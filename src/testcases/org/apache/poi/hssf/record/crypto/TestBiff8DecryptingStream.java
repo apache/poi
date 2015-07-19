@@ -96,8 +96,20 @@ public final class TestBiff8DecryptingStream {
 		}
 
 		public void confirmShort(int expVal) {
-			cmp(HexDump.shortToHex(expVal), HexDump.shortToHex(_bds.readUShort()));
+			cmp(HexDump.shortToHex(expVal), HexDump.shortToHex(_bds.readShort()));
 		}
+
+        public void confirmUShort(int expVal) {
+            cmp(HexDump.shortToHex(expVal), HexDump.shortToHex(_bds.readUShort()));
+        }
+        
+        public short readShort() {
+            return _bds.readShort();
+        }
+
+        public int readUShort() {
+            return _bds.readUShort();
+        }
 
 		public void confirmInt(int expVal) {
 			cmp(HexDump.intToHex(expVal), HexDump.intToHex(_bds.readInt()));
@@ -106,7 +118,7 @@ public final class TestBiff8DecryptingStream {
 		public void confirmLong(long expVal) {
 			cmp(HexDump.longToHex(expVal), HexDump.longToHex(_bds.readLong()));
 		}
-
+		
 		private void cmp(char[] exp, char[] act) {
 			if (Arrays.equals(exp, act)) {
 				return;
@@ -166,6 +178,15 @@ public final class TestBiff8DecryptingStream {
 		st.rollForward(0x0C04, 0x0FF8);
 		st.confirmLong(0x6AA2D5F6B975D10CL);
 		st.confirmLong(0x34248ADF7ED4F029L);
+		// check for signed/unsigned shorts #58069
+		st.rollForward(0x1008, 0x7213);
+		st.confirmUShort(0xFFFF);
+		st.rollForward(0x7215, 0x1B9AD);
+        st.confirmShort(-1);
+        st.rollForward(0x1B9AF, 0x37D99);
+        assertEquals(0xFFFF, st.readUShort());
+        st.rollForward(0x37D9B, 0x4A6F2);
+        assertEquals(-1, st.readShort());
 		st.assertNoErrors();
 	}
 
@@ -229,7 +250,7 @@ public final class TestBiff8DecryptingStream {
 		st.confirmData("01 C2 4E 55");  // first 4 bytes in next block
 		st.assertNoErrors();
 	}
-    
+
 	private static StreamTester createStreamTester(int mockStreamStartVal, String keyDigestHex, int expectedFirstInt) {
 		return new StreamTester(new MockStream(mockStreamStartVal), keyDigestHex, expectedFirstInt);
 	}

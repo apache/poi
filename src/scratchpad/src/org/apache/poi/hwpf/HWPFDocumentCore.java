@@ -85,7 +85,7 @@ public abstract class HWPFDocumentCore extends POIDocument
   }
 
   /**
-   * Takens an InputStream, verifies that it's not RTF, builds a
+   * Takens an InputStream, verifies that it's not RTF or PDF, builds a
    *  POIFSFileSystem from it, and returns that.
    */
   public static POIFSFileSystem verifyAndBuildPOIFS(InputStream istream) throws IOException {
@@ -98,9 +98,11 @@ public abstract class HWPFDocumentCore extends POIDocument
 	if(first6[0] == '{' && first6[1] == '\\' && first6[2] == 'r'
 		&& first6[3] == 't' && first6[4] == 'f') {
 		throw new IllegalArgumentException("The document is really a RTF file");
+	} else if(first6[0] == '%' && first6[1] == 'P' && first6[2] == 'D' && first6[3] == 'F' ) {
+		throw new IllegalArgumentException("The document is really a PDF file");
 	}
 
-	// OK, so it's not RTF
+	// OK, so it's neither RTF nor PDF
 	// Open a POIFSFileSystem on the (pushed back) stream
 	pis.unread(first6);
 	return new POIFSFileSystem(pis);

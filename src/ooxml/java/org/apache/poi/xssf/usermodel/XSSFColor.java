@@ -170,10 +170,7 @@ public class XSSFColor implements Color {
           return null;
        }
        for(byte c : rgb) {
-          int i = (int)c;
-          if(i < 0) {
-             i += 256;
-          }
+          int i = c & 0xff;
           String cs = Integer.toHexString(i);
           if(cs.length() == 1) {
              sb.append('0');
@@ -316,6 +313,13 @@ public class XSSFColor implements Color {
         return ctColor;
     }
 
+    public static XSSFColor toXSSFColor(Color color) {
+        if (color != null && !(color instanceof XSSFColor)) {
+            throw new IllegalArgumentException("Only XSSFColor objects are supported");
+        }
+        return (XSSFColor)color;
+    }
+    
     public int hashCode(){
         return ctColor.toString().hashCode();
     }

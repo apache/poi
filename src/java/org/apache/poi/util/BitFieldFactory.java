@@ -21,11 +21,8 @@ package org.apache.poi.util;
 import java.util.*;
 
 /**
- * Returns immutable Btfield instances.
- *
- * @author Jason Height (jheight at apache dot org)
+ * Returns immutable Bitfield instances.
  */
-
 public class BitFieldFactory {
     private static Map<Integer, BitField> instances = new HashMap<Integer, BitField>();
 

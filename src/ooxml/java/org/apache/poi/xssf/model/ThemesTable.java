@@ -45,7 +45,7 @@ public class ThemesTable extends POIXMLDocumentPart {
         try {
            theme = ThemeDocument.Factory.parse(part.getInputStream());
         } catch(XmlException e) {
-           throw new IOException(e.getLocalizedMessage());
+           throw new IOException(e.getLocalizedMessage(), e);
         }
     }
 

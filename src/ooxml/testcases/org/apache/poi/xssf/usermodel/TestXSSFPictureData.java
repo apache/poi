@@ -92,8 +92,8 @@ public final class TestXSSFPictureData extends TestCase {
         assertNotNull(p3);
 
         //check that the added pictures are accessible after write
-        wb = XSSFTestDataSamples.writeOutAndReadBack(wb);
-        List<XSSFPictureData> pictures2 = wb.getAllPictures();
+        XSSFWorkbook wbBack = XSSFTestDataSamples.writeOutAndReadBack(wb);
+        List<XSSFPictureData> pictures2 = wbBack.getAllPictures();
         assertEquals(3, pictures2.size());
 
         assertEquals("jpeg", pictures2.get(jpegIdx).suggestFileExtension());

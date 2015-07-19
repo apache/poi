@@ -17,8 +17,11 @@
 
 package org.apache.poi.ss.usermodel;
 
+import java.io.IOException;
+
 import junit.framework.TestCase;
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
@@ -134,8 +137,7 @@ public abstract class BaseTestSheetShiftRows extends TestCase {
         assertTrue("Row number 6 should have a pagebreak", s.isRowBroken(6));
     }
 
-    public void testShiftWithComments() { // TODO - enable XSSF test
-
+    public void testShiftWithComments() {
         Workbook wb = _testDataProvider.openSampleWorkbook("comments." + _testDataProvider.getStandardFileNameExtension());
 
         Sheet sheet = wb.getSheet("Sheet1");
@@ -153,6 +155,8 @@ public abstract class BaseTestSheetShiftRows extends TestCase {
         assertEquals(comment3,"comment top row3 (index2)\n");
         String comment4 = sheet.getCellComment(3,0).getString().getString();
         assertEquals(comment4,"comment top row4 (index3)\n");
+
+        //Workbook wbBack = _testDataProvider.writeOutAndReadBack(wb);
 
         // Shifting all but first line down to test comments shifting
         sheet.shiftRows(1, sheet.getLastRowNum(), 1, true, true);
@@ -191,6 +195,26 @@ public abstract class BaseTestSheetShiftRows extends TestCase {
         assertEquals(comment3,comment3_shifted);
         comment4_shifted = sheet.getCellComment(4,0).getString().getString();
         assertEquals(comment4,comment4_shifted);
+
+        // Shifting back up again, now two rows
+        sheet.shiftRows(2, sheet.getLastRowNum(), -2, true, true);
+
+        // TODO: it seems HSSFSheet does not correctly remove comments from rows that are overwritten
+        // by shifting rows...
+        if(!(wb instanceof HSSFWorkbook)) {
+        	assertEquals(2, sheet.getLastRowNum());
+        	
+        	// Verify comments are in the position expected
+        	assertNull("Had: " + (sheet.getCellComment(0,0) == null ? "null" : sheet.getCellComment(0,0).getString()),
+        			sheet.getCellComment(0,0));
+        	assertNotNull(sheet.getCellComment(1,0));
+        	assertNotNull(sheet.getCellComment(2,0));
+        }
+
+        comment1 = sheet.getCellComment(1,0).getString().getString();
+        assertEquals(comment1,"comment top row3 (index2)\n");
+        String comment2 = sheet.getCellComment(2,0).getString().getString();
+        assertEquals(comment2,"comment top row4 (index3)\n");
     }
 
     public final void testShiftWithNames() {
@@ -378,6 +402,28 @@ public abstract class BaseTestSheetShiftRows extends TestCase {
 
         assertEquals("SUM(G29:I29)", sheet.getRow(28).getCell(9).getCellFormula());
         assertEquals("SUM(G30:I30)", sheet.getRow(29).getCell(9).getCellFormula());
+    }
 
+	public void testBug55280() throws IOException {
+        Workbook w = _testDataProvider.createWorkbook();
+        try {
+            Sheet s = w.createSheet();
+            for (int row = 0; row < 5000; ++row)
+                s.addMergedRegion(new CellRangeAddress(row, row, 0, 3));
+
+            s.shiftRows(0, 4999, 1);        // takes a long time...
+        } finally {
+            w.close();
+        }
+	}
+
+    public void test47169() throws IOException {
+        Workbook wb = _testDataProvider.createWorkbook();
+        Sheet sheet = wb.createSheet();
+        sheet.createRow(30);
+        sheet.shiftRows(29, 29, 1, true, true);
+        sheet.createRow(30);
+
+        wb.close();
     }
 }

@@ -22,6 +22,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.FormulaParseException;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.usermodel.Cell;
@@ -227,6 +228,11 @@ public class SXSSFCell implements Cell
     public void setCellValue(RichTextString value)
     {
         ensureRichTextStringType();
+
+        if(value.length() > SpreadsheetVersion.EXCEL2007.getMaxTextLength()){
+            throw new IllegalArgumentException("The maximum length of cell contents (text) is 32,767 characters");
+        }
+
         ((RichTextValue)_value).setValue(value);
     }
 
@@ -241,6 +247,11 @@ public class SXSSFCell implements Cell
     public void setCellValue(String value)
     {
         ensureTypeOrFormulaType(CELL_TYPE_STRING);
+        
+        if(value != null && value.length() > SpreadsheetVersion.EXCEL2007.getMaxTextLength()){
+            throw new IllegalArgumentException("The maximum length of cell contents (text) is 32,767 characters");
+        }
+
         if(_value.getType()==CELL_TYPE_FORMULA)
             ((StringFormulaValue)_value).setPreEvaluatedValue(value);
         else

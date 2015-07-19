@@ -868,6 +868,17 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
     }
 
     /**
+     * @return the list of merged regions
+     */
+    public List<CellRangeAddress> getMergedRegions() {
+        List<CellRangeAddress> addresses = new ArrayList<CellRangeAddress>();
+        for (int i=0; i < _sheet.getNumMergedRegions(); i++) {
+            addresses.add(_sheet.getMergedRegionAt(i));
+        }
+        return addresses;
+    }
+
+    /**
      * @return an iterator of the PHYSICAL rows.  Meaning the 3rd element may not
      *         be the third row if say for instance the second row is undefined.
      *         Call getRowNum() on each row if you care which one it is.

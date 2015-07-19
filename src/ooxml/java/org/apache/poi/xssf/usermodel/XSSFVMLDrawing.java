@@ -68,6 +68,7 @@ public final class XSSFVMLDrawing extends POIXMLDocumentPart {
     private static final QName QNAME_SHAPE_LAYOUT = new QName("urn:schemas-microsoft-com:office:office", "shapelayout");
     private static final QName QNAME_SHAPE_TYPE = new QName("urn:schemas-microsoft-com:vml", "shapetype");
     private static final QName QNAME_SHAPE = new QName("urn:schemas-microsoft-com:vml", "shape");
+    private static final String COMMENT_SHAPE_TYPE_ID = "_x0000_t202"; // this ID value seems to have significance to Excel >= 2010; see https://issues.apache.org/bugzilla/show_bug.cgi?id=55409
 
     /**
      * regexp to parse shape ids, in VML they have weird form of id="_x0000_s1026"
@@ -190,7 +191,7 @@ public final class XSSFVMLDrawing extends POIXMLDocumentPart {
         _qnames.add(QNAME_SHAPE_LAYOUT);
 
         CTShapetype shapetype = CTShapetype.Factory.newInstance();
-        _shapeTypeId = "_xssf_cell_comment";
+        _shapeTypeId = COMMENT_SHAPE_TYPE_ID;
         shapetype.setId(_shapeTypeId);
         shapetype.setCoordsize("21600,21600");
         shapetype.setSpt(202);

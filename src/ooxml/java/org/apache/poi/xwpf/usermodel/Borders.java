@@ -32,8 +32,9 @@ import java.util.Map;
  * specified on any object which allows a border, however, art borders may only
  * be used as a border at the page level - the borders under the pgBorders
  * element
- *</li>
+ * </li>
  * </ul>
+ *
  * @author Gisella Bronzetti
  */
 public enum Borders {
@@ -599,21 +600,18 @@ public enum Borders {
 
     ZIG_ZAG_STITCH(191);
 
-    private final int value;
-
-    private Borders(int val) {
-        value = val;
-    }
-
-    public int getValue() {
-        return value;
-    }
-
     private static Map<Integer, Borders> imap = new HashMap<Integer, Borders>();
+
     static {
         for (Borders p : values()) {
             imap.put(Integer.valueOf(p.getValue()), p);
         }
+    }
+
+    private final int value;
+
+    private Borders(int val) {
+        value = val;
     }
 
     public static Borders valueOf(int type) {
@@ -622,5 +620,9 @@ public enum Borders {
             throw new IllegalArgumentException("Unknown paragraph border: " + type);
         }
         return pBorder;
+    }
+
+    public int getValue() {
+        return value;
     }
 }

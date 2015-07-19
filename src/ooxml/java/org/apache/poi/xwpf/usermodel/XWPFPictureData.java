@@ -43,6 +43,7 @@ public class XWPFPictureData extends POIXMLDocumentPart {
      * Relationships for each known picture type
      */
     protected static final POIXMLRelation[] RELATIONS;
+
     static {
         RELATIONS = new POIXMLRelation[13];
         RELATIONS[Document.PICTURE_TYPE_EMF] = XWPFRelation.IMAGE_EMF;
@@ -62,7 +63,6 @@ public class XWPFPictureData extends POIXMLDocumentPart {
 
     /**
      * Create a new XWPFGraphicData node
-     *
      */
     protected XWPFPictureData() {
         super();
@@ -73,7 +73,7 @@ public class XWPFPictureData extends POIXMLDocumentPart {
      *
      * @param part the package part holding the drawing data,
      * @param rel  the package relationship holding this drawing,
-     * the relationship type must be http://schemas.openxmlformats.org/officeDocument/2006/relationships/image
+     *             the relationship type must be http://schemas.openxmlformats.org/officeDocument/2006/relationships/image
      */
     public XWPFPictureData(PackagePart part, PackageRelationship rel) {
         super(part, rel);
@@ -94,6 +94,7 @@ public class XWPFPictureData extends POIXMLDocumentPart {
      * InputStream is = getPackagePart().getInputStream();
      * </code>
      * </p>
+     *
      * @return the Picture data.
      */
     public byte[] getData() {
@@ -118,6 +119,7 @@ public class XWPFPictureData extends POIXMLDocumentPart {
 
     /**
      * Suggests a file extension for this image.
+     *
      * @return the file extension.
      */
     public String suggestFileExtension() {
@@ -126,7 +128,7 @@ public class XWPFPictureData extends POIXMLDocumentPart {
 
     /**
      * Return an integer constant that specifies type of this picture
-     * 
+     *
      * @return an integer constant that specifies type of this picture
      * @see org.apache.poi.xwpf.usermodel.Document#PICTURE_TYPE_EMF
      * @see org.apache.poi.xwpf.usermodel.Document#PICTURE_TYPE_WMF
@@ -220,7 +222,7 @@ public class XWPFPictureData extends POIXMLDocumentPart {
                 }
             }
         }
-        
+
         Long foreignChecksum = picData.getChecksum();
         Long localChecksum = getChecksum();
 
@@ -236,7 +238,7 @@ public class XWPFPictureData extends POIXMLDocumentPart {
     }
 
     /**
-     * *PictureData objects store the actual content in the part directly without keeping a 
+     * *PictureData objects store the actual content in the part directly without keeping a
      * copy like all others therefore we need to handle them differently.
      */
     @Override

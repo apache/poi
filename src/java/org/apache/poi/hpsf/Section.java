@@ -285,7 +285,7 @@ public class Section
         /*
          * Extract the dictionary (if available).
          */
-        dictionary = (Map) getProperty(0);
+        dictionary = (Map<Long,String>) getProperty(0);
     }
 
 

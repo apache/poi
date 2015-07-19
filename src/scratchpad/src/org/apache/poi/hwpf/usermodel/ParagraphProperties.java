@@ -43,7 +43,7 @@ public final class ParagraphProperties extends PAPAbstractType implements
         pp.setBrcBar( (BorderCode) getBrcBar().clone() );
         pp.setDcs( getDcs().clone() );
         pp.setLspd( (LineSpacingDescriptor) getLspd().clone() );
-        pp.setShd( (ShadingDescriptor) getShd().clone() );
+        pp.setShd( getShd().clone() );
         pp.setPhe( getPhe().clone() );
         return pp;
     }

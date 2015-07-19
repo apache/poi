@@ -19,6 +19,8 @@ package org.apache.poi.xssf.usermodel;
 
 import java.io.IOException;
 
+import org.apache.poi.hssf.HSSFITestDataProvider;
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.BaseTestXCell;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DataFormatter;
@@ -28,6 +30,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.xssf.SXSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.SharedStringsTable;
@@ -400,6 +403,50 @@ public final class TestXSSFCell extends BaseTestXCell {
             row.createCell(2);
         } finally {
             wb.close();
+        }
+    }
+
+    public void testEncodingbeloAscii(){
+        StringBuffer sb = new StringBuffer();
+        // test all possible characters
+        for(int i = 0; i < Character.MAX_VALUE; i++) {
+        	sb.append((char)i);
+        }
+
+        String strAll = sb.toString();
+
+        // process in chunks as we have a limit on size of column now
+        int pos = 0;
+        while(pos < strAll.length()) {
+        	String str = strAll.substring(pos, Math.min(strAll.length(), pos+SpreadsheetVersion.EXCEL2007.getMaxTextLength()));
+        	
+            Workbook wb = HSSFITestDataProvider.instance.createWorkbook();
+            Cell cell = wb.createSheet().createRow(0).createCell(0);
+            
+            Workbook xwb = XSSFITestDataProvider.instance.createWorkbook();
+            Cell xCell = xwb.createSheet().createRow(0).createCell(0);
+
+            Workbook swb = SXSSFITestDataProvider.instance.createWorkbook();
+            Cell sCell = swb.createSheet().createRow(0).createCell(0);
+
+        	cell.setCellValue(str);
+        	assertEquals(str, cell.getStringCellValue());
+        	xCell.setCellValue(str);
+        	assertEquals(str, xCell.getStringCellValue());
+        	sCell.setCellValue(str);
+        	assertEquals(str, sCell.getStringCellValue());
+        	
+        	Workbook wbBack = HSSFITestDataProvider.instance.writeOutAndReadBack(wb);
+        	Workbook xwbBack = XSSFITestDataProvider.instance.writeOutAndReadBack(xwb);
+        	Workbook swbBack = SXSSFITestDataProvider.instance.writeOutAndReadBack(swb);
+        	cell = wbBack.getSheetAt(0).createRow(0).createCell(0);
+        	xCell = xwbBack.getSheetAt(0).createRow(0).createCell(0);
+        	sCell = swbBack.getSheetAt(0).createRow(0).createCell(0);
+        	
+        	assertEquals(cell.getStringCellValue(), xCell.getStringCellValue());
+        	assertEquals(cell.getStringCellValue(), sCell.getStringCellValue());
+        	
+        	pos += SpreadsheetVersion.EXCEL97.getMaxTextLength();
         }
     }
 }

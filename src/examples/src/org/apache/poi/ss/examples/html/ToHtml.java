@@ -289,7 +289,7 @@ public class ToHtml {
     private void fontStyle(CellStyle style) {
         Font font = wb.getFontAt(style.getFontIndex());
 
-        if (font.getBoldweight() >= HSSFFont.BOLDWEIGHT_NORMAL)
+        if (font.getBoldweight() >= HSSFFont.BOLDWEIGHT_BOLD)
             out.format("  font-weight: bold;%n");
         if (font.getItalic())
             out.format("  font-style: italic;%n");
@@ -309,8 +309,12 @@ public class ToHtml {
             style = wb.getCellStyleAt((short) 0);
         StringBuilder sb = new StringBuilder();
         Formatter fmt = new Formatter(sb);
-        fmt.format("style_%02x", style.getIndex());
-        return fmt.toString();
+        try {
+            fmt.format("style_%02x", style.getIndex());
+            return fmt.toString();
+        } finally {
+            fmt.close();
+        }
     }
 
     private <K> void styleOut(String attr, K key, Map<K, String> mapping) {

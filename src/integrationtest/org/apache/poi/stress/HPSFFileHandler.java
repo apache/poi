@@ -18,6 +18,7 @@ package org.apache.poi.stress;
 
 import static org.junit.Assert.assertNotNull;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
@@ -25,7 +26,7 @@ import org.apache.poi.hpsf.HPSFPropertiesOnlyDocument;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.junit.Test;
 
-public class HPSFFileHandler implements FileHandler {
+public class HPSFFileHandler extends AbstractFileHandler {
 	@Override
     public void handleFile(InputStream stream) throws Exception {
 		HPSFPropertiesOnlyDocument hpsf = new HPSFPropertiesOnlyDocument(new POIFSFileSystem(stream));
@@ -43,4 +44,10 @@ public class HPSFFileHandler implements FileHandler {
 			stream.close();
 		}
 	}
+
+    // a test-case to test this locally without executing the full TestAllFiles
+    @Test
+    public void testExtractor() throws Exception {
+        handleExtracting(new File("test-data/hpsf/TestBug44375.xls"));
+    }
 }

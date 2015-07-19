@@ -27,8 +27,8 @@ import org.apache.poi.ss.formula.function.FunctionMetadataRegistry;
 import org.apache.poi.ss.formula.functions.*;
 
 /**
- * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
- * @author Johan Karlsteen - added Intercept and Slope
+ * Mappings from the Excel functions to our evaluation implementations
+ *  (where avilable)
  */
 public final class FunctionEval {
     /**
@@ -99,7 +99,7 @@ public final class FunctionEval {
         retval[39] = NumericFunction.MOD;
 
         retval[43] = new DStarRunner(new DMin());
-        
+
         retval[46] = AggregateFunction.VAR;
         retval[48] = TextFunction.TEXT;
 
@@ -154,6 +154,7 @@ public final class FunctionEval {
 
         retval[124] = TextFunction.FIND;
 
+        retval[126] = LogicalFunction.ISERR;
         retval[127] = LogicalFunction.ISTEXT;
         retval[128] = LogicalFunction.ISNUMBER;
         retval[129] = LogicalFunction.ISBLANK;
@@ -161,7 +162,7 @@ public final class FunctionEval {
 
         retval[FunctionID.INDIRECT] = null; // Indirect.evaluate has different signature
 
-        retval[162] = TextFunction.CLEAN;  //Aniket Banerjee    
+        retval[162] = TextFunction.CLEAN;    
         retval[167] = new IPMT();
         retval[168] = new PPMT();
         retval[169] = new Counta();
@@ -177,7 +178,7 @@ public final class FunctionEval {
         retval[212] = NumericFunction.ROUNDUP;
         retval[213] = NumericFunction.ROUNDDOWN;
         retval[216] = new Rank();
-        retval[219] = new Address();  //Aniket Banerjee
+        retval[219] = new Address();
         retval[220] = new Days360();
         retval[221] = new Today();
 
@@ -290,7 +291,7 @@ public final class FunctionEval {
                 throw new IllegalArgumentException(name + " is a function from the Excel Analysis Toolpack. " +
                         "Use AnalysisToolpack.registerFunction(String name, FreeRefFunction func) instead.");
             }
-            
+
             throw new IllegalArgumentException("Unknown function: " + name);
         }
 

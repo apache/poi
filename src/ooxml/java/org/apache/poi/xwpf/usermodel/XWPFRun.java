@@ -35,13 +35,46 @@ import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlString;
 import org.apache.xmlbeans.XmlToken;
 import org.apache.xmlbeans.impl.values.XmlAnyTypeImpl;
-import org.openxmlformats.schemas.drawingml.x2006.main.*;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTBlip;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTBlipFillProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTGraphicalObject;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTGraphicalObjectData;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualDrawingProps;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualPictureProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTPoint2D;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTPositiveSize2D;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTPresetGeometry2D;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTransform2D;
+import org.openxmlformats.schemas.drawingml.x2006.main.STShapeType;
 import org.openxmlformats.schemas.drawingml.x2006.picture.CTPicture;
 import org.openxmlformats.schemas.drawingml.x2006.picture.CTPictureNonVisual;
 import org.openxmlformats.schemas.drawingml.x2006.wordprocessingDrawing.CTAnchor;
 import org.openxmlformats.schemas.drawingml.x2006.wordprocessingDrawing.CTInline;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.*;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTColor;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTDrawing;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTEmpty;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFFCheckBox;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFldChar;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFonts;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFtnEdnRef;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTHpsMeasure;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTOnOff;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPTab;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRPr;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSignedHpsMeasure;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSignedTwipsMeasure;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTText;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTUnderline;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTVerticalAlignRun;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STBrClear;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STBrType;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STFldCharType;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STOnOff;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STUnderline;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STVerticalAlignRun;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 
@@ -54,16 +87,6 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     private IRunBody parent;
     private List<XWPFPicture> pictures;
 
-    /**
-     * @see <a href="http://msdn.microsoft.com/en-us/library/ff533743(v=office.12).aspx">[MS-OI29500] Run Fonts</a> 
-     */
-    public static enum FontCharRange {
-        ascii /* char 0-127 */,
-        cs /* complex symbol */,
-        eastAsia /* east asia */,
-        hAnsi /* high ansi */
-    };
-    
     /**
      * @param r the CTR bean which holds the run attributes
      * @param p the parent paragraph
@@ -95,7 +118,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
         List<XmlObject> pictTextObjs = new ArrayList<XmlObject>();
         pictTextObjs.addAll(Arrays.asList(r.getPictArray()));
         pictTextObjs.addAll(Arrays.asList(r.getDrawingArray()));
-        for(XmlObject o : pictTextObjs) {
+        for (XmlObject o : pictTextObjs) {
             XmlObject[] ts = o.selectPath("declare namespace w='http://schemas.openxmlformats.org/wordprocessingml/2006/main' .//w:t");
             for (XmlObject t : ts) {
                 NodeList kids = t.getDomNode().getChildNodes();
@@ -113,34 +136,52 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
         // Do we have any embedded pictures?
         // (They're a different CTPicture, under the drawingml namespace)
         pictures = new ArrayList<XWPFPicture>();
-        for(XmlObject o : pictTextObjs) {
-            for(CTPicture pict : getCTPictures(o)) {
+        for (XmlObject o : pictTextObjs) {
+            for (CTPicture pict : getCTPictures(o)) {
                 XWPFPicture picture = new XWPFPicture(pict, this);
                 pictures.add(picture);
             }
         }
     }
+
+    ;
+
     /**
      * @deprecated Use {@link XWPFRun#XWPFRun(CTR, IRunBody)}
      */
     public XWPFRun(CTR r, XWPFParagraph p) {
-        this(r, (IRunBody)p);
+        this(r, (IRunBody) p);
+    }
+
+    /**
+     * Add the xml:spaces="preserve" attribute if the string has leading or trailing white spaces
+     *
+     * @param xs the string to check
+     */
+    static void preserveSpaces(XmlString xs) {
+        String text = xs.getStringValue();
+        if (text != null && (text.startsWith(" ") || text.endsWith(" "))) {
+            XmlCursor c = xs.newCursor();
+            c.toNextToken();
+            c.insertAttributeWithValue(new QName("http://www.w3.org/XML/1998/namespace", "space"), "preserve");
+            c.dispose();
+        }
     }
 
     private List<CTPicture> getCTPictures(XmlObject o) {
-        List<CTPicture> pictures = new ArrayList<CTPicture>(); 
-        XmlObject[] picts = o.selectPath("declare namespace pic='"+CTPicture.type.getName().getNamespaceURI()+"' .//pic:pic");
-        for(XmlObject pict : picts) {
-            if(pict instanceof XmlAnyTypeImpl) {
+        List<CTPicture> pictures = new ArrayList<CTPicture>();
+        XmlObject[] picts = o.selectPath("declare namespace pic='" + CTPicture.type.getName().getNamespaceURI() + "' .//pic:pic");
+        for (XmlObject pict : picts) {
+            if (pict instanceof XmlAnyTypeImpl) {
                 // Pesky XmlBeans bug - see Bugzilla #49934
                 try {
-                    pict = CTPicture.Factory.parse( pict.toString() );
-                } catch(XmlException e) {
+                    pict = CTPicture.Factory.parse(pict.toString());
+                } catch (XmlException e) {
                     throw new POIXMLException(e);
                 }
             }
-            if(pict instanceof CTPicture) {
-                pictures.add((CTPicture)pict);
+            if (pict instanceof CTPicture) {
+                pictures.add((CTPicture) pict);
             }
         }
         return pictures;
@@ -148,6 +189,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
 
     /**
      * Get the currently used CTR object
+     *
      * @return ctr object
      */
     @Internal
@@ -157,24 +199,27 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
 
     /**
      * Get the currently referenced paragraph/SDT object
+     *
      * @return current parent
      */
     public IRunBody getParent() {
         return parent;
     }
+
     /**
      * Get the currently referenced paragraph, or null if a SDT object
+     *
      * @deprecated use {@link XWPFRun#getParent()} instead
      */
     public XWPFParagraph getParagraph() {
         if (parent instanceof XWPFParagraph)
-            return (XWPFParagraph)parent;
+            return (XWPFParagraph) parent;
         return null;
     }
 
     /**
      * @return The {@link XWPFDocument} instance, this run belongs to, or
-     *         <code>null</code> if parent structure (paragraph > document) is not properly set.
+     * <code>null</code> if parent structure (paragraph > document) is not properly set.
      */
     public XWPFDocument getDocument() {
         if (parent != null) {
@@ -187,11 +232,11 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * For isBold, isItalic etc
      */
     private boolean isCTOnOff(CTOnOff onoff) {
-        if(! onoff.isSetVal())
+        if (!onoff.isSetVal())
             return true;
-        if(onoff.getVal() == STOnOff.ON)
+        if (onoff.getVal() == STOnOff.ON)
             return true;
-        if(onoff.getVal() == STOnOff.TRUE)
+        if (onoff.getVal() == STOnOff.TRUE)
             return true;
         return false;
     }
@@ -204,7 +249,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     public boolean isBold() {
         CTRPr pr = run.getRPr();
-        if(pr == null || !pr.isSetB()) {
+        if (pr == null || !pr.isSetB()) {
             return false;
         }
         return isCTOnOff(pr.getB());
@@ -212,7 +257,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
 
     /**
      * Whether the bold property shall be applied to all non-complex script
-     * characters in the contents of this run when displayed in a document. 
+     * characters in the contents of this run when displayed in a document.
      * <p>
      * This formatting property is a toggle property, which specifies that its
      * behavior differs between its use within a style definition and its use as
@@ -244,19 +289,20 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * Get text color. The returned value is a string in the hex form "RRGGBB".
      */
     public String getColor() {
-    	String color = null;
+        String color = null;
         if (run.isSetRPr()) {
-        	CTRPr pr = run.getRPr();
-        	if (pr.isSetColor()) {
-        		CTColor clr = pr.getColor();
-        		color = clr.xgetVal().getStringValue();
-        	}
+            CTRPr pr = run.getRPr();
+            if (pr.isSetColor()) {
+                CTColor clr = pr.getColor();
+                color = clr.xgetVal().getStringValue();
+            }
         }
-    	return color;
+        return color;
     }
 
     /**
      * Set text color.
+     *
      * @param rgbStr - the desired color, in the hex form "RRGGBB".
      */
     public void setColor(String rgbStr) {
@@ -288,17 +334,18 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * @param value the literal text which shall be displayed in the document
      */
     public void setText(String value) {
-        setText(value,run.sizeOfTArray());
+        setText(value, run.sizeOfTArray());
     }
 
     /**
-     * Sets the text of this text run in the 
+     * Sets the text of this text run in the
      *
      * @param value the literal text which shall be displayed in the document
-     * @param pos - position in the text array (NB: 0 based)
+     * @param pos   - position in the text array (NB: 0 based)
      */
     public void setText(String value, int pos) {
-        if(pos > run.sizeOfTArray()) throw new ArrayIndexOutOfBoundsException("Value too large for the parameter position in XWPFRun.setText(String value,int pos)");
+        if (pos > run.sizeOfTArray())
+            throw new ArrayIndexOutOfBoundsException("Value too large for the parameter position in XWPFRun.setText(String value,int pos)");
         CTText t = (pos < run.sizeOfTArray() && pos >= 0) ? run.getTArray(pos) : run.addNewT();
         t.setStringValue(value);
         preserveSpaces(t);
@@ -312,7 +359,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     public boolean isItalic() {
         CTRPr pr = run.getRPr();
-        if(pr == null || !pr.isSetI())
+        if (pr == null || !pr.isSetI())
             return false;
         return isCTOnOff(pr.getI());
     }
@@ -357,8 +404,8 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     public UnderlinePatterns getUnderline() {
         CTRPr pr = run.getRPr();
-        return (pr != null && pr.isSetU() && pr.getU().getVal() != null) 
-                ? UnderlinePatterns.valueOf(pr.getU().getVal().intValue()) 
+        return (pr != null && pr.isSetU() && pr.getU().getVal() != null)
+                ? UnderlinePatterns.valueOf(pr.getU().getVal().intValue())
                 : UnderlinePatterns.NONE;
     }
 
@@ -391,25 +438,9 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     public boolean isStrikeThrough() {
         CTRPr pr = run.getRPr();
-        if(pr == null || !pr.isSetStrike())
+        if (pr == null || !pr.isSetStrike())
             return false;
         return isCTOnOff(pr.getStrike());
-    }
-    @Deprecated
-    public boolean isStrike() {
-        return isStrikeThrough();
-    }
-    /**
-     * Specifies that the contents of this run shall be displayed with a double
-     * horizontal line through the center of the line.
-     *
-     * @return <code>true</code> if the double strike property is applied
-     */
-    public boolean isDoubleStrikeThrough() {
-        CTRPr pr = run.getRPr();
-        if(pr == null || !pr.isSetDstrike())
-            return false;
-        return isCTOnOff(pr.getDstrike());
     }
 
     /**
@@ -441,13 +472,34 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
         CTOnOff strike = pr.isSetStrike() ? pr.getStrike() : pr.addNewStrike();
         strike.setVal(value ? STOnOff.TRUE : STOnOff.FALSE);
     }
+
+    @Deprecated
+    public boolean isStrike() {
+        return isStrikeThrough();
+    }
+
     @Deprecated
     public void setStrike(boolean value) {
         setStrikeThrough(value);
     }
+
+    /**
+     * Specifies that the contents of this run shall be displayed with a double
+     * horizontal line through the center of the line.
+     *
+     * @return <code>true</code> if the double strike property is applied
+     */
+    public boolean isDoubleStrikeThrough() {
+        CTRPr pr = run.getRPr();
+        if (pr == null || !pr.isSetDstrike())
+            return false;
+        return isCTOnOff(pr.getDstrike());
+    }
+
     /**
      * Specifies that the contents of this run shall be displayed with a
      * double horizontal line through the center of the line.
+     *
      * @see #setStrikeThrough(boolean) for the rules about this
      */
     public void setDoubleStrikethrough(boolean value) {
@@ -458,63 +510,69 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
 
     public boolean isSmallCaps() {
         CTRPr pr = run.getRPr();
-        if(pr == null || !pr.isSetSmallCaps())
+        if (pr == null || !pr.isSetSmallCaps())
             return false;
         return isCTOnOff(pr.getSmallCaps());
     }
+
     public void setSmallCaps(boolean value) {
         CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
         CTOnOff caps = pr.isSetSmallCaps() ? pr.getSmallCaps() : pr.addNewSmallCaps();
         caps.setVal(value ? STOnOff.TRUE : STOnOff.FALSE);
     }
+
     public boolean isCapitalized() {
         CTRPr pr = run.getRPr();
-        if(pr == null || !pr.isSetCaps())
+        if (pr == null || !pr.isSetCaps())
             return false;
         return isCTOnOff(pr.getCaps());
     }
+
     public void setCapitalized(boolean value) {
         CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
         CTOnOff caps = pr.isSetCaps() ? pr.getCaps() : pr.addNewCaps();
         caps.setVal(value ? STOnOff.TRUE : STOnOff.FALSE);
     }
-    
+
     public boolean isShadowed() {
         CTRPr pr = run.getRPr();
-        if(pr == null || !pr.isSetShadow())
+        if (pr == null || !pr.isSetShadow())
             return false;
         return isCTOnOff(pr.getShadow());
     }
+
     public void setShadow(boolean value) {
         CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
         CTOnOff shadow = pr.isSetShadow() ? pr.getShadow() : pr.addNewShadow();
         shadow.setVal(value ? STOnOff.TRUE : STOnOff.FALSE);
     }
-    
+
     public boolean isImprinted() {
         CTRPr pr = run.getRPr();
-        if(pr == null || !pr.isSetImprint())
+        if (pr == null || !pr.isSetImprint())
             return false;
         return isCTOnOff(pr.getImprint());
     }
+
     public void setImprinted(boolean value) {
         CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
         CTOnOff imprinted = pr.isSetImprint() ? pr.getImprint() : pr.addNewImprint();
         imprinted.setVal(value ? STOnOff.TRUE : STOnOff.FALSE);
     }
-    
+
     public boolean isEmbossed() {
         CTRPr pr = run.getRPr();
-        if(pr == null || !pr.isSetEmboss())
+        if (pr == null || !pr.isSetEmboss())
             return false;
         return isCTOnOff(pr.getEmboss());
     }
+
     public void setEmbossed(boolean value) {
         CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
         CTOnOff emboss = pr.isSetEmboss() ? pr.getEmboss() : pr.addNewEmboss();
         emboss.setVal(value ? STOnOff.TRUE : STOnOff.FALSE);
     }
-    
+
     /**
      * Specifies the alignment which shall be applied to the contents of this
      * run in relation to the default appearance of the run's text.
@@ -553,28 +611,30 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
 
     public int getKerning() {
         CTRPr pr = run.getRPr();
-        if(pr == null || !pr.isSetKern())
+        if (pr == null || !pr.isSetKern())
             return 0;
         return pr.getKern().getVal().intValue();
     }
+
     public void setKerning(int kern) {
         CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
         CTHpsMeasure kernmes = pr.isSetKern() ? pr.getKern() : pr.addNewKern();
         kernmes.setVal(BigInteger.valueOf(kern));
     }
-    
+
     public int getCharacterSpacing() {
         CTRPr pr = run.getRPr();
-        if(pr == null || !pr.isSetSpacing())
+        if (pr == null || !pr.isSetSpacing())
             return 0;
         return pr.getSpacing().getVal().intValue();
     }
+
     public void setCharacterSpacing(int twips) {
         CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
         CTSignedTwipsMeasure spc = pr.isSetSpacing() ? pr.getSpacing() : pr.addNewSpacing();
         spc.setVal(BigInteger.valueOf(twips));
     }
-    
+
     /**
      * Gets the fonts which shall be used to display the text contents of
      * this run. Specifies a font which shall be used to format all characters
@@ -585,6 +645,21 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     public String getFontFamily() {
         return getFontFamily(null);
     }
+
+    /**
+     * Specifies the fonts which shall be used to display the text contents of
+     * this run. Specifies a font which shall be used to format all characters
+     * in the ASCII range (0 - 127) within the parent run.
+     * <p/>
+     * Also sets the other font ranges, if they haven't been set before
+     *
+     * @param fontFamily
+     * @see FontCharRange
+     */
+    public void setFontFamily(String fontFamily) {
+        setFontFamily(fontFamily, null);
+    }
+
     /**
      * Alias for {@link #getFontFamily()}
      */
@@ -597,42 +672,26 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * If fcr is null, the font char range "ascii" is used
      *
      * @param fcr the font char range, defaults to "ansi"
-     * @return  a string representing the font famil
+     * @return a string representing the font famil
      */
     public String getFontFamily(FontCharRange fcr) {
         CTRPr pr = run.getRPr();
         if (pr == null || !pr.isSetRFonts()) return null;
-        
+
         CTFonts fonts = pr.getRFonts();
         switch (fcr == null ? FontCharRange.ascii : fcr) {
-        default:
-        case ascii:
-            return fonts.getAscii();
-        case cs:
-            return fonts.getCs();
-        case eastAsia:
-            return fonts.getEastAsia();
-        case hAnsi:
-            return fonts.getHAnsi();
+            default:
+            case ascii:
+                return fonts.getAscii();
+            case cs:
+                return fonts.getCs();
+            case eastAsia:
+                return fonts.getEastAsia();
+            case hAnsi:
+                return fonts.getHAnsi();
         }
     }
-    
-    
-    /**
-     * Specifies the fonts which shall be used to display the text contents of
-     * this run. Specifies a font which shall be used to format all characters
-     * in the ASCII range (0 - 127) within the parent run.
-     * 
-     * Also sets the other font ranges, if they haven't been set before 
-     *
-     * @param fontFamily
-     * 
-     * @see FontCharRange
-     */
-    public void setFontFamily(String fontFamily) {
-        setFontFamily(fontFamily, null);
-    }
-    
+
     /**
      * Specifies the fonts which shall be used to display the text contents of
      * this run. The default handling for fcr == null is to overwrite the
@@ -640,12 +699,12 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * specified font ranges
      *
      * @param fontFamily
-     * @param fcr FontCharRange or null for default handling
+     * @param fcr        FontCharRange or null for default handling
      */
     public void setFontFamily(String fontFamily, FontCharRange fcr) {
         CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
         CTFonts fonts = pr.isSetRFonts() ? pr.getRFonts() : pr.addNewRFonts();
-        
+
         if (fcr == null) {
             fonts.setAscii(fontFamily);
             if (!fonts.isSetHAnsi()) {
@@ -659,18 +718,18 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
             }
         } else {
             switch (fcr) {
-            case ascii:
-                fonts.setAscii(fontFamily);
-                break;
-            case cs:
-                fonts.setCs(fontFamily);
-                break;
-            case eastAsia:
-                fonts.setEastAsia(fontFamily);
-                break;
-            case hAnsi:
-                fonts.setHAnsi(fontFamily);
-                break;
+                case ascii:
+                    fonts.setAscii(fontFamily);
+                    break;
+                case cs:
+                    fonts.setCs(fontFamily);
+                    break;
+                case eastAsia:
+                    fonts.setEastAsia(fontFamily);
+                    break;
+                case hAnsi:
+                    fonts.setHAnsi(fontFamily);
+                    break;
             }
         }
     }
@@ -699,7 +758,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * @param size
      */
     public void setFontSize(int size) {
-        BigInteger bint=new BigInteger(""+size);
+        BigInteger bint = new BigInteger("" + size);
         CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
         CTHpsMeasure ctSize = pr.isSetSz() ? pr.getSz() : pr.addNewSz();
         ctSize.setVal(bint.multiply(new BigInteger("2")));
@@ -742,14 +801,14 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * @param val
      */
     public void setTextPosition(int val) {
-        BigInteger bint=new BigInteger(""+val);
+        BigInteger bint = new BigInteger("" + val);
         CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
         CTSignedHpsMeasure position = pr.isSetPosition() ? pr.getPosition() : pr.addNewPosition();
         position.setVal(bint);
     }
 
     /**
-     * 
+     *
      */
     public void removeBreak() {
         // TODO
@@ -757,15 +816,16 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
 
     /**
      * Specifies that a break shall be placed at the current location in the run
-     * content. 
+     * content.
      * A break is a special character which is used to override the
      * normal line breaking that would be performed based on the normal layout
-     * of the document's contents. 
-     * @see #addCarriageReturn() 
+     * of the document's contents.
+     *
+     * @see #addCarriageReturn()
      */
     public void addBreak() {
         run.addNewBr();
-    } 
+    }
 
     /**
      * Specifies that a break shall be placed at the current location in the run
@@ -778,10 +838,11 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * location where text shall be restarted after this break) shall be
      * determined by its type values.
      * </p>
+     *
      * @see BreakType
      */
-    public void addBreak(BreakType type){
-        CTBr br=run.addNewBr();
+    public void addBreak(BreakType type) {
+        CTBr br = run.addNewBr();
         br.setType(STBrType.Enum.forInt(type.getValue()));
     }
 
@@ -795,17 +856,18 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * location where text shall be restarted after this break) shall be
      * determined by its type (in this case is BreakType.TEXT_WRAPPING as default) and clear attribute values.
      * </p>
+     *
      * @see BreakClear
      */
-    public void addBreak(BreakClear clear){
-        CTBr br=run.addNewBr();
+    public void addBreak(BreakClear clear) {
+        CTBr br = run.addNewBr();
         br.setType(STBrType.Enum.forInt(BreakType.TEXT_WRAPPING.getValue()));
         br.setClear(STBrClear.Enum.forInt(clear.getValue()));
     }
 
     /**
-     * Specifies that a tab shall be placed at the current location in 
-     *  the run content.
+     * Specifies that a tab shall be placed at the current location in
+     * the run content.
      */
     public void addTab() {
         run.addNewTab();
@@ -813,7 +875,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
 
     public void removeTab() {
         //TODO
-    }    
+    }
 
     /**
      * Specifies that a carriage return shall be placed at the
@@ -833,28 +895,27 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
 
     public void removeCarriageReturn() {
         //TODO
-    }    
+    }
 
     /**
      * Adds a picture to the run. This method handles
-     *  attaching the picture data to the overall file.
-     *  
+     * attaching the picture data to the overall file.
+     *
+     * @param pictureData The raw picture data
+     * @param pictureType The type of the picture, eg {@link Document#PICTURE_TYPE_JPEG}
+     * @param width       width in EMUs. To convert to / from points use {@link org.apache.poi.util.Units}
+     * @param height      height in EMUs. To convert to / from points use {@link org.apache.poi.util.Units}
+     * @throws org.apache.poi.openxml4j.exceptions.InvalidFormatException
+     * @throws IOException
      * @see org.apache.poi.xwpf.usermodel.Document#PICTURE_TYPE_EMF
      * @see org.apache.poi.xwpf.usermodel.Document#PICTURE_TYPE_WMF
      * @see org.apache.poi.xwpf.usermodel.Document#PICTURE_TYPE_PICT
      * @see org.apache.poi.xwpf.usermodel.Document#PICTURE_TYPE_JPEG
      * @see org.apache.poi.xwpf.usermodel.Document#PICTURE_TYPE_PNG
      * @see org.apache.poi.xwpf.usermodel.Document#PICTURE_TYPE_DIB
-     *  
-     * @param pictureData The raw picture data
-     * @param pictureType The type of the picture, eg {@link Document#PICTURE_TYPE_JPEG}
-     * @param width width in EMUs. To convert to / from points use {@link org.apache.poi.util.Units}
-     * @param height height in EMUs. To convert to / from points use {@link org.apache.poi.util.Units}
-     * @throws org.apache.poi.openxml4j.exceptions.InvalidFormatException
-     * @throws IOException
      */
     public XWPFPicture addPicture(InputStream pictureData, int pictureType, String filename, int width, int height)
-    throws InvalidFormatException, IOException {
+            throws InvalidFormatException, IOException {
         XWPFDocument doc = parent.getDocument();
 
         // Add the picture + relationship
@@ -868,12 +929,12 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
 
             // Do the fiddly namespace bits on the inline
             // (We need full control of what goes where and as what)
-            String xml = 
-                "<a:graphic xmlns:a=\"" + CTGraphicalObject.type.getName().getNamespaceURI() + "\">" +
-                "<a:graphicData uri=\"" + CTPicture.type.getName().getNamespaceURI() + "\">" +
-                "<pic:pic xmlns:pic=\"" + CTPicture.type.getName().getNamespaceURI() + "\" />" +
-                "</a:graphicData>" +
-                "</a:graphic>";
+            String xml =
+                    "<a:graphic xmlns:a=\"" + CTGraphicalObject.type.getName().getNamespaceURI() + "\">" +
+                            "<a:graphicData uri=\"" + CTPicture.type.getName().getNamespaceURI() + "\">" +
+                            "<pic:pic xmlns:pic=\"" + CTPicture.type.getName().getNamespaceURI() + "\" />" +
+                            "</a:graphicData>" +
+                            "</a:graphic>";
             inline.set(XmlToken.Factory.parse(xml));
 
             // Setup the inline
@@ -913,7 +974,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
 
             CTBlipFillProperties blipFill = pic.addNewBlipFill();
             CTBlip blip = blipFill.addNewBlip();
-            blip.setEmbed( picData.getPackageRelationship().getId() );
+            blip.setEmbed(picData.getPackageRelationship().getId());
             blipFill.addNewStretch().addNewFillRect();
 
             CTShapeProperties spPr = pic.addNewSpPr();
@@ -935,33 +996,18 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
             XWPFPicture xwpfPicture = new XWPFPicture(pic, this);
             pictures.add(xwpfPicture);
             return xwpfPicture;
-        } catch(XmlException e) {
+        } catch (XmlException e) {
             throw new IllegalStateException(e);
         }
     }
 
     /**
      * Returns the embedded pictures of the run. These
-     *  are pictures which reference an external, 
-     *  embedded picture image such as a .png or .jpg
+     * are pictures which reference an external,
+     * embedded picture image such as a .png or .jpg
      */
     public List<XWPFPicture> getEmbeddedPictures() {
         return pictures;
-    }
-
-    /**
-     * Add the xml:spaces="preserve" attribute if the string has leading or trailing white spaces
-     *
-     * @param xs    the string to check
-     */
-    static void preserveSpaces(XmlString xs) {
-        String text = xs.getStringValue();
-        if (text != null && (text.startsWith(" ") || text.endsWith(" "))) {
-            XmlCursor c = xs.newCursor();
-            c.toNextToken();
-            c.insertAttributeWithValue(new QName("http://www.w3.org/XML/1998/namespace", "space"), "preserve");
-            c.dispose();
-        }
     }
 
     /**
@@ -970,9 +1016,10 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     public String toString() {
         return text();
     }
+
     /**
      * Returns the string version of the text, with tabs and
-     *  carriage returns in place of their xml equivalents.
+     * carriage returns in place of their xml equivalents.
      */
     public String text() {
         StringBuffer text = new StringBuffer();
@@ -992,20 +1039,20 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
                     text.append(((CTText) o).getStringValue());
                 }
             }
-            
+
             // Complex type evaluation (currently only for extraction of check boxes)
-            if(o instanceof CTFldChar) {
-                CTFldChar ctfldChar = ((CTFldChar)o);
-                    if(ctfldChar.getFldCharType() == STFldCharType.BEGIN) {
-                        if(ctfldChar.getFfData() != null) {
-                            for(CTFFCheckBox checkBox : ctfldChar.getFfData().getCheckBoxList()) {
-                                if(checkBox.getDefault().getVal() == STOnOff.X_1) {
-                                    text.append("|X|");
-                                } else {
-                                    text.append("|_|");
-                                }
+            if (o instanceof CTFldChar) {
+                CTFldChar ctfldChar = ((CTFldChar) o);
+                if (ctfldChar.getFldCharType() == STFldCharType.BEGIN) {
+                    if (ctfldChar.getFfData() != null) {
+                        for (CTFFCheckBox checkBox : ctfldChar.getFfData().getCheckBoxList()) {
+                            if (checkBox.getDefault().getVal() == STOnOff.X_1) {
+                                text.append("|X|");
+                            } else {
+                                text.append("|_|");
                             }
                         }
+                    }
                 }
             }
 
@@ -1033,20 +1080,30 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
                 }
             }
             if (o instanceof CTFtnEdnRef) {
-                CTFtnEdnRef ftn = (CTFtnEdnRef)o;
+                CTFtnEdnRef ftn = (CTFtnEdnRef) o;
                 String footnoteRef = ftn.getDomNode().getLocalName().equals("footnoteReference") ?
-                    "[footnoteRef:" + ftn.getId().intValue() + "]" : "[endnoteRef:" + ftn.getId().intValue() + "]";
+                        "[footnoteRef:" + ftn.getId().intValue() + "]" : "[endnoteRef:" + ftn.getId().intValue() + "]";
                 text.append(footnoteRef);
-            }            
+            }
         }
 
         c.dispose();
 
         // Any picture text?
-        if(pictureText != null && pictureText.length() > 0) {
+        if (pictureText != null && pictureText.length() > 0) {
             text.append("\n").append(pictureText);
         }
 
         return text.toString();
+    }
+
+    /**
+     * @see <a href="http://msdn.microsoft.com/en-us/library/ff533743(v=office.12).aspx">[MS-OI29500] Run Fonts</a>
+     */
+    public static enum FontCharRange {
+        ascii /* char 0-127 */,
+        cs /* complex symbol */,
+        eastAsia /* east asia */,
+        hAnsi /* high ansi */
     }
 }

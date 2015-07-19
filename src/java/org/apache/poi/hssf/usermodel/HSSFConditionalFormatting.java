@@ -16,7 +16,7 @@
 ==================================================================== */
 package org.apache.poi.hssf.usermodel;
 
-import org.apache.poi.hssf.record.CFRuleRecord;
+import org.apache.poi.hssf.record.CFRuleBase;
 import org.apache.poi.hssf.record.aggregates.CFRecordsAggregate;
 import org.apache.poi.ss.usermodel.ConditionalFormatting;
 import org.apache.poi.ss.usermodel.ConditionalFormattingRule;
@@ -73,91 +73,84 @@ import org.apache.poi.ss.util.CellRangeAddress;
  * sheet.addConditionalFormatting(regions, rule);
  * </PRE>
  */
-public final class HSSFConditionalFormatting  implements ConditionalFormatting
-{
-	private final HSSFWorkbook _workbook;
-	private final CFRecordsAggregate cfAggregate;
+public final class HSSFConditionalFormatting  implements ConditionalFormatting {
+    private final HSSFSheet sheet;
+    private final CFRecordsAggregate cfAggregate;
 
-	HSSFConditionalFormatting(HSSFWorkbook workbook, CFRecordsAggregate cfAggregate)
-	{
-		if(workbook == null) {
-			throw new IllegalArgumentException("workbook must not be null");
-		}
-		if(cfAggregate == null) {
-			throw new IllegalArgumentException("cfAggregate must not be null");
-		}
-		_workbook = workbook;
-		this.cfAggregate = cfAggregate;
-	}
-	CFRecordsAggregate getCFRecordsAggregate() {
-		return cfAggregate;
-	}
+    HSSFConditionalFormatting(HSSFSheet sheet, CFRecordsAggregate cfAggregate) {
+        if(sheet == null) {
+            throw new IllegalArgumentException("sheet must not be null");
+        }
+        if(cfAggregate == null) {
+            throw new IllegalArgumentException("cfAggregate must not be null");
+        }
+        this.sheet = sheet; 
+        this.cfAggregate = cfAggregate;
+    }
+    CFRecordsAggregate getCFRecordsAggregate() {
+        return cfAggregate;
+    }
 
-	/**
-	 * @deprecated (Aug-2008) use {@link HSSFConditionalFormatting#getFormattingRanges()}
-	 */
-	public org.apache.poi.ss.util.Region[] getFormattingRegions()
-	{
-		CellRangeAddress[] cellRanges = getFormattingRanges();
-		return org.apache.poi.ss.util.Region.convertCellRangesToRegions(cellRanges);
-	}
-	/**
-	 * @return array of <tt>CellRangeAddress</tt>s. never <code>null</code> 
-	 */
-	public CellRangeAddress[] getFormattingRanges() {
-		return cfAggregate.getHeader().getCellRanges();
-	}
+    /**
+     * @deprecated (Aug-2008) use {@link HSSFConditionalFormatting#getFormattingRanges()}
+     */
+    public org.apache.poi.ss.util.Region[] getFormattingRegions() {
+        CellRangeAddress[] cellRanges = getFormattingRanges();
+        return org.apache.poi.ss.util.Region.convertCellRangesToRegions(cellRanges);
+    }
+    /**
+     * @return array of <tt>CellRangeAddress</tt>s. never <code>null</code> 
+     */
+    public CellRangeAddress[] getFormattingRanges() {
+        return cfAggregate.getHeader().getCellRanges();
+    }
 
-	/**
-	 * Replaces an existing Conditional Formatting rule at position idx. 
-	 * Excel allows to create up to 3 Conditional Formatting rules.
-	 * This method can be useful to modify existing  Conditional Formatting rules.
-	 * 
-	 * @param idx position of the rule. Should be between 0 and 2.
-	 * @param cfRule - Conditional Formatting rule
-	 */
-	public void setRule(int idx, HSSFConditionalFormattingRule cfRule)
-	{
-		cfAggregate.setRule(idx, cfRule.getCfRuleRecord());
-	}
+    /**
+     * Replaces an existing Conditional Formatting rule at position idx. 
+     * Older versions of Excel only allow up to 3 Conditional Formatting rules,
+     *  and will ignore rules beyond that, while newer versions are fine.
+     * This method can be useful to modify existing  Conditional Formatting rules.
+     * 
+     * @param idx position of the rule. Should be between 0 and 2 for older Excel versions
+     * @param cfRule - Conditional Formatting rule
+     */
+    public void setRule(int idx, HSSFConditionalFormattingRule cfRule) {
+        cfAggregate.setRule(idx, cfRule.getCfRuleRecord());
+    }
 
     public void setRule(int idx, ConditionalFormattingRule cfRule){
         setRule(idx, (HSSFConditionalFormattingRule)cfRule);
     }
 
-	/**
-	 * add a Conditional Formatting rule. 
-	 * Excel allows to create up to 3 Conditional Formatting rules.
-	 * @param cfRule - Conditional Formatting rule
-	 */
-	public void addRule(HSSFConditionalFormattingRule cfRule)
-	{
-		cfAggregate.addRule(cfRule.getCfRuleRecord());
-	}
+    /**
+     * add a Conditional Formatting rule. 
+     * Excel allows to create up to 3 Conditional Formatting rules.
+     * @param cfRule - Conditional Formatting rule
+     */
+    public void addRule(HSSFConditionalFormattingRule cfRule) {
+        cfAggregate.addRule(cfRule.getCfRuleRecord());
+    }
 
     public void addRule(ConditionalFormattingRule cfRule){
         addRule((HSSFConditionalFormattingRule)cfRule);
     }
 
-	/**
-	 * @return the Conditional Formatting rule at position idx.
-	 */
-	public HSSFConditionalFormattingRule getRule(int idx)
-	{
-		CFRuleRecord ruleRecord = cfAggregate.getRule(idx);
-		return new HSSFConditionalFormattingRule(_workbook, ruleRecord);
-	}
+    /**
+     * @return the Conditional Formatting rule at position idx.
+     */
+    public HSSFConditionalFormattingRule getRule(int idx) {
+        CFRuleBase ruleRecord = cfAggregate.getRule(idx);
+        return new HSSFConditionalFormattingRule(sheet, ruleRecord);
+    }
 
-	/**
-	 * @return number of Conditional Formatting rules.
-	 */
-	public int getNumberOfRules()
-	{
-		return cfAggregate.getNumberOfRules();
-	}
+    /**
+     * @return number of Conditional Formatting rules.
+     */
+    public int getNumberOfRules() {
+        return cfAggregate.getNumberOfRules();
+    }
 
-	public String toString()
-	{
-		return cfAggregate.toString();
-	}
+    public String toString() {
+        return cfAggregate.toString();
+    }
 }

@@ -22,7 +22,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import junit.framework.TestCase;
-
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 
@@ -33,7 +32,8 @@ public class TestXWPFWordExtractor extends TestCase {
 
     /**
      * Get text out of the simple file
-     * @throws IOException 
+     *
+     * @throws IOException
      */
     public void testGetSimpleText() throws IOException {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("sample.docx");
@@ -59,13 +59,14 @@ public class TestXWPFWordExtractor extends TestCase {
             }
         }
         assertEquals(3, ps);
-        
+
         extractor.close();
     }
 
     /**
      * Tests getting the text out of a complex file
-     * @throws IOException 
+     *
+     * @throws IOException
      */
     public void testGetComplexText() throws IOException {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("IllustrativeCases.docx");
@@ -97,7 +98,7 @@ public class TestXWPFWordExtractor extends TestCase {
             }
         }
         assertEquals(134, ps);
-        
+
         extractor.close();
     }
 
@@ -108,23 +109,23 @@ public class TestXWPFWordExtractor extends TestCase {
         // Now check contents
         extractor.setFetchHyperlinks(false);
         assertEquals(
-				"This is a test document.\nThis bit is in bold and italic\n" +
-				"Back to normal\n" +
-				"This contains BOLD, ITALIC and BOTH, as well as RED and YELLOW text.\n" +
-				"We have a hyperlink here, and another.\n",
+                "This is a test document.\nThis bit is in bold and italic\n" +
+                        "Back to normal\n" +
+                        "This contains BOLD, ITALIC and BOTH, as well as RED and YELLOW text.\n" +
+                        "We have a hyperlink here, and another.\n",
                 extractor.getText()
         );
 
         // One hyperlink is a real one, one is just to the top of page
         extractor.setFetchHyperlinks(true);
         assertEquals(
-				"This is a test document.\nThis bit is in bold and italic\n" +
-				"Back to normal\n" +
-				"This contains BOLD, ITALIC and BOTH, as well as RED and YELLOW text.\n" +
-				"We have a hyperlink <http://poi.apache.org/> here, and another.\n",
+                "This is a test document.\nThis bit is in bold and italic\n" +
+                        "Back to normal\n" +
+                        "This contains BOLD, ITALIC and BOTH, as well as RED and YELLOW text.\n" +
+                        "We have a hyperlink <http://poi.apache.org/> here, and another.\n",
                 extractor.getText()
         );
-        
+
         extractor.close();
     }
 
@@ -173,7 +174,7 @@ public class TestXWPFWordExtractor extends TestCase {
                         "Footer Left\tFooter Middle\tFooter Right\n",
                 extractor.getText()
         );
-        
+
         extractor.close();
     }
 
@@ -183,7 +184,7 @@ public class TestXWPFWordExtractor extends TestCase {
         String text = extractor.getText();
         assertTrue(text.contains("snoska"));
         assertTrue(text.contains("Eto ochen prostoy[footnoteRef:1] text so snoskoy"));
-        
+
         extractor.close();
     }
 
@@ -193,7 +194,7 @@ public class TestXWPFWordExtractor extends TestCase {
         XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
 
         assertTrue(extractor.getText().contains("snoska"));
-        
+
         extractor.close();
     }
 
@@ -204,7 +205,7 @@ public class TestXWPFWordExtractor extends TestCase {
         String text = extractor.getText();
         assertTrue("Unable to find expected word in text\n" + text, text.contains("testdoc"));
         assertTrue("Unable to find expected word in text\n" + text, text.contains("test phrase"));
-        
+
         extractor.close();
     }
 
@@ -214,7 +215,7 @@ public class TestXWPFWordExtractor extends TestCase {
         String text = extractor.getText();
         assertTrue(text.contains("XXX"));
         assertTrue(text.contains("tilaka [endnoteRef:2]or 'tika'"));
-        
+
         extractor.close();
     }
 
@@ -224,7 +225,7 @@ public class TestXWPFWordExtractor extends TestCase {
 
         assertTrue(extractor.getText().contains("pendant worn"));
         assertTrue(extractor.getText().contains("extremely well"));
-        
+
         extractor.close();
     }
 
@@ -235,14 +236,15 @@ public class TestXWPFWordExtractor extends TestCase {
         assertTrue(extractor.getText().contains("Section 1"));
         assertTrue(extractor.getText().contains("Section 2"));
         assertTrue(extractor.getText().contains("Section 3"));
-        
+
         extractor.close();
     }
 
     /**
      * Test that we can open and process .docm
-     *  (macro enabled) docx files (bug #45690)
-     * @throws IOException 
+     * (macro enabled) docx files (bug #45690)
+     *
+     * @throws IOException
      */
     public void testDOCMFiles() throws IOException {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("45690.docm");
@@ -251,35 +253,37 @@ public class TestXWPFWordExtractor extends TestCase {
         assertTrue(extractor.getText().contains("2004"));
         assertTrue(extractor.getText().contains("2008"));
         assertTrue(extractor.getText().contains("(120 "));
-        
+
         extractor.close();
     }
-    
+
     /**
      * Test that we handle things like tabs and
-     *  carriage returns properly in the text that
-     *  we're extracting (bug #49189)
-     * @throws IOException 
+     * carriage returns properly in the text that
+     * we're extracting (bug #49189)
+     *
+     * @throws IOException
      */
     public void testDocTabs() throws IOException {
-       XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("WithTabs.docx");
-       XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
- 
-       // Check bits
-       assertTrue(extractor.getText().contains("a"));
-       assertTrue(extractor.getText().contains("\t"));
-       assertTrue(extractor.getText().contains("b"));
-       
-       // Now check the first paragraph in total
-       assertTrue(extractor.getText().contains("a\tb\n"));
-       
-       extractor.close();
+        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("WithTabs.docx");
+        XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
+
+        // Check bits
+        assertTrue(extractor.getText().contains("a"));
+        assertTrue(extractor.getText().contains("\t"));
+        assertTrue(extractor.getText().contains("b"));
+
+        // Now check the first paragraph in total
+        assertTrue(extractor.getText().contains("a\tb\n"));
+
+        extractor.close();
     }
-    
+
     /**
      * The output should not contain field codes, e.g. those specified in the
      * w:instrText tag (spec sec. 17.16.23)
-     * @throws IOException 
+     *
+     * @throws IOException
      */
     public void testNoFieldCodes() throws IOException {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("FieldCodes.docx");
@@ -288,14 +292,15 @@ public class TestXWPFWordExtractor extends TestCase {
         assertTrue(text.length() > 0);
         assertFalse(text.contains("AUTHOR"));
         assertFalse(text.contains("CREATEDATE"));
-        
+
         extractor.close();
     }
-    
+
     /**
      * The output should contain the values of simple fields, those specified
      * with the fldSimple element (spec sec. 17.16.19)
-     * @throws IOException 
+     *
+     * @throws IOException
      */
     public void testFldSimpleContent() throws IOException {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("FldSimple.docx");
@@ -303,7 +308,7 @@ public class TestXWPFWordExtractor extends TestCase {
         String text = extractor.getText();
         assertTrue(text.length() > 0);
         assertTrue(text.contains("FldSimple.docx"));
-        
+
         extractor.close();
     }
 
@@ -316,12 +321,13 @@ public class TestXWPFWordExtractor extends TestCase {
         XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
         String text = extractor.getText();
         assertTrue(text.length() > 0);
-        
+
         extractor.close();
     }
-    
+
     /**
      * Test for basic extraction of SDT content
+     *
      * @throws IOException
      */
     public void testSimpleControlContent() throws IOException {
@@ -345,19 +351,19 @@ public class TestXWPFWordExtractor extends TestCase {
         XWPFWordExtractor ex = new XWPFWordExtractor(doc);
         String s = ex.getText().toLowerCase();
         int hits = 0;
-    
-        for (String targ : targs){
+
+        for (String targ : targs) {
             boolean hit = false;
-            if (s.indexOf(targ) > -1){
+            if (s.indexOf(targ) > -1) {
                 hit = true;
                 hits++;
             }
-            assertEquals("controlled content loading-"+targ, true, hit);
+            assertEquals("controlled content loading-" + targ, true, hit);
         }
         assertEquals("controlled content loading hit count", targs.length, hits);
         ex.close();
-        
-        
+
+
         doc = XWPFTestDataSamples.openSampleDocument("Bug54771a.docx");
         targs = new String[]{
                 "bb",
@@ -366,48 +372,50 @@ public class TestXWPFWordExtractor extends TestCase {
         };
         ex = new XWPFWordExtractor(doc);
         s = ex.getText().toLowerCase();
-        
+
         //At one point in development there were three copies of the text.
         //This ensures that there is only one copy.
-        for (String targ : targs){
+        for (String targ : targs) {
             Matcher m = Pattern.compile(targ).matcher(s);
             int hit = 0;
             while (m.find()) {
                 hit++;
             }
-            assertEquals("controlled content loading-"+targ, 1, hit);
+            assertEquals("controlled content loading-" + targ, 1, hit);
         }
         //"test\n" appears twice: once as the "title" and once in the text.
         //This also happens when you save this document as text from MSWord.
         Matcher m = Pattern.compile("test\n").matcher(s);
         int hit = 0;
-        while (m.find()){
+        while (m.find()) {
             hit++;
         }
         assertEquals("test<N>", 2, hit);
         ex.close();
     }
 
-    /** No Header or Footer in document */
+    /**
+     * No Header or Footer in document
+     */
     public void testBug55733() throws Exception {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("55733.docx");
-    	XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
+        XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
 
         // Check it gives text without error
         extractor.getText();
         extractor.close();
     }
-    
-    public void testCheckboxes() throws IOException  {
+
+    public void testCheckboxes() throws IOException {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("checkboxes.docx");
         System.out.println(doc);
         XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
-        
+
         assertEquals("This is a small test for checkboxes \nunchecked: |_| \n" +
-                     "Or checked: |X|\n\n\n\n\n" +
-                     "Test a checkbox within a textbox: |_| -> |X|\n\n\n" +
-                     "In Table:\n|_|\t|X|\n\n\n" +
-                     "In Sequence:\n|X||_||X|\n", extractor.getText());
+                "Or checked: |X|\n\n\n\n\n" +
+                "Test a checkbox within a textbox: |_| -> |X|\n\n\n" +
+                "In Table:\n|_|\t|X|\n\n\n" +
+                "In Sequence:\n|X||_||X|\n", extractor.getText());
         extractor.close();
     }
 }

@@ -19,13 +19,12 @@ package org.apache.poi.xwpf.usermodel;
 import java.io.IOException;
 
 import junit.framework.TestCase;
-
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 
 /**
  * Tests for reading SmartTags from Word docx.
  *
- * @author  Fabian Lange
+ * @author Fabian Lange
  */
 public final class TestXWPFSmartTag extends TestCase {
 

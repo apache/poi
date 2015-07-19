@@ -18,6 +18,7 @@
  */
 package org.apache.poi.xssf.usermodel;
 
+import org.apache.poi.ss.usermodel.Color;
 import org.apache.poi.ss.usermodel.PatternFormatting;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFill;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPatternFill;
@@ -34,37 +35,69 @@ public class XSSFPatternFormatting implements PatternFormatting {
         _fill = fill;
     }
 
-    public short getFillBackgroundColor(){
-        if(!_fill.isSetPatternFill()) return 0;
-
-        return (short)_fill.getPatternFill().getBgColor().getIndexed();
+    public XSSFColor getFillBackgroundColorColor() {
+        if(!_fill.isSetPatternFill()) return null;
+        return new XSSFColor(_fill.getPatternFill().getBgColor());
     }
-
-    public short getFillForegroundColor(){
+    public XSSFColor getFillForegroundColorColor() {
         if(!_fill.isSetPatternFill() || ! _fill.getPatternFill().isSetFgColor())
-            return 0;
-
-        return (short)_fill.getPatternFill().getFgColor().getIndexed();
+            return null;
+        return new XSSFColor(_fill.getPatternFill().getFgColor());
     }
 
-    public short getFillPattern(){
+    public short getFillPattern() {
         if(!_fill.isSetPatternFill() || !_fill.getPatternFill().isSetPatternType()) return NO_FILL;
 
         return (short)(_fill.getPatternFill().getPatternType().intValue() - 1);
      }
 
-    public void setFillBackgroundColor(short bg){
-        CTPatternFill ptrn = _fill.isSetPatternFill() ? _fill.getPatternFill() : _fill.addNewPatternFill();
-        CTColor bgColor = CTColor.Factory.newInstance();
-        bgColor.setIndexed(bg);
-        ptrn.setBgColor(bgColor);
+    public short getFillBackgroundColor() {
+        XSSFColor color = getFillBackgroundColorColor();
+        if (color == null) return 0;
+        return color.getIndexed();
+    }
+    public short getFillForegroundColor() {
+        XSSFColor color = getFillForegroundColorColor();
+        if (color == null) return 0;
+        return color.getIndexed();
     }
 
-    public void setFillForegroundColor(short fg){
+    public void setFillBackgroundColor(Color bg) {
+        XSSFColor xcolor = XSSFColor.toXSSFColor(bg);
+        if (xcolor == null) setFillBackgroundColor((CTColor)null);
+        else setFillBackgroundColor(xcolor.getCTColor());
+    }
+    public void setFillBackgroundColor(short bg) {
+        CTColor bgColor = CTColor.Factory.newInstance();
+        bgColor.setIndexed(bg);
+        setFillBackgroundColor(bgColor);
+    }
+    private void setFillBackgroundColor(CTColor color) {
         CTPatternFill ptrn = _fill.isSetPatternFill() ? _fill.getPatternFill() : _fill.addNewPatternFill();
+        if (color == null) {
+            ptrn.unsetBgColor();
+        } else {
+            ptrn.setBgColor(color);
+        }
+    }
+    
+    public void setFillForegroundColor(Color fg) {
+        XSSFColor xcolor = XSSFColor.toXSSFColor(fg);
+        if (xcolor == null) setFillForegroundColor((CTColor)null);
+        else setFillForegroundColor(xcolor.getCTColor());
+    }
+    public void setFillForegroundColor(short fg) {
         CTColor fgColor = CTColor.Factory.newInstance();
         fgColor.setIndexed(fg);
-        ptrn.setFgColor(fgColor);
+        setFillForegroundColor(fgColor);
+    }
+    private void setFillForegroundColor(CTColor color) {
+        CTPatternFill ptrn = _fill.isSetPatternFill() ? _fill.getPatternFill() : _fill.addNewPatternFill();
+        if (color == null) {
+            ptrn.unsetFgColor();
+        } else {
+            ptrn.setFgColor(color);
+        }
     }
 
     public void setFillPattern(short fp){

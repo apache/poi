@@ -30,14 +30,11 @@ import org.apache.poi.hpsf.PropertySet;
 import org.apache.poi.hpsf.PropertySetFactory;
 import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.poifs.crypt.EncryptionInfo;
-import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
-import org.apache.poi.poifs.filesystem.Entry;
-import org.apache.poi.poifs.filesystem.EntryUtils;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.poifs.filesystem.OPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
@@ -45,8 +42,6 @@ import org.apache.poi.util.POILogger;
  * This holds the common functionality for all POI
  *  Document classes.
  * Currently, this relates to Document Information Properties 
- * 
- * @author Nick Burch
  */
 public abstract class POIDocument {
     /** Holds metadata on our document */
@@ -72,20 +67,23 @@ public abstract class POIDocument {
     }
 
     /**
-     * @deprecated use {@link POIDocument#POIDocument(DirectoryNode)} instead 
+     * Constructs from an old-style OPOIFS
      */
-    @Deprecated
-    protected POIDocument(DirectoryNode dir, POIFSFileSystem fs) {
-       this.directory = dir;
-    }
-
-    protected POIDocument(POIFSFileSystem fs) {
+    protected POIDocument(OPOIFSFileSystem fs) {
        this(fs.getRoot());
     }
-    
+    /**
+     * Constructs from an old-style OPOIFS
+     */
     protected POIDocument(NPOIFSFileSystem fs) {
        this(fs.getRoot());
     }
+    /**
+     * Constructs from the default POIFS
+     */
+    protected POIDocument(POIFSFileSystem fs) {
+        this(fs.getRoot());
+     }
 
     /**
      * Fetch the Document Summary Information of the document
@@ -179,12 +177,13 @@ public abstract class POIDocument {
     protected PropertySet getPropertySet(String setName, EncryptionInfo encryptionInfo) {
         DirectoryNode dirNode = directory;
         
+        NPOIFSFileSystem encPoifs = null;
         if (encryptionInfo != null) {
             try {
                 InputStream is = encryptionInfo.getDecryptor().getDataStream(directory);
-                POIFSFileSystem poifs = new POIFSFileSystem(is);
+                encPoifs = new NPOIFSFileSystem(is);
                 is.close();
-                dirNode = poifs.getRoot();
+                dirNode = encPoifs.getRoot();
             } catch (Exception e) {
                 logger.log(POILogger.ERROR, "Error getting encrypted property set with name " + setName, e);
                 return null;
@@ -208,6 +207,11 @@ public abstract class POIDocument {
         try {
             // Create the Property Set
             PropertySet set = PropertySetFactory.create(dis);
+            // Tidy up if needed
+            if (encPoifs != null) {
+                encPoifs.close();
+            }
+            // Return the properties
             return set;
         } catch(IOException ie) {
             // Must be corrupt or something like that
@@ -218,26 +222,39 @@ public abstract class POIDocument {
         }
         return null;
     }
+    
+    /**
+     * Writes out the updated standard Document Information Properties (HPSF)
+     *  into the currently open NPOIFSFileSystem
+     * TODO Implement in-place update
+     * 
+     * @throws IOException if an error when writing to the open
+     *      {@link NPOIFSFileSystem} occurs
+     * TODO throws exception if open from stream not file
+     */
+    protected void writeProperties() throws IOException {
+        throw new IllegalStateException("In-place write is not yet supported");
+    }
 
     /**
-     * Writes out the standard Documment Information Properties (HPSF)
+     * Writes out the standard Document Information Properties (HPSF)
      * @param outFS the POIFSFileSystem to write the properties into
      * 
      * @throws IOException if an error when writing to the 
-     *      {@link POIFSFileSystem} occurs
+     *      {@link NPOIFSFileSystem} occurs
      */
-    protected void writeProperties(POIFSFileSystem outFS) throws IOException {
+    protected void writeProperties(NPOIFSFileSystem outFS) throws IOException {
         writeProperties(outFS, null);
     }
     /**
-     * Writes out the standard Documment Information Properties (HPSF)
-     * @param outFS the POIFSFileSystem to write the properties into
+     * Writes out the standard Document Information Properties (HPSF)
+     * @param outFS the NPOIFSFileSystem to write the properties into
      * @param writtenEntries a list of POIFS entries to add the property names too
      * 
      * @throws IOException if an error when writing to the 
-     *      {@link POIFSFileSystem} occurs
+     *      {@link NPOIFSFileSystem} occurs
      */
-    protected void writeProperties(POIFSFileSystem outFS, List<String> writtenEntries) throws IOException {
+    protected void writeProperties(NPOIFSFileSystem outFS, List<String> writtenEntries) throws IOException {
         SummaryInformation si = getSummaryInformation();
         if (si != null) {
             writePropertySet(SummaryInformation.DEFAULT_STREAM_NAME, si, outFS);
@@ -258,12 +275,12 @@ public abstract class POIDocument {
      * Writes out a given ProperySet
      * @param name the (POIFS Level) name of the property to write
      * @param set the PropertySet to write out 
-     * @param outFS the POIFSFileSystem to write the property into
+     * @param outFS the NPOIFSFileSystem to write the property into
      * 
      * @throws IOException if an error when writing to the 
-     *      {@link POIFSFileSystem} occurs
+     *      {@link NPOIFSFileSystem} occurs
      */
-    protected void writePropertySet(String name, PropertySet set, POIFSFileSystem outFS) throws IOException {
+    protected void writePropertySet(String name, PropertySet set, NPOIFSFileSystem outFS) throws IOException {
         try {
             MutablePropertySet mSet = new MutablePropertySet(set);
             ByteArrayOutputStream bOut = new ByteArrayOutputStream();
@@ -288,55 +305,4 @@ public abstract class POIDocument {
      * @throws IOException thrown on errors writing to the stream
      */
     public abstract void write(OutputStream out) throws IOException;
-
-    /**
-     * Copies nodes from one POIFS to the other minus the excepts
-     * @param source is the source POIFS to copy from
-     * @param target is the target POIFS to copy to
-     * @param excepts is a list of Strings specifying what nodes NOT to copy
-     * 
-     * @throws IOException thrown on errors writing to the target file system.
-     * 
-     * @deprecated Use {@link EntryUtils#copyNodes(DirectoryEntry, DirectoryEntry, List)} instead
-     */
-    @Deprecated
-    protected void copyNodes( POIFSFileSystem source, POIFSFileSystem target,
-            List<String> excepts ) throws IOException {
-        EntryUtils.copyNodes( source, target, excepts );
-    }
-
-   /**
-    * Copies nodes from one POIFS to the other minus the excepts
-    * @param sourceRoot is the source POIFS to copy from
-    * @param targetRoot is the target POIFS to copy to
-    * @param excepts is a list of Strings specifying what nodes NOT to copy
-     * 
-     * @throws IOException thrown on errors writing to the target directory node.
-     * 
-    * @deprecated Use {@link EntryUtils#copyNodes(DirectoryEntry, DirectoryEntry, List)} instead
-    */
-    @Deprecated
-    protected void copyNodes( DirectoryNode sourceRoot,
-            DirectoryNode targetRoot, List<String> excepts ) throws IOException
-    {
-        EntryUtils.copyNodes( sourceRoot, targetRoot, excepts );
-    }
-
-    /**
-     * Copies an Entry into a target POIFS directory, recursively
-     * 
-     * @param entry the entry to copy from
-     * @param target the entry to write to
-     * 
-     * @throws IOException thrown on errors writing to the target directory entry.
-     * 
-     * @deprecated Use {@link EntryUtils#copyNodeRecursively(Entry, DirectoryEntry)} instead
-     */
-    @Internal
-    @Deprecated
-    protected void copyNodeRecursively( Entry entry, DirectoryEntry target )
-            throws IOException
-    {
-        EntryUtils.copyNodeRecursively( entry, target );
-    }
 }

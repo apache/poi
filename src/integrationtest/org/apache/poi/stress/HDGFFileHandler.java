@@ -19,10 +19,12 @@ package org.apache.poi.stress;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
 import org.apache.poi.hdgf.HDGFDiagram;
+import org.apache.poi.hdgf.extractor.VisioTextExtractor;
 import org.apache.poi.hdgf.streams.Stream;
 import org.apache.poi.hdgf.streams.TrailerStream;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
@@ -48,9 +50,25 @@ public class HDGFFileHandler extends POIFSFileHandler {
 	// a test-case to test this locally without executing the full TestAllFiles
 	@Test
 	public void test() throws Exception {
-		InputStream stream = new FileInputStream("test-data/diagram/44501.vsd");
+		File file = new File("test-data/diagram/44501.vsd");
+
+		InputStream stream = new FileInputStream(file);
 		try {
 			handleFile(stream);
+		} finally {
+			stream.close();
+		}
+		
+		handleExtracting(file);
+		
+		stream = new FileInputStream(file);
+		try {
+			VisioTextExtractor extractor = new VisioTextExtractor(stream);
+			try {
+				assertNotNull(extractor.getText());
+			} finally {
+				extractor.close();
+			}
 		} finally {
 			stream.close();
 		}

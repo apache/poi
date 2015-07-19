@@ -40,7 +40,7 @@ import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.poifs.filesystem.DocumentNode;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.BoundedInputStream;
@@ -200,7 +200,7 @@ public class CryptoAPIDecryptor extends Decryptor {
     @SuppressWarnings("unused")
     public InputStream getDataStream(DirectoryNode dir)
     throws IOException, GeneralSecurityException {
-        POIFSFileSystem fsOut = new POIFSFileSystem();
+        NPOIFSFileSystem fsOut = new NPOIFSFileSystem();
         DocumentNode es = (DocumentNode) dir.getEntry("EncryptedSummary");
         DocumentInputStream dis = dir.createDocumentInputStream(es);
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -240,6 +240,7 @@ public class CryptoAPIDecryptor extends Decryptor {
         sbis = null;
         bos.reset();
         fsOut.writeFilesystem(bos);
+        fsOut.close();
         _length = bos.size();
         ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
         return bis;

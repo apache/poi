@@ -21,12 +21,15 @@ import org.apache.poi.POIXMLDocumentPart;
 
 /**
  * 9 Jan 2010
- * @author Philipp Epp
  *
+ * @author Philipp Epp
  */
-public interface IBodyElement{
-	IBody getBody();
+public interface IBodyElement {
+    IBody getBody();
+
     POIXMLDocumentPart getPart();
-	BodyType getPartType();
-	BodyElementType getElementType();
+
+    BodyType getPartType();
+
+    BodyElementType getElementType();
 }

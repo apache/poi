@@ -20,7 +20,6 @@ package org.apache.poi.xwpf.extractor;
 import java.io.IOException;
 
 import junit.framework.TestCase;
-
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 
@@ -28,19 +27,20 @@ public class TestExternalEntities extends TestCase {
 
     /**
      * Get text out of the simple file
-     * @throws IOException 
+     *
+     * @throws IOException
      */
     public void testFile() throws IOException {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("ExternalEntityInText.docx");
         XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
 
         String text = extractor.getText();
-        
+
         assertTrue(text.length() > 0);
 
         // Check contents, they should not contain the text from POI web site after colon!
         assertEquals("Here should not be the POI web site: \"\"", text.trim());
-        
+
         extractor.close();
     }
 

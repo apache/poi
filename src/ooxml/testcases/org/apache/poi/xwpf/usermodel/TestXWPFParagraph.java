@@ -22,12 +22,26 @@ import java.math.BigInteger;
 import java.util.List;
 
 import junit.framework.TestCase;
-
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.openxmlformats.schemas.drawingml.x2006.picture.CTPicture;
 import org.openxmlformats.schemas.drawingml.x2006.picture.PicDocument;
 import org.openxmlformats.schemas.drawingml.x2006.picture.impl.PicDocumentImpl;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.*;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBookmark;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBorder;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTInd;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTJc;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTOnOff;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPBdr;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPPr;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSpacing;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTextAlignment;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STBorder;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STJc;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STLineSpacingRule;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STOnOff;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STTextAlignment;
 
 /**
  * Tests for XWPF Paragraphs
@@ -36,7 +50,8 @@ public final class TestXWPFParagraph extends TestCase {
 
     /**
      * Check that we get the right paragraph from the header
-     * @throws IOException 
+     *
+     * @throws IOException
      */
     public void disabled_testHeaderParagraph() throws IOException {
         XWPFDocument xml = XWPFTestDataSamples.openSampleDocument("ThreeColHead.docx");
@@ -44,7 +59,7 @@ public final class TestXWPFParagraph extends TestCase {
         XWPFHeader hdr = xml.getHeaderFooterPolicy().getDefaultHeader();
         assertNotNull(hdr);
 
-       List<XWPFParagraph> ps =  hdr.getParagraphs();
+        List<XWPFParagraph> ps = hdr.getParagraphs();
         assertEquals(1, ps.size());
         XWPFParagraph p = ps.get(0);
 
@@ -55,7 +70,8 @@ public final class TestXWPFParagraph extends TestCase {
 
     /**
      * Check that we get the right paragraphs from the document
-     * @throws IOException 
+     *
+     * @throws IOException
      */
     public void disabled_testDocumentParagraph() throws IOException {
         XWPFDocument xml = XWPFTestDataSamples.openSampleDocument("ThreeColHead.docx");
@@ -88,7 +104,7 @@ public final class TestXWPFParagraph extends TestCase {
         assertEquals(STBorder.NONE.intValue(), p.getBorderTop().getValue());
 
         CTP ctp = p.getCTP();
-        CTPPr ppr = ctp.getPPr()== null? ctp.addNewPPr() : ctp.getPPr();
+        CTPPr ppr = ctp.getPPr() == null ? ctp.addNewPPr() : ctp.getPPr();
 
         //bordi
         CTPBdr bdr = ppr.addNewPBdr();
@@ -109,7 +125,7 @@ public final class TestXWPFParagraph extends TestCase {
         assertEquals(STJc.LEFT.intValue(), p.getAlignment().getValue());
 
         CTP ctp = p.getCTP();
-        CTPPr ppr = ctp.getPPr()== null? ctp.addNewPPr() : ctp.getPPr();
+        CTPPr ppr = ctp.getPPr() == null ? ctp.addNewPPr() : ctp.getPPr();
 
         CTJc align = ppr.addNewJc();
         align.setVal(STJc.CENTER);
@@ -125,7 +141,7 @@ public final class TestXWPFParagraph extends TestCase {
         XWPFParagraph p = doc.createParagraph();
 
         CTP ctp = p.getCTP();
-        CTPPr ppr = ctp.getPPr()== null? ctp.addNewPPr() : ctp.getPPr();
+        CTPPr ppr = ctp.getPPr() == null ? ctp.addNewPPr() : ctp.getPPr();
 
         assertEquals(-1, p.getSpacingAfter());
 
@@ -142,7 +158,7 @@ public final class TestXWPFParagraph extends TestCase {
         XWPFParagraph p = doc.createParagraph();
 
         CTP ctp = p.getCTP();
-        CTPPr ppr = ctp.getPPr()== null? ctp.addNewPPr() : ctp.getPPr();
+        CTPPr ppr = ctp.getPPr() == null ? ctp.addNewPPr() : ctp.getPPr();
 
         assertEquals(STLineSpacingRule.INT_AUTO, p.getSpacingLineRule().getValue());
 
@@ -161,7 +177,7 @@ public final class TestXWPFParagraph extends TestCase {
         assertEquals(-1, p.getIndentationLeft());
 
         CTP ctp = p.getCTP();
-        CTPPr ppr = ctp.getPPr()== null? ctp.addNewPPr() : ctp.getPPr();
+        CTPPr ppr = ctp.getPPr() == null ? ctp.addNewPPr() : ctp.getPPr();
 
         assertEquals(-1, p.getIndentationLeft());
 
@@ -179,7 +195,7 @@ public final class TestXWPFParagraph extends TestCase {
         XWPFParagraph p = doc.createParagraph();
 
         CTP ctp = p.getCTP();
-        CTPPr ppr = ctp.getPPr()== null? ctp.addNewPPr() : ctp.getPPr();
+        CTPPr ppr = ctp.getPPr() == null ? ctp.addNewPPr() : ctp.getPPr();
 
         CTTextAlignment txtAlign = ppr.addNewTextAlignment();
         txtAlign.setVal(STTextAlignment.CENTER);
@@ -194,7 +210,7 @@ public final class TestXWPFParagraph extends TestCase {
         XWPFParagraph p = doc.createParagraph();
 
         CTP ctp = p.getCTP();
-        CTPPr ppr = ctp.getPPr()== null? ctp.addNewPPr() : ctp.getPPr();
+        CTPPr ppr = ctp.getPPr() == null ? ctp.addNewPPr() : ctp.getPPr();
 
         CTOnOff wordWrap = ppr.addNewWordWrap();
         wordWrap.setVal(STOnOff.FALSE);
@@ -210,7 +226,7 @@ public final class TestXWPFParagraph extends TestCase {
         XWPFParagraph p = doc.createParagraph();
 
         CTP ctp = p.getCTP();
-        CTPPr ppr = ctp.getPPr()== null? ctp.addNewPPr() : ctp.getPPr();
+        CTPPr ppr = ctp.getPPr() == null ? ctp.addNewPPr() : ctp.getPPr();
 
         CTOnOff pageBreak = ppr.addNewPageBreakBefore();
         pageBreak.setVal(STOnOff.FALSE);
@@ -229,8 +245,8 @@ public final class TestXWPFParagraph extends TestCase {
         assertEquals(0, paragraph.getCTP().sizeOfBookmarkEndArray());
         CTBookmark ctBookmark = paragraph.getCTP().getBookmarkStartArray(0);
         assertEquals("poi", ctBookmark.getName());
-        for(CTBookmark bookmark : paragraph.getCTP().getBookmarkStartArray()) {
-           assertEquals("poi", bookmark.getName());
+        for (CTBookmark bookmark : paragraph.getCTP().getBookmarkStartArray()) {
+            assertEquals("poi", bookmark.getName());
         }
     }
 
@@ -241,108 +257,108 @@ public final class TestXWPFParagraph extends TestCase {
         p.setNumID(new BigInteger("10"));
         assertEquals("10", p.getNumID().toString());
     }
-    
+
     public void testAddingRuns() throws Exception {
-       XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("sample.docx");
-     
-       XWPFParagraph p = doc.getParagraphs().get(0);
-       assertEquals(2, p.getRuns().size());
-       
-       XWPFRun r = p.createRun();
-       assertEquals(3, p.getRuns().size());
-       assertEquals(2, p.getRuns().indexOf(r));
-       
-       XWPFRun r2 = p.insertNewRun(1);
-       assertEquals(4, p.getRuns().size());
-       assertEquals(1, p.getRuns().indexOf(r2));
-       assertEquals(3, p.getRuns().indexOf(r));
+        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("sample.docx");
+
+        XWPFParagraph p = doc.getParagraphs().get(0);
+        assertEquals(2, p.getRuns().size());
+
+        XWPFRun r = p.createRun();
+        assertEquals(3, p.getRuns().size());
+        assertEquals(2, p.getRuns().indexOf(r));
+
+        XWPFRun r2 = p.insertNewRun(1);
+        assertEquals(4, p.getRuns().size());
+        assertEquals(1, p.getRuns().indexOf(r2));
+        assertEquals(3, p.getRuns().indexOf(r));
     }
-    
+
     public void testPictures() throws Exception {
-       XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("VariousPictures.docx");
-       assertEquals(7, doc.getParagraphs().size());
-       
-       XWPFParagraph p;
-       XWPFRun r;
+        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("VariousPictures.docx");
+        assertEquals(7, doc.getParagraphs().size());
 
-       // Text paragraphs
-       assertEquals("Sheet with various pictures", doc.getParagraphs().get(0).getText());
-       assertEquals("(jpeg, png, wmf, emf and pict) ", doc.getParagraphs().get(1).getText());
-       
-       // Spacer ones
-       assertEquals("", doc.getParagraphs().get(2).getText());
-       assertEquals("", doc.getParagraphs().get(3).getText());
-       assertEquals("", doc.getParagraphs().get(4).getText());
-       
-       // Image one
-       p = doc.getParagraphs().get(5);
-       assertEquals(6, p.getRuns().size());
+        XWPFParagraph p;
+        XWPFRun r;
 
-       r = p.getRuns().get(0);
-       assertEquals("", r.toString());
-       assertEquals(1, r.getEmbeddedPictures().size());
-       assertNotNull(r.getEmbeddedPictures().get(0).getPictureData());
-       assertEquals("image1.wmf", r.getEmbeddedPictures().get(0).getPictureData().getFileName());
+        // Text paragraphs
+        assertEquals("Sheet with various pictures", doc.getParagraphs().get(0).getText());
+        assertEquals("(jpeg, png, wmf, emf and pict) ", doc.getParagraphs().get(1).getText());
 
-       r = p.getRuns().get(1);
-       assertEquals("", r.toString());
-       assertEquals(1, r.getEmbeddedPictures().size());
-       assertNotNull(r.getEmbeddedPictures().get(0).getPictureData());
-       assertEquals("image2.png", r.getEmbeddedPictures().get(0).getPictureData().getFileName());
+        // Spacer ones
+        assertEquals("", doc.getParagraphs().get(2).getText());
+        assertEquals("", doc.getParagraphs().get(3).getText());
+        assertEquals("", doc.getParagraphs().get(4).getText());
 
-       r = p.getRuns().get(2);
-       assertEquals("", r.toString());
-       assertEquals(1, r.getEmbeddedPictures().size());
-       assertNotNull(r.getEmbeddedPictures().get(0).getPictureData());
-       assertEquals("image3.emf", r.getEmbeddedPictures().get(0).getPictureData().getFileName());
+        // Image one
+        p = doc.getParagraphs().get(5);
+        assertEquals(6, p.getRuns().size());
 
-       r = p.getRuns().get(3);
-       assertEquals("", r.toString());
-       assertEquals(1, r.getEmbeddedPictures().size());
-       assertNotNull(r.getEmbeddedPictures().get(0).getPictureData());
-       assertEquals("image4.emf", r.getEmbeddedPictures().get(0).getPictureData().getFileName());
+        r = p.getRuns().get(0);
+        assertEquals("", r.toString());
+        assertEquals(1, r.getEmbeddedPictures().size());
+        assertNotNull(r.getEmbeddedPictures().get(0).getPictureData());
+        assertEquals("image1.wmf", r.getEmbeddedPictures().get(0).getPictureData().getFileName());
 
-       r = p.getRuns().get(4);
-       assertEquals("", r.toString());
-       assertEquals(1, r.getEmbeddedPictures().size());
-       assertNotNull(r.getEmbeddedPictures().get(0).getPictureData());
-       assertEquals("image5.jpeg", r.getEmbeddedPictures().get(0).getPictureData().getFileName());
-       
-       r = p.getRuns().get(5);
-       assertEquals(" ", r.toString());
-       assertEquals(0, r.getEmbeddedPictures().size());
-       
-       // Final spacer
-       assertEquals("", doc.getParagraphs().get(6).getText());
-       
-       
-       // Look in detail at one
-       r = p.getRuns().get(4);
-       XWPFPicture pict = r.getEmbeddedPictures().get(0);
-       CTPicture picture = pict.getCTPicture();
-       assertEquals("rId8", picture.getBlipFill().getBlip().getEmbed());
-       
-       // Ensure that the ooxml compiler finds everything we need
-       r.getCTR().getDrawingArray(0);
-       r.getCTR().getDrawingArray(0).getInlineArray(0);
-       r.getCTR().getDrawingArray(0).getInlineArray(0).getGraphic();
-       r.getCTR().getDrawingArray(0).getInlineArray(0).getGraphic().getGraphicData();
-       PicDocument pd = new PicDocumentImpl(null);
-       assertTrue(pd.isNil());
+        r = p.getRuns().get(1);
+        assertEquals("", r.toString());
+        assertEquals(1, r.getEmbeddedPictures().size());
+        assertNotNull(r.getEmbeddedPictures().get(0).getPictureData());
+        assertEquals("image2.png", r.getEmbeddedPictures().get(0).getPictureData().getFileName());
+
+        r = p.getRuns().get(2);
+        assertEquals("", r.toString());
+        assertEquals(1, r.getEmbeddedPictures().size());
+        assertNotNull(r.getEmbeddedPictures().get(0).getPictureData());
+        assertEquals("image3.emf", r.getEmbeddedPictures().get(0).getPictureData().getFileName());
+
+        r = p.getRuns().get(3);
+        assertEquals("", r.toString());
+        assertEquals(1, r.getEmbeddedPictures().size());
+        assertNotNull(r.getEmbeddedPictures().get(0).getPictureData());
+        assertEquals("image4.emf", r.getEmbeddedPictures().get(0).getPictureData().getFileName());
+
+        r = p.getRuns().get(4);
+        assertEquals("", r.toString());
+        assertEquals(1, r.getEmbeddedPictures().size());
+        assertNotNull(r.getEmbeddedPictures().get(0).getPictureData());
+        assertEquals("image5.jpeg", r.getEmbeddedPictures().get(0).getPictureData().getFileName());
+
+        r = p.getRuns().get(5);
+        assertEquals(" ", r.toString());
+        assertEquals(0, r.getEmbeddedPictures().size());
+
+        // Final spacer
+        assertEquals("", doc.getParagraphs().get(6).getText());
+
+
+        // Look in detail at one
+        r = p.getRuns().get(4);
+        XWPFPicture pict = r.getEmbeddedPictures().get(0);
+        CTPicture picture = pict.getCTPicture();
+        assertEquals("rId8", picture.getBlipFill().getBlip().getEmbed());
+
+        // Ensure that the ooxml compiler finds everything we need
+        r.getCTR().getDrawingArray(0);
+        r.getCTR().getDrawingArray(0).getInlineArray(0);
+        r.getCTR().getDrawingArray(0).getInlineArray(0).getGraphic();
+        r.getCTR().getDrawingArray(0).getInlineArray(0).getGraphic().getGraphicData();
+        PicDocument pd = new PicDocumentImpl(null);
+        assertTrue(pd.isNil());
     }
-    
-    public void testTika792() throws Exception{
-       //This test forces the loading of CTMoveBookmark and
-       //CTMoveBookmarkImpl into ooxml-lite.
-       XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Tika-792.docx");
-       XWPFParagraph paragraph = doc.getParagraphs().get(0);
-       assertEquals("s", paragraph.getText());
+
+    public void testTika792() throws Exception {
+        //This test forces the loading of CTMoveBookmark and
+        //CTMoveBookmarkImpl into ooxml-lite.
+        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Tika-792.docx");
+        XWPFParagraph paragraph = doc.getParagraphs().get(0);
+        assertEquals("s", paragraph.getText());
     }
 
     public void testSettersGetters() {
         XWPFDocument doc = new XWPFDocument();
         XWPFParagraph p = doc.createParagraph();
-        
+
         assertTrue(p.isEmpty());
         assertFalse(p.removeRun(0));
 
@@ -355,7 +371,7 @@ public final class TestXWPFParagraph extends TestCase {
         assertFalse(p.isEmpty());
         assertNull(p.getStyleID());
         assertNull(p.getStyle());
-        
+
         assertNull(p.getNumID());
         p.setNumID(BigInteger.valueOf(12));
         assertEquals(BigInteger.valueOf(12), p.getNumID());
@@ -363,18 +379,18 @@ public final class TestXWPFParagraph extends TestCase {
         assertEquals(BigInteger.valueOf(13), p.getNumID());
 
         assertNull(p.getNumFmt());
-        
+
         assertNull(p.getNumIlvl());
-        
+
         assertEquals("", p.getParagraphText());
         assertEquals("", p.getPictureText());
         assertEquals("", p.getFootnoteText());
-        
+
         p.setBorderBetween(Borders.NONE);
         assertEquals(Borders.NONE, p.getBorderBetween());
         p.setBorderBetween(Borders.BASIC_BLACK_DASHES);
         assertEquals(Borders.BASIC_BLACK_DASHES, p.getBorderBetween());
-        
+
         p.setBorderBottom(Borders.NONE);
         assertEquals(Borders.NONE, p.getBorderBottom());
         p.setBorderBottom(Borders.BABY_RATTLE);
@@ -394,37 +410,37 @@ public final class TestXWPFParagraph extends TestCase {
         assertEquals(Borders.NONE, p.getBorderBottom());
         p.setBorderBottom(Borders.BASIC_WHITE_DOTS);
         assertEquals(Borders.BASIC_WHITE_DOTS, p.getBorderBottom());
-        
+
         assertFalse(p.isPageBreak());
         p.setPageBreak(true);
         assertTrue(p.isPageBreak());
         p.setPageBreak(false);
         assertFalse(p.isPageBreak());
-        
+
         assertEquals(-1, p.getSpacingAfter());
         p.setSpacingAfter(12);
         assertEquals(12, p.getSpacingAfter());
-        
+
         assertEquals(-1, p.getSpacingAfterLines());
         p.setSpacingAfterLines(14);
         assertEquals(14, p.getSpacingAfterLines());
-        
+
         assertEquals(-1, p.getSpacingBefore());
         p.setSpacingBefore(16);
         assertEquals(16, p.getSpacingBefore());
-        
+
         assertEquals(-1, p.getSpacingBeforeLines());
         p.setSpacingBeforeLines(18);
         assertEquals(18, p.getSpacingBeforeLines());
-        
+
         assertEquals(LineSpacingRule.AUTO, p.getSpacingLineRule());
         p.setSpacingLineRule(LineSpacingRule.EXACT);
         assertEquals(LineSpacingRule.EXACT, p.getSpacingLineRule());
-        
+
         assertEquals(-1, p.getIndentationLeft());
         p.setIndentationLeft(21);
         assertEquals(21, p.getIndentationLeft());
-        
+
         assertEquals(-1, p.getIndentationRight());
         p.setIndentationRight(25);
         assertEquals(25, p.getIndentationRight());
@@ -442,20 +458,20 @@ public final class TestXWPFParagraph extends TestCase {
         assertTrue(p.isWordWrap());
         p.setWordWrap(false);
         assertFalse(p.isWordWrap());
-        
+
         assertNull(p.getStyle());
         p.setStyle("teststyle");
         assertEquals("teststyle", p.getStyle());
-        
+
         p.addRun(CTR.Factory.newInstance());
-        
+
         //assertTrue(p.removeRun(0));
-        
+
         assertNotNull(p.getBody());
         assertEquals(BodyElementType.PARAGRAPH, p.getElementType());
         assertEquals(BodyType.DOCUMENT, p.getPartType());
     }
-    
+
     public void testSearchTextNotFound() {
         XWPFDocument doc = new XWPFDocument();
         XWPFParagraph p = doc.createParagraph();
@@ -469,17 +485,17 @@ public final class TestXWPFParagraph extends TestCase {
 
         List<XWPFParagraph> ps = xml.getParagraphs();
         assertEquals(10, ps.size());
-        
+
         XWPFParagraph p = ps.get(0);
 
         TextSegement segment = p.searchText("sample word document", new PositionInParagraph());
         assertNotNull(segment);
-        
+
         assertEquals("sample word document", p.getText(segment));
-        
+
         assertTrue(p.removeRun(0));
     }
-    
+
     @SuppressWarnings("deprecation")
     public void testRuns() {
         XWPFDocument doc = new XWPFDocument();
@@ -489,7 +505,7 @@ public final class TestXWPFParagraph extends TestCase {
         XWPFRun r = new XWPFRun(run, doc.createParagraph());
         p.addRun(r);
         p.addRun(r);
-        
+
         assertNotNull(p.getRun(run));
         assertNull(p.getRun(null));
     }

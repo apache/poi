@@ -17,6 +17,10 @@
 
 package org.apache.poi.openxml4j.opc.compliance;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -34,6 +38,8 @@ import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.opc.TargetMode;
+import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.TempFile;
 
 /**
  * Test core properties Open Packaging Convention compliance.
@@ -224,4 +230,90 @@ public final class TestOPCComplianceCoreProperties extends TestCase {
 		String msg = extractInvalidFormatMessage("LimitedXSITypeAttribute_PresentWithUnauthorizedValueFAIL.docx");
 		assertEquals("The element 'modified' must have the 'xsi:type' attribute with the value 'dcterms:W3CDTF' !", msg);
 	}
+	
+    /**
+     * Document with no core properties - testing at the OPC level,
+     *  saving into a new stream
+     */
+    public void testNoCoreProperties_saveNew() throws Exception {
+        String sampleFileName = "OPCCompliance_NoCoreProperties.xlsx";
+        OPCPackage pkg = OPCPackage.open(POIDataSamples.getOpenXML4JInstance().getFile(sampleFileName).getPath());
+
+        // Verify it has empty properties
+        assertEquals(0, pkg.getPartsByContentType(ContentTypes.CORE_PROPERTIES_PART).size());
+        assertNotNull(pkg.getPackageProperties());
+        assertNotNull(pkg.getPackageProperties().getLanguageProperty());
+        assertNull(pkg.getPackageProperties().getLanguageProperty().getValue());
+
+        // Save and re-load
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        pkg.save(baos);
+        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+
+        pkg = OPCPackage.open(bais);
+
+        // An Empty Properties part has been added in the save/load
+        assertEquals(1, pkg.getPartsByContentType(ContentTypes.CORE_PROPERTIES_PART).size());
+        assertNotNull(pkg.getPackageProperties());
+        assertNotNull(pkg.getPackageProperties().getLanguageProperty());
+        assertNull(pkg.getPackageProperties().getLanguageProperty().getValue());
+        
+        
+        // Open a new copy of it
+        pkg = OPCPackage.open(POIDataSamples.getOpenXML4JInstance().getFile(sampleFileName).getPath());
+        
+        // Save and re-load, without having touched the properties yet
+        baos = new ByteArrayOutputStream();
+        pkg.save(baos);
+        bais = new ByteArrayInputStream(baos.toByteArray());
+        pkg = OPCPackage.open(bais);
+        
+        // Check that this too added empty properties without error
+        assertEquals(1, pkg.getPartsByContentType(ContentTypes.CORE_PROPERTIES_PART).size());
+        assertNotNull(pkg.getPackageProperties());
+        assertNotNull(pkg.getPackageProperties().getLanguageProperty());
+        assertNull(pkg.getPackageProperties().getLanguageProperty().getValue());
+    }
+
+    /**
+     * Document with no core properties - testing at the OPC level,
+     *  from a temp-file, saving in-place
+     */
+    public void testNoCoreProperties_saveInPlace() throws Exception {
+        String sampleFileName = "OPCCompliance_NoCoreProperties.xlsx";
+
+        // Copy this into a temp file, so we can play with it
+        File tmp = TempFile.createTempFile("poi-test", ".opc");
+        FileOutputStream out = new FileOutputStream(tmp);
+        IOUtils.copy(
+                POIDataSamples.getOpenXML4JInstance().openResourceAsStream(sampleFileName),
+                out);
+        out.close();
+
+        // Open it from that temp file
+        OPCPackage pkg = OPCPackage.open(tmp);
+
+        // Empty properties
+        assertEquals(0, pkg.getPartsByContentType(ContentTypes.CORE_PROPERTIES_PART).size());
+        assertNotNull(pkg.getPackageProperties());
+        assertNotNull(pkg.getPackageProperties().getLanguageProperty());
+        assertNull(pkg.getPackageProperties().getLanguageProperty().getValue());
+
+        // Save and close
+        pkg.close();
+
+
+        // Re-open and check
+        pkg = OPCPackage.open(tmp);
+
+        // An Empty Properties part has been added in the save/load
+        assertEquals(1, pkg.getPartsByContentType(ContentTypes.CORE_PROPERTIES_PART).size());
+        assertNotNull(pkg.getPackageProperties());
+        assertNotNull(pkg.getPackageProperties().getLanguageProperty());
+        assertNull(pkg.getPackageProperties().getLanguageProperty().getValue());
+
+        // Finish and tidy
+        pkg.revert();
+        tmp.delete();
+    }
 }

@@ -129,10 +129,13 @@ public class HSSFComment extends HSSFTextbox implements Comment {
 
     @Override
     void setShapeId(int shapeId) {
+    	if(shapeId > 65535) {
+    		throw new IllegalArgumentException("Cannot add more than " + 65535 + " shapes");
+    	}
         super.setShapeId(shapeId);
         CommonObjectDataSubRecord cod = (CommonObjectDataSubRecord) getObjRecord().getSubRecords().get(0);
-        cod.setObjectId((short) (shapeId % 1024));
-        _note.setShapeId(shapeId % 1024);
+        cod.setObjectId(shapeId);
+        _note.setShapeId(shapeId);
     }
 
     /**

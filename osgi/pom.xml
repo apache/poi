@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one
+  or more contributor license agreements.  See the NOTICE file
+  distributed with this work for additional information
+  regarding copyright ownership.  The ASF licenses this file
+  to you under the Apache License, Version 2.0 (the
+  "License"); you may not use this file except in compliance
+  with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing,
+  software distributed under the License is distributed on an
+  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  KIND, either express or implied.  See the License for the
+  specific language governing permissions and limitations
+  under the License.
+-->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.apache</groupId>
+    <artifactId>apache</artifactId>
+    <version>10</version>
+    <relativePath />
+  </parent>
+
+  <groupId>org.apache.poi</groupId>
+  <artifactId>poi-bundle</artifactId>
+  <packaging>bundle</packaging>
+  <name>Apache POI OSGi bundle</name>
+  <description>
+    OSGi bundle that contains Apache POI, and the dependencies.
+  </description>
+  <url>http://poi.apache.org/</url>
+  <version>${poi.version}</version>
+<!--
+  <version>3.12-beta2</version>
+  <version>@VERSION@</version>
+-->
+
+  <properties>
+    <maven.compiler.source>1.6</maven.compiler.source>
+    <maven.compiler.target>1.6</maven.compiler.target>
+    <pax.exam.version>4.4.0</pax.exam.version>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>poi</artifactId>
+      <version>${poi.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>poi-scratchpad</artifactId>
+      <version>${poi.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>poi-ooxml</artifactId>
+      <version>${poi.version}</version>
+    </dependency>
+
+    <!-- Test dependencies -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.12</version>
+    </dependency>
+    <dependency>
+      <groupId>org.ops4j.pax.exam</groupId>
+      <artifactId>pax-exam-junit4</artifactId>
+      <version>${pax.exam.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.ops4j.pax.exam</groupId>
+      <artifactId>pax-exam-container-native</artifactId>
+      <version>${pax.exam.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.felix</groupId>
+      <artifactId>org.apache.felix.framework</artifactId>
+      <version>4.6.0</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.ops4j.pax.exam</groupId>
+      <artifactId>pax-exam-link-assembly</artifactId>
+      <version>${pax.exam.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.ops4j.pax.url</groupId>
+      <artifactId>pax-url-aether</artifactId>
+      <version>2.3.0</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>javax.inject</groupId>
+      <artifactId>javax.inject</artifactId>
+      <version>1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.core</artifactId>
+      <version>5.0.0</version>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <extensions>true</extensions>
+        <configuration>
+          <instructions>
+            <Bundle-Activator>
+              org.apache.poi.osgi.Activator
+            </Bundle-Activator>
+            <Embed-Dependency>
+              poi;inline=true,
+              poi-scratchpad;inline=true,
+              poi-ooxml;inline=true,
+              poi-ooxml-schemas,
+              xmlbeans
+            </Embed-Dependency>
+            <Embed-Transitive>true</Embed-Transitive>
+            <Bundle-DocURL>${project.url}</Bundle-DocURL>
+            <Export-Package>
+              org.apache.poi.*
+            </Export-Package>
+            <Import-Package>
+              !org.junit,
+              *,
+              org.apache.xmlbeans.impl.xpath.saxon;resolution:=optional,
+              org.apache.xmlbeans.impl.xquery.saxon;resolution:=optional,
+              org.bouncycastle.cert;resolution:=optional,
+              org.bouncycastle.cert.ocsp;resolution:=optional,
+              org.bouncycastle.cms.bc;resolution:=optional,
+              org.bouncycastle.cert.jcajce;resolution:=optional,
+              org.bouncycastle.operator;resolution:=optional,
+              org.bouncycastle.operator.bc;resolution:=optional,
+              org.bouncycastle.tsp;resolution:=optional,
+              org.openxmlformats.schemas.officeDocument.x2006.math;resolution:=optional,
+              org.openxmlformats.schemas.schemaLibrary.x2006.main;resolution:=optional,
+              schemasMicrosoftComOfficePowerpoint;resolution:=optional,
+              schemasMicrosoftComOfficeWord;resolution:=optional,
+            </Import-Package>
+          </instructions>
+        </configuration>
+      </plugin>
+      <plugin>
+         <artifactId>maven-compiler-plugin</artifactId>
+         <version>3.2</version>
+         <configuration>
+            <source>${maven.compiler.source}</source>
+            <target>${maven.compiler.target}</target>
+         </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <profiles>
+    <profile>
+      <id>java6</id>
+      <activation>
+        <jdk>[1.6,)</jdk>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <executions>
+              <execution>
+                <phase>pre-integration-test</phase>
+                <goals>
+                  <goal>single</goal>
+                </goals>
+                <configuration>
+                  <descriptor>test-bundles.xml</descriptor>
+                  <finalName>test</finalName>
+                  <attach>false</attach>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <artifactId>maven-failsafe-plugin</artifactId>
+            <version>2.10</version>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>integration-test</goal>
+                  <goal>verify</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <systemPropertyVariables>
+                <org.ops4j.pax.logging.DefaultServiceLog.level>
+                  WARN
+                </org.ops4j.pax.logging.DefaultServiceLog.level>
+              </systemPropertyVariables>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
+  <organization>
+    <name>The Apache Software Founation</name>
+    <url>http://www.apache.org</url>
+  </organization>
+  <scm>
+    <url>http://svn.apache.org/viewvc/poi/trunk/osgi</url>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/poi/trunk/osgi</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/poi/trunk/osgi</developerConnection>
+  </scm>
+</project>

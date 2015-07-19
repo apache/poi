@@ -59,8 +59,7 @@ public class XWPFSettings extends POIXMLDocumentPart {
     }
 
     @Override
-    protected void onDocumentRead() throws IOException
-    {
+    protected void onDocumentRead() throws IOException {
         super.onDocumentRead();
         readFrom(getPackagePart().getInputStream());
     }
@@ -74,17 +73,18 @@ public class XWPFSettings extends POIXMLDocumentPart {
      * <pre>
      *    &lt;w:zoom w:percent="50" /&gt;
      * <pre>
+     *
      * @return percentage as an integer of zoom level
      */
     public long getZoomPercent() {
-       CTZoom zoom;
-       if (!ctSettings.isSetZoom()) {
-          zoom = ctSettings.addNewZoom();
-       } else {
-          zoom = ctSettings.getZoom();
-       }
+        CTZoom zoom;
+        if (!ctSettings.isSetZoom()) {
+            zoom = ctSettings.addNewZoom();
+        } else {
+            zoom = ctSettings.getZoom();
+        }
 
-       return zoom.getPercent().longValue();
+        return zoom.getPercent().longValue();
     }
 
     /**
@@ -92,31 +92,31 @@ public class XWPFSettings extends POIXMLDocumentPart {
      * In the zoom tag inside settings.xml file <br/>
      * it sets the value of zoom
      * <br/>
-     * sample snippet from settings.xml 
+     * sample snippet from settings.xml
      * <pre>
-     *    &lt;w:zoom w:percent="50" /&gt; 
+     *    &lt;w:zoom w:percent="50" /&gt;
      * <pre>
      */
     public void setZoomPercent(long zoomPercent) {
-       if (! ctSettings.isSetZoom()) {
-          ctSettings.addNewZoom();
-       }
-       CTZoom zoom = ctSettings.getZoom();
-       zoom.setPercent(BigInteger.valueOf(zoomPercent));
+        if (!ctSettings.isSetZoom()) {
+            ctSettings.addNewZoom();
+        }
+        CTZoom zoom = ctSettings.getZoom();
+        zoom.setPercent(BigInteger.valueOf(zoomPercent));
     }
 
     /**
      * Verifies the documentProtection tag inside settings.xml file <br/>
      * if the protection is enforced (w:enforcement="1") <br/>
      * and if the kind of protection equals to passed (STDocProtect.Enum editValue) <br/>
-     * 
+     * <p/>
      * <br/>
      * sample snippet from settings.xml
      * <pre>
      *     &lt;w:settings  ... &gt;
      *         &lt;w:documentProtection w:edit=&quot;readOnly&quot; w:enforcement=&quot;1&quot;/&gt;
      * </pre>
-     * 
+     *
      * @return true if documentProtection is enforced with option readOnly
      */
     public boolean isEnforcedWith(STDocProtect.Enum editValue) {
@@ -152,23 +152,23 @@ public class XWPFSettings extends POIXMLDocumentPart {
      * <br/>
      * sample snippet from settings.xml
      * <pre>
-     *   &lt;w:documentProtection w:edit=&quot;[passed editValue]&quot; w:enforcement=&quot;1&quot; 
+     *   &lt;w:documentProtection w:edit=&quot;[passed editValue]&quot; w:enforcement=&quot;1&quot;
      *       w:cryptProviderType=&quot;rsaAES&quot; w:cryptAlgorithmClass=&quot;hash&quot;
      *       w:cryptAlgorithmType=&quot;typeAny&quot; w:cryptAlgorithmSid=&quot;14&quot;
      *       w:cryptSpinCount=&quot;100000&quot; w:hash=&quot;...&quot; w:salt=&quot;....&quot;
      *   /&gt;
      * </pre>
-     * 
+     *
      * @param editValue the protection type
-     * @param password the plaintext password, if null no password will be applied
-     * @param hashAlgo the hash algorithm - only md2, m5, sha1, sha256, sha384 and sha512 are supported.
-     *   if null, it will default default to sha1
+     * @param password  the plaintext password, if null no password will be applied
+     * @param hashAlgo  the hash algorithm - only md2, m5, sha1, sha256, sha384 and sha512 are supported.
+     *                  if null, it will default default to sha1
      */
     public void setEnforcementEditValue(org.openxmlformats.schemas.wordprocessingml.x2006.main.STDocProtect.Enum editValue,
-            String password, HashAlgorithm hashAlgo) {
+                                        String password, HashAlgorithm hashAlgo) {
         safeGetDocumentProtection().setEnforcement(STOnOff.X_1);
         safeGetDocumentProtection().setEdit(editValue);
-        
+
         if (password == null) {
             if (safeGetDocumentProtection().isSetCryptProviderType()) {
                 safeGetDocumentProtection().unsetCryptProviderType();
@@ -177,23 +177,23 @@ public class XWPFSettings extends POIXMLDocumentPart {
             if (safeGetDocumentProtection().isSetCryptAlgorithmClass()) {
                 safeGetDocumentProtection().unsetCryptAlgorithmClass();
             }
-            
+
             if (safeGetDocumentProtection().isSetCryptAlgorithmType()) {
                 safeGetDocumentProtection().unsetCryptAlgorithmType();
             }
-            
+
             if (safeGetDocumentProtection().isSetCryptAlgorithmSid()) {
                 safeGetDocumentProtection().unsetCryptAlgorithmSid();
             }
-            
+
             if (safeGetDocumentProtection().isSetSalt()) {
                 safeGetDocumentProtection().unsetSalt();
             }
-            
+
             if (safeGetDocumentProtection().isSetCryptSpinCount()) {
                 safeGetDocumentProtection().unsetCryptSpinCount();
             }
-            
+
             if (safeGetDocumentProtection().isSetHash()) {
                 safeGetDocumentProtection().unsetHash();
             }
@@ -201,47 +201,47 @@ public class XWPFSettings extends POIXMLDocumentPart {
             final STCryptProv.Enum providerType;
             final int sid;
             switch (hashAlgo) {
-            case md2:
-                providerType = STCryptProv.RSA_FULL;
-                sid = 1;
-                break;
-            case md4:
-                providerType = STCryptProv.RSA_FULL;
-                sid = 2;
-                break;
-            case md5:
-                providerType = STCryptProv.RSA_FULL;
-                sid = 3;
-                break;
-            case sha1:
-                providerType = STCryptProv.RSA_FULL;
-                sid = 4;
-                break;
-            case sha256:
-                providerType = STCryptProv.RSA_AES;
-                sid = 12;
-                break;
-            case sha384:
-                providerType = STCryptProv.RSA_AES;
-                sid = 13;
-                break;
-            case sha512:
-                providerType = STCryptProv.RSA_AES;
-                sid = 14;
-                break;
-            default:
-                throw new EncryptedDocumentException
-                ("Hash algorithm '"+hashAlgo+"' is not supported for document write protection.");
+                case md2:
+                    providerType = STCryptProv.RSA_FULL;
+                    sid = 1;
+                    break;
+                case md4:
+                    providerType = STCryptProv.RSA_FULL;
+                    sid = 2;
+                    break;
+                case md5:
+                    providerType = STCryptProv.RSA_FULL;
+                    sid = 3;
+                    break;
+                case sha1:
+                    providerType = STCryptProv.RSA_FULL;
+                    sid = 4;
+                    break;
+                case sha256:
+                    providerType = STCryptProv.RSA_AES;
+                    sid = 12;
+                    break;
+                case sha384:
+                    providerType = STCryptProv.RSA_AES;
+                    sid = 13;
+                    break;
+                case sha512:
+                    providerType = STCryptProv.RSA_AES;
+                    sid = 14;
+                    break;
+                default:
+                    throw new EncryptedDocumentException
+                            ("Hash algorithm '" + hashAlgo + "' is not supported for document write protection.");
             }
 
-        
-            SecureRandom random = new SecureRandom(); 
+
+            SecureRandom random = new SecureRandom();
             byte salt[] = random.generateSeed(16);
-    
+
             // Iterations specifies the number of times the hashing function shall be iteratively run (using each
             // iteration's result as the input for the next iteration).
             int spinCount = 100000;
-    
+
             if (hashAlgo == null) hashAlgo = HashAlgorithm.sha1;
 
             String legacyHash = CryptoFunctions.xorHashPasswordReversed(password);
@@ -257,7 +257,7 @@ public class XWPFSettings extends POIXMLDocumentPart {
             safeGetDocumentProtection().setCryptAlgorithmClass(STAlgClass.HASH);
             safeGetDocumentProtection().setCryptProviderType(providerType);
             safeGetDocumentProtection().setCryptAlgorithmSid(BigInteger.valueOf(sid));
-        }        
+        }
     }
 
     /**
@@ -271,30 +271,45 @@ public class XWPFSettings extends POIXMLDocumentPart {
         byte hash[] = safeGetDocumentProtection().getHash();
         byte salt[] = safeGetDocumentProtection().getSalt();
         BigInteger spinCount = safeGetDocumentProtection().getCryptSpinCount();
-        
+
         if (sid == null || hash == null || salt == null || spinCount == null) return false;
-        
+
         HashAlgorithm hashAlgo;
         switch (sid.intValue()) {
-        case 1: hashAlgo = HashAlgorithm.md2; break;
-        case 2: hashAlgo = HashAlgorithm.md4; break;
-        case 3: hashAlgo = HashAlgorithm.md5; break;
-        case 4: hashAlgo = HashAlgorithm.sha1; break;
-        case 12: hashAlgo = HashAlgorithm.sha256; break;
-        case 13: hashAlgo = HashAlgorithm.sha384; break;
-        case 14: hashAlgo = HashAlgorithm.sha512; break;
-        default: return false;
+            case 1:
+                hashAlgo = HashAlgorithm.md2;
+                break;
+            case 2:
+                hashAlgo = HashAlgorithm.md4;
+                break;
+            case 3:
+                hashAlgo = HashAlgorithm.md5;
+                break;
+            case 4:
+                hashAlgo = HashAlgorithm.sha1;
+                break;
+            case 12:
+                hashAlgo = HashAlgorithm.sha256;
+                break;
+            case 13:
+                hashAlgo = HashAlgorithm.sha384;
+                break;
+            case 14:
+                hashAlgo = HashAlgorithm.sha512;
+                break;
+            default:
+                return false;
         }
-        
+
         String legacyHash = CryptoFunctions.xorHashPasswordReversed(password);
         // Implementation Notes List:
         // --> In this third stage, the reversed byte order legacy hash from the second stage shall
         //     be converted to Unicode hex string representation
         byte hash2[] = CryptoFunctions.hashPassword(legacyHash, hashAlgo, salt, spinCount.intValue(), false);
-        
+
         return Arrays.equals(hash, hash2);
     }
-    
+
     /**
      * Removes protection enforcement.<br/>
      * In the documentProtection tag inside settings.xml file <br/>
@@ -308,18 +323,18 @@ public class XWPFSettings extends POIXMLDocumentPart {
      * Enforces fields update on document open (in Word).
      * In the settings.xml file <br/>
      * sets the updateSettings value to true (w:updateSettings w:val="true")
-     * 
-     *  NOTICES:
-     *  <ul>
-     *  	<li>Causing Word to ask on open: "This document contains fields that may refer to other files. Do you want to update the fields in this document?"
-     *           (if "Update automatic links at open" is enabled)</li>
-     *  	<li>Flag is removed after saving with changes in Word </li>
-     *  </ul> 
+     * <p/>
+     * NOTICES:
+     * <ul>
+     * <li>Causing Word to ask on open: "This document contains fields that may refer to other files. Do you want to update the fields in this document?"
+     * (if "Update automatic links at open" is enabled)</li>
+     * <li>Flag is removed after saving with changes in Word </li>
+     * </ul>
      */
     public void setUpdateFields() {
-    	CTOnOff onOff = CTOnOff.Factory.newInstance();
-    	onOff.setVal(STOnOff.TRUE);
-    	ctSettings.setUpdateFields(onOff);
+        CTOnOff onOff = CTOnOff.Factory.newInstance();
+        onOff.setVal(STOnOff.TRUE);
+        ctSettings.setUpdateFields(onOff);
     }
 
     boolean isUpdateFields() {
@@ -328,7 +343,7 @@ public class XWPFSettings extends POIXMLDocumentPart {
 
     /**
      * Check if revision tracking is turned on.
-     * 
+     *
      * @return <code>true</code> if revision tracking is turned on
      */
     public boolean isTrackRevisions() {
@@ -337,16 +352,16 @@ public class XWPFSettings extends POIXMLDocumentPart {
 
     /**
      * Enable or disable revision tracking.
-     * 
+     *
      * @param enable <code>true</code> to  turn on revision tracking, <code>false</code> to turn off revision tracking
      */
     public void setTrackRevisions(boolean enable) {
-        if(enable) {
-            if(!ctSettings.isSetTrackRevisions()) {
+        if (enable) {
+            if (!ctSettings.isSetTrackRevisions()) {
                 ctSettings.addNewTrackRevisions();
             }
         } else {
-            if(ctSettings.isSetTrackRevisions()) {
+            if (ctSettings.isSetTrackRevisions()) {
                 ctSettings.unsetTrackRevisions();
             }
         }
@@ -355,7 +370,7 @@ public class XWPFSettings extends POIXMLDocumentPart {
     @Override
     protected void commit() throws IOException {
         if (ctSettings == null) {
-           throw new IllegalStateException("Unable to write out settings that were never read in!");
+            throw new IllegalStateException("Unable to write out settings that were never read in!");
         }
 
         XmlOptions xmlOptions = new XmlOptions(DEFAULT_XML_OPTIONS);

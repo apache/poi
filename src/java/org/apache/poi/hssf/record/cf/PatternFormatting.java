@@ -24,8 +24,6 @@ import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * Pattern Formatting Block of the Conditional Formatting Rule Record.
- * 
- * @author Dmitriy Kumshayev
  */
 public final class PatternFormatting implements Cloneable {
     /**  No background */
@@ -87,6 +85,10 @@ public final class PatternFormatting implements Cloneable {
     public PatternFormatting(LittleEndianInput in) {
         field_15_pattern_style    = in.readUShort();
         field_16_pattern_color_indexes    = in.readUShort();
+    }
+    
+    public int getDataLength() {
+        return 4;
     }
     
     /**

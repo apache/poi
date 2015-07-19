@@ -20,6 +20,7 @@
 ==================================================================== */
 package org.apache.poi.ss.usermodel;
 
+import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DateFormatSymbols;
 import java.text.DecimalFormat;
@@ -37,6 +38,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.apache.poi.ss.util.NumberToTextConverter;
 
 
 /**
@@ -731,7 +734,7 @@ public class DataFormatter {
      * @see #formatCellValue(Cell)
      */
     public String formatRawCellContents(double value, int formatIndex, String formatString) {
-       return formatRawCellContents(value, formatIndex, formatString, false);
+        return formatRawCellContents(value, formatIndex, formatString, false);
     }
     /**
      * Formats the given raw cell value, based on the supplied
@@ -744,28 +747,42 @@ public class DataFormatter {
             if(DateUtil.isValidExcelDate(value)) {
                 Format dateFormat = getFormat(value, formatIndex, formatString);
                 if(dateFormat instanceof ExcelStyleDateFormatter) {
-                   // Hint about the raw excel value
-                   ((ExcelStyleDateFormatter)dateFormat).setDateToBeFormatted(value);
+                    // Hint about the raw excel value
+                    ((ExcelStyleDateFormatter)dateFormat).setDateToBeFormatted(value);
                 }
                 Date d = DateUtil.getJavaDate(value, use1904Windowing);
                 return performDateFormatting(d, dateFormat);
             }
-             // RK: Invalid dates are 255 #s.
-             if (emulateCsv) {
-                 return invalidDateTimeString;
-             }
+            // RK: Invalid dates are 255 #s.
+            if (emulateCsv) {
+                return invalidDateTimeString;
+            }
         }
+        
         // else Number
-            Format numberFormat = getFormat(value, formatIndex, formatString);
-            if (numberFormat == null) {
-                return String.valueOf(value);
-            }
-            // RK: This hack handles scientific notation by adding the missing + back.
-            String result = numberFormat.format(new Double(value));
-            if (result.contains("E") && !result.contains("E-")) {
-                result = result.replaceFirst("E", "E+");
-            }
-            return result;
+        Format numberFormat = getFormat(value, formatIndex, formatString);
+        if (numberFormat == null) {
+            return String.valueOf(value);
+        }
+        
+        // When formatting 'value', double to text to BigDecimal produces more
+        // accurate results than double to Double in JDK8 (as compared to
+        // previous versions). However, if the value contains E notation, this
+        // would expand the values, which we do not want, so revert to
+        // original method.
+        String result;
+        final String textValue = NumberToTextConverter.toText(value);
+        if (textValue.indexOf('E') > -1) {
+            result = numberFormat.format(new Double(value));
+        }
+        else {
+            result = numberFormat.format(new BigDecimal(textValue));
+        }
+        // Complete scientific notation by adding the missing +.
+        if (result.indexOf('E') > -1 && !result.contains("E-")) {
+            result = result.replaceFirst("E", "E+");
+        }
+        return result;
     }
 
     /**

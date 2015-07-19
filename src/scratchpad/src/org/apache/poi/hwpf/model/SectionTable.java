@@ -38,11 +38,11 @@ public class SectionTable
   private final static POILogger _logger = POILogFactory.getLogger(SectionTable.class);
   private static final int SED_SIZE = 12;
 
-  protected ArrayList<SEPX> _sections = new ArrayList<SEPX>();
+  protected List<SEPX> _sections = new ArrayList<SEPX>();
   protected List<TextPiece> _text;
 
   /** So we can know if things are unicode or not */
-  private TextPieceTable tpt;
+  //private TextPieceTable tpt;
 
   public SectionTable()
   {
@@ -54,7 +54,7 @@ public class SectionTable
                       TextPieceTable tpt, int mainLength)
   {
     PlexOfCps sedPlex = new PlexOfCps(tableStream, offset, size, SED_SIZE);
-    this.tpt = tpt;
+    //this.tpt = tpt;
     this._text = tpt.getTextPieces();
 
     int length = sedPlex.length();
@@ -160,7 +160,7 @@ public class SectionTable
     // return FC;
     // }
 
-  public ArrayList<SEPX> getSections()
+  public List<SEPX> getSections()
   {
     return _sections;
   }

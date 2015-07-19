@@ -93,10 +93,9 @@ public class SheetUtil {
      * @param defaultCharWidth the width of a single character
      * @param formatter formatter used to prepare the text to be measured
      * @param useMergedCells    whether to use merged cells
-     * @return  the width in pixels
+     * @return  the width in pixels or -1 if cell is empty
      */
     public static double getCellWidth(Cell cell, int defaultCharWidth, DataFormatter formatter, boolean useMergedCells) {
-
         Sheet sheet = cell.getSheet();
         Workbook wb = sheet.getWorkbook();
         Row row = cell.getRow();
@@ -123,9 +122,6 @@ public class SheetUtil {
 
         Font font = wb.getFontAt(style.getFontIndex());
 
-        AttributedString str;
-        TextLayout layout;
-
         double width = -1;
         if (cellType == Cell.CELL_TYPE_STRING) {
             RichTextString rt = cell.getRichStringCellValue();
@@ -133,30 +129,14 @@ public class SheetUtil {
             for (int i = 0; i < lines.length; i++) {
                 String txt = lines[i] + defaultChar;
 
-                str = new AttributedString(txt);
+                AttributedString str = new AttributedString(txt);
                 copyAttributes(font, str, 0, txt.length());
 
                 if (rt.numFormattingRuns() > 0) {
                     // TODO: support rich text fragments
                 }
 
-                layout = new TextLayout(str.getIterator(), fontRenderContext);
-                if(style.getRotation() != 0){
-                    /*
-                     * Transform the text using a scale so that it's height is increased by a multiple of the leading,
-                     * and then rotate the text before computing the bounds. The scale results in some whitespace around
-                     * the unrotated top and bottom of the text that normally wouldn't be present if unscaled, but
-                     * is added by the standard Excel autosize.
-                     */
-                    AffineTransform trans = new AffineTransform();
-                    trans.concatenate(AffineTransform.getRotateInstance(style.getRotation()*2.0*Math.PI/360.0));
-                    trans.concatenate(
-                    AffineTransform.getScaleInstance(1, fontHeightMultiple)
-                    );
-                    width = Math.max(width, ((layout.getOutline(trans).getBounds().getWidth() / colspan) / defaultCharWidth) + cell.getCellStyle().getIndention());
-                } else {
-                    width = Math.max(width, ((layout.getBounds().getWidth() / colspan) / defaultCharWidth) + cell.getCellStyle().getIndention());
-                }
+                width = getCellWidth(defaultCharWidth, colspan, style, width, str);
             }
         } else {
             String sval = null;
@@ -172,27 +152,33 @@ public class SheetUtil {
             }
             if(sval != null) {
                 String txt = sval + defaultChar;
-                str = new AttributedString(txt);
+                AttributedString str = new AttributedString(txt);
                 copyAttributes(font, str, 0, txt.length());
 
-                layout = new TextLayout(str.getIterator(), fontRenderContext);
-                if(style.getRotation() != 0){
-                    /*
-                     * Transform the text using a scale so that it's height is increased by a multiple of the leading,
-                     * and then rotate the text before computing the bounds. The scale results in some whitespace around
-                     * the unrotated top and bottom of the text that normally wouldn't be present if unscaled, but
-                     * is added by the standard Excel autosize.
-                     */
-                    AffineTransform trans = new AffineTransform();
-                    trans.concatenate(AffineTransform.getRotateInstance(style.getRotation()*2.0*Math.PI/360.0));
-                    trans.concatenate(
-                    AffineTransform.getScaleInstance(1, fontHeightMultiple)
-                    );
-                    width = Math.max(width, ((layout.getOutline(trans).getBounds().getWidth() / colspan) / defaultCharWidth) + cell.getCellStyle().getIndention());
-                } else {
-                    width = Math.max(width, ((layout.getBounds().getWidth() / colspan) / defaultCharWidth) + cell.getCellStyle().getIndention());
-                }
+                width = getCellWidth(defaultCharWidth, colspan, style, width, str);
             }
+        }
+        return width;
+    }
+
+    private static double getCellWidth(int defaultCharWidth, int colspan,
+            CellStyle style, double width, AttributedString str) {
+        TextLayout layout = new TextLayout(str.getIterator(), fontRenderContext);
+        if(style.getRotation() != 0){
+            /*
+             * Transform the text using a scale so that it's height is increased by a multiple of the leading,
+             * and then rotate the text before computing the bounds. The scale results in some whitespace around
+             * the unrotated top and bottom of the text that normally wouldn't be present if unscaled, but
+             * is added by the standard Excel autosize.
+             */
+            AffineTransform trans = new AffineTransform();
+            trans.concatenate(AffineTransform.getRotateInstance(style.getRotation()*2.0*Math.PI/360.0));
+            trans.concatenate(
+            AffineTransform.getScaleInstance(1, fontHeightMultiple)
+            );
+            width = Math.max(width, ((layout.getOutline(trans).getBounds().getWidth() / colspan) / defaultCharWidth) + style.getIndention());
+        } else {
+            width = Math.max(width, ((layout.getBounds().getWidth() / colspan) / defaultCharWidth) + style.getIndention());
         }
         return width;
     }
@@ -203,35 +189,12 @@ public class SheetUtil {
      * @param sheet the sheet to calculate
      * @param column    0-based index of the column
      * @param useMergedCells    whether to use merged cells
-     * @return  the width in pixels
+     * @return  the width in pixels or -1 if all cells are empty
      */
-    public static double getColumnWidth(Sheet sheet, int column, boolean useMergedCells){
-        AttributedString str;
-        TextLayout layout;
-
-        Workbook wb = sheet.getWorkbook();
-        DataFormatter formatter = new DataFormatter();
-        Font defaultFont = wb.getFontAt((short) 0);
-
-        str = new AttributedString(String.valueOf(defaultChar));
-        copyAttributes(defaultFont, str, 0, 1);
-        layout = new TextLayout(str.getIterator(), fontRenderContext);
-        int defaultCharWidth = (int)layout.getAdvance();
-
-        double width = -1;
-        for (Row row : sheet) {
-            Cell cell = row.getCell(column);
-
-            if (cell == null) {
-                continue;
-            }
-
-            double cellWidth = getCellWidth(cell, defaultCharWidth, formatter, useMergedCells);
-            width = Math.max(width, cellWidth);
-        }
-        return width;
+    public static double getColumnWidth(Sheet sheet, int column, boolean useMergedCells) {
+        return getColumnWidth(sheet, column, useMergedCells, sheet.getFirstRowNum(), sheet.getLastRowNum());
     }
-
+    
     /**
      * Compute width of a column based on a subset of the rows and return the result
      *
@@ -240,19 +203,16 @@ public class SheetUtil {
      * @param useMergedCells    whether to use merged cells
      * @param firstRow  0-based index of the first row to consider (inclusive)
      * @param lastRow   0-based index of the last row to consider (inclusive)
-     * @return  the width in pixels
+     * @return  the width in pixels or -1 if cell is empty
      */
     public static double getColumnWidth(Sheet sheet, int column, boolean useMergedCells, int firstRow, int lastRow){
-        AttributedString str;
-        TextLayout layout;
-
         Workbook wb = sheet.getWorkbook();
         DataFormatter formatter = new DataFormatter();
         Font defaultFont = wb.getFontAt((short) 0);
 
-        str = new AttributedString(String.valueOf(defaultChar));
+        AttributedString str = new AttributedString(String.valueOf(defaultChar));
         copyAttributes(defaultFont, str, 0, 1);
-        layout = new TextLayout(str.getIterator(), fontRenderContext);
+        TextLayout layout = new TextLayout(str.getIterator(), fontRenderContext);
         int defaultCharWidth = (int)layout.getAdvance();
 
         double width = -1;
@@ -271,6 +231,30 @@ public class SheetUtil {
             }
         }
         return width;
+    }
+
+    /**
+     * Check if the Fonts are installed correctly so that Java can compute the size of
+     * columns. 
+     * 
+     * If a Cell uses a Font which is not available on the operating system then Java may 
+     * fail to return useful Font metrics and thus lead to an auto-computed size of 0.
+     * 
+     *  This method allows to check if computing the sizes for a given Font will succeed or not.
+     *
+     * @param font The Font that is used in the Cell
+     * @return true if computing the size for this Font will succeed, false otherwise
+     */
+    public static boolean canComputeColumnWidht(Font font) {
+        AttributedString str = new AttributedString("1");
+        copyAttributes(font, str, 0, "1".length());
+
+        TextLayout layout = new TextLayout(str.getIterator(), fontRenderContext);
+        if(layout.getBounds().getWidth() > 0) {
+            return true;
+        }
+
+        return false;
     }
 
     /**

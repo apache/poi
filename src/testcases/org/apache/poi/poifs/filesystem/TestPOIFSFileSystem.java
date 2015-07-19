@@ -22,7 +22,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
-import java.util.Iterator;
 
 import junit.framework.TestCase;
 
@@ -36,13 +35,10 @@ import org.apache.poi.poifs.storage.HeaderBlock;
 import org.apache.poi.poifs.storage.RawDataBlockList;
 
 /**
- * Tests for POIFSFileSystem
- *
- * @author Josh Micich
+ * Tests for the older OPOIFS-based POIFSFileSystem
  */
 public final class TestPOIFSFileSystem extends TestCase {
    private POIDataSamples _samples = POIDataSamples.getPOIFSInstance();
-   
 
 	/**
 	 * Mock exception used to ensure correct error handling
@@ -108,7 +104,7 @@ public final class TestPOIFSFileSystem extends TestCase {
 		// Normal case - read until EOF and close
 		testIS = new TestIS(openSampleStream("13224.xls"), -1);
 		try {
-			new POIFSFileSystem(testIS);
+			new OPOIFSFileSystem(testIS);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -117,7 +113,7 @@ public final class TestPOIFSFileSystem extends TestCase {
 		// intended to crash after reading 10000 bytes
 		testIS = new TestIS(openSampleStream("13224.xls"), 10000);
 		try {
-			new POIFSFileSystem(testIS);
+			new OPOIFSFileSystem(testIS);
 			fail("ex should have been thrown");
 		} catch (IOException e) {
 			throw new RuntimeException(e);
@@ -145,7 +141,7 @@ public final class TestPOIFSFileSystem extends TestCase {
 
 		for(int i=0; i<files.length; i++) {
 			// Open the file up
-			POIFSFileSystem fs = new POIFSFileSystem(
+			OPOIFSFileSystem fs = new OPOIFSFileSystem(
 			    _samples.openResourceAsStream(files[i])
 			);
 
@@ -167,7 +163,7 @@ public final class TestPOIFSFileSystem extends TestCase {
         try {
             InputStream stream = _samples.openResourceAsStream("ReferencesInvalidSectors.mpp");
             try {
-                new POIFSFileSystem(stream);
+                new OPOIFSFileSystem(stream);
                 fail("File is corrupt and shouldn't have been opened");
             } finally {
                 stream.close();
@@ -186,7 +182,7 @@ public final class TestPOIFSFileSystem extends TestCase {
 	 */
 	public void testBATandXBAT() throws Exception {
 	   byte[] hugeStream = new byte[8*1024*1024];
-	   POIFSFileSystem fs = new POIFSFileSystem();
+	   OPOIFSFileSystem fs = new OPOIFSFileSystem();
 	   fs.getRoot().createDocument(
 	         "BIG", new ByteArrayInputStream(hugeStream)
 	   );
@@ -230,7 +226,7 @@ public final class TestPOIFSFileSystem extends TestCase {
       
 	   // Now load it and check
 	   fs = null;
-	   fs = new POIFSFileSystem(
+	   fs = new OPOIFSFileSystem(
 	         new ByteArrayInputStream(fsData)
 	   );
 	   
@@ -264,7 +260,7 @@ public final class TestPOIFSFileSystem extends TestCase {
             assertEquals(15, data_blocks.blockCount());
 
             // Now try and open properly
-            POIFSFileSystem fs = new POIFSFileSystem(
+            OPOIFSFileSystem fs = new OPOIFSFileSystem(
                     _samples.openResourceAsStream("BlockSize4096.zvi"));
             assertTrue(fs.getRoot().getEntryCount() > 3);
 
@@ -272,7 +268,7 @@ public final class TestPOIFSFileSystem extends TestCase {
             checkAllDirectoryContents(fs.getRoot());
 
             // Finally, check we can do a similar 512byte one too
-            fs = new POIFSFileSystem(
+            fs = new OPOIFSFileSystem(
                     _samples.openResourceAsStream("BlockSize512.zvi"));
             assertTrue(fs.getRoot().getEntryCount() > 3);
             checkAllDirectoryContents(fs.getRoot());
@@ -296,43 +292,6 @@ public final class TestPOIFSFileSystem extends TestCase {
 	         }
 	      }
 	   }
-	}
-	
-	/**
-	 * Test that we can open files that come via Lotus notes.
-	 * These have a top level directory without a name....
-	 */
-	public void testNotesOLE2Files() throws Exception {
-      POIDataSamples _samples = POIDataSamples.getPOIFSInstance();
-      
-      // Open the file up
-      POIFSFileSystem fs = new POIFSFileSystem(
-          _samples.openResourceAsStream("Notes.ole2")
-      );
-      
-      // Check the contents
-      assertEquals(1, fs.getRoot().getEntryCount());
-      
-      Entry entry = fs.getRoot().getEntries().next();
-      assertTrue(entry.isDirectoryEntry());
-      assertTrue(entry instanceof DirectoryEntry);
-      
-      // The directory lacks a name!
-      DirectoryEntry dir = (DirectoryEntry)entry;
-      assertEquals("", dir.getName());
-      
-      // Has two children
-      assertEquals(2, dir.getEntryCount());
-      
-      // Check them
-      Iterator<Entry> it = dir.getEntries();
-      entry = it.next();
-      assertEquals(true, entry.isDocumentEntry());
-      assertEquals("\u0001Ole10Native", entry.getName());
-      
-      entry = it.next();
-      assertEquals(true, entry.isDocumentEntry());
-      assertEquals("\u0001CompObj", entry.getName());
 	}
 
 	private static InputStream openSampleStream(String sampleFileName) {

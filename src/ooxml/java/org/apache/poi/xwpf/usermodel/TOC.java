@@ -41,82 +41,82 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.STTheme;
 
 public class TOC {
 
-	CTSdtBlock block;
+    CTSdtBlock block;
 
-	public TOC() {
-		this(CTSdtBlock.Factory.newInstance());
-	}
+    public TOC() {
+        this(CTSdtBlock.Factory.newInstance());
+    }
 
-	public TOC(CTSdtBlock block) {
-		this.block = block;
-		CTSdtPr sdtPr = block.addNewSdtPr();
-		CTDecimalNumber id = sdtPr.addNewId();
-		id.setVal(new BigInteger("4844945"));
-		sdtPr.addNewDocPartObj().addNewDocPartGallery().setVal("Table of contents");
-		CTSdtEndPr sdtEndPr = block.addNewSdtEndPr();
-		CTRPr rPr = sdtEndPr.addNewRPr();
-		CTFonts fonts = rPr.addNewRFonts();
-		fonts.setAsciiTheme(STTheme.MINOR_H_ANSI);
-		fonts.setEastAsiaTheme(STTheme.MINOR_H_ANSI);
-		fonts.setHAnsiTheme(STTheme.MINOR_H_ANSI);
-		fonts.setCstheme(STTheme.MINOR_BIDI);
-		rPr.addNewB().setVal(STOnOff.OFF);
-		rPr.addNewBCs().setVal(STOnOff.OFF);
-		rPr.addNewColor().setVal("auto");
-		rPr.addNewSz().setVal(new BigInteger("24"));
-		rPr.addNewSzCs().setVal(new BigInteger("24"));
-		CTSdtContentBlock content = block.addNewSdtContent();
-		CTP p = content.addNewP();
-		p.setRsidR("00EF7E24".getBytes());
-		p.setRsidRDefault("00EF7E24".getBytes());
-		p.addNewPPr().addNewPStyle().setVal("TOCHeading");
-		p.addNewR().addNewT().setStringValue("Table of Contents");
-	}
+    public TOC(CTSdtBlock block) {
+        this.block = block;
+        CTSdtPr sdtPr = block.addNewSdtPr();
+        CTDecimalNumber id = sdtPr.addNewId();
+        id.setVal(new BigInteger("4844945"));
+        sdtPr.addNewDocPartObj().addNewDocPartGallery().setVal("Table of contents");
+        CTSdtEndPr sdtEndPr = block.addNewSdtEndPr();
+        CTRPr rPr = sdtEndPr.addNewRPr();
+        CTFonts fonts = rPr.addNewRFonts();
+        fonts.setAsciiTheme(STTheme.MINOR_H_ANSI);
+        fonts.setEastAsiaTheme(STTheme.MINOR_H_ANSI);
+        fonts.setHAnsiTheme(STTheme.MINOR_H_ANSI);
+        fonts.setCstheme(STTheme.MINOR_BIDI);
+        rPr.addNewB().setVal(STOnOff.OFF);
+        rPr.addNewBCs().setVal(STOnOff.OFF);
+        rPr.addNewColor().setVal("auto");
+        rPr.addNewSz().setVal(new BigInteger("24"));
+        rPr.addNewSzCs().setVal(new BigInteger("24"));
+        CTSdtContentBlock content = block.addNewSdtContent();
+        CTP p = content.addNewP();
+        p.setRsidR("00EF7E24".getBytes());
+        p.setRsidRDefault("00EF7E24".getBytes());
+        p.addNewPPr().addNewPStyle().setVal("TOCHeading");
+        p.addNewR().addNewT().setStringValue("Table of Contents");
+    }
 
     @Internal
     public CTSdtBlock getBlock() {
-		return this.block;
-	}
+        return this.block;
+    }
 
-	public void addRow(int level, String title, int page, String bookmarkRef) {
-		CTSdtContentBlock contentBlock = this.block.getSdtContent();
-		CTP p = contentBlock.addNewP();
-		p.setRsidR("00EF7E24".getBytes());
-		p.setRsidRDefault("00EF7E24".getBytes());
-		CTPPr pPr = p.addNewPPr();
-		pPr.addNewPStyle().setVal("TOC" + level);
-		CTTabs tabs = pPr.addNewTabs();
-		CTTabStop tab = tabs.addNewTab();
-		tab.setVal(STTabJc.RIGHT);
-		tab.setLeader(STTabTlc.DOT);
-		tab.setPos(new BigInteger("8290"));
-		pPr.addNewRPr().addNewNoProof();
-		CTR run = p.addNewR();
-		run.addNewRPr().addNewNoProof();
-		run.addNewT().setStringValue(title);
-		run = p.addNewR();
-		run.addNewRPr().addNewNoProof();
-		run.addNewTab();
-		run = p.addNewR();
-		run.addNewRPr().addNewNoProof();
-		run.addNewFldChar().setFldCharType(STFldCharType.BEGIN);
-		// pageref run
-		run = p.addNewR();
-		run.addNewRPr().addNewNoProof();
-		CTText text = run.addNewInstrText();
-		text.setSpace(Space.PRESERVE);
-		// bookmark reference
-		text.setStringValue(" PAGEREF _Toc" + bookmarkRef + " \\h ");
-		p.addNewR().addNewRPr().addNewNoProof();
-		run = p.addNewR();
-		run.addNewRPr().addNewNoProof();
-		run.addNewFldChar().setFldCharType(STFldCharType.SEPARATE);
-		// page number run
-		run = p.addNewR();
-		run.addNewRPr().addNewNoProof();
-		run.addNewT().setStringValue(Integer.valueOf(page).toString());
-		run = p.addNewR();
-		run.addNewRPr().addNewNoProof();
-		run.addNewFldChar().setFldCharType(STFldCharType.END);
-	}
+    public void addRow(int level, String title, int page, String bookmarkRef) {
+        CTSdtContentBlock contentBlock = this.block.getSdtContent();
+        CTP p = contentBlock.addNewP();
+        p.setRsidR("00EF7E24".getBytes());
+        p.setRsidRDefault("00EF7E24".getBytes());
+        CTPPr pPr = p.addNewPPr();
+        pPr.addNewPStyle().setVal("TOC" + level);
+        CTTabs tabs = pPr.addNewTabs();
+        CTTabStop tab = tabs.addNewTab();
+        tab.setVal(STTabJc.RIGHT);
+        tab.setLeader(STTabTlc.DOT);
+        tab.setPos(new BigInteger("8290"));
+        pPr.addNewRPr().addNewNoProof();
+        CTR run = p.addNewR();
+        run.addNewRPr().addNewNoProof();
+        run.addNewT().setStringValue(title);
+        run = p.addNewR();
+        run.addNewRPr().addNewNoProof();
+        run.addNewTab();
+        run = p.addNewR();
+        run.addNewRPr().addNewNoProof();
+        run.addNewFldChar().setFldCharType(STFldCharType.BEGIN);
+        // pageref run
+        run = p.addNewR();
+        run.addNewRPr().addNewNoProof();
+        CTText text = run.addNewInstrText();
+        text.setSpace(Space.PRESERVE);
+        // bookmark reference
+        text.setStringValue(" PAGEREF _Toc" + bookmarkRef + " \\h ");
+        p.addNewR().addNewRPr().addNewNoProof();
+        run = p.addNewR();
+        run.addNewRPr().addNewNoProof();
+        run.addNewFldChar().setFldCharType(STFldCharType.SEPARATE);
+        // page number run
+        run = p.addNewR();
+        run.addNewRPr().addNewNoProof();
+        run.addNewT().setStringValue(Integer.valueOf(page).toString());
+        run = p.addNewR();
+        run.addNewRPr().addNewNoProof();
+        run.addNewFldChar().setFldCharType(STFldCharType.END);
+    }
 }

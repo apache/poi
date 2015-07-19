@@ -22,8 +22,6 @@ import org.apache.poi.poifs.storage.SmallDocumentBlock;
 
 /**
  * Root property
- *
- * @author Marc Johnson (mjohnson at apache dot org)
  */
 public final class RootProperty extends DirectoryProperty {
    private static final String NAME = "Root Entry";

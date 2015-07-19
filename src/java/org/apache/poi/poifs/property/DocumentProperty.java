@@ -19,12 +19,10 @@
 
 package org.apache.poi.poifs.property;
 
-import org.apache.poi.poifs.filesystem.POIFSDocument;
+import org.apache.poi.poifs.filesystem.OPOIFSDocument;
 
 /**
  * Trivial extension of Property for POIFSDocuments
- *
- * @author Marc Johnson (mjohnson at apache dot org)
  */
 
 public class DocumentProperty
@@ -32,7 +30,7 @@ public class DocumentProperty
 {
 
     // the POIFSDocument this property is associated with
-    private POIFSDocument _document;
+    private OPOIFSDocument _document;
 
     /**
      * Constructor
@@ -72,7 +70,7 @@ public class DocumentProperty
      * @param doc the associated POIFSDocument
      */
 
-    public void setDocument(POIFSDocument doc)
+    public void setDocument(OPOIFSDocument doc)
     {
         _document = doc;
     }
@@ -83,7 +81,7 @@ public class DocumentProperty
      * @return the associated document
      */
 
-    public POIFSDocument getDocument()
+    public OPOIFSDocument getDocument()
     {
         return _document;
     }

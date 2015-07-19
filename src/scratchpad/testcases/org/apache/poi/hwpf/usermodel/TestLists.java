@@ -23,6 +23,7 @@ import junit.framework.TestCase;
 
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFTestDataSamples;
+import org.apache.poi.hwpf.model.ListLevel;
 
 /**
  * Tests for our handling of lists
@@ -207,4 +208,47 @@ public final class TestLists extends TestCase {
       assertEquals(1, r.getParagraph(22).getIlvl());
       assertEquals(0, r.getParagraph(23).getIlvl());
    }
+
+   public void testSpecificNumberedOrderedListFeatures() throws IOException {
+      HWPFDocument doc = HWPFTestDataSamples.openSampleFile("Lists.doc");
+
+      Range r = doc.getRange();
+      //these are in the numbered ordered list
+      //26 = OL 2
+      //27 = OL 2.1
+      //28 = OL 2.2
+      //29 = OL 2.2.1
+      for (int i = 26; i < 30; i++) {
+         Paragraph p = r.getParagraph(i);
+         assertTrue(p.isInList());
+         HWPFList list = p.getList();
+         ListLevel level = list.getLVL((char) p.getIlvl());
+         assertFalse(level.isLegalNumbering());
+         assertEquals(-1, level.getRestart());
+      }
+      Paragraph p = r.getParagraph(26);
+      HWPFList list = p.getList();
+      ListLevel level = list.getLVL((char) p.getIlvl());
+      byte[] lvl = level.getLevelNumberingPlaceholderOffsets();
+
+      assertEquals((byte)1, lvl[0]);
+      assertEquals((byte)0, lvl[1]);
+
+      p = r.getParagraph(27);
+      list = p.getList();
+      level = list.getLVL((char) p.getIlvl());
+      lvl = level.getLevelNumberingPlaceholderOffsets();
+      assertEquals((byte)1, lvl[0]);
+      assertEquals((byte)3, lvl[1]);
+
+      p = r.getParagraph(29);
+      list = p.getList();
+      level = list.getLVL((char) p.getIlvl());
+      lvl = level.getLevelNumberingPlaceholderOffsets();
+
+      assertEquals((byte)1, lvl[0]);
+      assertEquals((byte)3, lvl[1]);
+      assertEquals((byte)5, lvl[2]);
+   }
+
 }

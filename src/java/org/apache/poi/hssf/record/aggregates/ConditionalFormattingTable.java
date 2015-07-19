@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.hssf.model.RecordStream;
+import org.apache.poi.hssf.record.CFHeader12Record;
 import org.apache.poi.hssf.record.CFHeaderRecord;
 import org.apache.poi.ss.formula.FormulaShifter;
 
@@ -28,11 +29,8 @@ import org.apache.poi.ss.formula.FormulaShifter;
  * Holds all the conditional formatting for a workbook sheet.<p/>
  * 
  * See OOO exelfileformat.pdf sec 4.12 'Conditional Formatting Table'
- * 
- * @author Josh Micich
  */
 public final class ConditionalFormattingTable extends RecordAggregate {
-
 	private final List<CFRecordsAggregate> _cfHeaders;
 
 	/**
@@ -45,7 +43,8 @@ public final class ConditionalFormattingTable extends RecordAggregate {
 	public ConditionalFormattingTable(RecordStream rs) {
 
 		List<CFRecordsAggregate> temp = new ArrayList<CFRecordsAggregate>();
-		while (rs.peekNextClass() == CFHeaderRecord.class) {
+		while (rs.peekNextClass() == CFHeaderRecord.class ||
+		       rs.peekNextClass() == CFHeader12Record.class) {
 			temp.add(CFRecordsAggregate.createCFAggregate(rs));
 		}
 		_cfHeaders = temp;
@@ -62,6 +61,7 @@ public final class ConditionalFormattingTable extends RecordAggregate {
 	 * @return index of the newly added CF header aggregate
 	 */
 	public int add(CFRecordsAggregate cfAggregate) {
+	    cfAggregate.getHeader().setID(_cfHeaders.size());
 		_cfHeaders.add(cfAggregate);
 		return _cfHeaders.size() - 1;
 	}

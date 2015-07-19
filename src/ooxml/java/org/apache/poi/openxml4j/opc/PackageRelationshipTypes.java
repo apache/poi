@@ -19,14 +19,10 @@ package org.apache.poi.openxml4j.opc;
 
 /**
  * Relationship types.
- *
- * @author Julien Chable
- * @version 0.2
  */
 public interface PackageRelationshipTypes {
-
-	/**
-	 * Core properties relationship type.
+    /**
+     * Core properties relationship type.
      *
      *  <p>
      *  The standard specifies a source relations ship for the Core File Properties part as follows:
@@ -37,71 +33,86 @@ public interface PackageRelationshipTypes {
      *   <code>http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties.</code>
      * </p>
      * See 2.1.33 Part 1 Section 15.2.11.1, Core File Properties Part in [MS-OE376].pdf
-	 */
-	String CORE_PROPERTIES = "http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties";
+     */
+    String CORE_PROPERTIES = "http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties";
 
     /**
      * Core properties relationship type as defiend in ECMA 376.
-      */
+     */
     String CORE_PROPERTIES_ECMA376 = "http://schemas.openxmlformats.org/officedocument/2006/relationships/metadata/core-properties";
 
-	/**
-	 * Digital signature relationship type.
-	 */
-	String DIGITAL_SIGNATURE = "http://schemas.openxmlformats.org/package/2006/relationships/digital-signature/signature";
+    /**
+     * Digital signature relationship type.
+     */
+    String DIGITAL_SIGNATURE = "http://schemas.openxmlformats.org/package/2006/relationships/digital-signature/signature";
 
-	/**
-	 * Digital signature certificate relationship type.
-	 */
-	String DIGITAL_SIGNATURE_CERTIFICATE = "http://schemas.openxmlformats.org/package/2006/relationships/digital-signature/certificate";
+    /**
+     * Digital signature certificate relationship type.
+     */
+    String DIGITAL_SIGNATURE_CERTIFICATE = "http://schemas.openxmlformats.org/package/2006/relationships/digital-signature/certificate";
 
-	/**
-	 * Digital signature origin relationship type.
-	 */
-	String DIGITAL_SIGNATURE_ORIGIN = "http://schemas.openxmlformats.org/package/2006/relationships/digital-signature/origin";
+    /**
+     * Digital signature origin relationship type.
+     */
+    String DIGITAL_SIGNATURE_ORIGIN = "http://schemas.openxmlformats.org/package/2006/relationships/digital-signature/origin";
 
-	/**
-	 * Thumbnail relationship type.
-	 */
-	String THUMBNAIL = "http://schemas.openxmlformats.org/package/2006/relationships/metadata/thumbnail";
+    /**
+     * Thumbnail relationship type.
+     */
+    String THUMBNAIL = "http://schemas.openxmlformats.org/package/2006/relationships/metadata/thumbnail";
 
-	/**
-	 * Extended properties relationship type.
-	 */
-	String EXTENDED_PROPERTIES = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/extended-properties";
+    /**
+     * Extended properties relationship type.
+     */
+    String EXTENDED_PROPERTIES = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/extended-properties";
 
-	/**
-	 * Custom properties relationship type.
-	 */
-	String CUSTOM_PROPERTIES = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/custom-properties";
-	
-	/**
-	 * Core properties relationship type.
-	 */
-	String CORE_DOCUMENT = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument";
+    /**
+     * Extended properties relationship type for strict ooxml.
+     */
+    String STRICT_EXTENDED_PROPERTIES = "http://purl.oclc.org/ooxml/officeDocument/relationships/extendedProperties";
 
-	/**
-	 * Custom XML relationship type.
-	 */
-	String CUSTOM_XML = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/customXml";
+    /**
+     * Custom properties relationship type.
+     */
+    String CUSTOM_PROPERTIES = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/custom-properties";
 
-	/**
-	 * Image type.
-	 */
-	String IMAGE_PART = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image";
+    /**
+     * Core document relationship type.
+     */
+    String CORE_DOCUMENT = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument";
+
+    /**
+     * Core document relationship type for strict ooxml.
+     */
+    String STRICT_CORE_DOCUMENT = "http://purl.oclc.org/ooxml/officeDocument/relationships/officeDocument";
+
+    /**
+     * Custom XML relationship type.
+     */
+    String CUSTOM_XML = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/customXml";
+
+    /**
+     * Image type.
+     */
+    String IMAGE_PART = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image";
 
     /**
      * Hyperlink type.
      */
     String HYPERLINK_PART = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink";
 
-	/**
-	 * Style type.
-	 */
-	String STYLE_PART = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles";
-	
-	/**
-	 * External Link to another Document
-	 */
-	String EXTERNAL_LINK_PATH = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/externalLinkPath";
+    /**
+     * Style type.
+     */
+    String STYLE_PART = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles";
+
+    /**
+     * External Link to another Document
+     */
+    String EXTERNAL_LINK_PATH = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/externalLinkPath";
+
+    /**
+     * Visio 2010 VSDX equivalent of package {@link #CORE_DOCUMENT}
+     */
+    String VISIO_CORE_DOCUMENT = "http://schemas.microsoft.com/visio/2010/relationships/document";
 }

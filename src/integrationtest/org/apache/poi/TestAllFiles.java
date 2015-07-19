@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.poi.hwpf.OldWordFileFormatException;
 import org.apache.poi.stress.*;
 import org.apache.tools.ant.DirectoryScanner;
 import org.junit.Test;
@@ -65,83 +66,91 @@ import org.junit.runners.Parameterized.Parameters;
  */
 @RunWith(Parameterized.class)
 public class TestAllFiles {
-	private static final File ROOT_DIR = new File("test-data");
+    private static final File ROOT_DIR = new File("test-data");
 
     // map file extensions to the actual mappers
-	private static final Map<String, FileHandler> HANDLERS = new HashMap<String, FileHandler>();
-	static {
-		// Excel
-		HANDLERS.put(".xls", new HSSFFileHandler());
-		HANDLERS.put(".xlsx", new XSSFFileHandler());
-		HANDLERS.put(".xlsm", new XSSFFileHandler());
-		HANDLERS.put(".xltx", new XSSFFileHandler());
-		HANDLERS.put(".xlsb", new XSSFFileHandler());
-		
-		// Word
-		HANDLERS.put(".doc", new HWPFFileHandler());
-		HANDLERS.put(".docx", new XWPFFileHandler());
-		HANDLERS.put(".dotx", new XWPFFileHandler());
-		HANDLERS.put(".docm", new XWPFFileHandler());
-		HANDLERS.put(".ooxml", new XWPFFileHandler());		// OPCPackage
+    private static final Map<String, FileHandler> HANDLERS = new HashMap<String, FileHandler>();
+    static {
+        // Excel
+        HANDLERS.put(".xls", new HSSFFileHandler());
+        HANDLERS.put(".xlsx", new XSSFFileHandler());
+        HANDLERS.put(".xlsm", new XSSFFileHandler());
+        HANDLERS.put(".xltx", new XSSFFileHandler());
+        HANDLERS.put(".xlsb", new XSSFFileHandler());
 
-		// Powerpoint
-		HANDLERS.put(".ppt", new HSLFFileHandler());
-		HANDLERS.put(".pptx", new XSLFFileHandler());
-		HANDLERS.put(".pptm", new XSLFFileHandler());
-		HANDLERS.put(".ppsm", new XSLFFileHandler());
-		HANDLERS.put(".ppsx", new XSLFFileHandler());
-		HANDLERS.put(".thmx", new XSLFFileHandler());
+        // Word
+        HANDLERS.put(".doc", new HWPFFileHandler());
+        HANDLERS.put(".docx", new XWPFFileHandler());
+        HANDLERS.put(".dotx", new XWPFFileHandler());
+        HANDLERS.put(".docm", new XWPFFileHandler());
+        HANDLERS.put(".ooxml", new XWPFFileHandler());		// OPCPackage
 
-		// Outlook
-		HANDLERS.put(".msg", new HSMFFileHandler());
-		
-		// Publisher
-		HANDLERS.put(".pub", new HPBFFileHandler());
+        // Powerpoint
+        HANDLERS.put(".ppt", new HSLFFileHandler());
+        HANDLERS.put(".pptx", new XSLFFileHandler());
+        HANDLERS.put(".pptm", new XSLFFileHandler());
+        HANDLERS.put(".ppsm", new XSLFFileHandler());
+        HANDLERS.put(".ppsx", new XSLFFileHandler());
+        HANDLERS.put(".thmx", new XSLFFileHandler());
 
-		// Visio
-		HANDLERS.put(".vsd", new HDGFFileHandler());
-		
-		// POIFS
-		HANDLERS.put(".ole2", new POIFSFileHandler());
+        // Outlook
+        HANDLERS.put(".msg", new HSMFFileHandler());
 
-		// Microsoft Admin Template?
-		HANDLERS.put(".adm", new HPSFFileHandler());
+        // Publisher
+        HANDLERS.put(".pub", new HPBFFileHandler());
 
-		// Microsoft TNEF
-		HANDLERS.put(".dat", new HMEFFileHandler());
-		
-		// TODO: are these readable by some of the formats?
-		HANDLERS.put(".shw", new NullFileHandler());
-		HANDLERS.put(".zvi", new NullFileHandler());
-		HANDLERS.put(".mpp", new NullFileHandler());
-		HANDLERS.put(".qwp", new NullFileHandler());
-		HANDLERS.put(".wps", new NullFileHandler());
-		HANDLERS.put(".bin", new NullFileHandler());
-		HANDLERS.put(".xps", new NullFileHandler());
-		HANDLERS.put(".sldprt", new NullFileHandler());
-		HANDLERS.put(".mdb", new NullFileHandler());
-		HANDLERS.put(".vml", new NullFileHandler());
+        // Visio - binary
+        HANDLERS.put(".vsd", new HDGFFileHandler());
+        
+        // Visio - ooxml (currently unsupported)
+        HANDLERS.put(".vsdm", new NullFileHandler());
+        HANDLERS.put(".vsdx", new NullFileHandler());
+        HANDLERS.put(".vssm", new NullFileHandler());
+        HANDLERS.put(".vssx", new NullFileHandler());
+        HANDLERS.put(".vstm", new NullFileHandler());
+        HANDLERS.put(".vstx", new NullFileHandler());
 
-		// ignore some file types, images, other formats, ...
-		HANDLERS.put(".txt", new NullFileHandler());
-		HANDLERS.put(".pdf", new NullFileHandler());
-		HANDLERS.put(".rtf", new NullFileHandler());
-		HANDLERS.put(".gif", new NullFileHandler());
-		HANDLERS.put(".html", new NullFileHandler());
-		HANDLERS.put(".png", new NullFileHandler());
-		HANDLERS.put(".wmf", new NullFileHandler());
-		HANDLERS.put(".emf", new NullFileHandler());
-		HANDLERS.put(".dib", new NullFileHandler());
-		HANDLERS.put(".svg", new NullFileHandler());
-		HANDLERS.put(".pict", new NullFileHandler());
-		HANDLERS.put(".jpg", new NullFileHandler());
-		HANDLERS.put(".wav", new NullFileHandler());
-		HANDLERS.put(".pfx", new NullFileHandler());
-		HANDLERS.put(".xml", new NullFileHandler());
-		HANDLERS.put(".csv", new NullFileHandler());
-		
-		// map some files without extension
-		HANDLERS.put("spreadsheet/BigSSTRecord", new NullFileHandler());
+        // POIFS
+        HANDLERS.put(".ole2", new POIFSFileHandler());
+
+        // Microsoft Admin Template?
+        HANDLERS.put(".adm", new HPSFFileHandler());
+
+        // Microsoft TNEF
+        HANDLERS.put(".dat", new HMEFFileHandler());
+
+        // TODO: are these readable by some of the formats?
+        HANDLERS.put(".shw", new NullFileHandler());
+        HANDLERS.put(".zvi", new NullFileHandler());
+        HANDLERS.put(".mpp", new NullFileHandler());
+        HANDLERS.put(".qwp", new NullFileHandler());
+        HANDLERS.put(".wps", new NullFileHandler());
+        HANDLERS.put(".bin", new NullFileHandler());
+        HANDLERS.put(".xps", new NullFileHandler());
+        HANDLERS.put(".sldprt", new NullFileHandler());
+        HANDLERS.put(".mdb", new NullFileHandler());
+        HANDLERS.put(".vml", new NullFileHandler());
+
+        // ignore some file types, images, other formats, ...
+        HANDLERS.put(".txt", new NullFileHandler());
+        HANDLERS.put(".pdf", new NullFileHandler());
+        HANDLERS.put(".rtf", new NullFileHandler());
+        HANDLERS.put(".gif", new NullFileHandler());
+        HANDLERS.put(".html", new NullFileHandler());
+        HANDLERS.put(".png", new NullFileHandler());
+        HANDLERS.put(".wmf", new NullFileHandler());
+        HANDLERS.put(".emf", new NullFileHandler());
+        HANDLERS.put(".dib", new NullFileHandler());
+        HANDLERS.put(".svg", new NullFileHandler());
+        HANDLERS.put(".pict", new NullFileHandler());
+        HANDLERS.put(".jpg", new NullFileHandler());
+        HANDLERS.put(".wav", new NullFileHandler());
+        HANDLERS.put(".pfx", new NullFileHandler());
+        HANDLERS.put(".xml", new NullFileHandler());
+        HANDLERS.put(".csv", new NullFileHandler());
+
+        // map some files without extension
+        HANDLERS.put("spreadsheet/BigSSTRecord", new NullFileHandler());
         HANDLERS.put("spreadsheet/BigSSTRecord2", new NullFileHandler());
         HANDLERS.put("spreadsheet/BigSSTRecord2CR1", new NullFileHandler());
         HANDLERS.put("spreadsheet/BigSSTRecord2CR2", new NullFileHandler());
@@ -151,88 +160,104 @@ public class TestAllFiles {
         HANDLERS.put("spreadsheet/BigSSTRecord2CR6", new NullFileHandler());
         HANDLERS.put("spreadsheet/BigSSTRecord2CR7", new NullFileHandler());
         HANDLERS.put("spreadsheet/BigSSTRecordCR", new NullFileHandler());
-		HANDLERS.put("spreadsheet/test_properties1", new NullFileHandler());
-	}
+        HANDLERS.put("spreadsheet/test_properties1", new NullFileHandler());
+    }
 
-	private static final Set<String> EXPECTED_FAILURES = new HashSet<String>();
-	static {
-		// password protected files
-		EXPECTED_FAILURES.add("spreadsheet/password.xls");
-		EXPECTED_FAILURES.add("spreadsheet/51832.xls");
-		EXPECTED_FAILURES.add("document/PasswordProtected.doc");
-		EXPECTED_FAILURES.add("slideshow/Password_Protected-hello.ppt");
-		EXPECTED_FAILURES.add("slideshow/Password_Protected-56-hello.ppt");
-		EXPECTED_FAILURES.add("slideshow/Password_Protected-np-hello.ppt");
-		EXPECTED_FAILURES.add("slideshow/cryptoapi-proc2356.ppt");
-		//EXPECTED_FAILURES.add("document/bug53475-password-is-pass.docx");
-		//EXPECTED_FAILURES.add("document/bug53475-password-is-solrcell.docx");
-		EXPECTED_FAILURES.add("spreadsheet/xor-encryption-abc.xls");
+    // Old Word Documents where we can at least extract some text
+    private static final Set<String> OLD_FILES = new HashSet<String>();
+    static {
+        OLD_FILES.add("document/Bug49933.doc");
+        OLD_FILES.add("document/Bug51944.doc");
+        OLD_FILES.add("document/Word6.doc");
+        OLD_FILES.add("document/Word6_sections.doc");
+        OLD_FILES.add("document/Word6_sections2.doc");
+        OLD_FILES.add("document/Word95.doc");
+        OLD_FILES.add("document/word95err.doc");
+        OLD_FILES.add("hpsf/TestMickey.doc");
+        OLD_FILES.add("document/52117.doc");
+    }
+
+    private static final Set<String> EXPECTED_FAILURES = new HashSet<String>();
+    static {
+        // password protected files
+        EXPECTED_FAILURES.add("spreadsheet/password.xls");
+        EXPECTED_FAILURES.add("spreadsheet/protected_passtika.xlsx");
+        EXPECTED_FAILURES.add("spreadsheet/51832.xls");
+        EXPECTED_FAILURES.add("document/PasswordProtected.doc");
+        EXPECTED_FAILURES.add("slideshow/Password_Protected-hello.ppt");
+        EXPECTED_FAILURES.add("slideshow/Password_Protected-56-hello.ppt");
+        EXPECTED_FAILURES.add("slideshow/Password_Protected-np-hello.ppt");
+        EXPECTED_FAILURES.add("slideshow/cryptoapi-proc2356.ppt");
+        //EXPECTED_FAILURES.add("document/bug53475-password-is-pass.docx");
+        //EXPECTED_FAILURES.add("document/bug53475-password-is-solrcell.docx");
+        EXPECTED_FAILURES.add("spreadsheet/xor-encryption-abc.xls");
         EXPECTED_FAILURES.add("spreadsheet/35897-type4.xls");
         //EXPECTED_FAILURES.add("poifs/protect.xlsx");
         //EXPECTED_FAILURES.add("poifs/protected_sha512.xlsx");
         //EXPECTED_FAILURES.add("poifs/extenxls_pwd123.xlsx");
         //EXPECTED_FAILURES.add("poifs/protected_agile.docx");
-		
-		// TODO: fails XMLExportTest, is this ok?
-		EXPECTED_FAILURES.add("spreadsheet/CustomXMLMapping-singleattributenamespace.xlsx");
-		EXPECTED_FAILURES.add("spreadsheet/55864.xlsx");
-		
-		// TODO: these fail now with some NPE/file read error because we now try to compute every value via Cell.toString()!
-		EXPECTED_FAILURES.add("spreadsheet/44958.xls");
-		EXPECTED_FAILURES.add("spreadsheet/44958_1.xls");
-		EXPECTED_FAILURES.add("spreadsheet/testArraysAndTables.xls");
 
-		// TODO: good to ignore?
-		EXPECTED_FAILURES.add("spreadsheet/sample-beta.xlsx");
-		EXPECTED_FAILURES.add("spreadsheet/49931.xls");
-		EXPECTED_FAILURES.add("openxml4j/ContentTypeHasParameters.ooxml");
+        // TODO: fails XMLExportTest, is this ok?
+        EXPECTED_FAILURES.add("spreadsheet/CustomXMLMapping-singleattributenamespace.xlsx");
+        EXPECTED_FAILURES.add("spreadsheet/55864.xlsx");
 
-		// This is actually a spreadsheet!
-		EXPECTED_FAILURES.add("hpsf/TestRobert_Flaherty.doc");
-		
-		// some files that are broken, Excel 5.0/95, Word 95, ...
-		EXPECTED_FAILURES.add("spreadsheet/43493.xls");
-		EXPECTED_FAILURES.add("spreadsheet/46904.xls");
-		EXPECTED_FAILURES.add("document/56880.doc");
-		EXPECTED_FAILURES.add("document/Bug49933.doc");
-		EXPECTED_FAILURES.add("document/Bug50955.doc");
-		EXPECTED_FAILURES.add("document/Bug51944.doc");
-		EXPECTED_FAILURES.add("document/Word6.doc");
-		EXPECTED_FAILURES.add("document/Word6_sections.doc");
-		EXPECTED_FAILURES.add("document/Word6_sections2.doc");
-		EXPECTED_FAILURES.add("document/Word95.doc");
-		EXPECTED_FAILURES.add("document/word95err.doc");
-		EXPECTED_FAILURES.add("hpsf/TestMickey.doc");
-		EXPECTED_FAILURES.add("slideshow/PPT95.ppt");
-		EXPECTED_FAILURES.add("openxml4j/OPCCompliance_CoreProperties_DCTermsNamespaceLimitedUseFAIL.docx");
-		EXPECTED_FAILURES.add("openxml4j/OPCCompliance_CoreProperties_DoNotUseCompatibilityMarkupFAIL.docx");
-		EXPECTED_FAILURES.add("openxml4j/OPCCompliance_CoreProperties_LimitedXSITypeAttribute_NotPresentFAIL.docx");
-		EXPECTED_FAILURES.add("openxml4j/OPCCompliance_CoreProperties_LimitedXSITypeAttribute_PresentWithUnauthorizedValueFAIL.docx");
-		EXPECTED_FAILURES.add("openxml4j/OPCCompliance_CoreProperties_OnlyOneCorePropertiesPartFAIL.docx");
-		EXPECTED_FAILURES.add("openxml4j/OPCCompliance_CoreProperties_UnauthorizedXMLLangAttributeFAIL.docx");
-		EXPECTED_FAILURES.add("openxml4j/OPCCompliance_DerivedPartNameFAIL.docx");
-		EXPECTED_FAILURES.add("spreadsheet/54764-2.xlsx");   // see TestXSSFBugs.bug54764()
-		EXPECTED_FAILURES.add("spreadsheet/54764.xlsx");     // see TestXSSFBugs.bug54764()
+        // TODO: these fail now with some NPE/file read error because we now try to compute every value via Cell.toString()!
+        EXPECTED_FAILURES.add("spreadsheet/44958.xls");
+        EXPECTED_FAILURES.add("spreadsheet/44958_1.xls");
+        EXPECTED_FAILURES.add("spreadsheet/testArraysAndTables.xls");
+
+        // TODO: good to ignore?
+        EXPECTED_FAILURES.add("spreadsheet/sample-beta.xlsx");
+        EXPECTED_FAILURES.add("spreadsheet/49931.xls");
+        EXPECTED_FAILURES.add("openxml4j/ContentTypeHasParameters.ooxml");
+
+        // This is actually a spreadsheet!
+        EXPECTED_FAILURES.add("hpsf/TestRobert_Flaherty.doc");
+
+        // some files that are broken, eg Word 95, ...
+        EXPECTED_FAILURES.add("spreadsheet/43493.xls");
+        EXPECTED_FAILURES.add("spreadsheet/46904.xls");
+        EXPECTED_FAILURES.add("document/56880.doc");
+        EXPECTED_FAILURES.add("document/Bug50955.doc");
+        EXPECTED_FAILURES.add("slideshow/PPT95.ppt");
+        EXPECTED_FAILURES.add("openxml4j/OPCCompliance_CoreProperties_DCTermsNamespaceLimitedUseFAIL.docx");
+        EXPECTED_FAILURES.add("openxml4j/OPCCompliance_CoreProperties_DoNotUseCompatibilityMarkupFAIL.docx");
+        EXPECTED_FAILURES.add("openxml4j/OPCCompliance_CoreProperties_LimitedXSITypeAttribute_NotPresentFAIL.docx");
+        EXPECTED_FAILURES.add("openxml4j/OPCCompliance_CoreProperties_LimitedXSITypeAttribute_PresentWithUnauthorizedValueFAIL.docx");
+        EXPECTED_FAILURES.add("openxml4j/OPCCompliance_CoreProperties_OnlyOneCorePropertiesPartFAIL.docx");
+        EXPECTED_FAILURES.add("openxml4j/OPCCompliance_CoreProperties_UnauthorizedXMLLangAttributeFAIL.docx");
+        EXPECTED_FAILURES.add("openxml4j/OPCCompliance_DerivedPartNameFAIL.docx");
+        EXPECTED_FAILURES.add("spreadsheet/54764-2.xlsx");   // see TestXSSFBugs.bug54764()
+        EXPECTED_FAILURES.add("spreadsheet/54764.xlsx");     // see TestXSSFBugs.bug54764()
         EXPECTED_FAILURES.add("spreadsheet/Simple.xlsb");
+        EXPECTED_FAILURES.add("poifs/unknown_properties.msg"); // POIFS properties corrupted
+        EXPECTED_FAILURES.add("poifs/only-zero-byte-streams.ole2"); // No actual contents
+        
+        // old Excel files, which we only support simple text extraction of
         EXPECTED_FAILURES.add("spreadsheet/testEXCEL_2.xls");
         EXPECTED_FAILURES.add("spreadsheet/testEXCEL_3.xls");
         EXPECTED_FAILURES.add("spreadsheet/testEXCEL_4.xls");
         EXPECTED_FAILURES.add("spreadsheet/testEXCEL_5.xls");
         EXPECTED_FAILURES.add("spreadsheet/testEXCEL_95.xls");
+        
+        // OOXML Strict is not yet supported, see bug #57699
+        EXPECTED_FAILURES.add("spreadsheet/SampleSS.strict.xlsx");
+        EXPECTED_FAILURES.add("spreadsheet/SimpleStrict.xlsx");
+        EXPECTED_FAILURES.add("spreadsheet/sample.strict.xlsx");
 
-		// non-TNEF files
-		EXPECTED_FAILURES.add("ddf/Container.dat");
-		EXPECTED_FAILURES.add("ddf/47143.dat");
-	}
-	
+        // non-TNEF files
+        EXPECTED_FAILURES.add("ddf/Container.dat");
+        EXPECTED_FAILURES.add("ddf/47143.dat");
+    }
+
     @Parameters(name="{index}: {0} using {1}")
     public static Iterable<Object[]> files() {
         DirectoryScanner scanner = new DirectoryScanner();
         scanner.setBasedir(ROOT_DIR);
         scanner.setExcludes(new String[] { "**/.svn/**" });
-        
+
         scanner.scan();
-        
+
         System.out.println("Handling " + scanner.getIncludedFiles().length + " files");
 
         List<Object[]> files = new ArrayList<Object[]>();
@@ -240,47 +265,72 @@ public class TestAllFiles {
             file = file.replace('\\', '/'); // ... failures/handlers lookup doesn't work on windows otherwise
             files.add(new Object[] { file, HANDLERS.get(getExtension(file)) });
         }
-            
+
         return files;
-     }
-    
+    }
+
     @Parameter(value=0)
     public String file;
-    
+
     @Parameter(value=1)
     public FileHandler handler;
-    
+
     @Test
     public void testAllFiles() throws Exception {
-		assertNotNull("Unknown file extension for file: " + file + ": " + getExtension(file), handler);
-		InputStream stream = new BufferedInputStream(new FileInputStream(new File(ROOT_DIR, file)),100);
-		try {
-			handler.handleFile(stream);
-			
-			assertFalse("Expected to fail for file " + file + " and handler " + handler + ", but did not fail!", 
-			        EXPECTED_FAILURES.contains(file));
-		} catch (Exception e) {
-		    // check if we expect failure for this file
-			if(!EXPECTED_FAILURES.contains(file)) {
-			    throw new Exception("While handling " + file, e);
-			}
-		} finally {
-			stream.close();
-		}
-	}
+        assertNotNull("Unknown file extension for file: " + file + ": " + getExtension(file), handler);
+        File inputFile = new File(ROOT_DIR, file);
 
-	private static String getExtension(String file) {
-		int pos = file.lastIndexOf('.');
-		if(pos == -1 || pos == file.length()-1) {
-			return file;
-		}
-		
-		return file.substring(pos);
-	}
+        try {
+            InputStream stream = new BufferedInputStream(new FileInputStream(inputFile), 64*1024);
+            try {
+                handler.handleFile(stream);
 
-	private static class NullFileHandler implements FileHandler {
-		@Override
+                assertFalse("Expected to fail for file " + file + " and handler " + handler + ", but did not fail!", 
+                        OLD_FILES.contains(file));
+            } finally {
+                stream.close();
+            }
+
+            handler.handleExtracting(inputFile);
+
+            assertFalse("Expected to fail for file " + file + " and handler " + handler + ", but did not fail!", 
+                    EXPECTED_FAILURES.contains(file));
+        } catch (OldWordFileFormatException e) {
+            // for old word files we should still support extracting text
+            if(OLD_FILES.contains(file)) {
+                handler.handleExtracting(inputFile);
+            } else {
+                // check if we expect failure for this file
+                if(!EXPECTED_FAILURES.contains(file) && !AbstractFileHandler.EXPECTED_EXTRACTOR_FAILURES.contains(file)) {
+                    System.out.println("Failed: " + file);
+                    throw new Exception("While handling " + file, e);
+                }
+            }
+        } catch (Exception e) {
+            // check if we expect failure for this file
+            if(!EXPECTED_FAILURES.contains(file) && !AbstractFileHandler.EXPECTED_EXTRACTOR_FAILURES.contains(file)) {
+                System.out.println("Failed: " + file);
+                throw new Exception("While handling " + file, e);
+            }
+        }
+    }
+
+    private static String getExtension(String file) {
+        int pos = file.lastIndexOf('.');
+        if(pos == -1 || pos == file.length()-1) {
+            return file;
+        }
+
+        return file.substring(pos);
+    }
+
+    private static class NullFileHandler implements FileHandler {
+        @Override
         public void handleFile(InputStream stream) throws Exception {
-		}
-	}
+        }
+
+        @Override
+        public void handleExtracting(File file) throws Exception {
+        }
+    }
 }

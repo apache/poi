@@ -35,13 +35,23 @@ public class AreaReference {
     private final CellReference _firstCell;
     private final CellReference _lastCell;
     private final boolean _isSingleCell;
+    private SpreadsheetVersion _version;
 
+    /**
+     * @deprecated Prefer supplying a version.
+     */
+    @Deprecated
+    public AreaReference(String reference) {
+        this(reference, SpreadsheetVersion.EXCEL97);
+    }
+    
     /**
      * Create an area ref from a string representation.  Sheet names containing special characters should be
      * delimited and escaped as per normal syntax rules for formulas.<br/> 
      * The area reference must be contiguous (i.e. represent a single rectangle, not a union of rectangles)
      */
-    public AreaReference(String reference) {
+    public AreaReference(String reference, SpreadsheetVersion version) {
+        _version = version;
         if(! isContiguous(reference)) {
             throw new IllegalArgumentException(
                     "References passed to the AreaReference must be contiguous, " +
@@ -169,30 +179,34 @@ public class AreaReference {
        return false;
     }
 
-    public static AreaReference getWholeRow(String start, String end) {
-        return new AreaReference("$A" + start + ":$IV" + end);
+    public static AreaReference getWholeRow(SpreadsheetVersion version, String start, String end) {
+        return new AreaReference("$A" + start + ":$" + version.getLastColumnName() + end, version);
     }
 
-    public static AreaReference getWholeColumn(String start, String end) {
-        return new AreaReference(start + "$1:" + end + "$65536");
+    public static AreaReference getWholeColumn(SpreadsheetVersion version, String start, String end) {
+        return new AreaReference(start + "$1:" + end + "$" + version.getMaxRows(), version);
     }
 
     /**
      * Is the reference for a whole-column reference,
      *  such as C:C or D:G ?
      */
-    public static boolean isWholeColumnReference(CellReference topLeft, CellReference botRight) {
+    public static boolean isWholeColumnReference(SpreadsheetVersion version, CellReference topLeft, CellReference botRight) {
+        if (null == version) {
+            version = SpreadsheetVersion.EXCEL97; // how the code used to behave.
+        }
+        
         // These are represented as something like
         //   C$1:C$65535 or D$1:F$0
         // i.e. absolute from 1st row to 0th one
         if(topLeft.getRow() == 0 && topLeft.isRowAbsolute() &&
-            botRight.getRow() == SpreadsheetVersion.EXCEL97.getLastRowIndex() && botRight.isRowAbsolute()) {
+            botRight.getRow() == version.getLastRowIndex() && botRight.isRowAbsolute()) {
             return true;
         }
         return false;
     }
     public boolean isWholeColumnReference() {
-        return isWholeColumnReference(_firstCell, _lastCell);
+        return isWholeColumnReference(_version, _firstCell, _lastCell);
     }
 
     /**

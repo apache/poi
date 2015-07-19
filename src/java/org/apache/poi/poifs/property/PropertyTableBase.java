@@ -111,6 +111,11 @@ public abstract class PropertyTableBase implements BATManaged {
         while (!children.empty())
         {
             Property property = children.pop();
+            if (property == null)
+            {
+                // unknown / unsupported / corrupted property, skip
+                continue;
+            }
 
             root.addChild(property);
             if (property.isDirectory())

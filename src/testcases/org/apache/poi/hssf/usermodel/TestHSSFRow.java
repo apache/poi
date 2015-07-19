@@ -17,6 +17,8 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import java.io.IOException;
+
 import junit.framework.AssertionFailedError;
 
 import org.apache.poi.hssf.HSSFITestDataProvider;
@@ -71,7 +73,7 @@ public final class TestHSSFRow extends BaseTestRow {
         assertEquals(-1, row.getLastCellNum());
     }
 
-    public void testMoveCell() {
+    public void testMoveCell() throws IOException {
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet();
         HSSFRow row = sheet.createRow(0);
@@ -115,9 +117,11 @@ public final class TestHSSFRow extends BaseTestRow {
         assertEquals(5, cellB2.getColumnIndex());
         assertEquals(2, row.getFirstCellNum());
         assertEquals(6, row.getLastCellNum());
+        
+        workbook.close();
     }
 
-    public void testRowHeight(){
+    public void testRowHeight() throws IOException{
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet();
         HSSFRow row = sheet.createRow(0);
@@ -132,5 +136,7 @@ public final class TestHSSFRow extends BaseTestRow {
         row.setHeight((short) -1);
         assertEquals(row.getHeight(), sheet.getDefaultRowHeight());
         assertEquals(row.getRowRecord().getBadFontHeight(), false);
+        
+        workbook.close();
     }
 }

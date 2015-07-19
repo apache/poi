@@ -21,45 +21,44 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTNum;
 
 /**
  * @author Philipp Epp
- *
  */
 public class XWPFNum {
-	private CTNum ctNum;
-	protected XWPFNumbering numbering;
-	
-	public XWPFNum(){
-		this.ctNum = null;
-		this.numbering = null;
-	}
-	
-	public XWPFNum(CTNum ctNum){
-		this.ctNum = ctNum;
-		this.numbering = null;
-	}
-	
-	public XWPFNum(XWPFNumbering numbering){
-		this.ctNum = null;
-		this.numbering = numbering;
-	}
-	
-	public XWPFNum(CTNum ctNum, XWPFNumbering numbering){
-		this.ctNum = ctNum;
-		this.numbering = numbering;
-	}
-	
-	public XWPFNumbering getNumbering(){
-		return numbering;
-	}
-	
-	public CTNum getCTNum(){
-		return ctNum;
-	}
-	
-	public void setNumbering(XWPFNumbering numbering){
-		this.numbering = numbering;
-	}
-	
-	public void setCTNum(CTNum ctNum){
-		this.ctNum = ctNum;
-	}
+    protected XWPFNumbering numbering;
+    private CTNum ctNum;
+
+    public XWPFNum() {
+        this.ctNum = null;
+        this.numbering = null;
+    }
+
+    public XWPFNum(CTNum ctNum) {
+        this.ctNum = ctNum;
+        this.numbering = null;
+    }
+
+    public XWPFNum(XWPFNumbering numbering) {
+        this.ctNum = null;
+        this.numbering = numbering;
+    }
+
+    public XWPFNum(CTNum ctNum, XWPFNumbering numbering) {
+        this.ctNum = ctNum;
+        this.numbering = numbering;
+    }
+
+    public XWPFNumbering getNumbering() {
+        return numbering;
+    }
+
+    public void setNumbering(XWPFNumbering numbering) {
+        this.numbering = numbering;
+    }
+
+    public CTNum getCTNum() {
+        return ctNum;
+    }
+
+    public void setCTNum(CTNum ctNum) {
+        this.ctNum = ctNum;
+    }
 }

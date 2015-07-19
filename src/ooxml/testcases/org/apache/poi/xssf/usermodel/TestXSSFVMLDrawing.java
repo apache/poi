@@ -54,14 +54,14 @@ public class TestXSSFVMLDrawing extends TestCase {
         assertEquals("21600,21600", type.getCoordsize());
         assertEquals(202.0f, type.getSpt());
         assertEquals("m,l,21600r21600,l21600,xe", type.getPath2());
-        assertEquals("_xssf_cell_comment", type.getId());
+        assertEquals("_x0000_t202", type.getId());
         assertEquals(STTrueFalse.T, type.getPathArray(0).getGradientshapeok());
         assertEquals(STConnectType.RECT, type.getPathArray(0).getConnecttype());
 
         CTShape shape = vml.newCommentShape();
         assertEquals(3, items.size());
         assertSame(items.get(2),  shape);
-        assertEquals("#_xssf_cell_comment", shape.getType());
+        assertEquals("#_x0000_t202", shape.getType());
         assertEquals("position:absolute; visibility:hidden", shape.getStyle());
         assertEquals("#ffffe1", shape.getFillcolor());
         assertEquals(STInsetMode.AUTO, shape.getInsetmode());

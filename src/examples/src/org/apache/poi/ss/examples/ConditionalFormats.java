@@ -21,6 +21,8 @@ package org.apache.poi.ss.examples;
 
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.ConditionalFormattingThreshold.RangeType;
+import org.apache.poi.ss.usermodel.IconMultiStateFormatting.IconSet;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -31,10 +33,9 @@ import java.io.IOException;
  * Excel Conditional Formatting -- Examples
  *
  * <p>
- *   Based on the code snippets from http://www.contextures.com/xlcondformat03.html
+ *   Partly based on the code snippets from 
+ *   http://www.contextures.com/xlcondformat03.html
  * </p>
- *
- * @author Yegor Kozlov
  */
 public class ConditionalFormats {
 
@@ -46,6 +47,7 @@ public class ConditionalFormats {
 
         sameCell(wb.createSheet("Same Cell"));
         multiCell(wb.createSheet("MultiCell"));
+        overlapping(wb.createSheet("Overlapping"));
         errors(wb.createSheet("Errors"));
         hideDupplicates(wb.createSheet("Hide Dups"));
         formatDuplicates(wb.createSheet("Duplicates"));
@@ -53,6 +55,9 @@ public class ConditionalFormats {
         expiry(wb.createSheet("Expiry"));
         shadeAlt(wb.createSheet("Shade Alt"));
         shadeBands(wb.createSheet("Shade Bands"));
+        iconSets(wb.createSheet("Icon Sets"));
+        
+        // TODO Add colour scales, data bars etc, see bug #58130
 
         // Write the output to a file
         String file = "cf-poi.xls";
@@ -60,7 +65,7 @@ public class ConditionalFormats {
         FileOutputStream out = new FileOutputStream(file);
         wb.write(out);
         out.close();
-
+        System.out.println("Generated: " + file);
     }
 
     /**
@@ -138,6 +143,71 @@ public class ConditionalFormats {
         sheetCF.addConditionalFormatting(regions, rule1);
 
         sheet.getRow(2).createCell(4).setCellValue("<== Condition 1: Formula Is =$B2>75   (Blue Fill)");
+    }
+    
+    /**
+     * Multiple conditional formatting rules can apply to
+     *  one cell, some combining, some beating others.
+     * Done in order of the rules added to the 
+     *  SheetConditionalFormatting object
+     */
+    static void overlapping(Sheet sheet) {
+        for (int i=0; i<40; i++) {
+            int rn = i+1;
+            Row r = sheet.createRow(i);
+            r.createCell(0).setCellValue("This is row " + rn + " (" + i + ")");
+            String str = "";
+            if (rn%2 == 0) str = str + "even ";
+            if (rn%3 == 0) str = str + "x3 ";
+            if (rn%5 == 0) str = str + "x5 ";
+            if (rn%10 == 0) str = str + "x10 ";
+            if (str.length() == 0) str = "nothing special...";
+            r.createCell(1).setCellValue("It is " + str);
+        }
+        sheet.autoSizeColumn(0);
+        sheet.autoSizeColumn(1);
+        
+        sheet.getRow(1).createCell(3).setCellValue("Even rows are blue");
+        sheet.getRow(2).createCell(3).setCellValue("Multiples of 3 have a grey background");
+        sheet.getRow(4).createCell(3).setCellValue("Multiples of 5 are bold");
+        sheet.getRow(9).createCell(3).setCellValue("Multiples of 10 are red (beats even)");
+        
+        SheetConditionalFormatting sheetCF = sheet.getSheetConditionalFormatting();
+        
+        // Condition 1: Row divides by 10, red (will beat #1)
+        ConditionalFormattingRule rule1 = 
+                sheetCF.createConditionalFormattingRule("MOD(ROW(),10)=0");
+        FontFormatting font1 = rule1.createFontFormatting();
+        font1.setFontColorIndex(IndexedColors.RED.index);
+        
+        // Condition 2: Row is even, blue
+        ConditionalFormattingRule rule2 = 
+                sheetCF.createConditionalFormattingRule("MOD(ROW(),2)=0");
+        FontFormatting font2 = rule2.createFontFormatting();
+        font2.setFontColorIndex(IndexedColors.BLUE.index);
+        
+        // Condition 3: Row divides by 5, bold
+        ConditionalFormattingRule rule3 = 
+                sheetCF.createConditionalFormattingRule("MOD(ROW(),5)=0");
+        FontFormatting font3 = rule3.createFontFormatting();
+        font3.setFontStyle(false, true);
+        
+        // Condition 4: Row divides by 3, grey background
+        ConditionalFormattingRule rule4 = 
+                sheetCF.createConditionalFormattingRule("MOD(ROW(),3)=0");
+        PatternFormatting fill4 = rule4.createPatternFormatting();
+        fill4.setFillBackgroundColor(IndexedColors.GREY_25_PERCENT.index);
+        fill4.setFillPattern(PatternFormatting.SOLID_FOREGROUND);
+        
+        // Apply
+        CellRangeAddress[] regions = {
+                CellRangeAddress.valueOf("A1:F41")
+        };
+
+        sheetCF.addConditionalFormatting(regions, rule1);
+        sheetCF.addConditionalFormatting(regions, rule2);
+        sheetCF.addConditionalFormatting(regions, rule3);
+        sheetCF.addConditionalFormatting(regions, rule4);
     }
 
     /**
@@ -345,5 +415,65 @@ public class ConditionalFormats {
 
         sheet.createRow(0).createCell(1).setCellValue("Shade Bands of Rows");
         sheet.createRow(1).createCell(1).setCellValue("Condition: Formula Is  =MOD(ROW(),6)<2   (Light Grey Fill)");
+    }
+    
+    /**
+     * Icon Sets / Multi-States allow you to have icons shown which vary
+     *  based on the values, eg Red traffic light / Yellow traffic light /
+     *  Green traffic light
+     */
+    static void iconSets(Sheet sheet) {
+        sheet.createRow(0).createCell(0).setCellValue("Icon Sets");
+        Row r = sheet.createRow(1);
+        r.createCell(0).setCellValue("Reds");
+        r.createCell(1).setCellValue(0);
+        r.createCell(2).setCellValue(0);
+        r.createCell(3).setCellValue(0);
+        r = sheet.createRow(2);
+        r.createCell(0).setCellValue("Yellows");
+        r.createCell(1).setCellValue(5);
+        r.createCell(2).setCellValue(5);
+        r.createCell(3).setCellValue(5);
+        r = sheet.createRow(3);
+        r.createCell(0).setCellValue("Greens");
+        r.createCell(1).setCellValue(10);
+        r.createCell(2).setCellValue(10);
+        r.createCell(3).setCellValue(10);
+                
+        SheetConditionalFormatting sheetCF = sheet.getSheetConditionalFormatting();
+        
+        CellRangeAddress[] regions = { CellRangeAddress.valueOf("B1:B4") };
+        ConditionalFormattingRule rule1 =
+                sheetCF.createConditionalFormattingRule(IconSet.GYR_3_TRAFFIC_LIGHTS);
+        IconMultiStateFormatting im1 = rule1.getMultiStateFormatting();
+        im1.getThresholds()[0].setRangeType(RangeType.MIN);
+        im1.getThresholds()[1].setRangeType(RangeType.PERCENT);
+        im1.getThresholds()[1].setValue(33d);
+        im1.getThresholds()[2].setRangeType(RangeType.MAX);
+        sheetCF.addConditionalFormatting(regions, rule1);
+        
+        regions = new CellRangeAddress[] { CellRangeAddress.valueOf("C1:C4") };
+        ConditionalFormattingRule rule2 =
+                sheetCF.createConditionalFormattingRule(IconSet.GYR_3_FLAGS);
+        IconMultiStateFormatting im2 = rule1.getMultiStateFormatting();
+        im2.getThresholds()[0].setRangeType(RangeType.PERCENT);
+        im2.getThresholds()[0].setValue(0d);
+        im2.getThresholds()[1].setRangeType(RangeType.PERCENT);
+        im2.getThresholds()[1].setValue(33d);
+        im2.getThresholds()[2].setRangeType(RangeType.PERCENT);
+        im2.getThresholds()[2].setValue(67d);
+        sheetCF.addConditionalFormatting(regions, rule2);
+        
+        regions = new CellRangeAddress[] { CellRangeAddress.valueOf("D1:D4") };
+        ConditionalFormattingRule rule3 =
+                sheetCF.createConditionalFormattingRule(IconSet.GYR_3_SYMBOLS_CIRCLE);
+        IconMultiStateFormatting im3 = rule1.getMultiStateFormatting();
+        im3.setIconOnly(true);
+        im3.getThresholds()[0].setRangeType(RangeType.MIN);
+        im3.getThresholds()[1].setRangeType(RangeType.NUMBER);
+        im3.getThresholds()[1].setValue(3d);
+        im3.getThresholds()[2].setRangeType(RangeType.NUMBER);
+        im3.getThresholds()[2].setValue(7d);
+        sheetCF.addConditionalFormatting(regions, rule3);
     }
 }

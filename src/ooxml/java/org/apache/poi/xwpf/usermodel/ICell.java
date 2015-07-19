@@ -18,10 +18,10 @@ package org.apache.poi.xwpf.usermodel;
 
 /**
  * Interface for anything that can be at a table cell level:
- *  {@link XWPFTableCell}, {@link XWPFSDTCell}
- *  <p>
- *  Schematically something like this:
- *  &lt;tr&gt;&lt;tc/&gt;&lt;tc/&gt;&lt;sdt&gt&lt;tc/&gt;&lt;/sdt&gt;&lt;/tr&gt;
+ * {@link XWPFTableCell}, {@link XWPFSDTCell}
+ * <p/>
+ * Schematically something like this:
+ * &lt;tr&gt;&lt;tc/&gt;&lt;tc/&gt;&lt;sdt&gt&lt;tc/&gt;&lt;/sdt&gt;&lt;/tr&gt;
  */
 public interface ICell {
 }

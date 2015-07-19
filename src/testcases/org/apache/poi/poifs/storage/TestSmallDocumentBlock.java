@@ -21,12 +21,11 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
-import org.apache.poi.poifs.common.POIFSConstants;
-
 import junit.framework.TestCase;
+
+import org.apache.poi.poifs.common.POIFSConstants;
 
 /**
  * Class to test SmallDocumentBlock functionality
@@ -53,7 +52,7 @@ public final class TestSmallDocumentBlock extends TestCase {
         throws IOException
     {
         ByteArrayInputStream stream    = new ByteArrayInputStream(_testdata);
-        List                 documents = new ArrayList();
+        List<DocumentBlock> documents  = new ArrayList<DocumentBlock>();
 
         while (true)
         {
@@ -66,9 +65,8 @@ public final class TestSmallDocumentBlock extends TestCase {
             }
         }
         SmallDocumentBlock[] results =
-            SmallDocumentBlock
-                .convert(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS,( BlockWritable [] ) documents
-                    .toArray(new DocumentBlock[ 0 ]), _testdata_size);
+            SmallDocumentBlock.convert(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS,
+                          documents.toArray(new DocumentBlock[ 0 ]), _testdata_size);
 
         assertEquals("checking correct result size: ",
                      (_testdata_size + 63) / 64, results.length);
@@ -142,20 +140,20 @@ public final class TestSmallDocumentBlock extends TestCase {
     {
         for (int j = 0; j <= 8; j++)
         {
-            List foo = new ArrayList();
+            List<SmallDocumentBlock> blocks = new ArrayList<SmallDocumentBlock>();
 
             for (int k = 0; k < j; k++)
             {
-                foo.add(new Object());
+                blocks.add(new SmallDocumentBlock(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS));
             }
-            int result = SmallDocumentBlock.fill(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS,foo);
+            int result = SmallDocumentBlock.fill(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS, blocks);
 
             assertEquals("correct big block count: ", (j + 7) / 8, result);
             assertEquals("correct small block count: ", 8 * result,
-                         foo.size());
-            for (int m = j; m < foo.size(); m++)
+                         blocks.size());
+            for (int m = j; m < blocks.size(); m++)
             {
-                BlockWritable         block  = ( BlockWritable ) foo.get(m);
+                BlockWritable         block  = blocks.get(m);
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
 
                 block.writeBlocks(stream);
@@ -208,13 +206,12 @@ public final class TestSmallDocumentBlock extends TestCase {
         {
             new RawDataBlock(new ByteArrayInputStream(data))
         };
-        List           output = SmallDocumentBlock.extract(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS,blocks);
-        Iterator       iter   = output.iterator();
+        List<SmallDocumentBlock> output = SmallDocumentBlock.extract(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS,blocks);
 
         offset = 0;
-        while (iter.hasNext())
+        for (SmallDocumentBlock block : output)
         {
-            byte[] out_data = (( SmallDocumentBlock ) iter.next()).getData();
+            byte[] out_data = block.getData();
 
             assertEquals("testing block at offset " + offset, 64,
                          out_data.length);

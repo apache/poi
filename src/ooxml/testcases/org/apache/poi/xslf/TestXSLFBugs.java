@@ -18,6 +18,7 @@ package org.apache.poi.xslf;
 
 import static junit.framework.TestCase.assertEquals;
 import static org.apache.poi.POITestCase.assertContains;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
@@ -47,7 +48,6 @@ import org.apache.poi.xslf.usermodel.XSLFSlide;
 import org.apache.poi.xslf.usermodel.XSLFSlideLayout;
 import org.junit.Ignore;
 import org.junit.Test;
-
 public class TestXSLFBugs {
 
     @Test
@@ -196,7 +196,7 @@ public class TestXSLFBugs {
     }
 
     @Test
-    // @Ignore("Similar to TestFontRendering it doesn't make sense to compare images because of tiny rendering differences in windows/unix")
+    @Ignore("Similar to TestFontRendering it doesn't make sense to compare images because of tiny rendering differences in windows/unix")
     public void bug54542() throws Exception {
         XMLSlideShow ss = XSLFTestDataSamples.openSampleDocument("54542_cropped_bitmap.pptx");
         
@@ -259,6 +259,107 @@ public class TestXSLFBugs {
         ss.setSlideOrder(slide, 2);
         validateSlides(ss, true, "Slide1","Slide2","New slide");
     }
+    
+    /**
+     * When working with >9 images, make sure the sorting ensures
+     *  that image10.foo isn't between image1.foo and image2.foo
+     */
+    @Test
+    public void test57552() throws Exception {
+        XMLSlideShow ss = new XMLSlideShow();
+        for (String s : new String[]{"Slide1","Slide2"}) {
+            ss.createSlide().createTextBox().setText(s);
+        }
+        
+        // Slide starts with just layout relation
+        XSLFSlide slide = ss.getSlides().get(0);
+        assertEquals(0, ss.getAllPictures().size());
+        assertEquals(1, slide.getShapes().size());
+        
+        assertEquals(1, slide.getRelations().size());
+        assertRelationEquals(XSLFRelation.SLIDE_LAYOUT, slide.getRelations().get(0));
+        
+        // Some dummy pictures
+        byte[][] pics = new byte[15][3];
+        for (int i=0; i<pics.length; i++) {
+            for (int j=0; j<pics[i].length; j++) {
+                pics[i][j] = (byte)i;
+            }
+        }
+        
+        // Add a few pictures
+        for (int i=0; i<10; i++) {
+            int idx = ss.addPicture(pics[i], XSLFPictureData.PICTURE_TYPE_JPEG);
+            assertEquals(i, idx);
+            assertEquals(i+1, ss.getAllPictures().size());
+            
+            XSLFPictureShape shape = slide.createPicture(idx);
+            assertNotNull(shape.getPictureData());
+            assertArrayEquals(pics[i], shape.getPictureData().getData());
+            assertEquals(i+2, slide.getShapes().size());
+        }
+        // Re-fetch the pictures and check
+        for (int i=0; i<10; i++) {
+            XSLFPictureShape shape = (XSLFPictureShape)slide.getShapes().get(i+1);
+            assertNotNull(shape.getPictureData());
+            assertArrayEquals(pics[i], shape.getPictureData().getData());
+        }
+        
+        // Add past 10
+        for (int i=10; i<15; i++) {
+            int idx = ss.addPicture(pics[i], XSLFPictureData.PICTURE_TYPE_JPEG);
+            assertEquals(i, idx);
+            assertEquals(i+1, ss.getAllPictures().size());
+            
+            XSLFPictureShape shape = slide.createPicture(idx);
+            assertNotNull(shape.getPictureData());
+            assertArrayEquals(pics[i], shape.getPictureData().getData());
+            assertEquals(i+2, slide.getShapes().size());
+        }
+        // Check all pictures
+        for (int i=0; i<15; i++) {
+            XSLFPictureShape shape = (XSLFPictureShape)slide.getShapes().get(i+1);
+            assertNotNull(shape.getPictureData());
+            assertArrayEquals(pics[i], shape.getPictureData().getData());
+        }
+        
+        // Add a duplicate, check the right one is picked
+        int idx = ss.addPicture(pics[3], XSLFPictureData.PICTURE_TYPE_JPEG);
+        assertEquals(3, idx);
+        assertEquals(15, ss.getAllPictures().size());
+        
+        XSLFPictureShape shape = slide.createPicture(idx);
+        assertNotNull(shape.getPictureData());
+        assertArrayEquals(pics[3], shape.getPictureData().getData());
+        assertEquals(17, slide.getShapes().size());
+        
+        
+        // Save and re-load
+        ss = XSLFTestDataSamples.writeOutAndReadBack(ss);
+        slide = ss.getSlides().get(0);
+        
+        // Check the 15 individual ones added
+        for (int i=0; i<15; i++) {
+            shape = (XSLFPictureShape)slide.getShapes().get(i+1);
+            assertNotNull(shape.getPictureData());
+            assertArrayEquals(pics[i], shape.getPictureData().getData());
+        }
+        
+        // Check the duplicate
+        shape = (XSLFPictureShape)slide.getShapes().get(16);
+        assertNotNull(shape.getPictureData());
+        assertArrayEquals(pics[3], shape.getPictureData().getData());
+        
+        // Add another duplicate
+        idx = ss.addPicture(pics[5], XSLFPictureData.PICTURE_TYPE_JPEG);
+        assertEquals(5, idx);
+        assertEquals(15, ss.getAllPictures().size());
+        
+        shape = slide.createPicture(idx);
+        assertNotNull(shape.getPictureData());
+        assertArrayEquals(pics[5], shape.getPictureData().getData());
+        assertEquals(18, slide.getShapes().size());
+    }
 
     private void validateSlides(XMLSlideShow ss, boolean saveAndReload, String... slideTexts) {
         if (saveAndReload) {
@@ -272,5 +373,8 @@ public class TestXSLFBugs {
             assertContains(getSlideText(slide), slideTexts[i]);
         }
     }
-
+    private void assertRelationEquals(XSLFRelation expected, POIXMLDocumentPart relation) {
+        assertEquals(expected.getContentType(), relation.getPackagePart().getContentType());
+        assertEquals(expected.getFileName(expected.getFileNameIndex(relation)), relation.getPackagePart().getPartName().getName());
+    }
 }

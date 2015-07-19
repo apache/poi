@@ -22,6 +22,7 @@ import java.text.FieldPosition;
 import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.poi.hssf.record.RecordInputStream;
@@ -310,7 +311,7 @@ public class StringUtil {
 		Number number,
 		String formatting,
 		StringBuffer outputTo) {
-		NumberFormat numberFormat = NumberFormat.getInstance();
+		NumberFormat numberFormat = NumberFormat.getInstance(Locale.US);
 		if ((0 < formatting.length())
 			&& Character.isDigit(formatting.charAt(0))) {
 			numberFormat.setMinimumIntegerDigits(

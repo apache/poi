@@ -26,7 +26,7 @@ import org.apache.poi.hmef.attribute.MAPIAttribute;
 import org.apache.poi.hmef.attribute.MAPIStringAttribute;
 import org.junit.Test;
 
-public class HMEFFileHandler implements FileHandler {
+public class HMEFFileHandler extends AbstractFileHandler {
 
 	@Override
     public void handleFile(InputStream stream) throws Exception {

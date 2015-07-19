@@ -17,10 +17,6 @@
 
 package org.apache.poi.hwpf.usermodel;
 
-import org.apache.poi.util.POILogFactory;
-
-import org.apache.poi.util.POILogger;
-
 import org.apache.poi.hwpf.model.ListTables;
 
 import org.apache.poi.util.Internal;
@@ -52,7 +48,7 @@ import org.apache.poi.hwpf.sprm.ParagraphSprmCompressor;
  */
 public final class HWPFList
 {
-    private static POILogger log = POILogFactory.getLogger( HWPFList.class );
+    //private static POILogger log = POILogFactory.getLogger( HWPFList.class );
 
     private boolean _ignoreLogicalLeftIdentation = false;
     private LFO _lfo;

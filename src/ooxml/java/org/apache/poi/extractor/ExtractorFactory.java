@@ -18,7 +18,6 @@ package org.apache.poi.extractor;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -47,10 +46,16 @@ import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
+import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.Entry;
+import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.poifs.filesystem.NotOLE2FileException;
+import org.apache.poi.poifs.filesystem.OPOIFSFileSystem;
+import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.xslf.XSLFSlideShow;
 import org.apache.poi.xslf.extractor.XSLFPowerPointExtractor;
 import org.apache.poi.xslf.usermodel.XSLFRelation;
 import org.apache.poi.xssf.extractor.XSSFEventBasedExcelExtractor;
@@ -65,8 +70,9 @@ import org.apache.xmlbeans.XmlException;
  *  document, and returns it.
  */
 public class ExtractorFactory {
-	public static final String CORE_DOCUMENT_REL =
-		"http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument";
+	public static final String CORE_DOCUMENT_REL = PackageRelationshipTypes.CORE_DOCUMENT;
+	protected static final String VISIO_DOCUMENT_REL = PackageRelationshipTypes.VISIO_CORE_DOCUMENT;
+	protected static final String STRICT_DOCUMENT_REL = PackageRelationshipTypes.STRICT_CORE_DOCUMENT;
 
 
 	/** Should this thread prefer event based over usermodel based extractors? */
@@ -125,16 +131,14 @@ public class ExtractorFactory {
 	public static POITextExtractor createExtractor(File f) throws IOException, InvalidFormatException, OpenXML4JException, XmlException {
 		InputStream inp = null;
         try {
-            inp = new PushbackInputStream(
-                new FileInputStream(f), 8);
-
-            if(POIFSFileSystem.hasPOIFSHeader(inp)) {
-                return createExtractor(new POIFSFileSystem(inp));
-            }
-            if(POIXMLDocument.hasOOXMLHeader(inp)) {
+            try {
+                NPOIFSFileSystem fs = new NPOIFSFileSystem(f);
+                return createExtractor(fs);
+            } catch (OfficeXmlFileException e) {
                 return createExtractor(OPCPackage.open(f.toString(), PackageAccess.READ));
+            } catch (NotOLE2FileException ne) {
+                throw new IllegalArgumentException("Your File was neither an OLE2 file, nor an OOXML file");
             }
-            throw new IllegalArgumentException("Your File was neither an OLE2 file, nor an OOXML file");
         } finally {
             if(inp != null) inp.close();
         }
@@ -147,8 +151,8 @@ public class ExtractorFactory {
 			inp = new PushbackInputStream(inp, 8);
 		}
 
-		if(POIFSFileSystem.hasPOIFSHeader(inp)) {
-			return createExtractor(new POIFSFileSystem(inp));
+		if(NPOIFSFileSystem.hasPOIFSHeader(inp)) {
+			return createExtractor(new NPOIFSFileSystem(inp));
 		}
 		if(POIXMLDocument.hasOOXMLHeader(inp)) {
 			return createExtractor(OPCPackage.open(inp));
@@ -157,12 +161,30 @@ public class ExtractorFactory {
 	}
 
 	public static POIXMLTextExtractor createExtractor(OPCPackage pkg) throws IOException, OpenXML4JException, XmlException {
+	   // Check for the normal Office core document
        PackageRelationshipCollection core =
             pkg.getRelationshipsByType(CORE_DOCUMENT_REL);
-       if(core.size() != 1) {
-          throw new IllegalArgumentException("Invalid OOXML Package received - expected 1 core document, found " + core.size());
+       
+       // If nothing was found, try some of the other OOXML-based core types
+       if (core.size() == 0) {
+           // Could it be an OOXML-Strict one?
+           core = pkg.getRelationshipsByType(STRICT_DOCUMENT_REL);
+       }
+       if (core.size() == 0) {
+           // Could it be a visio one?
+           PackageRelationshipCollection visio =
+                   pkg.getRelationshipsByType(VISIO_DOCUMENT_REL);
+           if (visio.size() == 1) {
+               throw new IllegalArgumentException("Text extraction not supported for Visio OOXML files");
+           }
+       }
+       
+       // Should just be a single core document, complain if not
+       if (core.size() != 1) {
+           throw new IllegalArgumentException("Invalid OOXML Package received - expected 1 core document, found " + core.size());
        }
 
+       // Grab the core document part, and try to identify from that
        PackagePart corePart = pkg.getPart(core.getRelationship(0));
 
        // Is it XSSF?
@@ -190,6 +212,14 @@ public class ExtractorFactory {
           }
        }
 
+       // special handling for SlideShow-Theme-files, 
+       if(XSLFRelation.THEME_MANAGER.getContentType().equals(corePart.getContentType())) {
+           return new XSLFPowerPointExtractor(new XSLFSlideShow(pkg));
+       }
+
+       // ensure that we close the package again if there is an error opening it, however
+       // we need to revert the package to not re-write the file via close(), which is very likely not wanted for a TextExtractor!
+       pkg.revert();
        throw new IllegalArgumentException("No supported documents found in the OOXML package (found "+corePart.getContentType()+")");
 	}
 
@@ -197,23 +227,23 @@ public class ExtractorFactory {
 	   // Only ever an OLE2 one from the root of the FS
 		return (POIOLE2TextExtractor)createExtractor(fs.getRoot());
 	}
-
-    /**
-     * @deprecated Use {@link #createExtractor(DirectoryNode)} instead
-     */
-    @Deprecated
-    public static POITextExtractor createExtractor(DirectoryNode poifsDir, POIFSFileSystem fs)
-            throws IOException, InvalidFormatException, OpenXML4JException, XmlException
-    {
-        return createExtractor(poifsDir);
-    }
+    public static POIOLE2TextExtractor createExtractor(NPOIFSFileSystem fs) throws IOException, InvalidFormatException, OpenXML4JException, XmlException {
+        // Only ever an OLE2 one from the root of the FS
+         return (POIOLE2TextExtractor)createExtractor(fs.getRoot());
+     }
+    public static POIOLE2TextExtractor createExtractor(OPOIFSFileSystem fs) throws IOException, InvalidFormatException, OpenXML4JException, XmlException {
+        // Only ever an OLE2 one from the root of the FS
+         return (POIOLE2TextExtractor)createExtractor(fs.getRoot());
+     }
 
     public static POITextExtractor createExtractor(DirectoryNode poifsDir) throws IOException,
             InvalidFormatException, OpenXML4JException, XmlException
     {
         // Look for certain entries in the stream, to figure it
         // out from
-        if (poifsDir.hasEntry("Workbook")) {
+        if (poifsDir.hasEntry("Workbook") ||
+                // some XLS files have different entry-names
+                poifsDir.hasEntry("WORKBOOK") || poifsDir.hasEntry("BOOK")) {
             if (getPreferEventExtractor()) {
                 return new EventBasedExcelExtractor(poifsDir);
             }
@@ -263,10 +293,10 @@ public class ExtractorFactory {
 
 	/**
 	 * Returns an array of text extractors, one for each of
-	 *  the embeded documents in the file (if there are any).
-	 * If there are no embeded documents, you'll get back an
+	 *  the embedded documents in the file (if there are any).
+	 * If there are no embedded documents, you'll get back an
 	 *  empty array. Otherwise, you'll get one open
-	 *  {@link POITextExtractor} for each embeded file.
+	 *  {@link POITextExtractor} for each embedded file.
 	 */
 	public static POITextExtractor[] getEmbededDocsTextExtractors(POIOLE2TextExtractor ext) throws IOException, InvalidFormatException, OpenXML4JException, XmlException {
 	   // All the embded directories we spotted

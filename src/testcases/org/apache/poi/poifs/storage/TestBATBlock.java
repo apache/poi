@@ -26,6 +26,7 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.apache.poi.poifs.common.POIFSBigBlockSize;
 import org.apache.poi.poifs.common.POIFSConstants;
 
 /**
@@ -281,6 +282,59 @@ public final class TestBATBlock extends TestCase {
                4096 + 8030l*4096*1024, 
                BATBlock.calculateMaximumSize(POIFSConstants.LARGER_BIG_BLOCK_SIZE_DETAILS, 8030)
        );
+    }
+    
+    public void testUsedSectors() throws Exception {
+        POIFSBigBlockSize b512 = POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS;
+        POIFSBigBlockSize b4096 = POIFSConstants.LARGER_BIG_BLOCK_SIZE_DETAILS;
+        
+        // Try first with 512 block sizes, which can hold 128 entries
+        BATBlock block512 = BATBlock.createEmptyBATBlock(b512, false);
+        assertEquals(true, block512.hasFreeSectors());
+        assertEquals(0, block512.getUsedSectors(false));
+
+        // Allocate a few
+        block512.setValueAt(0, 42);
+        block512.setValueAt(10, 42);
+        block512.setValueAt(20, 42);
+        assertEquals(true, block512.hasFreeSectors());
+        assertEquals(3, block512.getUsedSectors(false));
+        
+        // Allocate all
+        for (int i=0; i<b512.getBATEntriesPerBlock(); i++) {
+            block512.setValueAt(i, 82);
+        }
+        // Check
+        assertEquals(false, block512.hasFreeSectors());
+        assertEquals(128, block512.getUsedSectors(false));
+        assertEquals(127, block512.getUsedSectors(true));
+        
+        // Release one
+        block512.setValueAt(10, POIFSConstants.UNUSED_BLOCK);
+        assertEquals(true, block512.hasFreeSectors());
+        assertEquals(127, block512.getUsedSectors(false));
+        assertEquals(126, block512.getUsedSectors(true));
+        
+        
+        // Now repeat with 4096 block sizes
+        BATBlock block4096 = BATBlock.createEmptyBATBlock(b4096, false);
+        assertEquals(true, block4096.hasFreeSectors());
+        assertEquals(0, block4096.getUsedSectors(false));
+        
+        block4096.setValueAt(0, 42);
+        block4096.setValueAt(10, 42);
+        block4096.setValueAt(20, 42);
+        assertEquals(true, block4096.hasFreeSectors());
+        assertEquals(3, block4096.getUsedSectors(false));
+        
+        // Allocate all
+        for (int i=0; i<b4096.getBATEntriesPerBlock(); i++) {
+            block4096.setValueAt(i, 82);
+        }
+        // Check
+        assertEquals(false, block4096.hasFreeSectors());
+        assertEquals(1024, block4096.getUsedSectors(false));
+        assertEquals(1023, block4096.getUsedSectors(true));
     }
     
     public void testGetBATBlockAndIndex() throws Exception {

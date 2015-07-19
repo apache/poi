@@ -31,7 +31,7 @@ import org.apache.poi.hpsf.PropertySetFactory;
 import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 
 /**
  * Tests various bugs have been fixed
@@ -109,8 +109,8 @@ public final class TestHPSFBugs extends TestCase {
     */
    public void test54233() throws Exception {
        DocumentInputStream dis;
-       POIFSFileSystem fs = 
-               new POIFSFileSystem(_samples.openResourceAsStream("TestNon4ByteBoundary.doc"));
+       NPOIFSFileSystem fs = 
+               new NPOIFSFileSystem(_samples.openResourceAsStream("TestNon4ByteBoundary.doc"));
        
        dis = fs.createDocumentInputStream(SummaryInformation.DEFAULT_STREAM_NAME);
        SummaryInformation si = (SummaryInformation)PropertySetFactory.create(dis);
@@ -130,7 +130,7 @@ public final class TestHPSFBugs extends TestCase {
        ByteArrayOutputStream baos = new ByteArrayOutputStream();
        doc.write(baos);
        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-       doc = new HPSFPropertiesOnlyDocument(new POIFSFileSystem(bais));
+       doc = new HPSFPropertiesOnlyDocument(new NPOIFSFileSystem(bais));
        
        // Check properties are still there
        assertEquals("Microsoft Word 10.0", si.getApplicationName());
@@ -144,8 +144,8 @@ public final class TestHPSFBugs extends TestCase {
     */
    public void test56138() throws Exception {
        DocumentInputStream dis;
-       POIFSFileSystem fs = 
-               new POIFSFileSystem(_samples.openResourceAsStream("TestZeroLengthCodePage.mpp"));
+       NPOIFSFileSystem fs = 
+               new NPOIFSFileSystem(_samples.openResourceAsStream("TestZeroLengthCodePage.mpp"));
        
        dis = fs.createDocumentInputStream(SummaryInformation.DEFAULT_STREAM_NAME);
        SummaryInformation si = (SummaryInformation)PropertySetFactory.create(dis);

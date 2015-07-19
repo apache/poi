@@ -24,9 +24,11 @@ import javax.crypto.SecretKey;
 
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.poifs.filesystem.OPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 public abstract class Encryptor {
+    protected static final String DEFAULT_POIFS_ENTRY = Decryptor.DEFAULT_POIFS_ENTRY;
     private SecretKey secretKey;
     
     /**
@@ -50,7 +52,9 @@ public abstract class Encryptor {
     public OutputStream getDataStream(NPOIFSFileSystem fs) throws IOException, GeneralSecurityException {
         return getDataStream(fs.getRoot());
     }
-
+    public OutputStream getDataStream(OPOIFSFileSystem fs) throws IOException, GeneralSecurityException {
+        return getDataStream(fs.getRoot());
+    }
     public OutputStream getDataStream(POIFSFileSystem fs) throws IOException, GeneralSecurityException {
         return getDataStream(fs.getRoot());
     }

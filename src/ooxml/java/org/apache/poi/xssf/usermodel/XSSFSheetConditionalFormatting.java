@@ -27,6 +27,7 @@ import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.ComparisonOperator;
 import org.apache.poi.ss.usermodel.ConditionalFormatting;
 import org.apache.poi.ss.usermodel.ConditionalFormattingRule;
+import org.apache.poi.ss.usermodel.IconMultiStateFormatting.IconSet;
 import org.apache.poi.ss.usermodel.SheetConditionalFormatting;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCfRule;
@@ -36,9 +37,12 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCfType;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STConditionalFormattingOperator;
 
 /**
- * @author Yegor Kozlov
+ * XSSF Conditional Formattings
  */
 public class XSSFSheetConditionalFormatting implements SheetConditionalFormatting {
+    /** Office 2010 Conditional Formatting extensions namespace */
+    protected static final String CF_EXT_2009_NS_X14 = "http://schemas.microsoft.com/office/spreadsheetml/2009/9/main";
+
     private final XSSFSheet _sheet;
 
     /* package */ XSSFSheetConditionalFormatting(XSSFSheet sheet) {
@@ -115,6 +119,27 @@ public class XSSFSheetConditionalFormatting implements SheetConditionalFormattin
         return rule;
     }
 
+    /**
+     * A factory method allowing the creation of conditional formatting
+     *  rules using an Icon Set / Multi-State formatting.
+     * The thresholds for it will be created, but will be empty
+     *  and require configuring with 
+     *  {@link XSSFConditionalFormattingRule#getMultiStateFormatting()}
+     *  then
+     *  {@link XSSFIconMultiStateFormatting#getThresholds()}
+     */
+    public XSSFConditionalFormattingRule createConditionalFormattingRule(IconSet iconSet) {
+        XSSFConditionalFormattingRule rule = new XSSFConditionalFormattingRule(_sheet);
+        
+        // Have it setup, with suitable defaults
+        rule.createMultiStateFormatting(iconSet);
+        
+        // All done!
+        return rule;
+    }
+
+    // TODO Support types beyond CELL_VALUE_IS and FORMULA and ICONs
+    
     @SuppressWarnings("deprecation")
     public int addConditionalFormatting(CellRangeAddress[] regions, ConditionalFormattingRule[] cfRules) {
         if (regions == null) {

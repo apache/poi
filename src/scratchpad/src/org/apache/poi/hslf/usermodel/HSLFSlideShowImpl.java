@@ -83,14 +83,6 @@ public final class HSLFSlideShowImpl extends POIDocument {
     // Embedded objects stored in storage records in the document stream, lazily populated.
     private HSLFObjectData[] _objects;
     
-    /**
-	 * Returns the underlying POIFSFileSystem for the document
-	 *  that is open.
-	 */
-	protected POIFSFileSystem getPOIFSFileSystem() {
-		return directory.getFileSystem();
-	}
-
    /**
     * Returns the directory in the underlying POIFSFileSystem for the 
     *  document that is open.

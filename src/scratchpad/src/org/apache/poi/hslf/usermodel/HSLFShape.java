@@ -184,11 +184,12 @@ public abstract class HSLFShape implements Shape {
             h = clientRec.getRow1()-clientRec.getCol1();
         }
 
+        // TODO: find out where this -1 value comes from at #57820 (link to ms docs?)
         Rectangle2D anchor = new Rectangle2D.Float(
-            (float)Units.masterToPoints(x),
-            (float)Units.masterToPoints(y),
-            (float)Units.masterToPoints(w),
-            (float)Units.masterToPoints(h)
+            (float)(x == -1 ? -1 : Units.masterToPoints(x)),
+            (float)(y == -1 ? -1 : Units.masterToPoints(y)),
+            (float)(w == -1 ? -1 : Units.masterToPoints(w)),
+            (float)(h == -1 ? -1 : Units.masterToPoints(h))
         );
         
         return anchor;

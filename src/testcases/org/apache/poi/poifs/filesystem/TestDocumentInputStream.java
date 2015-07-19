@@ -31,10 +31,7 @@ import org.apache.poi.poifs.storage.RawDataBlock;
 
 /**
  * Class to test DocumentInputStream functionality
- *
- * @author Marc Johnson
  */
-
 public final class TestDocumentInputStream extends TestCase {
    private DocumentNode     _workbook_n;
    private DocumentNode     _workbook_o;
@@ -64,8 +61,8 @@ public final class TestDocumentInputStream extends TestCase {
         {
             rawBlocks[ j ] = new RawDataBlock(stream);
         }
-        POIFSDocument document = new POIFSDocument("Workbook", rawBlocks,
-                                                   _workbook_size);
+        OPOIFSDocument document = new OPOIFSDocument("Workbook", rawBlocks,
+                                                     _workbook_size);
 
         _workbook_o = new DocumentNode(
             document.getDocumentProperty(),
@@ -95,7 +92,7 @@ public final class TestDocumentInputStream extends TestCase {
      * test constructor
      */
     public void testConstructor() throws IOException {
-        DocumentInputStream ostream = new DocumentInputStream(_workbook_o);
+        DocumentInputStream ostream = new ODocumentInputStream(_workbook_o);
         DocumentInputStream nstream = new NDocumentInputStream(_workbook_n);
         
         assertEquals(_workbook_size, _workbook_o.getSize());
@@ -103,6 +100,9 @@ public final class TestDocumentInputStream extends TestCase {
 
         assertEquals(_workbook_size, ostream.available());
         assertEquals(_workbook_size, nstream.available());
+        
+        ostream.close();
+        nstream.close();
     }
 
     /**
@@ -514,12 +514,14 @@ public final class TestDocumentInputStream extends TestCase {
        
        NPOIFSFileSystem npoifs = new NPOIFSFileSystem(sample);
        try {
-           POIFSFileSystem  opoifs = new POIFSFileSystem(new FileInputStream(sample));
+           OPOIFSFileSystem  opoifs = new OPOIFSFileSystem(new FileInputStream(sample));
            
            // Ensure we have what we expect on the root
            assertEquals(npoifs, npoifs.getRoot().getNFileSystem());
-           assertEquals(null,   npoifs.getRoot().getFileSystem());
-           assertEquals(opoifs, opoifs.getRoot().getFileSystem());
+           assertEquals(npoifs, npoifs.getRoot().getFileSystem());
+           assertEquals(null,   npoifs.getRoot().getOFileSystem());
+           assertEquals(null,   opoifs.getRoot().getFileSystem());
+           assertEquals(opoifs, opoifs.getRoot().getOFileSystem());
            assertEquals(null,   opoifs.getRoot().getNFileSystem());
            
            // Check inside

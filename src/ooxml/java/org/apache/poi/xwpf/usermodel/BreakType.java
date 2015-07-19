@@ -24,12 +24,12 @@ import java.util.Map;
  * document.
  * The break type determines the next location where text shall be
  * placed after this manual break is applied to the text contents
- * 
+ *
  * @author Gisella Bronzetti
  */
 public enum BreakType {
 
-    
+
     /**
      * Specifies that the current break shall restart itself on the next page of
      * the document when the document is displayed in page view.
@@ -56,28 +56,29 @@ public enum BreakType {
      */
     TEXT_WRAPPING(3);
 
+    private static Map<Integer, BreakType> imap = new HashMap<Integer, BreakType>();
+
+    static {
+        for (BreakType p : values()) {
+            imap.put(new Integer(p.getValue()), p);
+        }
+    }
+
     private final int value;
 
     private BreakType(int val) {
-       value = val;
-    }
-
-    public int getValue() {
-       return value;
-    }
-
-    private static Map<Integer, BreakType> imap = new HashMap<Integer, BreakType>();
-    static {
-       for (BreakType p : values()) {
-          imap.put(new Integer(p.getValue()), p);
-       }
+        value = val;
     }
 
     public static BreakType valueOf(int type) {
-       BreakType bType = imap.get(new Integer(type));
-       if (bType == null)
-          throw new IllegalArgumentException("Unknown break type: "
-                + type);
-       return bType;
+        BreakType bType = imap.get(new Integer(type));
+        if (bType == null)
+            throw new IllegalArgumentException("Unknown break type: "
+                    + type);
+        return bType;
+    }
+
+    public int getValue() {
+        return value;
     }
 }

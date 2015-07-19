@@ -17,6 +17,7 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -25,6 +26,7 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -39,10 +41,11 @@ import org.apache.poi.openxml4j.opc.ContentTypes;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagePartName;
+import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.opc.internal.MemoryPackagePart;
 import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
-
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.BaseTestWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -78,7 +81,8 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
 	 */
 	@Test
 	public void saveLoadNew() throws Exception {
-		XSSFWorkbook workbook = new XSSFWorkbook();
+		@SuppressWarnings("resource")
+        XSSFWorkbook workbook = new XSSFWorkbook();
 
 		//check that the default date system is set to 1900
 		CTWorkbookPr pr = workbook.getCTWorkbook().getWorkbookPr();
@@ -121,7 +125,8 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
 		// Links to the three sheets, shared strings and styles
 		assertTrue(wbPart.hasRelationships());
 		assertEquals(5, wbPart.getRelationships().size());
-
+		workbook.close();
+		
 		// Load back the XSSFWorkbook
 		workbook = new XSSFWorkbook(pkg);
 		assertEquals(3, workbook.getNumberOfSheets());
@@ -777,7 +782,7 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
         Cell cell9 = row3.createCell(2);
         cell9.setCellValue("Bepa");
 
-        AreaReference source = new AreaReference("A1:B2");
+        AreaReference source = new AreaReference("A1:B2", SpreadsheetVersion.EXCEL2007);
         sheet.createPivotTable(source, new CellReference("H5"));
     }
 
@@ -867,6 +872,56 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
             assertEquals(idx3, wb.getActiveSheetIndex());
         } finally {
             wb.close();
+        }
+    }
+
+    /**
+     * Tests that we can save a workbook with macros and reload it.
+     */
+    @Test
+    public void testSetVBAProject() throws Exception {
+        XSSFWorkbook workbook = null;
+        OutputStream out = null;
+        File file;
+        final byte[] allBytes = new byte[256];
+        for (int i = 0; i < 256; i++) {
+            allBytes[i] = (byte) (i - 128);
+        }
+        try {
+            workbook = new XSSFWorkbook();
+            workbook.createSheet();
+            workbook.setVBAProject(new ByteArrayInputStream(allBytes));
+            file = TempFile.createTempFile("poi-", ".xlsm");
+            out = new FileOutputStream(file);
+            workbook.write(out);
+        }
+        finally {
+            IOUtils.closeQuietly(out);
+            IOUtils.closeQuietly(workbook);
+        }
+
+        try {
+            // Check the package contains what we'd expect it to
+            OPCPackage pkg = OPCPackage.open(file.toString());
+            PackagePart wbPart = pkg.getPart(PackagingURIHelper.createPartName("/xl/workbook.xml"));
+            assertTrue(wbPart.hasRelationships());
+            final PackageRelationshipCollection relationships = wbPart.getRelationships().getRelationships(XSSFRelation.VBA_MACROS.getRelation());
+            assertEquals(1, relationships.size());
+            assertEquals(XSSFRelation.VBA_MACROS.getDefaultFileName(), relationships.getRelationship(0).getTargetURI().toString());
+            PackagePart vbaPart = pkg.getPart(PackagingURIHelper.createPartName(XSSFRelation.VBA_MACROS.getDefaultFileName()));
+            assertNotNull(vbaPart);
+            assertFalse(vbaPart.isRelationshipPart());
+            assertEquals(XSSFRelation.VBA_MACROS.getContentType(), vbaPart.getContentType());
+            final byte[] fromFile = IOUtils.toByteArray(vbaPart.getInputStream());
+            assertArrayEquals(allBytes, fromFile);
+
+            // Load back the XSSFWorkbook just to check nothing explodes
+            workbook = new XSSFWorkbook(pkg);
+            assertEquals(1, workbook.getNumberOfSheets());
+            assertEquals(XSSFWorkbookType.XLSM, workbook.getWorkbookType());
+        }
+        finally {
+            IOUtils.closeQuietly(workbook);
         }
     }
 }

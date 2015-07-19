@@ -40,27 +40,28 @@ public enum ParagraphAlignment {
     LOW_KASHIDA(9),
     THAI_DISTRIBUTE(10);
 
-    private final int value;
-
-    private ParagraphAlignment(int val){
-        value = val;
-    }
-
-    public int getValue(){
-        return value;
-    }
-
     private static Map<Integer, ParagraphAlignment> imap = new HashMap<Integer, ParagraphAlignment>();
-    static{
+
+    static {
         for (ParagraphAlignment p : values()) {
             imap.put(new Integer(p.getValue()), p);
         }
     }
 
-    public static ParagraphAlignment valueOf(int type){
+    private final int value;
+
+    private ParagraphAlignment(int val) {
+        value = val;
+    }
+
+    public static ParagraphAlignment valueOf(int type) {
         ParagraphAlignment err = imap.get(new Integer(type));
-        if(err == null) throw new IllegalArgumentException("Unknown paragraph alignment: " + type);
+        if (err == null) throw new IllegalArgumentException("Unknown paragraph alignment: " + type);
         return err;
+    }
+
+    public int getValue() {
+        return value;
     }
 
 }

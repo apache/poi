@@ -18,52 +18,51 @@
 package org.apache.poi.xwpf.usermodel;
 
 import junit.framework.TestCase;
-
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRow;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTbl;
 
 public class TestXWPFTableRow extends TestCase {
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-	}
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+    }
 
-	public void testCreateRow() throws Exception {
-		CTRow ctRow = CTRow.Factory.newInstance();
-		assertNotNull(ctRow);
-	}
-	
-	@Override
-	protected void tearDown() throws Exception {
-		super.tearDown();
-	}
+    public void testCreateRow() throws Exception {
+        CTRow ctRow = CTRow.Factory.newInstance();
+        assertNotNull(ctRow);
+    }
 
-	public void testSetGetCantSplitRow() {
-            // create a table
-            XWPFDocument doc = new XWPFDocument();
-            CTTbl ctTable = CTTbl.Factory.newInstance();
-            XWPFTable table = new XWPFTable(ctTable, doc);
-            // table has a single row by default; grab it
-            XWPFTableRow tr = table.getRow(0);
-            assertNotNull(tr);
+    @Override
+    protected void tearDown() throws Exception {
+        super.tearDown();
+    }
 
-            tr.setCantSplitRow(true);
-            boolean isCant = tr.isCantSplitRow();
-            assert(isCant);
-	}
-
-	public void testSetGetRepeatHeader() {
+    public void testSetGetCantSplitRow() {
         // create a table
-            XWPFDocument doc = new XWPFDocument();
-            CTTbl ctTable = CTTbl.Factory.newInstance();
-            XWPFTable table = new XWPFTable(ctTable, doc);
-            // table has a single row by default; grab it
-            XWPFTableRow tr = table.getRow(0);
-            assertNotNull(tr);
+        XWPFDocument doc = new XWPFDocument();
+        CTTbl ctTable = CTTbl.Factory.newInstance();
+        XWPFTable table = new XWPFTable(ctTable, doc);
+        // table has a single row by default; grab it
+        XWPFTableRow tr = table.getRow(0);
+        assertNotNull(tr);
 
-            tr.setRepeatHeader(true);
-            boolean isRpt = tr.isRepeatHeader();
-            assert(isRpt);
-	}
+        tr.setCantSplitRow(true);
+        boolean isCant = tr.isCantSplitRow();
+        assert (isCant);
+    }
+
+    public void testSetGetRepeatHeader() {
+        // create a table
+        XWPFDocument doc = new XWPFDocument();
+        CTTbl ctTable = CTTbl.Factory.newInstance();
+        XWPFTable table = new XWPFTable(ctTable, doc);
+        // table has a single row by default; grab it
+        XWPFTableRow tr = table.getRow(0);
+        assertNotNull(tr);
+
+        tr.setRepeatHeader(true);
+        boolean isRpt = tr.isRepeatHeader();
+        assert (isRpt);
+    }
 }

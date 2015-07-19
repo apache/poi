@@ -16,99 +16,89 @@
 ==================================================================== */
 package org.apache.poi.xwpf.usermodel;
 
-import java.util.List;
-
 import org.apache.poi.POIXMLDocumentPart;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtPr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTString;
 
 /**
  * Experimental abstract class that is a base for XWPFSDT and XWPFSDTCell
- *  
+ * <p/>
  * WARNING - APIs expected to change rapidly.
- * 
+ * <p/>
  * These classes have so far been built only for read-only processing.
- * 
  */
 public abstract class AbstractXWPFSDT implements ISDTContents {
-   private final String title;
-   private final String tag;
-   private final IBody part;
+    private final String title;
+    private final String tag;
+    private final IBody part;
 
-   @SuppressWarnings("deprecation")
-   public AbstractXWPFSDT(CTSdtPr pr, IBody part){
-       
-       CTString[] aliases = pr.getAliasArray();
-       if (aliases != null && aliases.length > 0){
-          title = aliases[0].getVal();
-       } else {
-          title = "";
-       }
-       CTString[] tags = pr.getTagArray();
-       if (tags != null && tags.length > 0){
-          tag = tags[0].getVal();
-       } else {
-          tag = "";
-       }
-       this.part = part;
-       
-   }
+    @SuppressWarnings("deprecation")
+    public AbstractXWPFSDT(CTSdtPr pr, IBody part) {
 
-   /**
-    * 
-    * @return first SDT Title
-    */
-   public String getTitle(){
-      return title;
-   }
-   
-   /**
-    * 
-    * @return first SDT Tag
-    */
-   public String getTag(){
-      return tag;
-   }
-   
-   /**
-    * 
-    * @return the content object
-    */
-   public abstract ISDTContent getContent();
+        CTString[] aliases = pr.getAliasArray();
+        if (aliases != null && aliases.length > 0) {
+            title = aliases[0].getVal();
+        } else {
+            title = "";
+        }
+        CTString[] tags = pr.getTagArray();
+        if (tags != null && tags.length > 0) {
+            tag = tags[0].getVal();
+        } else {
+            tag = "";
+        }
+        this.part = part;
 
-   /**
-    * 
-    * @return null
-    */
-   public IBody getBody() {
-      return null;
-   }
+    }
 
-   /**
-    * 
-    * @return document part
-    */
-   public POIXMLDocumentPart getPart() {
-      return part.getPart();
-   }
+    /**
+     * @return first SDT Title
+     */
+    public String getTitle() {
+        return title;
+    }
 
-   /**
-    * 
-    * @return partType
-    */
-   public BodyType getPartType() {
-      return BodyType.CONTENTCONTROL;
-   }
+    /**
+     * @return first SDT Tag
+     */
+    public String getTag() {
+        return tag;
+    }
 
-   /**
-    * 
-    * @return element type
-    */
-   public BodyElementType getElementType() {
-      return BodyElementType.CONTENTCONTROL;
-   }
+    /**
+     * @return the content object
+     */
+    public abstract ISDTContent getContent();
 
-   public XWPFDocument getDocument() {
-      return part.getXWPFDocument();
-   }
+    /**
+     * @return null
+     */
+    public IBody getBody() {
+        return null;
+    }
+
+    /**
+     * @return document part
+     */
+    public POIXMLDocumentPart getPart() {
+        return part.getPart();
+    }
+
+    /**
+     * @return partType
+     */
+    public BodyType getPartType() {
+        return BodyType.CONTENTCONTROL;
+    }
+
+    /**
+     * @return element type
+     */
+    public BodyElementType getElementType() {
+        return BodyElementType.CONTENTCONTROL;
+    }
+
+    public XWPFDocument getDocument() {
+        return part.getXWPFDocument();
+    }
 }

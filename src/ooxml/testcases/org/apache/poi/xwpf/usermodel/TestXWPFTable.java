@@ -20,7 +20,6 @@ import java.math.BigInteger;
 import java.util.List;
 
 import junit.framework.TestCase;
-
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.apache.poi.xwpf.usermodel.XWPFTable.XWPFBorderType;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
@@ -29,6 +28,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRow;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTbl;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblBorders;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblCellMar;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblGrid;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTc;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTText;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STBorder;
@@ -64,6 +64,17 @@ public class TestXWPFTable extends TestCase {
         assertNotNull(ctTable.getTrArray(0).getTcArray(0).getPArray(0));
     }
 
+    public void testTblGrid() {
+        XWPFDocument doc = new XWPFDocument();
+        CTTbl ctTable = CTTbl.Factory.newInstance();
+        CTTblGrid cttblgrid = ctTable.addNewTblGrid();
+        cttblgrid.addNewGridCol().setW(new BigInteger("123"));
+        cttblgrid.addNewGridCol().setW(new BigInteger("321"));
+
+        XWPFTable xtab = new XWPFTable(ctTable, doc);
+        assertEquals(123, xtab.getCTTbl().getTblGrid().getGridColArray(0).getW().intValue());
+        assertEquals(321, xtab.getCTTbl().getTblGrid().getGridColArray(1).getW().intValue());
+    }
 
     public void testGetText() {
         XWPFDocument doc = new XWPFDocument();
@@ -113,7 +124,7 @@ public class TestXWPFTable extends TestCase {
 
     public void testSetGetWidth() {
         XWPFDocument doc = new XWPFDocument();
-        
+
         CTTbl table = CTTbl.Factory.newInstance();
         table.addNewTblPr().addNewTblW().setW(new BigInteger("1000"));
 
@@ -137,14 +148,14 @@ public class TestXWPFTable extends TestCase {
     }
 
     public void testSetGetMargins() {
-    	// instantiate the following class so it'll get picked up by
-    	// the XmlBean process and added to the jar file. it's required
-    	// for the following XWPFTable methods.
-    	CTTblCellMar ctm = CTTblCellMar.Factory.newInstance();
-    	assertNotNull(ctm);
-    	// create a table
+        // instantiate the following class so it'll get picked up by
+        // the XmlBean process and added to the jar file. it's required
+        // for the following XWPFTable methods.
+        CTTblCellMar ctm = CTTblCellMar.Factory.newInstance();
+        assertNotNull(ctm);
+        // create a table
         XWPFDocument doc = new XWPFDocument();
-    	CTTbl ctTable = CTTbl.Factory.newInstance();
+        CTTbl ctTable = CTTbl.Factory.newInstance();
         XWPFTable table = new XWPFTable(ctTable, doc);
         // set margins
         table.setCellMargins(50, 50, 250, 450);
@@ -160,16 +171,16 @@ public class TestXWPFTable extends TestCase {
     }
 
     public void testSetGetHBorders() {
-    	// instantiate the following classes so they'll get picked up by
-    	// the XmlBean process and added to the jar file. they are required
-    	// for the following XWPFTable methods.
-    	CTTblBorders cttb = CTTblBorders.Factory.newInstance();
-    	assertNotNull(cttb);
-    	STBorder stb = STBorder.Factory.newInstance();
-    	assertNotNull(stb);
-    	// create a table
+        // instantiate the following classes so they'll get picked up by
+        // the XmlBean process and added to the jar file. they are required
+        // for the following XWPFTable methods.
+        CTTblBorders cttb = CTTblBorders.Factory.newInstance();
+        assertNotNull(cttb);
+        STBorder stb = STBorder.Factory.newInstance();
+        assertNotNull(stb);
+        // create a table
         XWPFDocument doc = new XWPFDocument();
-    	CTTbl ctTable = CTTbl.Factory.newInstance();
+        CTTbl ctTable = CTTbl.Factory.newInstance();
         XWPFTable table = new XWPFTable(ctTable, doc);
         // set inside horizontal border
         table.setInsideHBorder(XWPFBorderType.SINGLE, 4, 0, "FF0000");
@@ -185,7 +196,7 @@ public class TestXWPFTable extends TestCase {
     }
 
     public void testSetGetVBorders() {
-    	// create a table
+        // create a table
         XWPFDocument doc = new XWPFDocument();
         CTTbl ctTable = CTTbl.Factory.newInstance();
         XWPFTable table = new XWPFTable(ctTable, doc);
@@ -198,7 +209,7 @@ public class TestXWPFTable extends TestCase {
         assertEquals(4, sz);
         int sp = table.getInsideVBorderSpace();
         assertEquals(0, sp);
-        String clr =  table.getInsideVBorderColor();
+        String clr = table.getInsideVBorderColor();
         assertEquals("00FF00", clr);
     }
 
@@ -221,29 +232,27 @@ public class TestXWPFTable extends TestCase {
     }
 
     public void testCreateTable() throws Exception {
-       // open an empty document
-       XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("sample.docx");
+        // open an empty document
+        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("sample.docx");
 
-       // create a table with 5 rows and 7 columns
-       int noRows = 5; 
-       int noCols = 7;
-       XWPFTable table = doc.createTable(noRows,noCols);
+        // create a table with 5 rows and 7 columns
+        int noRows = 5;
+        int noCols = 7;
+        XWPFTable table = doc.createTable(noRows, noCols);
 
-       // assert the table is empty
-       List<XWPFTableRow> rows = table.getRows();
-       assertEquals("Table has less rows than requested.", noRows, rows.size());
-       for (XWPFTableRow xwpfRow : rows)
-       {
-          assertNotNull(xwpfRow);
-          for (int i = 0 ; i < 7 ; i++)
-          {
-             XWPFTableCell xwpfCell = xwpfRow.getCell(i);
-             assertNotNull(xwpfCell);
-             assertEquals("Empty cells should not have one paragraph.",1,xwpfCell.getParagraphs().size());
-             xwpfCell = xwpfRow.getCell(i);
-             assertEquals("Calling 'getCell' must not modify cells content.",1,xwpfCell.getParagraphs().size());
-          }
-       }
-       doc.getPackage().revert();
+        // assert the table is empty
+        List<XWPFTableRow> rows = table.getRows();
+        assertEquals("Table has less rows than requested.", noRows, rows.size());
+        for (XWPFTableRow xwpfRow : rows) {
+            assertNotNull(xwpfRow);
+            for (int i = 0; i < 7; i++) {
+                XWPFTableCell xwpfCell = xwpfRow.getCell(i);
+                assertNotNull(xwpfCell);
+                assertEquals("Empty cells should not have one paragraph.", 1, xwpfCell.getParagraphs().size());
+                xwpfCell = xwpfRow.getCell(i);
+                assertEquals("Calling 'getCell' must not modify cells content.", 1, xwpfCell.getParagraphs().size());
+            }
+        }
+        doc.getPackage().revert();
     }
 }

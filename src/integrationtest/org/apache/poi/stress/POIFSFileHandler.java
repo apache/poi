@@ -25,7 +25,7 @@ import java.io.InputStream;
 import org.apache.poi.POIDocument;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
-public class POIFSFileHandler implements FileHandler {
+public class POIFSFileHandler extends AbstractFileHandler {
 
 	@Override
     public void handleFile(InputStream stream) throws Exception {

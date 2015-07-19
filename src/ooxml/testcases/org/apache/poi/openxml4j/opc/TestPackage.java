@@ -17,6 +17,14 @@
 
 package org.apache.poi.openxml4j.opc;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -25,35 +33,47 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipOutputStream;
 
-import junit.framework.TestCase;
-
+import org.apache.poi.POIXMLException;
 import org.apache.poi.openxml4j.OpenXML4JTestDataSamples;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
 import org.apache.poi.openxml4j.opc.internal.ContentTypeManager;
 import org.apache.poi.openxml4j.opc.internal.FileHelper;
 import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
+import org.apache.poi.openxml4j.opc.internal.ZipHelper;
+import org.apache.poi.openxml4j.util.ZipSecureFile;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.util.DocumentHelper;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.TempFile;
+import org.junit.Ignore;
+import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-public final class TestPackage extends TestCase {
+public final class TestPackage {
     private static final POILogger logger = POILogFactory.getLogger(TestPackage.class);
 
 	/**
 	 * Test that just opening and closing the file doesn't alter the document.
 	 */
-	public void testOpenSave() throws Exception {
+    @Test
+	public void openSave() throws Exception {
 		String originalFile = OpenXML4JTestDataSamples.getSampleFileName("TestPackageCommon.docx");
 		File targetFile = OpenXML4JTestDataSamples.getOutputFile("TestPackageOpenSaveTMP.docx");
 
@@ -75,7 +95,8 @@ public final class TestPackage extends TestCase {
 	 * Test that when we create a new Package, we give it
 	 *  the correct default content types
 	 */
-	public void testCreateGetsContentTypes() throws Exception {
+    @Test
+	public void createGetsContentTypes() throws Exception {
 		File targetFile = OpenXML4JTestDataSamples.getOutputFile("TestCreatePackageTMP.docx");
 
 		// Zap the target file, in case of an earlier run
@@ -107,7 +128,8 @@ public final class TestPackage extends TestCase {
 	/**
 	 * Test package creation.
 	 */
-	public void testCreatePackageAddPart() throws Exception {
+    @Test
+	public void createPackageAddPart() throws Exception {
 		File targetFile = OpenXML4JTestDataSamples.getOutputFile("TestCreatePackageTMP.docx");
 
 		File expectedFile = OpenXML4JTestDataSamples.getSampleFile("TestCreatePackageOUTPUT.docx");
@@ -153,7 +175,8 @@ public final class TestPackage extends TestCase {
 	 *  document and another part, save and re-load and
 	 *  have everything setup as expected
 	 */
-	public void testCreatePackageWithCoreDocument() throws Exception {
+    @Test
+	public void createPackageWithCoreDocument() throws Exception {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		OPCPackage pkg = OPCPackage.create(baos);
 
@@ -247,7 +270,8 @@ public final class TestPackage extends TestCase {
     /**
 	 * Test package opening.
 	 */
-	public void testOpenPackage() throws Exception {
+    @Test
+	public void openPackage() throws Exception {
 		File targetFile = OpenXML4JTestDataSamples.getOutputFile("TestOpenPackageTMP.docx");
 
 		File inputFile = OpenXML4JTestDataSamples.getSampleFile("TestOpenPackageINPUT.docx");
@@ -306,7 +330,8 @@ public final class TestPackage extends TestCase {
 	 *  OutputStream, in addition to the normal writing
 	 *  to a file
 	 */
-	public void testSaveToOutputStream() throws Exception {
+    @Test
+	public void saveToOutputStream() throws Exception {
 		String originalFile = OpenXML4JTestDataSamples.getSampleFileName("TestPackageCommon.docx");
 		File targetFile = OpenXML4JTestDataSamples.getOutputFile("TestPackageOpenSaveTMP.docx");
 
@@ -334,7 +359,8 @@ public final class TestPackage extends TestCase {
 	 *  simple InputStream, in addition to the normal
 	 *  reading from a file
 	 */
-	public void testOpenFromInputStream() throws Exception {
+    @Test
+	public void openFromInputStream() throws Exception {
 		String originalFile = OpenXML4JTestDataSamples.getSampleFileName("TestPackageCommon.docx");
 
 		FileInputStream finp = new FileInputStream(originalFile);
@@ -353,7 +379,9 @@ public final class TestPackage extends TestCase {
     /**
      * TODO: fix and enable
      */
-    public void disabled_testRemovePartRecursive() throws Exception {
+    @Test
+    @Ignore
+    public void removePartRecursive() throws Exception {
 		String originalFile = OpenXML4JTestDataSamples.getSampleFileName("TestPackageCommon.docx");
 		File targetFile = OpenXML4JTestDataSamples.getOutputFile("TestPackageRemovePartRecursiveOUTPUT.docx");
 		File tempFile = OpenXML4JTestDataSamples.getOutputFile("TestPackageRemovePartRecursiveTMP.docx");
@@ -369,7 +397,8 @@ public final class TestPackage extends TestCase {
 		assertTrue(targetFile.delete());
 	}
 
-	public void testDeletePart() throws InvalidFormatException {
+    @Test
+	public void deletePart() throws InvalidFormatException {
 		TreeMap<PackagePartName, String> expectedValues;
 		TreeMap<PackagePartName, String> values;
 
@@ -426,7 +455,8 @@ public final class TestPackage extends TestCase {
 		p.revert();
 	}
 
-	public void testDeletePartRecursive() throws InvalidFormatException {
+    @Test
+	public void deletePartRecursive() throws InvalidFormatException {
 		TreeMap<PackagePartName, String> expectedValues;
 		TreeMap<PackagePartName, String> values;
 
@@ -468,7 +498,8 @@ public final class TestPackage extends TestCase {
 	 * Test that we can open a file by path, and then
 	 *  write changes to it.
 	 */
-	public void testOpenFileThenOverwrite() throws Exception {
+    @Test
+	public void openFileThenOverwrite() throws Exception {
         File tempFile = TempFile.createTempFile("poiTesting","tmp");
         File origFile = OpenXML4JTestDataSamples.getSampleFile("TestPackageCommon.docx");
         FileHelper.copyFile(origFile, tempFile);
@@ -505,7 +536,8 @@ public final class TestPackage extends TestCase {
      * Test that we can open a file by path, save it
      *  to another file, then delete both
      */
-    public void testOpenFileThenSaveDelete() throws Exception {
+    @Test
+    public void openFileThenSaveDelete() throws Exception {
         File tempFile = TempFile.createTempFile("poiTesting","tmp");
         File tempFile2 = TempFile.createTempFile("poiTesting","tmp");
         File origFile = OpenXML4JTestDataSamples.getSampleFile("TestPackageCommon.docx");
@@ -529,7 +561,8 @@ public final class TestPackage extends TestCase {
 		return (ContentTypeManager)f.get(pkg);
 	}
 
-    public void testGetPartsByName() throws Exception {
+    @Test
+    public void getPartsByName() throws Exception {
         String filepath =  OpenXML4JTestDataSamples.getSampleFileName("sample.docx");
 
         OPCPackage pkg = OPCPackage.open(filepath, PackageAccess.READ_WRITE);
@@ -553,7 +586,8 @@ public final class TestPackage extends TestCase {
         }
     }
     
-    public void testGetPartSize() throws Exception {
+    @Test
+    public void getPartSize() throws Exception {
        String filepath =  OpenXML4JTestDataSamples.getSampleFileName("sample.docx");
        OPCPackage pkg = OPCPackage.open(filepath, PackageAccess.READ);
        try {
@@ -585,7 +619,8 @@ public final class TestPackage extends TestCase {
        }
     }
 
-    public void testReplaceContentType() throws Exception {
+    @Test
+    public void replaceContentType() throws Exception {
         InputStream is = OpenXML4JTestDataSamples.openSampleStream("sample.xlsx");
         OPCPackage p = OPCPackage.open(is);
 
@@ -602,5 +637,132 @@ public final class TestPackage extends TestCase {
 
         assertFalse(mgr.isContentTypeRegister("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"));
         assertTrue(mgr.isContentTypeRegister("application/vnd.ms-excel.sheet.macroEnabled.main+xml"));
+    }
+
+    @Test(expected=IOException.class)
+    public void zipBombCreateAndHandle() throws Exception {
+        // #50090 / #56865
+        ZipFile zipFile = ZipHelper.openZipFile(OpenXML4JTestDataSamples.getSampleFile("sample.xlsx"));
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        ZipOutputStream append = new ZipOutputStream(bos);
+        // first, copy contents from existing war
+        Enumeration<? extends ZipEntry> entries = zipFile.entries();
+        while (entries.hasMoreElements()) {
+            ZipEntry e2 = entries.nextElement();
+            ZipEntry e = new ZipEntry(e2.getName());
+            e.setTime(e2.getTime());
+            e.setComment(e2.getComment());
+            e.setSize(e2.getSize());
+            
+            append.putNextEntry(e);
+            if (!e.isDirectory()) {
+                InputStream is = zipFile.getInputStream(e);
+                if (e.getName().equals("[Content_Types].xml")) {
+                    ByteArrayOutputStream bos2 = new ByteArrayOutputStream();
+                    IOUtils.copy(is, bos2);
+                    long size = bos2.size()-"</Types>".length();
+                    append.write(bos2.toByteArray(), 0, (int)size);
+                    byte spam[] = new byte[0x7FFF];
+                    for (int i=0; i<spam.length; i++) spam[i] = ' ';
+                    while (size < 0x7FFF0000) {
+                        append.write(spam);
+                        size += spam.length;
+                    }
+                    append.write("</Types>".getBytes());
+                    size += 8;
+                    e.setSize(size);
+                } else {
+                    IOUtils.copy(is, append);
+                }
+            }
+            append.closeEntry();
+        }
+        
+        append.close();
+        zipFile.close();
+
+        byte buf[] = bos.toByteArray();
+        bos = null;
+        
+        Workbook wb = WorkbookFactory.create(new ByteArrayInputStream(buf));
+        wb.getSheetAt(0);
+        wb.close();
+    }
+    
+    @Test
+    public void zipBombCheckSizes() throws Exception {
+        File file = OpenXML4JTestDataSamples.getSampleFile("sample.xlsx");
+
+        try {
+            double min_ratio = Double.MAX_VALUE;
+            long max_size = 0;
+            ZipFile zf = ZipHelper.openZipFile(file);
+            Enumeration<? extends ZipEntry> entries = zf.entries();
+            while (entries.hasMoreElements()) {
+                ZipEntry ze = entries.nextElement();
+                double ratio = (double)ze.getCompressedSize() / (double)ze.getSize();
+                min_ratio = Math.min(min_ratio, ratio);
+                max_size = Math.max(max_size, ze.getSize());
+            }
+            zf.close();
+    
+            // use values close to, but within the limits 
+            ZipSecureFile.setMinInflateRatio(min_ratio-0.002);
+            ZipSecureFile.setMaxEntrySize(max_size+1);
+            Workbook wb = WorkbookFactory.create(file, null, true);
+            wb.close();
+    
+            // check ratio out of bounds
+            ZipSecureFile.setMinInflateRatio(min_ratio+0.002);
+            try {
+                wb = WorkbookFactory.create(file, null, true);
+                wb.close();
+                // this is a bit strange, as there will be different exceptions thrown
+                // depending if this executed via "ant test" or within eclipse
+                // maybe a difference in JDK ...
+            } catch (InvalidFormatException e) {
+                checkForZipBombException(e);
+            } catch (POIXMLException e) {
+                checkForZipBombException(e);
+            }
+    
+            // check max entry size ouf of bounds
+            ZipSecureFile.setMinInflateRatio(min_ratio-0.002);
+            ZipSecureFile.setMaxEntrySize(max_size-1);
+            try {
+                wb = WorkbookFactory.create(file, null, true);
+                wb.close();
+            } catch (InvalidFormatException e) {
+                checkForZipBombException(e);
+            } catch (POIXMLException e) {
+                checkForZipBombException(e);
+            }
+        } finally {
+            // reset otherwise a lot of ooxml tests will fail
+            ZipSecureFile.setMinInflateRatio(0.01d);
+            ZipSecureFile.setMaxEntrySize(0xFFFFFFFFl);            
+        }
+    }
+
+    private void checkForZipBombException(Throwable e) {
+        if(e instanceof InvocationTargetException) {
+            InvocationTargetException t = (InvocationTargetException)e;
+            IOException t2 = (IOException)t.getTargetException();
+            if("Zip bomb detected! Exiting.".equals(t2.getMessage())) {
+                return;
+            }
+        }
+        
+        if ("Zip bomb detected! Exiting.".equals(e.getMessage())) {
+            return;
+        }
+        
+        // recursively check the causes for the message as it can be nested further down in the exception-tree
+        if(e.getCause() != null && e.getCause() != e) {
+            checkForZipBombException(e.getCause());
+            return;
+        }
+
+        throw new IllegalStateException("Expected to catch an Exception because of a detected Zip Bomb, but did not find the related error message in the exception", e);        
     }
 }

@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.Iterator;
 
 import org.apache.poi.POIDocument;
+import org.apache.poi.POIOLE2TextExtractor;
 import org.apache.poi.POITextExtractor;
 import org.apache.poi.hpsf.CustomProperties;
 import org.apache.poi.hpsf.DocumentSummaryInformation;
@@ -39,10 +40,10 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  *  build in and custom, returning them in
  *  textual form.
  */
-public class HPSFPropertiesExtractor extends POITextExtractor {
+public class HPSFPropertiesExtractor extends POIOLE2TextExtractor {
     private Closeable toClose;
 
-    public HPSFPropertiesExtractor(POITextExtractor mainExtractor) {
+    public HPSFPropertiesExtractor(POIOLE2TextExtractor mainExtractor) {
         super(mainExtractor);
     }
     public HPSFPropertiesExtractor(POIDocument doc) {
@@ -57,6 +58,10 @@ public class HPSFPropertiesExtractor extends POITextExtractor {
     }
 
     public String getDocumentSummaryInformationText() {
+        if(document == null) {  // event based extractor does not have a document
+            return "";
+        }
+
         DocumentSummaryInformation dsi = document.getDocumentSummaryInformation();
         StringBuffer text = new StringBuffer();
 
@@ -78,6 +83,10 @@ public class HPSFPropertiesExtractor extends POITextExtractor {
         return text.toString();
     }
     public String getSummaryInformationText() {
+        if(document == null) {  // event based extractor does not have a document
+            return "";
+        }
+
         SummaryInformation si = document.getSummaryInformation();
 
         // Just normal properties
