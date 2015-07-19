@@ -101,6 +101,7 @@ public abstract class BaseTestConditionalFormatting extends TestCase {
     /**
      * Test format conditions based on a boolean formula
      */
+    @SuppressWarnings("deprecation")
     public void testBooleanFormulaConditions() {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sh = wb.createSheet();
@@ -136,6 +137,7 @@ public abstract class BaseTestConditionalFormatting extends TestCase {
         assertEquals("B1:B3", ranges2[0].formatAsString());
     }
 
+    @SuppressWarnings("deprecation")
     public void testSingleFormulaConditions() {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sh = wb.createSheet();
@@ -207,6 +209,7 @@ public abstract class BaseTestConditionalFormatting extends TestCase {
         assertEquals(ComparisonOperator.NOT_BETWEEN, rule9.getComparisonOperation());
     }
 
+    @SuppressWarnings("deprecation")
     public void testCopy() {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet1 = wb.createSheet();
@@ -546,8 +549,7 @@ public abstract class BaseTestConditionalFormatting extends TestCase {
         Sheet s = wb.getSheet("CF");
         ConditionalFormatting cf = null;
         ConditionalFormattingRule cr = null;
-        IconMultiStateFormatting icon = null;
-        ConditionalFormattingThreshold th = null;
+
         
         // Sanity check data
         assertEquals("Values", s.getRow(0).getCell(0).toString());
@@ -696,22 +698,95 @@ public abstract class BaseTestConditionalFormatting extends TestCase {
         assertIconSetPercentages(cf, IconSet.GYRB_4_TRAFFIC_LIGHTS, 0d, 25d, 50d, 75d);
 
         
-        // Icons : 3 symbols - Column L
-        // Icons : 3 flags - Column M
-        // Icons : 3 symbols 2 - Column N
-        // Icons : 3 arrows - Column O     
-        // Icons : 5 arrows grey - Column P    
-        // Icons : 3 stars (ext) - Column Q
-        // Icons : 4 ratings - Column R
-        // Icons : 5 ratings - Column S
-        // Custom Icon+Format - Column T
-        // Mixed icons - Column U
+        // Icons : 3 symbols with backgrounds - Column L
+        cf = sheetCF.getConditionalFormattingAt(9);
+        assertEquals(1, cf.getFormattingRanges().length);
+        assertEquals("L2:L17", cf.getFormattingRanges()[0].formatAsString());
+        assertIconSetPercentages(cf, IconSet.GYR_3_SYMBOLS_CIRCLE, 0d, 33d, 67d);
 
+        
+        // Icons : 3 flags - Column M2 Only
+        cf = sheetCF.getConditionalFormattingAt(10);
+        assertEquals(1, cf.getFormattingRanges().length);
+        assertEquals("M2", cf.getFormattingRanges()[0].formatAsString());
+        assertIconSetPercentages(cf, IconSet.GYR_3_FLAGS, 0d, 33d, 67d);
+
+        // Icons : 3 flags - Column M (all)
+        cf = sheetCF.getConditionalFormattingAt(11);
+        assertEquals(1, cf.getFormattingRanges().length);
+        assertEquals("M2:M17", cf.getFormattingRanges()[0].formatAsString());
+        assertIconSetPercentages(cf, IconSet.GYR_3_FLAGS, 0d, 33d, 67d);
+
+        
+        // Icons : 3 symbols 2 (no background) - Column N
+        cf = sheetCF.getConditionalFormattingAt(12);
+        assertEquals(1, cf.getFormattingRanges().length);
+        assertEquals("N2:N17", cf.getFormattingRanges()[0].formatAsString());
+        assertIconSetPercentages(cf, IconSet.GYR_3_SYMBOLS, 0d, 33d, 67d);
+
+        
+        // Icons : 3 arrows - Column O
+        cf = sheetCF.getConditionalFormattingAt(13);
+        assertEquals(1, cf.getFormattingRanges().length);
+        assertEquals("O2:O17", cf.getFormattingRanges()[0].formatAsString());
+        assertIconSetPercentages(cf, IconSet.GYR_3_ARROW, 0d, 33d, 67d);
+
+        
+        // Icons : 5 arrows grey - Column P    
+        cf = sheetCF.getConditionalFormattingAt(14);
+        assertEquals(1, cf.getFormattingRanges().length);
+        assertEquals("P2:P17", cf.getFormattingRanges()[0].formatAsString());
+        assertIconSetPercentages(cf, IconSet.GREY_5_ARROWS, 0d, 20d, 40d, 60d, 80d);
+
+        
+        // Icons : 3 stars (ext) - Column Q
+        // TODO Support EXT formattings
+
+        
+        // Icons : 4 ratings - Column R
+        cf = sheetCF.getConditionalFormattingAt(15);
+        assertEquals(1, cf.getFormattingRanges().length);
+        assertEquals("R2:R17", cf.getFormattingRanges()[0].formatAsString());
+        assertIconSetPercentages(cf, IconSet.RATINGS_4, 0d, 25d, 50d, 75d);
+
+        
+        // Icons : 5 ratings - Column S
+        cf = sheetCF.getConditionalFormattingAt(16);
+        assertEquals(1, cf.getFormattingRanges().length);
+        assertEquals("S2:S17", cf.getFormattingRanges()[0].formatAsString());
+        assertIconSetPercentages(cf, IconSet.RATINGS_5, 0d, 20d, 40d, 60d, 80d);
+
+        
+        // Custom Icon+Format - Column T
+        cf = sheetCF.getConditionalFormattingAt(17);
+        assertEquals(1, cf.getFormattingRanges().length);
+        assertEquals("T2:T17", cf.getFormattingRanges()[0].formatAsString());
+        
+        // TODO Support IconSet + Other CFs with 2 rules
+//        assertEquals(2, cf.getNumberOfRules());
+//        cr = cf.getRule(0);
+//        assertIconSetPercentages(cr, IconSet.GYR_3_TRAFFIC_LIGHTS_BOX, 0d, 33d, 67d);
+//        cr = cf.getRule(1);
+//        assertEquals(ConditionType.FORMULA, cr.getConditionTypeType());
+//        assertEquals(ComparisonOperator.NO_COMPARISON, cr.getComparisonOperation());
+//        // TODO Why aren't these two the same between formats?
+//        if (cr instanceof HSSFConditionalFormattingRule) {
+//            assertEquals("MOD(ROW($T1),2)=1", cr.getFormula1());
+//        } else {
+//            assertEquals("MOD(ROW($T2),2)=1", cr.getFormula1());
+//        }
+//        assertEquals(null, cr.getFormula2());
+        
+        
+        // Mixed icons - Column U
+        // TODO Support EXT formattings
     }
     private void assertIconSetPercentages(ConditionalFormatting cf, IconSet iconset, Double...vals) {
         assertEquals(1, cf.getNumberOfRules());
         ConditionalFormattingRule cr = cf.getRule(0);
-        
+        assertIconSetPercentages(cr, iconset, vals);
+    }        
+    private void assertIconSetPercentages(ConditionalFormattingRule cr, IconSet iconset, Double...vals) {
         assertEquals(ConditionType.ICON_SET, cr.getConditionTypeType());
         assertEquals(ComparisonOperator.NO_COMPARISON, cr.getComparisonOperation());
         assertEquals(null, cr.getFormula1());
