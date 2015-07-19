@@ -555,11 +555,11 @@ public abstract class BaseTestConditionalFormatting extends TestCase {
         assertEquals("Values", s.getRow(0).getCell(0).toString());
         assertEquals("10.0", s.getRow(2).getCell(0).toString());
 
-        // Check we found all the conditional formattings rules we should have
+        // Check we found all the conditional formatting rules we should have
         SheetConditionalFormatting sheetCF = s.getSheetConditionalFormatting();
         int numCF = 3;
         int numCF12 = 15;
-        int numCFEX = 0; // TODO This should be 1, but we don't support CFEX formattings yet
+        int numCFEX = 0; // TODO This should be 2, but we don't support CFEX formattings yet
         assertEquals(numCF+numCF12+numCFEX, sheetCF.getNumConditionalFormattings());
         
         int fCF = 0, fCF12 = 0, fCFEX = 0;
@@ -982,8 +982,7 @@ public abstract class BaseTestConditionalFormatting extends TestCase {
         assertEquals(BorderFormatting.BORDER_HAIR, r1fp.getBorderRight());
     }
     
-    // TODO Fix this test to work for HSSF
-    public void DISABLEDtestCreateIconFormatting() {
+    public void testCreateIconFormatting() {
         Workbook workbook = _testDataProvider.createWorkbook();
         Sheet sheet = workbook.createSheet();
 
