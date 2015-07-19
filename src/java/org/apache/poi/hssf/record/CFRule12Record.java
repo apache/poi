@@ -19,6 +19,7 @@ package org.apache.poi.hssf.record;
 
 import java.util.Arrays;
 
+import org.apache.poi.hssf.record.cf.ColorGradientFormatting;
 import org.apache.poi.hssf.record.cf.IconMultiStateFormatting;
 import org.apache.poi.hssf.record.cf.Threshold;
 import org.apache.poi.hssf.record.common.FtrHeader;
@@ -56,9 +57,9 @@ public final class CFRule12Record extends CFRuleBase implements FutureRecord {
     private byte[] template_params;
     
     private IconMultiStateFormatting multistate;
+    private ColorGradientFormatting color_gradient;
     
     // TODO Parse these
-    private byte[] gradient_data;
     private byte[] databar_data;
     private byte[] filter_data;
 
@@ -176,7 +177,7 @@ public final class CFRule12Record extends CFRuleBase implements FutureRecord {
         
         byte type = getConditionType();
         if (type == CONDITION_TYPE_COLOR_SCALE) {
-            gradient_data = in.readRemainder();
+            color_gradient = new ColorGradientFormatting(in);
         } else if (type == CONDITION_TYPE_DATA_BAR) {
             databar_data = in.readRemainder();
         } else if (type == CONDITION_TYPE_FILTER) {
@@ -261,7 +262,7 @@ public final class CFRule12Record extends CFRuleBase implements FutureRecord {
         
         byte type = getConditionType();
         if (type == CONDITION_TYPE_COLOR_SCALE) {
-            out.write(gradient_data);
+            color_gradient.serialize(out);
         } else if (type == CONDITION_TYPE_DATA_BAR) {
             out.write(databar_data);
         } else if (type == CONDITION_TYPE_FILTER) {
@@ -285,7 +286,7 @@ public final class CFRule12Record extends CFRuleBase implements FutureRecord {
         
         byte type = getConditionType();
         if (type == CONDITION_TYPE_COLOR_SCALE) {
-            len += gradient_data.length;
+            len += color_gradient.getDataLength();
         } else if (type == CONDITION_TYPE_DATA_BAR) {
             len += databar_data.length;
         } else if (type == CONDITION_TYPE_FILTER) {
@@ -319,9 +320,11 @@ public final class CFRule12Record extends CFRuleBase implements FutureRecord {
         buffer.append("    .priority  =").append(priority).append("\n");
         buffer.append("    .template_type  =").append(template_type).append("\n");
         buffer.append("    .template_params=").append(HexDump.toHex(template_params)).append("\n");
-        buffer.append("    .gradient_data  =").append(HexDump.toHex(gradient_data)).append("\n");
         buffer.append("    .databar_data   =").append(HexDump.toHex(databar_data)).append("\n");
         buffer.append("    .filter_data    =").append(HexDump.toHex(filter_data)).append("\n");
+        if (color_gradient != null) {
+            buffer.append(color_gradient);
+        }
         if (multistate != null) {
             buffer.append(multistate);
         }
