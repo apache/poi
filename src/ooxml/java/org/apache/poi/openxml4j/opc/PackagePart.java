@@ -30,11 +30,8 @@ import org.apache.poi.openxml4j.opc.internal.ContentType;
 
 /**
  * Provides a base class for parts stored in a Package.
- *
- * @author Julien Chable
- * @version 0.9
  */
-public abstract class PackagePart implements RelationshipSource {
+public abstract class PackagePart implements RelationshipSource, Comparable<PackagePart> {
 
 	/**
 	 * This part's container.
@@ -228,8 +225,13 @@ public abstract class PackagePart implements RelationshipSource {
 	 *            Relationship unique id.
 	 * @return The newly created and added relationship
 	 *
+	 * @throws InvalidOperationException
+	 *             If a writing operation is done on a read only package or 
+	 *             invalid nested relations are created.
 	 * @throws InvalidFormatException
 	 *             If the URI point to a relationship part URI.
+	 * @throws IllegalArgumentException if targetPartName, targetMode 
+	 *             or relationshipType are passed as null
 	 * @see org.apache.poi.openxml4j.opc.RelationshipSource#addRelationship(org.apache.poi.openxml4j.opc.PackagePartName,
 	 *      org.apache.poi.openxml4j.opc.TargetMode, java.lang.String, java.lang.String)
 	 */
@@ -599,11 +601,14 @@ public abstract class PackagePart implements RelationshipSource {
 	 */
 	public void setContentType(String contentType)
 			throws InvalidFormatException {
-		if (_container == null)
-			this._contentType = new ContentType(contentType);
-		else
-			throw new InvalidOperationException(
-					"You can't change the content type of a part.");
+		if (_container == null) {
+			_contentType = new ContentType(contentType);
+		}
+		else {
+		    _container.unregisterPartAndContentType(_partName);
+		    _contentType = new ContentType(contentType);
+		    _container.registerPartAndContentType(this);
+		}
 	}
 
 	public OPCPackage getPackage() {
@@ -643,6 +648,19 @@ public abstract class PackagePart implements RelationshipSource {
 	public String toString() {
 		return "Name: " + this._partName + " - Content Type: "
 				+ this._contentType.toString();
+	}
+
+	/**
+	 * Compare based on the package part name, using a natural sort order
+	 */
+	@Override
+	public int compareTo(PackagePart other)
+	{
+	    // NOTE could also throw a NullPointerException() if desired
+	    if (other == null)
+	        return -1;
+
+	    return PackagePartName.compare(this._partName, other._partName);
 	}
 
 	/*-------------- Abstract methods ------------- */

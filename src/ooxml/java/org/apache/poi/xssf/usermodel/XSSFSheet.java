@@ -25,11 +25,13 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedMap;
 import java.util.TreeMap;
 
 import javax.xml.namespace.QName;
@@ -131,7 +133,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     protected CTSheet sheet;
     protected CTWorksheet worksheet;
 
-    private TreeMap<Integer, XSSFRow> _rows;
+    private SortedMap<Integer, XSSFRow> _rows;
     private List<XSSFHyperlink> hyperlinks;
     private ColumnHelper columnHelper;
     private CommentsTable sheetComments;
@@ -140,7 +142,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * Master shared formula is the first formula in a group of shared formulas is saved in the f element.
      */
     private Map<Integer, CTCellFormula> sharedFormulas;
-    private TreeMap<String,XSSFTable> tables;
+    private SortedMap<String,XSSFTable> tables;
     private List<CellRangeAddress> arrayFormulas;
     private XSSFDataValidationHelper dataValidationHelper;
 
@@ -600,6 +602,15 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         CTRow ctRow;
         XSSFRow prev = _rows.get(rownum);
         if(prev != null){
+            // the Cells in an existing row are invalidated on-purpose, in order to clean up correctly, we
+            // need to call the remove, so things like ArrayFormulas and CalculationChain updates are done 
+            // correctly. 
+            // We remove the cell this way as the internal cell-list is changed by the remove call and 
+            // thus would cause ConcurrentModificationException otherwise
+            while(prev.getFirstCellNum() != -1) {
+                prev.removeCell(prev.getCell(prev.getFirstCellNum()));
+            }
+            
             ctRow = prev.getCTRow();
             ctRow.set(CTRow.Factory.newInstance());
         } else {
@@ -1071,6 +1082,10 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     }
 
     /**
+     * Returns the merged region at the specified index. If you want multiple
+     * regions, it is faster to call {@link #getMergedRegions()} than to call
+     * this each time.
+     *
      * @return the merged region at the specified index
      * @throws IllegalStateException if this worksheet does not contain merged regions
      */
@@ -1082,6 +1097,27 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         CTMergeCell ctMergeCell = ctMergeCells.getMergeCellArray(index);
         String ref = ctMergeCell.getRef();
         return CellRangeAddress.valueOf(ref);
+    }
+
+    /**
+     * Returns the list of merged regions. If you want multiple regions, this is
+     * faster than calling {@link #getMergedRegion(int)} each time.
+     *
+     * @return the list of merged regions
+     * @throws IllegalStateException if this worksheet does not contain merged regions
+     */
+    @SuppressWarnings("deprecation")
+    @Override
+    public List<CellRangeAddress> getMergedRegions() {
+        CTMergeCells ctMergeCells = worksheet.getMergeCells();
+        if(ctMergeCells == null) throw new IllegalStateException("This worksheet does not contain merged regions");
+
+        List<CellRangeAddress> addresses = new ArrayList<CellRangeAddress>();
+        for(CTMergeCell ctMergeCell : ctMergeCells.getMergeCellArray()) {
+            String ref = ctMergeCell.getRef();
+            addresses.add(CellRangeAddress.valueOf(ref));
+        }
+        return addresses;
     }
 
     /**
@@ -2555,38 +2591,90 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      */
     @Override
     @SuppressWarnings("deprecation") //YK: getXYZArray() array accessors are deprecated in xmlbeans with JDK 1.5 support
-    public void shiftRows(int startRow, int endRow, int n, boolean copyRowHeight, boolean resetOriginalRowHeight) {
-        // first remove all rows which will be overwritten
+    public void shiftRows(int startRow, int endRow, final int n, boolean copyRowHeight, boolean resetOriginalRowHeight) {
+    	XSSFVMLDrawing vml = getVMLDrawing(false);
+
+    	// first remove all rows which will be overwritten
         for (Iterator<Row> it = rowIterator() ; it.hasNext() ; ) {
             XSSFRow row = (XSSFRow)it.next();
             int rownum = row.getRowNum();
 
             // check if we should remove this row as it will be overwritten by the data later
-            if (removeRow(startRow, endRow, n, rownum)) {
+            if (shouldRemoveRow(startRow, endRow, n, rownum)) {
                 // remove row from worksheet.getSheetData row array
                 int idx = _rows.headMap(row.getRowNum()).size();
                 worksheet.getSheetData().removeRow(idx);
+
                 // remove row from _rows
                 it.remove();
+
+                // also remove any comments associated with this row
+                if(sheetComments != null){
+                    CTCommentList lst = sheetComments.getCTComments().getCommentList();
+                    for (CTComment comment : lst.getCommentArray()) {
+                    	String strRef = comment.getRef();
+                    	CellReference ref = new CellReference(strRef);
+
+                    	// is this comment part of the current row?
+                    	if(ref.getRow() == rownum) {
+                            sheetComments.removeComment(strRef);
+                            vml.removeCommentShape(ref.getRow(), ref.getCol());
+                    	}
+                    }
+                }
             }
         }
 
         // then do the actual moving and also adjust comments/rowHeight
+        // we need to sort it in a way so the shifting does not mess up the structures, 
+        // i.e. when shifting down, start from down and go up, when shifting up, vice-versa
+        SortedMap<XSSFComment, Integer> commentsToShift = new TreeMap<XSSFComment, Integer>(new Comparator<XSSFComment>() {
+			public int compare(XSSFComment o1, XSSFComment o2) {
+				int row1 = o1.getRow();
+				int row2 = o2.getRow();
+				
+				if(row1 == row2) {
+					// ordering is not important when row is equal, but don't return zero to still 
+					// get multiple comments per row into the map
+					return o1.hashCode() - o2.hashCode();
+				}
+
+				// when shifting down, sort higher row-values first
+				if(n > 0) {
+					return row1 < row2 ? 1 : -1;
+				} else {
+					// sort lower-row values first when shifting up
+					return row1 > row2 ? 1 : -1;
+				}
+			}
+		});
+
+        
         for (Iterator<Row> it = rowIterator() ; it.hasNext() ; ) {
             XSSFRow row = (XSSFRow)it.next();
             int rownum = row.getRowNum();
 
             if(sheetComments != null){
-                //TODO shift Note's anchor in the associated /xl/drawing/vmlDrawings#.vml
-                CTCommentList lst = sheetComments.getCTComments().getCommentList();
-                for (CTComment comment : lst.getCommentArray()) {
-                    String oldRef = comment.getRef();
-                    CellReference ref = new CellReference(oldRef);
-                    if(ref.getRow() == rownum){
-                        ref = new CellReference(rownum + n, ref.getCol());
-                        comment.setRef(ref.formatAsString());
-                        sheetComments.referenceUpdated(oldRef, comment);
-                    }
+            	// calculate the new rownum
+            	int newrownum = shiftedRowNum(startRow, endRow, n, rownum);
+            	
+            	// is there a change necessary for the current row?
+            	if(newrownum != rownum) {
+                    CTCommentList lst = sheetComments.getCTComments().getCommentList();
+                    for (CTComment comment : lst.getCommentArray()) {
+                    	String oldRef = comment.getRef();
+                    	CellReference ref = new CellReference(oldRef);
+                    	
+                    	// is this comment part of the current row?
+                    	if(ref.getRow() == rownum) {
+                        	XSSFComment xssfComment = new XSSFComment(sheetComments, comment,
+                                    vml == null ? null : vml.findCommentShape(rownum, ref.getCol()));
+                        	
+                        	// we should not perform the shifting right here as we would then find
+                        	// already shifted comments and would shift them again...
+                        	commentsToShift.put(xssfComment, newrownum);
+                        }
+                	}
                 }
             }
 
@@ -2598,6 +2686,14 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
 
             row.shift(n);
         }
+        
+        // adjust all the affected comment-structures now
+        // the Map is sorted and thus provides them in the order that we need here, 
+        // i.e. from down to up if shifting down, vice-versa otherwise
+        for(Map.Entry<XSSFComment, Integer> entry : commentsToShift.entrySet()) {
+        	entry.getKey().setRow(entry.getValue());
+        }
+        
         XSSFRowShifter rowShifter = new XSSFRowShifter(this);
 
         int sheetIndex = getWorkbook().getSheetIndex(this);
@@ -2611,12 +2707,39 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         rowShifter.updateConditionalFormatting(shifter);
 
         //rebuild the _rows map
-        TreeMap<Integer, XSSFRow> map = new TreeMap<Integer, XSSFRow>();
+        SortedMap<Integer, XSSFRow> map = new TreeMap<Integer, XSSFRow>();
         for(XSSFRow r : _rows.values()) {
             map.put(r.getRowNum(), r);
         }
         _rows = map;
     }
+
+    private int shiftedRowNum(int startRow, int endRow, int n, int rownum) {
+		// no change if before any affected row
+    	if(rownum < startRow && (n > 0 || (startRow - rownum) > n)) {
+			return rownum;
+		}
+		
+    	// no change if after any affected row
+    	if(rownum > endRow && (n < 0 || (rownum - endRow) > n)) {
+    		return rownum;
+    	}
+    	
+    	// row before and things are moved up
+    	if(rownum < startRow) {
+    		// row is moved down by the shifting
+    		return rownum + (endRow - startRow);
+    	}
+    	
+    	// row is after and things are moved down
+    	if(rownum > endRow) {
+    		// row is moved up by the shifting
+    		return rownum - (endRow - startRow);
+    	}
+    	
+    	// row is part of the shifted block
+		return rownum + n;
+	}
 
     /**
      * Location of the top left visible cell Location of the top left visible cell in the bottom right
@@ -2873,7 +2996,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         return sheetPr.isSetPageSetUpPr() ? sheetPr.getPageSetUpPr() : sheetPr.addNewPageSetUpPr();
     }
 
-    private boolean removeRow(int startRow, int endRow, int n, int rownum) {
+    private boolean shouldRemoveRow(int startRow, int endRow, int n, int rownum) {
         // is this row in the target-window where the moved rows will land?
         if (rownum >= (startRow + n) && rownum <= (endRow + n)) {
             // only remove it if the current row is not part of the data that is copied

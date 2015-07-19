@@ -16,6 +16,8 @@
 ==================================================================== */
 package org.apache.poi.poifs.crypt;
 
+import static org.apache.poi.poifs.crypt.Decryptor.DEFAULT_POIFS_ENTRY;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -132,8 +134,8 @@ public abstract class ChunkedCipherOutputStream extends FilterOutputStream {
             super.close();
             
             int oleStreamSize = (int)(fileOut.length()+LittleEndianConsts.LONG_SIZE);
-            calculateChecksum(fileOut, oleStreamSize);
-            dir.createDocument("EncryptedPackage", oleStreamSize, new EncryptedPackageWriter());
+            calculateChecksum(fileOut, (int)_pos);
+            dir.createDocument(DEFAULT_POIFS_ENTRY, oleStreamSize, new EncryptedPackageWriter());
             createEncryptionInfoEntry(dir, fileOut);
         } catch (GeneralSecurityException e) {
             throw new IOException(e);

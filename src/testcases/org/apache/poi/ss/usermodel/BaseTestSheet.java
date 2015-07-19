@@ -17,17 +17,13 @@
 
 package org.apache.poi.ss.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static junit.framework.TestCase.assertNotNull;
+import static junit.framework.TestCase.assertTrue;
+import static org.junit.Assert.*;
 
+import java.io.IOException;
 import java.util.Iterator;
 
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.PaneInformation;
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.SpreadsheetVersion;
@@ -41,13 +37,15 @@ import org.junit.rules.ExpectedException;
  * {@link org.apache.poi.hssf.usermodel.HSSFCell}
  */
 public abstract class BaseTestSheet {
+    private static final int ROW_COUNT = 40000;
+
     @Rule
     public ExpectedException thrown = ExpectedException.none();
     
     private final ITestDataProvider _testDataProvider;
 
     protected BaseTestSheet(ITestDataProvider testDataProvider) {
-    _testDataProvider = testDataProvider;
+    	_testDataProvider = testDataProvider;
     }
 
     @Test
@@ -851,22 +849,126 @@ public abstract class BaseTestSheet {
     }
 
     @Test
-    public void bug55723_Rows() {
-        HSSFWorkbook wb = new HSSFWorkbook();
+    public void bug55723_Rows() throws IOException {
+        Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet = wb.createSheet();
 
         CellRangeAddress range = CellRangeAddress.valueOf("A4:B55000");
         AutoFilter filter = sheet.setAutoFilter(range);
         assertNotNull(filter);
+        
+        wb.close();
     }
 
     @Test
-    public void bug55723d_RowsOver65k() {
-        HSSFWorkbook wb = new HSSFWorkbook();
+    public void bug55723d_RowsOver65k() throws IOException {
+        Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet = wb.createSheet();
 
         CellRangeAddress range = CellRangeAddress.valueOf("A4:B75000");
         AutoFilter filter = sheet.setAutoFilter(range);
         assertNotNull(filter);
+        
+        wb.close();
+    }
+
+    /**
+     * XSSFSheet autoSizeColumn() on empty RichTextString fails
+     * @throws IOException 
+     */
+    @Test
+    public void bug48325() throws IOException {
+        Workbook wb = _testDataProvider.createWorkbook();
+        Sheet sheet = wb.createSheet("Test");
+        CreationHelper factory = wb.getCreationHelper();
+
+        Row row = sheet.createRow(0);
+        Cell cell = row.createCell(0);
+
+        Font font = wb.createFont();
+        RichTextString rts = factory.createRichTextString("");
+        rts.applyFont(font);
+        cell.setCellValue(rts);
+
+        sheet.autoSizeColumn(0);
+        
+        assertNotNull(_testDataProvider.writeOutAndReadBack(wb));
+        
+        wb.close();
+    }
+
+    @Test
+    public void getCellComment() throws IOException {
+        Workbook workbook = _testDataProvider.createWorkbook();
+        Sheet sheet = workbook.createSheet();
+        Drawing dg = sheet.createDrawingPatriarch();
+        Comment comment = dg.createCellComment(workbook.getCreationHelper().createClientAnchor());
+        Cell cell = sheet.createRow(9).createCell(2);
+        comment.setAuthor("test C10 author");
+        cell.setCellComment(comment);
+
+        assertNotNull(sheet.getCellComment(9, 2));
+        assertEquals("test C10 author", sheet.getCellComment(9, 2).getAuthor());
+        
+        assertNotNull(_testDataProvider.writeOutAndReadBack(workbook));
+        
+        workbook.close();
+    }
+
+
+    @Test
+    public void newMergedRegionAt() throws IOException {
+        Workbook workbook = _testDataProvider.createWorkbook();
+        Sheet sheet = workbook.createSheet();
+        CellRangeAddress region = CellRangeAddress.valueOf("B2:D4");
+        sheet.addMergedRegion(region);
+        assertEquals("B2:D4", sheet.getMergedRegion(0).formatAsString());
+        assertEquals(1, sheet.getNumMergedRegions());
+        
+        assertNotNull(_testDataProvider.writeOutAndReadBack(workbook));
+        
+        workbook.close();
+    }
+
+    @Test
+    public void showInPaneManyRowsBug55248() {
+        Workbook workbook = _testDataProvider.createWorkbook();
+        Sheet sheet = workbook.createSheet("Sheet 1");
+
+        sheet.showInPane(0, 0);
+
+        for(int i = ROW_COUNT/2;i < ROW_COUNT;i++) {
+            sheet.createRow(i);
+            sheet.showInPane(i, 0);
+            // this one fails: sheet.showInPane((short)i, 0);
+        }
+
+        int i = 0;
+        sheet.showInPane(i, i);
+
+        Workbook wb = _testDataProvider.writeOutAndReadBack(workbook);
+        checkRowCount(wb);
+    }
+
+    private void checkRowCount(Workbook wb) {
+        assertNotNull(wb);
+        final Sheet sh = wb.getSheet("Sheet 1");
+        assertNotNull(sh);
+        assertEquals(ROW_COUNT-1, sh.getLastRowNum());
+    }
+    
+    
+    @Test
+    public void testRightToLeft() throws IOException {
+        Workbook wb = _testDataProvider.createWorkbook();
+        Sheet sheet = wb.createSheet();
+
+        assertFalse(sheet.isRightToLeft());
+        sheet.setRightToLeft(true);
+        assertTrue(sheet.isRightToLeft());
+        sheet.setRightToLeft(false);
+        assertFalse(sheet.isRightToLeft());
+        
+        wb.close();
     }
 }

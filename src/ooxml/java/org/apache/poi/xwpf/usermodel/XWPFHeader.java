@@ -69,14 +69,14 @@ public class XWPFHeader extends XWPFHeaderFooter {
         cursor.dispose();
     }
 
-	/**
+    /**
      * save and commit footer
      */
     @Override
     protected void commit() throws IOException {
         XmlOptions xmlOptions = new XmlOptions(DEFAULT_XML_OPTIONS);
         xmlOptions.setSaveSyntheticDocumentElement(new QName(CTNumbering.type.getName().getNamespaceURI(), "hdr"));
-        Map<String,String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<String, String>();
         map.put("http://schemas.openxmlformats.org/markup-compatibility/2006", "ve");
         map.put("urn:schemas-microsoft-com:office:office", "o");
         map.put("http://schemas.openxmlformats.org/officeDocument/2006/relationships", "r");
@@ -95,11 +95,12 @@ public class XWPFHeader extends XWPFHeaderFooter {
 
     /**
      * reads the document
-     * @throws IOException 
+     *
+     * @throws IOException
      */
-    @Override  
+    @Override
     protected void onDocumentRead() throws IOException {
-        super.onDocumentRead();	          
+        super.onDocumentRead();
         HdrDocument hdrDocument = null;
         InputStream is;
         try {
@@ -113,17 +114,17 @@ public class XWPFHeader extends XWPFHeaderFooter {
             while (cursor.toNextSelection()) {
                 XmlObject o = cursor.getObject();
                 if (o instanceof CTP) {
-                    XWPFParagraph p = new XWPFParagraph((CTP)o, this);
+                    XWPFParagraph p = new XWPFParagraph((CTP) o, this);
                     paragraphs.add(p);
                     bodyElements.add(p);
                 }
                 if (o instanceof CTTbl) {
-                    XWPFTable t = new XWPFTable((CTTbl)o, this);
+                    XWPFTable t = new XWPFTable((CTTbl) o, this);
                     tables.add(t);
                     bodyElements.add(t);
                 }
-                if (o instanceof CTSdtBlock){
-                    XWPFSDT c = new XWPFSDT((CTSdtBlock)o, this);
+                if (o instanceof CTSdtBlock) {
+                    XWPFSDT c = new XWPFSDT((CTSdtBlock) o, this);
                     bodyElements.add(c);
                 }
             }
@@ -135,6 +136,7 @@ public class XWPFHeader extends XWPFHeaderFooter {
 
     /**
      * get the PartType of the body
+     *
      * @see org.apache.poi.xwpf.usermodel.IBody#getPartType()
      */
     public BodyType getPartType() {

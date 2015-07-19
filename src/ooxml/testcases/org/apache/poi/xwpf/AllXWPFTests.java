@@ -36,21 +36,21 @@ import org.junit.runners.Suite;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-    TestXWPFBugs.class,
-    org.apache.poi.xwpf.usermodel.TestXWPFBugs.class,
-    TestXWPFDocument.class,
-    TestXWPFWordExtractor.class,
-    TestXWPFHeaderFooterPolicy.class,
-    TestXWPFHeader.class,
-    TestXWPFHeadings.class,
-    TestXWPFParagraph.class,
-    TestXWPFRun.class,
-    TestXWPFTable.class,
-    TestXWPFStyles.class,
-    TestXWPFPictureData.class,
-    TestXWPFNumbering.class,
-    TestAllExtendedProperties.class,
-    TestPackageCorePropertiesGetKeywords.class
+        TestXWPFBugs.class,
+        org.apache.poi.xwpf.usermodel.TestXWPFBugs.class,
+        TestXWPFDocument.class,
+        TestXWPFWordExtractor.class,
+        TestXWPFHeaderFooterPolicy.class,
+        TestXWPFHeader.class,
+        TestXWPFHeadings.class,
+        TestXWPFParagraph.class,
+        TestXWPFRun.class,
+        TestXWPFTable.class,
+        TestXWPFStyles.class,
+        TestXWPFPictureData.class,
+        TestXWPFNumbering.class,
+        TestAllExtendedProperties.class,
+        TestPackageCorePropertiesGetKeywords.class
 })
 public final class AllXWPFTests {
 }

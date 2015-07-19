@@ -21,6 +21,8 @@ import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 import org.apache.poi.ss.formula.eval.AreaEval;
+import org.apache.poi.ss.formula.eval.BlankEval;
+import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.NumericValueEval;
 import org.apache.poi.ss.formula.eval.StringEval;
@@ -106,5 +108,12 @@ public final class TestSumif extends TestCase {
 		ve = invokeSumif(3, 0, arg0, arg1); // invoking from cell A4
 
 		confirmDouble(60, ve);
+	}
+
+	public void testEvaluateException() {
+	    assertEquals(ErrorEval.VALUE_INVALID, invokeSumif(-1, -1, BlankEval.instance, new NumberEval(30.0)));
+        assertEquals(ErrorEval.VALUE_INVALID, invokeSumif(-1, -1, BlankEval.instance, new NumberEval(30.0), new NumberEval(30.0)));
+        assertEquals(ErrorEval.VALUE_INVALID, invokeSumif(-1, -1, new NumberEval(30.0), BlankEval.instance, new NumberEval(30.0)));
+        assertEquals(ErrorEval.VALUE_INVALID, invokeSumif(-1, -1, new NumberEval(30.0), new NumberEval(30.0), BlankEval.instance));
 	}
 }

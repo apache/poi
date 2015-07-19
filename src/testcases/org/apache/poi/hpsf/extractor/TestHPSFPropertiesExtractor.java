@@ -34,45 +34,53 @@ public final class TestHPSFPropertiesExtractor extends TestCase {
 	public void testNormalProperties() throws Exception {
 		POIFSFileSystem fs = new POIFSFileSystem(_samples.openResourceAsStream("TestMickey.doc"));
 		HPSFPropertiesExtractor ext = new HPSFPropertiesExtractor(fs);
-		ext.getText();
-
-		// Check each bit in turn
-		String sinfText = ext.getSummaryInformationText();
-		String dinfText = ext.getDocumentSummaryInformationText();
-
-		assertTrue(sinfText.indexOf("TEMPLATE = Normal") > -1);
-		assertTrue(sinfText.indexOf("SUBJECT = sample subject") > -1);
-		assertTrue(dinfText.indexOf("MANAGER = sample manager") > -1);
-		assertTrue(dinfText.indexOf("COMPANY = sample company") > -1);
-
-		// Now overall
-		String text = ext.getText();
-		assertTrue(text.indexOf("TEMPLATE = Normal") > -1);
-		assertTrue(text.indexOf("SUBJECT = sample subject") > -1);
-		assertTrue(text.indexOf("MANAGER = sample manager") > -1);
-		assertTrue(text.indexOf("COMPANY = sample company") > -1);
+		try {
+    		ext.getText();
+    
+    		// Check each bit in turn
+    		String sinfText = ext.getSummaryInformationText();
+    		String dinfText = ext.getDocumentSummaryInformationText();
+    
+    		assertTrue(sinfText.indexOf("TEMPLATE = Normal") > -1);
+    		assertTrue(sinfText.indexOf("SUBJECT = sample subject") > -1);
+    		assertTrue(dinfText.indexOf("MANAGER = sample manager") > -1);
+    		assertTrue(dinfText.indexOf("COMPANY = sample company") > -1);
+    
+    		// Now overall
+    		String text = ext.getText();
+    		assertTrue(text.indexOf("TEMPLATE = Normal") > -1);
+    		assertTrue(text.indexOf("SUBJECT = sample subject") > -1);
+    		assertTrue(text.indexOf("MANAGER = sample manager") > -1);
+    		assertTrue(text.indexOf("COMPANY = sample company") > -1);
+		} finally {
+		    ext.close();
+		}
 	}
 
 	public void testNormalUnicodeProperties() throws Exception {
 		POIFSFileSystem fs = new POIFSFileSystem(_samples.openResourceAsStream("TestUnicode.xls"));
 		HPSFPropertiesExtractor ext = new HPSFPropertiesExtractor(fs);
-		ext.getText();
-
-		// Check each bit in turn
-		String sinfText = ext.getSummaryInformationText();
-		String dinfText = ext.getDocumentSummaryInformationText();
-
-		assertTrue(sinfText.indexOf("AUTHOR = marshall") > -1);
-		assertTrue(sinfText.indexOf("TITLE = Titel: \u00c4h") > -1);
-		assertTrue(dinfText.indexOf("COMPANY = Schreiner") > -1);
-		assertTrue(dinfText.indexOf("SCALE = false") > -1);
-
-		// Now overall
-		String text = ext.getText();
-		assertTrue(text.indexOf("AUTHOR = marshall") > -1);
-		assertTrue(text.indexOf("TITLE = Titel: \u00c4h") > -1);
-		assertTrue(text.indexOf("COMPANY = Schreiner") > -1);
-		assertTrue(text.indexOf("SCALE = false") > -1);
+		try {
+    		ext.getText();
+    
+    		// Check each bit in turn
+    		String sinfText = ext.getSummaryInformationText();
+    		String dinfText = ext.getDocumentSummaryInformationText();
+    
+    		assertTrue(sinfText.indexOf("AUTHOR = marshall") > -1);
+    		assertTrue(sinfText.indexOf("TITLE = Titel: \u00c4h") > -1);
+    		assertTrue(dinfText.indexOf("COMPANY = Schreiner") > -1);
+    		assertTrue(dinfText.indexOf("SCALE = false") > -1);
+    
+    		// Now overall
+    		String text = ext.getText();
+    		assertTrue(text.indexOf("AUTHOR = marshall") > -1);
+    		assertTrue(text.indexOf("TITLE = Titel: \u00c4h") > -1);
+    		assertTrue(text.indexOf("COMPANY = Schreiner") > -1);
+    		assertTrue(text.indexOf("SCALE = false") > -1);
+		} finally {
+		    ext.close();
+		}
 	}
 
 	public void testCustomProperties() throws Exception {
@@ -80,18 +88,21 @@ public final class TestHPSFPropertiesExtractor extends TestCase {
 				_samples.openResourceAsStream("TestMickey.doc")
 		);
 		HPSFPropertiesExtractor ext = new HPSFPropertiesExtractor(fs);
-
-		// Custom properties are part of the document info stream
-		String dinfText = ext.getDocumentSummaryInformationText();
-		assertTrue(dinfText.indexOf("Client = sample client") > -1);
-		assertTrue(dinfText.indexOf("Division = sample division") > -1);
-
-		String text = ext.getText();
-		assertTrue(text.indexOf("Client = sample client") > -1);
-		assertTrue(text.indexOf("Division = sample division") > -1);
+		try {
+    		// Custom properties are part of the document info stream
+    		String dinfText = ext.getDocumentSummaryInformationText();
+    		assertTrue(dinfText.indexOf("Client = sample client") > -1);
+    		assertTrue(dinfText.indexOf("Division = sample division") > -1);
+    
+    		String text = ext.getText();
+    		assertTrue(text.indexOf("Client = sample client") > -1);
+    		assertTrue(text.indexOf("Division = sample division") > -1);
+        } finally {
+            ext.close();
+        }
 	}
 
-	public void testConstructors() {
+	public void testConstructors() throws IOException {
 		POIFSFileSystem fs;
 		HSSFWorkbook wb;
 		try {
@@ -102,9 +113,29 @@ public final class TestHPSFPropertiesExtractor extends TestCase {
 		}
 		ExcelExtractor excelExt = new ExcelExtractor(wb);
 
-		String fsText = (new HPSFPropertiesExtractor(fs)).getText();
-		String hwText = (new HPSFPropertiesExtractor(wb)).getText();
-		String eeText = (new HPSFPropertiesExtractor(excelExt)).getText();
+		final String fsText;
+		HPSFPropertiesExtractor fsExt = new HPSFPropertiesExtractor(fs);
+		try {
+		    fsText = fsExt.getText();
+		} finally {
+		    fsExt.close();
+		}
+        
+        final String hwText; 
+		HPSFPropertiesExtractor hwExt = new HPSFPropertiesExtractor(wb);
+		try {
+		    hwText = hwExt.getText();
+		} finally {
+		    hwExt.close();
+		}
+		
+        final String eeText;
+        HPSFPropertiesExtractor eeExt = new HPSFPropertiesExtractor(excelExt);
+        try {
+            eeText = eeExt.getText();
+        } finally {
+            eeExt.close();
+        }
 
 		assertEquals(fsText, hwText);
 		assertEquals(fsText, eeText);
@@ -113,13 +144,17 @@ public final class TestHPSFPropertiesExtractor extends TestCase {
 		assertTrue(fsText.indexOf("TITLE = Titel: \u00c4h") > -1);
 	}
 
-	public void test42726() {
-		HPSFPropertiesExtractor ex = new HPSFPropertiesExtractor(HSSFTestDataSamples.openSampleWorkbook("42726.xls"));
-		String txt = ex.getText();
-		assertTrue(txt.indexOf("PID_AUTHOR") != -1);
-		assertTrue(txt.indexOf("PID_EDITTIME") != -1);
-		assertTrue(txt.indexOf("PID_REVNUMBER") != -1);
-		assertTrue(txt.indexOf("PID_THUMBNAIL") != -1);
+	public void test42726() throws IOException {
+		HPSFPropertiesExtractor ext = new HPSFPropertiesExtractor(HSSFTestDataSamples.openSampleWorkbook("42726.xls"));
+		try {
+    		String txt = ext.getText();
+    		assertTrue(txt.indexOf("PID_AUTHOR") != -1);
+    		assertTrue(txt.indexOf("PID_EDITTIME") != -1);
+    		assertTrue(txt.indexOf("PID_REVNUMBER") != -1);
+    		assertTrue(txt.indexOf("PID_THUMBNAIL") != -1);
+        } finally {
+            ext.close();
+        }
 	}
 	
     public void testThumbnail() throws Exception {

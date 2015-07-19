@@ -114,6 +114,8 @@ public final class WordDocument {
   /**
    *  right now this function takes one parameter: a Word file, and outputs an
    *  XSL-FO document at c:\test.xml (this is hardcoded)
+   *  
+   *  @param args The document to read
    */
   public static void main(String args[])
   {
@@ -175,7 +177,7 @@ public final class WordDocument {
       }
       else
       {
-	String sText = new String(_header, start, end-start);
+	String sText = new String(_header, start, end-start, "windows-1252");
 	out.write(sText);
       }
     }
@@ -758,7 +760,7 @@ public final class WordDocument {
     size = lineHeights.size();
     for(int x = 0; x < size; x++)
     {
-      Integer height = (Integer)lineHeights.get(x);
+      Integer height = lineHeights.get(x);
       sum += height.intValue();
     }
 
@@ -1765,7 +1767,7 @@ public final class WordDocument {
       for(int x = 0; x < size; x++)
       {
         StringBuffer rowBuffer = tableBodyBuffer;
-        TableRow row = (TableRow)_table.get(x);
+        TableRow row = _table.get(x);
         TAP tap = row.getTAP();
         ArrayList<String> cells = row.getCells();
 
@@ -1797,7 +1799,7 @@ public final class WordDocument {
           addBorder(rowBuffer, tc._brcBottom, "bottom");
           addBorder(rowBuffer, tc._brcRight, "right");
           rowBuffer.append(">");
-          rowBuffer.append((String)cells.get(y));
+          rowBuffer.append(cells.get(y));
           rowBuffer.append("</fo:table-cell>");
         }
         rowBuffer.append("</fo:table-row>");

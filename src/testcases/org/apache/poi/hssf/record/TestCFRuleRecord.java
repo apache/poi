@@ -21,7 +21,8 @@ import static org.junit.Assert.assertArrayEquals;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
-import org.apache.poi.hssf.record.CFRuleRecord.ComparisonOperator;
+import org.apache.poi.hssf.HSSFITestDataProvider;
+import org.apache.poi.hssf.record.CFRuleBase.ComparisonOperator;
 import org.apache.poi.hssf.record.cf.BorderFormatting;
 import org.apache.poi.hssf.record.cf.FontFormatting;
 import org.apache.poi.hssf.record.cf.PatternFormatting;
@@ -31,14 +32,15 @@ import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.ptg.RefNPtg;
 import org.apache.poi.ss.formula.ptg.RefPtg;
+import org.apache.poi.ss.usermodel.ConditionalFormattingThreshold.RangeType;
+import org.apache.poi.ss.usermodel.IconMultiStateFormatting.IconSet;
 import org.apache.poi.util.LittleEndian;
 
 /**
  * Tests the serialization and deserialization of the TestCFRuleRecord
  * class works correctly.
- *
- * @author Dmitriy Kumshayev
  */
+@SuppressWarnings("resource")
 public final class TestCFRuleRecord extends TestCase {
     public void testConstructors () {
         HSSFWorkbook workbook = new HSSFWorkbook();
@@ -91,19 +93,77 @@ public final class TestCFRuleRecord extends TestCase {
         }
     }
 
+    public void testCreateCFRule12Record() {
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        HSSFSheet sheet = workbook.createSheet();
+        CFRule12Record record = CFRule12Record.create(sheet, "7");
+        testCFRule12Record(record);
+
+        // Serialize
+        byte [] serializedRecord = record.serialize();
+
+        // Strip header
+        byte [] recordData = new byte[serializedRecord.length-4];
+        System.arraycopy(serializedRecord, 4, recordData, 0, recordData.length);
+
+        // Deserialize
+        record = new CFRule12Record(TestcaseRecordInputStream.create(CFRule12Record.sid, recordData));
+
+        // Serialize again
+        byte[] output = record.serialize();
+
+        // Compare
+        assertEquals("Output size", recordData.length+4, output.length); //includes sid+recordlength
+
+        for (int i = 0; i < recordData.length;i++)
+        {
+            assertEquals("CFRule12Record doesn't match", recordData[i], output[i+4]);
+        }
+    }
+
+    public void testCreateIconCFRule12Record() {
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        HSSFSheet sheet = workbook.createSheet();
+        CFRule12Record record = CFRule12Record.create(sheet, IconSet.GREY_5_ARROWS);
+        record.getMultiStateFormatting().getThresholds()[1].setType(RangeType.PERCENT.id);
+        record.getMultiStateFormatting().getThresholds()[1].setValue(10d);
+        record.getMultiStateFormatting().getThresholds()[2].setType(RangeType.NUMBER.id);
+        record.getMultiStateFormatting().getThresholds()[2].setValue(-4d);
+        
+        // Check it 
+        testCFRule12Record(record);
+        assertEquals(IconSet.GREY_5_ARROWS, record.getMultiStateFormatting().getIconSet());
+        assertEquals(5, record.getMultiStateFormatting().getThresholds().length);
+
+        // Serialize
+        byte [] serializedRecord = record.serialize();
+
+        // Strip header
+        byte [] recordData = new byte[serializedRecord.length-4];
+        System.arraycopy(serializedRecord, 4, recordData, 0, recordData.length);
+
+        // Deserialize
+        record = new CFRule12Record(TestcaseRecordInputStream.create(CFRule12Record.sid, recordData));
+        
+        // Check it has the icon, and the right number of thresholds
+        assertEquals(IconSet.GREY_5_ARROWS, record.getMultiStateFormatting().getIconSet());
+        assertEquals(5, record.getMultiStateFormatting().getThresholds().length);
+
+        // Serialize again
+        byte[] output = record.serialize();
+
+        // Compare
+        assertEquals("Output size", recordData.length+4, output.length); //includes sid+recordlength
+
+        for (int i = 0; i < recordData.length;i++)
+        {
+            assertEquals("CFRule12Record doesn't match", recordData[i], output[i+4]);
+        }
+    }
+    
     private void testCFRuleRecord(CFRuleRecord record) {
-        FontFormatting fontFormatting = new FontFormatting();
-        testFontFormattingAccessors(fontFormatting);
-        assertFalse(record.containsFontFormattingBlock());
-        record.setFontFormatting(fontFormatting);
-        assertTrue(record.containsFontFormattingBlock());
-
-        BorderFormatting borderFormatting = new BorderFormatting();
-        testBorderFormattingAccessors(borderFormatting);
-        assertFalse(record.containsBorderFormattingBlock());
-        record.setBorderFormatting(borderFormatting);
-        assertTrue(record.containsBorderFormattingBlock());
-
+        testCFRuleBase(record);
+        
         assertFalse(record.isLeftBorderModified());
         record.setLeftBorderModified(true);
         assertTrue(record.isLeftBorderModified());
@@ -129,12 +189,6 @@ public final class TestCFRuleRecord extends TestCase {
         assertTrue(record.isBottomLeftTopRightBorderModified());
 
 
-        PatternFormatting patternFormatting = new PatternFormatting();
-        testPatternFormattingAccessors(patternFormatting);
-        assertFalse(record.containsPatternFormattingBlock());
-        record.setPatternFormatting(patternFormatting);
-        assertTrue(record.containsPatternFormattingBlock());
-
         assertFalse(record.isPatternBackgroundColorModified());
         record.setPatternBackgroundColorModified(true);
         assertTrue(record.isPatternBackgroundColorModified());
@@ -146,6 +200,30 @@ public final class TestCFRuleRecord extends TestCase {
         assertFalse(record.isPatternStyleModified());
         record.setPatternStyleModified(true);
         assertTrue(record.isPatternStyleModified());
+    }
+    private void testCFRule12Record(CFRule12Record record) {
+        assertEquals(CFRule12Record.sid, record.getFutureRecordType());
+        assertEquals("A1", record.getAssociatedRange().formatAsString());
+        testCFRuleBase(record);
+    }
+    private void testCFRuleBase(CFRuleBase record) {
+        FontFormatting fontFormatting = new FontFormatting();
+        testFontFormattingAccessors(fontFormatting);
+        assertFalse(record.containsFontFormattingBlock());
+        record.setFontFormatting(fontFormatting);
+        assertTrue(record.containsFontFormattingBlock());
+
+        BorderFormatting borderFormatting = new BorderFormatting();
+        testBorderFormattingAccessors(borderFormatting);
+        assertFalse(record.containsBorderFormattingBlock());
+        record.setBorderFormatting(borderFormatting);
+        assertTrue(record.containsBorderFormattingBlock());
+
+        PatternFormatting patternFormatting = new PatternFormatting();
+        testPatternFormattingAccessors(patternFormatting);
+        assertFalse(record.containsPatternFormattingBlock());
+        record.setPatternFormatting(patternFormatting);
+        assertTrue(record.containsPatternFormattingBlock());
     }
 
     private void testPatternFormattingAccessors(PatternFormatting patternFormatting) {
@@ -364,5 +442,12 @@ public final class TestCFRuleRecord extends TestCase {
         byte [] serializedRecord = record.serialize();
         byte [] serializedClone = clone.serialize();
         assertArrayEquals(serializedRecord, serializedClone);
+    }
+    
+    public void testBug57231_rewrite() {
+        HSSFWorkbook wb = HSSFITestDataProvider.instance.openSampleWorkbook("57231_MixedGasReport.xls");
+        assertEquals(7, wb.getNumberOfSheets());
+        wb = HSSFITestDataProvider.instance.writeOutAndReadBack(wb);
+        assertEquals(7, wb.getNumberOfSheets());
     }
 }

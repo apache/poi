@@ -16,6 +16,7 @@
 ==================================================================== */
 package org.apache.poi.stress;
 
+import java.io.File;
 import java.io.InputStream;
 
 /**
@@ -34,4 +35,10 @@ public interface FileHandler {
 	 * @throws Exception
 	 */
 	void handleFile(InputStream stream) throws Exception;
+	
+	/**
+	 * Ensures that extracting text from the given file
+	 * is returning some text. 
+	 */
+	void handleExtracting(File file) throws Exception;
 }

@@ -24,7 +24,7 @@ import java.io.*;
 import java.util.*;
 
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
-import org.apache.poi.poifs.filesystem.POIFSDocument;
+import org.apache.poi.poifs.filesystem.OPOIFSDocument;
 import org.apache.poi.poifs.filesystem.POIFSDocumentPath;
 import org.apache.poi.poifs.property.DirectoryProperty;
 import org.apache.poi.poifs.property.Property;
@@ -240,19 +240,19 @@ public class POIFSReader
 
                 if (listeners.hasNext())
                 {
-                    int           size     = property.getSize();
-                    POIFSDocument document = null;
+                    int            size     = property.getSize();
+                    OPOIFSDocument document = null;
 
                     if (property.shouldUseSmallBlocks())
                     {
                         document =
-                            new POIFSDocument(name, small_blocks
+                            new OPOIFSDocument(name, small_blocks
                                 .fetchBlocks(startBlock, -1), size);
                     }
                     else
                     {
                         document =
-                            new POIFSDocument(name, big_blocks
+                            new OPOIFSDocument(name, big_blocks
                                 .fetchBlocks(startBlock, -1), size);
                     }
                     while (listeners.hasNext())

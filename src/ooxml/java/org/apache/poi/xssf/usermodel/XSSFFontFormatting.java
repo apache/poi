@@ -80,7 +80,6 @@ public class XSSFFontFormatting implements FontFormatting {
         return (short)idx;
     }
 
-
     /**
      * @param color font color index
      */
@@ -91,14 +90,26 @@ public class XSSFFontFormatting implements FontFormatting {
         }
     }
 
-    /**
-     *
-     * @return xssf color wrapper or null if color info is missing
-     */
-    public XSSFColor getXSSFColor(){
+    public XSSFColor getFontColor() {
         if(_font.sizeOfColorArray() == 0) return null;
 
         return new XSSFColor(_font.getColorArray(0));
+    }
+
+    public void setFontColor(Color color) {
+        XSSFColor xcolor = XSSFColor.toXSSFColor(color);
+        if (xcolor == null) {
+            _font.getColorList().clear();
+        } else {
+            _font.setColorArray(0, xcolor.getCTColor());
+        }
+    }
+
+    /**
+     * @deprecated use {@link #getFontColor()}
+     */
+    public XSSFColor getXSSFColor(){
+        return getFontColor();
     }
 
     /**

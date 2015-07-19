@@ -19,6 +19,7 @@ package org.apache.poi.hssf.eventusermodel;
 
 import java.io.InputStream;
 import java.io.IOException;
+import java.util.Set;
 
 import org.apache.poi.hssf.eventusermodel.HSSFUserException;
 import org.apache.poi.hssf.record.*;
@@ -56,11 +57,24 @@ public class HSSFEventFactory {
     * @param req an Instance of HSSFRequest which has your registered listeners
     * @param dir  a DirectoryNode containing your workbook
     */
-   public void processWorkbookEvents(HSSFRequest req, DirectoryNode dir) throws IOException {
-      InputStream in = dir.createDocumentInputStream("Workbook");
+    public void processWorkbookEvents(HSSFRequest req, DirectoryNode dir) throws IOException {
+        // some old documents have "WORKBOOK" or "BOOK"
+        final String name;
+        Set<String> entryNames = dir.getEntryNames();
+        if (entryNames.contains("Workbook")) {
+            name = "Workbook";
+        } else if (entryNames.contains("WORKBOOK")) {
+            name = "WORKBOOK";
+        } else if (entryNames.contains("BOOK")) {
+            name = "BOOK";
+        } else {
+            name = "Workbook";
+        }
 
-      processEvents(req, in);
-   }
+        InputStream in = dir.createDocumentInputStream(name);
+
+        processEvents(req, in);
+    }
 
    /**
     * Processes a file into essentially record events.

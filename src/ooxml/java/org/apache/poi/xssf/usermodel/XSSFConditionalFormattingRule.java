@@ -19,23 +19,48 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.ConditionalFormattingThreshold.RangeType;
+import org.apache.poi.ss.usermodel.IconMultiStateFormatting.IconSet;
 import org.apache.poi.xssf.usermodel.XSSFFontFormatting;
 import org.apache.poi.xssf.model.StylesTable;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCfRule;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCfType;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STConditionalFormattingOperator;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDxf;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFont;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFill;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorder;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
 
 /**
- * @author Yegor Kozlov
+ * XSSF suport for Conditional Formatting rules
  */
 public class XSSFConditionalFormattingRule implements ConditionalFormattingRule {
     private final CTCfRule _cfRule;
     private XSSFSheet _sh;
+    
+    private static Map<STCfType.Enum, ConditionType> typeLookup = new HashMap<STCfType.Enum, ConditionType>();
+    static {
+        typeLookup.put(STCfType.CELL_IS, ConditionType.CELL_VALUE_IS);
+        typeLookup.put(STCfType.EXPRESSION, ConditionType.FORMULA);
+        typeLookup.put(STCfType.COLOR_SCALE, ConditionType.COLOR_SCALE);
+        typeLookup.put(STCfType.DATA_BAR, ConditionType.DATA_BAR);
+        typeLookup.put(STCfType.ICON_SET, ConditionType.ICON_SET);
+        
+        // These are all subtypes of Filter, we think...
+        typeLookup.put(STCfType.TOP_10, ConditionType.FILTER);
+        typeLookup.put(STCfType.UNIQUE_VALUES, ConditionType.FILTER);
+        typeLookup.put(STCfType.DUPLICATE_VALUES, ConditionType.FILTER);
+        typeLookup.put(STCfType.CONTAINS_TEXT, ConditionType.FILTER);
+        typeLookup.put(STCfType.NOT_CONTAINS_TEXT, ConditionType.FILTER);
+        typeLookup.put(STCfType.BEGINS_WITH, ConditionType.FILTER);
+        typeLookup.put(STCfType.ENDS_WITH, ConditionType.FILTER);
+        typeLookup.put(STCfType.CONTAINS_BLANKS, ConditionType.FILTER);
+        typeLookup.put(STCfType.NOT_CONTAINS_BLANKS, ConditionType.FILTER);
+        typeLookup.put(STCfType.CONTAINS_ERRORS, ConditionType.FILTER);
+        typeLookup.put(STCfType.NOT_CONTAINS_ERRORS, ConditionType.FILTER);
+        typeLookup.put(STCfType.TIME_PERIOD, ConditionType.FILTER);
+        typeLookup.put(STCfType.ABOVE_AVERAGE, ConditionType.FILTER);
+    }
+    
+    // TODO Support types beyond CELL_VALUE_IS and FORMULA
 
     /*package*/ XSSFConditionalFormattingRule(XSSFSheet sh){
         _cfRule = CTCfRule.Factory.newInstance();
@@ -149,22 +174,68 @@ public class XSSFConditionalFormattingRule implements ConditionalFormattingRule 
 
         return new XSSFPatternFormatting(dxf.getFill());
     }
+    
+    public XSSFIconMultiStateFormatting createMultiStateFormatting(IconSet iconSet) {
+        // Is it already there?
+        if (_cfRule.isSetIconSet() && _cfRule.getType() == STCfType.ICON_SET)
+            return getMultiStateFormatting();
+        
+        // Mark it as being an Icon Set
+        _cfRule.setType(STCfType.ICON_SET);
+
+        // Ensure the right element
+        CTIconSet icons = null;
+        if (_cfRule.isSetIconSet()) {
+            icons = _cfRule.getIconSet();
+        } else {
+            icons = _cfRule.addNewIconSet();
+        }
+        // Set the type of the icon set
+        if (iconSet.name != null) {
+            STIconSetType.Enum xIconSet = STIconSetType.Enum.forString(iconSet.name);
+            icons.setIconSet(xIconSet);
+        }
+        
+        // Add a default set of thresholds
+        int jump = 100 / iconSet.num;
+        STCfvoType.Enum type = STCfvoType.Enum.forString(RangeType.PERCENT.name);
+        for (int i=0; i<iconSet.num; i++) {
+            CTCfvo cfvo = icons.addNewCfvo();
+            cfvo.setType(type);
+            cfvo.setVal(Integer.toString(i*jump));
+        }
+        
+        // Wrap and return
+        return new XSSFIconMultiStateFormatting(icons);
+    }
+    public XSSFIconMultiStateFormatting getMultiStateFormatting() {
+        if (_cfRule.isSetIconSet()) {
+            CTIconSet icons = _cfRule.getIconSet();
+            return new XSSFIconMultiStateFormatting(icons);
+        } else {
+            return null;
+        }
+    }
 
     /**
      * Type of conditional formatting rule.
      * <p>
-     * MUST be either {@link ConditionalFormattingRule#CONDITION_TYPE_CELL_VALUE_IS}
-     * or  {@link ConditionalFormattingRule#CONDITION_TYPE_FORMULA}
+     * MUST be one of the IDs of a {@link ConditionType}
      * </p>
      *
      * @return the type of condition
      */
     public byte getConditionType(){
-        switch (_cfRule.getType().intValue()){
-            case STCfType.INT_EXPRESSION: return ConditionalFormattingRule.CONDITION_TYPE_FORMULA;
-            case STCfType.INT_CELL_IS: return ConditionalFormattingRule.CONDITION_TYPE_CELL_VALUE_IS;
-        }
+        ConditionType type = getConditionTypeType();
+        if (type != null) return type.id;
         return 0;
+    }
+    
+    /**
+     * Type of conditional formatting rule.
+     */
+    public ConditionType getConditionTypeType() {
+        return typeLookup.get(_cfRule.getType());
     }
 
     /**

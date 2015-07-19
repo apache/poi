@@ -178,7 +178,7 @@ public final class HSLFTable extends HSLFGroupShape implements TableShape {
             }
         });
         
-        int y0 = -1;
+        int y0 = (shapeList.isEmpty()) ? -1 : shapeList.get(0).getAnchor().y - 1;
         int maxrowlen = 0;
         List<List<HSLFShape>> lst = new ArrayList<List<HSLFShape>>();
         List<HSLFShape> row = null;

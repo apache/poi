@@ -19,17 +19,15 @@
 
 package org.apache.poi.ss.usermodel;
 
+import org.apache.poi.ss.usermodel.IconMultiStateFormatting.IconSet;
 import org.apache.poi.ss.util.CellRangeAddress;
 
 /**
  * The 'Conditional Formatting' facet of <tt>Sheet</tt>
  *
- * @author Dmitriy Kumshayev
- * @author Yegor Kozlov
  * @since 3.8
  */
 public interface SheetConditionalFormatting {
-
     /**
      * Add a new Conditional Formatting to the sheet.
      *
@@ -58,7 +56,7 @@ public interface SheetConditionalFormatting {
      * Add a new Conditional Formatting set to the sheet.
      *
      * @param regions - list of rectangular regions to apply conditional formatting rules
-     * @param cfRules - set of up to three conditional formatting rules
+     * @param cfRules - set of up to conditional formatting rules (max 3 for Excel pre-2007)
      *
      * @return index of the newly created Conditional Formatting object
      */
@@ -86,7 +84,7 @@ public interface SheetConditionalFormatting {
      * <p>
      * The created conditional formatting rule compares a cell value
      * to a formula calculated result, using the specified operator.
-     * The type  of the created condition is {@link ConditionalFormattingRule#CONDITION_TYPE_CELL_VALUE_IS}
+     * The type  of the created condition is {@link ConditionType#CELL_VALUE_IS}
      * </p>
      *
      * @param comparisonOperation - MUST be a constant value from
@@ -115,7 +113,7 @@ public interface SheetConditionalFormatting {
      * Create a conditional formatting rule that compares a cell value
      * to a formula calculated result, using an operator     *
      * <p>
-      * The type  of the created condition is {@link ConditionalFormattingRule#CONDITION_TYPE_CELL_VALUE_IS}
+      * The type  of the created condition is {@link ConditionType#CELL_VALUE_IS}
      * </p>
      *
      * @param comparisonOperation  MUST be a constant value from
@@ -132,12 +130,24 @@ public interface SheetConditionalFormatting {
      *  When the formula result is true, the cell is highlighted.
      *
      * <p>
-     *  The type of the created format condition is  {@link ConditionalFormattingRule#CONDITION_TYPE_FORMULA}
+     *  The type of the created format condition is  {@link ConditionType#FORMULA}
      * </p>
      * @param formula   the formula to evaluate. MUST be a Boolean function.
      */
     ConditionalFormattingRule createConditionalFormattingRule(String formula);
 
+    /**
+     * Create an Icon Set / Multi-State conditional formatting rule.
+     * <p>The thresholds for it will be created, but will be empty
+     *  and require configuring with 
+     *  {@link ConditionalFormattingRule#getMultiStateFormatting()}
+     *  then
+     *  {@link IconMultiStateFormatting#getThresholds()}
+     */
+    ConditionalFormattingRule createConditionalFormattingRule(IconSet iconSet);
+
+    // TODO Support types beyond CELL_VALUE_IS and FORMULA and ICONs
+    
     /**
     * Gets Conditional Formatting object at a particular index
     *

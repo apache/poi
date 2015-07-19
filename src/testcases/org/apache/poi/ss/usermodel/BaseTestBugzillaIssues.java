@@ -18,9 +18,12 @@
 package org.apache.poi.ss.usermodel;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,6 +32,9 @@ import org.apache.poi.hssf.util.PaneInformation;
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.SheetUtil;
+import org.junit.Assume;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -120,7 +126,7 @@ public abstract class BaseTestBugzillaIssues {
      * Merged regions were being removed from the parent in cloned sheets
      */
     @Test
-    public final void bug22720() {
+    public void bug22720() {
        Workbook workBook = _testDataProvider.createWorkbook();
        workBook.createSheet("TEST");
        Sheet template = workBook.getSheetAt(0);
@@ -244,7 +250,7 @@ public abstract class BaseTestBugzillaIssues {
     }
 
     @Test
-    public final void bug18800() {
+    public void bug18800() {
        Workbook book = _testDataProvider.createWorkbook();
        book.createSheet("TEST");
        Sheet sheet = book.cloneSheet(0);
@@ -273,7 +279,7 @@ public abstract class BaseTestBugzillaIssues {
     }
 
     @Test
-    public final void bug43093() {
+    public void bug43093() {
         Workbook xlw = _testDataProvider.createWorkbook();
 
         addNewSheetWithCellsA1toD4(xlw, 1);
@@ -293,7 +299,7 @@ public abstract class BaseTestBugzillaIssues {
     }
 
     @Test
-    public final void bug46729_testMaxFunctionArguments(){
+    public void bug46729_testMaxFunctionArguments(){
         String[] func = {"COUNT", "AVERAGE", "MAX", "MIN", "OR", "SUBTOTAL", "SKEW"};
 
         SpreadsheetVersion ssVersion = _testDataProvider.getSpreadsheetVersion();
@@ -332,7 +338,7 @@ public abstract class BaseTestBugzillaIssues {
     }
 
     @Test
-    public final void bug506819_testAutoSize() {
+    public final void bug50681_testAutoSize() {
         Workbook wb = _testDataProvider.createWorkbook();
         BaseTestSheetAutosizeColumn.fixFonts(wb);
         Sheet sheet = wb.createSheet("Sheet1");
@@ -348,7 +354,26 @@ public abstract class BaseTestBugzillaIssues {
 
         cell0.setCellValue(longValue);
 
+        // autoSize will fail if required fonts are not installed, skip this test then
+        Font font = wb.getFontAt(cell0.getCellStyle().getFontIndex());
+        Assume.assumeTrue("Cannot verify auoSizeColumn() because the necessary Fonts are not installed on this machine: " + font, 
+                SheetUtil.canComputeColumnWidht(font));
+        
+        assertEquals("Expecting no indentation in this test",
+                0, cell0.getCellStyle().getIndention());
+
+        double width = SheetUtil.getColumnWidth(sheet, 0, false);
+        assertTrue("Expected to have column width > 0 BEFORE auto-size, but had " + width, width > 0);
+        width = SheetUtil.getCellWidth(cell0, 8, null, false);
+        assertTrue("Expected to have cell width > 0 BEFORE auto-size, but had " + width, width > 0);
+
         sheet.autoSizeColumn(0);
+        
+        width = SheetUtil.getColumnWidth(sheet, 0, false);
+        assertTrue("Expected to have column width > 0 AFTER auto-size, but had " + width, width > 0);
+        width = SheetUtil.getCellWidth(cell0, 8, null, false);
+        assertTrue("Expected to have cell width > 0 AFTER auto-size, but had " + width, width > 0);
+        
         assertEquals(255*256, sheet.getColumnWidth(0)); // maximum column width is 255 characters
         sheet.setColumnWidth(0, sheet.getColumnWidth(0)); // Bug 506819 reports exception at this point
     }
@@ -416,16 +441,16 @@ public abstract class BaseTestBugzillaIssues {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet = wb.createSheet("My sheet");
 
-        Row row = sheet.createRow( 0 );
-        Cell cell = row.createCell( 0 );
+        Row row = sheet.createRow(0);
+        Cell cell = row.createCell(0);
         cell.setCellFormula(hyperlinkF);
         
         assertEquals(hyperlinkF, cell.getCellFormula());
 
         wb = _testDataProvider.writeOutAndReadBack(wb);
         sheet = wb.getSheet("My Sheet");
-        row = sheet.getRow( 0 );
-        cell = row.getCell( 0 );
+        row = sheet.getRow(0);
+        cell = row.getCell(0);
         
         assertEquals(hyperlinkF, cell.getCellFormula());
     }
@@ -531,7 +556,7 @@ public abstract class BaseTestBugzillaIssues {
         assertAlmostEquals(1950, s.getColumnWidth(10), fontAccuracy);
         assertAlmostEquals(2225, s.getColumnWidth(11), fontAccuracy);
     }
-    
+
     /**
      * =ISNUMBER(SEARCH("AM",A1)) evaluation 
      */
@@ -637,7 +662,7 @@ public abstract class BaseTestBugzillaIssues {
         // Next up, SEARCH on its own
         cf.setCellFormula("SEARCH(\"am\", A1)");
         cf = evaluateCell(wb, cf);
-        assertEquals(ErrorConstants.ERROR_VALUE, cf.getErrorCellValue());
+        assertEquals(FormulaError.VALUE.getCode(), cf.getErrorCellValue());
         
         cf.setCellFormula("SEARCH(\"am\", B1)");
         cf = evaluateCell(wb, cf);
@@ -645,11 +670,11 @@ public abstract class BaseTestBugzillaIssues {
         
         cf.setCellFormula("SEARCH(\"am\", C1)");
         cf = evaluateCell(wb, cf);
-        assertEquals(ErrorConstants.ERROR_VALUE, cf.getErrorCellValue());
+        assertEquals(FormulaError.VALUE.getCode(), cf.getErrorCellValue());
         
         cf.setCellFormula("SEARCH(\"am\", D1)");
         cf = evaluateCell(wb, cf);
-        assertEquals(ErrorConstants.ERROR_VALUE, cf.getErrorCellValue());
+        assertEquals(FormulaError.VALUE.getCode(), cf.getErrorCellValue());
         
         
         // Finally, bring it all together
@@ -688,7 +713,8 @@ public abstract class BaseTestBugzillaIssues {
      * TODO Fix this to evaluate for XSSF
      * TODO Fix this to work at all for HSSF
      */
-//    @Test
+    @Ignore("Fix this to evaluate for XSSF, Fix this to work at all for HSSF")
+    @Test
     public void bug46670() throws Exception {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet s = wb.createSheet();
@@ -727,7 +753,7 @@ public abstract class BaseTestBugzillaIssues {
         assertEquals(refHttp,  c2.getCellFormula());
 
         
-        // Try to evalutate, without giving a way to get at the other file
+        // Try to evaluate, without giving a way to get at the other file
         try {
             evaluateCell(wb, c1);
             fail("Shouldn't be able to evaluate without the other file");
@@ -756,5 +782,288 @@ public abstract class BaseTestBugzillaIssues {
         
         assertEquals(otherCellText, c1.getStringCellValue());
         assertEquals(otherCellText, c2.getStringCellValue());
+    }
+
+    @Test
+    public void test56574OverwriteExistingRow() throws IOException {
+        Workbook wb = _testDataProvider.createWorkbook();
+        Sheet sheet = wb.createSheet();
+        
+        { // create the Formula-Cell
+            Row row = sheet.createRow(0);
+            Cell cell = row.createCell(0);
+            cell.setCellFormula("A2");
+        }
+        
+        { // check that it is there now
+            Row row = sheet.getRow(0);
+            
+           /* CTCell[] cArray = ((XSSFRow)row).getCTRow().getCArray();
+            assertEquals(1, cArray.length);*/
+
+            Cell cell = row.getCell(0);
+            assertEquals(Cell.CELL_TYPE_FORMULA, cell.getCellType());
+        }
+        
+        { // overwrite the row
+            Row row = sheet.createRow(0);
+            assertNotNull(row);
+        }
+        
+        { // creating a row in place of another should remove the existing data,
+            // check that the cell is gone now
+            Row row = sheet.getRow(0);
+            
+            /*CTCell[] cArray = ((XSSFRow)row).getCTRow().getCArray();
+            assertEquals(0, cArray.length);*/
+
+            Cell cell = row.getCell(0);
+            assertNull(cell);
+        }
+        
+        // the calculation chain in XSSF is empty in a newly created workbook, so we cannot check if it is correctly updated
+        /*assertNull(((XSSFWorkbook)wb).getCalculationChain());
+        assertNotNull(((XSSFWorkbook)wb).getCalculationChain().getCTCalcChain());
+        assertNotNull(((XSSFWorkbook)wb).getCalculationChain().getCTCalcChain().getCArray());
+        assertEquals(0, ((XSSFWorkbook)wb).getCalculationChain().getCTCalcChain().getCArray().length);*/
+
+        wb.close();
+    }
+
+    /**
+     * With HSSF, if you create a font, don't change it, and
+     *  create a 2nd, you really do get two fonts that you 
+     *  can alter as and when you want.
+     * With XSSF, that wasn't the case, but this verfies
+     *  that it now is again
+     */
+    @Test
+    public void bug48718() throws Exception {
+        Workbook wb = _testDataProvider.createWorkbook();
+        int startingFonts = wb instanceof HSSFWorkbook ? 4 : 1;
+
+        assertEquals(startingFonts, wb.getNumberOfFonts());
+
+        // Get a font, and slightly change it
+        Font a = wb.createFont();
+        assertEquals(startingFonts+1, wb.getNumberOfFonts());
+        a.setFontHeightInPoints((short)23);
+        assertEquals(startingFonts+1, wb.getNumberOfFonts());
+
+        // Get two more, unchanged
+        /*Font b =*/ wb.createFont();
+        assertEquals(startingFonts+2, wb.getNumberOfFonts());
+        /*Font c =*/ wb.createFont();
+        assertEquals(startingFonts+3, wb.getNumberOfFonts());
+    }
+
+    @Test
+    public void bug57430() throws Exception {
+        Workbook wb = _testDataProvider.createWorkbook();
+        try {
+            wb.createSheet("Sheet1");
+
+            Name name1 = wb.createName();
+            name1.setNameName("FMLA");
+            name1.setRefersToFormula("Sheet1!$B$3");
+        } finally {
+            wb.close();
+        }
+    }
+
+    @Test
+    public void bug56981() throws IOException {
+        Workbook wb = _testDataProvider.createWorkbook();
+        CellStyle vertTop = wb.createCellStyle();
+        vertTop.setVerticalAlignment(CellStyle.VERTICAL_TOP);
+        CellStyle vertBottom = wb.createCellStyle();
+        vertBottom.setVerticalAlignment(CellStyle.VERTICAL_BOTTOM);
+        Sheet sheet = wb.createSheet("Sheet 1");
+        Row row = sheet.createRow(0);
+        Cell top = row.createCell(0);
+        Cell bottom = row.createCell(1);
+        top.setCellValue("Top");
+        top.setCellStyle(vertTop); // comment this out to get all bottom-aligned
+                                   // cells
+        bottom.setCellValue("Bottom");
+        bottom.setCellStyle(vertBottom);
+        row.setHeightInPoints(85.75f); // make it obvious
+
+        /*FileOutputStream out = new FileOutputStream("c:\\temp\\56981.xlsx");
+        try {
+            wb.write(out);
+        } finally {
+            out.close();
+        }*/
+        
+        wb.close();
+    }
+
+    @Test
+    public void test57973() throws IOException {
+        Workbook wb = _testDataProvider.createWorkbook();
+
+        CreationHelper factory = wb.getCreationHelper();
+
+        Sheet sheet = wb.createSheet();
+        Drawing drawing = sheet.createDrawingPatriarch();
+        ClientAnchor anchor = factory.createClientAnchor();
+        
+        Cell cell0 = sheet.createRow(0).createCell(0);
+        cell0.setCellValue("Cell0");
+
+        Comment comment0 = drawing.createCellComment(anchor);
+        RichTextString str0 = factory.createRichTextString("Hello, World1!");
+        comment0.setString(str0);
+        comment0.setAuthor("Apache POI");
+        cell0.setCellComment(comment0);
+        
+        anchor = factory.createClientAnchor();
+        anchor.setCol1(1);
+        anchor.setCol2(1);
+        anchor.setRow1(1);
+        anchor.setRow2(1);
+        Cell cell1 = sheet.createRow(3).createCell(5);
+        cell1.setCellValue("F4");
+        Comment comment1 = drawing.createCellComment(anchor);
+        RichTextString str1 = factory.createRichTextString("Hello, World2!");
+        comment1.setString(str1);
+        comment1.setAuthor("Apache POI");
+        cell1.setCellComment(comment1);
+
+        Cell cell2 = sheet.createRow(2).createCell(2);
+        cell2.setCellValue("C3");
+
+        anchor = factory.createClientAnchor();
+        anchor.setCol1(2);
+        anchor.setCol2(2);
+        anchor.setRow1(2);
+        anchor.setRow2(2);
+
+        Comment comment2 = drawing.createCellComment(anchor);
+        RichTextString str2 = factory.createRichTextString("XSSF can set cell comments");
+        //apply custom font to the text in the comment
+        Font font = wb.createFont();
+        font.setFontName("Arial");
+        font.setFontHeightInPoints((short)14);
+        font.setBoldweight(Font.BOLDWEIGHT_BOLD);
+        font.setColor(IndexedColors.RED.getIndex());
+        str2.applyFont(font);
+
+        comment2.setString(str2);
+        comment2.setAuthor("Apache POI");
+        comment2.setColumn(2);
+        comment2.setRow(2);
+
+        /*OutputStream out = new FileOutputStream("C:\\temp\\57973.xlsx");
+        try {
+            wb.write(out);
+        } finally {
+            out.close();
+        }*/
+        
+        wb.close();
+    }
+
+    /**
+     * Ensures that XSSF and HSSF agree with each other,
+     *  and with the docs on when fetching the wrong
+     *  kind of value from a Formula cell
+     */
+    @Test
+    public void bug47815() {
+        Workbook wb = _testDataProvider.createWorkbook();
+        Sheet s = wb.createSheet();
+        Row r = s.createRow(0);
+
+        // Setup
+        Cell cn = r.createCell(0, Cell.CELL_TYPE_NUMERIC);
+        cn.setCellValue(1.2);
+        Cell cs = r.createCell(1, Cell.CELL_TYPE_STRING);
+        cs.setCellValue("Testing");
+
+        Cell cfn = r.createCell(2, Cell.CELL_TYPE_FORMULA);
+        cfn.setCellFormula("A1");  
+        Cell cfs = r.createCell(3, Cell.CELL_TYPE_FORMULA);
+        cfs.setCellFormula("B1");
+
+        FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();
+        assertEquals(Cell.CELL_TYPE_NUMERIC, fe.evaluate(cfn).getCellType());
+        assertEquals(Cell.CELL_TYPE_STRING, fe.evaluate(cfs).getCellType());
+        fe.evaluateFormulaCell(cfn);
+        fe.evaluateFormulaCell(cfs);
+
+        // Now test
+        assertEquals(Cell.CELL_TYPE_NUMERIC, cn.getCellType());
+        assertEquals(Cell.CELL_TYPE_STRING, cs.getCellType());
+        assertEquals(Cell.CELL_TYPE_FORMULA, cfn.getCellType());
+        assertEquals(Cell.CELL_TYPE_NUMERIC, cfn.getCachedFormulaResultType());
+        assertEquals(Cell.CELL_TYPE_FORMULA, cfs.getCellType());
+        assertEquals(Cell.CELL_TYPE_STRING, cfs.getCachedFormulaResultType());
+
+        // Different ways of retrieving
+        assertEquals(1.2, cn.getNumericCellValue(), 0);
+        try {
+            cn.getRichStringCellValue();
+            fail();
+        } catch(IllegalStateException e) {}
+
+        assertEquals("Testing", cs.getStringCellValue());
+        try {
+            cs.getNumericCellValue();
+            fail();
+        } catch(IllegalStateException e) {}
+
+        assertEquals(1.2, cfn.getNumericCellValue(), 0);
+        try {
+            cfn.getRichStringCellValue();
+            fail();
+        } catch(IllegalStateException e) {}
+
+        assertEquals("Testing", cfs.getStringCellValue());
+        try {
+            cfs.getNumericCellValue();
+            fail();
+        } catch(IllegalStateException e) {}
+    }
+    
+    @Test
+    public void test58113() {
+        Workbook wb = _testDataProvider.createWorkbook();
+        Sheet sheet = wb.createSheet( "Test" );
+
+        Row row = sheet.createRow(0);
+
+        Cell cell = row.createCell(0);
+        // verify that null-values can be set, this was possible up to 3.11, but broken in 3.12 
+        cell.setCellValue((String)null);
+        String value = cell.getStringCellValue();
+        assertTrue("HSSF will currently return empty string, XSSF/SXSSF will return null, but had: " + value,
+                value == null || value.length() == 0);
+        
+        cell = row.createCell(1);
+        // also verify that setting formulas to null works  
+        cell.setCellType(Cell.CELL_TYPE_FORMULA);
+        cell.setCellValue((String)null);
+        
+        wb.getCreationHelper().createFormulaEvaluator().evaluateAll();
+
+        value = cell.getStringCellValue();
+        assertTrue("HSSF will currently return empty string, XSSF/SXSSF will return null, but had: " + value,
+                value == null || value.length() == 0);
+        
+        // set some value
+        cell.setCellType(Cell.CELL_TYPE_STRING);
+        cell.setCellValue("somevalue");
+
+        value = cell.getStringCellValue();
+        assertTrue("can set value afterwards: " + value,
+                value.equals("somevalue"));
+
+        // verify that the null-value is actually set even if there was some value in the cell before  
+        cell.setCellValue((String)null);
+        value = cell.getStringCellValue();
+        assertTrue("HSSF will currently return empty string, XSSF/SXSSF will return null, but had: " + value,
+                value == null || value.length() == 0);
     }
 }

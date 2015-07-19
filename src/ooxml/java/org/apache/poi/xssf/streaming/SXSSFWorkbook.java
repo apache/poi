@@ -32,6 +32,7 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.openxml4j.opc.internal.ZipHelper;
 import org.apache.poi.ss.formula.udf.UDFFinder;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CreationHelper;
@@ -334,7 +335,7 @@ public class SXSSFWorkbook implements Workbook
     }
     private void injectData(File zipfile, OutputStream out) throws IOException 
     {
-        ZipFile zip = new ZipFile(zipfile);
+        ZipFile zip = ZipHelper.openZipFile(zipfile);
         try
         {
             ZipOutputStream zos = new ZipOutputStream(out);
@@ -709,9 +710,16 @@ public class SXSSFWorkbook implements Workbook
     @Override
     public void removeSheetAt(int index)
     {
-        XSSFSheet xSheet=_wb.getSheetAt(index);
+        // Get the sheet to be removed
+        XSSFSheet xSheet = _wb.getSheetAt(index);
+        SXSSFSheet sxSheet = getSXSSFSheet(xSheet);
+        
+        // De-register it
         _wb.removeSheetAt(index);
         deregisterSheetMapping(xSheet);
+        
+        // Clean up temporary resources
+        sxSheet.dispose();
     }
 
     /**
@@ -831,7 +839,7 @@ public class SXSSFWorkbook implements Workbook
 
     /**
      * Closes the underlying {@link XSSFWorkbook} and {@link OPCPackage} 
-     *  on which this Workbook is based, if any. Has no effect on Worbooks
+     *  on which this Workbook is based, if any. Has no effect on Workbooks
      *  created from scratch.
      */
     @Override

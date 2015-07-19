@@ -256,8 +256,10 @@ public class NPOIFSStream implements Iterable<ByteBuffer>
             NPOIFSStream toFree = new NPOIFSStream(blockStore, nextBlock);
             toFree.free(loopDetector);
             
-            // Mark the end of the stream
-            blockStore.setNextBlock(prevBlock, POIFSConstants.END_OF_CHAIN);
+            // Mark the end of the stream, if we have any data
+            if (prevBlock != POIFSConstants.END_OF_CHAIN) {
+                blockStore.setNextBlock(prevBlock, POIFSConstants.END_OF_CHAIN);
+            }
         }
    }
 }

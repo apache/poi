@@ -22,10 +22,11 @@ import org.apache.poi.wp.usermodel.Paragraph;
 /**
  * Simple interface describing both {@link XWPFParagraph}
  * and {@link XWPFSDT}
- * 
+ * <p/>
  * TODO Should this be based on / extend {@link Paragraph}?
  */
 public interface IRunBody {
-   public XWPFDocument getDocument();
-   public POIXMLDocumentPart getPart();
+    public XWPFDocument getDocument();
+
+    public POIXMLDocumentPart getPart();
 }

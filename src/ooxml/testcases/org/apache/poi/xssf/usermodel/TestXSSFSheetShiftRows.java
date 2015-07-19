@@ -25,7 +25,6 @@ import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
@@ -44,11 +43,6 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
         // TODO - support shifting of page breaks
     }
 
-    @Override
-	public void testShiftWithComments() { // disabled test from superclass
-        // TODO - support shifting of comments.
-    }
-
 	public void testBug54524() throws IOException {
         XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("54524.xlsx");
         XSSFSheet sheet = workbook.getSheetAt(0);
@@ -61,7 +55,6 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
 		cell = CellUtil.getCell(sheet.getRow(3), 0);
 		assertEquals("X", cell.getStringCellValue());
 	}
-	
 
 	public void testBug53798() throws IOException {
 		// NOTE that for HSSF (.xls) negative shifts combined with positive ones do work as expected  
@@ -187,19 +180,6 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
         assertNotNull(comment);
         assertEquals("Amdocs", comment.getAuthor());
         assertEquals("Amdocs:\ntest\n", comment.getString().getString());
-	}
-
-	public void testBug55280() throws IOException {
-        Workbook w = new XSSFWorkbook();
-        try {
-            Sheet s = w.createSheet();
-            for (int row = 0; row < 5000; ++row)
-                s.addMergedRegion(new CellRangeAddress(row, row, 0, 3));
-
-            s.shiftRows(0, 4999, 1);        // takes a long time...
-        } finally {
-            w.close();
-        }
 	}
 
     public void test57171() throws Exception {
@@ -351,5 +331,39 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
         {
             wb.removeSheetAt(sn);
         }
+    }
+
+    public void testBug57828_OnlyOneCommentShiftedInRow() throws IOException {
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("57828.xlsx");
+        XSSFSheet sheet = wb.getSheetAt(0);
+
+        Comment comment1 = sheet.getCellComment(2, 1);
+        assertNotNull(comment1);
+
+        Comment comment2 = sheet.getCellComment(2, 2);
+        assertNotNull(comment2);
+
+        Comment comment3 = sheet.getCellComment(1, 1);
+        assertNull("NO comment in (1,1) and it should be null", comment3);
+
+        sheet.shiftRows(2, 2, -1);
+
+        comment3 = sheet.getCellComment(1, 1);
+        assertNotNull("Comment in (2,1) moved to (1,1) so its not null now.", comment3);
+
+        comment1 = sheet.getCellComment(2, 1);
+        assertNull("No comment currently in (2,1) and hence it is null", comment1);
+
+        comment2 = sheet.getCellComment(1, 2);
+        assertNotNull("Comment in (2,2) should have moved as well because of shift rows. But its not", comment2);
+        
+//        OutputStream stream = new FileOutputStream("/tmp/57828.xlsx");
+//        try {
+//        	wb.write(stream);
+//        } finally {
+//        	stream.close();
+//        }
+        
+        wb.close();
     }
 }

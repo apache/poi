@@ -77,7 +77,7 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
 	 * @param fileName The name of the file to extract from
 	 */
 	public PowerPointExtractor(String fileName) throws IOException {
-		this(new FileInputStream(fileName));
+		this(new NPOIFSFileSystem(new File(fileName)));
 	}
 
 	/**

@@ -114,16 +114,17 @@ public class AligningCells {
 
         // Make the selection
         CTRowImpl ctRow = (CTRowImpl) row.getCTRow();
-        List spanList = new ArrayList();
 
         // Add object with format start_coll:end_coll. For example 1:3 will span from
         // cell 1 to cell 3, where the column index starts with 0
         //
         // You can add multiple spans for one row
         Object span = start_column + ":" + end_column;
+
+        List<Object> spanList = new ArrayList<Object>();
         spanList.add(span);
 
         //add spns to the row
         ctRow.setSpans(spanList);
     }
-} 
+}

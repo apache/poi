@@ -413,10 +413,6 @@ public final class TestRichTextRun {
         fs.close();		
 		byte[] raw_ss = baos.toByteArray();
 		
-		FileOutputStream fos = new FileOutputStream("PowerPoint Document.new.stream");
-		fos.write(raw_ss);
-		fos.close();
-
 		// different paragraph mask, because of sanitizing
 		raw_ss[169030] = 0x0a;
 		

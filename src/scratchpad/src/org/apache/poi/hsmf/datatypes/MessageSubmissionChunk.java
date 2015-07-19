@@ -69,15 +69,28 @@ public class MessageSubmissionChunk extends Chunk {
       for(String part : parts) {
          if(part.startsWith("l=")) {
             // Format of this bit appears to be l=<id>-<time>-<number>
-            if(part.indexOf('-') != -1 && 
-                  part.indexOf('-') != part.lastIndexOf('-')) {
-               String dateS = part.substring(part.indexOf('-')+1, part.lastIndexOf('-'));
-               
+            // ID may contain hyphens.
+
+            String dateS = null;
+            final int numberPartBegin = part.lastIndexOf('-');
+            if (numberPartBegin != -1) {
+                final int datePartBegin = part.lastIndexOf('-', numberPartBegin-1);
+                if (datePartBegin != -1 && 
+                        // cannot extract date if only one hyphen is in the string...
+                        numberPartBegin > datePartBegin) {
+                    dateS = part.substring(datePartBegin + 1, numberPartBegin);
+                }
+            }
+            if (dateS != null) {
                // Should be yymmddhhmmssZ
                Matcher m = datePatern.matcher(dateS);
                if(m.matches()) {
                   date = Calendar.getInstance();
-                  date.set(Calendar.YEAR,  Integer.parseInt(m.group(1)) + 2000);
+
+                  // work around issues with dates like 1989, which appear as "89" here
+                  int year = Integer.parseInt(m.group(1));
+                  date.set(Calendar.YEAR,  year + (year > 80 ? 1900 : 2000));
+
                   date.set(Calendar.MONTH, Integer.parseInt(m.group(2)) - 1); // Java is 0 based
                   date.set(Calendar.DATE,  Integer.parseInt(m.group(3)));
                   date.set(Calendar.HOUR_OF_DAY, Integer.parseInt(m.group(4)));

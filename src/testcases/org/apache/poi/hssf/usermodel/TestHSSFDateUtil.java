@@ -17,9 +17,7 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -349,6 +347,7 @@ public final class TestHSSFDateUtil {
         HSSFWorkbook workbook = HSSFTestDataSamples.openSampleWorkbook("DateFormats.xls");
         HSSFSheet sheet       = workbook.getSheetAt(0);
         InternalWorkbook wb           = workbook.getWorkbook();
+        assertNotNull(wb);
 
         HSSFRow  row;
         HSSFCell cell;
@@ -479,6 +478,25 @@ public final class TestHSSFDateUtil {
         // 1 Jan 1901 is 366 days after 31 Dec 1899
         calendar = new GregorianCalendar(1901, 0, 1);
         assertEquals("Checking absolute day (1 Jan 1901)", 366, HSSFDateUtil.absoluteDay(calendar, false));
+    }
+
+    @Test
+    public void absoluteDayYearTooLow() {
+        GregorianCalendar calendar = new GregorianCalendar(1899, 0, 1);
+        try {
+        	HSSFDateUtil.absoluteDay(calendar, false);
+        	fail("Should fail here");
+        } catch (IllegalArgumentException e) {
+        	// expected here
+        }
+
+        try {
+            calendar = new GregorianCalendar(1903, 0, 1);
+            HSSFDateUtil.absoluteDay(calendar, true);
+        	fail("Should fail here");
+        } catch (IllegalArgumentException e) {
+        	// expected here
+        }
     }
 
     @Test

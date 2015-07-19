@@ -617,16 +617,16 @@ public final class FormulaParser {
 		return new ParseNode(ptg);
 	}
 
-	private static AreaReference createAreaRef(SimpleRangePart part1, SimpleRangePart part2) {
+	private AreaReference createAreaRef(SimpleRangePart part1, SimpleRangePart part2) {
 		if (!part1.isCompatibleForArea(part2)) {
 			throw new FormulaParseException("has incompatible parts: '"
 					+ part1.getRep() + "' and '" + part2.getRep() + "'.");
 		}
 		if (part1.isRow()) {
-			return AreaReference.getWholeRow(part1.getRep(), part2.getRep());
+			return AreaReference.getWholeRow(_ssVersion, part1.getRep(), part2.getRep());
 		}
 		if (part1.isColumn()) {
-			return AreaReference.getWholeColumn(part1.getRep(), part2.getRep());
+			return AreaReference.getWholeColumn(_ssVersion, part1.getRep(), part2.getRep());
 		}
 		return new AreaReference(part1.getCellReference(), part2.getCellReference());
 	}

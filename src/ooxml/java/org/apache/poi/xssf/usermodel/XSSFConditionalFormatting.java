@@ -98,4 +98,8 @@ public class XSSFConditionalFormatting implements ConditionalFormatting {
      public int getNumberOfRules(){
          return _cf.sizeOfCfRuleArray();
      }
+     
+     public String toString() {
+         return _cf.toString();
+     }
 }

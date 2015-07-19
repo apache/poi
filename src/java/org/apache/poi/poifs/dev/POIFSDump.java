@@ -16,27 +16,54 @@
 ==================================================================== */
 package org.apache.poi.poifs.dev;
 
-import org.apache.poi.poifs.filesystem.*;
-
-import java.io.FileInputStream;
 import java.io.File;
-import java.io.IOException;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.lang.reflect.Field;
+import java.nio.ByteBuffer;
 import java.util.Iterator;
 
+import org.apache.poi.poifs.common.POIFSConstants;
+import org.apache.poi.poifs.filesystem.DirectoryEntry;
+import org.apache.poi.poifs.filesystem.DocumentInputStream;
+import org.apache.poi.poifs.filesystem.DocumentNode;
+import org.apache.poi.poifs.filesystem.Entry;
+import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.poifs.filesystem.NPOIFSStream;
+import org.apache.poi.poifs.property.NPropertyTable;
+import org.apache.poi.poifs.storage.HeaderBlock;
+
 /**
- *
  * Dump internal structure of a OLE2 file into file system
- *
- * @author Yegor Kozlov
  */
 public class POIFSDump {
-
     public static void main(String[] args) throws Exception {
+        if (args.length == 0) {
+            System.err.println("Must specify at least one file to dump");
+            System.exit(1);
+        }
+        
+        boolean dumpProps = false, dumpMini = false;
         for (int i = 0; i < args.length; i++) {
+            if (args[i].equalsIgnoreCase("-dumprops") ||
+                args[i].equalsIgnoreCase("-dump-props") ||
+                args[i].equalsIgnoreCase("-dump-properties")) {
+                dumpProps = true;
+                continue;
+            }
+            if (args[i].equalsIgnoreCase("-dumpmini") ||
+                args[i].equalsIgnoreCase("-dump-mini") ||
+                args[i].equalsIgnoreCase("-dump-ministream") ||
+                args[i].equalsIgnoreCase("-dump-mini-stream")) {
+                dumpMini = true;
+                continue;
+            }
+            
             System.out.println("Dumping " + args[i]);
             FileInputStream is = new FileInputStream(args[i]);
-            POIFSFileSystem fs = new POIFSFileSystem(is);
+            NPOIFSFileSystem fs = new NPOIFSFileSystem(is);
             is.close();
 
             DirectoryEntry root = fs.getRoot();
@@ -44,13 +71,39 @@ public class POIFSDump {
             file.mkdir();
 
             dump(root, file);
+            
+            if (dumpProps) {
+                HeaderBlock header = getHeaderBlock(fs);
+                dump(fs, header.getPropertyStart(), "properties", file);
+            }
+            if (dumpMini) {
+                NPropertyTable props = getPropertyTable(fs);
+                int startBlock = props.getRoot().getStartBlock(); 
+                if (startBlock == POIFSConstants.END_OF_CHAIN) {
+                    System.err.println("No Mini Stream in file");
+                } else {
+                    dump(fs, startBlock, "mini-stream", file);
+                }
+            }
         }
    }
-
+    
+    protected static HeaderBlock getHeaderBlock(NPOIFSFileSystem fs) throws Exception {
+        Field headerF = NPOIFSFileSystem.class.getDeclaredField("_header");
+        headerF.setAccessible(true);
+        HeaderBlock header = (HeaderBlock)headerF.get(fs);
+        return header;
+    }
+    protected static NPropertyTable getPropertyTable(NPOIFSFileSystem fs) throws Exception {
+        Field ptF = NPOIFSFileSystem.class.getDeclaredField("_property_table");
+        ptF.setAccessible(true);
+        NPropertyTable table = (NPropertyTable)ptF.get(fs);
+        return table;
+    }
 
     public static void dump(DirectoryEntry root, File parent) throws IOException {
-        for(Iterator it = root.getEntries(); it.hasNext();){
-            Entry entry = (Entry)it.next();
+        for(Iterator<Entry> it = root.getEntries(); it.hasNext();){
+            Entry entry = it.next();
             if(entry instanceof DocumentNode){
                 DocumentNode node = (DocumentNode)entry;
                 DocumentInputStream is = new DocumentInputStream(node);
@@ -58,9 +111,12 @@ public class POIFSDump {
                 is.read(bytes);
                 is.close();
 
-                FileOutputStream out = new FileOutputStream(new File(parent, node.getName().trim()));
-                out.write(bytes);
-                out.close();
+                OutputStream out = new FileOutputStream(new File(parent, node.getName().trim()));
+                try {
+                	out.write(bytes);
+                } finally {
+                	out.close();
+                }
             } else if (entry instanceof DirectoryEntry){
                 DirectoryEntry dir = (DirectoryEntry)entry;
                 File file = new File(parent, entry.getName());
@@ -70,5 +126,18 @@ public class POIFSDump {
                 System.err.println("Skipping unsupported POIFS entry: " + entry);
             }
         }
+    }
+    public static void dump(NPOIFSFileSystem fs, int startBlock, String name, File parent) throws IOException {
+        File file = new File(parent, name);
+        FileOutputStream out = new FileOutputStream(file);
+        NPOIFSStream stream = new NPOIFSStream(fs, startBlock);
+        
+        byte[] b = new byte[fs.getBigBlockSize()];
+        for (ByteBuffer bb : stream) {
+            int len = bb.remaining();
+            bb.get(b);
+            out.write(b, 0, len);
+        }
+        out.close();
     }
 }

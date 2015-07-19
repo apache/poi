@@ -20,7 +20,6 @@ import org.apache.poi.hpsf.DocumentSummaryInformation;
 import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hpsf.extractor.HPSFPropertiesExtractor;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
  * Common Parent for OLE2 based Text Extractors
@@ -34,15 +33,27 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  * @see org.apache.poi.hwpf.extractor.WordExtractor
  */
 public abstract class POIOLE2TextExtractor extends POITextExtractor {
+	/** The POIDocument that's open */
+	protected POIDocument document;
+
 	/**
 	 * Creates a new text extractor for the given document
 	 * 
 	 * @param document The POIDocument to use in this extractor.
 	 */
 	public POIOLE2TextExtractor(POIDocument document) {
-		super(document);
+		this.document = document;
 	}
 
+	/**
+	 * Creates a new text extractor, using the same
+	 *  document as another text extractor. Normally
+	 *  only used by properties extractors.
+	 */
+	protected POIOLE2TextExtractor(POIOLE2TextExtractor otherExtractor) {
+		this.document = otherExtractor.document;
+	}
+	
 	/**
 	 * Returns the document information metadata for the document
 	 * 
@@ -80,18 +91,5 @@ public abstract class POIOLE2TextExtractor extends POITextExtractor {
     public DirectoryEntry getRoot()
     {
         return document.directory;
-    }
-
-    /**
-     * Return the underlying POIFS FileSystem of this document.
-     * 
-     * @return the POIFSFileSystem that is associated with the POIDocument of this extractor. 
-     *
-     * @deprecated Use {@link #getRoot()} instead
-     */
-    @Deprecated
-    public POIFSFileSystem getFileSystem()
-    {
-        return document.directory.getFileSystem();
     }
 }

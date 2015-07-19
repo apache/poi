@@ -32,15 +32,18 @@ public abstract  class Bitmap extends HSLFPictureData {
 
     public byte[] getData(){
         byte[] rawdata = getRawData();
-        byte[] imgdata = new byte[rawdata.length-17];
-        System.arraycopy(rawdata, 17, imgdata, 0, imgdata.length);
+        int prefixLen = 16*uidInstanceCount+1;
+        byte[] imgdata = new byte[rawdata.length-prefixLen];
+        System.arraycopy(rawdata, prefixLen, imgdata, 0, imgdata.length);
         return imgdata;
     }
 
     public void setData(byte[] data) throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        byte[] checksum = getChecksum(data);
-        out.write(checksum);
+        for (int i=0; i<uidInstanceCount; i++) {
+            byte[] checksum = getChecksum(data);
+            out.write(checksum);
+        }
         out.write(0);
         out.write(data);
 

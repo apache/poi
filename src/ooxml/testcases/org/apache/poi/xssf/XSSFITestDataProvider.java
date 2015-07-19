@@ -41,7 +41,7 @@ public final class XSSFITestDataProvider implements ITestDataProvider {
 
     public XSSFWorkbook writeOutAndReadBack(Workbook original) {
         if(!(original instanceof XSSFWorkbook)) {
-            throw new IllegalArgumentException("Expected an instance of XSSFWorkbook");
+            throw new IllegalArgumentException("Expected an instance of XSSFWorkbook, but had " + original.getClass());
         }
         return XSSFTestDataSamples.writeOutAndReadBack((XSSFWorkbook)original);
     }

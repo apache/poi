@@ -34,6 +34,7 @@ import org.apache.poi.sl.draw.Drawable;
 import org.apache.poi.sl.usermodel.Slide;
 import org.apache.poi.sl.usermodel.SlideShow;
 import org.apache.poi.util.JvmBugs;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -138,7 +139,7 @@ public final class TestPicture {
     }
 
     @Test
-    // @Ignore("Just for visual validation - antialiasing is different on various systems")
+    @Ignore("Just for visual validation - antialiasing is different on various systems")
     public void bug54541() throws Exception {
         String files[] = {
 //            "sample_pptx_grouping_issues.pptx",

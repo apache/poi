@@ -242,12 +242,24 @@ public class NPOIFSMiniStore extends BlockStore
     }
     
     /**
-     * Writes the SBATs to their backing blocks
+     * Writes the SBATs to their backing blocks, and updates
+     *  the mini-stream size in the properties. Stream size is
+     *  based on full blocks used, not the data within the streams
      */
     protected void syncWithDataSource() throws IOException {
-       for(BATBlock sbat : _sbat_blocks) {
+       int blocksUsed = 0;
+       for (BATBlock sbat : _sbat_blocks) {
           ByteBuffer block = _filesystem.getBlockAt(sbat.getOurBlockIndex());
           BlockAllocationTableWriter.writeBlock(sbat, block);
+          
+          if (!sbat.hasFreeSectors()) {
+              blocksUsed += _filesystem.getBigBlockSizeDetails().getBATEntriesPerBlock();
+          } else {
+              blocksUsed += sbat.getUsedSectors(false);
+          }
        }
+       // Set the size on the root in terms of the number of SBAT blocks
+       // RootProperty.setSize does the sbat -> bytes conversion for us
+       _filesystem._get_property_table().getRoot().setSize(blocksUsed);
     }
 }

@@ -24,7 +24,7 @@ import java.util.Map;
  * relation to the default appearance of the run's text. This allows the text to
  * be repositioned as subscript or superscript without altering the font size of
  * the run properties.
- * 
+ *
  * @author Gisella Bronzetti
  */
 public enum VerticalAlign {
@@ -47,28 +47,29 @@ public enum VerticalAlign {
      */
     SUBSCRIPT(3);
 
+    private static Map<Integer, VerticalAlign> imap = new HashMap<Integer, VerticalAlign>();
+
+    static {
+        for (VerticalAlign p : values()) {
+            imap.put(new Integer(p.getValue()), p);
+        }
+    }
+
     private final int value;
 
     private VerticalAlign(int val) {
-       value = val;
-    }
-
-    public int getValue() {
-       return value;
-    }
-
-    private static Map<Integer, VerticalAlign> imap = new HashMap<Integer, VerticalAlign>();
-    static {
-       for (VerticalAlign p : values()) {
-          imap.put(new Integer(p.getValue()), p);
-       }
+        value = val;
     }
 
     public static VerticalAlign valueOf(int type) {
-       VerticalAlign align = imap.get(new Integer(type));
-       if (align == null)
-          throw new IllegalArgumentException("Unknown vertical alignment: "
-                + type);
-       return align;
+        VerticalAlign align = imap.get(new Integer(type));
+        if (align == null)
+            throw new IllegalArgumentException("Unknown vertical alignment: "
+                    + type);
+        return align;
+    }
+
+    public int getValue() {
+        return value;
     }
 }

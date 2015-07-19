@@ -53,16 +53,16 @@ public class XWPFFooter extends XWPFHeaderFooter {
         while (cursor.toNextSelection()) {
             XmlObject o = cursor.getObject();
             if (o instanceof CTP) {
-                XWPFParagraph p = new XWPFParagraph((CTP)o, this);
+                XWPFParagraph p = new XWPFParagraph((CTP) o, this);
                 paragraphs.add(p);
                 bodyElements.add(p);
             }
             if (o instanceof CTTbl) {
-                XWPFTable t = new XWPFTable((CTTbl)o, this);
+                XWPFTable t = new XWPFTable((CTTbl) o, this);
                 tables.add(t);
                 bodyElements.add(t);
             }
-            
+
         }
         cursor.dispose();
     }
@@ -78,7 +78,7 @@ public class XWPFFooter extends XWPFHeaderFooter {
     protected void commit() throws IOException {
         XmlOptions xmlOptions = new XmlOptions(DEFAULT_XML_OPTIONS);
         xmlOptions.setSaveSyntheticDocumentElement(new QName(CTNumbering.type.getName().getNamespaceURI(), "ftr"));
-        Map<String,String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<String, String>();
         map.put("http://schemas.openxmlformats.org/markup-compatibility/2006", "ve");
         map.put("urn:schemas-microsoft-com:office:office", "o");
         map.put("http://schemas.openxmlformats.org/officeDocument/2006/relationships", "r");
@@ -95,8 +95,8 @@ public class XWPFFooter extends XWPFHeaderFooter {
         out.close();
     }
 
-    @Override  
-    protected void onDocumentRead() throws IOException{
+    @Override
+    protected void onDocumentRead() throws IOException {
         super.onDocumentRead();
         FtrDocument ftrDocument = null;
         InputStream is;
@@ -111,19 +111,19 @@ public class XWPFFooter extends XWPFHeaderFooter {
             while (cursor.toNextSelection()) {
                 XmlObject o = cursor.getObject();
                 if (o instanceof CTP) {
-                    XWPFParagraph p = new XWPFParagraph((CTP)o, this);
+                    XWPFParagraph p = new XWPFParagraph((CTP) o, this);
                     paragraphs.add(p);
                     bodyElements.add(p);
                 }
                 if (o instanceof CTTbl) {
-                    XWPFTable t = new XWPFTable((CTTbl)o, this);
+                    XWPFTable t = new XWPFTable((CTTbl) o, this);
                     tables.add(t);
                     bodyElements.add(t);
                 }
-                if (o instanceof CTSdtBlock){
-                   XWPFSDT c = new XWPFSDT((CTSdtBlock)o, this);
-                   bodyElements.add(c);
-               }
+                if (o instanceof CTSdtBlock) {
+                    XWPFSDT c = new XWPFSDT((CTSdtBlock) o, this);
+                    bodyElements.add(c);
+                }
             }
             cursor.dispose();
         } catch (Exception e) {
@@ -133,6 +133,7 @@ public class XWPFFooter extends XWPFHeaderFooter {
 
     /**
      * get the PartType of the body
+     *
      * @see org.apache.poi.xwpf.usermodel.IBody#getPartType()
      */
     public BodyType getPartType() {

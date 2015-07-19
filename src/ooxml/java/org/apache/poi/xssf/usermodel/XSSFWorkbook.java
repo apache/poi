@@ -215,7 +215,15 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * Create a new SpreadsheetML workbook.
      */
     public XSSFWorkbook() {
-        super(newPackage());
+        this(XSSFWorkbookType.XLSX);
+    }
+
+    /**
+     * Create a new SpreadsheetML workbook.
+     * @param workbookType The type of workbook to make (.xlsx or .xlsm).
+     */
+    public XSSFWorkbook(XSSFWorkbookType workbookType) {
+        super(newPackage(workbookType));
         onWorkbookCreate();
     }
 
@@ -429,7 +437,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
     /**
      * Create a new SpreadsheetML package and setup the default minimal content
      */
-    protected static OPCPackage newPackage() {
+    protected static OPCPackage newPackage(XSSFWorkbookType workbookType) {
         try {
             OPCPackage pkg = OPCPackage.create(new ByteArrayOutputStream());
             // Main part
@@ -437,7 +445,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
             // Create main part relationship
             pkg.addRelationship(corePartName, TargetMode.INTERNAL, PackageRelationshipTypes.CORE_DOCUMENT);
             // Create main document part
-            pkg.createPart(corePartName, XSSFRelation.WORKBOOK.getContentType());
+            pkg.createPart(corePartName, workbookType.getContentType());
 
             pkg.getPackageProperties().setCreatorProperty(DOCUMENT_CREATOR);
 
@@ -576,13 +584,17 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
             // copy drawing contents
             clonedDg.getCTDrawing().set(dg.getCTDrawing());
 
+            clonedDg = clonedSheet.createDrawingPatriarch();
+            
             // Clone drawing relations
             List<POIXMLDocumentPart> srcRels = srcSheet.createDrawingPatriarch().getRelations();
             for (POIXMLDocumentPart rel : srcRels) {
                 PackageRelationship relation = rel.getPackageRelationship();
-                clonedSheet
-                        .createDrawingPatriarch()
-                        .getPackagePart()
+
+                clonedDg.addRelation(relation.getId(), rel);
+                
+                clonedDg
+						.getPackagePart()
                         .addRelationship(relation.getTargetURI(), relation.getTargetMode(),
                                 relation.getRelationshipType(), relation.getId());
             }
@@ -751,8 +763,26 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         CTSheet sheet = addSheet(sheetname);
 
         int sheetNumber = 1;
-        for(XSSFSheet sh : sheets) {
-            sheetNumber = (int)Math.max(sh.sheet.getSheetId() + 1, sheetNumber);
+        outerloop:
+        while(true) {
+            for(XSSFSheet sh : sheets) {
+                sheetNumber = (int)Math.max(sh.sheet.getSheetId() + 1, sheetNumber);
+            }
+            
+            // Bug 57165: We also need to check that the resulting file name is not already taken
+            // this can happen when moving/cloning sheets
+            String sheetName = XSSFRelation.WORKSHEET.getFileName(sheetNumber);
+            for(POIXMLDocumentPart relation : getRelations()) {
+                if(relation.getPackagePart() != null && 
+                        sheetName.equals(relation.getPackagePart().getPartName().getName())) {
+                    // name is taken => try next one
+                    sheetNumber++;
+                    continue outerloop;
+                }
+            }
+
+            // no duplicate found => use this one
+            break;
         }
 
         XSSFSheet wrapper = (XSSFSheet)createRelationship(XSSFRelation.WORKSHEET, XSSFFactory.getInstance(), sheetNumber);
@@ -821,6 +851,15 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      */
     @Override
     public XSSFCellStyle getCellStyleAt(short idx) {
+        return getCellStyleAt(idx&0xffff);
+    }
+    /**
+     * Get the cell style object at the given index
+     *
+     * @param idx  index within the set of styles
+     * @return XSSFCellStyle object at the index
+     */
+    public XSSFCellStyle getCellStyleAt(int idx) {
         return stylesSource.getStyleAt(idx);
     }
 
@@ -1518,16 +1557,6 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
     }
     
     /**
-     * Closes the underlying {@link OPCPackage} from which
-     *  the Workbook was read, if any. Has no effect on newly 
-     *  created Workbooks.
-     */
-    @Override
-    public void close() throws IOException {
-        super.close();
-    }
-
-    /**
      * Returns SharedStringsTable - tha cache of string for this workbook
      *
      * @return the shared string table
@@ -2022,5 +2051,68 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
     @Beta
     protected void setPivotTables(List<XSSFPivotTable> pivotTables) {
         this.pivotTables = pivotTables;
+    }
+
+    public XSSFWorkbookType getWorkbookType() {
+        return isMacroEnabled() ? XSSFWorkbookType.XLSM : XSSFWorkbookType.XLSX;
+    }
+
+    /**
+     * Sets whether the workbook will be an .xlsx or .xlsm (macro-enabled) file.
+     */
+    public void setWorkbookType(XSSFWorkbookType type) {
+        try {
+            getPackagePart().setContentType(type.getContentType());
+        } catch (InvalidFormatException e) {
+            throw new POIXMLException(e);
+        }
+    }
+
+    /**
+     * Adds a vbaProject.bin file to the workbook.  This will change the workbook
+     * type if necessary.
+     *
+     * @throws IOException
+     */
+    public void setVBAProject(InputStream vbaProjectStream) throws IOException {
+        if (!isMacroEnabled()) {
+            setWorkbookType(XSSFWorkbookType.XLSM);
+        }
+
+        PackagePartName ppName;
+        try {
+            ppName = PackagingURIHelper.createPartName(XSSFRelation.VBA_MACROS.getDefaultFileName());
+        } catch (InvalidFormatException e) {
+            throw new POIXMLException(e);
+        }
+        OPCPackage opc = getPackage();
+        OutputStream outputStream;
+        if (!opc.containPart(ppName)) {
+            POIXMLDocumentPart relationship = createRelationship(XSSFRelation.VBA_MACROS, XSSFFactory.getInstance());
+            outputStream = relationship.getPackagePart().getOutputStream();
+        } else {
+            PackagePart part = opc.getPart(ppName);
+            outputStream = part.getOutputStream();
+        }
+        try {
+            IOUtils.copy(vbaProjectStream, outputStream);
+        } finally {
+            IOUtils.closeQuietly(outputStream);
+        }
+    }
+
+    /**
+     * Adds a vbaProject.bin file taken from another, given workbook to this one.
+     * @throws IOException
+     * @throws InvalidFormatException
+     */
+    public void setVBAProject(XSSFWorkbook macroWorkbook) throws IOException, InvalidFormatException {
+        if (!macroWorkbook.isMacroEnabled()) {
+            return;
+        }
+        InputStream vbaProjectStream = XSSFRelation.VBA_MACROS.getContents(macroWorkbook.getCorePart());
+        if (vbaProjectStream != null) {
+            setVBAProject(vbaProjectStream);
+        }
     }
 }

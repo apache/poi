@@ -21,6 +21,7 @@ package org.apache.poi.ss.formula.functions;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
+
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.formula.OperationEvaluationContext;
@@ -263,5 +264,85 @@ public final class TestSumifs extends TestCase {
         fe.evaluate(ex5cell);
         assertEquals(625000., ex5cell.getNumericCellValue());
 
+    }
+    
+    public void testBug56655() {
+        ValueEval[] a2a9 = new ValueEval[] {
+                new NumberEval(5),
+                new NumberEval(4),
+                new NumberEval(15),
+                new NumberEval(3),
+                new NumberEval(22),
+                new NumberEval(12),
+                new NumberEval(10),
+                new NumberEval(33)
+        };
+
+        ValueEval[] args = new ValueEval[]{
+                EvalFactory.createAreaEval("A2:A9", a2a9),
+                ErrorEval.VALUE_INVALID,
+                new StringEval("A*"),
+        };
+        
+        ValueEval result = invokeSumifs(args, EC);
+        assertTrue("Expect to have an error when an input is an invalid value, but had: " + result.getClass(), result instanceof ErrorEval);
+
+        args = new ValueEval[]{
+                EvalFactory.createAreaEval("A2:A9", a2a9),
+                EvalFactory.createAreaEval("A2:A9", a2a9),
+                ErrorEval.VALUE_INVALID,
+        };
+        
+        result = invokeSumifs(args, EC);
+        assertTrue("Expect to have an error when an input is an invalid value, but had: " + result.getClass(), result instanceof ErrorEval);
+    }
+
+    public void testBug56655b() {
+/*
+        setCellFormula(sheet, 0, 0, "B1*C1");
+        sheet.getRow(0).createCell(1).setCellValue("A");
+        setCellFormula(sheet, 1, 0, "B1*C1");
+        sheet.getRow(1).createCell(1).setCellValue("A");
+        setCellFormula(sheet, 0, 3, "SUMIFS(A:A,A:A,A2)");
+ */
+    	ValueEval[] a0a1 = new ValueEval[] {
+                NumberEval.ZERO,
+                NumberEval.ZERO
+        };
+
+        ValueEval[] args = new ValueEval[]{
+                EvalFactory.createAreaEval("A0:A1", a0a1),
+                EvalFactory.createAreaEval("A0:A1", a0a1),
+                ErrorEval.VALUE_INVALID
+        };
+        
+        ValueEval result = invokeSumifs(args, EC);
+        assertTrue("Expect to have an error when an input is an invalid value, but had: " + result.getClass(), result instanceof ErrorEval);
+        assertEquals(ErrorEval.VALUE_INVALID, result);
+    }
+
+
+    public void testBug56655c() {
+/*
+        setCellFormula(sheet, 0, 0, "B1*C1");
+        sheet.getRow(0).createCell(1).setCellValue("A");
+        setCellFormula(sheet, 1, 0, "B1*C1");
+        sheet.getRow(1).createCell(1).setCellValue("A");
+        setCellFormula(sheet, 0, 3, "SUMIFS(A:A,A:A,A2)");
+ */
+        ValueEval[] a0a1 = new ValueEval[] {
+                NumberEval.ZERO,
+                NumberEval.ZERO
+        };
+
+        ValueEval[] args = new ValueEval[]{
+                EvalFactory.createAreaEval("A0:A1", a0a1),
+                EvalFactory.createAreaEval("A0:A1", a0a1),
+                ErrorEval.NAME_INVALID
+        };
+        
+        ValueEval result = invokeSumifs(args, EC);
+        assertTrue("Expect to have an error when an input is an invalid value, but had: " + result.getClass(), result instanceof ErrorEval);
+        assertEquals(ErrorEval.NAME_INVALID, result);
     }
 }

@@ -36,6 +36,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.poi.EmptyFileException;
 import org.apache.poi.poifs.common.POIFSBigBlockSize;
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.poifs.dev.POIFSViewable;
@@ -114,17 +115,18 @@ public class NPOIFSFileSystem extends BlockStore
     {
        this(true);
        
-        // Mark us as having a single empty BAT at offset 0
+        // Reserve block 0 for the start of the Properties Table
+        // Create a single empty BAT, at pop that at offset 1
         _header.setBATCount(1);
-        _header.setBATArray(new int[] { 0 });
+        _header.setBATArray(new int[] { 1 });
         BATBlock bb = BATBlock.createEmptyBATBlock(bigBlockSize, false);
-        bb.setOurBlockIndex(0);
+        bb.setOurBlockIndex(1);
         _bat_blocks.add(bb);
 
-        setNextBlock(0, POIFSConstants.FAT_SECTOR_BLOCK);
-        setNextBlock(1, POIFSConstants.END_OF_CHAIN);
+        setNextBlock(0, POIFSConstants.END_OF_CHAIN);
+        setNextBlock(1, POIFSConstants.FAT_SECTOR_BLOCK);
 
-        _property_table.setStartBlock(POIFSConstants.END_OF_CHAIN);
+        _property_table.setStartBlock(0);
     }
 
     /**
@@ -210,6 +212,9 @@ public class NPOIFSFileSystem extends BlockStore
        try {
           // Initialize the datasource
           if (srcFile != null) {
+              if (srcFile.length() == 0)
+                  throw new EmptyFileException();
+              
               FileBackedDataSource d = new FileBackedDataSource(srcFile, readOnly);
               channel = d.getChannel();
               _data = d;
@@ -236,7 +241,10 @@ public class NPOIFSFileSystem extends BlockStore
           // TODO Decide if we can handle these better whilst
           //  still sticking to the iterator contract
           if(closeChannelOnError) {
-             channel.close();
+              if (channel != null) {
+                  channel.close();
+                  channel = null;
+              }
           }
           throw e;
        }
@@ -370,6 +378,15 @@ public class NPOIFSFileSystem extends BlockStore
     }
     
     /**
+     * Checks if the supplied first 8 bytes of a stream / file
+     *  has a POIFS (OLE2) header.
+     */
+    public static boolean hasPOIFSHeader(byte[] header8Bytes) {
+        LongField signature = new LongField(HeaderBlockConstants._signature_offset, header8Bytes);
+        return (signature.get() == HeaderBlockConstants._signature);
+    }
+    
+    /**
      * Read and process the PropertiesTable and the
      *  FAT / XFAT blocks, so that we're ready to
      *  work with the file
@@ -420,7 +437,7 @@ public class NPOIFSFileSystem extends BlockStore
        List<BATBlock> sbats = new ArrayList<BATBlock>();
        _mini_store     = new NPOIFSMiniStore(this, _property_table.getRoot(), sbats, _header);
        nextAt = _header.getSBATStart();
-       for(int i=0; i<_header.getSBATCount(); i++) {
+       for(int i=0; i<_header.getSBATCount() && nextAt != POIFSConstants.END_OF_CHAIN; i++) {
           loopDetector.claim(nextAt);
           ByteBuffer fatData = getBlockAt(nextAt);
           sfat = BATBlock.createBATBlock(bigBlockSize, fatData);
@@ -749,6 +766,10 @@ public class NPOIFSFileSystem extends BlockStore
      *  to their backing blocks 
      */
     private void syncWithDataSource() throws IOException {
+        // Mini Stream + SBATs first, as mini-stream details have
+        //  to be stored in the Root Property
+        _mini_store.syncWithDataSource();
+        
         // Properties
         NPOIFSStream propStream = new NPOIFSStream(this, _header.getPropertyStart());
         _property_table.preWrite();
@@ -769,9 +790,6 @@ public class NPOIFSFileSystem extends BlockStore
            ByteBuffer block = getBlockAt(bat.getOurBlockIndex());
            BlockAllocationTableWriter.writeBlock(bat, block);
         }
-       
-       // SBATs
-       _mini_store.syncWithDataSource();
     }
     
     /**

@@ -25,6 +25,7 @@ import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ss.usermodel.BaseTestFormulaEvaluator;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellValue;
+import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -186,28 +187,32 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
         
         // Link and re-try
         Workbook alt = new XSSFWorkbook();
-        alt.createSheet().createRow(0).createCell(0).setCellValue("In another workbook");
-        // TODO Implement the rest of this, see bug #57184
-/*
-        wb.linkExternalWorkbook("alt.xlsx", alt);
-                
-        cXSLX_nw_cell.setCellFormula("[alt.xlsx]Sheet1!$A$1");
-        // Check it - TODO Is this correct? Or should it become [3]Sheet1!$A$1 ?
-        assertEquals("[alt.xlsx]Sheet1!$A$1", cXSLX_nw_cell.getCellFormula());
-        
-        // Evaluate it, without a link to that workbook
         try {
+            alt.createSheet().createRow(0).createCell(0).setCellValue("In another workbook");
+            // TODO Implement the rest of this, see bug #57184
+/*
+            wb.linkExternalWorkbook("alt.xlsx", alt);
+                    
+            cXSLX_nw_cell.setCellFormula("[alt.xlsx]Sheet1!$A$1");
+            // Check it - TODO Is this correct? Or should it become [3]Sheet1!$A$1 ?
+            assertEquals("[alt.xlsx]Sheet1!$A$1", cXSLX_nw_cell.getCellFormula());
+            
+            // Evaluate it, without a link to that workbook
+            try {
+                evaluator.evaluate(cXSLX_nw_cell);
+                fail("No cached value and no link to workbook, shouldn't evaluate");
+            } catch(Exception e) {}
+            
+            // Add a link, check it does
+            evaluators.put("alt.xlsx", alt.getCreationHelper().createFormulaEvaluator());
+            evaluator.setupReferencedWorkbooks(evaluators);
+            
             evaluator.evaluate(cXSLX_nw_cell);
-            fail("No cached value and no link to workbook, shouldn't evaluate");
-        } catch(Exception e) {}
-        
-        // Add a link, check it does
-        evaluators.put("alt.xlsx", alt.getCreationHelper().createFormulaEvaluator());
-        evaluator.setupReferencedWorkbooks(evaluators);
-        
-        evaluator.evaluate(cXSLX_nw_cell);
-        assertEquals("In another workbook", cXSLX_nw_cell.getStringCellValue());
+            assertEquals("In another workbook", cXSLX_nw_cell.getStringCellValue());
 */
+        } finally {
+        	alt.close();
+        }
     }
     
     /**
@@ -519,7 +524,6 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
         }
     }
     
-
     public void testBug55843f() throws IOException {
         XSSFWorkbook wb = new XSSFWorkbook();
         try {
@@ -539,4 +543,68 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
             wb.close();
         }
     }    
+
+    public void testBug56655() throws IOException {
+        Workbook wb =  new XSSFWorkbook();
+        Sheet sheet = wb.createSheet();
+        
+        setCellFormula(sheet, 0, 0, "#VALUE!");
+        setCellFormula(sheet, 0, 1, "SUMIFS(A:A,A:A,#VALUE!)");
+
+        wb.getCreationHelper().createFormulaEvaluator().evaluateAll();
+
+        assertEquals(XSSFCell.CELL_TYPE_ERROR, getCell(sheet, 0,0).getCachedFormulaResultType());
+        assertEquals(FormulaError.VALUE.getCode(), getCell(sheet, 0,0).getErrorCellValue());
+        assertEquals(XSSFCell.CELL_TYPE_ERROR, getCell(sheet, 0,1).getCachedFormulaResultType());
+        assertEquals(FormulaError.VALUE.getCode(), getCell(sheet, 0,1).getErrorCellValue());
+        
+        wb.close();
+    }
+
+    public void testBug56655a() throws IOException {
+        Workbook wb =  new XSSFWorkbook();
+        Sheet sheet = wb.createSheet();
+        
+        setCellFormula(sheet, 0, 0, "B1*C1");
+        sheet.getRow(0).createCell(1).setCellValue("A");
+        setCellFormula(sheet, 1, 0, "B1*C1");
+        sheet.getRow(1).createCell(1).setCellValue("A");
+        setCellFormula(sheet, 0, 3, "SUMIFS(A:A,A:A,A2)");
+
+        wb.getCreationHelper().createFormulaEvaluator().evaluateAll();
+
+        assertEquals(XSSFCell.CELL_TYPE_ERROR, getCell(sheet, 0, 0).getCachedFormulaResultType());
+        assertEquals(FormulaError.VALUE.getCode(), getCell(sheet, 0, 0).getErrorCellValue());
+        assertEquals(XSSFCell.CELL_TYPE_ERROR, getCell(sheet, 1, 0).getCachedFormulaResultType());
+        assertEquals(FormulaError.VALUE.getCode(), getCell(sheet, 1, 0).getErrorCellValue());
+        assertEquals(XSSFCell.CELL_TYPE_ERROR, getCell(sheet, 0, 3).getCachedFormulaResultType());
+        assertEquals(FormulaError.VALUE.getCode(), getCell(sheet, 0, 3).getErrorCellValue());
+        
+        wb.close();
+    }
+
+    /**
+    * @param row 0-based
+    * @param column 0-based
+    */
+   private void setCellFormula(Sheet sheet, int row, int column, String formula) {
+       Row r = sheet.getRow(row);
+       if (r == null) {
+           r = sheet.createRow(row);
+       }
+       Cell cell = r.getCell(column);
+       if (cell == null) {
+           cell = r.createCell(column);
+       }
+       cell.setCellType(XSSFCell.CELL_TYPE_FORMULA);
+       cell.setCellFormula(formula);
+   }
+
+   /**
+    * @param rowNo 0-based
+    * @param column 0-based
+    */
+   private Cell getCell(Sheet sheet, int rowNo, int column) {
+       return sheet.getRow(rowNo).getCell(column);
+   }
 }

@@ -24,6 +24,7 @@ import org.apache.poi.ss.formula.FormulaRenderer;
 import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.ptg.Pxg;
+import org.apache.poi.ss.formula.ptg.Pxg3D;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -125,8 +126,16 @@ public final class XSSFFormulaUtils {
         if (ptg instanceof Pxg) {
             Pxg pxg = (Pxg)ptg;
             if (pxg.getExternalWorkbookNumber() < 1) {
-                if (pxg.getSheetName().equals(oldName)) {
+                if (pxg.getSheetName() != null &&
+                        pxg.getSheetName().equals(oldName)) {
                     pxg.setSheetName(newName);
+                }
+                if (pxg instanceof Pxg3D) {
+                    Pxg3D pxg3D = (Pxg3D)pxg;
+                    if (pxg3D.getLastSheetName() != null &&
+                            pxg3D.getLastSheetName().equals(oldName)) {
+                        pxg3D.setLastSheetName(newName);
+                    }
                 }
             }
         }

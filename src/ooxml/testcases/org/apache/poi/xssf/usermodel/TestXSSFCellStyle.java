@@ -17,20 +17,26 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import java.io.IOException;
+
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellFill;
+import org.junit.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
 
 public class TestXSSFCellStyle extends TestCase {
@@ -82,6 +88,9 @@ public class TestXSSFCellStyle extends TestCase {
 		stylesTable.putCellStyleXf(cellStyleXf);
 		stylesTable.putCellXf(cellXf);
 		cellStyle = new XSSFCellStyle(1, 1, stylesTable, null);
+
+		assertNotNull(stylesTable.getFillAt(1).getCTFill().getPatternFill());
+		assertEquals(STPatternType.INT_DARK_GRAY, stylesTable.getFillAt(1).getCTFill().getPatternFill().getPatternType().intValue());
 	}
 
 	public void testGetSetBorderBottom() {
@@ -551,7 +560,7 @@ public class TestXSSFCellStyle extends TestCase {
         assertEquals(IndexedColors.AUTOMATIC.getIndex(), cellStyle.getFillBackgroundColor());
 	}
 
-	public void testDefaultStyles() {
+	public void testDefaultStyles() throws IOException {
 
 		XSSFWorkbook wb1 = new XSSFWorkbook();
 
@@ -577,6 +586,7 @@ public class TestXSSFCellStyle extends TestCase {
         assertEquals(style2.getBorderLeft(), style1.getBorderLeft());
         assertEquals(style2.getBorderRight(), style1.getBorderRight());
         assertEquals(style2.getBorderTop(), style1.getBorderTop());
+        wb2.close();
 	}
 
 
@@ -618,7 +628,7 @@ public class TestXSSFCellStyle extends TestCase {
 
 	public void testGetFillPattern() {
 
-        assertEquals(CellStyle.NO_FILL, cellStyle.getFillPattern());
+        assertEquals(STPatternType.INT_DARK_GRAY-1, cellStyle.getFillPattern());
 
         int num = stylesTable.getFills().size();
         cellStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
@@ -884,5 +894,51 @@ public class TestXSSFCellStyle extends TestCase {
 
         assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(wb));
         assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(wbOrig));
+    }
+    
+    @Test
+    public void testSetColor() throws IOException {
+        Workbook wb = new XSSFWorkbook();
+        Sheet sheet = wb.createSheet();
+        Row row = sheet.createRow(0);
+        
+        //CreationHelper ch = wb.getCreationHelper();
+        DataFormat format = wb.createDataFormat();
+        Cell cell = row.createCell(1);
+        cell.setCellValue("somevalue");
+        CellStyle cellStyle = wb.createCellStyle();
+
+
+        cellStyle.setDataFormat(format.getFormat("###0"));
+
+        cellStyle.setFillBackgroundColor(IndexedColors.DARK_BLUE.getIndex());
+        cellStyle.setFillForegroundColor(IndexedColors.DARK_BLUE.getIndex());
+        cellStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
+
+        cellStyle.setAlignment(CellStyle.ALIGN_RIGHT);
+        cellStyle.setVerticalAlignment(CellStyle.VERTICAL_TOP);
+
+        cell.setCellStyle(cellStyle);
+
+        /*OutputStream stream = new FileOutputStream("C:\\temp\\CellColor.xlsx");
+        try {
+            wb.write(stream);
+        } finally {
+            stream.close();
+        }*/
+        
+        Workbook wbBack = XSSFTestDataSamples.writeOutAndReadBack(wb);
+        Cell cellBack = wbBack.getSheetAt(0).getRow(0).getCell(1);
+        assertNotNull(cellBack);
+        CellStyle styleBack = cellBack.getCellStyle();
+        assertEquals(IndexedColors.DARK_BLUE.getIndex(), styleBack.getFillBackgroundColor());
+        assertEquals(IndexedColors.DARK_BLUE.getIndex(), styleBack.getFillForegroundColor());
+        assertEquals(CellStyle.ALIGN_RIGHT, styleBack.getAlignment());
+        assertEquals(CellStyle.VERTICAL_TOP, styleBack.getVerticalAlignment());
+        assertEquals(CellStyle.SOLID_FOREGROUND, styleBack.getFillPattern());
+        
+        wbBack.close();
+        
+        wb.close();
     }
 }

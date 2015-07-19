@@ -18,10 +18,12 @@ package org.apache.poi.stress;
 
 import static org.junit.Assert.assertNotNull;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
 import org.apache.poi.hpbf.HPBFDocument;
+import org.apache.poi.hpbf.extractor.PublisherTextExtractor;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.junit.Test;
 
@@ -39,11 +41,28 @@ public class HPBFFileHandler extends POIFSFileHandler {
 	// a test-case to test this locally without executing the full TestAllFiles
 	@Test
 	public void test() throws Exception {
-		InputStream stream = new FileInputStream("test-data/publisher/SampleBrochure.pub");
+		File file = new File("test-data/publisher/SampleBrochure.pub");
+
+		InputStream stream = new FileInputStream(file);
 		try {
 			handleFile(stream);
 		} finally {
 			stream.close();
 		}
+		
+		handleExtracting(file);
+		
+		stream = new FileInputStream(file);
+		try {
+			PublisherTextExtractor extractor = new PublisherTextExtractor(stream);
+			try {
+				assertNotNull(extractor.getText());
+			} finally {
+				extractor.close();
+			}
+		} finally {
+			stream.close();
+		}
 	}
+	
 }

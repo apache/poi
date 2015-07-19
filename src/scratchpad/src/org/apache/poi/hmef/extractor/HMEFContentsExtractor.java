@@ -22,6 +22,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
 import org.apache.poi.hmef.Attachment;
 import org.apache.poi.hmef.HMEFMessage;
@@ -70,13 +71,14 @@ public final class HMEFContentsExtractor {
     * Extracts the RTF message body to the supplied file
     */
    public void extractMessageBody(File dest) throws IOException {
-      FileOutputStream fout = new FileOutputStream(dest);
-      
-      MAPIRtfAttribute body = (MAPIRtfAttribute)
-         message.getMessageMAPIAttribute(MAPIProperty.RTF_COMPRESSED);
-      fout.write(body.getData());
-      
-      fout.close();
+      OutputStream fout = new FileOutputStream(dest);
+      try {
+          MAPIRtfAttribute body = (MAPIRtfAttribute)
+             message.getMessageMAPIAttribute(MAPIProperty.RTF_COMPRESSED);
+          fout.write(body.getData());
+      } finally {
+    	  fout.close();
+      }
    }
    
    /**
@@ -101,9 +103,12 @@ public final class HMEFContentsExtractor {
          
          // Save it
          File file = new File(dir, filename);
-         FileOutputStream fout = new FileOutputStream(file);
-         fout.write( att.getContents() );
-         fout.close();
+         OutputStream fout = new FileOutputStream(file);
+         try {
+        	 fout.write( att.getContents() );
+         } finally {
+        	 fout.close();
+         }
       }
    }
 }

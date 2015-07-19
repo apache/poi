@@ -63,14 +63,16 @@ public interface PatternFormatting {
     public final static short     LEAST_DOTS          = 18 ;
 
     short getFillBackgroundColor();
-
     short getFillForegroundColor();
+    Color getFillBackgroundColorColor();
+    Color getFillForegroundColorColor();
 
     short getFillPattern();
 
     void setFillBackgroundColor(short bg);
-
     void setFillForegroundColor(short fg);
+    void setFillBackgroundColor(Color bg);
+    void setFillForegroundColor(Color fg);
 
     void setFillPattern(short fp);
 }

@@ -17,14 +17,27 @@
 
 package org.apache.poi.hslf.model;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.List;
 
+import org.apache.poi.POIDataSamples;
 import org.apache.poi.hslf.record.TextHeaderAtom;
-import org.apache.poi.hslf.usermodel.*;
+import org.apache.poi.hslf.usermodel.HSLFShape;
+import org.apache.poi.hslf.usermodel.HSLFSlide;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
+import org.apache.poi.hslf.usermodel.HSLFTable;
+import org.apache.poi.hslf.usermodel.HSLFTableCell;
+import org.apache.poi.sl.usermodel.Shape;
+import org.apache.poi.sl.usermodel.Slide;
+import org.apache.poi.sl.usermodel.SlideShow;
+import org.apache.poi.sl.usermodel.TableShape;
 import org.junit.Test;
 
 /**
@@ -33,6 +46,7 @@ import org.junit.Test;
  * @author Yegor Kozlov
  */
 public final class TestTable {
+    private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
 
     /**
      * Test that ShapeFactory works properly and returns <code>Table</code>
@@ -104,5 +118,32 @@ public final class TestTable {
         } catch (IllegalArgumentException e){
 
         }
+    }
+    
+    /**
+     * Bug 57820: initTable throws NullPointerException
+     * when the table is positioned with its top at -1
+     */
+    @Test
+    public void test57820() throws Exception {
+        SlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("bug57820-initTableNullRefrenceException.ppt"));
+
+        List<? extends Slide<?,?,?>> slides = ppt.getSlides();
+        assertEquals(1, slides.size());
+
+        List<? extends Shape> shapes = slides.get(0).getShapes(); //throws NullPointerException
+
+        TableShape tbl = null;
+        for(Shape s : shapes) {
+            if(s instanceof TableShape) {
+                tbl = (TableShape)s;
+                break;
+            }
+        }
+
+        assertNotNull(tbl);
+
+        // handling changed in common sl, so it evaluates to 0 now
+        assertEquals(0, tbl.getAnchor().getY(), 0);
     }
 }

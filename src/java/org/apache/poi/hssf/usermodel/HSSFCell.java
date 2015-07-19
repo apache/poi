@@ -538,18 +538,17 @@ public class HSSFCell implements Cell {
 
     public void setCellValue(RichTextString value)
     {
-        HSSFRichTextString hvalue = (HSSFRichTextString) value;
         int row=_record.getRow();
         short col=_record.getColumn();
         short styleIndex=_record.getXFIndex();
-        if (hvalue == null)
+        if (value == null)
         {
             notifyFormulaChanging();
             setCellType(CELL_TYPE_BLANK, false, row, col, styleIndex);
             return;
         }
 
-        if(hvalue.length() > SpreadsheetVersion.EXCEL97.getMaxTextLength()){
+        if(value.length() > SpreadsheetVersion.EXCEL97.getMaxTextLength()){
             throw new IllegalArgumentException("The maximum length of cell contents (text) is 32,767 characters");
         }
 
@@ -557,7 +556,7 @@ public class HSSFCell implements Cell {
             // Set the 'pre-evaluated result' for the formula
             // note - formulas do not preserve text formatting.
             FormulaRecordAggregate fr = (FormulaRecordAggregate) _record;
-            fr.setCachedStringResult(hvalue.getString());
+            fr.setCachedStringResult(value.getString());
             // Update our local cache to the un-formatted version
             _stringValue = new HSSFRichTextString(value.getString());
 
@@ -573,6 +572,7 @@ public class HSSFCell implements Cell {
         }
         int index = 0;
 
+        HSSFRichTextString hvalue = (HSSFRichTextString) value;
         UnicodeString str = hvalue.getUnicodeString();
         index = _book.getWorkbook().addSSTString(str);
         (( LabelSSTRecord ) _record).setSSTIndex(index);

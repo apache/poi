@@ -25,11 +25,8 @@ import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * Border Formatting Block of the Conditional Formatting Rule Record.
- *
- * @author Dmitriy Kumshayev
  */
 public final class BorderFormatting {
-
     /** No border */
     public final static short    BORDER_NONE                = 0x0;
     /** Thin border */
@@ -89,6 +86,9 @@ public final class BorderFormatting {
         field_14_border_styles2    = in.readInt();
     }
 
+    public int getDataLength() {
+        return 8;
+    }
 
     /**
      * set the type of border to use for the left border of the cell

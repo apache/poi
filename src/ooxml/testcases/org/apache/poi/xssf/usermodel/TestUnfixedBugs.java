@@ -17,9 +17,11 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import static org.junit.Assert.assertEquals;
-
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.util.Calendar;
 import java.util.Date;
@@ -29,17 +31,21 @@ import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.DateUtil;
-import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.CellUtil;
+import org.apache.poi.ss.util.RegionUtil;
 import org.apache.poi.xssf.SXSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.junit.Test;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRow;
 
 /**
  * @author centic
@@ -184,38 +190,6 @@ public final class TestUnfixedBugs extends TestCase {
         }
     }
 
-    
-    @Test
-    public void test57165() throws IOException {
-        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("57171_57163_57165.xlsx");
-        try {
-            removeAllSheetsBut(3, wb);
-            wb.cloneSheet(0); // Throws exception here
-            wb.setSheetName(1, "New Sheet");
-            //saveWorkbook(wb, fileName);
-            
-            XSSFWorkbook wbBack = XSSFTestDataSamples.writeOutAndReadBack(wb);
-            try {
-                
-            } finally {
-                wbBack.close();
-            }
-        } finally {
-            wb.close();
-        }
-    }
-
-    private static void removeAllSheetsBut(int sheetIndex, Workbook wb)
-    {
-        int sheetNb = wb.getNumberOfSheets();
-        // Move this sheet at the first position
-        wb.setSheetOrder(wb.getSheetName(sheetIndex), 0);
-        for (int sn = sheetNb - 1; sn > 0; sn--)
-        {
-            wb.removeSheetAt(sn);
-        }
-    }
-
     // When this is fixed, the test case should go to BaseTestXCell with 
     // adjustments to use _testDataProvider to also verify this for XSSF
     public void testBug57294() throws IOException {
@@ -244,65 +218,159 @@ public final class TestUnfixedBugs extends TestCase {
         assertEquals(4, strBack.getIndexOfFormattingRun(2));
     }
 
-    @Test
-    public void testBug56655() {
-        XSSFWorkbook wb =  new XSSFWorkbook();
-        Sheet sheet = wb.createSheet();
-        
-        setCellFormula(sheet, 0, 0, "#VALUE!");
-        setCellFormula(sheet, 0, 1, "SUMIFS(A:A,A:A,#VALUE!)");
+   @Test
+   public void testBug55752() throws IOException {
+       Workbook wb = new XSSFWorkbook();
+       try {
+           Sheet sheet = wb.createSheet("test");
+    
+           for (int i = 0; i < 4; i++) {
+               Row row = sheet.createRow(i);
+               for (int j = 0; j < 2; j++) {
+                   Cell cell = row.createCell(j);
+                   cell.setCellStyle(wb.createCellStyle());
+               }
+           }
+    
+           // set content
+           Row row1 = sheet.getRow(0);
+           row1.getCell(0).setCellValue("AAA");
+           Row row2 = sheet.getRow(1);
+           row2.getCell(0).setCellValue("BBB");
+           Row row3 = sheet.getRow(2);
+           row3.getCell(0).setCellValue("CCC");
+           Row row4 = sheet.getRow(3);
+           row4.getCell(0).setCellValue("DDD");
+    
+           // merge cells
+           CellRangeAddress range1 = new CellRangeAddress(0, 0, 0, 1);
+           sheet.addMergedRegion(range1);
+           CellRangeAddress range2 = new CellRangeAddress(1, 1, 0, 1);
+           sheet.addMergedRegion(range2);
+           CellRangeAddress range3 = new CellRangeAddress(2, 2, 0, 1);
+           sheet.addMergedRegion(range3);
+           assertEquals(0, range3.getFirstColumn());
+           assertEquals(1, range3.getLastColumn());
+           assertEquals(2, range3.getLastRow());
+           CellRangeAddress range4 = new CellRangeAddress(3, 3, 0, 1);
+           sheet.addMergedRegion(range4);
+           
+           // set border
+           RegionUtil.setBorderBottom(CellStyle.BORDER_THIN, range1, sheet, wb);
+           
+           row2.getCell(0).getCellStyle().setBorderBottom(CellStyle.BORDER_THIN);
+           row2.getCell(1).getCellStyle().setBorderBottom(CellStyle.BORDER_THIN);
 
-        XSSFFormulaEvaluator.evaluateAllFormulaCells(wb);
+           Cell cell0 = CellUtil.getCell(row3, 0);
+           CellUtil.setCellStyleProperty(cell0, wb, CellUtil.BORDER_BOTTOM, CellStyle.BORDER_THIN);
+           Cell cell1 = CellUtil.getCell(row3, 1);
+           CellUtil.setCellStyleProperty(cell1, wb, CellUtil.BORDER_BOTTOM, CellStyle.BORDER_THIN);
 
-        assertEquals(XSSFCell.CELL_TYPE_ERROR, getCell(sheet, 0,0).getCachedFormulaResultType());
-        assertEquals(FormulaError.VALUE.getCode(), getCell(sheet, 0,0).getErrorCellValue());
-        assertEquals(XSSFCell.CELL_TYPE_ERROR, getCell(sheet, 0,1).getCachedFormulaResultType());
-        assertEquals(FormulaError.VALUE.getCode(), getCell(sheet, 0,1).getErrorCellValue());
-    }
-
-    @Test
-    public void testBug56655a() {
-        XSSFWorkbook wb =  new XSSFWorkbook();
-        Sheet sheet = wb.createSheet();
-        
-        setCellFormula(sheet, 0, 0, "B1*C1");
-        sheet.getRow(0).createCell(1).setCellValue("A");
-        setCellFormula(sheet, 1, 0, "B1*C1");
-        sheet.getRow(1).createCell(1).setCellValue("A");
-        setCellFormula(sheet, 0, 3, "SUMIFS(A:A,A:A,A2)");
-
-        XSSFFormulaEvaluator.evaluateAllFormulaCells(wb);
-
-        assertEquals(XSSFCell.CELL_TYPE_ERROR, getCell(sheet, 0, 0).getCachedFormulaResultType());
-        assertEquals(FormulaError.VALUE.getCode(), getCell(sheet, 0, 0).getErrorCellValue());
-        assertEquals(XSSFCell.CELL_TYPE_ERROR, getCell(sheet, 1, 0).getCachedFormulaResultType());
-        assertEquals(FormulaError.VALUE.getCode(), getCell(sheet, 1, 0).getErrorCellValue());
-        assertEquals(XSSFCell.CELL_TYPE_ERROR, getCell(sheet, 0, 3).getCachedFormulaResultType());
-        assertEquals(FormulaError.VALUE.getCode(), getCell(sheet, 0, 3).getErrorCellValue());
-    }
-
-    /**
-    * @param row 0-based
-    * @param column 0-based
-    */
-   void setCellFormula(Sheet sheet, int row, int column, String formula) {
-       Row r = sheet.getRow(row);
-       if (r == null) {
-           r = sheet.createRow(row);
+           RegionUtil.setBorderBottom(CellStyle.BORDER_THIN, range4, sheet, wb);
+    
+           // write to file
+           OutputStream stream = new FileOutputStream(new File("C:/temp/55752.xlsx"));
+           try {
+               wb.write(stream);
+           } finally {
+               stream.close();
+           }
+       } finally {
+           wb.close();
        }
-       Cell cell = r.getCell(column);
-       if (cell == null) {
-           cell = r.createCell(column);
-       }
-       cell.setCellType(XSSFCell.CELL_TYPE_FORMULA);
-       cell.setCellFormula(formula);
    }
 
-   /**
-    * @param rowNo 0-based
-    * @param column 0-based
-    */
-   Cell getCell(Sheet sheet, int rowNo, int column) {
-       return sheet.getRow(rowNo).getCell(column);
+   @Test
+   public void test57423() throws IOException {        
+       Workbook wb = XSSFTestDataSamples.openSampleWorkbook("57423.xlsx");
+       
+       Sheet testSheet = wb.getSheetAt(0);
+
+       // row shift (negative or positive) causes corrupted output xlsx file when the shift value is bigger 
+       // than the number of rows being shifted 
+       // Excel 2010 on opening the output file says:
+       // "Excel found unreadable content" and offers recovering the file by removing the unreadable content
+       // This can be observed in cases like the following:
+       // negative shift of 1 row by less than -1
+       // negative shift of 2 rows by less than -2
+       // positive shift of 1 row by 2 or more 
+       // positive shift of 2 rows by 3 or more
+       
+       //testSheet.shiftRows(4, 5, -3);
+       testSheet.shiftRows(10, 10, 2);
+       
+       checkRows57423(testSheet);
+       
+       Workbook wbBack = XSSFTestDataSamples.writeOutAndReadBack(wb);
+
+       /*FileOutputStream stream = new FileOutputStream("C:\\temp\\57423.xlsx");
+       try {
+           wb.write(stream);
+       } finally {
+           stream.close();
+       }*/
+
+       wb.close();
+       
+       checkRows57423(wbBack.getSheetAt(0));
+       
+       wbBack.close();
+   }
+
+   private void checkRows57423(Sheet testSheet) throws IOException {
+       checkRow57423(testSheet, 0, "0");
+       checkRow57423(testSheet, 1, "1");
+       checkRow57423(testSheet, 2, "2");
+       checkRow57423(testSheet, 3, "3");
+       checkRow57423(testSheet, 4, "4");
+       checkRow57423(testSheet, 5, "5");
+       checkRow57423(testSheet, 6, "6");
+       checkRow57423(testSheet, 7, "7");
+       checkRow57423(testSheet, 8, "8");
+       checkRow57423(testSheet, 9, "9");
+       
+       assertNull("Row number 10 should be gone after the shift", 
+               testSheet.getRow(10));
+       
+       checkRow57423(testSheet, 11, "11");
+       checkRow57423(testSheet, 12, "10");
+       checkRow57423(testSheet, 13, "13");
+       checkRow57423(testSheet, 14, "14");
+       checkRow57423(testSheet, 15, "15");
+       checkRow57423(testSheet, 16, "16");
+       checkRow57423(testSheet, 17, "17");
+       checkRow57423(testSheet, 18, "18");
+       
+       ByteArrayOutputStream stream = new ByteArrayOutputStream();
+       try {
+           ((XSSFSheet)testSheet).write(stream);
+       } finally {
+           stream.close();
+       }
+       
+       // verify that the resulting XML has the rows in correct order as required by Excel
+       String xml = new String(stream.toByteArray());
+       int posR12 = xml.indexOf("<row r=\"12\"");
+       int posR13 = xml.indexOf("<row r=\"13\"");
+       
+       // both need to be found
+       assertTrue(posR12 != -1);
+       assertTrue(posR13 != -1);
+       
+       assertTrue("Need to find row 12 before row 13 after the shifting, but had row 12 at " + posR12 + " and row 13 at " + posR13, 
+               posR12 < posR13);
+   }
+
+   private void checkRow57423(Sheet testSheet, int rowNum, String contents) {
+       Row row = testSheet.getRow(rowNum);
+       assertNotNull("Expecting row at rownum " + rowNum, row);
+       
+       CTRow ctRow = ((XSSFRow)row).getCTRow();
+       assertEquals(rowNum+1, ctRow.getR());
+       
+       Cell cell = row.getCell(0);
+       assertNotNull("Expecting cell at rownum " + rowNum, cell);
+       assertEquals("Did not have expected contents at rownum " + rowNum, 
+               contents + ".0", cell.toString());
    }
 }

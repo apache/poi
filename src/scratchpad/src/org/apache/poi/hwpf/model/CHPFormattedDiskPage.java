@@ -62,7 +62,6 @@ public final class CHPFormattedDiskPage extends FormattedDiskPage
      *             {@link #CHPFormattedDiskPage(byte[], int, CharIndexTranslator)}
      *             instead
      */
-    @SuppressWarnings( "unused" )
     public CHPFormattedDiskPage( byte[] documentStream, int offset, int fcMin,
             TextPieceTable tpt )
     {
@@ -145,7 +144,6 @@ public final class CHPFormattedDiskPage extends FormattedDiskPage
      * @deprecated Use {@link #toByteArray(CharIndexTranslator)} instead
      */
     @Deprecated
-    @SuppressWarnings( "unused" )
     protected byte[] toByteArray(CharIndexTranslator translator, int fcMin)
     {
         return toByteArray( translator );

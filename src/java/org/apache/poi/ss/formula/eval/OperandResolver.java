@@ -57,7 +57,7 @@ public final class OperandResolver {
 	 */
 	public static ValueEval getSingleValue(ValueEval arg, int srcCellRow, int srcCellCol)
 			throws EvaluationException {
-		ValueEval result;
+		final ValueEval result;
 		if (arg instanceof RefEval) {
 			result = chooseSingleElementFromRef((RefEval) arg);
 		} else if (arg instanceof AreaEval) {

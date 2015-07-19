@@ -43,8 +43,8 @@ public final class WMF extends Metafile {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             InputStream is = new ByteArrayInputStream( rawdata );
             Header header = new Header();
-            header.read(rawdata, CHECKSUM_SIZE);
-            is.skip(header.getSize() + CHECKSUM_SIZE);
+            header.read(rawdata, CHECKSUM_SIZE*uidInstanceCount);
+            is.skip(header.getSize() + CHECKSUM_SIZE*uidInstanceCount);
 
             AldusHeader aldus = new AldusHeader();
             aldus.left = header.bounds.x;
@@ -84,7 +84,9 @@ public final class WMF extends Metafile {
 
         byte[] checksum = getChecksum(data);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        out.write(checksum);
+        for (int i=0; i<uidInstanceCount; i++) {
+            out.write(checksum);
+        }
         header.write(out);
         out.write(compressed);
 
@@ -99,12 +101,27 @@ public final class WMF extends Metafile {
     }
 
     /**
-     * WMF signature is <code>0x2160</code>
+     * WMF signature is either {@code 0x2160} or {@code 0x2170}
      */
     public int getSignature(){
-        return 0x2160;
+        return (uidInstanceCount == 1 ? 0x2160 : 0x2170);
     }
 
+    /**
+     * Sets the WMF signature - either {@code 0x2160} or {@code 0x2170}
+     */
+    public void setSignature(int signature) {
+        switch (signature) {
+            case 0x2160:
+                uidInstanceCount = 1;
+                break;
+            case 0x2170:
+                uidInstanceCount = 2;
+                break;
+            default:
+                throw new IllegalArgumentException(signature+" is not a valid instance/signature value for WMF");
+        }
+    }
 
     /**
      * Aldus Placeable Metafile header - 22 byte structure before WMF data.

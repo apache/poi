@@ -18,7 +18,6 @@
 package org.apache.poi.hslf.dev;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -28,7 +27,7 @@ import java.io.Writer;
 import org.apache.poi.hslf.record.RecordTypes;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -50,9 +49,7 @@ public final class PPTXMLDump {
     protected boolean hexHeader = true;
 
     public PPTXMLDump(File ppt) throws IOException {
-        FileInputStream fis = new FileInputStream(ppt);
-        POIFSFileSystem fs = new POIFSFileSystem(fis);
-        fis.close();
+        NPOIFSFileSystem fs = new NPOIFSFileSystem(ppt);
 
         //read the document entry from OLE file system
         DocumentEntry entry = (DocumentEntry)fs.getRoot().getEntry(PPDOC_ENTRY);

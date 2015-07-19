@@ -46,46 +46,47 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSectPr;
  * Helper class to extract text from an OOXML Word file
  */
 public class XWPFWordExtractor extends POIXMLTextExtractor {
-   public static final XWPFRelation[] SUPPORTED_TYPES = new XWPFRelation[] {
-      XWPFRelation.DOCUMENT, XWPFRelation.TEMPLATE,
-      XWPFRelation.MACRO_DOCUMENT, 
-      XWPFRelation.MACRO_TEMPLATE_DOCUMENT
-   };
-   
-	private XWPFDocument document;
-	private boolean fetchHyperlinks = false;
-	
-	public XWPFWordExtractor(OPCPackage container) throws XmlException, OpenXML4JException, IOException {
-		this(new XWPFDocument(container));
-	}
-	public XWPFWordExtractor(XWPFDocument document) {
-		super(document);
-		this.document = document;
-	}
+    public static final XWPFRelation[] SUPPORTED_TYPES = new XWPFRelation[]{
+            XWPFRelation.DOCUMENT, XWPFRelation.TEMPLATE,
+            XWPFRelation.MACRO_DOCUMENT,
+            XWPFRelation.MACRO_TEMPLATE_DOCUMENT
+    };
 
-	/**
-	 * Should we also fetch the hyperlinks, when fetching 
-	 *  the text content? Default is to only output the
-	 *  hyperlink label, and not the contents
-	 */
-	public void setFetchHyperlinks(boolean fetch) {
-		fetchHyperlinks = fetch;
-	}
-	
-	public static void main(String[] args) throws Exception {
-		if(args.length < 1) {
-			System.err.println("Use:");
-			System.err.println("  XWPFWordExtractor <filename.docx>");
-			System.exit(1);
-		}
-		POIXMLTextExtractor extractor = 
-			new XWPFWordExtractor(POIXMLDocument.openPackage(
-					args[0]
-			));
-		System.out.println(extractor.getText());
-		extractor.close();
-	}
-	
+    private XWPFDocument document;
+    private boolean fetchHyperlinks = false;
+
+    public XWPFWordExtractor(OPCPackage container) throws XmlException, OpenXML4JException, IOException {
+        this(new XWPFDocument(container));
+    }
+
+    public XWPFWordExtractor(XWPFDocument document) {
+        super(document);
+        this.document = document;
+    }
+
+    public static void main(String[] args) throws Exception {
+        if (args.length < 1) {
+            System.err.println("Use:");
+            System.err.println("  XWPFWordExtractor <filename.docx>");
+            System.exit(1);
+        }
+        POIXMLTextExtractor extractor =
+                new XWPFWordExtractor(POIXMLDocument.openPackage(
+                        args[0]
+                ));
+        System.out.println(extractor.getText());
+        extractor.close();
+    }
+
+    /**
+     * Should we also fetch the hyperlinks, when fetching
+     * the text content? Default is to only output the
+     * hyperlink label, and not the contents
+     */
+    public void setFetchHyperlinks(boolean fetch) {
+        fetchHyperlinks = fetch;
+    }
+
     public String getText() {
         StringBuffer text = new StringBuffer();
         XWPFHeaderFooterPolicy hfPolicy = document.getHeaderFooterPolicy();
@@ -94,9 +95,9 @@ public class XWPFWordExtractor extends POIXMLTextExtractor {
         extractHeaders(text, hfPolicy);
 
         // Process all body elements
-        for (IBodyElement e : document.getBodyElements()){
-        	appendBodyElementText(text, e);
-        	text.append('\n');
+        for (IBodyElement e : document.getBodyElements()) {
+            appendBodyElementText(text, e);
+            text.append('\n');
         }
 
         // Finish up with all the footers
@@ -105,108 +106,108 @@ public class XWPFWordExtractor extends POIXMLTextExtractor {
         return text.toString();
     }
 
-   public void appendBodyElementText(StringBuffer text, IBodyElement e){
-      if (e instanceof XWPFParagraph){
-          appendParagraphText(text, (XWPFParagraph)e);
-      } else if (e instanceof XWPFTable){
-          appendTableText(text, (XWPFTable)e);
-      } else if (e instanceof XWPFSDT){
-          text.append(((XWPFSDT)e).getContent().getText());
-      }
-   }
-   
-   public void appendParagraphText(StringBuffer text, XWPFParagraph paragraph){
-      try {
-          CTSectPr ctSectPr = null;
-          if (paragraph.getCTP().getPPr()!=null) {
-              ctSectPr = paragraph.getCTP().getPPr().getSectPr();
-          }
+    public void appendBodyElementText(StringBuffer text, IBodyElement e) {
+        if (e instanceof XWPFParagraph) {
+            appendParagraphText(text, (XWPFParagraph) e);
+        } else if (e instanceof XWPFTable) {
+            appendTableText(text, (XWPFTable) e);
+        } else if (e instanceof XWPFSDT) {
+            text.append(((XWPFSDT) e).getContent().getText());
+        }
+    }
 
-          XWPFHeaderFooterPolicy headerFooterPolicy = null;
+    public void appendParagraphText(StringBuffer text, XWPFParagraph paragraph) {
+        try {
+            CTSectPr ctSectPr = null;
+            if (paragraph.getCTP().getPPr() != null) {
+                ctSectPr = paragraph.getCTP().getPPr().getSectPr();
+            }
 
-          if (ctSectPr!=null) {
-              headerFooterPolicy = new XWPFHeaderFooterPolicy(document, ctSectPr);
-              extractHeaders(text, headerFooterPolicy);
-          }
+            XWPFHeaderFooterPolicy headerFooterPolicy = null;
+
+            if (ctSectPr != null) {
+                headerFooterPolicy = new XWPFHeaderFooterPolicy(document, ctSectPr);
+                extractHeaders(text, headerFooterPolicy);
+            }
 
 
-          for(IRunElement run : paragraph.getRuns()) {
-              text.append(run.toString());
-              if(run instanceof XWPFHyperlinkRun && fetchHyperlinks) {
-                  XWPFHyperlink link = ((XWPFHyperlinkRun)run).getHyperlink(document);
-                  if(link != null)
-                      text.append(" <" + link.getURL() + ">");
-              }
-          }
+            for (IRunElement run : paragraph.getRuns()) {
+                text.append(run.toString());
+                if (run instanceof XWPFHyperlinkRun && fetchHyperlinks) {
+                    XWPFHyperlink link = ((XWPFHyperlinkRun) run).getHyperlink(document);
+                    if (link != null)
+                        text.append(" <" + link.getURL() + ">");
+                }
+            }
 
-          // Add comments
-          XWPFCommentsDecorator decorator = new XWPFCommentsDecorator(paragraph, null);
-          String commentText = decorator.getCommentText();
-          if (commentText.length() > 0){
-              text.append(commentText).append('\n');
-          }
+            // Add comments
+            XWPFCommentsDecorator decorator = new XWPFCommentsDecorator(paragraph, null);
+            String commentText = decorator.getCommentText();
+            if (commentText.length() > 0) {
+                text.append(commentText).append('\n');
+            }
 
-          // Do endnotes and footnotes
-          String footnameText = paragraph.getFootnoteText();
-          if(footnameText != null && footnameText.length() > 0) {
-              text.append(footnameText + '\n');
-          }
+            // Do endnotes and footnotes
+            String footnameText = paragraph.getFootnoteText();
+            if (footnameText != null && footnameText.length() > 0) {
+                text.append(footnameText + '\n');
+            }
 
-          if (ctSectPr!=null) {
-              extractFooters(text, headerFooterPolicy);
-          }
-      } catch (IOException e) {
-          throw new POIXMLException(e);
-      } catch (XmlException e) {
-          throw new POIXMLException(e);
-      }
-     
-   }
+            if (ctSectPr != null) {
+                extractFooters(text, headerFooterPolicy);
+            }
+        } catch (IOException e) {
+            throw new POIXMLException(e);
+        } catch (XmlException e) {
+            throw new POIXMLException(e);
+        }
 
-   private void appendTableText(StringBuffer text, XWPFTable table) {
-      //this works recursively to pull embedded tables from tables
-      for (XWPFTableRow row : table.getRows()) {
-          List<ICell> cells = row.getTableICells();
-          for (int i = 0; i < cells.size(); i++) {
-              ICell cell = cells.get(i);
-              if (cell instanceof XWPFTableCell) {
-                  text.append(((XWPFTableCell)cell).getTextRecursively());
-              } else if (cell instanceof XWPFSDTCell) {
-                  text.append(((XWPFSDTCell)cell).getContent().getText());
-              }
-              if (i < cells.size()-1) {
-                  text.append("\t");
-              }
-          }
-          text.append('\n');
-      }
-   }
-   
-	private void extractFooters(StringBuffer text, XWPFHeaderFooterPolicy hfPolicy) {
-		if (hfPolicy == null) return;
-		
-		if(hfPolicy.getFirstPageFooter() != null) {
-			text.append( hfPolicy.getFirstPageFooter().getText() );
-		}
-		if(hfPolicy.getEvenPageFooter() != null) {
-			text.append( hfPolicy.getEvenPageFooter().getText() );
-		}
-		if(hfPolicy.getDefaultFooter() != null) {
-			text.append( hfPolicy.getDefaultFooter().getText() );
-		}
-	}
+    }
 
-	private void extractHeaders(StringBuffer text, XWPFHeaderFooterPolicy hfPolicy) {
-		if (hfPolicy == null) return;
-		
-		if(hfPolicy.getFirstPageHeader() != null) {
-			text.append( hfPolicy.getFirstPageHeader().getText() );
-		}
-		if(hfPolicy.getEvenPageHeader() != null) {
-			text.append( hfPolicy.getEvenPageHeader().getText() );
-		}
-		if(hfPolicy.getDefaultHeader() != null) {
-			text.append( hfPolicy.getDefaultHeader().getText() );
-		}
-	}
+    private void appendTableText(StringBuffer text, XWPFTable table) {
+        //this works recursively to pull embedded tables from tables
+        for (XWPFTableRow row : table.getRows()) {
+            List<ICell> cells = row.getTableICells();
+            for (int i = 0; i < cells.size(); i++) {
+                ICell cell = cells.get(i);
+                if (cell instanceof XWPFTableCell) {
+                    text.append(((XWPFTableCell) cell).getTextRecursively());
+                } else if (cell instanceof XWPFSDTCell) {
+                    text.append(((XWPFSDTCell) cell).getContent().getText());
+                }
+                if (i < cells.size() - 1) {
+                    text.append("\t");
+                }
+            }
+            text.append('\n');
+        }
+    }
+
+    private void extractFooters(StringBuffer text, XWPFHeaderFooterPolicy hfPolicy) {
+        if (hfPolicy == null) return;
+
+        if (hfPolicy.getFirstPageFooter() != null) {
+            text.append(hfPolicy.getFirstPageFooter().getText());
+        }
+        if (hfPolicy.getEvenPageFooter() != null) {
+            text.append(hfPolicy.getEvenPageFooter().getText());
+        }
+        if (hfPolicy.getDefaultFooter() != null) {
+            text.append(hfPolicy.getDefaultFooter().getText());
+        }
+    }
+
+    private void extractHeaders(StringBuffer text, XWPFHeaderFooterPolicy hfPolicy) {
+        if (hfPolicy == null) return;
+
+        if (hfPolicy.getFirstPageHeader() != null) {
+            text.append(hfPolicy.getFirstPageHeader().getText());
+        }
+        if (hfPolicy.getEvenPageHeader() != null) {
+            text.append(hfPolicy.getEvenPageHeader().getText());
+        }
+        if (hfPolicy.getDefaultHeader() != null) {
+            text.append(hfPolicy.getDefaultHeader().getText());
+        }
+    }
 }

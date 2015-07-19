@@ -80,7 +80,11 @@ public class XSSFExcelExtractor extends POIXMLTextExtractor
         }
         POIXMLTextExtractor extractor =
                 new XSSFExcelExtractor(args[0]);
-        System.out.println(extractor.getText());
+        try {
+            System.out.println(extractor.getText());
+        } finally {
+            extractor.close();
+        }
     }
 
     /**
@@ -237,7 +241,7 @@ public class XSSFExcelExtractor extends POIXMLTextExtractor
         if (type == Cell.CELL_TYPE_NUMERIC) {
             CellStyle cs = cell.getCellStyle();
 
-            if (cs.getDataFormatString() != null) {
+            if (cs != null && cs.getDataFormatString() != null) {
                 text.append(formatter.formatRawCellContents(
                         cell.getNumericCellValue(), cs.getDataFormat(), cs.getDataFormatString()
                         ));

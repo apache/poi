@@ -30,21 +30,18 @@ import org.apache.poi.hslf.exceptions.CorruptPowerPointFileException;
 import org.apache.poi.hslf.exceptions.OldPowerPointFormatException;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
+import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.StringUtil;
 
-
 /**
- * This is a special kind of Atom, becauase it doesn't live inside the
- *  PowerPoint document. Instead, it lives in a seperate stream in the
- *  document. As such, it has to be treaded specially
- *
- * @author Nick Burch
+ * This is a special kind of Atom, because it doesn't live inside the
+ *  PowerPoint document. Instead, it lives in a separate stream in the
+ *  document. As such, it has to be treated specially
  */
-
 public class CurrentUserAtom
 {
 	private static POILogger logger = POILogFactory.getLogger(CurrentUserAtom.class);
@@ -117,6 +114,7 @@ public class CurrentUserAtom
 
 	/** 
 	 * Find the Current User in the filesystem, and create from that
+	 * @deprecated Use {@link #CurrentUserAtom(DirectoryNode)} instead
 	 */
 	public CurrentUserAtom(POIFSFileSystem fs) throws IOException {
 		this(fs.getRoot());
@@ -278,7 +276,7 @@ public class CurrentUserAtom
 	/**
 	 * Writes ourselves back out to a filesystem
 	 */
-	public void writeToFS(POIFSFileSystem fs) throws IOException {
+	public void writeToFS(NPOIFSFileSystem fs) throws IOException {
 		// Grab contents
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		writeOut(baos);

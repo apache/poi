@@ -30,10 +30,8 @@ import org.apache.poi.hssf.record.DBCellRecord;
 import org.apache.poi.hssf.record.FormulaRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.StringRecord;
-import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.BaseTestCell;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.ErrorConstants;
 import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
@@ -330,7 +328,7 @@ public final class TestHSSFCell extends BaseTestCell {
 		// string to error code
 		cell.setCellValue("abc");
 		confirmStringRecord(sheet, true);
-		cell.setCellErrorValue((byte)ErrorConstants.ERROR_REF);
+		cell.setCellErrorValue(FormulaError.REF.getCode());
 		confirmStringRecord(sheet, false);
 
 		// string to boolean
@@ -354,38 +352,6 @@ public final class TestHSSFCell extends BaseTestCell {
 		}
 		Record dbcr = recs[index++];
 		assertEquals(DBCellRecord.class, dbcr.getClass());
-	}
-
-	/**
-	 *  The maximum length of cell contents (text) is 32,767 characters.
-	 * @throws IOException 
-	 */
-	public void testMaxTextLength() throws IOException{
-		HSSFWorkbook wb = new HSSFWorkbook();
-        HSSFSheet sheet = wb.createSheet();
-		HSSFCell cell = sheet.createRow(0).createCell(0);
-
-		int maxlen = SpreadsheetVersion.EXCEL97.getMaxTextLength();
-		assertEquals(32767, maxlen);
-
-		StringBuffer b = new StringBuffer() ;
-
-		// 32767 is okay
-		for( int i = 0 ; i < maxlen ; i++ )
-		{
-			b.append( "X" ) ;
-		}
-		cell.setCellValue(b.toString());
-
-		b.append("X");
-		// 32768 produces an invalid XLS file
-		try {
-			cell.setCellValue(b.toString());
-			fail("Expected exception");
-		} catch (IllegalArgumentException e){
-			assertEquals("The maximum length of cell contents (text) is 32,767 characters", e.getMessage());
-		}
-		wb.close();
 	}
 
     /**

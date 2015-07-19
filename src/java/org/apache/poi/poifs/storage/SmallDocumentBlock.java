@@ -29,8 +29,6 @@ import org.apache.poi.poifs.common.POIFSBigBlockSize;
 /**
  * Storage for documents that are too small to use regular
  * DocumentBlocks for their data
- *
- * @author  Marc Johnson (mjohnson at apache dot org)
  */
 public final class SmallDocumentBlock implements BlockWritable, ListManagedBlock {
     private static final int BLOCK_SHIFT = 6;
@@ -49,7 +47,7 @@ public final class SmallDocumentBlock implements BlockWritable, ListManagedBlock
         System.arraycopy(data, index * _block_size, _data, 0, _block_size);
     }
 
-    private SmallDocumentBlock(final POIFSBigBlockSize bigBlockSize)
+    protected SmallDocumentBlock(final POIFSBigBlockSize bigBlockSize)
     {
         _bigBlockSize = bigBlockSize;
         _blocks_per_big_block = getBlocksPerBigBlock(bigBlockSize);
@@ -110,7 +108,7 @@ public final class SmallDocumentBlock implements BlockWritable, ListManagedBlock
      *
      * @return number of big blocks the list encompasses
      */
-    public static int fill(POIFSBigBlockSize bigBlockSize, List blocks)
+    public static int fill(POIFSBigBlockSize bigBlockSize, List<SmallDocumentBlock> blocks)
     {
         int _blocks_per_big_block = getBlocksPerBigBlock(bigBlockSize);
         
@@ -168,12 +166,12 @@ public final class SmallDocumentBlock implements BlockWritable, ListManagedBlock
      *
      * @return a List of SmallDocumentBlock's extracted from the input
      */
-    public static List extract(POIFSBigBlockSize bigBlockSize, ListManagedBlock [] blocks)
+    public static List<SmallDocumentBlock> extract(POIFSBigBlockSize bigBlockSize, ListManagedBlock [] blocks)
         throws IOException
     {
         int _blocks_per_big_block = getBlocksPerBigBlock(bigBlockSize);
         
-        List sdbs = new ArrayList();
+        List<SmallDocumentBlock> sdbs = new ArrayList<SmallDocumentBlock>();
 
         for (int j = 0; j < blocks.length; j++)
         {
@@ -203,6 +201,11 @@ public final class SmallDocumentBlock implements BlockWritable, ListManagedBlock
     public static int calcSize(int size)
     {
         return size * _block_size;
+    }
+    
+    protected int getSmallBlocksPerBigBlock()
+    {
+        return _blocks_per_big_block;
     }
 
     private static SmallDocumentBlock makeEmptySmallDocumentBlock(POIFSBigBlockSize bigBlockSize)

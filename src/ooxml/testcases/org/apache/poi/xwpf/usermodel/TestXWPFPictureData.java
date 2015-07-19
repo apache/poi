@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.util.List;
 
 import junit.framework.TestCase;
-
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.xssf.usermodel.XSSFRelation;
@@ -31,36 +30,33 @@ import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.apache.poi.xwpf.model.XWPFHeaderFooterPolicy;
 
 public class TestXWPFPictureData extends TestCase {
-    
-    public void testRead() throws InvalidFormatException, IOException
-    {
+
+    public void testRead() throws InvalidFormatException, IOException {
         XWPFDocument sampleDoc = XWPFTestDataSamples.openSampleDocument("VariousPictures.docx");
         List<XWPFPictureData> pictures = sampleDoc.getAllPictures();
 
-        assertEquals(5,pictures.size());
-        String[] ext = {"wmf","png","emf","emf","jpeg"};
-        for (int i = 0 ; i < pictures.size() ; i++)
-        {
-            assertEquals(ext[i],pictures.get(i).suggestFileExtension());
+        assertEquals(5, pictures.size());
+        String[] ext = {"wmf", "png", "emf", "emf", "jpeg"};
+        for (int i = 0; i < pictures.size(); i++) {
+            assertEquals(ext[i], pictures.get(i).suggestFileExtension());
         }
 
         int num = pictures.size();
 
         byte[] pictureData = XWPFTestDataSamples.getImage("nature1.jpg");
 
-        String relationId = sampleDoc.addPictureData(pictureData,XWPFDocument.PICTURE_TYPE_JPEG);
+        String relationId = sampleDoc.addPictureData(pictureData, XWPFDocument.PICTURE_TYPE_JPEG);
         // picture list was updated
-        assertEquals(num + 1,pictures.size());
+        assertEquals(num + 1, pictures.size());
         XWPFPictureData pict = (XWPFPictureData) sampleDoc.getRelationById(relationId);
-        assertEquals("jpeg",pict.suggestFileExtension());
-        assertArrayEquals(pictureData,pict.getData());
+        assertEquals("jpeg", pict.suggestFileExtension());
+        assertArrayEquals(pictureData, pict.getData());
     }
 
-    public void testPictureInHeader() throws IOException
-    {
+    public void testPictureInHeader() throws IOException {
         XWPFDocument sampleDoc = XWPFTestDataSamples.openSampleDocument("headerPic.docx");
         verifyOneHeaderPicture(sampleDoc);
-        
+
         XWPFDocument readBack = XWPFTestDataSamples.writeOutAndReadBack(sampleDoc);
         verifyOneHeaderPicture(readBack);
     }
@@ -71,11 +67,10 @@ public class TestXWPFPictureData extends TestCase {
         XWPFHeader header = policy.getDefaultHeader();
 
         List<XWPFPictureData> pictures = header.getAllPictures();
-        assertEquals(1,pictures.size());
+        assertEquals(1, pictures.size());
     }
 
-    public void testNew() throws InvalidFormatException, IOException 
-    {
+    public void testNew() throws InvalidFormatException, IOException {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("EmptyDocumentWithHeaderFooter.docx");
         byte[] jpegData = XWPFTestDataSamples.getImage("nature1.jpg");
         assertNotNull(jpegData);
@@ -85,57 +80,53 @@ public class TestXWPFPictureData extends TestCase {
         assertNotNull(pngData);
 
         List<XWPFPictureData> pictures = doc.getAllPictures();
-        assertEquals(0,pictures.size());
+        assertEquals(0, pictures.size());
 
         // Document shouldn't have any image relationships
-        assertEquals(13,doc.getPackagePart().getRelationships().size());
-        for (PackageRelationship rel : doc.getPackagePart().getRelationships())
-        {
-            if (rel.getRelationshipType().equals(XSSFRelation.IMAGE_JPEG.getRelation()))
-            {
+        assertEquals(13, doc.getPackagePart().getRelationships().size());
+        for (PackageRelationship rel : doc.getPackagePart().getRelationships()) {
+            if (rel.getRelationshipType().equals(XSSFRelation.IMAGE_JPEG.getRelation())) {
                 fail("Shouldn't have JPEG yet");
             }
         }
 
         // Add the image
-        String relationId = doc.addPictureData(jpegData,XWPFDocument.PICTURE_TYPE_JPEG);
-        assertEquals(1,pictures.size());
+        String relationId = doc.addPictureData(jpegData, XWPFDocument.PICTURE_TYPE_JPEG);
+        assertEquals(1, pictures.size());
         XWPFPictureData jpgPicData = (XWPFPictureData) doc.getRelationById(relationId);
-        assertEquals("jpeg",jpgPicData.suggestFileExtension());
-        assertArrayEquals(jpegData,jpgPicData.getData());
+        assertEquals("jpeg", jpgPicData.suggestFileExtension());
+        assertArrayEquals(jpegData, jpgPicData.getData());
 
         // Ensure it now has one
-        assertEquals(14,doc.getPackagePart().getRelationships().size());
+        assertEquals(14, doc.getPackagePart().getRelationships().size());
         PackageRelationship jpegRel = null;
-        for (PackageRelationship rel : doc.getPackagePart().getRelationships())
-        {
-            if (rel.getRelationshipType().equals(XWPFRelation.IMAGE_JPEG.getRelation()))
-            {
+        for (PackageRelationship rel : doc.getPackagePart().getRelationships()) {
+            if (rel.getRelationshipType().equals(XWPFRelation.IMAGE_JPEG.getRelation())) {
                 if (jpegRel != null)
                     fail("Found 2 jpegs!");
                 jpegRel = rel;
             }
         }
-        assertNotNull("JPEG Relationship not found",jpegRel);
+        assertNotNull("JPEG Relationship not found", jpegRel);
 
         // Check the details
         assertNotNull(jpegRel);
-        assertEquals(XWPFRelation.IMAGE_JPEG.getRelation(),jpegRel.getRelationshipType());
-        assertEquals("/word/document.xml",jpegRel.getSource().getPartName().toString());
-        assertEquals("/word/media/image1.jpeg",jpegRel.getTargetURI().getPath());
+        assertEquals(XWPFRelation.IMAGE_JPEG.getRelation(), jpegRel.getRelationshipType());
+        assertEquals("/word/document.xml", jpegRel.getSource().getPartName().toString());
+        assertEquals("/word/media/image1.jpeg", jpegRel.getTargetURI().getPath());
 
         XWPFPictureData pictureDataByID = doc.getPictureDataByID(jpegRel.getId());
         assertArrayEquals(jpegData, pictureDataByID.getData());
 
         // Save an re-load, check it appears
         doc = XWPFTestDataSamples.writeOutAndReadBack(doc);
-        assertEquals(1,doc.getAllPictures().size());
-        assertEquals(1,doc.getAllPackagePictures().size());
+        assertEquals(1, doc.getAllPictures().size());
+        assertEquals(1, doc.getAllPackagePictures().size());
 
         // verify the picture that we read back in
         pictureDataByID = doc.getPictureDataByID(jpegRel.getId());
         assertArrayEquals(jpegData, pictureDataByID.getData());
-        
+
     }
 
     public void testBug51770() throws InvalidFormatException, IOException {
@@ -148,7 +139,7 @@ public class TestXWPFPictureData extends TestCase {
                     if (paragraph.getDocument() != null) {
                         //System.out.println(picture.getCTPicture());
                         XWPFPictureData data = picture.getPictureData();
-                        if(data != null) System.out.println(data.getFileName());
+                        if (data != null) System.out.println(data.getFileName());
                     }
                 }
             }

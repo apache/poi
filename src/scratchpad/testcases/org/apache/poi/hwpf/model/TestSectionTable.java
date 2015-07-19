@@ -20,7 +20,7 @@ package org.apache.poi.hwpf.model;
 import junit.framework.*;
 
 import java.io.ByteArrayOutputStream;
-import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.poi.hwpf.*;
 import org.apache.poi.hwpf.model.io.*;
@@ -58,8 +58,8 @@ public final class TestSectionTable
     		newMainStream, newTableStream, 0,
     		newTableStream.length, 0, tpt, fib.getSubdocumentTextStreamLength( SubdocumentType.MAIN ));
 
-    ArrayList oldSections = sectionTable.getSections();
-    ArrayList newSections = newSectionTable.getSections();
+    List<SEPX> oldSections = sectionTable.getSections();
+    List<SEPX> newSections = newSectionTable.getSections();
 
     assertEquals(oldSections.size(), newSections.size());
 
@@ -79,8 +79,8 @@ public final class TestSectionTable
     int size = oldSections.size();
     for (int x = 0; x < size; x++)
     {
-      PropertyNode oldNode = (PropertyNode)oldSections.get(x);
-      PropertyNode newNode = (PropertyNode)newSections.get(x);
+	  SEPX oldNode = oldSections.get(x);
+	  SEPX newNode = newSections.get(x);
       assertEquals(oldNode, newNode);
     }
   }

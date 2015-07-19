@@ -30,9 +30,9 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtBlock;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTbl;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTc;
 
-public class XWPFFootnote implements Iterable<XWPFParagraph>,IBody {
+public class XWPFFootnote implements Iterable<XWPFParagraph>, IBody {
     private List<XWPFParagraph> paragraphs = new ArrayList<XWPFParagraph>();
-    private List<XWPFTable> tables= new ArrayList<XWPFTable>();
+    private List<XWPFTable> tables = new ArrayList<XWPFTable>();
     private List<XWPFPictureData> pictures = new ArrayList<XWPFPictureData>();
     private List<IBodyElement> bodyElements = new ArrayList<IBodyElement>();
 
@@ -41,47 +41,47 @@ public class XWPFFootnote implements Iterable<XWPFParagraph>,IBody {
     private XWPFDocument document;
 
     public XWPFFootnote(CTFtnEdn note, XWPFFootnotes xFootnotes) {
-       footnotes = xFootnotes;
-       ctFtnEdn = note;
-       document = xFootnotes.getXWPFDocument();
-       init();
+        footnotes = xFootnotes;
+        ctFtnEdn = note;
+        document = xFootnotes.getXWPFDocument();
+        init();
     }
 
     public XWPFFootnote(XWPFDocument document, CTFtnEdn body) {
-       ctFtnEdn = body;
-       this.document = document;
-       init();
+        ctFtnEdn = body;
+        this.document = document;
+        init();
     }
-    
-    private void init(){
-       XmlCursor cursor = ctFtnEdn.newCursor();
-       //copied from XWPFDocument...should centralize this code
-       //to avoid duplication
-       cursor.selectPath("./*");
-       while (cursor.toNextSelection()) {
-           XmlObject o = cursor.getObject();
-           if (o instanceof CTP) {
-               XWPFParagraph p = new XWPFParagraph((CTP) o, this);
-               bodyElements.add(p);
-               paragraphs.add(p);
-           } else if (o instanceof CTTbl) {
-               XWPFTable t = new XWPFTable((CTTbl) o, this);
-               bodyElements.add(t);
-               tables.add(t);
-           } else if (o instanceof CTSdtBlock){
-               XWPFSDT c = new XWPFSDT((CTSdtBlock)o, this);
-               bodyElements.add(c);
-           }
 
-       }
-       cursor.dispose();
-   }
+    private void init() {
+        XmlCursor cursor = ctFtnEdn.newCursor();
+        //copied from XWPFDocument...should centralize this code
+        //to avoid duplication
+        cursor.selectPath("./*");
+        while (cursor.toNextSelection()) {
+            XmlObject o = cursor.getObject();
+            if (o instanceof CTP) {
+                XWPFParagraph p = new XWPFParagraph((CTP) o, this);
+                bodyElements.add(p);
+                paragraphs.add(p);
+            } else if (o instanceof CTTbl) {
+                XWPFTable t = new XWPFTable((CTTbl) o, this);
+                bodyElements.add(t);
+                tables.add(t);
+            } else if (o instanceof CTSdtBlock) {
+                XWPFSDT c = new XWPFSDT((CTSdtBlock) o, this);
+                bodyElements.add(c);
+            }
+
+        }
+        cursor.dispose();
+    }
 
     public List<XWPFParagraph> getParagraphs() {
         return paragraphs;
     }
 
-    public Iterator<XWPFParagraph> iterator(){
+    public Iterator<XWPFParagraph> iterator() {
         return paragraphs.iterator();
     }
 
@@ -98,11 +98,11 @@ public class XWPFFootnote implements Iterable<XWPFParagraph>,IBody {
     }
 
     public CTFtnEdn getCTFtnEdn() {
-       return ctFtnEdn;
+        return ctFtnEdn;
     }
 
     public void setCTFtnEdn(CTFtnEdn footnote) {
-       ctFtnEdn = footnote;
+        ctFtnEdn = footnote;
     }
 
     /**
@@ -111,7 +111,7 @@ public class XWPFFootnote implements Iterable<XWPFParagraph>,IBody {
      * @see org.apache.poi.xwpf.usermodel.IBody#getTableArray(int)
      */
     public XWPFTable getTableArray(int pos) {
-        if(pos > 0 && pos < tables.size()){
+        if (pos > 0 && pos < tables.size()) {
             return tables.get(pos);
         }
         return null;
@@ -119,6 +119,7 @@ public class XWPFFootnote implements Iterable<XWPFParagraph>,IBody {
 
     /**
      * inserts an existing XWPFTable to the arrays bodyElements and tables
+     *
      * @param pos
      * @param table
      * @see org.apache.poi.xwpf.usermodel.IBody#insertTable(int pos, XWPFTable table)
@@ -128,7 +129,7 @@ public class XWPFFootnote implements Iterable<XWPFParagraph>,IBody {
         bodyElements.add(pos, table);
         int i = 0;
         for (CTTbl tbl : ctFtnEdn.getTblArray()) {
-            if(tbl == table.getCTTbl()){
+            if (tbl == table.getCTTbl()) {
                 break;
             }
             i++;
@@ -140,15 +141,16 @@ public class XWPFFootnote implements Iterable<XWPFParagraph>,IBody {
     /**
      * if there is a corresponding {@link XWPFTable} of the parameter ctTable in the tableList of this header
      * the method will return this table
-     * if there is no corresponding {@link XWPFTable} the method will return null 
+     * if there is no corresponding {@link XWPFTable} the method will return null
+     *
      * @param ctTable
      * @see org.apache.poi.xwpf.usermodel.IBody#getTable(CTTbl ctTable)
      */
-    public XWPFTable getTable(CTTbl ctTable){
+    public XWPFTable getTable(CTTbl ctTable) {
         for (XWPFTable table : tables) {
-            if(table==null)
+            if (table == null)
                 return null;
-            if(table.getCTTbl().equals(ctTable))
+            if (table.getCTTbl().equals(ctTable))
                 return table;
         }
         return null;
@@ -157,15 +159,16 @@ public class XWPFFootnote implements Iterable<XWPFParagraph>,IBody {
     /**
      * if there is a corresponding {@link XWPFParagraph} of the parameter ctTable in the paragraphList of this header or footer
      * the method will return this paragraph
-     * if there is no corresponding {@link XWPFParagraph} the method will return null 
+     * if there is no corresponding {@link XWPFParagraph} the method will return null
+     *
      * @param p is instance of CTP and is searching for an XWPFParagraph
      * @return null if there is no XWPFParagraph with an corresponding CTPparagraph in the paragraphList of this header or footer
-     * 		   XWPFParagraph with the correspondig CTP p
+     * XWPFParagraph with the correspondig CTP p
      * @see org.apache.poi.xwpf.usermodel.IBody#getParagraph(CTP p)
      */
-    public XWPFParagraph getParagraph(CTP p){
+    public XWPFParagraph getParagraph(CTP p) {
         for (XWPFParagraph paragraph : paragraphs) {
-            if(paragraph.getCTP().equals(p))
+            if (paragraph.getCTP().equals(p))
                 return paragraph;
         }
         return null;
@@ -173,7 +176,8 @@ public class XWPFFootnote implements Iterable<XWPFParagraph>,IBody {
 
     /**
      * Returns the paragraph that holds
-     *  the text of the header or footer.
+     * the text of the header or footer.
+     *
      * @see org.apache.poi.xwpf.usermodel.IBody#getParagraphArray(int pos)
      */
     public XWPFParagraph getParagraphArray(int pos) {
@@ -183,6 +187,7 @@ public class XWPFFootnote implements Iterable<XWPFParagraph>,IBody {
 
     /**
      * get the TableCell which belongs to the TableCell
+     *
      * @param cell
      * @see org.apache.poi.xwpf.usermodel.IBody#getTableCell(CTTc cell)
      */
@@ -190,23 +195,23 @@ public class XWPFFootnote implements Iterable<XWPFParagraph>,IBody {
         XmlCursor cursor = cell.newCursor();
         cursor.toParent();
         XmlObject o = cursor.getObject();
-        if(!(o instanceof CTRow)){
+        if (!(o instanceof CTRow)) {
             return null;
         }
-        CTRow row = (CTRow)o;
+        CTRow row = (CTRow) o;
         cursor.toParent();
         o = cursor.getObject();
         cursor.dispose();
-        if(! (o instanceof CTTbl)){
+        if (!(o instanceof CTTbl)) {
             return null;
         }
         CTTbl tbl = (CTTbl) o;
         XWPFTable table = getTable(tbl);
-        if(table == null){
+        if (table == null) {
             return null;
         }
         XWPFTableRow tableRow = table.getRow(row);
-        if(row == null){
+        if (row == null) {
             return null;
         }
         return tableRow.getTableCell(cell);
@@ -214,52 +219,51 @@ public class XWPFFootnote implements Iterable<XWPFParagraph>,IBody {
 
     /**
      * verifies that cursor is on the right position
+     *
      * @param cursor
      */
     private boolean isCursorInFtn(XmlCursor cursor) {
         XmlCursor verify = cursor.newCursor();
         verify.toParent();
-        if(verify.getObject() == this.ctFtnEdn){
+        if (verify.getObject() == this.ctFtnEdn) {
             return true;
         }
         return false;
     }
 
-    public POIXMLDocumentPart getOwner(){
+    public POIXMLDocumentPart getOwner() {
         return footnotes;
     }
 
     /**
-     * 
      * @param cursor
      * @return the inserted table
      * @see org.apache.poi.xwpf.usermodel.IBody#insertNewTbl(XmlCursor cursor)
      */
     public XWPFTable insertNewTbl(XmlCursor cursor) {
-        if(isCursorInFtn(cursor)){
+        if (isCursorInFtn(cursor)) {
             String uri = CTTbl.type.getName().getNamespaceURI();
             String localPart = "tbl";
-            cursor.beginElement(localPart,uri);
+            cursor.beginElement(localPart, uri);
             cursor.toParent();
-            CTTbl t = (CTTbl)cursor.getObject();
+            CTTbl t = (CTTbl) cursor.getObject();
             XWPFTable newT = new XWPFTable(t, this);
             cursor.removeXmlContents();
             XmlObject o = null;
-            while(!(o instanceof CTTbl)&&(cursor.toPrevSibling())){
+            while (!(o instanceof CTTbl) && (cursor.toPrevSibling())) {
                 o = cursor.getObject();
             }
-            if(!(o instanceof CTTbl)){
+            if (!(o instanceof CTTbl)) {
                 tables.add(0, newT);
+            } else {
+                int pos = tables.indexOf(getTable((CTTbl) o)) + 1;
+                tables.add(pos, newT);
             }
-            else{
-                int pos = tables.indexOf(getTable((CTTbl)o))+1;
-                tables.add(pos,newT);
-            }
-            int i=0;
+            int i = 0;
             cursor = t.newCursor();
-            while(cursor.toPrevSibling()){
-                o =cursor.getObject();
-                if(o instanceof CTP || o instanceof CTTbl)
+            while (cursor.toPrevSibling()) {
+                o = cursor.getObject();
+                if (o instanceof CTP || o instanceof CTTbl)
                     i++;
             }
             bodyElements.add(i, newT);
@@ -272,34 +276,34 @@ public class XWPFFootnote implements Iterable<XWPFParagraph>,IBody {
 
     /**
      * add a new paragraph at position of the cursor
+     *
      * @param cursor
      * @return the inserted paragraph
      * @see org.apache.poi.xwpf.usermodel.IBody#insertNewParagraph(XmlCursor cursor)
      */
-    public XWPFParagraph insertNewParagraph(XmlCursor cursor){
-        if(isCursorInFtn(cursor)){
+    public XWPFParagraph insertNewParagraph(XmlCursor cursor) {
+        if (isCursorInFtn(cursor)) {
             String uri = CTP.type.getName().getNamespaceURI();
             String localPart = "p";
-            cursor.beginElement(localPart,uri);
+            cursor.beginElement(localPart, uri);
             cursor.toParent();
-            CTP p = (CTP)cursor.getObject();
+            CTP p = (CTP) cursor.getObject();
             XWPFParagraph newP = new XWPFParagraph(p, this);
             XmlObject o = null;
-            while(!(o instanceof CTP)&&(cursor.toPrevSibling())){
+            while (!(o instanceof CTP) && (cursor.toPrevSibling())) {
                 o = cursor.getObject();
             }
-            if((!(o instanceof CTP)) || (CTP)o == p){
+            if ((!(o instanceof CTP)) || (CTP) o == p) {
                 paragraphs.add(0, newP);
+            } else {
+                int pos = paragraphs.indexOf(getParagraph((CTP) o)) + 1;
+                paragraphs.add(pos, newP);
             }
-            else{
-                int pos = paragraphs.indexOf(getParagraph((CTP)o))+1;
-                paragraphs.add(pos,newP);
-            }
-            int i=0;
+            int i = 0;
             cursor.toCursor(p.newCursor());
-            while(cursor.toPrevSibling()){
-                o =cursor.getObject();
-                if(o instanceof CTP || o instanceof CTTbl)
+            while (cursor.toPrevSibling()) {
+                o = cursor.getObject();
+                if (o instanceof CTP || o instanceof CTTbl)
                     i++;
             }
             bodyElements.add(i, newP);
@@ -312,6 +316,7 @@ public class XWPFFootnote implements Iterable<XWPFParagraph>,IBody {
 
     /**
      * add a new table to the end of the footnote
+     *
      * @param table
      * @return the added XWPFTable
      */
@@ -325,6 +330,7 @@ public class XWPFFootnote implements Iterable<XWPFParagraph>,IBody {
 
     /**
      * add a new paragraph to the end of the footnote
+     *
      * @param paragraph
      * @return the added XWPFParagraph
      */
@@ -339,12 +345,13 @@ public class XWPFFootnote implements Iterable<XWPFParagraph>,IBody {
     /**
      * @see org.apache.poi.xwpf.usermodel.IBody#getXWPFDocument()
      */
-    public  XWPFDocument getXWPFDocument() {
+    public XWPFDocument getXWPFDocument() {
         return document;
     }
 
     /**
      * returns the Part, to which the body belongs, which you need for adding relationship to other parts
+     *
      * @see org.apache.poi.xwpf.usermodel.IBody#getPart()
      */
     public POIXMLDocumentPart getPart() {
@@ -353,6 +360,7 @@ public class XWPFFootnote implements Iterable<XWPFParagraph>,IBody {
 
     /**
      * get the PartType of the body
+     *
      * @see org.apache.poi.xwpf.usermodel.IBody#getPartType()
      */
     public BodyType getPartType() {

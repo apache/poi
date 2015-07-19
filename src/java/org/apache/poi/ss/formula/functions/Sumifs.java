@@ -20,8 +20,14 @@
 package org.apache.poi.ss.formula.functions;
 
 import org.apache.poi.ss.formula.OperationEvaluationContext;
-import org.apache.poi.ss.formula.eval.*;
+import org.apache.poi.ss.formula.eval.AreaEval;
+import org.apache.poi.ss.formula.eval.ErrorEval;
+import org.apache.poi.ss.formula.eval.EvaluationException;
+import org.apache.poi.ss.formula.eval.NumberEval;
+import org.apache.poi.ss.formula.eval.RefEval;
+import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.functions.CountUtils.I_MatchPredicate;
+import org.apache.poi.ss.formula.functions.Countif.ErrorMatcher;
 
 /**
  * Implementation for the Excel function SUMIFS<p>
@@ -48,6 +54,7 @@ public final class Sumifs implements FreeRefFunction {
     public static final FreeRefFunction instance = new Sumifs();
 
 	public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
+	    // need at least 3 arguments and need to have an odd number of arguments (sum-range plus x*(criteria_range, criteria))
         if(args.length < 3 || args.length % 2 == 0) {
             return ErrorEval.VALUE_INVALID;
         }
@@ -60,10 +67,12 @@ public final class Sumifs implements FreeRefFunction {
             I_MatchPredicate[] mp = new I_MatchPredicate[ae.length];
             for(int i = 1, k=0; i < args.length; i += 2, k++){
                 ae[k] = convertRangeArg(args[i]);
+                
                 mp[k] = Countif.createCriteriaPredicate(args[i+1], ec.getRowIndex(), ec.getColumnIndex());
             }
 
             validateCriteriaRanges(ae, sumRange);
+            validateCriteria(mp);
 
             double result = sumMatchingCells(ae, mp, sumRange);
             return new NumberEval(result);
@@ -76,7 +85,7 @@ public final class Sumifs implements FreeRefFunction {
      * Verify that each <code>criteriaRanges</code> argument contains the same number of rows and columns
      * as the <code>sumRange</code> argument
      *
-     * @throws EvaluationException if
+     * @throws EvaluationException if the ranges do not match.
      */
     private void validateCriteriaRanges(AreaEval[] criteriaRanges, AreaEval sumRange) throws EvaluationException {
         for(AreaEval r : criteriaRanges){
@@ -86,6 +95,22 @@ public final class Sumifs implements FreeRefFunction {
             }
         }
     }
+
+    /**
+     * Verify that each <code>criteria</code> predicate is valid, i.e. not an error
+     *
+     * @throws EvaluationException if there are criteria which resulted in Errors.
+     */
+    private void validateCriteria(I_MatchPredicate[] criteria) throws EvaluationException {
+        for(I_MatchPredicate predicate : criteria) {
+            
+            // check for errors in predicate and return immediately using this error code
+            if(predicate instanceof ErrorMatcher) {
+                throw new EvaluationException(ErrorEval.valueOf(((ErrorMatcher)predicate).getValue()));
+            }
+        }
+    }
+
 
     /**
      *

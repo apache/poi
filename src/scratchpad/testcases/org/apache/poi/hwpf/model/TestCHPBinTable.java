@@ -18,7 +18,7 @@
 package org.apache.poi.hwpf.model;
 
 import java.io.ByteArrayOutputStream;
-import java.util.ArrayList;
+import java.util.List;
 
 import junit.framework.TestCase;
 
@@ -59,16 +59,16 @@ public final class TestCHPBinTable
 
     CHPBinTable newBinTable = new CHPBinTable(newMainStream, newTableStream, 0, newTableStream.length, fakeTPT);
 
-    ArrayList oldTextRuns = _cHPBinTable._textRuns;
-    ArrayList newTextRuns = newBinTable._textRuns;
+    List<CHPX> oldTextRuns = _cHPBinTable._textRuns;
+    List<CHPX> newTextRuns = newBinTable._textRuns;
 
     assertEquals(oldTextRuns.size(), newTextRuns.size());
 
     int size = oldTextRuns.size();
     for (int x = 0; x < size; x++)
     {
-      PropertyNode oldNode = (PropertyNode)oldTextRuns.get(x);
-      PropertyNode newNode = (PropertyNode)newTextRuns.get(x);
+      CHPX oldNode = oldTextRuns.get(x);
+      CHPX newNode = newTextRuns.get(x);
       assertTrue(oldNode.equals(newNode));
     }
 

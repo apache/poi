@@ -155,13 +155,16 @@ public final class TestPOIXMLDocument extends TestCase {
     public void testRelationOrder() throws Exception {
         OPCPackage pkg = PackageHelper.open(POIDataSamples.getDocumentInstance().openResourceAsStream("WordWithAttachments.docx"));
         OPCParser doc = new OPCParser(pkg);
-        doc.parse(new TestFactory());
-
-        for(POIXMLDocumentPart rel : doc.getRelations()){
-            //TODO finish me
-            assertNotNull(rel);
+        try {
+            doc.parse(new TestFactory());
+    
+            for(POIXMLDocumentPart rel : doc.getRelations()){
+                //TODO finish me
+                assertNotNull(rel);
+            }
+        } finally {
+        	doc.close();
         }
-
     }
 
     public void testCommitNullPart() throws IOException, InvalidFormatException {

@@ -24,8 +24,6 @@ import org.apache.poi.ss.SpreadsheetVersion;
  * See OOO documentation: excelfileformat.pdf sec 2.5.14 - 'Cell Range Address'<p/>
  *
  * Common subclass of 8-bit and 16-bit versions
- *
- * @author Josh Micich
  */
 public abstract class CellRangeAddressBase {
 

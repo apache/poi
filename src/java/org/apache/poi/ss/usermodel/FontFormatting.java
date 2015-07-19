@@ -22,9 +22,6 @@ package org.apache.poi.ss.usermodel;
 /**
  * High level representation for Font Formatting component
  * of Conditional Formatting settings
- *
- * @author Dmitriy Kumshayev
- * @author Yegor Kozlov
  */
 public interface FontFormatting {
     /** Escapement type - None */
@@ -66,15 +63,26 @@ public interface FontFormatting {
     void setEscapementType(short escapementType);
 
     /**
-     * @return font color index
+     * @return font colour index, or 0 if not indexed (XSSF only)
      */
     short getFontColorIndex();
 
-
     /**
-     * @param color font color index
+     * Sets the indexed colour to use
+     * @param color font colour index
      */
     void setFontColorIndex(short color);
+    
+    /**
+     * @return The colour of the font, or null if no colour applied
+     */
+    Color getFontColor();
+    
+    /**
+     * Sets the colour to use
+     * @param color font colour to use
+     */
+    void setFontColor(Color color);
 
     /**
      * gets the height of the font in 1/20th point units

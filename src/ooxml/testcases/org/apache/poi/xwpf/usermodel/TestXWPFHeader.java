@@ -20,7 +20,6 @@ package org.apache.poi.xwpf.usermodel;
 import java.io.IOException;
 
 import junit.framework.TestCase;
-
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.apache.poi.xwpf.model.XWPFHeaderFooterPolicy;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
@@ -162,7 +161,7 @@ public final class TestXWPFHeader extends TestCase {
 
     public void testSetWatermark() throws IOException {
         XWPFDocument sampleDoc = XWPFTestDataSamples.openSampleDocument("SampleDoc.docx");
-        
+
         // No header is set (yet)
         XWPFHeaderFooterPolicy policy = sampleDoc.getHeaderFooterPolicy();
         assertNull(policy.getDefaultHeader());
@@ -174,7 +173,7 @@ public final class TestXWPFHeader extends TestCase {
         assertNotNull(policy.getDefaultHeader());
         assertNotNull(policy.getFirstPageHeader());
         assertNotNull(policy.getEvenPageHeader());
-        
+
         // Re-open, and check
         XWPFDocument reopened = XWPFTestDataSamples.writeOutAndReadBack(sampleDoc);
         policy = reopened.getHeaderFooterPolicy();

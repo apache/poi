@@ -27,18 +27,15 @@ import org.apache.poi.poifs.dev.POIFSViewable;
 import org.apache.poi.poifs.property.DocumentProperty;
 
 /**
- * Simple implementation of DocumentEntry
- *
- * @author Marc Johnson (mjohnson at apache dot org)
+ * Simple implementation of DocumentEntry for OPOIFS
  */
-
 public class DocumentNode
     extends EntryNode
     implements DocumentEntry, POIFSViewable
 {
 
     // underlying POIFSDocument instance
-    private POIFSDocument _document;
+    private OPOIFSDocument _document;
 
     /**
      * create a DocumentNode. This method is not public by design; it
@@ -59,8 +56,7 @@ public class DocumentNode
      *
      * @return the internal POIFSDocument
      */
-
-    POIFSDocument getDocument()
+    OPOIFSDocument getDocument()
     {
         return _document;
     }

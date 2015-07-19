@@ -62,7 +62,7 @@ public final class VisioTextExtractor extends POIOLE2TextExtractor {
 		this(new HDGFDiagram(dir, fs));
 	}
 	public VisioTextExtractor(InputStream inp) throws IOException {
-		this(new POIFSFileSystem(inp));
+		this(new NPOIFSFileSystem(inp));
 	}
 
 	/**

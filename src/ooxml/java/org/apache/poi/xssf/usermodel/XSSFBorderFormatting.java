@@ -17,149 +17,230 @@
 package org.apache.poi.xssf.usermodel;
 
 import org.apache.poi.ss.usermodel.BorderFormatting;
+import org.apache.poi.ss.usermodel.Color;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorder;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STBorderStyle;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorderPr;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
 
 /**
- * @author Yegor Kozlov
+ * XSSF high level representation for Border Formatting component
+ * of Conditional Formatting settings
  */
 public class XSSFBorderFormatting implements BorderFormatting  {
     CTBorder _border;
 
-    /*package*/ XSSFBorderFormatting(CTBorder border){
+    /*package*/ XSSFBorderFormatting(CTBorder border) {
         _border = border;
     }
 
-    public short getBorderBottom(){
+    public short getBorderBottom() {
         STBorderStyle.Enum ptrn = _border.isSetBottom() ? _border.getBottom().getStyle() : null;
         return ptrn == null ? BORDER_NONE : (short)(ptrn.intValue() - 1);
     }
 
-    public short getBorderDiagonal(){
+    public short getBorderDiagonal() {
         STBorderStyle.Enum ptrn = _border.isSetDiagonal() ? _border.getDiagonal().getStyle() : null;
         return ptrn == null ? BORDER_NONE : (short)(ptrn.intValue() - 1);
     }
 
-    public short getBorderLeft(){
+    public short getBorderLeft() {
         STBorderStyle.Enum ptrn = _border.isSetLeft() ? _border.getLeft().getStyle() : null;
         return ptrn == null ? BORDER_NONE : (short)(ptrn.intValue() - 1);
     }
 
-    public short getBorderRight(){
+    public short getBorderRight() {
         STBorderStyle.Enum ptrn = _border.isSetRight() ? _border.getRight().getStyle() : null;
         return ptrn == null ? BORDER_NONE : (short)(ptrn.intValue() - 1);
     }
 
-    public short getBorderTop(){
+    public short getBorderTop() {
         STBorderStyle.Enum ptrn = _border.isSetTop() ? _border.getTop().getStyle() : null;
         return ptrn == null ? BORDER_NONE : (short)(ptrn.intValue() - 1);
     }
 
-    public short getBottomBorderColor(){
-        if(!_border.isSetBottom()) return 0;
+    public XSSFColor getBottomBorderColorColor() {
+        if(!_border.isSetBottom()) return null;
 
         CTBorderPr pr = _border.getBottom();
-        return (short)pr.getColor().getIndexed();
+        return new XSSFColor(pr.getColor());
+    }
+    public short getBottomBorderColor() {
+        XSSFColor color = getBottomBorderColorColor();
+        if (color == null) return 0;
+        return color.getIndexed();
     }
 
-    public short getDiagonalBorderColor(){
-        if(!_border.isSetDiagonal()) return 0;
+    public XSSFColor getDiagonalBorderColorColor() {
+        if(!_border.isSetDiagonal()) return null;
 
         CTBorderPr pr = _border.getDiagonal();
-        return (short)pr.getColor().getIndexed();
+        return new XSSFColor(pr.getColor());
+    }
+    public short getDiagonalBorderColor() {
+        XSSFColor color = getDiagonalBorderColorColor();
+        if (color == null) return 0;
+        return color.getIndexed();
     }
 
-    public short getLeftBorderColor(){
-        if(!_border.isSetLeft()) return 0;
+    public XSSFColor getLeftBorderColorColor() {
+        if(!_border.isSetLeft()) return null;
 
         CTBorderPr pr = _border.getLeft();
-        return (short)pr.getColor().getIndexed();
+        return new XSSFColor(pr.getColor());
+    }
+    public short getLeftBorderColor() {
+        XSSFColor color = getLeftBorderColorColor();
+        if (color == null) return 0;
+        return color.getIndexed();
     }
 
-    public short getRightBorderColor(){
-        if(!_border.isSetRight()) return 0;
+    public XSSFColor getRightBorderColorColor() {
+        if(!_border.isSetRight()) return null;
 
         CTBorderPr pr = _border.getRight();
-        return (short)pr.getColor().getIndexed();
+        return new XSSFColor(pr.getColor());
+    }
+    public short getRightBorderColor() {
+        XSSFColor color = getRightBorderColorColor();
+        if (color == null) return 0;
+        return color.getIndexed();
     }
 
-    public short getTopBorderColor(){
-        if(!_border.isSetTop()) return 0;
+    public XSSFColor getTopBorderColorColor() {
+        if(!_border.isSetTop()) return null;
 
         CTBorderPr pr = _border.getTop();
-        return (short)pr.getColor().getIndexed();
+        return new XSSFColor(pr.getColor());
+    }
+    public short getTopBorderColor() {
+        XSSFColor color = getRightBorderColorColor();
+        if (color == null) return 0;
+        return color.getIndexed();
     }
 
-    public void setBorderBottom(short border){
+    public void setBorderBottom(short border) {
         CTBorderPr pr = _border.isSetBottom() ? _border.getBottom() : _border.addNewBottom();
         if(border == BORDER_NONE) _border.unsetBottom();
         else pr.setStyle(STBorderStyle.Enum.forInt(border + 1));
     }
 
-    public void setBorderDiagonal(short border){
+    public void setBorderDiagonal(short border) {
         CTBorderPr pr = _border.isSetDiagonal() ? _border.getDiagonal() : _border.addNewDiagonal();
         if(border == BORDER_NONE) _border.unsetDiagonal();
         else pr.setStyle(STBorderStyle.Enum.forInt(border + 1));
     }
 
-    public void setBorderLeft(short border){
+    public void setBorderLeft(short border) {
         CTBorderPr pr = _border.isSetLeft() ? _border.getLeft() : _border.addNewLeft();
         if(border == BORDER_NONE) _border.unsetLeft();
         else pr.setStyle(STBorderStyle.Enum.forInt(border + 1));
     }
 
-    public void setBorderRight(short border){
+    public void setBorderRight(short border) {
         CTBorderPr pr = _border.isSetRight() ? _border.getRight() : _border.addNewRight();
         if(border == BORDER_NONE) _border.unsetRight();
         else pr.setStyle(STBorderStyle.Enum.forInt(border + 1));
     }
 
-    public void setBorderTop(short border){
+    public void setBorderTop(short border) {
         CTBorderPr pr = _border.isSetTop() ? _border.getTop() : _border.addNewTop();
         if(border == BORDER_NONE) _border.unsetTop();
         else pr.setStyle(STBorderStyle.Enum.forInt(border + 1));
     }
 
-    public void setBottomBorderColor(short color){
+    public void setBottomBorderColor(Color color) {
+        XSSFColor xcolor = XSSFColor.toXSSFColor(color);
+        if (xcolor == null) setBottomBorderColor((CTColor)null);
+        else setBottomBorderColor(xcolor.getCTColor());
+    }
+    public void setBottomBorderColor(short color) {
+        CTColor ctColor = CTColor.Factory.newInstance();
+        ctColor.setIndexed(color);
+        setBottomBorderColor(ctColor);
+    }
+    public void setBottomBorderColor(CTColor color) {
         CTBorderPr pr = _border.isSetBottom() ? _border.getBottom() : _border.addNewBottom();
-
-        CTColor ctColor = CTColor.Factory.newInstance();
-        ctColor.setIndexed(color);
-        pr.setColor(ctColor);
+        if (color == null) {
+            pr.unsetColor();
+        } else {
+            pr.setColor(color);
+        }
     }
 
-    public void setDiagonalBorderColor(short color){
+    public void setDiagonalBorderColor(Color color) {
+        XSSFColor xcolor = XSSFColor.toXSSFColor(color);
+        if (xcolor == null) setDiagonalBorderColor((CTColor)null);
+        else setDiagonalBorderColor(xcolor.getCTColor());
+    }
+    public void setDiagonalBorderColor(short color) {
+        CTColor ctColor = CTColor.Factory.newInstance();
+        ctColor.setIndexed(color);
+        setDiagonalBorderColor(ctColor);
+    }
+    public void setDiagonalBorderColor(CTColor color) {
         CTBorderPr pr = _border.isSetDiagonal() ? _border.getDiagonal() : _border.addNewDiagonal();
-
-        CTColor ctColor = CTColor.Factory.newInstance();
-        ctColor.setIndexed(color);
-        pr.setColor(ctColor);
+        if (color == null) {
+            pr.unsetColor();
+        } else {
+            pr.setColor(color);
+        }
     }
 
-    public void setLeftBorderColor(short color){
+    public void setLeftBorderColor(Color color) {
+        XSSFColor xcolor = XSSFColor.toXSSFColor(color);
+        if (xcolor == null) setLeftBorderColor((CTColor)null);
+        else setLeftBorderColor(xcolor.getCTColor());
+    }
+    public void setLeftBorderColor(short color) {
+        CTColor ctColor = CTColor.Factory.newInstance();
+        ctColor.setIndexed(color);
+        setLeftBorderColor(ctColor);
+    }
+    public void setLeftBorderColor(CTColor color) {
         CTBorderPr pr = _border.isSetLeft() ? _border.getLeft() : _border.addNewLeft();
-
-        CTColor ctColor = CTColor.Factory.newInstance();
-        ctColor.setIndexed(color);
-        pr.setColor(ctColor);
+        if (color == null) {
+            pr.unsetColor();
+        } else {
+            pr.setColor(color);
+        }
     }
 
-    public void setRightBorderColor(short color){
+    public void setRightBorderColor(Color color) {
+        XSSFColor xcolor = XSSFColor.toXSSFColor(color);
+        if (xcolor == null) setRightBorderColor((CTColor)null);
+        else setRightBorderColor(xcolor.getCTColor());
+    }
+    public void setRightBorderColor(short color) {
+        CTColor ctColor = CTColor.Factory.newInstance();
+        ctColor.setIndexed(color);
+        setRightBorderColor(ctColor);
+    }
+    public void setRightBorderColor(CTColor color) {
         CTBorderPr pr = _border.isSetRight() ? _border.getRight() : _border.addNewRight();
-
-        CTColor ctColor = CTColor.Factory.newInstance();
-        ctColor.setIndexed(color);
-        pr.setColor(ctColor);
+        if (color == null) {
+            pr.unsetColor();
+        } else {
+            pr.setColor(color);
+        }
     }
 
-    public void setTopBorderColor(short color){
+    public void setTopBorderColor(Color color) {
+        XSSFColor xcolor = XSSFColor.toXSSFColor(color);
+        if (xcolor == null) setTopBorderColor((CTColor)null);
+        else setTopBorderColor(xcolor.getCTColor());
+    }
+    public void setTopBorderColor(short color) {
+        CTColor ctColor = CTColor.Factory.newInstance();
+        ctColor.setIndexed(color);
+        setTopBorderColor(ctColor);
+    }
+    public void setTopBorderColor(CTColor color) {
         CTBorderPr pr = _border.isSetTop() ? _border.getTop() : _border.addNewTop();
-
-        CTColor ctColor = CTColor.Factory.newInstance();
-        ctColor.setIndexed(color);
-        pr.setColor(ctColor);
+        if (color == null) {
+            pr.unsetColor();
+        } else {
+            pr.setColor(color);
+        }
     }
-    
 }

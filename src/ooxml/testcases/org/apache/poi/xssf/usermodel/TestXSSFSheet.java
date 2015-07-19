@@ -36,21 +36,17 @@ import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.ss.usermodel.AutoFilter;
 import org.apache.poi.ss.usermodel.BaseTestSheet;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CreationHelper;
-import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
-import org.apache.poi.xssf.SXSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.CalculationChain;
 import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.xssf.model.StylesTable;
-import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.helpers.ColumnHelper;
 import org.junit.Test;
@@ -59,8 +55,6 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
 
 @SuppressWarnings("resource")
 public final class TestXSSFSheet extends BaseTestSheet {
-
-    private static final int ROW_COUNT = 40000;
 
     public TestXSSFSheet() {
         super(XSSFITestDataProvider.instance);
@@ -188,39 +182,6 @@ public final class TestXSSFSheet extends BaseTestSheet {
         assertTrue(col.getBestFit());
     }
 
-    /**
-     * XSSFSheet autoSizeColumn() on empty RichTextString fails
-     */
-    @Test
-    public void bug48325() {
-        XSSFWorkbook wb = new XSSFWorkbook();
-        XSSFSheet sheet = wb.createSheet("Test");
-        CreationHelper factory = wb.getCreationHelper();
-
-        XSSFRow row = sheet.createRow(0);
-        XSSFCell cell = row.createCell(0);
-
-        XSSFFont font = wb.createFont();
-        RichTextString rts = factory.createRichTextString("");
-        rts.applyFont(font);
-        cell.setCellValue(rts);
-
-        sheet.autoSizeColumn(0);
-    }
-
-    @Test
-    public void getCellComment() {
-        XSSFWorkbook workbook = new XSSFWorkbook();
-        XSSFSheet sheet = workbook.createSheet();
-        XSSFDrawing dg = sheet.createDrawingPatriarch();
-        XSSFComment comment = dg.createCellComment(new XSSFClientAnchor());
-        XSSFCell cell = sheet.createRow(9).createCell(2);
-        comment.setAuthor("test C10 author");
-        cell.setCellComment(comment);
-
-        assertNotNull(sheet.getCellComment(9, 2));
-        assertEquals("test C10 author", sheet.getCellComment(9, 2).getAuthor());
-    }
 
     @Test
     public void setCellComment() {
@@ -266,16 +227,6 @@ public final class TestXSSFSheet extends BaseTestSheet {
         sheet.createSplitPane(4, 8, 12, 12, 1);
         assertEquals(8.0, ctWorksheet.getSheetViews().getSheetViewArray(0).getPane().getYSplit(), 0.0);
         assertEquals(STPane.BOTTOM_RIGHT, ctWorksheet.getSheetViews().getSheetViewArray(0).getPane().getActivePane());
-    }
-
-    @Test
-    public void newMergedRegionAt() {
-        XSSFWorkbook workbook = new XSSFWorkbook();
-        XSSFSheet sheet = workbook.createSheet();
-        CellRangeAddress region = CellRangeAddress.valueOf("B2:D4");
-        sheet.addMergedRegion(region);
-        assertEquals("B2:D4", sheet.getMergedRegion(0).formatAsString());
-        assertEquals(1, sheet.getNumMergedRegions());
     }
 
     @Test
@@ -1245,53 +1196,6 @@ public final class TestXSSFSheet extends BaseTestSheet {
     }
 
     @Test
-    public void showInPaneManyRowsBug55248() {
-        XSSFWorkbook workbook = new XSSFWorkbook();
-        XSSFSheet sheet = workbook.createSheet("Sheet 1");
-
-        sheet.showInPane(0, 0);
-
-        for(int i = ROW_COUNT/2;i < ROW_COUNT;i++) {
-            sheet.createRow(i);
-            sheet.showInPane(i, 0);
-            // this one fails: sheet.showInPane((short)i, 0);
-        }
-
-        int i = 0;
-        sheet.showInPane(i, i);
-
-        XSSFWorkbook wb = XSSFTestDataSamples.writeOutAndReadBack(workbook);
-        checkRowCount(wb);
-    }
-
-    @Test
-    public void showInPaneManyRowsBug55248SXSSF() {
-        SXSSFWorkbook workbook = new SXSSFWorkbook(new XSSFWorkbook());
-        SXSSFSheet sheet = (SXSSFSheet) workbook.createSheet("Sheet 1");
-
-        sheet.showInPane(0, 0);
-
-        for(int i = ROW_COUNT/2;i < ROW_COUNT;i++) {
-            sheet.createRow(i);
-            sheet.showInPane(i, 0);
-            // this one fails: sheet.showInPane((short)i, 0);
-        }
-
-        int i = 0;
-        sheet.showInPane(i, i);
-
-        Workbook wb = SXSSFITestDataProvider.instance.writeOutAndReadBack(workbook);
-        checkRowCount(wb);
-    }
-
-    private void checkRowCount(Workbook wb) {
-        assertNotNull(wb);
-        final Sheet sh = wb.getSheet("Sheet 1");
-        assertNotNull(sh);
-        assertEquals(ROW_COUNT-1, sh.getLastRowNum());
-    }
-
-    @Test
     public void bug55745() throws Exception {
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("55745.xlsx");
         XSSFSheet sheet = wb.getSheetAt(0);
@@ -1471,17 +1375,5 @@ public final class TestXSSFSheet extends BaseTestSheet {
         XSSFWorkbook wb = new XSSFWorkbook();
         XSSFSheet sheet = wb.createSheet();
         assertNotNull(sheet.createComment());
-    }
-    
-    @Test
-    public void testRightToLeft() {
-        XSSFWorkbook wb = new XSSFWorkbook();
-        XSSFSheet sheet = wb.createSheet();
-
-        assertFalse(sheet.isRightToLeft());
-        sheet.setRightToLeft(true);
-        assertTrue(sheet.isRightToLeft());
-        sheet.setRightToLeft(false);
-        assertFalse(sheet.isRightToLeft());
     }
 }

@@ -30,8 +30,6 @@ import org.apache.poi.util.LittleEndian;
 /**
  * A block of block allocation table entries. BATBlocks are created
  * only through a static factory method: createBATBlocks.
- *
- * @author Marc Johnson (mjohnson at apache dot org)
  */
 public final class BATBlock extends BigBlock {
     /**
@@ -300,6 +298,21 @@ public final class BATBlock extends BigBlock {
      */
     public boolean hasFreeSectors() {
        return _has_free_sectors;
+    }
+    /**
+     * How many sectors in this block are taken?
+     * Note that calling {@link #hasFreeSectors()} is much quicker
+     */
+    public int getUsedSectors(boolean isAnXBAT) {
+        int usedSectors = 0;
+        int toCheck = _values.length;
+        if (isAnXBAT) toCheck--; // Last is a chain location
+        for(int k=0; k<toCheck; k++) {
+            if(_values[k] != POIFSConstants.UNUSED_BLOCK) {
+                usedSectors ++;
+            }
+        }
+        return usedSectors;
     }
     
     public int getValueAt(int relativeOffset) {

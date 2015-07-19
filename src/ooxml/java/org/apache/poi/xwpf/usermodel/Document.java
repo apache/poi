@@ -17,25 +17,39 @@
 package org.apache.poi.xwpf.usermodel;
 
 public interface Document {
-    /** Extended windows meta file */
+    /**
+     * Extended windows meta file
+     */
     public static final int PICTURE_TYPE_EMF = 2;
 
-    /** Windows Meta File */
+    /**
+     * Windows Meta File
+     */
     public static final int PICTURE_TYPE_WMF = 3;
 
-    /** Mac PICT format */
+    /**
+     * Mac PICT format
+     */
     public static final int PICTURE_TYPE_PICT = 4;
 
-    /** JPEG format */
+    /**
+     * JPEG format
+     */
     public static final int PICTURE_TYPE_JPEG = 5;
 
-    /** PNG format */
+    /**
+     * PNG format
+     */
     public static final int PICTURE_TYPE_PNG = 6;
 
-    /** Device independent bitmap */
+    /**
+     * Device independent bitmap
+     */
     public static final int PICTURE_TYPE_DIB = 7;
 
-    /** GIF image format */
+    /**
+     * GIF image format
+     */
     public static final int PICTURE_TYPE_GIF = 8;
 
     /**

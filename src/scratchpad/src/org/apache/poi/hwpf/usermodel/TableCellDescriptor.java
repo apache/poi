@@ -53,7 +53,7 @@ public final class TableCellDescriptor extends TCAbstractType implements
     throws CloneNotSupportedException
   {
     TableCellDescriptor tc = (TableCellDescriptor)super.clone();
-    tc.setShd( (ShadingDescriptor) getShd().clone() );
+    tc.setShd( getShd().clone() );
     tc.setBrcTop((BorderCode)getBrcTop().clone());
     tc.setBrcLeft((BorderCode)getBrcLeft().clone());
     tc.setBrcBottom((BorderCode)getBrcBottom().clone());

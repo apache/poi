@@ -17,13 +17,63 @@
 
 package org.apache.poi.hssf.dev;
 
-import java.io.*;
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintStream;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.hssf.record.*;
 import org.apache.poi.hssf.record.RecordInputStream.LeftoverDataException;
-import org.apache.poi.hssf.record.chart.*;
+import org.apache.poi.hssf.record.chart.AreaFormatRecord;
+import org.apache.poi.hssf.record.chart.AreaRecord;
+import org.apache.poi.hssf.record.chart.AxisLineFormatRecord;
+import org.apache.poi.hssf.record.chart.AxisOptionsRecord;
+import org.apache.poi.hssf.record.chart.AxisParentRecord;
+import org.apache.poi.hssf.record.chart.AxisRecord;
+import org.apache.poi.hssf.record.chart.AxisUsedRecord;
+import org.apache.poi.hssf.record.chart.BarRecord;
+import org.apache.poi.hssf.record.chart.BeginRecord;
+import org.apache.poi.hssf.record.chart.CatLabRecord;
+import org.apache.poi.hssf.record.chart.CategorySeriesAxisRecord;
+import org.apache.poi.hssf.record.chart.ChartEndBlockRecord;
+import org.apache.poi.hssf.record.chart.ChartEndObjectRecord;
+import org.apache.poi.hssf.record.chart.ChartFRTInfoRecord;
+import org.apache.poi.hssf.record.chart.ChartFormatRecord;
+import org.apache.poi.hssf.record.chart.ChartRecord;
+import org.apache.poi.hssf.record.chart.ChartStartBlockRecord;
+import org.apache.poi.hssf.record.chart.ChartStartObjectRecord;
+import org.apache.poi.hssf.record.chart.DatRecord;
+import org.apache.poi.hssf.record.chart.DataFormatRecord;
+import org.apache.poi.hssf.record.chart.DefaultDataLabelTextPropertiesRecord;
+import org.apache.poi.hssf.record.chart.EndRecord;
+import org.apache.poi.hssf.record.chart.FontBasisRecord;
+import org.apache.poi.hssf.record.chart.FontIndexRecord;
+import org.apache.poi.hssf.record.chart.FrameRecord;
+import org.apache.poi.hssf.record.chart.LegendRecord;
+import org.apache.poi.hssf.record.chart.LineFormatRecord;
+import org.apache.poi.hssf.record.chart.LinkedDataRecord;
+import org.apache.poi.hssf.record.chart.ObjectLinkRecord;
+import org.apache.poi.hssf.record.chart.PlotAreaRecord;
+import org.apache.poi.hssf.record.chart.PlotGrowthRecord;
+import org.apache.poi.hssf.record.chart.SeriesIndexRecord;
+import org.apache.poi.hssf.record.chart.SeriesListRecord;
+import org.apache.poi.hssf.record.chart.SeriesRecord;
+import org.apache.poi.hssf.record.chart.SeriesTextRecord;
+import org.apache.poi.hssf.record.chart.SeriesToChartGroupRecord;
+import org.apache.poi.hssf.record.chart.SheetPropertiesRecord;
+import org.apache.poi.hssf.record.chart.TextRecord;
+import org.apache.poi.hssf.record.chart.TickRecord;
+import org.apache.poi.hssf.record.chart.UnitsRecord;
+import org.apache.poi.hssf.record.chart.ValueRangeRecord;
 import org.apache.poi.hssf.record.pivottable.DataItemRecord;
 import org.apache.poi.hssf.record.pivottable.ExtendedPivotTableViewFieldsRecord;
 import org.apache.poi.hssf.record.pivottable.PageItemRecord;
@@ -32,330 +82,330 @@ import org.apache.poi.hssf.record.pivottable.ViewDefinitionRecord;
 import org.apache.poi.hssf.record.pivottable.ViewFieldsRecord;
 import org.apache.poi.hssf.record.pivottable.ViewSourceRecord;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
 
 /**
  *  Utillity for reading in BIFF8 records and displaying data from them.
- *
- *@author     Andrew C. Oliver (acoliver at apache dot org)
- *@author     Glen Stampoultzis (glens at apache.org)
- *@see        #main
+ * @see        #main
  */
 public final class BiffViewer {
-	static final char[] NEW_LINE_CHARS = System.getProperty("line.separator").toCharArray();
+    static final char[] NEW_LINE_CHARS = System.getProperty("line.separator").toCharArray();
 
     private BiffViewer() {
-		// no instances of this class
-	}
+        // no instances of this class
+    }
 
-	/**
-	 *  Create an array of records from an input stream
-	 *
-	 *@param  is the InputStream from which the records will be obtained
-	 *@return an array of Records created from the InputStream
-	 *@exception  RecordFormatException  on error processing the InputStream
-	 */
-	public static Record[] createRecords(InputStream is, PrintStream ps, BiffRecordListener recListener, boolean dumpInterpretedRecords)
-			throws RecordFormatException {
-		List<Record> temp = new ArrayList<Record>();
+    /**
+     *  Create an array of records from an input stream
+     *
+     *@param  is the InputStream from which the records will be obtained
+     *@return an array of Records created from the InputStream
+     *@exception  RecordFormatException  on error processing the InputStream
+     */
+    public static Record[] createRecords(InputStream is, PrintStream ps, BiffRecordListener recListener, boolean dumpInterpretedRecords)
+            throws RecordFormatException {
+        List<Record> temp = new ArrayList<Record>();
 
-		RecordInputStream recStream = new RecordInputStream(is);
-		while (true) {
-			boolean hasNext;
-			try {
-				hasNext = recStream.hasNextRecord();
-			} catch (LeftoverDataException e) {
-				e.printStackTrace();
-				System.err.println("Discarding " + recStream.remaining() + " bytes and continuing");
-				recStream.readRemainder();
-				hasNext = recStream.hasNextRecord();
-			}
-			if (!hasNext) {
-				break;
-			}
-			recStream.nextRecord();
-			if (recStream.getSid() == 0) {
-				continue;
-			}
-			Record record;
-			if (dumpInterpretedRecords) {
-				record = createRecord (recStream);
-				if (record.getSid() == ContinueRecord.sid) {
-					continue;
-				}
-				temp.add(record);
+        RecordInputStream recStream = new RecordInputStream(is);
+        while (true) {
+            boolean hasNext;
+            try {
+                hasNext = recStream.hasNextRecord();
+            } catch (LeftoverDataException e) {
+                e.printStackTrace();
+                System.err.println("Discarding " + recStream.remaining() + " bytes and continuing");
+                recStream.readRemainder();
+                hasNext = recStream.hasNextRecord();
+            }
+            if (!hasNext) {
+                break;
+            }
+            recStream.nextRecord();
+            if (recStream.getSid() == 0) {
+                continue;
+            }
+            Record record;
+            if (dumpInterpretedRecords) {
+                record = createRecord (recStream);
+                if (record.getSid() == ContinueRecord.sid) {
+                    continue;
+                }
+                temp.add(record);
 
-				if (dumpInterpretedRecords) {
-					for (String header : recListener.getRecentHeaders()) {
-						ps.println(header);
-					}
-					ps.print(record.toString());
-				}
-			} else {
-				recStream.readRemainder();
-			}
-			ps.println();
-		}
-		Record[] result = new Record[temp.size()];
-		temp.toArray(result);
-		return result;
-	}
+                if (dumpInterpretedRecords) {
+                    for (String header : recListener.getRecentHeaders()) {
+                        ps.println(header);
+                    }
+                    ps.print(record.toString());
+                }
+            } else {
+                recStream.readRemainder();
+            }
+            ps.println();
+        }
+        Record[] result = new Record[temp.size()];
+        temp.toArray(result);
+        return result;
+    }
 
 
-	/**
-	 *  Essentially a duplicate of RecordFactory. Kept separate as not to screw
-	 *  up non-debug operations.
-	 *
-	 */
-	private static Record createRecord(RecordInputStream in) {
-		switch (in.getSid()) {
-			case AreaFormatRecord.sid:     return new AreaFormatRecord(in);
-			case AreaRecord.sid:           return new AreaRecord(in);
-			case ArrayRecord.sid:          return new ArrayRecord(in);
-			case AxisLineFormatRecord.sid: return new AxisLineFormatRecord(in);
-			case AxisOptionsRecord.sid:    return new AxisOptionsRecord(in);
-			case AxisParentRecord.sid:     return new AxisParentRecord(in);
-			case AxisRecord.sid:           return new AxisRecord(in);
-			case AxisUsedRecord.sid:       return new AxisUsedRecord(in);
-			case AutoFilterInfoRecord.sid: return new AutoFilterInfoRecord(in);
-			case BOFRecord.sid:            return new BOFRecord(in);
-			case BackupRecord.sid:         return new BackupRecord(in);
-			case BarRecord.sid:            return new BarRecord(in);
-			case BeginRecord.sid:          return new BeginRecord(in);
-			case BlankRecord.sid:          return new BlankRecord(in);
-			case BookBoolRecord.sid:       return new BookBoolRecord(in);
-			case BoolErrRecord.sid:        return new BoolErrRecord(in);
-			case BottomMarginRecord.sid:   return new BottomMarginRecord(in);
-			case BoundSheetRecord.sid:     return new BoundSheetRecord(in);
-			case CFHeaderRecord.sid:       return new CFHeaderRecord(in);
-			case CFRuleRecord.sid:         return new CFRuleRecord(in);
-			case CalcCountRecord.sid:      return new CalcCountRecord(in);
-			case CalcModeRecord.sid:       return new CalcModeRecord(in);
-			case CategorySeriesAxisRecord.sid: return new CategorySeriesAxisRecord(in);
-			case ChartFormatRecord.sid:    return new ChartFormatRecord(in);
-			case ChartRecord.sid:          return new ChartRecord(in);
-			case CodepageRecord.sid:       return new CodepageRecord(in);
-			case ColumnInfoRecord.sid:     return new ColumnInfoRecord(in);
-			case ContinueRecord.sid:       return new ContinueRecord(in);
-			case CountryRecord.sid:        return new CountryRecord(in);
-			case DBCellRecord.sid:         return new DBCellRecord(in);
-			case DSFRecord.sid:            return new DSFRecord(in);
-			case DatRecord.sid:            return new DatRecord(in);
-			case DataFormatRecord.sid:     return new DataFormatRecord(in);
-			case DateWindow1904Record.sid: return new DateWindow1904Record(in);
-			case DConRefRecord.sid: return new DConRefRecord(in);
-			case DefaultColWidthRecord.sid:return new DefaultColWidthRecord(in);
-			case DefaultDataLabelTextPropertiesRecord.sid: return new DefaultDataLabelTextPropertiesRecord(in);
-			case DefaultRowHeightRecord.sid: return new DefaultRowHeightRecord(in);
-			case DeltaRecord.sid:          return new DeltaRecord(in);
-			case DimensionsRecord.sid:     return new DimensionsRecord(in);
-			case DrawingGroupRecord.sid:   return new DrawingGroupRecord(in);
-			case DrawingRecordForBiffViewer.sid: return new DrawingRecordForBiffViewer(in);
-			case DrawingSelectionRecord.sid: return new DrawingSelectionRecord(in);
-			case DVRecord.sid:             return new DVRecord(in);
-			case DVALRecord.sid:           return new DVALRecord(in);
-			case EOFRecord.sid:            return new EOFRecord(in);
-			case EndRecord.sid:            return new EndRecord(in);
-			case ExtSSTRecord.sid:         return new ExtSSTRecord(in);
-			case ExtendedFormatRecord.sid: return new ExtendedFormatRecord(in);
-			case ExternSheetRecord.sid:    return new ExternSheetRecord(in);
-			case ExternalNameRecord.sid:   return new ExternalNameRecord(in);
-			case FeatRecord.sid:           return new FeatRecord(in);
-			case FeatHdrRecord.sid:        return new FeatHdrRecord(in);
-			case FilePassRecord.sid:       return new FilePassRecord(in);
-			case FileSharingRecord.sid:    return new FileSharingRecord(in);
-			case FnGroupCountRecord.sid:   return new FnGroupCountRecord(in);
-			case FontBasisRecord.sid:      return new FontBasisRecord(in);
-			case FontIndexRecord.sid:      return new FontIndexRecord(in);
-			case FontRecord.sid:           return new FontRecord(in);
-			case FooterRecord.sid:         return new FooterRecord(in);
-			case FormatRecord.sid:         return new FormatRecord(in);
-			case FormulaRecord.sid:        return new FormulaRecord(in);
-			case FrameRecord.sid:          return new FrameRecord(in);
-			case GridsetRecord.sid:        return new GridsetRecord(in);
-			case GutsRecord.sid:           return new GutsRecord(in);
-			case HCenterRecord.sid:        return new HCenterRecord(in);
-			case HeaderRecord.sid:         return new HeaderRecord(in);
-			case HideObjRecord.sid:        return new HideObjRecord(in);
-			case HorizontalPageBreakRecord.sid: return new HorizontalPageBreakRecord(in);
-			case HyperlinkRecord.sid:      return new HyperlinkRecord(in);
-			case IndexRecord.sid:          return new IndexRecord(in);
-			case InterfaceEndRecord.sid:   return InterfaceEndRecord.create(in);
-			case InterfaceHdrRecord.sid:   return new InterfaceHdrRecord(in);
-			case IterationRecord.sid:      return new IterationRecord(in);
-			case LabelRecord.sid:          return new LabelRecord(in);
-			case LabelSSTRecord.sid:       return new LabelSSTRecord(in);
-			case LeftMarginRecord.sid:     return new LeftMarginRecord(in);
-			case LegendRecord.sid:         return new LegendRecord(in);
-			case LineFormatRecord.sid:     return new LineFormatRecord(in);
-			case LinkedDataRecord.sid:     return new LinkedDataRecord(in);
-			case MMSRecord.sid:            return new MMSRecord(in);
-			case MergeCellsRecord.sid:     return new MergeCellsRecord(in);
-			case MulBlankRecord.sid:       return new MulBlankRecord(in);
-			case MulRKRecord.sid:          return new MulRKRecord(in);
-			case NameRecord.sid:           return new NameRecord(in);
-			case NameCommentRecord.sid:    return new NameCommentRecord(in);
-			case NoteRecord.sid:           return new NoteRecord(in);
-			case NumberRecord.sid:         return new NumberRecord(in);
-			case ObjRecord.sid:            return new ObjRecord(in);
-			case ObjectLinkRecord.sid:     return new ObjectLinkRecord(in);
-			case PaletteRecord.sid:        return new PaletteRecord(in);
-			case PaneRecord.sid:           return new PaneRecord(in);
-			case PasswordRecord.sid:       return new PasswordRecord(in);
-			case PasswordRev4Record.sid:   return new PasswordRev4Record(in);
-			case PlotAreaRecord.sid:       return new PlotAreaRecord(in);
-			case PlotGrowthRecord.sid:     return new PlotGrowthRecord(in);
-			case PrecisionRecord.sid:      return new PrecisionRecord(in);
-			case PrintGridlinesRecord.sid: return new PrintGridlinesRecord(in);
-			case PrintHeadersRecord.sid:   return new PrintHeadersRecord(in);
-			case PrintSetupRecord.sid:     return new PrintSetupRecord(in);
-			case ProtectRecord.sid:        return new ProtectRecord(in);
-			case ProtectionRev4Record.sid: return new ProtectionRev4Record(in);
-			case RKRecord.sid:             return new RKRecord(in);
-			case RecalcIdRecord.sid:       return new RecalcIdRecord(in);
-			case RefModeRecord.sid:        return new RefModeRecord(in);
-			case RefreshAllRecord.sid:     return new RefreshAllRecord(in);
-			case RightMarginRecord.sid:    return new RightMarginRecord(in);
-			case RowRecord.sid:            return new RowRecord(in);
-			case SCLRecord.sid:            return new SCLRecord(in);
-			case SSTRecord.sid:            return new SSTRecord(in);
-			case SaveRecalcRecord.sid:     return new SaveRecalcRecord(in);
-			case SelectionRecord.sid:      return new SelectionRecord(in);
-			case SeriesIndexRecord.sid:    return new SeriesIndexRecord(in);
-			case SeriesListRecord.sid:     return new SeriesListRecord(in);
-			case SeriesRecord.sid:         return new SeriesRecord(in);
-			case SeriesTextRecord.sid:     return new SeriesTextRecord(in);
-			case SeriesToChartGroupRecord.sid: return new SeriesToChartGroupRecord(in);
-			case SharedFormulaRecord.sid:  return new SharedFormulaRecord(in);
-			case SheetPropertiesRecord.sid:return new SheetPropertiesRecord(in);
-			case StringRecord.sid:         return new StringRecord(in);
-			case StyleRecord.sid:          return new StyleRecord(in);
-			case SupBookRecord.sid:        return new SupBookRecord(in);
-			case TabIdRecord.sid:          return new TabIdRecord(in);
-			case TableStylesRecord.sid:    return new TableStylesRecord(in);
-			case TableRecord.sid:          return new TableRecord(in);
-			case TextObjectRecord.sid:     return new TextObjectRecord(in);
-			case TextRecord.sid:           return new TextRecord(in);
-			case TickRecord.sid:           return new TickRecord(in);
-			case TopMarginRecord.sid:      return new TopMarginRecord(in);
-            case UncalcedRecord.sid:       return new UncalcedRecord(in);
-			case UnitsRecord.sid:          return new UnitsRecord(in);
-			case UseSelFSRecord.sid:       return new UseSelFSRecord(in);
-			case VCenterRecord.sid:        return new VCenterRecord(in);
-			case ValueRangeRecord.sid:     return new ValueRangeRecord(in);
-			case VerticalPageBreakRecord.sid: return new VerticalPageBreakRecord(in);
-			case WSBoolRecord.sid:         return new WSBoolRecord(in);
-			case WindowOneRecord.sid:      return new WindowOneRecord(in);
-			case WindowProtectRecord.sid:  return new WindowProtectRecord(in);
-			case WindowTwoRecord.sid:      return new WindowTwoRecord(in);
-			case WriteAccessRecord.sid:    return new WriteAccessRecord(in);
-			case WriteProtectRecord.sid:   return new WriteProtectRecord(in);
+    /**
+     *  Essentially a duplicate of RecordFactory. Kept separate as not to screw
+     *  up non-debug operations.
+     *
+     */
+    private static Record createRecord(RecordInputStream in) {
+        switch (in.getSid()) {
+            case AreaFormatRecord.sid:        return new AreaFormatRecord(in);
+            case AreaRecord.sid:              return new AreaRecord(in);
+            case ArrayRecord.sid:             return new ArrayRecord(in);
+            case AxisLineFormatRecord.sid:    return new AxisLineFormatRecord(in);
+            case AxisOptionsRecord.sid:       return new AxisOptionsRecord(in);
+            case AxisParentRecord.sid:        return new AxisParentRecord(in);
+            case AxisRecord.sid:              return new AxisRecord(in);
+            case AxisUsedRecord.sid:          return new AxisUsedRecord(in);
+            case AutoFilterInfoRecord.sid:    return new AutoFilterInfoRecord(in);
+            case BOFRecord.sid:               return new BOFRecord(in);
+            case BackupRecord.sid:            return new BackupRecord(in);
+            case BarRecord.sid:               return new BarRecord(in);
+            case BeginRecord.sid:             return new BeginRecord(in);
+            case BlankRecord.sid:             return new BlankRecord(in);
+            case BookBoolRecord.sid:          return new BookBoolRecord(in);
+            case BoolErrRecord.sid:           return new BoolErrRecord(in);
+            case BottomMarginRecord.sid:      return new BottomMarginRecord(in);
+            case BoundSheetRecord.sid:        return new BoundSheetRecord(in);
+            case CFHeaderRecord.sid:          return new CFHeaderRecord(in);
+            case CFHeader12Record.sid:        return new CFHeader12Record(in);
+            case CFRuleRecord.sid:            return new CFRuleRecord(in);
+            case CFRule12Record.sid:          return new CFRule12Record(in);
+            // TODO Add CF Ex, and remove from UnknownRecord 
+            case CalcCountRecord.sid:         return new CalcCountRecord(in);
+            case CalcModeRecord.sid:          return new CalcModeRecord(in);
+            case CategorySeriesAxisRecord.sid:return new CategorySeriesAxisRecord(in);
+            case ChartFormatRecord.sid:       return new ChartFormatRecord(in);
+            case ChartRecord.sid:             return new ChartRecord(in);
+            case CodepageRecord.sid:          return new CodepageRecord(in);
+            case ColumnInfoRecord.sid:        return new ColumnInfoRecord(in);
+            case ContinueRecord.sid:          return new ContinueRecord(in);
+            case CountryRecord.sid:           return new CountryRecord(in);
+            case DBCellRecord.sid:            return new DBCellRecord(in);
+            case DSFRecord.sid:               return new DSFRecord(in);
+            case DatRecord.sid:               return new DatRecord(in);
+            case DataFormatRecord.sid:        return new DataFormatRecord(in);
+            case DateWindow1904Record.sid:    return new DateWindow1904Record(in);
+            case DConRefRecord.sid:           return new DConRefRecord(in);
+            case DefaultColWidthRecord.sid:   return new DefaultColWidthRecord(in);
+            case DefaultDataLabelTextPropertiesRecord.sid: return new DefaultDataLabelTextPropertiesRecord(in);
+            case DefaultRowHeightRecord.sid:  return new DefaultRowHeightRecord(in);
+            case DeltaRecord.sid:             return new DeltaRecord(in);
+            case DimensionsRecord.sid:        return new DimensionsRecord(in);
+            case DrawingGroupRecord.sid:      return new DrawingGroupRecord(in);
+            case DrawingRecordForBiffViewer.sid: return new DrawingRecordForBiffViewer(in);
+            case DrawingSelectionRecord.sid:  return new DrawingSelectionRecord(in);
+            case DVRecord.sid:                return new DVRecord(in);
+            case DVALRecord.sid:              return new DVALRecord(in);
+            case EOFRecord.sid:               return new EOFRecord(in);
+            case EndRecord.sid:               return new EndRecord(in);
+            case ExtSSTRecord.sid:            return new ExtSSTRecord(in);
+            case ExtendedFormatRecord.sid:    return new ExtendedFormatRecord(in);
+            case ExternSheetRecord.sid:       return new ExternSheetRecord(in);
+            case ExternalNameRecord.sid:      return new ExternalNameRecord(in);
+            case FeatRecord.sid:              return new FeatRecord(in);
+            case FeatHdrRecord.sid:           return new FeatHdrRecord(in);
+            case FilePassRecord.sid:          return new FilePassRecord(in);
+            case FileSharingRecord.sid:       return new FileSharingRecord(in);
+            case FnGroupCountRecord.sid:      return new FnGroupCountRecord(in);
+            case FontBasisRecord.sid:         return new FontBasisRecord(in);
+            case FontIndexRecord.sid:         return new FontIndexRecord(in);
+            case FontRecord.sid:              return new FontRecord(in);
+            case FooterRecord.sid:            return new FooterRecord(in);
+            case FormatRecord.sid:            return new FormatRecord(in);
+            case FormulaRecord.sid:           return new FormulaRecord(in);
+            case FrameRecord.sid:             return new FrameRecord(in);
+            case GridsetRecord.sid:           return new GridsetRecord(in);
+            case GutsRecord.sid:              return new GutsRecord(in);
+            case HCenterRecord.sid:           return new HCenterRecord(in);
+            case HeaderRecord.sid:            return new HeaderRecord(in);
+            case HideObjRecord.sid:           return new HideObjRecord(in);
+            case HorizontalPageBreakRecord.sid: return new HorizontalPageBreakRecord(in);
+            case HyperlinkRecord.sid:         return new HyperlinkRecord(in);
+            case IndexRecord.sid:             return new IndexRecord(in);
+            case InterfaceEndRecord.sid:      return InterfaceEndRecord.create(in);
+            case InterfaceHdrRecord.sid:      return new InterfaceHdrRecord(in);
+            case IterationRecord.sid:         return new IterationRecord(in);
+            case LabelRecord.sid:             return new LabelRecord(in);
+            case LabelSSTRecord.sid:          return new LabelSSTRecord(in);
+            case LeftMarginRecord.sid:        return new LeftMarginRecord(in);
+            case LegendRecord.sid:            return new LegendRecord(in);
+            case LineFormatRecord.sid:        return new LineFormatRecord(in);
+            case LinkedDataRecord.sid:        return new LinkedDataRecord(in);
+            case MMSRecord.sid:               return new MMSRecord(in);
+            case MergeCellsRecord.sid:        return new MergeCellsRecord(in);
+            case MulBlankRecord.sid:          return new MulBlankRecord(in);
+            case MulRKRecord.sid:             return new MulRKRecord(in);
+            case NameRecord.sid:              return new NameRecord(in);
+            case NameCommentRecord.sid:       return new NameCommentRecord(in);
+            case NoteRecord.sid:              return new NoteRecord(in);
+            case NumberRecord.sid:            return new NumberRecord(in);
+            case ObjRecord.sid:               return new ObjRecord(in);
+            case ObjectLinkRecord.sid:        return new ObjectLinkRecord(in);
+            case PaletteRecord.sid:           return new PaletteRecord(in);
+            case PaneRecord.sid:              return new PaneRecord(in);
+            case PasswordRecord.sid:          return new PasswordRecord(in);
+            case PasswordRev4Record.sid:      return new PasswordRev4Record(in);
+            case PlotAreaRecord.sid:          return new PlotAreaRecord(in);
+            case PlotGrowthRecord.sid:        return new PlotGrowthRecord(in);
+            case PrecisionRecord.sid:         return new PrecisionRecord(in);
+            case PrintGridlinesRecord.sid:    return new PrintGridlinesRecord(in);
+            case PrintHeadersRecord.sid:      return new PrintHeadersRecord(in);
+            case PrintSetupRecord.sid:        return new PrintSetupRecord(in);
+            case ProtectRecord.sid:           return new ProtectRecord(in);
+            case ProtectionRev4Record.sid:    return new ProtectionRev4Record(in);
+            case RKRecord.sid:                return new RKRecord(in);
+            case RecalcIdRecord.sid:          return new RecalcIdRecord(in);
+            case RefModeRecord.sid:           return new RefModeRecord(in);
+            case RefreshAllRecord.sid:        return new RefreshAllRecord(in);
+            case RightMarginRecord.sid:       return new RightMarginRecord(in);
+            case RowRecord.sid:               return new RowRecord(in);
+            case SCLRecord.sid:               return new SCLRecord(in);
+            case SSTRecord.sid:               return new SSTRecord(in);
+            case SaveRecalcRecord.sid:        return new SaveRecalcRecord(in);
+            case SelectionRecord.sid:         return new SelectionRecord(in);
+            case SeriesIndexRecord.sid:       return new SeriesIndexRecord(in);
+            case SeriesListRecord.sid:        return new SeriesListRecord(in);
+            case SeriesRecord.sid:            return new SeriesRecord(in);
+            case SeriesTextRecord.sid:        return new SeriesTextRecord(in);
+            case SeriesToChartGroupRecord.sid:return new SeriesToChartGroupRecord(in);
+            case SharedFormulaRecord.sid:     return new SharedFormulaRecord(in);
+            case SheetPropertiesRecord.sid:   return new SheetPropertiesRecord(in);
+            case StringRecord.sid:            return new StringRecord(in);
+            case StyleRecord.sid:             return new StyleRecord(in);
+            case SupBookRecord.sid:           return new SupBookRecord(in);
+            case TabIdRecord.sid:             return new TabIdRecord(in);
+            case TableStylesRecord.sid:       return new TableStylesRecord(in);
+            case TableRecord.sid:             return new TableRecord(in);
+            case TextObjectRecord.sid:        return new TextObjectRecord(in);
+            case TextRecord.sid:              return new TextRecord(in);
+            case TickRecord.sid:              return new TickRecord(in);
+            case TopMarginRecord.sid:         return new TopMarginRecord(in);
+            case UncalcedRecord.sid:          return new UncalcedRecord(in);
+            case UnitsRecord.sid:             return new UnitsRecord(in);
+            case UseSelFSRecord.sid:          return new UseSelFSRecord(in);
+            case VCenterRecord.sid:           return new VCenterRecord(in);
+            case ValueRangeRecord.sid:        return new ValueRangeRecord(in);
+            case VerticalPageBreakRecord.sid: return new VerticalPageBreakRecord(in);
+            case WSBoolRecord.sid:            return new WSBoolRecord(in);
+            case WindowOneRecord.sid:         return new WindowOneRecord(in);
+            case WindowProtectRecord.sid:     return new WindowProtectRecord(in);
+            case WindowTwoRecord.sid:         return new WindowTwoRecord(in);
+            case WriteAccessRecord.sid:       return new WriteAccessRecord(in);
+            case WriteProtectRecord.sid:      return new WriteProtectRecord(in);
 
-			// chart
-			case CatLabRecord.sid:         return new CatLabRecord(in);
-			case ChartEndBlockRecord.sid:  return new ChartEndBlockRecord(in);
-			case ChartEndObjectRecord.sid: return new ChartEndObjectRecord(in);
-			case ChartFRTInfoRecord.sid:   return new ChartFRTInfoRecord(in);
-			case ChartStartBlockRecord.sid: return new ChartStartBlockRecord(in);
-			case ChartStartObjectRecord.sid: return new ChartStartObjectRecord(in);
+            // chart
+            case CatLabRecord.sid:            return new CatLabRecord(in);
+            case ChartEndBlockRecord.sid:     return new ChartEndBlockRecord(in);
+            case ChartEndObjectRecord.sid:    return new ChartEndObjectRecord(in);
+            case ChartFRTInfoRecord.sid:      return new ChartFRTInfoRecord(in);
+            case ChartStartBlockRecord.sid:   return new ChartStartBlockRecord(in);
+            case ChartStartObjectRecord.sid:  return new ChartStartObjectRecord(in);
 
-			// pivot table
-			case StreamIDRecord.sid:        return new StreamIDRecord(in);
-			case ViewSourceRecord.sid:      return new ViewSourceRecord(in);
-			case PageItemRecord.sid:        return new PageItemRecord(in);
-			case ViewDefinitionRecord.sid:  return new ViewDefinitionRecord(in);
-			case ViewFieldsRecord.sid:      return new ViewFieldsRecord(in);
-			case DataItemRecord.sid:        return new DataItemRecord(in);
-			case ExtendedPivotTableViewFieldsRecord.sid: return new ExtendedPivotTableViewFieldsRecord(in);
-		}
-		return new UnknownRecord(in);
-	}
+            // pivot table
+            case StreamIDRecord.sid:           return new StreamIDRecord(in);
+            case ViewSourceRecord.sid:         return new ViewSourceRecord(in);
+            case PageItemRecord.sid:           return new PageItemRecord(in);
+            case ViewDefinitionRecord.sid:     return new ViewDefinitionRecord(in);
+            case ViewFieldsRecord.sid:         return new ViewFieldsRecord(in);
+            case DataItemRecord.sid:           return new DataItemRecord(in);
+            case ExtendedPivotTableViewFieldsRecord.sid: return new ExtendedPivotTableViewFieldsRecord(in);
+        }
+        return new UnknownRecord(in);
+    }
 
-	private static final class CommandArgs {
+    private static final class CommandArgs {
 
-		private final boolean _biffhex;
-		private final boolean _noint;
-		private final boolean _out;
-		private final boolean _rawhex;
-		private final boolean _noHeader;
-		private final File _file;
+        private final boolean _biffhex;
+        private final boolean _noint;
+        private final boolean _out;
+        private final boolean _rawhex;
+        private final boolean _noHeader;
+        private final File _file;
 
-		private CommandArgs(boolean biffhex, boolean noint, boolean out, boolean rawhex, boolean noHeader, File file) {
-			_biffhex = biffhex;
-			_noint = noint;
-			_out = out;
-			_rawhex = rawhex;
-			_file = file;
-			_noHeader = noHeader;
-		}
+        private CommandArgs(boolean biffhex, boolean noint, boolean out, boolean rawhex, boolean noHeader, File file) {
+            _biffhex = biffhex;
+            _noint = noint;
+            _out = out;
+            _rawhex = rawhex;
+            _file = file;
+            _noHeader = noHeader;
+        }
 
-		public static CommandArgs parse(String[] args) throws CommandParseException {
-			int nArgs = args.length;
-			boolean biffhex = false;
-			boolean noint = false;
-			boolean out = false;
-			boolean rawhex = false;
-			boolean noheader = false;
-			File file = null;
-			for (int i=0; i<nArgs; i++) {
-				String arg = args[i];
-				if (arg.startsWith("--")) {
-					if ("--biffhex".equals(arg)) {
-						biffhex = true;
-					} else if ("--noint".equals(arg)) {
-						noint = true;
-					} else if ("--out".equals(arg)) {
-						out = true;
-					} else if ("--escher".equals(arg)) {
-						System.setProperty("poi.deserialize.escher", "true");
-					} else if ("--rawhex".equals(arg)) {
-						rawhex = true;
-					} else if ("--noheader".equals(arg)) {
-						noheader = true;
-					} else {
-						throw new CommandParseException("Unexpected option '" + arg + "'");
-					}
-					continue;
-				}
-				file = new File(arg);
-				if (!file.exists()) {
-					throw new CommandParseException("Specified file '" + arg + "' does not exist");
-				}
-				if (i+1<nArgs) {
-					throw new CommandParseException("File name must be the last arg");
-				}
-			}
-			if (file == null) {
-				throw new CommandParseException("Biff viewer needs a filename");
-			}
-			return new CommandArgs(biffhex, noint, out, rawhex, noheader, file);
-		}
-		public boolean shouldDumpBiffHex() {
-			return _biffhex;
-		}
-		public boolean shouldDumpRecordInterpretations() {
-			return !_noint;
-		}
-		public boolean shouldOutputToFile() {
-			return _out;
-		}
-		public boolean shouldOutputRawHexOnly() {
-			return _rawhex;
-		}
-		public boolean suppressHeader() {
-			return _noHeader;
-		}
-		public File getFile() {
-			return _file;
-		}
-	}
-	private static final class CommandParseException extends Exception {
-		public CommandParseException(String msg) {
-			super(msg);
-		}
-	}
+        public static CommandArgs parse(String[] args) throws CommandParseException {
+            int nArgs = args.length;
+            boolean biffhex = false;
+            boolean noint = false;
+            boolean out = false;
+            boolean rawhex = false;
+            boolean noheader = false;
+            File file = null;
+            for (int i=0; i<nArgs; i++) {
+                String arg = args[i];
+                if (arg.startsWith("--")) {
+                    if ("--biffhex".equals(arg)) {
+                        biffhex = true;
+                    } else if ("--noint".equals(arg)) {
+                        noint = true;
+                    } else if ("--out".equals(arg)) {
+                        out = true;
+                    } else if ("--escher".equals(arg)) {
+                        System.setProperty("poi.deserialize.escher", "true");
+                    } else if ("--rawhex".equals(arg)) {
+                        rawhex = true;
+                    } else if ("--noheader".equals(arg)) {
+                        noheader = true;
+                    } else {
+                        throw new CommandParseException("Unexpected option '" + arg + "'");
+                    }
+                    continue;
+                }
+                file = new File(arg);
+                if (!file.exists()) {
+                    throw new CommandParseException("Specified file '" + arg + "' does not exist");
+                }
+                if (i+1<nArgs) {
+                    throw new CommandParseException("File name must be the last arg");
+                }
+            }
+            if (file == null) {
+                throw new CommandParseException("Biff viewer needs a filename");
+            }
+            return new CommandArgs(biffhex, noint, out, rawhex, noheader, file);
+        }
+        public boolean shouldDumpBiffHex() {
+            return _biffhex;
+        }
+        public boolean shouldDumpRecordInterpretations() {
+            return !_noint;
+        }
+        public boolean shouldOutputToFile() {
+            return _out;
+        }
+        public boolean shouldOutputRawHexOnly() {
+            return _rawhex;
+        }
+        public boolean suppressHeader() {
+            return _noHeader;
+        }
+        public File getFile() {
+            return _file;
+        }
+    }
+    private static final class CommandParseException extends Exception {
+        public CommandParseException(String msg) {
+            super(msg);
+        }
+    }
 
 	/**
 	 * Method main with 1 argument just run straight biffview against given
@@ -420,7 +470,7 @@ public final class BiffViewer {
 
 	protected static InputStream getPOIFSInputStream(File file)
 			throws IOException, FileNotFoundException {
-		POIFSFileSystem fs = new POIFSFileSystem(new FileInputStream(file));
+		NPOIFSFileSystem fs = new NPOIFSFileSystem(new FileInputStream(file));
 		String workbookName = HSSFWorkbook.getWorkbookDirEntryName(fs.getRoot());
 		return fs.createDocumentInputStream(workbookName);
 	}

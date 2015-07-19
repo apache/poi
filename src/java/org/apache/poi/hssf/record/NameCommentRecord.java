@@ -62,17 +62,27 @@ public final class NameCommentRecord extends StandardRecord {
     out.writeShort(field_4_name_length);
     out.writeShort(field_5_comment_length);
 
-    out.writeByte(0);
-    StringUtil.putCompressedUnicode(field_6_name_text, out);
-    out.writeByte(0);
-    StringUtil.putCompressedUnicode(field_7_comment_text, out);
+    boolean isNameMultiByte = StringUtil.hasMultibyte(field_6_name_text);
+    out.writeByte(isNameMultiByte ? 1 : 0);
+    if (isNameMultiByte) {
+        StringUtil.putUnicodeLE(field_6_name_text, out);
+    } else {
+        StringUtil.putCompressedUnicode(field_6_name_text, out);
+    }
+    boolean isCommentMultiByte = StringUtil.hasMultibyte(field_7_comment_text);
+    out.writeByte(isCommentMultiByte ? 1 : 0);
+    if (isCommentMultiByte) {
+        StringUtil.putUnicodeLE(field_7_comment_text, out);
+    } else {
+        StringUtil.putCompressedUnicode(field_7_comment_text, out);
+    }
   }
 
   @Override
   protected int getDataSize() {
     return 18 // 4 shorts + 1 long + 2 spurious 'nul's
-         + field_6_name_text.length()
-         + field_7_comment_text.length();
+         + (StringUtil.hasMultibyte(field_6_name_text) ? field_6_name_text.length()*2 : field_6_name_text.length())
+         + (StringUtil.hasMultibyte(field_7_comment_text) ? field_7_comment_text.length()*2 : field_7_comment_text.length());
   }
 
   /**
@@ -86,10 +96,16 @@ public final class NameCommentRecord extends StandardRecord {
     final int field_4_name_length = in.readShort();
     final int field_5_comment_length = in.readShort();
 
-    in.readByte(); //spurious NUL
-    field_6_name_text = StringUtil.readCompressedUnicode(in, field_4_name_length);
-    in.readByte(); //spurious NUL
-    field_7_comment_text = StringUtil.readCompressedUnicode(in, field_5_comment_length);
+    if (in.readByte() == 0) {
+        field_6_name_text = StringUtil.readCompressedUnicode(in, field_4_name_length);
+    } else {
+        field_6_name_text = StringUtil.readUnicodeLE(in, field_4_name_length);
+    }
+    if (in.readByte() == 0) {
+        field_7_comment_text = StringUtil.readCompressedUnicode(in, field_5_comment_length);
+    } else {
+        field_7_comment_text = StringUtil.readUnicodeLE(in, field_5_comment_length);
+    }    
   }
 
   /**

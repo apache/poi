@@ -46,15 +46,18 @@ public final class TestExcelExtractor extends TestCase {
 	}
 
 
-	public void testSimple() {
-
+	public void testSimple() throws IOException {
 		ExcelExtractor extractor = createExtractor("Simple.xls");
 
-		assertEquals("Sheet1\nreplaceMe\nSheet2\nSheet3\n", extractor.getText());
-
-		// Now turn off sheet names
-		extractor.setIncludeSheetNames(false);
-		assertEquals("replaceMe\n", extractor.getText());
+		try {
+    		assertEquals("Sheet1\nreplaceMe\nSheet2\nSheet3\n", extractor.getText());
+    
+    		// Now turn off sheet names
+    		extractor.setIncludeSheetNames(false);
+    		assertEquals("replaceMe\n", extractor.getText());
+		} finally {
+		    extractor.close();
+		}
 	}
 
 	public void testNumericFormula() {
@@ -126,45 +129,47 @@ public final class TestExcelExtractor extends TestCase {
 
 
 	public void testEventExtractor() throws Exception {
-		EventBasedExcelExtractor extractor;
-
 		// First up, a simple file with string
 		//  based formulas in it
-		extractor = new EventBasedExcelExtractor(
+		EventBasedExcelExtractor extractor = new EventBasedExcelExtractor(
 				new POIFSFileSystem(
 						HSSFTestDataSamples.openSampleFileStream("SimpleWithFormula.xls")
 				)
 		);
-		extractor.setIncludeSheetNames(true);
-
-		String text = extractor.getText();
-		assertEquals("Sheet1\nreplaceme\nreplaceme\nreplacemereplaceme\nSheet2\nSheet3\n", text);
-
-		extractor.setIncludeSheetNames(false);
-		extractor.setFormulasNotResults(true);
-
-		text = extractor.getText();
-		assertEquals("replaceme\nreplaceme\nCONCATENATE(A1,A2)\n", text);
-
-
-		// Now, a slightly longer file with numeric formulas
-		extractor = new EventBasedExcelExtractor(
-				new POIFSFileSystem(
-						HSSFTestDataSamples.openSampleFileStream("sumifformula.xls")
-				)
-		);
-		extractor.setIncludeSheetNames(false);
-		extractor.setFormulasNotResults(true);
-
-		text = extractor.getText();
-		assertEquals(
-				"1000\t1\tSUMIF(A1:A5,\">4000\",B1:B5)\n" +
-				"2000\t2\n" +
-				"3000\t3\n" +
-				"4000\t4\n" +
-				"5000\t5\n",
-				text
-		);
+		try {
+    		extractor.setIncludeSheetNames(true);
+    
+    		String text = extractor.getText();
+    		assertEquals("Sheet1\nreplaceme\nreplaceme\nreplacemereplaceme\nSheet2\nSheet3\n", text);
+    
+    		extractor.setIncludeSheetNames(false);
+    		extractor.setFormulasNotResults(true);
+    
+    		text = extractor.getText();
+    		assertEquals("replaceme\nreplaceme\nCONCATENATE(A1,A2)\n", text);
+    
+    
+    		// Now, a slightly longer file with numeric formulas
+    		extractor = new EventBasedExcelExtractor(
+    				new POIFSFileSystem(
+    						HSSFTestDataSamples.openSampleFileStream("sumifformula.xls")
+    				)
+    		);
+    		extractor.setIncludeSheetNames(false);
+    		extractor.setFormulasNotResults(true);
+    
+    		text = extractor.getText();
+    		assertEquals(
+    				"1000\t1\tSUMIF(A1:A5,\">4000\",B1:B5)\n" +
+    				"2000\t2\n" +
+    				"3000\t3\n" +
+    				"4000\t4\n" +
+    				"5000\t5\n",
+    				text
+    		);
+		} finally {
+		    extractor.close();
+		}
 	}
 
 	public void testWithComments() {
@@ -272,15 +277,22 @@ public final class TestExcelExtractor extends TestCase {
 		HSSFWorkbook wbB = new HSSFWorkbook(dirB, fs, true);
 
 		ExcelExtractor exA = new ExcelExtractor(wbA);
-		ExcelExtractor exB = new ExcelExtractor(wbB);
-
-		assertEquals("Sheet1\nTest excel file\nThis is the first file\nSheet2\nSheet3\n",
-				exA.getText());
-		assertEquals("Sample Excel", exA.getSummaryInformation().getTitle());
-
-		assertEquals("Sheet1\nAnother excel file\nThis is the second file\nSheet2\nSheet3\n",
-				exB.getText());
-		assertEquals("Sample Excel 2", exB.getSummaryInformation().getTitle());
+		try {
+    		ExcelExtractor exB = new ExcelExtractor(wbB);
+    		try {
+        		assertEquals("Sheet1\nTest excel file\nThis is the first file\nSheet2\nSheet3\n",
+        				exA.getText());
+        		assertEquals("Sample Excel", exA.getSummaryInformation().getTitle());
+        
+        		assertEquals("Sheet1\nAnother excel file\nThis is the second file\nSheet2\nSheet3\n",
+        				exB.getText());
+        		assertEquals("Sample Excel 2", exB.getSummaryInformation().getTitle());
+    		} finally {
+    		    exB.close();
+    		}
+		} finally {
+		    exA.close();
+		}
 	}
 
 	/**
@@ -299,21 +311,32 @@ public final class TestExcelExtractor extends TestCase {
 		HSSFWorkbook wbB = new HSSFWorkbook(dirB, fs, true);
 
 		ExcelExtractor exA = new ExcelExtractor(wbA);
-		ExcelExtractor exB = new ExcelExtractor(wbB);
-
-		assertEquals("Sheet1\nTest excel file\nThis is the first file\nSheet2\nSheet3\n",
-				exA.getText());
-		assertEquals("Sample Excel", exA.getSummaryInformation().getTitle());
-
-		assertEquals("Sheet1\nAnother excel file\nThis is the second file\nSheet2\nSheet3\n",
-				exB.getText());
-		assertEquals("Sample Excel 2", exB.getSummaryInformation().getTitle());
-
-		// And the base file too
-		ExcelExtractor ex = new ExcelExtractor(fs);
-		assertEquals("Sheet1\nI have lots of embeded files in me\nSheet2\nSheet3\n",
-				ex.getText());
-		assertEquals("Excel With Embeded", ex.getSummaryInformation().getTitle());
+		try {
+    		ExcelExtractor exB = new ExcelExtractor(wbB);
+    		try {
+        		assertEquals("Sheet1\nTest excel file\nThis is the first file\nSheet2\nSheet3\n",
+        				exA.getText());
+        		assertEquals("Sample Excel", exA.getSummaryInformation().getTitle());
+        
+        		assertEquals("Sheet1\nAnother excel file\nThis is the second file\nSheet2\nSheet3\n",
+        				exB.getText());
+        		assertEquals("Sample Excel 2", exB.getSummaryInformation().getTitle());
+        
+        		// And the base file too
+        		ExcelExtractor ex = new ExcelExtractor(fs);
+        		try {
+            		assertEquals("Sheet1\nI have lots of embeded files in me\nSheet2\nSheet3\n",
+            				ex.getText());
+            		assertEquals("Excel With Embeded", ex.getSummaryInformation().getTitle());
+        		} finally {
+        		    ex.close();
+        		}
+            } finally {
+                exB.close();
+            }
+        } finally {
+            exA.close();
+        }
 	}
 
 	/**
@@ -339,5 +362,11 @@ public final class TestExcelExtractor extends TestCase {
 		Biff8EncryptionKey.setCurrentUserPassword(null);
 
 		assertTrue(text.contains("ZIP"));
+	}
+
+	public void testNullPointerException() {
+		ExcelExtractor extractor = createExtractor("ar.org.apsme.www_Form%20Inscripcion%20Curso%20NO%20Socios.xls");
+		assertNotNull(extractor);
+		assertNotNull(extractor.getText());
 	}
 }

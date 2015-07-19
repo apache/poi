@@ -65,6 +65,7 @@ import org.apache.poi.hssf.record.UnknownRecord;
 import org.apache.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor;
 import org.apache.poi.hssf.record.common.UnicodeString;
 import org.apache.poi.hssf.util.CellReference;
+import org.apache.poi.poifs.crypt.Decryptor;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.EntryUtils;
@@ -205,6 +206,19 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     public HSSFWorkbook(POIFSFileSystem fs) throws IOException {
         this(fs,true);
     }
+    /**
+     * Given a POI POIFSFileSystem object, read in its Workbook along
+     *  with all related nodes, and populate the high and low level models.
+     * <p>This calls {@link #HSSFWorkbook(POIFSFileSystem, boolean)} with
+     *  preserve nodes set to true. 
+     * 
+     * @see #HSSFWorkbook(POIFSFileSystem, boolean)
+     * @see org.apache.poi.poifs.filesystem.POIFSFileSystem
+     * @exception IOException if the stream cannot be read
+     */
+    public HSSFWorkbook(NPOIFSFileSystem fs) throws IOException {
+        this(fs.getRoot(),true);
+    }
 
     /**
      * Given a POI POIFSFileSystem object, read in its Workbook and populate 
@@ -248,7 +262,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
         
         // check for an encrypted .xlsx file - they get OLE2 wrapped
         try {
-        	directory.getEntry("EncryptedPackage");
+        	directory.getEntry(Decryptor.DEFAULT_POIFS_ENTRY);
         	throw new EncryptedDocumentException("The supplied spreadsheet seems to be an Encrypted .xlsx file. " +
         			"It must be decrypted before use by XSSF, it cannot be used by HSSF");
         } catch (FileNotFoundException e) {
@@ -378,7 +392,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     public HSSFWorkbook(InputStream s, boolean preserveNodes)
             throws IOException
     {
-        this(new POIFSFileSystem(s), preserveNodes);
+        this(new NPOIFSFileSystem(s).getRoot(), preserveNodes);
     }
 
     /**
@@ -1276,7 +1290,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
             throws IOException
     {
         byte[] bytes = getBytes();
-        POIFSFileSystem fs = new POIFSFileSystem();
+        NPOIFSFileSystem fs = new NPOIFSFileSystem();
 
         // For tracking what we've written out, used if we're
         //  going to be preserving nodes
@@ -1843,7 +1857,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     throws IOException {
     	// check if we were created by POIFS otherwise create a new dummy POIFS for storing the package data
     	if (directory == null) {
-    		directory = new POIFSFileSystem().getRoot();
+    		directory = new NPOIFSFileSystem().getRoot();
     		preserveNodes = true;
     	}
     	

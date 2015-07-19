@@ -67,9 +67,14 @@ public class POIXMLPropertiesTextExtractor extends POIXMLTextExtractor {
 	 * Returns the core document properties, eg author
 	 */
 	public String getCorePropertiesText() {
+	    POIXMLDocument document = getDocument();
+        if(document == null) {  // event based extractor does not have a document
+            return "";
+        }
+
 		StringBuffer text = new StringBuffer();
-		PackagePropertiesPart props =
-			getDocument().getProperties().getCoreProperties().getUnderlyingProperties();
+        PackagePropertiesPart props =
+			document.getProperties().getCoreProperties().getUnderlyingProperties();
 
 		appendIfPresent(text, "Category", props.getCategoryProperty().getValue());
 		appendIfPresent(text, "Category", props.getCategoryProperty().getValue());
@@ -99,9 +104,14 @@ public class POIXMLPropertiesTextExtractor extends POIXMLTextExtractor {
 	 *  application
 	 */
 	public String getExtendedPropertiesText() {
+        POIXMLDocument document = getDocument();
+        if(document == null) {  // event based extractor does not have a document
+            return "";
+        }
+
 		StringBuffer text = new StringBuffer();
 		org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.CTProperties
-			props = getDocument().getProperties().getExtendedProperties().getUnderlyingProperties();
+			props = document.getProperties().getExtendedProperties().getUnderlyingProperties();
 
 		appendIfPresent(text, "Application", props.getApplication());
 		appendIfPresent(text, "AppVersion", props.getAppVersion());
@@ -127,9 +137,14 @@ public class POIXMLPropertiesTextExtractor extends POIXMLTextExtractor {
     */
    @SuppressWarnings("deprecation")
    public String getCustomPropertiesText() {
+       POIXMLDocument document = getDocument();
+       if(document == null) {  // event based extractor does not have a document
+           return "";
+       }
+
       StringBuilder text = new StringBuilder();
       org.openxmlformats.schemas.officeDocument.x2006.customProperties.CTProperties
-      props = getDocument().getProperties().getCustomProperties().getUnderlyingProperties();
+      props = document.getProperties().getCustomProperties().getUnderlyingProperties();
 
        for(CTProperty property : props.getPropertyArray()) {
          String val = "(not implemented!)";
