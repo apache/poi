@@ -709,7 +709,7 @@ under the License.
         </copy>
     </target>
 
-	<target name="generate-geometry" depends="fetch-ooxml-xsds">
+	<target name="generate-geometry" depends="fetch-ooxml-xsds" if="ignoreMe">
 		<delete dir="${geometry.output.tmpdir}"/>
 		<!-- taskdef xjc -->
 		<!-- "D:\Program Files\Java\jdk1.6.0_45\bin\xjc" -p org.apache.poi.sl.model.geom.binding -readOnly -Xlocator -mark-generated ooxml-schemas\dml-shapeGeometry.xsd -->
