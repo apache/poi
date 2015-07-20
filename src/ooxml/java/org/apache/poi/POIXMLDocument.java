@@ -127,18 +127,19 @@ public abstract class POIXMLDocument extends POIXMLDocumentPart implements Close
         inp.mark(4);
 
         byte[] header = new byte[4];
-        IOUtils.readFully(inp, header);
+        int bytesRead = IOUtils.readFully(inp, header);
 
         // Wind back those 4 bytes
         if(inp instanceof PushbackInputStream) {
             PushbackInputStream pin = (PushbackInputStream)inp;
-            pin.unread(header);
+            pin.unread(header, 0, bytesRead);
         } else {
             inp.reset();
         }
 
         // Did it match the ooxml zip signature?
         return (
+                bytesRead == 4 &&
                 header[0] == POIFSConstants.OOXML_FILE_HEADER[0] &&
                 header[1] == POIFSConstants.OOXML_FILE_HEADER[1] &&
                 header[2] == POIFSConstants.OOXML_FILE_HEADER[2] &&

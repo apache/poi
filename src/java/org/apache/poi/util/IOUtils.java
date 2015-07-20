@@ -57,7 +57,7 @@ public final class IOUtils {
         // Wind back those 8 bytes
         if(stream instanceof PushbackInputStream) {
             PushbackInputStream pin = (PushbackInputStream)stream;
-            pin.unread(header);
+            pin.unread(header, 0, read);
         } else {
             stream.reset();
         }

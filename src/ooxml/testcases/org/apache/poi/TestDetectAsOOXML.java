@@ -19,8 +19,10 @@
 
 package org.apache.poi;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.PushbackInputStream;
+import java.util.Arrays;
 
 import junit.framework.TestCase;
 
@@ -62,4 +64,22 @@ public class TestDetectAsOOXML extends TestCase
 		assertFalse(POIXMLDocument.hasOOXMLHeader(in));
 		in.close();
 	}
+    
+    public void testFileCorruption() throws Exception {
+	    
+	    // create test InputStream
+	    byte[] testData = { (byte)1, (byte)2, (byte)3 };
+        ByteArrayInputStream testInput = new ByteArrayInputStream(testData);
+        
+        // detect header
+        InputStream in = new PushbackInputStream(testInput, 10);
+        assertFalse(POIXMLDocument.hasOOXMLHeader(in));
+        
+        // check if InputStream is still intact
+        byte[] test = new byte[3];
+        in.read(test);
+        assertTrue(Arrays.equals(testData, test));
+        assertEquals(-1, in.read());
+	}
+
 }

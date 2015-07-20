@@ -354,7 +354,11 @@ public class NPOIFSFileSystem extends BlockStore
      *  has a POIFS (OLE2) header at the start of it.
      * If your InputStream does not support mark / reset,
      *  then wrap it in a PushBackInputStream, then be
-     *  sure to always use that, and not the original!
+     *  sure to always use that and not the original!
+     *  
+     *  After the method call, the InputStream is at the
+     *  same position as of the time of entering the method.
+     *  
      * @param inp An InputStream which supports either mark/reset, or is a PushbackInputStream
      */
     public static boolean hasPOIFSHeader(InputStream inp) throws IOException {
@@ -362,13 +366,13 @@ public class NPOIFSFileSystem extends BlockStore
         inp.mark(8);
 
         byte[] header = new byte[8];
-        IOUtils.readFully(inp, header);
+        int bytesRead = IOUtils.readFully(inp, header);
         LongField signature = new LongField(HeaderBlockConstants._signature_offset, header);
 
         // Wind back those 8 bytes
         if(inp instanceof PushbackInputStream) {
             PushbackInputStream pin = (PushbackInputStream)inp;
-            pin.unread(header);
+            pin.unread(header, 0, bytesRead);
         } else {
             inp.reset();
         }
