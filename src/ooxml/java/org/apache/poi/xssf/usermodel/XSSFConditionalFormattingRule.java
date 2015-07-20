@@ -173,6 +173,42 @@ public class XSSFConditionalFormattingRule implements ConditionalFormattingRule 
         return new XSSFPatternFormatting(dxf.getFill());
     }
     
+    public XSSFDataBarFormatting createDataBarFormatting(XSSFColor color) {
+        // Is it already there?
+        if (_cfRule.isSetDataBar() && _cfRule.getType() == STCfType.DATA_BAR)
+            return getDataBarFormatting();
+        
+        // Mark it as being a Data Bar
+        _cfRule.setType(STCfType.DATA_BAR);
+
+        // Ensure the right element
+        CTDataBar bar = null;
+        if (_cfRule.isSetDataBar()) {
+            bar = _cfRule.getDataBar();
+        } else {
+            bar = _cfRule.addNewDataBar();
+        }
+        // Set the color
+        bar.setColor(color.getCTColor());
+        
+        // Add the default thresholds
+        CTCfvo min = bar.addNewCfvo();
+        min.setType(STCfvoType.Enum.forString(RangeType.MIN.name));
+        CTCfvo max = bar.addNewCfvo();
+        max.setType(STCfvoType.Enum.forString(RangeType.MAX.name));
+        
+        // Wrap and return
+        return new XSSFDataBarFormatting(bar);
+    }
+    public XSSFDataBarFormatting getDataBarFormatting() {
+        if (_cfRule.isSetDataBar()) {
+            CTDataBar bar = _cfRule.getDataBar();
+            return new XSSFDataBarFormatting(bar);
+        } else {
+            return null;
+        }
+    }
+    
     public XSSFIconMultiStateFormatting createMultiStateFormatting(IconSet iconSet) {
         // Is it already there?
         if (_cfRule.isSetIconSet() && _cfRule.getType() == STCfType.ICON_SET)

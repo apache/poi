@@ -131,7 +131,13 @@ public class XSSFSheetConditionalFormatting implements SheetConditionalFormattin
      *  {@link XSSFDataBarFormatting#getMaxThreshold()}
      */
     public XSSFConditionalFormattingRule createConditionalFormattingRule(XSSFColor color) {
-        throw new IllegalStateException("Not Implemented Yet!"); // TODO Implement
+        XSSFConditionalFormattingRule rule = new XSSFConditionalFormattingRule(_sheet);
+        
+        // Have it setup, with suitable defaults
+        rule.createDataBarFormatting(color);
+        
+        // All done!
+        return rule;
     }
     public XSSFConditionalFormattingRule createConditionalFormattingRule(ExtendedColor color) {
         return createConditionalFormattingRule((XSSFColor)color);

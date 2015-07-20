@@ -132,8 +132,8 @@ public final class CFRule12Record extends CFRuleBase implements FutureRecord {
                                               ComparisonOperator.NO_COMPARISON);
         DataBarFormatting dbf = r.createDataBarFormatting();
         dbf.setColor(color);
-        dbf.setPercentMin((byte)50);
-        dbf.setPercentMax((byte)50);
+        dbf.setPercentMin((byte)0);
+        dbf.setPercentMax((byte)100);
         
         DataBarThreshold min = new DataBarThreshold();
         min.setType(RangeType.MIN.id);
