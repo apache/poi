@@ -21,48 +21,48 @@ import org.apache.poi.hssf.record.common.ExtendedColor;
 import org.apache.poi.ss.usermodel.CreationHelper;
 
 public class HSSFCreationHelper implements CreationHelper {
-	private HSSFWorkbook workbook;
-	private HSSFDataFormat dataFormat;
+    private HSSFWorkbook workbook;
+    private HSSFDataFormat dataFormat;
 
-	HSSFCreationHelper(HSSFWorkbook wb) {
-		workbook = wb;
+    HSSFCreationHelper(HSSFWorkbook wb) {
+        workbook = wb;
 
-		// Create the things we only ever need one of
-		dataFormat = new HSSFDataFormat(workbook.getWorkbook());
-	}
+        // Create the things we only ever need one of
+        dataFormat = new HSSFDataFormat(workbook.getWorkbook());
+    }
 
-	public HSSFRichTextString createRichTextString(String text) {
-		return new HSSFRichTextString(text);
-	}
+    public HSSFRichTextString createRichTextString(String text) {
+        return new HSSFRichTextString(text);
+    }
 
-	public HSSFDataFormat createDataFormat() {
-		return dataFormat;
-	}
+    public HSSFDataFormat createDataFormat() {
+        return dataFormat;
+    }
 
-	public HSSFHyperlink createHyperlink(int type) {
-		return new HSSFHyperlink(type);
-	}
+    public HSSFHyperlink createHyperlink(int type) {
+        return new HSSFHyperlink(type);
+    }
 
-	public HSSFExtendedColor createExtendedColor() {
+    public HSSFExtendedColor createExtendedColor() {
         return new HSSFExtendedColor(new ExtendedColor());
     }
 
     /**
-	 * Creates a HSSFFormulaEvaluator, the object that evaluates formula cells.
-	 *
-	 * @return a HSSFFormulaEvaluator instance
-	 */
-	public HSSFFormulaEvaluator createFormulaEvaluator(){
-		return new HSSFFormulaEvaluator(workbook);
-	}
+     * Creates a HSSFFormulaEvaluator, the object that evaluates formula cells.
+     *
+     * @return a HSSFFormulaEvaluator instance
+     */
+    public HSSFFormulaEvaluator createFormulaEvaluator(){
+        return new HSSFFormulaEvaluator(workbook);
+    }
 
-	/**
-	 * Creates a HSSFClientAnchor. Use this object to position drawing object in a sheet
-	 *
-	 * @return a HSSFClientAnchor instance
-	 * @see org.apache.poi.ss.usermodel.Drawing
-	 */
-	public HSSFClientAnchor createClientAnchor(){
-		return new HSSFClientAnchor();
-	}
+    /**
+     * Creates a HSSFClientAnchor. Use this object to position drawing object in a sheet
+     *
+     * @return a HSSFClientAnchor instance
+     * @see org.apache.poi.ss.usermodel.Drawing
+     */
+    public HSSFClientAnchor createClientAnchor(){
+        return new HSSFClientAnchor();
+    }
 }
