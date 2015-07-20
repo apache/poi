@@ -16,16 +16,15 @@
 ==================================================================== */
 package org.apache.poi.xssf.usermodel;
 
-import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.Color;
+import org.apache.poi.ss.usermodel.ExtendedColor;
 import org.apache.poi.util.Internal;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
 
 /**
  * Represents a color in SpreadsheetML
  */
-public class XSSFColor implements Color {
-
+public class XSSFColor extends ExtendedColor {
     private CTColor ctColor;
 
     /**
@@ -44,7 +43,7 @@ public class XSSFColor implements Color {
 
     public XSSFColor(java.awt.Color clr) {
         this();
-        ctColor.setRgb(new byte[]{(byte)clr.getRed(), (byte)clr.getGreen(), (byte)clr.getBlue()});
+        setColor(clr);
     }
 
     public XSSFColor(byte[] rgb) {
@@ -55,10 +54,10 @@ public class XSSFColor implements Color {
     /**
      * A boolean value indicating the ctColor is automatic and system ctColor dependent.
      */
+    @Override
     public boolean isAuto() {
         return ctColor.getAuto();
     }
-
     /**
      * A boolean value indicating the ctColor is automatic and system ctColor dependent.
      */
@@ -67,10 +66,40 @@ public class XSSFColor implements Color {
     }
 
     /**
+     * A boolean value indicating the ctColor is Indexed
+     */
+    @Override
+    public boolean isIndexed() {
+        return ctColor.isSetIndexed();
+    }
+
+    /**
+     * A boolean value indicating the ctColor is RGB or ARGB based
+     */
+    @Override
+    public boolean isRGB() {
+        return ctColor.isSetRgb();
+    }
+
+    /**
+     * A boolean value indicating the ctColor is Theme based
+     */
+    @Override
+    public boolean isThemed() {
+        return ctColor.isSetTheme();
+    }
+
+    /**
+     * Indexed ctColor value. Only used for backwards compatibility. References a ctColor in indexedColors.
+     */
+    public short getIndex() {
+        return (short)ctColor.getIndexed();
+    }
+    /**
      * Indexed ctColor value. Only used for backwards compatibility. References a ctColor in indexedColors.
      */
     public short getIndexed() {
-        return (short)ctColor.getIndexed();
+        return getIndex();
     }
 
     /**
@@ -84,7 +113,7 @@ public class XSSFColor implements Color {
     * Standard Red Green Blue ctColor value (RGB).
     * If there was an A (Alpha) value, it will be stripped.
     */
-   public byte[] getRgb() {
+   public byte[] getRGB() {
       byte[] rgb = getRGBOrARGB();
       if(rgb == null) return null;
 
@@ -97,11 +126,17 @@ public class XSSFColor implements Color {
          return rgb;
       }
    }
+   /**
+    * @deprecated use {@link #getRGB()}
+    */
+   public byte[] getRgb() {
+       return getRGB();
+   }
 
    /**
     * Standard Alpha Red Green Blue ctColor value (ARGB).
     */
-   public byte[] getARgb() {
+   public byte[] getARGB() {
       byte[] rgb = getRGBOrARGB();
       if(rgb == null) return null;
 
@@ -115,85 +150,35 @@ public class XSSFColor implements Color {
          return rgb;
       }
    }
+   /**
+    * @deprecated Use {@link #getARGB()}
+    */
+   public byte[] getARgb() {
+       return getARGB();
+   }
 
-   private byte[] getRGBOrARGB() {
-        byte[] rgb = null;
-
-        if (ctColor.isSetIndexed() && ctColor.getIndexed() > 0) {
-            HSSFColor indexed = HSSFColor.getIndexHash().get((int) ctColor.getIndexed());
-            if (indexed != null) {
-               rgb = new byte[3];
-               rgb[0] = (byte) indexed.getTriplet()[0];
-               rgb[1] = (byte) indexed.getTriplet()[1];
-               rgb[2] = (byte) indexed.getTriplet()[2];
-               return rgb;
-            }
-         }
-
-         if (!ctColor.isSetRgb()) {
-            // No colour is available, sorry
-            return null;
-         }
-
-         // Grab the colour
-         rgb = ctColor.getRgb();
-         return rgb;
-    }
+   protected byte[] getStoredRBG() {
+       return ctColor.getRgb();
+   }
 
     /**
      * Standard Red Green Blue ctColor value (RGB) with applied tint.
      * Alpha values are ignored.
      */
     public byte[] getRgbWithTint() {
-        byte[] rgb = ctColor.getRgb();
-        if (rgb != null) {
-            if(rgb.length == 4) {
-               byte[] tmp = new byte[3];
-               System.arraycopy(rgb, 1, tmp, 0, 3);
-               rgb = tmp;
-            }
-            for (int i = 0; i < rgb.length; i++){
-                rgb[i] = applyTint(rgb[i] & 0xFF, ctColor.getTint());
-            }
-        }
-        return rgb;
-    }
-
-    /**
-     * Return the ARGB value in hex format, eg FF00FF00.
-     * Works for both regular and indexed colours.
-     */
-    public String getARGBHex() {
-       StringBuffer sb = new StringBuffer();
-       byte[] rgb = getARgb();
-       if(rgb == null) {
-          return null;
-       }
-       for(byte c : rgb) {
-          int i = c & 0xff;
-          String cs = Integer.toHexString(i);
-          if(cs.length() == 1) {
-             sb.append('0');
-          }
-          sb.append(cs);
-       }
-       return sb.toString().toUpperCase();
-    }
-
-    private static byte applyTint(int lum, double tint){
-        if(tint > 0){
-            return (byte)(lum * (1.0-tint) + (255 - 255 * (1.0-tint)));
-        } else if (tint < 0){
-            return (byte)(lum*(1+tint));
-        } else {
-            return (byte)lum;
-        }
+        return getRGBWithTint();
     }
 
     /**
      * Standard Alpha Red Green Blue ctColor value (ARGB).
      */
     public void setRgb(byte[] rgb) {
+       setRGB(rgb);
+    }
+    /**
+     * Standard Alpha Red Green Blue ctColor value (ARGB).
+     */
+    public void setRGB(byte[] rgb) {
        ctColor.setRgb(rgb);
     }
 
