@@ -38,8 +38,17 @@ public final class TestHSSFConditionalFormatting extends BaseTestConditionalForm
     }
     protected void assertColour(String hexExpected, Color actual) {
         assertNotNull("Colour must be given", actual);
-        HSSFColor colour = (HSSFColor)actual;
-        assertEquals(hexExpected, colour.getHexString());
+        if (actual instanceof HSSFColor) {
+            HSSFColor colour = (HSSFColor)actual;
+            assertEquals(hexExpected, colour.getHexString());
+        } else {
+            HSSFExtendedColor colour = (HSSFExtendedColor)actual;
+            if (hexExpected.length() == 8) {
+                assertEquals(hexExpected, colour.getARGBHex());
+            } else {
+                assertEquals(hexExpected, colour.getARGBHex().substring(2));
+            }
+        }
     }
 
     public void testRead() {

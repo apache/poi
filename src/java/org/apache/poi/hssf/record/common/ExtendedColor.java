@@ -37,21 +37,49 @@ public final class ExtendedColor {
     public static final int TYPE_THEMED = 3;
     public static final int TYPE_UNSET = 4;
     
-    private int type; 
-    // TODO Decode
-    private byte[] value;
+    public static final int THEME_DARK_1  = 0;
+    public static final int THEME_LIGHT_1 = 1;
+    public static final int THEME_DARK_2  = 2;
+    public static final int THEME_LIGHT_2 = 3;
+    public static final int THEME_ACCENT_1 = 4;
+    public static final int THEME_ACCENT_2 = 5;
+    public static final int THEME_ACCENT_3 = 6;
+    public static final int THEME_ACCENT_4 = 7;
+    public static final int THEME_ACCENT_5 = 8;
+    public static final int THEME_ACCENT_6 = 9;
+    public static final int THEME_HYPERLINK = 10;
+    // This one is SheetEx only, not allowed in CFs
+    public static final int THEME_FOLLOWED_HYPERLINK = 11;
+    
+    private int type;
+    
+    // Type = Indexed
+    private int colorIndex;
+    // Type = RGB
+    private byte[] rgba;
+    // Type = Theme
+    private int themeIndex;
+    
     private double tint;
     
     public ExtendedColor() {
         this.type = TYPE_INDEXED;
-        this.value = new byte[4];
+        this.colorIndex = 0;
         this.tint = 0d;
     }
     public ExtendedColor(LittleEndianInput in) {
         type = in.readInt();
-        // TODO Decode color
-        value = new byte[4];
-        in.readFully(value);
+        if (type == TYPE_INDEXED) {
+            colorIndex = in.readInt();
+        } else if (type == TYPE_RGB) {
+            rgba = new byte[4];
+            in.readFully(rgba);
+        } else if (type == TYPE_THEMED) {
+            themeIndex = in.readInt();
+        } else {
+            // Ignored
+            in.readInt();
+        }
         tint = in.readDouble();
     }
 
@@ -61,9 +89,36 @@ public final class ExtendedColor {
     public void setType(int type) {
         this.type = type;
     }
+
+    /**
+     * @return Palette color index, if type is {@link #TYPE_INDEXED}
+     */
+    public int getColorIndex() {
+        return colorIndex;
+    }
+    public void setColorIndex(int colorIndex) {
+        this.colorIndex = colorIndex;
+    }
     
-    // TODO Return the color details
+    /**
+     * @return Red Green Blue Alpha, if type is {@link #TYPE_RGB}
+     */
+    public byte[] getRGBA() {
+        return rgba;
+    }
+    public void setRGBA(byte[] rgba) {
+        this.rgba = rgba;
+    }
     
+    /**
+     * @return Theme color type index, eg {@link #THEME_DARK_1}, if type is {@link #TYPE_THEMED}
+     */
+    public int getThemeIndex() {
+        return themeIndex;
+    }
+    public void setThemeIndex(int themeIndex) {
+        this.themeIndex = themeIndex;
+    }
     /**
      * @return Tint and Shade value, between -1 and +1
      */
@@ -85,7 +140,9 @@ public final class ExtendedColor {
         buffer.append("    [Extended Color]\n");
         buffer.append("          .type  = ").append(type).append("\n");
         buffer.append("          .tint  = ").append(tint).append("\n");
-        buffer.append("          .color = ").append(HexDump.toHex(value)).append("\n");
+        buffer.append("          .c_idx = ").append(colorIndex).append("\n");
+        buffer.append("          .rgba  = ").append(HexDump.toHex(rgba)).append("\n");
+        buffer.append("          .t_idx = ").append(themeIndex).append("\n");
         buffer.append("    [/Extended Color]\n");
         return buffer.toString();
     }
@@ -94,8 +151,14 @@ public final class ExtendedColor {
         ExtendedColor exc = new ExtendedColor();
         exc.type = type;
         exc.tint = tint;
-        exc.value = new byte[value.length];
-        System.arraycopy(value, 0, exc.value, 0, value.length);
+        if (type == TYPE_INDEXED) {
+            exc.colorIndex = colorIndex;
+        } else if (type == TYPE_RGB) {
+            exc.rgba = new byte[4];
+            System.arraycopy(rgba, 0, exc.rgba, 0, 4);
+        } else if (type == TYPE_THEMED) {
+            exc.themeIndex = themeIndex;
+        }
         return exc;
     }
     
@@ -105,7 +168,15 @@ public final class ExtendedColor {
 
     public void serialize(LittleEndianOutput out) {
         out.writeInt(type);
-        out.write(value);
+        if (type == TYPE_INDEXED) {
+            out.writeInt(colorIndex);
+        } else if (type == TYPE_RGB) {
+            out.write(rgba);
+        } else if (type == TYPE_THEMED) {
+            out.writeInt(themeIndex);
+        } else {
+            out.writeInt(0);
+        }
         out.writeDouble(tint);
     }
 }

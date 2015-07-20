@@ -19,6 +19,7 @@ package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.hssf.record.CFRule12Record;
 import org.apache.poi.hssf.record.cf.IconMultiStateFormatting;
+import org.apache.poi.hssf.record.cf.IconMultiStateThreshold;
 import org.apache.poi.hssf.record.cf.Threshold;
 import org.apache.poi.ss.usermodel.ConditionalFormattingThreshold;
 
@@ -76,6 +77,6 @@ public final class HSSFIconMultiStateFormatting implements org.apache.poi.ss.use
     }
 
     public HSSFConditionalFormattingThreshold createThreshold() {
-        return new HSSFConditionalFormattingThreshold(new Threshold(), sheet);
+        return new HSSFConditionalFormattingThreshold(new IconMultiStateThreshold(), sheet);
     }
 }

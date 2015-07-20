@@ -813,9 +813,6 @@ public abstract class BaseTestConditionalFormatting extends TestCase {
         assertEquals(null, cr.getFormula1());
         assertEquals(null, cr.getFormula2());
         
-// TODO Finish HSSF
-if (cr instanceof HSSFConditionalFormattingRule) return;
-        
         ColorScaleFormatting color = cr.getColorScaleFormatting();
         assertNotNull(color);
         assertNotNull(color.getColors());
