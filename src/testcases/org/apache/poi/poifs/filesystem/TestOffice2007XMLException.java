@@ -17,11 +17,15 @@
 
 package org.apache.poi.poifs.filesystem;
 
-import junit.framework.TestCase;
-
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PushbackInputStream;
+import java.util.Arrays;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
+
+import junit.framework.TestCase;
 
 /**
  * Class to test that POIFS complains when given an Office 2007 XML document
@@ -38,7 +42,7 @@ public class TestOffice2007XMLException extends TestCase {
 		InputStream in = openSampleStream("sample.xlsx");
 
 		try {
-			new POIFSFileSystem(in);
+			new POIFSFileSystem(in).close();
 			fail("expected exception was not thrown");
 		} catch(OfficeXmlFileException e) {
 			// expected during successful test
@@ -72,4 +76,39 @@ public class TestOffice2007XMLException extends TestCase {
 		    in.close();
 		}
 	}
+    
+    public void testFileCorruption() throws Exception {
+        
+        // create test InputStream
+        byte[] testData = { (byte)1, (byte)2, (byte)3 };
+        InputStream testInput = new ByteArrayInputStream(testData);
+        
+        // detect header
+        InputStream in = new PushbackInputStream(testInput, 10);
+        assertFalse(POIFSFileSystem.hasPOIFSHeader(in));
+        
+        // check if InputStream is still intact
+        byte[] test = new byte[3];
+        in.read(test);
+        assertTrue(Arrays.equals(testData, test));
+        assertEquals(-1, in.read());
+    }
+
+
+    public void testFileCorruptionOPOIFS() throws Exception {
+        
+        // create test InputStream
+        byte[] testData = { (byte)1, (byte)2, (byte)3 };
+        InputStream testInput = new ByteArrayInputStream(testData);
+        
+        // detect header
+        InputStream in = new PushbackInputStream(testInput, 10);
+        assertFalse(OPOIFSFileSystem.hasPOIFSHeader(in));
+
+        // check if InputStream is still intact
+        byte[] test = new byte[3];
+        in.read(test);
+        assertTrue(Arrays.equals(testData, test));
+        assertEquals(-1, in.read());
+    }
 }
