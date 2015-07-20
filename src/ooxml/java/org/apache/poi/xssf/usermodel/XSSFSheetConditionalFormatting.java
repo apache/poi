@@ -27,6 +27,7 @@ import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.ComparisonOperator;
 import org.apache.poi.ss.usermodel.ConditionalFormatting;
 import org.apache.poi.ss.usermodel.ConditionalFormattingRule;
+import org.apache.poi.ss.usermodel.ExtendedColor;
 import org.apache.poi.ss.usermodel.IconMultiStateFormatting.IconSet;
 import org.apache.poi.ss.usermodel.SheetConditionalFormatting;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -120,6 +121,23 @@ public class XSSFSheetConditionalFormatting implements SheetConditionalFormattin
     }
 
     /**
+     * Create a Databar conditional formatting rule.
+     * <p>The thresholds and colour for it will be created, but will be 
+     *  empty and require configuring with 
+     *  {@link XSSFConditionalFormattingRule#getDataBarFormatting()}
+     *  then
+     *  {@link XSSFDataBarFormatting#getMinThreshold()}
+     *  and 
+     *  {@link XSSFDataBarFormatting#getMaxThreshold()}
+     */
+    public XSSFConditionalFormattingRule createConditionalFormattingRule(XSSFColor color) {
+        throw new IllegalStateException("Not Implemented Yet!"); // TODO Implement
+    }
+    public XSSFConditionalFormattingRule createConditionalFormattingRule(ExtendedColor color) {
+        return createConditionalFormattingRule((XSSFColor)color);
+    }
+    
+    /**
      * A factory method allowing the creation of conditional formatting
      *  rules using an Icon Set / Multi-State formatting.
      * The thresholds for it will be created, but will be empty
@@ -156,22 +174,6 @@ public class XSSFSheetConditionalFormatting implements SheetConditionalFormattin
         
         // All done!
         return rule;
-    }
-    
-    /**
-     * Create a Databar conditional formatting rule.
-     * <p>The thresholds and colour for it will be created, but will be 
-     *  empty and require configuring with 
-     *  {@link XSSFConditionalFormattingRule#getDataBarFormatting()}
-     *  then
-     *  {@link XSSFDataBarFormatting#getMinThreshold()}
-     *  and 
-     *  {@link XSSFDataBarFormatting#getMaxThreshold()}
-     *  and
-     *  {@link XSSFDataBarFormatting#getColor()}
-     */
-    public XSSFConditionalFormattingRule createConditionalFormattingDataBarRule() {
-        throw new IllegalStateException("Not Implemented Yet!"); // TODO Implement
     }
     
     @SuppressWarnings("deprecation")

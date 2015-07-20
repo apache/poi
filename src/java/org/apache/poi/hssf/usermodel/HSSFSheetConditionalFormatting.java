@@ -25,6 +25,7 @@ import org.apache.poi.hssf.record.aggregates.ConditionalFormattingTable;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.ConditionalFormatting;
 import org.apache.poi.ss.usermodel.ConditionalFormattingRule;
+import org.apache.poi.ss.usermodel.ExtendedColor;
 import org.apache.poi.ss.usermodel.IconMultiStateFormatting.IconSet;
 import org.apache.poi.ss.usermodel.SheetConditionalFormatting;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -107,6 +108,24 @@ public final class HSSFSheetConditionalFormatting implements SheetConditionalFor
     }
 
     /**
+     * Create a Databar conditional formatting rule.
+     * <p>The thresholds and colour for it will be created, but will be 
+     *  empty and require configuring with 
+     *  {@link HSSFConditionalFormattingRule#getDataBarFormatting()}
+     *  then
+     *  {@link HSSFDataBarFormatting#getMinThreshold()}
+     *  and 
+     *  {@link HSSFDataBarFormatting#getMaxThreshold()}
+     */
+    public HSSFConditionalFormattingRule createConditionalFormattingRule(HSSFExtendedColor color) {
+        CFRule12Record rr = CFRule12Record.create(_sheet, color.getExtendedColor());
+        return new HSSFConditionalFormattingRule(_sheet, rr);
+    }
+    public HSSFConditionalFormattingRule createConditionalFormattingRule(ExtendedColor color) {
+        return createConditionalFormattingRule((HSSFExtendedColor)color);
+    }
+
+    /**
      * Create a Color Scale / Color Gradient conditional formatting rule.
      * <p>The thresholds and colours for it will be created, but will be 
      *  empty and require configuring with 
@@ -121,22 +140,6 @@ public final class HSSFSheetConditionalFormatting implements SheetConditionalFor
         return new HSSFConditionalFormattingRule(_sheet, rr);
     }
     
-    /**
-     * Create a Databar conditional formatting rule.
-     * <p>The thresholds and colour for it will be created, but will be 
-     *  empty and require configuring with 
-     *  {@link HSSFConditionalFormattingRule#getDataBarFormatting()}
-     *  then
-     *  {@link HSSFDataBarFormatting#getMinThreshold()}
-     *  and 
-     *  {@link HSSFDataBarFormatting#getMaxThreshold()}
-     *  and
-     *  {@link HSSFDataBarFormatting#getColor()}
-     */
-    public HSSFConditionalFormattingRule createConditionalFormattingDataBarRule() {
-        throw new IllegalStateException("Not Implemented Yet!"); // TODO Implement
-    }
-
     /**
      * Adds a copy of HSSFConditionalFormatting object to the sheet
      * <p>This method could be used to copy HSSFConditionalFormatting object
