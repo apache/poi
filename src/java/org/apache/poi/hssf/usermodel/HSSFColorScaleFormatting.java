@@ -21,6 +21,7 @@ import org.apache.poi.hssf.record.CFRule12Record;
 import org.apache.poi.hssf.record.cf.ColorGradientFormatting;
 import org.apache.poi.hssf.record.cf.ColorGradientThreshold;
 import org.apache.poi.hssf.record.cf.Threshold;
+import org.apache.poi.hssf.record.common.ExtendedColor;
 import org.apache.poi.ss.usermodel.Color;
 import org.apache.poi.ss.usermodel.ConditionalFormattingThreshold;
 
@@ -46,11 +47,20 @@ public final class HSSFColorScaleFormatting implements org.apache.poi.ss.usermod
         colorFormatting.setNumControlPoints(num);
     }
 
-    public Color[] getColors() {
-        return null; // TODO
+    public HSSFExtendedColor[] getColors() {
+        ExtendedColor[] colors = colorFormatting.getColors();
+        HSSFExtendedColor[] hcolors = new HSSFExtendedColor[colors.length];
+        for (int i=0; i<colors.length; i++) {
+            hcolors[i] = new HSSFExtendedColor(colors[i]);
+        }
+        return hcolors;
     }
     public void setColors(Color[] colors) {
-        // TODO
+        ExtendedColor[] cr = new ExtendedColor[colors.length];
+        for (int i=0; i<colors.length; i++) {
+            cr[i] = ((HSSFExtendedColor)colors[i]).getExtendedColor();
+        }
+        colorFormatting.setColors(cr);
     }
 
     public HSSFConditionalFormattingThreshold[] getThresholds() {
