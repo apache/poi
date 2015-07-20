@@ -1048,6 +1048,7 @@ public abstract class BaseTestConditionalFormatting extends TestCase {
         ConditionalFormatting cf = sheetCF.getConditionalFormattingAt(0);
         assertEquals(1, cf.getNumberOfRules());
         rule1 = cf.getRule(0);
+        assertEquals(ConditionType.ICON_SET, rule1.getConditionTypeType());
         iconFmt = rule1.getMultiStateFormatting();
         
         assertEquals(IconSet.GYRB_4_TRAFFIC_LIGHTS, iconFmt.getIconSet());
@@ -1066,8 +1067,49 @@ public abstract class BaseTestConditionalFormatting extends TestCase {
     }
     
     public void testCreateColorScaleFormatting() {
-        // TODO Implement then test
+        Workbook workbook = _testDataProvider.createWorkbook();
+        Sheet sheet = workbook.createSheet();
+
+        SheetConditionalFormatting sheetCF = sheet.getSheetConditionalFormatting();
+        ConditionalFormattingRule rule1 = 
+                sheetCF.createConditionalFormattingColorScaleRule();
+        ColorScaleFormatting clrFmt = rule1.getColorScaleFormatting();
+        
+        assertEquals(3, clrFmt.getNumControlPoints());
+        assertEquals(3, clrFmt.getColors().length);
+        assertEquals(3, clrFmt.getThresholds().length);
+        
+        clrFmt.getThresholds()[0].setRangeType(RangeType.MIN);
+        clrFmt.getThresholds()[1].setRangeType(RangeType.NUMBER);
+        clrFmt.getThresholds()[1].setValue(10d);
+        clrFmt.getThresholds()[2].setRangeType(RangeType.MAX);
+        
+        CellRangeAddress [] regions = { CellRangeAddress.valueOf("A1:A5") };
+        sheetCF.addConditionalFormatting(regions, rule1);
+        
+        // Save, re-load and re-check
+        workbook = _testDataProvider.writeOutAndReadBack(workbook);
+        sheetCF = sheet.getSheetConditionalFormatting();
+        assertEquals(1, sheetCF.getNumConditionalFormattings());
+        
+        ConditionalFormatting cf = sheetCF.getConditionalFormattingAt(0);
+        assertEquals(1, cf.getNumberOfRules());
+        rule1 = cf.getRule(0);
+        clrFmt = rule1.getColorScaleFormatting();
+        assertEquals(ConditionType.COLOR_SCALE, rule1.getConditionTypeType());
+        
+        assertEquals(3, clrFmt.getNumControlPoints());
+        assertEquals(3, clrFmt.getColors().length);
+        assertEquals(3, clrFmt.getThresholds().length);
+
+        assertEquals(RangeType.MIN,    clrFmt.getThresholds()[0].getRangeType());
+        assertEquals(RangeType.NUMBER, clrFmt.getThresholds()[1].getRangeType());
+        assertEquals(RangeType.MAX,    clrFmt.getThresholds()[2].getRangeType());
+        assertEquals(null, clrFmt.getThresholds()[0].getValue());
+        assertEquals(10d,  clrFmt.getThresholds()[1].getValue());
+        assertEquals(null, clrFmt.getThresholds()[2].getValue());
     }
+    
     public void testCreateDataBarFormatting() {
         // TODO Implement then test
     }

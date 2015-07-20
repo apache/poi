@@ -32,7 +32,7 @@ public final class ColorGradientThreshold extends Threshold {
         position = 0d;
     }
 
-    /** Creates new Ico Multi-State Threshold */
+    /** Creates new Color Gradient Threshold */
     public ColorGradientThreshold(LittleEndianInput in) {
         super(in);
         position = in.readDouble();
