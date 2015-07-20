@@ -1138,7 +1138,50 @@ public abstract class BaseTestConditionalFormatting extends TestCase {
     }
     
     public void testCreateDataBarFormatting() {
-        // TODO Implement then test
+        Workbook workbook = _testDataProvider.createWorkbook();
+        Sheet sheet = workbook.createSheet();
+
+        String colorHex = "FFFFEB84";
+        ExtendedColor color = workbook.getCreationHelper().createExtendedColor();
+        color.setARGBHex(colorHex);
+        SheetConditionalFormatting sheetCF = sheet.getSheetConditionalFormatting();
+        ConditionalFormattingRule rule1 = 
+                sheetCF.createConditionalFormattingRule(color);
+        DataBarFormatting dbFmt = rule1.getDataBarFormatting();
+        
+        assertEquals(false, dbFmt.isIconOnly());
+        assertEquals(true, dbFmt.isLeftToRight());
+        assertEquals(0,   dbFmt.getWidthMin());
+        assertEquals(100, dbFmt.getWidthMax());
+        assertColour(colorHex, dbFmt.getColor());
+        
+        dbFmt.getMinThreshold().setRangeType(RangeType.MIN);
+        dbFmt.getMaxThreshold().setRangeType(RangeType.MAX);
+        
+        CellRangeAddress [] regions = { CellRangeAddress.valueOf("A1:A5") };
+        sheetCF.addConditionalFormatting(regions, rule1);
+        
+        // Save, re-load and re-check
+        workbook = _testDataProvider.writeOutAndReadBack(workbook);
+        sheetCF = sheet.getSheetConditionalFormatting();
+        assertEquals(1, sheetCF.getNumConditionalFormattings());
+        
+        ConditionalFormatting cf = sheetCF.getConditionalFormattingAt(0);
+        assertEquals(1, cf.getNumberOfRules());
+        rule1 = cf.getRule(0);
+        dbFmt = rule1.getDataBarFormatting();
+        assertEquals(ConditionType.DATA_BAR, rule1.getConditionTypeType());
+        
+        assertEquals(false, dbFmt.isIconOnly());
+        assertEquals(true, dbFmt.isLeftToRight());
+        assertEquals(0,   dbFmt.getWidthMin());
+        assertEquals(100, dbFmt.getWidthMax());
+        assertColour(colorHex, dbFmt.getColor());
+
+        assertEquals(RangeType.MIN, dbFmt.getMinThreshold().getRangeType());
+        assertEquals(RangeType.MAX, dbFmt.getMaxThreshold().getRangeType());
+        assertEquals(null, dbFmt.getMinThreshold().getValue());
+        assertEquals(null, dbFmt.getMaxThreshold().getValue());
     }
     
     public void testBug55380() {

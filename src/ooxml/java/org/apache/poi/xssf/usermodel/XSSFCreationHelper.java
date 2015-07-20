@@ -39,6 +39,10 @@ public class XSSFCreationHelper implements CreationHelper {
 		return workbook.createDataFormat();
 	}
 
+    public XSSFColor createExtendedColor() {
+        return new XSSFColor();
+    }
+
     /**
      * Create a new XSSFHyperlink.
      *

@@ -57,8 +57,7 @@ public class ConditionalFormats {
         shadeBands(wb.createSheet("Shade Bands"));
         iconSets(wb.createSheet("Icon Sets"));
         colourScales(wb.createSheet("Colour Scales"));
-        
-        // TODO Add data bars, see bug #58130
+        dataBars(wb.createSheet("Data Bars"));
 
         // Write the output to a file
         String file = "cf-poi.xls";
@@ -539,6 +538,71 @@ public class ConditionalFormats {
         cs3.getThresholds()[1].setRangeType(RangeType.MAX);
         ((ExtendedColor)cs3.getColors()[0]).setARGBHex("FF5A8AC6");
         ((ExtendedColor)cs3.getColors()[1]).setARGBHex("FF63BE7B");
+        sheetCF.addConditionalFormatting(regions, rule3);
+    }
+    
+    /**
+     * DataBars / Data-Bars allow you to have bars shown vary
+     *  based on the values, from full to empty
+     */
+    static void dataBars(Sheet sheet) {
+        sheet.createRow(0).createCell(0).setCellValue("Data Bars");
+        Row r = sheet.createRow(1);
+        r.createCell(1).setCellValue("Green Positive");
+        r.createCell(2).setCellValue("Blue Mix");
+        r.createCell(3).setCellValue("Red Negative");
+        r = sheet.createRow(2);
+        r.createCell(1).setCellValue(0);
+        r.createCell(2).setCellValue(0);
+        r.createCell(3).setCellValue(0);
+        r = sheet.createRow(3);
+        r.createCell(1).setCellValue(5);
+        r.createCell(2).setCellValue(-5);
+        r.createCell(3).setCellValue(-5);
+        r = sheet.createRow(4);
+        r.createCell(1).setCellValue(10);
+        r.createCell(2).setCellValue(10);
+        r.createCell(3).setCellValue(-10);
+        r = sheet.createRow(5);
+        r.createCell(1).setCellValue(5);
+        r.createCell(2).setCellValue(5);
+        r.createCell(3).setCellValue(-5);
+        r = sheet.createRow(6);
+        r.createCell(1).setCellValue(20);
+        r.createCell(2).setCellValue(-10);
+        r.createCell(3).setCellValue(-20);
+        sheet.setColumnWidth(0, 3000);
+        sheet.setColumnWidth(1, 5000);
+        sheet.setColumnWidth(2, 5000);
+        sheet.setColumnWidth(3, 5000);
+
+        SheetConditionalFormatting sheetCF = sheet.getSheetConditionalFormatting();
+        
+        ExtendedColor color = sheet.getWorkbook().getCreationHelper().createExtendedColor();
+        color.setARGBHex("FF63BE7B");
+        CellRangeAddress[] regions = { CellRangeAddress.valueOf("B2:B7") };
+        ConditionalFormattingRule rule1 = sheetCF.createConditionalFormattingRule(color);
+        DataBarFormatting db1 = rule1.getDataBarFormatting();
+        db1.getMinThreshold().setRangeType(RangeType.MIN);
+        db1.getMaxThreshold().setRangeType(RangeType.MAX);
+        sheetCF.addConditionalFormatting(regions, rule1);
+        
+        color = sheet.getWorkbook().getCreationHelper().createExtendedColor();
+        color.setARGBHex("FF5A8AC6");
+        regions = new CellRangeAddress[] { CellRangeAddress.valueOf("C2:C7") };
+        ConditionalFormattingRule rule2 = sheetCF.createConditionalFormattingRule(color);
+        DataBarFormatting db2 = rule2.getDataBarFormatting();
+        db2.getMinThreshold().setRangeType(RangeType.MIN);
+        db2.getMaxThreshold().setRangeType(RangeType.MAX);
+        sheetCF.addConditionalFormatting(regions, rule2);
+        
+        color = sheet.getWorkbook().getCreationHelper().createExtendedColor();
+        color.setARGBHex("FFF8696B");
+        regions = new CellRangeAddress[] { CellRangeAddress.valueOf("D2:D7") };
+        ConditionalFormattingRule rule3 = sheetCF.createConditionalFormattingRule(color);
+        DataBarFormatting db3 = rule3.getDataBarFormatting();
+        db3.getMinThreshold().setRangeType(RangeType.MIN);
+        db3.getMaxThreshold().setRangeType(RangeType.MAX);
         sheetCF.addConditionalFormatting(regions, rule3);
     }
 }
