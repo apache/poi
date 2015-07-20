@@ -21,6 +21,8 @@ import java.util.Arrays;
 
 import org.apache.poi.hssf.record.cf.ColorGradientFormatting;
 import org.apache.poi.hssf.record.cf.ColorGradientThreshold;
+import org.apache.poi.hssf.record.cf.DataBarFormatting;
+import org.apache.poi.hssf.record.cf.DataBarThreshold;
 import org.apache.poi.hssf.record.cf.IconMultiStateFormatting;
 import org.apache.poi.hssf.record.cf.IconMultiStateThreshold;
 import org.apache.poi.hssf.record.cf.Threshold;
@@ -30,6 +32,7 @@ import org.apache.poi.hssf.record.common.FutureRecord;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.ss.formula.Formula;
 import org.apache.poi.ss.formula.ptg.Ptg;
+import org.apache.poi.ss.usermodel.ConditionalFormattingThreshold.RangeType;
 import org.apache.poi.ss.usermodel.IconMultiStateFormatting.IconSet;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.HexDump;
@@ -59,11 +62,10 @@ public final class CFRule12Record extends CFRuleBase implements FutureRecord {
     private byte template_param_length;
     private byte[] template_params;
     
+    private DataBarFormatting data_bar;
     private IconMultiStateFormatting multistate;
     private ColorGradientFormatting color_gradient;
-    
-    // TODO Parse these
-    private byte[] databar_data;
+    // TODO Parse this, see #58150
     private byte[] filter_data;
 
     /** Creates new CFRuleRecord */
@@ -123,6 +125,27 @@ public final class CFRule12Record extends CFRuleBase implements FutureRecord {
                 formula1, formula2, formula3);
     }
     /**
+     * Creates a new Data Bar formatting
+     */
+    public static CFRule12Record create(HSSFSheet sheet, ExtendedColor color) {
+        CFRule12Record r = new CFRule12Record(CONDITION_TYPE_DATA_BAR, 
+                                              ComparisonOperator.NO_COMPARISON);
+        DataBarFormatting dbf = r.createDataBarFormatting();
+        dbf.setColor(color);
+        dbf.setPercentMin((byte)50);
+        dbf.setPercentMax((byte)50);
+        
+        DataBarThreshold min = new DataBarThreshold();
+        min.setType(RangeType.MIN.id);
+        dbf.setThresholdMin(min);
+        
+        DataBarThreshold max = new DataBarThreshold();
+        max.setType(RangeType.MAX.id);
+        dbf.setThresholdMax(max);
+        
+        return r;
+    }
+    /**
      * Creates a new Icon Set / Multi-State formatting
      */
     public static CFRule12Record create(HSSFSheet sheet, IconSet iconSet) {
@@ -158,7 +181,6 @@ public final class CFRule12Record extends CFRuleBase implements FutureRecord {
         cgf.setColors(colors);
         return r;
     }
-    // TODO Static creators for Data Bars
 
     public CFRule12Record(RecordInputStream in) {
         futureHeader = new FtrHeader(in);
@@ -202,7 +224,7 @@ public final class CFRule12Record extends CFRuleBase implements FutureRecord {
         if (type == CONDITION_TYPE_COLOR_SCALE) {
             color_gradient = new ColorGradientFormatting(in);
         } else if (type == CONDITION_TYPE_DATA_BAR) {
-            databar_data = in.readRemainder();
+            data_bar = new DataBarFormatting(in);
         } else if (type == CONDITION_TYPE_FILTER) {
             filter_data = in.readRemainder();
         } else if (type == CONDITION_TYPE_ICON_SET) {
@@ -210,6 +232,21 @@ public final class CFRule12Record extends CFRuleBase implements FutureRecord {
         }
     }
     
+    public boolean containsDataBarBlock() {
+        return (data_bar != null);
+    }
+    public DataBarFormatting getDataBarFormatting() {
+        return data_bar;
+    }
+    public DataBarFormatting createDataBarFormatting() {
+        if (data_bar != null) return data_bar;
+        
+        // Convert, setup and return
+        setConditionType(CONDITION_TYPE_DATA_BAR);
+        data_bar = new DataBarFormatting();
+        return data_bar;
+    }
+
     public boolean containsMultiStateBlock() {
         return (multistate != null);
     }
@@ -302,7 +339,7 @@ public final class CFRule12Record extends CFRuleBase implements FutureRecord {
         if (type == CONDITION_TYPE_COLOR_SCALE) {
             color_gradient.serialize(out);
         } else if (type == CONDITION_TYPE_DATA_BAR) {
-            out.write(databar_data);
+            data_bar.serialize(out);
         } else if (type == CONDITION_TYPE_FILTER) {
             out.write(filter_data);
         } else if (type == CONDITION_TYPE_ICON_SET) {
@@ -326,7 +363,7 @@ public final class CFRule12Record extends CFRuleBase implements FutureRecord {
         if (type == CONDITION_TYPE_COLOR_SCALE) {
             len += color_gradient.getDataLength();
         } else if (type == CONDITION_TYPE_DATA_BAR) {
-            len += databar_data.length;
+            len += data_bar.getDataLength();
         } else if (type == CONDITION_TYPE_FILTER) {
             len += filter_data.length;
         } else if (type == CONDITION_TYPE_ICON_SET) {
@@ -358,13 +395,15 @@ public final class CFRule12Record extends CFRuleBase implements FutureRecord {
         buffer.append("    .priority  =").append(priority).append("\n");
         buffer.append("    .template_type  =").append(template_type).append("\n");
         buffer.append("    .template_params=").append(HexDump.toHex(template_params)).append("\n");
-        buffer.append("    .databar_data   =").append(HexDump.toHex(databar_data)).append("\n");
         buffer.append("    .filter_data    =").append(HexDump.toHex(filter_data)).append("\n");
         if (color_gradient != null) {
             buffer.append(color_gradient);
         }
         if (multistate != null) {
             buffer.append(multistate);
+        }
+        if (data_bar != null) {
+            buffer.append(data_bar);
         }
         buffer.append("[/CFRULE12]\n");
         return buffer.toString();
@@ -389,7 +428,19 @@ public final class CFRule12Record extends CFRuleBase implements FutureRecord {
         rec.template_params = new byte[template_param_length];
         System.arraycopy(template_params, 0, rec.template_params, 0, template_param_length);
 
-        // TODO Clone the rgbCT data like Gradients, Databars etc
+        if (color_gradient != null) {
+            rec.color_gradient = (ColorGradientFormatting)color_gradient.clone();
+        }
+        if (multistate != null) {
+            rec.multistate = (IconMultiStateFormatting)multistate.clone();
+        }
+        if (data_bar != null) {
+            rec.data_bar = (DataBarFormatting)data_bar.clone();
+        }
+        if (filter_data != null) {
+            rec.filter_data = new byte[filter_data.length];
+            System.arraycopy(filter_data, 0, rec.filter_data, 0, filter_data.length);
+        }
         
         return rec;
     }
