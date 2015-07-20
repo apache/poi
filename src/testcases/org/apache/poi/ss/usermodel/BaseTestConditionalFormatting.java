@@ -641,11 +641,7 @@ public abstract class BaseTestConditionalFormatting extends TestCase {
         cf = sheetCF.getConditionalFormattingAt(2);
         assertEquals(1, cf.getFormattingRanges().length);
         assertEquals("E2:E17", cf.getFormattingRanges()[0].formatAsString());
-        
-        assertEquals(1, cf.getNumberOfRules());
-        cr = cf.getRule(0);
-        assertEquals(ConditionType.DATA_BAR, cr.getConditionTypeType());
-        // TODO Support Data Bars, then check the rest of this rule
+        assertDataBar(cf, "FF63C384");
         
         
         // Colours Red->Yellow->Green - Column F
@@ -772,6 +768,37 @@ public abstract class BaseTestConditionalFormatting extends TestCase {
         
         // Mixed icons - Column U
         // TODO Support EXT formattings
+    }
+    
+    private void assertDataBar(ConditionalFormatting cf, String color) {
+        assertEquals(1, cf.getNumberOfRules());
+        ConditionalFormattingRule cr = cf.getRule(0);
+        assertDataBar(cr, color);
+    }
+    private void assertDataBar(ConditionalFormattingRule cr, String color) {
+        assertEquals(ConditionType.DATA_BAR, cr.getConditionTypeType());
+        assertEquals(ComparisonOperator.NO_COMPARISON, cr.getComparisonOperation());
+        assertEquals(null, cr.getFormula1());
+        assertEquals(null, cr.getFormula2());
+        
+        DataBarFormatting databar = cr.getDataBarFormatting();
+        assertNotNull(databar);
+        assertEquals(false, databar.isIconOnly());
+        assertEquals(true, databar.isLeftToRight());
+        assertEquals(0, databar.getWidthMin());
+        assertEquals(100, databar.getWidthMax());
+        
+        assertColour(color, databar.getColor());
+        
+        ConditionalFormattingThreshold th;
+        th = databar.getMinThreshold();
+        assertEquals(RangeType.MIN, th.getRangeType());
+        assertEquals(null, th.getValue());
+        assertEquals(null, th.getFormula());
+        th = databar.getMaxThreshold();
+        assertEquals(RangeType.MAX, th.getRangeType());
+        assertEquals(null, th.getValue());
+        assertEquals(null, th.getFormula());
     }
     
     private void assertIconSetPercentages(ConditionalFormatting cf, IconSet iconset, Double...vals) {

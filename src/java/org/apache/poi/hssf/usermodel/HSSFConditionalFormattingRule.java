@@ -24,6 +24,7 @@ import org.apache.poi.hssf.record.CFRuleBase.ComparisonOperator;
 import org.apache.poi.hssf.record.CFRuleRecord;
 import org.apache.poi.hssf.record.cf.BorderFormatting;
 import org.apache.poi.hssf.record.cf.ColorGradientFormatting;
+import org.apache.poi.hssf.record.cf.DataBarFormatting;
 import org.apache.poi.hssf.record.cf.FontFormatting;
 import org.apache.poi.hssf.record.cf.IconMultiStateFormatting;
 import org.apache.poi.hssf.record.cf.PatternFormatting;
@@ -69,8 +70,7 @@ public final class HSSFConditionalFormattingRule implements ConditionalFormattin
         return (CFRule12Record)cfRuleRecord;
     }
 
-    private HSSFFontFormatting getFontFormatting(boolean create)
-    {
+    private HSSFFontFormatting getFontFormatting(boolean create) {
         FontFormatting fontFormatting = cfRuleRecord.getFontFormatting();
         if ( fontFormatting != null)
         {
@@ -92,8 +92,7 @@ public final class HSSFConditionalFormattingRule implements ConditionalFormattin
     /**
      * @return - font formatting object  if defined,  <code>null</code> otherwise
      */
-    public HSSFFontFormatting getFontFormatting()
-    {
+    public HSSFFontFormatting getFontFormatting() {
         return getFontFormatting(false);
     }
     /**
@@ -101,13 +100,11 @@ public final class HSSFConditionalFormattingRule implements ConditionalFormattin
      * otherwise just return existing object.
      * @return - font formatting object, never returns <code>null</code>.
      */
-    public HSSFFontFormatting createFontFormatting()
-    {
+    public HSSFFontFormatting createFontFormatting() {
         return getFontFormatting(true);
     }
 
-    private HSSFBorderFormatting getBorderFormatting(boolean create)
-    {
+    private HSSFBorderFormatting getBorderFormatting(boolean create) {
         BorderFormatting borderFormatting = cfRuleRecord.getBorderFormatting();
         if ( borderFormatting != null)
         {
@@ -128,8 +125,7 @@ public final class HSSFConditionalFormattingRule implements ConditionalFormattin
     /**
      * @return - border formatting object  if defined,  <code>null</code> otherwise
      */
-    public HSSFBorderFormatting getBorderFormatting()
-    {
+    public HSSFBorderFormatting getBorderFormatting() {
         return getBorderFormatting(false);
     }
     /**
@@ -137,8 +133,7 @@ public final class HSSFConditionalFormattingRule implements ConditionalFormattin
      * otherwise just return existing object.
      * @return - border formatting object, never returns <code>null</code>.
      */
-    public HSSFBorderFormatting createBorderFormatting()
-    {
+    public HSSFBorderFormatting createBorderFormatting() {
         return getBorderFormatting(true);
     }
 
@@ -177,6 +172,37 @@ public final class HSSFConditionalFormattingRule implements ConditionalFormattin
     public HSSFPatternFormatting createPatternFormatting()
     {
         return getPatternFormatting(true);
+    }
+    
+    private HSSFDataBarFormatting getDataBarFormatting(boolean create) {
+        CFRule12Record cfRule12Record = getCFRule12Record(create);
+        DataBarFormatting databarFormatting = cfRule12Record.getDataBarFormatting();
+        if (databarFormatting != null)
+        {
+            return new HSSFDataBarFormatting(cfRule12Record, sheet);
+        }
+        else if( create )
+        {
+            databarFormatting = cfRule12Record.createDataBarFormatting();
+            return new HSSFDataBarFormatting(cfRule12Record, sheet);
+        }
+        else
+        {
+            return null;
+        }
+    }
+    /**
+     * @return databar / data-bar formatting object if defined, <code>null</code> otherwise
+     */
+    public HSSFDataBarFormatting getDataBarFormatting() {
+        return getDataBarFormatting(false);
+    }
+    /**
+     * create a new databar / data-bar formatting object if it does not exist,
+     * otherwise just return the existing object.
+     */
+    public HSSFDataBarFormatting createDataBarFormatting() {
+        return getDataBarFormatting(true);
     }
     
     private HSSFIconMultiStateFormatting getMultiStateFormatting(boolean create) {

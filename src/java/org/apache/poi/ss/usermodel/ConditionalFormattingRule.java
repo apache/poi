@@ -79,6 +79,11 @@ public interface ConditionalFormattingRule {
     PatternFormatting getPatternFormatting();
 
     /**
+     * @return - databar / data-bar formatting object if defined, <code>null</code> otherwise
+     */
+    DataBarFormatting getDataBarFormatting();
+    
+    /**
      * @return - icon / multi-state formatting object if defined, <code>null</code> otherwise
      */
     IconMultiStateFormatting getMultiStateFormatting();
