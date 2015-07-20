@@ -56,8 +56,9 @@ public class ConditionalFormats {
         shadeAlt(wb.createSheet("Shade Alt"));
         shadeBands(wb.createSheet("Shade Bands"));
         iconSets(wb.createSheet("Icon Sets"));
+        colourScales(wb.createSheet("Colour Scales"));
         
-        // TODO Add colour scales, data bars etc, see bug #58130
+        // TODO Add data bars, see bug #58130
 
         // Write the output to a file
         String file = "cf-poi.xls";
@@ -439,7 +440,7 @@ public class ConditionalFormats {
         r.createCell(1).setCellValue(10);
         r.createCell(2).setCellValue(10);
         r.createCell(3).setCellValue(10);
-                
+
         SheetConditionalFormatting sheetCF = sheet.getSheetConditionalFormatting();
         
         CellRangeAddress[] regions = { CellRangeAddress.valueOf("B1:B4") };
@@ -474,6 +475,70 @@ public class ConditionalFormats {
         im3.getThresholds()[1].setValue(3d);
         im3.getThresholds()[2].setRangeType(RangeType.NUMBER);
         im3.getThresholds()[2].setValue(7d);
+        sheetCF.addConditionalFormatting(regions, rule3);
+    }
+    
+    /**
+     * Color Scales / Colour Scales / Colour Gradients allow you shade the
+     *  background colour of the cell based on the values, eg from Red to
+     *  Yellow to Green.
+     */
+    static void colourScales(Sheet sheet) {
+        sheet.createRow(0).createCell(0).setCellValue("Colour Scales");
+        Row r = sheet.createRow(1);
+        r.createCell(0).setCellValue("Red-Yellow-Green");
+        for (int i=1; i<=7; i++) {
+            r.createCell(i).setCellValue((i-1)*5);
+        }
+        r = sheet.createRow(2);
+        r.createCell(0).setCellValue("Red-White-Blue");
+        for (int i=1; i<=9; i++) {
+            r.createCell(i).setCellValue((i-1)*5);
+        }
+        r = sheet.createRow(3);
+        r.createCell(0).setCellValue("Blue-Green");
+        for (int i=1; i<=16; i++) {
+            r.createCell(i).setCellValue((i-1));
+        }
+        sheet.setColumnWidth(0, 5000);
+        
+        SheetConditionalFormatting sheetCF = sheet.getSheetConditionalFormatting();
+        
+        CellRangeAddress[] regions = { CellRangeAddress.valueOf("B2:H2") };
+        ConditionalFormattingRule rule1 =
+                sheetCF.createConditionalFormattingColorScaleRule();
+        ColorScaleFormatting cs1 = rule1.getColorScaleFormatting();
+        cs1.getThresholds()[0].setRangeType(RangeType.MIN);
+        cs1.getThresholds()[1].setRangeType(RangeType.PERCENTILE);
+        cs1.getThresholds()[1].setValue(50d);
+        cs1.getThresholds()[2].setRangeType(RangeType.MAX);
+        ((ExtendedColor)cs1.getColors()[0]).setARGBHex("FFF8696B");
+        ((ExtendedColor)cs1.getColors()[1]).setARGBHex("FFFFEB84");
+        ((ExtendedColor)cs1.getColors()[2]).setARGBHex("FF63BE7B");
+        sheetCF.addConditionalFormatting(regions, rule1);
+        
+        regions = new CellRangeAddress[] { CellRangeAddress.valueOf("B3:J3") };
+        ConditionalFormattingRule rule2 =
+                sheetCF.createConditionalFormattingColorScaleRule();
+        ColorScaleFormatting cs2 = rule2.getColorScaleFormatting();
+        cs2.getThresholds()[0].setRangeType(RangeType.MIN);
+        cs2.getThresholds()[1].setRangeType(RangeType.PERCENTILE);
+        cs2.getThresholds()[1].setValue(50d);
+        cs2.getThresholds()[2].setRangeType(RangeType.MAX);
+        ((ExtendedColor)cs2.getColors()[0]).setARGBHex("FFF8696B");
+        ((ExtendedColor)cs2.getColors()[1]).setARGBHex("FFFCFCFF");
+        ((ExtendedColor)cs2.getColors()[2]).setARGBHex("FF5A8AC6");
+        sheetCF.addConditionalFormatting(regions, rule2);
+        
+        regions = new CellRangeAddress[] { CellRangeAddress.valueOf("B4:Q4") };
+        ConditionalFormattingRule rule3=
+                sheetCF.createConditionalFormattingColorScaleRule();
+        ColorScaleFormatting cs3 = rule3.getColorScaleFormatting();
+        cs3.setNumControlPoints(2);
+        cs3.getThresholds()[0].setRangeType(RangeType.MIN);
+        cs3.getThresholds()[1].setRangeType(RangeType.MAX);
+        ((ExtendedColor)cs3.getColors()[0]).setARGBHex("FF5A8AC6");
+        ((ExtendedColor)cs3.getColors()[1]).setARGBHex("FF63BE7B");
         sheetCF.addConditionalFormatting(regions, rule3);
     }
 }

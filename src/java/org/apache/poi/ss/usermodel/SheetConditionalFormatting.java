@@ -146,7 +146,31 @@ public interface SheetConditionalFormatting {
      */
     ConditionalFormattingRule createConditionalFormattingRule(IconSet iconSet);
 
-    // TODO Support types beyond CELL_VALUE_IS and FORMULA and ICONs
+    /**
+     * Create a Color Scale / Color Gradient conditional formatting rule.
+     * <p>The thresholds and colours for it will be created, but will be 
+     *  empty and require configuring with 
+     *  {@link ConditionalFormattingRule#getColorScaleFormatting()}
+     *  then
+     *  {@link ColorScaleFormatting#getThresholds()}
+     *  and
+     *  {@link ColorScaleFormatting#getColors()}
+     */
+    ConditionalFormattingRule createConditionalFormattingColorScaleRule();
+    
+    /**
+     * Create a Databar conditional formatting rule.
+     * <p>The thresholds and colour for it will be created, but will be 
+     *  empty and require configuring with 
+     *  {@link ConditionalFormattingRule#getDataBarFormatting()}
+     *  then
+     *  {@link DataBarFormatting#getMinThreshold()}
+     *  and 
+     *  {@link DataBarFormatting#getMaxThreshold()}
+     *  and
+     *  {@link DataBarFormatting#getColor()}
+     */
+    ConditionalFormattingRule createConditionalFormattingDataBarRule();
     
     /**
     * Gets Conditional Formatting object at a particular index

@@ -106,7 +106,36 @@ public final class HSSFSheetConditionalFormatting implements SheetConditionalFor
         return new HSSFConditionalFormattingRule(_sheet, rr);
     }
 
-    // TODO Support types beyond CELL_VALUE_IS and FORMULA and ICONs
+    /**
+     * Create a Color Scale / Color Gradient conditional formatting rule.
+     * <p>The thresholds and colours for it will be created, but will be 
+     *  empty and require configuring with 
+     *  {@link HSSFConditionalFormattingRule#getColorScaleFormatting()}
+     *  then
+     *  {@link HSSFColorScaleFormatting#getThresholds()}
+     *  and
+     *  {@link HSSFColorScaleFormatting#getColors()}
+     */
+    public HSSFConditionalFormattingRule createConditionalFormattingColorScaleRule() {
+        CFRule12Record rr = CFRule12Record.createColorScale(_sheet);
+        return new HSSFConditionalFormattingRule(_sheet, rr);
+    }
+    
+    /**
+     * Create a Databar conditional formatting rule.
+     * <p>The thresholds and colour for it will be created, but will be 
+     *  empty and require configuring with 
+     *  {@link HSSFConditionalFormattingRule#getDataBarFormatting()}
+     *  then
+     *  {@link HSSFDataBarFormatting#getMinThreshold()}
+     *  and 
+     *  {@link HSSFDataBarFormatting#getMaxThreshold()}
+     *  and
+     *  {@link HSSFDataBarFormatting#getColor()}
+     */
+    public HSSFConditionalFormattingRule createConditionalFormattingDataBarRule() {
+        throw new IllegalStateException("Not Implemented Yet!"); // TODO Implement
+    }
 
     /**
      * Adds a copy of HSSFConditionalFormatting object to the sheet

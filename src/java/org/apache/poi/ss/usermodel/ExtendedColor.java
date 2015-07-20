@@ -79,7 +79,7 @@ public abstract class ExtendedColor implements Color {
      */
     public abstract void setRGB(byte[] rgb);
    
-   protected byte[] getRGBOrARGB() {
+    protected byte[] getRGBOrARGB() {
         byte[] rgb = null;
 
         if (isIndexed() && getIndex() > 0) {
@@ -97,7 +97,7 @@ public abstract class ExtendedColor implements Color {
          // Grab the colour
          rgb = getStoredRBG();
          return rgb;
-    }
+     }
 
     /**
      * Standard Red Green Blue ctColor value (RGB) with applied tint.
@@ -137,6 +137,23 @@ public abstract class ExtendedColor implements Color {
           sb.append(cs);
        }
        return sb.toString().toUpperCase();
+    }
+    
+    /**
+     * Sets the ARGB value from hex format, eg FF0077FF.
+     * Only works for regular (non-indexed) colours
+     */
+    public void setARGBHex(String argb) {
+        if (argb.length() == 6 || argb.length() == 8) {
+            byte[] rgb = new byte[argb.length()/2];
+            for (int i=0; i<rgb.length; i++) {
+                String part = argb.substring(i*2,(i+1)*2);
+                rgb[i] = (byte)Integer.parseInt(part, 16);
+            }
+            setRGB(rgb);
+        } else {
+            throw new IllegalArgumentException("Must be of the form 112233 or FFEEDDCC");
+        }
     }
 
     private static byte applyTint(int lum, double tint){

@@ -138,7 +138,41 @@ public class XSSFSheetConditionalFormatting implements SheetConditionalFormattin
         return rule;
     }
 
-    // TODO Support types beyond CELL_VALUE_IS and FORMULA and ICONs
+    /**
+     * Create a Color Scale / Color Gradient conditional formatting rule.
+     * <p>The thresholds and colours for it will be created, but will be 
+     *  empty and require configuring with 
+     *  {@link XSSFConditionalFormattingRule#getColorScaleFormatting()}
+     *  then
+     *  {@link XSSFColorScaleFormatting#getThresholds()}
+     *  and
+     *  {@link XSSFColorScaleFormatting#getColors()}
+     */
+    public XSSFConditionalFormattingRule createConditionalFormattingColorScaleRule() {
+        XSSFConditionalFormattingRule rule = new XSSFConditionalFormattingRule(_sheet);
+        
+        // Have it setup, with suitable defaults
+        rule.createColorScaleFormatting();
+        
+        // All done!
+        return rule;
+    }
+    
+    /**
+     * Create a Databar conditional formatting rule.
+     * <p>The thresholds and colour for it will be created, but will be 
+     *  empty and require configuring with 
+     *  {@link XSSFConditionalFormattingRule#getDataBarFormatting()}
+     *  then
+     *  {@link XSSFDataBarFormatting#getMinThreshold()}
+     *  and 
+     *  {@link XSSFDataBarFormatting#getMaxThreshold()}
+     *  and
+     *  {@link XSSFDataBarFormatting#getColor()}
+     */
+    public XSSFConditionalFormattingRule createConditionalFormattingDataBarRule() {
+        throw new IllegalStateException("Not Implemented Yet!"); // TODO Implement
+    }
     
     @SuppressWarnings("deprecation")
     public int addConditionalFormatting(CellRangeAddress[] regions, ConditionalFormattingRule[] cfRules) {

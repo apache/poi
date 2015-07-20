@@ -20,9 +20,11 @@ package org.apache.poi.hssf.record;
 import java.util.Arrays;
 
 import org.apache.poi.hssf.record.cf.ColorGradientFormatting;
+import org.apache.poi.hssf.record.cf.ColorGradientThreshold;
 import org.apache.poi.hssf.record.cf.IconMultiStateFormatting;
 import org.apache.poi.hssf.record.cf.IconMultiStateThreshold;
 import org.apache.poi.hssf.record.cf.Threshold;
+import org.apache.poi.hssf.record.common.ExtendedColor;
 import org.apache.poi.hssf.record.common.FtrHeader;
 import org.apache.poi.hssf.record.common.FutureRecord;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -129,14 +131,34 @@ public final class CFRule12Record extends CFRuleBase implements FutureRecord {
             ts[i] = new IconMultiStateThreshold();
         }
         
-        CFRule12Record r = new CFRule12Record(CONDITION_TYPE_COLOR_SCALE, 
+        CFRule12Record r = new CFRule12Record(CONDITION_TYPE_ICON_SET, 
                                               ComparisonOperator.NO_COMPARISON);
         IconMultiStateFormatting imf = r.createMultiStateFormatting();
         imf.setIconSet(iconSet);
         imf.setThresholds(ts);
         return r;
     }
-    // TODO Static creators for the other record types
+    /**
+     * Creates a new Color Scale / Color Gradient formatting
+     */
+    public static CFRule12Record createColorScale(HSSFSheet sheet) {
+        int numPoints = 3;
+        ExtendedColor[] colors = new ExtendedColor[numPoints];
+        ColorGradientThreshold[] ts = new ColorGradientThreshold[numPoints];
+        for (int i=0; i<ts.length; i++) {
+            ts[i] = new ColorGradientThreshold();
+            colors[i] = new ExtendedColor();
+        }
+        
+        CFRule12Record r = new CFRule12Record(CONDITION_TYPE_COLOR_SCALE, 
+                                              ComparisonOperator.NO_COMPARISON);
+        ColorGradientFormatting cgf = r.createColorGradientFormatting();
+        cgf.setNumControlPoints(numPoints);
+        cgf.setThresholds(ts);
+        cgf.setColors(colors);
+        return r;
+    }
+    // TODO Static creators for Data Bars
 
     public CFRule12Record(RecordInputStream in) {
         futureHeader = new FtrHeader(in);
