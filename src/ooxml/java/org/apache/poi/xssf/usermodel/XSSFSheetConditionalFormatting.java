@@ -56,7 +56,7 @@ public class XSSFSheetConditionalFormatting implements SheetConditionalFormattin
      * TODO - formulas containing cell references are currently not parsed properly
      *
      * @param comparisonOperation - a constant value from
-     *		 <tt>{@link org.apache.poi.hssf.record.CFRuleRecord.ComparisonOperator}</tt>: <p>
+     *		 <tt>{@link org.apache.poi.hssf.record.CFRuleBase.ComparisonOperator}</tt>: <p>
      * <ul>
      *		 <li>BETWEEN</li>
      *		 <li>NOT_BETWEEN</li>

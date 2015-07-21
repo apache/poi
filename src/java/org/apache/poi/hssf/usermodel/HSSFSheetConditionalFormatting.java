@@ -48,7 +48,7 @@ public final class HSSFSheetConditionalFormatting implements SheetConditionalFor
      * TODO - formulas containing cell references are currently not parsed properly
      *
      * @param comparisonOperation - a constant value from
-     *		 <tt>{@link org.apache.poi.hssf.record.CFRuleRecord.ComparisonOperator}</tt>: <p>
+     *		 <tt>{@link org.apache.poi.hssf.record.CFRuleBase.ComparisonOperator}</tt>: <p>
      * <ul>
      *		 <li>BETWEEN</li>
      *		 <li>NOT_BETWEEN</li>
@@ -62,8 +62,8 @@ public final class HSSFSheetConditionalFormatting implements SheetConditionalFor
      * </p>
      * @param formula1 - formula for the valued, compared with the cell
      * @param formula2 - second formula (only used with
-     * {@link org.apache.poi.hssf.record.CFRuleRecord.ComparisonOperator#BETWEEN}) and
-     * {@link org.apache.poi.hssf.record.CFRuleRecord.ComparisonOperator#NOT_BETWEEN} operations)
+     * {@link org.apache.poi.hssf.record.CFRuleBase.ComparisonOperator#BETWEEN}) and
+     * {@link org.apache.poi.hssf.record.CFRuleBase.ComparisonOperator#NOT_BETWEEN} operations)
      */
     public HSSFConditionalFormattingRule createConditionalFormattingRule(
             byte comparisonOperation,
