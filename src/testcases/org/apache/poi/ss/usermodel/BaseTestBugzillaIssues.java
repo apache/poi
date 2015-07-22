@@ -373,13 +373,13 @@ public abstract class BaseTestBugzillaIssues {
         double widthBeforeCol = SheetUtil.getColumnWidth(sheet, 0, false);
 
         assertTrue("Expected to have cell width > 0 when computing manually, but had " + widthManual + "/" + widthBeforeCell + "/" + widthBeforeCol + "/" + 
-                SheetUtil.canComputeColumnWidht(font) + "/" + computeCellWidthFixed(cell0, font, "1") + "/" + computeCellWidthFixed(cell0, font, longValue), 
+                SheetUtil.canComputeColumnWidht(font) + "/" + computeCellWidthFixed(cell0, font, "1") + "/" + computeCellWidthFixed(cell0, font, "0000") + "/" + computeCellWidthFixed(cell0, font, longValue), 
                 widthManual > 0);
         assertTrue("Expected to have cell width > 0 BEFORE auto-size, but had " + widthManual + "/" + widthBeforeCell + "/" + widthBeforeCol + "/"  + 
-                SheetUtil.canComputeColumnWidht(font) + "/" + computeCellWidthFixed(cell0, font, "1") + "/" + computeCellWidthFixed(cell0, font, longValue), 
+                SheetUtil.canComputeColumnWidht(font) + "/" + computeCellWidthFixed(cell0, font, "1") + "/" + computeCellWidthFixed(cell0, font, "0000") + "/" + computeCellWidthFixed(cell0, font, longValue), 
                 widthBeforeCell > 0);
         assertTrue("Expected to have column width > 0 BEFORE auto-size, but had " + widthManual + "/" + widthBeforeCell + "/" + widthBeforeCol + "/"  + 
-                SheetUtil.canComputeColumnWidht(font) + "/" + computeCellWidthFixed(cell0, font, "1") + "/" + computeCellWidthFixed(cell0, font, longValue), 
+                SheetUtil.canComputeColumnWidht(font) + "/" + computeCellWidthFixed(cell0, font, "1") + "/" + computeCellWidthFixed(cell0, font, "0000") + "/" + computeCellWidthFixed(cell0, font, longValue), 
                 widthBeforeCol > 0);
 
         sheet.autoSizeColumn(0);
@@ -417,7 +417,7 @@ public abstract class BaseTestBugzillaIssues {
         copyAttributes(font, str, 0, txt.length());
 
         TextLayout layout = new TextLayout(str.getIterator(), fontRenderContext);
-        return ((layout.getBounds().getWidth() / 1) / 8);
+        return layout.getBounds().getWidth();
     }
 
     private static void copyAttributes(Font font, AttributedString str, int startIdx, int endIdx) {
