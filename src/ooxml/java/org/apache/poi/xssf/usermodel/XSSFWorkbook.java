@@ -153,8 +153,6 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      */
     private StylesTable stylesSource;
 
-    private ThemesTable theme;
-
     /**
      * The locator of user-defined functions.
      * By default includes functions from the Excel Analysis Toolpack
@@ -337,6 +335,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
             WorkbookDocument doc = WorkbookDocument.Factory.parse(getPackagePart().getInputStream());
             this.workbook = doc.getWorkbook();
 
+            ThemesTable theme = null;
             Map<String, XSSFSheet> shIdMap = new HashMap<String, XSSFSheet>();
             Map<String, ExternalLinksTable> elIdMap = new HashMap<String, ExternalLinksTable>();
             for(POIXMLDocumentPart p : getRelations()){
@@ -362,6 +361,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
                     stylesSource = (StylesTable)createRelationship(XSSFRelation.STYLES, XSSFFactory.getInstance());
                 }
             }
+            stylesSource.setWorkbook(this);
             stylesSource.setTheme(theme);
 
             if (sharedStringSource == null) {
@@ -428,6 +428,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
 
         sharedStringSource = (SharedStringsTable)createRelationship(XSSFRelation.SHARED_STRINGS, XSSFFactory.getInstance());
         stylesSource = (StylesTable)createRelationship(XSSFRelation.STYLES, XSSFFactory.getInstance());
+        stylesSource.setWorkbook(this);
 
         namedRanges = new ArrayList<XSSFName>();
         sheets = new ArrayList<XSSFSheet>();
@@ -1578,7 +1579,8 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * Returns the Theme of current workbook.
      */
     public ThemesTable getTheme() {
-        return theme;
+        if (stylesSource == null) return null;
+        return stylesSource.getTheme();
     }
 
     /**

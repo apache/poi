@@ -18,6 +18,7 @@
 package org.apache.poi.xssf.model;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.FileOutputStream;
 
@@ -29,6 +30,7 @@ import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.Test;
 
@@ -74,5 +76,25 @@ public class TestThemesTable {
             workbook.write(fos);
             fos.close();
         }
+    }
+    
+    @Test
+    public void testAddNew() throws Exception {
+        XSSFWorkbook wb = new XSSFWorkbook();
+        XSSFSheet s = wb.createSheet();
+        assertEquals(null, wb.getTheme());
+        
+        StylesTable styles = wb.getStylesSource();
+        assertEquals(null, styles.getTheme());
+        
+        styles.ensureThemesTable();
+        
+        assertNotNull(styles.getTheme());
+        assertNotNull(wb.getTheme());
+        
+        wb = XSSFTestDataSamples.writeOutAndReadBack(wb);
+        styles = wb.getStylesSource();
+        assertNotNull(styles.getTheme());
+        assertNotNull(wb.getTheme());
     }
 }
