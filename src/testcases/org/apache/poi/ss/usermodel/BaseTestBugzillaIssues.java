@@ -37,6 +37,7 @@ import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.SheetUtil;
+import org.apache.poi.util.StringUtil;
 import org.junit.Assume;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -368,18 +369,24 @@ public abstract class BaseTestBugzillaIssues {
         assertEquals("Expecting no rotation in this test", 
                 0, cell0.getCellStyle().getRotation());
 
+        // check computing size up to a large size
+        StringBuilder b = new StringBuilder();
+        for(int i = 0;i < longValue.length()*5;i++) {
+            b.append("w");
+            assertTrue("Had zero length starting at length " + i, computeCellWidthFixed(font, b.toString()) > 0);
+        }
         double widthManual = computeCellWidthManually(cell0, font);
         double widthBeforeCell = SheetUtil.getCellWidth(cell0, 8, null, false);
         double widthBeforeCol = SheetUtil.getColumnWidth(sheet, 0, false);
 
         assertTrue("Expected to have cell width > 0 when computing manually, but had " + widthManual + "/" + widthBeforeCell + "/" + widthBeforeCol + "/" + 
-                SheetUtil.canComputeColumnWidht(font) + "/" + computeCellWidthFixed(cell0, font, "1") + "/" + computeCellWidthFixed(cell0, font, "0000") + "/" + computeCellWidthFixed(cell0, font, longValue), 
+                SheetUtil.canComputeColumnWidht(font) + "/" + computeCellWidthFixed(font, "1") + "/" + computeCellWidthFixed(font, "0000") + "/" + computeCellWidthFixed(font, longValue), 
                 widthManual > 0);
         assertTrue("Expected to have cell width > 0 BEFORE auto-size, but had " + widthManual + "/" + widthBeforeCell + "/" + widthBeforeCol + "/"  + 
-                SheetUtil.canComputeColumnWidht(font) + "/" + computeCellWidthFixed(cell0, font, "1") + "/" + computeCellWidthFixed(cell0, font, "0000") + "/" + computeCellWidthFixed(cell0, font, longValue), 
+                SheetUtil.canComputeColumnWidht(font) + "/" + computeCellWidthFixed(font, "1") + "/" + computeCellWidthFixed(font, "0000") + "/" + computeCellWidthFixed(font, longValue), 
                 widthBeforeCell > 0);
         assertTrue("Expected to have column width > 0 BEFORE auto-size, but had " + widthManual + "/" + widthBeforeCell + "/" + widthBeforeCol + "/"  + 
-                SheetUtil.canComputeColumnWidht(font) + "/" + computeCellWidthFixed(cell0, font, "1") + "/" + computeCellWidthFixed(cell0, font, "0000") + "/" + computeCellWidthFixed(cell0, font, longValue), 
+                SheetUtil.canComputeColumnWidht(font) + "/" + computeCellWidthFixed(font, "1") + "/" + computeCellWidthFixed(font, "0000") + "/" + computeCellWidthFixed(font, longValue), 
                 widthBeforeCol > 0);
 
         sheet.autoSizeColumn(0);
@@ -411,7 +418,7 @@ public abstract class BaseTestBugzillaIssues {
         return ((layout.getBounds().getWidth() / 1) / 8);
     }
 
-    private double computeCellWidthFixed(Cell cell0, Font font, String txt) {
+    private double computeCellWidthFixed(Font font, String txt) {
         final FontRenderContext fontRenderContext = new FontRenderContext(null, true, true);        
         AttributedString str = new AttributedString(txt);
         copyAttributes(font, str, 0, txt.length());
