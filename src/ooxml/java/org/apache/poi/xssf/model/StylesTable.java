@@ -35,7 +35,10 @@ import org.apache.poi.ss.usermodel.BuiltinFormats;
 import org.apache.poi.ss.usermodel.FontFamily;
 import org.apache.poi.ss.usermodel.FontScheme;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFFactory;
 import org.apache.poi.xssf.usermodel.XSSFFont;
+import org.apache.poi.xssf.usermodel.XSSFRelation;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellFill;
 import org.apache.xmlbeans.XmlException;
@@ -56,7 +59,6 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTStylesheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTXf;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPatternType;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.StyleSheetDocument;
-
 
 /**
  * Table of styles shared across all sheets in a workbook.
@@ -79,6 +81,7 @@ public class StylesTable extends POIXMLDocumentPart {
     private static final int MAXIMUM_STYLE_ID = SpreadsheetVersion.EXCEL2007.getMaxCellStyles();
 
     private StyleSheetDocument doc;
+    private XSSFWorkbook workbook;
     private ThemesTable theme;
 
     /**
@@ -96,7 +99,17 @@ public class StylesTable extends POIXMLDocumentPart {
         super(part, rel);
         readFrom(part.getInputStream());
     }
+    
+    public void setWorkbook(XSSFWorkbook wb) {
+        this.workbook = wb;
+    }
 
+    /**
+     * Get the current Workbook's theme table, or null if the
+     *  Workbook lacks any themes.
+     * <p>Use {@link #ensureThemesTable()} to have a themes table
+     *  created if needed
+     */
     public ThemesTable getTheme() {
         return theme;
     }
@@ -112,6 +125,17 @@ public class StylesTable extends POIXMLDocumentPart {
         for(XSSFCellBorder border : borders) {
             border.setThemesTable(theme);
         }
+    }
+    
+    /**
+     * If there isn't currently a {@link ThemesTable} for the
+     *  current Workbook, then creates one and sets it up.
+     * After this, calls to {@link #getTheme()} won't give null
+     */
+    public void ensureThemesTable() {
+        if (theme != null) return;
+
+        theme = (ThemesTable)workbook.createRelationship(XSSFRelation.THEME, XSSFFactory.getInstance());
     }
 
     /**

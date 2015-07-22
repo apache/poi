@@ -17,12 +17,14 @@
 package org.apache.poi.xssf.model;
 
 import java.io.IOException;
+import java.io.OutputStream;
 
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTColor;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTColorScheme;
 import org.openxmlformats.schemas.drawingml.x2006.main.ThemeDocument;
@@ -34,6 +36,15 @@ import org.openxmlformats.schemas.drawingml.x2006.main.ThemeDocument;
 public class ThemesTable extends POIXMLDocumentPart {
     private ThemeDocument theme;
 
+    /**
+     * Create a new, empty ThemesTable
+     */
+    public ThemesTable() {
+        super();
+        theme = ThemeDocument.Factory.newInstance();
+        theme.addNewTheme().addNewThemeElements();
+    }
+    
     /**
      * Construct a ThemesTable.
      * @param part A PackagePart.
@@ -119,5 +130,25 @@ public class ThemesTable extends POIXMLDocumentPart {
        color.getCTColor().setRgb(themeColor.getCTColor().getRgb());
 
        // All done
+    }
+    
+    /**
+     * Write this table out as XML.
+     * 
+     * @param out The stream to write to.
+     * @throws IOException if an error occurs while writing.
+     */
+    public void writeTo(OutputStream out) throws IOException {
+        XmlOptions options = new XmlOptions(DEFAULT_XML_OPTIONS);
+
+        theme.save(out, options);
+    }
+
+    @Override
+    protected void commit() throws IOException {
+        PackagePart part = getPackagePart();
+        OutputStream out = part.getOutputStream();
+        writeTo(out);
+        out.close();
     }
 }
