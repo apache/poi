@@ -23,7 +23,11 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.awt.font.FontRenderContext;
+import java.awt.font.TextAttribute;
+import java.awt.font.TextLayout;
 import java.io.IOException;
+import java.text.AttributedString;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -361,15 +365,23 @@ public abstract class BaseTestBugzillaIssues {
         
         assertEquals("Expecting no indentation in this test",
                 0, cell0.getCellStyle().getIndention());
+        assertEquals("Expecting no rotation in this test", 
+                0, cell0.getCellStyle().getRotation());
 
-        double width = SheetUtil.getColumnWidth(sheet, 0, false);
-        assertTrue("Expected to have column width > 0 BEFORE auto-size, but had " + width, width > 0);
-        width = SheetUtil.getCellWidth(cell0, 8, null, false);
-        assertTrue("Expected to have cell width > 0 BEFORE auto-size, but had " + width, width > 0);
+        double widthManual = computeCellWidthManually(cell0, font);
+        double widthBeforeCell = SheetUtil.getCellWidth(cell0, 8, null, false);
+        double widthBeforeCol = SheetUtil.getColumnWidth(sheet, 0, false);
+
+        assertTrue("Expected to have cell width > 0 when computing manually, but had " + widthManual + "/" + widthBeforeCell + "/" + widthBeforeCol, 
+                widthManual > 0);
+        assertTrue("Expected to have cell width > 0 BEFORE auto-size, but had " + widthManual + "/" + widthBeforeCell + "/" + widthBeforeCol, 
+                widthBeforeCell > 0);
+        assertTrue("Expected to have column width > 0 BEFORE auto-size, but had " + widthManual + "/" + widthBeforeCell + "/" + widthBeforeCol, 
+                widthBeforeCol > 0);
 
         sheet.autoSizeColumn(0);
         
-        width = SheetUtil.getColumnWidth(sheet, 0, false);
+        double width = SheetUtil.getColumnWidth(sheet, 0, false);
         assertTrue("Expected to have column width > 0 AFTER auto-size, but had " + width, width > 0);
         width = SheetUtil.getCellWidth(cell0, 8, null, false);
         assertTrue("Expected to have cell width > 0 AFTER auto-size, but had " + width, width > 0);
@@ -378,6 +390,34 @@ public abstract class BaseTestBugzillaIssues {
         sheet.setColumnWidth(0, sheet.getColumnWidth(0)); // Bug 506819 reports exception at this point
     }
 
+    private double computeCellWidthManually(Cell cell0, Font font) {
+        double width;
+        final FontRenderContext fontRenderContext = new FontRenderContext(null, true, true);        
+        RichTextString rt = cell0.getRichStringCellValue();
+        String[] lines = rt.getString().split("\\n");
+        assertEquals(1, lines.length);
+        String txt = lines[0] + "0";
+
+        AttributedString str = new AttributedString(txt);
+        copyAttributes(font, str, 0, txt.length());
+
+        if (rt.numFormattingRuns() > 0) {
+            // TODO: support rich text fragments
+        }
+
+        TextLayout layout = new TextLayout(str.getIterator(), fontRenderContext);
+        width = ((layout.getBounds().getWidth() / 1) / 8);
+        return width;
+    }
+
+    private static void copyAttributes(Font font, AttributedString str, int startIdx, int endIdx) {
+        str.addAttribute(TextAttribute.FAMILY, font.getFontName(), startIdx, endIdx);
+        str.addAttribute(TextAttribute.SIZE, (float)font.getFontHeightInPoints());
+        if (font.getBoldweight() == Font.BOLDWEIGHT_BOLD) str.addAttribute(TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD, startIdx, endIdx);
+        if (font.getItalic() ) str.addAttribute(TextAttribute.POSTURE, TextAttribute.POSTURE_OBLIQUE, startIdx, endIdx);
+        if (font.getUnderline() == Font.U_SINGLE ) str.addAttribute(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON, startIdx, endIdx);
+    }
+    
     /**
      * CreateFreezePane column/row order check
      */
