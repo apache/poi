@@ -372,11 +372,14 @@ public abstract class BaseTestBugzillaIssues {
         double widthBeforeCell = SheetUtil.getCellWidth(cell0, 8, null, false);
         double widthBeforeCol = SheetUtil.getColumnWidth(sheet, 0, false);
 
-        assertTrue("Expected to have cell width > 0 when computing manually, but had " + widthManual + "/" + widthBeforeCell + "/" + widthBeforeCol, 
+        assertTrue("Expected to have cell width > 0 when computing manually, but had " + widthManual + "/" + widthBeforeCell + "/" + widthBeforeCol + "/" + 
+                SheetUtil.canComputeColumnWidht(font) + "/" + computeCellWidthFixed(cell0, font, "1") + "/" + computeCellWidthFixed(cell0, font, longValue), 
                 widthManual > 0);
-        assertTrue("Expected to have cell width > 0 BEFORE auto-size, but had " + widthManual + "/" + widthBeforeCell + "/" + widthBeforeCol, 
+        assertTrue("Expected to have cell width > 0 BEFORE auto-size, but had " + widthManual + "/" + widthBeforeCell + "/" + widthBeforeCol + "/"  + 
+                SheetUtil.canComputeColumnWidht(font) + "/" + computeCellWidthFixed(cell0, font, "1") + "/" + computeCellWidthFixed(cell0, font, longValue), 
                 widthBeforeCell > 0);
-        assertTrue("Expected to have column width > 0 BEFORE auto-size, but had " + widthManual + "/" + widthBeforeCell + "/" + widthBeforeCol, 
+        assertTrue("Expected to have column width > 0 BEFORE auto-size, but had " + widthManual + "/" + widthBeforeCell + "/" + widthBeforeCol + "/"  + 
+                SheetUtil.canComputeColumnWidht(font) + "/" + computeCellWidthFixed(cell0, font, "1") + "/" + computeCellWidthFixed(cell0, font, longValue), 
                 widthBeforeCol > 0);
 
         sheet.autoSizeColumn(0);
@@ -391,7 +394,6 @@ public abstract class BaseTestBugzillaIssues {
     }
 
     private double computeCellWidthManually(Cell cell0, Font font) {
-        double width;
         final FontRenderContext fontRenderContext = new FontRenderContext(null, true, true);        
         RichTextString rt = cell0.getRichStringCellValue();
         String[] lines = rt.getString().split("\\n");
@@ -406,8 +408,16 @@ public abstract class BaseTestBugzillaIssues {
         }
 
         TextLayout layout = new TextLayout(str.getIterator(), fontRenderContext);
-        width = ((layout.getBounds().getWidth() / 1) / 8);
-        return width;
+        return ((layout.getBounds().getWidth() / 1) / 8);
+    }
+
+    private double computeCellWidthFixed(Cell cell0, Font font, String txt) {
+        final FontRenderContext fontRenderContext = new FontRenderContext(null, true, true);        
+        AttributedString str = new AttributedString(txt);
+        copyAttributes(font, str, 0, txt.length());
+
+        TextLayout layout = new TextLayout(str.getIterator(), fontRenderContext);
+        return ((layout.getBounds().getWidth() / 1) / 8);
     }
 
     private static void copyAttributes(Font font, AttributedString str, int startIdx, int endIdx) {
