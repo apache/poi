@@ -63,6 +63,20 @@ under the License.
             </dirset>
         </pathconvert>
 
+		<!-- copy over required libs to avoid re-downloading them always -->
+		<mkdir dir="${dirversion}/lib"/>
+		<mkdir dir="${dirversion}/ooxml-lib"/>
+		<mkdir dir="${dirversion}/compile-lib"/>
+		<copy todir="${dirversion}/lib">
+			<fileset dir="../../lib"/>
+		</copy>
+		<copy todir="${dirversion}/ooxml-lib">
+			<fileset dir="../../ooxml-lib"/>
+		</copy>
+		<copy todir="${dirversion}/compile-lib">
+			<fileset dir="../../compile-lib"/>
+		</copy>
+		
         <!-- finally call Ant on the extracted source to check if we can build the packages -->
         <echo message="Building in temporary dir ${dirversion}/"/>
         <ant dir="${dirversion}" target="jar" inheritAll="false" inheritRefs="false" useNativeBasedir="true"/>
