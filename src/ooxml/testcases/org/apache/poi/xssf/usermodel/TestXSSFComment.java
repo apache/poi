@@ -22,14 +22,29 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.fail;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.ss.usermodel.BaseTestCellComment;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.ClientAnchor;
+import org.apache.poi.ss.usermodel.Comment;
+import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.RichTextString;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.CommentsTable;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.xmlbeans.XmlObject;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRPrElt;
@@ -177,5 +192,125 @@ public final class TestXSSFComment extends BaseTestCellComment  {
         comment.setAuthor("");
         assertEquals("", comment.getAuthor());
         assertEquals(2, sheetComments.getNumberOfAuthors());
+    }
+
+    @Test
+    public void testBug58175() throws IOException {
+        Workbook wb = new SXSSFWorkbook();
+        try {
+            Sheet sheet = wb.createSheet();
+
+            Row row = sheet.createRow(1);
+            Cell cell = row.createCell(3);
+
+            cell.setCellValue("F4");
+
+            CreationHelper factory = wb.getCreationHelper();
+
+            // When the comment box is visible, have it show in a 1x3 space
+            ClientAnchor anchor = factory.createClientAnchor();
+            anchor.setCol1(cell.getColumnIndex());
+            anchor.setCol2(cell.getColumnIndex() + 1);
+            anchor.setRow1(row.getRowNum());
+            anchor.setRow2(row.getRowNum() + 3);
+
+            XSSFClientAnchor ca = (XSSFClientAnchor) anchor;
+
+            // create comments and vmlDrawing parts if they don't exist
+            CommentsTable comments = ((SXSSFWorkbook) wb).getXSSFWorkbook()
+                    .getSheetAt(0).getCommentsTable(true);
+            XSSFVMLDrawing vml = ((SXSSFWorkbook) wb).getXSSFWorkbook()
+                    .getSheetAt(0).getVMLDrawing(true);
+            schemasMicrosoftComVml.CTShape vmlShape1 = vml.newCommentShape();
+            if (ca.isSet()) {
+                String position = ca.getCol1() + ", 0, " + ca.getRow1()
+                        + ", 0, " + ca.getCol2() + ", 0, " + ca.getRow2()
+                        + ", 0";
+                vmlShape1.getClientDataArray(0).setAnchorArray(0, position);
+            }
+
+            // create the comment in two different ways and verify that there is no difference
+            @SuppressWarnings("deprecation")
+            XSSFComment shape1 = new XSSFComment(comments, comments.newComment(), vmlShape1);
+            shape1.setColumn(ca.getCol1());
+            shape1.setRow(ca.getRow1());
+
+            schemasMicrosoftComVml.CTShape vmlShape2 = vml.newCommentShape();
+            if (ca.isSet()) {
+                String position = ca.getCol1() + ", 0, " + ca.getRow1()
+                        + ", 0, " + ca.getCol2() + ", 0, " + ca.getRow2()
+                        + ", 0";
+                vmlShape2.getClientDataArray(0).setAnchorArray(0, position);
+            }
+            
+            String ref = new CellReference(ca.getRow1(), ca.getCol1()).formatAsString();
+            XSSFComment shape2 = new XSSFComment(comments, comments.newComment(ref), vmlShape2);
+        
+            assertEquals(shape1.getAuthor(), shape2.getAuthor());
+            assertEquals(shape1.getClientAnchor(), shape2.getClientAnchor());
+            assertEquals(shape1.getColumn(), shape2.getColumn());
+            assertEquals(shape1.getRow(), shape2.getRow());
+            assertEquals(shape1.getCTComment().toString(), shape2.getCTComment().toString());
+            assertEquals(shape1.getCTComment().getRef(), shape2.getCTComment().getRef());
+            
+            /*CommentsTable table1 = shape1.getCommentsTable();
+            CommentsTable table2 = shape2.getCommentsTable();
+            assertEquals(table1.getCTComments().toString(), table2.getCTComments().toString());
+            assertEquals(table1.getNumberOfComments(), table2.getNumberOfComments());
+            assertEquals(table1.getRelations(), table2.getRelations());*/
+            
+            assertEquals("The vmlShapes should have equal content afterwards", 
+                    vmlShape1.toString().replaceAll("_x0000_s\\d+", "_x0000_s0000"), vmlShape2.toString().replaceAll("_x0000_s\\d+", "_x0000_s0000"));
+        } finally {
+            wb.close();
+        }
+    }
+
+    @Ignore("Used for manual testing with opening the resulting Workbook in Excel")
+    @Test
+    public void testBug58175a() throws IOException {
+        Workbook wb = new SXSSFWorkbook();
+        try {
+            Sheet sheet = wb.createSheet();
+
+            Row row = sheet.createRow(1);
+            Cell cell = row.createCell(3);
+
+            cell.setCellValue("F4");
+
+            Drawing drawing = sheet.createDrawingPatriarch();
+
+            CreationHelper factory = wb.getCreationHelper();
+
+            // When the comment box is visible, have it show in a 1x3 space
+            ClientAnchor anchor = factory.createClientAnchor();
+            anchor.setCol1(cell.getColumnIndex());
+            anchor.setCol2(cell.getColumnIndex() + 1);
+            anchor.setRow1(row.getRowNum());
+            anchor.setRow2(row.getRowNum() + 3);
+
+            // Create the comment and set the text+author
+            Comment comment = drawing.createCellComment(anchor);
+            RichTextString str = factory.createRichTextString("Hello, World!");
+            comment.setString(str);
+            comment.setAuthor("Apache POI");
+
+            /* fixed the problem as well 
+             * comment.setColumn(cell.getColumnIndex());
+             * comment.setRow(cell.getRowIndex());
+             */
+
+            // Assign the comment to the cell
+            cell.setCellComment(comment);
+
+            OutputStream out = new FileOutputStream("C:\\temp\\58175.xlsx");
+            try {
+                wb.write(out);
+            } finally {
+                out.close();
+            }
+        } finally {
+            wb.close();
+        }
     }
 }
