@@ -33,7 +33,7 @@ import java.io.OutputStream;
 public final class TextCharsAtom extends RecordAtom
 {
 	private byte[] _header;
-	private static long _type = 4000l;
+	private static long _type = RecordTypes.TextCharsAtom.typeID;
 
 	/** The bytes that make up the text */
 	private byte[] _text;

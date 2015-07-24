@@ -17,11 +17,16 @@
 
 package org.apache.poi.hslf.examples;
 
-import org.apache.poi.hslf.usermodel.SlideShow;
-import org.apache.poi.hslf.model.*;
-
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.io.FileOutputStream;
+
+import org.apache.poi.hslf.model.PPGraphics2D;
+import org.apache.poi.hslf.usermodel.HSLFGroupShape;
+import org.apache.poi.hslf.usermodel.HSLFSlide;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 
 /**
  * Demonstrates how to draw into a slide using the HSLF Graphics2D driver.
@@ -34,7 +39,7 @@ public final class Graphics2DDemo {
      * A simple bar chart demo
      */
     public static void main(String[] args) throws Exception {
-        SlideShow ppt = new SlideShow();
+        HSLFSlideShow ppt = new HSLFSlideShow();
 
         //bar chart data. The first value is the bar color, the second is the width
         Object[] def = new Object[]{
@@ -44,13 +49,13 @@ public final class Graphics2DDemo {
             Color.red, new Integer(80),
         };
 
-        Slide slide = ppt.createSlide();
+        HSLFSlide slide = ppt.createSlide();
 
-        ShapeGroup group = new ShapeGroup();
+        HSLFGroupShape group = new HSLFGroupShape();
         //define position of the drawing in the slide
         Rectangle bounds = new java.awt.Rectangle(200, 100, 350, 300);
         group.setAnchor(bounds);
-        group.setCoordinates(new java.awt.Rectangle(0, 0, 100, 100));
+        group.setInteriorAnchor(new java.awt.Rectangle(0, 0, 100, 100));
         slide.addShape(group);
         Graphics2D graphics = new PPGraphics2D(group);
 
@@ -68,7 +73,7 @@ public final class Graphics2DDemo {
         }
         graphics.setColor(Color.black);
         graphics.setFont(new Font("Arial", Font.BOLD, 14));
-        graphics.draw(group.getCoordinates());
+        graphics.draw(group.getInteriorAnchor());
         graphics.drawString("Performance", x + 30, y + 10);
 
         FileOutputStream out = new FileOutputStream("hslf-graphics.ppt");

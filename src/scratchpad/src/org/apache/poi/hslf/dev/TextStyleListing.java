@@ -17,13 +17,11 @@
 
 package org.apache.poi.hslf.dev;
 
-import org.apache.poi.hslf.*;
-import org.apache.poi.hslf.model.textproperties.BitMaskTextProp;
-import org.apache.poi.hslf.model.textproperties.TextProp;
-import org.apache.poi.hslf.model.textproperties.TextPropCollection;
-import org.apache.poi.hslf.record.*;
+import java.util.List;
 
-import java.util.LinkedList;
+import org.apache.poi.hslf.model.textproperties.*;
+import org.apache.poi.hslf.record.*;
+import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
 
 /**
  * Uses record level code to locate StyleTextPropAtom entries.
@@ -36,7 +34,7 @@ public final class TextStyleListing {
 			System.exit(1);
 		}
 
-		HSLFSlideShow ss = new HSLFSlideShow(args[0]);
+		HSLFSlideShowImpl ss = new HSLFSlideShowImpl(args[0]);
 
 		// Find the documents, and then their SLWT
 		Record[] records = ss.getRecords();
@@ -72,19 +70,19 @@ public final class TextStyleListing {
 	public static void showStyleTextPropAtom(StyleTextPropAtom stpa) {
 		System.out.println("\nFound a StyleTextPropAtom");
 
-		LinkedList paragraphStyles = stpa.getParagraphStyles();
+		List<TextPropCollection> paragraphStyles = stpa.getParagraphStyles();
 		System.out.println("Contains " + paragraphStyles.size() + " paragraph styles:");
 		for(int i=0; i<paragraphStyles.size(); i++) {
-			TextPropCollection tpc = (TextPropCollection)paragraphStyles.get(i);
+			TextPropCollection tpc = paragraphStyles.get(i);
 			System.out.println(" In paragraph styling " + i + ":");
 			System.out.println("  Characters covered is " + tpc.getCharactersCovered());
 			showTextProps(tpc);
 		}
 
-		LinkedList charStyles = stpa.getCharacterStyles();
+		List<TextPropCollection> charStyles = stpa.getCharacterStyles();
 		System.out.println("Contains " + charStyles.size() + " character styles:");
 		for(int i=0; i<charStyles.size(); i++) {
-			TextPropCollection tpc = (TextPropCollection)charStyles.get(i);
+			TextPropCollection tpc = charStyles.get(i);
 			System.out.println("  In character styling " + i + ":");
 			System.out.println("    Characters covered is " + tpc.getCharactersCovered());
 			showTextProps(tpc);
@@ -92,10 +90,10 @@ public final class TextStyleListing {
 	}
 
 	public static void showTextProps(TextPropCollection tpc) {
-		LinkedList textProps = tpc.getTextPropList();
+		List<TextProp> textProps = tpc.getTextPropList();
 		System.out.println("    Contains " + textProps.size() + " TextProps");
 		for(int i=0; i<textProps.size(); i++) {
-			TextProp tp = (TextProp)textProps.get(i);
+			TextProp tp = textProps.get(i);
 			System.out.println("      " + i + " - " + tp.getName());
 			System.out.println("          = " + tp.getValue());
 			System.out.println("          @ " + tp.getMask());

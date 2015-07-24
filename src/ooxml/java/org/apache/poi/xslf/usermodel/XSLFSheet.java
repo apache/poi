@@ -16,13 +16,30 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
+import java.awt.Graphics2D;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Pattern;
+
+import javax.xml.namespace.QName;
+
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.POIXMLException;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.TargetMode;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.sl.draw.DrawFactory;
+import org.apache.poi.sl.draw.Drawable;
+import org.apache.poi.sl.usermodel.Sheet;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
@@ -37,21 +54,8 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTPicture;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
 
-import javax.xml.namespace.QName;
-import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Pattern;
-
 @Beta
-public abstract class XSLFSheet extends POIXMLDocumentPart implements XSLFShapeContainer {
+public abstract class XSLFSheet extends POIXMLDocumentPart implements XSLFShapeContainer, Sheet<XSLFShape, XMLSlideShow> {
     private XSLFCommonSlideData _commonSlideData;
     private XSLFDrawing _drawing;
     private List<XSLFShape> _shapes;
@@ -142,6 +146,7 @@ public abstract class XSLFSheet extends POIXMLDocumentPart implements XSLFShapeC
         List<XSLFShape> shapes = getShapeList();
         XSLFAutoShape sh = getDrawing().createAutoShape();
         shapes.add(sh);
+        sh.setParent(this);
         return sh;
     }
 
@@ -149,6 +154,7 @@ public abstract class XSLFSheet extends POIXMLDocumentPart implements XSLFShapeC
         List<XSLFShape> shapes = getShapeList();
         XSLFFreeformShape sh = getDrawing().createFreeform();
         shapes.add(sh);
+        sh.setParent(this);
         return sh;
     }
 
@@ -156,6 +162,7 @@ public abstract class XSLFSheet extends POIXMLDocumentPart implements XSLFShapeC
         List<XSLFShape> shapes = getShapeList();
         XSLFTextBox sh = getDrawing().createTextBox();
         shapes.add(sh);
+        sh.setParent(this);
         return sh;
     }
 
@@ -163,6 +170,7 @@ public abstract class XSLFSheet extends POIXMLDocumentPart implements XSLFShapeC
         List<XSLFShape> shapes = getShapeList();
         XSLFConnectorShape sh = getDrawing().createConnector();
         shapes.add(sh);
+        sh.setParent(this);
         return sh;
     }
 
@@ -170,6 +178,7 @@ public abstract class XSLFSheet extends POIXMLDocumentPart implements XSLFShapeC
         List<XSLFShape> shapes = getShapeList();
         XSLFGroupShape sh = getDrawing().createGroup();
         shapes.add(sh);
+        sh.setParent(this);
         return sh;
     }
 
@@ -191,6 +200,7 @@ public abstract class XSLFSheet extends POIXMLDocumentPart implements XSLFShapeC
         sh.resize();
 
         getShapeList().add(sh);
+        sh.setParent(this);
         return sh;
     }
 
@@ -198,6 +208,7 @@ public abstract class XSLFSheet extends POIXMLDocumentPart implements XSLFShapeC
         List<XSLFShape> shapes = getShapeList();
         XSLFTable sh = getDrawing().createTable();
         shapes.add(sh);
+        sh.setParent(this);
         return sh;
     }
 
@@ -206,8 +217,8 @@ public abstract class XSLFSheet extends POIXMLDocumentPart implements XSLFShapeC
      *
      * @return an array of all shapes in this sheet
      */
-    public XSLFShape[] getShapes(){
-        return getShapeList().toArray(new XSLFShape[_shapes.size()]);
+    public List<XSLFShape> getShapes(){
+        return getShapeList();
     }
 
     /**
@@ -219,6 +230,12 @@ public abstract class XSLFSheet extends POIXMLDocumentPart implements XSLFShapeC
         return getShapeList().iterator();
     }
 
+    public void addShape(XSLFShape shape) {
+        throw new UnsupportedOperationException(
+            "Adding a shape from a different container is not supported -"
+            + " create it from scratch witht XSLFSheet.create* methods");
+    }
+    
     /**
      * Removes the specified shape from this sheet, if it is present
      * (optional operation).  If this sheet does not contain the element,
@@ -249,7 +266,8 @@ public abstract class XSLFSheet extends POIXMLDocumentPart implements XSLFShapeC
      * The container will be empty after this call returns.
      */
     public void clear() {
-        for(XSLFShape shape : getShapes()){
+        List<XSLFShape> shapes = new ArrayList<XSLFShape>(getShapes());
+        for(XSLFShape shape : shapes){
             removeShape(shape);
         }
     }
@@ -302,6 +320,9 @@ public abstract class XSLFSheet extends POIXMLDocumentPart implements XSLFShapeC
         _spTree = null;
         _placeholders = null;
 
+        // fix-me: wth would this ever happen to work ...
+        
+        
         // first copy the source xml
         getSpTree().set(src.getSpTree());
 
@@ -369,12 +390,6 @@ public abstract class XSLFSheet extends POIXMLDocumentPart implements XSLFShapeC
     XSLFTheme getTheme(){
     	return null;
     }
-
-    /**
-     *
-     * @return master of this sheet.
-     */
-    public abstract XSLFSheet getMasterSheet();
 
     protected XSLFTextShape getTextShapeByType(Placeholder type){
         for(XSLFShape shape : this.getShapes()){
@@ -485,32 +500,11 @@ public abstract class XSLFSheet extends POIXMLDocumentPart implements XSLFShapeC
      *
      * @param graphics
      */
+    @Override
     public void draw(Graphics2D graphics){
-        XSLFSheet master = getMasterSheet();
-        if(getFollowMasterGraphics() && master != null) master.draw(graphics);
-
-        graphics.setRenderingHint(XSLFRenderingHint.GROUP_TRANSFORM, new AffineTransform());
-        for(XSLFShape shape : getShapeList()) {
-            if(!canDraw(shape)) continue;
-
-        	// remember the initial transform and restore it after we are done with drawing
-        	AffineTransform at = graphics.getTransform();
-
-            // concrete implementations can make sense of this hint,
-            // for example PSGraphics2D or PDFGraphics2D would call gsave() / grestore
-            graphics.setRenderingHint(XSLFRenderingHint.GSAVE, true);
-
-            // apply rotation and flipping
-            shape.applyTransform(graphics);
-            // draw stuff
-            shape.draw(graphics);
-
-            // restore the coordinate system
-            graphics.setTransform(at);
-
-            graphics.setRenderingHint(XSLFRenderingHint.GRESTORE, true);
-
-        }
+        DrawFactory drawFact = DrawFactory.getInstance(graphics);
+        Drawable draw = drawFact.getDrawable(this);
+        draw.draw(graphics);
     }
 
     /**
@@ -545,25 +539,26 @@ public abstract class XSLFSheet extends POIXMLDocumentPart implements XSLFShapeC
      * Import a package part into this sheet.
      */
     PackagePart importPart(PackageRelationship srcRel, PackagePart srcPafrt) {
-
-        OPCPackage pkg = getPackagePart().getPackage();
-        if(!pkg.containPart(srcPafrt.getPartName())){
-            PackageRelationship rel = getPackagePart().addRelationship(
-                    srcPafrt.getPartName(), TargetMode.INTERNAL, srcRel.getRelationshipType());
-
-            PackagePart part = pkg.createPart(srcPafrt.getPartName(), srcPafrt.getContentType());
-            OutputStream out = part.getOutputStream();
-            try {
-                InputStream is = srcPafrt.getInputStream();
-                IOUtils.copy(is, out);
-                out.close();
-            } catch (IOException e){
-                throw new POIXMLException(e);
-            }
-            return part;
-        }  else {
+        PackagePart destPP = getPackagePart();
+        PackagePartName srcPPName = srcPafrt.getPartName();
+        
+        OPCPackage pkg = destPP.getPackage();
+        if(pkg.containPart(srcPPName)){
             // already exists
-            return pkg.getPart(srcPafrt.getPartName());
+            return pkg.getPart(srcPPName);
+        }            
+            
+        destPP.addRelationship(srcPPName, TargetMode.INTERNAL, srcRel.getRelationshipType());
+
+        PackagePart part = pkg.createPart(srcPPName, srcPafrt.getContentType());
+        OutputStream out = part.getOutputStream();
+        try {
+            InputStream is = srcPafrt.getInputStream();
+            IOUtils.copy(is, out);
+            out.close();
+        } catch (IOException e){
+            throw new POIXMLException(e);
         }
+        return part;
     }
 }

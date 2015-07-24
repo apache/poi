@@ -16,24 +16,29 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+import java.net.URI;
+import java.util.List;
+
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.xslf.XSLFTestDataSamples;
-
-import java.net.URI;
+import org.junit.Test;
 
 /**
  * @author Yegor Kozlov
  */
-public class TestXSLFHyperlink extends TestCase {
+public class TestXSLFHyperlink {
 
+    @Test
     public void testRead(){
         XMLSlideShow  ppt = XSLFTestDataSamples.openSampleDocument("shapes.pptx");
 
-        XSLFSlide slide = ppt.getSlides()[4];
-        XSLFShape[] shapes = slide.getShapes();
-        XSLFTable tbl = (XSLFTable)shapes[0];
+        XSLFSlide slide = ppt.getSlides().get(4);
+        List<XSLFShape> shapes = slide.getShapes();
+        XSLFTable tbl = (XSLFTable)shapes.get(0);
         XSLFTableCell cell1 = tbl.getRows().get(1).getCells().get(0);
         assertEquals("Web Page", cell1.getText());
         XSLFHyperlink link1 = cell1.getTextParagraphs().get(0).getTextRuns().get(0).getHyperlink();
@@ -53,6 +58,7 @@ public class TestXSLFHyperlink extends TestCase {
         assertEquals(URI.create("mailto:dev@poi.apache.org?subject=Hi%20There"), link3.getTargetURI());
     }
 
+    @Test
     public void testCreate() throws Exception  {
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFSlide slide1 = ppt.createSlide();

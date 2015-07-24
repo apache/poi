@@ -16,63 +16,68 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
-import junit.framework.TestCase;
-import org.apache.poi.POIXMLDocumentPart;
-import org.apache.poi.xslf.XSLFTestDataSamples;
+import static org.junit.Assert.*;
 
 import java.awt.Dimension;
 import java.util.List;
 
+import org.apache.poi.POIXMLDocumentPart;
+import org.apache.poi.xslf.XSLFTestDataSamples;
+import org.junit.Test;
+
 /**
  * @author Yegor Kozlov
  */
-public class TestXSLFSlideShow extends TestCase {
+public class TestXSLFSlideShow {
+    @Test
     public void testCreateSlide(){
         XMLSlideShow  ppt = new XMLSlideShow();
-        assertEquals(0, ppt.getSlides().length);
+        assertEquals(0, ppt.getSlides().size());
 
         XSLFSlide slide1 = ppt.createSlide();
-        assertEquals(1, ppt.getSlides().length);
-        assertSame(slide1, ppt.getSlides()[0]);
+        assertEquals(1, ppt.getSlides().size());
+        assertSame(slide1, ppt.getSlides().get(0));
 
         List<POIXMLDocumentPart> rels =  slide1.getRelations();
         assertEquals(1, rels.size());
         assertEquals(slide1.getSlideMaster().getLayout(SlideLayout.BLANK), rels.get(0));
 
         XSLFSlide slide2 = ppt.createSlide();
-        assertEquals(2, ppt.getSlides().length);
-        assertSame(slide2, ppt.getSlides()[1]);
+        assertEquals(2, ppt.getSlides().size());
+        assertSame(slide2, ppt.getSlides().get(1));
 
         ppt.setSlideOrder(slide2, 0);
-        assertSame(slide2, ppt.getSlides()[0]);
-        assertSame(slide1, ppt.getSlides()[1]);
+        assertSame(slide2, ppt.getSlides().get(0));
+        assertSame(slide1, ppt.getSlides().get(1));
 
         ppt = XSLFTestDataSamples.writeOutAndReadBack(ppt);
-        assertEquals(2, ppt.getSlides().length);
-        rels =  ppt.getSlides()[0].getRelations();
+        assertEquals(2, ppt.getSlides().size());
+        rels =  ppt.getSlides().get(0).getRelations();
     }
 
+    @Test
     public void testRemoveSlide(){
         XMLSlideShow  ppt = new XMLSlideShow();
-        assertEquals(0, ppt.getSlides().length);
+        assertEquals(0, ppt.getSlides().size());
 
         XSLFSlide slide1 = ppt.createSlide();
         XSLFSlide slide2 = ppt.createSlide();
 
-        assertEquals(2, ppt.getSlides().length);
-        assertSame(slide1, ppt.getSlides()[0]);
-        assertSame(slide2, ppt.getSlides()[1]);
+        assertEquals(2, ppt.getSlides().size());
+        assertSame(slide1, ppt.getSlides().get(0));
+        assertSame(slide2, ppt.getSlides().get(1));
 
         XSLFSlide removedSlide = ppt.removeSlide(0);
         assertSame(slide1, removedSlide);
 
-        assertEquals(1, ppt.getSlides().length);
-        assertSame(slide2, ppt.getSlides()[0]);
+        assertEquals(1, ppt.getSlides().size());
+        assertSame(slide2, ppt.getSlides().get(0));
 
         ppt = XSLFTestDataSamples.writeOutAndReadBack(ppt);
-        assertEquals(1, ppt.getSlides().length);
+        assertEquals(1, ppt.getSlides().size());
     }
 
+    @Test
     public void testDimension(){
         XMLSlideShow  ppt = new XMLSlideShow();
         Dimension sz = ppt.getPageSize();
@@ -84,24 +89,26 @@ public class TestXSLFSlideShow extends TestCase {
         assertEquals(612, sz.height);
     }
 
+    @Test
     public void testSlideMasters(){
         XMLSlideShow  ppt = new XMLSlideShow();
-        XSLFSlideMaster[] masters = ppt.getSlideMasters();
-        assertEquals(1, masters.length);
+        List<XSLFSlideMaster> masters = ppt.getSlideMasters();
+        assertEquals(1, masters.size());
 
         XSLFSlide slide = ppt.createSlide();
-        assertSame(masters[0], slide.getSlideMaster());
+        assertSame(masters.get(0), slide.getSlideMaster());
     }
 
+    @Test
     public void testSlideLayout(){
         XMLSlideShow  ppt = new XMLSlideShow();
-        XSLFSlideMaster[] masters = ppt.getSlideMasters();
-        assertEquals(1, masters.length);
+        List<XSLFSlideMaster> masters = ppt.getSlideMasters();
+        assertEquals(1, masters.size());
 
         XSLFSlide slide = ppt.createSlide();
         XSLFSlideLayout layout = slide.getSlideLayout();
         assertNotNull(layout);
 
-        assertSame(masters[0], layout.getSlideMaster());
+        assertSame(masters.get(0), layout.getSlideMaster());
     }
 }

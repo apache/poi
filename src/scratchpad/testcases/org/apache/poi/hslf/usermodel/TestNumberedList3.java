@@ -19,19 +19,16 @@
 
 package org.apache.poi.hslf.usermodel;
 
+import static org.junit.Assert.*;
+
 import java.util.List;
 
-import junit.framework.TestCase;
-
-import org.apache.poi.hslf.model.Slide;
-import org.apache.poi.hslf.model.TextRun;
+import org.apache.poi.POIDataSamples;
 import org.apache.poi.hslf.model.textproperties.TextPFException9;
 import org.apache.poi.hslf.model.textproperties.TextPropCollection;
-import org.apache.poi.hslf.record.EscherTextboxWrapper;
-import org.apache.poi.hslf.record.StyleTextProp9Atom;
-import org.apache.poi.hslf.record.StyleTextPropAtom;
-import org.apache.poi.hslf.record.TextAutoNumberSchemeEnum;
-import org.apache.poi.POIDataSamples;
+import org.apache.poi.hslf.record.*;
+import org.apache.poi.sl.usermodel.AutoNumberingScheme;
+import org.junit.Test;
 
 
 /**
@@ -42,22 +39,20 @@ import org.apache.poi.POIDataSamples;
  * 
  * @author Alex Nikiforov [mailto:anikif@gmail.com]
  */
-public final class TestNumberedList3 extends TestCase {
+public final class TestNumberedList3 {
     private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
 
-	protected void setUp() throws Exception {
-	}
-
-	public void testNumberedList() throws Exception {
-		SlideShow ppt = new SlideShow(_slTests.openResourceAsStream("numbers3.ppt"));
+    @Test
+    public void testNumberedList() throws Exception {
+		HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("numbers3.ppt"));
 		assertTrue("No Exceptions while reading file", true);
 
-		final Slide[] slides = ppt.getSlides();
-		assertEquals(1, slides.length);
-		final Slide slide = slides[0];
+		final List<HSLFSlide> slides = ppt.getSlides();
+		assertEquals(1, slides.size());
+		final HSLFSlide slide = slides.get(0);
 		checkSlide(slide);
 	}
-	private void checkSlide(final Slide s) {
+	private void checkSlide(final HSLFSlide s) {
 		final StyleTextProp9Atom[] numberedListArray = s.getNumberedListInfo();
 		assertNotNull(numberedListArray);
 		assertEquals(1, numberedListArray.length);
@@ -66,37 +61,38 @@ public final class TestNumberedList3 extends TestCase {
 		final TextPFException9[] autoNumbersOfTextBox0 = numberedListInfoForTextBox.getAutoNumberTypes();
 		assertEquals(Short.valueOf((short)1), autoNumbersOfTextBox0[0].getfBulletHasAutoNumber());
 		assertEquals(Short.valueOf((short)1), autoNumbersOfTextBox0[0].getAutoNumberStartNumber());//Default value = 1 will be used 
-		assertTrue(TextAutoNumberSchemeEnum.ANM_ArabicPeriod == autoNumbersOfTextBox0[0].getAutoNumberScheme());
+		assertTrue(AutoNumberingScheme.arabicPeriod == autoNumbersOfTextBox0[0].getAutoNumberScheme());
 		
-		final TextRun[] textRuns = s.getTextRuns();
-		assertEquals(3, textRuns.length);
-		assertEquals("Bulleted list\rMore bullets\rNo bullets here", textRuns[0].getRawText());
-		assertEquals("Numbered list between two bulleted lists\rSecond numbered list item", textRuns[1].getRawText());
-		assertEquals("Second bulleted list \u2013 should appear after numbered list\rMore bullets", textRuns[2].getRawText());
-		assertEquals(2, textRuns[0].getRichTextRuns().length);
-		assertEquals(1, textRuns[1].getRichTextRuns().length);
-		assertEquals(1, textRuns[2].getRichTextRuns().length);
-		assertNull(textRuns[0].getStyleTextProp9Atom());
-		assertNotNull(textRuns[1].getStyleTextProp9Atom());
-		assertNull(textRuns[2].getStyleTextProp9Atom());
-		final TextPFException9[] autoNumbers = textRuns[1].getStyleTextProp9Atom().getAutoNumberTypes();
+		final List<List<HSLFTextParagraph>> textParass = s.getTextParagraphs();
+		assertEquals(3, textParass.size());
+		assertEquals("Bulleted list\rMore bullets\rNo bullets here", HSLFTextParagraph.getRawText(textParass.get(0)));
+		assertEquals("Numbered list between two bulleted lists\rSecond numbered list item", HSLFTextParagraph.getRawText(textParass.get(1)));
+		assertEquals("Second bulleted list \u2013 should appear after numbered list\rMore bullets", HSLFTextParagraph.getRawText(textParass.get(2)));
+		assertEquals(3, textParass.get(0).size());
+		assertEquals(2, textParass.get(1).size());
+		assertEquals(2, textParass.get(2).size());
+		assertNull(textParass.get(0).get(0).getStyleTextProp9Atom());
+		assertNotNull(textParass.get(1).get(0).getStyleTextProp9Atom());
+		assertNull(textParass.get(2).get(0).getStyleTextProp9Atom());
+		final TextPFException9[] autoNumbers = textParass.get(1).get(0).getStyleTextProp9Atom().getAutoNumberTypes();
 		assertEquals(1, autoNumbers.length);
 		assertEquals(Short.valueOf((short)1), autoNumbers[0].getfBulletHasAutoNumber());
 		assertEquals(Short.valueOf((short)1), autoNumbers[0].getAutoNumberStartNumber());//Default value = 1 will be used 
-		assertTrue(TextAutoNumberSchemeEnum.ANM_ArabicPeriod == autoNumbersOfTextBox0[0].getAutoNumberScheme());
+		assertTrue(AutoNumberingScheme.arabicPeriod == autoNumbersOfTextBox0[0].getAutoNumberScheme());
 		
-		final List<TextPropCollection> textProps = textRuns[1].getStyleTextPropAtom().getCharacterStyles();
-		assertEquals(1, textProps.size());
-		final TextPropCollection textProp = textProps.get(0);
-		assertEquals(67, textProp.getCharactersCovered());
+		int chCovered = 0;
+		for (HSLFTextParagraph htp : textParass.get(1)) {
+    		for (HSLFTextRun htr : htp.getTextRuns()) {
+    		    TextPropCollection textProp = htr.getCharacterStyle();
+    		    chCovered += textProp.getCharactersCovered();
+    		}
+		}
+		assertEquals(67, chCovered);
 		
-		
-		RichTextRun textRun = textRuns[0].getRichTextRuns()[0];
-		assertTrue(textRun.isBullet());
-
+		assertTrue(textParass.get(0).get(0).isBullet());
 		
 		final EscherTextboxWrapper[] styleAtoms = s.getTextboxWrappers();
-		assertEquals(textRuns.length, styleAtoms.length);
+		assertEquals(textParass.size(), styleAtoms.length);
 		checkSingleRunWrapper(43, styleAtoms[0]);
 		checkSingleRunWrapper(67, styleAtoms[1]);
 	}
@@ -104,7 +100,6 @@ public final class TestNumberedList3 extends TestCase {
 		final StyleTextPropAtom styleTextPropAtom = wrapper.getStyleTextPropAtom();
 		final List<TextPropCollection> textProps = styleTextPropAtom.getCharacterStyles();
 		assertEquals(1, textProps.size());
-		final TextPropCollection[] props = (TextPropCollection[]) textProps.toArray(new TextPropCollection[textProps.size()]);
-		assertEquals(exceptedLength, props[0].getCharactersCovered());
+		assertEquals(exceptedLength, textProps.get(0).getCharactersCovered());
 	}
 }

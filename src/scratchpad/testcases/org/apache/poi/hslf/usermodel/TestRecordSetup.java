@@ -17,13 +17,12 @@
 
 package org.apache.poi.hslf.usermodel;
 
+import static org.junit.Assert.assertEquals;
 
-import junit.framework.TestCase;
-import org.apache.poi.hslf.*;
-import org.apache.poi.hslf.record.ParentAwareRecord;
-import org.apache.poi.hslf.record.Record;
-import org.apache.poi.hslf.record.RecordContainer;
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.hslf.record.*;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests that the record setup done by SlideShow
@@ -32,17 +31,20 @@ import org.apache.poi.POIDataSamples;
  *
  * @author Nick Burch (nick at torchbox dot com)
  */
-public final class TestRecordSetup extends TestCase {
+public final class TestRecordSetup {
 	// SlideShow primed on the test data
-	private SlideShow ss;
-	private HSLFSlideShow hss;
+	@SuppressWarnings("unused")
+    private HSLFSlideShow ss;
+	private HSLFSlideShowImpl hss;
 
-	public TestRecordSetup() throws Exception {
+	@Before
+	public void init() throws Exception {
         POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
-		hss = new HSLFSlideShow(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
-		ss = new SlideShow(hss);
+		hss = new HSLFSlideShowImpl(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
+		ss = new HSLFSlideShow(hss);
 	}
 
+	@Test
 	public void testHandleParentAwareRecords() {
 		Record[] records = hss.getRecords();
 		for(int i=0; i<records.length; i++) {

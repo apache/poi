@@ -24,7 +24,7 @@ import java.io.FileOutputStream;
 import junit.framework.TestCase;
 
 import org.apache.poi.hslf.record.SlideAtom.SSlideLayoutAtom;
-import org.apache.poi.hslf.usermodel.SlideShow;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 
 /**
  * Tests that SlideAtom works properly
@@ -77,16 +77,16 @@ public final class TestSlideAtom extends TestCase {
 	}
 	
 	public void testSSSlideInfoAtom() throws Exception {
-		SlideShow ss = new SlideShow();
-		org.apache.poi.hslf.model.Slide	slide1 = ss.createSlide(), slide2 = ss.createSlide();
+		HSLFSlideShow ss = new HSLFSlideShow();
+		org.apache.poi.hslf.usermodel.HSLFSlide	slide1 = ss.createSlide(), slide2 = ss.createSlide();
 		slide2.setHidden(true);
 
 		ByteArrayOutputStream bos = new ByteArrayOutputStream(4096);
 		ss.write(bos);
 		ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
-		ss = new SlideShow(bis);
-		slide1 = ss.getSlides()[0];
-		slide2 = ss.getSlides()[1];
+		ss = new HSLFSlideShow(bis);
+		slide1 = ss.getSlides().get(0);
+		slide2 = ss.getSlides().get(1);
 		assertFalse(slide1.getHidden());
 		assertTrue(slide2.getHidden());
 	}

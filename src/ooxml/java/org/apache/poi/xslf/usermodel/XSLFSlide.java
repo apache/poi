@@ -16,29 +16,32 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
+import java.awt.Graphics2D;
+import java.io.IOException;
+
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.sl.draw.DrawFactory;
+import org.apache.poi.sl.draw.Drawable;
+import org.apache.poi.sl.usermodel.Slide;
 import org.apache.poi.util.Beta;
 import org.apache.xmlbeans.XmlException;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTBlip;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTGroupShapeProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTGroupTransform2D;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualDrawingProps;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPoint2D;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPositiveSize2D;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTBlip;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTBackground;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTCommonSlideData;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTGroupShape;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTGroupShapeNonVisual;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTSlide;
 import org.openxmlformats.schemas.presentationml.x2006.main.SldDocument;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTBackground;
-
-import java.awt.Graphics2D;
-import java.io.IOException;
 
 @Beta
-public final class XSLFSlide extends XSLFSheet {
+public final class XSLFSlide extends XSLFSheet implements Slide<XSLFShape, XMLSlideShow, XSLFNotes> {
    private final CTSlide _slide;
    private XSLFSlideLayout _layout;
    private XSLFComments _comments;
@@ -111,7 +114,6 @@ public final class XSLFSlide extends XSLFSheet {
         return "sld";        
     }
 
-    @Override
     public XSLFSlideLayout getMasterSheet(){
         return getSlideLayout();
     }
@@ -211,15 +213,13 @@ public final class XSLFSlide extends XSLFSheet {
     }
 
 
-    @Override
-    public void draw(Graphics2D graphics){
-
-        XSLFBackground bg = getBackground();
-        if(bg != null) bg.draw(graphics);
-
-        super.draw(graphics);
+    public boolean getFollowMasterObjects() {
+        return getFollowMasterGraphics();
     }
-
+    
+    public void setFollowMasterObjects(boolean follow) {
+        setFollowMasterGraphics(follow);
+    }
 
     @Override
     public XSLFSlide importContent(XSLFSheet src){
@@ -239,4 +239,44 @@ public final class XSLFSlide extends XSLFSheet {
         return this;
     }
 
+    public boolean getFollowMasterBackground() {
+        return false;
+    }
+    
+    public void setFollowMasterBackground(boolean follow) {
+        // not implemented ... also not in the specs
+        throw new UnsupportedOperationException();
+    }
+
+    public boolean getFollowMasterColourScheme() {
+        return false;
+    }
+    
+    public void setFollowMasterColourScheme(boolean follow) {
+        // not implemented ... only for OLE objects in the specs
+        throw new UnsupportedOperationException();
+    }
+
+    public void setNotes(XSLFNotes notes) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public int getSlideNumber() {
+        int idx = getSlideShow().getSlides().indexOf(this);
+        return (idx == -1) ? idx : idx+1;
+    }
+
+    /**
+     * Render this sheet into the supplied graphics object
+     *
+     * @param graphics
+     */
+    @Override
+    public void draw(Graphics2D graphics){
+        DrawFactory drawFact = DrawFactory.getInstance(graphics);
+        Drawable draw = drawFact.getDrawable(this);
+        draw.draw(graphics);
+    }
 }

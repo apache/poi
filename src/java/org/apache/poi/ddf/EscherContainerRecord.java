@@ -18,10 +18,7 @@
 package org.apache.poi.ddf;
 
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
@@ -154,30 +151,9 @@ public final class EscherContainerRecord extends EscherRecord {
     }
 
     public Iterator<EscherRecord> getChildIterator() {
-        return new ReadOnlyIterator(_childRecords);
+        return Collections.unmodifiableList(_childRecords).iterator();
     }
-    private static final class ReadOnlyIterator implements Iterator<EscherRecord> {
-        private final List<EscherRecord> _list;
-        private int _index;
 
-        public ReadOnlyIterator(List<EscherRecord> list) {
-            _list = list;
-            _index = 0;
-        }
-
-        public boolean hasNext() {
-            return _index < _list.size();
-        }
-        public EscherRecord next() {
-            if (!hasNext()) {
-                throw new NoSuchElementException();
-            }
-            return _list.get(_index++);
-        }
-        public void remove() {
-            throw new UnsupportedOperationException();
-        }
-    }
     /**
      * replaces the internal child list with the contents of the supplied <tt>childRecords</tt>
      */

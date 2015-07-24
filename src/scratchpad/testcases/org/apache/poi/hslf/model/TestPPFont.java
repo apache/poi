@@ -17,18 +17,22 @@
 
 package org.apache.poi.hslf.model;
 
-import junit.framework.TestCase;
-import org.apache.poi.hslf.usermodel.SlideShow;
+import static org.junit.Assert.assertEquals;
+
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
+import org.junit.Test;
+
 
 /**
  * Test adding fonts to the presenataion resources
  *
  * @author Yegor Kozlov
  */
-public final class TestPPFont extends TestCase{
+public final class TestPPFont {
 
+    @Test
     public void testCreate() {
-        SlideShow ppt = new SlideShow();
+        HSLFSlideShow ppt = new HSLFSlideShow();
         assertEquals(1, ppt.getNumberOfFonts());
         assertEquals("Arial", ppt.getFont(0).getFontName());
 

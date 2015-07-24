@@ -16,22 +16,20 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
-import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import junit.framework.TestCase;
+import java.util.*;
 
 import org.apache.poi.xslf.XSLFTestDataSamples;
+import org.junit.Test;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPicture;
 
 /**
  * @author Yegor Kozlov
  */
-public class TestXSLFPictureShape extends TestCase {
+public class TestXSLFPictureShape {
 
+    @Test
     public void testCreate() {
         XMLSlideShow ppt = new XMLSlideShow();
         assertEquals(0, ppt.getAllPictures().size());
@@ -61,11 +59,12 @@ public class TestXSLFPictureShape extends TestCase {
         assertArrayEquals(data1, pics.get(0).getData());
         assertArrayEquals(data2, pics.get(1).getData());
 
-        XSLFShape[] shapes = ppt.getSlides()[0].getShapes();
-        assertArrayEquals(data1, ((XSLFPictureShape) shapes[0]).getPictureData().getData());
-        assertArrayEquals(data2, ((XSLFPictureShape) shapes[1]).getPictureData().getData());
+        List<XSLFShape> shapes = ppt.getSlides().get(0).getShapes();
+        assertArrayEquals(data1, ((XSLFPictureShape) shapes.get(0)).getPictureData().getData());
+        assertArrayEquals(data2, ((XSLFPictureShape) shapes.get(1)).getPictureData().getData());
     }
 
+    @Test
     public void testCreateMultiplePictures() {
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFSlide slide1 = ppt.createSlide();
@@ -118,6 +117,7 @@ public class TestXSLFPictureShape extends TestCase {
         }
     }
 
+    @Test
     public void testImageCaching() {
         XMLSlideShow ppt = new XMLSlideShow();
         byte[] img1 = new byte[]{1,2,3};
@@ -137,6 +137,7 @@ public class TestXSLFPictureShape extends TestCase {
 
     }
 
+    @Test
     public void testMerge() {
         XMLSlideShow ppt1 = new XMLSlideShow();
         byte[] data1 = new byte[100];
@@ -150,7 +151,7 @@ public class TestXSLFPictureShape extends TestCase {
         XMLSlideShow ppt2 = new XMLSlideShow();
 
         XSLFSlide slide2 = ppt2.createSlide().importContent(slide1);
-        XSLFPictureShape shape2 = (XSLFPictureShape)slide2.getShapes()[0];
+        XSLFPictureShape shape2 = (XSLFPictureShape)slide2.getShapes().get(0);
 
         assertArrayEquals(data1, shape2.getPictureData().getData());
 

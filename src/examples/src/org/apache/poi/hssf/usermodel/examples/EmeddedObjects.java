@@ -16,21 +16,23 @@
 ==================================================================== */
 package org.apache.poi.hssf.usermodel.examples;
 
-import org.apache.poi.hssf.usermodel.*;
+import java.io.FileInputStream;
+import java.util.Iterator;
+
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
+import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
+import org.apache.poi.hssf.usermodel.HSSFObjectData;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.hwpf.HWPFDocument;
-import org.apache.poi.hslf.HSLFSlideShow;
-import org.apache.poi.hslf.usermodel.SlideShow;
-
-import java.io.FileInputStream;
-import java.util.Iterator;
 
 /**
  * Demonstrates how you can extract embedded data from a .xls file
  */
 public class EmeddedObjects {
+    @SuppressWarnings("unused")
     public static void main(String[] args) throws Exception {
         POIFSFileSystem fs = new POIFSFileSystem(new FileInputStream(args[0]));
         HSSFWorkbook workbook = new HSSFWorkbook(fs);
@@ -41,20 +43,21 @@ public class EmeddedObjects {
                 DirectoryNode dn = (DirectoryNode) obj.getDirectory();
                 HSSFWorkbook embeddedWorkbook = new HSSFWorkbook(dn, fs, false);
                 //System.out.println(entry.getName() + ": " + embeddedWorkbook.getNumberOfSheets());
+                embeddedWorkbook.close();
             } else if (oleName.equals("Document")) {
                 DirectoryNode dn = (DirectoryNode) obj.getDirectory();
                 HWPFDocument embeddedWordDocument = new HWPFDocument(dn);
                 //System.out.println(entry.getName() + ": " + embeddedWordDocument.getRange().text());
             }  else if (oleName.equals("Presentation")) {
                 DirectoryNode dn = (DirectoryNode) obj.getDirectory();
-                SlideShow embeddedPowerPointDocument = new SlideShow(new HSLFSlideShow(dn));
+                HSLFSlideShow embeddedPowerPointDocument = new HSLFSlideShow(new HSLFSlideShowImpl(dn));
                 //System.out.println(entry.getName() + ": " + embeddedPowerPointDocument.getSlides().length);
             } else {
                 if(obj.hasDirectoryEntry()){
                     // The DirectoryEntry is a DocumentNode. Examine its entries to find out what it is
                     DirectoryNode dn = (DirectoryNode) obj.getDirectory();
-                    for (Iterator entries = dn.getEntries(); entries.hasNext();) {
-                        Entry entry = (Entry) entries.next();
+                    for (Iterator<Entry> entries = dn.getEntries(); entries.hasNext();) {
+                        Entry entry = entries.next();
                         //System.out.println(oleName + "." + entry.getName());
                     }
                 } else {
@@ -64,5 +67,6 @@ public class EmeddedObjects {
                 }
             }
         }
+        workbook.close();
     }
 }

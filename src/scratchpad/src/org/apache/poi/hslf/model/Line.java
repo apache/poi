@@ -18,90 +18,23 @@
 package org.apache.poi.hslf.model;
 
 import org.apache.poi.ddf.*;
-
-import java.awt.geom.Rectangle2D;
-import java.awt.geom.Line2D;
+import org.apache.poi.hslf.usermodel.*;
+import org.apache.poi.sl.usermodel.ShapeContainer;
+import org.apache.poi.sl.usermodel.ShapeType;
 
 /**
  * Represents a line in a PowerPoint drawing
  *
  *  @author Yegor Kozlov
  */
-public final class Line extends SimpleShape {
-    /**
-    * Solid (continuous) pen
-    */
-    public static final int PEN_SOLID = 1;
-    /**
-     *  PS_DASH system   dash style
-     */
-    public static final int PEN_PS_DASH = 2;
-    /**
-     *  PS_DOT system   dash style
-     */
-    public static final int PEN_DOT = 3;
-    /**
-     * PS_DASHDOT system dash style
-     */
-    public static final int PEN_DASHDOT = 4;
-    /**
-     * PS_DASHDOTDOT system dash style
-     */
-    public static final int PEN_DASHDOTDOT = 5;
-    /**
-     *  square dot style
-     */
-    public static final int PEN_DOTGEL = 6;
-    /**
-     *  dash style
-     */
-    public static final int PEN_DASH = 7;
-    /**
-     *  long dash style
-     */
-    public static final int PEN_LONGDASHGEL = 8;
-    /**
-     * dash short dash
-     */
-    public static final int PEN_DASHDOTGEL = 9;
-    /**
-     * long dash short dash
-     */
-    public static final int PEN_LONGDASHDOTGEL = 10;
-    /**
-     * long dash short dash short dash
-     */
-    public static final int PEN_LONGDASHDOTDOTGEL = 11;
-
-    /**
-     *  Single line (of width lineWidth)
-     */
-    public static final int LINE_SIMPLE = 0;
-    /**
-     * Double lines of equal width
-     */
-    public static final int LINE_DOUBLE = 1;
-    /**
-     * Double lines, one thick, one thin
-     */
-    public static final int LINE_THICKTHIN = 2;
-    /**
-     *  Double lines, reverse order
-     */
-    public static final int LINE_THINTHICK = 3;
-    /**
-     * Three lines, thin, thick, thin
-     */
-    public static final int LINE_TRIPLE = 4;
-
-
-    protected Line(EscherContainerRecord escherRecord, Shape parent){
+public final class Line extends HSLFSimpleShape {
+    public Line(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape> parent){
         super(escherRecord, parent);
     }
 
-    public Line(Shape parent){
+    public Line(ShapeContainer<HSLFShape> parent){
         super(null, parent);
-        _escherContainer = createSpContainer(parent instanceof ShapeGroup);
+        _escherContainer = createSpContainer(parent instanceof HSLFGroupShape);
     }
 
     public Line(){
@@ -110,9 +43,11 @@ public final class Line extends SimpleShape {
 
     protected EscherContainerRecord createSpContainer(boolean isChild){
         _escherContainer = super.createSpContainer(isChild);
+        
+        setShapeType(ShapeType.LINE);
 
         EscherSpRecord spRecord = _escherContainer.getChildById(EscherSpRecord.RECORD_ID);
-        short type = (ShapeTypes.Line << 4) | 0x2;
+        short type = (short)((ShapeType.LINE.nativeId << 4) | 0x2);
         spRecord.setOptions(type);
 
         //set default properties for a line
@@ -128,9 +63,24 @@ public final class Line extends SimpleShape {
 
         return _escherContainer;
     }
-
-    public java.awt.Shape getOutline(){
-        Rectangle2D anchor = getLogicalAnchor2D();
-        return new Line2D.Double(anchor.getX(), anchor.getY(), anchor.getX() + anchor.getWidth(), anchor.getY() + anchor.getHeight());
+    
+    /**
+     * Sets the orientation of the line, if inverse is false, then line goes
+     * from top-left to bottom-right, otherwise use inverse equals true 
+     *
+     * @param inverse the orientation of the line
+     */
+    public void setInverse(boolean inverse) {
+        setShapeType(inverse ? ShapeType.LINE_INV : ShapeType.LINE);
+    }
+    
+    /**
+     * Gets the orientation of the line, if inverse is false, then line goes
+     * from top-left to bottom-right, otherwise inverse equals true 
+     *
+     * @return inverse the orientation of the line
+     */
+    public boolean isInverse() {
+        return (getShapeType() == ShapeType.LINE_INV);
     }
 }

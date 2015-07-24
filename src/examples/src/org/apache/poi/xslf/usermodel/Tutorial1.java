@@ -37,7 +37,7 @@ public class Tutorial1 {
         /*XSLFSlide blankSlide =*/ ppt.createSlide();
 
         
-        XSLFSlideMaster master = ppt.getSlideMasters()[0];
+        XSLFSlideMaster master = ppt.getSlideMasters().get(0);
 
         XSLFSlideLayout layout1 = master.getLayout(SlideLayout.TITLE);
         XSLFSlide slide1 = ppt.createSlide(layout1) ;
@@ -56,17 +56,19 @@ public class Tutorial1 {
         // we are going to add text by paragraphs. Clear the default placehoder text before that
         bodyPlaceholder.clearText();
         XSLFTextParagraph p1 = bodyPlaceholder.addNewTextParagraph();
-        p1.setLevel(0);
+        p1.setIndentLevel(0);
         p1.addNewTextRun().setText("Level1 text");
         XSLFTextParagraph p2 = bodyPlaceholder.addNewTextParagraph();
-        p2.setLevel(1);
+        p2.setIndentLevel(1);
         p2.addNewTextRun().setText("Level2 text");
         XSLFTextParagraph p3 = bodyPlaceholder.addNewTextParagraph();
-        p3.setLevel(3);
+        p3.setIndentLevel(2);
         p3.addNewTextRun().setText("Level3 text");
 
         FileOutputStream out = new FileOutputStream("slides.pptx");
         ppt.write(out);
         out.close();
+
+        ppt.close();
     }
 }

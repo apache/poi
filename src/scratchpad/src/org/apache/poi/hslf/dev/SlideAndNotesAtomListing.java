@@ -19,6 +19,7 @@ package org.apache.poi.hslf.dev;
 
 import org.apache.poi.hslf.*;
 import org.apache.poi.hslf.record.*;
+import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
 
 
 /**
@@ -34,7 +35,7 @@ public final class SlideAndNotesAtomListing {
 			System.exit(1);
 		}
 
-		HSLFSlideShow ss = new HSLFSlideShow(args[0]);
+		HSLFSlideShowImpl ss = new HSLFSlideShowImpl(args[0]);
 		System.out.println("");
 
 		// Find either Slides or Notes

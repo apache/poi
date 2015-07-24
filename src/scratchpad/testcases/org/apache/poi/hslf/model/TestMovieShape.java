@@ -17,32 +17,34 @@
 
 package org.apache.poi.hslf.model;
 
+import static org.junit.Assert.*;
+
 import java.awt.geom.Rectangle2D;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
-import junit.framework.TestCase;
-
-import org.apache.poi.hslf.usermodel.SlideShow;
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.hslf.usermodel.*;
+import org.junit.Test;
 
 /**
  * Test <code>MovieShape</code> object.
  *
  * @author Yegor Kozlov
  */
-public final class TestMovieShape extends TestCase {
+public final class TestMovieShape {
 
     private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
 
+    @Test
     public void testCreate() throws Exception {
-        SlideShow ppt = new SlideShow();
+        HSLFSlideShow ppt = new HSLFSlideShow();
 
-        Slide slide = ppt.createSlide();
+        HSLFSlide slide = ppt.createSlide();
 
         String path = "/test-movie.mpg";
         int movieIdx = ppt.addMovie(path, MovieShape.MOVIE_MPEG);
-        int thumbnailIdx = ppt.addPicture(_slTests.readFile("tomcat.png"), Picture.PNG);
+        int thumbnailIdx = ppt.addPicture(_slTests.readFile("tomcat.png"), HSLFPictureShape.PNG);
 
         MovieShape shape = new MovieShape(movieIdx, thumbnailIdx);
         shape.setAnchor(new Rectangle2D.Float(300,225,120,90));
@@ -56,9 +58,9 @@ public final class TestMovieShape extends TestCase {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ppt.write(out);
 
-        ppt = new SlideShow(new ByteArrayInputStream(out.toByteArray()));
-        slide = ppt.getSlides()[0];
-        shape = (MovieShape)slide.getShapes()[0];
+        ppt = new HSLFSlideShow(new ByteArrayInputStream(out.toByteArray()));
+        slide = ppt.getSlides().get(0);
+        shape = (MovieShape)slide.getShapes().get(0);
         assertEquals(path, shape.getPath());
         assertFalse(shape.isAutoPlay());
     }

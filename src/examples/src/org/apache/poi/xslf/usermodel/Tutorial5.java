@@ -46,5 +46,7 @@ public class Tutorial5 {
         FileOutputStream out = new FileOutputStream("images.pptx");
         ppt.write(out);
         out.close();
+        
+        ppt.close();
     }
 }

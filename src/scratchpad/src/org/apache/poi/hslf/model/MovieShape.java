@@ -24,14 +24,15 @@ import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherProperties;
 import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.hslf.record.*;
-import org.apache.poi.hslf.usermodel.SlideShow;
+import org.apache.poi.hslf.usermodel.*;
+import org.apache.poi.sl.usermodel.ShapeContainer;
 
 /**
  * Represents a movie in a PowerPoint document.
  *
  * @author Yegor Kozlov
  */
-public final class MovieShape extends Picture {
+public final class MovieShape extends HSLFPictureShape {
     public static final int DEFAULT_MOVIE_THUMBNAIL = -1;
 
     public static final int MOVIE_MPEG = 1;
@@ -54,7 +55,7 @@ public final class MovieShape extends Picture {
      * @param idx the index of the picture
      * @param parent the parent shape
      */
-    public MovieShape(int movieIdx, int idx, Shape parent) {
+    public MovieShape(int movieIdx, int idx, ShapeContainer<HSLFShape> parent) {
         super(idx, parent);
         setMovieIndex(movieIdx);
     }
@@ -66,7 +67,7 @@ public final class MovieShape extends Picture {
       *        this picture in the <code>Slide</code>
       * @param parent the parent shape of this picture
       */
-     protected MovieShape(EscherContainerRecord escherRecord, Shape parent){
+    public MovieShape(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape> parent){
         super(escherRecord, parent);
     }
 
@@ -112,7 +113,7 @@ public final class MovieShape extends Picture {
     /**
      * Assign a movie to this shape
      *
-     * @see org.apache.poi.hslf.usermodel.SlideShow#addMovie(String, int)
+     * @see org.apache.poi.hslf.usermodel.HSLFSlideShow#addMovie(String, int)
      * @param idx  the index of the movie
      */
     public void setMovieIndex(int idx){
@@ -153,7 +154,7 @@ public final class MovieShape extends Picture {
         OEShapeAtom oe = getClientDataRecord(RecordTypes.OEShapeAtom.typeID);
         int idx = oe.getOptions();
 
-        SlideShow ppt = getSheet().getSlideShow();
+        HSLFSlideShow ppt = getSheet().getSlideShow();
         ExObjList lst = (ExObjList)ppt.getDocumentRecord().findFirstOfType(RecordTypes.ExObjList.typeID);
         if(lst == null) return null;
 

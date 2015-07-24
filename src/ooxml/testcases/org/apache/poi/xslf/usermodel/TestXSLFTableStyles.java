@@ -16,14 +16,18 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+import org.junit.Test;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTableStyle;
 
 /**
  * @author Yegor Kozlov
  */
-public class TestXSLFTableStyles extends TestCase {
+public class TestXSLFTableStyles {
 
+    @Test
     public void testRead(){
         XMLSlideShow  ppt = new XMLSlideShow();
         XSLFTableStyles tblStyles = ppt.getTableStyles();
@@ -32,6 +36,8 @@ public class TestXSLFTableStyles extends TestCase {
         assertEquals(0, tblStyles.getStyles().size());
     }
 
+    @SuppressWarnings("unused")
+    @Test
     public void testStyle(){
         CTTableStyle obj = CTTableStyle.Factory.newInstance();
         XSLFTableStyle style = new XSLFTableStyle(obj);

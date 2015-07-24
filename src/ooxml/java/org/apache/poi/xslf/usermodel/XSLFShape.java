@@ -19,13 +19,32 @@
 
 package org.apache.poi.xslf.usermodel;
 
-import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Rectangle2D;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Arrays;
+import java.util.Comparator;
 
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.sl.usermodel.ColorStyle;
+import org.apache.poi.sl.usermodel.PaintStyle;
+import org.apache.poi.sl.usermodel.PaintStyle.GradientPaint;
+import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
+import org.apache.poi.sl.usermodel.PaintStyle.TexturePaint;
+import org.apache.poi.sl.usermodel.PlaceableShape;
+import org.apache.poi.sl.usermodel.Shape;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
+import org.apache.poi.xslf.model.PropertyFetcher;
 import org.apache.xmlbeans.XmlObject;
+import org.openxmlformats.schemas.drawingml.x2006.main.*;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTApplicationNonVisualDrawingProps;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTBackground;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTBackgroundProperties;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
+import org.openxmlformats.schemas.presentationml.x2006.main.STPlaceholderType;
 
 /**
  * Base super-class class for all shapes in PresentationML
@@ -33,29 +52,40 @@ import org.apache.xmlbeans.XmlObject;
  * @author Yegor Kozlov
  */
 @Beta
-public abstract class XSLFShape {
+public abstract class XSLFShape implements Shape {
+    private final XmlObject _shape;
+    private final XSLFSheet _sheet;
+    private XSLFShapeContainer _parent;
 
-    /**
-     * @return the position of this shape within the drawing canvas.
-     *         The coordinates are expressed in points
-     */
-    public abstract Rectangle2D getAnchor();
+    private CTShapeProperties _spPr;
+    private CTShapeStyle _spStyle;
+    private CTNonVisualDrawingProps _nvPr;
+    private CTPlaceholder _ph;
 
-    /**
-     * @param anchor the position of this shape within the drawing canvas.
-     *               The coordinates are expressed in points
-     */
-    public abstract void setAnchor(Rectangle2D anchor);
-
+    protected XSLFShape(XmlObject shape, XSLFSheet sheet) {
+        _shape = shape;
+        _sheet = sheet;
+    }
+    
     /**
      * @return the xml bean holding this shape's data
      */
-    public abstract XmlObject getXmlObject();
-
+    public final XmlObject getXmlObject() {
+        // it's final because the xslf inheritance hierarchy is not necessary the same as
+        // the (not existing) xmlbeans hierarchy and subclasses shouldn't narrow it's return value
+        return _shape;
+    }
+    
+    public XSLFSheet getSheet() {
+        return _sheet;
+    }
+    
     /**
      * @return human-readable name of this shape, e.g. "Rectange 3"
      */
-    public abstract String getShapeName();
+    public String getShapeName(){
+        return getCNvPr().getName();
+    }
 
     /**
      * Returns a unique identifier for this shape within the current document.
@@ -68,132 +98,8 @@ public abstract class XSLFShape {
      *
      * @return unique id of this shape
      */
-    public abstract int getShapeId();
-
-    /**
-     * Rotate this shape.
-     * <p>
-     * Positive angles are clockwise (i.e., towards the positive y axis);
-     * negative angles are counter-clockwise (i.e., towards the negative y axis).
-     * </p>
-     *
-     * @param theta the rotation angle in degrees.
-     */
-    public abstract void setRotation(double theta);
-
-    /**
-     * Rotation angle in degrees
-     * <p>
-     * Positive angles are clockwise (i.e., towards the positive y axis);
-     * negative angles are counter-clockwise (i.e., towards the negative y axis).
-     * </p>
-     *
-     * @return rotation angle in degrees
-     */
-    public abstract double getRotation();
-
-    /**
-     * @param flip whether the shape is horizontally flipped
-     */
-    public abstract void setFlipHorizontal(boolean flip);
-
-    /**
-     * Whether the shape is vertically flipped
-     *
-     * @param flip whether the shape is vertically flipped
-     */
-    public abstract void setFlipVertical(boolean flip);
-
-    /**
-     * Whether the shape is horizontally flipped
-     *
-     * @return whether the shape is horizontally flipped
-     */
-    public abstract boolean getFlipHorizontal();
-
-    /**
-     * Whether the shape is vertically flipped
-     *
-     * @return whether the shape is vertically flipped
-     */
-    public abstract boolean getFlipVertical();
-
-    /**
-     * Draw this shape into the supplied canvas
-     *
-     * @param graphics the graphics to draw into
-     */
-    public abstract void draw(Graphics2D graphics);
-
-    /**
-     * Apply 2-D transforms before drawing this shape. This includes rotation and flipping.
-     *
-     * @param graphics the graphics whos transform matrix will be modified
-     */
-    protected void applyTransform(Graphics2D graphics) {
-        Rectangle2D anchor = getAnchor();
-        AffineTransform tx = (AffineTransform)graphics.getRenderingHint(XSLFRenderingHint.GROUP_TRANSFORM);
-        if(tx != null) {
-            anchor = tx.createTransformedShape(anchor).getBounds2D();
-        }
-
-        // rotation
-        double rotation = getRotation();
-        if (rotation != 0.) {
-            // PowerPoint rotates shapes relative to the geometric center
-            double centerX = anchor.getCenterX();
-            double centerY = anchor.getCenterY();
-
-            // normalize rotation
-            rotation = (360.+(rotation%360.))%360.;
-            int quadrant = (((int)rotation+45)/90)%4;
-            double scaleX = 1.0, scaleY = 1.0;
-
-            // scale to bounding box (bug #53176)
-            if (quadrant == 1 || quadrant == 3) {
-                // In quadrant 1 and 3, which is basically a shape in a more or less portrait orientation 
-                // (45-135 degrees and 225-315 degrees), we need to first rotate the shape by a multiple 
-                // of 90 degrees and then resize the bounding box to its original bbox. After that we can 
-                // rotate the shape to the exact rotation amount.
-                // It's strange that you'll need to rotate the shape back and forth again, but you can
-                // think of it, as if you paint the shape on a canvas. First you rotate the canvas, which might
-                // be already (differently) scaled, so you can paint the shape in its default orientation
-                // and later on, turn it around again to compare it with its original size ...
-                AffineTransform txg = new AffineTransform(); // graphics coordinate space
-                AffineTransform txs = new AffineTransform(tx); // shape coordinate space
-                txg.translate(centerX, centerY);
-                txg.rotate(Math.toRadians(quadrant*90));
-                txg.translate(-centerX, -centerY);
-                txs.translate(centerX, centerY);
-                txs.rotate(Math.toRadians(-quadrant*90));
-                txs.translate(-centerX, -centerY);
-                txg.concatenate(txs);
-                Rectangle2D anchor2 = txg.createTransformedShape(getAnchor()).getBounds2D();
-                scaleX = anchor.getWidth() == 0. ? 1.0 : anchor.getWidth() / anchor2.getWidth();
-                scaleY = anchor.getHeight() == 0. ? 1.0 : anchor.getHeight() / anchor2.getHeight();
-            }
-
-            // transformation is applied reversed ...
-            graphics.translate(centerX, centerY);
-            graphics.rotate(Math.toRadians(rotation-(double)(quadrant*90)));
-            graphics.scale(scaleX, scaleY);
-            graphics.rotate(Math.toRadians(quadrant*90));
-            graphics.translate(-centerX, -centerY);
-        }
-
-        //flip horizontal
-        if (getFlipHorizontal()) {
-            graphics.translate(anchor.getX() + anchor.getWidth(), anchor.getY());
-            graphics.scale(-1, 1);
-            graphics.translate(-anchor.getX(), -anchor.getY());
-        }
-
-        //flip vertical
-        if (getFlipVertical()) {
-            graphics.translate(anchor.getX(), anchor.getY() + anchor.getHeight());
-            graphics.scale(1, -1);
-            graphics.translate(-anchor.getX(), -anchor.getY());
-        }
+    public int getShapeId() {
+        return (int)getCNvPr().getId();
     }
 
     /**
@@ -210,6 +116,404 @@ public abstract class XSLFShape {
                     "Can't copy " + sh.getClass().getSimpleName() + " into " + getClass().getSimpleName());
         }
 
-        setAnchor(sh.getAnchor());
+        if (this instanceof PlaceableShape) {
+            PlaceableShape ps = (PlaceableShape)this;
+            ps.setAnchor(((PlaceableShape)sh).getAnchor());
+        }
+        
+        
+    }
+    
+    public void setParent(XSLFShapeContainer parent) {
+        this._parent = parent;
+    }
+    
+    public XSLFShapeContainer getParent() {
+        return this._parent;
+    }
+    
+    protected PaintStyle getFillPaint() {
+        PropertyFetcher<PaintStyle> fetcher = new PropertyFetcher<PaintStyle>() {
+            public boolean fetch(XSLFShape shape) {
+                XmlObject pr = null;
+                try {
+                    pr = shape.getSpPr();
+                    if (((CTShapeProperties)pr).isSetNoFill()) {
+                        setValue(PaintStyle.TRANSPARENT_PAINT);
+                        return true;
+                    }                    
+                } catch (IllegalStateException e) {}
+                // trying background properties now
+                if (pr == null) {
+                    pr = shape.getBgPr();
+                }
+                if (pr == null) {
+                    pr = shape.getGrpSpPr();
+                }
+                if (pr == null) {
+                    if (shape.getXmlObject() instanceof CTBackground) {
+                        pr = shape.getXmlObject();
+                    }
+                }
+                
+                if (pr == null) {
+                    setValue(PaintStyle.TRANSPARENT_PAINT);
+                    return true;
+                }
+                
+                PaintStyle paint = null;
+                for (XmlObject obj : pr.selectPath("*")) {
+                    paint = selectPaint(obj, null, getSheet().getPackagePart());
+                    if (paint != null) break;
+                }
+                
+                if (paint == null) return false;
+                
+                setValue(paint);
+                return true;
+            }
+        };
+        fetchShapeProperty(fetcher);
+
+        PaintStyle paint = fetcher.getValue();
+        if (paint != null) return paint;
+        
+        // fill color was not found, check if it is defined in the theme
+        // get a reference to a fill style within the style matrix.
+        CTStyleMatrixReference fillRef = null;
+        if (fillRef == null) {
+            CTShapeStyle style = getSpStyle();
+            if (style != null) fillRef = style.getFillRef();
+        }
+        if (fillRef == null) {
+            fillRef = getBgRef();
+        }
+        paint = selectPaint(fillRef);
+
+        return paint == null ? PaintStyle.TRANSPARENT_PAINT : paint;
+    }
+
+    protected CTBackgroundProperties getBgPr() {
+        String xquery = "declare namespace p='http://schemas.openxmlformats.org/presentationml/2006/main' p:bgPr";
+        return selectProperty(CTBackgroundProperties.class, xquery);
+    }
+    
+    protected CTStyleMatrixReference getBgRef() {
+        String xquery = "declare namespace p='http://schemas.openxmlformats.org/presentationml/2006/main' p:bgRef";
+        return selectProperty(CTStyleMatrixReference.class, xquery);
+    }
+    
+    protected CTGroupShapeProperties getGrpSpPr() {
+        String xquery = "declare namespace p='http://schemas.openxmlformats.org/presentationml/2006/main' p:grpSpPr";
+        return selectProperty(CTGroupShapeProperties.class, xquery);
+    }
+    
+    protected CTNonVisualDrawingProps getCNvPr() {
+        if (_nvPr == null) {
+            String xquery = "declare namespace p='http://schemas.openxmlformats.org/presentationml/2006/main' .//*/p:cNvPr";
+            _nvPr = selectProperty(CTNonVisualDrawingProps.class, xquery);
+        }
+        return _nvPr;
+    }
+
+    protected CTShapeProperties getSpPr() {
+        if (_spPr == null) {
+            String xquery = "declare namespace p='http://schemas.openxmlformats.org/presentationml/2006/main' p:spPr";
+            _spPr = selectProperty(CTShapeProperties.class, xquery);
+        }
+        if (_spPr == null) {
+            throw new IllegalStateException("CTShapeProperties was not found.");
+        }
+        return _spPr;
+    }
+
+    protected CTShapeStyle getSpStyle() {
+        if (_spStyle == null) {
+            String xquery = "declare namespace p='http://schemas.openxmlformats.org/presentationml/2006/main' p:style";
+            _spStyle = selectProperty(CTShapeStyle.class, xquery);
+        }
+        return _spStyle;
+    }
+
+    protected CTPlaceholder getCTPlaceholder() {
+        if (_ph == null) {
+            String xquery = "declare namespace p='http://schemas.openxmlformats.org/presentationml/2006/main' .//*/p:nvPr/p:ph";
+            _ph = selectProperty(CTPlaceholder.class, xquery);
+        }
+        return _ph;
+    }
+
+    /**
+     * Specifies that the corresponding shape should be represented by the generating application
+     * as a placeholder. When a shape is considered a placeholder by the generating application
+     * it can have special properties to alert the user that they may enter content into the shape.
+     * Different types of placeholders are allowed and can be specified by using the placeholder
+     * type attribute for this element
+     *
+     * @param placeholder
+     */
+    protected void setPlaceholder(Placeholder placeholder) {
+        String xquery = "declare namespace p='http://schemas.openxmlformats.org/presentationml/2006/main' .//*/p:nvPr";
+        CTApplicationNonVisualDrawingProps nv = selectProperty(CTApplicationNonVisualDrawingProps.class, xquery);
+        if (nv == null) return;
+        if(placeholder == null) {
+            if (nv.isSetPh()) nv.unsetPh();
+            _ph = null;
+        } else {
+            nv.addNewPh().setType(STPlaceholderType.Enum.forInt(placeholder.ordinal() + 1));
+        }
+    }
+    
+    
+    /**
+     * As there's no xmlbeans hierarchy, but XSLF works with subclassing, not all
+     * child classes work with a {@link CTShape} object, but often contain the same
+     * properties. This method is the generalized form of selecting and casting those
+     * properties.
+     *
+     * @param resultClass
+     * @param xquery
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    protected <T extends XmlObject> T selectProperty(Class<T> resultClass, String xquery) {
+        XmlObject[] rs = getXmlObject().selectPath(xquery);
+        if (rs.length == 0) return null;
+        return (resultClass.isInstance(rs[0])) ? (T)rs[0] : null;
+    }
+
+    /**
+     * Walk up the inheritance tree and fetch shape properties.
+     *
+     * The following order of inheritance is assumed:
+     * <p>
+     * slide <-- slideLayout <-- slideMaster
+     * </p>
+     *
+     * @param visitor the object that collects the desired property
+     * @return true if the property was fetched
+     */
+    protected boolean fetchShapeProperty(PropertyFetcher<?> visitor) {
+        boolean ok = visitor.fetch(this);
+
+        XSLFSimpleShape masterShape;
+        XSLFSheet masterSheet = (XSLFSheet)getSheet().getMasterSheet();
+        CTPlaceholder ph = getCTPlaceholder();
+
+        if (masterSheet != null && ph != null) {
+            if (!ok) {
+                masterShape = masterSheet.getPlaceholder(ph);
+                if (masterShape != null) {
+                    ok = visitor.fetch(masterShape);
+                }
+            }
+
+            // try slide master
+            if (!ok ) {
+                int textType;
+                if ( !ph.isSetType()) textType = STPlaceholderType.INT_BODY;
+                else {
+                    switch (ph.getType().intValue()) {
+                        case STPlaceholderType.INT_TITLE:
+                        case STPlaceholderType.INT_CTR_TITLE:
+                            textType = STPlaceholderType.INT_TITLE;
+                            break;
+                        case STPlaceholderType.INT_FTR:
+                        case STPlaceholderType.INT_SLD_NUM:
+                        case STPlaceholderType.INT_DT:
+                            textType = ph.getType().intValue();
+                            break;
+                        default:
+                            textType = STPlaceholderType.INT_BODY;
+                            break;
+                    }
+                }
+                XSLFSheet master = (XSLFSheet)masterSheet.getMasterSheet();
+                if (master != null) {
+                    masterShape = master.getPlaceholderByType(textType);
+                    if (masterShape != null) {
+                        ok = visitor.fetch(masterShape);
+                    }
+                }
+            }
+        }
+        return ok;
+    }
+
+    protected PaintStyle getPaint(XmlObject spPr, CTSchemeColor phClr) {
+        PaintStyle paint = null;
+        PackagePart pp = getSheet().getPackagePart();
+        for (XmlObject obj : spPr.selectPath("*")) {
+            paint = selectPaint(obj, phClr, pp);
+            if(paint != null) break;
+        }
+        return paint == null ? PaintStyle.TRANSPARENT_PAINT : paint;
+    }    
+    
+    /**
+     * Convert shape fill into java.awt.Paint. The result is either Color or
+     * TexturePaint or GradientPaint or null
+     *
+     * @param graphics  the target graphics
+     * @param obj       the xml to read. Must contain elements from the EG_ColorChoice group:
+     * <code>
+     *     a:scrgbClr    RGB Color Model - Percentage Variant
+     *     a:srgbClr    RGB Color Model - Hex Variant
+     *     a:hslClr    Hue, Saturation, Luminance Color Model
+     *     a:sysClr    System Color
+     *     a:schemeClr    Scheme Color
+     *     a:prstClr    Preset Color
+     *  </code>
+     *
+     * @param phClr     context color
+     * @param parentPart    the parent package part. Any external references (images, etc.) are resolved relative to it.
+     *
+     * @return  the applied Paint or null if none was applied
+     */
+    protected PaintStyle selectPaint(XmlObject obj, final CTSchemeColor phClr, final PackagePart parentPart) {
+        if (obj instanceof CTNoFillProperties) {
+            return PaintStyle.TRANSPARENT_PAINT;
+        } else if (obj instanceof CTSolidColorFillProperties) {
+            return selectPaint((CTSolidColorFillProperties)obj, phClr, parentPart);
+        } else if (obj instanceof CTBlipFillProperties) {
+            return selectPaint((CTBlipFillProperties)obj, phClr, parentPart);
+        } else if (obj instanceof CTGradientFillProperties) {
+            return selectPaint((CTGradientFillProperties) obj, phClr, parentPart);
+        } else if (obj instanceof CTStyleMatrixReference) {
+            return selectPaint((CTStyleMatrixReference)obj);
+        } else {
+            return null;
+        }
+    }
+
+    protected PaintStyle selectPaint(final CTSolidColorFillProperties solidFill, final CTSchemeColor phClr, final PackagePart parentPart) {
+        final XSLFTheme theme = getSheet().getTheme();
+        final XSLFColor c = new XSLFColor(solidFill, theme, phClr);
+        return new SolidPaint() {
+            public ColorStyle getSolidColor() {
+                return c.getColorStyle();
+            }
+        };
+    }
+    
+    protected PaintStyle selectPaint(final CTBlipFillProperties blipFill, final CTSchemeColor phClr, final PackagePart parentPart) {
+        final CTBlip blip = blipFill.getBlip();
+        return new TexturePaint() {
+            private PackagePart getPart() {
+                try {
+                    String blipId = blip.getEmbed();
+                    PackageRelationship rel = parentPart.getRelationship(blipId);
+                    return parentPart.getRelatedPart(rel);
+                } catch (InvalidFormatException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            
+            public InputStream getImageData() {
+                try {
+                    return getPart().getInputStream();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            public String getContentType() {
+                /* TOOD: map content-type */
+                return getPart().getContentType();
+            }
+
+            public int getAlpha() {
+                return (blip.sizeOfAlphaModFixArray() > 0)
+                    ? blip.getAlphaModFixArray(0).getAmt()
+                    : 0;
+            }
+        };        
+    }
+    
+    protected PaintStyle selectPaint(final CTGradientFillProperties gradFill, final CTSchemeColor phClr, final PackagePart parentPart) {
+
+        @SuppressWarnings("deprecation")
+        final CTGradientStop[] gs = gradFill.getGsLst().getGsArray();
+
+        Arrays.sort(gs, new Comparator<CTGradientStop>() {
+            public int compare(CTGradientStop o1, CTGradientStop o2) {
+                Integer pos1 = o1.getPos();
+                Integer pos2 = o2.getPos();
+                return pos1.compareTo(pos2);
+            }
+        });
+
+        final ColorStyle cs[] = new ColorStyle[gs.length];
+        final float fractions[] = new float[gs.length];
+        XSLFTheme theme = getSheet().getTheme();
+        
+        int i=0;
+        for (CTGradientStop cgs : gs) {
+            cs[i] = new XSLFColor(cgs, theme, phClr).getColorStyle();
+            fractions[i] = cgs.getPos() / 100000.f;
+            i++;
+        }
+        
+        return new GradientPaint() {
+
+            public double getGradientAngle() {
+                return (gradFill.isSetLin())
+                    ? gradFill.getLin().getAng() / 60000.d
+                    : 0;
+            }
+
+            public ColorStyle[] getGradientColors() {
+                return cs;
+            }
+
+            public float[] getGradientFractions() {
+                return fractions;
+            }
+
+            public boolean isRotatedWithShape() {
+                // TODO: is this correct???
+                return (gradFill.isSetRotWithShape() || !gradFill.getRotWithShape());
+            }
+
+            public GradientType getGradientType() {
+                if (gradFill.isSetLin()) {
+                    return GradientType.linear;
+                }
+                
+                if (gradFill.isSetPath()) {
+                    /* TODO: handle rect path */
+                    STPathShadeType.Enum ps = gradFill.getPath().getPath();
+                    if (ps == STPathShadeType.CIRCLE) {
+                        return GradientType.circular;
+                    } else if (ps == STPathShadeType.SHAPE) {
+                        return GradientType.shape;
+                    }
+                }
+                
+                return GradientType.linear;
+            }
+        };        
+    }
+    
+    protected PaintStyle selectPaint(CTStyleMatrixReference fillRef) {
+        if (fillRef == null) return null;
+        
+        // The idx attribute refers to the index of a fill style or
+        // background fill style within the presentation's style matrix, defined by the fmtScheme element.
+        // value of 0 or 1000 indicates no background,
+        // values 1-999 refer to the index of a fill style within the fillStyleLst element
+        // values 1001 and above refer to the index of a background fill style within the bgFillStyleLst element.
+        int idx = (int)fillRef.getIdx();
+        CTSchemeColor phClr = fillRef.getSchemeClr();
+        XSLFSheet sheet = getSheet();
+        XSLFTheme theme = sheet.getTheme();
+        XmlObject fillProps = null;
+        CTStyleMatrix matrix = theme.getXmlObject().getThemeElements().getFmtScheme();
+        if (idx >= 1 && idx <= 999) {
+            fillProps = matrix.getFillStyleLst().selectPath("*")[idx - 1];
+        } else if (idx >= 1001 ){
+            fillProps = matrix.getBgFillStyleLst().selectPath("*")[idx - 1001];
+        }
+        return (fillProps == null) ? null : selectPaint(fillProps, phClr, theme.getPackagePart());
     }
 }

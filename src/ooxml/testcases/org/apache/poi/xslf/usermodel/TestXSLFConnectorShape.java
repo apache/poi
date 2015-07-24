@@ -16,108 +16,117 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+
+import java.awt.Color;
+import java.awt.Rectangle;
+
+import org.apache.poi.sl.usermodel.LineDecoration.DecorationShape;
+import org.apache.poi.sl.usermodel.LineDecoration.DecorationSize;
+import org.apache.poi.sl.usermodel.*;
+import org.junit.Test;
 import org.openxmlformats.schemas.drawingml.x2006.main.*;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTConnector;
-
-import java.awt.*;
 
 /**
  * @author Yegor Kozlov
  */
-public class TestXSLFConnectorShape extends TestCase {
+public class TestXSLFConnectorShape {
 
+    @Test
     public void testLineDecorations() {
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFSlide slide = ppt.createSlide();
 
         XSLFConnectorShape shape = slide.createConnector();
-        assertEquals(1, slide.getShapes().length);
+        assertEquals(1, slide.getShapes().size());
 
         assertFalse(shape.getSpPr().getLn().isSetHeadEnd());
         assertFalse(shape.getSpPr().getLn().isSetTailEnd());
 
         // line decorations
-        assertEquals(LineDecoration.NONE, shape.getLineHeadDecoration());
-        assertEquals(LineDecoration.NONE, shape.getLineTailDecoration());
+        assertEquals(DecorationShape.NONE, shape.getLineHeadDecoration());
+        assertEquals(DecorationShape.NONE, shape.getLineTailDecoration());
         shape.setLineHeadDecoration(null);
         shape.setLineTailDecoration(null);
-        assertEquals(LineDecoration.NONE, shape.getLineHeadDecoration());
-        assertEquals(LineDecoration.NONE, shape.getLineTailDecoration());
+        assertEquals(DecorationShape.NONE, shape.getLineHeadDecoration());
+        assertEquals(DecorationShape.NONE, shape.getLineTailDecoration());
         assertFalse(shape.getSpPr().getLn().getHeadEnd().isSetType());
         assertFalse(shape.getSpPr().getLn().getTailEnd().isSetType());
 
-        shape.setLineHeadDecoration(LineDecoration.ARROW);
-        shape.setLineTailDecoration(LineDecoration.DIAMOND);
-        assertEquals(LineDecoration.ARROW, shape.getLineHeadDecoration());
-        assertEquals(LineDecoration.DIAMOND, shape.getLineTailDecoration());
+        shape.setLineHeadDecoration(DecorationShape.ARROW);
+        shape.setLineTailDecoration(DecorationShape.DIAMOND);
+        assertEquals(DecorationShape.ARROW, shape.getLineHeadDecoration());
+        assertEquals(DecorationShape.DIAMOND, shape.getLineTailDecoration());
         assertEquals(STLineEndType.ARROW, shape.getSpPr().getLn().getHeadEnd().getType());
         assertEquals(STLineEndType.DIAMOND, shape.getSpPr().getLn().getTailEnd().getType());
 
-        shape.setLineHeadDecoration(LineDecoration.DIAMOND);
-        shape.setLineTailDecoration(LineDecoration.ARROW);
-        assertEquals(LineDecoration.DIAMOND, shape.getLineHeadDecoration());
-        assertEquals(LineDecoration.ARROW, shape.getLineTailDecoration());
+        shape.setLineHeadDecoration(DecorationShape.DIAMOND);
+        shape.setLineTailDecoration(DecorationShape.ARROW);
+        assertEquals(DecorationShape.DIAMOND, shape.getLineHeadDecoration());
+        assertEquals(DecorationShape.ARROW, shape.getLineTailDecoration());
         assertEquals(STLineEndType.DIAMOND, shape.getSpPr().getLn().getHeadEnd().getType());
         assertEquals(STLineEndType.ARROW, shape.getSpPr().getLn().getTailEnd().getType());
 
         // line end width
-        assertEquals(LineEndWidth.MEDIUM, shape.getLineHeadWidth());
-        assertEquals(LineEndWidth.MEDIUM, shape.getLineTailWidth());
+        assertEquals(DecorationSize.MEDIUM, shape.getLineHeadWidth());
+        assertEquals(DecorationSize.MEDIUM, shape.getLineTailWidth());
         shape.setLineHeadWidth(null);
         shape.setLineHeadWidth(null);
-        assertEquals(LineEndWidth.MEDIUM, shape.getLineHeadWidth());
-        assertEquals(LineEndWidth.MEDIUM, shape.getLineTailWidth());
+        assertEquals(DecorationSize.MEDIUM, shape.getLineHeadWidth());
+        assertEquals(DecorationSize.MEDIUM, shape.getLineTailWidth());
         assertFalse(shape.getSpPr().getLn().getHeadEnd().isSetW());
         assertFalse(shape.getSpPr().getLn().getTailEnd().isSetW());
-        shape.setLineHeadWidth(LineEndWidth.LARGE);
-        shape.setLineTailWidth(LineEndWidth.MEDIUM);
-        assertEquals(LineEndWidth.LARGE, shape.getLineHeadWidth());
-        assertEquals(LineEndWidth.MEDIUM, shape.getLineTailWidth());
+        shape.setLineHeadWidth(DecorationSize.LARGE);
+        shape.setLineTailWidth(DecorationSize.MEDIUM);
+        assertEquals(DecorationSize.LARGE, shape.getLineHeadWidth());
+        assertEquals(DecorationSize.MEDIUM, shape.getLineTailWidth());
         assertEquals(STLineEndWidth.LG, shape.getSpPr().getLn().getHeadEnd().getW());
         assertEquals(STLineEndWidth.MED, shape.getSpPr().getLn().getTailEnd().getW());
-        shape.setLineHeadWidth(LineEndWidth.MEDIUM);
-        shape.setLineTailWidth(LineEndWidth.LARGE);
-        assertEquals(LineEndWidth.MEDIUM, shape.getLineHeadWidth());
-        assertEquals(LineEndWidth.LARGE, shape.getLineTailWidth());
+        shape.setLineHeadWidth(DecorationSize.MEDIUM);
+        shape.setLineTailWidth(DecorationSize.LARGE);
+        assertEquals(DecorationSize.MEDIUM, shape.getLineHeadWidth());
+        assertEquals(DecorationSize.LARGE, shape.getLineTailWidth());
         assertEquals(STLineEndWidth.MED, shape.getSpPr().getLn().getHeadEnd().getW());
         assertEquals(STLineEndWidth.LG, shape.getSpPr().getLn().getTailEnd().getW());
 
         // line end length
-        assertEquals(LineEndLength.MEDIUM, shape.getLineHeadLength());
-        assertEquals(LineEndLength.MEDIUM, shape.getLineTailLength());
+        assertEquals(DecorationSize.MEDIUM, shape.getLineHeadLength());
+        assertEquals(DecorationSize.MEDIUM, shape.getLineTailLength());
         shape.setLineHeadLength(null);
         shape.setLineTailLength(null);
-        assertEquals(LineEndLength.MEDIUM, shape.getLineHeadLength());
-        assertEquals(LineEndLength.MEDIUM, shape.getLineTailLength());
+        assertEquals(DecorationSize.MEDIUM, shape.getLineHeadLength());
+        assertEquals(DecorationSize.MEDIUM, shape.getLineTailLength());
         assertFalse(shape.getSpPr().getLn().getHeadEnd().isSetLen());
         assertFalse(shape.getSpPr().getLn().getTailEnd().isSetLen());
-        shape.setLineHeadLength(LineEndLength.LARGE);
-        shape.setLineTailLength(LineEndLength.MEDIUM);
-        assertEquals(LineEndLength.LARGE, shape.getLineHeadLength());
-        assertEquals(LineEndLength.MEDIUM, shape.getLineTailLength());
+        shape.setLineHeadLength(DecorationSize.LARGE);
+        shape.setLineTailLength(DecorationSize.MEDIUM);
+        assertEquals(DecorationSize.LARGE, shape.getLineHeadLength());
+        assertEquals(DecorationSize.MEDIUM, shape.getLineTailLength());
         assertEquals(STLineEndLength.LG, shape.getSpPr().getLn().getHeadEnd().getLen());
         assertEquals(STLineEndLength.MED, shape.getSpPr().getLn().getTailEnd().getLen());
-        shape.setLineHeadLength(LineEndLength.MEDIUM);
-        shape.setLineTailLength(LineEndLength.LARGE);
-        assertEquals(LineEndLength.MEDIUM, shape.getLineHeadLength());
-        assertEquals(LineEndLength.LARGE, shape.getLineTailLength());
+        shape.setLineHeadLength(DecorationSize.MEDIUM);
+        shape.setLineTailLength(DecorationSize.LARGE);
+        assertEquals(DecorationSize.MEDIUM, shape.getLineHeadLength());
+        assertEquals(DecorationSize.LARGE, shape.getLineTailLength());
         assertEquals(STLineEndLength.MED, shape.getSpPr().getLn().getHeadEnd().getLen());
         assertEquals(STLineEndLength.LG, shape.getSpPr().getLn().getTailEnd().getLen());
 
     }
 
+    @Test
     public void testAddConnector(){
         XMLSlideShow pptx = new XMLSlideShow();
         XSLFSlide slide = pptx.createSlide();
 
         XSLFAutoShape rect1 = slide.createAutoShape();
-        rect1.setShapeType(XSLFShapeType.RECT);
+        rect1.setShapeType(ShapeType.RECT);
         rect1.setAnchor(new Rectangle(100, 100, 100, 100));
         rect1.setFillColor(Color.blue);
 
         XSLFAutoShape rect2 = slide.createAutoShape();
-        rect2.setShapeType(XSLFShapeType.RECT);
+        rect2.setShapeType(ShapeType.RECT);
         rect2.setAnchor(new Rectangle(300, 300, 100, 100));
         rect2.setFillColor(Color.red);
 

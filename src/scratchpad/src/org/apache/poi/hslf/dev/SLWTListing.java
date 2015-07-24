@@ -17,11 +17,11 @@
 
 package org.apache.poi.hslf.dev;
 
-import org.apache.poi.hslf.HSLFSlideShow;
 import org.apache.poi.hslf.record.Document;
 import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.RecordTypes;
 import org.apache.poi.hslf.record.SlideListWithText;
+import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
 
 /**
  * Uses record level code to Documents.
@@ -35,7 +35,7 @@ public final class SLWTListing {
 			System.exit(1);
 		}
 
-		HSLFSlideShow ss = new HSLFSlideShow(args[0]);
+		HSLFSlideShowImpl ss = new HSLFSlideShowImpl(args[0]);
 
 		// Find the documents, and then their SLWT
 		Record[] records = ss.getRecords();

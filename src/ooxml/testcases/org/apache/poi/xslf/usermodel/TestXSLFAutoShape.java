@@ -16,15 +16,22 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+
+import org.apache.poi.sl.usermodel.*;
+import org.apache.poi.sl.usermodel.TextParagraph.TextAlign;
+import org.apache.poi.sl.usermodel.TextShape.TextAutofit;
+import org.apache.poi.sl.usermodel.TextShape.TextDirection;
 import org.apache.poi.util.Units;
+import org.junit.Test;
 import org.openxmlformats.schemas.drawingml.x2006.main.STTextStrikeType;
 import org.openxmlformats.schemas.drawingml.x2006.main.STTextUnderlineType;
 
 /**
  * @author Yegor Kozlov
  */
-public class TestXSLFAutoShape extends TestCase {
+public class TestXSLFAutoShape {
+    @Test
     public void testTextBodyProperies() {
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFSlide slide = ppt.createSlide();
@@ -33,38 +40,38 @@ public class TestXSLFAutoShape extends TestCase {
         shape.addNewTextParagraph().addNewTextRun().setText("POI");
 
         // default margins from slide master
-        assertEquals(3.6, shape.getBottomInset());
-        assertEquals(3.6, shape.getTopInset());
-        assertEquals(7.2, shape.getLeftInset());
-        assertEquals(7.2, shape.getRightInset());
+        assertEquals(3.6, shape.getBottomInset(), 0);
+        assertEquals(3.6, shape.getTopInset(), 0);
+        assertEquals(7.2, shape.getLeftInset(), 0);
+        assertEquals(7.2, shape.getRightInset(), 0);
 
         shape.setBottomInset(1.0);
-        assertEquals(1.0, shape.getBottomInset());
+        assertEquals(1.0, shape.getBottomInset(), 0);
         shape.setTopInset(2.0);
-        assertEquals(2.0, shape.getTopInset());
+        assertEquals(2.0, shape.getTopInset(), 0);
         shape.setLeftInset(3.0);
-        assertEquals(3.0, shape.getLeftInset());
+        assertEquals(3.0, shape.getLeftInset(), 0);
         shape.setRightInset(4.0);
-        assertEquals(4.0, shape.getRightInset());
+        assertEquals(4.0, shape.getRightInset(), 0);
 
         shape.setBottomInset(0.0);
-        assertEquals(0.0, shape.getBottomInset());
+        assertEquals(0.0, shape.getBottomInset(), 0);
         shape.setTopInset(0.0);
-        assertEquals(0.0, shape.getTopInset());
+        assertEquals(0.0, shape.getTopInset(), 0);
         shape.setLeftInset(0.0);
-        assertEquals(0.0, shape.getLeftInset());
+        assertEquals(0.0, shape.getLeftInset(), 0);
         shape.setRightInset(0.0);
-        assertEquals(0.0, shape.getRightInset());
+        assertEquals(0.0, shape.getRightInset(), 0);
 
         // unset to defauls
         shape.setBottomInset(-1);
-        assertEquals(3.6, shape.getBottomInset());
+        assertEquals(3.6, shape.getBottomInset(), 0);
         shape.setTopInset(-1);
-        assertEquals(3.6, shape.getTopInset());
+        assertEquals(3.6, shape.getTopInset(), 0);
         shape.setLeftInset(-1);
-        assertEquals(7.2, shape.getLeftInset());
+        assertEquals(7.2, shape.getLeftInset(), 0);
         shape.setRightInset(-1);
-        assertEquals(7.2, shape.getRightInset());
+        assertEquals(7.2, shape.getRightInset(), 0);
 
         // shape
         assertTrue(shape.getWordWrap());
@@ -97,88 +104,89 @@ public class TestXSLFAutoShape extends TestCase {
         assertEquals(TextDirection.HORIZONTAL, shape.getTextDirection());
     }
 
+    @Test
     public void testTextParagraph() {
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFSlide slide = ppt.createSlide();
-        assertEquals(0, slide.getShapes().length);
+        assertTrue(slide.getShapes().isEmpty());
 
         XSLFAutoShape shape = slide.createAutoShape();
         assertEquals(0, shape.getTextParagraphs().size());
         XSLFTextParagraph p = shape.addNewTextParagraph();
         assertEquals(1, shape.getTextParagraphs().size());
 
-        assertEquals(0., p.getIndent());
-        assertEquals(0., p.getLeftMargin());
-        assertEquals(100., p.getLineSpacing());
-        assertEquals(0., p.getSpaceAfter());
-        assertEquals(0., p.getSpaceBefore());
-        assertEquals(0, p.getLevel());
+        assertNull(p.getIndent());
+        assertEquals(0, p.getLeftMargin(), 0);
+        assertNull(p.getLineSpacing());
+        assertNull(p.getSpaceAfter());
+        assertNull(p.getSpaceBefore());
+        assertEquals(0, p.getIndentLevel());
 
         p.setIndent(2.0);
-        assertEquals(2.0, p.getIndent());
+        assertEquals(2.0, p.getIndent(), 0);
         assertTrue(p.getXmlObject().getPPr().isSetIndent());
-        p.setIndent(-1);
-        assertEquals(0.0, p.getIndent());
+        p.setIndent(null);
+        assertNull(p.getIndent());
         assertFalse(p.getXmlObject().getPPr().isSetIndent());
         p.setIndent(10.0);
-        assertEquals(10., p.getIndent());
+        assertEquals(10., p.getIndent(), 0);
         assertTrue(p.getXmlObject().getPPr().isSetIndent());
 
 
         assertFalse(p.getXmlObject().getPPr().isSetLvl());
-        p.setLevel(1);
-        assertEquals(1, p.getLevel());
+        p.setIndentLevel(1);
+        assertEquals(1, p.getIndentLevel());
         assertTrue(p.getXmlObject().getPPr().isSetLvl());
-        p.setLevel(2);
-        assertEquals(2, p.getLevel());
+        p.setIndentLevel(2);
+        assertEquals(2, p.getIndentLevel());
 
         p.setLeftMargin(2.0);
-        assertEquals(2.0, p.getLeftMargin());
+        assertEquals(2.0, p.getLeftMargin(), 0);
         assertTrue(p.getXmlObject().getPPr().isSetMarL());
         p.setLeftMargin(10.0);
-        assertEquals(10., p.getLeftMargin());
+        assertEquals(10., p.getLeftMargin(), 0);
         assertEquals(Units.toEMU(10), p.getXmlObject().getPPr().getMarL());
 
 
         assertFalse(p.getXmlObject().getPPr().isSetSpcAft());
-        p.setSpaceAfter(200);
+        p.setSpaceAfter(200d);
         assertEquals(200000, p.getXmlObject().getPPr().getSpcAft().getSpcPct().getVal());
         assertFalse(p.getXmlObject().getPPr().getSpcAft().isSetSpcPts());
-        p.setSpaceAfter(100);
+        p.setSpaceAfter(100d);
         assertEquals(100000, p.getXmlObject().getPPr().getSpcAft().getSpcPct().getVal());
         assertFalse(p.getXmlObject().getPPr().getSpcAft().isSetSpcPts());
-        p.setSpaceAfter(-20);
+        p.setSpaceAfter(-20d);
         assertEquals(2000, p.getXmlObject().getPPr().getSpcAft().getSpcPts().getVal());
         assertFalse(p.getXmlObject().getPPr().getSpcAft().isSetSpcPct());
-        p.setSpaceAfter(-10);
+        p.setSpaceAfter(-10d);
         assertEquals(1000, p.getXmlObject().getPPr().getSpcAft().getSpcPts().getVal());
         assertFalse(p.getXmlObject().getPPr().getSpcAft().isSetSpcPct());
 
         assertFalse(p.getXmlObject().getPPr().isSetSpcBef());
-        p.setSpaceBefore(200);
+        p.setSpaceBefore(200d);
         assertEquals(200000, p.getXmlObject().getPPr().getSpcBef().getSpcPct().getVal());
         assertFalse(p.getXmlObject().getPPr().getSpcBef().isSetSpcPts());
-        p.setSpaceBefore(100);
+        p.setSpaceBefore(100d);
         assertEquals(100000, p.getXmlObject().getPPr().getSpcBef().getSpcPct().getVal());
         assertFalse(p.getXmlObject().getPPr().getSpcBef().isSetSpcPts());
-        p.setSpaceBefore(-20);
+        p.setSpaceBefore(-20d);
         assertEquals(2000, p.getXmlObject().getPPr().getSpcBef().getSpcPts().getVal());
         assertFalse(p.getXmlObject().getPPr().getSpcBef().isSetSpcPct());
-        p.setSpaceBefore(-10);
+        p.setSpaceBefore(-10d);
         assertEquals(1000, p.getXmlObject().getPPr().getSpcBef().getSpcPts().getVal());
         assertFalse(p.getXmlObject().getPPr().getSpcBef().isSetSpcPct());
 
         assertFalse(p.getXmlObject().getPPr().isSetLnSpc());
-        p.setLineSpacing(200);
+        p.setLineSpacing(200d);
         assertEquals(200000, p.getXmlObject().getPPr().getLnSpc().getSpcPct().getVal());
         assertFalse(p.getXmlObject().getPPr().getLnSpc().isSetSpcPts());
-        p.setLineSpacing(100);
+        p.setLineSpacing(100d);
         assertEquals(100000, p.getXmlObject().getPPr().getLnSpc().getSpcPct().getVal());
         assertFalse(p.getXmlObject().getPPr().getLnSpc().isSetSpcPts());
-        p.setLineSpacing(-20);
+        p.setLineSpacing(-20d);
         assertEquals(2000, p.getXmlObject().getPPr().getLnSpc().getSpcPts().getVal());
         assertFalse(p.getXmlObject().getPPr().getLnSpc().isSetSpcPct());
-        p.setLineSpacing(-10);
+        p.setLineSpacing(-10d);
         assertEquals(1000, p.getXmlObject().getPPr().getLnSpc().getSpcPts().getVal());
         assertFalse(p.getXmlObject().getPPr().getLnSpc().isSetSpcPct());
 
@@ -196,6 +204,7 @@ public class TestXSLFAutoShape extends TestCase {
         assertFalse(p.getXmlObject().getPPr().isSetAlgn());
     }
 
+    @Test
     public void testTextRun() {
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFSlide slide = ppt.createSlide();
@@ -209,14 +218,14 @@ public class TestXSLFAutoShape extends TestCase {
         assertEquals(1, p.getTextRuns().size());
         assertSame(r, p.getTextRuns().get(0));
 
-        assertEquals(18.0, r.getFontSize()); // default font size for text boxes
+        assertEquals(18.0, r.getFontSize(), 0); // default font size for text boxes
         assertFalse(r.getXmlObject().getRPr().isSetSz());
         r.setFontSize(10.0);
         assertTrue(r.getXmlObject().isSetRPr());
         assertEquals(1000, r.getXmlObject().getRPr().getSz());
         r.setFontSize(12.5);
         assertEquals(1250, r.getXmlObject().getRPr().getSz());
-        r.setFontSize(-1);
+        r.setFontSize(null);
         assertFalse(r.getXmlObject().getRPr().isSetSz());
 
         assertFalse(r.getXmlObject().getRPr().isSetLatin());
@@ -251,31 +260,33 @@ public class TestXSLFAutoShape extends TestCase {
         assertTrue(r.isItalic());
         assertEquals(true, r.getXmlObject().getRPr().getI());
 
-        assertFalse(r.isUnderline());
+        assertFalse(r.isUnderlined());
         assertFalse(r.getXmlObject().getRPr().isSetU());
         r.setUnderline(true);
-        assertTrue(r.isUnderline());
+        assertTrue(r.isUnderlined());
         assertEquals(STTextUnderlineType.SNG, r.getXmlObject().getRPr().getU());
 
         r.setText("Apache");
-        assertEquals("Apache", r.getText());
+        assertEquals("Apache", r.getRawText());
         r.setText("POI");
-        assertEquals("POI", r.getText());
+        assertEquals("POI", r.getRawText());
         r.setText(null);
-        assertNull(r.getText());
+        assertNull(r.getRawText());
     }
 
+    @Test
     public void testShapeType() {
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFSlide slide = ppt.createSlide();
 
         XSLFAutoShape shape = slide.createAutoShape();
-        assertEquals(XSLFShapeType.RECT, shape.getShapeType());
+        assertEquals(ShapeType.RECT, shape.getShapeType());
 
-        shape.setShapeType(XSLFShapeType.TRIANGLE);
-        assertEquals(XSLFShapeType.TRIANGLE, shape.getShapeType());
+        shape.setShapeType(ShapeType.TRIANGLE);
+        assertEquals(ShapeType.TRIANGLE, shape.getShapeType());
 
-        for(XSLFShapeType tp : XSLFShapeType.values()) {
+        for(ShapeType tp : ShapeType.values()) {
+            if (tp.ooxmlId == -1 || tp == ShapeType.SEAL) continue;
             shape.setShapeType(tp);
             assertEquals(tp, shape.getShapeType());
         }

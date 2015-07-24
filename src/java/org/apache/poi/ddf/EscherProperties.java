@@ -507,7 +507,7 @@ public final class EscherProperties {
 		addProp(m, SHADOWSTYLE__ORIGINX, "shadowstyle.originx");
 		addProp(m, SHADOWSTYLE__ORIGINY, "shadowstyle.originy");
 		addProp(m, SHADOWSTYLE__SHADOW, "shadowstyle.shadow");
-		addProp(m, SHADOWSTYLE__SHADOWOBSURED, "shadowstyle.shadowobsured");
+		addProp(m, SHADOWSTYLE__SHADOWOBSURED, "shadowstyle.shadowobscured");
 		addProp(m, PERSPECTIVE__TYPE, "perspective.type");
 		addProp(m, PERSPECTIVE__OFFSETX, "perspective.offsetx");
 		addProp(m, PERSPECTIVE__OFFSETY, "perspective.offsety");

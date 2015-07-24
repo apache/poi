@@ -20,7 +20,7 @@ package org.apache.poi.hslf.record;
 
 import junit.framework.TestCase;
 
-import org.apache.poi.hslf.HSLFSlideShow;
+import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
 import org.apache.poi.POIDataSamples;
 
 /**
@@ -149,7 +149,7 @@ public final class TestRecordContainer extends TestCase {
 
 		// Find a real RecordContainer record
         POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
-		HSLFSlideShow hss = new HSLFSlideShow(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
+		HSLFSlideShowImpl hss = new HSLFSlideShowImpl(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
 
 		Record[] r = hss.getRecords();
 		for(int i=0; i<r.length; i++) {

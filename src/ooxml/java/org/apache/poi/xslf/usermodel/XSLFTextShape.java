@@ -19,15 +19,17 @@
 
 package org.apache.poi.xslf.usermodel;
 
-import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import org.apache.poi.POIXMLException;
+import org.apache.poi.sl.draw.DrawFactory;
+import org.apache.poi.sl.draw.DrawTextShape;
+import org.apache.poi.sl.usermodel.Insets2D;
+import org.apache.poi.sl.usermodel.TextShape;
+import org.apache.poi.sl.usermodel.VerticalAlignment;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Units;
 import org.apache.poi.xslf.model.PropertyFetcher;
@@ -35,28 +37,19 @@ import org.apache.poi.xslf.model.TextBodyPropertyFetcher;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBody;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBodyProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextListStyle;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraph;
 import org.openxmlformats.schemas.drawingml.x2006.main.STTextAnchoringType;
 import org.openxmlformats.schemas.drawingml.x2006.main.STTextVerticalType;
 import org.openxmlformats.schemas.drawingml.x2006.main.STTextWrappingType;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTApplicationNonVisualDrawingProps;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
-import org.openxmlformats.schemas.presentationml.x2006.main.STPlaceholderType;
 
 /**
  * Represents a shape that can hold text.
- *
- * @author Yegor Kozlov
  */
 @Beta
-public abstract class XSLFTextShape extends XSLFSimpleShape implements Iterable<XSLFTextParagraph>{
+public abstract class XSLFTextShape extends XSLFSimpleShape implements TextShape<XSLFTextParagraph> {
     private final List<XSLFTextParagraph> _paragraphs;
-
-    /**
-     * whether the text was broken into lines.
-     */
-    private boolean _isTextBroken;
 
     @SuppressWarnings("deprecation")
     /*package*/ XSLFTextShape(XmlObject shape, XSLFSheet sheet) {
@@ -72,7 +65,7 @@ public abstract class XSLFTextShape extends XSLFSimpleShape implements Iterable<
     }
 
     public Iterator<XSLFTextParagraph> iterator(){
-        return _paragraphs.iterator();
+        return getTextParagraphs().iterator();
     }
 
     /**
@@ -129,7 +122,7 @@ public abstract class XSLFTextShape extends XSLFSimpleShape implements Iterable<
      * Sets the type of vertical alignment for the text.
      *
      * @param anchor - the type of alignment.
-     * A <code>null</code> values unsets this property.
+     * A {@code null} values unsets this property.
      */
     public void setVerticalAlignment(VerticalAlignment anchor){
         CTTextBodyProperties bodyPr = getTextBodyPr();
@@ -162,6 +155,40 @@ public abstract class XSLFTextShape extends XSLFSimpleShape implements Iterable<
         return fetcher.getValue() == null ? VerticalAlignment.TOP : fetcher.getValue();
     }
 
+    /**
+     * Sets if the paragraphs are horizontal centered
+     *
+     * @param isCentered true, if the paragraphs are horizontal centered
+     * A {@code null} values unsets this property.
+     * 
+     * @see TextShape#isHorizontalCentered()
+     */
+    public void setHorizontalCentered(Boolean isCentered){
+        CTTextBodyProperties bodyPr = getTextBodyPr();
+        if (bodyPr != null) {
+             if (isCentered == null) {
+                if (bodyPr.isSetAnchorCtr()) bodyPr.unsetAnchorCtr();
+            } else {
+                bodyPr.setAnchorCtr(isCentered);
+            }
+        }
+    }
+
+    @Override
+    public boolean isHorizontalCentered(){
+        PropertyFetcher<Boolean> fetcher = new TextBodyPropertyFetcher<Boolean>(){
+            public boolean fetch(CTTextBodyProperties props){
+                if(props.isSetAnchorCtr()){
+                    setValue(props.getAnchorCtr());
+                    return true;
+                }
+                return false;
+            }
+        };
+        fetchShapeProperty(fetcher);
+        return fetcher.getValue() == null ? false : fetcher.getValue();
+    }
+    
     /**
      *
      * @param orientation vertical orientation of the text
@@ -283,7 +310,7 @@ public abstract class XSLFTextShape extends XSLFSimpleShape implements Iterable<
     }
 
     /**
-     * Sets the botom margin.
+     * Sets the bottom margin.
      * @see #getBottomInset()
      *
      * @param margin    the bottom margin
@@ -338,7 +365,13 @@ public abstract class XSLFTextShape extends XSLFSimpleShape implements Iterable<
         }
     }
 
-
+    @Override
+    public Insets2D getInsets() {
+        Insets2D insets = new Insets2D(getTopInset(), getLeftInset(), getBottomInset(), getRightInset());
+        return insets;
+    }
+    
+    
     /**
      * @return whether to wrap words within the bounding rectangle
      */
@@ -408,53 +441,26 @@ public abstract class XSLFTextShape extends XSLFSimpleShape implements Iterable<
         return textBody == null ? null : textBody.getBodyPr();
     }
 
-
     protected abstract CTTextBody getTextBody(boolean create);
 
+    @Override
+    public void setPlaceholder(Placeholder placeholder) {
+        super.setPlaceholder(placeholder);
+    }
 
     public Placeholder getTextType(){
-        CTPlaceholder ph;
-        XmlObject[] obj = getXmlObject().selectPath(
-                "declare namespace p='http://schemas.openxmlformats.org/presentationml/2006/main' .//*/p:nvPr/p:ph");
-        if(obj.length == 1){
-            ph = (CTPlaceholder)obj[0];
-            int val = ph.getType().intValue();
-            return Placeholder.values()[val - 1];
-        }
-        else {
-            return null;
-        }
+        CTPlaceholder ph = getCTPlaceholder();
+        if (ph == null) return null;
+
+        int val = ph.getType().intValue();
+        return Placeholder.values()[val - 1];
     }
 
-
-    /**
-     * Specifies that the corresponding shape should be represented by the generating application
-     * as a placeholder. When a shape is considered a placeholder by the generating application
-     * it can have special properties to alert the user that they may enter content into the shape.
-     * Different types of placeholders are allowed and can be specified by using the placeholder
-     * type attribute for this element
-     *
-     * @param placeholder
-     */
-    public void setPlaceholder(Placeholder placeholder){
-        CTShape sh =  (CTShape)getXmlObject();
-        CTApplicationNonVisualDrawingProps nv = sh.getNvSpPr().getNvPr();
-        if(placeholder == null) {
-            if(nv.isSetPh()) nv.unsetPh();
-        } else {
-            nv.addNewPh().setType(STPlaceholderType.Enum.forInt(placeholder.ordinal() + 1));
-        }
-    }
-
-    /**
-     * Compute the cumulative height occupied by the text
-     */
+    @Override
     public double getTextHeight(){
-        // dry-run in a 1x1 image and return the vertical advance
-        BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
-        Graphics2D graphics = img.createGraphics();
-        breakText(graphics);
-        return drawParagraphs(graphics, 0, 0);
+        DrawFactory drawFact = DrawFactory.getInstance(null);
+        DrawTextShape<XSLFTextShape> dts = drawFact.getDrawable(this);
+        return dts.getTextHeight();
     }
 
     /**
@@ -475,162 +481,57 @@ public abstract class XSLFTextShape extends XSLFSimpleShape implements Iterable<
         return anchor;
     }   
     
-    /**
-     * break the contained text into lines
-    */
-    private void breakText(Graphics2D graphics){
-        if(!_isTextBroken) {
-            for(XSLFTextParagraph p : _paragraphs) p.breakText(graphics);
-
-            _isTextBroken = true;
-        }
-    }
 
     @Override
-    public void drawContent(Graphics2D graphics) {
-        breakText(graphics);
+    void copy(XSLFShape other){
+        super.copy(other);
 
-        RenderableShape rShape = new RenderableShape(this);
-        Rectangle2D anchor = rShape.getAnchor(graphics);
-        double x = anchor.getX() + getLeftInset();
-        double y = anchor.getY();
-
-        // remember the initial transform
-        AffineTransform tx = graphics.getTransform();
-
-        // Transform of text in flipped shapes is special.
-        // At this point the flip and rotation transform is already applied
-        // (see XSLFShape#applyTransform ), but we need to restore it to avoid painting "upside down".
-        // See Bugzilla 54210.
-
-        if(getFlipVertical()){
-            graphics.translate(anchor.getX(), anchor.getY() + anchor.getHeight());
-            graphics.scale(1, -1);
-            graphics.translate(-anchor.getX(), -anchor.getY());
-
-            // text in vertically flipped shapes is rotated by 180 degrees
-            double centerX = anchor.getX() + anchor.getWidth()/2;
-            double centerY = anchor.getY() + anchor.getHeight()/2;
-            graphics.translate(centerX, centerY);
-            graphics.rotate(Math.toRadians(180));
-            graphics.translate(-centerX, -centerY);
+        XSLFTextShape otherTS = (XSLFTextShape)other;
+        CTTextBody otherTB = otherTS.getTextBody(false);
+        CTTextBody thisTB = getTextBody(true);
+        if (otherTB == null) {
+            return;
         }
+        
+        thisTB.setBodyPr((CTTextBodyProperties)otherTB.getBodyPr().copy());
 
-        // Horizontal flipping applies only to shape outline and not to the text in the shape.
-        // Applying flip second time restores the original not-flipped transform
-        if(getFlipHorizontal()){
-            graphics.translate(anchor.getX() + anchor.getWidth(), anchor.getY());
-            graphics.scale(-1, 1);
-            graphics.translate(-anchor.getX() , -anchor.getY());
+        if (thisTB.isSetLstStyle()) thisTB.unsetLstStyle();
+        if (otherTB.isSetLstStyle()) {
+            thisTB.setLstStyle((CTTextListStyle)otherTB.getLstStyle().copy());
         }
-
-
-        // first dry-run to calculate the total height of the text
-        double textHeight = getTextHeight();
-
-        switch (getVerticalAlignment()){
-            case TOP:
-                y += getTopInset();
-                break;
-            case BOTTOM:
-                y += anchor.getHeight() - textHeight - getBottomInset();
-                break;
-            default:
-            case MIDDLE:
-                double delta = anchor.getHeight() - textHeight -
-                        getTopInset() - getBottomInset();
-                y += getTopInset()  + delta/2;
-                break;
-        }
-
-        drawParagraphs(graphics, x, y);
-
-        // restore the transform
-        graphics.setTransform(tx);
-    }
-
-
-    /**
-     * paint the paragraphs starting from top left (x,y)
-     *
-     * @return  the vertical advance, i.e. the cumulative space occupied by the text
-     */
-    private double drawParagraphs(Graphics2D graphics,  double x, double y) {
-        double y0 = y;
-        for(int i = 0; i < _paragraphs.size(); i++){
-            XSLFTextParagraph p = _paragraphs.get(i);
-            List<TextFragment> lines = p.getTextLines();
-
-            if(i > 0 && lines.size() > 0) {
-                // the amount of vertical white space before the paragraph
-                double spaceBefore = p.getSpaceBefore();
-                if(spaceBefore > 0) {
-                    // positive value means percentage spacing of the height of the first line, e.g.
-                    // the higher the first line, the bigger the space before the paragraph
-                    y += spaceBefore*0.01*lines.get(0).getHeight();
-                } else {
-                    // negative value means the absolute spacing in points
-                    y += -spaceBefore;
-                }
-            }
-
-            y += p.draw(graphics, x, y);
-
-            if(i < _paragraphs.size() - 1) {
-                double spaceAfter = p.getSpaceAfter();
-                if(spaceAfter > 0) {
-                    // positive value means percentage spacing of the height of the last line, e.g.
-                    // the higher the last line, the bigger the space after the paragraph
-                    y += spaceAfter*0.01*lines.get(lines.size() - 1).getHeight();
-                } else {
-                    // negative value means the absolute spacing in points
-                    y += -spaceAfter;
-                }
-            }
-        }
-        return y - y0;
-    }
-
-    @Override
-    void copy(XSLFShape sh){
-        super.copy(sh);
-
-        XSLFTextShape tsh = (XSLFTextShape)sh;
-
-        boolean srcWordWrap = tsh.getWordWrap();
+        
+        boolean srcWordWrap = otherTS.getWordWrap();
         if(srcWordWrap != getWordWrap()){
             setWordWrap(srcWordWrap);
         }
 
-        double leftInset = tsh.getLeftInset();
+        double leftInset = otherTS.getLeftInset();
         if(leftInset != getLeftInset()) {
             setLeftInset(leftInset);
         }
-        double rightInset = tsh.getRightInset();
+        double rightInset = otherTS.getRightInset();
         if(rightInset != getRightInset()) {
             setRightInset(rightInset);
         }
-        double topInset = tsh.getTopInset();
+        double topInset = otherTS.getTopInset();
         if(topInset != getTopInset()) {
             setTopInset(topInset);
         }
-        double bottomInset = tsh.getBottomInset();
+        double bottomInset = otherTS.getBottomInset();
         if(bottomInset != getBottomInset()) {
             setBottomInset(bottomInset);
         }
 
-        VerticalAlignment vAlign = tsh.getVerticalAlignment();
+        VerticalAlignment vAlign = otherTS.getVerticalAlignment();
         if(vAlign != getVerticalAlignment()) {
             setVerticalAlignment(vAlign);
         }
 
-        List<XSLFTextParagraph> srcP = tsh.getTextParagraphs();
-        List<XSLFTextParagraph> tgtP = getTextParagraphs();
-        for(int i = 0; i < srcP.size(); i++){
-            XSLFTextParagraph p1 = srcP.get(i);
-            XSLFTextParagraph p2 = tgtP.get(i);
-            p2.copy(p1);
+        clearText();
+        
+        for (XSLFTextParagraph srcP : otherTS.getTextParagraphs()) {
+            XSLFTextParagraph tgtP = addNewTextParagraph();
+            tgtP.copy(srcP);
         }
-
     }
 }

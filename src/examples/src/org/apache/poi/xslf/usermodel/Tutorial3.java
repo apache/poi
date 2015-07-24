@@ -19,7 +19,7 @@
 
 package org.apache.poi.xslf.usermodel;
 
-import java.awt.*;
+import java.awt.Rectangle;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
@@ -43,5 +43,7 @@ public class Tutorial3 {
         FileOutputStream out = new FileOutputStream("title.pptx");
         ppt.write(out);
         out.close();
+        
+        ppt.close();
     }
 }

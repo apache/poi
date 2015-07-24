@@ -17,15 +17,15 @@
 
 package org.apache.poi.hslf.blip;
 
-import org.apache.poi.hslf.model.Picture;
-import org.apache.poi.hslf.model.Shape;
-import org.apache.poi.hslf.exceptions.HSLFException;
-
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.zip.InflaterInputStream;
+
+import org.apache.poi.hslf.exceptions.HSLFException;
+import org.apache.poi.hslf.usermodel.HSLFPictureShape;
+import org.apache.poi.util.Units;
 
 /**
  * Represents EMF (Windows Enhanced Metafile) picture data.
@@ -67,7 +67,7 @@ public final class EMF extends Metafile {
         header.wmfsize = data.length;
         //we don't have a EMF reader in java, have to set default image size  200x200
         header.bounds = new java.awt.Rectangle(0, 0, 200, 200);
-        header.size = new java.awt.Dimension(header.bounds.width*Shape.EMU_PER_POINT, header.bounds.height*Shape.EMU_PER_POINT);
+        header.size = new java.awt.Dimension(header.bounds.width*Units.EMU_PER_POINT, header.bounds.height*Units.EMU_PER_POINT);
         header.zipsize = compressed.length;
 
         byte[] checksum = getChecksum(data);
@@ -80,7 +80,7 @@ public final class EMF extends Metafile {
     }
 
     public int getType(){
-        return Picture.EMF;
+        return HSLFPictureShape.EMF;
     }
 
     /**
@@ -88,7 +88,7 @@ public final class EMF extends Metafile {
      *
      * @return EMF signature ({@code 0x3D40} or {@code 0x3D50})
      */
-    public int getSignature() {
+    public int getSignature(){
         return (uidInstanceCount == 1 ? 0x3D40 : 0x3D50);
     }
     
@@ -106,5 +106,9 @@ public final class EMF extends Metafile {
             default:
                 throw new IllegalArgumentException(signature+" is not a valid instance/signature value for EMF");
         }        
+    }
+
+    public String getContentType() {
+        return "image/x-emf";
     }
 }

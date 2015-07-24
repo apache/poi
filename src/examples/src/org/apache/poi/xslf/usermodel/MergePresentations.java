@@ -40,11 +40,15 @@ public final class MergePresentations {
             for(XSLFSlide srcSlide : src.getSlides()){
                 ppt.createSlide().importContent(srcSlide);
             }
+            
+            src.close();
         }
 
         FileOutputStream out = new FileOutputStream("merged.pptx");
         ppt.write(out);
         out.close();
+        
+        ppt.close();
     }
 
 }

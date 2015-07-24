@@ -20,7 +20,6 @@ package org.apache.poi.hslf.dev;
 import java.io.ByteArrayOutputStream;
 import java.util.Map;
 
-import org.apache.poi.hslf.HSLFSlideShow;
 import org.apache.poi.hslf.record.Document;
 import org.apache.poi.hslf.record.Notes;
 import org.apache.poi.hslf.record.NotesAtom;
@@ -31,7 +30,8 @@ import org.apache.poi.hslf.record.Slide;
 import org.apache.poi.hslf.record.SlideAtom;
 import org.apache.poi.hslf.record.SlideListWithText;
 import org.apache.poi.hslf.record.SlidePersistAtom;
-import org.apache.poi.hslf.usermodel.SlideShow;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
+import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -50,8 +50,8 @@ public final class SlideIdListing {
 
 
 		// Create the slideshow object, for normal working with
-		HSLFSlideShow hss = new HSLFSlideShow(args[0]);
-		SlideShow ss = new SlideShow(hss);
+		HSLFSlideShowImpl hss = new HSLFSlideShowImpl(args[0]);
+		HSLFSlideShow ss = new HSLFSlideShow(hss);
 
 		// Grab the base contents
 		fileContents = hss.getUnderlyingBytes();

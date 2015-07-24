@@ -17,7 +17,7 @@
 
 package org.apache.poi.hslf.blip;
 
-import org.apache.poi.hslf.usermodel.PictureData;
+import org.apache.poi.hslf.usermodel.HSLFPictureData;
 
 import java.io.IOException;
 import java.io.ByteArrayOutputStream;
@@ -28,7 +28,7 @@ import java.io.ByteArrayOutputStream;
  *
  * @author Yegor Kozlov
  */
-public abstract  class Bitmap extends PictureData {
+public abstract  class Bitmap extends HSLFPictureData {
 
     public byte[] getData(){
         byte[] rawdata = getRawData();

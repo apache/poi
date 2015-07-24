@@ -107,6 +107,11 @@ under the License.
     <property name="scratchpad.output.test.dir" location="build/scratchpad-test-classes"/>
     <property name="scratchpad.testokfile" location="build/scratchpad-testokfile.txt"/>
 
+    <!-- Scratchpad/Geometry -->
+	<property name="geometry.pkg" value="org.apache.poi.sl.draw.binding"/>
+	<property name="geometry.output.tmpdir" value="build/geometry-java"/>
+	
+	
     <!-- Examples: -->
     <property name="examples.src" location="src/examples/src"/>
     <property name="examples.output.dir" location="build/examples-classes"/>
@@ -378,6 +383,7 @@ under the License.
         <mkdir dir="${scratchpad.output.dir}"/>
         <mkdir dir="${scratchpad.output.test.dir}"/>
         <mkdir dir="${scratchpad.reports.test}"/>
+    	<mkdir dir="${geometry.output.tmpdir}"/>
         <mkdir dir="${ooxml.output.dir}"/>
         <mkdir dir="${ooxml.output.test.dir}"/>
         <mkdir dir="${ooxml.reports.test}"/>
@@ -702,7 +708,39 @@ under the License.
         </copy>
     </target>
 
-    <target name="compile-scratchpad" depends="compile-main">
+	<target name="generate-geometry" depends="fetch-ooxml-xsds" if="ignoreme">
+		<delete dir="${geometry.output.tmpdir}"/>
+		<!-- taskdef xjc -->
+		<!-- "D:\Program Files\Java\jdk1.6.0_45\bin\xjc" -p org.apache.poi.sl.model.geom.binding -readOnly -Xlocator -mark-generated ooxml-schemas\dml-shapeGeometry.xsd -->
+		<unzip src="${ooxml.lib}/${ooxml.xsds.izip.1}" dest="${geometry.output.tmpdir}"/>
+		<exec executable="${env.JAVA_HOME}/bin/xjc">
+			<arg value="-p"/>
+			<arg value="${geometry.pkg}"/>
+			<arg value="-b"/>
+			<arg file="src/types/definitions/dml-shapeGeometry.xjb"/>
+			<arg value="-readOnly"/>
+			<arg value="-npa"/>
+			<arg value="-no-header"/>
+			<!--arg value="-mark-generated"/ -->
+			<!--arg value="-Xlocator"/ -->
+			<arg file="${geometry.output.tmpdir}/dml-shapeGeometry.xsd"/>
+			<arg value="-d"/>
+			<arg file="${geometry.output.tmpdir}"/>
+		</exec>
+		<copy file="src/java/org/apache/poi/POIDocument.java" tofile="${geometry.output.tmpdir}/apache-license.txt">
+			<filterchain>
+			<headfilter lines="16"/>
+			</filterchain>
+		</copy>
+		<copy todir="${main.src}">
+			<fileset dir="${geometry.output.tmpdir}" includes="**/*.java"/>
+		     <filterchain>
+		         <concatfilter prepend="${geometry.output.tmpdir}/apache-license.txt"/>
+		     </filterchain>
+		</copy>
+	</target>
+	
+	<target name="compile-scratchpad" depends="compile-main,generate-geometry">
         <javac target="${jdk.version.class}"
                source="${jdk.version.source}"
                destdir="${scratchpad.output.dir}"
@@ -1669,7 +1707,7 @@ under the License.
               <exclude name="contrib/testcases/dummy.txt" />
               <exclude name="examples/lib/dummy.txt" />
               <exclude name="resources/ooxml/org/apache/poi/xslf/usermodel/notesMaster.xml" />
-              <exclude name="resources/ooxml/org/apache/poi/xslf/usermodel/presetShapeDefinitions.xml" />
+              <exclude name="resources/main/org/apache/poi/sl/draw/geom/presetShapeDefinitions.xml" />
               <exclude name="examples/src/org/apache/poi/xslf/usermodel/pie-chart-data.txt" />
            </fileset>
        </rat:report>

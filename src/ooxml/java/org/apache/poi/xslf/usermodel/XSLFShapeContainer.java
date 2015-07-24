@@ -19,10 +19,12 @@
 
 package org.apache.poi.xslf.usermodel;
 
+import org.apache.poi.sl.usermodel.ShapeContainer;
+
 /**
  * Common interface for shape containers, e.g. sheets or groups of shapes
  */
-public interface XSLFShapeContainer extends Iterable<XSLFShape> {
+public interface XSLFShapeContainer extends ShapeContainer<XSLFShape> {
 
     /**
      * create a new shape with a predefined geometry and add it to this shape container
@@ -54,27 +56,6 @@ public interface XSLFShapeContainer extends Iterable<XSLFShape> {
      * create a picture belonging to this container
      */
     XSLFPictureShape createPicture(int pictureIndex);
-
-    /**
-     * Returns an array containing all of the elements in this container in proper
-     * sequence (from first to last element).
-     *
-     * @return an array containing all of the elements in this container in proper
-     *         sequence
-     */
-    XSLFShape[] getShapes();
-
-    /**
-     * Removes the specified shape from this sheet, if it is present
-     * (optional operation).  If this sheet does not contain the element,
-     * it is unchanged.
-     *
-     * @param xShape shape to be removed from this sheet, if present
-     * @return <tt>true</tt> if this sheet contained the specified element
-     * @throws IllegalArgumentException if the type of the specified shape
-     *         is incompatible with this sheet (optional)
-     */
-    boolean removeShape(XSLFShape xShape) ;
 
     /**
      * Removes all of the elements from this container (optional operation).

@@ -21,43 +21,24 @@ package org.apache.poi.xslf.usermodel;
 
 import java.awt.Color;
 
+import org.apache.poi.sl.usermodel.VerticalAlignment;
 import org.apache.poi.util.Units;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTLineEndProperties;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTLineProperties;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTSRgbColor;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTSolidColorFillProperties;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTableCell;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTableCellProperties;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBody;
-import org.openxmlformats.schemas.drawingml.x2006.main.STCompoundLine;
-import org.openxmlformats.schemas.drawingml.x2006.main.STLineCap;
-import org.openxmlformats.schemas.drawingml.x2006.main.STLineEndLength;
-import org.openxmlformats.schemas.drawingml.x2006.main.STLineEndType;
-import org.openxmlformats.schemas.drawingml.x2006.main.STLineEndWidth;
-import org.openxmlformats.schemas.drawingml.x2006.main.STPenAlignment;
-import org.openxmlformats.schemas.drawingml.x2006.main.STPresetLineDashVal;
-import org.openxmlformats.schemas.drawingml.x2006.main.STTextAnchoringType;
+import org.openxmlformats.schemas.drawingml.x2006.main.*;
 
 /**
  * Represents a cell of a table in a .pptx presentation
- *
- * @author Yegor Kozlov
  */
 public class XSLFTableCell extends XSLFTextShape {
     static double defaultBorderWidth = 1.0;
+    private CTTableCellProperties _tcPr = null;
 
     /*package*/ XSLFTableCell(CTTableCell cell, XSLFSheet sheet){
         super(cell, sheet);
     }
 
     @Override
-    public CTTableCell getXmlObject(){
-        return (CTTableCell)super.getXmlObject();
-    }
-
-    @Override
     protected CTTextBody getTextBody(boolean create){
-        CTTableCell cell = getXmlObject();
+        CTTableCell cell = (CTTableCell)getXmlObject();
         CTTextBody txBody = cell.getTxBody();
         if (txBody == null && create) {
             txBody = cell.addNewTxBody();
@@ -77,135 +58,72 @@ public class XSLFTableCell extends XSLFTextShape {
         return cell;
     }
 
+    protected CTTableCellProperties getCellProperties(boolean create) {
+        if (_tcPr == null) {
+            CTTableCell cell = (CTTableCell)getXmlObject();
+            _tcPr = cell.getTcPr();
+            if (_tcPr == null && create) {
+                _tcPr = cell.addNewTcPr();
+            }
+        }
+        return _tcPr;
+    }
+    
     @Override
     public void setLeftInset(double margin){
-        CTTableCellProperties pr = getXmlObject().getTcPr();
-        if(pr == null) pr = getXmlObject().addNewTcPr();
-
+        CTTableCellProperties pr = getCellProperties(true);
         pr.setMarL(Units.toEMU(margin));
     }
 
     @Override
     public void setRightInset(double margin){
-        CTTableCellProperties pr = getXmlObject().getTcPr();
-        if(pr == null) pr = getXmlObject().addNewTcPr();
-
+        CTTableCellProperties pr = getCellProperties(true);
         pr.setMarR(Units.toEMU(margin));
     }
 
     @Override
     public void setTopInset(double margin){
-        CTTableCellProperties pr = getXmlObject().getTcPr();
-        if(pr == null) pr = getXmlObject().addNewTcPr();
-
+        CTTableCellProperties pr = getCellProperties(true);
         pr.setMarT(Units.toEMU(margin));
     }
 
     @Override
     public void setBottomInset(double margin){
-        CTTableCellProperties pr = getXmlObject().getTcPr();
-        if(pr == null) pr = getXmlObject().addNewTcPr();
-
+        CTTableCellProperties pr = getCellProperties(true);
         pr.setMarB(Units.toEMU(margin));
     }
 
-    public void setBorderLeft(double width){
-        CTTableCellProperties pr = getXmlObject().getTcPr();
-
-        CTLineProperties ln = pr.isSetLnL() ? pr.getLnL() : pr.addNewLnL();
+    private CTLineProperties getCTLine(char bltr, boolean create) {
+        CTTableCellProperties pr = getCellProperties(create);
+        if (pr == null) return null;
+        
+        switch (bltr) {
+            case 'b':
+                return (pr.isSetLnB()) ? pr.getLnB() : (create ? pr.addNewLnB() : null);
+            case 'l':
+                return (pr.isSetLnL()) ? pr.getLnL() : (create ? pr.addNewLnL() : null);
+            case 't':
+                return (pr.isSetLnT()) ? pr.getLnT() : (create ? pr.addNewLnT() : null);
+            case 'r':
+                return (pr.isSetLnR()) ? pr.getLnR() : (create ? pr.addNewLnR() : null);
+            default:
+                return null;
+        }
+    }
+    
+    private void setBorderWidth(char bltr, double width) {
+        CTLineProperties ln = getCTLine(bltr, true);
         ln.setW(Units.toEMU(width));
     }
 
-    public double getBorderLeft(){
-        CTTableCellProperties pr = getXmlObject().getTcPr();
-
-        CTLineProperties ln = pr.getLnL();
-        return ln == null || !ln.isSetW() ? defaultBorderWidth : Units.toPoints(ln.getW());
+    private double getBorderWidth(char bltr) {
+        CTLineProperties ln = getCTLine(bltr, false);
+        return (ln == null || !ln.isSetW()) ? defaultBorderWidth : Units.toPoints(ln.getW());
     }
 
-    public void setBorderLeftColor(Color color){
-        CTTableCellProperties pr = getXmlObject().getTcPr();
-        CTLineProperties ln = pr.isSetLnL() ? pr.getLnL() : pr.addNewLnL();
-        setLineColor(ln, color);
-    }
+    private void setBorderColor(char bltr, Color color) {
+        CTLineProperties ln = getCTLine(bltr, true);
 
-    public Color getBorderLeftColor(){
-        return getLineColor(getXmlObject().getTcPr().getLnL());
-    }
-
-    public void setBorderRight(double width){
-        CTTableCellProperties pr = getXmlObject().getTcPr();
-
-        CTLineProperties ln = pr.isSetLnR() ? pr.getLnR() : pr.addNewLnR();
-        ln.setW(Units.toEMU(width));
-    }
-
-    public double getBorderRight(){
-        CTTableCellProperties pr = getXmlObject().getTcPr();
-
-        CTLineProperties ln = pr.getLnR();
-        return ln == null || !ln.isSetW() ? defaultBorderWidth : Units.toPoints(ln.getW());
-    }
-
-    public void setBorderRightColor(Color color){
-        CTTableCellProperties pr = getXmlObject().getTcPr();
-        CTLineProperties ln = pr.isSetLnR() ? pr.getLnR() : pr.addNewLnR();
-        setLineColor(ln, color);
-    }
-
-    public Color getBorderRightColor(){
-        return getLineColor(getXmlObject().getTcPr().getLnR());
-    }
-
-    public void setBorderTop(double width){
-        CTTableCellProperties pr = getXmlObject().getTcPr();
-
-        CTLineProperties ln = pr.isSetLnT() ? pr.getLnT() : pr.addNewLnT();
-        ln.setW(Units.toEMU(width));
-    }
-
-    public double getBorderTop(){
-        CTTableCellProperties pr = getXmlObject().getTcPr();
-
-        CTLineProperties ln = pr.getLnT();
-        return ln == null || !ln.isSetW() ? defaultBorderWidth : Units.toPoints(ln.getW());
-    }
-
-    public void setBorderTopColor(Color color){
-        CTTableCellProperties pr = getXmlObject().getTcPr();
-        CTLineProperties ln = pr.isSetLnT() ? pr.getLnT() : pr.addNewLnT();
-        setLineColor(ln, color);
-    }
-
-    public Color getBorderTopColor(){
-        return getLineColor(getXmlObject().getTcPr().getLnT());
-    }
-
-    public void setBorderBottom(double width){
-        CTTableCellProperties pr = getXmlObject().getTcPr();
-
-        CTLineProperties ln = pr.isSetLnB() ? pr.getLnB() : pr.addNewLnB();
-        ln.setW(Units.toEMU(width));
-    }
-
-    public double getBorderBottom(){
-        CTTableCellProperties pr = getXmlObject().getTcPr();
-
-        CTLineProperties ln = pr.getLnB();
-        return ln == null || !ln.isSetW() ? defaultBorderWidth : Units.toPoints(ln.getW());
-    }
-
-    public void setBorderBottomColor(Color color){
-        CTTableCellProperties pr = getXmlObject().getTcPr();
-        CTLineProperties ln = pr.isSetLnB() ? pr.getLnB() : pr.addNewLnB();
-        setLineColor(ln, color);
-    }
-
-    public Color getBorderBottomColor(){
-        return getLineColor(getXmlObject().getTcPr().getLnB());
-    }
-
-    private void setLineColor(CTLineProperties ln, Color color){
         if(color == null){
             ln.addNewNoFill();
             if(ln.isSetSolidFill()) ln.unsetSolidFill();
@@ -232,19 +150,85 @@ public class XSLFTableCell extends XSLFTextShape {
             rgb.setVal(new byte[]{(byte)color.getRed(), (byte)color.getGreen(), (byte)color.getBlue()});
             ln.addNewSolidFill().setSrgbClr(rgb);
         }
-    }
-
-    private Color getLineColor(CTLineProperties ln){
-        if(ln == null || ln.isSetNoFill() || !ln.isSetSolidFill()) return null;
+    }    
+    
+    private Color getBorderColor(char bltr) {
+        CTLineProperties ln = getCTLine(bltr,false);
+        if (ln == null || ln.isSetNoFill() || !ln.isSetSolidFill()) return null;
 
         CTSolidColorFillProperties fill = ln.getSolidFill();
-        if(!fill.isSetSrgbClr()) {
+        if (!fill.isSetSrgbClr()) {
             // TODO for now return null for all colors except explicit RGB
             return null;
         }
         byte[] val = fill.getSrgbClr().getVal();
         return new Color(0xFF & val[0], 0xFF & val[1], 0xFF & val[2]);
+    }    
+    
+    public void setBorderLeft(double width) {
+        setBorderWidth('l', width);
     }
+
+    public double getBorderLeft() {
+        return getBorderWidth('l');
+    }
+
+    public void setBorderLeftColor(Color color) {
+        setBorderColor('l', color);
+    }
+
+    public Color getBorderLeftColor() {
+        return getBorderColor('l');
+    }
+
+    public void setBorderRight(double width) {
+        setBorderWidth('r', width);
+    }
+
+    public double getBorderRight() {
+        return getBorderWidth('r');
+    }
+
+    public void setBorderRightColor(Color color) {
+        setBorderColor('r', color);
+    }
+
+    public Color getBorderRightColor() {
+        return getBorderColor('r');
+    }
+
+    public void setBorderTop(double width) {
+        setBorderWidth('t', width);
+    }
+
+    public double getBorderTop() {
+        return getBorderWidth('t');
+    }
+
+    public void setBorderTopColor(Color color) {
+        setBorderColor('t', color);
+    }
+
+    public Color getBorderTopColor() {
+        return getBorderColor('t');
+    }
+
+    public void setBorderBottom(double width) {
+        setBorderWidth('b', width);
+    }
+
+    public double getBorderBottom() {
+        return getBorderWidth('b');
+    }
+
+    public void setBorderBottomColor(Color color) {
+        setBorderColor('b', color);
+    }
+
+    public Color getBorderBottomColor(){
+        return getBorderColor('b');
+    }
+
     /**
      * Specifies a solid color fill. The shape is filled entirely with the specified color.
      *
@@ -253,7 +237,7 @@ public class XSLFTableCell extends XSLFTextShape {
      */
     @Override
     public void setFillColor(Color color) {
-        CTTableCellProperties spPr = getXmlObject().getTcPr();
+        CTTableCellProperties spPr = getCellProperties(true);
         if (color == null) {
             if(spPr.isSetSolidFill()) spPr.unsetSolidFill();
         }
@@ -273,11 +257,11 @@ public class XSLFTableCell extends XSLFTextShape {
      */
     @Override
     public Color getFillColor(){
-        CTTableCellProperties spPr = getXmlObject().getTcPr();
-        if(!spPr.isSetSolidFill() ) return null;
+        CTTableCellProperties spPr = getCellProperties(false);
+        if (spPr == null || !spPr.isSetSolidFill()) return null;
 
         CTSolidColorFillProperties fill = spPr.getSolidFill();
-        if(!fill.isSetSrgbClr()) {
+        if (!fill.isSetSrgbClr()) {
             // TODO for now return null for all colors except explicit RGB
             return null;
         }
@@ -286,38 +270,36 @@ public class XSLFTableCell extends XSLFTextShape {
     }
 
     void setGridSpan(int gridSpan_) {
-    	getXmlObject().setGridSpan(gridSpan_);
+        ((CTTableCell)getXmlObject()).setGridSpan(gridSpan_);
     }
 
     void setRowSpan(int rowSpan_) {
-    	getXmlObject().setRowSpan(rowSpan_);
+        ((CTTableCell)getXmlObject()).setRowSpan(rowSpan_);
     }
 
     void setHMerge(boolean merge_) {
-    	getXmlObject().setHMerge(merge_);
+        ((CTTableCell)getXmlObject()).setHMerge(merge_);
     }
 
     void setVMerge(boolean merge_) {
-    	getXmlObject().setVMerge(merge_);
+        ((CTTableCell)getXmlObject()).setVMerge(merge_);
     }
     
     @Override
     public void setVerticalAlignment(VerticalAlignment anchor){
-    	CTTableCellProperties cellProps = getXmlObject().getTcPr();
-    	if(cellProps != null) {
-    		if(anchor == null) {
-    			if(cellProps.isSetAnchor()) {
-    				cellProps.unsetAnchor();
-    			}
-    		} else {
-				cellProps.setAnchor(STTextAnchoringType.Enum.forInt(anchor.ordinal() + 1));
+    	CTTableCellProperties cellProps = getCellProperties(true);
+		if(anchor == null) {
+			if(cellProps.isSetAnchor()) {
+				cellProps.unsetAnchor();
 			}
-    	}
+		} else {
+			cellProps.setAnchor(STTextAnchoringType.Enum.forInt(anchor.ordinal() + 1));
+		}
     }
 
     @Override
     public VerticalAlignment getVerticalAlignment(){
-        CTTableCellProperties cellProps = getXmlObject().getTcPr();
+        CTTableCellProperties cellProps = getCellProperties(false);
 
         VerticalAlignment align = VerticalAlignment.TOP;
         if(cellProps != null && cellProps.isSetAnchor()) {

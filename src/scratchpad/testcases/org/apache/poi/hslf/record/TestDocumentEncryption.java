@@ -33,11 +33,8 @@ import org.apache.poi.hpsf.DocumentSummaryInformation;
 import org.apache.poi.hpsf.PropertySet;
 import org.apache.poi.hpsf.PropertySetFactory;
 import org.apache.poi.hpsf.SummaryInformation;
-import org.apache.poi.hslf.HSLFSlideShow;
 import org.apache.poi.hslf.exceptions.EncryptedPowerPointFileException;
-import org.apache.poi.hslf.model.Slide;
-import org.apache.poi.hslf.usermodel.PictureData;
-import org.apache.poi.hslf.usermodel.SlideShow;
+import org.apache.poi.hslf.usermodel.*;
 import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.EncryptionInfo;
@@ -71,8 +68,8 @@ public class TestDocumentEncryption {
         for (String pptFile : encPpts) {
             try {
                 NPOIFSFileSystem fs = new NPOIFSFileSystem(slTests.getFile(pptFile), true);
-                HSLFSlideShow hss = new HSLFSlideShow(fs);
-                new SlideShow(hss);
+                HSLFSlideShowImpl hss = new HSLFSlideShowImpl(fs);
+                new HSLFSlideShow(hss);
                 fs.close();
             } catch (EncryptedPowerPointFileException e) {
                 fail(pptFile+" can't be decrypted");
@@ -85,9 +82,9 @@ public class TestDocumentEncryption {
         String pptFile = "cryptoapi-proc2356.ppt";
         Biff8EncryptionKey.setCurrentUserPassword("crypto");
         NPOIFSFileSystem fs = new NPOIFSFileSystem(slTests.getFile(pptFile), true);
-        HSLFSlideShow hss = new HSLFSlideShow(fs);
+        HSLFSlideShowImpl hss = new HSLFSlideShowImpl(fs);
         // need to cache data (i.e. read all data) before changing the key size
-        PictureData picsExpected[] = hss.getPictures();
+        HSLFPictureData picsExpected[] = hss.getPictures();
         hss.getDocumentSummaryInformation();
         EncryptionInfo ei = hss.getDocumentEncryptionAtom().getEncryptionInfo();
         ((CryptoAPIEncryptionHeader)ei.getHeader()).setKeySize(0x78);
@@ -97,8 +94,8 @@ public class TestDocumentEncryption {
         fs.close();
         
         fs = new NPOIFSFileSystem(new ByteArrayInputStream(bos.toByteArray()));
-        hss = new HSLFSlideShow(fs);
-        PictureData picsActual[] = hss.getPictures();
+        hss = new HSLFSlideShowImpl(fs);
+        HSLFPictureData picsActual[] = hss.getPictures();
         fs.close();
         
         assertEquals(picsExpected.length, picsActual.length);
@@ -112,7 +109,7 @@ public class TestDocumentEncryption {
         /* documents with multiple edits need to be normalized for encryption */
         String pptFile = "57272_corrupted_usereditatom.ppt";
         NPOIFSFileSystem fs = new NPOIFSFileSystem(slTests.getFile(pptFile), true);
-        HSLFSlideShow hss = new HSLFSlideShow(fs);
+        HSLFSlideShowImpl hss = new HSLFSlideShowImpl(fs);
         hss.normalizeRecords();
         
         // normalized ppt
@@ -128,7 +125,7 @@ public class TestDocumentEncryption {
         // decrypted
         ByteArrayInputStream bis = new ByteArrayInputStream(encrypted.toByteArray());
         fs = new NPOIFSFileSystem(bis);
-        hss = new HSLFSlideShow(fs);
+        hss = new HSLFSlideShowImpl(fs);
         Biff8EncryptionKey.setCurrentUserPassword(null);
         ByteArrayOutputStream actual = new ByteArrayOutputStream();
         hss.write(actual);
@@ -143,11 +140,12 @@ public class TestDocumentEncryption {
         // http://blogs.msdn.com/b/openspecification/archive/2009/05/08/dominic-salemno.aspx
         Biff8EncryptionKey.setCurrentUserPassword("crypto");
         NPOIFSFileSystem fs = new NPOIFSFileSystem(slTests.getFile("cryptoapi-proc2356.ppt"));
-        HSLFSlideShow hss = new HSLFSlideShow(fs);
-        SlideShow ss = new SlideShow(hss);
+        HSLFSlideShowImpl hss = new HSLFSlideShowImpl(fs);
+        HSLFSlideShow ss = new HSLFSlideShow(hss);
         
-        Slide slide = ss.getSlides()[0];
-        assertEquals("Dominic Salemno", slide.getTextRuns()[0].getText());
+        HSLFSlide slide = ss.getSlides().get(0);
+        String rawText = HSLFTextParagraph.getRawText(slide.getTextParagraphs().get(0));
+        assertEquals("Dominic Salemno", rawText);
 
         String picCmp[][] = {
             {"0","nKsDTKqxTCR8LFkVVWlP9GSTvZ0="},
@@ -160,9 +158,9 @@ public class TestDocumentEncryption {
         };
         
         MessageDigest md = CryptoFunctions.getMessageDigest(HashAlgorithm.sha1);
-        PictureData pd[] = hss.getPictures();
+        HSLFPictureData pd[] = hss.getPictures();
         int i = 0;
-        for (PictureData p : pd) {
+        for (HSLFPictureData p : pd) {
             byte hash[] = md.digest(p.getData());
             assertEquals(Integer.parseInt(picCmp[i][0]), p.getOffset());
             assertEquals(picCmp[i][1], Base64.encodeBase64String(hash));

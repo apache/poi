@@ -17,20 +17,16 @@
 
 package org.apache.poi.hslf.extractor;
 
+import java.io.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.poi.hslf.model.TextRun;
-import org.apache.poi.hslf.record.CString;
-import org.apache.poi.hslf.record.Record;
-import org.apache.poi.hslf.record.RecordTypes;
-import org.apache.poi.hslf.record.StyleTextPropAtom;
-import org.apache.poi.hslf.record.TextBytesAtom;
-import org.apache.poi.hslf.record.TextCharsAtom;
-import org.apache.poi.hslf.record.TextHeaderAtom;
+import org.apache.poi.hslf.record.*;
+import org.apache.poi.hslf.usermodel.HSLFTextParagraph;
+import org.apache.poi.hslf.usermodel.HSLFTextShape;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.util.LittleEndian;
@@ -172,18 +168,19 @@ public final class QuickButCruddyTextExtractor {
 		}
 
 		// Otherwise, check the type to see if it's text
-		long type = LittleEndian.getUShort(pptContents,startPos+2);
-		TextRun trun = null;
+		int type = LittleEndian.getUShort(pptContents,startPos+2);
 
 		// TextBytesAtom
 		if(type == RecordTypes.TextBytesAtom.typeID) {
 			TextBytesAtom tba = (TextBytesAtom)Record.createRecordForType(type, pptContents, startPos, len+8);
-			trun = new TextRun((TextHeaderAtom)null,tba,(StyleTextPropAtom)null);
+			String text = HSLFTextParagraph.toExternalString(tba.getText(), -1);
+			textV.add(text);
 		}
 		// TextCharsAtom
 		if(type == RecordTypes.TextCharsAtom.typeID) {
 			TextCharsAtom tca = (TextCharsAtom)Record.createRecordForType(type, pptContents, startPos, len+8);
-			trun = new TextRun((TextHeaderAtom)null,tca,(StyleTextPropAtom)null);
+            String text = HSLFTextParagraph.toExternalString(tca.getText(), -1);
+            textV.add(text);
 		}
 
 		// CString (doesn't go via a TextRun)
@@ -199,10 +196,6 @@ public final class QuickButCruddyTextExtractor {
 			}
 		}
 
-		// If we found text via a TextRun, save it in the vector
-		if(trun != null) {
-			textV.add(trun.getText());
-		}
 
 		// Wind on by the atom length, and check we're not at the end
 		int newPos = (startPos + 8 + len);

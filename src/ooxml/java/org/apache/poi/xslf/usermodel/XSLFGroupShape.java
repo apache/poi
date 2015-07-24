@@ -19,10 +19,19 @@
 
 package org.apache.poi.xslf.usermodel;
 
+import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.regex.Pattern;
+
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.TargetMode;
+import org.apache.poi.sl.usermodel.GroupShape;
 import org.apache.poi.util.Beta;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 import org.apache.poi.util.Units;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTGroupShapeProperties;
@@ -35,42 +44,41 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTGroupShape;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTGroupShapeNonVisual;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
 
-import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Rectangle2D;
-import java.util.Iterator;
-import java.util.List;
-import java.util.regex.Pattern;
-
 /**
  * Represents a group shape that consists of many shapes grouped together.
  * 
  * @author Yegor Kozlov
  */
 @Beta
-public class XSLFGroupShape extends XSLFShape implements XSLFShapeContainer {
-    private final CTGroupShape _shape;
-    private final XSLFSheet _sheet;
+public class XSLFGroupShape extends XSLFShape implements XSLFShapeContainer, GroupShape<XSLFShape> {
+    private static POILogger _logger = POILogFactory.getLogger(XSLFGroupShape.class);
+    
     private final List<XSLFShape> _shapes;
-    private final CTGroupShapeProperties _spPr;
+    private final CTGroupShapeProperties _grpSpPr;
     private XSLFDrawing _drawing;
 
-    /*package*/ XSLFGroupShape(CTGroupShape shape, XSLFSheet sheet){
-        _shape = shape;
-        _sheet = sheet;
-
-        _shapes = _sheet.buildShapes(_shape);
-        _spPr = shape.getGrpSpPr();
+    protected XSLFGroupShape(CTGroupShape shape, XSLFSheet sheet){
+        super(shape,sheet);
+        _shapes = sheet.buildShapes(shape);
+        _grpSpPr = shape.getGrpSpPr();
     }
 
-    @Override
-    public CTGroupShape getXmlObject(){
-        return _shape;
+    protected CTGroupShapeProperties getGrpSpPr() {
+        return _grpSpPr;
+    }
+    
+    protected CTGroupTransform2D getSafeXfrm() {
+        CTGroupTransform2D xfrm = getXfrm();
+        return (xfrm == null ? getGrpSpPr().addNewXfrm() : xfrm);
+    }
+    
+    protected CTGroupTransform2D getXfrm() {
+        return getGrpSpPr().getXfrm();
     }
 
     @Override
     public Rectangle2D getAnchor(){
-        CTGroupTransform2D xfrm = _spPr.getXfrm();
+        CTGroupTransform2D xfrm = getXfrm();
         CTPoint2D off = xfrm.getOff();
         long x = off.getX();
         long y = off.getY();
@@ -84,7 +92,7 @@ public class XSLFGroupShape extends XSLFShape implements XSLFShapeContainer {
 
     @Override
     public void setAnchor(Rectangle2D anchor){
-        CTGroupTransform2D xfrm = _spPr.isSetXfrm() ? _spPr.getXfrm() : _spPr.addNewXfrm();
+        CTGroupTransform2D xfrm = getSafeXfrm();
         CTPoint2D off = xfrm.isSetOff() ? xfrm.getOff() : xfrm.addNewOff();
         long x = Units.toEMU(anchor.getX());
         long y = Units.toEMU(anchor.getY());
@@ -104,7 +112,7 @@ public class XSLFGroupShape extends XSLFShape implements XSLFShapeContainer {
      * behavior of shapes placed within a group.
      */
     public Rectangle2D getInteriorAnchor(){
-        CTGroupTransform2D xfrm = _spPr.getXfrm();
+        CTGroupTransform2D xfrm = getXfrm();
         CTPoint2D off = xfrm.getChOff();
         long x = off.getX();
         long y = off.getY();
@@ -122,8 +130,8 @@ public class XSLFGroupShape extends XSLFShape implements XSLFShapeContainer {
      * used for calculations of grouping, scaling, and rotation
      * behavior of shapes placed within a group.
      */
-    public void setInteriorAnchor(Rectangle2D anchor){
-        CTGroupTransform2D xfrm = _spPr.isSetXfrm() ? _spPr.getXfrm() : _spPr.addNewXfrm();
+    public void setInteriorAnchor(Rectangle2D anchor) {
+        CTGroupTransform2D xfrm = getSafeXfrm();
         CTPoint2D off = xfrm.isSetChOff() ? xfrm.getChOff() : xfrm.addNewChOff();
         long x = Units.toEMU(anchor.getX());
         long y = Units.toEMU(anchor.getY());
@@ -140,8 +148,9 @@ public class XSLFGroupShape extends XSLFShape implements XSLFShapeContainer {
      *
      * @return child shapes contained witin this group
      */
-    public XSLFShape[] getShapes(){
-        return _shapes.toArray(new XSLFShape[_shapes.size()]);
+    @Override
+    public List<XSLFShape> getShapes(){
+        return _shapes;
     }
 
     /**
@@ -158,26 +167,17 @@ public class XSLFGroupShape extends XSLFShape implements XSLFShapeContainer {
      */
     public boolean removeShape(XSLFShape xShape) {
         XmlObject obj = xShape.getXmlObject();
+        CTGroupShape grpSp = (CTGroupShape)getXmlObject();
         if(obj instanceof CTShape){
-            _shape.getSpList().remove(obj);
+            grpSp.getSpList().remove(obj);
         } else if (obj instanceof CTGroupShape){
-            _shape.getGrpSpList().remove(obj);
+            grpSp.getGrpSpList().remove(obj);
         } else if (obj instanceof CTConnector){
-            _shape.getCxnSpList().remove(obj);
+            grpSp.getCxnSpList().remove(obj);
         } else {
             throw new IllegalArgumentException("Unsupported shape: " + xShape);
         }
         return _shapes.remove(xShape);
-    }
-
-    @Override
-    public String getShapeName(){
-        return _shape.getNvGrpSpPr().getCNvPr().getName();
-    }
-
-    @Override
-    public int getShapeId(){
-        return (int)_shape.getNvGrpSpPr().getCNvPr().getId();
     }
 
     /**
@@ -199,7 +199,7 @@ public class XSLFGroupShape extends XSLFShape implements XSLFShapeContainer {
     // shape factory methods
     private XSLFDrawing getDrawing(){
         if(_drawing == null) {
-            _drawing = new XSLFDrawing(_sheet, _shape);
+            _drawing = new XSLFDrawing(getSheet(), (CTGroupShape)getXmlObject());
         }
         return _drawing;
     }
@@ -207,36 +207,41 @@ public class XSLFGroupShape extends XSLFShape implements XSLFShapeContainer {
     public XSLFAutoShape createAutoShape(){
         XSLFAutoShape sh = getDrawing().createAutoShape();
         _shapes.add(sh);
+        sh.setParent(this);
         return sh;
     }
 
     public XSLFFreeformShape createFreeform(){
         XSLFFreeformShape sh = getDrawing().createFreeform();
         _shapes.add(sh);
+        sh.setParent(this);
         return sh;
     }
 
     public XSLFTextBox createTextBox(){
         XSLFTextBox sh = getDrawing().createTextBox();
         _shapes.add(sh);
+        sh.setParent(this);
         return sh;
     }
 
     public XSLFConnectorShape createConnector(){
         XSLFConnectorShape sh = getDrawing().createConnector();
         _shapes.add(sh);
+        sh.setParent(this);
         return sh;
     }
 
     public XSLFGroupShape createGroup(){
         XSLFGroupShape sh = getDrawing().createGroup();
         _shapes.add(sh);
+        sh.setParent(this);
         return sh;
     }
 
     public XSLFPictureShape createPicture(int pictureIndex){
 
-        List<PackagePart>  pics = _sheet.getPackagePart().getPackage()
+        List<PackagePart>  pics = getSheet().getPackagePart().getPackage()
                 .getPartsByName(Pattern.compile("/ppt/media/image" + (pictureIndex + 1) + ".*?"));
 
         if(pics.size() == 0) {
@@ -245,91 +250,89 @@ public class XSLFGroupShape extends XSLFShape implements XSLFShapeContainer {
 
         PackagePart pic = pics.get(0);
 
-        PackageRelationship rel = _sheet.getPackagePart().addRelationship(
+        PackageRelationship rel = getSheet().getPackagePart().addRelationship(
                 pic.getPartName(), TargetMode.INTERNAL, XSLFRelation.IMAGES.getRelation());
 
         XSLFPictureShape sh = getDrawing().createPicture(rel.getId());
         sh.resize();
         _shapes.add(sh);
+        sh.setParent(this);
         return sh;
     }
 
+    public XSLFTable createTable(){
+        XSLFTable sh = getDrawing().createTable();
+        _shapes.add(sh);
+        sh.setParent(this);
+        return sh;
+    }
+    
     @Override
     public void setFlipHorizontal(boolean flip){
-        _spPr.getXfrm().setFlipH(flip);
+        getSafeXfrm().setFlipH(flip);
     }
 
     @Override
     public void setFlipVertical(boolean flip){
-        _spPr.getXfrm().setFlipV(flip);
+        getSafeXfrm().setFlipV(flip);
     }
 
     @Override
     public boolean getFlipHorizontal(){
-         return _spPr.getXfrm().getFlipH();
+        CTGroupTransform2D xfrm = getXfrm();
+        return (xfrm == null || !xfrm.isSetFlipH()) ? false : xfrm.getFlipH();
     }
 
     @Override
     public boolean getFlipVertical(){
-         return _spPr.getXfrm().getFlipV();
+        CTGroupTransform2D xfrm = getXfrm();
+        return (xfrm == null || !xfrm.isSetFlipV()) ? false : xfrm.getFlipV();
     }
 
     @Override
     public void setRotation(double theta){
-        _spPr.getXfrm().setRot((int)(theta*60000));
+        getSafeXfrm().setRot((int) (theta * 60000));
     }
 
     @Override
     public double getRotation(){
-        return (double)_spPr.getXfrm().getRot()/60000;
-    }
-
-    @Override
-    public void draw(Graphics2D graphics){
-
-    	// the coordinate system of this group of shape
-        Rectangle2D interior = getInteriorAnchor();
-        // anchor of this group relative to the parent shape
-        Rectangle2D exterior = getAnchor();
-
-        AffineTransform tx = (AffineTransform)graphics.getRenderingHint(XSLFRenderingHint.GROUP_TRANSFORM);
-        AffineTransform tx0 = new AffineTransform(tx);
-
-        double scaleX = interior.getWidth() == 0. ? 1.0 : exterior.getWidth() / interior.getWidth();
-        double scaleY = interior.getHeight() == 0. ? 1.0 : exterior.getHeight() / interior.getHeight();
-
-        tx.translate(exterior.getX(), exterior.getY());
-        tx.scale(scaleX, scaleY);
-        tx.translate(-interior.getX(), -interior.getY());
-
-        for (XSLFShape shape : getShapes()) {
-        	// remember the initial transform and restore it after we are done with the drawing
-        	AffineTransform at = graphics.getTransform();
-            graphics.setRenderingHint(XSLFRenderingHint.GSAVE, true);
-
-            shape.applyTransform(graphics);
-        	shape.draw(graphics);
-
-            // restore the coordinate system
-            graphics.setTransform(at);
-            graphics.setRenderingHint(XSLFRenderingHint.GRESTORE, true);
-        }
-
-        graphics.setRenderingHint(XSLFRenderingHint.GROUP_TRANSFORM, tx0);
-        
+        CTGroupTransform2D xfrm = getXfrm();
+        return (xfrm == null || !xfrm.isSetRot()) ? 0 : (xfrm.getRot() / 60000.d);
     }
 
     @Override
     void copy(XSLFShape src){
         XSLFGroupShape gr = (XSLFGroupShape)src;
+        
+        // clear shapes
+        clear();
+        
         // recursively update each shape
-        XSLFShape[] tgtShapes = getShapes();
-        XSLFShape[] srcShapes = gr.getShapes();
-        for(int i = 0; i < tgtShapes.length; i++){
-            XSLFShape s1 = srcShapes[i];
-            XSLFShape s2 = tgtShapes[i];
+        for(XSLFShape shape : gr.getShapes()) {
+            XSLFShape newShape = null;
+            if (shape instanceof XSLFTextBox) {
+                newShape = createTextBox();
+            } else if (shape instanceof XSLFAutoShape) {
+                newShape = createAutoShape();
+            } else if (shape instanceof XSLFConnectorShape) {
+                newShape = createConnector();
+            } else if (shape instanceof XSLFFreeformShape) {
+                newShape = createFreeform();
+            } else if (shape instanceof XSLFPictureShape) {
+                XSLFPictureShape p = (XSLFPictureShape)shape;
+                XSLFPictureData pd = p.getPictureData();
+                int picId = getSheet().getSlideShow().addPicture(pd.getData(), pd.getPictureType());
+                newShape = createPicture(picId);
+            } else if (shape instanceof XSLFGroupShape) {
+                newShape = createGroup();
+            } else if (shape instanceof XSLFTable) {
+                newShape = createTable();
+            } else {
+                _logger.log(POILogger.WARN, "copying of class "+shape.getClass()+" not supported.");
+                continue;
+            }
 
-            s2.copy(s1);
+            newShape.copy(shape);
         }
     }
 
@@ -338,9 +341,15 @@ public class XSLFGroupShape extends XSLFShape implements XSLFShapeContainer {
      * The container will be empty after this call returns.
      */
     public void clear() {
-        for(XSLFShape shape : getShapes()){
+        List<XSLFShape> shapes = new ArrayList<XSLFShape>(getShapes());
+        for(XSLFShape shape : shapes){
             removeShape(shape);
         }
     }
 
+    public void addShape(XSLFShape shape) {
+        throw new UnsupportedOperationException(
+            "Adding a shape from a different container is not supported -"
+            + " create it from scratch with XSLFGroupShape.create* methods");
+    }
 }

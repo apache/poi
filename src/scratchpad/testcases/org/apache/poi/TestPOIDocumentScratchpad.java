@@ -22,9 +22,10 @@ package org.apache.poi;
 
 
 import junit.framework.TestCase;
+
 import java.io.*;
 
-import org.apache.poi.hslf.HSLFSlideShow;
+import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
 import org.apache.poi.hwpf.HWPFTestDataSamples;
 import org.apache.poi.poifs.filesystem.*;
 
@@ -47,7 +48,7 @@ public final class TestPOIDocumentScratchpad extends TestCase {
 	 *  a Word Document for our testing
 	 */
 	public void setUp() throws Exception {
-		doc = new HSLFSlideShow(POIDataSamples.getSlideShowInstance().openResourceAsStream("basic_test_ppt_file.ppt"));
+		doc = new HSLFSlideShowImpl(POIDataSamples.getSlideShowInstance().openResourceAsStream("basic_test_ppt_file.ppt"));
 
 		doc2 = HWPFTestDataSamples.openSampleFile("test2.doc");
 	}

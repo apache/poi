@@ -17,12 +17,17 @@
 
 package org.apache.poi.hslf.examples;
 
-import org.apache.poi.hslf.usermodel.SlideShow;
-import org.apache.poi.hslf.usermodel.RichTextRun;
-import org.apache.poi.hslf.model.*;
-
-import java.awt.*;
+import java.awt.Color;
 import java.io.FileOutputStream;
+
+import org.apache.poi.hslf.model.Line;
+import org.apache.poi.hslf.usermodel.HSLFSlide;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
+import org.apache.poi.hslf.usermodel.HSLFTable;
+import org.apache.poi.hslf.usermodel.HSLFTableCell;
+import org.apache.poi.hslf.usermodel.HSLFTextRun;
+import org.apache.poi.sl.usermodel.TextParagraph.TextAlign;
+import org.apache.poi.sl.usermodel.VerticalAlignment;
 
 /**
  * Demonstrates how to create tables
@@ -43,26 +48,26 @@ public final class TableDemo {
             {"Total PO History Spend", "$10,172,038"}
         };
 
-        SlideShow ppt = new SlideShow();
+        HSLFSlideShow ppt = new HSLFSlideShow();
 
-        Slide slide = ppt.createSlide();
+        HSLFSlide slide = ppt.createSlide();
 
         //six rows, two columns
-        Table table1 = new Table(6, 2);
+        HSLFTable table1 = new HSLFTable(6, 2);
         for (int i = 0; i < txt1.length; i++) {
             for (int j = 0; j < txt1[i].length; j++) {
-                TableCell cell = table1.getCell(i, j);
-                cell.setText(txt1[i][j]);
-                RichTextRun rt = cell.getTextRun().getRichTextRuns()[0];
-                rt.setFontName("Arial");
-                rt.setFontSize(10);
+                HSLFTableCell cell = table1.getCell(i, j);
+                HSLFTextRun rt = cell.getTextParagraphs().get(0).getTextRuns().get(0);
+                rt.setFontFamily("Arial");
+                rt.setFontSize(10d);
                 if(i == 0){
                     cell.getFill().setForegroundColor(new Color(227, 227, 227));
                 } else {
                     rt.setBold(true);
                 }
-                cell.setVerticalAlignment(TextBox.AnchorMiddle);
-                cell.setHorizontalAlignment(TextBox.AlignCenter);
+                cell.setVerticalAlignment(VerticalAlignment.MIDDLE);
+                cell.setHorizontalCentered(true);
+                cell.setText(txt1[i][j]);
             }
         }
 
@@ -87,26 +92,27 @@ public final class TableDemo {
         };
 
         //two rows, one column
-        Table table2 = new Table(2, 1);
+        HSLFTable table2 = new HSLFTable(2, 1);
         for (int i = 0; i < txt2.length; i++) {
             for (int j = 0; j < txt2[i].length; j++) {
-                TableCell cell = table2.getCell(i, j);
-                cell.setText(txt2[i][j]);
-                RichTextRun rt = cell.getTextRun().getRichTextRuns()[0];
-                rt.setFontSize(10);
-                rt.setFontName("Arial");
+                HSLFTableCell cell = table2.getCell(i, j);
+                HSLFTextRun rt = cell.getTextParagraphs().get(0).getTextRuns().get(0);
+                rt.setFontSize(10d);
+                rt.setFontFamily("Arial");
                 if(i == 0){
                     cell.getFill().setForegroundColor(new Color(0, 51, 102));
                     rt.setFontColor(Color.white);
                     rt.setBold(true);
-                    rt.setFontSize(14);
-                    cell.setHorizontalAlignment(TextBox.AlignCenter);
+                    rt.setFontSize(14d);
+                    cell.setHorizontalCentered(true);
                 } else {
-                    rt.setBullet(true);
-                    rt.setFontSize(12);
-                    cell.setHorizontalAlignment(TextBox.AlignLeft);
+                    rt.getTextParagraph().setBullet(true);
+                    rt.setFontSize(12d);
+                    rt.getTextParagraph().setAlignment(TextAlign.LEFT);
+                    cell.setHorizontalCentered(false);
                 }
-                cell.setVerticalAlignment(TextBox.AnchorMiddle);
+                cell.setVerticalAlignment(VerticalAlignment.MIDDLE);
+                cell.setText(txt2[i][j]);
             }
         }
         table2.setColumnWidth(0, 300);

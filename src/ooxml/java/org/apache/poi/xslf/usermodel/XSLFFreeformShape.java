@@ -24,6 +24,7 @@ import java.awt.geom.GeneralPath;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Rectangle2D;
 
+import org.apache.poi.sl.usermodel.FreeformShape;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Units;
 import org.apache.xmlbeans.XmlObject;
@@ -47,18 +48,13 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTShapeNonVisual;
  * @author Yegor Kozlov
  */
 @Beta
-public class XSLFFreeformShape extends XSLFAutoShape {
+public class XSLFFreeformShape extends XSLFAutoShape implements FreeformShape<XSLFTextParagraph> {
 
     /*package*/ XSLFFreeformShape(CTShape shape, XSLFSheet sheet) {
         super(shape, sheet);
     }
 
-    /**
-     * Set the shape path
-     *
-     * @param path  shape outline
-     * @return the number of points written
-     */
+    @Override
     public int setPath(GeneralPath path) {
         CTPath2D ctPath = CTPath2D.Factory.newInstance();
 
@@ -110,16 +106,7 @@ public class XSLFFreeformShape extends XSLFAutoShape {
         return numPoints;
     }
 
-    /**
-     * Gets the shape path.
-     * <p>
-     *     The path is translated in the shape's coordinate system, i.e.
-     *     freeform.getPath().getBounds2D() equals to freeform.getAnchor()
-     *     (small discrepancies are possible due to rounding errors)
-     * </p>
-     *
-     * @return the path
-     */
+    @Override
     @SuppressWarnings("deprecation")
     public GeneralPath getPath() {
         GeneralPath path = new GeneralPath();
