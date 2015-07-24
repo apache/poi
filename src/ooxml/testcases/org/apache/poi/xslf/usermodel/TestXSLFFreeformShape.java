@@ -16,17 +16,20 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
 
 import java.awt.Rectangle;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
 
+import org.junit.Test;
+
 /**
  * @author Yegor Kozlov
  */
-public class TestXSLFFreeformShape extends TestCase {
+public class TestXSLFFreeformShape {
 
+    @Test
     public void testSetPath() {
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFSlide slide = ppt.createSlide();

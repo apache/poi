@@ -17,12 +17,12 @@
 
 package org.apache.poi.hslf.examples;
 
-import org.apache.poi.hslf.usermodel.SlideShow;
-import org.apache.poi.hslf.usermodel.RichTextRun;
-import org.apache.poi.hslf.model.Slide;
-import org.apache.poi.hslf.model.TextBox;
-
 import java.io.FileOutputStream;
+
+import org.apache.poi.hslf.usermodel.HSLFSlide;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
+import org.apache.poi.hslf.usermodel.HSLFTextBox;
+import org.apache.poi.hslf.usermodel.HSLFTextParagraph;
 
 /**
  * How to create a single-level bulleted list
@@ -34,22 +34,22 @@ public final class BulletsDemo {
 
     public static void main(String[] args) throws Exception {
 
-        SlideShow ppt = new SlideShow();
+        HSLFSlideShow ppt = new HSLFSlideShow();
 
-        Slide slide = ppt.createSlide();
+        HSLFSlide slide = ppt.createSlide();
 
-        TextBox shape = new TextBox();
-        RichTextRun rt = shape.getTextRun().getRichTextRuns()[0];
+        HSLFTextBox shape = new HSLFTextBox();
+        HSLFTextParagraph rt = shape.getTextParagraphs().get(0);
+        rt.getTextRuns().get(0).setFontSize(42d);
+        rt.setBullet(true);
+        rt.setIndent(0d);  //bullet offset
+        rt.setLeftMargin(50d);   //text offset (should be greater than bullet offset)
+        rt.setBulletChar('\u263A'); //bullet character
         shape.setText(
                 "January\r" +
                 "February\r" +
                 "March\r" +
                 "April");
-        rt.setFontSize(42);
-        rt.setBullet(true);
-        rt.setBulletOffset(0);  //bullet offset
-        rt.setTextOffset(50);   //text offset (should be greater than bullet offset)
-        rt.setBulletChar('\u263A'); //bullet character
         slide.addShape(shape);
 
         shape.setAnchor(new java.awt.Rectangle(50, 50, 500, 300));  //position of the text box in the slide

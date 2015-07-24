@@ -294,7 +294,7 @@ public abstract class RecordContainer extends Record
 			// Write out our header, less the size
 			mout.write(new byte[] {headerA,headerB});
 			byte[] typeB = new byte[2];
-			LittleEndian.putShort(typeB,(short)type);
+			LittleEndian.putShort(typeB, 0, (short)type);
 			mout.write(typeB);
 			mout.write(new byte[4]);
 
@@ -320,7 +320,7 @@ public abstract class RecordContainer extends Record
 			// Write out our header, less the size
 			baos.write(new byte[] {headerA,headerB});
 			byte[] typeB = new byte[2];
-			LittleEndian.putShort(typeB,(short)type);
+			LittleEndian.putShort(typeB,0,(short)type);
 			baos.write(typeB);
 			baos.write(new byte[] {0,0,0,0});
 

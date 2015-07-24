@@ -17,15 +17,19 @@
 
 package org.apache.poi.hslf.examples;
 
-import org.apache.poi.hslf.usermodel.*;
-import org.apache.poi.hslf.model.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 
 import javax.imageio.ImageIO;
-import java.io.FileOutputStream;
-import java.io.FileInputStream;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.awt.geom.Rectangle2D;
+
+import org.apache.poi.hslf.usermodel.HSLFSlide;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 
 /**
  * Demonstrates how you can use HSLF to convert each slide into a PNG image
@@ -62,19 +66,18 @@ public final class PPT2PNG {
         }
 
         FileInputStream is = new FileInputStream(file);
-        SlideShow ppt = new SlideShow(is);
+        HSLFSlideShow ppt = new HSLFSlideShow(is);
         is.close();
 
         Dimension pgsize = ppt.getPageSize();
         int width = (int)(pgsize.width*scale);
         int height = (int)(pgsize.height*scale);
 
-        Slide[] slide = ppt.getSlides();
-        for (int i = 0; i < slide.length; i++) {
-            if (slidenum != -1 && slidenum != (i+1)) continue;
+        for (HSLFSlide slide : ppt.getSlides()) {
+            if (slidenum != -1 && slidenum != slide.getSlideNumber()) continue;
 
-            String title = slide[i].getTitle();
-            System.out.println("Rendering slide "+slide[i].getSlideNumber() + (title == null ? "" : ": " + title));
+            String title = slide.getTitle();
+            System.out.println("Rendering slide "+slide.getSlideNumber() + (title == null ? "" : ": " + title));
 
             BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
             Graphics2D graphics = img.createGraphics();
@@ -88,9 +91,9 @@ public final class PPT2PNG {
 
             graphics.scale((double)width/pgsize.width, (double)height/pgsize.height);
 
-            slide[i].draw(graphics);
+            slide.draw(graphics);
 
-            String fname = file.replaceAll("\\.ppt", "-" + (i+1) + ".png");
+            String fname = file.replaceAll("\\.ppt", "-" + slide.getSlideNumber() + ".png");
             FileOutputStream out = new FileOutputStream(fname);
             ImageIO.write(img, "png", out);
             out.close();

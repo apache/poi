@@ -25,7 +25,8 @@ import java.io.FileNotFoundException;
 import junit.framework.TestCase;
 
 import org.apache.poi.POIDataSamples;
-import org.apache.poi.hslf.usermodel.SlideShow;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
+import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
@@ -37,9 +38,9 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  */
 public final class TestReWrite extends TestCase {
 	// HSLFSlideShow primed on the test data
-	private HSLFSlideShow hssA;
-	private HSLFSlideShow hssB;
-	private HSLFSlideShow hssC;
+	private HSLFSlideShowImpl hssA;
+	private HSLFSlideShowImpl hssB;
+	private HSLFSlideShowImpl hssC;
 	// POIFS primed on the test data
 	private POIFSFileSystem pfsA;
 	private POIFSFileSystem pfsB;
@@ -50,20 +51,20 @@ public final class TestReWrite extends TestCase {
         POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
         
 		pfsA = new POIFSFileSystem(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
-		hssA = new HSLFSlideShow(pfsA);
+		hssA = new HSLFSlideShowImpl(pfsA);
 
         pfsB = new POIFSFileSystem(slTests.openResourceAsStream("ParagraphStylesShorterThanCharStyles.ppt"));
-		hssB = new HSLFSlideShow(pfsB);
+		hssB = new HSLFSlideShowImpl(pfsB);
 
         pfsC = new POIFSFileSystem(slTests.openResourceAsStream("WithMacros.ppt"));
-		hssC = new HSLFSlideShow(pfsC);
+		hssC = new HSLFSlideShowImpl(pfsC);
     }
 
     public void testWritesOutTheSame() throws Exception {
     	assertWritesOutTheSame(hssA, pfsA);
     	assertWritesOutTheSame(hssB, pfsB);
     }
-    public void assertWritesOutTheSame(HSLFSlideShow hss, POIFSFileSystem pfs) throws Exception {
+    public void assertWritesOutTheSame(HSLFSlideShowImpl hss, POIFSFileSystem pfs) throws Exception {
 		// Write out to a byte array
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		hss.write(baos);
@@ -129,9 +130,9 @@ public final class TestReWrite extends TestCase {
     	// We need to identify and fix that first
     	//assertSlideShowWritesOutTheSame(hssB, pfsB);
     }
-    public void assertSlideShowWritesOutTheSame(HSLFSlideShow hss, POIFSFileSystem pfs) throws Exception {
+    public void assertSlideShowWritesOutTheSame(HSLFSlideShowImpl hss, POIFSFileSystem pfs) throws Exception {
     	// Create a slideshow covering it
-    	SlideShow ss = new SlideShow(hss);
+    	HSLFSlideShow ss = new HSLFSlideShow(hss);
     	ss.getSlides();
     	ss.getNotes();
 
@@ -163,7 +164,7 @@ public final class TestReWrite extends TestCase {
 	}
     
     public void test48593() throws Exception {
-		SlideShow slideShow = new SlideShow();
+		HSLFSlideShow slideShow = new HSLFSlideShow();
 		slideShow.createSlide();
 		slideShow = HSLFTestDataSamples.writeOutAndReadBack(slideShow);
 		slideShow.createSlide();

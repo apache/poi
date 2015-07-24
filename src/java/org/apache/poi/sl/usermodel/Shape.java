@@ -17,15 +17,13 @@
 
 package org.apache.poi.sl.usermodel;
 
-import java.awt.geom.Rectangle2D;
 
 public interface Shape {
-	public int getShapeType();
-
-	public Rectangle2D getAnchor();
-	public void setAnchor(Rectangle2D anchor);
-
-	public void moveTo(float x, float y);
-
-	public Shape getParent();
+	ShapeContainer<? extends Shape> getParent();
+	
+    /**
+    *
+    * @return the sheet this shape belongs to
+    */
+   Sheet<? extends Shape, ? extends SlideShow> getSheet();
 }

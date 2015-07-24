@@ -29,6 +29,8 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.sl.draw.DrawFactory;
+import org.apache.poi.sl.draw.Drawable;
 import org.apache.poi.xslf.XSLFSlideShow;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFNotes;
@@ -61,9 +63,7 @@ public class XSLFFileHandler extends AbstractFileHandler {
     private void createBitmaps(ByteArrayOutputStream out) throws IOException {
         XMLSlideShow ppt = new XMLSlideShow(new ByteArrayInputStream(out.toByteArray()));
         Dimension pgsize = ppt.getPageSize();
-        XSLFSlide[] xmlSlide = ppt.getSlides();
-        int slideSize = xmlSlide.length;
-        for (int i = 0; i < slideSize; i++) {
+        for (XSLFSlide xmlSlide : ppt.getSlides()) {
 //            System.out.println("slide-" + (i + 1));
 //            System.out.println("" + xmlSlide[i].getTitle());
 
@@ -71,13 +71,15 @@ public class XSLFFileHandler extends AbstractFileHandler {
             Graphics2D graphics = img.createGraphics();
 
             // draw stuff
-            xmlSlide[i].draw(graphics);
+            xmlSlide.draw(graphics);
 
             // Also try to read notes
-            XSLFNotes notes = xmlSlide[i].getNotes();
+            XSLFNotes notes = xmlSlide.getNotes();
             if(notes != null) {
                 for (XSLFShape note : notes) {
-                    note.draw(graphics);
+                    DrawFactory df = DrawFactory.getInstance(graphics);
+                    Drawable d = df.getDrawable(note);
+                    d.draw(graphics);
                     
                     if (note instanceof XSLFTextShape) {
                         XSLFTextShape txShape = (XSLFTextShape) note;

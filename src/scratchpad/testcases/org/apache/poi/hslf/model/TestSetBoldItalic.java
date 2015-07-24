@@ -17,45 +17,46 @@
 
 package org.apache.poi.hslf.model;
 
-import junit.framework.TestCase;
-import org.apache.poi.hslf.usermodel.SlideShow;
-import org.apache.poi.hslf.usermodel.RichTextRun;
-import org.apache.poi.hslf.HSLFSlideShow;
+import static org.junit.Assert.*;
 
-import java.io.ByteArrayOutputStream;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+
+import org.apache.poi.hslf.usermodel.*;
+import org.junit.Test;
 
 /**
  * Test setting text properties of newly added TextBoxes
  *
  * @author Yegor Kozlov
  */
-public final class TestSetBoldItalic extends TestCase {
+public final class TestSetBoldItalic {
     /**
      * Verify that we can add TextBox shapes to a slide
      * and set some of the style attributes
      */
+    @Test
     public void testTextBoxWrite() throws Exception {
-        SlideShow ppt = new SlideShow();
-        Slide sl = ppt.createSlide();
-        RichTextRun rt;
+        HSLFSlideShow ppt = new HSLFSlideShow();
+        HSLFSlide sl = ppt.createSlide();
+        HSLFTextRun rt;
 
         String val = "Hello, World!";
 
         // Create a new textbox, and give it lots of properties
-        TextBox txtbox = new TextBox();
-        rt = txtbox.getTextRun().getRichTextRuns()[0];
+        HSLFTextBox txtbox = new HSLFTextBox();
+        rt = txtbox.getTextParagraphs().get(0).getTextRuns().get(0);
         txtbox.setText(val);
-        rt.setFontSize(42);
+        rt.setFontSize(42d);
         rt.setBold(true);
         rt.setItalic(true);
         rt.setUnderlined(false);
         sl.addShape(txtbox);
 
         // Check it before save
-        rt = txtbox.getTextRun().getRichTextRuns()[0];
-        assertEquals(val, rt.getText());
-        assertEquals(42, rt.getFontSize());
+        rt = txtbox.getTextParagraphs().get(0).getTextRuns().get(0);
+        assertEquals(val, rt.getRawText());
+        assertEquals(42, rt.getFontSize(), 0);
         assertTrue(rt.isBold());
         assertTrue(rt.isItalic());
 
@@ -64,15 +65,15 @@ public final class TestSetBoldItalic extends TestCase {
         ppt.write(out);
         out.close();
 
-        ppt = new SlideShow(new HSLFSlideShow(new ByteArrayInputStream(out.toByteArray())));
-        sl = ppt.getSlides()[0];
+        ppt = new HSLFSlideShow(new HSLFSlideShowImpl(new ByteArrayInputStream(out.toByteArray())));
+        sl = ppt.getSlides().get(0);
 
-        txtbox = (TextBox)sl.getShapes()[0];
-        rt = txtbox.getTextRun().getRichTextRuns()[0];
+        txtbox = (HSLFTextBox)sl.getShapes().get(0);
+        rt = txtbox.getTextParagraphs().get(0).getTextRuns().get(0);
 
         // Check after save
-        assertEquals(val, rt.getText());
-        assertEquals(42, rt.getFontSize());
+        assertEquals(val, rt.getRawText());
+        assertEquals(42, rt.getFontSize(), 0);
         assertTrue(rt.isBold());
         assertTrue(rt.isItalic());
         assertFalse(rt.isUnderlined());

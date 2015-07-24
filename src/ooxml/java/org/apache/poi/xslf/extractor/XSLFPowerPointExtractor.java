@@ -17,6 +17,7 @@
 package org.apache.poi.xslf.extractor;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.apache.poi.POIXMLTextExtractor;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
@@ -122,7 +123,7 @@ public class XSLFPowerPointExtractor extends POIXMLTextExtractor {
    public String getText(boolean slideText, boolean notesText, boolean masterText) {
       StringBuffer text = new StringBuffer();
 
-      XSLFSlide[] slides = slideshow.getSlides();
+      List<XSLFSlide> slides = slideshow.getSlides();
       XSLFCommentAuthors commentAuthors = slideshow.getCommentAuthors();
 
       for (XSLFSlide slide : slides) {

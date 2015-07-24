@@ -16,32 +16,39 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
-import junit.framework.TestCase;
-import org.apache.poi.xslf.XSLFTestDataSamples;
+import static org.junit.Assert.*;
 
 import java.awt.Color;
-import java.awt.TexturePaint;
+import java.util.List;
+
+import org.apache.poi.sl.usermodel.*;
+import org.apache.poi.sl.usermodel.PaintStyle.GradientPaint;
+import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
+import org.apache.poi.sl.usermodel.PaintStyle.TexturePaint;
+import org.apache.poi.xslf.XSLFTestDataSamples;
+import org.junit.Test;
 
 /**
  * test reading properties from a multi-theme and multi-master document
  *
  * @author Yegor Kozlov
  */
-public class TestXSLFTheme extends TestCase {
+public class TestXSLFTheme {
+    @Test
     public void testRead(){
         XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("themes.pptx");
-        XSLFSlide[] slides = ppt.getSlides();
+        List<XSLFSlide> slides = ppt.getSlides();
 
-        slide1(slides[0]);
-        slide2(slides[1]);
-        slide3(slides[2]);
-        slide4(slides[3]);
-        slide5(slides[4]);
-        slide6(slides[5]);
-        slide7(slides[6]);
-        slide8(slides[7]);
-        slide9(slides[8]);
-        slide10(slides[9]);
+        slide1(slides.get(0));
+        slide2(slides.get(1));
+        slide3(slides.get(2));
+        slide4(slides.get(3));
+        slide5(slides.get(4));
+        slide6(slides.get(5));
+        slide7(slides.get(6));
+        slide8(slides.get(7));
+        slide9(slides.get(8));
+        slide10(slides.get(9));
     }
 
     private XSLFShape getShape(XSLFSheet sheet, String name){
@@ -52,41 +59,39 @@ public class TestXSLFTheme extends TestCase {
     }
 
     void slide1(XSLFSlide slide){
-        assertEquals(Color.white, slide.getBackground().getFillColor());
+        assertEquals(Color.WHITE, slide.getBackground().getFillColor());
 
         XSLFTheme theme = slide.getTheme();
         assertEquals("Office Theme", theme.getName());
 
         XSLFTextShape sh1 = (XSLFTextShape)getShape(slide, "Rectangle 3");
-        RenderableShape rsh1 = new RenderableShape(sh1);
         XSLFTextRun run1 = sh1.getTextParagraphs().get(0).getTextRuns().get(0);
         assertEquals(Color.white, run1.getFontColor());
         assertEquals(new Color(79, 129, 189), sh1.getFillColor());
-        assertTrue(rsh1.getFillPaint(null) instanceof Color) ;   // solid fill
+        assertTrue(sh1.getFillStyle().getPaint() instanceof SolidPaint) ;   // solid fill
 
     }
 
     void slide2(XSLFSlide slide){
         // Background 2, darker 10%
         // YK: PPT shows slightly different color: new Color(221, 217, 195)
-        assertEquals(new Color(214, 212, 203), slide.getBackground().getFillColor());
+        assertEquals(new Color(221, 217, 195), slide.getBackground().getFillColor());
     }
 
     void slide3(XSLFSlide slide){
-        assertNull(slide.getBackground().getFillColor());
-        assertTrue(slide.getBackground().getPaint(null).getClass().getName().indexOf("Gradient") > 0);
+        PaintStyle fs = slide.getBackground().getFillStyle().getPaint();
+        assertTrue(fs instanceof GradientPaint);
     }
 
     void slide4(XSLFSlide slide){
-        assertNull(slide.getBackground().getFillColor());
-        assertTrue(slide.getBackground().getPaint(null).getClass().getName().indexOf("Gradient") > 0);
+        PaintStyle fs = slide.getBackground().getFillStyle().getPaint();
+        assertTrue(fs instanceof GradientPaint);
 
         XSLFTextShape sh1 = (XSLFTextShape)getShape(slide, "Rectangle 4");
-        RenderableShape rsh1 = new RenderableShape(sh1);
         XSLFTextRun run1 = sh1.getTextParagraphs().get(0).getTextRuns().get(0);
         assertEquals(Color.white, run1.getFontColor());
         assertEquals(new Color(148, 198, 0), sh1.getFillColor());
-        assertTrue(rsh1.getFillPaint(null) instanceof Color) ;   // solid fill
+        assertTrue(sh1.getFillStyle().getPaint() instanceof SolidPaint) ;   // solid fill
 
         XSLFTextShape sh2 = (XSLFTextShape)getShape(slide, "Title 3");
         XSLFTextRun run2 = sh2.getTextParagraphs().get(0).getTextRuns().get(0);
@@ -97,14 +102,15 @@ public class TestXSLFTheme extends TestCase {
     }
 
     void slide5(XSLFSlide slide){
-        assertTrue(slide.getBackground().getPaint(null) instanceof TexturePaint);
+        PaintStyle fs = slide.getBackground().getFillStyle().getPaint();
+        assertTrue(fs instanceof TexturePaint);
 
         XSLFTextShape sh2 = (XSLFTextShape)getShape(slide, "Title 1");
         XSLFTextRun run2 = sh2.getTextParagraphs().get(0).getTextRuns().get(0);
         assertEquals(new Color(148, 198, 0), run2.getFontColor());
         assertNull(sh2.getFillColor());  // no fill
         // font size is 40pt and scale factor is 90%
-        assertEquals(36.0, run2.getFontSize());
+        assertEquals(36.0, run2.getFontSize(), 0);
 
         assertTrue(slide.getSlideLayout().getFollowMasterGraphics());
     }
@@ -127,21 +133,24 @@ public class TestXSLFTheme extends TestCase {
     void slide7(XSLFSlide slide){
 
         //YK: PPT reports a slightly different color: r=189,g=239,b=87
-        assertEquals(new Color(182, 218, 108), slide.getBackground().getFillColor());
+        assertEquals(new Color(189, 239, 87), slide.getBackground().getFillColor());
 
         assertFalse(slide.getFollowMasterGraphics());
     }
 
     void slide8(XSLFSlide slide){
-        assertTrue(slide.getBackground().getPaint(null) instanceof TexturePaint);
+        PaintStyle fs = slide.getBackground().getFillStyle().getPaint();
+        assertTrue(fs instanceof TexturePaint);
     }
 
     void slide9(XSLFSlide slide){
-        assertTrue(slide.getBackground().getPaint(null) instanceof TexturePaint);
+        PaintStyle fs = slide.getBackground().getFillStyle().getPaint();
+        assertTrue(fs instanceof TexturePaint);
     }
 
     void slide10(XSLFSlide slide){
-        assertTrue(slide.getBackground().getPaint(null).getClass().getName().indexOf("Gradient") > 0);
+        PaintStyle fs = slide.getBackground().getFillStyle().getPaint();
+        assertTrue(fs instanceof GradientPaint);
 
         XSLFTextShape sh1 = (XSLFTextShape)getShape(slide, "Title 3");
         XSLFTextRun run1 = sh1.getTextParagraphs().get(0).getTextRuns().get(0);

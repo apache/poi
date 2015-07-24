@@ -16,14 +16,18 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
+import org.junit.Test;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextCharacterProperties;
 
 /**
  * @author Yegor Kozlov
  */
-public class TestXSLFTextBox extends TestCase {
+public class TestXSLFTextBox {
 
+    @Test
     public void testPlaceholder() {
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFSlide slide = ppt.createSlide();
@@ -40,6 +44,7 @@ public class TestXSLFTextBox extends TestCase {
     /**
      * text box inherits default text proeprties from presentation.xml
      */
+    @Test
     public void testDefaultTextStyle() {
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFSlide slide = ppt.createSlide();
@@ -55,12 +60,12 @@ public class TestXSLFTextBox extends TestCase {
         XSLFTextRun r = shape.getTextParagraphs().get(0).getTextRuns().get(0);
 
         assertEquals(1800, pPr.getSz());
-        assertEquals(18.0, r.getFontSize());
+        assertEquals(18.0, r.getFontSize(), 0);
         assertEquals("Calibri", r.getFontFamily());
 
         pPr.setSz(900);
         pPr.getLatin().setTypeface("Arial");
-        assertEquals(9.0, r.getFontSize());
+        assertEquals(9.0, r.getFontSize(), 0);
         assertEquals("Arial", r.getFontFamily());
 
         // unset font size in presentation.xml. The value should be taken from master slide
@@ -68,12 +73,11 @@ public class TestXSLFTextBox extends TestCase {
         ppt.getCTPresentation().getDefaultTextStyle().getLvl1PPr().getDefRPr().unsetSz();
         pPr = slide.getSlideMaster().getXmlObject().getTxStyles().getOtherStyle().getLvl1PPr().getDefRPr();
         assertEquals(1800, pPr.getSz());
-        assertEquals(18.0, r.getFontSize());
+        assertEquals(18.0, r.getFontSize(), 0);
         pPr.setSz(2000);
-        assertEquals(20.0, r.getFontSize());
+        assertEquals(20.0, r.getFontSize(), 0);
 
         pPr.unsetSz();  // Should never be
-        assertEquals(-1.0, r.getFontSize());
-
+        assertNull(r.getFontSize());
     }
 }

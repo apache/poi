@@ -19,19 +19,20 @@ package org.apache.poi.hslf.model;
 
 
 import java.awt.*;
-import java.awt.Shape;
-import java.awt.font.FontRenderContext;
-import java.awt.font.GlyphVector;
-import java.awt.font.TextLayout;
+import java.awt.font.*;
+import java.awt.geom.*;
 import java.awt.image.*;
 import java.awt.image.renderable.RenderableImage;
-import java.awt.geom.*;
 import java.text.AttributedCharacterIterator;
 import java.util.Map;
-import org.apache.poi.hslf.usermodel.RichTextRun;
+
 import org.apache.poi.hslf.exceptions.HSLFException;
-import org.apache.poi.util.POILogger;
+import org.apache.poi.hslf.usermodel.*;
+import org.apache.poi.sl.usermodel.StrokeStyle;
+import org.apache.poi.sl.usermodel.VerticalAlignment;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * Translates Graphics2D calls into PowerPoint.
@@ -43,7 +44,7 @@ public final class PPGraphics2D extends Graphics2D implements Cloneable {
     protected POILogger log = POILogFactory.getLogger(this.getClass());
 
     //The ppt object to write into.
-    private ShapeGroup _group;
+    private HSLFGroupShape _group;
 
     private AffineTransform _transform;
     private Stroke _stroke;
@@ -58,7 +59,7 @@ public final class PPGraphics2D extends Graphics2D implements Cloneable {
      *
      * @param group           The shape group to write the graphics calls into.
      */
-    public PPGraphics2D(ShapeGroup group){
+    public PPGraphics2D(HSLFGroupShape group){
         this._group = group;
 
         _transform = new AffineTransform();
@@ -73,7 +74,7 @@ public final class PPGraphics2D extends Graphics2D implements Cloneable {
     /**
      * @return  the shape group being used for drawing
      */
-    public ShapeGroup getShapeGroup(){
+    public HSLFGroupShape getShapeGroup(){
         return _group;
     }
 
@@ -214,7 +215,7 @@ public final class PPGraphics2D extends Graphics2D implements Cloneable {
      */
     public void draw(Shape shape){
         GeneralPath path = new GeneralPath(_transform.createTransformedShape(shape));
-        Freeform p = new Freeform(_group);
+        HSLFFreeformShape p = new HSLFFreeformShape(_group);
         p.setPath(path);
         p.getFill().setForegroundColor(null);
         applyStroke(p);
@@ -250,26 +251,25 @@ public final class PPGraphics2D extends Graphics2D implements Cloneable {
      * @see #setClip
      */
     public void drawString(String s, float x, float y) {
-        TextBox txt = new TextBox(_group);
-        txt.getTextRun().supplySlideShow(_group.getSheet().getSlideShow());
-        txt.getTextRun().setSheet(_group.getSheet());
+        HSLFTextBox txt = new HSLFTextBox(_group);
+        txt.getTextParagraphs().get(0).supplySheet(_group.getSheet());
         txt.setText(s);
 
-        RichTextRun rt = txt.getTextRun().getRichTextRuns()[0];
-        rt.setFontSize(_font.getSize());
-        rt.setFontName(_font.getFamily());
+        HSLFTextRun rt = txt.getTextParagraphs().get(0).getTextRuns().get(0);
+        rt.setFontSize((double)_font.getSize());
+        rt.setFontFamily(_font.getFamily());
 
         if (getColor() != null) rt.setFontColor(getColor());
         if (_font.isBold()) rt.setBold(true);
         if (_font.isItalic()) rt.setItalic(true);
 
-        txt.setMarginBottom(0);
-        txt.setMarginTop(0);
-        txt.setMarginLeft(0);
-        txt.setMarginRight(0);
-        txt.setWordWrap(TextBox.WrapNone);
-        txt.setHorizontalAlignment(TextBox.AlignLeft);
-        txt.setVerticalAlignment(TextBox.AnchorMiddle);
+        txt.setBottomInset(0);
+        txt.setTopInset(0);
+        txt.setLeftInset(0);
+        txt.setRightInset(0);
+        txt.setWordWrap(HSLFTextBox.WrapNone);
+        txt.setHorizontalCentered(false);
+        txt.setVerticalAlignment(VerticalAlignment.MIDDLE);
 
 
         TextLayout layout = new TextLayout(s, _font, getFontRenderContext());
@@ -317,7 +317,7 @@ public final class PPGraphics2D extends Graphics2D implements Cloneable {
      */
     public void fill(Shape shape){
         GeneralPath path = new GeneralPath(_transform.createTransformedShape(shape));
-        Freeform p = new Freeform(_group);
+        HSLFFreeformShape p = new HSLFFreeformShape(_group);
         p.setPath(path);
         applyPaint(p);
         p.setLineColor(null);   //Fills must be "No Line"
@@ -1456,7 +1456,7 @@ public final class PPGraphics2D extends Graphics2D implements Cloneable {
      * @param hints the rendering hints to be set
      * @see RenderingHints
      */
-    public void addRenderingHints(Map hints){
+    public void addRenderingHints(Map<?,?> hints){
         this._hints.putAll(hints);
     }
 
@@ -1581,8 +1581,9 @@ public final class PPGraphics2D extends Graphics2D implements Cloneable {
      * @param hints the rendering hints to be set
      * @see RenderingHints
      */
-    public void setRenderingHints(Map hints){
-        this._hints = new RenderingHints(hints);
+    public void setRenderingHints(Map<?,?> hints){
+        this._hints = new RenderingHints(null);
+        this._hints.putAll(hints);
     }
 
     /**
@@ -1787,19 +1788,19 @@ public final class PPGraphics2D extends Graphics2D implements Cloneable {
         }
     }
 
-    protected void applyStroke(SimpleShape shape) {
+    protected void applyStroke(HSLFSimpleShape shape) {
         if (_stroke instanceof BasicStroke){
             BasicStroke bs = (BasicStroke)_stroke;
             shape.setLineWidth(bs.getLineWidth());
             float[] dash = bs.getDashArray();
             if (dash != null) {
                 //TODO: implement more dashing styles
-                shape.setLineDashing(Line.PEN_DASH);
+                shape.setLineDashing(StrokeStyle.LineDash.DASH);
             }
         }
     }
 
-    protected void applyPaint(SimpleShape shape) {
+    protected void applyPaint(HSLFSimpleShape shape) {
         if (_paint instanceof Color) {
             shape.getFill().setForegroundColor((Color)_paint);
         }

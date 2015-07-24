@@ -19,7 +19,9 @@ package org.apache.poi.hslf;
 
 
 import junit.framework.TestCase;
+
 import org.apache.poi.hslf.record.*;
+import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
 import org.apache.poi.POIDataSamples;
 
 /**
@@ -30,11 +32,11 @@ import org.apache.poi.POIDataSamples;
  */
 public final class TestRecordCounts extends TestCase {
 	// HSLFSlideShow primed on the test data
-	private HSLFSlideShow ss;
+	private HSLFSlideShowImpl ss;
 
 	public TestRecordCounts() throws Exception {
         POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
-		ss = new HSLFSlideShow(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
+		ss = new HSLFSlideShowImpl(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
 	}
 
 	public void testSheetsCount() {

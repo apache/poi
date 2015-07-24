@@ -18,30 +18,33 @@
 package org.apache.poi.hslf.model;
 
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
-import org.apache.poi.hslf.HSLFSlideShow;
-import org.apache.poi.hslf.record.SlideAtom;
-import org.apache.poi.hslf.usermodel.SlideShow;
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.hslf.record.SlideAtom;
+import org.apache.poi.hslf.usermodel.*;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests that changing a slide's idea of what notes sheet is its works right
  *
  * @author Nick Burch (nick at torchbox dot com)
  */
-public final class TestSlideChangeNotes extends TestCase {
+public final class TestSlideChangeNotes {
 	// SlideShow primed on the test data
-	private SlideShow ss;
+	private HSLFSlideShow ss;
 
-	public TestSlideChangeNotes() throws Exception {
+	@Before
+	public void init() throws Exception {
         POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
-		HSLFSlideShow hss = new HSLFSlideShow(_slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
-		ss = new SlideShow(hss);
+		HSLFSlideShowImpl hss = new HSLFSlideShowImpl(_slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
+		ss = new HSLFSlideShow(hss);
 	}
 
+	@Test
 	public void testSetToNone() {
-		Slide slideOne = ss.getSlides()[0];
+		HSLFSlide slideOne = ss.getSlides().get(0);
 		SlideAtom sa = slideOne.getSlideRecord().getSlideAtom();
 
 		slideOne.setNotes(null);
@@ -49,9 +52,10 @@ public final class TestSlideChangeNotes extends TestCase {
 		assertEquals(0, sa.getNotesID());
 	}
 
+	@Test
 	public void testSetToSomething() {
-		Slide slideOne = ss.getSlides()[0];
-		Notes notesOne = ss.getNotes()[1];
+		HSLFSlide slideOne = ss.getSlides().get(0);
+		HSLFNotes notesOne = ss.getNotes().get(1);
 		SlideAtom sa = slideOne.getSlideRecord().getSlideAtom();
 
 		slideOne.setNotes(notesOne);

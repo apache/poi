@@ -28,6 +28,7 @@ import java.awt.image.ImageObserver;
 import java.awt.image.RenderedImage;
 import java.awt.image.renderable.RenderableImage;
 import java.text.AttributedCharacterIterator;
+import java.util.Arrays;
 import java.util.Map;
 
 public class DummyGraphics2d
@@ -262,7 +263,7 @@ public class DummyGraphics2d
 
     public void setPaint( Paint paint )
     {
-        System.out.println( "setPain(Paint):" );
+        System.out.println( "setPaint(Paint):" );
         System.out.println( "paint = " + paint );
         g2D.setPaint( paint );
     }
@@ -285,7 +286,19 @@ public class DummyGraphics2d
     public void setStroke(Stroke s)
     {
         System.out.println( "setStroke(Stoke):" );
-        System.out.println( "s = " + s );
+        if (s instanceof BasicStroke) {
+            BasicStroke bs = (BasicStroke)s;
+            StringBuilder str = new StringBuilder("s = BasicStroke(");
+            str.append("dash[]: "+Arrays.toString(bs.getDashArray())+", ");
+            str.append("dashPhase: "+bs.getDashPhase()+", ");
+            str.append("endCap: "+bs.getEndCap()+", ");
+            str.append("lineJoin: "+bs.getLineJoin()+", ");
+            str.append("width: "+bs.getLineWidth()+", ");
+            str.append("miterLimit: "+bs.getMiterLimit()+")");
+            System.out.println(str.toString());
+        } else {
+            System.out.println( "s = " + s );
+        }
         g2D.setStroke( s );
     }
 

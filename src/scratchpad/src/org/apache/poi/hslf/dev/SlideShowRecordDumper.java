@@ -19,20 +19,16 @@ package org.apache.poi.hslf.dev;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-
 import java.util.Iterator;
 
-import org.apache.poi.hslf.HSLFSlideShow;
 import org.apache.poi.hslf.record.Record;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.ddf.DefaultEscherRecordFactory;
 import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherTextboxRecord;
-import org.apache.poi.hslf.record.EscherTextboxWrapper;
-import org.apache.poi.hslf.record.TextCharsAtom;
-import org.apache.poi.hslf.record.TextBytesAtom;
-import org.apache.poi.hslf.record.StyleTextPropAtom;
+import org.apache.poi.hslf.record.*;
+import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
 
 /**
  * This class provides a way to view the contents of a powerpoint file.
@@ -44,7 +40,7 @@ import org.apache.poi.hslf.record.StyleTextPropAtom;
 public final class SlideShowRecordDumper {
   private boolean optVerbose;
   private boolean optEscher;
-  private HSLFSlideShow doc;
+  private HSLFSlideShowImpl doc;
 
   /**
    *  right now this function takes one parameter: a ppt file, and outputs
@@ -103,7 +99,7 @@ public final class SlideShowRecordDumper {
   {
 	optVerbose = verbose;
   	optEscher = escher;
-	doc = new HSLFSlideShow(fileName);
+	doc = new HSLFSlideShowImpl(fileName);
   }
 
 
@@ -264,7 +260,7 @@ public final class SlideShowRecordDumper {
 
 		// print additional information for drawings and atoms
 		if (optEscher && cname.equals("PPDrawing")) {
-			DefaultEscherRecordFactory factory = new DefaultEscherRecordFactory();
+			DefaultEscherRecordFactory factory = new HSLFEscherRecordFactory();
 
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			r.writeOut(baos);

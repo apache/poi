@@ -45,6 +45,16 @@ public class TextProp implements Cloneable {
 	}
 
 	/**
+	 * Clones the property
+	 */
+	public TextProp(TextProp other) {
+	    this.sizeOfDataBlock = other.sizeOfDataBlock;
+	    this.maskInHeader = other.maskInHeader;
+	    this.propName = other.propName;
+	    this.dataValue = other.dataValue;
+	}
+	
+	/**
 	 * Name of the text property
 	 */
 	public String getName() { return propName; }
@@ -79,11 +89,36 @@ public class TextProp implements Cloneable {
 	/**
 	 * Clone, eg when you want to actually make use of one of these.
 	 */
-	public Object clone(){
+	@Override
+	public TextProp clone(){
 		try {
-			return super.clone();
+			return (TextProp)super.clone();
 		} catch(CloneNotSupportedException e) {
 			throw new InternalError(e.getMessage());
 		}
 	}
+	
+	public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + dataValue;
+        result = prime * result + maskInHeader;
+        result = prime * result + ((propName == null) ? 0 : propName.hashCode());
+        result = prime * result + sizeOfDataBlock;
+        return result;
+    }
+
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
+        TextProp other = (TextProp) obj;
+        if (dataValue != other.dataValue) return false;
+        if (maskInHeader != other.maskInHeader) return false;
+        if (propName == null) {
+            if (other.propName != null) return false;
+        } else if (!propName.equals(other.propName)) return false;
+        if (sizeOfDataBlock != other.sizeOfDataBlock) return false;
+        return true;
+    }
 }

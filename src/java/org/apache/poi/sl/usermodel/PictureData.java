@@ -17,10 +17,11 @@
 
 package org.apache.poi.sl.usermodel;
 
+import java.io.IOException;
+
 public interface PictureData {
-	public int getType();
-	public byte[] getUID();
+	public String getContentType();
 
 	public byte[] getData();
-	public void setData(byte[] data);
+	public void setData(byte[] data) throws IOException;
 }

@@ -19,10 +19,12 @@
 
 package org.apache.poi.xslf.usermodel;
 
-import java.awt.*;
+import java.awt.Color;
 import java.awt.geom.Rectangle2D;
 import java.io.FileOutputStream;
 import java.io.IOException;
+
+import org.apache.poi.sl.usermodel.TextParagraph.TextAlign;
 
 /**
  * PPTX Tables
@@ -85,5 +87,7 @@ public class Tutorial4 {
         FileOutputStream out = new FileOutputStream("table.pptx");
         ppt.write(out);
         out.close();
+        
+        ppt.close();
     }
 }

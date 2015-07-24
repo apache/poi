@@ -17,13 +17,30 @@
 
 package org.apache.poi.sl.usermodel;
 
+import java.awt.Graphics2D;
+
+
 /**
  * Common parent of Slides, Notes and Masters
  */
-public interface Sheet extends ShapeContainer {
-	public SlideShow getSlideShow();
+public interface Sheet<T extends Shape, SS extends SlideShow> extends ShapeContainer<T> {
+	SS getSlideShow();
 
-	public MasterSheet getMasterSheet();
+    /**
+     * @return whether shapes on the master sheet should be shown. By default master graphics is turned off.
+     * Sheets that support the notion of master (slide, slideLayout) should override it and
+     * check this setting in the sheet XML
+     */
+	boolean getFollowMasterGraphics();
+	
+	MasterSheet<T,SS> getMasterSheet();
 
-	public Background getBackground();
+	Background getBackground();
+	
+	/**
+	 * Convenience method to draw a sheet to a graphics context
+	 *
+	 * @param graphics
+	 */
+	void draw(Graphics2D graphics);
 }

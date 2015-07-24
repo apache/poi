@@ -17,19 +17,13 @@
 
 package org.apache.poi.hslf.record;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.LinkedList;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.apache.poi.hslf.model.textproperties.AlignmentTextProp;
-import org.apache.poi.hslf.model.textproperties.CharFlagsTextProp;
-import org.apache.poi.hslf.model.textproperties.ParagraphFlagsTextProp;
-import org.apache.poi.hslf.model.textproperties.TextProp;
-import org.apache.poi.hslf.model.textproperties.TextPropCollection;
-import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.POILogger;
+import org.apache.poi.hslf.model.textproperties.*;
+import org.apache.poi.hslf.model.textproperties.TextPropCollection.TextPropType;
+import org.apache.poi.util.*;
 
 /**
  * A StyleTextPropAtom (type 4001). Holds basic character properties
@@ -51,7 +45,7 @@ import org.apache.poi.util.POILogger;
 public final class StyleTextPropAtom extends RecordAtom
 {
     private byte[] _header;
-    private static long _type = 4001l;
+    private static final long _type = RecordTypes.StyleTextPropAtom.typeID;
     private byte[] reserved;
 
     private byte[] rawContents; // Holds the contents between write-outs
@@ -68,26 +62,26 @@ public final class StyleTextPropAtom extends RecordAtom
      *  Characters the paragraph covers, and also contains the TextProps
      *  that actually define the styling of the paragraph.
      */
-    private LinkedList<TextPropCollection> paragraphStyles;
-    public LinkedList<TextPropCollection> getParagraphStyles() { return paragraphStyles; }
+    private List<TextPropCollection> paragraphStyles;
+    public List<TextPropCollection> getParagraphStyles() { return paragraphStyles; }
     /**
      * Updates the link list of TextPropCollections which make up the
      *  paragraph stylings
      */
-    public void setParagraphStyles(LinkedList<TextPropCollection> ps) { paragraphStyles = ps; }
+    public void setParagraphStyles(List<TextPropCollection> ps) { paragraphStyles = ps; }
     /**
      * The list of all the different character stylings we code for.
      * Each entry is a TextPropCollection, which tells you how many
      *  Characters the character styling covers, and also contains the
      *  TextProps that actually define the styling of the characters.
      */
-    private LinkedList<TextPropCollection> charStyles;
-    public LinkedList<TextPropCollection> getCharacterStyles() { return charStyles; }
+    private List<TextPropCollection> charStyles;
+    public List<TextPropCollection> getCharacterStyles() { return charStyles; }
     /**
      * Updates the link list of TextPropCollections which make up the
      *  character stylings
      */
-    public void setCharacterStyles(LinkedList<TextPropCollection> cs) { charStyles = cs; }
+    public void setCharacterStyles(List<TextPropCollection> cs) { charStyles = cs; }
 
     /**
      * Returns how many characters the paragraph's
@@ -109,65 +103,13 @@ public final class StyleTextPropAtom extends RecordAtom
     public int getCharacterTextLengthCovered() {
         return getCharactersCovered(charStyles);
     }
-    private int getCharactersCovered(LinkedList<TextPropCollection> styles) {
+    private int getCharactersCovered(List<TextPropCollection> styles) {
         int length = 0;
         for(TextPropCollection tpc : styles) {
             length += tpc.getCharactersCovered();
         }
         return length;
     }
-
-    /** All the different kinds of paragraph properties we might handle */
-    public static final TextProp[] paragraphTextPropTypes = new TextProp[] {
-        new TextProp(0, 0x1, "hasBullet"),
-        new TextProp(0, 0x2, "hasBulletFont"),
-        new TextProp(0, 0x4, "hasBulletColor"),
-        new TextProp(0, 0x8, "hasBulletSize"),
-        new ParagraphFlagsTextProp(),
-        new TextProp(2, 0x80, "bullet.char"),
-        new TextProp(2, 0x10, "bullet.font"),
-        new TextProp(2, 0x40, "bullet.size"),
-        new TextProp(4, 0x20, "bullet.color"),
-        new AlignmentTextProp(),
-        new TextProp(2, 0x100, "text.offset"),
-        new TextProp(2, 0x400, "bullet.offset"),
-        new TextProp(2, 0x1000, "linespacing"),
-        new TextProp(2, 0x2000, "spacebefore"),
-        new TextProp(2, 0x4000, "spaceafter"),
-        new TextProp(2, 0x8000, "defaultTabSize"),
-        new TextProp(2, 0x100000, "tabStops"),
-        new TextProp(2, 0x10000, "fontAlign"),
-        new TextProp(2, 0xA0000, "wrapFlags"),
-        new TextProp(2, 0x200000, "textDirection")
-    };
-    /** All the different kinds of character properties we might handle */
-    public static final TextProp[] characterTextPropTypes = new TextProp[] {
-        new TextProp(0, 0x1, "bold"),
-        new TextProp(0, 0x2, "italic"),
-        new TextProp(0, 0x4, "underline"),
-        new TextProp(0, 0x8, "unused1"),
-        new TextProp(0, 0x10, "shadow"),
-        new TextProp(0, 0x20, "fehint"),
-        new TextProp(0, 0x40, "unused2"),
-        new TextProp(0, 0x80, "kumi"),
-        new TextProp(0, 0x100, "unused3"),
-        new TextProp(0, 0x200, "emboss"),
-        new TextProp(0, 0x400, "nibble1"),
-        new TextProp(0, 0x800, "nibble2"),
-        new TextProp(0, 0x1000, "nibble3"),
-        new TextProp(0, 0x2000, "nibble4"),
-        new TextProp(0, 0x4000, "unused4"),
-        new TextProp(0, 0x8000, "unused5"),
-        new CharFlagsTextProp(),
-        new TextProp(2, 0x10000, "font.index"),
-        new TextProp(0, 0x100000, "pp10ext"),
-        new TextProp(2, 0x200000, "asian.font.index"),
-        new TextProp(2, 0x400000, "ansi.font.index"),
-        new TextProp(2, 0x800000, "symbol.font.index"),
-        new TextProp(2, 0x20000, "font.size"),
-        new TextProp(4, 0x40000, "font.color"),
-        new TextProp(2, 0x80000, "superscript")
-    };
 
     /* *************** record code follows ********************** */
 
@@ -193,9 +135,9 @@ public final class StyleTextPropAtom extends RecordAtom
         System.arraycopy(source,start+8,rawContents,0,rawContents.length);
         reserved = new byte[0];
 
-        // Set empty linked lists, ready for when they call setParentTextSize
-        paragraphStyles = new LinkedList<TextPropCollection>();
-        charStyles = new LinkedList<TextPropCollection>();
+        // Set empty lists, ready for when they call setParentTextSize
+        paragraphStyles = new ArrayList<TextPropCollection>();
+        charStyles = new ArrayList<TextPropCollection>();
     }
 
 
@@ -213,19 +155,20 @@ public final class StyleTextPropAtom extends RecordAtom
         LittleEndian.putInt(_header,4,10);
 
         // Set empty paragraph and character styles
-        paragraphStyles = new LinkedList<TextPropCollection>();
-        charStyles = new LinkedList<TextPropCollection>();
+        paragraphStyles = new ArrayList<TextPropCollection>();
+        charStyles = new ArrayList<TextPropCollection>();
 
-        TextPropCollection defaultParagraphTextProps =
-                new TextPropCollection(parentTextSize, (short)0);
-        paragraphStyles.add(defaultParagraphTextProps);
-
-        TextPropCollection defaultCharacterTextProps =
-                new TextPropCollection(parentTextSize);
-        charStyles.add(defaultCharacterTextProps);
+        addParagraphTextPropCollection(parentTextSize);
+        addCharacterTextPropCollection(parentTextSize);
 
         // Set us as now initialised
         initialised = true;
+
+        try {
+            updateRawContents();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 
@@ -244,10 +187,6 @@ public final class StyleTextPropAtom extends RecordAtom
         //  on the properties
         updateRawContents();
 
-        // Now ensure that the header size is correct
-        int newSize = rawContents.length + reserved.length;
-        LittleEndian.putInt(_header,4,newSize);
-
         // Write out the (new) header
         out.write(_header);
 
@@ -264,9 +203,14 @@ public final class StyleTextPropAtom extends RecordAtom
      *  contains, so we can go ahead and initialise ourselves.
      */
     public void setParentTextSize(int size) {
+        if (initialised) return;
+        
         int pos = 0;
         int textHandled = 0;
 
+        paragraphStyles.clear();
+        charStyles.clear();
+        
         // While we have text in need of paragraph stylings, go ahead and
         // grok the contents as paragraph formatting data
         int prsize = size;
@@ -285,9 +229,9 @@ public final class StyleTextPropAtom extends RecordAtom
             pos += 4;
 
             // Now make sense of those properties
-            TextPropCollection thisCollection = new TextPropCollection(textLen, indent);
-            int plSize = thisCollection.buildTextPropList(
-                    paraFlags, paragraphTextPropTypes, rawContents, pos);
+            TextPropCollection thisCollection = new TextPropCollection(textLen, TextPropType.paragraph);
+            thisCollection.setIndentLevel(indent);
+            int plSize = thisCollection.buildTextPropList(paraFlags, rawContents, pos);
             pos += plSize;
 
             // Save this properties set
@@ -313,18 +257,14 @@ public final class StyleTextPropAtom extends RecordAtom
             textHandled += textLen;
             pos += 4;
 
-            // There is no 2 byte value
-            short no_val = -1;
-
             // Grab the 4 byte value that tells us what properties follow
             int charFlags = LittleEndian.getInt(rawContents,pos);
             pos += 4;
 
             // Now make sense of those properties
             // (Assuming we actually have some)
-            TextPropCollection thisCollection = new TextPropCollection(textLen, no_val);
-            int chSize = thisCollection.buildTextPropList(
-                               charFlags, characterTextPropTypes, rawContents, pos);
+            TextPropCollection thisCollection = new TextPropCollection(textLen, TextPropType.character);
+            int chSize = thisCollection.buildTextPropList(charFlags, rawContents, pos);
             pos += chSize;
 
             // Save this properties set
@@ -362,42 +302,47 @@ public final class StyleTextPropAtom extends RecordAtom
      * Updates the cache of the raw contents. Serialised the styles out.
      */
     private void updateRawContents() throws IOException {
-        if(!initialised) {
-            // We haven't groked the styles since creation, so just stick
-            // with what we found
-            return;
+        if (initialised) {
+            // Only update the style bytes, if the styles have been potentially
+            // changed
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    
+            // First up, we need to serialise the paragraph properties
+            for(TextPropCollection tpc : paragraphStyles) {
+                tpc.writeOut(baos);
+            }
+    
+            // Now, we do the character ones
+            for(TextPropCollection tpc : charStyles) {
+                tpc.writeOut(baos);
+            }
+    
+            rawContents = baos.toByteArray();
         }
-
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-        // First up, we need to serialise the paragraph properties
-        for(int i=0; i<paragraphStyles.size(); i++) {
-            TextPropCollection tpc = paragraphStyles.get(i);
-            tpc.writeOut(baos);
-        }
-
-        // Now, we do the character ones
-        for(int i=0; i<charStyles.size(); i++) {
-            TextPropCollection tpc = charStyles.get(i);
-            tpc.writeOut(baos);
-        }
-
-        rawContents = baos.toByteArray();
+        
+        // Now ensure that the header size is correct
+        int newSize = rawContents.length + reserved.length;
+        LittleEndian.putInt(_header,4,newSize);
     }
 
-    public void setRawContents(byte[] bytes) {
-        rawContents = bytes;
+    /**
+     * Clear styles, so new collections can be added
+     */
+    public void clearStyles() {
+        paragraphStyles.clear();
+        charStyles.clear();
         reserved = new byte[0];
-        initialised = false;
+        initialised = true;
     }
-
+    
     /**
      * Create a new Paragraph TextPropCollection, and add it to the list
      * @param charactersCovered The number of characters this TextPropCollection will cover
      * @return the new TextPropCollection, which will then be in the list
      */
     public TextPropCollection addParagraphTextPropCollection(int charactersCovered) {
-        TextPropCollection tpc = new TextPropCollection(charactersCovered, (short)0);
+        TextPropCollection tpc = new TextPropCollection(charactersCovered, TextPropType.paragraph);
         paragraphStyles.add(tpc);
         return tpc;
     }
@@ -407,7 +352,7 @@ public final class StyleTextPropAtom extends RecordAtom
      * @return the new TextPropCollection, which will then be in the list
      */
     public TextPropCollection addCharacterTextPropCollection(int charactersCovered) {
-        TextPropCollection tpc = new TextPropCollection(charactersCovered);
+        TextPropCollection tpc = new TextPropCollection(charactersCovered, TextPropType.character);
         charStyles.add(tpc);
         return tpc;
     }
@@ -429,51 +374,25 @@ public final class StyleTextPropAtom extends RecordAtom
         } else {
 
             out.append("Paragraph properties\n");
-
             for(TextPropCollection pr : getParagraphStyles()) {
-                out.append("  chars covered: " + pr.getCharactersCovered());
-                out.append("  special mask flags: 0x" + HexDump.toHex(pr.getSpecialMask()) + "\n");
-                for(TextProp p : pr.getTextPropList()) {
-                    out.append("    " + p.getName() + " = " + p.getValue() );
-                    out.append(" (0x" + HexDump.toHex(p.getValue()) + ")\n");
-                }
-
-                out.append("  para bytes that would be written: \n");
-
-                try {
-                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                    pr.writeOut(baos);
-                    byte[] b = baos.toByteArray();
-                    out.append(HexDump.dump(b, 0, 0));
-                } catch (Exception e ) {
-                    e.printStackTrace();
-                }
+                out.append(pr);
             }
 
             out.append("Character properties\n");
             for(TextPropCollection pr : getCharacterStyles()) {
-                out.append("  chars covered: " + pr.getCharactersCovered() );
-                out.append("  special mask flags: 0x" + HexDump.toHex(pr.getSpecialMask()) + "\n");
-                for(TextProp p : pr.getTextPropList()) {
-                    out.append("    " + p.getName() + " = " + p.getValue() );
-                    out.append(" (0x" + HexDump.toHex(p.getValue()) + ")\n");
-                }
-
-                out.append("  char bytes that would be written: \n");
-
-                try {
-                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                    pr.writeOut(baos);
-                    byte[] b = baos.toByteArray();
-                    out.append(HexDump.dump(b, 0, 0));
-                } catch (Exception e ) {
-                    e.printStackTrace();
-                }
+                out.append(pr);
             }
+            
+            out.append("Reserved bytes\n");
+            out.append( HexDump.dump(reserved, 0, 0) );
         }
 
         out.append("  original byte stream \n");
-        out.append( HexDump.dump(rawContents, 0, 0) );
+        
+        byte buf[] = new byte[rawContents.length+reserved.length];
+        System.arraycopy(rawContents, 0, buf, 0, rawContents.length);
+        System.arraycopy(reserved, 0, buf, rawContents.length, reserved.length);
+        out.append( HexDump.dump(buf, 0, 0) );
 
         return out.toString();
     }

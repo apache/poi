@@ -18,9 +18,10 @@
 package org.apache.poi.hslf.usermodel;
 
 
+import java.util.List;
+
 import junit.framework.TestCase;
-import org.apache.poi.hslf.*;
-import org.apache.poi.hslf.model.*;
+
 import org.apache.poi.POIDataSamples;
 
 /**
@@ -30,48 +31,48 @@ import org.apache.poi.POIDataSamples;
  */
 public final class TestCounts extends TestCase {
 	// SlideShow primed on the test data
-	private SlideShow ss;
+	private HSLFSlideShow ss;
 
 	public TestCounts() throws Exception {
         POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
-		HSLFSlideShow hss = new HSLFSlideShow(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
-		ss = new SlideShow(hss);
+		HSLFSlideShowImpl hss = new HSLFSlideShowImpl(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
+		ss = new HSLFSlideShow(hss);
 	}
 
 	public void testSheetsCount() {
-		Slide[] slides = ss.getSlides();
+		List<HSLFSlide> slides = ss.getSlides();
 		// Two sheets - master sheet is separate
-		assertEquals(2, slides.length);
+		assertEquals(2, slides.size());
 
 		// They are slides 1+2
-		assertEquals(1, slides[0].getSlideNumber());
-		assertEquals(2, slides[1].getSlideNumber());
+		assertEquals(1, slides.get(0).getSlideNumber());
+		assertEquals(2, slides.get(1).getSlideNumber());
 
 		// The ref IDs are 4 and 6
-		assertEquals(4, slides[0]._getSheetRefId());
-		assertEquals(6, slides[1]._getSheetRefId());
+		assertEquals(4, slides.get(0)._getSheetRefId());
+		assertEquals(6, slides.get(1)._getSheetRefId());
 
 		// These are slides 1+2 -> 256+257
-		assertEquals(256, slides[0]._getSheetNumber());
-		assertEquals(257, slides[1]._getSheetNumber());
+		assertEquals(256, slides.get(0)._getSheetNumber());
+		assertEquals(257, slides.get(1)._getSheetNumber());
 	}
 
 	public void testNotesCount() {
-		Notes[] notes = ss.getNotes();
+		List<HSLFNotes> notes = ss.getNotes();
 		// Two sheets -> two notes
 		// Note: there are also notes on the slide master
 		//assertEquals(3, notes.length); // When we do slide masters
-		assertEquals(2, notes.length);
+		assertEquals(2, notes.size());
 
 		// First is for master
-		//assertEquals(-2147483648, notes[0]._getSheetNumber());  // When we do slide masters
+		//assertEquals(-2147483648, notes.get(0)._getSheetNumber());  // When we do slide masters
 
 		// Next two are for the two slides
-		assertEquals(256, notes[0]._getSheetNumber());
-		assertEquals(257, notes[1]._getSheetNumber());
+		assertEquals(256, notes.get(0)._getSheetNumber());
+		assertEquals(257, notes.get(1)._getSheetNumber());
 
 		// They happen to go between the two slides in Ref terms
-		assertEquals(5, notes[0]._getSheetRefId());
-		assertEquals(7, notes[1]._getSheetRefId());
+		assertEquals(5, notes.get(0)._getSheetRefId());
+		assertEquals(7, notes.get(1)._getSheetRefId());
 	}
 }

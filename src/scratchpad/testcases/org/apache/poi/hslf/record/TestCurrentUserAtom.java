@@ -24,8 +24,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 
 import org.apache.poi.POIDataSamples;
-import org.apache.poi.hslf.HSLFSlideShow;
 import org.apache.poi.hslf.exceptions.EncryptedPowerPointFileException;
+import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.junit.Test;
@@ -72,7 +72,7 @@ public final class TestCurrentUserAtom {
 		new CurrentUserAtom(fs);
 		assertTrue(true); // not yet failed
 		
-		new HSLFSlideShow(fs);
+		new HSLFSlideShowImpl(fs);
 	}
 
 	@Test

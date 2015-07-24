@@ -17,6 +17,7 @@
 
 package org.apache.poi.hslf.record;
 
+import org.apache.poi.hslf.model.PPFont;
 import org.apache.poi.util.POILogger;
 
 import java.io.*;
@@ -75,9 +76,9 @@ public final class FontCollection extends RecordContainer {
      */
     public int addFont(String name) {
         int idx = getFontIndex(name);
-        if(idx != -1) return idx;
+        if (idx != -1) return idx;
 
-        return addFont(name, 0, 0, 4, 34);
+        return addFont(name, 0, 0, 4, PPFont.FF_SWISS | PPFont.VARIABLE_PITCH);
     }
 
     public int addFont(String name, int charset, int flags, int type, int pitch) {

@@ -16,11 +16,11 @@
 ==================================================================== */
 package org.apache.poi.hslf.examples;
 
-import org.apache.poi.hslf.usermodel.SlideShow;
-import org.apache.poi.hslf.model.HeadersFooters;
-import org.apache.poi.hslf.model.Slide;
-
 import java.io.FileOutputStream;
+
+import org.apache.poi.hslf.model.HeadersFooters;
+import org.apache.poi.hslf.usermodel.HSLFSlide;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 
 /**
  * Demonstrates how to set headers / footers
@@ -29,7 +29,7 @@ import java.io.FileOutputStream;
  */
 public class HeadersFootersDemo {
     public static void main(String[] args) throws Exception {
-        SlideShow ppt = new SlideShow();
+        HSLFSlideShow ppt = new HSLFSlideShow();
         
         HeadersFooters slideHeaders = ppt.getSlideHeadersFooters();
         slideHeaders.setFootersText("Created by POI-HSLF");
@@ -40,7 +40,7 @@ public class HeadersFootersDemo {
         notesHeaders.setFootersText("My notes footers");
         notesHeaders.setHeaderText("My notes header");
 
-        Slide slide = ppt.createSlide();
+        HSLFSlide slide = ppt.createSlide();
 
         FileOutputStream out = new FileOutputStream("headers_footers.ppt");
         ppt.write(out);

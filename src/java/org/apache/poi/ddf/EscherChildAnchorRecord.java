@@ -40,13 +40,26 @@ public class EscherChildAnchorRecord
     private int field_4_dy2;
 
     public int fillFields(byte[] data, int offset, EscherRecordFactory recordFactory) {
-        /*int bytesRemaining =*/ readHeader( data, offset );
+        int bytesRemaining = readHeader( data, offset );
         int pos            = offset + 8;
         int size           = 0;
-        field_1_dx1    =  LittleEndian.getInt( data, pos + size );size+=4;
-        field_2_dy1    =  LittleEndian.getInt( data, pos + size );size+=4;
-        field_3_dx2  =  LittleEndian.getInt( data, pos + size );size+=4;
-        field_4_dy2 =  LittleEndian.getInt( data, pos + size );size+=4;
+        switch (bytesRemaining) {
+        case 16: // RectStruct
+            field_1_dx1 =  LittleEndian.getInt( data, pos + size );size+=4;
+            field_2_dy1 =  LittleEndian.getInt( data, pos + size );size+=4;
+            field_3_dx2 =  LittleEndian.getInt( data, pos + size );size+=4;
+            field_4_dy2 =  LittleEndian.getInt( data, pos + size );size+=4;
+            break;
+        case 8: // SmallRectStruct
+            field_1_dx1 =  LittleEndian.getShort( data, pos + size );size+=2;
+            field_2_dy1 =  LittleEndian.getShort( data, pos + size );size+=2;
+            field_3_dx2 =  LittleEndian.getShort( data, pos + size );size+=2;
+            field_4_dy2 =  LittleEndian.getShort( data, pos + size );size+=2;
+            break;
+        default:
+            throw new RuntimeException("Invalid EscherChildAnchorRecord - neither 8 nor 16 bytes.");
+        }
+            
         return 8 + size;
     }
 
@@ -58,8 +71,8 @@ public class EscherChildAnchorRecord
         LittleEndian.putInt( data, pos, getRecordSize()-8 );       pos += 4;
         LittleEndian.putInt( data, pos, field_1_dx1 );             pos += 4;
         LittleEndian.putInt( data, pos, field_2_dy1 );             pos += 4;
-        LittleEndian.putInt( data, pos, field_3_dx2 );           pos += 4;
-        LittleEndian.putInt( data, pos, field_4_dy2 );          pos += 4;
+        LittleEndian.putInt( data, pos, field_3_dx2 );             pos += 4;
+        LittleEndian.putInt( data, pos, field_4_dy2 );             pos += 4;
 
         listener.afterRecordSerialize( pos, getRecordId(), pos - offset, this );
         return pos - offset;

@@ -17,30 +17,22 @@
 
 package org.apache.poi.hslf.usermodel;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.junit.Assume.assumeTrue;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Graphics2D;
-import java.awt.GraphicsEnvironment;
-import java.awt.RenderingHints;
+import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.io.File;
 import java.io.InputStream;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import javax.imageio.ImageIO;
 
 import org.apache.poi.POIDataSamples;
-import org.apache.poi.hslf.model.Slide;
-import org.apache.poi.hslf.model.TextPainter;
+import org.apache.poi.sl.draw.Drawable;
 import org.apache.poi.util.TempFile;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -51,7 +43,7 @@ import org.junit.Test;
 public class TestFontRendering {
     private static POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
 
-    @Ignore("This fails on some systems because fonts are rendered slightly different")
+    // @Ignore2("This fails on some systems because fonts are rendered slightly different")
     @Test
     public void bug55902mixedFontWithChineseCharacters() throws Exception {
         // font files need to be downloaded first via
@@ -82,12 +74,12 @@ public class TestFontRendering {
         }
         
         InputStream is = slTests.openResourceAsStream("bug55902-mixedFontChineseCharacters.ppt");
-        SlideShow ss = new SlideShow(is);
+        HSLFSlideShow ss = new HSLFSlideShow(is);
         is.close();
         
         Dimension pgsize = ss.getPageSize();
         
-        Slide slide = ss.getSlides()[0];
+        HSLFSlide slide = ss.getSlides().get(0);
         
         // render it
         double zoom = 1;
@@ -96,8 +88,8 @@ public class TestFontRendering {
         
         BufferedImage imgActual = new BufferedImage((int)Math.ceil(pgsize.width*zoom), (int)Math.ceil(pgsize.height*zoom), BufferedImage.TYPE_3BYTE_BGR);
         Graphics2D graphics = imgActual.createGraphics();
-        graphics.setRenderingHint(TextPainter.KEY_FONTFALLBACK, fallbackMap);
-        graphics.setRenderingHint(TextPainter.KEY_FONTMAP, fontMap);
+        graphics.setRenderingHint(Drawable.FONT_FALLBACK, fallbackMap);
+        graphics.setRenderingHint(Drawable.FONT_MAP, fontMap);
         graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         graphics.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
         graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
@@ -117,7 +109,7 @@ public class TestFontRendering {
         if(!Arrays.equals(expectedData, actualData)) {
             ImageIO.write(imgActual, "PNG", TempFile.createTempFile("TestFontRendering", ".png"));
         }
-        assertTrue("Expected to have matching raster-arrays, but found differences, size " + expectedData.length + " and " + actualData.length, 
-                Arrays.equals(expectedData, actualData));
+        
+        assertArrayEquals("Expected to have matching raster-arrays, but found differences", expectedData, actualData);
     }
 }

@@ -23,8 +23,8 @@ import java.io.IOException;
 import java.util.zip.InflaterInputStream;
 
 import org.apache.poi.hslf.exceptions.HSLFException;
-import org.apache.poi.hslf.model.Picture;
-import org.apache.poi.hslf.model.Shape;
+import org.apache.poi.hslf.usermodel.HSLFPictureShape;
+import org.apache.poi.util.Units;
 
 /**
  * Represents Macintosh PICT picture data.
@@ -82,8 +82,8 @@ public final class PICT extends Metafile {
         header.wmfsize = data.length - 512;
         //we don't have a PICT reader in java, have to set default image size  200x200
         header.bounds = new java.awt.Rectangle(0, 0, 200, 200);
-        header.size = new java.awt.Dimension(header.bounds.width*Shape.EMU_PER_POINT,
-                header.bounds.height*Shape.EMU_PER_POINT);
+        header.size = new java.awt.Dimension(header.bounds.width*Units.EMU_PER_POINT,
+                header.bounds.height*Units.EMU_PER_POINT);
         header.zipsize = compressed.length;
 
         byte[] checksum = getChecksum(data);
@@ -98,10 +98,10 @@ public final class PICT extends Metafile {
     }
 
     /**
-     * @see org.apache.poi.hslf.model.Picture#PICT
+     * @see org.apache.poi.hslf.usermodel.HSLFPictureShape#PICT
      */
     public int getType(){
-        return Picture.PICT;
+        return HSLFPictureShape.PICT;
     }
 
     /**
@@ -128,4 +128,9 @@ public final class PICT extends Metafile {
                 throw new IllegalArgumentException(signature+" is not a valid instance/signature value for PICT");
         }        
     }
+
+    public String getContentType() {
+        return "image/x-pict";
+    }
+
 }

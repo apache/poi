@@ -17,14 +17,22 @@
 
 package org.apache.poi.hslf.examples;
 
-import org.apache.poi.hslf.usermodel.*;
-import org.apache.poi.hslf.model.*;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+
+import org.apache.poi.hslf.model.OLEShape;
+import org.apache.poi.hslf.usermodel.HSLFObjectData;
+import org.apache.poi.hslf.usermodel.HSLFPictureData;
+import org.apache.poi.hslf.usermodel.HSLFPictureShape;
+import org.apache.poi.hslf.usermodel.HSLFShape;
+import org.apache.poi.hslf.usermodel.HSLFSlide;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
+import org.apache.poi.hslf.usermodel.HSLFSoundData;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hwpf.HWPFDocument;
-import org.apache.poi.hwpf.usermodel.Range;
 import org.apache.poi.hwpf.usermodel.Paragraph;
-
-import java.io.*;
+import org.apache.poi.hwpf.usermodel.Range;
 
 /**
  * Demonstrates how you can extract misc embedded data from a ppt file
@@ -41,11 +49,11 @@ public final class DataExtraction {
         }
 
         FileInputStream is = new FileInputStream(args[0]);
-        SlideShow ppt = new SlideShow(is);
+        HSLFSlideShow ppt = new HSLFSlideShow(is);
         is.close();
 
         //extract all sound files embedded in this presentation
-        SoundData[] sound = ppt.getSoundData();
+        HSLFSoundData[] sound = ppt.getSoundData();
         for (int i = 0; i < sound.length; i++) {
             String type = sound[i].getSoundType();  //*.wav
             String name = sound[i].getSoundName();  //typically file name
@@ -57,14 +65,14 @@ public final class DataExtraction {
             out.close();
         }
 
-        //extract embedded OLE documents
-        Slide[] slide = ppt.getSlides();
-        for (int i = 0; i < slide.length; i++) {
-            Shape[] shape = slide[i].getShapes();
-            for (int j = 0; j < shape.length; j++) {
-                if (shape[j] instanceof OLEShape) {
-                    OLEShape ole = (OLEShape) shape[j];
-                    ObjectData data = ole.getObjectData();
+        int oleIdx=-1, picIdx=-1;
+        for (HSLFSlide slide : ppt.getSlides()) {
+            //extract embedded OLE documents
+            for (HSLFShape shape : slide.getShapes()) {
+                if (shape instanceof OLEShape) {
+                    oleIdx++;
+                    OLEShape ole = (OLEShape) shape;
+                    HSLFObjectData data = ole.getObjectData();
                     String name = ole.getInstanceName();
                     if ("Worksheet".equals(name)) {
 
@@ -81,11 +89,11 @@ public final class DataExtraction {
                          }
 
                         //save on disk
-                        FileOutputStream out = new FileOutputStream(name + "-("+(j)+").doc");
+                        FileOutputStream out = new FileOutputStream(name + "-("+(oleIdx)+").doc");
                         doc.write(out);
                         out.close();
                      }  else {
-                        FileOutputStream out = new FileOutputStream(ole.getProgID() + "-"+(j+1)+".dat");
+                        FileOutputStream out = new FileOutputStream(ole.getProgID() + "-"+(oleIdx+1)+".dat");
                         InputStream dis = data.getData();
                         byte[] chunk = new byte[2048];
                         int count;
@@ -96,50 +104,44 @@ public final class DataExtraction {
                         out.close();
                     }
                 }
-
-            }
-        }
-
-        //Pictures
-        for (int i = 0; i < slide.length; i++) {
-            Shape[] shape = slide[i].getShapes();
-            for (int j = 0; j < shape.length; j++) {
-                if (shape[j] instanceof Picture) {
-                    Picture p = (Picture) shape[j];
-                    PictureData data = p.getPictureData();
+                
+                //Pictures
+                else if (shape instanceof HSLFPictureShape) {
+                    picIdx++;
+                    HSLFPictureShape p = (HSLFPictureShape) shape;
+                    HSLFPictureData data = p.getPictureData();
                     String name = p.getPictureName();
                     int type = data.getType();
                     String ext;
                     switch (type) {
-                        case Picture.JPEG:
+                        case HSLFPictureShape.JPEG:
                             ext = ".jpg";
                             break;
-                        case Picture.PNG:
+                        case HSLFPictureShape.PNG:
                             ext = ".png";
                             break;
-                        case Picture.WMF:
+                        case HSLFPictureShape.WMF:
                             ext = ".wmf";
                             break;
-                        case Picture.EMF:
+                        case HSLFPictureShape.EMF:
                             ext = ".emf";
                             break;
-                        case Picture.PICT:
+                        case HSLFPictureShape.PICT:
                             ext = ".pict";
                             break;
-                        case Picture.DIB:
+                        case HSLFPictureShape.DIB:
                             ext = ".dib";
                             break;
                         default:
                             continue;
                     }
-                    FileOutputStream out = new FileOutputStream("pict-" + j + ext);
+                    FileOutputStream out = new FileOutputStream("pict-" + picIdx + ext);
                     out.write(data.getData());
                     out.close();
                 }
-
             }
-        }
 
+        }
     }
 
     private static void usage(){

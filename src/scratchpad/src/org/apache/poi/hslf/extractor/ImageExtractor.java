@@ -17,10 +17,7 @@
 
 package org.apache.poi.hslf.extractor;
 
-import org.apache.poi.hslf.usermodel.SlideShow;
-import org.apache.poi.hslf.usermodel.PictureData;
-import org.apache.poi.hslf.HSLFSlideShow;
-import org.apache.poi.hslf.model.Picture;
+import org.apache.poi.hslf.usermodel.*;
 
 import java.io.IOException;
 import java.io.FileOutputStream;
@@ -37,12 +34,12 @@ public final class ImageExtractor {
             System.err.println("\tImageExtractor <file>");
             return;
         }
-        SlideShow ppt = new SlideShow(new HSLFSlideShow(args[0]));
+        HSLFSlideShow ppt = new HSLFSlideShow(new HSLFSlideShowImpl(args[0]));
 
         //extract all pictures contained in the presentation
-        PictureData[] pdata = ppt.getPictureData();
+        HSLFPictureData[] pdata = ppt.getPictureData();
         for (int i = 0; i < pdata.length; i++) {
-            PictureData pict = pdata[i];
+            HSLFPictureData pict = pdata[i];
 
             // picture data
             byte[] data = pict.getData();
@@ -50,22 +47,22 @@ public final class ImageExtractor {
             int type = pict.getType();
             String ext;
             switch (type) {
-                case Picture.JPEG:
+                case HSLFPictureShape.JPEG:
                     ext = ".jpg";
                     break;
-                case Picture.PNG:
+                case HSLFPictureShape.PNG:
                     ext = ".png";
                     break;
-                case Picture.WMF:
+                case HSLFPictureShape.WMF:
                     ext = ".wmf";
                     break;
-                case Picture.EMF:
+                case HSLFPictureShape.EMF:
                     ext = ".emf";
                     break;
-                case Picture.PICT:
+                case HSLFPictureShape.PICT:
                     ext = ".pict";
                     break;
-                case Picture.DIB:
+                case HSLFPictureShape.DIB:
                     ext = ".dib";
                     break;
                 default:

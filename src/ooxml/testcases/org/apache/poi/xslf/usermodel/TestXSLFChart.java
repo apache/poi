@@ -46,7 +46,7 @@ public class TestXSLFChart extends TestCase {
         String chartTitle = "Apache POI";  // first line is chart title
 
         XMLSlideShow pptx = XSLFTestDataSamples.openSampleDocument("pie-chart.pptx");
-        XSLFSlide slide = pptx.getSlides()[0];
+        XSLFSlide slide = pptx.getSlides().get(0);
 
         // find chart in the slide
         XSLFChart chart = null;

@@ -17,10 +17,13 @@
 package org.apache.poi.xslf.usermodel;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.sl.usermodel.Notes;
 import org.apache.poi.util.Beta;
 import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTCommonSlideData;
@@ -28,7 +31,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTNotesSlide;
 import org.openxmlformats.schemas.presentationml.x2006.main.NotesDocument;
 
 @Beta
-public final class XSLFNotes extends XSLFSheet {
+public final class XSLFNotes extends XSLFSheet implements Notes<XSLFShape,XMLSlideShow> {
    private CTNotesSlide _notes;
 
     /**
@@ -80,7 +83,6 @@ public final class XSLFNotes extends XSLFSheet {
     	return getMasterSheet().getTheme();
     }
 
-    @Override
     public XSLFNotesMaster getMasterSheet() {
         for (POIXMLDocumentPart p : getRelations()) {
            if (p instanceof XSLFNotesMaster){
@@ -88,5 +90,17 @@ public final class XSLFNotes extends XSLFSheet {
            }
         }
         return null;
+    }
+
+    @Override
+    public List<List<XSLFTextParagraph>> getTextParagraphs() {
+        List<List<XSLFTextParagraph>> tp = new ArrayList<List<XSLFTextParagraph>>();
+        for (XSLFShape sh : super.getShapes()) {
+            if (sh instanceof XSLFTextShape) {
+                XSLFTextShape txt = (XSLFTextShape)sh;
+                tp.add(txt.getTextParagraphs());
+            }
+        }
+        return tp;
     }
 }

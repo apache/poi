@@ -17,7 +17,7 @@
 
 package org.apache.poi.hslf.blip;
 
-import org.apache.poi.hslf.model.Picture;
+import org.apache.poi.hslf.usermodel.HSLFPictureShape;
 import org.apache.poi.util.PngUtils;
 
 /**
@@ -46,10 +46,10 @@ public final class PNG extends Bitmap {
 
     /**
      * @return type of  this picture
-     * @see  org.apache.poi.hslf.model.Picture#PNG
+     * @see  org.apache.poi.hslf.usermodel.HSLFPictureShape#PNG
      */
     public int getType(){
-        return Picture.PNG;
+        return HSLFPictureShape.PNG;
     }
 
     /**
@@ -75,5 +75,9 @@ public final class PNG extends Bitmap {
             default:
                 throw new IllegalArgumentException(signature+" is not a valid instance/signature value for PNG");
         }        
+    }
+
+    public String getContentType() {
+        return "image/png";
     }
 }

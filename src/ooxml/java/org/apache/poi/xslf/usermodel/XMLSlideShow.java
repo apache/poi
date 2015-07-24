@@ -20,18 +20,24 @@ import java.awt.Dimension;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.apache.poi.POIXMLDocument;
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.POIXMLException;
-import org.apache.poi.POIXMLRelation;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.TargetMode;
+import org.apache.poi.sl.usermodel.MasterSheet;
+import org.apache.poi.sl.usermodel.Resources;
+import org.apache.poi.sl.usermodel.SlideShow;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
@@ -60,7 +66,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.PresentationDocument
  *  top level object for creating new slides/etc.
  */
 @Beta
-public class XMLSlideShow  extends POIXMLDocument {
+public class XMLSlideShow extends POIXMLDocument implements SlideShow {
     private static POILogger _logger = POILogFactory.getLogger(XMLSlideShow.class);
 
     private CTPresentation _presentation;
@@ -323,7 +329,7 @@ public class XMLSlideShow  extends POIXMLDocument {
         
         XSLFTheme theme = (XSLFTheme) createRelationship(XSLFRelation.THEME, 
                 XSLFFactory.getInstance(), themeIndex);
-        theme.importTheme(getSlides()[0].getTheme());
+        theme.importTheme(getSlides().get(0).getTheme());
         
         _notesMaster.addRelation(theme.getPackageRelationship().getId(), theme);
         PackagePartName themePackagePartName = theme.getPackagePart().getPartName();
@@ -339,15 +345,16 @@ public class XMLSlideShow  extends POIXMLDocument {
         return _notesMaster; 
     }
 
-    public XSLFSlideMaster[] getSlideMasters() {
-        return _masters.values().toArray(new XSLFSlideMaster[_masters.size()]);
+    @Override
+    public List<XSLFSlideMaster> getSlideMasters() {
+        return new ArrayList<XSLFSlideMaster>(_masters.values());
     }
 
     /**
      * Return all the slides in the slideshow
      */
-    public XSLFSlide[] getSlides() {
-        return _slides.toArray(new XSLFSlide[_slides.size()]);
+    public List<XSLFSlide> getSlides() {
+        return _slides;
     }
     
     /**
@@ -437,7 +444,7 @@ public class XMLSlideShow  extends POIXMLDocument {
      */
     public int addPicture(byte[] pictureData, int format) {
         XSLFPictureData img = findPictureData(pictureData);
-        POIXMLRelation relDesc = XSLFPictureData.RELATIONS[format];
+        // POIXMLRelation relDesc = XSLFPictureData.RELATIONS[format];
 
         if(img == null) {
             int imageNumber = _pictures.size();
@@ -485,4 +492,13 @@ public class XMLSlideShow  extends POIXMLDocument {
         return null;
     }
 
+    public MasterSheet createMasterSheet() throws IOException {
+        // TODO: implement!
+        throw new UnsupportedOperationException();
+    }
+
+    public Resources getResources() {
+        // TODO: implement!
+        throw new UnsupportedOperationException();
+    }
 }

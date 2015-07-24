@@ -35,7 +35,7 @@ import java.io.OutputStream;
 public final class TextBytesAtom extends RecordAtom
 {
 	private byte[] _header;
-	private static long _type = 4008l;
+	private static long _type = RecordTypes.TextBytesAtom.typeID;
 
 	/** The bytes that make up the text */
 	private byte[] _text;

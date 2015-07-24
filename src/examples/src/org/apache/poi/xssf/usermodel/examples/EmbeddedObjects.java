@@ -20,7 +20,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.apache.poi.hslf.HSLFSlideShow;
+import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.xslf.XSLFSlideShow;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -54,7 +54,7 @@ public class EmbeddedObjects {
             }
             // PowerPoint Document - binary file format
             else if (contentType.equals("application/vnd.ms-powerpoint")) {
-                HSLFSlideShow slideShow = new HSLFSlideShow(pPart.getInputStream());
+                HSLFSlideShowImpl slideShow = new HSLFSlideShowImpl(pPart.getInputStream());
             }
             // PowerPoint Document - OpenXML file format
             else if (contentType.equals("application/vnd.openxmlformats-officedocument.presentationml.presentation")) {

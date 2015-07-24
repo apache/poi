@@ -17,17 +17,27 @@
 
 package org.apache.poi.hslf.model;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-
-import junit.framework.TestCase;
+import java.util.List;
 
 import org.apache.poi.POIDataSamples;
-import org.apache.poi.hslf.HSLFSlideShow;
-import org.apache.poi.hslf.extractor.PowerPointExtractor;
 import org.apache.poi.hslf.record.TextHeaderAtom;
-import org.apache.poi.hslf.usermodel.SlideShow;
+import org.apache.poi.hslf.usermodel.HSLFShape;
+import org.apache.poi.hslf.usermodel.HSLFSlide;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
+import org.apache.poi.hslf.usermodel.HSLFTable;
+import org.apache.poi.hslf.usermodel.HSLFTableCell;
+import org.apache.poi.sl.usermodel.Shape;
+import org.apache.poi.sl.usermodel.Slide;
+import org.apache.poi.sl.usermodel.SlideShow;
+import org.apache.poi.sl.usermodel.TableShape;
 import org.junit.Test;
 
 /**
@@ -35,26 +45,27 @@ import org.junit.Test;
  *
  * @author Yegor Kozlov
  */
-public final class TestTable extends TestCase {
+public final class TestTable {
     private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
 
     /**
      * Test that ShapeFactory works properly and returns <code>Table</code>
      */
+    @Test
     public void testShapeFactory() throws Exception {
-        SlideShow ppt = new SlideShow();
+        HSLFSlideShow ppt = new HSLFSlideShow();
 
-        Slide slide = ppt.createSlide();
+        HSLFSlide slide = ppt.createSlide();
 
-        Table tbl = new Table(2, 5);
+        HSLFTable tbl = new HSLFTable(2, 5);
         slide.addShape(tbl);
 
-        TableCell cell = tbl.getCell(0, 0);
+        HSLFTableCell cell = tbl.getCell(0, 0);
         //table cells have type=TextHeaderAtom.OTHER_TYPE, see bug #46033
-        assertEquals(TextHeaderAtom.OTHER_TYPE, cell.getTextRun().getRunType());
+        assertEquals(TextHeaderAtom.OTHER_TYPE, cell.getTextParagraphs().get(0).getRunType());
 
-        assertTrue(slide.getShapes()[0] instanceof Table);
-        Table tbl2 = (Table)slide.getShapes()[0];
+        assertTrue(slide.getShapes().get(0) instanceof HSLFTable);
+        HSLFTable tbl2 = (HSLFTable)slide.getShapes().get(0);
         assertEquals(tbl.getNumberOfColumns(), tbl2.getNumberOfColumns());
         assertEquals(tbl.getNumberOfRows(), tbl2.getNumberOfRows());
 
@@ -62,10 +73,10 @@ public final class TestTable extends TestCase {
         ppt.write(out);
         out.close();
 
-        ppt = new SlideShow(new ByteArrayInputStream(out.toByteArray()));
-        slide = ppt.getSlides()[0];
-        assertTrue(slide.getShapes()[0] instanceof Table);
-        Table tbl3 = (Table)slide.getShapes()[0];
+        ppt = new HSLFSlideShow(new ByteArrayInputStream(out.toByteArray()));
+        slide = ppt.getSlides().get(0);
+        assertTrue(slide.getShapes().get(0) instanceof HSLFTable);
+        HSLFTable tbl3 = (HSLFTable)slide.getShapes().get(0);
         assertEquals(tbl.getNumberOfColumns(), tbl3.getNumberOfColumns());
         assertEquals(tbl.getNumberOfRows(), tbl3.getNumberOfRows());
     }
@@ -73,34 +84,36 @@ public final class TestTable extends TestCase {
     /**
      * Error constructing Table when rownum=1
      */
+    @Test
     public void test45889(){
-        SlideShow ppt = new SlideShow();
-        Slide slide = ppt.createSlide();
-        Shape[] shapes;
-        Table tbl1 = new Table(1, 5);
+        HSLFSlideShow ppt = new HSLFSlideShow();
+        HSLFSlide slide = ppt.createSlide();
+        List<HSLFShape> shapes;
+        HSLFTable tbl1 = new HSLFTable(1, 5);
         assertEquals(5, tbl1.getNumberOfColumns());
         assertEquals(1, tbl1.getNumberOfRows());
         slide.addShape(tbl1);
 
         shapes = slide.getShapes();
-        assertEquals(1, shapes.length);
+        assertEquals(1, shapes.size());
 
-        Table tbl2 = (Table)shapes[0];
+        HSLFTable tbl2 = (HSLFTable)shapes.get(0);
         assertSame(tbl1.getSpContainer(), tbl2.getSpContainer());
 
         assertEquals(tbl1.getNumberOfColumns(), tbl2.getNumberOfColumns());
         assertEquals(tbl1.getNumberOfRows(), tbl2.getNumberOfRows());
     }
 
+    @Test
     public void testIllegalCOnstruction(){
         try {
-            new Table(0, 5);
+            new HSLFTable(0, 5);
             fail("Table(rownum, colnum) must throw IllegalArgumentException if any of tghe arguments is less than 1");
         } catch (IllegalArgumentException e){
 
         }
         try {
-            new Table(5, 0);
+            new HSLFTable(5, 0);
             fail("Table(rownum, colnum) must throw IllegalArgumentException if any of tghe arguments is less than 1");
         } catch (IllegalArgumentException e){
 
@@ -113,23 +126,23 @@ public final class TestTable extends TestCase {
      */
     @Test
     public void test57820() throws Exception {
-        SlideShow ppt = new SlideShow(new HSLFSlideShow(_slTests.openResourceAsStream("bug57820-initTableNullRefrenceException.ppt")));
+        SlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("bug57820-initTableNullRefrenceException.ppt"));
 
-        Slide[] slides = ppt.getSlides();
-        assertEquals(1, slides.length);
+        List<? extends Slide<?,?,?>> slides = ppt.getSlides();
+        assertEquals(1, slides.size());
 
-        Shape[] shapes = slides[0].getShapes(); //throws NullPointerException
+        List<? extends Shape> shapes = slides.get(0).getShapes(); //throws NullPointerException
 
-        Table tbl = null;
-        for(int idx = 0; idx < shapes.length; idx++) {
-            if(shapes[idx] instanceof Table) {
-                tbl = (Table)shapes[idx];
+        TableShape tbl = null;
+        for(Shape s : shapes) {
+            if(s instanceof TableShape) {
+                tbl = (TableShape)s;
                 break;
             }
         }
 
         assertNotNull(tbl);
 
-        assertEquals(-1, tbl.getAnchor().y);
+        assertEquals(-1, tbl.getAnchor().getY(), 0);
     }
 }

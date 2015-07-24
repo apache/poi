@@ -19,13 +19,12 @@
 
 package org.apache.poi.xslf.usermodel;
 
-import org.apache.poi.openxml4j.opc.PackagePart;
-
-import java.awt.*;
-import java.awt.geom.Rectangle2D;
+import java.awt.Dimension;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.List;
+
+import org.apache.poi.openxml4j.opc.PackagePart;
 
 /**
  * Demonstrates how you can extract data from a .pptx file
@@ -34,6 +33,7 @@ import java.util.List;
  */
 public final class DataExtraction {
 
+    @SuppressWarnings("unused")
     public static void main(String args[]) throws Exception {
 
         if (args.length == 0) {
@@ -76,7 +76,6 @@ public final class DataExtraction {
         Dimension pageSize = ppt.getPageSize();  // size of the canvas in points
         for(XSLFSlide slide : ppt.getSlides()) {
             for(XSLFShape shape : slide){
-                Rectangle2D anchor = shape.getAnchor();  // position on the canvas
                 if(shape instanceof XSLFTextShape) {
                     XSLFTextShape txShape = (XSLFTextShape)shape;
                     System.out.println(txShape.getText());
@@ -89,6 +88,8 @@ public final class DataExtraction {
                 }
             }
         }
+        
+        ppt.close();
     }
 
 }

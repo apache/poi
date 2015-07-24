@@ -24,12 +24,14 @@ import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
 
 import javax.imageio.ImageIO;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.FileOutputStream;
+import java.util.List;
 
 /**
  * An utulity to convert slides of a .pptx slide show to a PNG image
@@ -79,11 +81,11 @@ public class PPTX2PNG {
         int width = (int) (pgsize.width * scale);
         int height = (int) (pgsize.height * scale);
 
-        XSLFSlide[] slide = ppt.getSlides();
-        for (int i = 0; i < slide.length; i++) {
+        List<XSLFSlide> slide = ppt.getSlides();
+        for (int i = 0; i < slide.size(); i++) {
             if (slidenum != -1 && slidenum != (i + 1)) continue;
 
-            String title = slide[i].getTitle();
+            String title = slide.get(i).getTitle();
             System.out.println("Rendering slide " + (i + 1) + (title == null ? "" : ": " + title));
 
             BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
@@ -101,7 +103,7 @@ public class PPTX2PNG {
             graphics.scale(scale, scale);
 
             // draw stuff
-            slide[i].draw(graphics);
+            slide.get(i).draw(graphics);
 
             // save the result
             int sep = file.lastIndexOf(".");

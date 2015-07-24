@@ -29,13 +29,11 @@ import org.junit.runners.Suite;
     TestFreeform.class,
     TestHeadersFooters.class,
     TestHyperlink.class,
-    TestImagePainter.class,
     TestLine.class,
     TestMovieShape.class,
     TestOleEmbedding.class,
     TestPPFont.class,
     TestPPGraphics2D.class,
-    TestPicture.class,
     TestSetBoldItalic.class,
     TestShapes.class,
     TestSheet.class,
@@ -43,9 +41,7 @@ import org.junit.runners.Suite;
     TestSlideMaster.class,
     TestSlides.class,
     TestTable.class,
-    TestTextRun.class,
-    TestTextRunReWrite.class,
-    TestTextShape.class
+    TestTextRunReWrite.class
 })
 public class AllHSLFModelTests {
 }

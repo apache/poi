@@ -17,11 +17,12 @@
 
 package org.apache.poi.hslf.record;
 
-import org.apache.poi.util.LittleEndian;
-
-import java.io.OutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianByteArrayInputStream;
 
 /**
  * The special info runs contained in this text.
@@ -30,6 +31,8 @@ import java.util.ArrayList;
  * @author Yegor Kozlov
  */
 public final class TextSpecInfoAtom extends RecordAtom {
+    private static final long _type = RecordTypes.TextSpecInfoAtom.typeID;
+    
     /**
      * Record header.
      */
@@ -41,6 +44,15 @@ public final class TextSpecInfoAtom extends RecordAtom {
     private byte[] _data;
 
     /**
+     * Constructs an empty atom, with a default run of size 1 
+     */
+    public TextSpecInfoAtom() {
+        _header = new byte[8];
+        LittleEndian.putUInt(_header, 4, _type);
+        reset(1);
+    }
+    
+    /**
      * Constructs the link related atom record from its
      *  source data.
      *
@@ -48,7 +60,7 @@ public final class TextSpecInfoAtom extends RecordAtom {
      * @param start the start offset into the byte array.
      * @param len the length of the slice in the byte array.
      */
-    protected TextSpecInfoAtom(byte[] source, int start, int len) {
+    public TextSpecInfoAtom(byte[] source, int start, int len) {
         // Get the header.
         _header = new byte[8];
         System.arraycopy(source,start,_header,0,8);
@@ -62,7 +74,7 @@ public final class TextSpecInfoAtom extends RecordAtom {
      * Gets the record type.
      * @return the record type.
      */
-    public long getRecordType() { return RecordTypes.TextSpecInfoAtom.typeID; }
+    public long getRecordType() { return _type; }
 
     /**
      * Write the contents of the record back, so it can be written
@@ -90,18 +102,49 @@ public final class TextSpecInfoAtom extends RecordAtom {
      * @param size  the site of parent text
      */
     public void reset(int size){
-        _data = new byte[10];
-        // 01 00 00 00
-        LittleEndian.putInt(_data, 0, size);
-        // 01 00 00 00
-        LittleEndian.putInt(_data, 4, 1); //mask
-        // 00 00
-        LittleEndian.putShort(_data, 8, (short)0); //langId
+        TextSpecInfoRun sir = new TextSpecInfoRun(size);
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        try {
+            sir.writeOut(bos);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        _data = bos.toByteArray();
 
         // Update the size (header bytes 5-8)
         LittleEndian.putInt(_header, 4, _data.length);
     }
 
+    /**
+     * Adapts the size by enlarging the last {@link TextSpecInfoRun}
+     * or chopping the runs to the given length
+     *
+     * @param size
+     */
+    public void setParentSize(int size) {
+        assert(size > 0);
+        int covered = 0;
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        TextSpecInfoRun runs[] = getTextSpecInfoRuns();
+        assert(runs.length > 0);
+        for (int i=0; i<runs.length && covered < size; i++) {
+            TextSpecInfoRun run = runs[i];
+            if (covered + run.getLength() > size || i == runs.length-1) {
+                run.setLength(size-covered);
+            }
+            covered += run.getLength();
+            try {
+                run.writeOut(bos);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        _data = bos.toByteArray();
+
+        // Update the size (header bytes 5-8)
+        LittleEndian.putInt(_header, 4, _data.length);
+    }
+    
     /**
      * Get the number of characters covered by this records
      *
@@ -109,92 +152,17 @@ public final class TextSpecInfoAtom extends RecordAtom {
      */
     public int getCharactersCovered(){
         int covered = 0;
-        TextSpecInfoRun[] runs = getTextSpecInfoRuns();
-        for (int i = 0; i < runs.length; i++) covered += runs[i].len;
+        for (TextSpecInfoRun r : getTextSpecInfoRuns()) covered += r.length;
         return covered;
     }
 
     public TextSpecInfoRun[] getTextSpecInfoRuns(){
-        ArrayList<TextSpecInfoRun> lst = new ArrayList<TextSpecInfoRun>();
-        int pos = 0;
-        int[] bits = {1, 0, 2};
-        while(pos < _data.length) {
-            TextSpecInfoRun run = new TextSpecInfoRun();
-            run.len = LittleEndian.getInt(_data, pos); pos += 4;
-            run.mask = LittleEndian.getInt(_data, pos); pos += 4;
-            for (int i = 0; i < bits.length; i++) {
-                if((run.mask & 1 << bits[i]) != 0){
-                    switch (bits[i]){
-                        case 0:
-                            run.spellInfo = LittleEndian.getShort(_data, pos); pos += 2;
-                            break;
-                        case 1:
-                            run.langId = LittleEndian.getShort(_data, pos); pos += 2;
-                            break;
-                        case 2:
-                            run.altLangId = LittleEndian.getShort(_data, pos); pos += 2;
-                            break;
-                    }
-                }
-            }
-            lst.add(run);
+        LittleEndianByteArrayInputStream bis = new LittleEndianByteArrayInputStream(_data);
+        List<TextSpecInfoRun> lst = new ArrayList<TextSpecInfoRun>();
+        while (bis.available() > 0) {
+            lst.add(new TextSpecInfoRun(bis));
         }
         return lst.toArray(new TextSpecInfoRun[lst.size()]);
     }
 
-    public static class TextSpecInfoRun {
-        //Length of special info run.
-        protected int len;
-
-        //Special info mask of this run;
-        protected int mask;
-
-        // info fields as indicated by the mask.
-        // -1 means the bit is not set
-        protected short spellInfo = -1;
-        protected short langId = -1;
-        protected short altLangId = -1;
-
-        /**
-         * Spelling status of this text. See Spell Info table below.
-         *
-         * <p>Spell Info Types:</p>
-         * <li>0    Unchecked
-         * <li>1    Previously incorrect, needs rechecking
-         * <li>2    Correct
-         * <li>3    Incorrect
-         *
-         * @return Spelling status of this text
-         */
-        public short getSpellInfo(){
-            return spellInfo;
-        }
-
-        /**
-         * Windows LANGID for this text.
-         *
-         * @return Windows LANGID for this text.
-         */
-        public short getLangId(){
-            return spellInfo;
-        }
-
-        /**
-         * Alternate Windows LANGID of this text;
-         * must be a valid non-East Asian LANGID if the text has an East Asian language,
-         * otherwise may be an East Asian LANGID or language neutral (zero).
-         *
-         * @return  Alternate Windows LANGID of this text
-         */
-        public short getAltLangId(){
-            return altLangId;
-        }
-
-        /**
-         * @return Length of special info run.
-         */
-        public int length(){
-            return len;
-        }
-    }
 }

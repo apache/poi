@@ -17,14 +17,17 @@
 
 package org.apache.poi.hslf.model;
 
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
+import java.util.List;
+
+import org.apache.poi.POIDataSamples;
 import org.apache.poi.hslf.exceptions.EncryptedPowerPointFileException;
 import org.apache.poi.hslf.record.ColorSchemeAtom;
 import org.apache.poi.hslf.record.PPDrawing;
-import org.apache.poi.hslf.usermodel.SlideShow;
-import org.apache.poi.POIDataSamples;
+import org.apache.poi.hslf.usermodel.*;
+import org.junit.Test;
 
 /**
  * Test common functionality of the <code>Sheet</code> object.
@@ -32,17 +35,18 @@ import org.apache.poi.POIDataSamples;
  *
  * @author Yegor Kozlov
  */
-public final class TestSheet extends TestCase {
+public final class TestSheet {
     private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
 
     /**
      * For each ppt in the test directory check that all sheets are properly initialized
      */
+    @Test
     public void testSheet() throws Exception {
         String[] tests = {"SampleShow.ppt", "backgrounds.ppt", "text_shapes.ppt", "pictures.ppt"};
         for (String file : tests) {
             try {
-                SlideShow ppt = new SlideShow(_slTests.openResourceAsStream(file));
+                HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream(file));
                 doSlideShow(ppt);
             } catch (EncryptedPowerPointFileException e){
                 ; //skip encrypted ppt
@@ -50,21 +54,20 @@ public final class TestSheet extends TestCase {
         }
     }
 
-    private void doSlideShow(SlideShow ppt) {
-        Slide[] slide = ppt.getSlides();
-        for (int i = 0; i < slide.length; i++) {
-            verify(slide[i]);
+    private void doSlideShow(HSLFSlideShow ppt) {
+        for (HSLFSlide slide : ppt.getSlides()) {
+            verify(slide);
 
-            Notes notes = slide[i].getNotesSheet();
+            HSLFNotes notes = slide.getNotes();
             if(notes != null) verify(notes);
 
-            MasterSheet master = slide[i].getMasterSheet();
+            HSLFMasterSheet master = slide.getMasterSheet();
             assertNotNull(master);
             verify(master);
         }
     }
 
-    private void verify(Sheet sheet){
+    private void verify(HSLFSheet sheet){
         assertNotNull(sheet.getSlideShow());
 
         ColorSchemeAtom colorscheme = sheet.getColorScheme();
@@ -73,29 +76,28 @@ public final class TestSheet extends TestCase {
         PPDrawing ppdrawing = sheet.getPPDrawing();
         assertNotNull(ppdrawing);
 
-        Background background = sheet.getBackground();
+        HSLFBackground background = sheet.getBackground();
         assertNotNull(background);
 
         assertTrue(sheet._getSheetNumber() != 0);
         assertTrue(sheet._getSheetRefId() != 0);
 
-        TextRun[] txt = sheet.getTextRuns();
-        if (txt == null) {
-            throw new AssertionFailedError("no text runs");
-        }
-        for (int i = 0; i < txt.length; i++) {
-            assertNotNull(txt[i].getSheet());
+        List<List<HSLFTextParagraph>> txt = sheet.getTextParagraphs();
+        // assertTrue("no text runs", txt != null && !txt.isEmpty());
+        // backgrounds.ppt has no texts
+        for (List<HSLFTextParagraph> t : txt) {
+            for (HSLFTextParagraph tp : t) {
+                assertNotNull(tp.getSheet());
+            }
         }
 
-        Shape[] shape = sheet.getShapes();
-        if (shape == null) {
-            throw new AssertionFailedError("no shapes");
-        }
-        for (int i = 0; i < shape.length; i++) {
-            assertNotNull(shape[i].getSpContainer());
-            assertNotNull(shape[i].getSheet());
-            assertNotNull(shape[i].getShapeName());
-            assertNotNull(shape[i].getAnchor());
+        List<HSLFShape> shape = sheet.getShapes();
+        assertTrue("no shapes", shape != null && !shape.isEmpty());
+        for (HSLFShape s : shape) {
+            assertNotNull(s.getSpContainer());
+            assertNotNull(s.getSheet());
+            assertNotNull(s.getShapeName());
+            assertNotNull(s.getAnchor());
         }
     }
 }

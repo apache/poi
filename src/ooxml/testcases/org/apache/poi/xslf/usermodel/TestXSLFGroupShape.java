@@ -16,16 +16,19 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
 
 import java.awt.Dimension;
 import java.awt.geom.Rectangle2D;
 
+import org.junit.Test;
+
 /**
  * @author Yegor Kozlov
  */
-public class TestXSLFGroupShape extends TestCase {
+public class TestXSLFGroupShape {
 
+    @Test
     public void testCreateShapes() {
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFSlide slide = ppt.createSlide();
@@ -33,7 +36,7 @@ public class TestXSLFGroupShape extends TestCase {
         ppt.setPageSize(new Dimension(792, 612));
         
         XSLFGroupShape group = slide.createGroup();
-        assertEquals(1, slide.getShapes().length);
+        assertEquals(1, slide.getShapes().size());
 
         Rectangle2D interior = new Rectangle2D.Double(-10, -10, 20, 20);
         group.setInteriorAnchor(interior);
@@ -43,45 +46,46 @@ public class TestXSLFGroupShape extends TestCase {
         group.setAnchor(anchor);
         assertEquals(anchor, group.getAnchor());
 
-        assertEquals(0, group.getShapes().length);
+        assertTrue(group.getShapes().isEmpty());
 
         XSLFTextBox shape1 = group.createTextBox();
-        assertEquals(1, group.getShapes().length);
-        assertSame(shape1, group.getShapes()[0]);
+        assertEquals(1, group.getShapes().size());
+        assertSame(shape1, group.getShapes().get(0));
         assertEquals(3, shape1.getShapeId());
 
         XSLFAutoShape shape2 = group.createAutoShape();
-        assertEquals(2, group.getShapes().length);
-        assertSame(shape1, group.getShapes()[0]);
-        assertSame(shape2, group.getShapes()[1]);
+        assertEquals(2, group.getShapes().size());
+        assertSame(shape1, group.getShapes().get(0));
+        assertSame(shape2, group.getShapes().get(1));
         assertEquals(4, shape2.getShapeId());
 
         XSLFConnectorShape shape3 = group.createConnector();
-        assertEquals(3, group.getShapes().length);
-        assertSame(shape3, group.getShapes()[2]);
+        assertEquals(3, group.getShapes().size());
+        assertSame(shape3, group.getShapes().get(2));
         assertEquals(5, shape3.getShapeId());
 
         XSLFGroupShape shape4 = group.createGroup();
-        assertEquals(4, group.getShapes().length);
-        assertSame(shape4, group.getShapes()[3]);
+        assertEquals(4, group.getShapes().size());
+        assertSame(shape4, group.getShapes().get(3));
         assertEquals(6, shape4.getShapeId());
 
         group.removeShape(shape2);
-        assertEquals(3, group.getShapes().length);
-        assertSame(shape1, group.getShapes()[0]);
-        assertSame(shape3, group.getShapes()[1]);
-        assertSame(shape4, group.getShapes()[2]);
+        assertEquals(3, group.getShapes().size());
+        assertSame(shape1, group.getShapes().get(0));
+        assertSame(shape3, group.getShapes().get(1));
+        assertSame(shape4, group.getShapes().get(2));
 
         group.removeShape(shape3);
-        assertEquals(2, group.getShapes().length);
-        assertSame(shape1, group.getShapes()[0]);
-        assertSame(shape4, group.getShapes()[1]);
+        assertEquals(2, group.getShapes().size());
+        assertSame(shape1, group.getShapes().get(0));
+        assertSame(shape4, group.getShapes().get(1));
 
         group.removeShape(shape1);
         group.removeShape(shape4);
-        assertEquals(0, group.getShapes().length);
+        assertTrue(group.getShapes().isEmpty());
     }
 
+    @Test
     public void testRemoveShapes() {
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFSlide slide = ppt.createSlide();

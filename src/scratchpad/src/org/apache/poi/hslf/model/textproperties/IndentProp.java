@@ -41,7 +41,7 @@ public class IndentProp  {
     public int getCharactersCovered() { return charactersCovered; }
     
     public int getIndentLevel() {
-        return (int)indentLevel;
+        return indentLevel;
     }
     
     /**

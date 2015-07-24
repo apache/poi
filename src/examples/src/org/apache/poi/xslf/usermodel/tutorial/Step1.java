@@ -50,12 +50,12 @@ public class Step1 {
                 if(shape instanceof XSLFTextShape) {
                     XSLFTextShape tsh = (XSLFTextShape)shape;
                     for(XSLFTextParagraph p : tsh){
-                        System.out.println("Paragraph level: " + p.getLevel());
+                        System.out.println("Paragraph level: " + p.getIndentLevel());
                         for(XSLFTextRun r : p){
-                            System.out.println(r.getText());
+                            System.out.println(r.getRawText());
                             System.out.println("  bold: " + r.isBold());
                             System.out.println("  italic: " + r.isItalic());
-                            System.out.println("  underline: " + r.isUnderline());
+                            System.out.println("  underline: " + r.isUnderlined());
                             System.out.println("  font.family: " + r.getFontFamily());
                             System.out.println("  font.size: " + r.getFontSize());
                             System.out.println("  font.color: " + r.getFontColor());

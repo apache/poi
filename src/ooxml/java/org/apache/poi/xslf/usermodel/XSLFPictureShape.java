@@ -19,7 +19,6 @@
 
 package org.apache.poi.xslf.usermodel;
 
-import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -32,6 +31,7 @@ import javax.xml.namespace.QName;
 import org.apache.poi.POIXMLException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.sl.usermodel.PictureShape;
 import org.apache.poi.util.Beta;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
@@ -52,7 +52,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTPictureNonVisual;
  * Represents a picture shape
  */
 @Beta
-public class XSLFPictureShape extends XSLFSimpleShape {
+public class XSLFPictureShape extends XSLFSimpleShape implements PictureShape {
     private XSLFPictureData _data;
 
     /*package*/ XSLFPictureShape(CTPicture shape, XSLFSheet sheet) {
@@ -179,30 +179,14 @@ public class XSLFPictureShape extends XSLFSimpleShape {
         return id;
     }
 
-    public Insets getBlipClip(){
+    @Override
+    public Insets getClipping(){
         CTPicture ct = (CTPicture)getXmlObject();
         CTRelativeRect r = ct.getBlipFill().getSrcRect();
         return (r == null) ? null : new Insets(r.getT(), r.getL(), r.getB(), r.getR());
     }
 
-    @Override
-    public void drawContent(Graphics2D graphics) {
-
-        XSLFPictureData data = getPictureData();
-    	if(data == null) return;
-
-        XSLFImageRenderer renderer = (XSLFImageRenderer)graphics.getRenderingHint(XSLFRenderingHint.IMAGE_RENDERER);
-        if(renderer == null) renderer = new XSLFImageRenderer();
-
-        RenderableShape rShape = new RenderableShape(this);
-        Rectangle2D anchor = rShape.getAnchor(graphics);
-        
-        Insets insets = getBlipClip();
-
-        renderer.drawImage(graphics, data, anchor, insets);
-    }
-
-
+    @SuppressWarnings("deprecation")
     @Override
     void copy(XSLFShape sh){
         super.copy(sh);
