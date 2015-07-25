@@ -27,6 +27,9 @@ import java.io.*;
 
 import javax.imageio.ImageIO;
 
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
+
 /**
  * For now this class renders only images supported by the javax.imageio.ImageIO
  * framework. Subclasses can override this class to support other formats, for
@@ -77,6 +80,8 @@ import javax.imageio.ImageIO;
  * </pre>
  */
 public class ImageRenderer {
+    private final static POILogger LOG = POILogFactory.getLogger(ImageRenderer.class);
+    
     protected BufferedImage img;
 
     /**
@@ -86,7 +91,7 @@ public class ImageRenderer {
      * @param contentType the content type
      */
     public void loadImage(InputStream data, String contentType) throws IOException {
-        img = convertBufferedImage(ImageIO.read(data));
+        img = convertBufferedImage(ImageIO.read(data), contentType);
     }
 
     /**
@@ -96,10 +101,18 @@ public class ImageRenderer {
      * @param contentType the content type
      */
     public void loadImage(byte data[], String contentType) throws IOException {
-        img = convertBufferedImage(ImageIO.read(new ByteArrayInputStream(data)));
+        img = convertBufferedImage(ImageIO.read(new ByteArrayInputStream(data)), contentType);
     }
 
-    protected static BufferedImage convertBufferedImage(BufferedImage img) {
+    /**
+     * Add alpha channel to buffered image 
+     */
+    private static BufferedImage convertBufferedImage(BufferedImage img, String contentType) {
+        if (img == null) {
+            LOG.log(POILogger.WARN, "Content-type: "+contentType+" is not support. Image ignored.");
+            return null;
+        }
+        
         BufferedImage bi = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_ARGB);
         Graphics g = bi.getGraphics();
         g.drawImage(img, 0, 0, null);
