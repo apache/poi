@@ -23,7 +23,23 @@ import java.awt.Graphics2D;
 import java.awt.font.TextLayout;
 import java.text.AttributedString;
 
-import org.apache.poi.sl.usermodel.*;
+import org.apache.poi.sl.usermodel.Background;
+import org.apache.poi.sl.usermodel.ConnectorShape;
+import org.apache.poi.sl.usermodel.FreeformShape;
+import org.apache.poi.sl.usermodel.GroupShape;
+import org.apache.poi.sl.usermodel.MasterSheet;
+import org.apache.poi.sl.usermodel.Notes;
+import org.apache.poi.sl.usermodel.PictureShape;
+import org.apache.poi.sl.usermodel.PlaceableShape;
+import org.apache.poi.sl.usermodel.Shape;
+import org.apache.poi.sl.usermodel.Sheet;
+import org.apache.poi.sl.usermodel.Slide;
+import org.apache.poi.sl.usermodel.SlideShow;
+import org.apache.poi.sl.usermodel.TableShape;
+import org.apache.poi.sl.usermodel.TextBox;
+import org.apache.poi.sl.usermodel.TextParagraph;
+import org.apache.poi.sl.usermodel.TextRun;
+import org.apache.poi.sl.usermodel.TextShape;
 
 public class DrawFactory {
     protected static ThreadLocal<DrawFactory> defaultFactory = new ThreadLocal<DrawFactory>();
@@ -85,8 +101,10 @@ public class DrawFactory {
             return getDrawable((MasterSheet<? extends Shape, ? extends SlideShow>)shape);
         } else if (shape instanceof Sheet) {
             return getDrawable((Sheet<? extends Shape, ? extends SlideShow>)shape);
+        } else if (shape.getClass().isAnnotationPresent(DrawNotImplemented.class)) {
+            return new DrawNothing<Shape>(shape);
         }
-
+        
         throw new IllegalArgumentException("Unsupported shape type: "+shape.getClass());
     }
 

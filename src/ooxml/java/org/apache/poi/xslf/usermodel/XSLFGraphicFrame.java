@@ -27,6 +27,7 @@ import org.apache.poi.POIXMLException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.sl.draw.DrawNotImplemented;
 import org.apache.poi.sl.usermodel.ShapeType;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Units;
@@ -42,6 +43,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTGraphicalObjectFra
  * @author Yegor Kozlov
  */
 @Beta
+@DrawNotImplemented
 public class XSLFGraphicFrame extends XSLFShape {
     /*package*/ XSLFGraphicFrame(CTGraphicalObjectFrame shape, XSLFSheet sheet){
         super(shape,sheet);
