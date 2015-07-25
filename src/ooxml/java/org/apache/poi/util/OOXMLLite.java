@@ -24,6 +24,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.net.URL;
+import java.security.CodeSource;
+import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -35,6 +38,7 @@ import java.util.jar.JarFile;
 import java.util.regex.Pattern;
 
 import junit.framework.TestCase;
+
 import org.junit.Test;
 import org.junit.internal.TextListener;
 import org.junit.runner.JUnitCore;import org.junit.runner.Result;
@@ -210,14 +214,16 @@ public final class OOXMLLite {
             Vector<Class<?>> classes = (Vector<Class<?>>) _classes.get(appLoader);
             Map<String, Class<?>> map = new HashMap<String, Class<?>>();
             for (Class<?> cls : classes) {
-                // e.g. proxy-classes, ... 
-                if(cls.getProtectionDomain() == null || 
-                        cls.getProtectionDomain().getCodeSource() == null) {
-                    continue;
-                }
-
-                    String jar = cls.getProtectionDomain().getCodeSource().getLocation().toString();
-                    if(jar.indexOf(ptrn) != -1) map.put(cls.getName(), cls);
+                // e.g. proxy-classes, ...
+                ProtectionDomain pd = cls.getProtectionDomain();
+                if (pd == null) continue;
+                CodeSource cs = pd.getCodeSource();
+                if (cs == null) continue;
+                URL loc = cs.getLocation();
+                if (loc == null) continue;
+                
+                String jar = loc.toString();
+                if(jar.indexOf(ptrn) != -1) map.put(cls.getName(), cls);
             }
             return map;
         } catch (IllegalAccessException e) {
