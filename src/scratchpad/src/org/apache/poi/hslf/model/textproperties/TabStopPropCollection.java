@@ -90,7 +90,6 @@ public class TabStopPropCollection extends TextProp {
      *
      * @param data the data stream
      * @param offset the offset within the data
-     * @return the new offset
      */
     public void parseProperty(byte data[], int offset) {
         int count = LittleEndian.getUShort(data, offset);

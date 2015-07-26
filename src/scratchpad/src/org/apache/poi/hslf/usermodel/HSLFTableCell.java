@@ -43,7 +43,7 @@ public final class HSLFTableCell extends HSLFTextBox {
     /**
      * Create a TableCell object and initialize it from the supplied Record container.
      *
-     * @param escherRecord       {@link EscherSpContainer} container which holds information about this shape
+     * @param escherRecord       EscherSpContainer which holds information about this shape
      * @param parent    the parent of the shape
      */
    protected HSLFTableCell(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape> parent){

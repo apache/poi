@@ -48,7 +48,7 @@ public final class HSLFTextRun implements TextRun {
 
 	/**
 	 * Create a new wrapper around a rich text string
-	 * @param parent The parent paragraph
+	 * @param parentParagraph the parent paragraph
 	 */
 	public HSLFTextRun(HSLFTextParagraph parentParagraph) {
 		this.parentParagraph = parentParagraph;

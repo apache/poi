@@ -144,7 +144,7 @@ public final class HSLFSlideShowImpl extends POIDocument {
     *  POIFS Filesystem. Parses the document and places all the
     *  important stuff into data structures.
     *
-    * @deprecated Use {@link #HSLFSlideShow(DirectoryNode)} instead
+    * @deprecated Use {@link #HSLFSlideShowImpl(DirectoryNode)} instead
     * @param dir the POIFS directory to read from
     * @param filesystem the POIFS FileSystem to read from
     * @throws IOException if there is a problem while parsing the document.

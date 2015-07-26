@@ -212,7 +212,7 @@ public class HSLFGroupShape extends HSLFShape implements GroupShape<HSLFShape> {
 
     /**
      * Return type of the shape.
-     * In most cases shape group type is {@link org.apache.poi.hslf.model.ShapeTypes#NotPrimitive}
+     * In most cases shape group type is {@link org.apache.poi.sl.usermodel.ShapeType#NOT_PRIMITIVE}
      *
      * @return type of the shape.
      */
