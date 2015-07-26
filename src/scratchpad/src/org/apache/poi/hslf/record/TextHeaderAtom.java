@@ -58,7 +58,7 @@ public final class TextHeaderAtom extends RecordAtom implements ParentAwareRecor
 	public int getIndex() { return index; }
 
     /**
-     *  @param id 0-based index of the text run in the SLWT container
+     *  @param index 0-based index of the text run in the SLWT container
      */
 	public void setIndex(int index) { this.index = index; }
 

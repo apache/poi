@@ -271,9 +271,9 @@ public abstract class XSLFShape implements Shape {
      * properties. This method is the generalized form of selecting and casting those
      * properties.
      *
-     * @param resultClass
-     * @param xquery
-     * @return
+     * @param resultClass the requested result class
+     * @param xquery the simple (xmlbean) xpath expression to the property
+     * @return the xml object at the xpath location, or null if not found
      */
     @SuppressWarnings("unchecked")
     protected <T extends XmlObject> T selectProperty(Class<T> resultClass, String xquery) {
@@ -354,7 +354,6 @@ public abstract class XSLFShape implements Shape {
      * Convert shape fill into java.awt.Paint. The result is either Color or
      * TexturePaint or GradientPaint or null
      *
-     * @param graphics  the target graphics
      * @param obj       the xml to read. Must contain elements from the EG_ColorChoice group:
      * <code>
      *     a:scrgbClr    RGB Color Model - Percentage Variant

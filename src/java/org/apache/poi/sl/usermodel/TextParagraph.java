@@ -279,7 +279,7 @@ public interface TextParagraph<T extends TextRun> extends Iterable<T> {
      *      paragraph.setLineSpacing(-48.0);
      * </code></pre>
      * 
-     * @param linespacing the vertical line spacing
+     * @param lineSpacing the vertical line spacing
      */
     void setLineSpacing(Double lineSpacing);
 

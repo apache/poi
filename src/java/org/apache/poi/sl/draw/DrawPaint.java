@@ -37,7 +37,7 @@ import org.apache.poi.util.POILogger;
 /**
  * This class handles color transformations
  * 
- * @see HSL code taken from <a href="https://tips4java.wordpress.com/2009/07/05/hsl-color/">Java Tips Weblog</a>
+ * @see <a href="https://tips4java.wordpress.com/2009/07/05/hsl-color/">HSL code taken from Java Tips Weblog</a>
  */
 public class DrawPaint {
     // HSL code is public domain - see https://tips4java.wordpress.com/contact-us/
@@ -147,8 +147,7 @@ public class DrawPaint {
      * Apply lumMod / lumOff adjustments
      *
      * @param c the color to modify
-     * @param lumMod luminance modulation in the range [0..100000]
-     * @param lumOff luminance offset in the range [0..100000]
+     * @param fc the color style containing the lumMod / lumOff adjustments
      * @return  modified color
      * 
      * @see <a href="https://msdn.microsoft.com/en-us/library/dd560821%28v=office.12%29.aspx">Using Office Open XML to Customize Document Formatting in the 2007 Office System</a>

@@ -37,7 +37,7 @@ public interface ShapeContainer<T extends Shape> extends Iterable<T> {
      * (optional operation).  If this sheet does not contain the element,
      * it is unchanged.
      *
-     * @param xShape shape to be removed from this sheet, if present
+     * @param shape the shape to be removed from this sheet, if present
      * @return <tt>true</tt> if this sheet contained the specified element
      * @throws IllegalArgumentException if the type of the specified shape
      *         is incompatible with this sheet (optional)

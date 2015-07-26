@@ -253,12 +253,11 @@ public class HSLFPictureShape extends HSLFSimpleShape implements PictureShape {
         }
     }
 
-    /**
-     * The anchor specified by {@link #getLogicalAnchor2D()} is the displayed size,
-     * i.e. the size of the already clipped image
-     */
+
     @Override
     public Insets getClipping() {
+        // The anchor specified by the escher properties is the displayed size,
+        // i.e. the size of the already clipped image
         EscherOptRecord opt = getEscherOptRecord();
         
         double top    = getFractProp(opt, EscherProperties.BLIP__CROPFROMTOP);
