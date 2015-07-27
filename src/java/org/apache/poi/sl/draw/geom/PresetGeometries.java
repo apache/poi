@@ -73,7 +73,7 @@ public class PresetGeometries extends LinkedHashMap<String, CustomGeometry> {
             cntElem++;
             
             if(containsKey(name)) {
-                LOG.log(POILogger.WARN, "Duplicate definoition of " + name);
+                LOG.log(POILogger.WARN, "Duplicate definition of " + name);
             }
             put(name, new CustomGeometry(cus));
         }       

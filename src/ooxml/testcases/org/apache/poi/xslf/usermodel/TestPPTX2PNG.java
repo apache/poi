@@ -22,11 +22,8 @@ package org.apache.poi.xslf.usermodel;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.imageio.ImageIO;
 
 import org.apache.poi.sl.draw.Drawable;
 import org.apache.poi.util.JvmBugs;
@@ -43,16 +40,20 @@ public class TestPPTX2PNG {
     public void render() throws Exception {
         String[] testFiles = {"backgrounds.pptx","layouts.pptx", "sample.pptx", "shapes.pptx", "themes.pptx",};
         for(String sampleFile : testFiles){
-            XMLSlideShow pptx = XSLFTestDataSamples.openSampleDocument(sampleFile);
-            Dimension pg = pptx.getPageSize();
-            int slideNo=1;
-            for(XSLFSlide slide : pptx.getSlides()){
-                BufferedImage img = new BufferedImage(pg.width, pg.height, BufferedImage.TYPE_INT_ARGB);
-                Graphics2D graphics = img.createGraphics();
-                fixFonts(graphics);
-                slide.draw(graphics);
-                // ImageIO.write(img, "PNG", new File("build/tmp/"+sampleFile.replaceFirst(".pptx?", "-")+slideNo+".png"));
-                slideNo++;
+            try {
+                XMLSlideShow pptx = XSLFTestDataSamples.openSampleDocument(sampleFile);
+                Dimension pg = pptx.getPageSize();
+                //int slideNo=1;
+                for(XSLFSlide slide : pptx.getSlides()){
+                    BufferedImage img = new BufferedImage(pg.width, pg.height, BufferedImage.TYPE_INT_ARGB);
+                    Graphics2D graphics = img.createGraphics();
+                    fixFonts(graphics);
+                    slide.draw(graphics);
+                    // ImageIO.write(img, "PNG", new File("build/tmp/"+sampleFile.replaceFirst(".pptx?", "-")+slideNo+".png"));
+                    //slideNo++;
+                }
+            } catch (IllegalStateException e) {
+                throw new IllegalStateException("While reading file " + sampleFile, e);
             }
         }
     }
