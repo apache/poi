@@ -18,11 +18,13 @@
  */
 package org.apache.poi.sl.draw.geom;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Rectangle2D;
+import java.io.IOException;
+import java.net.URL;
+import java.util.Enumeration;
 import java.util.Map;
 
 import org.junit.Test;
@@ -35,10 +37,8 @@ import org.junit.Test;
 public class TestPresetGeometries {
     @Test
     public void testRead(){
-
         Map<String, CustomGeometry> shapes = PresetGeometries.getInstance();
         assertEquals(187, shapes.size());
-
 
         for(String name : shapes.keySet()) {
             CustomGeometry geom = shapes.get(name);
@@ -52,8 +52,11 @@ public class TestPresetGeometries {
                 assertNotNull(path);
             }
         }
+        
+        // we get the same instance on further calls
+        assertTrue(shapes == PresetGeometries.getInstance());
     }
-    
+
     // helper methods to adjust list of presets for other tests
     public static void clearPreset() {
         // ensure that we are initialized
@@ -65,5 +68,25 @@ public class TestPresetGeometries {
     
     public static void resetPreset() {
         PresetGeometries._inst = null;
+    }
+
+    @Test
+    public void testCheckXMLParser() throws Exception{
+        // Gump reports a strange error because of an unavailable XML Parser, let's try to find out where 
+        // this comes from
+        // 
+        Enumeration<URL> resources = this.getClass().getClassLoader().getResources("META-INF/services/javax.xml.stream.XMLEventFactory");
+        printURLs(resources);
+        resources = ClassLoader.getSystemResources("META-INF/services/javax.xml.stream.XMLEventFactory");
+        printURLs(resources);
+        resources = ClassLoader.getSystemResources("org/apache/poi/sl/draw/geom/presetShapeDefinitions.xml");
+        printURLs(resources);
+    }
+
+    private void printURLs(Enumeration<URL> resources) {
+        while(resources.hasMoreElements()) {
+            URL url = resources.nextElement();
+            System.out.println("URL: " + url);
+        }
     }
 }

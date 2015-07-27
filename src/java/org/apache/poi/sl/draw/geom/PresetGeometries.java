@@ -96,18 +96,23 @@ public class PresetGeometries extends LinkedHashMap<String, CustomGeometry> {
 
     public static synchronized PresetGeometries getInstance(){
         if(_inst == null) {
-            _inst = new PresetGeometries();
+            // use a local object first to not assign a partly constructed object
+            // in case of failure
+            PresetGeometries lInst = new PresetGeometries();
             try {
                 InputStream is = PresetGeometries.class.
                     getResourceAsStream("presetShapeDefinitions.xml");
-                _inst.init(is);
-                is.close();
+                try {
+                    lInst.init(is);
+                } finally {
+                    is.close();
+                }
             } catch (Exception e){
                 throw new RuntimeException(e);
             }
+            _inst = lInst;
         }
 
         return _inst;
     }
-
 }
