@@ -246,8 +246,9 @@ public class SheetUtil {
      * @return true if computing the size for this Font will succeed, false otherwise
      */
     public static boolean canComputeColumnWidht(Font font) {
-        AttributedString str = new AttributedString("1");
-        copyAttributes(font, str, 0, "1".length());
+        // not sure what is the best value sample-here, only "1" did not work on some platforms...
+        AttributedString str = new AttributedString("1w");
+        copyAttributes(font, str, 0, "1w".length());
 
         TextLayout layout = new TextLayout(str.getIterator(), fontRenderContext);
         if(layout.getBounds().getWidth() > 0) {
