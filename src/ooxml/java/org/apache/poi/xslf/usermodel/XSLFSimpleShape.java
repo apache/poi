@@ -577,7 +577,7 @@ public abstract class XSLFSimpleShape extends XSLFShape implements SimpleShape {
             String name = spPr.getPrstGeom().getPrst().toString();
             geom = dict.get(name);
             if(geom == null) {
-                throw new IllegalStateException("Unknown shape geometry: " + name);
+                throw new IllegalStateException("Unknown shape geometry: " + name + ", available geometries are: " + dict.keySet());
             }
         } else if (spPr.isSetCustGeom()){
             XMLStreamReader staxReader = spPr.getCustGeom().newXMLStreamReader();

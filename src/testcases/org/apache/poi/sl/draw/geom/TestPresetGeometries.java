@@ -16,7 +16,7 @@
  *    limitations under the License.
  * ====================================================================
  */
-package org.apache.poi.xslf.geom;
+package org.apache.poi.sl.draw.geom;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -25,7 +25,6 @@ import java.awt.geom.GeneralPath;
 import java.awt.geom.Rectangle2D;
 import java.util.Map;
 
-import org.apache.poi.sl.draw.geom.*;
 import org.junit.Test;
 
 /**
@@ -53,5 +52,18 @@ public class TestPresetGeometries {
                 assertNotNull(path);
             }
         }
+    }
+    
+    // helper methods to adjust list of presets for other tests
+    public static void clearPreset() {
+        // ensure that we are initialized
+        assertNotNull(PresetGeometries.getInstance());
+        
+        // test handling if some presets are not found
+        PresetGeometries._inst.clear();
+    }
+    
+    public static void resetPreset() {
+        PresetGeometries._inst = null;
     }
 }

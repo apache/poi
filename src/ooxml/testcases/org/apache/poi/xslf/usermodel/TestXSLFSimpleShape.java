@@ -19,14 +19,25 @@ package org.apache.poi.xslf.usermodel;
 import static org.junit.Assert.*;
 
 import java.awt.Color;
+import java.io.IOException;
 import java.util.List;
 
+import org.apache.poi.sl.draw.geom.TestPresetGeometries;
 import org.apache.poi.sl.usermodel.StrokeStyle.LineCap;
 import org.apache.poi.sl.usermodel.StrokeStyle.LineDash;
 import org.apache.poi.util.Units;
 import org.apache.poi.xslf.XSLFTestDataSamples;
 import org.junit.Test;
-import org.openxmlformats.schemas.drawingml.x2006.main.*;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTEffectStyleItem;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTEffectStyleList;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTOuterShadowEffect;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTPresetGeometry2D;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTSchemeColor;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTStyleMatrix;
+import org.openxmlformats.schemas.drawingml.x2006.main.STLineCap;
+import org.openxmlformats.schemas.drawingml.x2006.main.STPresetLineDashVal;
+import org.openxmlformats.schemas.drawingml.x2006.main.STShapeType;
 
 /**
  * @author Yegor Kozlov
@@ -34,7 +45,7 @@ import org.openxmlformats.schemas.drawingml.x2006.main.*;
 public class TestXSLFSimpleShape {
     
     @Test
-    public void testLineStyles() {
+    public void testLineStyles() throws IOException {
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFSlide slide = ppt.createSlide();
 
@@ -121,10 +132,12 @@ public class TestXSLFSimpleShape {
         assertEquals(null, ln3.getLineDash());
         ln3.setLineCap(null);
         assertEquals(null, ln3.getLineDash());
+        
+        ppt.close();
     }
 
     @Test
-    public void testFill() {
+    public void testFill() throws IOException {
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFSlide slide = ppt.createSlide();
 
@@ -146,6 +159,7 @@ public class TestXSLFSimpleShape {
         shape.setFillColor(null);
         assertNull(shape.getFillColor());
         assertFalse(shape.getSpPr().isSetSolidFill());
+        ppt.close();
     }
 
     @Test
@@ -252,7 +266,7 @@ public class TestXSLFSimpleShape {
 
     @SuppressWarnings({ "deprecation", "unused" })
     @Test
-    public void testShadowEffects(){
+    public void testShadowEffects() throws IOException{
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFSlide slide = ppt.createSlide();
         CTStyleMatrix styleMatrix = slide.getTheme().getXmlObject().getThemeElements().getFmtScheme();
@@ -261,5 +275,65 @@ public class TestXSLFSimpleShape {
         for(CTEffectStyleItem ef : lst.getEffectStyleArray()){
             CTOuterShadowEffect obj = ef.getEffectLst().getOuterShdw();
         }
+        ppt.close();
+    }
+    
+    @Test
+    public void testValidGeometry() throws Exception {
+        XMLSlideShow ppt = new XMLSlideShow();
+        XSLFSlide slide = ppt.createSlide();
+
+        XSLFSimpleShape shape = slide.createAutoShape();
+        CTShapeProperties spPr = shape.getSpPr();
+        
+        CTPresetGeometry2D prstGeom = CTPresetGeometry2D.Factory.newInstance();
+        prstGeom.setPrst(STShapeType.Enum.forInt(1));
+        
+        assertNotNull(prstGeom.getPrst());
+        assertNotNull(prstGeom.getPrst().toString());
+        assertNotNull(spPr.getPrstGeom());
+        spPr.setPrstGeom(prstGeom);
+        assertNotNull(spPr.getPrstGeom().getPrst());
+        assertNotNull(spPr.getPrstGeom().getPrst().toString());
+        
+        assertNotNull(shape.getGeometry());
+        
+        ppt.close();
+    }
+
+    
+    @Test
+    public void testInvalidGeometry() throws Exception {
+        XMLSlideShow ppt = new XMLSlideShow();
+        XSLFSlide slide = ppt.createSlide();
+
+        XSLFSimpleShape shape = slide.createAutoShape();
+        CTShapeProperties spPr = shape.getSpPr();
+        
+        CTPresetGeometry2D prstGeom = CTPresetGeometry2D.Factory.newInstance();
+        prstGeom.setPrst(STShapeType.Enum.forInt(1));
+        
+        assertNotNull(prstGeom.getPrst());
+        assertNotNull(prstGeom.getPrst().toString());
+        assertNotNull(spPr.getPrstGeom());
+        spPr.setPrstGeom(prstGeom);
+        assertNotNull(spPr.getPrstGeom().getPrst());
+        assertNotNull(spPr.getPrstGeom().getPrst().toString());
+        
+        try {
+            // cause the geometries to be not found
+            TestPresetGeometries.clearPreset();
+            try {
+                shape.getGeometry();
+                fail("Should fail without the geometry");
+            } catch (IllegalStateException e) {
+                assertTrue(e.getMessage(), e.getMessage().contains("line"));
+            }
+        } finally {
+            // reset to not affect other tests
+            TestPresetGeometries.resetPreset();
+        }
+        
+        ppt.close();
     }
 }
