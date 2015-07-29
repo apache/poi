@@ -232,20 +232,21 @@ public class NPOIFSFileSystem extends BlockStore
           // Now process the various entries
           readCoreContents();
        } catch(IOException e) {
-          if(closeChannelOnError) {
-             channel.close();
+          // Until we upgrade to Java 7, and can do a MultiCatch, we 
+          //  need to keep these two catch blocks in sync on their cleanup
+          if (closeChannelOnError && channel != null) {
+              channel.close();
+              channel = null;
           }
           throw e;
        } catch(RuntimeException e) {
           // Comes from Iterators etc.
           // TODO Decide if we can handle these better whilst
           //  still sticking to the iterator contract
-          if(closeChannelOnError) {
-              if (channel != null) {
-                  channel.close();
-                  channel = null;
-              }
-          }
+           if (closeChannelOnError && channel != null) {
+               channel.close();
+               channel = null;
+           }
           throw e;
        }
     }
