@@ -235,22 +235,22 @@ public class XSSFFormulaEvaluator implements FormulaEvaluator, WorkbookEvaluator
 	 *  cells, and calling evaluateFormulaCell on each one.
 	 */
 	public static void evaluateAllFormulaCells(XSSFWorkbook wb) {
-	   HSSFFormulaEvaluator.evaluateAllFormulaCells(wb);
+	    HSSFFormulaEvaluator.evaluateAllFormulaCells(wb);
 	}
-   /**
-    * Loops over all cells in all sheets of the supplied
-    *  workbook.
-    * For cells that contain formulas, their formulas are
-    *  evaluated, and the results are saved. These cells
-    *  remain as formula cells.
-    * For cells that do not contain formulas, no changes
-    *  are made.
-    * This is a helpful wrapper around looping over all
-    *  cells, and calling evaluateFormulaCell on each one.
-    */
-   public void evaluateAll() {
-      HSSFFormulaEvaluator.evaluateAllFormulaCells(_book);
-   }
+	/**
+	 * Loops over all cells in all sheets of the supplied
+	 *  workbook.
+	 * For cells that contain formulas, their formulas are
+	 *  evaluated, and the results are saved. These cells
+	 *  remain as formula cells.
+	 * For cells that do not contain formulas, no changes
+	 *  are made.
+	 * This is a helpful wrapper around looping over all
+	 *  cells, and calling evaluateFormulaCell on each one.
+	 */
+	public void evaluateAll() {
+	    HSSFFormulaEvaluator.evaluateAllFormulaCells(_book);
+	}
 
 	/**
 	 * Returns a CellValue wrapper around the supplied ValueEval instance.

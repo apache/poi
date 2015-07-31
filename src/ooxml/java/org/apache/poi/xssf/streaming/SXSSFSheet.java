@@ -50,25 +50,22 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
 
 /**
  * Streaming version of XSSFSheet implementing the "BigGridDemo" strategy.
- *
- * @author Alex Geller, Four J's Development Tools
 */
 public class SXSSFSheet implements Sheet, Cloneable
 {
-    SXSSFWorkbook _workbook;
     XSSFSheet _sh;
-    TreeMap<Integer,SXSSFRow> _rows=new TreeMap<Integer,SXSSFRow>();
-    SheetDataWriter _writer;
-    int _randomAccessWindowSize = SXSSFWorkbook.DEFAULT_WINDOW_SIZE;
-    int outlineLevelRow = 0;
+    private SXSSFWorkbook _workbook;
+    private TreeMap<Integer,SXSSFRow> _rows=new TreeMap<Integer,SXSSFRow>();
+    private SheetDataWriter _writer;
+    private int _randomAccessWindowSize = SXSSFWorkbook.DEFAULT_WINDOW_SIZE;
+    private int outlineLevelRow = 0;
+    private boolean flushed = false;
 
-    public SXSSFSheet(SXSSFWorkbook workbook, XSSFSheet xSheet) throws IOException
-    {
-        _workbook=workbook;
-        _sh=xSheet;
+    public SXSSFSheet(SXSSFWorkbook workbook, XSSFSheet xSheet) throws IOException {
+        _workbook = workbook;
+        _sh = xSheet;
         _writer = workbook.createSheetDataWriter();
         setRandomAccessWindowSize(_workbook.getRandomAccessWindowSize());
-
     }
 
     /**
@@ -138,6 +135,7 @@ public class SXSSFSheet implements Sheet, Cloneable
             initialAllocationSize=10;
         SXSSFRow newRow=new SXSSFRow(this,initialAllocationSize);
         _rows.put(new Integer(rownum),newRow);
+        flushed = false;
         if(_randomAccessWindowSize>=0&&_rows.size()>_randomAccessWindowSize)
         {
             try
@@ -1464,6 +1462,13 @@ public class SXSSFSheet implements Sheet, Cloneable
          }
          _randomAccessWindowSize=value;
     }
+    
+    /**
+     * Are all rows flushed to disk?
+     */
+    public boolean isFlushed() {
+        return flushed;
+    }
 
     /**
      * Specifies how many rows can be accessed at most via getRow().
@@ -1473,6 +1478,7 @@ public class SXSSFSheet implements Sheet, Cloneable
     public void flushRows(int remaining) throws IOException
     {
         while(_rows.size() > remaining) flushOneRow();
+        if (remaining == 0) flushed = true;
     }
 
     /**
@@ -1517,7 +1523,8 @@ public class SXSSFSheet implements Sheet, Cloneable
      * Deletes the temporary file that backed this sheet on disk.
      * @return true if the file was deleted, false if it wasn't.
      */
-    boolean dispose() {
+    boolean dispose() throws IOException {
+        if (!flushed) flushRows();
         return _writer.dispose();
     }
 

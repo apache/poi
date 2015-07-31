@@ -367,12 +367,8 @@ public class SheetDataWriter {
      * Deletes the temporary file that backed this sheet on disk.
      * @return true if the file was deleted, false if it wasn't.
      */
-    boolean dispose() {
-        try {
-            _out.close();
-            return _fd.delete();
-        } catch (IOException e){
-            return false;
-        }
+    boolean dispose() throws IOException {
+        _out.close();
+        return _fd.delete();
     }
 }
