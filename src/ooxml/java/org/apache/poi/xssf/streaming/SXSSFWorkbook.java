@@ -44,6 +44,8 @@ import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -62,8 +64,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  * Carefully review your memory budget and compatibility needs before deciding
  * whether to enable shared strings or not.
  */
-public class SXSSFWorkbook implements Workbook
-{
+public class SXSSFWorkbook implements Workbook {
     /**
      * Specifies how many rows can be accessed at most via getRow().
      * When a new node is created via createRow() and the total number
@@ -72,6 +73,7 @@ public class SXSSFWorkbook implements Workbook
      * via getRow() anymore.
      */
     public static final int DEFAULT_WINDOW_SIZE = 100;
+    private static POILogger logger = POILogFactory.getLogger(SXSSFWorkbook.class);
 
     XSSFWorkbook _wb;
 
@@ -650,7 +652,7 @@ public class SXSSFWorkbook implements Workbook
      * @throws IllegalArgumentException if the name is greater than 31 chars or contains <code>/\?*[]</code>
      */
     @Override
-    public Sheet createSheet(String sheetname)
+    public SXSSFSheet createSheet(String sheetname)
     {
         return createAndRegisterSXSSFSheet(_wb.createSheet(sheetname));
     }
@@ -685,7 +687,7 @@ public class SXSSFWorkbook implements Workbook
      * @return Sheet at the provided index
      */
     @Override
-    public Sheet getSheetAt(int index)
+    public SXSSFSheet getSheetAt(int index)
     {
         return getSXSSFSheet(_wb.getSheetAt(index));
     }
@@ -697,7 +699,7 @@ public class SXSSFWorkbook implements Workbook
      * @return Sheet with the name provided or <code>null</code> if it does not exist
      */
     @Override
-    public Sheet getSheet(String name)
+    public SXSSFSheet getSheet(String name)
     {
         return getSXSSFSheet(_wb.getSheet(name));
     }
@@ -719,7 +721,11 @@ public class SXSSFWorkbook implements Workbook
         deregisterSheetMapping(xSheet);
         
         // Clean up temporary resources
-        sxSheet.dispose();
+        try {
+            sxSheet.dispose();
+        } catch (IOException e) {
+            logger.log(POILogger.WARN, e);
+        }
     }
 
     /**
@@ -909,7 +915,12 @@ public class SXSSFWorkbook implements Workbook
         boolean success = true;
         for (SXSSFSheet sheet : _sxFromXHash.keySet())
         {
-            success = sheet.dispose() && success;
+            try {
+                success = sheet.dispose() && success;
+            } catch (IOException e) {
+                logger.log(POILogger.WARN, e);
+                success = false;
+            }
         }
         return success;
     }
@@ -1114,12 +1125,12 @@ public class SXSSFWorkbook implements Workbook
 
     /**
      * Returns an object that handles instantiating concrete
-     * classes of the various instances one needs for  HSSF and XSSF.
+     *  classes of the various instances one needs for HSSF, XSSF
+     *  and SXSSF.
      */
     @Override
-    public CreationHelper getCreationHelper()
-    {
-        return _wb.getCreationHelper();
+    public CreationHelper getCreationHelper() {
+        return new SXSSFCreationHelper(this);
     }
 
     protected boolean isDate1904() {

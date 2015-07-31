@@ -18,11 +18,13 @@ package org.apache.poi.xssf.usermodel;
 
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Hyperlink;
+import org.apache.poi.util.Internal;
 
 public class XSSFCreationHelper implements CreationHelper {
     private XSSFWorkbook workbook;
 
-    XSSFCreationHelper(XSSFWorkbook wb) {
+    @Internal
+    public XSSFCreationHelper(XSSFWorkbook wb) {
         workbook = wb;
     }
 
