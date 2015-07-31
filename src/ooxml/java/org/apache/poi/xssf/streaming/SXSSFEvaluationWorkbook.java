@@ -15,34 +15,11 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xssf.usermodel;
-
-import org.apache.poi.ss.formula.EvaluationCell;
-import org.apache.poi.ss.formula.EvaluationSheet;
+package org.apache.poi.xssf.streaming;
 
 /**
- * XSSF wrapper for a sheet under evaluation
+ * SXSSF wrapper around the SXSSF and XSSF workbooks
  */
-final class XSSFEvaluationSheet implements EvaluationSheet {
-
-	private final XSSFSheet _xs;
-
-	public XSSFEvaluationSheet(XSSFSheet sheet) {
-		_xs = sheet;
-	}
-
-	public XSSFSheet getXSSFSheet() {
-		return _xs;
-	}
-	public EvaluationCell getCell(int rowIndex, int columnIndex) {
-		XSSFRow row = _xs.getRow(rowIndex);
-		if (row == null) {
-			return null;
-		}
-		XSSFCell cell = row.getCell(columnIndex);
-		if (cell == null) {
-			return null;
-		}
-		return new XSSFEvaluationCell(cell, this);
-	}
+public final class SXSSFEvaluationWorkbook {
+    // TODO Refactor XSSFEvaluationWorkbook then extend
 }

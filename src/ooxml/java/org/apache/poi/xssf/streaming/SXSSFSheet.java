@@ -99,7 +99,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      *      a rownum is provided where the row is already flushed to disk.
      * @see #removeRow(Row)
      */
-    public Row createRow(int rownum)
+    public SXSSFRow createRow(int rownum)
     {
         int maxrow = SpreadsheetVersion.EXCEL2007.getLastRowIndex();
         if (rownum < 0 || rownum > maxrow) {
@@ -179,7 +179,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      * @param rownum  row to get (0-based)
      * @return Row representing the rownumber or null if its not defined on the sheet
      */
-    public Row getRow(int rownum)
+    public SXSSFRow getRow(int rownum)
     {
         return _rows.get(new Integer(rownum));
     }
@@ -1223,7 +1223,7 @@ public class SXSSFSheet implements Sheet, Cloneable
             if (lastRowObj != null) {
                 lastRowObj.setCollapsed(true);
             } else {
-                SXSSFRow newRow = (SXSSFRow) createRow(lastRow);
+                SXSSFRow newRow = createRow(lastRow);
                 newRow.setCollapsed(true);
             }
         }

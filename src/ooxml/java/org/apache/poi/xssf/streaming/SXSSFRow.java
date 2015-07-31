@@ -97,7 +97,7 @@ public class SXSSFRow implements Row
      * @throws IllegalArgumentException if columnIndex < 0 or greater than the maximum number of supported columns
      * (255 for *.xls, 1048576 for *.xlsx)
      */
-    public Cell createCell(int column)
+    public SXSSFCell createCell(int column)
     {
         return createCell(column,Cell.CELL_TYPE_BLANK);
     }
@@ -113,7 +113,7 @@ public class SXSSFRow implements Row
      * @throws IllegalArgumentException if columnIndex < 0 or greate than a maximum number of supported columns
      * (255 for *.xls, 1048576 for *.xlsx)
      */
-    public Cell createCell(int column, int type)
+    public SXSSFCell createCell(int column, int type)
     {
         checkBounds(column);
 
@@ -194,10 +194,10 @@ public class SXSSFRow implements Row
      * @return Cell representing that column or null if undefined.
      * @see #getCell(int, org.apache.poi.ss.usermodel.Row.MissingCellPolicy)
      */
-    public Cell getCell(int cellnum) {
+    public SXSSFCell getCell(int cellnum) {
         if(cellnum < 0) throw new IllegalArgumentException("Cell index must be >= 0");
 
-        Cell cell = cellnum > _maxColumn ? null : _cells[cellnum];
+        SXSSFCell cell = cellnum > _maxColumn ? null : _cells[cellnum];
 
         MissingCellPolicy policy = _sheet.getWorkbook().getMissingCellPolicy();
         if(policy == RETURN_NULL_AND_BLANK) {

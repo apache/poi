@@ -80,6 +80,7 @@ public final class TestSXSSFWorkbook extends BaseTestWorkbook {
         try {
             super.setSheetName();
             fail("expected exception");
+        } catch (ClassCastException e) { // TODO Temporary workaround during #58200
         } catch (Exception e){
             assertEquals(
                     "Unexpected type of cell: class org.apache.poi.xssf.streaming.SXSSFCell. " +
