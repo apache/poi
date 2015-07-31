@@ -41,16 +41,19 @@ public final class TestXSSFRichTextString extends TestCase {
     public void testCreate() {
         XSSFRichTextString rt = new XSSFRichTextString("Apache POI");
         assertEquals("Apache POI", rt.getString());
+        assertEquals(false, rt.hasFormatting());
 
         CTRst st = rt.getCTRst();
         assertTrue(st.isSetT());
         assertEquals("Apache POI", st.getT());
+        assertEquals(false, rt.hasFormatting());
 
         rt.append(" is cool stuff");
         assertEquals(2, st.sizeOfRArray());
         assertFalse(st.isSetT());
 
         assertEquals("Apache POI is cool stuff", rt.getString());
+        assertEquals(false, rt.hasFormatting());
     }
 
     public void testEmpty() {
@@ -67,11 +70,13 @@ public final class TestXSSFRichTextString extends TestCase {
         rt.append("89");
 
         assertEquals("123456789", rt.getString());
+        assertEquals(false, rt.hasFormatting());
 
         XSSFFont font1 = new XSSFFont();
         font1.setBold(true);
 
         rt.applyFont(2, 5, font1);
+        assertEquals(true, rt.hasFormatting());
 
         assertEquals(4, rt.numFormattingRuns());
         assertEquals(0, rt.getIndexOfFormattingRun(0));
@@ -152,6 +157,7 @@ public final class TestXSSFRichTextString extends TestCase {
 
         XSSFRichTextString rt = new XSSFRichTextString("Apache POI");
         assertEquals("Apache POI", rt.getString());
+        assertEquals(false, rt.hasFormatting());
 
         rt.clearFormatting();
 
@@ -159,15 +165,20 @@ public final class TestXSSFRichTextString extends TestCase {
         assertTrue(st.isSetT());
         assertEquals("Apache POI", rt.getString());
         assertEquals(0, rt.numFormattingRuns());
+        assertEquals(false, rt.hasFormatting());
 
         XSSFFont font = new XSSFFont();
         font.setBold(true);
 
         rt.applyFont(7, 10, font);
         assertEquals(2, rt.numFormattingRuns());
+        assertEquals(true, rt.hasFormatting());
+        
         rt.clearFormatting();
+        
         assertEquals("Apache POI", rt.getString());
         assertEquals(0, rt.numFormattingRuns());
+        assertEquals(false, rt.hasFormatting());
     }
 
     public void testGetFonts() {

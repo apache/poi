@@ -1629,7 +1629,8 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * </p>
      * @return true if the date systems used in the workbook starts in 1904
      */
-    protected boolean isDate1904(){
+    @Internal
+    public boolean isDate1904(){
         CTWorkbookPr workbookPr = workbook.getWorkbookPr();
         return workbookPr != null && workbookPr.getDate1904();
     }

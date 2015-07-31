@@ -40,9 +40,6 @@ import org.apache.poi.ss.usermodel.FormulaEvaluator;
  * For performance reasons, this class keeps a cache of all previously calculated intermediate
  * cell values.  Be sure to call {@link #clearAllCachedResultValues()} if any workbook cells are changed between
  * calls to evaluate~ methods on this class.
- *
- * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
- * @author Josh Micich
  */
 public class XSSFFormulaEvaluator implements FormulaEvaluator, WorkbookEvaluatorProvider {
 
