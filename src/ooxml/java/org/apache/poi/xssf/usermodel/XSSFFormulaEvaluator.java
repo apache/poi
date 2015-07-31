@@ -153,7 +153,7 @@ public class XSSFFormulaEvaluator implements FormulaEvaluator, WorkbookEvaluator
      *  of the old formula.
      * Else if cell does not contain formula, this method leaves
      *  the cell unchanged.
-     * Note that the same instance of HSSFCell is returned to
+     * Note that the same instance of XSSFCell is returned to
      * allow chained calls like:
      * <pre>
      * int evaluatedCellType = evaluator.evaluateInCell(cell).getCellType();
@@ -164,16 +164,16 @@ public class XSSFFormulaEvaluator implements FormulaEvaluator, WorkbookEvaluator
      * @param cell
      */
     public XSSFCell evaluateInCell(Cell cell) {
-        if (cell == null) {
-            return null;
-        }
-        XSSFCell result = (XSSFCell) cell;
+        doEvaluateInCell(cell);
+        return (XSSFCell)cell;
+    }
+    protected void doEvaluateInCell(Cell cell) {
+        if (cell == null) return;
         if (cell.getCellType() == XSSFCell.CELL_TYPE_FORMULA) {
             CellValue cv = evaluateFormulaCellValue(cell);
             setCellType(cell, cv); // cell will no longer be a formula cell
             setCellValue(cell, cv);
         }
-        return result;
     }
     private static void setCellType(Cell cell, CellValue cv) {
         int cellType = cv.getCellType();
