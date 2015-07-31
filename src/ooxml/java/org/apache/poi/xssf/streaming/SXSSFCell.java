@@ -33,18 +33,18 @@ import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 import org.apache.poi.xssf.usermodel.XSSFHyperlink;
+import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 
 /**
  * Streaming version of XSSFRow implementing the "BigGridDemo" strategy.
- *
- * @author Alex Geller, Four J's Development Tools
 */
-public class SXSSFCell implements Cell 
-{
+public class SXSSFCell implements Cell {
+    private static POILogger logger = POILogFactory.getLogger(SXSSFCell.class);
 
     SXSSFRow _row;
     Value _value;
@@ -84,7 +84,7 @@ public class SXSSFCell implements Cell
      *
      * @return the sheet this cell belongs to
      */
-    public Sheet getSheet()
+    public SXSSFSheet getSheet()
     {
         return _row.getSheet();
     }
@@ -185,11 +185,8 @@ public class SXSSFCell implements Cell
      *        precalculated value, for numerics we'll set its value. For other types we
      *        will change the cell to a numerics cell and set its value.
      */
-    public void setCellValue(Date value)
-    {
-//TODO: activate this when compiling against 3.7.
-        //boolean date1904 = getSheet().getXSSFWorkbook().isDate1904();
-        boolean date1904 = false;
+    public void setCellValue(Date value) {
+        boolean date1904 = getSheet().getWorkbook().isDate1904();
         setCellValue(DateUtil.getExcelDate(value, date1904));
     }
 
@@ -209,11 +206,8 @@ public class SXSSFCell implements Cell
      *        precalculated value, for numerics we'll set its value. For othertypes we
      *        will change the cell to a numeric cell and set its value.
      */
-    public void setCellValue(Calendar value)
-    {
-//TODO: activate this when compiling against 3.7.
-        //boolean date1904 = getSheet().getXSSFWorkbook().isDate1904();
-        boolean date1904 = false;
+    public void setCellValue(Calendar value) {
+        boolean date1904 = getSheet().getWorkbook().isDate1904();
         setCellValue( DateUtil.getExcelDate(value, date1904 ));
     }
 
@@ -234,6 +228,9 @@ public class SXSSFCell implements Cell
         }
 
         ((RichTextValue)_value).setValue(value);
+        
+        if (((XSSFRichTextString)value).hasFormatting())
+            logger.log(POILogger.WARN, "SXSSF doesn't support Shared Strings, rich text formatting information has be lost");
     }
 
     /**
@@ -343,9 +340,7 @@ public class SXSSFCell implements Cell
         }
 
         double value = getNumericCellValue();
-//TODO: activate this when compiling against 3.7.
-        //boolean date1904 = getSheet().getXSSFWorkbook().isDate1904();
-        boolean date1904 = false;
+        boolean date1904 = getSheet().getWorkbook().isDate1904();
         return DateUtil.getJavaDate(value, date1904);
     }
 
@@ -603,8 +598,7 @@ public class SXSSFCell implements Cell
         xssfobj.getCTHyperlink().setRef( ref.formatAsString()  );
 
         // Add to the lists
-        ((SXSSFSheet)getSheet())._sh.addHyperlink(xssfobj);
-
+        getSheet()._sh.addHyperlink(xssfobj);
     }
 
     /**
@@ -614,7 +608,7 @@ public class SXSSFCell implements Cell
     {
         removeProperty(Property.HYPERLINK);
 
-        ((SXSSFSheet) getSheet())._sh.removeHyperlink(getRowIndex(), getColumnIndex());
+        getSheet()._sh.removeHyperlink(getRowIndex(), getColumnIndex());
     }
 
     /**

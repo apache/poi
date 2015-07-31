@@ -420,7 +420,7 @@ public class SXSSFRow implements Row
      *
      * @return the Sheet that owns this row
      */
-    public Sheet getSheet()
+    public SXSSFSheet getSheet()
     {
         return _sheet;
     }
