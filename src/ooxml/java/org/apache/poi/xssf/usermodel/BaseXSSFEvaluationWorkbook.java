@@ -20,9 +20,7 @@ package org.apache.poi.xssf.usermodel;
 import java.util.List;
 
 import org.apache.poi.ss.SpreadsheetVersion;
-import org.apache.poi.ss.formula.EvaluationCell;
 import org.apache.poi.ss.formula.EvaluationName;
-import org.apache.poi.ss.formula.EvaluationSheet;
 import org.apache.poi.ss.formula.EvaluationWorkbook;
 import org.apache.poi.ss.formula.FormulaParser;
 import org.apache.poi.ss.formula.FormulaParsingWorkbook;
@@ -44,7 +42,7 @@ import org.apache.poi.xssf.model.ExternalLinksTable;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedName;
 
 /**
- * Internal POI use only
+ * Internal POI use only - parent of XSSF and SXSSF evaluation workbooks
  */
 public abstract class BaseXSSFEvaluationWorkbook implements FormulaRenderingWorkbook, EvaluationWorkbook, FormulaParsingWorkbook {
 	protected final XSSFWorkbook _uBook;
