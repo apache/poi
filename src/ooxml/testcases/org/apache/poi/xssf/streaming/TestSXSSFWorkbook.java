@@ -42,6 +42,7 @@ import org.apache.poi.xssf.SXSSFITestDataProvider;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.After;
+import org.junit.Assume;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -72,20 +73,13 @@ public final class TestSXSSFWorkbook extends BaseTestWorkbook {
     }
 
     /**
-     * this test involves evaluation of formulas which isn't supported for SXSSF
+     * Skip this test, as SXSSF doesn't update formulas on sheet name
+     *  changes.
      */
     @Override
     @Test
     public void setSheetName() {
-        try {
-            super.setSheetName();
-            fail("expected exception");
-        } catch (ClassCastException e) { // TODO Temporary workaround during #58200
-        } catch (Exception e){
-            assertEquals(
-                    "Unexpected type of cell: class org.apache.poi.xssf.streaming.SXSSFCell. " +
-                    "Only XSSFCells can be evaluated.", e.getMessage());
-        }
+        Assume.assumeTrue("SXSSF doesn't update formulas on sheet name changes, as most cells probably aren't in memory at the time", false);
     }
 
     @Test
@@ -217,7 +211,7 @@ public final class TestSXSSFWorkbook extends BaseTestWorkbook {
     @Test
     public void sheetdataWriter(){
         SXSSFWorkbook wb = new SXSSFWorkbook();
-        SXSSFSheet sh = (SXSSFSheet)wb.createSheet();
+        SXSSFSheet sh = wb.createSheet();
         SheetDataWriter wr = sh.getSheetDataWriter();
         assertTrue(wr.getClass() == SheetDataWriter.class);
         File tmp = wr.getTempFile();
@@ -227,7 +221,7 @@ public final class TestSXSSFWorkbook extends BaseTestWorkbook {
 
         wb = new SXSSFWorkbook();
         wb.setCompressTempFiles(true);
-        sh = (SXSSFSheet)wb.createSheet();
+        sh = wb.createSheet();
         wr = sh.getSheetDataWriter();
         assertTrue(wr.getClass() == GZIPSheetDataWriter.class);
         tmp = wr.getTempFile();
