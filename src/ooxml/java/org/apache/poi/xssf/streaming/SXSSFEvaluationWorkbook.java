@@ -17,7 +17,11 @@
 
 package org.apache.poi.xssf.streaming;
 
+import org.apache.poi.ss.formula.EvaluationCell;
 import org.apache.poi.ss.formula.EvaluationSheet;
+import org.apache.poi.ss.formula.FormulaParser;
+import org.apache.poi.ss.formula.FormulaType;
+import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.xssf.usermodel.BaseXSSFEvaluationWorkbook;
 
 /**
@@ -45,5 +49,11 @@ public final class SXSSFEvaluationWorkbook extends BaseXSSFEvaluationWorkbook {
     
     public EvaluationSheet getSheet(int sheetIndex) {
         return new SXSSFEvaluationSheet(_uBook.getSheetAt(sheetIndex));
+    }
+    
+    public Ptg[] getFormulaTokens(EvaluationCell evalCell) {
+        SXSSFCell cell = ((SXSSFEvaluationCell)evalCell).getSXSSFCell();
+        SXSSFEvaluationWorkbook frBook = SXSSFEvaluationWorkbook.create(_uBook);
+        return FormulaParser.parse(cell.getCellFormula(), frBook, FormulaType.CELL, _uBook.getSheetIndex(cell.getSheet()));
     }
 }

@@ -59,7 +59,8 @@ public class SXSSFSheet implements Sheet, Cloneable
     private SheetDataWriter _writer;
     private int _randomAccessWindowSize = SXSSFWorkbook.DEFAULT_WINDOW_SIZE;
     private int outlineLevelRow = 0;
-    private boolean flushed = false;
+    private int lastFlushedRowNumber = -1;
+    private boolean allFlushed = false;
 
     public SXSSFSheet(SXSSFWorkbook workbook, XSSFSheet xSheet) throws IOException {
         _workbook = workbook;
@@ -135,7 +136,7 @@ public class SXSSFSheet implements Sheet, Cloneable
             initialAllocationSize=10;
         SXSSFRow newRow=new SXSSFRow(this,initialAllocationSize);
         _rows.put(new Integer(rownum),newRow);
-        flushed = false;
+        allFlushed = false;
         if(_randomAccessWindowSize>=0&&_rows.size()>_randomAccessWindowSize)
         {
             try
@@ -1211,7 +1212,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      * @param rowIndex the zero based row index to collapse
      */
     private void collapseRow(int rowIndex) {
-        SXSSFRow row = (SXSSFRow) getRow(rowIndex);
+        SXSSFRow row = getRow(rowIndex);
         if(row == null) {
 			throw new IllegalArgumentException("Invalid row number("+ rowIndex + "). Row does not exist.");
 		} else {
@@ -1219,7 +1220,7 @@ public class SXSSFSheet implements Sheet, Cloneable
 
             // Hide all the columns until the end of the group
             int lastRow = writeHidden(row, startRow, true);
-            SXSSFRow lastRowObj = (SXSSFRow) getRow(lastRow); 
+            SXSSFRow lastRowObj = getRow(lastRow); 
             if (lastRowObj != null) {
                 lastRowObj.setCollapsed(true);
             } else {
@@ -1241,7 +1242,7 @@ public class SXSSFSheet implements Sheet, Cloneable
         }
         int currentRow = rowIndex;
         while (getRow(currentRow) != null) {
-            if (((SXSSFRow) getRow(currentRow)).getOutlineLevel() < level)
+            if (getRow(currentRow).getOutlineLevel() < level)
                 return currentRow + 1;
             currentRow--;
         }
@@ -1250,12 +1251,12 @@ public class SXSSFSheet implements Sheet, Cloneable
     
     private int writeHidden(SXSSFRow xRow, int rowIndex, boolean hidden) {
         int level = xRow.getOutlineLevel();
-        SXSSFRow currRow = (SXSSFRow) getRow(rowIndex);
+        SXSSFRow currRow = getRow(rowIndex);
 
         while (currRow != null && currRow.getOutlineLevel() >= level) {
             currRow.setHidden(hidden);
             rowIndex++;
-            currRow = (SXSSFRow) getRow(rowIndex);
+            currRow = getRow(rowIndex);
         }
         return rowIndex;
     }
@@ -1466,8 +1467,14 @@ public class SXSSFSheet implements Sheet, Cloneable
     /**
      * Are all rows flushed to disk?
      */
-    public boolean isFlushed() {
-        return flushed;
+    public boolean areAllRowsFlushed() {
+        return allFlushed;
+    }
+    /**
+     * @return Last row number to be flushed to disk, or -1 if none flushed yet
+     */
+    public int getLastFlushedRowNum() {
+        return lastFlushedRowNumber;
     }
 
     /**
@@ -1478,7 +1485,7 @@ public class SXSSFSheet implements Sheet, Cloneable
     public void flushRows(int remaining) throws IOException
     {
         while(_rows.size() > remaining) flushOneRow();
-        if (remaining == 0) flushed = true;
+        if (remaining == 0) allFlushed = true;
     }
 
     /**
@@ -1499,6 +1506,7 @@ public class SXSSFSheet implements Sheet, Cloneable
             SXSSFRow row = _rows.get(firstRowNum);
             _writer.writeRow(rowIndex, row);
             _rows.remove(firstRowNum);
+            lastFlushedRowNumber = rowIndex;
         }
     }
     public void changeRowNum(SXSSFRow row, int newRowNum)
@@ -1524,7 +1532,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      * @return true if the file was deleted, false if it wasn't.
      */
     boolean dispose() throws IOException {
-        if (!flushed) flushRows();
+        if (!allFlushed) flushRows();
         return _writer.dispose();
     }
 

@@ -18,6 +18,9 @@
 package org.apache.poi.xssf.streaming;
 
 import org.apache.poi.ss.formula.EvaluationCell;
+import org.apache.poi.ss.formula.IStabilityClassifier;
+import org.apache.poi.ss.formula.WorkbookEvaluator;
+import org.apache.poi.ss.formula.udf.UDFFinder;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.util.POILogFactory;
@@ -34,8 +37,24 @@ public class SXSSFFormulaEvaluator extends XSSFFormulaEvaluator {
     private SXSSFWorkbook wb;
     
     public SXSSFFormulaEvaluator(SXSSFWorkbook workbook) {
-        super(workbook.getXSSFWorkbook());
+        this(workbook, null, null);
+    }
+    private SXSSFFormulaEvaluator(SXSSFWorkbook workbook, IStabilityClassifier stabilityClassifier, UDFFinder udfFinder) {
+        this(workbook, new WorkbookEvaluator(SXSSFEvaluationWorkbook.create(workbook), stabilityClassifier, udfFinder));
+    }
+    private SXSSFFormulaEvaluator(SXSSFWorkbook workbook, WorkbookEvaluator bookEvaluator) {
+        super(workbook.getXSSFWorkbook(), bookEvaluator);
         this.wb = workbook;
+    }
+    
+    /**
+     * @param stabilityClassifier used to optimise caching performance. Pass <code>null</code>
+     * for the (conservative) assumption that any cell may have its definition changed after
+     * evaluation begins.
+     * @param udfFinder pass <code>null</code> for default (AnalysisToolPak only)
+     */
+    public static SXSSFFormulaEvaluator create(SXSSFWorkbook workbook, IStabilityClassifier stabilityClassifier, UDFFinder udfFinder) {
+        return new SXSSFFormulaEvaluator(workbook, stabilityClassifier, udfFinder);
     }
     
     /**
@@ -63,7 +82,7 @@ public class SXSSFFormulaEvaluator extends XSSFFormulaEvaluator {
         // Check they're all available
         for (int i=0; i<wb.getNumberOfSheets(); i++) {
             SXSSFSheet s = wb.getSheetAt(i);
-            if (s.isFlushed()) {
+            if (s.areAllRowsFlushed()) {
                 throw new SheetsFlushedException();
             }
         }
@@ -73,12 +92,10 @@ public class SXSSFFormulaEvaluator extends XSSFFormulaEvaluator {
             SXSSFSheet s = wb.getSheetAt(i);
             
             // Check if any rows have already been flushed out
-            int firstRowNum = s.getFirstRowNum();
-            int firstAvailableRowNum = s.iterator().next().getRowNum();
-            if (firstRowNum != firstAvailableRowNum) {
-                if (skipOutOfWindow) throw new RowsFlushedException();
-                logger.log(POILogger.INFO, "Rows from " + firstRowNum + " to" +
-                           (firstAvailableRowNum-1) + " have already been flushed, skipping");
+            int lastFlushedRowNum = s.getLastFlushedRowNum();
+            if (lastFlushedRowNum > -1) {
+                if (! skipOutOfWindow) throw new RowFlushedException(0);
+                logger.log(POILogger.INFO, "Rows up to " + lastFlushedRowNum + " have already been flushed, skipping");
             }
             
             // Evaluate what we have
@@ -109,9 +126,9 @@ public class SXSSFFormulaEvaluator extends XSSFFormulaEvaluator {
             super("One or more sheets have been flushed, cannot evaluate all cells");
         }
     }
-    public static class RowsFlushedException extends IllegalStateException {
-        protected RowsFlushedException() {
-            super("One or more rows have been flushed, cannot evaluate all cells");
+    public static class RowFlushedException extends IllegalStateException {
+        protected RowFlushedException(int rowNum) {
+            super("Row " + rowNum + " has been flushed, cannot evaluate all cells");
         }
     }
 }

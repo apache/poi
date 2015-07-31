@@ -51,7 +51,10 @@ public class XSSFFormulaEvaluator implements FormulaEvaluator, WorkbookEvaluator
         this(workbook, null, null);
     }
     private XSSFFormulaEvaluator(XSSFWorkbook workbook, IStabilityClassifier stabilityClassifier, UDFFinder udfFinder) {
-        _bookEvaluator = new WorkbookEvaluator(XSSFEvaluationWorkbook.create(workbook), stabilityClassifier, udfFinder);
+        this(workbook, new WorkbookEvaluator(XSSFEvaluationWorkbook.create(workbook), stabilityClassifier, udfFinder));
+    }
+    protected XSSFFormulaEvaluator(XSSFWorkbook workbook, WorkbookEvaluator bookEvaluator) {
+        _bookEvaluator = bookEvaluator;
         _book = workbook;
     }
 
