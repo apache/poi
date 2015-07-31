@@ -194,17 +194,17 @@ public class HSSFFormulaEvaluator implements FormulaEvaluator, WorkbookEvaluator
 		}
 
 		switch (cell.getCellType()) {
-			case HSSFCell.CELL_TYPE_BOOLEAN:
+			case Cell.CELL_TYPE_BOOLEAN:
 				return CellValue.valueOf(cell.getBooleanCellValue());
-			case HSSFCell.CELL_TYPE_ERROR:
+			case Cell.CELL_TYPE_ERROR:
 				return CellValue.getError(cell.getErrorCellValue());
-			case HSSFCell.CELL_TYPE_FORMULA:
+			case Cell.CELL_TYPE_FORMULA:
 				return evaluateFormulaCellValue(cell);
-			case HSSFCell.CELL_TYPE_NUMERIC:
+			case Cell.CELL_TYPE_NUMERIC:
 				return new CellValue(cell.getNumericCellValue());
-			case HSSFCell.CELL_TYPE_STRING:
+			case Cell.CELL_TYPE_STRING:
 				return new CellValue(cell.getRichStringCellValue().getString());
-			case HSSFCell.CELL_TYPE_BLANK:
+			case Cell.CELL_TYPE_BLANK:
 				return null;
 		}
 		throw new IllegalStateException("Bad cell type (" + cell.getCellType() + ")");
@@ -228,7 +228,7 @@ public class HSSFFormulaEvaluator implements FormulaEvaluator, WorkbookEvaluator
 	 */
 	@Override
     public int evaluateFormulaCell(Cell cell) {
-		if (cell == null || cell.getCellType() != HSSFCell.CELL_TYPE_FORMULA) {
+		if (cell == null || cell.getCellType() != Cell.CELL_TYPE_FORMULA) {
 			return -1;
 		}
 		CellValue cv = evaluateFormulaCellValue(cell);
@@ -258,7 +258,7 @@ public class HSSFFormulaEvaluator implements FormulaEvaluator, WorkbookEvaluator
 			return null;
 		}
 		HSSFCell result = (HSSFCell) cell;
-		if (cell.getCellType() == HSSFCell.CELL_TYPE_FORMULA) {
+		if (cell.getCellType() == Cell.CELL_TYPE_FORMULA) {
 			CellValue cv = evaluateFormulaCellValue(cell);
 			setCellValue(cell, cv);
 			setCellType(cell, cv); // cell will no longer be a formula cell
@@ -268,15 +268,15 @@ public class HSSFFormulaEvaluator implements FormulaEvaluator, WorkbookEvaluator
 	private static void setCellType(Cell cell, CellValue cv) {
 		int cellType = cv.getCellType();
 		switch (cellType) {
-			case HSSFCell.CELL_TYPE_BOOLEAN:
-			case HSSFCell.CELL_TYPE_ERROR:
-			case HSSFCell.CELL_TYPE_NUMERIC:
-			case HSSFCell.CELL_TYPE_STRING:
+			case Cell.CELL_TYPE_BOOLEAN:
+			case Cell.CELL_TYPE_ERROR:
+			case Cell.CELL_TYPE_NUMERIC:
+			case Cell.CELL_TYPE_STRING:
 				cell.setCellType(cellType);
 				return;
-			case HSSFCell.CELL_TYPE_BLANK:
+			case Cell.CELL_TYPE_BLANK:
 				// never happens - blanks eventually get translated to zero
-			case HSSFCell.CELL_TYPE_FORMULA:
+			case Cell.CELL_TYPE_FORMULA:
 				// this will never happen, we have already evaluated the formula
 		}
 		throw new IllegalStateException("Unexpected cell value type (" + cellType + ")");
@@ -285,21 +285,21 @@ public class HSSFFormulaEvaluator implements FormulaEvaluator, WorkbookEvaluator
 	private static void setCellValue(Cell cell, CellValue cv) {
 		int cellType = cv.getCellType();
 		switch (cellType) {
-			case HSSFCell.CELL_TYPE_BOOLEAN:
+			case Cell.CELL_TYPE_BOOLEAN:
 				cell.setCellValue(cv.getBooleanValue());
 				break;
-			case HSSFCell.CELL_TYPE_ERROR:
+			case Cell.CELL_TYPE_ERROR:
 				cell.setCellErrorValue(cv.getErrorValue());
 				break;
-			case HSSFCell.CELL_TYPE_NUMERIC:
+			case Cell.CELL_TYPE_NUMERIC:
 				cell.setCellValue(cv.getNumberValue());
 				break;
-			case HSSFCell.CELL_TYPE_STRING:
+			case Cell.CELL_TYPE_STRING:
 				cell.setCellValue(new HSSFRichTextString(cv.getStringValue()));
 				break;
-			case HSSFCell.CELL_TYPE_BLANK:
+			case Cell.CELL_TYPE_BLANK:
 				// never happens - blanks eventually get translated to zero
-			case HSSFCell.CELL_TYPE_FORMULA:
+			case Cell.CELL_TYPE_FORMULA:
 				// this will never happen, we have already evaluated the formula
 			default:
 				throw new IllegalStateException("Unexpected cell value type (" + cellType + ")");
@@ -342,7 +342,7 @@ public class HSSFFormulaEvaluator implements FormulaEvaluator, WorkbookEvaluator
 
          for(Row r : sheet) {
             for (Cell c : r) {
-               if (c.getCellType() == HSSFCell.CELL_TYPE_FORMULA) {
+               if (c.getCellType() == Cell.CELL_TYPE_FORMULA) {
                   evaluator.evaluateFormulaCell(c);
                }
             }
