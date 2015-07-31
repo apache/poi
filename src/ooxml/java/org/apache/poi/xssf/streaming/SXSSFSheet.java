@@ -1344,7 +1344,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      *
      * @return the parent workbook
      */
-    public Workbook getWorkbook()
+    public SXSSFWorkbook getWorkbook()
     {
         return _workbook;
     }

@@ -622,7 +622,7 @@ public class SXSSFWorkbook implements Workbook
      * @return Sheet representing the new sheet.
      */
     @Override
-    public Sheet createSheet()
+    public SXSSFSheet createSheet()
     {
         return createAndRegisterSXSSFSheet(_wb.createSheet());
     }
@@ -1122,6 +1122,10 @@ public class SXSSFWorkbook implements Workbook
         return _wb.getCreationHelper();
     }
 
+    protected boolean isDate1904() {
+        return _wb.isDate1904();
+    }
+    
     /**
      * @return <code>false</code> if this workbook is not visible in the GUI
      */
