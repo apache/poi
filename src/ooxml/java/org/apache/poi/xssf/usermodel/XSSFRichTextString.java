@@ -203,8 +203,11 @@ public class XSSFRichTextString implements RichTextString {
         CTRElt lt = st.addNewR();
         lt.setT(text);
         preserveSpaces(lt.xgetT());
-        CTRPrElt pr = lt.addNewRPr();
-        if(font != null) setRunAttributes(font.getCTFont(), pr);
+        
+        if (font != null) {
+            CTRPrElt pr = lt.addNewRPr();
+            setRunAttributes(font.getCTFont(), pr);
+        }
     }
 
     /**
@@ -243,6 +246,22 @@ public class XSSFRichTextString implements RichTextString {
         if(ctFont.sizeOfOutlineArray() > 0) pr.addNewOutline().setVal(ctFont.getOutlineArray(0).getVal());
         if(ctFont.sizeOfShadowArray() > 0) pr.addNewShadow().setVal(ctFont.getShadowArray(0).getVal());
         if(ctFont.sizeOfStrikeArray() > 0) pr.addNewStrike().setVal(ctFont.getStrikeArray(0).getVal());
+    }
+    
+    /**
+     * Does this string have any explicit formatting applied, or is 
+     *  it just text in the default style?
+     */
+    public boolean hasFormatting() {
+        @SuppressWarnings("deprecation")
+        CTRElt[] rs = st.getRArray();
+        if (rs == null || rs.length == 0) {
+            return false;
+        }
+        for (CTRElt r : rs) {
+            if (r.isSetRPr()) return true;
+        }
+        return false;
     }
 
     /**
