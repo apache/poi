@@ -28,7 +28,6 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.xssf.SXSSFITestDataProvider;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -38,7 +37,6 @@ import org.junit.Test;
  *  cell is in the current window, and all references
  *  from the cell are in the current window
  */
-@Ignore
 public final class TestSXSSFFormulaEvaluation {
     public static final SXSSFITestDataProvider _testDataProvider = SXSSFITestDataProvider.instance;
 
@@ -54,24 +52,18 @@ public final class TestSXSSFFormulaEvaluation {
         
         FormulaEvaluator eval = wb.getCreationHelper().createFormulaEvaluator();
         
-        // References outside window will fail
         s.createRow(0).createCell(0).setCellFormula("1+2");
         s.createRow(1).createCell(0).setCellFormula("A21");
-        try {
-            eval.evaluateAll();
-            fail("Evaluate All shouldn't work, as references outside the window");
-        } catch(Exception e) {
-            System.err.println(e); // TODO
-        }
+        for (int i=2; i<19; i++) { s.createRow(i); }
         
-        // Cells outside window will fail
-        s.createRow(10).createCell(0).setCellFormula("A1+A2");
+        // Cells outside window will fail, whether referenced or not
+        s.createRow(19).createCell(0).setCellFormula("A1+A2");
         s.createRow(20).createCell(0).setCellFormula("A1+A11+100");
         try {
             eval.evaluateAll();
             fail("Evaluate All shouldn't work, as some cells outside the window");
-        } catch(Exception e) {
-            System.err.println(e); // TODO
+        } catch(SXSSFFormulaEvaluator.RowFlushedException e) {
+            // Expected
         }
         
         
@@ -97,16 +89,24 @@ public final class TestSXSSFFormulaEvaluation {
     public void testEvaluateRefOutsideWindowFails() {
         SXSSFWorkbook wb = new SXSSFWorkbook(5);
         SXSSFSheet s = wb.createSheet();
+        
         s.createRow(0).createCell(0).setCellFormula("1+2");
+        assertEquals(false, s.areAllRowsFlushed());
+        assertEquals(-1, s.getLastFlushedRowNum());
+        
+        for (int i=1; i<=19; i++) { s.createRow(i); }
         Cell c = s.createRow(20).createCell(0);
         c.setCellFormula("A1+100");
+        
+        assertEquals(false, s.areAllRowsFlushed());
+        assertEquals(15, s.getLastFlushedRowNum());
         
         FormulaEvaluator eval = wb.getCreationHelper().createFormulaEvaluator();
         try {
             eval.evaluateFormulaCell(c);
             fail("Evaluate shouldn't work, as reference outside the window");
-        } catch(Exception e) {
-            System.err.println(e); // TODO
+        } catch(SXSSFFormulaEvaluator.RowFlushedException e) {
+            // Expected
         }
     }
     
@@ -163,7 +163,6 @@ public final class TestSXSSFFormulaEvaluation {
         
         c = s.createRow(1).createCell(0);
         c.setCellFormula("CONCATENATE(\"hello\",\" \",\"world\")");
-        assertEquals("", c.getStringCellValue());
         eval.evaluateFormulaCell(c);
         assertEquals("hello world", c.getStringCellValue());
     }

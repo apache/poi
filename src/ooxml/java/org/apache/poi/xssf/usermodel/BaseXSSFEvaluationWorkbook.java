@@ -292,11 +292,6 @@ public abstract class BaseXSSFEvaluationWorkbook implements FormulaRenderingWork
 		int ix = namePtg.getIndex();
 		return new Name(_uBook.getNameAt(ix), ix, this);
 	}
-	public Ptg[] getFormulaTokens(EvaluationCell evalCell) {
-		XSSFCell cell = ((XSSFEvaluationCell)evalCell).getXSSFCell();
-		XSSFEvaluationWorkbook frBook = XSSFEvaluationWorkbook.create(_uBook);
-		return FormulaParser.parse(cell.getCellFormula(), frBook, FormulaType.CELL, _uBook.getSheetIndex(cell.getSheet()));
-	}
 	
     public UDFFinder getUDFFinder(){
         return _uBook.getUDFFinder();

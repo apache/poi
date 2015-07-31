@@ -36,6 +36,9 @@ final class SXSSFEvaluationSheet implements EvaluationSheet {
     public EvaluationCell getCell(int rowIndex, int columnIndex) {
         SXSSFRow row = _xs.getRow(rowIndex);
         if (row == null) {
+            if (rowIndex <= _xs.getLastFlushedRowNum()) {
+                throw new SXSSFFormulaEvaluator.RowFlushedException(rowIndex);
+            }
             return null;
         }
         SXSSFCell cell = row.getCell(columnIndex);
