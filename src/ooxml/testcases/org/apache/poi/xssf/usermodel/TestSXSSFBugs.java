@@ -34,6 +34,7 @@ public final class TestSXSSFBugs extends BaseTestBugzillaIssues {
     }
 
     // override some tests which do not work for SXSSF
+    // TODO Re-enable some of these when #58200 is implemented
     @Override @Ignore("cloneSheet() not implemented") @Test public void bug18800() { /* cloneSheet() not implemented */ }
     @Override @Ignore("cloneSheet() not implemented") @Test public void bug22720() { /* cloneSheet() not implemented */ }
     @Override @Ignore("Evaluation is not supported") @Test public void bug43093() { /* Evaluation is not supported */ }
@@ -41,6 +42,7 @@ public final class TestSXSSFBugs extends BaseTestBugzillaIssues {
     @Override @Ignore("Evaluation is not supported") @Test public void bug46729_testMaxFunctionArguments() { /* Evaluation is not supported */ }
     @Override @Ignore("Evaluation is not supported") @Test public void stackoverflow26437323() { /* Evaluation is not supported */ }
     @Override @Ignore("Evaluation is not supported") @Test public void bug47815() { /* Evaluation is not supported */ }
+    @Override @Ignore("Evaluation is not supported") @Test public void test58113() { /* Evaluation is not supported */ }
     
     /**
      * Setting repeating rows and columns shouldn't break

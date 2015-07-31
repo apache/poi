@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.ss.formula.CollaboratingWorkbooksEnvironment;
+import org.apache.poi.ss.formula.EvaluationCell;
 import org.apache.poi.ss.formula.IStabilityClassifier;
 import org.apache.poi.ss.formula.WorkbookEvaluator;
 import org.apache.poi.ss.formula.WorkbookEvaluatorProvider;
@@ -251,17 +252,25 @@ public class XSSFFormulaEvaluator implements FormulaEvaluator, WorkbookEvaluator
 	public void evaluateAll() {
 	    HSSFFormulaEvaluator.evaluateAllFormulaCells(_book);
 	}
+	
+	/**
+	 * Turns a XSSFCell into a XSSFEvaluationCell
+	 */
+	protected EvaluationCell toEvaluationCell(Cell cell) {
+        if (!(cell instanceof XSSFCell)){
+            throw new IllegalArgumentException("Unexpected type of cell: " + cell.getClass() + "." +
+                    " Only XSSFCells can be evaluated.");
+        }
+
+        return new XSSFEvaluationCell((XSSFCell)cell);
+	}
 
 	/**
 	 * Returns a CellValue wrapper around the supplied ValueEval instance.
 	 */
 	private CellValue evaluateFormulaCellValue(Cell cell) {
-        if(!(cell instanceof XSSFCell)){
-            throw new IllegalArgumentException("Unexpected type of cell: " + cell.getClass() + "." +
-                    " Only XSSFCells can be evaluated.");
-        }
-
-		ValueEval eval = _bookEvaluator.evaluate(new XSSFEvaluationCell((XSSFCell) cell));
+	    EvaluationCell evalCell = toEvaluationCell(cell);
+		ValueEval eval = _bookEvaluator.evaluate(evalCell);
 		if (eval instanceof NumberEval) {
 			NumberEval ne = (NumberEval) eval;
 			return new CellValue(ne.getNumberValue());

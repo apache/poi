@@ -17,6 +17,9 @@
 
 package org.apache.poi.xssf.streaming;
 
+import org.apache.poi.ss.formula.EvaluationCell;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.xssf.usermodel.XSSFFormulaEvaluator;
@@ -36,12 +39,27 @@ public class SXSSFFormulaEvaluator extends XSSFFormulaEvaluator {
     }
     
     /**
+     * Turns a SXSSFCell into a SXSSFEvaluationCell
+     */
+    @Override
+    protected EvaluationCell toEvaluationCell(Cell cell) {
+        if (!(cell instanceof SXSSFCell)){
+            throw new IllegalArgumentException("Unexpected type of cell: " + cell.getClass() + "." +
+                    " Only SXSSFCells can be evaluated.");
+        }
+
+        return new SXSSFEvaluationCell((SXSSFCell)cell);
+    }
+    
+    /**
      * For active worksheets only, will loop over rows and
      *  cells, evaluating formula cells there.
      * If formula cells are outside the window for that sheet,
      *  it can either skip them silently, or give an exception
      */
     public static void evaluateAllFormulaCells(SXSSFWorkbook wb, boolean skipOutOfWindow) {
+        SXSSFFormulaEvaluator eval = new SXSSFFormulaEvaluator(wb);
+        
         // Check they're all available
         for (int i=0; i<wb.getNumberOfSheets(); i++) {
             SXSSFSheet s = wb.getSheetAt(i);
@@ -53,7 +71,24 @@ public class SXSSFFormulaEvaluator extends XSSFFormulaEvaluator {
         // Process the sheets as best we can
         for (int i=0; i<wb.getNumberOfSheets(); i++) {
             SXSSFSheet s = wb.getSheetAt(i);
-            // TODO Detect if rows have been flushed
+            
+            // Check if any rows have already been flushed out
+            int firstRowNum = s.getFirstRowNum();
+            int firstAvailableRowNum = s.iterator().next().getRowNum();
+            if (firstRowNum != firstAvailableRowNum) {
+                if (skipOutOfWindow) throw new RowsFlushedException();
+                logger.log(POILogger.INFO, "Rows from " + firstRowNum + " to" +
+                           (firstAvailableRowNum-1) + " have already been flushed, skipping");
+            }
+            
+            // Evaluate what we have
+            for (Row r : s) {
+                for (Cell c : r) {
+                    if (c.getCellType() == Cell.CELL_TYPE_FORMULA) {
+                        eval.evaluateFormulaCell(c);
+                    }
+                }
+            }
         }
     }
     
@@ -72,6 +107,11 @@ public class SXSSFFormulaEvaluator extends XSSFFormulaEvaluator {
     public static class SheetsFlushedException extends IllegalStateException {
         protected SheetsFlushedException() {
             super("One or more sheets have been flushed, cannot evaluate all cells");
+        }
+    }
+    public static class RowsFlushedException extends IllegalStateException {
+        protected RowsFlushedException() {
+            super("One or more rows have been flushed, cannot evaluate all cells");
         }
     }
 }

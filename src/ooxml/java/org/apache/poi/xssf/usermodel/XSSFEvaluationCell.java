@@ -22,8 +22,6 @@ import org.apache.poi.ss.formula.EvaluationSheet;
 
 /**
  * XSSF wrapper for a cell under evaluation
- * 
- * @author Josh Micich
  */
 final class XSSFEvaluationCell implements EvaluationCell {
 
@@ -41,7 +39,7 @@ final class XSSFEvaluationCell implements EvaluationCell {
 
 	public Object getIdentityKey() {
 		// save memory by just using the cell itself as the identity key
-		// Note - this assumes HSSFCell has not overridden hashCode and equals
+		// Note - this assumes XSSFCell has not overridden hashCode and equals
 		return _cell;
 	}
 
