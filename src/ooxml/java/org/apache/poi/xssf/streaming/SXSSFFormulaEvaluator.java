@@ -25,13 +25,13 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.apache.poi.xssf.usermodel.XSSFFormulaEvaluator;
+import org.apache.poi.xssf.usermodel.BaseXSSFFormulaEvaluator;
 
 /**
  * Streaming-specific Formula Evaluator, which is able to 
  *  lookup cells within the current Window.
  */
-public class SXSSFFormulaEvaluator extends XSSFFormulaEvaluator {
+public final class SXSSFFormulaEvaluator extends BaseXSSFFormulaEvaluator {
     private static POILogger logger = POILogFactory.getLogger(SXSSFFormulaEvaluator.class);
     
     private SXSSFWorkbook wb;
@@ -43,7 +43,7 @@ public class SXSSFFormulaEvaluator extends XSSFFormulaEvaluator {
         this(workbook, new WorkbookEvaluator(SXSSFEvaluationWorkbook.create(workbook), stabilityClassifier, udfFinder));
     }
     private SXSSFFormulaEvaluator(SXSSFWorkbook workbook, WorkbookEvaluator bookEvaluator) {
-        super(workbook.getXSSFWorkbook(), bookEvaluator);
+        super(bookEvaluator);
         this.wb = workbook;
     }
     
@@ -68,6 +68,26 @@ public class SXSSFFormulaEvaluator extends XSSFFormulaEvaluator {
         }
 
         return new SXSSFEvaluationCell((SXSSFCell)cell);
+    }
+    
+    /**
+     * If cell contains formula, it evaluates the formula, and
+     *  puts the formula result back into the cell, in place
+     *  of the old formula.
+     * Else if cell does not contain formula, this method leaves
+     *  the cell unchanged.
+     * Note that the same instance of SXSSFCell is returned to
+     * allow chained calls like:
+     * <pre>
+     * int evaluatedCellType = evaluator.evaluateInCell(cell).getCellType();
+     * </pre>
+     * Be aware that your cell value will be changed to hold the
+     *  result of the formula. If you simply want the formula
+     *  value computed for you, use {@link #evaluateFormulaCell(org.apache.poi.ss.usermodel.Cell)} }
+     */
+    public SXSSFCell evaluateInCell(Cell cell) {
+        doEvaluateInCell(cell);
+        return (SXSSFCell)cell;
     }
     
     /**

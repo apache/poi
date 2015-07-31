@@ -908,7 +908,9 @@ public class SXSSFCell implements Cell {
     }
     private String convertCellValueToString() {
         int cellType = getCellType();
-
+        return convertCellValueToString(cellType);
+    }
+    private String convertCellValueToString(int cellType) {
         switch (cellType) {
             case CELL_TYPE_BLANK:
                 return "";
@@ -922,6 +924,12 @@ public class SXSSFCell implements Cell {
                 byte errVal = getErrorCellValue();
                 return FormulaError.forInt(errVal).getString();
             case CELL_TYPE_FORMULA:
+                if (_value != null) {
+                    FormulaValue fv = (FormulaValue)_value;
+                    if (fv.getFormulaType() != CELL_TYPE_FORMULA) {
+                        return convertCellValueToString(fv.getFormulaType());
+                    }
+                }
                 return "";
             default:
                 throw new IllegalStateException("Unexpected cell type (" + cellType + ")");

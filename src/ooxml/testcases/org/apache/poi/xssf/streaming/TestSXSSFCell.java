@@ -30,7 +30,6 @@ import org.apache.poi.xssf.SXSSFITestDataProvider;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.xmlbeans.XmlCursor;
-import org.junit.Ignore;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
 
 /**
@@ -46,51 +45,6 @@ public class TestSXSSFCell extends BaseTestXCell {
     @Override
     public void tearDown(){
         SXSSFITestDataProvider.instance.cleanup();
-    }
-
-    /**
-     * this test involves evaluation of formulas which isn't supported for SXSSF
-     */
-    @Override
-    public void testConvertStringFormulaCell() {
-        try {
-            super.testConvertStringFormulaCell();
-            fail("expected exception");
-        } catch (IllegalArgumentException e){
-            assertEquals(
-                    "Unexpected type of cell: class org.apache.poi.xssf.streaming.SXSSFCell. " +
-                    "Only XSSFCells can be evaluated.", e.getMessage());
-        } catch (ClassCastException e) {} // TODO Temporary workaround during #58200
-    }
-
-    /**
-     * this test involves evaluation of formulas which isn't supported for SXSSF
-     */
-    @Override
-    public void testSetTypeStringOnFormulaCell() {
-        try {
-            super.testSetTypeStringOnFormulaCell();
-            fail("expected exception");
-        } catch (IllegalArgumentException e){
-            assertEquals(
-                    "Unexpected type of cell: class org.apache.poi.xssf.streaming.SXSSFCell. " +
-                    "Only XSSFCells can be evaluated.", e.getMessage());
-        } catch (ClassCastException e) {} // TODO Temporary workaround during #58200
-    }
-    
-    /**
-     * this test involves evaluation of formulas which isn't supported for SXSSF
-     */
-    @Override
-    public void testGetErrorCellValueFromFormulaCell() {
-        try {
-            super.testConvertStringFormulaCell();
-            fail("expected exception");
-        } catch (IllegalArgumentException e){
-            assertEquals(
-                    "Unexpected type of cell: class org.apache.poi.xssf.streaming.SXSSFCell. " +
-                    "Only XSSFCells can be evaluated.", e.getMessage());
-        } catch (ClassCastException e) {} // TODO Temporary workaround during #58200
     }
 
     public void testPreserveSpaces() throws IOException {

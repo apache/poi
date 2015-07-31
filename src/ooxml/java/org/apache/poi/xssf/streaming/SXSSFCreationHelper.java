@@ -17,6 +17,11 @@
 
 package org.apache.poi.xssf.streaming;
 
+import org.apache.poi.ss.usermodel.ClientAnchor;
+import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.DataFormat;
+import org.apache.poi.ss.usermodel.ExtendedColor;
+import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.xssf.usermodel.XSSFCreationHelper;
@@ -27,13 +32,14 @@ import org.apache.poi.xssf.usermodel.XSSFRichTextString;
  *  based on the Streaming Workbook, and some on the related
  *  regular XSSF Workbook
  */
-public class SXSSFCreationHelper extends XSSFCreationHelper {
+public class SXSSFCreationHelper implements CreationHelper {
     private static POILogger logger = POILogFactory.getLogger(SXSSFCreationHelper.class);
     
     private SXSSFWorkbook wb;
+    private XSSFCreationHelper helper;
     
     public SXSSFCreationHelper(SXSSFWorkbook workbook) {
-        super(workbook.getXSSFWorkbook());
+        this.helper = new XSSFCreationHelper(workbook.getXSSFWorkbook());
         this.wb = workbook;
     }
 
@@ -44,5 +50,19 @@ public class SXSSFCreationHelper extends XSSFCreationHelper {
 
     public SXSSFFormulaEvaluator createFormulaEvaluator() {
         return new SXSSFFormulaEvaluator(wb);
+    }
+
+    // Pass-through methods
+    public DataFormat createDataFormat() {
+        return helper.createDataFormat();
+    }
+    public Hyperlink createHyperlink(int type) {
+        return helper.createHyperlink(type);
+    }
+    public ExtendedColor createExtendedColor() {
+        return helper.createExtendedColor();
+    }
+    public ClientAnchor createClientAnchor() {
+        return helper.createClientAnchor();
     }
 }
