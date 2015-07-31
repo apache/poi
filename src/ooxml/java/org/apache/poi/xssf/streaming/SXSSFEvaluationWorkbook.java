@@ -17,9 +17,33 @@
 
 package org.apache.poi.xssf.streaming;
 
+import org.apache.poi.ss.formula.EvaluationSheet;
+import org.apache.poi.xssf.usermodel.BaseXSSFEvaluationWorkbook;
+
 /**
  * SXSSF wrapper around the SXSSF and XSSF workbooks
  */
-public final class SXSSFEvaluationWorkbook {
-    // TODO Refactor XSSFEvaluationWorkbook then extend
+public final class SXSSFEvaluationWorkbook extends BaseXSSFEvaluationWorkbook {
+    private SXSSFWorkbook _uBook;
+    
+    public static SXSSFEvaluationWorkbook create(SXSSFWorkbook book) {
+        if (book == null) {
+            return null;
+        }
+        return new SXSSFEvaluationWorkbook(book);
+    }
+    
+    private SXSSFEvaluationWorkbook(SXSSFWorkbook book) {
+        super(book.getXSSFWorkbook());
+        _uBook = book;
+    }
+    
+    public int getSheetIndex(EvaluationSheet evalSheet) {
+        SXSSFSheet sheet = ((SXSSFEvaluationSheet)evalSheet).getSXSSFSheet();
+        return _uBook.getSheetIndex(sheet);
+    }
+    
+    public EvaluationSheet getSheet(int sheetIndex) {
+        return new SXSSFEvaluationSheet(_uBook.getSheetAt(sheetIndex));
+    }
 }
