@@ -1120,4 +1120,35 @@ public abstract class BaseTestBugzillaIssues {
         assertTrue("HSSF will currently return empty string, XSSF/SXSSF will return null, but had: " + value,
                 value == null || value.length() == 0);
     }
+    
+    /**
+     * Formulas with Nested Ifs, or If with text functions like
+     *  Mid in it, can give #VALUE in Excel
+     */
+    @Test
+    public void bug55747() {
+        Workbook wb = _testDataProvider.createWorkbook();
+        FormulaEvaluator ev = wb.getCreationHelper().createFormulaEvaluator();
+        Sheet s = wb.createSheet();
+        
+        Row row = s.createRow(0);
+        row.createCell(0).setCellValue("abc");
+        row.createCell(1).setCellValue("");
+        row.createCell(2).setCellValue(3);
+
+        Cell cell = row.createCell(5);
+        cell.setCellFormula("IF(A1<>\"\",MID(A1,1,2),\" \")");
+        ev.evaluateAll();
+        assertEquals("ab", cell.getStringCellValue());
+        
+        cell = row.createCell(6);
+        cell.setCellFormula("IF(B1<>\"\",MID(A1,1,2),\"empty\")");
+        ev.evaluateAll();
+        assertEquals("empty", cell.getStringCellValue());
+        
+        cell = row.createCell(7);
+        cell.setCellFormula("IF(A1<>\"\",IF(C1<>\"\",MID(A1,1,2),\"c1\"),\"c2\")");
+        ev.evaluateAll();
+        assertEquals("ab", cell.getStringCellValue());
+    }
 }
