@@ -37,6 +37,7 @@ import org.apache.poi.util.POILogger;
 public class PresetGeometries extends LinkedHashMap<String, CustomGeometry> {
     private final static POILogger LOG = POILogFactory.getLogger(PresetGeometries.class);
     protected final static String BINDING_PACKAGE = "org.apache.poi.sl.draw.binding";
+    private static final String JAXPFACTORYID = "javax.xml.stream.XMLInputFactory";
     
     protected static PresetGeometries _inst;
 
@@ -44,9 +45,6 @@ public class PresetGeometries extends LinkedHashMap<String, CustomGeometry> {
 
     @SuppressWarnings("unused")
     public void init(InputStream is) throws XMLStreamException, JAXBException {
-        // Reader xml = new InputStreamReader( is, Charset.forName("UTF-8") );
-        
-
         // StAX:
         EventFilter startElementFilter = new EventFilter() {
             @Override
@@ -55,8 +53,9 @@ public class PresetGeometries extends LinkedHashMap<String, CustomGeometry> {
             }
         };
         
-        long cntElem = 0;
-        XMLInputFactory staxFactory = XMLInputFactory.newInstance();
+        fixXmlSystemProperties();
+        
+        XMLInputFactory staxFactory = XMLInputFactory.newFactory();
         XMLEventReader staxReader = staxFactory.createXMLEventReader(is);
         XMLEventReader staxFiltRd = staxFactory.createFilteredReader(staxReader, startElementFilter);
         // ignore StartElement:
@@ -65,6 +64,7 @@ public class PresetGeometries extends LinkedHashMap<String, CustomGeometry> {
         JAXBContext jaxbContext = JAXBContext.newInstance(BINDING_PACKAGE);
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
 
+        long cntElem = 0;
         while (staxFiltRd.peek() != null) {
             StartElement evRoot = (StartElement)staxFiltRd.peek();
             String name = evRoot.getName().getLocalPart();
@@ -114,5 +114,22 @@ public class PresetGeometries extends LinkedHashMap<String, CustomGeometry> {
         }
 
         return _inst;
+    }
+    
+    public static void fixXmlSystemProperties() {
+        // handling for illegal system properties - mainly because of failing gump build
+        String xmlFactClass = System.getProperty(JAXPFACTORYID);
+        if (xmlFactClass != null) {
+            try {
+                Class.forName(xmlFactClass);
+            } catch (Exception e) {
+                LOG.log(POILogger.ERROR, "Invalid xml input factory config detected. ("+JAXPFACTORYID+"="+xmlFactClass+")");
+                try {
+                    System.clearProperty(JAXPFACTORYID);
+                } catch (Exception e2) {
+                    LOG.log(POILogger.ERROR, "Failed to remove invalid xml input factory", e2);
+                }
+            }
+        }
     }
 }
