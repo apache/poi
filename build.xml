@@ -1526,7 +1526,7 @@ under the License.
             </packageset>
             <link offline="true" href="https://poi.apache.org/apidocs" packagelistLoc="build/tmp/site/build/site/apidocs"/>
         </javadoc>
-        <jar destfile="${dist.dir}/${jarname}-${version.id}-javadocs-${DSTAMP}.jar"
+        <jar destfile="${dist.dir}/${jarname}-${version.id}-javadoc-${DSTAMP}.jar"
              manifest="build/poi-manifest.mf">
             <fileset dir="${build.maven.javadocs}"/>
             <metainf dir="legal/"/>
