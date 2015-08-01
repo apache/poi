@@ -2487,4 +2487,13 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         
         wb.close();
     }
+    
+    /**
+     * Excel 2007 generated Macro-Enabled .xlsm file
+     */
+    @Test
+    public void bug57181() throws Exception {
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("57181.xlsm");
+        assertEquals(9, wb.getNumberOfSheets());
+    }
 }
