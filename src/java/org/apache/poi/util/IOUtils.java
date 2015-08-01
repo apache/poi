@@ -166,12 +166,35 @@ public final class IOUtils {
         }
     }
 
+    /**
+     * Calculate checksum on input data
+     */
     public static long calculateChecksum(byte[] data) {
         Checksum sum = new CRC32();
         sum.update(data, 0, data.length);
         return sum.getValue();
     }
 
+    /**
+     * Calculate checksum on all the data read from input stream.
+     *
+     * This should be more efficient than the equivalent code
+     * {@code IOUtils.calculateChecksum(IOUtils.toByteArray(stream))}
+     */
+    public static long calculateChecksum(InputStream stream) throws IOException {
+        Checksum sum = new CRC32();
+
+        byte[] buf = new byte[4096];
+        int count;
+        while ((count = stream.read(buf)) != -1) {
+            if (count > 0) {
+                sum.update(buf, 0, count);
+            }
+        }
+        return sum.getValue();
+    }    
+    
+    
     /**
      * Quietly (no exceptions) close Closable resource. In case of error it will
      * be printed to {@link IOUtils} class logger.

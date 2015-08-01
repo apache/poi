@@ -20,6 +20,7 @@
 package org.apache.poi.xslf.usermodel;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.apache.poi.POIXMLDocumentPart;
@@ -141,21 +142,25 @@ public final class XSLFPictureData extends POIXMLDocumentPart implements Picture
     }
 
     /**
-     * Gets the picture data as a byte array.
-     * <p>
-     * Note, that this call might be expensive since all the picture data is copied into a temporary byte array.
-     * You can grab the picture data directly from the underlying package part as follows:
-     * <br/>
-     * <code>
-     * InputStream is = getPackagePart().getInputStream();
-     * </code>
-     * </p>
+     * An InputStream to read the picture data directly
+     * from the underlying package part
      *
+     * @return InputStream
+     */
+    public InputStream getInputStream() throws IOException {
+        return getPackagePart().getInputStream();
+    }
+    
+    /**
+     * Gets the picture data as a byte array.
+     *
+     * You can grab the picture data directly from the underlying package part with the {@link #getInputStream()} method
+     * 
      * @return the Picture data.
      */
     public byte[] getData() {
         try {
-            return IOUtils.toByteArray(getPackagePart().getInputStream());
+            return IOUtils.toByteArray(getInputStream());
         } catch (IOException e) {
             throw new POIXMLException(e);
         }
@@ -203,8 +208,11 @@ public final class XSLFPictureData extends POIXMLDocumentPart implements Picture
 
     long getChecksum(){
         if(checksum == null){
-            byte[] pictureData = getData();
-            checksum = IOUtils.calculateChecksum(pictureData);
+            try {
+                checksum = IOUtils.calculateChecksum(getInputStream());
+            } catch (IOException e) {
+                throw new POIXMLException("Unable to calulate checksum", e);
+            }
         }
         return checksum;
     }
@@ -227,6 +235,8 @@ public final class XSLFPictureData extends POIXMLDocumentPart implements Picture
         OutputStream os = getPackagePart().getOutputStream();
         os.write(data);
         os.close();
+        // recalculate now since we already have the data bytes available anyhow
+        checksum = IOUtils.calculateChecksum(data);
     }
     
     
