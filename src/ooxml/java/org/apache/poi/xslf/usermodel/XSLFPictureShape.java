@@ -22,7 +22,6 @@ package org.apache.poi.xslf.usermodel;
 import java.awt.Insets;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.net.URI;
 
 import javax.imageio.ImageIO;
@@ -91,10 +90,8 @@ public class XSLFPictureShape extends XSLFSimpleShape implements PictureShape {
      * for other types sets the default size of 200x200 pixels.
      */
     public void resize() {
-        XSLFPictureData pict = getPictureData();
-
         try {
-            BufferedImage img = ImageIO.read(new ByteArrayInputStream(pict.getData()));
+            BufferedImage img = ImageIO.read(getPictureData().getInputStream());
             setAnchor(new Rectangle2D.Double(0, 0, img.getWidth(), img.getHeight()));
         }
         catch (Exception e) {
