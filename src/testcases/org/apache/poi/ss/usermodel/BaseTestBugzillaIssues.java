@@ -37,7 +37,6 @@ import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.SheetUtil;
-import org.apache.poi.util.StringUtil;
 import org.junit.Assume;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -1149,6 +1148,28 @@ public abstract class BaseTestBugzillaIssues {
         cell = row.createCell(7);
         cell.setCellFormula("IF(A1<>\"\",IF(C1<>\"\",MID(A1,1,2),\"c1\"),\"c2\")");
         ev.evaluateAll();
+        assertEquals("ab", cell.getStringCellValue());
+        
+        // Write it back out, and re-read
+        wb = _testDataProvider.writeOutAndReadBack(wb);
+        ev = wb.getCreationHelper().createFormulaEvaluator();
+        s = wb.getSheetAt(0);
+        row = s.getRow(0);
+        
+        // Check read ok, and re-evaluate fine
+        cell = row.getCell(5);
+        assertEquals("ab", cell.getStringCellValue());
+        ev.evaluateFormulaCell(cell);
+        assertEquals("ab", cell.getStringCellValue());
+        
+        cell = row.getCell(6);
+        assertEquals("empty", cell.getStringCellValue());
+        ev.evaluateFormulaCell(cell);
+        assertEquals("empty", cell.getStringCellValue());
+        
+        cell = row.getCell(7);
+        assertEquals("ab", cell.getStringCellValue());
+        ev.evaluateFormulaCell(cell);
         assertEquals("ab", cell.getStringCellValue());
     }
 }
