@@ -536,6 +536,13 @@ public final class XSSFCell implements Cell {
             _cell.setS(idx);
         }
     }
+    
+    private boolean isFormulaCell() {
+        if (_cell.getF() != null || getSheet().isCellInArrayFormulaContext(this)) {
+            return true;
+        }
+        return false;
+    }
 
     /**
      * Return the cell type.
@@ -550,10 +557,7 @@ public final class XSSFCell implements Cell {
      */
     @Override
     public int getCellType() {
-
-        if (_cell.getF() != null || getSheet().isCellInArrayFormulaContext(this)) {
-            return CELL_TYPE_FORMULA;
-        }
+        if (isFormulaCell()) return CELL_TYPE_FORMULA;
 
         return getBaseCellType(true);
     }
@@ -566,7 +570,7 @@ public final class XSSFCell implements Cell {
      */
     @Override
     public int getCachedFormulaResultType() {
-        if (_cell.getF() == null) {
+        if (! isFormulaCell()) {
             throw new IllegalStateException("Only formula cells have cached results");
         }
 
