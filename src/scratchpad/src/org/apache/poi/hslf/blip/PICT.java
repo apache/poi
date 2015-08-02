@@ -23,19 +23,14 @@ import java.io.IOException;
 import java.util.zip.InflaterInputStream;
 
 import org.apache.poi.hslf.exceptions.HSLFException;
-import org.apache.poi.hslf.usermodel.HSLFPictureShape;
 import org.apache.poi.util.Units;
 
 /**
  * Represents Macintosh PICT picture data.
- *
- * @author Yegor Kozlov
  */
 public final class PICT extends Metafile {
 
-    /**
-     * Extract compressed PICT data from a ppt
-     */
+    @Override
     public byte[] getData(){
         byte[] rawdata = getRawData();
         try {
@@ -74,6 +69,7 @@ public final class PICT extends Metafile {
         return out.toByteArray();
     }
 
+    @Override
     public void setData(byte[] data) throws IOException {
         int pos = 512; //skip the first 512 bytes - they are MAC specific crap
         byte[] compressed = compress(data, pos, data.length-pos);
@@ -97,11 +93,9 @@ public final class PICT extends Metafile {
         setRawData(out.toByteArray());
     }
 
-    /**
-     * @see org.apache.poi.hslf.usermodel.HSLFPictureShape#PICT
-     */
-    public int getType(){
-        return HSLFPictureShape.PICT;
+    @Override
+    public PictureType getType(){
+        return PictureType.PICT;
     }
 
     /**
@@ -128,9 +122,4 @@ public final class PICT extends Metafile {
                 throw new IllegalArgumentException(signature+" is not a valid instance/signature value for PICT");
         }        
     }
-
-    public String getContentType() {
-        return "image/x-pict";
-    }
-
 }

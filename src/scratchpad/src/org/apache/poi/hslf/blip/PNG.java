@@ -17,19 +17,14 @@
 
 package org.apache.poi.hslf.blip;
 
-import org.apache.poi.hslf.usermodel.HSLFPictureShape;
 import org.apache.poi.util.PngUtils;
 
 /**
  * Represents a PNG picture data in a PPT file
- *
- * @author Yegor Kozlov
  */
 public final class PNG extends Bitmap {
 
-    /**
-     * @return PNG data
-     */
+    @Override
     public byte[] getData() {
         byte[] data = super.getData();
 
@@ -44,12 +39,9 @@ public final class PNG extends Bitmap {
         return data;
     }
 
-    /**
-     * @return type of  this picture
-     * @see  org.apache.poi.hslf.usermodel.HSLFPictureShape#PNG
-     */
-    public int getType(){
-        return HSLFPictureShape.PNG;
+    @Override
+    public PictureType getType(){
+        return PictureType.PNG;
     }
 
     /**
@@ -75,9 +67,5 @@ public final class PNG extends Bitmap {
             default:
                 throw new IllegalArgumentException(signature+" is not a valid instance/signature value for PNG");
         }        
-    }
-
-    public String getContentType() {
-        return "image/png";
     }
 }

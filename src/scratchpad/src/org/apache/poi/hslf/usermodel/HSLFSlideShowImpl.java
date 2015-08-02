@@ -52,6 +52,7 @@ import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.poifs.filesystem.EntryUtils;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -407,13 +408,14 @@ public final class HSLFSlideShowImpl extends POIDocument {
 			}
 
 			// If they type (including the bonus 0xF018) is 0, skip it
-			if(type == 0) {
+			PictureType pt = PictureType.forNativeID(type - 0xF018);
+			if(type == 0 || pt == null) {
 				logger.log(POILogger.ERROR, "Problem reading picture: Invalid image type 0, on picture with length " + imgsize + ".\nYou document will probably become corrupted if you save it!");
 				logger.log(POILogger.ERROR, "" + pos);
 			} else {
 				// Build the PictureData object from the data
-				try {
-					HSLFPictureData pict = HSLFPictureData.create(type - 0xF018);
+                try {
+					HSLFPictureData pict = HSLFPictureData.create(pt);
 
                     // Copy the data, ready to pass to PictureData
                     byte[] imgdata = new byte[imgsize];
@@ -421,6 +423,7 @@ public final class HSLFSlideShowImpl extends POIDocument {
                     pict.setRawData(imgdata);
 
                     pict.setOffset(offset);
+                    pict.setIndex(_pictures.size());
 					_pictures.add(pict);
 				} catch(IllegalArgumentException e) {
 					logger.log(POILogger.ERROR, "Problem reading picture: " + e + "\nYou document will probably become corrupted if you save it!");
@@ -711,6 +714,7 @@ public final class HSLFSlideShowImpl extends POIDocument {
 	      offset = prev.getOffset() + prev.getRawData().length + 8;
 	   }
 	   img.setOffset(offset);
+	   img.setIndex(_pictures.size()+1);
 	   _pictures.add(img);
 	   return offset;
    }

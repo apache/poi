@@ -17,15 +17,12 @@
 
 package org.apache.poi.hslf.blip;
 
-import org.apache.poi.hslf.usermodel.HSLFPictureShape;
-import org.apache.poi.util.LittleEndian;
-
 import java.io.IOException;
+
+import org.apache.poi.util.LittleEndian;
 
 /**
  * Represents a DIB picture data in a PPT file
- *
- * @author Yegor Kozlov
  */
 public final class DIB extends Bitmap {
     /**
@@ -33,12 +30,9 @@ public final class DIB extends Bitmap {
      */
     private static final int HEADER_SIZE = 14;
 
-    /**
-     * @return type of  this picture
-     * @see  org.apache.poi.hslf.usermodel.HSLFPictureShape#DIB
-     */
-    public int getType(){
-        return HSLFPictureShape.DIB;
+    @Override
+    public PictureType getType(){
+        return PictureType.DIB;
     }
 
     /**
@@ -66,6 +60,7 @@ public final class DIB extends Bitmap {
         }        
     }    
     
+    @Override
     public byte[] getData(){
         return addBMPHeader ( super.getData() );
     }
@@ -99,14 +94,11 @@ public final class DIB extends Bitmap {
         return dib;
     }
 
+    @Override
     public void setData(byte[] data) throws IOException {
         //cut off the bitmap file-header
         byte[] dib = new byte[data.length-HEADER_SIZE];
         System.arraycopy(data, HEADER_SIZE, dib, 0, dib.length);
         super.setData(dib);
-    }
-
-    public String getContentType() {
-        return "image/bmp";
     }
 }

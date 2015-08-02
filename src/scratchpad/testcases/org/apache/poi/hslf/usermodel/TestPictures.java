@@ -28,6 +28,7 @@ import junit.framework.TestCase;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hslf.blip.*;
+import org.apache.poi.sl.usermodel.PictureData.PictureType;
 
 /**
  * Test adding/reading pictures
@@ -47,9 +48,9 @@ public final class TestPictures extends TestCase{
 
         HSLFSlide slide = ppt.createSlide();
         byte[] src_bytes = slTests.readFile("cow.pict");
-        int idx = ppt.addPicture(src_bytes, HSLFPictureShape.PICT);
-        HSLFPictureShape pict = new HSLFPictureShape(idx);
-        assertEquals(idx, pict.getPictureIndex());
+        HSLFPictureData data = ppt.addPicture(src_bytes, PictureType.PICT);
+        HSLFPictureShape pict = new HSLFPictureShape(data);
+        assertEquals(data.getIndex(), pict.getPictureIndex());
         slide.addShape(pict);
 
         //serialize and read again
@@ -63,7 +64,7 @@ public final class TestPictures extends TestCase{
         List<HSLFShape> sh = ppt.getSlides().get(0).getShapes();
         assertEquals(1, sh.size());
         pict = (HSLFPictureShape)sh.get(0);
-        assertEquals(idx, pict.getPictureIndex());
+        assertEquals(data.getIndex(), pict.getPictureIndex());
 
         //check picture data
         HSLFPictureData[] pictures = ppt.getPictureData();
@@ -71,7 +72,7 @@ public final class TestPictures extends TestCase{
         assertEquals(pict.getPictureData(), pictures[0]);
 
         assertEquals(1, pictures.length);
-        assertEquals(HSLFPictureShape.PICT, pictures[0].getType());
+        assertEquals(PictureType.PICT, pictures[0].getType());
         assertTrue(pictures[0] instanceof PICT);
         //compare the content of the initial file with what is stored in the PictureData
         byte[] ppt_bytes = pictures[0].getData();
@@ -92,9 +93,9 @@ public final class TestPictures extends TestCase{
 
         HSLFSlide slide = ppt.createSlide();
         byte[] src_bytes = slTests.readFile("santa.wmf");
-        int idx = ppt.addPicture(src_bytes, HSLFPictureShape.WMF);
-        HSLFPictureShape pict = new HSLFPictureShape(idx);
-        assertEquals(idx, pict.getPictureIndex());
+        HSLFPictureData data = ppt.addPicture(src_bytes, PictureType.WMF);
+        HSLFPictureShape pict = new HSLFPictureShape(data);
+        assertEquals(data.getIndex(), pict.getPictureIndex());
         slide.addShape(pict);
 
         //serialize and read again
@@ -108,7 +109,7 @@ public final class TestPictures extends TestCase{
         List<HSLFShape> sh = ppt.getSlides().get(0).getShapes();
         assertEquals(1, sh.size());
         pict = (HSLFPictureShape)sh.get(0);
-        assertEquals(idx, pict.getPictureIndex());
+        assertEquals(data.getIndex(), pict.getPictureIndex());
 
         //check picture data
         HSLFPictureData[] pictures = ppt.getPictureData();
@@ -116,7 +117,7 @@ public final class TestPictures extends TestCase{
         assertEquals(pict.getPictureData(), pictures[0]);
 
         assertEquals(1, pictures.length);
-        assertEquals(HSLFPictureShape.WMF, pictures[0].getType());
+        assertEquals(PictureType.WMF, pictures[0].getType());
         assertTrue(pictures[0] instanceof WMF);
         //compare the content of the initial file with what is stored in the PictureData
         byte[] ppt_bytes = pictures[0].getData();
@@ -137,10 +138,10 @@ public final class TestPictures extends TestCase{
 
         HSLFSlide slide = ppt.createSlide();
         byte[] src_bytes = slTests.readFile("wrench.emf");
-        int idx = ppt.addPicture(src_bytes, HSLFPictureShape.EMF);
+        HSLFPictureData data = ppt.addPicture(src_bytes, PictureType.EMF);
 
-        HSLFPictureShape pict = new HSLFPictureShape(idx);
-        assertEquals(idx, pict.getPictureIndex());
+        HSLFPictureShape pict = new HSLFPictureShape(data);
+        assertEquals(data.getIndex(), pict.getPictureIndex());
         slide.addShape(pict);
 
         //serialize and read again
@@ -154,7 +155,7 @@ public final class TestPictures extends TestCase{
         List<HSLFShape> sh = ppt.getSlides().get(0).getShapes();
         assertEquals(1, sh.size());
         pict = (HSLFPictureShape)sh.get(0);
-        assertEquals(idx, pict.getPictureIndex());
+        assertEquals(data.getIndex(), pict.getPictureIndex());
 
         //check picture data
         HSLFPictureData[] pictures = ppt.getPictureData();
@@ -162,7 +163,7 @@ public final class TestPictures extends TestCase{
         assertEquals(pict.getPictureData(), pictures[0]);
 
         assertEquals(1, pictures.length);
-        assertEquals(HSLFPictureShape.EMF, pictures[0].getType());
+        assertEquals(PictureType.EMF, pictures[0].getType());
         assertTrue(pictures[0] instanceof EMF);
         //compare the content of the initial file with what is stored in the PictureData
         byte[] ppt_bytes = pictures[0].getData();
@@ -177,9 +178,9 @@ public final class TestPictures extends TestCase{
 
         HSLFSlide slide = ppt.createSlide();
         byte[] src_bytes = slTests.readFile("tomcat.png");
-        int idx = ppt.addPicture(src_bytes, HSLFPictureShape.PNG);
-        HSLFPictureShape pict = new HSLFPictureShape(idx);
-        assertEquals(idx, pict.getPictureIndex());
+        HSLFPictureData data = ppt.addPicture(src_bytes, PictureType.PNG);
+        HSLFPictureShape pict = new HSLFPictureShape(data);
+        assertEquals(data.getIndex(), pict.getPictureIndex());
         slide.addShape(pict);
 
         //serialize and read again
@@ -193,7 +194,7 @@ public final class TestPictures extends TestCase{
         List<HSLFShape> sh = ppt.getSlides().get(0).getShapes();
         assertEquals(1, sh.size());
         pict = (HSLFPictureShape)sh.get(0);
-        assertEquals(idx, pict.getPictureIndex());
+        assertEquals(data.getIndex(), pict.getPictureIndex());
 
         //check picture data
         HSLFPictureData[] pictures = ppt.getPictureData();
@@ -201,7 +202,7 @@ public final class TestPictures extends TestCase{
         assertEquals(pict.getPictureData(), pictures[0]);
 
         assertEquals(1, pictures.length);
-        assertEquals(HSLFPictureShape.PNG, pictures[0].getType());
+        assertEquals(PictureType.PNG, pictures[0].getType());
         assertTrue(pictures[0] instanceof PNG);
         //compare the content of the initial file with what is stored in the PictureData
         byte[] ppt_bytes = pictures[0].getData();
@@ -216,10 +217,10 @@ public final class TestPictures extends TestCase{
 
         HSLFSlide slide = ppt.createSlide();
         byte[] src_bytes = slTests.readFile("clock.jpg");
-        int idx = ppt.addPicture(src_bytes, HSLFPictureShape.JPEG);
+        HSLFPictureData data = ppt.addPicture(src_bytes, PictureType.JPEG);
 
-        HSLFPictureShape pict = new HSLFPictureShape(idx);
-        assertEquals(idx, pict.getPictureIndex());
+        HSLFPictureShape pict = new HSLFPictureShape(data);
+        assertEquals(data.getIndex(), pict.getPictureIndex());
         slide.addShape(pict);
 
         //serialize and read again
@@ -233,7 +234,7 @@ public final class TestPictures extends TestCase{
         List<HSLFShape> sh = ppt.getSlides().get(0).getShapes();
         assertEquals(1, sh.size());
         pict = (HSLFPictureShape)sh.get(0);
-        assertEquals(idx, pict.getPictureIndex());
+        assertEquals(data.getIndex(), pict.getPictureIndex());
 
         //check picture data
         HSLFPictureData[] pictures = ppt.getPictureData();
@@ -241,7 +242,7 @@ public final class TestPictures extends TestCase{
         assertEquals(pict.getPictureData(), pictures[0]);
 
         assertEquals(1, pictures.length);
-        assertEquals(HSLFPictureShape.JPEG, pictures[0].getType());
+        assertEquals(PictureType.JPEG, pictures[0].getType());
         assertTrue(pictures[0] instanceof JPEG);
         //compare the content of the initial file with what is stored in the PictureData
         byte[] ppt_bytes = pictures[0].getData();
@@ -256,9 +257,9 @@ public final class TestPictures extends TestCase{
 
         HSLFSlide slide = ppt.createSlide();
         byte[] src_bytes = slTests.readFile("clock.dib");
-        int idx = ppt.addPicture(src_bytes, HSLFPictureShape.DIB);
-        HSLFPictureShape pict = new HSLFPictureShape(idx);
-        assertEquals(idx, pict.getPictureIndex());
+        HSLFPictureData data = ppt.addPicture(src_bytes, PictureType.DIB);
+        HSLFPictureShape pict = new HSLFPictureShape(data);
+        assertEquals(data.getIndex(), pict.getPictureIndex());
         slide.addShape(pict);
 
         //serialize and read again
@@ -272,7 +273,7 @@ public final class TestPictures extends TestCase{
         List<HSLFShape> sh = ppt.getSlides().get(0).getShapes();
         assertEquals(1, sh.size());
         pict = (HSLFPictureShape)sh.get(0);
-        assertEquals(idx, pict.getPictureIndex());
+        assertEquals(data.getIndex(), pict.getPictureIndex());
 
         //check picture data
         HSLFPictureData[] pictures = ppt.getPictureData();
@@ -280,7 +281,7 @@ public final class TestPictures extends TestCase{
         assertEquals(pict.getPictureData(), pictures[0]);
 
         assertEquals(1, pictures.length);
-        assertEquals(HSLFPictureShape.DIB, pictures[0].getType());
+        assertEquals(PictureType.DIB, pictures[0].getType());
         assertTrue(pictures[0] instanceof DIB);
         //compare the content of the initial file with what is stored in the PictureData
         byte[] ppt_bytes = pictures[0].getData();
@@ -304,7 +305,7 @@ public final class TestPictures extends TestCase{
         pict = (HSLFPictureShape)slides.get(0).getShapes().get(0); //the first slide contains JPEG
         pdata = pict.getPictureData();
         assertTrue(pdata instanceof JPEG);
-        assertEquals(HSLFPictureShape.JPEG, pdata.getType());
+        assertEquals(PictureType.JPEG, pdata.getType());
         src_bytes = pdata.getData();
         ppt_bytes = slTests.readFile("clock.jpg");
         assertArrayEquals(src_bytes, ppt_bytes);
@@ -312,7 +313,7 @@ public final class TestPictures extends TestCase{
         pict = (HSLFPictureShape)slides.get(1).getShapes().get(0); //the second slide contains PNG
         pdata = pict.getPictureData();
         assertTrue(pdata instanceof PNG);
-        assertEquals(HSLFPictureShape.PNG, pdata.getType());
+        assertEquals(PictureType.PNG, pdata.getType());
         src_bytes = pdata.getData();
         ppt_bytes = slTests.readFile("tomcat.png");
         assertArrayEquals(src_bytes, ppt_bytes);
@@ -320,7 +321,7 @@ public final class TestPictures extends TestCase{
         pict = (HSLFPictureShape)slides.get(2).getShapes().get(0); //the third slide contains WMF
         pdata = pict.getPictureData();
         assertTrue(pdata instanceof WMF);
-        assertEquals(HSLFPictureShape.WMF, pdata.getType());
+        assertEquals(PictureType.WMF, pdata.getType());
         src_bytes = pdata.getData();
         ppt_bytes = slTests.readFile("santa.wmf");
         assertEquals(src_bytes.length, ppt_bytes.length);
@@ -334,7 +335,7 @@ public final class TestPictures extends TestCase{
         pict = (HSLFPictureShape)slides.get(3).getShapes().get(0); //the forth slide contains PICT
         pdata = pict.getPictureData();
         assertTrue(pdata instanceof PICT);
-        assertEquals(HSLFPictureShape.PICT, pdata.getType());
+        assertEquals(PictureType.PICT, pdata.getType());
         src_bytes = pdata.getData();
         ppt_bytes = slTests.readFile("cow.pict");
         assertEquals(src_bytes.length, ppt_bytes.length);
@@ -348,7 +349,7 @@ public final class TestPictures extends TestCase{
         pict = (HSLFPictureShape)slides.get(4).getShapes().get(0); //the fifth slide contains EMF
         pdata = pict.getPictureData();
         assertTrue(pdata instanceof EMF);
-        assertEquals(HSLFPictureShape.EMF, pdata.getType());
+        assertEquals(PictureType.EMF, pdata.getType());
         src_bytes = pdata.getData();
         ppt_bytes = slTests.readFile("wrench.emf");
         assertArrayEquals(src_bytes, ppt_bytes);
@@ -365,8 +366,8 @@ public final class TestPictures extends TestCase{
 		// Should still have 2 real pictures
 		assertEquals(2, hslf.getPictures().length);
 		// Both are real pictures, both WMF
-		assertEquals(HSLFPictureShape.WMF, hslf.getPictures()[0].getType());
-		assertEquals(HSLFPictureShape.WMF, hslf.getPictures()[1].getType());
+		assertEquals(PictureType.WMF, hslf.getPictures()[0].getType());
+		assertEquals(PictureType.WMF, hslf.getPictures()[1].getType());
 
 		// Now test what happens when we use the SlideShow interface
 		HSLFSlideShow ppt = new HSLFSlideShow(hslf);
@@ -381,12 +382,12 @@ public final class TestPictures extends TestCase{
         pict = (HSLFPictureShape)slides.get(0).getShapes().get(1); // 2nd object on 1st slide
         pdata = pict.getPictureData();
         assertTrue(pdata instanceof WMF);
-        assertEquals(HSLFPictureShape.WMF, pdata.getType());
+        assertEquals(PictureType.WMF, pdata.getType());
 
         pict = (HSLFPictureShape)slides.get(0).getShapes().get(2); // 3rd object on 1st slide
         pdata = pict.getPictureData();
         assertTrue(pdata instanceof WMF);
-        assertEquals(HSLFPictureShape.WMF, pdata.getType());
+        assertEquals(PictureType.WMF, pdata.getType());
 	}
 
     /**
@@ -401,8 +402,8 @@ public final class TestPictures extends TestCase{
 		// Should still have 2 real pictures
 		assertEquals(2, hslf.getPictures().length);
 		// Both are real pictures, both WMF
-		assertEquals(HSLFPictureShape.WMF, hslf.getPictures()[0].getType());
-		assertEquals(HSLFPictureShape.WMF, hslf.getPictures()[1].getType());
+		assertEquals(PictureType.WMF, hslf.getPictures()[0].getType());
+		assertEquals(PictureType.WMF, hslf.getPictures()[1].getType());
 
 		// Now test what happens when we use the SlideShow interface
 		HSLFSlideShow ppt = new HSLFSlideShow(hslf);
@@ -417,12 +418,12 @@ public final class TestPictures extends TestCase{
         pict = (HSLFPictureShape)slides.get(6).getShapes().get(13);
         pdata = pict.getPictureData();
         assertTrue(pdata instanceof WMF);
-        assertEquals(HSLFPictureShape.WMF, pdata.getType());
+        assertEquals(PictureType.WMF, pdata.getType());
 
         pict = (HSLFPictureShape)slides.get(7).getShapes().get(13);
         pdata = pict.getPictureData();
         assertTrue(pdata instanceof WMF);
-        assertEquals(HSLFPictureShape.WMF, pdata.getType());
+        assertEquals(PictureType.WMF, pdata.getType());
 
         //add a new picture, it should be correctly appended to the Pictures stream
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -431,7 +432,7 @@ public final class TestPictures extends TestCase{
 
         int streamSize = out.size();
 
-        HSLFPictureData data = HSLFPictureData.create(HSLFPictureShape.JPEG);
+        HSLFPictureData data = HSLFPictureData.create(PictureType.JPEG);
         data.setData(new byte[100]);
         int offset = hslf.addPicture(data);
         assertEquals(streamSize, offset);
@@ -452,8 +453,8 @@ public final class TestPictures extends TestCase{
 
         HSLFSlide slide = ppt.createSlide();
         byte[] img = slTests.readFile("tomcat.png");
-        int idx = ppt.addPicture(img, HSLFPictureShape.PNG);
-        HSLFPictureShape pict = new HSLFPictureShape(idx);
+        HSLFPictureData data = ppt.addPicture(img, PictureType.PNG);
+        HSLFPictureShape pict = new HSLFPictureShape(data);
         pict.setPictureName("tomcat.png");
         slide.addShape(pict);
 

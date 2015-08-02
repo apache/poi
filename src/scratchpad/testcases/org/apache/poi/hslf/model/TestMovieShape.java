@@ -17,14 +17,19 @@
 
 package org.apache.poi.hslf.model;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.awt.geom.Rectangle2D;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
 import org.apache.poi.POIDataSamples;
-import org.apache.poi.hslf.usermodel.*;
+import org.apache.poi.hslf.usermodel.HSLFPictureData;
+import org.apache.poi.hslf.usermodel.HSLFSlide;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
+import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.junit.Test;
 
 /**
@@ -44,9 +49,9 @@ public final class TestMovieShape {
 
         String path = "/test-movie.mpg";
         int movieIdx = ppt.addMovie(path, MovieShape.MOVIE_MPEG);
-        int thumbnailIdx = ppt.addPicture(_slTests.readFile("tomcat.png"), HSLFPictureShape.PNG);
+        HSLFPictureData thumbnailData = ppt.addPicture(_slTests.readFile("tomcat.png"), PictureType.PNG);
 
-        MovieShape shape = new MovieShape(movieIdx, thumbnailIdx);
+        MovieShape shape = new MovieShape(movieIdx, thumbnailData);
         shape.setAnchor(new Rectangle2D.Float(300,225,120,90));
         slide.addShape(shape);
 

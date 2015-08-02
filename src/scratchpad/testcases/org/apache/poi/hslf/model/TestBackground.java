@@ -33,7 +33,15 @@ import org.apache.poi.ddf.EscherProperties;
 import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.ddf.EscherSimpleProperty;
 import org.apache.poi.hslf.record.Document;
-import org.apache.poi.hslf.usermodel.*;
+import org.apache.poi.hslf.usermodel.HSLFAutoShape;
+import org.apache.poi.hslf.usermodel.HSLFFill;
+import org.apache.poi.hslf.usermodel.HSLFPictureData;
+import org.apache.poi.hslf.usermodel.HSLFShape;
+import org.apache.poi.hslf.usermodel.HSLFSheet;
+import org.apache.poi.hslf.usermodel.HSLFSlide;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
+import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
+import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.apache.poi.sl.usermodel.ShapeType;
 import org.junit.Test;
 
@@ -104,15 +112,15 @@ public final class TestBackground {
         HSLFSlide slide;
         HSLFFill fill;
         HSLFShape shape;
-        int idx;
+        HSLFPictureData data;
 
         //slide 1
         slide = ppt.createSlide();
         slide.setFollowMasterBackground(false);
         fill = slide.getBackground().getFill();
-        idx = ppt.addPicture(_slTests.readFile("tomcat.png"), HSLFPictureShape.PNG);
+        data = ppt.addPicture(_slTests.readFile("tomcat.png"), PictureType.PNG);
         fill.setFillType(HSLFFill.FILL_PICTURE);
-        fill.setPictureData(idx);
+        fill.setPictureData(data);
 
         shape = new HSLFAutoShape(ShapeType.RECT);
         shape.setAnchor(new java.awt.Rectangle(100, 100, 200, 200));
@@ -124,9 +132,9 @@ public final class TestBackground {
         slide = ppt.createSlide();
         slide.setFollowMasterBackground(false);
         fill = slide.getBackground().getFill();
-        idx = ppt.addPicture(_slTests.readFile("tomcat.png"), HSLFPictureShape.PNG);
+        data = ppt.addPicture(_slTests.readFile("tomcat.png"), PictureType.PNG);
         fill.setFillType(HSLFFill.FILL_PATTERN);
-        fill.setPictureData(idx);
+        fill.setPictureData(data);
         fill.setBackgroundColor(Color.green);
         fill.setForegroundColor(Color.red);
 
@@ -140,16 +148,16 @@ public final class TestBackground {
         slide = ppt.createSlide();
         slide.setFollowMasterBackground(false);
         fill = slide.getBackground().getFill();
-        idx = ppt.addPicture(_slTests.readFile("tomcat.png"), HSLFPictureShape.PNG);
+        data = ppt.addPicture(_slTests.readFile("tomcat.png"), PictureType.PNG);
         fill.setFillType(HSLFFill.FILL_TEXTURE);
-        fill.setPictureData(idx);
+        fill.setPictureData(data);
 
         shape = new HSLFAutoShape(ShapeType.RECT);
         shape.setAnchor(new java.awt.Rectangle(100, 100, 200, 200));
         fill = shape.getFill();
         fill.setFillType(HSLFFill.FILL_PICTURE);
-        idx = ppt.addPicture(_slTests.readFile("clock.jpg"), HSLFPictureShape.JPEG);
-        fill.setPictureData(idx);
+        data = ppt.addPicture(_slTests.readFile("clock.jpg"), PictureType.JPEG);
+        fill.setPictureData(data);
         slide.addShape(shape);
 
         // slide 4
@@ -198,7 +206,6 @@ public final class TestBackground {
         assertEquals(HSLFFill.FILL_SHADE_CENTER, fill.getFillType());
         shape = slides.get(3).getShapes().get(0);
         assertEquals(HSLFFill.FILL_SHADE, shape.getFill().getFillType());
-
     }
 
     private int getFillPictureRefCount(HSLFShape shape, HSLFFill fill) {

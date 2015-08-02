@@ -41,10 +41,10 @@ public final class MovieShape extends HSLFPictureShape {
     /**
      * Create a new <code>Picture</code>
      *
-    * @param pictureIdx the index of the picture
+    * @param pictureData the picture data
      */
-    public MovieShape(int movieIdx, int pictureIdx){
-        super(pictureIdx, null);
+    public MovieShape(int movieIdx, HSLFPictureData pictureData){
+        super(pictureData, null);
         setMovieIndex(movieIdx);
         setAutoPlay(true);
     }
@@ -52,11 +52,11 @@ public final class MovieShape extends HSLFPictureShape {
     /**
      * Create a new <code>Picture</code>
      *
-     * @param idx the index of the picture
+     * @param pictureData the picture data
      * @param parent the parent shape
      */
-    public MovieShape(int movieIdx, int idx, ShapeContainer<HSLFShape> parent) {
-        super(idx, parent);
+    public MovieShape(int movieIdx, HSLFPictureData pictureData, ShapeContainer<HSLFShape> parent) {
+        super(pictureData, parent);
         setMovieIndex(movieIdx);
     }
 

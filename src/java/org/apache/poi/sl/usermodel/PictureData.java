@@ -20,8 +20,80 @@ package org.apache.poi.sl.usermodel;
 import java.io.IOException;
 
 public interface PictureData {
-	public String getContentType();
+    
+    enum PictureType {
+        /** Extended windows meta file */
+        EMF(2,2,"image/x-emf",".emf"),
+        /** Windows Meta File */
+        WMF(3,3,"image/x-wmf",".wmf"),
+        /** Mac PICT format */
+        PICT(4,4,"image/pict",".pict"), // or image/x-pict (for HSLF) ???
+        /** JPEG format */
+        JPEG(5,5,"image/jpeg",".jpg"),
+        /** PNG format */
+        PNG(6,6,"image/png",".png"),
+        /** Device independent bitmap */
+        DIB(7,7,"image/dib",".dib"),
+        /** GIF image format */
+        GIF(-1,8,"image/gif",".gif"),
+        /** Tag Image File (.tiff) */
+        TIFF(-1,9,"image/tiff",".tif"),
+        /** Encapsulated Postscript (.eps) */
+        EPS(-1,10,"image/x-eps",".eps"),
+        /** Windows Bitmap (.bmp) */
+        BMP(-1,11,"image/x-ms-bmp",".bmp"),
+        /** WordPerfect graphics (.wpg) */
+        WPG(-1,12,"image/x-wpg",".wpg"),
+        /** Microsoft Windows Media Photo image (.wdp) */
+        WDP(-1,13,"image/vnd.ms-photo",".wdp");
+        
+        public final int nativeId, ooxmlId;
+        public final String contentType,extension;
 
-	public byte[] getData();
-	public void setData(byte[] data) throws IOException;
+        PictureType(int nativeId, int ooxmlId,String contentType,String extension) {
+            this.nativeId = nativeId;
+            this.ooxmlId = ooxmlId;
+            this.contentType = contentType;
+            this.extension = extension;
+        }
+        
+        public static PictureType forNativeID(int nativeId) {
+            for (PictureType ans : values()) {
+                if (ans.nativeId == nativeId) return ans;
+            }
+            return null;
+        }
+
+        public static PictureType forOoxmlID(int ooxmlId) {
+            for (PictureType ans : values()) {
+                if (ans.ooxmlId == ooxmlId) return ans;
+            }
+            return null;
+        }
+    }
+    
+    
+    /**
+     * Returns content type (mime type) of this picture.
+     *
+     * @return content type of this picture.
+     */
+	String getContentType();
+	
+	/**
+	 * @return the picture type
+	 */
+	PictureType getType();
+
+    /**
+     * Returns the binary data of this Picture
+     * @return picture data
+     */
+	byte[] getData();
+
+    /**
+     * Sets the binary picture data
+     * @param data picture data
+     */
+	void setData(byte[] data) throws IOException;
 }

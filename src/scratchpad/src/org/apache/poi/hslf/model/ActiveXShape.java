@@ -52,10 +52,10 @@ public final class ActiveXShape extends HSLFPictureShape {
     /**
      * Create a new <code>Picture</code>
      *
-    * @param pictureIdx the index of the picture
+    * @param pictureData the picture data
      */
-    public ActiveXShape(int movieIdx, int pictureIdx){
-        super(pictureIdx, null);
+    public ActiveXShape(int movieIdx, HSLFPictureData pictureData){
+        super(pictureData, null);
         setActiveXIndex(movieIdx);
     }
 

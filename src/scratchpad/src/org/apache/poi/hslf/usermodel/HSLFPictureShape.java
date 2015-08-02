@@ -52,42 +52,12 @@ import org.apache.poi.util.Units;
 public class HSLFPictureShape extends HSLFSimpleShape implements PictureShape {
 
     /**
-    *  Windows Enhanced Metafile (EMF)
-    */
-    public static final int EMF = 2;
-
-    /**
-    *  Windows Metafile (WMF)
-    */
-    public static final int WMF = 3;
-
-    /**
-    * Macintosh PICT
-    */
-    public static final int PICT = 4;
-
-    /**
-    *  JPEG
-    */
-    public static final int JPEG = 5;
-
-    /**
-    *  PNG
-    */
-    public static final int PNG = 6;
-
-    /**
-     * Windows DIB (BMP)
-     */
-    public static final byte DIB = 7;
-
-    /**
      * Create a new <code>Picture</code>
      *
     * @param idx the index of the picture
      */
-    public HSLFPictureShape(int idx){
-        this(idx, null);
+    public HSLFPictureShape(HSLFPictureData data){
+        this(data, null);
     }
 
     /**
@@ -96,9 +66,9 @@ public class HSLFPictureShape extends HSLFSimpleShape implements PictureShape {
      * @param idx the index of the picture
      * @param parent the parent shape
      */
-    public HSLFPictureShape(int idx, ShapeContainer<HSLFShape> parent) {
+    public HSLFPictureShape(HSLFPictureData data, ShapeContainer<HSLFShape> parent) {
         super(null, parent);
-        _escherContainer = createSpContainer(idx, parent instanceof HSLFGroupShape);
+        _escherContainer = createSpContainer(data.getIndex(), parent instanceof HSLFGroupShape);
     }
 
     /**

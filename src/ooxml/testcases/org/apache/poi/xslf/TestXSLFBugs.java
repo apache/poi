@@ -37,6 +37,7 @@ import javax.imageio.ImageIO;
 
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.apache.poi.xslf.usermodel.DrawingParagraph;
 import org.apache.poi.xslf.usermodel.DrawingTextBody;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
@@ -48,6 +49,8 @@ import org.apache.poi.xslf.usermodel.XSLFSlide;
 import org.apache.poi.xslf.usermodel.XSLFSlideLayout;
 import org.junit.Ignore;
 import org.junit.Test;
+
+
 public class TestXSLFBugs {
 
     @Test
@@ -56,7 +59,6 @@ public class TestXSLFBugs {
        XMLSlideShow ss = XSLFTestDataSamples.openSampleDocument("51187.pptx");
        
        assertEquals(1, ss.getSlides().size());
-       XSLFSlide slide = ss.getSlides().get(0);
        
        // Check the relations on it
        // Note - rId3 is a self reference
@@ -289,11 +291,11 @@ public class TestXSLFBugs {
         
         // Add a few pictures
         for (int i=0; i<10; i++) {
-            int idx = ss.addPicture(pics[i], XSLFPictureData.PICTURE_TYPE_JPEG);
-            assertEquals(i, idx);
+            XSLFPictureData data = ss.addPicture(pics[i], PictureType.JPEG);
+            assertEquals(i, data.getIndex());
             assertEquals(i+1, ss.getAllPictures().size());
             
-            XSLFPictureShape shape = slide.createPicture(idx);
+            XSLFPictureShape shape = slide.createPicture(data);
             assertNotNull(shape.getPictureData());
             assertArrayEquals(pics[i], shape.getPictureData().getData());
             assertEquals(i+2, slide.getShapes().size());
@@ -307,11 +309,11 @@ public class TestXSLFBugs {
         
         // Add past 10
         for (int i=10; i<15; i++) {
-            int idx = ss.addPicture(pics[i], XSLFPictureData.PICTURE_TYPE_JPEG);
-            assertEquals(i, idx);
+            XSLFPictureData data = ss.addPicture(pics[i], PictureType.JPEG);
+            assertEquals(i, data.getIndex());
             assertEquals(i+1, ss.getAllPictures().size());
             
-            XSLFPictureShape shape = slide.createPicture(idx);
+            XSLFPictureShape shape = slide.createPicture(data);
             assertNotNull(shape.getPictureData());
             assertArrayEquals(pics[i], shape.getPictureData().getData());
             assertEquals(i+2, slide.getShapes().size());
@@ -324,11 +326,11 @@ public class TestXSLFBugs {
         }
         
         // Add a duplicate, check the right one is picked
-        int idx = ss.addPicture(pics[3], XSLFPictureData.PICTURE_TYPE_JPEG);
-        assertEquals(3, idx);
+        XSLFPictureData data = ss.addPicture(pics[3], PictureType.JPEG);
+        assertEquals(3, data.getIndex());
         assertEquals(15, ss.getAllPictures().size());
         
-        XSLFPictureShape shape = slide.createPicture(idx);
+        XSLFPictureShape shape = slide.createPicture(data);
         assertNotNull(shape.getPictureData());
         assertArrayEquals(pics[3], shape.getPictureData().getData());
         assertEquals(17, slide.getShapes().size());
@@ -351,11 +353,11 @@ public class TestXSLFBugs {
         assertArrayEquals(pics[3], shape.getPictureData().getData());
         
         // Add another duplicate
-        idx = ss.addPicture(pics[5], XSLFPictureData.PICTURE_TYPE_JPEG);
-        assertEquals(5, idx);
+        data = ss.addPicture(pics[5], PictureType.JPEG);
+        assertEquals(5, data.getIndex());
         assertEquals(15, ss.getAllPictures().size());
         
-        shape = slide.createPicture(idx);
+        shape = slide.createPicture(data);
         assertNotNull(shape.getPictureData());
         assertArrayEquals(pics[5], shape.getPictureData().getData());
         assertEquals(18, slide.getShapes().size());

@@ -21,6 +21,9 @@ import java.awt.Dimension;
 import java.io.IOException;
 import java.util.List;
 
+import org.apache.poi.sl.usermodel.PictureData;
+import org.apache.poi.sl.usermodel.PictureData.PictureType;
+
 public interface SlideShow {
 	Slide<? extends Shape, ? extends SlideShow, ? extends Notes<?,?>> createSlide() throws IOException;
 
@@ -41,5 +44,16 @@ public interface SlideShow {
      *
      * @return the page size
      */
-    Dimension getPageSize();    
+    Dimension getPageSize();
+    
+
+    /**
+     * Adds a picture to the workbook.
+     *
+     * @param pictureData       The bytes of the picture
+     * @param format            The format of the picture.
+     *
+     * @return the new picture reference
+     */
+    PictureData addPicture(byte[] pictureData, PictureType format) throws IOException;
 }

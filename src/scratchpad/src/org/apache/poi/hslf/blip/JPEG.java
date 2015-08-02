@@ -17,12 +17,9 @@
 
 package org.apache.poi.hslf.blip;
 
-import org.apache.poi.hslf.usermodel.HSLFPictureShape;
 
 /**
  * Represents a JPEG picture data in a PPT file
- *
- * @author Yegor Kozlov
  */
 public final class JPEG extends Bitmap {
 
@@ -30,12 +27,9 @@ public final class JPEG extends Bitmap {
     
     private ColorSpace colorSpace = ColorSpace.rgb;
     
-    /**
-     * @return type of  this picture
-     * @see  org.apache.poi.hslf.usermodel.HSLFPictureShape#JPEG
-     */
-    public int getType(){
-        return HSLFPictureShape.JPEG;
+    @Override
+    public PictureType getType(){
+        return PictureType.JPEG;
     }
 
     public ColorSpace getColorSpace() {
@@ -81,9 +75,5 @@ public final class JPEG extends Bitmap {
             default:
                 throw new IllegalArgumentException(signature+" is not a valid instance/signature value for JPEG");
         }        
-    }
-
-    public String getContentType() {
-        return "image/jpeg";
     }
 }
