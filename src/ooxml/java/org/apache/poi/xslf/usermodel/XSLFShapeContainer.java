@@ -55,7 +55,7 @@ public interface XSLFShapeContainer extends ShapeContainer<XSLFShape> {
     /**
      * create a picture belonging to this container
      */
-    XSLFPictureShape createPicture(int pictureIndex);
+    XSLFPictureShape createPicture(XSLFPictureData pictureData);
 
     /**
      * Removes all of the elements from this container (optional operation).

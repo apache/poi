@@ -23,7 +23,6 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
@@ -239,16 +238,8 @@ public class XSLFGroupShape extends XSLFShape implements XSLFShapeContainer, Gro
         return sh;
     }
 
-    public XSLFPictureShape createPicture(int pictureIndex){
-
-        List<PackagePart>  pics = getSheet().getPackagePart().getPackage()
-                .getPartsByName(Pattern.compile("/ppt/media/image" + (pictureIndex + 1) + ".*?"));
-
-        if(pics.size() == 0) {
-            throw new IllegalArgumentException("Picture with index=" + pictureIndex + " was not found");
-        }
-
-        PackagePart pic = pics.get(0);
+    public XSLFPictureShape createPicture(XSLFPictureData pictureData){
+        PackagePart pic = pictureData.getPackagePart();
 
         PackageRelationship rel = getSheet().getPackagePart().addRelationship(
                 pic.getPartName(), TargetMode.INTERNAL, XSLFRelation.IMAGES.getRelation());
@@ -321,8 +312,8 @@ public class XSLFGroupShape extends XSLFShape implements XSLFShapeContainer, Gro
             } else if (shape instanceof XSLFPictureShape) {
                 XSLFPictureShape p = (XSLFPictureShape)shape;
                 XSLFPictureData pd = p.getPictureData();
-                int picId = getSheet().getSlideShow().addPicture(pd.getData(), pd.getPictureType());
-                newShape = createPicture(picId);
+                XSLFPictureData pdNew = getSheet().getSlideShow().addPicture(pd.getData(), pd.getType());
+                newShape = createPicture(pdNew);
             } else if (shape instanceof XSLFGroupShape) {
                 newShape = createGroup();
             } else if (shape instanceof XSLFTable) {

@@ -21,14 +21,11 @@ import java.util.Map;
 
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.POIXMLRelation;
+import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.apache.poi.util.Beta;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 
 @Beta
 public class XSLFRelation extends POIXMLRelation {
-
-   private static final POILogger log = POILogFactory.getLogger(XSLFRelation.class);
 
    /**
     * A map to lookup POIXMLRelation by its relation type
@@ -148,76 +145,76 @@ public class XSLFRelation extends POIXMLRelation {
     );
 
     public static final XSLFRelation IMAGE_EMF = new XSLFRelation(
-          "image/x-emf",
+          PictureType.EMF.contentType,
           "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
           "/ppt/media/image#.emf",
           XSLFPictureData.class
-	);
-	public static final XSLFRelation IMAGE_WMF = new XSLFRelation(
-	      "image/x-wmf",
-	      "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
-	      "/ppt/media/image#.wmf",
-	      XSLFPictureData.class
-	);
-	public static final XSLFRelation IMAGE_PICT = new XSLFRelation(
-	      "image/pict",
-	      "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
-	      "/ppt/media/image#.pict",
-	      XSLFPictureData.class
-	);
-	public static final XSLFRelation IMAGE_JPEG = new XSLFRelation(
-	      "image/jpeg",
-	      "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
-	      "/ppt/media/image#.jpeg",
-	      XSLFPictureData.class
-	);
-	public static final XSLFRelation IMAGE_PNG = new XSLFRelation(
-	      "image/png",
-	      "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
-	      "/ppt/media/image#.png",
-	      XSLFPictureData.class
-	);
-	public static final XSLFRelation IMAGE_DIB = new XSLFRelation(
-	      "image/dib",
-	      "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
-	      "/ppt/media/image#.dib",
-	      XSLFPictureData.class
-	);
-	public static final XSLFRelation IMAGE_GIF = new XSLFRelation(
-	      "image/gif",
-	      "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
-	      "/ppt/media/image#.gif",
-	      XSLFPictureData.class
-	);
+    );
+    public static final XSLFRelation IMAGE_WMF = new XSLFRelation(
+          PictureType.WMF.contentType,
+          "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
+          "/ppt/media/image#.wmf",
+          XSLFPictureData.class
+    );
+    public static final XSLFRelation IMAGE_PICT = new XSLFRelation(
+          PictureType.PICT.contentType,
+          "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
+          "/ppt/media/image#.pict",
+          XSLFPictureData.class
+    );
+    public static final XSLFRelation IMAGE_JPEG = new XSLFRelation(
+          PictureType.JPEG.contentType,
+          "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
+          "/ppt/media/image#.jpeg",
+          XSLFPictureData.class
+    );
+    public static final XSLFRelation IMAGE_PNG = new XSLFRelation(
+          PictureType.PNG.contentType,
+          "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
+          "/ppt/media/image#.png",
+          XSLFPictureData.class
+    );
+    public static final XSLFRelation IMAGE_DIB = new XSLFRelation(
+          PictureType.DIB.contentType,
+          "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
+          "/ppt/media/image#.dib",
+          XSLFPictureData.class
+    );
+    public static final XSLFRelation IMAGE_GIF = new XSLFRelation(
+          PictureType.GIF.contentType,
+          "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
+          "/ppt/media/image#.gif",
+          XSLFPictureData.class
+    );
     public static final XSLFRelation IMAGE_TIFF = new XSLFRelation(
-            "image/tiff",
-            "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
-            "/ppt/media/image#.tiff",
-            XSLFPictureData.class
+          PictureType.TIFF.contentType,
+          "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
+          "/ppt/media/image#.tiff",
+          XSLFPictureData.class
     );
     public static final XSLFRelation IMAGE_EPS = new XSLFRelation(
-            "image/x-eps",
-            "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
-            "/ppt/media/image#.eps",
-            XSLFPictureData.class
+          PictureType.EPS.contentType,
+          "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
+          "/ppt/media/image#.eps",
+          XSLFPictureData.class
     );
     public static final XSLFRelation IMAGE_BMP = new XSLFRelation(
-            "image/x-ms-bmp",
-            "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
-            "/ppt/media/image#.bmp",
-            XSLFPictureData.class
+          PictureType.BMP.contentType,
+          "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
+          "/ppt/media/image#.bmp",
+          XSLFPictureData.class
     );
     public static final XSLFRelation IMAGE_WPG = new XSLFRelation(
-            "image/x-wpg",
-            "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
-            "/ppt/media/image#.wpg",
-            XSLFPictureData.class
+          PictureType.WPG.contentType,
+          "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
+          "/ppt/media/image#.wpg",
+          XSLFPictureData.class
     );
     public static final XSLFRelation IMAGE_WDP = new XSLFRelation(
-            "image/vnd.ms-photo",
-            "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
-            "/ppt/media/image#.wdp",
-            XSLFPictureData.class
+          PictureType.WDP.contentType,
+          "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
+          "/ppt/media/image#.wdp",
+          XSLFPictureData.class
     );
 
     public static final XSLFRelation IMAGES = new XSLFRelation(

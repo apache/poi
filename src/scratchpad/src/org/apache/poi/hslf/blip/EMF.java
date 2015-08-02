@@ -24,19 +24,14 @@ import java.io.InputStream;
 import java.util.zip.InflaterInputStream;
 
 import org.apache.poi.hslf.exceptions.HSLFException;
-import org.apache.poi.hslf.usermodel.HSLFPictureShape;
 import org.apache.poi.util.Units;
 
 /**
  * Represents EMF (Windows Enhanced Metafile) picture data.
- *
- * @author Yegor Kozlov
  */
 public final class EMF extends Metafile {
 
-    /**
-     * Extract compressed EMF data from a ppt
-     */
+    @Override
     public byte[] getData(){
         try {
             byte[] rawdata = getRawData();
@@ -60,6 +55,7 @@ public final class EMF extends Metafile {
         }
     }
 
+    @Override
     public void setData(byte[] data) throws IOException {
         byte[] compressed = compress(data, 0, data.length);
 
@@ -79,8 +75,9 @@ public final class EMF extends Metafile {
         setRawData(out.toByteArray());
     }
 
-    public int getType(){
-        return HSLFPictureShape.EMF;
+    @Override
+    public PictureType getType(){
+        return PictureType.EMF;
     }
 
     /**
@@ -106,9 +103,5 @@ public final class EMF extends Metafile {
             default:
                 throw new IllegalArgumentException(signature+" is not a valid instance/signature value for EMF");
         }        
-    }
-
-    public String getContentType() {
-        return "image/x-emf";
     }
 }

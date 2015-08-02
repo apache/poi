@@ -25,11 +25,10 @@ import java.io.ByteArrayOutputStream;
 /**
  * Represents a bitmap picture data:  JPEG or PNG.
  * The data is not compressed and the exact file content is written in the stream.
- *
- * @author Yegor Kozlov
  */
-public abstract  class Bitmap extends HSLFPictureData {
+public abstract class Bitmap extends HSLFPictureData {
 
+    @Override
     public byte[] getData(){
         byte[] rawdata = getRawData();
         int prefixLen = 16*uidInstanceCount+1;
@@ -38,6 +37,7 @@ public abstract  class Bitmap extends HSLFPictureData {
         return imgdata;
     }
 
+    @Override
     public void setData(byte[] data) throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         for (int i=0; i<uidInstanceCount; i++) {

@@ -77,6 +77,7 @@ public final class DataExtraction {
                     if ("Worksheet".equals(name)) {
 
                         //read xls
+                        @SuppressWarnings({ "unused", "resource" })
                         HSSFWorkbook wb = new HSSFWorkbook(data.getData());
 
                     } else if ("Document".equals(name)) {
@@ -110,31 +111,7 @@ public final class DataExtraction {
                     picIdx++;
                     HSLFPictureShape p = (HSLFPictureShape) shape;
                     HSLFPictureData data = p.getPictureData();
-                    String name = p.getPictureName();
-                    int type = data.getType();
-                    String ext;
-                    switch (type) {
-                        case HSLFPictureShape.JPEG:
-                            ext = ".jpg";
-                            break;
-                        case HSLFPictureShape.PNG:
-                            ext = ".png";
-                            break;
-                        case HSLFPictureShape.WMF:
-                            ext = ".wmf";
-                            break;
-                        case HSLFPictureShape.EMF:
-                            ext = ".emf";
-                            break;
-                        case HSLFPictureShape.PICT:
-                            ext = ".pict";
-                            break;
-                        case HSLFPictureShape.DIB:
-                            ext = ".dib";
-                            break;
-                        default:
-                            continue;
-                    }
+                    String ext = data.getType().extension;
                     FileOutputStream out = new FileOutputStream("pict-" + picIdx + ext);
                     out.write(data.getData());
                     out.close();

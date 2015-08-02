@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import org.apache.poi.sl.usermodel.PictureData.PictureType;
 
 /**
  * Images
@@ -39,7 +40,7 @@ public class Tutorial5 {
         XSLFSlide slide = ppt.createSlide();
         File img = new File(System.getProperty("POI.testdata.path"), "slideshow/clock.jpg");
         byte[] data = IOUtils.toByteArray(new FileInputStream(img));
-        int pictureIndex = ppt.addPicture(data, XSLFPictureData.PICTURE_TYPE_PNG);
+        XSLFPictureData pictureIndex = ppt.addPicture(data, PictureType.PNG);
 
         /*XSLFPictureShape shape =*/ slide.createPicture(pictureIndex);
 

@@ -18,6 +18,7 @@
 package org.apache.poi.hslf.extractor;
 
 import org.apache.poi.hslf.usermodel.*;
+import org.apache.poi.sl.usermodel.PictureData.PictureType;
 
 import java.io.IOException;
 import java.io.FileOutputStream;
@@ -44,31 +45,8 @@ public final class ImageExtractor {
             // picture data
             byte[] data = pict.getData();
 
-            int type = pict.getType();
-            String ext;
-            switch (type) {
-                case HSLFPictureShape.JPEG:
-                    ext = ".jpg";
-                    break;
-                case HSLFPictureShape.PNG:
-                    ext = ".png";
-                    break;
-                case HSLFPictureShape.WMF:
-                    ext = ".wmf";
-                    break;
-                case HSLFPictureShape.EMF:
-                    ext = ".emf";
-                    break;
-                case HSLFPictureShape.PICT:
-                    ext = ".pict";
-                    break;
-                case HSLFPictureShape.DIB:
-                    ext = ".dib";
-                    break;
-                default:
-                    continue;
-            }
-            FileOutputStream out = new FileOutputStream("pict_" + i + ext);
+            PictureType type = pict.getType();
+            FileOutputStream out = new FileOutputStream("pict_" + i + type.extension);
             out.write(data);
             out.close();
         }

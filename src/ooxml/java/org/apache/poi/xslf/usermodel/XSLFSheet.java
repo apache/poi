@@ -25,7 +25,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 import javax.xml.namespace.QName;
 
@@ -182,15 +181,8 @@ public abstract class XSLFSheet extends POIXMLDocumentPart implements XSLFShapeC
         return sh;
     }
 
-    public XSLFPictureShape createPicture(int pictureIndex){
-        List<PackagePart>  pics = getPackagePart().getPackage()
-                .getPartsByName(Pattern.compile("/ppt/media/image" + (pictureIndex + 1) + ".*?"));
-
-        if(pics.size() == 0) {
-            throw new IllegalArgumentException("Picture with index=" + pictureIndex + " was not found");
-        }
-
-        PackagePart pic = pics.get(0);
+    public XSLFPictureShape createPicture(XSLFPictureData pictureData){
+        PackagePart pic = pictureData.getPackagePart();
 
         PackageRelationship rel = getPackagePart().addRelationship(
                 pic.getPartName(), TargetMode.INTERNAL, XSLFRelation.IMAGES.getRelation());
@@ -525,8 +517,8 @@ public abstract class XSLFSheet extends POIXMLDocumentPart implements XSLFShapeC
         XSLFPictureData data = new XSLFPictureData(blipPart, null);
 
         XMLSlideShow ppt = getSlideShow();
-        int pictureIdx = ppt.addPicture(data.getData(), data.getPictureType());
-        PackagePart pic = ppt.getAllPictures().get(pictureIdx).getPackagePart();
+        XSLFPictureData pictureData = ppt.addPicture(data.getData(), data.getType());
+        PackagePart pic = pictureData.getPackagePart();
 
         PackageRelationship rel = getPackagePart().addRelationship(
                 pic.getPartName(), TargetMode.INTERNAL, blipRel.getRelationshipType());

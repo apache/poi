@@ -25,21 +25,16 @@ import java.io.OutputStream;
 import java.util.zip.InflaterInputStream;
 
 import org.apache.poi.hslf.exceptions.HSLFException;
-import org.apache.poi.hslf.usermodel.HSLFPictureShape;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.Units;
 
 /**
  * Represents a WMF (Windows Metafile) picture data.
- *
- * @author Yegor Kozlov
  */
 public final class WMF extends Metafile {
 
-    /**
-     * Extract compressed WMF data from a ppt
-     */
+    @Override
     public byte[] getData(){
         try {
             byte[] rawdata = getRawData();
@@ -70,6 +65,7 @@ public final class WMF extends Metafile {
         }
     }
 
+    @Override
     public void setData(byte[] data) throws IOException {
         int pos = 0;
         AldusHeader aldus = new AldusHeader();
@@ -97,11 +93,9 @@ public final class WMF extends Metafile {
         setRawData(out.toByteArray());
     }
 
-    /**
-     * We are of type <code>Picture.WMF</code>
-     */
-    public int getType(){
-        return HSLFPictureShape.WMF;
+    @Override
+    public PictureType getType(){
+        return PictureType.WMF;
     }
 
     /**
@@ -208,10 +202,4 @@ public final class WMF extends Metafile {
             return 22;
         }
     }
-
-
-    public String getContentType() {
-        return "image/x-wmf";
-    }
-
 }

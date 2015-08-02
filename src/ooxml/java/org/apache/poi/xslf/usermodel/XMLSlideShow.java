@@ -36,6 +36,7 @@ import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.sl.usermodel.MasterSheet;
+import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.apache.poi.sl.usermodel.Resources;
 import org.apache.poi.sl.usermodel.SlideShow;
 import org.apache.poi.util.Beta;
@@ -192,7 +193,9 @@ public class XMLSlideShow extends POIXMLDocument implements SlideShow {
             List<PackagePart> mediaParts = getPackage().getPartsByName(Pattern.compile("/ppt/media/.*?"));
             _pictures = new ArrayList<XSLFPictureData>(mediaParts.size());
             for(PackagePart part : mediaParts){
-                _pictures.add(new XSLFPictureData(part, null));    
+                XSLFPictureData pd = new XSLFPictureData(part, null);
+                pd.setIndex(_pictures.size());
+                _pictures.add(pd);
             }
         }
         return Collections.unmodifiableList(_pictures);
@@ -442,26 +445,28 @@ public class XMLSlideShow extends POIXMLDocument implements SlideShow {
      * @see XSLFPictureData#PICTURE_TYPE_PNG
      * @see XSLFPictureData#PICTURE_TYPE_DIB
      */
-    public int addPicture(byte[] pictureData, int format) {
+    public XSLFPictureData addPicture(byte[] pictureData, PictureType format) {
         XSLFPictureData img = findPictureData(pictureData);
-        // POIXMLRelation relDesc = XSLFPictureData.RELATIONS[format];
 
-        if(img == null) {
-            int imageNumber = _pictures.size();
-            img = (XSLFPictureData) createRelationship(
-                    XSLFPictureData.RELATIONS[format], XSLFFactory.getInstance(), imageNumber + 1, true);
-            _pictures.add(img);
-            try {
-                OutputStream out = img.getPackagePart().getOutputStream();
-                out.write(pictureData);
-                out.close();
-            } catch (IOException e) {
-                throw new POIXMLException(e);
-            }
-            return _pictures.size() - 1;
-        } else {
-            return _pictures.indexOf(img);
+        if (img != null) return img;
+        
+        int imageNumber = _pictures.size();
+        XSLFRelation relType = XSLFPictureData.getRelationForType(format);
+        if (relType == null) {
+            throw new IllegalArgumentException("Picture type "+format+" is not supported.");
         }
+        img = (XSLFPictureData) createRelationship(relType, XSLFFactory.getInstance(), imageNumber + 1, true);
+        img.setIndex(imageNumber);
+        _pictures.add(img);
+        try {
+            OutputStream out = img.getPackagePart().getOutputStream();
+            out.write(pictureData);
+            out.close();
+        } catch (IOException e) {
+            throw new POIXMLException(e);
+        }
+        
+        return img;
     }
 
     /**
@@ -492,7 +497,7 @@ public class XMLSlideShow extends POIXMLDocument implements SlideShow {
         return null;
     }
 
-    public MasterSheet createMasterSheet() throws IOException {
+    public MasterSheet<XSLFShape, XMLSlideShow> createMasterSheet() throws IOException {
         // TODO: implement!
         throw new UnsupportedOperationException();
     }

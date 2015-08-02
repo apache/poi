@@ -17,13 +17,24 @@
 
 package org.apache.poi.hslf.usermodel;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 
-import java.awt.*;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.InputStream;
 import java.lang.reflect.Constructor;
-import java.util.*;
+import java.util.BitSet;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 
@@ -31,6 +42,7 @@ import org.apache.poi.POIDataSamples;
 import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.hssf.usermodel.DummyGraphics2d;
 import org.apache.poi.sl.draw.Drawable;
+import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.apache.poi.sl.usermodel.Slide;
 import org.apache.poi.sl.usermodel.SlideShow;
 import org.apache.poi.util.JvmBugs;
@@ -58,10 +70,10 @@ public final class TestPicture {
         HSLFSlide s2 = ppt.createSlide();
         HSLFSlide s3 = ppt.createSlide();
 
-        int idx = ppt.addPicture(_slTests.readFile("clock.jpg"), HSLFPictureShape.JPEG);
-        HSLFPictureShape pict = new HSLFPictureShape(idx);
-        HSLFPictureShape pict2 = new HSLFPictureShape(idx);
-        HSLFPictureShape pict3 = new HSLFPictureShape(idx);
+        HSLFPictureData data = ppt.addPicture(_slTests.readFile("clock.jpg"), PictureType.JPEG);
+        HSLFPictureShape pict = new HSLFPictureShape(data);
+        HSLFPictureShape pict2 = new HSLFPictureShape(data);
+        HSLFPictureShape pict3 = new HSLFPictureShape(data);
 
         pict.setAnchor(new Rectangle(10,10,100,100));
         s.addShape(pict);
@@ -89,8 +101,9 @@ public final class TestPicture {
     public void bug46122() {
         HSLFSlideShow ppt = new HSLFSlideShow();
         HSLFSlide slide = ppt.createSlide();
-
-        HSLFPictureShape pict = new HSLFPictureShape(-1); //index to non-existing picture data
+        HSLFPictureData pd = HSLFPictureData.create(PictureType.PNG);
+        
+        HSLFPictureShape pict = new HSLFPictureShape(pd); //index to non-existing picture data
         pict.setSheet(slide);
         HSLFPictureData data = pict.getPictureData();
         assertNull(data);
@@ -125,15 +138,19 @@ public final class TestPicture {
                 null            // EMF
         };
 
-        for (int i = 0; i < pictures.length; i++) {
-            BufferedImage image = ImageIO.read(new ByteArrayInputStream(pictures[i].getData()));
-
-            if (pictures[i].getType() != HSLFPictureShape.WMF && pictures[i].getType() != HSLFPictureShape.EMF) {
-                assertNotNull(image);
-
-                int[] dimensions = expectedSizes[i];
-                assertEquals(dimensions[0], image.getWidth());
-                assertEquals(dimensions[1], image.getHeight());
+        int i = 0;
+        for (HSLFPictureData pd : pictures) {
+            int[] dimensions = expectedSizes[i++];
+            BufferedImage image = ImageIO.read(new ByteArrayInputStream(pd.getData()));
+            switch (pd.getType()) {
+                case WMF:
+                case EMF:
+                    break;
+                default:
+                    assertNotNull(image);
+                    assertEquals(dimensions[0], image.getWidth());
+                    assertEquals(dimensions[1], image.getHeight());
+                    break;
             }
         }
     }

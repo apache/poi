@@ -17,11 +17,16 @@
 
 package org.apache.poi.hslf.usermodel;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
-import java.awt.Color;
-import java.awt.Rectangle;
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -39,15 +44,16 @@ import org.apache.poi.ddf.EscherOptRecord;
 import org.apache.poi.ddf.EscherProperties;
 import org.apache.poi.hslf.HSLFTestDataSamples;
 import org.apache.poi.hslf.exceptions.OldPowerPointFormatException;
-import org.apache.poi.hslf.model.*;
-import org.apache.poi.hslf.model.textproperties.TextPropCollection;
-import org.apache.poi.hslf.model.textproperties.TextPropCollection.TextPropType;
-import org.apache.poi.hslf.record.*;
+import org.apache.poi.hslf.model.HeadersFooters;
+import org.apache.poi.hslf.record.Document;
+import org.apache.poi.hslf.record.Record;
+import org.apache.poi.hslf.record.SlideListWithText;
 import org.apache.poi.hslf.record.SlideListWithText.SlideAtomsSet;
-import org.apache.poi.poifs.filesystem.DocumentEntry;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.util.*;
-import org.junit.Ignore;
+import org.apache.poi.hslf.record.TextHeaderAtom;
+import org.apache.poi.sl.usermodel.PictureData.PictureType;
+import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.StringUtil;
+import org.apache.poi.util.Units;
 import org.junit.Test;
 
 /**
@@ -73,8 +79,8 @@ public final class TestBugs {
 
         HSLFPictureData[] pict = ppt.getPictureData();
         assertEquals(2, pict.length);
-        assertEquals(HSLFPictureShape.JPEG, pict[0].getType());
-        assertEquals(HSLFPictureShape.JPEG, pict[1].getType());
+        assertEquals(PictureType.JPEG, pict[0].getType());
+        assertEquals(PictureType.JPEG, pict[1].getType());
     }
 
     /**
@@ -354,7 +360,7 @@ public final class TestBugs {
 
         HSLFPictureData pict = f.getPictureData();
         assertNotNull(pict);
-        assertEquals(HSLFPictureShape.JPEG, pict.getType());
+        assertEquals(PictureType.JPEG, pict.getType());
     }
 
     /**

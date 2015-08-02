@@ -39,10 +39,10 @@ public final class OLEShape extends HSLFPictureShape {
     /**
      * Create a new <code>OLEShape</code>
      *
-    * @param idx the index of the picture
+    * @param data the picture data
      */
-    public OLEShape(int idx){
-        super(idx);
+    public OLEShape(HSLFPictureData data){
+        super(data);
     }
 
     /**
@@ -51,8 +51,8 @@ public final class OLEShape extends HSLFPictureShape {
      * @param idx the index of the picture
      * @param parent the parent shape
      */
-    public OLEShape(int idx, ShapeContainer<HSLFShape> parent) {
-        super(idx, parent);
+    public OLEShape(HSLFPictureData data, ShapeContainer<HSLFShape> parent) {
+        super(data, parent);
     }
 
     /**

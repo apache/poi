@@ -54,34 +54,12 @@ public abstract class HSLFPictureData implements PictureData {
      * The instance type/signatures defines if one or two UID instances will be included
      */
     protected int uidInstanceCount = 1;
+
+    /**
+     * The 1-based index within the pictures stream 
+     */
+    protected int index = -1;
     
-    /**
-     * Returns type of this picture.
-     * Must be one of the static constants defined in the <code>Picture<code> class.
-     *
-     * @return type of this picture.
-     */
-    public abstract int getType();
-
-
-    /**
-     * Returns content type (mime type) of this picture.
-     *
-     * @return content type of this picture.
-     */
-    public abstract String getContentType();
-    
-    /**
-     * Returns the binary data of this Picture
-     * @return picture data
-     */
-    public abstract byte[] getData();
-
-    /**
-     *  Set picture data
-     */
-    public abstract void setData(byte[] data) throws IOException;
-
     /**
      * Blip signature.
      */
@@ -159,7 +137,8 @@ public abstract class HSLFPictureData implements PictureData {
         out.write(data);
 
         data = new byte[LittleEndian.SHORT_SIZE];
-        LittleEndian.putUShort(data, 0, getType() + 0xF018);
+        PictureType pt = getType();
+        LittleEndian.putUShort(data, 0, pt.nativeId + 0xF018);
         out.write(data);
 
         byte[] rawdata = getRawData();
@@ -178,27 +157,15 @@ public abstract class HSLFPictureData implements PictureData {
      * Must be one of the static constants defined in the <code>Picture<code> class.
      * @return concrete instance of <code>PictureData</code>
      */
-     public static HSLFPictureData create(int type){
+     public static HSLFPictureData create(PictureType type){
         HSLFPictureData pict;
         switch (type){
-            case HSLFPictureShape.EMF:
-                pict = new EMF();
-                break;
-            case HSLFPictureShape.WMF:
-                pict = new WMF();
-                break;
-            case HSLFPictureShape.PICT:
-                pict = new PICT();
-                break;
-            case HSLFPictureShape.JPEG:
-                pict = new JPEG();
-                break;
-            case HSLFPictureShape.PNG:
-                pict = new PNG();
-                break;
-            case HSLFPictureShape.DIB:
-                pict = new DIB();
-                break;
+            case EMF: pict = new EMF(); break;
+            case WMF: pict = new WMF(); break;
+            case PICT: pict = new PICT(); break;
+            case JPEG: pict = new JPEG(); break;
+            case PNG: pict = new PNG(); break;
+            case DIB: pict = new DIB(); break;
             default:
                 throw new IllegalArgumentException("Unsupported picture type: " + type);
         }
@@ -230,5 +197,24 @@ public abstract class HSLFPictureData implements PictureData {
     */
     public int getSize(){
         return getData().length;
+    }
+
+    /**
+     * @return the 1-based index of this pictures within the pictures stream
+     */
+    public int getIndex() {
+        return index;
+    }
+
+    /**
+     * @param index sets the 1-based index of this pictures within the pictures stream
+     */
+    public void setIndex(int index) {
+        this.index = index;
+    }
+    
+    @Override
+    public final String getContentType() {
+        return getType().contentType;
     }
 }

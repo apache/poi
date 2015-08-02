@@ -295,16 +295,14 @@ public final class HSLFFill {
     /**
      * Assign picture used to fill the underlying shape.
      *
-     * @param idx 0-based index of the picture added to this ppt by <code>SlideShow.addPicture</code> method.
+     * @param data the picture data added to this ppt by {@link HSLFSlideShow#addPicture(byte[], org.apache.poi.sl.usermodel.PictureData.PictureType)} method.
      */
-    public void setPictureData(int idx){
+    public void setPictureData(HSLFPictureData data){
         EscherOptRecord opt = shape.getEscherOptRecord();
-        HSLFShape.setEscherProperty(opt, (short)(EscherProperties.FILL__PATTERNTEXTURE + 0x4000), idx);
-        if( idx != 0 ) {
-            if( shape.getSheet() != null ) {
-                EscherBSERecord bse = getEscherBSERecord(idx);
-                bse.setRef(bse.getRef() + 1);
-            }
+        HSLFShape.setEscherProperty(opt, (short)(EscherProperties.FILL__PATTERNTEXTURE + 0x4000), (data == null ? 0 : data.getIndex()));
+        if(data != null && shape.getSheet() != null) {
+            EscherBSERecord bse = getEscherBSERecord(data.getIndex());
+            bse.setRef(bse.getRef() + 1);
         }
     }
 

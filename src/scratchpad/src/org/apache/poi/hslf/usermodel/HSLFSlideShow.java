@@ -25,46 +25,31 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherOptRecord;
-import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.hpsf.ClassID;
 import org.apache.poi.hslf.exceptions.CorruptPowerPointFileException;
 import org.apache.poi.hslf.exceptions.HSLFException;
-import org.apache.poi.hslf.model.*;
-import org.apache.poi.hslf.record.Document;
-import org.apache.poi.hslf.record.DocumentAtom;
-import org.apache.poi.hslf.record.ExAviMovie;
-import org.apache.poi.hslf.record.ExControl;
-import org.apache.poi.hslf.record.ExEmbed;
-import org.apache.poi.hslf.record.ExEmbedAtom;
-import org.apache.poi.hslf.record.ExHyperlink;
-import org.apache.poi.hslf.record.ExHyperlinkAtom;
-import org.apache.poi.hslf.record.ExMCIMovie;
-import org.apache.poi.hslf.record.ExObjList;
-import org.apache.poi.hslf.record.ExObjListAtom;
-import org.apache.poi.hslf.record.ExOleObjAtom;
-import org.apache.poi.hslf.record.ExOleObjStg;
-import org.apache.poi.hslf.record.ExVideoContainer;
-import org.apache.poi.hslf.record.FontCollection;
-import org.apache.poi.hslf.record.FontEntityAtom;
-import org.apache.poi.hslf.record.HeadersFootersContainer;
-import org.apache.poi.hslf.record.PersistPtrHolder;
-import org.apache.poi.hslf.record.PositionDependentRecord;
-import org.apache.poi.hslf.record.PositionDependentRecordContainer;
-import org.apache.poi.hslf.record.Record;
-import org.apache.poi.hslf.record.RecordContainer;
-import org.apache.poi.hslf.record.RecordTypes;
-import org.apache.poi.hslf.record.SlideListWithText;
+import org.apache.poi.hslf.model.HeadersFooters;
+import org.apache.poi.hslf.model.MovieShape;
+import org.apache.poi.hslf.model.PPFont;
+import org.apache.poi.hslf.record.*;
 import org.apache.poi.hslf.record.SlideListWithText.SlideAtomsSet;
-import org.apache.poi.hslf.record.SlidePersistAtom;
-import org.apache.poi.hslf.record.UserEditAtom;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.sl.usermodel.*;
+import org.apache.poi.sl.usermodel.MasterSheet;
+import org.apache.poi.sl.usermodel.PictureData.PictureType;
+import org.apache.poi.sl.usermodel.Resources;
+import org.apache.poi.sl.usermodel.Shape;
+import org.apache.poi.sl.usermodel.SlideShow;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.Units;
@@ -752,19 +737,20 @@ public final class HSLFSlideShow implements SlideShow {
 		return slide;
 	}
 
-	/**
-	 * Adds a picture to this presentation and returns the associated index.
-	 *
-	 * @param data
-	 *            picture data
-	 * @param format
-	 *            the format of the picture. One of constans defined in the
-	 *            <code>Picture</code> class.
-	 * @return the index to this picture (1 based).
-	 */
-	public int addPicture(byte[] data, int format) throws IOException {
-		byte[] uid = HSLFPictureData.getChecksum(data);
+	@Override
+	public HSLFPictureData addPicture(byte[] data, PictureType format) throws IOException {
+	    if (format == null || format.nativeId == -1) {
+	        throw new IllegalArgumentException("Unsupported picture format: " + format); 
+	    }
+	    
+	    byte[] uid = HSLFPictureData.getChecksum(data);
 
+		for (HSLFPictureData pd : getPictureData()) {
+		    if (Arrays.equals(pd.getUID(), uid)) {
+		        return pd;
+		    }
+		}
+		
 		EscherContainerRecord bstore;
 
 		EscherContainerRecord dggContainer = _documentRecord.getPPDrawingGroup().getDggContainer();
@@ -775,14 +761,6 @@ public final class HSLFSlideShow implements SlideShow {
 			bstore.setRecordId(EscherContainerRecord.BSTORE_CONTAINER);
 
 			dggContainer.addChildBefore(bstore, EscherOptRecord.RECORD_ID);
-		} else {
-			Iterator<EscherRecord> iter = bstore.getChildIterator();
-			for (int i = 0; iter.hasNext(); i++) {
-				EscherBSERecord bse = (EscherBSERecord) iter.next();
-				if (Arrays.equals(bse.getUid(), uid)) {
-					return i + 1;
-				}
-			}
 		}
 
 		HSLFPictureData pict = HSLFPictureData.create(format);
@@ -792,19 +770,20 @@ public final class HSLFSlideShow implements SlideShow {
 
 		EscherBSERecord bse = new EscherBSERecord();
 		bse.setRecordId(EscherBSERecord.RECORD_ID);
-		bse.setOptions((short) (0x0002 | (format << 4)));
+		bse.setOptions((short) (0x0002 | (format.nativeId << 4)));
 		bse.setSize(pict.getRawData().length + 8);
 		bse.setUid(uid);
 
-		bse.setBlipTypeMacOS((byte) format);
-		bse.setBlipTypeWin32((byte) format);
+		bse.setBlipTypeMacOS((byte) format.nativeId);
+		bse.setBlipTypeWin32((byte) format.nativeId);
 
-		if (format == HSLFPictureShape.EMF)
-			bse.setBlipTypeMacOS((byte) HSLFPictureShape.PICT);
-		else if (format == HSLFPictureShape.WMF)
-			bse.setBlipTypeMacOS((byte) HSLFPictureShape.PICT);
-		else if (format == HSLFPictureShape.PICT)
-			bse.setBlipTypeWin32((byte) HSLFPictureShape.WMF);
+		if (format == PictureType.EMF) {
+			bse.setBlipTypeMacOS((byte) PictureType.PICT.nativeId);
+		} else if (format == PictureType.WMF) {
+			bse.setBlipTypeMacOS((byte) PictureType.PICT.nativeId);
+		} else if (format == PictureType.PICT) {
+			bse.setBlipTypeWin32((byte) PictureType.WMF.nativeId);
+		}
 
 		bse.setRef(0);
 		bse.setOffset(offset);
@@ -814,7 +793,7 @@ public final class HSLFSlideShow implements SlideShow {
 		int count = bstore.getChildRecords().size();
 		bstore.setOptions((short) ((count << 4) | 0xF));
 
-		return count;
+		return pict;
 	}
 
 	/**
@@ -827,7 +806,7 @@ public final class HSLFSlideShow implements SlideShow {
 	 *            <code>Picture</code> class.
 	 * @return the index to this picture (1 based).
 	 */
-	public int addPicture(File pict, int format) throws IOException {
+	public HSLFPictureData addPicture(File pict, PictureType format) throws IOException {
 		int length = (int) pict.length();
 		byte[] data = new byte[length];
         FileInputStream is = null;

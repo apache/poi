@@ -25,7 +25,6 @@ import java.io.OutputStream;
 
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.POIXMLException;
-import org.apache.poi.POIXMLRelation;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.sl.usermodel.PictureData;
@@ -34,94 +33,11 @@ import org.apache.poi.util.IOUtils;
 
 /**
  * Instantiates sub-classes of POIXMLDocumentPart depending on their relationship type
- *
- * @author Yegor Kozlov
  */
 @Beta
 public final class XSLFPictureData extends POIXMLDocumentPart implements PictureData {
-    /**
-     * Extended windows meta file
-     */
-    public static final int PICTURE_TYPE_EMF = 2;
-
-    /**
-     * Windows Meta File
-     */
-    public static final int PICTURE_TYPE_WMF = 3;
-
-    /**
-     * Mac PICT format
-     */
-    public static final int PICTURE_TYPE_PICT = 4;
-
-    /**
-     * JPEG format
-     */
-    public static final int PICTURE_TYPE_JPEG = 5;
-
-    /**
-     * PNG format
-     */
-    public static final int PICTURE_TYPE_PNG = 6;
-
-    /**
-     * Device independent bitmap
-     */
-    public static final int PICTURE_TYPE_DIB = 7;
-
-    /**
-     * GIF image format
-     */
-    public static final int PICTURE_TYPE_GIF = 8;
-
-    /**
-     * Tag Image File (.tiff)
-     */
-    public static final int PICTURE_TYPE_TIFF = 9;
-
-    /**
-     * Encapsulated Postscript (.eps)
-     */
-    public static final int PICTURE_TYPE_EPS = 10;
-
-
-    /**
-     * Windows Bitmap (.bmp)
-     */
-    public static final int PICTURE_TYPE_BMP = 11;
-
-    /**
-     * WordPerfect graphics (.wpg)
-     */
-    public static final int PICTURE_TYPE_WPG = 12;
-
-    /**
-     * Microsoft Windows Media Photo image (.wdp)
-     */
-    public static final int PICTURE_TYPE_WDP = 13;
-
-    /**
-     * Relationships for each known picture type
-     */
-    protected static final POIXMLRelation[] RELATIONS;
-
-    static {
-        RELATIONS = new POIXMLRelation[14];
-        RELATIONS[PICTURE_TYPE_EMF] = XSLFRelation.IMAGE_EMF;
-        RELATIONS[PICTURE_TYPE_WMF] = XSLFRelation.IMAGE_WMF;
-        RELATIONS[PICTURE_TYPE_PICT] = XSLFRelation.IMAGE_PICT;
-        RELATIONS[PICTURE_TYPE_JPEG] = XSLFRelation.IMAGE_JPEG;
-        RELATIONS[PICTURE_TYPE_PNG] = XSLFRelation.IMAGE_PNG;
-        RELATIONS[PICTURE_TYPE_DIB] = XSLFRelation.IMAGE_DIB;
-        RELATIONS[PICTURE_TYPE_GIF] = XSLFRelation.IMAGE_GIF;
-        RELATIONS[PICTURE_TYPE_TIFF] = XSLFRelation.IMAGE_TIFF;
-        RELATIONS[PICTURE_TYPE_EPS] = XSLFRelation.IMAGE_EPS;
-        RELATIONS[PICTURE_TYPE_BMP] = XSLFRelation.IMAGE_BMP;
-        RELATIONS[PICTURE_TYPE_WPG] = XSLFRelation.IMAGE_WPG;
-        RELATIONS[PICTURE_TYPE_WDP] = XSLFRelation.IMAGE_WDP;
-    }
-
     private Long checksum = null;
+    private int index = -1;
 
     /**
      * Create a new XSLFGraphicData node
@@ -150,12 +66,12 @@ public final class XSLFPictureData extends POIXMLDocumentPart implements Picture
     public InputStream getInputStream() throws IOException {
         return getPackagePart().getInputStream();
     }
-    
+
     /**
      * Gets the picture data as a byte array.
      *
      * You can grab the picture data directly from the underlying package part with the {@link #getInputStream()} method
-     * 
+     *
      * @return the Picture data.
      */
     public byte[] getData() {
@@ -187,25 +103,6 @@ public final class XSLFPictureData extends POIXMLDocumentPart implements Picture
         return getPackagePart().getPartName().getExtension();
     }
 
-    /**
-     * Return an integer constant that specifies type of this picture
-     *
-     * @return an integer constant that specifies type of this picture
-     */
-    public int getPictureType() {
-        String contentType = getPackagePart().getContentType();
-        for (int i = 0; i < RELATIONS.length; i++) {
-            if (RELATIONS[i] == null) {
-                continue;
-            }
-
-            if (RELATIONS[i].getContentType().equals(contentType)) {
-                return i;
-            }
-        }
-        return 0;
-    }
-
     long getChecksum(){
         if(checksum == null){
             try {
@@ -218,17 +115,17 @@ public final class XSLFPictureData extends POIXMLDocumentPart implements Picture
     }
 
     /**
-     * *PictureData objects store the actual content in the part directly without keeping a 
+     * *PictureData objects store the actual content in the part directly without keeping a
      * copy like all others therefore we need to handle them differently.
      */
     @Override
     protected void prepareForCommit() {
         // do not clear the part here
     }
-    
+
+    @Override
     public String getContentType() {
-        POIXMLRelation rel = RELATIONS[getPictureType()];
-        return (rel == null) ? null : rel.getContentType();
+        return getPackagePart().getContentType();
     }
 
     public void setData(byte[] data) throws IOException {
@@ -238,6 +135,65 @@ public final class XSLFPictureData extends POIXMLDocumentPart implements Picture
         // recalculate now since we already have the data bytes available anyhow
         checksum = IOUtils.calculateChecksum(data);
     }
+
+    @Override
+    public PictureType getType() {
+        String ct = getContentType();
+        if (XSLFRelation.IMAGE_EMF.getContentType().equals(ct)) {
+            return PictureType.EMF;
+        } else if (XSLFRelation.IMAGE_WMF.getContentType().equals(ct)) {
+            return PictureType.WMF;
+        } else if (XSLFRelation.IMAGE_PICT.getContentType().equals(ct)) {
+            return PictureType.PICT;
+        } else if (XSLFRelation.IMAGE_JPEG.getContentType().equals(ct)) {
+            return PictureType.JPEG;
+        } else if (XSLFRelation.IMAGE_PNG.getContentType().equals(ct)) {
+            return PictureType.PNG;
+        } else if (XSLFRelation.IMAGE_DIB.getContentType().equals(ct)) {
+            return PictureType.DIB;
+        } else if (XSLFRelation.IMAGE_GIF.getContentType().equals(ct)) {
+            return PictureType.GIF;
+        } else if (XSLFRelation.IMAGE_EPS.getContentType().equals(ct)) {
+            return PictureType.EPS;
+        } else if (XSLFRelation.IMAGE_BMP.getContentType().equals(ct)) {
+            return PictureType.BMP;
+        } else if (XSLFRelation.IMAGE_WPG.getContentType().equals(ct)) {
+            return PictureType.WPG;
+        } else if (XSLFRelation.IMAGE_WDP.getContentType().equals(ct)) {
+            return PictureType.WDP;
+        } else {
+            return null;
+        }
+    }
     
-    
+    /* package */ static XSLFRelation getRelationForType(PictureType pt) {
+        switch (pt) {
+            case EMF: return XSLFRelation.IMAGE_EMF;
+            case WMF: return XSLFRelation.IMAGE_WMF;
+            case PICT: return XSLFRelation.IMAGE_PICT;
+            case JPEG: return XSLFRelation.IMAGE_JPEG;
+            case PNG: return XSLFRelation.IMAGE_PNG;
+            case DIB: return XSLFRelation.IMAGE_DIB;
+            case GIF: return XSLFRelation.IMAGE_GIF;
+            case EPS: return XSLFRelation.IMAGE_EPS;
+            case BMP: return XSLFRelation.IMAGE_BMP;
+            case WPG: return XSLFRelation.IMAGE_WPG;
+            case WDP: return XSLFRelation.IMAGE_WDP;
+            default: return null;
+        }
+    }
+
+    /**
+     * @return the 0-based index of this pictures within the picture parts
+     */
+    public int getIndex() {
+        return index;
+    }
+
+    /**
+     * @param index sets the 0-based index of this pictures within the picture parts
+     */
+    public void setIndex(int index) {
+        this.index = index;
+    }
 }

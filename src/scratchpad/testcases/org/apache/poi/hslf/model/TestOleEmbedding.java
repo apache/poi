@@ -30,6 +30,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.junit.Test;
 
 public final class TestOleEmbedding {
@@ -95,7 +96,7 @@ public final class TestOleEmbedding {
     	HSLFSlideShow ppt = new HSLFSlideShow(_hslfSlideShow);
     	
     	File pict = POIDataSamples.getSlideShowInstance().getFile("clock.jpg");
-    	int pictId = ppt.addPicture(pict, HSLFPictureShape.JPEG);
+    	HSLFPictureData pictData = ppt.addPicture(pict, PictureType.JPEG);
     	
     	InputStream is = POIDataSamples.getSpreadSheetInstance().openResourceAsStream("Employee.xls");
     	POIFSFileSystem poiData1 = new POIFSFileSystem(is);
@@ -104,14 +105,14 @@ public final class TestOleEmbedding {
     	int oleObjectId1 = ppt.addEmbed(poiData1);
     	
     	HSLFSlide slide1 = ppt.createSlide();
-    	OLEShape oleShape1 = new OLEShape(pictId);
+    	OLEShape oleShape1 = new OLEShape(pictData);
     	oleShape1.setObjectID(oleObjectId1);
     	slide1.addShape(oleShape1);
     	oleShape1.setAnchor(new Rectangle2D.Double(100,100,100,100));
     	
     	// add second slide with different order in object creation
     	HSLFSlide slide2 = ppt.createSlide();
-    	OLEShape oleShape2 = new OLEShape(pictId);
+    	OLEShape oleShape2 = new OLEShape(pictData);
 
         is = POIDataSamples.getSpreadSheetInstance().openResourceAsStream("SimpleWithImages.xls");
         POIFSFileSystem poiData2 = new POIFSFileSystem(is);
