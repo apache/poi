@@ -22,8 +22,15 @@ package org.apache.poi.sl.draw.geom;
 import java.io.InputStream;
 import java.util.LinkedHashMap;
 
-import javax.xml.bind.*;
-import javax.xml.stream.*;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.stream.EventFilter;
+import javax.xml.stream.XMLEventReader;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
@@ -37,7 +44,6 @@ import org.apache.poi.util.POILogger;
 public class PresetGeometries extends LinkedHashMap<String, CustomGeometry> {
     private final static POILogger LOG = POILogFactory.getLogger(PresetGeometries.class);
     protected final static String BINDING_PACKAGE = "org.apache.poi.sl.draw.binding";
-    private static final String JAXPFACTORYID = "javax.xml.stream.XMLInputFactory";
     
     protected static PresetGeometries _inst;
 
@@ -52,8 +58,6 @@ public class PresetGeometries extends LinkedHashMap<String, CustomGeometry> {
                 return event.isStartElement();
             }
         };
-        
-        fixXmlSystemProperties();
         
         XMLInputFactory staxFactory = XMLInputFactory.newFactory();
         XMLEventReader staxReader = staxFactory.createXMLEventReader(is);
@@ -114,22 +118,5 @@ public class PresetGeometries extends LinkedHashMap<String, CustomGeometry> {
         }
 
         return _inst;
-    }
-    
-    public static void fixXmlSystemProperties() {
-        // handling for illegal system properties - mainly because of failing gump build
-        String xmlFactClass = System.getProperty(JAXPFACTORYID);
-        if (xmlFactClass != null) {
-            try {
-                Class.forName(xmlFactClass);
-            } catch (Exception e) {
-                LOG.log(POILogger.ERROR, "Invalid xml input factory config detected. ("+JAXPFACTORYID+"="+xmlFactClass+")");
-                try {
-                    System.clearProperty(JAXPFACTORYID);
-                } catch (Exception e2) {
-                    LOG.log(POILogger.ERROR, "Failed to remove invalid xml input factory", e2);
-                }
-            }
-        }
     }
 }
