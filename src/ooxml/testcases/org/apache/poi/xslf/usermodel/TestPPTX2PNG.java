@@ -26,8 +26,6 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.xml.stream.XMLInputFactory;
-
 import org.apache.poi.sl.draw.Drawable;
 import org.apache.poi.util.JvmBugs;
 import org.apache.poi.xslf.XSLFTestDataSamples;
@@ -46,7 +44,7 @@ public class TestPPTX2PNG {
     @BeforeClass
     public static void activateJaxpDebug() {
         jaxpDebugEnable = setDebugFld(true);
-        fixDefaultInputFactory();
+        setXmlInputFactory();
     }
 
     @AfterClass
@@ -69,17 +67,13 @@ public class TestPPTX2PNG {
         }
     }
 
-    private static void fixDefaultInputFactory() {
-        String originalValue = "com.sun.xml.internal.stream.XMLInputFactoryImpl";
+    private static void setXmlInputFactory() {
+        String propName = "javax.xml.stream.XMLInputFactory";
+        String propVal = "com.sun.xml.internal.stream.XMLInputFactoryImpl";
         try {
-            Field fld = XMLInputFactory.class.getDeclaredField("DEFAULIMPL");
-            fld.setAccessible(true);
-            String val = (String)fld.get(null);
-            if (!originalValue.equals(val)) {
-                System.out.println("DefaultXMLInputFactory illegal changed to: "+val);
-                fld.set(null, originalValue);
-            }
-        } catch (Exception e) {
+            Class.forName(propVal);
+            System.setProperty(propName, propVal);
+        } catch (Exception e){
             // ignore
         }
     }
