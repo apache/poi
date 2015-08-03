@@ -42,7 +42,7 @@ import org.apache.poi.sl.usermodel.TextRun;
 import org.apache.poi.sl.usermodel.TextShape;
 
 public class DrawFactory {
-    protected static ThreadLocal<DrawFactory> defaultFactory = new ThreadLocal<DrawFactory>();
+    protected static final ThreadLocal<DrawFactory> defaultFactory = new ThreadLocal<DrawFactory>();
 
     /**
      * Set a custom draw factory for the current thread.

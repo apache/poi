@@ -40,7 +40,7 @@ import org.apache.poi.util.*;
  */
 
 public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
-    protected static POILogger logger = POILogFactory.getLogger(HSLFTextParagraph.class);
+    protected static final POILogger logger = POILogFactory.getLogger(HSLFTextParagraph.class);
 
     /**
      * How to align the text
