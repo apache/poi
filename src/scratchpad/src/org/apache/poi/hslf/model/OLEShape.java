@@ -48,7 +48,7 @@ public final class OLEShape extends HSLFPictureShape {
     /**
      * Create a new <code>OLEShape</code>
      *
-     * @param idx the index of the picture
+     * @param data the picture data
      * @param parent the parent shape
      */
     public OLEShape(HSLFPictureData data, ShapeContainer<HSLFShape> parent) {
