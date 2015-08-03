@@ -54,7 +54,7 @@ public class HSLFPictureShape extends HSLFSimpleShape implements PictureShape {
     /**
      * Create a new <code>Picture</code>
      *
-    * @param idx the index of the picture
+    * @param data the picture data
      */
     public HSLFPictureShape(HSLFPictureData data){
         this(data, null);
@@ -63,7 +63,7 @@ public class HSLFPictureShape extends HSLFSimpleShape implements PictureShape {
     /**
      * Create a new <code>Picture</code>
      *
-     * @param idx the index of the picture
+     * @param data the picture data
      * @param parent the parent shape
      */
     public HSLFPictureShape(HSLFPictureData data, ShapeContainer<HSLFShape> parent) {
