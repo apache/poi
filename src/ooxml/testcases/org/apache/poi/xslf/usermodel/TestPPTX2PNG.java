@@ -44,7 +44,7 @@ public class TestPPTX2PNG {
     @BeforeClass
     public static void activateJaxpDebug() {
         jaxpDebugEnable = setDebugFld(true);
-        setXmlInputFactory();
+//        setXmlInputFactory();
     }
 
     @AfterClass
@@ -67,16 +67,16 @@ public class TestPPTX2PNG {
         }
     }
 
-    private static void setXmlInputFactory() {
-        String propName = "javax.xml.stream.XMLInputFactory";
-        String propVal = "com.sun.xml.internal.stream.XMLInputFactoryImpl";
-        try {
-            Class.forName(propVal);
-            System.setProperty(propName, propVal);
-        } catch (Exception e){
-            // ignore
-        }
-    }
+//    private static void setXmlInputFactory() {
+//        String propName = "javax.xml.stream.XMLInputFactory";
+//        String propVal = "com.sun.xml.internal.stream.XMLInputFactoryImpl";
+//        try {
+//            Class.forName(propVal);
+//            System.setProperty(propName, propVal);
+//        } catch (Exception e){
+//            // ignore
+//        }
+//    }
     
     
     @Test
