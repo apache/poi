@@ -461,7 +461,7 @@ public final class FontFormatting {
     public String toString()
     {
         StringBuffer buffer = new StringBuffer();
-        buffer.append("	[Font Formatting]\n");
+        buffer.append("    [Font Formatting]\n");
 
         buffer.append("	.font height = ").append(getFontHeight()).append(" twips\n");
 
@@ -535,7 +535,7 @@ public final class FontFormatting {
         }
         buffer.append("	.color index = ").append("0x"+Integer.toHexString(getFontColorIndex()).toUpperCase()).append("\n");
 
-        buffer.append("	[/Font Formatting]\n");
+        buffer.append("    [/Font Formatting]\n");
         return buffer.toString();
     }
 
