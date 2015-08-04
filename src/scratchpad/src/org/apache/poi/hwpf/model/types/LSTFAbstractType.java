@@ -144,7 +144,7 @@ public abstract class LSTFAbstractType
         builder.append("    .tplc                 = ");
         builder.append(" (").append(getTplc()).append(" )\n");
         builder.append("    .rgistdPara           = ");
-        builder.append(" (").append(getRgistdPara()).append(" )\n");
+        builder.append(" (").append(Arrays.toString(getRgistdPara())).append(" )\n");
         builder.append("    .flags                = ");
         builder.append(" (").append(getFlags()).append(" )\n");
         builder.append("         .fSimpleList              = ").append(isFSimpleList()).append('\n');

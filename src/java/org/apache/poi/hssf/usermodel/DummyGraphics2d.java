@@ -415,7 +415,7 @@ public class DummyGraphics2d
 
     public void drawBytes(byte data[], int offset, int length, int x, int y) {
         System.out.println( "drawBytes(byte[],int,int,int,int):" );
-        System.out.println( "data = " + data );
+        System.out.println( "data = " + Arrays.toString(data) );
         System.out.println( "offset = " + offset );
         System.out.println( "length = " + length );
         System.out.println( "x = " + x );
@@ -425,7 +425,7 @@ public class DummyGraphics2d
 
     public void drawChars(char data[], int offset, int length, int x, int y) {
         System.out.println( "drawChars(data,int,int,int,int):" );
-        System.out.println( "data = " + data.toString() );
+        System.out.println( "data = " + Arrays.toString(data) );
         System.out.println( "offset = " + offset );
         System.out.println( "length = " + length );
         System.out.println( "x = " + x );
@@ -557,8 +557,8 @@ public class DummyGraphics2d
 				     int nPoints)
     {
         System.out.println( "drawPolygon(int[],int[],int):" );
-        System.out.println( "xPoints = " + xPoints );
-        System.out.println( "yPoints = " + yPoints );
+        System.out.println( "xPoints = " + Arrays.toString(xPoints) );
+        System.out.println( "yPoints = " + Arrays.toString(yPoints) );
         System.out.println( "nPoints = " + nPoints );
         g2D.drawPolygon( xPoints, yPoints, nPoints );
     }
@@ -567,8 +567,8 @@ public class DummyGraphics2d
 				      int nPoints)
     {
         System.out.println( "drawPolyline(int[],int[],int):" );
-        System.out.println( "xPoints = " + xPoints );
-        System.out.println( "yPoints = " + yPoints );
+        System.out.println( "xPoints = " + Arrays.toString(xPoints) );
+        System.out.println( "yPoints = " + Arrays.toString(yPoints) );
         System.out.println( "nPoints = " + nPoints );
         g2D.drawPolyline( xPoints, yPoints, nPoints );
     }
@@ -658,8 +658,8 @@ public class DummyGraphics2d
 				     int nPoints)
     {
         System.out.println( "fillPolygon(int[],int[],int):" );
-        System.out.println( "xPoints = " + xPoints );
-        System.out.println( "yPoints = " + yPoints );
+        System.out.println( "xPoints = " + Arrays.toString(xPoints) );
+        System.out.println( "yPoints = " + Arrays.toString(yPoints) );
         System.out.println( "nPoints = " + nPoints );
         g2D.fillPolygon( xPoints, yPoints, nPoints );
     }

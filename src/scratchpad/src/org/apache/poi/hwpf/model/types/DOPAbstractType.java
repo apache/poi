@@ -18,6 +18,8 @@
 package org.apache.poi.hwpf.model.types;
 
 
+import java.util.Arrays;
+
 import org.apache.poi.hdf.model.hdftypes.HDFType;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.Internal;
@@ -248,12 +250,12 @@ public abstract class DOPAbstractType implements HDFType {
     {
         data[ 0x0 + offset] = field_1_formatFlags;
         data[ 0x1 + offset] = field_2_unused2;
-        LittleEndian.putShort(data, 0x2 + offset, (short)field_3_footnoteInfo);
+        LittleEndian.putShort(data, 0x2 + offset, field_3_footnoteInfo);
         data[ 0x4 + offset] = field_4_fOutlineDirtySave;
         data[ 0x5 + offset] = field_5_docinfo;
         data[ 0x6 + offset] = field_6_docinfo1;
         data[ 0x7 + offset] = field_7_docinfo2;
-        LittleEndian.putShort(data, 0x8 + offset, (short)field_8_docinfo3);
+        LittleEndian.putShort(data, 0x8 + offset, field_8_docinfo3);
         LittleEndian.putShort(data, 0xa + offset, (short)field_9_dxaTab);
         LittleEndian.putShort(data, 0xc + offset, (short)field_10_wSpare);
         LittleEndian.putShort(data, 0xe + offset, (short)field_11_dxaHotz);
@@ -268,22 +270,22 @@ public abstract class DOPAbstractType implements HDFType {
         LittleEndian.putInt(data, 0x2a + offset, field_20_cCh);
         LittleEndian.putShort(data, 0x2e + offset, (short)field_21_cPg);
         LittleEndian.putInt(data, 0x30 + offset, field_22_cParas);
-        LittleEndian.putShort(data, 0x34 + offset, (short)field_23_Edn);
-        LittleEndian.putShort(data, 0x36 + offset, (short)field_24_Edn1);
+        LittleEndian.putShort(data, 0x34 + offset, field_23_Edn);
+        LittleEndian.putShort(data, 0x36 + offset, field_24_Edn1);
         LittleEndian.putInt(data, 0x38 + offset, field_25_cLines);
         LittleEndian.putInt(data, 0x3c + offset, field_26_cWordsFtnEnd);
         LittleEndian.putInt(data, 0x40 + offset, field_27_cChFtnEdn);
-        LittleEndian.putShort(data, 0x44 + offset, (short)field_28_cPgFtnEdn);
+        LittleEndian.putShort(data, 0x44 + offset, field_28_cPgFtnEdn);
         LittleEndian.putInt(data, 0x46 + offset, field_29_cParasFtnEdn);
         LittleEndian.putInt(data, 0x4a + offset, field_30_cLinesFtnEdn);
         LittleEndian.putInt(data, 0x4e + offset, field_31_lKeyProtDoc);
-        LittleEndian.putShort(data, 0x52 + offset, (short)field_32_view);
+        LittleEndian.putShort(data, 0x52 + offset, field_32_view);
         LittleEndian.putInt(data, 0x54 + offset, field_33_docinfo4);
-        LittleEndian.putShort(data, 0x58 + offset, (short)field_34_adt);
+        LittleEndian.putShort(data, 0x58 + offset, field_34_adt);
         System.arraycopy(field_35_doptypography, 0, data, 0x5a + offset, field_35_doptypography.length);
         System.arraycopy(field_36_dogrid, 0, data, 0x190 + offset, field_36_dogrid.length);
-        LittleEndian.putShort(data, 0x19a + offset, (short)field_37_docinfo5);
-        LittleEndian.putShort(data, 0x19c + offset, (short)field_38_docinfo6);
+        LittleEndian.putShort(data, 0x19a + offset, field_37_docinfo5);
+        LittleEndian.putShort(data, 0x19c + offset, field_38_docinfo6);
         System.arraycopy(field_39_asumyi, 0, data, 0x19e + offset, field_39_asumyi.length);
         LittleEndian.putInt(data, 0x1aa + offset, field_40_cChWS);
         LittleEndian.putInt(data, 0x1ae + offset, field_41_cChWSFtnEdn);
@@ -295,10 +297,10 @@ public abstract class DOPAbstractType implements HDFType {
         LittleEndian.putInt(data, 0x1e0 + offset, field_47_cDBC);
         LittleEndian.putInt(data, 0x1e4 + offset, field_48_cDBCFtnEdn);
         LittleEndian.putInt(data, 0x1e8 + offset, field_49_reserved);
-        LittleEndian.putShort(data, 0x1ec + offset, (short)field_50_nfcFtnRef);
-        LittleEndian.putShort(data, 0x1ee + offset, (short)field_51_nfcEdnRef);
-        LittleEndian.putShort(data, 0x1f0 + offset, (short)field_52_hpsZoonFontPag);
-        LittleEndian.putShort(data, 0x1f2 + offset, (short)field_53_dywDispPag);
+        LittleEndian.putShort(data, 0x1ec + offset, field_50_nfcFtnRef);
+        LittleEndian.putShort(data, 0x1ee + offset, field_51_nfcEdnRef);
+        LittleEndian.putShort(data, 0x1f0 + offset, field_52_hpsZoonFontPag);
+        LittleEndian.putShort(data, 0x1f2 + offset, field_53_dywDispPag);
     }
 
     /**
@@ -458,9 +460,9 @@ public abstract class DOPAbstractType implements HDFType {
         builder.append("    .adt                  = ");
         builder.append(" (").append(getAdt()).append(" )\n");
         builder.append("    .doptypography        = ");
-        builder.append(" (").append(getDoptypography()).append(" )\n");
+        builder.append(" (").append(Arrays.toString(getDoptypography())).append(" )\n");
         builder.append("    .dogrid               = ");
-        builder.append(" (").append(getDogrid()).append(" )\n");
+        builder.append(" (").append(Arrays.toString(getDogrid())).append(" )\n");
         builder.append("    .docinfo5             = ");
         builder.append(" (").append(getDocinfo5()).append(" )\n");
         builder.append("         .lvl                      = ").append(getLvl()).append('\n');
@@ -479,7 +481,7 @@ public abstract class DOPAbstractType implements HDFType {
         builder.append("         .fHaveVersions            = ").append(isFHaveVersions()).append('\n');
         builder.append("         .fAutoVersions            = ").append(isFAutoVersions()).append('\n');
         builder.append("    .asumyi               = ");
-        builder.append(" (").append(getAsumyi()).append(" )\n");
+        builder.append(" (").append(Arrays.toString(getAsumyi())).append(" )\n");
         builder.append("    .cChWS                = ");
         builder.append(" (").append(getCChWS()).append(" )\n");
         builder.append("    .cChWSFtnEdn          = ");
@@ -492,7 +494,7 @@ public abstract class DOPAbstractType implements HDFType {
         builder.append("         .fVirusLoadSafe           = ").append(isFVirusLoadSafe()).append('\n');
         builder.append("         .KeyVirusSession30        = ").append(getKeyVirusSession30()).append('\n');
         builder.append("    .Spare                = ");
-        builder.append(" (").append(getSpare()).append(" )\n");
+        builder.append(" (").append(Arrays.toString(getSpare())).append(" )\n");
         builder.append("    .reserved1            = ");
         builder.append(" (").append(getReserved1()).append(" )\n");
         builder.append("    .reserved2            = ");
@@ -2657,7 +2659,7 @@ public abstract class DOPAbstractType implements HDFType {
     @Internal
     public void setFNoTabForInd( boolean value )
     {
-        field_33_docinfo4 = (int)fNoTabForInd.setBoolean(field_33_docinfo4, value);
+        field_33_docinfo4 = fNoTabForInd.setBoolean(field_33_docinfo4, value);
     }
 
     /**
@@ -2677,7 +2679,7 @@ public abstract class DOPAbstractType implements HDFType {
     @Internal
     public void setFNoSpaceRaiseLower( boolean value )
     {
-        field_33_docinfo4 = (int)fNoSpaceRaiseLower.setBoolean(field_33_docinfo4, value);
+        field_33_docinfo4 = fNoSpaceRaiseLower.setBoolean(field_33_docinfo4, value);
     }
 
     /**
@@ -2697,7 +2699,7 @@ public abstract class DOPAbstractType implements HDFType {
     @Internal
     public void setFSupressSpdfAfterPageBreak( boolean value )
     {
-        field_33_docinfo4 = (int)fSupressSpdfAfterPageBreak.setBoolean(field_33_docinfo4, value);
+        field_33_docinfo4 = fSupressSpdfAfterPageBreak.setBoolean(field_33_docinfo4, value);
     }
 
     /**
@@ -2717,7 +2719,7 @@ public abstract class DOPAbstractType implements HDFType {
     @Internal
     public void setFWrapTrailSpaces( boolean value )
     {
-        field_33_docinfo4 = (int)fWrapTrailSpaces.setBoolean(field_33_docinfo4, value);
+        field_33_docinfo4 = fWrapTrailSpaces.setBoolean(field_33_docinfo4, value);
     }
 
     /**
@@ -2737,7 +2739,7 @@ public abstract class DOPAbstractType implements HDFType {
     @Internal
     public void setFMapPrintTextColor( boolean value )
     {
-        field_33_docinfo4 = (int)fMapPrintTextColor.setBoolean(field_33_docinfo4, value);
+        field_33_docinfo4 = fMapPrintTextColor.setBoolean(field_33_docinfo4, value);
     }
 
     /**
@@ -2757,7 +2759,7 @@ public abstract class DOPAbstractType implements HDFType {
     @Internal
     public void setFNoColumnBalance( boolean value )
     {
-        field_33_docinfo4 = (int)fNoColumnBalance.setBoolean(field_33_docinfo4, value);
+        field_33_docinfo4 = fNoColumnBalance.setBoolean(field_33_docinfo4, value);
     }
 
     /**
@@ -2777,7 +2779,7 @@ public abstract class DOPAbstractType implements HDFType {
     @Internal
     public void setFConvMailMergeEsc( boolean value )
     {
-        field_33_docinfo4 = (int)fConvMailMergeEsc.setBoolean(field_33_docinfo4, value);
+        field_33_docinfo4 = fConvMailMergeEsc.setBoolean(field_33_docinfo4, value);
     }
 
     /**
@@ -2797,7 +2799,7 @@ public abstract class DOPAbstractType implements HDFType {
     @Internal
     public void setFSupressTopSpacing( boolean value )
     {
-        field_33_docinfo4 = (int)fSupressTopSpacing.setBoolean(field_33_docinfo4, value);
+        field_33_docinfo4 = fSupressTopSpacing.setBoolean(field_33_docinfo4, value);
     }
 
     /**
@@ -2817,7 +2819,7 @@ public abstract class DOPAbstractType implements HDFType {
     @Internal
     public void setFOrigWordTableRules( boolean value )
     {
-        field_33_docinfo4 = (int)fOrigWordTableRules.setBoolean(field_33_docinfo4, value);
+        field_33_docinfo4 = fOrigWordTableRules.setBoolean(field_33_docinfo4, value);
     }
 
     /**
@@ -2837,7 +2839,7 @@ public abstract class DOPAbstractType implements HDFType {
     @Internal
     public void setFTransparentMetafiles( boolean value )
     {
-        field_33_docinfo4 = (int)fTransparentMetafiles.setBoolean(field_33_docinfo4, value);
+        field_33_docinfo4 = fTransparentMetafiles.setBoolean(field_33_docinfo4, value);
     }
 
     /**
@@ -2857,7 +2859,7 @@ public abstract class DOPAbstractType implements HDFType {
     @Internal
     public void setFShowBreaksInFrames( boolean value )
     {
-        field_33_docinfo4 = (int)fShowBreaksInFrames.setBoolean(field_33_docinfo4, value);
+        field_33_docinfo4 = fShowBreaksInFrames.setBoolean(field_33_docinfo4, value);
     }
 
     /**
@@ -2877,7 +2879,7 @@ public abstract class DOPAbstractType implements HDFType {
     @Internal
     public void setFSwapBordersFacingPgs( boolean value )
     {
-        field_33_docinfo4 = (int)fSwapBordersFacingPgs.setBoolean(field_33_docinfo4, value);
+        field_33_docinfo4 = fSwapBordersFacingPgs.setBoolean(field_33_docinfo4, value);
     }
 
     /**
@@ -2897,7 +2899,7 @@ public abstract class DOPAbstractType implements HDFType {
     @Internal
     public void setFSuppressTopSPacingMac5( boolean value )
     {
-        field_33_docinfo4 = (int)fSuppressTopSPacingMac5.setBoolean(field_33_docinfo4, value);
+        field_33_docinfo4 = fSuppressTopSPacingMac5.setBoolean(field_33_docinfo4, value);
     }
 
     /**
@@ -2917,7 +2919,7 @@ public abstract class DOPAbstractType implements HDFType {
     @Internal
     public void setFTruncDxaExpand( boolean value )
     {
-        field_33_docinfo4 = (int)fTruncDxaExpand.setBoolean(field_33_docinfo4, value);
+        field_33_docinfo4 = fTruncDxaExpand.setBoolean(field_33_docinfo4, value);
     }
 
     /**
@@ -2937,7 +2939,7 @@ public abstract class DOPAbstractType implements HDFType {
     @Internal
     public void setFPrintBodyBeforeHdr( boolean value )
     {
-        field_33_docinfo4 = (int)fPrintBodyBeforeHdr.setBoolean(field_33_docinfo4, value);
+        field_33_docinfo4 = fPrintBodyBeforeHdr.setBoolean(field_33_docinfo4, value);
     }
 
     /**
@@ -2957,7 +2959,7 @@ public abstract class DOPAbstractType implements HDFType {
     @Internal
     public void setFNoLeading( boolean value )
     {
-        field_33_docinfo4 = (int)fNoLeading.setBoolean(field_33_docinfo4, value);
+        field_33_docinfo4 = fNoLeading.setBoolean(field_33_docinfo4, value);
     }
 
     /**
@@ -2977,7 +2979,7 @@ public abstract class DOPAbstractType implements HDFType {
     @Internal
     public void setFMWSmallCaps( boolean value )
     {
-        field_33_docinfo4 = (int)fMWSmallCaps.setBoolean(field_33_docinfo4, value);
+        field_33_docinfo4 = fMWSmallCaps.setBoolean(field_33_docinfo4, value);
     }
 
     /**
@@ -3257,7 +3259,7 @@ public abstract class DOPAbstractType implements HDFType {
     @Internal
     public void setFVirusPrompted( boolean value )
     {
-        field_43_virusinfo = (int)fVirusPrompted.setBoolean(field_43_virusinfo, value);
+        field_43_virusinfo = fVirusPrompted.setBoolean(field_43_virusinfo, value);
     }
 
     /**
@@ -3277,7 +3279,7 @@ public abstract class DOPAbstractType implements HDFType {
     @Internal
     public void setFVirusLoadSafe( boolean value )
     {
-        field_43_virusinfo = (int)fVirusLoadSafe.setBoolean(field_43_virusinfo, value);
+        field_43_virusinfo = fVirusLoadSafe.setBoolean(field_43_virusinfo, value);
     }
 
     /**
@@ -3297,7 +3299,7 @@ public abstract class DOPAbstractType implements HDFType {
     @Internal
     public void setKeyVirusSession30( int value )
     {
-        field_43_virusinfo = (int)KeyVirusSession30.setValue(field_43_virusinfo, value);
+        field_43_virusinfo = KeyVirusSession30.setValue(field_43_virusinfo, value);
     }
 
     /**
@@ -3307,7 +3309,7 @@ public abstract class DOPAbstractType implements HDFType {
     @Internal
     public int getKeyVirusSession30()
     {
-        return ( int )KeyVirusSession30.getValue(field_43_virusinfo);
+        return KeyVirusSession30.getValue(field_43_virusinfo);
     }
 
 }  // END OF CLASS

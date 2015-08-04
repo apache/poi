@@ -191,7 +191,7 @@ public abstract class LVLFAbstractType
         builder.append("         .unused1                  = ").append(isUnused1()).append('\n');
         builder.append("         .fTentative               = ").append(isFTentative()).append('\n');
         builder.append("    .rgbxchNums           = ");
-        builder.append(" (").append(getRgbxchNums()).append(" )\n");
+        builder.append(" (").append(Arrays.toString(getRgbxchNums())).append(" )\n");
         builder.append("    .ixchFollow           = ");
         builder.append(" (").append(getIxchFollow()).append(" )\n");
         builder.append("    .dxaIndentSav         = ");

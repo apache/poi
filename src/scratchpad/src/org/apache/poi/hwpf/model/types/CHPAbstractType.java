@@ -685,7 +685,7 @@ public abstract class CHPAbstractType
         builder.append("    .dttmDispFldRMark     = ");
         builder.append(" (").append(getDttmDispFldRMark()).append(" )\n");
         builder.append("    .xstDispFldRMark      = ");
-        builder.append(" (").append(getXstDispFldRMark()).append(" )\n");
+        builder.append(" (").append(Arrays.toString(getXstDispFldRMark())).append(" )\n");
         builder.append("    .fcObjp               = ");
         builder.append(" (").append(getFcObjp()).append(" )\n");
         builder.append("    .lbrCRJ               = ");

@@ -19,6 +19,8 @@
 package org.apache.poi.hwpf.model.types;
 
 
+import java.util.Arrays;
+
 import org.apache.poi.util.*;
 
 /**
@@ -201,13 +203,13 @@ public abstract class PICFAbstractType
         builder.append("    .bpp                  = ");
         builder.append(" (").append(getBpp()).append(" )\n");
         builder.append("    .brcTop80             = ");
-        builder.append(" (").append(getBrcTop80()).append(" )\n");
+        builder.append(" (").append(Arrays.toString(getBrcTop80())).append(" )\n");
         builder.append("    .brcLeft80            = ");
-        builder.append(" (").append(getBrcLeft80()).append(" )\n");
+        builder.append(" (").append(Arrays.toString(getBrcLeft80())).append(" )\n");
         builder.append("    .brcBottom80          = ");
-        builder.append(" (").append(getBrcBottom80()).append(" )\n");
+        builder.append(" (").append(Arrays.toString(getBrcBottom80())).append(" )\n");
         builder.append("    .brcRight80           = ");
-        builder.append(" (").append(getBrcRight80()).append(" )\n");
+        builder.append(" (").append(Arrays.toString(getBrcRight80())).append(" )\n");
         builder.append("    .dxaReserved3         = ");
         builder.append(" (").append(getDxaReserved3()).append(" )\n");
         builder.append("    .dyaReserved3         = ");

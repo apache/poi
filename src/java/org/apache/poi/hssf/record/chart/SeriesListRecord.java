@@ -17,6 +17,8 @@
 
 package org.apache.poi.hssf.record.chart;
 
+import java.util.Arrays;
+
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.StandardRecord;
 import org.apache.poi.util.LittleEndianOutput;
@@ -51,9 +53,9 @@ public final class SeriesListRecord extends StandardRecord {
 
     public String toString() {
         StringBuffer buffer = new StringBuffer();
-
+        
         buffer.append("[SERIESLIST]\n");
-        buffer.append("    .seriesNumbers= ").append(" (").append( getSeriesNumbers() ).append(" )");
+        buffer.append("    .seriesNumbers= ").append(" (").append( Arrays.toString(getSeriesNumbers()) ).append(" )");
         buffer.append("\n"); 
 
         buffer.append("[/SERIESLIST]\n");

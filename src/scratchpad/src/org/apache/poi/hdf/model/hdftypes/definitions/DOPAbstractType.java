@@ -19,6 +19,8 @@ package org.apache.poi.hdf.model.hdftypes.definitions;
 
 
 
+import java.util.Arrays;
+
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.LittleEndian;
@@ -523,11 +525,11 @@ public abstract class DOPAbstractType
 
         buffer.append("    .doptypography        = ");
         buffer.append(HexDump.toHex(getDoptypography()));
-        buffer.append(" (").append(getDoptypography()).append(" )\n");
+        buffer.append(" (").append(Arrays.toString(getDoptypography())).append(" )\n");
 
         buffer.append("    .dogrid               = ");
         buffer.append(HexDump.toHex(getDogrid()));
-        buffer.append(" (").append(getDogrid()).append(" )\n");
+        buffer.append(" (").append(Arrays.toString(getDogrid())).append(" )\n");
 
         buffer.append("    .docinfo5             = ");
         buffer.append(HexDump.shortToHex(getDocinfo5()));
@@ -552,7 +554,7 @@ public abstract class DOPAbstractType
 
         buffer.append("    .asumyi               = ");
         buffer.append(HexDump.toHex(getAsumyi()));
-        buffer.append(" (").append(getAsumyi()).append(" )\n");
+        buffer.append(" (").append(Arrays.toString(getAsumyi())).append(" )\n");
 
         buffer.append("    .cChWS                = ");
         buffer.append(HexDump.intToHex(getCChWS()));
@@ -575,7 +577,7 @@ public abstract class DOPAbstractType
 
         buffer.append("    .Spare                = ");
         buffer.append(HexDump.toHex(getSpare()));
-        buffer.append(" (").append(getSpare()).append(" )\n");
+        buffer.append(" (").append(Arrays.toString(getSpare())).append(" )\n");
 
         buffer.append("    .reserved1            = ");
         buffer.append(HexDump.intToHex(getReserved1()));

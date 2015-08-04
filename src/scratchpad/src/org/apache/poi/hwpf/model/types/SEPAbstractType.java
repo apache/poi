@@ -18,6 +18,8 @@
 package org.apache.poi.hwpf.model.types;
 
 
+import java.util.Arrays;
+
 import org.apache.poi.hwpf.usermodel.BorderCode;
 import org.apache.poi.hwpf.usermodel.DateAndTime;
 import org.apache.poi.util.Internal;
@@ -249,7 +251,7 @@ public abstract class SEPAbstractType
         builder.append("    .dxaColumns           = ");
         builder.append(" (").append(getDxaColumns()).append(" )\n");
         builder.append("    .rgdxaColumn          = ");
-        builder.append(" (").append(getRgdxaColumn()).append(" )\n");
+        builder.append(" (").append(Arrays.toString(getRgdxaColumn())).append(" )\n");
         builder.append("    .dxaColumnWidth       = ");
         builder.append(" (").append(getDxaColumnWidth()).append(" )\n");
         builder.append("    .dmOrientFirst        = ");
@@ -259,7 +261,7 @@ public abstract class SEPAbstractType
         builder.append("    .unused6              = ");
         builder.append(" (").append(getUnused6()).append(" )\n");
         builder.append("    .olstAnm              = ");
-        builder.append(" (").append(getOlstAnm()).append(" )\n");
+        builder.append(" (").append(Arrays.toString(getOlstAnm())).append(" )\n");
 
         builder.append("[/SEP]\n");
         return builder.toString();
