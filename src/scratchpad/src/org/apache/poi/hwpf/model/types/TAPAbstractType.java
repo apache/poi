@@ -18,8 +18,14 @@
 package org.apache.poi.hwpf.model.types;
 
 
-import org.apache.poi.hwpf.usermodel.*;
-import org.apache.poi.util.*;
+import java.util.Arrays;
+
+import org.apache.poi.hwpf.usermodel.BorderCode;
+import org.apache.poi.hwpf.usermodel.ShadingDescriptor;
+import org.apache.poi.hwpf.usermodel.TableAutoformatLookSpecifier;
+import org.apache.poi.hwpf.usermodel.TableCellDescriptor;
+import org.apache.poi.util.BitField;
+import org.apache.poi.util.Internal;
 
 /**
  * Table Properties. Properties descriptions quoted from official 97-2007 binary file
@@ -258,9 +264,9 @@ public abstract class TAPAbstractType
         builder.append("         .fAdjusted                = ").append(isFAdjusted()).append('\n');
         builder.append("         .viewFlags_unused2        = ").append(getViewFlags_unused2()).append('\n');
         builder.append("    .rgdxaCenter          = ");
-        builder.append(" (").append(getRgdxaCenter()).append(" )\n");
+        builder.append(" (").append(Arrays.toString(getRgdxaCenter())).append(" )\n");
         builder.append("    .rgdxaCenterPrint     = ");
-        builder.append(" (").append(getRgdxaCenterPrint()).append(" )\n");
+        builder.append(" (").append(Arrays.toString(getRgdxaCenterPrint())).append(" )\n");
         builder.append("    .shdTable             = ");
         builder.append(" (").append(getShdTable()).append(" )\n");
         builder.append("    .brcBottom            = ");
@@ -340,7 +346,7 @@ public abstract class TAPAbstractType
         builder.append("    .ftsCellSpacingOuterRight = ");
         builder.append(" (").append(getFtsCellSpacingOuterRight()).append(" )\n");
         builder.append("    .rgtc                 = ");
-        builder.append(" (").append(getRgtc()).append(" )\n");
+        builder.append(" (").append(Arrays.toString(getRgtc())).append(" )\n");
         builder.append("    .rgshd                = ");
         builder.append(" (").append(getRgshd()).append(" )\n");
         builder.append("    .fPropRMark           = ");
@@ -1825,7 +1831,7 @@ public abstract class TAPAbstractType
     @Internal
     public void setFAutofit( boolean value )
     {
-        field_13_widthAndFitsFlags = (int)fAutofit.setBoolean(field_13_widthAndFitsFlags, value);
+        field_13_widthAndFitsFlags = fAutofit.setBoolean(field_13_widthAndFitsFlags, value);
     }
 
     /**
@@ -1845,7 +1851,7 @@ public abstract class TAPAbstractType
     @Internal
     public void setFKeepFollow( boolean value )
     {
-        field_13_widthAndFitsFlags = (int)fKeepFollow.setBoolean(field_13_widthAndFitsFlags, value);
+        field_13_widthAndFitsFlags = fKeepFollow.setBoolean(field_13_widthAndFitsFlags, value);
     }
 
     /**
@@ -1865,7 +1871,7 @@ public abstract class TAPAbstractType
     @Internal
     public void setFtsWidth( byte value )
     {
-        field_13_widthAndFitsFlags = (int)ftsWidth.setValue(field_13_widthAndFitsFlags, value);
+        field_13_widthAndFitsFlags = ftsWidth.setValue(field_13_widthAndFitsFlags, value);
     }
 
     /**
@@ -1885,7 +1891,7 @@ public abstract class TAPAbstractType
     @Internal
     public void setFtsWidthIndent( byte value )
     {
-        field_13_widthAndFitsFlags = (int)ftsWidthIndent.setValue(field_13_widthAndFitsFlags, value);
+        field_13_widthAndFitsFlags = ftsWidthIndent.setValue(field_13_widthAndFitsFlags, value);
     }
 
     /**
@@ -1905,7 +1911,7 @@ public abstract class TAPAbstractType
     @Internal
     public void setFtsWidthBefore( byte value )
     {
-        field_13_widthAndFitsFlags = (int)ftsWidthBefore.setValue(field_13_widthAndFitsFlags, value);
+        field_13_widthAndFitsFlags = ftsWidthBefore.setValue(field_13_widthAndFitsFlags, value);
     }
 
     /**
@@ -1925,7 +1931,7 @@ public abstract class TAPAbstractType
     @Internal
     public void setFtsWidthAfter( byte value )
     {
-        field_13_widthAndFitsFlags = (int)ftsWidthAfter.setValue(field_13_widthAndFitsFlags, value);
+        field_13_widthAndFitsFlags = ftsWidthAfter.setValue(field_13_widthAndFitsFlags, value);
     }
 
     /**
@@ -1945,7 +1951,7 @@ public abstract class TAPAbstractType
     @Internal
     public void setFNeverBeenAutofit( boolean value )
     {
-        field_13_widthAndFitsFlags = (int)fNeverBeenAutofit.setBoolean(field_13_widthAndFitsFlags, value);
+        field_13_widthAndFitsFlags = fNeverBeenAutofit.setBoolean(field_13_widthAndFitsFlags, value);
     }
 
     /**
@@ -1965,7 +1971,7 @@ public abstract class TAPAbstractType
     @Internal
     public void setFInvalAutofit( boolean value )
     {
-        field_13_widthAndFitsFlags = (int)fInvalAutofit.setBoolean(field_13_widthAndFitsFlags, value);
+        field_13_widthAndFitsFlags = fInvalAutofit.setBoolean(field_13_widthAndFitsFlags, value);
     }
 
     /**
@@ -1985,7 +1991,7 @@ public abstract class TAPAbstractType
     @Internal
     public void setWidthAndFitsFlags_empty1( byte value )
     {
-        field_13_widthAndFitsFlags = (int)widthAndFitsFlags_empty1.setValue(field_13_widthAndFitsFlags, value);
+        field_13_widthAndFitsFlags = widthAndFitsFlags_empty1.setValue(field_13_widthAndFitsFlags, value);
     }
 
     /**
@@ -2005,7 +2011,7 @@ public abstract class TAPAbstractType
     @Internal
     public void setFVert( boolean value )
     {
-        field_13_widthAndFitsFlags = (int)fVert.setBoolean(field_13_widthAndFitsFlags, value);
+        field_13_widthAndFitsFlags = fVert.setBoolean(field_13_widthAndFitsFlags, value);
     }
 
     /**
@@ -2025,7 +2031,7 @@ public abstract class TAPAbstractType
     @Internal
     public void setPcVert( byte value )
     {
-        field_13_widthAndFitsFlags = (int)pcVert.setValue(field_13_widthAndFitsFlags, value);
+        field_13_widthAndFitsFlags = pcVert.setValue(field_13_widthAndFitsFlags, value);
     }
 
     /**
@@ -2045,7 +2051,7 @@ public abstract class TAPAbstractType
     @Internal
     public void setPcHorz( byte value )
     {
-        field_13_widthAndFitsFlags = (int)pcHorz.setValue(field_13_widthAndFitsFlags, value);
+        field_13_widthAndFitsFlags = pcHorz.setValue(field_13_widthAndFitsFlags, value);
     }
 
     /**
@@ -2065,7 +2071,7 @@ public abstract class TAPAbstractType
     @Internal
     public void setWidthAndFitsFlags_empty2( short value )
     {
-        field_13_widthAndFitsFlags = (int)widthAndFitsFlags_empty2.setValue(field_13_widthAndFitsFlags, value);
+        field_13_widthAndFitsFlags = widthAndFitsFlags_empty2.setValue(field_13_widthAndFitsFlags, value);
     }
 
     /**
@@ -2085,7 +2091,7 @@ public abstract class TAPAbstractType
     @Internal
     public void setFFirstRow( boolean value )
     {
-        field_25_internalFlags = (int)fFirstRow.setBoolean(field_25_internalFlags, value);
+        field_25_internalFlags = fFirstRow.setBoolean(field_25_internalFlags, value);
     }
 
     /**
@@ -2105,7 +2111,7 @@ public abstract class TAPAbstractType
     @Internal
     public void setFLastRow( boolean value )
     {
-        field_25_internalFlags = (int)fLastRow.setBoolean(field_25_internalFlags, value);
+        field_25_internalFlags = fLastRow.setBoolean(field_25_internalFlags, value);
     }
 
     /**
@@ -2125,7 +2131,7 @@ public abstract class TAPAbstractType
     @Internal
     public void setFOutline( boolean value )
     {
-        field_25_internalFlags = (int)fOutline.setBoolean(field_25_internalFlags, value);
+        field_25_internalFlags = fOutline.setBoolean(field_25_internalFlags, value);
     }
 
     /**
@@ -2145,7 +2151,7 @@ public abstract class TAPAbstractType
     @Internal
     public void setFOrigWordTableRules( boolean value )
     {
-        field_25_internalFlags = (int)fOrigWordTableRules.setBoolean(field_25_internalFlags, value);
+        field_25_internalFlags = fOrigWordTableRules.setBoolean(field_25_internalFlags, value);
     }
 
     /**
@@ -2165,7 +2171,7 @@ public abstract class TAPAbstractType
     @Internal
     public void setFCellSpacing( boolean value )
     {
-        field_25_internalFlags = (int)fCellSpacing.setBoolean(field_25_internalFlags, value);
+        field_25_internalFlags = fCellSpacing.setBoolean(field_25_internalFlags, value);
     }
 
     /**
@@ -2185,7 +2191,7 @@ public abstract class TAPAbstractType
     @Internal
     public void setGrpfTap_unused( short value )
     {
-        field_25_internalFlags = (int)grpfTap_unused.setValue(field_25_internalFlags, value);
+        field_25_internalFlags = grpfTap_unused.setValue(field_25_internalFlags, value);
     }
 
     /**
@@ -2205,7 +2211,7 @@ public abstract class TAPAbstractType
     @Internal
     public void setFWrapToWwd( boolean value )
     {
-        field_32_viewFlags = (int)fWrapToWwd.setBoolean(field_32_viewFlags, value);
+        field_32_viewFlags = fWrapToWwd.setBoolean(field_32_viewFlags, value);
     }
 
     /**
@@ -2225,7 +2231,7 @@ public abstract class TAPAbstractType
     @Internal
     public void setFNotPageView( boolean value )
     {
-        field_32_viewFlags = (int)fNotPageView.setBoolean(field_32_viewFlags, value);
+        field_32_viewFlags = fNotPageView.setBoolean(field_32_viewFlags, value);
     }
 
     /**
@@ -2245,7 +2251,7 @@ public abstract class TAPAbstractType
     @Internal
     public void setViewFlags_unused1( boolean value )
     {
-        field_32_viewFlags = (int)viewFlags_unused1.setBoolean(field_32_viewFlags, value);
+        field_32_viewFlags = viewFlags_unused1.setBoolean(field_32_viewFlags, value);
     }
 
     /**
@@ -2265,7 +2271,7 @@ public abstract class TAPAbstractType
     @Internal
     public void setFWebView( boolean value )
     {
-        field_32_viewFlags = (int)fWebView.setBoolean(field_32_viewFlags, value);
+        field_32_viewFlags = fWebView.setBoolean(field_32_viewFlags, value);
     }
 
     /**
@@ -2285,7 +2291,7 @@ public abstract class TAPAbstractType
     @Internal
     public void setFAdjusted( boolean value )
     {
-        field_32_viewFlags = (int)fAdjusted.setBoolean(field_32_viewFlags, value);
+        field_32_viewFlags = fAdjusted.setBoolean(field_32_viewFlags, value);
     }
 
     /**
@@ -2305,7 +2311,7 @@ public abstract class TAPAbstractType
     @Internal
     public void setViewFlags_unused2( short value )
     {
-        field_32_viewFlags = (int)viewFlags_unused2.setValue(field_32_viewFlags, value);
+        field_32_viewFlags = viewFlags_unused2.setValue(field_32_viewFlags, value);
     }
 
     /**

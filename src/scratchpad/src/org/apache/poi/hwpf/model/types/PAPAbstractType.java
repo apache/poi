@@ -18,6 +18,8 @@
 package org.apache.poi.hwpf.model.types;
 
 
+import java.util.Arrays;
+
 import org.apache.poi.hwpf.model.TabDescriptor;
 import org.apache.poi.hwpf.usermodel.BorderCode;
 import org.apache.poi.hwpf.usermodel.DateAndTime;
@@ -305,9 +307,9 @@ public abstract class PAPAbstractType
         builder.append("    .shd                  = ");
         builder.append(" (").append(getShd()).append(" )\n");
         builder.append("    .anld                 = ");
-        builder.append(" (").append(getAnld()).append(" )\n");
+        builder.append(" (").append(Arrays.toString(getAnld())).append(" )\n");
         builder.append("    .phe                  = ");
-        builder.append(" (").append(getPhe()).append(" )\n");
+        builder.append(" (").append(Arrays.toString(getPhe())).append(" )\n");
         builder.append("    .fPropRMark           = ");
         builder.append(" (").append(getFPropRMark()).append(" )\n");
         builder.append("    .ibstPropRMark        = ");
@@ -317,13 +319,13 @@ public abstract class PAPAbstractType
         builder.append("    .itbdMac              = ");
         builder.append(" (").append(getItbdMac()).append(" )\n");
         builder.append("    .rgdxaTab             = ");
-        builder.append(" (").append(getRgdxaTab()).append(" )\n");
+        builder.append(" (").append(Arrays.toString(getRgdxaTab())).append(" )\n");
         builder.append("    .rgtbd                = ");
-        builder.append(" (").append(getRgtbd()).append(" )\n");
+        builder.append(" (").append(Arrays.toString(getRgtbd())).append(" )\n");
         builder.append("    .numrm                = ");
-        builder.append(" (").append(getNumrm()).append(" )\n");
+        builder.append(" (").append(Arrays.toString(getNumrm())).append(" )\n");
         builder.append("    .ptap                 = ");
-        builder.append(" (").append(getPtap()).append(" )\n");
+        builder.append(" (").append(Arrays.toString(getPtap())).append(" )\n");
         builder.append("    .fNoAllowOverlap      = ");
         builder.append(" (").append(getFNoAllowOverlap()).append(" )\n");
         builder.append("    .ipgp                 = ");
