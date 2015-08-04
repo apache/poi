@@ -34,6 +34,19 @@ import org.openxmlformats.schemas.drawingml.x2006.main.ThemeDocument;
  * colors and fonts.
  */
 public class ThemesTable extends POIXMLDocumentPart {
+   public static final int THEME_LT1 = 0;
+   public static final int THEME_DK1 =1;
+   public static final int THEME_LT2 = 2;
+   public static final int THEME_DK2 = 3;
+   public static final int THEME_ACCENT1 = 4;
+   public static final int THEME_ACCENT2 = 5;
+   public static final int THEME_ACCENT3 = 6;
+   public static final int THEME_ACCENT4 = 7;
+   public static final int THEME_ACCENT5 = 8;
+   public static final int THEME_ACCENT6 = 9;
+   public static final int THEME_HLINK = 10;
+   public static final int THEME_FOLHLINK = 11;
+
     private ThemeDocument theme;
 
     /**
@@ -69,7 +82,7 @@ public class ThemesTable extends POIXMLDocumentPart {
     }
 
     /**
-     * Convert a theme "index" into a color.
+     * Convert a theme "index" (as used by fonts etc) into a color.
      * @param idx A theme "index"
      * @return The mapped XSSFColor, or null if not mapped.
      */
@@ -80,18 +93,18 @@ public class ThemesTable extends POIXMLDocumentPart {
         CTColorScheme colorScheme = theme.getTheme().getThemeElements().getClrScheme();
         CTColor ctColor;
         switch (idx) {
-            case  0: ctColor = colorScheme.getLt1(); break;
-            case  1: ctColor = colorScheme.getDk1(); break;
-            case  2: ctColor = colorScheme.getLt2(); break;
-            case  3: ctColor = colorScheme.getDk2(); break;
-            case  4: ctColor = colorScheme.getAccent1(); break;
-            case  5: ctColor = colorScheme.getAccent2(); break;
-            case  6: ctColor = colorScheme.getAccent3(); break;
-            case  7: ctColor = colorScheme.getAccent4(); break;
-            case  8: ctColor = colorScheme.getAccent5(); break;
-            case  9: ctColor = colorScheme.getAccent6(); break;
-            case 10: ctColor = colorScheme.getHlink(); break;
-            case 11: ctColor = colorScheme.getFolHlink(); break;
+            case THEME_LT1: ctColor = colorScheme.getLt1(); break;
+            case THEME_DK1: ctColor = colorScheme.getDk1(); break;
+            case THEME_LT2: ctColor = colorScheme.getLt2(); break;
+            case THEME_DK2: ctColor = colorScheme.getDk2(); break;
+            case THEME_ACCENT1: ctColor = colorScheme.getAccent1(); break;
+            case THEME_ACCENT2: ctColor = colorScheme.getAccent2(); break;
+            case THEME_ACCENT3: ctColor = colorScheme.getAccent3(); break;
+            case THEME_ACCENT4: ctColor = colorScheme.getAccent4(); break;
+            case THEME_ACCENT5: ctColor = colorScheme.getAccent5(); break;
+            case THEME_ACCENT6: ctColor = colorScheme.getAccent6(); break;
+            case THEME_HLINK:   ctColor = colorScheme.getHlink();   break;
+            case THEME_FOLHLINK:ctColor = colorScheme.getFolHlink();break;
             default: return null;
         }
 

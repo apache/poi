@@ -303,10 +303,7 @@ public class XSSFFont implements Font {
      * @see FontCharset
      */
     public void setCharSet(byte charset) {
-       int cs = (int)charset;
-       if(cs < 0) {
-          cs += 256;
-       }
+       int cs = charset & 0xff;
        setCharSet(cs);
     }
     /**
@@ -373,7 +370,7 @@ public class XSSFFont implements Font {
         if(color == null) _ctFont.setColorArray(null);
         else {
             CTColor ctColor = _ctFont.sizeOfColorArray() == 0 ? _ctFont.addNewColor() : _ctFont.getColorArray(0);
-            ctColor.setRgb(color.getRgb());
+            ctColor.setRgb(color.getRGB());
         }
     }
 
