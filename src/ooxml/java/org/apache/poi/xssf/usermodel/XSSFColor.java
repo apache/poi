@@ -88,6 +88,14 @@ public class XSSFColor extends ExtendedColor {
     public boolean isThemed() {
         return ctColor.isSetTheme();
     }
+    
+    /**
+     * A boolean value indicating if the ctColor has a tint or not
+     */
+    public boolean hasTint() {
+        if (! ctColor.isSetRgb()) return false;
+        return ctColor.getRgb().length == 4;
+    }
 
     /**
      * Indexed ctColor value. Only used for backwards compatibility. References a ctColor in indexedColors.
