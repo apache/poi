@@ -28,6 +28,7 @@ import org.apache.commons.codec.binary.Hex;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.XSSFTestDataSamples;
+import org.apache.poi.xssf.model.ThemesTable.ThemeElement;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
@@ -36,27 +37,13 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.Test;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
 
 public class TestThemesTable {
     private String testFileSimple = "Themes.xlsx";
     private String testFileComplex = "Themes2.xlsx";
     // TODO .xls version available too, add HSSF support then check 
     
-    // What our theme names are
-    private static String[] themeEntries = {
-        "lt1",
-        "dk1",
-        "lt2",
-        "dk2",
-        "accent1",
-        "accent2",
-        "accent3",
-        "accent4",
-        "accent5",
-        "accent6",
-        "hlink",
-        "folhlink"
-    };
     // What colours they should show up as
     private static String rgbExpected[] = {
             "ffffff", // Lt1
@@ -93,7 +80,7 @@ public class TestThemesTable {
 //        workbooks.put("Re-Saved_" + testFileComplex, complexRS);
         
         // Sanity check
-        assertEquals(themeEntries.length, rgbExpected.length);
+        assertEquals(rgbExpected.length, rgbExpected.length);
         
         // For offline testing
         boolean createFiles = false;
@@ -106,25 +93,33 @@ public class TestThemesTable {
             int startRN = 0;
             if (whatWorkbook.endsWith(testFileComplex)) startRN++;
             
-            for (int rn=startRN; rn<themeEntries.length+startRN; rn++) {
+            for (int rn=startRN; rn<rgbExpected.length+startRN; rn++) {
                 XSSFRow row = sheet.getRow(rn);
                 assertNotNull("Missing row " + rn + " in " + whatWorkbook, row);
                 String ref = (new CellReference(rn, 0)).formatAsString();
                 XSSFCell cell = row.getCell(0);
                 assertNotNull(
                         "Missing cell " + ref + " in " + whatWorkbook, cell);
+                
+                ThemeElement themeElem = ThemeElement.byId(rn-startRN);
                 assertEquals(
                         "Wrong theme at " + ref + " in " + whatWorkbook,
-                        themeEntries[rn], cell.getStringCellValue());
+                        themeElem.name.toLowerCase(), cell.getStringCellValue());
 
+                // Fonts are theme-based in their colours
                 XSSFFont font = cell.getCellStyle().getFont();
-                XSSFColor color = font.getXSSFColor();
+                CTColor ctColor = font.getCTFont().getColorArray(0);
+                assertNotNull(ctColor);
+                assertEquals(true, ctColor.isSetTheme());
+                assertEquals(themeElem.idx, ctColor.getTheme());
                 
+                // Get the colour, via the theme
+                XSSFColor color = font.getXSSFColor();
                 // Theme colours aren't tinted
                 assertEquals(false, color.hasTint());
                 // Check the RGB part (no tint)
                 assertEquals(
-                        "Wrong theme colour " + themeEntries[rn] + " on " + whatWorkbook,
+                        "Wrong theme colour " + themeElem.name + " on " + whatWorkbook,
                         rgbExpected[rn], Hex.encodeHexString(color.getRGB()));
                 // Check the Theme ID
                 int expectedThemeIdx = rn - startRN;
