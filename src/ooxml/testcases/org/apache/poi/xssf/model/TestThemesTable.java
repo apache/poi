@@ -21,7 +21,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.FileOutputStream;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.commons.codec.binary.Hex;
@@ -72,7 +72,7 @@ public class TestThemesTable {
         simple = XSSFTestDataSamples.openSampleWorkbook(testFileSimple);
         complex = XSSFTestDataSamples.openSampleWorkbook(testFileComplex);
         // Files and descriptions
-        Map<String,XSSFWorkbook> workbooks = new HashMap<String, XSSFWorkbook>();
+        Map<String,XSSFWorkbook> workbooks = new LinkedHashMap<String, XSSFWorkbook>();
         workbooks.put(testFileSimple, simple);
         workbooks.put("Re-Saved_" + testFileSimple, simpleRS);
         // TODO Fix these to work!
@@ -143,8 +143,15 @@ public class TestThemesTable {
             }
         }
     }
-    
-    // TODO Check the complex parts 
+
+    /**
+     * Ensure that, for a file with themes, we can correctly
+     *  read both the themed and non-themed colours back
+     */
+    @Test
+    public void themedAndNonThemedColours() {
+        // TODO Implement this using Theme2.xls{x}
+    }
     
     @Test
     @SuppressWarnings("resource")
