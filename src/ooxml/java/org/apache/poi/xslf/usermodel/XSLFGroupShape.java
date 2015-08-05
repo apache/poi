@@ -144,8 +144,7 @@ public class XSLFGroupShape extends XSLFShape implements XSLFShapeContainer, Gro
     }
 
     /**
-     *
-     * @return child shapes contained witin this group
+     * @return child shapes contained within this group
      */
     @Override
     public List<XSLFShape> getShapes(){

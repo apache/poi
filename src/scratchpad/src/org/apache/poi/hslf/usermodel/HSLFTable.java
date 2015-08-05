@@ -162,7 +162,7 @@ public final class HSLFTable extends HSLFGroupShape implements TableShape {
     }
 
     protected void initTable(){
-        List<HSLFShape> shapeList = getShapeList();
+        List<HSLFShape> shapeList = getShapes();
 
         Iterator<HSLFShape> shapeIter = shapeList.iterator();
         while (shapeIter.hasNext()) {

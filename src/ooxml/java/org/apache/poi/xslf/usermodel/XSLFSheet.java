@@ -25,7 +25,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 import javax.xml.namespace.QName;
 
 import org.apache.poi.POIXMLDocumentPart;
@@ -126,57 +125,70 @@ public abstract class XSLFSheet extends POIXMLDocumentPart implements XSLFShapeC
     }
 
     private XSLFDrawing getDrawing(){
-        if(_drawing == null) {
-            _drawing = new XSLFDrawing(this, getSpTree());
-        }
+        initDrawingAndShapes();
         return _drawing;
     }
 
-    private List<XSLFShape> getShapeList(){
-        if(_shapes == null){
-            _shapes = buildShapes(getSpTree());
-        }
+    /**
+     * Returns an array containing all of the shapes in this sheet
+     *
+     * @return an array of all shapes in this sheet
+     */
+    @Override
+    public List<XSLFShape> getShapes(){
+        initDrawingAndShapes();
         return _shapes;
+    }
+    
+    /**
+     * Helper method for initializing drawing and shapes in one go.
+     * If they are initialized separately, there's a risk that shapes
+     * get added twice, e.g. a shape is added to the drawing, then
+     * buildShapes is called and at last the shape is added to shape list
+     */
+    private void initDrawingAndShapes() {
+        CTGroupShape cgs = getSpTree();
+        if(_drawing == null) {
+            _drawing = new XSLFDrawing(this, cgs);
+        }
+        if (_shapes == null) {
+            _shapes = buildShapes(cgs);
+        }
     }
 
     // shape factory methods
 
     public XSLFAutoShape createAutoShape(){
-        List<XSLFShape> shapes = getShapeList();
         XSLFAutoShape sh = getDrawing().createAutoShape();
-        shapes.add(sh);
+        getShapes().add(sh);
         sh.setParent(this);
         return sh;
     }
 
     public XSLFFreeformShape createFreeform(){
-        List<XSLFShape> shapes = getShapeList();
         XSLFFreeformShape sh = getDrawing().createFreeform();
-        shapes.add(sh);
+        getShapes().add(sh);
         sh.setParent(this);
         return sh;
     }
 
     public XSLFTextBox createTextBox(){
-        List<XSLFShape> shapes = getShapeList();
         XSLFTextBox sh = getDrawing().createTextBox();
-        shapes.add(sh);
+        getShapes().add(sh);
         sh.setParent(this);
         return sh;
     }
 
     public XSLFConnectorShape createConnector(){
-        List<XSLFShape> shapes = getShapeList();
         XSLFConnectorShape sh = getDrawing().createConnector();
-        shapes.add(sh);
+        getShapes().add(sh);
         sh.setParent(this);
         return sh;
     }
 
     public XSLFGroupShape createGroup(){
-        List<XSLFShape> shapes = getShapeList();
         XSLFGroupShape sh = getDrawing().createGroup();
-        shapes.add(sh);
+        getShapes().add(sh);
         sh.setParent(this);
         return sh;
     }
@@ -190,27 +202,16 @@ public abstract class XSLFSheet extends POIXMLDocumentPart implements XSLFShapeC
 
         XSLFPictureShape sh = getDrawing().createPicture(rel.getId());
         sh.resize();
-
-        getShapeList().add(sh);
+        getShapes().add(sh);
         sh.setParent(this);
         return sh;
     }
 
     public XSLFTable createTable(){
-        List<XSLFShape> shapes = getShapeList();
         XSLFTable sh = getDrawing().createTable();
-        shapes.add(sh);
+        getShapes().add(sh);
         sh.setParent(this);
         return sh;
-    }
-
-    /**
-     * Returns an array containing all of the shapes in this sheet
-     *
-     * @return an array of all shapes in this sheet
-     */
-    public List<XSLFShape> getShapes(){
-        return getShapeList();
     }
 
     /**
@@ -219,7 +220,7 @@ public abstract class XSLFSheet extends POIXMLDocumentPart implements XSLFShapeC
      * @return an iterator over the shapes in this sheet
      */
     public Iterator<XSLFShape> iterator(){
-        return getShapeList().iterator();
+        return getShapes().iterator();
     }
 
     public void addShape(XSLFShape shape) {
@@ -250,7 +251,7 @@ public abstract class XSLFSheet extends POIXMLDocumentPart implements XSLFShapeC
         } else {
             throw new IllegalArgumentException("Unsupported shape: " + xShape);
         }
-        return getShapeList().remove(xShape);
+        return getShapes().remove(xShape);
     }
 
     /**
@@ -319,8 +320,8 @@ public abstract class XSLFSheet extends POIXMLDocumentPart implements XSLFShapeC
         getSpTree().set(src.getSpTree());
 
         // recursively update each shape
-        List<XSLFShape> tgtShapes = getShapeList();
-        List<XSLFShape> srcShapes = src.getShapeList();
+        List<XSLFShape> tgtShapes = getShapes();
+        List<XSLFShape> srcShapes = src.getShapes();
         for(int i = 0; i < tgtShapes.size(); i++){
             XSLFShape s1 = srcShapes.get(i);
             XSLFShape s2 = tgtShapes.get(i);
@@ -338,7 +339,7 @@ public abstract class XSLFSheet extends POIXMLDocumentPart implements XSLFShapeC
      */
     public XSLFSheet appendContent(XSLFSheet src){
         CTGroupShape spTree = getSpTree();
-        int numShapes = getShapeList().size();
+        int numShapes = getShapes().size();
 
         CTGroupShape srcTree = src.getSpTree();
         for(XmlObject ch : srcTree.selectPath("*")){
@@ -362,8 +363,8 @@ public abstract class XSLFSheet extends POIXMLDocumentPart implements XSLFShapeC
         _placeholders = null;
 
         // recursively update each shape
-        List<XSLFShape> tgtShapes = getShapeList();
-        List<XSLFShape> srcShapes = src.getShapeList();
+        List<XSLFShape> tgtShapes = getShapes();
+        List<XSLFShape> srcShapes = src.getShapes();
         for(int i = 0; i < srcShapes.size(); i++){
             XSLFShape s1 = srcShapes.get(i);
             XSLFShape s2 = tgtShapes.get(numShapes + i);
