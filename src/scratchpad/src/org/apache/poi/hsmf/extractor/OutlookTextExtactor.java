@@ -25,6 +25,7 @@ import java.util.TimeZone;
 import org.apache.poi.POIOLE2TextExtractor;
 import org.apache.poi.hsmf.MAPIMessage;
 import org.apache.poi.hsmf.datatypes.AttachmentChunks;
+import org.apache.poi.hsmf.datatypes.StringChunk;
 import org.apache.poi.hsmf.exceptions.ChunkNotFoundException;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
@@ -65,6 +66,7 @@ public class OutlookTextExtactor extends POIOLE2TextExtractor {
                new NPOIFSFileSystem(new File(filename))
          );
          System.out.println( extractor.getText() );
+         extractor.close();
       }
    }
 
@@ -146,12 +148,15 @@ public class OutlookTextExtactor extends POIOLE2TextExtractor {
       // Display attachment names
       // To get the attachments, use ExtractorFactory
       for(AttachmentChunks att : msg.getAttachmentFiles()) {
-         String ats = att.attachLongFileName.getValue();
+         StringChunk name = att.attachLongFileName;
+         if (name == null) name = att.attachFileName;
+         String attName = name.getValue();
+          
          if(att.attachMimeTag != null && 
                att.attachMimeTag.getValue() != null) {
-            ats = att.attachMimeTag.getValue() + " = " + ats; 
+             attName = att.attachMimeTag.getValue() + " = " + attName; 
          }
-         s.append("Attachment: " + ats + "\n");
+         s.append("Attachment: " + attName + "\n");
       }
       
       try {
