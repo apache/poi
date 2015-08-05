@@ -37,6 +37,7 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTPath2DClose;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPath2DCubicBezierTo;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPath2DLineTo;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPath2DMoveTo;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTPath2DQuadBezierTo;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTShapeNonVisual;
@@ -80,6 +81,16 @@ public class XSLFFreeformShape extends XSLFAutoShape implements FreeformShape<XS
                     ln.setX(Units.toEMU(vals[0]) - x0);
                     ln.setY(Units.toEMU(vals[1]) - y0);
                     numPoints++;
+                    break;
+                case PathIterator.SEG_QUADTO:
+                    CTPath2DQuadBezierTo qbez = ctPath.addNewQuadBezTo();
+                    CTAdjPoint2D qp1 = qbez.addNewPt();
+                    qp1.setX(Units.toEMU(vals[0]) - x0);
+                    qp1.setY(Units.toEMU(vals[1]) - y0);
+                    CTAdjPoint2D qp2 = qbez.addNewPt();
+                    qp2.setX(Units.toEMU(vals[2]) - x0);
+                    qp2.setY(Units.toEMU(vals[3]) - y0);
+                    numPoints += 2;
                     break;
                 case PathIterator.SEG_CUBICTO:
                     CTPath2DCubicBezierTo bez = ctPath.addNewCubicBezTo();
@@ -126,6 +137,15 @@ public class XSLFFreeformShape extends XSLFAutoShape implements FreeformShape<XS
                     CTAdjPoint2D pt = ((CTPath2DLineTo)ch).getPt();
                     path.lineTo((float)Units.toPoints((Long)pt.getX()),
                                 (float)Units.toPoints((Long)pt.getY()));
+                } else if (ch instanceof CTPath2DQuadBezierTo){
+                    CTPath2DQuadBezierTo bez = ((CTPath2DQuadBezierTo)ch);
+                    CTAdjPoint2D pt1 = bez.getPtArray(0);
+                    CTAdjPoint2D pt2 = bez.getPtArray(1);
+                    path.quadTo(
+                            (float) (Units.toPoints((Long) pt1.getX()) * scaleW),
+                            (float) (Units.toPoints((Long) pt1.getY()) * scaleH),
+                            (float) (Units.toPoints((Long) pt2.getX()) * scaleW),
+                            (float) (Units.toPoints((Long) pt2.getY()) * scaleH));
                 } else if (ch instanceof CTPath2DCubicBezierTo){
                     CTPath2DCubicBezierTo bez = ((CTPath2DCubicBezierTo)ch);
                     CTAdjPoint2D pt1 = bez.getPtArray(0);
@@ -137,8 +157,7 @@ public class XSLFFreeformShape extends XSLFAutoShape implements FreeformShape<XS
                             (float) (Units.toPoints((Long) pt2.getX()) * scaleW),
                             (float) (Units.toPoints((Long) pt2.getY()) * scaleH),
                             (float) (Units.toPoints((Long) pt3.getX()) * scaleW),
-                            (float) (Units.toPoints((Long) pt3.getY()) * scaleH)                    );
-
+                            (float) (Units.toPoints((Long) pt3.getY()) * scaleH));
                 } else if (ch instanceof CTPath2DClose){
                     path.closePath();
                 }
