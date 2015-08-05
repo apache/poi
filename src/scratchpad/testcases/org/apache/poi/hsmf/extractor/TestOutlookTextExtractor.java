@@ -209,6 +209,25 @@ public final class TestOutlookTextExtractor extends POITestCase {
       ext.close();
    }
    
+   public void testWithAttachedMessage() throws Exception {
+       POIFSFileSystem simple = new POIFSFileSystem(
+               new FileInputStream(samples.getFile("58214_with_attachment.msg"))
+         );
+         MAPIMessage msg = new MAPIMessage(simple);
+         OutlookTextExtactor ext = new OutlookTextExtactor(msg);
+         String text = ext.getText();
+         
+         // Check we got bits from the main message
+         assertContains(text, "Master mail");
+         assertContains(text, "ante in lacinia euismod");
+         
+         // But not the attached message
+         assertNotContained(text, "Test mail attachment");
+         assertNotContained(text, "Lorem ipsum dolor sit");
+         
+         ext.close();
+   }
+   
    public void testEncodings() throws Exception {
       POIFSFileSystem simple = new POIFSFileSystem(
             new FileInputStream(samples.getFile("chinese-traditional.msg"))

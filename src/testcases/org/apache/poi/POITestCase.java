@@ -33,6 +33,12 @@ public class POITestCase extends TestCase {
               haystack.contains(needle)
         );
      }
+    public static void assertNotContained(String haystack, String needle) {
+        assertFalse(
+              "Unexpectedly found text '" + needle + "' in text:\n" + haystack,
+              haystack.contains(needle)
+        );
+     }
     
     public static <T> void assertEquals(T[] expected, T[] actual)
     {
