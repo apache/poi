@@ -1196,7 +1196,9 @@ under the License.
             <syspropertyset refid="junit.properties"/>
             <jvmarg value="${poi.test.locale}"/>
             <jvmarg value="-Dadditionaljar=${additionaljar}"/>
-            <arg value="-ooxml"/>
+        	<!-- Fix for strange woodstox references in gump build -->
+            <jvmarg value="-Djavax.xml.stream.XMLInputFactory=com.sun.xml.internal.stream.XMLInputFactoryImpl"/>
+        	<arg value="-ooxml"/>
             <arg value="${ooxml.lite-merged.dir}/ooxml-lite-merged.jar"/>
             <arg value="-test"/>
             <arg value="${ooxml.output.test.dir}"/>
