@@ -108,6 +108,13 @@ import org.openxmlformats.schemas.presentationml.x2006.main.SldMasterDocument;
         return getLayouts().values().toArray(new XSLFSlideLayout[_layouts.size()]);
     }
 
+    /**
+     * Get the slide layout by type.
+     *
+     * @param  type     The layout type. Cannot be null.
+     *
+     * @return the layout found or null on failure
+     */
     public XSLFSlideLayout getLayout(SlideLayout type){
         for(XSLFSlideLayout layout : getLayouts().values()){
             if(layout.getType() == type) {
@@ -116,6 +123,18 @@ import org.openxmlformats.schemas.presentationml.x2006.main.SldMasterDocument;
         }
         return null;
     }
+
+    /**
+     * Get the slide layout by name.
+     *
+     * @param name  The layout name (case-insensitive). Cannot be null.
+     *
+     * @return the layout found or null on failure
+     */
+    public XSLFSlideLayout getLayout(String name) {
+        return getLayouts().get(name.toLowerCase());
+    }
+
 
     @Override
     public XSLFTheme getTheme(){

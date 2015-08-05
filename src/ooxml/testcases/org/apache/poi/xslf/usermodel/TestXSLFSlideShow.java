@@ -16,9 +16,12 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
 
 import java.awt.Dimension;
+import java.io.IOException;
 import java.util.List;
 
 import org.apache.poi.POIXMLDocumentPart;
@@ -30,7 +33,7 @@ import org.junit.Test;
  */
 public class TestXSLFSlideShow {
     @Test
-    public void testCreateSlide(){
+    public void testCreateSlide() throws IOException {
         XMLSlideShow  ppt = new XMLSlideShow();
         assertEquals(0, ppt.getSlides().size());
 
@@ -50,13 +53,16 @@ public class TestXSLFSlideShow {
         assertSame(slide2, ppt.getSlides().get(0));
         assertSame(slide1, ppt.getSlides().get(1));
 
-        ppt = XSLFTestDataSamples.writeOutAndReadBack(ppt);
-        assertEquals(2, ppt.getSlides().size());
-        rels =  ppt.getSlides().get(0).getRelations();
+        XMLSlideShow ppt2 = XSLFTestDataSamples.writeOutAndReadBack(ppt);
+        assertEquals(2, ppt2.getSlides().size());
+        rels =  ppt2.getSlides().get(0).getRelations();
+        
+        ppt2.close();
+        ppt.close();
     }
 
     @Test
-    public void testRemoveSlide(){
+    public void testRemoveSlide() throws IOException {
         XMLSlideShow  ppt = new XMLSlideShow();
         assertEquals(0, ppt.getSlides().size());
 
@@ -73,12 +79,15 @@ public class TestXSLFSlideShow {
         assertEquals(1, ppt.getSlides().size());
         assertSame(slide2, ppt.getSlides().get(0));
 
-        ppt = XSLFTestDataSamples.writeOutAndReadBack(ppt);
-        assertEquals(1, ppt.getSlides().size());
+        XMLSlideShow ppt2 = XSLFTestDataSamples.writeOutAndReadBack(ppt);
+        assertEquals(1, ppt2.getSlides().size());
+        
+        ppt2.close();
+        ppt.close();
     }
 
     @Test
-    public void testDimension(){
+    public void testDimension() throws IOException {
         XMLSlideShow  ppt = new XMLSlideShow();
         Dimension sz = ppt.getPageSize();
         assertEquals(720, sz.width);
@@ -87,20 +96,22 @@ public class TestXSLFSlideShow {
         sz = ppt.getPageSize();
         assertEquals(792, sz.width);
         assertEquals(612, sz.height);
+        ppt.close();
     }
 
     @Test
-    public void testSlideMasters(){
+    public void testSlideMasters() throws IOException {
         XMLSlideShow  ppt = new XMLSlideShow();
         List<XSLFSlideMaster> masters = ppt.getSlideMasters();
         assertEquals(1, masters.size());
 
         XSLFSlide slide = ppt.createSlide();
         assertSame(masters.get(0), slide.getSlideMaster());
+        ppt.close();
     }
 
     @Test
-    public void testSlideLayout(){
+    public void testSlideLayout() throws IOException {
         XMLSlideShow  ppt = new XMLSlideShow();
         List<XSLFSlideMaster> masters = ppt.getSlideMasters();
         assertEquals(1, masters.size());
@@ -110,5 +121,29 @@ public class TestXSLFSlideShow {
         assertNotNull(layout);
 
         assertSame(masters.get(0), layout.getSlideMaster());
+        ppt.close();
+    }
+
+    @Test
+    public void testSlideLayoutNames() throws IOException {
+        final String names[] = {
+              "Blank", "Title Only", "Section Header", "Picture with Caption", "Title and Content"
+            , "Title Slide", "Title and Vertical Text", "Vertical Title and Text", "Comparison"
+            , "Two Content", "Content with Caption"                
+        };
+        XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("layouts.pptx");
+        for (String name : names) {
+            assertNotNull(ppt.findLayout(name));
+        }
+        final SlideLayout layTypes[] = {
+              SlideLayout.BLANK, SlideLayout.TITLE_ONLY, SlideLayout.SECTION_HEADER
+            , SlideLayout.PIC_TX, SlideLayout.TITLE_AND_CONTENT, SlideLayout.TITLE
+            , SlideLayout.VERT_TX, SlideLayout.VERT_TITLE_AND_TX, SlideLayout.TWO_TX_TWO_OBJ
+            , SlideLayout.TWO_OBJ, SlideLayout.OBJ_TX                
+        };
+        for (SlideLayout sl : layTypes){
+            assertNotNull(ppt.getSlideMasters().get(0).getLayout(sl));
+        }
+        ppt.close();
     }
 }

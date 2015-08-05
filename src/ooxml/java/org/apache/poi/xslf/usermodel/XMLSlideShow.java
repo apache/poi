@@ -476,6 +476,24 @@ public class XMLSlideShow extends POIXMLDocument implements SlideShow {
         return null;
     }
 
+
+    /**
+     * Scan the master slides for the first slide layout with the given name.
+     *
+     * @param name  The layout name (case-insensitive). Cannot be null.
+     * @return the first layout found or null on failure
+     */
+    public XSLFSlideLayout findLayout(String name) {
+        for (XSLFSlideMaster master : getSlideMasters()) {
+            XSLFSlideLayout layout = master.getLayout(name);
+            if (layout != null) {
+                return layout;
+            }
+        }
+        return null;
+    }
+
+
     public XSLFTableStyles getTableStyles(){
         return _tableStyles;
     }
