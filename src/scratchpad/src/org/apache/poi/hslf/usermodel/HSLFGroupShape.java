@@ -52,11 +52,6 @@ public class HSLFGroupShape extends HSLFShape implements GroupShape<HSLFShape> {
         super(escherRecord, parent);
     }
 
-    @Override
-    public List<HSLFShape> getShapes() {
-        return getShapeList();
-    }
-
     /**
      * Sets the anchor (the bounding box rectangle) of this shape.
      * All coordinates should be expressed in Master units (576 dpi).
@@ -238,7 +233,7 @@ public class HSLFGroupShape extends HSLFShape implements GroupShape<HSLFShape> {
     }
 
     public Iterator<HSLFShape> iterator() {
-        return getShapeList().iterator();
+        return getShapes().iterator();
     }
 
     public boolean removeShape(HSLFShape shape) {
@@ -249,7 +244,8 @@ public class HSLFGroupShape extends HSLFShape implements GroupShape<HSLFShape> {
     /**
      * @return the shapes contained in this group container
      */
-    protected List<HSLFShape> getShapeList() {
+    @Override
+    public List<HSLFShape> getShapes() {
         // Out escher container record should contain several
         //  SpContainers, the first of which is the group shape itself
         Iterator<EscherRecord> iter = _escherContainer.getChildIterator();
