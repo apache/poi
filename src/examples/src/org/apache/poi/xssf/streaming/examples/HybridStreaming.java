@@ -15,6 +15,8 @@ import org.xml.sax.SAXException;
 
 /**
  * This demonstrates how a hybrid approach to workbook read can be taken, using 
+ * a mix of traditional XSSF and streaming one particular worksheet (perhaps one
+ * which is too big for the ordinary DOM parse).
  */
 public class HybridStreaming {
     
