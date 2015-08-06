@@ -377,14 +377,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
             //  of CTSheet elements in the workbook
             sheets = new ArrayList<XSSFSheet>(shIdMap.size());
             for (CTSheet ctSheet : this.workbook.getSheets().getSheetArray()) {
-                XSSFSheet sh = shIdMap.get(ctSheet.getId());
-                if(sh == null) {
-                    logger.log(POILogger.WARN, "Sheet with name " + ctSheet.getName() + " and r:id " + ctSheet.getId()+ " was defined, but didn't exist in package, skipping");
-                    continue;
-                }
-                sh.sheet = ctSheet;
-                sh.onDocumentRead();
-                sheets.add(sh);
+                parseSheet(shIdMap, ctSheet);
             }
             
             // Load the external links tables. Their order is defined by the order 
@@ -406,6 +399,17 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         } catch (XmlException e) {
             throw new POIXMLException(e);
         }
+    }
+
+    protected void parseSheet(Map<String, XSSFSheet> shIdMap, CTSheet ctSheet) {
+        XSSFSheet sh = shIdMap.get(ctSheet.getId());
+        if(sh == null) {
+            logger.log(POILogger.WARN, "Sheet with name " + ctSheet.getName() + " and r:id " + ctSheet.getId()+ " was defined, but didn't exist in package, skipping");
+            return;
+        }
+        sh.sheet = ctSheet;
+        sh.onDocumentRead();
+        sheets.add(sh);
     }
 
     /**
