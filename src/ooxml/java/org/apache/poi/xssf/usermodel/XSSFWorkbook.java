@@ -401,7 +401,11 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         }
     }
 
-    protected void parseSheet(Map<String, XSSFSheet> shIdMap, CTSheet ctSheet) {
+    /**
+     * Not normally to be called externally, but possibly to be overridden to avoid
+     * the DOM based parse of large sheets (see examples).
+     */
+    public void parseSheet(Map<String, XSSFSheet> shIdMap, CTSheet ctSheet) {
         XSSFSheet sh = shIdMap.get(ctSheet.getId());
         if(sh == null) {
             logger.log(POILogger.WARN, "Sheet with name " + ctSheet.getName() + " and r:id " + ctSheet.getId()+ " was defined, but didn't exist in package, skipping");
