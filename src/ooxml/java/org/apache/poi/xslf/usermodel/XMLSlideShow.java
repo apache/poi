@@ -57,6 +57,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTNotesMasterIdListE
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPresentation;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideIdList;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideIdListEntry;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideMasterIdListEntry;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideSize;
 import org.openxmlformats.schemas.presentationml.x2006.main.PresentationDocument;
 
@@ -72,7 +73,7 @@ public class XMLSlideShow extends POIXMLDocument implements SlideShow {
 
     private CTPresentation _presentation;
     private List<XSLFSlide> _slides;
-    private Map<String, XSLFSlideMaster> _masters;
+    private List<XSLFSlideMaster> _masters;
     private List<XSLFPictureData> _pictures;
     private XSLFTableStyles _tableStyles;
     private XSLFNotesMaster _notesMaster;
@@ -120,21 +121,19 @@ public class XMLSlideShow extends POIXMLDocument implements SlideShow {
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     protected void onDocumentRead() throws IOException {
         try {
             PresentationDocument doc =
                     PresentationDocument.Factory.parse(getCorePart().getInputStream());
             _presentation = doc.getPresentation();
-            Map<String, XSLFSlide> shIdMap = new HashMap<String, XSLFSlide>();
 
-            _masters = new HashMap<String, XSLFSlideMaster>();
+            Map<String, XSLFSlideMaster> masterMap = new HashMap<String, XSLFSlideMaster>();
+            Map<String, XSLFSlide> shIdMap = new HashMap<String, XSLFSlide>();
             for (POIXMLDocumentPart p : getRelations()) {
                 if (p instanceof XSLFSlide) {
                     shIdMap.put(p.getPackageRelationship().getId(), (XSLFSlide) p);
                 } else if (p instanceof XSLFSlideMaster) {
-                    XSLFSlideMaster master = (XSLFSlideMaster)p;
-                    _masters.put(p.getPackageRelationship().getId(), master);
+                    masterMap.put(getRelationId(p), (XSLFSlideMaster) p);
                 } else if (p instanceof XSLFTableStyles){
                     _tableStyles = (XSLFTableStyles)p;
                 } else if (p instanceof XSLFNotesMaster) {
@@ -144,9 +143,15 @@ public class XMLSlideShow extends POIXMLDocument implements SlideShow {
                 }
             }
 
-            _slides = new ArrayList<XSLFSlide>();
+            _masters = new ArrayList<XSLFSlideMaster>(masterMap.size());
+            for (CTSlideMasterIdListEntry masterId : _presentation.getSldMasterIdLst().getSldMasterIdList()) {
+                XSLFSlideMaster master = masterMap.get(masterId.getId2());
+                _masters.add(master);
+            }
+
+            _slides = new ArrayList<XSLFSlide>(shIdMap.size());
             if (_presentation.isSetSldIdLst()) {
-                for (CTSlideIdListEntry slId : _presentation.getSldIdLst().getSldIdArray()) {
+                for (CTSlideIdListEntry slId : _presentation.getSldIdLst().getSldIdList()) {
                     XSLFSlide sh = shIdMap.get(slId.getId2());
                     if (sh == null) {
                         _logger.log(POILogger.WARN, "Slide with r:id " + slId.getId() + " was defined, but didn't exist in package, skipping");
@@ -239,13 +244,11 @@ public class XMLSlideShow extends POIXMLDocument implements SlideShow {
     }
     
     /**
-     * Create a blank slide.
+     * Create a blank slide using the default (first) master.
      */
+    @Override
     public XSLFSlide createSlide() {
-        String masterId = _presentation.getSldMasterIdLst().getSldMasterIdArray(0).getId2();
-        XSLFSlideMaster master = _masters.get(masterId);
-
-        XSLFSlideLayout layout = master.getLayout(SlideLayout.BLANK);
+        XSLFSlideLayout layout = _masters.get(0).getLayout(SlideLayout.BLANK);
         if(layout == null) throw new IllegalArgumentException("Blank layout was not found");
 
         return createSlide(layout);
@@ -350,7 +353,7 @@ public class XMLSlideShow extends POIXMLDocument implements SlideShow {
 
     @Override
     public List<XSLFSlideMaster> getSlideMasters() {
-        return new ArrayList<XSLFSlideMaster>(_masters.values());
+        return _masters;
     }
 
     /**
