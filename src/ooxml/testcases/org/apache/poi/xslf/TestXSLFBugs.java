@@ -30,6 +30,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 
@@ -47,6 +48,7 @@ import org.apache.poi.xslf.usermodel.XSLFRelation;
 import org.apache.poi.xslf.usermodel.XSLFShape;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
 import org.apache.poi.xslf.usermodel.XSLFSlideLayout;
+import org.apache.poi.xslf.usermodel.XSLFSlideMaster;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -337,8 +339,8 @@ public class TestXSLFBugs {
         
         
         // Save and re-load
-        ss = XSLFTestDataSamples.writeOutAndReadBack(ss);
-        slide = ss.getSlides().get(0);
+        XMLSlideShow ss2 = XSLFTestDataSamples.writeOutAndReadBack(ss);
+        slide = ss2.getSlides().get(0);
         
         // Check the 15 individual ones added
         for (int i=0; i<15; i++) {
@@ -353,14 +355,17 @@ public class TestXSLFBugs {
         assertArrayEquals(pics[3], shape.getPictureData().getData());
         
         // Add another duplicate
-        data = ss.addPicture(pics[5], PictureType.JPEG);
+        data = ss2.addPicture(pics[5], PictureType.JPEG);
         assertEquals(5, data.getIndex());
-        assertEquals(15, ss.getAllPictures().size());
+        assertEquals(15, ss2.getAllPictures().size());
         
         shape = slide.createPicture(data);
         assertNotNull(shape.getPictureData());
         assertArrayEquals(pics[5], shape.getPictureData().getData());
         assertEquals(18, slide.getShapes().size());
+        
+        ss2.close();
+        ss.close();
     }
 
     private void validateSlides(XMLSlideShow ss, boolean saveAndReload, String... slideTexts) {
@@ -378,5 +383,17 @@ public class TestXSLFBugs {
     private void assertRelationEquals(XSLFRelation expected, POIXMLDocumentPart relation) {
         assertEquals(expected.getContentType(), relation.getPackagePart().getContentType());
         assertEquals(expected.getFileName(expected.getFileNameIndex(relation)), relation.getPackagePart().getPartName().getName());
+    }
+    
+    @Test
+    public void bug58205() throws IOException {
+        XMLSlideShow ss = XSLFTestDataSamples.openSampleDocument("themes.pptx");
+       
+        int i = 1;
+        for (XSLFSlideMaster sm : ss.getSlideMasters()) {
+            assertEquals("rId"+(i++), ss.getRelationId(sm));
+        }
+        
+        ss.close();
     }
 }
