@@ -10,6 +10,7 @@
 	<classpathentry kind="src" path="src/scratchpad/testcases"/>
 	<classpathentry kind="src" path="src/resources/scratchpad"/>
 	<classpathentry kind="src" path="src/contrib/poi-ruby/java"/>
+	<classpathentry kind="src" path="src/contrib/src"/>
 	<classpathentry kind="src" path="src/examples/src"/>
 	<classpathentry kind="src" path="src/excelant/java"/>
 	<classpathentry kind="src" path="src/excelant/testcases"/>
