@@ -17,15 +17,26 @@
 
 package org.apache.poi.hslf.usermodel;
 
-import static org.junit.Assert.*;
+import static org.apache.poi.sl.TestCommonSL.sameColor;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 import java.awt.Color;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.List;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hslf.model.textproperties.TextPropCollection;
-import org.apache.poi.hslf.record.*;
+import org.apache.poi.hslf.record.Record;
+import org.apache.poi.hslf.record.TextBytesAtom;
+import org.apache.poi.hslf.record.TextCharsAtom;
+import org.apache.poi.hslf.record.TextHeaderAtom;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -539,7 +550,7 @@ public final class TestTextRun {
                     List<HSLFTextParagraph> run = tx.getTextParagraphs();
                     HSLFTextRun rt = run.get(0).getTextRuns().get(0);
                     assertTrue(rt.isBold());
-                    assertEquals(rt.getFontColor(), Color.RED);
+                    assertTrue(sameColor(Color.RED, rt.getFontColor()));
                 }
             }
         }

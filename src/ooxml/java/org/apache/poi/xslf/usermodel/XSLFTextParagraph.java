@@ -21,7 +21,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.poi.sl.draw.DrawPaint;
 import org.apache.poi.sl.usermodel.AutoNumberingScheme;
+import org.apache.poi.sl.usermodel.PaintStyle;
+import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
 import org.apache.poi.sl.usermodel.TextParagraph;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
@@ -264,7 +267,7 @@ public class XSLFTextParagraph implements TextParagraph<XSLFTextRun> {
      * @return the color of bullet characters within a given paragraph.
      * A <code>null</code> value means to use the text font color.
      */
-    public Color getBulletFontColor(){
+    public PaintStyle getBulletFontColor(){
         final XSLFTheme theme = getParentShape().getSheet().getTheme();
         ParagraphPropertyFetcher<Color> fetcher = new ParagraphPropertyFetcher<Color>(getIndentLevel()){
             public boolean fetch(CTTextParagraphProperties props){
@@ -277,19 +280,33 @@ public class XSLFTextParagraph implements TextParagraph<XSLFTextRun> {
             }
         };
         fetchParagraphProperty(fetcher);
-        return fetcher.getValue();
+        Color col = fetcher.getValue();
+        return (col == null) ? null : DrawPaint.createSolidPaint(col);
     }
 
+    public void setBulletFontColor(Color color) {
+        setBulletFontColor(DrawPaint.createSolidPaint(color));
+    }
+    
+    
     /**
      * Set the color to be used on bullet characters within a given paragraph.
      *
      * @param color the bullet color
      */
-    public void setBulletFontColor(Color color){
+    public void setBulletFontColor(PaintStyle color) {
+        if (!(color instanceof SolidPaint)) {
+            throw new IllegalArgumentException("Currently XSLF only supports SolidPaint");
+        }
+
+        // TODO: implement setting bullet color to null
+        SolidPaint sp = (SolidPaint)color;
+        Color col = DrawPaint.applyColorTransform(sp.getSolidColor());
+        
         CTTextParagraphProperties pr = _p.isSetPPr() ? _p.getPPr() : _p.addNewPPr();
         CTColor c = pr.isSetBuClr() ? pr.getBuClr() : pr.addNewBuClr();
         CTSRgbColor clr = c.isSetSrgbClr() ? c.getSrgbClr() : c.addNewSrgbClr();
-        clr.setVal(new byte[]{(byte) color.getRed(), (byte) color.getGreen(), (byte) color.getBlue()});
+        clr.setVal(new byte[]{(byte) col.getRed(), (byte) col.getGreen(), (byte) col.getBlue()});
     }
 
     /**
@@ -729,7 +746,6 @@ public class XSLFTextParagraph implements TextParagraph<XSLFTextRun> {
         XSLFSheet masterSheet = _shape.getSheet();
         for (XSLFSheet m = masterSheet; m != null; m = (XSLFSheet)m.getMasterSheet()) {
             masterSheet = m;
-
             XmlObject xo = masterSheet.getXmlObject();
             for (String xpath : xpaths) {
                 XmlObject[] o = xo.selectPath(xpath);
@@ -767,32 +783,35 @@ public class XSLFTextParagraph implements TextParagraph<XSLFTextRun> {
 
     private <T> boolean fetchParagraphProperty(ParagraphPropertyFetcher<T> visitor){
         boolean ok = false;
-
+        XSLFTextShape shape = getParentShape();
+        XSLFSheet sheet = shape.getSheet();
+        
         if(_p.isSetPPr()) ok = visitor.fetch(_p.getPPr());
+        if (ok) return true;
 
-        if(!ok) {
-            XSLFTextShape shape = getParentShape();
-            ok = shape.fetchShapeProperty(visitor);
-            if(!ok){
-                CTPlaceholder ph = shape.getCTPlaceholder();
-                if(ph == null){
-                    // if it is a plain text box then take defaults from presentation.xml
-                    XMLSlideShow ppt = getParentShape().getSheet().getSlideShow();
-                    CTTextParagraphProperties themeProps = ppt.getDefaultParagraphStyle(getIndentLevel());
-                    if(themeProps != null) ok = visitor.fetch(themeProps);
-                }
-
-                if(!ok){
-                    // defaults for placeholders are defined in the slide master
-                    CTTextParagraphProperties defaultProps = getDefaultMasterStyle();
-                    if(defaultProps != null) ok = visitor.fetch(defaultProps);
-                }
-            }
+        ok = shape.fetchShapeProperty(visitor);
+        if (ok) return true;
+                
+        
+        CTPlaceholder ph = shape.getCTPlaceholder();
+        if(ph == null){
+            // if it is a plain text box then take defaults from presentation.xml
+            XMLSlideShow ppt = sheet.getSlideShow();
+            CTTextParagraphProperties themeProps = ppt.getDefaultParagraphStyle(getIndentLevel());
+            if (themeProps != null) ok = visitor.fetch(themeProps);
         }
+        if (ok) return true;
 
-        return ok;
+        // defaults for placeholders are defined in the slide master
+        CTTextParagraphProperties defaultProps = getDefaultMasterStyle();
+        // TODO: determine master shape
+        if(defaultProps != null) ok = visitor.fetch(defaultProps);
+        if (ok) return true;
+
+        return false;
     }
 
+    @SuppressWarnings("deprecation")
     void copy(XSLFTextParagraph other){
         if (other == this) return;
         
@@ -848,7 +867,7 @@ public class XSLFTextParagraph implements TextParagraph<XSLFTextRun> {
                 if(buChar != null && !buChar.equals(getBulletCharacter())){
                     setBulletCharacter(buChar);
                 }
-                Color buColor = other.getBulletFontColor();
+                PaintStyle buColor = other.getBulletFontColor();
                 if(buColor != null && !buColor.equals(getBulletFontColor())){
                     setBulletFontColor(buColor);
                 }
@@ -920,8 +939,18 @@ public class XSLFTextParagraph implements TextParagraph<XSLFTextRun> {
             }
 
             @Override
-            public Color getBulletFontColor() {
+            public PaintStyle getBulletFontColor() {
                 return XSLFTextParagraph.this.getBulletFontColor();
+            }
+            
+            @Override
+            public void setBulletFontColor(Color color) {
+                setBulletFontColor(DrawPaint.createSolidPaint(color));
+            }
+
+            @Override
+            public void setBulletFontColor(PaintStyle color) {
+                XSLFTextParagraph.this.setBulletFontColor(color);
             }
             
             @Override

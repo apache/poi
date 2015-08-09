@@ -17,18 +17,32 @@
 
 package org.apache.poi.sl.draw;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.font.*;
+import java.awt.Paint;
+import java.awt.font.FontRenderContext;
+import java.awt.font.LineBreakMeasurer;
+import java.awt.font.TextAttribute;
+import java.awt.font.TextLayout;
 import java.awt.geom.Rectangle2D;
-import java.text.*;
+import java.text.AttributedCharacterIterator;
 import java.text.AttributedCharacterIterator.Attribute;
-import java.util.*;
+import java.text.AttributedString;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
-import org.apache.poi.sl.usermodel.*;
+import org.apache.poi.sl.usermodel.AutoNumberingScheme;
+import org.apache.poi.sl.usermodel.Insets2D;
+import org.apache.poi.sl.usermodel.PaintStyle;
+import org.apache.poi.sl.usermodel.PlaceableShape;
+import org.apache.poi.sl.usermodel.Shape;
+import org.apache.poi.sl.usermodel.ShapeContainer;
+import org.apache.poi.sl.usermodel.TextParagraph;
 import org.apache.poi.sl.usermodel.TextParagraph.BulletStyle;
 import org.apache.poi.sl.usermodel.TextParagraph.TextAlign;
+import org.apache.poi.sl.usermodel.TextRun;
 import org.apache.poi.sl.usermodel.TextRun.TextCap;
+import org.apache.poi.sl.usermodel.TextShape;
 import org.apache.poi.util.Units;
 
 public class DrawTextParagraph<T extends TextRun> implements Drawable {
@@ -69,9 +83,6 @@ public class DrawTextParagraph<T extends TextRun> implements Drawable {
     public void draw(Graphics2D graphics){
         if (lines.isEmpty()) return;
         
-        Insets2D insets = paragraph.getParentShape().getInsets();
-        double leftInset = insets.left;
-        double rightInset = insets.right;
         double penY = y;
 
         boolean firstLine = true;
@@ -79,12 +90,17 @@ public class DrawTextParagraph<T extends TextRun> implements Drawable {
         Double leftMargin = paragraph.getLeftMargin();
         if (leftMargin == null) {
             // if the marL attribute is omitted, then a value of 347663 is implied
-            leftMargin = Units.toPoints(347663*(indentLevel+1));
+            leftMargin = Units.toPoints(347663*indentLevel);
         }
         Double indent = paragraph.getIndent();
         if (indent == null) {
             indent = Units.toPoints(347663*indentLevel);
         }
+        if (paragraph.getClass().getName().contains("HSLF")) {
+            // special handling for HSLF
+            indent -= leftMargin;
+        }
+        
         Double rightMargin = paragraph.getRightMargin();
         if (rightMargin == null) {
             rightMargin = 0d;
@@ -104,25 +120,30 @@ public class DrawTextParagraph<T extends TextRun> implements Drawable {
                 }
                 
                 if (bullet != null){
-                    bullet.setPosition(x + indent, penY);
+                    bullet.setPosition(x+leftMargin+indent, penY);
                     bullet.draw(graphics);
                     // don't let text overlay the bullet and advance by the bullet width
                     double bulletWidth = bullet.getLayout().getAdvance() + 1;
-                    penX = x + Math.max(leftMargin, indent+bulletWidth);
+                    penX = x + Math.max(leftMargin, leftMargin+indent+bulletWidth);
                 } else {
-                    penX = x + indent;
+                    penX = x + leftMargin;
                 }
             } else {
                 penX = x + leftMargin;
             }
 
             Rectangle2D anchor = DrawShape.getAnchor(graphics, paragraph.getParentShape());
+            // Insets are already applied on DrawTextShape.drawContent
+            // but (outer) anchor need to be adjusted
+            Insets2D insets = paragraph.getParentShape().getInsets();
+            double leftInset = insets.left;
+            double rightInset = insets.right;
 
             TextAlign ta = paragraph.getTextAlign();
             if (ta == null) ta = TextAlign.LEFT;
             switch (ta) {
                 case CENTER:
-                    penX += (anchor.getWidth() - leftMargin - line.getWidth() - leftInset - rightInset) / 2;
+                    penX += (anchor.getWidth() - line.getWidth() - leftInset - rightInset - leftMargin) / 2;
                     break;
                 case RIGHT:
                     penX += (anchor.getWidth() - line.getWidth() - leftInset - rightInset);
@@ -245,8 +266,14 @@ public class DrawTextParagraph<T extends TextRun> implements Drawable {
         if (buFont == null) buFont = paragraph.getDefaultFontFamily();
         assert(buFont != null);
 
-        Color buColor = bulletStyle.getBulletFontColor();
-        if (buColor == null) buColor = (Color)firstLineAttr.getAttribute(TextAttribute.FOREGROUND);
+        PlaceableShape ps = getParagraphShape();
+        PaintStyle fgPaintStyle = bulletStyle.getBulletFontColor();
+        Paint fgPaint;
+        if (fgPaintStyle == null) {
+            fgPaint = (Paint)firstLineAttr.getAttribute(TextAttribute.FOREGROUND);
+        } else {
+            fgPaint = new DrawPaint(ps).getPaint(graphics, fgPaintStyle);
+        }
 
         float fontSize = (Float)firstLineAttr.getAttribute(TextAttribute.SIZE);
         Double buSz = bulletStyle.getBulletFontSize();
@@ -256,7 +283,7 @@ public class DrawTextParagraph<T extends TextRun> implements Drawable {
 
         
         AttributedString str = new AttributedString(buCharacter);
-        str.addAttribute(TextAttribute.FOREGROUND, buColor);
+        str.addAttribute(TextAttribute.FOREGROUND, fgPaint);
         str.addAttribute(TextAttribute.FAMILY, buFont);
         str.addAttribute(TextAttribute.SIZE, fontSize);
 
@@ -382,11 +409,31 @@ public class DrawTextParagraph<T extends TextRun> implements Drawable {
             this.endIndex = endIndex;
         }
     }
+    
+    /**
+     * Helper method for paint style relative to bounds, e.g. gradient paint
+     */
+    private PlaceableShape getParagraphShape() {
+        PlaceableShape ps = new PlaceableShape(){
+            public ShapeContainer<? extends Shape> getParent() { return null; }
+            public Rectangle2D getAnchor() { return paragraph.getParentShape().getAnchor(); }
+            public void setAnchor(Rectangle2D anchor) {}
+            public double getRotation() { return 0; }
+            public void setRotation(double theta) {}
+            public void setFlipHorizontal(boolean flip) {}
+            public void setFlipVertical(boolean flip) {}
+            public boolean getFlipHorizontal() { return false; }
+            public boolean getFlipVertical() { return false; }
+        };
+        return ps;
+    }
 
     protected AttributedString getAttributedString(Graphics2D graphics, StringBuilder text){
         List<AttributedStringData> attList = new ArrayList<AttributedStringData>();
         if (text == null) text = new StringBuilder();
 
+        PlaceableShape ps = getParagraphShape();
+        
         DrawFontManager fontHandler = (DrawFontManager)graphics.getRenderingHint(Drawable.FONT_HANDLER);
 
         for (TextRun run : paragraph){
@@ -398,9 +445,9 @@ public class DrawTextParagraph<T extends TextRun> implements Drawable {
             text.append(runText);
             int endIndex = text.length();
 
-            Color fgColor = run.getFontColor();
-            if (fgColor == null) fgColor = Color.BLACK;
-            attList.add(new AttributedStringData(TextAttribute.FOREGROUND, fgColor, beginIndex, endIndex));
+            PaintStyle fgPaintStyle = run.getFontColor();
+            Paint fgPaint = new DrawPaint(ps).getPaint(graphics, fgPaintStyle);
+            attList.add(new AttributedStringData(TextAttribute.FOREGROUND, fgPaint, beginIndex, endIndex));
 
             // user can pass an custom object to convert fonts
             String fontFamily = run.getFontFamily();

@@ -102,7 +102,6 @@ public class DrawTextShape<T extends TextShape<? extends TextParagraph<? extends
      */
     public double drawParagraphs(Graphics2D graphics, double x, double y) {
         DrawFactory fact = DrawFactory.getInstance(graphics);
-        Insets2D shapePadding = shape.getInsets();
 
         double y0 = y;
         Iterator<? extends TextParagraph<? extends TextRun>> paragraphs = shape.iterator();

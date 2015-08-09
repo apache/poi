@@ -168,13 +168,10 @@ public final class XSLFSlide extends XSLFSheet implements Slide<XSLFShape, XMLSl
        return _notes;
     }
 
-    /**
-     *
-     * @return title of this slide or empty string if title is not set
-     */
+    @Override
     public String getTitle(){
         XSLFTextShape txt = getTextShapeByType(Placeholder.TITLE);
-        return txt == null ? "" : txt.getText();
+        return txt == null ? null : txt.getText();
     }
     
     @Override

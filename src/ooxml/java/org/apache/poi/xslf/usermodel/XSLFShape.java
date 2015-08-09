@@ -27,10 +27,10 @@ import java.util.Comparator;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.sl.draw.DrawPaint;
 import org.apache.poi.sl.usermodel.ColorStyle;
 import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.sl.usermodel.PaintStyle.GradientPaint;
-import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
 import org.apache.poi.sl.usermodel.PaintStyle.TexturePaint;
 import org.apache.poi.sl.usermodel.PlaceableShape;
 import org.apache.poi.sl.usermodel.Shape;
@@ -38,7 +38,20 @@ import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
 import org.apache.poi.xslf.model.PropertyFetcher;
 import org.apache.xmlbeans.XmlObject;
-import org.openxmlformats.schemas.drawingml.x2006.main.*;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTBlip;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTBlipFillProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTGradientFillProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTGradientStop;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTGroupShapeProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTNoFillProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualDrawingProps;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTSchemeColor;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeStyle;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTSolidColorFillProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTStyleMatrix;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTStyleMatrixReference;
+import org.openxmlformats.schemas.drawingml.x2006.main.STPathShadeType;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTApplicationNonVisualDrawingProps;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTBackground;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTBackgroundProperties;
@@ -139,7 +152,7 @@ public abstract class XSLFShape implements Shape {
                 try {
                     pr = shape.getSpPr();
                     if (((CTShapeProperties)pr).isSetNoFill()) {
-                        setValue(PaintStyle.TRANSPARENT_PAINT);
+                        setValue(null);
                         return true;
                     }                    
                 } catch (IllegalStateException e) {}
@@ -156,21 +169,19 @@ public abstract class XSLFShape implements Shape {
                     }
                 }
                 
-                if (pr == null) {
-                    setValue(PaintStyle.TRANSPARENT_PAINT);
-                    return true;
-                }
+                if (pr == null) return false;
                 
                 PaintStyle paint = null;
+                PackagePart pp = getSheet().getPackagePart();
                 for (XmlObject obj : pr.selectPath("*")) {
-                    paint = selectPaint(obj, null, getSheet().getPackagePart());
-                    if (paint != null) break;
+                    paint = selectPaint(obj, null, pp);
+                    if (paint != null) {
+                        setValue(paint);
+                        return true;
+                    };
                 }
                 
-                if (paint == null) return false;
-                
-                setValue(paint);
-                return true;
+                return false;
             }
         };
         fetchShapeProperty(fetcher);
@@ -190,7 +201,7 @@ public abstract class XSLFShape implements Shape {
         }
         paint = selectPaint(fillRef);
 
-        return paint == null ? PaintStyle.TRANSPARENT_PAINT : paint;
+        return paint;
     }
 
     protected CTBackgroundProperties getBgPr() {
@@ -347,8 +358,8 @@ public abstract class XSLFShape implements Shape {
             paint = selectPaint(obj, phClr, pp);
             if(paint != null) break;
         }
-        return paint == null ? PaintStyle.TRANSPARENT_PAINT : paint;
-    }    
+        return paint;
+    }
     
     /**
      * Convert shape fill into java.awt.Paint. The result is either Color or
@@ -371,13 +382,13 @@ public abstract class XSLFShape implements Shape {
      */
     protected PaintStyle selectPaint(XmlObject obj, final CTSchemeColor phClr, final PackagePart parentPart) {
         if (obj instanceof CTNoFillProperties) {
-            return PaintStyle.TRANSPARENT_PAINT;
+            return null;
         } else if (obj instanceof CTSolidColorFillProperties) {
-            return selectPaint((CTSolidColorFillProperties)obj, phClr, parentPart);
+            return selectPaint((CTSolidColorFillProperties)obj, phClr);
         } else if (obj instanceof CTBlipFillProperties) {
-            return selectPaint((CTBlipFillProperties)obj, phClr, parentPart);
+            return selectPaint((CTBlipFillProperties)obj, parentPart);
         } else if (obj instanceof CTGradientFillProperties) {
-            return selectPaint((CTGradientFillProperties) obj, phClr, parentPart);
+            return selectPaint((CTGradientFillProperties) obj, phClr);
         } else if (obj instanceof CTStyleMatrixReference) {
             return selectPaint((CTStyleMatrixReference)obj);
         } else {
@@ -385,17 +396,16 @@ public abstract class XSLFShape implements Shape {
         }
     }
 
-    protected PaintStyle selectPaint(final CTSolidColorFillProperties solidFill, final CTSchemeColor phClr, final PackagePart parentPart) {
+    protected PaintStyle selectPaint(CTSolidColorFillProperties solidFill, CTSchemeColor phClr) {
         final XSLFTheme theme = getSheet().getTheme();
+        if (phClr == null && solidFill.isSetSchemeClr()) {
+            phClr = solidFill.getSchemeClr();
+        }
         final XSLFColor c = new XSLFColor(solidFill, theme, phClr);
-        return new SolidPaint() {
-            public ColorStyle getSolidColor() {
-                return c.getColorStyle();
-            }
-        };
+        return DrawPaint.createSolidPaint(c.getColorStyle());
     }
     
-    protected PaintStyle selectPaint(final CTBlipFillProperties blipFill, final CTSchemeColor phClr, final PackagePart parentPart) {
+    protected PaintStyle selectPaint(final CTBlipFillProperties blipFill, final PackagePart parentPart) {
         final CTBlip blip = blipFill.getBlip();
         return new TexturePaint() {
             private PackagePart getPart() {
@@ -424,12 +434,12 @@ public abstract class XSLFShape implements Shape {
             public int getAlpha() {
                 return (blip.sizeOfAlphaModFixArray() > 0)
                     ? blip.getAlphaModFixArray(0).getAmt()
-                    : 0;
+                    : 100000;
             }
         };        
     }
     
-    protected PaintStyle selectPaint(final CTGradientFillProperties gradFill, final CTSchemeColor phClr, final PackagePart parentPart) {
+    protected PaintStyle selectPaint(final CTGradientFillProperties gradFill, CTSchemeColor phClr) {
 
         @SuppressWarnings("deprecation")
         final CTGradientStop[] gs = gradFill.getGsLst().getGsArray();
@@ -448,7 +458,11 @@ public abstract class XSLFShape implements Shape {
         
         int i=0;
         for (CTGradientStop cgs : gs) {
-            cs[i] = new XSLFColor(cgs, theme, phClr).getColorStyle();
+            CTSchemeColor phClrCgs = phClr;
+            if (phClrCgs == null && cgs.isSetSchemeClr()) {
+                phClrCgs = cgs.getSchemeClr();
+            }
+            cs[i] = new XSLFColor(cgs, theme, phClrCgs).getColorStyle();
             fractions[i] = cgs.getPos() / 100000.f;
             i++;
         }

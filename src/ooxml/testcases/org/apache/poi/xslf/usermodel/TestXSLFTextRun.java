@@ -18,16 +18,23 @@
  */
 package org.apache.poi.xslf.usermodel;
 
-import junit.framework.TestCase;
+import static org.apache.poi.sl.TestCommonSL.sameColor;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
-import java.awt.*;
+import java.awt.Color;
+import java.io.IOException;
+
+import org.junit.Test;
 
 /**
  * @author Yegor Kozlov
  */
-public class TestXSLFTextRun extends TestCase {
+public class TestXSLFTextRun {
 
-    public void testRunProperties(){
+    @Test
+    public void testRunProperties() throws IOException {
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFSlide slide = ppt.createSlide();
         XSLFTextShape sh = slide.createAutoShape();
@@ -35,26 +42,26 @@ public class TestXSLFTextRun extends TestCase {
         XSLFTextRun r = sh.addNewTextParagraph().addNewTextRun();
         assertEquals("en-US", r.getRPr().getLang());
 
-        assertEquals(0., r.getCharacterSpacing());
+        assertEquals(0., r.getCharacterSpacing(), 0);
         r.setCharacterSpacing(3);
-        assertEquals(3., r.getCharacterSpacing());
+        assertEquals(3., r.getCharacterSpacing(), 0);
         r.setCharacterSpacing(-3);
-        assertEquals(-3., r.getCharacterSpacing());
+        assertEquals(-3., r.getCharacterSpacing(), 0);
         r.setCharacterSpacing(0);
-        assertEquals(0., r.getCharacterSpacing());
+        assertEquals(0., r.getCharacterSpacing(), 0);
         assertFalse(r.getRPr().isSetSpc());
 
-        assertEquals(Color.black, r.getFontColor());
+        assertTrue(sameColor(Color.black, r.getFontColor()));
         r.setFontColor(Color.red);
-        assertEquals(Color.red, r.getFontColor());
+        assertTrue(sameColor(Color.red, r.getFontColor()));
 
         assertEquals("Calibri", r.getFontFamily());
         r.setFontFamily("Arial");
         assertEquals("Arial", r.getFontFamily());
 
-        assertEquals(18.0, r.getFontSize());
+        assertEquals(18.0, r.getFontSize(), 0);
         r.setFontSize(13.0);
-        assertEquals(13.0, r.getFontSize());
+        assertEquals(13.0, r.getFontSize(), 0);
 
         assertEquals(false, r.isSuperscript());
         r.setSuperscript(true);
@@ -67,5 +74,7 @@ public class TestXSLFTextRun extends TestCase {
         assertEquals(true, r.isSubscript());
         r.setSubscript(false);
         assertEquals(false, r.isSubscript());
+        
+        ppt.close();
     }
 }

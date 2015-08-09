@@ -16,19 +16,24 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
-import static org.junit.Assert.*;
+import static org.apache.poi.sl.TestCommonSL.sameColor;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.List;
 
 import org.apache.poi.sl.draw.DrawTextFragment;
 import org.apache.poi.sl.draw.DrawTextParagraph;
 import org.apache.poi.sl.usermodel.AutoNumberingScheme;
 import org.apache.poi.sl.usermodel.TextParagraph.TextAlign;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.xslf.XSLFTestDataSamples;
 import org.junit.Assume;
 import org.junit.Test;
@@ -37,7 +42,7 @@ import org.junit.Test;
  * @author Yegor Kozlov
  */
 public class TestXSLFTextParagraph {
-    private static POILogger _logger = POILogFactory.getLogger(XSLFTextParagraph.class);
+    // private static POILogger _logger = POILogFactory.getLogger(XSLFTextParagraph.class);
 
     static class DrawTextParagraphProxy extends DrawTextParagraph<XSLFTextRun> {
         DrawTextParagraphProxy(XSLFTextParagraph p) {
@@ -58,7 +63,7 @@ public class TestXSLFTextParagraph {
     }
     
     @Test
-    public void testWrappingWidth() throws Exception {
+    public void testWrappingWidth() throws IOException {
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFSlide slide = ppt.createSlide();
         XSLFTextShape sh = slide.createAutoShape();
@@ -142,6 +147,8 @@ public class TestXSLFTextParagraph {
         expectedWidth = anchor.getWidth() - leftInset - rightInset - leftMargin;
         assertEquals(244.0, expectedWidth, 0); // 300 - 10 - 10 - 36 
         assertEquals(expectedWidth, dtp.getWrappingWidth(false, null), 0);
+        
+        ppt.close();
      }
 
     /**
@@ -149,7 +156,7 @@ public class TestXSLFTextParagraph {
      * This test requires that the Arial font is available and will run only on windows
      */
     @Test
-    public void testBreakLines(){
+    public void testBreakLines() throws IOException {
         String os = System.getProperty("os.name");
         Assume.assumeTrue("Skipping testBreakLines(), it is executed only on Windows machines", (os != null && os.contains("Windows")));
 
@@ -237,10 +244,11 @@ public class TestXSLFTextParagraph {
         // the first line is at least two times higher than the second
         assertTrue(lines.get(0).getHeight() > lines.get(1).getHeight()*2);
 
+        ppt.close();
     }
 
     @Test
-    public void testThemeInheritance(){
+    public void testThemeInheritance() throws IOException {
         XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("prProps.pptx");
         List<XSLFShape> shapes = ppt.getSlides().get(0).getShapes();
         XSLFTextShape sh1 = (XSLFTextShape)shapes.get(0);
@@ -252,10 +260,11 @@ public class TestXSLFTextParagraph {
         XSLFTextShape sh3 = (XSLFTextShape)shapes.get(2);
         assertEquals("Foundation", sh3.getText());
         assertEquals(TextAlign.CENTER, sh3.getTextParagraphs().get(0).getTextAlign());
+        ppt.close();
     }
 
     @Test
-    public void testParagraphProperties(){
+    public void testParagraphProperties() throws IOException {
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFSlide slide = ppt.createSlide();
         XSLFTextShape sh = slide.createAutoShape();
@@ -275,7 +284,7 @@ public class TestXSLFTextParagraph {
 
         assertEquals(null, p.getBulletFontColor());
         p.setBulletFontColor(Color.red);
-        assertEquals(Color.red, p.getBulletFontColor());
+        assertTrue(sameColor(Color.red, p.getBulletFontColor()));
 
         assertNull(p.getBulletFontSize());
         p.setBulletFontSize(200.);
@@ -342,34 +351,35 @@ public class TestXSLFTextParagraph {
 
         assertEquals(72.0, p.getDefaultTabSize(), 0);
 
+        ppt.close();
     }
 
-    @Test
-    public void testLineBreak(){
+    @Test(expected = IllegalStateException.class)
+    public void testLineBreak() throws IOException {
         XMLSlideShow ppt = new XMLSlideShow();
-        XSLFSlide slide = ppt.createSlide();
-        XSLFTextShape sh = slide.createAutoShape();
-
-        XSLFTextParagraph p = sh.addNewTextParagraph();
-        XSLFTextRun r1 = p.addNewTextRun();
-        r1.setText("Hello,");
-        XSLFTextRun r2 = p.addLineBreak();
-        assertEquals("\n", r2.getRawText());
-        r2.setFontSize(10.0);
-        assertEquals(10.0, r2.getFontSize(), 0);
-        XSLFTextRun r3 = p.addNewTextRun();
-        r3.setText("World!");
-        r3.setFontSize(20.0);
-        XSLFTextRun r4 = p.addLineBreak();
-        assertEquals(20.0, r4.getFontSize(), 0);
-
-        assertEquals("Hello,\nWorld!\n",sh.getText());
-
         try {
+            XSLFSlide slide = ppt.createSlide();
+            XSLFTextShape sh = slide.createAutoShape();
+    
+            XSLFTextParagraph p = sh.addNewTextParagraph();
+            XSLFTextRun r1 = p.addNewTextRun();
+            r1.setText("Hello,");
+            XSLFTextRun r2 = p.addLineBreak();
+            assertEquals("\n", r2.getRawText());
+            r2.setFontSize(10.0);
+            assertEquals(10.0, r2.getFontSize(), 0);
+            XSLFTextRun r3 = p.addNewTextRun();
+            r3.setText("World!");
+            r3.setFontSize(20.0);
+            XSLFTextRun r4 = p.addLineBreak();
+            assertEquals(20.0, r4.getFontSize(), 0);
+    
+            assertEquals("Hello,\nWorld!\n",sh.getText());
+
+            // "You cannot change text of a line break, it is always '\\n'"
             r2.setText("aaa");
-            fail("Expected IllegalStateException");
-        } catch (IllegalStateException e){
-            assertEquals("You cannot change text of a line break, it is always '\\n'", e.getMessage());
+        } finally {
+            ppt.close();
         }
     }
 }

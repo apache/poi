@@ -20,6 +20,7 @@ package org.apache.poi.sl.usermodel;
 import java.awt.Color;
 
 
+
 public interface TextParagraph<T extends TextRun> extends Iterable<T> {
 
     /**
@@ -113,7 +114,20 @@ public interface TextParagraph<T extends TextRun> extends Iterable<T> {
          * @return the bullet point font size
          */
         Double getBulletFontSize();
-        Color getBulletFontColor();
+
+        /**
+         * Convenience function to set a solid color
+         */
+        void setBulletFontColor(Color color);
+        
+        void setBulletFontColor(PaintStyle color);
+
+        /**
+         *
+         * @return the color of bullet characters within a given paragraph.
+         * A {@code null} value means to use the text font color.
+         */
+        PaintStyle getBulletFontColor();
         
         AutoNumberingScheme getAutoNumberingScheme();
         /**

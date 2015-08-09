@@ -22,10 +22,16 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.List;
 
-import org.apache.poi.ddf.*;
+import org.apache.poi.ddf.EscherBSERecord;
+import org.apache.poi.ddf.EscherContainerRecord;
+import org.apache.poi.ddf.EscherOptRecord;
+import org.apache.poi.ddf.EscherProperties;
+import org.apache.poi.ddf.EscherRecord;
+import org.apache.poi.ddf.EscherSimpleProperty;
 import org.apache.poi.hslf.record.Document;
-import org.apache.poi.sl.usermodel.*;
-import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
+import org.apache.poi.sl.draw.DrawPaint;
+import org.apache.poi.sl.usermodel.FillStyle;
+import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.sl.usermodel.PaintStyle.TexturePaint;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -113,20 +119,8 @@ public final class HSLFFill {
         return new FillStyle() {
             public PaintStyle getPaint() {
                 switch (getFillType()) {
-                    case FILL_SOLID: {
-                        return new SolidPaint() {
-                            public ColorStyle getSolidColor() {
-                                return new ColorStyle() {
-                                    public Color getColor() { return getForegroundColor(); }
-                                    public int getAlpha() { return -1; }
-                                    public int getLumOff() { return -1; }
-                                    public int getLumMod() { return -1; }
-                                    public int getShade()  { return -1; }
-                                    public int getTint()  { return -1; }
-                                };
-                            }
-                        };
-                    }
+                    case FILL_SOLID:
+                        return DrawPaint.createSolidPaint(getForegroundColor());
                     case FILL_PICTURE: {
                         final HSLFPictureData pd = getPictureData();
                         if (pd == null) break;
@@ -149,7 +143,7 @@ public final class HSLFFill {
                         logger.log(POILogger.WARN, "unsuported fill type: " + getFillType());
                         break;
                 }
-                return PaintStyle.TRANSPARENT_PAINT;
+                return null;
             }
         };
     }

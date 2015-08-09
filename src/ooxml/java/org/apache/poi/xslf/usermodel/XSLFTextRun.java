@@ -18,6 +18,9 @@ package org.apache.poi.xslf.usermodel;
 
 import java.awt.Color;
 
+import org.apache.poi.sl.draw.DrawPaint;
+import org.apache.poi.sl.usermodel.PaintStyle;
+import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
 import org.apache.poi.sl.usermodel.TextRun;
 import org.apache.poi.util.Beta;
 import org.apache.poi.xslf.model.CharacterPropertyFetcher;
@@ -84,10 +87,21 @@ public class XSLFTextRun implements TextRun {
 
     @Override
     public void setFontColor(Color color) {
+        setFontColor(DrawPaint.createSolidPaint(color));
+    }
+    
+    @Override
+    public void setFontColor(PaintStyle color) {
+        if (!(color instanceof SolidPaint)) {
+            throw new IllegalArgumentException("Currently only SolidPaint is supported!");
+        }
+        SolidPaint sp = (SolidPaint)color;
+        
         CTTextCharacterProperties rPr = getRPr();
         CTSolidColorFillProperties fill = rPr.isSetSolidFill() ? rPr.getSolidFill() : rPr.addNewSolidFill();
         CTSRgbColor clr = fill.isSetSrgbClr() ? fill.getSrgbClr() : fill.addNewSrgbClr();
-        clr.setVal(new byte[]{(byte)color.getRed(), (byte)color.getGreen(), (byte)color.getBlue()});
+        Color c = DrawPaint.applyColorTransform(sp.getSolidColor());
+        clr.setVal(new byte[]{(byte)c.getRed(), (byte)c.getGreen(), (byte)c.getBlue()});
 
         if(fill.isSetHslClr()) fill.unsetHslClr();
         if(fill.isSetPrstClr()) fill.unsetPrstClr();
@@ -98,22 +112,22 @@ public class XSLFTextRun implements TextRun {
     }
 
     @Override
-    public Color getFontColor(){
-        final XSLFTheme theme = _p.getParentShape().getSheet().getTheme();
-        CTShapeStyle style = _p.getParentShape().getSpStyle();
-        final CTSchemeColor phClr = style == null ? null : style.getFontRef().getSchemeClr();
-
-        CharacterPropertyFetcher<Color> fetcher = new CharacterPropertyFetcher<Color>(_p.getIndentLevel()){
+    public PaintStyle getFontColor(){
+        CharacterPropertyFetcher<PaintStyle> fetcher = new CharacterPropertyFetcher<PaintStyle>(_p.getIndentLevel()){
             public boolean fetch(CTTextCharacterProperties props){
-                CTSolidColorFillProperties solidFill = props.getSolidFill();
-                if(solidFill != null) {
-                    boolean useCtxColor =
-                            (solidFill.isSetSchemeClr() && solidFill.getSchemeClr().getVal() == STSchemeColorVal.PH_CLR)
-                            || isFetchingFromMaster;
-                    Color c = new XSLFColor(solidFill, theme, useCtxColor ? phClr : null).getColor();
-                    setValue(c);
+                XSLFShape shape = _p.getParentShape();
+                CTShapeStyle style = shape.getSpStyle();
+                CTSchemeColor phClr = null;
+                if (style != null && style.getFontRef() != null) {
+                    phClr = style.getFontRef().getSchemeClr();
+                }
+
+                PaintStyle ps = shape.getPaint(props, phClr);
+                if (ps != null)  {
+                    setValue(ps);
                     return true;
                 }
+                
                 return false;
             }
         };
@@ -250,7 +264,7 @@ public class XSLFTextRun implements TextRun {
     }
 
     public byte getPitchAndFamily(){
-        final XSLFTheme theme = _p.getParentShape().getSheet().getTheme();
+        // final XSLFTheme theme = _p.getParentShape().getSheet().getTheme();
 
         CharacterPropertyFetcher<Byte> visitor = new CharacterPropertyFetcher<Byte>(_p.getIndentLevel()){
             public boolean fetch(CTTextCharacterProperties props){
@@ -474,35 +488,36 @@ public class XSLFTextRun implements TextRun {
     }
 
     private boolean fetchCharacterProperty(CharacterPropertyFetcher<?> fetcher){
+        XSLFTextShape shape = _p.getParentShape();
+        XSLFSheet sheet = shape.getSheet();
         boolean ok = false;
 
-        if(_r.isSetRPr()) ok = fetcher.fetch(getRPr());
-
-        if(!ok) {
-            XSLFTextShape shape = _p.getParentShape();
-            ok = shape.fetchShapeProperty(fetcher);
-            if(!ok){
-                CTPlaceholder ph = shape.getCTPlaceholder();
-                if(ph == null){
-                    // if it is a plain text box then take defaults from presentation.xml
-                    XMLSlideShow ppt = shape.getSheet().getSlideShow();
-                    CTTextParagraphProperties themeProps = ppt.getDefaultParagraphStyle(_p.getIndentLevel());
-                    if(themeProps != null) {
-                        fetcher.isFetchingFromMaster = true;
-                        ok = fetcher.fetch(themeProps);
-                    }
-                }
-                if (!ok) {
-                    CTTextParagraphProperties defaultProps =  _p.getDefaultMasterStyle();
-                    if(defaultProps != null) {
-                        fetcher.isFetchingFromMaster = true;
-                        ok = fetcher.fetch(defaultProps);
-                    }
-                }
+        if (_r.isSetRPr()) ok = fetcher.fetch(getRPr());
+        if (ok) return true;
+        
+        ok = shape.fetchShapeProperty(fetcher);
+        if (ok) return true;
+        
+        CTPlaceholder ph = shape.getCTPlaceholder();
+        if (ph == null){
+            // if it is a plain text box then take defaults from presentation.xml
+            XMLSlideShow ppt = sheet.getSlideShow();
+            CTTextParagraphProperties themeProps = ppt.getDefaultParagraphStyle(_p.getIndentLevel());
+            if (themeProps != null) {
+                // TODO: determine master shape
+                ok = fetcher.fetch(themeProps);
             }
         }
+        if (ok) return true;
 
-        return ok;
+        CTTextParagraphProperties defaultProps =  _p.getDefaultMasterStyle();
+        if(defaultProps != null) {
+            // TODO: determine master shape
+            ok = fetcher.fetch(defaultProps);
+        }
+        if (ok) return true;
+
+        return false;
     }
 
     void copy(XSLFTextRun r){
@@ -511,7 +526,7 @@ public class XSLFTextRun implements TextRun {
             setFontFamily(srcFontFamily);
         }
 
-        Color srcFontColor = r.getFontColor();
+        PaintStyle srcFontColor = r.getFontColor();
         if(srcFontColor != null && !srcFontColor.equals(getFontColor())){
             setFontColor(srcFontColor);
         }

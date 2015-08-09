@@ -16,6 +16,7 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
+import static org.apache.poi.sl.TestCommonSL.sameColor;
 import static org.junit.Assert.*;
 
 import java.awt.Color;
@@ -66,7 +67,7 @@ public class TestXSLFTheme {
 
         XSLFTextShape sh1 = (XSLFTextShape)getShape(slide, "Rectangle 3");
         XSLFTextRun run1 = sh1.getTextParagraphs().get(0).getTextRuns().get(0);
-        assertEquals(Color.white, run1.getFontColor());
+        assertTrue(sameColor(Color.white, run1.getFontColor()));
         assertEquals(new Color(79, 129, 189), sh1.getFillColor());
         assertTrue(sh1.getFillStyle().getPaint() instanceof SolidPaint) ;   // solid fill
 
@@ -89,13 +90,13 @@ public class TestXSLFTheme {
 
         XSLFTextShape sh1 = (XSLFTextShape)getShape(slide, "Rectangle 4");
         XSLFTextRun run1 = sh1.getTextParagraphs().get(0).getTextRuns().get(0);
-        assertEquals(Color.white, run1.getFontColor());
+        assertTrue(sameColor(Color.white, run1.getFontColor()));
         assertEquals(new Color(148, 198, 0), sh1.getFillColor());
         assertTrue(sh1.getFillStyle().getPaint() instanceof SolidPaint) ;   // solid fill
 
         XSLFTextShape sh2 = (XSLFTextShape)getShape(slide, "Title 3");
         XSLFTextRun run2 = sh2.getTextParagraphs().get(0).getTextRuns().get(0);
-        assertEquals(new Color(148, 198, 0), run2.getFontColor());
+        assertTrue(sameColor(new Color(148, 198, 0), run2.getFontColor()));
         assertNull(sh2.getFillColor());  // no fill
 
         assertTrue(slide.getSlideLayout().getFollowMasterGraphics());
@@ -107,7 +108,7 @@ public class TestXSLFTheme {
 
         XSLFTextShape sh2 = (XSLFTextShape)getShape(slide, "Title 1");
         XSLFTextRun run2 = sh2.getTextParagraphs().get(0).getTextRuns().get(0);
-        assertEquals(new Color(148, 198, 0), run2.getFontColor());
+        assertTrue(sameColor(new Color(148, 198, 0), run2.getFontColor()));
         assertNull(sh2.getFillColor());  // no fill
         // font size is 40pt and scale factor is 90%
         assertEquals(36.0, run2.getFontSize(), 0);
@@ -119,12 +120,12 @@ public class TestXSLFTheme {
 
         XSLFTextShape sh1 = (XSLFTextShape)getShape(slide, "Subtitle 3");
         XSLFTextRun run1 = sh1.getTextParagraphs().get(0).getTextRuns().get(0);
-        assertEquals(new Color(66, 66, 66), run1.getFontColor());
+        assertTrue(sameColor(new Color(66, 66, 66), run1.getFontColor()));
         assertNull(sh1.getFillColor());  // no fill
 
         XSLFTextShape sh2 = (XSLFTextShape)getShape(slide, "Title 2");
         XSLFTextRun run2 = sh2.getTextParagraphs().get(0).getTextRuns().get(0);
-        assertEquals(new Color(148, 198, 0), run2.getFontColor());
+        assertTrue(sameColor(new Color(148, 198, 0), run2.getFontColor()));
         assertNull(sh2.getFillColor());  // no fill
 
         assertFalse(slide.getSlideLayout().getFollowMasterGraphics());
@@ -154,12 +155,12 @@ public class TestXSLFTheme {
 
         XSLFTextShape sh1 = (XSLFTextShape)getShape(slide, "Title 3");
         XSLFTextRun run1 = sh1.getTextParagraphs().get(0).getTextRuns().get(0);
-        assertEquals(Color.white, run1.getFontColor());
+        assertTrue(sameColor(Color.white, run1.getFontColor()));
         assertNull(sh1.getFillColor());  // no fill
 
         XSLFTextShape sh2 = (XSLFTextShape)getShape(slide, "Subtitle 4");
         XSLFTextRun run2 = sh2.getTextParagraphs().get(0).getTextRuns().get(0);
-        assertEquals(Color.white, run2.getFontColor());
+        assertTrue(sameColor(Color.white, run2.getFontColor()));
         assertNull(sh2.getFillColor());  // no fill
     }
 }

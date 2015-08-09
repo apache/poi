@@ -17,6 +17,7 @@
 
 package org.apache.poi.hslf.model;
 
+import static org.apache.poi.sl.TestCommonSL.sameColor;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -53,9 +54,9 @@ import org.apache.poi.hslf.usermodel.HSLFTextBox;
 import org.apache.poi.hslf.usermodel.HSLFTextParagraph;
 import org.apache.poi.hslf.usermodel.HSLFTextRun;
 import org.apache.poi.hslf.usermodel.HSLFTextShape;
+import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.apache.poi.sl.usermodel.ShapeType;
 import org.apache.poi.sl.usermodel.StrokeStyle.LineDash;
-import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -189,16 +190,16 @@ public final class TestShapes {
         List<HSLFTextParagraph> para = tb.getTextParagraphs();
         HSLFTextRun tr = para.get(0).getTextRuns().get(0);
         assertEquals("para 1 run 1. ", tr.getRawText());
-        assertEquals(Color.black, tr.getFontColor());
+        assertTrue(sameColor(Color.black, tr.getFontColor()));
         tr = para.get(0).getTextRuns().get(1);
         assertEquals("para 1 run 2.\r",  tr.getRawText());
-        assertEquals(Color.red, tr.getFontColor());
+        assertTrue(sameColor(Color.red, tr.getFontColor()));
         tr = para.get(1).getTextRuns().get(0);
         assertEquals("para 2 run 1. ", tr.getRawText());
-        assertEquals(Color.yellow, tr.getFontColor());
+        assertTrue(sameColor(Color.yellow, tr.getFontColor()));
         tr = para.get(1).getTextRuns().get(1);
         assertEquals("para 2 run 2. para 2 run 3.", tr.getRawText());
-        assertEquals(Color.black, tr.getFontColor());
+        assertTrue(sameColor(Color.black, tr.getFontColor()));
         assertTrue(tr.isStrikethrough());
     }
         
@@ -235,7 +236,7 @@ public final class TestShapes {
         assertTrue(rt.isItalic());
         assertFalse(rt.isUnderlined());
         assertEquals("Arial", rt.getFontFamily());
-        assertEquals(Color.red, rt.getFontColor());
+        assertTrue(sameColor(Color.red, rt.getFontColor()));
 
         // Serialize and read again
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -255,7 +256,7 @@ public final class TestShapes {
         assertTrue(rt.isItalic());
         assertFalse(rt.isUnderlined());
         assertEquals("Arial", rt.getFontFamily());
-        assertEquals(Color.red, rt.getFontColor());
+        assertTrue(sameColor(Color.red, rt.getFontColor()));
     }
 
     /**

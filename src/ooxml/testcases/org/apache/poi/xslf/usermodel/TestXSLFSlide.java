@@ -16,9 +16,15 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
-import static org.junit.Assert.*;
+import static org.apache.poi.sl.TestCommonSL.sameColor;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.awt.Color;
+import java.io.IOException;
 import java.util.List;
 
 import org.apache.poi.xslf.XSLFTestDataSamples;
@@ -98,7 +104,7 @@ public class TestXSLFSlide {
     }
 
     @Test
-    public void testCreateSlide(){
+    public void testCreateSlide() throws IOException {
         XMLSlideShow  ppt = new XMLSlideShow();
         assertEquals(0, ppt.getSlides().size());
 
@@ -108,10 +114,12 @@ public class TestXSLFSlide {
         assertFalse(slide.getFollowMasterGraphics());
         slide.setFollowMasterGraphics(true);
         assertTrue(slide.getFollowMasterGraphics());
+        
+        ppt.close();
     }
 
     @Test
-    public void testImportContent(){
+    public void testImportContent() throws IOException {
         XMLSlideShow ppt = new XMLSlideShow();
 
         XMLSlideShow  src = XSLFTestDataSamples.openSampleDocument("themes.pptx");
@@ -128,7 +136,7 @@ public class TestXSLFSlide {
         assertEquals(40.0, r1.getFontSize(), 0);
         assertTrue(r1.isBold());
         assertTrue(r1.isItalic());
-        assertEquals(new Color(148, 198, 0), r1.getFontColor());
+        assertTrue(sameColor(new Color(148, 198, 0), r1.getFontColor()));
         assertNull(sh1.getFillColor());
         assertNull(sh1.getLineColor());
 
@@ -141,7 +149,7 @@ public class TestXSLFSlide {
         assertEquals(18.0, r2.getFontSize(), 0);
         assertFalse(r2.isBold());
         assertFalse(r2.isItalic());
-        assertEquals(Color.white, r2.getFontColor());
+        assertTrue(sameColor(Color.white, r2.getFontColor()));
         assertEquals(new Color(148, 198, 0), sh2.getFillColor());
         assertEquals(new Color(148, 198, 0), sh2.getLineColor()); // slightly different from PowerPoint!
 
@@ -157,17 +165,19 @@ public class TestXSLFSlide {
         //assertEquals(32.4.0, r3.getFontSize());
         assertTrue(r3.isBold());
         assertTrue(r3.isItalic());
-        assertEquals(new Color(148, 198, 0), r3.getFontColor());
+        assertTrue(sameColor(new Color(148, 198, 0), r3.getFontColor()));
         assertNull(sh3.getFillColor());
         assertNull(sh3.getLineColor());
 
         XSLFPictureShape sh4 = (XSLFPictureShape)shapes2.get(1);
         XSLFPictureShape srcPic = (XSLFPictureShape)src.getSlides().get(4).getShapes().get(1);
         assertArrayEquals(sh4.getPictureData().getData(), srcPic.getPictureData().getData());
+        
+        ppt.close();
     }
 
     @Test
-    public void testMergeSlides(){
+    public void testMergeSlides() throws IOException {
         XMLSlideShow ppt = new XMLSlideShow();
         String[] pptx = {"shapes.pptx", "themes.pptx", "layouts.pptx", "backgrounds.pptx"};
 
@@ -179,5 +189,7 @@ public class TestXSLFSlide {
             }
         }
         assertEquals(30, ppt.getSlides().size());
+        
+        ppt.close();
     }    
 }

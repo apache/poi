@@ -78,6 +78,22 @@ public class XSLFColor {
                 return getRawValue("alpha");
             }
 
+            public int getHueOff() {
+                return getRawValue("hueOff");
+            }
+
+            public int getHueMod() {
+                return getRawValue("hueMod");
+            }
+
+            public int getSatOff() {
+                return getRawValue("satOff");
+            }
+
+            public int getSatMod() {
+                return getRawValue("satMod");
+            }
+
             public int getLumOff() {
                 return getRawValue("lumOff");
             }
