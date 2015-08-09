@@ -19,6 +19,8 @@ package org.apache.poi.sl.usermodel;
 
 import java.awt.Color;
 
+import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
+
 /**
  * Some text.
  */
@@ -34,8 +36,33 @@ public interface TextRun {
 
 	TextCap getTextCap();
 	
-	Color getFontColor();
-	void setFontColor(Color color);
+	/**
+	 * Returns the font color.
+	 * This usually returns a {@link SolidPaint}, but but also other classes are possible
+	 * 
+	 * @return the font color/paint
+	 * 
+     * @see org.apache.poi.sl.draw.DrawPaint#getPaint(java.awt.Graphics2D, PaintStyle)
+     * @see SolidPaint#getSolidColor()
+	 * @see org.apache.poi.sl.draw.DrawPaint#applyColorTransform(ColorStyle)
+	 */
+	PaintStyle getFontColor();
+
+    /**
+     * Sets the (solid) font color - convenience function
+     *
+     * @param color the color
+     */
+    void setFontColor(Color color);
+
+    /**
+	 * Sets the font color
+	 *
+	 * @param color the color
+	 * 
+	 * @see org.apache.poi.sl.draw.DrawPaint#createSolidPaint(Color)
+	 */
+	void setFontColor(PaintStyle color);
 	
 	
     /**

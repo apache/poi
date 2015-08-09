@@ -17,25 +17,31 @@
 
 package org.apache.poi.sl.draw;
 
-import static org.apache.poi.sl.usermodel.PaintStyle.TRANSPARENT_PAINT;
-
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.LinearGradientPaint;
 import java.awt.MultipleGradientPaint.ColorSpaceType;
 import java.awt.MultipleGradientPaint.CycleMethod;
-import java.awt.geom.*;
+import java.awt.Paint;
+import java.awt.RadialGradientPaint;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.poi.sl.usermodel.*;
+import org.apache.poi.sl.usermodel.ColorStyle;
+import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.sl.usermodel.PaintStyle.GradientPaint;
 import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
 import org.apache.poi.sl.usermodel.PaintStyle.TexturePaint;
+import org.apache.poi.sl.usermodel.PlaceableShape;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
 
 /**
- * This class handles color transformations
+ * This class handles color transformations.
  * 
  * @see <a href="https://tips4java.wordpress.com/2009/07/05/hsl-color/">HSL code taken from Java Tips Weblog</a>
  */
@@ -50,19 +56,45 @@ public class DrawPaint {
         this.shape = shape;
     }
 
-    public static SolidPaint createSolidPaint(final Color color) {
-        return new SolidPaint() {
-            public ColorStyle getSolidColor() {
-                return new ColorStyle(){
+    private static class SimpleSolidPaint implements SolidPaint {
+        private final ColorStyle solidColor;
+
+        SimpleSolidPaint(final Color color) {
+            if (color == null) {
+                throw new NullPointerException("Color needs to be specified");
+            }
+            this.solidColor = new ColorStyle(){
                     public Color getColor() { return color; }
                     public int getAlpha() { return -1; }
+                    public int getHueOff() { return -1; }
+                    public int getHueMod() { return -1; }
+                    public int getSatOff() { return -1; }
+                    public int getSatMod() { return -1; }
                     public int getLumOff() { return -1; }
                     public int getLumMod() { return -1; }
                     public int getShade() { return -1; }
                     public int getTint() { return -1; }
                 };
+        }
+
+        SimpleSolidPaint(ColorStyle color) {
+            if (color == null) {
+                throw new NullPointerException("Color needs to be specified");
             }
-        };
+            this.solidColor = color;
+        }
+        
+        public ColorStyle getSolidColor() {
+            return solidColor;
+        }
+    }
+    
+    public static SolidPaint createSolidPaint(final Color color) {
+        return (color == null) ? null : new SimpleSolidPaint(color);
+    }
+    
+    public static SolidPaint createSolidPaint(final ColorStyle color) {
+        return (color == null) ? null : new SimpleSolidPaint(color);
     }
     
     public Paint getPaint(Graphics2D graphics, PaintStyle paint) {
@@ -95,26 +127,26 @@ public class DrawPaint {
 
     protected Paint getTexturePaint(TexturePaint fill, Graphics2D graphics) {
         InputStream is = fill.getImageData();
-        if (is == null) return TRANSPARENT_PAINT.getSolidColor().getColor();
+        if (is == null) return null;
         assert(graphics != null);
         
         ImageRenderer renderer = (ImageRenderer)graphics.getRenderingHint(Drawable.IMAGE_RENDERER);
         if (renderer == null) renderer = new ImageRenderer();
 
         try {
-            renderer.loadImage(fill.getImageData(), fill.getContentType());
+            renderer.loadImage(is, fill.getContentType());
+            is.close();
         } catch (IOException e) {
             LOG.log(POILogger.ERROR, "Can't load image data - using transparent color", e);
-            return TRANSPARENT_PAINT.getSolidColor().getColor();
+            return null;
         }
 
         int alpha = fill.getAlpha();
-        if (alpha != -1) {
+        if (0 <= alpha && alpha < 100000) {
             renderer.setAlpha(alpha/100000.f);
         }
         
-        Dimension dim = renderer.getDimension();
-        Rectangle2D textAnchor = new Rectangle2D.Double(0, 0, dim.getWidth(), dim.getHeight());
+        Rectangle2D textAnchor = shape.getAnchor();
         Paint paint = new java.awt.TexturePaint(renderer.getImage(), textAnchor);
 
         return paint;
@@ -122,106 +154,102 @@ public class DrawPaint {
     
     /**
      * Convert color transformations in {@link ColorStyle} to a {@link Color} instance
+     * 
+     * @see <a href="https://msdn.microsoft.com/en-us/library/dd560821%28v=office.12%29.aspx">Using Office Open XML to Customize Document Formatting in the 2007 Office System</a>
+     * @see <a href="https://social.msdn.microsoft.com/Forums/office/en-US/040e0a1f-dbfe-4ce5-826b-38b4b6f6d3f7/saturation-modulation-satmod">saturation modulation (satMod)</a>
+     * @see <a href="http://stackoverflow.com/questions/6754127/office-open-xml-satmod-results-in-more-than-100-saturation">Office Open XML satMod results in more than 100% saturation</a>
      */
     public static Color applyColorTransform(ColorStyle color){
+        // TODO: The colors don't match 100% the results of Powerpoint, maybe because we still
+        // operate in sRGB and not scRGB ... work in progress ...
+
         Color result = color.getColor();
+        if (result == null) return null;
 
-        if (result == null || color.getAlpha() == 100) {
-            return TRANSPARENT_PAINT.getSolidColor().getColor();
-        }
+        double alpha = getAlpha(result, color);
+        double hsl[] = RGB2HSL(result); // values are in the range [0..100] (usually ...)
+        applyHslModOff(hsl, 0, color.getHueMod(), color.getHueOff());
+        applyHslModOff(hsl, 1, color.getSatMod(), color.getSatOff());
+        applyHslModOff(hsl, 2, color.getLumMod(), color.getLumOff());
+        applyShade(hsl, color);
+        applyTint(hsl, color);
+
+        result = HSL2RGB(hsl[0], hsl[1], hsl[2], alpha);
         
-        result = applyAlpha(result, color);
-        result = applyLuminance(result, color);
-        result = applyShade(result, color);
-        result = applyTint(result, color);
-
         return result;
     }
 
-    protected static Color applyAlpha(Color c, ColorStyle fc) {
-        int alpha = c.getAlpha();
-        return (alpha == 255) ? c : new Color(c.getRed(), c.getGreen(), c.getBlue(), alpha); 
+    private static double getAlpha(Color c, ColorStyle fc) {
+        double alpha = c.getAlpha()/255d;
+        int fcAlpha = fc.getAlpha();
+        if (fcAlpha != -1) {
+            alpha *= fcAlpha/100000d;
+        }
+        return Math.min(1, Math.max(0, alpha));
     }
     
     /**
-     * Apply lumMod / lumOff adjustments
-     *
-     * @param c the color to modify
-     * @param fc the color style containing the lumMod / lumOff adjustments
-     * @return  modified color
+     * Apply the modulation and offset adjustments to the given HSL part
      * 
-     * @see <a href="https://msdn.microsoft.com/en-us/library/dd560821%28v=office.12%29.aspx">Using Office Open XML to Customize Document Formatting in the 2007 Office System</a>
+     * Example for lumMod/lumOff:
+     * The lumMod value is the percent luminance. A lumMod value of "60000",
+     * is 60% of the luminance of the original color.
+     * When the color is a shade of the original theme color, the lumMod
+     * attribute is the only one of the tags shown here that appears.
+     * The <a:lumOff> tag appears after the <a:lumMod> tag when the color is a
+     * tint of the original. The lumOff value always equals 1-lumMod, which is used in the tint calculation
+     * 
+     * Despite having different ways to display the tint and shade percentages,
+     * all of the programs use the same method to calculate the resulting color.
+     * Convert the original RGB value to HSL ... and then adjust the luminance (L)
+     * with one of the following equations before converting the HSL value back to RGB.
+     * (The % tint in the following equations refers to the tint, themetint, themeshade,
+     * or lumMod values, as applicable.)
+     * 
+     * @param hsl the hsl values
+     * @param hslPart the hsl part to modify [0..2]
+     * @param mod the modulation adjustment
+     * @param off the offset adjustment
+     * @return the modified hsl value
+     * 
      */
-    protected static Color applyLuminance(Color c, ColorStyle fc) {
-        int lumMod = fc.getLumMod();
-        if (lumMod == -1) lumMod = 100000;
-
-        int lumOff = fc.getLumOff();
-        if (lumOff == -1) lumOff = 0;
-        
-        if (lumMod == 100000 && lumOff == 0) return c;
-
-        // The lumMod value is the percent luminance. A lumMod value of "60000",
-        // is 60% of the luminance of the original color.
-        // When the color is a shade of the original theme color, the lumMod
-        // attribute is the only one of the tags shown here that appears.
-        // The <a:lumOff> tag appears after the <a:lumMod> tag when the color is a
-        // tint of the original. The lumOff value always equals 1-lumMod, which is used in the tint calculation
-        //
-        // Despite having different ways to display the tint and shade percentages,
-        // all of the programs use the same method to calculate the resulting color.
-        // Convert the original RGB value to HSL ... and then adjust the luminance (L)
-        // with one of the following equations before converting the HSL value back to RGB.
-        // (The % tint in the following equations refers to the tint, themetint, themeshade,
-        // or lumMod values, as applicable.)
-        //
-        // For a shade, the equation is luminance * %tint.
-        //
-        // For a tint, the equation is luminance * %tint + (1-%tint).
-        // (Note that 1-%tint is equal to the lumOff value in DrawingML.)
-        
-        double fLumOff = lumOff / 100000d;
-        double fLumMod = lumMod / 100000d;
-        
-        double hsl[] = RGB2HSL(c);
-        hsl[2] = hsl[2]*fLumMod+fLumOff;
-
-        Color c2 = HSL2RGB(hsl[0], hsl[1], hsl[2], c.getAlpha()/255d);
-        return c2;
+    private static void applyHslModOff(double hsl[], int hslPart, int mod, int off) {
+        if (mod == -1) mod = 100000;
+        if (off == -1) off = 0;
+        if (!(mod == 100000 && off == 0)) {
+            double fOff = off / 1000d;
+            double fMod = mod / 100000d;
+            hsl[hslPart] = hsl[hslPart]*fMod+fOff;
+        }
     }
     
     /**
-     * This algorithm returns result different from PowerPoint.
-     * TODO: revisit and improve
+     * Apply the shade
+     * 
+     * For a shade, the equation is luminance * %tint.
      */
-    protected static Color applyShade(Color c, ColorStyle fc) {
+    private static void applyShade(double hsl[], ColorStyle fc) {
         int shade = fc.getShade();
-        if (shade == -1) return c;
+        if (shade == -1) return;
         
-        float fshade = shade / 100000.f;
-
-        float red = c.getRed() * fshade;
-        float green = c.getGreen() * fshade;
-        float blue = c.getGreen() * fshade;
+        double fshade = shade / 100000.d;
         
-        return new Color(Math.round(red), Math.round(green), Math.round(blue), c.getAlpha());
+        hsl[2] *= fshade;
     }
 
     /**
-     * This algorithm returns result different from PowerPoint.
-     * TODO: revisit and improve
+     * Apply the tint
+     * 
+     * For a tint, the equation is luminance * %tint + (1-%tint).
+     * (Note that 1-%tint is equal to the lumOff value in DrawingML.)
      */
-    protected static Color applyTint(Color c, ColorStyle fc) {
+    private static void applyTint(double hsl[], ColorStyle fc) {
         int tint = fc.getTint();
-        if (tint == -1) return c;
+        if (tint == -1) return;
         
-        float ftint = tint / 100000.f;
+        double ftint = tint / 100000.f;
 
-        float red = ftint * c.getRed() + (1.f - ftint) * 255.f;
-        float green = ftint * c.getGreen() + (1.f - ftint) * 255.f;
-        float blue = ftint * c.getBlue() + (1.f - ftint) * 255.f;
-
-        return new Color(Math.round(red), Math.round(green), Math.round(blue), c.getAlpha());
+        hsl[2] = hsl[2] * ftint + (100 - ftint*100.);
     }
     
 

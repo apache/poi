@@ -188,16 +188,14 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFSl
 	// Complex Accesser methods follow
 
 	/**
-	 * Return title of this slide or <code>null</code> if the slide does not have title.
 	 * <p>
 	 * The title is a run of text of type <code>TextHeaderAtom.CENTER_TITLE_TYPE</code> or
 	 * <code>TextHeaderAtom.TITLE_TYPE</code>
 	 * </p>
 	 *
 	 * @see TextHeaderAtom
-	 *
-	 * @return title of this slide
 	 */
+	@Override
 	public String getTitle(){
 		for (List<HSLFTextParagraph> tp : getTextParagraphs()) {
 		    if (tp.isEmpty()) continue;

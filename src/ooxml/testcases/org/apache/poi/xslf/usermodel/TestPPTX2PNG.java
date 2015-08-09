@@ -19,16 +19,11 @@
 
 package org.apache.poi.xslf.usermodel;
 
-import java.awt.Dimension;
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
+import java.io.File;
 import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.Map;
 
-import org.apache.poi.sl.draw.Drawable;
-import org.apache.poi.util.JvmBugs;
-import org.apache.poi.xslf.XSLFTestDataSamples;
+import org.apache.poi.POIDataSamples;
+import org.apache.poi.xslf.util.PPTX2PNG;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -44,7 +39,6 @@ public class TestPPTX2PNG {
     @BeforeClass
     public static void activateJaxpDebug() {
         jaxpDebugEnable = setDebugFld(true);
-//        setXmlInputFactory();
     }
 
     @AfterClass
@@ -66,48 +60,26 @@ public class TestPPTX2PNG {
             return false;
         }
     }
-
-//    private static void setXmlInputFactory() {
-//        String propName = "javax.xml.stream.XMLInputFactory";
-//        String propVal = "com.sun.xml.internal.stream.XMLInputFactoryImpl";
-//        try {
-//            Class.forName(propVal);
-//            System.setProperty(propName, propVal);
-//        } catch (Exception e){
-//            // ignore
-//        }
-//    }
-    
     
     @Test
     public void render() throws Exception {
-        String[] testFiles = {"backgrounds.pptx","layouts.pptx", "sample.pptx", "shapes.pptx", "themes.pptx",};
+        POIDataSamples samples = POIDataSamples.getSlideShowInstance();
+
+        String[] testFiles = {"alterman_security.ppt","alterman_security.pptx","KEY02.pptx","themes.pptx","backgrounds.pptx","layouts.pptx", "sample.pptx", "shapes.pptx",};
+        String[] args = {
+            "-format", "null", // png,gif,jpg or null for test
+            "-slide", "-1", // -1 for all
+            "-outdir", new File("build/tmp/").getCanonicalPath(),
+            "-quite",
+            "dummyfile"
+        };
         for(String sampleFile : testFiles){
+            args[args.length-1] = samples.getFile(sampleFile).getCanonicalPath();
             try {
-                XMLSlideShow pptx = XSLFTestDataSamples.openSampleDocument(sampleFile);
-                Dimension pg = pptx.getPageSize();
-                //int slideNo=1;
-                for(XSLFSlide slide : pptx.getSlides()){
-                    BufferedImage img = new BufferedImage(pg.width, pg.height, BufferedImage.TYPE_INT_ARGB);
-                    Graphics2D graphics = img.createGraphics();
-                    fixFonts(graphics);
-                    slide.draw(graphics);
-                    // ImageIO.write(img, "PNG", new File("build/tmp/"+sampleFile.replaceFirst(".pptx?", "-")+slideNo+".png"));
-                    //slideNo++;
-                }
+                PPTX2PNG.main(args);
             } catch (IllegalStateException e) {
                 throw new IllegalStateException("While reading file " + sampleFile, e);
             }
         }
-    }
-    
-    @SuppressWarnings("unchecked")
-    private void fixFonts(Graphics2D graphics) {
-        if (!JvmBugs.hasLineBreakMeasurerBug()) return;
-        Map<String,String> fontMap = (Map<String,String>)graphics.getRenderingHint(Drawable.FONT_MAP);
-        if (fontMap == null) fontMap = new HashMap<String,String>();
-        fontMap.put("Calibri", "Lucida Sans");
-        fontMap.put("Cambria", "Lucida Bright");
-        graphics.setRenderingHint(Drawable.FONT_MAP, fontMap);        
     }
 }

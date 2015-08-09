@@ -21,8 +21,14 @@ import static org.apache.poi.hslf.usermodel.HSLFTextParagraph.getPropVal;
 
 import java.awt.Color;
 
-import org.apache.poi.hslf.model.textproperties.*;
+import org.apache.poi.hslf.model.textproperties.BitMaskTextProp;
+import org.apache.poi.hslf.model.textproperties.CharFlagsTextProp;
+import org.apache.poi.hslf.model.textproperties.TextProp;
+import org.apache.poi.hslf.model.textproperties.TextPropCollection;
 import org.apache.poi.hslf.model.textproperties.TextPropCollection.TextPropType;
+import org.apache.poi.sl.draw.DrawPaint;
+import org.apache.poi.sl.usermodel.PaintStyle;
+import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
 import org.apache.poi.sl.usermodel.TextRun;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -315,13 +321,15 @@ public final class HSLFTextRun implements TextRun {
 	}
 
 	/**
-	 * @return font color as RGB value
-	 * @see java.awt.Color
+	 * @return font color as PaintStyle
 	 */
-	public Color getFontColor() {
+	@Override
+	public SolidPaint getFontColor() {
 		TextProp tp = getPropVal(characterStyle, "font.color", parentParagraph);
-		return (tp == null) ? null
-	        : HSLFTextParagraph.getColorFromColorIndexStruct(tp.getValue(), parentParagraph.getSheet());
+		if (tp == null) return null;
+		Color color = HSLFTextParagraph.getColorFromColorIndexStruct(tp.getValue(), parentParagraph.getSheet());
+		SolidPaint ps = DrawPaint.createSolidPaint(color);
+		return ps;
 	}
 
 	/**
@@ -334,12 +342,21 @@ public final class HSLFTextRun implements TextRun {
 		setCharTextPropVal("font.color", bgr);
 	}
 
-	/**
-	 * Sets color of the text, as a java.awt.Color
-	 */
-	public void setFontColor(Color color) {
+
+    @Override
+    public void setFontColor(Color color) {
+        setFontColor(DrawPaint.createSolidPaint(color));
+    }
+	
+	@Override
+	public void setFontColor(PaintStyle color) {
+	    if (!(color instanceof SolidPaint)) {
+	        throw new IllegalArgumentException("HSLF only supports solid paint");
+	    }
 		// In PowerPont RGB bytes are swapped, as BGR
-		int rgb = new Color(color.getBlue(), color.getGreen(), color.getRed(), 254).getRGB();
+	    SolidPaint sp = (SolidPaint)color;
+	    Color c = DrawPaint.applyColorTransform(sp.getSolidColor());
+		int rgb = new Color(c.getBlue(), c.getGreen(), c.getRed(), 254).getRGB();
 		setFontColor(rgb);
 	}
 

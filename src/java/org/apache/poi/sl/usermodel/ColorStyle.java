@@ -32,17 +32,55 @@ public interface ColorStyle {
     int getAlpha();
     
     /**
-     * the luminance shift as expressed by a percentage relative to the input color
+     * the hue shift as expressed by a percentage relative to the input color.
+     * Be aware that OOXML also returns values greater than 100%
+     * 
+     * @return  hue shift in percents in the range [0..100000] (usually ...)
+     * or -1 if the value is not set
+     */
+    int getHueOff();
+    
+    /**
+     * the hue as expressed by a percentage relative to the input color.
+     * Be aware that OOXML also returns values greater than 100%
+     * 
+     * @return  hue in percents in the range [0..100000] (usually ...)
+     * or -1 if the value is not set
+     */
+    int getHueMod();
+    
+    /**
+     * the saturation shift as expressed by a percentage relative to the input color.
+     * Be aware that OOXML also returns values greater than 100%
+     * 
+     * @return  saturation shift in percents in the range [0..100000] (usually ...)
+     * or -1 if the value is not set
+     */
+    int getSatOff();
+    
+    /**
+     * the saturation as expressed by a percentage relative to the input color.
+     * Be aware that OOXML also returns values greater than 100%
+     * 
+     * @return  saturation in percents in the range [0..100000] (usually ...)
+     * or -1 if the value is not set
+     */
+    int getSatMod();
+    
+    /**
+     * the luminance shift as expressed by a percentage relative to the input color.
+     * Be aware that OOXML also returns values greater than 100%
      *
-     * @return  luminance shift in percents in the range [0..100000]
+     * @return  luminance shift in percents in the range [0..100000] (usually ...)
      * or -1 if the value is not set
      */
     int getLumOff();
     
     /**
-     * the luminance as expressed by a percentage relative to the input color
+     * the luminance as expressed by a percentage relative to the input color.
+     * Be aware that OOXML also returns values greater than 100%.
      *
-     * @return  luminance in percents in the range [0..100000]
+     * @return  luminance in percents in the range [0..100000] (usually ...)
      * or -1 if the value is not set
      */
     int getLumMod();
@@ -50,8 +88,9 @@ public interface ColorStyle {
     /**
      * specifies a darker version of its input color.
      * A 10% shade is 10% of the input color combined with 90% black.
+     * Be aware that OOXML also returns values greater than 100%.
      * 
-     * @return the value of the shade specified as percents in the range [0..100000]
+     * @return the value of the shade specified as percents in the range [0..100000] (usually ...)
      * with 0% indicating minimal shade and 100% indicating maximum
      * or -1 if the value is not set
      */
@@ -60,8 +99,9 @@ public interface ColorStyle {
     /**
      * specifies a lighter version of its input color.
      * A 10% tint is 10% of the input color combined with 90% white.
+     * Be aware that OOXML also returns values greater than 100%
      *
-     * @return the value of the tint specified as percents in the range [0..100000]
+     * @return the value of the tint specified as percents in the range [0..100000] (usually ...)
      * with 0% indicating minimal tint and 100% indicating maximum
      * or -1 if the value is not set
      */

@@ -21,8 +21,6 @@ import java.awt.Color;
 import java.awt.geom.Rectangle2D;
 
 import org.apache.poi.sl.draw.DrawPaint;
-import org.apache.poi.sl.usermodel.ColorStyle;
-import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
 import org.apache.poi.sl.usermodel.Shadow;
 import org.apache.poi.util.Units;
@@ -90,7 +88,7 @@ public class XSLFShadow extends XSLFShape implements Shadow {
      */
     public Color getFillColor() {
         SolidPaint ps = getFillStyle();
-        if (ps == PaintStyle.TRANSPARENT_PAINT) return null;
+        if (ps == null) return null;
         Color col = DrawPaint.applyColorTransform(ps.getSolidColor());
         return col;
     }
@@ -99,14 +97,10 @@ public class XSLFShadow extends XSLFShape implements Shadow {
     public SolidPaint getFillStyle() {
         XSLFTheme theme = getSheet().getTheme();
         CTOuterShadowEffect ct = (CTOuterShadowEffect)getXmlObject();
-        if(ct == null) return PaintStyle.TRANSPARENT_PAINT;
+        if(ct == null) return null;
             
         CTSchemeColor phClr = ct.getSchemeClr();
         final XSLFColor xc = new XSLFColor(ct, theme, phClr);
-        return new SolidPaint(){
-            public ColorStyle getSolidColor() {
-                return xc.getColorStyle();
-            }
-        };
+        return DrawPaint.createSolidPaint(xc.getColorStyle());
     }
 }

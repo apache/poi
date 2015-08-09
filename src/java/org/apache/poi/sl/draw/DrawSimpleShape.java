@@ -47,9 +47,6 @@ public class DrawSimpleShape<T extends SimpleShape> extends DrawShape<T> {
 
     @Override
     public void draw(Graphics2D graphics) {
-//        RenderableShape rShape = new RenderableShape(this);
-//        rShape.render(graphics);
-
         DrawPaint drawPaint = DrawFactory.getInstance(graphics).getPaint(shape);
         Paint fill = drawPaint.getPaint(graphics, shape.getFillStyle().getPaint());
         Paint line = drawPaint.getPaint(graphics, shape.getStrokeStyle().getPaint());

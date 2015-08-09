@@ -17,8 +17,14 @@
 
 package org.apache.poi.hslf.model;
 
-import org.apache.poi.ddf.*;
-import org.apache.poi.hslf.usermodel.*;
+import org.apache.poi.ddf.EscherContainerRecord;
+import org.apache.poi.ddf.EscherOptRecord;
+import org.apache.poi.ddf.EscherProperties;
+import org.apache.poi.ddf.EscherSpRecord;
+import org.apache.poi.hslf.usermodel.HSLFGroupShape;
+import org.apache.poi.hslf.usermodel.HSLFShape;
+import org.apache.poi.hslf.usermodel.HSLFTextParagraph;
+import org.apache.poi.hslf.usermodel.HSLFTextShape;
 import org.apache.poi.sl.usermodel.ShapeContainer;
 import org.apache.poi.sl.usermodel.ShapeType;
 
@@ -27,7 +33,7 @@ import org.apache.poi.sl.usermodel.ShapeType;
  *
  *  @author Yegor Kozlov
  */
-public final class Line extends HSLFSimpleShape {
+public final class Line extends HSLFTextShape implements org.apache.poi.sl.usermodel.Line<HSLFTextParagraph> {
     public Line(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape> parent){
         super(escherRecord, parent);
     }
@@ -64,23 +70,23 @@ public final class Line extends HSLFSimpleShape {
         return _escherContainer;
     }
     
-    /**
-     * Sets the orientation of the line, if inverse is false, then line goes
-     * from top-left to bottom-right, otherwise use inverse equals true 
-     *
-     * @param inverse the orientation of the line
-     */
-    public void setInverse(boolean inverse) {
-        setShapeType(inverse ? ShapeType.LINE_INV : ShapeType.LINE);
-    }
-    
-    /**
-     * Gets the orientation of the line, if inverse is false, then line goes
-     * from top-left to bottom-right, otherwise inverse equals true 
-     *
-     * @return inverse the orientation of the line
-     */
-    public boolean isInverse() {
-        return (getShapeType() == ShapeType.LINE_INV);
-    }
+//    /**
+//     * Sets the orientation of the line, if inverse is false, then line goes
+//     * from top-left to bottom-right, otherwise use inverse equals true 
+//     *
+//     * @param inverse the orientation of the line
+//     */
+//    public void setInverse(boolean inverse) {
+//        setShapeType(inverse ? ShapeType.LINE_INV : ShapeType.LINE);
+//    }
+//    
+//    /**
+//     * Gets the orientation of the line, if inverse is false, then line goes
+//     * from top-left to bottom-right, otherwise inverse equals true 
+//     *
+//     * @return inverse the orientation of the line
+//     */
+//    public boolean isInverse() {
+//        return (getShapeType() == ShapeType.LINE_INV);
+//    }
 }

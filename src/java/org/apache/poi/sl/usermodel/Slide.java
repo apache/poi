@@ -18,20 +18,26 @@
 package org.apache.poi.sl.usermodel;
 
 public interface Slide<T extends Shape, SS extends SlideShow, N extends Notes<T,SS>> extends Sheet<T, SS> {
-	N getNotes();
-	void setNotes(N notes);
+    N getNotes();
+    void setNotes(N notes);
 
-	boolean getFollowMasterBackground();
-	void setFollowMasterBackground(boolean follow);
+    boolean getFollowMasterBackground();
+    void setFollowMasterBackground(boolean follow);
 
-	boolean getFollowMasterColourScheme();
-	void setFollowMasterColourScheme(boolean follow);
+    boolean getFollowMasterColourScheme();
+    void setFollowMasterColourScheme(boolean follow);
 
-	boolean getFollowMasterObjects();
-	void setFollowMasterObjects(boolean follow);
+    boolean getFollowMasterObjects();
+    void setFollowMasterObjects(boolean follow);
 
-	/**
-	 * @return the 1-based slide no.
-	 */
-	int getSlideNumber();
+    /**
+     * @return the 1-based slide no.
+     */
+    int getSlideNumber();
+
+    /**
+     * @return title of this slide or null if title is not set
+     */
+    String getTitle();
+
 }

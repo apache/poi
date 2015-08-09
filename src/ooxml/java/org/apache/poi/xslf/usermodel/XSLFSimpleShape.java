@@ -19,8 +19,6 @@
 
 package org.apache.poi.xslf.usermodel;
 
-import static org.apache.poi.sl.usermodel.PaintStyle.TRANSPARENT_PAINT;
-
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;
 
@@ -31,10 +29,15 @@ import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.sl.draw.geom.CustomGeometry;
 import org.apache.poi.sl.draw.geom.Guide;
 import org.apache.poi.sl.draw.geom.PresetGeometries;
-import org.apache.poi.sl.usermodel.*;
+import org.apache.poi.sl.usermodel.FillStyle;
+import org.apache.poi.sl.usermodel.LineDecoration;
 import org.apache.poi.sl.usermodel.LineDecoration.DecorationShape;
 import org.apache.poi.sl.usermodel.LineDecoration.DecorationSize;
+import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
+import org.apache.poi.sl.usermodel.ShapeType;
+import org.apache.poi.sl.usermodel.SimpleShape;
+import org.apache.poi.sl.usermodel.StrokeStyle;
 import org.apache.poi.sl.usermodel.StrokeStyle.LineCap;
 import org.apache.poi.sl.usermodel.StrokeStyle.LineCompound;
 import org.apache.poi.sl.usermodel.StrokeStyle.LineDash;
@@ -219,7 +222,6 @@ public abstract class XSLFSimpleShape extends XSLFShape implements SimpleShape {
      */
     public Color getLineColor() {
         PaintStyle ps = getLinePaint();
-        if (ps == null || ps == TRANSPARENT_PAINT) return null;
         if (ps instanceof SolidPaint) {
             return ((SolidPaint)ps).getSolidColor().getColor();
         }
@@ -232,7 +234,7 @@ public abstract class XSLFSimpleShape extends XSLFShape implements SimpleShape {
                 CTLineProperties spPr = shape.getSpPr().getLn();
                 if (spPr != null) {
                     if (spPr.isSetNoFill()) {
-                        setValue(TRANSPARENT_PAINT); // use it as 'nofill' value
+                        setValue(null); // use it as 'nofill' value
                         return true;
                     }
                     
@@ -266,7 +268,7 @@ public abstract class XSLFSimpleShape extends XSLFShape implements SimpleShape {
         
         // line color was not found, check if it is defined in the theme
         CTShapeStyle style = getSpStyle();
-        if (style == null) return TRANSPARENT_PAINT;
+        if (style == null) return null;
         
         // get a reference to a line style within the style matrix.
         CTStyleMatrixReference lnRef = style.getLnRef();
@@ -279,7 +281,7 @@ public abstract class XSLFSimpleShape extends XSLFShape implements SimpleShape {
             paint = getPaint(lnProps, phClr);
         }
 
-        return paint == null ? TRANSPARENT_PAINT : paint;
+        return paint;
     }
     
     /**
@@ -524,7 +526,6 @@ public abstract class XSLFSimpleShape extends XSLFShape implements SimpleShape {
      */
     public Color getFillColor() {
         PaintStyle ps = getFillPaint();
-        if (ps == null || ps == TRANSPARENT_PAINT) return null;
         if (ps instanceof SolidPaint) {
             return ((SolidPaint)ps).getSolidColor().getColor();
         }

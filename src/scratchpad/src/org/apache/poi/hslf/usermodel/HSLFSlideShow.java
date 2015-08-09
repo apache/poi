@@ -132,6 +132,20 @@ public final class HSLFSlideShow implements SlideShow {
 		this(new HSLFSlideShowImpl(inputStream));
 	}
 
+    /**
+     * Constructs a Powerpoint document from an POIFSFileSystem.
+     */
+    public HSLFSlideShow(POIFSFileSystem inputStream) throws IOException {
+        this(new HSLFSlideShowImpl(inputStream));
+    }
+
+    /**
+     * Constructs a Powerpoint document from an DirectoryNode.
+     */
+    public HSLFSlideShow(DirectoryNode root) throws IOException {
+        this(new HSLFSlideShowImpl(root));
+    }
+
 	/**
 	 * Use the PersistPtrHolder entries to figure out what is the "most recent"
 	 * version of all the core records (Document, Notes, Slide etc), and save a

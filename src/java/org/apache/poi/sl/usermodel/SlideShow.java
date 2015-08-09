@@ -21,7 +21,6 @@ import java.awt.Dimension;
 import java.io.IOException;
 import java.util.List;
 
-import org.apache.poi.sl.usermodel.PictureData;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
 
 public interface SlideShow {

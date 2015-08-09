@@ -44,8 +44,12 @@ public class XSLFDrawing {
         XmlObject[] cNvPr = sheet.getSpTree().selectPath(
                 "declare namespace p='http://schemas.openxmlformats.org/presentationml/2006/main' .//*/p:cNvPr");
         for(XmlObject o : cNvPr) {
-            CTNonVisualDrawingProps p = (CTNonVisualDrawingProps)o;
-            _shapeId = (int)Math.max(_shapeId, p.getId());
+            // powerpoint generates AlternateContent elements which cNvPr elements aren't recognized
+            // ignore them for now
+            if (o instanceof CTNonVisualDrawingProps) {
+                CTNonVisualDrawingProps p = (CTNonVisualDrawingProps)o;
+                _shapeId = (int)Math.max(_shapeId, p.getId());
+            }
         }
     }
 
