@@ -58,7 +58,7 @@ public class TestThemesTable {
             "f79646", // Accent6
             "0000ff", // Hlink
             "800080"  // FolHlink
-        };
+    };
 
     @Test
     public void testThemesTableColors() throws Exception {
@@ -75,9 +75,8 @@ public class TestThemesTable {
         Map<String,XSSFWorkbook> workbooks = new LinkedHashMap<String, XSSFWorkbook>();
         workbooks.put(testFileSimple, simple);
         workbooks.put("Re-Saved_" + testFileSimple, simpleRS);
-        // TODO Fix these to work!
-//        workbooks.put(testFileComplex, complex);
-//        workbooks.put("Re-Saved_" + testFileComplex, complexRS);
+        workbooks.put(testFileComplex, complex);
+        workbooks.put("Re-Saved_" + testFileComplex, complexRS);
         
         // Sanity check
         assertEquals(rgbExpected.length, rgbExpected.length);
@@ -100,8 +99,9 @@ public class TestThemesTable {
                 XSSFCell cell = row.getCell(0);
                 assertNotNull(
                         "Missing cell " + ref + " in " + whatWorkbook, cell);
-                
-                ThemeElement themeElem = ThemeElement.byId(rn-startRN);
+
+                int expectedThemeIdx = rn-startRN;
+                ThemeElement themeElem = ThemeElement.byId(expectedThemeIdx);
                 assertEquals(
                         "Wrong theme at " + ref + " in " + whatWorkbook,
                         themeElem.name.toLowerCase(), cell.getStringCellValue());
@@ -120,9 +120,7 @@ public class TestThemesTable {
                 // Check the RGB part (no tint)
                 assertEquals(
                         "Wrong theme colour " + themeElem.name + " on " + whatWorkbook,
-                        rgbExpected[rn], Hex.encodeHexString(color.getRGB()));
-                // Check the Theme ID
-                int expectedThemeIdx = rn - startRN;
+                        rgbExpected[expectedThemeIdx], Hex.encodeHexString(color.getRGB()));
                 long themeIdx = font.getCTFont().getColorArray(0).getTheme();
                 assertEquals(
                         "Wrong theme index " + expectedThemeIdx + " on " + whatWorkbook,
