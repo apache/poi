@@ -150,7 +150,6 @@ public class TestThemesTable {
      * Column C = Explicit Colour Foreground
      * Column E = Explicit Colour Background, Black Foreground
      * Column G = Conditional Formatting Backgrounds
-     * (Row 4 = White by Lt2)
      */
     @Test
     public void themedAndNonThemedColours() {
@@ -158,26 +157,23 @@ public class TestThemesTable {
         XSSFSheet sheet = wb.getSheetAt(0);
         XSSFCellStyle style;
         XSSFColor color;
+        XSSFCell cell;
         
-        String[] names = {"Black","White","Grey","Blue","Red","Green"};
-        int[] themes = {1,0,2,3,4,5};
-        assertEquals(names.length, themes.length);
+        String[] names = {"White","Black","Grey","Dark Blue","Blue","Red","Green"};
+        assertEquals(7, names.length);
         
         // Check the non-CF colours in Columns A, B, C and E
-        for (int rn=2; rn<8; rn++) {
-            int idx = rn-2;
+        for (int rn=1; rn<8; rn++) {
+            int idx = rn-1;
             XSSFRow row = sheet.getRow(rn);
             assertNotNull("Missing row " + rn, row);
             
-            // Theme cells aren't quite in the same order...
+            // Theme cells come first
             XSSFCell themeCell = row.getCell(0);
-            if (idx == 1) themeCell = sheet.getRow(idx).getCell(0);
-            if (idx >= 2) themeCell = sheet.getRow(idx+1).getCell(0);
+            ThemeElement themeElem = ThemeElement.byId(idx);
+            assertCellContents(themeElem.name, themeCell);
 
             // Sanity check names
-            int themeIdx = themes[idx];
-            ThemeElement themeElem = ThemeElement.byId(themeIdx);
-            assertCellContents(themeElem.name, themeCell);
             assertCellContents(names[idx], row.getCell(1));
             assertCellContents(names[idx], row.getCell(2));
             assertCellContents(names[idx], row.getCell(4));
@@ -187,16 +183,17 @@ public class TestThemesTable {
             style = themeCell.getCellStyle();
             color = style.getFont().getXSSFColor();
             assertEquals(true, color.isThemed());
-            assertEquals(themeIdx, color.getTheme());
-            assertEquals(rgbExpected[themeIdx], Hex.encodeHexString(color.getRGB()));
+            assertEquals(idx, color.getTheme());
+            assertEquals(rgbExpected[idx], Hex.encodeHexString(color.getRGB()));
             //  B: Theme Based, Foreground
-            style = row.getCell(1).getCellStyle();
+            cell = row.getCell(1);
+            style = cell.getCellStyle();
             color = style.getFont().getXSSFColor();
-            // TODO Fix this!
-            if (idx < 2) {
-                assertEquals(true, color.isThemed());
-                assertEquals(themeIdx, color.getTheme());
-                assertEquals(rgbExpected[themeIdx], Hex.encodeHexString(color.getRGB()));
+            assertEquals(true, color.isThemed());
+            // TODO Fix the grey theme color in Column B
+            if (idx != 2) {
+                assertEquals(idx, color.getTheme());
+                assertEquals(rgbExpected[idx], Hex.encodeHexString(color.getRGB()));
             }
         }
         
