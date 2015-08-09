@@ -150,6 +150,8 @@ public class TestThemesTable {
      * Column C = Explicit Colour Foreground
      * Column E = Explicit Colour Background, Black Foreground
      * Column G = Conditional Formatting Backgrounds
+     * 
+     * Note - Grey Row has an odd way of doing the styling... 
      */
     @Test
     public void themedAndNonThemedColours() {
@@ -160,6 +162,10 @@ public class TestThemesTable {
         XSSFCell cell;
         
         String[] names = {"White","Black","Grey","Dark Blue","Blue","Red","Green"};
+        String[] explicitFHexes = { "FFFFFFFF", "FF000000", "FFC0C0C0", "FF002060",
+                                    "FF0070C0", "FFFF0000", "FF00B050" };
+        String[] explicitBHexes = { "FFFFFFFF", "FF000000", "FFC0C0C0", "FF002060",
+                                    "FF0000FF", "FFFF0000", "FF00FF00" };
         assertEquals(7, names.length);
         
         // Check the non-CF colours in Columns A, B, C and E
@@ -178,23 +184,50 @@ public class TestThemesTable {
             assertCellContents(names[idx], row.getCell(2));
             assertCellContents(names[idx], row.getCell(4));
             
+            
             // Check the colours
+            
             //  A: Theme Based, Foreground
             style = themeCell.getCellStyle();
             color = style.getFont().getXSSFColor();
             assertEquals(true, color.isThemed());
             assertEquals(idx, color.getTheme());
             assertEquals(rgbExpected[idx], Hex.encodeHexString(color.getRGB()));
+            
             //  B: Theme Based, Foreground
             cell = row.getCell(1);
             style = cell.getCellStyle();
             color = style.getFont().getXSSFColor();
             assertEquals(true, color.isThemed());
-            // TODO Fix the grey theme color in Column B
             if (idx != 2) {
                 assertEquals(idx, color.getTheme());
                 assertEquals(rgbExpected[idx], Hex.encodeHexString(color.getRGB()));
+            } else {
+                assertEquals(1, color.getTheme());
+                assertEquals(0.50, color.getTint(), 0.001);
             }
+            
+            //  C: Explicit, Foreground
+            cell = row.getCell(2);
+            style = cell.getCellStyle();
+            color = style.getFont().getXSSFColor();
+            assertEquals(false, color.isThemed());
+            assertEquals(explicitFHexes[idx], color.getARGBHex());
+            
+            // E: Explicit Background, Foreground all Black
+            cell = row.getCell(4);
+            style = cell.getCellStyle();
+            
+            color = style.getFont().getXSSFColor();
+            assertEquals(true, color.isThemed());
+            assertEquals("FF000000", color.getARGBHex());
+            
+            color = style.getFillForegroundXSSFColor();
+            assertEquals(false, color.isThemed());
+            assertEquals(explicitBHexes[idx], color.getARGBHex());
+            color = style.getFillBackgroundColorColor();
+            assertEquals(false, color.isThemed());
+            assertEquals(null, color.getARGBHex());
         }
         
         // Check the CF colours
