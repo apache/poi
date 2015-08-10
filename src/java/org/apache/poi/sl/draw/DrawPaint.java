@@ -357,17 +357,17 @@ public class DrawPaint {
      */
     private static Color HSL2RGB(double h, double s, double l, double alpha) {
         if (s <0.0f || s > 100.0f) {
-            String message = "Color parameter outside of expected range - Saturation";
+            String message = "Color parameter outside of expected range - Saturation: " + s;
             throw new IllegalArgumentException( message );
         }
 
         if (l <0.0f || l > 100.0f) {
-            String message = "Color parameter outside of expected range - Luminance";
+            String message = "Color parameter outside of expected range - Luminance: " + l;
             throw new IllegalArgumentException( message );
         }
 
         if (alpha <0.0f || alpha > 1.0f) {
-            String message = "Color parameter outside of expected range - Alpha";
+            String message = "Color parameter outside of expected range - Alpha: " + alpha;
             throw new IllegalArgumentException( message );
         }
 
