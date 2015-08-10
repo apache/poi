@@ -97,7 +97,7 @@ public class XSLFFileHandler extends AbstractFileHandler {
 	// a test-case to test this locally without executing the full TestAllFiles
 	@Test
 	public void test() throws Exception {
-		InputStream stream = new FileInputStream("test-data/slideshow/SampleShow.pptx");
+		InputStream stream = new FileInputStream("test-data/slideshow/ae.ac.uaeu.faculty_nafaachbili_GeomLec1.pptx");
 		try {
 			handleFile(stream);
 		} finally {
@@ -105,10 +105,9 @@ public class XSLFFileHandler extends AbstractFileHandler {
 		}
 	}
 
-
     // a test-case to test this locally without executing the full TestAllFiles
     @Test
     public void testExtractor() throws Exception {
-        handleExtracting(new File("test-data/slideshow/testPPT.thmx"));
+        handleExtracting(new File("test-data/slideshow/ae.ac.uaeu.faculty_nafaachbili_GeomLec1.pptx"));
     }
 }
