@@ -17,50 +17,32 @@
 package org.apache.poi.xwpf.usermodel;
 
 import org.apache.poi.util.Internal;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTHyperlink;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSimpleField;
 
 /**
- * A run of text with a Hyperlink applied to it.
- * Any given Hyperlink may be made up of multiple of these.
+ * A run of text which is part of a field, such as Title
+ *  of Page number or Author.
+ * Any given Field may be made up of multiple of these.
  */
-public class XWPFHyperlinkRun extends XWPFRun {
-    private CTHyperlink hyperlink;
+public class XWPFFieldRun extends XWPFRun {
+    private CTSimpleField field;
 
-    public XWPFHyperlinkRun(CTHyperlink hyperlink, CTR run, IRunBody p) {
+    public XWPFFieldRun(CTSimpleField field, CTR run, IRunBody p) {
         super(run, p);
-        this.hyperlink = hyperlink;
+        this.field = field;
     }
 
     @Internal
-    public CTHyperlink getCTHyperlink() {
-        return hyperlink;
+    public CTSimpleField getCTField() {
+        return field;
     }
 
-    public String getAnchor() {
-        return hyperlink.getAnchor();
+    public String getFieldInstruction() {
+        return field.getInstr();
     }
 
-    /**
-     * Returns the ID of the hyperlink, if one is set.
-     */
-    public String getHyperlinkId() {
-        return hyperlink.getId();
-    }
-
-    public void setHyperlinkId(String id) {
-        hyperlink.setId(id);
-    }
-
-    /**
-     * If this Hyperlink is an external reference hyperlink,
-     * return the object for it.
-     */
-    public XWPFHyperlink getHyperlink(XWPFDocument document) {
-        String id = getHyperlinkId();
-        if (id == null)
-            return null;
-
-        return document.getHyperlinkByID(id);
+    public void setFieldInstruction(String instruction) {
+        field.setInstr(instruction);
     }
 }
