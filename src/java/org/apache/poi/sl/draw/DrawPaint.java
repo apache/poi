@@ -356,15 +356,10 @@ public class DrawPaint {
      *  @returns the RGB Color object
      */
     private static Color HSL2RGB(double h, double s, double l, double alpha) {
-        if (s <0.0f || s > 100.0f) {
-            String message = "Color parameter outside of expected range - Saturation: " + s;
-            throw new IllegalArgumentException( message );
-        }
-
-        if (l <0.0f || l > 100.0f) {
-            String message = "Color parameter outside of expected range - Luminance: " + l;
-            throw new IllegalArgumentException( message );
-        }
+        // we clamp the values, as it possible to come up with more than 100% sat/lum
+        // (see links in applyColorTransform() for more info)
+        s = Math.max(0, Math.min(100, s));
+        l = Math.max(0, Math.min(100, l));
 
         if (alpha <0.0f || alpha > 1.0f) {
             String message = "Color parameter outside of expected range - Alpha: " + alpha;
