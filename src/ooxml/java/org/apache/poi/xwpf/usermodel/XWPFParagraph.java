@@ -131,6 +131,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * sub-paragraph that correspond to character text
      * runs, and builds the appropriate runs for these.
      */
+    @SuppressWarnings("deprecation")
     private void buildRunsInOrderFromXml(XmlObject object) {
         XmlCursor c = object.newCursor();
         c.selectPath("child::*");
@@ -1322,7 +1323,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * @return a new text run
      */
     public XWPFRun createRun() {
-        XWPFRun xwpfRun = new XWPFRun(paragraph.addNewR(), this);
+        XWPFRun xwpfRun = new XWPFRun(paragraph.addNewR(), (IRunBody)this);
         runs.add(xwpfRun);
         iruns.add(xwpfRun);
         return xwpfRun;
@@ -1337,7 +1338,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
     public XWPFRun insertNewRun(int pos) {
         if (pos >= 0 && pos <= paragraph.sizeOfRArray()) {
             CTR ctRun = paragraph.insertNewR(pos);
-            XWPFRun newRun = new XWPFRun(ctRun, this);
+            XWPFRun newRun = new XWPFRun(ctRun, (IRunBody)this);
 
             // To update the iruns, find where we're going
             // in the normal runs, and go in there
@@ -1358,6 +1359,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
         }
         return null;
     }
+    // TODO Add methods to allow adding a HyperlinkRun or a FieldRun
 
     /**
      * this methods parse the paragraph and search for the string searched.
@@ -1369,10 +1371,12 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      */
     public TextSegement searchText(String searched, PositionInParagraph startPos) {
         int startRun = startPos.getRun(),
-                startText = startPos.getText(),
-                startChar = startPos.getChar();
+            startText = startPos.getText(),
+            startChar = startPos.getChar();
         int beginRunPos = 0, candCharPos = 0;
         boolean newList = false;
+        
+        @SuppressWarnings("deprecation")
         CTR[] rArray = paragraph.getRArray();
         for (int runPos = startRun; runPos < rArray.length; runPos++) {
             int beginTextPos = 0, beginCharPos = 0, textPos = 0, charPos = 0;
@@ -1433,6 +1437,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      *
      * @param segment
      */
+    @SuppressWarnings("deprecation")
     public String getText(TextSegement segment) {
         int runBegin = segment.getBeginRun();
         int textBegin = segment.getBeginText();
@@ -1473,6 +1478,12 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
         if (pos >= 0 && pos < paragraph.sizeOfRArray()) {
             // Remove the run from our high level lists
             XWPFRun run = runs.get(pos);
+            if (run instanceof XWPFHyperlinkRun ||
+                run instanceof XWPFFieldRun) {
+                // TODO Add support for removing these kinds of nested runs,
+                //  which aren't on the CTP -> R array, but CTP -> XXX -> R array
+                throw new IllegalArgumentException("Removing Field or Hyperlink runs not yet supported");
+            }
             runs.remove(pos);
             iruns.remove(run);
             // Remove the run from the low-level XML
