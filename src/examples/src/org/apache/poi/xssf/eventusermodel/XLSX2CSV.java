@@ -31,6 +31,8 @@ import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.ss.usermodel.BuiltinFormats;
 import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.xssf.eventusermodel.XSSFSheetXMLHandler.SheetContentsHandler;
+import org.apache.poi.xssf.extractor.XSSFEventBasedExcelExtractor;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
@@ -57,12 +59,12 @@ import org.xml.sax.helpers.DefaultHandler;
  * because the standard POI SharedStringsTable grows very
  * quickly with the number of unique strings.
  * <p/>
- * Thanks to Eric Smith for a patch that fixes a problem
- * triggered by cells with multiple "t" elements, which is
- * how Excel represents different formats (e.g., one word
- * plain and one word bold).
- * 
- * @author Chris Lott
+ * For a more advanced implementation of SAX event parsing
+ * of XLSX files, see {@link XSSFEventBasedExcelExtractor}
+ * and {@link XSSFSheetXMLHandler}. Note that some use cases,
+ * it may be possible to simply use those with a custom 
+ * {@link SheetContentsHandler} and no SAX code needed of
+ * your own!
  */
 public class XLSX2CSV {
 
@@ -195,12 +197,19 @@ public class XLSX2CSV {
                 else if (cellStyleStr != null) {
                     // It's a number, but almost certainly one
                     //  with a special style or format 
-                    int styleIndex = Integer.parseInt(cellStyleStr);
-                    XSSFCellStyle style = stylesTable.getStyleAt(styleIndex);
-                    this.formatIndex = style.getDataFormat();
-                    this.formatString = style.getDataFormatString();
-                    if (this.formatString == null)
-                        this.formatString = BuiltinFormats.getBuiltinFormat(this.formatIndex);
+                    XSSFCellStyle style = null;
+                    if (cellStyleStr != null) {
+                        int styleIndex = Integer.parseInt(cellStyleStr);
+                        style = stylesTable.getStyleAt(styleIndex);
+                    } else if (stylesTable.getNumCellStyles() > 0) {
+                        style = stylesTable.getStyleAt(0);
+                    }
+                    if (style != null) {
+                        this.formatIndex = style.getDataFormat();
+                        this.formatString = style.getDataFormatString();
+                        if (this.formatString == null)
+                            this.formatString = BuiltinFormats.getBuiltinFormat(this.formatIndex);
+                    }
                 }
             }
 
@@ -256,7 +265,7 @@ public class XLSX2CSV {
 
                     case NUMBER:
                         String n = value.toString();
-                        if (this.formatString != null)
+                        if (this.formatString != null && n.length() > 0)
                             thisStr = formatter.formatRawCellContents(Double.parseDouble(n), this.formatIndex, this.formatString);
                         else
                             thisStr = n;
