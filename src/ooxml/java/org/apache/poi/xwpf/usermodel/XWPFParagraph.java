@@ -142,11 +142,19 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
                 iruns.add(r);
             }
             if (o instanceof CTHyperlink) {
-                CTHyperlink link = (CTHyperlink) o;
+                CTHyperlink link = (CTHyperlink)o;
                 for (CTR r : link.getRArray()) {
                     XWPFHyperlinkRun hr = new XWPFHyperlinkRun(link, r, this);
                     runs.add(hr);
                     iruns.add(hr);
+                }
+            }
+            if (o instanceof CTSimpleField) {
+                CTSimpleField field = (CTSimpleField)o;
+                for (CTR r : field.getRArray()) {
+                    XWPFFieldRun fr = new XWPFFieldRun(field, r, this);
+                    runs.add(fr);
+                    iruns.add(fr);
                 }
             }
             if (o instanceof CTSdtBlock) {
@@ -159,13 +167,6 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
             }
             if (o instanceof CTRunTrackChange) {
                 for (CTR r : ((CTRunTrackChange) o).getRArray()) {
-                    XWPFRun cr = new XWPFRun(r, this);
-                    runs.add(cr);
-                    iruns.add(cr);
-                }
-            }
-            if (o instanceof CTSimpleField) {
-                for (CTR r : ((CTSimpleField) o).getRArray()) {
                     XWPFRun cr = new XWPFRun(r, this);
                     runs.add(cr);
                     iruns.add(cr);
