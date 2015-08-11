@@ -228,7 +228,7 @@ public final class TestOPCComplianceCoreProperties extends TestCase {
 	 */
 	public void testLimitedXSITypeAttribute_PresentWithUnauthorizedValue() {
 		String msg = extractInvalidFormatMessage("LimitedXSITypeAttribute_PresentWithUnauthorizedValueFAIL.docx");
-		assertEquals("The element 'modified' must have the 'xsi:type' attribute with the value 'dcterms:W3CDTF' !", msg);
+		assertEquals("The element 'modified' must have the 'xsi:type' attribute with the value 'dcterms:W3CDTF', but had 'W3CDTF' !", msg);
 	}
 	
     /**

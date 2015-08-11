@@ -279,9 +279,9 @@ public final class PackagePropertiesUnmarshaller implements PartUnmarshaller {
 						+ "' must have the 'xsi:type' attribute present !");
 
 			// Check for the attribute value => 'dcterms:W3CDTF'
-			if (!typeAtt.getValue().equals("dcterms:W3CDTF"))
+			if (!typeAtt.getValue().equals(el.getPrefix() + ":W3CDTF"))
 				throw new InvalidFormatException("The element '" + elName
-						+ "' must have the 'xsi:type' attribute with the value 'dcterms:W3CDTF' !");
+						+ "' must have the 'xsi:type' attribute with the value '" + el.getPrefix() + ":W3CDTF', but had '" + typeAtt.getValue() + "' !");
 		}
 
 		// Check its children

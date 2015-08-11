@@ -83,7 +83,10 @@ public class TestAllFiles {
         HANDLERS.put(".docx", new XWPFFileHandler());
         HANDLERS.put(".dotx", new XWPFFileHandler());
         HANDLERS.put(".docm", new XWPFFileHandler());
-        HANDLERS.put(".ooxml", new XWPFFileHandler());		// OPCPackage
+
+        // OpenXML4J files
+        HANDLERS.put(".ooxml", new OPCFileHandler());		// OPCPackage
+        HANDLERS.put(".zip", new OPCFileHandler());      // OPCPackage
 
         // Powerpoint
         HANDLERS.put(".ppt", new HSLFFileHandler());
@@ -209,7 +212,6 @@ public class TestAllFiles {
         // TODO: good to ignore?
         EXPECTED_FAILURES.add("spreadsheet/sample-beta.xlsx");
         EXPECTED_FAILURES.add("spreadsheet/49931.xls");
-        EXPECTED_FAILURES.add("openxml4j/ContentTypeHasParameters.ooxml");
 
         // This is actually a spreadsheet!
         EXPECTED_FAILURES.add("hpsf/TestRobert_Flaherty.doc");
