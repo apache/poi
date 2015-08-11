@@ -23,7 +23,6 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.PushbackInputStream;
 
-import org.apache.poi.openxml4j.OpenXML4JTestDataSamples;
 import org.apache.poi.openxml4j.opc.ContentTypes;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
@@ -36,8 +35,7 @@ public class OPCFileHandler extends AbstractFileHandler {
         // ignore password protected files
         if (POIXMLDocumentHandler.isEncrypted(stream)) return;
 
-        InputStream is = OpenXML4JTestDataSamples.openSampleStream("dcterms_bug_56479.zip");
-        OPCPackage p = OPCPackage.open(is);
+        OPCPackage p = OPCPackage.open(stream);
         
         for (PackagePart part : p.getParts()) {
             if (part.getPartName().toString().equals("/docProps/core.xml")) {
