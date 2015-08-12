@@ -174,24 +174,42 @@ public class XSSFFont implements Font {
     }
 
     /**
-     * get the font height in point.
-     *
-     * @return short - height in point
+     * Get the font height in unit's of 1/20th of a point.
+     * <p>
+     * For many users, the related {@link #getFontHeightInPoints()}
+     *  will be more helpful, as that returns font heights in the
+     *  more familiar points units, eg 10, 12, 14.
+
+     * @return short - height in 1/20ths of a point
+     * @see #getFontHeightInPoints()
      */
     public short getFontHeight() {
-        CTFontSize size = _ctFont.sizeOfSzArray() == 0 ? null : _ctFont.getSzArray(0);
-        if (size != null) {
-            double fontHeight = size.getVal();
-            return (short)(fontHeight*20);
-        }
-        return (short)(DEFAULT_FONT_SIZE*20);
+        return (short)(getFontHeightRaw()*20);
     }
 
     /**
+     * Get the font height in points.
+     * <p>
+     * This will return the same font height that is shown in Excel,
+     *  such as 10 or 14 or 28.
+     * @return short - height in the familiar unit of measure - points
      * @see #getFontHeight()
      */
     public short getFontHeightInPoints() {
-        return (short)(getFontHeight()/20);
+        return (short)getFontHeightRaw();
+    }
+    
+    /**
+     * Return the raw font height, in points, but also
+     *  including fractions.
+     */
+    private double getFontHeightRaw() {
+        CTFontSize size = _ctFont.sizeOfSzArray() == 0 ? null : _ctFont.getSzArray(0);
+        if (size != null) {
+            double fontHeight = size.getVal();
+            return fontHeight;
+        }
+        return DEFAULT_FONT_SIZE;
     }
 
     /**
