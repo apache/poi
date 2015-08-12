@@ -48,11 +48,13 @@ import org.apache.poi.ss.util.CellReference;
  *
  */
 public final class TestFormulaEvaluatorBugs extends TestCase {
-    private static final boolean OUTPUT_TEST_FILES = false;
+    private static boolean OUTPUT_TEST_FILES = false;
     private String tmpDirName;
 
     protected void setUp() {
         tmpDirName = System.getProperty("java.io.tmpdir");
+        OUTPUT_TEST_FILES = Boolean.parseBoolean(
+                System.getProperty("org.apache.poi.test.output_test_files", "False"));
     }
 
     /**
@@ -529,10 +531,12 @@ public final class TestFormulaEvaluatorBugs extends TestCase {
         cell = row.getCell(CellReference.convertColStringToIndex("H"));
         assertEquals("A", cell.getStringCellValue());
 
-        // Enable this block to write out, and check in Excel
-//FileOutputStream out = new FileOutputStream("/tmp/test.xls");
-//wb.write(out);
-//out.close();
+        // Enable this to write out + check in Excel
+        if (OUTPUT_TEST_FILES) {
+            FileOutputStream out = new FileOutputStream("/tmp/test.xls");
+            wb.write(out);
+            out.close();
+        }
     }
     private Ptg[] getPtgs(HSSFCell cell) {
         assertEquals(HSSFCell.CELL_TYPE_FORMULA, cell.getCellType());
