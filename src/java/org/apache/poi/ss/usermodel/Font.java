@@ -138,20 +138,25 @@ public interface Font {
     void setFontHeightInPoints(short height);
 
     /**
-     * get the font height in unit's of 1/20th of a point.  Maybe you might want to
-     * use the getFontHeightInPoints which matches to the familiar 10, 12, 14 etc..
+     * Get the font height in unit's of 1/20th of a point.
+     * <p>
+     * For many users, the related {@link #getFontHeightInPoints()}
+     *  will be more helpful, as that returns font heights in the
+     *  more familiar points units, eg 10, 12, 14.
+
      * @return short - height in 1/20ths of a point
      * @see #getFontHeightInPoints()
      */
-
     short getFontHeight();
 
     /**
-     * get the font height
+     * Get the font height in points.
+     * <p>
+     * This will return the same font height that is shown in Excel,
+     *  such as 10 or 14 or 28.
      * @return short - height in the familiar unit of measure - points
      * @see #getFontHeight()
      */
-
     short getFontHeightInPoints();
 
     /**
