@@ -23,11 +23,18 @@ import org.apache.poi.ss.formula.eval.EvaluationException;
 import org.apache.poi.ss.formula.eval.MissingArgEval;
 import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.formula.eval.ValueEval;
+import org.apache.poi.ss.formula.ptg.Ptg;
+import org.apache.poi.ss.formula.ptg.RefPtg;
 
 /**
  * Implementation for the Excel function IF
- *
- * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
+ * <p>
+ * Note that Excel is a bit picky about the arguments to this function,
+ *  when serialised into {@link Ptg}s in a HSSF file. While most cases are
+ *  pretty chilled about the R vs V state of {@link RefPtg} arguments,
+ *  for IF special care is needed to avoid Excel showing #VALUE.
+ * See bug numbers #55324 and #55747 for the full details on this.
+ * TODO Fix this...
  */
 public final class IfFunc extends Var2or3ArgFunction {
 
