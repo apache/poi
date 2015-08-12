@@ -417,7 +417,8 @@ public final class TestFormulaEvaluatorBugs extends TestCase {
 		assertEquals(ErrorEval.NA, ve);
 	}
 
-	public void test55747_55324() throws Exception {
+	@SuppressWarnings("resource")
+    public void test55747_55324() throws Exception {
 	    HSSFWorkbook wb = new HSSFWorkbook();
         HSSFFormulaEvaluator ev = wb.getCreationHelper().createFormulaEvaluator();
         HSSFSheet ws = wb.createSheet();
@@ -464,7 +465,12 @@ public final class TestFormulaEvaluatorBugs extends TestCase {
         // Evaluate
         ev.evaluateAll();
         
-        // Check the MID Ptgs have V RefPtgs for A1
+        // Save and re-load
+        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
+        ws = wb.getSheetAt(0);
+        
+        // Check the MID Ptgs in Row 2 have V RefPtgs for A1
+        row = ws.getRow(1);
         for (int i=1; i<=4; i++) {
             cell = row.getCell(i);
             Ptg[] ptgs = getPtgs(cell);
@@ -479,33 +485,55 @@ public final class TestFormulaEvaluatorBugs extends TestCase {
         
         // H1, MID is used in the expression IF checks, so A1 should be V
         cell = row.getCell(CellReference.convertColStringToIndex("H"));
+        assertRefPtgA1('V', getPtgs(cell), 0);
         
-        // E1, MID is used in the FALSE route, so A1 should be V
+        // E1, MID is used in the FALSE route, so:
+        //  A1 should be V in the IF check
+        //  A1 should be R in the FALSE route
+        cell = row.getCell(CellReference.convertColStringToIndex("E"));
+        assertRefPtgA1('V', getPtgs(cell), 0);
+        assertRefPtgA1('R', getPtgs(cell), 6);
         
-        // 
+        // Check that, for B1, D1, F1 and G1, the references to A1
+        //  from all of IF check, True and False are V
+        cell = row.getCell(CellReference.convertColStringToIndex("B"));
+        assertRefPtgA1('V', getPtgs(cell), 0);
+//      assertRefPtgA1('V', getPtgs(cell), 4); // FIXME!
         
-        // Check that, for E1 and H1, the A1 in the IF is a V, but in the
-        //  True -> MID is an R
-        for (int cn : new int[] { 4, 7 }) {
-            cell = row.getCell(cn);
-            
-            FormulaRecordAggregate agg = (FormulaRecordAggregate)cell.getCellValueRecord();
-            FormulaRecord rec = agg.getFormulaRecord();
-            
-            // 1st is the 
-            assertEquals(RefPtg.class, rec.getParsedExpression()[0].getClass());
-            assertEquals('V', ((RefPtg)rec.getParsedExpression()[0]).getRVAType());
-            assertEquals(0,   ((RefPtg)rec.getParsedExpression()[0]).getRow());
-            assertEquals(0,   ((RefPtg)rec.getParsedExpression()[0]).getColumn());
-        }
+        cell = row.getCell(CellReference.convertColStringToIndex("D"));
+        assertRefPtgA1('V', getPtgs(cell), 0);
+//      assertRefPtgA1('V', getPtgs(cell), 6); // FIXME!
         
-        // Check that, for B1, D1, F1 and G1 
+        cell = row.getCell(CellReference.convertColStringToIndex("F"));
+        assertRefPtgA1('V', getPtgs(cell), 0);
+//      assertRefPtgA1('V', getPtgs(cell), 4); // FIXME!
+//      assertRefPtgA1('V', getPtgs(cell), 9); // FIXME!
         
-        // Check our values
-        // TODO
+        cell = row.getCell(CellReference.convertColStringToIndex("G"));
+        assertRefPtgA1('V', getPtgs(cell), 0);
+//      assertRefPtgA1('V', getPtgs(cell), 4); // FIXME!
+//      assertRefPtgA1('V', getPtgs(cell), 9); // FIXME!
         
-        // Check our PTGs
-        // TODO
+        
+        // Check our cached values were correctly evaluated
+        cell = row.getCell(CellReference.convertColStringToIndex("A"));
+        assertEquals("abc", cell.getStringCellValue());
+        cell = row.getCell(CellReference.convertColStringToIndex("B"));
+        assertEquals("ab", cell.getStringCellValue());
+        cell = row.getCell(CellReference.convertColStringToIndex("C"));
+        assertEquals("A", cell.getStringCellValue());
+        cell = row.getCell(CellReference.convertColStringToIndex("D"));
+        assertEquals("ab", cell.getStringCellValue());
+        cell = row.getCell(CellReference.convertColStringToIndex("E"));
+        assertEquals("X", cell.getStringCellValue());
+        cell = row.getCell(CellReference.convertColStringToIndex("F"));
+        assertEquals("bc", cell.getStringCellValue());
+        cell = row.getCell(CellReference.convertColStringToIndex("G"));
+        assertEquals("ab", cell.getStringCellValue());
+        cell = row.getCell(CellReference.convertColStringToIndex("H"));
+        assertEquals("A", cell.getStringCellValue());
+
+        // Enable this block to write out, and check in Excel
 //FileOutputStream out = new FileOutputStream("/tmp/test.xls");
 //wb.write(out);
 //out.close();
@@ -520,8 +548,8 @@ public final class TestFormulaEvaluatorBugs extends TestCase {
 	private void assertRefPtgA1(char rv, Ptg[] ptgs, int at) {
 	    Ptg ptg = ptgs[at];
         assertEquals(RefPtg.class, ptg.getClass());
-        assertEquals(0,   ((RefPtg)ptg).getRow());
-        assertEquals(0,   ((RefPtg)ptg).getColumn());
-        assertEquals('V', ((RefPtg)ptg).getRVAType());
+        assertEquals(0,  ((RefPtg)ptg).getRow());
+        assertEquals(0,  ((RefPtg)ptg).getColumn());
+        assertEquals(rv, ((RefPtg)ptg).getRVAType());
 	}
 }
