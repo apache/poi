@@ -29,12 +29,13 @@ import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 
 /**
- * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
- * @author Josh Micich
+ * Implementation of the various ISxxx Logical Functions, which
+ *  take a single expression argument, and return True or False.
  */
 public abstract class LogicalFunction extends Fixed1ArgFunction {
 
-	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0) {
+    @SuppressWarnings("unused")
+    public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0) {
 		ValueEval ve;
 		try {
 			ve = OperandResolver.getSingleValue(arg0, srcRowIndex, srcColumnIndex);
