@@ -27,16 +27,22 @@ import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.hssf.record.FormulaRecord;
 import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
-import org.apache.poi.ss.formula.ptg.AreaPtg;
-import org.apache.poi.ss.formula.ptg.FuncVarPtg;
-import org.apache.poi.ss.formula.ptg.Ptg;
-import org.apache.poi.ss.formula.eval.ErrorEval;
-import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.EvaluationCell;
 import org.apache.poi.ss.formula.EvaluationListener;
 import org.apache.poi.ss.formula.WorkbookEvaluator;
 import org.apache.poi.ss.formula.WorkbookEvaluatorTestHelper;
+import org.apache.poi.ss.formula.eval.ErrorEval;
+import org.apache.poi.ss.formula.eval.ValueEval;
+import org.apache.poi.ss.formula.ptg.AreaPtg;
+import org.apache.poi.ss.formula.ptg.FuncPtg;
+import org.apache.poi.ss.formula.ptg.FuncVarPtg;
+import org.apache.poi.ss.formula.ptg.Ptg;
+import org.apache.poi.ss.formula.ptg.RefPtg;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.util.CellReference;
 
 /**
  *
@@ -47,7 +53,6 @@ public final class TestFormulaEvaluatorBugs extends TestCase {
 	private String tmpDirName;
 
 	protected void setUp() {
-
 		tmpDirName = System.getProperty("java.io.tmpdir");
 	}
 
@@ -265,11 +270,10 @@ public final class TestFormulaEvaluatorBugs extends TestCase {
 			HSSFSheet s = wb.getSheetAt(i);
 			HSSFFormulaEvaluator eval = new HSSFFormulaEvaluator(wb);
 
-			for (Iterator rows = s.rowIterator(); rows.hasNext();) {
-				HSSFRow r = (HSSFRow) rows.next();
-
-				for (Iterator cells = r.cellIterator(); cells.hasNext();) {
-					HSSFCell c = (HSSFCell) cells.next();
+			for (Iterator<Row> rows = s.rowIterator(); rows.hasNext();) {
+			    HSSFRow r = (HSSFRow)rows.next();
+			    for (Iterator<Cell> cells = r.cellIterator(); cells.hasNext();) {
+			        HSSFCell c = (HSSFCell)cells.next();
 					eval.evaluateFormulaCell(c);
 				}
 			}
@@ -411,5 +415,113 @@ public final class TestFormulaEvaluatorBugs extends TestCase {
 
 		// confirm the evaluation result too
 		assertEquals(ErrorEval.NA, ve);
+	}
+
+	public void test55747_55324() throws Exception {
+	    HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFFormulaEvaluator ev = wb.getCreationHelper().createFormulaEvaluator();
+        HSSFSheet ws = wb.createSheet();
+        HSSFRow row = ws.createRow(0);
+        HSSFCell cell;
+        
+        // Our test value
+        cell = row.createCell(0);
+        cell.setCellValue("abc");
+
+        // Lots of IF cases
+        
+        cell = row.createCell(1);
+        cell.setCellFormula("IF(A1<>\"\",MID(A1,1,2),\"X\")");//if(expr,func,val)
+        
+        cell = row.createCell(2);
+        cell.setCellFormula("IF(A1<>\"\",\"A\",\"B\")");// if(expr,val,val)
+        
+        cell = row.createCell(3);
+        cell.setCellFormula("IF(A1=\"\",\"X\",MID(A1,1,2))");//if(expr,val,func),
+        
+        cell = row.createCell(4);
+        cell.setCellFormula("IF(A1<>\"\",\"X\",MID(A1,1,2))");//if(expr,val,func),
+        
+        cell = row.createCell(5);
+        cell.setCellFormula("IF(A1=\"\",MID(A1,1,2),MID(A1,2,2))");//if(exp,func,func)
+        cell = row.createCell(6);
+        cell.setCellFormula("IF(A1<>\"\",MID(A1,1,2),MID(A1,2,2))");//if(exp,func,func)
+        
+        cell = row.createCell(7);
+        cell.setCellFormula("IF(MID(A1,1,2)<>\"\",\"A\",\"B\")");//if(func_expr,val,val)
+        
+        // And some MID ones just to check
+        row = ws.createRow(1);
+        cell = row.createCell(1);
+        cell.setCellFormula("MID(A1,1,2)");
+        cell = row.createCell(2);
+        cell.setCellFormula("MID(A1,2,2)");
+        cell = row.createCell(3);
+        cell.setCellFormula("MID(A1,2,1)");
+        cell = row.createCell(4);
+        cell.setCellFormula("MID(A1,3,1)");
+        
+        // Evaluate
+        ev.evaluateAll();
+        
+        // Check the MID Ptgs have V RefPtgs for A1
+        for (int i=1; i<=4; i++) {
+            cell = row.getCell(i);
+            Ptg[] ptgs = getPtgs(cell);
+            assertEquals(4, ptgs.length);
+            assertEquals(FuncPtg.class,   ptgs[3].getClass());
+            assertEquals("MID", ((FuncPtg)ptgs[3]).getName());
+            assertRefPtgA1('V', ptgs, 0);
+        }
+        
+        // Now check the IF formulas
+        row = ws.getRow(0);
+        
+        // H1, MID is used in the expression IF checks, so A1 should be V
+        cell = row.getCell(CellReference.convertColStringToIndex("H"));
+        
+        // E1, MID is used in the FALSE route, so A1 should be V
+        
+        // 
+        
+        // Check that, for E1 and H1, the A1 in the IF is a V, but in the
+        //  True -> MID is an R
+        for (int cn : new int[] { 4, 7 }) {
+            cell = row.getCell(cn);
+            
+            FormulaRecordAggregate agg = (FormulaRecordAggregate)cell.getCellValueRecord();
+            FormulaRecord rec = agg.getFormulaRecord();
+            
+            // 1st is the 
+            assertEquals(RefPtg.class, rec.getParsedExpression()[0].getClass());
+            assertEquals('V', ((RefPtg)rec.getParsedExpression()[0]).getRVAType());
+            assertEquals(0,   ((RefPtg)rec.getParsedExpression()[0]).getRow());
+            assertEquals(0,   ((RefPtg)rec.getParsedExpression()[0]).getColumn());
+        }
+        
+        // Check that, for B1, D1, F1 and G1 
+        
+        // Check our values
+        // TODO
+        
+        // Check our PTGs
+        // TODO
+//FileOutputStream out = new FileOutputStream("/tmp/test.xls");
+//wb.write(out);
+//out.close();
+ 	}
+	private Ptg[] getPtgs(HSSFCell cell) {
+	    assertEquals(HSSFCell.CELL_TYPE_FORMULA, cell.getCellType());
+        assertEquals(FormulaRecordAggregate.class, cell.getCellValueRecord().getClass());
+        FormulaRecordAggregate agg = (FormulaRecordAggregate)cell.getCellValueRecord();
+        FormulaRecord rec = agg.getFormulaRecord();
+        return rec.getParsedExpression();
+	}
+	private void assertRefPtgA1(char rv, Ptg[] ptgs, int at) {
+	    Ptg ptg = ptgs[at];
+        assertEquals(RefPtg.class, ptg.getClass());
+        assertEquals(0,   ((RefPtg)ptg).getRow());
+        assertEquals(0,   ((RefPtg)ptg).getColumn());
+        assertEquals('V', ((RefPtg)ptg).getRVAType());
 	}
 }
