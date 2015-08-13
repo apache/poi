@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.util.List;
 
 import org.apache.poi.POIXMLDocument;
-import org.apache.poi.POIXMLException;
 import org.apache.poi.POIXMLTextExtractor;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -117,51 +116,44 @@ public class XWPFWordExtractor extends POIXMLTextExtractor {
     }
 
     public void appendParagraphText(StringBuffer text, XWPFParagraph paragraph) {
-        try {
-            CTSectPr ctSectPr = null;
-            if (paragraph.getCTP().getPPr() != null) {
-                ctSectPr = paragraph.getCTP().getPPr().getSectPr();
-            }
-
-            XWPFHeaderFooterPolicy headerFooterPolicy = null;
-
-            if (ctSectPr != null) {
-                headerFooterPolicy = new XWPFHeaderFooterPolicy(document, ctSectPr);
-                extractHeaders(text, headerFooterPolicy);
-            }
-
-
-            for (IRunElement run : paragraph.getRuns()) {
-                text.append(run.toString());
-                if (run instanceof XWPFHyperlinkRun && fetchHyperlinks) {
-                    XWPFHyperlink link = ((XWPFHyperlinkRun) run).getHyperlink(document);
-                    if (link != null)
-                        text.append(" <" + link.getURL() + ">");
-                }
-            }
-
-            // Add comments
-            XWPFCommentsDecorator decorator = new XWPFCommentsDecorator(paragraph, null);
-            String commentText = decorator.getCommentText();
-            if (commentText.length() > 0) {
-                text.append(commentText).append('\n');
-            }
-
-            // Do endnotes and footnotes
-            String footnameText = paragraph.getFootnoteText();
-            if (footnameText != null && footnameText.length() > 0) {
-                text.append(footnameText + '\n');
-            }
-
-            if (ctSectPr != null) {
-                extractFooters(text, headerFooterPolicy);
-            }
-        } catch (IOException e) {
-            throw new POIXMLException(e);
-        } catch (XmlException e) {
-            throw new POIXMLException(e);
+        CTSectPr ctSectPr = null;
+        if (paragraph.getCTP().getPPr() != null) {
+            ctSectPr = paragraph.getCTP().getPPr().getSectPr();
         }
 
+        XWPFHeaderFooterPolicy headerFooterPolicy = null;
+
+        if (ctSectPr != null) {
+            headerFooterPolicy = new XWPFHeaderFooterPolicy(document, ctSectPr);
+            extractHeaders(text, headerFooterPolicy);
+        }
+
+
+        for (IRunElement run : paragraph.getRuns()) {
+            text.append(run.toString());
+            if (run instanceof XWPFHyperlinkRun && fetchHyperlinks) {
+                XWPFHyperlink link = ((XWPFHyperlinkRun) run).getHyperlink(document);
+                if (link != null)
+                    text.append(" <" + link.getURL() + ">");
+            }
+        }
+
+        // Add comments
+        XWPFCommentsDecorator decorator = new XWPFCommentsDecorator(paragraph, null);
+        String commentText = decorator.getCommentText();
+        if (commentText.length() > 0) {
+            text.append(commentText).append('\n');
+        }
+
+        // Do endnotes and footnotes
+        String footnameText = paragraph.getFootnoteText();
+        if (footnameText != null && footnameText.length() > 0) {
+            text.append(footnameText + '\n');
+        }
+
+        if (ctSectPr != null) {
+            extractFooters(text, headerFooterPolicy);
+        }
     }
 
     private void appendTableText(StringBuffer text, XWPFTable table) {
