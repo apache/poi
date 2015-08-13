@@ -27,7 +27,7 @@ public class Configurator {
         int result = defaultValue;
         String property = System.getProperty(systemProperty);
         try {
-            result = Integer.valueOf(property);
+            result = Integer.parseInt(property);
         } catch (Exception e) {
             logger.log(POILogger.ERROR, "System property -D"+systemProperty +" do not contains a valid integer " + property);
         }

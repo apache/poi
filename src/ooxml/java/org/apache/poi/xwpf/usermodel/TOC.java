@@ -114,7 +114,7 @@ public class TOC {
         // page number run
         run = p.addNewR();
         run.addNewRPr().addNewNoProof();
-        run.addNewT().setStringValue(Integer.valueOf(page).toString());
+        run.addNewT().setStringValue(Integer.toString(page));
         run = p.addNewR();
         run.addNewRPr().addNewNoProof();
         run.addNewFldChar().setFldCharType(STFldCharType.END);

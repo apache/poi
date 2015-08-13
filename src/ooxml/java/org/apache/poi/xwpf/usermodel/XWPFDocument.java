@@ -901,7 +901,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
             String parStyle = par.getStyle();
             if (parStyle != null && parStyle.startsWith("Heading")) {
                 try {
-                    int level = Integer.valueOf(parStyle.substring("Heading".length())).intValue();
+                    int level = Integer.parseInt(parStyle.substring("Heading".length()));
                     toc.addRow(level, par.getText(), 1, "112723803");
                 } catch (NumberFormatException e) {
                     e.printStackTrace();
