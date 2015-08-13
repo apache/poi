@@ -34,10 +34,9 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTText;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STBorder;
 
 /**
- * Tests for XWPF Run
+ * Tests for XWPF Tables
  */
 public class TestXWPFTable extends TestCase {
-
     protected void setUp() {
         /*
           XWPFDocument doc = new XWPFDocument();

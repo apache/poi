@@ -26,16 +26,13 @@ import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.junit.Test;
 
 public class TestChangeTracking {
-
     @Test
     public void detection() throws Exception {
-
         XWPFDocument documentWithoutChangeTracking = XWPFTestDataSamples.openSampleDocument("bug56075-changeTracking_off.docx");
         assertFalse(documentWithoutChangeTracking.isTrackRevisions());
 
         XWPFDocument documentWithChangeTracking = XWPFTestDataSamples.openSampleDocument("bug56075-changeTracking_on.docx");
         assertTrue(documentWithChangeTracking.isTrackRevisions());
-
     }
 
     @Test
@@ -49,6 +46,7 @@ public class TestChangeTracking {
     }
 
     @Test
+    @SuppressWarnings("resource")
     public void integration() throws Exception {
         XWPFDocument doc = new XWPFDocument();
 
@@ -67,5 +65,4 @@ public class TestChangeTracking {
 
         assertTrue(document.isTrackRevisions());
     }
-
 }
