@@ -30,6 +30,7 @@ import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
 import org.apache.poi.sl.usermodel.StrokeStyle.LineCompound;
 import org.apache.poi.sl.usermodel.StrokeStyle.LineDash;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.POILogger;
 import org.apache.poi.util.Units;
 
 /**
@@ -346,11 +347,15 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape {
     }
 
     public Guide getAdjustValue(String name) {
-        if (name == null || !name.matches("adj([1-9]|10)")) {
+        if (name == null || !name.matches("adj([1-9]|10)?")) {
             throw new IllegalArgumentException("Adjust value '"+name+"' not supported.");
         }
+        
+        name = name.replace("adj", "");
+        if ("".equals(name)) name = "1";
+        
         short escherProp;
-        switch (Integer.parseInt(name.substring(3))) {
+        switch (Integer.parseInt(name)) {
             case 1: escherProp = EscherProperties.GEOMETRY__ADJUSTVALUE; break;
             case 2: escherProp = EscherProperties.GEOMETRY__ADJUST2VALUE; break;
             case 3: escherProp = EscherProperties.GEOMETRY__ADJUST3VALUE; break;
@@ -369,13 +374,14 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape {
     }
 
     public CustomGeometry getGeometry() {
+        PresetGeometries dict = PresetGeometries.getInstance();
         ShapeType st = getShapeType();
         String name = st.getOoxmlName();
-        
-        PresetGeometries dict = PresetGeometries.getInstance();
         CustomGeometry geom = dict.get(name);
         if(geom == null) {
-            throw new IllegalStateException("Unknown shape geometry: " + name);
+            if (name == null && st != null) name = st.toString();
+            logger.log(POILogger.WARN, "No preset shape definition for shapeType: "+name);
+            return null;
         }
         
         return geom;
