@@ -252,6 +252,12 @@ public class TestAllFiles {
         EXPECTED_FAILURES.add("ddf/47143.dat");
     }
 
+    private static final Set<String> IGNORED = new HashSet<String>();
+    static {
+        // need JDK8+ - https://bugs.openjdk.java.net/browse/JDK-8038081
+        IGNORED.add("slideshow/42474-2.ppt");
+    }
+    
     @Parameters(name="{index}: {0} using {1}")
     public static Iterable<Object[]> files() {
         DirectoryScanner scanner = new DirectoryScanner();
@@ -265,6 +271,7 @@ public class TestAllFiles {
         List<Object[]> files = new ArrayList<Object[]>();
         for(String file : scanner.getIncludedFiles()) {
             file = file.replace('\\', '/'); // ... failures/handlers lookup doesn't work on windows otherwise
+            if (IGNORED.contains(file)) continue;
             files.add(new Object[] { file, HANDLERS.get(getExtension(file)) });
         }
 

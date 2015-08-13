@@ -416,6 +416,7 @@ public final class HSLFSlideShowImpl extends POIDocument {
 				// Build the PictureData object from the data
                 try {
 					HSLFPictureData pict = HSLFPictureData.create(pt);
+					pict.setSignature(signature);
 
                     // Copy the data, ready to pass to PictureData
                     byte[] imgdata = new byte[imgsize];

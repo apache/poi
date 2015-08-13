@@ -23,10 +23,11 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 
 import org.apache.poi.hslf.record.Record;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
 import org.junit.Test;
 
-public class HSLFFileHandler extends POIFSFileHandler {
+public class HSLFFileHandler extends SlideShowHandler {
 	@Override
 	public void handleFile(InputStream stream) throws Exception {
 		HSLFSlideShowImpl slide = new HSLFSlideShowImpl(stream);
@@ -41,6 +42,9 @@ public class HSLFFileHandler extends POIFSFileHandler {
 		}
 		
 		handlePOIDocument(slide);
+		
+		HSLFSlideShow ss = new HSLFSlideShow(slide);
+		handleSlideShow(ss);
 	}
 	
 	// a test-case to test this locally without executing the full TestAllFiles

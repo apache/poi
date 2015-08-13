@@ -19,6 +19,7 @@ package org.apache.poi.sl.usermodel;
 
 import java.awt.Dimension;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.List;
 
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
@@ -55,4 +56,16 @@ public interface SlideShow {
      * @return the new picture reference
      */
     PictureData addPicture(byte[] pictureData, PictureType format) throws IOException;
+
+    /**
+     * Writes out the slideshow file the is represented by an instance of this
+     * class
+     *
+     * @param out
+     *            The OutputStream to write to.
+     * @throws IOException
+     *             If there is an unexpected IOException from the passed in
+     *             OutputStream
+     */
+    void write(OutputStream out) throws IOException;
 }

@@ -431,16 +431,7 @@ public final class HSLFSlideShow implements SlideShow {
 		}
 	}
 
-	/**
-	 * Writes out the slideshow file the is represented by an instance of this
-	 * class
-	 *
-	 * @param out
-	 *            The OutputStream to write to.
-	 * @throws IOException
-	 *             If there is an unexpected IOException from the passed in
-	 *             OutputStream
-	 */
+	@Override
 	public void write(OutputStream out) throws IOException {
 	    // check for text paragraph modifications
 	    for (HSLFSlide sl : getSlides()) {
