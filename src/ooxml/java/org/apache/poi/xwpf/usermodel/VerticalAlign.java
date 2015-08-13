@@ -51,7 +51,7 @@ public enum VerticalAlign {
 
     static {
         for (VerticalAlign p : values()) {
-            imap.put(new Integer(p.getValue()), p);
+            imap.put(p.getValue(), p);
         }
     }
 
@@ -62,7 +62,7 @@ public enum VerticalAlign {
     }
 
     public static VerticalAlign valueOf(int type) {
-        VerticalAlign align = imap.get(new Integer(type));
+        VerticalAlign align = imap.get(type);
         if (align == null)
             throw new IllegalArgumentException("Unknown vertical alignment: "
                     + type);

@@ -44,7 +44,7 @@ public enum ParagraphAlignment {
 
     static {
         for (ParagraphAlignment p : values()) {
-            imap.put(new Integer(p.getValue()), p);
+            imap.put(p.getValue(), p);
         }
     }
 
@@ -55,7 +55,7 @@ public enum ParagraphAlignment {
     }
 
     public static ParagraphAlignment valueOf(int type) {
-        ParagraphAlignment err = imap.get(new Integer(type));
+        ParagraphAlignment err = imap.get(type);
         if (err == null) throw new IllegalArgumentException("Unknown paragraph alignment: " + type);
         return err;
     }

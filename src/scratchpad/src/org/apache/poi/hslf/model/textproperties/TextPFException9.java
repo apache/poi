@@ -44,7 +44,7 @@ public class TextPFException9 {
 	private final AutoNumberingScheme autoNumberScheme;
 	private final static AutoNumberingScheme DEFAULT_AUTONUMBER_SHEME = AutoNumberingScheme.arabicPeriod;
 	private final Short autoNumberStartNumber;
-	private final static Short DEFAULT_START_NUMBER = new Short((short)1);
+	private final static Short DEFAULT_START_NUMBER = 1;
 	private final int recordLength;
 	public TextPFException9(final byte[] source, final int startIndex) {
 		//this.mask1 = source[startIndex];

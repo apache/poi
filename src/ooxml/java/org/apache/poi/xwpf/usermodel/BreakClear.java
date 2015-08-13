@@ -87,7 +87,7 @@ public enum BreakClear {
 
     static {
         for (BreakClear p : values()) {
-            imap.put(new Integer(p.getValue()), p);
+            imap.put(p.getValue(), p);
         }
     }
 
@@ -98,7 +98,7 @@ public enum BreakClear {
     }
 
     public static BreakClear valueOf(int type) {
-        BreakClear bType = imap.get(new Integer(type));
+        BreakClear bType = imap.get(type);
         if (bType == null)
             throw new IllegalArgumentException("Unknown break clear type: "
                     + type);

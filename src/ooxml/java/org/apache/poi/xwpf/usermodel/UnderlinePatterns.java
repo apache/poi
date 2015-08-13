@@ -139,7 +139,7 @@ public enum UnderlinePatterns {
 
     static {
         for (UnderlinePatterns p : values()) {
-            imap.put(new Integer(p.getValue()), p);
+            imap.put(p.getValue(), p);
         }
     }
 
@@ -150,7 +150,7 @@ public enum UnderlinePatterns {
     }
 
     public static UnderlinePatterns valueOf(int type) {
-        UnderlinePatterns align = imap.get(new Integer(type));
+        UnderlinePatterns align = imap.get(type);
         if (align == null)
             throw new IllegalArgumentException("Unknown underline pattern: "
                     + type);
