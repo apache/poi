@@ -56,7 +56,7 @@ public enum TextAlignment {
 
     static {
         for (TextAlignment p : values()) {
-            imap.put(new Integer(p.getValue()), p);
+            imap.put(p.getValue(), p);
         }
     }
 
@@ -67,7 +67,7 @@ public enum TextAlignment {
     }
 
     public static TextAlignment valueOf(int type) {
-        TextAlignment align = imap.get(new Integer(type));
+        TextAlignment align = imap.get(type);
         if (align == null) throw new IllegalArgumentException("Unknown text alignment: " + type);
         return align;
     }

@@ -60,7 +60,7 @@ public enum BreakType {
 
     static {
         for (BreakType p : values()) {
-            imap.put(new Integer(p.getValue()), p);
+            imap.put(p.getValue(), p);
         }
     }
 
@@ -71,7 +71,7 @@ public enum BreakType {
     }
 
     public static BreakType valueOf(int type) {
-        BreakType bType = imap.get(new Integer(type));
+        BreakType bType = imap.get(type);
         if (bType == null)
             throw new IllegalArgumentException("Unknown break type: "
                     + type);

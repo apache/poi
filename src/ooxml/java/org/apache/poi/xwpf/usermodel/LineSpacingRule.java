@@ -53,7 +53,7 @@ public enum LineSpacingRule {
 
     static {
         for (LineSpacingRule p : values()) {
-            imap.put(new Integer(p.getValue()), p);
+            imap.put(p.getValue(), p);
         }
     }
 
@@ -64,7 +64,7 @@ public enum LineSpacingRule {
     }
 
     public static LineSpacingRule valueOf(int type) {
-        LineSpacingRule lineType = imap.get(new Integer(type));
+        LineSpacingRule lineType = imap.get(type);
         if (lineType == null)
             throw new IllegalArgumentException("Unknown line type: " + type);
         return lineType;

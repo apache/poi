@@ -135,7 +135,7 @@ public class SXSSFSheet implements Sheet, Cloneable
         if(initialAllocationSize<=0)
             initialAllocationSize=10;
         SXSSFRow newRow=new SXSSFRow(this,initialAllocationSize);
-        _rows.put(new Integer(rownum),newRow);
+        _rows.put(rownum,newRow);
         allFlushed = false;
         if(_randomAccessWindowSize>=0&&_rows.size()>_randomAccessWindowSize)
         {
@@ -182,7 +182,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      */
     public SXSSFRow getRow(int rownum)
     {
-        return _rows.get(new Integer(rownum));
+        return _rows.get(rownum);
     }
 
     /**
@@ -1165,7 +1165,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      */
     public void setRowOutlineLevel(int rownum, int level)
     {
-        SXSSFRow row = _rows.get(new Integer(rownum));
+        SXSSFRow row = _rows.get(rownum);
         row.setOutlineLevel(level);
         if(level > 0 && level > outlineLevelRow) {
             outlineLevelRow = level;
@@ -1513,7 +1513,7 @@ public class SXSSFSheet implements Sheet, Cloneable
     {
         
         removeRow(row);
-        _rows.put(new Integer(newRowNum),row);
+        _rows.put(newRowNum,row);
     }
 
     public int getRowNum(SXSSFRow row)
