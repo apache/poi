@@ -20,6 +20,7 @@
 package org.apache.poi.xwpf.usermodel;
 
 import junit.framework.TestCase;
+
 import org.apache.poi.xwpf.usermodel.XWPFTableCell.XWPFVertAlign;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTHMerge;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTShd;
@@ -34,7 +35,6 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.STShd;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STVerticalJc;
 
 public class TestXWPFTableCell extends TestCase {
-
     @Override
     protected void setUp() throws Exception {
         super.setUp();
@@ -87,6 +87,7 @@ public class TestXWPFTableCell extends TestCase {
     /**
      * ensure that CTHMerge & CTTcBorders go in poi-ooxml.jar
      */
+    @SuppressWarnings("unused")
     public void test54099() {
         XWPFDocument doc = new XWPFDocument();
         CTTbl ctTable = CTTbl.Factory.newInstance();

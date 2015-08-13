@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import junit.framework.TestCase;
+
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFonts;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTLatentStyles;
@@ -31,11 +32,6 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTStyles;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STStyleType;
 
 public class TestXWPFStyles extends TestCase {
-
-//	protected void setUp() throws Exception {
-//		super.setUp();
-//	}
-
     public void testGetUsedStyles() throws IOException {
         XWPFDocument sampleDoc = XWPFTestDataSamples.openSampleDocument("Styles.docx");
         List<XWPFStyle> testUsedStyleList = new ArrayList<XWPFStyle>();
@@ -49,8 +45,6 @@ public class TestXWPFStyles extends TestCase {
 
         List<XWPFStyle> usedStyleList = styles.getUsedStyleList(style);
         assertEquals(usedStyleList, testUsedStyleList);
-
-
     }
 
     public void testAddStylesToDocument() throws IOException {
@@ -91,6 +85,7 @@ public class TestXWPFStyles extends TestCase {
      * YK: tests below don't make much sense,
      * they exist only to copy xml beans to pi-ooxml-schemas.jar
      */
+    @SuppressWarnings("resource")
     public void testLanguages() {
         XWPFDocument docOut = new XWPFDocument();
         XWPFStyles styles = docOut.createStyles();

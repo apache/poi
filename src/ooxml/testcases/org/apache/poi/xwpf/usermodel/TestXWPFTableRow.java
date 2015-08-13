@@ -22,7 +22,6 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRow;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTbl;
 
 public class TestXWPFTableRow extends TestCase {
-
     @Override
     protected void setUp() throws Exception {
         super.setUp();
