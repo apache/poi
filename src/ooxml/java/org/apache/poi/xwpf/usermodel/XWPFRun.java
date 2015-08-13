@@ -916,11 +916,21 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     public XWPFPicture addPicture(InputStream pictureData, int pictureType, String filename, int width, int height)
             throws InvalidFormatException, IOException {
-        XWPFDocument doc = parent.getDocument();
-
-        // Add the picture + relationship
-        String relationId = doc.addPictureData(pictureData, pictureType);
-        XWPFPictureData picData = (XWPFPictureData) doc.getRelationById(relationId);
+        String relationId;
+        XWPFPictureData picData;
+        
+        // Work out what to add the picture to, then add both the
+        //  picture and the relationship for it
+        // TODO Should we have an interface for this sort of thing?
+        if (parent.getPart() instanceof XWPFHeaderFooter) {
+            XWPFHeaderFooter headerFooter = (XWPFHeaderFooter)parent.getPart();
+            relationId = headerFooter.addPictureData(pictureData, pictureType);
+            picData = (XWPFPictureData) headerFooter.getRelationById(relationId);
+        } else {
+            XWPFDocument doc = parent.getDocument();
+            relationId = doc.addPictureData(pictureData, pictureType);
+            picData = (XWPFPictureData) doc.getRelationById(relationId);
+        }
 
         // Create the drawing entry for it
         try {
