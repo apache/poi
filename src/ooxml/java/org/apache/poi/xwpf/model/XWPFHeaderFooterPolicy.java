@@ -166,7 +166,9 @@ public class XWPFHeaderFooterPolicy {
         String pStyle = "Header";
         int i = getRelationIndex(relation);
         HdrDocument hdrDoc = HdrDocument.Factory.newInstance();
+        
         XWPFHeader wrapper = (XWPFHeader) doc.createRelationship(relation, XWPFFactory.getInstance(), i);
+        wrapper.setXWPFDocument(doc);
 
         CTHdrFtr hdr = buildHdr(type, pStyle, wrapper, pars);
         wrapper.setHeaderFooter(hdr);
@@ -201,7 +203,9 @@ public class XWPFHeaderFooterPolicy {
         String pStyle = "Footer";
         int i = getRelationIndex(relation);
         FtrDocument ftrDoc = FtrDocument.Factory.newInstance();
+        
         XWPFFooter wrapper = (XWPFFooter) doc.createRelationship(relation, XWPFFactory.getInstance(), i);
+        wrapper.setXWPFDocument(doc);
 
         CTHdrFtr ftr = buildFtr(type, pStyle, wrapper, pars);
         wrapper.setHeaderFooter(ftr);

@@ -30,7 +30,6 @@ import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.xssf.usermodel.XSSFRelation;
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.apache.poi.xwpf.model.XWPFHeaderFooterPolicy;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
 
 public class TestXWPFPictureData extends TestCase {
 
@@ -64,7 +63,7 @@ public class TestXWPFPictureData extends TestCase {
         verifyOneHeaderPicture(readBack);
     }
     
-    public void FIXMEtestCreateHeaderPicture() throws Exception { // TODO Fix
+    public void testCreateHeaderPicture() throws Exception {
         XWPFDocument doc = new XWPFDocument();
         
         // Starts with no header
@@ -73,16 +72,13 @@ public class TestXWPFPictureData extends TestCase {
         
         // Add a default header
         policy = doc.createHeaderFooterPolicy();
-        
-        XWPFParagraph[] hparas = new XWPFParagraph[] {
-                new XWPFParagraph(CTP.Factory.newInstance(), doc)
-        };
-        hparas[0].createRun().setText("Header Hello World!");
-        XWPFHeader header = policy.createHeader(XWPFHeaderFooterPolicy.DEFAULT, hparas);
+        XWPFHeader header = policy.createHeader(XWPFHeaderFooterPolicy.DEFAULT);
+        header.getParagraphs().get(0).createRun().setText("Hello, Header World!");
+        header.createParagraph().createRun().setText("Paragraph 2");
         assertEquals(0, header.getAllPictures().size());
-        assertEquals(1, header.getParagraphs().size());
+        assertEquals(2, header.getParagraphs().size());
         
-        // Add a picture to it
+        // Add a picture to the first paragraph
         header.getParagraphs().get(0).getRuns().get(0).addPicture(
                 new ByteArrayInputStream(new byte[] {1,2,3,4}), 
                 Document.PICTURE_TYPE_JPEG, "test.jpg", 2, 2);
