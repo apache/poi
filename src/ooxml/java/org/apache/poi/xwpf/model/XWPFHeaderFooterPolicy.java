@@ -31,8 +31,8 @@ import org.apache.poi.xwpf.usermodel.XWPFHeader;
 import org.apache.poi.xwpf.usermodel.XWPFHeaderFooter;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRelation;
-import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBody;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTHdrFtr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTHdrFtrRef;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
@@ -45,6 +45,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.FtrDocument;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.HdrDocument;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STHdrFtr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STHdrFtr.Enum;
+
 import schemasMicrosoftComOfficeOffice.CTLock;
 import schemasMicrosoftComOfficeOffice.STConnectType;
 import schemasMicrosoftComVml.CTFormulas;
@@ -86,7 +87,7 @@ public class XWPFHeaderFooterPolicy {
      * and creates any header and footer objects
      * as required.
      */
-    public XWPFHeaderFooterPolicy(XWPFDocument doc) throws IOException, XmlException {
+    public XWPFHeaderFooterPolicy(XWPFDocument doc) {
         this(doc, doc.getDocument().getBody().getSectPr());
     }
 
@@ -95,7 +96,7 @@ public class XWPFHeaderFooterPolicy {
      * and creates any header and footer objects
      * as required.
      */
-    public XWPFHeaderFooterPolicy(XWPFDocument doc, CTSectPr sectPr) throws IOException, XmlException {
+    public XWPFHeaderFooterPolicy(XWPFDocument doc, CTSectPr sectPr) {
         // Grab what headers and footers have been defined
         // For now, we don't care about different ranges, as it
         //  doesn't seem that .docx properly supports that
@@ -178,6 +179,7 @@ public class XWPFHeaderFooterPolicy {
         assignHeader(wrapper, type);
         hdrDoc.save(outputStream, xmlOptions);
         outputStream.close();
+        
         return wrapper;
     }
 
@@ -282,10 +284,16 @@ public class XWPFHeaderFooterPolicy {
             }
         } else {
             CTP p = ftr.addNewP();
-            byte[] rsidr = doc.getDocument().getBody().getPArray(0).getRsidR();
-            byte[] rsidrdefault = doc.getDocument().getBody().getPArray(0).getRsidRDefault();
-            p.setRsidP(rsidr);
-            p.setRsidRDefault(rsidrdefault);
+            CTBody body = doc.getDocument().getBody();
+            if (body.sizeOfPArray() > 0) {
+                CTP p0 = body.getPArray(0);
+                if (p0.isSetRsidR()) {
+                    byte[] rsidr = p0.getRsidR();
+                    byte[] rsidrdefault = p0.getRsidRDefault();
+                    p.setRsidP(rsidr);
+                    p.setRsidRDefault(rsidrdefault);
+                }
+            }
             CTPPr pPr = p.addNewPPr();
             pPr.addNewPStyle().setVal(pStyle);
         }
