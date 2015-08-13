@@ -318,6 +318,15 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
     }
 
     /**
+     * Adds a new paragraph at the end of the header or footer
+     */
+    public XWPFParagraph createParagraph() {
+        XWPFParagraph paragraph = new XWPFParagraph(headerFooter.addNewP(), this);
+        paragraphs.add(paragraph);
+        return paragraph;
+    }
+    
+    /**
      * add a new paragraph at position of the cursor
      *
      * @param cursor

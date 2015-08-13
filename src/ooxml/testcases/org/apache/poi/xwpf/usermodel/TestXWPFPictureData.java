@@ -19,15 +19,18 @@ package org.apache.poi.xwpf.usermodel;
 
 import static org.junit.Assert.assertArrayEquals;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.List;
 
 import junit.framework.TestCase;
+
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.xssf.usermodel.XSSFRelation;
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.apache.poi.xwpf.model.XWPFHeaderFooterPolicy;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
 
 public class TestXWPFPictureData extends TestCase {
 
@@ -58,6 +61,37 @@ public class TestXWPFPictureData extends TestCase {
         verifyOneHeaderPicture(sampleDoc);
 
         XWPFDocument readBack = XWPFTestDataSamples.writeOutAndReadBack(sampleDoc);
+        verifyOneHeaderPicture(readBack);
+    }
+    
+    public void FIXMEtestCreateHeaderPicture() throws Exception { // TODO Fix
+        XWPFDocument doc = new XWPFDocument();
+        
+        // Starts with no header
+        XWPFHeaderFooterPolicy policy = doc.getHeaderFooterPolicy();
+        assertNull(policy);
+        
+        // Add a default header
+        policy = doc.createHeaderFooterPolicy();
+        
+        XWPFParagraph[] hparas = new XWPFParagraph[] {
+                new XWPFParagraph(CTP.Factory.newInstance(), doc)
+        };
+        hparas[0].createRun().setText("Header Hello World!");
+        XWPFHeader header = policy.createHeader(XWPFHeaderFooterPolicy.DEFAULT, hparas);
+        assertEquals(0, header.getAllPictures().size());
+        assertEquals(1, header.getParagraphs().size());
+        
+        // Add a picture to it
+        header.getParagraphs().get(0).getRuns().get(0).addPicture(
+                new ByteArrayInputStream(new byte[] {1,2,3,4}), 
+                Document.PICTURE_TYPE_JPEG, "test.jpg", 2, 2);
+        
+        // Check
+        verifyOneHeaderPicture(doc);
+        
+        // Save, re-load, re-check
+        XWPFDocument readBack = XWPFTestDataSamples.writeOutAndReadBack(doc);
         verifyOneHeaderPicture(readBack);
     }
 

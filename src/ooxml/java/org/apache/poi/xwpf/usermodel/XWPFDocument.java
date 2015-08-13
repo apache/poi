@@ -427,6 +427,15 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     public XWPFHeaderFooterPolicy getHeaderFooterPolicy() {
         return headerFooterPolicy;
     }
+    public XWPFHeaderFooterPolicy createHeaderFooterPolicy() {
+        if (headerFooterPolicy == null) {
+            if (! ctDocument.getBody().isSetSectPr()) {
+                ctDocument.getBody().addNewSectPr();
+            }
+            headerFooterPolicy = new XWPFHeaderFooterPolicy(this);
+        }
+        return headerFooterPolicy;
+    }
 
     /**
      * Returns the styles object used
