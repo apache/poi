@@ -104,7 +104,7 @@ public class Complex extends Var2or3ArgFunction implements FreeRefFunction {
         StringBuffer strb = new StringBuffer("");
         if (realNum != 0) {
             if (isDoubleAnInt(realNum)) {
-                strb.append(new Double(realNum).intValue());
+                strb.append((int)realNum);
             } else {
                 strb.append(realNum);
             }

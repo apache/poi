@@ -59,7 +59,7 @@ public class Rept extends Fixed2ArgFunction  {
             return ErrorEval.VALUE_INVALID;
         }
 
-        int numberOfTimeInt = new Double(numberOfTime).intValue();
+        int numberOfTimeInt = (int)numberOfTime;
         StringBuffer strb = new StringBuffer(strText1.length() * numberOfTimeInt);
         for(int i = 0; i < numberOfTimeInt; i++) {
             strb.append(strText1);
