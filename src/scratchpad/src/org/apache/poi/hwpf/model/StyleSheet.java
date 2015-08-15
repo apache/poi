@@ -42,10 +42,10 @@ import org.apache.poi.util.LittleEndian;
 public final class StyleSheet implements HDFType {
 
   public static final int NIL_STYLE = 4095;
-  private static final int PAP_TYPE = 1;
-  private static final int CHP_TYPE = 2;
-  private static final int SEP_TYPE = 4;
-  private static final int TAP_TYPE = 5;
+//  private static final int PAP_TYPE = 1;
+//  private static final int CHP_TYPE = 2;
+//  private static final int SEP_TYPE = 4;
+//  private static final int TAP_TYPE = 5;
 
     @Deprecated
     private final static ParagraphProperties NIL_PAP = new ParagraphProperties();
@@ -144,7 +144,7 @@ public final class StyleSheet implements HDFType {
 
     _stshif.setCstd( _styleDescriptions.length );
     _stshif.serialize( buf, offset );
-    offset += Stshif.getSize();
+    // offset += Stshif.getSize();
 
     out.write(buf);
 
@@ -156,7 +156,7 @@ public final class StyleSheet implements HDFType {
           byte[] std = _styleDescriptions[x].toByteArray();
 
           // adjust the size so it is always on a word boundary
-          LittleEndian.putShort(sizeHolder, (short)((std.length) + (std.length % 2)));
+          LittleEndian.putShort(sizeHolder, 0, (short)((std.length) + (std.length % 2)));
           out.write(sizeHolder);
           out.write(std);
 

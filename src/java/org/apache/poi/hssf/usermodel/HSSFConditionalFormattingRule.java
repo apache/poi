@@ -72,21 +72,12 @@ public final class HSSFConditionalFormattingRule implements ConditionalFormattin
 
     private HSSFFontFormatting getFontFormatting(boolean create) {
         FontFormatting fontFormatting = cfRuleRecord.getFontFormatting();
-        if ( fontFormatting != null)
-        {
-            cfRuleRecord.setFontFormatting(fontFormatting);
-            return new HSSFFontFormatting(cfRuleRecord, workbook);
-        }
-        else if( create )
-        {
+        if (fontFormatting == null) {
+            if (!create) return null;
             fontFormatting = new FontFormatting();
             cfRuleRecord.setFontFormatting(fontFormatting);
-            return new HSSFFontFormatting(cfRuleRecord, workbook);
         }
-        else
-        {
-            return null;
-        }
+        return new HSSFFontFormatting(cfRuleRecord, workbook);
     }
 
     /**
@@ -106,22 +97,14 @@ public final class HSSFConditionalFormattingRule implements ConditionalFormattin
 
     private HSSFBorderFormatting getBorderFormatting(boolean create) {
         BorderFormatting borderFormatting = cfRuleRecord.getBorderFormatting();
-        if ( borderFormatting != null)
-        {
-            cfRuleRecord.setBorderFormatting(borderFormatting);
-            return new HSSFBorderFormatting(cfRuleRecord, workbook);
-        }
-        else if( create )
-        {
+        if (borderFormatting == null) {
+            if (!create) return null;
             borderFormatting = new BorderFormatting();
             cfRuleRecord.setBorderFormatting(borderFormatting);
-            return new HSSFBorderFormatting(cfRuleRecord, workbook);
         }
-        else
-        {
-            return null;
-        }
+        return new HSSFBorderFormatting(cfRuleRecord, workbook);
     }
+
     /**
      * @return - border formatting object  if defined,  <code>null</code> otherwise
      */
@@ -137,24 +120,14 @@ public final class HSSFConditionalFormattingRule implements ConditionalFormattin
         return getBorderFormatting(true);
     }
 
-    private HSSFPatternFormatting getPatternFormatting(boolean create)
-    {
+    private HSSFPatternFormatting getPatternFormatting(boolean create) {
         PatternFormatting patternFormatting = cfRuleRecord.getPatternFormatting();
-        if ( patternFormatting != null)
-        {
-            cfRuleRecord.setPatternFormatting(patternFormatting);
-            return new HSSFPatternFormatting(cfRuleRecord, workbook);
-        }
-        else if( create )
-        {
+        if (patternFormatting == null) {
+            if (!create) return null;
             patternFormatting = new PatternFormatting();
             cfRuleRecord.setPatternFormatting(patternFormatting);
-            return new HSSFPatternFormatting(cfRuleRecord, workbook);
         }
-        else
-        {
-            return null;
-        }
+        return new HSSFPatternFormatting(cfRuleRecord, workbook);
     }
 
     /**
@@ -176,21 +149,17 @@ public final class HSSFConditionalFormattingRule implements ConditionalFormattin
     
     private HSSFDataBarFormatting getDataBarFormatting(boolean create) {
         CFRule12Record cfRule12Record = getCFRule12Record(create);
+        if (cfRule12Record == null) return null;
+        
         DataBarFormatting databarFormatting = cfRule12Record.getDataBarFormatting();
-        if (databarFormatting != null)
-        {
-            return new HSSFDataBarFormatting(cfRule12Record, sheet);
+        if (databarFormatting == null) {
+            if (!create) return null;
+            cfRule12Record.createDataBarFormatting();
         }
-        else if( create )
-        {
-            databarFormatting = cfRule12Record.createDataBarFormatting();
-            return new HSSFDataBarFormatting(cfRule12Record, sheet);
-        }
-        else
-        {
-            return null;
-        }
+        
+        return new HSSFDataBarFormatting(cfRule12Record, sheet);
     }
+    
     /**
      * @return databar / data-bar formatting object if defined, <code>null</code> otherwise
      */
@@ -207,21 +176,16 @@ public final class HSSFConditionalFormattingRule implements ConditionalFormattin
     
     private HSSFIconMultiStateFormatting getMultiStateFormatting(boolean create) {
         CFRule12Record cfRule12Record = getCFRule12Record(create);
+        if (cfRule12Record == null) return null;
+        
         IconMultiStateFormatting iconFormatting = cfRule12Record.getMultiStateFormatting();
-        if (iconFormatting != null)
-        {
-            return new HSSFIconMultiStateFormatting(cfRule12Record, sheet);
+        if (iconFormatting == null) {
+            if (!create) return null;
+            cfRule12Record.createMultiStateFormatting();
         }
-        else if( create )
-        {
-            iconFormatting = cfRule12Record.createMultiStateFormatting();
-            return new HSSFIconMultiStateFormatting(cfRule12Record, sheet);
-        }
-        else
-        {
-            return null;
-        }
+        return new HSSFIconMultiStateFormatting(cfRule12Record, sheet);
     }
+    
     /**
      * @return icon / multi-state formatting object if defined, <code>null</code> otherwise
      */
@@ -238,21 +202,17 @@ public final class HSSFConditionalFormattingRule implements ConditionalFormattin
     
     private HSSFColorScaleFormatting getColorScaleFormatting(boolean create) {
         CFRule12Record cfRule12Record = getCFRule12Record(create);
+        if (cfRule12Record == null) return null;
+        
         ColorGradientFormatting colorFormatting = cfRule12Record.getColorGradientFormatting();
-        if (colorFormatting != null)
-        {
-            return new HSSFColorScaleFormatting(cfRule12Record, sheet);
+        if (colorFormatting == null) {
+            if (!create) return null;
+            cfRule12Record.createColorGradientFormatting();
         }
-        else if( create )
-        {
-            colorFormatting = cfRule12Record.createColorGradientFormatting();
-            return new HSSFColorScaleFormatting(cfRule12Record, sheet);
-        }
-        else
-        {
-            return null;
-        }
+
+        return new HSSFColorScaleFormatting(cfRule12Record, sheet);
     }
+    
     /**
      * @return color scale / gradient formatting object if defined, <code>null</code> otherwise
      */

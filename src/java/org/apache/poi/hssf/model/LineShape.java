@@ -55,7 +55,6 @@ public class LineShape
         EscherContainerRecord spContainer = new EscherContainerRecord();
         EscherSpRecord sp = new EscherSpRecord();
         EscherOptRecord opt = new EscherOptRecord();
-        EscherRecord anchor = new EscherClientAnchorRecord();
         EscherClientDataRecord clientData = new EscherClientDataRecord();
 
         spContainer.setRecordId( EscherContainerRecord.SP_CONTAINER );
@@ -74,7 +73,7 @@ public class LineShape
             sp.setFlags(sp.getFlags() | EscherSpRecord.FLAG_FLIPHORIZ);
         if (userAnchor.isVerticallyFlipped())
             sp.setFlags(sp.getFlags() | EscherSpRecord.FLAG_FLIPVERT);
-        anchor = createAnchor(userAnchor);
+        EscherRecord anchor = createAnchor(userAnchor);
         clientData.setRecordId( EscherClientDataRecord.RECORD_ID );
         clientData.setOptions( (short) 0x0000 );
 

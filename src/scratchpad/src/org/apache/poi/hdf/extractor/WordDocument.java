@@ -784,7 +784,6 @@ public final class WordDocument {
 
     return context.getFontMetrics(font);
   }*/
-  @SuppressWarnings("unused")
   private String createRegion(boolean before, HeaderFooter header, SEP sep, String name)
   {
     if(header.isEmpty())
@@ -820,8 +819,8 @@ public final class WordDocument {
       sep._dyaBottom = Math.max(extent*20, sep._dyaBottom);
     }
 
-    int marginLeft = sep._dxaLeft/20;
-    int marginRight = sep._dxaRight/20;
+    //int marginLeft = sep._dxaLeft/20;
+    //int marginRight = sep._dxaRight/20;
 
     return "<fo:region-" + where + " display-align=\"" + align + "\" extent=\""
              + extent + "pt\" "+region+"/>";

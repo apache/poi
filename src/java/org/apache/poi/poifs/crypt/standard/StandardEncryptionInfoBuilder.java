@@ -40,8 +40,7 @@ public class StandardEncryptionInfoBuilder implements EncryptionInfoBuilder {
     public void initialize(EncryptionInfo info, LittleEndianInput dis) throws IOException {
         this.info = info;
         
-        @SuppressWarnings("unused")
-        int hSize = dis.readInt();
+        /* int hSize = */ dis.readInt();
         header = new StandardEncryptionHeader(dis);
         verifier = new StandardEncryptionVerifier(dis, header);
 

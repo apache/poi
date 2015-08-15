@@ -36,7 +36,6 @@ import org.apache.poi.hssf.record.DrawingRecord;
 import org.apache.poi.hssf.record.EscherAggregate;
 import org.apache.poi.hssf.record.ExtendedFormatRecord;
 import org.apache.poi.hssf.record.NameRecord;
-import org.apache.poi.hssf.record.NoteRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RowRecord;
 import org.apache.poi.hssf.record.SCLRecord;
@@ -1448,11 +1447,8 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
             return;
         }
 
-        NoteRecord[] noteRecs;
         if (moveComments) {
-            noteRecs = _sheet.getNoteRecords();
-        } else {
-            noteRecs = NoteRecord.EMPTY_ARRAY;
+            _sheet.getNoteRecords();
         }
 
         shiftMerged(startRow, endRow, n, true);

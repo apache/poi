@@ -94,7 +94,6 @@ public final class NewOleFile extends RandomAccessFile
         int counter = 0;
         for(int x = 0; x < _num_bbd_blocks; x++)
         {
-            byte[] bigBlock = new byte[512];
             int offset = (_bbd_list[x] + 1) * 512;
             seek(offset);
             for(int y = 0; y < 128; y++)
@@ -107,17 +106,12 @@ public final class NewOleFile extends RandomAccessFile
         initializePropertySets(rootChain);
 
     }
-    @SuppressWarnings("unused")
-    public static void main(String args[])
-    {
-      try
-      {
-          NewOleFile file = new NewOleFile(args[0], "r");
-      }
-      catch(Exception e)
-      {
-      }
+
+    public static void main(String args[]) throws Exception {
+        NewOleFile nof = new NewOleFile(args[0], "r");
+        nof.close();
     }
+    
     protected int[] readChain(int[] blockChain, int startBlock) {
 
         int[] tempChain = new int[blockChain.length];

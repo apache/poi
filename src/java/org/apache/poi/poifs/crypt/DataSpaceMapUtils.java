@@ -95,8 +95,7 @@ public class DataSpaceMapUtils {
         }
         
         public DataSpaceMap(LittleEndianInput is) {
-            @SuppressWarnings("unused")
-            int length = is.readInt();
+            /*int length = */ is.readInt();
             int entryCount = is.readInt();
             entries = new DataSpaceMapEntry[entryCount];
             for (int i=0; i<entryCount; i++) {
@@ -125,8 +124,7 @@ public class DataSpaceMapUtils {
         }
         
         public DataSpaceMapEntry(LittleEndianInput is) {
-            @SuppressWarnings("unused")
-            int length = is.readInt();
+            /*int length = */ is.readInt();
             int referenceComponentCount = is.readInt();
             referenceComponentType = new int[referenceComponentCount];
             referenceComponent = new String[referenceComponentCount];
@@ -158,8 +156,7 @@ public class DataSpaceMapUtils {
         }
         
         public DataSpaceDefinition(LittleEndianInput is) {
-            @SuppressWarnings("unused")
-            int headerLength = is.readInt();
+            /* int headerLength = */ is.readInt();
             int transformReferenceCount = is.readInt();
             transformer = new String[transformReferenceCount];
             for (int i=0; i<transformReferenceCount; i++) {
@@ -230,8 +227,7 @@ public class DataSpaceMapUtils {
         }
         
         public TransformInfoHeader(LittleEndianInput is) {
-            @SuppressWarnings("unused")
-            int length = is.readInt();
+            /* int length = */ is.readInt();
             transformType = is.readInt();
             transformerId = readUnicodeLPP4(is);
             transformerName = readUnicodeLPP4(is);

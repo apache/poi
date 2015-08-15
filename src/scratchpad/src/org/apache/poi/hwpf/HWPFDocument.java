@@ -347,7 +347,7 @@ public final class HWPFDocument extends HWPFDocumentCore
     _ft = new FontTable(_tableStream, _fib.getFcSttbfffn(), _fib.getLcbSttbfffn());
 
         int listOffset = _fib.getFcPlfLst();
-        int lfoOffset = _fib.getFcPlfLfo();
+        // int lfoOffset = _fib.getFcPlfLfo();
         if ( listOffset != 0 && _fib.getLcbPlfLst() != 0 )
         {
             _lt = new ListTables( _tableStream, listOffset, _fib.getFcPlfLfo(),

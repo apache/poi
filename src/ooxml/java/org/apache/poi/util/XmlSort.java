@@ -187,7 +187,7 @@ public final class XmlSort
      * The constructor accepts an argument indicating whether the comparison order is the same as
      * the lexicographic order of the strings or the reverse.
      */
-    public static final class QNameComparator implements Comparator
+    public static final class QNameComparator implements Comparator<XmlCursor>
     {
         public static final int ASCENDING = 1;
         public static final int DESCENDING = 2;
@@ -202,10 +202,7 @@ public final class XmlSort
                     "comparison orders");
         }
 
-        public int compare(Object o, Object o1)
-        {
-            XmlCursor cursor1 = (XmlCursor) o;
-            XmlCursor cursor2 = (XmlCursor) o1;
+        public int compare(XmlCursor cursor1, XmlCursor cursor2) {
             QName qname1 = cursor1.getName();
             QName qname2 = cursor2.getName();
             int qnameComparisonRes = qname1.getNamespaceURI().compareTo(qname2.getNamespaceURI());

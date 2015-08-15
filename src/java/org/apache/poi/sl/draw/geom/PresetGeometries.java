@@ -63,7 +63,7 @@ public class PresetGeometries extends LinkedHashMap<String, CustomGeometry> {
         XMLEventReader staxReader = staxFactory.createXMLEventReader(is);
         XMLEventReader staxFiltRd = staxFactory.createFilteredReader(staxReader, startElementFilter);
         // ignore StartElement:
-        XMLEvent evDoc = staxFiltRd.nextEvent();
+        /* XMLEvent evDoc = */ staxFiltRd.nextEvent();
         // JAXB:
         JAXBContext jaxbContext = JAXBContext.newInstance(BINDING_PACKAGE);
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
