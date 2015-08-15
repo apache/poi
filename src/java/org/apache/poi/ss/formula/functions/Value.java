@@ -186,7 +186,7 @@ public final class Value extends Fixed1ArgFunction {
 			// still a problem parsing the number - probably out of range
 			return null;
 		}
-        Double result = new Double(foundUnaryMinus ? -d : d);
-        return foundPercentage ? result /100 : result;
+        double result = foundUnaryMinus ? -d : d;
+        return foundPercentage ? result/100. : result;
 	}
 }
