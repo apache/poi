@@ -7,7 +7,7 @@
     <groupId>org.apache.poi</groupId>
     <artifactId>poi-parent</artifactId>
     <packaging>pom</packaging>
-    <version>3.12-SNAPSHOT</version>
+    <version>3.13-SNAPSHOT</version>
 
     <name>Apache POI - the Java API for Microsoft Documents</name>
 
