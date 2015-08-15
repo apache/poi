@@ -328,8 +328,7 @@ public class DataSpaceMapUtils {
     public static String readUtf8LPP4(LittleEndianInput is) {
         int length = is.readInt();
         if (length == 0 || length == 4) {
-            @SuppressWarnings("unused")
-            int skip = is.readInt(); // ignore
+            /* int skip = */ is.readInt();
             return length == 0 ? null : "";
         }
         

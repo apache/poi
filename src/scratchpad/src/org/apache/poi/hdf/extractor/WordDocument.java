@@ -1485,16 +1485,16 @@ public final class WordDocument {
     _headerBuffer.append("</fo:simple-page-master>\r\n");
     return thisPage;
   }
-  @SuppressWarnings("unused")
+
   private void addBorder(StringBuffer buf, short[] brc, String where)
   {
     if((brc[0] & 0xff00) != 0 && brc[0] != -1)
     {
-      int type = (brc[0] & 0xff00) >> 8;
+      // int type = (brc[0] & 0xff00) >> 8;
       float width = (brc[0] & 0x00ff)/8.0f;
       String style = getBorderStyle(brc[0]);
       String color = getColor(brc[1] & 0x00ff);
-      String thickness = getBorderThickness(brc[0]);
+      // String thickness = getBorderThickness(brc[0]);
       buf.append("border-" + where + "-style=\"" + style + "\"\r\n");
       buf.append("border-" + where + "-color=\"" + color + "\"\r\n");
       buf.append("border-" + where + "-width=\"" + width + "pt\"\r\n");
@@ -1520,22 +1520,22 @@ public final class WordDocument {
       t.printStackTrace();
     }
   }
-  private String getBorderThickness(int style)
-  {
-    switch(style)
-    {
-      case 1:
-        return "medium";
-      case 2:
-        return "thick";
-      case 3:
-        return "medium";
-      case 5:
-        return "thin";
-      default:
-        return "medium";
-    }
-  }
+//  private String getBorderThickness(int style)
+//  {
+//    switch(style)
+//    {
+//      case 1:
+//        return "medium";
+//      case 2:
+//        return "thick";
+//      case 3:
+//        return "medium";
+//      case 5:
+//        return "thin";
+//      default:
+//        return "medium";
+//    }
+//  }
 
 
   private String getColor(int ico)
