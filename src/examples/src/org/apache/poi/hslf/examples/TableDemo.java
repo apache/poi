@@ -20,12 +20,12 @@ package org.apache.poi.hslf.examples;
 import java.awt.Color;
 import java.io.FileOutputStream;
 
-import org.apache.poi.hslf.model.Line;
 import org.apache.poi.hslf.usermodel.HSLFSlide;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.hslf.usermodel.HSLFTable;
 import org.apache.poi.hslf.usermodel.HSLFTableCell;
 import org.apache.poi.hslf.usermodel.HSLFTextRun;
+import org.apache.poi.hslf.usermodel.HSLFLine;
 import org.apache.poi.sl.usermodel.TextParagraph.TextAlign;
 import org.apache.poi.sl.usermodel.VerticalAlignment;
 
@@ -71,7 +71,7 @@ public final class TableDemo {
             }
         }
 
-        Line border1 = table1.createBorder();
+        HSLFLine border1 = table1.createBorder();
         border1.setLineColor(Color.black);
         border1.setLineWidth(1.0);
         table1.setAllBorders(border1);
@@ -119,7 +119,7 @@ public final class TableDemo {
         table2.setRowHeight(0, 30);
         table2.setRowHeight(1, 70);
 
-        Line border2 = table2.createBorder();
+        HSLFLine border2 = table2.createBorder();
         table2.setOutsideBorders(border2);
 
         slide.addShape(table2);

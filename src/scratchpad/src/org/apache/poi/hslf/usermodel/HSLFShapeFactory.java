@@ -103,7 +103,7 @@ public final class HSLFShapeFactory {
                 break;
             }
             case LINE:
-                shape = new Line(spContainer, parent);
+                shape = new HSLFLine(spContainer, parent);
                 break;
             case NOT_PRIMITIVE: {
                 EscherOptRecord opt = HSLFShape.getEscherChild(spContainer, EscherOptRecord.RECORD_ID);

@@ -22,7 +22,6 @@ import java.awt.Rectangle;
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherOptRecord;
 import org.apache.poi.ddf.EscherProperties;
-import org.apache.poi.hslf.model.Line;
 import org.apache.poi.sl.usermodel.ShapeContainer;
 import org.apache.poi.sl.usermodel.ShapeType;
 
@@ -35,10 +34,10 @@ public final class HSLFTableCell extends HSLFTextBox {
     protected static final int DEFAULT_WIDTH = 100;
     protected static final int DEFAULT_HEIGHT = 40;
 
-    private Line borderLeft;
-    private Line borderRight;
-    private Line borderTop;
-    private Line borderBottom;
+    private HSLFLine borderLeft;
+    private HSLFLine borderRight;
+    private HSLFLine borderTop;
+    private HSLFLine borderBottom;
 
     /**
      * Create a TableCell object and initialize it from the supplied Record container.
@@ -76,7 +75,7 @@ public final class HSLFTableCell extends HSLFTextBox {
         return _escherContainer;
     }
 
-    protected void anchorBorder(int type, Line line){
+    protected void anchorBorder(int type, HSLFLine line){
         Rectangle cellAnchor = getAnchor();
         Rectangle lineAnchor = new Rectangle();
         switch(type){
@@ -110,38 +109,38 @@ public final class HSLFTableCell extends HSLFTextBox {
         line.setAnchor(lineAnchor);
     }
 
-    public Line getBorderLeft() {
+    public HSLFLine getBorderLeft() {
         return borderLeft;
     }
 
-    public void setBorderLeft(Line line) {
+    public void setBorderLeft(HSLFLine line) {
         if(line != null) anchorBorder(HSLFTable.BORDER_LEFT, line);
         this.borderLeft = line;
     }
 
-    public Line getBorderRight() {
+    public HSLFLine getBorderRight() {
         return borderRight;
     }
 
-    public void setBorderRight(Line line) {
+    public void setBorderRight(HSLFLine line) {
         if(line != null) anchorBorder(HSLFTable.BORDER_RIGHT, line);
         this.borderRight = line;
     }
 
-    public Line getBorderTop() {
+    public HSLFLine getBorderTop() {
         return borderTop;
     }
 
-    public void setBorderTop(Line line) {
+    public void setBorderTop(HSLFLine line) {
         if(line != null) anchorBorder(HSLFTable.BORDER_TOP, line);
         this.borderTop = line;
     }
 
-    public Line getBorderBottom() {
+    public HSLFLine getBorderBottom() {
         return borderBottom;
     }
 
-    public void setBorderBottom(Line line) {
+    public void setBorderBottom(HSLFLine line) {
         if(line != null) anchorBorder(HSLFTable.BORDER_BOTTOM, line);
         this.borderBottom = line;
     }

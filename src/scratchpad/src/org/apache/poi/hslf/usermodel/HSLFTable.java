@@ -31,7 +31,6 @@ import org.apache.poi.ddf.EscherProperties;
 import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.ddf.EscherSimpleProperty;
 import org.apache.poi.ddf.EscherTextboxRecord;
-import org.apache.poi.hslf.model.Line;
 import org.apache.poi.sl.usermodel.ShapeContainer;
 import org.apache.poi.sl.usermodel.TableShape;
 import org.apache.poi.util.LittleEndian;
@@ -144,16 +143,16 @@ public final class HSLFTable extends HSLFGroupShape implements TableShape {
                 HSLFTableCell c = cells[i][j];
                 addShape(c);
 
-                Line bt = c.getBorderTop();
+                HSLFLine bt = c.getBorderTop();
                 if(bt != null) addShape(bt);
 
-                Line br = c.getBorderRight();
+                HSLFLine br = c.getBorderRight();
                 if(br != null) addShape(br);
 
-                Line bb = c.getBorderBottom();
+                HSLFLine bb = c.getBorderBottom();
                 if(bb != null) addShape(bb);
 
-                Line bl = c.getBorderLeft();
+                HSLFLine bl = c.getBorderLeft();
                 if(bl != null) addShape(bl);
 
             }
@@ -279,7 +278,7 @@ public final class HSLFTable extends HSLFGroupShape implements TableShape {
      *
      * @param line the border line
      */
-    public void setAllBorders(Line line){
+    public void setAllBorders(HSLFLine line){
         for (int i = 0; i < cells.length; i++) {
             for (int j = 0; j < cells[i].length; j++) {
                 HSLFTableCell cell = cells[i][j];
@@ -296,7 +295,7 @@ public final class HSLFTable extends HSLFGroupShape implements TableShape {
      *
      * @param line the border line
      */
-    public void setOutsideBorders(Line line){
+    public void setOutsideBorders(HSLFLine line){
         for (int i = 0; i < cells.length; i++) {
             for (int j = 0; j < cells[i].length; j++) {
                 HSLFTableCell cell = cells[i][j];
@@ -323,7 +322,7 @@ public final class HSLFTable extends HSLFGroupShape implements TableShape {
      *
      * @param line the border line
      */
-    public void setInsideBorders(Line line){
+    public void setInsideBorders(HSLFLine line){
         for (int i = 0; i < cells.length; i++) {
             for (int j = 0; j < cells[i].length; j++) {
                 HSLFTableCell cell = cells[i][j];
@@ -343,8 +342,8 @@ public final class HSLFTable extends HSLFGroupShape implements TableShape {
         }
     }
 
-    private Line cloneBorder(Line line){
-        Line border = createBorder();
+    private HSLFLine cloneBorder(HSLFLine line){
+        HSLFLine border = createBorder();
         border.setLineWidth(line.getLineWidth());
         border.setLineDashing(line.getLineDashing());
         border.setLineColor(line.getLineColor());
@@ -357,8 +356,8 @@ public final class HSLFTable extends HSLFGroupShape implements TableShape {
      *
      * @return the created border
      */
-    public Line createBorder(){
-        Line line = new Line(this);
+    public HSLFLine createBorder(){
+        HSLFLine line = new HSLFLine(this);
 
         EscherOptRecord opt = getEscherOptRecord();
         setEscherProperty(opt, EscherProperties.GEOMETRY__SHAPEPATH, -1);
