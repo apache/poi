@@ -15,16 +15,13 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hslf.model;
+package org.apache.poi.hslf.usermodel;
 
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherOptRecord;
 import org.apache.poi.ddf.EscherProperties;
 import org.apache.poi.ddf.EscherSpRecord;
-import org.apache.poi.hslf.usermodel.HSLFGroupShape;
-import org.apache.poi.hslf.usermodel.HSLFShape;
-import org.apache.poi.hslf.usermodel.HSLFTextParagraph;
-import org.apache.poi.hslf.usermodel.HSLFTextShape;
+import org.apache.poi.sl.usermodel.Line;
 import org.apache.poi.sl.usermodel.ShapeContainer;
 import org.apache.poi.sl.usermodel.ShapeType;
 
@@ -33,17 +30,17 @@ import org.apache.poi.sl.usermodel.ShapeType;
  *
  *  @author Yegor Kozlov
  */
-public final class Line extends HSLFTextShape implements org.apache.poi.sl.usermodel.Line<HSLFTextParagraph> {
-    public Line(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape> parent){
+public final class HSLFLine extends HSLFTextShape implements Line<HSLFTextParagraph> {
+    public HSLFLine(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape> parent){
         super(escherRecord, parent);
     }
 
-    public Line(ShapeContainer<HSLFShape> parent){
+    public HSLFLine(ShapeContainer<HSLFShape> parent){
         super(null, parent);
         _escherContainer = createSpContainer(parent instanceof HSLFGroupShape);
     }
 
-    public Line(){
+    public HSLFLine(){
         this(null);
     }
 

@@ -26,7 +26,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 
-import org.apache.poi.hslf.model.Line;
 import org.apache.poi.hslf.model.PPGraphics2D;
 import org.apache.poi.hslf.record.TextHeaderAtom;
 import org.apache.poi.hslf.usermodel.HSLFAutoShape;
@@ -38,6 +37,7 @@ import org.apache.poi.hslf.usermodel.HSLFTableCell;
 import org.apache.poi.hslf.usermodel.HSLFTextBox;
 import org.apache.poi.hslf.usermodel.HSLFTextParagraph;
 import org.apache.poi.hslf.usermodel.HSLFTextRun;
+import org.apache.poi.hslf.usermodel.HSLFLine;
 import org.apache.poi.sl.usermodel.ShapeType;
 import org.apache.poi.sl.usermodel.VerticalAlignment;
 
@@ -180,12 +180,12 @@ public final class ApacheconEU08 {
             }
         }
 
-        Line border1 = table1.createBorder();
+        HSLFLine border1 = table1.createBorder();
         border1.setLineColor(Color.black);
         border1.setLineWidth(1.0);
         table1.setAllBorders(border1);
 
-        Line border2 = table1.createBorder();
+        HSLFLine border2 = table1.createBorder();
         border2.setLineColor(Color.black);
         border2.setLineWidth(2.0);
         table1.setOutsideBorders(border2);

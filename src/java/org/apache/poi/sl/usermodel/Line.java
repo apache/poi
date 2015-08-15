@@ -17,6 +17,14 @@
 
 package org.apache.poi.sl.usermodel;
 
+import org.apache.poi.util.Internal;
+
+/**
+ * Interface for Lines ... this will be eventually removed, 
+ * so don't depend on it in user classes, but use AutoShape instead!
+ */
+
+@Internal
 public interface Line<T extends TextParagraph<? extends TextRun>> extends AutoShape<T> {
 
 }

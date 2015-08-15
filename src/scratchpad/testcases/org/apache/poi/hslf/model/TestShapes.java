@@ -54,6 +54,7 @@ import org.apache.poi.hslf.usermodel.HSLFTextBox;
 import org.apache.poi.hslf.usermodel.HSLFTextParagraph;
 import org.apache.poi.hslf.usermodel.HSLFTextRun;
 import org.apache.poi.hslf.usermodel.HSLFTextShape;
+import org.apache.poi.hslf.usermodel.HSLFLine;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.apache.poi.sl.usermodel.ShapeType;
 import org.apache.poi.sl.usermodel.StrokeStyle.LineDash;
@@ -89,7 +90,7 @@ public final class TestShapes {
     public void graphics() throws Exception {
         HSLFSlide slide = ppt.createSlide();
 
-        Line line = new Line();
+        HSLFLine line = new HSLFLine();
         java.awt.Rectangle lineAnchor = new java.awt.Rectangle(100, 200, 50, 60);
         line.setAnchor(lineAnchor);
         line.setLineWidth(3);
@@ -119,7 +120,7 @@ public final class TestShapes {
         List<HSLFShape> shape = slide.getShapes();
         assertEquals(2, shape.size());
 
-        assertTrue(shape.get(0) instanceof Line); //group shape
+        assertTrue(shape.get(0) instanceof HSLFLine); //group shape
         assertEquals(lineAnchor, shape.get(0).getAnchor()); //group shape
 
         assertTrue(shape.get(1) instanceof HSLFAutoShape); //group shape
@@ -335,7 +336,7 @@ public final class TestShapes {
         pict.setAnchor(new Rectangle(0, 0, 200, 200));
         group.addShape(pict);
 
-        Line line = new Line(group);
+        HSLFLine line = new HSLFLine(group);
         line.setAnchor(new Rectangle(300, 300, 500, 0));
         group.addShape(line);
 
@@ -358,12 +359,12 @@ public final class TestShapes {
         List<HSLFShape> grshape = group.getShapes();
         assertEquals(2, grshape.size());
         assertTrue(grshape.get(0) instanceof HSLFPictureShape);
-        assertTrue(grshape.get(1) instanceof Line);
+        assertTrue(grshape.get(1) instanceof HSLFLine);
 
         pict = (HSLFPictureShape)grshape.get(0);
         assertEquals(new Rectangle(0, 0, 200, 200), pict.getAnchor());
 
-        line = (Line)grshape.get(1);
+        line = (HSLFLine)grshape.get(1);
         assertEquals(new Rectangle(300, 300, 500, 0), line.getAnchor());
     }
 
@@ -427,7 +428,7 @@ public final class TestShapes {
         int dgShapesUsed = dg.getNumShapes();          // number of shapes in the slide
         //insert 3 shapes and make sure the Ids are properly incremented
         for (int i = 0; i < 3; i++) {
-            shape = new Line();
+            shape = new HSLFLine();
             assertEquals(0, shape.getShapeId());
             slide.addShape(shape);
             assertTrue(shape.getShapeId() > 0);
@@ -454,7 +455,7 @@ public final class TestShapes {
         //make sure it is so
         int numClusters = dgg.getNumIdClusters();
         for (int i = 0; i < 1025; i++) {
-            shape = new Line();
+            shape = new HSLFLine();
             slide.addShape(shape);
         }
         assertEquals(numClusters + 1, dgg.getNumIdClusters());
