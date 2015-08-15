@@ -68,19 +68,10 @@ public final class HDFObjectFactory {
     byte[] _tableBuffer;
 
 
-    @SuppressWarnings("unused")
-    public static void main(String args[])
-    {
-      try
-      {
-        HDFObjectFactory f = new HDFObjectFactory(new FileInputStream("c:\\test.doc"));
-        int k = 0;
-      }
-      catch(Exception t)
-      {
-        t.printStackTrace();
-      }
+    public static void main(String args[]) throws Exception {
+        new HDFObjectFactory(new FileInputStream("c:\\test.doc"));
     }
+    
     /** Creates a new instance of HDFObjectFactory
      *
      * @param istream The InputStream that is the Word document
@@ -133,19 +124,23 @@ public final class HDFObjectFactory {
         List<FileInformationBlock> results = new ArrayList<FileInformationBlock>(1);
 
         //do Ole stuff
-        POIFSFileSystem filesystem = new POIFSFileSystem(istream);
-
-        DocumentEntry headerProps =
-            (DocumentEntry)filesystem.getRoot().getEntry("WordDocument");
-
-        byte[] mainDocument = new byte[headerProps.getSize()];
-        filesystem.createDocumentInputStream("WordDocument").read(mainDocument);
-
-        FileInformationBlock fib = new FileInformationBlock(mainDocument);
-
-
-        results.add(fib);
-        return results;
+        POIFSFileSystem filesystem = null;
+        try {
+            filesystem = new POIFSFileSystem(istream);
+            DocumentEntry headerProps =
+                (DocumentEntry)filesystem.getRoot().getEntry("WordDocument");
+    
+            byte[] mainDocument = new byte[headerProps.getSize()];
+            filesystem.createDocumentInputStream("WordDocument").read(mainDocument);
+    
+            FileInformationBlock fib = new FileInformationBlock(mainDocument);
+    
+    
+            results.add(fib);
+            return results;
+        } finally {
+            if (filesystem != null) filesystem.close();
+        }
     }
 
 
@@ -477,7 +472,7 @@ public final class HDFObjectFactory {
     {
 
       int ccpText = _fib.getCcpText();
-      int ccpFtn = _fib.getCcpFtn();
+      // int ccpFtn = _fib.getCcpFtn();
 
       //sections
       int fcMin = _fib.getFcMin();

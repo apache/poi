@@ -73,8 +73,7 @@ public final class CompressedRTF extends LZWDecompresser {
       compressedSize = LittleEndian.readInt(src);
       decompressedSize = LittleEndian.readInt(src);
       int compressionType = LittleEndian.readInt(src);
-      @SuppressWarnings("unused")
-      int dataCRC = LittleEndian.readInt(src);
+      /* int dataCRC = */ LittleEndian.readInt(src);
       
       // TODO - Handle CRC checking on the output side
       

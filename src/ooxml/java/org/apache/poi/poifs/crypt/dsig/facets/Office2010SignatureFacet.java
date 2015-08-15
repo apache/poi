@@ -68,7 +68,7 @@ public class Office2010SignatureFacet extends SignatureFacet {
         }
         UnsignedSignaturePropertiesType unsignedSigProps = unsignedProps.getUnsignedSignatureProperties();
         if (unsignedSigProps == null) {
-            unsignedSigProps = unsignedProps.addNewUnsignedSignatureProperties();
+            /* unsignedSigProps = */ unsignedProps.addNewUnsignedSignatureProperties();
         }
         
         Node n = document.importNode(qualProps.getDomNode().getFirstChild(), true);

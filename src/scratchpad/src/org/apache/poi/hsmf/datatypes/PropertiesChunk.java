@@ -112,7 +112,7 @@ public abstract class PropertiesChunk extends Chunk {
            return null;
        }
        if (val instanceof ChunkBasedPropertyValue) {
-           ChunkBasedPropertyValue cval = (ChunkBasedPropertyValue)val;
+           // ChunkBasedPropertyValue cval = (ChunkBasedPropertyValue)val;
            // TODO Lookup
            return Collections.emptyList();
        } else {

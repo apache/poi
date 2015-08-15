@@ -21,7 +21,6 @@ package org.apache.poi.xslf.usermodel;
 
 import org.apache.poi.sl.usermodel.ConnectorShape;
 import org.apache.poi.util.Beta;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTLineProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualDrawingProps;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPresetGeometry2D;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
@@ -44,7 +43,6 @@ public class XSLFConnectorShape extends XSLFSimpleShape implements ConnectorShap
     /**
      * @param shapeId 1-based shapeId
      */
-    @SuppressWarnings("unused")
     static CTConnector prototype(int shapeId) {
         CTConnector ct = CTConnector.Factory.newInstance();
         CTConnectorNonVisual nvSpPr = ct.addNewNvCxnSpPr();
@@ -57,7 +55,7 @@ public class XSLFConnectorShape extends XSLFSimpleShape implements ConnectorShap
         CTPresetGeometry2D prst = spPr.addNewPrstGeom();
         prst.setPrst(STShapeType.LINE);
         prst.addNewAvLst();
-        CTLineProperties ln = spPr.addNewLn();
+        /* CTLineProperties ln = */ spPr.addNewLn();
         return ct;
     }
 

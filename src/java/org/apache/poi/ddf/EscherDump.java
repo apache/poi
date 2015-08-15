@@ -73,14 +73,12 @@ public final class EscherDump {
         short options;      // 4 bits for the version and 12 bits for the instance
         short recordId;
         int recordBytesRemaining;       // including enclosing records
-        StringBuffer stringBuf = new StringBuffer();
         short nDumpSize;
         String recordName;
 
         boolean atEOF = false;
 
         while (!atEOF && (remainingBytes > 0)) {
-            stringBuf = new StringBuffer();
             options = LittleEndian.readShort( in );
             recordId = LittleEndian.readShort( in );
             recordBytesRemaining = LittleEndian.readInt( in );
@@ -194,6 +192,7 @@ public final class EscherDump {
                         recordName = "UNKNOWN ID";
             }
 
+            StringBuilder stringBuf = new StringBuilder();
             stringBuf.append( "  " );
             stringBuf.append( HexDump.toHex( recordId ) );
             stringBuf.append( "  " ).append( recordName ).append( " [" );
@@ -203,6 +202,7 @@ public final class EscherDump {
             stringBuf.append( "]  instance: " );
             stringBuf.append( HexDump.toHex( ( (short) ( options >> 4 ) ) ) );
             out.println( stringBuf.toString() );
+            stringBuf.setLength(0);
 
 
             if ( recordId == (short) 0xF007 && 36 <= remainingBytes && 36 <= recordBytesRemaining )
@@ -213,7 +213,7 @@ public final class EscherDump {
                 //                short n16;
                 //                int n32;
 
-                stringBuf = new StringBuffer( "    btWin32: " );
+                stringBuf = stringBuf.append( "    btWin32: " );
                 n8 = (byte) in.read();
                 stringBuf.append( HexDump.toHex( n8 ) );
                 stringBuf.append( getBlipType( n8 ) );

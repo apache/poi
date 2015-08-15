@@ -148,7 +148,6 @@ public final class HSSFName implements Name {
         
         // Update our comment, if there is one
         if(_commentRec != null) {
-           String oldName = _commentRec.getNameText();
            _commentRec.setNameText(nameName);
            _book.getWorkbook().updateNameCommentRecordCache(_commentRec);
         }

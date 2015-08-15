@@ -197,7 +197,6 @@ public class CryptoAPIDecryptor extends Decryptor {
      * 
      * @see <a href="http://msdn.microsoft.com/en-us/library/dd943321(v=office.12).aspx">2.3.5.4 RC4 CryptoAPI Encrypted Summary Stream</a>
      */
-    @SuppressWarnings("unused")
     public InputStream getDataStream(DirectoryNode dir)
     throws IOException, GeneralSecurityException {
         NPOIFSFileSystem fsOut = new NPOIFSFileSystem();
@@ -209,7 +208,7 @@ public class CryptoAPIDecryptor extends Decryptor {
         SeekableByteArrayInputStream sbis = new SeekableByteArrayInputStream(bos.toByteArray());
         LittleEndianInputStream leis = new LittleEndianInputStream(sbis);
         int streamDescriptorArrayOffset = (int) leis.readUInt();
-        int streamDescriptorArraySize = (int) leis.readUInt();
+        /* int streamDescriptorArraySize = (int) */ leis.readUInt();
         sbis.skip(streamDescriptorArrayOffset - 8);
         sbis.setBlock(0);
         int encryptedStreamDescriptorCount = (int) leis.readUInt();
@@ -222,7 +221,7 @@ public class CryptoAPIDecryptor extends Decryptor {
             entry.block = leis.readUShort();
             int nameSize = leis.readUByte();
             entry.flags = leis.readUByte();
-            boolean isStream = StreamDescriptorEntry.flagStream.isSet(entry.flags);
+            // boolean isStream = StreamDescriptorEntry.flagStream.isSet(entry.flags);
             entry.reserved2 = leis.readInt();
             entry.streamName = StringUtil.readUnicodeLE(leis, nameSize);
             leis.readShort();

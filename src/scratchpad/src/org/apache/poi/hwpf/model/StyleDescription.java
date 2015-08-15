@@ -40,8 +40,8 @@ public final class StyleDescription implements HDFType
     
   private final static int PARAGRAPH_STYLE = 1;
   private final static int CHARACTER_STYLE = 2;
-  private final static int TABLE_STYLE = 3;
-  private final static int NUMBERING_STYLE = 4;
+  // private final static int TABLE_STYLE = 3;
+  // private final static int NUMBERING_STYLE = 4;
 
   private int _baseLength;
   private StdfBase _stdfBase;
@@ -86,7 +86,7 @@ public final class StyleDescription implements HDFType
         if ( readStdfPost2000 )
         {
             _stdfPost2000 = new StdfPost2000( std, offset );
-            offset += StdfPost2000.getSize();
+            // offset += StdfPost2000.getSize();
         }
 
       //first byte(s) of variable length section of std is the length of the

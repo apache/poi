@@ -130,8 +130,6 @@ public class PolygonShape
      */
     private ObjRecord createObjRecord( HSSFShape hssfShape, int shapeId )
     {
-        HSSFShape shape = hssfShape;
-
         ObjRecord obj = new ObjRecord();
         CommonObjectDataSubRecord c = new CommonObjectDataSubRecord();
         c.setObjectType( OBJECT_TYPE_MICROSOFT_OFFICE_DRAWING );

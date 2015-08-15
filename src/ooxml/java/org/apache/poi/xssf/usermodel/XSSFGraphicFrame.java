@@ -23,7 +23,12 @@ import javax.xml.namespace.QName;
 
 import org.apache.poi.util.Internal;
 import org.apache.xmlbeans.XmlCursor;
-import org.openxmlformats.schemas.drawingml.x2006.main.*;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTGraphicalObjectData;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualDrawingProps;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTPoint2D;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTPositiveSize2D;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTransform2D;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTGraphicalObjectFrame;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTGraphicalObjectFrameNonVisual;
 import org.openxmlformats.schemas.officeDocument.x2006.relationships.STRelationshipId;
@@ -79,7 +84,7 @@ public final class XSSFGraphicFrame extends XSSFShape {
 			offPoint.setX(0);
 			offPoint.setY(0);
 
-			CTGraphicalObject graphic = graphicFrame.addNewGraphic();
+			/* CTGraphicalObject graphic = */ graphicFrame.addNewGraphic();
 
 			prototype = graphicFrame;
 		}

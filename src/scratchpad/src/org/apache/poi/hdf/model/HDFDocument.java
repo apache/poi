@@ -33,11 +33,11 @@ public final class HDFDocument
   public HDFDocument(InputStream in, HDFParsingListener listener) throws IOException
   {
     EventBridge eb = new EventBridge(listener);
-    HDFObjectFactory factory = new HDFObjectFactory(in, eb);
+    /* HDFObjectFactory factory = */ new HDFObjectFactory(in, eb);
   }
   public HDFDocument(InputStream in) throws IOException
   {
     _model = new HDFObjectModel();
-    HDFObjectFactory factory = new HDFObjectFactory(in, _model);
+    /* HDFObjectFactory factory = */ new HDFObjectFactory(in, _model);
   }
 }

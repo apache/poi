@@ -69,14 +69,14 @@ public class Address implements Function {
                     throw new EvaluationException(ErrorEval.VALUE_INVALID);
             }
 
-            boolean a1;
-            if(args.length > 3){
-                ValueEval ve = OperandResolver.getSingleValue(args[3], srcRowIndex, srcColumnIndex);
-                // TODO R1C1 style is not yet supported
-                a1 = ve == MissingArgEval.instance ? true : OperandResolver.coerceValueToBoolean(ve, false);
-            } else {
-                a1 = true;
-            }
+//            boolean a1;
+//            if(args.length > 3){
+//                ValueEval ve = OperandResolver.getSingleValue(args[3], srcRowIndex, srcColumnIndex);
+//                // TODO R1C1 style is not yet supported
+//                a1 = ve == MissingArgEval.instance ? true : OperandResolver.coerceValueToBoolean(ve, false);
+//            } else {
+//                a1 = true;
+//            }
 
             String sheetName;
             if(args.length == 5){

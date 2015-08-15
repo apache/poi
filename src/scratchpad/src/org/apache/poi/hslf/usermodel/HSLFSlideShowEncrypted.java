@@ -221,7 +221,7 @@ public class HSLFSlideShowEncrypted {
                 cipher.doFinal(pictstream, offset, 8, pictstream, offset);
                 recInst = fieldRecInst.getValue(LittleEndian.getUShort(pictstream, offset));
                 recType = LittleEndian.getUShort(pictstream, offset+2);
-                rlen = (int)LittleEndian.getUInt(pictstream, offset+4);
+                // rlen = (int)LittleEndian.getUInt(pictstream, offset+4);
                 offset += 8;
             }
 
@@ -299,7 +299,7 @@ public class HSLFSlideShowEncrypted {
                 // update header data
                 recInst = fieldRecInst.getValue(LittleEndian.getUShort(pictstream, offset));
                 recType = LittleEndian.getUShort(pictstream, offset+2);
-                rlen = (int)LittleEndian.getUInt(pictstream, offset+4);
+                // rlen = (int) LittleEndian.getUInt(pictstream, offset+4);
                 cipher.doFinal(pictstream, offset, 8, pictstream, offset);
                 offset += 8;
             }

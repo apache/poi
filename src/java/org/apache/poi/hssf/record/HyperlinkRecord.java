@@ -507,7 +507,7 @@ public final class HyperlinkRecord extends StandardRecord {
 
                     //From the spec: An optional unsigned integer that MUST be 3 if present
                     // but some files has 4
-                    int usKeyValue = in.readUShort();
+                    /*int usKeyValue = */ in.readUShort();
 
                     _address = StringUtil.readUnicodeLE(in, charDataSize/2);
                 } else {

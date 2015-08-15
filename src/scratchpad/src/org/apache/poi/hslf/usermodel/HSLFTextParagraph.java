@@ -752,10 +752,10 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
 
         RecordContainer _txtbox = headerAtom.getParentRecord();
         Record[] cr = _txtbox.getChildRecords();
-        int headerIdx = -1, textIdx = -1, styleIdx = -1;
+        int /* headerIdx = -1, */ textIdx = -1, styleIdx = -1;
         for (int i = 0; i < cr.length; i++) {
             Record r = cr[i];
-            if (r == headerAtom) headerIdx = i;
+            if (r == headerAtom) ; // headerIdx = i;
             else if (r == oldRecord || r == newRecord) textIdx = i;
             else if (r == styleAtom) styleIdx = i;
         }
@@ -763,7 +763,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
         if (textIdx == -1) {
             // the old record was never registered, ignore it
             _txtbox.addChildAfter(newRecord, headerAtom);
-            textIdx = headerIdx + 1;
+            // textIdx = headerIdx + 1;
         } else {
             // swap not appropriated records - noop if unchanged
             cr[textIdx] = newRecord;

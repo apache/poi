@@ -329,15 +329,14 @@ public final class StyleSheet implements HDFType {
                newCHP.setIco((byte)0);
                break;
           case 0x33:
-               try
-               {
-                   newCHP = (CharacterProperties)oldCHP.clone();
-               }
-               catch(CloneNotSupportedException e)
-               {
-                   //do nothing
-               }
-               return;
+               // ... this code has no effect ...
+               //  try {
+               //      newCHP = (CharacterProperties)oldCHP.clone();
+               //  }
+               //  catch(CloneNotSupportedException e) {
+               //      //do nothing
+               //  }
+              break;
           case 0x34:
                break;
           case 0x35:

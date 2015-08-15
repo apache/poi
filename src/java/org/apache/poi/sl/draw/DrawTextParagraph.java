@@ -101,10 +101,10 @@ public class DrawTextParagraph<T extends TextRun> implements Drawable {
             indent -= leftMargin;
         }
         
-        Double rightMargin = paragraph.getRightMargin();
-        if (rightMargin == null) {
-            rightMargin = 0d;
-        }
+//        Double rightMargin = paragraph.getRightMargin();
+//        if (rightMargin == null) {
+//            rightMargin = 0d;
+//        }
 
         //The vertical line spacing
         Double spacing = paragraph.getLineSpacing();
