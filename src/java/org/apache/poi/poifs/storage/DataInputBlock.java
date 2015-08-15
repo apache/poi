@@ -79,7 +79,7 @@ public final class DataInputBlock {
 		// simple case - will always be one byte in each block
 		int i = prevBlock._buf.length-1;
 		
-		int b0 = prevBlock._buf[i++] & 0xFF;
+		int b0 = prevBlock._buf[i] & 0xFF;
 		int b1 = _buf[_readIndex++] & 0xFF;
 		return (b1 << 8) + (b0 << 0);
 	}
