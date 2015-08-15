@@ -348,7 +348,7 @@ public abstract class TAPAbstractType
         builder.append("    .rgtc                 = ");
         builder.append(" (").append(Arrays.toString(getRgtc())).append(" )\n");
         builder.append("    .rgshd                = ");
-        builder.append(" (").append(getRgshd()).append(" )\n");
+        builder.append(" (").append(Arrays.toString(getRgshd())).append(" )\n");
         builder.append("    .fPropRMark           = ");
         builder.append(" (").append(getFPropRMark()).append(" )\n");
         builder.append("    .fHasOldProps         = ");
