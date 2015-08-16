@@ -33,6 +33,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Method;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
@@ -632,13 +633,31 @@ public class TestSignatureInfo {
 
     private static File copy(File input) throws IOException {
         String extension = input.getName().replaceAll(".*?(\\.[^.]+)?$", "$1");
-        if (extension == null || "".equals(extension)) extension = ".zip";
-        File tmpFile = new File("build", "sigtest"+extension);
-        FileOutputStream fos = new FileOutputStream(tmpFile);
-        FileInputStream fis = new FileInputStream(input);
-        IOUtils.copy(fis, fos);
-        fis.close();
-        fos.close();
+        if (extension == null || "".equals(extension)) {
+            extension = ".zip";
+        }
+
+        // ensure that we create the "build" directory as it might not be existing
+        // in the Sonar Maven runs where we are at a different source directory
+        File buildDir = new File("build");
+        if(!buildDir.exists()) {
+            assertTrue("Failed to create " + buildDir.getAbsolutePath(), 
+                    buildDir.mkdirs());
+        }
+        File tmpFile = new File(buildDir, "sigtest"+extension);
+
+        OutputStream fos = new FileOutputStream(tmpFile);
+        try {
+            InputStream fis = new FileInputStream(input);
+            try {
+                IOUtils.copy(fis, fos);
+            } finally {
+                fis.close();
+            }
+        } finally {
+            fos.close();
+        }
+
         return tmpFile;
     }
 

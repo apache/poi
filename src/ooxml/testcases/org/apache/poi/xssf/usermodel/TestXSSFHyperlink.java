@@ -17,6 +17,8 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import java.io.IOException;
+
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
 import org.apache.poi.ss.usermodel.BaseTestHyperlink;
@@ -30,15 +32,6 @@ import org.apache.poi.xssf.XSSFTestDataSamples;
 public final class TestXSSFHyperlink extends BaseTestHyperlink {
 	public TestXSSFHyperlink() {
 		super(XSSFITestDataProvider.instance);
-	}
-
-	@Override
-	protected void setUp() {
-		// Use system out logger
-		System.setProperty(
-				"org.apache.poi.util.POILogger",
-				"org.apache.poi.util.SystemOutLogger"
-		);
 	}
 
 	public void testLoadExisting() {
@@ -94,7 +87,7 @@ public final class TestXSSFHyperlink extends BaseTestHyperlink {
         }
     }
 
-    public void testInvalidURLs() {
+    public void testInvalidURLs() throws IOException {
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFCreationHelper createHelper = workbook.getCreationHelper();
 
@@ -111,6 +104,7 @@ public final class TestXSSFHyperlink extends BaseTestHyperlink {
 
             }
         }
+        workbook.close();
     }
 
     public void testLoadSave() {

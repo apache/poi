@@ -1923,6 +1923,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
     @Test
     public void test57196_WorkbookEvaluator() {
+        String previousLogger = System.getProperty("org.apache.poi.util.POILogger");
         //System.setProperty("org.apache.poi.util.POILogger", "org.apache.poi.util.SystemOutLogger");
         //System.setProperty("poi.log.level", "3");
         try {
@@ -1990,7 +1991,11 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             workbookEvaluator.setDebugEvaluationOutputForNextEval(true);
             workbookEvaluator.evaluate(new XSSFEvaluationCell(cell));
         } finally {
-            System.clearProperty("org.apache.poi.util.POILogger");
+            if(previousLogger == null) {
+                System.clearProperty("org.apache.poi.util.POILogger");
+            } else {
+                System.setProperty("org.apache.poi.util.POILogger", previousLogger);
+            }
             System.clearProperty("poi.log.level");
         }
     }

@@ -32,15 +32,6 @@ import org.apache.poi.util.DummyPOILogger;
  * @author Marc Johnson
  */
 public final class TestRawDataBlockList extends TestCase {
-	static {
-        // We always want to use our own
-        //  logger
-        System.setProperty(
-        		"org.apache.poi.util.POILogger",
-        		"org.apache.poi.util.DummyPOILogger"
-        );
-	}
-
     /**
      * Test creating a normal RawDataBlockList
      */
