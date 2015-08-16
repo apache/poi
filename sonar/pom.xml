@@ -56,6 +56,7 @@
 		<module>main</module>
 		<module>ooxml-schema</module>
 		<module>ooxml-schema-encryption</module>
+		<module>ooxml-schema-security</module>
 		<module>ooxml</module>
 		<module>scratchpad</module>
 		<module>excelant</module>
@@ -100,7 +101,8 @@
 					<java.awt.headless>true</java.awt.headless>
 					<org.apache.poi.util.POILogger>org.apache.poi.util.NullLogger</org.apache.poi.util.POILogger>
 				</systemPropertyVariables>
-				<argLine>-Duser.language=en -Duser.country=US</argLine>
+				<!-- use to following to analyze OOM issues:  -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/tmp -->
+				<argLine>-Duser.language=en -Duser.country=US -Xmx512m</argLine>
 				<excludes>
 					<exclude>**/All*Tests.java</exclude>
 					<exclude>**/TestUnfixedBugs.java</exclude>

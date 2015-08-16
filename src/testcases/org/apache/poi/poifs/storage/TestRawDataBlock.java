@@ -33,15 +33,6 @@ import org.apache.poi.util.DummyPOILogger;
  * @author Marc Johnson
  */
 public final class TestRawDataBlock extends TestCase {
-	static {
-		// We always want to use our own
-		//  logger
-		System.setProperty(
-				"org.apache.poi.util.POILogger",
-				"org.apache.poi.util.DummyPOILogger"
-		);
-	}
-
 	/**
 	 * Test creating a normal RawDataBlock
 	 */
@@ -130,7 +121,7 @@ public final class TestRawDataBlock extends TestCase {
 
 				assertEquals(
 						"7 - Unable to read entire block; "+bts+" read before EOF; expected 512 bytes. Your document was either written by software that ignores the spec, or has been truncated!",
-						(String)(logger.logged.get(0))
+						logger.logged.get(0)
 				);
 			} else {
 				assertEquals(0, logger.logged.size());

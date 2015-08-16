@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
+import org.apache.poi.POIDataSamples;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFTestDataSamples;
 import org.apache.poi.hwpf.extractor.WordExtractor;
@@ -38,7 +39,7 @@ public class TestWordDocument {
         
         //WordDocument.main(new String[] {"test-data/document/Word95.doc", "/tmp/test.doc"});
         //WordDocument.main(new String[] {"test-data/document/Word6.doc", "/tmp/test.doc"});
-        WordDocument.main(new String[] {"test-data/document/53446.doc", "/tmp/test.doc"});
+        WordDocument.main(new String[] {POIDataSamples.getDocumentInstance().getFile("53446.doc").getAbsolutePath(), "/tmp/test.doc"});
     }
 
     @SuppressWarnings("deprecation")
@@ -53,7 +54,7 @@ public class TestWordDocument {
         assertTrue("Had: " + text, text.contains("Just  a \u201Ctest\u201D"));
         extractor.close();
         
-		WordDocument wordDoc = new WordDocument("test-data/document/47304.doc");
+		WordDocument wordDoc = new WordDocument(POIDataSamples.getDocumentInstance().getFile("47304.doc").getAbsolutePath());
         
         StringWriter docTextWriter = new StringWriter();
         PrintWriter out = new PrintWriter(docTextWriter);

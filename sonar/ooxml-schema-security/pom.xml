@@ -1,0 +1,84 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.apache.poi</groupId>
+        <artifactId>poi-parent</artifactId>
+        <version>3.12-SNAPSHOT</version>
+    </parent>
+    <artifactId>poi-ooxml-schema-security</artifactId>
+    <packaging>jar</packaging>
+
+    <name>Apach POI - Openxmlformats Security-Schema package</name>
+
+	<properties>
+		<!-- see http://docs.codehaus.org/display/SONAR/Narrowing+the+Focus for details of this property -->
+		<sonar.exclusions>target/generated-sources/*</sonar.exclusions>
+	</properties>
+  
+    <build>
+		<plugins>
+			<!-- reuse Ant build here instead of trying to tweak Maven to do this as we got stuck 
+			because we cannot provide "-noupa -nopvr" using the xmlbeans-maven-plugin -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.6</version>
+				<executions>
+					<execution>
+						<id>build-jar</id>
+						<phase>generate-sources</phase>
+						<configuration>
+							<target>
+								<echo message="build jar-file for ooxml-security" />
+								<ant dir="../.." target="compile-ooxml-xsds" useNativeBasedir="true"/>
+								<unzip src="../../ooxml-lib/ooxml-security-1.0.jar" dest="target/jar"/>
+							</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- copy resulting files from the jar-file as "resources" as otherwise Sonar does not pick them up -->
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.6</version>
+				<executions>
+					<execution>
+						<id>copy-sources</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${basedir}/src/main/resources</outputDirectory>
+							<resources>          
+								<resource>
+									<directory>target/jar</directory>
+								</resource>
+							</resources>              
+						</configuration>            
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>poi-main</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>poi-scratchpad</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+</project>
