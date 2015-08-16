@@ -64,4 +64,17 @@ public class TestTempFile extends TestCase {
             // expecting an exception here...
         }
     }
+
+    public void testTempFileCreationStrategyCreatesDirectoryIfNotExist() throws IOException {
+        File poiNotExistDir = new File(System.getProperty("java.io.tmpdir"), "poifilesNotExist");
+        assertFalse(poiNotExistDir.isDirectory());
+
+        TempFile.setTempFileCreationStrategy(new TempFile.DefaultTempFileCreationStrategy(poiNotExistDir));
+
+        File file1 = TempFile.createTempFile("TestTempFile", ".tst");
+        assertTrue(poiNotExistDir.isDirectory());
+
+        assertNotNull(file1);
+        assertTrue(file1.delete());
+    }
 }
