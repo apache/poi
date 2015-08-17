@@ -208,7 +208,7 @@ public class WorkbookFactory {
         if (POIXMLDocument.hasOOXMLHeader(inp)) {
             return new XSSFWorkbook(OPCPackage.open(inp));
         }
-        throw new IllegalArgumentException("Your InputStream was neither an OLE2 stream, nor an OOXML stream");
+        throw new InvalidFormatException("Your InputStream was neither an OLE2 stream, nor an OOXML stream");
     }
 
     /**

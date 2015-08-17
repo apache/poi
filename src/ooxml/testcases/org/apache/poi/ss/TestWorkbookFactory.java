@@ -30,6 +30,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 
 import junit.framework.TestCase;
@@ -135,7 +136,7 @@ public final class TestWorkbookFactory extends TestCase {
                 stream.close();
             }
             fail();
-        } catch(IllegalArgumentException e) {
+        } catch(InvalidFormatException e) {
             // Good
         }
     }
