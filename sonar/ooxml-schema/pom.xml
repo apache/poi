@@ -27,7 +27,7 @@
 				<version>1.1.0</version>
 				<executions>
 					<execution>
-						<id>install-xsds</id>
+						<id>install-xsds-part-4</id>
 						<phase>generate-sources</phase>
 						<goals>
 							<goal>wget</goal>
@@ -36,6 +36,18 @@
 							<url>http://www.ecma-international.org/publications/files/ECMA-ST/Office%20Open%20XML%201st%20edition%20Part%204%20(PDF).zip</url>
 							<unpack>true</unpack>
 							<md5>abe6bb6e7799e854934b3c634e8bcf7b</md5>
+						</configuration>
+					</execution>
+					<execution>
+						<id>install-xsds-part-2</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>wget</goal>
+						</goals>
+						<configuration>
+							<url>http://www.ecma-international.org/publications/files/ECMA-ST/Office%20Open%20XML%201st%20edition%20Part%202%20(PDF).zip</url>
+							<unpack>true</unpack>
+							<md5>c8f0eac388691d5be0d1647146400a10</md5>
 						</configuration>
 					</execution>
 				</executions>
@@ -53,6 +65,23 @@
 							<target>
 								<echo message="unzip schemas" />
 								<unzip src="target/OfficeOpenXML-XMLSchema.zip" dest="target/schemas/" />
+								<unzip src="target/OpenPackagingConventions-XMLSchema.zip" dest="target/schemas/" />
+								
+								<property name="ooxml.xsds.dc.1" value="http://dublincore.org/schemas/xmls/qdc/2003/04/02/dc.xsd"/>
+								<property name="ooxml.xsds.dc.2" value="http://dublincore.org/schemas/xmls/qdc/2003/04/02/dcterms.xsd"/>
+								<property name="ooxml.xsds.dc.3" value="http://dublincore.org/schemas/xmls/qdc/2003/04/02/dcmitype.xsd"/>
+								<property name="ooxml.xsds.dsig.1" value="http://www.w3.org/TR/2002/REC-xmldsig-core-20020212/xmldsig-core-schema.xsd"/>
+								<property name="ooxml.xsds.dsig.2" value="http://uri.etsi.org/01903/v1.3.2/XAdES.xsd"/>
+								<property name="ooxml.xsds.dsig.3" value="http://uri.etsi.org/01903/v1.4.1/XAdESv141.xsd"/>
+							
+								<get dest="target/schemas" skipexisting="true">
+									<url url="${ooxml.xsds.dc.1}"/>
+									<url url="${ooxml.xsds.dc.2}"/>
+									<url url="${ooxml.xsds.dc.3}"/>
+									<url url="${ooxml.xsds.dsig.1}"/>
+									<url url="${ooxml.xsds.dsig.2}"/>
+									<url url="${ooxml.xsds.dsig.3}"/>
+								</get>
 							</target>
 						</configuration>
 						<goals>
@@ -76,6 +105,8 @@
 			  </executions>
 				<configuration>
 					<schemaDirectory>target/schemas</schemaDirectory>
+					<noUpa>true</noUpa>
+					<noPvr>true</noPvr>
 					<javaSource>1.5</javaSource>
 					<optimize>yes</optimize>
 				</configuration>
