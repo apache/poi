@@ -17,13 +17,11 @@
 
 package org.apache.poi.hssf.util;
 
-
 import junit.framework.TestCase;
 
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.CellReference.NameType;
 import org.apache.poi.ss.SpreadsheetVersion;
-
 
 public final class TestCellReference extends TestCase {
     public void testColNumConversion() {
