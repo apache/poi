@@ -616,7 +616,7 @@ under the License.
         </condition>
     </target>
     <target name="compile-ooxml-xsds" unless="ooxml-compiled-xsds.present"
-        depends="check-jars,fetch-jars,check-compiled-ooxml-xsds"
+        depends="init,check-compiled-ooxml-xsds"
         description="Unpacks the OOXML xsd files, and compiles them into XmlBeans">
         <taskdef name="xmlbean"
                  classname="org.apache.xmlbeans.impl.tool.XMLBean"
@@ -1690,7 +1690,7 @@ under the License.
     <!--  which are missing the correct license headers -->
     <!-- You need to download rat from http://incubator.apache.org/rat/ -->
     <!--  and place the Rat jar into your ant lib before running -->
-    <target name="rat-check" depends="check-jars,fetch-jars">
+    <target name="rat-check" depends="init">
        <mkdir dir="${rat.reportdir}" />
 
        <typedef resource="org/apache/rat/anttasks/antlib.xml"
