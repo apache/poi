@@ -23,6 +23,10 @@ import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.CellReference.NameType;
 import org.apache.poi.ss.SpreadsheetVersion;
 
+/**
+ * Tests for the HSSF and SS versions of CellReference.
+ * See also {@link org.apache.poi.ss.util.TestCellReference}
+ */
 public final class TestCellReference extends TestCase {
     public void testColNumConversion() {
         assertEquals(0, CellReference.convertColStringToIndex("A"));
