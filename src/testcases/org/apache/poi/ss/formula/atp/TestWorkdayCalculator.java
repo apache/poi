@@ -65,6 +65,12 @@ public class TestWorkdayCalculator extends TestCase {
         assertEquals(4, WorkdayCalculator.instance.calculateWorkdays(A_FRIDAY, A_WEDNESDAY, new double[]{ A_SATURDAY, A_SUNDAY }));
     }
 
+    public void testCalculateWorkdaysNumberOfDays() {
+    	double start = 41553.0;
+    	int days = 1;
+        assertEquals(new Date(113, 9, 7), WorkdayCalculator.instance.calculateWorkdays(start, days, new double[0]));
+    }
+
     public void testPastDaysOfWeekShouldReturn0Past0Saturdays() {
         final double A_WEDNESDAY = DateUtil.getExcelDate(new Date(111, DECEMBER, 7));
         final double A_FRIDAY = DateUtil.getExcelDate(new Date(111, DECEMBER, 9));
