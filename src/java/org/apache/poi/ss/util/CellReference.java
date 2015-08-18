@@ -85,14 +85,14 @@ public class CellReference {
 	 * delimited and escaped as per normal syntax rules for formulas.
 	 */
 	public CellReference(String cellRef) {
-      if(cellRef.endsWith("#REF!")) {
-         throw new IllegalArgumentException("Cell reference invalid: " + cellRef);
-      }
+		if(cellRef.toUpperCase().endsWith("#REF!")) {
+			throw new IllegalArgumentException("Cell reference invalid: " + cellRef);
+		}
 
-		String[] parts = separateRefParts(cellRef);
-		_sheetName = parts[0];
+		CellRefParts parts = separateRefParts(cellRef);
+		_sheetName = parts.sheetName;
 
-		String colRef = parts[1];
+		String colRef = parts.colRef;
 		_isColAbs = (colRef.length() > 0) && colRef.charAt(0) == '$';
 		if (_isColAbs) {
 		  colRef = colRef.substring(1);
@@ -103,8 +103,8 @@ public class CellReference {
 		  _colIndex = convertColStringToIndex(colRef);
 		}
 
-		String rowRef=parts[2];
-    _isRowAbs = (rowRef.length() > 0) && rowRef.charAt(0) == '$';
+		String rowRef=parts.rowRef;
+		_isRowAbs = (rowRef.length() > 0) && rowRef.charAt(0) == '$';
 		if (_isRowAbs) {
 		  rowRef = rowRef.substring(1);
 		}
@@ -332,19 +332,37 @@ public class CellReference {
 		}
 		return rowNum <= ssVersion.getMaxRows();
 	}
+	
+	private static final class CellRefParts {
+		final String sheetName;
+		final String rowRef;
+		final String colRef; 
+		
+		private CellRefParts(String sheetName, String rowRef, String colRef) {
+			this.sheetName = sheetName;
+			this.rowRef = rowRef;
+			this.colRef = colRef;
+		}
+	}
 
 	/**
-	 * Separates the row from the columns and returns an array of three Strings.  The first element
-	 * is the sheet name. Only the first element may be null.  The second element in is the column
-	 * name still in ALPHA-26 number format.  The third element is the row.
+	 * Separates the sheet name, row, and columns from a cell reference string.
+	 * 
+	 * @param reference is a string that identifies a cell within the sheet or workbook
+	 * reference may not refer to a cell in an external workbook
+	 * reference may be absolute or relative.
+	 * @return String array of sheetName, column (in ALPHA-26 format), and row
+	 * output column or row elements will contain absolute reference markers if they
+	 * existed in the input reference.
 	 */
-	private static String[] separateRefParts(String reference) {
+	private static CellRefParts separateRefParts(String reference) {
 		int plingPos = reference.lastIndexOf(SHEET_NAME_DELIMITER);
-		String sheetName = parseSheetName(reference, plingPos);
+		final String sheetName = parseSheetName(reference, plingPos);
+		String row;
+		String col;
 		int start = plingPos+1;
 
 		int length = reference.length();
-
 
 		int loc = start;
 		// skip initial dollars
@@ -358,11 +376,11 @@ public class CellReference {
 				break;
 			}
 		}
-		return new String[] {
-			sheetName,
-			reference.substring(start,loc),
-			reference.substring(loc),
-		};
+		
+		col = reference.substring(start,loc).toUpperCase();
+		row = reference.substring(loc);
+		CellRefParts cellRefParts = new CellRefParts(sheetName, row, col);
+		return cellRefParts;
 	}
 
 	private static String parseSheetName(String reference, int indexOfSheetNameDelimiter) {
@@ -471,6 +489,7 @@ public class CellReference {
 	 * This will not include any markers for absolute
 	 *  references, so use {@link #formatAsString()}
 	 *  to properly turn references into strings.
+	 *  @return String array of { sheetName, rowString, colString }
 	 */
 	public String[] getCellRefParts() {
 		return new String[] {
