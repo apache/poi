@@ -25,9 +25,54 @@ import junit.framework.TestCase;
 
 
 /**
- * Tests that the common CellReference works as we need it to
+ * Tests that the common CellReference works as we need it to.
+ * Note - some additional testing is also done in the HSSF class,
+ *  {@link org.apache.poi.hssf.util.TestCellReference}
  */
 public final class TestCellReference extends TestCase {
+	public void testConstructors() {
+		CellReference cellReference;
+		final String sheet = "Sheet1";
+		final String cellRef = "A1";
+		final int row = 0;
+		final int col = 0;
+		final boolean absRow = true;
+		final boolean absCol = false;
+		
+		cellReference = new CellReference(row, col);
+		assertEquals("A1", cellReference.formatAsString());
+		
+		cellReference = new CellReference(row, col, absRow, absCol);
+		assertEquals("A$1", cellReference.formatAsString());
+		
+		cellReference = new CellReference(row, (short)col);
+		assertEquals("A1", cellReference.formatAsString());
+		
+		cellReference = new CellReference(cellRef);
+		assertEquals("A1", cellReference.formatAsString());
+		
+		cellReference = new CellReference(sheet, row, col, absRow, absCol);
+		assertEquals("Sheet1!A$1", cellReference.formatAsString());
+	}
+	
+	public void testFormatAsString() {
+		CellReference cellReference;
+		
+		cellReference = new CellReference(null, 0, 0, false, false);
+		assertEquals("A1", cellReference.formatAsString());
+		
+		//absolute references
+		cellReference = new CellReference(null, 0, 0, true, false);
+		assertEquals("A$1", cellReference.formatAsString());
+		
+		//sheet name with no spaces
+		cellReference = new CellReference("Sheet1", 0, 0, true, false);
+		assertEquals("Sheet1!A$1", cellReference.formatAsString());
+		
+		//sheet name with spaces
+		cellReference = new CellReference("Sheet 1", 0, 0, true, false);
+		assertEquals("'Sheet 1'!A$1", cellReference.formatAsString());
+	}
 	
 	public void testGetCellRefParts() {
 		CellReference cellReference;
