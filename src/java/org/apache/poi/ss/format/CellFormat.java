@@ -17,11 +17,6 @@
 
 package org.apache.poi.ss.format;
 
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.DateUtil;
-import org.apache.poi.ss.usermodel.DataFormatter;
-
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -30,6 +25,14 @@ import java.util.WeakHashMap;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.swing.JLabel;
+
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.ConditionalFormatting;
+import org.apache.poi.ss.usermodel.ConditionalFormattingRule;
+import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.DateUtil;
 
 /**
  * Format a value according to the standard Excel behavior.  This "standard" is
@@ -66,11 +69,10 @@ import java.util.regex.Pattern;
  * object.
  * 
  * TODO Merge this with {@link DataFormatter} so we only have one set of
- * code for formatting numbers.
- *
- * @author Ken Arnold, Industrious Media LLC
+ *  code for formatting numbers.
+ * TODO Re-use parts of this logic with {@link ConditionalFormatting} /
+ *  {@link ConditionalFormattingRule} for reporting stylings which do/don't apply
  */
-@SuppressWarnings({"Singleton"})
 public class CellFormat {
     private final String format;
     private final CellFormatPart posNumFmt;
