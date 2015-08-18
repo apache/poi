@@ -1196,6 +1196,7 @@ under the License.
             <classpath refid="test.ooxml.classpath"/>
             <classpath refid="ooxml.xmlsec.classpath"/>
             <syspropertyset refid="junit.properties"/>
+            <jvmarg value="-XX:MaxPermSize=256m"/>
             <arg value="-ooxml"/>
             <arg value="${ooxml.lite-merged.dir}/ooxml-lite-merged.jar"/>
             <arg value="-test"/>
