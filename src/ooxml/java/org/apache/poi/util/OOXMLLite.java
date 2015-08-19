@@ -91,7 +91,10 @@ public final class OOXMLLite {
         //collect unit tests
         System.out.println("Collecting unit tests from " + _testDir);
         collectTests(_testDir, _testDir, lst, ".+.class$", 
-                ".+(BaseTestXCell|TestUnfixedBugs|MemoryUsage|TestDataProvider|TestDataSamples|All.+Tests|ZipFileAssert|PkiTestUtils|TestCellFormatPart\\$\\d|TestSignatureInfo\\$\\d).class");
+                ".+(BaseTestXCell|TestUnfixedBugs|MemoryUsage|TestDataProvider|TestDataSamples|All.+Tests|ZipFileAssert|PkiTestUtils|TestCellFormatPart\\$\\d|TestSignatureInfo\\$\\d|"
+                + "TestSXSSFWorkbook\\$\\d|TestCertificateEncryption\\$CertData|TestPOIXMLDocument\\$OPCParser|TestPOIXMLDocument\\$TestFactory|TestXSLFTextParagraph\\$DrawTextParagraphProxy|"
+                + "TestXSSFExportToXML\\$\\d|TestXSSFExportToXML\\$DummyEntityResolver|TestSXSSFWorkbook\\$NullOutputStream|TestFormulaEvaluatorOnXSSF\\$Result|TestFormulaEvaluatorOnXSSF\\$SS|"
+                + "TestMultiSheetFormulaEvaluatorOnXSSF\\$Result|TestMultiSheetFormulaEvaluatorOnXSSF\\$SS|TestXSSFBugs\\$\\d).class");
         System.out.println("Found " + lst.size() + " classes");
         
         //run tests
@@ -145,6 +148,15 @@ public final class OOXMLLite {
         for (Method m : testclass.getDeclaredMethods()) {
             if(m.isAnnotationPresent(Test.class)) {
                 return true;
+            }
+        }
+        
+        // also check super classes
+        if(testclass.getSuperclass() != null) {
+            for (Method m : testclass.getSuperclass().getDeclaredMethods()) {
+                if(m.isAnnotationPresent(Test.class)) {
+                    return true;
+                }
             }
         }
         
