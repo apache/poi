@@ -2501,4 +2501,30 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("57181.xlsm");
         assertEquals(9, wb.getNumberOfSheets());
     }
+    
+    @Test
+    public void bug52111() throws Exception {
+        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("Intersection-52111-xssf.xlsx");
+        Sheet s = wb.getSheetAt(0);
+        assertFormula(wb, s.getRow(2).getCell(0), "(C2:D3 D3:E4)", "4.0");
+        assertFormula(wb, s.getRow(6).getCell(0), "Tabelle2!E:E Tabelle2!11:11", "5.0");
+        assertFormula(wb, s.getRow(8).getCell(0), "Tabelle2!E:F Tabelle2!11:12", null);
+    }
+    
+    private void assertFormula(Workbook wb, Cell intF, String expectedFormula, String expectedResultOrNull) {
+        assertEquals(Cell.CELL_TYPE_FORMULA, intF.getCellType());
+        if (null == expectedResultOrNull) {
+            assertEquals(Cell.CELL_TYPE_ERROR, intF.getCachedFormulaResultType());
+            expectedResultOrNull = "#VALUE!";
+        }
+        else {
+            assertEquals(Cell.CELL_TYPE_NUMERIC, intF.getCachedFormulaResultType());
+        }
+        
+        assertEquals(expectedFormula, intF.getCellFormula());
+
+        // Check we can evaluate it correctly
+        FormulaEvaluator eval = wb.getCreationHelper().createFormulaEvaluator();
+        assertEquals(expectedResultOrNull, eval.evaluate(intF).formatAsString());
+    }
 }

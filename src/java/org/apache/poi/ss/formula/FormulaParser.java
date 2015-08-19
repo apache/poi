@@ -39,6 +39,7 @@ import org.apache.poi.ss.formula.ptg.FuncPtg;
 import org.apache.poi.ss.formula.ptg.FuncVarPtg;
 import org.apache.poi.ss.formula.ptg.GreaterEqualPtg;
 import org.apache.poi.ss.formula.ptg.GreaterThanPtg;
+import org.apache.poi.ss.formula.ptg.IntersectionPtg;
 import org.apache.poi.ss.formula.ptg.IntPtg;
 import org.apache.poi.ss.formula.ptg.LessEqualPtg;
 import org.apache.poi.ss.formula.ptg.LessThanPtg;
@@ -100,6 +101,12 @@ public final class FormulaParser {
 	 */
 	private char look;
 
+    /**
+     * Tracks whether the run of whitespace preceeding "look" could be an
+     * intersection operator.  See GetChar.
+     */
+	private boolean _inIntersection = false;
+
 	private FormulaParsingWorkbook _book;
 	private SpreadsheetVersion _ssVersion;
 
@@ -145,9 +152,20 @@ public final class FormulaParser {
 		fp.parse();
 		return fp.getRPNPtg(formulaType);
 	}
-
+	
 	/** Read New Character From Input Stream */
 	private void GetChar() {
+		// The intersection operator is a space.  We track whether the run of 
+		// whitespace preceeding "look" counts as an intersection operator.  
+		if (IsWhite(look)) {
+			if (look == ' ') {
+				_inIntersection = true;
+			}
+		}
+		else {
+			_inIntersection = false;
+		}
+		
 		// Check to see if we've walked off the end of the string.
 		if (_pointer > _formulaLength) {
 			throw new RuntimeException("too far");
@@ -158,6 +176,7 @@ public final class FormulaParser {
 			// Just return if so and reset 'look' to something to keep
 			// SkipWhitespace from spinning
 			look = (char)0;
+			_inIntersection = false;
 		}
 		_pointer++;
 		//System.out.println("Got char: "+ look);
@@ -1108,7 +1127,7 @@ public final class FormulaParser {
 				return parseUnary(true);
 			case '(':
 				Match('(');
-				ParseNode inside = comparisonExpression();
+				ParseNode inside = unionExpression();
 				Match(')');
 				return new ParseNode(ParenthesisPtg.instance, inside);
 			case '"':
@@ -1447,8 +1466,9 @@ public final class FormulaParser {
 			result = new ParseNode(operator, result, other);
 		}
 	}
+
 	private ParseNode unionExpression() {
-		ParseNode result = comparisonExpression();
+		ParseNode result = intersectionExpression();
 		boolean hasUnions = false;
 		while (true) {
 			SkipWhite();
@@ -1456,7 +1476,7 @@ public final class FormulaParser {
 				case ',':
 					GetChar();
 					hasUnions = true;
-					ParseNode other = comparisonExpression();
+					ParseNode other = intersectionExpression();
 					result = new ParseNode(UnionPtg.instance, result, other);
 					continue;
 			}
@@ -1467,6 +1487,25 @@ public final class FormulaParser {
 		}
 	}
 
+   private ParseNode intersectionExpression() {
+		ParseNode result = comparisonExpression();
+		boolean hasIntersections = false;
+		while (true) {
+			SkipWhite();
+			if (_inIntersection) {
+				// Don't getChar() as the space has already been eaten and recorded by SkipWhite().
+				hasIntersections = true;
+				ParseNode other = comparisonExpression();
+				result = new ParseNode(IntersectionPtg.instance, result, other);
+				continue;
+			}
+			if (hasIntersections) {
+				return augmentWithMemPtg(result);
+			}
+			return result;
+		}
+	}
+	
 	private ParseNode comparisonExpression() {
 		ParseNode result = concatExpression();
 		while (true) {

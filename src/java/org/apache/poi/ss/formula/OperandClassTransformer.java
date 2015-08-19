@@ -21,6 +21,7 @@ import org.apache.poi.ss.formula.ptg.AbstractFunctionPtg;
 import org.apache.poi.ss.formula.ptg.AttrPtg;
 import org.apache.poi.ss.formula.ptg.ControlPtg;
 import org.apache.poi.ss.formula.ptg.FuncVarPtg;
+import org.apache.poi.ss.formula.ptg.IntersectionPtg;
 import org.apache.poi.ss.formula.ptg.MemAreaPtg;
 import org.apache.poi.ss.formula.ptg.MemFuncPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
@@ -117,7 +118,8 @@ final class OperandClassTransformer {
 		if (token instanceof ValueOperatorPtg || token instanceof ControlPtg
 				|| token instanceof MemFuncPtg
 				|| token instanceof MemAreaPtg
-				|| token instanceof UnionPtg) {
+				|| token instanceof UnionPtg
+				|| token instanceof IntersectionPtg) {
 			// Value Operator Ptgs and Control are base tokens, so token will be unchanged
 			// but any child nodes are processed according to desiredOperandClass and callerForceArrayFlag
 

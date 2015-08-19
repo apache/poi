@@ -702,7 +702,6 @@ public final class TestFormulaParser extends TestCase {
 		assertEquals("IF(1<2,SUM(5,2,IF(3>2,SUM(A1:A2),6)),4)", formulaString);
 	}
 	public void testParserErrors() {
-		parseExpectedException("1 2");
 		parseExpectedException(" 12 . 345  ");
 		parseExpectedException("1 .23  ");
 
@@ -1060,8 +1059,65 @@ public final class TestFormulaParser extends TestCase {
 		);
 		MemFuncPtg mf = (MemFuncPtg)ptgs[0];
 		assertEquals(45, mf.getLenRefSubexpression());
+
+        // We don't check the type of the operands.
+        confirmTokenClasses("1,2", MemAreaPtg.class, IntPtg.class, IntPtg.class, UnionPtg.class);
 	}
 
+	public void testIntersection() {
+       String formula = "Sheet1!$B$2:$C$3 OFFSET(Sheet1!$E$2:$E$4, 1,Sheet1!$A$1) Sheet1!$D$6";
+        HSSFWorkbook wb = new HSSFWorkbook();
+        wb.createSheet("Sheet1");
+        Ptg[] ptgs = FormulaParser.parse(formula, HSSFEvaluationWorkbook.create(wb), FormulaType.CELL, -1);
+
+        confirmTokenClasses(ptgs,
+                // TODO - AttrPtg.class, // Excel prepends this
+                MemFuncPtg.class,
+                Area3DPtg.class,
+                Area3DPtg.class,
+                IntPtg.class,
+                Ref3DPtg.class,
+                FuncVarPtg.class,
+                IntersectionPtg.class,
+                Ref3DPtg.class,
+                IntersectionPtg.class
+        );
+        MemFuncPtg mf = (MemFuncPtg)ptgs[0];
+        assertEquals(45, mf.getLenRefSubexpression());
+
+        // This used to be an error but now parses.  Union has the same behaviour.
+        confirmTokenClasses("1 2", MemAreaPtg.class, IntPtg.class, IntPtg.class, IntersectionPtg.class);
+	}
+	
+	public void testComparisonInParen() {
+	    confirmTokenClasses("(A1 > B2)", 
+            RefPtg.class, 
+            RefPtg.class, 
+            GreaterThanPtg.class, 
+            ParenthesisPtg.class
+        );
+	}
+	
+	public void testUnionInParen() {
+	    confirmTokenClasses("(A1:B2,B2:C3)", 
+          MemAreaPtg.class, 
+          AreaPtg.class, 
+          AreaPtg.class, 
+          UnionPtg.class, 
+          ParenthesisPtg.class
+        );
+	}
+
+    public void testIntersectionInParen() {
+        confirmTokenClasses("(A1:B2 B2:C3)", 
+            MemAreaPtg.class, 
+            AreaPtg.class, 
+            AreaPtg.class, 
+            IntersectionPtg.class, 
+            ParenthesisPtg.class
+        );
+    }
+    
 	public void testRange_bug46643() {
 		String formula = "Sheet1!A1:Sheet1!B3";
 		HSSFWorkbook wb = new HSSFWorkbook();
