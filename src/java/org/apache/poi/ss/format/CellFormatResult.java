@@ -16,7 +16,7 @@
 ==================================================================== */
 package org.apache.poi.ss.format;
 
-import java.awt.*;
+import java.awt.Color;
 
 /**
  * This object contains the result of applying a cell format or cell format part
@@ -50,8 +50,10 @@ public class CellFormatResult {
      * @param text      The value for {@link #text}.
      * @param textColor The value for {@link #textColor}.
      */
-    public CellFormatResult(boolean applies, String text, Color textColor) {
+    public CellFormatResult(boolean applies, String text, Color textColor) throws IllegalArgumentException {
         this.applies = applies;
+        if (text == null)
+            throw new IllegalArgumentException("CellFormatResult text may not be null");
         this.text = text;
         this.textColor = (applies ? textColor : null);
     }
