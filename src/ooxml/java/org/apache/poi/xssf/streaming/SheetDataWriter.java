@@ -189,7 +189,12 @@ public class SheetDataWriter {
         String ref = new CellReference(_rownum, columnIndex).formatAsString();
         _out.write("<c r=\"" + ref + "\"");
         CellStyle cellStyle = cell.getCellStyle();
-        if (cellStyle.getIndex() != 0) _out.write(" s=\"" + cellStyle.getIndex() + "\"");
+        if (cellStyle.getIndex() != 0) {
+            // need to convert the short to unsigned short as the indexes can be up to 64k
+            // ideally we would use int for this index, but that would need changes to some more 
+            // APIs
+            _out.write(" s=\"" + (cellStyle.getIndex() & 0xffff) + "\"");
+        }
         int cellType = cell.getCellType();
         switch (cellType) {
             case Cell.CELL_TYPE_BLANK: {
