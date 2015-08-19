@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PushbackInputStream;
 import java.lang.reflect.Field;
-import java.nio.charset.Charset;
 import java.util.zip.InflaterInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
@@ -51,17 +50,32 @@ public class ZipSecureFile extends ZipFile {
     /**
      * Sets the ratio between de- and inflated bytes to detect zipbomb.
      * It defaults to 1% (= 0.01d), i.e. when the compression is better than
-     * 1% for any given read package part, the parsing will fail
+     * 1% for any given read package part, the parsing will fail indicating a 
+     * Zip-Bomb.
      *
      * @param ratio the ratio between de- and inflated bytes to detect zipbomb
      */
     public static void setMinInflateRatio(double ratio) {
         MIN_INFLATE_RATIO = ratio;
     }
+    
+    /**
+     * Returns the current minimum compression rate that is used.
+     * 
+     * See setMinInflateRatio() for details.
+     *
+     * @return The min accepted compression-ratio.  
+     */
+    public static double getMinInflateRatio() {
+        return MIN_INFLATE_RATIO;
+    }
 
     /**
      * Sets the maximum file size of a single zip entry. It defaults to 4GB,
      * i.e. the 32-bit zip format maximum.
+     * 
+     * This can be used to limit memory consumption and protect against 
+     * security vulnerabilities when documents are provided by users.
      *
      * @param maxEntrySize the max. file size of a single zip entry
      */
@@ -70,6 +84,17 @@ public class ZipSecureFile extends ZipFile {
             throw new IllegalArgumentException("Max entry size is bounded [0-4GB].");
         }
         MAX_ENTRY_SIZE = maxEntrySize;
+    }
+
+    /**
+     * Returns the current maximum allowed uncompressed file size.
+     * 
+     * See setMaxEntrySize() for details.
+     *
+     * @return The max accepted uncompressed file size. 
+     */
+    public static long getMaxEntrySize() {
+        return MAX_ENTRY_SIZE;
     }
 
     public ZipSecureFile(File file, int mode) throws IOException {
@@ -162,9 +187,12 @@ public class ZipSecureFile extends ZipFile {
             if (counter < MAX_ENTRY_SIZE) {
                 if (cis == null) return;
                 double ratio = (double)cis.counter/(double)counter;
-                if (ratio > MIN_INFLATE_RATIO) return;
+                if (ratio >= MIN_INFLATE_RATIO) return;
             }
-            throw new IOException("Zip bomb detected! Exiting.");
+            throw new IOException("Zip bomb detected! The file would exceed certain limits which usually indicate that the file is used to inflate memory usage and thus could pose a security risk. "
+                    + "You can adjust these limits via setMinInflateRatio() and setMaxEntrySize() if you need to work with files which exceed these limits. "
+                    + "Counter: " + counter + ", cis.counter: " + (cis == null ? 0 : cis.counter) + ", ratio: " + (cis == null ? 0 : ((double)cis.counter)/counter)
+                    + "Limits: MIN_INFLATE_RATIO: " + MIN_INFLATE_RATIO + ", MAX_ENTRY_SIZE: " + MAX_ENTRY_SIZE);
         }
 
         public ZipEntry getNextEntry() throws IOException {
