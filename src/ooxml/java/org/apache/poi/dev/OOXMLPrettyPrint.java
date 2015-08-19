@@ -40,6 +40,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.poi.openxml4j.opc.internal.ZipHelper;
+import org.apache.poi.openxml4j.util.ZipSecureFile;
 import org.apache.poi.util.IOUtils;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
@@ -56,6 +57,9 @@ public class OOXMLPrettyPrint {
     private final DocumentBuilder documentBuilder;
 
     public OOXMLPrettyPrint() throws ParserConfigurationException {
+        // allow files with much lower inflation rate here as there is no risk of Zip Bomb attacks in this developer tool
+        ZipSecureFile.setMinInflateRatio(0.00001);
+        
         documentBuilder = documentBuilderFactory.newDocumentBuilder();
     }
 

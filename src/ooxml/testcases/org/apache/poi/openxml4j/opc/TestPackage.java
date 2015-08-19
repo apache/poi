@@ -748,12 +748,12 @@ public final class TestPackage {
         if(e instanceof InvocationTargetException) {
             InvocationTargetException t = (InvocationTargetException)e;
             IOException t2 = (IOException)t.getTargetException();
-            if("Zip bomb detected! Exiting.".equals(t2.getMessage())) {
+            if(t2.getMessage().startsWith("Zip bomb detected!")) {
                 return;
             }
         }
         
-        if ("Zip bomb detected! Exiting.".equals(e.getMessage())) {
+        if(e.getMessage().startsWith("Zip bomb detected!")) {
             return;
         }
         
@@ -766,3 +766,4 @@ public final class TestPackage {
         throw new IllegalStateException("Expected to catch an Exception because of a detected Zip Bomb, but did not find the related error message in the exception", e);        
     }
 }
+
