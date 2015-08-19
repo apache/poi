@@ -2664,17 +2664,26 @@ public final class TestBugs extends BaseTestBugzillaIssues {
     public void bug52111() throws Exception {
         Workbook wb = openSample("Intersection-52111.xls");
         Sheet s = wb.getSheetAt(0);
-
-        // Check we can read it correctly
-        Cell intF = s.getRow(2).getCell(0);
+        assertFormula(wb, s.getRow(2).getCell(0), "(C2:D3 D3:E4)", "4.0");
+        assertFormula(wb, s.getRow(6).getCell(0), "Tabelle2!E:E Tabelle2!$A11:$IV11", "5.0");
+        assertFormula(wb, s.getRow(8).getCell(0), "Tabelle2!E:F Tabelle2!$A11:$IV12", null);
+    }
+    
+    private void assertFormula(Workbook wb, Cell intF, String expectedFormula, String expectedResultOrNull) {
         assertEquals(Cell.CELL_TYPE_FORMULA, intF.getCellType());
-        assertEquals(Cell.CELL_TYPE_NUMERIC, intF.getCachedFormulaResultType());
-
-        assertEquals("(C2:D3 D3:E4)", intF.getCellFormula());
+        if (null == expectedResultOrNull) {
+            assertEquals(Cell.CELL_TYPE_ERROR, intF.getCachedFormulaResultType());
+            expectedResultOrNull = "#VALUE!";
+        }
+        else {
+            assertEquals(Cell.CELL_TYPE_NUMERIC, intF.getCachedFormulaResultType());
+        }
+        
+        assertEquals(expectedFormula, intF.getCellFormula());
 
         // Check we can evaluate it correctly
         FormulaEvaluator eval = wb.getCreationHelper().createFormulaEvaluator();
-        assertEquals("4.0", eval.evaluate(intF).formatAsString());
+        assertEquals(expectedResultOrNull, eval.evaluate(intF).formatAsString());
     }
 
     @Test
