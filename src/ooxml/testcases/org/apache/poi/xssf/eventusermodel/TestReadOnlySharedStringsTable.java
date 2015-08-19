@@ -20,12 +20,16 @@
 package org.apache.poi.xssf.eventusermodel;
 
 import junit.framework.TestCase;
+
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.xssf.model.SharedStringsTable;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
+import org.xml.sax.SAXException;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -55,4 +59,24 @@ public final class TestReadOnlySharedStringsTable extends TestCase {
         }
 
 	}
+    
+    public void testEmptySSTOnPackageObtainedViaWorkbook() throws Exception {
+        XSSFWorkbook wb = new XSSFWorkbook(_ssTests.openResourceAsStream("noSharedStringTable.xlsx"));
+        OPCPackage pkg = wb.getPackage();
+        assertEmptySST(pkg);
+        wb.close();
+    }
+    
+    public void testEmptySSTOnPackageDirect() throws Exception {
+        OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream("noSharedStringTable.xlsx"));
+        assertEmptySST(pkg);
+    }
+
+    private void assertEmptySST(OPCPackage pkg) throws IOException, SAXException {
+        ReadOnlySharedStringsTable sst = new ReadOnlySharedStringsTable(pkg);
+        assertEquals(0, sst.getCount());
+        assertEquals(0, sst.getUniqueCount());
+        assertNull(sst.getItems()); // same state it's left in if fed a package which has no SST part.
+    }
+    
 }
