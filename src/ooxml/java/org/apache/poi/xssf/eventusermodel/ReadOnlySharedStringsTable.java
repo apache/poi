@@ -132,13 +132,15 @@ public class ReadOnlySharedStringsTable extends DefaultHandler {
      * @throws ParserConfigurationException
      */
     public void readFrom(InputStream is) throws IOException, SAXException {
-        InputSource sheetSource = new InputSource(is);
-        try {
-           XMLReader sheetParser = SAXHelper.newXMLReader();
-           sheetParser.setContentHandler(this);
-           sheetParser.parse(sheetSource);
-        } catch(ParserConfigurationException e) {
-           throw new RuntimeException("SAX parser appears to be broken - " + e.getMessage());
+        if (is.available() > 0) {
+            InputSource sheetSource = new InputSource(is);
+            try {
+                XMLReader sheetParser = SAXHelper.newXMLReader();
+                sheetParser.setContentHandler(this);
+                sheetParser.parse(sheetSource);
+            } catch(ParserConfigurationException e) {
+                throw new RuntimeException("SAX parser appears to be broken - " + e.getMessage());
+            }
         }
     }
 
