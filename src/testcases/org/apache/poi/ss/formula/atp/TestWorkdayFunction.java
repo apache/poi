@@ -92,7 +92,11 @@ public class TestWorkdayFunction extends TestCase {
 		StringEval stringEval = new StringEval(startDate);
 		double numberValue = ((NumberEval) WorkdayFunction.instance.evaluate(new ValueEval[]{
                 stringEval, new NumberEval(days) }, EC)).getNumberValue();
-		assertEquals(expectedWorkDay, formatter.format(DateUtil.getJavaDate(numberValue)));
+		assertEquals(41544.0, numberValue);
+		
+		Date date = DateUtil.getJavaDate(numberValue);
+        assertEquals(new Date(113, 8, 27), date);
+        assertEquals(expectedWorkDay, formatter.format(date));
     }
     
     public void testReturnWorkdaysSpanningAWeekendAddingDays() {
@@ -102,7 +106,11 @@ public class TestWorkdayFunction extends TestCase {
 		StringEval stringEval = new StringEval(startDate);
 		double numberValue = ((NumberEval) WorkdayFunction.instance.evaluate(new ValueEval[]{
                 stringEval, new NumberEval(days) }, EC)).getNumberValue();
-		assertEquals(expectedWorkDay, formatter.format(DateUtil.getJavaDate(numberValue)));
+        assertEquals(41547.0, numberValue);
+
+        Date date = DateUtil.getJavaDate(numberValue);
+		assertEquals(new Date(113, 8, 30), date);
+        assertEquals(expectedWorkDay, formatter.format(date));
     }
     
     public void testReturnWorkdaysWhenStartIsWeekendAddingDays() {
@@ -112,7 +120,11 @@ public class TestWorkdayFunction extends TestCase {
 		StringEval stringEval = new StringEval(startDate);
 		double numberValue = ((NumberEval) WorkdayFunction.instance.evaluate(new ValueEval[]{
                 stringEval, new NumberEval(days) }, EC)).getNumberValue();
-		assertEquals(expectedWorkDay, formatter.format(DateUtil.getJavaDate(numberValue)));
+        assertEquals(41554.0, numberValue);
+
+        Date date = DateUtil.getJavaDate(numberValue);
+        assertEquals(new Date(113, 9, 7), date);
+        assertEquals(expectedWorkDay, formatter.format(date));
     }
     
     public void testReturnWorkdaysWhenStartIsWeekendSubtractingDays() {
@@ -122,7 +134,11 @@ public class TestWorkdayFunction extends TestCase {
 		StringEval stringEval = new StringEval(startDate);
 		double numberValue = ((NumberEval) WorkdayFunction.instance.evaluate(new ValueEval[]{
                 stringEval, new NumberEval(days) }, EC)).getNumberValue();
-		assertEquals(expectedWorkDay, formatter.format(DateUtil.getJavaDate(numberValue)));
+        assertEquals(41551.0, numberValue);
+
+        Date date = DateUtil.getJavaDate(numberValue);
+        assertEquals(new Date(113, 9, 4), date);
+        assertEquals(expectedWorkDay, formatter.format(date));
     }
 
     public void testReturnWorkdaysWithDaysTruncated() {
