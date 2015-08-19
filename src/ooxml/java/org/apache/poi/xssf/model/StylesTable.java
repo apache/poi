@@ -563,11 +563,12 @@ public class StylesTable extends POIXMLDocumentPart {
     }
 
     public XSSFCellStyle createCellStyle() {
-        int xfSize = styleXfs.size();
-        if (xfSize > MAXIMUM_STYLE_ID)
+        if (getNumCellStyles() > MAXIMUM_STYLE_ID) {
             throw new IllegalStateException("The maximum number of Cell Styles was exceeded. " +
                       "You can define up to " + MAXIMUM_STYLE_ID + " style in a .xlsx Workbook");
+        }
 
+        int xfSize = styleXfs.size();
         CTXf xf = CTXf.Factory.newInstance();
         xf.setNumFmtId(0);
         xf.setFontId(0);

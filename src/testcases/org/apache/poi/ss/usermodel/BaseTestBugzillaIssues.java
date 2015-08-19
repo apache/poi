@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.text.AttributedString;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.PaneInformation;
@@ -775,8 +776,7 @@ public abstract class BaseTestBugzillaIssues {
         
         
         // References to try
-        String ext = "xls";
-        if (! (wb instanceof HSSFWorkbook)) ext += "x";
+        String ext = _testDataProvider.getStandardFileNameExtension();
         String refLocal = "'[test."+ext+"]Sheet1'!$A$2";
         String refHttp  = "'[http://example.com/test."+ext+"]Sheet1'!$A$2";
         String otherCellText = "In Another Workbook";
@@ -1171,5 +1171,75 @@ public abstract class BaseTestBugzillaIssues {
         assertEquals("ab", cell.getStringCellValue());
         ev.evaluateFormulaCell(cell);
         assertEquals("ab", cell.getStringCellValue());
+    }
+
+    @Test
+    public void bug58260() throws IOException {
+        //Create workbook and worksheet
+        Workbook wb = _testDataProvider.createWorkbook();
+        Sheet worksheet = wb.createSheet("sample");
+
+        //Loop through and add all values from array list
+        // use a fixed seed to always produce the same file which makes comparing stuff easier
+        Random rnd = new Random(4352345);
+        int maxStyles = (wb instanceof HSSFWorkbook) ? 4009 : 64000;
+        for(int i = 0;i < maxStyles;i++) {
+            //Create new row
+            Row row = worksheet.createRow(i);
+
+            //Create cell style
+            final CellStyle style; 
+            try {
+                style = wb.createCellStyle();
+            } catch (IllegalStateException e) {
+                throw new IllegalStateException("Failed for row " + i, e);
+            }
+            style.setAlignment(CellStyle.ALIGN_RIGHT);
+            if((wb instanceof HSSFWorkbook)) {
+                // there are some predefined styles
+                assertEquals(i+21, style.getIndex());
+            } else {
+                // getIndex() returns short, which is not sufficient for > 32767
+                // we should really change the API to be "int" for getIndex() but
+                // that needs API changes
+                assertEquals(i+1, style.getIndex() & 0xffff);
+            }
+
+            //Create cell
+            Cell cell = row.createCell(0);
+
+            //Set cell style
+            cell.setCellStyle(style);
+
+            //Set cell value
+            cell.setCellValue("r" + rnd.nextInt());
+        }
+
+        // should fail if we try to add more now
+        try {
+            wb.createCellStyle();
+            fail("Should fail after " + maxStyles + " styles, but did not fail");
+        } catch (IllegalStateException e) {
+            // expected here
+        }
+        
+        /*//add column width for appearance sake
+        worksheet.setColumnWidth(0, 5000);
+        
+        // Write the output to a file       
+        System.out.println("Writing...");
+        OutputStream fileOut = new FileOutputStream("C:\\temp\\58260." + _testDataProvider.getStandardFileNameExtension());
+        
+        // the resulting file can be compressed nicely, so we need to disable the zip bomb detection here
+        double before = ZipSecureFile.getMinInflateRatio();
+        try {
+            ZipSecureFile.setMinInflateRatio(0.00001);
+            wb.write(fileOut);
+        } finally { 
+            fileOut.close();
+            ZipSecureFile.setMinInflateRatio(before);
+        }*/
+        
+        wb.close();
     }
 }
