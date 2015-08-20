@@ -54,7 +54,7 @@ public interface Workbook extends Closeable {
 
     /**
      * Indicates the sheet is visible.
-     * 
+     *
      * @see #setSheetHidden(int, int)
      */
     public static final int SHEET_STATE_VISIBLE = 0;
@@ -286,10 +286,11 @@ public interface Workbook extends Closeable {
      * @param endColumn     0 based end of repeating columns.
      * @param startRow      0 based start of repeating rows.
      * @param endRow        0 based end of repeating rows.
-     * 
+     *
      * @deprecated use {@link Sheet#setRepeatingRows(CellRangeAddress)}
      *        or {@link Sheet#setRepeatingColumns(CellRangeAddress)}
      */
+    @Deprecated
     void setRepeatingRowsAndColumns(int sheetIndex, int startColumn, int endColumn, int startRow, int endRow);
 
     /**
@@ -325,6 +326,7 @@ public interface Workbook extends Closeable {
      * Create a new Cell style and add it to the workbook's style table
      *
      * @return the new Cell Style object
+     * @throws IllegalStateException if the number of cell styles exceeded the limit for this type of Workbook.
      */
     CellStyle createCellStyle();
 
@@ -357,8 +359,9 @@ public interface Workbook extends Closeable {
      *  Workbook should no longer be used.
      * <p>This will have no effect newly created Workbooks.
      */
+    @Override
     void close() throws IOException;
-    
+
     /**
      * @return the total number of defined names in this workbook
      */
@@ -414,7 +417,7 @@ public interface Workbook extends Closeable {
      *  to be added to the file, some linking information must first
      *  be recorded. Once a given external workbook has been linked,
      *  then formulas using it can added. Each workbook needs linking
-     *  only once. 
+     *  only once.
      * <p>This linking only applies for writing formulas. To link things
      *  for evaluation, see {@link FormulaEvaluator#setupReferencedWorkbooks(java.util.Map)}
      *
@@ -422,7 +425,7 @@ public interface Workbook extends Closeable {
      * @param workbook The open workbook to fetch the link required information from
      */
     int linkExternalWorkbook(String name, Workbook workbook);
-    
+
      /**
      * Sets the printarea for the sheet provided
      * <p>
@@ -557,7 +560,7 @@ public interface Workbook extends Closeable {
 
     /**
      * Hide or unhide a sheet.
-     * 
+     *
      * <ul>
      *  <li>0 - visible. </li>
      *  <li>1 - hidden. </li>

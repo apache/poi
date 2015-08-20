@@ -131,10 +131,11 @@ public class XSSFCellStyle implements CellStyle {
      *  XSSFWorkbook if you like. This allows you to
      *  copy styles from one XSSFWorkbook to another.
      */
+    @Override
     public void cloneStyleFrom(CellStyle source) {
         if(source instanceof XSSFCellStyle) {
             XSSFCellStyle src = (XSSFCellStyle)source;
-            
+
             // Is it on our Workbook?
             if(src._stylesSource == _stylesSource) {
                // Nice and easy
@@ -149,30 +150,30 @@ public class XSSFCellStyle implements CellStyle {
                      _cellXf.unsetAlignment();
                   if(_cellXf.isSetExtLst())
                      _cellXf.unsetExtLst();
-                  
+
                   // Create a new Xf with the same contents
                   _cellXf = CTXf.Factory.parse(
                         src.getCoreXf().toString()
                   );
-                  
+
                   // bug 56295: ensure that the fills is available and set correctly
                   CTFill fill = CTFill.Factory.parse(
                 		  src.getCTFill().toString()
                 		  );
                   addFill(fill);
-                  
+
                   // Swap it over
                   _stylesSource.replaceCellXfAt(_cellXfId, _cellXf);
                } catch(XmlException e) {
                   throw new POIXMLException(e);
                }
-               
+
                // Copy the format
                String fmt = src.getDataFormatString();
                setDataFormat(
                      (new XSSFDataFormat(_stylesSource)).getFormat(fmt)
                );
-               
+
                // Copy the font
                try {
                   CTFont ctFont = CTFont.Factory.parse(
@@ -185,7 +186,7 @@ public class XSSFCellStyle implements CellStyle {
                   throw new POIXMLException(e);
                }
             }
-            
+
             // Clear out cached details
             _font = null;
             _cellAlignment = null;
@@ -213,6 +214,7 @@ public class XSSFCellStyle implements CellStyle {
      * @see org.apache.poi.ss.usermodel.CellStyle#ALIGN_JUSTIFY
      * @see org.apache.poi.ss.usermodel.CellStyle#ALIGN_CENTER_SELECTION
      */
+    @Override
     public short getAlignment() {
         return (short)(getAlignmentEnum().ordinal());
     }
@@ -250,6 +252,7 @@ public class XSSFCellStyle implements CellStyle {
      * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_MEDIUM_DASH_DOT_DOT
      * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_SLANTED_DASH_DOT
      */
+    @Override
     public short getBorderBottom() {
         if(!_cellXf.getApplyBorder()) return BORDER_NONE;
 
@@ -289,6 +292,7 @@ public class XSSFCellStyle implements CellStyle {
      * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_MEDIUM_DASH_DOT_DOT
      * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_SLANTED_DASH_DOT
      */
+    @Override
     public short getBorderLeft() {
         if(!_cellXf.getApplyBorder()) return BORDER_NONE;
 
@@ -327,6 +331,7 @@ public class XSSFCellStyle implements CellStyle {
      * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_MEDIUM_DASH_DOT_DOT
      * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_SLANTED_DASH_DOT
      */
+    @Override
     public short getBorderRight() {
         if(!_cellXf.getApplyBorder()) return BORDER_NONE;
 
@@ -365,6 +370,7 @@ public class XSSFCellStyle implements CellStyle {
      * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_MEDIUM_DASH_DOT_DOT
      * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_SLANTED_DASH_DOT
      */
+    @Override
     public short getBorderTop() {
         if(!_cellXf.getApplyBorder()) return BORDER_NONE;
 
@@ -391,6 +397,7 @@ public class XSSFCellStyle implements CellStyle {
      * @return the index of the color definition, default value is {@link org.apache.poi.ss.usermodel.IndexedColors#AUTOMATIC}
      * @see org.apache.poi.ss.usermodel.IndexedColors
      */
+    @Override
     public short getBottomBorderColor() {
         XSSFColor clr = getBottomBorderXSSFColor();
         return clr == null ? IndexedColors.BLACK.getIndex() : clr.getIndexed();
@@ -415,6 +422,7 @@ public class XSSFCellStyle implements CellStyle {
      *
      * @return the index of the number format
      */
+    @Override
     public short getDataFormat() {
         return (short)_cellXf.getNumFmtId();
     }
@@ -425,6 +433,7 @@ public class XSSFCellStyle implements CellStyle {
      *
      * @return the number format string
      */
+    @Override
     public String getDataFormatString() {
         int idx = getDataFormat();
         return new XSSFDataFormat(_stylesSource).getFormat((short)idx);
@@ -439,11 +448,13 @@ public class XSSFCellStyle implements CellStyle {
      * @return fill color, default value is {@link org.apache.poi.ss.usermodel.IndexedColors#AUTOMATIC}
      * @see org.apache.poi.ss.usermodel.IndexedColors
      */
+    @Override
     public short getFillBackgroundColor() {
         XSSFColor clr = getFillBackgroundXSSFColor();
         return clr == null ? IndexedColors.AUTOMATIC.getIndex() : clr.getIndexed();
     }
-    
+
+    @Override
     public XSSFColor getFillBackgroundColorColor() {
        return getFillBackgroundXSSFColor();
     }
@@ -480,15 +491,17 @@ public class XSSFCellStyle implements CellStyle {
      * @see IndexedColors
      * @return fill color, default value is {@link org.apache.poi.ss.usermodel.IndexedColors#AUTOMATIC}
      */
+    @Override
     public short getFillForegroundColor() {
         XSSFColor clr = getFillForegroundXSSFColor();
         return clr == null ? IndexedColors.AUTOMATIC.getIndex() : clr.getIndexed();
     }
 
+    @Override
     public XSSFColor getFillForegroundColorColor() {
        return getFillForegroundXSSFColor();
     }
-    
+
     /**
      * Get the foreground fill color.
      *
@@ -530,6 +543,7 @@ public class XSSFCellStyle implements CellStyle {
      * @see org.apache.poi.ss.usermodel.CellStyle#SQUARES
      * @see org.apache.poi.ss.usermodel.CellStyle#DIAMONDS
      */
+    @Override
     public short getFillPattern() {
     	// bug 56295: handle missing applyFill attribute as "true" because Excel does as well
         if(_cellXf.isSetApplyFill() && !_cellXf.getApplyFill()) return 0;
@@ -569,6 +583,7 @@ public class XSSFCellStyle implements CellStyle {
      * @return short - font index
      * @see org.apache.poi.xssf.usermodel.XSSFWorkbook#getFontAt(short)
      */
+    @Override
     public short getFontIndex() {
         return (short) getFontId();
     }
@@ -578,6 +593,7 @@ public class XSSFCellStyle implements CellStyle {
      *
      * @return boolean -  whether the cell using this style is hidden
      */
+    @Override
     public boolean getHidden() {
         if (!_cellXf.isSetProtection() || !_cellXf.getProtection().isSetHidden()) {
             return false;
@@ -590,6 +606,7 @@ public class XSSFCellStyle implements CellStyle {
      *
      * @return indent - number of spaces
      */
+    @Override
     public short getIndention() {
         CTCellAlignment align = _cellXf.getAlignment();
         return (short)(align == null ? 0 : align.getIndent());
@@ -600,9 +617,18 @@ public class XSSFCellStyle implements CellStyle {
      *
      * @return unique index number of the underlying record this style represents
      */
+    @Override
     public short getIndex() {
         return (short)this._cellXfId;
     }
+
+    /**
+     * Workaround for places where we need to support more than 32767 cell styles, ideally
+     * the main getIndex() and others would return int, not short, but that would affect some
+     * public APIs
+     *
+     * @return
+     */
     protected int getUIndex() {
         return this._cellXfId;
     }
@@ -613,6 +639,7 @@ public class XSSFCellStyle implements CellStyle {
      * @return the index of the color definition, default value is {@link org.apache.poi.ss.usermodel.IndexedColors#BLACK}
      * @see org.apache.poi.ss.usermodel.IndexedColors
      */
+    @Override
     public short getLeftBorderColor() {
         XSSFColor clr = getLeftBorderXSSFColor();
         return clr == null ? IndexedColors.BLACK.getIndex() : clr.getIndexed();
@@ -638,6 +665,7 @@ public class XSSFCellStyle implements CellStyle {
      *
      * @return whether the cell using this style are locked
      */
+    @Override
     public boolean getLocked() {
         if (!_cellXf.isSetProtection() || !_cellXf.getProtection().isSetLocked()) {
             return true;
@@ -651,6 +679,7 @@ public class XSSFCellStyle implements CellStyle {
      * @return the index of the color definition, default value is {@link org.apache.poi.ss.usermodel.IndexedColors#BLACK}
      * @see org.apache.poi.ss.usermodel.IndexedColors
      */
+    @Override
     public short getRightBorderColor() {
         XSSFColor clr = getRightBorderXSSFColor();
         return clr == null ? IndexedColors.BLACK.getIndex() : clr.getIndexed();
@@ -683,22 +712,25 @@ public class XSSFCellStyle implements CellStyle {
      *
      * @return rotation degrees (between 0 and 180 degrees)
      */
+    @Override
     public short getRotation() {
         CTCellAlignment align = _cellXf.getAlignment();
         return (short)(align == null ? 0 : align.getTextRotation());
     }
 
+    @Override
     public boolean getShrinkToFit() {
         CTCellAlignment align = _cellXf.getAlignment();
         return align != null && align.getShrinkToFit();
     }
-    
+
     /**
      * Get the color to use for the top border
      *
      * @return the index of the color definition, default value is {@link org.apache.poi.ss.usermodel.IndexedColors#BLACK}
      * @see org.apache.poi.ss.usermodel.IndexedColors
      */
+    @Override
     public short getTopBorderColor() {
         XSSFColor clr = getTopBorderXSSFColor();
         return clr == null ? IndexedColors.BLACK.getIndex() : clr.getIndexed();
@@ -727,6 +759,7 @@ public class XSSFCellStyle implements CellStyle {
      * @see org.apache.poi.ss.usermodel.CellStyle#VERTICAL_BOTTOM
      * @see org.apache.poi.ss.usermodel.CellStyle#VERTICAL_JUSTIFY
      */
+    @Override
     public short getVerticalAlignment() {
         return (short) (getVerticalAlignmentEnum().ordinal());
     }
@@ -750,6 +783,7 @@ public class XSSFCellStyle implements CellStyle {
      *
      * @return  a boolean value indicating if the text in a cell should be line-wrapped within the cell.
      */
+    @Override
     public boolean getWrapText() {
         CTCellAlignment align = _cellXf.getAlignment();
         return align != null && align.getWrapText();
@@ -767,6 +801,7 @@ public class XSSFCellStyle implements CellStyle {
      * @see org.apache.poi.ss.usermodel.CellStyle#ALIGN_JUSTIFY
      * @see org.apache.poi.ss.usermodel.CellStyle#ALIGN_CENTER_SELECTION
      */
+    @Override
     public void setAlignment(short align) {
         getCellAlignment().setHorizontal(HorizontalAlignment.values()[align]);
     }
@@ -800,6 +835,7 @@ public class XSSFCellStyle implements CellStyle {
      * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_MEDIUM_DASH_DOT_DOT
      * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_SLANTED_DASH_DOT
      */
+    @Override
     public void setBorderBottom(short border) {
         CTBorder ct = getCTBorder();
         CTBorderPr pr = ct.isSetBottom() ? ct.getBottom() : ct.addNewBottom();
@@ -840,6 +876,7 @@ public class XSSFCellStyle implements CellStyle {
      * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_MEDIUM_DASH_DOT_DOT
      * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_SLANTED_DASH_DOT
      */
+    @Override
     public void setBorderLeft(short border) {
         CTBorder ct = getCTBorder();
         CTBorderPr pr = ct.isSetLeft() ? ct.getLeft() : ct.addNewLeft();
@@ -880,7 +917,8 @@ public class XSSFCellStyle implements CellStyle {
      * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_MEDIUM_DASH_DOT_DOT
      * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_SLANTED_DASH_DOT
      */
-   public void setBorderRight(short border) {
+   @Override
+public void setBorderRight(short border) {
         CTBorder ct = getCTBorder();
         CTBorderPr pr = ct.isSetRight() ? ct.getRight() : ct.addNewRight();
         if(border == BORDER_NONE) ct.unsetRight();
@@ -920,7 +958,8 @@ public class XSSFCellStyle implements CellStyle {
      * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_MEDIUM_DASH_DOT_DOT
      * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_SLANTED_DASH_DOT
      */
-   public void setBorderTop(short border) {
+   @Override
+public void setBorderTop(short border) {
         CTBorder ct = getCTBorder();
         CTBorderPr pr = ct.isSetTop() ? ct.getTop() : ct.addNewTop();
         if(border == BORDER_NONE) ct.unsetTop();
@@ -946,6 +985,7 @@ public class XSSFCellStyle implements CellStyle {
      * @param color the index of the color definition
      * @see org.apache.poi.ss.usermodel.IndexedColors
      */
+    @Override
     public void setBottomBorderColor(short color) {
         XSSFColor clr = new XSSFColor();
         clr.setIndexed(color);
@@ -976,6 +1016,7 @@ public class XSSFCellStyle implements CellStyle {
      *
      * @param fmt the index of a data format
      */
+    @Override
     public void setDataFormat(short fmt) {
         // XSSF supports >32,767 formats
         setDataFormat(fmt&0xffff);
@@ -1054,6 +1095,7 @@ public class XSSFCellStyle implements CellStyle {
      * @param bg - the color to use
      * @see org.apache.poi.ss.usermodel.IndexedColors
      */
+    @Override
     public void setFillBackgroundColor(short bg) {
         XSSFColor clr = new XSSFColor();
         clr.setIndexed(bg);
@@ -1088,6 +1130,7 @@ public class XSSFCellStyle implements CellStyle {
      * @param fg the color to use
      * @see org.apache.poi.ss.usermodel.IndexedColors
      */
+    @Override
     public void setFillForegroundColor(short fg) {
         XSSFColor clr = new XSSFColor();
         clr.setIndexed(fg);
@@ -1153,7 +1196,8 @@ public class XSSFCellStyle implements CellStyle {
      * @see #setFillForegroundColor(short)
      * @param fp  fill pattern (set to {@link org.apache.poi.ss.usermodel.CellStyle#SOLID_FOREGROUND} to fill w/foreground color)
      */
-   public void setFillPattern(short fp) {
+   @Override
+public void setFillPattern(short fp) {
         CTFill ct = getCTFill();
         CTPatternFill ptrn = ct.isSetPatternFill() ? ct.getPatternFill() : ct.addNewPatternFill();
         if(fp == NO_FILL && ptrn.isSetPatternType()) ptrn.unsetPatternType();
@@ -1182,6 +1226,7 @@ public class XSSFCellStyle implements CellStyle {
      * @see org.apache.poi.xssf.usermodel.XSSFWorkbook#createFont()
      * @see org.apache.poi.xssf.usermodel.XSSFWorkbook#getFontAt(short)
      */
+    @Override
     public void setFont(Font font) {
         if(font != null){
             long index = font.getIndex();
@@ -1197,6 +1242,7 @@ public class XSSFCellStyle implements CellStyle {
      *
      * @param hidden - whether the cell using this style should be hidden
      */
+    @Override
     public void setHidden(boolean hidden) {
         if (!_cellXf.isSetProtection()) {
              _cellXf.addNewProtection();
@@ -1209,6 +1255,7 @@ public class XSSFCellStyle implements CellStyle {
      *
      * @param indent - number of spaces
      */
+    @Override
     public void setIndention(short indent) {
         getCellAlignment().setIndent(indent);
     }
@@ -1219,6 +1266,7 @@ public class XSSFCellStyle implements CellStyle {
      * @param color the index of the color definition
      * @see org.apache.poi.ss.usermodel.IndexedColors
      */
+    @Override
     public void setLeftBorderColor(short color) {
         XSSFColor clr = new XSSFColor();
         clr.setIndexed(color);
@@ -1249,6 +1297,7 @@ public class XSSFCellStyle implements CellStyle {
      *
      * @param locked -  whether the cell using this style should be locked
      */
+    @Override
     public void setLocked(boolean locked) {
         if (!_cellXf.isSetProtection()) {
              _cellXf.addNewProtection();
@@ -1262,6 +1311,7 @@ public class XSSFCellStyle implements CellStyle {
      * @param color the index of the color definition
      * @see org.apache.poi.ss.usermodel.IndexedColors
      */
+    @Override
     public void setRightBorderColor(short color) {
         XSSFColor clr = new XSSFColor();
         clr.setIndexed(color);
@@ -1301,6 +1351,7 @@ public class XSSFCellStyle implements CellStyle {
      *
      * @param rotation - the rotation degrees (between 0 and 180 degrees)
      */
+    @Override
     public void setRotation(short rotation) {
         getCellAlignment().setTextRotation(rotation);
     }
@@ -1312,6 +1363,7 @@ public class XSSFCellStyle implements CellStyle {
      * @param color the index of the color definition
      * @see org.apache.poi.ss.usermodel.IndexedColors
      */
+    @Override
     public void setTopBorderColor(short color) {
         XSSFColor clr = new XSSFColor();
         clr.setIndexed(color);
@@ -1347,6 +1399,7 @@ public class XSSFCellStyle implements CellStyle {
      * @see org.apache.poi.ss.usermodel.CellStyle#VERTICAL_JUSTIFY
      * @see org.apache.poi.ss.usermodel.VerticalAlignment
      */
+    @Override
     public void setVerticalAlignment(short align) {
         getCellAlignment().setVertical(VerticalAlignment.values()[align]);
     }
@@ -1369,6 +1422,7 @@ public class XSSFCellStyle implements CellStyle {
      *
      * @param wrapped a boolean value indicating if the text in a cell should be line-wrapped within the cell.
      */
+    @Override
     public void setWrapText(boolean wrapped) {
         getCellAlignment().setWrapText(wrapped);
     }
@@ -1416,7 +1470,8 @@ public class XSSFCellStyle implements CellStyle {
                 break;
         }
     }
-    
+
+    @Override
     public void setShrinkToFit(boolean shrinkToFit) {
         getCellAlignment().setShrinkToFit(shrinkToFit);
     }
@@ -1456,6 +1511,7 @@ public class XSSFCellStyle implements CellStyle {
      *
      * @return the hash code value for this style
      */
+    @Override
     public int hashCode(){
         return _cellXf.toString().hashCode();
     }
@@ -1466,6 +1522,7 @@ public class XSSFCellStyle implements CellStyle {
      * @param o the style to check
      * @return true if the supplied style is equal to this style
      */
+    @Override
     public boolean equals(Object o){
         if(o == null || !(o instanceof XSSFCellStyle)) return false;
 
@@ -1479,6 +1536,7 @@ public class XSSFCellStyle implements CellStyle {
      *
      * @return a copy of this style
      */
+    @Override
     public Object clone(){
         CTXf xf = (CTXf)_cellXf.copy();
 

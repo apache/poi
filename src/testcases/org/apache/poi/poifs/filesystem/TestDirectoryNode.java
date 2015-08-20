@@ -18,14 +18,15 @@
 
 package org.apache.poi.poifs.filesystem;
 
-import java.io.*;
-
-import java.util.*;
-
-import junit.framework.*;
+import java.io.ByteArrayInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Iterator;
 
 import org.apache.poi.poifs.property.DirectoryProperty;
 import org.apache.poi.poifs.property.DocumentProperty;
+
+import junit.framework.TestCase;
 
 /**
  * Class to test DirectoryNode functionality
@@ -51,7 +52,7 @@ public final class TestDirectoryNode extends TestCase {
 
         // verify that getEntries behaves correctly
         int      count = 0;
-        Iterator iter  = node.getEntries();
+        Iterator<Entry> iter  = node.getEntries();
 
         while (iter.hasNext())
         {
@@ -106,7 +107,7 @@ public final class TestDirectoryNode extends TestCase {
 
         // verify that getEntries behaves correctly
         int           count = 0;
-        Iterator      iter  = node.getEntries();
+        Iterator<Entry>      iter  = node.getEntries();
 
         while (iter.hasNext())
         {
@@ -160,7 +161,7 @@ public final class TestDirectoryNode extends TestCase {
         // verify cannot delete the root directory
         assertFalse(root.delete());
         assertTrue(root.isEmpty());
-        
+
         DirectoryEntry dir = fs.createDirectory("myDir");
 
         assertFalse(root.isEmpty());
@@ -169,7 +170,7 @@ public final class TestDirectoryNode extends TestCase {
         // verify can delete empty directory
         assertFalse(root.delete());
         assertTrue(dir.delete());
-        
+
         // Now look at a non-empty one
         dir = fs.createDirectory("NextDir");
         DocumentEntry doc =
@@ -181,14 +182,16 @@ public final class TestDirectoryNode extends TestCase {
 
         // verify cannot delete non-empty directory
         assertFalse(dir.delete());
-        
+
         // but we can delete it if we remove the document
         assertTrue(doc.delete());
         assertTrue(dir.isEmpty());
         assertTrue(dir.delete());
-        
+
         // It's really gone!
         assertTrue(root.isEmpty());
+
+        fs.close();
     }
 
     /**
@@ -211,5 +214,7 @@ public final class TestDirectoryNode extends TestCase {
         assertTrue(dir.renameTo("FirstDir"));
         assertTrue(dir2.renameTo("foo"));
         assertEquals("foo", dir2.getName());
+
+        fs.close();
     }
 }
