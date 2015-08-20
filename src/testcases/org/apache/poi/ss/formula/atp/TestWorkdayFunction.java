@@ -32,8 +32,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.apache.poi.ss.formula.OperationEvaluationContext;
 import org.apache.poi.ss.formula.TwoDEval;
 import org.apache.poi.ss.formula.eval.AreaEval;
@@ -42,6 +40,8 @@ import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.usermodel.DateUtil;
+
+import junit.framework.TestCase;
 
 /**
  * @author jfaenomoto@gmail.com
@@ -88,57 +88,49 @@ public class TestWorkdayFunction extends TestCase {
     public void testReturnWorkdaysSpanningAWeekendSubtractingDays() {
     	String startDate = "2013/09/30";
     	int days = -1;
-    	String expectedWorkDay = "2013/09/27";
 		StringEval stringEval = new StringEval(startDate);
 		double numberValue = ((NumberEval) WorkdayFunction.instance.evaluate(new ValueEval[]{
                 stringEval, new NumberEval(days) }, EC)).getNumberValue();
 		assertEquals(41544.0, numberValue);
 		
 		Date date = DateUtil.getJavaDate(numberValue);
-        assertEquals(new Date(113, 8, 27), date);
-        assertEquals(expectedWorkDay, formatter.format(date));
+        assertEquals("Should be 2013/09/27", new Date(113, 8, 27), date);
     }
-    
+
     public void testReturnWorkdaysSpanningAWeekendAddingDays() {
     	String startDate = "2013/09/27";
     	int days = 1;
-    	String expectedWorkDay = "2013/09/30";
 		StringEval stringEval = new StringEval(startDate);
 		double numberValue = ((NumberEval) WorkdayFunction.instance.evaluate(new ValueEval[]{
                 stringEval, new NumberEval(days) }, EC)).getNumberValue();
         assertEquals(41547.0, numberValue);
 
         Date date = DateUtil.getJavaDate(numberValue);
-		assertEquals(new Date(113, 8, 30), date);
-        assertEquals(expectedWorkDay, formatter.format(date));
+		assertEquals("Should be 2013/09/30", new Date(113, 8, 30), date);
     }
-    
+
     public void testReturnWorkdaysWhenStartIsWeekendAddingDays() {
     	String startDate = "2013/10/06";
     	int days = 1;
-    	String expectedWorkDay = "2013/10/07";
 		StringEval stringEval = new StringEval(startDate);
 		double numberValue = ((NumberEval) WorkdayFunction.instance.evaluate(new ValueEval[]{
                 stringEval, new NumberEval(days) }, EC)).getNumberValue();
         assertEquals(41554.0, numberValue);
 
         Date date = DateUtil.getJavaDate(numberValue);
-        assertEquals(new Date(113, 9, 7), date);
-        assertEquals(expectedWorkDay, formatter.format(date));
+        assertEquals("Should be 2013/10/07", new Date(113, 9, 7), date);
     }
-    
+
     public void testReturnWorkdaysWhenStartIsWeekendSubtractingDays() {
     	String startDate = "2013/10/06";
     	int days = -1;
-    	String expectedWorkDay = "2013/10/04";
 		StringEval stringEval = new StringEval(startDate);
 		double numberValue = ((NumberEval) WorkdayFunction.instance.evaluate(new ValueEval[]{
                 stringEval, new NumberEval(days) }, EC)).getNumberValue();
         assertEquals(41551.0, numberValue);
 
         Date date = DateUtil.getJavaDate(numberValue);
-        assertEquals(new Date(113, 9, 4), date);
-        assertEquals(expectedWorkDay, formatter.format(date));
+        assertEquals("Should be 2013/10/04", new Date(113, 9, 4), date);
     }
 
     public void testReturnWorkdaysWithDaysTruncated() {
