@@ -102,7 +102,7 @@
 					<org.apache.poi.util.POILogger>org.apache.poi.util.NullLogger</org.apache.poi.util.POILogger>
 				</systemPropertyVariables>
 				<!-- use to following to analyze OOM issues:  -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/tmp -->
-				<argLine>-Duser.language=en -Duser.country=US -Xmx512m</argLine>
+				<argLine>-Duser.language=en -Duser.country=US -Xmx1024m</argLine>
 				<excludes>
 					<exclude>**/All*Tests.java</exclude>
 					<exclude>**/TestUnfixedBugs.java</exclude>
