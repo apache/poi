@@ -26,22 +26,22 @@ import org.apache.poi.sl.usermodel.PictureData;
 import org.apache.poi.sl.usermodel.PictureShape;
 
 
-public class DrawPictureShape<T extends PictureShape> extends DrawSimpleShape<T> {
-    public DrawPictureShape(T shape) {
+public class DrawPictureShape extends DrawSimpleShape {
+    public DrawPictureShape(PictureShape<?,?> shape) {
         super(shape);
     }
     
     @Override
     public void drawContent(Graphics2D graphics) {
-        PictureData data = shape.getPictureData();
+        PictureData data = getShape().getPictureData();
         if(data == null) return;
 
         ImageRenderer renderer = (ImageRenderer)graphics.getRenderingHint(Drawable.IMAGE_RENDERER);
         if (renderer == null) renderer = new ImageRenderer();
         
-        Rectangle2D anchor = getAnchor(graphics, shape);
+        Rectangle2D anchor = getAnchor(graphics, getShape());
 
-        Insets insets = shape.getClipping();
+        Insets insets = getShape().getClipping();
 
         try {
             renderer.loadImage(data.getData(), data.getContentType());
@@ -51,4 +51,9 @@ public class DrawPictureShape<T extends PictureShape> extends DrawSimpleShape<T>
             throw new RuntimeException(e);
         }
     }    
+
+    @Override
+    protected PictureShape<?,?> getShape() {
+        return (PictureShape<?,?>)shape;
+    }
 }

@@ -18,15 +18,28 @@
 package org.apache.poi.hslf.usermodel;
 
 import java.awt.Graphics2D;
-import java.util.*;
+import java.awt.Rectangle;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
-import org.apache.poi.ddf.*;
-import org.apache.poi.hslf.record.*;
+import org.apache.poi.ddf.EscherContainerRecord;
+import org.apache.poi.ddf.EscherDgRecord;
+import org.apache.poi.ddf.EscherDggRecord;
+import org.apache.poi.ddf.EscherRecord;
+import org.apache.poi.hslf.record.CString;
+import org.apache.poi.hslf.record.ColorSchemeAtom;
+import org.apache.poi.hslf.record.OEPlaceholderAtom;
+import org.apache.poi.hslf.record.PPDrawing;
+import org.apache.poi.hslf.record.RecordContainer;
+import org.apache.poi.hslf.record.RecordTypes;
+import org.apache.poi.hslf.record.RoundTripHFPlaceholder12;
+import org.apache.poi.hslf.record.SheetContainer;
 import org.apache.poi.sl.draw.DrawFactory;
 import org.apache.poi.sl.draw.Drawable;
+import org.apache.poi.sl.usermodel.PictureData;
+import org.apache.poi.sl.usermodel.ShapeType;
 import org.apache.poi.sl.usermodel.Sheet;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 
 /**
  * This class defines the common format of "Sheets" in a powerpoint
@@ -36,9 +49,7 @@ import org.apache.poi.util.POILogger;
  * @author Yegor Kozlov
  */
 
-public abstract class HSLFSheet implements Sheet<HSLFShape,HSLFSlideShow> {
-	private static POILogger logger = POILogFactory.getLogger(HSLFSheet.class);
-
+public abstract class HSLFSheet implements HSLFShapeContainer, Sheet<HSLFShape,HSLFTextParagraph> {
     /**
      * The <code>SlideShow</code> we belong to
      */
@@ -387,4 +398,68 @@ public abstract class HSLFSheet implements Sheet<HSLFShape,HSLFSlideShow> {
     }
 
 
+    @Override
+    public HSLFTextBox createTextBox() {
+        HSLFTextBox s = new HSLFTextBox();
+        s.setHorizontalCentered(true);
+        s.setAnchor(new Rectangle(0, 0, 100, 100));
+        addShape(s);
+        return s;
+    }
+
+    @Override
+    public HSLFAutoShape createAutoShape() {
+        HSLFAutoShape s = new HSLFAutoShape(ShapeType.RECT);
+        s.setHorizontalCentered(true);
+        s.setAnchor(new Rectangle(0, 0, 100, 100));
+        addShape(s);
+        return s;
+    }
+
+    @Override
+    public HSLFFreeformShape createFreeform() {
+        HSLFFreeformShape s = new HSLFFreeformShape();
+        s.setHorizontalCentered(true);
+        s.setAnchor(new Rectangle(0, 0, 100, 100));
+        addShape(s);
+        return s;
+    }
+
+    @Override
+    public HSLFConnectorShape createConnector() {
+        HSLFConnectorShape s = new HSLFConnectorShape();
+        s.setAnchor(new Rectangle(0, 0, 100, 100));
+        addShape(s);
+        return s;
+    }
+
+    @Override
+    public HSLFGroupShape createGroup() {
+        HSLFGroupShape s = new HSLFGroupShape();
+        s.setAnchor(new Rectangle(0, 0, 100, 100));
+        addShape(s);
+        return s;
+    }
+
+    @Override
+    public HSLFPictureShape createPicture(PictureData pictureData) {
+        if (!(pictureData instanceof HSLFPictureData)) {
+            throw new IllegalArgumentException("pictureData needs to be of type HSLFPictureData");
+        }
+        HSLFPictureShape s = new HSLFPictureShape((HSLFPictureData)pictureData);
+        s.setAnchor(new Rectangle(0, 0, 100, 100));
+        addShape(s);
+        return s;
+    }
+
+    @Override
+    public HSLFTable createTable(int numRows, int numCols) {
+        if (numRows < 1 || numCols < 1) {
+            throw new IllegalArgumentException("numRows and numCols must be greater than 0");
+        }
+        HSLFTable s = new HSLFTable(numRows,numCols);
+        s.setAnchor(new Rectangle(0, 0, 100, 100));
+        addShape(s);
+        return s;
+    }
 }

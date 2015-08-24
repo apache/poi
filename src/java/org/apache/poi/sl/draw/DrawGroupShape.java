@@ -24,18 +24,18 @@ import java.awt.geom.Rectangle2D;
 import org.apache.poi.sl.usermodel.*;
 
 
-public class DrawGroupShape<T extends GroupShape<? extends Shape>> extends DrawShape<T> implements Drawable {
+public class DrawGroupShape extends DrawShape {
 
-    public DrawGroupShape(T shape) {
+    public DrawGroupShape(GroupShape<?,?> shape) {
         super(shape);
     }
     
     public void draw(Graphics2D graphics) {
 
         // the coordinate system of this group of shape
-        Rectangle2D interior = shape.getInteriorAnchor();
+        Rectangle2D interior = getShape().getInteriorAnchor();
         // anchor of this group relative to the parent shape
-        Rectangle2D exterior = shape.getAnchor();
+        Rectangle2D exterior = getShape().getAnchor();
 
         AffineTransform tx = (AffineTransform)graphics.getRenderingHint(Drawable.GROUP_TRANSFORM);
         AffineTransform tx0 = new AffineTransform(tx);
@@ -50,7 +50,7 @@ public class DrawGroupShape<T extends GroupShape<? extends Shape>> extends DrawS
         DrawFactory drawFact = DrawFactory.getInstance(graphics);
         AffineTransform at2 = graphics.getTransform();
         
-        for (Shape child : shape) {
+        for (Shape<?,?> child : getShape()) {
             // remember the initial transform and restore it after we are done with the drawing
             AffineTransform at = graphics.getTransform();
             graphics.setRenderingHint(Drawable.GSAVE, true);
@@ -66,5 +66,10 @@ public class DrawGroupShape<T extends GroupShape<? extends Shape>> extends DrawS
 
         graphics.setTransform(at2);
         graphics.setRenderingHint(Drawable.GROUP_TRANSFORM, tx0);
+    }
+
+    @Override
+    protected GroupShape<?,?> getShape() {
+        return (GroupShape<?,?>)shape;
     }
 }

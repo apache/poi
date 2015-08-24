@@ -28,7 +28,7 @@ import org.apache.poi.sl.usermodel.MasterSheet;
  *
  * @author Yegor Kozlov
  */
-public abstract class HSLFMasterSheet extends HSLFSheet implements MasterSheet<HSLFShape,HSLFSlideShow> {
+public abstract class HSLFMasterSheet extends HSLFSheet implements MasterSheet<HSLFShape,HSLFTextParagraph> {
     public HSLFMasterSheet(SheetContainer container, int sheetNo){
         super(container, sheetNo);
     }

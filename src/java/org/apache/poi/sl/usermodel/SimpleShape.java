@@ -21,7 +21,10 @@ import org.apache.poi.sl.draw.geom.CustomGeometry;
 import org.apache.poi.sl.draw.geom.IAdjustableShape;
 
 
-public interface SimpleShape extends Shape, IAdjustableShape, PlaceableShape {
+public interface SimpleShape<
+    S extends Shape<S,P>,
+    P extends TextParagraph<S,P,? extends TextRun>
+> extends Shape<S,P>, IAdjustableShape, PlaceableShape<S,P> {
     FillStyle getFillStyle();
     LineDecoration getLineDecoration();
     StrokeStyle getStrokeStyle();

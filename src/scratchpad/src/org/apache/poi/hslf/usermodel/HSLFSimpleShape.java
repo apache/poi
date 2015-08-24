@@ -39,7 +39,7 @@ import org.apache.poi.util.Units;
  *
  *  @author Yegor Kozlov
  */
-public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape {
+public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<HSLFShape,HSLFTextParagraph> {
 
     public final static double DEFAULT_LINE_WIDTH = 0.75;
 
@@ -55,7 +55,7 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape {
      * @param escherRecord    <code>EscherSpContainer</code> container which holds information about this shape
      * @param parent    the parent of the shape
      */
-    protected HSLFSimpleShape(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape> parent){
+    protected HSLFSimpleShape(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape,HSLFTextParagraph> parent){
         super(escherRecord, parent);
     }
 
@@ -76,7 +76,7 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape {
         sp.setFlags(flags);
         _escherContainer.addChildRecord(sp);
 
-        EscherOptRecord opt = new EscherOptRecord();
+        AbstractEscherOptRecord opt = new EscherOptRecord();
         opt.setRecordId(EscherOptRecord.RECORD_ID);
         _escherContainer.addChildRecord(opt);
 
@@ -102,7 +102,7 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape {
      *  Returns width of the line in in points
      */
     public double getLineWidth(){
-        EscherOptRecord opt = getEscherOptRecord();
+        AbstractEscherOptRecord opt = getEscherOptRecord();
         EscherSimpleProperty prop = getEscherProperty(opt, EscherProperties.LINESTYLE__LINEWIDTH);
         double width = (prop == null) ? DEFAULT_LINE_WIDTH : Units.toPoints(prop.getPropertyValue());
         return width;
@@ -113,7 +113,7 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape {
      *  @param width  the width of line in in points
      */
     public void setLineWidth(double width){
-        EscherOptRecord opt = getEscherOptRecord();
+        AbstractEscherOptRecord opt = getEscherOptRecord();
         setEscherProperty(opt, EscherProperties.LINESTYLE__LINEWIDTH, Units.toEMU(width));
     }
 
@@ -123,7 +123,7 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape {
      * @param color new color of the line
      */
     public void setLineColor(Color color){
-        EscherOptRecord opt = getEscherOptRecord();
+        AbstractEscherOptRecord opt = getEscherOptRecord();
         if (color == null) {
             setEscherProperty(opt, EscherProperties.LINESTYLE__NOLINEDRAWDASH, 0x80000);
         } else {
@@ -137,7 +137,7 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape {
      * @return color of the line. If color is not set returns <code>java.awt.Color.black</code>
      */
     public Color getLineColor(){
-        EscherOptRecord opt = getEscherOptRecord();
+        AbstractEscherOptRecord opt = getEscherOptRecord();
 
         EscherSimpleProperty p = getEscherProperty(opt, EscherProperties.LINESTYLE__NOLINEDRAWDASH);
         if(p != null && (p.getPropertyValue() & 0x8) == 0) return null;
@@ -152,7 +152,7 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape {
      * @return dashing of the line.
      */
     public LineDash getLineDashing(){
-        EscherOptRecord opt = getEscherOptRecord();
+        AbstractEscherOptRecord opt = getEscherOptRecord();
         EscherSimpleProperty prop = getEscherProperty(opt, EscherProperties.LINESTYLE__LINEDASHING);
         return (prop == null) ? LineDash.SOLID : LineDash.fromNativeId(prop.getPropertyValue());
     }
@@ -163,7 +163,7 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape {
      * @param pen new style of the line.
      */
     public void setLineDashing(LineDash pen){
-        EscherOptRecord opt = getEscherOptRecord();
+        AbstractEscherOptRecord opt = getEscherOptRecord();
         setEscherProperty(opt, EscherProperties.LINESTYLE__LINEDASHING, pen == LineDash.SOLID ? -1 : pen.nativeId);
     }
 
@@ -173,7 +173,7 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape {
      * @return the compound style of the line.
      */
     public LineCompound getLineCompound() {
-        EscherOptRecord opt = getEscherOptRecord();
+        AbstractEscherOptRecord opt = getEscherOptRecord();
         EscherSimpleProperty prop = getEscherProperty(opt, EscherProperties.LINESTYLE__LINESTYLE);
         return (prop == null) ? LineCompound.SINGLE : LineCompound.fromNativeId(prop.getPropertyValue());
     }
@@ -184,7 +184,7 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape {
      * @param style new compound style of the line.
      */
     public void setLineCompound(LineCompound style){
-        EscherOptRecord opt = getEscherOptRecord();
+        AbstractEscherOptRecord opt = getEscherOptRecord();
         setEscherProperty(opt, EscherProperties.LINESTYLE__LINESTYLE, style == LineCompound.SINGLE ? -1 : style.nativeId);
     }
 
@@ -389,7 +389,7 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape {
 
 
     public double getShadowAngle() {
-        EscherOptRecord opt = getEscherOptRecord();
+        AbstractEscherOptRecord opt = getEscherOptRecord();
         EscherSimpleProperty prop = getEscherProperty(opt, EscherProperties.SHADOWSTYLE__OFFSETX);
         int offX = (prop == null) ? 0 : prop.getPropertyValue();
         prop = getEscherProperty(opt, EscherProperties.SHADOWSTYLE__OFFSETY);
@@ -398,7 +398,7 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape {
     }
     
     public double getShadowDistance() {
-        EscherOptRecord opt = getEscherOptRecord();
+        AbstractEscherOptRecord opt = getEscherOptRecord();
         EscherSimpleProperty prop = getEscherProperty(opt, EscherProperties.SHADOWSTYLE__OFFSETX);
         int offX = (prop == null) ? 0 : prop.getPropertyValue();
         prop = getEscherProperty(opt, EscherProperties.SHADOWSTYLE__OFFSETY);
@@ -415,12 +415,12 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape {
     }    
     
     public Shadow getShadow() {
-        EscherOptRecord opt = getEscherOptRecord();
+        AbstractEscherOptRecord opt = getEscherOptRecord();
         EscherProperty shadowType = opt.lookup(EscherProperties.SHADOWSTYLE__TYPE);
         if (shadowType == null) return null;
         
         return new Shadow(){
-            public SimpleShape getShadowParent() {
+            public SimpleShape<HSLFShape,HSLFTextParagraph> getShadowParent() {
                 return HSLFSimpleShape.this;
             }
 

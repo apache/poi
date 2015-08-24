@@ -172,11 +172,11 @@ public final class TestPicture {
         
         for (String file : files) {
             InputStream is = _slTests.openResourceAsStream(file);
-            SlideShow ss;
+            SlideShow<?,?> ss;
             if (file.endsWith("pptx")) {
                 Class<?> cls = Class.forName("org.apache.poi.xslf.usermodel.XMLSlideShow");
                 Constructor<?> ct = cls.getDeclaredConstructor(InputStream.class);
-                ss = (SlideShow)ct.newInstance(is);
+                ss = (SlideShow<?,?>)ct.newInstance(is);
             } else {
                 ss = new HSLFSlideShow(is);
             }
@@ -184,7 +184,7 @@ public final class TestPicture {
             
             boolean debugOut = false;
             Dimension pg = ss.getPageSize();
-            for (Slide<?,?,?> slide : ss.getSlides()) {
+            for (Slide<?,?> slide : ss.getSlides()) {
                 int slideNo = slide.getSlideNumber();
                 if (!pages.get(slideNo-1)) {
                     if (pages.nextSetBit(slideNo-1) == -1) break; else continue;

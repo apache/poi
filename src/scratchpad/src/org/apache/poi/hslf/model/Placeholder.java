@@ -21,6 +21,7 @@ import org.apache.poi.ddf.*;
 import org.apache.poi.hslf.record.OEPlaceholderAtom;
 import org.apache.poi.hslf.usermodel.HSLFShape;
 import org.apache.poi.hslf.usermodel.HSLFTextBox;
+import org.apache.poi.hslf.usermodel.HSLFTextParagraph;
 import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.sl.usermodel.ShapeContainer;
 
@@ -33,11 +34,11 @@ import java.io.ByteArrayOutputStream;
  */
 public final class Placeholder extends HSLFTextBox {
 
-    protected Placeholder(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape> parent){
+    protected Placeholder(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape,HSLFTextParagraph> parent){
         super(escherRecord, parent);
     }
 
-    public Placeholder(ShapeContainer<HSLFShape> parent){
+    public Placeholder(ShapeContainer<HSLFShape,HSLFTextParagraph> parent){
         super(parent);
     }
 
@@ -59,7 +60,7 @@ public final class Placeholder extends HSLFTextBox {
         EscherClientDataRecord cldata = new EscherClientDataRecord();
         cldata.setOptions((short)15);
 
-        EscherOptRecord opt = getEscherOptRecord();
+        AbstractEscherOptRecord opt = getEscherOptRecord();
 
         //Placeholders can't be grouped
         setEscherProperty(opt, EscherProperties.PROTECTION__LOCKAGAINSTGROUPING, 262144);

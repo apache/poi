@@ -39,7 +39,8 @@ import org.apache.poi.util.Units;
  *
  * @author Yegor Kozlov
  */
-public abstract class HSLFTextShape extends HSLFSimpleShape implements TextShape<HSLFTextParagraph> {
+public abstract class HSLFTextShape extends HSLFSimpleShape
+implements TextShape<HSLFShape,HSLFTextParagraph> {
 
     /**
      * How to anchor the text
@@ -93,9 +94,8 @@ public abstract class HSLFTextShape extends HSLFSimpleShape implements TextShape
      * @param escherRecord       <code>EscherSpContainer</code> container which holds information about this shape
      * @param parent    the parent of the shape
      */
-   protected HSLFTextShape(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape> parent){
+    protected HSLFTextShape(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape,HSLFTextParagraph> parent){
         super(escherRecord, parent);
-
     }
 
     /**
@@ -104,7 +104,7 @@ public abstract class HSLFTextShape extends HSLFSimpleShape implements TextShape
      * @param parent    the parent of this Shape. For example, if this text box is a cell
      * in a table then the parent is Table.
      */
-    public HSLFTextShape(ShapeContainer<HSLFShape> parent){
+    public HSLFTextShape(ShapeContainer<HSLFShape,HSLFTextParagraph> parent){
         super(null, parent);
         _escherContainer = createSpContainer(parent instanceof HSLFGroupShape);
     }
@@ -241,7 +241,7 @@ public abstract class HSLFTextShape extends HSLFSimpleShape implements TextShape
      * @return the type of alignment
      */
     /* package */ int getAlignment(){
-        EscherOptRecord opt = getEscherOptRecord();
+        AbstractEscherOptRecord opt = getEscherOptRecord();
         EscherSimpleProperty prop = getEscherProperty(opt, EscherProperties.TEXT__ANCHORTEXT);
         int align = HSLFTextShape.AnchorTop;
         if (prop == null){
@@ -465,7 +465,7 @@ public abstract class HSLFTextShape extends HSLFSimpleShape implements TextShape
      * @return the inset in points
      */
     private double getInset(short propId, double defaultInch) {
-        EscherOptRecord opt = getEscherOptRecord();
+        AbstractEscherOptRecord opt = getEscherOptRecord();
         EscherSimpleProperty prop = getEscherProperty(opt, propId);
         int val = prop == null ? (int)(Units.toEMU(Units.POINT_DPI)*defaultInch) : prop.getPropertyValue();
         return Units.toPoints(val);        
@@ -494,7 +494,7 @@ public abstract class HSLFTextShape extends HSLFSimpleShape implements TextShape
      * @see <a href="https://msdn.microsoft.com/en-us/library/dd948168(v=office.12).aspx">MSOWRAPMODE</a>
      */
     public int getWordWrapEx() {
-        EscherOptRecord opt = getEscherOptRecord();
+        AbstractEscherOptRecord opt = getEscherOptRecord();
         EscherSimpleProperty prop = getEscherProperty(opt, EscherProperties.TEXT__WRAPTEXT);
         return prop == null ? WrapSquare : prop.getPropertyValue();
     }
@@ -513,7 +513,7 @@ public abstract class HSLFTextShape extends HSLFSimpleShape implements TextShape
      * @return id for the text.
      */
     public int getTextId(){
-        EscherOptRecord opt = getEscherOptRecord();
+        AbstractEscherOptRecord opt = getEscherOptRecord();
         EscherSimpleProperty prop = getEscherProperty(opt, EscherProperties.TEXT__TEXTID);
         return prop == null ? 0 : prop.getPropertyValue();
     }
@@ -527,9 +527,7 @@ public abstract class HSLFTextShape extends HSLFSimpleShape implements TextShape
         setEscherProperty(EscherProperties.TEXT__TEXTID, id);
     }
 
-    /**
-      * @return the TextParagraphs for this text box
-      */
+    @Override
     public List<HSLFTextParagraph> getTextParagraphs(){
         if (!_paragraphs.isEmpty()) return _paragraphs;
         
@@ -704,7 +702,7 @@ public abstract class HSLFTextShape extends HSLFSimpleShape implements TextShape
     @Override
     public double getTextHeight(){
         DrawFactory drawFact = DrawFactory.getInstance(null);
-        DrawTextShape<HSLFTextShape> dts = drawFact.getDrawable(this);
+        DrawTextShape dts = drawFact.getDrawable(this);
         return dts.getTextHeight();
     }
 

@@ -24,6 +24,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.poi.ddf.AbstractEscherOptRecord;
 import org.apache.poi.ddf.EscherArrayProperty;
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherOptRecord;
@@ -31,6 +32,7 @@ import org.apache.poi.ddf.EscherProperties;
 import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.ddf.EscherSimpleProperty;
 import org.apache.poi.ddf.EscherTextboxRecord;
+import org.apache.poi.hslf.record.RecordTypes;
 import org.apache.poi.sl.usermodel.ShapeContainer;
 import org.apache.poi.sl.usermodel.TableShape;
 import org.apache.poi.util.LittleEndian;
@@ -41,7 +43,8 @@ import org.apache.poi.util.Units;
  *
  * @author Yegor Kozlov
  */
-public final class HSLFTable extends HSLFGroupShape implements TableShape {
+public final class HSLFTable extends HSLFGroupShape
+implements HSLFShapeContainer, TableShape<HSLFShape,HSLFTextParagraph> {
 
     protected static final int BORDER_TOP = 1;
     protected static final int BORDER_RIGHT = 2;
@@ -59,17 +62,28 @@ public final class HSLFTable extends HSLFGroupShape implements TableShape {
     /**
      * Create a new Table of the given number of rows and columns
      *
-     * @param numrows the number of rows
-     * @param numcols the number of columns
+     * @param numRows the number of rows
+     * @param numCols the number of columns
      */
-    public HSLFTable(int numrows, int numcols) {
-        super();
+    public HSLFTable(int numRows, int numCols) {
+        this(numRows, numCols, null);
+    }
+    
+    /**
+     * Create a new Table of the given number of rows and columns
+     *
+     * @param numRows the number of rows
+     * @param numCols the number of columns
+     * @param parent the parent shape, or null if table is added to sheet
+     */
+    public HSLFTable(int numRows, int numCols, ShapeContainer<HSLFShape,HSLFTextParagraph> parent) {
+        super(parent);
 
-        if(numrows < 1) throw new IllegalArgumentException("The number of rows must be greater than 1");
-        if(numcols < 1) throw new IllegalArgumentException("The number of columns must be greater than 1");
+        if(numRows < 1) throw new IllegalArgumentException("The number of rows must be greater than 1");
+        if(numCols < 1) throw new IllegalArgumentException("The number of columns must be greater than 1");
 
         int x=0, y=0, tblWidth=0, tblHeight=0;
-        cells = new HSLFTableCell[numrows][numcols];
+        cells = new HSLFTableCell[numRows][numCols];
         for (int i = 0; i < cells.length; i++) {
             x = 0;
             for (int j = 0; j < cells[i].length; j++) {
@@ -85,17 +99,15 @@ public final class HSLFTable extends HSLFGroupShape implements TableShape {
         setAnchor(new Rectangle(0, 0, tblWidth, tblHeight));
 
         EscherContainerRecord spCont = (EscherContainerRecord) getSpContainer().getChild(0);
-        EscherOptRecord opt = new EscherOptRecord();
-        opt.setRecordId((short)0xF122);
+        AbstractEscherOptRecord opt = new EscherOptRecord();
+        opt.setRecordId((short)RecordTypes.EscherUserDefined);
         opt.addEscherProperty(new EscherSimpleProperty((short)0x39F, 1));
         EscherArrayProperty p = new EscherArrayProperty((short)(0x4000 | 0x3A0), false, null);
         p.setSizeOfElements(0x0004);
-        p.setNumberOfElementsInArray(numrows);
-        p.setNumberOfElementsInMemory(numrows);
+        p.setNumberOfElementsInArray(numRows);
+        p.setNumberOfElementsInMemory(numRows);
         opt.addEscherProperty(p);
-        List<EscherRecord> lst = spCont.getChildRecords();
-        lst.add(lst.size()-1, opt);
-        spCont.setChildRecords(lst);
+        spCont.addChildBefore(opt, RecordTypes.EscherClientAnchor);
     }
 
     /**
@@ -104,7 +116,7 @@ public final class HSLFTable extends HSLFGroupShape implements TableShape {
      * @param escherRecord <code>EscherSpContainer</code> container which holds information about this shape
      * @param parent       the parent of the shape
      */
-    public HSLFTable(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape> parent) {
+    public HSLFTable(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape,HSLFTextParagraph> parent) {
         super(escherRecord, parent);
     }
 
@@ -131,7 +143,7 @@ public final class HSLFTable extends HSLFGroupShape implements TableShape {
 
         EscherContainerRecord spCont = (EscherContainerRecord) getSpContainer().getChild(0);
         List<EscherRecord> lst = spCont.getChildRecords();
-        EscherOptRecord opt = (EscherOptRecord)lst.get(lst.size()-2);
+        AbstractEscherOptRecord opt = (AbstractEscherOptRecord)lst.get(lst.size()-2);
         EscherArrayProperty p = opt.lookup(0x3A0); 
         for (int i = 0; i < cells.length; i++) {
             HSLFTableCell cell = cells[i][0];
@@ -359,7 +371,7 @@ public final class HSLFTable extends HSLFGroupShape implements TableShape {
     public HSLFLine createBorder(){
         HSLFLine line = new HSLFLine(this);
 
-        EscherOptRecord opt = getEscherOptRecord();
+        AbstractEscherOptRecord opt = getEscherOptRecord();
         setEscherProperty(opt, EscherProperties.GEOMETRY__SHAPEPATH, -1);
         setEscherProperty(opt, EscherProperties.GEOMETRY__FILLOK, -1);
         setEscherProperty(opt, EscherProperties.SHADOWSTYLE__SHADOWOBSURED, 0x20000);

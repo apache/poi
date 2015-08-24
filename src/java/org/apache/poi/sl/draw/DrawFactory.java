@@ -28,17 +28,14 @@ import org.apache.poi.sl.usermodel.ConnectorShape;
 import org.apache.poi.sl.usermodel.FreeformShape;
 import org.apache.poi.sl.usermodel.GroupShape;
 import org.apache.poi.sl.usermodel.MasterSheet;
-import org.apache.poi.sl.usermodel.Notes;
 import org.apache.poi.sl.usermodel.PictureShape;
 import org.apache.poi.sl.usermodel.PlaceableShape;
 import org.apache.poi.sl.usermodel.Shape;
 import org.apache.poi.sl.usermodel.Sheet;
 import org.apache.poi.sl.usermodel.Slide;
-import org.apache.poi.sl.usermodel.SlideShow;
 import org.apache.poi.sl.usermodel.TableShape;
 import org.apache.poi.sl.usermodel.TextBox;
 import org.apache.poi.sl.usermodel.TextParagraph;
-import org.apache.poi.sl.usermodel.TextRun;
 import org.apache.poi.sl.usermodel.TextShape;
 
 public class DrawFactory {
@@ -77,90 +74,89 @@ public class DrawFactory {
         return factory;
     }
 
-    @SuppressWarnings("unchecked")
-    public Drawable getDrawable(Shape shape) {
+    public Drawable getDrawable(Shape<?,?> shape) {
         if (shape instanceof TextBox) {
-            return getDrawable((TextBox<? extends TextParagraph<? extends TextRun>>)shape);
+            return getDrawable((TextBox<?,?>)shape);
         } else if (shape instanceof FreeformShape) {
-            return getDrawable((FreeformShape<? extends TextParagraph<? extends TextRun>>)shape);
+            return getDrawable((FreeformShape<?,?>)shape);
         } else if (shape instanceof TextShape) {
-            return getDrawable((TextShape<? extends TextParagraph<? extends TextRun>>)shape);
-        } else if (shape instanceof GroupShape) {
-            return getDrawable((GroupShape<? extends Shape>)shape);
-        } else if (shape instanceof PictureShape) {
-            return getDrawable((PictureShape)shape);
-        } else if (shape instanceof Background) {
-            return getDrawable((Background)shape);
-        } else if (shape instanceof ConnectorShape) {
-            return getDrawable((ConnectorShape)shape);
+            return getDrawable((TextShape<?,?>)shape);
         } else if (shape instanceof TableShape) {
-            return getDrawable((TableShape)shape);
+            return getDrawable((TableShape<?,?>)shape);
+        } else if (shape instanceof GroupShape) {
+            return getDrawable((GroupShape<?,?>)shape);
+        } else if (shape instanceof PictureShape) {
+            return getDrawable((PictureShape<?,?>)shape);
+        } else if (shape instanceof Background) {
+            return getDrawable((Background<?,?>)shape);
+        } else if (shape instanceof ConnectorShape) {
+            return getDrawable((ConnectorShape<?,?>)shape);
         } else if (shape instanceof Slide) {
-            return getDrawable((Slide<? extends Shape, ? extends SlideShow, ? extends Notes<?,?>>)shape);
+            return getDrawable((Slide<?,?>)shape);
         } else if (shape instanceof MasterSheet) {
-            return getDrawable((MasterSheet<? extends Shape, ? extends SlideShow>)shape);
+            return getDrawable((MasterSheet<?,?>)shape);
         } else if (shape instanceof Sheet) {
-            return getDrawable((Sheet<? extends Shape, ? extends SlideShow>)shape);
+            return getDrawable((Sheet<?,?>)shape);
         } else if (shape.getClass().isAnnotationPresent(DrawNotImplemented.class)) {
-            return new DrawNothing<Shape>(shape);
+            return new DrawNothing(shape);
         }
         
         throw new IllegalArgumentException("Unsupported shape type: "+shape.getClass());
     }
 
-    public <T extends Slide<? extends Shape, ? extends SlideShow, ? extends Notes<?,?>>> DrawSlide<T> getDrawable(T sheet) {
-        return new DrawSlide<T>(sheet);
+    public DrawSlide getDrawable(Slide<?,?> sheet) {
+        return new DrawSlide(sheet);
     }
 
-    public <T extends Sheet<? extends Shape, ? extends SlideShow>> DrawSheet<T> getDrawable(T sheet) {
-        return new DrawSheet<T>(sheet);
+    public DrawSheet getDrawable(Sheet<?,?> sheet) {
+        return new DrawSheet(sheet);
     }
 
-    public <T extends MasterSheet<? extends Shape, ? extends SlideShow>> DrawMasterSheet<T> getDrawable(T sheet) {
-        return new DrawMasterSheet<T>(sheet);
+    public DrawMasterSheet getDrawable(MasterSheet<?,?> sheet) {
+        return new DrawMasterSheet(sheet);
     }
 
-    public <T extends TextBox<? extends TextParagraph<?>>> DrawTextBox<T> getDrawable(T shape) {
-        return new DrawTextBox<T>(shape);
+    public DrawTextBox getDrawable(TextBox<?,?> shape) {
+        return new DrawTextBox(shape);
     }
 
-    public <T extends FreeformShape<? extends TextParagraph<? extends TextRun>>> DrawFreeformShape<T> getDrawable(T shape) {
-        return new DrawFreeformShape<T>(shape);
+    public DrawFreeformShape getDrawable(FreeformShape<?,?> shape) {
+        return new DrawFreeformShape(shape);
     }
 
-    public <T extends ConnectorShape> DrawConnectorShape<T> getDrawable(T shape) {
-        return new DrawConnectorShape<T>(shape);
+    public DrawConnectorShape getDrawable(ConnectorShape<?,?> shape) {
+        return new DrawConnectorShape(shape);
     }
     
-    public <T extends TableShape> DrawTableShape<T> getDrawable(T shape) {
-        return new DrawTableShape<T>(shape);
+    public DrawTableShape getDrawable(TableShape<?,?> shape) {
+        return new DrawTableShape(shape);
     }
     
-    public <T extends TextShape<? extends TextParagraph<? extends TextRun>>> DrawTextShape<T> getDrawable(T shape) {
-        return new DrawTextShape<T>(shape);
+    public DrawTextShape getDrawable(TextShape<?,?> shape) {
+        return new DrawTextShape(shape);
     }
 
-    public <T extends GroupShape<? extends Shape>> DrawGroupShape<T> getDrawable(T shape) {
-        return new DrawGroupShape<T>(shape);
+    public DrawGroupShape getDrawable(GroupShape<?,?> shape) {
+        return new DrawGroupShape(shape);
     }
     
-    public <T extends PictureShape> DrawPictureShape<T> getDrawable(T shape) {
-        return new DrawPictureShape<T>(shape);
+    public DrawPictureShape getDrawable(PictureShape<?,?> shape) {
+        return new DrawPictureShape(shape);
     }
     
-    public <T extends TextRun> DrawTextParagraph<T> getDrawable(TextParagraph<T> paragraph) {
-        return new DrawTextParagraph<T>(paragraph);
+    public DrawTextParagraph getDrawable(TextParagraph<?,?,?> paragraph) {
+        return new DrawTextParagraph(paragraph);
     }
 
-    public <T extends Background> DrawBackground<T> getDrawable(T shape) {
-        return new DrawBackground<T>(shape);
+    public DrawBackground getDrawable(Background<?,?> shape) {
+        return new DrawBackground(shape);
     }
     
     public DrawTextFragment getTextFragment(TextLayout layout, AttributedString str) {
         return new DrawTextFragment(layout, str);
     }
     
-    public DrawPaint getPaint(PlaceableShape shape) {
+    public DrawPaint getPaint(PlaceableShape<?,?> shape) {
         return new DrawPaint(shape);
     }
 }

@@ -19,7 +19,10 @@ package org.apache.poi.sl.usermodel;
 
 import java.awt.geom.GeneralPath;
 
-public interface FreeformShape<T extends TextParagraph<? extends TextRun>> extends AutoShape<T> {
+public interface FreeformShape<
+    S extends Shape<S,P>,
+    P extends TextParagraph<S,P,? extends TextRun>
+> extends AutoShape<S,P> {
     /**
      * Gets the shape path.
      * <p>

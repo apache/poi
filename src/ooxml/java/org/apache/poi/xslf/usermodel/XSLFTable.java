@@ -46,7 +46,8 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTGraphicalObjectFra
  *
  * @author Yegor Kozlov
  */
-public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow>, TableShape {
+public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow>,
+    TableShape<XSLFShape,XSLFTextParagraph> {
     static String TABLE_URI = "http://schemas.openxmlformats.org/drawingml/2006/table";
 
     private CTTable _table;

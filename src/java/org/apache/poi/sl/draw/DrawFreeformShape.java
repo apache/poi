@@ -27,21 +27,24 @@ import org.apache.poi.sl.draw.geom.Path;
 import org.apache.poi.sl.usermodel.FillStyle;
 import org.apache.poi.sl.usermodel.FreeformShape;
 import org.apache.poi.sl.usermodel.StrokeStyle;
-import org.apache.poi.sl.usermodel.TextParagraph;
-import org.apache.poi.sl.usermodel.TextRun;
 
-public class DrawFreeformShape<T extends FreeformShape<? extends TextParagraph<? extends TextRun>>> extends DrawAutoShape<T> {
-    public DrawFreeformShape(T shape) {
+public class DrawFreeformShape extends DrawAutoShape {
+    public DrawFreeformShape(FreeformShape<?,?> shape) {
         super(shape);
     }
     
     protected Collection<Outline> computeOutlines(Graphics2D graphics) {
         List<Outline> lst = new ArrayList<Outline>();
-        java.awt.Shape sh = shape.getPath();
-        FillStyle fs = shape.getFillStyle();
-        StrokeStyle ss = shape.getStrokeStyle();
+        java.awt.Shape sh = getShape().getPath();
+        FillStyle fs = getShape().getFillStyle();
+        StrokeStyle ss = getShape().getStrokeStyle();
         Path path = new Path(fs != null, ss != null);
         lst.add(new Outline(sh, path));
         return lst;
+    }
+
+    @Override
+    protected FreeformShape<?,?> getShape() {
+        return (FreeformShape<?,?>)shape;
     }
 }

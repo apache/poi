@@ -26,9 +26,9 @@ import org.apache.poi.sl.usermodel.ShapeContainer;
  *
  * @author Yegor Kozlov
  */
-public final class HSLFBackground extends HSLFShape implements Background {
+public final class HSLFBackground extends HSLFShape implements Background<HSLFShape,HSLFTextParagraph> {
 
-    protected HSLFBackground(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape> parent) {
+    protected HSLFBackground(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape,HSLFTextParagraph> parent) {
         super(escherRecord, parent);
     }
 

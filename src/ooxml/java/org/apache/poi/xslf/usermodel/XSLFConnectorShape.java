@@ -34,7 +34,8 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTConnectorNonVisual
  * @author Yegor Kozlov
  */
 @Beta
-public class XSLFConnectorShape extends XSLFSimpleShape implements ConnectorShape {
+public class XSLFConnectorShape extends XSLFSimpleShape
+    implements ConnectorShape<XSLFShape,XSLFTextParagraph> {
 
     /*package*/ XSLFConnectorShape(CTConnector shape, XSLFSheet sheet) {
         super(shape, sheet);

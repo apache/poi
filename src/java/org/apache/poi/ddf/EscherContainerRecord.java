@@ -221,13 +221,13 @@ public final class EscherContainerRecord extends EscherRecord {
     }
 
     public void addChildBefore(EscherRecord record, int insertBeforeRecordId) {
-        for (int i = 0; i < _childRecords.size(); i++) {
-            EscherRecord rec = _childRecords.get(i);
-            if(rec.getRecordId() == insertBeforeRecordId){
-                _childRecords.add(i++, record);
-                // TODO - keep looping? Do we expect multiple matches?
-            }
+        int idx = 0;
+        for (EscherRecord rec : _childRecords) {
+            if(rec.getRecordId() == (short)insertBeforeRecordId) break;
+            // TODO - keep looping? Do we expect multiple matches?
+            idx++;
         }
+        _childRecords.add(idx, record);
     }
 
     public String toString()

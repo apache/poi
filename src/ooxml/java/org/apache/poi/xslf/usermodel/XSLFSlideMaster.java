@@ -54,7 +54,8 @@ import org.openxmlformats.schemas.presentationml.x2006.main.SldMasterDocument;
  * @author Yegor Kozlov
 */
 @Beta
- public class XSLFSlideMaster extends XSLFSheet implements MasterSheet<XSLFShape, XMLSlideShow> {
+ public class XSLFSlideMaster extends XSLFSheet
+ implements MasterSheet<XSLFShape,XSLFTextParagraph> {
 	private CTSlideMaster _slide;
     private Map<String, XSLFSlideLayout> _layouts;
     private XSLFTheme _theme;
@@ -83,7 +84,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.SldMasterDocument;
     }
 
     @Override
-    public MasterSheet<XSLFShape, XMLSlideShow> getMasterSheet() {
+    public XSLFSlideMaster getMasterSheet() {
         return null;
     }
 

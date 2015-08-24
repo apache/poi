@@ -25,14 +25,14 @@ import org.apache.poi.sl.usermodel.PlaceableShape;
 import org.apache.poi.sl.usermodel.Shape;
 
 
-public class DrawShape<T extends Shape> implements Drawable {
+public class DrawShape implements Drawable {
 
-    protected final T shape;
-    
-    public DrawShape(T shape) {
+    protected final Shape<?,?> shape;
+
+    public DrawShape(Shape<?,?> shape) {
         this.shape = shape;
     }
-    
+
     /**
      * Apply 2-D transforms before drawing this shape. This includes rotation and flipping.
      *
@@ -40,8 +40,8 @@ public class DrawShape<T extends Shape> implements Drawable {
      */
     public void applyTransform(Graphics2D graphics) {
         if (!(shape instanceof PlaceableShape)) return;
-        
-        PlaceableShape ps = (PlaceableShape)shape;
+
+        PlaceableShape<?,?> ps = (PlaceableShape<?,?>)shape;
         AffineTransform tx = (AffineTransform)graphics.getRenderingHint(Drawable.GROUP_TRANSFORM);
         if (tx == null) tx = new AffineTransform();
         final Rectangle2D anchor = tx.createTransformedShape(ps.getAnchor()).getBounds2D();
@@ -59,12 +59,12 @@ public class DrawShape<T extends Shape> implements Drawable {
 
             int quadrant = (((int)rotation+45)/90)%4;
             double scaleX = 1.0, scaleY = 1.0;
-            
+
             // scale to bounding box (bug #53176)
             if (quadrant == 1 || quadrant == 3) {
-                // In quadrant 1 and 3, which is basically a shape in a more or less portrait orientation 
-                // (45-135 degrees and 225-315 degrees), we need to first rotate the shape by a multiple 
-                // of 90 degrees and then resize the bounding box to its original bbox. After that we can 
+                // In quadrant 1 and 3, which is basically a shape in a more or less portrait orientation
+                // (45-135 degrees and 225-315 degrees), we need to first rotate the shape by a multiple
+                // of 90 degrees and then resize the bounding box to its original bbox. After that we can
                 // rotate the shape to the exact rotation amount.
                 // It's strange that you'll need to rotate the shape back and forth again, but you can
                 // think of it, as if you paint the shape on a canvas. First you rotate the canvas, which might
@@ -82,19 +82,19 @@ public class DrawShape<T extends Shape> implements Drawable {
                     txs.translate(-centerX, -centerY);
                     txs.concatenate(tx);
                 }
-                
+
                 txs.translate(centerX, centerY);
                 txs.rotate(Math.PI/2.);
                 txs.translate(-centerX, -centerY);
-                
+
                 Rectangle2D anchor2 = txs.createTransformedShape(ps.getAnchor()).getBounds2D();
-                
+
                 scaleX = anchor.getWidth() == 0. ? 1.0 : anchor.getWidth() / anchor2.getWidth();
                 scaleY = anchor.getHeight() == 0. ? 1.0 : anchor.getHeight() / anchor2.getHeight();
             } else {
                 quadrant = 0;
             }
-            
+
             // transformation is applied reversed ...
             graphics.translate(centerX, centerY);
             graphics.rotate(Math.toRadians(rotation-quadrant*90.));
@@ -122,13 +122,13 @@ public class DrawShape<T extends Shape> implements Drawable {
     public void draw(Graphics2D graphics) {
     }
 
-    public void drawContent(Graphics2D context) {
+    public void drawContent(Graphics2D graphics) {
     }
 
-    public static Rectangle2D getAnchor(Graphics2D graphics, PlaceableShape shape) {
+    public static Rectangle2D getAnchor(Graphics2D graphics, PlaceableShape<?,?> shape) {
         return getAnchor(graphics, shape.getAnchor());
     }
-    
+
     public static Rectangle2D getAnchor(Graphics2D graphics, Rectangle2D anchor) {
         if(graphics == null)  {
             return anchor;
@@ -139,5 +139,9 @@ public class DrawShape<T extends Shape> implements Drawable {
             anchor = tx.createTransformedShape(anchor).getBounds2D();
         }
         return anchor;
-    }    
+    }
+    
+    protected Shape<?,?> getShape() {
+        return shape;
+    }
 }

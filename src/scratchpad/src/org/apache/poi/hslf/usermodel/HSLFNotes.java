@@ -32,7 +32,7 @@ import org.apache.poi.util.POILogger;
  * @author Nick Burch
  */
 
-public final class HSLFNotes extends HSLFSheet implements Notes<HSLFShape, HSLFSlideShow> {
+public final class HSLFNotes extends HSLFSheet implements Notes<HSLFShape,HSLFTextParagraph> {
     protected static final POILogger logger = POILogFactory.getLogger(HSLFNotes.class);
     
     private List<List<HSLFTextParagraph>> _paragraphs = new ArrayList<List<HSLFTextParagraph>>();

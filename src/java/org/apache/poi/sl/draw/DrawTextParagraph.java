@@ -35,7 +35,6 @@ import org.apache.poi.sl.usermodel.AutoNumberingScheme;
 import org.apache.poi.sl.usermodel.Insets2D;
 import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.sl.usermodel.PlaceableShape;
-import org.apache.poi.sl.usermodel.Shape;
 import org.apache.poi.sl.usermodel.ShapeContainer;
 import org.apache.poi.sl.usermodel.TextParagraph;
 import org.apache.poi.sl.usermodel.TextParagraph.BulletStyle;
@@ -45,8 +44,8 @@ import org.apache.poi.sl.usermodel.TextRun.TextCap;
 import org.apache.poi.sl.usermodel.TextShape;
 import org.apache.poi.util.Units;
 
-public class DrawTextParagraph<T extends TextRun> implements Drawable {
-    protected TextParagraph<T> paragraph;
+public class DrawTextParagraph implements Drawable {
+    protected TextParagraph<?,?,?> paragraph;
     double x, y;
     protected List<DrawTextFragment> lines = new ArrayList<DrawTextFragment>();
     protected String rawText;
@@ -58,7 +57,7 @@ public class DrawTextParagraph<T extends TextRun> implements Drawable {
      */
     protected double maxLineHeight;
 
-    public DrawTextParagraph(TextParagraph<T> paragraph) {
+    public DrawTextParagraph(TextParagraph<?,?,?> paragraph) {
         this.paragraph = paragraph;
     }
 
@@ -266,7 +265,7 @@ public class DrawTextParagraph<T extends TextRun> implements Drawable {
         if (buFont == null) buFont = paragraph.getDefaultFontFamily();
         assert(buFont != null);
 
-        PlaceableShape ps = getParagraphShape();
+        PlaceableShape<?,?> ps = getParagraphShape();
         PaintStyle fgPaintStyle = bulletStyle.getBulletFontColor();
         Paint fgPaint;
         if (fgPaintStyle == null) {
@@ -377,7 +376,7 @@ public class DrawTextParagraph<T extends TextRun> implements Drawable {
         }
 
         double width;
-        TextShape<? extends TextParagraph<T>> ts = paragraph.getParentShape();
+        TextShape<?,?> ts = paragraph.getParentShape();
         if (!ts.getWordWrap()) {
             // if wordWrap == false then we return the advance to the right border of the sheet
             width = ts.getSheet().getSlideShow().getPageSize().getWidth() - anchor.getX();
@@ -413,9 +412,10 @@ public class DrawTextParagraph<T extends TextRun> implements Drawable {
     /**
      * Helper method for paint style relative to bounds, e.g. gradient paint
      */
-    private PlaceableShape getParagraphShape() {
-        PlaceableShape ps = new PlaceableShape(){
-            public ShapeContainer<? extends Shape> getParent() { return null; }
+    @SuppressWarnings("rawtypes")
+    private PlaceableShape<?,?> getParagraphShape() {
+        PlaceableShape<?,?> ps = new PlaceableShape(){
+            public ShapeContainer<?,?> getParent() { return null; }
             public Rectangle2D getAnchor() { return paragraph.getParentShape().getAnchor(); }
             public void setAnchor(Rectangle2D anchor) {}
             public double getRotation() { return 0; }
@@ -432,7 +432,7 @@ public class DrawTextParagraph<T extends TextRun> implements Drawable {
         List<AttributedStringData> attList = new ArrayList<AttributedStringData>();
         if (text == null) text = new StringBuilder();
 
-        PlaceableShape ps = getParagraphShape();
+        PlaceableShape<?,?> ps = getParagraphShape();
         
         DrawFontManager fontHandler = (DrawFontManager)graphics.getRenderingHint(Drawable.FONT_HANDLER);
 

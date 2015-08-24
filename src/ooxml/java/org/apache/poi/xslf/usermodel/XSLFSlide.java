@@ -24,6 +24,7 @@ import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.sl.draw.DrawFactory;
 import org.apache.poi.sl.draw.Drawable;
+import org.apache.poi.sl.usermodel.Notes;
 import org.apache.poi.sl.usermodel.Slide;
 import org.apache.poi.util.Beta;
 import org.apache.xmlbeans.XmlException;
@@ -41,7 +42,8 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTSlide;
 import org.openxmlformats.schemas.presentationml.x2006.main.SldDocument;
 
 @Beta
-public final class XSLFSlide extends XSLFSheet implements Slide<XSLFShape, XMLSlideShow, XSLFNotes> {
+public final class XSLFSlide extends XSLFSheet
+implements Slide<XSLFShape,XSLFTextParagraph> {
    private final CTSlide _slide;
    private XSLFSlideLayout _layout;
    private XSLFComments _comments;
@@ -254,11 +256,12 @@ public final class XSLFSlide extends XSLFSheet implements Slide<XSLFShape, XMLSl
         throw new UnsupportedOperationException();
     }
 
-    public void setNotes(XSLFNotes notes) {
+    @Override
+    public void setNotes(Notes<XSLFShape,XSLFTextParagraph> notes) {
+        assert(notes instanceof XSLFNotes);
         // TODO Auto-generated method stub
-        
     }
-
+    
     @Override
     public int getSlideNumber() {
         int idx = getSlideShow().getSlides().indexOf(this);

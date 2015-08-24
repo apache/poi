@@ -55,7 +55,7 @@ public final class MovieShape extends HSLFPictureShape {
      * @param pictureData the picture data
      * @param parent the parent shape
      */
-    public MovieShape(int movieIdx, HSLFPictureData pictureData, ShapeContainer<HSLFShape> parent) {
+    public MovieShape(int movieIdx, HSLFPictureData pictureData, ShapeContainer<HSLFShape,HSLFTextParagraph> parent) {
         super(pictureData, parent);
         setMovieIndex(movieIdx);
     }
@@ -67,7 +67,7 @@ public final class MovieShape extends HSLFPictureShape {
       *        this picture in the <code>Slide</code>
       * @param parent the parent shape of this picture
       */
-    public MovieShape(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape> parent){
+    public MovieShape(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape,HSLFTextParagraph> parent){
         super(escherRecord, parent);
     }
 

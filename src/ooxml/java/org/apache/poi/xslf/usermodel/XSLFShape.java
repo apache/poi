@@ -65,7 +65,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.STPlaceholderType;
  * @author Yegor Kozlov
  */
 @Beta
-public abstract class XSLFShape implements Shape {
+public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
     private final XmlObject _shape;
     private final XSLFSheet _sheet;
     private XSLFShapeContainer _parent;
@@ -130,8 +130,8 @@ public abstract class XSLFShape implements Shape {
         }
 
         if (this instanceof PlaceableShape) {
-            PlaceableShape ps = (PlaceableShape)this;
-            ps.setAnchor(((PlaceableShape)sh).getAnchor());
+            PlaceableShape<?,?> ps = (PlaceableShape<?,?>)this;
+            ps.setAnchor(((PlaceableShape<?,?>)sh).getAnchor());
         }
         
         

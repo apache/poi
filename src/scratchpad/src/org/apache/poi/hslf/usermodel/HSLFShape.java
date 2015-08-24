@@ -44,7 +44,7 @@ import org.apache.poi.util.*;
   *
   * @author Yegor Kozlov
  */
-public abstract class HSLFShape implements Shape {
+public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
 
     // For logging
     protected POILogger logger = POILogFactory.getLogger(this.getClass());
@@ -59,7 +59,7 @@ public abstract class HSLFShape implements Shape {
      * Parent of this shape.
      * <code>null</code> for the topmost shapes.
      */
-    protected ShapeContainer<HSLFShape> _parent;
+    protected ShapeContainer<HSLFShape,HSLFTextParagraph> _parent;
 
     /**
      * The <code>Sheet</code> this shape belongs to
@@ -77,7 +77,7 @@ public abstract class HSLFShape implements Shape {
      * @param escherRecord       <code>EscherSpContainer</code> container which holds information about this shape
      * @param parent             the parent of this Shape
      */
-      protected HSLFShape(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape> parent){
+      protected HSLFShape(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape,HSLFTextParagraph> parent){
         _escherContainer = escherRecord;
         _parent = parent;
      }
@@ -90,7 +90,7 @@ public abstract class HSLFShape implements Shape {
     /**
      *  @return the parent of this shape
      */
-    public ShapeContainer<HSLFShape> getParent(){
+    public ShapeContainer<HSLFShape,HSLFTextParagraph> getParent(){
         return _parent;
     }
 
@@ -229,7 +229,7 @@ public abstract class HSLFShape implements Shape {
      *
      * @return escher property or <code>null</code> if not found.
      */
-     public static <T extends EscherProperty> T getEscherProperty(EscherOptRecord opt, int propId){
+     public static <T extends EscherProperty> T getEscherProperty(AbstractEscherOptRecord opt, int propId){
          if (opt == null) return null;
          return opt.lookup(propId);
      }
@@ -241,7 +241,7 @@ public abstract class HSLFShape implements Shape {
      * @param propId    The id of the property. One of the constants defined in EscherOptRecord.
      * @param value     value of the property. If value = -1 then the property is removed.
      */
-     public static void setEscherProperty(EscherOptRecord opt, short propId, int value){
+     public static void setEscherProperty(AbstractEscherOptRecord opt, short propId, int value){
         java.util.List<EscherProperty> props = opt.getEscherProperties();
         for ( Iterator<EscherProperty> iterator = props.iterator(); iterator.hasNext(); ) {
             if (iterator.next().getPropertyNumber() == propId){
@@ -262,7 +262,7 @@ public abstract class HSLFShape implements Shape {
      * @param value     value of the property. If value = -1 then the property is removed.
      */
     public void setEscherProperty(short propId, int value){
-        EscherOptRecord opt = getEscherOptRecord();
+        AbstractEscherOptRecord opt = getEscherOptRecord();
         setEscherProperty(opt, propId, value);
     }
 
@@ -272,7 +272,7 @@ public abstract class HSLFShape implements Shape {
      * @param propId    The id of the property. One of the constants defined in EscherOptRecord.
      */
    public int getEscherProperty(short propId){
-        EscherOptRecord opt = getEscherOptRecord();
+       AbstractEscherOptRecord opt = getEscherOptRecord();
         EscherSimpleProperty prop = getEscherProperty(opt, propId);
         return prop == null ? 0 : prop.getPropertyValue();
     }
@@ -283,7 +283,7 @@ public abstract class HSLFShape implements Shape {
      * @param propId    The id of the property. One of the constants defined in EscherOptRecord.
      */
    public int getEscherProperty(short propId, int defaultValue){
-        EscherOptRecord opt = getEscherOptRecord();
+       AbstractEscherOptRecord opt = getEscherOptRecord();
         EscherSimpleProperty prop = getEscherProperty(opt, propId);
         return prop == null ? defaultValue : prop.getPropertyValue();
     }
@@ -327,7 +327,7 @@ public abstract class HSLFShape implements Shape {
     }
 
     Color getColor(short colorProperty, short opacityProperty, int defaultColor){
-        EscherOptRecord opt = getEscherOptRecord();
+        AbstractEscherOptRecord opt = getEscherOptRecord();
         EscherSimpleProperty p = getEscherProperty(opt, colorProperty);
         if(p == null && defaultColor == -1) return null;
 
@@ -367,7 +367,7 @@ public abstract class HSLFShape implements Shape {
     }
 
     double getAlpha(short opacityProperty) {
-        EscherOptRecord opt = getEscherOptRecord();
+        AbstractEscherOptRecord opt = getEscherOptRecord();
         EscherSimpleProperty op = getEscherProperty(opt, opacityProperty);
         int defaultOpacity = 0x00010000;
         int opacity = (op == null) ? defaultOpacity : op.getPropertyValue();
@@ -444,8 +444,8 @@ public abstract class HSLFShape implements Shape {
         logger.log(POILogger.INFO, "Rendering " + getShapeName());
     }
 
-    public EscherOptRecord getEscherOptRecord() {
-        EscherOptRecord opt = getEscherChild(EscherOptRecord.RECORD_ID);
+    public AbstractEscherOptRecord getEscherOptRecord() {
+        AbstractEscherOptRecord opt = getEscherChild(EscherOptRecord.RECORD_ID);
         if (opt == null) {
             opt = getEscherChild(RecordTypes.EscherUserDefined);
         }

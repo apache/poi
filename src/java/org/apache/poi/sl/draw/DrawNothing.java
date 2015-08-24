@@ -22,11 +22,11 @@ import java.awt.Graphics2D;
 import org.apache.poi.sl.usermodel.Shape;
 
 
-public class DrawNothing<T extends Shape> implements Drawable {
+public class DrawNothing implements Drawable {
 
-    protected final T shape;
+    protected final Shape<?,?> shape;
     
-    public DrawNothing(T shape) {
+    public DrawNothing(Shape<?,?> shape) {
         this.shape = shape;
     }
     

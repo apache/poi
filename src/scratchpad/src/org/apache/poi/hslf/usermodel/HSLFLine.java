@@ -17,8 +17,8 @@
 
 package org.apache.poi.hslf.usermodel;
 
+import org.apache.poi.ddf.AbstractEscherOptRecord;
 import org.apache.poi.ddf.EscherContainerRecord;
-import org.apache.poi.ddf.EscherOptRecord;
 import org.apache.poi.ddf.EscherProperties;
 import org.apache.poi.ddf.EscherSpRecord;
 import org.apache.poi.sl.usermodel.Line;
@@ -30,12 +30,12 @@ import org.apache.poi.sl.usermodel.ShapeType;
  *
  *  @author Yegor Kozlov
  */
-public final class HSLFLine extends HSLFTextShape implements Line<HSLFTextParagraph> {
-    public HSLFLine(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape> parent){
+public final class HSLFLine extends HSLFTextShape implements Line<HSLFShape,HSLFTextParagraph> {
+    public HSLFLine(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape,HSLFTextParagraph> parent){
         super(escherRecord, parent);
     }
 
-    public HSLFLine(ShapeContainer<HSLFShape> parent){
+    public HSLFLine(ShapeContainer<HSLFShape,HSLFTextParagraph> parent){
         super(null, parent);
         _escherContainer = createSpContainer(parent instanceof HSLFGroupShape);
     }
@@ -54,7 +54,7 @@ public final class HSLFLine extends HSLFTextShape implements Line<HSLFTextParagr
         spRecord.setOptions(type);
 
         //set default properties for a line
-        EscherOptRecord opt = getEscherOptRecord();
+        AbstractEscherOptRecord opt = getEscherOptRecord();
 
         //default line properties
         setEscherProperty(opt, EscherProperties.GEOMETRY__SHAPEPATH, 4);

@@ -21,12 +21,28 @@ import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.poi.ddf.*;
-import org.apache.poi.hslf.model.*;
-import org.apache.poi.hslf.record.*;
+import org.apache.poi.ddf.EscherContainerRecord;
+import org.apache.poi.ddf.EscherDgRecord;
+import org.apache.poi.ddf.EscherDggRecord;
+import org.apache.poi.ddf.EscherSpRecord;
+import org.apache.poi.hslf.model.Comment;
+import org.apache.poi.hslf.model.HeadersFooters;
+import org.apache.poi.hslf.model.Placeholder;
+import org.apache.poi.hslf.record.ColorSchemeAtom;
+import org.apache.poi.hslf.record.Comment2000;
+import org.apache.poi.hslf.record.EscherTextboxWrapper;
+import org.apache.poi.hslf.record.HeadersFootersContainer;
+import org.apache.poi.hslf.record.Record;
+import org.apache.poi.hslf.record.RecordContainer;
+import org.apache.poi.hslf.record.RecordTypes;
+import org.apache.poi.hslf.record.SSSlideInfoAtom;
+import org.apache.poi.hslf.record.SlideAtom;
 import org.apache.poi.hslf.record.SlideListWithText.SlideAtomsSet;
+import org.apache.poi.hslf.record.StyleTextProp9Atom;
+import org.apache.poi.hslf.record.TextHeaderAtom;
 import org.apache.poi.sl.draw.DrawFactory;
 import org.apache.poi.sl.draw.Drawable;
+import org.apache.poi.sl.usermodel.Notes;
 import org.apache.poi.sl.usermodel.ShapeType;
 import org.apache.poi.sl.usermodel.Slide;
 
@@ -39,7 +55,7 @@ import org.apache.poi.sl.usermodel.Slide;
  * @author Yegor Kozlov
  */
 
-public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFSlideShow,HSLFNotes> {
+public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFTextParagraph> {
 	private int _slideNo;
 	private SlideAtomsSet _atomSet;
 	private final List<List<HSLFTextParagraph>> _paragraphs = new ArrayList<List<HSLFTextParagraph>>();
@@ -110,8 +126,11 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFSl
 	 *  references in the records to point to the new ID
 	 */
 	@Override
-	public void setNotes(HSLFNotes notes) {
-		_notes = notes;
+	public void setNotes(Notes<HSLFShape,HSLFTextParagraph> notes) {
+        if (notes != null && !(notes instanceof HSLFNotes)) {
+            throw new IllegalArgumentException("notes needs to be of type HSLFNotes");
+        }
+		_notes = (HSLFNotes)notes;
 
 		// Update the Slide Atom's ID of where to point to
 		SlideAtom sa = getSlideRecord().getSlideAtom();

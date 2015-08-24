@@ -17,11 +17,45 @@
 
 package org.apache.poi.sl.draw;
 
-import org.apache.poi.sl.usermodel.*;
+import java.awt.Graphics2D;
 
-public class DrawTableShape<T extends TableShape> extends DrawShape<T> {
+import org.apache.poi.sl.usermodel.GroupShape;
+import org.apache.poi.sl.usermodel.TableShape;
+
+public class DrawTableShape extends DrawShape {
     // to be implemented ...
-    public DrawTableShape(T shape) {
+    public DrawTableShape(TableShape<?,?> shape) {
         super(shape);
     }
+    
+    protected Drawable getDrawable(Graphics2D graphics) {
+        if (shape instanceof GroupShape) {
+            DrawFactory df = DrawFactory.getInstance(graphics);
+            return df.getDrawable((GroupShape<?,?>)shape);
+        }
+        return null;
+    }
+
+    public void applyTransform(Graphics2D graphics) {
+        Drawable d = getDrawable(graphics);
+        if (d != null) {
+            d.applyTransform(graphics);
+        }
+    }
+
+    public void draw(Graphics2D graphics) {
+        Drawable d = getDrawable(graphics);
+        if (d != null) {
+            d.draw(graphics);
+        }
+    }
+
+    public void drawContent(Graphics2D graphics) {
+        Drawable d = getDrawable(graphics);
+        if (d != null) {
+            d.drawContent(graphics);
+        }
+    }
+
+    
 }

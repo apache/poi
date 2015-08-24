@@ -25,6 +25,9 @@ import org.apache.poi.util.Internal;
  */
 
 @Internal
-public interface Line<T extends TextParagraph<? extends TextRun>> extends AutoShape<T> {
+public interface Line<
+    S extends Shape<S,P>,
+    P extends TextParagraph<S,P,? extends TextRun>
+> extends AutoShape<S,P> {
 
 }

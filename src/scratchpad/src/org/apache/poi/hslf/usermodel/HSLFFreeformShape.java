@@ -26,9 +26,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.poi.ddf.AbstractEscherOptRecord;
 import org.apache.poi.ddf.EscherArrayProperty;
 import org.apache.poi.ddf.EscherContainerRecord;
-import org.apache.poi.ddf.EscherOptRecord;
 import org.apache.poi.ddf.EscherProperties;
 import org.apache.poi.ddf.EscherSimpleProperty;
 import org.apache.poi.sl.usermodel.FreeformShape;
@@ -47,7 +47,7 @@ import org.apache.poi.util.Units;
  * </p>
  * @author Yegor Kozlov
  */
-public final class HSLFFreeformShape extends HSLFAutoShape implements FreeformShape<HSLFTextParagraph> {
+public final class HSLFFreeformShape extends HSLFAutoShape implements FreeformShape<HSLFShape,HSLFTextParagraph> {
 
     public static final byte[] SEGMENTINFO_MOVETO   = new byte[]{0x00, 0x40};
     public static final byte[] SEGMENTINFO_LINETO   = new byte[]{0x00, (byte)0xAC};
@@ -64,7 +64,7 @@ public final class HSLFFreeformShape extends HSLFAutoShape implements FreeformSh
      * @param escherRecord       <code>EscherSpContainer</code> container which holds information about this shape
      * @param parent    the parent of the shape
      */
-   protected HSLFFreeformShape(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape> parent){
+   protected HSLFFreeformShape(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape,HSLFTextParagraph> parent){
         super(escherRecord, parent);
 
     }
@@ -75,7 +75,7 @@ public final class HSLFFreeformShape extends HSLFAutoShape implements FreeformSh
      * @param parent    the parent of this Shape. For example, if this text box is a cell
      * in a table then the parent is Table.
      */
-    public HSLFFreeformShape(ShapeContainer<HSLFShape> parent){
+    public HSLFFreeformShape(ShapeContainer<HSLFShape,HSLFTextParagraph> parent){
         super((EscherContainerRecord)null, parent);
         _escherContainer = createSpContainer(ShapeType.NOT_PRIMITIVE, parent instanceof HSLFGroupShape);
     }
@@ -140,7 +140,7 @@ public final class HSLFFreeformShape extends HSLFAutoShape implements FreeformSh
         if(!isClosed) segInfo.add(SEGMENTINFO_LINETO);
         segInfo.add(new byte[]{0x00, (byte)0x80});
 
-        EscherOptRecord opt = getEscherOptRecord();
+        AbstractEscherOptRecord opt = getEscherOptRecord();
         opt.addEscherProperty(new EscherSimpleProperty(EscherProperties.GEOMETRY__SHAPEPATH, 0x4));
 
         EscherArrayProperty verticesProp = new EscherArrayProperty((short)(EscherProperties.GEOMETRY__VERTICES + 0x4000), false, null);
@@ -178,7 +178,7 @@ public final class HSLFFreeformShape extends HSLFAutoShape implements FreeformSh
 
     @Override
     public GeneralPath getPath(){
-        EscherOptRecord opt = getEscherOptRecord();
+        AbstractEscherOptRecord opt = getEscherOptRecord();
         opt.addEscherProperty(new EscherSimpleProperty(EscherProperties.GEOMETRY__SHAPEPATH, 0x4));
 
         EscherArrayProperty verticesProp = getEscherProperty(opt, (short)(EscherProperties.GEOMETRY__VERTICES + 0x4000));

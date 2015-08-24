@@ -20,7 +20,10 @@ package org.apache.poi.sl.usermodel;
 import java.util.List;
 
 
-public interface ShapeContainer<T extends Shape> extends Iterable<T> {
+public interface ShapeContainer<
+    S extends Shape<S,P>,
+    P extends TextParagraph<S,P,? extends TextRun>
+> extends Iterable<S> {
     /**
      * Returns an list containing all of the elements in this container in proper
      * sequence (from first to last element).
@@ -28,9 +31,9 @@ public interface ShapeContainer<T extends Shape> extends Iterable<T> {
      * @return an list containing all of the elements in this container in proper
      *         sequence
      */
-	List<T> getShapes();
+	List<S> getShapes();
 
-	void addShape(T shape);
+	void addShape(S shape);
 
     /**
      * Removes the specified shape from this sheet, if it is present
@@ -42,5 +45,43 @@ public interface ShapeContainer<T extends Shape> extends Iterable<T> {
      * @throws IllegalArgumentException if the type of the specified shape
      *         is incompatible with this sheet (optional)
      */
-	boolean removeShape(T shape);
+	boolean removeShape(S shape);
+
+    /**
+     * create a new shape with a predefined geometry and add it to this shape container
+     */
+    AutoShape<S,P> createAutoShape();
+
+    /**
+     * create a new shape with a custom geometry
+     */
+    FreeformShape<S,P> createFreeform();
+
+    /**
+     * create a text box
+     */
+	TextBox<S,P> createTextBox();
+	
+    /**
+     * create a connector
+     */
+	ConnectorShape<S,P> createConnector();
+	
+    /**
+     * create a group of shapes belonging to this container
+     */
+	GroupShape<S,P> createGroup();
+	
+    /**
+     * create a picture belonging to this container
+     */
+	PictureShape<S,P> createPicture(PictureData pictureData);
+	
+    /**
+     * Create a new Table of the given number of rows and columns
+     *
+     * @param numrows the number of rows
+     * @param numcols the number of columns
+     */
+	TableShape<S,P> createTable(int numRows, int numCols);
 }

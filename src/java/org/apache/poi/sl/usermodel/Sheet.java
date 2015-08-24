@@ -23,8 +23,11 @@ import java.awt.Graphics2D;
 /**
  * Common parent of Slides, Notes and Masters
  */
-public interface Sheet<T extends Shape, SS extends SlideShow> extends ShapeContainer<T> {
-	SS getSlideShow();
+public interface Sheet<
+    S extends Shape<S,P>,
+    P extends TextParagraph<S,P,? extends TextRun>
+> extends ShapeContainer<S,P> {
+	SlideShow<S,P> getSlideShow();
 
     /**
      * @return whether shapes on the master sheet should be shown. By default master graphics is turned off.
@@ -33,9 +36,9 @@ public interface Sheet<T extends Shape, SS extends SlideShow> extends ShapeConta
      */
 	boolean getFollowMasterGraphics();
 	
-	MasterSheet<T,SS> getMasterSheet();
+	MasterSheet<S,P> getMasterSheet();
 
-	Background getBackground();
+	Background<S,P> getBackground();
 	
 	/**
 	 * Convenience method to draw a sheet to a graphics context

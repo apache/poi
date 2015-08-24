@@ -38,9 +38,9 @@ import java.util.Set;
 import junit.framework.AssertionFailedError;
 
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.ddf.AbstractEscherOptRecord;
 import org.apache.poi.ddf.EscherArrayProperty;
 import org.apache.poi.ddf.EscherColorRef;
-import org.apache.poi.ddf.EscherOptRecord;
 import org.apache.poi.ddf.EscherProperties;
 import org.apache.poi.hslf.HSLFTestDataSamples;
 import org.apache.poi.hslf.exceptions.OldPowerPointFormatException;
@@ -612,7 +612,7 @@ public final class TestBugs {
         try {
             HSLFSlideShow slideShow = new HSLFSlideShow(inputStream);
             HSLFAutoShape as = (HSLFAutoShape)slideShow.getSlides().get(0).getShapes().get(0);
-            EscherOptRecord opt = as.getEscherOptRecord();
+            AbstractEscherOptRecord opt = as.getEscherOptRecord();
             EscherArrayProperty ep = HSLFShape.getEscherProperty(opt, EscherProperties.FILL__SHADECOLORS);
             double exp[][] = {
                 // r, g, b, position

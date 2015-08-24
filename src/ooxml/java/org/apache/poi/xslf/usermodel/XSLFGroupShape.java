@@ -28,6 +28,7 @@ import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.sl.usermodel.GroupShape;
+import org.apache.poi.sl.usermodel.PictureData;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -49,7 +50,8 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
  * @author Yegor Kozlov
  */
 @Beta
-public class XSLFGroupShape extends XSLFShape implements XSLFShapeContainer, GroupShape<XSLFShape> {
+public class XSLFGroupShape extends XSLFShape
+implements XSLFShapeContainer, GroupShape<XSLFShape,XSLFTextParagraph> {
     private static POILogger _logger = POILogFactory.getLogger(XSLFGroupShape.class);
     
     private final List<XSLFShape> _shapes;
@@ -237,8 +239,12 @@ public class XSLFGroupShape extends XSLFShape implements XSLFShapeContainer, Gro
         return sh;
     }
 
-    public XSLFPictureShape createPicture(XSLFPictureData pictureData){
-        PackagePart pic = pictureData.getPackagePart();
+    public XSLFPictureShape createPicture(PictureData pictureData){
+        if (!(pictureData instanceof XSLFPictureData)) {
+            throw new IllegalArgumentException("pictureData needs to be of type XSLFPictureData");
+        }
+        XSLFPictureData xPictureData = (XSLFPictureData)pictureData;
+        PackagePart pic = xPictureData.getPackagePart();
 
         PackageRelationship rel = getSheet().getPackagePart().addRelationship(
                 pic.getPartName(), TargetMode.INTERNAL, XSLFRelation.IMAGES.getRelation());
@@ -256,6 +262,24 @@ public class XSLFGroupShape extends XSLFShape implements XSLFShapeContainer, Gro
         sh.setParent(this);
         return sh;
     }
+    
+    @Override
+    public XSLFTable createTable(int numRows, int numCols){
+        if (numRows < 1 || numCols < 1) {
+            throw new IllegalArgumentException("numRows and numCols must be greater than 0");
+        }
+        XSLFTable sh = getDrawing().createTable();
+        _shapes.add(sh);
+        sh.setParent(this);
+        for (int r=0; r<numRows; r++) {
+            XSLFTableRow row = sh.addRow();
+            for (int c=0; c<numCols; c++) {
+                row.addCell();
+            }
+        }
+        return sh;
+    }
+
     
     @Override
     public void setFlipHorizontal(boolean flip){

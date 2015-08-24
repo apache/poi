@@ -48,7 +48,6 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.sl.usermodel.MasterSheet;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.apache.poi.sl.usermodel.Resources;
-import org.apache.poi.sl.usermodel.Shape;
 import org.apache.poi.sl.usermodel.SlideShow;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -63,7 +62,7 @@ import org.apache.poi.util.Units;
  * @author Nick Burch
  * @author Yegor kozlov
  */
-public final class HSLFSlideShow implements SlideShow {
+public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagraph> {
 	// What we're based on
 	private HSLFSlideShowImpl _hslfSlideShow;
 
@@ -671,6 +670,7 @@ public final class HSLFSlideShow implements SlideShow {
 	 *
 	 * @return the created <code>Slide</code>
 	 */
+	@Override
 	public HSLFSlide createSlide() {
 		SlideListWithText slist = null;
 
@@ -1131,8 +1131,7 @@ public final class HSLFSlideShow implements SlideShow {
 		return psrId;
     }
 
-    public MasterSheet<? extends Shape, ? extends SlideShow> createMasterSheet()
-            throws IOException {
+    public MasterSheet<HSLFShape,HSLFTextParagraph> createMasterSheet() throws IOException {
         // TODO Auto-generated method stub
         return null;
     }

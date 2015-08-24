@@ -17,6 +17,9 @@
 
 package org.apache.poi.sl.usermodel;
 
-public interface TableShape extends Shape, PlaceableShape {
+public interface TableShape<
+    S extends Shape<S,P>,
+    P extends TextParagraph<S,P,? extends TextRun>
+> extends Shape<S,P>, PlaceableShape<S,P> {
     // to be defined ...
 }

@@ -68,7 +68,8 @@ import org.openxmlformats.schemas.presentationml.x2006.main.PresentationDocument
  *  top level object for creating new slides/etc.
  */
 @Beta
-public class XMLSlideShow extends POIXMLDocument implements SlideShow {
+public class XMLSlideShow extends POIXMLDocument
+implements SlideShow<XSLFShape,XSLFTextParagraph> {
     private static POILogger _logger = POILogFactory.getLogger(XMLSlideShow.class);
 
     private CTPresentation _presentation;
@@ -512,7 +513,8 @@ public class XMLSlideShow extends POIXMLDocument implements SlideShow {
         return null;
     }
 
-    public MasterSheet<XSLFShape, XMLSlideShow> createMasterSheet() throws IOException {
+    @Override
+    public MasterSheet<XSLFShape,XSLFTextParagraph> createMasterSheet() throws IOException {
         // TODO: implement!
         throw new UnsupportedOperationException();
     }

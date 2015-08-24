@@ -49,7 +49,8 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTShapeNonVisual;
  * @author Yegor Kozlov
  */
 @Beta
-public class XSLFFreeformShape extends XSLFAutoShape implements FreeformShape<XSLFTextParagraph> {
+public class XSLFFreeformShape extends XSLFAutoShape
+    implements FreeformShape<XSLFShape,XSLFTextParagraph> {
 
     /*package*/ XSLFFreeformShape(CTShape shape, XSLFSheet sheet) {
         super(shape, sheet);

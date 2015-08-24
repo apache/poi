@@ -37,6 +37,7 @@ import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.sl.draw.DrawFactory;
 import org.apache.poi.sl.draw.Drawable;
+import org.apache.poi.sl.usermodel.PictureData;
 import org.apache.poi.sl.usermodel.Sheet;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.IOUtils;
@@ -53,7 +54,8 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
 
 @Beta
-public abstract class XSLFSheet extends POIXMLDocumentPart implements XSLFShapeContainer, Sheet<XSLFShape, XMLSlideShow> {
+public abstract class XSLFSheet extends POIXMLDocumentPart
+implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
     private XSLFCommonSlideData _commonSlideData;
     private XSLFDrawing _drawing;
     private List<XSLFShape> _shapes;
@@ -72,9 +74,9 @@ public abstract class XSLFSheet extends POIXMLDocumentPart implements XSLFShapeC
     }
 
     /**
-     *
      * @return the XMLSlideShow this sheet belongs to
      */
+    @Override
     public XMLSlideShow getSlideShow() {
         POIXMLDocumentPart p = getParent();
         while(p != null) {
@@ -158,6 +160,7 @@ public abstract class XSLFSheet extends POIXMLDocumentPart implements XSLFShapeC
 
     // shape factory methods
 
+    @Override
     public XSLFAutoShape createAutoShape(){
         XSLFAutoShape sh = getDrawing().createAutoShape();
         getShapes().add(sh);
@@ -165,6 +168,7 @@ public abstract class XSLFSheet extends POIXMLDocumentPart implements XSLFShapeC
         return sh;
     }
 
+    @Override
     public XSLFFreeformShape createFreeform(){
         XSLFFreeformShape sh = getDrawing().createFreeform();
         getShapes().add(sh);
@@ -172,6 +176,7 @@ public abstract class XSLFSheet extends POIXMLDocumentPart implements XSLFShapeC
         return sh;
     }
 
+    @Override
     public XSLFTextBox createTextBox(){
         XSLFTextBox sh = getDrawing().createTextBox();
         getShapes().add(sh);
@@ -179,6 +184,7 @@ public abstract class XSLFSheet extends POIXMLDocumentPart implements XSLFShapeC
         return sh;
     }
 
+    @Override
     public XSLFConnectorShape createConnector(){
         XSLFConnectorShape sh = getDrawing().createConnector();
         getShapes().add(sh);
@@ -186,6 +192,7 @@ public abstract class XSLFSheet extends POIXMLDocumentPart implements XSLFShapeC
         return sh;
     }
 
+    @Override
     public XSLFGroupShape createGroup(){
         XSLFGroupShape sh = getDrawing().createGroup();
         getShapes().add(sh);
@@ -193,8 +200,13 @@ public abstract class XSLFSheet extends POIXMLDocumentPart implements XSLFShapeC
         return sh;
     }
 
-    public XSLFPictureShape createPicture(XSLFPictureData pictureData){
-        PackagePart pic = pictureData.getPackagePart();
+    @Override
+    public XSLFPictureShape createPicture(PictureData pictureData){
+        if (!(pictureData instanceof XSLFPictureData)) {
+            throw new IllegalArgumentException("pictureData needs to be of type XSLFPictureData");
+        }
+        XSLFPictureData xPictureData = (XSLFPictureData)pictureData;
+        PackagePart pic = xPictureData.getPackagePart();
 
         PackageRelationship rel = getPackagePart().addRelationship(
                 pic.getPartName(), TargetMode.INTERNAL, XSLFRelation.IMAGES.getRelation());
@@ -214,6 +226,24 @@ public abstract class XSLFSheet extends POIXMLDocumentPart implements XSLFShapeC
         return sh;
     }
 
+    @Override
+    public XSLFTable createTable(int numRows, int numCols){
+        if (numRows < 1 || numCols < 1) {
+            throw new IllegalArgumentException("numRows and numCols must be greater than 0");
+        }
+        XSLFTable sh = getDrawing().createTable();
+        getShapes().add(sh);
+        sh.setParent(this);
+        for (int r=0; r<numRows; r++) {
+            XSLFTableRow row = sh.addRow();
+            for (int c=0; c<numCols; c++) {
+                row.addCell();
+            }
+        }
+        return sh;
+    }
+
+    
     /**
      * Returns an iterator over the shapes in this sheet
      *
@@ -481,9 +511,9 @@ public abstract class XSLFSheet extends POIXMLDocumentPart implements XSLFShapeC
     }
 
     /**
-     *
      * @return  background for this sheet
      */
+    @Override
     public XSLFBackground getBackground() {
         return null;
     }

@@ -21,14 +21,29 @@ package org.apache.poi.xslf.usermodel;
 
 import java.awt.Color;
 
+import org.apache.poi.sl.usermodel.TableCell;
 import org.apache.poi.sl.usermodel.VerticalAlignment;
 import org.apache.poi.util.Units;
-import org.openxmlformats.schemas.drawingml.x2006.main.*;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTLineEndProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTLineProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTSRgbColor;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTSolidColorFillProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTableCell;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTableCellProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBody;
+import org.openxmlformats.schemas.drawingml.x2006.main.STCompoundLine;
+import org.openxmlformats.schemas.drawingml.x2006.main.STLineCap;
+import org.openxmlformats.schemas.drawingml.x2006.main.STLineEndLength;
+import org.openxmlformats.schemas.drawingml.x2006.main.STLineEndType;
+import org.openxmlformats.schemas.drawingml.x2006.main.STLineEndWidth;
+import org.openxmlformats.schemas.drawingml.x2006.main.STPenAlignment;
+import org.openxmlformats.schemas.drawingml.x2006.main.STPresetLineDashVal;
+import org.openxmlformats.schemas.drawingml.x2006.main.STTextAnchoringType;
 
 /**
  * Represents a cell of a table in a .pptx presentation
  */
-public class XSLFTableCell extends XSLFTextShape {
+public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,XSLFTextParagraph> {
     static double defaultBorderWidth = 1.0;
     private CTTableCellProperties _tcPr = null;
 
