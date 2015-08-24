@@ -30,7 +30,6 @@ import java.io.IOException;
 import java.text.AttributedString;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.PaneInformation;
@@ -1177,15 +1176,15 @@ public abstract class BaseTestBugzillaIssues {
     public void bug58260() throws IOException {
         //Create workbook and worksheet
         Workbook wb = _testDataProvider.createWorkbook();
-        Sheet worksheet = wb.createSheet("sample");
+        //Sheet worksheet = wb.createSheet("sample");
 
         //Loop through and add all values from array list
         // use a fixed seed to always produce the same file which makes comparing stuff easier
-        Random rnd = new Random(4352345);
+        //Random rnd = new Random(4352345);
         int maxStyles = (wb instanceof HSSFWorkbook) ? 4009 : 64000;
         for(int i = 0;i < maxStyles;i++) {
             //Create new row
-            Row row = worksheet.createRow(i);
+            //Row row = worksheet.createRow(i);
 
             //Create cell style
             final CellStyle style; 
@@ -1206,13 +1205,13 @@ public abstract class BaseTestBugzillaIssues {
             }
 
             //Create cell
-            Cell cell = row.createCell(0);
+            //Cell cell = row.createCell(0);
 
             //Set cell style
-            cell.setCellStyle(style);
+            //cell.setCellStyle(style);
 
             //Set cell value
-            cell.setCellValue("r" + rnd.nextInt());
+            //cell.setCellValue("r" + rnd.nextInt());
         }
 
         // should fail if we try to add more now
