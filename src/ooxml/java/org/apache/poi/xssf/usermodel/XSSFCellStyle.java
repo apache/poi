@@ -615,7 +615,7 @@ public class XSSFCellStyle implements CellStyle {
     /**
      * Get the index within the StylesTable (sequence within the collection of CTXf elements)
      *
-     * @return unique index number of the underlying record this style represents
+     * @return unique index number of the underlying record this style represents, as a short (may wrap)
      */
     @Override
     public short getIndex() {
@@ -627,7 +627,7 @@ public class XSSFCellStyle implements CellStyle {
      * the main getIndex() and others would return int, not short, but that would affect some
      * public APIs
      *
-     * @return
+     * @return unique index number of the underlying record this style represents, as an int (always positive)
      */
     protected int getUIndex() {
         return this._cellXfId;
