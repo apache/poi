@@ -17,11 +17,12 @@
 
 package org.apache.poi.sl.usermodel;
 
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import java.util.List;
 
-
-
-public interface TextShape<T extends TextParagraph<? extends TextRun>> extends SimpleShape, Iterable<T>  {
+public interface TextShape<
+    S extends Shape<S,P>,
+    P extends TextParagraph<S,P,? extends TextRun>
+> extends SimpleShape<S,P>, Iterable<P>  {
     /**
      * Vertical Text Types
      */
@@ -87,40 +88,45 @@ public interface TextShape<T extends TextParagraph<? extends TextRun>> extends S
          * </p>
          */
         SHAPE
-    }    
+    }
     
+    /**
+     * @return the TextParagraphs for this text box
+     */
+    List<? extends TextParagraph<S,P,? extends TextRun>> getTextParagraphs();
+
     /**
      * @return text shape margin
      */
     Insets2D getInsets();
-    
+
     /**
      * Compute the cumulative height occupied by the text
      */
     double getTextHeight();
-    
+
     /**
      * Returns the type of vertical alignment for the text.
      *
      * @return the type of vertical alignment
      */
     VerticalAlignment getVerticalAlignment();
-    
+
     /**
      * Returns if the text is centered.
      * If true and if the individual paragraph settings allow it,
      * the whole text block will be displayed centered, i.e. its left and right
      * margin will be maximized while still keeping the alignment of the paragraphs
      *
-     * @return true, if the text anchor is horizontal centered 
+     * @return true, if the text anchor is horizontal centered
      */
     boolean isHorizontalCentered();
-    
+
     /**
      * @return whether to wrap words within the bounding rectangle
      */
     boolean getWordWrap();
-    
+
     /**
      * @return vertical orientation of the text
      */

@@ -24,18 +24,21 @@ import java.util.List;
 
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
 
-public interface SlideShow {
-	Slide<? extends Shape, ? extends SlideShow, ? extends Notes<?,?>> createSlide() throws IOException;
+public interface SlideShow<
+    S extends Shape<S,P>,
+    P extends TextParagraph<S,P,? extends TextRun>
+> {
+	Slide<S,P> createSlide() throws IOException;
 
-	List<? extends Slide<? extends Shape, ? extends SlideShow, ? extends Notes<?,?>>> getSlides();
+	List<? extends Slide<S,P>> getSlides();
 
-    MasterSheet<? extends Shape, ? extends SlideShow> createMasterSheet() throws IOException;
+    MasterSheet<S,P> createMasterSheet() throws IOException;
 
 	/**
      * Returns all slide masters.
      * This doesn't include notes master and other arbitrary masters.
      */
-	List<? extends MasterSheet<? extends Shape, ? extends SlideShow>> getSlideMasters();
+	List<? extends MasterSheet<S,P>> getSlideMasters();
 
 	Resources getResources();
 

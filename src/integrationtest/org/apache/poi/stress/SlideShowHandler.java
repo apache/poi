@@ -31,7 +31,6 @@ import java.util.Map;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.sl.SlideShowFactory;
 import org.apache.poi.sl.draw.Drawable;
-import org.apache.poi.sl.usermodel.Notes;
 import org.apache.poi.sl.usermodel.Shape;
 import org.apache.poi.sl.usermodel.ShapeContainer;
 import org.apache.poi.sl.usermodel.Slide;
@@ -42,7 +41,7 @@ import org.apache.poi.sl.usermodel.TextShape;
 import org.apache.poi.util.JvmBugs;
 
 public abstract class SlideShowHandler extends POIFSFileHandler {
-    public void handleSlideShow(SlideShow ss) throws IOException {
+    public void handleSlideShow(SlideShow<?,?> ss) throws IOException {
         renderSlides(ss);
 
         readContent(ss);
@@ -53,7 +52,7 @@ public abstract class SlideShowHandler extends POIFSFileHandler {
         readContent(ss);
 
         // read in the writen file
-        SlideShow read;
+        SlideShow<?,?> read;
         try {
             read = SlideShowFactory.create(new ByteArrayInputStream(out.toByteArray()));
         } catch (InvalidFormatException e) {
@@ -65,7 +64,7 @@ public abstract class SlideShowHandler extends POIFSFileHandler {
         
     }
 
-    private ByteArrayOutputStream writeToArray(SlideShow ss) throws IOException {
+    private ByteArrayOutputStream writeToArray(SlideShow<?,?> ss) throws IOException {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         try {
             ss.write(stream);
@@ -77,8 +76,8 @@ public abstract class SlideShowHandler extends POIFSFileHandler {
     }
 
     
-    private void readContent(SlideShow ss) {
-        for (Slide<?,?,? extends Notes<?,?>> s : ss.getSlides()) {
+    private void readContent(SlideShow<?,?> ss) {
+        for (Slide<?,?> s : ss.getSlides()) {
             s.getTitle();
             readText(s);
             readText(s.getNotes());
@@ -86,12 +85,11 @@ public abstract class SlideShowHandler extends POIFSFileHandler {
         }
     }
     
-    @SuppressWarnings("unchecked")
-    private void readText(ShapeContainer<?> sc) {
+    private void readText(ShapeContainer<?,?> sc) {
         if (sc == null) return;
-        for (Shape s : sc) {
+        for (Shape<?,?> s : sc) {
             if (s instanceof TextShape) {
-                for (TextParagraph<? extends TextRun> tp : (TextShape<TextParagraph<? extends TextRun>>)s) {
+                for (TextParagraph<?,?,?> tp : (TextShape<?,?>)s) {
                     for (TextRun tr : tp) {
                         tr.getRawText();
                     }
@@ -100,10 +98,10 @@ public abstract class SlideShowHandler extends POIFSFileHandler {
         }
     }
     
-    private void renderSlides(SlideShow ss) {
+    private void renderSlides(SlideShow<?,?> ss) {
         Dimension pgsize = ss.getPageSize();
 
-        for (Slide<?,?,?> s : ss.getSlides()) {
+        for (Slide<?,?> s : ss.getSlides()) {
             BufferedImage img = new BufferedImage(pgsize.width, pgsize.height, BufferedImage.TYPE_INT_ARGB);
             Graphics2D graphics = img.createGraphics();
             fixFonts(graphics);

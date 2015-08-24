@@ -35,7 +35,8 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTBackground;
  *
  * @author Yegor Kozlov
  */
-public class XSLFBackground extends XSLFSimpleShape implements Background {
+public class XSLFBackground extends XSLFSimpleShape
+    implements Background<XSLFShape,XSLFTextParagraph> {
 
     /* package */XSLFBackground(CTBackground shape, XSLFSheet sheet) {
         super(shape, sheet);

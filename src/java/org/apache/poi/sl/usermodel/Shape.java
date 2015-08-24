@@ -18,12 +18,15 @@
 package org.apache.poi.sl.usermodel;
 
 
-public interface Shape {
-	ShapeContainer<? extends Shape> getParent();
+public interface Shape<
+    S extends Shape<S,P>,
+    P extends TextParagraph<S,P,? extends TextRun>
+> {
+	ShapeContainer<S,P> getParent();
 	
     /**
     *
     * @return the sheet this shape belongs to
     */
-   Sheet<? extends Shape, ? extends SlideShow> getSheet();
+   Sheet<S,P> getSheet();
 }

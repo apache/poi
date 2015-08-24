@@ -27,9 +27,9 @@ import org.apache.poi.sl.usermodel.*;
 import org.apache.poi.sl.usermodel.TextParagraph.BulletStyle;
 import org.apache.poi.util.JvmBugs;
 
-public class DrawTextShape<T extends TextShape<? extends TextParagraph<? extends TextRun>>> extends DrawSimpleShape<T> {
+public class DrawTextShape extends DrawSimpleShape {
 
-    public DrawTextShape(T shape) {
+    public DrawTextShape(TextShape<?,?> shape) {
         super(shape);
     }
 
@@ -37,8 +37,8 @@ public class DrawTextShape<T extends TextShape<? extends TextParagraph<? extends
     public void drawContent(Graphics2D graphics) {
         fixFonts(graphics);
         
-        Rectangle2D anchor = DrawShape.getAnchor(graphics, shape);
-        Insets2D insets = shape.getInsets();
+        Rectangle2D anchor = DrawShape.getAnchor(graphics, getShape());
+        Insets2D insets = getShape().getInsets();
         double x = anchor.getX() + insets.left;
         double y = anchor.getY();
 
@@ -50,7 +50,7 @@ public class DrawTextShape<T extends TextShape<? extends TextParagraph<? extends
         // (see DrawShape#applyTransform ), but we need to restore it to avoid painting "upside down".
         // See Bugzilla 54210.
 
-        if(shape.getFlipVertical()){
+        if(getShape().getFlipVertical()){
             graphics.translate(anchor.getX(), anchor.getY() + anchor.getHeight());
             graphics.scale(1, -1);
             graphics.translate(-anchor.getX(), -anchor.getY());
@@ -65,7 +65,7 @@ public class DrawTextShape<T extends TextShape<? extends TextParagraph<? extends
 
         // Horizontal flipping applies only to shape outline and not to the text in the shape.
         // Applying flip second time restores the original not-flipped transform
-        if(shape.getFlipHorizontal()){
+        if(getShape().getFlipHorizontal()){
             graphics.translate(anchor.getX() + anchor.getWidth(), anchor.getY());
             graphics.scale(-1, 1);
             graphics.translate(-anchor.getX() , -anchor.getY());
@@ -73,9 +73,9 @@ public class DrawTextShape<T extends TextShape<? extends TextParagraph<? extends
 
 
         // first dry-run to calculate the total height of the text
-        double textHeight = shape.getTextHeight();
+        double textHeight = getShape().getTextHeight();
 
-        switch (shape.getVerticalAlignment()){
+        switch (getShape().getVerticalAlignment()){
             case TOP:
                 y += insets.top;
                 break;
@@ -104,12 +104,12 @@ public class DrawTextShape<T extends TextShape<? extends TextParagraph<? extends
         DrawFactory fact = DrawFactory.getInstance(graphics);
 
         double y0 = y;
-        Iterator<? extends TextParagraph<? extends TextRun>> paragraphs = shape.iterator();
+        Iterator<? extends TextParagraph<?,?,? extends TextRun>> paragraphs = getShape().iterator();
         
         boolean isFirstLine = true;
         for (int autoNbrIdx=0; paragraphs.hasNext(); autoNbrIdx++){
-            TextParagraph<? extends TextRun> p = paragraphs.next();
-            DrawTextParagraph<? extends TextRun> dp = fact.getDrawable(p);
+            TextParagraph<?,?,? extends TextRun> p = paragraphs.next();
+            DrawTextParagraph dp = fact.getDrawable(p);
             BulletStyle bs = p.getBulletStyle();
             if (bs == null || bs.getAutoNumberingScheme() == null) {
                 autoNbrIdx = -1;
@@ -179,5 +179,10 @@ public class DrawTextShape<T extends TextShape<? extends TextParagraph<? extends
         
         if (!fontMap.containsKey("Calibri")) fontMap.put("Calibri", "Lucida Sans");
         if (!fontMap.containsKey("Cambria")) fontMap.put("Cambria", "Lucida Bright");
+    }
+
+    @Override
+    protected TextShape<?,?> getShape() {
+        return (TextShape<?,?>)shape;
     }
 }

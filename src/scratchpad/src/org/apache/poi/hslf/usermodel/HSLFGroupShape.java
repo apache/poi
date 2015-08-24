@@ -17,11 +17,22 @@
 
 package org.apache.poi.hslf.usermodel;
 
+import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
-import org.apache.poi.ddf.*;
-import org.apache.poi.sl.usermodel.*;
+import org.apache.poi.ddf.EscherChildAnchorRecord;
+import org.apache.poi.ddf.EscherClientAnchorRecord;
+import org.apache.poi.ddf.EscherContainerRecord;
+import org.apache.poi.ddf.EscherRecord;
+import org.apache.poi.ddf.EscherSpRecord;
+import org.apache.poi.ddf.EscherSpgrRecord;
+import org.apache.poi.sl.usermodel.GroupShape;
+import org.apache.poi.sl.usermodel.PictureData;
+import org.apache.poi.sl.usermodel.ShapeContainer;
+import org.apache.poi.sl.usermodel.ShapeType;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.Units;
@@ -31,7 +42,8 @@ import org.apache.poi.util.Units;
  *
  * @author Yegor Kozlov
  */
-public class HSLFGroupShape extends HSLFShape implements GroupShape<HSLFShape> {
+public class HSLFGroupShape extends HSLFShape
+implements HSLFShapeContainer, GroupShape<HSLFShape,HSLFTextParagraph> {
 
     /**
       * Create a new ShapeGroup. This constructor is used when a new shape is created.
@@ -43,12 +55,22 @@ public class HSLFGroupShape extends HSLFShape implements GroupShape<HSLFShape> {
     }
 
     /**
-      * Create a ShapeGroup object and initilize it from the supplied Record container.
+      * Create a new ShapeGroup. This constructor is used when a new shape is created.
+      *
+      * @param parent    the parent of the shape
+      */
+    public HSLFGroupShape(ShapeContainer<HSLFShape,HSLFTextParagraph> parent){
+        this(null, parent);
+        _escherContainer = createSpContainer(parent instanceof HSLFGroupShape);
+    }
+
+    /**
+      * Create a ShapeGroup object and initialize it from the supplied Record container.
       *
       * @param escherRecord       <code>EscherSpContainer</code> container which holds information about this shape
       * @param parent    the parent of the shape
       */
-    protected HSLFGroupShape(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape> parent){
+    protected HSLFGroupShape(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape,HSLFTextParagraph> parent){
         super(escherRecord, parent);
     }
 
@@ -273,4 +295,68 @@ public class HSLFGroupShape extends HSLFShape implements GroupShape<HSLFShape> {
         return shapeList;
     }
 
+    @Override
+    public HSLFTextBox createTextBox() {
+        HSLFTextBox s = new HSLFTextBox(this);
+        s.setHorizontalCentered(true);
+        s.setAnchor(new Rectangle(0, 0, 100, 100));
+        addShape(s);
+        return s;
+    }
+
+    @Override
+    public HSLFAutoShape createAutoShape() {
+        HSLFAutoShape s = new HSLFAutoShape(ShapeType.RECT, this);
+        s.setHorizontalCentered(true);
+        s.setAnchor(new Rectangle(0, 0, 100, 100));
+        addShape(s);
+        return s;
+    }
+
+    @Override
+    public HSLFFreeformShape createFreeform() {
+        HSLFFreeformShape s = new HSLFFreeformShape(this);
+        s.setHorizontalCentered(true);
+        s.setAnchor(new Rectangle(0, 0, 100, 100));
+        addShape(s);
+        return s;
+    }
+
+    @Override
+    public HSLFConnectorShape createConnector() {
+        HSLFConnectorShape s = new HSLFConnectorShape(this);
+        s.setAnchor(new Rectangle(0, 0, 100, 100));
+        addShape(s);
+        return s;
+    }
+
+    @Override
+    public HSLFGroupShape createGroup() {
+        HSLFGroupShape s = new HSLFGroupShape(this);
+        s.setAnchor(new Rectangle(0, 0, 100, 100));
+        addShape(s);
+        return s;
+    }
+
+    @Override
+    public HSLFPictureShape createPicture(PictureData pictureData) {
+        if (!(pictureData instanceof HSLFPictureData)) {
+            throw new IllegalArgumentException("pictureData needs to be of type HSLFPictureData");
+        }
+        HSLFPictureShape s = new HSLFPictureShape((HSLFPictureData)pictureData, this);
+        s.setAnchor(new Rectangle(0, 0, 100, 100));
+        addShape(s);
+        return s;
+    }
+
+    @Override
+    public HSLFTable createTable(int numRows, int numCols) {
+        if (numRows < 1 || numCols < 1) {
+            throw new IllegalArgumentException("numRows and numCols must be greater than 0");
+        }
+        HSLFTable s = new HSLFTable(numRows,numCols,this);
+        s.setAnchor(new Rectangle(0, 0, 100, 100));
+        addShape(s);
+        return s;
+    }
 }

@@ -51,7 +51,7 @@ public final class OLEShape extends HSLFPictureShape {
      * @param data the picture data
      * @param parent the parent shape
      */
-    public OLEShape(HSLFPictureData data, ShapeContainer<HSLFShape> parent) {
+    public OLEShape(HSLFPictureData data, ShapeContainer<HSLFShape,HSLFTextParagraph> parent) {
         super(data, parent);
     }
 
@@ -62,7 +62,7 @@ public final class OLEShape extends HSLFPictureShape {
       *        this picture in the <code>Slide</code>
       * @param parent the parent shape of this picture
       */
-    public OLEShape(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape> parent){
+    public OLEShape(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape,HSLFTextParagraph> parent){
         super(escherRecord, parent);
     }
 

@@ -22,14 +22,14 @@ import java.awt.Graphics2D;
 import org.apache.poi.sl.usermodel.*;
 
 
-public class DrawSlide<T extends Slide<? extends Shape, ? extends SlideShow, ? extends Notes<?,?>>> extends DrawSheet<T> {
+public class DrawSlide extends DrawSheet {
 
-    public DrawSlide(T slide) {
+    public DrawSlide(Slide<?,?> slide) {
         super(slide);
     }
     
     public void draw(Graphics2D graphics) {
-        Background bg = sheet.getBackground();
+        Background<?,?> bg = sheet.getBackground();
         if(bg != null) {
             DrawFactory drawFact = DrawFactory.getInstance(graphics);
             Drawable db = drawFact.getDrawable(bg);

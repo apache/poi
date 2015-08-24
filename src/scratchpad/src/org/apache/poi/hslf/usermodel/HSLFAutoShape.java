@@ -31,13 +31,13 @@ import org.apache.poi.ss.usermodel.ShapeTypes;
  *
  *  @author Yegor Kozlov
  */
-public class HSLFAutoShape extends HSLFTextShape implements AutoShape<HSLFTextParagraph> {
+public class HSLFAutoShape extends HSLFTextShape implements AutoShape<HSLFShape,HSLFTextParagraph> {
 
-    protected HSLFAutoShape(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape> parent){
+    protected HSLFAutoShape(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape,HSLFTextParagraph> parent){
         super(escherRecord, parent);
     }
 
-    public HSLFAutoShape(ShapeType type, ShapeContainer<HSLFShape> parent){
+    public HSLFAutoShape(ShapeType type, ShapeContainer<HSLFShape,HSLFTextParagraph> parent){
         super(null, parent);
         _escherContainer = createSpContainer(type, parent instanceof HSLFGroupShape);
     }

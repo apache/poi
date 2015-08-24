@@ -21,7 +21,11 @@ import java.awt.Color;
 
 
 
-public interface TextParagraph<T extends TextRun> extends Iterable<T> {
+public interface TextParagraph<
+    S extends Shape<S,P>,
+    P extends TextParagraph<S,P,T>,
+    T extends TextRun
+> extends Iterable<T> {
 
     /**
      * Specifies a list of text alignment types
@@ -334,5 +338,5 @@ public interface TextParagraph<T extends TextRun> extends Iterable<T> {
     Double getDefaultTabSize();
 
     
-    TextShape<? extends TextParagraph<T>> getParentShape();
+    TextShape<S,P> getParentShape();
 }

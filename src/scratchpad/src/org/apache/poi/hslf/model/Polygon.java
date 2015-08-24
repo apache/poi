@@ -38,7 +38,7 @@ public final class Polygon extends HSLFAutoShape {
      * @param escherRecord       <code>EscherSpContainer</code> container which holds information about this shape
      * @param parent    the parent of the shape
      */
-   protected Polygon(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape> parent){
+   protected Polygon(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape,HSLFTextParagraph> parent){
         super(escherRecord, parent);
 
     }
@@ -49,7 +49,7 @@ public final class Polygon extends HSLFAutoShape {
      * @param parent    the parent of this Shape. For example, if this text box is a cell
      * in a table then the parent is Table.
      */
-    public Polygon(ShapeContainer<HSLFShape> parent){
+    public Polygon(ShapeContainer<HSLFShape,HSLFTextParagraph> parent){
         super((EscherContainerRecord)null, parent);
         _escherContainer = createSpContainer(ShapeType.NOT_PRIMITIVE, parent instanceof HSLFGroupShape);
     }
@@ -75,7 +75,7 @@ public final class Polygon extends HSLFAutoShape {
         float left   = findSmallest(xPoints);
         float top    = findSmallest(yPoints);
 
-        EscherOptRecord opt = getEscherOptRecord();
+        AbstractEscherOptRecord opt = getEscherOptRecord();
         opt.addEscherProperty(new EscherSimpleProperty(EscherProperties.GEOMETRY__RIGHT, Units.pointsToMaster(right - left)));
         opt.addEscherProperty(new EscherSimpleProperty(EscherProperties.GEOMETRY__BOTTOM, Units.pointsToMaster(bottom - top)));
 

@@ -19,8 +19,11 @@ package org.apache.poi.sl.usermodel;
 
 import java.awt.geom.Rectangle2D;
 
-public interface PlaceableShape {
-    ShapeContainer<? extends Shape> getParent();
+public interface PlaceableShape<
+    S extends Shape<S,P>,
+    P extends TextParagraph<S,P,? extends TextRun>
+> {
+    ShapeContainer<S,P> getParent();
     
     /**
      * @return the position of this shape within the drawing canvas.

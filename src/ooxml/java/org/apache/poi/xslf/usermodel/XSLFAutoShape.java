@@ -36,7 +36,8 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTShapeNonVisual;
  * @author Yegor Kozlov
  */
 @Beta
-public class XSLFAutoShape extends XSLFTextShape implements AutoShape<XSLFTextParagraph> {
+public class XSLFAutoShape extends XSLFTextShape
+    implements AutoShape<XSLFShape,XSLFTextParagraph> {
 
     /*package*/ XSLFAutoShape(CTShape shape, XSLFSheet sheet) {
         super(shape, sheet);

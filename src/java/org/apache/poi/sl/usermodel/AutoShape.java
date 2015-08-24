@@ -17,5 +17,8 @@
 
 package org.apache.poi.sl.usermodel;
 
-public interface AutoShape<T extends TextParagraph<? extends TextRun>> extends TextShape<T> {
+public interface AutoShape<
+    S extends Shape<S,P>,
+    P extends TextParagraph<S,P,? extends TextRun>
+> extends TextShape<S,P> {
 }

@@ -26,10 +26,10 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
+import org.apache.poi.ddf.AbstractEscherOptRecord;
 import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.ddf.EscherComplexProperty;
 import org.apache.poi.ddf.EscherContainerRecord;
-import org.apache.poi.ddf.EscherOptRecord;
 import org.apache.poi.ddf.EscherProperties;
 import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.ddf.EscherSimpleProperty;
@@ -49,7 +49,7 @@ import org.apache.poi.util.Units;
  *
  * @author Yegor Kozlov
  */
-public class HSLFPictureShape extends HSLFSimpleShape implements PictureShape {
+public class HSLFPictureShape extends HSLFSimpleShape implements PictureShape<HSLFShape,HSLFTextParagraph> {
 
     /**
      * Create a new <code>Picture</code>
@@ -66,7 +66,7 @@ public class HSLFPictureShape extends HSLFSimpleShape implements PictureShape {
      * @param data the picture data
      * @param parent the parent shape
      */
-    public HSLFPictureShape(HSLFPictureData data, ShapeContainer<HSLFShape> parent) {
+    public HSLFPictureShape(HSLFPictureData data, ShapeContainer<HSLFShape,HSLFTextParagraph> parent) {
         super(null, parent);
         _escherContainer = createSpContainer(data.getIndex(), parent instanceof HSLFGroupShape);
     }
@@ -78,7 +78,7 @@ public class HSLFPictureShape extends HSLFSimpleShape implements PictureShape {
       *        this picture in the <code>Slide</code>
       * @param parent the parent shape of this picture
       */
-     protected HSLFPictureShape(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape> parent){
+     protected HSLFPictureShape(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape,HSLFTextParagraph> parent){
         super(escherRecord, parent);
     }
 
@@ -90,7 +90,7 @@ public class HSLFPictureShape extends HSLFSimpleShape implements PictureShape {
      * @return the index to this picture (1 based).
      */
     public int getPictureIndex(){
-        EscherOptRecord opt = getEscherOptRecord();
+        AbstractEscherOptRecord opt = getEscherOptRecord();
         EscherSimpleProperty prop = getEscherProperty(opt, EscherProperties.BLIP__BLIPTODISPLAY);
         return prop == null ? 0 : prop.getPropertyValue();
     }
@@ -109,7 +109,7 @@ public class HSLFPictureShape extends HSLFSimpleShape implements PictureShape {
         spRecord.setOptions((short)((ShapeType.FRAME.nativeId << 4) | 0x2));
 
         //set default properties for a picture
-        EscherOptRecord opt = getEscherOptRecord();
+        AbstractEscherOptRecord opt = getEscherOptRecord();
         setEscherProperty(opt, EscherProperties.PROTECTION__LOCKAGAINSTGROUPING, 0x800080);
 
         //another weird feature of powerpoint: for picture id we must add 0x4000.
@@ -189,7 +189,7 @@ public class HSLFPictureShape extends HSLFSimpleShape implements PictureShape {
      * @return name of this picture
      */
     public String getPictureName(){
-        EscherOptRecord opt = getEscherOptRecord();
+        AbstractEscherOptRecord opt = getEscherOptRecord();
         EscherComplexProperty prop = getEscherProperty(opt, EscherProperties.BLIP__BLIPFILENAME);
         if (prop == null) return null;
         String name = StringUtil.getFromUnicodeLE(prop.getComplexData());
@@ -202,7 +202,7 @@ public class HSLFPictureShape extends HSLFSimpleShape implements PictureShape {
      * @param name of this picture
      */
     public void setPictureName(String name){
-        EscherOptRecord opt = getEscherOptRecord();
+        AbstractEscherOptRecord opt = getEscherOptRecord();
         byte[] data = StringUtil.getToUnicodeLE(name + '\u0000');
         EscherComplexProperty prop = new EscherComplexProperty(EscherProperties.BLIP__BLIPFILENAME, false, data);
         opt.addEscherProperty(prop);
@@ -228,7 +228,7 @@ public class HSLFPictureShape extends HSLFSimpleShape implements PictureShape {
     public Insets getClipping() {
         // The anchor specified by the escher properties is the displayed size,
         // i.e. the size of the already clipped image
-        EscherOptRecord opt = getEscherOptRecord();
+        AbstractEscherOptRecord opt = getEscherOptRecord();
         
         double top    = getFractProp(opt, EscherProperties.BLIP__CROPFROMTOP);
         double bottom = getFractProp(opt, EscherProperties.BLIP__CROPFROMBOTTOM);
@@ -244,7 +244,7 @@ public class HSLFPictureShape extends HSLFSimpleShape implements PictureShape {
     /**
      * @return the fractional property or 0 if not defined
      */
-    private static double getFractProp(EscherOptRecord opt, short propertyId) {
+    private static double getFractProp(AbstractEscherOptRecord opt, short propertyId) {
         EscherSimpleProperty prop = getEscherProperty(opt, propertyId);
         if (prop == null) return 0;
         int fixedPoint = prop.getPropertyValue();

@@ -26,11 +26,11 @@ import java.awt.geom.AffineTransform;
 import org.apache.poi.sl.usermodel.*;
 
 
-public class DrawSheet<T extends Sheet<? extends Shape, ? extends SlideShow>> implements Drawable {
+public class DrawSheet implements Drawable {
 
-    protected final T sheet;
+    protected final Sheet<?,?> sheet;
     
-    public DrawSheet(T sheet) {
+    public DrawSheet(Sheet<?,?> sheet) {
         this.sheet = sheet;
     }
     
@@ -41,7 +41,7 @@ public class DrawSheet<T extends Sheet<? extends Shape, ? extends SlideShow>> im
         graphics.fillRect(0, 0, (int)dim.getWidth(), (int)dim.getHeight());
         
         DrawFactory drawFact = DrawFactory.getInstance(graphics);
-        MasterSheet<? extends Shape, ? extends SlideShow> master = sheet.getMasterSheet();
+        MasterSheet<?,?> master = sheet.getMasterSheet();
         
         if(sheet.getFollowMasterGraphics() && master != null) {
             Drawable drawer = drawFact.getDrawable(master);
@@ -50,7 +50,7 @@ public class DrawSheet<T extends Sheet<? extends Shape, ? extends SlideShow>> im
         
         graphics.setRenderingHint(Drawable.GROUP_TRANSFORM, new AffineTransform());
 
-        for (Shape shape : sheet.getShapes()) {
+        for (Shape<?,?> shape : sheet.getShapes()) {
             if(!canDraw(shape)) continue;
             
             // remember the initial transform and restore it after we are done with drawing
@@ -85,7 +85,7 @@ public class DrawSheet<T extends Sheet<? extends Shape, ? extends SlideShow>> im
      * Subclasses can override it and skip certain shapes from drawings,
      * for instance, slide masters and layouts don't display placeholders
      */
-    protected boolean canDraw(Shape shape){
+    protected boolean canDraw(Shape<?,?> shape){
         return true;
     }
 }

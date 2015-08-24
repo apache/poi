@@ -31,7 +31,8 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideLayout;
 import org.openxmlformats.schemas.presentationml.x2006.main.SldLayoutDocument;
 
 @Beta
-public class XSLFSlideLayout extends XSLFSheet implements MasterSheet<XSLFShape, XMLSlideShow> {
+public class XSLFSlideLayout extends XSLFSheet
+implements MasterSheet<XSLFShape,XSLFTextParagraph> {
     private CTSlideLayout _layout;
     private XSLFSlideMaster _master;
 

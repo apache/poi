@@ -17,39 +17,60 @@
 
 package org.apache.poi.sl.draw;
 
-import java.awt.*;
-import java.awt.geom.*;
-import java.io.*;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Paint;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.GeneralPath;
+import java.awt.geom.Rectangle2D;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.nio.charset.Charset;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import javax.xml.bind.*;
-import javax.xml.stream.*;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.Unmarshaller;
 import javax.xml.stream.EventFilter;
+import javax.xml.stream.XMLEventReader;
+import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
 import org.apache.poi.sl.draw.binding.CTCustomGeometry2D;
-import org.apache.poi.sl.draw.geom.*;
-import org.apache.poi.sl.usermodel.*;
+import org.apache.poi.sl.draw.geom.Context;
+import org.apache.poi.sl.draw.geom.CustomGeometry;
+import org.apache.poi.sl.draw.geom.Outline;
+import org.apache.poi.sl.draw.geom.Path;
+import org.apache.poi.sl.usermodel.LineDecoration;
 import org.apache.poi.sl.usermodel.LineDecoration.DecorationSize;
 import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
-import org.apache.poi.sl.usermodel.StrokeStyle.*;
+import org.apache.poi.sl.usermodel.Shadow;
+import org.apache.poi.sl.usermodel.SimpleShape;
+import org.apache.poi.sl.usermodel.StrokeStyle;
+import org.apache.poi.sl.usermodel.StrokeStyle.LineCap;
+import org.apache.poi.sl.usermodel.StrokeStyle.LineDash;
 import org.apache.poi.util.Units;
 
 
-public class DrawSimpleShape<T extends SimpleShape> extends DrawShape<T> {
+public class DrawSimpleShape extends DrawShape {
 
-    public DrawSimpleShape(T shape) {
+    public DrawSimpleShape(SimpleShape<?,?> shape) {
         super(shape);
     }
 
     @Override
     public void draw(Graphics2D graphics) {
-        DrawPaint drawPaint = DrawFactory.getInstance(graphics).getPaint(shape);
-        Paint fill = drawPaint.getPaint(graphics, shape.getFillStyle().getPaint());
-        Paint line = drawPaint.getPaint(graphics, shape.getStrokeStyle().getPaint());
+        DrawPaint drawPaint = DrawFactory.getInstance(graphics).getPaint(getShape());
+        Paint fill = drawPaint.getPaint(graphics, getShape().getFillStyle().getPaint());
+        Paint line = drawPaint.getPaint(graphics, getShape().getStrokeStyle().getPaint());
         BasicStroke stroke = getStroke(); // the stroke applies both to the shadow and the shape
         graphics.setStroke(stroke);
 
@@ -94,7 +115,7 @@ public class DrawSimpleShape<T extends SimpleShape> extends DrawShape<T> {
         graphics.setPaint(line);
         
         List<Outline> lst = new ArrayList<Outline>();
-        LineDecoration deco = shape.getLineDecoration();
+        LineDecoration deco = getShape().getLineDecoration();
         Outline head = getHeadDecoration(graphics, deco, stroke);
         if (head != null) lst.add(head);
         Outline tail = getTailDecoration(graphics, deco, stroke);
@@ -117,7 +138,7 @@ public class DrawSimpleShape<T extends SimpleShape> extends DrawShape<T> {
     
         double lineWidth = Math.max(2.5, stroke.getLineWidth());
     
-        Rectangle2D anchor = getAnchor(graphics, shape);
+        Rectangle2D anchor = getAnchor(graphics, getShape());
         double x2 = anchor.getX() + anchor.getWidth(),
                y2 = anchor.getY() + anchor.getHeight();
     
@@ -175,7 +196,7 @@ public class DrawSimpleShape<T extends SimpleShape> extends DrawShape<T> {
     
         double lineWidth = Math.max(2.5, stroke.getLineWidth());
     
-        Rectangle2D anchor = getAnchor(graphics, shape);
+        Rectangle2D anchor = getAnchor(graphics, getShape());
         double x1 = anchor.getX(),
                 y1 = anchor.getY();
     
@@ -228,7 +249,7 @@ public class DrawSimpleShape<T extends SimpleShape> extends DrawShape<T> {
     }
     
     public BasicStroke getStroke() {
-        StrokeStyle strokeStyle = shape.getStrokeStyle();
+        StrokeStyle strokeStyle = getShape().getStrokeStyle();
         
         float lineWidth = (float) strokeStyle.getLineWidth();
         if (lineWidth == 0.0f) lineWidth = 0.25f; // Both PowerPoint and OOo draw zero-length lines as 0.25pt
@@ -275,14 +296,14 @@ public class DrawSimpleShape<T extends SimpleShape> extends DrawShape<T> {
           , Paint fill
           , Paint line
     ) {
-          Shadow shadow = shape.getShadow();
+          Shadow shadow = getShape().getShadow();
           if (shadow == null || (fill == null && line == null)) return;
 
           SolidPaint shadowPaint = shadow.getFillStyle();
           Color shadowColor = DrawPaint.applyColorTransform(shadowPaint.getSolidColor());
           
-          double shapeRotation = shape.getRotation();
-          if(shape.getFlipVertical()) {
+          double shapeRotation = getShape().getRotation();
+          if(getShape().getFlipVertical()) {
               shapeRotation += 180;
           }
           double angle = shadow.getAngle() - shapeRotation;
@@ -366,12 +387,12 @@ public class DrawSimpleShape<T extends SimpleShape> extends DrawShape<T> {
     protected Collection<Outline> computeOutlines(Graphics2D graphics) {
 
         List<Outline> lst = new ArrayList<Outline>();
-        CustomGeometry geom = shape.getGeometry();
+        CustomGeometry geom = getShape().getGeometry();
         if(geom == null) {
             return lst;
         }
 
-        Rectangle2D anchor = getAnchor(graphics, shape);
+        Rectangle2D anchor = getAnchor(graphics, getShape());
         for (Path p : geom) {
 
             double w = p.getW() == -1 ? anchor.getWidth() * Units.EMU_PER_POINT : p.getW();
@@ -381,7 +402,7 @@ public class DrawSimpleShape<T extends SimpleShape> extends DrawShape<T> {
             // so we build the path starting from (0,0).
             final Rectangle2D pathAnchor = new Rectangle2D.Double(0,0,w,h);
 
-            Context ctx = new Context(geom, pathAnchor, shape);
+            Context ctx = new Context(geom, pathAnchor, getShape());
 
             java.awt.Shape gp = p.getPath(ctx);
 
@@ -411,4 +432,8 @@ public class DrawSimpleShape<T extends SimpleShape> extends DrawShape<T> {
         return lst;
     }
 
+    @Override
+    protected SimpleShape<?,?> getShape() {
+        return (SimpleShape<?,?>)shape;
+    }
 }

@@ -116,8 +116,8 @@ public class PPTX2PNG {
         if (!quite) {
             System.out.println("Processing " + file);
         }
-        SlideShow ss = SlideShowFactory.create(file, null, true);
-        List<? extends Slide<?,?,?>> slides = ss.getSlides();
+        SlideShow<?,?> ss = SlideShowFactory.create(file, null, true);
+        List<? extends Slide<?,?>> slides = ss.getSlides();
 
         
         if (slidenum < -1 || slidenum == 0 || slidenum > slides.size()) {
@@ -130,7 +130,7 @@ public class PPTX2PNG {
         int height = (int) (pgsize.height * scale);
 
         int slideNo=1;
-        for(Slide<?,?,?> slide : slides) {
+        for(Slide<?,?> slide : slides) {
             if (slidenum == -1 || slideNo == slidenum) {
                 String title = slide.getTitle();
                 if (!quite) {

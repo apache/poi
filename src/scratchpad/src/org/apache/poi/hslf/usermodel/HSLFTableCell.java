@@ -19,18 +19,19 @@ package org.apache.poi.hslf.usermodel;
 
 import java.awt.Rectangle;
 
+import org.apache.poi.ddf.AbstractEscherOptRecord;
 import org.apache.poi.ddf.EscherContainerRecord;
-import org.apache.poi.ddf.EscherOptRecord;
 import org.apache.poi.ddf.EscherProperties;
 import org.apache.poi.sl.usermodel.ShapeContainer;
 import org.apache.poi.sl.usermodel.ShapeType;
+import org.apache.poi.sl.usermodel.TableCell;
 
 /**
  * Represents a cell in a ppt table
  *
  * @author Yegor Kozlov
  */
-public final class HSLFTableCell extends HSLFTextBox {
+public final class HSLFTableCell extends HSLFTextBox implements TableCell<HSLFShape,HSLFTextParagraph> {
     protected static final int DEFAULT_WIDTH = 100;
     protected static final int DEFAULT_HEIGHT = 40;
 
@@ -45,7 +46,7 @@ public final class HSLFTableCell extends HSLFTextBox {
      * @param escherRecord       EscherSpContainer which holds information about this shape
      * @param parent    the parent of the shape
      */
-   protected HSLFTableCell(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape> parent){
+   protected HSLFTableCell(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape,HSLFTextParagraph> parent){
         super(escherRecord, parent);
     }
 
@@ -55,7 +56,7 @@ public final class HSLFTableCell extends HSLFTextBox {
      * @param parent    the parent of this Shape. For example, if this text box is a cell
      * in a table then the parent is Table.
      */
-    public HSLFTableCell(ShapeContainer<HSLFShape> parent){
+    public HSLFTableCell(ShapeContainer<HSLFShape,HSLFTextParagraph> parent){
         super(parent);
 
         setShapeType(ShapeType.RECT);
@@ -65,7 +66,7 @@ public final class HSLFTableCell extends HSLFTextBox {
 
     protected EscherContainerRecord createSpContainer(boolean isChild){
         _escherContainer = super.createSpContainer(isChild);
-        EscherOptRecord opt = getEscherOptRecord();
+        AbstractEscherOptRecord opt = getEscherOptRecord();
         setEscherProperty(opt, EscherProperties.TEXT__TEXTID, 0);
         setEscherProperty(opt, EscherProperties.TEXT__SIZE_TEXT_TO_FIT_SHAPE, 0x20000);
         setEscherProperty(opt, EscherProperties.FILL__NOFILLHITTEST, 0x150001);

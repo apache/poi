@@ -31,7 +31,8 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTNotesSlide;
 import org.openxmlformats.schemas.presentationml.x2006.main.NotesDocument;
 
 @Beta
-public final class XSLFNotes extends XSLFSheet implements Notes<XSLFShape,XMLSlideShow> {
+public final class XSLFNotes extends XSLFSheet
+implements Notes<XSLFShape,XSLFTextParagraph> {
    private CTNotesSlide _notes;
 
     /**
@@ -83,6 +84,7 @@ public final class XSLFNotes extends XSLFSheet implements Notes<XSLFShape,XMLSli
     	return getMasterSheet().getTheme();
     }
 
+    @Override
     public XSLFNotesMaster getMasterSheet() {
         for (POIXMLDocumentPart p : getRelations()) {
            if (p instanceof XSLFNotesMaster){

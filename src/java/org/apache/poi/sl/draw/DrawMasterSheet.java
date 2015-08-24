@@ -20,9 +20,9 @@ package org.apache.poi.sl.draw;
 import org.apache.poi.sl.usermodel.*;
 
 
-public class DrawMasterSheet<T extends MasterSheet<? extends Shape, ? extends SlideShow>> extends DrawSheet<T> {
+public class DrawMasterSheet extends DrawSheet {
 
-    public DrawMasterSheet(T sheet) {
+    public DrawMasterSheet(MasterSheet<?,?> sheet) {
         super(sheet);
     }
 
@@ -32,7 +32,8 @@ public class DrawMasterSheet<T extends MasterSheet<? extends Shape, ? extends Sl
      * Subclasses can override it and skip certain shapes from drawings,
      * for instance, slide masters and layouts don't display placeholders
      */
-    protected boolean canDraw(Shape shape){
-        return !(shape instanceof SimpleShape) || !((SimpleShape)shape).isPlaceholder();
+    @Override
+    protected boolean canDraw(Shape<?,?> shape){
+        return !(shape instanceof SimpleShape) || !((SimpleShape<?,?>)shape).isPlaceholder();
     }
 }

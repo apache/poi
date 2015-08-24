@@ -36,13 +36,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.ddf.AbstractEscherOptRecord;
 import org.apache.poi.ddf.EscherDgRecord;
 import org.apache.poi.ddf.EscherDggRecord;
-import org.apache.poi.ddf.EscherOptRecord;
 import org.apache.poi.ddf.EscherProperties;
 import org.apache.poi.ddf.EscherSimpleProperty;
 import org.apache.poi.hslf.usermodel.HSLFAutoShape;
 import org.apache.poi.hslf.usermodel.HSLFGroupShape;
+import org.apache.poi.hslf.usermodel.HSLFLine;
 import org.apache.poi.hslf.usermodel.HSLFPictureData;
 import org.apache.poi.hslf.usermodel.HSLFPictureShape;
 import org.apache.poi.hslf.usermodel.HSLFShape;
@@ -54,7 +55,6 @@ import org.apache.poi.hslf.usermodel.HSLFTextBox;
 import org.apache.poi.hslf.usermodel.HSLFTextParagraph;
 import org.apache.poi.hslf.usermodel.HSLFTextRun;
 import org.apache.poi.hslf.usermodel.HSLFTextShape;
-import org.apache.poi.hslf.usermodel.HSLFLine;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.apache.poi.sl.usermodel.ShapeType;
 import org.apache.poi.sl.usermodel.StrokeStyle.LineDash;
@@ -400,7 +400,7 @@ public final class TestShapes {
     public void lineWidth() {
         HSLFSimpleShape sh = new HSLFAutoShape(ShapeType.RT_TRIANGLE);
 
-        EscherOptRecord opt = sh.getEscherOptRecord();
+        AbstractEscherOptRecord opt = sh.getEscherOptRecord();
         EscherSimpleProperty prop = HSLFSimpleShape.getEscherProperty(opt, EscherProperties.LINESTYLE__LINEWIDTH);
         assertNull(prop);
         assertEquals(HSLFSimpleShape.DEFAULT_LINE_WIDTH, sh.getLineWidth(), 0);

@@ -20,10 +20,10 @@ package org.apache.poi.hslf.model;
 import java.io.ByteArrayOutputStream;
 import java.util.Iterator;
 
+import org.apache.poi.ddf.AbstractEscherOptRecord;
 import org.apache.poi.ddf.EscherClientDataRecord;
 import org.apache.poi.ddf.EscherComplexProperty;
 import org.apache.poi.ddf.EscherContainerRecord;
-import org.apache.poi.ddf.EscherOptRecord;
 import org.apache.poi.ddf.EscherProperties;
 import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.ddf.EscherSpRecord;
@@ -34,7 +34,11 @@ import org.apache.poi.hslf.record.ExObjList;
 import org.apache.poi.hslf.record.OEShapeAtom;
 import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.RecordTypes;
-import org.apache.poi.hslf.usermodel.*;
+import org.apache.poi.hslf.usermodel.HSLFPictureData;
+import org.apache.poi.hslf.usermodel.HSLFPictureShape;
+import org.apache.poi.hslf.usermodel.HSLFShape;
+import org.apache.poi.hslf.usermodel.HSLFSheet;
+import org.apache.poi.hslf.usermodel.HSLFTextParagraph;
 import org.apache.poi.sl.usermodel.ShapeContainer;
 import org.apache.poi.sl.usermodel.ShapeType;
 import org.apache.poi.util.LittleEndian;
@@ -66,7 +70,7 @@ public final class ActiveXShape extends HSLFPictureShape {
       *        this picture in the <code>Slide</code>
       * @param parent the parent shape of this picture
       */
-     protected ActiveXShape(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape> parent){
+     protected ActiveXShape(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape,HSLFTextParagraph> parent){
         super(escherRecord, parent);
     }
 
@@ -172,7 +176,7 @@ public final class ActiveXShape extends HSLFPictureShape {
         String name = ctrl.getProgId() + "-" + getControlIndex() + '\u0000';
         byte[] data = StringUtil.getToUnicodeLE(name);
         EscherComplexProperty prop = new EscherComplexProperty(EscherProperties.GROUPSHAPE__SHAPENAME, false, data);
-        EscherOptRecord opt = getEscherOptRecord();
+        AbstractEscherOptRecord opt = getEscherOptRecord();
         opt.addEscherProperty(prop);
     }
 }

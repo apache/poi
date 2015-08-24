@@ -51,7 +51,8 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTPictureNonVisual;
  * Represents a picture shape
  */
 @Beta
-public class XSLFPictureShape extends XSLFSimpleShape implements PictureShape {
+public class XSLFPictureShape extends XSLFSimpleShape
+    implements PictureShape<XSLFShape,XSLFTextParagraph> {
     private XSLFPictureData _data;
 
     /*package*/ XSLFPictureShape(CTPicture shape, XSLFSheet sheet) {

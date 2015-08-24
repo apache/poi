@@ -54,7 +54,8 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
  * @author Yegor Kozlov
  */
 @Beta
-public abstract class XSLFSimpleShape extends XSLFShape implements SimpleShape {
+public abstract class XSLFSimpleShape extends XSLFShape
+    implements SimpleShape<XSLFShape,XSLFTextParagraph> {
     private static CTOuterShadowEffect NO_SHADOW = CTOuterShadowEffect.Factory.newInstance();
 
     /* package */XSLFSimpleShape(XmlObject shape, XSLFSheet sheet) {

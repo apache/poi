@@ -42,7 +42,7 @@ import org.apache.poi.util.*;
  * @author Nick Burch
  */
 
-public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
+public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFTextParagraph,HSLFTextRun> {
     protected static final POILogger logger = POILogFactory.getLogger(HSLFTextParagraph.class);
 
     /**

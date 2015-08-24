@@ -48,7 +48,8 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
  * Represents a shape that can hold text.
  */
 @Beta
-public abstract class XSLFTextShape extends XSLFSimpleShape implements TextShape<XSLFTextParagraph> {
+public abstract class XSLFTextShape extends XSLFSimpleShape
+    implements TextShape<XSLFShape,XSLFTextParagraph> {
     private final List<XSLFTextParagraph> _paragraphs;
 
     @SuppressWarnings("deprecation")
@@ -96,10 +97,7 @@ public abstract class XSLFTextShape extends XSLFSimpleShape implements TextShape
         addNewTextParagraph().addNewTextRun().setText(text);
     }
 
-    /**
-     *
-     * @return text paragraphs in this shape
-     */
+    @Override
     public List<XSLFTextParagraph> getTextParagraphs() {
         return _paragraphs;
     }
@@ -459,7 +457,7 @@ public abstract class XSLFTextShape extends XSLFSimpleShape implements TextShape
     @Override
     public double getTextHeight(){
         DrawFactory drawFact = DrawFactory.getInstance(null);
-        DrawTextShape<XSLFTextShape> dts = drawFact.getDrawable(this);
+        DrawTextShape dts = drawFact.getDrawable(this);
         return dts.getTextHeight();
     }
 

@@ -44,7 +44,7 @@ import org.junit.Test;
 public class TestXSLFTextParagraph {
     // private static POILogger _logger = POILogFactory.getLogger(XSLFTextParagraph.class);
 
-    static class DrawTextParagraphProxy extends DrawTextParagraph<XSLFTextRun> {
+    static class DrawTextParagraphProxy extends DrawTextParagraph {
         DrawTextParagraphProxy(XSLFTextParagraph p) {
             super(p);
         }

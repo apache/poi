@@ -44,7 +44,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.STPlaceholderType;
  * @since POI-3.8
  */
 @Beta
-public class XSLFTextParagraph implements TextParagraph<XSLFTextRun> {
+public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagraph,XSLFTextRun> {
     private final CTTextParagraph _p;
     private final List<XSLFTextRun> _runs;
     private final XSLFTextShape _shape;

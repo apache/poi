@@ -19,7 +19,10 @@ package org.apache.poi.sl.usermodel;
 
 import java.awt.geom.Rectangle2D;
 
-public interface GroupShape<T extends Shape> extends Shape, ShapeContainer<T>, PlaceableShape {
+public interface GroupShape<
+    S extends Shape<S,P>,
+    P extends TextParagraph<S,P,? extends TextRun>
+> extends Shape<S,P>, ShapeContainer<S,P>, PlaceableShape<S,P> {
 
     /**
      * Gets the coordinate space of this group.  All children are constrained

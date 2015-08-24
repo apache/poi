@@ -22,9 +22,9 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.List;
 
+import org.apache.poi.ddf.AbstractEscherOptRecord;
 import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.ddf.EscherContainerRecord;
-import org.apache.poi.ddf.EscherOptRecord;
 import org.apache.poi.ddf.EscherProperties;
 import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.ddf.EscherSimpleProperty;
@@ -155,7 +155,7 @@ public final class HSLFFill {
      * @return type of fill
      */
     public int getFillType(){
-        EscherOptRecord opt = shape.getEscherOptRecord();
+        AbstractEscherOptRecord opt = shape.getEscherOptRecord();
         EscherSimpleProperty prop = HSLFShape.getEscherProperty(opt, EscherProperties.FILL__FILLTYPE);
         return prop == null ? FILL_SOLID : prop.getPropertyValue();
     }
@@ -163,7 +163,7 @@ public final class HSLFFill {
     /**
      */
     protected void afterInsert(HSLFSheet sh){
-        EscherOptRecord opt = shape.getEscherOptRecord();
+        AbstractEscherOptRecord opt = shape.getEscherOptRecord();
         EscherSimpleProperty p = HSLFShape.getEscherProperty(opt, EscherProperties.FILL__PATTERNTEXTURE);
         if(p != null) {
             int idx = p.getPropertyValue();
@@ -197,7 +197,7 @@ public final class HSLFFill {
      * @param type type of the fill
      */
     public void setFillType(int type){
-        EscherOptRecord opt = shape.getEscherOptRecord();
+        AbstractEscherOptRecord opt = shape.getEscherOptRecord();
         HSLFShape.setEscherProperty(opt, EscherProperties.FILL__FILLTYPE, type);
     }
 
@@ -205,7 +205,7 @@ public final class HSLFFill {
      * Foreground color
      */
     public Color getForegroundColor(){
-        EscherOptRecord opt = shape.getEscherOptRecord();
+        AbstractEscherOptRecord opt = shape.getEscherOptRecord();
         EscherSimpleProperty p = HSLFShape.getEscherProperty(opt, EscherProperties.FILL__NOFILLHITTEST);
 
         if(p != null && (p.getPropertyValue() & 0x10) == 0) return null;
@@ -218,7 +218,7 @@ public final class HSLFFill {
      * Foreground color
      */
     public void setForegroundColor(Color color){
-        EscherOptRecord opt = shape.getEscherOptRecord();
+        AbstractEscherOptRecord opt = shape.getEscherOptRecord();
         if (color == null) {
             HSLFShape.setEscherProperty(opt, EscherProperties.FILL__NOFILLHITTEST, 0x150000);
         }
@@ -233,7 +233,7 @@ public final class HSLFFill {
      * Background color
      */
     public Color getBackgroundColor(){
-        EscherOptRecord opt = shape.getEscherOptRecord();
+        AbstractEscherOptRecord opt = shape.getEscherOptRecord();
         EscherSimpleProperty p = HSLFShape.getEscherProperty(opt, EscherProperties.FILL__NOFILLHITTEST);
 
         if(p != null && (p.getPropertyValue() & 0x10) == 0) return null;
@@ -245,7 +245,7 @@ public final class HSLFFill {
      * Background color
      */
     public void setBackgroundColor(Color color){
-        EscherOptRecord opt = shape.getEscherOptRecord();
+        AbstractEscherOptRecord opt = shape.getEscherOptRecord();
         if (color == null) {
             HSLFShape.setEscherProperty(opt, EscherProperties.FILL__FILLBACKCOLOR, -1);
         }
@@ -259,7 +259,7 @@ public final class HSLFFill {
      * <code>PictureData</code> object used in a texture, pattern of picture fill.
      */
     public HSLFPictureData getPictureData(){
-        EscherOptRecord opt = shape.getEscherOptRecord();
+        AbstractEscherOptRecord opt = shape.getEscherOptRecord();
         EscherSimpleProperty p = HSLFShape.getEscherProperty(opt, EscherProperties.FILL__PATTERNTEXTURE);
         if (p == null) return null;
 
@@ -292,7 +292,7 @@ public final class HSLFFill {
      * @param data the picture data added to this ppt by {@link HSLFSlideShow#addPicture(byte[], org.apache.poi.sl.usermodel.PictureData.PictureType)} method.
      */
     public void setPictureData(HSLFPictureData data){
-        EscherOptRecord opt = shape.getEscherOptRecord();
+        AbstractEscherOptRecord opt = shape.getEscherOptRecord();
         HSLFShape.setEscherProperty(opt, (short)(EscherProperties.FILL__PATTERNTEXTURE + 0x4000), (data == null ? 0 : data.getIndex()));
         if(data != null && shape.getSheet() != null) {
             EscherBSERecord bse = getEscherBSERecord(data.getIndex());

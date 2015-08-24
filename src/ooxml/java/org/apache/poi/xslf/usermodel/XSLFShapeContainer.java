@@ -19,43 +19,32 @@
 
 package org.apache.poi.xslf.usermodel;
 
+import org.apache.poi.sl.usermodel.PictureData;
 import org.apache.poi.sl.usermodel.ShapeContainer;
 
 /**
  * Common interface for shape containers, e.g. sheets or groups of shapes
  */
-public interface XSLFShapeContainer extends ShapeContainer<XSLFShape> {
+public interface XSLFShapeContainer
+    extends ShapeContainer<XSLFShape,XSLFTextParagraph> {
 
-    /**
-     * create a new shape with a predefined geometry and add it to this shape container
-     */
+    @Override
     XSLFAutoShape createAutoShape();
 
-    /**
-     * create a new shape with a custom geometry
-     */
+    @Override
     XSLFFreeformShape createFreeform();
 
-    /**
-     * create a text box
-     */
+    @Override
     XSLFTextBox createTextBox();
 
-    /**
-     *
-     * create a connector
-     */
+    @Override
     XSLFConnectorShape createConnector();
 
-    /**
-     * create a group of shapes belonging to this container
-     */
+    @Override
     XSLFGroupShape createGroup();
 
-    /**
-     * create a picture belonging to this container
-     */
-    XSLFPictureShape createPicture(XSLFPictureData pictureData);
+    @Override
+    XSLFPictureShape createPicture(PictureData pictureData);
 
     /**
      * Removes all of the elements from this container (optional operation).

@@ -15,12 +15,11 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.sl.draw;
+package org.apache.poi.sl.usermodel;
 
-import org.apache.poi.sl.usermodel.ConnectorShape;
+public interface TableCell<
+    S extends Shape<S,P>,
+    P extends TextParagraph<S,P,? extends TextRun>
+> extends TextShape<S,P> {
 
-public class DrawConnectorShape extends DrawSimpleShape {
-    public DrawConnectorShape(ConnectorShape<?,?> shape) {
-        super(shape);
-    }
 }

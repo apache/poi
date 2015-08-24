@@ -50,9 +50,9 @@ public class DrawPaint {
     
     private final static POILogger LOG = POILogFactory.getLogger(DrawPaint.class);
 
-    protected PlaceableShape shape;
+    protected PlaceableShape<?,?> shape;
     
-    public DrawPaint(PlaceableShape shape) {
+    public DrawPaint(PlaceableShape<?,?> shape) {
         this.shape = shape;
     }
 

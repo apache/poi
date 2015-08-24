@@ -29,7 +29,7 @@ import org.apache.poi.sl.usermodel.*;
  *
  * @author Yegor Kozlov
  */
-public class HSLFTextBox extends HSLFTextShape {
+public class HSLFTextBox extends HSLFTextShape implements TextBox<HSLFShape,HSLFTextParagraph> {
 
     /**
      * Create a TextBox object and initialize it from the supplied Record container.
@@ -37,7 +37,7 @@ public class HSLFTextBox extends HSLFTextShape {
      * @param escherRecord       <code>EscherSpContainer</code> container which holds information about this shape
      * @param parent    the parent of the shape
      */
-   protected HSLFTextBox(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape> parent){
+   protected HSLFTextBox(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape,HSLFTextParagraph> parent){
         super(escherRecord, parent);
 
     }
@@ -48,7 +48,7 @@ public class HSLFTextBox extends HSLFTextShape {
      * @param parent    the parent of this Shape. For example, if this text box is a cell
      * in a table then the parent is Table.
      */
-    public HSLFTextBox(ShapeContainer<HSLFShape> parent){
+    public HSLFTextBox(ShapeContainer<HSLFShape,HSLFTextParagraph> parent){
         super(parent);
     }
 

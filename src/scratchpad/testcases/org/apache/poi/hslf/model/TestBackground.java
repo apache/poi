@@ -26,9 +26,9 @@ import java.io.ByteArrayOutputStream;
 import java.util.List;
 
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.ddf.AbstractEscherOptRecord;
 import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.ddf.EscherContainerRecord;
-import org.apache.poi.ddf.EscherOptRecord;
 import org.apache.poi.ddf.EscherProperties;
 import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.ddf.EscherSimpleProperty;
@@ -209,7 +209,7 @@ public final class TestBackground {
     }
 
     private int getFillPictureRefCount(HSLFShape shape, HSLFFill fill) {
-        EscherOptRecord opt = shape.getEscherOptRecord();
+        AbstractEscherOptRecord opt = shape.getEscherOptRecord();
         EscherSimpleProperty p = HSLFShape.getEscherProperty(opt, EscherProperties.FILL__PATTERNTEXTURE);
         if(p != null) {
             int idx = p.getPropertyValue();

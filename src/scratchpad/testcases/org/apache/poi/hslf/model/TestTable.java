@@ -126,17 +126,17 @@ public final class TestTable {
      */
     @Test
     public void test57820() throws Exception {
-        SlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("bug57820-initTableNullRefrenceException.ppt"));
+        SlideShow<?,?> ppt = new HSLFSlideShow(_slTests.openResourceAsStream("bug57820-initTableNullRefrenceException.ppt"));
 
-        List<? extends Slide<?,?,?>> slides = ppt.getSlides();
+        List<? extends Slide<?,?>> slides = ppt.getSlides();
         assertEquals(1, slides.size());
 
-        List<? extends Shape> shapes = slides.get(0).getShapes(); //throws NullPointerException
+        List<? extends Shape<?,?>> shapes = slides.get(0).getShapes(); //throws NullPointerException
 
-        TableShape tbl = null;
-        for(Shape s : shapes) {
+        TableShape<?,?> tbl = null;
+        for(Shape<?,?> s : shapes) {
             if(s instanceof TableShape) {
-                tbl = (TableShape)s;
+                tbl = (TableShape<?,?>)s;
                 break;
             }
         }
