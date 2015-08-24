@@ -340,7 +340,7 @@ public abstract class ContentTypeManager {
 		 */
 		if (this.container != null && this.container.getPart(partName) != null) {
 			throw new OpenXML4JRuntimeException(
-					"Rule M2.4 exception : this error should NEVER happen, if so please send a mail to the developers team, thanks !");
+					"Rule M2.4 exception : this error should NEVER happen! Please raise a bug at https://bz.apache.org/bugzilla/enter_bug.cgi?product=POI and attach a file that triggers it, thanks!");
 		}
 		return null;
 	}
