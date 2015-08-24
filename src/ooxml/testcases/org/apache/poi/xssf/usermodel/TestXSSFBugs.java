@@ -741,6 +741,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     /**
      * Excel .xls style indexed colours in a .xlsx file
      */
+    @SuppressWarnings("deprecation")
     @Test
     public void bug50786() throws Exception {
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("50786-indexed_colours.xlsx");
@@ -792,6 +793,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
      *  then being set explicitly still should allow the
      *  fetching of the RGB.
      */
+    @SuppressWarnings("deprecation")
     @Test
     public void bug50784() throws Exception {
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("50784-font_theme_colours.xlsx");
@@ -1802,7 +1804,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         
         // Now check the spreadsheet itself
         try {
-            new XSSFWorkbook(pkg);
+            new XSSFWorkbook(pkg).close();
             fail("Should fail as too much expansion occurs");
         } catch(POIXMLException e) {
             // Expected
@@ -1848,7 +1850,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         
         // XSSF Workbook gives helpful error
         try {
-            new XSSFWorkbook(pkg);
+            new XSSFWorkbook(pkg).close();
             fail(".xlsb files not supported");
         } catch (XLSBUnsupportedException e) {
             // Good, detected and warned
@@ -2359,7 +2361,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     public void bug57880() throws Exception {
         int numStyles = 33000;
         XSSFWorkbook wb = new XSSFWorkbook();
-        XSSFSheet s = wb.createSheet("TestSheet");
+        //XSSFSheet s = wb.createSheet("TestSheet");
         XSSFDataFormat fmt = wb.getCreationHelper().createDataFormat();
         for (int i=1; i<numStyles; i++) {
             short df = fmt.getFormat("test"+i);
@@ -2369,11 +2371,11 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             XSSFCellStyle style = wb.createCellStyle();
             assertEquals(i, style.getUIndex());
             style.setDataFormat(df);
-            XSSFCell c = s.createRow(i).createCell(0, Cell.CELL_TYPE_NUMERIC);
+            /*XSSFCell c = s.createRow(i).createCell(0, Cell.CELL_TYPE_NUMERIC);
             c.setCellStyle(style);
-            c.setCellValue(i);
+            c.setCellValue(i);*/
         }
-        
+
         // using temp file instead of ByteArrayOutputStream because of OOM in gump run
         File tmp = TempFile.createTempFile("poi-test", ".bug57880");
         FileOutputStream fos = new FileOutputStream(tmp);
@@ -2381,12 +2383,12 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         fos.close();
         
         wb.close();
-        fmt = null; s = null; wb = null;
+        fmt = null; /*s = null;*/ wb = null;
         // System.gc();
         
         wb = new XSSFWorkbook(tmp);
         fmt = wb.getCreationHelper().createDataFormat();
-        s = wb.getSheetAt(0);
+        // s = wb.getSheetAt(0);
         for (int i=1; i<numStyles; i++) {
             XSSFCellStyle style = wb.getCellStyleAt((short)i);
             assertNotNull(style);
