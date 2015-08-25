@@ -380,4 +380,82 @@ public final class TestPageSettingsBlock extends TestCase {
         assertArrayEquals(svb.getGuid(), hd2.getGuid());
     }
 
+    public void testDuplicateHeaderFooterInside_bug48026() {
+
+        Record[] recs = {
+                BOFRecord.createSheetBOF(),
+                new IndexRecord(),
+
+                //PageSettingsBlock
+                new HeaderRecord("&LDecember"),
+                new FooterRecord("&LJanuary"),
+                new DimensionsRecord(),
+
+                new WindowTwoRecord(),
+
+                //CustomViewSettingsRecordAggregate
+                new UserSViewBegin(HexRead.readFromString("53 CE BD CC DE 38 44 45 97 C1 5C 89 F9 37 32 1B 01 00 00 00 64 00 00 00 40 00 00 00 03 00 00 00 7D 00 00 20 00 00 34 00 00 00 18 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 FF FF FF FF")),
+                new SelectionRecord(0, 0),
+
+                // two HeaderFooterRecord records, the first one has zero GUID (16 bytes at offset 12) and belongs to the PSB,
+                // the other is matched with a CustomViewSettingsRecordAggregate having UserSViewBegin with the same GUID
+                new HeaderFooterRecord(HexRead.readFromString("9C 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 34 33 00 00 00 00 00 00 00 00")),
+                new HeaderFooterRecord(HexRead.readFromString("9C 08 00 00 00 00 00 00 00 00 00 00 53 CE BD CC DE 38 44 45 97 C1 5C 89 F9 37 32 1B 34 33 00 00 00 00 00 00 00 00")),
+
+                new UserSViewEnd(HexRead.readFromString("01 00")),
+
+                EOFRecord.instance,
+        };
+        RecordStream rs = new RecordStream(Arrays.asList(recs), 0);
+        InternalSheet sheet;
+        try {
+            sheet = InternalSheet.createSheet(rs);
+        } catch (RuntimeException e) {
+            if (e.getMessage().equals("Duplicate PageSettingsBlock record (sid=0x89c)")) {
+                throw new AssertionFailedError("Identified bug 48026");
+            }
+            throw e;
+        }
+
+        RecordCollector rv = new RecordCollector();
+        sheet.visitContainedRecords(rv, 0);
+        Record[] outRecs = rv.getRecords();
+
+        assertEquals(recs.length+1, outRecs.length);
+        //expected order of records:
+        Record[] expectedRecs = {
+                recs[0],  //BOFRecord
+                recs[1],  //IndexRecord
+
+                //PageSettingsBlock
+                recs[2],  //HeaderRecord
+                recs[3],  //FooterRecord
+                recs[4],  // DimensionsRecord
+                recs[5],  // WindowTwoRecord
+
+                //CustomViewSettingsRecordAggregate
+                recs[6],  // UserSViewBegin
+                recs[7],  // SelectionRecord
+                recs[2],  //HeaderRecord
+                recs[3],  //FooterRecord
+                recs[8], // HeaderFooterRecord
+//                recs[9],  //HeaderFooterRecord
+                recs[10],  // UserSViewEnd
+
+                recs[11],  //EOFRecord
+        };
+        for(int i=0; i < expectedRecs.length; i++){
+            assertEquals("Record mismatch at index " + i,  expectedRecs[i].getClass(), outRecs[i].getClass());
+        }
+        HeaderFooterRecord hd1 = (HeaderFooterRecord)expectedRecs[10];
+        //GUID is zero
+        assertArrayEquals(new byte[16], hd1.getGuid());
+        assertTrue(hd1.isCurrentSheet());
+
+        UserSViewBegin svb = (UserSViewBegin)expectedRecs[6];
+        HeaderFooterRecord hd2 = (HeaderFooterRecord)recs[9];
+        assertFalse(hd2.isCurrentSheet());
+        //GUIDs of HeaderFooterRecord and UserSViewBegin must be the same
+        assertArrayEquals(svb.getGuid(), hd2.getGuid());
+    }
 }
