@@ -65,7 +65,9 @@
 
 	<properties>
 		<project.build.sourceEncoding>ASCII</project.build.sourceEncoding>
-	</properties>
+		<sonar.sources>${basedir}/../src/contrib/src,${basedir}/../src/examples/src,${basedir}/../src/excelant/java,${basedir}/../src/java,${basedir}/../src/ooxml/java,${basedir}/../src/scratchpad/examples,${basedir}/../src/,${basedir}/../src/scratchpad/src</sonar.sources>
+		<!-- tests are automatically found in Maven ../src/integrationtest,../src/contrib/testcases,../src/excelant/testcases,../src/ooxml/testcases,../src/scratchpad/testcases,../src/testcases -->
+  </properties>
   
     <build>
         <pluginManagement>
