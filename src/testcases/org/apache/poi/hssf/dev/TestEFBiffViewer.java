@@ -19,36 +19,33 @@ package org.apache.poi.hssf.dev;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.util.List;
 
 public class TestEFBiffViewer extends BaseXLSIteratingTest {
 	static {
-		// Look at the output of the test for the detailed stacktrace of the failures...
-		//EXCLUDED.add("");
-
 		// these are likely ok to fail
-		SILENT_EXCLUDED.add("XRefCalc.xls"); 
-		SILENT_EXCLUDED.add("password.xls"); 
-		SILENT_EXCLUDED.add("51832.xls"); 		// password
-		SILENT_EXCLUDED.add("xor-encryption-abc.xls");    // password, ty again later!
-		SILENT_EXCLUDED.add("43493.xls");	// HSSFWorkbook cannot open it as well
-		SILENT_EXCLUDED.add("44958_1.xls");   // known bad file
-		SILENT_EXCLUDED.add("46904.xls");     // Exception, too old
-		SILENT_EXCLUDED.add("47251_1.xls");   // Broken test file
-		SILENT_EXCLUDED.add("testEXCEL_4.xls");   // old unsupported format
-		SILENT_EXCLUDED.add("testEXCEL_5.xls");   // old unsupported format
-		SILENT_EXCLUDED.add("testEXCEL_95.xls");   // old unsupported format
-		SILENT_EXCLUDED.add("35897-type4.xls");   // unsupported encryption
+		EXCLUDED.add("XRefCalc.xls"); 
+		EXCLUDED.add("password.xls"); 
+		EXCLUDED.add("51832.xls"); 		// password
+		EXCLUDED.add("xor-encryption-abc.xls");    // password, ty again later!
+		EXCLUDED.add("43493.xls");	// HSSFWorkbook cannot open it as well
+		EXCLUDED.add("44958_1.xls");   // known bad file
+		EXCLUDED.add("46904.xls");     // Exception, too old
+		EXCLUDED.add("47251_1.xls");   // Broken test file
+        EXCLUDED.add("testEXCEL_3.xls");  // Biff 3 / Excel 3, pre-OLE2
+		EXCLUDED.add("testEXCEL_4.xls");   // old unsupported format
+		EXCLUDED.add("testEXCEL_5.xls");   // old unsupported format
+		EXCLUDED.add("testEXCEL_95.xls");   // old unsupported format
+		EXCLUDED.add("35897-type4.xls");   // unsupported encryption
 	}
 	
 	@Override
-	void runOneFile(String dir, String file, List<String> failed) throws IOException {
+	void runOneFile(File file) throws IOException {
 		PrintStream save = System.out;
 		try {
 			// redirect standard out during the test to avoid spamming the console with output
 			System.setOut(new PrintStream(NULL_OUTPUT_STREAM));
 
-			EFBiffViewer.main(new String[] { new File(dir, file).getAbsolutePath() });
+			EFBiffViewer.main(new String[] { file.getAbsolutePath() });
 		} finally {
 			System.setOut(save);
 		}

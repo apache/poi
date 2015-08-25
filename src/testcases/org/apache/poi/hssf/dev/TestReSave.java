@@ -24,26 +24,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.POIDataSamples;
-import org.junit.Test;
 
 public class TestReSave extends BaseXLSIteratingTest {
 	static {
-		// TODO: is it ok to fail these? 
-		// Look at the output of the test for the detailed stacktrace of the failures...
-		EXCLUDED.add("49931.xls");
-
 		// these are likely ok to fail
-		SILENT_EXCLUDED.add("password.xls"); 
-		SILENT_EXCLUDED.add("43493.xls");	// HSSFWorkbook cannot open it as well
-		SILENT_EXCLUDED.add("46904.xls"); 
-		SILENT_EXCLUDED.add("51832.xls");	// password 
-        SILENT_EXCLUDED.add("44958_1.xls");   // known bad file
+		EXCLUDED.add("password.xls"); 
+		EXCLUDED.add("43493.xls");	// HSSFWorkbook cannot open it as well
+		EXCLUDED.add("46904.xls"); 
+		EXCLUDED.add("51832.xls");	// password 
+        EXCLUDED.add("44958_1.xls");   // known bad file
 	}
 	
 	@Override
-	void runOneFile(String dir, String file, List<String> failed) throws Exception {
+	void runOneFile(File file) throws Exception {
 		// avoid running on files leftover from previous failed runs
-		if(file.endsWith("-saved.xls")) {
+		if(file.getName().endsWith("-saved.xls")) {
 			return;
 		}
 
@@ -52,22 +47,23 @@ public class TestReSave extends BaseXLSIteratingTest {
 			// redirect standard out during the test to avoid spamming the console with output
 			System.setOut(new PrintStream(NULL_OUTPUT_STREAM));
 
+			File reSavedFile = new File(file.getParentFile(), file.getName().replace(".xls", "-saved.xls"));
 			try {
-				ReSave.main(new String[] { new File(dir, file).getAbsolutePath() });
+				ReSave.main(new String[] { file.getAbsolutePath() });
 				
 				// also try BiffViewer on the saved file
-				new TestBiffViewer().runOneFile(dir, file.replace(".xls", "-saved.xls"), failed);
+                new TestBiffViewer().runOneFile(reSavedFile);
 
     			try {
         			// had one case where the re-saved could not be re-saved!
-        			ReSave.main(new String[] { new File(dir, file.replace(".xls", "-saved.xls")).getAbsolutePath() });
+        			ReSave.main(new String[] { reSavedFile.getAbsolutePath() });
     			} finally {
     				// clean up the re-re-saved file
-    				new File(dir, file.replace(".xls", "-saved.xls").replace(".xls", "-saved.xls")).delete();
+    			    new File(file.getParentFile(), reSavedFile.getName().replace(".xls", "-saved.xls")).delete();
     			}
 			} finally {
 				// clean up the re-saved file
-				new File(dir, file.replace(".xls", "-saved.xls")).delete();
+				reSavedFile.delete();
 			}
 
 		} finally {
@@ -75,7 +71,8 @@ public class TestReSave extends BaseXLSIteratingTest {
 		}
 	}
 
-	@Test
+	//Only used for local testing
+	//@Test
 	public void testOneFile() throws Exception {
         String dataDirName = System.getProperty(POIDataSamples.TEST_PROPERTY);
         if(dataDirName == null) {
@@ -83,7 +80,7 @@ public class TestReSave extends BaseXLSIteratingTest {
         }
 
 		List<String> failed = new ArrayList<String>();
-		runOneFile(dataDirName + "/spreadsheet", "49219.xls", failed);
+		runOneFile(new File(dataDirName + "/spreadsheet", "49931.xls"));
 
 		assertTrue("Expected to have no failed except the ones excluded, but had: " + failed, 
 				failed.isEmpty());

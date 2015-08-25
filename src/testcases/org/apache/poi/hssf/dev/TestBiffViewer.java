@@ -20,34 +20,30 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
-import java.util.List;
 
 public class TestBiffViewer extends BaseXLSIteratingTest {
 	static {
-		// Look at the output of the test for the detailed stacktrace of the failures...
-		//EXCLUDED.add("");
-		
 		// these are likely ok to fail
-		SILENT_EXCLUDED.add("XRefCalc.xls"); 	// "Buffer overrun"
-		SILENT_EXCLUDED.add("50833.xls"); 		// "Name is too long" when setting username
-		SILENT_EXCLUDED.add("OddStyleRecord.xls");		
-		SILENT_EXCLUDED.add("NoGutsRecords.xls"); 
-		SILENT_EXCLUDED.add("51832.xls");	// password 
-		SILENT_EXCLUDED.add("43493.xls");	// HSSFWorkbook cannot open it as well
-		SILENT_EXCLUDED.add("password.xls"); 
-		SILENT_EXCLUDED.add("46904.xls");
-        SILENT_EXCLUDED.add("35897-type4.xls"); // unsupported crypto api header 
-		SILENT_EXCLUDED.add("xor-encryption-abc.xls"); // unsupported XOR-encryption
-        SILENT_EXCLUDED.add("testEXCEL_2.xls");  // Biff 2 / Excel 2, pre-OLE2
-        SILENT_EXCLUDED.add("testEXCEL_3.xls");  // Biff 3 / Excel 3, pre-OLE2
-        SILENT_EXCLUDED.add("testEXCEL_4.xls");  // Biff 4 / Excel 4, pre-OLE2
-        SILENT_EXCLUDED.add("testEXCEL_5.xls");  // Biff 5 / Excel 5
-        SILENT_EXCLUDED.add("testEXCEL_95.xls"); // Biff 5 / Excel 95
+		EXCLUDED.add("XRefCalc.xls"); 	// "Buffer overrun"
+		EXCLUDED.add("50833.xls"); 		// "Name is too long" when setting username
+		EXCLUDED.add("OddStyleRecord.xls");		
+		EXCLUDED.add("NoGutsRecords.xls"); 
+		EXCLUDED.add("51832.xls");	// password 
+		EXCLUDED.add("43493.xls");	// HSSFWorkbook cannot open it as well
+		EXCLUDED.add("password.xls"); 
+		EXCLUDED.add("46904.xls");
+        EXCLUDED.add("35897-type4.xls"); // unsupported crypto api header 
+		EXCLUDED.add("xor-encryption-abc.xls"); // unsupported XOR-encryption
+        EXCLUDED.add("testEXCEL_2.xls");  // Biff 2 / Excel 2, pre-OLE2
+        EXCLUDED.add("testEXCEL_3.xls");  // Biff 3 / Excel 3, pre-OLE2
+        EXCLUDED.add("testEXCEL_4.xls");  // Biff 4 / Excel 4, pre-OLE2
+        EXCLUDED.add("testEXCEL_5.xls");  // Biff 5 / Excel 5
+        EXCLUDED.add("testEXCEL_95.xls"); // Biff 5 / Excel 95
 	}
 
 	@Override
-	void runOneFile(String dir, String file, List<String> failed) throws IOException {
-		InputStream is = BiffViewer.getPOIFSInputStream(new File(dir, file));
+	void runOneFile(File file) throws IOException {
+		InputStream is = BiffViewer.getPOIFSInputStream(file);
 		try {
 			// use a NullOutputStream to not write the bytes anywhere for best runtime 
 			BiffViewer.runBiffViewer(new PrintStream(NULL_OUTPUT_STREAM), is, true, true, true, false);
