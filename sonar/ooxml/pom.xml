@@ -12,6 +12,12 @@
     <packaging>jar</packaging>
 
     <name>Apache POI OOXML package</name>
+
+	<properties>
+		<!-- specify actual source directory as otherwise Sonar-plugin will fail during SVN checks  -->
+		<sonar.sources>${basedir}/../../src/ooxml/java</sonar.sources>
+		<!-- tests are automatically found in Maven -->
+	</properties>
 	
     <build>
 		<plugins>

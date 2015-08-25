@@ -14,10 +14,12 @@
     <name>Apache POI Scratchpad package</name>
 
 	<properties>
+		<!-- specify actual source directory as otherwise Sonar-plugin will fail during SVN checks  -->
+		<sonar.sources>${basedir}/../../src/scratchpad/examples,${basedir}/../../src/scratchpad/src</sonar.sources>
+		<!-- tests are automatically found in Maven -->
 		<!-- Exclude some generated code from Sonar analysis -->
 		<sonar.exclusions>src/main/java/org/apache/poi/hwpf/model/types/*,src/main/java/org/apache/poi/hdf/model/hdftypes/definitions/*</sonar.exclusions>
 	</properties>
- 
 
     <build>
 		<plugins>
