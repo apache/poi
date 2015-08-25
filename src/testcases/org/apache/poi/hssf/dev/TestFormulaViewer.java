@@ -18,7 +18,6 @@ package org.apache.poi.hssf.dev;
 
 import java.io.File;
 import java.io.PrintStream;
-import java.util.List;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -41,14 +40,14 @@ public class TestFormulaViewer extends BaseXLSIteratingTest {
 	}
 
 	@Override
-	void runOneFile(String dir, String file, List<String> failed) throws Exception {
+	void runOneFile(File file) throws Exception {
 		PrintStream save = System.out;
 		try {
 			// redirect standard out during the test to avoid spamming the console with output
 			System.setOut(new PrintStream(NULL_OUTPUT_STREAM));
 
             FormulaViewer viewer = new FormulaViewer();
-            viewer.setFile(new File(dir, file).getAbsolutePath());
+            viewer.setFile(file.getAbsolutePath());
             viewer.setList(true);
             viewer.run();
 		} finally {

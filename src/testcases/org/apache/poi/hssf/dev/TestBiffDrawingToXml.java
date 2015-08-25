@@ -20,7 +20,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.PrintStream;
-import java.util.List;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -42,13 +41,13 @@ public class TestBiffDrawingToXml extends BaseXLSIteratingTest {
 	}
 	
 	@Override
-	void runOneFile(String dir, String file, List<String> failed)
+	void runOneFile(File file)
 			throws Exception {
 		PrintStream save = System.out;
 		try {
 			//System.setOut(new PrintStream(TestBiffViewer.NULL_OUTPUT_STREAM));
 			// use a NullOutputStream to not write the bytes anywhere for best runtime 
-		    InputStream wb = new FileInputStream(new File(dir, file));
+		    InputStream wb = new FileInputStream(file);
 		    try {
 		    	BiffDrawingToXml.writeToFile(NULL_OUTPUT_STREAM, wb, false, new String[] {});
 		    } finally {

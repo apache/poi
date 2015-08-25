@@ -17,7 +17,6 @@
 package org.apache.poi.hssf.dev;
 
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -29,79 +28,79 @@ import java.util.List;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.junit.Assume;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameter;
+import org.junit.runners.Parameterized.Parameters;
 
 /**
  * Base class for integration-style tests which iterate over all test-files
  * and execute the same action to find out if any change breaks these applications.
+ * 
+ * This test uses {@link Parameterized} to run the test for each file separatedely.
  */
+@RunWith(Parameterized.class)
 public abstract class BaseXLSIteratingTest {
     protected static final OutputStream NULL_OUTPUT_STREAM = new NullOutputStream();
 
 	protected static final List<String> EXCLUDED = new ArrayList<String>();
-	protected static final List<String> SILENT_EXCLUDED = new ArrayList<String>();
 
+    @Parameters(name="{index}: {0} using {1}")
+    public static Iterable<Object[]> files() {
+        String dataDirName = System.getProperty(POIDataSamples.TEST_PROPERTY);
+        if(dataDirName == null) {
+            dataDirName = "test-data";
+        }
+
+        List<Object[]> files = new ArrayList<Object[]>();
+        findFile(files, dataDirName + "/spreadsheet");
+        findFile(files, dataDirName + "/hpsf");
+        
+        return files;
+    }
+	
+    private static void findFile(List<Object[]> list, String dir) {
+        String[] files = new File(dir).list(new FilenameFilter() {
+            @Override
+            public boolean accept(File arg0, String arg1) {
+                return arg1.toLowerCase().endsWith(".xls");
+            }
+        });
+        
+        assertNotNull("Did not find any xls files in directory " + dir, files);
+        
+        for(String file : files) {
+            list.add(new Object[] { new File(dir, file) });
+        }
+    }
+    
+    @Parameter
+    public File file;
+    
 	@Test
 	public void testMain() throws Exception {
-	    String dataDirName = System.getProperty(POIDataSamples.TEST_PROPERTY);
-	    if(dataDirName == null) {
-	        dataDirName = "test-data";
-	    }
+		try {
+			runOneFile(file);
+		} catch (Exception e) {
+		    Assume.assumeFalse("File " + file + " is excluded currently",
+		            EXCLUDED.contains(file.getName()));
 
-	    int count = runWithDir(dataDirName + "/spreadsheet");
-		count += runWithDir(dataDirName + "/hpsf");
-		
-		System.out.println("Had " + count + " files");
-	}
-
-	private int runWithDir(String dir) throws IOException {
-		List<String> failed = new ArrayList<String>();
-
-		String[] files = new File(dir).list(new FilenameFilter() {
-			@Override
-            public boolean accept(File arg0, String arg1) {
-				return arg1.toLowerCase().endsWith(".xls");
-			}
-		});
-		
-		assertNotNull("Did not find any xls files in directory " + dir, files);
-		
-		runWithArrayOfFiles(files, dir, failed);
-
-		assertTrue("Expected to have no failed except the ones excluded, but had: " + failed, 
-				failed.isEmpty());
-		
-		return files.length;
-	}
-
-	private void runWithArrayOfFiles(String[] files, String dir, List<String> failed) throws IOException {
-		for(String file : files) {
+			System.out.println("Failed: " + file);
+			e.printStackTrace();
+			
+			// try to read it in HSSFWorkbook to quickly fail if we cannot read the file there at all and thus probably should use EXCLUDED instead
+			FileInputStream stream = new FileInputStream(file);
 			try {
-				runOneFile(dir, file, failed);
-			} catch (Exception e) {
-				if(SILENT_EXCLUDED.contains(file)) {
-					continue;
-				}
-
-				System.out.println("Failed: " + file);
-				e.printStackTrace();
-				
-				// try to read it in HSSFWorkbook to quickly fail if we cannot read the file there at all and thus probably can use SILENT_EXCLUDED instead
-				FileInputStream stream = new FileInputStream(new File(dir, file));
-				try {
-					assertNotNull(new HSSFWorkbook(stream));
-				} finally {
-					stream.close();
-				}
-				
-				if(!EXCLUDED.contains(file)) {
-					failed.add(file);
-				}
+				assertNotNull(new HSSFWorkbook(stream));
+			} finally {
+				stream.close();
 			}
 		}
 	}
 
-	abstract void runOneFile(String dir, String file, List<String> failed) throws Exception;
+	abstract void runOneFile(File file) throws Exception;
 
 	/**
 	 * Implementation of an OutputStream which does nothing, used
