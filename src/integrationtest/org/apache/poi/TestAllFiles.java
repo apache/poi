@@ -211,7 +211,6 @@ public class TestAllFiles {
 
         // TODO: good to ignore?
         EXPECTED_FAILURES.add("spreadsheet/sample-beta.xlsx");
-        EXPECTED_FAILURES.add("spreadsheet/49931.xls");
 
         // This is actually a spreadsheet!
         EXPECTED_FAILURES.add("hpsf/TestRobert_Flaherty.doc");
