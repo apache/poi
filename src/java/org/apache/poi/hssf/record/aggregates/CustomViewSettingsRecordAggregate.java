@@ -47,10 +47,15 @@ public final class CustomViewSettingsRecordAggregate extends RecordAggregate {
 		List<RecordBase> temp = new ArrayList<RecordBase>();
 		while (rs.peekNextSid() != UserSViewEnd.sid) {
 			if (PageSettingsBlock.isComponentRecord(rs.peekNextSid())) {
-				if (_psBlock != null) {
-					throw new IllegalStateException(
-							"Found more than one PageSettingsBlock in custom view settings sub-stream");
-				}
+                if (_psBlock != null) {
+                    if (rs.peekNextSid() == HeaderFooterRecord.sid) {
+                        // test samples: 45538_classic_Footer.xls, 45538_classic_Header.xls
+                        _psBlock.addLateHeaderFooter((HeaderFooterRecord)rs.getNext());
+                        continue;
+                    }
+                    throw new IllegalStateException(
+                            "Found more than one PageSettingsBlock in chart sub-stream, had sid: " + rs.peekNextSid());
+                }
 				_psBlock = new PageSettingsBlock(rs);
 				temp.add(_psBlock);
 				continue;

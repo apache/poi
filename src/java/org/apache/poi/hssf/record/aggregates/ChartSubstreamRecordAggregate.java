@@ -50,7 +50,7 @@ public final class ChartSubstreamRecordAggregate extends RecordAggregate {
 						continue;
 					}
 					throw new IllegalStateException(
-							"Found more than one PageSettingsBlock in chart sub-stream");
+							"Found more than one PageSettingsBlock in chart sub-stream, had sid: " + rs.peekNextSid());
 				}
 				_psBlock = new PageSettingsBlock(rs);
 				temp.add(_psBlock);
