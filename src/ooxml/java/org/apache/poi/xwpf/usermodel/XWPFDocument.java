@@ -1199,6 +1199,25 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
         settings.setTrackRevisions(enable);
     }
 
+
+    /**
+     * Returns the current zoom factor in percent values, i.e. 100 is normal zoom.
+     *
+     * @return A percent value denoting the current zoom setting of this document.
+     */
+    public long getZoomPercent() {
+        return settings.getZoomPercent();
+    }
+
+    /**
+     * Set the zoom setting as percent value, i.e. 100 is normal zoom.
+     *
+     * @param zoomPercent A percent value denoting the zoom setting for this document.
+     */
+    public void setZoomPercent(long zoomPercent) {
+        settings.setZoomPercent(zoomPercent);;
+    }
+    
     /**
      * inserts an existing XWPFTable to the arrays bodyElements and tables
      *
