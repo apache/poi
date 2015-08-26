@@ -17,12 +17,12 @@
 
 package org.apache.poi.xwpf.usermodel;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.List;
 
-import junit.framework.TestCase;
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.POIXMLProperties;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -35,6 +35,8 @@ import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.apache.xmlbeans.XmlCursor;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
+
+import junit.framework.TestCase;
 
 public final class TestXWPFDocument extends TestCase {
 
@@ -352,9 +354,29 @@ public final class TestXWPFDocument extends TestCase {
         assertEquals(0, extendedProperties.getUnderlyingProperties().getCharacters());
     }
 
-    public void testSettings() {
+    public void testSettings() throws IOException {
         XWPFSettings settings = new XWPFSettings();
+        assertEquals(100, settings.getZoomPercent());
         settings.setZoomPercent(50);
         assertEquals(50, settings.getZoomPercent());
+
+        XWPFDocument doc = new XWPFDocument();
+        assertEquals(100, doc.getZoomPercent());
+
+        doc.setZoomPercent(50);
+        assertEquals(50, doc.getZoomPercent());
+
+        doc.setZoomPercent(200);
+        assertEquals(200, doc.getZoomPercent());
+
+        XWPFDocument back = XWPFTestDataSamples.writeOutAndReadBack(doc);
+        assertEquals(200, back.getZoomPercent());
+        back.close();
+
+//        OutputStream out = new FileOutputStream("/tmp/testZoom.docx");
+//        doc.write(out);
+//        out.close();
+
+        doc.close();
     }
 }

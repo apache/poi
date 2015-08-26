@@ -84,7 +84,12 @@ public class XWPFSettings extends POIXMLDocumentPart {
             zoom = ctSettings.getZoom();
         }
 
-        return zoom.getPercent().longValue();
+        
+        BigInteger percent = zoom.getPercent();
+        if(percent == null) {
+            return 100;
+        }
+        return percent.longValue();
     }
 
     /**
