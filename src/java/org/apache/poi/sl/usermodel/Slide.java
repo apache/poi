@@ -19,7 +19,7 @@ package org.apache.poi.sl.usermodel;
 
 public interface Slide<
     S extends Shape<S,P>,
-    P extends TextParagraph<S,P,? extends TextRun>
+    P extends TextParagraph<S,P,?>
 > extends Sheet<S,P> {
     Notes<S,P> getNotes();
     void setNotes(Notes<S,P> notes);

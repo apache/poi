@@ -20,7 +20,7 @@ package org.apache.poi.sl.usermodel;
 
 public interface Shape<
     S extends Shape<S,P>,
-    P extends TextParagraph<S,P,? extends TextRun>
+    P extends TextParagraph<S,P,?>
 > {
 	ShapeContainer<S,P> getParent();
 	

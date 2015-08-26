@@ -21,7 +21,7 @@ import java.util.List;
 
 public interface TextShape<
     S extends Shape<S,P>,
-    P extends TextParagraph<S,P,? extends TextRun>
+    P extends TextParagraph<S,P,?>
 > extends SimpleShape<S,P>, Iterable<P>  {
     /**
      * Vertical Text Types
@@ -93,7 +93,7 @@ public interface TextShape<
     /**
      * @return the TextParagraphs for this text box
      */
-    List<? extends TextParagraph<S,P,? extends TextRun>> getTextParagraphs();
+    List<? extends TextParagraph<S,P,?>> getTextParagraphs();
 
     /**
      * @return text shape margin
