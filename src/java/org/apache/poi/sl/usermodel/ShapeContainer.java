@@ -80,8 +80,8 @@ public interface ShapeContainer<
     /**
      * Create a new Table of the given number of rows and columns
      *
-     * @param numrows the number of rows
-     * @param numcols the number of columns
+     * @param numRows the number of rows
+     * @param numCols the number of columns
      */
 	TableShape<S,P> createTable(int numRows, int numCols);
 }
