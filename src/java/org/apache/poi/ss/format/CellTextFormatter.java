@@ -18,6 +18,7 @@ package org.apache.poi.ss.format;
 
 import org.apache.poi.ss.format.CellFormatPart.PartHandler;
 
+import java.util.Locale;
 import java.util.regex.Matcher;
 
 /**
@@ -62,7 +63,7 @@ public class CellTextFormatter extends CellFormatter {
         int start = toAppendTo.length();
         String text = obj.toString();
         if (obj instanceof Boolean) {
-            text = text.toUpperCase();
+            text = text.toUpperCase(Locale.ROOT);
         }
         toAppendTo.append(desc);
         for (int i = 0; i < textPos.length; i++) {
