@@ -26,6 +26,8 @@ public class TestRecordLister extends BaseXLSIteratingTest {
 		EXCLUDED.add("46904.xls"); 
         EXCLUDED.add("testEXCEL_3.xls");  // Biff 3 / Excel 3, pre-OLE2
         EXCLUDED.add("testEXCEL_4.xls");   // old unsupported format
+        EXCLUDED.add("testEXCEL_5.xls");  // Biff 5 / Excel 5
+        EXCLUDED.add("testEXCEL_95.xls"); // Biff 5 / Excel 95
 	}
 	
 	@Override
@@ -41,5 +43,12 @@ public class TestRecordLister extends BaseXLSIteratingTest {
 		} finally {
 			System.setOut(save);
 		}
+	}
+
+	//@Test
+	public void testFile() throws IOException {
+	    RecordLister viewer = new RecordLister();
+        viewer.setFile(new File("test-data/spreadsheet/testEXCEL_95.xls").getAbsolutePath());
+        viewer.run();
 	}
 }

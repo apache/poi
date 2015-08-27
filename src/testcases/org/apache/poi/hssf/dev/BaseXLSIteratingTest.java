@@ -47,7 +47,7 @@ public abstract class BaseXLSIteratingTest {
 
 	protected static final List<String> EXCLUDED = new ArrayList<String>();
 
-    @Parameters(name="{index}: {0} using {1}")
+    @Parameters(name="{index}: {0}")
     public static Iterable<Object[]> files() {
         String dataDirName = System.getProperty(POIDataSamples.TEST_PROPERTY);
         if(dataDirName == null) {
