@@ -1730,7 +1730,27 @@ under the License.
     <!-- See https://github.com/policeman-tools/forbidden-apis for details -->
     <!--  of the checks that this can do -->
     <target name="forbidden-apis-check" depends="init">
-       <fail message="TODO" />
+        <taskdef name="forbiddenapis" 
+                 classname="de.thetaphi.forbiddenapis.AntTask" 
+                 classpath="${forbidden.jar}"/>
+        <antcall target="-do-forbidden-apis-check">
+            <param name="dir" value="${main.output.dir}"/>
+        </antcall>
+        <antcall target="-do-forbidden-apis-check">
+            <param name="dir" value="${scratchpad.output.dir}"/>
+        </antcall>
+        <antcall target="-do-forbidden-apis-check">
+            <param name="dir" value="${ooxml.output.dir}"/>
+        </antcall>
+    </target>
+    <target name="-do-forbidden-apis-check">
+        <forbiddenapis 
+                 internalRuntimeForbidden="true" 
+                 classpathref="javadoc.classpath" 
+                 dir="${dir}">
+            <bundledsignatures name="jdk-unsafe-${jdk.version.source}"/>
+            <bundledsignatures name="jdk-deprecated-${jdk.version.source}"/>
+        </forbiddenapis>
     </target>
 
     <target name="findbugs"><!-- depends="assemble" -->
