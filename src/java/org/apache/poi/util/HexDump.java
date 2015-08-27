@@ -25,7 +25,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.nio.charset.Charset;
 import java.text.DecimalFormat;
+
+import org.apache.commons.codec.CharEncoding;
 
 /**
  * dump data in hexadecimal format; derived from a HexDump utility I
@@ -36,6 +39,7 @@ import java.text.DecimalFormat;
  */
 public class HexDump {
     public static final String EOL = System.getProperty("line.separator");
+    private static final Charset UTF8 = Charset.forName(CharEncoding.UTF_8);
     private static final char _hexcodes[] = "0123456789ABCDEF".toCharArray();
     private static final int _shifts[]   =
     {
@@ -70,7 +74,7 @@ public class HexDump {
     {
         if (data.length == 0)
         {
-            stream.write( ("No Data" + EOL).getBytes() );
+            stream.write( ("No Data" + EOL).getBytes(UTF8) );
             stream.flush();
             return;
         }
@@ -125,7 +129,7 @@ public class HexDump {
                 }
             }
             buffer.append(EOL);
-            stream.write(buffer.toString().getBytes());
+            stream.write(buffer.toString().getBytes(UTF8));
             stream.flush();
             buffer.setLength(0);
             display_offset += chars_read;
