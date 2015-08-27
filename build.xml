@@ -1647,12 +1647,12 @@ under the License.
        </mvn:mvn>
     </target>
 
-    <target name="dist" depends="clean, compile-all, test-all, site, jar, release-notes, assemble"
+    <target name="dist" depends="clean, compile-all, test-all, rat-check, forbidden-apis-check, site, jar, release-notes, assemble"
             description="Creates the entire distribution into build/dist, from scratch">
     </target>
 
     <target name="gump" depends="compile-all, test-all, jar"/>
-    <target name="jenkins" depends="compile-all, test-all, test-integration, jar, javadocs, assemble, findbugs, release-notes, rat-check"/>
+    <target name="jenkins" depends="compile-all, test-all, test-integration, jar, javadocs, assemble, findbugs, release-notes, rat-check, forbidden-apis-check"/>
 
     <available property="maven.ant.tasks.present" classname="org.apache.maven.artifact.ant.Pom"/>
     <target name="maven.ant.tasks-check">
@@ -1718,6 +1718,14 @@ under the License.
 
        <!-- fail the build if at least one note is in the report -->
        <fail><condition><matches pattern="[1-9][0-9]* Unknown Licens" string="${rat.reportcontent}"/></condition></fail>
+    </target>
+
+    <!-- Runs the Forbiddens APIs checker against the source code, to -->
+    <!--  spot any cases where we've accidently used methods we shouldn't -->
+    <!-- See https://github.com/policeman-tools/forbidden-apis for details -->
+    <!--  of the checks that this can do -->
+    <target name="forbidden-apis-check" depends="init">
+       <fail message="TODO" />
     </target>
 
     <target name="findbugs"><!-- depends="assemble" -->
