@@ -13,12 +13,6 @@
 
     <name>Apache POI ExcelAnt package</name>
 
-	<properties>
-		<!-- specify actual source directory as otherwise Sonar-plugin will fail during SVN checks  -->
-		<sonar.sources>${basedir}/../../src/excelant/java</sonar.sources>
-		<!-- tests are automatically found in Maven -->
-	</properties>
-
     <build>
 		<plugins>
 			<!-- copy sources, resources and tests in place as otherwise Sonar does not pick them up correctly! -->
