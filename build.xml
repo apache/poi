@@ -190,9 +190,11 @@ under the License.
     <property name="asm.jar" location="${main.lib}/asm-all-5.0.3.jar"/>
     <property name="asm.url" value="${repository.m2}/maven2/org/ow2/asm/asm-all/5.0.3/asm-all-5.0.3.jar"/>
 
-    <!-- license checks -->
+    <!-- license and api checks -->
     <property name="rat.jar" location="${main.lib}/apache-rat-0.11.jar"/>
     <property name="rat.url" value="${repository.m2}/maven2/org/apache/rat/apache-rat/0.11/apache-rat-0.11.jar"/>
+    <property name="forbidden.jar" location="${main.lib}/forbiddenapis-1.8.jar"/>
+    <property name="forbidden.url" value="${repository.m2}/maven2/de/thetaphi/forbiddenapis/1.8/forbiddenapis-1.8.jar"/>
 
     <!-- See http://www.ecma-international.org/publications/standards/Ecma-376.htm -->
     <!-- "Copy these file(s), free of charge" -->
@@ -464,6 +466,7 @@ under the License.
                     <available file="${asm.jar}"/>
                     <available file="${jacoco.zip}"/>
                     <available file="${rat.jar}"/>
+                    <available file="${forbidden.jar}"/>
                     <available file="${dsig.bouncycastle-prov.jar}"/>
                     <available file="${dsig.bouncycastle-pkix.jar}"/>
                     <available file="${dsig.xmlsec.jar}"/>
@@ -521,6 +524,10 @@ under the License.
         <antcall target="downloadfile">
             <param name="sourcefile" value="${rat.url}"/>
             <param name="destfile" value="${rat.jar}"/>
+        </antcall>
+        <antcall target="downloadfile">
+            <param name="sourcefile" value="${forbidden.url}"/>
+            <param name="destfile" value="${forbidden.jar}"/>
         </antcall>
         <antcall target="downloadfile">
             <param name="sourcefile" value="${dsig.bouncycastle-prov.url}"/>
@@ -1688,10 +1695,8 @@ under the License.
       <m2-install artifactId="poi-excelant"/>
     </target>
 
-    <!-- Runs Apache Rat against the source code, to spot any files -->
-    <!--  which are missing the correct license headers -->
-    <!-- You need to download rat from http://incubator.apache.org/rat/ -->
-    <!--  and place the Rat jar into your ant lib before running -->
+    <!-- Runs the Apache Creadur Rat check against the source code, to -->
+    <!--  spot any files which are missing the correct license headers -->
     <target name="rat-check" depends="init">
        <mkdir dir="${rat.reportdir}" />
 
