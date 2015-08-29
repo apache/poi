@@ -27,7 +27,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.nio.charset.Charset;
-import java.text.DecimalFormat;
+import java.util.Locale;
 
 import org.apache.commons.codec.CharEncoding;
 
@@ -149,10 +149,10 @@ public class HexDump {
                 chars_read = 16;
             }
             
-            buffer.append(String.format("%08X ", display_offset));
+            buffer.append(String.format(Locale.ROOT, "%08X ", display_offset));
             for (int k = 0; k < 16; k++) {
                 if (k < chars_read) {
-                    buffer.append(String.format("%02X ", data[ k + j ]));
+                    buffer.append(String.format(Locale.ROOT, "%02X ", data[ k + j ]));
                 } else {
                     buffer.append("   ");
                 }
@@ -236,20 +236,16 @@ public class HexDump {
     {
         final int digits =
             (int) Math.round(Math.log(value.length) / Math.log(10) + 0.5);
-        final StringBuffer formatString = new StringBuffer();
-        for (int i = 0; i < digits; i++)
-            formatString.append('0');
-        formatString.append(": ");
-        final DecimalFormat format = new DecimalFormat(formatString.toString());
+        final String formatString = (digits == 0 ? ": %d" : "%0"+digits+"d: ");
         StringBuffer retVal = new StringBuffer();
-        retVal.append(format.format(0));
+        retVal.append(String.format(Locale.ROOT, formatString, 0));
         int i = -1;
         for(int x = 0; x < value.length; x++)
         {
             if (++i == bytesPerLine)
             {
                 retVal.append('\n');
-                retVal.append(format.format(x));
+                retVal.append(String.format(Locale.ROOT, formatString, x));
                 i = 0;
             } else if (x>0) {
                 retVal.append(", ");
@@ -266,7 +262,7 @@ public class HexDump {
      * @return          The result right padded with 0
      */
     public static String toHex(final short value) {
-        return String.format("%04X", value);
+        return String.format(Locale.ROOT, "%04X", value);
     }
 
     /**
@@ -276,7 +272,7 @@ public class HexDump {
      * @return          The result right padded with 0
      */
     public static String toHex(final byte value) {
-        return String.format("%02X", value);
+        return String.format(Locale.ROOT, "%02X", value);
     }
 
     /**
@@ -286,7 +282,7 @@ public class HexDump {
      * @return          The result right padded with 0
      */
     public static String toHex(final int value) {
-        return String.format("%08X", value);
+        return String.format(Locale.ROOT, "%08X", value);
     }
 
     /**
@@ -296,7 +292,7 @@ public class HexDump {
      * @return          The result right padded with 0
      */
     public static String toHex(final long value) {
-        return String.format("%016X", value);
+        return String.format(Locale.ROOT, "%016X", value);
     }
 
     /**
@@ -340,28 +336,28 @@ public class HexDump {
      * @return string of 16 (zero padded) uppercase hex chars and prefixed with '0x'
      */
     public static String longToHex(long value) {
-        return String.format("0x%016X", value);
+        return String.format(Locale.ROOT, "0x%016X", value);
     }
     
     /**
      * @return string of 8 (zero padded) uppercase hex chars and prefixed with '0x'
      */
     public static String intToHex(int value) {
-        return String.format("0x%08X", value & 0xFFFFFFFF);
+        return String.format(Locale.ROOT, "0x%08X", value & 0xFFFFFFFF);
     }
     
     /**
      * @return string of 4 (zero padded) uppercase hex chars and prefixed with '0x'
      */
     public static String shortToHex(int value) {
-        return String.format("0x%04X", value & 0xFFFF);
+        return String.format(Locale.ROOT, "0x%04X", value & 0xFFFF);
     }
     
     /**
      * @return string of 2 (zero padded) uppercase hex chars and prefixed with '0x'
      */
     public static String byteToHex(int value) {
-        return String.format("0x%02X", value & 0xFF);
+        return String.format(Locale.ROOT, "0x%02X", value & 0xFF);
     }
 
     public static void main(String[] args) throws Exception {
