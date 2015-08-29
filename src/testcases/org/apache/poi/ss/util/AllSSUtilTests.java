@@ -26,12 +26,17 @@ import org.junit.runners.Suite;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
+    TestAreaReference.class,
     TestCellRangeAddress.class,
     TestCellReference.class,
+    TestDateFormatConverter.class,
     TestExpandedDouble.class,
     TestNumberComparer.class,
     TestNumberToTextConverter.class,
-    TestRegion.class
+    TestRegion.class,
+    TestSheetBuilder.class,
+    TestSheetUtil.class,
+    TestWorkbookUtil.class
 })
 public class AllSSUtilTests {
 }

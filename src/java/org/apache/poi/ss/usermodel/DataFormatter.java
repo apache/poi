@@ -440,8 +440,8 @@ public class DataFormatter {
 
         Matcher dateMatcher = daysAsText.matcher(formatStr);
         if (dateMatcher.find()) {
-            String match = dateMatcher.group(0);
-            formatStr = dateMatcher.replaceAll(match.toUpperCase().replaceAll("D", "E"));
+            String match = dateMatcher.group(0).toUpperCase(Locale.ROOT).replaceAll("D", "E");
+            formatStr = dateMatcher.replaceAll(match);
         }
 
         // Convert excel date format to SimpleDateFormat.
@@ -903,8 +903,9 @@ public class DataFormatter {
     /**
      * @return a <tt>DecimalFormat</tt> with parseIntegerOnly set <code>true</code>
      */
-    /* package */ static DecimalFormat createIntegerOnlyFormat(String fmt) {
-        DecimalFormat result = new DecimalFormat(fmt);
+    private static DecimalFormat createIntegerOnlyFormat(String fmt) {
+        DecimalFormatSymbols dsf = DecimalFormatSymbols.getInstance(Locale.ROOT);
+        DecimalFormat result = new DecimalFormat(fmt, dsf);
         result.setParseIntegerOnly(true);
         return result;
     }

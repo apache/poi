@@ -40,13 +40,18 @@ public class ExcelStyleDateFormatter extends SimpleDateFormat {
     public static final char L_BRACKET_SYMBOL = '\ue016';
     public static final char LL_BRACKET_SYMBOL = '\ue017';
 
-    private DecimalFormat format1digit = new DecimalFormat("0");
-    private DecimalFormat format2digits = new DecimalFormat("00");
+    private final DecimalFormat format1digit;
+    private final DecimalFormat format2digits;
 
-    private DecimalFormat format3digit = new DecimalFormat("0");
-    private DecimalFormat format4digits = new DecimalFormat("00");
+    private final DecimalFormat format3digit;
+    private final DecimalFormat format4digits;
 
     {
+        DecimalFormatSymbols dfs = DecimalFormatSymbols.getInstance(Locale.ROOT);
+        format1digit = new DecimalFormat("0", dfs);
+        format2digits = new DecimalFormat("00", dfs);
+        format3digit = new DecimalFormat("0", dfs);
+        format4digits = new DecimalFormat("00", dfs);
         DataFormatter.setExcelStyleRoundingMode(format1digit, RoundingMode.DOWN);
         DataFormatter.setExcelStyleRoundingMode(format2digits, RoundingMode.DOWN);
         DataFormatter.setExcelStyleRoundingMode(format3digit);
