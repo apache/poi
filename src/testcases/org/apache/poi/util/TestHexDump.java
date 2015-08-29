@@ -17,6 +17,12 @@
 
 package org.apache.poi.util;
 
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -26,243 +32,116 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Constructor;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
-/**
- * @author Glen Stampoultzis (glens at apache.org)
- * @author Marc Johnson (mjohnson at apache dot org)
- */
-public final class TestHexDump extends TestCase {
-
-
-    private static char toHex(int n) {
-        return Character.toUpperCase(Character.forDigit(n & 0x0F, 16));
-    }
-
+public final class TestHexDump {
+    @Test
     public void testDump() throws IOException {
         byte[] testArray = new byte[ 256 ];
 
-        for (int j = 0; j < 256; j++)
-        {
+        for (int j = 0; j < 256; j++) {
             testArray[ j ] = ( byte ) j;
         }
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        ByteArrayOutputStream streamAct = new ByteArrayOutputStream();
+        HexDump.dump(testArray, 0, streamAct, 0);
+        byte bytesAct[] = streamAct.toByteArray();
+        byte bytesExp[] = toHexDump(0,0);
 
-        HexDump.dump(testArray, 0, stream, 0);
-        byte[] outputArray = new byte[ 16 * (73 + HexDump.EOL.length()) ];
-
-        for (int j = 0; j < 16; j++)
-        {
-            int offset = (73 + HexDump.EOL.length()) * j;
-
-            outputArray[ offset++ ] = ( byte ) '0';
-            outputArray[ offset++ ] = ( byte ) '0';
-            outputArray[ offset++ ] = ( byte ) '0';
-            outputArray[ offset++ ] = ( byte ) '0';
-            outputArray[ offset++ ] = ( byte ) '0';
-            outputArray[ offset++ ] = ( byte ) '0';
-            outputArray[ offset++ ] = ( byte ) toHex(j);
-            outputArray[ offset++ ] = ( byte ) '0';
-            outputArray[ offset++ ] = ( byte ) ' ';
-            for (int k = 0; k < 16; k++)
-            {
-                outputArray[ offset++ ] = ( byte ) toHex(j);
-                outputArray[ offset++ ] = ( byte ) toHex(k);
-                outputArray[ offset++ ] = ( byte ) ' ';
-            }
-            for (int k = 0; k < 16; k++)
-            {
-                outputArray[ offset++ ] = ( byte ) toAscii((j * 16) + k);
-            }
-            System.arraycopy(HexDump.EOL.getBytes(), 0, outputArray, offset,
-                             HexDump.EOL.getBytes().length);
-        }
-        byte[] actualOutput = stream.toByteArray();
-
-        assertEquals("array size mismatch", outputArray.length,
-                     actualOutput.length);
-        for (int j = 0; j < outputArray.length; j++)
-        {
-            assertEquals("array[ " + j + "] mismatch", outputArray[ j ],
-                         actualOutput[ j ]);
-        }
+        assertEquals("array size mismatch", bytesExp.length, bytesAct.length);
+        assertArrayEquals("array mismatch", bytesExp, bytesAct);
 
         // verify proper behavior with non-zero offset
-        stream = new ByteArrayOutputStream();
-        HexDump.dump(testArray, 0x10000000, stream, 0);
-        outputArray = new byte[ 16 * (73 + HexDump.EOL.length()) ];
-        for (int j = 0; j < 16; j++)
-        {
-            int offset = (73 + HexDump.EOL.length()) * j;
-
-            outputArray[ offset++ ] = ( byte ) '1';
-            outputArray[ offset++ ] = ( byte ) '0';
-            outputArray[ offset++ ] = ( byte ) '0';
-            outputArray[ offset++ ] = ( byte ) '0';
-            outputArray[ offset++ ] = ( byte ) '0';
-            outputArray[ offset++ ] = ( byte ) '0';
-            outputArray[ offset++ ] = ( byte ) toHex(j);
-            outputArray[ offset++ ] = ( byte ) '0';
-            outputArray[ offset++ ] = ( byte ) ' ';
-            for (int k = 0; k < 16; k++)
-            {
-                outputArray[ offset++ ] = ( byte ) toHex(j);
-                outputArray[ offset++ ] = ( byte ) toHex(k);
-                outputArray[ offset++ ] = ( byte ) ' ';
-            }
-            for (int k = 0; k < 16; k++)
-            {
-                outputArray[ offset++ ] = ( byte ) toAscii((j * 16) + k);
-            }
-            System.arraycopy(HexDump.EOL.getBytes(), 0, outputArray, offset,
-                             HexDump.EOL.getBytes().length);
-        }
-        actualOutput = stream.toByteArray();
-        assertEquals("array size mismatch", outputArray.length,
-                     actualOutput.length);
-        for (int j = 0; j < outputArray.length; j++)
-        {
-            assertEquals("array[ " + j + "] mismatch", outputArray[ j ],
-                         actualOutput[ j ]);
-        }
+        streamAct.reset();
+        HexDump.dump(testArray, 0x10000000L, streamAct, 0);
+        bytesAct = streamAct.toByteArray();
+        bytesExp = toHexDump(0x10000000L,0);
+        
+        assertEquals("array size mismatch", bytesExp.length, bytesAct.length);
+        assertArrayEquals("array mismatch", bytesExp, bytesAct);
 
         // verify proper behavior with negative offset
-        stream = new ByteArrayOutputStream();
-        HexDump.dump(testArray, 0xFF000000, stream, 0);
-        outputArray = new byte[ 16 * (73 + HexDump.EOL.length()) ];
-        for (int j = 0; j < 16; j++)
-        {
-            int offset = (73 + HexDump.EOL.length()) * j;
+        streamAct.reset();
+        HexDump.dump(testArray, 0xFF000000L, streamAct, 0);
+        bytesAct = streamAct.toByteArray();
+        bytesExp = toHexDump(0xFF000000L,0);
 
-            outputArray[ offset++ ] = ( byte ) 'F';
-            outputArray[ offset++ ] = ( byte ) 'F';
-            outputArray[ offset++ ] = ( byte ) '0';
-            outputArray[ offset++ ] = ( byte ) '0';
-            outputArray[ offset++ ] = ( byte ) '0';
-            outputArray[ offset++ ] = ( byte ) '0';
-            outputArray[ offset++ ] = ( byte ) toHex(j);
-            outputArray[ offset++ ] = ( byte ) '0';
-            outputArray[ offset++ ] = ( byte ) ' ';
-            for (int k = 0; k < 16; k++)
-            {
-                outputArray[ offset++ ] = ( byte ) toHex(j);
-                outputArray[ offset++ ] = ( byte ) toHex(k);
-                outputArray[ offset++ ] = ( byte ) ' ';
-            }
-            for (int k = 0; k < 16; k++)
-            {
-                outputArray[ offset++ ] = ( byte ) toAscii((j * 16) + k);
-            }
-            System.arraycopy(HexDump.EOL.getBytes(), 0, outputArray, offset,
-                             HexDump.EOL.getBytes().length);
-        }
-        actualOutput = stream.toByteArray();
-        assertEquals("array size mismatch", outputArray.length,
-                     actualOutput.length);
-        for (int j = 0; j < outputArray.length; j++)
-        {
-            assertEquals("array[ " + j + "] mismatch", outputArray[ j ],
-                         actualOutput[ j ]);
-        }
+        assertEquals("array size mismatch", bytesExp.length, bytesAct.length);
+        assertArrayEquals("array mismatch", bytesExp, bytesAct);
 
         // verify proper behavior with non-zero index
-        stream = new ByteArrayOutputStream();
-        HexDump.dump(testArray, 0x10000000, stream, 0x81);
-        outputArray = new byte[ (8 * (73 + HexDump.EOL.length())) - 1 ];
-        for (int j = 0; j < 8; j++)
-        {
-            int offset = (73 + HexDump.EOL.length()) * j;
+        streamAct.reset();
+        HexDump.dump(testArray, 0xFF000000L, streamAct, 0x81);
+        bytesAct = streamAct.toByteArray();
+        bytesExp = toHexDump(0xFF000000L,0x81);
 
-            outputArray[ offset++ ] = ( byte ) '1';
-            outputArray[ offset++ ] = ( byte ) '0';
-            outputArray[ offset++ ] = ( byte ) '0';
-            outputArray[ offset++ ] = ( byte ) '0';
-            outputArray[ offset++ ] = ( byte ) '0';
-            outputArray[ offset++ ] = ( byte ) '0';
-            outputArray[ offset++ ] = ( byte ) toHex(j + 8);
-            outputArray[ offset++ ] = ( byte ) '1';
-            outputArray[ offset++ ] = ( byte ) ' ';
-            for (int k = 0; k < 16; k++)
-            {
-                int index = 0x81 + (j * 16) + k;
+        assertEquals("array size mismatch", bytesExp.length, bytesAct.length);
+        assertArrayEquals("array mismatch", bytesExp, bytesAct);
 
-                if (index < 0x100)
-                {
-                    outputArray[ offset++ ] = ( byte ) toHex(index / 16);
-                    outputArray[ offset++ ] = ( byte ) toHex(index);
-                }
-                else
-                {
-                    outputArray[ offset++ ] = ( byte ) ' ';
-                    outputArray[ offset++ ] = ( byte ) ' ';
-                }
-                outputArray[ offset++ ] = ( byte ) ' ';
-            }
-            for (int k = 0; k < 16; k++)
-            {
-                int index = 0x81 + (j * 16) + k;
-
-                if (index < 0x100)
-                {
-                    outputArray[ offset++ ] = ( byte ) toAscii(index);
-                }
-            }
-            System.arraycopy(HexDump.EOL.getBytes(), 0, outputArray, offset,
-                             HexDump.EOL.getBytes().length);
-        }
-        actualOutput = stream.toByteArray();
-        assertEquals("array size mismatch", outputArray.length,
-                     actualOutput.length);
-        for (int j = 0; j < outputArray.length; j++)
-        {
-            assertEquals("array[ " + j + "] mismatch", outputArray[ j ],
-                         actualOutput[ j ]);
-        }
 
         // verify proper behavior with negative index
-        try
-        {
-            HexDump.dump(testArray, 0x10000000, new ByteArrayOutputStream(), -1);
+        try {
+            streamAct.reset();
+            HexDump.dump(testArray, 0x10000000L, streamAct, -1);
             fail("should have caught ArrayIndexOutOfBoundsException on negative index");
-        }
-        catch (ArrayIndexOutOfBoundsException ignored_exception)
-        {
-
+        } catch (ArrayIndexOutOfBoundsException ignored_exception) {
             // as expected
         }
 
         // verify proper behavior with index that is too large
-        try
-        {
-            HexDump.dump(testArray, 0x10000000, new ByteArrayOutputStream(),
-                         testArray.length);
+        try {
+            streamAct.reset();
+            HexDump.dump(testArray, 0x10000000L, streamAct, testArray.length);
             fail("should have caught ArrayIndexOutOfBoundsException on large index");
-        }
-        catch (ArrayIndexOutOfBoundsException ignored_exception)
-        {
-
+        } catch (ArrayIndexOutOfBoundsException ignored_exception) {
             // as expected
         }
 
         // verify proper behavior with null stream
-        try
-        {
-            HexDump.dump(testArray, 0x10000000, null, 0);
+        try {
+            HexDump.dump(testArray, 0x10000000L, null, 0);
             fail("should have caught IllegalArgumentException on negative index");
-        }
-        catch (IllegalArgumentException ignored_exception)
-        {
+        } catch (IllegalArgumentException ignored_exception) {
 
             // as expected
         }
 
         // verify proper behaviour with empty byte array
-        ByteArrayOutputStream os = new ByteArrayOutputStream( );
-        HexDump.dump( new byte[0], 0, os, 0 );
-        assertEquals( "No Data" + System.getProperty( "line.separator"), os.toString() );
+        streamAct.reset();
+        HexDump.dump( new byte[0], 0, streamAct, 0 );
+        assertEquals( "No Data" + System.getProperty( "line.separator"), streamAct.toString() );
 
     }
+    
+    private byte[] toHexDump(long offset, int index) {
+        StringBuilder strExp = new StringBuilder(), chrs = new StringBuilder();
+        Object obj[] = new Object[33];
+        StringBuilder format = new StringBuilder();
+        
+        for (int j = 0; j < 16 && (index + j*16) < 256; j++) {
+            obj[0] = offset+index+j*16;
+            chrs.setLength(0);
+            format.setLength(0);
+            format.append("%08X ");
+            for (int k = 0; k < 16; k++) {
+                if (index+j*16+k < 256){
+                    obj[k+1] = index+j*16+k;
+                    chrs.append(HexDump.toAscii(index+j*16+k));
+                    format.append("%02X ");
+                } else {
+                    format.append("   ");
+                }
+            }
+            obj[17] = chrs.toString();
+            format.append("%18$s"+HexDump.EOL);
+            
+            String str = String.format(format.toString(), obj);
+            strExp.append(str);
+        }
+        byte bytesExp[] = strExp.toString().getBytes(HexDump.UTF8);
+        return bytesExp;
+    }
 
+    @Test
     public void testToHex() {
         assertEquals("000A", HexDump.toHex((short)0xA));
         
@@ -287,29 +166,17 @@ public final class TestHexDump extends TestCase {
         
         assertEquals("00000000000004D2", HexDump.toHex(1234l));
         
-        confirmStr("0xFE", HexDump.byteToHex(-2));
-        confirmStr("0x25", HexDump.byteToHex(37));
-        confirmStr("0xFFFE", HexDump.shortToHex(-2));
-        confirmStr("0x0005", HexDump.shortToHex(5));
-        confirmStr("0xFFFFFF9C", HexDump.intToHex(-100));
-        confirmStr("0x00001001", HexDump.intToHex(4097));
-        confirmStr("0xFFFFFFFFFFFF0006", HexDump.longToHex(-65530));
-        confirmStr("0x0000000000003FCD", HexDump.longToHex(16333));
+        assertEquals("0xFE", HexDump.byteToHex(-2));
+        assertEquals("0x25", HexDump.byteToHex(37));
+        assertEquals("0xFFFE", HexDump.shortToHex(-2));
+        assertEquals("0x0005", HexDump.shortToHex(5));
+        assertEquals("0xFFFFFF9C", HexDump.intToHex(-100));
+        assertEquals("0x00001001", HexDump.intToHex(4097));
+        assertEquals("0xFFFFFFFFFFFF0006", HexDump.longToHex(-65530));
+        assertEquals("0x0000000000003FCD", HexDump.longToHex(16333));
     }
 
-    private static void confirmStr(String expected, char[] actualChars) {
-        assertEquals(expected, new String(actualChars));
-    }
-
-    private static char toAscii(int c) {
-        char rval = '.';
-
-        if (c >= 32 && c <= 126) {
-            rval = ( char ) c;
-        }
-        return rval;
-    }
-    
+	@Test
     public void testDumpToString() throws Exception {
         byte[] testArray = new byte[ 256 ];
 
@@ -328,24 +195,22 @@ public final class TestHexDump extends TestCase {
                 dump.contains("123456789:;<=>?@"));
     }
 
-    public void testDumpToStringOutOfIndex() throws Exception {
-        byte[] testArray = new byte[ 0 ];
+    @Test(expected=ArrayIndexOutOfBoundsException.class)
+    public void testDumpToStringOutOfIndex1() throws Exception {
+        HexDump.dump(new byte[ 1 ], 0, -1);
+    }
 
-        try {
-            HexDump.dump(testArray, 0, -1);
-            fail("Should throw an exception with invalid input");
-        } catch (ArrayIndexOutOfBoundsException e) {
-            // expected
-        }
+    @Test(expected=ArrayIndexOutOfBoundsException.class)
+    public void testDumpToStringOutOfIndex2() throws Exception {
+        HexDump.dump(new byte[ 1 ], 0, 2);
+    }
 
-        try {
-            HexDump.dump(testArray, 0, 1);
-            fail("Should throw an exception with invalid input");
-        } catch (ArrayIndexOutOfBoundsException e) {
-            // expected
-        }
+    public void testDumpToStringOutOfIndex3() throws Exception {
+        HexDump.dump(new byte[ 1 ], 0, 1);
     }
     
+    
+    @Test
     public void testDumpToPrintStream() throws IOException {
         byte[] testArray = new byte[ 256 ];
 
@@ -425,6 +290,7 @@ public final class TestHexDump extends TestCase {
         }
     }
     
+    @Test
     public void testConstruct() throws Exception {
         // to cover private constructor
         // get the default constructor
@@ -437,6 +303,7 @@ public final class TestHexDump extends TestCase {
         assertNotNull(c.newInstance((Object[]) null));        
     }
     
+    @Test
     public void testMain() throws Exception {
         File file = TempFile.createTempFile("HexDump", ".dat");
         try {

@@ -17,14 +17,16 @@
 package org.apache.poi.hssf.record;
 
 import static org.junit.Assert.assertArrayEquals;
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.fail;
 
 import org.apache.poi.hssf.record.HyperlinkRecord.GUID;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.HexRead;
 import org.apache.poi.util.LittleEndianByteArrayInputStream;
 import org.apache.poi.util.LittleEndianByteArrayOutputStream;
+import org.junit.Test;
 
 /**
  * Test HyperlinkRecord
@@ -32,7 +34,7 @@ import org.apache.poi.util.LittleEndianByteArrayOutputStream;
  * @author Nick Burch
  * @author Yegor Kozlov
  */
-public final class TestHyperlinkRecord extends TestCase {
+public final class TestHyperlinkRecord {
 
     //link to http://www.lakings.com/
     private static final byte[] data1 = { 0x02, 0x00,    //First row of the hyperlink
@@ -262,6 +264,8 @@ public final class TestHyperlinkRecord extends TestCase {
     private void confirmGUID(GUID expectedGuid, GUID actualGuid) {
 		assertEquals(expectedGuid, actualGuid);
 	}
+    
+    @Test
     public void testReadURLLink(){
         RecordInputStream is = TestcaseRecordInputStream.create(HyperlinkRecord.sid, data1);
         HyperlinkRecord link = new HyperlinkRecord(is);
@@ -281,6 +285,7 @@ public final class TestHyperlinkRecord extends TestCase {
         assertEquals("http://www.lakings.com/", link.getAddress());
     }
 
+    @Test
     public void testReadFileLink(){
         RecordInputStream is = TestcaseRecordInputStream.create(HyperlinkRecord.sid, data2);
         HyperlinkRecord link = new HyperlinkRecord(is);
@@ -300,6 +305,7 @@ public final class TestHyperlinkRecord extends TestCase {
         assertEquals("link1.xls", link.getAddress());
     }
 
+    @Test
     public void testReadEmailLink(){
         RecordInputStream is = TestcaseRecordInputStream.create(HyperlinkRecord.sid, data3);
         HyperlinkRecord link = new HyperlinkRecord(is);
@@ -318,6 +324,7 @@ public final class TestHyperlinkRecord extends TestCase {
         assertEquals("mailto:ebgans@mail.ru?subject=Hello,%20Ebgans!", link.getAddress());
     }
 
+    @Test
     public void testReadDocumentLink(){
         RecordInputStream is = TestcaseRecordInputStream.create(HyperlinkRecord.sid, data4);
         HyperlinkRecord link = new HyperlinkRecord(is);
@@ -347,6 +354,7 @@ public final class TestHyperlinkRecord extends TestCase {
         assertArrayEquals(bytes1, bytes2);
     }
 
+    @Test
     public void testSerialize(){
         serialize(data1);
         serialize(data2);
@@ -354,6 +362,7 @@ public final class TestHyperlinkRecord extends TestCase {
         serialize(data4);
     }
 
+    @Test
     public void testCreateURLRecord() {
         HyperlinkRecord link = new HyperlinkRecord();
         link.newUrlLink();
@@ -369,6 +378,7 @@ public final class TestHyperlinkRecord extends TestCase {
         assertArrayEquals(data1, ser);
     }
 
+    @Test
     public void testCreateFileRecord() {
         HyperlinkRecord link = new HyperlinkRecord();
         link.newFileLink();
@@ -384,6 +394,7 @@ public final class TestHyperlinkRecord extends TestCase {
         assertArrayEquals(data2, ser);
     }
 
+    @Test
     public void testCreateDocumentRecord() {
         HyperlinkRecord link = new HyperlinkRecord();
         link.newDocumentLink();
@@ -399,6 +410,7 @@ public final class TestHyperlinkRecord extends TestCase {
         assertArrayEquals(data4, ser);
     }
 
+    @Test
     public void testCreateEmailtRecord() {
         HyperlinkRecord link = new HyperlinkRecord();
         link.newUrlLink();
@@ -414,6 +426,7 @@ public final class TestHyperlinkRecord extends TestCase {
         assertArrayEquals(data3, ser);
     }
 
+    @Test
     public void testClone() {
         byte[][] data = {data1, data2, data3, data4};
         for (int i = 0; i < data.length; i++) {
@@ -425,27 +438,27 @@ public final class TestHyperlinkRecord extends TestCase {
 
     }
 
-	public void testReserializeTargetFrame() {
+    @Test
+    public void testReserializeTargetFrame() {
 		RecordInputStream in = TestcaseRecordInputStream.create(HyperlinkRecord.sid, dataTargetFrame);
 		HyperlinkRecord hr = new HyperlinkRecord(in);
 		byte[] ser = hr.serialize();
 		TestcaseRecordInputStream.confirmRecordEncoding(HyperlinkRecord.sid, dataTargetFrame, ser);
 	}
 
-
+    @Test
 	public void testReserializeLinkToWorkbook() {
 
 		RecordInputStream in = TestcaseRecordInputStream.create(HyperlinkRecord.sid, dataLinkToWorkbook);
 		HyperlinkRecord hr = new HyperlinkRecord(in);
 		byte[] ser = hr.serialize();
 		TestcaseRecordInputStream.confirmRecordEncoding(HyperlinkRecord.sid, dataLinkToWorkbook, ser);
-		if ("YEARFR~1.XLS".equals(hr.getAddress())) {
-			throw new AssertionFailedError("Identified bug in reading workbook link");
-		}
+		assertNotEquals("Identified bug in reading workbook link", "YEARFR~1.XLS", hr.getAddress());
 		assertEquals("yearfracExamples.xls", hr.getAddress());
 	}
 
-	public void testReserializeUNC() {
+    @Test
+    public void testReserializeUNC() {
 
 		RecordInputStream in = TestcaseRecordInputStream.create(HyperlinkRecord.sid, dataUNC);
 		HyperlinkRecord hr = new HyperlinkRecord(in);
@@ -454,10 +467,11 @@ public final class TestHyperlinkRecord extends TestCase {
 		try {
 			hr.toString();
 		} catch (NullPointerException e) {
-			throw new AssertionFailedError("Identified bug with option URL and UNC set at same time");
+		    fail("Identified bug with option URL and UNC set at same time");
 		}
 	}
 	
+    @Test
 	public void testGUID() {
 		GUID g;
 		g = GUID.parse("3F2504E0-4F89-11D3-9A0C-0305E82C3301");
@@ -489,12 +503,13 @@ public final class TestHyperlinkRecord extends TestCase {
 	}
 
 	private void confirmGUID(GUID g, int d1, int d2, int d3, long d4) {
-		assertEquals(new String(HexDump.intToHex(d1)), new String(HexDump.intToHex(g.getD1())));
-		assertEquals(new String(HexDump.shortToHex(d2)), new String(HexDump.shortToHex(g.getD2())));
-		assertEquals(new String(HexDump.shortToHex(d3)), new String(HexDump.shortToHex(g.getD3())));
-		assertEquals(new String(HexDump.longToHex(d4)), new String(HexDump.longToHex(g.getD4())));
+		assertEquals(HexDump.intToHex(d1), HexDump.intToHex(g.getD1()));
+		assertEquals(HexDump.shortToHex(d2), HexDump.shortToHex(g.getD2()));
+		assertEquals(HexDump.shortToHex(d3), HexDump.shortToHex(g.getD3()));
+		assertEquals(HexDump.longToHex(d4), HexDump.longToHex(g.getD4()));
 	}
 
+	@Test
     public void test47498(){
         RecordInputStream is = TestcaseRecordInputStream.create(HyperlinkRecord.sid, data_47498);
         HyperlinkRecord link = new HyperlinkRecord(is);

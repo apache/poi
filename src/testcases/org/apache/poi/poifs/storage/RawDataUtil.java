@@ -50,9 +50,7 @@ public final class RawDataUtil {
 		System.out.println("String[] hexDataLines = {");
 		System.out.print("\t\"");
 		while(true) {
-			char[] cc = HexDump.byteToHex(data[i]);
-			System.out.print(cc[2]);
-			System.out.print(cc[3]);
+			System.out.print(HexDump.byteToHex(data[i]).substring(2));
 			i++;
 			if (i>=data.length) {
 				break;

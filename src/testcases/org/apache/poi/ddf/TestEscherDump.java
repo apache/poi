@@ -17,9 +17,12 @@
 
 package org.apache.poi.ddf;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hssf.HSSFTestDataSamples;
@@ -30,23 +33,23 @@ public class TestEscherDump {
     @Test
     public void testSimple() throws Exception {
         // simple test to at least cover some parts of the class
-        EscherDump.main(new String[] {});
+        EscherDump.main(new String[] {}, new NullPrinterStream());
         
-        new EscherDump().dump(0, new byte[] {}, System.out);
-        new EscherDump().dump(new byte[] {}, 0, 0, System.out);
-        new EscherDump().dumpOld(0, new ByteArrayInputStream(new byte[] {}), System.out);
+        new EscherDump().dump(0, new byte[] {}, new NullPrinterStream());
+        new EscherDump().dump(new byte[] {}, 0, 0, new NullPrinterStream());
+        new EscherDump().dumpOld(0, new ByteArrayInputStream(new byte[] {}), new NullPrinterStream());
     }
 
     @Test
     public void testWithData() throws Exception {
-        new EscherDump().dumpOld(8, new ByteArrayInputStream(new byte[] { 00, 00, 00, 00, 00, 00, 00, 00 }), System.out);
+        new EscherDump().dumpOld(8, new ByteArrayInputStream(new byte[] { 00, 00, 00, 00, 00, 00, 00, 00 }), new NullPrinterStream());
     }
 
     @Test
     public  void testWithSamplefile() throws Exception {
         //InputStream stream = HSSFTestDataSamples.openSampleFileStream(")
         byte[] data = POIDataSamples.getDDFInstance().readFile("Container.dat");
-        new EscherDump().dump(data.length, data, System.out);
+        new EscherDump().dump(data.length, data, new NullPrinterStream());
         //new EscherDump().dumpOld(data.length, new ByteArrayInputStream(data), System.out);
         
         data = new byte[2586114];
@@ -55,4 +58,31 @@ public class TestEscherDump {
         //new EscherDump().dump(bytes, data, System.out);
         //new EscherDump().dumpOld(bytes, new ByteArrayInputStream(data), System.out);
     }
+    
+    /**
+     * Implementation of an OutputStream which does nothing, used
+     * to redirect stdout to avoid spamming the console with output
+     */
+    private static class NullPrinterStream extends PrintStream {
+        private NullPrinterStream() {
+            super(new NullOutputStream());
+        }
+        /**
+         * Implementation of an OutputStream which does nothing, used
+         * to redirect stdout to avoid spamming the console with output
+         */
+        private static class NullOutputStream extends OutputStream {
+            @Override
+            public void write(byte[] b, int off, int len) {
+            }
+
+            @Override
+            public void write(int b) {
+            }
+
+            @Override
+            public void write(byte[] b) throws IOException {
+            }
+        }        
+    }    
 }

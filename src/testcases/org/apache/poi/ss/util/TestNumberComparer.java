@@ -17,18 +17,21 @@
 
 package org.apache.poi.ss.util;
 
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.apache.poi.ss.util.NumberComparisonExamples.ComparisonExample;
 import org.apache.poi.util.HexDump;
+import org.junit.Test;
 /**
  * Tests for {@link NumberComparer}
  *
  * @author Josh Micich
  */
-public final class TestNumberComparer extends TestCase {
+public final class TestNumberComparer {
 
+    @Test
 	public void testAllComparisonExamples() {
 		ComparisonExample[] examples = NumberComparisonExamples.getComparisonExamples();
 		boolean success = true;
@@ -40,11 +43,11 @@ public final class TestNumberComparer extends TestCase {
 			success &= confirm(i, ce.getNegA(), ce.getNegB(), -ce.getExpectedResult());
 			success &= confirm(i, ce.getNegB(), ce.getNegA(), +ce.getExpectedResult());
 		}
-		if (!success) {
-			throw new AssertionFailedError("One or more cases failed.  See stderr");
-		}
+		
+		assertTrue("One or more cases failed.  See stderr", success);
 	}
 
+    @Test
 	public void testRoundTripOnComparisonExamples() {
 		ComparisonExample[] examples = NumberComparisonExamples.getComparisonExamples();
 		boolean success = true;
@@ -55,10 +58,8 @@ public final class TestNumberComparer extends TestCase {
 			success &= confirmRoundTrip(i, ce.getB());
 			success &= confirmRoundTrip(i, ce.getNegB());
 		}
-		if (!success) {
-			throw new AssertionFailedError("One or more cases failed.  See stderr");
-		}
-
+		
+		assertTrue("One or more cases failed.  See stderr", success);
 	}
 
 	private boolean confirmRoundTrip(int i, double a) {
@@ -68,6 +69,7 @@ public final class TestNumberComparer extends TestCase {
 	/**
 	 * The actual example from bug 47598
 	 */
+	@Test
 	public void testSpecificExampleA() {
 		double a = 0.06-0.01;
 		double b = 0.05;
@@ -78,6 +80,7 @@ public final class TestNumberComparer extends TestCase {
 	/**
 	 * The example from the nabble posting
 	 */
+	@Test
 	public void testSpecificExampleB() {
 		double a = 1+1.0028-0.9973;
 		double b = 1.0055;
@@ -99,8 +102,6 @@ public final class TestNumberComparer extends TestCase {
 	}
 	private static String formatDoubleAsHex(double d) {
 		long l = Double.doubleToLongBits(d);
-		StringBuilder sb = new StringBuilder(20);
-		sb.append(HexDump.longToHex(l)).append('L');
-		return sb.toString();
+		return HexDump.longToHex(l)+'L';
 	}
 }

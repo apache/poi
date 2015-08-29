@@ -20,8 +20,6 @@ package org.apache.poi.ddf;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
 
-import java.io.ByteArrayOutputStream;
-
 /**
  * @author Glen Stampoultzis
  */
@@ -95,17 +93,8 @@ public class EscherBitmapBlip extends EscherBlipRecord {
     {
         String nl = System.getProperty( "line.separator" );
 
-        String extraData;
-        ByteArrayOutputStream b = new ByteArrayOutputStream();
-        try
-        {
-            HexDump.dump( this.field_pictureData, 0, b, 0 );
-            extraData = b.toString();
-        }
-        catch ( Exception e )
-        {
-            extraData = e.toString();
-        }
+        String extraData = HexDump.dump(this.field_pictureData, 0, 0);
+
         return getClass().getName() + ":" + nl +
                 "  RecordId: 0x" + HexDump.toHex( getRecordId() ) + nl +
                 "  Version: 0x" + HexDump.toHex( getVersion() ) + nl +
@@ -117,17 +106,7 @@ public class EscherBitmapBlip extends EscherBlipRecord {
 
     @Override
     public String toXml(String tab) {
-        String extraData;
-        ByteArrayOutputStream b = new ByteArrayOutputStream();
-        try
-        {
-            HexDump.dump( this.field_pictureData, 0, b, 0 );
-            extraData = b.toString();
-        }
-        catch ( Exception e )
-        {
-            extraData = e.toString();
-        }
+        String extraData = HexDump.dump(this.field_pictureData, 0, 0);
         StringBuilder builder = new StringBuilder();
         builder.append(tab).append(formatXmlRecordHeader(getClass().getSimpleName(), HexDump.toHex(getRecordId()), HexDump.toHex(getVersion()), HexDump.toHex(getInstance())))
                 .append(tab).append("\t").append("<UID>0x").append(HexDump.toHex(field_1_UID)).append("</UID>\n")

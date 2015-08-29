@@ -142,7 +142,7 @@ public final class TestMinusZeroResult extends TestCase {
 		long bitsB = Double.doubleToLongBits(b);
 		if (bitsA != bitsB) {
 			throw new ComparisonFailure("value different to expected",
-					new String(HexDump.longToHex(bitsA)), new String(HexDump.longToHex(bitsB)));
+					HexDump.longToHex(bitsA), HexDump.longToHex(bitsB));
 		}
 	}
 }

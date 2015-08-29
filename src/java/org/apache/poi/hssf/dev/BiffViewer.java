@@ -19,7 +19,6 @@ package org.apache.poi.hssf.dev;
 
 import java.io.DataInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -31,8 +30,119 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.poi.hssf.record.*;
+import org.apache.poi.hssf.record.ArrayRecord;
+import org.apache.poi.hssf.record.AutoFilterInfoRecord;
+import org.apache.poi.hssf.record.BOFRecord;
+import org.apache.poi.hssf.record.BackupRecord;
+import org.apache.poi.hssf.record.BlankRecord;
+import org.apache.poi.hssf.record.BookBoolRecord;
+import org.apache.poi.hssf.record.BoolErrRecord;
+import org.apache.poi.hssf.record.BottomMarginRecord;
+import org.apache.poi.hssf.record.BoundSheetRecord;
+import org.apache.poi.hssf.record.CFHeader12Record;
+import org.apache.poi.hssf.record.CFHeaderRecord;
+import org.apache.poi.hssf.record.CFRule12Record;
+import org.apache.poi.hssf.record.CFRuleRecord;
+import org.apache.poi.hssf.record.CalcCountRecord;
+import org.apache.poi.hssf.record.CalcModeRecord;
+import org.apache.poi.hssf.record.CodepageRecord;
+import org.apache.poi.hssf.record.ColumnInfoRecord;
+import org.apache.poi.hssf.record.ContinueRecord;
+import org.apache.poi.hssf.record.CountryRecord;
+import org.apache.poi.hssf.record.DBCellRecord;
+import org.apache.poi.hssf.record.DConRefRecord;
+import org.apache.poi.hssf.record.DSFRecord;
+import org.apache.poi.hssf.record.DVALRecord;
+import org.apache.poi.hssf.record.DVRecord;
+import org.apache.poi.hssf.record.DateWindow1904Record;
+import org.apache.poi.hssf.record.DefaultColWidthRecord;
+import org.apache.poi.hssf.record.DefaultRowHeightRecord;
+import org.apache.poi.hssf.record.DeltaRecord;
+import org.apache.poi.hssf.record.DimensionsRecord;
+import org.apache.poi.hssf.record.DrawingGroupRecord;
+import org.apache.poi.hssf.record.DrawingRecordForBiffViewer;
+import org.apache.poi.hssf.record.DrawingSelectionRecord;
+import org.apache.poi.hssf.record.EOFRecord;
+import org.apache.poi.hssf.record.ExtSSTRecord;
+import org.apache.poi.hssf.record.ExtendedFormatRecord;
+import org.apache.poi.hssf.record.ExternSheetRecord;
+import org.apache.poi.hssf.record.ExternalNameRecord;
+import org.apache.poi.hssf.record.FeatHdrRecord;
+import org.apache.poi.hssf.record.FeatRecord;
+import org.apache.poi.hssf.record.FilePassRecord;
+import org.apache.poi.hssf.record.FileSharingRecord;
+import org.apache.poi.hssf.record.FnGroupCountRecord;
+import org.apache.poi.hssf.record.FontRecord;
+import org.apache.poi.hssf.record.FooterRecord;
+import org.apache.poi.hssf.record.FormatRecord;
+import org.apache.poi.hssf.record.FormulaRecord;
+import org.apache.poi.hssf.record.GridsetRecord;
+import org.apache.poi.hssf.record.GutsRecord;
+import org.apache.poi.hssf.record.HCenterRecord;
+import org.apache.poi.hssf.record.HeaderRecord;
+import org.apache.poi.hssf.record.HideObjRecord;
+import org.apache.poi.hssf.record.HorizontalPageBreakRecord;
+import org.apache.poi.hssf.record.HyperlinkRecord;
+import org.apache.poi.hssf.record.IndexRecord;
+import org.apache.poi.hssf.record.InterfaceEndRecord;
+import org.apache.poi.hssf.record.InterfaceHdrRecord;
+import org.apache.poi.hssf.record.IterationRecord;
+import org.apache.poi.hssf.record.LabelRecord;
+import org.apache.poi.hssf.record.LabelSSTRecord;
+import org.apache.poi.hssf.record.LeftMarginRecord;
+import org.apache.poi.hssf.record.MMSRecord;
+import org.apache.poi.hssf.record.MergeCellsRecord;
+import org.apache.poi.hssf.record.MulBlankRecord;
+import org.apache.poi.hssf.record.MulRKRecord;
+import org.apache.poi.hssf.record.NameCommentRecord;
+import org.apache.poi.hssf.record.NameRecord;
+import org.apache.poi.hssf.record.NoteRecord;
+import org.apache.poi.hssf.record.NumberRecord;
+import org.apache.poi.hssf.record.ObjRecord;
+import org.apache.poi.hssf.record.PaletteRecord;
+import org.apache.poi.hssf.record.PaneRecord;
+import org.apache.poi.hssf.record.PasswordRecord;
+import org.apache.poi.hssf.record.PasswordRev4Record;
+import org.apache.poi.hssf.record.PrecisionRecord;
+import org.apache.poi.hssf.record.PrintGridlinesRecord;
+import org.apache.poi.hssf.record.PrintHeadersRecord;
+import org.apache.poi.hssf.record.PrintSetupRecord;
+import org.apache.poi.hssf.record.ProtectRecord;
+import org.apache.poi.hssf.record.ProtectionRev4Record;
+import org.apache.poi.hssf.record.RKRecord;
+import org.apache.poi.hssf.record.RecalcIdRecord;
+import org.apache.poi.hssf.record.Record;
+import org.apache.poi.hssf.record.RecordFormatException;
+import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.RecordInputStream.LeftoverDataException;
+import org.apache.poi.hssf.record.RefModeRecord;
+import org.apache.poi.hssf.record.RefreshAllRecord;
+import org.apache.poi.hssf.record.RightMarginRecord;
+import org.apache.poi.hssf.record.RowRecord;
+import org.apache.poi.hssf.record.SCLRecord;
+import org.apache.poi.hssf.record.SSTRecord;
+import org.apache.poi.hssf.record.SaveRecalcRecord;
+import org.apache.poi.hssf.record.SelectionRecord;
+import org.apache.poi.hssf.record.SharedFormulaRecord;
+import org.apache.poi.hssf.record.StringRecord;
+import org.apache.poi.hssf.record.StyleRecord;
+import org.apache.poi.hssf.record.SupBookRecord;
+import org.apache.poi.hssf.record.TabIdRecord;
+import org.apache.poi.hssf.record.TableRecord;
+import org.apache.poi.hssf.record.TableStylesRecord;
+import org.apache.poi.hssf.record.TextObjectRecord;
+import org.apache.poi.hssf.record.TopMarginRecord;
+import org.apache.poi.hssf.record.UncalcedRecord;
+import org.apache.poi.hssf.record.UnknownRecord;
+import org.apache.poi.hssf.record.UseSelFSRecord;
+import org.apache.poi.hssf.record.VCenterRecord;
+import org.apache.poi.hssf.record.VerticalPageBreakRecord;
+import org.apache.poi.hssf.record.WSBoolRecord;
+import org.apache.poi.hssf.record.WindowOneRecord;
+import org.apache.poi.hssf.record.WindowProtectRecord;
+import org.apache.poi.hssf.record.WindowTwoRecord;
+import org.apache.poi.hssf.record.WriteAccessRecord;
+import org.apache.poi.hssf.record.WriteProtectRecord;
 import org.apache.poi.hssf.record.chart.AreaFormatRecord;
 import org.apache.poi.hssf.record.chart.AreaRecord;
 import org.apache.poi.hssf.record.chart.AxisLineFormatRecord;
@@ -85,13 +195,16 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  *  Utillity for reading in BIFF8 records and displaying data from them.
  * @see        #main
  */
 public final class BiffViewer {
-    static final char[] NEW_LINE_CHARS = System.getProperty("line.separator").toCharArray();
+    static final String NEW_LINE_CHARS = System.getProperty("line.separator");
+    private static POILogger logger = POILogFactory.getLogger(BiffViewer.class);
 
     private BiffViewer() {
         // no instances of this class
@@ -114,8 +227,7 @@ public final class BiffViewer {
             try {
                 hasNext = recStream.hasNextRecord();
             } catch (LeftoverDataException e) {
-                e.printStackTrace();
-                System.err.println("Discarding " + recStream.remaining() + " bytes and continuing");
+                logger.log(POILogger.ERROR, "Discarding " + recStream.remaining() + " bytes and continuing", e);
                 recStream.readRemainder();
                 hasNext = recStream.hasNextRecord();
             }
@@ -427,7 +539,7 @@ public final class BiffViewer {
 	 * </table>
 	 *
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		// args = new String[] { "--out", "", };
 		CommandArgs cmdArgs;
 		try {
@@ -437,40 +549,37 @@ public final class BiffViewer {
 			return;
 		}
 
-		try {
-
-			PrintStream ps;
-			if (cmdArgs.shouldOutputToFile()) {
-				OutputStream os = new FileOutputStream(cmdArgs.getFile().getAbsolutePath() + ".out");
-				ps = new PrintStream(os);
-			} else {
-				ps = System.out;
-			}
-
-			InputStream is = getPOIFSInputStream(cmdArgs.getFile());
-
-			if (cmdArgs.shouldOutputRawHexOnly()) {
-				int size = is.available();
-				byte[] data = new byte[size];
-
-				is.read(data);
-				HexDump.dump(data, 0, System.out, 0);
-			} else {
-				boolean dumpInterpretedRecords = cmdArgs.shouldDumpRecordInterpretations();
-				boolean dumpHex = cmdArgs.shouldDumpBiffHex();
-				boolean zeroAlignHexDump = dumpInterpretedRecords;  // TODO - fix non-zeroAlign
-				runBiffViewer(ps, is, dumpInterpretedRecords, dumpHex, zeroAlignHexDump,
-						cmdArgs.suppressHeader());
-			}
-			ps.close();
-		} catch (Exception e) {
-			e.printStackTrace();
+		PrintStream ps;
+		if (cmdArgs.shouldOutputToFile()) {
+			OutputStream os = new FileOutputStream(cmdArgs.getFile().getAbsolutePath() + ".out");
+			ps = new PrintStream(os);
+		} else {
+			ps = System.out;
 		}
+
+		NPOIFSFileSystem fs = new NPOIFSFileSystem(cmdArgs.getFile(), true);
+        InputStream is = getPOIFSInputStream(fs);
+		
+		if (cmdArgs.shouldOutputRawHexOnly()) {
+			int size = is.available();
+			byte[] data = new byte[size];
+
+			is.read(data);
+			HexDump.dump(data, 0, System.out, 0);
+		} else {
+			boolean dumpInterpretedRecords = cmdArgs.shouldDumpRecordInterpretations();
+			boolean dumpHex = cmdArgs.shouldDumpBiffHex();
+			boolean zeroAlignHexDump = dumpInterpretedRecords;  // TODO - fix non-zeroAlign
+			runBiffViewer(ps, is, dumpInterpretedRecords, dumpHex, zeroAlignHexDump,
+					cmdArgs.suppressHeader());
+		}
+		is.close();
+        fs.close();
+		ps.close();
 	}
 
-	protected static InputStream getPOIFSInputStream(File file)
+	protected static InputStream getPOIFSInputStream(NPOIFSFileSystem fs)
 			throws IOException, FileNotFoundException {
-		NPOIFSFileSystem fs = new NPOIFSFileSystem(new FileInputStream(file));
 		String workbookName = HSSFWorkbook.getWorkbookDirEntryName(fs.getRoot());
 		return fs.createDocumentInputStream(workbookName);
 	}

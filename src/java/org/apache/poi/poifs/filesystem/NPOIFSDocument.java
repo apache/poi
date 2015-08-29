@@ -18,7 +18,6 @@
 package org.apache.poi.poifs.filesystem;
 
 import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -211,31 +210,22 @@ public final class NPOIFSDocument implements POIFSViewable {
     * @return an array of Object; may not be null, but may be empty
     */
    public Object[] getViewableArray() {
-      Object[] results = new Object[1];
-      String result;
+      String result = "<NO DATA>";
 
-      try {
-         if(getSize() > 0) {
-            // Get all the data into a single array
-            byte[] data = new byte[getSize()];
-            int offset = 0;
-            for(ByteBuffer buffer : _stream) {
-               int length = Math.min(_block_size, data.length-offset); 
-               buffer.get(data, offset, length);
-               offset += length;
-            }
-
-            ByteArrayOutputStream output = new ByteArrayOutputStream();
-            HexDump.dump(data, 0, output, 0);
-            result = output.toString();
-         } else {
-            result = "<NO DATA>";
+      if(getSize() > 0) {
+         // Get all the data into a single array
+         byte[] data = new byte[getSize()];
+         int offset = 0;
+         for(ByteBuffer buffer : _stream) {
+            int length = Math.min(_block_size, data.length-offset); 
+            buffer.get(data, offset, length);
+            offset += length;
          }
-      } catch (IOException e) {
-         result = e.getMessage();
+ 
+         result = HexDump.dump(data, 0, 0);
       }
-      results[0] = result;
-      return results;
+      
+      return new String[]{ result };
    }
 
    /**

@@ -92,15 +92,15 @@ public final class TestBiff8DecryptingStream {
 		}
 
 		public void confirmByte(int expVal) {
-			cmp(HexDump.byteToHex(expVal), HexDump.byteToHex(_bds.readUByte()));
+		    assertEquals(HexDump.byteToHex(expVal), HexDump.byteToHex(_bds.readUByte()));
 		}
 
 		public void confirmShort(int expVal) {
-			cmp(HexDump.shortToHex(expVal), HexDump.shortToHex(_bds.readShort()));
+		    assertEquals(HexDump.shortToHex(expVal), HexDump.shortToHex(_bds.readShort()));
 		}
 
         public void confirmUShort(int expVal) {
-            cmp(HexDump.shortToHex(expVal), HexDump.shortToHex(_bds.readUShort()));
+            assertEquals(HexDump.shortToHex(expVal), HexDump.shortToHex(_bds.readUShort()));
         }
         
         public short readShort() {
@@ -112,25 +112,13 @@ public final class TestBiff8DecryptingStream {
         }
 
 		public void confirmInt(int expVal) {
-			cmp(HexDump.intToHex(expVal), HexDump.intToHex(_bds.readInt()));
+			assertEquals(HexDump.intToHex(expVal), HexDump.intToHex(_bds.readInt()));
 		}
 
 		public void confirmLong(long expVal) {
-			cmp(HexDump.longToHex(expVal), HexDump.longToHex(_bds.readLong()));
+		    assertEquals(HexDump.longToHex(expVal), HexDump.longToHex(_bds.readLong()));
 		}
 		
-		private void cmp(char[] exp, char[] act) {
-			if (Arrays.equals(exp, act)) {
-				return;
-			}
-			_errorsOccurred = true;
-			if (ONLY_LOG_ERRORS) {
-				logErr(3, "Value mismatch " + new String(exp) + " - " + new String(act));
-				return;
-			}
-			throw new ComparisonFailure("Value mismatch", new String(exp), new String(act));
-		}
-
 		public void confirmData(String expHexData) {
 
 			byte[] expData = HexRead.readFromString(expHexData);

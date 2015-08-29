@@ -21,6 +21,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 
+import org.apache.poi.POIDataSamples;
+import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.junit.Ignore;
+import org.junit.Test;
+
 public class TestBiffViewer extends BaseXLSIteratingTest {
 	static {
 		// these are likely ok to fail
@@ -43,21 +48,21 @@ public class TestBiffViewer extends BaseXLSIteratingTest {
 
 	@Override
 	void runOneFile(File file) throws IOException {
-		InputStream is = BiffViewer.getPOIFSInputStream(file);
+	    NPOIFSFileSystem fs  = new NPOIFSFileSystem(file, true);
+		InputStream is = BiffViewer.getPOIFSInputStream(fs);
 		try {
 			// use a NullOutputStream to not write the bytes anywhere for best runtime 
 			BiffViewer.runBiffViewer(new PrintStream(NULL_OUTPUT_STREAM), is, true, true, true, false);
 		} finally {
 			is.close();
+			fs.close();
 		}
 	}
 	
 //	@Test
+//	@Ignore("only used for manual tests")
 //	public void testOneFile() throws Exception {
-//		List<String> failed = new ArrayList<String>();
-//		runOneFile("test-data/spreadsheet", "WORKBOOK_in_capitals.xls", failed);
-//
-//		assertTrue("Expected to have no failed except the ones excluded, but had: " + failed, 
-//				failed.isEmpty());
+//	    POIDataSamples samples = POIDataSamples.getSpreadSheetInstance();
+//		runOneFile(samples.getFile("43493.xls"));
 //	}
 }
