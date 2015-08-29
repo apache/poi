@@ -20,6 +20,7 @@ package org.apache.poi.sl.draw;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
+import java.util.Locale;
 
 import org.apache.poi.sl.usermodel.PlaceableShape;
 import org.apache.poi.sl.usermodel.Shape;
@@ -72,7 +73,7 @@ public class DrawShape implements Drawable {
                 // and later on, turn it around again to compare it with its original size ...
 
                 AffineTransform txs;
-                if (ps.getClass().getCanonicalName().toLowerCase().contains("hslf")) {
+                if (ps.getClass().getCanonicalName().toLowerCase(Locale.ROOT).contains("hslf")) {
                     txs = new AffineTransform(tx);
                 } else {
                     // this handling is only based on try and error ... not sure why xslf is handled differently.

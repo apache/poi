@@ -16,6 +16,8 @@
 ==================================================================== */
 package org.apache.poi.util;
 
+import java.util.Locale;
+
 public class JvmBugs {
     private static final POILogger LOG = POILogFactory.getLogger(JvmBugs.class);
     
@@ -42,7 +44,7 @@ public class JvmBugs {
      */
     public static boolean hasLineBreakMeasurerBug() {
         String version = System.getProperty("java.version");
-        String os = System.getProperty("os.name").toLowerCase();
+        String os = System.getProperty("os.name").toLowerCase(Locale.ROOT);
         boolean ignore = Boolean.getBoolean("org.apache.poi.JvmBugs.LineBreakMeasurer.ignore");
         boolean hasBug = (!ignore && (os.contains("win") && ("1.6.0_45".equals(version) || "1.7.0_21".equals(version))));
         if (hasBug) {
