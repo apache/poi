@@ -17,6 +17,7 @@
 
 package org.apache.poi.ss.util;
 
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -86,7 +87,7 @@ public class CellReference {
      * delimited and escaped as per normal syntax rules for formulas.
      */
     public CellReference(String cellRef) {
-        if(cellRef.toUpperCase().endsWith("#REF!")) {
+        if(cellRef.toUpperCase(Locale.ROOT).endsWith("#REF!")) {
             throw new IllegalArgumentException("Cell reference invalid: " + cellRef);
         }
 
