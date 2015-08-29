@@ -17,22 +17,21 @@
 
 package org.apache.poi.ss.util;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 /**
  * Test suite for <tt>org.apache.poi.ss.util</tt>
  *
  * @author Josh Micich
  */
-public final class AllSSUtilTests {
-	public static Test suite() {
-		TestSuite result = new TestSuite(AllSSUtilTests.class.getName());
-		result.addTestSuite(TestCellRangeAddress.class);
-		result.addTestSuite(TestCellReference.class);
-		result.addTestSuite(TestExpandedDouble.class);
-		result.addTestSuite(TestNumberComparer.class);
-		result.addTestSuite(TestNumberToTextConverter.class);
-		result.addTestSuite(TestRegion.class);
-		return result;
-	}
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+    TestCellRangeAddress.class,
+    TestCellReference.class,
+    TestExpandedDouble.class,
+    TestNumberComparer.class,
+    TestNumberToTextConverter.class,
+    TestRegion.class
+})
+public class AllSSUtilTests {
 }
