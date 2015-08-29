@@ -17,21 +17,24 @@
 
 package org.apache.poi.ss.util;
 
+import static org.junit.Assert.assertEquals;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
-
 import org.apache.poi.util.HexDump;
+import org.junit.Test;
+
+import junit.framework.AssertionFailedError;
 /**
  * Tests for {@link ExpandedDouble}
  *
  * @author Josh Micich
  */
-public final class TestExpandedDouble extends TestCase {
+public final class TestExpandedDouble {
 	private static final BigInteger BIG_POW_10 = BigInteger.valueOf(1000000000);
 
+	@Test
 	public void testNegative() {
 		ExpandedDouble hd = new ExpandedDouble(0xC010000000000000L);
 
@@ -44,6 +47,7 @@ public final class TestExpandedDouble extends TestCase {
 		assertEquals(1, frac.bitCount());
 	}
 
+	@Test
 	public void testSubnormal() {
 		ExpandedDouble hd = new ExpandedDouble(0x0000000000000001L);
 
@@ -59,6 +63,7 @@ public final class TestExpandedDouble extends TestCase {
 	/**
 	 * Tests specific values for conversion from {@link ExpandedDouble} to {@link NormalisedDecimal} and back
 	 */
+	@Test
 	public void testRoundTripShifting() {
 		long[] rawValues = {
 				0x4010000000000004L,
@@ -87,6 +92,7 @@ public final class TestExpandedDouble extends TestCase {
 			throw new AssertionFailedError("One or more test examples failed.  See stderr.");
 		}
 	}
+	
 	public static boolean confirmRoundTrip(int i, long rawBitsA) {
 		double a = Double.longBitsToDouble(rawBitsA);
 		if (a == 0.0) {
@@ -150,6 +156,7 @@ public final class TestExpandedDouble extends TestCase {
 		}
 		return bd.unscaledValue().toString();
 	}
+	
 	public static BigInteger getNearby(NormalisedDecimal md, int offset) {
 		BigInteger frac = md.composeFrac();
 		int be = frac.bitLength() - 24 - 1;
@@ -218,8 +225,6 @@ public final class TestExpandedDouble extends TestCase {
 
 	private static String formatDoubleAsHex(double d) {
 		long l = Double.doubleToLongBits(d);
-		StringBuilder sb = new StringBuilder(20);
-		sb.append(HexDump.longToHex(l)).append('L');
-		return sb.toString();
+		return HexDump.longToHex(l)+'L';
 	}
 }

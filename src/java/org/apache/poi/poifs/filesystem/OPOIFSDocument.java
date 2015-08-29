@@ -332,11 +332,9 @@ public final class OPOIFSDocument implements BATManaged, BlockWritable, POIFSVie
 	 * @return an array of Object; may not be null, but may be empty
 	 */
 	public Object[] getViewableArray() {
-		Object[] results = new Object[1];
-		String result;
+		String result = "<NO DATA>";
 
 		try {
-			ByteArrayOutputStream output = new ByteArrayOutputStream();
 			BlockWritable[] blocks = null;
 
 			if (_big_store.isValid()) {
@@ -345,28 +343,17 @@ public final class OPOIFSDocument implements BATManaged, BlockWritable, POIFSVie
 				blocks = _small_store.getBlocks();
 			}
 			if (blocks != null) {
-				for (int k = 0; k < blocks.length; k++) {
-					blocks[k].writeBlocks(output);
+	            ByteArrayOutputStream output = new ByteArrayOutputStream();
+				for (BlockWritable bw : blocks) {
+					bw.writeBlocks(output);
 				}
-				byte[] data = output.toByteArray();
-
-				if (data.length > _property.getSize()) {
-					byte[] tmp = new byte[_property.getSize()];
-
-					System.arraycopy(data, 0, tmp, 0, tmp.length);
-					data = tmp;
-				}
-				output = new ByteArrayOutputStream();
-				HexDump.dump(data, 0, output, 0);
-				result = output.toString();
-			} else {
-				result = "<NO DATA>";
+				int length = Math.min(output.size(), _property.getSize());
+				result = HexDump.dump(output.toByteArray(), 0, 0, length);
 			}
 		} catch (IOException e) {
 			result = e.getMessage();
 		}
-		results[0] = result;
-		return results;
+		return new String[]{ result };
 	}
 
 	/**

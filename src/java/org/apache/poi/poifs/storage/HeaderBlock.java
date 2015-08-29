@@ -34,17 +34,12 @@ import org.apache.poi.util.IntegerField;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LongField;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.util.ShortField;
 
 /**
  * The block containing the archive header
  */
 public final class HeaderBlock implements HeaderBlockConstants {
-   private static final POILogger _logger =
-      POILogFactory.getLogger(HeaderBlock.class);
-   
 	/**
 	 * What big block size the file uses. Most files
 	 *  use 512 bytes, but a few use 4096
@@ -165,8 +160,8 @@ public final class HeaderBlock implements HeaderBlockConstants {
 
 			// Give a generic error if the OLE2 signature isn't found
 			throw new NotOLE2FileException("Invalid header signature; read "
-				                  + longToHex(signature) + ", expected "
-				                  + longToHex(_signature) + " - Your file appears "
+				                  + HexDump.longToHex(signature) + ", expected "
+				                  + HexDump.longToHex(_signature) + " - Your file appears "
 				                  + "not to be a valid OLE2 document");
 		}
 
@@ -235,10 +230,6 @@ public final class HeaderBlock implements HeaderBlockConstants {
          throw alertShortRead(bsCount, 512);
       }
       return data;
-	}
-
-	private static String longToHex(long value) {
-		return new String(HexDump.longToHex(value));
 	}
 
 	private static IOException alertShortRead(int pRead, int expectedReadSize) {

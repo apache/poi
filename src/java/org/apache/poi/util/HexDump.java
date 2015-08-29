@@ -24,6 +24,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.nio.charset.Charset;
 import java.text.DecimalFormat;
@@ -31,20 +32,12 @@ import java.text.DecimalFormat;
 import org.apache.commons.codec.CharEncoding;
 
 /**
- * dump data in hexadecimal format; derived from a HexDump utility I
- * wrote in June 2001.
- *
- * @author Marc Johnson
- * @author Glen Stampoultzis  (glens at apache.org)
+ * dump data in hexadecimal format
  */
+@Internal
 public class HexDump {
     public static final String EOL = System.getProperty("line.separator");
-    private static final Charset UTF8 = Charset.forName(CharEncoding.UTF_8);
-    private static final char _hexcodes[] = "0123456789ABCDEF".toCharArray();
-    private static final int _shifts[]   =
-    {
-        60, 56, 52, 48, 44, 40, 36, 32, 28, 24, 20, 16, 12, 8, 4, 0
-    };
+    public static final Charset UTF8 = Charset.forName(CharEncoding.UTF_8);
 
     private HexDump() {
         // all static methods, so no need for a public constructor
@@ -68,73 +61,15 @@ public class HexDump {
      *            null
      */
     public static void dump(final byte [] data, final long offset,
-                            final OutputStream stream, final int index, final int length)
-            throws IOException, ArrayIndexOutOfBoundsException,
-                    IllegalArgumentException
-    {
-        if (data.length == 0)
-        {
-            stream.write( ("No Data" + EOL).getBytes(UTF8) );
-            stream.flush();
-            return;
-        }
-        if ((index < 0) || (index >= data.length))
-        {
-            throw new ArrayIndexOutOfBoundsException(
-                "illegal index: " + index + " into array of length "
-                + data.length);
-        }
-        if (stream == null)
-        {
+        final OutputStream stream, final int index, final int length)
+    throws IOException, ArrayIndexOutOfBoundsException, IllegalArgumentException {
+        if (stream == null) {
             throw new IllegalArgumentException("cannot write to nullstream");
         }
 
-        long         display_offset = offset + index;
-        StringBuffer buffer         = new StringBuffer(74);
-
-
-        int data_length = Math.min(data.length,index+length);
-        for (int j = index; j < data_length; j += 16)
-        {
-            int chars_read = data_length - j;
-
-            if (chars_read > 16)
-            {
-                chars_read = 16;
-            }
-            buffer.append(
-                        dump(display_offset)
-                         ).append(' ');
-            for (int k = 0; k < 16; k++)
-            {
-                if (k < chars_read)
-                {
-                    buffer.append(dump(data[ k + j ]));
-                }
-                else
-                {
-                    buffer.append("  ");
-                }
-                buffer.append(' ');
-            }
-            for (int k = 0; k < chars_read; k++)
-            {
-                if ((data[ k + j ] >= ' ') && (data[ k + j ] < 127))
-                {
-                    buffer.append(( char ) data[ k + j ]);
-                }
-                else
-                {
-                    buffer.append('.');
-                }
-            }
-            buffer.append(EOL);
-            stream.write(buffer.toString().getBytes(UTF8));
-            stream.flush();
-            buffer.setLength(0);
-            display_offset += chars_read;
-        }
-
+        OutputStreamWriter osw = new OutputStreamWriter(stream, UTF8);
+        osw.write(dump(data, offset, index, length));
+        osw.flush();
     }
 
     /**
@@ -155,11 +90,9 @@ public class HexDump {
      */
 
     public synchronized static void dump(final byte [] data, final long offset,
-                            final OutputStream stream, final int index)
-        throws IOException, ArrayIndexOutOfBoundsException,
-                IllegalArgumentException
-    {
-        dump(data, offset, stream, index, data.length-index);
+            final OutputStream stream, final int index)
+    throws IOException, ArrayIndexOutOfBoundsException, IllegalArgumentException {
+        dump(data, offset, stream, index, Integer.MAX_VALUE);
     }
 
     /**
@@ -175,40 +108,57 @@ public class HexDump {
      */
 
     public static String dump(final byte [] data, final long offset, final int index) {
-        if ((index < 0) || (index > data.length))
-        {
-            throw new ArrayIndexOutOfBoundsException(
-                "illegal index: " + index + " into array of length "
-                + data.length);
+        return dump(data, offset, index, Integer.MAX_VALUE);
+    }    
+    
+    /**
+     * dump an array of bytes to a String
+     *
+     * @param data the byte array to be dumped
+     * @param offset its offset, whatever that might mean
+     * @param index initial index into the byte array
+     * @param length number of characters to output
+     *
+     * @exception ArrayIndexOutOfBoundsException if the index is
+     *            outside the data array's bounds
+     * @return output string
+     */
+
+    public static String dump(final byte [] data, final long offset, final int index, final int length) {
+        if (data == null || data.length == 0) {
+            return "No Data"+EOL;
         }
+
+        int data_length = (length == Integer.MAX_VALUE || length < 0 || index+length < 0)
+            ? data.length
+            : Math.min(data.length,index+length);
+        
+        
+        if ((index < 0) || (index >= data.length)) {
+            String err = "illegal index: "+index+" into array of length "+data.length;
+            throw new ArrayIndexOutOfBoundsException(err);
+        }
+        
         long  display_offset = offset + index;
         StringBuilder buffer = new StringBuilder(74);
-
-        for (int j = index; j <= data.length; j += 16) {
-            int chars_read = data.length - j;
+        
+        for (int j = index; j < data_length; j += 16) {
+            int chars_read = data_length - j;
 
             if (chars_read > 16) {
                 chars_read = 16;
             }
             
-            buffer.append(dump(display_offset)).append(' ');
+            buffer.append(String.format("%08X ", display_offset));
             for (int k = 0; k < 16; k++) {
-                String hexDmp = (k < chars_read) ? dump(data[ k + j ]) : "  ";
-                buffer.append(hexDmp);
-                buffer.append(' ');
+                if (k < chars_read) {
+                    buffer.append(String.format("%02X ", data[ k + j ]));
+                } else {
+                    buffer.append("   ");
+                }
             }
             for (int k = 0; k < chars_read; k++) {
-                byte dataB = data[ k + j ];
-                char charB = (char)(dataB & 0xFF);
-                switch (charB) {
-                case 127: case 128: case 129: case 141: case 142: case 143: case 144: case 157: case 158:
-                    charB = '.';
-                    break;
-                default:
-                    if (charB < ' ') charB = '.';
-                    break;
-                }
-                buffer.append(charB);
+                buffer.append(toAscii(data[ k + j ]));
             }
             buffer.append(EOL);
             display_offset += chars_read;
@@ -216,29 +166,18 @@ public class HexDump {
         return buffer.toString();
     }
 
-
-    private static String dump(final long value)
-    {
-        StringBuffer buf = new StringBuffer();
-        buf.setLength(0);
-        for (int j = 0; j < 8; j++)
-        {
-            buf.append( _hexcodes[ (( int ) (value >> _shifts[ j + _shifts.length - 8 ])) & 15 ]);
+    public static char toAscii(int dataB) {
+        char charB = (char)(dataB & 0xFF);
+        if (Character.isISOControl(charB)) return '.';
+        
+        switch (charB) {
+        case 0xFF: case 0xDD: // printable, but not compilable with current compiler encoding
+            charB = '.';
+            break;
         }
-        return buf.toString();
+        return charB;
     }
-
-    private static String dump(final byte value)
-    {
-        StringBuffer buf = new StringBuffer();
-        buf.setLength(0);
-        for (int j = 0; j < 2; j++)
-        {
-            buf.append(_hexcodes[ (value >> _shifts[ j + 6 ]) & 15 ]);
-        }
-        return buf.toString();
-    }
-
+    
     /**
      * Converts the parameter to a hex value.
      *
@@ -326,9 +265,8 @@ public class HexDump {
      * @param value     The value to convert
      * @return          The result right padded with 0
      */
-    public static String toHex(final short value)
-    {
-        return toHex(value, 4);
+    public static String toHex(final short value) {
+        return String.format("%04X", value);
     }
 
     /**
@@ -337,9 +275,8 @@ public class HexDump {
      * @param value     The value to convert
      * @return          The result right padded with 0
      */
-    public static String toHex(final byte value)
-    {
-        return toHex(value, 2);
+    public static String toHex(final byte value) {
+        return String.format("%02X", value);
     }
 
     /**
@@ -348,9 +285,8 @@ public class HexDump {
      * @param value     The value to convert
      * @return          The result right padded with 0
      */
-    public static String toHex(final int value)
-    {
-        return toHex(value, 8);
+    public static String toHex(final int value) {
+        return String.format("%08X", value);
     }
 
     /**
@@ -359,20 +295,8 @@ public class HexDump {
      * @param value     The value to convert
      * @return          The result right padded with 0
      */
-    public static String toHex(final long value)
-    {
-        return toHex(value, 16);
-    }
-
-
-    private static String toHex(final long value, final int digits)
-    {
-        StringBuffer result = new StringBuffer(digits);
-        for (int j = 0; j < digits; j++)
-        {
-            result.append( _hexcodes[ (int) ((value >> _shifts[ j + (16 - digits) ]) & 15)]);
-        }
-        return result.toString();
+    public static String toHex(final long value) {
+        return String.format("%016X", value);
     }
 
     /**
@@ -411,49 +335,33 @@ public class HexDump {
         byte[] data = buf.toByteArray();
         dump(data, 0, out, start, data.length);
     }
-    /**
-     * @return char array of uppercase hex chars, zero padded and prefixed with '0x'
-     */
-    private static char[] toHexChars(long pValue, int nBytes) {
-        int charPos = 2 + nBytes*2;
-        // The return type is char array because most callers will probably append the value to a
-        // StringBuffer, or write it to a Stream / Writer so there is no need to create a String;
-        char[] result = new char[charPos];
 
-        long value = pValue;
-        do {
-            result[--charPos] = _hexcodes[(int) (value & 0x0F)];
-            value >>>= 4;
-        } while (charPos > 1);
-
-        // Prefix added to avoid ambiguity
-        result[0] = '0';
-        result[1] = 'x';
-        return result;
-    }
     /**
-     * @return char array of 4 (zero padded) uppercase hex chars and prefixed with '0x'
+     * @return string of 16 (zero padded) uppercase hex chars and prefixed with '0x'
      */
-    public static char[] longToHex(long value) {
-        return toHexChars(value, 8);
+    public static String longToHex(long value) {
+        return String.format("0x%016X", value);
     }
+    
     /**
-     * @return char array of 4 (zero padded) uppercase hex chars and prefixed with '0x'
+     * @return string of 8 (zero padded) uppercase hex chars and prefixed with '0x'
      */
-    public static char[] intToHex(int value) {
-        return toHexChars(value, 4);
+    public static String intToHex(int value) {
+        return String.format("0x%08X", value & 0xFFFFFFFF);
     }
+    
     /**
-     * @return char array of 2 (zero padded) uppercase hex chars and prefixed with '0x'
+     * @return string of 4 (zero padded) uppercase hex chars and prefixed with '0x'
      */
-    public static char[] shortToHex(int value) {
-        return toHexChars(value, 2);
+    public static String shortToHex(int value) {
+        return String.format("0x%04X", value & 0xFFFF);
     }
+    
     /**
-     * @return char array of 1 (zero padded) uppercase hex chars and prefixed with '0x'
+     * @return string of 2 (zero padded) uppercase hex chars and prefixed with '0x'
      */
-    public static char[] byteToHex(int value) {
-        return toHexChars(value, 1);
+    public static String byteToHex(int value) {
+        return String.format("0x%02X", value & 0xFF);
     }
 
     public static void main(String[] args) throws Exception {

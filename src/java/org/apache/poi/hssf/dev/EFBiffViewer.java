@@ -25,6 +25,7 @@ import org.apache.poi.hssf.eventusermodel.HSSFEventFactory;
 import org.apache.poi.hssf.eventusermodel.HSSFListener;
 import org.apache.poi.hssf.eventusermodel.HSSFRequest;
 import org.apache.poi.hssf.record.Record;
+import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 
 /**
  *
@@ -42,7 +43,8 @@ public class EFBiffViewer
     }
 
     public void run() throws IOException {
-        InputStream     din   = BiffViewer.getPOIFSInputStream(new File(file));
+        NPOIFSFileSystem fs   = new NPOIFSFileSystem(new File(file), true);
+        InputStream     din   = BiffViewer.getPOIFSInputStream(fs);
         HSSFRequest     req   = new HSSFRequest();
 
         req.addListenerForAllRecords(new HSSFListener()
@@ -55,6 +57,8 @@ public class EFBiffViewer
         HSSFEventFactory factory = new HSSFEventFactory();
 
         factory.processEvents(req, din);
+        din.close();
+        fs.close();
     }
 
     public void setFile(String file)

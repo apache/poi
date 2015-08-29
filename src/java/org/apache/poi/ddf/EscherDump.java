@@ -777,6 +777,10 @@ public final class EscherDump {
      * A simple test stub.
      */
     public static void main( String[] args ) {
+        main(args, System.out);
+    }
+    
+    public static void main( String[] args, PrintStream out ) {
         String dump =
                 "0F 00 00 F0 89 07 00 00 00 00 06 F0 18 00 00 00 " +
                 "05 04 00 00 02 00 00 00 05 00 00 00 01 00 00 00 " +
@@ -907,7 +911,7 @@ public final class EscherDump {
         EscherDump dumper = new EscherDump();
         // Dump the contents of scher to screen.
 //        dumper.dumpOld( bytes.length, new ByteArrayInputStream( bytes ), System.out );
-        dumper.dump(bytes, 0, bytes.length, System.out);
+        dumper.dump(bytes, 0, bytes.length, out);
 
     }
 

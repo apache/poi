@@ -20,8 +20,6 @@ package org.apache.poi.ddf;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
 
-import java.io.ByteArrayOutputStream;
-
 /**
  * The escher client anchor specifies which rows and cells the shape is bound to as well as
  * the offsets within those cells.  Each cell is 1024 units wide by 256 units long regardless
@@ -138,18 +136,7 @@ public class EscherClientAnchorRecord
     public String toString()
     {
         String nl = System.getProperty("line.separator");
-
-        String extraData;
-        ByteArrayOutputStream b = new ByteArrayOutputStream();
-        try
-        {
-            HexDump.dump(this.remainingData, 0, b, 0);
-            extraData = b.toString();
-        }
-        catch ( Exception e )
-        {
-            extraData = "error\n";
-        }
+        String extraData = HexDump.dump(this.remainingData, 0, 0);
         return getClass().getName() + ":" + nl +
                 "  RecordId: 0x" + HexDump.toHex(RECORD_ID) + nl +
                 "  Version: 0x" + HexDump.toHex(getVersion()) + nl +
@@ -169,20 +156,7 @@ public class EscherClientAnchorRecord
 
     @Override
     public String toXml(String tab) {
-        String extraData;
-        ByteArrayOutputStream b = new ByteArrayOutputStream();
-        try
-        {
-            HexDump.dump(this.remainingData, 0, b, 0);
-            extraData = b.toString();
-        }
-        catch ( Exception e )
-        {
-            extraData = "error\n";
-        }
-        if (extraData.contains("No Data")){
-            extraData = "No Data";
-        }
+        String extraData = HexDump.dump(this.remainingData, 0, 0).trim();
         StringBuilder builder = new StringBuilder();
         builder.append(tab).append(formatXmlRecordHeader(getClass().getSimpleName(), HexDump.toHex(getRecordId()), HexDump.toHex(getVersion()), HexDump.toHex(getInstance())))
                 .append(tab).append("\t").append("<Flag>").append(field_1_flag).append("</Flag>\n")

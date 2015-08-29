@@ -124,16 +124,16 @@ public final class HyperlinkRecord extends StandardRecord {
 			StringBuilder sb = new StringBuilder(36);
 
 			int PREFIX_LEN = "0x".length();
-			sb.append(HexDump.intToHex(_d1), PREFIX_LEN, 8);
+			sb.append(HexDump.intToHex(_d1).substring(PREFIX_LEN));
 			sb.append("-");
-			sb.append(HexDump.shortToHex(_d2), PREFIX_LEN, 4);
+			sb.append(HexDump.shortToHex(_d2).substring(PREFIX_LEN));
 			sb.append("-");
-			sb.append(HexDump.shortToHex(_d3), PREFIX_LEN, 4);
+			sb.append(HexDump.shortToHex(_d3).substring(PREFIX_LEN));
 			sb.append("-");
-			char[] d4Chars = HexDump.longToHex(getD4());
-			sb.append(d4Chars, PREFIX_LEN, 4);
+			String d4Chars = HexDump.longToHex(getD4());
+			sb.append(d4Chars.substring(PREFIX_LEN, PREFIX_LEN+4));
 			sb.append("-");
-			sb.append(d4Chars, PREFIX_LEN + 4, 12);
+			sb.append(d4Chars.substring(PREFIX_LEN+4));
 			return sb.toString();
 		}
 
@@ -643,14 +643,14 @@ public final class HyperlinkRecord extends StandardRecord {
     private static byte[] readTail(byte[] expectedTail, LittleEndianInput in) {
     	byte[] result = new byte[TAIL_SIZE];
     	in.readFully(result);
-    	if (false) { // Quite a few examples in the unit tests which don't have the exact expected tail
-            for (int i = 0; i < expectedTail.length; i++) {
-                if (expectedTail[i] != result[i]) {
-                	logger.log( POILogger.ERROR, "Mismatch in tail byte [" + i + "]"
-                    		+ "expected " + (expectedTail[i] & 0xFF) + " but got " + (result[i] & 0xFF));
-                }
-            }
-    	}
+//    	if (false) { // Quite a few examples in the unit tests which don't have the exact expected tail
+//            for (int i = 0; i < expectedTail.length; i++) {
+//                if (expectedTail[i] != result[i]) {
+//                	logger.log( POILogger.ERROR, "Mismatch in tail byte [" + i + "]"
+//                    		+ "expected " + (expectedTail[i] & 0xFF) + " but got " + (result[i] & 0xFF));
+//                }
+//            }
+//    	}
         return result;
     }
     private static void writeTail(byte[] tail, LittleEndianOutput out) {

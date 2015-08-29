@@ -25,6 +25,7 @@ import org.apache.poi.hssf.record.ContinueRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RecordFactory;
 import org.apache.poi.hssf.record.RecordInputStream;
+import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 
 /**
  * This is a low-level debugging class, which simply prints
@@ -49,7 +50,8 @@ public class RecordLister
     public void run()
         throws IOException
     {
-        InputStream       din   = BiffViewer.getPOIFSInputStream(new File(file));
+        NPOIFSFileSystem  fs    = new NPOIFSFileSystem(new File(file), true);
+        InputStream       din   = BiffViewer.getPOIFSInputStream(fs);
         RecordInputStream rinp  = new RecordInputStream(din);
 
         while(rinp.hasNextRecord()) {
@@ -77,6 +79,9 @@ public class RecordLister
               System.out.println( formatData(data) );
            }
         }
+        
+        din.close();
+        fs.close();
     }
     
     private static String formatSID(int sid) {
