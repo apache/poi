@@ -17,6 +17,8 @@
 
 package org.apache.poi.sl.usermodel;
 
+import java.util.Locale;
+
 public enum AutoNumberingScheme {
     /** Lowercase alphabetic character enclosed in parentheses. Example: (a), (b), (c), ... */
     alphaLcParenBoth(0x0008, 1),
@@ -177,7 +179,7 @@ public enum AutoNumberingScheme {
     }
 
     private String formatSeperator(String cased) {
-        String name = name().toLowerCase();
+        String name = name().toLowerCase(Locale.ROOT);
         if (name.contains("plain")) return cased;
         if (name.contains("parenright")) return cased+")";
         if (name.contains("parenboth")) return "("+cased+")";
@@ -187,9 +189,9 @@ public enum AutoNumberingScheme {
     }
 
     private String formatCase(String index) {
-        String name = name().toLowerCase();
-        if (name.contains("lc")) return index.toLowerCase();
-        if (name.contains("uc")) return index.toUpperCase();
+        String name = name().toLowerCase(Locale.ROOT);
+        if (name.contains("lc")) return index.toLowerCase(Locale.ROOT);
+        if (name.contains("uc")) return index.toUpperCase(Locale.ROOT);
         return index;
     }
 
@@ -203,7 +205,7 @@ public enum AutoNumberingScheme {
             "\u2776\u2777\u2778\u2779\u277A\u277B\u277C\u277D\u277E";
 
     private String formatIndex(int value) {
-        String name = name().toLowerCase();
+        String name = name().toLowerCase(Locale.ROOT);
         if (name.startsWith("roman")) {
             return formatRomanIndex(value);
         } else if (name.startsWith("arabic") && !name.contains("db")) {
