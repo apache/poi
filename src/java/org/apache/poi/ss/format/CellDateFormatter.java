@@ -24,14 +24,19 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Formatter;
 import java.util.Locale;
+import java.util.TimeZone;
 import java.util.regex.Matcher;
 
 /**
  * Formats a date value.
- *
- * @author Ken Arnold, Industrious Media LLC
  */
 public class CellDateFormatter extends CellFormatter {
+    /**
+     * Excel doesn't store TimeZone information in the file, so if in doubt,
+     *  use UTC to perform calculations
+     */
+    private static final TimeZone DEFAULT_TIMEZONE = TimeZone.getTimeZone("UTC");
+    
     private boolean amPmUpper;
     private boolean showM;
     private boolean showAmPm;
@@ -45,7 +50,7 @@ public class CellDateFormatter extends CellFormatter {
             "mm/d/y");
 
     static {
-        Calendar c = Calendar.getInstance();
+        Calendar c = Calendar.getInstance(DEFAULT_TIMEZONE, Locale.ROOT);
         c.set(1904, 0, 1, 0, 0, 0);
         EXCEL_EPOCH_DATE = c.getTime();
         EXCEL_EPOCH_TIME = c.getTimeInMillis();
@@ -183,7 +188,7 @@ public class CellDateFormatter extends CellFormatter {
                 if (!doneMillis) {
                     Date dateObj = (Date) value;
                     int pos = toAppendTo.length();
-                    Formatter formatter = new Formatter(toAppendTo);
+                    Formatter formatter = new Formatter(toAppendTo, Locale.ROOT);
                     try {
                         long msecs = dateObj.getTime() % 1000;
                         formatter.format(LOCALE, sFmt, msecs / 1000.0);
