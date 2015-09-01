@@ -19,6 +19,7 @@ package org.apache.poi.ss.formula.functions;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Locale;
+import java.util.TimeZone;
 
 import org.apache.poi.ss.formula.eval.EvaluationException;
 import org.apache.poi.ss.formula.eval.NumberEval;
@@ -31,10 +32,13 @@ import org.apache.poi.ss.usermodel.DateUtil;
  * (twelve 30-day months), which is used in some accounting calculations. Use
  * this function to help compute payments if your accounting system is based on
  * twelve 30-day months.
- *
- * @author PUdalau
  */
 public class Days360 extends Var2or3ArgFunction {
+    /**
+     * Excel doesn't store TimeZone information in the file, so if in doubt,
+     *  use UTC to perform calculations
+     */
+    private static final TimeZone DEFAULT_TIMEZONE = TimeZone.getTimeZone("UTC");
 
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1) {
         double result;
@@ -73,7 +77,7 @@ public class Days360 extends Var2or3ArgFunction {
     }
 
     private static Calendar getDate(double date) {
-        Calendar processedDate = new GregorianCalendar(Locale.ROOT);
+        Calendar processedDate = new GregorianCalendar(DEFAULT_TIMEZONE, Locale.ROOT);
         processedDate.setTime(DateUtil.getJavaDate(date, false));
         return processedDate;
     }

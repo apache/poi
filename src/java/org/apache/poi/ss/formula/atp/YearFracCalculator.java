@@ -19,6 +19,7 @@ package org.apache.poi.ss.formula.atp;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.Locale;
 import java.util.TimeZone;
 
 import org.apache.poi.ss.formula.eval.ErrorEval;
@@ -316,7 +317,7 @@ final class YearFracCalculator {
 	}
 
 	private static SimpleDate createDate(int dayCount) {
-		GregorianCalendar calendar = new GregorianCalendar(UTC_TIME_ZONE);
+		GregorianCalendar calendar = new GregorianCalendar(UTC_TIME_ZONE, Locale.ROOT);
 		DateUtil.setCalendar(calendar, dayCount, 0, false, false);
 		return new SimpleDate(calendar);
 	}

@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -432,8 +433,10 @@ public final class RecordFactory {
             Integer key = Integer.valueOf(sid);
             if (result.containsKey(key)) {
                 Class<?> prevClass = result.get(key).getRecordClass();
-                throw new RuntimeException("duplicate record sid 0x" + Integer.toHexString(sid).toUpperCase()
-                        + " for classes (" + recClass.getName() + ") and (" + prevClass.getName() + ")");
+                throw new RuntimeException("duplicate record sid 0x" + 
+                        Integer.toHexString(sid).toUpperCase(Locale.ROOT)
+                        + " for classes (" + recClass.getName() + ") and ("
+                        + prevClass.getName() + ")");
             }
             result.put(key, getRecordCreator(recClass));
         }

@@ -17,6 +17,8 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import java.util.Locale;
+
 import org.apache.poi.hssf.record.PaletteRecord;
 import org.apache.poi.hssf.util.HSSFColor;
 
@@ -234,7 +236,7 @@ public final class HSSFPalette {
             {
                 int c = color & 0xff; //as unsigned
                 c = (c << 8) | c; //pad to 16-bit
-                s = Integer.toHexString(c).toUpperCase();
+                s = Integer.toHexString(c).toUpperCase(Locale.ROOT);
                 while (s.length() < 4)
                 {
                     s = "0" + s;

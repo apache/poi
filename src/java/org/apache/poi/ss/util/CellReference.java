@@ -173,7 +173,7 @@ public class CellReference {
      */
     public static int convertColStringToIndex(String ref) {
         int retval=0;
-        char[] refs = ref.toUpperCase().toCharArray();
+        char[] refs = ref.toUpperCase(Locale.ROOT).toCharArray();
         for (int k=0; k<refs.length; k++) {
             char thechar = refs[k];
             if (thechar == ABSOLUTE_REFERENCE_MARKER) {
@@ -311,7 +311,7 @@ public class CellReference {
             return false; // that was easy
         }
         if(numberOfLetters == lastColLength) {
-            if(colStr.toUpperCase().compareTo(lastCol) > 0) {
+            if(colStr.toUpperCase(Locale.ROOT).compareTo(lastCol) > 0) {
                 return false;
             }
         } else {
@@ -379,7 +379,7 @@ public class CellReference {
             }
         }
 
-        col = reference.substring(start,loc).toUpperCase();
+        col = reference.substring(start,loc).toUpperCase(Locale.ROOT);
         row = reference.substring(loc);
         CellRefParts cellRefParts = new CellRefParts(sheetName, row, col);
         return cellRefParts;
