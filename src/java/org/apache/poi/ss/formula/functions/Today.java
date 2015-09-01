@@ -19,6 +19,7 @@ package org.apache.poi.ss.formula.functions;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.Locale;
 
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
@@ -33,7 +34,7 @@ public final class Today extends Fixed0ArgFunction {
 
 	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex) {
 
-		Calendar now = new GregorianCalendar();
+		Calendar now = new GregorianCalendar(Locale.ROOT);
 		now.set(now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DATE),0,0,0);
 		now.set(Calendar.MILLISECOND, 0);
 		return new NumberEval(DateUtil.getExcelDate(now.getTime()));

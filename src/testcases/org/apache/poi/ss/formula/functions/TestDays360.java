@@ -20,6 +20,7 @@ package org.apache.poi.ss.formula.functions;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Locale;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
@@ -44,13 +45,13 @@ public final class TestDays360 extends TestCase {
 		return cal.getTime();
 	}
 	private static Date decrementDay(Date d) {
-		Calendar c = new GregorianCalendar();
+		Calendar c = new GregorianCalendar(Locale.ROOT);
 		c.setTimeInMillis(d.getTime());
 		c.add(Calendar.DAY_OF_MONTH, -1);
 		return c.getTime();
 	}
 	private static String fmt(Date d) {
-		Calendar c = new GregorianCalendar();
+		Calendar c = new GregorianCalendar(Locale.ROOT);
 		c.setTimeInMillis(d.getTime());
 		StringBuilder sb = new StringBuilder();
 		sb.append(c.get(Calendar.YEAR));

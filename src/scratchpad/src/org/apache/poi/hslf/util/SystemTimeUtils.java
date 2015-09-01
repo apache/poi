@@ -20,6 +20,7 @@ package org.apache.poi.hslf.util;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Locale;
 
 import org.apache.poi.util.LittleEndian;
 
@@ -47,7 +48,7 @@ public final class SystemTimeUtils {
 	 * Get the date found in the byte array, as a java Data object
 	 */
 	public static Date getDate(byte[] data, int offset) {
-        Calendar cal = new GregorianCalendar();
+        Calendar cal = new GregorianCalendar(Locale.ROOT);
 
         cal.set(Calendar.YEAR,         LittleEndian.getShort(data,offset));
         cal.set(Calendar.MONTH,        LittleEndian.getShort(data,offset+2)-1);

@@ -25,6 +25,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Locale;
 import java.util.TimeZone;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
@@ -461,7 +462,7 @@ public final class TestHSSFDateUtil {
      * @param day one based
      */
     private static Date createDate(int year, int month, int day, int hour, int minute, int second) {
-        Calendar c = new GregorianCalendar();
+        Calendar c = new GregorianCalendar(Locale.ROOT);
         c.set(year, month, day, hour, minute, second);
         c.set(Calendar.MILLISECOND, 0);
         return c.getTime();

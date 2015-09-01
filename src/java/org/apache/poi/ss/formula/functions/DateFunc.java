@@ -19,6 +19,7 @@ package org.apache.poi.ss.formula.functions;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.Locale;
 
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.EvaluationException;
@@ -86,7 +87,7 @@ public final class DateFunc extends Fixed3ArgFunction {
 		}
 
 		// Turn this into a Java date
-		Calendar c = new GregorianCalendar();
+		Calendar c = new GregorianCalendar(Locale.ROOT);
 		c.set(year, month, day, 0, 0, 0);
 		c.set(Calendar.MILLISECOND, 0);
 		
