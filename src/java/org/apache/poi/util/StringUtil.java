@@ -31,15 +31,12 @@ import org.apache.poi.hssf.record.RecordInputStream;
  *
  * Note - none of the methods in this class deals with {@link org.apache.poi.hssf.record.ContinueRecord}s.
  * For such functionality, consider using {@link RecordInputStream}
- * 
- *
- *@author     Andrew C. Oliver
- *@author     Sergei Kozello (sergeikozello at mail.ru)
- *@author     Toshiaki Kamoshida (kamoshida.toshiaki at future dot co dot jp)
  */
 public class StringUtil {
-	private static final Charset ISO_8859_1 = Charset.forName("ISO-8859-1");
-	private static final Charset UTF16LE = Charset.forName("UTF-16LE");
+	protected static final Charset ISO_8859_1 = Charset.forName("ISO-8859-1");
+	protected static final Charset UTF16LE = Charset.forName("UTF-16LE");
+	public static final Charset UTF8 = Charset.forName("UTF-8");
+	
     private static Map<Integer,Integer> msCodepointToUnicode;
 
 	private StringUtil() {
