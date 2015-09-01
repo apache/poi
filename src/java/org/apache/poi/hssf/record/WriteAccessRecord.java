@@ -31,8 +31,6 @@ import org.apache.poi.util.StringUtil;
  * <p/>
  * REFERENCE: PG 424 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)
  * <p/>
- * 
- * @author Andrew C. Oliver (acoliver at apache dot org)
  */
 public final class WriteAccessRecord extends StandardRecord {
 	public final static short sid = 0x005C;
@@ -68,7 +66,7 @@ public final class WriteAccessRecord extends StandardRecord {
 			LittleEndian.putUShort(data, 0, nChars);
 			LittleEndian.putByte(data, 2, is16BitFlag);
 			in.readFully(data, 3, data.length-3);
-			String rawValue = new String(data);
+			String rawValue = new String(data, StringUtil.UTF8);
 			setUsername(rawValue.trim());
 			return;
 		}

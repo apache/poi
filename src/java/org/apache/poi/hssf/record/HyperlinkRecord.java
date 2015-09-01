@@ -35,9 +35,6 @@ import org.apache.poi.util.StringUtil;
  * The <code>HyperlinkRecord</code> (0x01B8) wraps an HLINK-record
  *  from the Excel-97 format.
  * Supports only external links for now (eg http://)
- *
- * @author      Mark Hissink Muller <a href="mailto:mark@hissinkmuller.nl >mark&064;hissinkmuller.nl</a>
- * @author      Yegor Kozlov (yegor at apache dot org)
  */
 public final class HyperlinkRecord extends StandardRecord {
     public final static short sid = 0x01B8;
@@ -521,7 +518,7 @@ public final class HyperlinkRecord extends StandardRecord {
                 byte[] path_bytes = new byte[len];
                 in.readFully(path_bytes);
 
-                _address = new String(path_bytes);
+                _address = new String(path_bytes, StringUtil.UTF8);
             }
         }
 
