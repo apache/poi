@@ -18,10 +18,11 @@
 package org.apache.poi.hssf.usermodel;
 
 import java.io.IOException;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-
-import junit.framework.AssertionFailedError;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.hssf.HSSFTestDataSamples;
@@ -37,6 +38,8 @@ import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+
+import junit.framework.AssertionFailedError;
 
 /**
  * Tests various functionality having to do with {@link HSSFCell}.  For instance support for
@@ -57,7 +60,9 @@ public final class TestHSSFCell extends BaseTestCell {
 	 *  but there's a separate unit test for that.
 	 */
 	public void testDateWindowingRead() {
-		GregorianCalendar cal = new GregorianCalendar(2000,0,1); // Jan. 1, 2000
+	    Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.ROOT);
+	    cal.set(2000, 0, 1, 0, 0, 0); // Jan. 1, 2000
+	    cal.clear(Calendar.MILLISECOND);
 		Date date = cal.getTime();
 
 		// first check a file with 1900 Date Windowing

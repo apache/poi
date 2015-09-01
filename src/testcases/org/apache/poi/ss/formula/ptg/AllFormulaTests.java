@@ -22,40 +22,34 @@ import org.apache.poi.ss.formula.TestSheetNameFormatter;
 import org.apache.poi.ss.formula.eval.AllFormulaEvalTests;
 import org.apache.poi.ss.formula.function.AllFormulaFunctionTests;
 import org.apache.poi.ss.formula.functions.AllIndividualFunctionEvaluationTests;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
 /**
  * Collects all tests for <tt>org.apache.poi.hssf.record.formula</tt>.
- * 
- * @author Josh Micich
  */
-public final class AllFormulaTests {
-	
-	public static Test suite() {
-		TestSuite result = new TestSuite(AllFormulaTests.class.getName());
-		result.addTest(AllFormulaEvalTests.suite());
-		result.addTest(AllFormulaFunctionTests.suite());
-		result.addTest(AllIndividualFunctionEvaluationTests.suite());
-
-		result.addTestSuite(TestArea3DPtg.class);
-		result.addTestSuite(TestAreaErrPtg.class);
-		result.addTestSuite(TestAreaPtg.class);
-		result.addTestSuite(TestArrayPtg.class);
-		result.addTestSuite(TestAttrPtg.class);
-		result.addTestSuite(TestErrPtg.class);
-		result.addTestSuite(TestExternalFunctionFormulas.class);
-		result.addTestSuite(TestFormulaShifter.class);
-		result.addTestSuite(TestFuncPtg.class);
-		result.addTestSuite(TestFuncVarPtg.class);
-		result.addTestSuite(TestIntersectionPtg.class);
-		result.addTestSuite(TestPercentPtg.class);
-		result.addTestSuite(TestRangePtg.class);
-		result.addTestSuite(TestRef3DPtg.class);
-		result.addTestSuite(TestReferencePtg.class);
-		result.addTestSuite(TestSheetNameFormatter.class);
-		result.addTestSuite(TestUnionPtg.class);
-		return result;
-	}
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+    AllFormulaEvalTests.class,
+    AllFormulaFunctionTests.class,
+    AllIndividualFunctionEvaluationTests.class,
+    TestArea3DPtg.class,
+    TestAreaErrPtg.class,
+    TestAreaPtg.class,
+    TestArrayPtg.class,
+    TestAttrPtg.class,
+    TestErrPtg.class,
+    TestExternalFunctionFormulas.class,
+    TestFormulaShifter.class,
+    TestFuncPtg.class,
+    TestFuncVarPtg.class,
+    TestIntersectionPtg.class,
+    TestPercentPtg.class,
+    TestRangePtg.class,
+    TestRef3DPtg.class,
+    TestReferencePtg.class,
+    TestSheetNameFormatter.class,
+    TestUnionPtg.class,    
+})
+public class AllFormulaTests {
 }

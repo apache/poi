@@ -17,51 +17,47 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
 /**
  * Direct tests for all implementors of <code>Function</code>.
- *
- * @author Josh Micich
  */
-public final class AllIndividualFunctionEvaluationTests {
-
-	public static Test suite() {
-		TestSuite result = new TestSuite(AllIndividualFunctionEvaluationTests.class.getName());
-		result.addTestSuite(TestAverage.class);
-		result.addTestSuite(TestCountFuncs.class);
-		result.addTestSuite(TestDate.class);
-		result.addTestSuite(TestDays360.class);
-		result.addTestSuite(TestFinanceLib.class);
-		result.addTestSuite(TestFind.class);
-		result.addTestSuite(TestIndex.class);
-		result.addTestSuite(TestIndexFunctionFromSpreadsheet.class);
-		result.addTestSuite(TestIndirect.class);
-		result.addTestSuite(TestIsBlank.class);
-		result.addTestSuite(TestLen.class);
-		result.addTestSuite(TestLookupFunctionsFromSpreadsheet.class);
-		result.addTestSuite(TestMatch.class);
-		result.addTestSuite(TestMathX.class);
-		result.addTestSuite(TestMid.class);
-		result.addTestSuite(TestNper.class);
-		result.addTestSuite(TestOffset.class);
-		result.addTestSuite(TestPmt.class);
-		result.addTestSuite(TestRoundFuncs.class);
-		result.addTestSuite(TestRowCol.class);
-		result.addTestSuite(TestStatsLib.class);
-		result.addTestSuite(TestSubtotal.class);
-		result.addTestSuite(TestSumif.class);
-		result.addTestSuite(TestSumproduct.class);
-		result.addTestSuite(TestText.class);
-		result.addTestSuite(TestTFunc.class);
-		result.addTestSuite(TestTime.class);
-		result.addTestSuite(TestTrim.class);
-		result.addTestSuite(TestTrunc.class);
-		result.addTestSuite(TestValue.class);
-		result.addTestSuite(TestXYNumericFunction.class);
-		result.addTestSuite(TestAddress.class);
-		result.addTestSuite(TestClean.class);
-		return result;
-	}
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+    TestAverage.class,
+    TestCountFuncs.class,
+    TestDate.class,
+    TestDays360.class,
+    TestFinanceLib.class,
+    TestFind.class,
+    TestIndex.class,
+    TestIndexFunctionFromSpreadsheet.class,
+    TestIndirect.class,
+    TestIsBlank.class,
+    TestLen.class,
+    TestLookupFunctionsFromSpreadsheet.class,
+    TestMatch.class,
+    TestMathX.class,
+    TestMid.class,
+    TestNper.class,
+    TestOffset.class,
+    TestPmt.class,
+    TestRoundFuncs.class,
+    TestRowCol.class,
+    TestStatsLib.class,
+    TestSubtotal.class,
+    TestSumif.class,
+    TestSumproduct.class,
+    TestText.class,
+    TestTFunc.class,
+    TestTime.class,
+    TestTrim.class,
+    TestTrunc.class,
+    TestValue.class,
+    TestXYNumericFunction.class,
+    TestAddress.class,
+    TestClean.class
+})
+public class AllIndividualFunctionEvaluationTests {
 }

@@ -39,6 +39,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.TimeZone;
 
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.hssf.HSSFITestDataProvider;
@@ -68,6 +69,7 @@ import org.apache.poi.ss.usermodel.BaseTestBugzillaIssues;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.usermodel.Row;
@@ -1730,8 +1732,8 @@ public final class TestBugs extends BaseTestBugzillaIssues {
      */
     @Test
     public void bug46664() throws Exception {
-       HSSFWorkbook wb = new HSSFWorkbook();
-       HSSFSheet sheet = wb.createSheet("new_sheet");
+       HSSFWorkbook wb1 = new HSSFWorkbook();
+       HSSFSheet sheet = wb1.createSheet("new_sheet");
        HSSFRow row = sheet.createRow((short)0);
        row.createCell(0).setCellValue(new HSSFRichTextString("Column A"));
        row.createCell(1).setCellValue(new HSSFRichTextString("Column B"));
@@ -1741,7 +1743,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
        row.createCell(5).setCellValue(new HSSFRichTextString("Column F"));
 
        //set print area from column a to column c (on first row)
-       wb.setPrintArea(
+       wb1.setPrintArea(
                0, //sheet index
                0, //start column
                2, //end column
@@ -1749,11 +1751,12 @@ public final class TestBugs extends BaseTestBugzillaIssues {
                0  //end row
        );
 
-       wb = writeOutAndReadBack(wb);
+       HSSFWorkbook wb2 = writeOutAndReadBack(wb1);
+       wb1.close();
 
        // Ensure the tab index
        TabIdRecord tr = null;
-       for(Record r : wb.getWorkbook().getRecords()) {
+       for(Record r : wb2.getWorkbook().getRecords()) {
           if(r instanceof TabIdRecord) {
              tr = (TabIdRecord)r;
           }
@@ -1763,20 +1766,21 @@ public final class TestBugs extends BaseTestBugzillaIssues {
        assertEquals(0, tr._tabids[0]);
 
        // Ensure the print setup
-       assertEquals("new_sheet!$A$1:$C$1", wb.getPrintArea(0));
-       assertEquals("new_sheet!$A$1:$C$1", wb.getName("Print_Area").getRefersToFormula());
+       assertEquals("new_sheet!$A$1:$C$1", wb2.getPrintArea(0));
+       assertEquals("new_sheet!$A$1:$C$1", wb2.getName("Print_Area").getRefersToFormula());
 
        // Needs reference not value
-       NameRecord nr = wb.getWorkbook().getNameRecord(
-             wb.getNameIndex("Print_Area")
+       NameRecord nr = wb2.getWorkbook().getNameRecord(
+               wb2.getNameIndex("Print_Area")
        );
        assertEquals("Print_Area", nr.getNameText());
        assertEquals(1, nr.getNameDefinition().length);
        assertEquals(
              "new_sheet!$A$1:$C$1",
-             ((Area3DPtg)nr.getNameDefinition()[0]).toFormulaString(HSSFEvaluationWorkbook.create(wb))
+             ((Area3DPtg)nr.getNameDefinition()[0]).toFormulaString(HSSFEvaluationWorkbook.create(wb2))
        );
        assertEquals('R', nr.getNameDefinition()[0].getRVAType());
+       wb2.close();
     }
 
     /**
@@ -1932,14 +1936,14 @@ public final class TestBugs extends BaseTestBugzillaIssues {
      */
     @Test
     public void bug49689() throws Exception {
-       HSSFWorkbook wb = new HSSFWorkbook();
-       HSSFSheet s = wb.createSheet("Test");
+       HSSFWorkbook wb1 = new HSSFWorkbook();
+       HSSFSheet s = wb1.createSheet("Test");
        HSSFRow r = s.createRow(0);
        HSSFCell c = r.createCell(0);
 
-       HSSFCellStyle cs1 = wb.createCellStyle();
-       HSSFCellStyle cs2 = wb.createCellStyle();
-       HSSFCellStyle cs3 = wb.createCellStyle();
+       HSSFCellStyle cs1 = wb1.createCellStyle();
+       HSSFCellStyle cs2 = wb1.createCellStyle();
+       HSSFCellStyle cs3 = wb1.createCellStyle();
 
        assertEquals(21, cs1.getIndex());
        cs1.setUserStyleName("Testing");
@@ -1954,12 +1958,14 @@ public final class TestBugs extends BaseTestBugzillaIssues {
        c.setCellStyle(cs1);
 
        // Write out and read back
-       wb = writeOutAndReadBack(wb);
+       HSSFWorkbook wb2 = writeOutAndReadBack(wb1);
 
        // Re-check
-       assertEquals("Testing", wb.getCellStyleAt((short)21).getUserStyleName());
-       assertEquals("Testing 2", wb.getCellStyleAt((short)22).getUserStyleName());
-       assertEquals("Testing 3", wb.getCellStyleAt((short)23).getUserStyleName());
+       assertEquals("Testing", wb2.getCellStyleAt((short)21).getUserStyleName());
+       assertEquals("Testing 2", wb2.getCellStyleAt((short)22).getUserStyleName());
+       assertEquals("Testing 3", wb2.getCellStyleAt((short)23).getUserStyleName());
+       
+       wb2.close();
     }
 
     @Test
@@ -2187,51 +2193,59 @@ public final class TestBugs extends BaseTestBugzillaIssues {
 
     @Test
     public void bug48968() throws Exception {
-       HSSFWorkbook wb = openSample("48968.xls");
-       assertEquals(1, wb.getNumberOfSheets());
-
-       DataFormatter fmt = new DataFormatter();
-
-       // Check the dates
-       HSSFSheet s = wb.getSheetAt(0);
-       Cell cell_d20110325 = s.getRow(0).getCell(0);
-       Cell cell_d19000102 = s.getRow(11).getCell(0);
-       Cell cell_d19000100 = s.getRow(21).getCell(0);
-       assertEquals(s.getRow(0).getCell(3).getStringCellValue(), fmt.formatCellValue(cell_d20110325));
-       assertEquals(s.getRow(11).getCell(3).getStringCellValue(), fmt.formatCellValue(cell_d19000102));
-       // There is no such thing as 00/01/1900...
-       assertEquals("00/01/1900 06:14:24", s.getRow(21).getCell(3).getStringCellValue());
-       assertEquals("31/12/1899 06:14:24", fmt.formatCellValue(cell_d19000100));
-
-       // Check the cached values
-       assertEquals("HOUR(A1)",   s.getRow(5).getCell(0).getCellFormula());
-       assertEquals(11.0,         s.getRow(5).getCell(0).getNumericCellValue(), 0);
-       assertEquals("MINUTE(A1)", s.getRow(6).getCell(0).getCellFormula());
-       assertEquals(39.0,         s.getRow(6).getCell(0).getNumericCellValue(), 0);
-       assertEquals("SECOND(A1)", s.getRow(7).getCell(0).getCellFormula());
-       assertEquals(54.0,         s.getRow(7).getCell(0).getNumericCellValue(), 0);
-
-       // Re-evaulate and check
-       HSSFFormulaEvaluator.evaluateAllFormulaCells(wb);
-       assertEquals("HOUR(A1)",   s.getRow(5).getCell(0).getCellFormula());
-       assertEquals(11.0,         s.getRow(5).getCell(0).getNumericCellValue(), 0);
-       assertEquals("MINUTE(A1)", s.getRow(6).getCell(0).getCellFormula());
-       assertEquals(39.0,         s.getRow(6).getCell(0).getNumericCellValue(), 0);
-       assertEquals("SECOND(A1)", s.getRow(7).getCell(0).getCellFormula());
-       assertEquals(54.0,         s.getRow(7).getCell(0).getNumericCellValue(), 0);
-
-       // Push the time forward a bit and check
-       double date = s.getRow(0).getCell(0).getNumericCellValue();
-       s.getRow(0).getCell(0).setCellValue(date + 1.26);
-
-       HSSFFormulaEvaluator.evaluateAllFormulaCells(wb);
-       assertEquals("HOUR(A1)",   s.getRow(5).getCell(0).getCellFormula());
-       assertEquals(11.0+6.0,     s.getRow(5).getCell(0).getNumericCellValue(), 0);
-       assertEquals("MINUTE(A1)", s.getRow(6).getCell(0).getCellFormula());
-       assertEquals(39.0+14.0+1,  s.getRow(6).getCell(0).getNumericCellValue(), 0);
-       assertEquals("SECOND(A1)", s.getRow(7).getCell(0).getCellFormula());
-       assertEquals(54.0+24.0-60, s.getRow(7).getCell(0).getNumericCellValue(), 0);
+       TimeZone tz = DateUtil.getUserTimeZone();
+       try {
+           DateUtil.setUserTimeZone(TimeZone.getTimeZone("CET"));
+           
+           HSSFWorkbook wb = openSample("48968.xls");
+           assertEquals(1, wb.getNumberOfSheets());
+    
+           DataFormatter fmt = new DataFormatter();
+    
+           // Check the dates
+           HSSFSheet s = wb.getSheetAt(0);
+           Cell cell_d20110325 = s.getRow(0).getCell(0);
+           Cell cell_d19000102 = s.getRow(11).getCell(0);
+           Cell cell_d19000100 = s.getRow(21).getCell(0);
+           assertEquals(s.getRow(0).getCell(3).getStringCellValue(), fmt.formatCellValue(cell_d20110325));
+           assertEquals(s.getRow(11).getCell(3).getStringCellValue(), fmt.formatCellValue(cell_d19000102));
+           // There is no such thing as 00/01/1900...
+           assertEquals("00/01/1900 06:14:24", s.getRow(21).getCell(3).getStringCellValue());
+           assertEquals("31/12/1899 06:14:24", fmt.formatCellValue(cell_d19000100));
+    
+           // Check the cached values
+           assertEquals("HOUR(A1)",   s.getRow(5).getCell(0).getCellFormula());
+           assertEquals(11.0,         s.getRow(5).getCell(0).getNumericCellValue(), 0);
+           assertEquals("MINUTE(A1)", s.getRow(6).getCell(0).getCellFormula());
+           assertEquals(39.0,         s.getRow(6).getCell(0).getNumericCellValue(), 0);
+           assertEquals("SECOND(A1)", s.getRow(7).getCell(0).getCellFormula());
+           assertEquals(54.0,         s.getRow(7).getCell(0).getNumericCellValue(), 0);
+    
+           // Re-evaulate and check
+           HSSFFormulaEvaluator.evaluateAllFormulaCells(wb);
+           assertEquals("HOUR(A1)",   s.getRow(5).getCell(0).getCellFormula());
+           assertEquals(11.0,         s.getRow(5).getCell(0).getNumericCellValue(), 0);
+           assertEquals("MINUTE(A1)", s.getRow(6).getCell(0).getCellFormula());
+           assertEquals(39.0,         s.getRow(6).getCell(0).getNumericCellValue(), 0);
+           assertEquals("SECOND(A1)", s.getRow(7).getCell(0).getCellFormula());
+           assertEquals(54.0,         s.getRow(7).getCell(0).getNumericCellValue(), 0);
+    
+           // Push the time forward a bit and check
+           double date = s.getRow(0).getCell(0).getNumericCellValue();
+           s.getRow(0).getCell(0).setCellValue(date + 1.26);
+    
+           HSSFFormulaEvaluator.evaluateAllFormulaCells(wb);
+           assertEquals("HOUR(A1)",   s.getRow(5).getCell(0).getCellFormula());
+           assertEquals(11.0+6.0,     s.getRow(5).getCell(0).getNumericCellValue(), 0);
+           assertEquals("MINUTE(A1)", s.getRow(6).getCell(0).getCellFormula());
+           assertEquals(39.0+14.0+1,  s.getRow(6).getCell(0).getNumericCellValue(), 0);
+           assertEquals("SECOND(A1)", s.getRow(7).getCell(0).getCellFormula());
+           assertEquals(54.0+24.0-60, s.getRow(7).getCell(0).getNumericCellValue(), 0);
+       } finally {
+           DateUtil.setUserTimeZone(tz);
+       }
     }
+       
 
     /**
      * Mixture of Ascii and Unicode strings in a
@@ -2418,23 +2432,25 @@ public final class TestBugs extends BaseTestBugzillaIssues {
 
     @Test
     public void bug53432() throws IOException{
-        Workbook wb = new HSSFWorkbook(); //or new HSSFWorkbook();
-        wb.addPicture(new byte[]{123,22}, Workbook.PICTURE_TYPE_JPEG);
-        assertEquals(wb.getAllPictures().size(), 1);
-        wb.close();
+        Workbook wb1 = new HSSFWorkbook(); //or new HSSFWorkbook();
+        wb1.addPicture(new byte[]{123,22}, Workbook.PICTURE_TYPE_JPEG);
+        assertEquals(wb1.getAllPictures().size(), 1);
+        wb1.close();
 
-        wb.close();
-        wb = new HSSFWorkbook();
+        wb1.close();
+        wb1 = new HSSFWorkbook();
 
-        wb = writeOutAndReadBack((HSSFWorkbook) wb);
-        assertEquals(wb.getAllPictures().size(), 0);
-        wb.addPicture(new byte[]{123,22}, Workbook.PICTURE_TYPE_JPEG);
-        assertEquals(wb.getAllPictures().size(), 1);
+        Workbook wb2 = writeOutAndReadBack((HSSFWorkbook) wb1);
+        wb1.close();
+        assertEquals(wb2.getAllPictures().size(), 0);
+        wb2.addPicture(new byte[]{123,22}, Workbook.PICTURE_TYPE_JPEG);
+        assertEquals(wb2.getAllPictures().size(), 1);
 
-        wb = writeOutAndReadBack((HSSFWorkbook) wb);
-        assertEquals(wb.getAllPictures().size(), 1);
+        Workbook wb3 = writeOutAndReadBack((HSSFWorkbook) wb2);
+        wb2.close();
+        assertEquals(wb3.getAllPictures().size(), 1);
         
-        wb.close();
+        wb3.close();
     }
 
     @Test
@@ -2539,30 +2555,34 @@ public final class TestBugs extends BaseTestBugzillaIssues {
 
     @Test
     public void bug56325() throws IOException {
-        HSSFWorkbook wb;
+        HSSFWorkbook wb1;
 
         File file = HSSFTestDataSamples.getSampleFile("56325.xls");
         InputStream stream = new FileInputStream(file);
         try {
             POIFSFileSystem fs = new POIFSFileSystem(stream);
-            wb = new HSSFWorkbook(fs);
+            wb1 = new HSSFWorkbook(fs);
         } finally {
             stream.close();
         }
 
-        assertEquals(3, wb.getNumberOfSheets());
-        wb.removeSheetAt(0);
-        assertEquals(2, wb.getNumberOfSheets());
+        assertEquals(3, wb1.getNumberOfSheets());
+        wb1.removeSheetAt(0);
+        assertEquals(2, wb1.getNumberOfSheets());
 
-        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
-        assertEquals(2, wb.getNumberOfSheets());
-        wb.removeSheetAt(0);
-        assertEquals(1, wb.getNumberOfSheets());
-        wb.removeSheetAt(0);
-        assertEquals(0, wb.getNumberOfSheets());
+        HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1);
+        wb1.close();
+        assertEquals(2, wb2.getNumberOfSheets());
+        wb2.removeSheetAt(0);
+        assertEquals(1, wb2.getNumberOfSheets());
+        wb2.removeSheetAt(0);
+        assertEquals(0, wb2.getNumberOfSheets());
 
-        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
-        assertEquals(0, wb.getNumberOfSheets());
+        HSSFWorkbook wb3 = HSSFTestDataSamples.writeOutAndReadBack(wb2);
+        wb2.close();
+        
+        assertEquals(0, wb3.getNumberOfSheets());
+        wb3.close();
     }
 
     @Test
