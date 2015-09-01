@@ -21,6 +21,7 @@ import java.text.MessageFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 import org.apache.poi.hssf.model.HSSFFormulaParser;
@@ -54,10 +55,6 @@ public class DVConstraint implements DataValidationConstraint {
 		}
 		
 	}
-	
-	// convenient access to ValidationType namespace
-	private static final ValidationType VT = null;
-
 	
 	private final int _validationType;
 	private int _operator;
@@ -184,7 +181,7 @@ public class DVConstraint implements DataValidationConstraint {
 			throw new IllegalArgumentException("expr1 must be supplied");
 		}
 		OperatorType.validateSecondArg(comparisonOperator, expr2);
-		SimpleDateFormat df = dateFormat == null ? null : new SimpleDateFormat(dateFormat);
+		SimpleDateFormat df = dateFormat == null ? null : new SimpleDateFormat(dateFormat, Locale.ROOT);
 		
 		// formula1 and value1 are mutually exclusive
 		String formula1 = getFormulaFromTextExpression(expr1);
