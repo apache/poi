@@ -61,7 +61,10 @@ public class DateUtil {
     //  elapsed time patterns: [h],[m] and [s]
     private static final Pattern date_ptrn4 = Pattern.compile("^\\[([hH]+|[mM]+|[sS]+)\\]");
 
-    // only get this static info once (because operations are not really cheap)
+    /**
+     * Excel doesn't store TimeZone information in the file, so if in doubt,
+     *  use UTC to perform calculations
+     */
     private static final TimeZone TIMEZONE_UTC = TimeZone.getTimeZone("UTC");
 
 
@@ -84,7 +87,7 @@ public class DateUtil {
      * @param use1904windowing Should 1900 or 1904 date windowing be used?
      */
     public static double getExcelDate(Date date, boolean use1904windowing) {
-        Calendar calStart = new GregorianCalendar(Locale.ROOT);
+        Calendar calStart = new GregorianCalendar(TIMEZONE_UTC, Locale.ROOT);
         calStart.setTime(date);   // If date includes hours, minutes, and seconds, set them to 0
         return internalGetExcelDate(calStart, use1904windowing);
     }
@@ -322,7 +325,7 @@ public class DateUtil {
         if (timeZone != null) {
             calendar = new GregorianCalendar(timeZone, Locale.ROOT);
         } else {
-            calendar = new GregorianCalendar(Locale.ROOT); // using default time-zone
+            calendar = new GregorianCalendar(TIMEZONE_UTC, Locale.ROOT); // using default time-zone
         }
         setCalendar(calendar, wholeDays, millisecondsInDay, use1904windowing, roundSeconds);
         return calendar;
