@@ -33,160 +33,159 @@ import org.apache.poi.hssf.record.RecordInputStream;
  * For such functionality, consider using {@link RecordInputStream}
  */
 public class StringUtil {
-	protected static final Charset ISO_8859_1 = Charset.forName("ISO-8859-1");
-	protected static final Charset UTF16LE = Charset.forName("UTF-16LE");
-	public static final Charset UTF8 = Charset.forName("UTF-8");
-	
+    protected static final Charset ISO_8859_1 = Charset.forName("ISO-8859-1");
+    protected static final Charset UTF16LE = Charset.forName("UTF-16LE");
+    public static final Charset UTF8 = Charset.forName("UTF-8");
+
     private static Map<Integer,Integer> msCodepointToUnicode;
 
-	private StringUtil() {
-		// no instances of this class
-	}
+    private StringUtil() {
+        // no instances of this class
+    }
 
-	/**
-	 *  Given a byte array of 16-bit unicode characters in Little Endian
-	 *  format (most important byte last), return a Java String representation
-	 *  of it.
-	 *
-	 * { 0x16, 0x00 } -0x16
-	 *
-	 * @param  string  the byte array to be converted
-	 * @param  offset  the initial offset into the
-	 *                 byte array. it is assumed that string[ offset ] and string[ offset +
-	 *                 1 ] contain the first 16-bit unicode character
+    /**
+     *  Given a byte array of 16-bit unicode characters in Little Endian
+     *  format (most important byte last), return a Java String representation
+     *  of it.
+     *
+     * { 0x16, 0x00 } -0x16
+     *
+     * @param  string  the byte array to be converted
+     * @param  offset  the initial offset into the
+     *                 byte array. it is assumed that string[ offset ] and string[ offset +
+     *                 1 ] contain the first 16-bit unicode character
      * @param len the length of the final string
-	 * @return the converted string, never <code>null</code>.
-	 * @exception  ArrayIndexOutOfBoundsException  if offset is out of bounds for
-	 *      the byte array (i.e., is negative or is greater than or equal to
-	 *      string.length)
-	 * @exception  IllegalArgumentException        if len is too large (i.e.,
-	 *      there is not enough data in string to create a String of that
-	 *      length)
-	 */
-	public static String getFromUnicodeLE(
-		final byte[] string,
-		final int offset,
-		final int len)
-		throws ArrayIndexOutOfBoundsException, IllegalArgumentException {
-		if ((offset < 0) || (offset >= string.length)) {
-			throw new ArrayIndexOutOfBoundsException("Illegal offset " + offset + " (String data is of length " + string.length + ")");
-		}
-		if ((len < 0) || (((string.length - offset) / 2) < len)) {
-			throw new IllegalArgumentException("Illegal length " + len);
-		}
+     * @return the converted string, never <code>null</code>.
+     * @exception  ArrayIndexOutOfBoundsException  if offset is out of bounds for
+     *      the byte array (i.e., is negative or is greater than or equal to
+     *      string.length)
+     * @exception  IllegalArgumentException        if len is too large (i.e.,
+     *      there is not enough data in string to create a String of that
+     *      length)
+     */
+    public static String getFromUnicodeLE(
+            final byte[] string,
+            final int offset,
+            final int len)
+            throws ArrayIndexOutOfBoundsException, IllegalArgumentException {
+        if ((offset < 0) || (offset >= string.length)) {
+            throw new ArrayIndexOutOfBoundsException("Illegal offset " + offset + " (String data is of length " + string.length + ")");
+        }
+        if ((len < 0) || (((string.length - offset) / 2) < len)) {
+            throw new IllegalArgumentException("Illegal length " + len);
+        }
 
-		return new String(string, offset, len * 2, UTF16LE);
-	}
+        return new String(string, offset, len * 2, UTF16LE);
+    }
 
-	/**
-	 *  Given a byte array of 16-bit unicode characters in little endian
-	 *  format (most important byte last), return a Java String representation
-	 *  of it.
-	 *
-	 * { 0x16, 0x00 } -0x16
-	 *
-	 * @param  string  the byte array to be converted
-	 * @return the converted string, never <code>null</code>
-	 */
-	public static String getFromUnicodeLE(byte[] string) {
+    /**
+     *  Given a byte array of 16-bit unicode characters in little endian
+     *  format (most important byte last), return a Java String representation
+     *  of it.
+     *
+     * { 0x16, 0x00 } -0x16
+     *
+     * @param  string  the byte array to be converted
+     * @return the converted string, never <code>null</code>
+     */
+    public static String getFromUnicodeLE(byte[] string) {
         if(string.length == 0) { return ""; }
         return getFromUnicodeLE(string, 0, string.length / 2);
-	}
-	
-	/**
-	 * Convert String to 16-bit unicode characters in little endian format
-	 *
-	 * @param string the string
-	 * @return the byte array of 16-bit unicode characters
-	 */
-	public static byte[] getToUnicodeLE(String string) {
-	    return string.getBytes(UTF16LE);
-	}
+    }
 
-	/**
-	 * Read 8 bit data (in ISO-8859-1 codepage) into a (unicode) Java
-	 * String and return.
-	 * (In Excel terms, read compressed 8 bit unicode as a string)
-	 *
-	 * @param string byte array to read
-	 * @param offset offset to read byte array
-	 * @param len    length to read byte array
-	 * @return String generated String instance by reading byte array
-	 */
-	public static String getFromCompressedUnicode(
-		final byte[] string,
-		final int offset,
-		final int len) {
-		int len_to_use = Math.min(len, string.length - offset);
-		return new String(string, offset, len_to_use, ISO_8859_1);
-	}
-	
-	public static String readCompressedUnicode(LittleEndianInput in, int nChars) {
-		byte[] buf = new byte[nChars];
-		in.readFully(buf);
-		return new String(buf, ISO_8859_1);
-	}
-	
-	/**
-	 * InputStream <tt>in</tt> is expected to contain:
-	 * <ol>
-	 * <li>ushort nChars</li>
-	 * <li>byte is16BitFlag</li>
-	 * <li>byte[]/char[] characterData</li>
-	 * </ol>
-	 * For this encoding, the is16BitFlag is always present even if nChars==0.
-	 * 
-	 * This structure is also known as a XLUnicodeString.
-	 */
-	public static String readUnicodeString(LittleEndianInput in) {
+    /**
+     * Convert String to 16-bit unicode characters in little endian format
+     *
+     * @param string the string
+     * @return the byte array of 16-bit unicode characters
+     */
+    public static byte[] getToUnicodeLE(String string) {
+        return string.getBytes(UTF16LE);
+    }
 
-		int nChars = in.readUShort();
-		byte flag = in.readByte();
-		if ((flag & 0x01) == 0) {
-			return readCompressedUnicode(in, nChars);
-		}
-		return readUnicodeLE(in, nChars);
-	}
-	/**
-	 * InputStream <tt>in</tt> is expected to contain:
-	 * <ol>
-	 * <li>byte is16BitFlag</li>
-	 * <li>byte[]/char[] characterData</li>
-	 * </ol>
-	 * For this encoding, the is16BitFlag is always present even if nChars==0.
-	 * <br/>
-	 * This method should be used when the nChars field is <em>not</em> stored
-	 * as a ushort immediately before the is16BitFlag. Otherwise, {@link
-	 * #readUnicodeString(LittleEndianInput)} can be used.
-	 */
-	public static String readUnicodeString(LittleEndianInput in, int nChars) {
-		byte is16Bit = in.readByte();
-		if ((is16Bit & 0x01) == 0) {
-			return readCompressedUnicode(in, nChars);
-		}
-		return readUnicodeLE(in, nChars);
-	}
-	/**
-	 * OutputStream <tt>out</tt> will get:
-	 * <ol>
-	 * <li>ushort nChars</li>
-	 * <li>byte is16BitFlag</li>
-	 * <li>byte[]/char[] characterData</li>
-	 * </ol>
-	 * For this encoding, the is16BitFlag is always present even if nChars==0.
-	 */
-	public static void writeUnicodeString(LittleEndianOutput out, String value) {
+    /**
+     * Read 8 bit data (in ISO-8859-1 codepage) into a (unicode) Java
+     * String and return.
+     * (In Excel terms, read compressed 8 bit unicode as a string)
+     *
+     * @param string byte array to read
+     * @param offset offset to read byte array
+     * @param len    length to read byte array
+     * @return String generated String instance by reading byte array
+     */
+    public static String getFromCompressedUnicode(
+            final byte[] string,
+            final int offset,
+            final int len) {
+        int len_to_use = Math.min(len, string.length - offset);
+        return new String(string, offset, len_to_use, ISO_8859_1);
+    }
 
-		int nChars = value.length();
-		out.writeShort(nChars);
-		boolean is16Bit = hasMultibyte(value);
-		out.writeByte(is16Bit ? 0x01 : 0x00);
-		if (is16Bit) {
-			putUnicodeLE(value, out);
-		} else {
-			putCompressedUnicode(value, out);
-		}
-	}
+    public static String readCompressedUnicode(LittleEndianInput in, int nChars) {
+        byte[] buf = new byte[nChars];
+        in.readFully(buf);
+        return new String(buf, ISO_8859_1);
+    }
+
+    /**
+     * InputStream <tt>in</tt> is expected to contain:
+     * <ol>
+     * <li>ushort nChars</li>
+     * <li>byte is16BitFlag</li>
+     * <li>byte[]/char[] characterData</li>
+     * </ol>
+     * For this encoding, the is16BitFlag is always present even if nChars==0.
+     * 
+     * This structure is also known as a XLUnicodeString.
+     */
+    public static String readUnicodeString(LittleEndianInput in) {
+
+        int nChars = in.readUShort();
+        byte flag = in.readByte();
+        if ((flag & 0x01) == 0) {
+            return readCompressedUnicode(in, nChars);
+        }
+        return readUnicodeLE(in, nChars);
+    }
+    /**
+     * InputStream <tt>in</tt> is expected to contain:
+     * <ol>
+     * <li>byte is16BitFlag</li>
+     * <li>byte[]/char[] characterData</li>
+     * </ol>
+     * For this encoding, the is16BitFlag is always present even if nChars==0.
+     * <br/>
+     * This method should be used when the nChars field is <em>not</em> stored
+     * as a ushort immediately before the is16BitFlag. Otherwise, {@link
+     * #readUnicodeString(LittleEndianInput)} can be used.
+     */
+    public static String readUnicodeString(LittleEndianInput in, int nChars) {
+        byte is16Bit = in.readByte();
+        if ((is16Bit & 0x01) == 0) {
+            return readCompressedUnicode(in, nChars);
+        }
+        return readUnicodeLE(in, nChars);
+    }
+    /**
+     * OutputStream <tt>out</tt> will get:
+     * <ol>
+     * <li>ushort nChars</li>
+     * <li>byte is16BitFlag</li>
+     * <li>byte[]/char[] characterData</li>
+     * </ol>
+     * For this encoding, the is16BitFlag is always present even if nChars==0.
+     */
+    public static void writeUnicodeString(LittleEndianOutput out, String value) {
+        int nChars = value.length();
+        out.writeShort(nChars);
+        boolean is16Bit = hasMultibyte(value);
+        out.writeByte(is16Bit ? 0x01 : 0x00);
+        if (is16Bit) {
+            putUnicodeLE(value, out);
+        } else {
+            putCompressedUnicode(value, out);
+        }
+    }
 	/**
 	 * OutputStream <tt>out</tt> will get:
 	 * <ol>
