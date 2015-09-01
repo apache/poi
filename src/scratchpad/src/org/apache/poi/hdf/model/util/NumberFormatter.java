@@ -17,11 +17,10 @@
 
 package org.apache.poi.hdf.model.util;
 
+import java.util.Locale;
 
 /**
- * Comment me
- *
- * @author Ryan Ackley
+ * TODO Comment me
  */
 @Deprecated
 public final class NumberFormatter
@@ -68,11 +67,11 @@ public final class NumberFormatter
       case ARABIC:
         return _arabic[num - 1];
       case UPPER_ROMAN:
-        return _roman[num-1].toUpperCase();
+        return _roman[num-1].toUpperCase(Locale.ROOT);
       case LOWER_ROMAN:
         return _roman[num-1];
       case UPPER_LETTER:
-        return _letter[num-1].toUpperCase();
+        return _letter[num-1].toUpperCase(Locale.ROOT);
       case LOWER_LETTER:
         return _letter[num-1];
       case ORDINAL:

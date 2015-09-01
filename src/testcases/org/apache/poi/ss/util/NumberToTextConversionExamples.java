@@ -16,10 +16,11 @@
 ==================================================================== */
 
 package org.apache.poi.ss.util;
+
+import java.util.Locale;
+
 /**
  * Contains specific examples of <tt>double</tt> values and their rendering in Excel.
- *
- * @author Josh Micich
  */
 final class NumberToTextConversionExamples {
 
@@ -62,7 +63,7 @@ final class NumberToTextConversionExamples {
 			_doubleValue = d;
 		}
 		private static String doubleToHexString(double d) {
-			return "0x" + Long.toHexString(Double.doubleToLongBits(d)).toUpperCase() + "L";
+			return "0x" + Long.toHexString(Double.doubleToLongBits(d)).toUpperCase(Locale.ROOT) + "L";
 		}
 		public String getJavaRendering() {
 			return _javaRendering;

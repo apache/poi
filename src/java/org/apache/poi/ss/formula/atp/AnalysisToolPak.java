@@ -13,6 +13,7 @@ package org.apache.poi.ss.formula.atp;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TreeSet;
 
@@ -70,7 +71,7 @@ public final class AnalysisToolPak implements UDFFinder {
         // if you save such a .xlsx workbook as .xls
         if(name.startsWith("_xlfn.")) name = name.substring(6);
 
-        return _functionsByName.get(name.toUpperCase());
+        return _functionsByName.get(name.toUpperCase(Locale.ROOT));
     }
 
     private Map<String, FreeRefFunction> createFunctionsMap() {

@@ -21,6 +21,8 @@ import junit.framework.AssertionFailedError;
 import junit.framework.ComparisonFailure;
 import junit.framework.TestCase;
 
+import java.util.Locale;
+
 import org.apache.poi.hssf.record.FormulaRecord;
 import org.apache.poi.ss.formula.constant.ConstantValueParser;
 import org.apache.poi.ss.formula.ptg.NumberPtg;
@@ -74,7 +76,7 @@ public final class TestNumberToTextConverter extends TestCase {
 	}
 
 	private static String formatExample(ExampleConversion example) {
-		String hexLong = Long.toHexString(example.getRawDoubleBits()).toUpperCase();
+		String hexLong = Long.toHexString(example.getRawDoubleBits()).toUpperCase(Locale.ROOT);
 		String longRep = "0x" + "0000000000000000".substring(hexLong.length()) + hexLong+ "L";  
 		return "ec(" + longRep + ", \"" + example.getJavaRendering() + "\", \"" + example.getExcelRendering() + "\")";
 	}

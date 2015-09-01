@@ -30,6 +30,7 @@ import static org.apache.poi.hsmf.datatypes.Types.TIME;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.poi.hsmf.datatypes.Types.MAPIType;
@@ -1060,7 +1061,7 @@ public class MAPIProperty {
    }
    
    public String asFileName() {
-      String str = Integer.toHexString(id).toUpperCase();
+      String str = Integer.toHexString(id).toUpperCase(Locale.ROOT);
       while(str.length() < 4) {
          str = "0" + str;
       }

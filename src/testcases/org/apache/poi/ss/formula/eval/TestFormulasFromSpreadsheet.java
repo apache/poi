@@ -19,6 +19,7 @@ package org.apache.poi.ss.formula.eval;
 
 import java.io.PrintStream;
 import java.util.Collection;
+import java.util.Locale;
 
 import junit.framework.Assert;
 import junit.framework.AssertionFailedError;
@@ -211,7 +212,7 @@ public final class TestFormulasFromSpreadsheet extends TestCase {
 					default:
 						throw new RuntimeException("unexpected result");
 					case Result.NO_EVALUATIONS_FOUND: // do nothing
-                        String uname = targetFunctionName.toUpperCase();
+                        String uname = targetFunctionName.toUpperCase(Locale.ROOT);
                         if(startRowIndex >= SS.START_FUNCTIONS_ROW_INDEX &&
                                 funcs.contains(uname)) {
                             logger.log(POILogger.WARN, uname + ": function is supported but missing test data");

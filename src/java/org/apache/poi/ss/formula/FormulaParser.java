@@ -19,6 +19,7 @@ package org.apache.poi.ss.formula;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 import org.apache.poi.ss.SpreadsheetVersion;
@@ -907,7 +908,7 @@ public final class FormulaParser {
 			 * (b) LOG10 + 1
 			 * In (a) LOG10 is a name of a built-in function. In (b) LOG10 is a cell reference
 			 */
-			boolean isFunc = FunctionMetadataRegistry.getFunctionByName(str.toUpperCase()) != null;
+			boolean isFunc = FunctionMetadataRegistry.getFunctionByName(str.toUpperCase(Locale.ROOT)) != null;
 			if(isFunc){
 				int savePointer = _pointer;
 				resetPointer(_pointer + str.length());
@@ -974,7 +975,7 @@ public final class FormulaParser {
 	 */
 	private ParseNode getFunction(String name, Ptg namePtg, ParseNode[] args) {
 
-		FunctionMetadata fm = FunctionMetadataRegistry.getFunctionByName(name.toUpperCase());
+		FunctionMetadata fm = FunctionMetadataRegistry.getFunctionByName(name.toUpperCase(Locale.ROOT));
 		int numArgs = args.length;
 		if(fm == null) {
 			if (namePtg == null) {
@@ -1313,7 +1314,7 @@ public final class FormulaParser {
 
 	private int parseErrorLiteral() {
 		Match('#');
-		String part1 = parseUnquotedIdentifier().toUpperCase();
+		String part1 = parseUnquotedIdentifier().toUpperCase(Locale.ROOT);
 		if (part1 == null) {
 			throw expected("remainder of error constant literal");
 		}

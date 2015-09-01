@@ -20,6 +20,7 @@ package org.apache.poi.hsmf.datatypes;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Locale;
 
 import org.apache.poi.hsmf.datatypes.Types.MAPIType;
 
@@ -62,7 +63,8 @@ public abstract class Chunk {
        String chunkId = Integer.toHexString(this.chunkId);
        while(chunkId.length() < 4) chunkId = "0" + chunkId;
 
-       return this.namePrefix + chunkId.toUpperCase() + type.toUpperCase();
+       return this.namePrefix + chunkId.toUpperCase(Locale.ROOT)
+              + type.toUpperCase(Locale.ROOT);
    }
 
    /**
