@@ -19,6 +19,8 @@ package org.apache.poi.hpsf.wellknown;
 
 import java.util.HashMap;
 
+import org.apache.poi.util.StringUtil;
+
 /**
  * <p>Maps section format IDs to {@link PropertyIDMap}s. It is
  * initialized with two well-known section format IDs: those of the
@@ -33,11 +35,9 @@ import java.util.HashMap;
  * <p>This {@link java.util.Map} expects the byte arrays of section format IDs
  * as keys. A key maps to a {@link PropertyIDMap} describing the
  * property IDs in sections with the specified section format ID.</p>
- *
- * @author Rainer Klute (klute@rainer-klute.de)
  */
+@SuppressWarnings({"rawtypes","unchecked"}) // Java Generics have issues on this style of class...
 public class SectionIDMap extends HashMap {
-
     /**
      * <p>The SummaryInformation's section's format ID.</p>
      */
@@ -141,10 +141,8 @@ public class SectionIDMap extends HashMap {
      */
     public PropertyIDMap get(final byte[] sectionFormatID)
     {
-        return (PropertyIDMap) super.get(new String(sectionFormatID));
+        return (PropertyIDMap)super.get(new String(sectionFormatID, StringUtil.UTF8));
     }
-
-
 
     /**
      * <p>Returns the {@link PropertyIDMap} for a given section format
@@ -154,12 +152,10 @@ public class SectionIDMap extends HashMap {
      * @deprecated Use {@link #get(byte[])} instead!
      * @return the property ID map
      */
-    public Object get(final Object sectionFormatID)
+    public PropertyIDMap get(final Object sectionFormatID)
     {
         return get((byte[]) sectionFormatID);
     }
-
-
 
     /**
      * <p>Associates a section format ID with a {@link
@@ -169,13 +165,19 @@ public class SectionIDMap extends HashMap {
      * @param propertyIDMap the property ID map
      * @return as defined by {@link java.util.Map#put}
      */
-    public Object put(final byte[] sectionFormatID,
-                      final PropertyIDMap propertyIDMap)
+    public PropertyIDMap put(final byte[] sectionFormatID,
+                             final PropertyIDMap propertyIDMap)
     {
-        return super.put(new String(sectionFormatID), propertyIDMap);
+        return (PropertyIDMap)super.put(new String(sectionFormatID, StringUtil.UTF8), propertyIDMap);
     }
 
-
+    /**
+     * Associates the string representation of a section
+     *  format ID with a {@link PropertyIDMap}
+     */
+    protected PropertyIDMap put(String key, PropertyIDMap value) {
+        return (PropertyIDMap)super.put(key, value);
+    }
 
     /**
      * @deprecated Use {@link #put(byte[], PropertyIDMap)} instead!
@@ -189,9 +191,10 @@ public class SectionIDMap extends HashMap {
      * @return The return value remains undocumented since the method is
      * deprecated.
      */
-    public Object put(final Object key, final Object value)
+    public PropertyIDMap put(final Object key, final Object value)
     {
+        if (key instanceof String)
+            return put((String)key, (PropertyIDMap) value);
         return put((byte[]) key, (PropertyIDMap) value);
     }
-
 }
