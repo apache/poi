@@ -18,6 +18,7 @@ package org.apache.poi.ss.formula.functions;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.Locale;
 
 import org.apache.poi.ss.formula.eval.EvaluationException;
 import org.apache.poi.ss.formula.eval.NumberEval;
@@ -72,7 +73,7 @@ public class Days360 extends Var2or3ArgFunction {
     }
 
     private static Calendar getDate(double date) {
-        Calendar processedDate = new GregorianCalendar();
+        Calendar processedDate = new GregorianCalendar(Locale.ROOT);
         processedDate.setTime(DateUtil.getJavaDate(date, false));
         return processedDate;
     }

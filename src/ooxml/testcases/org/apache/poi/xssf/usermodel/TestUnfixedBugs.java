@@ -26,6 +26,7 @@ import java.nio.charset.Charset;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Locale;
 
 import junit.framework.TestCase;
 
@@ -142,14 +143,14 @@ public final class TestUnfixedBugs extends TestCase {
         // second to be different here!
         int startYear = 1900;
         int dayAdjust = -1; // Excel thinks 2/29/1900 is a valid date, which it isn't
-        Calendar calendar1 = new GregorianCalendar();
+        Calendar calendar1 = new GregorianCalendar(Locale.ROOT);
         calendar1.set(startYear,0, wholeDays1 + dayAdjust, 0, 0, 0);
         calendar1.set(Calendar.MILLISECOND, millisecondsInDay1);
       // this is the rounding part:
       calendar1.add(Calendar.MILLISECOND, 500);
       calendar1.clear(Calendar.MILLISECOND);
 
-        Calendar calendar2 = new GregorianCalendar();
+        Calendar calendar2 = new GregorianCalendar(Locale.ROOT);
         calendar2.set(startYear,0, wholeDays2 + dayAdjust, 0, 0, 0);
         calendar2.set(Calendar.MILLISECOND, millisecondsInDay2);
       // this is the rounding part:

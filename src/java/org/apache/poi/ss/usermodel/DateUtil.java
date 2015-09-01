@@ -21,6 +21,7 @@ package org.apache.poi.ss.usermodel;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Locale;
 import java.util.TimeZone;
 import java.util.regex.Pattern;
 
@@ -83,7 +84,7 @@ public class DateUtil {
      * @param use1904windowing Should 1900 or 1904 date windowing be used?
      */
     public static double getExcelDate(Date date, boolean use1904windowing) {
-        Calendar calStart = new GregorianCalendar();
+        Calendar calStart = new GregorianCalendar(Locale.ROOT);
         calStart.setTime(date);   // If date includes hours, minutes, and seconds, set them to 0
         return internalGetExcelDate(calStart, use1904windowing);
     }
@@ -319,9 +320,9 @@ public class DateUtil {
         int millisecondsInDay = (int)((date - wholeDays) * DAY_MILLISECONDS + 0.5);
         Calendar calendar;
         if (timeZone != null) {
-            calendar = new GregorianCalendar(timeZone);
+            calendar = new GregorianCalendar(timeZone, Locale.ROOT);
         } else {
-            calendar = new GregorianCalendar();     // using default time-zone
+            calendar = new GregorianCalendar(Locale.ROOT); // using default time-zone
         }
         setCalendar(calendar, wholeDays, millisecondsInDay, use1904windowing, roundSeconds);
         return calendar;

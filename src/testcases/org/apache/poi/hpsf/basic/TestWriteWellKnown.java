@@ -28,6 +28,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import junit.framework.TestCase;
@@ -227,7 +228,7 @@ public class TestWriteWellKnown extends TestCase {
          * (e.g. author, edit date, application name) and to the document
          * summary information (e.g. company, manager).
          */
-        Calendar cal = new GregorianCalendar();
+        Calendar cal = new GregorianCalendar(Locale.ROOT);
         cal.set(2000, 6, 6, 6, 6, 6);
         final long time1 = cal.getTimeInMillis();
         cal.set(2001, 7, 7, 7, 7, 7);

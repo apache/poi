@@ -19,6 +19,7 @@ package org.apache.poi.ss.formula.atp;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.Locale;
 
 import junit.framework.TestCase;
 
@@ -58,7 +59,7 @@ public final class TestYearFracCalculator extends TestCase {
 	}
 
 	private static double md(int year, int month, int day) {
-		Calendar c = new GregorianCalendar();
+		Calendar c = new GregorianCalendar(Locale.ROOT);
 		
 		c.set(year, month-1, day, 0, 0, 0);
 		c.set(Calendar.MILLISECOND, 0);

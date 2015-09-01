@@ -23,6 +23,7 @@ import org.apache.poi.ss.usermodel.DateUtil;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.Locale;
 
 /**
  * Implementation for Excel WeekNum() function.<p/>
@@ -52,7 +53,7 @@ public class WeekNum extends Fixed2ArgFunction implements FreeRefFunction {
         } catch (EvaluationException e) {
             return ErrorEval.VALUE_INVALID;
         }
-        Calendar serialNumCalendar = new GregorianCalendar();
+        Calendar serialNumCalendar = new GregorianCalendar(Locale.ROOT);
         serialNumCalendar.setTime(DateUtil.getJavaDate(serialNum, false));
 
         int returnType = 0;
