@@ -19,8 +19,9 @@
 package org.apache.poi.dev;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.Locale;
 import java.util.Properties;
@@ -35,6 +36,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.apache.poi.util.StringUtil;
 import org.apache.poi.util.XMLHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -128,7 +130,7 @@ public class RecordGenerator {
     private static void transform(final File in, final File out, final File xslt)
     throws FileNotFoundException, TransformerException
     {
-        final Reader r = new FileReader(xslt);
+        final Reader r = new InputStreamReader(new FileInputStream(xslt), StringUtil.UTF8);
         final StreamSource ss = new StreamSource(r);
         final TransformerFactory tf = TransformerFactory.newInstance();
         final Transformer t;

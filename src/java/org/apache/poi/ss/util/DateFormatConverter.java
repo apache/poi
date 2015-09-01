@@ -337,8 +337,8 @@ public class DateFormatConverter  {
 			result = localePrefixes.get( localeString.substring( 0, 2 ) );
 			if( result ==  null ) {
 				Locale parentLocale = new Locale(localeString.substring( 0, 2 ));
-				logger.log( POILogger.ERROR, "Unable to find prefix for " + locale + "(" + locale.getDisplayName() + ") or " 
-						+ localeString.substring( 0, 2 ) + "(" + parentLocale.getDisplayName() + ")" );
+				logger.log( POILogger.ERROR, "Unable to find prefix for " + locale + "(" + locale.getDisplayName(Locale.ROOT) + ") or " 
+						+ localeString.substring( 0, 2 ) + "(" + parentLocale.getDisplayName(Locale.ROOT) + ")" );
 				return "";
 			}
 		}
