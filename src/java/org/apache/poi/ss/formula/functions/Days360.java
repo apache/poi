@@ -17,7 +17,6 @@
 package org.apache.poi.ss.formula.functions;
 
 import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -28,10 +27,44 @@ import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.usermodel.DateUtil;
 
 /**
- * Calculates the number of days between two dates based on a 360-day year
+ * <p>Calculates the number of days between two dates based on a 360-day year
  * (twelve 30-day months), which is used in some accounting calculations. Use
  * this function to help compute payments if your accounting system is based on
- * twelve 30-day months.
+ * twelve 30-day months.<p>
+ * 
+ * {@code DAYS360(start_date,end_date,[method])}
+ * 
+ * <ul>
+ * <li>Start_date, end_date (required):<br/>
+ * The two dates between which you want to know the number of days.<br/>
+ * If start_date occurs after end_date, the DAYS360 function returns a negative number.</li>
+ * 
+ * <li>Method (optional):<br/>
+ * A logical value that specifies whether to use the U.S. or European method in the calculation</li>
+ * 
+ * <li>Method set to false or omitted:<br/>
+ * the DAYS360 function uses the U.S. (NASD) method. If the starting date is the 31st of a month,
+ * it becomes equal to the 30th of the same month. If the ending date is the 31st of a month and
+ * the starting date is earlier than the 30th of a month, the ending date becomes equal to the
+ * 1st of the next month, otherwise the ending date becomes equal to the 30th of the same month.
+ * The month February and leap years are handled in the following way:<br/>
+ * On a non-leap year the function {@code =DAYS360("2/28/93", "3/1/93", FALSE)} returns 1 day
+ * because the DAYS360 function ignores the extra days added to February.<br/>
+ * On a leap year the function {@code =DAYS360("2/29/96","3/1/96", FALSE)} returns 1 day for
+ * the same reason.</li>
+ * 
+ * <li>Method Set to true:<br/>
+ * When you set the method parameter to TRUE, the DAYS360 function uses the European method.
+ * Starting dates or ending dates that occur on the 31st of a month become equal to the 30th of
+ * the same month. The month February and leap years are handled in the following way:<br/>
+ * On a non-leap year the function {@code =DAYS360("2/28/93", "3/1/93", TRUE)} returns
+ * 3 days because the DAYS360 function is counting the extra days added to February to give
+ * February 30 days.<br/>
+ * On a leap year the function {@code =DAYS360("2/29/96", "3/1/96", TRUE)} returns
+ * 2 days for the same reason.</li>
+ * </ul>
+ * 
+ * @see <a href="https://support.microsoft.com/en-us/kb/235575">DAYS360 Function Produces Different Values Depending on the Version of Excel</a>
  */
 public class Days360 extends Var2or3ArgFunction {
     /**
@@ -68,56 +101,57 @@ public class Days360 extends Var2or3ArgFunction {
     }
 
     private static double evaluate(double d0, double d1, boolean method) {
-        Calendar startingDate = getStartingDate(d0);
-        Calendar endingDate = getEndingDateAccordingToStartingDate(d1, startingDate);
-        long startingDay = startingDate.get(Calendar.MONTH) * 30 + startingDate.get(Calendar.DAY_OF_MONTH);
-        long endingDay = (endingDate.get(Calendar.YEAR) - startingDate.get(Calendar.YEAR)) * 360
-                + endingDate.get(Calendar.MONTH) * 30 + endingDate.get(Calendar.DAY_OF_MONTH);
-        return endingDay - startingDay;
+        Calendar realStart = getDate(d0);
+        Calendar realEnd = getDate(d1);
+        int startingDate[] = getStartingDate(realStart, method);
+        int endingDate[] = getEndingDate(realEnd, realStart, method);
+        
+        return
+            (endingDate[0]*360+endingDate[1]*30+endingDate[2])-
+            (startingDate[0]*360+startingDate[1]*30+startingDate[2]);
     }
 
     private static Calendar getDate(double date) {
-        Calendar processedDate = new GregorianCalendar(DEFAULT_TIMEZONE, Locale.ROOT);
-        processedDate.setTime(DateUtil.getJavaDate(date, false));
+        Calendar processedDate = Calendar.getInstance(DEFAULT_TIMEZONE, Locale.ROOT);
+        processedDate.setTime(DateUtil.getJavaDate(date, false, DEFAULT_TIMEZONE));
         return processedDate;
     }
 
-    private static Calendar getStartingDate(double date) {
-        Calendar startingDate = getDate(date);
-        if (isLastDayOfMonth(startingDate)) {
-            startingDate.set(Calendar.DAY_OF_MONTH, 30);
-        }
-        return startingDate;
+    private static int[] getStartingDate(Calendar realStart, boolean method) {
+        Calendar d = realStart;
+        int yyyy = d.get(Calendar.YEAR);
+        int mm = d.get(Calendar.MONTH);
+        int dd = Math.min(30, d.get(Calendar.DAY_OF_MONTH));
+        
+        if (method == false && isLastDayOfMonth(d)) dd = 30;
+        
+        return new int[]{yyyy,mm,dd};
     }
 
-    private static Calendar getEndingDateAccordingToStartingDate(double date, Calendar startingDate) {
-        Calendar endingDate = getDate(date);
-        endingDate.setTime(DateUtil.getJavaDate(date, false));
-        if (isLastDayOfMonth(endingDate)) {
-            if (startingDate.get(Calendar.DATE) < 30) {
-                endingDate = getFirstDayOfNextMonth(endingDate);
+    private static int[] getEndingDate(Calendar realEnd, Calendar realStart, boolean method) {
+        Calendar d = realEnd;
+        int yyyy = d.get(Calendar.YEAR);
+        int mm = d.get(Calendar.MONTH);
+        int dd = Math.min(30, d.get(Calendar.DAY_OF_MONTH));
+
+        if (method == false && realEnd.get(Calendar.DAY_OF_MONTH) == 31) {
+            if (realStart.get(Calendar.DAY_OF_MONTH) < 30) {
+                d.set(Calendar.DAY_OF_MONTH, 1);
+                d.add(Calendar.MONTH, 1);
+                yyyy = d.get(Calendar.YEAR);
+                mm = d.get(Calendar.MONTH);
+                dd = 1;
+            } else {
+                dd = 30;
             }
         }
-        return endingDate;
+        
+        return new int[]{yyyy,mm,dd};
     }
-
+    
     private static boolean isLastDayOfMonth(Calendar date) {
-        Calendar clone = (Calendar) date.clone();
-        clone.add(java.util.Calendar.MONTH, 1);
-        clone.add(java.util.Calendar.DAY_OF_MONTH, -1);
-        int lastDayOfMonth = clone.get(Calendar.DAY_OF_MONTH);
-        return date.get(Calendar.DAY_OF_MONTH) == lastDayOfMonth;
-    }
-
-    private static Calendar getFirstDayOfNextMonth(Calendar date) {
-        Calendar newDate = (Calendar) date.clone();
-        if (date.get(Calendar.MONTH) < Calendar.DECEMBER) {
-            newDate.set(Calendar.MONTH, date.get(Calendar.MONTH) + 1);
-        } else {
-            newDate.set(Calendar.MONTH, 1);
-            newDate.set(Calendar.YEAR, date.get(Calendar.YEAR) + 1);
-        }
-        newDate.set(Calendar.DATE, 1);
-        return newDate;
+        int dayOfMonth = date.get(Calendar.DAY_OF_MONTH);
+        int lastDayOfMonth = date.getActualMaximum(Calendar.DAY_OF_MONTH);
+        return (dayOfMonth == lastDayOfMonth);
     }
 }

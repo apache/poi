@@ -19,6 +19,8 @@ package org.apache.poi.ss.usermodel;
 
 import java.io.IOException;
 import java.util.Calendar;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
@@ -78,7 +80,7 @@ public abstract class BaseTestCell extends TestCase {
 		assertProhibitedValueAccess(cell, Cell.CELL_TYPE_NUMERIC, Cell.CELL_TYPE_BOOLEAN,
 				Cell.CELL_TYPE_FORMULA, Cell.CELL_TYPE_ERROR);
 
-		Calendar c = Calendar.getInstance();
+		Calendar c = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.ROOT);
 		c.setTimeInMillis(123456789);
 		cell.setCellValue(c.getTime());
 		assertEquals(c.getTime().getTime(), cell.getDateCellValue().getTime());

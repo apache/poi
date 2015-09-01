@@ -17,24 +17,30 @@
 
 package org.apache.poi.ss.formula.eval;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+
 import java.io.PrintStream;
 import java.util.Collection;
 import java.util.Locale;
 
-import junit.framework.Assert;
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
-
 import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.ss.formula.functions.TestMathX;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.formula.functions.TestMathX;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+
+import junit.framework.AssertionFailedError;
+import junit.framework.TestCase;
 
 /**
  * Tests formulas and operators as loaded from a test data spreadsheet.<p/>
@@ -46,7 +52,7 @@ import org.apache.poi.util.POILogger;
  *
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
  */
-public final class TestFormulasFromSpreadsheet extends TestCase {
+public final class TestFormulasFromSpreadsheet {
     private static final POILogger logger = POILogFactory.getLogger(TestFormulasFromSpreadsheet.class);
 
 	private static final class Result {
@@ -111,12 +117,8 @@ public final class TestFormulasFromSpreadsheet extends TestCase {
 
 
 	private static void confirmExpectedResult(String msg, Cell expected, CellValue actual) {
-		if (expected == null) {
-			throw new AssertionFailedError(msg + " - Bad setup data expected value is null");
-		}
-		if(actual == null) {
-			throw new AssertionFailedError(msg + " - actual value was null");
-		}
+		assertNotNull(msg + " - Bad setup data expected value is null", expected);
+		assertNotNull(msg + " - actual value was null", actual);
 
 		switch (expected.getCellType()) {
 			case Cell.CELL_TYPE_BLANK:
@@ -131,7 +133,7 @@ public final class TestFormulasFromSpreadsheet extends TestCase {
 				assertEquals(msg, ErrorEval.getText(expected.getErrorCellValue()), ErrorEval.getText(actual.getErrorValue()));
 				break;
 			case Cell.CELL_TYPE_FORMULA: // will never be used, since we will call method after formula evaluation
-				throw new AssertionFailedError("Cannot expect formula as result of formula evaluation: " + msg);
+				fail("Cannot expect formula as result of formula evaluation: " + msg);
 			case Cell.CELL_TYPE_NUMERIC:
 				assertEquals(msg, Cell.CELL_TYPE_NUMERIC, actual.getCellType());
 				TestMathX.assertEquals(msg, expected.getNumericCellValue(), actual.getNumberValue(), TestMathX.POS_ZERO, TestMathX.DIFF_TOLERANCE_FACTOR);
@@ -143,7 +145,7 @@ public final class TestFormulasFromSpreadsheet extends TestCase {
 		}
 	}
 
-
+	@Before
 	protected void setUp() {
 		if (workbook == null) {
 			workbook = HSSFTestDataSamples.openSampleWorkbook(SS.FILENAME);
@@ -155,6 +157,7 @@ public final class TestFormulasFromSpreadsheet extends TestCase {
 		_evaluationSuccessCount = 0;
 	}
 
+	@Test
 	public void testFunctionsFromTestSpreadsheet() {
 
 		processFunctionGroup(SS.START_OPERATORS_ROW_INDEX, null);
@@ -167,11 +170,9 @@ public final class TestFormulasFromSpreadsheet extends TestCase {
 		String successMsg = "There were "
 				+ _evaluationSuccessCount + " successful evaluation(s) and "
 				+ _functionSuccessCount + " function(s) without error";
-		if(_functionFailureCount > 0) {
-			String msg = _functionFailureCount + " function(s) failed in "
-			+ _evaluationFailureCount + " evaluation(s).  " + successMsg;
-			throw new AssertionFailedError(msg);
-		}
+        String msg = _functionFailureCount + " function(s) failed in "
+                + _evaluationFailureCount + " evaluation(s).  " + successMsg;
+		assertEquals(msg, _functionFailureCount, 0);
         logger.log(POILogger.INFO, getClass().getName() + ": " + successMsg);
 	}
 
@@ -188,11 +189,9 @@ public final class TestFormulasFromSpreadsheet extends TestCase {
 		while (true) {
 			Row r = sheet.getRow(rowIndex);
 			String targetFunctionName = getTargetFunctionName(r);
-			if(targetFunctionName == null) {
-				throw new AssertionFailedError("Test spreadsheet cell empty on row ("
-						+ (rowIndex+1) + "). Expected function name or '"
-						+ SS.FUNCTION_NAMES_END_SENTINEL + "'");
-			}
+			assertNotNull("Test spreadsheet cell empty on row ("
+                    + (rowIndex+1) + "). Expected function name or '"
+                    + SS.FUNCTION_NAMES_END_SENTINEL + "'", targetFunctionName);
 			if(targetFunctionName.equals(SS.FUNCTION_NAMES_END_SENTINEL)) {
 				// found end of functions list
 				break;
@@ -201,11 +200,9 @@ public final class TestFormulasFromSpreadsheet extends TestCase {
 
 				// expected results are on the row below
 				Row expectedValuesRow = sheet.getRow(rowIndex + 1);
-				if(expectedValuesRow == null) {
-					int missingRowNum = rowIndex + 2; //+1 for 1-based, +1 for next row
-					throw new AssertionFailedError("Missing expected values row for function '"
-							+ targetFunctionName + " (row " + missingRowNum + ")");
-				}
+                int missingRowNum = rowIndex + 2; //+1 for 1-based, +1 for next row
+                assertNotNull("Missing expected values row for function '"
+                        + targetFunctionName + " (row " + missingRowNum + ")", expectedValuesRow);
 				switch(processFunctionRow(evaluator, targetFunctionName, r, expectedValuesRow)) {
 					case Result.ALL_EVALUATIONS_SUCCEEDED: _functionSuccessCount++; break;
 					case Result.SOME_EVALUATIONS_FAILED: _functionFailureCount++; break;

@@ -20,7 +20,6 @@ package org.apache.poi.ss.usermodel;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.regex.Pattern;
@@ -79,7 +78,7 @@ public class DateUtil {
      * @param use1904windowing Should 1900 or 1904 date windowing be used?
      */
     public static double getExcelDate(Date date, boolean use1904windowing) {
-        Calendar calStart = new GregorianCalendar(TIMEZONE_UTC, Locale.ROOT);
+        Calendar calStart = Calendar.getInstance(getUserTimeZone(), Locale.ROOT);
         calStart.setTime(date);   // If date includes hours, minutes, and seconds, set them to 0
         return internalGetExcelDate(calStart, use1904windowing);
     }
@@ -315,9 +314,9 @@ public class DateUtil {
         int millisecondsInDay = (int)((date - wholeDays) * DAY_MILLISECONDS + 0.5);
         Calendar calendar;
         if (timeZone != null) {
-            calendar = new GregorianCalendar(timeZone, Locale.ROOT);
+            calendar = Calendar.getInstance(timeZone, Locale.ROOT);
         } else {
-            calendar = new GregorianCalendar(TIMEZONE_UTC, Locale.ROOT); // using default time-zone
+            calendar = Calendar.getInstance(getUserTimeZone(), Locale.ROOT); // using default time-zone
         }
         setCalendar(calendar, wholeDays, millisecondsInDay, use1904windowing, roundSeconds);
         return calendar;
@@ -334,6 +333,13 @@ public class DateUtil {
     };
     private static ThreadLocal<String> lastFormatString = new ThreadLocal<String>();
     private static ThreadLocal<Boolean> lastCachedResult = new ThreadLocal<Boolean>();
+    
+    private static ThreadLocal<TimeZone> userTimeZone = new ThreadLocal<TimeZone>() {
+        @Override
+        protected TimeZone initialValue() {
+            return TIMEZONE_UTC;
+        }
+    };
 
     private static boolean isCached(String formatString, int formatIndex) {
         String cachedFormatString = lastFormatString.get();
@@ -345,6 +351,23 @@ public class DateUtil {
         lastFormatIndex.set(formatIndex);
         lastFormatString.set(formatString);
         lastCachedResult.set(Boolean.valueOf(cached));
+    }
+
+    /**
+     * as timezone information is not stored in any format, it can be
+     * set before any date calculations take place
+     *
+     * @param timezone the timezone under which date calculations take place
+     */
+    public static void setUserTimeZone(TimeZone timezone) {
+        userTimeZone.set(timezone);
+    }
+    
+    /**
+     * @return the time zone which is used for date calculations
+     */
+    public static TimeZone getUserTimeZone() {
+        return userTimeZone.get();
     }
     
     /**
@@ -661,7 +684,7 @@ public class DateUtil {
         int month = parseInt(monthStr, "month", 1, 12);
         int day = parseInt(dayStr, "day", 1, 31);
 
-        Calendar cal = new GregorianCalendar(TIMEZONE_UTC, Locale.ROOT);
+        Calendar cal = Calendar.getInstance(getUserTimeZone(), Locale.ROOT);
         cal.set(year, month-1, day, 0, 0, 0);
         cal.set(Calendar.MILLISECOND, 0);
         return cal.getTime();
