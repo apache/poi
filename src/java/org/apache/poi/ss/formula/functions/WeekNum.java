@@ -24,6 +24,7 @@ import org.apache.poi.ss.usermodel.DateUtil;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Locale;
+import java.util.TimeZone;
 
 /**
  * Implementation for Excel WeekNum() function.<p/>
@@ -39,10 +40,13 @@ import java.util.Locale;
  * Return_type     is a number that determines on which day the week begins. The default is 1.
  * 1	Week begins on Sunday. Weekdays are numbered 1 through 7.
  * 2	Week begins on Monday. Weekdays are numbered 1 through 7.
- *
- * @author cedric dot walter @ gmail dot com
  */
 public class WeekNum extends Fixed2ArgFunction implements FreeRefFunction {
+    /**
+     * Excel doesn't store TimeZone information in the file, so if in doubt,
+     *  use UTC to perform calculations
+     */
+    private static final TimeZone DEFAULT_TIMEZONE = TimeZone.getTimeZone("UTC");
 
     public static final FreeRefFunction instance = new WeekNum();
 
@@ -53,7 +57,7 @@ public class WeekNum extends Fixed2ArgFunction implements FreeRefFunction {
         } catch (EvaluationException e) {
             return ErrorEval.VALUE_INVALID;
         }
-        Calendar serialNumCalendar = new GregorianCalendar(Locale.ROOT);
+        Calendar serialNumCalendar = new GregorianCalendar(DEFAULT_TIMEZONE, Locale.ROOT);
         serialNumCalendar.setTime(DateUtil.getJavaDate(serialNum, false));
 
         int returnType = 0;

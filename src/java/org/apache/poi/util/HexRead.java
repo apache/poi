@@ -24,9 +24,6 @@ import java.util.ArrayList;
 /**
  * Utilities to read hex from files.
  * TODO - move to test packages
- *
- * @author Marc Johnson
- * @author Glen Stampoultzis (glens at apache.org)
  */
 public class HexRead
 {
@@ -174,7 +171,7 @@ public class HexRead
 
     static public byte[] readFromString(String data) {
         try {
-            return readData(new ByteArrayInputStream( data.getBytes() ), -1);
+            return readData(new ByteArrayInputStream( data.getBytes(StringUtil.UTF8) ), -1);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
