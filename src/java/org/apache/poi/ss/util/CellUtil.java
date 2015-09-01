@@ -18,6 +18,7 @@
 package org.apache.poi.ss.util;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.poi.ss.usermodel.Cell;
@@ -336,7 +337,7 @@ public final class CellUtil {
 
 		String s = cell.getRichStringCellValue().getString();
 		boolean foundUnicode = false;
-		String lowerCaseStr = s.toLowerCase();
+		String lowerCaseStr = s.toLowerCase(Locale.ROOT);
 
 		for (int i = 0; i < unicodeMappings.length; i++) {
 			UnicodeMapping entry = unicodeMappings[i];

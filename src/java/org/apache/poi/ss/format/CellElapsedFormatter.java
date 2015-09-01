@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Formatter;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -85,7 +86,7 @@ public class CellElapsedFormatter extends CellFormatter {
                 if (topmost != null)
                     throw new IllegalArgumentException(
                             "Duplicate '[' times in format");
-                part = part.toLowerCase();
+                part = part.toLowerCase(Locale.ROOT);
                 int specLen = part.length() - 2;
                 topmost = assignSpec(part.charAt(1), pos, specLen);
                 return part.substring(1, 1 + specLen);
@@ -94,7 +95,7 @@ public class CellElapsedFormatter extends CellFormatter {
             case 'm':
             case 's':
             case '0':
-                part = part.toLowerCase();
+                part = part.toLowerCase(Locale.ROOT);
                 assignSpec(part.charAt(0), pos, part.length());
                 return part;
 

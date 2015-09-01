@@ -23,6 +23,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Locale;
 
 import junit.framework.TestCase;
 import org.apache.poi.POIDataSamples;
@@ -62,7 +63,7 @@ public class TestSprms extends TestCase
         for ( int p = 0; p < range.numParagraphs(); p++ )
         {
             Paragraph paragraph = range.getParagraph( p );
-            char first = paragraph.text().toLowerCase().charAt( 0 );
+            char first = paragraph.text().toLowerCase(Locale.ROOT).charAt( 0 );
             if ( '1' <= first && first < '4' )
             {
                 assertTrue( paragraph.isInTable() );

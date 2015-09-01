@@ -18,6 +18,7 @@ package org.apache.poi.xslf.usermodel;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.poi.POIXMLDocumentPart;
@@ -94,7 +95,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.SldMasterDocument;
             for (POIXMLDocumentPart p : getRelations()) {
                 if (p instanceof XSLFSlideLayout){
                     XSLFSlideLayout layout = (XSLFSlideLayout)p;
-                    _layouts.put(layout.getName().toLowerCase(), layout);
+                    _layouts.put(layout.getName().toLowerCase(Locale.ROOT), layout);
                 }
             }
         }
@@ -133,7 +134,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.SldMasterDocument;
      * @return the layout found or null on failure
      */
     public XSLFSlideLayout getLayout(String name) {
-        return getLayouts().get(name.toLowerCase());
+        return getLayouts().get(name.toLowerCase(Locale.ROOT));
     }
 
 

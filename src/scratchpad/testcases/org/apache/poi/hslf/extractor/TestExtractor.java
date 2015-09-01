@@ -20,6 +20,7 @@ package org.apache.poi.hslf.extractor;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.POITestCase;
@@ -314,7 +315,7 @@ public final class TestExtractor extends POITestCase {
        ppe = new PowerPointExtractor(hslf);
        
        text = ppe.getText();
-       assertContains(text.toLowerCase(), "master");
+       assertContains(text.toLowerCase(Locale.ROOT), "master");
        assertContains(text, masterText);
     }
 
