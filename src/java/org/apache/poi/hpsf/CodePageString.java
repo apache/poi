@@ -25,6 +25,7 @@ import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.util.StringUtil;
 
 @Internal
 class CodePageString
@@ -64,7 +65,7 @@ class CodePageString
     {
         String result;
         if ( codepage == -1 )
-            result = new String( _value );
+            result = new String( _value, StringUtil.UTF8 );
         else
             result = CodePageUtil.getStringFromCodePage(_value, codepage);
         final int terminator = result.indexOf( '\0' );
@@ -96,7 +97,7 @@ class CodePageString
     {
         String stringNT = string + "\0";
         if ( codepage == -1 )
-            _value = stringNT.getBytes();
+            _value = stringNT.getBytes(StringUtil.UTF8);
         else
             _value = CodePageUtil.getBytesInCodePage(stringNT, codepage);
     }

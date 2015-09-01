@@ -20,6 +20,7 @@ package org.apache.poi.hpsf;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.Charset;
 import java.util.List;
 
 import org.apache.poi.hpsf.wellknown.PropertyIDMap;
@@ -345,7 +346,7 @@ public abstract class SpecialPropertySet extends MutablePropertySet
                 return Long.toString( LittleEndian.getUInt(b) );
             }
             // Maybe it's a string? who knows!
-            return new String(b);
+            return new String(b, Charset.forName("ASCII"));
         }
         return propertyValue.toString();
     }

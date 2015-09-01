@@ -18,15 +18,13 @@
 package org.apache.poi.hpsf;
 
 import org.apache.poi.util.HexDump;
+import org.apache.poi.util.StringUtil;
 
 /**
  *  <p>Represents a class ID (16 bytes). Unlike other little-endian
  *  type the {@link ClassID} is not just 16 bytes stored in the wrong
  *  order. Instead, it is a double word (4 bytes) followed by two
  *  words (2 bytes each) followed by 8 bytes.</p>
- *
- * @author Rainer Klute <a
- * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
  */
 public class ClassID
 {
@@ -238,10 +236,8 @@ public class ClassID
      */
     public int hashCode()
     {
-        return new String(bytes).hashCode();
+        return new String(bytes, StringUtil.UTF8).hashCode();
     }
-
-
 
     /**
      * <p>Returns a human-readable representation of the Class ID in standard 

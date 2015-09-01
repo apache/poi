@@ -51,8 +51,6 @@ import org.apache.poi.ss.formula.eval.*;
  * <li>If this argument is negative, this function returns the #NUM! error value.</li>
  * <li>If this argument contains a decimal value, this function ignores the numbers to the right side of the decimal point.</li>
  * </ul>
- *
- * @author cedric dot walter @ gmail dot com
  */
 public final class Dec2Hex extends Var1or2ArgFunction implements FreeRefFunction {
 
@@ -111,7 +109,7 @@ public final class Dec2Hex extends Var1or2ArgFunction implements FreeRefFunction
 
         String hex;
         if (placesNumber != 0) {
-            hex = String.format("%0"+placesNumber+"X", number1.intValue());
+            hex = String.format("%0"+placesNumber+"X", number1.intValue(), Locale.ROOT);
         }
         else {
             hex = Integer.toHexString(number1.intValue());
