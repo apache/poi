@@ -21,6 +21,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
+import java.util.TimeZone;
 
 import org.apache.poi.ss.formula.OperationEvaluationContext;
 import org.apache.poi.ss.formula.eval.ErrorEval;
@@ -44,7 +45,12 @@ import org.apache.poi.ss.usermodel.DateUtil;
  * zero or negative (in the past).
  */
 public class EOMonth implements FreeRefFunction {
-
+    /**
+     * Excel doesn't store TimeZone information in the file, so if in doubt,
+     *  use UTC to perform calculations
+     */
+    private static final TimeZone DEFAULT_TIMEZONE = TimeZone.getTimeZone("UTC");
+    
     public static final FreeRefFunction instance = new EOMonth();
 
     @Override
@@ -64,7 +70,7 @@ public class EOMonth implements FreeRefFunction {
 
             Date startDate = DateUtil.getJavaDate(startDateAsNumber, false);
 
-            Calendar cal = new GregorianCalendar(Locale.ROOT);
+            Calendar cal = new GregorianCalendar(DEFAULT_TIMEZONE, Locale.ROOT);
             cal.setTime(startDate);
             cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH), 0, 0, 0);
             cal.set(Calendar.MILLISECOND, 0);
@@ -78,5 +84,4 @@ public class EOMonth implements FreeRefFunction {
             return e.getErrorEval();
         }
     }
-
 }
