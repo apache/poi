@@ -25,6 +25,7 @@ import java.security.Provider;
 import java.security.Security;
 import java.security.spec.AlgorithmParameterSpec;
 import java.util.Arrays;
+import java.util.Locale;
 
 import javax.crypto.Cipher;
 import javax.crypto.Mac;
@@ -424,7 +425,7 @@ public class CryptoFunctions {
      */
     public static String xorHashPassword(String password) {
         int hashedPassword = createXorVerifier2(password);
-        return String.format("%1$08X", hashedPassword);
+        return String.format(Locale.ROOT, "%1$08X", hashedPassword);
     }
     
     /**
@@ -434,7 +435,7 @@ public class CryptoFunctions {
     public static String xorHashPasswordReversed(String password) {
         int hashedPassword = createXorVerifier2(password);
         
-        return String.format("%1$02X%2$02X%3$02X%4$02X"
+        return String.format(Locale.ROOT, "%1$02X%2$02X%3$02X%4$02X"
             , ( hashedPassword >>> 0 ) & 0xFF
             , ( hashedPassword >>> 8 ) & 0xFF
             , ( hashedPassword >>> 16 ) & 0xFF

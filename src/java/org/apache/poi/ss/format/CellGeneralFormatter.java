@@ -17,6 +17,7 @@
 package org.apache.poi.ss.format;
 
 import java.util.Formatter;
+import java.util.Locale;
 
 /**
  * A formatter for the default "General" cell format.
@@ -77,7 +78,7 @@ public class CellGeneralFormatter extends CellFormatter {
                 }
             }
         } else if (value instanceof Boolean) {
-            toAppendTo.append(value.toString().toUpperCase());
+            toAppendTo.append(value.toString().toUpperCase(Locale.ROOT));
         } else {
             toAppendTo.append(value.toString());
         }

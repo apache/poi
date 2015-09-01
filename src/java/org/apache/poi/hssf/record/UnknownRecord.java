@@ -17,6 +17,8 @@
 
 package org.apache.poi.hssf.record;
 
+import java.util.Locale;
+
 import org.apache.poi.hssf.record.aggregates.PageSettingsBlock;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
@@ -85,7 +87,8 @@ public final class UnknownRecord extends StandardRecord {
             // unknown sids in the range 0x0004-0x0013 are probably 'sub-records' of ObjectRecord
             // those sids are in a different number space.
             // TODO - put unknown OBJ sub-records in a different class
-            System.out.println("Unknown record 0x" + Integer.toHexString(_sid).toUpperCase());
+            System.out.println("Unknown record 0x" + 
+                               Integer.toHexString(_sid).toUpperCase(Locale.ROOT));
         }
     }
 
@@ -114,7 +117,7 @@ public final class UnknownRecord extends StandardRecord {
         StringBuffer sb = new StringBuffer();
 
         sb.append("[").append(biffName).append("] (0x");
-        sb.append(Integer.toHexString(_sid).toUpperCase() + ")\n");
+        sb.append(Integer.toHexString(_sid).toUpperCase(Locale.ROOT) + ")\n");
         if (_rawData.length > 0) {
             sb.append("  rawData=").append(HexDump.toHex(_rawData)).append("\n");
         }
@@ -213,7 +216,7 @@ public final class UnknownRecord extends StandardRecord {
             case 0x1007: return "CHARTLINEFORMAT";
         }
         if (isObservedButUnknown(sid)) {
-            return "UNKNOWN-" + Integer.toHexString(sid).toUpperCase();
+            return "UNKNOWN-" + Integer.toHexString(sid).toUpperCase(Locale.ROOT);
         }
 
         return null;

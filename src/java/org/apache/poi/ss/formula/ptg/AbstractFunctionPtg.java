@@ -17,9 +17,10 @@
 
 package org.apache.poi.ss.formula.ptg;
 
+import java.util.Locale;
+
 import org.apache.poi.ss.formula.function.FunctionMetadata;
 import org.apache.poi.ss.formula.function.FunctionMetadataRegistry;
-
 
 /**
  * This class provides the base functionality for Excel sheet functions
@@ -119,7 +120,7 @@ public abstract class AbstractFunctionPtg extends OperationPtg {
      *  <code>false</code> if the name should be assumed to be an external function.
      */
     public static final boolean isBuiltInFunctionName(String name) {
-        short ix = FunctionMetadataRegistry.lookupIndexByName(name.toUpperCase());
+        short ix = FunctionMetadataRegistry.lookupIndexByName(name.toUpperCase(Locale.ROOT));
         return ix >= 0;
     }
 

@@ -17,9 +17,10 @@
 
 package org.apache.poi.hssf.record;
 
+import java.util.Locale;
+
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
-
 
 /**
  * The UserSViewBegin record specifies settings for a custom view associated with the sheet.
@@ -76,7 +77,7 @@ public final class UserSViewBegin extends StandardRecord {
         StringBuffer sb = new StringBuffer();
 
         sb.append("[").append("USERSVIEWBEGIN").append("] (0x");
-        sb.append(Integer.toHexString(sid).toUpperCase() + ")\n");
+        sb.append(Integer.toHexString(sid).toUpperCase(Locale.ROOT) + ")\n");
         sb.append("  rawData=").append(HexDump.toHex(_rawData)).append("\n");
         sb.append("[/").append("USERSVIEWBEGIN").append("]\n");
         return sb.toString();

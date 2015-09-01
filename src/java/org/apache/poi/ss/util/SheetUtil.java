@@ -22,6 +22,7 @@ import java.awt.font.TextAttribute;
 import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
 import java.text.AttributedString;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.poi.ss.usermodel.Cell;
@@ -148,7 +149,7 @@ public class SheetUtil {
                     sval = String.valueOf(cell.getNumericCellValue());
                 }
             } else if (cellType == Cell.CELL_TYPE_BOOLEAN) {
-                sval = String.valueOf(cell.getBooleanCellValue()).toUpperCase();
+                sval = String.valueOf(cell.getBooleanCellValue()).toUpperCase(Locale.ROOT);
             }
             if(sval != null) {
                 String txt = sval + defaultChar;

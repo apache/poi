@@ -16,6 +16,8 @@
 ==================================================================== */
 package org.apache.poi.ss.usermodel;
 
+import java.util.Locale;
+
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.Color;
 
@@ -136,7 +138,7 @@ public abstract class ExtendedColor implements Color {
           }
           sb.append(cs);
        }
-       return sb.toString().toUpperCase();
+       return sb.toString().toUpperCase(Locale.ROOT);
     }
     
     /**

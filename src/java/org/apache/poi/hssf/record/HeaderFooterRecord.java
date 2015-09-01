@@ -21,6 +21,7 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 
 import java.util.Arrays;
+import java.util.Locale;
 
 /**
  * The HEADERFOOTER record stores information added in Office Excel 2007 for headers/footers.
@@ -88,7 +89,7 @@ public final class HeaderFooterRecord extends StandardRecord {
         StringBuffer sb = new StringBuffer();
 
         sb.append("[").append("HEADERFOOTER").append("] (0x");
-        sb.append(Integer.toHexString(sid).toUpperCase() + ")\n");
+        sb.append(Integer.toHexString(sid).toUpperCase(Locale.ROOT) + ")\n");
         sb.append("  rawData=").append(HexDump.toHex(_rawData)).append("\n");
         sb.append("[/").append("HEADERFOOTER").append("]\n");
         return sb.toString();
