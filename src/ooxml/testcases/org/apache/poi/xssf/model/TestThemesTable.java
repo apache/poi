@@ -22,6 +22,7 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.FileOutputStream;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.codec.binary.Hex;
@@ -104,7 +105,7 @@ public class TestThemesTable {
                 ThemeElement themeElem = ThemeElement.byId(expectedThemeIdx);
                 assertEquals(
                         "Wrong theme at " + ref + " in " + whatWorkbook,
-                        themeElem.name.toLowerCase(), cell.getStringCellValue());
+                        themeElem.name.toLowerCase(Locale.ROOT), cell.getStringCellValue());
 
                 // Fonts are theme-based in their colours
                 XSSFFont font = cell.getCellStyle().getFont();
@@ -235,7 +236,8 @@ public class TestThemesTable {
     }
     private static void assertCellContents(String expected, XSSFCell cell) {
         assertNotNull(cell);
-        assertEquals(expected.toLowerCase(), cell.getStringCellValue().toLowerCase());
+        assertEquals(expected.toLowerCase(Locale.ROOT), 
+                     cell.getStringCellValue().toLowerCase(Locale.ROOT));
     }
     
     @Test

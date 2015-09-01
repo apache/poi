@@ -17,6 +17,8 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import java.util.Locale;
+
 import org.apache.poi.ss.formula.OperationEvaluationContext;
 import org.apache.poi.ss.formula.eval.*;
 
@@ -119,7 +121,7 @@ public final class Dec2Hex extends Var1or2ArgFunction implements FreeRefFunction
             hex =  "FF"+  hex.substring(2);
         }
 
-        return new StringEval(hex.toUpperCase());
+        return new StringEval(hex.toUpperCase(Locale.ROOT));
     }
 
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0) {

@@ -20,6 +20,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.TreeMap;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -343,7 +344,7 @@ public final class PackageRelationshipCollection implements
                 Attr targetModeAttr = element.getAttributeNode(PackageRelationship.TARGET_MODE_ATTRIBUTE_NAME);
                 TargetMode targetMode = TargetMode.INTERNAL;
                 if (targetModeAttr != null) {
-                    targetMode = targetModeAttr.getValue().toLowerCase()
+                    targetMode = targetModeAttr.getValue().toLowerCase(Locale.ROOT)
                             .equals("internal") ? TargetMode.INTERNAL
                             : TargetMode.EXTERNAL;
                 }

@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -65,7 +66,7 @@ public abstract class BaseXLSIteratingTest {
         String[] files = new File(dir).list(new FilenameFilter() {
             @Override
             public boolean accept(File arg0, String arg1) {
-                return arg1.toLowerCase().endsWith(".xls");
+                return arg1.toLowerCase(Locale.ROOT).endsWith(".xls");
             }
         });
         

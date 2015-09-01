@@ -18,6 +18,7 @@
 package org.apache.poi.xwpf.extractor;
 
 import java.io.IOException;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -349,7 +350,7 @@ public class TestXWPFWordExtractor extends TestCase {
                 "endnote_sdt"
         };
         XWPFWordExtractor ex = new XWPFWordExtractor(doc);
-        String s = ex.getText().toLowerCase();
+        String s = ex.getText().toLowerCase(Locale.ROOT);
         int hits = 0;
 
         for (String targ : targs) {
@@ -371,7 +372,7 @@ public class TestXWPFWordExtractor extends TestCase {
                 "test user\n",
         };
         ex = new XWPFWordExtractor(doc);
-        s = ex.getText().toLowerCase();
+        s = ex.getText().toLowerCase(Locale.ROOT);
 
         //At one point in development there were three copies of the text.
         //This ensures that there is only one copy.

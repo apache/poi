@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Locale;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
@@ -150,7 +151,7 @@ public abstract class ContentTypeManager {
 	 */
 	public void addContentType(PackagePartName partName, String contentType) {
 		boolean defaultCTExists = this.defaultContentType.containsValue(contentType);
-		String extension = partName.getExtension().toLowerCase();
+		String extension = partName.getExtension().toLowerCase(Locale.ROOT);
 		if ((extension.length() == 0)
 				|| (this.defaultContentType.containsKey(extension) && !defaultCTExists))
 			this.addOverrideContentType(partName, contentType);
@@ -184,7 +185,7 @@ public abstract class ContentTypeManager {
 	private void addDefaultContentType(String extension, String contentType) {
 		// Remark : Originally the latest parameter was :
 		// contentType.toLowerCase(). Change due to a request ID 1996748.
-		defaultContentType.put(extension.toLowerCase(), contentType);
+		defaultContentType.put(extension.toLowerCase(Locale.ROOT), contentType);
 	}
 
 	/**
@@ -327,7 +328,7 @@ public abstract class ContentTypeManager {
 				&& this.overrideContentType.containsKey(partName))
 			return this.overrideContentType.get(partName);
 
-		String extension = partName.getExtension().toLowerCase();
+		String extension = partName.getExtension().toLowerCase(Locale.ROOT);
 		if (this.defaultContentType.containsKey(extension))
 			return this.defaultContentType.get(extension);
 
