@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.Reader;
+import java.util.Locale;
 import java.util.Properties;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -92,7 +93,8 @@ public class RecordGenerator {
                 File destinationPathFile = new File(destinationPath);
                 destinationPathFile.mkdirs();
                 String destinationFilepath = destinationPath + "/" + recordName + suffix + ".java";
-                transform(file, new File(destinationFilepath), new File(recordStyleDir + "/" + extendstg.toLowerCase() + ".xsl"));
+                transform(file, new File(destinationFilepath), 
+                          new File(recordStyleDir + "/" + extendstg.toLowerCase(Locale.ROOT) + ".xsl"));
                 System.out.println("Generated " + suffix + ": " + destinationFilepath);
 
                 // Generate test (if not already generated)
@@ -101,7 +103,7 @@ public class RecordGenerator {
                 destinationPathFile.mkdirs();
                 destinationFilepath = destinationPath + "/Test" + recordName + suffix + ".java";
                 if (new File(destinationFilepath).exists() == false) {
-                    String temp = (recordStyleDir + "/" + extendstg.toLowerCase() + "_test.xsl");
+                    String temp = (recordStyleDir + "/" + extendstg.toLowerCase(Locale.ROOT) + "_test.xsl");
                     transform(file, new File(destinationFilepath), new File(temp));
                     System.out.println("Generated test: " + destinationFilepath);
                 } else {

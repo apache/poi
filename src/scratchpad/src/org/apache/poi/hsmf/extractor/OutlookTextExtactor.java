@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.util.Locale;
 import java.util.TimeZone;
 
 import org.apache.poi.POIOLE2TextExtractor;
@@ -127,7 +128,7 @@ public class OutlookTextExtactor extends POIOLE2TextExtractor {
             // Failing that try via the raw headers 
             String[] headers = msg.getHeaders();
             for(String header: headers) {
-               if(header.toLowerCase().startsWith("date:")) {
+               if(header.toLowerCase(Locale.ROOT).startsWith("date:")) {
                   s.append(
                         "Date:" + 
                         header.substring(header.indexOf(':')+1) +

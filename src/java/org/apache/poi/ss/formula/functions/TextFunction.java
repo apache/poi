@@ -17,6 +17,7 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 import org.apache.poi.ss.formula.eval.BoolEval;
@@ -106,12 +107,12 @@ public abstract class TextFunction implements Function {
 	};
 	public static final Function LOWER = new SingleArgTextFunc() {
 		protected ValueEval evaluate(String arg) {
-			return new StringEval(arg.toLowerCase());
+			return new StringEval(arg.toLowerCase(Locale.ROOT));
 		}
 	};
 	public static final Function UPPER = new SingleArgTextFunc() {
 		protected ValueEval evaluate(String arg) {
-			return new StringEval(arg.toUpperCase());
+			return new StringEval(arg.toUpperCase(Locale.ROOT));
 		}
 	};
 
@@ -125,8 +126,8 @@ public abstract class TextFunction implements Function {
 		protected ValueEval evaluate(String text) {
 			StringBuilder sb = new StringBuilder();
 			boolean shouldMakeUppercase = true;
-			String lowercaseText = text.toLowerCase();
-			String uppercaseText = text.toUpperCase();
+			String lowercaseText = text.toLowerCase(Locale.ROOT);
+			String uppercaseText = text.toUpperCase(Locale.ROOT);
 			for(int i = 0; i < text.length(); ++i) {
 				if (shouldMakeUppercase) {
 					sb.append(uppercaseText.charAt(i));

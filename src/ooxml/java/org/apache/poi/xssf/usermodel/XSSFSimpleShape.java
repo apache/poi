@@ -20,6 +20,7 @@ package org.apache.poi.xssf.usermodel;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
@@ -254,7 +255,7 @@ public class XSSFSimpleShape extends XSSFShape implements Iterable<XSSFTextParag
         case ALPHA_LC_PARENT_BOTH:
         case ALPHA_LC_PARENT_R:
             if(scheme == ListAutoNumber.ALPHA_LC_PARENT_BOTH) out.append('(');
-            out.append(valueToAlpha(value).toLowerCase());
+            out.append(valueToAlpha(value).toLowerCase(Locale.ROOT));
             out.append(')');
             break;
         case ALPHA_UC_PARENT_BOTH:
@@ -264,7 +265,7 @@ public class XSSFSimpleShape extends XSSFShape implements Iterable<XSSFTextParag
             out.append(')');
             break;        
         case ALPHA_LC_PERIOD:
-            out.append(valueToAlpha(value).toLowerCase());
+            out.append(valueToAlpha(value).toLowerCase(Locale.ROOT));
             out.append('.');
             break;
         case ALPHA_UC_PERIOD:
@@ -287,7 +288,7 @@ public class XSSFSimpleShape extends XSSFShape implements Iterable<XSSFTextParag
         case ROMAN_LC_PARENT_BOTH:
         case ROMAN_LC_PARENT_R:
             if(scheme == ListAutoNumber.ROMAN_LC_PARENT_BOTH) out.append('(');
-            out.append(valueToRoman(value).toLowerCase());
+            out.append(valueToRoman(value).toLowerCase(Locale.ROOT));
             out.append(')');
             break;
         case ROMAN_UC_PARENT_BOTH:
@@ -297,7 +298,7 @@ public class XSSFSimpleShape extends XSSFShape implements Iterable<XSSFTextParag
             out.append(')');
             break;        
         case ROMAN_LC_PERIOD:
-            out.append(valueToRoman(value).toLowerCase());
+            out.append(valueToRoman(value).toLowerCase(Locale.ROOT));
             out.append('.');
             break;
         case ROMAN_UC_PERIOD:

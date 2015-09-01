@@ -331,7 +331,7 @@ public class DateFormatConverter  {
 	}
 	
 	public static String getPrefixForLocale( Locale locale ) {
-		String localeString = locale.toString().toLowerCase();
+		String localeString = locale.toString().toLowerCase(locale);
 		String result = localePrefixes.get( localeString );
 		if( result == null ) {
 			result = localePrefixes.get( localeString.substring( 0, 2 ) );
