@@ -35,15 +35,12 @@ import org.apache.poi.hssf.record.EscherAggregate;
 import org.apache.poi.hssf.usermodel.HSSFPatriarch;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.util.StringUtil;
 
 /**
  * Utility for representing drawings contained in a binary Excel file as a XML tree
- *
- * @author Evgeniy Berlog
- * date: 10.04.12
  */
 public class BiffDrawingToXml {
-
     private static final String SHEET_NAME_PARAM = "-sheet-name";
     private static final String SHEET_INDEXES_PARAM = "-sheet-indexes";
     private static final String EXCLUDE_WORKBOOK_RECORDS = "-exclude-workbook";
@@ -163,7 +160,7 @@ public class BiffDrawingToXml {
             }
         }
         builder.append("</workbook>\n");
-        fos.write(builder.toString().getBytes());
+        fos.write(builder.toString().getBytes(StringUtil.UTF8));
         fos.close();
     }
 
