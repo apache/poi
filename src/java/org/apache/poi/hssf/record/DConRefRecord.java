@@ -18,10 +18,11 @@
  */
 package org.apache.poi.hssf.record;
 
+import java.util.Arrays;
+
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianOutput;
-
-import java.util.Arrays;
+import org.apache.poi.util.StringUtil;
 
 /**
  * DConRef records specify a range in a workbook (internal or external) that serves as a data source
@@ -292,7 +293,7 @@ public class DConRefRecord extends StandardRecord
             {
                 offset++;
             }
-            String out = new String(Arrays.copyOfRange(path, offset, path.length));
+            String out = new String(Arrays.copyOfRange(path, offset, path.length), StringUtil.UTF8);
             //UNC paths have \u0003 chars as path separators.
             out = out.replaceAll("\u0003", "/");
             return out;

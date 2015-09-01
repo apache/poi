@@ -201,7 +201,7 @@ public class CellElapsedFormatter extends CellFormatter {
             parts[i] = specs.get(i).valueFor(elapsed);
         }
 
-        Formatter formatter = new Formatter(toAppendTo);
+        Formatter formatter = new Formatter(toAppendTo, Locale.ROOT);
         try {
             formatter.format(printfFmt, parts);
         } finally {
