@@ -19,12 +19,9 @@ package org.apache.poi.hssf.dev;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintStream;
+import java.io.PrintWriter;
 
-import org.apache.poi.POIDataSamples;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
-import org.junit.Ignore;
-import org.junit.Test;
 
 public class TestBiffViewer extends BaseXLSIteratingTest {
 	static {
@@ -52,7 +49,7 @@ public class TestBiffViewer extends BaseXLSIteratingTest {
 		InputStream is = BiffViewer.getPOIFSInputStream(fs);
 		try {
 			// use a NullOutputStream to not write the bytes anywhere for best runtime 
-			BiffViewer.runBiffViewer(new PrintStream(NULL_OUTPUT_STREAM), is, true, true, true, false);
+			BiffViewer.runBiffViewer(new PrintWriter(NULL_OUTPUT_STREAM), is, true, true, true, false);
 		} finally {
 			is.close();
 			fs.close();

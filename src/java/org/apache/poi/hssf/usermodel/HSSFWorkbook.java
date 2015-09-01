@@ -23,7 +23,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -1713,7 +1715,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
         DrawingGroupRecord r = (DrawingGroupRecord) workbook.findFirstRecordBySid( DrawingGroupRecord.sid );
         r.decode();
         List<EscherRecord> escherRecords = r.getEscherRecords();
-        PrintWriter w = new PrintWriter(System.out);
+        PrintWriter w = new PrintWriter(new OutputStreamWriter(System.out, Charset.defaultCharset()));
         for ( Iterator<EscherRecord> iterator = escherRecords.iterator(); iterator.hasNext(); )
         {
             EscherRecord escherRecord = iterator.next();
