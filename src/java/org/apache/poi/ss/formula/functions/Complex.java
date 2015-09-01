@@ -17,6 +17,8 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import java.util.Locale;
+
 import org.apache.poi.ss.formula.OperationEvaluationContext;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.EvaluationException;
@@ -94,7 +96,8 @@ public class Complex extends Var2or3ArgFunction implements FreeRefFunction {
         if (suffixValue.length() == 0) {
             suffixValue = DEFAULT_SUFFIX;
         }
-        if (suffixValue.equals(DEFAULT_SUFFIX.toUpperCase()) || suffixValue.equals(SUPPORTED_SUFFIX.toUpperCase())) {
+        if (suffixValue.equals(DEFAULT_SUFFIX.toUpperCase(Locale.ROOT)) || 
+                suffixValue.equals(SUPPORTED_SUFFIX.toUpperCase(Locale.ROOT))) {
             return ErrorEval.VALUE_INVALID;
         }
         if (!(suffixValue.equals(DEFAULT_SUFFIX) || suffixValue.equals(SUPPORTED_SUFFIX))) {

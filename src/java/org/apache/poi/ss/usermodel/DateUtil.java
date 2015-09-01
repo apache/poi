@@ -27,14 +27,6 @@ import java.util.regex.Pattern;
 
 /**
  * Contains methods for dealing with Excel dates.
- *
- * @author  Michael Harhen
- * @author  Glen Stampoultzis (glens at apache.org)
- * @author  Dan Sherman (dsherman at isisph.com)
- * @author  Hack Kampbjorn (hak at 2mba.dk)
- * @author  Alex Jacoby (ajacoby at gmail.com)
- * @author  Pavel Krupets (pkrupets at palmtreebusiness dot com)
- * @author  Thies Wellpott
  */
 public class DateUtil {
     protected DateUtil() {
@@ -669,7 +661,8 @@ public class DateUtil {
         int month = parseInt(monthStr, "month", 1, 12);
         int day = parseInt(dayStr, "day", 1, 31);
 
-        Calendar cal = new GregorianCalendar(year, month-1, day, 0, 0, 0);
+        Calendar cal = new GregorianCalendar(TIMEZONE_UTC, Locale.ROOT);
+        cal.set(year, month-1, day, 0, 0, 0);
         cal.set(Calendar.MILLISECOND, 0);
         return cal.getTime();
     }
