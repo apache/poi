@@ -20,6 +20,7 @@ package org.apache.poi.openxml4j.opc;
 import java.math.BigInteger;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Locale;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JRuntimeException;
@@ -479,9 +480,9 @@ public final class PackagePartName implements Comparable<PackagePartName> {
 	public boolean equals(Object other) {
             if (other instanceof PackagePartName) {
                 // String.equals() is compatible with our compareTo(), but cheaper
-                return this.partNameURI.toASCIIString().toLowerCase().equals
+                return this.partNameURI.toASCIIString().toLowerCase(Locale.ROOT).equals
                 (
-                    ((PackagePartName) other).partNameURI.toASCIIString().toLowerCase()
+                    ((PackagePartName) other).partNameURI.toASCIIString().toLowerCase(Locale.ROOT)
                 );
             } else {
                 return false;
@@ -490,7 +491,7 @@ public final class PackagePartName implements Comparable<PackagePartName> {
 
 	@Override
 	public int hashCode() {
-		return this.partNameURI.toASCIIString().toLowerCase().hashCode();
+		return this.partNameURI.toASCIIString().toLowerCase(Locale.ROOT).hashCode();
 	}
 
 	@Override
@@ -543,8 +544,8 @@ public final class PackagePartName implements Comparable<PackagePartName> {
 
         return compare
         (
-            obj1.getURI().toASCIIString().toLowerCase(),
-            obj2.getURI().toASCIIString().toLowerCase()
+            obj1.getURI().toASCIIString().toLowerCase(Locale.ROOT),
+            obj2.getURI().toASCIIString().toLowerCase(Locale.ROOT)
         );
     }
 

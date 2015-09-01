@@ -20,6 +20,7 @@ package org.apache.poi.hssf.usermodel.examples;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Locale;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
@@ -198,7 +199,7 @@ public final class HSSFReadWrite {
 					}
 				}
 			} else if (args.length == 2) {
-				if (args[1].toLowerCase().equals("write")) {
+				if (args[1].toLowerCase(Locale.ROOT).equals("write")) {
 					System.out.println("Write mode");
 					long time = System.currentTimeMillis();
 					HSSFReadWrite.testCreateSampleSheet(fileName);
@@ -213,7 +214,7 @@ public final class HSSFReadWrite {
 					wb.write(stream);
 					stream.close();
 				}
-			} else if (args.length == 3 && args[2].toLowerCase().equals("modify1")) {
+			} else if (args.length == 3 && args[2].toLowerCase(Locale.ROOT).equals("modify1")) {
 				// delete row 0-24, row 74 - 99 && change cell 3 on row 39 to string "MODIFIED CELL!!"
 
 				HSSFWorkbook wb = HSSFReadWrite.readFile(fileName);

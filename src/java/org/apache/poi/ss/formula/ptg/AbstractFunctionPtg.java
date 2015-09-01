@@ -142,7 +142,7 @@ public abstract class AbstractFunctionPtg extends OperationPtg {
      * @return the standard worksheet function index if found, otherwise <tt>FUNCTION_INDEX_EXTERNAL</tt>
      */
     protected static short lookupIndex(String name) {
-        short ix = FunctionMetadataRegistry.lookupIndexByName(name.toUpperCase());
+        short ix = FunctionMetadataRegistry.lookupIndexByName(name.toUpperCase(Locale.ROOT));
         if (ix < 0) {
             return FUNCTION_INDEX_EXTERNAL;
         }

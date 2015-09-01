@@ -23,6 +23,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Locale;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -382,7 +383,7 @@ public class AddDimensionedImage {
         // the image files location is identified by interrogating the URL passed
         // to the method, the images type is identified before it is added to the
         // sheet.
-        String sURL = imageFile.toString().toLowerCase();
+        String sURL = imageFile.toString().toLowerCase(Locale.ROOT);
 	if( sURL.endsWith(".png") ) {
             imageType = Workbook.PICTURE_TYPE_PNG;
 	}

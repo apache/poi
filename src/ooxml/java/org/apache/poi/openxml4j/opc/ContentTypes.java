@@ -17,6 +17,8 @@
 
 package org.apache.poi.openxml4j.opc;
 
+import java.util.Locale;
+
 /**
  * Open Packaging Convention content types (see Annex F : Standard Namespaces
  * and Content Types).
@@ -110,7 +112,7 @@ public final class ContentTypes {
 
 	public static String getContentTypeFromFileExtension(String filename) {
 		String extension = filename.substring(filename.lastIndexOf(".") + 1)
-				.toLowerCase();
+				.toLowerCase(Locale.ROOT);
 		if (extension.equals(EXTENSION_JPG_1)
 				|| extension.equals(EXTENSION_JPG_2))
 			return IMAGE_JPEG;
