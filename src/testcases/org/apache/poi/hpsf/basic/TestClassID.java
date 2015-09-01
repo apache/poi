@@ -17,6 +17,8 @@
 
 package org.apache.poi.hpsf.basic;
 
+import java.util.Locale;
+
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
@@ -115,7 +117,7 @@ public final class TestClassID extends TestCase {
                           0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x10}
             , 0
         );
-        Assert.assertEquals(clsidTest.toString().toUpperCase(),
+        Assert.assertEquals(clsidTest.toString().toUpperCase(Locale.ROOT),
                             "{04030201-0605-0807-090A-0B0C0D0E0F10}"
         );
     }

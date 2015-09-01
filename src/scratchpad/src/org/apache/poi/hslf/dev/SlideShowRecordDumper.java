@@ -20,6 +20,7 @@ package org.apache.poi.hslf.dev;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.Locale;
 
 import org.apache.poi.hslf.record.Record;
 import org.apache.poi.util.HexDump;
@@ -109,7 +110,7 @@ public final class SlideShowRecordDumper {
   }
 
   public String makeHex(int number, int padding) {
-	String hex = Integer.toHexString(number).toUpperCase();
+	String hex = Integer.toHexString(number).toUpperCase(Locale.ROOT);
 	while(hex.length() < padding) {
 		hex = "0" + hex;
 	}

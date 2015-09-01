@@ -21,6 +21,7 @@ package org.apache.poi.xssf.usermodel.helpers;
 
 import java.security.SecureRandom;
 import java.util.Arrays;
+import java.util.Locale;
 
 import javax.xml.bind.DatatypeConverter;
 import javax.xml.namespace.QName;
@@ -54,7 +55,8 @@ public class XSSFPaswordHelper {
         cur.toFirstContentToken();
         if (hashAlgo == null) {
             int hash = CryptoFunctions.createXorVerifier1(password);
-            cur.insertAttributeWithValue(getAttrName(prefix, "password"), Integer.toHexString(hash).toUpperCase());
+            cur.insertAttributeWithValue(getAttrName(prefix, "password"), 
+                                         Integer.toHexString(hash).toUpperCase(Locale.ROOT));
         } else {
             SecureRandom random = new SecureRandom(); 
             byte salt[] = random.generateSeed(16);

@@ -20,10 +20,9 @@ package org.apache.poi.poifs.poibrowser;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Locale;
 
 import org.apache.poi.hpsf.ClassID;
-
-
 
 /**
  * <p>Provides utility methods for encoding and decoding hexadecimal
@@ -181,7 +180,7 @@ public class Codec
                 ("String has odd length " + length);
         byte[] b = new byte[length / 2];
         char[] c = new char[length];
-        s.toUpperCase().getChars(0, length, c, 0);
+        s.toUpperCase(Locale.ROOT).getChars(0, length, c, 0);
         for (int i = 0; i < length; i += 2)
             b[i/2] = (byte) (decodeNibble(c[i]) << 4 & 0xF0 |
                              decodeNibble(c[i+1])    & 0x0F);

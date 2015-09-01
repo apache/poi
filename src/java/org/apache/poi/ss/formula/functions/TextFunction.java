@@ -368,7 +368,8 @@ public abstract class TextFunction implements Function {
 			if (_isCaseSensitive) {
 				result = haystack.indexOf(needle, startIndex);
 			} else {
-				result = haystack.toUpperCase().indexOf(needle.toUpperCase(), startIndex);
+				result = haystack.toUpperCase(Locale.ROOT)
+                       .indexOf(needle.toUpperCase(Locale.ROOT), startIndex);
 			}
 			if (result == -1) {
 				return ErrorEval.VALUE_INVALID;

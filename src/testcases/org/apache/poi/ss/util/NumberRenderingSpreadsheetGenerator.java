@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
@@ -229,7 +230,7 @@ public class NumberRenderingSpreadsheetGenerator {
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
-		return "0x" + Long.toHexString(l).toUpperCase();
+		return "0x" + Long.toHexString(l).toUpperCase(Locale.ROOT);
 	}
 
 	private static boolean isNaNBytes(byte[] fileContent, int offset) {

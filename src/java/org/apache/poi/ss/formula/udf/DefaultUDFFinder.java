@@ -18,6 +18,7 @@
 package org.apache.poi.ss.formula.udf;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.poi.ss.formula.functions.FreeRefFunction;
@@ -38,12 +39,12 @@ public final class DefaultUDFFinder implements UDFFinder {
 		}
 		HashMap<String, FreeRefFunction> m = new HashMap<String, FreeRefFunction>(nFuncs * 3 / 2);
 		for (int i = 0; i < functionImpls.length; i++) {
-			m.put(functionNames[i].toUpperCase(), functionImpls[i]);
+			m.put(functionNames[i].toUpperCase(Locale.ROOT), functionImpls[i]);
 		}
 		_functionsByName = m;
 	}
 
 	public FreeRefFunction findFunction(String name) {
-		return _functionsByName.get(name.toUpperCase());
+		return _functionsByName.get(name.toUpperCase(Locale.ROOT));
 	}
 }

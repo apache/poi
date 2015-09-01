@@ -20,6 +20,7 @@ package org.apache.poi.hslf.dev;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Locale;
 
 import org.apache.poi.ddf.DefaultEscherRecordFactory;
 import org.apache.poi.ddf.EscherContainerRecord;
@@ -192,12 +193,12 @@ public final class SlideShowDumper {
 }
 
 public String makeHex(short s) {
-	String hex = Integer.toHexString(s).toUpperCase();
+	String hex = Integer.toHexString(s).toUpperCase(Locale.ROOT);
 	if(hex.length() == 1) { return "0" + hex; }
 	return hex;
 }
 public String makeHex(int i) {
-	String hex = Integer.toHexString(i).toUpperCase();
+	String hex = Integer.toHexString(i).toUpperCase(Locale.ROOT);
 	if(hex.length() == 1) { return "000" + hex; }
 	if(hex.length() == 2) { return "00" + hex; }
 	if(hex.length() == 3) { return "0" + hex; }

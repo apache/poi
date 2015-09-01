@@ -19,6 +19,8 @@
 
 package org.apache.poi.hwpf.converter;
 
+import java.util.Locale;
+
 import org.apache.poi.util.Beta;
 
 /**
@@ -52,11 +54,11 @@ public final class NumberFormatter
         switch ( style )
         {
         case T_UPPER_ROMAN:
-            return toRoman( num ).toUpperCase();
+            return toRoman( num ).toUpperCase(Locale.ROOT);
         case T_LOWER_ROMAN:
             return toRoman( num );
         case T_UPPER_LETTER:
-            return toLetters( num ).toUpperCase();
+            return toLetters( num ).toUpperCase(Locale.ROOT);
         case T_LOWER_LETTER:
             return toLetters( num );
         case T_ARABIC:

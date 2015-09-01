@@ -32,6 +32,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -66,7 +67,7 @@ public class SettingExternalFunction {
         }
 
         public FreeRefFunction findFunction(String name) {
-            return _functionsByName.get(name.toUpperCase());
+            return _functionsByName.get(name.toUpperCase(Locale.ROOT));
         }
 
     }

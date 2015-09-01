@@ -18,6 +18,7 @@
 package org.apache.poi.hsmf.datatypes;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -138,7 +139,7 @@ public final class Types {
    }
 
    public static String asFileEnding(int type) {
-      String str = Integer.toHexString(type).toUpperCase();
+      String str = Integer.toHexString(type).toUpperCase(Locale.ROOT);
       while(str.length() < 4) {
          str = "0" + str;
       }
