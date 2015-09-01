@@ -18,6 +18,8 @@
 
 package org.apache.poi.hssf.record.cf;
 
+import java.util.Locale;
+
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
@@ -533,7 +535,7 @@ public final class FontFormatting {
         {
             buffer.append("	.underline type is not modified\n");
         }
-        buffer.append("	.color index = ").append("0x"+Integer.toHexString(getFontColorIndex()).toUpperCase()).append("\n");
+        buffer.append("	.color index = ").append("0x"+Integer.toHexString(getFontColorIndex()).toUpperCase(Locale.ROOT)).append("\n");
 
         buffer.append("    [/Font Formatting]\n");
         return buffer.toString();

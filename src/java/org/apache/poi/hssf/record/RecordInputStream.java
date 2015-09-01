@@ -19,6 +19,7 @@ package org.apache.poi.hssf.record;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.util.Locale;
 
 import org.apache.poi.hssf.dev.BiffViewer;
 import org.apache.poi.hssf.record.crypto.Biff8DecryptingStream;
@@ -51,7 +52,7 @@ public final class RecordInputStream implements LittleEndianInput {
 	@SuppressWarnings("serial")
 	public static final class LeftoverDataException extends RuntimeException {
 		public LeftoverDataException(int sid, int remainingByteCount) {
-			super("Initialisation of record 0x" + Integer.toHexString(sid).toUpperCase()
+			super("Initialisation of record 0x" + Integer.toHexString(sid).toUpperCase(Locale.ROOT)
 					+ "(" + getRecordName(sid) + ") left " + remainingByteCount 
 					+ " bytes remaining still to be read.");
 		}

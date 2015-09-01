@@ -22,6 +22,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.util.Locale;
 
 import org.apache.poi.POIOLE2TextExtractor;
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -159,7 +160,7 @@ public class ExcelExtractor extends POIOLE2TextExtractor implements org.apache.p
 			if (i >= args.length) {
 				throw new CommandParseException("Expected value after '" + args[i-1] + "'");
 			}
-			String value = args[i].toUpperCase();
+			String value = args[i].toUpperCase(Locale.ROOT);
 			if ("Y".equals(value) || "YES".equals(value) || "ON".equals(value) || "TRUE".equals(value)) {
 				return true;
 			}

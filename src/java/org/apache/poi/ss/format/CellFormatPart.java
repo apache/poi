@@ -20,6 +20,7 @@ import org.apache.poi.hssf.util.HSSFColor;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
@@ -60,7 +61,7 @@ public class CellFormatPart {
         for (HSSFColor color : colors.values()) {
             Class<? extends HSSFColor> type = color.getClass();
             String name = type.getSimpleName();
-            if (name.equals(name.toUpperCase())) {
+            if (name.equals(name.toUpperCase(Locale.ROOT))) {
                 short[] rgb = color.getTriplet();
                 Color c = new Color(rgb[0], rgb[1], rgb[2]);
                 NAMED_COLORS.put(name, c);

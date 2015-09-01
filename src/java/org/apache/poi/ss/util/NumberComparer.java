@@ -17,6 +17,8 @@
 
 package org.apache.poi.ss.util;
 
+import java.util.Locale;
+
 import static org.apache.poi.ss.util.IEEEDouble.*;
 
 /**
@@ -168,6 +170,6 @@ public final class NumberComparer {
 	 * for formatting double values in error messages
 	 */
 	private static String toHex(double a) {
-		return "0x" + Long.toHexString(Double.doubleToLongBits(a)).toUpperCase();
+		return "0x" + Long.toHexString(Double.doubleToLongBits(a)).toUpperCase(Locale.ROOT);
 	}
 }
