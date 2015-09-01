@@ -20,6 +20,7 @@ package org.apache.poi.ss.formula.functions;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Locale;
+import java.util.TimeZone;
 
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.EvaluationException;
@@ -30,10 +31,13 @@ import org.apache.poi.ss.usermodel.DateUtil;
 
 /**
  * Implementation for the Excel function DATE
- *
- * @author Pavel Krupets (pkrupets at palmtreebusiness dot com)
  */
 public final class DateFunc extends Fixed3ArgFunction {
+    /**
+     * Excel doesn't store TimeZone information in the file, so if in doubt,
+     *  use UTC to perform calculations
+     */
+    private static final TimeZone DEFAULT_TIMEZONE = TimeZone.getTimeZone("UTC");
 
 	public static final Function instance = new DateFunc();
 
@@ -87,7 +91,7 @@ public final class DateFunc extends Fixed3ArgFunction {
 		}
 
 		// Turn this into a Java date
-		Calendar c = new GregorianCalendar(Locale.ROOT);
+		Calendar c = new GregorianCalendar(DEFAULT_TIMEZONE, Locale.ROOT);
 		c.set(year, month, day, 0, 0, 0);
 		c.set(Calendar.MILLISECOND, 0);
 		
