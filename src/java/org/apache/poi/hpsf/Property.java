@@ -18,6 +18,7 @@
 package org.apache.poi.hpsf;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -52,9 +53,6 @@ import org.apache.poi.util.POILogger;
  * href="http://msdn.microsoft.com/library/en-us/stg/stg/property_set_display_name_dictionary.asp?frame=true">
  * Property Set Display Name Dictionary</a>.
  *
- * @author Rainer Klute <a
- * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
- * @author Drew Varner (Drew.Varner InAndAround sc.edu)
  * @see Section
  * @see Variant
  */
@@ -238,7 +236,7 @@ public class Property
                     {
                         /* Without a codepage the length is equal to the number of
                          * bytes. */
-                        b.append(new String(src, o, (int) sLength));
+                        b.append(new String(src, o, (int) sLength, Charset.forName("ASCII")));
                         break;
                     }
                     case CodePageUtil.CP_UNICODE:

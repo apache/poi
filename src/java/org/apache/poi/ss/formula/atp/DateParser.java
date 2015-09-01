@@ -19,6 +19,8 @@ package org.apache.poi.ss.formula.atp;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.Locale;
+import java.util.TimeZone;
 import java.util.regex.Pattern;
 
 import org.apache.poi.ss.formula.eval.ErrorEval;
@@ -26,10 +28,13 @@ import org.apache.poi.ss.formula.eval.EvaluationException;
 
 /**
  * Parser for java dates.
- * 
- * @author jfaenomoto@gmail.com
  */
 public class DateParser {
+    /**
+     * Excel doesn't store TimeZone information in the file, so if in doubt,
+     *  use UTC to perform calculations
+     */
+    private static final TimeZone DEFAULT_TIMEZONE = TimeZone.getTimeZone("UTC");
 
     public DateParser instance = new DateParser();
 
@@ -90,7 +95,8 @@ public class DateParser {
         if (month < 1 || month > 12) {
             throw new EvaluationException(ErrorEval.VALUE_INVALID);
         }
-        Calendar cal = new GregorianCalendar(year, month - 1, 1, 0, 0, 0);
+        Calendar cal = new GregorianCalendar(DEFAULT_TIMEZONE, Locale.ROOT);
+        cal.set(year, month - 1, 1, 0, 0, 0);
         cal.set(Calendar.MILLISECOND, 0);
         if (day < 1 || day > cal.getActualMaximum(Calendar.DAY_OF_MONTH)) {
             throw new EvaluationException(ErrorEval.VALUE_INVALID);
