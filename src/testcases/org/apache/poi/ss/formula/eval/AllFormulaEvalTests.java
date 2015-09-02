@@ -36,7 +36,7 @@ import org.junit.runners.Suite;
     TestMissingArgEval.class,
     TestPercentEval.class,
     TestRangeEval.class,
-    TestUnaryPlusEval.class,
+    TestUnaryPlusEval.class
 })
 public class AllFormulaEvalTests {
 }

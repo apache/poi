@@ -49,7 +49,7 @@ import org.junit.runners.Suite;
     TestRef3DPtg.class,
     TestReferencePtg.class,
     TestSheetNameFormatter.class,
-    TestUnionPtg.class,    
+    TestUnionPtg.class
 })
 public class AllFormulaTests {
 }
