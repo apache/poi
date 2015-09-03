@@ -917,8 +917,8 @@ public class XSSFCellStyle implements CellStyle {
      * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_MEDIUM_DASH_DOT_DOT
      * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_SLANTED_DASH_DOT
      */
-   @Override
-public void setBorderRight(short border) {
+    @Override
+    public void setBorderRight(short border) {
         CTBorder ct = getCTBorder();
         CTBorderPr pr = ct.isSetRight() ? ct.getRight() : ct.addNewRight();
         if(border == BORDER_NONE) ct.unsetRight();

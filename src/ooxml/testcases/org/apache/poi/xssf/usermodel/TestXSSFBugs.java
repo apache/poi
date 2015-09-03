@@ -2381,9 +2381,12 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
         // using temp file instead of ByteArrayOutputStream because of OOM in gump run
         File tmp = TempFile.createTempFile("poi-test", ".bug57880");
-        FileOutputStream fos = new FileOutputStream(tmp);
-        wb.write(fos);
-        fos.close();
+        OutputStream fos = new FileOutputStream(tmp);
+        try {
+            wb.write(fos);
+        } finally {
+            fos.close();
+        }
         
         wb.close();
         fmt = null; /*s = null;*/ wb = null;

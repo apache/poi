@@ -50,6 +50,7 @@ import org.apache.poi.util.TempFile;
 /**
  * Physical zip package.
  */
+@SuppressWarnings("deprecation")
 public final class ZipPackage extends Package {
     private static POILogger logger = POILogFactory.getLogger(ZipPackage.class);
 
@@ -62,7 +63,6 @@ public final class ZipPackage extends Package {
     /**
      * Constructor. Creates a new, empty ZipPackage.
      */
-    @SuppressWarnings("deprecation")
     public ZipPackage() {
     	super(defaultPackageAccess);
     	this.zipArchive = null;
@@ -84,7 +84,6 @@ public final class ZipPackage extends Package {
      *             If the specified input stream not an instance of
      *             ZipInputStream.
      */
-    @SuppressWarnings("deprecation")
     ZipPackage(InputStream in, PackageAccess access) throws IOException {
     	super(access);
     	InputStream zis = new ZipInputStream(in);
@@ -102,7 +101,6 @@ public final class ZipPackage extends Package {
      * @throws InvalidFormatException
      *             If the content type part parsing encounters an error.
      */
-    @SuppressWarnings("deprecation")
     ZipPackage(String path, PackageAccess access) {
     	super(access);
 
@@ -128,7 +126,6 @@ public final class ZipPackage extends Package {
      * @throws InvalidFormatException
      *             If the content type part parsing encounters an error.
      */
-    @SuppressWarnings("deprecation")
     ZipPackage(File file, PackageAccess access) {
     	super(access);
 
@@ -156,7 +153,6 @@ public final class ZipPackage extends Package {
      * @throws InvalidFormatException
      *             If the content type part parsing encounters an error.
      */
-    @SuppressWarnings("deprecation")
     ZipPackage(ZipEntrySource zipEntry, PackageAccess access) {
     	super(access);
     	this.zipArchive = zipEntry;

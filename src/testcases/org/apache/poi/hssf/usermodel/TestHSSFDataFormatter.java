@@ -228,6 +228,7 @@ public final class TestHSSFDataFormatter extends TestCase {
 		row = wb.getSheetAt(0).getRow(1);
       it = row.cellIterator();
       log("==== VALID TIME FORMATS ====");
+      
       while (it.hasNext()) {
          Cell cell = it.next();
          String fmt = cell.getCellStyle().getDataFormatString();
@@ -239,7 +240,8 @@ public final class TestHSSFDataFormatter extends TestCase {
          assertTrue( ! "555.47431".equals(fmtval));
 
          // check we found the time properly
-         assertTrue("Format came out incorrect - " + fmt, fmtval.indexOf("11:23") > -1);
+         assertTrue("Format came out incorrect - " + fmt + ": " + fmtval + ", but expected to find '11:23'", 
+                 fmtval.indexOf("11:23") > -1);
       }
       
 		// test number formats
@@ -409,8 +411,8 @@ public final class TestHSSFDataFormatter extends TestCase {
 	}
 
 	private static void log(String msg) {
-		if (false) { // successful tests should be silent
-			System.out.println(msg);
-		}
+//		if (false) { // successful tests should be silent
+//			System.out.println(msg);
+//		}
 	}
 }
