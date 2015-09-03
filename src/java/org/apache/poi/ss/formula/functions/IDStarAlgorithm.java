@@ -25,11 +25,6 @@ import org.apache.poi.ss.formula.eval.ValueEval;
  */
 public interface IDStarAlgorithm {
     /**
-     * Reset the state of this algorithm.
-     * This is called before each run through a database.
-     */
-    void reset();
-    /**
      * Process a match that is found during a run through a database.
      * @param eval ValueEval of the cell in the matching row. References will already be resolved.
      * @return Whether we should continue iterating through the database.
