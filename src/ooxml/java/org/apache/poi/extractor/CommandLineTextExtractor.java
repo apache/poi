@@ -42,14 +42,18 @@ public class CommandLineTextExtractor {
          
          POITextExtractor extractor = 
             ExtractorFactory.createExtractor(f);
-         POITextExtractor metadataExtractor =
-            extractor.getMetadataTextExtractor();
-         
-         System.out.println("   " + DIVIDER);
-         System.out.println(metadataExtractor.getText());
-         System.out.println("   " + DIVIDER);
-         System.out.println(extractor.getText());
-         System.out.println(DIVIDER);
+         try {
+             POITextExtractor metadataExtractor =
+                extractor.getMetadataTextExtractor();
+             
+             System.out.println("   " + DIVIDER);
+             System.out.println(metadataExtractor.getText());
+             System.out.println("   " + DIVIDER);
+             System.out.println(extractor.getText());
+             System.out.println(DIVIDER);
+         } finally {
+             extractor.close();
+         }
       }
    }
 }

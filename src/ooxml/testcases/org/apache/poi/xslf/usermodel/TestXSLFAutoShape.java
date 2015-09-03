@@ -18,6 +18,8 @@ package org.apache.poi.xslf.usermodel;
 
 import static org.junit.Assert.*;
 
+import java.io.IOException;
+
 import org.apache.poi.sl.usermodel.*;
 import org.apache.poi.sl.usermodel.TextParagraph.TextAlign;
 import org.apache.poi.sl.usermodel.TextShape.TextAutofit;
@@ -32,7 +34,7 @@ import org.openxmlformats.schemas.drawingml.x2006.main.STTextUnderlineType;
  */
 public class TestXSLFAutoShape {
     @Test
-    public void testTextBodyProperies() {
+    public void testTextBodyProperies() throws IOException {
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFSlide slide = ppt.createSlide();
 
@@ -102,10 +104,12 @@ public class TestXSLFAutoShape {
         assertEquals(TextDirection.VERTICAL, shape.getTextDirection());
         shape.setTextDirection(null);
         assertEquals(TextDirection.HORIZONTAL, shape.getTextDirection());
+        
+        ppt.close();
     }
 
     @Test
-    public void testTextParagraph() {
+    public void testTextParagraph() throws IOException {
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFSlide slide = ppt.createSlide();
         assertTrue(slide.getShapes().isEmpty());
@@ -202,10 +206,12 @@ public class TestXSLFAutoShape {
         p.setTextAlign(null);
         assertEquals(TextAlign.LEFT, p.getTextAlign());
         assertFalse(p.getXmlObject().getPPr().isSetAlgn());
+        
+        ppt.close();
     }
 
     @Test
-    public void testTextRun() {
+    public void testTextRun() throws IOException {
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFSlide slide = ppt.createSlide();
 
@@ -272,10 +278,12 @@ public class TestXSLFAutoShape {
         assertEquals("POI", r.getRawText());
         r.setText(null);
         assertNull(r.getRawText());
+        
+        ppt.close();
     }
 
     @Test
-    public void testShapeType() {
+    public void testShapeType() throws IOException {
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFSlide slide = ppt.createSlide();
 
@@ -290,5 +298,7 @@ public class TestXSLFAutoShape {
             shape.setShapeType(tp);
             assertEquals(tp, shape.getShapeType());
         }
+        
+        ppt.close();
     }
 }

@@ -139,5 +139,7 @@ public final class VisioTextExtractor extends POIOLE2TextExtractor {
 
 		// Print not PrintLn as already has \n added to it
 		System.out.print(extractor.getText());
+		
+		extractor.close();
 	}
 }
