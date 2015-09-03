@@ -254,7 +254,7 @@ public interface CellStyle {
 
     /**
      * set the font for this style
-     * @param font  a font object created or retreived from the Workbook object
+     * @param font  a font object created or retrieved from the Workbook object
      * @see Workbook#createFont()
      * @see Workbook#getFontAt(short)
      */

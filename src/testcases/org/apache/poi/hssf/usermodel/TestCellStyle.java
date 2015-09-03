@@ -28,6 +28,7 @@ import junit.framework.TestCase;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -127,7 +128,7 @@ public final class TestCellStyle extends TestCase {
         assertEquals("FIRST ROW ", 0, s.getFirstRowNum());
     }
     
-    public void testHashEquals() {
+    public void testHashEquals() throws IOException {
         HSSFWorkbook     wb   = new HSSFWorkbook();
         HSSFSheet        s    = wb.createSheet();
         HSSFCellStyle    cs1  = wb.createCellStyle();
@@ -154,6 +155,8 @@ public final class TestCellStyle extends TestCase {
         int hash1 = cs1.hashCode();
         cs1.setDataFormat(HSSFDataFormat.getBuiltinFormat("m/dd/yy"));
         assertFalse(hash1 == cs1.hashCode());
+        
+        wb.close();
     }
 
     /**
@@ -466,5 +469,44 @@ public final class TestCellStyle extends TestCase {
         if(threadB.getException() != null) {
             throw threadB.getException();
         }
+    }
+    
+    public void test56959() throws IOException {
+        Workbook wb = new HSSFWorkbook();
+        Sheet sheet = wb.createSheet("somesheet");
+        
+        Row row = sheet.createRow(0);
+        
+        // Create a new font and alter it.
+        Font font = wb.createFont();
+        font.setFontHeightInPoints((short)24);
+        font.setFontName("Courier New");
+        font.setItalic(true);
+        font.setStrikeout(true);
+        font.setColor(Font.COLOR_RED);
+        
+        CellStyle style = wb.createCellStyle();
+        style.setBorderBottom(CellStyle.BORDER_DOTTED);
+        style.setFont(font);
+        
+        Cell cell = row.createCell(0);
+        cell.setCellStyle(style);
+        cell.setCellValue("testtext");
+        
+        Cell newCell = row.createCell(1);
+        
+        newCell.setCellStyle(style);
+        newCell.setCellValue("2testtext2");
+
+        CellStyle newStyle = newCell.getCellStyle();
+        assertEquals(CellStyle.BORDER_DOTTED, newStyle.getBorderBottom());
+        assertEquals(Font.COLOR_RED, ((HSSFCellStyle)newStyle).getFont(wb).getColor());
+        
+//        OutputStream out = new FileOutputStream("/tmp/56959.xls");
+//        try {
+//            wb.write(out);
+//        } finally {
+//            out.close();
+//        }
     }
 }
