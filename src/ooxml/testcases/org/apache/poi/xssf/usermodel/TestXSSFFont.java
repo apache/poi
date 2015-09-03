@@ -17,6 +17,8 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import static org.junit.Assert.assertArrayEquals;
+
 import java.io.IOException;
 
 import org.apache.poi.POIXMLException;
@@ -226,15 +228,21 @@ public final class TestXSSFFont extends BaseTestFont{
 		ctFont.setColorArray(0,color);
 
 		XSSFFont xssfFont=new XSSFFont(ctFont);
-		assertEquals(ctFont.getColorArray(0).getRgb()[0],xssfFont.getXSSFColor().getRgb()[0]);
-		assertEquals(ctFont.getColorArray(0).getRgb()[1],xssfFont.getXSSFColor().getRgb()[1]);
-		assertEquals(ctFont.getColorArray(0).getRgb()[2],xssfFont.getXSSFColor().getRgb()[2]);
-		assertEquals(ctFont.getColorArray(0).getRgb()[3],xssfFont.getXSSFColor().getRgb()[3]);
+		assertEquals(ctFont.getColorArray(0).getRgb()[0],xssfFont.getXSSFColor().getRGB()[0]);
+		assertEquals(ctFont.getColorArray(0).getRgb()[1],xssfFont.getXSSFColor().getRGB()[1]);
+		assertEquals(ctFont.getColorArray(0).getRgb()[2],xssfFont.getXSSFColor().getRGB()[2]);
+		assertEquals(ctFont.getColorArray(0).getRgb()[3],xssfFont.getXSSFColor().getRGB()[3]);
 
-		color.setRgb(Integer.toHexString(0xF1F1F1).getBytes());
+		xssfFont.setColor((short)23);
+		
+		byte[] bytes = Integer.toHexString(0xF1F1F1).getBytes();
+        color.setRgb(bytes);
 		XSSFColor newColor=new XSSFColor(color);
 		xssfFont.setColor(newColor);
-		assertEquals(ctFont.getColorArray(0).getRgb()[2],newColor.getRgb()[2]);
+		assertEquals(ctFont.getColorArray(0).getRgb()[2],newColor.getRGB()[2]);
+		
+		assertArrayEquals(bytes, xssfFont.getXSSFColor().getRGB());
+		assertEquals(0, xssfFont.getColor());
 	}
 
 	public void testThemeColor() {

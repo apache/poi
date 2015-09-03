@@ -388,6 +388,9 @@ public class XSSFFont implements Font {
         if(color == null) _ctFont.setColorArray(null);
         else {
             CTColor ctColor = _ctFont.sizeOfColorArray() == 0 ? _ctFont.addNewColor() : _ctFont.getColorArray(0);
+            if (ctColor.isSetIndexed()) {
+                ctColor.unsetIndexed();
+            }
             ctColor.setRgb(color.getRGB());
         }
     }
