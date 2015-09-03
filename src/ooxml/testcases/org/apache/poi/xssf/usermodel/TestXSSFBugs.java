@@ -29,9 +29,10 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
@@ -66,6 +67,7 @@ import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Drawing;
@@ -2570,5 +2572,48 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
                 assertNotNull(cell.toString());
             }
         }
+    }
+
+    @Test
+    public void test51626() throws Exception {
+        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("51626.xlsx");
+        assertNotNull(wb);
+        wb.close();
+        
+        InputStream stream = HSSFTestDataSamples.openSampleFileStream("51626.xlsx");
+        wb = WorkbookFactory.create(stream);
+        stream.close();
+        wb.close();
+        
+        wb = XSSFTestDataSamples.openSampleWorkbook("51626_contact.xlsx");
+        assertNotNull(wb);
+        wb.close();
+        
+        stream = HSSFTestDataSamples.openSampleFileStream("51626_contact.xlsx");
+        wb = WorkbookFactory.create(stream);
+        stream.close();
+        wb.close();
+    }
+    
+    @Test
+    public void test51451() throws IOException {
+        Workbook wb = new XSSFWorkbook();
+        Sheet sh = wb.createSheet();
+        
+        Row row = sh.createRow(0);
+        Cell cell = row.createCell(0);
+        cell.setCellValue(239827342);
+        
+        CellStyle style = wb.createCellStyle();
+        //style.setHidden(false);
+        DataFormat excelFormat = wb.createDataFormat();
+        style.setDataFormat(excelFormat.getFormat("#,##0"));
+        sh.setDefaultColumnStyle(0, style);
+
+//        FileOutputStream out = new FileOutputStream("/tmp/51451.xlsx");
+//        wb.write(out);
+//        out.close();
+        
+        wb.close();
     }
 }
