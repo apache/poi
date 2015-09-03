@@ -29,6 +29,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
@@ -2528,5 +2529,46 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         // Check we can evaluate it correctly
         FormulaEvaluator eval = wb.getCreationHelper().createFormulaEvaluator();
         assertEquals(expectedResultOrNull, eval.evaluate(intF).formatAsString());
+    }
+
+    @Test
+    public void test48962() {
+        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("48962.xlsx");
+        Sheet sh = wb.getSheetAt(0);
+        Row row = sh.getRow(1);
+        Cell cell = row.getCell(0);
+        
+        CellStyle style = cell.getCellStyle();
+        assertNotNull(style);
+        
+        // color index
+        assertEquals(64, style.getFillBackgroundColor());
+        XSSFColor color = ((XSSFCellStyle)style).getFillBackgroundXSSFColor();
+        assertNotNull(color);
+        
+        // indexed color
+        assertEquals(64, color.getIndexed());
+        assertEquals(64, color.getIndex());
+        
+        // not an RGB color
+        assertFalse(color.isRGB());
+        assertNull(color.getRGB());        
+    }
+    
+    @Test
+    public void test50755_workday_formula_example() {
+        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("50755_workday_formula_example.xlsx");
+        Sheet sheet = wb.getSheet("Sheet1");
+        for(Row aRow : sheet) {
+            Cell cell = aRow.getCell(1);
+            if(cell.getCellType() == Cell.CELL_TYPE_FORMULA) {
+                String formula = cell.getCellFormula();
+                //System.out.println("formula: " + formula);
+                assertNotNull(formula);
+                assertTrue(formula.contains("WORKDAY"));
+            } else {
+                assertNotNull(cell.toString());
+            }
+        }
     }
 }
