@@ -2616,4 +2616,21 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         
         wb.close();
     }
+
+    @Test
+    public void test53105() throws IOException {
+        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("53105.xlsx");
+        assertNotNull(wb);
+        
+
+        // Act
+        // evaluate SUM('Skye Lookup Input'!A4:XFD4), cells in range each contain "1"
+        FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
+        double numericValue = evaluator.evaluate(wb.getSheetAt(0).getRow(1).getCell(0)).getNumberValue();
+
+        // Assert
+        assertEquals(16384.0, numericValue, 0.0);
+    
+        wb.close();
+    }
 }
