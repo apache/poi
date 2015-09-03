@@ -23,18 +23,11 @@ import org.apache.poi.ss.formula.eval.ValueEval;
 /**
  * Implementation of the DGet function:
  * Finds the value of a column in an area with given conditions.
- * 
- * TODO:
- * - wildcards ? and * in string conditions
- * - functions as conditions
  */
 public final class DGet implements IDStarAlgorithm {
     private ValueEval result;
-    
-    public void reset() {
-        result = null;
-    }
 
+    @Override
     public boolean processMatch(ValueEval eval) {
         if(result == null) // First match, just set the value.
         {
@@ -49,6 +42,7 @@ public final class DGet implements IDStarAlgorithm {
         return true;
     }
 
+    @Override
     public ValueEval getResult() {
         if(result == null) {
             return ErrorEval.VALUE_INVALID;

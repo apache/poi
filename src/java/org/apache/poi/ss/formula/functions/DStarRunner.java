@@ -32,12 +32,21 @@ import org.apache.poi.ss.util.NumberComparer;
  * This class performs a D* calculation. It takes an {@link IDStarAlgorithm} object and
  * uses it for calculating the result value. Iterating a database and checking the
  * entries against the set of conditions is done here.
+ *
+ * TODO:
+ * - wildcards ? and * in string conditions
+ * - functions as conditions
  */
 public final class DStarRunner implements Function3Arg {
-    private IDStarAlgorithm algorithm;
+    public enum DStarAlgorithmEnum {
+        DGET,
+        DMIN,
+        // DMAX, // DMAX is not yet implemented
+    }
+    private final DStarAlgorithmEnum algoType;
 
-    public DStarRunner(IDStarAlgorithm algorithm) {
-        this.algorithm = algorithm;
+    public DStarRunner(DStarAlgorithmEnum algorithm) {
+        this.algoType = algorithm;
     }
 
     public final ValueEval evaluate(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
@@ -69,10 +78,14 @@ public final class DStarRunner implements Function3Arg {
             return ErrorEval.VALUE_INVALID;
         }
 
-        // Reset algorithm.
-        algorithm.reset();
+        // Create an algorithm runner.
+        IDStarAlgorithm algorithm = null;
+        switch(algoType) {
+            case DGET: algorithm = new DGet(); break;
+            case DMIN: algorithm = new DMin(); break;
+        }
 
-        // Iterate over all db entries.
+        // Iterate over all DB entries.
         for(int row = 1; row < db.getHeight(); ++row) {
             boolean matches = true;
             try {

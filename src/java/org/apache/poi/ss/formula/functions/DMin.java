@@ -32,10 +32,7 @@ import org.apache.poi.ss.formula.eval.ValueEval;
 public final class DMin implements IDStarAlgorithm {
     private ValueEval minimumValue;
 
-    public void reset() {
-        minimumValue = null;
-    }
-
+    @Override
     public boolean processMatch(ValueEval eval) {
         if(eval instanceof NumericValueEval) {
             if(minimumValue == null) { // First match, just set the value.
@@ -52,6 +49,7 @@ public final class DMin implements IDStarAlgorithm {
         return true;
     }
 
+    @Override
     public ValueEval getResult() {
         if(minimumValue == null) {
             return NumberEval.ZERO;
