@@ -435,6 +435,11 @@ public class XSSFRichTextString implements RichTextString {
     protected static CTFont toCTFont(CTRPrElt pr){
         CTFont ctFont =  CTFont.Factory.newInstance();
 
+        // Bug 58315: there are files where there is no pr-entry for a RichTextString
+        if(pr == null) {
+            return ctFont;
+        }
+
         if(pr.sizeOfBArray() > 0) ctFont.addNewB().setVal(pr.getBArray(0).getVal());
         if(pr.sizeOfUArray() > 0) ctFont.addNewU().setVal(pr.getUArray(0).getVal());
         if(pr.sizeOfIArray() > 0) ctFont.addNewI().setVal(pr.getIArray(0).getVal());

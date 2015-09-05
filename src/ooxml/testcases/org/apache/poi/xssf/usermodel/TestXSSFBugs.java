@@ -2636,4 +2636,25 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     
         wb.close();
     }
+
+
+    @Test
+    public void test58315() throws IOException {
+        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("58315.xlsx");
+        Cell cell = wb.getSheetAt(0).getRow(0).getCell(0);
+        assertNotNull(cell);
+        StringBuilder tmpCellContent = new StringBuilder(cell.getStringCellValue());
+        XSSFRichTextString richText = (XSSFRichTextString) cell.getRichStringCellValue();
+
+        for (int i = richText.length() - 1; i >= 0; i--) {
+            Font f = richText.getFontAtIndex(i);
+            if (f != null && f.getStrikeout()) {
+                tmpCellContent.deleteCharAt(i);
+            }
+        }
+        String result = tmpCellContent.toString();
+        assertEquals("320 350", result);
+
+        wb.close();
+    }
 }
