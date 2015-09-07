@@ -38,13 +38,12 @@ public class CellDateFormatter extends CellFormatter {
     private final DateFormat dateFmt;
     private String sFmt;
 
-    private static final long EXCEL_EPOCH_TIME;
-    private static final Date EXCEL_EPOCH_DATE;
+    private final long EXCEL_EPOCH_TIME;
+    private final Date EXCEL_EPOCH_DATE;
 
-    private static final CellFormatter SIMPLE_DATE = new CellDateFormatter(
-            "mm/d/y");
+    private static /* final */ CellDateFormatter SIMPLE_DATE = null;
 
-    static {
+    {
         Calendar c = LocaleUtil.getLocaleCalendar(1904, 0, 1, 0, 0, 0);
         EXCEL_EPOCH_DATE = c.getTime();
         EXCEL_EPOCH_TIME = c.getTimeInMillis();
@@ -153,7 +152,7 @@ public class CellDateFormatter extends CellFormatter {
         // tweak the format pattern to pass tests on JDK 1.7,
         // See https://issues.apache.org/bugzilla/show_bug.cgi?id=53369
         String ptrn = descBuf.toString().replaceAll("((y)(?!y))(?<!yy)", "yy");
-        dateFmt = new SimpleDateFormat(ptrn, LOCALE);
+        dateFmt = new SimpleDateFormat(ptrn, LocaleUtil.getUserLocale());
     }
 
     /** {@inheritDoc} */
@@ -185,7 +184,7 @@ public class CellDateFormatter extends CellFormatter {
                     Formatter formatter = new Formatter(toAppendTo, Locale.ROOT);
                     try {
                         long msecs = dateObj.getTime() % 1000;
-                        formatter.format(LOCALE, sFmt, msecs / 1000.0);
+                        formatter.format(LocaleUtil.getUserLocale(), sFmt, msecs / 1000.0);
                     } finally {
                         formatter.close();
                     }
@@ -219,6 +218,11 @@ public class CellDateFormatter extends CellFormatter {
      * For a date, this is <tt>"mm/d/y"</tt>.
      */
     public void simpleValue(StringBuffer toAppendTo, Object value) {
+        synchronized (CellDateFormatter.class) {
+            if (SIMPLE_DATE == null || !SIMPLE_DATE.EXCEL_EPOCH_DATE.equals(EXCEL_EPOCH_DATE)) {
+                SIMPLE_DATE = new CellDateFormatter("mm/d/y");
+            }
+        }
         SIMPLE_DATE.formatValue(toAppendTo, value);
     }
 }

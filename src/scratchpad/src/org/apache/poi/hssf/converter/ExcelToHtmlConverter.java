@@ -17,7 +17,6 @@
 package org.apache.poi.hssf.converter;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -85,9 +84,8 @@ public class ExcelToHtmlConverter extends AbstractExcelConverter
         {
             Document doc = ExcelToHtmlConverter.process( new File( args[0] ) );
 
-            FileWriter out = new FileWriter( args[1] );
             DOMSource domSource = new DOMSource( doc );
-            StreamResult streamResult = new StreamResult( out );
+            StreamResult streamResult = new StreamResult( new File(args[1]) );
 
             TransformerFactory tf = TransformerFactory.newInstance();
             Transformer serializer = tf.newTransformer();
@@ -96,7 +94,6 @@ public class ExcelToHtmlConverter extends AbstractExcelConverter
             serializer.setOutputProperty( OutputKeys.INDENT, "no" );
             serializer.setOutputProperty( OutputKeys.METHOD, "html" );
             serializer.transform( domSource, streamResult );
-            out.close();
         }
         catch ( Exception e )
         {
@@ -118,7 +115,9 @@ public class ExcelToHtmlConverter extends AbstractExcelConverter
                 XMLHelper.getDocumentBuilderFactory().newDocumentBuilder()
                         .newDocument() );
         excelToHtmlConverter.processWorkbook( workbook );
-        return excelToHtmlConverter.getDocument();
+        Document doc = excelToHtmlConverter.getDocument();
+        workbook.close();
+        return doc;
     }
 
     private String cssClassContainerCell = null;
@@ -368,8 +367,10 @@ public class ExcelToHtmlConverter extends AbstractExcelConverter
         final short cellStyleIndex = cellStyle.getIndex();
         if ( cellStyleIndex != 0 )
         {
+            @SuppressWarnings("resource")
             HSSFWorkbook workbook = cell.getRow().getSheet().getWorkbook();
             String mainCssClass = getStyleClassName( workbook, cellStyle );
+            
             if ( wrapInDivs )
             {
                 tableCellElement.setAttribute( "class", mainCssClass + " "

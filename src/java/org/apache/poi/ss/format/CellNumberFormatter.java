@@ -597,9 +597,9 @@ public class CellNumberFormatter extends CellFormatter {
             writeFraction(value, null, fractional, output, mods);
         } else {
             StringBuffer result = new StringBuffer();
-            Formatter f = new Formatter(result, LOCALE);
+            Formatter f = new Formatter(result, LocaleUtil.getUserLocale());
             try {
-                f.format(LOCALE, printfFmt, value);
+                f.format(LocaleUtil.getUserLocale(), printfFmt, value);
             } finally {
                 f.close();
             }
@@ -873,9 +873,9 @@ public class CellNumberFormatter extends CellFormatter {
             List<Special> numSpecials, Set<StringMod> mods) {
 
         StringBuffer sb = new StringBuffer();
-        Formatter formatter = new Formatter(sb, LOCALE);
+        Formatter formatter = new Formatter(sb, LocaleUtil.getUserLocale());
         try {
-            formatter.format(LOCALE, fmt, num);
+            formatter.format(LocaleUtil.getUserLocale(), fmt, num);
         } finally {
             formatter.close();
         }

@@ -19,6 +19,7 @@ package org.apache.poi.xwpf.usermodel;
 import java.math.BigInteger;
 
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.LocaleUtil;
 import org.apache.xmlbeans.impl.xb.xmlschema.SpaceAttribute.Space;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTDecimalNumber;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFonts;
@@ -67,8 +68,8 @@ public class TOC {
         rPr.addNewSzCs().setVal(new BigInteger("24"));
         CTSdtContentBlock content = block.addNewSdtContent();
         CTP p = content.addNewP();
-        p.setRsidR("00EF7E24".getBytes());
-        p.setRsidRDefault("00EF7E24".getBytes());
+        p.setRsidR("00EF7E24".getBytes(LocaleUtil.CHARSET_1252));
+        p.setRsidRDefault("00EF7E24".getBytes(LocaleUtil.CHARSET_1252));
         p.addNewPPr().addNewPStyle().setVal("TOCHeading");
         p.addNewR().addNewT().setStringValue("Table of Contents");
     }
@@ -81,8 +82,8 @@ public class TOC {
     public void addRow(int level, String title, int page, String bookmarkRef) {
         CTSdtContentBlock contentBlock = this.block.getSdtContent();
         CTP p = contentBlock.addNewP();
-        p.setRsidR("00EF7E24".getBytes());
-        p.setRsidRDefault("00EF7E24".getBytes());
+        p.setRsidR("00EF7E24".getBytes(LocaleUtil.CHARSET_1252));
+        p.setRsidRDefault("00EF7E24".getBytes(LocaleUtil.CHARSET_1252));
         CTPPr pPr = p.addNewPPr();
         pPr.addNewPStyle().setVal("TOC" + level);
         CTTabs tabs = pPr.addNewTabs();

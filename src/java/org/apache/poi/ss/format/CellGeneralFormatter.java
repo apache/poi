@@ -19,6 +19,8 @@ package org.apache.poi.ss.format;
 import java.util.Formatter;
 import java.util.Locale;
 
+import org.apache.poi.util.LocaleUtil;
+
 /**
  * A formatter for the default "General" cell format.
  *
@@ -57,9 +59,9 @@ public class CellGeneralFormatter extends CellFormatter {
                 stripZeros = false;
             }
 
-            Formatter formatter = new Formatter(toAppendTo, LOCALE);
+            Formatter formatter = new Formatter(toAppendTo, LocaleUtil.getUserLocale());
             try {
-                formatter.format(LOCALE, fmt, value);
+                formatter.format(LocaleUtil.getUserLocale(), fmt, value);
             } finally {
                 formatter.close();
             }
