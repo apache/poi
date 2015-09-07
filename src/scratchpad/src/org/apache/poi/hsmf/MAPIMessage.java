@@ -81,7 +81,7 @@ public class MAPIMessage extends POIDocument {
     */
    public MAPIMessage() {
       // TODO - make writing possible
-      super(new POIFSFileSystem());
+      super(new NPOIFSFileSystem());
    }
 
 
@@ -91,7 +91,7 @@ public class MAPIMessage extends POIDocument {
     * @throws IOException
     */
    public MAPIMessage(String filename) throws IOException {
-      this(new FileInputStream(new File(filename)));
+      this(new NPOIFSFileSystem(new File(filename)));
    }
 
    /**
@@ -101,14 +101,6 @@ public class MAPIMessage extends POIDocument {
     */
    public MAPIMessage(InputStream in) throws IOException {
       this(new NPOIFSFileSystem(in));
-   }
-   /**
-    * Constructor for reading MSG Files from a POIFS filesystem
-    * @param fs
-    * @throws IOException
-    */
-   public MAPIMessage(POIFSFileSystem fs) throws IOException {
-      this(fs.getRoot());
    }
    /**
     * Constructor for reading MSG Files from a POIFS filesystem

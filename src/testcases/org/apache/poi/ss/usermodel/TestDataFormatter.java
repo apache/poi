@@ -21,16 +21,22 @@
 
 package org.apache.poi.ss.usermodel;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.IOException;
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import junit.framework.TestCase;
-
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.usermodel.TestHSSFDataFormatter;
+import org.apache.poi.util.LocaleUtil;
+import org.junit.Ignore;
+import org.junit.Test;
 
 /**
  * Tests of {@link DataFormatter}
@@ -38,13 +44,14 @@ import org.apache.poi.hssf.usermodel.TestHSSFDataFormatter;
  * See {@link TestHSSFDataFormatter} too for
  *  more tests.
  */
-public class TestDataFormatter extends TestCase {
+public class TestDataFormatter {
     private static final double _15_MINUTES = 0.041666667;
 
 	/**
      * Test that we use the specified locale when deciding
      *   how to format normal numbers
      */
+    @Test
     public void testLocale() {
        DataFormatter dfUS = new DataFormatter(Locale.US);
        DataFormatter dfFR = new DataFormatter(Locale.FRENCH);
@@ -61,6 +68,7 @@ public class TestDataFormatter extends TestCase {
      *  a specific locale, but we should format things as if
      *  the locale (eg '[$-1010409]') isn't there
      */
+    @Test
     public void testLocaleBasedFormats() {
        DataFormatter dfUS = new DataFormatter(Locale.US);
 
@@ -78,6 +86,7 @@ public class TestDataFormatter extends TestCase {
      * Ensure that colours get correctly
      *  zapped from within the format strings
      */
+    @Test
     public void testColours() {
        DataFormatter dfUS = new DataFormatter(Locale.US);
        
@@ -105,6 +114,7 @@ public class TestDataFormatter extends TestCase {
        assertEquals("[ab]12.34[x]", dfUS.formatRawCellContents(12.343, -1, "[ab]##.##[x]"));
     }
     
+    @Test
     public void testColoursAndBrackets() {
        DataFormatter dfUS = new DataFormatter(Locale.US);
        
@@ -149,6 +159,7 @@ public class TestDataFormatter extends TestCase {
      *  and Excel differ, and workarounds are not
      *  yet in place for all of these
      */
+    @Test
     public void testNegativeZero() {
        DataFormatter dfUS = new DataFormatter(Locale.US);
        
@@ -193,6 +204,7 @@ public class TestDataFormatter extends TestCase {
      * Test that we correctly handle fractions in the
      *  format string, eg # #/#
      */
+    @Test
     public void testFractions() {
        DataFormatter dfUS = new DataFormatter(Locale.US);
        
@@ -262,6 +274,7 @@ public class TestDataFormatter extends TestCase {
      *  and *x (fill to the column width with "x"s) are
      *  correctly ignored by us.
      */
+    @Test
     public void testPaddingSpaces() {
        DataFormatter dfUS = new DataFormatter(Locale.US);
        assertEquals("12.34", dfUS.formatRawCellContents(12.343, -1, "##.##_ "));
@@ -278,6 +291,7 @@ public class TestDataFormatter extends TestCase {
     /**
      * DataFormatter is the CSV mode preserves spaces
      */
+    @Test
     public void testPaddingSpacesCSV() {
        DataFormatter dfUS = new DataFormatter(Locale.US, true);
        assertEquals("12.34 ", dfUS.formatRawCellContents(12.343, -1, "##.##_ "));
@@ -311,12 +325,11 @@ public class TestDataFormatter extends TestCase {
      * Test that the special Excel month format MMMMM
      *  gets turned into the first letter of the month
      */
+    @Test
     public void testMMMMM() {
        DataFormatter dfUS = new DataFormatter(Locale.US);
        
-       Calendar c = Calendar.getInstance();
-       c.set(Calendar.MILLISECOND, 0);
-       c.set(2010, 5, 1, 2, 0, 0);
+       Calendar c = LocaleUtil.getLocaleCalendar(2010, 5, 1, 2, 0, 0);
        
        assertEquals("2010-J-1 2:00:00", dfUS.formatRawCellContents(
              DateUtil.getExcelDate(c, false), -1, "YYYY-MMMMM-D h:mm:ss"
@@ -326,6 +339,7 @@ public class TestDataFormatter extends TestCase {
     /**
      * Tests that we do AM/PM handling properly
      */
+    @Test
     public void testAMPM() {
        DataFormatter dfUS = new DataFormatter(Locale.US);
        
@@ -343,6 +357,7 @@ public class TestDataFormatter extends TestCase {
      * Test that we can handle elapsed time,
      *  eg formatting 1 day 4 hours as 28 hours
      */
+    @Test
     public void testElapsedTime() {
        DataFormatter dfUS = new DataFormatter(Locale.US);
 
@@ -447,6 +462,7 @@ public class TestDataFormatter extends TestCase {
         }
     }
 
+    @Test
     public void testDateWindowing() {
        DataFormatter dfUS = new DataFormatter(Locale.US);
        
@@ -455,6 +471,7 @@ public class TestDataFormatter extends TestCase {
        assertEquals("1904-01-01 00:00:00", dfUS.formatRawCellContents(0.0, -1, "yyyy-mm-dd hh:mm:ss", true));
     }
 
+    @Test
     public void testScientificNotation() {
         DataFormatter dfUS = new DataFormatter(Locale.US);
 
@@ -463,6 +480,7 @@ public class TestDataFormatter extends TestCase {
         assertEquals("0.00E+00", dfUS.formatRawCellContents(0.0, -1, "0.00E+00"));
      }
 
+    @Test
     public void testInvalidDate() {
         DataFormatter df1 = new DataFormatter(Locale.US);
         assertEquals("-1.0", df1.formatRawCellContents(-1, -1, "mm/dd/yyyy"));
@@ -472,6 +490,7 @@ public class TestDataFormatter extends TestCase {
                 df2.formatRawCellContents(-1, -1, "mm/dd/yyyy"));
     }
 
+    @Test
     public void testEscapes() {
        DataFormatter dfUS = new DataFormatter(Locale.US);
 
@@ -485,6 +504,7 @@ public class TestDataFormatter extends TestCase {
        assertEquals("1901/01/01", dfUS.formatRawCellContents(367.0, -1, "yyyy\\/mm\\/dd"));
     }
 
+    @Test
     public void testOther() {
         DataFormatter dfUS = new DataFormatter(Locale.US, true);
 
@@ -494,6 +514,7 @@ public class TestDataFormatter extends TestCase {
         assertEquals(" $-   ", dfUS.formatRawCellContents(0.0, -1, "_-$* #,##0.00_-;-$* #,##0.00_-;_-$* \"-\"??_-;_-@_-"));
     }
     
+    @Test
     public void testErrors() throws IOException {
         DataFormatter dfUS = new DataFormatter(Locale.US, true);
 
@@ -519,6 +540,7 @@ public class TestDataFormatter extends TestCase {
      *  the start of a format string to format it differently, we
      *  should at least handle it as it if wasn't there
      */
+    @Test
     public void testDatesWithLocales() {
         DataFormatter dfUS = new DataFormatter(Locale.US, true);
         
@@ -543,7 +565,9 @@ public class TestDataFormatter extends TestCase {
     /**
      * TODO Fix these so that they work
      */
-    public void DISABLEDtestCustomFormats() {
+    @Test
+    @Ignore
+    public void testCustomFormats() {
        DataFormatter dfUS = new DataFormatter(Locale.US, true);
        String fmt;
        
@@ -560,6 +584,7 @@ public class TestDataFormatter extends TestCase {
     /**
      * ExcelStyleDateFormatter should work for Milliseconds too
      */
+    @Test
     public void testExcelStyleDateFormatterStringOnMillis() {
        // Test directly with the .000 style
        DateFormat formatter1 = new ExcelStyleDateFormatter("ss.000");
@@ -589,7 +614,8 @@ public class TestDataFormatter extends TestCase {
        assertEquals("01.010", dfUS.formatRawCellContents(0.0000116898, -1, "ss.000"));
     }
 
-	public void testBug54786() {
+    @Test
+    public void testBug54786() {
 		DataFormatter formatter = new DataFormatter();
 		String format = "[h]\"\"h\"\" m\"\"m\"\"";
 		assertTrue(DateUtil.isADateFormat(-1,format));
@@ -613,7 +639,8 @@ public class TestDataFormatter extends TestCase {
 		}
 	}
 	
-	public void testIsADateFormat() {
+    @Test
+    public void testIsADateFormat() {
 	    // first check some cases that should not be a date, also call multiple times to ensure the cache is used
 	    assertFalse(DateUtil.isADateFormat(-1, null));
 	    assertFalse(DateUtil.isADateFormat(-1, null));

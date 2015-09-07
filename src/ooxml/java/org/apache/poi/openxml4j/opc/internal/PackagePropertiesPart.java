@@ -22,8 +22,7 @@ import java.io.OutputStream;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
-import java.util.TimeZone;
+import java.util.Locale;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
@@ -33,6 +32,7 @@ import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.PackageProperties;
 import org.apache.poi.openxml4j.util.Nullable;
+import org.apache.poi.util.LocaleUtil;
 
 /**
  * Represents the core properties part of a package.
@@ -559,9 +559,8 @@ public final class PackagePropertiesPart extends PackagePart implements
 		if (s == null || s.equals("")) {
 			return new Nullable<Date>();
 		}
-		SimpleDateFormat df = new SimpleDateFormat(
-				"yyyy-MM-dd'T'HH:mm:ss'Z'");
-		df.setTimeZone(TimeZone.getTimeZone("UTC"));
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.ROOT);
+		df.setTimeZone(LocaleUtil.TIMEZONE_UTC);
 		Date d = df.parse(s, new ParsePosition(0));
 		if (d == null) {
 			throw new InvalidFormatException("Date not well formated");
@@ -586,9 +585,8 @@ public final class PackagePropertiesPart extends PackagePart implements
 		   return "";
 		}
 		
-		SimpleDateFormat df = new SimpleDateFormat(
-				"yyyy-MM-dd'T'HH:mm:ss'Z'");
-		df.setTimeZone(TimeZone.getTimeZone("UTC"));
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.ROOT);
+		df.setTimeZone(LocaleUtil.TIMEZONE_UTC);
 		return df.format(date);
 	}
 

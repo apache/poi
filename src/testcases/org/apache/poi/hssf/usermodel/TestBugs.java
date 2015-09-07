@@ -36,9 +36,9 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.TimeZone;
 
 import org.apache.poi.EncryptedDocumentException;
@@ -69,13 +69,13 @@ import org.apache.poi.ss.usermodel.BaseTestBugzillaIssues;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.DataFormatter;
-import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.TempFile;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -2193,10 +2193,9 @@ public final class TestBugs extends BaseTestBugzillaIssues {
 
     @Test
     public void bug48968() throws Exception {
-       TimeZone tz = DateUtil.getUserTimeZone();
-       try {
-           DateUtil.setUserTimeZone(TimeZone.getTimeZone("CET"));
-           
+        TimeZone userTimeZone = LocaleUtil.getUserTimeZone();
+        LocaleUtil.setUserTimeZone(TimeZone.getTimeZone("CET"));
+        try {
            HSSFWorkbook wb = openSample("48968.xls");
            assertEquals(1, wb.getNumberOfSheets());
     
@@ -2241,9 +2240,9 @@ public final class TestBugs extends BaseTestBugzillaIssues {
            assertEquals(39.0+14.0+1,  s.getRow(6).getCell(0).getNumericCellValue(), 0);
            assertEquals("SECOND(A1)", s.getRow(7).getCell(0).getCellFormula());
            assertEquals(54.0+24.0-60, s.getRow(7).getCell(0).getNumericCellValue(), 0);
-       } finally {
-           DateUtil.setUserTimeZone(tz);
-       }
+        } finally {
+            LocaleUtil.setUserTimeZone(userTimeZone);
+        }
     }
        
 
@@ -2474,12 +2473,13 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         Sheet sheet = wb.getSheet("test-sheet");
         int rowCount = sheet.getLastRowNum() + 1;
         int newRows = 5;
+        Calendar cal = LocaleUtil.getLocaleCalendar(); 
         for (int r = rowCount; r < rowCount + newRows; r++) {
             Row row = sheet.createRow((short) r);
             row.createCell(0).setCellValue(1.03 * (r + 7));
-            row.createCell(1).setCellValue(new Date());
-            row.createCell(2).setCellValue(Calendar.getInstance());
-            row.createCell(3).setCellValue(String.format("row:%d/col:%d", r, 3));
+            row.createCell(1).setCellValue(cal.getTime());
+            row.createCell(2).setCellValue(cal);
+            row.createCell(3).setCellValue(String.format(Locale.ROOT, "row:%d/col:%d", r, 3));
             row.createCell(4).setCellValue(true);
             row.createCell(5).setCellType(Cell.CELL_TYPE_ERROR);
             row.createCell(6).setCellValue("added cells.");

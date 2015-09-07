@@ -17,14 +17,19 @@
 
 package org.apache.poi.ss.usermodel;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.util.Calendar;
+import java.util.Locale;
 
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.JvmBugs;
+import org.apache.poi.util.LocaleUtil;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
-
-import java.util.Calendar;
 
 /**
  * Common superclass for testing automatic sizing of sheet columns
@@ -35,12 +40,25 @@ public abstract class BaseTestSheetAutosizeColumn {
 
     private final ITestDataProvider _testDataProvider;
 
+    private static Locale userLocale;
+    
+    @BeforeClass
+    public static void initLocale() {
+        userLocale = LocaleUtil.getUserLocale();
+        LocaleUtil.setUserLocale(Locale.ROOT);
+    }
+    
+    @AfterClass
+    public static void resetLocale() {
+        LocaleUtil.setUserLocale(userLocale);
+    }
+    
     protected BaseTestSheetAutosizeColumn(ITestDataProvider testDataProvider) {
         _testDataProvider = testDataProvider;
     }
 
     @Test
-    public void numericCells(){
+    public void numericCells() throws Exception {
         Workbook workbook = _testDataProvider.createWorkbook();
         fixFonts(workbook);
         DataFormat df = workbook.getCreationHelper().createDataFormat();
@@ -77,10 +95,12 @@ public abstract class BaseTestSheetAutosizeColumn {
         assertEquals(sheet.getColumnWidth(1), sheet.getColumnWidth(2)); // columns 1, 2 and 3 should have the same width
         assertEquals(sheet.getColumnWidth(2), sheet.getColumnWidth(3)); // columns 1, 2 and 3 should have the same width
         assertEquals(sheet.getColumnWidth(4), sheet.getColumnWidth(5)); // 10.0000 and '10.0000'
+        
+        workbook.close();
     }
 
     @Test
-    public void booleanCells(){
+    public void booleanCells() throws Exception {
         Workbook workbook = _testDataProvider.createWorkbook();
         fixFonts(workbook);
         Sheet sheet = workbook.createSheet();
@@ -106,10 +126,12 @@ public abstract class BaseTestSheetAutosizeColumn {
         assertTrue(sheet.getColumnWidth(1) > sheet.getColumnWidth(0));  // 'true' is wider than '0'
         assertEquals(sheet.getColumnWidth(1), sheet.getColumnWidth(2));  // columns 1, 2 and 3 should have the same width
         assertEquals(sheet.getColumnWidth(2), sheet.getColumnWidth(3));  // columns 1, 2 and 3 should have the same width
+
+        workbook.close();
     }
 
     @Test
-    public void dateCells(){
+    public void dateCells() throws Exception {
         Workbook workbook = _testDataProvider.createWorkbook();
         fixFonts(workbook);
         Sheet sheet = workbook.createSheet();
@@ -124,8 +146,7 @@ public abstract class BaseTestSheetAutosizeColumn {
         CellStyle style5 = workbook.createCellStyle(); //rotated text
         style5.setDataFormat(df.getFormat("mmm/dd/yyyy"));
 
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(2010, 0, 1); // Jan 1 2010
+        Calendar calendar = LocaleUtil.getLocaleCalendar(2010, 0, 1); // Jan 1 2010
 
         Row row = sheet.createRow(0);
         row.createCell(0).setCellValue(DateUtil.getJavaDate(0));   //default date
@@ -172,10 +193,12 @@ public abstract class BaseTestSheetAutosizeColumn {
         assertTrue(sheet.getColumnWidth(5) > sheet.getColumnWidth(3));  // 'mmm/dd/yyyy' is wider than 'mmm'
         assertEquals(sheet.getColumnWidth(6), sheet.getColumnWidth(5)); // date formatted as 'mmm/dd/yyyy'
         assertEquals(sheet.getColumnWidth(4), sheet.getColumnWidth(7)); // date formula formatted as 'mmm'
+        
+        workbook.close();
     }
 
     @Test
-    public void stringCells(){
+    public void stringCells() throws Exception {
         Workbook workbook = _testDataProvider.createWorkbook();
         fixFonts(workbook);
         Sheet sheet = workbook.createSheet();
@@ -205,10 +228,12 @@ public abstract class BaseTestSheetAutosizeColumn {
         assertEquals(sheet.getColumnWidth(4), sheet.getColumnWidth(3));
         boolean ignoreFontSizeX2 = JvmBugs.hasLineBreakMeasurerBug();
         assertTrue(ignoreFontSizeX2 || sheet.getColumnWidth(5) > sheet.getColumnWidth(4)); //larger font results in a wider column width
+        
+        workbook.close();
     }
 
     @Test
-    public void rotatedText(){
+    public void rotatedText() throws Exception {
         Workbook workbook = _testDataProvider.createWorkbook();
         fixFonts(workbook);
         Sheet sheet = workbook.createSheet();
@@ -230,10 +255,12 @@ public abstract class BaseTestSheetAutosizeColumn {
         int w1 = sheet.getColumnWidth(1);
 
         assertTrue(w0*5 < w1); // rotated text occupies at least five times less horizontal space than normal text
+        
+        workbook.close();
     }
 
     @Test
-    public void mergedCells(){
+    public void mergedCells() throws Exception {
         Workbook workbook = _testDataProvider.createWorkbook();
         fixFonts(workbook);
         Sheet sheet = workbook.createSheet();
@@ -251,6 +278,8 @@ public abstract class BaseTestSheetAutosizeColumn {
 
         sheet.autoSizeColumn(0, true);
         assertTrue(sheet.getColumnWidth(0) > defaulWidth);
+        
+        workbook.close();
     }
 
     
@@ -293,6 +322,8 @@ public abstract class BaseTestSheetAutosizeColumn {
        Row r60708 = sheet.createRow(60708);
        r60708.createCell(0).setCellValue("Near the end");
        sheet.autoSizeColumn(0);
+       
+       workbook.close();
     }
     
     // TODO should we have this stuff in the FormulaEvaluator?

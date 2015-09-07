@@ -19,6 +19,8 @@
 
 package org.apache.poi.xssf.streaming;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.IOException;
 
 import javax.xml.namespace.QName;
@@ -30,6 +32,8 @@ import org.apache.poi.xssf.SXSSFITestDataProvider;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.xmlbeans.XmlCursor;
+import org.junit.AfterClass;
+import org.junit.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
 
 /**
@@ -42,11 +46,12 @@ public class TestSXSSFCell extends BaseTestXCell {
         super(SXSSFITestDataProvider.instance);
     }
 
-    @Override
-    public void tearDown(){
+    @AfterClass
+    public static void tearDown(){
         SXSSFITestDataProvider.instance.cleanup();
     }
 
+    @Test
     public void testPreserveSpaces() throws IOException {
         String[] samplesWithSpaces = {
                 " POI",

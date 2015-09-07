@@ -144,7 +144,7 @@ public final class TestStringUtil extends TestCase {
     }
 
     private static String fmt(double num, int minIntDigits, int maxFracDigitis) {
-        NumberFormat nf = NumberFormat.getInstance();
+        NumberFormat nf = NumberFormat.getInstance(LocaleUtil.getUserLocale());
 
         if (minIntDigits != -1) {
             nf.setMinimumIntegerDigits(minIntDigits);

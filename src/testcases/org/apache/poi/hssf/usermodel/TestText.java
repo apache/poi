@@ -18,21 +18,23 @@
 package org.apache.poi.hssf.usermodel;
 
 import static org.junit.Assert.assertArrayEquals;
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.model.HSSFTestModelHelper;
 import org.apache.poi.hssf.model.TextboxShape;
 import org.apache.poi.hssf.record.ObjRecord;
 import org.apache.poi.hssf.record.TextObjectRecord;
+import org.junit.Test;
 
 /**
  * @author Evgeniy Berlog
  * @date 25.06.12
  */
-public class TestText extends TestCase {
+public class TestText {
 
-    public void testResultEqualsToAbstractShape() {
+    @Test
+    public void testResultEqualsToAbstractShape() throws Exception {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sh = wb.createSheet();
         HSSFPatriarch patriarch = sh.createDrawingPatriarch();
@@ -81,11 +83,14 @@ public class TestText extends TestCase {
 
         assertEquals(expected.length, actual.length);
         assertArrayEquals(expected, actual);
+        
+        wb.close();
     }
 
-    public void testAddTextToExistingFile() {
-        HSSFWorkbook wb = new HSSFWorkbook();
-        HSSFSheet sh = wb.createSheet();
+    @Test
+    public void testAddTextToExistingFile() throws Exception {
+        HSSFWorkbook wb1 = new HSSFWorkbook();
+        HSSFSheet sh = wb1.createSheet();
         HSSFPatriarch patriarch = sh.createDrawingPatriarch();
         HSSFTextbox textbox = patriarch.createTextbox(new HSSFClientAnchor());
         textbox.setString(new HSSFRichTextString("just for test"));
@@ -94,8 +99,9 @@ public class TestText extends TestCase {
 
         assertEquals(patriarch.getChildren().size(), 2);
 
-        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
-        sh = wb.getSheetAt(0);
+        HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1);
+        wb1.close();
+        sh = wb2.getSheetAt(0);
         patriarch = sh.getDrawingPatriarch();
 
         assertEquals(patriarch.getChildren().size(), 2);
@@ -103,19 +109,23 @@ public class TestText extends TestCase {
         text3.setString(new HSSFRichTextString("text3"));
         assertEquals(patriarch.getChildren().size(), 3);
 
-        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
-        sh = wb.getSheetAt(0);
+        HSSFWorkbook wb3 = HSSFTestDataSamples.writeOutAndReadBack(wb2);
+        wb2.close();
+        sh = wb3.getSheetAt(0);
         patriarch = sh.getDrawingPatriarch();
 
         assertEquals(patriarch.getChildren().size(), 3);
         assertEquals(((HSSFTextbox) patriarch.getChildren().get(0)).getString().getString(), "just for test");
         assertEquals(((HSSFTextbox) patriarch.getChildren().get(1)).getString().getString(), "just for test2");
         assertEquals(((HSSFTextbox) patriarch.getChildren().get(2)).getString().getString(), "text3");
+        
+        wb3.close();
     }
 
-    public void testSetGetProperties() {
-        HSSFWorkbook wb = new HSSFWorkbook();
-        HSSFSheet sh = wb.createSheet();
+    @Test
+    public void testSetGetProperties() throws Exception {
+        HSSFWorkbook wb1 = new HSSFWorkbook();
+        HSSFSheet sh = wb1.createSheet();
         HSSFPatriarch patriarch = sh.createDrawingPatriarch();
         HSSFTextbox textbox = patriarch.createTextbox(new HSSFClientAnchor());
         textbox.setString(new HSSFRichTextString("test"));
@@ -139,8 +149,9 @@ public class TestText extends TestCase {
         textbox.setMarginTop(10);
         assertEquals(textbox.getMarginTop(), 10);
 
-        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
-        sh = wb.getSheetAt(0);
+        HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1);
+        wb1.close();
+        sh = wb2.getSheetAt(0);
         patriarch = sh.getDrawingPatriarch();
         textbox = (HSSFTextbox) patriarch.getChildren().get(0);
         assertEquals(textbox.getString().getString(), "test");
@@ -167,8 +178,9 @@ public class TestText extends TestCase {
         assertEquals(textbox.getMarginRight(), 91);
         assertEquals(textbox.getMarginTop(), 101);
 
-        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
-        sh = wb.getSheetAt(0);
+        HSSFWorkbook wb3 = HSSFTestDataSamples.writeOutAndReadBack(wb2);
+        wb2.close();
+        sh = wb3.getSheetAt(0);
         patriarch = sh.getDrawingPatriarch();
         textbox = (HSSFTextbox) patriarch.getChildren().get(0);
 
@@ -179,9 +191,12 @@ public class TestText extends TestCase {
         assertEquals(textbox.getMarginLeft(), 81);
         assertEquals(textbox.getMarginRight(), 91);
         assertEquals(textbox.getMarginTop(), 101);
+        
+        wb3.close();
     }
 
-    public void testExistingFileWithText(){
+    @Test
+    public void testExistingFileWithText() throws Exception {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("drawings.xls");
         HSSFSheet sheet = wb.getSheet("text");
         HSSFPatriarch drawing = sheet.getDrawingPatriarch();
@@ -194,5 +209,6 @@ public class TestText extends TestCase {
         assertEquals(textbox.getMarginLeft(), 3600000);
         assertEquals(textbox.getMarginRight(), 0);
         assertEquals(textbox.getString().getString(), "teeeeesssstttt");
+        wb.close();
     }
 }

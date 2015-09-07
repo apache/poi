@@ -17,14 +17,13 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.Iterator;
-
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.FormulaRecord;
@@ -43,15 +42,19 @@ import org.apache.poi.ss.formula.ptg.RefPtg;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.util.LocaleUtil;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 /**
  *
  */
-public final class TestFormulaEvaluatorBugs extends TestCase {
+public final class TestFormulaEvaluatorBugs {
     private static boolean OUTPUT_TEST_FILES = false;
-    private String tmpDirName;
+    private static String tmpDirName;
 
-    protected void setUp() {
+    @BeforeClass
+    public static void setUp() {
         tmpDirName = System.getProperty("java.io.tmpdir");
         OUTPUT_TEST_FILES = Boolean.parseBoolean(
                 System.getProperty("org.apache.poi.test.output_test_files", "False"));
@@ -66,6 +69,7 @@ public final class TestFormulaEvaluatorBugs extends TestCase {
      * WARNING - tedious bug where you actually have to
      *  open up excel
      */
+    @Test
     public void test44636() throws Exception {
         // Open the existing file, tweak one value and
         // re-calculate
@@ -80,15 +84,16 @@ public final class TestFormulaEvaluatorBugs extends TestCase {
         HSSFFormulaEvaluator.evaluateAllFormulaCells(wb);
         assertEquals(4.2 * 25, row.getCell(3).getNumericCellValue(), 0.0001);
 
-        FileOutputStream out;
         if (OUTPUT_TEST_FILES) {
             // Save
             File existing = new File(tmpDirName, "44636-existing.xls");
-            out = new FileOutputStream(existing);
+            FileOutputStream out = new FileOutputStream(existing);
             wb.write(out);
             out.close();
             System.err.println("Existing file for bug #44636 written to " + existing.toString());
         }
+        wb.close();
+        
         // Now, do a new file from scratch
         wb = new HSSFWorkbook();
         sheet = wb.createSheet();
@@ -106,21 +111,21 @@ public final class TestFormulaEvaluatorBugs extends TestCase {
         if (OUTPUT_TEST_FILES) {
             // Save
             File scratch = new File(tmpDirName, "44636-scratch.xls");
-            out = new FileOutputStream(scratch);
+            FileOutputStream out = new FileOutputStream(scratch);
             wb.write(out);
             out.close();
             System.err.println("New file for bug #44636 written to " + scratch.toString());
         }
+        wb.close();
     }
 
     /**
      * Bug 44297: 32767+32768 is evaluated to -1
      * Fix: IntPtg must operate with unsigned short. Reading signed short results in incorrect formula calculation
      * if a formula has values in the interval [Short.MAX_VALUE, (Short.MAX_VALUE+1)*2]
-     *
-     * @author Yegor Kozlov
      */
-    public void test44297() {
+    @Test
+    public void test44297() throws Exception {
 
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("44297.xls");
 
@@ -175,13 +180,16 @@ public final class TestFormulaEvaluatorBugs extends TestCase {
         cell = row.getCell(0);
         assertEquals("-1000000-3000000", cell.getCellFormula());
         assertEquals(-4000000, eva.evaluate(cell).getNumberValue(), 0);
+        
+        wb.close();
     }
 
     /**
      * Bug 44410: SUM(C:C) is valid in excel, and means a sum
      *  of all the rows in Column C
      */
-    public void test44410() {
+    @Test
+    public void test44410() throws Exception {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("SingleLetterRanges.xls");
 
         HSSFSheet sheet = wb.getSheetAt(0);
@@ -233,12 +241,15 @@ public final class TestFormulaEvaluatorBugs extends TestCase {
         HSSFCell cellSUM2D = rowSUM2D.getCell(0);
         assertEquals("SUM(C:D)", cellSUM2D.getCellFormula());
         assertEquals(66, eva.evaluate(cellSUM2D).getNumberValue(), 0);
+        
+        wb.close();
     }
 
     /**
      * Tests that we can evaluate boolean cells properly
      */
-    public void testEvaluateBooleanInCell_bug44508() {
+    @Test
+    public void testEvaluateBooleanInCell_bug44508() throws Exception {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet();
         wb.setSheetName(0, "Sheet1");
@@ -254,9 +265,12 @@ public final class TestFormulaEvaluatorBugs extends TestCase {
             fail("Identified bug 44508");
         }
         assertEquals(true, cell.getBooleanCellValue());
+        
+        wb.close();
     }
 
-    public void testClassCast_bug44861() {
+    @Test
+    public void testClassCast_bug44861() throws Exception {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("44861.xls");
 
         // Check direct
@@ -276,9 +290,12 @@ public final class TestFormulaEvaluatorBugs extends TestCase {
                 }
             }
         }
+        
+        wb.close();
     }
 
-    public void testEvaluateInCellWithErrorCode_bug44950() {
+    @Test
+    public void testEvaluateInCellWithErrorCode_bug44950() throws Exception {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet("Sheet1");
         HSSFRow row = sheet.createRow(1);
@@ -289,13 +306,16 @@ public final class TestFormulaEvaluatorBugs extends TestCase {
             fe.evaluateInCell(cell);
         } catch (NumberFormatException e) {
             if (e.getMessage().equals("You cannot get an error value from a non-error cell")) {
-                throw new AssertionFailedError("Identified bug 44950 b");
+                fail("Identified bug 44950 b");
             }
             throw e;
+        } finally {
+            wb.close();
         }
     }
 
-    public void testDateWithNegativeParts_bug48528() {
+    @Test
+    public void testDateWithNegativeParts_bug48528() throws Exception {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet("Sheet1");
         HSSFRow row = sheet.createRow(1);
@@ -310,31 +330,33 @@ public final class TestFormulaEvaluatorBugs extends TestCase {
 
         cell.setCellFormula("DATE(2012,2,1)");
         fe.notifyUpdateCell(cell);
-        assertEquals(40940.0, fe.evaluate(cell).getNumberValue());
+        assertEquals(40940.0, fe.evaluate(cell).getNumberValue(), 0);
 
         cell.setCellFormula("DATE(2012,2,1+4)");
         fe.notifyUpdateCell(cell);
-        assertEquals(40944.0, fe.evaluate(cell).getNumberValue());
+        assertEquals(40944.0, fe.evaluate(cell).getNumberValue(), 0);
 
         cell.setCellFormula("DATE(2012,2-1,1+4)");
         fe.notifyUpdateCell(cell);
-        assertEquals(40913.0, fe.evaluate(cell).getNumberValue());
+        assertEquals(40913.0, fe.evaluate(cell).getNumberValue(), 0);
 
         cell.setCellFormula("DATE(2012,2,1-27)");
         fe.notifyUpdateCell(cell);
-        assertEquals(40913.0, fe.evaluate(cell).getNumberValue());
+        assertEquals(40913.0, fe.evaluate(cell).getNumberValue(), 0);
 
         cell.setCellFormula("DATE(2012,2-2,1+4)");
         fe.notifyUpdateCell(cell);
-        assertEquals(40882.0, fe.evaluate(cell).getNumberValue());
+        assertEquals(40882.0, fe.evaluate(cell).getNumberValue(), 0);
 
         cell.setCellFormula("DATE(2012,2,1-58)");
         fe.notifyUpdateCell(cell);
-        assertEquals(40882.0, fe.evaluate(cell).getNumberValue());
+        assertEquals(40882.0, fe.evaluate(cell).getNumberValue(), 0);
 
         cell.setCellFormula("DATE(2012,2-12,1+4)");
         fe.notifyUpdateCell(cell);
-        assertEquals(40579.0, fe.evaluate(cell).getNumberValue());
+        assertEquals(40579.0, fe.evaluate(cell).getNumberValue(), 0);
+        
+        wb.close();
     }
 
     private static final class EvalListener extends EvaluationListener {
@@ -363,7 +385,8 @@ public final class TestFormulaEvaluatorBugs extends TestCase {
     /**
      * The HSSFFormula evaluator performance benefits greatly from caching of intermediate cell values
      */
-    public void testSlowEvaluate45376() {
+    @Test
+    public void testSlowEvaluate45376() throws Exception {
         /*
          * Note - to observe behaviour without caching, disable the call to
          * updateValue() from FormulaCellCacheEntry.updateFormulaResult().
@@ -384,7 +407,7 @@ public final class TestFormulaEvaluatorBugs extends TestCase {
                     "DATE(YEAR(" + prevCell + "),MONTH(" + prevCell + ")+1,1),NA())";
             cell.setCellFormula(formula);
         }
-        Calendar cal = new GregorianCalendar(2000, 0, 1, 0, 0, 0);
+        Calendar cal = LocaleUtil.getLocaleCalendar(2000, 0, 1, 0, 0, 0);
         row.createCell(0).setCellValue(cal);
 
         // Choose cell A9 instead of A10, so that the failing test case doesn't take too long to execute.
@@ -397,8 +420,8 @@ public final class TestFormulaEvaluatorBugs extends TestCase {
             // Without caching, evaluating cell 'A9' takes 21845 evaluations which consumes
             // much time (~3 sec on Core 2 Duo 2.2GHz)
             // short-circuit-if optimisation cuts this down to 255 evaluations which is still too high
-            System.err.println("Cell A9 took " + evalCount + " intermediate evaluations");
-            throw new AssertionFailedError("Identifed bug 45376 - Formula evaluator should cache values");
+            // System.err.println("Cell A9 took " + evalCount + " intermediate evaluations");
+            fail("Identifed bug 45376 - Formula evaluator should cache values");
         }
         // With caching, the evaluationCount is 8 which is exactly the
         // number of formula cells that needed to be evaluated.
@@ -413,9 +436,12 @@ public final class TestFormulaEvaluatorBugs extends TestCase {
 
         // confirm the evaluation result too
         assertEquals(ErrorEval.NA, ve);
+        
+        wb.close();
     }
 
     @SuppressWarnings("resource")
+    @Test
     public void test55747_55324() throws Exception {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFFormulaEvaluator ev = wb.getCreationHelper().createFormulaEvaluator();

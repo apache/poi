@@ -18,13 +18,11 @@
 package org.apache.poi.ss.formula.atp;
 
 import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.Locale;
-import java.util.TimeZone;
 
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.EvaluationException;
 import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.util.LocaleUtil;
 
 
 /**
@@ -35,8 +33,6 @@ import org.apache.poi.ss.usermodel.DateUtil;
  * @author Josh Micich
  */
 final class YearFracCalculator {
-	/** use UTC time-zone to avoid daylight savings issues */
-	private static final TimeZone UTC_TIME_ZONE = TimeZone.getTimeZone("UTC");
 	private static final int MS_PER_HOUR = 60 * 60 * 1000;
 	private static final int MS_PER_DAY = 24 * MS_PER_HOUR;
 	private static final int DAYS_PER_NORMAL_YEAR = 365;
@@ -317,9 +313,10 @@ final class YearFracCalculator {
 	}
 
 	private static SimpleDate createDate(int dayCount) {
-		GregorianCalendar calendar = new GregorianCalendar(UTC_TIME_ZONE, Locale.ROOT);
-		DateUtil.setCalendar(calendar, dayCount, 0, false, false);
-		return new SimpleDate(calendar);
+	    /** use UTC time-zone to avoid daylight savings issues */
+		Calendar cal = LocaleUtil.getLocaleCalendar(LocaleUtil.TIMEZONE_UTC);
+		DateUtil.setCalendar(cal, dayCount, 0, false, false);
+		return new SimpleDate(cal);
 	}
 
 	private static final class SimpleDate {

@@ -19,21 +19,14 @@ package org.apache.poi.ss.formula.atp;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
-import java.util.TimeZone;
 
 import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.util.LocaleUtil;
 
 /**
  * A calculator for workdays, considering dates as excel representations.
  */
 public class WorkdayCalculator {
-    /**
-     * Excel doesn't store TimeZone information in the file, so if in doubt,
-     *  use UTC to perform calculations
-     */
-    private static final TimeZone DEFAULT_TIMEZONE = TimeZone.getTimeZone("UTC");
-
     public static final WorkdayCalculator instance = new WorkdayCalculator();
 
     /**
@@ -69,7 +62,7 @@ public class WorkdayCalculator {
 	public Date calculateWorkdays(double start, int workdays, double[] holidays) {
 		Date startDate = DateUtil.getJavaDate(start);
 		int direction = workdays < 0 ? -1 : 1;
-		Calendar endDate = Calendar.getInstance(DEFAULT_TIMEZONE, Locale.ROOT);
+		Calendar endDate = LocaleUtil.getLocaleCalendar();
 		endDate.setTime(startDate);
 		double excelEndDate = DateUtil.getExcelDate(endDate.getTime());
 		while (workdays != 0) {
@@ -97,7 +90,7 @@ public class WorkdayCalculator {
         int startDay = (int) Math.floor(start < end ? start : end);
         int endDay = (int) Math.floor(end > start ? end : start);
         for (; startDay <= endDay; startDay++) {
-            Calendar today = Calendar.getInstance(DEFAULT_TIMEZONE, Locale.ROOT);
+            Calendar today = LocaleUtil.getLocaleCalendar();
             today.setTime(DateUtil.getJavaDate(startDay));
             if (today.get(Calendar.DAY_OF_WEEK) == dayOfWeek) {
                 pastDaysOfWeek++;
@@ -133,7 +126,7 @@ public class WorkdayCalculator {
      * @return <code>true</code> if date is weekend, <code>false</code> otherwise.
      */
     protected boolean isWeekend(double aDate) {
-        Calendar date = Calendar.getInstance(DEFAULT_TIMEZONE, Locale.ROOT);
+        Calendar date = LocaleUtil.getLocaleCalendar();
         date.setTime(DateUtil.getJavaDate(aDate));
         return date.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY || date.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY;
     }

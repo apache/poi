@@ -28,6 +28,7 @@ import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.ss.formula.eval.BoolEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
+import org.apache.poi.util.LocaleUtil;
 import org.junit.Test;
 
 public final class TestDays360 {
@@ -36,14 +37,13 @@ public final class TestDays360 {
 	 * @param month 1-based
 	 */
 	private static Date makeDate(int year, int month, int day) {
-		Calendar cal = Calendar.getInstance(Locale.ROOT);
-		cal.set(year, month-1, day, 0, 0, 0);
-		cal.set(Calendar.MILLISECOND, 0);
+		Calendar cal = LocaleUtil.getLocaleCalendar(year, month-1, day);
 		return cal.getTime();
 	}
 
 	private static Date decrementDay(Date d) {
-		Calendar c = (Calendar)d.clone();
+		Calendar c = LocaleUtil.getLocaleCalendar();
+		c.setTime(d);
 		c.add(Calendar.DAY_OF_MONTH, -1);
 		return c.getTime();
 	}

@@ -524,4 +524,8 @@ public class CellFormatPart {
         String str = m.group(g);
         return (str == null ? "" : str);
     }
+
+    public String toString() {
+        return format.format;
+    }
 }

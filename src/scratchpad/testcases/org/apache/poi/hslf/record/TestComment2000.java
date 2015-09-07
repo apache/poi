@@ -18,10 +18,19 @@
 package org.apache.poi.hslf.record;
 
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
+
+import org.apache.poi.util.LocaleUtil;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 /**
  * Tests that Comment2000 works properly.
@@ -29,7 +38,7 @@ import java.util.Date;
  *
  * @author Nick Burch (nick at torchbox dot com)
  */
-public final class TestComment2000 extends TestCase {
+public final class TestComment2000 {
 	// From a real file
 	private byte[] data_a = new byte[] {
 		0x0F, 00, 0xE0-256, 0x2E, 0x9C-256, 00, 00, 00,
@@ -82,22 +91,35 @@ public final class TestComment2000 extends TestCase {
 		0x0A, 00, 00, 00
 		};
 
-	private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+	private static SimpleDateFormat sdf;
+	
+	@BeforeClass
+	public static void initDateFormat() {
+	    sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.ROOT);
+	    sdf.setTimeZone(LocaleUtil.getUserTimeZone());
+	}
 
+    @Test
     public void testRecordType() {
 		Comment2000 ca = new Comment2000(data_a, 0, data_a.length);
 		assertEquals(12000l, ca.getRecordType());
 	}
-	public void testAuthor() {
+    
+    @Test
+    public void testAuthor() {
 		Comment2000 ca = new Comment2000(data_a, 0, data_a.length);
 		assertEquals("Dumbledore", ca.getAuthor());
 		assertEquals("D", ca.getAuthorInitials());
 	}
-	public void testText() {
+	
+    @Test
+    public void testText() {
 		Comment2000 ca = new Comment2000(data_a, 0, data_a.length);
 		assertEquals("Yes, they certainly are, aren't they!", ca.getText());
 	}
-	public void testCommentAtom() throws Exception {
+	
+    @Test
+    public void testCommentAtom() throws Exception {
 		Comment2000 ca = new Comment2000(data_a, 0, data_a.length);
 		Comment2000Atom c2a = ca.getComment2000Atom();
 
@@ -107,7 +129,9 @@ public final class TestComment2000 extends TestCase {
 		Date exp_a = sdf.parse("2006-01-24 10:26:15.205");
 		assertEquals(exp_a, c2a.getDate());
 	}
-	public void testCommentAtomB() throws Exception {
+	
+    @Test
+    public void testCommentAtomB() throws Exception {
 		Comment2000 cb = new Comment2000(data_b, 0, data_b.length);
 		Comment2000Atom c2b = cb.getComment2000Atom();
 
@@ -118,7 +142,8 @@ public final class TestComment2000 extends TestCase {
 		assertEquals(exp_b, c2b.getDate());
 	}
 
-	public void testWrite() throws Exception {
+    @Test
+    public void testWrite() throws Exception {
 		Comment2000 ca = new Comment2000(data_a, 0, data_a.length);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		ca.writeOut(baos);
@@ -131,7 +156,8 @@ public final class TestComment2000 extends TestCase {
 	}
 
 	// Change a few things
-	public void testChange() throws Exception {
+    @Test
+    public void testChange() throws Exception {
 		Comment2000 ca = new Comment2000(data_a, 0, data_a.length);
 		Comment2000 cb = new Comment2000(data_b, 0, data_b.length);
 		Comment2000 cn = new Comment2000();
@@ -196,6 +222,7 @@ public final class TestComment2000 extends TestCase {
     /**
      *  A Comment2000 records with missing commentTextAtom
      */
+    @Test
     public void testBug44770() {
 		byte[] data = {
             0x0F, 0x00, (byte)0xE0, 0x2E, 0x3E, 0x00, 0x00, 0x00, 0x00, 0x00, (byte)0xBA, 0x0F,

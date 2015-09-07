@@ -17,6 +17,9 @@
 package org.apache.poi.ss.usermodel;
 
 import java.util.*;
+
+import org.apache.poi.util.LocaleUtil;
+
 import java.math.RoundingMode;
 import java.text.*;
 
@@ -56,16 +59,15 @@ public class ExcelStyleDateFormatter extends SimpleDateFormat {
         DataFormatter.setExcelStyleRoundingMode(format2digits, RoundingMode.DOWN);
         DataFormatter.setExcelStyleRoundingMode(format3digit);
         DataFormatter.setExcelStyleRoundingMode(format4digits);
+        setTimeZone(LocaleUtil.getUserTimeZone());
     }
 
     private double dateToBeFormatted = 0.0;
 
-    public ExcelStyleDateFormatter() {
-        super();
-    }
+    // no-arg constructor is private because of undefined super call with locale
 
     public ExcelStyleDateFormatter(String pattern) {
-        super(processFormatPattern(pattern));
+        super(processFormatPattern(pattern), LocaleUtil.getUserLocale());
     }
 
     public ExcelStyleDateFormatter(String pattern,

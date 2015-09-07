@@ -17,30 +17,28 @@
 
 package org.apache.poi.hsmf;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
-import org.apache.poi.hsmf.datatypes.*;
+import org.apache.poi.hsmf.datatypes.TestChunkData;
+import org.apache.poi.hsmf.datatypes.TestSorters;
+import org.apache.poi.hsmf.datatypes.TestTypes;
 import org.apache.poi.hsmf.extractor.TestOutlookTextExtractor;
-import org.apache.poi.hsmf.parsers.*;
+import org.apache.poi.hsmf.parsers.TestPOIFSChunkParser;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
-public final class AllHSMFTests {
-   public static Test suite() {
-      TestSuite suite = new TestSuite(AllHSMFTests.class.getName());
-
-      suite.addTestSuite(TestBasics.class);
-      suite.addTestSuite(TestBlankFileRead.class);
-      suite.addTestSuite(TestSimpleFileRead.class);
-      suite.addTestSuite(TestOutlook30FileRead.class);
-      suite.addTestSuite(TestFileWithAttachmentsRead.class);
-      suite.addTestSuite(TestChunkData.class);
-      suite.addTestSuite(TestTypes.class);
-      suite.addTestSuite(TestSorters.class);
-      suite.addTestSuite(TestOutlookTextExtractor.class);
-      suite.addTestSuite(TestPOIFSChunkParser.class);
-      suite.addTestSuite(TestMessageSubmissionChunkY2KRead.class);
-      suite.addTestSuite(TestMessageSubmissionChunk.class);
-
-      return suite;
-   }
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+    TestBasics.class,
+    TestBlankFileRead.class,
+    TestSimpleFileRead.class,
+    TestOutlook30FileRead.class,
+    TestFileWithAttachmentsRead.class,
+    TestChunkData.class,
+    TestTypes.class,
+    TestSorters.class,
+    TestOutlookTextExtractor.class,
+    TestPOIFSChunkParser.class,
+    TestMessageSubmissionChunkY2KRead.class,
+    TestMessageSubmissionChunk.class
+})
+public class AllHSMFTests {
 }

@@ -31,6 +31,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.TimeZone;
 
@@ -196,7 +197,7 @@ public class OOXMLSignatureFacet extends SignatureFacet {
         /*
          * SignatureTime
          */
-        DateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        DateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.ROOT);
         fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
         String nowStr = fmt.format(signatureConfig.getExecutionTime());
         LOG.log(POILogger.DEBUG, "now: " + nowStr);

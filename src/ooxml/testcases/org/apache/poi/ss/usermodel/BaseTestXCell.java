@@ -17,13 +17,13 @@
 
 package org.apache.poi.ss.usermodel;
 
+import static org.junit.Assert.assertEquals;
+
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.ss.ITestDataProvider;
-import org.apache.poi.ss.SpreadsheetVersion;
-import org.apache.poi.xssf.SXSSFITestDataProvider;
-import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.streaming.SXSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.junit.Test;
 
 /**
  * Class for combined testing of XML-specific functionality of 
@@ -37,6 +37,7 @@ public abstract class BaseTestXCell extends BaseTestCell {
         super(testDataProvider);
     }
 
+    @Test
     public void testXmlEncoding(){
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sh = wb.createSheet();

@@ -36,10 +36,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.poi.ss.util.NumberToTextConverter;
+import org.apache.poi.util.LocaleUtil;
 
 
 /**
@@ -100,7 +103,7 @@ import org.apache.poi.ss.util.NumberToTextConverter;
  *   Excel will output "", <code>DataFormatter</code> will output "0".
  * </ul>
  */
-public class DataFormatter {
+public class DataFormatter implements Observer {
     private static final String defaultFractionWholePartFormat = "#";
     private static final String defaultFractionFractionPartFormat = "#/##";
     /** Pattern to find a number format: "0" or  "#" */
@@ -153,18 +156,18 @@ public class DataFormatter {
     /**
      * The decimal symbols of the locale used for formatting values.
      */
-    private final DecimalFormatSymbols decimalSymbols;
+    private DecimalFormatSymbols decimalSymbols;
 
     /**
      * The date symbols of the locale used for formatting values.
      */
-    private final DateFormatSymbols dateSymbols;
+    private DateFormatSymbols dateSymbols;
 
     /** <em>General</em> format for whole numbers. */
-    private final Format generalWholeNumFormat;
+    private Format generalWholeNumFormat;
 
     /** <em>General</em> format for decimal numbers. */
-    private final Format generalDecimalNumFormat;
+    private Format generalDecimalNumFormat;
 
     /** A default format to use when a number pattern cannot be parsed. */
     private Format defaultNumFormat;
@@ -173,15 +176,37 @@ public class DataFormatter {
      * A map to cache formats.
      *  Map<String,Format> formats
      */
-    private final Map<String,Format> formats;
+    private final Map<String,Format> formats = new HashMap<String,Format>();
 
     private boolean emulateCsv = false;
 
+    /** stores the locale valid it the last formatting call */
+    private Locale locale;
+    
+    /** stores if the locale should change according to {@link LocaleUtil#getUserLocale()} */
+    private boolean localeIsAdapting = true;
+    
+    private class LocaleChangeObservable extends Observable {
+        void checkForLocaleChange() {
+            checkForLocaleChange(LocaleUtil.getUserLocale());
+        }
+        void checkForLocaleChange(Locale newLocale) {
+            if (!localeIsAdapting) return;
+            if (newLocale.equals(locale)) return;
+            super.setChanged();
+            notifyObservers(newLocale);
+        }
+    }
+    
+    /** the Observable to notify, when the locale has been changed */
+    private final LocaleChangeObservable localeChangedObervable = new LocaleChangeObservable();
+    
     /**
      * Creates a formatter using the {@link Locale#getDefault() default locale}.
      */
     public DataFormatter() {
         this(false);
+        this.localeIsAdapting = true;
     }
 
     /**
@@ -190,8 +215,8 @@ public class DataFormatter {
      * @param  emulateCsv whether to emulate CSV output.
      */
     public DataFormatter(boolean emulateCsv) {
-        this(Locale.getDefault());
-        this.emulateCsv = emulateCsv;
+        this(LocaleUtil.getUserLocale(), emulateCsv);
+        this.localeIsAdapting = true;
     }
 
     /**
@@ -208,29 +233,9 @@ public class DataFormatter {
      * Creates a formatter using the given locale.
      */
     public DataFormatter(Locale locale) {
-        dateSymbols = new DateFormatSymbols(locale);
-        decimalSymbols = new DecimalFormatSymbols(locale);
-        generalWholeNumFormat = new DecimalFormat("#", decimalSymbols);
-        generalDecimalNumFormat = new DecimalFormat("#.##########", decimalSymbols);
-
-        formats = new HashMap<String,Format>();
-
-        // init built-in formats
-
-        Format zipFormat = ZipPlusFourFormat.instance;
-        addFormat("00000\\-0000", zipFormat);
-        addFormat("00000-0000", zipFormat);
-
-        Format phoneFormat = PhoneFormat.instance;
-        // allow for format string variations
-        addFormat("[<=9999999]###\\-####;\\(###\\)\\ ###\\-####", phoneFormat);
-        addFormat("[<=9999999]###-####;(###) ###-####", phoneFormat);
-        addFormat("###\\-####;\\(###\\)\\ ###\\-####", phoneFormat);
-        addFormat("###-####;(###) ###-####", phoneFormat);
-
-        Format ssnFormat = SSNFormat.instance;
-        addFormat("000\\-00\\-0000", ssnFormat);
-        addFormat("000-00-0000", ssnFormat);
+        localeChangedObervable.addObserver(this);
+        localeChangedObervable.checkForLocaleChange(locale);
+        this.localeIsAdapting = false;
     }
 
     /**
@@ -260,6 +265,8 @@ public class DataFormatter {
     }
 
     private Format getFormat(double cellValue, int formatIndex, String formatStrIn) {
+        localeChangedObervable.checkForLocaleChange();
+        
 //      // Might be better to separate out the n p and z formats, falling back to p when n and z are not set.
 //      // That however would require other code to be re factored.
 //      String[] formatBits = formatStrIn.split(";");
@@ -329,6 +336,8 @@ public class DataFormatter {
     }
 
     private Format createFormat(double cellValue, int formatIndex, String sFormat) {
+        localeChangedObervable.checkForLocaleChange();
+        
         String formatStr = sFormat;
         
         // Remove colour formatting if present
@@ -666,6 +675,8 @@ public class DataFormatter {
         return getDefaultFormat(cell.getNumericCellValue());
     }
     private Format getDefaultFormat(double cellValue) {
+        localeChangedObervable.checkForLocaleChange();
+        
         // for numeric cells try user supplied default
         if (defaultNumFormat != null) {
             return defaultNumFormat;
@@ -742,6 +753,8 @@ public class DataFormatter {
      * @see #formatCellValue(Cell)
      */
     public String formatRawCellContents(double value, int formatIndex, String formatString, boolean use1904Windowing) {
+        localeChangedObervable.checkForLocaleChange();
+        
         // Is it a date?
         if(DateUtil.isADateFormat(formatIndex,formatString)) {
             if(DateUtil.isValidExcelDate(value)) {
@@ -820,6 +833,7 @@ public class DataFormatter {
      * @return a string value of the cell
      */
     public String formatCellValue(Cell cell, FormulaEvaluator evaluator) {
+        localeChangedObervable.checkForLocaleChange();
         
         if (cell == null) {
             return "";
@@ -926,6 +940,59 @@ public class DataFormatter {
     public static void setExcelStyleRoundingMode(DecimalFormat format, RoundingMode roundingMode) {
        format.setRoundingMode(roundingMode);
     }
+
+    /**
+     * If the Locale has been changed via {@link LocaleUtil#setUserLocale(Locale)} the stored
+     * formats need to be refreshed. All formats which aren't originated from DataFormatter
+     * itself, i.e. all Formats added via {@link DataFormatter#addFormat(String, Format)} and
+     * {@link DataFormatter#setDefaultNumberFormat(Format)}, need to be added again.
+     * To notify callers, the returned {@link Observable} should be used.
+     * The Object in {@link Observer#update(Observable, Object)} is the new Locale.
+     *
+     * @return the listener object, where callers can register themself
+     */
+    public Observable getLocaleChangedObservable() {
+        return localeChangedObervable;
+    }
+
+    /**
+     * Update formats when locale has been changed
+     *
+     * @param observable usually this is our own Observable instance
+     * @param localeObj only reacts on Locale objects
+     */
+    public void update(Observable observable, Object localeObj) {
+        if (!(localeObj instanceof Locale))  return;
+        Locale newLocale = (Locale)localeObj;
+        if (!localeIsAdapting || newLocale.equals(locale)) return;
+        
+        locale = newLocale;
+        
+        dateSymbols = DateFormatSymbols.getInstance(locale);
+        decimalSymbols = DecimalFormatSymbols.getInstance(locale);
+        generalWholeNumFormat = new DecimalFormat("#", decimalSymbols);
+        generalDecimalNumFormat = new DecimalFormat("#.##########", decimalSymbols);
+
+        // init built-in formats
+
+        formats.clear();
+        Format zipFormat = ZipPlusFourFormat.instance;
+        addFormat("00000\\-0000", zipFormat);
+        addFormat("00000-0000", zipFormat);
+
+        Format phoneFormat = PhoneFormat.instance;
+        // allow for format string variations
+        addFormat("[<=9999999]###\\-####;\\(###\\)\\ ###\\-####", phoneFormat);
+        addFormat("[<=9999999]###-####;(###) ###-####", phoneFormat);
+        addFormat("###\\-####;\\(###\\)\\ ###\\-####", phoneFormat);
+        addFormat("###-####;(###) ###-####", phoneFormat);
+
+        Format ssnFormat = SSNFormat.instance;
+        addFormat("000\\-00\\-0000", ssnFormat);
+        addFormat("000-00-0000", ssnFormat);
+    }
+
+
 
     /**
      * Format class for Excel's SSN format. This class mimics Excel's built-in

@@ -22,6 +22,7 @@ import java.util.Calendar;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LocaleUtil;
 
 /**
  * This class is used to represent a date and time in a Word document.
@@ -39,7 +40,7 @@ public final class DateAndTime
     private short _info2;
     private static final BitField _months = BitFieldFactory.getInstance(0xf);
     private static final BitField _years = BitFieldFactory.getInstance(0x1ff0);
-    private static final BitField _weekday = BitFieldFactory.getInstance(0xe000);
+    // private static final BitField _weekday = BitFieldFactory.getInstance(0xe000);
 
   public DateAndTime()
   {
@@ -53,8 +54,7 @@ public final class DateAndTime
   
   public Calendar getDate() {
      // TODO Discover if the timezone is stored somewhere else or not
-     Calendar cal = Calendar.getInstance();
-     cal.set(
+     Calendar cal = LocaleUtil.getLocaleCalendar(
            _years.getValue(_info2)+1900, 
            _months.getValue(_info2)-1, 
            _dom.getValue(_info), 
@@ -62,7 +62,6 @@ public final class DateAndTime
            _minutes.getValue(_info),
            0
      );
-     cal.set(Calendar.MILLISECOND, 0);
      return cal;
   }
 

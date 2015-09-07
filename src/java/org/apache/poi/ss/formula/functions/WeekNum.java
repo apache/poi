@@ -17,14 +17,16 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import org.apache.poi.ss.formula.OperationEvaluationContext;
-import org.apache.poi.ss.formula.eval.*;
-import org.apache.poi.ss.usermodel.DateUtil;
-
 import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.Locale;
-import java.util.TimeZone;
+
+import org.apache.poi.ss.formula.OperationEvaluationContext;
+import org.apache.poi.ss.formula.eval.ErrorEval;
+import org.apache.poi.ss.formula.eval.EvaluationException;
+import org.apache.poi.ss.formula.eval.NumberEval;
+import org.apache.poi.ss.formula.eval.OperandResolver;
+import org.apache.poi.ss.formula.eval.ValueEval;
+import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.util.LocaleUtil;
 
 /**
  * Implementation for Excel WeekNum() function.<p/>
@@ -42,12 +44,6 @@ import java.util.TimeZone;
  * 2	Week begins on Monday. Weekdays are numbered 1 through 7.
  */
 public class WeekNum extends Fixed2ArgFunction implements FreeRefFunction {
-    /**
-     * Excel doesn't store TimeZone information in the file, so if in doubt,
-     *  use UTC to perform calculations
-     */
-    private static final TimeZone DEFAULT_TIMEZONE = TimeZone.getTimeZone("UTC");
-
     public static final FreeRefFunction instance = new WeekNum();
 
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval serialNumVE, ValueEval returnTypeVE) {
@@ -57,7 +53,7 @@ public class WeekNum extends Fixed2ArgFunction implements FreeRefFunction {
         } catch (EvaluationException e) {
             return ErrorEval.VALUE_INVALID;
         }
-        Calendar serialNumCalendar = new GregorianCalendar(DEFAULT_TIMEZONE, Locale.ROOT);
+        Calendar serialNumCalendar = LocaleUtil.getLocaleCalendar();
         serialNumCalendar.setTime(DateUtil.getJavaDate(serialNum, false));
 
         int returnType = 0;

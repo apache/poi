@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
-import java.util.TimeZone;
 
 import org.apache.poi.POIOLE2TextExtractor;
 import org.apache.poi.hsmf.MAPIMessage;
@@ -31,6 +30,7 @@ import org.apache.poi.hsmf.exceptions.ChunkNotFoundException;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.StringUtil.StringsIterator;
 
 /**
@@ -51,9 +51,6 @@ public class OutlookTextExtactor extends POIOLE2TextExtractor {
    public OutlookTextExtactor(DirectoryNode poifsDir) throws IOException {
       this(new MAPIMessage(poifsDir));
    }
-   public OutlookTextExtactor(POIFSFileSystem fs) throws IOException {
-      this(new MAPIMessage(fs));
-   }
    public OutlookTextExtactor(NPOIFSFileSystem fs) throws IOException {
       this(new MAPIMessage(fs));
    }
@@ -63,11 +60,16 @@ public class OutlookTextExtactor extends POIOLE2TextExtractor {
    
    public static void main(String[] args) throws Exception {
       for(String filename : args) {
-         OutlookTextExtactor extractor = new OutlookTextExtactor(
-               new NPOIFSFileSystem(new File(filename))
-         );
-         System.out.println( extractor.getText() );
-         extractor.close();
+         NPOIFSFileSystem poifs = null;
+         OutlookTextExtactor extractor = null;
+         try {
+             poifs = new NPOIFSFileSystem(new File(filename));
+             extractor = new OutlookTextExtactor(poifs);
+             System.out.println( extractor.getText() );
+         } finally {
+             if (extractor != null) extractor.close();
+             if (poifs != null) poifs.close();
+         }
       }
    }
 
@@ -120,8 +122,8 @@ public class OutlookTextExtactor extends POIOLE2TextExtractor {
       // Date - try two ways to find it
       try {
          // First try via the proper chunk
-         SimpleDateFormat f = new SimpleDateFormat("E, d MMM yyyy HH:mm:ss Z");
-         f.setTimeZone(TimeZone.getTimeZone("UTC"));
+         SimpleDateFormat f = new SimpleDateFormat("E, d MMM yyyy HH:mm:ss Z", Locale.ROOT);
+         f.setTimeZone(LocaleUtil.getUserTimeZone());
          s.append("Date: " + f.format(msg.getMessageDate().getTime()) + "\n");
       } catch(ChunkNotFoundException e) {
          try {

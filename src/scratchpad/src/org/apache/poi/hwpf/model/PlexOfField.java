@@ -19,7 +19,7 @@
 
 package org.apache.poi.hwpf.model;
 
-import java.text.MessageFormat;
+import java.util.Locale;
 
 import org.apache.poi.util.Internal;
 
@@ -63,11 +63,9 @@ public class PlexOfField
         return fld;
     }
 
-    public String toString()
-    {
-        return MessageFormat.format( "[{0}, {1}) - FLD - 0x{2}; 0x{3}",
-                getFcStart(), getFcEnd(),
-                Integer.toHexString( 0xff & fld.getBoundaryType() ),
-                Integer.toHexString( 0xff & fld.getFlt() ) );
+    public String toString() {
+        String str = String.format(Locale.ROOT, "[%d, %d) - FLD - 0x%x; 0x%x"
+            , getFcStart(), getFcEnd(), fld.getBoundaryType(), fld.getFlt());
+        return str;
     }
 }

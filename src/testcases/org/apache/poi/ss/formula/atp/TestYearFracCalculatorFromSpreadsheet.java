@@ -17,31 +17,29 @@
 
 package org.apache.poi.ss.formula.atp;
 
-import java.io.PrintStream;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.Iterator;
 
-import junit.framework.Assert;
-import junit.framework.AssertionFailedError;
-import junit.framework.ComparisonFailure;
-import junit.framework.TestCase;
-
 import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.ss.formula.eval.EvaluationException;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.formula.eval.EvaluationException;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.util.LocaleUtil;
+import org.junit.Test;
 
 /**
  * Tests YearFracCalculator using test-cases listed in a sample spreadsheet
- * 
- * @author Josh Micich
  */
-public final class TestYearFracCalculatorFromSpreadsheet extends TestCase {
+public final class TestYearFracCalculatorFromSpreadsheet {
 	
 	private static final class SS {
 
@@ -52,15 +50,14 @@ public final class TestYearFracCalculatorFromSpreadsheet extends TestCase {
 		public static final int EXPECTED_RESULT_COLUMN = 13; // "N"
 	}
 
-	public void testAll() {
+	@Test
+	public void testAll() throws Exception {
 		
 		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("yearfracExamples.xls");
 		HSSFSheet sheet = wb.getSheetAt(0);
 		HSSFFormulaEvaluator formulaEvaluator = new HSSFFormulaEvaluator(wb);
 		int nSuccess = 0;
-		int nFailures = 0;
-		int nUnexpectedErrors = 0;
-		Iterator rowIterator = sheet.rowIterator();
+		Iterator<Row> rowIterator = sheet.rowIterator();
 		while(rowIterator.hasNext()) {
 			HSSFRow row = (HSSFRow) rowIterator.next();
 			
@@ -68,28 +65,16 @@ public final class TestYearFracCalculatorFromSpreadsheet extends TestCase {
 			if (cell == null || cell.getCellType() != HSSFCell.CELL_TYPE_FORMULA) {
 				continue;
 			}
-			try {
-				processRow(row, cell, formulaEvaluator);
-				nSuccess++;
-			} catch (RuntimeException e) {
-				nUnexpectedErrors ++;
-				printShortStackTrace(System.err, e);
-			} catch (AssertionFailedError e) {
-				nFailures ++;
-				printShortStackTrace(System.err, e);
-			}
+            processRow(row, cell, formulaEvaluator);
+            nSuccess++;
 		}
-		if (nUnexpectedErrors + nFailures > 0) {
-			String msg = nFailures + " failures(s) and " + nUnexpectedErrors 
-				+ " unexpected errors(s) occurred. See stderr for details";
-			throw new AssertionFailedError(msg);
-		}
-		if (nSuccess < 1) {
-			throw new RuntimeException("No test sample cases found");
-		}
+
+		assertTrue("No test sample cases found", nSuccess > 0);
+		wb.close();
 	}
 	
-	private static void processRow(HSSFRow row, HSSFCell cell, HSSFFormulaEvaluator formulaEvaluator) {
+	private void processRow(HSSFRow row, HSSFCell cell, HSSFFormulaEvaluator formulaEvaluator)
+	throws EvaluationException {
 		
 		double startDate = makeDate(row, SS.START_YEAR_COLUMN);
 		double endDate = makeDate(row, SS.END_YEAR_COLUMN);
@@ -98,81 +83,33 @@ public final class TestYearFracCalculatorFromSpreadsheet extends TestCase {
 		
 		double expectedValue = getDoubleCell(row, SS.EXPECTED_RESULT_COLUMN);
 		
-		double actualValue;
-		try {
-			actualValue = YearFracCalculator.calculate(startDate, endDate, basis);
-		} catch (EvaluationException e) {
-			throw new RuntimeException(e);
-		}
-		if (expectedValue != actualValue) {
-			throw new ComparisonFailure("Direct calculate failed - row " + (row.getRowNum()+1), 
-					String.valueOf(expectedValue), String.valueOf(actualValue));
-		}
+		double actualValue = YearFracCalculator.calculate(startDate, endDate, basis);
+
+		String loc = " - row " + (row.getRowNum()+1);
+		assertEquals("Direct calculate failed"+loc, expectedValue, actualValue, 0);
 		actualValue = formulaEvaluator.evaluate(cell).getNumberValue();
-		if (expectedValue != actualValue) {
-			throw new ComparisonFailure("Formula evaluate failed - row " + (row.getRowNum()+1), 
-					String.valueOf(expectedValue), String.valueOf(actualValue));
-		}
+		assertEquals("Formula evaluate failed"+loc, expectedValue, actualValue, 0);
 	}
 
 	private static double makeDate(HSSFRow row, int yearColumn) {
 		int year = getIntCell(row, yearColumn + 0);
 		int month = getIntCell(row, yearColumn + 1);
 		int day = getIntCell(row, yearColumn + 2);
-		Calendar c = new GregorianCalendar(year, month-1, day, 0, 0, 0);
-		c.set(Calendar.MILLISECOND, 0);
+		Calendar c = LocaleUtil.getLocaleCalendar(year, month-1, day);
 		return HSSFDateUtil.getExcelDate(c.getTime());
 	}
 
 	private static int getIntCell(HSSFRow row, int colIx) {
 		double dVal = getDoubleCell(row, colIx);
-		if (Math.floor(dVal) != dVal) {
-			throw new RuntimeException("Non integer value (" + dVal 
-					+ ") cell found at column " + (char)('A' + colIx));
-		}
+		String msg = "Non integer value (" + dVal + ") cell found at column " + (char)('A' + colIx);
+		assertEquals(msg, Math.floor(dVal), dVal, 0);
 		return (int)dVal;
 	}
 
 	private static double getDoubleCell(HSSFRow row, int colIx) {
 		HSSFCell cell = row.getCell(colIx);
-		if (cell == null) {
-			throw new RuntimeException("No cell found at column " + colIx);
-		}
+		assertNotNull("No cell found at column " + colIx, cell);
 		double dVal = cell.getNumericCellValue();
 		return dVal;
-	}
-
-	/**
-	 * Useful to keep output concise when expecting many failures to be reported by this test case
-	 * TODO - refactor duplicates in other Test~FromSpreadsheet classes
-	 */
-	private static void printShortStackTrace(PrintStream ps, Throwable e) {
-		StackTraceElement[] stes = e.getStackTrace();
-		
-		int startIx = 0;
-		// skip any top frames inside junit.framework.Assert
-		while(startIx<stes.length) {
-			if(!stes[startIx].getClassName().equals(Assert.class.getName())) {
-				break;
-			}
-			startIx++;
-		}
-		// skip bottom frames (part of junit framework)
-		int endIx = startIx+1;
-		while(endIx < stes.length) {
-			if(stes[endIx].getClassName().equals(TestCase.class.getName())) {
-				break;
-			}
-			endIx++;
-		}
-		if(startIx >= endIx) {
-			// something went wrong. just print the whole stack trace
-			e.printStackTrace(ps);
-		}
-		endIx -= 4; // skip 4 frames of reflection invocation
-		ps.println(e.toString());
-		for(int i=startIx; i<endIx; i++) {
-			ps.println("\tat " + stes[i].toString());
-		}
 	}
 }

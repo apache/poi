@@ -39,6 +39,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
 import java.util.UUID;
 
 import javax.xml.crypto.MarshalException;
@@ -214,7 +216,7 @@ public class XAdESXLSignatureFacet extends SignatureFacet {
                 CRLIdentifierType crlIdentifier = crlRef.addNewCRLIdentifier();
                 String issuerName = crl.getIssuerDN().getName().replace(",", ", ");
                 crlIdentifier.setIssuer(issuerName);
-                Calendar cal = Calendar.getInstance();
+                Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Z"), Locale.ROOT);
                 cal.setTime(crl.getThisUpdate());
                 crlIdentifier.setIssueTime(cal);
                 crlIdentifier.setNumber(getCrlNumber(crl));
@@ -238,7 +240,7 @@ public class XAdESXLSignatureFacet extends SignatureFacet {
                     
                     BasicOCSPResp basicOcspResp = (BasicOCSPResp)ocspResp.getResponseObject();
                     
-                    Calendar cal = Calendar.getInstance();
+                    Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Z"), Locale.ROOT);
                     cal.setTime(basicOcspResp.getProducedAt());
                     ocspIdentifier.setProducedAt(cal);
     

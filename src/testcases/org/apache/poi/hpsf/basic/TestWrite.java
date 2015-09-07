@@ -38,6 +38,7 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.poi.POIDataSamples;
@@ -117,8 +118,8 @@ public class TestWrite
      *
      * @exception IOException if an I/O exception occurs
      */
-    @Test
-    public void withoutAFormatID() throws IOException
+    @Test(expected=NoFormatIDException.class)
+    public void withoutAFormatID() throws Exception
     {
         final File filename = TempFile.createTempFile(POI_FS, ".doc");
 
@@ -131,8 +132,7 @@ public class TestWrite
         ps.addSection(new MutableSection());
 
         /* Write it to a POIFS and the latter to disk: */
-        try
-        {
+        try {
             final ByteArrayOutputStream psStream = new ByteArrayOutputStream();
             ps.write(psStream);
             psStream.close();
@@ -140,15 +140,8 @@ public class TestWrite
             poiFs.createDocument(new ByteArrayInputStream(streamData),
                                  SummaryInformation.DEFAULT_STREAM_NAME);
             poiFs.writeFilesystem(out);
-            out.close();
-            fail("Should have thrown a NoFormatIDException.");
-        }
-        catch (Exception ex)
-        {
-            assertTrue(ex instanceof NoFormatIDException);
-        }
-        finally
-        {
+        } finally {
+            poiFs.close();
             out.close();
         }
     }
@@ -185,6 +178,7 @@ public class TestWrite
         poiFs.createDocument(new ByteArrayInputStream(streamData),
                              SummaryInformation.DEFAULT_STREAM_NAME);
         poiFs.writeFilesystem(out);
+        poiFs.close();
         out.close();
 
         /* Read the POIFS: */
@@ -236,6 +230,7 @@ public class TestWrite
         poiFs.createDocument(ps.toInputStream(),
                              SummaryInformation.DEFAULT_STREAM_NAME);
         poiFs.writeFilesystem(out);
+        poiFs.close();
         out.close();
 
         /* Read the POIFS: */
@@ -317,6 +312,7 @@ public class TestWrite
 
         poiFs.createDocument(ps.toInputStream(), STREAM_NAME);
         poiFs.writeFilesystem(out);
+        poiFs.close();
         out.close();
 
         /* Read the POIFS: */
@@ -755,6 +751,7 @@ public class TestWrite
                                  psf1[i].getName());
             poiFs.writeFilesystem(out);
         }
+        poiFs.close();
         out.close();
 
 
@@ -805,6 +802,7 @@ public class TestWrite
                       Integer.valueOf(codepage));
         poiFs.createDocument(ps1.toInputStream(), "Test");
         poiFs.writeFilesystem(out);
+        poiFs.close();
         out.close();
 
         /* Read back: */
@@ -1010,7 +1008,7 @@ public class TestWrite
             // or via sun.misc.Cleaner, but this is regarded unsafe
             // http://stackoverflow.com/questions/2972986
             // http://bugs.java.com/view_bug.do?bug_id=4724038
-            Assume.assumeFalse(System.getProperty("os.name").toLowerCase().contains("win"));
+            Assume.assumeFalse(System.getProperty("os.name").toLowerCase(Locale.ROOT).contains("win"));
             throw e;
         }
     }
@@ -1022,7 +1020,7 @@ public class TestWrite
      * @throws IOException 
      * @throws HPSFException 
      */
-    @Test
+    @Test(expected=IllegalPropertySetDataException.class)
     public void dictionaryWithInvalidCodepage() throws IOException, HPSFException
     {
         final File copy = TempFile.createTempFile("Test-HPSF", "ole2");
@@ -1039,8 +1037,7 @@ public class TestWrite
         m.put(Long.valueOf(2), "String 2");
         m.put(Long.valueOf(3), "String 3");
 
-        try
-        {
+        try {
             s.setDictionary(m);
             s.setFormatID(SectionIDMap.DOCUMENT_SUMMARY_INFORMATION_ID[0]);
             int codepage = 12345;
@@ -1048,13 +1045,9 @@ public class TestWrite
                           Integer.valueOf(codepage));
             poiFs.createDocument(ps1.toInputStream(), "Test");
             poiFs.writeFilesystem(out);
+        } finally {
+            poiFs.close();
             out.close();
-            fail("This testcase did not detect the invalid codepage value.");
-        }
-        catch (IllegalPropertySetDataException ex)
-        {
-            out.close();
-            assertTrue(true);
         }
     }
 
@@ -1069,7 +1062,7 @@ public class TestWrite
     {
         final String charSetName = System.getProperty("file.encoding");
         final Charset charSet = Charset.forName(charSetName);
-        return charSet.displayName();
+        return charSet.displayName(Locale.ROOT);
     }
 
 

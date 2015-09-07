@@ -30,17 +30,12 @@ import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.RefEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.util.LocaleUtil;
 
 /**
  * Implementation for Excel EDATE () function.
  */
 public class EDate implements FreeRefFunction {
-    /**
-     * Excel doesn't store TimeZone information in the file, so if in doubt,
-     *  use UTC to perform calculations
-     */
-    private static final TimeZone DEFAULT_TIMEZONE = TimeZone.getTimeZone("UTC");
-
     public static final FreeRefFunction instance = new EDate();
 
     public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
@@ -52,7 +47,7 @@ public class EDate implements FreeRefFunction {
             int offsetInMonthAsNumber = (int) getValue(args[1]);
 
             Date startDate = DateUtil.getJavaDate(startDateAsNumber);
-            Calendar calendar = Calendar.getInstance(DEFAULT_TIMEZONE, Locale.ROOT);
+            Calendar calendar = LocaleUtil.getLocaleCalendar();
             calendar.setTime(startDate);
             calendar.add(Calendar.MONTH, offsetInMonthAsNumber);
             return new NumberEval(DateUtil.getExcelDate(calendar.getTime()));

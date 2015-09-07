@@ -69,7 +69,7 @@ public final class TestDateFormatConverter extends TestCase {
                     Row row = sheet.createRow(rowNum++);
         
                     row.createCell(0).setCellValue(locale.toString());
-                    row.createCell(1).setCellValue(locale.getDisplayName());
+                    row.createCell(1).setCellValue(locale.getDisplayName(Locale.ROOT));
         
                     DateFormat dateFormat;
                     if( dates ) {

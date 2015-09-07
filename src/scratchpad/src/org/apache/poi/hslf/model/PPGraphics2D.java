@@ -63,6 +63,7 @@ import org.apache.poi.sl.usermodel.StrokeStyle;
 import org.apache.poi.sl.usermodel.VerticalAlignment;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.util.SuppressForbidden;
 
 /**
  * Translates Graphics2D calls into PowerPoint.
@@ -1716,6 +1717,7 @@ public final class PPGraphics2D extends Graphics2D implements Cloneable {
      * @see       java.awt.Graphics#getFontMetrics()
      */
     @SuppressWarnings("deprecation")
+    @SuppressForbidden
     public FontMetrics getFontMetrics(Font f) {
         return Toolkit.getDefaultToolkit().getFontMetrics(f);
     }

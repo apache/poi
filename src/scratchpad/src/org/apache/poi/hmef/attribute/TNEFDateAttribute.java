@@ -21,12 +21,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.TimeZone;
 
 import org.apache.poi.hmef.Attachment;
 import org.apache.poi.hmef.HMEFMessage;
 import org.apache.poi.hpsf.Util;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
@@ -53,7 +53,7 @@ public final class TNEFDateAttribute extends TNEFAttribute {
          );
       } else if(data.length == 14) {
          // It's the 7 date fields. We think it's in UTC...
-         Calendar c = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+         Calendar c = LocaleUtil.getLocaleCalendar(LocaleUtil.TIMEZONE_UTC);
          c.set(Calendar.YEAR, LittleEndian.getUShort(data, 0));
          c.set(Calendar.MONTH, LittleEndian.getUShort(data, 2) - 1); // Java months are 0 based!
          c.set(Calendar.DAY_OF_MONTH, LittleEndian.getUShort(data, 4));
@@ -61,7 +61,7 @@ public final class TNEFDateAttribute extends TNEFAttribute {
          c.set(Calendar.MINUTE, LittleEndian.getUShort(data, 8));
          c.set(Calendar.SECOND, LittleEndian.getUShort(data, 10));
          // The 7th field is day of week, which we don't require
-         c.set(Calendar.MILLISECOND, 0); // Not set in the file
+         c.clear(Calendar.MILLISECOND); // Not set in the file
          this.data = c.getTime();
       } else {
          throw new IllegalArgumentException("Invalid date, found " + data.length + " bytes");

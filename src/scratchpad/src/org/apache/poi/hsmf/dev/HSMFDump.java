@@ -17,7 +17,7 @@
 
 package org.apache.poi.hsmf.dev;
 
-import java.io.FileInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 
@@ -27,14 +27,14 @@ import org.apache.poi.hsmf.datatypes.MAPIProperty;
 import org.apache.poi.hsmf.datatypes.PropertiesChunk;
 import org.apache.poi.hsmf.datatypes.PropertyValue;
 import org.apache.poi.hsmf.parsers.POIFSChunkParser;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 
 /**
  * Dumps out the chunk details, and where possible contents
  */
 public class HSMFDump {
-   private POIFSFileSystem fs;
-   public HSMFDump(POIFSFileSystem fs) {
+   private NPOIFSFileSystem fs;
+   public HSMFDump(NPOIFSFileSystem fs) {
       this.fs = fs;
    }
    
@@ -84,9 +84,10 @@ public class HSMFDump {
    
    public static void main(String[] args) throws Exception {
       for(String file : args) {
-         POIFSFileSystem fs = new POIFSFileSystem(new FileInputStream(file));
+         NPOIFSFileSystem fs = new NPOIFSFileSystem(new File(file), true);
          HSMFDump dump = new HSMFDump(fs);
          dump.dump();
+         fs.close();
       }
    }
 }

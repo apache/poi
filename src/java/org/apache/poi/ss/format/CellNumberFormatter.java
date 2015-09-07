@@ -17,6 +17,7 @@
 package org.apache.poi.ss.format;
 
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.FieldPosition;
 import java.util.BitSet;
 import java.util.Collections;
@@ -30,6 +31,7 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 
 import org.apache.poi.ss.format.CellFormatPart.PartHandler;
+import org.apache.poi.util.LocaleUtil;
 
 /**
  * This class implements printing out a value using a number format.
@@ -182,8 +184,8 @@ public class CellNumberFormatter extends CellFormatter {
         private char insertSignForExponent;
 
         public String handlePart(Matcher m, String part, CellFormatType type,
-                StringBuffer desc) {
-            int pos = desc.length();
+                StringBuffer descBuf) {
+            int pos = descBuf.length();
             char firstCh = part.charAt(0);
             switch (firstCh) {
             case 'e':
@@ -203,7 +205,7 @@ public class CellNumberFormatter extends CellFormatter {
             case '#':
                 if (insertSignForExponent != '\0') {
                     specials.add(new Special(insertSignForExponent, pos));
-                    desc.append(insertSignForExponent);
+                    descBuf.append(insertSignForExponent);
                     insertSignForExponent = '\0';
                     pos++;
                 }
@@ -354,7 +356,8 @@ public class CellNumberFormatter extends CellFormatter {
             fmtBuf.append('E');
             placeZeros(fmtBuf, exponentSpecials.subList(2,
                     exponentSpecials.size()));
-            decimalFmt = new DecimalFormat(fmtBuf.toString());
+            DecimalFormatSymbols dfs = DecimalFormatSymbols.getInstance(LocaleUtil.getUserLocale());
+            decimalFmt = new DecimalFormat(fmtBuf.toString(), dfs);
         }
 
         if (exponent != null)
@@ -594,7 +597,7 @@ public class CellNumberFormatter extends CellFormatter {
             writeFraction(value, null, fractional, output, mods);
         } else {
             StringBuffer result = new StringBuffer();
-            Formatter f = new Formatter(result);
+            Formatter f = new Formatter(result, LOCALE);
             try {
                 f.format(LOCALE, printfFmt, value);
             } finally {
@@ -767,6 +770,7 @@ public class CellNumberFormatter extends CellFormatter {
         writeInteger(exponentNum, output, exponentDigitSpecials, mods, false);
     }
 
+    @SuppressWarnings("unchecked")
     private void writeFraction(double value, StringBuffer result,
             double fractional, StringBuffer output, Set<StringMod> mods) {
 
@@ -869,7 +873,7 @@ public class CellNumberFormatter extends CellFormatter {
             List<Special> numSpecials, Set<StringMod> mods) {
 
         StringBuffer sb = new StringBuffer();
-        Formatter formatter = new Formatter(sb);
+        Formatter formatter = new Formatter(sb, LOCALE);
         try {
             formatter.format(LOCALE, fmt, num);
         } finally {

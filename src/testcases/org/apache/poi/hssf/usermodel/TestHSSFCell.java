@@ -17,12 +17,15 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
+
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.Locale;
-import java.util.TimeZone;
 
 import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.hssf.HSSFTestDataSamples;
@@ -38,15 +41,14 @@ import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.util.LocaleUtil;
+import org.junit.Test;
 
 import junit.framework.AssertionFailedError;
 
 /**
  * Tests various functionality having to do with {@link HSSFCell}.  For instance support for
  * particular datatypes, etc.
- * @author Andrew C. Oliver (andy at superlinksoftware dot com)
- * @author  Dan Sherman (dsherman at isisph.com)
- * @author Alex Jacoby (ajacoby at gmail.com)
  */
 public final class TestHSSFCell extends BaseTestCell {
 
@@ -59,27 +61,28 @@ public final class TestHSSFCell extends BaseTestCell {
 	 *  is working properly. Conversion of the date is also an issue,
 	 *  but there's a separate unit test for that.
 	 */
-	public void testDateWindowingRead() {
-	    Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.ROOT);
-	    cal.set(2000, 0, 1, 0, 0, 0); // Jan. 1, 2000
-	    cal.clear(Calendar.MILLISECOND);
+	@Test
+	public void testDateWindowingRead() throws Exception {
+	    Calendar cal = LocaleUtil.getLocaleCalendar(2000, 0, 1, 0, 0, 0);// Jan. 1, 2000
 		Date date = cal.getTime();
 
 		// first check a file with 1900 Date Windowing
-		HSSFWorkbook workbook = HSSFTestDataSamples.openSampleWorkbook("1900DateWindowing.xls");
-		HSSFSheet sheet = workbook.getSheetAt(0);
+		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("1900DateWindowing.xls");
+		HSSFSheet sheet = wb.getSheetAt(0);
 
 		assertEquals("Date from file using 1900 Date Windowing",
 				date.getTime(),
 				sheet.getRow(0).getCell(0).getDateCellValue().getTime());
+		wb.close();
 
 		// now check a file with 1904 Date Windowing
-		workbook = HSSFTestDataSamples.openSampleWorkbook("1904DateWindowing.xls");
-		sheet	= workbook.getSheetAt(0);
+		wb = HSSFTestDataSamples.openSampleWorkbook("1904DateWindowing.xls");
+		sheet	= wb.getSheetAt(0);
 
 		assertEquals("Date from file using 1904 Date Windowing",
 				date.getTime(),
 				sheet.getRow(0).getCell(0).getDateCellValue().getTime());
+		wb.close();
 	}
 
 
@@ -90,28 +93,32 @@ public final class TestHSSFCell extends BaseTestCell {
 	 * previous test ({@link #testDateWindowingRead}) fails, the
 	 * results of this test are meaningless.
 	 */
-	public void testDateWindowingWrite() {
-		GregorianCalendar cal = new GregorianCalendar(2000,0,1); // Jan. 1, 2000
+	@Test
+	public void testDateWindowingWrite() throws Exception {
+	    Calendar cal = LocaleUtil.getLocaleCalendar(2000,0,1,0,0,0); // Jan. 1, 2000
 		Date date = cal.getTime();
 
 		// first check a file with 1900 Date Windowing
-		HSSFWorkbook wb;
-		wb = HSSFTestDataSamples.openSampleWorkbook("1900DateWindowing.xls");
+		HSSFWorkbook wb1 = HSSFTestDataSamples.openSampleWorkbook("1900DateWindowing.xls");
 
-		setCell(wb, 0, 1, date);
-		wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
+		setCell(wb1, 0, 1, date);
+		HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1);
 
 		assertEquals("Date from file using 1900 Date Windowing",
 				date.getTime(),
-				readCell(wb, 0, 1).getTime());
+				readCell(wb2, 0, 1).getTime());
+        wb1.close();
+		wb2.close();
 
 		// now check a file with 1904 Date Windowing
-		wb = HSSFTestDataSamples.openSampleWorkbook("1904DateWindowing.xls");
-		setCell(wb, 0, 1, date);
-		wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
+		wb1 = HSSFTestDataSamples.openSampleWorkbook("1904DateWindowing.xls");
+		setCell(wb1, 0, 1, date);
+		wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1);
 		assertEquals("Date from file using 1900 Date Windowing",
 				date.getTime(),
-				readCell(wb, 0, 1).getTime());
+				readCell(wb2, 0, 1).getTime());
+        wb1.close();
+        wb2.close();
 	}
 
 	private static void setCell(HSSFWorkbook workbook, int rowIdx, int colIdx, Date date) {
@@ -135,12 +142,13 @@ public final class TestHSSFCell extends BaseTestCell {
 	/**
 	 * Tests that the active cell can be correctly read and set
 	 */
-	public void testActiveCell() {
+	@Test
+	public void testActiveCell() throws Exception {
 		//read in sample
-		HSSFWorkbook book = HSSFTestDataSamples.openSampleWorkbook("Simple.xls");
+		HSSFWorkbook wb1 = HSSFTestDataSamples.openSampleWorkbook("Simple.xls");
 
 		//check initial position
-		HSSFSheet umSheet = book.getSheetAt(0);
+		HSSFSheet umSheet = wb1.getSheetAt(0);
 		InternalSheet s = umSheet.getSheet();
 		assertEquals("Initial active cell should be in col 0",
 			(short) 0, s.getActiveCellCol());
@@ -156,18 +164,22 @@ public final class TestHSSFCell extends BaseTestCell {
 			3, s.getActiveCellRow());
 
 		//write book to temp file; read and verify that position is serialized
-		book = HSSFTestDataSamples.writeOutAndReadBack(book);
+		HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1);
+		wb1.close();
 
-		umSheet = book.getSheetAt(0);
+		umSheet = wb2.getSheetAt(0);
 		s = umSheet.getSheet();
 
 		assertEquals("After serialize, active cell should be in col 2",
 			(short) 2, s.getActiveCellCol());
 		assertEquals("After serialize, active cell should be on row 3",
 			3, s.getActiveCellRow());
+		
+		wb2.close();
 	}
 
 	
+	@Test
 	public void testActiveCellBug56114() throws IOException {
 	    Workbook wb = new HSSFWorkbook();
 	    Sheet sh = wb.createSheet();
@@ -222,7 +234,8 @@ public final class TestHSSFCell extends BaseTestCell {
 	/**
 	 * Test reading hyperlinks
 	 */
-	public void testWithHyperlink() {
+	@Test
+	public void testWithHyperlink() throws Exception {
 
 		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("WithHyperlink.xls");
 
@@ -235,12 +248,15 @@ public final class TestHSSFCell extends BaseTestCell {
 		assertEquals("http://poi.apache.org/", link.getAddress());
 		assertEquals(4, link.getFirstRow());
 		assertEquals(0, link.getFirstColumn());
+		
+		wb.close();
 	}
 
 	/**
 	 * Test reading hyperlinks
 	 */
-	public void testWithTwoHyperlinks() {
+	@Test
+	public void testWithTwoHyperlinks() throws Exception {
 
 		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("WithTwoHyperLinks.xls");
 
@@ -261,13 +277,16 @@ public final class TestHSSFCell extends BaseTestCell {
 		assertEquals("http://poi.apache.org/hssf/", link2.getAddress());
 		assertEquals(8, link2.getFirstRow());
 		assertEquals(1, link2.getFirstColumn());
+		
+		wb.close();
 	}
 
 	/**
 	 * Test to ensure we can only assign cell styles that belong
 	 *  to our workbook, and not those from other workbooks.
 	 */
-	public void testCellStyleWorkbookMatch() {
+	@Test
+	public void testCellStyleWorkbookMatch() throws Exception {
 		HSSFWorkbook wbA = new HSSFWorkbook();
 		HSSFWorkbook wbB = new HSSFWorkbook();
 
@@ -306,6 +325,9 @@ public final class TestHSSFCell extends BaseTestCell {
 		} catch (IllegalArgumentException e) {
 			// expected during successful test
 		}
+		
+		wbB.close();
+		wbA.close();
 	}
 
 	/**
@@ -315,6 +337,7 @@ public final class TestHSSFCell extends BaseTestCell {
 	 * versions (prior to bug 46213 / r717883) crash instead.
 	 * @throws IOException 
 	 */
+	@Test
 	public void testCachedTypeChange() throws IOException {
 		HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet("Sheet1");
@@ -362,22 +385,27 @@ public final class TestHSSFCell extends BaseTestCell {
     /**
      * HSSF prior to version 3.7 had a bug: it could write a NaN but could not read such a file back.
      */
-    public void testReadNaN() {
+	@Test
+	public void testReadNaN() throws Exception {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("49761.xls");
         assertNotNull(wb);
+        wb.close();
     }
 
-    public void testHSSFCell() {
+	@Test
+	public void testHSSFCell() throws Exception {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet();
         HSSFRow row = sheet.createRow(0);
         row.createCell(0);
         HSSFCell cell = new HSSFCell(wb, sheet, 0, (short)0);
-        assertNotNull(cell);  
+        assertNotNull(cell);
+        wb.close();
     }
 
     @SuppressWarnings("deprecation")
-    public void testDeprecatedMethods() {
+    @Test
+    public void testDeprecatedMethods() throws Exception {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet();
         HSSFRow row = sheet.createRow(0);
@@ -402,8 +430,11 @@ public final class TestHSSFCell extends BaseTestCell {
         
         cell.removeCellComment();
         cell.removeCellComment();
+        
+        wb.close();
     }
 
+    @Test
     public void testCellType() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet = wb.createSheet();

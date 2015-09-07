@@ -34,13 +34,13 @@ import java.util.Map;
 public class DummyGraphics2d
         extends Graphics2D
 {
-    BufferedImage img;
+    private BufferedImage bufimg;
     private Graphics2D g2D;
 
     public DummyGraphics2d()
     {
-        img = new BufferedImage(1000, 1000, 2);
-        g2D = (Graphics2D)img.getGraphics();
+        bufimg = new BufferedImage(1000, 1000, 2);
+        g2D = (Graphics2D)bufimg.getGraphics();
     }
 
     public void addRenderingHints(Map<?,?> hints)
@@ -708,12 +708,6 @@ public class DummyGraphics2d
         System.out.println( "getClipBounds(Rectangle):" );
         System.out.println( "r = " + r );
         return g2D.getClipBounds( r );
-    }
-
-    @SuppressWarnings("deprecation")
-    public Rectangle getClipRect() {
-        System.out.println( "getClipRect():" );
-        return g2D.getClipRect();
     }
 
     public Color getColor()

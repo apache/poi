@@ -19,10 +19,9 @@ package org.apache.poi.hslf.util;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.Locale;
 
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LocaleUtil;
 
 /**
  * A helper class for dealing with SystemTime Structs, as defined at
@@ -33,9 +32,6 @@ import org.apache.poi.util.LittleEndian;
  *  - that the day of the week (0) starts on Sunday in SYSTEMTIME, and Monday in Calendar
  * It is also the case that this does not store the timezone, and no... it is not
  * stored as UTC either, but rather the local system time (yuck.)
- *
- * @author Daniel Noll
- * @author Nick Burch
  */
 public final class SystemTimeUtils {
 	/**
@@ -48,7 +44,7 @@ public final class SystemTimeUtils {
 	 * Get the date found in the byte array, as a java Data object
 	 */
 	public static Date getDate(byte[] data, int offset) {
-        Calendar cal = new GregorianCalendar(Locale.ROOT);
+        Calendar cal = LocaleUtil.getLocaleCalendar();
 
         cal.set(Calendar.YEAR,         LittleEndian.getShort(data,offset));
         cal.set(Calendar.MONTH,        LittleEndian.getShort(data,offset+2)-1);
@@ -75,7 +71,7 @@ public final class SystemTimeUtils {
 	 *  into the supplied byte array.
 	 */
 	public static void storeDate(Date date, byte[] dest, int offset) {
-        Calendar cal = new GregorianCalendar();
+        Calendar cal = LocaleUtil.getLocaleCalendar();
         cal.setTime(date);
 
         LittleEndian.putShort(dest, offset + 0, (short) cal.get(Calendar.YEAR));

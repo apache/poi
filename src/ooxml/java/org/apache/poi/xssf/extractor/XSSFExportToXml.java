@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Vector;
 
@@ -314,7 +315,7 @@ public class XSSFExportToXml implements Comparator<String>{
     }
 
     private String getFormattedDate(XSSFCell cell) {
-        DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.ROOT);
         return sdf.format(cell.getDateCellValue());
     }
 

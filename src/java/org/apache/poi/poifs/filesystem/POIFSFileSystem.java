@@ -19,6 +19,7 @@
 
 package org.apache.poi.poifs.filesystem;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -85,6 +86,22 @@ public class POIFSFileSystem
         super(stream);
     }
 
+    /**
+     * <p>Creates a POIFSFileSystem from a <tt>File</tt>. This uses less memory than
+     *  creating from an <tt>InputStream</tt>. The File will be opened read-only</p>
+     *  
+     * <p>Note that with this constructor, you will need to call {@link #close()}
+     *  when you're done to have the underlying file closed, as the file is
+     *  kept open during normal operation to read the data out.</p> 
+     *  
+     * @param file the File from which to read the data
+     *
+     * @exception IOException on errors reading, or on invalid data
+     */
+    public POIFSFileSystem(File file) throws IOException {
+        super(file);
+    }
+    
     /**
      * Checks that the supplied InputStream (which MUST
      *  support mark and reset, or be a PushbackInputStream)

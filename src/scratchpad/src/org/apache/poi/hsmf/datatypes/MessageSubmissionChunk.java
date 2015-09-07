@@ -26,6 +26,7 @@ import java.util.regex.Pattern;
 
 import org.apache.poi.hsmf.datatypes.Types.MAPIType;
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
@@ -85,7 +86,7 @@ public class MessageSubmissionChunk extends Chunk {
                // Should be yymmddhhmmssZ
                Matcher m = datePatern.matcher(dateS);
                if(m.matches()) {
-                  date = Calendar.getInstance();
+                  date = LocaleUtil.getLocaleCalendar();
 
                   // work around issues with dates like 1989, which appear as "89" here
                   int year = Integer.parseInt(m.group(1));
@@ -96,7 +97,7 @@ public class MessageSubmissionChunk extends Chunk {
                   date.set(Calendar.HOUR_OF_DAY, Integer.parseInt(m.group(4)));
                   date.set(Calendar.MINUTE,      Integer.parseInt(m.group(5)));
                   date.set(Calendar.SECOND,      Integer.parseInt(m.group(6)));
-                  date.set(Calendar.MILLISECOND, 0);
+                  date.clear(Calendar.MILLISECOND);
                } else {
             	   logger.log(POILogger.WARN, "Warning - unable to make sense of date " + dateS);
                }

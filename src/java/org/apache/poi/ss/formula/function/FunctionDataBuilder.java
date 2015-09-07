@@ -30,16 +30,16 @@ import java.util.Set;
  */
 final class FunctionDataBuilder {
 	private int _maxFunctionIndex;
-	private final Map _functionDataByName;
-	private final Map _functionDataByIndex;
+	private final Map<String,FunctionMetadata> _functionDataByName;
+	private final Map<Integer,FunctionMetadata> _functionDataByIndex;
 	/** stores indexes of all functions with footnotes (i.e. whose definitions might change) */
-	private final Set _mutatingFunctionIndexes;
+	private final Set<Integer> _mutatingFunctionIndexes;
 
 	public FunctionDataBuilder(int sizeEstimate) {
 		_maxFunctionIndex = -1;
-		_functionDataByName = new HashMap(sizeEstimate * 3 / 2);
-		_functionDataByIndex = new HashMap(sizeEstimate * 3 / 2);
-		_mutatingFunctionIndexes = new HashSet();
+		_functionDataByName = new HashMap<String,FunctionMetadata>(sizeEstimate * 3 / 2);
+		_functionDataByIndex = new HashMap<Integer,FunctionMetadata>(sizeEstimate * 3 / 2);
+		_mutatingFunctionIndexes = new HashSet<Integer>();
 	}
 
 	public void add(int functionIndex, String functionName, int minParams, int maxParams,
@@ -55,14 +55,14 @@ final class FunctionDataBuilder {
 		}
 		// allow function definitions to change only if both previous and the new items have footnotes
 		FunctionMetadata prevFM;
-		prevFM = (FunctionMetadata) _functionDataByName.get(functionName);
+		prevFM = _functionDataByName.get(functionName);
 		if(prevFM != null) {
 			if(!hasFootnote || !_mutatingFunctionIndexes.contains(indexKey)) {
 				throw new RuntimeException("Multiple entries for function name '" + functionName + "'");
 			}
 			_functionDataByIndex.remove(Integer.valueOf(prevFM.getIndex()));
 		}
-		prevFM = (FunctionMetadata) _functionDataByIndex.get(indexKey);
+		prevFM = _functionDataByIndex.get(indexKey);
 		if(prevFM != null) {
 			if(!hasFootnote || !_mutatingFunctionIndexes.contains(indexKey)) {
 				throw new RuntimeException("Multiple entries for function index (" + functionIndex + ")");

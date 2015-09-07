@@ -40,7 +40,7 @@ import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.poifs.filesystem.DocumentNode;
 import org.apache.poi.poifs.filesystem.Entry;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
@@ -52,7 +52,7 @@ import org.apache.poi.util.POILogger;
 public final class POIFSChunkParser {
    private static POILogger logger = POILogFactory.getLogger(POIFSChunkParser.class);
 
-   public static ChunkGroup[] parse(POIFSFileSystem fs) throws IOException {
+   public static ChunkGroup[] parse(NPOIFSFileSystem fs) throws IOException {
       return parse(fs.getRoot());
    }
    public static ChunkGroup[] parse(DirectoryNode node) throws IOException {
@@ -205,12 +205,15 @@ public final class POIFSChunkParser {
          
       if(chunk != null) {
           if(entry instanceof DocumentNode) {
+             DocumentInputStream inp = null;
              try {
-                DocumentInputStream inp = new DocumentInputStream((DocumentNode)entry);
+                inp = new DocumentInputStream((DocumentNode)entry);
                 chunk.readValue(inp);
                 grouping.record(chunk);
              } catch(IOException e) {
             	 logger.log(POILogger.ERROR, "Error reading from part " + entry.getName() + " - " + e.toString());
+             } finally {
+                 if (inp != null) inp.close();
              }
           } else {
              grouping.record(chunk);

@@ -17,7 +17,6 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import java.text.MessageFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -463,7 +462,7 @@ public class DVConstraint implements DataValidationConstraint {
         case ValidationType.FORMULA:
             return createCustomFormulaConstraint(toFormulaString(dvRecord.getFormula1(), book).string());
         default:
-            throw new UnsupportedOperationException(MessageFormat.format("validationType={0}", dvRecord.getDataType()));
+            throw new UnsupportedOperationException("validationType="+dvRecord.getDataType());
         }
     }
 

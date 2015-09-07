@@ -17,20 +17,11 @@
 
 package org.apache.poi.ss.formula.atp;
 
-import static java.util.Calendar.DECEMBER;
-import static java.util.Calendar.JANUARY;
-import static java.util.Calendar.MARCH;
-import static java.util.Calendar.NOVEMBER;
-import static java.util.Calendar.OCTOBER;
 import static org.apache.poi.ss.formula.eval.ErrorEval.NAME_INVALID;
 import static org.apache.poi.ss.formula.eval.ErrorEval.VALUE_INVALID;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-
-import junit.framework.TestCase;
 
 import org.apache.poi.ss.formula.OperationEvaluationContext;
 import org.apache.poi.ss.formula.TwoDEval;
@@ -40,23 +31,15 @@ import org.apache.poi.ss.formula.eval.NumericValueEval;
 import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 
-/**
- * @author jfaenomoto@gmail.com
- */
-@SuppressWarnings("deprecation") // YK: uses deprecated {@link java.util.Date(int year, int month, int date)}
+import junit.framework.TestCase;
+
 public class TestNetworkdaysFunction extends TestCase {
 
-    private static final SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
-
-    private static final String STARTING_DATE = formatter.format(new Date(108, OCTOBER, 1));
-
-    private static final String END_DATE = formatter.format(new Date(109, MARCH, 1));
-
-    private static final String FIRST_HOLIDAY = formatter.format(new Date(108, NOVEMBER, 26));
-
-    private static final String SECOND_HOLIDAY = formatter.format(new Date(108, DECEMBER, 4));
-
-    private static final String THIRD_HOLIDAY = formatter.format(new Date(109, JANUARY, 21));
+    private static final String STARTING_DATE = "2008/10/01";
+    private static final String END_DATE = "2009/03/01";
+    private static final String FIRST_HOLIDAY = "2008/11/26";
+    private static final String SECOND_HOLIDAY = "2008/12/04";
+    private static final String THIRD_HOLIDAY = "2009/01/21";
 
     private static final OperationEvaluationContext EC = new OperationEvaluationContext(null, null, 1, 1, 1, null);
 

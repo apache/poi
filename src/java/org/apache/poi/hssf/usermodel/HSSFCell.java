@@ -52,6 +52,7 @@ import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.NumberToTextConverter;
+import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
@@ -989,7 +990,7 @@ public class HSSFCell implements Cell {
             case CELL_TYPE_NUMERIC:
                 //TODO apply the dataformat for this cell
                 if (HSSFDateUtil.isCellDateFormatted(this)) {
-                    DateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");
+                    DateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy", LocaleUtil.getUserLocale());
                     return sdf.format(getDateCellValue());
                 }
 				return  String.valueOf(getNumericCellValue());

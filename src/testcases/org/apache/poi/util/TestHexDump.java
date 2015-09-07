@@ -134,7 +134,7 @@ public final class TestHexDump {
             obj[17] = chrs.toString();
             format.append("%18$s"+HexDump.EOL);
             
-            String str = String.format(format.toString(), obj);
+            String str = String.format(LocaleUtil.getUserLocale(), format.toString(), obj);
             strExp.append(str);
         }
         byte bytesExp[] = strExp.toString().getBytes(HexDump.UTF8);

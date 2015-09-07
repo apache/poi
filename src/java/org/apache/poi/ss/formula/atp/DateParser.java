@@ -18,24 +18,16 @@
 package org.apache.poi.ss.formula.atp;
 
 import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.Locale;
-import java.util.TimeZone;
 import java.util.regex.Pattern;
 
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.EvaluationException;
+import org.apache.poi.util.LocaleUtil;
 
 /**
  * Parser for java dates.
  */
 public class DateParser {
-    /**
-     * Excel doesn't store TimeZone information in the file, so if in doubt,
-     *  use UTC to perform calculations
-     */
-    private static final TimeZone DEFAULT_TIMEZONE = TimeZone.getTimeZone("UTC");
-
     public DateParser instance = new DateParser();
 
     private DateParser() {
@@ -80,10 +72,10 @@ public class DateParser {
             return makeDate(f0, f1, f2);
         }
         // otherwise the format seems to depend on OS settings (default date format)
-        if (false) {
-            // MM/DD/YYYY is probably a good guess, if the in the US
-            return makeDate(f2, f0, f1);
-        }
+//        if (false) {
+//            // MM/DD/YYYY is probably a good guess, if the in the US
+//            return makeDate(f2, f0, f1);
+//        }
         // TODO - find a way to choose the correct date format
         throw new RuntimeException("Unable to determine date format for text '" + strVal + "'");
     }
@@ -95,9 +87,7 @@ public class DateParser {
         if (month < 1 || month > 12) {
             throw new EvaluationException(ErrorEval.VALUE_INVALID);
         }
-        Calendar cal = new GregorianCalendar(DEFAULT_TIMEZONE, Locale.ROOT);
-        cal.set(year, month - 1, 1, 0, 0, 0);
-        cal.set(Calendar.MILLISECOND, 0);
+        Calendar cal = LocaleUtil.getLocaleCalendar(year, month - 1, 1, 0, 0, 0);
         if (day < 1 || day > cal.getActualMaximum(Calendar.DAY_OF_MONTH)) {
             throw new EvaluationException(ErrorEval.VALUE_INVALID);
         }

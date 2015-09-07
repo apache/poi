@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -96,6 +95,7 @@ import org.apache.poi.ss.formula.udf.UDFFinder;
 import org.apache.poi.ss.usermodel.BuiltinFormats;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
@@ -1774,7 +1774,7 @@ public final class InternalWorkbook {
         retval.setDefaultCountry(( short ) 1);
 
         // from Russia with love ;)
-        if ( Locale.getDefault().toString().equals( "ru_RU" ) ) {
+        if ( LocaleUtil.getUserLocale().toString().equals( "ru_RU" ) ) {
             retval.setCurrentCountry(( short ) 7);
         }
         else {

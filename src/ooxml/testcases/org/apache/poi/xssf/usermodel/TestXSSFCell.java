@@ -17,6 +17,11 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.IOException;
 
 import org.apache.poi.hssf.HSSFITestDataProvider;
@@ -34,6 +39,7 @@ import org.apache.poi.xssf.SXSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.SharedStringsTable;
+import org.junit.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellType;
 
@@ -50,6 +56,7 @@ public final class TestXSSFCell extends BaseTestXCell {
      * Bug 47026: trouble changing cell type when workbook doesn't contain
      * Shared String Table
      */
+    @Test
     public void test47026_1() {
         Workbook source = _testDataProvider.openSampleWorkbook("47026.xlsm");
         Sheet sheet = source.getSheetAt(0);
@@ -59,6 +66,7 @@ public final class TestXSSFCell extends BaseTestXCell {
         cell.setCellValue("456");
     }
 
+    @Test
     public void test47026_2() {
         Workbook source = _testDataProvider.openSampleWorkbook("47026.xlsm");
         Sheet sheet = source.getSheetAt(0);
@@ -75,6 +83,7 @@ public final class TestXSSFCell extends BaseTestXCell {
      * Some programs, for example, Microsoft Excel Driver for .xlsx insert inline string
      * instead of using the shared string table. See bug 47206
      */
+    @Test
     public void testInlineString() {
         XSSFWorkbook wb = (XSSFWorkbook)_testDataProvider.openSampleWorkbook("xlsx-jdbc.xlsx");
         XSSFSheet sheet = wb.getSheetAt(0);
@@ -99,6 +108,7 @@ public final class TestXSSFCell extends BaseTestXCell {
     /**
      *  Bug 47278 -  xsi:nil attribute for <t> tag caused Excel 2007 to fail to open workbook
      */
+    @Test
     public void test47278() {
         XSSFWorkbook wb = (XSSFWorkbook)_testDataProvider.createWorkbook();
         Sheet sheet = wb.createSheet();
@@ -121,6 +131,7 @@ public final class TestXSSFCell extends BaseTestXCell {
         assertEquals(Cell.CELL_TYPE_BLANK, cell_1.getCellType());
     }
 
+    @Test
     public void testFormulaString() throws IOException {
         XSSFWorkbook wb = (XSSFWorkbook)_testDataProvider.createWorkbook();
         try {
@@ -162,6 +173,7 @@ public final class TestXSSFCell extends BaseTestXCell {
     /**
      * Bug 47889: problems when calling XSSFCell.getStringCellValue() on a workbook created in Gnumeric
      */
+    @Test
     public void test47889() {
         XSSFWorkbook wb = (XSSFWorkbook)_testDataProvider.openSampleWorkbook("47889.xlsx");
         XSSFSheet sh = wb.getSheetAt(0);
@@ -180,13 +192,14 @@ public final class TestXSSFCell extends BaseTestXCell {
         //try a numeric cell
         cell = sh.getRow(1).getCell(0);
         assertEquals(XSSFCell.CELL_TYPE_NUMERIC, cell.getCellType());
-        assertEquals(1.0, cell.getNumericCellValue());
+        assertEquals(1.0, cell.getNumericCellValue(), 0);
         assertEquals("1.0", cell.toString());
         //Gnumeric produces spreadsheets without styles
         //make sure we return null for that instead of throwing OutOfBounds
         assertEquals(null, cell.getCellStyle());
     }
 
+    @Test
     public void testMissingRAttribute() {
         XSSFWorkbook wb = new XSSFWorkbook();
         XSSFSheet sheet = wb.createSheet();
@@ -238,6 +251,7 @@ public final class TestXSSFCell extends BaseTestXCell {
         assertEquals("F1", a6.getReference());
     }
 
+    @Test
     public void testMissingRAttributeBug54288() {
         // workbook with cells missing the R attribute
         XSSFWorkbook wb = (XSSFWorkbook)_testDataProvider.openSampleWorkbook("54288.xlsx");
@@ -278,6 +292,7 @@ public final class TestXSSFCell extends BaseTestXCell {
         }
     }
     
+    @Test
     public void test56170() throws IOException {
         final Workbook wb = XSSFTestDataSamples.openSampleWorkbook("56170.xlsx");
         final XSSFSheet sheet = (XSSFSheet) wb.getSheetAt(0);
@@ -326,6 +341,7 @@ public final class TestXSSFCell extends BaseTestXCell {
         stream.close();*/
     }
     
+    @Test
     public void test56170Reproduce() throws IOException {
         final Workbook wb = new XSSFWorkbook();
         try {
@@ -370,6 +386,7 @@ public final class TestXSSFCell extends BaseTestXCell {
         }
     }    
 
+    @Test
     public void testBug56644ReturnNull() throws IOException {
         Workbook wb = XSSFTestDataSamples.openSampleWorkbook("56644.xlsx");
         try {
@@ -382,6 +399,7 @@ public final class TestXSSFCell extends BaseTestXCell {
         }
     }
 
+    @Test
     public void testBug56644ReturnBlank() throws IOException {
         Workbook wb = XSSFTestDataSamples.openSampleWorkbook("56644.xlsx");
         try {
@@ -394,6 +412,7 @@ public final class TestXSSFCell extends BaseTestXCell {
         }
     }
 
+    @Test
     public void testBug56644CreateBlank() throws IOException {
         Workbook wb = XSSFTestDataSamples.openSampleWorkbook("56644.xlsx");
         try {
@@ -406,6 +425,7 @@ public final class TestXSSFCell extends BaseTestXCell {
         }
     }
 
+    @Test
     public void testEncodingbeloAscii(){
         StringBuffer sb = new StringBuffer();
         // test all possible characters

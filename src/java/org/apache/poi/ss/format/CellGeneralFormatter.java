@@ -57,7 +57,7 @@ public class CellGeneralFormatter extends CellFormatter {
                 stripZeros = false;
             }
 
-            Formatter formatter = new Formatter(toAppendTo);
+            Formatter formatter = new Formatter(toAppendTo, LOCALE);
             try {
                 formatter.format(LOCALE, fmt, value);
             } finally {
