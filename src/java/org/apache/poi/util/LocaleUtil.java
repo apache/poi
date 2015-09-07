@@ -18,6 +18,7 @@
 
 package org.apache.poi.util;
 
+import java.nio.charset.Charset;
 import java.util.Calendar;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -39,6 +40,13 @@ public class LocaleUtil {
      *  use UTC to perform calculations
      */
     public static final TimeZone TIMEZONE_UTC = TimeZone.getTimeZone("UTC");
+    
+    /**
+     * Default encoding for unknown byte encodings of native files
+     * (at least it's better than to rely on a platform dependent encoding
+     * for legacy stuff ...)
+     */
+    public static final Charset CHARSET_1252 = Charset.forName("CP1252");
 
     private static final ThreadLocal<TimeZone> userTimeZone = new ThreadLocal<TimeZone>() {
         @Override

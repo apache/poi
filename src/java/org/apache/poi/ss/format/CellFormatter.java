@@ -16,7 +16,6 @@
 ==================================================================== */
 package org.apache.poi.ss.format;
 
-import java.util.Locale;
 import java.util.logging.Logger;
 
 /**
@@ -27,12 +26,6 @@ import java.util.logging.Logger;
 public abstract class CellFormatter {
     /** The original specified format. */
     protected final String format;
-
-    /**
-     * This is the locale used to get a consistent format result from which to
-     * work.
-     */
-    public static final Locale LOCALE = Locale.US;
 
     /**
      * Creates a new formatter object, storing the format in {@link #format}.
