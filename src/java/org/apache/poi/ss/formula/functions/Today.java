@@ -18,28 +18,23 @@
 package org.apache.poi.ss.formula.functions;
 
 import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.Locale;
-import java.util.TimeZone;
 
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.util.LocaleUtil;
 
 /**
  * Implementation of Excel TODAY() Function<br/>
  */
 public final class Today extends Fixed0ArgFunction {
-    /**
-     * Excel doesn't store TimeZone information in the file, so if in doubt,
-     *  use UTC to perform calculations
-     */
-    private static final TimeZone DEFAULT_TIMEZONE = TimeZone.getTimeZone("UTC");
-
 	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex) {
-		Calendar now = new GregorianCalendar(DEFAULT_TIMEZONE, Locale.ROOT);
-		now.set(now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DATE),0,0,0);
-		now.set(Calendar.MILLISECOND, 0);
+		Calendar now = LocaleUtil.getLocaleCalendar();
+		now.clear(Calendar.HOUR);
+        now.set(Calendar.HOUR_OF_DAY,0);
+		now.clear(Calendar.MINUTE);
+		now.clear(Calendar.SECOND);
+		now.clear(Calendar.MILLISECOND);
 		return new NumberEval(DateUtil.getExcelDate(now.getTime()));
 	}
 }

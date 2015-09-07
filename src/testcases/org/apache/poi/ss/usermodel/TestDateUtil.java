@@ -23,6 +23,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
+import org.apache.poi.util.LocaleUtil;
 import org.junit.Test;
 
 public class TestDateUtil {
@@ -30,7 +31,7 @@ public class TestDateUtil {
     @Test
     public void getJavaDate_InvalidValue() {
         double dateValue = -1;
-        TimeZone tz = TimeZone.getDefault();
+        TimeZone tz = LocaleUtil.getUserTimeZone();
         boolean use1904windowing = false;
         boolean roundSeconds = false;
 
@@ -44,13 +45,11 @@ public class TestDateUtil {
     @Test
     public void getJavaDate_ValidValue() {
         double dateValue = 0;
-        TimeZone tz = TimeZone.getDefault();
+        TimeZone tz = LocaleUtil.getUserTimeZone();
         boolean use1904windowing = false;
         boolean roundSeconds = false;
 
-        Calendar calendar = Calendar.getInstance(tz);
-        calendar.set(1900, 0, 0, 0, 0, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
+        Calendar calendar = LocaleUtil.getLocaleCalendar(1900, 0, 0);
         Date date = calendar.getTime();
 
         assertEquals(date, DateUtil.getJavaDate(dateValue));
@@ -63,7 +62,7 @@ public class TestDateUtil {
     @Test
     public void getJavaCalendar_InvalidValue() {
         double dateValue = -1;
-        TimeZone tz = TimeZone.getDefault();
+        TimeZone tz = LocaleUtil.getUserTimeZone();
         boolean use1904windowing = false;
         boolean roundSeconds = false;
 
@@ -76,17 +75,21 @@ public class TestDateUtil {
     @Test
     public void getJavaCalendar_ValidValue() {
         double dateValue = 0;
-        TimeZone tz = TimeZone.getDefault();
+        TimeZone tz = LocaleUtil.getUserTimeZone();
         boolean use1904windowing = false;
         boolean roundSeconds = false;
 
-        Calendar calendar = Calendar.getInstance(tz);
-        calendar.set(1900, 0, 0, 0, 0, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
+        Calendar expCal = LocaleUtil.getLocaleCalendar(1900, 0, 0);
 
-        assertEquals(calendar, DateUtil.getJavaCalendar(dateValue));
-        assertEquals(calendar, DateUtil.getJavaCalendar(dateValue, use1904windowing));
-        assertEquals(calendar, DateUtil.getJavaCalendar(dateValue, use1904windowing, tz));
-        assertEquals(calendar, DateUtil.getJavaCalendar(dateValue, use1904windowing, tz, roundSeconds));
+        Calendar actCal[] = {
+            DateUtil.getJavaCalendar(dateValue),
+            DateUtil.getJavaCalendar(dateValue, use1904windowing),
+            DateUtil.getJavaCalendar(dateValue, use1904windowing, tz),
+            DateUtil.getJavaCalendar(dateValue, use1904windowing, tz, roundSeconds)
+        };
+        assertEquals(expCal, actCal[0]);
+        assertEquals(expCal, actCal[1]);
+        assertEquals(expCal, actCal[2]);
+        assertEquals(expCal, actCal[3]);
     }
 }

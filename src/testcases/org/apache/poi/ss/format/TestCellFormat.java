@@ -16,14 +16,16 @@
 ==================================================================== */
 package org.apache.poi.ss.format;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import javax.swing.JLabel;
-
-import junit.framework.TestCase;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -31,8 +33,28 @@ import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.util.LocaleUtil;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
-public class TestCellFormat extends TestCase {
+public class TestCellFormat {
+    
+    private static TimeZone userTimeZone;
+    
+    @BeforeClass
+    public static void setTimeZone() {
+        userTimeZone = LocaleUtil.getUserTimeZone();
+        LocaleUtil.setUserTimeZone(TimeZone.getTimeZone("CET"));
+        LocaleUtil.setUserLocale(Locale.US);
+    }
+    
+    @AfterClass
+    public static void resetTimeZone() {
+        LocaleUtil.setUserTimeZone(userTimeZone);
+        LocaleUtil.setUserLocale(Locale.ROOT);
+    }
+    
     
     private static final String _255_POUND_SIGNS;
     static {
@@ -43,6 +65,7 @@ public class TestCellFormat extends TestCase {
         _255_POUND_SIGNS = sb.toString();
     }
     
+    @Test
     public void testSome() {
         JLabel l = new JLabel();
         CellFormat fmt = CellFormat.getInstance(
@@ -50,48 +73,56 @@ public class TestCellFormat extends TestCase {
         fmt.apply(l, 1.1);
     }
     
+    @Test
     public void testPositiveFormatHasOnePart() {
         CellFormat fmt = CellFormat.getInstance("0.00");
         CellFormatResult result = fmt.apply(12.345);
         assertEquals("12.35", result.text);
     }
     
+    @Test
     public void testNegativeFormatHasOnePart() {
         CellFormat fmt = CellFormat.getInstance("0.00");
         CellFormatResult result = fmt.apply(-12.345);
         assertEquals("-12.35", result.text);
     }
     
+    @Test
     public void testZeroFormatHasOnePart() {
         CellFormat fmt = CellFormat.getInstance("0.00");
         CellFormatResult result = fmt.apply(0.0);
         assertEquals("0.00", result.text);
     }
     
+    @Test
     public void testPositiveFormatHasPosAndNegParts() {
         CellFormat fmt = CellFormat.getInstance("0.00;-0.00");
         CellFormatResult result = fmt.apply(12.345);
         assertEquals("12.35", result.text);
     }
     
+    @Test
     public void testNegativeFormatHasPosAndNegParts() {
         CellFormat fmt = CellFormat.getInstance("0.00;-0.00");
         CellFormatResult result = fmt.apply(-12.345);
         assertEquals("-12.35", result.text);
     }
 
+    @Test
     public void testNegativeFormatHasPosAndNegParts2() {
         CellFormat fmt = CellFormat.getInstance("0.00;(0.00)");
         CellFormatResult result = fmt.apply(-12.345);
         assertEquals("(12.35)", result.text);
     }
     
+    @Test
     public void testZeroFormatHasPosAndNegParts() {
         CellFormat fmt = CellFormat.getInstance("0.00;-0.00");
         CellFormatResult result = fmt.apply(0.0);
         assertEquals("0.00", result.text);
     }
 
+    @Test
     public void testFormatWithThreeSections() {
         CellFormat fmt = CellFormat.getInstance("0.00;-0.00;-");
         
@@ -101,6 +132,7 @@ public class TestCellFormat extends TestCase {
         assertEquals("abc",    fmt.apply("abc").text);
     }
     
+    @Test
     public void testFormatWithFourSections() {
         CellFormat fmt = CellFormat.getInstance("0.00;-0.00;-; @ ");
         
@@ -110,7 +142,8 @@ public class TestCellFormat extends TestCase {
         assertEquals(" abc ",  fmt.apply("abc").text);
     }
 
-    public void testApplyCellForGeneralFormat() {
+    @Test
+    public void testApplyCellForGeneralFormat() throws Exception {
         
         // Create a workbook, row and cell to test with
         Workbook wb = new HSSFWorkbook();
@@ -147,9 +180,11 @@ public class TestCellFormat extends TestCase {
         CellFormatResult result4 = cf.apply(cell4);
         assertEquals("abc", result4.text);
         
+        wb.close();
     }
     
-    public void testApplyCellForAtFormat() {
+    @Test
+    public void testApplyCellForAtFormat() throws Exception {
         
         // Create a workbook, row and cell to test with
         Workbook wb = new HSSFWorkbook();
@@ -186,9 +221,11 @@ public class TestCellFormat extends TestCase {
         CellFormatResult result4 = cf.apply(cell4);
         assertEquals("abc", result4.text);
         
+        wb.close();
     }
     
-    public void testApplyCellForDateFormat() {
+    @Test
+    public void testApplyCellForDateFormat() throws Exception {
         
         // Create a workbook, row and cell to test with
         Workbook wb = new HSSFWorkbook();
@@ -207,9 +244,11 @@ public class TestCellFormat extends TestCase {
         CellFormatResult result1 = cf.apply(cell1);
         assertEquals(_255_POUND_SIGNS, result1.text);
         
+        wb.close();
     }
     
-    public void testApplyCellForTimeFormat() {
+    @Test
+    public void testApplyCellForTimeFormat() throws Exception {
         
         // Create a workbook, row and cell to test with
         Workbook wb = new HSSFWorkbook();
@@ -223,9 +262,11 @@ public class TestCellFormat extends TestCase {
         CellFormatResult result = cf.apply(cell);
         assertEquals("03:04", result.text);
         
+        wb.close();
     }
     
-   public void testApplyCellForDateFormatAndNegativeFormat() {
+    @Test
+    public void testApplyCellForDateFormatAndNegativeFormat() throws Exception {
         
         // Create a workbook, row and cell to test with
         Workbook wb = new HSSFWorkbook();
@@ -244,9 +285,11 @@ public class TestCellFormat extends TestCase {
         CellFormatResult result1 = cf.apply(cell1);
         assertEquals("(1)", result1.text);
         
+        wb.close();
     }
     
-    public void testApplyJLabelCellForGeneralFormat() {
+    @Test
+    public void testApplyJLabelCellForGeneralFormat() throws Exception {
         
         // Create a workbook, row and cell to test with
         Workbook wb = new HSSFWorkbook();
@@ -294,9 +337,11 @@ public class TestCellFormat extends TestCase {
         assertEquals("abc", result4.text);
         assertEquals("abc", label4.getText());
         
+        wb.close();
     }
     
-    public void testApplyJLabelCellForAtFormat() {
+    @Test
+    public void testApplyJLabelCellForAtFormat() throws Exception {
         
         // Create a workbook, row and cell to test with
         Workbook wb = new HSSFWorkbook();
@@ -344,9 +389,11 @@ public class TestCellFormat extends TestCase {
         assertEquals("abc", result4.text);
         assertEquals("abc", label4.getText());
         
+        wb.close();
     }
 
-    public void testApplyJLabelCellForDateFormat() {
+    @Test
+    public void testApplyJLabelCellForDateFormat() throws Exception {
         
         // Create a workbook, row and cell to test with
         Workbook wb = new HSSFWorkbook();
@@ -370,9 +417,11 @@ public class TestCellFormat extends TestCase {
         assertEquals(_255_POUND_SIGNS, result1.text);
         assertEquals(_255_POUND_SIGNS, label1.getText());
         
+        wb.close();
     }
 
-    public void testApplyJLabelCellForTimeFormat() {
+    @Test
+    public void testApplyJLabelCellForTimeFormat() throws Exception {
         
         // Create a workbook, row and cell to test with
         Workbook wb = new HSSFWorkbook();
@@ -389,9 +438,11 @@ public class TestCellFormat extends TestCase {
         assertEquals("03:04", result.text);
         assertEquals("03:04", label.getText());
         
+        wb.close();
     }
     
-    public void testApplyJLabelCellForDateFormatAndNegativeFormat() {
+    @Test
+    public void testApplyJLabelCellForDateFormatAndNegativeFormat() throws Exception {
         
         // Create a workbook, row and cell to test with
         Workbook wb = new HSSFWorkbook();
@@ -415,9 +466,11 @@ public class TestCellFormat extends TestCase {
         assertEquals("(1)", result1.text);
         assertEquals("(1)", label1.getText());
         
+        wb.close();
     }
 
-    public void testApplyFormatHasOnePartAndPartHasCondition() {
+    @Test
+    public void testApplyFormatHasOnePartAndPartHasCondition() throws Exception {
         
         // Create a workbook, row and cell to test with
         Workbook wb = new HSSFWorkbook();
@@ -442,9 +495,11 @@ public class TestCellFormat extends TestCase {
         cell.setCellValue("abc");
         assertEquals("abc", cf.apply(cell).text);
         
+        wb.close();
     }
     
-    public void testApplyFormatHasTwoPartsFirstHasCondition() {
+    @Test
+    public void testApplyFormatHasTwoPartsFirstHasCondition() throws Exception {
         
         // Create a workbook, row and cell to test with
         Workbook wb = new HSSFWorkbook();
@@ -475,9 +530,11 @@ public class TestCellFormat extends TestCase {
         cell.setCellValue("TRUE");
         assertEquals("TRUE", cf.apply(cell).text);
         
+        wb.close();
     }
     
-    public void testApplyFormatHasTwoPartsBothHaveCondition() {
+    @Test
+    public void testApplyFormatHasTwoPartsBothHaveCondition() throws Exception {
         
         // Create a workbook, row and cell to test with
         Workbook wb = new HSSFWorkbook();
@@ -505,9 +562,11 @@ public class TestCellFormat extends TestCase {
         cell.setCellValue("abc");
         assertEquals("abc", cf.apply(cell).text);
         
+        wb.close();
     }
     
-    public void testApplyFormatHasThreePartsFirstHasCondition() {
+    @Test
+    public void testApplyFormatHasThreePartsFirstHasCondition() throws Exception {
         
         // Create a workbook, row and cell to test with
         Workbook wb = new HSSFWorkbook();
@@ -537,9 +596,11 @@ public class TestCellFormat extends TestCase {
         cell.setCellValue("abc");
         assertEquals("abc", cf.apply(cell).text);
         
+        wb.close();
     }
     
-    public void testApplyFormatHasThreePartsFirstTwoHaveCondition() {
+    @Test
+    public void testApplyFormatHasThreePartsFirstTwoHaveCondition() throws Exception {
         
         // Create a workbook, row and cell to test with
         Workbook wb = new HSSFWorkbook();
@@ -564,9 +625,11 @@ public class TestCellFormat extends TestCase {
         cell.setCellValue("abc");
         assertEquals("abc", cf.apply(cell).text);
         
+        wb.close();
     }
 
-    public void testApplyFormatHasThreePartsFirstIsDateFirstTwoHaveCondition() {
+    @Test
+    public void testApplyFormatHasThreePartsFirstIsDateFirstTwoHaveCondition() throws Exception {
         
         // Create a workbook, row and cell to test with
         Workbook wb = new HSSFWorkbook();
@@ -591,9 +654,11 @@ public class TestCellFormat extends TestCase {
         cell.setCellValue("abc");
         assertEquals("abc", cf.apply(cell).text);
         
+        wb.close();
     }
 
-    public void testApplyFormatHasTwoPartsFirstHasConditionSecondIsGeneral() {
+    @Test
+    public void testApplyFormatHasTwoPartsFirstHasConditionSecondIsGeneral() throws Exception {
         
         // Create a workbook, row and cell to test with
         Workbook wb = new HSSFWorkbook();
@@ -618,9 +683,11 @@ public class TestCellFormat extends TestCase {
         cell.setCellValue("abc");
         assertEquals("abc", cf.apply(cell).text);
         
+        wb.close();
     }
 
-    public void testApplyFormatHasThreePartsFirstTwoHaveConditionThirdIsGeneral() {
+    @Test
+    public void testApplyFormatHasThreePartsFirstTwoHaveConditionThirdIsGeneral() throws Exception {
         
         // Create a workbook, row and cell to test with
         Workbook wb = new HSSFWorkbook();
@@ -645,9 +712,11 @@ public class TestCellFormat extends TestCase {
         cell.setCellValue("abc");
         assertEquals("abc", cf.apply(cell).text);
         
+        wb.close();
     }
     
-    public void testApplyFormatHasFourPartsFirstHasCondition() {
+    @Test
+    public void testApplyFormatHasFourPartsFirstHasCondition() throws Exception {
         
         // Create a workbook, row and cell to test with
         Workbook wb = new HSSFWorkbook();
@@ -677,9 +746,11 @@ public class TestCellFormat extends TestCase {
         cell.setCellValue("abc");
         assertEquals("~~abc~~", cf.apply(cell).text);
         
+        wb.close();
     }
     
-    public void testApplyFormatHasFourPartsSecondHasCondition() {
+    @Test
+    public void testApplyFormatHasFourPartsSecondHasCondition() throws Exception {
         
         // Create a workbook, row and cell to test with
         Workbook wb = new HSSFWorkbook();
@@ -710,9 +781,11 @@ public class TestCellFormat extends TestCase {
         cell.setCellValue(true);
         assertEquals("~~TRUE~~", cf.apply(cell).text);
         
+        wb.close();
     }
 
-    public void testApplyFormatHasFourPartsFirstTwoHaveCondition() {
+    @Test
+    public void testApplyFormatHasFourPartsFirstTwoHaveCondition() throws Exception {
         
         // Create a workbook, row and cell to test with
         Workbook wb = new HSSFWorkbook();
@@ -739,11 +812,14 @@ public class TestCellFormat extends TestCase {
         
         cell.setCellValue(true);
         assertEquals("~~TRUE~~", cf.apply(cell).text);
+        
+        wb.close();
     }
     
     /*
      * Test apply(Object value) with a number as parameter
      */
+    @Test
     public void testApplyObjectNumber() {
         
         CellFormat cf1 = CellFormat.getInstance("0.000");
@@ -771,15 +847,17 @@ public class TestCellFormat extends TestCase {
     /*
      * Test apply(Object value) with a Date as parameter
      */
+    @Test
     public void testApplyObjectDate() throws ParseException {
         
         CellFormat cf1 = CellFormat.getInstance("m/d/yyyy");
-        Date date1 = new SimpleDateFormat("M/d/y").parse("01/11/2012");
+        Date date1 = new SimpleDateFormat("M/d/y", Locale.ROOT).parse("01/11/2012");
         assertEquals("1/11/2012", cf1.apply(date1).text);
         
     }
 
-    public void testApplyCellForDateFormatWithConditions() {
+    @Test
+    public void testApplyCellForDateFormatWithConditions() throws Exception {
         
         // Create a workbook, row and cell to test with
         Workbook wb = new HSSFWorkbook();
@@ -798,11 +876,13 @@ public class TestCellFormat extends TestCase {
         cell.setCellValue(-1);
         assertEquals(_255_POUND_SIGNS, cf.apply(cell).text);
         
+        wb.close();
     }
     
     /*
      * Test apply(Object value) with a String as parameter
      */
+    @Test
     public void testApplyObjectString() {
         
         CellFormat cf = CellFormat.getInstance("0.00");
@@ -814,6 +894,7 @@ public class TestCellFormat extends TestCase {
     /*
      * Test apply(Object value) with a Boolean as parameter
      */
+    @Test
     public void testApplyObjectBoolean() {
         
         CellFormat cf1 = CellFormat.getInstance("0");
@@ -826,6 +907,7 @@ public class TestCellFormat extends TestCase {
         
     }
     
+    @Test
     public void testSimpleFractionFormat() throws IOException {
         CellFormat cf1 = CellFormat.getInstance("# ?/?");
         // Create a workbook, row and cell to test with

@@ -18,7 +18,10 @@
         
 package org.apache.poi.util;
 
-import java.awt.*;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.GraphicsEnvironment;
+import java.awt.Toolkit;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
@@ -26,6 +29,7 @@ import java.util.Properties;
 @SuppressWarnings("deprecation")
 public class FontMetricsDumper
 {
+    @SuppressForbidden
     public static void main( String[] args ) throws IOException
     {
 

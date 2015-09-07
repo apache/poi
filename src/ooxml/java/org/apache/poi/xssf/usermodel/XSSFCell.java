@@ -21,6 +21,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.FormulaParser;
@@ -840,7 +841,7 @@ public final class XSSFCell implements Cell {
                 return getCellFormula();
             case CELL_TYPE_NUMERIC:
                 if (DateUtil.isCellDateFormatted(this)) {
-                    DateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");
+                    DateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy", Locale.ROOT);
                     return sdf.format(getDateCellValue());
                 }
                 return Double.toString(getNumericCellValue());

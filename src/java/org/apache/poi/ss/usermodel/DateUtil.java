@@ -20,9 +20,10 @@ package org.apache.poi.ss.usermodel;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
 import java.util.TimeZone;
 import java.util.regex.Pattern;
+
+import org.apache.poi.util.LocaleUtil;
 
 /**
  * Contains methods for dealing with Excel dates.
@@ -53,13 +54,6 @@ public class DateUtil {
     private static final Pattern date_ptrn4 = Pattern.compile("^\\[([hH]+|[mM]+|[sS]+)\\]");
 
     /**
-     * Excel doesn't store TimeZone information in the file, so if in doubt,
-     *  use UTC to perform calculations
-     */
-    private static final TimeZone TIMEZONE_UTC = TimeZone.getTimeZone("UTC");
-
-
-    /**
      * Given a Date, converts it into a double representing its internal Excel representation,
      *   which is the number of days since 1/1/1900. Fractional days represent hours, minutes, and seconds.
      *
@@ -78,7 +72,7 @@ public class DateUtil {
      * @param use1904windowing Should 1900 or 1904 date windowing be used?
      */
     public static double getExcelDate(Date date, boolean use1904windowing) {
-        Calendar calStart = Calendar.getInstance(getUserTimeZone(), Locale.ROOT);
+        Calendar calStart = LocaleUtil.getLocaleCalendar();
         calStart.setTime(date);   // If date includes hours, minutes, and seconds, set them to 0
         return internalGetExcelDate(calStart, use1904windowing);
     }
@@ -242,6 +236,9 @@ public class DateUtil {
         }
         calendar.set(startYear,0, wholeDays + dayAdjust, 0, 0, 0);
         calendar.set(Calendar.MILLISECOND, millisecondsInDay);
+        if (calendar.get(Calendar.MILLISECOND) == 0) {
+            calendar.clear(Calendar.MILLISECOND);
+        }
         if (roundSeconds) {
             calendar.add(Calendar.MILLISECOND, 500);
             calendar.clear(Calendar.MILLISECOND);
@@ -281,7 +278,7 @@ public class DateUtil {
      * @return Java representation of the date in UTC, or null if date is not a valid Excel date
      */
     public static Calendar getJavaCalendarUTC(double date, boolean use1904windowing) {
-    	return getJavaCalendar(date, use1904windowing, TIMEZONE_UTC, false);
+    	return getJavaCalendar(date, use1904windowing, LocaleUtil.TIMEZONE_UTC, false);
     }
 
 
@@ -314,9 +311,9 @@ public class DateUtil {
         int millisecondsInDay = (int)((date - wholeDays) * DAY_MILLISECONDS + 0.5);
         Calendar calendar;
         if (timeZone != null) {
-            calendar = Calendar.getInstance(timeZone, Locale.ROOT);
+            calendar = LocaleUtil.getLocaleCalendar(timeZone);
         } else {
-            calendar = Calendar.getInstance(getUserTimeZone(), Locale.ROOT); // using default time-zone
+            calendar = LocaleUtil.getLocaleCalendar(); // using default time-zone
         }
         setCalendar(calendar, wholeDays, millisecondsInDay, use1904windowing, roundSeconds);
         return calendar;
@@ -334,13 +331,6 @@ public class DateUtil {
     private static ThreadLocal<String> lastFormatString = new ThreadLocal<String>();
     private static ThreadLocal<Boolean> lastCachedResult = new ThreadLocal<Boolean>();
     
-    private static ThreadLocal<TimeZone> userTimeZone = new ThreadLocal<TimeZone>() {
-        @Override
-        protected TimeZone initialValue() {
-            return TIMEZONE_UTC;
-        }
-    };
-
     private static boolean isCached(String formatString, int formatIndex) {
         String cachedFormatString = lastFormatString.get();
         return cachedFormatString != null && formatIndex == lastFormatIndex.get()
@@ -353,23 +343,6 @@ public class DateUtil {
         lastCachedResult.set(Boolean.valueOf(cached));
     }
 
-    /**
-     * as timezone information is not stored in any format, it can be
-     * set before any date calculations take place
-     *
-     * @param timezone the timezone under which date calculations take place
-     */
-    public static void setUserTimeZone(TimeZone timezone) {
-        userTimeZone.set(timezone);
-    }
-    
-    /**
-     * @return the time zone which is used for date calculations
-     */
-    public static TimeZone getUserTimeZone() {
-        return userTimeZone.get();
-    }
-    
     /**
      * Given a format ID and its format String, will check to see if the
      *  format represents a date format or not.
@@ -684,9 +657,7 @@ public class DateUtil {
         int month = parseInt(monthStr, "month", 1, 12);
         int day = parseInt(dayStr, "day", 1, 31);
 
-        Calendar cal = Calendar.getInstance(getUserTimeZone(), Locale.ROOT);
-        cal.set(year, month-1, day, 0, 0, 0);
-        cal.set(Calendar.MILLISECOND, 0);
+        Calendar cal = LocaleUtil.getLocaleCalendar(year, month-1, day);
         return cal.getTime();
     }
     private static int parseInt(String strVal, String fieldName, int rangeMax) throws FormatException {

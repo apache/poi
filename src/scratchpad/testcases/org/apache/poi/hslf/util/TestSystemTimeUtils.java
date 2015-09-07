@@ -18,17 +18,22 @@
 package org.apache.poi.hslf.util;
 
 
+import static org.junit.Assert.assertEquals;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
-import junit.framework.TestCase;
+import org.apache.poi.util.LocaleUtil;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 /**
  * Tests that SystemTimeUtils works properly.
  *
  * @author Nick Burch (nick at torchbox dot com)
  */
-public final class TestSystemTimeUtils extends TestCase {
+public final class TestSystemTimeUtils {
 	// From real files
 	private byte[] data_a = new byte[] {
 		0xD6-256, 07, 01, 00,
@@ -43,9 +48,16 @@ public final class TestSystemTimeUtils extends TestCase {
 		0x0A, 00, 00, 00
 	};
 
-	private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
+    private static SimpleDateFormat sdf;
+    
+    @BeforeClass
+    public static void initDateFormat() {
+        sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.ROOT);
+        sdf.setTimeZone(LocaleUtil.getUserTimeZone());
+    }
 
-	public void testGetDateA() throws Exception {
+	@Test
+    public void testGetDateA() throws Exception {
 		Date date = SystemTimeUtils.getDate(data_a);
 
 		// Is 2006-01-24 (2nd day of week) 10:26:15.205
@@ -54,6 +66,7 @@ public final class TestSystemTimeUtils extends TestCase {
 		assertEquals(exp, date);
 	}
 
+	@Test
 	public void testGetDateB() throws Exception {
 		Date date = SystemTimeUtils.getDate(data_b, 8+4);
 
@@ -63,6 +76,7 @@ public final class TestSystemTimeUtils extends TestCase {
 		assertEquals(exp, date);
 	}
 
+	@Test
 	public void testWriteDateA() throws Exception {
 		byte[] out_a = new byte[data_a.length];
 		Date date = sdf.parse("2006-01-24 10:26:15.205");
@@ -73,6 +87,7 @@ public final class TestSystemTimeUtils extends TestCase {
 		}
 	}
 
+	@Test
 	public void testWriteDateB() throws Exception {
 		byte[] out_b = new byte[data_b.length];
 		// Copy over start and end, ignoring the 16 byte date field in the middle

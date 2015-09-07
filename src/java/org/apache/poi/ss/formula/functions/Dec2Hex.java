@@ -109,7 +109,7 @@ public final class Dec2Hex extends Var1or2ArgFunction implements FreeRefFunction
 
         String hex;
         if (placesNumber != 0) {
-            hex = String.format("%0"+placesNumber+"X", number1.intValue(), Locale.ROOT);
+            hex = String.format(Locale.ROOT, "%0"+placesNumber+"X", number1.intValue());
         }
         else {
             hex = Integer.toHexString(number1.intValue());

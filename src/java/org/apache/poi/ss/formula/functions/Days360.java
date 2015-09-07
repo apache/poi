@@ -17,14 +17,13 @@
 package org.apache.poi.ss.formula.functions;
 
 import java.util.Calendar;
-import java.util.Locale;
-import java.util.TimeZone;
 
 import org.apache.poi.ss.formula.eval.EvaluationException;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.util.LocaleUtil;
 
 /**
  * <p>Calculates the number of days between two dates based on a 360-day year
@@ -67,12 +66,6 @@ import org.apache.poi.ss.usermodel.DateUtil;
  * @see <a href="https://support.microsoft.com/en-us/kb/235575">DAYS360 Function Produces Different Values Depending on the Version of Excel</a>
  */
 public class Days360 extends Var2or3ArgFunction {
-    /**
-     * Excel doesn't store TimeZone information in the file, so if in doubt,
-     *  use UTC to perform calculations
-     */
-    private static final TimeZone DEFAULT_TIMEZONE = TimeZone.getTimeZone("UTC");
-
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1) {
         double result;
         try {
@@ -112,8 +105,8 @@ public class Days360 extends Var2or3ArgFunction {
     }
 
     private static Calendar getDate(double date) {
-        Calendar processedDate = Calendar.getInstance(DEFAULT_TIMEZONE, Locale.ROOT);
-        processedDate.setTime(DateUtil.getJavaDate(date, false, DEFAULT_TIMEZONE));
+        Calendar processedDate = LocaleUtil.getLocaleCalendar();
+        processedDate.setTime(DateUtil.getJavaDate(date, false));
         return processedDate;
     }
 

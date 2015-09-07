@@ -1105,6 +1105,7 @@ under the License.
                      failureproperty="ooxml.test.failed">
                   <classpath refid="@{classpath}"/>
                   <syspropertyset refid="junit.properties"/>
+              	  <jvmarg value="-Xmx768M"/>
                   <jvmarg value="-ea"/>
                   <formatter type="plain"/>
                   <formatter type="xml"/>
@@ -1126,6 +1127,7 @@ under the License.
                       <path refid="ooxml.xmlsec.classpath"/>
                   </classpath>
                   <syspropertyset refid="junit.properties"/>
+              	  <jvmarg value="-Xmx768M"/>
                   <jvmarg value="-ea"/>
                   <formatter type="plain"/>
                   <formatter type="xml"/>
@@ -1715,6 +1717,7 @@ under the License.
               <exclude name="resources/ooxml/org/apache/poi/xslf/usermodel/empty.pptx" />
               <exclude name="resources/main/org/apache/poi/sl/draw/geom/presetShapeDefinitions.xml" />
               <exclude name="examples/src/org/apache/poi/xslf/usermodel/pie-chart-data.txt" />
+              <exclude name="**/*.iml" />
            </fileset>
        </rat:report>
 
@@ -1733,23 +1736,22 @@ under the License.
         <taskdef name="forbiddenapis" 
                  classname="de.thetaphi.forbiddenapis.AntTask" 
                  classpath="${forbidden.jar}"/>
-        <antcall target="-do-forbidden-apis-check">
-            <param name="dir" value="${main.output.dir}"/>
-        </antcall>
-        <antcall target="-do-forbidden-apis-check">
-            <param name="dir" value="${scratchpad.output.dir}"/>
-        </antcall>
-        <antcall target="-do-forbidden-apis-check">
-            <param name="dir" value="${ooxml.output.dir}"/>
-        </antcall>
-    </target>
-    <target name="-do-forbidden-apis-check">
         <forbiddenapis 
                  internalRuntimeForbidden="true" 
-                 classpathref="javadoc.classpath" 
-                 dir="${dir}">
+                 classpathref="javadoc.classpath"
+    			 suppressAnnotation="org.apache.poi.util.SuppressForbidden"
+        	>
             <bundledsignatures name="jdk-unsafe-${jdk.version.source}"/>
             <bundledsignatures name="jdk-deprecated-${jdk.version.source}"/>
+        	<signaturesFileset file="src/resources/devtools/forbidden-signatures.txt"/>
+        	<fileset dir="${main.output.dir}"/>
+        	<fileset dir="${scratchpad.output.dir}"/>
+        	<fileset dir="${ooxml.output.dir}"/>
+        	<!--
+        	<fileset dir="${main.output.test.dir}"/>
+        	<fileset dir="${scratchpad.output.test.dir}"/>
+        	<fileset dir="${ooxml.output.test.dir}"/>
+        	-->
         </forbiddenapis>
     </target>
 

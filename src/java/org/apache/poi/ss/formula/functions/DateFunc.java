@@ -27,18 +27,13 @@ import org.apache.poi.ss.formula.eval.EvaluationException;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.util.LocaleUtil;
 
 
 /**
  * Implementation for the Excel function DATE
  */
 public final class DateFunc extends Fixed3ArgFunction {
-    /**
-     * Excel doesn't store TimeZone information in the file, so if in doubt,
-     *  use UTC to perform calculations
-     */
-    private static final TimeZone DEFAULT_TIMEZONE = TimeZone.getTimeZone("UTC");
-
 	public static final Function instance = new DateFunc();
 
 	private DateFunc() {
@@ -91,9 +86,7 @@ public final class DateFunc extends Fixed3ArgFunction {
 		}
 
 		// Turn this into a Java date
-		Calendar c = new GregorianCalendar(DEFAULT_TIMEZONE, Locale.ROOT);
-		c.set(year, month, day, 0, 0, 0);
-		c.set(Calendar.MILLISECOND, 0);
+		Calendar c = LocaleUtil.getLocaleCalendar(year, month, day);
 		
 		// Handle negative days of the week, that pull us across
 		//  the 29th of Feb 1900

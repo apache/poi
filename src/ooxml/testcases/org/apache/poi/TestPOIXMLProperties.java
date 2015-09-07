@@ -17,37 +17,49 @@
 
 package org.apache.poi;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.Locale;
-import java.util.TimeZone;
-
-import junit.framework.TestCase;
 
 import org.apache.poi.POIXMLProperties.CoreProperties;
 import org.apache.poi.openxml4j.util.Nullable;
+import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Test setting extended and custom OOXML properties
  */
-public final class TestPOIXMLProperties extends TestCase {
+public final class TestPOIXMLProperties {
+    private XWPFDocument sampleDoc;
 	private POIXMLProperties _props;
 	private CoreProperties _coreProperties;
 
+	@Before
 	public void setUp() throws IOException {
-		XWPFDocument sampleDoc = XWPFTestDataSamples.openSampleDocument("documentProperties.docx");
+		sampleDoc = XWPFTestDataSamples.openSampleDocument("documentProperties.docx");
 		_props = sampleDoc.getProperties();
 		_coreProperties = _props.getCoreProperties();
 		assertNotNull(_props);
 	}
+	
+	@After
+	public void closeResources() throws Exception {
+	    sampleDoc.close();
+	}
 
-	public void testWorkbookExtendedProperties() {
+	@Test
+	public void testWorkbookExtendedProperties() throws Exception {
 		XSSFWorkbook workbook = new XSSFWorkbook();
 		POIXMLProperties props = workbook.getProperties();
 		assertNotNull(props);
@@ -71,7 +83,7 @@ public final class TestPOIXMLProperties extends TestCase {
 
 		XSSFWorkbook newWorkbook =
 				XSSFTestDataSamples.writeOutAndReadBack(workbook);
-
+		workbook.close();
 		assertTrue(workbook != newWorkbook);
 
 
@@ -88,16 +100,19 @@ public final class TestPOIXMLProperties extends TestCase {
 
 		assertEquals(application, newCtProps.getApplication());
 		assertEquals(appVersion, newCtProps.getAppVersion());
+		
+		newWorkbook.close();
 	}
 
 
     /**
      * Test usermodel API for setting custom properties
      */
-    public void testCustomProperties() {
-        POIXMLDocument wb = new XSSFWorkbook();
+	@Test
+	public void testCustomProperties() throws Exception {
+        POIXMLDocument wb1 = new XSSFWorkbook();
 
-        POIXMLProperties.CustomProperties customProps = wb.getProperties().getCustomProperties();
+        POIXMLProperties.CustomProperties customProps = wb1.getProperties().getCustomProperties();
         customProps.addProperty("test-1", "string val");
         customProps.addProperty("test-2", 1974);
         customProps.addProperty("test-3", 36.6);
@@ -110,9 +125,10 @@ public final class TestPOIXMLProperties extends TestCase {
         }
         customProps.addProperty("test-4", true);
 
-        wb = XSSFTestDataSamples.writeOutAndReadBack((XSSFWorkbook)wb);
+        POIXMLDocument wb2 = XSSFTestDataSamples.writeOutAndReadBack((XSSFWorkbook)wb1);
+        wb1.close();
         org.openxmlformats.schemas.officeDocument.x2006.customProperties.CTProperties ctProps =
-                wb.getProperties().getCustomProperties().getUnderlyingProperties();
+                wb2.getProperties().getCustomProperties().getUnderlyingProperties();
         assertEquals(4, ctProps.sizeOfPropertyArray());
         org.openxmlformats.schemas.officeDocument.x2006.customProperties.CTProperty p;
 
@@ -131,7 +147,7 @@ public final class TestPOIXMLProperties extends TestCase {
         p = ctProps.getPropertyArray(2);
         assertEquals("{D5CDD505-2E9C-101B-9397-08002B2CF9AE}", p.getFmtid());
         assertEquals("test-3", p.getName());
-        assertEquals(36.6, p.getR8());
+        assertEquals(36.6, p.getR8(), 0);
         assertEquals(4, p.getPid());
 
         p = ctProps.getPropertyArray(3);
@@ -139,9 +155,12 @@ public final class TestPOIXMLProperties extends TestCase {
         assertEquals("test-4", p.getName());
         assertEquals(true, p.getBool());
         assertEquals(5, p.getPid());
+        
+        wb2.close();
     }
 
-    public void testDocumentProperties() {
+	@Test
+	public void testDocumentProperties() {
 		String category = _coreProperties.getCategory();
 		assertEquals("test", category);
 		String contentStatus = "Draft";
@@ -158,21 +177,25 @@ public final class TestPOIXMLProperties extends TestCase {
 		assertEquals("Hello World", title);
 	}
 
-    public void testTransitiveSetters() throws IOException {
+	@Test
+	public void testTransitiveSetters() throws IOException {
 		XWPFDocument doc = new XWPFDocument();
         CoreProperties cp = doc.getProperties().getCoreProperties();
 
-        Date dateCreated = new GregorianCalendar(2010, 6, 15, 10, 0, 0).getTime();
+
+        Date dateCreated = LocaleUtil.getLocaleCalendar(2010, 6, 15, 10, 0, 0).getTime();
         cp.setCreated(new Nullable<Date>(dateCreated));
         assertEquals(dateCreated.toString(), cp.getCreated().toString());
 
-        doc = XWPFTestDataSamples.writeOutAndReadBack(doc);
+        XWPFDocument doc2 = XWPFTestDataSamples.writeOutAndReadBack(doc);
+        doc.close();
         cp = doc.getProperties().getCoreProperties();
         Date dt3 = cp.getCreated();
         assertEquals(dateCreated.toString(), dt3.toString());
-
+        doc2.close();
     }
 
+	@Test
 	public void testGetSetRevision() {
 		String revision = _coreProperties.getRevision();
 		assertTrue("Revision number is 1", Integer.parseInt(revision) > 1);
@@ -183,7 +206,7 @@ public final class TestPOIXMLProperties extends TestCase {
 	}
 	
 	public static boolean dateTimeEqualToUTCString(Date dateTime, String utcString) {
-		Calendar utcCalendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.UK);
+		Calendar utcCalendar = LocaleUtil.getLocaleCalendar(LocaleUtil.TIMEZONE_UTC);
         utcCalendar.setTimeInMillis(dateTime.getTime());
         String dateTimeUtcString = utcCalendar.get(Calendar.YEAR) + "-" + 
                zeroPad((utcCalendar.get(Calendar.MONTH)+1)) + "-" + 

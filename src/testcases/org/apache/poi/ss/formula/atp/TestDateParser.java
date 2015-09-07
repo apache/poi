@@ -17,21 +17,18 @@
 
 package org.apache.poi.ss.formula.atp;
 
-import static java.util.Calendar.OCTOBER;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.util.Calendar;
-import java.util.Date;
-
-import junit.framework.TestCase;
 
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.EvaluationException;
+import org.apache.poi.util.LocaleUtil;
+import org.junit.Test;
 
-/**
- * @author jfaenomoto@gmail.com
- */
-public class TestDateParser extends TestCase {
-
+public class TestDateParser {
+    @Test
     public void testFailWhenNoDate() {
         try {
             DateParser.parseDate("potato");
@@ -41,6 +38,7 @@ public class TestDateParser extends TestCase {
         }
     }
 
+    @Test
     public void testFailWhenLooksLikeDateButItIsnt() {
         try {
             DateParser.parseDate("potato/cucumber/banana");
@@ -50,6 +48,7 @@ public class TestDateParser extends TestCase {
         }
     }
 
+    @Test
     public void testFailWhenIsInvalidDate() {
         try {
             DateParser.parseDate("13/13/13");
@@ -59,18 +58,18 @@ public class TestDateParser extends TestCase {
         }
     }
 
-    @SuppressWarnings("deprecation")
+    @Test
     public void testShouldParseValidDate() throws EvaluationException {
-        Calendar aDate = Calendar.getInstance();
-        aDate.setTime(new Date(84, OCTOBER, 20));
-        assertEquals(aDate, DateParser.parseDate("1984/10/20"));
+        Calendar expDate = LocaleUtil.getLocaleCalendar(1984, Calendar.OCTOBER, 20);
+        Calendar actDate = DateParser.parseDate("1984/10/20");
+        assertEquals(expDate, actDate);
     }
 
-    @SuppressWarnings("deprecation")
+    @Test
     public void testShouldIgnoreTimestamp() throws EvaluationException {
-        Calendar aDate = Calendar.getInstance();
-        aDate.setTime(new Date(84, OCTOBER, 20));
-        assertEquals(aDate, DateParser.parseDate("1984/10/20 12:34:56"));
+        Calendar expDate = LocaleUtil.getLocaleCalendar(1984, Calendar.OCTOBER, 20);
+        Calendar actDate = DateParser.parseDate("1984/10/20 12:34:56");
+        assertEquals(expDate, actDate);
     }
 
 }

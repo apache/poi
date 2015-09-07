@@ -17,12 +17,13 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Calendar;
 import java.util.Date;
 
-import junit.framework.TestCase;
 import org.apache.poi.ss.formula.OperationEvaluationContext;
-
 import org.apache.poi.ss.formula.eval.BlankEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
@@ -30,8 +31,10 @@ import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.ErrorConstants;
+import org.apache.poi.util.LocaleUtil;
+import org.junit.Test;
 
-public class TestEOMonth extends TestCase{
+public class TestEOMonth {
 
     private static final double BAD_DATE = -1.0;
 
@@ -47,6 +50,7 @@ public class TestEOMonth extends TestCase{
     private final FreeRefFunction eOMonth = EOMonth.instance;
     private final OperationEvaluationContext ec = new OperationEvaluationContext(null, null, 0, 0, 0, null);
 
+    @Test
     public void testEOMonthProperValues() {
         // verify some border-case combinations of startDate and month-increase
         checkValue(DATE_1900_01_01, 0, DATE_1900_01_31);
@@ -56,6 +60,7 @@ public class TestEOMonth extends TestCase{
         checkValue(DATE_2034_06_09, 1, DATE_2034_07_31);
     }
 
+    @Test
     public void testEOMonthBadDateValues() {
         checkValue(0.0, -2, BAD_DATE);
         checkValue(0.0, -3, BAD_DATE);
@@ -63,74 +68,85 @@ public class TestEOMonth extends TestCase{
     }
 
     private void checkValue(double startDate, int monthInc, double expectedResult) {
-        NumberEval result = (NumberEval) eOMonth.evaluate(new ValueEval[] {new NumberEval(startDate), new NumberEval(monthInc)}, ec);
-        assertEquals(expectedResult, result.getNumberValue());
+        ValueEval ve[] = {new NumberEval(startDate), new NumberEval(monthInc)};
+        NumberEval result = (NumberEval) eOMonth.evaluate(ve, ec);
+        assertEquals(expectedResult, result.getNumberValue(), 0);
     }
 
+    @Test
     public void testEOMonthZeroDate() {
         NumberEval result = (NumberEval) eOMonth.evaluate(new ValueEval[] {new NumberEval(0), new NumberEval(0)}, ec);
-        assertEquals("0 startDate is 1900-01-00", DATE_1900_01_31, result.getNumberValue());
+        assertEquals("0 startDate is 1900-01-00", DATE_1900_01_31, result.getNumberValue(), 0);
 
         result = (NumberEval) eOMonth.evaluate(new ValueEval[] {new NumberEval(0), new NumberEval(1)}, ec);
-        assertEquals("0 startDate is 1900-01-00", DATE_1900_02_28, result.getNumberValue());
+        assertEquals("0 startDate is 1900-01-00", DATE_1900_02_28, result.getNumberValue(), 0);
     }
 
+    @Test
     public void testEOMonthInvalidArguments() {
         ValueEval result = eOMonth.evaluate(new ValueEval[] {new NumberEval(DATE_1902_09_26)}, ec);
         assertTrue(result instanceof ErrorEval);
-        assertEquals(ErrorConstants.ERROR_VALUE, ((ErrorEval) result).getErrorCode());
+        assertEquals(ErrorConstants.ERROR_VALUE, ((ErrorEval) result).getErrorCode(), 0);
 
         result = eOMonth.evaluate(new ValueEval[] {new StringEval("a"), new StringEval("b")}, ec);
         assertTrue(result instanceof ErrorEval);
-        assertEquals(ErrorConstants.ERROR_VALUE, ((ErrorEval) result).getErrorCode());
+        assertEquals(ErrorConstants.ERROR_VALUE, ((ErrorEval) result).getErrorCode(), 0);
     }
 
-    public void testEOMonthIncrease() {
-        checkOffset(new Date(), 2);
+    @Test
+    public void checkOffset() {
+        for (int offset=-12; offset<=12; offset++) {
+            Calendar cal = LocaleUtil.getLocaleCalendar();
+            Date startDate = cal.getTime();
+
+            cal.add(Calendar.MONTH, offset);
+            cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
+            cal.clear(Calendar.HOUR);
+            cal.set(Calendar.HOUR_OF_DAY, 0);
+            cal.clear(Calendar.MINUTE);
+            cal.clear(Calendar.SECOND);
+            cal.clear(Calendar.MILLISECOND);
+            Date expDate = cal.getTime();
+            
+            ValueEval ve[] = {
+                new NumberEval(DateUtil.getExcelDate(startDate)),
+                new NumberEval(offset)
+            };
+            NumberEval result = (NumberEval) eOMonth.evaluate(ve, ec);
+            Date actDate = DateUtil.getJavaDate(result.getNumberValue());
+            
+            assertEquals(expDate, actDate);
+        }
     }
 
-    public void testEOMonthDecrease() {
-        checkOffset(new Date(), -2);
-    }
-
-    private void checkOffset(Date startDate, int offset) {
-        NumberEval result = (NumberEval) eOMonth.evaluate(new ValueEval[] {new NumberEval(DateUtil.getExcelDate(startDate)), new NumberEval(offset)}, ec);
-        Date resultDate = DateUtil.getJavaDate(result.getNumberValue());
-        Calendar instance = Calendar.getInstance();
-        instance.setTime(startDate);
-        instance.add(Calendar.MONTH, offset);
-        instance.add(Calendar.MONTH, 1);
-        instance.set(Calendar.DAY_OF_MONTH, 1);
-        instance.add(Calendar.DAY_OF_MONTH, -1);
-        instance.set(Calendar.HOUR_OF_DAY, 0);
-        instance.set(Calendar.MINUTE, 0);
-        instance.set(Calendar.SECOND, 0);
-        instance.set(Calendar.MILLISECOND, 0);
-        assertEquals(instance.getTime(), resultDate);
-    }
-
+    @Test
     public void testBug56688() {
-        NumberEval result = (NumberEval) eOMonth.evaluate(new ValueEval[] {new NumberEval(DATE_1902_09_26), new RefEvalImplementation(new NumberEval(0))}, ec);
-        assertEquals(DATE_1902_09_30, result.getNumberValue());
+        ValueEval ve[] = {new NumberEval(DATE_1902_09_26), new RefEvalImplementation(new NumberEval(0))};
+        NumberEval result = (NumberEval) eOMonth.evaluate(ve, ec);
+        assertEquals(DATE_1902_09_30, result.getNumberValue(), 0);
     }
 
+    @Test
     public void testRefEvalStartDate() {
-        NumberEval result = (NumberEval) eOMonth.evaluate(new ValueEval[] {new RefEvalImplementation(new NumberEval(DATE_1902_09_26)), new NumberEval(0)}, ec);
-        assertEquals(DATE_1902_09_30, result.getNumberValue());
+        ValueEval ve[] = {new RefEvalImplementation(new NumberEval(DATE_1902_09_26)), new NumberEval(0)};
+        NumberEval result = (NumberEval) eOMonth.evaluate(ve, ec);
+        assertEquals(DATE_1902_09_30, result.getNumberValue(), 0);
     }
 
+    @Test
     public void testEOMonthBlankValueEval() {
         NumberEval evaluate = (NumberEval) eOMonth.evaluate(new ValueEval[] {BlankEval.instance, new NumberEval(0)}, ec);
-        assertEquals("Blank is handled as 0", DATE_1900_01_31, evaluate.getNumberValue());
+        assertEquals("Blank is handled as 0", DATE_1900_01_31, evaluate.getNumberValue(), 0);
     }
 
+    @Test
     public void testEOMonthBlankRefValueEval() {
-        NumberEval result = (NumberEval) eOMonth.evaluate(new ValueEval[] {new RefEvalImplementation(BlankEval.instance), new NumberEval(1)}, ec);
-        assertEquals("Blank is handled as 0",
-                DATE_1900_02_28, result.getNumberValue());
+        ValueEval[] ve1 = {new RefEvalImplementation(BlankEval.instance), new NumberEval(1)};
+        NumberEval result = (NumberEval) eOMonth.evaluate(ve1, ec);
+        assertEquals("Blank is handled as 0", DATE_1900_02_28, result.getNumberValue(), 0);
 
-        result = (NumberEval) eOMonth.evaluate(new ValueEval[] {new NumberEval(1), new RefEvalImplementation(BlankEval.instance)}, ec);
-        assertEquals("Blank is handled as 0",
-                DATE_1900_01_31, result.getNumberValue());
+        ValueEval[] ve2 = {new NumberEval(1), new RefEvalImplementation(BlankEval.instance)};
+        result = (NumberEval) eOMonth.evaluate(ve2, ec);
+        assertEquals("Blank is handled as 0", DATE_1900_01_31, result.getNumberValue(), 0);
     }
 }

@@ -25,10 +25,12 @@ import static java.awt.Color.ORANGE;
 import static java.awt.Color.RED;
 import static java.awt.Color.WHITE;
 import static java.awt.Color.YELLOW;
+import static org.junit.Assert.assertEquals;
 
 import java.awt.Color;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -36,15 +38,14 @@ import java.util.TreeSet;
 
 import javax.swing.JLabel;
 
-import junit.framework.TestCase;
-
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.util.POILogger;
+import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * This class is a base class for spreadsheet-based tests, such as are used for
@@ -57,9 +58,7 @@ import org.apache.poi.util.POILogFactory;
  * flag "Categories" is not empty, only tests that have at least one category
  * listed in "Categories" are run.
  */
-@SuppressWarnings(
-        {"JUnitTestCaseWithNoTests", "JUnitTestClassNamingConvention"})
-public class CellFormatTestBase extends TestCase {
+public class CellFormatTestBase {
     private static final POILogger logger = POILogFactory.getLogger(CellFormatTestBase.class);
 
     private final ITestDataProvider _testDataProvider;
@@ -86,7 +85,6 @@ public class CellFormatTestBase extends TestCase {
     abstract static class CellValue {
         abstract Object getValue(Cell cell);
 
-        @SuppressWarnings({"UnusedDeclaration"})
         Color getColor(Cell cell) {
             return TEST_COLOR;
         }
@@ -114,20 +112,19 @@ public class CellFormatTestBase extends TestCase {
         }
 
         Sheet sheet = workbook.getSheet("Tests");
-        int end = sheet.getLastRowNum();
-        // Skip the header row, therefore "+ 1"
-        for (int r = sheet.getFirstRowNum() + 1; r <= end; r++) {
-            Row row = sheet.getRow(r);
-            if (row == null)
-                continue;
-            int cellnum = 0;
-            String expectedText = row.getCell(cellnum).getStringCellValue();
-            String format = row.getCell(1).getStringCellValue();
+        Iterator<Row> rowIter = sheet.rowIterator();
+        // Skip the header row
+        rowIter.next();
+        while (rowIter.hasNext()) {
+            Row row = rowIter.next();
+            if (row == null) continue;
+            String expectedText     = row.getCell(0).getStringCellValue();
+            String format           = row.getCell(1).getStringCellValue();
+            Cell value              = row.getCell(2);
             String testCategoryList = row.getCell(3).getStringCellValue();
             boolean byCategory = runByCategory(runCategories, testCategoryList);
             if ((expectedText.length() > 0 || format.length() > 0) && byCategory) {
-                Cell cell = row.getCell(2);
-                tryFormat(r, expectedText, format, valueGetter, cell);
+                tryFormat(row.getRowNum(), expectedText, format, valueGetter, value);
             }
         }
     }
@@ -216,16 +213,17 @@ public class CellFormatTestBase extends TestCase {
         label.setForeground(testColor);
         label.setText("xyzzy");
 
-        logger.log(POILogger.INFO, String.format("Row %d: \"%s\" -> \"%s\": expected \"%s\"", row + 1,
-                String.valueOf(value), desc, expectedText));
+        logger.log(POILogger.INFO, String.format(LocaleUtil.getUserLocale(),
+                "Row %d: \"%s\" -> \"%s\": expected \"%s\"",
+                row + 1, String.valueOf(value), desc, expectedText));
         String actualText = tryColor(desc, null, getter, value, expectedText,
                 testColor);
-        logger.log(POILogger.INFO, String.format(", actual \"%s\")%n", actualText));
+        logger.log(POILogger.INFO, String.format(LocaleUtil.getUserLocale(),
+                ", actual \"%s\")%n", actualText));
 
         if (tryAllColors && testColor != TEST_COLOR) {
             for (int i = 0; i < COLOR_NAMES.length; i++) {
-                String cname = COLOR_NAMES[i];
-                tryColor(desc, cname, getter, value, expectedText, COLORS[i]);
+                tryColor(desc, COLOR_NAMES[i], getter, value, expectedText, COLORS[i]);
             }
         }
     }

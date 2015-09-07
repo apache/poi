@@ -17,33 +17,47 @@
 
 package org.apache.poi.hsmf.extractor;
 
+import static org.apache.poi.POITestCase.assertContains;
+import static org.apache.poi.POITestCase.assertNotContained;
+import static org.junit.Assert.assertEquals;
+
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.GregorianCalendar;
+import java.util.Locale;
 import java.util.TimeZone;
 
 import org.apache.poi.POIDataSamples;
-import org.apache.poi.POITestCase;
 import org.apache.poi.hsmf.MAPIMessage;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.util.LocaleUtil;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 /**
  * Tests to verify that the text extractor works
  */
-public final class TestOutlookTextExtractor extends POITestCase {
-   private POIDataSamples samples;
-
-   public TestOutlookTextExtractor() throws IOException {
-       samples = POIDataSamples.getHSMFInstance();
-   }
+public final class TestOutlookTextExtractor {
+   private POIDataSamples samples = POIDataSamples.getHSMFInstance();
 	
+   private static TimeZone userTZ;
+   
+   @BeforeClass
+   public static void initTimeZone() {
+       userTZ = LocaleUtil.getUserTimeZone();
+       LocaleUtil.setUserTimeZone(LocaleUtil.TIMEZONE_UTC);
+   }
+   
+   @AfterClass
+   public static void resetTimeZone() {
+       LocaleUtil.setUserTimeZone(userTZ);
+   }
+   
+   @Test
    public void testQuick() throws Exception {
-      POIFSFileSystem simple = new POIFSFileSystem(
-            new FileInputStream(samples.getFile("quick.msg"))
-      );
-      MAPIMessage msg = new MAPIMessage(simple);
+      NPOIFSFileSystem poifs = new NPOIFSFileSystem(samples.getFile("quick.msg"), true);
+      MAPIMessage msg = new MAPIMessage(poifs);
       
       OutlookTextExtactor ext = new OutlookTextExtactor(msg);
       String text = ext.getText();
@@ -54,20 +68,21 @@ public final class TestOutlookTextExtractor extends POITestCase {
       assertEquals(-1, text.indexOf("BCC:"));
       assertEquals(-1, text.indexOf("Attachment:"));
       assertContains(text, "Subject: Test the content transformer\n");
-      Calendar cal = new GregorianCalendar(2007, 5, 14, 9, 42, 55);
-      SimpleDateFormat f = new SimpleDateFormat("E, d MMM yyyy HH:mm:ss Z");
-      f.setTimeZone(TimeZone.getTimeZone("UTC"));
+      Calendar cal = LocaleUtil.getLocaleCalendar(2007, 5, 14, 9, 42, 55);
+      SimpleDateFormat f = new SimpleDateFormat("E, d MMM yyyy HH:mm:ss Z", Locale.ROOT);
+      f.setTimeZone(LocaleUtil.getUserTimeZone());
       String dateText = f.format(cal.getTime());
       assertContains(text, "Date: " + dateText + "\n");
       assertContains(text, "The quick brown fox jumps over the lazy dog");
 
       ext.close();
+      poifs.close();
    }
    
+   @Test
    public void testSimple() throws Exception {
-      MAPIMessage msg = new MAPIMessage(new POIFSFileSystem(
-            new FileInputStream(samples.getFile("simple_test_msg.msg"))
-      ));
+      NPOIFSFileSystem poifs = new NPOIFSFileSystem(samples.getFile("simple_test_msg.msg"), true);
+      MAPIMessage msg = new MAPIMessage(poifs);
       
       OutlookTextExtactor ext = new OutlookTextExtactor(msg);
       String text = ext.getText();
@@ -81,25 +96,30 @@ public final class TestOutlookTextExtractor extends POITestCase {
       assertContains(text, "This is a test message.");
 
       ext.close();
+      poifs.close();
    }
 
+   @Test
    public void testConstructors() throws Exception {
-        OutlookTextExtactor ext = new OutlookTextExtactor(new FileInputStream(
-                samples.getFile("simple_test_msg.msg")));
+        FileInputStream fis = new FileInputStream(samples.getFile("simple_test_msg.msg"));
+        OutlookTextExtactor ext = new OutlookTextExtactor(fis);
         String inp = ext.getText();
         ext.close();
+        fis.close();
 
-        ext = new OutlookTextExtactor(new POIFSFileSystem(new FileInputStream(
-                samples.getFile("simple_test_msg.msg"))));
-        String poifs = ext.getText();
+        NPOIFSFileSystem poifs = new NPOIFSFileSystem(samples.getFile("simple_test_msg.msg"), true);
+        ext = new OutlookTextExtactor(poifs);
+        String poifsTxt = ext.getText();
         ext.close();
+        poifs.close();
 
-        ext = new OutlookTextExtactor(new MAPIMessage(new FileInputStream(
-                samples.getFile("simple_test_msg.msg"))));
+        fis = new FileInputStream(samples.getFile("simple_test_msg.msg"));
+        ext = new OutlookTextExtactor(new MAPIMessage(fis));
         String mapi = ext.getText();
         ext.close();
+        fis.close();
 
-        assertEquals(inp, poifs);
+        assertEquals(inp, poifsTxt);
         assertEquals(inp, mapi);
    }
    
@@ -107,6 +127,7 @@ public final class TestOutlookTextExtractor extends POITestCase {
     * Test that we correctly handle multiple To+CC+BCC
     *  recipients in an email we sent.
     */
+   @Test
    public void testSentWithMulipleRecipients() throws Exception {
       // To: 'Ashutosh Dandavate' <ashutosh.dandavate@alfresco.com>,
       //   'Paul Holmes-Higgin' <paul.hh@alfresco.com>,
@@ -120,9 +141,8 @@ public final class TestOutlookTextExtractor extends POITestCase {
             "example_sent_regular.msg", "example_sent_unicode.msg"
       };
       for(String file : files) {
-         MAPIMessage msg = new MAPIMessage(new POIFSFileSystem(
-               new FileInputStream(samples.getFile(file))
-         ));
+         NPOIFSFileSystem poifs = new NPOIFSFileSystem(samples.getFile(file), true);
+         MAPIMessage msg = new MAPIMessage(poifs);
          
          OutlookTextExtactor ext = new OutlookTextExtactor(msg);
          String text = ext.getText();
@@ -139,6 +159,7 @@ public final class TestOutlookTextExtractor extends POITestCase {
          assertContains(text, "The quick brown fox jumps over the lazy dog");
 
          ext.close();
+         poifs.close();
       }
    }
    
@@ -146,6 +167,7 @@ public final class TestOutlookTextExtractor extends POITestCase {
     * Test that we correctly handle multiple To+CC
     *  recipients in an email we received.
     */
+   @Test
    public void testReceivedWithMultipleRecipients() throws Exception {
       // To: 'Ashutosh Dandavate' <ashutosh.dandavate@alfresco.com>,
       //   'Paul Holmes-Higgin' <paul.hh@alfresco.com>,
@@ -159,9 +181,9 @@ public final class TestOutlookTextExtractor extends POITestCase {
             "example_received_regular.msg", "example_received_unicode.msg"
       };
       for(String file : files) {
-         MAPIMessage msg = new MAPIMessage(new POIFSFileSystem(
-               new FileInputStream(samples.getFile(file))
-         ));
+          NPOIFSFileSystem poifs = new NPOIFSFileSystem(samples.getFile(file), true);
+          MAPIMessage msg = new MAPIMessage(poifs);
+
          
          OutlookTextExtactor ext = new OutlookTextExtactor(msg);
          String text = ext.getText();
@@ -177,6 +199,7 @@ public final class TestOutlookTextExtractor extends POITestCase {
          assertContains(text, "The quick brown fox jumps over the lazy dog");
 
          ext.close();
+         poifs.close();
       }
    }
    
@@ -184,10 +207,8 @@ public final class TestOutlookTextExtractor extends POITestCase {
     * See also {@link org.apache.poi.extractor.TestExtractorFactory#testEmbeded()}
     */
    public void testWithAttachments() throws Exception {
-      POIFSFileSystem simple = new POIFSFileSystem(
-            new FileInputStream(samples.getFile("attachment_test_msg.msg"))
-      );
-      MAPIMessage msg = new MAPIMessage(simple);
+      NPOIFSFileSystem poifs = new NPOIFSFileSystem(samples.getFile("attachment_test_msg.msg"), true);
+      MAPIMessage msg = new MAPIMessage(poifs);
       OutlookTextExtactor ext = new OutlookTextExtactor(msg);
       
       // Check the normal bits
@@ -207,13 +228,12 @@ public final class TestOutlookTextExtractor extends POITestCase {
       //  TestExtractorFactory
 
       ext.close();
+      poifs.close();
    }
    
    public void testWithAttachedMessage() throws Exception {
-       POIFSFileSystem simple = new POIFSFileSystem(
-               new FileInputStream(samples.getFile("58214_with_attachment.msg"))
-         );
-         MAPIMessage msg = new MAPIMessage(simple);
+       NPOIFSFileSystem poifs = new NPOIFSFileSystem(samples.getFile("58214_with_attachment.msg"), true);
+         MAPIMessage msg = new MAPIMessage(poifs);
          OutlookTextExtactor ext = new OutlookTextExtactor(msg);
          String text = ext.getText();
          
@@ -226,13 +246,12 @@ public final class TestOutlookTextExtractor extends POITestCase {
          assertNotContained(text, "Lorem ipsum dolor sit");
          
          ext.close();
+         poifs.close();
    }
    
    public void testEncodings() throws Exception {
-      POIFSFileSystem simple = new POIFSFileSystem(
-            new FileInputStream(samples.getFile("chinese-traditional.msg"))
-      );
-      MAPIMessage msg = new MAPIMessage(simple);
+      NPOIFSFileSystem poifs = new NPOIFSFileSystem(samples.getFile("chinese-traditional.msg"), true);
+      MAPIMessage msg = new MAPIMessage(poifs);
       OutlookTextExtactor ext = new OutlookTextExtactor(msg);
       String text = ext.getText();
       
@@ -245,5 +264,6 @@ public final class TestOutlookTextExtractor extends POITestCase {
       assertContains(text, "( MSG \u683c\u5f0f\u6e2c\u8a66 )");
 
       ext.close();
+      poifs.close();
    }
 }

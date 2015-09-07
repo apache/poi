@@ -17,20 +17,21 @@
 
 package org.apache.poi.ss.formula.atp;
 
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.Locale;
+import static org.junit.Assert.assertEquals;
 
-import junit.framework.TestCase;
+import java.util.Calendar;
 
 import org.apache.poi.ss.formula.eval.EvaluationException;
 import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.util.LocaleUtil;
+import org.junit.Test;
 
 /**
  * Specific test cases for YearFracCalculator
  */
-public final class TestYearFracCalculator extends TestCase {
+public final class TestYearFracCalculator {
 
+    @Test
 	public void testBasis1() {
 		confirm(md(1999, 1, 1), md(1999, 4, 5), 1, 0.257534247);
 		confirm(md(1999, 4, 1), md(1999, 4, 5), 1, 0.010958904);
@@ -59,10 +60,7 @@ public final class TestYearFracCalculator extends TestCase {
 	}
 
 	private static double md(int year, int month, int day) {
-		Calendar c = new GregorianCalendar(Locale.ROOT);
-		
-		c.set(year, month-1, day, 0, 0, 0);
-		c.set(Calendar.MILLISECOND, 0);
+		Calendar c = LocaleUtil.getLocaleCalendar(year, month-1, day);
 		return DateUtil.getExcelDate(c.getTime());
 	}
 }

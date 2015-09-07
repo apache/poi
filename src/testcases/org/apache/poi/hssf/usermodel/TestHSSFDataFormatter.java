@@ -17,18 +17,25 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.Format;
 import java.text.SimpleDateFormat;
-import java.util.GregorianCalendar;
+import java.util.Calendar;
 import java.util.Iterator;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DateUtil;
-
-import junit.framework.TestCase;
+import org.apache.poi.util.LocaleUtil;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 /**
  * Unit tests for HSSFDataFormatter.java
@@ -36,9 +43,25 @@ import junit.framework.TestCase;
  * @author James May (james dot may at fmr dot com)
  *
  */
-public final class TestHSSFDataFormatter extends TestCase {
+public final class TestHSSFDataFormatter {
 
-	private final HSSFDataFormatter formatter;
+    private static TimeZone userTimeZone;
+    
+    @BeforeClass
+    public static void setTimeZone() {
+        userTimeZone = LocaleUtil.getUserTimeZone();
+        LocaleUtil.setUserTimeZone(TimeZone.getTimeZone("CET"));
+        LocaleUtil.setUserLocale(Locale.US);
+    }
+    
+    @AfterClass
+    public static void resetTimeZone() {
+        LocaleUtil.setUserTimeZone(userTimeZone);
+        LocaleUtil.setUserLocale(Locale.ROOT);
+    }
+
+    
+    private final HSSFDataFormatter formatter;
 	private final HSSFWorkbook wb;
 
 	public TestHSSFDataFormatter() {
@@ -197,6 +220,7 @@ public final class TestHSSFDataFormatter extends TestCase {
 	/**
 	 * Test getting formatted values from numeric and date cells.
 	 */
+	@Test
 	public void testGetFormattedCellValueHSSFCell() {
 		// Valid date formats -- cell values should be date formatted & not "555.555"
 		HSSFRow row = wb.getSheetAt(0).getRow(0);
@@ -216,7 +240,9 @@ public final class TestHSSFDataFormatter extends TestCase {
 			//assert the correct month form, as in the original Excel format
 			String monthPtrn = fmt.indexOf("mmmm") != -1 ? "MMMM" : "MMM";
 			// this line is intended to compute how "July" would look like in the current locale
-			String jul = new SimpleDateFormat(monthPtrn).format(new GregorianCalendar(2010,6,15).getTime());
+			SimpleDateFormat sdf = new SimpleDateFormat(monthPtrn, LocaleUtil.getUserLocale());
+			Calendar calDef = LocaleUtil.getLocaleCalendar(2010, 6, 15, 0, 0, 0);
+			String jul = sdf.format(calDef.getTime());
 			// special case for MMMMM = 1st letter of month name
 			if(fmt.indexOf("mmmmm") > -1) {
 				jul = jul.substring(0,1);
@@ -228,7 +254,6 @@ public final class TestHSSFDataFormatter extends TestCase {
 		row = wb.getSheetAt(0).getRow(1);
       it = row.cellIterator();
       log("==== VALID TIME FORMATS ====");
-      
       while (it.hasNext()) {
          Cell cell = it.next();
          String fmt = cell.getCellStyle().getDataFormatString();
@@ -265,7 +290,7 @@ public final class TestHSSFDataFormatter extends TestCase {
 			log(formatter.formatCellValue(cell));
 			// should be equal to "1234567890.12345" 
 			// in some locales the the decimal delimiter is a comma, not a dot
-			char decimalSeparator = new DecimalFormatSymbols().getDecimalSeparator();
+			char decimalSeparator = new DecimalFormatSymbols(LocaleUtil.getUserLocale()).getDecimalSeparator();
 			assertEquals("1234567890" + decimalSeparator + "12345", formatter.formatCellValue(cell));
 		}
 
@@ -297,6 +322,7 @@ public final class TestHSSFDataFormatter extends TestCase {
 		assertEquals(formatter.formatCellValue(null), "");
 	}
 
+	@Test
 	public void testGetFormattedCellValueHSSFCellHSSFFormulaEvaluator() {
 		// test formula format
 		HSSFRow row = wb.getSheetAt(0).getRow(7);
@@ -310,7 +336,7 @@ public final class TestHSSFDataFormatter extends TestCase {
 		// now with a formula evaluator
 		HSSFFormulaEvaluator evaluator = new HSSFFormulaEvaluator(wb);
 		log(formatter.formatCellValue(cell, evaluator) + "\t\t\t (with evaluator)");
-		char decimalSeparator = new DecimalFormatSymbols().getDecimalSeparator();
+		char decimalSeparator = new DecimalFormatSymbols(LocaleUtil.getUserLocale()).getDecimalSeparator();
 		assertEquals("24" + decimalSeparator + "50%", formatter.formatCellValue(cell,evaluator));
 		
 	}
@@ -319,10 +345,12 @@ public final class TestHSSFDataFormatter extends TestCase {
 	 * Test using a default number format. The format should be used when a
 	 * format pattern cannot be parsed by DecimalFormat.
 	 */
+	@Test
 	public void testSetDefaultNumberFormat() {
 		HSSFRow row = wb.getSheetAt(0).getRow(3);
 		Iterator<Cell> it = row.cellIterator();
-		Format defaultFormat = new DecimalFormat("Balance $#,#00.00 USD;Balance -$#,#00.00 USD");
+		DecimalFormatSymbols dfs = DecimalFormatSymbols.getInstance(LocaleUtil.getUserLocale());
+		Format defaultFormat = new DecimalFormat("Balance $#,#00.00 USD;Balance -$#,#00.00 USD", dfs);
 		formatter.setDefaultNumberFormat(defaultFormat);
 
 		log("\n==== DEFAULT NUMBER FORMAT ====");
@@ -338,6 +366,7 @@ public final class TestHSSFDataFormatter extends TestCase {
 	/**
 	 * A format of "@" means use the general format
 	 */
+	@Test
 	public void testGeneralAtFormat() {
 		HSSFWorkbook workbook = HSSFTestDataSamples.openSampleWorkbook("47154.xls");
 		HSSFSheet sheet = workbook.getSheetAt(0);
@@ -356,6 +385,7 @@ public final class TestHSSFDataFormatter extends TestCase {
 	/**
 	 * Tests various formattings of dates and numbers
 	 */
+	@Test
 	public void testFromFile() {
       HSSFWorkbook workbook = HSSFTestDataSamples.openSampleWorkbook("Formatting.xls");
       HSSFSheet sheet = workbook.getSheetAt(0);

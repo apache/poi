@@ -23,6 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.util.LocaleUtil;
 
 /**
  * HSSFDataFormatter contains methods for formatting the value stored in an
@@ -76,7 +77,7 @@ public final class HSSFDataFormatter extends DataFormatter {
      * Creates a formatter using the {@link Locale#getDefault() default locale}.
      */
     public HSSFDataFormatter() {
-        this(Locale.getDefault());
+        this(LocaleUtil.getUserLocale());
     }
 
 }

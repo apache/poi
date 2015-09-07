@@ -26,6 +26,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.imageio.ImageIO;
@@ -155,7 +156,7 @@ public class PPTX2PNG {
                 // save the result
                 if (!"null".equals(format)) {
                     String outname = file.getName().replaceFirst(".pptx?", "");
-                    outname = String.format("%1$s-%2$04d.%3$s", outname, slideNo, format);
+                    outname = String.format(Locale.ROOT, "%1$s-%2$04d.%3$s", outname, slideNo, format);
                     File outfile = new File(outdir, outname);
                     ImageIO.write(img, format, outfile);
                 }

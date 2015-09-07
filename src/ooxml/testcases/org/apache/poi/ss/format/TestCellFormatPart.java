@@ -16,14 +16,36 @@
 ==================================================================== */
 package org.apache.poi.ss.format;
 
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.xssf.XSSFITestDataProvider;
+import static org.junit.Assert.assertEquals;
 
+import java.util.Locale;
+import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.util.LocaleUtil;
+import org.apache.poi.xssf.XSSFITestDataProvider;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
 /** Test the individual CellFormatPart types. */
 public class TestCellFormatPart extends CellFormatTestBase {
+    
+    private static Locale userLocale;
+    
+    @BeforeClass
+    public static void setLocale() {
+        userLocale = LocaleUtil.getUserLocale();
+        LocaleUtil.setUserLocale(Locale.ROOT);
+    }
+    
+    @AfterClass
+    public static void unsetLocale() {
+        LocaleUtil.setUserLocale(userLocale);
+    }
+    
     private static final Pattern NUMBER_EXTRACT_FMT = Pattern.compile(
             "([-+]?[0-9]+)(\\.[0-9]+)?.*(?:(e).*?([+-]?[0-9]+))",
             Pattern.CASE_INSENSITIVE);
@@ -32,6 +54,7 @@ public class TestCellFormatPart extends CellFormatTestBase {
         super(XSSFITestDataProvider.instance);
     }
 
+    @Test
     public void testGeneralFormat() throws Exception {
         runFormatTests("GeneralFormatTests.xlsx", new CellValue() {
             public Object getValue(Cell cell) {
@@ -54,6 +77,7 @@ public class TestCellFormatPart extends CellFormatTestBase {
         });
     }
 
+    @Test
     public void testNumberApproxFormat() throws Exception {
         runFormatTests("NumberFormatApproxTests.xlsx", new CellValue() {
             public Object getValue(Cell cell) {
@@ -73,14 +97,22 @@ public class TestCellFormatPart extends CellFormatTestBase {
         });
     }
 
+    @Test
     public void testDateFormat() throws Exception {
-        runFormatTests("DateFormatTests.xlsx", new CellValue() {
-            public Object getValue(Cell cell) {
-                return cell.getDateCellValue();
-            }
-        });
+        TimeZone tz = LocaleUtil.getUserTimeZone();
+        LocaleUtil.setUserTimeZone(TimeZone.getTimeZone("CET"));
+        try {
+            runFormatTests("DateFormatTests.xlsx", new CellValue() {
+                public Object getValue(Cell cell) {
+                    return cell.getDateCellValue();
+                }
+            });
+        } finally {
+            LocaleUtil.setUserTimeZone(tz);
+        }
     }
 
+    @Test
     public void testElapsedFormat() throws Exception {
         runFormatTests("ElapsedFormatTests.xlsx", new CellValue() {
             public Object getValue(Cell cell) {
@@ -89,6 +121,7 @@ public class TestCellFormatPart extends CellFormatTestBase {
         });
     }
 
+    @Test
     public void testTextFormat() throws Exception {
         runFormatTests("TextFormatTests.xlsx", new CellValue() {
             public Object getValue(Cell cell) {
@@ -100,6 +133,7 @@ public class TestCellFormatPart extends CellFormatTestBase {
         });
     }
 
+    @Test
     public void testConditions() throws Exception {
         runFormatTests("FormatConditionTests.xlsx", new CellValue() {
             Object getValue(Cell cell) {

@@ -18,17 +18,23 @@
 package org.apache.poi.hslf.record;
 
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+
 import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
+
+import org.apache.poi.util.LocaleUtil;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 /**
  * Tests that Comment2000Atom works properly.
  *
  * @author Nick Burch (nick at torchbox dot com)
  */
-public final class TestComment2000Atom extends TestCase {
+public final class TestComment2000Atom {
 	// From a real file
 	private byte[] data_a = new byte[] {
 		00, 00, 0xE1-256, 0x2E, 0x1C, 00, 00, 00,
@@ -45,14 +51,22 @@ public final class TestComment2000Atom extends TestCase {
 		0x0E, 00, 00, 00
 		};
 
-	private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+    private static SimpleDateFormat sdf;
+    
+    @BeforeClass
+    public static void initDateFormat() {
+        sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.ROOT);
+        sdf.setTimeZone(LocaleUtil.getUserTimeZone());
+    }
 
+	@Test
 	public void testRecordType() {
 		Comment2000Atom ca = new Comment2000Atom(data_a, 0, data_a.length);
 		assertEquals(12001l, ca.getRecordType());
 	}
 
-	public void testGetDate() throws Exception {
+	@Test
+    public void testGetDate() throws Exception {
 		Comment2000Atom ca = new Comment2000Atom(data_a, 0, data_a.length);
 		Comment2000Atom cb = new Comment2000Atom(data_b, 0, data_b.length);
 
@@ -65,7 +79,8 @@ public final class TestComment2000Atom extends TestCase {
 		assertEquals(exp_b, cb.getDate());
 	}
 
-	public void testGetNums() {
+	@Test
+    public void testGetNums() {
 		Comment2000Atom ca = new Comment2000Atom(data_a, 0, data_a.length);
 		Comment2000Atom cb = new Comment2000Atom(data_b, 0, data_b.length);
 
@@ -75,7 +90,8 @@ public final class TestComment2000Atom extends TestCase {
 		assertEquals(5, cb.getNumber());
 	}
 
-	public void testGetPos() {
+	@Test
+    public void testGetPos() {
 		Comment2000Atom ca = new Comment2000Atom(data_a, 0, data_a.length);
 		Comment2000Atom cb = new Comment2000Atom(data_b, 0, data_b.length);
 
@@ -88,7 +104,8 @@ public final class TestComment2000Atom extends TestCase {
 		assertEquals(0x0E, cb.getYOffset());
 	}
 
-	public void testWrite() throws Exception {
+	@Test
+    public void testWrite() throws Exception {
 		Comment2000Atom ca = new Comment2000Atom(data_a, 0, data_a.length);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		ca.writeOut(baos);
@@ -101,7 +118,8 @@ public final class TestComment2000Atom extends TestCase {
 	}
 
 	// Create A from scratch
-	public void testCreate() throws Exception {
+	@Test
+    public void testCreate() throws Exception {
 		Comment2000Atom a = new Comment2000Atom();
 
 		// Set number, x and y
@@ -125,7 +143,8 @@ public final class TestComment2000Atom extends TestCase {
 	}
 
 	// Try to turn a into b
-	public void testChange() throws Exception {
+	@Test
+    public void testChange() throws Exception {
 		Comment2000Atom ca = new Comment2000Atom(data_a, 0, data_a.length);
 
 		// Change the number

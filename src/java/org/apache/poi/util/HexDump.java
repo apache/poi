@@ -149,14 +149,15 @@ public class HexDump {
                 chars_read = 16;
             }
             
-            buffer.append(String.format(Locale.ROOT, "%08X ", display_offset));
+            buffer.append(xpad(display_offset, 8, ""));
             for (int k = 0; k < 16; k++) {
                 if (k < chars_read) {
-                    buffer.append(String.format(Locale.ROOT, "%02X ", data[ k + j ]));
+                    buffer.append(xpad(data[ k + j ], 2, " "));
                 } else {
                     buffer.append("   ");
                 }
             }
+            buffer.append(' ');
             for (int k = 0; k < chars_read; k++) {
                 buffer.append(toAscii(data[ k + j ]));
             }
@@ -232,20 +233,19 @@ public class HexDump {
      *                     will be written to a new line
      * @return             A String representing the array of bytes
      */
-    public static String toHex(final byte[] value, final int bytesPerLine)
-    {
-        final int digits =
-            (int) Math.round(Math.log(value.length) / Math.log(10) + 0.5);
-        final String formatString = (digits == 0 ? ": %d" : "%0"+digits+"d: ");
-        StringBuffer retVal = new StringBuffer();
-        retVal.append(String.format(Locale.ROOT, formatString, 0));
-        int i = -1;
-        for(int x = 0; x < value.length; x++)
-        {
-            if (++i == bytesPerLine)
-            {
+    public static String toHex(final byte[] value, final int bytesPerLine) {
+        if (value.length == 0) {
+            return ": 0";
+        }
+        final int digits = (int) Math.round(Math.log(value.length) / Math.log(10) + 0.5);
+        StringBuilder retVal = new StringBuilder();
+        retVal.append(xpad(0, digits, ""));
+        retVal.append(": ");
+        for(int x=0, i=-1; x < value.length; x++) {
+            if (++i == bytesPerLine) {
                 retVal.append('\n');
-                retVal.append(String.format(Locale.ROOT, formatString, x));
+                retVal.append(xpad(x, digits, ""));
+                retVal.append(": ");
                 i = 0;
             } else if (x>0) {
                 retVal.append(", ");
@@ -262,7 +262,7 @@ public class HexDump {
      * @return          The result right padded with 0
      */
     public static String toHex(final short value) {
-        return String.format(Locale.ROOT, "%04X", value);
+        return xpad(value & 0xFFFF, 4, "");
     }
 
     /**
@@ -272,7 +272,7 @@ public class HexDump {
      * @return          The result right padded with 0
      */
     public static String toHex(final byte value) {
-        return String.format(Locale.ROOT, "%02X", value);
+        return xpad(value & 0xFF, 2, "");
     }
 
     /**
@@ -282,7 +282,7 @@ public class HexDump {
      * @return          The result right padded with 0
      */
     public static String toHex(final int value) {
-        return String.format(Locale.ROOT, "%08X", value);
+        return xpad(value & 0xFFFFFFFF, 8, "");
     }
 
     /**
@@ -292,7 +292,7 @@ public class HexDump {
      * @return          The result right padded with 0
      */
     public static String toHex(final long value) {
-        return String.format(Locale.ROOT, "%016X", value);
+        return xpad(value & 0xFFFFFFFF, 16, "");
     }
 
     /**
@@ -336,30 +336,46 @@ public class HexDump {
      * @return string of 16 (zero padded) uppercase hex chars and prefixed with '0x'
      */
     public static String longToHex(long value) {
-        return String.format(Locale.ROOT, "0x%016X", value);
+        return xpad(value, 16, "0x");
     }
     
     /**
      * @return string of 8 (zero padded) uppercase hex chars and prefixed with '0x'
      */
     public static String intToHex(int value) {
-        return String.format(Locale.ROOT, "0x%08X", value & 0xFFFFFFFF);
+        return xpad(value & 0xFFFFFFFF, 8, "0x");
     }
     
     /**
      * @return string of 4 (zero padded) uppercase hex chars and prefixed with '0x'
      */
     public static String shortToHex(int value) {
-        return String.format(Locale.ROOT, "0x%04X", value & 0xFFFF);
+        return xpad(value & 0xFFFF, 4, "0x");
     }
     
     /**
      * @return string of 2 (zero padded) uppercase hex chars and prefixed with '0x'
      */
     public static String byteToHex(int value) {
-        return String.format(Locale.ROOT, "0x%02X", value & 0xFF);
+        return xpad(value & 0xFF, 2, "0x");
     }
 
+    private static String xpad(long value, int pad, String prefix) {
+        String sv = Long.toHexString(value).toUpperCase(Locale.ROOT);
+        int len = sv.length();
+        if ((pad == 0 || len == pad) && "".equals(prefix)) return sv;
+        StringBuilder sb = new StringBuilder(prefix);
+        if (len < pad) {
+            sb.append("0000000000000000", 0, pad-len);
+            sb.append(sv);
+        } else if (len > pad) {
+            sb.append(sv, len-pad, len);
+        } else {
+            sb.append(sv);
+        }
+        return sb.toString();
+    }
+    
     public static void main(String[] args) throws Exception {
         File file = new File(args[0]);
         InputStream in = new BufferedInputStream(new FileInputStream(file));

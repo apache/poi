@@ -32,12 +32,11 @@ import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.TempFile;
 
 /**
  * Class to test cell styling functionality
- *
- * @author Andrew C. Oliver
  */
 
 public final class TestCellStyle extends TestCase {
@@ -115,8 +114,7 @@ public final class TestCellStyle extends TestCase {
         cell = row.createCell(2);
         cs.setDataFormat(HSSFDataFormat.getBuiltinFormat("m/d/yy"));
         cell.setCellStyle(cs);
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(new Date());
+        Calendar cal = LocaleUtil.getLocaleCalendar();
         cell.setCellValue(cal);
 
         wb.write(out);

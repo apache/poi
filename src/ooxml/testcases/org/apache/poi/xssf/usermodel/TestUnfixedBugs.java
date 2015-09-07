@@ -17,6 +17,12 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -25,10 +31,6 @@ import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.Locale;
-
-import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ss.usermodel.Cell;
@@ -42,6 +44,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.ss.util.RegionUtil;
+import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.xssf.SXSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
@@ -57,7 +60,8 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRow;
  * Bugzilla id's PLEASE MOVE tests from this class to TestBugs once the bugs are
  * fixed, so that they are then run automatically.
  */
-public final class TestUnfixedBugs extends TestCase {
+public final class TestUnfixedBugs {
+    @Test
     public void testBug54084Unicode() throws IOException {
         // sample XLSX with the same text-contents as the text-file above
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("54084 - Greek - beyond BMP.xlsx");
@@ -76,8 +80,14 @@ public final class TestUnfixedBugs extends TestCase {
         verifyBug54084Unicode(wbWritten);
 
         // finally also write it out via the streaming interface and verify that we still can read it back in
-        Workbook wbStreamingWritten = SXSSFITestDataProvider.instance.writeOutAndReadBack(new SXSSFWorkbook(wb));
+        SXSSFWorkbook swb = new SXSSFWorkbook(wb);
+        Workbook wbStreamingWritten = SXSSFITestDataProvider.instance.writeOutAndReadBack(swb);
         verifyBug54084Unicode(wbStreamingWritten);
+
+        wbWritten.close();
+        swb.close();
+        wbStreamingWritten.close();
+        wb.close();
     }
 
     private void verifyBug54084Unicode(Workbook wb) {
@@ -95,7 +105,8 @@ public final class TestUnfixedBugs extends TestCase {
         assertEquals("The data in the text-file should exactly match the data that we read from the workbook", testData, value);
     }
 
-    public void test54071() {
+    @Test
+    public void test54071() throws Exception {
         Workbook workbook = XSSFTestDataSamples.openSampleWorkbook("54071.xlsx");
         Sheet sheet = workbook.getSheetAt(0);
         int rows = sheet.getPhysicalNumberOfRows();
@@ -120,8 +131,11 @@ public final class TestUnfixedBugs extends TestCase {
                 }
             }
         }
+        
+        workbook.close();
     }
     
+    @Test
     public void test54071Simple() {
         double value1 = 41224.999988425923;
         double value2 = 41224.999988368058;
@@ -143,15 +157,13 @@ public final class TestUnfixedBugs extends TestCase {
         // second to be different here!
         int startYear = 1900;
         int dayAdjust = -1; // Excel thinks 2/29/1900 is a valid date, which it isn't
-        Calendar calendar1 = new GregorianCalendar(Locale.ROOT);
-        calendar1.set(startYear,0, wholeDays1 + dayAdjust, 0, 0, 0);
+        Calendar calendar1 = LocaleUtil.getLocaleCalendar(startYear,0, wholeDays1 + dayAdjust);
         calendar1.set(Calendar.MILLISECOND, millisecondsInDay1);
       // this is the rounding part:
       calendar1.add(Calendar.MILLISECOND, 500);
       calendar1.clear(Calendar.MILLISECOND);
 
-        Calendar calendar2 = new GregorianCalendar(Locale.ROOT);
-        calendar2.set(startYear,0, wholeDays2 + dayAdjust, 0, 0, 0);
+        Calendar calendar2 = LocaleUtil.getLocaleCalendar(startYear,0, wholeDays2 + dayAdjust);
         calendar2.set(Calendar.MILLISECOND, millisecondsInDay2);
       // this is the rounding part:
       calendar2.add(Calendar.MILLISECOND, 500);
@@ -163,7 +175,8 @@ public final class TestUnfixedBugs extends TestCase {
         assertEquals(DateUtil.getJavaDate(value1, false), DateUtil.getJavaDate(value2, false));
     }
 
-    public void test57236() {
+    @Test
+    public void test57236() throws Exception {
         // Having very small numbers leads to different formatting, Excel uses the scientific notation, but POI leads to "0"
         
         /*
@@ -189,10 +202,12 @@ public final class TestUnfixedBugs extends TestCase {
                 }
             }
         }
+        wb.close();
     }
 
     // When this is fixed, the test case should go to BaseTestXCell with 
     // adjustments to use _testDataProvider to also verify this for XSSF
+    @Test
     public void testBug57294() throws IOException {
         Workbook wb = SXSSFITestDataProvider.instance.createWorkbook();
         
@@ -217,6 +232,8 @@ public final class TestUnfixedBugs extends TestCase {
         assertEquals(0, strBack.getIndexOfFormattingRun(0));
         assertEquals(2, strBack.getIndexOfFormattingRun(1));
         assertEquals(4, strBack.getIndexOfFormattingRun(2));
+        
+        wbBack.close();
     }
 
    @Test

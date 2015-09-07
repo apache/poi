@@ -17,23 +17,31 @@
 
 package org.apache.poi.ss.usermodel;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
-
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.SpreadsheetVersion;
+import org.apache.poi.util.LocaleUtil;
+import org.junit.Test;
+
+import junit.framework.AssertionFailedError;
 
 /**
  * Common superclass for testing implementations of
  *  {@link org.apache.poi.ss.usermodel.Cell}
  */
-public abstract class BaseTestCell extends TestCase {
+public abstract class BaseTestCell {
 
 	protected final ITestDataProvider _testDataProvider;
 
@@ -44,6 +52,7 @@ public abstract class BaseTestCell extends TestCase {
 		_testDataProvider = testDataProvider;
 	}
 
+	@Test
 	public void testSetValues() {
 		Workbook book = _testDataProvider.createWorkbook();
 		Sheet sheet = book.createSheet("test");
@@ -80,7 +89,7 @@ public abstract class BaseTestCell extends TestCase {
 		assertProhibitedValueAccess(cell, Cell.CELL_TYPE_NUMERIC, Cell.CELL_TYPE_BOOLEAN,
 				Cell.CELL_TYPE_FORMULA, Cell.CELL_TYPE_ERROR);
 
-		Calendar c = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.ROOT);
+		Calendar c = LocaleUtil.getLocaleCalendar();
 		c.setTimeInMillis(123456789);
 		cell.setCellValue(c.getTime());
 		assertEquals(c.getTime().getTime(), cell.getDateCellValue().getTime());
@@ -132,6 +141,7 @@ public abstract class BaseTestCell extends TestCase {
 	/**
 	 * test that Boolean and Error types (BoolErrRecord) are supported properly.
 	 */
+	@Test
 	public void testBoolErr() {
 
 		Workbook wb = _testDataProvider.createWorkbook();
@@ -173,6 +183,7 @@ public abstract class BaseTestCell extends TestCase {
 	/**
 	 * test that Cell Styles being applied to formulas remain intact
 	 */
+	@Test
 	public void testFormulaStyle() {
 
 		Workbook wb = _testDataProvider.createWorkbook();
@@ -214,6 +225,7 @@ public abstract class BaseTestCell extends TestCase {
 	}
 
 	/**tests the toString() method of HSSFCell*/
+	@Test
 	public void testToString() {
 		Workbook wb = _testDataProvider.createWorkbook();
 		Row r = wb.createSheet("Sheet1").createRow(0);
@@ -245,6 +257,7 @@ public abstract class BaseTestCell extends TestCase {
 	/**
 	 *  Test that setting cached formula result keeps the cell type
 	 */
+	@Test
 	public void testSetFormulaValue() {
 		Workbook wb = _testDataProvider.createWorkbook();
 		Sheet s = wb.createSheet();
@@ -278,7 +291,7 @@ public abstract class BaseTestCell extends TestCase {
 		return _testDataProvider.createWorkbook().createSheet("Sheet1").createRow(0).createCell(0);
 	}
 
-
+	@Test
 	public void testChangeTypeStringToBool() {
 		Cell cell = createACell();
 
@@ -305,6 +318,7 @@ public abstract class BaseTestCell extends TestCase {
 		assertEquals("FALSE", cell.getRichStringCellValue().getString());
 	}
 
+	@Test
 	public void testChangeTypeBoolToString() {
 		Cell cell = createACell();
 
@@ -321,6 +335,7 @@ public abstract class BaseTestCell extends TestCase {
 		assertEquals("TRUE", cell.getRichStringCellValue().getString());
 	}
 
+	@Test
 	public void testChangeTypeErrorToNumber() {
 		Cell cell = createACell();
 		cell.setCellErrorValue((byte)ErrorConstants.ERROR_NAME);
@@ -332,6 +347,7 @@ public abstract class BaseTestCell extends TestCase {
 		assertEquals(2.5, cell.getNumericCellValue(), 0.0);
 	}
 
+	@Test
 	public void testChangeTypeErrorToBoolean() {
 		Cell cell = createACell();
 		cell.setCellErrorValue((byte)ErrorConstants.ERROR_NAME);
@@ -353,6 +369,7 @@ public abstract class BaseTestCell extends TestCase {
 	 * {@link FormulaEvaluator#evaluateInCell(Cell)} with a
 	 * string result type.
 	 */
+	@Test
 	public void testConvertStringFormulaCell() {
 		Cell cellA1 = createACell();
 		cellA1.setCellFormula("\"abc\"");
@@ -371,10 +388,12 @@ public abstract class BaseTestCell extends TestCase {
 		}
 		assertEquals("abc", cellA1.getStringCellValue());
 	}
+	
 	/**
 	 * similar to {@link #testConvertStringFormulaCell()} but  checks at a
 	 * lower level that {#link {@link Cell#setCellType(int)} works properly
 	 */
+	@Test
 	public void testSetTypeStringOnFormulaCell() {
 		Cell cellA1 = createACell();
 		FormulaEvaluator fe = cellA1.getSheet().getWorkbook().getCreationHelper().createFormulaEvaluator();
@@ -418,6 +437,7 @@ public abstract class BaseTestCell extends TestCase {
 	/**
 	 * Test for bug in convertCellValueToBoolean to make sure that formula results get converted
 	 */
+	@Test
 	public void testChangeTypeFormulaToBoolean() {
 		Cell cell = createACell();
 		cell.setCellFormula("1=1");
@@ -433,6 +453,7 @@ public abstract class BaseTestCell extends TestCase {
 	 * Bug 40296:	  HSSFCell.setCellFormula throws
 	 *   ClassCastException if cell is created using HSSFRow.createCell(short column, int type)
 	 */
+	@Test
 	public void test40296() {
 		Workbook wb = _testDataProvider.createWorkbook();
 		Sheet workSheet = wb.createSheet("Sheet1");
@@ -470,6 +491,7 @@ public abstract class BaseTestCell extends TestCase {
 		assertEquals("SUM(A1:B1)", cell.getCellFormula());
 	}
 
+	@Test
 	public void testSetStringInFormulaCell_bug44606() {
 		Workbook wb = _testDataProvider.createWorkbook();
 		Cell cell = wb.createSheet("Sheet1").createRow(0).createCell(0);
@@ -484,7 +506,8 @@ public abstract class BaseTestCell extends TestCase {
     /**
      *  Make sure that cell.setCellType(Cell.CELL_TYPE_BLANK) preserves the cell style
      */
-    public void testSetBlank_bug47028() {
+	@Test
+	public void testSetBlank_bug47028() {
         Workbook wb = _testDataProvider.createWorkbook();
         CellStyle style = wb.createCellStyle();
         Cell cell = wb.createSheet("Sheet1").createRow(0).createCell(0);
@@ -514,7 +537,8 @@ public abstract class BaseTestCell extends TestCase {
      * </li>
      * </ul>
      */
-    public void testNanAndInfinity() {
+	@Test
+	public void testNanAndInfinity() {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet workSheet = wb.createSheet("Sheet1");
         Row row = workSheet.createRow(0);
@@ -550,7 +574,8 @@ public abstract class BaseTestCell extends TestCase {
         assertEquals(ErrorConstants.ERROR_DIV_0, cell2.getErrorCellValue());
     }
 
-    public void testDefaultStyleProperties() {
+	@Test
+	public void testDefaultStyleProperties() {
         Workbook wb = _testDataProvider.createWorkbook();
 
         Cell cell = wb.createSheet("Sheet1").createRow(0).createCell(0);
@@ -584,7 +609,8 @@ public abstract class BaseTestCell extends TestCase {
         assertFalse(style2.getHidden());
     }
 
-    public void testBug55658SetNumericValue(){
+	@Test
+	public void testBug55658SetNumericValue(){
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sh = wb.createSheet();
         Row row = sh.createRow(0);
@@ -604,7 +630,8 @@ public abstract class BaseTestCell extends TestCase {
         assertEquals("24", wb.getSheetAt(0).getRow(0).getCell(1).getStringCellValue());
     }
 
-    public void testRemoveHyperlink(){
+	@Test
+	public void testRemoveHyperlink(){
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sh = wb.createSheet("test");
         Row row = sh.createRow(0);
@@ -646,7 +673,8 @@ public abstract class BaseTestCell extends TestCase {
      * an problem that cell could not return error value form formula cell).
      * @throws IOException 
      */
-    public void testGetErrorCellValueFromFormulaCell() throws IOException {
+	@Test
+	public void testGetErrorCellValueFromFormulaCell() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         try {
             Sheet sheet = wb.createSheet();
@@ -660,7 +688,8 @@ public abstract class BaseTestCell extends TestCase {
         }
     }
     
-    public void testSetRemoveStyle() throws Exception {
+	@Test
+	public void testSetRemoveStyle() throws Exception {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet = wb.createSheet();
         Row row = sheet.createRow(0);
@@ -699,6 +728,7 @@ public abstract class BaseTestCell extends TestCase {
         wb.close();
     }
 
+	@Test
 	public void test57008() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
 		Sheet sheet = wb.createSheet();
@@ -740,6 +770,7 @@ public abstract class BaseTestCell extends TestCase {
 	 *  The maximum length of cell contents (text) is 32,767 characters.
 	 * @throws IOException 
 	 */
+	@Test
 	public void testMaxTextLength() throws IOException{
 		Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet = wb.createSheet();

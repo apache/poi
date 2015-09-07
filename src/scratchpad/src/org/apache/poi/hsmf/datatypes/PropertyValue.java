@@ -19,9 +19,9 @@ package org.apache.poi.hsmf.datatypes;
 
 import java.math.BigInteger;
 import java.util.Calendar;
-import java.util.TimeZone;
 
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LocaleUtil;
 
 /**
  * An instance of a {@link MAPIProperty} inside a {@link PropertiesChunk}.
@@ -218,7 +218,7 @@ public class PropertyValue {
          long time = LittleEndian.getLong(data);
          time = (time / 10 / 1000) - OFFSET;
 
-         Calendar timeC = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+         Calendar timeC = LocaleUtil.getLocaleCalendar();
          timeC.setTimeInMillis(time);
 
          return timeC;

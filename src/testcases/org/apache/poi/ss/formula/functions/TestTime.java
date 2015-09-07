@@ -17,9 +17,9 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import java.util.regex.Pattern;
+import static org.junit.Assert.assertEquals;
 
-import junit.framework.TestCase;
+import java.util.regex.Pattern;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
@@ -28,13 +28,13 @@ import org.apache.poi.hssf.usermodel.HSSFDataFormatter;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests for {@link TimeFunc}
- *
- * @author @author Steven Butler (sebutler @ gmail dot com)
  */
-public final class TestTime extends TestCase {
+public final class TestTime {
 
 	private static final int SECONDS_PER_MINUTE = 60;
 	private static final int SECONDS_PER_HOUR = 60 * SECONDS_PER_MINUTE;
@@ -44,7 +44,8 @@ public final class TestTime extends TestCase {
 	private HSSFWorkbook wb;
 	private HSSFDataFormatter form;
 	private HSSFCellStyle style;
-
+	
+	@Before
 	public void setUp() {
 		wb = new HSSFWorkbook();
 		HSSFSheet sheet = wb.createSheet("new sheet");
@@ -58,11 +59,13 @@ public final class TestTime extends TestCase {
 		evaluator = new HSSFFormulaEvaluator(wb);
 	}
 
+	@Test
 	public void testSomeArgumentsMissing() {
 		confirm("00:00:00", "TIME(, 0, 0)");
 		confirm("12:00:00", "TIME(12, , )");
 	}
 
+	@Test
 	public void testValid() {
 		confirm("00:00:01", 0, 0, 1);
 		confirm("00:01:00", 0, 1, 0);
@@ -101,7 +104,6 @@ public final class TestTime extends TestCase {
 	}
 
 	private void confirm(String expectedTimeStr, String formulaText) {
-//		System.out.println("=" + formulaText);
 		String[] parts = Pattern.compile(":").split(expectedTimeStr);
 		int expH = Integer.parseInt(parts[0]);
 		int expM = Integer.parseInt(parts[1]);

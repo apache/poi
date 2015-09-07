@@ -36,7 +36,7 @@ import org.apache.poi.ss.usermodel.DataFormatter;
  */
 public abstract class TextFunction implements Function {
 	protected static final DataFormatter formatter = new DataFormatter();
-   protected static final String EMPTY_STRING = "";
+    protected static final String EMPTY_STRING = "";
 
 	protected static final String evaluateStringArg(ValueEval eval, int srcRow, int srcCol) throws EvaluationException {
 		ValueEval ve = OperandResolver.getSingleValue(eval, srcRow, srcCol);

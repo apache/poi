@@ -20,6 +20,7 @@ package org.apache.poi.hssf.usermodel;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.util.SuppressForbidden;
 
 import java.awt.*;
 import java.awt.image.ImageObserver;
@@ -57,8 +58,7 @@ import java.text.AttributedCharacterIterator;
  * <code>HSSFClientAnchor.getAnchorHeightInPoints()</code>.
  * </blockquote>
  */
-public class EscherGraphics
-        extends Graphics
+public class EscherGraphics extends Graphics
 {
     private HSSFShapeGroup escherGroup;
     private HSSFWorkbook workbook;
@@ -293,18 +293,18 @@ public class EscherGraphics
         textbox.setString( s );
     }
 
-    private HSSFFont matchFont( Font font )
+    private HSSFFont matchFont( Font matchFont )
     {
         HSSFColor hssfColor = workbook.getCustomPalette()
                 .findColor((byte)foreground.getRed(), (byte)foreground.getGreen(), (byte)foreground.getBlue());
         if (hssfColor == null)
             hssfColor = workbook.getCustomPalette().findSimilarColor((byte)foreground.getRed(), (byte)foreground.getGreen(), (byte)foreground.getBlue());
-        boolean bold = (font.getStyle() & Font.BOLD) != 0;
-        boolean italic = (font.getStyle() & Font.ITALIC) != 0;
+        boolean bold = (matchFont.getStyle() & Font.BOLD) != 0;
+        boolean italic = (matchFont.getStyle() & Font.ITALIC) != 0;
         HSSFFont hssfFont = workbook.findFont(bold ? HSSFFont.BOLDWEIGHT_BOLD : 0,
                     hssfColor.getIndex(),
-                    (short)(font.getSize() * 20),
-                    font.getName(),
+                    (short)(matchFont.getSize() * 20),
+                    matchFont.getName(),
                     italic,
                     false,
                     (short)0,
@@ -314,8 +314,8 @@ public class EscherGraphics
             hssfFont = workbook.createFont();
             hssfFont.setBoldweight(bold ? HSSFFont.BOLDWEIGHT_BOLD : 0);
             hssfFont.setColor(hssfColor.getIndex());
-            hssfFont.setFontHeight((short)(font.getSize() * 20));
-            hssfFont.setFontName(font.getName());
+            hssfFont.setFontHeight((short)(matchFont.getSize() * 20));
+            hssfFont.setFontName(matchFont.getName());
             hssfFont.setItalic(italic);
             hssfFont.setStrikeout(false);
             hssfFont.setTypeOffset((short) 0);
@@ -431,11 +431,6 @@ public class EscherGraphics
         return null;
     }
 
-    public Rectangle getClipRect()
-    {
-        return getClipBounds();
-    }
-
     public Color getColor()
     {
         return foreground;
@@ -447,6 +442,7 @@ public class EscherGraphics
     }
 
     @SuppressWarnings("deprecation")
+    @SuppressForbidden
     public FontMetrics getFontMetrics(Font f)
     {
         return Toolkit.getDefaultToolkit().getFontMetrics(f);

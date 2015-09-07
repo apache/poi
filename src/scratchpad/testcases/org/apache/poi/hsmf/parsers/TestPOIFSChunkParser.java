@@ -17,13 +17,16 @@
 
 package org.apache.poi.hsmf.parsers;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 
+import org.apache.poi.POIDataSamples;
 import org.apache.poi.hsmf.MAPIMessage;
 import org.apache.poi.hsmf.datatypes.AttachmentChunks;
 import org.apache.poi.hsmf.datatypes.ChunkGroup;
@@ -35,25 +38,19 @@ import org.apache.poi.hsmf.datatypes.RecipientChunks.RecipientChunksSorter;
 import org.apache.poi.hsmf.datatypes.StringChunk;
 import org.apache.poi.hsmf.datatypes.Types;
 import org.apache.poi.hsmf.exceptions.ChunkNotFoundException;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.POIDataSamples;
-
-import junit.framework.TestCase;
+import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.util.LocaleUtil;
+import org.junit.Test;
 
 /**
  * Tests to verify that the chunk parser works properly
  */
-public final class TestPOIFSChunkParser extends TestCase {
-   private POIDataSamples samples;
+public final class TestPOIFSChunkParser {
+   private POIDataSamples samples = POIDataSamples.getHSMFInstance();
 
-	public TestPOIFSChunkParser() throws IOException {
-        samples = POIDataSamples.getHSMFInstance();
-	}
-	
-   public void testFindsCore() throws IOException {
-      POIFSFileSystem simple = new POIFSFileSystem(
-            new FileInputStream(samples.getFile("quick.msg"))
-      );
+   @Test
+   public void testFindsCore() throws Exception {
+      NPOIFSFileSystem simple = new NPOIFSFileSystem(samples.getFile("quick.msg"), true);
       
       // Check a few core things are present
       simple.getRoot().getEntry(
@@ -65,29 +62,20 @@ public final class TestPOIFSChunkParser extends TestCase {
       
       // Now load the file
       MAPIMessage msg = new MAPIMessage(simple);
-      try {
-         assertEquals("Kevin Roast", msg.getDisplayTo());
-         assertEquals("Kevin Roast", msg.getDisplayFrom());
-         assertEquals("Test the content transformer", msg.getSubject());
-      } catch(ChunkNotFoundException e) {
-         fail();
-      }
+      assertEquals("Kevin Roast", msg.getDisplayTo());
+      assertEquals("Kevin Roast", msg.getDisplayFrom());
+      assertEquals("Test the content transformer", msg.getSubject());
       
       // Check date too
-      try {
-         SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-         
-         Calendar c = msg.getMessageDate();
-         assertEquals( "2007-06-14 09:42:55", f.format(c.getTime()) );
-      } catch(ChunkNotFoundException e) {
-         fail();
-      }
+      Calendar calExp = LocaleUtil.getLocaleCalendar(2007,5,14,9,42,55);
+      Calendar calAct = msg.getMessageDate();
+      assertEquals( calExp, calAct );
+
+      simple.close();
    }
    
    public void testFindsRecips() throws IOException, ChunkNotFoundException {
-      POIFSFileSystem simple = new POIFSFileSystem(
-            new FileInputStream(samples.getFile("quick.msg"))
-      );
+      NPOIFSFileSystem simple = new NPOIFSFileSystem(samples.getFile("quick.msg"), true);
       
       simple.getRoot().getEntry("__recip_version1.0_#00000000");
 
@@ -121,11 +109,12 @@ public final class TestPOIFSChunkParser extends TestCase {
       assertEquals("kevin.roast@alfresco.org", msg.getRecipientDetailsChunks()[0].recipientSMTPChunk.getValue());
       assertEquals("/O=HOSTEDSERVICE2/OU=FIRST ADMINISTRATIVE GROUP/CN=RECIPIENTS/CN=Kevin.roast@ben", 
             msg.getRecipientDetailsChunks()[0].recipientEmailChunk.getValue());
+      simple.close();
+      
       
       // Now look at another message
-      msg = new MAPIMessage(new POIFSFileSystem(
-            new FileInputStream(samples.getFile("simple_test_msg.msg"))
-      ));
+      simple = new NPOIFSFileSystem(samples.getFile("simple_test_msg.msg"), true);
+      msg = new MAPIMessage(simple);
       assertNotNull(msg.getRecipientDetailsChunks());
       assertEquals(1, msg.getRecipientDetailsChunks().length);
       
@@ -134,12 +123,12 @@ public final class TestPOIFSChunkParser extends TestCase {
       assertEquals(null, msg.getRecipientDetailsChunks()[0].recipientNameChunk);
       assertEquals("travis@overwrittenstack.com", msg.getRecipientDetailsChunks()[0].recipientEmailChunk.getValue());
       assertEquals("travis@overwrittenstack.com", msg.getRecipientEmailAddress());
+      
+      simple.close();
    }
    
    public void testFindsMultipleRecipients() throws IOException, ChunkNotFoundException {
-      POIFSFileSystem multiple = new POIFSFileSystem(
-            new FileInputStream(samples.getFile("example_received_unicode.msg"))
-      );
+      NPOIFSFileSystem multiple = new NPOIFSFileSystem(samples.getFile("example_received_unicode.msg"), true);
       
       multiple.getRoot().getEntry("__recip_version1.0_#00000000");
       multiple.getRoot().getEntry("__recip_version1.0_#00000001");
@@ -225,12 +214,12 @@ public final class TestPOIFSChunkParser extends TestCase {
       assertEquals("nickb@alfresco.com",              msg.getRecipientEmailAddressList()[3]);
       assertEquals("nick.burch@alfresco.com",         msg.getRecipientEmailAddressList()[4]);
       assertEquals("roy.wetherall@alfresco.com",      msg.getRecipientEmailAddressList()[5]);
+      
+      multiple.close();
    }
    
    public void testFindsNameId() throws IOException {
-      POIFSFileSystem simple = new POIFSFileSystem(
-            new FileInputStream(samples.getFile("quick.msg"))
-      );
+      NPOIFSFileSystem simple = new NPOIFSFileSystem(samples.getFile("quick.msg"), true);
       
       simple.getRoot().getEntry("__nameid_version1.0");
 
@@ -247,15 +236,13 @@ public final class TestPOIFSChunkParser extends TestCase {
       MAPIMessage msg = new MAPIMessage(simple);
       assertNotNull(msg.getNameIdChunks());
       assertEquals(10, msg.getNameIdChunks().getAll().length);
+      
+      simple.close();
    }
    
-	public void testFindsAttachments() throws IOException {
-	   POIFSFileSystem with = new POIFSFileSystem(
-	         new FileInputStream(samples.getFile("attachment_test_msg.msg"))
-	   );
-      POIFSFileSystem without = new POIFSFileSystem(
-            new FileInputStream(samples.getFile("quick.msg"))
-      );
+   public void testFindsAttachments() throws Exception {
+	  NPOIFSFileSystem with = new NPOIFSFileSystem(samples.getFile("attachment_test_msg.msg"), true);
+      NPOIFSFileSystem without = new NPOIFSFileSystem(samples.getFile("quick.msg"), true);
       AttachmentChunks attachment;
       
       
@@ -284,15 +271,8 @@ public final class TestPOIFSChunkParser extends TestCase {
 	   
       
       // Check raw details on one without
-      try {
-         without.getRoot().getEntry("__attach_version1.0_#00000000");
-         fail();
-      } catch(FileNotFoundException e) {}
-      try {
-         without.getRoot().getEntry("__attach_version1.0_#00000001");
-         fail();
-      } catch(FileNotFoundException e) {}
-      
+      assertFalse(without.getRoot().hasEntry("__attach_version1.0_#00000000"));
+      assertFalse(without.getRoot().hasEntry("__attach_version1.0_#00000001"));
       
 	   // One with, from the top
       MAPIMessage msgWith = new MAPIMessage(with);
@@ -309,14 +289,9 @@ public final class TestPOIFSChunkParser extends TestCase {
       assertEquals(89, attachment.attachData.getValue().length);
       
       // Plus check core details are there
-      try {
-         assertEquals("'nicolas1.23456@free.fr'", msgWith.getDisplayTo());
-         assertEquals("Nicolas1 23456", msgWith.getDisplayFrom());
-         assertEquals("test pi\u00e8ce jointe 1", msgWith.getSubject());
-      } catch(ChunkNotFoundException e) {
-         fail();
-      }
-	   
+      assertEquals("'nicolas1.23456@free.fr'", msgWith.getDisplayTo());
+      assertEquals("Nicolas1 23456", msgWith.getDisplayFrom());
+      assertEquals("test pi\u00e8ce jointe 1", msgWith.getSubject());
       
 	   // One without, from the top
       MAPIMessage msgWithout = new MAPIMessage(without);
@@ -325,13 +300,12 @@ public final class TestPOIFSChunkParser extends TestCase {
       assertEquals(0, msgWithout.getAttachmentFiles().length);
       
       // But has core details
-      try {
-         assertEquals("Kevin Roast", msgWithout.getDisplayTo());
-         assertEquals("Kevin Roast", msgWithout.getDisplayFrom());
-         assertEquals("Test the content transformer", msgWithout.getSubject());
-      } catch(ChunkNotFoundException e) {
-         fail();
-      }
+      assertEquals("Kevin Roast", msgWithout.getDisplayTo());
+      assertEquals("Kevin Roast", msgWithout.getDisplayFrom());
+      assertEquals("Test the content transformer", msgWithout.getSubject());
+
+      without.close();
+      with.close();
    }
 	
    /**
@@ -340,13 +314,13 @@ public final class TestPOIFSChunkParser extends TestCase {
     *  such as "Olk10SideProps_0001"
     */
    public void testOlk10SideProps() throws Exception {
-      POIFSFileSystem poifs = new POIFSFileSystem(
-          new FileInputStream(samples.getFile("51873.msg"))
-      );
+      NPOIFSFileSystem poifs = new NPOIFSFileSystem(samples.getFile("51873.msg"), true);
       MAPIMessage msg = new MAPIMessage(poifs);
 
       // Check core details came through
       assertEquals("bubba@bubbasmith.com", msg.getDisplayTo());
       assertEquals("Test with Olk10SideProps_ Chunk", msg.getSubject());
+      
+      poifs.close();
    }
 }

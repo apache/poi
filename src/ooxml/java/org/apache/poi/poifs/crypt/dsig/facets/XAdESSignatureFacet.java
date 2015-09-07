@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 
@@ -115,8 +116,7 @@ public class XAdESSignatureFacet extends SignatureFacet {
         SignedSignaturePropertiesType signedSignatureProperties = signedProperties.addNewSignedSignatureProperties();
 
         // SigningTime
-        Calendar xmlGregorianCalendar = Calendar.getInstance();
-        xmlGregorianCalendar.setTimeZone(TimeZone.getTimeZone("Z"));
+        Calendar xmlGregorianCalendar = Calendar.getInstance(TimeZone.getTimeZone("Z"), Locale.ROOT);
         xmlGregorianCalendar.setTime(signatureConfig.getExecutionTime());
         xmlGregorianCalendar.clear(Calendar.MILLISECOND);
         signedSignatureProperties.setSigningTime(xmlGregorianCalendar);

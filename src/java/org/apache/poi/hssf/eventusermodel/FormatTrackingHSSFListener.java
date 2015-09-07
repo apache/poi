@@ -31,6 +31,7 @@ import org.apache.poi.hssf.record.NumberRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.usermodel.HSSFDataFormat;
 import org.apache.poi.hssf.usermodel.HSSFDataFormatter;
+import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
@@ -52,7 +53,7 @@ public class FormatTrackingHSSFListener implements HSSFListener {
 	 * the {@link Locale#getDefault() default locale} for the formats.
 	 */
 	public FormatTrackingHSSFListener(HSSFListener childListener) {
-		this(childListener, Locale.getDefault());
+		this(childListener, LocaleUtil.getUserLocale());
 	}
 
 	/**
