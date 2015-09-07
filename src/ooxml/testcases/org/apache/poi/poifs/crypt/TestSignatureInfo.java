@@ -52,7 +52,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.TimeZone;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -71,6 +70,7 @@ import org.apache.poi.poifs.crypt.dsig.services.TimeStampService;
 import org.apache.poi.poifs.crypt.dsig.services.TimeStampServiceValidator;
 import org.apache.poi.util.DocumentHelper;
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -99,10 +99,9 @@ public class TestSignatureInfo {
         CryptoFunctions.registerBouncyCastle();
 
         /*** TODO : set cal to now ... only set to fixed date for debugging ... */ 
-        cal = Calendar.getInstance();
-        cal.clear();
-        cal.setTimeZone(TimeZone.getTimeZone("UTC"));
-        cal.set(2014, 7, 6, 21, 42, 12);
+        cal = LocaleUtil.getLocaleCalendar(LocaleUtil.TIMEZONE_UTC);
+//        cal.set(2014, 7, 6, 21, 42, 12);
+//        cal.clear(Calendar.MILLISECOND);
 
         // don't run this test when we are using older Xerces as it triggers an XML Parser backwards compatibility issue 
         // in the xmlsec jar file
@@ -241,6 +240,7 @@ public class TestSignatureInfo {
     public void testManipulation() throws Exception {
         // sign & validate
         String testFile = "hello-world-unsigned.xlsx";
+        @SuppressWarnings("resource")
         OPCPackage pkg = OPCPackage.open(copy(testdata.getFile(testFile)), PackageAccess.READ_WRITE);
         sign(pkg, "Test", "CN=Test", 1);
         
@@ -289,6 +289,7 @@ public class TestSignatureInfo {
         pkg.close();
     }
 
+    @SuppressWarnings("resource")
     @Test
     public void testSignEnvelopingDocument() throws Exception {
         String testFile = "hello-world-unsigned.xlsx";
@@ -350,9 +351,9 @@ public class TestSignatureInfo {
         } else {
             TimeStampServiceValidator tspValidator = new TimeStampServiceValidator() {
                 @Override
-                public void validate(List<X509Certificate> certificateChain,
+                public void validate(List<X509Certificate> validateChain,
                 RevocationData revocationData) throws Exception {
-                    for (X509Certificate certificate : certificateChain) {
+                    for (X509Certificate certificate : validateChain) {
                         LOG.log(POILogger.DEBUG, "certificate: " + certificate.getSubjectX500Principal());
                         LOG.log(POILogger.DEBUG, "validity: " + certificate.getNotBefore() + " - " + certificate.getNotAfter());
                     }
@@ -370,7 +371,7 @@ public class TestSignatureInfo {
 
         RevocationDataService revocationDataService = new RevocationDataService(){
             @Override
-            public RevocationData getRevocationData(List<X509Certificate> certificateChain) {
+            public RevocationData getRevocationData(List<X509Certificate> revocationChain) {
                 return revocationData;
             }
         };
@@ -498,9 +499,8 @@ public class TestSignatureInfo {
         SignatureConfig signatureConfig = new SignatureConfig();
         signatureConfig.setKey(keyPair.getPrivate());
         signatureConfig.setSigningCertificateChain(certChain);
-        Calendar cal = Calendar.getInstance();
-        cal.set(2007, 7, 1);
-        signatureConfig.setExecutionTime(cal.getTime());
+        Calendar oldCal = LocaleUtil.getLocaleCalendar(2007, 7, 1);
+        signatureConfig.setExecutionTime(oldCal.getTime());
         signatureConfig.setDigestAlgo(HashAlgorithm.sha1);
         signatureConfig.setOpcPackage(pkg);
         
@@ -615,10 +615,10 @@ public class TestSignatureInfo {
             keyPair = new KeyPair(x509.getPublicKey(), (PrivateKey)key);
         } else {
             keyPair = PkiTestUtils.generateKeyPair();
-            Calendar cal = Calendar.getInstance();
             Date notBefore = cal.getTime();
-            cal.add(Calendar.YEAR, 1);
-            Date notAfter = cal.getTime();
+            Calendar cal2 = (Calendar)cal.clone();
+            cal2.add(Calendar.YEAR, 1);
+            Date notAfter = cal2.getTime();
             KeyUsage keyUsage = new KeyUsage(KeyUsage.digitalSignature);
             
             x509 = PkiTestUtils.generateCertificate(keyPair.getPublic(), subjectDN
