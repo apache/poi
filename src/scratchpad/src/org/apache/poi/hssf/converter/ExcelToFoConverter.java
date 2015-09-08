@@ -17,7 +17,6 @@
 package org.apache.poi.hssf.converter;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,38 +76,27 @@ public class ExcelToFoConverter extends AbstractExcelConverter
      * Where infile is an input .xls file ( Word 97-2007) which will be rendered
      * as XSL FO into outfile
      */
-    public static void main( String[] args )
-    {
-        if ( args.length < 2 )
-        {
-            System.err
-                    .println( "Usage: ExcelToFoConverter <inputFile.xls> <saveTo.xml>" );
+    public static void main( String[] args ) throws Exception {
+        if ( args.length < 2 ) {
+            System.err.println( "Usage: ExcelToFoConverter <inputFile.xls> <saveTo.xml>" );
             return;
         }
 
         System.out.println( "Converting " + args[0] );
         System.out.println( "Saving output to " + args[1] );
-        try
-        {
-            Document doc = ExcelToHtmlConverter.process( new File( args[0] ) );
 
-            FileWriter out = new FileWriter( args[1] );
-            DOMSource domSource = new DOMSource( doc );
-            StreamResult streamResult = new StreamResult( out );
+        Document doc = ExcelToHtmlConverter.process( new File( args[0] ) );
 
-            TransformerFactory tf = TransformerFactory.newInstance();
-            Transformer serializer = tf.newTransformer();
-            // TODO set encoding from a command argument
-            serializer.setOutputProperty( OutputKeys.ENCODING, "UTF-8" );
-            serializer.setOutputProperty( OutputKeys.INDENT, "no" );
-            serializer.setOutputProperty( OutputKeys.METHOD, "xml" );
-            serializer.transform( domSource, streamResult );
-            out.close();
-        }
-        catch ( Exception e )
-        {
-            e.printStackTrace();
-        }
+        DOMSource domSource = new DOMSource( doc );
+        StreamResult streamResult = new StreamResult( new File(args[1]) );
+
+        TransformerFactory tf = TransformerFactory.newInstance();
+        Transformer serializer = tf.newTransformer();
+        // TODO set encoding from a command argument
+        serializer.setOutputProperty( OutputKeys.ENCODING, "UTF-8" );
+        serializer.setOutputProperty( OutputKeys.INDENT, "no" );
+        serializer.setOutputProperty( OutputKeys.METHOD, "xml" );
+        serializer.transform( domSource, streamResult );
     }
 
     /**
@@ -125,7 +113,9 @@ public class ExcelToFoConverter extends AbstractExcelConverter
                 XMLHelper.getDocumentBuilderFactory().newDocumentBuilder()
                         .newDocument() );
         excelToHtmlConverter.processWorkbook( workbook );
-        return excelToHtmlConverter.getDocument();
+        Document doc = excelToHtmlConverter.getDocument();
+        workbook.close();
+        return doc;
     }
 
     private final FoDocumentFacade foDocumentFacade;

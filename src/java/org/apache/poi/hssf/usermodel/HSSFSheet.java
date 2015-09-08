@@ -1819,21 +1819,20 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      * Aggregates the drawing records and dumps the escher record hierarchy
      * to the standard output.
      */
-    public void dumpDrawingRecords(boolean fat) {
+    public void dumpDrawingRecords(boolean fat, PrintWriter pw) {
         _sheet.aggregateDrawingRecords(_book.getDrawingManager(), false);
 
         EscherAggregate r = (EscherAggregate) getSheet().findFirstRecordBySid(EscherAggregate.sid);
         List<EscherRecord> escherRecords = r.getEscherRecords();
-        PrintWriter w = new PrintWriter(System.out);
         for (Iterator<EscherRecord> iterator = escherRecords.iterator(); iterator.hasNext(); ) {
             EscherRecord escherRecord = iterator.next();
             if (fat) {
-                System.out.println(escherRecord.toString());
+                pw.println(escherRecord.toString());
             } else {
-                escherRecord.display(w, 0);
+                escherRecord.display(pw, 0);
             }
         }
-        w.flush();
+        pw.flush();
     }
 
     /**
@@ -2053,6 +2052,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      *
      * @return the name of this sheet
      */
+    @SuppressWarnings("resource")
     public String getSheetName() {
         HSSFWorkbook wb = getWorkbook();
         int idx = wb.getSheetIndex(this);

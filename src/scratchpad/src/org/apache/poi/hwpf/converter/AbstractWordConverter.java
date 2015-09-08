@@ -495,8 +495,7 @@ public abstract class AbstractWordConverter
             }
 
             String text = characterRun.text();
-            if ( text.getBytes().length == 0 )
-                continue;
+            if ( text.isEmpty() ) continue;
 
             if ( characterRun.isSpecialCharacter() )
             {
@@ -530,7 +529,7 @@ public abstract class AbstractWordConverter
                 }
             }
 
-            if ( text.getBytes()[0] == FIELD_BEGIN_MARK )
+            if ( text.charAt(0) == FIELD_BEGIN_MARK )
             {
                 if ( wordDocument instanceof HWPFDocument )
                 {
@@ -566,12 +565,12 @@ public abstract class AbstractWordConverter
 
                 continue;
             }
-            if ( text.getBytes()[0] == FIELD_SEPARATOR_MARK )
+            if ( text.charAt(0) == FIELD_SEPARATOR_MARK )
             {
                 // shall not appear without FIELD_BEGIN_MARK
                 continue;
             }
-            if ( text.getBytes()[0] == FIELD_END_MARK )
+            if ( text.charAt(0) == FIELD_END_MARK )
             {
                 // shall not appear without FIELD_BEGIN_MARK
                 continue;
@@ -1168,10 +1167,9 @@ public abstract class AbstractWordConverter
             CharacterRun characterRun = range.getCharacterRun( c );
 
             String text = characterRun.text();
-            if ( text.getBytes().length == 0 )
-                continue;
+            if ( text.isEmpty() ) continue;
 
-            final byte firstByte = text.getBytes()[0];
+            final char firstByte = text.charAt(0);
             if ( firstByte == FIELD_BEGIN_MARK )
             {
                 int[] nested = tryDeadField_lookupFieldSeparatorEnd(
@@ -1195,7 +1193,7 @@ public abstract class AbstractWordConverter
                 continue;
             }
 
-            if ( text.getBytes()[0] == FIELD_END_MARK )
+            if ( firstByte == FIELD_END_MARK )
             {
                 if ( endMark != -1 )
                 {

@@ -25,6 +25,7 @@ import org.apache.poi.hpbf.model.qcbits.QCTextBit;
 import org.apache.poi.hpbf.model.qcbits.UnknownQCBit;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LocaleUtil;
 
 /**
  * Quill -> QuillSub -> CONTENTS
@@ -40,7 +41,7 @@ public final class QuillContents extends HPBFPart {
 		//  all our bits
 
 		// Check first 8 bytes
-		String f8 = new String(data, 0, 8);
+		String f8 = new String(data, 0, 8, LocaleUtil.CHARSET_1252);
 		if(! f8.equals("CHNKINK ")) {
 			throw new IllegalArgumentException("Expecting 'CHNKINK ' but was '"+f8+"'");
 		}
@@ -52,11 +53,11 @@ public final class QuillContents extends HPBFPart {
 			int offset = 0x20 + i*24;
 			if(data[offset] == 0x18 && data[offset+1] == 0x00) {
 				// Has some data
-				String thingType = new String(data, offset+2, 4);
+				String thingType = new String(data, offset+2, 4, LocaleUtil.CHARSET_1252);
 				int optA = LittleEndian.getUShort(data, offset+6);
 				int optB = LittleEndian.getUShort(data, offset+8);
 				int optC = LittleEndian.getUShort(data, offset+10);
-				String bitType = new String(data, offset+12, 4);
+				String bitType = new String(data, offset+12, 4, LocaleUtil.CHARSET_1252);
 				int from = (int)LittleEndian.getUInt(data, offset+16);
 				int len = (int)LittleEndian.getUInt(data, offset+20);
 

@@ -19,10 +19,12 @@ package org.apache.poi.hslf.dev;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.nio.charset.Charset;
 
 import org.apache.poi.hslf.record.RecordTypes;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
@@ -49,21 +51,26 @@ public final class PPTXMLDump {
     protected boolean hexHeader = true;
 
     public PPTXMLDump(File ppt) throws IOException {
-        NPOIFSFileSystem fs = new NPOIFSFileSystem(ppt);
-
-        //read the document entry from OLE file system
-        DocumentEntry entry = (DocumentEntry)fs.getRoot().getEntry(PPDOC_ENTRY);
-        docstream = new byte[entry.getSize()];
-        DocumentInputStream is = fs.createDocumentInputStream(PPDOC_ENTRY);
-        is.read(docstream);
-
+        NPOIFSFileSystem fs = new NPOIFSFileSystem(ppt, true);
+        DocumentInputStream is = null;
+        
         try {
+            //read the document entry from OLE file system
+            DocumentEntry entry = (DocumentEntry)fs.getRoot().getEntry(PPDOC_ENTRY);
+            docstream = new byte[entry.getSize()];
+            is = fs.createDocumentInputStream(PPDOC_ENTRY);
+            is.read(docstream);
+            is.close();
+
             entry = (DocumentEntry)fs.getRoot().getEntry(PICTURES_ENTRY);
             pictstream = new byte[entry.getSize()];
             is = fs.createDocumentInputStream(PICTURES_ENTRY);
             is.read(pictstream);
         } catch(FileNotFoundException e){
             //silently catch errors if the presentation does not contain pictures
+        } finally {
+            if (is != null) is.close();
+            fs.close();
         }
     }
 
@@ -72,8 +79,8 @@ public final class PPTXMLDump {
      * @param out <code>Writer</code> to write out
      * @throws java.io.IOException
      */
-    public void dump(Writer out) throws IOException {
-        this.out = out;
+    public void dump(Writer outWriter) throws IOException {
+        this.out = outWriter;
 
         int padding = 0;
         write(out, "<Presentation>" + CR, padding);
@@ -197,7 +204,8 @@ public final class PPTXMLDump {
                 System.out.println("Dumping " + args[i]);
 
                 if (outFile){
-                    FileWriter out = new FileWriter(ppt.getName() + ".xml");
+                    FileOutputStream fos = new FileOutputStream(ppt.getName() + ".xml");
+                    OutputStreamWriter out = new OutputStreamWriter(fos, Charset.forName("UTF8"));
                     dump.dump(out);
                     out.close();
                 } else {

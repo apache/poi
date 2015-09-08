@@ -40,6 +40,8 @@ public class TestEncryptionInfo {
         assertEquals(32, info.getVerifier().getEncryptedVerifierHash().length);
         assertEquals(CipherProvider.aes, info.getHeader().getCipherProvider());                
         assertEquals("Microsoft Enhanced RSA and AES Cryptographic Provider", info.getHeader().getCspName());
+        
+        fs.close();
     }
     
     @Test
@@ -57,5 +59,7 @@ public class TestEncryptionInfo {
         assertEquals(64, info.getVerifier().getEncryptedVerifierHash().length);
         assertEquals(CipherProvider.aes, info.getHeader().getCipherProvider());                
 //        assertEquals("Microsoft Enhanced RSA and AES Cryptographic Provider", info.getHeader().getCspName());
+        
+        fs.close();
     }
 }
