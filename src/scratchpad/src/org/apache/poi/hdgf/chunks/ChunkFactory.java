@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
 
+import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
@@ -65,43 +66,49 @@ public final class ChunkFactory {
 	 */
 	private void processChunkParseCommands() throws IOException {
 		String line;
-		InputStream cpd = ChunkFactory.class.getResourceAsStream(chunkTableName);
-		if(cpd == null) {
-			throw new IllegalStateException("Unable to find HDGF chunk definition on the classpath - " + chunkTableName);
+		InputStream cpd = null;
+		BufferedReader inp = null;
+		try {
+	        cpd = ChunkFactory.class.getResourceAsStream(chunkTableName);
+	        if(cpd == null) {
+	            throw new IllegalStateException("Unable to find HDGF chunk definition on the classpath - " + chunkTableName);
+	        }
+
+	        inp = new BufferedReader(new InputStreamReader(cpd, LocaleUtil.CHARSET_1252));
+		    
+		    while( (line = inp.readLine()) != null ) {
+    			if(line.startsWith("#")) continue;
+    			if(line.startsWith(" ")) continue;
+    			if(line.startsWith("\t")) continue;
+    			if(line.length() == 0) continue;
+    
+    			// Start xxx
+    			if(!line.startsWith("start")) {
+    				throw new IllegalStateException("Expecting start xxx, found " + line);
+    			}
+    			int chunkType = Integer.parseInt(line.substring(6));
+    			ArrayList<CommandDefinition> defsL = new ArrayList<CommandDefinition>();
+    
+    			// Data entries
+    			while( ! (line = inp.readLine()).startsWith("end") ) {
+    				StringTokenizer st = new StringTokenizer(line, " ");
+    				int defType = Integer.parseInt(st.nextToken());
+    				int offset = Integer.parseInt(st.nextToken());
+    				String name = st.nextToken("\uffff").substring(1);
+    
+    				CommandDefinition def = new CommandDefinition(defType,offset,name);
+    				defsL.add(def);
+    			}
+    
+    			CommandDefinition[] defs = defsL.toArray(new CommandDefinition[defsL.size()]);
+    
+    			// Add to the hashtable
+    			chunkCommandDefinitions.put(Integer.valueOf(chunkType), defs);
+    		}
+		} finally {
+    		if (inp != null) inp.close();
+    		if (cpd != null) cpd.close();
 		}
-
-		BufferedReader inp = new BufferedReader(new InputStreamReader(cpd));
-		while( (line = inp.readLine()) != null ) {
-			if(line.startsWith("#")) continue;
-			if(line.startsWith(" ")) continue;
-			if(line.startsWith("\t")) continue;
-			if(line.length() == 0) continue;
-
-			// Start xxx
-			if(!line.startsWith("start")) {
-				throw new IllegalStateException("Expecting start xxx, found " + line);
-			}
-			int chunkType = Integer.parseInt(line.substring(6));
-			ArrayList<CommandDefinition> defsL = new ArrayList<CommandDefinition>();
-
-			// Data entries
-			while( ! (line = inp.readLine()).startsWith("end") ) {
-				StringTokenizer st = new StringTokenizer(line, " ");
-				int defType = Integer.parseInt(st.nextToken());
-				int offset = Integer.parseInt(st.nextToken());
-				String name = st.nextToken("\uffff").substring(1);
-
-				CommandDefinition def = new CommandDefinition(defType,offset,name);
-				defsL.add(def);
-			}
-
-			CommandDefinition[] defs = defsL.toArray(new CommandDefinition[defsL.size()]);
-
-			// Add to the hashtable
-			chunkCommandDefinitions.put(Integer.valueOf(chunkType), defs);
-		}
-		inp.close();
-		cpd.close();
 	}
 
 	public int getVersion() { return version; }

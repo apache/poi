@@ -1244,7 +1244,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
         wrapper.appendChildRecord(tha);
 
         TextBytesAtom tba = new TextBytesAtom();
-        tba.setText("".getBytes());
+        tba.setText("".getBytes(LocaleUtil.CHARSET_1252));
         wrapper.appendChildRecord(tba);
 
         StyleTextPropAtom sta = new StyleTextPropAtom(1);

@@ -47,6 +47,7 @@ import javax.xml.bind.DatatypeConverter;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.poifs.crypt.dsig.SignatureConfig;
+import org.apache.poi.util.HexDump;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -160,7 +161,7 @@ public class TSPTimeStampService implements TimeStampService {
         
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         IOUtils.copy(huc.getInputStream(), bos);
-        LOG.log(POILogger.DEBUG, "response content: ", bos.toString());
+        LOG.log(POILogger.DEBUG, "response content: ", HexDump.dump(bos.toByteArray(), 0, 0));
         
         if (!contentType.startsWith(signatureConfig.isTspOldProtocol() 
             ? "application/timestamp-response"

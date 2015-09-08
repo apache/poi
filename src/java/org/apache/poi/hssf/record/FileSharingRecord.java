@@ -52,25 +52,6 @@ public final class FileSharingRecord extends StandardRecord {
         }
     }
 
-    //this is the world's lamest "security".  thanks to Wouter van Vugt for making me
-    //not have to try real hard.  -ACO
-    public static short hashPassword(String password) {
-        byte[] passwordCharacters = password.getBytes();
-        int hash = 0;
-        if (passwordCharacters.length > 0) {
-            int charIndex = passwordCharacters.length;
-            while (charIndex-- > 0) {
-                hash = ((hash >> 14) & 0x01) | ((hash << 1) & 0x7fff);
-                hash ^= passwordCharacters[charIndex];
-            }
-            // also hash with charcount
-            hash = ((hash >> 14) & 0x01) | ((hash << 1) & 0x7fff);
-            hash ^= passwordCharacters.length;
-            hash ^= (0x8000 | ('N' << 8) | 'K');
-        }
-        return (short)hash;
-    } 
-
     /**
      * set the readonly flag
      *

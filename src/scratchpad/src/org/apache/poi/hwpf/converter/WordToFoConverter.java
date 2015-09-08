@@ -17,7 +17,6 @@
 package org.apache.poi.hwpf.converter;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -73,36 +72,25 @@ public class WordToFoConverter extends AbstractWordConverter
      * Where infile is an input .doc file ( Word 97-2007) which will be rendered
      * as XSL-FO into outfile
      */
-    public static void main( String[] args )
-    {
+    public static void main( String[] args ) throws Exception {
         if ( args.length < 2 )
         {
-            System.err
-                    .println( "Usage: WordToFoConverter <inputFile.doc> <saveTo.fo>" );
+            System.err.println( "Usage: WordToFoConverter <inputFile.doc> <saveTo.fo>" );
             return;
         }
 
         System.out.println( "Converting " + args[0] );
         System.out.println( "Saving output to " + args[1] );
-        try
-        {
-            Document doc = WordToFoConverter.process( new File( args[0] ) );
+        Document doc = WordToFoConverter.process( new File( args[0] ) );
 
-            FileWriter out = new FileWriter( args[1] );
-            DOMSource domSource = new DOMSource( doc );
-            StreamResult streamResult = new StreamResult( out );
-            TransformerFactory tf = TransformerFactory.newInstance();
-            Transformer serializer = tf.newTransformer();
-            // TODO set encoding from a command argument
-            serializer.setOutputProperty( OutputKeys.ENCODING, "UTF-8" );
-            serializer.setOutputProperty( OutputKeys.INDENT, "yes" );
-            serializer.transform( domSource, streamResult );
-            out.close();
-        }
-        catch ( Exception e )
-        {
-            e.printStackTrace();
-        }
+        DOMSource domSource = new DOMSource( doc );
+        StreamResult streamResult = new StreamResult( new File( args[1] ) );
+        TransformerFactory tf = TransformerFactory.newInstance();
+        Transformer serializer = tf.newTransformer();
+        // TODO set encoding from a command argument
+        serializer.setOutputProperty( OutputKeys.ENCODING, "UTF-8" );
+        serializer.setOutputProperty( OutputKeys.INDENT, "yes" );
+        serializer.transform( domSource, streamResult );
     }
 
     static Document process( File docFile ) throws Exception

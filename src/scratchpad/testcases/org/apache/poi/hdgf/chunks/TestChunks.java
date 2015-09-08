@@ -17,9 +17,14 @@
 
 package org.apache.poi.hdgf.chunks;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
-public final class TestChunks extends TestCase {
+import org.junit.Test;
+
+public final class TestChunks {
 public static final byte[] data_a = new byte[] { 70, 0, 0, 0,
 	-1, -1, -1, -1, 2, 0, 0, 0, 68, 0, 0, 0, 0, 0, 0, 68, 0, 0, 0, 0, 0,
 	0, 0, 2, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
@@ -82,9 +87,9 @@ public static final byte[] data_b = new byte[] { 70, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0
 };
-
+    
+    @Test
 	public void testChunkHeaderA() throws Exception {
-		ChunkFactory cf = new ChunkFactory(11);
 		ChunkHeader h =
 			ChunkHeader.createChunkHeader(11, data_a, 0);
 
@@ -101,8 +106,9 @@ public static final byte[] data_b = new byte[] { 70, 0, 0, 0,
 		assertTrue(header.hasTrailer());
 		assertTrue(header.hasSeparator());
 	}
-	public void testChunkHeaderB() throws Exception {
-		ChunkFactory cf = new ChunkFactory(11);
+	
+    @Test
+    public void testChunkHeaderB() throws Exception {
 		ChunkHeader h =
 			ChunkHeader.createChunkHeader(11, data_b, 0);
 
@@ -120,7 +126,8 @@ public static final byte[] data_b = new byte[] { 70, 0, 0, 0,
 		assertTrue(header.hasSeparator());
 	}
 
-	public void testOneChunk() throws Exception {
+    @Test
+    public void testOneChunk() throws Exception {
 		ChunkFactory cf = new ChunkFactory(11);
 		cf.createChunk(data_a, 0);
 		cf.createChunk(data_b, 0);
@@ -152,7 +159,8 @@ public static final byte[] data_b = new byte[] { 70, 0, 0, 0,
 		assertEquals("0", chunk.commandDefinitions[1].getName());
 	}
 
-	public void testAnotherChunk() throws Exception {
+    @Test
+    public void testAnotherChunk() throws Exception {
 		ChunkFactory cf = new ChunkFactory(11);
 
 		// Go for the 2nd chunk in the stream
@@ -187,7 +195,8 @@ public static final byte[] data_b = new byte[] { 70, 0, 0, 0,
 		assertEquals("0", chunk.commandDefinitions[1].getName());
 	}
 
-	public void testManyChunks() throws Exception {
+    @Test
+    public void testManyChunks() throws Exception {
 		ChunkFactory cf = new ChunkFactory(11);
 		Chunk chunk;
 		int offset = 0;

@@ -17,7 +17,7 @@
 
 package org.apache.poi.hdgf;
 
-import java.io.FileInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -34,6 +34,7 @@ import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LocaleUtil;
 
 /**
  * See
@@ -80,7 +81,7 @@ public final class HDGFDiagram extends POIDocument {
 		dir.createDocumentInputStream("VisioDocument").read(_docstream);
 
 		// Check it's really visio
-		String typeString = new String(_docstream, 0, 20);
+		String typeString = new String(_docstream, 0, 20, LocaleUtil.CHARSET_1252 );
 		if(! typeString.equals(VISIO_HEADER)) {
 			throw new IllegalArgumentException("Wasn't a valid visio document, started with " + typeString);
 		}
@@ -171,7 +172,9 @@ public final class HDGFDiagram extends POIDocument {
 	 * For testing only
 	 */
 	public static void main(String args[]) throws Exception {
-		HDGFDiagram hdgf = new HDGFDiagram(new POIFSFileSystem(new FileInputStream(args[0])));
+	    NPOIFSFileSystem pfs = new NPOIFSFileSystem(new File(args[0]));
+		HDGFDiagram hdgf = new HDGFDiagram(pfs);
 		hdgf.debug();
+		pfs.close();
 	}
 }

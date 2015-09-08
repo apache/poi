@@ -82,6 +82,7 @@ import org.apache.poi.hssf.record.WriteAccessRecord;
 import org.apache.poi.hssf.record.WriteProtectRecord;
 import org.apache.poi.hssf.record.common.UnicodeString;
 import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.ss.formula.EvaluationWorkbook.ExternalName;
 import org.apache.poi.ss.formula.EvaluationWorkbook.ExternalSheet;
 import org.apache.poi.ss.formula.EvaluationWorkbook.ExternalSheetRange;
@@ -2375,7 +2376,7 @@ public final class InternalWorkbook {
         WriteAccessRecord waccess = getWriteAccess();
         /* WriteProtectRecord wprotect =*/ getWriteProtect();
         frec.setReadOnly((short)1);
-        frec.setPassword(FileSharingRecord.hashPassword(password));
+        frec.setPassword((short)CryptoFunctions.createXorVerifier1(password));
         frec.setUsername(username);
         waccess.setUsername(username);
     }
