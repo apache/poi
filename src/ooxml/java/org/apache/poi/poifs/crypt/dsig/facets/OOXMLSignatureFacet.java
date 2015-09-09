@@ -58,6 +58,7 @@ import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.poifs.crypt.dsig.services.RelationshipTransformService;
 import org.apache.poi.poifs.crypt.dsig.services.RelationshipTransformService.RelationshipTransformParameterSpec;
+import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.openxmlformats.schemas.xpackage.x2006.digitalSignature.CTSignatureTime;
@@ -198,7 +199,7 @@ public class OOXMLSignatureFacet extends SignatureFacet {
          * SignatureTime
          */
         DateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.ROOT);
-        fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
+        fmt.setTimeZone(LocaleUtil.TIMEZONE_UTC);
         String nowStr = fmt.format(signatureConfig.getExecutionTime());
         LOG.log(POILogger.DEBUG, "now: " + nowStr);
 

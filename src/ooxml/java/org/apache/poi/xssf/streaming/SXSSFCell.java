@@ -523,6 +523,7 @@ public class SXSSFCell implements Cell {
      * <code>workbook.getCellStyleAt(0)</code>
      * @see org.apache.poi.ss.usermodel.Workbook#getCellStyleAt(short)
      */
+    @SuppressWarnings("resource")
     public CellStyle getCellStyle()
     {
         if(_style == null){
@@ -655,6 +656,7 @@ public class SXSSFCell implements Cell {
             case CELL_TYPE_NUMERIC:
                 if (DateUtil.isCellDateFormatted(this)) {
                     DateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy", LocaleUtil.getUserLocale());
+                    sdf.setTimeZone(LocaleUtil.getUserTimeZone());
                     return sdf.format(getDateCellValue());
                 }
                 return getNumericCellValue() + "";

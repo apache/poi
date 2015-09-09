@@ -45,6 +45,7 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.util.DocumentHelper;
+import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFMap;
 import org.apache.poi.xssf.usermodel.XSSFRow;
@@ -316,6 +317,7 @@ public class XSSFExportToXml implements Comparator<String>{
 
     private String getFormattedDate(XSSFCell cell) {
         DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.ROOT);
+        sdf.setTimeZone(LocaleUtil.getUserTimeZone());
         return sdf.format(cell.getDateCellValue());
     }
 

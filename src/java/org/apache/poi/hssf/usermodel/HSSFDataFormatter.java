@@ -19,7 +19,6 @@ package org.apache.poi.hssf.usermodel;
 
 import java.text.DecimalFormat;
 import java.text.Format;
-import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 import org.apache.poi.ss.usermodel.DataFormatter;
@@ -33,7 +32,7 @@ import org.apache.poi.util.LocaleUtil;
  * codes, etc.
  * <p>
  * Internally, formats will be implemented using subclasses of {@link Format}
- * such as {@link DecimalFormat} and {@link SimpleDateFormat}. Therefore the
+ * such as {@link DecimalFormat} and {@link java.text.SimpleDateFormat}. Therefore the
  * formats used by this class must obey the same pattern rules as these Format
  * subclasses. This means that only legal number pattern characters ("0", "#",
  * ".", "," etc.) may appear in number formats. Other characters can be

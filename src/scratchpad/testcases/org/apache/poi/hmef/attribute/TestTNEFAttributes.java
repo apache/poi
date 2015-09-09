@@ -20,15 +20,15 @@ package org.apache.poi.hmef.attribute;
 import java.io.ByteArrayInputStream;
 import java.text.DateFormat;
 import java.util.Locale;
-import java.util.TimeZone;
-
-import junit.framework.TestCase;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hmef.Attachment;
 import org.apache.poi.hmef.HMEFMessage;
 import org.apache.poi.hsmf.datatypes.MAPIProperty;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LocaleUtil;
+
+import junit.framework.TestCase;
 
 public final class TestTNEFAttributes extends TestCase {
    private static final POIDataSamples _samples = POIDataSamples.getHMEFInstance();
@@ -162,7 +162,7 @@ public final class TestTNEFAttributes extends TestCase {
       DateFormat fmt = DateFormat.getDateTimeInstance(
             DateFormat.MEDIUM, DateFormat.MEDIUM, Locale.UK
       );
-      fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
+      fmt.setTimeZone(LocaleUtil.TIMEZONE_UTC);
       assertEquals("28-Apr-2010 12:40:56", fmt.format(date.getDate()));
 	}
 	

@@ -38,16 +38,10 @@ public class CellDateFormatter extends CellFormatter {
     private final DateFormat dateFmt;
     private String sFmt;
 
-    private final long EXCEL_EPOCH_TIME;
-    private final Date EXCEL_EPOCH_DATE;
+    private final Calendar EXCEL_EPOCH_CAL =
+        LocaleUtil.getLocaleCalendar(1904, 0, 1);
 
     private static /* final */ CellDateFormatter SIMPLE_DATE = null;
-
-    {
-        Calendar c = LocaleUtil.getLocaleCalendar(1904, 0, 1, 0, 0, 0);
-        EXCEL_EPOCH_DATE = c.getTime();
-        EXCEL_EPOCH_TIME = c.getTimeInMillis();
-    }
 
     private class DatePartHandler implements CellFormatPart.PartHandler {
         private int mStart = -1;
@@ -153,6 +147,7 @@ public class CellDateFormatter extends CellFormatter {
         // See https://issues.apache.org/bugzilla/show_bug.cgi?id=53369
         String ptrn = descBuf.toString().replaceAll("((y)(?!y))(?<!yy)", "yy");
         dateFmt = new SimpleDateFormat(ptrn, LocaleUtil.getUserLocale());
+        dateFmt.setTimeZone(LocaleUtil.getUserTimeZone());
     }
 
     /** {@inheritDoc} */
@@ -161,15 +156,18 @@ public class CellDateFormatter extends CellFormatter {
             value = 0.0;
         if (value instanceof Number) {
             Number num = (Number) value;
-            double v = num.doubleValue();
-            if (v == 0.0)
-                value = EXCEL_EPOCH_DATE;
-            else
-                value = new Date((long) (EXCEL_EPOCH_TIME + v));
+            long v = num.longValue();
+            if (v == 0L) {
+                value = EXCEL_EPOCH_CAL.getTime();
+            } else {
+                Calendar c = (Calendar)EXCEL_EPOCH_CAL.clone();
+                c.add(Calendar.SECOND, (int)(v / 1000));
+                c.add(Calendar.MILLISECOND, (int)(v % 1000));
+                value = c.getTime();
+            }
         }
 
-        AttributedCharacterIterator it = dateFmt.formatToCharacterIterator(
-                value);
+        AttributedCharacterIterator it = dateFmt.formatToCharacterIterator(value);
         boolean doneAm = false;
         boolean doneMillis = false;
 
@@ -219,7 +217,7 @@ public class CellDateFormatter extends CellFormatter {
      */
     public void simpleValue(StringBuffer toAppendTo, Object value) {
         synchronized (CellDateFormatter.class) {
-            if (SIMPLE_DATE == null || !SIMPLE_DATE.EXCEL_EPOCH_DATE.equals(EXCEL_EPOCH_DATE)) {
+            if (SIMPLE_DATE == null || !SIMPLE_DATE.EXCEL_EPOCH_CAL.equals(EXCEL_EPOCH_CAL)) {
                 SIMPLE_DATE = new CellDateFormatter("mm/d/y");
             }
         }

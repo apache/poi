@@ -20,7 +20,8 @@ package org.apache.poi.hmef;
 import java.text.DateFormat;
 import java.util.List;
 import java.util.Locale;
-import java.util.TimeZone;
+
+import org.apache.poi.util.LocaleUtil;
 
 public final class TestAttachments extends HMEFTest {
    private HMEFMessage quick;
@@ -85,7 +86,7 @@ public final class TestAttachments extends HMEFTest {
       DateFormat fmt = DateFormat.getDateTimeInstance(
             DateFormat.MEDIUM, DateFormat.MEDIUM, Locale.UK
       );
-      fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
+      fmt.setTimeZone(LocaleUtil.TIMEZONE_UTC);
       
       // They should all have the same date on them
       assertEquals("28-Apr-2010 12:40:56", fmt.format( attachments.get(0).getModifiedDate()));
