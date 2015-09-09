@@ -33,11 +33,11 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 public class ReSave {
     public static void main(String[] args) throws Exception {
         boolean initDrawing = false;
-        for(String arg : args) {
-            if(arg.equals("-dg")) initDrawing = true;
+        for(String filename : args) {
+            if(filename.equals("-dg")) initDrawing = true;
             else {
-                System.out.print("reading " + arg + "...");
-                FileInputStream is = new FileInputStream(arg);
+                System.out.print("reading " + filename + "...");
+                FileInputStream is = new FileInputStream(filename);
                 HSSFWorkbook wb = new HSSFWorkbook(is);
                 try {
                     System.out.println("done");
@@ -49,7 +49,7 @@ public class ReSave {
                         }
                     }
     
-                    String outputFile = arg.replace(".xls", "-saved.xls");
+                    String outputFile = filename.replace(".xls", "-saved.xls");
                     System.out.print("saving to " + outputFile + "...");
                     FileOutputStream out = new FileOutputStream(outputFile);
                     try {
