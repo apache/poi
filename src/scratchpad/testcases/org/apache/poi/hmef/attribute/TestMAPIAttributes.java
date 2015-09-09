@@ -21,14 +21,14 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.text.DateFormat;
 import java.util.Locale;
-import java.util.TimeZone;
-
-import junit.framework.TestCase;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hmef.HMEFMessage;
 import org.apache.poi.hsmf.datatypes.MAPIProperty;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LocaleUtil;
+
+import junit.framework.TestCase;
 
 public final class TestMAPIAttributes extends TestCase {
    private static final POIDataSamples _samples = POIDataSamples.getHMEFInstance();
@@ -161,7 +161,7 @@ public final class TestMAPIAttributes extends TestCase {
       DateFormat fmt = DateFormat.getDateTimeInstance(
             DateFormat.MEDIUM, DateFormat.MEDIUM, Locale.UK
       );
-      fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
+      fmt.setTimeZone(LocaleUtil.TIMEZONE_UTC);
       assertEquals("15-Dec-2010 14:46:31", fmt.format(date.getDate()));
       
       // RTF

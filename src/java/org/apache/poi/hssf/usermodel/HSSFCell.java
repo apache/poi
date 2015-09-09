@@ -17,7 +17,6 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -53,8 +52,6 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.NumberToTextConverter;
 import org.apache.poi.util.LocaleUtil;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 
 /**
  * High level representation of a cell in a row of a spreadsheet.
@@ -69,8 +66,6 @@ import org.apache.poi.util.POILogger;
  * <p>
  */
 public class HSSFCell implements Cell {
-    private static POILogger log = POILogFactory.getLogger(HSSFCell.class);
-
     private static final String FILE_FORMAT_NAME  = "BIFF8";
     /**
      * The maximum  number of columns in BIFF8
@@ -990,7 +985,8 @@ public class HSSFCell implements Cell {
             case CELL_TYPE_NUMERIC:
                 //TODO apply the dataformat for this cell
                 if (HSSFDateUtil.isCellDateFormatted(this)) {
-                    DateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy", LocaleUtil.getUserLocale());
+                    SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy", LocaleUtil.getUserLocale());
+                    sdf.setTimeZone(LocaleUtil.getUserTimeZone());
                     return sdf.format(getDateCellValue());
                 }
 				return  String.valueOf(getNumericCellValue());

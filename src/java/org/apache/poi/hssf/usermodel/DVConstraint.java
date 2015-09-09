@@ -20,7 +20,6 @@ package org.apache.poi.hssf.usermodel;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
 import java.util.regex.Pattern;
 
 import org.apache.poi.hssf.model.HSSFFormulaParser;
@@ -32,6 +31,7 @@ import org.apache.poi.ss.formula.ptg.NumberPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.ptg.StringPtg;
 import org.apache.poi.ss.usermodel.DataValidationConstraint;
+import org.apache.poi.util.LocaleUtil;
 
 /**
  * Data Validation Constraint
@@ -180,7 +180,11 @@ public class DVConstraint implements DataValidationConstraint {
 			throw new IllegalArgumentException("expr1 must be supplied");
 		}
 		OperatorType.validateSecondArg(comparisonOperator, expr2);
-		SimpleDateFormat df = dateFormat == null ? null : new SimpleDateFormat(dateFormat, Locale.ROOT);
+		SimpleDateFormat df = null;
+		if (dateFormat != null) {
+		    df = new SimpleDateFormat(dateFormat, LocaleUtil.getUserLocale());
+		    df.setTimeZone(LocaleUtil.getUserTimeZone());
+		}
 		
 		// formula1 and value1 are mutually exclusive
 		String formula1 = getFormulaFromTextExpression(expr1);
@@ -392,7 +396,8 @@ public class DVConstraint implements DataValidationConstraint {
 		return new FormulaPair(formula1, formula2);
 	}
 
-	private Ptg[] createListFormula(HSSFSheet sheet) {
+    @SuppressWarnings("resource")
+    private Ptg[] createListFormula(HSSFSheet sheet) {
 
 		if (_explicitListValues == null) {
             HSSFWorkbook wb = sheet.getWorkbook();
@@ -417,6 +422,7 @@ public class DVConstraint implements DataValidationConstraint {
 	 * @return The parsed token array representing the formula or value specified. 
 	 * Empty array if both formula and value are <code>null</code>
 	 */
+    @SuppressWarnings("resource")
 	private static Ptg[] convertDoubleFormula(String formula, Double value, HSSFSheet sheet) {
 		if (formula == null) {
 			if (value == null) {

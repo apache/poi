@@ -241,6 +241,7 @@ public final class TestHSSFDataFormatter {
 			String monthPtrn = fmt.indexOf("mmmm") != -1 ? "MMMM" : "MMM";
 			// this line is intended to compute how "July" would look like in the current locale
 			SimpleDateFormat sdf = new SimpleDateFormat(monthPtrn, LocaleUtil.getUserLocale());
+			sdf.setTimeZone(LocaleUtil.getUserTimeZone());
 			Calendar calDef = LocaleUtil.getLocaleCalendar(2010, 6, 15, 0, 0, 0);
 			String jul = sdf.format(calDef.getTime());
 			// special case for MMMMM = 1st letter of month name
