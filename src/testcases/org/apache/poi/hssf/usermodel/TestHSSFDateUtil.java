@@ -42,13 +42,28 @@ import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.model.InternalWorkbook;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.util.LocaleUtil;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
  * Class TestHSSFDateUtil
  */
-public final class TestHSSFDateUtil {
+public class TestHSSFDateUtil {
 
+    static TimeZone userTimeZone;
+    
+    @BeforeClass
+    public static void setCEST() {
+        userTimeZone = LocaleUtil.getUserTimeZone();
+        LocaleUtil.setUserTimeZone(TimeZone.getTimeZone("CEST"));
+    }
+    
+    @AfterClass
+    public static void resetTimeZone() {
+        LocaleUtil.setUserTimeZone(userTimeZone);
+    }
+    
     /**
      * Checks the date conversion functions in the HSSFDateUtil class.
      */
@@ -136,9 +151,9 @@ public final class TestHSSFDateUtil {
 
             cal.set(Calendar.HOUR_OF_DAY, hour);
             Date javaDate = HSSFDateUtil.getJavaDate(excelDate, false);
+            double actDate = HSSFDateUtil.getExcelDate(javaDate, false);
             assertEquals("Checking " + hour + " hours on Daylight Saving Time start date",
-                    excelDate,
-                    HSSFDateUtil.getExcelDate(javaDate, false), oneMinute);
+                    excelDate, actDate, oneMinute);
         }
     }
 
