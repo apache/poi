@@ -115,6 +115,7 @@ public final class TestText {
             // update: now the locale will be (if not set otherwise) always Locale.getDefault() (see LocaleUtil)
             DateFormatSymbols dfs = DateFormatSymbols.getInstance(LocaleUtil.getUserLocale());
             SimpleDateFormat sdf = new SimpleDateFormat("MMMM", dfs);
+            sdf.setTimeZone(LocaleUtil.getUserTimeZone());
             String november = sdf.format(LocaleUtil.getLocaleCalendar(2015,10,1).getTime());
     
             // Again with Java style
