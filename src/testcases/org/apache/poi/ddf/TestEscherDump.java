@@ -23,12 +23,15 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.LocaleUtil;
 import org.junit.Test;
 
+@SuppressWarnings("resource")
 public class TestEscherDump {
     @Test
     public void testSimple() throws Exception {
@@ -64,8 +67,8 @@ public class TestEscherDump {
      * to redirect stdout to avoid spamming the console with output
      */
     private static class NullPrinterStream extends PrintStream {
-        private NullPrinterStream() {
-            super(new NullOutputStream());
+        private NullPrinterStream() throws UnsupportedEncodingException {
+            super(new NullOutputStream(),true,LocaleUtil.CHARSET_1252.name());
         }
         /**
          * Implementation of an OutputStream which does nothing, used

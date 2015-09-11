@@ -17,23 +17,27 @@
 
 package org.apache.poi.poifs.property;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import junit.framework.TestCase;
-
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.poifs.storage.RawDataUtil;
+import org.apache.poi.util.LocaleUtil;
+import org.junit.Test;
 
 /**
  * Class to test RootProperty functionality
  *
  * @author Marc Johnson
  */
-public final class TestRootProperty extends TestCase {
+public final class TestRootProperty {
 	private RootProperty _property;
 	private byte[] _testblock;
 
+	@Test
 	public void testConstructor() throws IOException {
 		createBasicRootProperty();
 		verifyProperty();
@@ -67,7 +71,7 @@ public final class TestRootProperty extends TestCase {
 		for (; index < 0x80; index++) {
 			_testblock[index] = (byte) 0;
 		}
-		byte[] name_bytes = name.getBytes();
+		byte[] name_bytes = name.getBytes(LocaleUtil.CHARSET_1252);
 
 		for (index = 0; index < limit; index++) {
 			_testblock[index * 2] = name_bytes[index];
@@ -86,6 +90,7 @@ public final class TestRootProperty extends TestCase {
 		}
 	}
 
+	@Test
 	public void testSetSize() {
 		for (int j = 0; j < 10; j++) {
 			createBasicRootProperty();
@@ -94,6 +99,7 @@ public final class TestRootProperty extends TestCase {
 		}
 	}
 
+	@Test
 	public void testReadingConstructor() {
 		String[] input = {
 			"52 00 6F 00 6F 00 74 00 20 00 45 00 6E 00 74 00 72 00 79 00 00 00 00 00 00 00 00 00 00 00 00 00",

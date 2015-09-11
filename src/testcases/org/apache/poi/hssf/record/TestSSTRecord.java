@@ -18,6 +18,9 @@
 package org.apache.poi.hssf.record;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -28,21 +31,22 @@ import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.Iterator;
 
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
-
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.common.UnicodeString;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.util.HexRead;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LocaleUtil;
+import org.junit.Test;
+
+import junit.framework.AssertionFailedError;
 
 /**
  * @author Marc Johnson (mjohnson at apache dot org)
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class TestSSTRecord extends TestCase {
+public final class TestSSTRecord {
 
     /**
      * decodes hexdump files and concatenates the results
@@ -55,7 +59,7 @@ public final class TestSSTRecord extends TestCase {
         for (int i = 0; i < nFiles; i++) {
             String sampleFileName = hexDumpFileNames[i];
             InputStream is = HSSFTestDataSamples.openSampleFileStream(sampleFileName);
-            BufferedReader br = new BufferedReader(new InputStreamReader(is));
+            BufferedReader br = new BufferedReader(new InputStreamReader(is, LocaleUtil.CHARSET_1252));
 
             while (true) {
                 String line = br.readLine();
@@ -86,6 +90,7 @@ public final class TestSSTRecord extends TestCase {
      * SST is often split over several {@link ContinueRecord}s
      * @throws IOException 
      */
+    @Test
     public void testContinuedRecord() throws IOException {
         byte[] origData;
         SSTRecord record;
@@ -109,20 +114,20 @@ public final class TestSSTRecord extends TestCase {
         assertEquals( 5249, record.getNumUniqueStrings() );
         assertEquals( 5249, record.countStrings() );
         ser_output = record.serialize();
-        if (false) { // set true to observe make sure areSameSSTs() is working
-            ser_output[11000] = 'X';
-        }
+//        if (false) { // set true to observe make sure areSameSSTs() is working
+//            ser_output[11000] = 'X';
+//        }
 
         SSTRecord rec2 = createSSTFromRawData(ser_output);
         if (!areSameSSTs(record, rec2)) {
             throw new AssertionFailedError("large SST re-serialized incorrectly");
         }
-        if (false) {
-            // TODO - trivial differences in ContinueRecord break locations
-            // Sample data should be checked against what most recent Excel version produces.
-            // maybe tweaks are required in ContinuableRecordOutput
-            assertArrayEquals(origData, ser_output);
-        }
+//        if (false) {
+//            // TODO - trivial differences in ContinueRecord break locations
+//            // Sample data should be checked against what most recent Excel version produces.
+//            // maybe tweaks are required in ContinuableRecordOutput
+//            assertArrayEquals(origData, ser_output);
+//        }
     }
 
     private boolean areSameSSTs(SSTRecord a, SSTRecord b) {
@@ -147,7 +152,7 @@ public final class TestSSTRecord extends TestCase {
      *
      * @exception IOException
      */
-
+    @Test
     public void testHugeStrings() {
         SSTRecord record = new SSTRecord();
         byte[][] bstrings =
@@ -161,7 +166,7 @@ public final class TestSSTRecord extends TestCase {
         for ( int k = 0; k < bstrings.length; k++ )
         {
             Arrays.fill( bstrings[k], (byte) ( 'a' + k ) );
-            strings[k] = new UnicodeString( new String(bstrings[k]) );
+            strings[k] = new UnicodeString( new String(bstrings[k], LocaleUtil.CHARSET_1252) );
             record.addString( strings[k] );
             total_length += 3 + bstrings[k].length;
         }
@@ -198,7 +203,7 @@ public final class TestSSTRecord extends TestCase {
             if ( ( bstrings[k].length % 2 ) == 1 )
             {
                 Arrays.fill( bstrings[k], (byte) ( 'a' + k ) );
-                strings[k] = new UnicodeString( new String(bstrings[k]) );
+                strings[k] = new UnicodeString( new String(bstrings[k], LocaleUtil.CHARSET_1252) );
             }
             else
             {
@@ -230,6 +235,7 @@ public final class TestSSTRecord extends TestCase {
     /**
      * test SSTRecord boundary conditions
      */
+    @Test
     public void testSSTRecordBug() {
         // create an SSTRecord and write a certain pattern of strings
         // to it ... then serialize it and verify the content
@@ -265,6 +271,7 @@ public final class TestSSTRecord extends TestCase {
     /**
      * test simple addString
      */
+    @Test
     public void testSimpleAddString() {
         SSTRecord record = new SSTRecord();
         UnicodeString s1 = new UnicodeString("Hello world");
@@ -310,6 +317,7 @@ public final class TestSSTRecord extends TestCase {
     /**
      * test simple constructor
      */
+    @Test
     public void testSimpleConstructor() {
         SSTRecord record = new SSTRecord();
 
@@ -334,13 +342,16 @@ public final class TestSSTRecord extends TestCase {
     /**
      * Tests that workbooks with rich text that duplicates a non rich text cell can be read and written.
      */
-    public void testReadWriteDuplicatedRichText1() {
+    @Test
+    public void testReadWriteDuplicatedRichText1() throws Exception {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("duprich1.xls");
         HSSFSheet sheet = wb.getSheetAt( 1 );
         assertEquals( "01/05 (Wed)", sheet.getRow( 0 ).getCell(8 ).getStringCellValue() );
         assertEquals( "01/05 (Wed)", sheet.getRow( 1 ).getCell(8 ).getStringCellValue() );
 
-        HSSFTestDataSamples.writeOutAndReadBack(wb);
+        HSSFTestDataSamples.writeOutAndReadBack(wb).close();
+        
+        wb.close();
 
         // test the second file.
         wb = HSSFTestDataSamples.openSampleWorkbook("duprich2.xls");
@@ -353,7 +364,9 @@ public final class TestSSTRecord extends TestCase {
         assertEquals( "Testing", sheet.getRow( row++ ).getCell(0 ).getStringCellValue() );
         assertEquals( "Testing", sheet.getRow( row++ ).getCell(0 ).getStringCellValue() );
 
-        HSSFTestDataSamples.writeOutAndReadBack(wb);
+        HSSFTestDataSamples.writeOutAndReadBack(wb).close();
+        
+        wb.close();
     }
 
     /**
@@ -1447,7 +1460,7 @@ public final class TestSSTRecord extends TestCase {
     /**
      * deep comparison of two SST records
      */
-    public static void assertEquals(SSTRecord expected, SSTRecord actual){
+    private static void assertRecordEquals(SSTRecord expected, SSTRecord actual){
         assertEquals("number of strings", expected.getNumStrings(), actual.getNumStrings());
         assertEquals("number of unique strings", expected.getNumUniqueStrings(), actual.getNumUniqueStrings());
         assertEquals("count of strings", expected.countStrings(), actual.countStrings());
@@ -1458,8 +1471,8 @@ public final class TestSSTRecord extends TestCase {
             assertTrue("String at idx=" + k, us1.equals(us2));
         }
     }
-
-
+    
+    @Test
     public void test50779_1(){
         byte[] bytes = HexRead.readFromString(data_50779_1);
 
@@ -1475,9 +1488,10 @@ public final class TestSSTRecord extends TestCase {
         SSTRecord dst = new SSTRecord(in);
         assertEquals(81, dst.getNumStrings());
 
-        assertEquals(src, dst);
+        assertRecordEquals(src, dst);
     }
 
+    @Test
     public void test50779_2() {
         byte[] bytes = HexRead.readFromString(data_50779_2);
 
@@ -1493,9 +1507,10 @@ public final class TestSSTRecord extends TestCase {
         SSTRecord dst = new SSTRecord(in);
         assertEquals(81, dst.getNumStrings());
 
-        assertEquals(src, dst);
+        assertRecordEquals(src, dst);
     }
 
+    @Test
     public void test57456() {
         byte[] bytes = HexRead.readFromString("FC, 00, 08, 00, 00, 00, 00, 00, E1, 06, 00, 00");
         RecordInputStream in = TestcaseRecordInputStream.create(bytes);

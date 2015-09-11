@@ -16,6 +16,9 @@
 ==================================================================== */
 package org.apache.poi.hwpf.converter;
 
+import static org.apache.poi.POITestCase.assertContains;
+import static org.junit.Assert.assertFalse;
+
 import java.io.StringWriter;
 
 import javax.xml.transform.OutputKeys;
@@ -25,16 +28,16 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.poi.POIDataSamples;
-import org.apache.poi.POITestCase;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.usermodel.PictureType;
 import org.apache.poi.util.XMLHelper;
+import org.junit.Test;
 import org.w3c.dom.Document;
 
 /**
  * Test cases for {@link WordToHtmlConverter}
  */
-public class TestWordToHtmlConverter extends POITestCase
+public class TestWordToHtmlConverter
 {
     private static String getHtmlText( final String sampleFileName )
             throws Exception
@@ -82,12 +85,14 @@ public class TestWordToHtmlConverter extends POITestCase
         return result;
     }
 
+    @Test
     public void testAIOOBTap() throws Exception
     {
         String result = getHtmlText( "AIOOB-Tap.doc");
         assertContains(result.substring( 0, 6000 ), "<table class=\"t1\">");
     }
 
+    @Test
     public void testBug33519() throws Exception
     {
         String result = getHtmlText( "Bug33519.doc");
@@ -98,6 +103,7 @@ public class TestWordToHtmlConverter extends POITestCase
                 "\u042F\u0432\u043E\u0440 \u0410\u0441\u0435\u043D\u043E\u0432");
     }
 
+    @Test
     public void testBug46610_2() throws Exception
     {
         String result = getHtmlText( "Bug46610_2.doc");
@@ -106,6 +112,7 @@ public class TestWordToHtmlConverter extends POITestCase
                 "012345678911234567892123456789312345678941234567890123456789112345678921234567893123456789412345678");
     }
 
+    @Test
     public void testBug46817() throws Exception
     {
         String result = getHtmlText( "Bug46817.doc");
@@ -113,6 +120,7 @@ public class TestWordToHtmlConverter extends POITestCase
         assertContains(result, substring);
     }
 
+    @Test
     public void testBug47286() throws Exception
     {
         String result = getHtmlText( "Bug47286.doc");
@@ -124,11 +132,13 @@ public class TestWordToHtmlConverter extends POITestCase
         assertContains(result, "mfa.gov.cy");
     }
 
+    @Test
     public void testBug48075() throws Exception
     {
         getHtmlText( "Bug48075.doc");
     }
 
+    @Test
     public void testBug52583() throws Exception
     {
         String result = getHtmlText( "Bug52583.doc");
@@ -137,12 +147,14 @@ public class TestWordToHtmlConverter extends POITestCase
                 "<select><option selected>riri</option><option>fifi</option><option>loulou</option></select>");
     }
 
+    @Test
     public void testBug53182() throws Exception
     {
         String result = getHtmlText( "Bug53182.doc");
         assertFalse(result.contains( "italic" ));
     }
 
+    @Test
     public void testDocumentProperties() throws Exception
     {
         String result = getHtmlText( "documentProperties.doc");
@@ -152,6 +164,7 @@ public class TestWordToHtmlConverter extends POITestCase
                 "<meta content=\"This is document keywords\" name=\"keywords\">");
     }
 
+    @Test
     public void testEmailhyperlink() throws Exception
     {
         String result = getHtmlText( "Bug47286.doc");
@@ -159,6 +172,7 @@ public class TestWordToHtmlConverter extends POITestCase
         assertContains(result, substring);
     }
 
+    @Test
     public void testEndnote() throws Exception
     {
         String result = getHtmlText( "endingnote.doc");
@@ -172,6 +186,7 @@ public class TestWordToHtmlConverter extends POITestCase
         assertContains(result, "Ending note text");
     }
 
+    @Test
     public void testEquation() throws Exception
     {
         String result = getHtmlText( "equation.doc");
@@ -179,6 +194,7 @@ public class TestWordToHtmlConverter extends POITestCase
         assertContains(result, "<!--Image link to '0.emf' can be here-->");
     }
 
+    @Test
     public void testHyperlink() throws Exception
     {
         String result = getHtmlText( "hyperlink.doc");
@@ -189,11 +205,13 @@ public class TestWordToHtmlConverter extends POITestCase
         assertContains(result, "</a><span>; after text</span>");
     }
 
+    @Test
     public void testInnerTable() throws Exception
     {
         getHtmlText( "innertable.doc");
     }
 
+    @Test
     public void testListsMargins() throws Exception
     {
         String result = getHtmlText( "lists-margins.doc");
@@ -210,11 +228,13 @@ public class TestWordToHtmlConverter extends POITestCase
                 ".p4{text-indent:-0.59652776in;margin-left:-0.70069444in;");
     }
 
+    @Test
     public void testO_kurs_doc() throws Exception
     {
         getHtmlText( "o_kurs.doc");
     }
 
+    @Test
     public void testPageref() throws Exception
     {
         String result = getHtmlText( "pageref.doc");
@@ -224,6 +244,7 @@ public class TestWordToHtmlConverter extends POITestCase
         assertContains(result, "1");
     }
 
+    @Test
     public void testPicture() throws Exception
     {
         String result = getHtmlText( "picture.doc", true);
@@ -238,6 +259,7 @@ public class TestWordToHtmlConverter extends POITestCase
         assertContains(result, "width:3.4125in;height:2.325in;");
     }
 
+    @Test
     public void testPicturesEscher() throws Exception
     {
         String result = getHtmlText( "pictures_escher.doc", true);
@@ -245,6 +267,7 @@ public class TestWordToHtmlConverter extends POITestCase
         assertContains(result, "<img src=\"s808.PNG\">");
     }
 
+    @Test
     public void testTableMerges() throws Exception
     {
         String result = getHtmlText( "table-merges.doc");
@@ -253,6 +276,7 @@ public class TestWordToHtmlConverter extends POITestCase
         assertContains(result, "<td class=\"td2\" colspan=\"2\">");
     }
 
+    @Test
     public void testBug52420() throws Exception {
         String result = getHtmlText( "52420.doc");
 

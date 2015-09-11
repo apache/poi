@@ -1025,6 +1025,7 @@ under the License.
                 <syspropertyset refid="junit.properties"/>
                 <jvmarg value="-ea"/>
                 <jvmarg value="-Xmx256m"/>
+            	<!-- jvmarg value="-Duser.timezone=UTC"/ -->
                 <formatter type="plain"/>
                 <formatter type="xml"/>
                 <batchtest todir="${main.reports.test}">
@@ -1065,6 +1066,7 @@ under the License.
                 <classpath refid="test.scratchpad.classpath"/>
                 <syspropertyset refid="junit.properties"/>
                 <jvmarg value="-ea"/>
+            	<!-- jvmarg value="-Duser.timezone=UTC"/ -->
                 <!--
                   YK: ensure that JUnit has enough memory to run tests.
                   Without the line below tests fail on Mac OS X with jdk-1.6.26
@@ -1107,6 +1109,7 @@ under the License.
                   <syspropertyset refid="junit.properties"/>
               	  <jvmarg value="-Xmx768M"/>
                   <jvmarg value="-ea"/>
+              	  <!-- jvmarg value="-Duser.timezone=UTC"/ -->
                   <formatter type="plain"/>
                   <formatter type="xml"/>
                   <batchtest todir="${ooxml.reports.test}">
@@ -1747,8 +1750,8 @@ under the License.
         	<fileset dir="${main.output.dir}"/>
         	<fileset dir="${scratchpad.output.dir}"/>
         	<fileset dir="${ooxml.output.dir}"/>
-        	<!--
         	<fileset dir="${main.output.test.dir}"/>
+        	<!--
         	<fileset dir="${scratchpad.output.test.dir}"/>
         	<fileset dir="${ooxml.output.test.dir}"/>
         	-->

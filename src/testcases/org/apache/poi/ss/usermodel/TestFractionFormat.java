@@ -17,35 +17,34 @@
 
 package org.apache.poi.ss.usermodel;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 
-import junit.framework.TestCase;
-
 import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.DataFormatter;
-import org.apache.poi.ss.usermodel.FormulaEvaluator;
-import org.apache.poi.ss.usermodel.FractionFormat;
-import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.util.LocaleUtil;
+import org.junit.Test;
 
 /**
  * Tests for the Fraction Formatting part of DataFormatter.
  * Largely taken from bug #54686
  */
-public final class TestFractionFormat extends TestCase {
-      public void testSingle() throws Exception {
+public final class TestFractionFormat {
+    @Test
+    public void testSingle() throws Exception {
         FractionFormat f = new FractionFormat("", "##");
         double val = 321.321;
         String ret = f.format(val);
         assertEquals("26027/81", ret);
     }
      
+    @Test
     public void testTruthFile() throws Exception {
         File truthFile = HSSFTestDataSamples.getSampleFile("54686_fraction_formats.txt");
-        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(truthFile)));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(truthFile), LocaleUtil.CHARSET_1252));
         Workbook wb = HSSFTestDataSamples.openSampleWorkbook("54686_fraction_formats.xls");
         Sheet sheet = wb.getSheetAt(0);
         DataFormatter formatter = new DataFormatter();
@@ -73,6 +72,7 @@ public final class TestFractionFormat extends TestCase {
             }
             truthLine = reader.readLine();
         }
+        wb.close();
         reader.close();
     }
 

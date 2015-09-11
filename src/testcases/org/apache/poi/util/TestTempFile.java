@@ -16,36 +16,42 @@
 ==================================================================== */
 package org.apache.poi.util;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+
+import org.junit.Test;
 
 /**
  * @author Glen Stampoultzis
  */
-public class TestTempFile extends TestCase {
-    TempFile tempFile;
-
+public class TestTempFile {
+    @Test
     public void testCreateTempFile()
             throws Exception
     {
         File tempFile = TempFile.createTempFile("test", ".txt");
-        FileWriter w = new FileWriter(tempFile);
-        w.write("testing");
-        w.close();
+        FileOutputStream fos = new FileOutputStream(tempFile);
+        fos.write(1);
+        fos.close();
         assertTrue(tempFile.exists());
         assertEquals("poifiles", tempFile.getParentFile().getName());
 
         // Can't think of a good way to check whether a file is actually deleted since it would require the VM to stop.
     }
     
+    @Test
     public void testConstructor() {
         // can currently be constructed...
         new TempFile();
     }
     
+    @Test(expected=IllegalArgumentException.class)
     public void testSetTempFileCreationStrategy() throws IOException {
         TempFile.setTempFileCreationStrategy(new TempFile.DefaultTempFileCreationStrategy());
         
@@ -57,11 +63,6 @@ public class TestTempFile extends TestCase {
         assertNotNull(file1);
         assertTrue(file1.delete());
         
-        try {
-            TempFile.setTempFileCreationStrategy(null);
-            fail("Expecting an exception here");
-        } catch (IllegalArgumentException e) {
-            // expecting an exception here...
-        }
+        TempFile.setTempFileCreationStrategy(null);
     }
 }
