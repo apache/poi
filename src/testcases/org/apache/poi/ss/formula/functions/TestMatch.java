@@ -17,10 +17,6 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import junit.framework.TestCase;
-
-import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.formula.eval.AreaEval;
 import org.apache.poi.ss.formula.eval.BoolEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
@@ -28,7 +24,8 @@ import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.NumericValueEval;
 import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
-import org.apache.poi.ss.usermodel.CellValue;
+
+import junit.framework.TestCase;
 
 /**
  * Test cases for MATCH()
@@ -40,14 +37,21 @@ public final class TestMatch extends TestCase {
 	/** greater than or equal to */
 	private static final NumberEval MATCH_SMALLEST_GTE = new NumberEval(-1);
 
+    private static final StringEval MATCH_INVALID = new StringEval("blabla");
 
 	private static ValueEval invokeMatch(ValueEval lookup_value, ValueEval lookup_array, ValueEval match_type) {
 		ValueEval[] args = { lookup_value, lookup_array, match_type, };
 		return new Match().evaluate(args, -1, (short)-1);
 	}
-	private static void confirmInt(int expected, ValueEval actualEval) {
+
+    private static ValueEval invokeMatch(ValueEval lookup_value, ValueEval lookup_array) {
+        ValueEval[] args = { lookup_value, lookup_array, };
+        return new Match().evaluate(args, -1, (short)-1);
+    }
+
+    private static void confirmInt(int expected, ValueEval actualEval) {
 		if(!(actualEval instanceof NumericValueEval)) {
-			fail("Expected numeric result");
+			fail("Expected numeric result but had " + actualEval);
 		}
 		NumericValueEval nve = (NumericValueEval)actualEval;
 		assertEquals(expected, nve.getNumberValue(), 0);
@@ -66,6 +70,7 @@ public final class TestMatch extends TestCase {
 		AreaEval ae = EvalFactory.createAreaEval("A1:A5", values);
 
 		confirmInt(2, invokeMatch(new NumberEval(5), ae, MATCH_LARGEST_LTE));
+        confirmInt(2, invokeMatch(new NumberEval(5), ae));
 		confirmInt(2, invokeMatch(new NumberEval(5), ae, MATCH_EXACT));
 		confirmInt(4, invokeMatch(new NumberEval(10), ae, MATCH_LARGEST_LTE));
 		confirmInt(3, invokeMatch(new NumberEval(10), ae, MATCH_EXACT));
@@ -89,6 +94,7 @@ public final class TestMatch extends TestCase {
 		confirmInt(2, invokeMatch(new NumberEval(10), ae, MATCH_EXACT));
 		confirmInt(4, invokeMatch(new NumberEval(9), ae, MATCH_SMALLEST_GTE));
 		confirmInt(1, invokeMatch(new NumberEval(20), ae, MATCH_SMALLEST_GTE));
+		confirmInt(5, invokeMatch(new NumberEval(3), ae, MATCH_SMALLEST_GTE));
 		assertEquals(ErrorEval.NA, invokeMatch(new NumberEval(20), ae, MATCH_EXACT));
 		assertEquals(ErrorEval.NA, invokeMatch(new NumberEval(26), ae, MATCH_SMALLEST_GTE));
 	}
@@ -250,5 +256,23 @@ public final class TestMatch extends TestCase {
 			// some other error ??
 			throw e;
 		}
+	}
+	
+	public void testInvalidMatchType() {
+
+        ValueEval[] values = {
+            new NumberEval(4),
+            new NumberEval(5),
+            new NumberEval(10),
+            new NumberEval(10),
+            new NumberEval(25),
+        };
+
+        AreaEval ae = EvalFactory.createAreaEval("A1:A5", values);
+
+        confirmInt(2, invokeMatch(new NumberEval(5), ae, MATCH_LARGEST_LTE));
+        
+        assertEquals("Should return #REF! for invalid match type", 
+                ErrorEval.REF_INVALID, invokeMatch(new StringEval("Ben"), ae, MATCH_INVALID));
 	}
 }
