@@ -18,15 +18,13 @@
 package org.apache.poi.hssf.usermodel;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
-
-import junit.framework.TestCase;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hssf.HSSFTestDataSamples;
@@ -35,52 +33,59 @@ import org.apache.poi.poifs.filesystem.Ole10Native;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.util.LocaleUtil;
+import org.junit.Test;
 
 /**
  * 
  */
-public final class TestOLE2Embeding extends TestCase {
+public final class TestOLE2Embeding {
 
-    public void testEmbeding() {
+    @Test
+    public void testEmbeding() throws Exception {
         // This used to break, until bug #43116 was fixed
         HSSFWorkbook workbook = HSSFTestDataSamples.openSampleWorkbook("ole2-embedding.xls");
 
         // Check we can get at the Escher layer still
         workbook.getAllPictures();
+        
+        workbook.close();
     }
 
+    @Test
     public void testEmbeddedObjects() throws Exception {
         HSSFWorkbook workbook = HSSFTestDataSamples.openSampleWorkbook("ole2-embedding.xls");
 
         List<HSSFObjectData> objects = workbook.getAllEmbeddedObjects();
         assertEquals("Wrong number of objects", 2, objects.size());
         assertEquals("Wrong name for first object", "MBD06CAB431",
-                ((HSSFObjectData)
-                objects.get(0)).getDirectory().getName());
+                objects.get(0).getDirectory().getName());
         assertEquals("Wrong name for second object", "MBD06CAC85A",
-                ((HSSFObjectData)
-                objects.get(1)).getDirectory().getName());
+                objects.get(1).getDirectory().getName());
+        
+        workbook.close();
     }
     
+    @Test
     public void testReallyEmbedSomething() throws Exception {
-    	HSSFWorkbook wb = new HSSFWorkbook();
-    	HSSFSheet sheet = wb.createSheet();
+    	HSSFWorkbook wb1 = new HSSFWorkbook();
+    	HSSFSheet sheet = wb1.createSheet();
     	HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
 
     	byte[] pictureData = HSSFTestDataSamples.getTestDataFileContent("logoKarmokar4.png");
     	byte[] picturePPT = POIDataSamples.getSlideShowInstance().readFile("clock.jpg");
-    	int imgIdx = wb.addPicture(pictureData, HSSFWorkbook.PICTURE_TYPE_PNG);
+    	int imgIdx = wb1.addPicture(pictureData, HSSFWorkbook.PICTURE_TYPE_PNG);
     	POIFSFileSystem pptPoifs = getSamplePPT();
-    	int pptIdx = wb.addOlePackage(pptPoifs, "Sample-PPT", "sample.ppt", "sample.ppt");
+    	int pptIdx = wb1.addOlePackage(pptPoifs, "Sample-PPT", "sample.ppt", "sample.ppt");
     	POIFSFileSystem xlsPoifs = getSampleXLS();
-    	int imgPPT = wb.addPicture(picturePPT, HSSFWorkbook.PICTURE_TYPE_JPEG);
-    	int xlsIdx = wb.addOlePackage(xlsPoifs, "Sample-XLS", "sample.xls", "sample.xls");
-    	int txtIdx = wb.addOlePackage(getSampleTXT(), "Sample-TXT", "sample.txt", "sample.txt");
+    	int imgPPT = wb1.addPicture(picturePPT, HSSFWorkbook.PICTURE_TYPE_JPEG);
+    	int xlsIdx = wb1.addOlePackage(xlsPoifs, "Sample-XLS", "sample.xls", "sample.xls");
+    	int txtIdx = wb1.addOlePackage(getSampleTXT(), "Sample-TXT", "sample.txt", "sample.txt");
     	
         int rowoffset = 5;
         int coloffset = 5;
 
-        CreationHelper ch = wb.getCreationHelper();
+        CreationHelper ch = wb1.getCreationHelper();
         HSSFClientAnchor anchor = (HSSFClientAnchor)ch.createClientAnchor();
         anchor.setAnchor((short)(2+coloffset), 1+rowoffset, 0, 0, (short)(3+coloffset), 5+rowoffset, 0, 0);
         anchor.setAnchorType(ClientAnchor.DONT_MOVE_AND_RESIZE);
@@ -107,31 +112,35 @@ public final class TestOLE2Embeding extends TestCase {
         circle.setShapeType(HSSFSimpleShape.OBJECT_TYPE_OVAL);
         circle.setNoFill(true);
 
-        if (false) {
-	        FileOutputStream fos = new FileOutputStream("embed.xls");
-	        wb.write(fos);
-	        fos.close();
-        }
+//        if (false) {
+//	        FileOutputStream fos = new FileOutputStream("embed.xls");
+//	        wb.write(fos);
+//	        fos.close();
+//        }
         
-        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
+        HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1);
+        wb1.close();
         
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        HSSFObjectData od = wb.getAllEmbeddedObjects().get(0);
+        HSSFObjectData od = wb2.getAllEmbeddedObjects().get(0);
         Ole10Native ole10 = Ole10Native.createFromEmbeddedOleObject((DirectoryNode)od.getDirectory());
         bos.reset();
         pptPoifs.writeFilesystem(bos);
         assertArrayEquals(ole10.getDataBuffer(), bos.toByteArray());
 
-        od = wb.getAllEmbeddedObjects().get(1);
+        od = wb2.getAllEmbeddedObjects().get(1);
         ole10 = Ole10Native.createFromEmbeddedOleObject((DirectoryNode)od.getDirectory());
         bos.reset();
         xlsPoifs.writeFilesystem(bos);
         assertArrayEquals(ole10.getDataBuffer(), bos.toByteArray());
 
-        od = wb.getAllEmbeddedObjects().get(2);
+        od = wb2.getAllEmbeddedObjects().get(2);
         ole10 = Ole10Native.createFromEmbeddedOleObject((DirectoryNode)od.getDirectory());
         assertArrayEquals(ole10.getDataBuffer(), getSampleTXT());
     
+        xlsPoifs.close();
+        pptPoifs.close();
+        wb2.close();
     }
     
     static POIFSFileSystem getSamplePPT() throws IOException {
@@ -150,12 +159,13 @@ public final class TestOLE2Embeding extends TestCase {
 
     	ByteArrayOutputStream bos = new ByteArrayOutputStream();
     	wb.write(bos);
+    	wb.close();
     	POIFSFileSystem poifs = new POIFSFileSystem(new ByteArrayInputStream(bos.toByteArray()));
         
         return poifs;
     }
     
     static byte[] getSampleTXT() {
-        return "All your base are belong to us".getBytes();
+        return "All your base are belong to us".getBytes(LocaleUtil.CHARSET_1252);
     }    
 }

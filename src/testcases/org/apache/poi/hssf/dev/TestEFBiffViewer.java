@@ -20,6 +20,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 
+import org.apache.poi.util.LocaleUtil;
+
 public class TestEFBiffViewer extends BaseXLSIteratingTest {
 	static {
 		// these are likely ok to fail
@@ -39,13 +41,13 @@ public class TestEFBiffViewer extends BaseXLSIteratingTest {
 	}
 	
 	@Override
-	void runOneFile(File file) throws IOException {
+	void runOneFile(File fileIn) throws IOException {
 		PrintStream save = System.out;
 		try {
 			// redirect standard out during the test to avoid spamming the console with output
-			System.setOut(new PrintStream(NULL_OUTPUT_STREAM));
+			System.setOut(new PrintStream(NULL_OUTPUT_STREAM,true,LocaleUtil.CHARSET_1252.name()));
 
-			EFBiffViewer.main(new String[] { file.getAbsolutePath() });
+			EFBiffViewer.main(new String[] { fileIn.getAbsolutePath() });
 		} finally {
 			System.setOut(save);
 		}

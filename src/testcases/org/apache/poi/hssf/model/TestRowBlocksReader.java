@@ -17,10 +17,12 @@
 
 package org.apache.poi.hssf.model;
 
-import java.util.Arrays;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
+import java.util.Arrays;
 
 import org.apache.poi.hssf.record.NumberRecord;
 import org.apache.poi.hssf.record.Record;
@@ -28,27 +30,30 @@ import org.apache.poi.hssf.record.RowRecord;
 import org.apache.poi.hssf.record.UnknownRecord;
 import org.apache.poi.hssf.record.WindowTwoRecord;
 import org.apache.poi.hssf.record.pivottable.ViewDefinitionRecord;
+import org.apache.poi.util.LocaleUtil;
+import org.junit.Test;
 
 /**
  * Tests for {@link RowBlocksReader}
  *
  * @author Josh Micich
  */
-public final class TestRowBlocksReader extends TestCase {
+public final class TestRowBlocksReader {
+    @Test
 	public void testAbnormalPivotTableRecords_bug46280() {
 		int SXVIEW_SID = ViewDefinitionRecord.sid;
 		Record[] inRecs = {
 			new RowRecord(0),
 			new NumberRecord(),
 			// normally MSODRAWING(0x00EC) would come here before SXVIEW
-			new UnknownRecord(SXVIEW_SID, "dummydata (SXVIEW: View Definition)".getBytes()),
+			new UnknownRecord(SXVIEW_SID, "dummydata (SXVIEW: View Definition)".getBytes(LocaleUtil.CHARSET_1252)),
 			new WindowTwoRecord(),
 		};
 		RecordStream rs = new RecordStream(Arrays.asList(inRecs), 0);
 		RowBlocksReader rbr = new RowBlocksReader(rs);
 		if (rs.peekNextClass() == WindowTwoRecord.class) {
 			// Should have stopped at the SXVIEW record
-			throw new AssertionFailedError("Identified bug 46280b");
+			fail("Identified bug 46280b");
 		}
 		RecordStream rbStream = rbr.getPlainRecordStream();
 		assertEquals(inRecs[0], rbStream.getNext());

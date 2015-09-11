@@ -124,7 +124,7 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
 	public PowerPointExtractor(DirectoryNode dir, POIFSFileSystem fs) throws IOException {
 		this(new HSLFSlideShowImpl(dir, fs));
 	}
-
+   
 	/**
 	 * Creates a PowerPointExtractor, from a HSLFSlideShow
 	 *

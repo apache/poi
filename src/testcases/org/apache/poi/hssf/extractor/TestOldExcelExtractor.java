@@ -17,27 +17,32 @@
 
 package org.apache.poi.hssf.extractor;
 
-import java.io.File;
-import java.io.InputStream;
+import static org.apache.poi.POITestCase.assertContains;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
-import org.apache.poi.POITestCase;
+import java.io.File;
+
 import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.junit.Test;
 
 /**
  * Unit tests for the Excel 5/95 and Excel 4 (and older) text 
  *  extractor
  */
-public final class TestOldExcelExtractor extends POITestCase {
+public final class TestOldExcelExtractor {
     private static OldExcelExtractor createExtractor(String sampleFileName) {
-        InputStream is = HSSFTestDataSamples.openSampleFileStream(sampleFileName);
+        File file = HSSFTestDataSamples.getSampleFile(sampleFileName);
 
         try {
-            return new OldExcelExtractor(is);
+            return new OldExcelExtractor(file);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
     
+    @Test
     public void testSimpleExcel3() {
         OldExcelExtractor extractor = createExtractor("testEXCEL_3.xls");
 
@@ -59,6 +64,8 @@ public final class TestOldExcelExtractor extends POITestCase {
         assertEquals(3, extractor.getBiffVersion());
         assertEquals(0x10, extractor.getFileType());
     }
+    
+    @Test
     public void testSimpleExcel4() {
         OldExcelExtractor extractor = createExtractor("testEXCEL_4.xls");
 
@@ -77,6 +84,8 @@ public final class TestOldExcelExtractor extends POITestCase {
         assertEquals(4, extractor.getBiffVersion());
         assertEquals(0x10, extractor.getFileType());
     }
+    
+    @Test
     public void testSimpleExcel5() {
         for (String ver : new String[] {"5", "95"}) {
             OldExcelExtractor extractor = createExtractor("testEXCEL_"+ver+".xls");
@@ -101,6 +110,7 @@ public final class TestOldExcelExtractor extends POITestCase {
         }
     }
 
+    @Test
     public void testStrings() {
         OldExcelExtractor extractor = createExtractor("testEXCEL_4.xls");
         String text = extractor.getText();
@@ -119,6 +129,7 @@ public final class TestOldExcelExtractor extends POITestCase {
         // TODO Find some then test
     }
 
+    @Test
     public void testFormattedNumbersExcel4() {
         OldExcelExtractor extractor = createExtractor("testEXCEL_4.xls");
         String text = extractor.getText();
@@ -136,6 +147,8 @@ public final class TestOldExcelExtractor extends POITestCase {
 //      assertContains(text, "55,624");
 //      assertContains(text, "11,743,477");
     }
+    
+    @Test
     public void testFormattedNumbersExcel5() {
         for (String ver : new String[] {"5", "95"}) {
             OldExcelExtractor extractor = createExtractor("testEXCEL_"+ver+".xls");
@@ -160,6 +173,7 @@ public final class TestOldExcelExtractor extends POITestCase {
         }
     }
     
+    @Test
     public void testFromFile() throws Exception {
         for (String ver : new String[] {"4", "5", "95"}) {
             String filename = "testEXCEL_"+ver+".xls";

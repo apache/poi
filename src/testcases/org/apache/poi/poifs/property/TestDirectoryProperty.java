@@ -17,6 +17,10 @@
 
 package org.apache.poi.poifs.property;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -25,21 +29,20 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.poi.poifs.storage.RawDataUtil;
-
-import junit.framework.TestCase;
+import org.apache.poi.util.LocaleUtil;
+import org.junit.Test;
 
 /**
  * Class to test DirectoryProperty functionality
- *
- * @author Marc Johnson
  */
-public final class TestDirectoryProperty extends TestCase {
+public final class TestDirectoryProperty {
     private DirectoryProperty _property;
     private byte[]            _testblock;
 
     /**
      * Test constructing DirectoryProperty
      */
+    @Test
     public void testConstructor() throws IOException {
         createBasicDirectoryProperty();
         verifyProperty();
@@ -48,6 +51,7 @@ public final class TestDirectoryProperty extends TestCase {
     /**
      * Test pre-write functionality
      */
+    @Test
     public void testPreWrite() throws IOException {
         createBasicDirectoryProperty();
         _property.preWrite();
@@ -97,8 +101,8 @@ public final class TestDirectoryProperty extends TestCase {
     }
 
     private void verifyChildren(int count) {
-        Iterator iter     = _property.getChildren();
-        List     children = new ArrayList();
+        Iterator<Property> iter = _property.getChildren();
+        List<Property> children = new ArrayList<Property>();
 
         while (iter.hasNext())
         {
@@ -116,7 +120,7 @@ public final class TestDirectoryProperty extends TestCase {
             iter = children.iterator();
             while (iter.hasNext())
             {
-                Property child = ( Property ) iter.next();
+                Property child = iter.next();
                 Child    next  = child.getNextChild();
 
                 if (next != null)
@@ -175,7 +179,7 @@ public final class TestDirectoryProperty extends TestCase {
         {
             _testblock[ index ] = ( byte ) 0;
         }
-        byte[] name_bytes = name.getBytes();
+        byte[] name_bytes = name.getBytes(LocaleUtil.CHARSET_1252);
 
         for (index = 0; index < limit; index++)
         {
@@ -197,6 +201,7 @@ public final class TestDirectoryProperty extends TestCase {
         }
     }
 
+    @Test
     public void testAddChild() throws IOException {
         createBasicDirectoryProperty();
         _property.addChild(new LocalProperty(1));
@@ -224,6 +229,7 @@ public final class TestDirectoryProperty extends TestCase {
         _property.addChild(new LocalProperty(3));
     }
 
+    @Test
     public void testDeleteChild() throws IOException {
         createBasicDirectoryProperty();
         Property p1 = new LocalProperty(1);
@@ -244,6 +250,7 @@ public final class TestDirectoryProperty extends TestCase {
         _property.addChild(new LocalProperty(1));
     }
 
+    @Test
     public void testChangeName() throws IOException {
         createBasicDirectoryProperty();
         Property p1           = new LocalProperty(1);
@@ -262,6 +269,7 @@ public final class TestDirectoryProperty extends TestCase {
         assertTrue(_property.changeName(p1, originalName));
     }
 
+    @Test
     public void testReadingConstructor() {
         String[] input = {
             "42 00 6F 00 6F 00 74 00 20 00 45 00 6E 00 74 00 72 00 79 00 00 00 00 00 00 00 00 00 00 00 00 00",

@@ -17,16 +17,17 @@
 
 package org.apache.poi;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.Collection;
-
-import junit.framework.TestCase;
 
 /**
  * Parent class for POI JUnit TestCases, which provide additional
  *  features 
  */
-public class POITestCase extends TestCase {
+public class POITestCase {
     public static void assertContains(String haystack, String needle) {
         assertTrue(
               "Unable to find expected text '" + needle + "' in text:\n" + haystack,
@@ -39,21 +40,6 @@ public class POITestCase extends TestCase {
               haystack.contains(needle)
         );
      }
-    
-    public static <T> void assertEquals(T[] expected, T[] actual)
-    {
-        assertEquals("Non-matching lengths", expected.length, actual.length);
-        for (int i=0; i<expected.length; i++) {
-            assertEquals("Mis-match at offset " + i, expected[i], actual[i]);
-        }
-    }
-    public static void assertEquals(byte[] expected, byte[] actual)
-    {
-        assertEquals("Non-matching lengths", expected.length, actual.length);
-        for (int i=0; i<expected.length; i++) {
-            assertEquals("Mis-match at offset " + i, expected[i], actual[i]);
-        }
-    }
     
     public static <T> void assertContains(T needle, T[] haystack)
     {

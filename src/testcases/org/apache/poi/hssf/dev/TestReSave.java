@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.util.LocaleUtil;
 
 public class TestReSave extends BaseXLSIteratingTest {
 	static {
@@ -36,20 +37,20 @@ public class TestReSave extends BaseXLSIteratingTest {
 	}
 	
 	@Override
-	void runOneFile(File file) throws Exception {
+	void runOneFile(File fileIn) throws Exception {
 		// avoid running on files leftover from previous failed runs
-		if(file.getName().endsWith("-saved.xls")) {
+		if(fileIn.getName().endsWith("-saved.xls")) {
 			return;
 		}
 
 		PrintStream save = System.out;
 		try {
 			// redirect standard out during the test to avoid spamming the console with output
-			System.setOut(new PrintStream(NULL_OUTPUT_STREAM));
+			System.setOut(new PrintStream(NULL_OUTPUT_STREAM,true,LocaleUtil.CHARSET_1252.name()));
 
-			File reSavedFile = new File(file.getParentFile(), file.getName().replace(".xls", "-saved.xls"));
+			File reSavedFile = new File(fileIn.getParentFile(), fileIn.getName().replace(".xls", "-saved.xls"));
 			try {
-				ReSave.main(new String[] { file.getAbsolutePath() });
+				ReSave.main(new String[] { fileIn.getAbsolutePath() });
 				
 				// also try BiffViewer on the saved file
                 new TestBiffViewer().runOneFile(reSavedFile);
@@ -59,7 +60,7 @@ public class TestReSave extends BaseXLSIteratingTest {
         			ReSave.main(new String[] { reSavedFile.getAbsolutePath() });
     			} finally {
     				// clean up the re-re-saved file
-    			    new File(file.getParentFile(), reSavedFile.getName().replace(".xls", "-saved.xls")).delete();
+    			    new File(fileIn.getParentFile(), reSavedFile.getName().replace(".xls", "-saved.xls")).delete();
     			}
 			} finally {
 				// clean up the re-saved file

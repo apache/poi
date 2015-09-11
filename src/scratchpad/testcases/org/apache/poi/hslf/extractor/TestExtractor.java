@@ -17,13 +17,18 @@
 
 package org.apache.poi.hslf.extractor;
 
+import static org.apache.poi.POITestCase.assertContains;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Locale;
 
 import org.apache.poi.POIDataSamples;
-import org.apache.poi.POITestCase;
 import org.apache.poi.hslf.model.OLEShape;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
@@ -33,11 +38,14 @@ import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.IOUtils;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests that the extractor correctly gets the text out of our sample file
  */
-public final class TestExtractor extends POITestCase {
+public final class TestExtractor {
    /** Extractor primed on the 2 page basic test data */
    private PowerPointExtractor ppe;
    private static final String expectText = "This is a test title\nThis is a test subtitle\nThis is on page 1\nThis is the title on page 2\nThis is page two\nIt has several blocks of text\nNone of them have formatting\n";
@@ -47,15 +55,21 @@ public final class TestExtractor extends POITestCase {
    private static final String expectText2 = "Hello, World!!!\nI am just a poor boy\nThis is Times New Roman\nPlain Text \n";
    
    /** Where our embeded files live */
-   //private String pdirname;
    private static POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
-   //private String pdirname;
 
-   protected void setUp() throws Exception {
-      ppe = new PowerPointExtractor(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
-      ppe2 = new PowerPointExtractor(slTests.openResourceAsStream("with_textbox.ppt"));
+   @Before
+   public void setUp() throws Exception {
+      ppe = new PowerPointExtractor(slTests.getFile("basic_test_ppt_file.ppt").getCanonicalPath());
+      ppe2 = new PowerPointExtractor(slTests.getFile("with_textbox.ppt").getCanonicalPath());
    }
 
+   @After
+   public void closeResources() throws Exception {
+       ppe2.close();
+       ppe.close();
+   }
+   
+    @Test
     public void testReadSheetText() {
     	// Basic 2 page example
 		String sheetText = ppe.getText();
@@ -69,20 +83,22 @@ public final class TestExtractor extends POITestCase {
 		ensureTwoStringsTheSame(expectText2, sheetText);
     }
     
+    @Test
 	public void testReadNoteText() {
 		// Basic 2 page example
 		String notesText = ppe.getNotes();
-		String expectText = "These are the notes for page 1\nThese are the notes on page two, again lacking formatting\n";
+		String expText = "These are the notes for page 1\nThese are the notes on page two, again lacking formatting\n";
 
-		ensureTwoStringsTheSame(expectText, notesText);
+		ensureTwoStringsTheSame(expText, notesText);
 		
 		// Other one doesn't have notes
 		notesText = ppe2.getNotes();
-		expectText = "";
+		expText = "";
 		
-		ensureTwoStringsTheSame(expectText, notesText);
+		ensureTwoStringsTheSame(expText, notesText);
 	}
 	
+    @Test
 	public void testReadBoth() {
 		String[] slText = new String[] {
 				"This is a test title\nThis is a test subtitle\nThis is on page 1\n",
@@ -111,6 +127,7 @@ public final class TestExtractor extends POITestCase {
 	 *  core record, we can still get the rest of the text out
 	 * @throws Exception
 	 */
+    @Test
 	public void testMissingCoreRecords() throws Exception {
 		ppe = new PowerPointExtractor(slTests.openResourceAsStream("missing_core_records.ppt"));
 
@@ -137,6 +154,7 @@ public final class TestExtractor extends POITestCase {
 		assertEquals(exp,act);
     }
     
+    @Test
     public void testExtractFromEmbeded() throws Exception {
          POIFSFileSystem fs = new POIFSFileSystem(
              POIDataSamples.getSpreadSheetInstance().openResourceAsStream("excel_with_embeded.xls")
@@ -164,12 +182,14 @@ public final class TestExtractor extends POITestCase {
          assertEquals("Sample PowerPoint file\nThis is the 2nd file\nNot much too it either\n",
                  ppe.getText(true, false)
          );
+         fs.close();
      }
 
      /**
       * A powerpoint file with embeded powerpoint files
       */
      @SuppressWarnings("unused")
+     @Test
      public void testExtractFromOwnEmbeded() throws Exception {
          String path = "ppt_with_embeded.ppt";
          ppe = new PowerPointExtractor(POIDataSamples.getSlideShowInstance().openResourceAsStream(path));
@@ -182,6 +202,7 @@ public final class TestExtractor extends POITestCase {
              if ("Worksheet".equals(name)) {
                  HSSFWorkbook wb = new HSSFWorkbook(data);
                  num_xls++;
+                 wb.close();
              } else if ("Document".equals(name)) {
                  HWPFDocument doc = new HWPFDocument(data);
                  num_doc++;
@@ -189,6 +210,7 @@ public final class TestExtractor extends POITestCase {
                  num_ppt++;
                  HSLFSlideShow ppt = new HSLFSlideShow(data);
              }
+             data.close();
          }
          assertEquals("Expected 2 embedded Word Documents", 2, num_doc);
          assertEquals("Expected 2 embedded Excel Spreadsheets", 2, num_xls);
@@ -198,6 +220,7 @@ public final class TestExtractor extends POITestCase {
     /**
      * A powerpoint file with embeded powerpoint files
      */
+    @Test
     public void test52991() throws Exception {
         String path = "badzip.ppt";
         ppe = new PowerPointExtractor(POIDataSamples.getSlideShowInstance().openResourceAsStream(path));
@@ -211,6 +234,7 @@ public final class TestExtractor extends POITestCase {
     /**
      * From bug #45543
      */
+    @Test
     public void testWithComments() throws Exception {
 		ppe = new PowerPointExtractor(slTests.openResourceAsStream("WithComments.ppt"));
 
@@ -238,6 +262,7 @@ public final class TestExtractor extends POITestCase {
     /**
      * From bug #45537
      */
+    @Test
     public void testHeaderFooter() throws Exception {
        String  text;
 
@@ -278,6 +303,7 @@ public final class TestExtractor extends POITestCase {
     }
     
    @SuppressWarnings("unused")
+   @Test
    public void testSlideMasterText() throws Exception {
       String masterTitleText = "This is the Master Title";
       String masterRandomText = "This text comes from the Master Slide";
@@ -292,7 +318,8 @@ public final class TestExtractor extends POITestCase {
       assertContains(text, masterFooterText);
    }
 
-    public void testMasterText() throws Exception {
+   @Test
+   public void testMasterText() throws Exception {
        ppe = new PowerPointExtractor(slTests.openResourceAsStream("master_text.ppt"));
        
        // Initially not there
@@ -322,6 +349,7 @@ public final class TestExtractor extends POITestCase {
     /**
      * Bug #54880 Chinese text not extracted properly
      */
+    @Test
     public void testChineseText() throws Exception {
        HSLFSlideShowImpl hslf = new HSLFSlideShowImpl(slTests.openResourceAsStream("54880_chinese.ppt"));
        ppe = new PowerPointExtractor(hslf);
@@ -346,6 +374,7 @@ public final class TestExtractor extends POITestCase {
      *  and {@link NPOIFSFileSystem}
      */
     @SuppressWarnings("resource")
+    @Test
     public void testDifferentPOIFS() throws Exception {
        // Open the two filesystems
        DirectoryNode[] files = new DirectoryNode[2];
@@ -369,6 +398,7 @@ public final class TestExtractor extends POITestCase {
        npoifsFileSystem.close();
     }
 
+    @Test
     public void testTable() throws Exception{
 //        ppe = new PowerPointExtractor(slTests.openResourceAsStream("54111.ppt"));
 //        String text = ppe.getText();

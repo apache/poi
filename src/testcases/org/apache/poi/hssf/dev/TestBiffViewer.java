@@ -19,9 +19,11 @@ package org.apache.poi.hssf.dev;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.util.LocaleUtil;
 
 public class TestBiffViewer extends BaseXLSIteratingTest {
 	static {
@@ -44,12 +46,13 @@ public class TestBiffViewer extends BaseXLSIteratingTest {
 	}
 
 	@Override
-	void runOneFile(File file) throws IOException {
-	    NPOIFSFileSystem fs  = new NPOIFSFileSystem(file, true);
+	void runOneFile(File fileIn) throws IOException {
+	    NPOIFSFileSystem fs  = new NPOIFSFileSystem(fileIn, true);
 		InputStream is = BiffViewer.getPOIFSInputStream(fs);
 		try {
-			// use a NullOutputStream to not write the bytes anywhere for best runtime 
-			BiffViewer.runBiffViewer(new PrintWriter(NULL_OUTPUT_STREAM), is, true, true, true, false);
+			// use a NullOutputStream to not write the bytes anywhere for best runtime
+		    PrintWriter dummy = new PrintWriter(new OutputStreamWriter(NULL_OUTPUT_STREAM, LocaleUtil.CHARSET_1252));
+			BiffViewer.runBiffViewer(dummy, is, true, true, true, false);
 		} finally {
 			is.close();
 			fs.close();

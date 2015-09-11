@@ -17,8 +17,6 @@
 
 package org.apache.poi.hwpf;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.apache.poi.hwpf.converter.AbstractWordUtilsTest;
 import org.apache.poi.hwpf.converter.TestWordToFoConverter;
 import org.apache.poi.hwpf.converter.TestWordToHtmlConverter;
@@ -58,69 +56,65 @@ import org.apache.poi.hwpf.usermodel.TestRangeReplacement;
 import org.apache.poi.hwpf.usermodel.TestRangeSymbols;
 import org.apache.poi.hwpf.usermodel.TestShapes;
 import org.apache.poi.hwpf.usermodel.TestTableRow;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
-public final class AllHWPFTests
-{
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+    // org.apache.poi.hwpf
+    TestFieldsTables.class,
+    TestHWPFPictures.class,
+    TestHWPFRangeParts.class,
 
-    public static Test suite()
-    {
-        TestSuite suite = new TestSuite( AllHWPFTests.class.getName() );
+    // org.apache.poi.hwpf.converter
+    // TestWordToConverterSuite.class,
+    AbstractWordUtilsTest.class,
+    TestWordToFoConverter.class,
+    TestWordToHtmlConverter.class,
 
-        // org.apache.poi.hwpf
-        suite.addTestSuite( TestFieldsTables.class );
-        suite.addTestSuite( TestHWPFPictures.class );
-        suite.addTestSuite( TestHWPFRangeParts.class );
+    // org.apache.poi.hwpf.extractor
+    TestDifferentRoutes.class,
+    TestWordExtractor.class,
+    TestWordExtractorBugs.class,
 
-        // org.apache.poi.hwpf.converter
-        // suite.addTestSuite( TestWordToConverterSuite.class );
-        suite.addTestSuite( AbstractWordUtilsTest.class );
-        suite.addTestSuite( TestWordToFoConverter.class );
-        suite.addTestSuite( TestWordToHtmlConverter.class );
+    // org.apache.poi.hwpf.model
+    TestBookmarksTables.class,
+    TestCHPBinTable.class,
+    TestDocumentProperties.class,
+    TestFileInformationBlock.class,
+    TestFontTable.class,
+    TestListTables.class,
+    TestNotesTables.class,
+    TestPAPBinTable.class,
+    TestPlexOfCps.class,
+    TestRevisionMarkAuthorTable.class,
+    TestSavedByTable.class,
+    TestSectionTable.class,
+    TestStyleSheet.class,
+    TestTextPieceTable.class,
 
-        // org.apache.poi.hwpf.extractor
-        suite.addTestSuite( TestDifferentRoutes.class );
-        suite.addTestSuite( TestWordExtractor.class );
-        suite.addTestSuite( TestWordExtractorBugs.class );
+    // org.apache.poi.hwpf.sprm
+    TestSprms.class,
 
-        // org.apache.poi.hwpf.model
-        suite.addTestSuite( TestBookmarksTables.class );
-        suite.addTestSuite( TestCHPBinTable.class );
-        suite.addTestSuite( TestDocumentProperties.class );
-        suite.addTestSuite( TestFileInformationBlock.class );
-        suite.addTestSuite( TestFontTable.class );
-        suite.addTestSuite( TestListTables.class );
-        suite.addTestSuite( TestNotesTables.class );
-        suite.addTestSuite( TestPAPBinTable.class );
-        suite.addTestSuite( TestPlexOfCps.class );
-        suite.addTestSuite( TestRevisionMarkAuthorTable.class );
-        suite.addTestSuite( TestSavedByTable.class );
-        suite.addTestSuite( TestSectionTable.class );
-        suite.addTestSuite( TestStyleSheet.class );
-        suite.addTestSuite( TestTextPieceTable.class );
-
-        // org.apache.poi.hwpf.sprm
-        suite.addTestSuite( TestSprms.class );
-
-        // org.apache.poi.hwpf.usermodel
-        suite.addTestSuite( TestBorderCode.class );
-        suite.addTestSuite( TestBug46610.class );
-        suite.addTestSuite( TestBug49820.class );
-        suite.addTestSuite( TestBug50075.class );
-        suite.addTestSuite( TestBugs.class );
-        suite.addTestSuite( TestHeaderStories.class );
-        suite.addTestSuite( TestHWPFOldDocument.class );
-        suite.addTestSuite( TestLists.class );
-        suite.addTestSuite( TestPictures.class );
-        suite.addTestSuite( TestProblems.class );
-        suite.addTestSuite( TestRange.class );
-        suite.addTestSuite( TestRangeDelete.class );
-        suite.addTestSuite( TestRangeInsertion.class );
-        suite.addTestSuite( TestRangeProperties.class );
-        suite.addTestSuite( TestRangeReplacement.class );
-        suite.addTestSuite( TestRangeSymbols.class );
-        suite.addTestSuite( TestShapes.class );
-        suite.addTestSuite( TestTableRow.class );
-
-        return suite;
-    }
+    // org.apache.poi.hwpf.usermodel
+    TestBorderCode.class,
+    TestBug46610.class,
+    TestBug49820.class,
+    TestBug50075.class,
+    TestBugs.class,
+    TestHeaderStories.class,
+    TestHWPFOldDocument.class,
+    TestLists.class,
+    TestPictures.class,
+    TestProblems.class,
+    TestRange.class,
+    TestRangeDelete.class,
+    TestRangeInsertion.class,
+    TestRangeProperties.class,
+    TestRangeReplacement.class,
+    TestRangeSymbols.class,
+    TestShapes.class,
+    TestTableRow.class
+})
+public final class AllHWPFTests {
 }

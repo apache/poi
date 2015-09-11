@@ -17,23 +17,19 @@
 
 package org.apache.poi.poifs.property;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
 /**
  * Tests for org.apache.poi.poifs.property<br/>
- * 
- * @author Josh Micich
  */
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+    TestDirectoryProperty.class,
+    TestDocumentProperty.class,
+    TestPropertyFactory.class,
+    TestPropertyTable.class,
+    TestRootProperty.class
+})
 public final class AllPOIFSPropertyTests {
-
-    public static Test suite() {
-        TestSuite result = new TestSuite(AllPOIFSPropertyTests.class.getName());
-        result.addTestSuite(TestDirectoryProperty.class);
-        result.addTestSuite(TestDocumentProperty.class);
-        result.addTestSuite(TestPropertyFactory.class);
-        result.addTestSuite(TestPropertyTable.class);
-        result.addTestSuite(TestRootProperty.class);
-        return result;
-    }
 }

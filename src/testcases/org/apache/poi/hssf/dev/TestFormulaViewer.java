@@ -19,6 +19,7 @@ package org.apache.poi.hssf.dev;
 import java.io.File;
 import java.io.PrintStream;
 
+import org.apache.poi.util.LocaleUtil;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -39,15 +40,15 @@ public class TestFormulaViewer extends BaseXLSIteratingTest {
 	public void testMain() throws Exception {
 	}
 
-	@Override
-	void runOneFile(File file) throws Exception {
+    @Override
+	void runOneFile(File fileIn) throws Exception {
 		PrintStream save = System.out;
 		try {
 			// redirect standard out during the test to avoid spamming the console with output
-			System.setOut(new PrintStream(NULL_OUTPUT_STREAM));
+			System.setOut(new PrintStream(NULL_OUTPUT_STREAM,true,LocaleUtil.CHARSET_1252.name()));
 
             FormulaViewer viewer = new FormulaViewer();
-            viewer.setFile(file.getAbsolutePath());
+            viewer.setFile(fileIn.getAbsolutePath());
             viewer.setList(true);
             viewer.run();
 		} finally {

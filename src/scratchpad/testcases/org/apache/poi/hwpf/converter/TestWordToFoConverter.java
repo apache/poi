@@ -18,6 +18,8 @@
  */
 package org.apache.poi.hwpf.converter;
 
+import static org.apache.poi.POITestCase.assertContains;
+
 import java.io.StringWriter;
 
 import javax.xml.transform.OutputKeys;
@@ -27,14 +29,14 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.poi.POIDataSamples;
-import org.apache.poi.POITestCase;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.util.XMLHelper;
+import org.junit.Test;
 
 /**
  * Test cases for {@link WordToFoConverter}
  */
-public class TestWordToFoConverter extends POITestCase
+public class TestWordToFoConverter
 {
     private static String getFoText( final String sampleFileName )
             throws Exception
@@ -59,6 +61,7 @@ public class TestWordToFoConverter extends POITestCase
         return result;
     }
 
+    @Test
     public void testDocumentProperties() throws Exception
     {
         String result = getFoText( "documentProperties.doc" );
@@ -71,6 +74,7 @@ public class TestWordToFoConverter extends POITestCase
                 "<pdf:Keywords xmlns:pdf=\"http://ns.adobe.com/pdf/1.3/\">This is document keywords</pdf:Keywords>" );
     }
 
+    @Test
     public void testEndnote() throws Exception
     {
         String result = getFoText( "endingnote.doc" );
@@ -86,6 +90,7 @@ public class TestWordToFoConverter extends POITestCase
         assertContains( result, "Ending note text" );
     }
 
+    @Test
     public void testEquation() throws Exception
     {
         final String sampleFileName = "equation.doc";
@@ -94,6 +99,7 @@ public class TestWordToFoConverter extends POITestCase
         assertContains( result, "<!--Image link to '0.emf' can be here-->" );
     }
 
+    @Test
     public void testHyperlink() throws Exception
     {
         final String sampleFileName = "hyperlink.doc";
@@ -104,6 +110,7 @@ public class TestWordToFoConverter extends POITestCase
         assertContains( result, "Hyperlink text" );
     }
 
+    @Test
     public void testInnerTable() throws Exception
     {
         final String sampleFileName = "innertable.doc";
@@ -113,6 +120,7 @@ public class TestWordToFoConverter extends POITestCase
                 "padding-end=\"0.0in\" padding-start=\"0.0in\" width=\"1.0770833in\"" );
     }
 
+    @Test
     public void testPageBreak() throws Exception
     {
         final String sampleFileName = "page-break.doc";
@@ -121,6 +129,7 @@ public class TestWordToFoConverter extends POITestCase
         assertContains( result, "<fo:block break-before=\"page\"" );
     }
 
+    @Test
     public void testPageBreakBefore() throws Exception
     {
         final String sampleFileName = "page-break-before.doc";
@@ -129,6 +138,7 @@ public class TestWordToFoConverter extends POITestCase
         assertContains( result, "<fo:block break-before=\"page\"" );
     }
 
+    @Test
     public void testPageref() throws Exception
     {
         final String sampleFileName = "pageref.doc";

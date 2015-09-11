@@ -17,25 +17,30 @@
 
 package org.apache.poi.poifs.filesystem;
 
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import java.io.ByteArrayInputStream;
 import java.nio.ByteBuffer;
 import java.util.Iterator;
 
 import org.apache.poi.POIDataSamples;
-import org.apache.poi.POITestCase;
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.util.IOUtils;
+import org.junit.Test;
 
 /**
  * Tests for the Mini Store in the NIO POIFS
  */
-public final class TestNPOIFSMiniStore extends POITestCase {
+public final class TestNPOIFSMiniStore {
    private static final POIDataSamples _inst = POIDataSamples.getPOIFSInstance();
    
    /**
     * Check that for a given mini block, we can correctly figure
     *  out what the next one is
     */
+   @Test
    public void testNextBlock() throws Exception {
       // It's the same on 512 byte and 4096 byte block files!
       NPOIFSFileSystem fsA = new NPOIFSFileSystem(_inst.getFile("BlockSize512.zvi"));
@@ -103,14 +108,17 @@ public final class TestNPOIFSMiniStore extends POITestCase {
          for(int i=181; i<fs.getBigBlockSizeDetails().getBATEntriesPerBlock(); i++) {
             assertEquals(POIFSConstants.UNUSED_BLOCK, ministore.getNextBlock(i));
          }
-         
-         fs.close();
       }
+      fsD.close();
+      fsC.close();
+      fsB.close();
+      fsA.close();
    }
 
    /**
     * Check we get the right data back for each block
     */
+   @Test
    public void testGetBlock() throws Exception {
       // It's the same on 512 byte and 4096 byte block files!
       NPOIFSFileSystem fsA = new NPOIFSFileSystem(_inst.getFile("BlockSize512.zvi"));
@@ -170,15 +178,18 @@ public final class TestNPOIFSMiniStore extends POITestCase {
             assertEquals((byte)0, b.get());
             assertEquals((byte)0, b.get());
          }
-         
-         fs.close();
       }
+      fsD.close();
+      fsC.close();
+      fsB.close();
+      fsA.close();
    }
    
    /**
     * Ask for free blocks where there are some already
     *  to be had from the SFAT
     */
+   @Test
    public void testGetFreeBlockWithSpare() throws Exception {
       NPOIFSFileSystem fs = new NPOIFSFileSystem(_inst.getFile("BlockSize512.zvi"));
       NPOIFSMiniStore ministore = fs.getMiniStore();
@@ -210,6 +221,7 @@ public final class TestNPOIFSMiniStore extends POITestCase {
     * Ask for free blocks where no free ones exist, and so the
     *  stream needs to be extended and another SBAT added
     */
+   @Test
    public void testGetFreeBlockWithNoneSpare() throws Exception {
       NPOIFSFileSystem fs = new NPOIFSFileSystem(_inst.openResourceAsStream("BlockSize512.zvi"));
       NPOIFSMiniStore ministore = fs.getMiniStore();
@@ -254,6 +266,7 @@ public final class TestNPOIFSMiniStore extends POITestCase {
     * Test that we will extend the underlying chain of 
     *  big blocks that make up the ministream as needed
     */
+   @Test
    public void testCreateBlockIfNeeded() throws Exception {
       NPOIFSFileSystem fs = new NPOIFSFileSystem(_inst.openResourceAsStream("BlockSize512.zvi"));
       NPOIFSMiniStore ministore = fs.getMiniStore();
@@ -334,6 +347,7 @@ public final class TestNPOIFSMiniStore extends POITestCase {
       fs.close();
    }
    
+   @Test
    public void testCreateMiniStoreFirst() throws Exception {
        NPOIFSFileSystem fs = new NPOIFSFileSystem();
        NPOIFSMiniStore ministore = fs.getMiniStore();
@@ -385,7 +399,7 @@ public final class TestNPOIFSMiniStore extends POITestCase {
        byte[] rdata = new byte[data.length];
        dis = new DocumentInputStream(entry);
        IOUtils.readFully(dis, rdata);
-       assertEquals(data, rdata);
+       assertArrayEquals(data, rdata);
        dis.close();
        
        entry = (DocumentEntry)fs.getRoot().getEntry("mini2");
@@ -393,13 +407,14 @@ public final class TestNPOIFSMiniStore extends POITestCase {
        rdata = new byte[data.length];
        dis = new DocumentInputStream(entry);
        IOUtils.readFully(dis, rdata);
-       assertEquals(data, rdata);
+       assertArrayEquals(data, rdata);
        dis.close();
 
        // Done
        fs.close();
    }
    
+   @Test
    public void testMultiBlockStream() throws Exception {
        byte[] data1B = new byte[63];
        byte[] data2B = new byte[64+14];
@@ -451,12 +466,13 @@ public final class TestNPOIFSMiniStore extends POITestCase {
        DocumentInputStream dis = fs.createDocumentInputStream("mini1");
        IOUtils.readFully(dis, r1);
        dis.close();
-       assertEquals(data1B, r1);
+       assertArrayEquals(data1B, r1);
        
        byte[] r2 = new byte[data2B.length];
        dis = fs.createDocumentInputStream("mini2");
        IOUtils.readFully(dis, r2);
        dis.close();
-       assertEquals(data2B, r2);
+       assertArrayEquals(data2B, r2);
+       fs.close();
    }
 }

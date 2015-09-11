@@ -17,6 +17,11 @@
 
 package org.apache.poi.hpsf.basic;
 
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -24,8 +29,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
-
-import junit.framework.TestCase;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hpsf.DocumentSummaryInformation;
@@ -37,13 +40,15 @@ import org.apache.poi.hpsf.PropertySetFactory;
 import org.apache.poi.hpsf.Section;
 import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hpsf.wellknown.SectionIDMap;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * <p>Tests the basic HPSF functionality.</p>
  *
  * @author Rainer Klute (klute@rainer-klute.de)
  */
-public final class TestBasic extends TestCase {
+public final class TestBasic {
 
     private static final String POI_FS = "TestGermanWord90.doc";
     private static final String[] POI_FILES = new String[]
@@ -80,6 +85,7 @@ public final class TestBasic extends TestCase {
      * @exception FileNotFoundException if the file to be read does not exist.
      * @exception IOException if any other I/O exception occurs.
      */
+    @Before
     public void setUp() throws IOException
     {
         POIDataSamples samples = POIDataSamples.getHPSFInstance();
@@ -91,6 +97,7 @@ public final class TestBasic extends TestCase {
      * <p>Checks the names of the files in the POI filesystem. They
      * are expected to be in a certain order.</p>
      */
+    @Test
     public void testReadFiles()
     {
         String[] expected = POI_FILES;
@@ -112,6 +119,7 @@ public final class TestBasic extends TestCase {
      * @exception UnsupportedEncodingException if a character encoding is not
      * supported.
      */
+    @Test
     public void testCreatePropertySets()
     throws UnsupportedEncodingException, IOException
     {
@@ -152,24 +160,21 @@ public final class TestBasic extends TestCase {
      * @exception IOException if an I/O exception occurs
      * @exception HPSFException if any HPSF exception occurs
      */
+    @Test
     public void testPropertySetMethods() throws IOException, HPSFException
     {
         /* Loop over the two property sets. */
         for (int i = 0; i < 2; i++)
         {
             byte[] b = poiFiles[i].getBytes();
-            PropertySet ps =
-                PropertySetFactory.create(new ByteArrayInputStream(b));
-            assertEquals(ps.getByteOrder(), BYTE_ORDER);
-            assertEquals(ps.getFormat(), FORMAT);
-            assertEquals(ps.getOSVersion(), OS_VERSION);
-            assertEquals(new String(ps.getClassID().getBytes()),
-                                new String(CLASS_ID));
-            assertEquals(ps.getSectionCount(), SECTION_COUNT[i]);
-            assertEquals(ps.isSummaryInformation(),
-                                IS_SUMMARY_INFORMATION[i]);
-            assertEquals(ps.isDocumentSummaryInformation(),
-                                IS_DOCUMENT_SUMMARY_INFORMATION[i]);
+            PropertySet ps = PropertySetFactory.create(new ByteArrayInputStream(b));
+            assertEquals(BYTE_ORDER, ps.getByteOrder());
+            assertEquals(FORMAT, ps.getFormat());
+            assertEquals(OS_VERSION, ps.getOSVersion());
+            assertArrayEquals(CLASS_ID, ps.getClassID().getBytes());
+            assertEquals(SECTION_COUNT[i], ps.getSectionCount());
+            assertEquals(IS_SUMMARY_INFORMATION[i], ps.isSummaryInformation());
+            assertEquals(IS_DOCUMENT_SUMMARY_INFORMATION[i], ps.isDocumentSummaryInformation());
         }
     }
 
@@ -181,6 +186,7 @@ public final class TestBasic extends TestCase {
      * @exception IOException if an I/O exception occurs
      * @exception HPSFException if any HPSF exception occurs
      */
+    @Test
     public void testSectionMethods() throws IOException, HPSFException
     {
         final SummaryInformation si = (SummaryInformation)

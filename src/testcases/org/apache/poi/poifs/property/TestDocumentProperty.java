@@ -21,6 +21,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import org.apache.poi.poifs.storage.RawDataUtil;
+import org.apache.poi.util.LocaleUtil;
 
 import junit.framework.TestCase;
 
@@ -137,7 +138,7 @@ public final class TestDocumentProperty extends TestCase {
         {
             testblock[ index ] = ( byte ) 0x0;
         }
-        byte[] name_bytes = name.getBytes();
+        byte[] name_bytes = name.getBytes(LocaleUtil.CHARSET_1252);
 
         for (index = 0; index < limit; index++)
         {
