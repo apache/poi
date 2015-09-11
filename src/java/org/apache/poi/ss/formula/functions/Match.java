@@ -228,18 +228,10 @@ public final class Match extends Var2or3ArgFunction {
 				return i-1;
 			}
 		}
-
-		throw new EvaluationException(ErrorEval.NA);
+		return size-1;
 	}
 
 	private static LookupValueComparer createLookupComparer(ValueEval lookupValue, boolean matchExact) {
 		return LookupUtils.createLookupComparer(lookupValue, matchExact, true);
-	}
-
-	private static boolean isLookupValueWild(String stringValue) {
-		if(stringValue.indexOf('?') >=0 || stringValue.indexOf('*') >=0) {
-			return true;
-		}
-		return false;
 	}
 }
