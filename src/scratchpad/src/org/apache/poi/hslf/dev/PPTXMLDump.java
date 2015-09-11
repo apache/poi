@@ -76,7 +76,7 @@ public final class PPTXMLDump {
 
     /**
      * Dump the structure of the supplied PPT file into XML
-     * @param out <code>Writer</code> to write out
+     * @param outWriter <code>Writer</code> to write out
      * @throws java.io.IOException
      */
     public void dump(Writer outWriter) throws IOException {
