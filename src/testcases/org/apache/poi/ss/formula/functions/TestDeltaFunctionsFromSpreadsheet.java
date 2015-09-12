@@ -16,14 +16,16 @@
 ==================================================================== */
 package org.apache.poi.ss.formula.functions;
 
-/**
-* Tests DELTA() as loaded from a test data spreadsheet.<p/>
-*
-* @author cedric dot walter @ gmail dot com
-*/
-public class TestDeltaFunctionsFromSpreadsheet extends BaseTestFunctionsFromSpreadsheet {
+import java.util.Collection;
 
-    protected String getFilename() {
-        return "DeltaFunctionTestCaseData.xls";
+import org.junit.runners.Parameterized.Parameters;
+
+/**
+ * Tests DELTA() as loaded from a test data spreadsheet.<p/>
+ */
+public class TestDeltaFunctionsFromSpreadsheet extends BaseTestFunctionsFromSpreadsheet {
+    @Parameters(name="{0}")
+    public static Collection<Object[]> data() throws Exception {
+        return data(TestDeltaFunctionsFromSpreadsheet.class, "DeltaFunctionTestCaseData.xls");
     }
 }

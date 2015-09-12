@@ -17,13 +17,16 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import java.util.Collection;
+
+import org.junit.runners.Parameterized.Parameters;
+
 /**
  * Tests FIXED() as loaded from a test data spreadsheet.
  */
 public class TestFixedFunctionsFromSpreadsheet extends BaseTestFunctionsFromSpreadsheet {
-
-    @Override
-    protected String getFilename() {
-        return "57003-FixedFunctionTestCaseData.xls";
+    @Parameters(name="{0}")
+    public static Collection<Object[]> data() throws Exception {
+        return data(TestFixedFunctionsFromSpreadsheet.class, "57003-FixedFunctionTestCaseData.xls");
     }
 }

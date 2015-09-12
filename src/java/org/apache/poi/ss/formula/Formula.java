@@ -44,19 +44,19 @@ public class Formula {
 	private Formula(byte[] byteEncoding, int encodedTokenLen) {
 		_byteEncoding = byteEncoding;
 		_encodedTokenLen = encodedTokenLen;
-		if (false) { // set to true to eagerly check Ptg decoding
-			LittleEndianByteArrayInputStream in = new LittleEndianByteArrayInputStream(byteEncoding);
-			Ptg.readTokens(encodedTokenLen, in);
-			int nUnusedBytes = _byteEncoding.length - in.getReadIndex();
-			if (nUnusedBytes > 0) {
-				// TODO - this seems to occur when IntersectionPtg is present
-				// This example file "IntersectionPtg.xls"
-				// used by test: TestIntersectionPtg.testReading()
-				// has 10 bytes unused at the end of the formula
-				// 10 extra bytes are just 0x01 and 0x00
-				System.out.println(nUnusedBytes + " unused bytes at end of formula");
-			}
-		}
+//		if (false) { // set to true to eagerly check Ptg decoding
+//			LittleEndianByteArrayInputStream in = new LittleEndianByteArrayInputStream(byteEncoding);
+//			Ptg.readTokens(encodedTokenLen, in);
+//			int nUnusedBytes = _byteEncoding.length - in.getReadIndex();
+//			if (nUnusedBytes > 0) {
+//				// TODO - this seems to occur when IntersectionPtg is present
+//				// This example file "IntersectionPtg.xls"
+//				// used by test: TestIntersectionPtg.testReading()
+//				// has 10 bytes unused at the end of the formula
+//				// 10 extra bytes are just 0x01 and 0x00
+//				System.out.println(nUnusedBytes + " unused bytes at end of formula");
+//			}
+//		}
 	}
 	/**
 	 * Convenience method for {@link #read(int, LittleEndianInput, int)}

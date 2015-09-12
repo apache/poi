@@ -17,13 +17,16 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import java.util.Collection;
+
+import org.junit.runners.Parameterized.Parameters;
+
 /**
  * Tests INDEX() as loaded from a test data spreadsheet.<p/>
  */
 public final class TestIndexFunctionFromSpreadsheet  extends BaseTestFunctionsFromSpreadsheet {
-
-    @Override
-    protected String getFilename() {
-        return "IndexFunctionTestCaseData.xls";
+    @Parameters(name="{0}")
+    public static Collection<Object[]> data() throws Exception {
+        return data(TestIndexFunctionFromSpreadsheet.class, "IndexFunctionTestCaseData.xls");
     }
 }

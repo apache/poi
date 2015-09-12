@@ -17,7 +17,9 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import java.util.Collection;
 
+import org.junit.runners.Parameterized.Parameters;
 
 /**
  * Tests Match functions as loaded from a test data spreadsheet.<p/>
@@ -27,9 +29,8 @@ package org.apache.poi.ss.formula.functions;
  *  more easily.
  */
 public final class TestMatchFunctionsFromSpreadsheet extends BaseTestFunctionsFromSpreadsheet {
-
-    @Override
-    protected String getFilename() {
-        return "MatchFunctionTestCaseData.xls";
+    @Parameters(name="{0}")
+    public static Collection<Object[]> data() throws Exception {
+        return data(TestMatchFunctionsFromSpreadsheet.class, "MatchFunctionTestCaseData.xls");
     }
 }

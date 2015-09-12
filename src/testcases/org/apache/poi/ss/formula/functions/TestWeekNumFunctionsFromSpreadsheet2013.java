@@ -17,15 +17,17 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import java.util.Collection;
+
+import org.junit.runners.Parameterized.Parameters;
+
 /**
  * Tests WeekNum() as loaded from a test data 2013 excel spreadsheet.<p/>
- *
- * @author cedric dot walter @ gmail dot com
  */
 public class TestWeekNumFunctionsFromSpreadsheet2013 extends BaseTestFunctionsFromSpreadsheet {
-
-    protected String getFilename() {
+    @Parameters(name="{0}")
+    public static Collection<Object[]> data() throws Exception {
         //Only open this file with Excel 2013 to keep binary specific to that version
-        return "WeekNumFunctionTestCaseData2013.xls";
+        return data(TestWeekNumFunctionsFromSpreadsheet2013.class, "WeekNumFunctionTestCaseData2013.xls");
     }
 }

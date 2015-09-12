@@ -128,11 +128,11 @@ public class NumberRenderingSpreadsheetGenerator {
 		row.createCell(5).setCellFormula(matchExpr);
 		row.createCell(6).setCellFormula(jmExpr.replaceAll("'", "\""));
 
-		if (false) {
-			// for observing arithmetic near numeric range boundaries
-			row.createCell(7).setCellFormula(cel0ref + " * 1.0001");
-			row.createCell(8).setCellFormula(cel0ref + " / 1.0001");
-		}
+//		if (false) {
+//			// for observing arithmetic near numeric range boundaries
+//			row.createCell(7).setCellFormula(cel0ref + " * 1.0001");
+//			row.createCell(8).setCellFormula(cel0ref + " / 1.0001");
+//		}
 	}
 	
 	private static String formatLongAsHex(long l) {
@@ -215,10 +215,10 @@ public class NumberRenderingSpreadsheetGenerator {
 		bb[i+2] = (byte) (val >> 16);
 		bb[i+1] = (byte) (val >>  8);
 		bb[i+0] = (byte) (val >>  0);
-		if (false) {
-			String newVal = interpretLong(bb, i);
-			System.out.println("changed offset " + i + " from " + oldVal + " to " + newVal);
-		}
+//		if (false) {
+//			String newVal = interpretLong(bb, i);
+//			System.out.println("changed offset " + i + " from " + oldVal + " to " + newVal);
+//		}
 		
 	}
 

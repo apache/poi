@@ -17,19 +17,24 @@
 
 package org.apache.poi.ss.usermodel;
 
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
+import org.junit.Test;
 
 /**
  * Tests of implementations of {@link org.apache.poi.ss.usermodel.Name}.
  *
  * @author Yegor Kozlov
  */
-public abstract class BaseTestNamedRange extends TestCase {
+public abstract class BaseTestNamedRange {
 
     private final ITestDataProvider _testDataProvider;
 
@@ -37,11 +42,12 @@ public abstract class BaseTestNamedRange extends TestCase {
         _testDataProvider = testDataProvider;
     }
 
-    public final void testCreate(){
+    @Test
+    public final void testCreate() throws Exception {
         // Create a new workbook
         Workbook wb = _testDataProvider.createWorkbook();
-        Sheet sheet1 = wb.createSheet("Test1");
-        Sheet sheet2 = wb.createSheet("Testing Named Ranges");
+        wb.createSheet("Test1");
+        wb.createSheet("Testing Named Ranges");
 
         Name name1 = wb.createName();
         name1.setNameName("testOne");
@@ -101,24 +107,31 @@ public abstract class BaseTestNamedRange extends TestCase {
                 // expected during successful test
             }
         }
+        
+        wb.close();
     }
 
-    public final void testUnicodeNamedRange() {
-        Workbook workBook = _testDataProvider.createWorkbook();
-        workBook.createSheet("Test");
-        Name name = workBook.createName();
+    @Test
+    public final void testUnicodeNamedRange() throws Exception {
+        Workbook wb1 = _testDataProvider.createWorkbook();
+        wb1.createSheet("Test");
+        Name name = wb1.createName();
         name.setNameName("\u03B1");
         name.setRefersToFormula("Test!$D$3:$E$8");
 
 
-        Workbook workBook2 = _testDataProvider.writeOutAndReadBack(workBook);
-        Name name2 = workBook2.getNameAt(0);
+        Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1);
+        Name name2 = wb2.getNameAt(0);
 
         assertEquals("\u03B1", name2.getNameName());
         assertEquals("Test!$D$3:$E$8", name2.getRefersToFormula());
+        
+        wb2.close();
+        wb1.close();
     }
 
-    public final void testAddRemove() {
+    @Test
+    public final void testAddRemove() throws Exception {
         Workbook wb = _testDataProvider.createWorkbook();
         assertEquals(0, wb.getNumberOfNames());
         Name name1 = wb.createName();
@@ -138,9 +151,12 @@ public abstract class BaseTestNamedRange extends TestCase {
 
         wb.removeName(0);
         assertEquals(1, wb.getNumberOfNames());
+        
+        wb.close();
     }
 
-    public final void testScope() {
+    @Test
+    public final void testScope() throws Exception {
         Workbook wb = _testDataProvider.createWorkbook();
         wb.createSheet();
         wb.createSheet();
@@ -186,6 +202,8 @@ public abstract class BaseTestNamedRange extends TestCase {
             if("aaa".equals(wb.getNameAt(i).getNameName())) cnt++;
         }
         assertEquals(3, cnt);
+        
+        wb.close();
     }
 
     /**
@@ -193,21 +211,22 @@ public abstract class BaseTestNamedRange extends TestCase {
      * <p>
      * Addresses Bug <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=13775" target="_bug">#13775</a>
      */
-    public final void testMultiNamedRange() {
+    @Test
+    public final void testMultiNamedRange() throws Exception {
 
          // Create a new workbook
-         Workbook wb = _testDataProvider.createWorkbook();
+         Workbook wb1 = _testDataProvider.createWorkbook();
 
          // Create a worksheet 'sheet1' in the new workbook
-         wb.createSheet ();
-         wb.setSheetName (0, "sheet1");
+         wb1.createSheet ();
+         wb1.setSheetName (0, "sheet1");
 
          // Create another worksheet 'sheet2' in the new workbook
-         wb.createSheet ();
-         wb.setSheetName (1, "sheet2");
+         wb1.createSheet ();
+         wb1.setSheetName (1, "sheet2");
 
          // Create a new named range for worksheet 'sheet1'
-         Name namedRange1 = wb.createName();
+         Name namedRange1 = wb1.createName();
 
          // Set the name for the named range for worksheet 'sheet1'
          namedRange1.setNameName("RangeTest1");
@@ -216,7 +235,7 @@ public abstract class BaseTestNamedRange extends TestCase {
          namedRange1.setRefersToFormula("sheet1" + "!$A$1:$L$41");
 
          // Create a new named range for worksheet 'sheet2'
-         Name namedRange2 = wb.createName();
+         Name namedRange2 = wb1.createName();
 
          // Set the name for the named range for worksheet 'sheet2'
          namedRange2.setNameName("RangeTest2");
@@ -226,20 +245,24 @@ public abstract class BaseTestNamedRange extends TestCase {
 
          // Write the workbook to a file
          // Read the Excel file and verify its content
-         wb = _testDataProvider.writeOutAndReadBack(wb);
-         Name nm1 =wb.getNameAt(wb.getNameIndex("RangeTest1"));
+         Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1);
+         Name nm1 = wb2.getNameAt(wb2.getNameIndex("RangeTest1"));
          assertTrue("Name is "+nm1.getNameName(),"RangeTest1".equals(nm1.getNameName()));
-         assertTrue("Reference is "+nm1.getRefersToFormula(),(wb.getSheetName(0)+"!$A$1:$L$41").equals(nm1.getRefersToFormula()));
+         assertTrue("Reference is "+nm1.getRefersToFormula(),(wb2.getSheetName(0)+"!$A$1:$L$41").equals(nm1.getRefersToFormula()));
 
-         Name nm2 =wb.getNameAt(wb.getNameIndex("RangeTest2"));
+         Name nm2 = wb2.getNameAt(wb2.getNameIndex("RangeTest2"));
          assertTrue("Name is "+nm2.getNameName(),"RangeTest2".equals(nm2.getNameName()));
-         assertTrue("Reference is "+nm2.getRefersToFormula(),(wb.getSheetName(1)+"!$A$1:$O$21").equals(nm2.getRefersToFormula()));
+         assertTrue("Reference is "+nm2.getRefersToFormula(),(wb2.getSheetName(1)+"!$A$1:$O$21").equals(nm2.getRefersToFormula()));
+         
+         wb2.close();
+         wb1.close();
      }
 
     /**
      * Test to see if the print areas can be retrieved/created in memory
      */
-    public final void testSinglePrintArea() {
+    @Test
+    public final void testSinglePrintArea() throws Exception {
         Workbook workbook = _testDataProvider.createWorkbook();
         workbook.createSheet("Test Print Area");
         String sheetName = workbook.getSheetName(0);
@@ -251,12 +274,15 @@ public abstract class BaseTestNamedRange extends TestCase {
 
         assertNotNull("Print Area not defined for first sheet", retrievedPrintArea);
         assertEquals("'" + sheetName + "'!$A$1:$B$1", retrievedPrintArea);
+        
+        workbook.close();
     }
 
      /**
       * For Convenience, don't force sheet names to be used
       */
-     public final void testSinglePrintAreaWOSheet()
+    @Test
+     public final void testSinglePrintAreaWOSheet() throws Exception
      {
          Workbook workbook = _testDataProvider.createWorkbook();
          workbook.createSheet("Test Print Area");
@@ -269,80 +295,91 @@ public abstract class BaseTestNamedRange extends TestCase {
 
          assertNotNull("Print Area not defined for first sheet", retrievedPrintArea);
          assertEquals("'" + sheetName + "'!" + reference, retrievedPrintArea);
+         
+         workbook.close();
      }
 
      /**
       * Test to see if the print area made it to the file
       */
-     public final void testPrintAreaFile() {
-         Workbook workbook = _testDataProvider.createWorkbook();
-         workbook.createSheet("Test Print Area");
-         String sheetName = workbook.getSheetName(0);
+    @Test
+    public final void testPrintAreaFile() throws Exception {
+         Workbook wb1 = _testDataProvider.createWorkbook();
+         wb1.createSheet("Test Print Area");
+         String sheetName = wb1.getSheetName(0);
 
 
          String reference = "$A$1:$B$1";
-         workbook.setPrintArea(0, reference);
+         wb1.setPrintArea(0, reference);
 
-         workbook = _testDataProvider.writeOutAndReadBack(workbook);
+         Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1);
 
-         String retrievedPrintArea = workbook.getPrintArea(0);
+         String retrievedPrintArea = wb2.getPrintArea(0);
          assertNotNull("Print Area not defined for first sheet", retrievedPrintArea);
          assertEquals("References Match", "'" + sheetName + "'!$A$1:$B$1", retrievedPrintArea);
+         
+         wb2.close();
+         wb1.close();
     }
 
     /**
      * Test to see if multiple print areas made it to the file
      */
-    public final void testMultiplePrintAreaFile() {
-        Workbook workbook = _testDataProvider.createWorkbook();
+    @Test
+    public final void testMultiplePrintAreaFile() throws Exception {
+        Workbook wb1 = _testDataProvider.createWorkbook();
 
-        workbook.createSheet("Sheet1");
-        workbook.createSheet("Sheet2");
-        workbook.createSheet("Sheet3");
+        wb1.createSheet("Sheet1");
+        wb1.createSheet("Sheet2");
+        wb1.createSheet("Sheet3");
         String reference1 = "$A$1:$B$1";
         String reference2 = "$B$2:$D$5";
         String reference3 = "$D$2:$F$5";
 
-        workbook.setPrintArea(0, reference1);
-        workbook.setPrintArea(1, reference2);
-        workbook.setPrintArea(2, reference3);
+        wb1.setPrintArea(0, reference1);
+        wb1.setPrintArea(1, reference2);
+        wb1.setPrintArea(2, reference3);
 
         //Check created print areas
         String retrievedPrintArea;
 
-        retrievedPrintArea = workbook.getPrintArea(0);
+        retrievedPrintArea = wb1.getPrintArea(0);
         assertNotNull("Print Area Not Found (Sheet 1)", retrievedPrintArea);
         assertEquals("Sheet1!" + reference1, retrievedPrintArea);
 
-        retrievedPrintArea = workbook.getPrintArea(1);
+        retrievedPrintArea = wb1.getPrintArea(1);
         assertNotNull("Print Area Not Found (Sheet 2)", retrievedPrintArea);
         assertEquals("Sheet2!" + reference2, retrievedPrintArea);
 
-        retrievedPrintArea = workbook.getPrintArea(2);
+        retrievedPrintArea = wb1.getPrintArea(2);
         assertNotNull("Print Area Not Found (Sheet 3)", retrievedPrintArea);
         assertEquals("Sheet3!" + reference3, retrievedPrintArea);
 
         // Check print areas after re-reading workbook
-        workbook = _testDataProvider.writeOutAndReadBack(workbook);
+        Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1);
 
-        retrievedPrintArea = workbook.getPrintArea(0);
+        retrievedPrintArea = wb2.getPrintArea(0);
         assertNotNull("Print Area Not Found (Sheet 1)", retrievedPrintArea);
         assertEquals("Sheet1!" + reference1, retrievedPrintArea);
 
-        retrievedPrintArea = workbook.getPrintArea(1);
+        retrievedPrintArea = wb2.getPrintArea(1);
         assertNotNull("Print Area Not Found (Sheet 2)", retrievedPrintArea);
         assertEquals("Sheet2!" + reference2, retrievedPrintArea);
 
-        retrievedPrintArea = workbook.getPrintArea(2);
+        retrievedPrintArea = wb2.getPrintArea(2);
         assertNotNull("Print Area Not Found (Sheet 3)", retrievedPrintArea);
         assertEquals("Sheet3!" + reference3, retrievedPrintArea);
+        
+        wb2.close();
+        wb1.close();
     }
 
     /**
      * Tests the setting of print areas with coordinates (Row/Column designations)
      *
      */
-    public final void testPrintAreaCoords(){
+    @Test
+    public final void testPrintAreaCoords() throws Exception {
         Workbook workbook = _testDataProvider.createWorkbook();
         workbook.createSheet("Test Print Area");
         String sheetName = workbook.getSheetName(0);
@@ -353,6 +390,8 @@ public abstract class BaseTestNamedRange extends TestCase {
 
         assertNotNull("Print Area not defined for first sheet", retrievedPrintArea);
         assertEquals("'" + sheetName + "'!$A$1:$B$1", retrievedPrintArea);
+        
+        workbook.close();
     }
 
 
@@ -360,7 +399,8 @@ public abstract class BaseTestNamedRange extends TestCase {
      * Tests the parsing of union area expressions, and re-display in the presence of sheet names
      * with special characters.
      */
-    public final void testPrintAreaUnion(){
+    @Test
+    public final void testPrintAreaUnion() throws Exception {
         Workbook workbook = _testDataProvider.createWorkbook();
         workbook.createSheet("Test Print Area");
 
@@ -369,13 +409,16 @@ public abstract class BaseTestNamedRange extends TestCase {
         String retrievedPrintArea = workbook.getPrintArea(0);
         assertNotNull("Print Area not defined for first sheet", retrievedPrintArea);
         assertEquals("'Test Print Area'!$A$1:$B$1,'Test Print Area'!$D$1:$F$2", retrievedPrintArea);
+        
+        workbook.close();
     }
 
     /**
      * Verifies an existing print area is deleted
      *
      */
-    public final void testPrintAreaRemove() {
+    @Test
+    public final void testPrintAreaRemove() throws Exception {
         Workbook workbook = _testDataProvider.createWorkbook();
         workbook.createSheet("Test Print Area");
         workbook.getSheetName(0);
@@ -388,47 +431,53 @@ public abstract class BaseTestNamedRange extends TestCase {
 
         workbook.removePrintArea(0);
         assertNull("PrintArea was not removed", workbook.getPrintArea(0));
+        workbook.close();
     }
 
     /**
      * Test that multiple named ranges can be added written and read
      */
-    public final void testMultipleNamedWrite() {
-        Workbook wb = _testDataProvider.createWorkbook();
+    @Test
+    public final void testMultipleNamedWrite() throws Exception {
+        Workbook wb1 = _testDataProvider.createWorkbook();
 
 
-        wb.createSheet("testSheet1");
-        String sheetName = wb.getSheetName(0);
+        wb1.createSheet("testSheet1");
+        String sheetName = wb1.getSheetName(0);
 
         assertEquals("testSheet1", sheetName);
 
         //Creating new Named Range
-        Name newNamedRange = wb.createName();
+        Name newNamedRange = wb1.createName();
 
         newNamedRange.setNameName("RangeTest");
         newNamedRange.setRefersToFormula(sheetName + "!$D$4:$E$8");
 
         //Creating another new Named Range
-        Name newNamedRange2 = wb.createName();
+        Name newNamedRange2 = wb1.createName();
 
         newNamedRange2.setNameName("AnotherTest");
         newNamedRange2.setRefersToFormula(sheetName + "!$F$1:$G$6");
 
-        wb.getNameAt(0);
+        wb1.getNameAt(0);
 
-        wb = _testDataProvider.writeOutAndReadBack(wb);
-        Name nm =wb.getNameAt(wb.getNameIndex("RangeTest"));
+        Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1);
+        Name nm =wb2.getNameAt(wb2.getNameIndex("RangeTest"));
         assertTrue("Name is "+nm.getNameName(),"RangeTest".equals(nm.getNameName()));
-        assertTrue("Reference is "+nm.getRefersToFormula(),(wb.getSheetName(0)+"!$D$4:$E$8").equals(nm.getRefersToFormula()));
+        assertTrue("Reference is "+nm.getRefersToFormula(),(wb2.getSheetName(0)+"!$D$4:$E$8").equals(nm.getRefersToFormula()));
 
-        nm = wb.getNameAt(wb.getNameIndex("AnotherTest"));
+        nm = wb2.getNameAt(wb2.getNameIndex("AnotherTest"));
         assertTrue("Name is "+nm.getNameName(),"AnotherTest".equals(nm.getNameName()));
         assertTrue("Reference is "+nm.getRefersToFormula(),newNamedRange2.getRefersToFormula().equals(nm.getRefersToFormula()));
+        
+        wb2.close();
+        wb1.close();
     }
     /**
      * Verifies correct functioning for "single cell named range" (aka "named cell")
      */
-    public final void testNamedCell_1() {
+    @Test
+    public final void testNamedCell_1() throws Exception {
 
         // setup for this testcase
         String sheetName = "Test Named Cell";
@@ -451,6 +500,7 @@ public abstract class BaseTestNamedRange extends TestCase {
         assertNotNull(aNamedCell);
 
         // retrieve the cell at the named range and test its contents
+        @SuppressWarnings("deprecation")
         AreaReference aref = new AreaReference(aNamedCell.getRefersToFormula());
         assertTrue("Should be exactly 1 cell in the named cell :'" +cellName+"'", aref.isSingleCell());
 
@@ -462,12 +512,15 @@ public abstract class BaseTestNamedRange extends TestCase {
         Cell c = r.getCell(cref.getCol());
         String contents = c.getRichStringCellValue().getString();
         assertEquals("Contents of cell retrieved by its named reference", contents, cellValue);
+        
+        wb.close();
     }
 
     /**
      * Verifies correct functioning for "single cell named range" (aka "named cell")
      */
-    public final void testNamedCell_2() {
+    @Test
+    public final void testNamedCell_2() throws Exception {
 
         // setup for this testcase
         String sname = "TestSheet", cname = "TestName", cvalue = "TestVal";
@@ -491,10 +544,13 @@ public abstract class BaseTestNamedRange extends TestCase {
         CellReference cref = new CellReference(aNamedCell.getRefersToFormula());
         assertNotNull(cref);
         Sheet s = wb.getSheet(cref.getSheetName());
+        assertNotNull(s);
         Row r = sheet.getRow(cref.getRow());
         Cell c = r.getCell(cref.getCol());
         String contents = c.getRichStringCellValue().getString();
         assertEquals("Contents of cell retrieved by its named reference", contents, cvalue);
+        
+        wb.close();
     }
 
 
@@ -511,40 +567,40 @@ public abstract class BaseTestNamedRange extends TestCase {
      * could do the same, but that would involve adjusting subsequent name indexes across
      * all formulas. <p/>
      *
-     * For the moment, POI has been made to behave more sensibly with uninitialised name
+     * For the moment, POI has been made to behave more sensibly with uninitialized name
      * records.
      */
-    public final void testUninitialisedNameGetRefersToFormula_bug46973() {
+    @Test
+    public final void testUninitialisedNameGetRefersToFormula_bug46973() throws Exception {
         Workbook wb = _testDataProvider.createWorkbook();
         Name n = wb.createName();
         n.setNameName("UPSState");
-        String formula;
-        try {
-            formula = n.getRefersToFormula();
-        } catch (IllegalArgumentException e) {
-            if (e.getMessage().equals("ptgs must not be null")) {
-                throw new AssertionFailedError("Identified bug 46973");
-            }
-            throw e;
-        }
+        String formula = n.getRefersToFormula();
+        
+        // bug 46973: fails here with IllegalArgumentException
+        // ptgs must not be null
+
         assertNull(formula);
-        assertFalse(n.isDeleted()); // according to exact definition of isDeleted()
+        // according to exact definition of isDeleted()
+        assertFalse(n.isDeleted());
+        wb.close();
     }
 
-    public final void testDeletedCell() {
+    @Test
+    public final void testDeletedCell() throws Exception {
         Workbook wb = _testDataProvider.createWorkbook();
         Name n = wb.createName();
         n.setNameName("MyName");
         // contrived example to expose bug:
         n.setRefersToFormula("if(A1,\"#REF!\", \"\")");
 
-        if (n.isDeleted()) {
-            throw new AssertionFailedError("Identified bug in recoginising formulas referring to deleted cells");
-        }
-
+        assertFalse("Identified bug in recoginising formulas referring to deleted cells", n.isDeleted());
+        
+        wb.close();
     }
 
-    public final void testFunctionNames() {
+    @Test
+    public final void testFunctionNames() throws Exception {
         Workbook wb = _testDataProvider.createWorkbook();
         Name n = wb.createName();
         assertFalse(n.isFunctionName());
@@ -557,9 +613,12 @@ public abstract class BaseTestNamedRange extends TestCase {
 
         n.setFunction(false);
         assertFalse(n.isFunctionName());
+        
+        wb.close();
     }
 
-    public final void testDefferedSetting() {
+    @Test
+    public final void testDefferedSetting() throws Exception {
         Workbook wb = _testDataProvider.createWorkbook();
         Name n1 = wb.createName();
         assertNull(n1.getRefersToFormula());
@@ -581,6 +640,7 @@ public abstract class BaseTestNamedRange extends TestCase {
         } catch(Exception e){
             assertEquals("The workbook already contains this name: sale_1", e.getMessage());
         }
-
+        
+        wb.close();
     }
 }

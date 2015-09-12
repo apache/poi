@@ -54,9 +54,9 @@ public class HSSFFormulaEvaluator implements FormulaEvaluator, WorkbookEvaluator
 	@Deprecated
     public HSSFFormulaEvaluator(HSSFSheet sheet, HSSFWorkbook workbook) {
 		this(workbook);
-		if (false) {
-			sheet.toString(); // suppress unused parameter compiler warning
-		}
+//		if (false) {
+//			sheet.toString(); // suppress unused parameter compiler warning
+//		}
 		this._book = workbook;
 	}
 	public HSSFFormulaEvaluator(HSSFWorkbook workbook) {
@@ -122,9 +122,9 @@ public class HSSFFormulaEvaluator implements FormulaEvaluator, WorkbookEvaluator
 	@Deprecated
     public void setCurrentRow(HSSFRow row) {
 		// do nothing
-		if (false) {
-			row.getClass(); // suppress unused parameter compiler warning
-		}
+//		if (false) {
+//			row.getClass(); // suppress unused parameter compiler warning
+//		}
 	}
 
 	/**

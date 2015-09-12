@@ -17,24 +17,26 @@
 
 package org.apache.poi.poifs.storage;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
+import org.junit.Test;
 
 /**
  * Class to test BlockListImpl functionality
  *
  * @author Marc Johnson
  */
-public final class TestBlockListImpl extends TestCase {
+public final class TestBlockListImpl {
     private static final class BlockListTestImpl extends BlockListImpl {
         public BlockListTestImpl() {
             // no extra initialisation
@@ -44,6 +46,7 @@ public final class TestBlockListImpl extends TestCase {
         return new BlockListTestImpl();
     }
 
+    @Test
     public void testZap() throws IOException {
         BlockListImpl list = create();
 
@@ -79,7 +82,7 @@ public final class TestBlockListImpl extends TestCase {
         }
     }
 
-
+    @Test
     public void testRemove() throws IOException {
         BlockListImpl  list   = create();
         RawDataBlock[] blocks = new RawDataBlock[ 5 ];
@@ -139,6 +142,7 @@ public final class TestBlockListImpl extends TestCase {
         }
     }
 
+    @Test
     public void testSetBAT() throws IOException {
         BlockListImpl list = create();
 
@@ -154,6 +158,7 @@ public final class TestBlockListImpl extends TestCase {
         }
     }
 
+    @Test
     public void testFetchBlocks() throws IOException {
 
         // strategy:
@@ -169,7 +174,7 @@ public final class TestBlockListImpl extends TestCase {
         // that includes a reserved (XBAT) block, and one that
         // points off into space somewhere
         BlockListImpl list       = create();
-        List          raw_blocks = new ArrayList();
+        List<RawDataBlock>  raw_blocks = new ArrayList<RawDataBlock>();
         byte[]        data       = new byte[ 512 ];
         int           offset     = 0;
 
@@ -227,8 +232,7 @@ public final class TestBlockListImpl extends TestCase {
             raw_blocks.add(
                 new RawDataBlock(new ByteArrayInputStream(new byte[ 0 ])));
         }
-        list.setBlocks(( RawDataBlock [] ) raw_blocks
-            .toArray(new RawDataBlock[ 0 ]));
+        list.setBlocks(raw_blocks.toArray(new RawDataBlock[raw_blocks.size()]));
         int[]                      blocks          =
         {
             0

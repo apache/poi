@@ -17,20 +17,21 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.lang.reflect.Field;
 
 import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.record.NameRecord;
-import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.FormulaType;
+import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.usermodel.BaseTestNamedRange;
 import org.apache.poi.ss.util.AreaReference;
-import org.apache.poi.util.TempFile;
+import org.junit.Test;
 
 /**
  * Tests various functionality having to do with {@link org.apache.poi.ss.usermodel.Name}.
@@ -65,7 +66,8 @@ public final class TestHSSFName extends BaseTestNamedRange {
         super(HSSFITestDataProvider.instance);
     }
 
-    public void testRepeatingRowsAndColumsNames() {
+    @Test
+    public void testRepeatingRowsAndColumsNames() throws Exception {
          // First test that setting RR&C for same sheet more than once only creates a
          // single  Print_Titles built-in record
          HSSFWorkbook wb = new HSSFWorkbook();
@@ -80,15 +82,16 @@ public final class TestHSSFName extends BaseTestNamedRange {
          HSSFName nr1 = wb.getNameAt(0);
 
          assertEquals("Print_Titles", nr1.getNameName());
-         if (false) {
-             //     TODO - full column references not rendering properly, absolute markers not present either
-             assertEquals("FirstSheet!$A:$A,FirstSheet!$1:$3", nr1.getRefersToFormula());
-         } else {
+//         if (false) {
+//             //     TODO - full column references not rendering properly, absolute markers not present either
+//             assertEquals("FirstSheet!$A:$A,FirstSheet!$1:$3", nr1.getRefersToFormula());
+//         } else {
              assertEquals("FirstSheet!A:A,FirstSheet!$A$1:$IV$3", nr1.getRefersToFormula());
-         }
+//         }
 
          // Save and re-open
          HSSFWorkbook nwb = HSSFTestDataSamples.writeOutAndReadBack(wb);
+         wb.close();
 
          assertEquals(1, nwb.getNumberOfNames());
          nr1 = nwb.getNameAt(0);
@@ -107,29 +110,31 @@ public final class TestHSSFName extends BaseTestNamedRange {
          assertEquals("Print_Titles", nr2.getNameName());
          assertEquals("SecondSheet!B:C,SecondSheet!$A$1:$IV$1", nr2.getRefersToFormula());
 
-         if (false) {
-             // In case you fancy checking in excel, to ensure it
-             //  won't complain about the file now
-             try {
-                 File tempFile = TempFile.createTempFile("POI-45126-", ".xls");
-                 FileOutputStream fout = new FileOutputStream(tempFile);
-                 nwb.write(fout);
-                 fout.close();
-                 System.out.println("check out " + tempFile.getAbsolutePath());
-             } catch (IOException e) {
-                 throw new RuntimeException(e);
-             }
-         }
+//         if (false) {
+//             // In case you fancy checking in excel, to ensure it
+//             //  won't complain about the file now
+//             try {
+//                 File tempFile = TempFile.createTempFile("POI-45126-", ".xls");
+//                 FileOutputStream fout = new FileOutputStream(tempFile);
+//                 nwb.write(fout);
+//                 fout.close();
+//                 System.out.println("check out " + tempFile.getAbsolutePath());
+//             } catch (IOException e) {
+//                 throw new RuntimeException(e);
+//             }
+//         }
+         nwb.close();
      }
 
-    public void testNamedRange() {
-        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("Simple.xls");
+    @Test
+    public void testNamedRange() throws Exception {
+        HSSFWorkbook wb1 = HSSFTestDataSamples.openSampleWorkbook("Simple.xls");
 
         //Creating new Named Range
-        HSSFName newNamedRange = wb.createName();
+        HSSFName newNamedRange = wb1.createName();
 
         //Getting Sheet Name for the reference
-        String sheetName = wb.getSheetName(0);
+        String sheetName = wb1.getSheetName(0);
 
         //Setting its name
         newNamedRange.setNameName("RangeTest");
@@ -137,18 +142,20 @@ public final class TestHSSFName extends BaseTestNamedRange {
         newNamedRange.setRefersToFormula(sheetName + "!$D$4:$E$8");
 
         //Getting NAmed Range
-        HSSFName namedRange1 = wb.getNameAt(0);
+        HSSFName namedRange1 = wb1.getNameAt(0);
         //Getting it sheet name
         sheetName = namedRange1.getSheetName();
 
         // sanity check
         SanityChecker c = new SanityChecker();
-        c.checkHSSFWorkbook(wb);
+        c.checkHSSFWorkbook(wb1);
 
-        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
-        HSSFName nm =wb.getNameAt(wb.getNameIndex("RangeTest"));
+        HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1);
+        HSSFName nm = wb2.getNameAt(wb2.getNameIndex("RangeTest"));
         assertTrue("Name is "+nm.getNameName(),"RangeTest".equals(nm.getNameName()));
-        assertEquals(wb.getSheetName(0)+"!$D$4:$E$8", nm.getRefersToFormula());
+        assertEquals(wb2.getSheetName(0)+"!$D$4:$E$8", nm.getRefersToFormula());
+        wb2.close();
+        wb1.close();
     }
 
     /**
@@ -156,7 +163,8 @@ public final class TestHSSFName extends BaseTestNamedRange {
      * <p>
      * Addresses Bug <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=9632" target="_bug">#9632</a>
      */
-    public void testNamedRead() {
+    @Test
+    public void testNamedRead() throws Exception {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("namedinput.xls");
 
         //Get index of the named range with the name = "NamedRangeName" , which was defined in input.xls as A1:D10
@@ -175,6 +183,8 @@ public final class TestHSSFName extends BaseTestNamedRange {
 
         assertEquals(sheetName+"!$D$17:$G$27", namedRange2.getRefersToFormula());
         assertEquals("SecondNamedRange", namedRange2.getNameName());
+        
+        wb.close();
     }
 
     /**
@@ -182,7 +192,8 @@ public final class TestHSSFName extends BaseTestNamedRange {
      * <p>
      * Addresses Bug <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=16411" target="_bug">#16411</a>
      */
-    public void testNamedReadModify() {
+    @Test
+    public void testNamedReadModify() throws Exception {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("namedinput.xls");
 
         HSSFName name = wb.getNameAt(0);
@@ -195,22 +206,26 @@ public final class TestHSSFName extends BaseTestNamedRange {
 
         name.setRefersToFormula(newReference);
         assertEquals(newReference, name.getRefersToFormula());
+        
+        wb.close();
     }
 
      /**
       * Test to see if the print area can be retrieved from an excel created file
       */
-     public void testPrintAreaFileRead() {
-         HSSFWorkbook workbook = HSSFTestDataSamples.openSampleWorkbook("SimpleWithPrintArea.xls");
+    @Test
+    public void testPrintAreaFileRead() throws Exception {
+        HSSFWorkbook workbook = HSSFTestDataSamples.openSampleWorkbook("SimpleWithPrintArea.xls");
 
         String sheetName = workbook.getSheetName(0);
         String reference = sheetName+"!$A$1:$C$5";
 
         assertEquals(reference, workbook.getPrintArea(0));
+        workbook.close();
     }
 
-
-    public void testDeletedReference() {
+    @Test
+    public void testDeletedReference() throws Exception {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("24207.xls");
         assertEquals(2, wb.getNumberOfNames());
 
@@ -230,6 +245,7 @@ public final class TestHSSFName extends BaseTestNamedRange {
         } catch (IllegalArgumentException e) { // TODO - use a stronger typed exception for this condition
             // expected during successful test
         }
+        wb.close();
     }
 
     /**
@@ -237,7 +253,8 @@ public final class TestHSSFName extends BaseTestNamedRange {
      * must set the type of operands to Ptg.CLASS_REF,
      * otherwise created named don't appear in the drop-down to the left of formula bar in Excel
      */
-    public void testTypeOfRootPtg(){
+    @Test
+    public void testTypeOfRootPtg() throws Exception {
         HSSFWorkbook wb = new HSSFWorkbook();
         wb.createSheet("CSCO");
 
@@ -245,6 +262,6 @@ public final class TestHSSFName extends BaseTestNamedRange {
         for (int i = 0; i < ptgs.length; i++) {
             assertEquals('R', ptgs[i].getRVAType());
         }
-
+        wb.close();
     }
 }

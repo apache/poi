@@ -16,12 +16,16 @@
 ==================================================================== */
 package org.apache.poi.ss.formula.functions;
 
+import java.util.Collection;
+
+import org.junit.runners.Parameterized.Parameters;
+
 /**
 * Tests D*() functions as loaded from a test data spreadsheet.
 */
 public class TestDStarFunctionsFromSpreadsheet extends BaseTestFunctionsFromSpreadsheet {
-
-    protected String getFilename() {
-        return "DStar.xls";
+    @Parameters(name="{0}")
+    public static Collection<Object[]> data() throws Exception {
+        return data(TestDStarFunctionsFromSpreadsheet.class, "DStar.xls");
     }
 }

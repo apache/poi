@@ -16,12 +16,16 @@
 ==================================================================== */
 package org.apache.poi.ss.formula.functions;
 
+import java.util.Collection;
+
+import org.junit.runners.Parameterized.Parameters;
+
 /**
 * Tests DGET() as loaded from a test data spreadsheet.
 */
 public class TestDGetFunctionsFromSpreadsheet extends BaseTestFunctionsFromSpreadsheet {
-
-    protected String getFilename() {
-        return "DGet.xls";
+    @Parameters(name="{0}")
+    public static Collection<Object[]> data() throws Exception {
+        return data(TestDGetFunctionsFromSpreadsheet.class, "DGet.xls");
     }
 }

@@ -130,28 +130,28 @@ public final class OperandResolver {
 	private static ValueEval chooseSingleElementFromAreaInternal(AreaEval ae,
 			int srcCellRow, int srcCellCol) throws EvaluationException {
 
-		if(false) {
-			// this is too simplistic
-			if(ae.containsRow(srcCellRow) && ae.containsColumn(srcCellCol)) {
-				throw new EvaluationException(ErrorEval.CIRCULAR_REF_ERROR);
-			}
-		/*
-		Circular references are not dealt with directly here, but it is worth noting some issues.
-
-		ANY one of the return statements in this method could return a cell that is identical
-		to the one immediately being evaluated.  The evaluating cell is identified by srcCellRow,
-		srcCellRow AND sheet.  The sheet is not available in any nearby calling method, so that's
-		one reason why circular references are not easy to detect here. (The sheet of the returned
-		cell can be obtained from ae if it is an Area3DEval.)
-
-		Another reason there's little value in attempting to detect circular references here is
-		that only direct circular references could be detected.  If the cycle involved two or more
-		cells this method could not detect it.
-
-		Logic to detect evaluation cycles of all kinds has been coded in EvaluationCycleDetector
-		(and FormulaEvaluator).
-		 */
-		}
+//		if(false) {
+//			// this is too simplistic
+//			if(ae.containsRow(srcCellRow) && ae.containsColumn(srcCellCol)) {
+//				throw new EvaluationException(ErrorEval.CIRCULAR_REF_ERROR);
+//			}
+//		/*
+//		Circular references are not dealt with directly here, but it is worth noting some issues.
+//
+//		ANY one of the return statements in this method could return a cell that is identical
+//		to the one immediately being evaluated.  The evaluating cell is identified by srcCellRow,
+//		srcCellRow AND sheet.  The sheet is not available in any nearby calling method, so that's
+//		one reason why circular references are not easy to detect here. (The sheet of the returned
+//		cell can be obtained from ae if it is an Area3DEval.)
+//
+//		Another reason there's little value in attempting to detect circular references here is
+//		that only direct circular references could be detected.  If the cycle involved two or more
+//		cells this method could not detect it.
+//
+//		Logic to detect evaluation cycles of all kinds has been coded in EvaluationCycleDetector
+//		(and FormulaEvaluator).
+//		 */
+//		}
 
 		if (ae.isColumn()) {
 			if(ae.isRow()) {

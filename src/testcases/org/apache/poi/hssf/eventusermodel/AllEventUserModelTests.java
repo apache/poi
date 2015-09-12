@@ -17,22 +17,18 @@
 
 package org.apache.poi.hssf.eventusermodel;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
 /**
  * Collects all tests for <tt>org.apache.poi.hssf.eventusermodel</tt>.
- * 
- * @author Josh Micich
  */
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+    TestEventWorkbookBuilder.class,
+    TestFormatTrackingHSSFListener.class,
+    TestHSSFEventFactory.class,
+    TestMissingRecordAwareHSSFListener.class
+})
 public class AllEventUserModelTests {
-	
-	public static Test suite() {
-		TestSuite result = new TestSuite(AllEventUserModelTests.class.getName());
-		result.addTestSuite(TestEventWorkbookBuilder.class);
-		result.addTestSuite(TestFormatTrackingHSSFListener.class);
-		result.addTestSuite(TestHSSFEventFactory.class);
-		result.addTestSuite(TestMissingRecordAwareHSSFListener.class);
-		return result;
-	}
 }

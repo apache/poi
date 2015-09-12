@@ -16,6 +16,8 @@
 ==================================================================== */
 package org.apache.poi.xssf.usermodel;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
@@ -34,6 +36,7 @@ import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
+import org.junit.Test;
 
 public class TestXSSFDataValidation extends BaseTestDataValidation {
 
@@ -41,9 +44,10 @@ public class TestXSSFDataValidation extends BaseTestDataValidation {
         super(XSSFITestDataProvider.instance);
     }
 
+    @Test
 	public void testAddValidations() throws Exception {
-		XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("DataValidations-49244.xlsx");
-		Sheet sheet = workbook.getSheetAt(0);
+		XSSFWorkbook wb1 = XSSFTestDataSamples.openSampleWorkbook("DataValidations-49244.xlsx");
+		Sheet sheet = wb1.getSheetAt(0);
 		List<XSSFDataValidation> dataValidations = ((XSSFSheet)sheet).getDataValidations();
 		
 /**
@@ -232,9 +236,11 @@ public class TestXSSFDataValidation extends BaseTestDataValidation {
 			}
 		}
 
-		workbook = XSSFTestDataSamples.writeOutAndReadBack(workbook);
-		Sheet sheetAt = workbook.getSheetAt(0);
+		XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb1);
+		wb1.close();
+		Sheet sheetAt = wb2.getSheetAt(0);
 		assertEquals(lastKnownNumValidations,((XSSFSheet)sheetAt).getDataValidations().size());
+		wb2.close();
 	}
 
 	protected void setOtherValidationParameters(DataValidation validation) {
@@ -247,6 +253,7 @@ public class TestXSSFDataValidation extends BaseTestDataValidation {
 		validation.setSuppressDropDownArrow(yesNo);
 	}
 
+	@Test
     public void test53965() throws Exception {
         XSSFWorkbook wb = new XSSFWorkbook();
         try {
@@ -271,6 +278,7 @@ public class TestXSSFDataValidation extends BaseTestDataValidation {
         }
     }
 
+	@Test
     public void testDefaultAllowBlank() throws IOException {
         XSSFWorkbook wb = new XSSFWorkbook();
         try {
@@ -286,6 +294,7 @@ public class TestXSSFDataValidation extends BaseTestDataValidation {
         }
     }
 
+	@Test
     public void testSetAllowBlankToFalse() throws IOException {
         XSSFWorkbook wb = new XSSFWorkbook();
         try {
@@ -303,6 +312,7 @@ public class TestXSSFDataValidation extends BaseTestDataValidation {
         }
     }
 
+	@Test
     public void testSetAllowBlankToTrue() throws IOException {
         XSSFWorkbook wb = new XSSFWorkbook();
         try {

@@ -90,14 +90,14 @@ public class HSSFColor implements Color {
                 // most colors don't have a second index
                 continue;
             }
-            if (result.containsKey(index2)) {
-                if (false) { // Many of the second indexes clash
-                    HSSFColor prevColor = (HSSFColor)result.get(index2);
-                    throw new RuntimeException("Dup color index (" + index2
-                            + ") for colors (" + prevColor.getClass().getName()
-                            + "),(" + color.getClass().getName() + ")");
-                }
-            }
+//            if (result.containsKey(index2)) {
+//                if (false) { // Many of the second indexes clash
+//                    HSSFColor prevColor = (HSSFColor)result.get(index2);
+//                    throw new RuntimeException("Dup color index (" + index2
+//                            + ") for colors (" + prevColor.getClass().getName()
+//                            + "),(" + color.getClass().getName() + ")");
+//                }
+//            }
             result.put(index2, color);
         }
         return result;

@@ -17,25 +17,27 @@
 
 package org.apache.poi.openxml4j.opc;
 
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.util.TreeMap;
 
 import org.apache.poi.openxml4j.opc.internal.FileHelper;
-
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * Test TestFileHelper class.
  *
  * @author Julien Chable
  */
-public final class TestFileHelper extends TestCase {
+public final class TestFileHelper {
 
 	/**
 	 * TODO - use simple JDK methods on {@link File} instead:<br/>
 	 * {@link File#getParentFile()} instead of {@link FileHelper#getDirectory(File)
 	 * {@link File#getName()} instead of {@link FileHelper#getFilename(File)
 	 */
+    @Test
 	public void testGetDirectory() {
 		TreeMap<String, String> expectedValue = new TreeMap<String, String>();
 		expectedValue.put("/dir1/test.doc", "/dir1");
@@ -45,11 +47,11 @@ public final class TestFileHelper extends TestCase {
 			File f1 = new File(expectedValue.get(filename));
 			File f2 = FileHelper.getDirectory(new File(filename));
 
-			if (false) {
-				// YK: The original version asserted expected values against File#getAbsolutePath():
-				assertTrue(expectedValue.get(filename).equalsIgnoreCase(f2.getAbsolutePath()));
-				// This comparison is platform dependent. A better approach is below
-			}
+//			if (false) {
+//				// YK: The original version asserted expected values against File#getAbsolutePath():
+//				assertTrue(expectedValue.get(filename).equalsIgnoreCase(f2.getAbsolutePath()));
+//				// This comparison is platform dependent. A better approach is below
+//			}
 			assertTrue(f1.equals(f2));
 		}
 	}

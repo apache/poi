@@ -17,21 +17,17 @@
 
 package org.apache.poi.ss.formula.function;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
 /**
  * Collects all tests for this <tt>org.apache.poi.hssf.record.formula.function</tt>.
- * 
- * @author Josh Micich
  */
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+    TestFunctionMetadataRegistry.class,
+    TestParseMissingBuiltInFuncs.class,
+    TestReadMissingBuiltInFuncs.class
+})
 public class AllFormulaFunctionTests {
-	
-	public static Test suite() {
-		TestSuite result = new TestSuite(AllFormulaFunctionTests.class.getName());
-		result.addTestSuite(TestFunctionMetadataRegistry.class);
-		result.addTestSuite(TestParseMissingBuiltInFuncs.class);
-		result.addTestSuite(TestReadMissingBuiltInFuncs.class);
-		return result;
-	}
 }

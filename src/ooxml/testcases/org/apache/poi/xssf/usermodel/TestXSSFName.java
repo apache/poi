@@ -18,7 +18,11 @@
 package org.apache.poi.xssf.usermodel;
 
 import org.apache.poi.xssf.XSSFTestDataSamples;
+import org.junit.Test;
 import org.apache.poi.xssf.XSSFITestDataProvider;
+
+import static org.junit.Assert.*;
+
 import org.apache.poi.ss.usermodel.BaseTestNamedRange;
 import org.apache.poi.ss.util.CellRangeAddress;
 
@@ -32,7 +36,8 @@ public final class TestXSSFName extends BaseTestNamedRange {
     }
 
     //TODO combine testRepeatingRowsAndColums() for HSSF and XSSF
-    public void testRepeatingRowsAndColums() {
+    @Test
+    public void testRepeatingRowsAndColums() throws Exception {
         // First test that setting RR&C for same sheet more than once only creates a
         // single  Print_Titles built-in record
         XSSFWorkbook wb = new XSSFWorkbook();
@@ -69,7 +74,8 @@ public final class TestXSSFName extends BaseTestNamedRange {
 
         // Save and re-open
         XSSFWorkbook nwb = XSSFTestDataSamples.writeOutAndReadBack(wb);
-
+        wb.close();
+        
         assertEquals(1, nwb.getNumberOfNames());
         nr1 = nwb.getNameAt(0);
 
@@ -90,5 +96,6 @@ public final class TestXSSFName extends BaseTestNamedRange {
 
         sheet2.setRepeatingRows(null);
         sheet2.setRepeatingColumns(null);
+        nwb.close();
     }
 }
