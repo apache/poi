@@ -17,56 +17,51 @@
 
 package org.apache.poi.hssf.record.chart;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
 /**
  * Collects all tests for package <tt>org.apache.poi.hssf.record.class</tt>.
- * 
- * @author Josh Micich
  */
-public final class AllChartRecordTests {
-	
-	public static Test suite() {
-		TestSuite result = new TestSuite(AllChartRecordTests.class.getName());
-
-		result.addTestSuite(TestAreaFormatRecord.class);
-		result.addTestSuite(TestAreaRecord.class);
-		result.addTestSuite(TestAxisLineFormatRecord.class);
-		result.addTestSuite(TestAxisOptionsRecord.class);
-		result.addTestSuite(TestAxisParentRecord.class);
-		result.addTestSuite(TestAxisRecord.class);
-		result.addTestSuite(TestAxisUsedRecord.class);
-		result.addTestSuite(TestBarRecord.class);
-		result.addTestSuite(TestCategorySeriesAxisRecord.class);
-		result.addTestSuite(TestChartFormatRecord.class);
-		result.addTestSuite(TestChartRecord.class);
-		result.addTestSuite(TestChartTitleFormatRecord.class);
-		result.addTestSuite(TestDatRecord.class);
-		result.addTestSuite(TestDataFormatRecord.class);
-		result.addTestSuite(TestDefaultDataLabelTextPropertiesRecord.class);
-		result.addTestSuite(TestFontBasisRecord.class);
-		result.addTestSuite(TestFontIndexRecord.class);
-		result.addTestSuite(TestFrameRecord.class);
-		result.addTestSuite(TestLegendRecord.class);
-		result.addTestSuite(TestLineFormatRecord.class);
-		result.addTestSuite(TestLinkedDataRecord.class);
-		result.addTestSuite(TestNumberFormatIndexRecord.class);
-		result.addTestSuite(TestObjectLinkRecord.class);
-		result.addTestSuite(TestPlotAreaRecord.class);
-		result.addTestSuite(TestPlotGrowthRecord.class);
-		result.addTestSuite(TestSeriesChartGroupIndexRecord.class);
-		result.addTestSuite(TestSeriesIndexRecord.class);
-		result.addTestSuite(TestSeriesLabelsRecord.class);
-		result.addTestSuite(TestSeriesListRecord.class);
-		result.addTestSuite(TestSeriesRecord.class);
-		result.addTestSuite(TestSeriesTextRecord.class);
-		result.addTestSuite(TestSeriesToChartGroupRecord.class);
-		result.addTestSuite(TestSheetPropertiesRecord.class);
-		result.addTestSuite(TestTextRecord.class);
-		result.addTestSuite(TestTickRecord.class);
-		result.addTestSuite(TestUnitsRecord.class);
-		result.addTestSuite(TestValueRangeRecord.class);
-		return result;
-	}
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+    TestAreaFormatRecord.class,
+    TestAreaRecord.class,
+    TestAxisLineFormatRecord.class,
+    TestAxisOptionsRecord.class,
+    TestAxisParentRecord.class,
+    TestAxisRecord.class,
+    TestAxisUsedRecord.class,
+    TestBarRecord.class,
+    TestCategorySeriesAxisRecord.class,
+    TestChartFormatRecord.class,
+    TestChartRecord.class,
+    TestChartTitleFormatRecord.class,
+    TestDatRecord.class,
+    TestDataFormatRecord.class,
+    TestDefaultDataLabelTextPropertiesRecord.class,
+    TestFontBasisRecord.class,
+    TestFontIndexRecord.class,
+    TestFrameRecord.class,
+    TestLegendRecord.class,
+    TestLineFormatRecord.class,
+    TestLinkedDataRecord.class,
+    TestNumberFormatIndexRecord.class,
+    TestObjectLinkRecord.class,
+    TestPlotAreaRecord.class,
+    TestPlotGrowthRecord.class,
+    TestSeriesChartGroupIndexRecord.class,
+    TestSeriesIndexRecord.class,
+    TestSeriesLabelsRecord.class,
+    TestSeriesListRecord.class,
+    TestSeriesRecord.class,
+    TestSeriesTextRecord.class,
+    TestSeriesToChartGroupRecord.class,
+    TestSheetPropertiesRecord.class,
+    TestTextRecord.class,
+    TestTickRecord.class,
+    TestUnitsRecord.class,
+    TestValueRangeRecord.class
+})
+public class AllChartRecordTests {
 }

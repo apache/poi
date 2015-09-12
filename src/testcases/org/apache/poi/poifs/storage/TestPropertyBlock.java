@@ -17,26 +17,27 @@
 
 package org.apache.poi.poifs.storage;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.poifs.common.POIFSConstants;
-
-import junit.framework.TestCase;
+import org.apache.poi.poifs.property.Property;
+import org.junit.Test;
 
 /**
  * Class to test PropertyBlock functionality
- *
- * @author Marc Johnson
  */
-public final class TestPropertyBlock extends TestCase {
+public final class TestPropertyBlock {
 
-    public void testCreatePropertyBlocks() {
+    @Test
+    public void testCreatePropertyBlocks() throws Exception {
 
         // test with 0 properties
-        List            properties = new ArrayList();
+        List<Property> properties = new ArrayList<Property>();
         BlockWritable[] blocks     =
             PropertyBlock.createPropertyBlockArray(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS,properties);
 
@@ -181,22 +182,18 @@ public final class TestPropertyBlock extends TestCase {
         }
     }
 
-    private static void verifyCorrect(BlockWritable[] blocks, byte[] testblock) {
+    private static void verifyCorrect(BlockWritable[] blocks, byte[] testblock)
+    throws IOException {
         ByteArrayOutputStream stream = new ByteArrayOutputStream(512
                                            * blocks.length);
 
-        for (int j = 0; j < blocks.length; j++) {
-            try {
-				blocks[ j ].writeBlocks(stream);
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
+        for (BlockWritable b : blocks) {
+			b.writeBlocks(stream);
         }
         byte[] output = stream.toByteArray();
 
         assertEquals(testblock.length, output.length);
-        for (int j = 0; j < testblock.length; j++)
-        {
+        for (int j = 0; j < testblock.length; j++) {
             assertEquals("mismatch at offset " + j, testblock[ j ],
                          output[ j ]);
         }

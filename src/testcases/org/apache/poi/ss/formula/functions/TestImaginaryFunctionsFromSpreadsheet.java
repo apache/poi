@@ -17,14 +17,16 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import java.util.Collection;
+
+import org.junit.runners.Parameterized.Parameters;
+
 /**
  * Tests Imaginary() as loaded from a test data spreadsheet.<p/>
- *
- * @author cedric dot walter @ gmail dot com
  */
 public class TestImaginaryFunctionsFromSpreadsheet extends BaseTestFunctionsFromSpreadsheet {
-
-    protected String getFilename() {
-        return "ImaginaryFunctionTestCaseData.xls";
+    @Parameters(name="{0}")
+    public static Collection<Object[]> data() throws Exception {
+        return data(TestImaginaryFunctionsFromSpreadsheet.class, "ImaginaryFunctionTestCaseData.xls");
     }
 }

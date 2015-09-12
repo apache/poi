@@ -17,198 +17,102 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import java.io.PrintStream;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
-import junit.framework.Assert;
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Locale;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.CellReference;
+import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.usermodel.CellValue;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameter;
 
-/**
- * 
- */
-public abstract class BaseTestFunctionsFromSpreadsheet extends TestCase {
-
-    private static final class Result {
-        public static final int SOME_EVALUATIONS_FAILED = -1;
-        public static final int ALL_EVALUATIONS_SUCCEEDED = +1;
-        public static final int NO_EVALUATIONS_FOUND = 0;
-    }
+@RunWith(Parameterized.class)
+public abstract class BaseTestFunctionsFromSpreadsheet {
 
     /**
      * This class defines constants for navigating around the test data spreadsheet used for these tests.
      */
-    private static final class SS {
-
+    interface SS {
         /** Name of the test spreadsheet (found in the standard test data folder) */
 
-
         /** Name of the first sheet in the spreadsheet (contains comments) */
-        public final static String README_SHEET_NAME = "Read Me";
+        String README_SHEET_NAME = "Read Me";
 
         /** Row (zero-based) in each sheet where the evaluation cases start.   */
-        public static final int START_TEST_CASES_ROW_INDEX = 4; // Row '5'
+        int START_TEST_CASES_ROW_INDEX = 4; // Row '5'
         /**  Index of the column that contains the function names */
-        public static final int COLUMN_INDEX_MARKER = 0; // Column 'A'
-        public static final int COLUMN_INDEX_EVALUATION = 1; // Column 'B'
-        public static final int COLUMN_INDEX_EXPECTED_RESULT = 2; // Column 'C'
-        public static final int COLUMN_ROW_COMMENT = 3; // Column 'D'
+        int COLUMN_INDEX_MARKER = 0; // Column 'A'
+        int COLUMN_INDEX_EVALUATION = 1; // Column 'B'
+        int COLUMN_INDEX_EXPECTED_RESULT = 2; // Column 'C'
+        int COLUMN_ROW_COMMENT = 3; // Column 'D'
 
         /** Used to indicate when there are no more test cases on the current sheet   */
-        public static final String TEST_CASES_END_MARKER = "<end>";
+        String TEST_CASES_END_MARKER = "<end>";
         /** Used to indicate that the test on the current row should be ignored */
-        public static final String SKIP_CURRENT_TEST_CASE_MARKER = "<skip>";
+        String SKIP_CURRENT_TEST_CASE_MARKER = "<skip>";
 
     }
 
-    // Note - multiple failures are aggregated before ending.
-    // If one or more functions fail, a single AssertionFailedError is thrown at the end
-    private int _sheetFailureCount;
-    private int _sheetSuccessCount;
-    private int _evaluationFailureCount;
-    private int _evaluationSuccessCount;
+    @Parameter(value = 0)
+    public String testName;
+    @Parameter(value = 1)
+    public String filename;
+    @Parameter(value = 2)
+    public HSSFSheet sheet;
+    @Parameter(value = 3)
+    public int formulasRowIdx;
+    @Parameter(value = 4)
+    public HSSFFormulaEvaluator evaluator;
 
 
+    
+    protected static Collection<Object[]> data(Class<? extends BaseTestFunctionsFromSpreadsheet> clazz, String filename) throws Exception {
+        HSSFWorkbook workbook = HSSFTestDataSamples.openSampleWorkbook(filename);
+        confirmReadMeSheet(workbook, clazz);
 
-    private static void confirmExpectedResult(String msg, HSSFCell expected, CellValue actual) {
-        if (expected == null) {
-            throw new AssertionFailedError(msg + " - Bad setup data expected value is null");
-        }
-        if(actual == null) {
-            throw new AssertionFailedError(msg + " - actual value was null");
-        }
-        if(expected.getCellType() == HSSFCell.CELL_TYPE_ERROR) {
-            confirmErrorResult(msg, expected.getErrorCellValue(), actual);
-            return;
-        }
-        if(actual.getCellType() == HSSFCell.CELL_TYPE_ERROR) {
-            throw unexpectedError(msg, expected, actual.getErrorValue());
-        }
-        if(actual.getCellType() != expected.getCellType()) {
-            throw wrongTypeError(msg, expected, actual);
-        }
+        List<Object[]> data = new ArrayList<Object[]>();
 
-
-        switch (expected.getCellType()) {
-            case HSSFCell.CELL_TYPE_BOOLEAN:
-                assertEquals(msg, expected.getBooleanCellValue(), actual.getBooleanValue());
-                break;
-            case HSSFCell.CELL_TYPE_FORMULA: // will never be used, since we will call method after formula evaluation
-                throw new IllegalStateException("Cannot expect formula as result of formula evaluation: " + msg);
-            case HSSFCell.CELL_TYPE_NUMERIC:
-                assertEquals(expected.getNumericCellValue(), actual.getNumberValue(), 0.0);
-                break;
-            case HSSFCell.CELL_TYPE_STRING:
-                assertEquals(msg, expected.getRichStringCellValue().getString(), actual.getStringValue());
-                break;
-        }
-    }
-
-
-    private static AssertionFailedError wrongTypeError(String msgPrefix, HSSFCell expectedCell, CellValue actualValue) {
-        return new AssertionFailedError(msgPrefix + " Result type mismatch. Evaluated result was "
-                + actualValue.formatAsString()
-                + " but the expected result was "
-                + formatValue(expectedCell)
-        );
-    }
-    private static AssertionFailedError unexpectedError(String msgPrefix, HSSFCell expected, int actualErrorCode) {
-        return new AssertionFailedError(msgPrefix + " Error code ("
-                + ErrorEval.getText(actualErrorCode)
-                + ") was evaluated, but the expected result was "
-                + formatValue(expected)
-        );
-    }
-
-
-    private static void confirmErrorResult(String msgPrefix, int expectedErrorCode, CellValue actual) {
-        if(actual.getCellType() != HSSFCell.CELL_TYPE_ERROR) {
-            throw new AssertionFailedError(msgPrefix + " Expected cell error ("
-                    + ErrorEval.getText(expectedErrorCode) + ") but actual value was "
-                    + actual.formatAsString());
-        }
-        if(expectedErrorCode != actual.getErrorValue()) {
-            throw new AssertionFailedError(msgPrefix + " Expected cell error code ("
-                    + ErrorEval.getText(expectedErrorCode)
-                    + ") but actual error code was ("
-                    + ErrorEval.getText(actual.getErrorValue())
-                    + ")");
-        }
-    }
-
-
-    private static String formatValue(HSSFCell expecedCell) {
-        switch (expecedCell.getCellType()) {
-            case HSSFCell.CELL_TYPE_BLANK: return "<blank>";
-            case HSSFCell.CELL_TYPE_BOOLEAN: return String.valueOf(expecedCell.getBooleanCellValue());
-            case HSSFCell.CELL_TYPE_NUMERIC: return String.valueOf(expecedCell.getNumericCellValue());
-            case HSSFCell.CELL_TYPE_STRING: return expecedCell.getRichStringCellValue().getString();
-        }
-        throw new RuntimeException("Unexpected cell type of expected value (" + expecedCell.getCellType() + ")");
-    }
-
-
-    protected void setUp() {
-        _sheetFailureCount = 0;
-        _sheetSuccessCount = 0;
-        _evaluationFailureCount = 0;
-        _evaluationSuccessCount = 0;
-    }
-
-    public void testFunctionsFromTestSpreadsheet() {
-        HSSFWorkbook workbook = HSSFTestDataSamples.openSampleWorkbook(this.getFilename());
-
-        confirmReadMeSheet(workbook);
         int nSheets = workbook.getNumberOfSheets();
-        for(int i=1; i< nSheets; i++) {
-            int sheetResult = processTestSheet(workbook, i, workbook.getSheetName(i));
-            switch(sheetResult) {
-                case Result.ALL_EVALUATIONS_SUCCEEDED: _sheetSuccessCount ++; break;
-                case Result.SOME_EVALUATIONS_FAILED: _sheetFailureCount ++; break;
-            }
+        for(int sheetIdx=1; sheetIdx< nSheets; sheetIdx++) {
+            HSSFSheet sheet = workbook.getSheetAt(sheetIdx);
+            processFunctionGroup(data, sheet, SS.START_TEST_CASES_ROW_INDEX, null, filename);
         }
-
-        // confirm results
-        String successMsg = "There were "
-                + _sheetSuccessCount + " successful sheets(s) and "
-                + _evaluationSuccessCount + " function(s) without error";
-        if(_sheetFailureCount > 0) {
-            String msg = _sheetFailureCount + " sheets(s) failed with "
-                    + _evaluationFailureCount + " evaluation(s).  " + successMsg;
-            throw new AssertionFailedError(msg);
-        }
-        if(false) { // normally no output for successful tests
-            System.out.println(getClass().getName() + ": " + successMsg);
-        }
+        
+        workbook.close();
+        
+        return data;
     }
 
-    protected abstract String getFilename();
+    private static void processFunctionGroup(List<Object[]> data, HSSFSheet sheet, final int startRowIndex, String testFocusFunctionName, String filename) {
+        HSSFFormulaEvaluator evaluator = new HSSFFormulaEvaluator(sheet.getWorkbook());
 
-    private int processTestSheet(HSSFWorkbook workbook, int sheetIndex, String sheetName) {
-        HSSFSheet sheet = workbook.getSheetAt(sheetIndex);
-        HSSFFormulaEvaluator evaluator = new HSSFFormulaEvaluator(workbook);
-        int maxRows = sheet.getLastRowNum()+1;
-        int result = Result.NO_EVALUATIONS_FOUND; // so far
-
-        String currentGroupComment = null;
-        for(int rowIndex=SS.START_TEST_CASES_ROW_INDEX; rowIndex<maxRows; rowIndex++) {
+        String currentGroupComment = "";
+        final int maxRows = sheet.getLastRowNum()+1;
+        for(int rowIndex=startRowIndex; rowIndex<maxRows; rowIndex++) {
             HSSFRow r = sheet.getRow(rowIndex);
-            String newMarkerValue = getMarkerColumnValue(r);
             if(r == null) {
                 continue;
             }
+            String newMarkerValue = getCellTextValue(r, SS.COLUMN_INDEX_MARKER, "marker");                    
             if(SS.TEST_CASES_END_MARKER.equalsIgnoreCase(newMarkerValue)) {
                 // normal exit point
-                return result;
+                return;
             }
             if(SS.SKIP_CURRENT_TEST_CASE_MARKER.equalsIgnoreCase(newMarkerValue)) {
                 // currently disabled test case row
@@ -217,66 +121,66 @@ public abstract class BaseTestFunctionsFromSpreadsheet extends TestCase {
             if(newMarkerValue != null) {
                 currentGroupComment = newMarkerValue;
             }
-            HSSFCell c = r.getCell(SS.COLUMN_INDEX_EVALUATION);
-            if (c == null || c.getCellType() != HSSFCell.CELL_TYPE_FORMULA) {
+            HSSFCell evalCell = r.getCell(SS.COLUMN_INDEX_EVALUATION);
+            if (evalCell == null || evalCell.getCellType() != HSSFCell.CELL_TYPE_FORMULA) {
                 continue;
             }
-            CellValue actualValue = evaluator.evaluate(c);
-            HSSFCell expectedValueCell = r.getCell(SS.COLUMN_INDEX_EXPECTED_RESULT);
-            String rowComment = getRowCommentColumnValue(r);
+            String rowComment = getCellTextValue(r, SS.COLUMN_ROW_COMMENT, "row comment");
 
-            String msgPrefix = formatTestCaseDetails(this.getFilename(),sheetName, r.getRowNum(), c, currentGroupComment, rowComment);
-            try {
-                confirmExpectedResult(msgPrefix, expectedValueCell, actualValue);
-                _evaluationSuccessCount ++;
-                if(result != Result.SOME_EVALUATIONS_FAILED) {
-                    result = Result.ALL_EVALUATIONS_SUCCEEDED;
-                }
-            } catch (RuntimeException e) {
-                _evaluationFailureCount ++;
-                printShortStackTrace(System.err, e);
-                result = Result.SOME_EVALUATIONS_FAILED;
-            } catch (AssertionFailedError e) {
-                _evaluationFailureCount ++;
-                printShortStackTrace(System.err, e);
-                result = Result.SOME_EVALUATIONS_FAILED;
+            String testName = (currentGroupComment+'\n'+rowComment).replace("null", "").trim().replace("\n", " - ");
+            if ("".equals(testName)) {
+                testName = evalCell.getCellFormula();
             }
-
+            
+            data.add(new Object[]{testName, filename, sheet, rowIndex, evaluator});
         }
-        throw new RuntimeException("Missing end marker '" + SS.TEST_CASES_END_MARKER
-                + "' on sheet '" + sheetName + "'");
-
+        fail("Missing end marker '" + SS.TEST_CASES_END_MARKER + "' on sheet '" + sheet.getSheetName() + "'");
     }
 
+    @Test
+    public void processFunctionRow() throws Exception {
+        HSSFRow r = sheet.getRow(formulasRowIdx);
+        HSSFCell evalCell = r.getCell(SS.COLUMN_INDEX_EVALUATION);
+        HSSFCell expectedCell = r.getCell(SS.COLUMN_INDEX_EXPECTED_RESULT);
+        
+        CellReference cr = new CellReference(sheet.getSheetName(), formulasRowIdx, evalCell.getColumnIndex(), false, false);
+        String msg = String.format(Locale.ROOT, "In %s %s {=%s} '%s'"
+            , filename, cr.formatAsString(), evalCell.getCellFormula(), testName);
 
-    private static String formatTestCaseDetails(String filename, String sheetName, int rowIndex, HSSFCell c, String currentGroupComment,
-                                                String rowComment) {
+        CellValue actualValue = evaluator.evaluate(evalCell);
 
-        StringBuffer sb = new StringBuffer();
+        assertNotNull(msg + " - Bad setup data expected value is null", expectedCell);
+        assertNotNull(msg + " - actual value was null", actualValue);
 
-        sb.append("In ").append(filename).append(" ");
-
-        CellReference cr = new CellReference(sheetName, rowIndex, c.getColumnIndex(), false, false);
-        sb.append(cr.formatAsString());
-        sb.append(" {=").append(c.getCellFormula()).append("}");
-
-        if(currentGroupComment != null) {
-            sb.append(" '");
-            sb.append(currentGroupComment);
-            if(rowComment != null) {
-                sb.append(" - ");
-                sb.append(rowComment);
-            }
-            sb.append("' ");
-        } else {
-            if(rowComment != null) {
-                sb.append(" '");
-                sb.append(rowComment);
-                sb.append("' ");
-            }
+        if (expectedCell.getCellType() == HSSFCell.CELL_TYPE_ERROR) {
+            int expectedErrorCode = expectedCell.getErrorCellValue();
+            assertEquals(msg, HSSFCell.CELL_TYPE_ERROR, actualValue.getCellType());
+            assertEquals(msg, ErrorEval.getText(expectedErrorCode), actualValue.formatAsString());
+            assertEquals(msg, expectedErrorCode, actualValue.getErrorValue());
+            assertEquals(msg, ErrorEval.getText(expectedErrorCode), ErrorEval.getText(actualValue.getErrorValue()));
+            return;
         }
 
-        return sb.toString();
+        // unexpected error
+        assertNotEquals(msg, HSSFCell.CELL_TYPE_ERROR, actualValue.getCellType());
+        assertNotEquals(msg, formatValue(expectedCell), ErrorEval.getText(actualValue.getErrorValue()));
+
+        // wrong type error
+        assertEquals(msg, expectedCell.getCellType(), actualValue.getCellType());
+
+        switch (expectedCell.getCellType()) {
+            case HSSFCell.CELL_TYPE_BOOLEAN:
+                assertEquals(msg, expectedCell.getBooleanCellValue(), actualValue.getBooleanValue());
+                break;
+            case HSSFCell.CELL_TYPE_FORMULA: // will never be used, since we will call method after formula evaluation
+                fail("Cannot expect formula as result of formula evaluation: " + msg);
+            case HSSFCell.CELL_TYPE_NUMERIC:
+                assertEquals(expectedCell.getNumericCellValue(), actualValue.getNumberValue(), 0.0);
+                break;
+            case HSSFCell.CELL_TYPE_STRING:
+                assertEquals(msg, expectedCell.getRichStringCellValue().getString(), actualValue.getStringValue());
+                break;
+        }
     }
 
     /**
@@ -284,57 +188,13 @@ public abstract class BaseTestFunctionsFromSpreadsheet extends TestCase {
      * cells.  This back-link is to make it easy to find this class if a reader encounters the
      * spreadsheet first.
      */
-    private void confirmReadMeSheet(HSSFWorkbook workbook) {
+    private static void confirmReadMeSheet(HSSFWorkbook workbook, Class<? extends BaseTestFunctionsFromSpreadsheet> clazz) {
         String firstSheetName = workbook.getSheetName(0);
-        if(!firstSheetName.equalsIgnoreCase(SS.README_SHEET_NAME)) {
-            throw new RuntimeException("First sheet's name was '" + firstSheetName + "' but expected '" + SS.README_SHEET_NAME + "'");
-        }
+        assertTrue("First sheet's name was '" + firstSheetName + "' but expected '" + SS.README_SHEET_NAME + "'",
+            firstSheetName.equalsIgnoreCase(SS.README_SHEET_NAME));
         HSSFSheet sheet = workbook.getSheetAt(0);
         String specifiedClassName = sheet.getRow(2).getCell(0).getRichStringCellValue().getString();
-        assertEquals("Test class name in spreadsheet comment", getClass().getName(), specifiedClassName);
-    }
-
-
-    /**
-     * Useful to keep output concise when expecting many failures to be reported by this test case
-     */
-    private static void printShortStackTrace(PrintStream ps, Throwable e) {
-        StackTraceElement[] stes = e.getStackTrace();
-
-        int startIx = 0;
-        // skip any top frames inside junit.framework.Assert
-        while(startIx<stes.length) {
-            if(!stes[startIx].getClassName().equals(Assert.class.getName())) {
-                break;
-            }
-            startIx++;
-        }
-        // skip bottom frames (part of junit framework)
-        int endIx = startIx+1;
-        while(endIx < stes.length) {
-            if(stes[endIx].getClassName().equals(TestCase.class.getName())) {
-                break;
-            }
-            endIx++;
-        }
-        if(startIx >= endIx) {
-            // something went wrong. just print the whole stack trace
-            e.printStackTrace(ps);
-        }
-        endIx -= 4; // skip 4 frames of reflection invocation
-        ps.println(e.toString());
-        for(int i=startIx; i<endIx; i++) {
-            ps.println("\tat " + stes[i].toString());
-        }
-
-    }
-
-    private static String getRowCommentColumnValue(HSSFRow r) {
-        return getCellTextValue(r, SS.COLUMN_ROW_COMMENT, "row comment");
-    }
-
-    private static String getMarkerColumnValue(HSSFRow r) {
-        return getCellTextValue(r, SS.COLUMN_INDEX_MARKER, "marker");
+        assertEquals("Test class name in spreadsheet comment", clazz.getName(), specifiedClassName);
     }
 
     /**
@@ -355,8 +215,21 @@ public abstract class BaseTestFunctionsFromSpreadsheet extends TestCase {
             return cell.getRichStringCellValue().getString();
         }
 
-        throw new RuntimeException("Bad cell type for '" + columnName + "' column: ("
+        fail("Bad cell type for '" + columnName + "' column: ("
                 + cell.getCellType() + ") row (" + (r.getRowNum() +1) + ")");
+        return "";
     }
+
+    private static String formatValue(HSSFCell expecedCell) {
+        switch (expecedCell.getCellType()) {
+            case HSSFCell.CELL_TYPE_BLANK: return "<blank>";
+            case HSSFCell.CELL_TYPE_BOOLEAN: return Boolean.toString(expecedCell.getBooleanCellValue());
+            case HSSFCell.CELL_TYPE_NUMERIC: return Double.toString(expecedCell.getNumericCellValue());
+            case HSSFCell.CELL_TYPE_STRING: return expecedCell.getRichStringCellValue().getString();
+        }
+        fail("Unexpected cell type of expected value (" + expecedCell.getCellType() + ")");
+        return "";
+    }
+
 
 }

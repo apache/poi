@@ -17,12 +17,11 @@
 
 package org.apache.poi.ss.formula.eval;
 
-import java.io.FileOutputStream;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import java.io.IOException;
 import java.io.InputStream;
-
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -31,31 +30,25 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.CellValue;
+import org.junit.Test;
 
 /**
  * Miscellaneous tests for bugzilla entries.<p/> The test name contains the
  * bugzilla bug id.
- * 
- * 
- * @author Josh Micich
  */
-public final class TestFormulaBugs extends TestCase {
+public final class TestFormulaBugs {
 
 	/**
 	 * Bug 27349 - VLOOKUP with reference to another sheet.<p/> This test was
 	 * added <em>long</em> after the relevant functionality was fixed.
 	 */
-	public void test27349() {
+    @Test
+	public void test27349() throws Exception {
 		// 27349-vlookupAcrossSheets.xls is bugzilla/attachment.cgi?id=10622
 		InputStream is = HSSFTestDataSamples.openSampleFileStream("27349-vlookupAcrossSheets.xls");
-		HSSFWorkbook wb;
-		try {
-			// original bug may have thrown exception here, or output warning to
-			// stderr
-			wb = new HSSFWorkbook(is);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
+        // original bug may have thrown exception here,
+        // or output warning to stderr
+		HSSFWorkbook wb = new HSSFWorkbook(is);
 
 		HSSFSheet sheet = wb.getSheetAt(0);
 		HSSFRow row = sheet.getRow(1);
@@ -71,6 +64,9 @@ public final class TestFormulaBugs extends TestCase {
 
 		assertEquals(HSSFCell.CELL_TYPE_NUMERIC, cv.getCellType());
 		assertEquals(3.0, cv.getNumberValue(), 0.0);
+		
+		wb.close();
+		is.close();
 	}
 
 	/**
@@ -78,7 +74,8 @@ public final class TestFormulaBugs extends TestCase {
 	 * 
 	 * seems to be a duplicate of 24925
 	 */
-	public void test27405() {
+    @Test
+	public void test27405() throws Exception {
 
 		HSSFWorkbook wb = new HSSFWorkbook();
 		HSSFSheet sheet = wb.createSheet("input");
@@ -99,16 +96,16 @@ public final class TestFormulaBugs extends TestCase {
 		cell = row.createCell(3); // D5
 		cell.setCellFormula("IF(ISNUMBER(b1),b1,b2)");
 
-		if (false) { // set true to check excel file manually
-			// bug report mentions 'Editing the formula in excel "fixes" the problem.'
-			try {
-				FileOutputStream fileOut = new FileOutputStream("27405output.xls");
-				wb.write(fileOut);
-				fileOut.close();
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
-		}
+//		if (false) { // set true to check excel file manually
+//			// bug report mentions 'Editing the formula in excel "fixes" the problem.'
+//			try {
+//				FileOutputStream fileOut = new FileOutputStream("27405output.xls");
+//				wb.write(fileOut);
+//				fileOut.close();
+//			} catch (IOException e) {
+//				throw new RuntimeException(e);
+//			}
+//		}
 		
 		// use POI's evaluator as an extra sanity check
 		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
@@ -120,58 +117,59 @@ public final class TestFormulaBugs extends TestCase {
 		cv = fe.evaluate(row.getCell(1));
 		assertEquals(HSSFCell.CELL_TYPE_BOOLEAN, cv.getCellType());
 		assertEquals(true, cv.getBooleanValue());
+		
+		wb.close();
 	}
 
 	/**
 	 * Bug 42448 - Can't parse SUMPRODUCT(A!C7:A!C67, B8:B68) / B69 <p/>
 	 * @throws IOException 
 	 */
+    @Test
 	public void test42448() throws IOException {
 		HSSFWorkbook wb = new HSSFWorkbook();
+		HSSFSheet sheet1 = wb.createSheet("Sheet1");
+
+		HSSFRow row = sheet1.createRow(0);
+		HSSFCell cell = row.createCell(0);
+
+		// it's important to create the referenced sheet first
+		HSSFSheet sheet2 = wb.createSheet("A"); // note name 'A'
+		// TODO - POI crashes if the formula is added before this sheet
+		// RuntimeException("Zero length string is an invalid sheet name")
+		// Excel doesn't crash but the formula doesn't work until it is
+		// re-entered
+
+		String inputFormula = "SUMPRODUCT(A!C7:A!C67, B8:B68) / B69"; // as per bug report
 		try {
-    		HSSFSheet sheet1 = wb.createSheet("Sheet1");
-    
-    		HSSFRow row = sheet1.createRow(0);
-    		HSSFCell cell = row.createCell(0);
-    
-    		// it's important to create the referenced sheet first
-    		HSSFSheet sheet2 = wb.createSheet("A"); // note name 'A'
-    		// TODO - POI crashes if the formula is added before this sheet
-    		// RuntimeException("Zero length string is an invalid sheet name")
-    		// Excel doesn't crash but the formula doesn't work until it is
-    		// re-entered
-    
-    		String inputFormula = "SUMPRODUCT(A!C7:A!C67, B8:B68) / B69"; // as per bug report
-    		try {
-    			cell.setCellFormula(inputFormula); 
-    		} catch (StringIndexOutOfBoundsException e) {
-    			throw new AssertionFailedError("Identified bug 42448");
-    		}
-    
-    		assertEquals("SUMPRODUCT(A!C7:A!C67,B8:B68)/B69", cell.getCellFormula());
-    
-    		// might as well evaluate the sucker...
-    
-    		addCell(sheet2, 5, 2, 3.0); // A!C6
-    		addCell(sheet2, 6, 2, 4.0); // A!C7
-    		addCell(sheet2, 66, 2, 5.0); // A!C67
-    		addCell(sheet2, 67, 2, 6.0); // A!C68
-    
-    		addCell(sheet1, 6, 1, 7.0); // B7
-    		addCell(sheet1, 7, 1, 8.0); // B8
-    		addCell(sheet1, 67, 1, 9.0); // B68
-    		addCell(sheet1, 68, 1, 10.0); // B69
-    
-    		double expectedResult = (4.0 * 8.0 + 5.0 * 9.0) / 10.0;
-    
-    		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
-    		CellValue cv = fe.evaluate(cell);
-    
-    		assertEquals(HSSFCell.CELL_TYPE_NUMERIC, cv.getCellType());
-    		assertEquals(expectedResult, cv.getNumberValue(), 0.0);
-		} finally {
-		    wb.close();
+			cell.setCellFormula(inputFormula); 
+		} catch (StringIndexOutOfBoundsException e) {
+			fail("Identified bug 42448");
 		}
+
+		assertEquals("SUMPRODUCT(A!C7:A!C67,B8:B68)/B69", cell.getCellFormula());
+
+		// might as well evaluate the sucker...
+
+		addCell(sheet2, 5, 2, 3.0); // A!C6
+		addCell(sheet2, 6, 2, 4.0); // A!C7
+		addCell(sheet2, 66, 2, 5.0); // A!C67
+		addCell(sheet2, 67, 2, 6.0); // A!C68
+
+		addCell(sheet1, 6, 1, 7.0); // B7
+		addCell(sheet1, 7, 1, 8.0); // B8
+		addCell(sheet1, 67, 1, 9.0); // B68
+		addCell(sheet1, 68, 1, 10.0); // B69
+
+		double expectedResult = (4.0 * 8.0 + 5.0 * 9.0) / 10.0;
+
+		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+		CellValue cv = fe.evaluate(cell);
+
+		assertEquals(HSSFCell.CELL_TYPE_NUMERIC, cv.getCellType());
+		assertEquals(expectedResult, cv.getNumberValue(), 0.0);
+
+		wb.close();
 	}
 
 	private static void addCell(HSSFSheet sheet, int rowIx, int colIx,

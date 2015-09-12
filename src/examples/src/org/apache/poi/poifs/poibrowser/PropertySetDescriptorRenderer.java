@@ -45,11 +45,11 @@ public class PropertySetDescriptorRenderer extends DocumentDescriptorRenderer
 
     public Component getTreeCellRendererComponent(final JTree tree,
                                                   final Object value,
-                                                  final boolean selected,
+                                                  final boolean selectedCell,
                                                   final boolean expanded,
                                                   final boolean leaf,
                                                   final int row,
-                                                  final boolean hasFocus)
+                                                  final boolean hasCellFocus)
     {
         final PropertySetDescriptor d = (PropertySetDescriptor)
             ((DefaultMutableTreeNode) value).getUserObject();
@@ -96,7 +96,7 @@ public class PropertySetDescriptorRenderer extends DocumentDescriptorRenderer
             text.append("\nSecurity:            " + si.getSecurity());
         }
 
-        if (selected)
+        if (selectedCell)
             Util.invert(text);
         return p;
     }
@@ -107,13 +107,13 @@ public class PropertySetDescriptorRenderer extends DocumentDescriptorRenderer
      * <p>Returns a string representation of a list of {@link
      * Section}s.</p>
      */
-    protected String sectionsToString(final List sections)
+    protected String sectionsToString(final List<Section> sections)
     {
         final StringBuffer b = new StringBuffer();
         int count = 1;
-        for (Iterator i = sections.iterator(); i.hasNext();)
+        for (Iterator<Section>  i = sections.iterator(); i.hasNext();)
         {
-            Section s = (Section) i.next();
+            Section s = i.next();
             String d = toString(s, "Section " + count++);
             b.append(d);
         }

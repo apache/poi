@@ -89,19 +89,16 @@ public class POIBrowser extends JFrame
         for (int i = 0; i < args.length; i++)
         {
             final String filename = args[i];
-            try
-            {
+            try {
+                FileInputStream fis = new FileInputStream(filename);
                 POIFSReader r = new POIFSReader();
                 r.registerListener(new TreeReaderListener(filename, rootNode));
-                r.read(new FileInputStream(filename));
+                r.read(fis);
+                fis.close();
                 displayedFiles++;
-            }
-            catch (IOException ex)
-            {
+            } catch (IOException ex) {
                 System.err.println(filename + ": " + ex);
-            }
-            catch (Exception t)
-            {
+            } catch (Exception t) {
                 System.err.println("Unexpected exception while reading \"" +
                                    filename + "\":");
                 t.printStackTrace(System.err);

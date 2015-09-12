@@ -244,7 +244,7 @@ public final class SlideShowRecordDumper {
 		String rHexType = reverseHex(hexType);
 
 		// Grab the hslf.record type
-		Class c = r.getClass();
+		Class<? extends Record> c = r.getClass();
 		String cname = c.toString();
 		if(cname.startsWith("class ")) {
 			cname = cname.substring(6);

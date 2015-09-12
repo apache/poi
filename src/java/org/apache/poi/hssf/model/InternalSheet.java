@@ -254,12 +254,12 @@ public final class InternalSheet {
 
             if (recSid == BOFRecord.sid) {
                 ChartSubstreamRecordAggregate chartAgg = new ChartSubstreamRecordAggregate(rs);
-                if (false) {
-                    // TODO - would like to keep the chart aggregate packed, but one unit test needs attention
-                    records.add(chartAgg);
-                } else {
+//                if (false) {
+//                    // TODO - would like to keep the chart aggregate packed, but one unit test needs attention
+//                    records.add(chartAgg);
+//                } else {
                     spillAggregate(chartAgg, records);
-                }
+//                }
                 continue;
             }
 

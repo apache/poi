@@ -29,7 +29,9 @@ import java.util.regex.Pattern;
  * @author Yegor Kozlov
  */
 public class ExpressionParser {
-    static final HashMap<String, Class> impls = new HashMap<String, Class>();
+    static final HashMap<String, Class<? extends Expression>> impls =
+        new HashMap<String, Class<? extends Expression>>();
+    
     static {
         impls.put("\\*/ +([\\-\\w]+) +([\\-\\w]+) +([\\-\\w]+)", MultiplyDivideExpression.class);
         impls.put("\\+- +([\\-\\w]+) +([\\-\\w]+) +([\\-\\w]+)( 0)?", AddSubtractExpression.class);
@@ -56,9 +58,9 @@ public class ExpressionParser {
             Pattern ptrn = Pattern.compile(regexp);
             Matcher m = ptrn.matcher(str);
             if(m.matches()) {
-                Class c = impls.get(regexp);
+                Class<? extends Expression> c = impls.get(regexp);
                 try {
-                    return (Expression)c.getDeclaredConstructor(Matcher.class).newInstance(m);
+                    return c.getDeclaredConstructor(Matcher.class).newInstance(m);
                 } catch (Exception e){
                     throw new RuntimeException(e);
                 }

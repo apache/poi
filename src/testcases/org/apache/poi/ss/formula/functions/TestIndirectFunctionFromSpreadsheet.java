@@ -17,6 +17,10 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import java.util.Collection;
+
+import org.junit.runners.Parameterized.Parameters;
+
 /**
  * Tests INDIRECT() as loaded from a test data spreadsheet.<p/>
  *
@@ -25,9 +29,8 @@ package org.apache.poi.ss.formula.functions;
  *  more easily.
  */
 public final class TestIndirectFunctionFromSpreadsheet extends BaseTestFunctionsFromSpreadsheet {
-
-    @Override
-    protected String getFilename() {
-        return "IndirectFunctionTestCaseData.xls";
+    @Parameters(name="{0}")
+    public static Collection<Object[]> data() throws Exception {
+        return data(TestIndirectFunctionFromSpreadsheet.class, "IndirectFunctionTestCaseData.xls");
     }
 }

@@ -16,6 +16,8 @@
 ==================================================================== */
 package org.apache.poi.xssf.streaming;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.List;
 
 import org.apache.poi.ss.usermodel.BaseTestDataValidation;
@@ -25,6 +27,7 @@ import org.apache.poi.ss.usermodel.DataValidationHelper;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.xssf.SXSSFITestDataProvider;
+import org.junit.Test;
 
 public class TestSXSSFDataValidation extends BaseTestDataValidation {
 
@@ -32,6 +35,7 @@ public class TestSXSSFDataValidation extends BaseTestDataValidation {
         super(SXSSFITestDataProvider.instance);
     }
 
+    @Test
     public void test53965() throws Exception {
         SXSSFWorkbook wb = new SXSSFWorkbook();
         try {

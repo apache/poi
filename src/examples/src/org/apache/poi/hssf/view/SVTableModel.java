@@ -25,6 +25,7 @@ import javax.swing.table.*;
 
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 
 /**
@@ -43,7 +44,7 @@ public class SVTableModel extends AbstractTableModel {
 
   public SVTableModel(HSSFSheet st) {
     this.st = st;
-    Iterator i = st.rowIterator();
+    Iterator<Row> i = st.rowIterator();
 
     while (i.hasNext()) {
       HSSFRow row = (HSSFRow)i.next();
@@ -69,7 +70,7 @@ public class SVTableModel extends AbstractTableModel {
     return st.getLastRowNum() + 1;
   }
 
-  public Class getColumnClass(int c) {
+  public Class<?> getColumnClass(int c) {
 	return HSSFCell.class;
   }
 

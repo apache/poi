@@ -621,12 +621,12 @@ public final class ExcelFileFormatDocFunctionExtractor {
 
 		File outFile = new File("functionMetadata-asGenerated.txt");
 
-		if (false) { // set true to use local file
-			File dir = new File("c:/temp");
-			File effDocFile = new File(dir, SOURCE_DOC_FILE_NAME);
-			processFile(effDocFile, outFile);
-			return;
-		}
+//		if (false) { // set true to use local file
+//			File dir = new File("c:/temp");
+//			File effDocFile = new File(dir, SOURCE_DOC_FILE_NAME);
+//			processFile(effDocFile, outFile);
+//			return;
+//		}
 
 		File tempEFFDocFile = downloadSourceFile();
 		processFile(tempEFFDocFile, outFile);

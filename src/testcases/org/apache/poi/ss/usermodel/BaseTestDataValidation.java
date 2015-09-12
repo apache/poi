@@ -17,8 +17,6 @@
 
 package org.apache.poi.ss.usermodel;
 
-import junit.framework.TestCase;
-
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.usermodel.DataValidation.ErrorStyle;
 import org.apache.poi.ss.usermodel.DataValidationConstraint.OperatorType;
@@ -27,13 +25,14 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.junit.Test;
 
 /**
  * Class for testing Excel's data validation mechanism
  *
  * @author Dragos Buleandra ( dragos.buleandra@trade2b.ro )
  */
-public abstract class BaseTestDataValidation extends TestCase {
+public abstract class BaseTestDataValidation {
     private final ITestDataProvider _testDataProvider;
 
     private static final POILogger log = POILogFactory.getLogger(BaseTestDataValidation.class);
@@ -465,7 +464,8 @@ public abstract class BaseTestDataValidation extends TestCase {
 		va.addValidation(OperatorType.LESS_OR_EQUAL, "4", null, ErrorStyle.STOP, "Less than or equal to 4", "-", false, true, false);
 	}
 
-	public void testDataValidation() {
+	@Test
+	public void testDataValidation() throws Exception {
 		log("\nTest no. 2 - Test Excel's Data validation mechanism");
 		Workbook wb = _testDataProvider.createWorkbook();
 		WorkbookFormatter wf = new WorkbookFormatter(wb);
@@ -491,7 +491,9 @@ public abstract class BaseTestDataValidation extends TestCase {
 		addCustomValidations(wf);
 		log("done !");
 
-        wb = _testDataProvider.writeOutAndReadBack(wb);
+        _testDataProvider.writeOutAndReadBack(wb).close();
+        
+        wb.close();
 	}
 
 

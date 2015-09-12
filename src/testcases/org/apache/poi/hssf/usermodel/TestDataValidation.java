@@ -17,26 +17,23 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import java.io.ByteArrayInputStream;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.List;
 
-import junit.framework.AssertionFailedError;
-
 import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.hssf.eventmodel.ERFListener;
-import org.apache.poi.hssf.eventmodel.EventRecordFactory;
 import org.apache.poi.hssf.record.DVRecord;
-import org.apache.poi.hssf.record.RecordFormatException;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.BaseTestDataValidation;
 import org.apache.poi.ss.usermodel.DataValidation;
+import org.apache.poi.ss.usermodel.DataValidation.ErrorStyle;
 import org.apache.poi.ss.usermodel.DataValidationConstraint;
 import org.apache.poi.ss.usermodel.DataValidationConstraint.OperatorType;
 import org.apache.poi.ss.usermodel.DataValidationConstraint.ValidationType;
@@ -45,10 +42,8 @@ import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.ss.usermodel.DataValidation.ErrorStyle;
-import org.apache.poi.ss.usermodel.DataValidationConstraint.OperatorType;
 import org.apache.poi.ss.util.CellRangeAddressList;
+import org.junit.Test;
 
 /**
  * Class for testing Excel's data validation mechanism
@@ -73,11 +68,11 @@ public final class TestDataValidation extends BaseTestDataValidation {
 		}
 		byte[] generatedContent = baos.toByteArray();
 		boolean isSame;
-		if (false) {
-			// TODO - add proof spreadsheet and compare
-			InputStream proofStream = HSSFTestDataSamples.openSampleFileStream("TestDataValidation.xls");
-			isSame = compareStreams(proofStream, generatedContent);
-		}
+//		if (false) {
+//			// TODO - add proof spreadsheet and compare
+//			InputStream proofStream = HSSFTestDataSamples.openSampleFileStream("TestDataValidation.xls");
+//			isSame = compareStreams(proofStream, generatedContent);
+//		}
 		isSame = true;
 		
 		if (isSame) {
@@ -112,37 +107,38 @@ public final class TestDataValidation extends BaseTestDataValidation {
 		
 	}
 	
-	private static boolean compareStreams(InputStream isA, byte[] generatedContent) {
-
-		InputStream isB = new ByteArrayInputStream(generatedContent);
-
-		// The allowable regions where the generated file can differ from the 
-		// proof should be small (i.e. much less than 1K)
-		int[] allowableDifferenceRegions = { 
-				0x0228, 16,  // a region of the file containing the OS username
-				0x506C, 8,   // See RootProperty (super fields _seconds_2 and _days_2)
-		};
-		int[] diffs = StreamUtility.diffStreams(isA, isB, allowableDifferenceRegions);
-		if (diffs == null) {
-			return true;
-		}
-		System.err.println("Diff from proof: ");
-		for (int i = 0; i < diffs.length; i++) {
-			System.err.println("diff at offset: 0x" + Integer.toHexString(diffs[i]));
-		}
-		return false;
-	}
+//	private static boolean compareStreams(InputStream isA, byte[] generatedContent) {
+//
+//		InputStream isB = new ByteArrayInputStream(generatedContent);
+//
+//		// The allowable regions where the generated file can differ from the 
+//		// proof should be small (i.e. much less than 1K)
+//		int[] allowableDifferenceRegions = { 
+//				0x0228, 16,  // a region of the file containing the OS username
+//				0x506C, 8,   // See RootProperty (super fields _seconds_2 and _days_2)
+//		};
+//		int[] diffs = StreamUtility.diffStreams(isA, isB, allowableDifferenceRegions);
+//		if (diffs == null) {
+//			return true;
+//		}
+//		System.err.println("Diff from proof: ");
+//		for (int i = 0; i < diffs.length; i++) {
+//			System.err.println("diff at offset: 0x" + Integer.toHexString(diffs[i]));
+//		}
+//		return false;
+//	}
   
 
 
 
 
-  /* package */ static void setCellValue(HSSFCell cell, String text) {
+    /* package */ static void setCellValue(HSSFCell cell, String text) {
 	  cell.setCellValue(new HSSFRichTextString(text));
 	  
-  }
+    }
   
-	public void testAddToExistingSheet() {
+	@Test
+    public void testAddToExistingSheet() throws Exception {
 
 		// dvEmpty.xls is a simple one sheet workbook.  With a DataValidations header record but no 
 		// DataValidations.  It's important that the example has one SHEETPROTECTION record.
@@ -164,27 +160,23 @@ public final class TestDataValidation extends BaseTestDataValidation {
 		sheet.addValidationData(dv);
 		
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		try {
-			wb.write(baos);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
+		wb.write(baos);
 		
 		byte[] wbData = baos.toByteArray();
 		
-		if (false) { // TODO (Jul 2008) fix EventRecordFactory to process unknown records, (and DV records for that matter)
-
-			ERFListener erfListener = null; // new MyERFListener();
-			EventRecordFactory erf = new EventRecordFactory(erfListener, null);
-			try {
-				POIFSFileSystem fs = new POIFSFileSystem(new ByteArrayInputStream(baos.toByteArray()));
-				erf.processRecords(fs.createDocumentInputStream("Workbook"));
-			} catch (RecordFormatException e) {
-				throw new RuntimeException(e);
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
-		}
+//		if (false) { // TODO (Jul 2008) fix EventRecordFactory to process unknown records, (and DV records for that matter)
+//
+//			ERFListener erfListener = null; // new MyERFListener();
+//			EventRecordFactory erf = new EventRecordFactory(erfListener, null);
+//			try {
+//				POIFSFileSystem fs = new POIFSFileSystem(new ByteArrayInputStream(baos.toByteArray()));
+//				erf.processRecords(fs.createDocumentInputStream("Workbook"));
+//			} catch (RecordFormatException e) {
+//				throw new RuntimeException(e);
+//			} catch (IOException e) {
+//				throw new RuntimeException(e);
+//			}
+//		}
 		// else verify record ordering by navigating the raw bytes
 		
 		byte[] dvHeaderRecStart= { (byte)0xB2, 0x01, 0x12, 0x00, };
@@ -199,10 +191,13 @@ public final class TestDataValidation extends BaseTestDataValidation {
 		// and the DV records, Excel will not be able to open the workbook without error.
 		
 		if (nextSid == 0x0867) {
-			throw new AssertionFailedError("Identified bug 45519");
+			fail("Identified bug 45519");
 		}
 		assertEquals(DVRecord.sid, nextSid);
+		
+		wb.close();
 	}
+	
 	private int findIndex(byte[] largeData, byte[] searchPattern) {
 		byte firstByte = searchPattern[0];
 		for (int i = 0; i < largeData.length; i++) {
@@ -223,7 +218,8 @@ public final class TestDataValidation extends BaseTestDataValidation {
 		return -1;
 	}
 
-    public void testGetDataValidationsAny() {
+	@Test
+    public void testGetDataValidationsAny() throws Exception {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet();
         List<HSSFDataValidation> list = sheet.getDataValidations();
@@ -265,9 +261,12 @@ public final class TestDataValidation extends BaseTestDataValidation {
         DataValidationConstraint c = dv.getValidationConstraint();
         assertEquals(ValidationType.ANY, c.getValidationType());
         assertEquals(OperatorType.IGNORED, c.getOperator());
+        
+        wb.close();
     }
 
-    public void testGetDataValidationsIntegerFormula() {
+	@Test
+    public void testGetDataValidationsIntegerFormula() throws Exception {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet();
         List<HSSFDataValidation> list = sheet.getDataValidations();
@@ -291,9 +290,12 @@ public final class TestDataValidation extends BaseTestDataValidation {
         assertEquals("A3", c.getFormula2());
         assertEquals(null, c.getValue1());
         assertEquals(null, c.getValue2());
+        
+        wb.close();
     }
 
-    public void testGetDataValidationsIntegerValue() {
+	@Test
+    public void testGetDataValidationsIntegerValue() throws Exception {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet();
         List<HSSFDataValidation> list = sheet.getDataValidations();
@@ -317,9 +319,12 @@ public final class TestDataValidation extends BaseTestDataValidation {
         assertEquals(null, c.getFormula2());
         assertEquals(new Double("100"), c.getValue1());
         assertEquals(new Double("200"), c.getValue2());
+        
+        wb.close();
     }
 
-    public void testGetDataValidationsDecimal() {
+	@Test
+    public void testGetDataValidationsDecimal() throws Exception {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet();
         List<HSSFDataValidation> list = sheet.getDataValidations();
@@ -343,9 +348,12 @@ public final class TestDataValidation extends BaseTestDataValidation {
         assertEquals(null, c.getFormula2());
         assertEquals(null, c.getValue1());
         assertEquals(new Double("200"), c.getValue2());
+        
+        wb.close();
     }
 
-    public void testGetDataValidationsDate() {
+	@Test
+    public void testGetDataValidationsDate() throws Exception {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet();
         List<HSSFDataValidation> list = sheet.getDataValidations();
@@ -367,11 +375,14 @@ public final class TestDataValidation extends BaseTestDataValidation {
         assertEquals(OperatorType.EQUAL, c.getOperator());
         assertEquals(null, c.getFormula1());
         assertEquals(null, c.getFormula2());
-        assertEquals(DateUtil.getExcelDate(DateUtil.parseYYYYMMDDDate("2014/10/25")), c.getValue1());
+        assertEquals(DateUtil.getExcelDate(DateUtil.parseYYYYMMDDDate("2014/10/25")), c.getValue1(), 0);
         assertEquals(null, c.getValue2());
+        
+        wb.close();
     }
 
-    public void testGetDataValidationsListExplicit() {
+	@Test
+    public void testGetDataValidationsListExplicit() throws Exception {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet();
         List<HSSFDataValidation> list = sheet.getDataValidations();
@@ -402,9 +413,12 @@ public final class TestDataValidation extends BaseTestDataValidation {
         assertEquals("aaa", values[0]);
         assertEquals("bbb", values[1]);
         assertEquals("ccc", values[2]);
+        
+        wb.close();
     }
 
-    public void testGetDataValidationsListFormula() {
+	@Test
+    public void testGetDataValidationsListFormula() throws Exception {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet();
         List<HSSFDataValidation> list = sheet.getDataValidations();
@@ -429,9 +443,12 @@ public final class TestDataValidation extends BaseTestDataValidation {
         assertEquals(null, c.getFormula2());
         assertEquals(null, c.getValue1());
         assertEquals(null, c.getValue2());
+        
+        wb.close();
     }
 
-    public void testGetDataValidationsFormula() {
+	@Test
+    public void testGetDataValidationsFormula() throws Exception {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet();
         List<HSSFDataValidation> list = sheet.getDataValidations();
@@ -453,5 +470,6 @@ public final class TestDataValidation extends BaseTestDataValidation {
         assertEquals(null, c.getFormula2());
         assertEquals(null, c.getValue1());
         assertEquals(null, c.getValue2());
+        wb.close();
     }
 }
