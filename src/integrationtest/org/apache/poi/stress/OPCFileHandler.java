@@ -17,6 +17,7 @@
 package org.apache.poi.stress;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -36,19 +37,23 @@ public class OPCFileHandler extends AbstractFileHandler {
         if (POIXMLDocumentHandler.isEncrypted(stream)) return;
 
         OPCPackage p = OPCPackage.open(stream);
-        
+
         for (PackagePart part : p.getParts()) {
             if (part.getPartName().toString().equals("/docProps/core.xml")) {
                 assertEquals(ContentTypes.CORE_PROPERTIES_PART, part.getContentType());
             }
             if (part.getPartName().toString().equals("/word/document.xml")) {
-                assertEquals(XWPFRelation.DOCUMENT.getContentType(), part.getContentType());
+                assertTrue("Expected one of " + XWPFRelation.MACRO_DOCUMENT + ", " + XWPFRelation.DOCUMENT + ", " + XWPFRelation.TEMPLATE + 
+                        ", but had " + part.getContentType(),
+                        XWPFRelation.DOCUMENT.getContentType().equals(part.getContentType()) ||
+                        XWPFRelation.MACRO_DOCUMENT.getContentType().equals(part.getContentType()) ||
+                        XWPFRelation.TEMPLATE.getContentType().equals(part.getContentType()));
             }
             if (part.getPartName().toString().equals("/word/theme/theme1.xml")) {
                 assertEquals(XWPFRelation.THEME.getContentType(), part.getContentType());
             }
         }
-	}
+    }
 	
     public void handleExtracting(File file) throws Exception {
         // text-extraction is not possible currenlty for these types of files
@@ -57,7 +62,7 @@ public class OPCFileHandler extends AbstractFileHandler {
 	// a test-case to test this locally without executing the full TestAllFiles
 	@Test
 	public void test() throws Exception {
-		File file = new File("test-data/openxml4j/dcterms_bug_56479.zip");
+		File file = new File("test-data/diagram/test.vsdx");
 
 		InputStream stream = new PushbackInputStream(new FileInputStream(file), 100000);
 		try {
