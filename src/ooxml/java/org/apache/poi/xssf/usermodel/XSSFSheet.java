@@ -593,6 +593,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     /**
      * Create a new row within the sheet and return the high level representation
      *
+     * Note: If a row already exists at this position, it is removed/overwritten and
+     *      any existing cell is removed!
+     *
      * @param rownum  row number
      * @return High level {@link XSSFRow} object representing a row in the sheet
      * @see #removeRow(org.apache.poi.ss.usermodel.Row)
