@@ -271,7 +271,16 @@ public class TestAllFiles {
         for(String file : scanner.getIncludedFiles()) {
             file = file.replace('\\', '/'); // ... failures/handlers lookup doesn't work on windows otherwise
             if (IGNORED.contains(file)) continue;
-            files.add(new Object[] { file, HANDLERS.get(getExtension(file)) });
+            FileHandler handler = HANDLERS.get(getExtension(file));
+            files.add(new Object[] { file, handler });
+            
+            // for some file-types also run OPCFileHandler
+            if(handler instanceof XSSFFileHandler ||
+                handler instanceof XWPFFileHandler ||
+                handler instanceof XSLFFileHandler ||
+                handler instanceof XDGFFileHandler) {
+                files.add(new Object[] { file, HANDLERS.get(".ooxml") });
+            }
         }
 
         return files;
@@ -301,8 +310,12 @@ public class TestAllFiles {
 
             handler.handleExtracting(inputFile);
 
+            // special cases where docx-handling breaks, but OPCPackage handling works
+            boolean ignoredOPC = (file.endsWith(".docx") || file.endsWith(".xlsx") || file.endsWith(".xlsb")) && 
+                    handler instanceof OPCFileHandler;
+
             assertFalse("Expected to fail for file " + file + " and handler " + handler + ", but did not fail!", 
-                    EXPECTED_FAILURES.contains(file));
+                EXPECTED_FAILURES.contains(file) && !ignoredOPC);
         } catch (OldWordFileFormatException e) {
             // for old word files we should still support extracting text
             if(OLD_FILES.contains(file)) {
