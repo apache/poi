@@ -1187,6 +1187,9 @@ public class SXSSFWorkbook implements Workbook {
 
     /**
      * Hide or unhide a sheet
+     * 
+     * Please note that the sheet currently set as active sheet (sheet 0 in a newly 
+     * created workbook or the one set via setActiveSheet()) cannot be hidden. 
      *
      * @param sheetIx the sheet index (0-based)
      * @param hidden True to mark the sheet as hidden, false otherwise
@@ -1205,6 +1208,10 @@ public class SXSSFWorkbook implements Workbook {
      *  <li>1 - hidden. </li>
      *  <li>2 - very hidden.</li>
      * </ul>
+     * 
+     * Please note that the sheet currently set as active sheet (sheet 0 in a newly 
+     * created workbook or the one set via setActiveSheet()) cannot be hidden.
+     *  
      * @param sheetIx the sheet index (0-based)
      * @param hidden one of the following <code>Workbook</code> constants:
      *        <code>Workbook.SHEET_STATE_VISIBLE</code>,
