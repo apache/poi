@@ -924,4 +924,20 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
             IOUtils.closeQuietly(workbook);
         }
     }
+
+    @Test
+    public void testBug54399() throws IOException {
+        XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("54399.xlsx");
+              
+        //System.out.println("sheets:" + workbook.getNumberOfSheets());
+
+        for (int i = 0; i < workbook.getNumberOfSheets(); i++) {  
+          //System.out.println("i:" + i);
+          workbook.setSheetName(i, "SheetRenamed" + (i + 1));
+        }  
+
+//        FileOutputStream fileOutputStream = new FileOutputStream("/tmp/54399.xlsx"); 
+//        workbook.write(fileOutputStream);
+//        fileOutputStream.close();  
+    }
 }
