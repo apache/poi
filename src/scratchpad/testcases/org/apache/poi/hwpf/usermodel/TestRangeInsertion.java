@@ -85,15 +85,15 @@ public final class TestRangeInsertion extends TestCase {
 
 		HWPFDocument daDoc = HWPFTestDataSamples.openSampleFile(illustrativeDocFile);
 
-		if (false) { // TODO - delete or resurrect this code
-			Range range = daDoc.getRange();
-			Section section = range.getSection(0);
-			Paragraph para = section.getParagraph(2);
-			String text = para.getCharacterRun(0).text() + para.getCharacterRun(1).text() +
-			para.getCharacterRun(2).text();
-
-			System.out.println(text);
-		}
+//		if (false) { // TODO - delete or resurrect this code
+//			Range range = daDoc.getRange();
+//			Section section = range.getSection(0);
+//			Paragraph para = section.getParagraph(2);
+//			String text = para.getCharacterRun(0).text() + para.getCharacterRun(1).text() +
+//			para.getCharacterRun(2).text();
+//
+//			System.out.println(text);
+//		}
 
 		Range range = new Range(insertionPoint, (insertionPoint + 2), daDoc);
 		range.insertBefore(textToInsert);

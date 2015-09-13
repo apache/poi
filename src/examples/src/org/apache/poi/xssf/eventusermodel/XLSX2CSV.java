@@ -102,16 +102,6 @@ public class XLSX2CSV {
          */
         private ReadOnlySharedStringsTable sharedStringsTable;
 
-        /**
-         * Destination for data
-         */
-        private final PrintStream output;
-
-        /**
-         * Number of columns to read starting with leftmost
-         */
-        private final int minColumnCount;
-
         // Set when V start element is seen
         private boolean vIsOpen;
 
@@ -141,13 +131,9 @@ public class XLSX2CSV {
          */
         public MyXSSFSheetHandler(
                 StylesTable styles,
-                ReadOnlySharedStringsTable strings,
-                int cols,
-                PrintStream target) {
+                ReadOnlySharedStringsTable strings) {
             this.stylesTable = styles;
             this.sharedStringsTable = strings;
-            this.minColumnCount = cols;
-            this.output = target;
             this.value = new StringBuffer();
             this.nextDataType = xssfDataType.NUMBER;
             this.formatter = new DataFormatter();
@@ -201,7 +187,8 @@ public class XLSX2CSV {
                     if (cellStyleStr != null) {
                         int styleIndex = Integer.parseInt(cellStyleStr);
                         style = stylesTable.getStyleAt(styleIndex);
-                    } else if (stylesTable.getNumCellStyles() > 0) {
+                    }
+                    if (style == null && stylesTable.getNumCellStyles() > 0) {
                         style = stylesTable.getStyleAt(0);
                     }
                     if (style != null) {
@@ -299,7 +286,7 @@ public class XLSX2CSV {
                     if (lastColumnNumber == -1) {
                         lastColumnNumber = 0;
                     }
-                    for (int i = lastColumnNumber; i < (this.minColumnCount); i++) {
+                    for (int i = lastColumnNumber; i < minColumns; i++) {
                         output.print(',');
                     }
                 }
@@ -340,9 +327,17 @@ public class XLSX2CSV {
 
     ///////////////////////////////////////
 
-    private OPCPackage xlsxPackage;
-    private int minColumns;
-    private PrintStream output;
+    private final OPCPackage xlsxPackage;
+
+    /**
+     * Number of columns to read starting with leftmost
+     */
+    private final int minColumns;
+
+    /**
+     * Destination for data
+     */
+    private final PrintStream output;
 
     /**
      * Creates a new XLSX -> CSV converter
@@ -375,7 +370,7 @@ public class XLSX2CSV {
         SAXParserFactory saxFactory = SAXParserFactory.newInstance();
         SAXParser saxParser = saxFactory.newSAXParser();
         XMLReader sheetParser = saxParser.getXMLReader();
-        ContentHandler handler = new MyXSSFSheetHandler(styles, strings, this.minColumns, this.output);
+        ContentHandler handler = new MyXSSFSheetHandler(styles, strings);
         sheetParser.setContentHandler(handler);
         sheetParser.parse(sheetSource);
     }
@@ -428,6 +423,7 @@ public class XLSX2CSV {
         OPCPackage p = OPCPackage.open(xlsxFile.getPath(), PackageAccess.READ);
 		XLSX2CSV xlsx2csv = new XLSX2CSV(p, System.out, minColumns);
 		xlsx2csv.process();
+		p.close();
 	}
 
 }

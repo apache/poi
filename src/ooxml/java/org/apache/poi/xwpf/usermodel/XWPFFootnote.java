@@ -211,9 +211,6 @@ public class XWPFFootnote implements Iterable<XWPFParagraph>, IBody {
             return null;
         }
         XWPFTableRow tableRow = table.getRow(row);
-        if (row == null) {
-            return null;
-        }
         return tableRow.getTableCell(cell);
     }
 

@@ -205,6 +205,10 @@ public class XWPFSettings extends POIXMLDocumentPart {
         } else {
             final STCryptProv.Enum providerType;
             final int sid;
+            if (hashAlgo == null) {
+                hashAlgo = HashAlgorithm.sha1;
+            }
+            
             switch (hashAlgo) {
                 case md2:
                     providerType = STCryptProv.RSA_FULL;
@@ -246,8 +250,6 @@ public class XWPFSettings extends POIXMLDocumentPart {
             // Iterations specifies the number of times the hashing function shall be iteratively run (using each
             // iteration's result as the input for the next iteration).
             int spinCount = 100000;
-
-            if (hashAlgo == null) hashAlgo = HashAlgorithm.sha1;
 
             String legacyHash = CryptoFunctions.xorHashPasswordReversed(password);
             // Implementation Notes List:

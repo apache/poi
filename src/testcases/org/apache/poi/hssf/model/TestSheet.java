@@ -17,13 +17,16 @@
 
 package org.apache.poi.hssf.model;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
 
 import org.apache.poi.ddf.EscherDggRecord;
 import org.apache.poi.hssf.HSSFTestDataSamples;
@@ -62,13 +65,14 @@ import org.apache.poi.hssf.usermodel.RecordInspector.RecordCollector;
 import org.apache.poi.ss.formula.FormulaShifter;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.HexRead;
+import org.junit.Test;
+
+import junit.framework.AssertionFailedError;
 
 /**
  * Unit test for the {@link InternalSheet} class.
- *
- * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class TestSheet extends TestCase {
+public final class TestSheet {
 	private static InternalSheet createSheet(List<Record> inRecs) {
 		return InternalSheet.createSheet(new RecordStream(inRecs, 0));
 	}
@@ -79,6 +83,7 @@ public final class TestSheet extends TestCase {
 		return rc.getRecords();
 	}
 
+	@Test
 	public void testCreateSheet() {
 		// Check we're adding row and cell aggregates
 		List<Record> records = new ArrayList<Record>();
@@ -124,6 +129,7 @@ public final class TestSheet extends TestCase {
 		}
 	}
 
+    @Test
 	public void testAddMergedRegion() {
 		InternalSheet sheet = InternalSheet.createSheet();
 		int regionsToAdd = 4096;
@@ -164,6 +170,7 @@ public final class TestSheet extends TestCase {
 		}
 	}
 
+    @Test
 	public void testRemoveMergedRegion() {
 		InternalSheet sheet = InternalSheet.createSheet();
 		int regionsToAdd = 4096;
@@ -194,6 +201,7 @@ public final class TestSheet extends TestCase {
 	 * fills up the records.
 	 *
 	 */
+    @Test
 	public void testMovingMergedRegion() {
 		List<Record> records = new ArrayList<Record>();
 
@@ -218,10 +226,12 @@ public final class TestSheet extends TestCase {
 		assertEquals("Should be no more merged regions", 0, sheet.getNumMergedRegions());
 	}
 
+    @Test
 	public void testGetMergedRegionAt() {
 		//TODO
 	}
 
+    @Test
 	public void testGetNumMergedRegions() {
 		//TODO
 	}
@@ -230,6 +240,7 @@ public final class TestSheet extends TestCase {
 	 * Makes sure all rows registered for this sheet are aggregated, they were being skipped
 	 *
 	 */
+    @Test
 	public void testRowAggregation() {
 		List<Record> records = new ArrayList<Record>();
 
@@ -253,6 +264,7 @@ public final class TestSheet extends TestCase {
 	 * Make sure page break functionality works (in memory)
 	 *
 	 */
+    @Test
 	public void testRowPageBreaks() {
 		short colFrom = 0;
 		short colTo = 255;
@@ -309,6 +321,7 @@ public final class TestSheet extends TestCase {
 	 * Make sure column pag breaks works properly (in-memory)
 	 *
 	 */
+    @Test
 	public void testColPageBreaks() {
 		short rowFrom = 0;
 		short rowTo = (short)65535;
@@ -370,6 +383,7 @@ public final class TestSheet extends TestCase {
 	 * test newly added method Sheet.getXFIndexForColAt(..)
 	 * works as designed.
 	 */
+    @Test
 	public void testXFIndexForColumn() {
 		final short TEST_IDX = 10;
 		final short DEFAULT_IDX = 0xF; // 15
@@ -461,6 +475,7 @@ public final class TestSheet extends TestCase {
 	 * Prior to bug 45066, POI would get the estimated sheet size wrong
 	 * when an <tt>UncalcedRecord</tt> was present.<p/>
 	 */
+    @Test
 	public void testUncalcSize_bug45066() {
 
 		List<Record> records = new ArrayList<Record>();
@@ -486,6 +501,7 @@ public final class TestSheet extends TestCase {
 	 *
 	 * The code here represents a normal POI use case where a spreadsheet is created from scratch.
 	 */
+    @Test
 	public void testRowValueAggregatesOrder_bug45145() {
 
 		InternalSheet sheet = InternalSheet.createSheet();
@@ -506,12 +522,12 @@ public final class TestSheet extends TestCase {
 			throw new AssertionFailedError("Identified  bug 45145");
 		}
 
-		if (false) {
-			// make sure that RRA and VRA are in the right place
-			// (Aug 2008) since the VRA is now part of the RRA, there is much less chance that
-			// they could get out of order. Still, one could write serialize the sheet here,
-			// and read back with EventRecordFactory to make sure...
-		}
+//		if (false) {
+//			// make sure that RRA and VRA are in the right place
+//			// (Aug 2008) since the VRA is now part of the RRA, there is much less chance that
+//			// they could get out of order. Still, one could write serialize the sheet here,
+//			// and read back with EventRecordFactory to make sure...
+//		}
 		assertEquals(242, dbCellRecordPos);
 	}
 
@@ -551,6 +567,7 @@ public final class TestSheet extends TestCase {
 	 * Checks for bug introduced around r682282-r683880 that caused a second GUTS records
 	 * which in turn got the dimensions record out of alignment
 	 */
+    @Test
 	public void testGutsRecord_bug45640() {
 
 		InternalSheet sheet = InternalSheet.createSheet();
@@ -571,21 +588,25 @@ public final class TestSheet extends TestCase {
 		assertEquals(1, count);
 	}
 
-	public void testMisplacedMergedCellsRecords_bug45699() {
+    @Test
+	public void testMisplacedMergedCellsRecords_bug45699() throws Exception {
 		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("ex45698-22488.xls");
 
 		HSSFSheet sheet = wb.getSheetAt(0);
 		HSSFRow row = sheet.getRow(3);
 		HSSFCell cell = row.getCell(4);
 		if (cell == null) {
-			throw new AssertionFailedError("Identified bug 45699");
+			fail("Identified bug 45699");
 		}
 		assertEquals("Informations", cell.getRichStringCellValue().getString());
+		
+		wb.close();
 	}
 	/**
 	 * In 3.1, setting margins between creating first row and first cell caused an exception.
 	 */
-	public void testSetMargins_bug45717() {
+    @Test
+	public void testSetMargins_bug45717() throws Exception {
 		HSSFWorkbook workbook = new HSSFWorkbook();
 		HSSFSheet sheet = workbook.createSheet("Vorschauliste");
 		HSSFRow row = sheet.createRow(0);
@@ -595,9 +616,11 @@ public final class TestSheet extends TestCase {
 			row.createCell(0);
 		} catch (IllegalStateException e) {
 			if (e.getMessage().equals("Cannot create value records before row records exist")) {
-				throw new AssertionFailedError("Identified bug 45717");
+				fail("Identified bug 45717");
 			}
 			throw e;
+		} finally {
+		    workbook.close();
 		}
 	}
 
@@ -605,6 +628,7 @@ public final class TestSheet extends TestCase {
 	 * Some apps seem to write files with missing DIMENSION records.
 	 * Excel(2007) tolerates this, so POI should too.
 	 */
+    @Test
 	public void testMissingDims() {
 
 		int rowIx = 5;
@@ -648,6 +672,7 @@ public final class TestSheet extends TestCase {
 	 * aggregates. However, since this unnecessary creation helped expose bug 46547b,
 	 * and since there is a slight performance hit the fix was made to avoid it.
 	 */
+    @Test
 	public void testShiftFormulasAddCondFormat_bug46547() {
 		// Create a sheet with data validity (similar to bugzilla attachment id=23131).
 		InternalSheet sheet = InternalSheet.createSheet();
@@ -666,6 +691,7 @@ public final class TestSheet extends TestCase {
 	 * Bug 46547 happened when attempting to add conditional formatting to a sheet
 	 * which already had data validity constraints.
 	 */
+    @Test
 	public void testAddCondFormatAfterDataValidation_bug46547() {
 		// Create a sheet with data validity (similar to bugzilla attachment id=23131).
 		InternalSheet sheet = InternalSheet.createSheet();
@@ -682,6 +708,7 @@ public final class TestSheet extends TestCase {
 		assertNotNull(cft);
 	}
 
+    @Test
 	public void testCloneMulBlank_bug46776() {
 		Record[]  recs = {
 				InternalSheet.createBOF(),
@@ -711,6 +738,7 @@ public final class TestSheet extends TestCase {
 		assertEquals(recs.length+2, clonedRecs.length); // +2 for INDEX and DBCELL
 	}
 
+    @Test
     public void testCreateAggregate() {
         String msoDrawingRecord1 =
                 "0F 00 02 F0 20 01 00 00 10 00 08 F0 08 00 00 00 \n" +
@@ -798,6 +826,7 @@ public final class TestSheet extends TestCase {
         assertEquals(EOFRecord.sid, ((Record)sheetRecords.get(3)).getSid());
     }
 
+    @Test
     public void testSheetDimensions() throws IOException{
         InternalSheet sheet = InternalSheet.createSheet();
         DimensionsRecord dimensions = (DimensionsRecord)sheet.findFirstRecordBySid(DimensionsRecord.sid);

@@ -17,7 +17,8 @@
 
 package org.apache.poi.xwpf.usermodel;
 
-import java.io.FileOutputStream;
+import static org.junit.Assert.*;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
@@ -34,12 +35,12 @@ import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.apache.xmlbeans.XmlCursor;
+import org.junit.Test;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
 
-import junit.framework.TestCase;
+public final class TestXWPFDocument {
 
-public final class TestXWPFDocument extends TestCase {
-
+    @Test
     public void testContainsMainContentType() throws Exception {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("sample.docx");
         OPCPackage pack = doc.getPackage();
@@ -49,31 +50,36 @@ public final class TestXWPFDocument extends TestCase {
             if (part.getContentType().equals(XWPFRelation.DOCUMENT.getContentType())) {
                 found = true;
             }
-            if (false) {
-                // successful tests should be silent
-                System.out.println(part);
-            }
+//            if (false) {
+//                // successful tests should be silent
+//                System.out.println(part);
+//            }
         }
         assertTrue(found);
+        
+        pack.close();
+        doc.close();
     }
 
+    @Test
     public void testOpen() throws Exception {
-        XWPFDocument xml;
-
         // Simple file
-        xml = XWPFTestDataSamples.openSampleDocument("sample.docx");
+        XWPFDocument xml1 = XWPFTestDataSamples.openSampleDocument("sample.docx");
         // Check it has key parts
-        assertNotNull(xml.getDocument());
-        assertNotNull(xml.getDocument().getBody());
-        assertNotNull(xml.getStyle());
+        assertNotNull(xml1.getDocument());
+        assertNotNull(xml1.getDocument().getBody());
+        assertNotNull(xml1.getStyle());
+        xml1.close();
 
         // Complex file
-        xml = XWPFTestDataSamples.openSampleDocument("IllustrativeCases.docx");
-        assertNotNull(xml.getDocument());
-        assertNotNull(xml.getDocument().getBody());
-        assertNotNull(xml.getStyle());
+        XWPFDocument xml2 = XWPFTestDataSamples.openSampleDocument("IllustrativeCases.docx");
+        assertNotNull(xml2.getDocument());
+        assertNotNull(xml2.getDocument().getBody());
+        assertNotNull(xml2.getStyle());
+        xml2.close();
     }
 
+    @Test
     public void testMetadataBasics() throws IOException {
         XWPFDocument xml = XWPFTestDataSamples.openSampleDocument("sample.docx");
         assertNotNull(xml.getProperties().getCoreProperties());
@@ -85,8 +91,10 @@ public final class TestXWPFDocument extends TestCase {
 
         assertEquals(null, xml.getProperties().getCoreProperties().getTitle());
         assertEquals(null, xml.getProperties().getCoreProperties().getUnderlyingProperties().getSubjectProperty().getValue());
+        xml.close();
     }
 
+    @Test
     public void testMetadataComplex() throws IOException {
         XWPFDocument xml = XWPFTestDataSamples.openSampleDocument("IllustrativeCases.docx");
         assertNotNull(xml.getProperties().getCoreProperties());
@@ -98,15 +106,19 @@ public final class TestXWPFDocument extends TestCase {
 
         assertEquals(" ", xml.getProperties().getCoreProperties().getTitle());
         assertEquals(" ", xml.getProperties().getCoreProperties().getUnderlyingProperties().getSubjectProperty().getValue());
+        xml.close();
     }
 
-    public void testWorkbookProperties() {
+    @Test
+    public void testWorkbookProperties() throws Exception {
         XWPFDocument doc = new XWPFDocument();
         POIXMLProperties props = doc.getProperties();
         assertNotNull(props);
         assertEquals("Apache POI", props.getExtendedProperties().getUnderlyingProperties().getApplication());
+        doc.close();
     }
 
+    @Test
     public void testAddParagraph() throws IOException {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("sample.docx");
         assertEquals(3, doc.getParagraphs().size());
@@ -125,8 +137,10 @@ public final class TestXWPFDocument extends TestCase {
         XWPFParagraph cP = doc.insertNewParagraph(cursor);
         assertSame(cP, doc.getParagraphs().get(0));
         assertEquals(5, doc.getParagraphs().size());
+        doc.close();
     }
 
+    @Test
     public void testAddPicture() throws IOException, InvalidFormatException {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("sample.docx");
         byte[] jpeg = XWPFTestDataSamples.getImage("nature1.jpg");
@@ -137,8 +151,10 @@ public final class TestXWPFDocument extends TestCase {
         for (int i = 0; i < jpeg.length; i++) {
             assertEquals(newJpeg[i], jpeg[i]);
         }
+        doc.close();
     }
 
+    @Test
     public void testAllPictureFormats() throws IOException, InvalidFormatException {
         XWPFDocument doc = new XWPFDocument();
 
@@ -156,11 +172,13 @@ public final class TestXWPFDocument extends TestCase {
 
         assertEquals(11, doc.getAllPictures().size());
 
-        doc = XWPFTestDataSamples.writeOutAndReadBack(doc);
-        assertEquals(11, doc.getAllPictures().size());
-
+        XWPFDocument doc2 = XWPFTestDataSamples.writeOutAndReadBack(doc);
+        assertEquals(11, doc2.getAllPictures().size());
+        doc2.close();
+        doc.close();
     }
 
+    @Test
     public void testRemoveBodyElement() throws IOException {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("sample.docx");
         assertEquals(3, doc.getParagraphs().size());
@@ -220,8 +238,10 @@ public final class TestXWPFDocument extends TestCase {
 
         assertEquals(p3, doc.getBodyElements().get(0));
         assertEquals(p3, doc.getParagraphs().get(0));
+        doc.close();
     }
 
+    @Test
     public void testRegisterPackagePictureData() throws IOException, InvalidFormatException {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("issue_51265_1.docx");
 
@@ -250,8 +270,11 @@ public final class TestXWPFDocument extends TestCase {
         assertTrue(doc.getAllPackagePictures().contains(newPicData));
 
         doc.getPackage().revert();
+        opcPckg.close();
+        doc.close();
     }
 
+    @Test
     public void testFindPackagePictureData() throws IOException {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("issue_51265_1.docx");
         byte[] nature1 = XWPFTestDataSamples.getImage("nature1.gif");
@@ -260,8 +283,10 @@ public final class TestXWPFDocument extends TestCase {
         assertTrue(doc.getAllPictures().contains(part));
         assertTrue(doc.getAllPackagePictures().contains(part));
         doc.getPackage().revert();
+        doc.close();
     }
 
+    @Test
     public void testGetAllPictures() throws IOException {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("issue_51265_3.docx");
         List<XWPFPictureData> allPictures = doc.getAllPictures();
@@ -281,8 +306,10 @@ public final class TestXWPFDocument extends TestCase {
         }
 
         doc.getPackage().revert();
+        doc.close();
     }
 
+    @Test
     public void testGetAllPackagePictures() throws IOException {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("issue_51265_3.docx");
         List<XWPFPictureData> allPackagePictures = doc.getAllPackagePictures();
@@ -298,8 +325,10 @@ public final class TestXWPFDocument extends TestCase {
         }
 
         doc.getPackage().revert();
+        doc.close();
     }
 
+    @Test
     public void testPictureHandlingSimpleFile() throws IOException, InvalidFormatException {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("issue_51265_1.docx");
         assertEquals(1, doc.getAllPackagePictures().size());
@@ -311,16 +340,20 @@ public final class TestXWPFDocument extends TestCase {
         String id2 = doc.addPictureData(newPicCopy, Document.PICTURE_TYPE_JPEG);
         assertEquals(id1, id2);
         doc.getPackage().revert();
+        doc.close();
     }
 
+    @Test
     public void testPictureHandlingHeaderDocumentImages() throws IOException {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("issue_51265_2.docx");
         assertEquals(1, doc.getAllPictures().size());
         assertEquals(1, doc.getAllPackagePictures().size());
         assertEquals(1, doc.getHeaderArray(0).getAllPictures().size());
         doc.getPackage().revert();
+        doc.close();
     }
 
+    @Test
     public void testPictureHandlingComplex() throws IOException, InvalidFormatException {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("issue_51265_3.docx");
         XWPFHeader xwpfHeader = doc.getHeaderArray(0);
@@ -336,8 +369,10 @@ public final class TestXWPFDocument extends TestCase {
         assertSame(part1, part2);
 
         doc.getPackage().revert();
+        doc.close();
     }
 
+    @Test
     public void testZeroLengthLibreOfficeDocumentWithWaterMarkHeader() throws IOException {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("zero-length.docx");
         POIXMLProperties properties = doc.getProperties();
@@ -352,8 +387,10 @@ public final class TestXWPFDocument extends TestCase {
         POIXMLProperties.ExtendedProperties extendedProperties = properties.getExtendedProperties();
         assertNotNull(extendedProperties);
         assertEquals(0, extendedProperties.getUnderlyingProperties().getCharacters());
+        doc.close();
     }
 
+    @Test
     public void testSettings() throws IOException {
         XWPFSettings settings = new XWPFSettings();
         assertEquals(100, settings.getZoomPercent());

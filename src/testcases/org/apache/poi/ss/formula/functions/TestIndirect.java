@@ -17,23 +17,27 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
+import org.apache.poi.hssf.usermodel.HSSFName;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.formula.eval.ErrorEval;
-import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
+import org.junit.Test;
 
 /**
  * Tests for the INDIRECT() function.</p>
- *
- * @author Josh Micich
  */
-public final class TestIndirect extends TestCase {
+public final class TestIndirect {
 	// convenient access to namespace
-	private static final ErrorEval EE = null;
+	// private static final ErrorEval EE = null;
 
 	private static void createDataRow(HSSFSheet sheet, int rowIndex, double... vals) {
 		HSSFRow row = sheet.createRow(rowIndex);
@@ -91,7 +95,8 @@ public final class TestIndirect extends TestCase {
 		return wb;
 	}
 
-	public void testBasic() {
+	@Test
+	public void testBasic() throws Exception {
 
 		HSSFWorkbook wbA = createWBA();
 		HSSFCell c = wbA.getSheetAt(0).createRow(5).createCell(2);
@@ -138,14 +143,17 @@ public final class TestIndirect extends TestCase {
 		confirm(feA, c, "SUM(INDIRECT(\"'John's sales'!A1:C1\"))", ErrorEval.REF_INVALID); // bad quote escaping
 		confirm(feA, c, "INDIRECT(\"[Book1]Sheet1!A1\")", ErrorEval.REF_INVALID); // unknown external workbook
 		confirm(feA, c, "INDIRECT(\"Sheet3!A1\")", ErrorEval.REF_INVALID); // unknown sheet
-		if (false) { // TODO - support evaluation of defined names
-			confirm(feA, c, "INDIRECT(\"Sheet1!IW1\")", ErrorEval.REF_INVALID); // bad column
-			confirm(feA, c, "INDIRECT(\"Sheet1!A65537\")", ErrorEval.REF_INVALID); // bad row
-		}
+//		if (false) { // TODO - support evaluation of defined names
+//			confirm(feA, c, "INDIRECT(\"Sheet1!IW1\")", ErrorEval.REF_INVALID); // bad column
+//			confirm(feA, c, "INDIRECT(\"Sheet1!A65537\")", ErrorEval.REF_INVALID); // bad row
+//		}
 		confirm(feA, c, "INDIRECT(\"Sheet1!A 1\")", ErrorEval.REF_INVALID); // space in cell ref
+		
+		wbA.close();
 	}
 
-	public void testMultipleWorkbooks() {
+	@Test
+	public void testMultipleWorkbooks() throws Exception {
 		HSSFWorkbook wbA = createWBA();
 		HSSFCell cellA = wbA.getSheetAt(0).createRow(10).createCell(0);
 		HSSFFormulaEvaluator feA = new HSSFFormulaEvaluator(wbA);
@@ -164,6 +172,9 @@ public final class TestIndirect extends TestCase {
 		// 2 level recursion
 		confirm(feB, cellB, "INDIRECT(\"[MyBook]Sheet2!A1\")", 50); // set up (and check) first level
 		confirm(feA, cellA, "INDIRECT(\"'[Figures for January]Sheet1'!A11\")", 50); // points to cellB
+		
+		wbB.close();
+		wbA.close();
 	}
 
 	private static void confirm(FormulaEvaluator fe, Cell cell, String formula,
@@ -172,21 +183,22 @@ public final class TestIndirect extends TestCase {
 		cell.setCellFormula(formula);
 		CellValue cv = fe.evaluate(cell);
 		if (cv.getCellType() != Cell.CELL_TYPE_NUMERIC) {
-			throw new AssertionFailedError("expected numeric cell type but got " + cv.formatAsString());
+			fail("expected numeric cell type but got " + cv.formatAsString());
 		}
 		assertEquals(expectedResult, cv.getNumberValue(), 0.0);
 	}
+	
 	private static void confirm(FormulaEvaluator fe, Cell cell, String formula,
 			ErrorEval expectedResult) {
 		fe.clearAllCachedResultValues();
 		cell.setCellFormula(formula);
 		CellValue cv = fe.evaluate(cell);
 		if (cv.getCellType() != Cell.CELL_TYPE_ERROR) {
-			throw new AssertionFailedError("expected error cell type but got " + cv.formatAsString());
+			fail("expected error cell type but got " + cv.formatAsString());
 		}
 		int expCode = expectedResult.getErrorCode();
 		if (cv.getErrorValue() != expCode) {
-			throw new AssertionFailedError("Expected error '" + ErrorEval.getText(expCode)
+			fail("Expected error '" + ErrorEval.getText(expCode)
 					+ "' but got '" + cv.formatAsString() + "'.");
 		}
 	}

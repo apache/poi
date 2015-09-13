@@ -17,16 +17,13 @@
 
 package org.apache.poi.hssf.record.aggregates;
 
-import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.CRC32;
-
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.model.RecordStream;
@@ -39,15 +36,17 @@ import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.SharedFormulaRecord;
 import org.apache.poi.hssf.record.WindowTwoRecord;
 import org.apache.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor;
-import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.util.HexRead;
+import org.junit.Test;
+
+import junit.framework.AssertionFailedError;
 
 /**
  * Tests for {@link ValueRecordsAggregate}
  */
-public final class TestValueRecordsAggregate extends TestCase {
+public final class TestValueRecordsAggregate {
 	private static final String ABNORMAL_SHARED_FORMULA_FLAG_TEST_FILE = "AbnormalSharedFormulaFlag.xls";
 	private final ValueRecordsAggregate valueRecord = new ValueRecordsAggregate();
 
@@ -56,6 +55,7 @@ public final class TestValueRecordsAggregate extends TestCase {
 	 * as part of the value records
 	 */
     @SuppressWarnings("deprecation") // uses deprecated {@link ValueRecordsAggregate#getValueRecords()}
+    @Test
 	public void testSharedFormula() {
 		List<Record> records = new ArrayList<Record>();
 		records.add(new FormulaRecord());
@@ -97,6 +97,7 @@ public final class TestValueRecordsAggregate extends TestCase {
 	}
 
     @SuppressWarnings("deprecation") // uses deprecated {@link ValueRecordsAggregate#getValueRecords()}
+    @Test
 	public void testInsertCell() {
 		CellValueRecordInterface[] cvrs = valueRecord.getValueRecords();
 		assertEquals(0, cvrs.length);
@@ -108,7 +109,8 @@ public final class TestValueRecordsAggregate extends TestCase {
 	}
 
     @SuppressWarnings("deprecation") // uses deprecated {@link ValueRecordsAggregate#getValueRecords()}
-	public void testRemoveCell() {
+    @Test
+    public void testRemoveCell() {
 		BlankRecord blankRecord1 = newBlankRecord();
 		valueRecord.insertCell( blankRecord1 );
 		BlankRecord blankRecord2 = newBlankRecord();
@@ -120,6 +122,7 @@ public final class TestValueRecordsAggregate extends TestCase {
 		valueRecord.removeCell( blankRecord2 );
 	}
 
+    @Test
 	public void testGetPhysicalNumberOfCells() {
 		assertEquals(0, valueRecord.getPhysicalNumberOfCells());
 		BlankRecord blankRecord1 = newBlankRecord();
@@ -129,6 +132,7 @@ public final class TestValueRecordsAggregate extends TestCase {
 		assertEquals(0, valueRecord.getPhysicalNumberOfCells());
 	}
 
+    @Test
 	public void testGetFirstCellNum() {
 		assertEquals( -1, valueRecord.getFirstCellNum() );
 		valueRecord.insertCell( newBlankRecord( 2, 2 ) );
@@ -141,6 +145,7 @@ public final class TestValueRecordsAggregate extends TestCase {
 		assertEquals( 2, valueRecord.getFirstCellNum() );
 	}
 
+    @Test
 	public void testGetLastCellNum() {
 		assertEquals( -1, valueRecord.getLastCellNum() );
 		valueRecord.insertCell( newBlankRecord( 2, 2 ) );
@@ -172,6 +177,7 @@ public final class TestValueRecordsAggregate extends TestCase {
 		}
 	}
 
+    @Test
 	public void testSerialize() {
 		byte[] expectedArray = HexRead.readFromString(""
 				+ "06 00 16 00 " // Formula
@@ -230,7 +236,8 @@ public final class TestValueRecordsAggregate extends TestCase {
 	 * There are other variations on this theme to create the same effect.
 	 *
 	 */
-	public void testSpuriousSharedFormulaFlag() {
+    @Test
+	public void testSpuriousSharedFormulaFlag() throws Exception {
 
 		long actualCRC = getFileCRC(HSSFTestDataSamples.openSampleFileStream(ABNORMAL_SHARED_FORMULA_FLAG_TEST_FILE));
 		long expectedCRC = 2277445406L;
@@ -245,18 +252,15 @@ public final class TestValueRecordsAggregate extends TestCase {
 		String cellFormula;
 		cellFormula = getFormulaFromFirstCell(s, 0); // row "1"
 		// the problem is not observable in the first row of the shared formula
-		if(!cellFormula.equals("\"first formula\"")) {
-			throw new RuntimeException("Something else wrong with this test case");
-		}
+		assertEquals("Something else wrong with this test case", "\"first formula\"", cellFormula);
 
 		// but the problem is observable in rows 2,3,4
 		cellFormula = getFormulaFromFirstCell(s, 1); // row "2"
-		if(cellFormula.equals("\"second formula\"")) {
-			throw new AssertionFailedError("found bug 44449 (Wrong SharedFormulaRecord was used).");
-		}
-		if(!cellFormula.equals("\"first formula\"")) {
-			throw new RuntimeException("Something else wrong with this test case");
-		}
+		assertNotEquals("found bug 44449 (Wrong SharedFormulaRecord was used).", "\"second formula\"", cellFormula);
+
+		assertEquals("Something else wrong with this test case", "\"first formula\"", cellFormula);
+		
+		wb.close();
 	}
 	private static String getFormulaFromFirstCell(HSSFSheet s, int rowIx) {
 		return s.getRow(rowIx).getCell(0).getCellFormula();
@@ -302,6 +306,8 @@ public final class TestValueRecordsAggregate extends TestCase {
 
 		return crc.getValue();
 	}
+	
+    @Test
 	public void testRemoveNewRow_bug46312() {
 		// To make bug occur, rowIndex needs to be >= ValueRecordsAggregate.records.length
 		int rowIndex = 30;
@@ -316,26 +322,27 @@ public final class TestValueRecordsAggregate extends TestCase {
 			throw e;
 		}
 
-		if (false) { // same bug as demonstrated through usermodel API
-
-			HSSFWorkbook wb = new HSSFWorkbook();
-			HSSFSheet sheet = wb.createSheet();
-			HSSFRow row = sheet.createRow(rowIndex);
-			if (false) { // must not add any cells to the new row if we want to see the bug
-				row.createCell(0); // this causes ValueRecordsAggregate.records to auto-extend
-			}
-			try {
-				sheet.createRow(rowIndex);
-			} catch (IllegalArgumentException e) {
-				throw new AssertionFailedError("Identified bug 46312");
-			}
-		}
+//		if (false) { // same bug as demonstrated through usermodel API
+//
+//			HSSFWorkbook wb = new HSSFWorkbook();
+//			HSSFSheet sheet = wb.createSheet();
+//			HSSFRow row = sheet.createRow(rowIndex);
+//			if (false) { // must not add any cells to the new row if we want to see the bug
+//				row.createCell(0); // this causes ValueRecordsAggregate.records to auto-extend
+//			}
+//			try {
+//				sheet.createRow(rowIndex);
+//			} catch (IllegalArgumentException e) {
+//				throw new AssertionFailedError("Identified bug 46312");
+//			}
+//		}
 	}
 
 	/**
 	 * Tests various manipulations of blank cells, to make sure that {@link MulBlankRecord}s
 	 * are use appropriately
 	 */
+    @Test
 	public void testMultipleBlanks() {
 		BlankRecord brA2 = newBlankRecord(0, 1);
 		BlankRecord brB2 = newBlankRecord(1, 1);
