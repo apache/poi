@@ -81,6 +81,7 @@ import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.usermodel.PrintSetup;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.SheetConditionalFormatting;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.ss.util.AreaReference;
@@ -2782,5 +2783,31 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         assertEquals("320 350", result);
 
         wb.close();
+    }
+
+    @Test
+    public void test55406() {
+        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("55406_Conditional_formatting_sample.xlsx");
+        Sheet sheet = wb.getSheetAt(0);
+        Cell cellA1 = sheet.getRow(0).getCell(0);
+        Cell cellA2 = sheet.getRow(1).getCell(0);
+        
+        assertEquals(0, cellA1.getCellStyle().getFillForegroundColor());
+        assertEquals("FFFDFDFD", ((XSSFColor)cellA1.getCellStyle().getFillForegroundColorColor()).getARGBHex());
+        assertEquals(0, cellA2.getCellStyle().getFillForegroundColor());
+        assertEquals("FFFDFDFD", ((XSSFColor)cellA2.getCellStyle().getFillForegroundColorColor()).getARGBHex());
+        
+        SheetConditionalFormatting cond = sheet.getSheetConditionalFormatting();
+        assertEquals(2, cond.getNumConditionalFormattings());
+
+        assertEquals(1, cond.getConditionalFormattingAt(0).getNumberOfRules());
+        assertEquals(64, cond.getConditionalFormattingAt(0).getRule(0).getPatternFormatting().getFillForegroundColor());
+        assertEquals("ISEVEN(ROW())", cond.getConditionalFormattingAt(0).getRule(0).getFormula1());
+        assertNull(((XSSFColor)cond.getConditionalFormattingAt(0).getRule(0).getPatternFormatting().getFillForegroundColorColor()).getARGBHex());
+
+        assertEquals(1, cond.getConditionalFormattingAt(1).getNumberOfRules());
+        assertEquals(64, cond.getConditionalFormattingAt(1).getRule(0).getPatternFormatting().getFillForegroundColor()); 
+        assertEquals("ISEVEN(ROW())", cond.getConditionalFormattingAt(1).getRule(0).getFormula1());
+        assertNull(((XSSFColor)cond.getConditionalFormattingAt(1).getRule(0).getPatternFormatting().getFillForegroundColorColor()).getARGBHex()); 
     }
 }
