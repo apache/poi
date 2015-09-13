@@ -20,6 +20,9 @@ package org.apache.poi.xssf.usermodel;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
+import static org.junit.Assume.assumeFalse;
+import static org.junit.Assume.assumeNotNull;
+import static org.junit.Assume.assumeTrue;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -37,6 +40,8 @@ import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.util.LocaleUtil;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 import org.junit.AfterClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -56,6 +61,7 @@ import org.junit.runners.Parameterized.Parameters;
  */
 @RunWith(Parameterized.class)
 public final class TestFormulaEvaluatorOnXSSF {
+    private static final POILogger logger = POILogFactory.getLogger(TestFormulaEvaluatorOnXSSF.class);
 
     private static XSSFWorkbook workbook;
     private static Sheet sheet;
@@ -144,12 +150,15 @@ public final class TestFormulaEvaluatorOnXSSF {
     private static void processFunctionGroup(List<Object[]> data, int startRowIndex, String testFocusFunctionName) {
         for (int rowIndex = startRowIndex; true; rowIndex += SS.NUMBER_OF_ROWS_PER_FUNCTION) {
             Row r = sheet.getRow(rowIndex);
+
+            // only evaluate non empty row
+            if(r == null) continue;
+            
             String targetFunctionName = getTargetFunctionName(r);
-            if(targetFunctionName == null) {
-                fail("Test spreadsheet cell empty on row ("
-                    + (rowIndex+1) + "). Expected function name or '"
-                    + SS.FUNCTION_NAMES_END_SENTINEL + "'");
-            }
+            assertNotNull("Test spreadsheet cell empty on row ("
+                + (rowIndex+1) + "). Expected function name or '"
+                + SS.FUNCTION_NAMES_END_SENTINEL + "'", targetFunctionName);
+
             if(targetFunctionName.equals(SS.FUNCTION_NAMES_END_SENTINEL)) {
                 // found end of functions list
                 break;
@@ -158,11 +167,10 @@ public final class TestFormulaEvaluatorOnXSSF {
                 
                 // expected results are on the row below
                 Row expectedValuesRow = sheet.getRow(rowIndex + 1);
-                if(expectedValuesRow == null) {
-                    int missingRowNum = rowIndex + 2; //+1 for 1-based, +1 for next row
-                    fail("Missing expected values row for function '" 
-                        + targetFunctionName + " (row " + missingRowNum + ")"); 
-                }
+                // +1 for 1-based, +1 for next row
+                assertNotNull("Missing expected values row for function '" 
+                    + targetFunctionName + " (row " + rowIndex + 2 + ")"
+                    , expectedValuesRow);
                 
                 data.add(new Object[]{targetFunctionName, rowIndex, rowIndex + 1});
             }
@@ -180,12 +188,9 @@ public final class TestFormulaEvaluatorOnXSSF {
 		// iterate across the row for all the evaluation cases
 		for (short colnum=SS.COLUMN_INDEX_FIRST_TEST_VALUE; colnum < endcolnum; colnum++) {
 			Cell c = formulasRow.getCell(colnum);
-			if (c == null || c.getCellType() != Cell.CELL_TYPE_FORMULA) {
-				continue;
-			}
-			if(isIgnoredFormulaTestCase(c.getCellFormula())) {
-				continue;
-			}
+			assumeNotNull(c);
+			assumeTrue(c.getCellType() == Cell.CELL_TYPE_FORMULA);
+			ignoredFormulaTestCase(c.getCellFormula());
 
 			CellValue actValue = evaluator.evaluate(c);
 			Cell expValue = (expectedValuesRow == null) ? null : expectedValuesRow.getCell(colnum);
@@ -230,19 +235,16 @@ public final class TestFormulaEvaluatorOnXSSF {
 	/*
 	 * TODO - these are all formulas which currently (Apr-2008) break on ooxml 
 	 */
-	private static boolean isIgnoredFormulaTestCase(String cellFormula) {
-		if ("COLUMN(1:2)".equals(cellFormula) || "ROW(2:3)".equals(cellFormula)) {
-			// full row ranges are not parsed properly yet.
-			// These cases currently work in svn trunk because of another bug which causes the 
-			// formula to get rendered as COLUMN($A$1:$IV$2) or ROW($A$2:$IV$3) 
-			return true;
-		}
-		if ("ISREF(currentcell())".equals(cellFormula)) {
-			// currently throws NPE because unknown function "currentcell" causes name lookup 
-			// Name lookup requires some equivalent object of the Workbook within xSSFWorkbook.
-			return true;
-		}
-		return false;
+	private static void ignoredFormulaTestCase(String cellFormula) {
+        // full row ranges are not parsed properly yet.
+        // These cases currently work in svn trunk because of another bug which causes the 
+        // formula to get rendered as COLUMN($A$1:$IV$2) or ROW($A$2:$IV$3) 
+	    assumeFalse("COLUMN(1:2)".equals(cellFormula));
+	    assumeFalse("ROW(2:3)".equals(cellFormula));
+
+        // currently throws NPE because unknown function "currentcell" causes name lookup 
+        // Name lookup requires some equivalent object of the Workbook within xSSFWorkbook.
+	    assumeFalse("ISREF(currentcell())".equals(cellFormula));
 	}
 
 	/**
@@ -250,12 +252,12 @@ public final class TestFormulaEvaluatorOnXSSF {
 	 */
 	private static String getTargetFunctionName(Row r) {
 		if(r == null) {
-			System.err.println("Warning - given null row, can't figure out function name");
+            logger.log(POILogger.WARN, "Warning - given null row, can't figure out function name");
 			return null;
 		}
 		Cell cell = r.getCell(SS.COLUMN_INDEX_FUNCTION_NAME);
 		if(cell == null) {
-			System.err.println("Warning - Row " + r.getRowNum() + " has no cell " + SS.COLUMN_INDEX_FUNCTION_NAME + ", can't figure out function name");
+            logger.log(POILogger.WARN, "Warning - Row " + r.getRowNum() + " has no cell " + SS.COLUMN_INDEX_FUNCTION_NAME + ", can't figure out function name");
 			return null;
 		}
 		if(cell.getCellType() == Cell.CELL_TYPE_BLANK) {

@@ -139,7 +139,6 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
             }
         }
 
-        List<XWPFTable> tables = getTables();
         for (int i = 0; i < tables.size(); i++) {
             String text = tables.get(i).getText();
             if (text != null && text.length() > 0) {
@@ -505,9 +504,6 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
             return null;
         }
         XWPFTableRow tableRow = table.getRow(row);
-        if (row == null) {
-            return null;
-        }
         return tableRow.getTableCell(cell);
     }
 
