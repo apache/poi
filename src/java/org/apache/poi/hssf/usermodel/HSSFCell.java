@@ -413,7 +413,7 @@ public class HSSFCell implements Cell {
                 errRec.setColumn(col);
                 if (setValue)
                 {
-                    errRec.setValue((byte)HSSFErrorConstants.ERROR_VALUE);
+                    errRec.setValue(FormulaError.VALUE.getCode());
                 }
                 errRec.setXFIndex(styleIndex);
                 errRec.setRow(row);
@@ -821,7 +821,7 @@ public class HSSFCell implements Cell {
             case CELL_TYPE_NUMERIC:
                 return NumberToTextConverter.toText(((NumberRecord)_record).getValue());
             case CELL_TYPE_ERROR:
-                   return HSSFErrorConstants.getText(((BoolErrRecord) _record).getErrorValue());
+                   return FormulaError.forInt(((BoolErrRecord)_record).getErrorValue()).getString();
             case CELL_TYPE_FORMULA:
                 // should really evaluate, but HSSFCell can't call HSSFFormulaEvaluator
                 // just use cached formula result instead
@@ -839,7 +839,7 @@ public class HSSFCell implements Cell {
             case CELL_TYPE_NUMERIC:
                 return NumberToTextConverter.toText(fr.getValue());
             case CELL_TYPE_ERROR:
-                   return HSSFErrorConstants.getText(fr.getCachedErrorValue());
+                   return FormulaError.forInt(fr.getCachedErrorValue()).getString();
         }
         throw new IllegalStateException("Unexpected formula result type (" + _cellType + ")");
     }
@@ -964,7 +964,7 @@ public class HSSFCell implements Cell {
      * Returns a string representation of the cell
      *
      * This method returns a simple representation,
-     * anthing more complex should be in user code, with
+     * anything more complex should be in user code, with
      * knowledge of the semantics of the sheet being processed.
      *
      * Formula cells return the formula string,
