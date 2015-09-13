@@ -1714,6 +1714,9 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      *   Calling <code>setSheetHidden(sheetIndex, false)</code> is equivalent to
      *   <code>setSheetHidden(sheetIndex, Workbook.SHEET_STATE_VISIBLE)</code>.
      * </p>
+     * 
+     * Please note that the sheet currently set as active sheet (sheet 0 in a newly 
+     * created workbook or the one set via setActiveSheet()) cannot be hidden. 
      *
      * @param sheetIx   the 0-based index of the sheet
      * @param hidden whether this sheet is hidden
@@ -1732,6 +1735,10 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      *  <li>1 - hidden. </li>
      *  <li>2 - very hidden.</li>
      * </ul>
+     * 
+     * Please note that the sheet currently set as active sheet (sheet 0 in a newly 
+     * created workbook or the one set via setActiveSheet()) cannot be hidden.
+     *  
      * @param sheetIx the sheet index (0-based)
      * @param state one of the following <code>Workbook</code> constants:
      *        <code>Workbook.SHEET_STATE_VISIBLE</code>,
