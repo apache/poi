@@ -18,24 +18,22 @@
 package org.apache.poi.ss.excelant.util;
 
 import java.util.HashMap;
+import java.util.Map;
 
 
 /**
  * This is a factory class maps file names to WorkbookUtil instances.  This
  * helps ExcelAnt be more efficient when being run many times in an Ant build.
  *
- * @author Jon Svede ( jon [at] loquatic [dot] com )
- * @author Brian Bush ( brian [dot] bush [at] nrel [dot] gov )
+ * @author Jon Svede (jon [at] loquatic [dot] com)
+ * @author Brian Bush (brian [dot] bush [at] nrel [dot] gov)
  *
  */
-public class ExcelAntWorkbookUtilFactory {
+public final class ExcelAntWorkbookUtilFactory {
 
-    private static HashMap<String, ExcelAntWorkbookUtil> workbookUtilMap ;
-
-    private static ExcelAntWorkbookUtilFactory factory ;
+    private static Map<String, ExcelAntWorkbookUtil> workbookUtilMap;
 
     private ExcelAntWorkbookUtilFactory() {
-        workbookUtilMap = new HashMap<String, ExcelAntWorkbookUtil>() ;
     }
 
     /**
@@ -45,19 +43,17 @@ public class ExcelAntWorkbookUtilFactory {
      * @param fileName
      * @return
      */
-    public static ExcelAntWorkbookUtil getInstance( String fileName ) {
-
-        if( factory == null ) {
-            factory = new ExcelAntWorkbookUtilFactory() ;
+    public static ExcelAntWorkbookUtil getInstance(String fileName) {
+        if(workbookUtilMap == null) {
+            workbookUtilMap = new HashMap<String, ExcelAntWorkbookUtil>();
         }
-        if( workbookUtilMap != null &&
-                workbookUtilMap.containsKey( fileName ) ) {
-            return workbookUtilMap.get( fileName ) ;
+        if(workbookUtilMap != null &&
+                workbookUtilMap.containsKey(fileName)) {
+            return workbookUtilMap.get(fileName);
         }
 
-        ExcelAntWorkbookUtil wbu = new ExcelAntWorkbookUtil( fileName ) ;
-        workbookUtilMap.put( fileName, wbu ) ;
-        return wbu ;
+        ExcelAntWorkbookUtil wbu = new ExcelAntWorkbookUtil(fileName);
+        workbookUtilMap.put(fileName, wbu);
+        return wbu;
     }
-
 }

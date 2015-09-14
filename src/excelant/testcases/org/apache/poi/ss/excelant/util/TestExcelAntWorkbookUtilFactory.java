@@ -16,19 +16,21 @@
 ==================================================================== */
 package org.apache.poi.ss.excelant.util;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import org.apache.poi.ss.excelant.BuildFileTest;
+import org.junit.Test;
 
 
 /**
  * Tests for the ExcelAntWorbookUtilFactory.
  * 
- * @author Jon Svede ( jon [at] loquatic [dot] com )
- * @author Brian Bush ( brian [dot] bush [at] nrel [dot] gov )
+ * @author Jon Svede (jon [at] loquatic [dot] com)
+ * @author Brian Bush (brian [dot] bush [at] nrel [dot] gov)
  *
  */
-public class TestExcelAntWorkbookUtilFactory extends TestCase{
+public class TestExcelAntWorkbookUtilFactory {
 
     private static final String mortgageCalculatorWorkbookFile =
         BuildFileTest.getDataDir() + "/spreadsheet/mortgage-calculation.xls" ;
@@ -38,13 +40,12 @@ public class TestExcelAntWorkbookUtilFactory extends TestCase{
 	 * Simple test to determine if the factory properly returns an non-null
 	 * instance of the ExcelAntWorkbookUtil class.
 	 */
+    @Test
 	public void testGetNewWorkbookUtilInstance() {
-		
 		ExcelAntWorkbookUtil util = ExcelAntWorkbookUtilFactory.getInstance(
-				                              mortgageCalculatorWorkbookFile ) ;
+				                              mortgageCalculatorWorkbookFile) ;
 		
-		assertNotNull( util ) ;
-		
+		assertNotNull(util) ;
 	}
 	
 	
@@ -53,19 +54,19 @@ public class TestExcelAntWorkbookUtilFactory extends TestCase{
 	 * to an ExcelAnt WorkbookUtil when two different Strings, that point to
 	 * the same resource, are passed in. 
 	 */
+    @Test
 	public void testVerifyEquivalence() {
 		String sameFileName = BuildFileTest.getDataDir() + "/spreadsheet/mortgage-calculation.xls" ;
 		
 		ExcelAntWorkbookUtil util = ExcelAntWorkbookUtilFactory.getInstance(
-                mortgageCalculatorWorkbookFile ) ;
+                mortgageCalculatorWorkbookFile) ;
 
 		ExcelAntWorkbookUtil util2 = ExcelAntWorkbookUtilFactory.getInstance(
-				                       sameFileName ) ;
+				                       sameFileName) ;
 		
-		assertNotNull( util ) ;
-		assertNotNull( util2 ) ;
+		assertNotNull(util) ;
+		assertNotNull(util2) ;
 		
-		assertEquals( util, util2 ) ;
+		assertEquals(util, util2) ;
 	}
-	
 }

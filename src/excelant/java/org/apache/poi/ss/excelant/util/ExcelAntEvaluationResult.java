@@ -21,8 +21,8 @@ package org.apache.poi.ss.excelant.util;
  * A simple class that encapsulates information about a cell evaluation
  * from POI.
  * 
- * @author Jon Svede ( jon [at] loquatic [dot] com )
- * @author Brian Bush ( brian [dot] bush [at] nrel [dot] gov )
+ * @author Jon Svede (jon [at] loquatic [dot] com)
+ * @author Brian Bush (brian [dot] bush [at] nrel [dot] gov)
  *
  */
 public class ExcelAntEvaluationResult {
@@ -62,12 +62,12 @@ public class ExcelAntEvaluationResult {
 	
 	
 
-	public ExcelAntEvaluationResult( boolean completedWithError,
+	public ExcelAntEvaluationResult(boolean completedWithError,
 			                 boolean passed, 
 			                 double retValue, 
 			                 String errMessage, 
 			                 double delta,
-			                 String cellId ) {
+			                 String cellId) {
 
 		evaluationCompletedWithError = completedWithError;
 		didPass = passed;

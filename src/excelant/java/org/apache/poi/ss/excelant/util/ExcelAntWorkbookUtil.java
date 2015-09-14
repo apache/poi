@@ -17,13 +17,28 @@
 
 package org.apache.poi.ss.excelant.util;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.formula.functions.FreeRefFunction;
 import org.apache.poi.ss.formula.udf.AggregatingUDFFinder;
 import org.apache.poi.ss.formula.udf.DefaultUDFFinder;
 import org.apache.poi.ss.formula.udf.UDFFinder;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellValue;
+import org.apache.poi.ss.usermodel.FormulaError;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.XSSFFormulaEvaluator;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -31,19 +46,12 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Typedef;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-
 /**
  * A general utility class that abstracts the POI details of loading the
  * workbook, accessing and updating cells.
  *
- * @author Jon Svede ( jon [at] loquatic [dot] com )
- * @author Brian Bush ( brian [dot] bush [at] nrel [dot] gov )
+ * @author Jon Svede (jon [at] loquatic [dot] com)
+ * @author Brian Bush (brian [dot] bush [at] nrel [dot] gov)
  *
  */
 public class ExcelAntWorkbookUtil extends Typedef {
@@ -52,7 +60,7 @@ public class ExcelAntWorkbookUtil extends Typedef {
 
     private Workbook workbook;
 
-    private final HashMap<String, FreeRefFunction> xlsMacroList = new HashMap<String, FreeRefFunction>();
+    private final Map<String, FreeRefFunction> xlsMacroList = new HashMap<String, FreeRefFunction>();
 
     /**
      * Constructs an instance using a String that contains the fully qualified
@@ -95,7 +103,7 @@ public class ExcelAntWorkbookUtil extends Typedef {
                     + ". Make sure the path and file permissions are correct.", e);
         }
 
-        return workbook ;
+        return workbook;
     }
 
     /**
@@ -106,11 +114,11 @@ public class ExcelAntWorkbookUtil extends Typedef {
      * @throws InstantiationException
      * @throws IllegalAccessException
      */
-    public void addFunction( String name, String clazzName ) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-        Class<?> clazzInst = Class.forName( clazzName ) ;
-        Object newInst = clazzInst.newInstance() ;
-        if( newInst instanceof FreeRefFunction ) {
-            addFunction( name, (FreeRefFunction)newInst ) ;
+    public void addFunction(String name, String clazzName) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+        Class<?> clazzInst = Class.forName(clazzName);
+        Object newInst = clazzInst.newInstance();
+        if(newInst instanceof FreeRefFunction) {
+            addFunction(name, (FreeRefFunction)newInst);
         }
 
     }
@@ -136,13 +144,10 @@ public class ExcelAntWorkbookUtil extends Typedef {
         String[] names = new String[xlsMacroList.size()];
         FreeRefFunction[] functions = new FreeRefFunction[xlsMacroList.size()];
 
-        Iterator<String> keysIt = xlsMacroList.keySet().iterator();
         int x = 0;
-        while (keysIt.hasNext()) {
-            String name = keysIt.next();
-            FreeRefFunction function = xlsMacroList.get(name);
-            names[x] = name;
-            functions[x] = function;
+        for(Map.Entry<String, FreeRefFunction> entry : xlsMacroList.entrySet()) {
+            names[x] = entry.getKey();
+            functions[x] = entry.getValue();
         }
 
         UDFFinder udff1 = new DefaultUDFFinder(names, functions);
@@ -159,26 +164,26 @@ public class ExcelAntWorkbookUtil extends Typedef {
      * @param fileName
      * @return
      */
-    protected FormulaEvaluator getEvaluator( String fileName ) {
-        FormulaEvaluator evaluator ;
+    protected FormulaEvaluator getEvaluator(String fileName) {
+        FormulaEvaluator evaluator;
         if (fileName.endsWith(".xlsx")) {
-            if( xlsMacroList.size() > 0 ) {
-                evaluator = XSSFFormulaEvaluator.create( (XSSFWorkbook) workbook,
+            if(xlsMacroList.size() > 0) {
+                evaluator = XSSFFormulaEvaluator.create((XSSFWorkbook) workbook,
                                                          null,
-                                                         getFunctions() ) ;
+                                                         getFunctions());
             }
             evaluator = new XSSFFormulaEvaluator((XSSFWorkbook) workbook);
         } else {
-            if( xlsMacroList.size() > 0 ) {
-                evaluator = HSSFFormulaEvaluator.create( (HSSFWorkbook)workbook,
+            if(xlsMacroList.size() > 0) {
+                evaluator = HSSFFormulaEvaluator.create((HSSFWorkbook)workbook,
                                                          null,
-                                                         getFunctions() ) ;
+                                                         getFunctions());
             }
 
             evaluator = new HSSFFormulaEvaluator((HSSFWorkbook) workbook);
         }
 
-        return evaluator ;
+        return evaluator;
 
     }
 
@@ -206,16 +211,16 @@ public class ExcelAntWorkbookUtil extends Typedef {
      *
      * @return
      */
-    public ArrayList<String> getSheets() {
-    	ArrayList<String> sheets = new ArrayList<String>() ;
+    public List<String> getSheets() {
+    	ArrayList<String> sheets = new ArrayList<String>();
 
-    	int sheetCount = workbook.getNumberOfSheets() ;
+    	int sheetCount = workbook.getNumberOfSheets();
 
-    	for( int x=0; x<sheetCount; x++ ) {
-    		sheets.add( workbook.getSheetName( x ) ) ;
+    	for(int x=0; x<sheetCount; x++) {
+    		sheets.add(workbook.getSheetName(x));
     	}
 
-    	return sheets ;
+    	return sheets;
     }
 
     /**
@@ -241,7 +246,7 @@ public class ExcelAntWorkbookUtil extends Typedef {
      * @param cellName
      * @param value
      */
-    public void setStringValue( String cellName, String value ) {
+    public void setStringValue(String cellName, String value) {
         Cell cell = getCell(cellName);
         cell.setCellValue(value);
     }
@@ -252,9 +257,9 @@ public class ExcelAntWorkbookUtil extends Typedef {
      * @param cellName
      * @param formula
      */
-    public void setFormulaValue( String cellName, String formula ) {
+    public void setFormulaValue(String cellName, String formula) {
         Cell cell = getCell(cellName);
-        cell.setCellFormula( formula );
+        cell.setCellFormula(formula);
     }
 
     /**
@@ -262,9 +267,9 @@ public class ExcelAntWorkbookUtil extends Typedef {
      * @param cellName
      * @param date
      */
-    public void setDateValue( String cellName, Date date  ) {
+    public void setDateValue(String cellName, Date date) {
         Cell cell = getCell(cellName);
-        cell.setCellValue( date ) ;
+        cell.setCellValue(date);
     }
     /**
      * Uses a String in standard Excel format (SheetName!CellId) to locate a
@@ -281,7 +286,7 @@ public class ExcelAntWorkbookUtil extends Typedef {
 
         Cell cell = getCell(cellName);
 
-        FormulaEvaluator evaluator = getEvaluator( excelFileName );
+        FormulaEvaluator evaluator = getEvaluator(excelFileName);
 
 
         CellValue resultOfEval = evaluator.evaluate(cell);
@@ -294,20 +299,19 @@ public class ExcelAntWorkbookUtil extends Typedef {
                 evalResults = new ExcelAntEvaluationResult(false, false,
                         resultOfEval.getNumberValue(),
                         "Results was out of range based on precision " + " of "
-                                + precision + ".  Delta was actually " + delta, delta, cellName );
+                                + precision + ".  Delta was actually " + delta, delta, cellName);
             } else {
                 evalResults = new ExcelAntEvaluationResult(false, true,
                         resultOfEval.getNumberValue(),
-                        "Evaluation passed without error within in range.", delta, cellName );
+                        "Evaluation passed without error within in range.", delta, cellName);
             }
         } else {
-            String errorMeaning = null ;
+            String errorMeaning = null;
             try {
-                errorMeaning = ErrorConstants.getText( resultOfEval
-                        .getErrorValue() ) ;
-            } catch( IllegalArgumentException iae ) {
+                errorMeaning = FormulaError.forInt(resultOfEval.getErrorValue()).getString();
+            } catch(IllegalArgumentException iae) {
                 errorMeaning =  "unknown error code: " +
-                                Byte.toString( resultOfEval.getErrorValue() ) ;
+                                Byte.toString(resultOfEval.getErrorValue());
             }
 
             evalResults = new ExcelAntEvaluationResult(true, false,
@@ -315,7 +319,7 @@ public class ExcelAntWorkbookUtil extends Typedef {
                     "Evaluation failed due to an evaluation error of "
                             + resultOfEval.getErrorValue()
                             + " which is "
-                            + errorMeaning, 0, cellName );
+                            + errorMeaning, 0, cellName);
         }
 
         return evalResults;
@@ -327,9 +331,9 @@ public class ExcelAntWorkbookUtil extends Typedef {
      * @param cellName
      * @return
      */
-    public String getCellAsString( String cellName ) {
-    	Cell cell = getCell( cellName ) ;
-		return cell.getStringCellValue() ;
+    public String getCellAsString(String cellName) {
+    	Cell cell = getCell(cellName);
+		return cell.getStringCellValue();
     }
 
 
@@ -339,9 +343,9 @@ public class ExcelAntWorkbookUtil extends Typedef {
      * @param cellName
      * @return
      */
-    public double getCellAsDouble( String cellName ) {
-    	Cell cell = getCell( cellName ) ;
-		return cell.getNumericCellValue() ;
+    public double getCellAsDouble(String cellName) {
+    	Cell cell = getCell(cellName);
+		return cell.getNumericCellValue();
     }
     /**
      * Returns a cell reference based on a String in standard Excel format
@@ -363,14 +367,14 @@ public class ExcelAntWorkbookUtil extends Typedef {
         int colIdx = cellRef.getCol();
         Row row = sheet.getRow(rowIdx);
 
-        if( row == null ) {
-        	row = sheet.createRow( rowIdx ) ;
+        if(row == null) {
+        	row = sheet.createRow(rowIdx);
         }
 
         Cell cell = row.getCell(colIdx);
 
-        if( cell == null ) {
-        	cell = row.createCell( colIdx ) ;
+        if(cell == null) {
+        	cell = row.createCell(colIdx);
         }
 
         return cell;
