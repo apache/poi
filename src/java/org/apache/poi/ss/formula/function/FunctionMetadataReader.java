@@ -53,40 +53,48 @@ final class FunctionMetadataReader {
 	private static final Set<String> DIGIT_ENDING_FUNCTION_NAMES_SET = new HashSet<String>(Arrays.asList(DIGIT_ENDING_FUNCTION_NAMES));
 
 	public static FunctionMetadataRegistry createRegistry() {
-		InputStream is = FunctionMetadataReader.class.getResourceAsStream(METADATA_FILE_NAME);
-		if (is == null) {
-			throw new RuntimeException("resource '" + METADATA_FILE_NAME + "' not found");
-		}
+	    try {
+    		InputStream is = FunctionMetadataReader.class.getResourceAsStream(METADATA_FILE_NAME);
+    		if (is == null) {
+    			throw new RuntimeException("resource '" + METADATA_FILE_NAME + "' not found");
+    		}
+    
+    		try {
+        		BufferedReader br;
+        		try {
+        			br = new BufferedReader(new InputStreamReader(is,"UTF-8"));
+        		} catch(UnsupportedEncodingException e) {
+        			throw new RuntimeException(e);
+        		}
+        		
+        		try {
+        		    FunctionDataBuilder fdb = new FunctionDataBuilder(400);
+        
+        			while (true) {
+        				String line = br.readLine();
+        				if (line == null) {
+        					break;
+        				}
+        				if (line.length() < 1 || line.charAt(0) == '#') {
+        					continue;
+        				}
+        				String trimLine = line.trim();
+        				if (trimLine.length() < 1) {
+        					continue;
+        				}
+        				processLine(fdb, line);
+        			}
 
-		BufferedReader br;
-		try {
-			br = new BufferedReader(new InputStreamReader(is,"UTF-8"));
-		} catch(UnsupportedEncodingException e) {
-			throw new RuntimeException(e);
-		}
-		FunctionDataBuilder fdb = new FunctionDataBuilder(400);
-
-		try {
-			while (true) {
-				String line = br.readLine();
-				if (line == null) {
-					break;
-				}
-				if (line.length() < 1 || line.charAt(0) == '#') {
-					continue;
-				}
-				String trimLine = line.trim();
-				if (trimLine.length() < 1) {
-					continue;
-				}
-				processLine(fdb, line);
-			}
-			br.close();
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-
-		return fdb.build();
+        			return fdb.build();
+        		} finally {
+        		    br.close();
+        		}
+    		} finally {
+    		    is.close();
+    		}
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+	    } 
 	}
 
 	private static void processLine(FunctionDataBuilder fdb, String line) {

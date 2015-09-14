@@ -19,10 +19,8 @@ package org.apache.poi.ss.excelant.util;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Date;
-
-import junit.framework.TestCase;
+import java.util.List;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.examples.formula.CalculateMortgageFunction;
@@ -33,6 +31,8 @@ import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.tools.ant.BuildException;
+
+import junit.framework.TestCase;
 
 public class TestExcelAntWorkbookUtil extends TestCase {
 	
@@ -198,9 +198,10 @@ public class TestExcelAntWorkbookUtil extends TestCase {
 				                                                precision);
 
 		//System.out.println(result);
-		assertTrue(result.toString().contains("evaluationCompletedWithError=false"));
-		assertTrue(result.toString().contains("returnValue=790.79"));
-		assertTrue(result.toString().contains("cellName='MortgageCalculator'!B4"));
+		assertTrue("Had:" + result.toString(), result.toString().contains("evaluationCompletedWithError=false"));
+		assertTrue("Had:" + result.toString(), result.toString().contains("returnValue=790.79"));
+		assertTrue("Had:" + result.toString(), result.toString().contains("cellName='MortgageCalculator'!B4"));
+        assertFalse(result.toString().contains("#N/A"));
 
 		assertFalse(result.evaluationCompleteWithError());
 		assertTrue(result.didTestPass());
@@ -219,9 +220,10 @@ public class TestExcelAntWorkbookUtil extends TestCase {
                                                                 precision);
 
         //System.out.println(result);
-        assertTrue(result.toString().contains("evaluationCompletedWithError=false"));
-        assertTrue(result.toString().contains("returnValue=790.79"));
-        assertTrue(result.toString().contains("cellName='MortgageCalculator'!B4"));
+        assertTrue("Had:" + result.toString(), result.toString().contains("evaluationCompletedWithError=false"));
+        assertTrue("Had:" + result.toString(), result.toString().contains("returnValue=790.79"));
+        assertTrue("Had:" + result.toString(), result.toString().contains("cellName='MortgageCalculator'!B4"));
+        assertFalse("Should not see an error, but had:" + result.toString(), result.toString().contains("#"));
 
         assertFalse(result.evaluationCompleteWithError());
         assertFalse(result.didTestPass());
@@ -240,9 +242,10 @@ public class TestExcelAntWorkbookUtil extends TestCase {
                                                                 precision);
 
         System.out.println(result);
-        assertTrue(result.toString().contains("evaluationCompletedWithError=true"));
-        assertTrue(result.toString().contains("returnValue=0.0"));
-        assertTrue(result.toString().contains("cellName='ErrorCell'!A1"));
+        assertTrue("Had:" + result.toString(), result.toString().contains("evaluationCompletedWithError=true"));
+        assertTrue("Had:" + result.toString(), result.toString().contains("returnValue=0.0"));
+        assertTrue("Had:" + result.toString(), result.toString().contains("cellName='ErrorCell'!A1"));
+        assertTrue("Had:" + result.toString(), result.toString().contains("#N/A"));
 
         assertTrue(result.evaluationCompleteWithError());
         assertFalse(result.didTestPass());
@@ -252,7 +255,7 @@ public class TestExcelAntWorkbookUtil extends TestCase {
 		fixture = new ExcelAntWorkbookUtilTestHelper(
                 mortgageCalculatorFileName);
 		
-		ArrayList<String> sheets = fixture.getSheets();
+		List<String> sheets = fixture.getSheets();
 		
 		assertNotNull(sheets);
 		assertEquals(sheets.size(), 3); 

@@ -31,6 +31,7 @@ import org.junit.Test;
  * @author Evgeniy Berlog
  * @date 25.06.12
  */
+@SuppressWarnings("deprecation")
 public class TestText {
 
     @Test

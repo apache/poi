@@ -16,52 +16,61 @@
 ==================================================================== */
 package org.apache.poi.ss.excelant.util;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
-public class TestExcelAntEvaluationResult extends TestCase {
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+public class TestExcelAntEvaluationResult {
+	private ExcelAntEvaluationResult fixture;
 	
-	private ExcelAntEvaluationResult fixture ;
-	
-	private boolean completedWithError = false ;
-    private boolean passed = false ;
-    private double retValue  = 1.1 ; 
-    private String errMessage = "error message" ;  
-    private double delta = 2.2 ; 
-    private String cellId = "testCell!$F$1" ;
+	private boolean completedWithError = false;
+    private boolean passed = false;
+    private double retValue  = 1.1; 
+    private String errMessage = "error message";  
+    private double delta = 2.2; 
+    private String cellId = "testCell!$F$1";
     
+    @Before
 	public void setUp() {
-		fixture = new ExcelAntEvaluationResult( completedWithError,
+		fixture = new ExcelAntEvaluationResult(completedWithError,
 				                                passed, 
 				                                retValue,
 				                                errMessage, 
 				                                delta,
-				                                cellId ) ;
+				                                cellId);
 	}
 	
+    @After
 	public void tearDown() {
-		fixture = null ;
+		fixture = null;
 	}
 	
+    @Test
 	public void testCompletedWithErrorMessage() {
-		String errMsg = fixture.getErrorMessage() ;
- 		assertNotNull( errMsg ) ;
- 		assertEquals( errMsg, errMessage ) ;
+		String errMsg = fixture.getErrorMessage();
+ 		assertNotNull(errMsg);
+ 		assertEquals(errMsg, errMessage);
 	}
 	
+    @Test
 	public void testPassed() {
-		boolean passedValue = fixture.didTestPass() ;
-		assertEquals( passedValue, passed ) ;
+		boolean passedValue = fixture.didTestPass();
+		assertEquals(passedValue, passed);
 	}
 	
+    @Test
 	public void testDelta() {
-		double deltaValue = fixture.getDelta() ;
-		assertEquals(deltaValue, delta, 0.0 ) ;
+		double deltaValue = fixture.getDelta();
+		assertEquals(deltaValue, delta, 0.0);
 	}
 	
+    @Test
 	public void testCellId() {
-		String cellIdValue = fixture.getCellName() ;
-		assertNotNull( cellIdValue ) ;
-		assertEquals( cellIdValue, cellId ) ;
+		String cellIdValue = fixture.getCellName();
+		assertNotNull(cellIdValue);
+		assertEquals(cellIdValue, cellId);
 	}
-
 }
