@@ -32,6 +32,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Iterator;
 import java.util.List;
 import java.util.zip.CRC32;
 
@@ -939,5 +940,84 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
 //        FileOutputStream fileOutputStream = new FileOutputStream("/tmp/54399.xlsx"); 
 //        workbook.write(fileOutputStream);
 //        fileOutputStream.close();  
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Test
+    /**
+     *  Iterator<XSSFSheet> XSSFWorkbook.iterator was committed in r700472 on 2008-09-30
+     *  and has been replaced with Iterator<Sheet> XSSFWorkbook.iterator
+     * 
+     *  In order to make code for looping over sheets in workbooks standard, regardless
+     *  of the type of workbook (HSSFWorkbook, XSSFWorkbook, SXSSFWorkbook), the previously
+     *  available Iterator<XSSFSheet> iterator and Iterator<XSSFSheet> sheetIterator
+     *  have been replaced with Iterator<Sheet>  {@link #iterator} and
+     *  Iterator<Sheet> {@link #sheetIterator}. This makes iterating over sheets in a workbook
+     *  similar to iterating over rows in a sheet and cells in a row.
+     *  
+     *  Note: this breaks backwards compatibility! Existing codebases will need to
+     *  upgrade their code with either of the following options presented in this test case.
+     *  
+     */
+    public void bug58245_XSSFSheetIterator() {
+        final XSSFWorkbook wb = new XSSFWorkbook();
+        try {
+            wb.createSheet();
+            
+            // =====================================================================
+            // Case 1: Existing code uses XSSFSheet for-each loop
+            // =====================================================================
+            // Original code (no longer valid)
+            /*
+            for (XSSFSheet sh : wb) {
+                sh.createRow(0);
+            }
+            */
+            
+            // Option A:
+            for (XSSFSheet sh : (Iterable<XSSFSheet>) (Iterable<? extends Sheet>) wb) {
+                sh.createRow(0);
+            }
+            
+            // Option B (preferred for new code):
+            for (Sheet sh : wb) {
+                sh.createRow(0);
+            }
+    
+            // =====================================================================
+            // Case 2: Existing code creates an iterator variable
+            // =====================================================================
+            // Original code (no longer valid)
+            /*
+            Iterator<XSSFSheet> it = wb.iterator();
+            XSSFSheet sh = it.next();
+            sh.createRow(0);
+            */
+            
+            // Option A:
+            {
+                Iterator<XSSFSheet> it = (Iterator<XSSFSheet>) (Iterator<? extends Sheet>) wb.iterator();
+                XSSFSheet sh = it.next();
+                sh.createRow(0);
+            }
+            
+            // Option B:
+            {
+                @SuppressWarnings("deprecation")
+                Iterator<XSSFSheet> it = wb.xssfSheetIterator();
+                XSSFSheet sh = it.next();
+                sh.createRow(0);
+            }
+            
+            // Option C (preferred for new code):
+            {
+                Iterator<Sheet> it = wb.iterator();
+                Sheet sh = it.next();
+                sh.createRow(0);
+            }
+        }
+        finally {
+            IOUtils.closeQuietly(wb);
+        }
     }
 }
