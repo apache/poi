@@ -19,8 +19,15 @@ package org.apache.poi.xssf.extractor;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.parsers.DocumentBuilder;
@@ -30,7 +37,10 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.DocumentHelper;
+import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.xssf.usermodel.XSSFCell;
@@ -39,6 +49,7 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFTable;
 import org.apache.poi.xssf.usermodel.helpers.XSSFSingleXmlCell;
 import org.apache.poi.xssf.usermodel.helpers.XSSFXmlColumnPr;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STXmlDataType;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -95,6 +106,7 @@ public class XSSFImportFromXML {
 
         for (XSSFSingleXmlCell singleXmlCell : singleXmlCells) {
 
+            STXmlDataType.Enum xmlDataType = singleXmlCell.getXmlDataType();
             String xpathString = singleXmlCell.getXpath();
             Node result = (Node) xpath.evaluate(xpathString, doc, XPathConstants.NODE);
             // result can be null if value is optional (xsd:minOccurs=0), see bugzilla 55864
@@ -104,7 +116,7 @@ public class XSSFImportFromXML {
 	            XSSFCell cell = singleXmlCell.getReferencedCell();
 	            logger.log(POILogger.DEBUG, "Setting '" + textContent + "' to cell " + cell.getColumnIndex() + "-" + cell.getRowIndex() + " in sheet "
 	                                            + cell.getSheet().getSheetName());
-	            cell.setCellValue(textContent);
+                setCellValue(textContent, cell, xmlDataType);
             }
         }
 
@@ -146,9 +158,71 @@ public class XSSFImportFromXML {
                     }
                     logger.log(POILogger.DEBUG, "Setting '" + value + "' to cell " + cell.getColumnIndex() + "-" + cell.getRowIndex() + " in sheet "
                                                     + table.getXSSFSheet().getSheetName());
-                    cell.setCellValue(value.trim());
+                    setCellValue(value, cell, xmlColumnPr.getXmlDataType());
                 }
             }
+        }
+    }
+
+    private static enum DataType {
+        BOOLEAN(STXmlDataType.BOOLEAN), //
+        DOUBLE(STXmlDataType.DOUBLE), //
+        INTEGER(STXmlDataType.INT, STXmlDataType.UNSIGNED_INT, STXmlDataType.INTEGER), //
+        STRING(STXmlDataType.STRING), //
+        DATE(STXmlDataType.DATE);
+
+        private Set<STXmlDataType.Enum> xmlDataTypes;
+
+        private DataType(STXmlDataType.Enum... xmlDataTypes) {
+            this.xmlDataTypes = new HashSet<STXmlDataType.Enum>(Arrays.asList(xmlDataTypes));
+        }
+
+        public static DataType getDataType(STXmlDataType.Enum xmlDataType) {
+            for (DataType dataType : DataType.values()) {
+                if (dataType.xmlDataTypes.contains(xmlDataType)) {
+                    return dataType;
+                }
+            }
+            return null;
+        }
+    }
+
+    private void setCellValue(String value, XSSFCell cell, STXmlDataType.Enum xmlDataType) {
+        DataType type = DataType.getDataType(xmlDataType);
+        try {
+            if (value.isEmpty() || type == null) {
+                cell.setCellValue((String) null);
+            } else {
+                switch (type) {
+                case BOOLEAN:
+                    cell.setCellValue(Boolean.parseBoolean(value));
+                    break;
+                case DOUBLE:
+                    cell.setCellValue(Double.parseDouble(value));
+                    break;
+                case INTEGER:
+                    cell.setCellValue(Integer.parseInt(value));
+                    break;
+                case DATE:
+                    DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", LocaleUtil.getUserLocale());
+                    Date date = sdf.parse(value);
+                    cell.setCellValue(date);
+                    if (!DateUtil.isValidExcelDate(cell.getNumericCellValue())) {
+                        cell.setCellValue(value);
+                    }
+                    break;
+                case STRING:
+                default:
+                    cell.setCellValue(value.trim());
+                    break;
+                }
+            }
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException(String.format(LocaleUtil.getUserLocale(), "Unable to format value '%s' as %s for cell %s", value,
+                    type, new CellReference(cell).formatAsString()));
+        } catch (ParseException e) {
+            throw new IllegalArgumentException(String.format(LocaleUtil.getUserLocale(), "Unable to format value '%s' as %s for cell %s", value,
+                    type, new CellReference(cell).formatAsString()));
         }
     }
 
@@ -219,7 +293,7 @@ public class XSSFImportFromXML {
 
         // Dummy implementation - not used!
         @Override
-        public Iterator getPrefixes(String val) {
+        public Iterator<?> getPrefixes(String val) {
             return null;
         }
 
