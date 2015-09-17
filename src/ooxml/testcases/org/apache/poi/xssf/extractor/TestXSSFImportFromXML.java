@@ -17,6 +17,8 @@
 
 package org.apache.poi.xssf.extractor;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import junit.framework.TestCase;
 
@@ -129,10 +131,10 @@ public class TestXSSFImportFromXML extends TestCase {
 	public void testSingleAttributeCellWithNamespace() throws Exception{
 		XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("CustomXMLMapping-singleattributenamespace.xlsx");	 
 		try {
-    		String id = "a";
+    		int id = 1;
     		String displayName = "dispName";
     		String ref="19"; 
-    		String count = "21";
+    		int count = 21;
     		
     		String testXML = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\" ?>"+ 
     						 "<ns1:table xmlns:ns1=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" id=\""+id+"\" displayName=\""+displayName+"\" ref=\""+ref+"\">"+
@@ -146,16 +148,15 @@ public class TestXSSFImportFromXML extends TestCase {
     		//Check for Schema element
     		XSSFSheet sheet=wb.getSheetAt(0);
     		 
-    		assertEquals(id,sheet.getRow(28).getCell(1).getStringCellValue());
-    		assertEquals(displayName,sheet.getRow(11).getCell(5).getStringCellValue());
-    		assertEquals(ref,sheet.getRow(14).getCell(7).getStringCellValue());
-    		assertEquals(count,sheet.getRow(18).getCell(3).getStringCellValue());
+    		assertEquals(new Double(id), sheet.getRow(28).getCell(1).getNumericCellValue());
+    		assertEquals(displayName, sheet.getRow(11).getCell(5).getStringCellValue());
+    		assertEquals(ref, sheet.getRow(14).getCell(7).getStringCellValue());
+    		assertEquals(new Double(count), sheet.getRow(18).getCell(3).getNumericCellValue());
         } finally {
             wb.close();
         }
 	}
-	
-	
+
 	public void testOptionalFields_Bugzilla_55864() throws Exception {
 		XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("55864.xlsx");	 
 		try {
@@ -194,5 +195,37 @@ public class TestXSSFImportFromXML extends TestCase {
         } finally {
             wb.close();
         }
+	}
+
+	public void testOptionalFields_Bugzilla_57890() throws Exception {
+		XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("57890.xlsx");
+
+		String testXML = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" + "<TestInfoRoot>"
+				+ "<TestData>" + "<Int>" + Integer.MIN_VALUE + "</Int>" + "<UnsignedInt>12345</UnsignedInt>"
+				+ "<double>1.0000123</double>" + "<Date>1991-03-14</Date>" + "</TestData>" + "</TestInfoRoot>";
+
+		XSSFMap map = wb.getMapInfo().getXSSFMapByName("TestInfoRoot_Map");
+		assertNotNull(map);
+		XSSFImportFromXML importer = new XSSFImportFromXML(map);
+
+		importer.importFromXML(testXML);
+
+		XSSFSheet sheet = wb.getSheetAt(0);
+
+		XSSFRow rowHeadings = sheet.getRow(0);
+		XSSFRow rowData = sheet.getRow(1);
+
+		assertEquals("Date", rowHeadings.getCell(0).getStringCellValue());
+		Date date = new SimpleDateFormat("yyyy-MM-dd").parse("1991-3-14");
+		assertEquals(date, rowData.getCell(0).getDateCellValue());
+
+		assertEquals("Amount Int", rowHeadings.getCell(1).getStringCellValue());
+		assertEquals(new Double(Integer.MIN_VALUE), rowData.getCell(1).getNumericCellValue());
+
+		assertEquals("Amount Double", rowHeadings.getCell(2).getStringCellValue());
+		assertEquals(1.0000123, rowData.getCell(2).getNumericCellValue());
+
+		assertEquals("Amount UnsignedInt", rowHeadings.getCell(3).getStringCellValue());
+		assertEquals(new Double(12345), rowData.getCell(3).getNumericCellValue());
 	}
 }

@@ -203,6 +203,7 @@ public class TestAllFiles {
         // TODO: fails XMLExportTest, is this ok?
         EXPECTED_FAILURES.add("spreadsheet/CustomXMLMapping-singleattributenamespace.xlsx");
         EXPECTED_FAILURES.add("spreadsheet/55864.xlsx");
+        EXPECTED_FAILURES.add("spreadsheet/57890.xlsx");
 
         // TODO: these fail now with some NPE/file read error because we now try to compute every value via Cell.toString()!
         EXPECTED_FAILURES.add("spreadsheet/44958.xls");
