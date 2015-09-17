@@ -1115,8 +1115,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     }
     
     /**
-     *  
-     *  xssfSheetIterator was added to make transitioning to the new Iterator<Sheet> iterator()
+     * xssfSheetIterator was added to make transitioning to the new Iterator<Sheet> iterator()
      *  interface less painful for projects currently using POI.
      *  
      *  If your code was written using a for-each loop:
@@ -1129,9 +1128,9 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
      *  There are two ways to upgrade your code:
      *  // Option A:
      *  <pre><code>
-     *      for (XSSFSheet sh : (Iterable<XSSFSheet>) (Iterable<? extends Sheet>) wb) {
-     *          sh.createRow(0);
-     *      }
+     *  for (XSSFSheet sh : (Iterable<XSSFSheet>) (Iterable<? extends Sheet>) wb) {
+     *      sh.createRow(0);
+     *  }
      *  </code></pre>
      *      
      *  // Option B (preferred for new code):
@@ -1160,7 +1159,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
      *
      *  // Option B:
      *  <pre><code>
-     *  @SuppressWarnings("deprecation")
+     *  &#64;SuppressWarnings("deprecation")
      *  Iterator<XSSFSheet> it = wb.xssfSheetIterator();
      *  XSSFSheet sh = it.next();
      *  sh.createRow(0);
