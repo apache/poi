@@ -81,6 +81,28 @@ public final class TestDec2Hex extends TestCase {
 
 		confirmValue("Converts decimal -54 to hexadecimal, 2 is ignored","-54", "2",  "FFFFFFFFCA");
 		confirmValue("places is optionnal","-54", "FFFFFFFFCA");
+		
+		confirmValue("Converts normal decimal number to hexadecimal", "100", "64");
+        
+		String maxInt = Integer.toString(Integer.MAX_VALUE);
+        assertEquals("2147483647", maxInt);
+        confirmValue("Converts INT_MAX to hexadecimal", maxInt, "7FFFFFFF");
+
+        String minInt = Integer.toString(Integer.MIN_VALUE);
+        assertEquals("-2147483648", minInt);
+        confirmValue("Converts INT_MIN to hexadecimal", minInt, "FF80000000");
+
+        String maxIntPlusOne = Long.toString(((long)Integer.MAX_VALUE)+1);
+        assertEquals("2147483648", maxIntPlusOne);
+        confirmValue("Converts INT_MAX + 1 to hexadecimal", maxIntPlusOne, "80000000");
+        
+        String maxLong = Long.toString(549755813887l);
+        assertEquals("549755813887", maxLong);
+        confirmValue("Converts the max supported value to hexadecimal", maxLong, "7FFFFFFFFF");
+        
+        String minLong = Long.toString(-549755813888l);
+        assertEquals("-549755813888", minLong);
+        confirmValue("Converts the min supported value to hexadecimal", minLong, "FF80000000");
 	}
 
     public void testErrors() {
