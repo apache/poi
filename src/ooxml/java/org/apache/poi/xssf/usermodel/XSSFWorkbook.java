@@ -33,6 +33,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.regex.Pattern;
 
 import javax.xml.namespace.QName;
@@ -104,7 +105,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.WorkbookDocument;
  * will construct whether they are reading or writing a workbook.  It is also the
  * top level object for creating new sheets/etc.
  */
-public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<XSSFSheet> {
+public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     private static final Pattern COMMA_PATTERN = Pattern.compile(",");
 
     /**
@@ -1055,18 +1056,133 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
     }
 
     /**
-     * Allows foreach loops:
-     * <pre><code>
-     * XSSFWorkbook wb = new XSSFWorkbook(package);
-     * for(XSSFSheet sheet : wb){
+     * Returns an iterator of the sheets in the workbook
+     * in sheet order. Includes hidden and very hidden sheets.
      *
-     * }
-     * </code></pre>
+     * Note: remove() is not supported on this iterator.
+     * Use {@link #removeSheetAt(int)} to remove sheets instead.
+     *
+     * @return an iterator of the sheets.
+     */
+    public Iterator<Sheet> sheetIterator() {
+        return new SheetIterator<Sheet>();
+    }
+    
+    /**
+     * Alias for {@link #sheetIterator()} to allow
+     * foreach loops
+     * 
+     * <code>Iterator<XSSFSheet> iterator()<code> was replaced with <code>Iterator<Sheet> iterator()</code>
+     * to make iterating over a container (Workbook, Sheet, Row) consistent across POI spreadsheets.
+     * This breaks backwards compatibility and may affect your code.
+     * See {@link XSSFWorkbook#xssfSheetIterator} for how to upgrade your code to be compatible
+     * with the new interface.
+     * 
+     * Note: remove() is not supported on this iterator.
+     * Use {@link #removeSheetAt(int)} to remove sheets instead.
+     * 
+     * @return an iterator  of the sheets.
      */
     @Override
-    public Iterator<XSSFSheet> iterator() {
-        return sheets.iterator();
+    public Iterator<Sheet> iterator() {
+        return sheetIterator();
     }
+    
+    private final class SheetIterator<T extends Sheet> implements Iterator<T> {
+        final private Iterator<T> it;
+        @SuppressWarnings("unchecked")
+        public SheetIterator() {
+            it = (Iterator<T>) sheets.iterator();
+        }
+        @Override
+        public boolean hasNext() {
+            return it.hasNext();
+        }
+        @Override
+        public T next() throws NoSuchElementException {
+            return it.next();
+        }
+        /**
+         * Unexpected behavior may occur if sheets are reordered after iterator
+         * has been created. Support for the remove method may be added in the future
+         * if someone can figure out a reliable implementation.
+         */
+        @Override
+        public void remove() throws IllegalStateException {
+            throw new UnsupportedOperationException("remove method not supported on XSSFWorkbook.iterator(). "+
+                    "Use Sheet.removeSheetAt(int) instead.");
+        }
+    }
+    
+    /**
+     *  
+     *  xssfSheetIterator was added to make transitioning to the new Iterator<Sheet> iterator()
+     *  interface less painful for projects currently using POI.
+     *  
+     *  If your code was written using a for-each loop:
+     *  <pre><code>
+     *  for (XSSFSheet sh : wb) {
+     *      sh.createRow(0);
+     *  }
+     *  </code></pre>
+     *  
+     *  There are two ways to upgrade your code:
+     *  // Option A:
+     *  <pre><code>
+     *      for (XSSFSheet sh : (Iterable<XSSFSheet>) (Iterable<? extends Sheet>) wb) {
+     *          sh.createRow(0);
+     *      }
+     *  </code></pre>
+     *      
+     *  // Option B (preferred for new code):
+     *  <pre><code>
+     *  for (Sheet sh : wb) {
+     *      sh.createRow(0);
+     *  }
+     *  </code></pre>
+     *  
+     *  
+     *  
+     *  If your code was written using an iterator variable:
+     *  <pre><code>
+     *  Iterator<XSSFSheet> it = wb.iterator();
+     *  XSSFSheet sh = it.next();
+     *  sh.createRow(0);
+     *  </code></pre>
+     *  
+     *  There are three ways to upgrade your code:
+     *  // Option A:
+     *  <pre><code>
+     *  Iterator<XSSFSheet> it = (Iterator<XSSFSheet>) (Iterator<? extends Sheet>) wb.iterator();
+     *  XSSFSheet sh = it.next();
+     *  sh.createRow(0);
+     *  </code></pre>
+     *
+     *  // Option B:
+     *  <pre><code>
+     *  @SuppressWarnings("deprecation")
+     *  Iterator<XSSFSheet> it = wb.xssfSheetIterator();
+     *  XSSFSheet sh = it.next();
+     *  sh.createRow(0);
+     *  </code></pre>
+     *
+     *  // Option C (preferred for new code):
+     *  <pre><code>
+     *  Iterator<Sheet> it = wb.iterator();
+     *  Sheet sh = it.next();
+     *  sh.createRow(0);
+     *  </code></pre>
+     *  
+     *  New projects should use the preferred options. Note: XSSFWorkbook.xssfSheetIterator
+     *  is deprecated and will be removed in a future version.
+     *
+     * @return an iterator of the sheets.
+     */
+    @Deprecated
+    public Iterator<XSSFSheet> xssfSheetIterator() {
+        return new SheetIterator<XSSFSheet>();
+    }
+    
     /**
      * Are we a normal workbook (.xlsx), or a
      *  macro enabled workbook (.xlsm)?

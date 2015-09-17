@@ -33,6 +33,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.regex.Pattern;
 
 import org.apache.commons.codec.digest.DigestUtils;
@@ -82,6 +83,7 @@ import org.apache.poi.ss.formula.udf.AggregatingUDFFinder;
 import org.apache.poi.ss.formula.udf.IndexedUDFFinder;
 import org.apache.poi.ss.formula.udf.UDFFinder;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.WorkbookUtil;
@@ -913,12 +915,58 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
         sheet.setActive(isOnlySheet);
         return sheet;
     }
+    
+    /**
+     *  Returns an iterator of the sheets in the workbook
+     *  in sheet order. Includes hidden and very hidden sheets.
+     *
+     * @return an iterator of the sheets.
+     */
+    public Iterator<Sheet> sheetIterator() {
+        Iterator<Sheet> result = new SheetIterator<Sheet>();
+        return result;
+    }
+
+    /**
+     * Alias for {@link #sheetIterator()} to allow
+     * foreach loops
+     */
+    public Iterator<Sheet> iterator() {
+        return sheetIterator();
+    }
+    
+    private final class SheetIterator<T extends Sheet> implements Iterator<T> {
+        final private Iterator<T> it;
+        private T cursor = null;
+        @SuppressWarnings("unchecked")
+        public SheetIterator() {
+            it = (Iterator<T>) _sheets.iterator();
+        }
+        @Override
+        public boolean hasNext() {
+            return it.hasNext();
+        }
+        @Override
+        public T next() throws NoSuchElementException {
+            cursor = it.next();
+            return cursor;
+        }
+        /**
+         * Unexpected behavior may occur if sheets are reordered after iterator
+         * has been created. Support for the remove method may be added in the future
+         * if someone can figure out a reliable implementation.
+         */
+        @Override
+        public void remove() throws IllegalStateException {
+            throw new UnsupportedOperationException("remove method not supported on HSSFWorkbook.iterator(). "+
+                        "Use Sheet.removeSheetAt(int) instead.");
+        }
+    }
 
     /**
      * get the number of spreadsheets in the workbook (this will be three after serialization)
      * @return number of sheets
      */
-
     @Override
     public int getNumberOfSheets()
     {

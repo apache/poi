@@ -22,6 +22,7 @@ import java.util.TreeMap;
 
 import junit.framework.TestCase;
 
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.XSSFTestDataSamples;
@@ -441,20 +442,20 @@ public final class TestXSSFRichTextString extends TestCase {
     @Test
     public void testBug56511() {
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("56511.xlsx");
-        for (XSSFSheet sheet : wb) {
+        for (Sheet sheet : wb) {
             int lastRow = sheet.getLastRowNum();
             for (int rowIdx = sheet.getFirstRowNum(); rowIdx <= lastRow; rowIdx++) {
-                XSSFRow row = sheet.getRow(rowIdx);
+                Row row = sheet.getRow(rowIdx);
                 if(row != null) {
                     int lastCell = row.getLastCellNum();
     
                     for (int cellIdx = row.getFirstCellNum(); cellIdx <= lastCell; cellIdx++) {
     
-                        XSSFCell cell = row.getCell(cellIdx);
+                        Cell cell = row.getCell(cellIdx);
                         if (cell != null) {
                             //System.out.println("row " + rowIdx + " column " + cellIdx + ": " + cell.getCellType() + ": " + cell.toString());
                             
-                            XSSFRichTextString richText = cell.getRichStringCellValue();
+                            XSSFRichTextString richText = (XSSFRichTextString) cell.getRichStringCellValue();
                             int anzFormattingRuns = richText.numFormattingRuns();
                             for (int run = 0; run < anzFormattingRuns; run++) {
                                 /*XSSFFont font =*/ richText.getFontOfFormattingRun(run);

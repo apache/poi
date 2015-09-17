@@ -26,7 +26,9 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
@@ -678,6 +680,55 @@ public class SXSSFWorkbook implements Workbook {
     public int getNumberOfSheets()
     {
         return _wb.getNumberOfSheets();
+    }
+    
+    /**
+     *  Returns an iterator of the sheets in the workbook
+     *  in sheet order. Includes hidden and very hidden sheets.
+     *
+     * @return an iterator of the sheets.
+     */
+    @Override
+    public Iterator<Sheet> sheetIterator() {
+        return new SheetIterator<Sheet>();
+    }
+    
+    private final class SheetIterator<T extends Sheet> implements Iterator<T> {
+        final private Iterator<XSSFSheet> it;
+        @SuppressWarnings("unchecked")
+        public SheetIterator() {
+            it = (Iterator<XSSFSheet>)(Iterator<? extends Sheet>) _wb.iterator();
+        }
+        @Override
+        public boolean hasNext() {
+            return it.hasNext();
+        }
+        @Override
+        @SuppressWarnings("unchecked")
+        public T next() throws NoSuchElementException {
+            final XSSFSheet xssfSheet = it.next();
+            final T sxssfSheet = (T) getSXSSFSheet(xssfSheet);
+            return sxssfSheet;
+        }
+        /**
+         * Unexpected behavior may occur if sheets are reordered after iterator
+         * has been created. Support for the remove method may be added in the future
+         * if someone can figure out a reliable implementation.
+         */
+        @Override
+        public void remove() throws IllegalStateException {
+            throw new UnsupportedOperationException("remove method not supported on XSSFWorkbook.iterator(). "+
+                    "Use Sheet.removeSheetAt(int) instead.");
+        }
+    }
+    
+    /**
+     * Alias for {@link #sheetIterator()} to allow
+     * foreach loops
+     */
+    @Override
+    public Iterator<Sheet> iterator() {
+        return sheetIterator();
     }
 
     /**

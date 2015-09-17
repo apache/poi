@@ -26,6 +26,8 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
+import java.util.ConcurrentModificationException;
+import java.util.Iterator;
 
 import junit.framework.AssertionFailedError;
 
@@ -43,6 +45,79 @@ public abstract class BaseTestWorkbook {
     protected BaseTestWorkbook(ITestDataProvider testDataProvider) {
     _testDataProvider = testDataProvider;
     }
+    
+    @Test
+    public void sheetIterator_forEach() {
+        final Workbook wb = _testDataProvider.createWorkbook();
+        wb.createSheet("Sheet0");
+        wb.createSheet("Sheet1");
+        wb.createSheet("Sheet2");
+        int i = 0;
+        for (Sheet sh : wb) {
+            assertEquals("Sheet"+i, sh.getSheetName());
+            i++;
+        }
+    }
+    
+    @Test
+    public void sheetIterator_sheetsReordered() {
+        final Workbook wb = _testDataProvider.createWorkbook();
+        wb.createSheet("Sheet0");
+        wb.createSheet("Sheet1");
+        wb.createSheet("Sheet2");
+        
+        Iterator<Sheet> it = wb.sheetIterator();
+        it.next();
+        wb.setSheetOrder("Sheet2", 1);
+        
+        // Iterator order should be fixed when iterator is created
+        try {
+            assertEquals("Sheet1", it.next().getSheetName());
+            fail("Expected ConcurrentModificationException: "+
+                 "should not be able to advance an iterator when the "+
+                 "underlying data has been reordered");
+        } catch (final ConcurrentModificationException e) {
+            // expected
+        }
+    }
+    
+    @Test
+    public void sheetIterator_sheetRemoved() {
+        final Workbook wb = _testDataProvider.createWorkbook();
+        wb.createSheet("Sheet0");
+        wb.createSheet("Sheet1");
+        wb.createSheet("Sheet2");
+        
+        Iterator<Sheet> it = wb.sheetIterator();
+        wb.removeSheetAt(1);
+        
+        // Iterator order should be fixed when iterator is created
+        try {
+            it.next();
+            fail("Expected ConcurrentModificationException: "+
+                 "should not be able to advance an iterator when the "+
+                 "underlying data has been reordered");
+        } catch (final ConcurrentModificationException e) {
+            // expected
+        }
+    }
+    
+    @Test
+    public void sheetIterator_remove() {
+        final Workbook wb = _testDataProvider.createWorkbook();
+        wb.createSheet("Sheet0");
+        
+        Iterator<Sheet> it = wb.sheetIterator();
+        it.next(); //Sheet0
+        try {
+            it.remove();
+            fail("Expected UnsupportedOperationException: "+
+                 "should not be able to remove sheets from the sheet iterator");
+        } catch (final UnsupportedOperationException e) {
+            // expected
+        }
+    }
+
 
     @Test
     public void createSheet() {

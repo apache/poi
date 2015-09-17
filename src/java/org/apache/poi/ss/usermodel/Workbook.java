@@ -20,6 +20,7 @@ package org.apache.poi.ss.usermodel;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.poi.ss.formula.udf.UDFFinder;
@@ -31,7 +32,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
  * will construct whether they are reading or writing a workbook.  It is also the
  * top level object for creating new sheets/etc.
  */
-public interface Workbook extends Closeable {
+public interface Workbook extends Closeable, Iterable<Sheet> {
 
     /** Extended windows meta file */
     public static final int PICTURE_TYPE_EMF = 2;
@@ -231,6 +232,14 @@ public interface Workbook extends Closeable {
      */
     Sheet cloneSheet(int sheetNum);
 
+    
+    /**
+     *  Returns an iterator of the sheets in the workbook
+     *  in sheet order. Includes hidden and very hidden sheets.
+     *
+     * @return an iterator of the sheets.
+     */
+    Iterator<Sheet> sheetIterator();
 
     /**
      * Get the number of spreadsheets in the workbook

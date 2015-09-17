@@ -32,6 +32,7 @@ import org.apache.poi.ss.formula.ptg.AreaPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -148,13 +149,13 @@ public final class XSSFRowShifter {
 
         //update formulas on other sheets
         XSSFWorkbook wb = sheet.getWorkbook();
-        for (XSSFSheet sh : wb) {
+        for (Sheet sh : wb) {
             if (sheet == sh) continue;
             updateSheetFormulas(sh, shifter);
         }
     }
 
-    private void updateSheetFormulas(XSSFSheet sh, FormulaShifter shifter) {
+    private void updateSheetFormulas(Sheet sh, FormulaShifter shifter) {
         for (Row r : sh) {
             XSSFRow row = (XSSFRow) r;
             updateRowFormulas(row, shifter);
