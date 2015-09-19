@@ -94,7 +94,11 @@ public final class OperationEvaluationContext {
 		if (externalSheet == null || externalSheet.getWorkbookName() == null) {
 			// sheet is in same workbook
 			targetEvaluator = _bookEvaluator;
-			otherFirstSheetIndex = _workbook.getSheetIndex(externalSheet.getSheetName());
+			if(externalSheet == null) {
+			    otherFirstSheetIndex = 0;
+			} else {
+			    otherFirstSheetIndex = _workbook.getSheetIndex(externalSheet.getSheetName());
+			}
 			
 			if (externalSheet instanceof ExternalSheetRange) {
 			    String lastSheetName = ((ExternalSheetRange)externalSheet).getLastSheetName();
