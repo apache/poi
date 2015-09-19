@@ -2846,4 +2846,22 @@ public final class TestBugs extends BaseTestBugzillaIssues {
 
         wb.close();
     }
+    
+    @Test
+    public void test57925() throws IOException {
+        Workbook wb = HSSFTestDataSamples.openSampleWorkbook("57925.xls");
+        
+        wb.getCreationHelper().createFormulaEvaluator().evaluateAll();
+        
+        for(int i = 0;i < wb.getNumberOfSheets();i++) {
+            Sheet sheet = wb.getSheetAt(i);
+            for(Row row : sheet) {
+                for(Cell cell : row) {
+                    new DataFormatter().formatCellValue(cell);
+                }
+            }
+        }
+        
+        wb.close();
+    }
 }
