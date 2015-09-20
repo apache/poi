@@ -57,23 +57,25 @@ public final class TestXSSFCell extends BaseTestXCell {
      * Shared String Table
      */
     @Test
-    public void test47026_1() {
-        Workbook source = _testDataProvider.openSampleWorkbook("47026.xlsm");
-        Sheet sheet = source.getSheetAt(0);
+    public void test47026_1() throws Exception {
+        Workbook wb = _testDataProvider.openSampleWorkbook("47026.xlsm");
+        Sheet sheet = wb.getSheetAt(0);
         Row row = sheet.getRow(0);
         Cell cell = row.getCell(0);
         cell.setCellType(Cell.CELL_TYPE_STRING);
         cell.setCellValue("456");
+        wb.close();
     }
 
     @Test
-    public void test47026_2() {
-        Workbook source = _testDataProvider.openSampleWorkbook("47026.xlsm");
-        Sheet sheet = source.getSheetAt(0);
+    public void test47026_2() throws Exception {
+        Workbook wb = _testDataProvider.openSampleWorkbook("47026.xlsm");
+        Sheet sheet = wb.getSheetAt(0);
         Row row = sheet.getRow(0);
         Cell cell = row.getCell(0);
         cell.setCellFormula(null);
         cell.setCellValue("456");
+        wb.close();
     }
 
     /**
@@ -84,7 +86,7 @@ public final class TestXSSFCell extends BaseTestXCell {
      * instead of using the shared string table. See bug 47206
      */
     @Test
-    public void testInlineString() {
+    public void testInlineString() throws Exception {
         XSSFWorkbook wb = (XSSFWorkbook)_testDataProvider.openSampleWorkbook("xlsx-jdbc.xlsx");
         XSSFSheet sheet = wb.getSheetAt(0);
         XSSFRow row = sheet.getRow(1);
@@ -103,13 +105,14 @@ public final class TestXSSFCell extends BaseTestXCell {
         assertEquals(STCellType.INT_INLINE_STR, cell_2.getCTCell().getT().intValue());
         assertTrue(cell_2.getCTCell().isSetIs());
         assertEquals("bar", row.getCell(2).getStringCellValue());
+        wb.close();
     }
 
     /**
      *  Bug 47278 -  xsi:nil attribute for <t> tag caused Excel 2007 to fail to open workbook
      */
     @Test
-    public void test47278() {
+    public void test47278() throws Exception {
         XSSFWorkbook wb = (XSSFWorkbook)_testDataProvider.createWorkbook();
         Sheet sheet = wb.createSheet();
         Row row = sheet.createRow(0);
@@ -129,6 +132,7 @@ public final class TestXSSFCell extends BaseTestXCell {
         cell_1.setCellValue((String)null);
         assertEquals(0, sst.getCount());
         assertEquals(Cell.CELL_TYPE_BLANK, cell_1.getCellType());
+        wb.close();
     }
 
     @Test
@@ -174,7 +178,7 @@ public final class TestXSSFCell extends BaseTestXCell {
      * Bug 47889: problems when calling XSSFCell.getStringCellValue() on a workbook created in Gnumeric
      */
     @Test
-    public void test47889() {
+    public void test47889() throws Exception {
         XSSFWorkbook wb = (XSSFWorkbook)_testDataProvider.openSampleWorkbook("47889.xlsx");
         XSSFSheet sh = wb.getSheetAt(0);
 
@@ -197,12 +201,13 @@ public final class TestXSSFCell extends BaseTestXCell {
         //Gnumeric produces spreadsheets without styles
         //make sure we return null for that instead of throwing OutOfBounds
         assertEquals(null, cell.getCellStyle());
+        wb.close();
     }
 
     @Test
-    public void testMissingRAttribute() {
-        XSSFWorkbook wb = new XSSFWorkbook();
-        XSSFSheet sheet = wb.createSheet();
+    public void testMissingRAttribute() throws Exception {
+        XSSFWorkbook wb1 = new XSSFWorkbook();
+        XSSFSheet sheet = wb1.createSheet();
         XSSFRow row = sheet.createRow(0);
         XSSFCell a1 = row.createCell(0);
         a1.setCellValue("A1");
@@ -220,9 +225,12 @@ public final class TestXSSFCell extends BaseTestXCell {
 
         assertCellsWithMissingR(row);
 
-        XSSFWorkbook wbNew = (XSSFWorkbook)_testDataProvider.writeOutAndReadBack(wb);
-        row = wbNew.getSheetAt(0).getRow(0);
+        XSSFWorkbook wb2 = (XSSFWorkbook)_testDataProvider.writeOutAndReadBack(wb1);
+        row = wb2.getSheetAt(0).getRow(0);
         assertCellsWithMissingR(row);
+        
+        wb2.close();
+        wb1.close();
     }
 
     private void assertCellsWithMissingR(XSSFRow row){
@@ -252,7 +260,7 @@ public final class TestXSSFCell extends BaseTestXCell {
     }
 
     @Test
-    public void testMissingRAttributeBug54288() {
+    public void testMissingRAttributeBug54288() throws Exception {
         // workbook with cells missing the R attribute
         XSSFWorkbook wb = (XSSFWorkbook)_testDataProvider.openSampleWorkbook("54288.xlsx");
         // same workbook re-saved in Excel 2010, the R attribute is updated for every cell with the right value.
@@ -290,32 +298,34 @@ public final class TestXSSFCell extends BaseTestXCell {
 
             }
         }
+        wbRef.close();
+        wb.close();
     }
     
     @Test
     public void test56170() throws IOException {
-        final Workbook wb = XSSFTestDataSamples.openSampleWorkbook("56170.xlsx");
-        final XSSFSheet sheet = (XSSFSheet) wb.getSheetAt(0);
+        final Workbook wb1 = XSSFTestDataSamples.openSampleWorkbook("56170.xlsx");
+        final XSSFSheet sheet = (XSSFSheet) wb1.getSheetAt(0);
 
-        Workbook wbRead = XSSFTestDataSamples.writeOutAndReadBack(wb);
+        Workbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb1);
         Cell cell;
         
         // add some contents to table so that the table will need expansion
         Row row = sheet.getRow(0);
-        wbRead = XSSFTestDataSamples.writeOutAndReadBack(wb);
+        Workbook wb3 = XSSFTestDataSamples.writeOutAndReadBack(wb2);
         cell = row.createCell(0);
-        wbRead = XSSFTestDataSamples.writeOutAndReadBack(wb);
+        Workbook wb4 = XSSFTestDataSamples.writeOutAndReadBack(wb3);
         cell.setCellValue("demo1");
-        wbRead = XSSFTestDataSamples.writeOutAndReadBack(wb);
+        Workbook wb5 = XSSFTestDataSamples.writeOutAndReadBack(wb4);
         cell = row.createCell(1);
-        wbRead = XSSFTestDataSamples.writeOutAndReadBack(wb);
+        Workbook wb6 = XSSFTestDataSamples.writeOutAndReadBack(wb5);
         cell.setCellValue("demo2");
-        wbRead = XSSFTestDataSamples.writeOutAndReadBack(wb);
+        Workbook wb7 = XSSFTestDataSamples.writeOutAndReadBack(wb6);
         cell = row.createCell(2);
-        wbRead = XSSFTestDataSamples.writeOutAndReadBack(wb);
+        Workbook wb8 = XSSFTestDataSamples.writeOutAndReadBack(wb7);
         cell.setCellValue("demo3");
 
-        wbRead = XSSFTestDataSamples.writeOutAndReadBack(wb);
+        Workbook wb9 = XSSFTestDataSamples.writeOutAndReadBack(wb8);
         
         row = sheet.getRow(1);
         cell = row.createCell(0);
@@ -325,7 +335,7 @@ public final class TestXSSFCell extends BaseTestXCell {
         cell = row.createCell(2);
         cell.setCellValue("demo3");
 
-        wbRead = XSSFTestDataSamples.writeOutAndReadBack(wb);
+        Workbook wb10 = XSSFTestDataSamples.writeOutAndReadBack(wb9);
         
         // expand table
         XSSFTable table = sheet.getTables().get(0);
@@ -333,12 +343,20 @@ public final class TestXSSFCell extends BaseTestXCell {
         final CellReference endRef = table.getEndCellReference();
         table.getCTTable().setRef(new CellRangeAddress(startRef.getRow(), 1, startRef.getCol(), endRef.getCol()).formatAsString());
 
-        wbRead = XSSFTestDataSamples.writeOutAndReadBack(wb);
-        assertNotNull(wbRead);
+        Workbook wb11 = XSSFTestDataSamples.writeOutAndReadBack(wb10);
+        assertNotNull(wb11);
 
-        /*FileOutputStream stream = new FileOutputStream("c:\\temp\\output.xlsx");
-        workbook.write(stream);
-        stream.close();*/
+        wb11.close();
+        wb10.close();
+        wb9.close();
+        wb8.close();
+        wb7.close();
+        wb6.close();
+        wb5.close();
+        wb4.close();
+        wb3.close();
+        wb2.close();
+        wb1.close();
     }
     
     @Test
@@ -426,7 +444,7 @@ public final class TestXSSFCell extends BaseTestXCell {
     }
 
     @Test
-    public void testEncodingbeloAscii(){
+    public void testEncodingbeloAscii() throws Exception {
         StringBuffer sb = new StringBuffer();
         // test all possible characters
         for(int i = 0; i < Character.MAX_VALUE; i++) {
@@ -467,6 +485,13 @@ public final class TestXSSFCell extends BaseTestXCell {
         	assertEquals(cell.getStringCellValue(), sCell.getStringCellValue());
         	
         	pos += SpreadsheetVersion.EXCEL97.getMaxTextLength();
+        	
+        	swbBack.close();
+        	xwbBack.close();
+        	wbBack.close();
+        	swb.close();
+        	xwb.close();
+        	wb.close();
         }
     }
 }
