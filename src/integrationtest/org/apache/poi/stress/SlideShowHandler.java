@@ -17,6 +17,7 @@
 package org.apache.poi.stress;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.awt.Dimension;
 import java.awt.Graphics2D;
@@ -31,6 +32,7 @@ import java.util.Map;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.sl.SlideShowFactory;
 import org.apache.poi.sl.draw.Drawable;
+import org.apache.poi.sl.usermodel.PictureData;
 import org.apache.poi.sl.usermodel.Shape;
 import org.apache.poi.sl.usermodel.ShapeContainer;
 import org.apache.poi.sl.usermodel.Slide;
@@ -45,6 +47,7 @@ public abstract class SlideShowHandler extends POIFSFileHandler {
         renderSlides(ss);
 
         readContent(ss);
+        readPictures(ss);
 
         // write out the file
         ByteArrayOutputStream out = writeToArray(ss);
@@ -95,6 +98,14 @@ public abstract class SlideShowHandler extends POIFSFileHandler {
                     }
                 }
             }
+        }
+    }
+    
+    private void readPictures(SlideShow<?,?> ss) {
+        for (PictureData pd : ss.getPictureData()) {
+            Dimension dim = pd.getImageDimension();
+            assertTrue(dim.getHeight() >= 0);
+            assertTrue(dim.getWidth() >= 0);
         }
     }
     

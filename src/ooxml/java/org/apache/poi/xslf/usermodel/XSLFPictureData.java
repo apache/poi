@@ -19,24 +19,41 @@
 
 package org.apache.poi.xslf.usermodel;
 
+import java.awt.Dimension;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import javax.imageio.ImageIO;
+
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.POIXMLException;
+import org.apache.poi.hslf.blip.EMF;
+import org.apache.poi.hslf.blip.PICT;
+import org.apache.poi.hslf.blip.WMF;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.sl.usermodel.PictureData;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianConsts;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * Instantiates sub-classes of POIXMLDocumentPart depending on their relationship type
  */
 @Beta
 public final class XSLFPictureData extends POIXMLDocumentPart implements PictureData {
+    private static final POILogger logger = POILogFactory.getLogger(XSLFPictureData.class);
+    
     private Long checksum = null;
+
+    // original image dimensions (for formats supported by BufferedImage)
+    private Dimension _origSize = null;
     private int index = -1;
 
     /**
@@ -103,15 +120,52 @@ public final class XSLFPictureData extends POIXMLDocumentPart implements Picture
         return getPackagePart().getPartName().getExtension();
     }
 
-    long getChecksum(){
-        if(checksum == null){
-            try {
-                checksum = IOUtils.calculateChecksum(getInputStream());
-            } catch (IOException e) {
-                throw new POIXMLException("Unable to calulate checksum", e);
+    @Override
+    public byte[] getChecksum() {
+        cacheProperties();
+        byte cs[] = new byte[LittleEndianConsts.LONG_SIZE];
+        LittleEndian.putLong(cs,0,checksum);
+        return cs;
+    }
+
+    @Override
+    public Dimension getImageDimension() {
+        cacheProperties();
+        return _origSize;
+    }
+
+    /**
+     * Determine and cache image properties
+     */
+    protected void cacheProperties() {
+        if (_origSize == null || checksum == null) {
+            byte data[] = getData();
+            checksum = IOUtils.calculateChecksum(data);
+            
+            switch (getType()) {
+            case EMF:
+                _origSize = new EMF.NativeHeader(data, 0).getSize();
+                break;
+            case WMF:
+                // wmf files in pptx usually have their placeable header 
+                // stripped away, so this returns only the dummy size
+                _origSize = new WMF.NativeHeader(data, 0).getSize();
+                break;
+            case PICT:
+                _origSize = new PICT.NativeHeader(data, 0).getSize();
+                break;
+            default:
+                try {
+                    BufferedImage img = ImageIO.read(new ByteArrayInputStream(data));
+                    _origSize = (img == null) ? new Dimension() : new Dimension(img.getWidth(), img.getHeight());
+                } catch (IOException e) {
+                    logger.log(POILogger.WARN, "Can't determine image dimensions", e);
+                    // failed to get information, set dummy size
+                    _origSize = new Dimension(200,200);
+                }
+                break;
             }
         }
-        return checksum;
     }
 
     /**
@@ -134,6 +188,8 @@ public final class XSLFPictureData extends POIXMLDocumentPart implements Picture
         os.close();
         // recalculate now since we already have the data bytes available anyhow
         checksum = IOUtils.calculateChecksum(data);
+
+        _origSize = null; // need to recalculate image size
     }
 
     @Override

@@ -17,6 +17,8 @@
 
 package org.apache.poi.hslf.blip;
 
+import java.awt.Dimension;
+import java.awt.Rectangle;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -24,6 +26,8 @@ import java.io.InputStream;
 import java.util.zip.InflaterInputStream;
 
 import org.apache.poi.hslf.exceptions.HSLFException;
+import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.Units;
 
 /**
@@ -31,6 +35,38 @@ import org.apache.poi.util.Units;
  */
 public final class EMF extends Metafile {
 
+    public static class NativeHeader {
+        // rectangular inclusive-inclusive bounds, in device units, of the smallest 
+        // rectangle that can be drawn around the image stored in the metafile.
+        private final Rectangle deviceBounds;
+
+        private final static String EMF_SIGNATURE = " EMF"; // 0x464D4520 (LE)
+        
+        public NativeHeader(byte data[], int offset) {
+            int type = (int)LittleEndian.getUInt(data, offset); offset += 4;
+            if (type != 1) {
+                throw new HSLFException("Invalid EMF picture");
+            }
+            // ignore header size
+            offset += 4;
+            int left = LittleEndian.getInt(data, offset); offset += 4;
+            int top = LittleEndian.getInt(data, offset); offset += 4;
+            int right = LittleEndian.getInt(data, offset); offset += 4;
+            int bottom = LittleEndian.getInt(data, offset); offset += 4;
+            deviceBounds = new Rectangle(left, top, right-left, bottom-top);
+            // ignore frame bounds
+            offset += 16;
+            String signature = new String(data, offset, EMF_SIGNATURE.length(), LocaleUtil.CHARSET_1252);
+            if (!EMF_SIGNATURE.equals(signature)) {
+                throw new HSLFException("Invalid EMF picture");
+            }
+        }
+
+        public Dimension getSize() {
+            return deviceBounds.getSize();
+        }
+    }
+    
     @Override
     public byte[] getData(){
         try {
@@ -59,16 +95,21 @@ public final class EMF extends Metafile {
     public void setData(byte[] data) throws IOException {
         byte[] compressed = compress(data, 0, data.length);
 
+        NativeHeader nHeader = new NativeHeader(data, 0);
+        
         Header header = new Header();
         header.wmfsize = data.length;
-        //we don't have a EMF reader in java, have to set default image size  200x200
-        header.bounds = new java.awt.Rectangle(0, 0, 200, 200);
-        header.size = new java.awt.Dimension(header.bounds.width*Units.EMU_PER_POINT, header.bounds.height*Units.EMU_PER_POINT);
+        header.bounds = nHeader.deviceBounds;
+        Dimension nDim = nHeader.getSize();
+        header.size = new Dimension(Units.toEMU(nDim.getWidth()), Units.toEMU(nDim.getHeight()));
         header.zipsize = compressed.length;
 
         byte[] checksum = getChecksum(data);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         out.write(checksum);
+        if (uidInstanceCount == 2) {
+            out.write(checksum);
+        }
         header.write(out);
         out.write(compressed);
 

@@ -19,12 +19,10 @@
 
 package org.apache.poi.xslf.usermodel;
 
+import java.awt.Dimension;
 import java.awt.Insets;
-import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
+import java.awt.Rectangle;
 import java.net.URI;
-
-import javax.imageio.ImageIO;
 import javax.xml.namespace.QName;
 
 import org.apache.poi.POIXMLException;
@@ -87,20 +85,23 @@ public class XSLFPictureShape extends XSLFSimpleShape
 
     /**
      * Resize this picture to the default size.
+     *
      * For PNG and JPEG resizes the image to 100%,
-     * for other types sets the default size of 200x200 pixels.
+     * for other types sets the default size to 200x200 pixels.
      */
     public void resize() {
-        try {
-            BufferedImage img = ImageIO.read(getPictureData().getInputStream());
-            setAnchor(new Rectangle2D.Double(0, 0, img.getWidth(), img.getHeight()));
+        Dimension dim = getPictureData().getImageDimension();
+        if (dim.width > 0 && dim.height > 0)
+        {
+            setAnchor(new Rectangle(0, 0, dim.width, dim.height));
         }
-        catch (Exception e) {
-            //default size is 200x200
-            setAnchor(new java.awt.Rectangle(50, 50, 200, 200));
+        else
+        {
+            // unsupported/unknown formats
+            setAnchor(new Rectangle(50, 50, 200, 200));
         }
     }
-    
+
     /**
      * Is this an internal picture (image data included within
      *  the PowerPoint file), or an external linked picture

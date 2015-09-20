@@ -22,6 +22,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.awt.geom.Rectangle2D;
 import java.io.*;
+import java.util.List;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hslf.usermodel.*;
@@ -44,8 +45,8 @@ public final class TestOleEmbedding {
     public void testOleEmbedding2003() throws Exception {
         HSLFSlideShowImpl slideShow = new HSLFSlideShowImpl(_slTests.openResourceAsStream("ole2-embedding-2003.ppt"));
         // Placeholder EMFs for clients that don't support the OLE components.
-        HSLFPictureData[] pictures = slideShow.getPictures();
-        assertEquals("Should be two pictures", 2, pictures.length);
+        List<HSLFPictureData> pictures = slideShow.getPictureData();
+        assertEquals("Should be two pictures", 2, pictures.size());
         //assertDigestEquals("Wrong data for picture 1", "8d1fbadf4814f321bb1ccdd056e3c788", pictures[0].getData());
         //assertDigestEquals("Wrong data for picture 2", "987a698e83559cf3d38a0deeba1cc63b", pictures[1].getData());
 
@@ -136,6 +137,9 @@ public final class TestOleEmbedding {
     	byte expData[] = bos.toByteArray();
     	
     	assertArrayEquals(expData, compData);
+    	
+    	poiData1.close();
+    	poiData2.close();
     	
     }
 }

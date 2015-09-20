@@ -17,10 +17,15 @@
 
 package org.apache.poi.hslf.blip;
 
-import org.apache.poi.hslf.usermodel.HSLFPictureData;
-
-import java.io.IOException;
+import java.awt.Dimension;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+
+import org.apache.poi.hslf.usermodel.HSLFPictureData;
 
 /**
  * Represents a bitmap picture data:  JPEG or PNG.
@@ -48,5 +53,14 @@ public abstract class Bitmap extends HSLFPictureData {
         out.write(data);
 
         setRawData(out.toByteArray());
+    }
+
+    public Dimension getImageDimension() {
+        try {
+            BufferedImage bi = ImageIO.read(new ByteArrayInputStream(getData()));
+            return new Dimension(bi.getWidth(), bi.getHeight());
+        } catch (IOException e) {
+            return new Dimension(200,200);
+        }
     }
 }

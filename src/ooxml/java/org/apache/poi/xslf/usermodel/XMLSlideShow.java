@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -42,6 +43,8 @@ import org.apache.poi.sl.usermodel.SlideShow;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.PackageHelper;
@@ -106,12 +109,18 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
     static final OPCPackage empty() {
         InputStream is = XMLSlideShow.class.getResourceAsStream("empty.pptx");
         if (is == null) {
-            throw new RuntimeException("Missing resource 'empty.pptx'");
+            throw new POIXMLException("Missing resource 'empty.pptx'");
         }
         try {
             return OPCPackage.open(is);
         } catch (Exception e){
             throw new POIXMLException(e);
+        } finally {
+            try {
+                is.close();
+            } catch (Exception e) {
+                throw new POIXMLException(e);
+            }
         }
     }
 
@@ -189,12 +198,8 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
         );
     }
 
-    /**
-     * Returns all Pictures, which are referenced from the document itself.
-     * @return a {@link List} of {@link PackagePart}.
-     * The returned {@link List} is unmodifiable. 
-     */
-    public List<XSLFPictureData> getAllPictures() {
+    @Override
+    public List<XSLFPictureData> getPictureData() {
         if(_pictures == null){
             List<PackagePart> mediaParts = getPackage().getPartsByName(Pattern.compile("/ppt/media/.*?"));
             _pictures = new ArrayList<XSLFPictureData>(mediaParts.size());
@@ -472,8 +477,11 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
      */
     XSLFPictureData findPictureData(byte[] pictureData){
         long checksum = IOUtils.calculateChecksum(pictureData);
-        for(XSLFPictureData pic : getAllPictures()){
-            if(pic.getChecksum() == checksum) {
+        byte cs[] = new byte[LittleEndianConsts.LONG_SIZE];
+        LittleEndian.putLong(cs,0,checksum);
+
+        for(XSLFPictureData pic : getPictureData()){
+            if(Arrays.equals(pic.getChecksum(), cs)) {
                 return pic;
             }
         }

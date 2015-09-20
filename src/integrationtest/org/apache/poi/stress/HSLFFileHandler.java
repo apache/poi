@@ -34,7 +34,7 @@ public class HSLFFileHandler extends SlideShowHandler {
 		assertNotNull(slide.getCurrentUserAtom());
 		assertNotNull(slide.getEmbeddedObjects());
 		assertNotNull(slide.getUnderlyingBytes());
-		assertNotNull(slide.getPictures());
+		assertNotNull(slide.getPictureData());
 		Record[] records = slide.getRecords();
 		assertNotNull(records);
 		for(Record record : records) {

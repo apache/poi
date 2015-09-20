@@ -19,12 +19,13 @@ package org.apache.poi.hslf.usermodel;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
@@ -84,13 +85,13 @@ public final class HSLFSlideShowImpl extends POIDocument {
     // Embedded objects stored in storage records in the document stream, lazily populated.
     private HSLFObjectData[] _objects;
     
-   /**
-    * Returns the directory in the underlying POIFSFileSystem for the 
-    *  document that is open.
-    */
-   protected DirectoryNode getPOIFSDirectory() {
-      return directory;
-   }
+    /**
+     * Returns the directory in the underlying POIFSFileSystem for the 
+     *  document that is open.
+     */
+    protected DirectoryNode getPOIFSDirectory() {
+       return directory;
+    }
 
 	/**
 	 * Constructs a Powerpoint document from fileName. Parses the document
@@ -99,9 +100,9 @@ public final class HSLFSlideShowImpl extends POIDocument {
 	 * @param fileName The name of the file to read.
 	 * @throws IOException if there is a problem while parsing the document.
 	 */
-	public HSLFSlideShowImpl(String fileName) throws IOException
-	{
-		this(new FileInputStream(fileName));
+    @SuppressWarnings("resource")
+	public HSLFSlideShowImpl(String fileName) throws IOException {
+		this(new POIFSFileSystem(new File(fileName)));
 	}
 
 	/**
@@ -111,7 +112,8 @@ public final class HSLFSlideShowImpl extends POIDocument {
 	 * @param inputStream the source of the data
 	 * @throws IOException if there is a problem while parsing the document.
 	 */
-	public HSLFSlideShowImpl(InputStream inputStream) throws IOException {
+	@SuppressWarnings("resource")
+    public HSLFSlideShowImpl(InputStream inputStream) throws IOException {
 		//do Ole stuff
 		this(new POIFSFileSystem(inputStream));
 	}
@@ -123,38 +125,35 @@ public final class HSLFSlideShowImpl extends POIDocument {
 	 * @param filesystem the POIFS FileSystem to read from
 	 * @throws IOException if there is a problem while parsing the document.
 	 */
-	public HSLFSlideShowImpl(POIFSFileSystem filesystem) throws IOException
-	{
+	public HSLFSlideShowImpl(POIFSFileSystem filesystem) throws IOException	{
 		this(filesystem.getRoot());
 	}
 
-   /**
-    * Constructs a Powerpoint document from a POIFS Filesystem. Parses the
-    * document and places all the important stuff into data structures.
-    *
-    * @param filesystem the POIFS FileSystem to read from
-    * @throws IOException if there is a problem while parsing the document.
-    */
-   public HSLFSlideShowImpl(NPOIFSFileSystem filesystem) throws IOException
-   {
-      this(filesystem.getRoot());
-   }
+    /**
+     * Constructs a Powerpoint document from a POIFS Filesystem. Parses the
+     * document and places all the important stuff into data structures.
+     *
+     * @param filesystem the POIFS FileSystem to read from
+     * @throws IOException if there is a problem while parsing the document.
+     */
+    public HSLFSlideShowImpl(NPOIFSFileSystem filesystem) throws IOException {
+        this(filesystem.getRoot());
+    }
 
-   /**
-    * Constructs a Powerpoint document from a specific point in a
-    *  POIFS Filesystem. Parses the document and places all the
-    *  important stuff into data structures.
-    *
-    * @deprecated Use {@link #HSLFSlideShowImpl(DirectoryNode)} instead
-    * @param dir the POIFS directory to read from
-    * @param filesystem the POIFS FileSystem to read from
-    * @throws IOException if there is a problem while parsing the document.
-    */
-	@Deprecated
-   public HSLFSlideShowImpl(DirectoryNode dir, POIFSFileSystem filesystem) throws IOException
-   {
-      this(dir);
-   }
+    /**
+     * Constructs a Powerpoint document from a specific point in a
+     *  POIFS Filesystem. Parses the document and places all the
+     *  important stuff into data structures.
+     *
+     * @deprecated Use {@link #HSLFSlideShowImpl(DirectoryNode)} instead
+     * @param dir the POIFS directory to read from
+     * @param filesystem the POIFS FileSystem to read from
+     * @throws IOException if there is a problem while parsing the document.
+     */
+    @Deprecated
+    public HSLFSlideShowImpl(DirectoryNode dir, POIFSFileSystem filesystem) throws IOException {
+        this(dir);
+    }
    
 	/**
 	 * Constructs a Powerpoint document from a specific point in a
@@ -196,12 +195,16 @@ public final class HSLFSlideShowImpl extends POIDocument {
 	public static final HSLFSlideShowImpl create() {
 		InputStream is = HSLFSlideShowImpl.class.getResourceAsStream("/org/apache/poi/hslf/data/empty.ppt");
 		if (is == null) {
-			throw new RuntimeException("Missing resource 'empty.ppt'");
+			throw new HSLFException("Missing resource 'empty.ppt'");
 		}
 		try {
-			return new HSLFSlideShowImpl(is);
+		    try {
+		        return new HSLFSlideShowImpl(is);
+		    } finally {
+                is.close();
+            }
 		} catch (IOException e) {
-			throw new RuntimeException(e);
+			throw new HSLFException(e);
 		}
 	}
 
@@ -362,7 +365,6 @@ public final class HSLFSlideShowImpl extends POIDocument {
 	 * Find and read in pictures contained in this presentation.
 	 * This is lazily called as and when we want to touch pictures.
 	 */
-    @SuppressWarnings("unused")
 	private void readPictures() throws IOException {
         _pictures = new ArrayList<HSLFPictureData>();
 
@@ -503,6 +505,7 @@ public final class HSLFSlideShowImpl extends POIDocument {
             // Dummy write out, so the position winds on properly
             record.writeOut(cos);
         }
+        cos.close();
         
         assert(usr != null && ptr != null);
         
@@ -596,6 +599,7 @@ public final class HSLFSlideShowImpl extends POIDocument {
         // Update our cached copy of the bytes that make up the PPT stream
         _docstream = new byte[baos.size()];
         System.arraycopy(baos.getBuf(), 0, _docstream, 0, baos.size());
+        baos.close();
 
         // Write the PPT stream into the POIFS layer
         ByteArrayInputStream bais = new ByteArrayInputStream(_docstream);
@@ -618,6 +622,7 @@ public final class HSLFSlideShowImpl extends POIDocument {
                 new ByteArrayInputStream(pict.getBuf(), 0, pict.size()), "Pictures"
             );
             writtenEntries.add("Pictures");
+            pict.close();
         }
 
         // If requested, write out any other streams we spot
@@ -627,6 +632,7 @@ public final class HSLFSlideShowImpl extends POIDocument {
 
         // Send the POIFSFileSystem object out to the underlying stream
         outFS.writeFilesystem(out);
+        outFS.close();
     }
 
     /** 
@@ -740,12 +746,12 @@ public final class HSLFSlideShowImpl extends POIDocument {
 	public CurrentUserAtom getCurrentUserAtom() { return currentUser; }
 
 	/**
-	 *  Return array of pictures contained in this presentation
+	 *  Return list of pictures contained in this presentation
 	 *
-	 *  @return array with the read pictures or <code>null</code> if the
+	 *  @return list with the read pictures or an empty list if the
 	 *  presentation doesn't contain pictures.
 	 */
-	public HSLFPictureData[] getPictures() {
+	public List<HSLFPictureData> getPictureData() {
 	   if(_pictures == null) {
 	      try {
 	         readPictures();
@@ -754,7 +760,7 @@ public final class HSLFSlideShowImpl extends POIDocument {
 	      }
 	   }
 	   
-		return _pictures.toArray(new HSLFPictureData[_pictures.size()]);
+		return Collections.unmodifiableList(_pictures);
 	}
 
     /**

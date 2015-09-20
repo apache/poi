@@ -264,7 +264,7 @@ public final class HSLFFill {
         if (p == null) return null;
 
         HSLFSlideShow ppt = shape.getSheet().getSlideShow();
-        HSLFPictureData[] pict = ppt.getPictureData();
+        List<HSLFPictureData> pict = ppt.getPictureData();
         Document doc = ppt.getDocumentRecord();
 
         EscherContainerRecord dggContainer = doc.getPPDrawingGroup().getDggContainer();
@@ -276,9 +276,9 @@ public final class HSLFFill {
             logger.log(POILogger.WARN, "no reference to picture data found ");
         } else {
             EscherBSERecord bse = (EscherBSERecord)lst.get(idx - 1);
-            for ( int i = 0; i < pict.length; i++ ) {
-                if (pict[i].getOffset() ==  bse.getOffset()){
-                    return pict[i];
+            for (HSLFPictureData pd : pict) {
+                if (pd.getOffset() ==  bse.getOffset()){
+                    return pd;
                 }
             }
         }

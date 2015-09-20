@@ -77,10 +77,10 @@ public final class TestBugs {
 
         assertEquals(1, ppt.getSlides().size());
 
-        HSLFPictureData[] pict = ppt.getPictureData();
-        assertEquals(2, pict.length);
-        assertEquals(PictureType.JPEG, pict[0].getType());
-        assertEquals(PictureType.JPEG, pict[1].getType());
+        List<HSLFPictureData> pict = ppt.getPictureData();
+        assertEquals(2, pict.size());
+        assertEquals(PictureType.JPEG, pict.get(0).getType());
+        assertEquals(PictureType.JPEG, pict.get(1).getType());
     }
 
     /**

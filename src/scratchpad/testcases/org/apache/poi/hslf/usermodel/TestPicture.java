@@ -34,6 +34,7 @@ import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.util.BitSet;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.imageio.ImageIO;
@@ -117,8 +118,8 @@ public final class TestPicture {
     public void macImages() throws Exception {
         HSLFSlideShowImpl hss = new HSLFSlideShowImpl(_slTests.openResourceAsStream("53446.ppt"));
 
-        HSLFPictureData[] pictures = hss.getPictures();
-        assertEquals(15, pictures.length);
+        List<HSLFPictureData> pictures = hss.getPictureData();
+        assertEquals(15, pictures.size());
 
         int[][] expectedSizes = {
                 null,           // WMF
