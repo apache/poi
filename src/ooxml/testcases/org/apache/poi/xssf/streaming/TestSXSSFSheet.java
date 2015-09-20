@@ -24,6 +24,7 @@ import static org.junit.Assert.fail;
 
 import java.io.IOException;
 
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.BaseTestSheet;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -146,6 +147,10 @@ public class TestSXSSFSheet extends BaseTestSheet {
         } finally {
             wb.close();
         }
+    }
 
+    @Test
+    public void createRowAfterLastRow() {
+        createRowAfterLastRow(SpreadsheetVersion.EXCEL2007);
     }
 }

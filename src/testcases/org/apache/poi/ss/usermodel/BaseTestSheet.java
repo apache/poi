@@ -87,6 +87,31 @@ public abstract class BaseTestSheet {
         assertSame(row2_ovrewritten, row2_ovrewritten_ref);
         assertEquals(100.0, row2_ovrewritten_ref.getCell(0).getNumericCellValue(), 0.0);
     }
+    
+    @Test
+    public void createRowBeforeFirstRow() {
+        final Workbook workbook = _testDataProvider.createWorkbook();
+        final Sheet sh = workbook.createSheet();
+        sh.createRow(0);
+        try {
+            sh.createRow(-1);
+            fail("Negative rows not allowed");
+        } catch (final IllegalArgumentException e) {
+            // expected
+        }
+    }
+    
+    protected void createRowAfterLastRow(SpreadsheetVersion version) {
+        final Workbook workbook = _testDataProvider.createWorkbook();
+        final Sheet sh = workbook.createSheet();
+        sh.createRow(version.getLastRowIndex());
+        try {
+            sh.createRow(version.getLastRowIndex() + 1);
+            fail("Row number must be between 0 and " + version.getLastColumnIndex());
+        } catch (final IllegalArgumentException e) {
+            // expected
+        }
+    }
 
 
     @Test
