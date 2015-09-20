@@ -41,8 +41,33 @@ import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.hslf.model.HeadersFooters;
 import org.apache.poi.hslf.model.MovieShape;
 import org.apache.poi.hslf.model.PPFont;
-import org.apache.poi.hslf.record.*;
+import org.apache.poi.hslf.record.Document;
+import org.apache.poi.hslf.record.DocumentAtom;
+import org.apache.poi.hslf.record.ExAviMovie;
+import org.apache.poi.hslf.record.ExControl;
+import org.apache.poi.hslf.record.ExEmbed;
+import org.apache.poi.hslf.record.ExEmbedAtom;
+import org.apache.poi.hslf.record.ExHyperlink;
+import org.apache.poi.hslf.record.ExHyperlinkAtom;
+import org.apache.poi.hslf.record.ExMCIMovie;
+import org.apache.poi.hslf.record.ExObjList;
+import org.apache.poi.hslf.record.ExObjListAtom;
+import org.apache.poi.hslf.record.ExOleObjAtom;
+import org.apache.poi.hslf.record.ExOleObjStg;
+import org.apache.poi.hslf.record.ExVideoContainer;
+import org.apache.poi.hslf.record.FontCollection;
+import org.apache.poi.hslf.record.FontEntityAtom;
+import org.apache.poi.hslf.record.HeadersFootersContainer;
+import org.apache.poi.hslf.record.PersistPtrHolder;
+import org.apache.poi.hslf.record.PositionDependentRecord;
+import org.apache.poi.hslf.record.PositionDependentRecordContainer;
+import org.apache.poi.hslf.record.Record;
+import org.apache.poi.hslf.record.RecordContainer;
+import org.apache.poi.hslf.record.RecordTypes;
+import org.apache.poi.hslf.record.SlideListWithText;
 import org.apache.poi.hslf.record.SlideListWithText.SlideAtomsSet;
+import org.apache.poi.hslf.record.SlidePersistAtom;
+import org.apache.poi.hslf.record.UserEditAtom;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.sl.usermodel.MasterSheet;
@@ -486,11 +511,9 @@ public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagrap
 		return _titleMasters;
 	}
 
-	/**
-	 * Returns the data of all the pictures attached to the SlideShow
-	 */
-	public HSLFPictureData[] getPictureData() {
-		return _hslfSlideShow.getPictures();
+	@Override
+	public List<HSLFPictureData> getPictureData() {
+		return _hslfSlideShow.getPictureData();
 	}
 
 	/**

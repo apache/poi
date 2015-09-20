@@ -17,12 +17,16 @@
 
 package org.apache.poi.hslf.blip;
 
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.hslf.usermodel.HSLFPictureData;
-
-import java.awt.*;
-import java.io.*;
+import java.awt.Dimension;
+import java.awt.Rectangle;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.zip.DeflaterOutputStream;
+
+import org.apache.poi.hslf.usermodel.HSLFPictureData;
+import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.Units;
 
 /**
  * Represents a metafile picture which can be one of the following types: EMF, WMF, or PICT.
@@ -114,11 +118,22 @@ public abstract class Metafile extends HSLFPictureData {
         }
     }
 
-    protected byte[] compress(byte[] bytes, int offset, int length) throws IOException {
+    protected static byte[] compress(byte[] bytes, int offset, int length) throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         DeflaterOutputStream  deflater = new DeflaterOutputStream( out );
         deflater.write(bytes, offset, length);
         deflater.close();
         return out.toByteArray();
+    }
+
+
+    public Dimension getImageDimension() {
+        int prefixLen = 16*uidInstanceCount;
+        Header header = new Header();
+        header.read(getRawData(), prefixLen);
+        return new Dimension(
+            (int)Math.round(Units.toPoints((long)header.size.getWidth())),
+            (int)Math.round(Units.toPoints((long)header.size.getHeight()))
+        );
     }
 }

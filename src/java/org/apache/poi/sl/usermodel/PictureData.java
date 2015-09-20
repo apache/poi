@@ -17,6 +17,7 @@
 
 package org.apache.poi.sl.usermodel;
 
+import java.awt.Dimension;
 import java.io.IOException;
 
 public interface PictureData {
@@ -96,4 +97,19 @@ public interface PictureData {
      * @param data picture data
      */
 	void setData(byte[] data) throws IOException;
+	
+	/**
+	 * Gets the checksum - the checksum can be of various length -
+	 * mostly it's 8 (XSLF) or 16 (HSLF) bytes long.  
+	 * @return the checksum
+	 */
+	byte[] getChecksum();
+	
+    /**
+     * Return the original image dimensions
+     * (for formats supported by BufferedImage).
+     *
+     * Will return a Dimension with zero width/height if the format unsupported.
+     */
+	Dimension getImageDimension();
 }

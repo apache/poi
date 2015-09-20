@@ -34,8 +34,6 @@ import org.apache.poi.util.*;
  */
 public abstract class HSLFPictureData implements PictureData {
 
-    protected POILogger logger = POILogFactory.getLogger(this.getClass());
-
     /**
      * Size of the image checksum calculated using MD5 algorithm.
      */
@@ -116,7 +114,11 @@ public abstract class HSLFPictureData implements PictureData {
         return uid;
     }
 
-
+    @Override
+    public byte[] getChecksum() {
+        return getChecksum(getData());
+    }
+        
     /**
      * Compute 16-byte checksum of this picture using MD5 algorithm.
      */
@@ -141,13 +143,13 @@ public abstract class HSLFPictureData implements PictureData {
         LittleEndian.putUShort(data, 0, pt.nativeId + 0xF018);
         out.write(data);
 
-        byte[] rawdata = getRawData();
+        byte[] rd = getRawData();
 
         data = new byte[LittleEndian.INT_SIZE];
-        LittleEndian.putInt(data, 0, rawdata.length);
+        LittleEndian.putInt(data, 0, rd.length);
         out.write(data);
 
-        out.write(rawdata);
+        out.write(rd);
     }
 
     /**

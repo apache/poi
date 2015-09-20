@@ -17,6 +17,8 @@
 
 package org.apache.poi.hslf.blip;
 
+import java.awt.Dimension;
+import java.awt.Rectangle;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -26,6 +28,7 @@ import java.util.zip.InflaterInputStream;
 
 import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.Units;
 
@@ -45,11 +48,7 @@ public final class WMF extends Metafile {
             header.read(rawdata, CHECKSUM_SIZE*uidInstanceCount);
             is.skip(header.getSize() + CHECKSUM_SIZE*uidInstanceCount);
 
-            AldusHeader aldus = new AldusHeader();
-            aldus.left = header.bounds.x;
-            aldus.top = header.bounds.y;
-            aldus.right = header.bounds.x + header.bounds.width;
-            aldus.bottom = header.bounds.y + header.bounds.height;
+            NativeHeader aldus = new NativeHeader(header.bounds);
             aldus.write(out);
 
             InflaterInputStream inflater = new InflaterInputStream( is );
@@ -68,18 +67,16 @@ public final class WMF extends Metafile {
     @Override
     public void setData(byte[] data) throws IOException {
         int pos = 0;
-        AldusHeader aldus = new AldusHeader();
-        aldus.read(data, pos);
-        pos += aldus.getSize();
+        NativeHeader nHeader = new NativeHeader(data, pos);
+        pos += nHeader.getLength();
 
         byte[] compressed = compress(data, pos, data.length-pos);
 
         Header header = new Header();
-        header.wmfsize = data.length - aldus.getSize();
-        header.bounds = new java.awt.Rectangle((short)aldus.left, (short)aldus.top, (short)aldus.right-(short)aldus.left, (short)aldus.bottom-(short)aldus.top);
-        //coefficient to translate from WMF dpi to 96pdi
-        int coeff = 96*Units.EMU_PER_POINT/aldus.inch;
-        header.size = new java.awt.Dimension(header.bounds.width*coeff, header.bounds.height*coeff);
+        header.wmfsize = data.length - nHeader.getLength();
+        header.bounds = new Rectangle((short)nHeader.left, (short)nHeader.top, (short)nHeader.right-(short)nHeader.left, (short)nHeader.bottom-(short)nHeader.top);
+        Dimension nDim = nHeader.getSize();
+        header.size = new Dimension(Units.toEMU(nDim.getWidth()), Units.toEMU(nDim.getHeight()));
         header.zipsize = compressed.length;
 
         byte[] checksum = getChecksum(data);
@@ -135,25 +132,55 @@ public final class WMF extends Metafile {
      *  <li>short  Checksum;       Checksum value for previous 10 shorts
      * </ul>
      */
-    public class AldusHeader{
+    @SuppressWarnings("unused")
+    public static class NativeHeader {
         public static final int APMHEADER_KEY = 0x9AC6CDD7;
+        private static POILogger logger = POILogFactory.getLogger(NativeHeader.class);
 
-        public int handle;
-        public int left, top, right, bottom;
-        public int inch = 72; //default resolution is 72 dpi
-        public int reserved;
-        public int checksum;
+        private final int handle;
+        private final int left, top, right, bottom;
 
-        public void read(byte[] data, int offset){
-            int pos = offset;
+        /**
+         * The number of logical units per inch used to represent the image.
+         * This value can be used to scale an image. By convention, an image is
+         * considered to be recorded at 1440 logical units (twips) per inch. 
+         * Thus, a value of 720 specifies that the image SHOULD be rendered at
+         * twice its normal size, and a value of 2880 specifies that the image
+         * SHOULD be rendered at half its normal size.
+         */
+        private final int inch; 
+        private final int reserved;
+        private int checksum;
+        
+        public NativeHeader(Rectangle dim) {
+            handle = 0;
+            left = dim.x;
+            top = dim.y;
+            right = dim.x + dim.width;
+            bottom = dim.y + dim.height;
+            inch = Units.POINT_DPI; //default resolution is 72 dpi
+            reserved = 0;
+        }
+
+        public NativeHeader(byte[] data, int pos) {
             int key = LittleEndian.getInt(data, pos); pos += LittleEndian.INT_SIZE; //header key
-            if (key != APMHEADER_KEY) throw new HSLFException("Not a valid WMF file");
+            if (key != APMHEADER_KEY) {
+                logger.log(POILogger.WARN, "WMF file doesn't contain a placeable header - ignore parsing");
+                handle = 0;
+                left = 0;
+                top = 0;
+                right = 200;
+                bottom = 200;
+                inch = Units.POINT_DPI; //default resolution is 72 dpi
+                reserved = 0;
+                return;
+            }
 
             handle = LittleEndian.getUShort(data, pos); pos += LittleEndian.SHORT_SIZE;
-            left = LittleEndian.getUShort(data, pos); pos += LittleEndian.SHORT_SIZE;
-            top = LittleEndian.getUShort(data, pos); pos += LittleEndian.SHORT_SIZE;
-            right = LittleEndian.getUShort(data, pos); pos += LittleEndian.SHORT_SIZE;
-            bottom = LittleEndian.getUShort(data, pos); pos += LittleEndian.SHORT_SIZE;
+            left = LittleEndian.getShort(data, pos); pos += LittleEndian.SHORT_SIZE;
+            top = LittleEndian.getShort(data, pos); pos += LittleEndian.SHORT_SIZE;
+            right = LittleEndian.getShort(data, pos); pos += LittleEndian.SHORT_SIZE;
+            bottom = LittleEndian.getShort(data, pos); pos += LittleEndian.SHORT_SIZE;
 
             inch = LittleEndian.getUShort(data, pos); pos += LittleEndian.SHORT_SIZE;
             reserved = LittleEndian.getInt(data, pos); pos += LittleEndian.INT_SIZE;
@@ -169,15 +196,15 @@ public final class WMF extends Metafile {
          * The checksum is calculated by XORing each short value to an initial value of 0:
          */
         public int getChecksum(){
-            int checksum = 0;
-            checksum ^=  (APMHEADER_KEY & 0x0000FFFF);
-            checksum ^= ((APMHEADER_KEY & 0xFFFF0000) >> 16);
-            checksum ^= left;
-            checksum ^= top;
-            checksum ^= right;
-            checksum ^= bottom;
-            checksum ^= inch;
-            return checksum;
+            int cs = 0;
+            cs ^=  (APMHEADER_KEY & 0x0000FFFF);
+            cs ^= ((APMHEADER_KEY & 0xFFFF0000) >> 16);
+            cs ^= left;
+            cs ^= top;
+            cs ^= right;
+            cs ^= bottom;
+            cs ^= inch;
+            return cs;
         }
 
         public void write(OutputStream out) throws IOException {
@@ -198,7 +225,13 @@ public final class WMF extends Metafile {
             out.write(header);
         }
 
-        public int getSize(){
+        public Dimension getSize() {
+            //coefficient to translate from WMF dpi to 72dpi
+            double coeff = ((double)Units.POINT_DPI)/inch;
+            return new Dimension((int)Math.round((right-left)*coeff), (int)Math.round((bottom-top)*coeff));
+        }
+        
+        public int getLength(){
             return 22;
         }
     }

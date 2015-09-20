@@ -58,7 +58,7 @@ public final class DataExtraction {
         }
 
         // Get the document's embedded files.
-        List<XSLFPictureData> images = ppt.getAllPictures();
+        List<XSLFPictureData> images = ppt.getPictureData();
         for (XSLFPictureData data : images) {
             PackagePart p = data.getPackagePart();
 

@@ -26,6 +26,7 @@ import static org.junit.Assert.fail;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.security.MessageDigest;
+import java.util.List;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.poi.POIDataSamples;
@@ -34,7 +35,11 @@ import org.apache.poi.hpsf.PropertySet;
 import org.apache.poi.hpsf.PropertySetFactory;
 import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hslf.exceptions.EncryptedPowerPointFileException;
-import org.apache.poi.hslf.usermodel.*;
+import org.apache.poi.hslf.usermodel.HSLFPictureData;
+import org.apache.poi.hslf.usermodel.HSLFSlide;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
+import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
+import org.apache.poi.hslf.usermodel.HSLFTextParagraph;
 import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.EncryptionInfo;
@@ -84,7 +89,7 @@ public class TestDocumentEncryption {
         NPOIFSFileSystem fs = new NPOIFSFileSystem(slTests.getFile(pptFile), true);
         HSLFSlideShowImpl hss = new HSLFSlideShowImpl(fs);
         // need to cache data (i.e. read all data) before changing the key size
-        HSLFPictureData picsExpected[] = hss.getPictures();
+        List<HSLFPictureData> picsExpected = hss.getPictureData();
         hss.getDocumentSummaryInformation();
         EncryptionInfo ei = hss.getDocumentEncryptionAtom().getEncryptionInfo();
         ((CryptoAPIEncryptionHeader)ei.getHeader()).setKeySize(0x78);
@@ -95,12 +100,12 @@ public class TestDocumentEncryption {
         
         fs = new NPOIFSFileSystem(new ByteArrayInputStream(bos.toByteArray()));
         hss = new HSLFSlideShowImpl(fs);
-        HSLFPictureData picsActual[] = hss.getPictures();
+        List<HSLFPictureData> picsActual = hss.getPictureData();
         fs.close();
         
-        assertEquals(picsExpected.length, picsActual.length);
-        for (int i=0; i<picsExpected.length; i++) {
-            assertArrayEquals(picsExpected[i].getRawData(), picsActual[i].getRawData());
+        assertEquals(picsExpected.size(), picsActual.size());
+        for (int i=0; i<picsExpected.size(); i++) {
+            assertArrayEquals(picsExpected.get(i).getRawData(), picsActual.get(i).getRawData());
         }
     }
 
@@ -158,7 +163,7 @@ public class TestDocumentEncryption {
         };
         
         MessageDigest md = CryptoFunctions.getMessageDigest(HashAlgorithm.sha1);
-        HSLFPictureData pd[] = hss.getPictures();
+        List<HSLFPictureData> pd = hss.getPictureData();
         int i = 0;
         for (HSLFPictureData p : pd) {
             byte hash[] = md.digest(p.getData());
@@ -177,5 +182,6 @@ public class TestDocumentEncryption {
         assertTrue(ps.isDocumentSummaryInformation());
         assertEquals("On-screen Show (4:3)", ps.getProperties()[1].getValue());
         fs.close();
+        fs2.close();
     }
 }

@@ -17,14 +17,10 @@
 
 package org.apache.poi.hslf.usermodel;
 
+import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.util.List;
-
-import javax.imageio.ImageIO;
 
 import org.apache.poi.ddf.AbstractEscherOptRecord;
 import org.apache.poi.ddf.EscherBSERecord;
@@ -34,7 +30,6 @@ import org.apache.poi.ddf.EscherProperties;
 import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.ddf.EscherSimpleProperty;
 import org.apache.poi.ddf.EscherSpRecord;
-import org.apache.poi.hslf.blip.Bitmap;
 import org.apache.poi.hslf.record.Document;
 import org.apache.poi.sl.usermodel.PictureShape;
 import org.apache.poi.sl.usermodel.ShapeContainer;
@@ -121,43 +116,30 @@ public class HSLFPictureShape extends HSLFSimpleShape implements PictureShape<HS
     /**
      * Resize this picture to the default size.
      * For PNG and JPEG resizes the image to 100%,
-     * for other types sets the default size of 200x200 pixels.
+     * for other types, if the size can't be determined it will be 200x200 pixels.
      */
     public void setDefaultSize(){
-        HSLFPictureData pict = getPictureData();
-        if (pict  instanceof Bitmap){
-            BufferedImage img = null;
-            try {
-               	img = ImageIO.read(new ByteArrayInputStream(pict.getData()));
-            }
-            catch (IOException e){}
-            catch (NegativeArraySizeException ne) {}
-
-            if(img != null) {
-                // Valid image, set anchor from it
-                setAnchor(new Rectangle2D.Double(0, 0, Units.pixelToPoints(img.getWidth()), Units.pixelToPoints(img.getHeight())));
-            } else {
-                // Invalid image, go with the default metafile size
-                setAnchor(new Rectangle2D.Double(0, 0, 200, 200));
-            }
-        } else {
-            //default size of a metafile picture is 200x200
-            setAnchor(new Rectangle2D.Double(50, 50, 200, 200));
-        }
+        Dimension dim = getPictureData().getImageDimension();
+        Rectangle2D origRect = getAnchor2D();
+        double x = origRect.getX();
+        double y = origRect.getY();
+        double w = Units.pixelToPoints((int)dim.getWidth());
+        double h = Units.pixelToPoints((int)dim.getHeight());
+        setAnchor(new Rectangle2D.Double(x, y, w, h));
     }
 
     @Override
     public HSLFPictureData getPictureData(){
         HSLFSlideShow ppt = getSheet().getSlideShow();
-        HSLFPictureData[] pict = ppt.getPictureData();
+        List<HSLFPictureData> pict = ppt.getPictureData();
 
         EscherBSERecord bse = getEscherBSERecord();
         if (bse == null){
             logger.log(POILogger.ERROR, "no reference to picture data found ");
         } else {
-            for ( int i = 0; i < pict.length; i++ ) {
-                if (pict[i].getOffset() ==  bse.getOffset()){
-                    return pict[i];
+            for (HSLFPictureData pd : pict) {
+                if (pd.getOffset() ==  bse.getOffset()){
+                    return pd;
                 }
             }
             logger.log(POILogger.ERROR, "no picture found for our BSE offset " + bse.getOffset());

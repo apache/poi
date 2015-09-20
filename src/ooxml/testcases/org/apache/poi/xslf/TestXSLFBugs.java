@@ -58,14 +58,14 @@ public class TestXSLFBugs {
     @Test
     @SuppressWarnings("deprecation")
     public void bug51187() throws Exception {
-       XMLSlideShow ss = XSLFTestDataSamples.openSampleDocument("51187.pptx");
+       XMLSlideShow ss1 = XSLFTestDataSamples.openSampleDocument("51187.pptx");
        
-       assertEquals(1, ss.getSlides().size());
+       assertEquals(1, ss1.getSlides().size());
        
        // Check the relations on it
        // Note - rId3 is a self reference
-       PackagePart slidePart = ss._getXSLFSlideShow().getSlidePart(
-             ss._getXSLFSlideShow().getSlideReferences().getSldIdArray(0)
+       PackagePart slidePart = ss1._getXSLFSlideShow().getSlidePart(
+             ss1._getXSLFSlideShow().getSlideReferences().getSldIdArray(0)
        );
        assertEquals("/ppt/slides/slide1.xml", slidePart.getPartName().toString());
        assertEquals("/ppt/slideLayouts/slideLayout12.xml", slidePart.getRelationship("rId1").getTargetURI().toString());
@@ -74,11 +74,12 @@ public class TestXSLFBugs {
        assertEquals("/ppt/media/image1.png", slidePart.getRelationship("rId4").getTargetURI().toString());
        
        // Save and re-load
-       ss = XSLFTestDataSamples.writeOutAndReadBack(ss);
-       assertEquals(1, ss.getSlides().size());
+       XMLSlideShow ss2 = XSLFTestDataSamples.writeOutAndReadBack(ss1);
+       ss1.close();
+       assertEquals(1, ss2.getSlides().size());
        
-       slidePart = ss._getXSLFSlideShow().getSlidePart(
-             ss._getXSLFSlideShow().getSlideReferences().getSldIdArray(0)
+       slidePart = ss2._getXSLFSlideShow().getSlidePart(
+             ss2._getXSLFSlideShow().getSlideReferences().getSldIdArray(0)
        );
        assertEquals("/ppt/slides/slide1.xml", slidePart.getPartName().toString());
        assertEquals("/ppt/slideLayouts/slideLayout12.xml", slidePart.getRelationship("rId1").getTargetURI().toString());
@@ -86,13 +87,15 @@ public class TestXSLFBugs {
        // TODO Fix this
        assertEquals("/ppt/slides/slide1.xml", slidePart.getRelationship("rId3").getTargetURI().toString());
        assertEquals("/ppt/media/image1.png", slidePart.getRelationship("rId4").getTargetURI().toString());
+       
+       ss2.close();
     }
     
     /**
      * Slide relations with anchors in them
      */
     @Test
-    public void tika705() {
+    public void tika705() throws Exception {
        XMLSlideShow ss = XSLFTestDataSamples.openSampleDocument("with_japanese.pptx");
        
        // Should have one slide
@@ -132,6 +135,7 @@ public class TestXSLFBugs {
              }
           }
        }
+       ss.close();
     }
     
     /**
@@ -161,6 +165,8 @@ public class TestXSLFBugs {
         
         slide = ss.getSlides().get(3);
         assertContains("POI can read this", getSlideText(slide));
+        
+        ss.close();
     }
     
     /**
@@ -197,6 +203,7 @@ public class TestXSLFBugs {
         
         assertEquals(2, internalPictures);
         assertEquals(1, externalPictures);
+        ppt.close();
     }
 
     @Test
@@ -225,6 +232,7 @@ public class TestXSLFBugs {
         slide.draw(graphics);             
         
         ImageIO.write(imgActual, "PNG", new File("bug54542.png"));
+        ss.close();
     }
     
     protected String getSlideText(XSLFSlide slide) {
@@ -262,6 +270,7 @@ public class TestXSLFBugs {
         ss.setSlideOrder(slide, 0);
         ss.setSlideOrder(slide, 2);
         validateSlides(ss, true, "Slide1","Slide2","New slide");
+        ss.close();
     }
     
     /**
@@ -277,7 +286,7 @@ public class TestXSLFBugs {
         
         // Slide starts with just layout relation
         XSLFSlide slide = ss.getSlides().get(0);
-        assertEquals(0, ss.getAllPictures().size());
+        assertEquals(0, ss.getPictureData().size());
         assertEquals(1, slide.getShapes().size());
         
         assertEquals(1, slide.getRelations().size());
@@ -295,7 +304,7 @@ public class TestXSLFBugs {
         for (int i=0; i<10; i++) {
             XSLFPictureData data = ss.addPicture(pics[i], PictureType.JPEG);
             assertEquals(i, data.getIndex());
-            assertEquals(i+1, ss.getAllPictures().size());
+            assertEquals(i+1, ss.getPictureData().size());
             
             XSLFPictureShape shape = slide.createPicture(data);
             assertNotNull(shape.getPictureData());
@@ -313,7 +322,7 @@ public class TestXSLFBugs {
         for (int i=10; i<15; i++) {
             XSLFPictureData data = ss.addPicture(pics[i], PictureType.JPEG);
             assertEquals(i, data.getIndex());
-            assertEquals(i+1, ss.getAllPictures().size());
+            assertEquals(i+1, ss.getPictureData().size());
             
             XSLFPictureShape shape = slide.createPicture(data);
             assertNotNull(shape.getPictureData());
@@ -330,7 +339,7 @@ public class TestXSLFBugs {
         // Add a duplicate, check the right one is picked
         XSLFPictureData data = ss.addPicture(pics[3], PictureType.JPEG);
         assertEquals(3, data.getIndex());
-        assertEquals(15, ss.getAllPictures().size());
+        assertEquals(15, ss.getPictureData().size());
         
         XSLFPictureShape shape = slide.createPicture(data);
         assertNotNull(shape.getPictureData());
@@ -357,7 +366,7 @@ public class TestXSLFBugs {
         // Add another duplicate
         data = ss2.addPicture(pics[5], PictureType.JPEG);
         assertEquals(5, data.getIndex());
-        assertEquals(15, ss2.getAllPictures().size());
+        assertEquals(15, ss2.getPictureData().size());
         
         shape = slide.createPicture(data);
         assertNotNull(shape.getPictureData());
@@ -368,11 +377,17 @@ public class TestXSLFBugs {
         ss.close();
     }
 
-    private void validateSlides(XMLSlideShow ss, boolean saveAndReload, String... slideTexts) {
+    private void validateSlides(XMLSlideShow ss, boolean saveAndReload, String... slideTexts) throws IOException {
         if (saveAndReload) {
-            ss = XSLFTestDataSamples.writeOutAndReadBack(ss);
+            XMLSlideShow ss2 = XSLFTestDataSamples.writeOutAndReadBack(ss);
+            validateSlides(ss, slideTexts);
+            ss2.close();
+        } else {
+            validateSlides(ss, slideTexts);
         }
-
+    }
+    
+    private void validateSlides(XMLSlideShow ss, String... slideTexts) throws IOException {
         assertEquals(slideTexts.length, ss.getSlides().size());
 
         for (int i = 0; i < slideTexts.length; i++) {
@@ -380,6 +395,7 @@ public class TestXSLFBugs {
             assertContains(getSlideText(slide), slideTexts[i]);
         }
     }
+    
     private void assertRelationEquals(XSLFRelation expected, POIXMLDocumentPart relation) {
         assertEquals(expected.getContentType(), relation.getPackagePart().getContentType());
         assertEquals(expected.getFileName(expected.getFileNameIndex(relation)), relation.getPackagePart().getPartName().getName());
