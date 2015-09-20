@@ -37,6 +37,10 @@ import java.util.ArrayList;
  */
 public class MemoryUsage extends TestCase {
     private static final int NUM_COLUMNS = 255;
+    
+    private static void printMemoryUsage(String msg) {
+        System.out.println(" Memory (" + msg + "): " + Runtime.getRuntime().totalMemory()/(1024*1024) + "MB");
+    }
 
     /**
      * Generate a spreadsheet until OutOfMemoryError
@@ -50,7 +54,7 @@ public class MemoryUsage extends TestCase {
     public static void mixedSpreadsheet(Workbook wb, int numCols){
 
         System.out.println("Testing " + wb.getClass().getName());
-        System.out.println("Memory: " + Runtime.getRuntime().totalMemory()/(1024*1024) + "MB");
+        printMemoryUsage("before");
         int i=0, cnt=0;
         try {
             Sheet sh = wb.createSheet();
@@ -65,8 +69,11 @@ public class MemoryUsage extends TestCase {
             }
         } catch (OutOfMemoryError er){
             System.out.println("Failed at row=" + i + ", objects : " + cnt);
+        } catch (final Exception e) {
+            System.out.println("Unable to reach an OutOfMemoryError");
+            System.out.println(e.getClass().getName() + ": " + e.getMessage());
         }
-        System.out.println("Memory: " + Runtime.getRuntime().totalMemory()/(1024*1024) + "MB");
+        printMemoryUsage("after");
     }
 
     /**
@@ -74,7 +81,7 @@ public class MemoryUsage extends TestCase {
      * The data is generated until OutOfMemoryError. 
      * <p>
      * as compared to {@link #mixedSpreadsheet(org.apache.poi.ss.usermodel.Workbook, int)},
-     * this method does not set string values and, hence, does not invole the Shared Strings Table.
+     * this method does not set string values and, hence, does not involve the Shared Strings Table.
      * </p>
      *
      * @param wb        the workbook to write to
@@ -83,7 +90,7 @@ public class MemoryUsage extends TestCase {
     public static void numberSpreadsheet(Workbook wb, int numCols){
 
         System.out.println("Testing " + wb.getClass().getName());
-        System.out.println("Memory: " + Runtime.getRuntime().totalMemory()/(1024*1024) + "MB");
+        printMemoryUsage("before");
         int i=0, cnt=0;
         try {
             Sheet sh = wb.createSheet();
@@ -97,8 +104,11 @@ public class MemoryUsage extends TestCase {
             }
         } catch (OutOfMemoryError er){
             System.out.println("Failed at row=" + i + ", objects : " + cnt);
+        } catch (final Exception e) {
+            System.out.println("Unable to reach an OutOfMemoryError");
+            System.out.println(e.getClass().getName() + ": " + e.getMessage());
         }
-        System.out.println("Memory: " + Runtime.getRuntime().totalMemory()/(1024*1024) + "MB");
+        printMemoryUsage("after");
     }
 
     /**
@@ -111,7 +121,7 @@ public class MemoryUsage extends TestCase {
      */
     public static void xmlBeans(int numCols) {
         int i = 0, cnt = 0;
-        System.out.println("Memory: " + Runtime.getRuntime().totalMemory() / (1024 * 1024) + "MB");
+        printMemoryUsage("before");
 
         CTWorksheet sh = CTWorksheet.Factory.newInstance();
         CTSheetData data = sh.addNewSheetData();
@@ -128,8 +138,11 @@ public class MemoryUsage extends TestCase {
             }
         } catch (OutOfMemoryError er) {
             System.out.println("Failed at row=" + i + ", objects: " + cnt);
+        } catch (final Exception e) {
+            System.out.println("Unable to reach an OutOfMemoryError");
+            System.out.println(e.getClass().getName() + ": " + e.getMessage());
         }
-        System.out.println("Memory: " + Runtime.getRuntime().totalMemory() / (1024 * 1024) + "MB");
+        printMemoryUsage("after");
     }
 
     /**
@@ -149,17 +162,21 @@ public class MemoryUsage extends TestCase {
             }
         } catch (OutOfMemoryError er) {
             System.out.println("Failed at row=" + i);
+        } catch (final Exception e) {
+            System.out.println("Unable to reach an OutOfMemoryError");
+            System.out.println(e.getClass().getName() + ": " + e.getMessage());
         }
-        System.out.println("Memory: " + Runtime.getRuntime().totalMemory() / (1024 * 1024) + "MB");
+        printMemoryUsage("after");
     }
 
     /**
-     * Generate atatched (having a parent bean) Xml beans until OutOfMemoryError.
+     * Generate attached (having a parent bean) Xml beans until OutOfMemoryError.
      * This is MUCH more memory-efficient than {@link #testXmlDetached()}
      *
      * @see #testXmlAttached()
      */
     public void testXmlAttached(){
+        printMemoryUsage("before");
         List<CTRow> rows = new ArrayList<CTRow>();
         int i = 0;
         //top-level element in sheet.xml
@@ -174,8 +191,11 @@ public class MemoryUsage extends TestCase {
             }
         } catch (OutOfMemoryError er) {
             System.out.println("Failed at row=" + i);
+        } catch (final Exception e) {
+            System.out.println("Unable to reach an OutOfMemoryError");
+            System.out.println(e.getClass().getName() + ": " + e.getMessage());
         }
-        System.out.println("Memory: " + Runtime.getRuntime().totalMemory() / (1024 * 1024) + "MB");
+        printMemoryUsage("after");
     }
 
     public void testMixedHSSF(){
