@@ -29,10 +29,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -76,7 +74,6 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.LocaleUtil;
-import org.apache.poi.util.TempFile;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -86,9 +83,6 @@ import org.junit.Test;
  *
  * <b>YK: If a bug can be tested in terms of common ss interfaces,
  *  define the test in the base class {@link BaseTestBugzillaIssues}</b>
- *
- * @author Avik Sengupta
- * @author Yegor Kozlov
  */
 public final class TestBugs extends BaseTestBugzillaIssues {
 
@@ -104,67 +98,48 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         return HSSFITestDataProvider.instance.writeOutAndReadBack(original);
     }
 
-    @SuppressWarnings("unused")
-    private static void writeTestOutputFileForViewing(HSSFWorkbook wb, String simpleFileName) {
-        if (true) { // set to false to output test files
-            return;
-        }
-        System.setProperty("poi.keep.tmp.files", "true");
-        File file;
-        try {
-            file = TempFile.createTempFile(simpleFileName + "#", ".xls");
-            OutputStream out = new FileOutputStream(file);
-            try {
-            	wb.write(out);
-            } finally {
-            	out.close();
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        if (!file.exists()) {
-            throw new RuntimeException("File was not written");
-        }
-        System.out.println("Open file '" + file.getAbsolutePath() + "' in Excel");
-    }
-
     /** Test reading AND writing a complicated workbook
      *Test opening resulting sheet in excel*/
     @Test
-    public void bug15228() {
+    public void bug15228() throws Exception {
         HSSFWorkbook wb = openSample("15228.xls");
         HSSFSheet s = wb.getSheetAt(0);
         HSSFRow r = s.createRow(0);
         HSSFCell c = r.createCell(0);
         c.setCellValue(10);
-        writeTestOutputFileForViewing(wb, "test15228");
+        writeOutAndReadBack(wb).close();
+        wb.close();
     }
 
     @Test
-    public void bug13796() {
+    public void bug13796() throws Exception {
         HSSFWorkbook wb = openSample("13796.xls");
         HSSFSheet s = wb.getSheetAt(0);
         HSSFRow r = s.createRow(0);
         HSSFCell c = r.createCell(0);
         c.setCellValue(10);
-        writeOutAndReadBack(wb);
+        writeOutAndReadBack(wb).close();
+        wb.close();
     }
 
     /** test reading of a formula with a name and a cell ref in one
      **/
     @Test
-    public void bug14460() {
+    public void bug14460() throws Exception {
         HSSFWorkbook wb = openSample("14460.xls");
         wb.getSheetAt(0);
+        wb.close();
     }
 
     @Test
-    public void bug14330() {
-        HSSFWorkbook wb = openSample("14330-1.xls");
-        wb.getSheetAt(0);
+    public void bug14330() throws Exception {
+        HSSFWorkbook wb1 = openSample("14330-1.xls");
+        wb1.getSheetAt(0);
+        wb1.close();
 
-        wb = openSample("14330-2.xls");
-        wb.getSheetAt(0);
+        HSSFWorkbook wb2 = openSample("14330-2.xls");
+        wb2.getSheetAt(0);
+        wb2.close();
     }
 
     private static void setCellText(HSSFCell cell, String text) {
@@ -174,7 +149,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
     /** test rewriting a file with large number of unique strings
      *open resulting file in Excel to check results!*/
     @Test
-    public void bug15375() {
+    public void bug15375() throws Exception {
         HSSFWorkbook wb = openSample("15375.xls");
         HSSFSheet sheet = wb.getSheetAt(0);
 
@@ -195,24 +170,26 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         oCell = oRow.getCell(5);
         setCellText(oCell, "0.3");
 
-        writeTestOutputFileForViewing(wb, "test15375");
+        writeOutAndReadBack(wb).close();
+        wb.close();
     }
     /**
      * test writing a file with large number of unique strings,
      * open resulting file in Excel to check results!
      */
     @Test
-    public void bug15375_2() {
+    public void bug15375_2() throws Exception {
         bug15375(6000);
     }
 
     /**Double byte strings*/
     @Test
-    public void bug15556() {
+    public void bug15556() throws Exception {
         HSSFWorkbook wb = openSample("15556.xls");
         HSSFSheet sheet = wb.getSheetAt(0);
         HSSFRow row = sheet.getRow(45);
         assertNotNull("Read row fine!" , row);
+        wb.close();
     }
 
     /**Double byte strings */
@@ -261,7 +238,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
     }
 
     @Test
-    public void bug24215() {
+    public void bug24215() throws Exception {
         HSSFWorkbook wb = openSample("24215.xls");
 
         for (int sheetIndex = 0; sheetIndex < wb.getNumberOfSheets();sheetIndex++) {
@@ -277,6 +254,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
                 }
             }
         }
+        wb.close();
     }
 
     /**Tests read and write of Unicode strings in formula results
@@ -284,7 +262,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
      * The file contains THAI unicode characters.
      */
     @Test
-    public void bugUnicodeStringFormulaRead() {
+    public void bugUnicodeStringFormulaRead() throws Exception {
 
         HSSFWorkbook w = openSample("25695.xls");
 
@@ -318,6 +296,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         confirmSameCellText(d1, d2);
 
         HSSFWorkbook rw = writeOutAndReadBack(w);
+        w.close();
 
         HSSFCell ra1 = rw.getSheetAt(0).getRow(0).getCell(0);
         HSSFCell ra2 = rw.getSheetAt(0).getRow(0).getCell(1);
@@ -337,6 +316,8 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         confirmSameCellText(b1, rb2);
         confirmSameCellText(c1, rc2);
         confirmSameCellText(d1, rd2);
+        
+        rw.close();
     }
 
     private static void confirmSameCellText(HSSFCell a, HSSFCell b) {
@@ -367,7 +348,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
 
     /**names and macros */
     @Test
-    public void bug27852() {
+    public void bug27852() throws Exception {
         HSSFWorkbook wb = openSample("27852.xls");
 
         for(int i = 0 ; i < wb.getNumberOfNames(); i++){
@@ -378,6 +359,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
           }
           name.getRefersToFormula();
         }
+        wb.close();
     }
 
     @Test
@@ -396,43 +378,47 @@ public final class TestBugs extends BaseTestBugzillaIssues {
 
     /** Error when reading then writing ArrayValues in NameRecord's*/
     @Test
-    public void bug37630() {
+    public void bug37630() throws Exception {
         HSSFWorkbook wb = openSample("37630.xls");
         writeOutAndReadBack(wb);
+        wb.close();
     }
 
     /**
      * Bug 25183: org.apache.poi.hssf.usermodel.HSSFSheet.setPropertiesFromSheet
      */
     @Test
-    public void bug25183() {
+    public void bug25183() throws Exception {
         HSSFWorkbook wb = openSample("25183.xls");
         writeOutAndReadBack(wb);
+        wb.close();
     }
 
     /**
      * Bug 26100: 128-character message in IF statement cell causes HSSFWorkbook open failure
      */
     @Test
-    public void bug26100() {
+    public void bug26100() throws Exception {
         HSSFWorkbook wb = openSample("26100.xls");
         writeOutAndReadBack(wb);
+        wb.close();
     }
 
     /**
      * Bug 27933: Unable to use a template (xls) file containing a wmf graphic
      */
     @Test
-    public void bug27933() {
+    public void bug27933() throws Exception {
         HSSFWorkbook wb = openSample("27933.xls");
         writeOutAndReadBack(wb);
+        wb.close();
     }
 
     /**
      * Bug 29206:      NPE on HSSFSheet.getRow for blank rows
      */
     @Test
-    public void bug29206() {
+    public void bug29206() throws Exception {
         //the first check with blank workbook
         HSSFWorkbook wb = openSample("Simple.xls");
         HSSFSheet sheet = wb.createSheet();
@@ -442,22 +428,24 @@ public final class TestBugs extends BaseTestBugzillaIssues {
                 row.getCell(0);
             }
         }
+        wb.close();
     }
 
     /**
      * Bug 29675: POI 2.5 final corrupts output when starting workbook has a graphic
      */
     @Test
-    public void bug29675() {
+    public void bug29675() throws Exception {
         HSSFWorkbook wb = openSample("29675.xls");
         writeOutAndReadBack(wb);
+        wb.close();
     }
 
     /**
      * Bug 29942: Importing Excel files that have been created by Open Office on Linux
      */
     @Test
-    public void bug29942() {
+    public void bug29942() throws Exception {
         HSSFWorkbook wb = openSample("29942.xls");
 
         HSSFSheet sheet = wb.getSheetAt(0);
@@ -472,7 +460,8 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         }
         assertEquals(85, count); //should read 85 rows
 
-        writeOutAndReadBack(wb);
+        writeOutAndReadBack(wb).close();
+        wb.close();
     }
 
     /**
@@ -480,39 +469,44 @@ public final class TestBugs extends BaseTestBugzillaIssues {
      *  Unable to construct record instance
      */
     @Test
-    public void bug29982() {
+    public void bug29982() throws Exception {
         HSSFWorkbook wb = openSample("29982.xls");
-        writeOutAndReadBack(wb);
+        writeOutAndReadBack(wb).close();
+        wb.close();
     }
 
     /**
      * Bug 30540: HSSFSheet.setRowBreak throws NullPointerException
      */
     @Test
-    public void bug30540() {
+    public void bug30540() throws Exception {
         HSSFWorkbook wb = openSample("30540.xls");
 
         HSSFSheet s = wb.getSheetAt(0);
         s.setRowBreak(1);
-        writeOutAndReadBack(wb);
+        writeOutAndReadBack(wb).close();
+        
+        wb.close();
     }
 
     /**
      * Bug 31749: {Need help urgently}[This is critical] workbook.write() corrupts the file......?
      */
     @Test
-    public void bug31749() {
+    public void bug31749() throws Exception {
         HSSFWorkbook wb = openSample("31749.xls");
-        writeOutAndReadBack(wb);
+        writeOutAndReadBack(wb).close();
+        wb.close();
     }
 
     /**
      * Bug 31979: {urgent help needed .....}poi library does not support form objects properly.
      */
     @Test
-    public void bug31979() {
+    public void bug31979() throws Exception {
         HSSFWorkbook wb = openSample("31979.xls");
-        writeOutAndReadBack(wb);
+        writeOutAndReadBack(wb).close();
+        wb.close();
     }
 
     /**
@@ -520,42 +514,47 @@ public final class TestBugs extends BaseTestBugzillaIssues {
      *  when HSSFWorkbook is created from file
      */
     @Test
-    public void bug35564() {
+    public void bug35564() throws Exception {
         HSSFWorkbook wb = openSample("35564.xls");
 
         HSSFSheet sheet = wb.getSheetAt( 0 );
         assertEquals(false, sheet.isGridsPrinted());
         assertEquals(false, sheet.getProtect());
 
-        writeOutAndReadBack(wb);
+        writeOutAndReadBack(wb).close();
+        
+        wb.close();
     }
 
     /**
      * Bug 35565: HSSFCell.java: NullPtrExc in getColumnBreaks() when HSSFWorkbook is created from file
      */
     @Test
-    public void bug35565() {
+    public void bug35565() throws Exception {
         HSSFWorkbook wb = openSample("35565.xls");
 
         HSSFSheet sheet = wb.getSheetAt( 0 );
         assertNotNull(sheet);
-        writeOutAndReadBack(wb);
+        writeOutAndReadBack(wb).close();
+        
+        wb.close();
     }
 
     /**
      * Bug 37376: Cannot open the saved Excel file if checkbox controls exceed certain limit
      */
     @Test
-    public void bug37376() {
+    public void bug37376() throws Exception {
         HSSFWorkbook wb = openSample("37376.xls");
-        writeOutAndReadBack(wb);
+        writeOutAndReadBack(wb).close();
+        wb.close();
     }
 
     /**
      * Bug 40285:      CellIterator Skips First Column
      */
     @Test
-    public void bug40285() {
+    public void bug40285() throws Exception {
         HSSFWorkbook wb = openSample("40285.xls");
 
         HSSFSheet sheet = wb.getSheetAt( 0 );
@@ -569,6 +568,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
                 assertEquals(cellNum, cell.getColumnIndex());
             }
         }
+        wb.close();
     }
 
     /**
@@ -582,10 +582,10 @@ public final class TestBugs extends BaseTestBugzillaIssues {
      * 4. Get a NullPointerException
      */
     @Test
-    public void bug38266() {
+    public void bug38266() throws Exception {
         String[] files = {"Simple.xls", "SimpleMultiCell.xls", "duprich1.xls"};
-        for (int i = 0; i < files.length; i++) {
-            HSSFWorkbook wb = openSample(files[i]);
+        for (String file : files) {
+            HSSFWorkbook wb = openSample(file);
 
             HSSFSheet sheet = wb.getSheetAt( 0 );
             int[] breaks = sheet.getRowBreaks();
@@ -595,54 +595,59 @@ public final class TestBugs extends BaseTestBugzillaIssues {
             for (int j = 1; j <= 3; j++) {
                 sheet.setRowBreak(j*20);
             }
+            wb.close();
         }
     }
 
     @Test
-    public void bug40738() {
+    public void bug40738() throws Exception {
         HSSFWorkbook wb = openSample("SimpleWithAutofilter.xls");
-        writeOutAndReadBack(wb);
+        writeOutAndReadBack(wb).close();
+        wb.close();
     }
 
     /**
      * Bug 44200: Sheet not cloneable when Note added to excel cell
      */
     @Test
-    public void bug44200() {
+    public void bug44200() throws Exception {
         HSSFWorkbook wb = openSample("44200.xls");
-
         wb.cloneSheet(0);
-        writeOutAndReadBack(wb);
+        writeOutAndReadBack(wb).close();
+        wb.close();
     }
 
     /**
      * Bug 44201: Sheet not cloneable when validation added to excel cell
      */
     @Test
-    public void bug44201() {
+    public void bug44201() throws Exception {
         HSSFWorkbook wb = openSample("44201.xls");
-        writeOutAndReadBack(wb);
+        writeOutAndReadBack(wb).close();
+        wb.close();
     }
 
     /**
      * Bug 37684  : Unhandled Continue Record Error
      */
     @Test
-    public void bug37684 () {
-        HSSFWorkbook wb = openSample("37684-1.xls");
-        writeOutAndReadBack(wb);
-
-        wb = openSample("37684-2.xls");
-        writeOutAndReadBack(wb);
+    public void bug37684() throws Exception {
+        HSSFWorkbook wb1 = openSample("37684-1.xls");
+        writeOutAndReadBack(wb1).close();
+        wb1.close();
+        HSSFWorkbook wb2 = openSample("37684-2.xls");
+        writeOutAndReadBack(wb2).close();
+        wb2.close();
     }
 
     /**
      * Bug 41139: Constructing HSSFWorkbook is failed,threw threw ArrayIndexOutOfBoundsException for creating UnknownRecord
      */
     @Test
-    public void bug41139() {
+    public void bug41139() throws Exception {
         HSSFWorkbook wb = openSample("41139.xls");
-        writeOutAndReadBack(wb);
+        writeOutAndReadBack(wb).close();
+        wb.close();
     }
 
     /**
@@ -650,11 +655,13 @@ public final class TestBugs extends BaseTestBugzillaIssues {
      *  Unknown Ptg in Formula: 0x1a (26)
      */
     @Test
-    public void bug41546() {
-        HSSFWorkbook wb = openSample("41546.xls");
-        assertEquals(1, wb.getNumberOfSheets());
-        wb = writeOutAndReadBack(wb);
-        assertEquals(1, wb.getNumberOfSheets());
+    public void bug41546() throws Exception {
+        HSSFWorkbook wb1 = openSample("41546.xls");
+        assertEquals(1, wb1.getNumberOfSheets());
+        HSSFWorkbook wb2 = writeOutAndReadBack(wb1);
+        assertEquals(1, wb2.getNumberOfSheets());
+        wb2.close();
+        wb1.close();
     }
 
     /**
@@ -662,9 +669,10 @@ public final class TestBugs extends BaseTestBugzillaIssues {
      *  when reading the BOFRecord
      */
     @Test
-    public void bug42564() {
+    public void bug42564() throws Exception {
         HSSFWorkbook wb = openSample("ex42564-21435.xls");
-        writeOutAndReadBack(wb);
+        writeOutAndReadBack(wb).close();
+        wb.close();
     }
 
     /**
@@ -673,9 +681,10 @@ public final class TestBugs extends BaseTestBugzillaIssues {
      *  issue.
      */
     @Test
-    public void bug42564Alt() {
+    public void bug42564Alt() throws Exception {
         HSSFWorkbook wb = openSample("ex42564-21503.xls");
-        writeOutAndReadBack(wb);
+        writeOutAndReadBack(wb).close();
+        wb.close();
     }
 
     /**
@@ -683,11 +692,12 @@ public final class TestBugs extends BaseTestBugzillaIssues {
      *     =CHOOSE(2,A2,A3,A4)
      */
     @Test
-    public void bug42618() {
-        HSSFWorkbook wb = openSample("SimpleWithChoose.xls");
-        wb = writeOutAndReadBack(wb);
+    public void bug42618() throws Exception {
+        HSSFWorkbook wb1 = openSample("SimpleWithChoose.xls");
+        HSSFWorkbook wb2 = writeOutAndReadBack(wb1);
+        wb1.close();
         // Check we detect the string properly too
-        HSSFSheet s = wb.getSheetAt(0);
+        HSSFSheet s = wb2.getSheetAt(0);
 
         // Textual value
         HSSFRow r1 = s.getRow(0);
@@ -707,22 +717,19 @@ public final class TestBugs extends BaseTestBugzillaIssues {
                 fail("identified bug 44306");
             }
         }
+        wb2.close();
     }
 
     /**
      * Something up with the FileSharingRecord
      */
     @Test
-    public void bug43251() {
-
+    public void bug43251() throws Exception {
         // Used to blow up with an IllegalArgumentException
         //  when creating a FileSharingRecord
-        try {
-            HSSFWorkbook wb = openSample("43251.xls");
-            assertEquals(1, wb.getNumberOfSheets());
-        } catch (IllegalArgumentException e) {
-            fail("identified bug 43251");
-        }
+        HSSFWorkbook wb = openSample("43251.xls");
+        assertEquals(1, wb.getNumberOfSheets());
+        wb.close();
     }
 
     /**
@@ -730,18 +737,12 @@ public final class TestBugs extends BaseTestBugzillaIssues {
      *  StyleRecords, which is against the spec
      */
     @Test
-    public void bug44471() {
-
+    public void bug44471() throws Exception {
         // Used to blow up with an ArrayIndexOutOfBounds
         //  when creating a StyleRecord
-        HSSFWorkbook wb;
-        //try {
-        wb = openSample("OddStyleRecord.xls");
-        //} catch (ArrayIndexOutOfBoundsException e) {
-        //    throw new AssertionFailedError("Identified bug 44471");
-        //}
-
+        HSSFWorkbook wb = openSample("OddStyleRecord.xls");
         assertEquals(1, wb.getNumberOfSheets());
+        wb.close();
     }
 
     /**
@@ -749,19 +750,20 @@ public final class TestBugs extends BaseTestBugzillaIssues {
      *  grief on the FileSharingRecord
      */
     @Test
-    public void bug44536() {
-
+    public void bug44536() throws Exception {
         // Used to blow up with an IllegalArgumentException
         //  when creating a FileSharingRecord
-        HSSFWorkbook wb = openSample("ReadOnlyRecommended.xls");
+        HSSFWorkbook wb1 = openSample("ReadOnlyRecommended.xls");
 
         // Check read only advised
-        assertEquals(3, wb.getNumberOfSheets());
-        assertTrue(wb.isWriteProtected());
+        assertEquals(3, wb1.getNumberOfSheets());
+        assertTrue(wb1.isWriteProtected());
+        wb1.close();
 
         // But also check that another wb isn't
-        wb = openSample("SimpleWithChoose.xls");
-        assertFalse(wb.isWriteProtected());
+        HSSFWorkbook wb2 = openSample("SimpleWithChoose.xls");
+        assertFalse(wb2.isWriteProtected());
+        wb2.close();
     }
 
     /**
@@ -769,20 +771,14 @@ public final class TestBugs extends BaseTestBugzillaIssues {
      *  probably due to dropdowns
      */
     @Test
-    public void bug44593() {
-
+    public void bug44593() throws Exception {
         // Used to blow up with an IllegalArgumentException
         //  when creating a DVRecord
         // Now won't, but no idea if this means we have
         //  rubbish in the DVRecord or not...
-        HSSFWorkbook wb;
-        //try {
-        wb = openSample("44593.xls");
-        //} catch (IllegalArgumentException e) {
-        //    throw new AssertionFailedError("Identified bug 44593");
-        //}
-
+        HSSFWorkbook wb = openSample("44593.xls");
         assertEquals(2, wb.getNumberOfSheets());
+        wb.close();
     }
 
     /**
@@ -790,17 +786,11 @@ public final class TestBugs extends BaseTestBugzillaIssues {
      *  length string, but that's now properly handled
      */
     @Test
-    public void bug44643() {
-
+    public void bug44643() throws Exception {
         // Used to blow up with an IllegalArgumentException
-        HSSFWorkbook wb;
-        //try {
-        wb = openSample("44643.xls");
-        //} catch (IllegalArgumentException e) {
-        //    throw new AssertionFailedError("identified bug 44643");
-        //}
-
+        HSSFWorkbook wb = openSample("44643.xls");
         assertEquals(1, wb.getNumberOfSheets());
+        wb.close();
     }
 
     /**
@@ -808,8 +798,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
      *  iterator, but we can't replicate that
      */
     @Test
-    public void bug44693() {
-
+    public void bug44693() throws Exception {
         HSSFWorkbook wb = openSample("44693.xls");
         HSSFSheet s = wb.getSheetAt(0);
 
@@ -826,17 +815,19 @@ public final class TestBugs extends BaseTestBugzillaIssues {
             rowsSeen++;
         }
         assertEquals(713, rowsSeen);
+        wb.close();
     }
 
     /**
      * Bug 28774: Excel will crash when opening xls-files with images.
      */
     @Test
-    public void bug28774() {
+    public void bug28774() throws Exception {
         HSSFWorkbook wb = openSample("28774.xls");
         assertTrue("no errors reading sample xls", true);
-        writeOutAndReadBack(wb);
+        writeOutAndReadBack(wb).close();;
         assertTrue("no errors writing sample xls", true);
+        wb.close();
     }
 
     /**
@@ -844,11 +835,12 @@ public final class TestBugs extends BaseTestBugzillaIssues {
      *  works just fine...
      */
     @Test
-    public void bug44891() {
+    public void bug44891() throws Exception {
         HSSFWorkbook wb = openSample("44891.xls");
         assertTrue("no errors reading sample xls", true);
-        writeOutAndReadBack(wb);
+        writeOutAndReadBack(wb).close();
         assertTrue("no errors writing sample xls", true);
+        wb.close();
     }
 
     /**
@@ -857,27 +849,30 @@ public final class TestBugs extends BaseTestBugzillaIssues {
      * Works fine with poi-3.1-beta1.
      */
     @Test
-    public void bug44235() {
+    public void bug44235() throws Exception {
         HSSFWorkbook wb = openSample("44235.xls");
         assertTrue("no errors reading sample xls", true);
-        writeOutAndReadBack(wb);
+        writeOutAndReadBack(wb).close();
         assertTrue("no errors writing sample xls", true);
+        wb.close();
     }
 
     @Test
-    public void bug36947() {
+    public void bug36947() throws Exception {
         HSSFWorkbook wb = openSample("36947.xls");
         assertTrue("no errors reading sample xls", true);
-        writeOutAndReadBack(wb);
+        writeOutAndReadBack(wb).close();
         assertTrue("no errors writing sample xls", true);
+        wb.close();
     }
 
     @Test
-    public void bug39634() {
+    public void bug39634() throws Exception {
         HSSFWorkbook wb = openSample("39634.xls");
         assertTrue("no errors reading sample xls", true);
-        writeOutAndReadBack(wb);
+        writeOutAndReadBack(wb).close();
         assertTrue("no errors writing sample xls", true);
+        wb.close();
     }
 
     /**
@@ -885,8 +880,8 @@ public final class TestBugs extends BaseTestBugzillaIssues {
      *  HSSFObjectData
      * @throws Exception
      */
-    @Test
-    public void bug44840() {
+    @Test(expected=FileNotFoundException.class)
+    public void bug44840() throws Exception {
         HSSFWorkbook wb = openSample("WithCheckBoxes.xls");
 
         // Take a look at the embedded objects
@@ -913,11 +908,8 @@ public final class TestBugs extends BaseTestBugzillaIssues {
 
         try {
             obj.getDirectory();
-            fail();
-        } catch(FileNotFoundException e) {
-            // expected during successful test
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } finally {
+            wb.close();
         }
     }
 
@@ -927,17 +919,17 @@ public final class TestBugs extends BaseTestBugzillaIssues {
      *  used for printing stuff.
      */
     @Test
-    public void bug30978() {
-        HSSFWorkbook wb = openSample("30978-alt.xls");
-        assertEquals(1, wb.getNumberOfNames());
-        assertEquals(3, wb.getNumberOfSheets());
+    public void bug30978() throws Exception {
+        HSSFWorkbook wb1 = openSample("30978-alt.xls");
+        assertEquals(1, wb1.getNumberOfNames());
+        assertEquals(3, wb1.getNumberOfSheets());
 
         // Check all names fit within range, and use
         //  DeletedArea3DPtg
-        InternalWorkbook w = wb.getWorkbook();
+        InternalWorkbook w = wb1.getWorkbook();
         for(int i=0; i<w.getNumNames(); i++) {
             NameRecord r = w.getNameRecord(i);
-            assertTrue(r.getSheetNumber() <= wb.getNumberOfSheets());
+            assertTrue(r.getSheetNumber() <= wb1.getNumberOfSheets());
 
             Ptg[] nd = r.getNameDefinition();
             assertEquals(1, nd.length);
@@ -946,16 +938,16 @@ public final class TestBugs extends BaseTestBugzillaIssues {
 
 
         // Delete the 2nd sheet
-        wb.removeSheetAt(1);
+        wb1.removeSheetAt(1);
 
 
         // Re-check
-        assertEquals(1, wb.getNumberOfNames());
-        assertEquals(2, wb.getNumberOfSheets());
+        assertEquals(1, wb1.getNumberOfNames());
+        assertEquals(2, wb1.getNumberOfSheets());
 
         for(int i=0; i<w.getNumNames(); i++) {
             NameRecord r = w.getNameRecord(i);
-            assertTrue(r.getSheetNumber() <= wb.getNumberOfSheets());
+            assertTrue(r.getSheetNumber() <= wb1.getNumberOfSheets());
 
             Ptg[] nd = r.getNameDefinition();
             assertEquals(1, nd.length);
@@ -964,20 +956,22 @@ public final class TestBugs extends BaseTestBugzillaIssues {
 
 
         // Save and re-load
-        wb = writeOutAndReadBack(wb);
-        w = wb.getWorkbook();
+        HSSFWorkbook wb2 = writeOutAndReadBack(wb1);
+        wb1.close();
+        w = wb2.getWorkbook();
 
-        assertEquals(1, wb.getNumberOfNames());
-        assertEquals(2, wb.getNumberOfSheets());
+        assertEquals(1, wb2.getNumberOfNames());
+        assertEquals(2, wb2.getNumberOfSheets());
 
         for(int i=0; i<w.getNumNames(); i++) {
             NameRecord r = w.getNameRecord(i);
-            assertTrue(r.getSheetNumber() <= wb.getNumberOfSheets());
+            assertTrue(r.getSheetNumber() <= wb2.getNumberOfSheets());
 
             Ptg[] nd = r.getNameDefinition();
             assertEquals(1, nd.length);
             assertTrue(nd[0] instanceof DeletedArea3DPtg);
         }
+        wb2.close();
     }
 
     /**
@@ -1073,9 +1067,9 @@ public final class TestBugs extends BaseTestBugzillaIssues {
      *  containing a zip code, eg ="70164"
      */
     @Test
-    public void bugZipCodeFormulas() {
-        HSSFWorkbook wb = new HSSFWorkbook();
-        HSSFSheet s = wb.createSheet();
+    public void bugZipCodeFormulas() throws Exception {
+        HSSFWorkbook wb1 = new HSSFWorkbook();
+        HSSFSheet s = wb1.createSheet();
         s.createRow(0);
         HSSFCell c1 = s.getRow(0).createCell(0);
         HSSFCell c2 = s.getRow(0).createCell(1);
@@ -1108,7 +1102,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
 
 
         // Now evaluate, they should all be changed
-        HSSFFormulaEvaluator eval = new HSSFFormulaEvaluator(wb);
+        HSSFFormulaEvaluator eval = new HSSFFormulaEvaluator(wb1);
         eval.evaluateFormulaCell(c1);
         eval.evaluateFormulaCell(c2);
         eval.evaluateFormulaCell(c3);
@@ -1121,8 +1115,9 @@ public final class TestBugs extends BaseTestBugzillaIssues {
 
 
         // Write and read
-        HSSFWorkbook nwb = writeOutAndReadBack(wb);
-        HSSFSheet ns = nwb.getSheetAt(0);
+        HSSFWorkbook wb2 = writeOutAndReadBack(wb1);
+        wb1.close();
+        HSSFSheet ns = wb2.getSheetAt(0);
         HSSFCell nc1 = ns.getRow(0).getCell(0);
         HSSFCell nc2 = ns.getRow(0).getCell(1);
         HSSFCell nc3 = ns.getRow(0).getCell(2);
@@ -1154,6 +1149,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
             }
         }
         assertEquals(3, cvrs.length);
+        wb2.close();
     }
 
     private static void confirmCachedValue(double expectedValue, HSSFCell cell) {
@@ -1180,11 +1176,11 @@ public final class TestBugs extends BaseTestBugzillaIssues {
      *  Expected ExpPtg to be converted from Shared to Non-Shared...
      */
     @Ignore
-    public void test43623() {
-        HSSFWorkbook wb = openSample("43623.xls");
-        assertEquals(1, wb.getNumberOfSheets());
+    public void test43623() throws Exception {
+        HSSFWorkbook wb1 = openSample("43623.xls");
+        assertEquals(1, wb1.getNumberOfSheets());
 
-        HSSFSheet s1 = wb.getSheetAt(0);
+        HSSFSheet s1 = wb1.getSheetAt(0);
 
         HSSFCell c1 = s1.getRow(0).getCell(2);
         HSSFCell c2 = s1.getRow(1).getCell(2);
@@ -1196,8 +1192,9 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         assertEquals("{=sin(B1:B9){9,1)[2][0]", c3.getCellFormula());
 
         // Save and re-open, ensure it still works
-        HSSFWorkbook nwb = writeOutAndReadBack(wb);
-        HSSFSheet ns1 = nwb.getSheetAt(0);
+        HSSFWorkbook wb2 = writeOutAndReadBack(wb1);
+        wb1.close();
+        HSSFSheet ns1 = wb2.getSheetAt(0);
         HSSFCell nc1 = ns1.getRow(0).getCell(2);
         HSSFCell nc2 = ns1.getRow(1).getCell(2);
         HSSFCell nc3 = ns1.getRow(2).getCell(2);
@@ -1205,6 +1202,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         assertEquals("{=sin(B1:B9){9,1)[0][0]", nc1.getCellFormula());
         assertEquals("{=sin(B1:B9){9,1)[1][0]", nc2.getCellFormula());
         assertEquals("{=sin(B1:B9){9,1)[2][0]", nc3.getCellFormula());
+        wb2.close();
     }
 
     /**
@@ -1264,7 +1262,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
      * Data Tables - ptg 0x2
      */
     @Test
-    public void bug44958() {
+    public void bug44958() throws Exception {
         HSSFWorkbook wb = openSample("44958.xls");
         HSSFSheet s;
         HSSFRow r;
@@ -1290,16 +1288,18 @@ public final class TestBugs extends BaseTestBugzillaIssues {
 
         // TODO - check the formula once tables and
         //  arrays are properly supported
+        wb.close();
     }
 
     /**
      * 45322: HSSFSheet.autoSizeColumn fails when style.getDataFormat() returns -1
      */
     @Test
-    public void bug45322() {
+    public void bug45322() throws Exception {
         HSSFWorkbook wb = openSample("44958.xls");
         HSSFSheet sh = wb.getSheetAt(0);
         for(short i=0; i < 30; i++) sh.autoSizeColumn(i);
+        wb.close();
      }
 
     /**
@@ -1307,48 +1307,52 @@ public final class TestBugs extends BaseTestBugzillaIssues {
      *  with diagrams on. Don't any more
      */
     @Test
-    public void bug45414() {
-        HSSFWorkbook wb = openSample("WithThreeCharts.xls");
-        wb.getSheetAt(0).setForceFormulaRecalculation(true);
-        wb.getSheetAt(1).setForceFormulaRecalculation(false);
-        wb.getSheetAt(2).setForceFormulaRecalculation(true);
+    public void bug45414() throws Exception {
+        HSSFWorkbook wb1 = openSample("WithThreeCharts.xls");
+        wb1.getSheetAt(0).setForceFormulaRecalculation(true);
+        wb1.getSheetAt(1).setForceFormulaRecalculation(false);
+        wb1.getSheetAt(2).setForceFormulaRecalculation(true);
 
         // Write out and back in again
         // This used to break
-        HSSFWorkbook nwb = writeOutAndReadBack(wb);
+        HSSFWorkbook wb2 = writeOutAndReadBack(wb1);
+        wb1.close();
 
         // Check now set as it should be
-        assertTrue(nwb.getSheetAt(0).getForceFormulaRecalculation());
-        assertFalse(nwb.getSheetAt(1).getForceFormulaRecalculation());
-        assertTrue(nwb.getSheetAt(2).getForceFormulaRecalculation());
+        assertTrue(wb2.getSheetAt(0).getForceFormulaRecalculation());
+        assertFalse(wb2.getSheetAt(1).getForceFormulaRecalculation());
+        assertTrue(wb2.getSheetAt(2).getForceFormulaRecalculation());
+        wb2.close();
     }
 
     /**
      * Very hidden sheets not displaying as such
      */
     @Test
-    public void bug45761() {
-        HSSFWorkbook wb = openSample("45761.xls");
-        assertEquals(3, wb.getNumberOfSheets());
+    public void bug45761() throws Exception {
+        HSSFWorkbook wb1 = openSample("45761.xls");
+        assertEquals(3, wb1.getNumberOfSheets());
 
-        assertFalse(wb.isSheetHidden(0));
-        assertFalse(wb.isSheetVeryHidden(0));
-        assertTrue(wb.isSheetHidden(1));
-        assertFalse(wb.isSheetVeryHidden(1));
-        assertFalse(wb.isSheetHidden(2));
-        assertTrue(wb.isSheetVeryHidden(2));
+        assertFalse(wb1.isSheetHidden(0));
+        assertFalse(wb1.isSheetVeryHidden(0));
+        assertTrue(wb1.isSheetHidden(1));
+        assertFalse(wb1.isSheetVeryHidden(1));
+        assertFalse(wb1.isSheetHidden(2));
+        assertTrue(wb1.isSheetVeryHidden(2));
 
         // Change 0 to be very hidden, and re-load
-        wb.setSheetHidden(0, Workbook.SHEET_STATE_VERY_HIDDEN);
+        wb1.setSheetHidden(0, Workbook.SHEET_STATE_VERY_HIDDEN);
 
-        HSSFWorkbook nwb = writeOutAndReadBack(wb);
+        HSSFWorkbook wb2 = writeOutAndReadBack(wb1);
+        wb1.close();
 
-        assertFalse(nwb.isSheetHidden(0));
-        assertTrue(nwb.isSheetVeryHidden(0));
-        assertTrue(nwb.isSheetHidden(1));
-        assertFalse(nwb.isSheetVeryHidden(1));
-        assertFalse(nwb.isSheetHidden(2));
-        assertTrue(nwb.isSheetVeryHidden(2));
+        assertFalse(wb2.isSheetHidden(0));
+        assertTrue(wb2.isSheetVeryHidden(0));
+        assertTrue(wb2.isSheetHidden(1));
+        assertFalse(wb2.isSheetVeryHidden(1));
+        assertFalse(wb2.isSheetHidden(2));
+        assertTrue(wb2.isSheetVeryHidden(2));
+        wb2.close();
     }
 
     /**
@@ -1357,7 +1361,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
      * POI now supports header / footer text lengths beyond 256 bytes.
      */
     @Test
-    public void bug45777() {
+    public void bug45777() throws Exception {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet s = wb.createSheet();
 
@@ -1377,52 +1381,49 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         // Try on headers
         s.getHeader().setCenter(s248);
         assertEquals(254, s.getHeader().getRawText().length());
-        writeOutAndReadBack(wb);
+        writeOutAndReadBack(wb).close();
 
         s.getHeader().setCenter(s251);
         assertEquals(257, s.getHeader().getRawText().length());
-        writeOutAndReadBack(wb);
+        writeOutAndReadBack(wb).close();
 
-        try {
-            s.getHeader().setCenter(s250); // 256 bytes required
-            s.getHeader().setCenter(s251); // 257 bytes required
-        } catch(IllegalArgumentException e) {
-            fail("Identified bug 47244b - header can be more than 256 bytes");
-        }
+        // header can be more than 256 bytes
+        s.getHeader().setCenter(s250); // 256 bytes required
+        s.getHeader().setCenter(s251); // 257 bytes required
 
         // Now try on footers
         s.getFooter().setCenter(s248);
         assertEquals(254, s.getFooter().getRawText().length());
-        writeOutAndReadBack(wb);
+        writeOutAndReadBack(wb).close();
 
         s.getFooter().setCenter(s251);
         assertEquals(257, s.getFooter().getRawText().length());
-        writeOutAndReadBack(wb);
+        writeOutAndReadBack(wb).close();
 
-        try {
-            s.getFooter().setCenter(s250); // 256 bytes required
-            s.getFooter().setCenter(s251); // 257 bytes required
-        } catch(IllegalArgumentException e) {
-            fail("Identified bug 47244b - footer can be more than 256 bytes");
-        }
+        // footer can be more than 256 bytes
+        s.getFooter().setCenter(s250); // 256 bytes required
+        s.getFooter().setCenter(s251); // 257 bytes required
+        
+        wb.close();
     }
 
     /**
      * Charts with long titles
      */
     @Test
-    public void bug45784() {
+    public void bug45784() throws Exception {
         // This used to break
         HSSFWorkbook wb = openSample("45784.xls");
         assertEquals(1, wb.getNumberOfSheets());
-        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
+        writeOutAndReadBack(wb).close();
+        wb.close();
     }
 
    /**
      * Cell background colours
      */
     @Test
-    public void bug45492() {
+    public void bug45492() throws Exception {
         HSSFWorkbook wb = openSample("45492.xls");
         HSSFSheet s = wb.getSheetAt(0);
         HSSFRow r = s.getRow(0);
@@ -1453,17 +1454,19 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         assertEquals(11, green.getCellStyle().getFillForegroundColor());
         assertEquals(64, green.getCellStyle().getFillBackgroundColor());
         assertEquals("0:FFFF:0", p.getColor(11).getHexString());
+        wb.close();
     }
 
     /**
      * ContinueRecord after EOF
      */
     @Test
-    public void bug46137() {
+    public void bug46137() throws Exception {
         // This used to break
         HSSFWorkbook wb = openSample("46137.xls");
         assertEquals(7, wb.getNumberOfSheets());
-        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
+        writeOutAndReadBack(wb).close();
+        wb.close();
     }
 
     /**
@@ -1471,9 +1474,10 @@ public final class TestBugs extends BaseTestBugzillaIssues {
      * block[ 44 ] already removed from org.apache.poi.poifs.storage.BlockListImpl.remove
      */
     @Test
-    public void bug45290() {
+    public void bug45290() throws Exception {
         HSSFWorkbook wb = openSample("45290.xls");
         assertEquals(1, wb.getNumberOfSheets());
+        wb.close();
     }
 
     /**
@@ -1481,7 +1485,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
      *  =MY_VBA_FUNCTION("lskdjflsk")
      */
     @Test
-    public void bug30070() {
+    public void bug30070() throws Exception {
         HSSFWorkbook wb = openSample("30070.xls"); //contains custom VBA function 'Commission'
         HSSFSheet sh = wb.getSheetAt(0);
         HSSFCell cell = sh.getRow(0).getCell(1);
@@ -1495,7 +1499,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
 
         HSSFName name = wb.getNameAt(idx);
         assertEquals("Commission(Sheet0!$A$1)", name.getRefersToFormula());
-
+        wb.close();
     }
 
     /**
@@ -1514,13 +1518,14 @@ public final class TestBugs extends BaseTestBugzillaIssues {
      *
      */
     @Test
-    public void bug27364() {
+    public void bug27364() throws Exception {
         HSSFWorkbook wb = openSample("27364.xls");
         HSSFSheet sheet = wb.getSheetAt(0);
 
         assertEquals("[link_sub.xls]Sheet1!$A$1", sheet.getRow(0).getCell(0).getCellFormula());
         assertEquals("[link_sub.xls]Sheet1!$A$2", sheet.getRow(1).getCell(0).getCellFormula());
         assertEquals("[link_sub.xls]Sheet1!$A$3", sheet.getRow(2).getCell(0).getCellFormula());
+        wb.close();
     }
 
     /**
@@ -1528,18 +1533,19 @@ public final class TestBugs extends BaseTestBugzillaIssues {
      * HSSFCell.getCellFormula() fails with references to external workbooks
      */
     @Test
-    public void bug31661() {
+    public void bug31661() throws Exception {
         HSSFWorkbook wb = openSample("31661.xls");
         HSSFSheet sheet = wb.getSheetAt(0);
         HSSFCell cell = sheet.getRow(11).getCell(10); //K11
         assertEquals("+'[GM Budget.xls]8085.4450'!$B$2", cell.getCellFormula());
+        wb.close();
     }
 
     /**
      * Incorrect handling of non-ISO 8859-1 characters in Windows ANSII Code Page 1252
      */
     @Test
-    public void bug27394() {
+    public void bug27394() throws Exception {
         HSSFWorkbook wb = openSample("27394.xls");
         assertEquals("\u0161\u017E", wb.getSheetName(0));
         assertEquals("\u0161\u017E\u010D\u0148\u0159", wb.getSheetName(1));
@@ -1547,6 +1553,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
 
         assertEquals("\u0161\u017E", sheet.getRow(0).getCell(0).getStringCellValue());
         assertEquals("\u0161\u017E\u010D\u0148\u0159", sheet.getRow(1).getCell(0).getStringCellValue());
+        wb.close();
     }
 
     /**
@@ -1572,7 +1579,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         out.close();
         int size3 = out.size();
         assertEquals(size2, size3);
-
+        wb.close();
     }
 
     /**
@@ -1612,10 +1619,11 @@ public final class TestBugs extends BaseTestBugzillaIssues {
      *  non-unicode data for a name record
      */
     @Test
-    public void bug47034() {
+    public void bug47034() throws Exception {
         HSSFWorkbook wb = openSample("47034.xls");
         assertEquals(893, wb.getNumberOfNames());
         assertEquals("Matthew\\Matthew11_1\\Matthew2331_1\\Matthew2351_1\\Matthew2361_1___lab", wb.getNameName(300));
+        wb.close();
     }
 
     /**
@@ -1623,7 +1631,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
      * The test file was created in OpenOffice 3.0 as Excel does not allow cell text longer than 32,767 characters
      */
     @Test
-    public void bug46368() {
+    public void bug46368() throws Exception {
         HSSFWorkbook wb = openSample("46368.xls");
     	HSSFSheet s = wb.getSheetAt(0);
         HSSFCell cell1 = s.getRow(0).getCell(0);
@@ -1631,13 +1639,14 @@ public final class TestBugs extends BaseTestBugzillaIssues {
 
         HSSFCell cell2 = s.getRow(2).getCell(0);
         assertEquals(32766, cell2.getStringCellValue().length());
+        wb.close();
     }
 
     /**
      * Short records on certain sheets with charts in them
      */
     @Test
-    public void bug48180() {
+    public void bug48180() throws Exception {
         HSSFWorkbook wb = openSample("48180.xls");
 
     	HSSFSheet s = wb.getSheetAt(0);
@@ -1646,6 +1655,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
 
         HSSFCell cell2 = s.getRow(0).getCell(1);
         assertEquals(1.0, cell2.getNumericCellValue(), 0.0);
+        wb.close();
     }
 
     /**
@@ -1675,12 +1685,12 @@ public final class TestBugs extends BaseTestBugzillaIssues {
      */
     @Test
     public void bug47847() throws Exception {
-       HSSFWorkbook wb = openSample("47847.xls");
-       assertEquals(3, wb.getNumberOfSheets());
+       HSSFWorkbook wb1 = openSample("47847.xls");
+       assertEquals(3, wb1.getNumberOfSheets());
 
        // Find the SST record
-       UnicodeString withExt = wb.getWorkbook().getSSTString(0);
-       UnicodeString withoutExt = wb.getWorkbook().getSSTString(31);
+       UnicodeString withExt = wb1.getWorkbook().getSSTString(0);
+       UnicodeString withoutExt = wb1.getWorkbook().getSSTString(31);
 
        assertEquals("O:Alloc:Qty", withExt.getString());
        assertTrue((withExt.getOptionFlags() & 0x0004) == 0x0004);
@@ -1692,18 +1702,20 @@ public final class TestBugs extends BaseTestBugzillaIssues {
 
 
        // Write out and re-read
-       wb = writeOutAndReadBack(wb);
-       assertEquals(3, wb.getNumberOfSheets());
+       HSSFWorkbook wb2 = writeOutAndReadBack(wb1);
+       wb1.close();
+       assertEquals(3, wb2.getNumberOfSheets());
 
        // Check it's the same now
-       withExt = wb.getWorkbook().getSSTString(0);
-       withoutExt = wb.getWorkbook().getSSTString(31);
+       withExt = wb2.getWorkbook().getSSTString(0);
+       withoutExt = wb2.getWorkbook().getSSTString(31);
 
        assertEquals("O:Alloc:Qty", withExt.getString());
        assertTrue((withExt.getOptionFlags() & 0x0004) == 0x0004);
 
        assertEquals("RT", withoutExt.getString());
        assertTrue((withoutExt.getOptionFlags() & 0x0004) == 0x0000);
+       wb2.close();
     }
 
     /**
@@ -1712,15 +1724,17 @@ public final class TestBugs extends BaseTestBugzillaIssues {
      */
     @Test
     public void bug49096() throws Exception {
-       HSSFWorkbook wb = openSample("49096.xls");
-       assertEquals(1, wb.getNumberOfSheets());
+       HSSFWorkbook wb1 = openSample("49096.xls");
+       assertEquals(1, wb1.getNumberOfSheets());
 
-       assertNotNull(wb.getSheetAt(0));
-       wb.cloneSheet(0);
-       assertEquals(2, wb.getNumberOfSheets());
+       assertNotNull(wb1.getSheetAt(0));
+       wb1.cloneSheet(0);
+       assertEquals(2, wb1.getNumberOfSheets());
 
-       wb = writeOutAndReadBack(wb);
-       assertEquals(2, wb.getNumberOfSheets());
+       HSSFWorkbook wb2 = writeOutAndReadBack(wb1);
+       wb1.close();
+       assertEquals(2, wb2.getNumberOfSheets());
+       wb2.close();
     }
 
     /**
@@ -1789,10 +1803,10 @@ public final class TestBugs extends BaseTestBugzillaIssues {
      */
     @Test
     public void bug45970() throws Exception {
-       HSSFWorkbook wb = openSample("FormulaRefs.xls");
-       assertEquals(3, wb.getNumberOfSheets());
+       HSSFWorkbook wb1 = openSample("FormulaRefs.xls");
+       assertEquals(3, wb1.getNumberOfSheets());
 
-       HSSFSheet s = wb.getSheetAt(0);
+       HSSFSheet s = wb1.getSheetAt(0);
        HSSFRow row;
 
        row = s.getRow(0);
@@ -1831,8 +1845,9 @@ public final class TestBugs extends BaseTestBugzillaIssues {
 
 
        // Re-test
-       wb = writeOutAndReadBack(wb);
-       s = wb.getSheetAt(0);
+       HSSFWorkbook wb2 = writeOutAndReadBack(wb1);
+       wb1.close();
+       s = wb2.getSheetAt(0);
 
        row = s.getRow(0);
        assertEquals(Cell.CELL_TYPE_NUMERIC, row.getCell(1).getCellType());
@@ -1863,6 +1878,8 @@ public final class TestBugs extends BaseTestBugzillaIssues {
        assertEquals(Cell.CELL_TYPE_FORMULA, row.getCell(1).getCellType());
        assertEquals("'[$http://example.com/FormulaRefs.xls]Sheet1'!B1", row.getCell(1).getCellFormula());
        assertEquals(234.0, row.getCell(1).getNumericCellValue(), 0);*/
+       
+       wb2.close();
     }
 
     /**
@@ -1870,8 +1887,8 @@ public final class TestBugs extends BaseTestBugzillaIssues {
      */
     @Test
     public void bug49185() throws Exception {
-      HSSFWorkbook wb = openSample("49185.xls");
-      Name name = wb.getName("foobarName");
+      HSSFWorkbook wb1 = openSample("49185.xls");
+      Name name = wb1.getName("foobarName");
       assertEquals("This is a comment", name.getComment());
 
       // Rename the name, comment comes with it
@@ -1879,8 +1896,9 @@ public final class TestBugs extends BaseTestBugzillaIssues {
       assertEquals("This is a comment", name.getComment());
 
       // Save and re-check
-      wb = writeOutAndReadBack(wb);
-      name = wb.getName("ChangedName");
+      HSSFWorkbook wb2 = writeOutAndReadBack(wb1);
+      wb1.close();
+      name = wb2.getName("ChangedName");
       assertEquals("This is a comment", name.getComment());
 
       // Now try to change it
@@ -1888,9 +1906,11 @@ public final class TestBugs extends BaseTestBugzillaIssues {
       assertEquals("Changed Comment", name.getComment());
 
       // Save and re-check
-      wb = writeOutAndReadBack(wb);
-      name = wb.getName("ChangedName");
+      HSSFWorkbook wb3 = writeOutAndReadBack(wb2);
+      wb2.close();
+      name = wb3.getName("ChangedName");
       assertEquals("Changed Comment", name.getComment());
+      wb3.close();
     }
 
     /**
@@ -1898,8 +1918,8 @@ public final class TestBugs extends BaseTestBugzillaIssues {
      */
     @Test
     public void bug49524() throws Exception {
-       HSSFWorkbook wb = openSample("49524.xls");
-       Sheet s = wb.getSheetAt(0);
+       HSSFWorkbook wb1 = openSample("49524.xls");
+       Sheet s = wb1.getSheetAt(0);
        Row r = s.getRow(0);
        Cell rotated = r.getCell(0);
        Cell normal = r.getCell(1);
@@ -1909,7 +1929,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
        assertEquals(0xff, rotated.getCellStyle().getRotation());
 
        // Add a new style, also rotated
-       CellStyle cs = wb.createCellStyle();
+       CellStyle cs = wb1.createCellStyle();
        cs.setRotation((short)0xff);
        Cell nc = r.createCell(2);
        nc.setCellValue("New Rotated Text");
@@ -1917,10 +1937,11 @@ public final class TestBugs extends BaseTestBugzillaIssues {
        assertEquals(0xff, nc.getCellStyle().getRotation());
 
        // Write out and read back
-       wb = writeOutAndReadBack(wb);
+       HSSFWorkbook wb2 = writeOutAndReadBack(wb1);
+       wb1.close();
 
        // Re-check
-       s = wb.getSheetAt(0);
+       s = wb2.getSheetAt(0);
        r = s.getRow(0);
        rotated = r.getCell(0);
        normal = r.getCell(1);
@@ -1929,6 +1950,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
        assertEquals(0, normal.getCellStyle().getRotation());
        assertEquals(0xff, rotated.getCellStyle().getRotation());
        assertEquals(0xff, nc.getCellStyle().getRotation());
+       wb2.close();
     }
 
     /**
@@ -1959,6 +1981,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
 
        // Write out and read back
        HSSFWorkbook wb2 = writeOutAndReadBack(wb1);
+       wb1.close();
 
        // Re-check
        assertEquals("Testing", wb2.getCellStyleAt((short)21).getUserStyleName());
@@ -1969,7 +1992,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
     }
 
     @Test
-    public void bug49751() {
+    public void bug49751() throws Exception {
         HSSFWorkbook wb = openSample("49751.xls");
         short numCellStyles = wb.getNumCellStyles();
         List<String> namedStyles = Arrays.asList(
@@ -1990,6 +2013,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
             }
         }
         assertTrue(namedStyles.containsAll(collecteddStyles));
+        wb.close();
     }
 
     /**
@@ -1998,9 +2022,9 @@ public final class TestBugs extends BaseTestBugzillaIssues {
     @Test
     public void bug49931() throws Exception {
        HSSFWorkbook wb = openSample("49931.xls");
-
        assertEquals(1, wb.getNumberOfSheets());
        assertEquals("Foo", wb.getSheetAt(0).getRow(0).getCell(0).getRichStringCellValue().toString());
+       wb.close();
     }
 
     /**
@@ -2012,14 +2036,15 @@ public final class TestBugs extends BaseTestBugzillaIssues {
        HSSFSheet sh = wb.getSheetAt(0);
        HSSFFooter f = sh.getFooter();
 
-       // Will show as the centre, as that is what excel does
-       //  with an invalid footer lacking left/right/centre details
+       // Will show as the center, as that is what excel does
+       //  with an invalid footer lacking left/right/center details
        assertEquals("Left text should be empty", "", f.getLeft());
        assertEquals("Right text should be empty", "", f.getRight());
        assertEquals(
              "Center text should contain the illegal value",
              "BlahBlah blah blah  ", f.getCenter()
        );
+       wb.close();
     }
 
     /**
@@ -2028,13 +2053,15 @@ public final class TestBugs extends BaseTestBugzillaIssues {
     @Test
     public void bug50020() throws Exception {
        HSSFWorkbook wb = openSample("50020.xls");
-       writeOutAndReadBack(wb);
+       writeOutAndReadBack(wb).close();
+       wb.close();
     }
 
     @Test
     public void bug50426() throws Exception {
        HSSFWorkbook wb = openSample("50426.xls");
-       writeOutAndReadBack(wb);
+       writeOutAndReadBack(wb).close();
+       wb.close();
     }
 
     /**
@@ -2126,6 +2153,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
        assertEquals("16", df.formatCellValue(r18.getCell(1)));
        assertEquals("35", df.formatCellValue(r18.getCell(2)));
        assertEquals("123", df.formatCellValue(r18.getCell(3)));
+       wb.close();
     }
 
     /**
@@ -2138,8 +2166,8 @@ public final class TestBugs extends BaseTestBugzillaIssues {
     public void bug50833() throws Exception {
        Biff8EncryptionKey.setCurrentUserPassword(null);
 
-       HSSFWorkbook wb = openSample("50833.xls");
-       HSSFSheet s = wb.getSheetAt(0);
+       HSSFWorkbook wb1 = openSample("50833.xls");
+       HSSFSheet s = wb1.getSheetAt(0);
        assertEquals("Sheet1", s.getSheetName());
        assertEquals(false, s.getProtect());
 
@@ -2152,8 +2180,9 @@ public final class TestBugs extends BaseTestBugzillaIssues {
        assertEquals("Robert Lawrence:\ntest comment", cmt.getString().getString());
 
        // Reload
-       wb = writeOutAndReadBack(wb);
-       s = wb.getSheetAt(0);
+       HSSFWorkbook wb2 = writeOutAndReadBack(wb1);
+       wb1.close();
+       s = wb2.getSheetAt(0);
        c = s.getRow(0).getCell(0);
 
        // Re-check the comment
@@ -2163,15 +2192,18 @@ public final class TestBugs extends BaseTestBugzillaIssues {
        assertEquals("Robert Lawrence:\ntest comment", cmt.getString().getString());
 
        // TODO Identify what excel doesn't like, and check for that
+       wb2.close();
     }
 
     @Test
     public void bug50779() throws Exception {
-       HSSFWorkbook wb1 = openSample("50779_1.xls");
-       writeOutAndReadBack(wb1);
+        HSSFWorkbook wb1 = openSample("50779_1.xls");
+        writeOutAndReadBack(wb1).close();
+        wb1.close();
 
         HSSFWorkbook wb2 = openSample("50779_2.xls");
-        writeOutAndReadBack(wb2);
+        writeOutAndReadBack(wb2).close();
+        wb2.close();
     }
 
     /**
@@ -2182,6 +2214,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
     public void bug50939() throws Exception {
        HSSFWorkbook wb = openSample("50939.xls");
        assertEquals(2, wb.getNumberOfSheets());
+       wb.close();
     }
 
     @Test
@@ -2189,6 +2222,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
        HSSFWorkbook wb = openSample("49219.xls");
        assertEquals(1, wb.getNumberOfSheets());
        assertEquals("DGATE", wb.getSheetAt(0).getRow(1).getCell(0).getStringCellValue());
+       wb.close();
     }
 
     @Test
@@ -2220,7 +2254,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
            assertEquals("SECOND(A1)", s.getRow(7).getCell(0).getCellFormula());
            assertEquals(54.0,         s.getRow(7).getCell(0).getNumericCellValue(), 0);
     
-           // Re-evaulate and check
+           // Re-evaluate and check
            HSSFFormulaEvaluator.evaluateAllFormulaCells(wb);
            assertEquals("HOUR(A1)",   s.getRow(5).getCell(0).getCellFormula());
            assertEquals(11.0,         s.getRow(5).getCell(0).getNumericCellValue(), 0);
@@ -2240,6 +2274,8 @@ public final class TestBugs extends BaseTestBugzillaIssues {
            assertEquals(39.0+14.0+1,  s.getRow(6).getCell(0).getNumericCellValue(), 0);
            assertEquals("SECOND(A1)", s.getRow(7).getCell(0).getCellFormula());
            assertEquals(54.0+24.0-60, s.getRow(7).getCell(0).getNumericCellValue(), 0);
+           
+           wb.close();
         } finally {
             LocaleUtil.setUserTimeZone(userTimeZone);
         }
@@ -2252,10 +2288,12 @@ public final class TestBugs extends BaseTestBugzillaIssues {
      */
     @Test
     public void bug51143() throws Exception {
-       HSSFWorkbook wb = openSample("51143.xls");
-       assertEquals(1, wb.getNumberOfSheets());
-       wb = writeOutAndReadBack(wb);
-       assertEquals(1, wb.getNumberOfSheets());
+       HSSFWorkbook wb1 = openSample("51143.xls");
+       assertEquals(1, wb1.getNumberOfSheets());
+       HSSFWorkbook wb2 = writeOutAndReadBack(wb1);
+       wb1.close();
+       assertEquals(1, wb2.getNumberOfSheets());
+       wb2.close();
     }
 
     /**
@@ -2311,9 +2349,10 @@ public final class TestBugs extends BaseTestBugzillaIssues {
     }
 
     @Test
-    public void bug51670() {
+    public void bug51670() throws Exception {
         HSSFWorkbook wb = openSample("51670.xls");
-        writeOutAndReadBack(wb);
+        writeOutAndReadBack(wb).close();
+        wb.close();
     }
 
     /**
@@ -2322,7 +2361,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
      * DISABLED - We currently get the formula wrong, and mis-evaluate
      */
     @Ignore
-    public void test48703() {
+    public void test48703() throws Exception {
         HSSFWorkbook wb = openSample("48703.xls");
         assertEquals(3, wb.getNumberOfSheets());
 
@@ -2338,6 +2377,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         HSSFFormulaEvaluator eval = new HSSFFormulaEvaluator(wb);
         eval.evaluateFormulaCell(c);
         assertEquals(4.0, c.getNumericCellValue(), 0);
+        wb.close();
     }
 
     /**
@@ -2350,26 +2390,29 @@ public final class TestBugs extends BaseTestBugzillaIssues {
     }
 
     @Test
-    public void bug49896() {
+    public void bug49896() throws Exception {
         HSSFWorkbook wb = openSample("49896.xls");
         HSSFCell  cell = wb.getSheetAt(0).getRow(1).getCell(1);
         String PATH_SEPARATOR = System.getProperty("file.separator");
         assertEquals("VLOOKUP(A2,'[C:Documents and Settings" + PATH_SEPARATOR+"Yegor"+PATH_SEPARATOR
                 +"My Documents"+PATH_SEPARATOR+"csco.xls]Sheet1'!$A$2:$B$3,2,FALSE)",
                 cell.getCellFormula());
+        wb.close();
      }
 
     @Test
     public void bug49529() throws Exception {
         // user code reported in Bugzilla #49529
-        HSSFWorkbook workbook = openSample("49529.xls");
-        workbook.getSheetAt(0).createDrawingPatriarch();
+        HSSFWorkbook wb = openSample("49529.xls");
+        wb.getSheetAt(0).createDrawingPatriarch();
         // prior to the fix the line below failed with
         // java.lang.IllegalStateException: EOF - next record not available
-        workbook.cloneSheet(0);
+        wb.cloneSheet(0);
 
         // make sure we are still readable
-        writeOutAndReadBack(workbook);
+        writeOutAndReadBack(wb).close();
+        
+        wb.close();
     }
 
     /**
@@ -2395,13 +2438,14 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         assertEquals("evaluating c1", 30.0, eval.evaluate(c1).getNumberValue(), 0.001);
         assertEquals("evaluating d1", 30.0, eval.evaluate(d1).getNumberValue(), 0.001);
         assertEquals("evaluating e1", 30.0, eval.evaluate(e1).getNumberValue(), 0.001);
+        wb.close();
     }
 
     @Test
-    public void bug51675(){
+    public void bug51675() throws Exception {
         final List<Short> list = new ArrayList<Short>();
-        HSSFWorkbook workbook = openSample("51675.xls");
-        HSSFSheet sh = workbook.getSheetAt(0);
+        HSSFWorkbook wb = openSample("51675.xls");
+        HSSFSheet sh = wb.getSheetAt(0);
         InternalSheet ish = HSSFTestHelper.getSheetForTest(sh);
         PageSettingsBlock psb = (PageSettingsBlock) ish.getRecords().get(13);
         psb.visitContainedRecords(new RecordAggregate.RecordVisitor() {
@@ -2412,6 +2456,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         });
         assertTrue(list.get(list.size()-1).intValue() == UnknownRecord.BITMAP_00E9);
         assertTrue(list.get(list.size()-2).intValue() == UnknownRecord.HEADER_FOOTER_089C);
+        wb.close();
     }
 
     @Test
@@ -2453,8 +2498,8 @@ public final class TestBugs extends BaseTestBugzillaIssues {
     }
 
     @Test
-    public void bug46250(){
-        Workbook wb = openSample("46250.xls");
+    public void bug46250() throws Exception {
+        HSSFWorkbook wb = openSample("46250.xls");
         Sheet sh = wb.getSheet("Template");
         Sheet cSh = wb.cloneSheet(wb.getSheetIndex(sh));
 
@@ -2464,12 +2509,14 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         tb.setString(new HSSFRichTextString("POI test"));
         tb.setAnchor(new HSSFClientAnchor(0,0,0,0,(short)0,0,(short)10,10));
 
-        wb = writeOutAndReadBack((HSSFWorkbook) wb);
+        writeOutAndReadBack(wb).close();
+        
+        wb.close();
     }
 
     @Test
-    public void bug53404(){
-        Workbook wb = openSample("53404.xls");
+    public void bug53404() throws Exception {
+        HSSFWorkbook wb = openSample("53404.xls");
         Sheet sheet = wb.getSheet("test-sheet");
         int rowCount = sheet.getLastRowNum() + 1;
         int newRows = 5;
@@ -2485,46 +2532,48 @@ public final class TestBugs extends BaseTestBugzillaIssues {
             row.createCell(6).setCellValue("added cells.");
         }
 
-        wb = writeOutAndReadBack((HSSFWorkbook) wb);
+        writeOutAndReadBack(wb).close();
+        
+        wb.close();
     }
 
     @Test
-    public void bug54016() {
+    public void bug54016() throws Exception {
         // This used to break
         HSSFWorkbook wb = openSample("54016.xls");
-        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
+        writeOutAndReadBack(wb).close();
+        wb.close();
     }
 
     /** Row style information is 12 not 16 bits */
     @Test
-    public void bug49237() {
+    public void bug49237() throws Exception {
         HSSFWorkbook wb = openSample("49237.xls");
         HSSFSheet sheet = wb.getSheetAt(0);
         HSSFRow row = sheet.getRow(0);
         HSSFCellStyle rstyle = row.getRowStyle();
         assertEquals(rstyle.getBorderBottom(), CellStyle.BORDER_DOUBLE);
+        wb.close();
     }
 
-    @Test
+    /** POI doesn't currently support the RC4 CryptoAPI encryption header structure */
+    @Test(expected=EncryptedDocumentException.class)
     public void bug35897() throws Exception {
         // password is abc
         try {
             Biff8EncryptionKey.setCurrentUserPassword("abc");
-            openSample("xor-encryption-abc.xls");
+            openSample("xor-encryption-abc.xls").close();
         } finally {
             Biff8EncryptionKey.setCurrentUserPassword(null);
         }
 
         // One using the only-recently-documented encryption header type 4,
         //  and the RC4 CryptoAPI encryption header structure
-        try {
-            openSample("35897-type4.xls");
-            fail("POI doesn't currently support the RC4 CryptoAPI encryption header structure");
-        } catch (EncryptedDocumentException e) {}
+        openSample("35897-type4.xls").close();
     }
 
     @Test
-    public void bug56450() {
+    public void bug56450() throws Exception {
         HSSFWorkbook wb = openSample("56450.xls");
         HSSFSheet sheet = wb.getSheetAt(0);
         int comments = 0;
@@ -2537,13 +2586,14 @@ public final class TestBugs extends BaseTestBugzillaIssues {
             }
         }
         assertEquals(0, comments);
+        wb.close();
     }
 
     /**
      * Files initially created with Excel 2010 can have >3 CF rules
      */
     @Test
-    public void bug56482() {
+    public void bug56482() throws Exception {
         HSSFWorkbook wb = openSample("56482.xls");
         assertEquals(1, wb.getNumberOfSheets());
 
@@ -2551,16 +2601,18 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         HSSFSheetConditionalFormatting cf = sheet.getSheetConditionalFormatting();
 
         assertEquals(5, cf.getNumConditionalFormattings());
+        wb.close();
     }
 
     @Test
     public void bug56325() throws IOException {
         HSSFWorkbook wb1;
+        POIFSFileSystem fs;
 
         File file = HSSFTestDataSamples.getSampleFile("56325.xls");
         InputStream stream = new FileInputStream(file);
         try {
-            POIFSFileSystem fs = new POIFSFileSystem(stream);
+            fs = new POIFSFileSystem(stream);
             wb1 = new HSSFWorkbook(fs);
         } finally {
             stream.close();
@@ -2570,15 +2622,16 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         wb1.removeSheetAt(0);
         assertEquals(2, wb1.getNumberOfSheets());
 
-        HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1);
+        HSSFWorkbook wb2 = writeOutAndReadBack(wb1);
         wb1.close();
+        fs.close();
         assertEquals(2, wb2.getNumberOfSheets());
         wb2.removeSheetAt(0);
         assertEquals(1, wb2.getNumberOfSheets());
         wb2.removeSheetAt(0);
         assertEquals(0, wb2.getNumberOfSheets());
 
-        HSSFWorkbook wb3 = HSSFTestDataSamples.writeOutAndReadBack(wb2);
+        HSSFWorkbook wb3 = writeOutAndReadBack(wb2);
         wb2.close();
         
         assertEquals(0, wb3.getNumberOfSheets());
@@ -2587,29 +2640,24 @@ public final class TestBugs extends BaseTestBugzillaIssues {
 
     @Test
     public void bug56325a() throws IOException {
-        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("56325a.xls");
+        HSSFWorkbook wb1 = HSSFTestDataSamples.openSampleWorkbook("56325a.xls");
 
-        HSSFSheet sheet = wb.cloneSheet(2);
-        wb.setSheetName(3, "Clone 1");
+        HSSFSheet sheet = wb1.cloneSheet(2);
+        wb1.setSheetName(3, "Clone 1");
         sheet.setRepeatingRows(CellRangeAddress.valueOf("2:3"));
-        wb.setPrintArea(3, "$A$4:$C$10");
+        wb1.setPrintArea(3, "$A$4:$C$10");
 
-        sheet = wb.cloneSheet(2);
-        wb.setSheetName(4, "Clone 2");
+        sheet = wb1.cloneSheet(2);
+        wb1.setSheetName(4, "Clone 2");
         sheet.setRepeatingRows(CellRangeAddress.valueOf("2:3"));
-        wb.setPrintArea(4, "$A$4:$C$10");
+        wb1.setPrintArea(4, "$A$4:$C$10");
 
-        wb.removeSheetAt(2);
+        wb1.removeSheetAt(2);
 
-        Workbook wbBack = HSSFTestDataSamples.writeOutAndReadBack(wb);
-        assertEquals(4, wbBack.getNumberOfSheets());
-        
-//        OutputStream fOut = new FileOutputStream("C:\\temp\\56325a.xls");
-//        try {
-//        	wb.write(fOut);
-//        } finally {
-//        	fOut.close();
-//        }
+        Workbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1);
+        assertEquals(4, wb2.getNumberOfSheets());
+        wb2.close();
+        wb1.close();
     }
 
     /**
@@ -2652,6 +2700,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
 
         // Try to evaluate everything
         eval.evaluateAll();
+        wb.close();
     }
 
     /**
@@ -2673,8 +2722,9 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         // Switch to newStyle, style is now un-used
         cell.setCellStyle(newStyle);
 
-        // Optimise
+        // Optimize
         HSSFOptimiser.optimiseCellStyles(workbook);
+        workbook.close();
     }
 
     /**
@@ -2687,6 +2737,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         assertFormula(wb, s.getRow(2).getCell(0), "(C2:D3 D3:E4)", "4.0");
         assertFormula(wb, s.getRow(6).getCell(0), "Tabelle2!E:E Tabelle2!$A11:$IV11", "5.0");
         assertFormula(wb, s.getRow(8).getCell(0), "Tabelle2!E:F Tabelle2!$A11:$IV12", null);
+        wb.close();
     }
     
     private void assertFormula(Workbook wb, Cell intF, String expectedFormula, String expectedResultOrNull) {
@@ -2707,23 +2758,25 @@ public final class TestBugs extends BaseTestBugzillaIssues {
     }
 
     @Test
-    public void bug42016() {
+    public void bug42016() throws Exception {
         Workbook wb = openSample("42016.xls");
         Sheet s = wb.getSheetAt(0);
         for(int row = 0;row < 7;row++) {
             assertEquals("A$1+B$1", s.getRow(row).getCell(2).getCellFormula());
         }
+        wb.close();
     }
 
     /**
      * Unexpected record type (org.apache.poi.hssf.record.ColumnInfoRecord)
      */
     @Test
-    public void bug53984() {
+    public void bug53984() throws Exception {
         Workbook wb = openSample("53984.xls");
         Sheet s = wb.getSheetAt(0);
         assertEquals("International Communication Services SA", s.getRow(2).getCell(0).getStringCellValue());
         assertEquals("Saudi Arabia-Riyadh", s.getRow(210).getCell(0).getStringCellValue());
+        wb.close();
     }
 
     /**
@@ -2733,9 +2786,9 @@ public final class TestBugs extends BaseTestBugzillaIssues {
      * TODO Fix this so that it works - formulas are ending up as
      *  #REF when being changed
      */
-//    @Test
-    public void bug46670_existing() {
-        HSSFWorkbook wb;
+    @Test
+    @Ignore
+    public void bug46670_existing() throws Exception {
         Sheet s;
         Cell c;
 
@@ -2744,36 +2797,41 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         String refHttp  = "'[9http://www.principlesofeconometrics.com/excel/airline.xls]Sheet1'!$A$2";
 
         // Check we can read them correctly
-        wb = openSample("46670_local.xls");
-        s = wb.getSheetAt(0);
+        HSSFWorkbook wb1 = openSample("46670_local.xls");
+        s = wb1.getSheetAt(0);
         assertEquals(refLocal, s.getRow(0).getCell(0).getCellFormula());
+        wb1.close();
 
-        wb = openSample("46670_http.xls");
-        s = wb.getSheetAt(0);
+        HSSFWorkbook wb2 = openSample("46670_http.xls");
+        s = wb2.getSheetAt(0);
         assertEquals(refHttp, s.getRow(0).getCell(0).getCellFormula());
+        wb2.close();
 
         // Now try to set them to the same values, and ensure that
         //  they end up as they did before, even with a save and re-load
-        wb = openSample("46670_local.xls");
-        s = wb.getSheetAt(0);
+        HSSFWorkbook wb3 = openSample("46670_local.xls");
+        s = wb3.getSheetAt(0);
         c = s.getRow(0).getCell(0);
         c.setCellFormula(refLocal);
         assertEquals(refLocal, c.getCellFormula());
 
-        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
-        s = wb.getSheetAt(0);
+        HSSFWorkbook wb4 = HSSFTestDataSamples.writeOutAndReadBack(wb3);
+        wb3.close();
+        s = wb4.getSheetAt(0);
         assertEquals(refLocal, s.getRow(0).getCell(0).getCellFormula());
+        wb4.close();
 
-
-        wb = openSample("46670_http.xls");
-        s = wb.getSheetAt(0);
+        HSSFWorkbook wb5 = openSample("46670_http.xls");
+        s = wb5.getSheetAt(0);
         c = s.getRow(0).getCell(0);
         c.setCellFormula(refHttp);
         assertEquals(refHttp, c.getCellFormula());
 
-        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
-        s = wb.getSheetAt(0);
+        HSSFWorkbook wb6 = HSSFTestDataSamples.writeOutAndReadBack(wb5);
+        wb5.close();
+        s = wb6.getSheetAt(0);
         assertEquals(refHttp, s.getRow(0).getCell(0).getCellFormula());
+        wb6.close();
     }
 
     @Test
@@ -2794,22 +2852,24 @@ public final class TestBugs extends BaseTestBugzillaIssues {
 
     @Test
     public void test53109() throws IOException {
-        HSSFWorkbook wb = openSample("53109.xls");
+        HSSFWorkbook wb1 = openSample("53109.xls");
         
-        Workbook wbBack = HSSFTestDataSamples.writeOutAndReadBack(wb);
-        assertNotNull(wbBack);
+        HSSFWorkbook wb2 = writeOutAndReadBack(wb1);
+        assertNotNull(wb2);
+        wb2.close();
         
-        wb.close();
+        wb1.close();
     }
     
     @Test
     public void test53109a() throws IOException {
-        HSSFWorkbook wb = openSample("com.aida-tour.www_SPO_files_maldives%20august%20october.xls");
+        HSSFWorkbook wb1 = openSample("com.aida-tour.www_SPO_files_maldives%20august%20october.xls");
         
-        Workbook wbBack = HSSFTestDataSamples.writeOutAndReadBack(wb);
-        assertNotNull(wbBack);
+        Workbook wb2 = writeOutAndReadBack(wb1);
+        assertNotNull(wb2);
+        wb2.close();
         
-        wb.close();
+        wb1.close();
     }
     
     @Test

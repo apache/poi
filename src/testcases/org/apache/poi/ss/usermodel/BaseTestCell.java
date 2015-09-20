@@ -26,8 +26,6 @@ import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.util.Calendar;
-import java.util.Locale;
-import java.util.TimeZone;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.ITestDataProvider;
@@ -41,6 +39,7 @@ import junit.framework.AssertionFailedError;
  * Common superclass for testing implementations of
  *  {@link org.apache.poi.ss.usermodel.Cell}
  */
+@SuppressWarnings("deprecation")
 public abstract class BaseTestCell {
 
 	protected final ITestDataProvider _testDataProvider;
@@ -53,7 +52,7 @@ public abstract class BaseTestCell {
 	}
 
 	@Test
-	public void testSetValues() {
+	public void testSetValues() throws Exception {
 		Workbook book = _testDataProvider.createWorkbook();
 		Sheet sheet = book.createSheet("test");
 		Row row = sheet.createRow(0);
@@ -108,6 +107,8 @@ public abstract class BaseTestCell {
 		assertEquals(Cell.CELL_TYPE_ERROR, cell.getCellType());
 		assertProhibitedValueAccess(cell, Cell.CELL_TYPE_NUMERIC, Cell.CELL_TYPE_BOOLEAN,
 				Cell.CELL_TYPE_FORMULA, Cell.CELL_TYPE_STRING);
+		
+		book.close();
 	}
 
 	private static void assertProhibitedValueAccess(Cell cell, int ... types){
@@ -142,10 +143,10 @@ public abstract class BaseTestCell {
 	 * test that Boolean and Error types (BoolErrRecord) are supported properly.
 	 */
 	@Test
-	public void testBoolErr() {
+	public void testBoolErr() throws Exception {
 
-		Workbook wb = _testDataProvider.createWorkbook();
-		Sheet s = wb.createSheet("testSheet1");
+		Workbook wb1 = _testDataProvider.createWorkbook();
+		Sheet s = wb1.createSheet("testSheet1");
 		Row r;
 		Cell c;
 		r = s.createRow(0);
@@ -166,8 +167,9 @@ public abstract class BaseTestCell {
 		//c.setCellType(HSSFCell.CELL_TYPE_ERROR);
 		c.setCellErrorValue((byte)7);
 
-		wb = _testDataProvider.writeOutAndReadBack(wb);
-		s = wb.getSheetAt(0);
+		Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1);
+		wb1.close();
+		s = wb2.getSheetAt(0);
 		r = s.getRow(0);
 		c = r.getCell(1);
 		assertTrue("boolean value 0,1 = true",c.getBooleanCellValue());
@@ -178,20 +180,21 @@ public abstract class BaseTestCell {
 		assertTrue("boolean value 0,1 = 0",c.getErrorCellValue() == 0);
 		c = r.getCell(2);
 		assertTrue("boolean value 0,2 = 7",c.getErrorCellValue() == 7);
+		wb2.close();
 	}
 
 	/**
 	 * test that Cell Styles being applied to formulas remain intact
 	 */
 	@Test
-	public void testFormulaStyle() {
+	public void testFormulaStyle() throws Exception {
 
-		Workbook wb = _testDataProvider.createWorkbook();
-		Sheet s = wb.createSheet("testSheet1");
+		Workbook wb1 = _testDataProvider.createWorkbook();
+		Sheet s = wb1.createSheet("testSheet1");
 		Row r = null;
 		Cell c = null;
-		CellStyle cs = wb.createCellStyle();
-		Font f = wb.createFont();
+		CellStyle cs = wb1.createCellStyle();
+		Font f = wb1.createFont();
 		f.setFontHeightInPoints((short) 20);
 		f.setColor(IndexedColors.RED.getIndex());
 		f.setBoldweight(Font.BOLDWEIGHT_BOLD);
@@ -208,8 +211,9 @@ public abstract class BaseTestCell {
 		c.setCellStyle(cs);
 		c.setCellFormula("2*3");
 
-		wb = _testDataProvider.writeOutAndReadBack(wb);
-		s = wb.getSheetAt(0);
+		Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1);
+		wb1.close();
+		s = wb2.getSheetAt(0);
 		r = s.getRow(0);
 		c = r.getCell(0);
 
@@ -222,14 +226,15 @@ public abstract class BaseTestCell {
 		assertTrue("Left Border", (cs.getBorderLeft() == (short)1));
 		assertTrue("Right Border", (cs.getBorderRight() == (short)1));
 		assertTrue("Bottom Border", (cs.getBorderBottom() == (short)1));
+		wb2.close();
 	}
 
 	/**tests the toString() method of HSSFCell*/
-	@Test
-	public void testToString() {
-		Workbook wb = _testDataProvider.createWorkbook();
-		Row r = wb.createSheet("Sheet1").createRow(0);
-		CreationHelper factory = wb.getCreationHelper();
+    @Test
+	public void testToString() throws Exception {
+		Workbook wb1 = _testDataProvider.createWorkbook();
+		Row r = wb1.createSheet("Sheet1").createRow(0);
+		CreationHelper factory = wb1.getCreationHelper();
 
 		r.createCell(0).setCellValue(true);
 		r.createCell(1).setCellValue(1.5);
@@ -244,21 +249,23 @@ public abstract class BaseTestCell {
 		assertEquals("Formula", "A1+B1", r.getCell(4).toString());
 
 		//Write out the file, read it in, and then check cell values
-		wb = _testDataProvider.writeOutAndReadBack(wb);
+		Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1);
+		wb1.close();
 
-		r = wb.getSheetAt(0).getRow(0);
+		r = wb2.getSheetAt(0).getRow(0);
 		assertEquals("Boolean", "TRUE", r.getCell(0).toString());
 		assertEquals("Numeric", "1.5", r.getCell(1).toString());
 		assertEquals("String", "Astring", r.getCell(2).toString());
 		assertEquals("Error", "#DIV/0!", r.getCell(3).toString());
 		assertEquals("Formula", "A1+B1", r.getCell(4).toString());
+		wb2.close();
 	}
 
 	/**
 	 *  Test that setting cached formula result keeps the cell type
 	 */
 	@Test
-	public void testSetFormulaValue() {
+	public void testSetFormulaValue() throws Exception {
 		Workbook wb = _testDataProvider.createWorkbook();
 		Sheet s = wb.createSheet();
 		Row r = s.createRow(0);
@@ -285,6 +292,7 @@ public abstract class BaseTestCell {
         Cell c3 = r.createCell(2);
         c3.setCellFormula(null);
         assertEquals(Cell.CELL_TYPE_BLANK, c3.getCellType());
+        wb.close();
 
     }
 	private Cell createACell() {
@@ -454,9 +462,9 @@ public abstract class BaseTestCell {
 	 *   ClassCastException if cell is created using HSSFRow.createCell(short column, int type)
 	 */
 	@Test
-	public void test40296() {
-		Workbook wb = _testDataProvider.createWorkbook();
-		Sheet workSheet = wb.createSheet("Sheet1");
+	public void test40296() throws Exception {
+		Workbook wb1 = _testDataProvider.createWorkbook();
+		Sheet workSheet = wb1.createSheet("Sheet1");
 		Cell cell;
 		Row row = workSheet.createRow(0);
 
@@ -476,8 +484,9 @@ public abstract class BaseTestCell {
 		assertEquals("SUM(A1:B1)", cell.getCellFormula());
 
 		//serialize and check again
-		wb = _testDataProvider.writeOutAndReadBack(wb);
-		row = wb.getSheetAt(0).getRow(0);
+		Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1);
+		wb1.close();
+		row = wb2.getSheetAt(0).getRow(0);
 		cell = row.getCell(0);
 		assertEquals(Cell.CELL_TYPE_NUMERIC, cell.getCellType());
 		assertEquals(1.0, cell.getNumericCellValue(), 0.0);
@@ -489,25 +498,23 @@ public abstract class BaseTestCell {
 		cell = row.getCell(2);
 		assertEquals(Cell.CELL_TYPE_FORMULA, cell.getCellType());
 		assertEquals("SUM(A1:B1)", cell.getCellFormula());
+		wb2.close();
 	}
 
 	@Test
-	public void testSetStringInFormulaCell_bug44606() {
+	public void testSetStringInFormulaCell_bug44606() throws Exception {
 		Workbook wb = _testDataProvider.createWorkbook();
 		Cell cell = wb.createSheet("Sheet1").createRow(0).createCell(0);
 		cell.setCellFormula("B1&C1");
-		try {
-			cell.setCellValue(wb.getCreationHelper().createRichTextString("hello"));
-		} catch (ClassCastException e) {
-			throw new AssertionFailedError("Identified bug 44606");
-		}
+		cell.setCellValue(wb.getCreationHelper().createRichTextString("hello"));
+		wb.close();
 	}
 
     /**
      *  Make sure that cell.setCellType(Cell.CELL_TYPE_BLANK) preserves the cell style
      */
 	@Test
-	public void testSetBlank_bug47028() {
+	public void testSetBlank_bug47028() throws Exception {
         Workbook wb = _testDataProvider.createWorkbook();
         CellStyle style = wb.createCellStyle();
         Cell cell = wb.createSheet("Sheet1").createRow(0).createCell(0);
@@ -516,6 +523,7 @@ public abstract class BaseTestCell {
         cell.setCellType(Cell.CELL_TYPE_BLANK);
         int i2 = cell.getCellStyle().getIndex();
         assertEquals(i1, i2);
+        wb.close();
     }
 
     /**
@@ -538,9 +546,9 @@ public abstract class BaseTestCell {
      * </ul>
      */
 	@Test
-	public void testNanAndInfinity() {
-        Workbook wb = _testDataProvider.createWorkbook();
-        Sheet workSheet = wb.createSheet("Sheet1");
+	public void testNanAndInfinity() throws Exception {
+        Workbook wb1 = _testDataProvider.createWorkbook();
+        Sheet workSheet = wb1.createSheet("Sheet1");
         Row row = workSheet.createRow(0);
 
         Cell cell0 = row.createCell(0);
@@ -558,8 +566,9 @@ public abstract class BaseTestCell {
         assertEquals("Double.NEGATIVE_INFINITY should change cell type to CELL_TYPE_ERROR", Cell.CELL_TYPE_ERROR, cell2.getCellType());
         assertEquals("Double.NEGATIVE_INFINITY should change cell value to #DIV/0!", ErrorConstants.ERROR_DIV_0, cell2.getErrorCellValue());
 
-        wb = _testDataProvider.writeOutAndReadBack(wb);
-        row = wb.getSheetAt(0).getRow(0);
+        Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1);
+        wb1.close();
+        row = wb2.getSheetAt(0).getRow(0);
 
         cell0 = row.getCell(0);
         assertEquals(Cell.CELL_TYPE_ERROR, cell0.getCellType());
@@ -572,13 +581,14 @@ public abstract class BaseTestCell {
         cell2 = row.getCell(2);
         assertEquals(Cell.CELL_TYPE_ERROR, cell2.getCellType());
         assertEquals(ErrorConstants.ERROR_DIV_0, cell2.getErrorCellValue());
+        wb2.close();
     }
 
 	@Test
-	public void testDefaultStyleProperties() {
-        Workbook wb = _testDataProvider.createWorkbook();
+	public void testDefaultStyleProperties() throws Exception {
+        Workbook wb1 = _testDataProvider.createWorkbook();
 
-        Cell cell = wb.createSheet("Sheet1").createRow(0).createCell(0);
+        Cell cell = wb1.createSheet("Sheet1").createRow(0).createCell(0);
         CellStyle style = cell.getCellStyle();
 
         assertTrue(style.getLocked());
@@ -589,7 +599,7 @@ public abstract class BaseTestCell {
         assertEquals(0, style.getDataFormat());
         assertEquals(false, style.getWrapText());
 
-        CellStyle style2 = wb.createCellStyle();
+        CellStyle style2 = wb1.createCellStyle();
         assertTrue(style2.getLocked());
         assertFalse(style2.getHidden());
         style2.setLocked(false);
@@ -597,8 +607,9 @@ public abstract class BaseTestCell {
         assertFalse(style2.getLocked());
         assertTrue(style2.getHidden());
 
-        wb = _testDataProvider.writeOutAndReadBack(wb);
-        cell = wb.getSheetAt(0).getRow(0).getCell(0);
+        Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1);
+        wb1.close();
+        cell = wb2.getSheetAt(0).getRow(0).getCell(0);
         style = cell.getCellStyle();
         assertFalse(style2.getLocked());
         assertTrue(style2.getHidden());
@@ -607,12 +618,13 @@ public abstract class BaseTestCell {
         style2.setHidden(false);
         assertTrue(style2.getLocked());
         assertFalse(style2.getHidden());
+        wb2.close();
     }
 
 	@Test
-	public void testBug55658SetNumericValue(){
-        Workbook wb = _testDataProvider.createWorkbook();
-        Sheet sh = wb.createSheet();
+	public void testBug55658SetNumericValue() throws Exception {
+        Workbook wb1 = _testDataProvider.createWorkbook();
+        Sheet sh = wb1.createSheet();
         Row row = sh.createRow(0);
         Cell cell = row.createCell(0);
         cell.setCellValue(Integer.valueOf(23));
@@ -624,18 +636,20 @@ public abstract class BaseTestCell {
         
         cell.setCellValue("24");
 
-        wb = _testDataProvider.writeOutAndReadBack(wb);
+        Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1);
+        wb1.close();
 
-        assertEquals("some", wb.getSheetAt(0).getRow(0).getCell(0).getStringCellValue());
-        assertEquals("24", wb.getSheetAt(0).getRow(0).getCell(1).getStringCellValue());
+        assertEquals("some", wb2.getSheetAt(0).getRow(0).getCell(0).getStringCellValue());
+        assertEquals("24", wb2.getSheetAt(0).getRow(0).getCell(1).getStringCellValue());
+        wb2.close();
     }
 
 	@Test
-	public void testRemoveHyperlink(){
-        Workbook wb = _testDataProvider.createWorkbook();
-        Sheet sh = wb.createSheet("test");
+	public void testRemoveHyperlink() throws Exception {
+        Workbook wb1 = _testDataProvider.createWorkbook();
+        Sheet sh = wb1.createSheet("test");
         Row row = sh.createRow(0);
-        CreationHelper helper = wb.getCreationHelper();
+        CreationHelper helper = wb1.getCreationHelper();
 
         Cell cell1 = row.createCell(1);
         Hyperlink link1 = helper.createHyperlink(Hyperlink.LINK_URL);
@@ -657,15 +671,17 @@ public abstract class BaseTestCell {
         cell3.setHyperlink(link3);
         assertNotNull(cell3.getHyperlink());
 
-        Workbook wbBack = _testDataProvider.writeOutAndReadBack(wb);
-        assertNotNull(wbBack);
+        Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1);
+        wb1.close();
+        assertNotNull(wb2);
         
-        cell1 = wbBack.getSheet("test").getRow(0).getCell(1);
+        cell1 = wb2.getSheet("test").getRow(0).getCell(1);
         assertNull(cell1.getHyperlink());
-        cell2 = wbBack.getSheet("test").getRow(0).getCell(0);
+        cell2 = wb2.getSheet("test").getRow(0).getCell(0);
         assertNull(cell2.getHyperlink());
-        cell3 = wbBack.getSheet("test").getRow(0).getCell(2);
+        cell3 = wb2.getSheet("test").getRow(0).getCell(2);
         assertNotNull(cell3.getHyperlink());
+        wb2.close();
     }
 
     /**
@@ -730,8 +746,8 @@ public abstract class BaseTestCell {
 
 	@Test
 	public void test57008() throws IOException {
-        Workbook wb = _testDataProvider.createWorkbook();
-		Sheet sheet = wb.createSheet();
+        Workbook wb1 = _testDataProvider.createWorkbook();
+		Sheet sheet = wb1.createSheet();
 		
 		Row row0 = sheet.createRow(0);
 		Cell cell0 = row0.createCell(0);
@@ -743,18 +759,12 @@ public abstract class BaseTestCell {
 		Cell cell2 = row0.createCell(2);
 		cell2.setCellValue("hgh_x0041_**_x0100_*_x0101_*_x0190_*_x0200_*_x0300_*_x0427_*");
 
-		checkUnicodeValues(wb);
+		checkUnicodeValues(wb1);
 		
-//		String fname = "/tmp/Test_xNNNN_inCell" + (wb instanceof HSSFWorkbook ? ".xls" : ".xlsx");
-//		FileOutputStream out = new FileOutputStream(fname);
-//		try {
-//			wb.write(out);
-//		} finally {
-//			out.close();
-//		}
-		
-		Workbook wbBack = _testDataProvider.writeOutAndReadBack(wb);
-		checkUnicodeValues(wbBack);
+		Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1);
+		checkUnicodeValues(wb2);
+		wb2.close();
+		wb1.close();
 	}
 
 	private void checkUnicodeValues(Workbook wb) {

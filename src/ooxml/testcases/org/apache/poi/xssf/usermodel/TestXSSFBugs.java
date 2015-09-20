@@ -114,7 +114,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
      * open resulting file in Excel to check results!
      */
     @Test
-    public void bug15375_2() {
+    public void bug15375_2() throws Exception {
         bug15375(1000);
     }
 
@@ -2786,7 +2786,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     }
 
     @Test
-    public void test55406() {
+    public void test55406() throws Exception {
         Workbook wb = XSSFTestDataSamples.openSampleWorkbook("55406_Conditional_formatting_sample.xlsx");
         Sheet sheet = wb.getSheetAt(0);
         Cell cellA1 = sheet.getRow(0).getCell(0);
@@ -2809,5 +2809,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         assertEquals(64, cond.getConditionalFormattingAt(1).getRule(0).getPatternFormatting().getFillForegroundColor()); 
         assertEquals("ISEVEN(ROW())", cond.getConditionalFormattingAt(1).getRule(0).getFormula1());
         assertNull(((XSSFColor)cond.getConditionalFormattingAt(1).getRule(0).getPatternFormatting().getFillForegroundColorColor()).getARGBHex()); 
+        
+        wb.close();
     }
 }

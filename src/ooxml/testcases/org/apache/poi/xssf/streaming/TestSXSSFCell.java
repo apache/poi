@@ -76,6 +76,8 @@ public class TestSXSSFCell extends BaseTestXCell {
             String t = c.getAttributeText(new QName("http://www.w3.org/XML/1998/namespace", "space"));
             c.dispose();
             assertEquals("expected xml:spaces=\"preserve\" \"" + str + "\"", "preserve", t);
+            xwb.close();
+            swb.close();
         }
     }
 }
