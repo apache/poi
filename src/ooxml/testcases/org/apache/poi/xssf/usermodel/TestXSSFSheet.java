@@ -33,6 +33,7 @@ import org.apache.poi.POIXMLException;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.AutoFilter;
 import org.apache.poi.ss.usermodel.BaseTestSheet;
 import org.apache.poi.ss.usermodel.Cell;
@@ -993,6 +994,11 @@ public final class TestXSSFSheet extends BaseTestSheet {
         assertEquals(2, xrow[2].sizeOfCArray());
         assertEquals(3, xrow[2].getR());
 
+    }
+    
+    @Test
+    public void createRowAfterLastRow() {
+        createRowAfterLastRow(SpreadsheetVersion.EXCEL2007);
     }
 
     @Test

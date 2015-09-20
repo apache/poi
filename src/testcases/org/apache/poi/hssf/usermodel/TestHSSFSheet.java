@@ -57,6 +57,7 @@ import org.apache.poi.hssf.record.WSBoolRecord;
 import org.apache.poi.hssf.record.WindowTwoRecord;
 import org.apache.poi.hssf.record.aggregates.WorksheetProtectionBlock;
 import org.apache.poi.hssf.usermodel.RecordInspector.RecordCollector;
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.ptg.Area3DPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.usermodel.AutoFilter;
@@ -84,7 +85,11 @@ public final class TestHSSFSheet extends BaseTestSheet {
     public TestHSSFSheet() {
         super(HSSFITestDataProvider.instance);
     }
-
+    
+    @Test
+    public void createRowAfterLastRow() {
+        createRowAfterLastRow(SpreadsheetVersion.EXCEL97);
+    }
 
     /**
      * Test for Bugzilla #29747.
