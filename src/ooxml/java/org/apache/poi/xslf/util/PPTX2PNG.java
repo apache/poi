@@ -31,10 +31,10 @@ import java.util.Map;
 
 import javax.imageio.ImageIO;
 
-import org.apache.poi.sl.SlideShowFactory;
 import org.apache.poi.sl.draw.Drawable;
 import org.apache.poi.sl.usermodel.Slide;
 import org.apache.poi.sl.usermodel.SlideShow;
+import org.apache.poi.sl.usermodel.SlideShowFactory;
 import org.apache.poi.util.JvmBugs;
 
 /**

@@ -17,6 +17,7 @@
 
 package org.apache.poi.hslf.usermodel;
 
+import java.awt.Dimension;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.security.MessageDigest;
@@ -218,5 +219,14 @@ public abstract class HSLFPictureData implements PictureData {
     @Override
     public final String getContentType() {
         return getType().contentType;
+    }
+
+    @Override
+    public Dimension getImageDimensionInPixels() {
+        Dimension dim = getImageDimension();
+        return new Dimension(
+            Units.pointsToPixel(dim.getWidth()),
+            Units.pointsToPixel(dim.getHeight())
+        );
     }
 }

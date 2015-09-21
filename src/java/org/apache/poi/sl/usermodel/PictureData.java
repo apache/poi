@@ -106,10 +106,16 @@ public interface PictureData {
 	byte[] getChecksum();
 	
     /**
-     * Return the original image dimensions
+     * Return the original image dimensions in points
      * (for formats supported by BufferedImage).
      *
-     * Will return a Dimension with zero width/height if the format unsupported.
+     * Will return a Dimension with a default width of 200x200 if the format unsupported.
      */
 	Dimension getImageDimension();
+	
+    /**
+     * Return the original image dimensions in pixels
+     * @see PictureData#getImageDimension()
+     */
+	Dimension getImageDimensionInPixels();
 }

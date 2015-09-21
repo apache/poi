@@ -20,18 +20,26 @@ package org.apache.poi.hslf.model;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
-import java.awt.geom.Rectangle2D;
-import java.io.*;
+import java.awt.Rectangle;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.InputStream;
 import java.util.List;
 
 import org.apache.poi.POIDataSamples;
-import org.apache.poi.hslf.usermodel.*;
+import org.apache.poi.hslf.usermodel.HSLFObjectData;
+import org.apache.poi.hslf.usermodel.HSLFPictureData;
+import org.apache.poi.hslf.usermodel.HSLFShape;
+import org.apache.poi.hslf.usermodel.HSLFSlide;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
+import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.util.IOUtils;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
+import org.apache.poi.util.IOUtils;
 import org.junit.Test;
 
 public final class TestOleEmbedding {
@@ -109,7 +117,7 @@ public final class TestOleEmbedding {
     	OLEShape oleShape1 = new OLEShape(pictData);
     	oleShape1.setObjectID(oleObjectId1);
     	slide1.addShape(oleShape1);
-    	oleShape1.setAnchor(new Rectangle2D.Double(100,100,100,100));
+    	oleShape1.setAnchor(new Rectangle(100,100,100,100));
     	
     	// add second slide with different order in object creation
     	HSLFSlide slide2 = ppt.createSlide();
@@ -123,7 +131,7 @@ public final class TestOleEmbedding {
 
         oleShape2.setObjectID(oleObjectId2);
         slide2.addShape(oleShape2);
-        oleShape2.setAnchor(new Rectangle2D.Double(100,100,100,100));
+        oleShape2.setAnchor(new Rectangle(100,100,100,100));
         
     	ByteArrayOutputStream bos = new ByteArrayOutputStream();
     	ppt.write(bos);

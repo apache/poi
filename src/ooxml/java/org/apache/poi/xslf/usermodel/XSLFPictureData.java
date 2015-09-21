@@ -42,6 +42,7 @@ import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.util.Units;
 
 /**
  * Instantiates sub-classes of POIXMLDocumentPart depending on their relationship type
@@ -134,6 +135,15 @@ public final class XSLFPictureData extends POIXMLDocumentPart implements Picture
         return _origSize;
     }
 
+    @Override
+    public Dimension getImageDimensionInPixels() {
+        Dimension dim = getImageDimension();
+        return new Dimension(
+            Units.pointsToPixel(dim.getWidth()),
+            Units.pointsToPixel(dim.getHeight())
+        );
+    }
+    
     /**
      * Determine and cache image properties
      */
@@ -155,14 +165,19 @@ public final class XSLFPictureData extends POIXMLDocumentPart implements Picture
                 _origSize = new PICT.NativeHeader(data, 0).getSize();
                 break;
             default:
+                BufferedImage img = null;
                 try {
-                    BufferedImage img = ImageIO.read(new ByteArrayInputStream(data));
-                    _origSize = (img == null) ? new Dimension() : new Dimension(img.getWidth(), img.getHeight());
+                    img = ImageIO.read(new ByteArrayInputStream(data));
                 } catch (IOException e) {
                     logger.log(POILogger.WARN, "Can't determine image dimensions", e);
-                    // failed to get information, set dummy size
-                    _origSize = new Dimension(200,200);
                 }
+                // set dummy size, in case of dummy dimension can't be set
+                _origSize = (img == null)
+                    ? new Dimension(200,200)
+                    : new Dimension(
+                        (int)Units.pixelToPoints(img.getWidth()),
+                        (int)Units.pixelToPoints(img.getHeight())
+                    );
                 break;
             }
         }

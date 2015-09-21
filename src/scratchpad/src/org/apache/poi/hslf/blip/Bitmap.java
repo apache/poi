@@ -26,6 +26,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 import org.apache.poi.hslf.usermodel.HSLFPictureData;
+import org.apache.poi.util.Units;
 
 /**
  * Represents a bitmap picture data:  JPEG or PNG.
@@ -55,10 +56,14 @@ public abstract class Bitmap extends HSLFPictureData {
         setRawData(out.toByteArray());
     }
 
+    @Override
     public Dimension getImageDimension() {
         try {
             BufferedImage bi = ImageIO.read(new ByteArrayInputStream(getData()));
-            return new Dimension(bi.getWidth(), bi.getHeight());
+            return new Dimension(
+                (int)Units.pixelToPoints(bi.getWidth()),
+                (int)Units.pixelToPoints(bi.getHeight())
+            );
         } catch (IOException e) {
             return new Dimension(200,200);
         }

@@ -42,7 +42,6 @@ import java.awt.geom.Arc2D;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
-import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
@@ -327,7 +326,7 @@ public final class PPGraphics2D extends Graphics2D implements Cloneable {
           Java graphics sets string coordinates by the baseline of the first character
           so we need to shift down by the height of the textbox
         */
-        txt.setAnchor(new Rectangle2D.Float(x, y, width, height));
+        txt.setAnchor(new Rectangle((int)x, (int)y, (int)width, (int)height));
 
         _group.addShape(txt);
     }

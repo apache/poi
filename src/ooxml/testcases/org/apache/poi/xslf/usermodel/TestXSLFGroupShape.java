@@ -16,10 +16,12 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 import java.awt.Dimension;
-import java.awt.geom.Rectangle2D;
+import java.awt.Rectangle;
 
 import org.junit.Test;
 
@@ -29,7 +31,7 @@ import org.junit.Test;
 public class TestXSLFGroupShape {
 
     @Test
-    public void testCreateShapes() {
+    public void testCreateShapes() throws Exception {
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFSlide slide = ppt.createSlide();
 
@@ -38,11 +40,11 @@ public class TestXSLFGroupShape {
         XSLFGroupShape group = slide.createGroup();
         assertEquals(1, slide.getShapes().size());
 
-        Rectangle2D interior = new Rectangle2D.Double(-10, -10, 20, 20);
+        Rectangle interior = new Rectangle(-10, -10, 20, 20);
         group.setInteriorAnchor(interior);
         assertEquals(interior, group.getInteriorAnchor());
 
-        Rectangle2D anchor = new Rectangle2D.Double(0, 0, 792, 612);
+        Rectangle anchor = new Rectangle(0, 0, 792, 612);
         group.setAnchor(anchor);
         assertEquals(anchor, group.getAnchor());
 
@@ -83,10 +85,12 @@ public class TestXSLFGroupShape {
         group.removeShape(shape1);
         group.removeShape(shape4);
         assertTrue(group.getShapes().isEmpty());
+        
+        ppt.close();
     }
 
     @Test
-    public void testRemoveShapes() {
+    public void testRemoveShapes() throws Exception {
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFSlide slide = ppt.createSlide();
 
@@ -99,5 +103,6 @@ public class TestXSLFGroupShape {
         slide.removeShape(group2);
         slide.removeShape(group3);
 
+        ppt.close();
     }
 }

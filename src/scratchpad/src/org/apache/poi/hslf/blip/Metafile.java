@@ -126,7 +126,7 @@ public abstract class Metafile extends HSLFPictureData {
         return out.toByteArray();
     }
 
-
+    @Override
     public Dimension getImageDimension() {
         int prefixLen = 16*uidInstanceCount;
         Header header = new Header();

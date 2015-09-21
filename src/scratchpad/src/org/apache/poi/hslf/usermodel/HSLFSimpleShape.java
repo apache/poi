@@ -414,12 +414,12 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
         return clr == null ? Color.black : clr;
     }    
     
-    public Shadow getShadow() {
+    public Shadow<HSLFShape,HSLFTextParagraph> getShadow() {
         AbstractEscherOptRecord opt = getEscherOptRecord();
         EscherProperty shadowType = opt.lookup(EscherProperties.SHADOWSTYLE__TYPE);
         if (shadowType == null) return null;
         
-        return new Shadow(){
+        return new Shadow<HSLFShape,HSLFTextParagraph>(){
             public SimpleShape<HSLFShape,HSLFTextParagraph> getShadowParent() {
                 return HSLFSimpleShape.this;
             }

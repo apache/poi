@@ -17,13 +17,16 @@
 
 package org.apache.poi.sl.draw;
 
+import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Insets;
+import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 
 import org.apache.poi.sl.usermodel.PictureData;
 import org.apache.poi.sl.usermodel.PictureShape;
+import org.apache.poi.sl.usermodel.RectAlign;
 
 
 public class DrawPictureShape extends DrawSimpleShape {
@@ -55,5 +58,118 @@ public class DrawPictureShape extends DrawSimpleShape {
     @Override
     protected PictureShape<?,?> getShape() {
         return (PictureShape<?,?>)shape;
+    }
+    
+    /**
+     * Resize this picture to the default size.
+     *
+     * For PNG and JPEG resizes the image to 100%,
+     * for other types, if the size can't be determined it will be 200x200 pixels.
+     */
+    public void resize() {
+        PictureShape<?,?> ps = getShape();
+        Dimension dim = ps.getPictureData().getImageDimension();
+
+        Rectangle origRect = ps.getAnchor();
+        int x = (int)origRect.getX();
+        int y = (int)origRect.getY();
+        int w = (int)dim.getWidth();
+        int h = (int)dim.getHeight();
+        ps.setAnchor(new Rectangle(x, y, w, h));
+    }
+
+
+    /**
+     * Fit picture shape into the target rectangle, maintaining the aspect ratio
+     * and repositioning within the target rectangle with a centered alignment.
+     *
+     * @param target    The target rectangle
+     */
+    public void resize(Rectangle target) {
+        resize(target, RectAlign.CENTER);
+    }
+
+
+    /**
+     * Fit picture shape into the target rectangle, maintaining the aspect ratio
+     * and repositioning within the target rectangle based on the specified
+     * alignment (gravity).
+     *
+     * @param target    The target rectangle
+     * @param align
+     *            The alignment within the target rectangle when resizing.
+     *            A null value corresponds to RectAlign.CENTER
+     */
+    public void resize(Rectangle target, RectAlign align) {
+        PictureShape<?,?> ps = getShape();
+        Dimension dim = ps.getPictureData().getImageDimension();
+        if (dim.width <= 0 || dim.height <= 0) {
+            // nothing useful to be done for this case
+            ps.setAnchor(target);
+            return;
+        }
+
+        double w = target.getWidth();
+        double h = target.getHeight();
+
+        // scaling
+        double sx = w / dim.width;
+        double sy = h / dim.height;
+
+        // position adjustments
+        double dx = 0, dy = 0;
+
+        if (sx > sy) {
+            // use y-scaling for both, reposition x accordingly
+            w  = sy * dim.width;
+            dx = target.getWidth() - w;
+        } else if (sy > sx) {
+            // use x-scaling for both, reposition y accordingly
+            h  = sx * dim.height;
+            dy = target.getHeight() - h;
+        } else {
+            // uniform scaling, can use target values directly
+            ps.setAnchor(target);
+            return;
+        }
+
+        // the positioning
+        double x = target.getX();
+        double y = target.getY();
+        switch (align) {
+            case TOP:           // X=balance, Y=ok
+                x += dx/2;
+                break;
+            case TOP_RIGHT:     // X=shift, Y=ok
+                x += dx;
+                break;
+            case RIGHT:         // X=shift, Y=balance
+                x += dx;
+                y += dy/2;
+                break;
+            case BOTTOM_RIGHT:  // X=shift, Y=shift
+                x += dx;
+                y += dy;
+                break;
+            case BOTTOM:        // X=balance, Y=shift
+                x += dx/2;
+                y += dy;
+                break;
+            case BOTTOM_LEFT:   // X=ok, Y=shift
+                y += dy;
+                break;
+            case LEFT:          // X=ok, Y=balance
+                y += dy/2;
+                break;
+            case TOP_LEFT:      // X=ok, Y=ok
+                /* no-op */
+                break;
+            default:            // CENTER: X=balance, Y=balance
+                x += dx/2;
+                y += dy/2;
+                break;
+        }
+
+        ps.setAnchor(new Rectangle((int)x, (int)y, (int)w, (int)h));
     }
 }

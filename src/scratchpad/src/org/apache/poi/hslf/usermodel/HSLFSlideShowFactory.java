@@ -15,39 +15,24 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.sl.usermodel;
+package org.apache.poi.hslf.usermodel;
 
-import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
+import java.io.IOException;
 
+import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.sl.usermodel.SlideShow;
+import org.apache.poi.sl.usermodel.SlideShowFactory;
+import org.apache.poi.util.Internal;
 
-
-public interface Shadow<
-S extends Shape<S,P>,
-P extends TextParagraph<S,P,?>
-> {
-    SimpleShape<S,P> getShadowParent();
-    
+@Internal
+public class HSLFSlideShowFactory extends SlideShowFactory {
     /**
-     * @return the offset of this shadow in points
+     * Creates a HSLFSlideShow from the given NPOIFSFileSystem
+     * <p>Note that in order to properly release resources the
+     *  SlideShow should be closed after use.
      */
-    double getDistance();
-    
-    /**
-     * 
-     * @return the direction to offset the shadow in angles
-     */
-    double getAngle();
+    public static SlideShow<?,?> createSlideShow(NPOIFSFileSystem fs) throws IOException {
+        return new HSLFSlideShow(fs);
+    }
 
-    /**
-     * 
-     * @return the blur radius of the shadow
-     * TODO: figure out how to make sense of this property when rendering shadows 
-     */
-    double getBlur();
-
-    /**
-     * @return the color of this shadow. 
-     * Depending whether the parent shape is filled or stroked, this color is used to fill or stroke this shadow
-     */
-    SolidPaint getFillStyle();    
 }

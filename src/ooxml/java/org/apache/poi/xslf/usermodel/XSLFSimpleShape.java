@@ -20,7 +20,7 @@
 package org.apache.poi.xslf.usermodel;
 
 import java.awt.Color;
-import java.awt.geom.Rectangle2D;
+import java.awt.Rectangle;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -45,7 +45,33 @@ import org.apache.poi.util.Beta;
 import org.apache.poi.util.Units;
 import org.apache.poi.xslf.model.PropertyFetcher;
 import org.apache.xmlbeans.XmlObject;
-import org.openxmlformats.schemas.drawingml.x2006.main.*;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTBaseStyles;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTBlip;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTEffectStyleItem;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTGeomGuide;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTLineEndProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTLineProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTLineStyleList;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTOuterShadowEffect;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTPoint2D;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTPositiveSize2D;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTPresetGeometry2D;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTPresetLineDashProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTSRgbColor;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTSchemeColor;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeStyle;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTSolidColorFillProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTStyleMatrix;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTStyleMatrixReference;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTransform2D;
+import org.openxmlformats.schemas.drawingml.x2006.main.STCompoundLine;
+import org.openxmlformats.schemas.drawingml.x2006.main.STLineCap;
+import org.openxmlformats.schemas.drawingml.x2006.main.STLineEndLength;
+import org.openxmlformats.schemas.drawingml.x2006.main.STLineEndType;
+import org.openxmlformats.schemas.drawingml.x2006.main.STLineEndWidth;
+import org.openxmlformats.schemas.drawingml.x2006.main.STPresetLineDashVal;
+import org.openxmlformats.schemas.drawingml.x2006.main.STShapeType;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
 
 /**
@@ -97,23 +123,21 @@ public abstract class XSLFSimpleShape extends XSLFShape
     }
 
     @Override
-    public Rectangle2D getAnchor() {
+    public Rectangle getAnchor() {
 
         CTTransform2D xfrm = getXfrm();
 
         CTPoint2D off = xfrm.getOff();
-        long x = off.getX();
-        long y = off.getY();
+        int x = (int)Units.toPoints(off.getX());
+        int y = (int)Units.toPoints(off.getY());
         CTPositiveSize2D ext = xfrm.getExt();
-        long cx = ext.getCx();
-        long cy = ext.getCy();
-        return new Rectangle2D.Double(
-                Units.toPoints(x), Units.toPoints(y),
-                Units.toPoints(cx), Units.toPoints(cy));
+        int cx = (int)Units.toPoints(ext.getCx());
+        int cy = (int)Units.toPoints(ext.getCy());
+        return new Rectangle(x, y, cx, cy);
     }
 
     @Override
-    public void setAnchor(Rectangle2D anchor) {
+    public void setAnchor(Rectangle anchor) {
         CTTransform2D xfrm = getSafeXfrm();
         CTPoint2D off = xfrm.isSetOff() ? xfrm.getOff() : xfrm.addNewOff();
         long x = Units.toEMU(anchor.getX());

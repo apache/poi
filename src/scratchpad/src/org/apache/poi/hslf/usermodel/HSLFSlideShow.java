@@ -69,6 +69,7 @@ import org.apache.poi.hslf.record.SlideListWithText.SlideAtomsSet;
 import org.apache.poi.hslf.record.SlidePersistAtom;
 import org.apache.poi.hslf.record.UserEditAtom;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
+import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.sl.usermodel.MasterSheet;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
@@ -159,8 +160,8 @@ public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagrap
     /**
      * Constructs a Powerpoint document from an POIFSFileSystem.
      */
-    public HSLFSlideShow(POIFSFileSystem inputStream) throws IOException {
-        this(new HSLFSlideShowImpl(inputStream));
+    public HSLFSlideShow(NPOIFSFileSystem npoifs) throws IOException {
+        this(new HSLFSlideShowImpl(npoifs));
     }
 
     /**

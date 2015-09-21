@@ -25,7 +25,6 @@ import static org.junit.Assert.assertTrue;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.List;
@@ -75,7 +74,7 @@ public class TestXSLFTextParagraph {
                 "of text within a shape. Properties here apply to all text " +
                 "residing within the corresponding paragraph.");
 
-        Rectangle2D anchor = new Rectangle(50, 50, 300, 200);
+        Rectangle anchor = new Rectangle(50, 50, 300, 200);
         sh.setAnchor(anchor);
         
         DrawTextParagraphProxy dtp = new DrawTextParagraphProxy(p);

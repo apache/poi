@@ -35,6 +35,7 @@ import org.apache.poi.hslf.blip.PICT;
 import org.apache.poi.hslf.blip.PNG;
 import org.apache.poi.hslf.blip.WMF;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
+import org.apache.poi.util.Units;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -45,8 +46,6 @@ import org.junit.Test;
  */
 public final class TestPictures {
     private static POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
-
-    //protected File cwd;
 
     /**
      * Test read/write Macintosh PICT
@@ -64,9 +63,9 @@ public final class TestPictures {
         assertEquals(expWidth, nDim.getWidth(), 0);
         assertEquals(expHeight, nDim.getHeight(), 0);
         
-        Dimension dim = data.getImageDimension();
-        assertEquals(expWidth, dim.getWidth(), 0);
-        assertEquals(expHeight, dim.getHeight(), 0);
+        Dimension dim = data.getImageDimensionInPixels();
+        assertEquals(Units.pointsToPixel(expWidth), dim.getWidth(), 0);
+        assertEquals(Units.pointsToPixel(expHeight), dim.getHeight(), 0);
         
         HSLFPictureShape pict = new HSLFPictureShape(data);
         assertEquals(data.getIndex(), pict.getPictureIndex());
@@ -127,9 +126,9 @@ public final class TestPictures {
         assertEquals(expWidth, nDim.getWidth(), 0);
         assertEquals(expHeight, nDim.getHeight(), 0);
 
-        Dimension dim = data.getImageDimension();
-        assertEquals(expWidth, dim.getWidth(), 0);
-        assertEquals(expHeight, dim.getHeight(), 0);
+        Dimension dim = data.getImageDimensionInPixels();
+        assertEquals(Units.pointsToPixel(expWidth), dim.getWidth(), 0);
+        assertEquals(Units.pointsToPixel(expHeight), dim.getHeight(), 0);
         
         HSLFPictureShape pict = new HSLFPictureShape(data);
         assertEquals(data.getIndex(), pict.getPictureIndex());
@@ -189,9 +188,9 @@ public final class TestPictures {
         assertEquals(expWidth, nDim.getWidth(), 0);
         assertEquals(expHeight, nDim.getHeight(), 0);
 
-        Dimension dim = data.getImageDimension();
-        assertEquals(expWidth, dim.getWidth(), 0);
-        assertEquals(expHeight, dim.getHeight(), 0);
+        Dimension dim = data.getImageDimensionInPixels();
+        assertEquals(Units.pointsToPixel(expWidth), dim.getWidth(), 0);
+        assertEquals(Units.pointsToPixel(expHeight), dim.getHeight(), 0);
         
         HSLFPictureShape pict = new HSLFPictureShape(data);
         assertEquals(data.getIndex(), pict.getPictureIndex());

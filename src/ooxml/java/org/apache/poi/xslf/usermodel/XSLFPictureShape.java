@@ -19,10 +19,9 @@
 
 package org.apache.poi.xslf.usermodel;
 
-import java.awt.Dimension;
 import java.awt.Insets;
-import java.awt.Rectangle;
 import java.net.URI;
+
 import javax.xml.namespace.QName;
 
 import org.apache.poi.POIXMLException;
@@ -83,24 +82,6 @@ public class XSLFPictureShape extends XSLFSimpleShape
         return ct;
     }
 
-    /**
-     * Resize this picture to the default size.
-     *
-     * For PNG and JPEG resizes the image to 100%,
-     * for other types sets the default size to 200x200 pixels.
-     */
-    public void resize() {
-        Dimension dim = getPictureData().getImageDimension();
-        if (dim.width > 0 && dim.height > 0)
-        {
-            setAnchor(new Rectangle(0, 0, dim.width, dim.height));
-        }
-        else
-        {
-            // unsupported/unknown formats
-            setAnchor(new Rectangle(50, 50, 200, 200));
-        }
-    }
 
     /**
      * Is this an internal picture (image data included within
