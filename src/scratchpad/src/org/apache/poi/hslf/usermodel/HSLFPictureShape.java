@@ -17,9 +17,8 @@
 
 package org.apache.poi.hslf.usermodel;
 
-import java.awt.Dimension;
 import java.awt.Insets;
-import java.awt.geom.Rectangle2D;
+import java.awt.Rectangle;
 import java.util.List;
 
 import org.apache.poi.ddf.AbstractEscherOptRecord;
@@ -31,6 +30,7 @@ import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.ddf.EscherSimpleProperty;
 import org.apache.poi.ddf.EscherSpRecord;
 import org.apache.poi.hslf.record.Document;
+import org.apache.poi.sl.draw.DrawPictureShape;
 import org.apache.poi.sl.usermodel.PictureShape;
 import org.apache.poi.sl.usermodel.ShapeContainer;
 import org.apache.poi.sl.usermodel.ShapeType;
@@ -113,21 +113,6 @@ public class HSLFPictureShape extends HSLFSimpleShape implements PictureShape<HS
         return _escherContainer;
     }
 
-    /**
-     * Resize this picture to the default size.
-     * For PNG and JPEG resizes the image to 100%,
-     * for other types, if the size can't be determined it will be 200x200 pixels.
-     */
-    public void setDefaultSize(){
-        Dimension dim = getPictureData().getImageDimension();
-        Rectangle2D origRect = getAnchor2D();
-        double x = origRect.getX();
-        double y = origRect.getY();
-        double w = Units.pixelToPoints((int)dim.getWidth());
-        double h = Units.pixelToPoints((int)dim.getHeight());
-        setAnchor(new Rectangle2D.Double(x, y, w, h));
-    }
-
     @Override
     public HSLFPictureData getPictureData(){
         HSLFSlideShow ppt = getSheet().getSlideShow();
@@ -199,9 +184,9 @@ public class HSLFPictureShape extends HSLFSimpleShape implements PictureShape<HS
         EscherBSERecord bse = getEscherBSERecord();
         bse.setRef(bse.getRef() + 1);
 
-        java.awt.Rectangle anchor = getAnchor();
-        if (anchor.equals(new java.awt.Rectangle())){
-            setDefaultSize();
+        Rectangle anchor = getAnchor();
+        if (anchor.isEmpty()){
+            new DrawPictureShape(this).resize();
         }
     }
 

@@ -139,15 +139,15 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
 
         storeText();
         
-        EscherTextboxWrapper _txtbox = getEscherTextboxWrapper();
-        if(_txtbox != null){
-            _escherContainer.addChildRecord(_txtbox.getEscherRecord());
+        EscherTextboxWrapper thisTxtbox = getEscherTextboxWrapper();
+        if(thisTxtbox != null){
+            _escherContainer.addChildRecord(thisTxtbox.getEscherRecord());
             
             PPDrawing ppdrawing = sh.getPPDrawing();
-            ppdrawing.addTextboxWrapper(_txtbox);
+            ppdrawing.addTextboxWrapper(thisTxtbox);
             // Ensure the escher layer knows about the added records
             try {
-                _txtbox.writeOut(null);
+                thisTxtbox.writeOut(null);
             } catch (IOException e){
                 throw new HSLFException(e);
             }
@@ -192,10 +192,10 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
      * @return a <code>Rectangle2D</code> that is the bounds of this shape.
      */
     public Rectangle2D resizeToFitText(){
-        Rectangle2D anchor = getAnchor();
+        Rectangle anchor = getAnchor();
         if(anchor.getWidth() == 0.) {
             logger.log(POILogger.WARN, "Width of shape wasn't set. Defaulting to 200px");
-            anchor = new Rectangle2D.Double(anchor.getX(), anchor.getY(), 200, anchor.getHeight());
+            anchor.setSize(200, (int)anchor.getHeight());
             setAnchor(anchor);
         }
         double height = getTextHeight(); 

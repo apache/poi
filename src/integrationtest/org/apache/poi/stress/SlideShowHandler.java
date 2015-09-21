@@ -29,14 +29,13 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.sl.SlideShowFactory;
 import org.apache.poi.sl.draw.Drawable;
 import org.apache.poi.sl.usermodel.PictureData;
 import org.apache.poi.sl.usermodel.Shape;
 import org.apache.poi.sl.usermodel.ShapeContainer;
 import org.apache.poi.sl.usermodel.Slide;
 import org.apache.poi.sl.usermodel.SlideShow;
+import org.apache.poi.sl.usermodel.SlideShowFactory;
 import org.apache.poi.sl.usermodel.TextParagraph;
 import org.apache.poi.sl.usermodel.TextRun;
 import org.apache.poi.sl.usermodel.TextShape;
@@ -55,12 +54,7 @@ public abstract class SlideShowHandler extends POIFSFileHandler {
         readContent(ss);
 
         // read in the writen file
-        SlideShow<?,?> read;
-        try {
-            read = SlideShowFactory.create(new ByteArrayInputStream(out.toByteArray()));
-        } catch (InvalidFormatException e) {
-            throw new IllegalStateException(e);
-        }
+        SlideShow<?,?> read = SlideShowFactory.create(new ByteArrayInputStream(out.toByteArray()));
         assertNotNull(read);
         
         readContent(read);

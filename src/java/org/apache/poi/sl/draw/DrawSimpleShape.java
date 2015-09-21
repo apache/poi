@@ -25,10 +25,8 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Rectangle2D;
+import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -145,7 +143,7 @@ public class DrawSimpleShape extends DrawShape {
         double alpha = Math.atan(anchor.getHeight() / anchor.getWidth());
     
         AffineTransform at = new AffineTransform();
-        java.awt.Shape shape = null;
+        java.awt.Shape tailShape = null;
         Path p = null;
         Rectangle2D bounds;
         final double scaleY = Math.pow(2, tailWidth.ordinal()+1);
@@ -153,8 +151,8 @@ public class DrawSimpleShape extends DrawShape {
         switch (deco.getTailShape()) {
             case OVAL:
                 p = new Path();
-                shape = new Ellipse2D.Double(0, 0, lineWidth * scaleX, lineWidth * scaleY);
-                bounds = shape.getBounds2D();
+                tailShape = new Ellipse2D.Double(0, 0, lineWidth * scaleX, lineWidth * scaleY);
+                bounds = tailShape.getBounds2D();
                 at.translate(x2 - bounds.getWidth() / 2, y2 - bounds.getHeight() / 2);
                 at.rotate(alpha, bounds.getX() + bounds.getWidth() / 2, bounds.getY() + bounds.getHeight() / 2);
                 break;
@@ -165,7 +163,7 @@ public class DrawSimpleShape extends DrawShape {
                 arrow.moveTo((float) (-lineWidth * scaleX), (float) (-lineWidth * scaleY / 2));
                 arrow.lineTo(0, 0);
                 arrow.lineTo((float) (-lineWidth * scaleX), (float) (lineWidth * scaleY / 2));
-                shape = arrow;
+                tailShape = arrow;
                 at.translate(x2, y2);
                 at.rotate(alpha);
                 break;
@@ -176,7 +174,7 @@ public class DrawSimpleShape extends DrawShape {
                 triangle.lineTo(0, 0);
                 triangle.lineTo((float) (-lineWidth * scaleX), (float) (lineWidth * scaleY / 2));
                 triangle.closePath();
-                shape = triangle;
+                tailShape = triangle;
                 at.translate(x2, y2);
                 at.rotate(alpha);
                 break;
@@ -184,10 +182,10 @@ public class DrawSimpleShape extends DrawShape {
                 break;
         }
     
-        if (shape != null) {
-            shape = at.createTransformedShape(shape);
+        if (tailShape != null) {
+            tailShape = at.createTransformedShape(tailShape);
         }
-        return shape == null ? null : new Outline(shape, p);
+        return tailShape == null ? null : new Outline(tailShape, p);
     }
     
     protected Outline getHeadDecoration(Graphics2D graphics, LineDecoration deco, BasicStroke stroke) {
@@ -203,7 +201,7 @@ public class DrawSimpleShape extends DrawShape {
         double alpha = Math.atan(anchor.getHeight() / anchor.getWidth());
     
         AffineTransform at = new AffineTransform();
-        java.awt.Shape shape = null;
+        java.awt.Shape headShape = null;
         Path p = null;
         Rectangle2D bounds;
         final double scaleY = Math.pow(2, headWidth.ordinal()+1);
@@ -211,8 +209,8 @@ public class DrawSimpleShape extends DrawShape {
         switch (deco.getHeadShape()) {
             case OVAL:
                 p = new Path();
-                shape = new Ellipse2D.Double(0, 0, lineWidth * scaleX, lineWidth * scaleY);
-                bounds = shape.getBounds2D();
+                headShape = new Ellipse2D.Double(0, 0, lineWidth * scaleX, lineWidth * scaleY);
+                bounds = headShape.getBounds2D();
                 at.translate(x1 - bounds.getWidth() / 2, y1 - bounds.getHeight() / 2);
                 at.rotate(alpha, bounds.getX() + bounds.getWidth() / 2, bounds.getY() + bounds.getHeight() / 2);
                 break;
@@ -223,7 +221,7 @@ public class DrawSimpleShape extends DrawShape {
                 arrow.moveTo((float) (lineWidth * scaleX), (float) (-lineWidth * scaleY / 2));
                 arrow.lineTo(0, 0);
                 arrow.lineTo((float) (lineWidth * scaleX), (float) (lineWidth * scaleY / 2));
-                shape = arrow;
+                headShape = arrow;
                 at.translate(x1, y1);
                 at.rotate(alpha);
                 break;
@@ -234,7 +232,7 @@ public class DrawSimpleShape extends DrawShape {
                 triangle.lineTo(0, 0);
                 triangle.lineTo((float) (lineWidth * scaleX), (float) (lineWidth * scaleY / 2));
                 triangle.closePath();
-                shape = triangle;
+                headShape = triangle;
                 at.translate(x1, y1);
                 at.rotate(alpha);
                 break;
@@ -242,10 +240,10 @@ public class DrawSimpleShape extends DrawShape {
                 break;
         }
     
-        if (shape != null) {
-            shape = at.createTransformedShape(shape);
+        if (headShape != null) {
+            headShape = at.createTransformedShape(headShape);
         }
-        return shape == null ? null : new Outline(shape, p);
+        return headShape == null ? null : new Outline(headShape, p);
     }
     
     public BasicStroke getStroke() {
@@ -296,7 +294,7 @@ public class DrawSimpleShape extends DrawShape {
           , Paint fill
           , Paint line
     ) {
-          Shadow shadow = getShape().getShadow();
+          Shadow<?,?> shadow = getShape().getShadow();
           if (shadow == null || (fill == null && line == null)) return;
 
           SolidPaint shadowPaint = shadow.getFillStyle();
@@ -347,7 +345,6 @@ public class DrawSimpleShape extends DrawShape {
             
             String packageName = "org.apache.poi.sl.draw.binding";
             InputStream presetIS = Drawable.class.getResourceAsStream("presetShapeDefinitions.xml");
-            Reader xml = new InputStreamReader( presetIS, Charset.forName("UTF-8") );
     
             // StAX:
             EventFilter startElementFilter = new EventFilter() {
@@ -359,7 +356,7 @@ public class DrawSimpleShape extends DrawShape {
             
             try {
                 XMLInputFactory staxFactory = XMLInputFactory.newInstance();
-                XMLEventReader staxReader = staxFactory.createXMLEventReader(xml);
+                XMLEventReader staxReader = staxFactory.createXMLEventReader(presetIS);
                 XMLEventReader staxFiltRd = staxFactory.createFilteredReader(staxReader, startElementFilter);
                 // Ignore StartElement:
                 staxFiltRd.nextEvent();
@@ -378,6 +375,12 @@ public class DrawSimpleShape extends DrawShape {
                 }
             } catch (Exception e) {
                 throw new RuntimeException("Unable to load preset geometries.", e);
+            } finally {
+                try {
+                    presetIS.close();
+                } catch (IOException e) {
+                    throw new RuntimeException("Unable to load preset geometries.", e);
+                }
             }
         }
         

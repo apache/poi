@@ -18,7 +18,6 @@
 package org.apache.poi.hslf.usermodel;
 
 import java.awt.Rectangle;
-import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -105,7 +104,7 @@ implements HSLFShapeContainer, GroupShape<HSLFShape,HSLFTextParagraph> {
     }
 
     @Override
-    public void setInteriorAnchor(Rectangle2D anchor){
+    public void setInteriorAnchor(Rectangle anchor){
         EscherSpgrRecord spgr = getEscherChild(EscherSpgrRecord.RECORD_ID);
 
         int x1 = Units.pointsToMaster(anchor.getX());
@@ -121,13 +120,13 @@ implements HSLFShapeContainer, GroupShape<HSLFShape,HSLFTextParagraph> {
     }
 
     @Override
-    public Rectangle2D getInteriorAnchor(){
+    public Rectangle getInteriorAnchor(){
         EscherSpgrRecord rec = getEscherChild(EscherSpgrRecord.RECORD_ID);
-        double x1 = Units.masterToPoints(rec.getRectX1());
-        double y1 = Units.masterToPoints(rec.getRectY1());
-        double x2 = Units.masterToPoints(rec.getRectX2());
-        double y2 = Units.masterToPoints(rec.getRectY2());
-        return new Rectangle2D.Double(x1,y1,x2-x1,y2-y1);
+        int x1 = (int)Units.masterToPoints(rec.getRectX1());
+        int y1 = (int)Units.masterToPoints(rec.getRectY1());
+        int x2 = (int)Units.masterToPoints(rec.getRectX2());
+        int y2 = (int)Units.masterToPoints(rec.getRectY2());
+        return new Rectangle(x1,y1,x2-x1,y2-y1);
     }
 
     /**
@@ -181,7 +180,7 @@ implements HSLFShapeContainer, GroupShape<HSLFShape,HSLFTextParagraph> {
      * @param y the y coordinate of the top left corner of the shape in new location
      */
     public void moveTo(int x, int y){
-        java.awt.Rectangle anchor = getAnchor();
+        Rectangle anchor = getAnchor();
         int dx = x - anchor.x;
         int dy = y - anchor.y;
         anchor.translate(dx, dy);
@@ -189,7 +188,7 @@ implements HSLFShapeContainer, GroupShape<HSLFShape,HSLFTextParagraph> {
 
         
         for (HSLFShape shape : getShapes()) {
-            java.awt.Rectangle chanchor = shape.getAnchor();
+            Rectangle chanchor = shape.getAnchor();
             chanchor.translate(dx, dy);
             shape.setAnchor(chanchor);
         }
@@ -201,7 +200,7 @@ implements HSLFShapeContainer, GroupShape<HSLFShape,HSLFTextParagraph> {
      *
      * @return the anchor of this shape group
      */
-    public Rectangle2D getAnchor2D(){
+    public Rectangle getAnchor(){
         EscherClientAnchorRecord clientAnchor = getEscherChild(EscherClientAnchorRecord.RECORD_ID);
         int x1,y1,x2,y2;
         if(clientAnchor == null){
@@ -217,11 +216,11 @@ implements HSLFShapeContainer, GroupShape<HSLFShape,HSLFTextParagraph> {
             x2 = clientAnchor.getDx1();
             y2 = clientAnchor.getRow1();
         }
-        Rectangle2D anchor= new Rectangle2D.Double(
-            (x1 == -1 ? -1 : Units.masterToPoints(x1)),
-            (y1 == -1 ? -1 : Units.masterToPoints(y1)),
-            (x2 == -1 ? -1 : Units.masterToPoints(x2-x1)),
-            (y2 == -1 ? -1 : Units.masterToPoints(y2-y1))
+        Rectangle anchor= new Rectangle(
+            (int)(x1 == -1 ? -1 : Units.masterToPoints(x1)),
+            (int)(y1 == -1 ? -1 : Units.masterToPoints(y1)),
+            (int)(x2 == -1 ? -1 : Units.masterToPoints(x2-x1)),
+            (int)(y2 == -1 ? -1 : Units.masterToPoints(y2-y1))
         );
 
         return anchor;

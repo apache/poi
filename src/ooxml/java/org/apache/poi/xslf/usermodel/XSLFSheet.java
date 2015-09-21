@@ -36,6 +36,7 @@ import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.sl.draw.DrawFactory;
+import org.apache.poi.sl.draw.DrawPictureShape;
 import org.apache.poi.sl.draw.Drawable;
 import org.apache.poi.sl.usermodel.PictureData;
 import org.apache.poi.sl.usermodel.Sheet;
@@ -213,7 +214,7 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
         addRelation(rel.getId(), new XSLFPictureData(pic, rel));
 
         XSLFPictureShape sh = getDrawing().createPicture(rel.getId());
-        sh.resize();
+        new DrawPictureShape(sh).resize();
         getShapes().add(sh);
         sh.setParent(this);
         return sh;
@@ -537,6 +538,7 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
      * @param packagePart   package part containing the data to import
      * @return ID of the created relationship
      */
+    @SuppressWarnings("resource")
     String importBlip(String blipId, PackagePart packagePart) {
         PackageRelationship blipRel = packagePart.getRelationship(blipId);
         PackagePart blipPart;
@@ -561,6 +563,7 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
     /**
      * Import a package part into this sheet.
      */
+    @SuppressWarnings("resource")
     PackagePart importPart(PackageRelationship srcRel, PackagePart srcPafrt) {
         PackagePart destPP = getPackagePart();
         PackagePartName srcPPName = srcPafrt.getPartName();
@@ -574,10 +577,11 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
         destPP.addRelationship(srcPPName, TargetMode.INTERNAL, srcRel.getRelationshipType());
 
         PackagePart part = pkg.createPart(srcPPName, srcPafrt.getContentType());
-        OutputStream out = part.getOutputStream();
         try {
+            OutputStream out = part.getOutputStream();
             InputStream is = srcPafrt.getInputStream();
             IOUtils.copy(is, out);
+            is.close();
             out.close();
         } catch (IOException e){
             throw new POIXMLException(e);

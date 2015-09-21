@@ -19,6 +19,7 @@ package org.apache.poi.sl.draw;
 
 import java.awt.Graphics2D;
 import java.awt.Paint;
+import java.awt.Rectangle;
 import java.awt.font.FontRenderContext;
 import java.awt.font.LineBreakMeasurer;
 import java.awt.font.TextAttribute;
@@ -416,8 +417,8 @@ public class DrawTextParagraph implements Drawable {
     private PlaceableShape<?,?> getParagraphShape() {
         PlaceableShape<?,?> ps = new PlaceableShape(){
             public ShapeContainer<?,?> getParent() { return null; }
-            public Rectangle2D getAnchor() { return paragraph.getParentShape().getAnchor(); }
-            public void setAnchor(Rectangle2D anchor) {}
+            public Rectangle getAnchor() { return paragraph.getParentShape().getAnchor(); }
+            public void setAnchor(Rectangle anchor) {}
             public double getRotation() { return 0; }
             public void setRotation(double theta) {}
             public void setFlipHorizontal(boolean flip) {}

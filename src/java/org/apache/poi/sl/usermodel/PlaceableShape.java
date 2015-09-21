@@ -17,7 +17,7 @@
 
 package org.apache.poi.sl.usermodel;
 
-import java.awt.geom.Rectangle2D;
+import java.awt.Rectangle;
 
 public interface PlaceableShape<
     S extends Shape<S,P>,
@@ -29,13 +29,13 @@ public interface PlaceableShape<
      * @return the position of this shape within the drawing canvas.
      *         The coordinates are expressed in points
      */
-    Rectangle2D getAnchor();
+    Rectangle getAnchor();
 
     /**
      * @param anchor the position of this shape within the drawing canvas.
      *               The coordinates are expressed in points
      */
-    void setAnchor(Rectangle2D anchor);
+    void setAnchor(Rectangle anchor);
 
     /**
      * Rotation angle in degrees

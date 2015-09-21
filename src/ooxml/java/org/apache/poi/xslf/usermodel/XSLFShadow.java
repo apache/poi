@@ -18,7 +18,7 @@
 package org.apache.poi.xslf.usermodel;
 
 import java.awt.Color;
-import java.awt.geom.Rectangle2D;
+import java.awt.Rectangle;
 
 import org.apache.poi.sl.draw.DrawPaint;
 import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
@@ -32,7 +32,7 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTSchemeColor;
  *
  * @author Yegor Kozlov
  */
-public class XSLFShadow extends XSLFShape implements Shadow {
+public class XSLFShadow extends XSLFShape implements Shadow<XSLFShape,XSLFTextParagraph> {
 
     private XSLFSimpleShape _parent;
 
@@ -47,11 +47,12 @@ public class XSLFShadow extends XSLFShape implements Shadow {
         return _parent;
     }
 
-    public Rectangle2D getAnchor(){
+    @Override
+    public Rectangle getAnchor(){
         return _parent.getAnchor();
     }
 
-    public void setAnchor(Rectangle2D anchor){
+    public void setAnchor(Rectangle anchor){
         throw new IllegalStateException("You can't set anchor of a shadow");
     }
 

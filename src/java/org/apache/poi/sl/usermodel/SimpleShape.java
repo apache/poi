@@ -35,5 +35,5 @@ public interface SimpleShape<
 
     boolean isPlaceholder();
     
-	Shadow getShadow();
+	Shadow<S,P> getShadow();
 }

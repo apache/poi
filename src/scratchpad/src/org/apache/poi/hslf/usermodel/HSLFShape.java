@@ -19,14 +19,29 @@ package org.apache.poi.hslf.usermodel;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.geom.Rectangle2D;
+import java.awt.Rectangle;
 import java.util.Iterator;
 
-import org.apache.poi.ddf.*;
+import org.apache.poi.ddf.AbstractEscherOptRecord;
+import org.apache.poi.ddf.EscherChildAnchorRecord;
+import org.apache.poi.ddf.EscherClientAnchorRecord;
+import org.apache.poi.ddf.EscherColorRef;
+import org.apache.poi.ddf.EscherContainerRecord;
+import org.apache.poi.ddf.EscherOptRecord;
+import org.apache.poi.ddf.EscherProperties;
+import org.apache.poi.ddf.EscherProperty;
+import org.apache.poi.ddf.EscherRecord;
+import org.apache.poi.ddf.EscherSimpleProperty;
+import org.apache.poi.ddf.EscherSpRecord;
 import org.apache.poi.hslf.record.ColorSchemeAtom;
 import org.apache.poi.hslf.record.RecordTypes;
-import org.apache.poi.sl.usermodel.*;
-import org.apache.poi.util.*;
+import org.apache.poi.sl.usermodel.FillStyle;
+import org.apache.poi.sl.usermodel.Shape;
+import org.apache.poi.sl.usermodel.ShapeContainer;
+import org.apache.poi.sl.usermodel.ShapeType;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
+import org.apache.poi.util.Units;
 
 /**
  *  <p>
@@ -126,18 +141,7 @@ public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
      *
      * @return the anchor of this shape
      */
-    public java.awt.Rectangle getAnchor(){
-        Rectangle2D anchor2d = getAnchor2D();
-        return anchor2d.getBounds();
-    }
-
-    /**
-     * Returns the anchor (the bounding box rectangle) of this shape.
-     * All coordinates are expressed in points (72 dpi).
-     *
-     * @return the anchor of this shape
-     */
-    public Rectangle2D getAnchor2D(){
+    public Rectangle getAnchor() {
         EscherSpRecord spRecord = getEscherChild(EscherSpRecord.RECORD_ID);
         int flags = spRecord.getFlags();
         int x1,y1,x2,y2;
@@ -160,11 +164,11 @@ public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
         }
 
         // TODO: find out where this -1 value comes from at #57820 (link to ms docs?)
-        Rectangle2D anchor = new Rectangle2D.Double(
-            (x1 == -1 ? -1 : Units.masterToPoints(x1)),
-            (y1 == -1 ? -1 : Units.masterToPoints(y1)),
-            (x2 == -1 ? -1 : Units.masterToPoints(x2-x1)),
-            (y2 == -1 ? -1 : Units.masterToPoints(y2-y1))
+        Rectangle anchor = new Rectangle(
+            (int)(x1 == -1 ? -1 : Units.masterToPoints(x1)),
+            (int)(y1 == -1 ? -1 : Units.masterToPoints(y1)),
+            (int)(x2 == -1 ? -1 : Units.masterToPoints(x2-x1)),
+            (int)(y2 == -1 ? -1 : Units.masterToPoints(y2-y1))
         );
         
         return anchor;
@@ -176,7 +180,7 @@ public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
      *
      * @param anchor new anchor
      */
-    public void setAnchor(Rectangle2D anchor){
+    public void setAnchor(Rectangle anchor){
         int x = Units.pointsToMaster(anchor.getX());
         int y = Units.pointsToMaster(anchor.getY());
         int w = Units.pointsToMaster(anchor.getWidth() + anchor.getX());
@@ -206,7 +210,7 @@ public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
      * @param y the y coordinate of the top left corner of the shape
      */
     public void moveTo(float x, float y){
-        Rectangle2D anchor = getAnchor2D();
+        Rectangle anchor = getAnchor();
         anchor.setRect(x, y, anchor.getWidth(), anchor.getHeight());
         setAnchor(anchor);
     }

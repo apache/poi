@@ -15,28 +15,14 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.sl.usermodel;
+package org.apache.poi.hslf.usermodel;
 
-import java.awt.Rectangle;
+import org.apache.poi.sl.usermodel.BaseTestSlideShowFactory;
+import org.junit.Test;
 
-public interface GroupShape<
-    S extends Shape<S,P>,
-    P extends TextParagraph<S,P,?>
-> extends Shape<S,P>, ShapeContainer<S,P>, PlaceableShape<S,P> {
-
-    /**
-     * Gets the coordinate space of this group.  All children are constrained
-     * to these coordinates.
-     *
-     * @return the coordinate space of this group
-     */
-    Rectangle getInteriorAnchor();
-    
-    /**
-     * Sets the coordinate space of this group.  All children are constrained
-     * to these coordinates.
-     *
-     * @param anchor the coordinate space of this group
-     */
-    void setInteriorAnchor(Rectangle anchor);
+public final class TestHSLFSlideShowFactory extends BaseTestSlideShowFactory {
+    @Test
+    public void testFactory() throws Exception {
+        testFactory("pictures.ppt", "Password_Protected-hello.ppt", "hello");
+    }
 }

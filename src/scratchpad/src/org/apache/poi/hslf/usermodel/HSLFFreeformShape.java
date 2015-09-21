@@ -17,6 +17,7 @@
 
 package org.apache.poi.hslf.usermodel;
 
+import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.PathIterator;
@@ -45,7 +46,6 @@ import org.apache.poi.util.Units;
  * Shapes drawn with the "Freeform" tool have cubic bezier curve segments in the smooth sections
  * and straight-line segments in the straight sections. This object closely corresponds to <code>java.awt.geom.GeneralPath</code>.
  * </p>
- * @author Yegor Kozlov
  */
 public final class HSLFFreeformShape extends HSLFAutoShape implements FreeformShape<HSLFShape,HSLFTextParagraph> {
 
@@ -90,7 +90,7 @@ public final class HSLFFreeformShape extends HSLFAutoShape implements FreeformSh
 
     @Override
     public int setPath(GeneralPath path) {
-        Rectangle2D bounds = path.getBounds2D();
+        Rectangle bounds = path.getBounds();
         PathIterator it = path.getPathIterator(new AffineTransform());
 
         List<byte[]> segInfo = new ArrayList<byte[]>();
@@ -241,7 +241,7 @@ public final class HSLFFreeformShape extends HSLFAutoShape implements FreeformSh
             }
         }
         
-        Rectangle2D anchor = getAnchor2D();
+        Rectangle2D anchor = getAnchor();
         Rectangle2D bounds = path.getBounds2D();
         AffineTransform at = new AffineTransform();
         at.translate(anchor.getX(), anchor.getY());

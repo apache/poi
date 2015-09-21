@@ -20,7 +20,7 @@
 package org.apache.poi.xslf.usermodel;
 
 import java.awt.Color;
-import java.awt.geom.Rectangle2D;
+import java.awt.Rectangle;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
@@ -40,7 +40,7 @@ public class Tutorial4 {
         XSLFSlide slide = ppt.createSlide();
 
         XSLFTable tbl = slide.createTable();
-        tbl.setAnchor(new Rectangle2D.Double(50, 50, 450, 300));
+        tbl.setAnchor(new Rectangle(50, 50, 450, 300));
 
         int numColumns = 3;
         int numRows = 5;

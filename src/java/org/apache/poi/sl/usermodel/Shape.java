@@ -17,6 +17,7 @@
 
 package org.apache.poi.sl.usermodel;
 
+import java.awt.Rectangle;
 
 public interface Shape<
     S extends Shape<S,P>,
@@ -29,4 +30,12 @@ public interface Shape<
     * @return the sheet this shape belongs to
     */
    Sheet<S,P> getSheet();
+   
+   /**
+    * Returns the anchor (the bounding box rectangle) of this shape.
+    * All coordinates are expressed in points (72 dpi).
+    *
+    * @return the anchor of this shape
+    */
+   Rectangle getAnchor();   
 }

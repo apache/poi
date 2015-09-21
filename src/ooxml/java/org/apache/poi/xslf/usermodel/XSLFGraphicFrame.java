@@ -19,7 +19,7 @@
 
 package org.apache.poi.xslf.usermodel;
 
-import java.awt.geom.Rectangle2D;
+import java.awt.Rectangle;
 
 import javax.xml.namespace.QName;
 
@@ -53,20 +53,19 @@ public class XSLFGraphicFrame extends XSLFShape {
         throw new UnsupportedOperationException();
     }
 
-    public Rectangle2D getAnchor(){
+    @Override
+    public Rectangle getAnchor(){
         CTTransform2D xfrm = ((CTGraphicalObjectFrame)getXmlObject()).getXfrm();
         CTPoint2D off = xfrm.getOff();
-        long x = off.getX();
-        long y = off.getY();
+        int x = (int)Units.toPoints(off.getX());
+        int y = (int)Units.toPoints(off.getY());
         CTPositiveSize2D ext = xfrm.getExt();
-        long cx = ext.getCx();
-        long cy = ext.getCy();
-        return new Rectangle2D.Double(
-                Units.toPoints(x), Units.toPoints(y),
-                Units.toPoints(cx), Units.toPoints(cy));
+        int cx = (int)Units.toPoints(ext.getCx());
+        int cy = (int)Units.toPoints(ext.getCy());
+        return new Rectangle(x, y, cx, cy);
     }
 
-    public void setAnchor(Rectangle2D anchor){
+    public void setAnchor(Rectangle anchor){
         CTTransform2D xfrm = ((CTGraphicalObjectFrame)getXmlObject()).getXfrm();
         CTPoint2D off = xfrm.isSetOff() ? xfrm.getOff() : xfrm.addNewOff();
         long x = Units.toEMU(anchor.getX());
