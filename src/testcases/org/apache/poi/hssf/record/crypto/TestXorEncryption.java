@@ -27,12 +27,19 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.util.HexRead;
+import org.junit.After;
 import org.junit.Test;
 
 public class TestXorEncryption {
     
     private static HSSFTestDataSamples samples = new HSSFTestDataSamples();
     
+    // to not affect other tests running in the same JVM
+    @After
+    public void resetPassword() {
+        Biff8EncryptionKey.setCurrentUserPassword(null);
+    }
+
     @Test
     public void testXorEncryption() throws Exception {
         // Xor-Password: abc

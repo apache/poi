@@ -121,9 +121,11 @@ public class WorkbookFactory {
         if (password != null) {
             Biff8EncryptionKey.setCurrentUserPassword(password);
         }
-        Workbook wb = new HSSFWorkbook(root, true);
-        Biff8EncryptionKey.setCurrentUserPassword(null);
-        return wb;
+        try {
+            return new HSSFWorkbook(root, true);
+        } finally {
+            Biff8EncryptionKey.setCurrentUserPassword(null);
+        }
     }
 
     /**

@@ -25,6 +25,7 @@ import java.io.ByteArrayInputStream;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.poi.util.HexRead;
+import org.junit.After;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -35,6 +36,11 @@ import org.junit.rules.ExpectedException;
  * @author Josh Micich
  */
 public final class TestRecordFactoryInputStream {
+    // to not affect other tests running in the same JVM
+    @After
+    public void resetPassword() {
+        Biff8EncryptionKey.setCurrentUserPassword(null);
+    }
 
 	/**
 	 * Hex dump of a BOF record and most of a FILEPASS record.

@@ -36,6 +36,7 @@ import org.apache.poi.hssf.record.SelectionRecord;
 import org.apache.poi.hssf.record.WindowTwoRecord;
 import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.junit.After;
 
 /**
  * Testing for {@link HSSFEventFactory}
@@ -43,6 +44,12 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 public final class TestHSSFEventFactory extends TestCase {
     private static final InputStream openSample(String sampleFileName) {
         return HSSFTestDataSamples.openSampleFileStream(sampleFileName);
+    }
+
+    // to not affect other tests running in the same JVM
+    @After
+    public void resetPassword() {
+        Biff8EncryptionKey.setCurrentUserPassword(null);
     }
 
     public void testWithMissingRecords() throws Exception {

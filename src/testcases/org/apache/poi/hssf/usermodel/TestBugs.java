@@ -74,6 +74,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.LocaleUtil;
+import org.junit.After;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -85,6 +86,11 @@ import org.junit.Test;
  *  define the test in the base class {@link BaseTestBugzillaIssues}</b>
  */
 public final class TestBugs extends BaseTestBugzillaIssues {
+    // to not affect other tests running in the same JVM
+    @After
+    public void resetPassword() {
+        Biff8EncryptionKey.setCurrentUserPassword(null);
+    }
 
     public TestBugs() {
         super(HSSFITestDataProvider.instance);

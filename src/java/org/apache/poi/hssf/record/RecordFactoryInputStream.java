@@ -55,8 +55,6 @@ public final class RecordFactoryInputStream {
 		private final Record _lastRecord;
 		private final boolean _hasBOFRecord;
 
-		private static POILogger log = POILogFactory.getLogger(StreamEncryptionInfo.class);
-		
 		public StreamEncryptionInfo(RecordInputStream rs, List<Record> outputRecs) {
 			Record rec;
 			rs.nextRecord();
