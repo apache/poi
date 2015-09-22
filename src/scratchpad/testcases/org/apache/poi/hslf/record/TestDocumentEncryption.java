@@ -47,6 +47,7 @@ import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.poifs.crypt.cryptoapi.CryptoAPIEncryptionHeader;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -57,6 +58,7 @@ public class TestDocumentEncryption {
     POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
 
     @Before
+    @After  // also afterwards to not affect other tests running in the same JVM
     public void resetPassword() {
         Biff8EncryptionKey.setCurrentUserPassword(null);
     }

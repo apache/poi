@@ -32,12 +32,18 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.LocaleUtil;
+import org.junit.After;
 import org.junit.Test;
 
 /**
  *
  */
 public final class TestExcelExtractor {
+    // to not affect other tests running in the same JVM
+    @After
+    public void resetPassword() {
+        Biff8EncryptionKey.setCurrentUserPassword(null);
+    }
 
 	@SuppressWarnings("resource")
     private static ExcelExtractor createExtractor(String sampleFileName) throws IOException {
