@@ -74,9 +74,10 @@ public class EscherBitmapBlip extends EscherBlipRecord {
         return field_1_UID;
     }
 
-    public void setUID( byte[] field_1_UID )
-    {
-        this.field_1_UID = field_1_UID;
+    public void setUID( byte[] field_1_UID ) {
+        if (field_1_UID != null && field_1_UID.length == 16) {
+            System.arraycopy(field_1_UID, 0, this.field_1_UID , 0, 16);
+        }
     }
 
     public byte getMarker()

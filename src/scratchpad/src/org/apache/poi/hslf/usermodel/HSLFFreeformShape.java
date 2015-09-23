@@ -133,6 +133,9 @@ public final class HSLFFreeformShape extends HSLFAutoShape implements FreeformSh
                     isClosed = true;
                     numPoints++;
                     break;
+                default:
+                    logger.log(POILogger.WARN, "Ignoring invalid segment type "+type);
+                    break;
             }
 
             it.next();

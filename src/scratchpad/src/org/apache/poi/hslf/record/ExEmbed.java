@@ -113,6 +113,7 @@ public class ExEmbed extends RecordContainer {
                     case 0x1: menuName = cs; break;
                     case 0x2: progId = cs; break;
                     case 0x3: clipboardName = cs; break;
+                    default: break;
                 }
             }
         }

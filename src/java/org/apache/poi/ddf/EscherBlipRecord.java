@@ -70,7 +70,11 @@ public class EscherBlipRecord extends EscherRecord { // TODO - instantiable supe
     }
 
     public void setPictureData(byte[] pictureData) {
-        field_pictureData = pictureData;
+        if (pictureData == null) {
+            field_pictureData = null;
+        } else {
+            field_pictureData = pictureData.clone();
+        }
     }
 
     public String toString() {

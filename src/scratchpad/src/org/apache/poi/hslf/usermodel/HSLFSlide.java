@@ -180,6 +180,8 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFTe
                 case EscherContainerRecord.SP_CONTAINER:
                     spr = c.getChildById(EscherSpRecord.RECORD_ID);
                     break;
+                default:
+                    break;
             }
             if(spr != null) spr.setShapeId(allocateShapeId());
         }

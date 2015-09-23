@@ -124,6 +124,7 @@ public final class Comment2000 extends RecordContainer {
                     case 0: authorRecord = cs; break;
                     case 1: commentRecord = cs; break;
                     case 2: authorInitialsRecord = cs; break;
+                    default: break;
                 }
             } else if (r instanceof Comment2000Atom){
                 commentAtom = (Comment2000Atom)r;

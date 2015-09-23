@@ -21,18 +21,49 @@ import static org.apache.poi.hslf.record.RecordTypes.OutlineTextRefAtom;
 
 import java.awt.Color;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
 import org.apache.poi.hslf.model.PPFont;
-import org.apache.poi.hslf.model.textproperties.*;
+import org.apache.poi.hslf.model.textproperties.BitMaskTextProp;
+import org.apache.poi.hslf.model.textproperties.FontAlignmentProp;
+import org.apache.poi.hslf.model.textproperties.IndentProp;
+import org.apache.poi.hslf.model.textproperties.ParagraphFlagsTextProp;
+import org.apache.poi.hslf.model.textproperties.TextAlignmentProp;
+import org.apache.poi.hslf.model.textproperties.TextPFException9;
+import org.apache.poi.hslf.model.textproperties.TextProp;
+import org.apache.poi.hslf.model.textproperties.TextPropCollection;
 import org.apache.poi.hslf.model.textproperties.TextPropCollection.TextPropType;
-import org.apache.poi.hslf.record.*;
+import org.apache.poi.hslf.record.ColorSchemeAtom;
+import org.apache.poi.hslf.record.EscherTextboxWrapper;
+import org.apache.poi.hslf.record.FontCollection;
+import org.apache.poi.hslf.record.MasterTextPropAtom;
+import org.apache.poi.hslf.record.OutlineTextRefAtom;
+import org.apache.poi.hslf.record.PPDrawing;
+import org.apache.poi.hslf.record.Record;
+import org.apache.poi.hslf.record.RecordContainer;
+import org.apache.poi.hslf.record.RecordTypes;
+import org.apache.poi.hslf.record.SlideListWithText;
+import org.apache.poi.hslf.record.SlidePersistAtom;
+import org.apache.poi.hslf.record.StyleTextProp9Atom;
+import org.apache.poi.hslf.record.StyleTextPropAtom;
+import org.apache.poi.hslf.record.TextBytesAtom;
+import org.apache.poi.hslf.record.TextCharsAtom;
+import org.apache.poi.hslf.record.TextHeaderAtom;
+import org.apache.poi.hslf.record.TextRulerAtom;
+import org.apache.poi.hslf.record.TextSpecInfoAtom;
 import org.apache.poi.sl.draw.DrawPaint;
 import org.apache.poi.sl.usermodel.AutoNumberingScheme;
 import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
 import org.apache.poi.sl.usermodel.TextParagraph;
-import org.apache.poi.util.*;
+import org.apache.poi.util.LocaleUtil;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
+import org.apache.poi.util.StringUtil;
+import org.apache.poi.util.Units;
 
 /**
  * This class represents a run of text in a powerpoint document. That
@@ -906,12 +937,16 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
         }
 
         Iterator<HSLFTextRun> runIter = htp.getTextRuns().iterator();
-        HSLFTextRun htr = runIter.next();
-        htr.setText("");
-        assert (htr != null);
-        while (runIter.hasNext()) {
-            runIter.next();
-            runIter.remove();
+        if (runIter.hasNext()) {
+            HSLFTextRun htr = runIter.next();
+            htr.setText("");
+            while (runIter.hasNext()) {
+                runIter.next();
+                runIter.remove();
+            }
+        } else {
+            HSLFTextRun trun = new HSLFTextRun(htp);
+            htp.addTextRun(trun);
         }
 
         return appendText(paragraphs, text, false);
