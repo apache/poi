@@ -129,7 +129,7 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
         } else {
             int rgb = new Color(color.getBlue(), color.getGreen(), color.getRed(), 0).getRGB();
             setEscherProperty(opt, EscherProperties.LINESTYLE__COLOR, rgb);
-            setEscherProperty(opt, EscherProperties.LINESTYLE__NOLINEDRAWDASH, color == null ? 0x180010 : 0x180018);
+            setEscherProperty(opt, EscherProperties.LINESTYLE__NOLINEDRAWDASH, 0x180018);
         }
     }
 
@@ -331,6 +331,9 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
                 infoAtom.setAction(InteractiveInfoAtom.ACTION_HYPERLINK);
                 infoAtom.setJump(InteractiveInfoAtom.JUMP_NONE);
                 infoAtom.setHyperlinkType(InteractiveInfoAtom.LINK_SlideNumber);
+                break;
+            default:
+                logger.log(POILogger.WARN, "Ignore unknown hyperlink type : "+link.getTitle());
                 break;
         }
 

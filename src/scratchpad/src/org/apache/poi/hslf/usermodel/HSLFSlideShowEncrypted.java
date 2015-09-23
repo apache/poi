@@ -38,7 +38,6 @@ import org.apache.poi.hslf.record.UserEditAtom;
 import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.poi.poifs.crypt.Decryptor;
 import org.apache.poi.poifs.crypt.EncryptionInfo;
-import org.apache.poi.poifs.crypt.Encryptor;
 import org.apache.poi.poifs.crypt.cryptoapi.CryptoAPIDecryptor;
 import org.apache.poi.poifs.crypt.cryptoapi.CryptoAPIEncryptor;
 import org.apache.poi.util.BitField;
@@ -95,8 +94,8 @@ public class HSLFSlideShowEncrypted {
         }
         assert(r instanceof DocumentEncryptionAtom);
         this.dea = (DocumentEncryptionAtom)r;
+        decryptInit();
         
-        CryptoAPIDecryptor dec = (CryptoAPIDecryptor)dea.getEncryptionInfo().getDecryptor();
         String pass = Biff8EncryptionKey.getCurrentUserPassword();
         if(!dec.verifyPassword(pass != null ? pass : Decryptor.DEFAULT_PASSWORD)) {
             throw new EncryptedPowerPointFileException("PowerPoint file is encrypted. The correct password needs to be set via Biff8EncryptionKey.setCurrentUserPassword()");
@@ -342,10 +341,11 @@ public class HSLFSlideShowEncrypted {
             // create password record
             if (dea == null) {
                 dea = new DocumentEncryptionAtom();
+                enc = null;
             }
+            encryptInit();
             EncryptionInfo ei = dea.getEncryptionInfo();
             byte salt[] = ei.getVerifier().getSalt();
-            Encryptor enc = ei.getEncryptor();
             if (salt == null) {
                 enc.confirmPassword(password);
             } else {
@@ -396,11 +396,12 @@ public class HSLFSlideShowEncrypted {
             
             recordMap.put(pdr.getLastOnDiskOffset(), r);
         }
+        
+        assert(uea != null && pph != null && uea.getPersistPointersOffset() == pph.getLastOnDiskOffset());
+        
         recordMap.put(pph.getLastOnDiskOffset(), pph);
         recordMap.put(uea.getLastOnDiskOffset(), uea);
 
-        assert(uea != null && pph != null && uea.getPersistPointersOffset() == pph.getLastOnDiskOffset());
-        
         if (duplicatedCount == 0 && obsoleteOffsets.isEmpty()) {
             return records;
         }

@@ -319,7 +319,7 @@ public abstract class HSLFSheet implements HSLFShapeContainer, Sheet<HSLFShape,H
         for (HSLFShape shape : getShapes()) {
             if(shape instanceof HSLFTextShape){
                 HSLFTextShape tx = (HSLFTextShape)shape;
-                if (tx != null && tx.getRunType() == type) {
+                if (tx.getRunType() == type) {
                     return tx;
                 }
             }

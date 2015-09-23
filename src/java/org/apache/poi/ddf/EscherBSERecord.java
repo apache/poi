@@ -61,7 +61,8 @@ public final class EscherBSERecord extends EscherRecord {
         int pos = offset + 8;
         field_1_blipTypeWin32 = data[pos];
         field_2_blipTypeMacOS = data[pos + 1];
-        System.arraycopy( data, pos + 2, field_3_uid = new byte[16], 0, 16 );
+        field_3_uid = new byte[16];
+        System.arraycopy( data, pos + 2, field_3_uid, 0, 16 );
         field_4_tag = LittleEndian.getShort( data, pos + 18 );
         field_5_size = LittleEndian.getInt( data, pos + 20 );
         field_6_ref = LittleEndian.getInt( data, pos + 24 );
@@ -90,12 +91,12 @@ public final class EscherBSERecord extends EscherRecord {
     public int serialize(int offset, byte[] data, EscherSerializationListener listener) {
         listener.beforeRecordSerialize( offset, getRecordId(), this );
 
-        if (_remainingData == null)
+        if (_remainingData == null) {
             _remainingData = new byte[0];
+        }
 
         LittleEndian.putShort( data, offset, getOptions() );
         LittleEndian.putShort( data, offset + 2, getRecordId() );
-        if (_remainingData == null) _remainingData = new byte[0];
         int blipSize = field_12_blipRecord == null ? 0 : field_12_blipRecord.getRecordSize();
         int remainingBytes = _remainingData.length + 36 + blipSize;
         LittleEndian.putInt( data, offset + 4, remainingBytes );
@@ -117,8 +118,6 @@ public final class EscherBSERecord extends EscherRecord {
         {
             bytesWritten = field_12_blipRecord.serialize( offset + 44, data, new NullEscherSerializationListener() );
         }
-        if (_remainingData == null)
-            _remainingData = new byte[0];
         System.arraycopy( _remainingData, 0, data, offset + 44 + bytesWritten, _remainingData.length );
         int pos = offset + 8 + 36 + _remainingData.length + bytesWritten;
 
@@ -184,7 +183,9 @@ public final class EscherBSERecord extends EscherRecord {
      * 16 byte MD4 checksum.
      */
     public void setUid(byte[] uid) {
-        field_3_uid = uid;
+        if (uid != null && uid.length == 16) {
+            System.arraycopy(uid, 0, field_3_uid, 0, field_3_uid.length);
+        };
     }
 
     /**
@@ -306,7 +307,11 @@ public final class EscherBSERecord extends EscherRecord {
      * Any remaining data in this record.
      */
     public void setRemainingData(byte[] remainingData) {
-        _remainingData = remainingData;
+        if (remainingData == null) {
+            _remainingData = null;
+        } else {
+            _remainingData = remainingData.clone();
+        }
     }
 
     public String toString() {

@@ -149,6 +149,8 @@ public final class TextRulerAtom extends RecordAtom {
                         val = LittleEndian.getShort(_data, pos); pos += 2;
                         textOffsets[bits[i]-8] = val;
                         break;
+                    default:
+                        break;
                 }
             }
         }

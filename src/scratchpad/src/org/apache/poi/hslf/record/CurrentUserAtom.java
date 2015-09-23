@@ -133,10 +133,17 @@ public class CurrentUserAtom
 		}
 		
 		// Grab the contents
-		_contents = new byte[docProps.getSize()];
+		int len = docProps.getSize();
+		_contents = new byte[len];
 		InputStream in = dir.createDocumentInputStream("Current User");
-		in.read(_contents);
+		int readLen = in.read(_contents);
+		in.close();
 
+        if (len != readLen) {
+            throw new IOException("Current User input stream ended prematurely - expected "+len+" bytes - received "+readLen+" bytes");
+        }
+		
+		
 		// See how long it is. If it's under 28 bytes long, we can't
 		//  read it
 		if(_contents.length < 28) {

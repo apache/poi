@@ -659,7 +659,7 @@ public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagrap
 
 		// if the removed slide had notes - remove references to them too
 
-        int notesId = (removedSlide != null) ? removedSlide.getSlideRecord().getSlideAtom().getNotesID() : 0;
+        int notesId = removedSlide.getSlideRecord().getSlideAtom().getNotesID();
 		if (notesId != 0) {
 			SlideListWithText nslwt = _documentRecord.getNotesSlideListWithText();
 			records = new ArrayList<Record>();

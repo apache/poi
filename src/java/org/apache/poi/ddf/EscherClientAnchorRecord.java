@@ -333,8 +333,11 @@ public class EscherClientAnchorRecord
     /**
      * Any remaining data in the record
      */
-    public void setRemainingData( byte[] remainingData )
-    {
-        this.remainingData = remainingData;
+    public void setRemainingData( byte[] remainingData ) {
+        if (remainingData == null) {
+            this.remainingData = null;
+        } else {
+            this.remainingData = remainingData.clone();
+        }
     }
 }

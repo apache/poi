@@ -54,7 +54,8 @@ public class ZipContentTypeManager extends ContentTypeManager {
 		super(in, pkg);
 	}
 
-	@Override
+	@SuppressWarnings("resource")
+    @Override
 	public boolean saveImpl(Document content, OutputStream out) {
 		ZipOutputStream zos = null;
 		if (out instanceof ZipOutputStream)

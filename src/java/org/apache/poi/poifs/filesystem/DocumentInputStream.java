@@ -85,14 +85,17 @@ public class DocumentInputStream extends InputStream implements LittleEndianInpu
       delegate = new NDocumentInputStream(document);
    }
 
+    @Override
 	public int available() {
 	   return delegate.available();
 	}
 
+    @Override
 	public void close() {
 	   delegate.close();
 	}
 
+    @Override
 	public void mark(int ignoredReadlimit) {
 		delegate.mark(ignoredReadlimit);
 	}
@@ -102,18 +105,22 @@ public class DocumentInputStream extends InputStream implements LittleEndianInpu
 	 * 
 	 * @return <code>true</code> always
 	 */
+    @Override
 	public boolean markSupported() {
 		return true;
 	}
 
+    @Override
 	public int read() throws IOException {
 	   return delegate.read();
 	}
 
+	@Override
 	public int read(byte[] b) throws IOException {
 		return read(b, 0, b.length);
 	}
 
+    @Override
 	public int read(byte[] b, int off, int len) throws IOException {
 	   return delegate.read(b, off, len);
 	}
@@ -123,46 +130,57 @@ public class DocumentInputStream extends InputStream implements LittleEndianInpu
 	 * last called on this input stream. If mark() has not been called this
 	 * method repositions the stream to its beginning.
 	 */
+    @Override
 	public void reset() {
 	   delegate.reset();
 	}
 
+    @Override
 	public long skip(long n) throws IOException {
 	   return delegate.skip(n);
 	}
 
+    @Override
 	public byte readByte() {
 	   return delegate.readByte();
 	}
 
+    @Override
 	public double readDouble() {
 	   return delegate.readDouble();
 	}
 
+    @Override
 	public short readShort() {
 		return (short) readUShort();
 	}
 
-   public void readFully(byte[] buf) {
-      readFully(buf, 0, buf.length);
-   }
+    @Override
+    public void readFully(byte[] buf) {
+        readFully(buf, 0, buf.length);
+    }
 
+    @Override
 	public void readFully(byte[] buf, int off, int len) {
 	   delegate.readFully(buf, off, len);
 	}
 
+    @Override
 	public long readLong() {
 	   return delegate.readLong();
 	}
 
+    @Override
 	public int readInt() {
 	   return delegate.readInt();
 	}
 
+    @Override
 	public int readUShort() {
 	   return delegate.readUShort();
 	}
 
+    @Override
 	public int readUByte() {
 	   return delegate.readUByte();
 	}
