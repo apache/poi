@@ -657,6 +657,13 @@ public final class TestHSSFSheet extends BaseTestSheet {
         assertTrue(sheet3.getColumnWidth(0) >= minWithRow1And2);
         assertTrue(sheet3.getColumnWidth(0) <= maxWithRow1And2);
     }
+
+    @Test
+    public void testNoMergedRegionsIsEmptyList() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet s = wb.createSheet("Sheet1");
+        assertTrue(s.getMergedRegions().isEmpty());
+    }
     
     @Test
     public void autoSizeDate() throws Exception {
