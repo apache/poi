@@ -1382,4 +1382,11 @@ public final class TestXSSFSheet extends BaseTestSheet {
         XSSFSheet sheet = wb.createSheet();
         assertNotNull(sheet.createComment());
     }
+
+    @Test
+    public void testNoMergedRegionsIsEmptyList() {
+        XSSFWorkbook wb = new XSSFWorkbook();
+        XSSFSheet sheet = wb.createSheet();
+        assertTrue(sheet.getMergedRegions().isEmpty());
+    }
 }
