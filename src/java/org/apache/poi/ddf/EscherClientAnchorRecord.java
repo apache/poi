@@ -52,7 +52,7 @@ public class EscherClientAnchorRecord
     private short field_7_dx2;
     private short field_8_row2;
     private short field_9_dy2;
-    private byte[] remainingData;
+    private byte[] remainingData = new byte[0];
     private boolean shortRecord = false;
 
     public int fillFields(byte[] data, int offset, EscherRecordFactory recordFactory) {
@@ -335,7 +335,7 @@ public class EscherClientAnchorRecord
      */
     public void setRemainingData( byte[] remainingData ) {
         if (remainingData == null) {
-            this.remainingData = null;
+            this.remainingData = new byte[0];
         } else {
             this.remainingData = remainingData.clone();
         }
