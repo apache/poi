@@ -30,14 +30,13 @@ public class EscherBitmapBlip extends EscherBlipRecord {
 
     private static final int HEADER_SIZE = 8;
 
-    private byte[] field_1_UID;
+    private final byte[] field_1_UID = new byte[16];
     private byte field_2_marker = (byte) 0xFF;
 
     public int fillFields(byte[] data, int offset, EscherRecordFactory recordFactory) {
         int bytesAfterHeader = readHeader( data, offset );
         int pos = offset + HEADER_SIZE;
 
-        field_1_UID = new byte[16];
         System.arraycopy( data, pos, field_1_UID, 0, 16 ); pos += 16;
         field_2_marker = data[pos]; pos++;
 
@@ -75,9 +74,10 @@ public class EscherBitmapBlip extends EscherBlipRecord {
     }
 
     public void setUID( byte[] field_1_UID ) {
-        if (field_1_UID != null && field_1_UID.length == 16) {
-            System.arraycopy(field_1_UID, 0, this.field_1_UID , 0, 16);
+        if (field_1_UID == null || field_1_UID.length != 16) {
+            throw new IllegalArgumentException("field_1_UID must be byte[16]");
         }
+        System.arraycopy(field_1_UID, 0, this.field_1_UID , 0, 16);
     }
 
     public byte getMarker()

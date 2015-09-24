@@ -43,7 +43,7 @@ public final class EscherBSERecord extends EscherRecord {
 
     private byte field_1_blipTypeWin32;
     private byte field_2_blipTypeMacOS;
-    private byte[] field_3_uid;  // 16 bytes
+    private final byte[] field_3_uid = new byte[16];
     private short field_4_tag;
     private int field_5_size;
     private int field_6_ref;
@@ -54,14 +54,13 @@ public final class EscherBSERecord extends EscherRecord {
     private byte field_11_unused3;
     private EscherBlipRecord field_12_blipRecord;
 
-    private byte[] _remainingData;
+    private byte[] _remainingData = new byte[0];
 
     public int fillFields(byte[] data, int offset, EscherRecordFactory recordFactory) {
         int bytesRemaining = readHeader( data, offset );
         int pos = offset + 8;
         field_1_blipTypeWin32 = data[pos];
         field_2_blipTypeMacOS = data[pos + 1];
-        field_3_uid = new byte[16];
         System.arraycopy( data, pos + 2, field_3_uid, 0, 16 );
         field_4_tag = LittleEndian.getShort( data, pos + 18 );
         field_5_size = LittleEndian.getInt( data, pos + 20 );
@@ -183,9 +182,10 @@ public final class EscherBSERecord extends EscherRecord {
      * 16 byte MD4 checksum.
      */
     public void setUid(byte[] uid) {
-        if (uid != null && uid.length == 16) {
-            System.arraycopy(uid, 0, field_3_uid, 0, field_3_uid.length);
-        };
+        if (uid == null || uid.length != 16) {
+            throw new IllegalArgumentException("uid must be byte[16]");
+        }
+        System.arraycopy(uid, 0, field_3_uid, 0, field_3_uid.length);
     }
 
     /**
@@ -308,7 +308,7 @@ public final class EscherBSERecord extends EscherRecord {
      */
     public void setRemainingData(byte[] remainingData) {
         if (remainingData == null) {
-            _remainingData = null;
+            _remainingData = new byte[0];
         } else {
             _remainingData = remainingData.clone();
         }
