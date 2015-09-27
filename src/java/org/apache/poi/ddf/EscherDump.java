@@ -744,7 +744,7 @@ public final class EscherDump {
         String result = "";
         result += (short) ( n32 >> 16 );
         result += '.';
-        result += (short) ( n32 & (short) 0xFFFF );
+        result += (short) ( n32 & 0xFFFF );
         return result;
     }
 

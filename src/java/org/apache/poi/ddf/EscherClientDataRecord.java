@@ -108,8 +108,9 @@ public class EscherClientDataRecord
     /**
      * Any data recording this record.
      */
-    public void setRemainingData( byte[] remainingData )
-    {
-        this.remainingData = remainingData;
+    public void setRemainingData( byte[] remainingData ) {
+        this.remainingData = (remainingData == null)
+            ? new byte[0]
+            : remainingData.clone();
     }
 }

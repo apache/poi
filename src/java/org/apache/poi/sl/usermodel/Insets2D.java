@@ -17,8 +17,6 @@
 
 package org.apache.poi.sl.usermodel;
 
-import java.awt.Insets;
-
 /**
  * This is a replacement for {@link java.awt.Insets} which works on doubles
  * instead of ints
@@ -94,8 +92,8 @@ public class Insets2D {
      * @since       JDK1.1
      */
     public boolean equals(Object obj) {
-    if (obj instanceof Insets) {
-        Insets insets = (Insets)obj;
+    if (obj instanceof Insets2D) {
+        Insets2D insets = (Insets2D)obj;
         return ((top == insets.top) && (left == insets.left) &&
             (bottom == insets.bottom) && (right == insets.right));
     }

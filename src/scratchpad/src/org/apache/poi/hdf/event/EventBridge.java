@@ -81,13 +81,17 @@ public final class EventBridge implements HDFLowLevelParsingListener
   {
     _listener = listener;
   }
-  public void mainDocument(byte[] mainDocument)
-  {
-    _mainDocument = mainDocument;
+  public void mainDocument(byte[] mainDocument) {
+      if (mainDocument == null) {
+          throw new IllegalArgumentException("mainDocument is null.");
+      }
+    _mainDocument = mainDocument.clone();
   }
-  public void tableStream(byte[] tableStream)
-  {
-    _tableStream = tableStream;
+  public void tableStream(byte[] tableStream) {
+      if (tableStream == null) {
+          throw new IllegalArgumentException("tableStream is null.");
+      }
+      _tableStream = tableStream.clone();
   }
   public void miscellaneous(int fcMin, int ccpText, int ccpFtn, int fcPlcfhdd, int lcbPlcfhdd)
   {

@@ -19,10 +19,7 @@
 package org.apache.poi.dev;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.util.Locale;
 import java.util.Properties;
 
@@ -36,7 +33,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-import org.apache.poi.util.StringUtil;
 import org.apache.poi.util.XMLHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -70,10 +66,13 @@ public class RecordGenerator {
 
     private static void generateRecords(String defintionsDir, String recordStyleDir, String destSrcPathDir, String testSrcPathDir)
              throws Exception {
-        File definitionsFile = new File(defintionsDir);
+        File definitionsFiles[] = new File(defintionsDir).listFiles();
+        if (definitionsFiles == null) {
+            System.err.println(defintionsDir+" is not a directory.");
+            return;
+        }
 
-        for (int i = 0; i < definitionsFile.listFiles().length; i++) {
-            File file = definitionsFile.listFiles()[i];
+        for (File file : definitionsFiles) {
             if (file.isFile() &&
                     (file.getName().endsWith("_record.xml") ||
                     file.getName().endsWith("_type.xml")
@@ -130,8 +129,7 @@ public class RecordGenerator {
     private static void transform(final File in, final File out, final File xslt)
     throws FileNotFoundException, TransformerException
     {
-        final Reader r = new InputStreamReader(new FileInputStream(xslt), StringUtil.UTF8);
-        final StreamSource ss = new StreamSource(r);
+        final StreamSource ss = new StreamSource(xslt);
         final TransformerFactory tf = TransformerFactory.newInstance();
         final Transformer t;
         try

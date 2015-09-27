@@ -28,18 +28,12 @@ public final class Odd extends NumericFunction.OneArg {
 		if (d==0) {
 			return 1;
 		}
-		if (d>0) {
-			return calcOdd(d);
-		}
-		return -calcOdd(-d);
+		return (d>0) ? calcOdd(d) : -calcOdd(-d);
 	}
 
 	private static long calcOdd(double d) {
 		double dpm1 = d+1;
 		long x = ((long) dpm1) & PARITY_MASK;
-		if (x == dpm1) {
-			return x-1;
-		}
-		return x + 1;
+		return ( Double.compare(x, dpm1) == 0 ) ? x-1 : x+1;
 	}
 }

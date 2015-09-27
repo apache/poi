@@ -41,7 +41,7 @@ public final class EscherPictBlip extends EscherBlipRecord {
 
     private static final int HEADER_SIZE = 8;
 
-    private byte[] field_1_UID;
+    private final byte[] field_1_UID = new byte[16];
     private int field_2_cb;
     private int field_3_rcBounds_x1;
     private int field_3_rcBounds_y1;
@@ -59,7 +59,6 @@ public final class EscherPictBlip extends EscherBlipRecord {
         int bytesAfterHeader = readHeader(data, offset);
         int pos = offset + HEADER_SIZE;
 
-        field_1_UID = new byte[16];
         System.arraycopy( data, pos, field_1_UID, 0, 16 ); pos += 16;
         field_2_cb = LittleEndian.getInt( data, pos ); pos += 4;
         field_3_rcBounds_x1 = LittleEndian.getInt( data, pos ); pos += 4;
@@ -146,7 +145,10 @@ public final class EscherPictBlip extends EscherBlipRecord {
     }
 
     public void setUID(byte[] uid) {
-        this.field_1_UID = uid;
+        if (uid == null || uid.length != 16) {
+            throw new IllegalArgumentException("uid must be byte[16]");
+        }
+        System.arraycopy(uid, 0, field_1_UID, 0, field_1_UID.length);
     }
 
     public int getUncompressedSize() {

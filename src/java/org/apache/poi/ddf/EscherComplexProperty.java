@@ -26,8 +26,6 @@ import org.apache.poi.util.LittleEndian;
  * A complex property differs from a simple property in that the data can not fit inside a 32 bit
  * integer.  See the specification for more detailed information regarding exactly what is
  * stored here.
- *
- * @author Glen Stampoultzis
  */
 public class EscherComplexProperty extends EscherProperty {
     // TODO - make private and final
@@ -43,7 +41,10 @@ public class EscherComplexProperty extends EscherProperty {
      */
     public EscherComplexProperty(short id, byte[] complexData) {
         super(id);
-        _complexData = complexData;
+        if (complexData == null) {
+            throw new IllegalArgumentException("complexData can't be null");
+        }
+        _complexData = complexData.clone();
     }
 
     /**
@@ -56,7 +57,10 @@ public class EscherComplexProperty extends EscherProperty {
      */
     public EscherComplexProperty(short propertyNumber, boolean isBlipId, byte[] complexData) {
         super(propertyNumber, true, isBlipId);
-        _complexData = complexData;
+        if (complexData == null) {
+            throw new IllegalArgumentException("complexData can't be null");
+        }
+        _complexData = complexData.clone();
     }
 
     /**

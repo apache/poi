@@ -1168,7 +1168,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
     }
 
     public int getIndentFromLeft() {
-        return getIndentFromLeft();
+        return getIndentationLeft();
     }
 
     public void setIndentFromLeft(int dxaLeft) {
@@ -1176,7 +1176,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
     }
 
     public int getIndentFromRight() {
-        return getIndentFromRight();
+        return getIndentationRight();
     }
 
     public void setIndentFromRight(int dxaRight) {
