@@ -91,7 +91,7 @@ public final class StyleDescription
               System.arraycopy(std, grupxStart + offset + 2, _chpx, 0, upxSize);
           }
 
-          if(upxSize % 2 == 1)
+          if((upxSize & 2) == 1)
           {
               ++upxSize;
           }

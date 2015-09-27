@@ -43,11 +43,11 @@ public final class EscherMetafileBlip extends EscherBlipRecord {
 
     private static final int HEADER_SIZE = 8;
 
-    private byte[] field_1_UID;
+    private final byte[] field_1_UID = new byte[16];
     /**
      * The primary UID is only saved to disk if (blip_instance ^ blip_signature == 1)
      */
-    private byte[] field_2_UID;
+    private final byte[] field_2_UID = new byte[16];
     private int field_2_cb;
     private int field_3_rcBounds_x1;
     private int field_3_rcBounds_y1;
@@ -65,11 +65,9 @@ public final class EscherMetafileBlip extends EscherBlipRecord {
     public int fillFields(byte[] data, int offset, EscherRecordFactory recordFactory) {
         int bytesAfterHeader = readHeader( data, offset );
         int pos = offset + HEADER_SIZE;
-        field_1_UID = new byte[16];
         System.arraycopy( data, pos, field_1_UID, 0, 16 ); pos += 16;
 
         if((getOptions() ^ getSignature()) == 0x10){
-            field_2_UID = new byte[16];
             System.arraycopy( data, pos, field_2_UID, 0, 16 ); pos += 16;
         }
 
@@ -173,16 +171,21 @@ public final class EscherMetafileBlip extends EscherBlipRecord {
     }
 
     public void setUID(byte[] uid) {
-        field_1_UID = uid;
+        if (uid == null || uid.length != 16) {
+            throw new IllegalArgumentException("uid must be byte[16]");
+        }
+        System.arraycopy(uid, 0, field_1_UID, 0, field_1_UID.length);
     }
 
-    public byte[] getPrimaryUID()
-    {
+    public byte[] getPrimaryUID() {
         return field_2_UID;
     }
 
     public void setPrimaryUID(byte[] primaryUID) {
-        field_2_UID = primaryUID;
+        if (primaryUID == null || primaryUID.length != 16) {
+            throw new IllegalArgumentException("primaryUID must be byte[16]");
+        }
+        System.arraycopy(primaryUID, 0, field_2_UID, 0, field_2_UID.length);
     }
 
     public int getUncompressedSize() {
