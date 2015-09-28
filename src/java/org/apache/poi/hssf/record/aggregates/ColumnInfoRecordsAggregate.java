@@ -28,7 +28,7 @@ import org.apache.poi.hssf.record.ColumnInfoRecord;
 /**
  * @author Glen Stampoultzis
  */
-public final class ColumnInfoRecordsAggregate extends RecordAggregate {
+public final class ColumnInfoRecordsAggregate extends RecordAggregate implements Cloneable {
 	/**
 	 * List of {@link ColumnInfoRecord}s assumed to be in order
 	 */
@@ -75,14 +75,11 @@ public final class ColumnInfoRecordsAggregate extends RecordAggregate {
 		}
 	}
 
-	/**
-	 * Performs a deep clone of the record
-	 */
-	public Object clone() {
+	@Override
+	public ColumnInfoRecordsAggregate clone() {
 		ColumnInfoRecordsAggregate rec = new ColumnInfoRecordsAggregate();
-		for (int k = 0; k < records.size(); k++) {
-			ColumnInfoRecord ci = records.get(k);
-			rec.records.add((ColumnInfoRecord) ci.clone());
+		for (ColumnInfoRecord ci : records) {
+			rec.records.add(ci.clone());
 		}
 		return rec;
 	}
@@ -295,7 +292,7 @@ public final class ColumnInfoRecordsAggregate extends RecordAggregate {
 	}
 
 	private static ColumnInfoRecord copyColInfo(ColumnInfoRecord ci) {
-		return (ColumnInfoRecord) ci.clone();
+		return ci.clone();
 	}
 
 

@@ -33,7 +33,7 @@ import org.apache.poi.util.LittleEndianOutput;
  * @author Andrew C. Oliver (acoliver at apache dot org)
  * @author Jason Height (jheight at chariot dot net dot au)
  */
-public final class FormulaRecord extends CellRecord {
+public final class FormulaRecord extends CellRecord implements Cloneable {
 
 	public static final short sid = 0x0006;   // docs say 406...because of a bug Microsoft support site article #Q184647)
 	private static int FIXED_SIZE = 14; // double + short + int
@@ -375,7 +375,7 @@ public final class FormulaRecord extends CellRecord {
 	}
 
 	@Override
-    public Object clone() {
+    public FormulaRecord clone() {
 		FormulaRecord rec = new FormulaRecord();
 		copyBaseFields(rec);
 		rec.field_4_value = field_4_value;

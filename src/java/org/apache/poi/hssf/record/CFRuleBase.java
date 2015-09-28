@@ -39,7 +39,7 @@ import org.apache.poi.util.POILogger;
  *  new-style (Excel 2007+) also make use of {@link CFRule12Record}
  *  and {@link CFExRuleRecord} for their rules.
  */
-public abstract class CFRuleBase extends StandardRecord {
+public abstract class CFRuleBase extends StandardRecord implements Cloneable {
     public static final class ComparisonOperator {
         public static final byte NO_COMPARISON = 0;
         public static final byte BETWEEN       = 1;
@@ -452,4 +452,7 @@ public abstract class CFRuleBase extends StandardRecord {
         rec.setFormula1(getFormula1().copy());
         rec.setFormula2(getFormula2().copy());
     }
+    
+    @Override
+    public abstract CFRuleBase clone();
 }

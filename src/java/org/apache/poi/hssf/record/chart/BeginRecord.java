@@ -29,7 +29,7 @@ import org.apache.poi.util.LittleEndianOutput;
  *
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class BeginRecord extends StandardRecord {
+public final class BeginRecord extends StandardRecord implements Cloneable {
     public static final short sid = 0x1033;
 
     public BeginRecord()
@@ -64,7 +64,8 @@ public final class BeginRecord extends StandardRecord {
         return sid;
     }
     
-    public Object clone() {
+    @Override
+    public BeginRecord clone() {
        BeginRecord br = new BeginRecord();
        // No data so nothing to copy
        return br;

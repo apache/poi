@@ -29,7 +29,7 @@ import org.apache.poi.util.LittleEndianOutput;
  * 
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class DataFormatRecord extends StandardRecord {
+public final class DataFormatRecord extends StandardRecord implements Cloneable {
     public final static short sid = 0x1006;
 
     private static final BitField useExcel4Colors = BitFieldFactory.getInstance(0x1);
@@ -96,7 +96,8 @@ public final class DataFormatRecord extends StandardRecord {
         return sid;
     }
 
-    public Object clone() {
+    @Override
+    public DataFormatRecord clone() {
         DataFormatRecord rec = new DataFormatRecord();
     
         rec.field_1_pointNumber = field_1_pointNumber;

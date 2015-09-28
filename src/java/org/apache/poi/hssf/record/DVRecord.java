@@ -36,7 +36,7 @@ import org.apache.poi.util.StringUtil;
  * @author Dragos Buleandra (dragos.buleandra@trade2b.ro)
  * @author Josh Micich
  */
-public final class DVRecord extends StandardRecord {
+public final class DVRecord extends StandardRecord implements Cloneable {
 	public final static short sid = 0x01BE;
 	
 	/** the unicode string used for error/prompt title/text when not present */
@@ -345,7 +345,8 @@ public final class DVRecord extends StandardRecord {
 	 * Clones the object. Uses serialisation, as the
 	 *  contents are somewhat complex
 	 */
-	public Object clone() {
-		return cloneViaReserialise();
+	@Override
+	public DVRecord clone() {
+		return (DVRecord)cloneViaReserialise();
 	}
 }

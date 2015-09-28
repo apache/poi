@@ -21,79 +21,79 @@ package org.apache.poi.wp.usermodel;
  * This class represents a run of text that share common properties.
  */
 public interface CharacterRun {
-    public boolean isBold();
-    public void setBold(boolean bold);
+    boolean isBold();
+    void setBold(boolean bold);
 
-    public boolean isItalic();
-    public void setItalic(boolean italic);
+    boolean isItalic();
+    void setItalic(boolean italic);
 
-    public boolean isSmallCaps();
-    public void setSmallCaps(boolean smallCaps);
+    boolean isSmallCaps();
+    void setSmallCaps(boolean smallCaps);
 
-    public boolean isCapitalized();
-    public void setCapitalized(boolean caps);
+    boolean isCapitalized();
+    void setCapitalized(boolean caps);
 
-    public boolean isStrikeThrough();
-    public void setStrikeThrough(boolean strike);
-    public boolean isDoubleStrikeThrough();
-    public void setDoubleStrikethrough(boolean dstrike);
+    boolean isStrikeThrough();
+    void setStrikeThrough(boolean strike);
+    boolean isDoubleStrikeThrough();
+    void setDoubleStrikethrough(boolean dstrike);
 
-    public boolean isShadowed();
-    public void setShadow(boolean shadow);
+    boolean isShadowed();
+    void setShadow(boolean shadow);
 
-    public boolean isEmbossed();
-    public void setEmbossed(boolean emboss);
+    boolean isEmbossed();
+    void setEmbossed(boolean emboss);
 
-    public boolean isImprinted();
-    public void setImprinted(boolean imprint);
+    boolean isImprinted();
+    void setImprinted(boolean imprint);
 
-    public int getFontSize();
-    public void setFontSize(int halfPoints);
+    int getFontSize();
+    void setFontSize(int halfPoints);
 
-    public int getCharacterSpacing();
-    public void setCharacterSpacing(int twips);
+    int getCharacterSpacing();
+    void setCharacterSpacing(int twips);
 
-    public int getKerning();
-    public void setKerning(int kern);
+    int getKerning();
+    void setKerning(int kern);
 
-    public String getFontName();
+    String getFontName();
     
     /**
      * @return The text of the run, including any tabs/spaces/etc
      */
-    public String text();
+    String text();
 
     // HWPF uses indexes, XWPF special
-//    public int getUnderlineCode();
-//    public void setUnderlineCode(int kul);
+//    int getUnderlineCode();
+//    void setUnderlineCode(int kul);
 
     // HWPF uses indexes, XWPF special vertical alignments
-//    public short getSubSuperScriptIndex();
-//    public void setSubSuperScriptIndex(short iss);
+//    short getSubSuperScriptIndex();
+//    void setSubSuperScriptIndex(short iss);
 
     // HWPF uses indexes, XWPF special vertical alignments
-//    public int getVerticalOffset();
-//    public void setVerticalOffset(int hpsPos);
+//    int getVerticalOffset();
+//    void setVerticalOffset(int hpsPos);
 
     // HWPF has colour indexes, XWPF colour names
-//    public int getColor();
-//    public void setColor(int color);
+//    int getColor();
+//    void setColor(int color);
 
     // TODO Review these, and add to XWPFRun if possible
 /*
-    public boolean isFldVanished();
-    public void setFldVanish(boolean fldVanish);
+    boolean isFldVanished();
+    void setFldVanish(boolean fldVanish);
     
-    public boolean isOutlined();
-    public void setOutline(boolean outlined);
+    boolean isOutlined();
+    void setOutline(boolean outlined);
     
-    public boolean isVanished();
-    public void setVanished(boolean vanish);
+    boolean isVanished();
+    void setVanished(boolean vanish);
 
-    public boolean isMarkedDeleted();
-    public void markDeleted(boolean mark);
+    boolean isMarkedDeleted();
+    void markDeleted(boolean mark);
 
-    public boolean isMarkedInserted();
-    public void markInserted(boolean mark);
+    boolean isMarkedInserted();
+    void markInserted(boolean mark);
 */
 }

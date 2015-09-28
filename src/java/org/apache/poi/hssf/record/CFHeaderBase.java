@@ -26,7 +26,7 @@ import org.apache.poi.util.LittleEndianOutput;
  * Parent of Conditional Formatting Header records,
  *  {@link CFHeaderRecord} and {@link CFHeader12Record}.
  */
-public abstract class CFHeaderBase extends StandardRecord {
+public abstract class CFHeaderBase extends StandardRecord implements Cloneable {
     private int field_1_numcf;
     private int field_2_need_recalculation_and_id;
     private CellRangeAddress field_3_enclosing_cell_range;
@@ -150,4 +150,7 @@ public abstract class CFHeaderBase extends StandardRecord {
         result.field_3_enclosing_cell_range = field_3_enclosing_cell_range.copy();
         result.field_4_cell_ranges = field_4_cell_ranges.copy();
     }
+
+    @Override
+    public abstract CFHeaderBase clone();
 }

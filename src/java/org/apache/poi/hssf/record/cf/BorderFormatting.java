@@ -26,7 +26,7 @@ import org.apache.poi.util.LittleEndianOutput;
 /**
  * Border Formatting Block of the Conditional Formatting Rule Record.
  */
-public final class BorderFormatting {
+public final class BorderFormatting implements Cloneable {
     /** No border */
     public final static short    BORDER_NONE                = 0x0;
     /** Thin border */
@@ -446,7 +446,8 @@ public final class BorderFormatting {
         return buffer.toString();
     }
 
-    public Object clone() {
+    @Override
+    public BorderFormatting clone() {
       BorderFormatting rec = new BorderFormatting();
       rec.field_13_border_styles1 = field_13_border_styles1;
       rec.field_14_border_styles2 = field_14_border_styles2;

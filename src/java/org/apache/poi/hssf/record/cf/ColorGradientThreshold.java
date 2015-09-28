@@ -24,7 +24,7 @@ import org.apache.poi.util.LittleEndianOutput;
  * Color Gradient / Color Scale specific Threshold / value (CFVO),
  *  for changes in Conditional Formatting
  */
-public final class ColorGradientThreshold extends Threshold {
+public final class ColorGradientThreshold extends Threshold implements Cloneable {
     private double position;
 
     public ColorGradientThreshold() {
@@ -49,7 +49,8 @@ public final class ColorGradientThreshold extends Threshold {
         return super.getDataLength() + 8;
     }
 
-    public Object clone() {
+    @Override
+    public ColorGradientThreshold clone() {
       ColorGradientThreshold rec = new ColorGradientThreshold();
       super.copyTo(rec);
       rec.position = position;

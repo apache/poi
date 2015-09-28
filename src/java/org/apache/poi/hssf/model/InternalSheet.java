@@ -390,7 +390,11 @@ public final class InternalSheet {
             _destList = destList;
         }
         public void visitRecord(Record r) {
-            _destList.add((Record)r.clone());
+            try {
+                _destList.add((Record)r.clone());
+            } catch (CloneNotSupportedException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
@@ -415,8 +419,12 @@ public final class InternalSheet {
                  */
                 rb = new DrawingRecord();
             }
-            Record rec = (Record) ((Record) rb).clone();
-            clonedRecords.add(rec);
+            try {
+                Record rec = (Record) ((Record) rb).clone();
+                clonedRecords.add(rec);
+            } catch (CloneNotSupportedException e) {
+                throw new RuntimeException(e);
+            }
         }
         return createSheet(new RecordStream(clonedRecords, 0));
     }

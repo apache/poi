@@ -28,7 +28,7 @@ import org.apache.poi.util.LittleEndianOutput;
  * The collection of data (Globals Substream ABNF, macro sheet substream 
  *  ABNF or worksheet substream ABNF) specifies Shared Feature data.
  */
-public final class FeatHdrRecord extends StandardRecord  {
+public final class FeatHdrRecord extends StandardRecord implements Cloneable  {
 	/**
 	 * Specifies the enhanced protection type. Used to protect a 
 	 * shared workbook by restricting access to some areas of it 
@@ -106,9 +106,10 @@ public final class FeatHdrRecord extends StandardRecord  {
 		return 12 + 2+1+4+rgbHdrData.length;
 	}
     
-    //HACK: do a "cheat" clone, see Record.java for more information
-    public Object clone() {
-        return cloneViaReserialise();
+	@Override
+    public FeatHdrRecord clone() {
+	    //HACK: do a "cheat" clone, see Record.java for more information
+        return (FeatHdrRecord)cloneViaReserialise();
     }
 
     

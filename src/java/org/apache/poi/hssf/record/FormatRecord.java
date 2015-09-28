@@ -29,13 +29,19 @@ import org.apache.poi.util.StringUtil;
  * @author Andrew C. Oliver (acoliver at apache dot org)
  * @author Shawn M. Laubach (slaubach at apache dot org)
  */
-public final class FormatRecord extends StandardRecord {
+public final class FormatRecord extends StandardRecord implements Cloneable {
     public final static short sid = 0x041E;
 
     private final int field_1_index_code;
     private final boolean field_3_hasMultibyte;
     private final String field_4_formatstring;
 
+    private FormatRecord(FormatRecord other) {
+        field_1_index_code = other.field_1_index_code;
+        field_3_hasMultibyte = other.field_3_hasMultibyte;
+        field_4_formatstring = other.field_4_formatstring;
+    }
+    
     public FormatRecord(int indexCode, String fs) {
         field_1_index_code = indexCode;
         field_4_formatstring = fs;
@@ -104,9 +110,9 @@ public final class FormatRecord extends StandardRecord {
     public short getSid() {
         return sid;
     }
+    
     @Override
-    public Object clone() {
-        // immutable
-        return this;
+    public FormatRecord clone() {
+        return new FormatRecord(this);
     }
 }

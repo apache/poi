@@ -28,7 +28,7 @@ import org.apache.poi.util.LittleEndianOutput;
  * @author Jason Height (jheight at chariot dot net dot au)
  * @version 2.0-pre
  */
-public final class BlankRecord extends StandardRecord implements CellValueRecordInterface {
+public final class BlankRecord extends StandardRecord implements CellValueRecordInterface, Cloneable {
     public final static short sid = 0x0201;
     private int             field_1_row;
     private short             field_2_col;
@@ -137,7 +137,8 @@ public final class BlankRecord extends StandardRecord implements CellValueRecord
         return 6;
     }
 
-    public Object clone() {
+    @Override
+    public BlankRecord clone() {
       BlankRecord rec = new BlankRecord();
       rec.field_1_row = field_1_row;
       rec.field_2_col = field_2_col;

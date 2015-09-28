@@ -28,7 +28,7 @@ import org.apache.poi.util.LittleEndianOutput;
  * @author Jason Height (jheight at chariot dot net dot au)
  * @version 2.0-pre
  */
-public final class DefaultColWidthRecord extends StandardRecord {
+public final class DefaultColWidthRecord extends StandardRecord implements Cloneable {
     public final static short sid = 0x0055;
     private int             field_1_col_width;
 
@@ -91,7 +91,8 @@ public final class DefaultColWidthRecord extends StandardRecord {
         return sid;
     }
 
-    public Object clone() {
+    @Override
+    public DefaultColWidthRecord clone() {
       DefaultColWidthRecord rec = new DefaultColWidthRecord();
       rec.field_1_col_width = field_1_col_width;
       return rec;

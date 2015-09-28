@@ -28,7 +28,7 @@ import org.apache.poi.util.LittleEndianOutput;
  * 
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class CommonObjectDataSubRecord extends SubRecord {
+public final class CommonObjectDataSubRecord extends SubRecord implements Cloneable {
     public final static short sid = 0x0015;
 
     private static final BitField locked    = BitFieldFactory.getInstance(0x0001);
@@ -153,7 +153,8 @@ public final class CommonObjectDataSubRecord extends SubRecord {
         return sid;
     }
 
-    public Object clone() {
+    @Override
+    public CommonObjectDataSubRecord clone() {
         CommonObjectDataSubRecord rec = new CommonObjectDataSubRecord();
     
         rec.field_1_objectType = field_1_objectType;

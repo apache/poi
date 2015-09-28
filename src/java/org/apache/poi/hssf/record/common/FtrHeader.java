@@ -28,7 +28,7 @@ import org.apache.poi.util.LittleEndianOutput;
  *  style record, which includes extra attributes above and
  *  beyond those of a traditional record. 
  */
-public final class FtrHeader {
+public final class FtrHeader implements Cloneable {
     /** This MUST match the type on the containing record */
     private short recordType;
     /** This is a FrtFlags */

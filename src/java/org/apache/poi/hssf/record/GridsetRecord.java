@@ -34,9 +34,7 @@ import org.apache.poi.util.LittleEndianOutput;
  * @version 2.0-pre
  */
 
-public final class GridsetRecord
-    extends StandardRecord
-{
+public final class GridsetRecord extends StandardRecord implements Cloneable {
     public final static short sid = 0x82;
     public short              field_1_gridset_flag;
 
@@ -102,7 +100,8 @@ public final class GridsetRecord
         return sid;
     }
 
-    public Object clone() {
+    @Override
+    public GridsetRecord clone() {
       GridsetRecord rec = new GridsetRecord();
       rec.field_1_gridset_flag = field_1_gridset_flag;
       return rec;

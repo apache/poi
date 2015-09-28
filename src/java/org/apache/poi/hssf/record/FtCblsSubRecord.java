@@ -27,7 +27,7 @@ import org.apache.poi.util.LittleEndianOutput;
  *
  * @author Yegor Kozlov
  */
-public final class FtCblsSubRecord extends SubRecord {
+public final class FtCblsSubRecord extends SubRecord implements Cloneable {
     public final static short sid = 0x0C;
     private static final int ENCODED_SIZE = 20;
 
@@ -90,7 +90,8 @@ public final class FtCblsSubRecord extends SubRecord {
         return sid;
     }
 
-    public Object clone() {
+    @Override
+    public FtCblsSubRecord clone() {
         FtCblsSubRecord rec = new FtCblsSubRecord();
         byte[] recdata = new byte[reserved.length];
         System.arraycopy(reserved, 0, recdata, 0, recdata.length);

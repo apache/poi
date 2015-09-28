@@ -29,7 +29,7 @@ import org.apache.poi.util.LittleEndianOutput;
  * 
  * @author Andrew C. Oliver(acoliver at apache.org)
  */
-public final class AxisOptionsRecord extends StandardRecord {
+public final class AxisOptionsRecord extends StandardRecord implements Cloneable {
     public final static short sid = 0x1062;
 
     private static final BitField defaultMinimum      = BitFieldFactory.getInstance(0x01);
@@ -145,7 +145,8 @@ public final class AxisOptionsRecord extends StandardRecord {
         return sid;
     }
 
-    public Object clone() {
+    @Override
+    public AxisOptionsRecord clone() {
         AxisOptionsRecord rec = new AxisOptionsRecord();
     
         rec.field_1_minimumCategory = field_1_minimumCategory;

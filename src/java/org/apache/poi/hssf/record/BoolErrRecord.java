@@ -27,7 +27,7 @@ import org.apache.poi.util.LittleEndianOutput;
  * @author Michael P. Harhen
  * @author Jason Height (jheight at chariot dot net dot au)
  */
-public final class BoolErrRecord extends CellRecord {
+public final class BoolErrRecord extends CellRecord implements Cloneable {
 	public final static short sid = 0x0205;
 	private int _value;
 	/**
@@ -169,7 +169,8 @@ public final class BoolErrRecord extends CellRecord {
 		return sid;
 	}
 
-	public Object clone() {
+	@Override
+	public BoolErrRecord clone() {
 	  BoolErrRecord rec = new BoolErrRecord();
 	  copyBaseFields(rec);
 	  rec._value = _value;

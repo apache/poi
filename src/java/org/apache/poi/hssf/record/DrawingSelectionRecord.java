@@ -28,7 +28,7 @@ import org.apache.poi.util.LittleEndianOutput;
  * 
  * @author Josh Micich
  */
-public final class DrawingSelectionRecord extends StandardRecord {
+public final class DrawingSelectionRecord extends StandardRecord implements Cloneable {
 	public static final short sid = 0x00ED;
 
 	/**
@@ -110,7 +110,8 @@ public final class DrawingSelectionRecord extends StandardRecord {
 		}
 	}
 
-	public Object clone() {
+	@Override
+	public DrawingSelectionRecord clone() {
 		// currently immutable
 		return this;
 	}

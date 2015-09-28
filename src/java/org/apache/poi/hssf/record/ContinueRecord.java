@@ -28,7 +28,7 @@ import org.apache.poi.util.LittleEndianOutput;
  * @author Andrew C. Oliver (acoliver at apache dot org)
  * @author Csaba Nagy (ncsaba at yahoo dot com)
  */
-public final class ContinueRecord extends StandardRecord {
+public final class ContinueRecord extends StandardRecord implements Cloneable {
     public final static short sid = 0x003C;
     private byte[] _data;
 
@@ -69,7 +69,8 @@ public final class ContinueRecord extends StandardRecord {
         _data = in.readRemainder();
     }
 
-    public Object clone() {
+    @Override
+    public ContinueRecord clone() {
         return new ContinueRecord(_data);
     }
 }

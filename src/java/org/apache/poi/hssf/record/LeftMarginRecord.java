@@ -24,8 +24,7 @@ import org.apache.poi.util.LittleEndianOutput;
  * 
  * @author Shawn Laubach (slaubach at apache dot org)
  */
-public final class LeftMarginRecord extends StandardRecord implements Margin
-{
+public final class LeftMarginRecord extends StandardRecord implements Margin, Cloneable {
     public final static short sid = 0x0026;
     private double field_1_margin;
 
@@ -72,10 +71,10 @@ public final class LeftMarginRecord extends StandardRecord implements Margin
         this.field_1_margin = field_1_margin;
     }
 
-    public Object clone()
-    {
+    @Override
+    public LeftMarginRecord clone() {
         LeftMarginRecord rec = new LeftMarginRecord();
         rec.field_1_margin = this.field_1_margin;
         return rec;
     }
-}  // END OF 
+} 

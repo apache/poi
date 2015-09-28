@@ -27,7 +27,7 @@ import org.apache.poi.util.LittleEndianOutput;
  * @author Jason Height (jheight at chariot dot net dot au)
  * @version 2.0-pre
  */
-public final class HCenterRecord extends StandardRecord {
+public final class HCenterRecord extends StandardRecord implements Cloneable {
     public final static short sid = 0x0083;
     private short             field_1_hcenter;
 
@@ -91,7 +91,8 @@ public final class HCenterRecord extends StandardRecord {
         return sid;
     }
 
-    public Object clone() {
+    @Override
+    public HCenterRecord clone() {
       HCenterRecord rec = new HCenterRecord();
       rec.field_1_hcenter = field_1_hcenter;
       return rec;

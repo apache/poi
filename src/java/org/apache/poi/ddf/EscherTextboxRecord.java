@@ -26,12 +26,8 @@ import org.apache.poi.util.RecordFormatException;
  *  text in the format of the parent application, rather than in
  *  Escher format. We don't attempt to understand the contents, since
  *  they will be in the parent's format, not Escher format.
- *
- * @author Glen Stampoultzis (glens at apache.org)
- * @author Nick Burch  (nick at torchbox dot com)
  */
-public class EscherTextboxRecord extends EscherRecord
-{
+public class EscherTextboxRecord extends EscherRecord implements Cloneable {
     public static final short RECORD_ID = (short)0xF00D;
     public static final String RECORD_DESCRIPTION = "msofbtClientTextbox";
 
@@ -102,10 +98,13 @@ public class EscherTextboxRecord extends EscherRecord
         return 8 + thedata.length;
     }
 
-    public Object clone()
-    {
-        // shallow clone
-        return super.clone();
+    @Override
+    public EscherTextboxRecord clone() {
+        EscherTextboxRecord etr = new EscherTextboxRecord();
+        etr.setOptions(this.getOptions());
+        etr.setRecordId(this.getRecordId());
+        etr.thedata = this.thedata.clone();
+        return etr;
     }
 
     public String getRecordName() {

@@ -27,7 +27,7 @@ import org.apache.poi.util.LittleEndianOutput;
  * 
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class NumberFormatIndexRecord extends StandardRecord {
+public final class NumberFormatIndexRecord extends StandardRecord implements Cloneable {
     public final static short      sid                             = 0x104E;
     private  short      field_1_formatIndex;
 
@@ -69,7 +69,8 @@ public final class NumberFormatIndexRecord extends StandardRecord {
         return sid;
     }
 
-    public Object clone() {
+    @Override
+    public NumberFormatIndexRecord clone() {
         NumberFormatIndexRecord rec = new NumberFormatIndexRecord();
     
         rec.field_1_formatIndex = field_1_formatIndex;

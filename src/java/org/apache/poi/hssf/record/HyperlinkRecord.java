@@ -36,7 +36,7 @@ import org.apache.poi.util.StringUtil;
  *  from the Excel-97 format.
  * Supports only external links for now (eg http://)
  */
-public final class HyperlinkRecord extends StandardRecord {
+public final class HyperlinkRecord extends StandardRecord implements Cloneable {
     public final static short sid = 0x01B8;
     private static POILogger logger = POILogFactory.getLogger(HyperlinkRecord.class);
 
@@ -743,7 +743,8 @@ public final class HyperlinkRecord extends StandardRecord {
         setTextMark("");
     }
 
-    public Object clone() {
+    @Override
+    public HyperlinkRecord clone() {
         HyperlinkRecord rec = new HyperlinkRecord();
         rec._range = _range.copy();
         rec._guid = _guid;

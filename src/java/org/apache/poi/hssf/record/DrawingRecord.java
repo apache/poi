@@ -21,7 +21,7 @@ import org.apache.poi.util.LittleEndianOutput;
 /**
  * DrawingRecord (0x00EC)<p/>
  */
-public final class DrawingRecord extends StandardRecord {
+public final class DrawingRecord extends StandardRecord implements Cloneable {
     public static final short sid = 0x00EC;
 
     private static final byte[] EMPTY_BYTE_ARRAY = {};
@@ -75,7 +75,8 @@ public final class DrawingRecord extends StandardRecord {
      * Cloning of drawing records must be executed through HSSFPatriarch, because all id's must be changed
      * @return cloned drawing records
      */
-    public Object clone() {
+    @Override
+    public DrawingRecord clone() {
         DrawingRecord rec = new DrawingRecord();
         rec.recordData = recordData.clone();
         if (contd != null) {

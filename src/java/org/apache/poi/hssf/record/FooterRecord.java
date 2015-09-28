@@ -26,7 +26,7 @@ package org.apache.poi.hssf.record;
  * @author Jason Height (jheight at chariot dot net dot au)
  *
  */
-public final class FooterRecord extends HeaderFooterBase {
+public final class FooterRecord extends HeaderFooterBase implements Cloneable {
 	public final static short sid = 0x0015;
 
 	public FooterRecord(String text) {
@@ -50,7 +50,8 @@ public final class FooterRecord extends HeaderFooterBase {
 		return sid;
 	}
 
-	public Object clone() {
+	@Override
+	public FooterRecord clone() {
 		return new FooterRecord(getText());
 	}
 }

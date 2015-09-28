@@ -28,7 +28,7 @@ import org.apache.poi.util.LittleEndian;
 /**
  * Font Formatting Block of the Conditional Formatting Rule Record.
  */
-public final class FontFormatting {
+public final class FontFormatting implements Cloneable {
     private byte[] _rawData;
 
     private static final int OFFSET_FONT_NAME = 0;
@@ -541,7 +541,8 @@ public final class FontFormatting {
         return buffer.toString();
     }
 
-    public Object clone()
+    @Override
+    public FontFormatting clone()
     {
         byte[] rawData = _rawData.clone();
         return new FontFormatting(rawData);

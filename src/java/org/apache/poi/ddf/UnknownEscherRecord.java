@@ -31,7 +31,7 @@ import org.apache.poi.util.LittleEndian;
  * @author Glen Stampoultzis (glens at apache.org)
  * @author Zhang Zhang (zhangzzh at gmail.com)
  */
-public final class UnknownEscherRecord extends EscherRecord {
+public final class UnknownEscherRecord extends EscherRecord implements Cloneable {
     private static final byte[] NO_BYTES = new byte[0];
 
     /** The data for this record not including the the 8 byte header */
@@ -113,9 +113,13 @@ public final class UnknownEscherRecord extends EscherRecord {
         _childRecords = childRecords;
     }
 
-    public Object clone() {
-        // shallow clone
-        return super.clone();
+    @Override
+    public UnknownEscherRecord clone() {
+        UnknownEscherRecord uer = new UnknownEscherRecord();
+        uer.thedata = this.thedata.clone();
+        uer.setOptions(this.getOptions());
+        uer.setRecordId(this.getRecordId());
+        return uer;
     }
 
     public String getRecordName() {

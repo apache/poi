@@ -29,7 +29,7 @@ import org.apache.poi.util.LittleEndianOutput;
  * 
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class LineFormatRecord extends StandardRecord {
+public final class LineFormatRecord extends StandardRecord implements Cloneable {
     public final static short sid = 0x1007;
 
     private static final BitField auto      = BitFieldFactory.getInstance(0x1);
@@ -121,7 +121,8 @@ public final class LineFormatRecord extends StandardRecord {
         return sid;
     }
 
-    public Object clone() {
+    @Override
+    public LineFormatRecord clone() {
         LineFormatRecord rec = new LineFormatRecord();
     
         rec.field_1_lineColor = field_1_lineColor;

@@ -27,7 +27,7 @@ import org.apache.poi.util.LittleEndianOutput;
  * 
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class AxisParentRecord extends StandardRecord {
+public final class AxisParentRecord extends StandardRecord implements Cloneable {
     public final static short      sid                             = 0x1041;
     private  short      field_1_axisType;
     public final static short       AXIS_TYPE_MAIN                 = 0;
@@ -99,7 +99,8 @@ public final class AxisParentRecord extends StandardRecord {
         return sid;
     }
 
-    public Object clone() {
+    @Override
+    public AxisParentRecord clone() {
         AxisParentRecord rec = new AxisParentRecord();
     
         rec.field_1_axisType = field_1_axisType;

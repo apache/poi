@@ -24,22 +24,22 @@ public interface AreaI {
 	/**
 	 * @return the first row in the area
 	 */
-	public int getFirstRow();
+	int getFirstRow();
 
 	/**
 	 * @return last row in the range (x2 in x1,y1-x2,y2)
 	 */
-	public int getLastRow();
+	int getLastRow();
 
 	/**
 	 * @return the first column number in the area.
 	 */
-	public int getFirstColumn();
+	int getFirstColumn();
 
 	/**
 	 * @return lastcolumn in the area
 	 */
-	public int getLastColumn();
+	int getLastColumn();
 
 	class OffsetArea implements AreaI {
 

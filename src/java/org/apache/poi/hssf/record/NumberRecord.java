@@ -26,7 +26,7 @@ import org.apache.poi.util.LittleEndianOutput;
  * @author Andrew C. Oliver (acoliver at apache dot org)
  * @author Jason Height (jheight at chariot dot net dot au)
  */
-public final class NumberRecord extends CellRecord {
+public final class NumberRecord extends CellRecord implements Cloneable {
     public static final short sid = 0x0203;
     private double field_4_value;
 
@@ -87,7 +87,7 @@ public final class NumberRecord extends CellRecord {
     }
 
     @Override
-    public Object clone() {
+    public NumberRecord clone() {
       NumberRecord rec = new NumberRecord();
       copyBaseFields(rec);
       rec.field_4_value = field_4_value;

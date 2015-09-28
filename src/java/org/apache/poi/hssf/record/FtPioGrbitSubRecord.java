@@ -25,7 +25,7 @@ import org.apache.poi.util.LittleEndianOutput;
 /**
  * This structure appears as part of an Obj record that represents image display properties.
  */
-public final class FtPioGrbitSubRecord extends SubRecord {
+public final class FtPioGrbitSubRecord extends SubRecord implements Cloneable {
     public final static short sid = 0x08;
     public final static short length = 0x02;
     
@@ -151,7 +151,8 @@ public final class FtPioGrbitSubRecord extends SubRecord {
         return sid;
     }
 
-    public Object clone() {
+    @Override
+    public FtPioGrbitSubRecord clone() {
         FtPioGrbitSubRecord rec = new FtPioGrbitSubRecord();
         rec.flags = this.flags;
         return rec;

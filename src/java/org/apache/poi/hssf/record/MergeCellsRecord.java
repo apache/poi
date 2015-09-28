@@ -27,7 +27,7 @@ import org.apache.poi.util.LittleEndianOutput;
  * Description:  Optional record defining a square area of cells to "merged" into one cell. <br>
  * @author Andrew C. Oliver (acoliver at apache dot org)
  */
-public final class MergeCellsRecord extends StandardRecord {
+public final class MergeCellsRecord extends StandardRecord implements Cloneable {
     public final static short sid = 0x00E5;
     /** sometimes the regions array is shared with other MergedCellsRecords */ 
     private CellRangeAddress[] _regions;
@@ -102,7 +102,8 @@ public final class MergeCellsRecord extends StandardRecord {
         return retval.toString();
     }
 
-    public Object clone() {
+    @Override
+    public MergeCellsRecord clone() {
     	int nRegions = _numberOfRegions;
     	CellRangeAddress[] clonedRegions = new CellRangeAddress[nRegions];
 		for (int i = 0; i < clonedRegions.length; i++) {

@@ -25,7 +25,7 @@ import java.util.Iterator;
  * @see PageBreakRecord
  * @author Danny Mui (dmui at apache dot org)
  */
-public final class HorizontalPageBreakRecord extends PageBreakRecord {
+public final class HorizontalPageBreakRecord extends PageBreakRecord implements Cloneable {
 
 	public static final short sid = 0x001B;
 
@@ -48,7 +48,8 @@ public final class HorizontalPageBreakRecord extends PageBreakRecord {
 		return sid;
 	}
 
-	public Object clone() {
+	@Override
+	public PageBreakRecord clone() {
 		PageBreakRecord result = new HorizontalPageBreakRecord();
 		Iterator<Break> iterator = getBreaksIterator();
 		while (iterator.hasNext()) {

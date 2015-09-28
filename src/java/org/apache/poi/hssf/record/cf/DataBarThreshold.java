@@ -23,7 +23,7 @@ import org.apache.poi.util.LittleEndianInput;
  * Data Bar specific Threshold / value (CFVO),
  *  for changes in Conditional Formatting
  */
-public final class DataBarThreshold extends Threshold {
+public final class DataBarThreshold extends Threshold implements Cloneable {
     public DataBarThreshold() {
         super();
     }
@@ -33,7 +33,8 @@ public final class DataBarThreshold extends Threshold {
         super(in);
     }
 
-    public Object clone() {
+    @Override
+    public DataBarThreshold clone() {
       DataBarThreshold rec = new DataBarThreshold();
       super.copyTo(rec);
       return rec;

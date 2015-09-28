@@ -28,9 +28,7 @@ import org.apache.poi.util.LittleEndianOutput;
  * @author Yegor Kozlov
  */
 
-public final class AutoFilterInfoRecord
-    extends StandardRecord
-{
+public final class AutoFilterInfoRecord extends StandardRecord implements Cloneable {
     public final static short sid = 0x9D;
     /**
      * Number of AutoFilter drop-down arrows on the sheet
@@ -93,9 +91,9 @@ public final class AutoFilterInfoRecord
     }
 
     @Override
-    public Object clone()
+    public AutoFilterInfoRecord clone()
     {
-    	return cloneViaReserialise();
+    	return (AutoFilterInfoRecord)cloneViaReserialise();
     }
     
 }

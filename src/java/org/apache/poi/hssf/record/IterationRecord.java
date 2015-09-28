@@ -32,7 +32,7 @@ import org.apache.poi.util.LittleEndianOutput;
  * @author Andrew C. Oliver (acoliver at apache dot org)
  * @author Jason Height (jheight at chariot dot net dot au)
  */
-public final class IterationRecord extends StandardRecord {
+public final class IterationRecord extends StandardRecord implements Cloneable {
     public final static short sid = 0x0011;
 
     private static final BitField iterationOn = BitFieldFactory.getInstance(0x0001);
@@ -86,7 +86,8 @@ public final class IterationRecord extends StandardRecord {
         return sid;
     }
 
-    public Object clone() {
+    @Override
+    public IterationRecord clone() {
         return new IterationRecord(getIteration());
     }
 }

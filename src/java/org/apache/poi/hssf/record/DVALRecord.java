@@ -25,7 +25,7 @@ import org.apache.poi.util.LittleEndianOutput;
  *               This record is the list header of all data validation records (0x01BE) in the current sheet.
  * @author Dragos Buleandra (dragos.buleandra@trade2b.ro)
  */
-public final class DVALRecord extends StandardRecord {
+public final class DVALRecord extends StandardRecord implements Cloneable {
 	public final static short sid = 0x01B2;
 
 	/** Options of the DVAL */
@@ -159,7 +159,8 @@ public final class DVALRecord extends StandardRecord {
         return sid;
     }
 
-    public Object clone() {
+    @Override
+    public DVALRecord clone() {
       DVALRecord rec = new DVALRecord();
       rec.field_1_options = field_1_options;
       rec.field_2_horiz_pos = field_2_horiz_pos;
