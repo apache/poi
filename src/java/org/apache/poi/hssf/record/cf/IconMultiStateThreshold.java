@@ -24,7 +24,7 @@ import org.apache.poi.util.LittleEndianOutput;
  * Icon / Multi-State specific Threshold / value (CFVO),
  *  for changes in Conditional Formatting
  */
-public final class IconMultiStateThreshold extends Threshold {
+public final class IconMultiStateThreshold extends Threshold implements Cloneable {
     /**
      * Cell values that are equal to the threshold value do not pass the threshold
      */
@@ -60,7 +60,8 @@ public final class IconMultiStateThreshold extends Threshold {
         return super.getDataLength() + 5;
     }
 
-    public Object clone() {
+    @Override
+    public IconMultiStateThreshold clone() {
       IconMultiStateThreshold rec = new IconMultiStateThreshold();
       super.copyTo(rec);
       rec.equals = equals;

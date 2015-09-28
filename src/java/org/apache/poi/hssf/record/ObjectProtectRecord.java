@@ -31,9 +31,7 @@ import org.apache.poi.util.LittleEndianOutput;
  * @author Andrew C. Oliver (acoliver at apache dot org)
  */
 
-public final class ObjectProtectRecord
-    extends StandardRecord
-{
+public final class ObjectProtectRecord extends StandardRecord implements Cloneable {
     public final static short sid = 0x63;
     private short             field_1_protect;
 
@@ -97,7 +95,8 @@ public final class ObjectProtectRecord
         return sid;
     }
 
-    public Object clone() {
+    @Override
+    public ObjectProtectRecord clone() {
         ObjectProtectRecord rec = new ObjectProtectRecord();
         rec.field_1_protect = field_1_protect;
         return rec;

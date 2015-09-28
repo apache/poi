@@ -31,9 +31,7 @@ import org.apache.poi.util.LittleEndianOutput;
  * @version 2.0-pre
  */
 
-public final class DefaultRowHeightRecord
-    extends StandardRecord
-{
+public final class DefaultRowHeightRecord extends StandardRecord implements Cloneable {
     public final static short sid = 0x225;
     private short             field_1_option_flags;
     private short             field_2_row_height;
@@ -122,7 +120,8 @@ public final class DefaultRowHeightRecord
         return sid;
     }
 
-    public Object clone() {
+    @Override
+    public DefaultRowHeightRecord clone() {
       DefaultRowHeightRecord rec = new DefaultRowHeightRecord();
       rec.field_1_option_flags = field_1_option_flags;
       rec.field_2_row_height = field_2_row_height;

@@ -258,7 +258,8 @@ public class LbsDataSubRecord extends SubRecord {
     }
 
     @Override
-    public Object clone() {
+    public LbsDataSubRecord clone() {
+        // TODO: is immutable ???
         return this;
     }
 

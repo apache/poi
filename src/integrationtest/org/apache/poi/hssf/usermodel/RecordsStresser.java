@@ -56,6 +56,8 @@ public class RecordsStresser {
                 
                 assertArrayEquals("Record of type " + record.getClass() + " should return the same byte array via the clone() method, but did return a different array", 
                         origBytes, newBytes);
+            } catch (CloneNotSupportedException e) {
+                throw new RuntimeException(e);
             } catch (RuntimeException e) {
                 // some Records do not implement clone, ignore those for now
                 assertTrue(e.getMessage().contains("needs to define a clone method"));
@@ -70,6 +72,7 @@ public class RecordsStresser {
         try {
             HSSFWorkbook wb = new HSSFWorkbook(stream);
             handleWorkbook(wb);
+            wb.close();
         } finally {
             stream.close();
         }

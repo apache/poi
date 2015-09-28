@@ -28,7 +28,7 @@ import org.apache.poi.util.BitFieldFactory;
  * REFERENCE:  PG 293 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<p/>
  * @author Andrew C. Oliver (acoliver at apache dot org)
  */
-public final class ColumnInfoRecord extends StandardRecord {
+public final class ColumnInfoRecord extends StandardRecord implements Cloneable {
     public static final short sid = 0x007D;
 
     private int _firstCol;
@@ -244,7 +244,8 @@ public final class ColumnInfoRecord extends StandardRecord {
         return sb.toString();
     }
 
-    public Object clone() {
+    @Override
+    public ColumnInfoRecord clone() {
         ColumnInfoRecord rec = new ColumnInfoRecord();
         rec._firstCol = _firstCol;
         rec._lastCol = _lastCol;

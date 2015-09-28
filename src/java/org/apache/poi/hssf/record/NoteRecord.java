@@ -25,7 +25,7 @@ import org.apache.poi.util.StringUtil;
  *
  * @author Yegor Kozlov
  */
-public final class NoteRecord extends StandardRecord {
+public final class NoteRecord extends StandardRecord implements Cloneable {
 	public final static short sid = 0x001C;
 
 	public static final NoteRecord[] EMPTY_ARRAY = { };
@@ -235,7 +235,8 @@ public final class NoteRecord extends StandardRecord {
       field_5_hasMultibyte = StringUtil.hasMultibyte(author);
 	}
 
-	public Object clone() {
+	@Override
+	public NoteRecord clone() {
 		NoteRecord rec = new NoteRecord();
 		rec.field_1_row = field_1_row;
 		rec.field_2_col = field_2_col;

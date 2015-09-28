@@ -38,7 +38,7 @@ public interface BlockList
      *              out of range, that's ok
      */
 
-    public void zap(final int index);
+    void zap(final int index);
 
     /**
      * remove and return the specified block from the list
@@ -51,8 +51,7 @@ public interface BlockList
      *            already been removed
      */
 
-    public ListManagedBlock remove(final int index)
-        throws IOException;
+     ListManagedBlock remove(final int index) throws IOException;
 
     /**
      * get the blocks making up a particular stream in the list. The
@@ -66,7 +65,7 @@ public interface BlockList
      * @exception IOException if blocks are missing
      */
 
-    public ListManagedBlock [] fetchBlocks(final int startBlock, final int headerPropertiesStartBlock)
+     ListManagedBlock [] fetchBlocks(final int startBlock, final int headerPropertiesStartBlock)
         throws IOException;
 
     /**
@@ -77,9 +76,8 @@ public interface BlockList
      * @exception IOException
      */
 
-    public void setBAT(final BlockAllocationTableReader bat)
-        throws IOException;
+    void setBAT(final BlockAllocationTableReader bat) throws IOException;
     
-    public int blockCount();
+    int blockCount();
 }   // end public interface BlockList
 

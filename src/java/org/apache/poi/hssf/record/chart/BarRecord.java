@@ -29,7 +29,7 @@ import org.apache.poi.util.LittleEndianOutput;
  * 
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class BarRecord extends StandardRecord {
+public final class BarRecord extends StandardRecord implements Cloneable {
     public final static short sid = 0x1017;
 
     private static final BitField   horizontal          = BitFieldFactory.getInstance(0x1);
@@ -95,7 +95,8 @@ public final class BarRecord extends StandardRecord {
         return sid;
     }
 
-    public Object clone() {
+    @Override
+    public BarRecord clone() {
         BarRecord rec = new BarRecord();
     
         rec.field_1_barSpace = field_1_barSpace;

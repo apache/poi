@@ -61,16 +61,8 @@ public abstract class Record extends RecordBase {
     public abstract short getSid();
 
     @Override
-    public Object clone() {
-//        if (false) {
-//            // TODO - implement clone in a more standardised way
-//            try {
-//                return super.clone();
-//            } catch (CloneNotSupportedException e) {
-//                throw new RuntimeException(e);
-//            }
-//        }
-        throw new RuntimeException("The class "+getClass().getName()+" needs to define a clone method");
+    public Object clone() throws CloneNotSupportedException {
+        throw new CloneNotSupportedException("The class "+getClass().getName()+" needs to define a clone method");
     }
 
     /**

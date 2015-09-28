@@ -29,7 +29,7 @@ import org.apache.poi.util.LittleEndianOutput;
  * 
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class CategorySeriesAxisRecord extends StandardRecord {
+public final class CategorySeriesAxisRecord extends StandardRecord implements Cloneable {
     public final static short sid = 0x1020;
 
     private static final BitField valueAxisCrossing = BitFieldFactory.getInstance(0x1);
@@ -100,7 +100,8 @@ public final class CategorySeriesAxisRecord extends StandardRecord {
         return sid;
     }
 
-    public Object clone() {
+    @Override
+    public CategorySeriesAxisRecord clone() {
         CategorySeriesAxisRecord rec = new CategorySeriesAxisRecord();
     
         rec.field_1_crossingPoint = field_1_crossingPoint;

@@ -26,7 +26,7 @@ import org.apache.poi.util.LittleEndianOutput;
  *               value.  <P>
  * REFERENCE:  PG 325 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
  */
-public final class LabelSSTRecord extends CellRecord {
+public final class LabelSSTRecord extends CellRecord implements Cloneable {
     public final static short sid = 0xfd;
     private int field_4_sst_index;
 
@@ -84,7 +84,8 @@ public final class LabelSSTRecord extends CellRecord {
         return sid;
     }
 
-    public Object clone() {
+    @Override
+    public LabelSSTRecord clone() {
       LabelSSTRecord rec = new LabelSSTRecord();
       copyBaseFields(rec);
       rec.field_4_sst_index = field_4_sst_index;

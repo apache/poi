@@ -27,7 +27,7 @@ import org.apache.poi.util.LittleEndianOutput;
  * 
  * @author Andrew C. Oliver (acoliver at apache.org)
  */
-public final class ObjectLinkRecord extends StandardRecord {
+public final class ObjectLinkRecord extends StandardRecord implements Cloneable {
     public final static short      sid                             = 0x1027;
     private  short      field_1_anchorId;
     public final static short       ANCHOR_ID_CHART_TITLE          = 1;
@@ -89,7 +89,8 @@ public final class ObjectLinkRecord extends StandardRecord {
         return sid;
     }
 
-    public Object clone() {
+    @Override
+    public ObjectLinkRecord clone() {
         ObjectLinkRecord rec = new ObjectLinkRecord();
     
         rec.field_1_anchorId = field_1_anchorId;

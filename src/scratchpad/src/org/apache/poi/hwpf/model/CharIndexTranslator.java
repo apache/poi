@@ -81,7 +81,7 @@ public interface CharIndexTranslator {
      * @param bytePos
      * @return  first index greater or equal to bytePos that is in table
      */
-    public int lookIndexForward(int bytePos);
+    int lookIndexForward(int bytePos);
 
     /**
      * Return last index <= bytePos that is in table
@@ -89,6 +89,6 @@ public interface CharIndexTranslator {
      * @param bytePos
      * @return last index less of equal to bytePos that is in table
      */
-    public int lookIndexBackward(int bytePos);
+    int lookIndexBackward(int bytePos);
 
 }

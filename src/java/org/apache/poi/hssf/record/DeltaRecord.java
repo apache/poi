@@ -26,7 +26,7 @@ import org.apache.poi.util.LittleEndianOutput;
  * @author Andrew C. Oliver (acoliver at apache dot org)
  * @author Jason Height (jheight at chariot dot net dot au)
  */
-public final class DeltaRecord extends StandardRecord {
+public final class DeltaRecord extends StandardRecord implements Cloneable {
     public final static short sid = 0x0010;
     public final static double DEFAULT_VALUE = 0.0010;   // should be .001
 
@@ -71,7 +71,8 @@ public final class DeltaRecord extends StandardRecord {
         return sid;
     }
 
-    public Object clone() {
+    @Override
+    public DeltaRecord clone() {
         // immutable
         return this;
     }

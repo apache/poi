@@ -27,7 +27,7 @@ import org.apache.poi.util.LittleEndianOutput;
  * 
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class DefaultDataLabelTextPropertiesRecord extends StandardRecord {
+public final class DefaultDataLabelTextPropertiesRecord extends StandardRecord implements Cloneable {
     public final static short      sid                             = 0x1024;
     private  short      field_1_categoryDataType;
     public final static short       CATEGORY_DATA_TYPE_SHOW_LABELS_CHARACTERISTIC = 0;
@@ -72,7 +72,8 @@ public final class DefaultDataLabelTextPropertiesRecord extends StandardRecord {
         return sid;
     }
 
-    public Object clone() {
+    @Override
+    public DefaultDataLabelTextPropertiesRecord clone() {
         DefaultDataLabelTextPropertiesRecord rec = new DefaultDataLabelTextPropertiesRecord();
     
         rec.field_1_categoryDataType = field_1_categoryDataType;

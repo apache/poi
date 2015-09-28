@@ -26,7 +26,7 @@ import org.apache.poi.util.LittleEndianOutput;
  * Conditional Formatting Header v12 record CFHEADER12 (0x0879),
  *  for conditional formattings introduced in Excel 2007 and newer.
  */
-public final class CFHeader12Record extends CFHeaderBase implements FutureRecord {
+public final class CFHeader12Record extends CFHeaderBase implements FutureRecord, Cloneable {
     public static final short sid = 0x0879;
 
     private FtrHeader futureHeader;
@@ -79,7 +79,8 @@ public final class CFHeader12Record extends CFHeaderBase implements FutureRecord
         return futureHeader.getAssociatedRange();
     }
     
-    public Object clone() {
+    @Override
+    public CFHeader12Record clone() {
         CFHeader12Record result = new CFHeader12Record();
         result.futureHeader = (FtrHeader)futureHeader.clone();
         super.copyTo(result);

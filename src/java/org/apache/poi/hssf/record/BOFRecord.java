@@ -29,7 +29,7 @@ import org.apache.poi.util.LittleEndianOutput;
  * @author Andrew C. Oliver
  * @author Jason Height (jheight at chariot dot net dot au)
  */
-public final class BOFRecord extends StandardRecord {
+public final class BOFRecord extends StandardRecord implements Cloneable {
     /**
      * for BIFF8 files the BOF is 0x809. For earlier versions see
      *  {@link #biff2_sid} {@link #biff3_sid} {@link #biff4_sid} 
@@ -268,7 +268,8 @@ public final class BOFRecord extends StandardRecord {
         return sid;
     }
 
-    public Object clone() {
+    @Override
+    public BOFRecord clone() {
       BOFRecord rec = new BOFRecord();
       rec.field_1_version = field_1_version;
       rec.field_2_type = field_2_type;

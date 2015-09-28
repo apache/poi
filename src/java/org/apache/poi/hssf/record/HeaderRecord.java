@@ -25,7 +25,7 @@ package org.apache.poi.hssf.record;
  * @author Shawn Laubach (slaubach at apache dot org) Modified 3/14/02
  * @author Jason Height (jheight at chariot dot net dot au)
  */
-public final class HeaderRecord extends HeaderFooterBase {
+public final class HeaderRecord extends HeaderFooterBase implements Cloneable {
 	public final static short sid = 0x0014;
 
 	public HeaderRecord(String text) {
@@ -49,7 +49,8 @@ public final class HeaderRecord extends HeaderFooterBase {
 		return sid;
 	}
 
-	public Object clone() {
+	@Override
+	public HeaderRecord clone() {
 		return new HeaderRecord(getText());
 	}
 }

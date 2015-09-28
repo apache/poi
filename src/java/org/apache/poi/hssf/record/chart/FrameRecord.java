@@ -29,7 +29,7 @@ import org.apache.poi.util.LittleEndianOutput;
  * 
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class FrameRecord extends StandardRecord {
+public final class FrameRecord extends StandardRecord implements Cloneable {
     public final static short sid  = 0x1032;
 
     private static final BitField autoSize     = BitFieldFactory.getInstance(0x1);
@@ -86,7 +86,8 @@ public final class FrameRecord extends StandardRecord {
         return sid;
     }
 
-    public Object clone() {
+    @Override
+    public FrameRecord clone() {
         FrameRecord rec = new FrameRecord();
     
         rec.field_1_borderType = field_1_borderType;

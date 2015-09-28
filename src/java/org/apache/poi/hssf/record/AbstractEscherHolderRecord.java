@@ -36,7 +36,7 @@ import org.apache.poi.hssf.util.LazilyConcatenatedByteArray;
  * @author Glen Stampoultzis (glens at apache.org)
  * @author Michael Zalewski (zalewski at optonline.net)
  */
-public abstract class AbstractEscherHolderRecord extends Record {
+public abstract class AbstractEscherHolderRecord extends Record implements Cloneable {
     private static boolean DESERIALISE;
     static {
     try {
@@ -148,9 +148,9 @@ public abstract class AbstractEscherHolderRecord extends Record {
 
     public abstract short getSid();
 
-    public Object clone()
-    {
-    	return cloneViaReserialise();
+    @Override
+    public AbstractEscherHolderRecord clone() {
+    	return (AbstractEscherHolderRecord)cloneViaReserialise();
     }
 
     public void addEscherRecord(int index, EscherRecord element)

@@ -33,9 +33,7 @@ import org.apache.poi.util.LittleEndianOutput;
  * @see org.apache.poi.hssf.record.CalcModeRecord
  */
 
-public final class CalcCountRecord
-    extends StandardRecord
-{
+public final class CalcCountRecord extends StandardRecord implements Cloneable {
     public final static short sid = 0xC;
     private short             field_1_iterations;
 
@@ -92,7 +90,8 @@ public final class CalcCountRecord
         return sid;
     }
 
-    public Object clone() {
+    @Override
+    public CalcCountRecord clone() {
       CalcCountRecord rec = new CalcCountRecord();
       rec.field_1_iterations = field_1_iterations;
       return rec;

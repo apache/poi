@@ -27,7 +27,7 @@ import org.apache.poi.util.LittleEndianOutput;
  * 
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class EndSubRecord extends SubRecord {
+public final class EndSubRecord extends SubRecord implements Cloneable {
     public final static short sid = 0x0000; // Note - zero sid is somewhat unusual (compared to plain Records)
     private static final int ENCODED_SIZE = 0;
 
@@ -75,7 +75,8 @@ public final class EndSubRecord extends SubRecord {
         return sid;
     }
 
-    public Object clone() {
+    @Override
+    public EndSubRecord clone() {
         EndSubRecord rec = new EndSubRecord();
     
         return rec;

@@ -31,9 +31,7 @@ import org.apache.poi.util.LittleEndianOutput;
  * @version 2.0-pre
  */
 
-public final class DimensionsRecord
-    extends StandardRecord
-{
+public final class DimensionsRecord extends StandardRecord implements Cloneable {
     public final static short sid = 0x200;
     private int               field_1_first_row;
     private int               field_2_last_row;   // plus 1
@@ -170,7 +168,8 @@ public final class DimensionsRecord
         return sid;
     }
 
-    public Object clone() {
+    @Override
+    public DimensionsRecord clone() {
       DimensionsRecord rec = new DimensionsRecord();
       rec.field_1_first_row = field_1_first_row;
       rec.field_2_last_row = field_2_last_row;

@@ -40,7 +40,7 @@ import org.apache.poi.util.StringUtil;
  *
  * @author Daniel Noll
  */
-public final class EmbeddedObjectRefSubRecord extends SubRecord {
+public final class EmbeddedObjectRefSubRecord extends SubRecord implements Cloneable {
 	private static POILogger logger = POILogFactory.getLogger(EmbeddedObjectRefSubRecord.class);
 	public static final short sid = 0x0009;
 
@@ -305,7 +305,8 @@ public final class EmbeddedObjectRefSubRecord extends SubRecord {
 		return field_6_unknown;
 	}
 
-	public Object clone() {
+	@Override
+	public EmbeddedObjectRefSubRecord clone() {
 		return this; // TODO proper clone
 	}
 

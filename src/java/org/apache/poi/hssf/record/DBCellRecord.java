@@ -27,7 +27,7 @@ import org.apache.poi.util.LittleEndianOutput;
  * @author Andrew C. Oliver (acoliver at apache dot org)
  * @author Jason Height
  */
-public final class DBCellRecord extends StandardRecord {
+public final class DBCellRecord extends StandardRecord implements Cloneable {
     public final static short sid = 0x00D7;
     public final static int BLOCK_SIZE = 32;
     
@@ -116,7 +116,8 @@ public final class DBCellRecord extends StandardRecord {
         return sid;
     }
 
-    public Object clone() {
+    @Override
+    public DBCellRecord clone() {
         // safe because immutable
         return this;
     }

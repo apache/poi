@@ -29,7 +29,7 @@ import org.apache.poi.util.LittleEndianOutput;
  * 
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class AreaRecord extends StandardRecord {
+public final class AreaRecord extends StandardRecord implements Cloneable {
     public final static short      sid                             = 0x101A;
     private  short      field_1_formatFlags;
     private static final BitField stacked             = BitFieldFactory.getInstance(0x1);
@@ -78,7 +78,8 @@ public final class AreaRecord extends StandardRecord {
         return sid;
     }
 
-    public Object clone() {
+    @Override
+    public AreaRecord clone() {
         AreaRecord rec = new AreaRecord();
     
         rec.field_1_formatFlags = field_1_formatFlags;

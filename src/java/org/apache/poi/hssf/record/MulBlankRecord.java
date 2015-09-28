@@ -135,7 +135,7 @@ public final class MulBlankRecord extends StandardRecord {
 	}
 
 	@Override
-	public Object clone() {
+	public MulBlankRecord clone() {
 		// immutable - so OK to return this
 		return this;
 	}

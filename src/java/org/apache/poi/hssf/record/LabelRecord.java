@@ -28,7 +28,7 @@ import org.apache.poi.util.POILogger;
  * 
  * @see org.apache.poi.hssf.record.LabelSSTRecord
  */
-public final class LabelRecord extends Record implements CellValueRecordInterface {
+public final class LabelRecord extends Record implements CellValueRecordInterface, Cloneable {
     private final static POILogger logger = POILogFactory.getLogger(LabelRecord.class);
 
     public final static short sid = 0x0204;
@@ -170,7 +170,8 @@ public final class LabelRecord extends Record implements CellValueRecordInterfac
     {
     }
 
-    public Object clone() {
+    @Override
+    public LabelRecord clone() {
       LabelRecord rec = new LabelRecord();
       rec.field_1_row = field_1_row;
       rec.field_2_column = field_2_column;

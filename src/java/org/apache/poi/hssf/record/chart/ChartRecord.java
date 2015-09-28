@@ -40,7 +40,7 @@ import org.apache.poi.util.LittleEndianOutput;
  *  
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class ChartRecord extends StandardRecord {
+public final class ChartRecord extends StandardRecord implements Cloneable {
     public final static short sid = 0x1002;
     private int field_1_x;
     private int field_2_y;
@@ -87,7 +87,8 @@ public final class ChartRecord extends StandardRecord {
         return sid;
     }
 
-    public Object clone() {
+    @Override
+    public ChartRecord clone() {
         ChartRecord rec = new ChartRecord();
     
         rec.field_1_x = field_1_x;

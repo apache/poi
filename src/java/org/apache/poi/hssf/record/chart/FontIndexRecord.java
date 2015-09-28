@@ -27,8 +27,8 @@ import org.apache.poi.util.LittleEndianOutput;
  * 
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class FontIndexRecord extends StandardRecord {
-    public final static short      sid                             = 0x1026;
+public final class FontIndexRecord extends StandardRecord implements Cloneable {
+    public final static short sid = 0x1026;
     private  short      field_1_fontIndex;
 
 
@@ -69,7 +69,8 @@ public final class FontIndexRecord extends StandardRecord {
         return sid;
     }
 
-    public Object clone() {
+    @Override
+    public FontIndexRecord clone() {
         FontIndexRecord rec = new FontIndexRecord();
     
         rec.field_1_fontIndex = field_1_fontIndex;

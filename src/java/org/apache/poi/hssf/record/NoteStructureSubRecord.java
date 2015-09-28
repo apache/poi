@@ -31,7 +31,7 @@ import org.apache.poi.util.LittleEndianOutput;
  *
  * @author Yegor Kozlov
  */
-public final class NoteStructureSubRecord extends SubRecord {
+public final class NoteStructureSubRecord extends SubRecord implements Cloneable {
     public final static short sid = 0x0D;
     private static final int ENCODED_SIZE = 22;
 
@@ -98,7 +98,8 @@ public final class NoteStructureSubRecord extends SubRecord {
         return sid;
     }
 
-    public Object clone() {
+    @Override
+    public NoteStructureSubRecord clone() {
         NoteStructureSubRecord rec = new NoteStructureSubRecord();
         byte[] recdata = new byte[reserved.length];
         System.arraycopy(reserved, 0, recdata, 0, recdata.length);

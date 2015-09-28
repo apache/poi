@@ -30,7 +30,7 @@ import org.apache.poi.util.LittleEndianOutput;
  *
  * @author Josh Micich
  */
-public final class ArrayRecord extends SharedValueRecordBase {
+public final class ArrayRecord extends SharedValueRecordBase implements Cloneable {
 
 	public final static short sid = 0x0221;
 	private static final int OPT_ALWAYS_RECALCULATE = 0x0001;
@@ -96,7 +96,8 @@ public final class ArrayRecord extends SharedValueRecordBase {
 		return sb.toString();
 	}	
     
-    public Object clone() {
+	@Override
+    public ArrayRecord clone() {
         ArrayRecord rec = new ArrayRecord(_formula.copy(), getRange());
 
         // they both seem unused, but clone them nevertheless to have an exact copy

@@ -33,7 +33,7 @@ import org.apache.poi.util.POILogger;
  * This record specifies Shared Features data. It is normally paired
  *  up with a {@link FeatHdrRecord}.
  */
-public final class FeatRecord extends StandardRecord  {
+public final class FeatRecord extends StandardRecord implements Cloneable  {
     private static POILogger logger = POILogFactory.getLogger(FeatRecord.class);
     public final static short sid = 0x0868;
     // SIDs from newer versions
@@ -175,9 +175,10 @@ public final class FeatRecord extends StandardRecord  {
 	}
 
     
-    //HACK: do a "cheat" clone, see Record.java for more information
-    public Object clone() {
-        return cloneViaReserialise();
+	@Override
+	public FeatRecord clone() {
+        //HACK: do a "cheat" clone, see Record.java for more information
+        return (FeatRecord)cloneViaReserialise();
     }
 
     

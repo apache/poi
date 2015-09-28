@@ -33,7 +33,7 @@ import org.apache.poi.util.LittleEndianInputStream;
  *
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class ObjRecord extends Record {
+public final class ObjRecord extends Record implements Cloneable {
 	public final static short sid = 0x005D;
 
 	private static final int NORMAL_PAD_ALIGNMENT = 2;
@@ -222,7 +222,7 @@ public final class ObjRecord extends Record {
 	}
 
 	@Override
-	public Object clone() {
+	public ObjRecord clone() {
 		ObjRecord rec = new ObjRecord();
 
 		for (int i = 0; i < subrecords.size(); i++) {

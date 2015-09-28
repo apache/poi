@@ -22,7 +22,11 @@ import java.io.PrintWriter;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.poi.util.*;
+import org.apache.poi.util.BitField;
+import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.HexDump;
+import org.apache.poi.util.Internal;
+import org.apache.poi.util.LittleEndian;
 
 /**
  * The base abstract record from which all escher records are defined.  Subclasses will need
@@ -223,9 +227,9 @@ public abstract class EscherRecord {
     /**
      * Escher records may need to be clonable in the future.
      */
-    public Object clone()
-    {
-        throw new RuntimeException( "The class " + getClass().getName() + " needs to define a clone method" );
+    @Override
+    public EscherRecord clone() throws CloneNotSupportedException {
+        throw new CloneNotSupportedException( "The class " + getClass().getName() + " needs to define a clone method" );
     }
 
     /**

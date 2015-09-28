@@ -25,7 +25,7 @@ import org.apache.poi.util.LittleEndianOutput;
 /**
  * The FtCf structure specifies the clipboard format of the picture-type Obj record containing this FtCf.
  */
-public final class FtCfSubRecord extends SubRecord {
+public final class FtCfSubRecord extends SubRecord implements Cloneable {
     public final static short sid = 0x07;
     public final static short length = 0x02;
     
@@ -97,7 +97,8 @@ public final class FtCfSubRecord extends SubRecord {
         return sid;
     }
 
-    public Object clone() {
+    @Override
+    public FtCfSubRecord clone() {
         FtCfSubRecord rec = new FtCfSubRecord();
         rec.flags = this.flags;
         return rec;

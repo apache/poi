@@ -28,7 +28,7 @@ import java.util.Locale;
  *
  * @author Yegor Kozlov
  */
-public final class HeaderFooterRecord extends StandardRecord {
+public final class HeaderFooterRecord extends StandardRecord implements Cloneable {
 
     private static final byte[] BLANK_GUID = new byte[16];
 
@@ -95,9 +95,10 @@ public final class HeaderFooterRecord extends StandardRecord {
         return sb.toString();
     }
 
-    //HACK: do a "cheat" clone, see Record.java for more information
-    public Object clone() {
-                return cloneViaReserialise();
+    @Override
+    public HeaderFooterRecord clone() {
+        //HACK: do a "cheat" clone, see Record.java for more information
+        return (HeaderFooterRecord)cloneViaReserialise();
     }
     
  

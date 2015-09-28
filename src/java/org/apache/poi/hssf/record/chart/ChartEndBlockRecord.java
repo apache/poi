@@ -27,7 +27,7 @@ import org.apache.poi.util.LittleEndianOutput;
  * 
  * @author Patrick Cheng
  */
-public final class ChartEndBlockRecord extends StandardRecord {
+public final class ChartEndBlockRecord extends StandardRecord implements Cloneable {
 	public static final short sid = 0x0853;
 
 	private short rt;

@@ -27,7 +27,7 @@ import org.apache.poi.util.StringUtil;
  * REFERENCE:  PG 314 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<p/>
  * @author Andrew C. Oliver (acoliver at apache dot org)
  */
-public final class FileSharingRecord extends StandardRecord {
+public final class FileSharingRecord extends StandardRecord implements Cloneable {
 
     public final static short sid = 0x005B;
     private short             field_1_readonly;
@@ -137,10 +137,8 @@ public final class FileSharingRecord extends StandardRecord {
         return sid;
     }
 
-    /**
-     * Clone this record.
-     */
-    public Object clone() {
+    @Override
+    public FileSharingRecord clone() {
       FileSharingRecord clone = new FileSharingRecord();
       clone.setReadOnly(field_1_readonly);
       clone.setPassword(field_2_password);

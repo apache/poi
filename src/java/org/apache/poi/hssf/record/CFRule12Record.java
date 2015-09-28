@@ -49,7 +49,7 @@ import org.apache.poi.util.POILogger;
  *  {@link #CONDITION_TYPE_CELL_VALUE_IS} or {@link #CONDITION_TYPE_FORMULA},
  *  this is only used for the other types
  */
-public final class CFRule12Record extends CFRuleBase implements FutureRecord {
+public final class CFRule12Record extends CFRuleBase implements FutureRecord, Cloneable {
     public static final short sid = 0x087A;
 
     private FtrHeader futureHeader;
@@ -409,7 +409,8 @@ public final class CFRule12Record extends CFRuleBase implements FutureRecord {
         return buffer.toString();
     }
 
-    public Object clone() {
+    @Override
+    public CFRule12Record clone() {
         CFRule12Record rec = new CFRule12Record(getConditionType(), getComparisonOperation());
         rec.futureHeader.setAssociatedRange(futureHeader.getAssociatedRange().copy());
         

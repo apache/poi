@@ -30,7 +30,7 @@ import org.apache.poi.util.LittleEndianOutput;
  *  Formatting, Sheet Extensions), this XSSF-style color record 
  *  can be used.
  */
-public final class ExtendedColor {
+public final class ExtendedColor implements Cloneable {
     public static final int TYPE_AUTO = 0;
     public static final int TYPE_INDEXED = 1;
     public static final int TYPE_RGB = 2;
@@ -147,7 +147,8 @@ public final class ExtendedColor {
         return buffer.toString();
     }
     
-    public Object clone()  {
+    @Override
+    public ExtendedColor clone()  {
         ExtendedColor exc = new ExtendedColor();
         exc.type = type;
         exc.tint = tint;

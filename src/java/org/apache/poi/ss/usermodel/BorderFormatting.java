@@ -25,33 +25,33 @@ package org.apache.poi.ss.usermodel;
  */
 public interface BorderFormatting {
     /** No border */
-    final static short    BORDER_NONE                = 0x0;
+    short BORDER_NONE                = 0x0;
     /** Thin border */
-    final static short    BORDER_THIN                = 0x1;
+    short BORDER_THIN                = 0x1;
     /** Medium border */
-    final static short    BORDER_MEDIUM              = 0x2;
+    short BORDER_MEDIUM              = 0x2;
     /** dash border */
-    final static short    BORDER_DASHED              = 0x3;
+    short BORDER_DASHED              = 0x3;
     /** dot border */
-    final static short    BORDER_HAIR                = 0x4;
+    short BORDER_HAIR                = 0x4;
     /** Thick border */
-    final static short    BORDER_THICK               = 0x5;
+    short BORDER_THICK               = 0x5;
     /** double-line border */
-    final static short    BORDER_DOUBLE              = 0x6;
+    short BORDER_DOUBLE              = 0x6;
     /** hair-line border */
-    final static short    BORDER_DOTTED              = 0x7;
+    short BORDER_DOTTED              = 0x7;
     /** Medium dashed border */
-    final static short    BORDER_MEDIUM_DASHED       = 0x8;
+    short BORDER_MEDIUM_DASHED       = 0x8;
     /** dash-dot border */
-    final static short    BORDER_DASH_DOT            = 0x9;
+    short BORDER_DASH_DOT            = 0x9;
     /** medium dash-dot border */
-    final static short    BORDER_MEDIUM_DASH_DOT     = 0xA;
+    short BORDER_MEDIUM_DASH_DOT     = 0xA;
     /** dash-dot-dot border */
-    final static short    BORDER_DASH_DOT_DOT        = 0xB;
+    short BORDER_DASH_DOT_DOT        = 0xB;
     /** medium dash-dot-dot border */
-    final static short    BORDER_MEDIUM_DASH_DOT_DOT = 0xC;
+    short BORDER_MEDIUM_DASH_DOT_DOT = 0xC;
     /** slanted dash-dot border */
-    final static short    BORDER_SLANTED_DASH_DOT    = 0xD;
+    short BORDER_SLANTED_DASH_DOT    = 0xD;
 
     short getBorderBottom();
 

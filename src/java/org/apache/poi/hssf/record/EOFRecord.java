@@ -29,7 +29,7 @@ import org.apache.poi.util.LittleEndianOutput;
  * @author Jason Height (jheight at chariot dot net dot au)
  * @version 2.0-pre
  */
-public final class EOFRecord extends StandardRecord {
+public final class EOFRecord extends StandardRecord implements Cloneable {
     public final static short sid = 0x0A;
 	public static final int ENCODED_SIZE = 4;
 
@@ -67,7 +67,8 @@ public final class EOFRecord extends StandardRecord {
         return sid;
     }
 
-    public Object clone() {
+    @Override
+    public EOFRecord clone() {
       return instance;
     }
 }

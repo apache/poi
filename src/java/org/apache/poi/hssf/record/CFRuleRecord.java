@@ -31,7 +31,7 @@ import org.apache.poi.util.LittleEndianOutput;
  *  new-style (Excel 2007+) also make use of {@link CFRule12Record}
  *  and {@link CFExRuleRecord} for their rules.
  */
-public final class CFRuleRecord extends CFRuleBase {
+public final class CFRuleRecord extends CFRuleBase implements Cloneable {
     public static final short sid = 0x01B1;
 
     /** Creates new CFRuleRecord */
@@ -139,7 +139,8 @@ public final class CFRuleRecord extends CFRuleBase {
         return buffer.toString();
     }
 
-    public Object clone() {
+    @Override
+    public CFRuleRecord clone() {
         CFRuleRecord rec = new CFRuleRecord(getConditionType(), getComparisonOperation());
         super.copyTo(rec);
         return rec;

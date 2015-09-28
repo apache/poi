@@ -31,7 +31,7 @@ import org.apache.poi.util.LittleEndianOutput;
  *
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class LinkedDataRecord extends StandardRecord {
+public final class LinkedDataRecord extends StandardRecord implements Cloneable {
     public final static short sid  = 0x1051;
 
     private static final BitField customNumberFormat= BitFieldFactory.getInstance(0x1);
@@ -102,7 +102,8 @@ public final class LinkedDataRecord extends StandardRecord {
         return sid;
     }
 
-    public Object clone() {
+    @Override
+    public LinkedDataRecord clone() {
         LinkedDataRecord rec = new LinkedDataRecord();
 
         rec.field_1_linkType = field_1_linkType;

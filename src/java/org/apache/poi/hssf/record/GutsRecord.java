@@ -30,9 +30,7 @@ import org.apache.poi.util.LittleEndianOutput;
  * @version 2.0-pre
  */
 
-public final class GutsRecord
-    extends StandardRecord
-{
+public final class GutsRecord extends StandardRecord implements Cloneable {
     public final static short sid = 0x80;
     private short             field_1_left_row_gutter;   // size of the row gutter to the left of the rows
     private short             field_2_top_col_gutter;    // size of the column gutter above the columns
@@ -172,7 +170,8 @@ public final class GutsRecord
         return sid;
     }
 
-    public Object clone() {
+    @Override
+    public GutsRecord clone() {
       GutsRecord rec = new GutsRecord();
       rec.field_1_left_row_gutter = field_1_left_row_gutter;
       rec.field_2_top_col_gutter = field_2_top_col_gutter;

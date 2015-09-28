@@ -29,7 +29,7 @@ import org.apache.poi.util.LittleEndianOutput;
  * 
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class DatRecord extends StandardRecord {
+public final class DatRecord extends StandardRecord implements Cloneable {
     public final static short sid = 0x1063;
 
     private static final BitField horizontalBorder = BitFieldFactory.getInstance(0x1);
@@ -81,9 +81,9 @@ public final class DatRecord extends StandardRecord {
         return sid;
     }
 
-    public Object clone() {
+    @Override
+    public DatRecord clone() {
         DatRecord rec = new DatRecord();
-    
         rec.field_1_options = field_1_options;
         return rec;
     }

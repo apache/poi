@@ -28,17 +28,20 @@ import org.apache.poi.util.LittleEndianOutput;
  *
  * @author Jason Height (jheight at chariot dot net dot au)
  */
-public final class FilePassRecord extends StandardRecord {
-	public final static short sid = 0x002F;
+public final class FilePassRecord extends StandardRecord implements Cloneable {
+	public static final short sid = 0x002F;
+    private static final int ENCRYPTION_XOR = 0;
+    private static final int ENCRYPTION_OTHER = 1;
 	
 	private int _encryptionType;
 	private KeyData _keyData;
 
-	private static interface KeyData {
+	private static interface KeyData extends Cloneable {
 	    void read(RecordInputStream in);
 	    void serialize(LittleEndianOutput out);
 	    int getDataSize();
 	    void appendToString(StringBuffer buffer);
+	    KeyData clone();
 	} 
 	
 	public static class Rc4KeyData implements KeyData {
@@ -119,6 +122,17 @@ public final class FilePassRecord extends StandardRecord {
             buffer.append("    .rc4.verifier = ").append(HexDump.toHex(_encryptedVerifier)).append("\n");
             buffer.append("    .rc4.verifierHash = ").append(HexDump.toHex(_encryptedVerifierHash)).append("\n");
         }
+        
+        @Override
+        public Rc4KeyData clone() {
+            Rc4KeyData other = new Rc4KeyData();
+            other._salt = this._salt.clone();
+            other._encryptedVerifier = this._encryptedVerifier.clone();
+            other._encryptedVerifierHash = this._encryptedVerifierHash.clone();
+            other._encryptionInfo = this._encryptionInfo;
+            other._minorVersionNo = this._minorVersionNo;
+            return other;
+        }
 	}
 
 	public static class XorKeyData implements KeyData {
@@ -170,12 +184,22 @@ public final class FilePassRecord extends StandardRecord {
             buffer.append("    .xor.key = ").append(HexDump.intToHex(_key)).append("\n");
             buffer.append("    .xor.verifier  = ").append(HexDump.intToHex(_verifier)).append("\n");
         }
+        
+        @Override
+        public XorKeyData clone() {
+            XorKeyData other = new XorKeyData();
+            other._key = this._key;
+            other._verifier = this._verifier;
+            return other;
+        }
 	}
 	
 	
-	private static final int ENCRYPTION_XOR = 0;
-	private static final int ENCRYPTION_OTHER = 1;
-
+	private FilePassRecord(FilePassRecord other) {
+	    _encryptionType = other._encryptionType;
+	    _keyData = other._keyData.clone();
+	}
+	
 	public FilePassRecord(RecordInputStream in) {
 		_encryptionType = in.readUShort();
 
@@ -282,9 +306,9 @@ public final class FilePassRecord extends StandardRecord {
 		return sid;
 	}
 	
-    public Object clone() {
-		// currently immutable
-		return this;
+	@Override
+	public FilePassRecord clone() {
+		return new FilePassRecord(this);
 	}
 
 	public String toString() {

@@ -27,7 +27,7 @@ import org.apache.poi.util.LittleEndianOutput;
 
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class GroupMarkerSubRecord extends SubRecord {
+public final class GroupMarkerSubRecord extends SubRecord implements Cloneable {
     public final static short sid = 0x0006;
 
     private static final byte[] EMPTY_BYTE_ARRAY = { };
@@ -70,7 +70,8 @@ public final class GroupMarkerSubRecord extends SubRecord {
         return sid;
     }
 
-    public Object clone() {
+    @Override
+    public GroupMarkerSubRecord clone() {
         GroupMarkerSubRecord rec = new GroupMarkerSubRecord();
         rec.reserved = new byte[reserved.length];
         for ( int i = 0; i < reserved.length; i++ )

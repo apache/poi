@@ -29,7 +29,7 @@ import org.apache.poi.util.LittleEndianOutput;
  * 
  * @author Andrew C. Oliver (acoliver at apache.org)
  */
-public final class LegendRecord extends StandardRecord {
+public final class LegendRecord extends StandardRecord implements Cloneable {
     public final static short sid = 0x1015;
 
     private static final BitField autoPosition     = BitFieldFactory.getInstance(0x01);
@@ -136,7 +136,8 @@ public final class LegendRecord extends StandardRecord {
         return sid;
     }
 
-    public Object clone() {
+    @Override
+    public LegendRecord clone() {
         LegendRecord rec = new LegendRecord();
     
         rec.field_1_xAxisUpperLeft = field_1_xAxisUpperLeft;
