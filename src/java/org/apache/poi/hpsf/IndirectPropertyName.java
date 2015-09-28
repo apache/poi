@@ -23,7 +23,7 @@ class IndirectPropertyName
 {
     private CodePageString _value;
 
-    IndirectPropertyName( byte[] data, int offset )
+    IndirectPropertyName( byte[] data, int offset ) //NOSONAR
     {
         _value = new CodePageString( data, offset );
     }

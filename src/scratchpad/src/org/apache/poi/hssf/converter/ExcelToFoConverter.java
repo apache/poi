@@ -189,13 +189,14 @@ public class ExcelToFoConverter extends AbstractExcelConverter
      * @return <tt>false</tt> if cell style by itself (without text, i.e.
      *         borders, fill, etc.) worth a mention, <tt>true</tt> otherwise
      */
-    protected boolean isEmptyStyle( CellStyle cellStyle )
-    {
-        return cellStyle.getFillPattern() == 0 //
-                && cellStyle.getBorderTop() == HSSFCellStyle.BORDER_NONE //
-                && cellStyle.getBorderRight() == HSSFCellStyle.BORDER_NONE //
-                && cellStyle.getBorderBottom() == HSSFCellStyle.BORDER_NONE //
-                && cellStyle.getBorderLeft() == HSSFCellStyle.BORDER_NONE; //
+    protected boolean isEmptyStyle( CellStyle cellStyle ) {
+        return cellStyle == null || (
+               cellStyle.getFillPattern() == 0
+            && cellStyle.getBorderTop() == HSSFCellStyle.BORDER_NONE
+            && cellStyle.getBorderRight() == HSSFCellStyle.BORDER_NONE
+            && cellStyle.getBorderBottom() == HSSFCellStyle.BORDER_NONE
+            && cellStyle.getBorderLeft() == HSSFCellStyle.BORDER_NONE
+        );
     }
 
     protected boolean processCell( HSSFWorkbook workbook, HSSFCell cell,
@@ -226,20 +227,17 @@ public class ExcelToFoConverter extends AbstractExcelConverter
                 }
                 break;
             case HSSFCell.CELL_TYPE_NUMERIC:
-                HSSFCellStyle style = cellStyle;
-                if ( style == null )
-                {
-                    value = String.valueOf( cell.getNumericCellValue() );
-                }
-                else
-                {
-                    value = ( _formatter.formatRawCellContents(
-                            cell.getNumericCellValue(), style.getDataFormat(),
-                            style.getDataFormatString() ) );
+                double nValue = cell.getNumericCellValue();
+                if ( cellStyle == null ) {
+                    value = Double.toString( nValue );
+                } else {
+                    short df = cellStyle.getDataFormat();
+                    String dfs = cellStyle.getDataFormatString();
+                    value = _formatter.formatRawCellContents(nValue, df, dfs );
                 }
                 break;
             case HSSFCell.CELL_TYPE_BOOLEAN:
-                value = String.valueOf( cell.getBooleanCellValue() );
+                value = Boolean.toString( cell.getBooleanCellValue() );
                 break;
             case HSSFCell.CELL_TYPE_ERROR:
                 value = ErrorEval.getText( cell.getErrorCellValue() );
@@ -260,7 +258,7 @@ public class ExcelToFoConverter extends AbstractExcelConverter
             value = _formatter.formatCellValue( cell );
             break;
         case HSSFCell.CELL_TYPE_BOOLEAN:
-            value = String.valueOf( cell.getBooleanCellValue() );
+            value = Boolean.toString( cell.getBooleanCellValue() );
             break;
         case HSSFCell.CELL_TYPE_ERROR:
             value = ErrorEval.getText( cell.getErrorCellValue() );
@@ -272,20 +270,16 @@ public class ExcelToFoConverter extends AbstractExcelConverter
         }
 
         final boolean noText = ExcelToHtmlUtils.isEmpty( value );
-        final boolean wrapInDivs = !noText && !cellStyle.getWrapText();
+        final boolean wrapInDivs = !noText && (cellStyle == null || !cellStyle.getWrapText());
 
         final boolean emptyStyle = isEmptyStyle( cellStyle );
-        if ( !emptyStyle )
-        {
-            if ( noText )
-            {
-                /*
-                 * if cell style is defined (like borders, etc.) but cell text
-                 * is empty, add "&nbsp;" to output, so browser won't collapse
-                 * and ignore cell
-                 */
-                value = "\u00A0";
-            }
+        if ( !emptyStyle && noText ) {
+            /*
+             * if cell style is defined (like borders, etc.) but cell text
+             * is empty, add "&nbsp;" to output, so browser won't collapse
+             * and ignore cell
+             */
+            value = "\u00A0";
         }
 
         if ( isOutputLeadingSpacesAsNonBreaking() && value.startsWith( " " ) )
@@ -293,13 +287,15 @@ public class ExcelToFoConverter extends AbstractExcelConverter
             StringBuilder builder = new StringBuilder();
             for ( int c = 0; c < value.length(); c++ )
             {
-                if ( value.charAt( c ) != ' ' )
+                if ( value.charAt( c ) != ' ' ) {
                     break;
+                }
                 builder.append( '\u00a0' );
             }
 
-            if ( value.length() != builder.length() )
+            if ( value.length() != builder.length() ) {
                 builder.append( value.substring( builder.length() ) );
+            }
 
             value = builder.toString();
         }

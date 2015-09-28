@@ -158,7 +158,7 @@ public class BigExample {
 
         // demonstrate adding/naming and deleting a sheet
         // create a sheet, set its title then delete it
-        s = wb.createSheet();
+        wb.createSheet();
         wb.setSheetName(1, "DeletedSheet");
         wb.removeSheetAt(1);
         //end deleted sheet
@@ -167,5 +167,6 @@ public class BigExample {
         // close our file (don't blow out our file handles
         wb.write(out);
         out.close();
+        wb.close();
     }
 }

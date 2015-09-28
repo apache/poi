@@ -38,9 +38,6 @@ import org.apache.poi.ss.util.CellRangeAddress;
  * THIS IS NOT THE MAIN HSSF FILE!! This is a utility for testing functionality.
  * It does contain sample API usage that may be educational to regular API
  * users.
- *
- * @see #main
- * @author Andrew Oliver (acoliver at apache dot org)
  */
 public final class HSSFReadWrite {
 
@@ -48,7 +45,12 @@ public final class HSSFReadWrite {
 	 * creates an {@link HSSFWorkbook} the specified OS filename.
 	 */
 	private static HSSFWorkbook readFile(String filename) throws IOException {
-		return new HSSFWorkbook(new FileInputStream(filename));
+	    FileInputStream fis = new FileInputStream(filename);
+	    try {
+	        return new HSSFWorkbook(fis);
+	    } finally {
+	        fis.close();
+	    }
 	}
 
 	/**
@@ -115,7 +117,7 @@ public final class HSSFReadWrite {
 
 		// end draw thick black border
 		// create a sheet, set its title then delete it
-		s = wb.createSheet();
+		wb.createSheet();
 		wb.setSheetName(1, "DeletedSheet");
 		wb.removeSheetAt(1);
 
@@ -123,6 +125,8 @@ public final class HSSFReadWrite {
 		FileOutputStream out = new FileOutputStream(outputFilename);
 		wb.write(out);
 		out.close();
+		
+		wb.close();
 	}
 
 	/**
@@ -198,6 +202,7 @@ public final class HSSFReadWrite {
 						}
 					}
 				}
+				wb.close();
 			} else if (args.length == 2) {
 				if (args[1].toLowerCase(Locale.ROOT).equals("write")) {
 					System.out.println("Write mode");
@@ -213,6 +218,7 @@ public final class HSSFReadWrite {
 
 					wb.write(stream);
 					stream.close();
+					wb.close();
 				}
 			} else if (args.length == 3 && args[2].toLowerCase(Locale.ROOT).equals("modify1")) {
 				// delete row 0-24, row 74 - 99 && change cell 3 on row 39 to string "MODIFIED CELL!!"
@@ -237,6 +243,7 @@ public final class HSSFReadWrite {
 
 				wb.write(stream);
 				stream.close();
+				wb.close();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

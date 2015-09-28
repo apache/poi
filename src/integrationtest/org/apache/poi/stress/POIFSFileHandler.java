@@ -31,6 +31,7 @@ public class POIFSFileHandler extends AbstractFileHandler {
     public void handleFile(InputStream stream) throws Exception {
 		POIFSFileSystem fs = new POIFSFileSystem(stream);
 		handlePOIFSFileSystem(fs);
+		fs.close();
 	}
 
 	private void handlePOIFSFileSystem(POIFSFileSystem fs) {
@@ -45,5 +46,6 @@ public class POIFSFileHandler extends AbstractFileHandler {
 		ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
 		POIFSFileSystem fs = new POIFSFileSystem(in);
 		handlePOIFSFileSystem(fs);
+		fs.close();
 	}
 }

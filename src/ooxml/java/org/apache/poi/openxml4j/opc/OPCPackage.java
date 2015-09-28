@@ -244,10 +244,12 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
     */
    public static OPCPackage open(File file, PackageAccess access)
          throws InvalidFormatException {
-      if (file == null)
-			throw new IllegalArgumentException("'file' must be given");
-      if (file == null || (file.exists() && file.isDirectory()))
-			throw new IllegalArgumentException("file must not be a directory");
+      if (file == null) {
+          throw new IllegalArgumentException("'file' must be given");
+      }
+      if (file.exists() && file.isDirectory()) {
+          throw new IllegalArgumentException("file must not be a directory");
+      }
 
       OPCPackage pack = new ZipPackage(file, access);
       if (pack.partList == null && access != PackageAccess.WRITE) {

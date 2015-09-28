@@ -233,14 +233,21 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
                 }
             }
 
-            for (int i = 0; i < _slides.size(); i++) {
-				HSLFSlide slide = _slides.get(i);
-
-				// Slide header, if set
-				HeadersFooters hf = slide.getHeadersFooters();
-				if (hf != null && hf.isHeaderVisible() && hf.getHeaderText() != null) {
-					ret.append(hf.getHeaderText() + "\n");
-				}
+            for (HSLFSlide slide : _slides) {
+                String headerText = "";
+                String footerText = "";
+                HeadersFooters hf = slide.getHeadersFooters();
+                if (hf != null) {
+                    if (hf.isHeaderVisible()) {
+                        headerText = safeLine(hf.getHeaderText());
+                    }
+                    if (hf.isFooterVisible()) {
+                        footerText = safeLine(hf.getFooterText());
+                    }
+                }
+                
+                // Slide header, if set
+				ret.append(headerText);
 
 				// Slide text
                 textRunsToText(ret, slide.getTextParagraphs());
@@ -252,9 +259,7 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
                     }
                 }
                 // Slide footer, if set
-				if (hf != null && hf.isFooterVisible() && hf.getFooterText() != null) {
-					ret.append(hf.getFooterText() + "\n");
-				}
+                ret.append(footerText);
 
 				// Comments, if requested and present
 				if (getCommentText) {
@@ -274,7 +279,18 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
 			// master sheets in. Grab Slide list, then work from there,
 			// but ensure no duplicates
 			HashSet<Integer> seenNotes = new HashSet<Integer>();
+            String headerText = "";
+            String footerText = "";
 			HeadersFooters hf = _show.getNotesHeadersFooters();
+			if (hf != null) {
+			    if (hf.isHeaderVisible()) {
+			        headerText = safeLine(hf.getHeaderText());
+			    }
+			    if (hf.isFooterVisible()) {
+                    footerText = safeLine(hf.getFooterText());
+			    }
+			}
+			
 
 			for (int i = 0; i < _slides.size(); i++) {
 				HSLFNotes notes = _slides.get(i).getNotes();
@@ -288,21 +304,21 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
 				seenNotes.add(id);
 
 				// Repeat the Notes header, if set
-				if (hf != null && hf.isHeaderVisible() && hf.getHeaderText() != null) {
-					ret.append(hf.getHeaderText() + "\n");
-				}
+			    ret.append(headerText);
 
 				// Notes text
                 textRunsToText(ret, notes.getTextParagraphs());
 
 				// Repeat the notes footer, if set
-				if (hf != null && hf.isFooterVisible() && hf.getFooterText() != null) {
-					ret.append(hf.getFooterText() + "\n");
-				}
+                ret.append(footerText);
 			}
 		}
 
 		return ret.toString();
+	}
+	
+	private static String safeLine(String text) {
+	    return (text == null) ? "" : (text+'\n');
 	}
 
     private void extractTableText(StringBuffer ret, HSLFTable table) {

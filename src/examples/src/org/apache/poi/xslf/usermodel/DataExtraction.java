@@ -21,35 +21,37 @@ package org.apache.poi.xslf.usermodel;
 
 import java.awt.Dimension;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
+import java.io.PrintStream;
 
+import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 
 /**
  * Demonstrates how you can extract data from a .pptx file
- *
- * @author Yegor Kozlov
  */
 public final class DataExtraction {
 
-    @SuppressWarnings("unused")
-    public static void main(String args[]) throws Exception {
+    public static void main(String args[]) throws IOException, OpenXML4JException {
+
+        PrintStream out = System.out;
 
         if (args.length == 0) {
-           System.out.println("Input file is required");
+           out.println("Input file is required");
            return;
         }
-
+        
         FileInputStream is = new FileInputStream(args[0]);
         XMLSlideShow ppt = new XMLSlideShow(is);
         is.close();
 
         // Get the document's embedded files.
-        List<PackagePart> embeds = ppt.getAllEmbedds();
-        for (PackagePart p : embeds) {
+        for (PackagePart p : ppt.getAllEmbedds()) {
             String type = p.getContentType();
-            String name = p.getPartName().getName();  //typically file name
+            // typically file name
+            String name = p.getPartName().getName();  
+            out.println("Embedded file ("+type+"): "+name);
             
             InputStream pIs = p.getInputStream();
             // make sense of the part data
@@ -58,33 +60,31 @@ public final class DataExtraction {
         }
 
         // Get the document's embedded files.
-        List<XSLFPictureData> images = ppt.getPictureData();
-        for (XSLFPictureData data : images) {
-            PackagePart p = data.getPackagePart();
-
-            String type = p.getContentType();
+        for (XSLFPictureData data : ppt.getPictureData()) {
+            String type = data.getContentType();
             String name = data.getFileName();
+            out.println("Picture ("+type+"): "+name);
 
-            InputStream pIs = p.getInputStream();
+            InputStream pIs = data.getInputStream();
             // make sense of the image data
             pIs.close();
-
-
-
         }
 
-        Dimension pageSize = ppt.getPageSize();  // size of the canvas in points
+        // size of the canvas in points
+        Dimension pageSize = ppt.getPageSize();
+        out.println("Pagesize: "+pageSize);
+        
         for(XSLFSlide slide : ppt.getSlides()) {
             for(XSLFShape shape : slide){
                 if(shape instanceof XSLFTextShape) {
                     XSLFTextShape txShape = (XSLFTextShape)shape;
-                    System.out.println(txShape.getText());
+                    out.println(txShape.getText());
                 } else if (shape instanceof XSLFPictureShape){
                     XSLFPictureShape pShape = (XSLFPictureShape)shape;
                     XSLFPictureData pData = pShape.getPictureData();
-                    System.out.println(pData.getFileName());
+                    out.println(pData.getFileName());
                 } else {
-                    System.out.println("Process me: " + shape.getClass());
+                    out.println("Process me: " + shape.getClass());
                 }
             }
         }

@@ -220,8 +220,7 @@ public final class RecordTypes {
      */
     public static String recordName(int type) {
         String name = typeToName.get(Integer.valueOf(type));
-        if (name == null) name = "Unknown" + type;
-        return name;
+        return (name == null) ? ("Unknown" + type) : name;
     }
 
     /**

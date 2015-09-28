@@ -17,18 +17,19 @@
 package org.apache.poi.xssf.usermodel.examples;
 
 import java.io.FileOutputStream;
+import java.io.IOException;
 
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-public class SelectedSheet {
-
-    public static void main(String[]args) throws Exception {
+public abstract class SelectedSheet {
+    
+    public static void main(String[]args) throws IOException {
         Workbook wb = new XSSFWorkbook(); //or new HSSFWorkbook();
 
-        Sheet sheet = wb.createSheet("row sheet");
-        Sheet sheet2 = wb.createSheet("another sheet");
+        wb.createSheet("row sheet");
+        wb.createSheet("another sheet");
         Sheet sheet3 = wb.createSheet(" sheet 3 ");
         sheet3.setSelected(true);
         wb.setActiveSheet(2);
@@ -38,6 +39,8 @@ public class SelectedSheet {
         FileOutputStream fileOut = new FileOutputStream("selectedSheet.xlsx");
         wb.write(fileOut);
         fileOut.close();
+        
+        wb.close();
     }
 
 }

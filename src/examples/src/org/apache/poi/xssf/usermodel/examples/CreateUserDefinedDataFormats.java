@@ -18,6 +18,7 @@
 package org.apache.poi.xssf.usermodel.examples;
 
 import java.io.FileOutputStream;
+import java.io.IOException;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -33,7 +34,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 public class CreateUserDefinedDataFormats {
 
 
-    public static void main(String[]args) throws Exception {
+    public static void main(String[]args) throws IOException {
         Workbook wb = new XSSFWorkbook();  //or new HSSFWorkbook();
         Sheet sheet = wb.createSheet("format sheet");
         CellStyle style;
@@ -43,14 +44,14 @@ public class CreateUserDefinedDataFormats {
         short rowNum = 0;
         short colNum = 0;
 
-        row = sheet.createRow(rowNum++);
+        row = sheet.createRow(rowNum);
         cell = row.createCell(colNum);
         cell.setCellValue(11111.25);
         style = wb.createCellStyle();
         style.setDataFormat(format.getFormat("0.0"));
         cell.setCellStyle(style);
 
-        row = sheet.createRow(rowNum++);
+        row = sheet.createRow(++rowNum);
         cell = row.createCell(colNum);
         cell.setCellValue(11111.25);
         style = wb.createCellStyle();
@@ -60,6 +61,8 @@ public class CreateUserDefinedDataFormats {
         FileOutputStream fileOut = new FileOutputStream("ooxml_dataFormat.xlsx");
         wb.write(fileOut);
         fileOut.close();
+        
+        wb.close();
     }
 
 }
