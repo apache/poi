@@ -23,7 +23,6 @@ import org.apache.poi.hdgf.chunks.ChunkFactory.CommandDefinition;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.apache.poi.util.StringUtil;
 
 /**
  * Base of all chunks, which hold data, flags etc
@@ -55,7 +54,7 @@ public final class Chunk {
 		this.header = header;
 		this.trailer = trailer;
 		this.separator = separator;
-		this.contents = contents;
+		this.contents = contents.clone();
 	}
 
 	public byte[] _getContents() {
@@ -116,14 +115,14 @@ public final class Chunk {
 
 		// Loop over the definitions, building the commands
 		//  and getting their values
-		ArrayList<Command> commands = new ArrayList<Command>();
-		for(int i=0; i<commandDefinitions.length; i++) {
-			int type = commandDefinitions[i].getType();
-			int offset = commandDefinitions[i].getOffset();
+		ArrayList<Command> commandList = new ArrayList<Command>();
+		for(CommandDefinition cdef : commandDefinitions) {
+			int type = cdef.getType();
+			int offset = cdef.getOffset();
 
 			// Handle virtual commands
 			if(type == 10) {
-				name = commandDefinitions[i].getName();
+				name = cdef.getName();
 				continue;
 			} else if(type == 18) {
 				continue;
@@ -133,9 +132,9 @@ public final class Chunk {
 			// Build the appropriate command for the type
 			Command command;
 			if(type == 11 || type == 21) {
-				command = new BlockOffsetCommand(commandDefinitions[i]);
+				command = new BlockOffsetCommand(cdef);
 			} else {
-				command = new Command(commandDefinitions[i]);
+				command = new Command(cdef);
 			}
 
 			// Bizarely, many of the offsets are from the start of the
@@ -234,12 +233,12 @@ public final class Chunk {
 			}
 
 			// Add to the array
-			commands.add(command);
+			commandList.add(command);
 		}
 
 		// Save the commands we liked the look of
-		this.commands = commands.toArray(
-							new Command[commands.size()] );
+		this.commands = commandList.toArray(
+							new Command[commandList.size()] );
 
 		// Now build up the blocks, if we had a command that tells
 		//  us where a block is
@@ -280,13 +279,11 @@ public final class Chunk {
 	 * A special kind of command that holds the offset to
 	 *  a block
 	 */
-	public static class BlockOffsetCommand extends Command {
-		private int offset;
+	private static class BlockOffsetCommand extends Command {
 		private BlockOffsetCommand(CommandDefinition definition) {
 			super(definition, null);
 		}
 		private void setOffset(int offset) {
-			this.offset = offset;
 			value = Integer.valueOf(offset);
 		}
 	}

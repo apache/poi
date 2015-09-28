@@ -54,7 +54,7 @@ public final class XSLFPictureData extends POIXMLDocumentPart implements Picture
     private Long checksum = null;
 
     // original image dimensions (for formats supported by BufferedImage)
-    private Dimension _origSize = null;
+    private Dimension origSize = null;
     private int index = -1;
 
     /**
@@ -107,8 +107,9 @@ public final class XSLFPictureData extends POIXMLDocumentPart implements Picture
      */
     public String getFileName() {
         String name = getPackagePart().getPartName().getName();
-        if (name == null)
+        if (name == null) {
             return null;
+        }
         return name.substring(name.lastIndexOf('/') + 1);
     }
 
@@ -132,7 +133,7 @@ public final class XSLFPictureData extends POIXMLDocumentPart implements Picture
     @Override
     public Dimension getImageDimension() {
         cacheProperties();
-        return _origSize;
+        return origSize;
     }
 
     @Override
@@ -148,21 +149,21 @@ public final class XSLFPictureData extends POIXMLDocumentPart implements Picture
      * Determine and cache image properties
      */
     protected void cacheProperties() {
-        if (_origSize == null || checksum == null) {
+        if (origSize == null || checksum == null) {
             byte data[] = getData();
             checksum = IOUtils.calculateChecksum(data);
             
             switch (getType()) {
             case EMF:
-                _origSize = new EMF.NativeHeader(data, 0).getSize();
+                origSize = new EMF.NativeHeader(data, 0).getSize();
                 break;
             case WMF:
                 // wmf files in pptx usually have their placeable header 
                 // stripped away, so this returns only the dummy size
-                _origSize = new WMF.NativeHeader(data, 0).getSize();
+                origSize = new WMF.NativeHeader(data, 0).getSize();
                 break;
             case PICT:
-                _origSize = new PICT.NativeHeader(data, 0).getSize();
+                origSize = new PICT.NativeHeader(data, 0).getSize();
                 break;
             default:
                 BufferedImage img = null;
@@ -172,7 +173,7 @@ public final class XSLFPictureData extends POIXMLDocumentPart implements Picture
                     logger.log(POILogger.WARN, "Can't determine image dimensions", e);
                 }
                 // set dummy size, in case of dummy dimension can't be set
-                _origSize = (img == null)
+                origSize = (img == null)
                     ? new Dimension(200,200)
                     : new Dimension(
                         (int)Units.pixelToPoints(img.getWidth()),
@@ -204,7 +205,7 @@ public final class XSLFPictureData extends POIXMLDocumentPart implements Picture
         // recalculate now since we already have the data bytes available anyhow
         checksum = IOUtils.calculateChecksum(data);
 
-        _origSize = null; // need to recalculate image size
+        origSize = null; // need to recalculate image size
     }
 
     @Override

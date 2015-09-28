@@ -34,7 +34,7 @@ public abstract class QCBit {
 	public QCBit(String thingType, String bitType, byte[] data) {
 		this.thingType = thingType;
 		this.bitType = bitType;
-		this.data = data;
+		this.data = data.clone();
 	}
 
 	/**

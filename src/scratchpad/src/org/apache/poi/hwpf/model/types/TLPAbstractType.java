@@ -17,7 +17,6 @@
 
 package org.apache.poi.hwpf.model.types;
 
-import org.apache.poi.hdf.model.hdftypes.HDFType;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
@@ -35,18 +34,18 @@ import org.apache.poi.util.LittleEndian;
  *         File Format Specification [*.doc]
  */
 @Internal
-public abstract class TLPAbstractType implements HDFType
+public abstract class TLPAbstractType
 {
 
     protected short field_1_itl;
     protected byte field_2_tlp_flags;
-    private static BitField fBorders = new BitField( 0x0001 );
-    private static BitField fShading = new BitField( 0x0002 );
-    private static BitField fFont = new BitField( 0x0004 );
-    private static BitField fColor = new BitField( 0x0008 );
-    private static BitField fBestFit = new BitField( 0x0010 );
-    private static BitField fHdrRows = new BitField( 0x0020 );
-    private static BitField fLastRow = new BitField( 0x0040 );
+    private static final BitField fBorders = new BitField( 0x0001 );
+    private static final BitField fShading = new BitField( 0x0002 );
+    private static final BitField fFont = new BitField( 0x0004 );
+    private static final BitField fColor = new BitField( 0x0008 );
+    private static final BitField fBestFit = new BitField( 0x0010 );
+    private static final BitField fHdrRows = new BitField( 0x0020 );
+    private static final BitField fLastRow = new BitField( 0x0040 );
 
     public TLPAbstractType()
     {

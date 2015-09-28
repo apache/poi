@@ -17,7 +17,6 @@
 
 package org.apache.poi.hwpf.model.types;
 
-import org.apache.poi.hdf.model.hdftypes.HDFType;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.Internal;
 
@@ -34,21 +33,21 @@ import org.apache.poi.util.Internal;
  *         File Format Specification [*.doc]
  */
 @Internal
-public abstract class FLDAbstractType implements HDFType
+public abstract class FLDAbstractType
 {
 
     protected byte field_1_chHolder;
-    private static BitField ch = new BitField( 0x1f );
-    private static BitField reserved = new BitField( 0xe0 );
+    private static final BitField ch = new BitField( 0x1f );
+    private static final BitField reserved = new BitField( 0xe0 );
     protected byte field_2_flt;
-    private static BitField fDiffer = new BitField( 0x01 );
-    private static BitField fZombieEmbed = new BitField( 0x02 );
-    private static BitField fResultDirty = new BitField( 0x04 );
-    private static BitField fResultEdited = new BitField( 0x08 );
-    private static BitField fLocked = new BitField( 0x10 );
-    private static BitField fPrivateResult = new BitField( 0x20 );
-    private static BitField fNested = new BitField( 0x40 );
-    private static BitField fHasSep = new BitField( 0x40 );
+    private static final BitField fDiffer = new BitField( 0x01 );
+    private static final BitField fZombieEmbed = new BitField( 0x02 );
+    private static final BitField fResultDirty = new BitField( 0x04 );
+    private static final BitField fResultEdited = new BitField( 0x08 );
+    private static final BitField fLocked = new BitField( 0x10 );
+    private static final BitField fPrivateResult = new BitField( 0x20 );
+    private static final BitField fNested = new BitField( 0x40 );
+    private static final BitField fHasSep = new BitField( 0x40 );
 
     public FLDAbstractType()
     {

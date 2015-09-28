@@ -17,27 +17,27 @@
 
 package org.apache.poi.hssf.usermodel.examples;
 
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.ss.util.WorkbookUtil;
-
-import java.io.IOException;
 import java.io.FileOutputStream;
+import java.io.IOException;
+
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.util.WorkbookUtil;
 
 /**
  * Creates a new workbook with a sheet that's been explicitly defined.
- *
- * @author Glen Stampoultzis (glens at apache.org)
  */
-public class NewSheet {
+public abstract class NewSheet {
     public static void main(String[] args) throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
-        HSSFSheet sheet1 = wb.createSheet("new sheet");
-        HSSFSheet sheet2 = wb.createSheet(); // create with default name
+        wb.createSheet("new sheet");
+        // create with default name
+        wb.createSheet();
         final String name = "second sheet";
-        wb.setSheetName(1, WorkbookUtil.createSafeSheetName(name)); // setting sheet name later
+        // setting sheet name later
+        wb.setSheetName(1, WorkbookUtil.createSafeSheetName(name));
         FileOutputStream fileOut = new FileOutputStream("workbook.xls");
         wb.write(fileOut);
         fileOut.close();
+        wb.close();
     }
 }

@@ -170,32 +170,30 @@ public class XLSX2CSV {
                 this.formatString = null;
                 String cellType = attributes.getValue("t");
                 String cellStyleStr = attributes.getValue("s");
-                if ("b".equals(cellType))
+                if ("b".equals(cellType)) {
                     nextDataType = xssfDataType.BOOL;
-                else if ("e".equals(cellType))
+                } else if ("e".equals(cellType)) {
                     nextDataType = xssfDataType.ERROR;
-                else if ("inlineStr".equals(cellType))
+                } else if ("inlineStr".equals(cellType)) {
                     nextDataType = xssfDataType.INLINESTR;
-                else if ("s".equals(cellType))
+                } else if ("s".equals(cellType)) {
                     nextDataType = xssfDataType.SSTINDEX;
-                else if ("str".equals(cellType))
+                } else if ("str".equals(cellType)) {
                     nextDataType = xssfDataType.FORMULA;
-                else if (cellStyleStr != null) {
+                } else if (cellStyleStr != null) {
                     // It's a number, but almost certainly one
                     //  with a special style or format 
-                    XSSFCellStyle style = null;
-                    if (cellStyleStr != null) {
-                        int styleIndex = Integer.parseInt(cellStyleStr);
-                        style = stylesTable.getStyleAt(styleIndex);
-                    }
+                    int styleIndex = Integer.parseInt(cellStyleStr);
+                    XSSFCellStyle style = stylesTable.getStyleAt(styleIndex);
                     if (style == null && stylesTable.getNumCellStyles() > 0) {
                         style = stylesTable.getStyleAt(0);
                     }
                     if (style != null) {
                         this.formatIndex = style.getDataFormat();
                         this.formatString = style.getDataFormatString();
-                        if (this.formatString == null)
+                        if (this.formatString == null) {
                             this.formatString = BuiltinFormats.getBuiltinFormat(this.formatIndex);
+                        }
                     }
                 }
             }

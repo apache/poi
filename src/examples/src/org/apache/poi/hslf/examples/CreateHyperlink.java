@@ -19,6 +19,7 @@ package org.apache.poi.hslf.examples;
 
 import java.awt.Rectangle;
 import java.io.FileOutputStream;
+import java.io.IOException;
 
 import org.apache.poi.hslf.usermodel.HSLFHyperlink;
 import org.apache.poi.hslf.usermodel.HSLFSlide;
@@ -27,17 +28,14 @@ import org.apache.poi.hslf.usermodel.HSLFTextBox;
 
 /**
  * Demonstrates how to create hyperlinks in PowerPoint presentations
- *
- * @author Yegor Kozlov
  */
-public final class CreateHyperlink {
-
-    @SuppressWarnings("unused")
-    public static void main(String[] args) throws Exception {
+public abstract class CreateHyperlink {
+    
+    public static void main(String[] args) throws IOException {
         HSLFSlideShow ppt = new HSLFSlideShow();
 
         HSLFSlide slideA = ppt.createSlide();
-        HSLFSlide slideB = ppt.createSlide();
+        ppt.createSlide();
         HSLFSlide slideC = ppt.createSlide();
 
         // link to a URL

@@ -49,7 +49,7 @@ public class MAPIAttribute {
    public MAPIAttribute(MAPIProperty property, int type, byte[] data) {
       this.property = property;
       this.type = type;
-      this.data = data;
+      this.data = data.clone();
    }
 
    public MAPIProperty getProperty() {
