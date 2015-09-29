@@ -35,6 +35,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -61,29 +62,7 @@ import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.functions.Function;
-import org.apache.poi.ss.usermodel.BaseTestBugzillaIssues;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CellValue;
-import org.apache.poi.ss.usermodel.ClientAnchor;
-import org.apache.poi.ss.usermodel.Comment;
-import org.apache.poi.ss.usermodel.CreationHelper;
-import org.apache.poi.ss.usermodel.DataFormat;
-import org.apache.poi.ss.usermodel.DataFormatter;
-import org.apache.poi.ss.usermodel.DateUtil;
-import org.apache.poi.ss.usermodel.Drawing;
-import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.FormulaError;
-import org.apache.poi.ss.usermodel.FormulaEvaluator;
-import org.apache.poi.ss.usermodel.Hyperlink;
-import org.apache.poi.ss.usermodel.IndexedColors;
-import org.apache.poi.ss.usermodel.Name;
-import org.apache.poi.ss.usermodel.PrintSetup;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.SheetConditionalFormatting;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
@@ -2811,5 +2790,37 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         assertNull(((XSSFColor)cond.getConditionalFormattingAt(1).getRule(0).getPatternFormatting().getFillForegroundColorColor()).getARGBHex()); 
         
         wb.close();
+    }
+
+    @Test
+    public void test51998() throws IOException {
+        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("51998.xlsx");
+        
+        Set<String> sheetNames = new HashSet<String>();
+        
+        for (int sheetNum = 0; sheetNum < wb.getNumberOfSheets(); sheetNum++)
+        {
+            sheetNames.add(wb.getSheetName(sheetNum));
+        }
+        
+        for (String sheetName : sheetNames)
+        {
+            int sheetIndex = wb.getSheetIndex(sheetName);
+            
+            wb.removeSheetAt(sheetIndex);
+            
+            Sheet newSheet = wb.createSheet();
+            //Sheet newSheet = wb.createSheet(sheetName);
+            int newSheetIndex = wb.getSheetIndex(newSheet);
+            //System.out.println(newSheetIndex);
+            wb.setSheetName(newSheetIndex, sheetName);
+            wb.setSheetOrder(sheetName, sheetIndex);
+        }
+        
+        Workbook wbBack = XSSFTestDataSamples.writeOutAndReadBack(wb);
+        wb.close();
+        
+        assertNotNull(wbBack);
+        wbBack.close();
     }
 }
