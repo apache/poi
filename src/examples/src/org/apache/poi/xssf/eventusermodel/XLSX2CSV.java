@@ -185,15 +185,10 @@ public class XLSX2CSV {
                     //  with a special style or format 
                     int styleIndex = Integer.parseInt(cellStyleStr);
                     XSSFCellStyle style = stylesTable.getStyleAt(styleIndex);
-                    if (style == null && stylesTable.getNumCellStyles() > 0) {
-                        style = stylesTable.getStyleAt(0);
-                    }
-                    if (style != null) {
-                        this.formatIndex = style.getDataFormat();
-                        this.formatString = style.getDataFormatString();
-                        if (this.formatString == null) {
-                            this.formatString = BuiltinFormats.getBuiltinFormat(this.formatIndex);
-                        }
+                    this.formatIndex = style.getDataFormat();
+                    this.formatString = style.getDataFormatString();
+                    if (this.formatString == null) {
+                        this.formatString = BuiltinFormats.getBuiltinFormat(this.formatIndex);
                     }
                 }
             }

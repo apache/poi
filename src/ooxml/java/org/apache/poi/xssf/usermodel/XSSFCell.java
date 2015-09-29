@@ -259,8 +259,7 @@ public final class XSSFCell implements Cell {
      */
     @Override
     public String getStringCellValue() {
-        XSSFRichTextString str = getRichStringCellValue();
-        return str == null ? null : str.getString();
+        return getRichStringCellValue().getString();
     }
 
     /**

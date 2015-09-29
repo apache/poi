@@ -228,13 +228,9 @@ public class ExcelToFoConverter extends AbstractExcelConverter
                 break;
             case HSSFCell.CELL_TYPE_NUMERIC:
                 double nValue = cell.getNumericCellValue();
-                if ( cellStyle == null ) {
-                    value = Double.toString( nValue );
-                } else {
-                    short df = cellStyle.getDataFormat();
-                    String dfs = cellStyle.getDataFormatString();
-                    value = _formatter.formatRawCellContents(nValue, df, dfs );
-                }
+                short df = cellStyle.getDataFormat();
+                String dfs = cellStyle.getDataFormatString();
+                value = _formatter.formatRawCellContents(nValue, df, dfs );
                 break;
             case HSSFCell.CELL_TYPE_BOOLEAN:
                 value = Boolean.toString( cell.getBooleanCellValue() );
@@ -270,7 +266,7 @@ public class ExcelToFoConverter extends AbstractExcelConverter
         }
 
         final boolean noText = ExcelToHtmlUtils.isEmpty( value );
-        final boolean wrapInDivs = !noText && (cellStyle == null || !cellStyle.getWrapText());
+        final boolean wrapInDivs = !noText && !cellStyle.getWrapText();
 
         final boolean emptyStyle = isEmptyStyle( cellStyle );
         if ( !emptyStyle && noText ) {
