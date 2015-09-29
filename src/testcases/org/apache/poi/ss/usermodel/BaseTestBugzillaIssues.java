@@ -1274,4 +1274,18 @@ public abstract class BaseTestBugzillaIssues {
 
         wb.close();
     }
+
+    @Test
+    public void test50319() throws IOException {
+        Workbook wb = new HSSFWorkbook();
+        Sheet sheet = wb.createSheet("Test");
+        sheet.createRow(0);
+        sheet.groupRow(0, 0);
+        sheet.setRowGroupCollapsed(0, true);
+        
+        sheet.groupColumn(0, 0);
+        sheet.setColumnGroupCollapsed(0, true);
+        
+        wb.close();
+    }
 }

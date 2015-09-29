@@ -293,7 +293,7 @@ public final class RowRecordsAggregate extends RecordAggregate {
 		RowRecord rowRecord = this.getRow( row );
 		int level = rowRecord.getOutlineLevel();
 		int currentRow = row;
-		while (this.getRow( currentRow ) != null) {
+		while (currentRow >= 0 && this.getRow( currentRow ) != null) {
 			rowRecord = this.getRow( currentRow );
 			if (rowRecord.getOutlineLevel() < level) {
 				return currentRow + 1;
