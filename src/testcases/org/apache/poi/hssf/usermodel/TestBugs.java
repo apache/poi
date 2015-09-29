@@ -24,6 +24,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -31,6 +32,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -38,6 +40,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
+
+import javax.imageio.ImageIO;
 
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.hssf.HSSFITestDataProvider;
@@ -75,6 +79,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.LocaleUtil;
 import org.junit.After;
+import org.junit.Assume;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -2928,6 +2933,45 @@ public final class TestBugs extends BaseTestBugzillaIssues {
             }
         }
         
+        wb.close();
+    }
+    
+    @Test
+    public void test46515() throws IOException {
+        Workbook wb = HSSFTestDataSamples.openSampleWorkbook("46515.xls");
+
+        // Get structure from webservice
+        String urlString = "http://poi.apache.org/resources/images/project-logo.jpg";
+        URL structURL = new URL(urlString);
+        BufferedImage bimage;
+        try {
+            bimage = ImageIO.read(structURL);
+        } catch (IOException e) {
+            Assume.assumeNoException("Downloading a jpg from poi.apache.org should work", e);
+            return;
+        }
+
+        // Convert BufferedImage to byte[]
+        ByteArrayOutputStream imageBAOS = new ByteArrayOutputStream();
+        ImageIO.write(bimage, "jpeg", imageBAOS);
+        imageBAOS.flush();
+        byte[]imageBytes = imageBAOS.toByteArray();
+        imageBAOS.close();
+
+        // Pop structure into Structure HSSFSheet
+        int pict = wb.addPicture(imageBytes, HSSFWorkbook.PICTURE_TYPE_JPEG);
+        Sheet sheet = wb.getSheet("Structure");
+        assertNotNull("Did not find sheet", sheet);
+        HSSFPatriarch patriarch = (HSSFPatriarch) sheet.createDrawingPatriarch();
+        HSSFClientAnchor anchor = new HSSFClientAnchor(0, 0, 0, 0, (short) 1, 1, (short) 10, 22);
+        anchor.setAnchorType(2);
+        patriarch.createPicture(anchor, pict);
+
+        // Write out destination file
+//        FileOutputStream fileOut = new FileOutputStream("/tmp/46515.xls");
+//        wb.write(fileOut);
+//        fileOut.close();
+
         wb.close();
     }
 }
