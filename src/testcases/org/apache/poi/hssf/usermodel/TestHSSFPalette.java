@@ -19,14 +19,17 @@ package org.apache.poi.hssf.usermodel;
 
 import static org.junit.Assert.assertArrayEquals;
 
+import java.awt.Color;
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
-
-import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.PaletteRecord;
 import org.apache.poi.hssf.util.HSSFColor;
+import org.junit.Test;
+
+import junit.framework.TestCase;
 
 /**
  * @author Brian Sanders (bsanders at risklabs dot com)
@@ -137,7 +140,7 @@ public final class TestHSSFPalette extends TestCase {
         assertEquals("FFFF:0:FFFF", p.getColor((short)14).getHexString());
     }
 
-    public void testFindSimilar() {
+    public void testFindSimilar() throws IOException {
         HSSFWorkbook book = new HSSFWorkbook();
         HSSFPalette p = book.getCustomPalette();
         
@@ -219,6 +222,8 @@ public final class TestHSSFPalette extends TestCase {
                 p.getColor((short)12).getHexString(),
                 p.findSimilarColor(255, 2, 10).getHexString()
         );
+        
+        book.close();
     }
     
     /**
@@ -282,5 +287,28 @@ public final class TestHSSFPalette extends TestCase {
 
     private static interface ColorComparator {
         void compare(HSSFColor expected, HSSFColor palette);
+    }
+
+    @Test
+    public void test48403() throws Exception {
+        HSSFWorkbook wb = new HSSFWorkbook();
+
+        Color color = Color.decode("#006B6B");
+        HSSFPalette palette = wb.getCustomPalette();
+        
+        HSSFColor hssfColor = palette.findColor((byte) color.getRed(),
+                (byte) color.getGreen(), (byte) color.getBlue());
+        assertNull(hssfColor);
+
+        palette.setColorAtIndex(
+                (short) (PaletteRecord.STANDARD_PALETTE_SIZE - 1),
+                (byte) color.getRed(), (byte) color.getGreen(),
+                (byte) color.getBlue());
+        hssfColor = palette.getColor((short) (PaletteRecord.STANDARD_PALETTE_SIZE - 1));
+        assertNotNull(hssfColor);
+        assertEquals(55, hssfColor.getIndex());
+        assertArrayEquals(new short[] {0, 107, 107}, hssfColor.getTriplet());
+        
+        wb.close();
     }
 }
