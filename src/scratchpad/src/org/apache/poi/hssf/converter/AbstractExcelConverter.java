@@ -139,14 +139,10 @@ public abstract class AbstractExcelConverter
                 break;
             case HSSFCell.CELL_TYPE_NUMERIC:
                 HSSFCellStyle style = cell.getCellStyle();
-                if ( style == null )
-                {
-                    return false;
-                }
-
-                value = ( _formatter.formatRawCellContents(
-                        cell.getNumericCellValue(), style.getDataFormat(),
-                        style.getDataFormatString() ) );
+                double nval = cell.getNumericCellValue();
+                short df = style.getDataFormat();
+                String dfs = style.getDataFormatString();
+                value = _formatter.formatRawCellContents(nval, df, dfs);
                 break;
             case HSSFCell.CELL_TYPE_BOOLEAN:
                 value = String.valueOf( cell.getBooleanCellValue() );

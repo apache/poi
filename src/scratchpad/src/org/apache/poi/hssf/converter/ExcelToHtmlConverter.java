@@ -313,13 +313,9 @@ public class ExcelToHtmlConverter extends AbstractExcelConverter
                 break;
             case HSSFCell.CELL_TYPE_NUMERIC:
                 double nValue = cell.getNumericCellValue();
-                if ( cellStyle == null ) {
-                    value = Double.toString(nValue);
-                } else {
-                    short df = cellStyle.getDataFormat();
-                    String dfs = cellStyle.getDataFormatString();
-                    value = _formatter.formatRawCellContents(nValue, df, dfs);
-                }
+                short df = cellStyle.getDataFormat();
+                String dfs = cellStyle.getDataFormatString();
+                value = _formatter.formatRawCellContents(nValue, df, dfs);
                 break;
             case HSSFCell.CELL_TYPE_BOOLEAN:
                 value = String.valueOf( cell.getBooleanCellValue() );
@@ -355,10 +351,9 @@ public class ExcelToHtmlConverter extends AbstractExcelConverter
         }
 
         final boolean noText = ExcelToHtmlUtils.isEmpty( value );
-        final boolean wrapInDivs = !noText && isUseDivsToSpan()
-                && (cellStyle == null || !cellStyle.getWrapText());
+        final boolean wrapInDivs = !noText && isUseDivsToSpan() && !cellStyle.getWrapText();
 
-        if ( cellStyle != null && cellStyle.getIndex() != 0 )
+        if ( cellStyle.getIndex() != 0 )
         {
             @SuppressWarnings("resource")
             HSSFWorkbook workbook = cell.getRow().getSheet().getWorkbook();
@@ -418,9 +413,7 @@ public class ExcelToHtmlConverter extends AbstractExcelConverter
             innerDivStyle.append( "overflow:hidden;max-height:" );
             innerDivStyle.append( normalHeightPt );
             innerDivStyle.append( "pt;white-space:nowrap;" );
-            if (cellStyle != null) {
-                ExcelToHtmlUtils.appendAlign( innerDivStyle, cellStyle.getAlignment() );
-            }
+            ExcelToHtmlUtils.appendAlign( innerDivStyle, cellStyle.getAlignment() );
             htmlDocumentFacade.addStyleClass( outerDiv, cssClassPrefixDiv,
                     innerDivStyle.toString() );
 
@@ -433,7 +426,7 @@ public class ExcelToHtmlConverter extends AbstractExcelConverter
             tableCellElement.appendChild( text );
         }
 
-        return ExcelToHtmlUtils.isEmpty( value ) && (cellStyle == null || cellStyle.getIndex() == 0);
+        return ExcelToHtmlUtils.isEmpty( value ) && (cellStyle.getIndex() == 0);
     }
 
     protected void processColumnHeaders( HSSFSheet sheet, int maxSheetColumns,

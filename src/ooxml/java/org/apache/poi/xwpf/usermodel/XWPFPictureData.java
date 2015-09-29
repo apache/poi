@@ -112,9 +112,6 @@ public class XWPFPictureData extends POIXMLDocumentPart {
      */
     public String getFileName() {
         String name = getPackagePart().getPartName().getName();
-        if (name == null) {
-            return null;
-        }
         return name.substring(name.lastIndexOf('/') + 1);
     }
 

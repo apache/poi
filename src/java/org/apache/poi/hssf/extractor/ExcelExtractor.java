@@ -358,18 +358,11 @@ public class ExcelExtractor extends POIOLE2TextExtractor implements org.apache.p
 											}
 											break;
 										case HSSFCell.CELL_TYPE_NUMERIC:
-										   HSSFCellStyle style = cell.getCellStyle();
-										   if(style == null) {
-										      text.append( cell.getNumericCellValue() );
-										   } else {
-	                                 text.append(
-	                                       _formatter.formatRawCellContents(
-	                                             cell.getNumericCellValue(),
-	                                             style.getDataFormat(),
-	                                             style.getDataFormatString()
-	                                       )
-	                                 );
-										   }
+											HSSFCellStyle style = cell.getCellStyle();
+											double nVal = cell.getNumericCellValue();
+											short df = style.getDataFormat();
+											String dfs = style.getDataFormatString();
+											text.append(_formatter.formatRawCellContents(nVal, df, dfs));
 											break;
 										case HSSFCell.CELL_TYPE_BOOLEAN:
 											text.append(cell.getBooleanCellValue());

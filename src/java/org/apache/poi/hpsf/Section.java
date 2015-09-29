@@ -447,12 +447,12 @@ public class Section
     public String getPIDString(final long pid)
     {
         String s = null;
-        if (dictionary != null)
+        if (dictionary != null) {
             s = dictionary.get(Long.valueOf(pid));
-        if (s == null)
+        }
+        if (s == null) {
             s = SectionIDMap.getPIDString(getFormatID().getBytes(), pid);
-        if (s == null)
-            s = SectionIDMap.UNDEFINED;
+        }
         return s;
     }
 
