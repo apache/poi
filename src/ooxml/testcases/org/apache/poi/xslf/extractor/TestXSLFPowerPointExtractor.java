@@ -16,10 +16,13 @@
 ==================================================================== */
 package org.apache.poi.xslf.extractor;
 
-import junit.framework.TestCase;
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.POITextExtractor;
+import org.apache.poi.extractor.ExtractorFactory;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.xslf.XSLFSlideShow;
+
+import junit.framework.TestCase;
 
 /**
  * Tests for HXFPowerPointExtractor
@@ -279,4 +282,36 @@ public class TestXSLFPowerPointExtractor extends TestCase {
  		 extractor.close();
        }
     }
+
+   public void test45541() throws Exception {
+       // extract text from a powerpoint that has a header in the notes-element
+       POITextExtractor extr = ExtractorFactory.createExtractor(slTests
+               .openResourceAsStream("45541_Header.pptx"));
+       String text = extr.getText();
+       assertNotNull(text);
+       assertFalse("Had: " + text, text.contains("testdoc"));
+       
+       text = ((XSLFPowerPointExtractor)extr).getText(false, true);
+       assertNotNull(text);
+       assertTrue("Had: " + text, text.contains("testdoc"));
+       extr.close();
+       assertNotNull(text);
+
+       // extract text from a powerpoint that has a footer in the master-slide
+       extr = ExtractorFactory.createExtractor(slTests
+               .openResourceAsStream("45541_Footer.pptx"));
+       text = extr.getText();
+       assertNotNull(text);
+       assertFalse("Had " + text, text.contains("testdoc"));
+       
+       text = ((XSLFPowerPointExtractor)extr).getText(false, true);
+       assertNotNull(text);
+       assertFalse("Had: " + text, text.contains("testdoc"));
+
+       text = ((XSLFPowerPointExtractor)extr).getText(false, false, true);
+       assertNotNull(text);
+       assertFalse("Had: " + text, text.contains("testdoc"));
+
+       extr.close();
+   }
 }

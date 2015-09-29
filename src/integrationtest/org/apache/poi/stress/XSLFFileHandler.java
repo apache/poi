@@ -16,13 +16,16 @@
 ==================================================================== */
 package org.apache.poi.stress;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
+import org.apache.poi.extractor.ExtractorFactory;
 import org.apache.poi.xslf.XSLFSlideShow;
+import org.apache.poi.xslf.extractor.XSLFPowerPointExtractor;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.junit.Test;
 
@@ -43,7 +46,25 @@ public class XSLFFileHandler extends SlideShowHandler {
 		slide.close();
 	}
 
-	// a test-case to test this locally without executing the full TestAllFiles
+	public void handleExtracting(File file) throws Exception {
+        super.handleExtracting(file);
+        
+        
+        // additionally try the other getText() methods
+        
+        XSLFPowerPointExtractor extractor = (XSLFPowerPointExtractor) ExtractorFactory.createExtractor(file);
+        try  {
+            assertNotNull(extractor);
+
+            assertNotNull(extractor.getText(true, true, true));
+            assertEquals("With all options disabled we should not get text", 
+                    "", extractor.getText(false, false, false));
+        } finally {
+            extractor.close();
+        }
+    }
+
+    // a test-case to test this locally without executing the full TestAllFiles
 	@Test
 	public void test() throws Exception {
 		InputStream stream = new FileInputStream("test-data/slideshow/ae.ac.uaeu.faculty_nafaachbili_GeomLec1.pptx");
@@ -58,5 +79,5 @@ public class XSLFFileHandler extends SlideShowHandler {
     @Test
     public void testExtractor() throws Exception {
         handleExtracting(new File("test-data/slideshow/ae.ac.uaeu.faculty_nafaachbili_GeomLec1.pptx"));
-    }
+   }
 }
