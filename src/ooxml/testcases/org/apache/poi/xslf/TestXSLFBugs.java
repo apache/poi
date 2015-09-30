@@ -37,7 +37,6 @@ import java.util.List;
 import javax.imageio.ImageIO;
 
 import org.apache.poi.POIXMLDocumentPart;
-import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.apache.poi.xslf.usermodel.DrawingParagraph;
 import org.apache.poi.xslf.usermodel.DrawingTextBody;
@@ -56,7 +55,6 @@ import org.junit.Test;
 public class TestXSLFBugs {
 
     @Test
-    @SuppressWarnings("deprecation")
     public void bug51187() throws Exception {
        XMLSlideShow ss1 = XSLFTestDataSamples.openSampleDocument("51187.pptx");
        
@@ -64,29 +62,26 @@ public class TestXSLFBugs {
        
        // Check the relations on it
        // Note - rId3 is a self reference
-       PackagePart slidePart = ss1._getXSLFSlideShow().getSlidePart(
-             ss1._getXSLFSlideShow().getSlideReferences().getSldIdArray(0)
-       );
-       assertEquals("/ppt/slides/slide1.xml", slidePart.getPartName().toString());
-       assertEquals("/ppt/slideLayouts/slideLayout12.xml", slidePart.getRelationship("rId1").getTargetURI().toString());
-       assertEquals("/ppt/notesSlides/notesSlide1.xml", slidePart.getRelationship("rId2").getTargetURI().toString());
-       assertEquals("/ppt/slides/slide1.xml", slidePart.getRelationship("rId3").getTargetURI().toString());
-       assertEquals("/ppt/media/image1.png", slidePart.getRelationship("rId4").getTargetURI().toString());
+       XSLFSlide slide0 = ss1.getSlides().get(0);
+
+       assertEquals("/ppt/slides/slide1.xml", slide0.getPackagePart().getPartName().toString());
+       assertEquals("/ppt/slideLayouts/slideLayout12.xml", slide0.getRelationById("rId1").getPackageRelationship().getTargetURI().toString());
+       assertEquals("/ppt/notesSlides/notesSlide1.xml", slide0.getRelationById("rId2").getPackageRelationship().getTargetURI().toString());
+       assertEquals("/ppt/slides/slide1.xml", slide0.getRelationById("rId3").getPackageRelationship().getTargetURI().toString());
+       assertEquals("/ppt/media/image1.png", slide0.getRelationById("rId4").getPackageRelationship().getTargetURI().toString());
        
        // Save and re-load
        XMLSlideShow ss2 = XSLFTestDataSamples.writeOutAndReadBack(ss1);
        ss1.close();
        assertEquals(1, ss2.getSlides().size());
        
-       slidePart = ss2._getXSLFSlideShow().getSlidePart(
-             ss2._getXSLFSlideShow().getSlideReferences().getSldIdArray(0)
-       );
-       assertEquals("/ppt/slides/slide1.xml", slidePart.getPartName().toString());
-       assertEquals("/ppt/slideLayouts/slideLayout12.xml", slidePart.getRelationship("rId1").getTargetURI().toString());
-       assertEquals("/ppt/notesSlides/notesSlide1.xml", slidePart.getRelationship("rId2").getTargetURI().toString());
+       slide0 = ss2.getSlides().get(0);
+       assertEquals("/ppt/slides/slide1.xml", slide0.getPackagePart().getPartName().toString());
+       assertEquals("/ppt/slideLayouts/slideLayout12.xml", slide0.getRelationById("rId1").getPackageRelationship().getTargetURI().toString());
+       assertEquals("/ppt/notesSlides/notesSlide1.xml", slide0.getRelationById("rId2").getPackageRelationship().getTargetURI().toString());
        // TODO Fix this
-       assertEquals("/ppt/slides/slide1.xml", slidePart.getRelationship("rId3").getTargetURI().toString());
-       assertEquals("/ppt/media/image1.png", slidePart.getRelationship("rId4").getTargetURI().toString());
+       assertEquals("/ppt/slides/slide1.xml", slide0.getRelationById("rId3").getPackageRelationship().getTargetURI().toString());
+       assertEquals("/ppt/media/image1.png", slide0.getRelationById("rId4").getPackageRelationship().getTargetURI().toString());
        
        ss2.close();
     }

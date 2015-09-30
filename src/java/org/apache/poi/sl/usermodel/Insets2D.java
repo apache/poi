@@ -21,7 +21,7 @@ package org.apache.poi.sl.usermodel;
  * This is a replacement for {@link java.awt.Insets} which works on doubles
  * instead of ints
  */
-public class Insets2D implements Cloneable {
+public final class Insets2D implements Cloneable {
 
     /**
      * The inset from the top.

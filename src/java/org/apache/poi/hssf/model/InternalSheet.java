@@ -164,7 +164,7 @@ public final class InternalSheet {
         int dimsloc = -1;
 
         if (rs.peekNextSid() != BOFRecord.sid) {
-            throw new RuntimeException("BOF record expected");
+            throw new RecordFormatException("BOF record expected");
         }
         
         BOFRecord bof = (BOFRecord) rs.getNext();
@@ -210,7 +210,7 @@ public final class InternalSheet {
             if (RecordOrderer.isRowBlockRecord(recSid)) {
                 //only add the aggregate once
                 if (rra != null) {
-                    throw new RuntimeException("row/cell records found in the wrong place");
+                    throw new RecordFormatException("row/cell records found in the wrong place");
                 }
                 RowBlocksReader rbr = new RowBlocksReader(rs);
                 _mergedCellsTable.addRecords(rbr.getLooseMergedCells());
@@ -332,7 +332,7 @@ public final class InternalSheet {
             records.add(rec);
         }
         if (windowTwo == null) {
-            throw new RuntimeException("WINDOW2 was not found");
+            throw new RecordFormatException("WINDOW2 was not found");
         }
         if (_dimensions == null) {
             // Excel seems to always write the DIMENSION record, but tolerates when it is not present
@@ -393,7 +393,7 @@ public final class InternalSheet {
             try {
                 _destList.add((Record)r.clone());
             } catch (CloneNotSupportedException e) {
-                throw new RuntimeException(e);
+                throw new RecordFormatException(e);
             }
         }
     }
@@ -423,7 +423,7 @@ public final class InternalSheet {
                 Record rec = (Record) ((Record) rb).clone();
                 clonedRecords.add(rec);
             } catch (CloneNotSupportedException e) {
-                throw new RuntimeException(e);
+                throw new RecordFormatException(e);
             }
         }
         return createSheet(new RecordStream(clonedRecords, 0));

@@ -111,7 +111,7 @@ public class MAPIAttribute {
          boolean isMV = false;
          boolean isVL = false;
          int typeId = typeAndMV;
-         if( (typeAndMV & Types.MULTIVALUED_FLAG) > 0 ) {
+         if( (typeAndMV & Types.MULTIVALUED_FLAG) != 0 ) {
             isMV = true;
             typeId -= Types.MULTIVALUED_FLAG;
          }

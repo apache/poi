@@ -152,5 +152,5 @@ public abstract class CFHeaderBase extends StandardRecord implements Cloneable {
     }
 
     @Override
-    public abstract CFHeaderBase clone();
+    public abstract CFHeaderBase clone(); // NOSONAR
 }

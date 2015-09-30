@@ -28,6 +28,7 @@ import org.apache.poi.hssf.record.CFRule12Record;
 import org.apache.poi.hssf.record.CFRuleBase;
 import org.apache.poi.hssf.record.CFRuleRecord;
 import org.apache.poi.hssf.record.Record;
+import org.apache.poi.hssf.record.RecordFormatException;
 import org.apache.poi.ss.formula.FormulaShifter;
 import org.apache.poi.ss.formula.ptg.AreaErrPtg;
 import org.apache.poi.ss.formula.ptg.AreaPtg;
@@ -68,7 +69,7 @@ public final class CFRecordsAggregate extends RecordAggregate {
                     + " this file will cause problems with old Excel versions");
         }
         if (pRules.length != pHeader.getNumberOfConditionalFormats()) {
-            throw new RuntimeException("Mismatch number of rules");
+            throw new RecordFormatException("Mismatch number of rules");
         }
         header = pHeader;
         rules = new ArrayList<CFRuleBase>(pRules.length);
@@ -119,9 +120,9 @@ public final class CFRecordsAggregate extends RecordAggregate {
     public CFRecordsAggregate cloneCFAggregate() {
         CFRuleBase[] newRecs = new CFRuleBase[rules.size()];
         for (int i = 0; i < newRecs.length; i++) {
-            newRecs[i] = (CFRuleRecord) getRule(i).clone();
+            newRecs[i] = getRule(i).clone();
         }
-        return new CFRecordsAggregate((CFHeaderBase)header.clone(), newRecs);
+        return new CFRecordsAggregate(header.clone(), newRecs);
     }
 
     /**

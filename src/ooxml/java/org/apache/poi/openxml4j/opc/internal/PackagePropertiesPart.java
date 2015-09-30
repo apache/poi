@@ -48,6 +48,10 @@ public final class PackagePropertiesPart extends PackagePart implements
 
 	public final static String NAMESPACE_DCTERMS_URI = "http://purl.org/dc/terms/";
 
+	private final static String DEFAULT_DATEFORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+	private final static String ALTERNATIVE_DATEFORMAT = "yyyy-MM-dd'T'HH:mm:ss.SS'Z'";
+	
+	
 	/**
 	 * Constructor.
 	 *
@@ -386,8 +390,8 @@ public final class PackagePropertiesPart extends PackagePart implements
 		try {
 			this.created = setDateValue(created);
 		} catch (InvalidFormatException e) {
-			new IllegalArgumentException("created  : "
-					+ e.getLocalizedMessage());
+			throw new IllegalArgumentException("created  : "
+					+ e.getLocalizedMessage(), e);
 		}
 	}
 
@@ -464,8 +468,8 @@ public final class PackagePropertiesPart extends PackagePart implements
 		try {
 			this.lastPrinted = setDateValue(lastPrinted);
 		} catch (InvalidFormatException e) {
-			new IllegalArgumentException("lastPrinted  : "
-					+ e.getLocalizedMessage());
+			throw new IllegalArgumentException("lastPrinted  : "
+					+ e.getLocalizedMessage(), e);
 		}
 	}
 
@@ -488,8 +492,8 @@ public final class PackagePropertiesPart extends PackagePart implements
 		try {
 			this.modified = setDateValue(modified);
 		} catch (InvalidFormatException e) {
-			new IllegalArgumentException("modified  : "
-					+ e.getLocalizedMessage());
+			throw new IllegalArgumentException("modified  : "
+					+ e.getLocalizedMessage(), e);
 		}
 	}
 
@@ -559,9 +563,17 @@ public final class PackagePropertiesPart extends PackagePart implements
 		if (s == null || s.equals("")) {
 			return new Nullable<Date>();
 		}
-		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.ROOT);
+		if (!s.endsWith("Z")) {
+		    s += "Z";
+		}
+		SimpleDateFormat df = new SimpleDateFormat(DEFAULT_DATEFORMAT, Locale.ROOT);
 		df.setTimeZone(LocaleUtil.TIMEZONE_UTC);
 		Date d = df.parse(s, new ParsePosition(0));
+		if (d == null) {
+		    df = new SimpleDateFormat(ALTERNATIVE_DATEFORMAT, Locale.ROOT);
+		    df.setTimeZone(LocaleUtil.TIMEZONE_UTC);
+		    d = df.parse(s, new ParsePosition(0));
+		}
 		if (d == null) {
 			throw new InvalidFormatException("Date not well formated");
 		}
@@ -585,7 +597,7 @@ public final class PackagePropertiesPart extends PackagePart implements
 		   return "";
 		}
 		
-		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.ROOT);
+		SimpleDateFormat df = new SimpleDateFormat(DEFAULT_DATEFORMAT, Locale.ROOT);
 		df.setTimeZone(LocaleUtil.TIMEZONE_UTC);
 		return df.format(date);
 	}

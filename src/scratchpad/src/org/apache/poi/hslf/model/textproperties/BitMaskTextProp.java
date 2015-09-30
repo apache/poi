@@ -17,7 +17,6 @@
 
 package org.apache.poi.hslf.model.textproperties;
 
-import org.apache.poi.hslf.record.Record;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 

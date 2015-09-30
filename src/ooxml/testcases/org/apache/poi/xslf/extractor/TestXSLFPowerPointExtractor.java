@@ -20,7 +20,7 @@ import org.apache.poi.POIDataSamples;
 import org.apache.poi.POITextExtractor;
 import org.apache.poi.extractor.ExtractorFactory;
 import org.apache.poi.openxml4j.opc.OPCPackage;
-import org.apache.poi.xslf.XSLFSlideShow;
+import org.apache.poi.xslf.usermodel.XSLFSlideShow;
 
 import junit.framework.TestCase;
 

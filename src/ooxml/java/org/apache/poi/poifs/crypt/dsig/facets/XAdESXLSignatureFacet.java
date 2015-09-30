@@ -28,6 +28,7 @@ import static org.apache.poi.poifs.crypt.dsig.facets.XAdESSignatureFacet.insertX
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.security.cert.CRLException;
 import java.security.cert.CertificateEncodingException;
@@ -324,21 +325,25 @@ public class XAdESXLSignatureFacet extends SignatureFacet {
     }
 
     private BigInteger getCrlNumber(X509CRL crl) {
-        try {
-            byte[] crlNumberExtensionValue = crl.getExtensionValue(Extension.cRLNumber.getId());
-            if (null == crlNumberExtensionValue) {
-                return null;
-            }
+        byte[] crlNumberExtensionValue = crl.getExtensionValue(Extension.cRLNumber.getId());
+        if (null == crlNumberExtensionValue) {
+            return null;
+        }
 
-            @SuppressWarnings("resource")
-            ASN1InputStream asn1InputStream = new ASN1InputStream(crlNumberExtensionValue);
-            ASN1OctetString octetString = (ASN1OctetString)asn1InputStream.readObject();
-            byte[] octets = octetString.getOctets();
-            asn1InputStream = new ASN1InputStream(octets);
-            ASN1Integer integer = (ASN1Integer)asn1InputStream.readObject();
-            BigInteger crlNumber = integer.getPositiveValue();
-            return crlNumber;
-        } catch (Exception e) {
+        try {
+            ASN1InputStream asn1IS1 = null, asn1IS2 = null;
+            try {
+                asn1IS1 = new ASN1InputStream(crlNumberExtensionValue);
+                ASN1OctetString octetString = (ASN1OctetString)asn1IS1.readObject();
+                byte[] octets = octetString.getOctets();
+                asn1IS2 = new ASN1InputStream(octets);
+                ASN1Integer integer = (ASN1Integer)asn1IS2.readObject();
+                return integer.getPositiveValue();
+            } finally {
+                asn1IS2.close();
+                asn1IS1.close();
+            }
+        } catch (IOException e) {
             throw new RuntimeException("I/O error: " + e.getMessage(), e);
         }
     }
