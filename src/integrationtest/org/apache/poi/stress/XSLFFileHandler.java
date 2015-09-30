@@ -24,9 +24,9 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 
 import org.apache.poi.extractor.ExtractorFactory;
-import org.apache.poi.xslf.XSLFSlideShow;
 import org.apache.poi.xslf.extractor.XSLFPowerPointExtractor;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
+import org.apache.poi.xslf.usermodel.XSLFSlideShow;
 import org.junit.Test;
 
 public class XSLFFileHandler extends SlideShowHandler {

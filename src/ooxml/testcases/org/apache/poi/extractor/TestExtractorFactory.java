@@ -16,11 +16,16 @@
 ==================================================================== */
 package org.apache.poi.extractor;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-
-import junit.framework.TestCase;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.POIOLE2TextExtractor;
@@ -43,40 +48,42 @@ import org.apache.poi.xslf.extractor.XSLFPowerPointExtractor;
 import org.apache.poi.xssf.extractor.XSSFEventBasedExcelExtractor;
 import org.apache.poi.xssf.extractor.XSSFExcelExtractor;
 import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 /**
  * Test that the extractor factory plays nicely
  */
-public class TestExtractorFactory extends TestCase {
-    private File txt;
+public class TestExtractorFactory {
+    private static File txt;
 
-    private File xls;
-    private File xlsx;
-    private File xlsxStrict;
-    private File xltx;
-    private File xlsEmb;
+    private static File xls;
+    private static File xlsx;
+    private static File xlsxStrict;
+    private static File xltx;
+    private static File xlsEmb;
 
-    private File doc;
-    private File doc6;
-    private File doc95;
-    private File docx;
-    private File dotx;
-    private File docEmb;
-    private File docEmbOOXML;
+    private static File doc;
+    private static File doc6;
+    private static File doc95;
+    private static File docx;
+    private static File dotx;
+    private static File docEmb;
+    private static File docEmbOOXML;
 
-    private File ppt;
-    private File pptx;
+    private static File ppt;
+    private static File pptx;
 
-    private File msg;
-    private File msgEmb;
-    private File msgEmbMsg;
+    private static File msg;
+    private static File msgEmb;
+    private static File msgEmbMsg;
 
-    private File vsd;
-    private File vsdx;
+    private static File vsd;
+    private static File vsdx;
 
-    private File pub;
+    private static File pub;
 
-    private File getFileAndCheck(POIDataSamples samples, String name) {
+    private static File getFileAndCheck(POIDataSamples samples, String name) {
         File file = samples.getFile(name);
 
         assertNotNull("Did not get a file for " + name, file);
@@ -85,9 +92,9 @@ public class TestExtractorFactory extends TestCase {
 
         return file;
     }
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
+
+    @BeforeClass
+    public static void setUp() throws Exception {
 
         POIDataSamples ssTests = POIDataSamples.getSpreadSheetInstance();
         xls = getFileAndCheck(ssTests, "SampleSS.xls");
@@ -123,6 +130,7 @@ public class TestExtractorFactory extends TestCase {
         msgEmbMsg = getFileAndCheck(olTests, "attachment_msg_pdf.msg");
     }
 
+    @Test
     public void testFile() throws Exception {
         // Excel
         POITextExtractor xlsExtractor = ExtractorFactory.createExtractor(xls);
@@ -297,6 +305,7 @@ public class TestExtractorFactory extends TestCase {
         }
     }
 
+    @Test
     public void testInputStream() throws Exception {
         // Excel
         assertTrue(
@@ -421,6 +430,7 @@ public class TestExtractorFactory extends TestCase {
         }
     }
 
+    @Test
     public void testPOIFS() throws Exception {
         // Excel
         assertTrue(
@@ -501,6 +511,7 @@ public class TestExtractorFactory extends TestCase {
         }
     }
 
+    @Test
     public void testPackage() throws Exception {
         // Excel
         POIXMLTextExtractor extractor = ExtractorFactory.createExtractor(OPCPackage.open(xlsx.toString(), PackageAccess.READ));
@@ -550,6 +561,7 @@ public class TestExtractorFactory extends TestCase {
         }
     }
 
+    @Test
     public void testPreferEventBased() throws Exception {
         assertFalse(ExtractorFactory.getPreferEventExtractor());
         assertFalse(ExtractorFactory.getThreadPrefersEventExtractors());
@@ -635,6 +647,7 @@ public class TestExtractorFactory extends TestCase {
      *  does poifs embeded, but will do ooxml ones 
      *  at some point.
      */
+    @Test
     public void testEmbeded() throws Exception {
         POIOLE2TextExtractor ext;
         POITextExtractor[] embeds;

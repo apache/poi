@@ -49,7 +49,6 @@ import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.PackageHelper;
 import org.apache.poi.util.Units;
-import org.apache.poi.xslf.XSLFSlideShow;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
@@ -122,12 +121,6 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
                 throw new POIXMLException(e);
             }
         }
-    }
-
-    // TODO get rid of this method
-    @Deprecated
-    public XSLFSlideShow _getXSLFSlideShow() throws OpenXML4JException, IOException, XmlException{
-        return new XSLFSlideShow(getPackage());
     }
 
     @Override

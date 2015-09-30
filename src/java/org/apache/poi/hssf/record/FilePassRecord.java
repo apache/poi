@@ -41,10 +41,10 @@ public final class FilePassRecord extends StandardRecord implements Cloneable {
 	    void serialize(LittleEndianOutput out);
 	    int getDataSize();
 	    void appendToString(StringBuffer buffer);
-	    KeyData clone();
+	    KeyData clone(); // NOSONAR
 	} 
 	
-	public static class Rc4KeyData implements KeyData {
+	public static final class Rc4KeyData implements KeyData, Cloneable {
 	    private static final int ENCRYPTION_OTHER_RC4 = 1;
 	    private static final int ENCRYPTION_OTHER_CAPI_2 = 2;
 	    private static final int ENCRYPTION_OTHER_CAPI_3 = 3;
@@ -135,7 +135,7 @@ public final class FilePassRecord extends StandardRecord implements Cloneable {
         }
 	}
 
-	public static class XorKeyData implements KeyData {
+	public static final class XorKeyData implements KeyData, Cloneable {
 	    /**
 	     * key (2 bytes): An unsigned integer that specifies the obfuscation key. 
 	     * See [MS-OFFCRYPTO], 2.3.6.2 section, the first step of initializing XOR

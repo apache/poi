@@ -20,7 +20,7 @@
 package org.apache.poi;
 
 import org.apache.poi.util.IOUtils;
-import org.apache.poi.xslf.XSLFSlideShow;
+import org.apache.poi.xslf.usermodel.XSLFSlideShow;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.openxml4j.opc.OPCPackage;
