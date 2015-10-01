@@ -20,6 +20,7 @@ package org.apache.poi.ss.formula.functions;
 import org.apache.poi.ss.formula.eval.BoolEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.EvaluationException;
+import org.apache.poi.ss.formula.eval.MissingArgEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 
@@ -63,10 +64,24 @@ public abstract class FinanceFunction implements Function3Arg, Function4Arg {
 		switch (args.length) {
 			case 3:
 				return evaluate(srcRowIndex, srcColumnIndex, args[0], args[1], args[2], DEFAULT_ARG3, DEFAULT_ARG4);
-			case 4:
-				return evaluate(srcRowIndex, srcColumnIndex, args[0], args[1], args[2], args[3], DEFAULT_ARG4);
-			case 5:
-				return evaluate(srcRowIndex, srcColumnIndex, args[0], args[1], args[2], args[3], args[4]);
+			case 4: {
+			    ValueEval arg3 = args[3];
+			    if(arg3 == MissingArgEval.instance) {
+			        arg3 = DEFAULT_ARG3;
+			    }
+				return evaluate(srcRowIndex, srcColumnIndex, args[0], args[1], args[2], arg3, DEFAULT_ARG4);
+			}
+			case 5: {
+                ValueEval arg3 = args[3];
+                if(arg3 == MissingArgEval.instance) {
+                    arg3 = DEFAULT_ARG3;
+                }
+                ValueEval arg4 = args[4];
+                if(arg4 == MissingArgEval.instance) {
+                    arg4 = DEFAULT_ARG4;
+                }
+				return evaluate(srcRowIndex, srcColumnIndex, args[0], args[1], args[2], arg3, arg4);
+			}
 		}
 		return ErrorEval.VALUE_INVALID;
 	}

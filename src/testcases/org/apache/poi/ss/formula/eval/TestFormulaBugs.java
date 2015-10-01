@@ -29,7 +29,12 @@ import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellValue;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.Test;
 
 /**
@@ -176,4 +181,32 @@ public final class TestFormulaBugs {
 			double value) {
 		sheet.createRow(rowIx).createCell(colIx).setCellValue(value);
 	}
+
+	@Test
+	public void test55032() throws IOException {
+        Workbook wb = new HSSFWorkbook();
+        Sheet sheet = wb.createSheet("input");
+
+        Row row = sheet.createRow(0);
+        Cell cell = row.createCell(1);
+
+        checkFormulaValue(wb, cell, "PV(0.08/12, 20*12, 500, ,0)", -59777.14585);
+        checkFormulaValue(wb, cell, "PV(0.08/12, 20*12, 500, ,)", -59777.14585);
+        checkFormulaValue(wb, cell, "PV(0.08/12, 20*12, 500, 500,)", -59878.6315455);
+        
+        checkFormulaValue(wb, cell, "FV(0.08/12, 20*12, 500, ,)", -294510.2078107270);
+        checkFormulaValue(wb, cell, "PMT(0.08/12, 20*12, 500, ,)", -4.1822003450);
+        checkFormulaValue(wb, cell, "NPER(0.08/12, 20*12, 500, ,)", -2.0758873434);
+
+        wb.close();
+	}
+
+    private void checkFormulaValue(Workbook wb, Cell cell, String formula, double expectedValue) {
+        cell.setCellFormula(formula);
+	    
+        FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
+        CellValue value = evaluator.evaluate(cell);
+        
+        assertEquals(expectedValue, value.getNumberValue(), 0.0001);
+    }
 }
