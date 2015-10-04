@@ -381,7 +381,7 @@ public final class CharacterSprmUncompressor extends SprmUncompressor
 
         //byte cInc = (byte)(((byte)(param & 0xfe00) >>> 4) >> 1);
         byte cInc = (byte) ((operand & 0xff00) >>> 8);
-        cInc = (byte) (cInc >>> 1);
+        cInc >>>= 1;
         if (cInc != 0)
         {
           newCHP.setHps (Math.max (newCHP.getHps () + (cInc * 2), 2));

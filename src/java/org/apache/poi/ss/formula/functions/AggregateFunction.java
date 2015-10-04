@@ -115,7 +115,7 @@ public abstract class AggregateFunction extends MultiOperandNumericFunction {
 				double n = (N - 1) * dn + 1;
 				if (n == 1d) {
 					result = StatsLib.kthSmallest(ds, 1);
-				} else if (n == N) {
+				} else if (Double.compare(n, N) == 0) {
 					result = StatsLib.kthLargest(ds, 1);
 				} else {
 					int k = (int) n;

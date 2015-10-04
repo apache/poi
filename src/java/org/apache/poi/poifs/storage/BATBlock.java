@@ -265,9 +265,10 @@ public final class BATBlock extends BigBlock {
     public static BATBlockAndIndex getBATBlockAndIndex(final int offset, 
                 final HeaderBlock header, final List<BATBlock> bats) {
        POIFSBigBlockSize bigBlockSize = header.getBigBlockSize();
+       int entriesPerBlock = bigBlockSize.getBATEntriesPerBlock();
        
-       int whichBAT = (int)Math.floor(offset / bigBlockSize.getBATEntriesPerBlock());
-       int index = offset % bigBlockSize.getBATEntriesPerBlock();
+       int whichBAT = offset / entriesPerBlock;
+       int index = offset % entriesPerBlock;
        return new BATBlockAndIndex( index, bats.get(whichBAT) );
     }
     
@@ -279,10 +280,11 @@ public final class BATBlock extends BigBlock {
     public static BATBlockAndIndex getSBATBlockAndIndex(final int offset, 
           final HeaderBlock header, final List<BATBlock> sbats) {
        POIFSBigBlockSize bigBlockSize = header.getBigBlockSize();
+       int entriesPerBlock = bigBlockSize.getBATEntriesPerBlock();
        
        // SBATs are so much easier, as they're chained streams
-       int whichSBAT = (int)Math.floor(offset / bigBlockSize.getBATEntriesPerBlock());
-       int index = offset % bigBlockSize.getBATEntriesPerBlock();
+       int whichSBAT = offset / entriesPerBlock;
+       int index = offset % entriesPerBlock;
        return new BATBlockAndIndex( index, sbats.get(whichSBAT) );
     }
     

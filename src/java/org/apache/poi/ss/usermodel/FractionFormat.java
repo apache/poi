@@ -24,6 +24,8 @@ import java.util.regex.Pattern;
 
 import org.apache.poi.ss.format.SimpleFraction;
 import org.apache.poi.ss.formula.eval.NotImplementedException;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * <p>Format class that handles Excel style fractions, such as "# #/#" and "#/###"</p>
@@ -39,7 +41,8 @@ import org.apache.poi.ss.formula.eval.NotImplementedException;
 
 @SuppressWarnings("serial")
 public class FractionFormat extends Format {
-    private final static Pattern DENOM_FORMAT_PATTERN = Pattern.compile("(?:(#+)|(\\d+))");
+    private static final POILogger LOGGER = POILogFactory.getLogger(FractionFormat.class); 
+    private static final Pattern DENOM_FORMAT_PATTERN = Pattern.compile("(?:(#+)|(\\d+))");
 
     //this was chosen to match the earlier limitation of max denom power
     //it can be expanded to get closer to Excel's calculations
@@ -47,7 +50,7 @@ public class FractionFormat extends Format {
     //but as of this writing, the numerators and denominators
     //with formats of that nature on very small values were quite
     //far from Excel's calculations
-    private final static int MAX_DENOM_POW = 4;
+    private static final int MAX_DENOM_POW = 4;
 
     //there are two options:
     //a) an exact denominator is specified in the formatString
@@ -133,7 +136,7 @@ public class FractionFormat extends Format {
                 fract = SimpleFraction.buildFractionMaxDenominator(decPart, maxDenom);
             }
         } catch (RuntimeException e){
-            e.printStackTrace();
+            LOGGER.log(POILogger.WARN, "Can't format fraction", e);
             return Double.toString(doubleValue);
         }
 
