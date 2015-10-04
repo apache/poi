@@ -343,21 +343,21 @@ public class HexDump {
      * @return string of 8 (zero padded) uppercase hex chars and prefixed with '0x'
      */
     public static String intToHex(int value) {
-        return xpad(value & 0xFFFFFFFF, 8, "0x");
+        return xpad(value & 0xFFFFFFFFL, 8, "0x");
     }
     
     /**
      * @return string of 4 (zero padded) uppercase hex chars and prefixed with '0x'
      */
     public static String shortToHex(int value) {
-        return xpad(value & 0xFFFF, 4, "0x");
+        return xpad(value & 0xFFFFL, 4, "0x");
     }
     
     /**
      * @return string of 2 (zero padded) uppercase hex chars and prefixed with '0x'
      */
     public static String byteToHex(int value) {
-        return xpad(value & 0xFF, 2, "0x");
+        return xpad(value & 0xFFL, 2, "0x");
     }
 
     private static String xpad(long value, int pad, String prefix) {

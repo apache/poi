@@ -559,20 +559,18 @@ public final class PackagePropertiesPart extends PackagePart implements
 	 * @throws InvalidFormatException
 	 *             Throws if the date format isnot valid.
 	 */
-	private Nullable<Date> setDateValue(String s) throws InvalidFormatException {
-		if (s == null || s.equals("")) {
+	private Nullable<Date> setDateValue(String dateStr) throws InvalidFormatException {
+		if (dateStr == null || dateStr.equals("")) {
 			return new Nullable<Date>();
 		}
-		if (!s.endsWith("Z")) {
-		    s += "Z";
-		}
+		String dateTzStr = dateStr.endsWith("Z") ? dateStr : (dateStr + "Z");
 		SimpleDateFormat df = new SimpleDateFormat(DEFAULT_DATEFORMAT, Locale.ROOT);
 		df.setTimeZone(LocaleUtil.TIMEZONE_UTC);
-		Date d = df.parse(s, new ParsePosition(0));
+		Date d = df.parse(dateTzStr, new ParsePosition(0));
 		if (d == null) {
 		    df = new SimpleDateFormat(ALTERNATIVE_DATEFORMAT, Locale.ROOT);
 		    df.setTimeZone(LocaleUtil.TIMEZONE_UTC);
-		    d = df.parse(s, new ParsePosition(0));
+		    d = df.parse(dateTzStr, new ParsePosition(0));
 		}
 		if (d == null) {
 			throw new InvalidFormatException("Date not well formated");

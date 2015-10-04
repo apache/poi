@@ -366,7 +366,7 @@ public abstract class NumericFunction implements Function {
 				double d1 = NumericFunction.singleOperandEvaluate(arg1, srcRowIndex, srcColumnIndex);
 				double logE = Math.log(d0);
 				double base = d1;
-				if (base == Math.E) {
+				if (Double.compare(base, Math.E) == 0) {
 					result = logE;
 				} else {
 					result = logE / Math.log(base);

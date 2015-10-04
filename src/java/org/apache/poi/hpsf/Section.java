@@ -150,6 +150,7 @@ public class Section
      * @exception UnsupportedEncodingException if the section's codepage is not
      * supported.
      */
+    @SuppressWarnings("unchecked")
     public Section(final byte[] src, final int offset)
     throws UnsupportedEncodingException
     {
@@ -332,19 +333,25 @@ public class Section
 
 
         public boolean equals(Object obj) {
-            if (this == obj)
+            if (this == obj) {
                 return true;
-            if (obj == null)
+            }
+            if (obj == null) {
                 return false;
-            if (getClass() != obj.getClass())
+            }
+            if (getClass() != obj.getClass()) {
                 return false;
+            }
             PropertyListEntry other = (PropertyListEntry) obj;
-            if (id != other.id)
+            if (id != other.id) {
                 return false;
-            if (length != other.length)
+            }
+            if (length != other.length) {
                 return false;
-            if (offset != other.offset)
+            }
+            if (offset != other.offset) {
                 return false;
+            }
             return true;
         }
 

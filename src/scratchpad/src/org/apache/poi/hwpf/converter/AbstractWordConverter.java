@@ -915,21 +915,23 @@ public abstract class AbstractWordConverter
             Element currentBlock, Range textRange, int currentTableLevel,
             String hyperlink );
 
-    protected void processImage( Element currentBlock, boolean inlined,
-            Picture picture )
-    {
+    protected void processImage( Element currentBlock, boolean inlined, Picture picture ) {
         PicturesManager fileManager = getPicturesManager();
-        if ( fileManager != null )
-        {
-            final int aspectRatioX = picture.getHorizontalScalingFactor();
-            final int aspectRatioY = picture.getVerticalScalingFactor();
+        if ( fileManager != null ) {
+            final float aspectRatioX = picture.getHorizontalScalingFactor();
+            final float aspectRatioY = picture.getVerticalScalingFactor();
 
-            final float imageWidth = aspectRatioX > 0 ? picture.getDxaGoal()
-                    * aspectRatioX / 1000 / AbstractWordUtils.TWIPS_PER_INCH
-                    : picture.getDxaGoal() / AbstractWordUtils.TWIPS_PER_INCH;
-            final float imageHeight = aspectRatioY > 0 ? picture.getDyaGoal()
-                    * aspectRatioY / 1000 / AbstractWordUtils.TWIPS_PER_INCH
-                    : picture.getDyaGoal() / AbstractWordUtils.TWIPS_PER_INCH;
+            float imageWidth = picture.getDxaGoal();
+            if (aspectRatioX > 0) {
+                imageWidth *= aspectRatioX / 1000f;
+            }
+            imageWidth /= AbstractWordUtils.TWIPS_PER_INCH;
+            
+            float imageHeight = picture.getDyaGoal();
+            if (aspectRatioY > 0) {
+                imageHeight *= aspectRatioY / 1000f;
+            }
+            imageHeight /= AbstractWordUtils.TWIPS_PER_INCH;
 
             String url = fileManager.savePicture( picture.getContent(),
                     picture.suggestPictureType(),

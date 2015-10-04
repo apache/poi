@@ -80,7 +80,11 @@ public abstract class BlockStore {
     protected class ChainLoopDetector {
        private boolean[] used_blocks;
        protected ChainLoopDetector(long rawSize) {
-          int numBlocks = (int)Math.ceil( ((double)rawSize) / getBlockStoreBlockSize() );
+          int blkSize = getBlockStoreBlockSize();
+          int numBlocks = (int)(rawSize / blkSize);
+          if ((rawSize % blkSize) != 0) {
+              numBlocks++;
+          }
           used_blocks = new boolean[numBlocks];
        }
        protected void claim(int offset) {
