@@ -197,8 +197,12 @@ public final class POIDataSamples {
                 return;
             }
 
-            throw new RuntimeException("Must set system property '" +
-                    TEST_PROPERTY + "' before running tests");
+            if(new File("test-data").exists()) {
+               dataDirName = "test-data";
+            } else {
+               throw new RuntimeException("Must set system property '" +
+                       TEST_PROPERTY + "' before running tests");
+            }
         }
         File dataDir = new File(dataDirName, _moduleDir);
         if (!dataDir.exists()) {
