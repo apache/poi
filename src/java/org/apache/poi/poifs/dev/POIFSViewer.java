@@ -21,7 +21,6 @@ package org.apache.poi.poifs.dev;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
@@ -41,10 +40,8 @@ public class POIFSViewer
      * @param args the names of the files to be displayed
      */
 
-    public static void main(final String args[])
-    {
-        if (args.length < 0)
-        {
+    public static void main(final String args[]) {
+        if (args.length == 0) {
             System.err.println("Must specify at least one file to view");
             System.exit(1);
         }
@@ -56,16 +53,12 @@ public class POIFSViewer
         }
     }
 
-    private static void viewFile(final String filename,
-                                 final boolean printName)
-    {
-        if (printName)
-        {
+    private static void viewFile(String filename, boolean printName) {
+        if (printName) {
             StringBuffer flowerbox = new StringBuffer();
 
             flowerbox.append(".");
-            for (int j = 0; j < filename.length(); j++)
-            {
+            for (int j = 0; j < filename.length(); j++) {
                 flowerbox.append("-");
             }
             flowerbox.append(".");
@@ -73,21 +66,14 @@ public class POIFSViewer
             System.out.println("|" + filename + "|");
             System.out.println(flowerbox);
         }
-        try
-        {
-            POIFSViewable fs      =
-                new NPOIFSFileSystem(new File(filename));
-            List<String>  strings = POIFSViewEngine.inspectViewable(fs, true,
-                                        0, "  ");
-            Iterator<String> iter = strings.iterator();
-
-            while (iter.hasNext())
-            {
-                System.out.print(iter.next());
+        try {
+            NPOIFSFileSystem fs = new NPOIFSFileSystem(new File(filename));
+            List<String> strings = POIFSViewEngine.inspectViewable(fs, true, 0, "  ");
+            for (String s : strings) {
+                System.out.print(s);
             }
-        }
-        catch (IOException e)
-        {
+            fs.close();
+        } catch (IOException e) {
             System.out.println(e.getMessage());
         }
     }

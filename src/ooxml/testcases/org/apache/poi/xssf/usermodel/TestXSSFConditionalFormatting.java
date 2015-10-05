@@ -18,9 +18,15 @@
  */
 package org.apache.poi.xssf.usermodel;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+import java.io.IOException;
+
 import org.apache.poi.ss.usermodel.BaseTestConditionalFormatting;
 import org.apache.poi.ss.usermodel.Color;
 import org.apache.poi.xssf.XSSFITestDataProvider;
+import org.junit.Test;
 
 /**
  * XSSF-specific Conditional Formatting tests
@@ -40,11 +46,13 @@ public class TestXSSFConditionalFormatting extends BaseTestConditionalFormatting
         }
     }
 
-    public void testRead(){
+    @Test
+    public void testRead() throws IOException {
         testRead("WithConditionalFormatting.xlsx");
     }
     
-    public void testReadOffice2007() {
+    @Test
+    public void testReadOffice2007() throws IOException {
         testReadOffice2007("NewStyleConditionalFormattings.xlsx");
     }
 }

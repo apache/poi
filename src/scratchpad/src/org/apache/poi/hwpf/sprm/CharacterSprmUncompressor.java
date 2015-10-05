@@ -389,7 +389,7 @@ public final class CharacterSprmUncompressor extends SprmUncompressor
 
         //byte hpsPos = (byte)((param & 0xff0000) >>> 8);
         byte hpsPos = (byte) ((operand & 0xff0000) >>> 16);
-        if (hpsPos != 0x80)
+        if (hpsPos != (byte)0x80)
         {
           newCHP.setHpsPos (hpsPos);
         }
