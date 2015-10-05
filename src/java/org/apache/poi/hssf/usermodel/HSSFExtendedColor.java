@@ -97,6 +97,7 @@ public class HSSFExtendedColor extends ExtendedColor {
             rgb[3] = a;
             color.setRGBA(rgb);
         }
+        color.setType(TYPE_RGB);
     }
 
     public double getTint() {
