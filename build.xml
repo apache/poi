@@ -389,7 +389,7 @@ under the License.
         <format property="tstamp.year" pattern="yyyy"/>
     </tstamp>
 
-    <target name="init" depends="fetch-jars,fetch-ooxml-jars">
+    <target name="init" depends="fetch-jars,fetch-ooxml-jars" description="Initialization run before other targets.">
         <mkdir dir="build"/>
         <mkdir dir="${main.output.dir}"/>
         <mkdir dir="${main.output.test.dir}"/>
@@ -413,7 +413,7 @@ under the License.
         <echo message="Using Java: ${java.version}/${java.runtime.version}/${java.vm.version}/${java.vm.name} from ${java.vm.vendor} on ${os.name}: ${os.version}" />
     </target>
 
-    <target name="clean">
+    <target name="clean" description="Remove generated artefacts">
         <delete dir="build"/>
     </target>
 
@@ -1687,11 +1687,7 @@ under the License.
       </sequential>
     </macrodef>
 
-    <!--
-      Install POI artifacts into the local repository.
-      Invoking this command is equivalent to 'mvn install' in Maven-driven projects.
-    -->
-    <target name="mvn-install" depends="maven.ant.tasks-check,jar,maven-poms">
+    <target name="mvn-install" depends="maven.ant.tasks-check,jar,maven-poms" description="Install POI artifacts into the local repository. Equivalent of 'mvn install'">
       <m2-install artifactId="poi"/>
       <m2-install artifactId="poi-scratchpad"/>
       <m2-install artifactId="poi-ooxml"/>
@@ -1700,9 +1696,7 @@ under the License.
       <m2-install artifactId="poi-excelant"/>
     </target>
 
-    <!-- Runs the Apache Creadur Rat check against the source code, to -->
-    <!--  spot any files which are missing the correct license headers -->
-    <target name="rat-check" depends="init">
+    <target name="rat-check" depends="init" description="Runs the Apache Creadur Rat check against the source code, to spot any files which are missing the correct license headers">
        <mkdir dir="${rat.reportdir}" />
 
        <typedef resource="org/apache/rat/anttasks/antlib.xml"
@@ -1758,7 +1752,7 @@ under the License.
         </forbiddenapis>
     </target>
 
-    <target name="findbugs"><!-- depends="assemble" -->
+    <target name="findbugs">
         <antcall target="downloadfile">
             <param name="sourcefile" value="http://prdownloads.sourceforge.net/findbugs/findbugs-noUpdateChecks-2.0.3.zip?download"/>
             <param name="destfile" value="${main.lib}/findbugs-noUpdateChecks-2.0.3.zip"/>
