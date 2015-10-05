@@ -18,6 +18,7 @@
 package org.apache.poi.hwpf.model;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
@@ -37,7 +38,7 @@ public final class PlexOfCps
     private int _iMac;
     private int _offset;
     private int _cbStruct;
-    private ArrayList<GenericPropertyNode> _props;
+    private List<GenericPropertyNode> _props;
 
     public PlexOfCps( int sizeOfStruct )
     {

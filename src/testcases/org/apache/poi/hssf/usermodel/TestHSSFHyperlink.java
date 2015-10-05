@@ -17,8 +17,10 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import org.apache.poi.hssf.HSSFTestDataSamples;
+import java.io.IOException;
+
 import org.apache.poi.hssf.HSSFITestDataProvider;
+import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ss.usermodel.BaseTestHyperlink;
 
 /**
@@ -107,8 +109,9 @@ public final class TestHSSFHyperlink extends BaseTestHyperlink {
      *  link.setTextMark("'Target Sheet-1'!A1"); //HSSF-specific
      *  or
      *  link.setAddress("'Target Sheet-1'!A1"); //common between XSSF and HSSF
+     * @throws IOException 
      */
-    public void testCreateDocumentLink() {
+    public void testCreateDocumentLink() throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
 
         //link to a place in this workbook
@@ -134,8 +137,10 @@ public final class TestHSSFHyperlink extends BaseTestHyperlink {
         link.setAddress("'Hyperlinks'!A1");
         cell.setHyperlink(link);
 
-        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
-        sheet = wb.getSheet("Hyperlinks");
+        HSSFWorkbook wbBack = HSSFTestDataSamples.writeOutAndReadBack(wb);
+        wb.close();
+        
+        sheet = wbBack.getSheet("Hyperlinks");
 
         cell = sheet.getRow(0).getCell(0);
         link = cell.getHyperlink();
@@ -148,6 +153,8 @@ public final class TestHSSFHyperlink extends BaseTestHyperlink {
         assertNotNull(link);
         assertEquals("'Hyperlinks'!A1", link.getTextMark());
         assertEquals("'Hyperlinks'!A1", link.getAddress());
+        
+        wbBack.close();
     }
 
     public void testCloneSheet() {
@@ -169,7 +176,7 @@ public final class TestHSSFHyperlink extends BaseTestHyperlink {
         assertEquals("http://poi.apache.org/hssf/", link.getAddress());
     }
 
-    public void testCreate() {
+    public void testCreate() throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
 
         HSSFHyperlink link;
@@ -182,13 +189,18 @@ public final class TestHSSFHyperlink extends BaseTestHyperlink {
         link.setAddress("testfolder\\test.PDF");
         cell.setHyperlink(link);
 
-        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
-        sheet = wb.getSheet("Hyperlinks");
+        HSSFWorkbook wbBack = HSSFTestDataSamples.writeOutAndReadBack(wb);
+        
+        wb.close();
+
+        sheet = wbBack.getSheet("Hyperlinks");
 
         cell = sheet.getRow(1).getCell(0);
         link = cell.getHyperlink();
         assertNotNull(link);
         assertEquals("testfolder\\test.PDF", link.getAddress());
+        
+        wbBack.close();
     }
 
     /**
