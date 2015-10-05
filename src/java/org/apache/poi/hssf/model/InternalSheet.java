@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.poi.hssf.record.BOFRecord;
+import org.apache.poi.hssf.record.CFHeader12Record;
 import org.apache.poi.hssf.record.CFHeaderRecord;
 import org.apache.poi.hssf.record.CalcCountRecord;
 import org.apache.poi.hssf.record.CalcModeRecord;
@@ -190,7 +191,7 @@ public final class InternalSheet {
         while (rs.hasNext()) {
             int recSid = rs.peekNextSid();
 
-            if ( recSid == CFHeaderRecord.sid ) {
+            if ( recSid == CFHeaderRecord.sid || recSid == CFHeader12Record.sid ) {
                 condFormatting = new ConditionalFormattingTable(rs);
                 records.add(condFormatting);
                 continue;
