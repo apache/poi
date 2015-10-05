@@ -32,6 +32,7 @@ import org.apache.poi.hpsf.Property;
 import org.apache.poi.hpsf.PropertySet;
 import org.apache.poi.hpsf.Section;
 import org.apache.poi.hpsf.SummaryInformation;
+import org.apache.poi.util.HexDump;
 
 /**
  * <p>Renders a {@link PropertySetDescriptor} by more or less dumping
@@ -59,14 +60,14 @@ public class PropertySetDescriptorRenderer extends DocumentDescriptorRenderer
         text.setBackground(new Color(200, 255, 200));
         text.setFont(new Font("Monospaced", Font.PLAIN, 10));
         text.append(renderAsString(d));
-        text.append("\nByte order: " +
-                    Codec.hexEncode((short) ps.getByteOrder()));
-        text.append("\nFormat: " +
-                    Codec.hexEncode((short) ps.getFormat()));
-        text.append("\nOS version: " +
-                    Codec.hexEncode(ps.getOSVersion()));
-        text.append("\nClass ID: " +
-                    Codec.hexEncode(ps.getClassID()));
+        text.append("\nByte order: ");
+        text.append(HexDump.toHex((short) ps.getByteOrder()));
+        text.append("\nFormat: ");
+        text.append(HexDump.toHex((short) ps.getFormat()));
+        text.append("\nOS version: ");
+        text.append(HexDump.toHex(ps.getOSVersion()));
+        text.append("\nClass ID: ");
+        text.append(HexDump.toHex(ps.getClassID().getBytes()));
         text.append("\nSection count: " + ps.getSectionCount());
         text.append(sectionsToString(ps.getSections()));
         p.add(text);
@@ -132,7 +133,7 @@ public class PropertySetDescriptorRenderer extends DocumentDescriptorRenderer
     {
         final StringBuffer b = new StringBuffer();
         b.append("\n" + name + " Format ID: ");
-        b.append(Codec.hexEncode(s.getFormatID()));
+        b.append(HexDump.toHex(s.getFormatID().getBytes()));
         b.append("\n" + name + " Offset: " + s.getOffset());
         b.append("\n" + name + " Section size: " + s.getSize());
         b.append("\n" + name + " Property count: " + s.getPropertyCount());
@@ -153,17 +154,17 @@ public class PropertySetDescriptorRenderer extends DocumentDescriptorRenderer
             b.append("), Type: ");
             b.append(type);
             b.append(", Value: ");
-            if (value instanceof byte[])
-            {
-                byte[] b2 = (byte[]) value;
-                b.append("0x" + Codec.hexEncode(b2, 0, 4));
+            if (value instanceof byte[]) {
+                byte[] buf = new byte[4];
+                System.arraycopy(value, 0, buf, 0, 4);
+                b.append(HexDump.toHex(buf));
                 b.append(' ');
-                b.append("0x" + Codec.hexEncode(b2, 4, b2.length - 4));
-            }
-            else if (value != null)
+                System.arraycopy(value, ((byte[])value).length - 4, buf, 0, 4);
+            } else if (value != null) {
                 b.append(value.toString());
-            else
+            } else {
                 b.append("null");
+            }
         }
         return b.toString();
     }

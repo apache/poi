@@ -172,7 +172,8 @@ public class HexDump {
         if (Character.isISOControl(charB)) return '.';
         
         switch (charB) {
-        case 0xFF: case 0xDD: // printable, but not compilable with current compiler encoding
+        // printable, but not compilable with current compiler encoding
+        case 0xFF: case 0xDD:
             charB = '.';
             break;
         }
@@ -187,7 +188,7 @@ public class HexDump {
      */
     public static String toHex(final byte[] value)
     {
-        StringBuffer retVal = new StringBuffer();
+        StringBuilder retVal = new StringBuilder();
         retVal.append('[');
         if (value != null && value.length > 0)
         {
@@ -211,7 +212,7 @@ public class HexDump {
      */
     public static String toHex(final short[] value)
     {
-        StringBuffer retVal = new StringBuffer();
+        StringBuilder retVal = new StringBuilder();
         retVal.append('[');
         for(int x = 0; x < value.length; x++)
         {
@@ -261,7 +262,7 @@ public class HexDump {
      * @param value     The value to convert
      * @return          The result right padded with 0
      */
-    public static String toHex(final short value) {
+    public static String toHex(short value) {
         return xpad(value & 0xFFFF, 4, "");
     }
 
@@ -271,7 +272,7 @@ public class HexDump {
      * @param value     The value to convert
      * @return          The result right padded with 0
      */
-    public static String toHex(final byte value) {
+    public static String toHex(byte value) {
         return xpad(value & 0xFF, 2, "");
     }
 
@@ -281,7 +282,7 @@ public class HexDump {
      * @param value     The value to convert
      * @return          The result right padded with 0
      */
-    public static String toHex(final int value) {
+    public static String toHex(int value) {
         return xpad(value & 0xFFFFFFFF, 8, "");
     }
 
@@ -291,10 +292,22 @@ public class HexDump {
      * @param value     The value to convert
      * @return          The result right padded with 0
      */
-    public static String toHex(final long value) {
-        return xpad(value & 0xFFFFFFFF, 16, "");
+    public static String toHex(long value) {
+        return xpad(value, 16, "");
     }
 
+    /**
+     * Converts the string to a string of hex values.
+     *
+     * @param value     The value to convert
+     * @return          The resulted hex string
+     */
+    public static String toHex(String value) {
+        return (value == null || value.length() == 0)
+            ? "[]"
+            : toHex(value.getBytes(LocaleUtil.CHARSET_1252));
+    }
+    
     /**
      * Dumps <code>bytesToDump</code> bytes to an output stream.
      *
