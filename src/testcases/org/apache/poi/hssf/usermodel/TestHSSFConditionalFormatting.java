@@ -18,6 +18,7 @@
 package org.apache.poi.hssf.usermodel;
 
 
+import static org.junit.Assert.*;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
@@ -28,6 +29,7 @@ import org.apache.poi.ss.usermodel.Color;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.SheetConditionalFormatting;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.junit.Test;
 
 /**
  * HSSF-specific Conditional Formatting tests
@@ -51,18 +53,20 @@ public final class TestHSSFConditionalFormatting extends BaseTestConditionalForm
         }
     }
 
-    public void testRead() {
+    @Test
+    public void testRead() throws IOException {
         testRead("WithConditionalFormatting.xls");
     }
     
-    public void testReadOffice2007() {
+    @Test
+    public void testReadOffice2007() throws IOException {
         testReadOffice2007("NewStyleConditionalFormattings.xls");
     }
 
+    @Test
     public void test53691() throws IOException {
         SheetConditionalFormatting cf;
-        final Workbook wb;
-        wb = HSSFITestDataProvider.instance.openSampleWorkbook("53691.xls");
+        final Workbook wb = HSSFITestDataProvider.instance.openSampleWorkbook("53691.xls");
         /*
         FileInputStream s = new FileInputStream("C:\\temp\\53691bbadfixed.xls");
         try {
@@ -101,6 +105,8 @@ public final class TestHSSFConditionalFormatting extends BaseTestConditionalForm
         removeConditionalFormatting(sheet);        
         removeConditionalFormatting(wb.getSheetAt(0));        
         writeTemp53691(wb, "fgood");
+        
+        wb.close();
     }
     
     private void removeConditionalFormatting(Sheet sheet) {
@@ -110,18 +116,10 @@ public final class TestHSSFConditionalFormatting extends BaseTestConditionalForm
         }
     }
 
-    private void writeTemp53691(Workbook wb, String suffix) throws FileNotFoundException,
-            IOException {
+    private void writeTemp53691(Workbook wb, String suffix) throws FileNotFoundException, IOException {
         // assert that we can write/read it in memory
         Workbook wbBack = HSSFITestDataProvider.instance.writeOutAndReadBack(wb);
         assertNotNull(wbBack);
-        
-        /* Just necessary for local testing... */
-        /*OutputStream out = new FileOutputStream("C:\\temp\\53691" + suffix + ".xls");
-        try {
-            wb.write(out);
-        } finally {
-            out.close();
-        }*/
+        wbBack.close();
     }
 }

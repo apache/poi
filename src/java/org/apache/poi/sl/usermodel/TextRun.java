@@ -66,11 +66,17 @@ public interface TextRun {
 	
 	
     /**
+     * Returns the font size which is either set directly on this text run or
+     * given from the slide layout
+     * 
      * @return font size in points or null if font size is not set.
      */
 	Double getFontSize();
 
     /**
+     * Sets the font size directly on this text run, if null is given, the
+     * font size defaults to the values given from the slide layout
+     * 
      * @param fontSize font size in points, if null the underlying fontsize will be unset
      */
 	void setFontSize(Double fontSize);

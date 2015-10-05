@@ -126,7 +126,7 @@ public final class StyleDescription implements HDFType
 
 
           // the upx will always start on a word boundary.
-          if(upxSize % 2 == 1)
+          if((upxSize & 1) == 1)
           {
               ++varOffset;
           }

@@ -17,17 +17,21 @@
 
 package org.apache.poi.ss.usermodel;
 
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
+
+import java.io.IOException;
 
 import org.apache.poi.ss.ITestDataProvider;
+import org.junit.Test;
 
 /**
  * Common superclass for testing implementatiosn of{@link FormulaEvaluator}
  *
  * @author Yegor Kozlov
  */
-public abstract class BaseTestFormulaEvaluator extends TestCase {
+public abstract class BaseTestFormulaEvaluator {
 
 	protected final ITestDataProvider _testDataProvider;
 
@@ -38,7 +42,8 @@ public abstract class BaseTestFormulaEvaluator extends TestCase {
 		_testDataProvider = testDataProvider;
 	}
 
-    public void testSimpleArithmetic() {
+	@Test
+    public void testSimpleArithmetic() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet s = wb.createSheet();
         Row r = s.createRow(0);
@@ -58,9 +63,12 @@ public abstract class BaseTestFormulaEvaluator extends TestCase {
 
         assertEquals(6.0, c1.getNumericCellValue(), 0.0001);
         assertEquals(5.0, c2.getNumericCellValue(), 0.0001);
+        
+        wb.close();
     }
 
-    public void testSumCount() {
+	@Test
+	public void testSumCount() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet s = wb.createSheet();
         Row r = s.createRow(0);
@@ -100,9 +108,11 @@ public abstract class BaseTestFormulaEvaluator extends TestCase {
         assertEquals(17.5, c2.getNumericCellValue(), 0.0001);
         assertEquals(1, c3.getNumericCellValue(), 0.0001);
         assertEquals(4, c4.getNumericCellValue(), 0.0001);
+        
+        wb.close();
     }
 
-    public void baseTestSharedFormulas(String sampleFile){
+	public void baseTestSharedFormulas(String sampleFile) throws IOException {
         Workbook wb = _testDataProvider.openSampleWorkbook(sampleFile);
 
         Sheet sheet = wb.getSheetAt(0);
@@ -125,12 +135,15 @@ public abstract class BaseTestFormulaEvaluator extends TestCase {
         cell = sheet.getRow(4).getCell(0);
         assertEquals("B5", cell.getCellFormula());
         assertEquals("UniqueDocumentNumberID", evaluator.evaluate(cell).getStringValue());
+        
+        wb.close();
     }
 
     /**
      * Test creation / evaluation of formulas with sheet-level names
      */
-    public void testSheetLevelFormulas(){
+	@Test
+    public void testSheetLevelFormulas() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
 
         Row row;
@@ -161,9 +174,12 @@ public abstract class BaseTestFormulaEvaluator extends TestCase {
 
         assertEquals(5.0, evaluator.evaluate(sh2.getRow(0).getCell(1)).getNumberValue(), 0.0);
         assertEquals(15.0, evaluator.evaluate(sh2.getRow(0).getCell(2)).getNumberValue(), 0.0);
+        
+        wb.close();
     }
 
-    public void testFullColumnRefs() {
+	@Test
+    public void testFullColumnRefs() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet = wb.createSheet("Sheet1");
         Row row = sheet.createRow(0);
@@ -192,9 +208,12 @@ public abstract class BaseTestFormulaEvaluator extends TestCase {
         FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();
         assertEquals(26.0, fe.evaluate(cell0).getNumberValue(), 0.0);
         assertEquals(56.0, fe.evaluate(cell1).getNumberValue(), 0.0);
+        
+        wb.close();
     }
     
-    public void testRepeatedEvaluation() {
+	@Test
+    public void testRepeatedEvaluation() throws IOException {
        Workbook wb = _testDataProvider.createWorkbook();
        FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();
        Sheet sheet = wb.createSheet("Sheet1");
@@ -230,6 +249,8 @@ public abstract class BaseTestFormulaEvaluator extends TestCase {
        fe.clearAllCachedResultValues();
        cellValue = fe.evaluate(c);
        assertEquals(40455.0, cellValue.getNumberValue(), 0.0);
+       
+       wb.close();
     }
 
     private static void setValue(Sheet sheet, int rowIndex, int colIndex, double value) {
@@ -244,19 +265,22 @@ public abstract class BaseTestFormulaEvaluator extends TestCase {
      * {@link FormulaEvaluator#evaluate(org.apache.poi.ss.usermodel.Cell)} should behave the same whether the cell
      * is <code>null</code> or blank.
      */
-    public void testEvaluateBlank() {
+    @Test
+    public void testEvaluateBlank() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();
         assertNull(fe.evaluate(null));
         Sheet sheet = wb.createSheet("Sheet1");
         Cell cell = sheet.createRow(0).createCell(0);
         assertNull(fe.evaluate(cell));
+        wb.close();
     }
 
     /**
      * Test for bug due to attempt to convert a cached formula error result to a boolean
      */
-    public void testUpdateCachedFormulaResultFromErrorToNumber_bug46479() {
+    @Test
+    public void testUpdateCachedFormulaResultFromErrorToNumber_bug46479() throws IOException {
 
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet = wb.createSheet("Sheet1");
@@ -275,14 +299,16 @@ public abstract class BaseTestFormulaEvaluator extends TestCase {
             fe.evaluateInCell(cellB1);
         } catch (IllegalStateException e) {
             if (e.getMessage().equals("Cannot get a numeric value from a error formula cell")) {
-                throw new AssertionFailedError("Identified bug 46479a");
+                fail("Identified bug 46479a");
             }
         }
         assertEquals(3.5, cellB1.getNumericCellValue(), 0.0);
+        
+        wb.close();
     }
 
-
-    public void testRounding_bug51339() {
+    @Test
+    public void testRounding_bug51339() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet = wb.createSheet("Sheet1");
         Row row = sheet.createRow(0);
@@ -299,5 +325,7 @@ public abstract class BaseTestFormulaEvaluator extends TestCase {
         assertEquals(2162.62, fe.evaluateInCell(cellB1).getNumericCellValue(), 0.0);
         assertEquals(2162.62, fe.evaluateInCell(cellC1).getNumericCellValue(), 0.0);
         assertEquals(2162.61, fe.evaluateInCell(cellD1).getNumericCellValue(), 0.0);
+        
+        wb.close();
     }
 }

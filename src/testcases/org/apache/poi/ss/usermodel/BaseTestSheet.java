@@ -49,7 +49,7 @@ public abstract class BaseTestSheet {
     }
 
     @Test
-    public void createRow() {
+    public void createRow() throws IOException {
         Workbook workbook = _testDataProvider.createWorkbook();
         Sheet sheet = workbook.createSheet();
         assertEquals(0, sheet.getPhysicalNumberOfRows());
@@ -86,36 +86,38 @@ public abstract class BaseTestSheet {
         Row row2_ovrewritten_ref = it2.next();
         assertSame(row2_ovrewritten, row2_ovrewritten_ref);
         assertEquals(100.0, row2_ovrewritten_ref.getCell(0).getNumericCellValue(), 0.0);
+        
+        workbook.close();
     }
     
-    @Test
-    public void createRowBeforeFirstRow() {
+    @Test(expected=IllegalArgumentException.class)
+    public void createRowBeforeFirstRow() throws IOException {
         final Workbook workbook = _testDataProvider.createWorkbook();
         final Sheet sh = workbook.createSheet();
         sh.createRow(0);
         try {
+            // Negative rows not allowed
             sh.createRow(-1);
-            fail("Negative rows not allowed");
-        } catch (final IllegalArgumentException e) {
-            // expected
+        } finally {
+            workbook.close();
         }
     }
     
-    protected void createRowAfterLastRow(SpreadsheetVersion version) {
+    protected void createRowAfterLastRow(SpreadsheetVersion version) throws IOException {
         final Workbook workbook = _testDataProvider.createWorkbook();
         final Sheet sh = workbook.createSheet();
         sh.createRow(version.getLastRowIndex());
         try {
+            // Row number must be between 0 and last row
             sh.createRow(version.getLastRowIndex() + 1);
-            fail("Row number must be between 0 and " + version.getLastColumnIndex());
-        } catch (final IllegalArgumentException e) {
-            // expected
+        } finally {
+            workbook.close();
         }
     }
 
 
     @Test
-    public void removeRow() {
+    public void removeRow() throws IOException {
         Workbook workbook = _testDataProvider.createWorkbook();
         Sheet sheet1 = workbook.createSheet();
         assertEquals(0, sheet1.getPhysicalNumberOfRows());
@@ -152,10 +154,12 @@ public abstract class BaseTestSheet {
         thrown.expect(IllegalArgumentException.class);
         thrown.expectMessage("Specified row does not belong to this sheet");
         sheet2.removeRow(row3);
+
+        workbook.close();
     }
 
     @Test
-    public void cloneSheet() {
+    public void cloneSheet() throws IOException {
         Workbook workbook = _testDataProvider.createWorkbook();
         CreationHelper factory = workbook.getCreationHelper();
         Sheet sheet = workbook.createSheet("Test Clone");
@@ -182,13 +186,15 @@ public abstract class BaseTestSheet {
         }
         assertEquals(clonedRow.getCell(0).getRichStringCellValue().getString(), "clone_test");
         assertEquals(clonedRow.getCell(1).getCellFormula(), "SIN(1)");
+        
+        workbook.close();
     }
 
     /** tests that the sheet name for multiple clones of the same sheet is unique
      * BUG 37416
      */
     @Test
-    public void cloneSheetMultipleTimes() {
+    public void cloneSheetMultipleTimes() throws IOException {
         Workbook workbook = _testDataProvider.createWorkbook();
         CreationHelper factory = workbook.getCreationHelper();
         Sheet sheet = workbook.createSheet("Test Clone");
@@ -210,16 +216,18 @@ public abstract class BaseTestSheet {
         workbook.createSheet("abc ( 123)");
         workbook.cloneSheet(0);
         assertEquals("abc (124)", workbook.getSheetName(1));
+        
+        workbook.close();
     }
 
     /**
      * Setting landscape and portrait stuff on new sheets
      */
     @Test
-    public void printSetupLandscapeNew() {
-        Workbook workbook = _testDataProvider.createWorkbook();
-        Sheet sheetL = workbook.createSheet("LandscapeS");
-        Sheet sheetP = workbook.createSheet("LandscapeP");
+    public void printSetupLandscapeNew() throws IOException {
+        Workbook wb1 = _testDataProvider.createWorkbook();
+        Sheet sheetL = wb1.createSheet("LandscapeS");
+        Sheet sheetP = wb1.createSheet("LandscapeP");
 
         // Check two aspects of the print setup
         assertFalse(sheetL.getPrintSetup().getLandscape());
@@ -238,14 +246,16 @@ public abstract class BaseTestSheet {
         assertEquals(3, sheetP.getPrintSetup().getCopies());
 
         // Save and re-load, and check still there
-        workbook = _testDataProvider.writeOutAndReadBack(workbook);
-        sheetL = workbook.getSheet("LandscapeS");
-        sheetP = workbook.getSheet("LandscapeP");
+        Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1);
+        wb1.close();
+        sheetL = wb2.getSheet("LandscapeS");
+        sheetP = wb2.getSheet("LandscapeP");
 
         assertTrue(sheetL.getPrintSetup().getLandscape());
         assertFalse(sheetP.getPrintSetup().getLandscape());
         assertEquals(1, sheetL.getPrintSetup().getCopies());
         assertEquals(3, sheetP.getPrintSetup().getCopies());
+        wb2.close();
     }
 
     /**
@@ -254,7 +264,7 @@ public abstract class BaseTestSheet {
      *
      */
     @Test
-    public void addMerged() {
+    public void addMerged() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet = wb.createSheet();
         assertEquals(0, sheet.getNumMergedRegions());
@@ -286,6 +296,8 @@ public abstract class BaseTestSheet {
             assertEquals("Maximum row number is " + ssVersion.getLastRowIndex(), e.getMessage());
         }
         assertEquals(1, sheet.getNumMergedRegions());
+        
+        wb.close();
     }
 
     /**
@@ -293,7 +305,7 @@ public abstract class BaseTestSheet {
      *
      */
     @Test
-    public void removeMerged() {
+    public void removeMerged() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet = wb.createSheet();
         CellRangeAddress region = new CellRangeAddress(0, 1, 0, 1);
@@ -325,10 +337,12 @@ public abstract class BaseTestSheet {
         assertTrue("there isn't more than one merged region in there", 1 <= sheet.getNumMergedRegions());
         region = sheet.getMergedRegion(0);
         assertEquals("the merged row to doesnt match the one we put in ", 4, region.getLastRow());
+        
+        wb.close();
     }
 
     @Test
-    public void shiftMerged() {
+    public void shiftMerged() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         CreationHelper factory = wb.getCreationHelper();
         Sheet sheet = wb.createSheet();
@@ -347,16 +361,17 @@ public abstract class BaseTestSheet {
 
         region = sheet.getMergedRegion(0);
         assertEquals("Merged region not moved over to row 2", 2, region.getFirstRow());
+        
+        wb.close();
     }
 
     /**
      * Tests the display of gridlines, formulas, and rowcolheadings.
-     * @author Shawn Laubach (slaubach at apache dot org)
      */
     @Test
-    public void displayOptions() {
-        Workbook wb = _testDataProvider.createWorkbook();
-        Sheet sheet = wb.createSheet();
+    public void displayOptions() throws IOException {
+        Workbook wb1 = _testDataProvider.createWorkbook();
+        Sheet sheet = wb1.createSheet();
 
         assertEquals(sheet.isDisplayGridlines(), true);
         assertEquals(sheet.isDisplayRowColHeadings(), true);
@@ -368,19 +383,22 @@ public abstract class BaseTestSheet {
         sheet.setDisplayFormulas(true);
         sheet.setDisplayZeros(false);
 
-        wb = _testDataProvider.writeOutAndReadBack(wb);
-        sheet = wb.getSheetAt(0);
+        Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1);
+        wb1.close();
+        sheet = wb2.getSheetAt(0);
 
         assertEquals(sheet.isDisplayGridlines(), false);
         assertEquals(sheet.isDisplayRowColHeadings(), false);
         assertEquals(sheet.isDisplayFormulas(), true);
         assertEquals(sheet.isDisplayZeros(), false);
+        
+        wb2.close();
     }
 
     @Test
-    public void columnWidth() {
-        Workbook wb = _testDataProvider.createWorkbook();
-        Sheet sheet = wb.createSheet();
+    public void columnWidth() throws IOException {
+        Workbook wb1 = _testDataProvider.createWorkbook();
+        Sheet sheet = wb1.createSheet();
 
         //default column width measured in characters
         sheet.setDefaultColumnWidth(10);
@@ -421,9 +439,10 @@ public abstract class BaseTestSheet {
         }
 
         //serialize and read again
-        wb = _testDataProvider.writeOutAndReadBack(wb);
+        Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1);
+        wb1.close();
 
-        sheet = wb.getSheetAt(0);
+        sheet = wb2.getSheetAt(0);
         assertEquals(20, sheet.getDefaultColumnWidth());
         //columns A-C have default width
         assertEquals(256*20, sheet.getColumnWidth(0));
@@ -435,11 +454,13 @@ public abstract class BaseTestSheet {
             assertEquals(w, sheet.getColumnWidth(i));
         }
         assertEquals(40000, sheet.getColumnWidth(10));
+        
+        wb2.close();
     }
 
     
     @Test
-    public void defaultRowHeight() {
+    public void defaultRowHeight() throws IOException {
         Workbook workbook = _testDataProvider.createWorkbook();
         Sheet sheet = workbook.createSheet();
         sheet.setDefaultRowHeightInPoints(15);
@@ -464,11 +485,13 @@ public abstract class BaseTestSheet {
         sheet.setDefaultRowHeightInPoints(17.5f);
         assertEquals(17.5f, sheet.getDefaultRowHeightInPoints(), 0F);
         assertEquals((short)(17.5f*20), sheet.getDefaultRowHeight());
+        
+        workbook.close();
     }
 
     /** cell with formula becomes null on cloning a sheet*/
     @Test
-    public void bug35084() {
+    public void bug35084() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet s = wb.createSheet("Sheet1");
         Row r = s.createRow(0);
@@ -479,11 +502,12 @@ public abstract class BaseTestSheet {
         assertEquals("double", r.getCell(0).getNumericCellValue(), 1, 0); // sanity check
         assertNotNull(r.getCell(1));
         assertEquals("formula", r.getCell(1).getCellFormula(), "A1*2");
+        wb.close();
     }
 
     /** test that new default column styles get applied */
     @Test
-    public void defaultColumnStyle() {
+    public void defaultColumnStyle() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         CellStyle style = wb.createCellStyle();
         Sheet sheet = wb.createSheet();
@@ -496,13 +520,14 @@ public abstract class BaseTestSheet {
         CellStyle style2 = cell.getCellStyle();
         assertNotNull(style2);
         assertEquals("style should match", style.getIndex(), style2.getIndex());
+        wb.close();
     }
 
     @Test
-    public void outlineProperties() {
-        Workbook wb = _testDataProvider.createWorkbook();
+    public void outlineProperties() throws IOException {
+        Workbook wb1 = _testDataProvider.createWorkbook();
 
-        Sheet sheet = wb.createSheet();
+        Sheet sheet = wb1.createSheet();
 
         //TODO defaults are different in HSSF and XSSF
         //assertTrue(sheet.getRowSumsBelow());
@@ -520,17 +545,19 @@ public abstract class BaseTestSheet {
         assertTrue(sheet.getRowSumsBelow());
         assertTrue(sheet.getRowSumsRight());
 
-        wb = _testDataProvider.writeOutAndReadBack(wb);
-        sheet = wb.getSheetAt(0);
+        Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1);
+        wb1.close();
+        sheet = wb2.getSheetAt(0);
         assertTrue(sheet.getRowSumsBelow());
         assertTrue(sheet.getRowSumsRight());
+        wb2.close();
     }
 
     /**
      * Test basic display properties
      */
     @Test
-    public void sheetProperties() {
+    public void sheetProperties() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet = wb.createSheet();
 
@@ -580,9 +607,11 @@ public abstract class BaseTestSheet {
         assertTrue(sheet.getFitToPage());
         sheet.setFitToPage(false);
         assertFalse(sheet.getFitToPage());
+        
+        wb.close();
     }
 
-    public void baseTestGetSetMargin(double[] defaultMargins) {
+    public void baseTestGetSetMargin(double[] defaultMargins) throws IOException {
         double marginLeft = defaultMargins[0];
         double marginRight = defaultMargins[1];
         double marginTop = defaultMargins[2];
@@ -615,10 +644,12 @@ public abstract class BaseTestSheet {
         thrown.expect(IllegalArgumentException.class);
         thrown.expectMessage("Unknown margin constant:  65");
         sheet.setMargin((short) 65, 15);
+        
+        workbook.close();
     }
 
     @Test
-    public void rowBreaks() {
+    public void rowBreaks() throws IOException {
         Workbook workbook = _testDataProvider.createWorkbook();
         Sheet sheet = workbook.createSheet();
         //Sheet#getRowBreaks() returns an empty array if no row breaks are defined
@@ -644,10 +675,12 @@ public abstract class BaseTestSheet {
 
         assertFalse(sheet.isRowBroken(1));
         assertFalse(sheet.isRowBroken(15));
+        
+        workbook.close();
     }
 
     @Test
-    public void columnBreaks() {
+    public void columnBreaks() throws IOException {
         Workbook workbook = _testDataProvider.createWorkbook();
         Sheet sheet = workbook.createSheet();
         assertNotNull(sheet.getColumnBreaks());
@@ -672,10 +705,11 @@ public abstract class BaseTestSheet {
 
         assertFalse(sheet.isColumnBroken(11));
         assertFalse(sheet.isColumnBroken(12));
+        workbook.close();
     }
 
     @Test
-    public void getFirstLastRowNum() {
+    public void getFirstLastRowNum() throws IOException {
         Workbook workbook = _testDataProvider.createWorkbook();
         Sheet sheet = workbook.createSheet("Sheet 1");
         sheet.createRow(9);
@@ -683,27 +717,30 @@ public abstract class BaseTestSheet {
         sheet.createRow(1);
         assertEquals(0, sheet.getFirstRowNum());
         assertEquals(9, sheet.getLastRowNum());
+        workbook.close();
     }
 
     @Test
-    public void getFooter() {
+    public void getFooter() throws IOException {
         Workbook workbook = _testDataProvider.createWorkbook();
         Sheet sheet = workbook.createSheet("Sheet 1");
         assertNotNull(sheet.getFooter());
         sheet.getFooter().setCenter("test center footer");
         assertEquals("test center footer", sheet.getFooter().getCenter());
+        workbook.close();
     }
 
     @Test
-    public void getSetColumnHidden() {
+    public void getSetColumnHidden() throws IOException {
         Workbook workbook = _testDataProvider.createWorkbook();
         Sheet sheet = workbook.createSheet("Sheet 1");
         sheet.setColumnHidden(2, true);
         assertTrue(sheet.isColumnHidden(2));
+        workbook.close();
     }
 
     @Test
-    public void protectSheet() {
+    public void protectSheet() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet = wb.createSheet();
         assertFalse(sheet.getProtect());
@@ -711,11 +748,11 @@ public abstract class BaseTestSheet {
         assertTrue(sheet.getProtect());
         sheet.protectSheet(null);
         assertFalse(sheet.getProtect());
-
+        wb.close();
     }
 
     @Test
-    public void createFreezePane() {
+    public void createFreezePane() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         // create a workbook
         Sheet sheet = wb.createSheet();
@@ -762,11 +799,13 @@ public abstract class BaseTestSheet {
         sheet.createFreezePane(0, 0);
         // If both colSplit and rowSplit are zero then the existing freeze pane is removed
         assertNull(sheet.getPaneInformation());
+        
+        wb.close();
     }
 
     
     @Test
-    public void getRepeatingRowsAndColumns() {
+    public void getRepeatingRowsAndColumns() throws IOException {
         Workbook wb = _testDataProvider.openSampleWorkbook(
             "RepeatingRowsCols." 
             + _testDataProvider.getStandardFileNameExtension());
@@ -775,11 +814,12 @@ public abstract class BaseTestSheet {
         checkRepeatingRowsAndColumns(wb.getSheetAt(1), "1:1", null);
         checkRepeatingRowsAndColumns(wb.getSheetAt(2), null, "A:A");
         checkRepeatingRowsAndColumns(wb.getSheetAt(3), "2:3", "A:B");
+        wb.close();
     }
 
 
     @Test
-    public void setRepeatingRowsAndColumnsBug47294(){
+    public void setRepeatingRowsAndColumnsBug47294() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet1 = wb.createSheet();
         sheet1.setRepeatingRows(CellRangeAddress.valueOf("1:4"));
@@ -789,14 +829,15 @@ public abstract class BaseTestSheet {
         Sheet sheet2 = wb.createSheet("My' Sheet");
         sheet2.setRepeatingRows(CellRangeAddress.valueOf("1:4"));
         assertEquals("1:4", sheet2.getRepeatingRows().formatAsString());
+        wb.close();
     }
 
     @Test
-    public void setRepeatingRowsAndColumns() {
-        Workbook wb = _testDataProvider.createWorkbook();
-        Sheet sheet1 = wb.createSheet("Sheet1");
-        Sheet sheet2 = wb.createSheet("Sheet2");
-        Sheet sheet3 = wb.createSheet("Sheet3");
+    public void setRepeatingRowsAndColumns() throws IOException {
+        Workbook wb1 = _testDataProvider.createWorkbook();
+        Sheet sheet1 = wb1.createSheet("Sheet1");
+        Sheet sheet2 = wb1.createSheet("Sheet2");
+        Sheet sheet3 = wb1.createSheet("Sheet3");
         
         checkRepeatingRowsAndColumns(sheet1, null, null);
         
@@ -810,10 +851,11 @@ public abstract class BaseTestSheet {
         checkRepeatingRowsAndColumns(sheet3, "1:4", "A:A");
         
         // write out, read back, and test refrain...
-        wb = _testDataProvider.writeOutAndReadBack(wb);
-        sheet1 = wb.getSheetAt(0);
-        sheet2 = wb.getSheetAt(1);
-        sheet3 = wb.getSheetAt(2);
+        Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1);
+        wb1.close();
+        sheet1 = wb2.getSheetAt(0);
+        sheet2 = wb2.getSheetAt(1);
+        sheet3 = wb2.getSheetAt(2);
         
         checkRepeatingRowsAndColumns(sheet1, "4:5", null);
         checkRepeatingRowsAndColumns(sheet2, null, "A:C");
@@ -825,6 +867,7 @@ public abstract class BaseTestSheet {
         
         sheet3.setRepeatingColumns(null);
         checkRepeatingRowsAndColumns(sheet3, null, null);
+        wb2.close();
     }
 
     private void checkRepeatingRowsAndColumns(
@@ -842,23 +885,25 @@ public abstract class BaseTestSheet {
     }
 
     @Test
-    public void baseZoom() {
+    public void baseZoom() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet = wb.createSheet();
         
         // here we can only verify that setting some zoom values works, range-checking is different between the implementations
         sheet.setZoom(3,4);
+        wb.close();
     }
     
     @Test
-    public void baseShowInPane() {
+    public void baseShowInPane() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet = wb.createSheet();
         sheet.showInPane(2, 3);
+        wb.close();
     }
 
     @Test
-    public void bug55723(){
+    public void bug55723() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet = wb.createSheet();
 
@@ -871,6 +916,7 @@ public abstract class BaseTestSheet {
         filter = sheet.setAutoFilter(range);
         assertNotNull(filter);
         // there seems to be currently no generic way to check the setting...
+        wb.close();
     }
 
     @Test
@@ -956,9 +1002,9 @@ public abstract class BaseTestSheet {
     }
 
     @Test
-    public void showInPaneManyRowsBug55248() {
-        Workbook workbook = _testDataProvider.createWorkbook();
-        Sheet sheet = workbook.createSheet("Sheet 1");
+    public void showInPaneManyRowsBug55248() throws IOException {
+        Workbook wb1 = _testDataProvider.createWorkbook();
+        Sheet sheet = wb1.createSheet("Sheet 1");
 
         sheet.showInPane(0, 0);
 
@@ -971,8 +1017,11 @@ public abstract class BaseTestSheet {
         int i = 0;
         sheet.showInPane(i, i);
 
-        Workbook wb = _testDataProvider.writeOutAndReadBack(workbook);
-        checkRowCount(wb);
+        Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1);
+        checkRowCount(wb2);
+        
+        wb2.close();
+        wb1.close();
     }
 
     private void checkRowCount(Workbook wb) {

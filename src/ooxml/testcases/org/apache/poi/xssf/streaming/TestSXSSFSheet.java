@@ -52,7 +52,7 @@ public class TestSXSSFSheet extends BaseTestSheet {
      */
     @Override
     @Test
-    public void cloneSheet() {
+    public void cloneSheet() throws IOException {
         thrown.expect(RuntimeException.class);
         thrown.expectMessage("NotImplemented");
         super.cloneSheet();
@@ -60,7 +60,7 @@ public class TestSXSSFSheet extends BaseTestSheet {
 
     @Override
     @Test
-    public void cloneSheetMultipleTimes() {
+    public void cloneSheetMultipleTimes() throws IOException {
         thrown.expect(RuntimeException.class);
         thrown.expectMessage("NotImplemented");
         super.cloneSheetMultipleTimes();
@@ -71,7 +71,7 @@ public class TestSXSSFSheet extends BaseTestSheet {
      */
     @Override
     @Test
-    public void shiftMerged(){
+    public void shiftMerged() throws IOException {
         thrown.expect(RuntimeException.class);
         thrown.expectMessage("NotImplemented");
         super.shiftMerged();
@@ -84,7 +84,7 @@ public class TestSXSSFSheet extends BaseTestSheet {
      */
     @Override
     @Test
-    public void bug35084(){
+    public void bug35084() throws IOException {
         thrown.expect(RuntimeException.class);
         thrown.expectMessage("NotImplemented");
         super.bug35084();
@@ -146,11 +146,12 @@ public class TestSXSSFSheet extends BaseTestSheet {
             sheet.createRow(2);
         } finally {
             wb.close();
+            template.close();
         }
     }
 
-    @Test
-    public void createRowAfterLastRow() {
+    @Test(expected=IllegalArgumentException.class)
+    public void createRowAfterLastRow() throws IOException {
         createRowAfterLastRow(SpreadsheetVersion.EXCEL2007);
     }
 }
