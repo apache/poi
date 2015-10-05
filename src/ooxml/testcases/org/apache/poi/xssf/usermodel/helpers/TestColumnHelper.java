@@ -68,9 +68,6 @@ public final class TestColumnHelper extends TestCase {
     }
 
     public void testSortColumns() {
-        CTWorksheet worksheet = CTWorksheet.Factory.newInstance();
-        ColumnHelper helper = new ColumnHelper(worksheet);
-
         CTCols cols1 = CTCols.Factory.newInstance();
         CTCol col1 = cols1.addNewCol();
         col1.setMin(1);
@@ -154,41 +151,119 @@ public final class TestColumnHelper extends TestCase {
         col4.setMax(9);
         assertEquals(4, cols1.sizeOfColArray());
 
-        CTCol col5 = CTCol.Factory.newInstance();
-        col5.setMin(4);
-        col5.setMax(5);
-        helper.addCleanColIntoCols(cols1, col5);
+        // No overlap
+        helper.addCleanColIntoCols(cols1, createCol(4, 5));
         assertEquals(5, cols1.sizeOfColArray());
 
-        CTCol col6 = CTCol.Factory.newInstance();
-        col6.setMin(8);
-        col6.setMax(11);
+        // Overlaps with 8 - 9 (overlap and after replacements required)
+        CTCol col6 = createCol(8, 11);
         col6.setHidden(true);
         helper.addCleanColIntoCols(cols1, col6);
         assertEquals(6, cols1.sizeOfColArray());
 
-        CTCol col7 = CTCol.Factory.newInstance();
-        col7.setMin(6);
-        col7.setMax(8);
+        // Overlaps with 8 - 9 (before and overlap replacements required)
+        CTCol col7 = createCol(6, 8);
         col7.setWidth(17.0);
         helper.addCleanColIntoCols(cols1, col7);
         assertEquals(8, cols1.sizeOfColArray());
 
-        CTCol col8 = CTCol.Factory.newInstance();
-        col8.setMin(20);
-        col8.setMax(30);
-        helper.addCleanColIntoCols(cols1, col8);
+        // Overlaps with 13 - 16750 (before, overlap and after replacements required)
+        helper.addCleanColIntoCols(cols1, createCol(20, 30));
         assertEquals(10, cols1.sizeOfColArray());
 
-        CTCol col9 = CTCol.Factory.newInstance();
-        col9.setMin(25);
-        col9.setMax(27);
-        helper.addCleanColIntoCols(cols1, col9);
+        // Overlaps with 20 - 30 (before, overlap and after replacements required)
+        helper.addCleanColIntoCols(cols1, createCol(25, 27));
 
         // TODO - assert something interesting
         assertEquals(12, cols1.sizeOfColArray());
         assertEquals(1, cols1.getColArray(0).getMin());
         assertEquals(16750, cols1.getColArray(11).getMax());
+    }
+
+    public void testAddCleanColIntoColsExactOverlap() throws Exception {
+        CTCols cols = createHiddenAndBestFitColsWithHelper(1, 1, 1, 1);
+        assertEquals(1, cols.sizeOfColArray());
+        assertMinMaxHiddenBestFit(cols, 0, 1, 1, true, true);
+    }
+
+    public void testAddCleanColIntoColsOverlapsOverhangingBothSides() throws Exception {
+        CTCols cols = createHiddenAndBestFitColsWithHelper(2, 2, 1, 3);
+        assertEquals(3, cols.sizeOfColArray());
+        assertMinMaxHiddenBestFit(cols, 0, 1, 1, false, true);
+        assertMinMaxHiddenBestFit(cols, 1, 2, 2, true, true);
+        assertMinMaxHiddenBestFit(cols, 2, 3, 3, false, true);
+    }
+
+    public void testAddCleanColIntoColsOverlapsCompletelyNested() throws Exception {
+        CTCols cols = createHiddenAndBestFitColsWithHelper(1, 3, 2, 2);
+        assertEquals(3, cols.sizeOfColArray());
+        assertMinMaxHiddenBestFit(cols, 0, 1, 1, true, false);
+        assertMinMaxHiddenBestFit(cols, 1, 2, 2, true, true);
+        assertMinMaxHiddenBestFit(cols, 2, 3, 3, true, false);
+    }
+
+    public void testAddCleanColIntoColsNewOverlapsOverhangingLeftNotRightExactRight() throws Exception {
+        CTCols cols = createHiddenAndBestFitColsWithHelper(2, 3, 1, 3);
+        assertEquals(2, cols.sizeOfColArray());
+        assertMinMaxHiddenBestFit(cols, 0, 1, 1, false, true);
+        assertMinMaxHiddenBestFit(cols, 1, 2, 3, true, true);
+    }
+
+    public void testAddCleanColIntoColsNewOverlapsOverhangingRightNotLeftExactLeft() throws Exception {
+        CTCols cols = createHiddenAndBestFitColsWithHelper(1, 2, 1, 3);
+        assertEquals(2, cols.sizeOfColArray());
+        assertMinMaxHiddenBestFit(cols, 0, 1, 2, true, true);
+        assertMinMaxHiddenBestFit(cols, 1, 3, 3, false, true);
+    }
+
+    public void testAddCleanColIntoColsNewOverlapsOverhangingLeftNotRight() throws Exception {
+        CTCols cols = createHiddenAndBestFitColsWithHelper(2, 3, 1, 2);
+        assertEquals(3, cols.sizeOfColArray());
+        assertMinMaxHiddenBestFit(cols, 0, 1, 1, false, true);
+        assertMinMaxHiddenBestFit(cols, 1, 2, 2, true, true);
+        assertMinMaxHiddenBestFit(cols, 2, 3, 3, true, false);
+    }
+
+    public void testAddCleanColIntoColsNewOverlapsOverhangingRightNotLeft() throws Exception {
+        CTCols cols = createHiddenAndBestFitColsWithHelper(1, 2, 2, 3);
+        assertEquals(3, cols.sizeOfColArray());
+        assertMinMaxHiddenBestFit(cols, 0, 1, 1, true, false);
+        assertMinMaxHiddenBestFit(cols, 1, 2, 2, true, true);
+        assertMinMaxHiddenBestFit(cols, 2, 3, 3, false, true);
+    }
+
+    /**
+     * Creates and adds a hidden column and then a best fit column with the given min/max pairs.
+     * Suitable for testing handling of overlap. 
+     */
+    private CTCols createHiddenAndBestFitColsWithHelper(int hiddenMin, int hiddenMax, int bestFitMin, int bestFitMax) {
+        CTWorksheet worksheet = CTWorksheet.Factory.newInstance();
+        ColumnHelper helper = new ColumnHelper(worksheet);
+        CTCols cols = worksheet.getColsArray(0);
+
+        CTCol hidden = createCol(hiddenMin, hiddenMax);
+        hidden.setHidden(true);
+        helper.addCleanColIntoCols(cols, hidden);
+
+        CTCol bestFit = createCol(bestFitMin, bestFitMax);
+        bestFit.setBestFit(true);
+        helper.addCleanColIntoCols(cols, bestFit);
+        return cols;
+    }
+
+    private void assertMinMaxHiddenBestFit(CTCols cols, int index, int min, int max, boolean hidden, boolean bestFit) {
+        CTCol col = cols.getColArray(index);
+        assertEquals(min, col.getMin());
+        assertEquals(max, col.getMax());
+        assertEquals(hidden, col.getHidden());
+        assertEquals(bestFit, col.getBestFit());
+    }
+
+    private CTCol createCol(int min, int max) {
+        CTCol col = CTCol.Factory.newInstance();
+        col.setMin(min);
+        col.setMax(max);
+        return col;
     }
 
     public void testGetColumn() {

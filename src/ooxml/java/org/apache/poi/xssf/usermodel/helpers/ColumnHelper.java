@@ -19,15 +19,13 @@ package org.apache.poi.xssf.usermodel.helpers;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
-import java.util.Set;
+import java.util.NavigableSet;
 import java.util.TreeSet;
 
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.xssf.util.CTColComparator;
+import org.apache.poi.xssf.util.NumericRanges;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCol;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCols;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
@@ -41,7 +39,6 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
 public class ColumnHelper {
 
     private CTWorksheet worksheet;
-    private CTCols newCols;
 
     public ColumnHelper(CTWorksheet worksheet) {
         super();
@@ -51,107 +48,112 @@ public class ColumnHelper {
     
     @SuppressWarnings("deprecation")
     public void cleanColumns() {
-        this.newCols = CTCols.Factory.newInstance();
-
-        CTCols aggregateCols = CTCols.Factory.newInstance();
+        TreeSet<CTCol> trackedCols = new TreeSet<CTCol>(CTColComparator.BY_MIN_MAX);
+        CTCols newCols = CTCols.Factory.newInstance();
         CTCols[] colsArray = worksheet.getColsArray();
-        assert(colsArray != null);
-        
-        for (CTCols cols : colsArray) {
-            for (CTCol col : cols.getColArray()) {
-                cloneCol(aggregateCols, col);
+        int i = 0;
+        for (i = 0; i < colsArray.length; i++) {
+            CTCols cols = colsArray[i];
+            CTCol[] colArray = cols.getColArray();
+            for (CTCol col : colArray) {
+                addCleanColIntoCols(newCols, col, trackedCols);
             }
         }
-        
-        sortColumns(aggregateCols);
-        
-        CTCol[] colArray = aggregateCols.getColArray();
-        sweepCleanColumns(newCols, colArray, null);
-        
-        int i = colsArray.length;
         for (int y = i - 1; y >= 0; y--) {
             worksheet.removeCols(y);
         }
+        
+        newCols.setColArray(trackedCols.toArray(new CTCol[trackedCols.size()]));
         worksheet.addNewCols();
         worksheet.setColsArray(0, newCols);
     }
 
-    /**
-     * @see <a href="http://en.wikipedia.org/wiki/Sweep_line_algorithm">Sweep line algorithm</a>
-     */
-    private void sweepCleanColumns(CTCols cols, CTCol[] flattenedColsArray, CTCol overrideColumn) {
-        List<CTCol> flattenedCols = new ArrayList<CTCol>(Arrays.asList(flattenedColsArray));
-        TreeSet<CTCol> currentElements = new TreeSet<CTCol>(CTColComparator.BY_MAX);
-        ListIterator<CTCol> flIter = flattenedCols.listIterator();
-        CTCol haveOverrideColumn = null;
-        long lastMaxIndex = 0;
-        long currentMax = 0;
-        while (flIter.hasNext()) {
-            CTCol col = flIter.next();
-            long currentIndex = col.getMin();
-            long colMax = col.getMax();
-            long nextIndex = (colMax > currentMax) ? colMax : currentMax;
-            if (flIter.hasNext()) {
-                nextIndex = flIter.next().getMin();
-                flIter.previous();
-            }
-            Iterator<CTCol> iter = currentElements.iterator();
-            while (iter.hasNext()) {
-                CTCol elem = iter.next();
-                if (currentIndex <= elem.getMax()) break; // all passed elements have been purged
-                iter.remove();
-            }
-            if (!currentElements.isEmpty() && lastMaxIndex < currentIndex) {
-                // we need to process previous elements first
-                insertCol(cols, lastMaxIndex, currentIndex - 1, currentElements.toArray(new CTCol[currentElements.size()]), true, haveOverrideColumn);
-            }
-            currentElements.add(col);
-            if (colMax > currentMax) currentMax = colMax;
-            if (col.equals(overrideColumn)) haveOverrideColumn = overrideColumn;
-            while (currentIndex <= nextIndex && !currentElements.isEmpty()) {
-                Set<CTCol> currentIndexElements = new HashSet<CTCol>();
-                long currentElemIndex;
-                
-                {
-                    // narrow scope of currentElem
-                    CTCol currentElem = currentElements.first();
-                    currentElemIndex = currentElem.getMax();
-                    currentIndexElements.add(currentElem);
-
-                    while (true) {
-                        CTCol higherElem = currentElements.higher(currentElem);
-                        if (higherElem == null || higherElem.getMax() != currentElemIndex)
-                            break;
-                        currentElem = higherElem;
-                        currentIndexElements.add(currentElem);
-                        if (colMax > currentMax) currentMax = colMax;
-                        if (col.equals(overrideColumn)) haveOverrideColumn = overrideColumn;
-                    }
-                }
-                
-                
-                if (currentElemIndex < nextIndex || !flIter.hasNext()) {
-                    insertCol(cols, currentIndex, currentElemIndex, currentElements.toArray(new CTCol[currentElements.size()]), true, haveOverrideColumn);
-                    if (flIter.hasNext()) {
-                        if (nextIndex > currentElemIndex) {
-                            currentElements.removeAll(currentIndexElements);
-                            if (currentIndexElements.contains(overrideColumn)) haveOverrideColumn = null;
-                        }
-                    } else {
-                        currentElements.removeAll(currentIndexElements);
-                        if (currentIndexElements.contains(overrideColumn)) haveOverrideColumn = null;
-                    }
-                    lastMaxIndex = currentIndex = currentElemIndex + 1;
-                } else {
-                    lastMaxIndex = currentIndex;
-                    currentIndex = nextIndex + 1;
-                }
-                
-            }        
-        }
-        sortColumns(cols);
+    public CTCols addCleanColIntoCols(CTCols cols, CTCol newCol) {
+        // Performance issue. If we encapsulated management of min/max in this
+        // class then we could keep trackedCols as state,
+        // making this log(N) rather than Nlog(N). We do this for the initial
+        // read above.
+        TreeSet<CTCol> trackedCols = new TreeSet<CTCol>(
+                CTColComparator.BY_MIN_MAX);
+        trackedCols.addAll(cols.getColList());
+        addCleanColIntoCols(cols, newCol, trackedCols);
+        cols.setColArray(trackedCols.toArray(new CTCol[0]));
+        return cols;
     }
 
+    private void addCleanColIntoCols(final CTCols cols, final CTCol newCol, final TreeSet<CTCol> trackedCols) {
+        List<CTCol> overlapping = getOverlappingCols(newCol, trackedCols);
+        if (overlapping.isEmpty()) {
+            trackedCols.add(cloneCol(cols, newCol));
+            return;
+        }
+
+        trackedCols.removeAll(overlapping);
+        for (CTCol existing : overlapping) {
+            // We add up to three columns for each existing one: non-overlap
+            // before, overlap, non-overlap after.
+            long[] overlap = getOverlap(newCol, existing);
+
+            CTCol overlapCol = cloneCol(cols, existing, overlap);
+            setColumnAttributes(newCol, overlapCol);
+            trackedCols.add(overlapCol);
+
+            CTCol beforeCol = existing.getMin() < newCol.getMin() ? existing
+                    : newCol;
+            long[] before = new long[] {
+                    Math.min(existing.getMin(), newCol.getMin()),
+                    overlap[0] - 1 };
+            if (before[0] <= before[1]) {
+                trackedCols.add(cloneCol(cols, beforeCol, before));
+            }
+
+            CTCol afterCol = existing.getMax() > newCol.getMax() ? existing
+                    : newCol;
+            long[] after = new long[] { overlap[1] + 1,
+                    Math.max(existing.getMax(), newCol.getMax()) };
+            if (after[0] <= after[1]) {
+                trackedCols.add(cloneCol(cols, afterCol, after));
+            }
+        }
+    }
+
+    private CTCol cloneCol(final CTCols cols, final CTCol col, final long[] newRange) {
+        CTCol cloneCol = cloneCol(cols, col);
+        cloneCol.setMin(newRange[0]);
+        cloneCol.setMax(newRange[1]);
+        return cloneCol;
+    }
+
+    private long[] getOverlap(final CTCol col1, final CTCol col2) {
+        return getOverlappingRange(col1, col2);
+    }
+
+    private List<CTCol> getOverlappingCols(final CTCol newCol, final TreeSet<CTCol> trackedCols) {
+        CTCol lower = trackedCols.lower(newCol);
+        NavigableSet<CTCol> potentiallyOverlapping = lower == null ? trackedCols : trackedCols.tailSet(lower, overlaps(lower, newCol));
+        List<CTCol> overlapping = new ArrayList<CTCol>();
+        for (CTCol existing : potentiallyOverlapping) {
+            if (overlaps(newCol, existing)) {
+                overlapping.add(existing);
+            } else {
+                break;
+            }
+        }
+        return overlapping;
+    }
+
+    private boolean overlaps(final CTCol col1, final CTCol col2) {
+        return NumericRanges.getOverlappingType(toRange(col1), toRange(col2)) != NumericRanges.NO_OVERLAPS;
+    }
+
+    private long[] getOverlappingRange(final CTCol col1, final CTCol col2) {
+        return NumericRanges.getOverlappingRange(toRange(col1), toRange(col2));
+    }
+
+    private long[] toRange(final CTCol col) {
+        return new long[] { col.getMin(), col.getMax() };
+    }
+    
     @SuppressWarnings("deprecation")
     public static void sortColumns(CTCols newCols) {
         CTCol[] colArray = newCols.getColArray();
@@ -206,22 +208,6 @@ public class ColumnHelper {
             }
         }
         return null;
-    }
-
-    @SuppressWarnings("deprecation")
-    public CTCols addCleanColIntoCols(CTCols cols, CTCol col) {
-        CTCols newCols = CTCols.Factory.newInstance();
-        for (CTCol c : cols.getColArray()) {
-            cloneCol(newCols, c);
-        }
-        cloneCol(newCols, col);
-        sortColumns(newCols);
-        CTCol[] colArray = newCols.getColArray();
-        CTCols returnCols = CTCols.Factory.newInstance();
-        sweepCleanColumns(returnCols, colArray, col);
-        colArray = returnCols.getColArray();
-        cols.setColArray(colArray);
-        return returnCols;
     }
 
     /*
