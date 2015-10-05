@@ -26,7 +26,6 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
       TestArrayUtil.class
-    , TestBinaryTree.class
     , TestBitField.class
     , TestByteField.class
     , TestHexDump.class
@@ -37,7 +36,6 @@ import org.junit.runners.Suite;
     , TestPOILogFactory.class
     , TestPOILogger.class
     , TestShortField.class
-    , TestShortList.class
     , TestStringUtil.class
     , TestTempFile.class
 })
