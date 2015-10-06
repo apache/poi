@@ -162,11 +162,8 @@ public class DataFormatter implements Observer {
      */
     private DateFormatSymbols dateSymbols;
 
-    /** <em>General</em> format for whole numbers. */
-    private Format generalWholeNumFormat;
-
-    /** <em>General</em> format for decimal numbers. */
-    private Format generalDecimalNumFormat;
+    /** <em>General</em> format for numbers. */
+    private Format generalNumberFormat;
 
     /** A default format to use when a number pattern cannot be parsed. */
     private Format defaultNumFormat;
@@ -308,10 +305,7 @@ public class DataFormatter implements Observer {
         
         // Is it one of the special built in types, General or @?
         if ("General".equalsIgnoreCase(formatStr) || "@".equals(formatStr)) {
-            if (isWholeNumber(cellValue)) {
-                return generalWholeNumFormat;
-            }
-            return generalDecimalNumFormat;
+            return generalNumberFormat;
         }
         
         // Build a formatter, and cache it
@@ -378,10 +372,7 @@ public class DataFormatter implements Observer {
         }
         
         if ("General".equalsIgnoreCase(formatStr) || "@".equals(formatStr)) {
-           if (isWholeNumber(cellValue)) {
-               return generalWholeNumFormat;
-           }
-           return generalDecimalNumFormat;
+           return generalNumberFormat;
         }
 
         if(DateUtil.isADateFormat(formatIndex,formatStr) &&
@@ -657,15 +648,6 @@ public class DataFormatter implements Observer {
     }
 
     /**
-     * Return true if the double value represents a whole number
-     * @param d the double value to check
-     * @return <code>true</code> if d is a whole number
-     */
-    private static boolean isWholeNumber(double d) {
-        return d == Math.floor(d);
-    }
-
-    /**
      * Returns a default format for a cell.
      * @param cell The cell
      * @return a default format
@@ -682,10 +664,7 @@ public class DataFormatter implements Observer {
 
           // otherwise use general format
         }
-        if (isWholeNumber(cellValue)){
-            return generalWholeNumFormat;
-        }
-        return generalDecimalNumFormat;
+        return generalNumberFormat;
     }
     
     /**
@@ -735,7 +714,8 @@ public class DataFormatter implements Observer {
         if (numberFormat == null) {
             return String.valueOf(d);
         }
-        return numberFormat.format(new Double(d));
+        String formatted = numberFormat.format(new Double(d));
+        return formatted.replaceFirst("E(\\d)", "E+$1"); // to match Excel's E-notation
     }
 
     /**
@@ -888,8 +868,7 @@ public class DataFormatter implements Observer {
         Iterator<Map.Entry<String,Format>> itr = formats.entrySet().iterator();
         while(itr.hasNext()) {
             Map.Entry<String,Format> entry = itr.next();
-            if (entry.getValue() == generalDecimalNumFormat
-                    || entry.getValue() == generalWholeNumFormat) {
+            if (entry.getValue() == generalNumberFormat) {
                 entry.setValue(format);
             }
         }
@@ -969,8 +948,7 @@ public class DataFormatter implements Observer {
         
         dateSymbols = DateFormatSymbols.getInstance(locale);
         decimalSymbols = DecimalFormatSymbols.getInstance(locale);
-        generalWholeNumFormat = new DecimalFormat("#", decimalSymbols);
-        generalDecimalNumFormat = new DecimalFormat("#.##########", decimalSymbols);
+        generalNumberFormat = new ExcelGeneralNumberFormat(locale);
 
         // init built-in formats
 
