@@ -48,7 +48,7 @@ public final class TextBytesAtom extends RecordAtom
 	/** Updates the text in the Atom. Must be 8 bit ascii */
 	public void setText(byte[] b) {
 		// Set the text
-		_text = b;
+		_text = b.clone();
 
 		// Update the size (header bytes 5-8)
 		LittleEndian.putInt(_header,4,_text.length);

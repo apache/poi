@@ -117,7 +117,7 @@ public final class SSCellRange<K extends Cell> implements CellRange<K> {
 		private int _index;
 
 		public ArrayIterator(D[] array) {
-			_array = array;
+			_array = array.clone();
 			_index = 0;
 		}
 		public boolean hasNext() {

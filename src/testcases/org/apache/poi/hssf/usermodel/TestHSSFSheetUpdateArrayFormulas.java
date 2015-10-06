@@ -17,7 +17,12 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import junit.framework.AssertionFailedError;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.io.IOException;
 
 import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.hssf.record.ArrayRecord;
@@ -27,8 +32,10 @@ import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
 import org.apache.poi.hssf.record.aggregates.RowRecordsAggregate;
 import org.apache.poi.hssf.record.aggregates.SharedValueManager;
 import org.apache.poi.hssf.record.aggregates.TestSharedValueManager;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.BaseTestSheetUpdateArrayFormulas;
+import org.apache.poi.ss.usermodel.CellRange;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.junit.Test;
 
 /**
  * Test array formulas in HSSF
@@ -44,8 +51,8 @@ public final class TestHSSFSheetUpdateArrayFormulas extends BaseTestSheetUpdateA
 
     // Test methods common with XSSF are in superclass
     // Local methods here test HSSF-specific details of updating array formulas
-
-    public void testHSSFSetArrayFormula_singleCell() {
+    @Test
+    public void testHSSFSetArrayFormula_singleCell() throws IOException {
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet("Sheet1");
 
@@ -65,12 +72,15 @@ public final class TestHSSFSheetUpdateArrayFormulas extends BaseTestSheetUpdateA
         FormulaRecordAggregate agg = (FormulaRecordAggregate)cell.getCellValueRecord();
         assertEquals(range.formatAsString(), agg.getArrayFormulaRange().formatAsString());
         assertTrue(agg.isPartOfArrayFormula());
+        
+        workbook.close();
     }
 
     /**
      * Makes sure the internal state of HSSFSheet is consistent after removing array formulas
      */
-    public void testAddRemoveArrayFormulas_recordUpdates() {
+    @Test
+    public void testAddRemoveArrayFormulas_recordUpdates() throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet s = wb.createSheet("Sheet1");
 
@@ -96,14 +106,16 @@ public final class TestHSSFSheetUpdateArrayFormulas extends BaseTestSheetUpdateA
         RowRecordsAggregate rra = s.getSheet().getRowsAggregate();
         SharedValueManager svm = TestSharedValueManager.extractFromRRA(rra);
         if (svm.getArrayRecord(4, 1) != null) {
-            throw new AssertionFailedError("Array record was not cleaned up properly.");
+            fail("Array record was not cleaned up properly.");
         }
+        
+        wb.close();
     }
 
     private static void confirmRecordClass(Record[] recs, int index, Class<? extends Record> cls) {
         if (recs.length <= index) {
-            throw new AssertionFailedError("Expected (" + cls.getName() + ") at index "
-                    + index + " but array length is " + recs.length + ".");
+            fail("Expected (" + cls.getName() + ") at index "
+                + index + " but array length is " + recs.length + ".");
         }
         assertEquals(cls, recs[index].getClass());
     }

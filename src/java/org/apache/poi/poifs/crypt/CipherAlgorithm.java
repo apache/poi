@@ -53,7 +53,7 @@ public enum CipherAlgorithm {
         this.jceId = jceId;
         this.ecmaId = ecmaId;
         this.defaultKeySize = defaultKeySize;
-        this.allowedKeySize = allowedKeySize;
+        this.allowedKeySize = allowedKeySize.clone();
         this.blockSize = blockSize;
         this.encryptedVerifierHashLength = encryptedVerifierHashLength;
         this.xmlId = xmlId;

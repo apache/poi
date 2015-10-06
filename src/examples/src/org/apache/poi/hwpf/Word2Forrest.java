@@ -20,6 +20,7 @@ package org.apache.poi.hwpf;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
@@ -215,19 +216,14 @@ public final class Word2Forrest
     }
 
 
-  public static void main(String[] args)
-  {
-    try
-    {
-      OutputStream out = new FileOutputStream("c:\\test.xml");
-
-      new Word2Forrest(new HWPFDocument(new FileInputStream(args[0])), out);
-      out.close();
+    public static void main(String[] args) throws IOException {
+        InputStream is = new FileInputStream(args[0]);
+        OutputStream out = new FileOutputStream("test.xml");
+        try {
+            new Word2Forrest(new HWPFDocument(is), out);
+        } finally {
+            out.close();
+            is.close();
+        }
     }
-    catch (Exception t)
-    {
-      t.printStackTrace();
-    }
-
-  }
 }
