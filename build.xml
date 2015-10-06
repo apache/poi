@@ -1260,6 +1260,7 @@ under the License.
 
 
     <target name="-check-docs">
+        <echo message="Checking if documentation recreation is necessary, i.e. if any file at ${main.documentation} is newer than ${build.site}/index.html"/>
         <uptodate property="main.docs.notRequired" targetfile="${build.site}/index.html">
             <srcfiles dir="${main.documentation}" />
         </uptodate>
@@ -1731,7 +1732,7 @@ under the License.
     <!--  of the checks that this can do -->
     <target name="forbidden-apis-check" depends="init">
         <taskdef name="forbiddenapis" 
-                 classname="de.thetaphi.forbiddenapis.AntTask" 
+                 classname="de.thetaphi.forbiddenapis.ant.AntTask" 
                  classpath="${forbidden.jar}"/>
         <forbiddenapis 
                  internalRuntimeForbidden="true" 
