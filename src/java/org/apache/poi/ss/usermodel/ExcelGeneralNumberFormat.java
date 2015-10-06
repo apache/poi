@@ -30,27 +30,29 @@ import java.text.Format;
 import java.text.ParsePosition;
 import java.util.Locale;
 
-/** A format that formats a double as Excel would, ignoring FieldPosition. All other operations are unsupported. */
+/**
+ * A format that formats a double as Excel would, ignoring FieldPosition.
+ * All other operations are unsupported.
+ **/
 public class ExcelGeneralNumberFormat extends Format {
 
     private static final long serialVersionUID = 1L;
 
-    private static final DecimalFormat SCIENTIFIC_FORMAT = new DecimalFormat("0.#####E0");
-    static {
-        SCIENTIFIC_FORMAT.setRoundingMode(RoundingMode.HALF_UP);
-    }
     private static final MathContext TO_10_SF = new MathContext(10, RoundingMode.HALF_UP);
 
     private final DecimalFormatSymbols decimalSymbols;
-    private final DecimalFormat wholeNumFormat;
-    private final DecimalFormat decimalNumFormat;
+    private final DecimalFormat integerFormat;
+    private final DecimalFormat decimalFormat;
+    private final DecimalFormat scientificFormat;
 
     public ExcelGeneralNumberFormat(final Locale locale) {
         decimalSymbols = new DecimalFormatSymbols(locale);
-        wholeNumFormat = new DecimalFormat("#", decimalSymbols);
-        DataFormatter.setExcelStyleRoundingMode(wholeNumFormat);
-        decimalNumFormat = new DecimalFormat("#.##########", decimalSymbols);
-        DataFormatter.setExcelStyleRoundingMode(decimalNumFormat);
+        scientificFormat = new DecimalFormat("0.#####E0", decimalSymbols);
+        DataFormatter.setExcelStyleRoundingMode(scientificFormat);
+        integerFormat = new DecimalFormat("#", decimalSymbols);
+        DataFormatter.setExcelStyleRoundingMode(integerFormat);
+        decimalFormat = new DecimalFormat("#.##########", decimalSymbols);
+        DataFormatter.setExcelStyleRoundingMode(decimalFormat);
     }
 
     public StringBuffer format(Object number, StringBuffer toAppendTo, FieldPosition pos) {
@@ -58,26 +60,26 @@ public class ExcelGeneralNumberFormat extends Format {
         if (number instanceof Number) {
             value = ((Number)number).doubleValue();
             if (Double.isInfinite(value) || Double.isNaN(value)) {
-                return wholeNumFormat.format(number, toAppendTo, pos);
+                return integerFormat.format(number, toAppendTo, pos);
             }
         } else {
             // testBug54786 gets here with a date, so retain previous behaviour
-            return wholeNumFormat.format(number, toAppendTo, pos);
+            return integerFormat.format(number, toAppendTo, pos);
         }
 
         final double abs = Math.abs(value);
         if (abs >= 1E11 || (abs <= 1E-10 && abs > 0)) {
-            return SCIENTIFIC_FORMAT.format(number, toAppendTo, pos);
+            return scientificFormat.format(number, toAppendTo, pos);
         } else if (Math.floor(value) == value || abs >= 1E10) {
             // integer, or integer portion uses all 11 allowed digits
-            return wholeNumFormat.format(number, toAppendTo, pos);
+            return integerFormat.format(number, toAppendTo, pos);
         }
         // Non-integers of non-scientific magnitude are formatted as "up to 11
         // numeric characters, with the decimal point counting as a numeric
         // character". We know there is a decimal point, so limit to 10 digits.
         // https://support.microsoft.com/en-us/kb/65903
         final double rounded = new BigDecimal(value).round(TO_10_SF).doubleValue();
-        return decimalNumFormat.format(rounded, toAppendTo, pos);
+        return decimalFormat.format(rounded, toAppendTo, pos);
     }
 
     public Object parseObject(String source, ParsePosition pos) {
