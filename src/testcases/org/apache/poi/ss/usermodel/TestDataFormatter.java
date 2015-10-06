@@ -660,4 +660,59 @@ public class TestDataFormatter {
         assertTrue(DateUtil.isADateFormat(-1, "dd/mm/yy;[red]dd/mm/yy"));
         assertTrue(DateUtil.isADateFormat(-1, "[h]"));
 	}
+
+
+    @Test
+    public void testLargeNumbersAndENotation() throws IOException{
+      assertFormatsTo("1E+86", 99999999999999999999999999999999999999999999999999999999999999999999999999999999999999d);
+      assertFormatsTo("1E-84", 0.000000000000000000000000000000000000000000000000000000000000000000000000000000000001d);
+      // Smallest double
+      assertFormatsTo("1E-323", 0.00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001d);
+
+      // "up to 11 numeric characters, with the decimal point counting as a numeric character"
+      // https://support.microsoft.com/en-us/kb/65903
+      assertFormatsTo( "12345678911",   12345678911d);
+      assertFormatsTo( "1.23457E+11",   123456789112d);  // 12th digit of integer -> scientific
+      assertFormatsTo( "-12345678911", -12345678911d);
+      assertFormatsTo( "-1.23457E+11", -123456789112d);
+      assertFormatsTo( "0.1",           0.1);
+      assertFormatsTo( "0.000000001",   0.000000001);
+      assertFormatsTo( "1E-10",         0.0000000001);  // 12th digit
+      assertFormatsTo( "-0.000000001", -0.000000001);
+      assertFormatsTo( "-1E-10",       -0.0000000001);
+      assertFormatsTo( "123.4567892",   123.45678919);  // excess decimals are simply rounded away
+      assertFormatsTo("-123.4567892",  -123.45678919);
+      assertFormatsTo( "1.234567893",   1.2345678925);  // rounding mode is half-up
+      assertFormatsTo("-1.234567893",  -1.2345678925);
+      assertFormatsTo( "1.23457E+19",   12345650000000000000d);
+      assertFormatsTo("-1.23457E+19",  -12345650000000000000d);
+      assertFormatsTo( "1.23457E-19",   0.0000000000000000001234565d);
+      assertFormatsTo("-1.23457E-19",  -0.0000000000000000001234565d);
+      assertFormatsTo( "1.000000001",   1.000000001);
+      assertFormatsTo( "1",             1.0000000001);
+      assertFormatsTo( "1234.567891",   1234.567891123456789d);
+      assertFormatsTo( "1234567.891",   1234567.891123456789d);
+      assertFormatsTo( "12345678912",   12345678911.63456789d);  // integer portion uses all 11 digits
+      assertFormatsTo( "12345678913",   12345678912.5d);  // half-up here too
+      assertFormatsTo("-12345678913",  -12345678912.5d);
+      assertFormatsTo( "1.23457E+11",   123456789112.3456789d);
+    }
+
+   private static void assertFormatsTo(String expected, double input) throws IOException {
+       Workbook wb = new HSSFWorkbook();
+       try {
+            Sheet s1 = wb.createSheet();
+            Row row = s1.createRow(0);
+            Cell rawValue = row.createCell(0);
+            rawValue.setCellValue(input);
+            CellStyle newStyle = wb.createCellStyle();
+            DataFormat dataFormat = wb.createDataFormat();
+            newStyle.setDataFormat(dataFormat.getFormat("General"));
+            String actual = new DataFormatter().formatCellValue(rawValue);
+            assertEquals(expected, actual);
+        }
+        finally {
+            wb.close();
+        }
+    }
 }

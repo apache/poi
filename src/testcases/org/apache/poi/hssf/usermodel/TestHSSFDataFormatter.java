@@ -171,7 +171,8 @@ public final class TestHSSFDataFormatter {
 		// create cells with bad num patterns
 		for (int i = 0; i < badNumPatterns.length; i++) {
 			HSSFCell cell = row.createCell(i);
-			cell.setCellValue(1234567890.12345);
+			// If the '.' is any later, ExcelGeneralNumberFormat will render an integer, as Excel does.
+			cell.setCellValue(12345678.9012345);
 			HSSFCellStyle cellStyle = wb.createCellStyle();
 			cellStyle.setDataFormat(format.getFormat(badNumPatterns[i]));
 			cell.setCellStyle(cellStyle);
@@ -276,10 +277,11 @@ public final class TestHSSFDataFormatter {
 		log("\n==== VALID NUMBER FORMATS ====");
 		while (it.hasNext()) {
 			HSSFCell cell = (HSSFCell) it.next();
-			log(formatter.formatCellValue(cell));
+			final String formatted = formatter.formatCellValue(cell);
+			log(formatted);
 
-			// should not be equal to "1234567890.12345"
-			assertTrue( ! "1234567890.12345".equals(formatter.formatCellValue(cell)));
+			// should not include "12345678" - note that the input value was negative
+			assertTrue(formatted != null && ! formatted.contains("12345678"));
 		}
 
 		// test bad number formats
@@ -289,10 +291,9 @@ public final class TestHSSFDataFormatter {
 		while (it.hasNext()) {
 			HSSFCell cell = (HSSFCell) it.next();
 			log(formatter.formatCellValue(cell));
-			// should be equal to "1234567890.12345" 
 			// in some locales the the decimal delimiter is a comma, not a dot
 			char decimalSeparator = new DecimalFormatSymbols(LocaleUtil.getUserLocale()).getDecimalSeparator();
-			assertEquals("1234567890" + decimalSeparator + "12345", formatter.formatCellValue(cell));
+			assertEquals("12345678" + decimalSeparator + "9", formatter.formatCellValue(cell));
 		}
 
 		// test Zip+4 format
