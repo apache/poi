@@ -365,11 +365,11 @@ public class DrawTextParagraph implements Drawable {
         Double leftMargin = paragraph.getLeftMargin();
         if (leftMargin == null) {
             // if the marL attribute is omitted, then a value of 347663 is implied
-            leftMargin = Units.toPoints(347663*(indentLevel+1));
+            leftMargin = Units.toPoints(347663L*(indentLevel+1));
         }
         Double indent = paragraph.getIndent();
         if (indent == null) {
-            indent = Units.toPoints(347663*indentLevel);
+            indent = Units.toPoints(347663L*indentLevel);
         }
         Double rightMargin = paragraph.getRightMargin();
         if (rightMargin == null) {

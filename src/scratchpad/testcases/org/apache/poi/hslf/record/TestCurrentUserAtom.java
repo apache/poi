@@ -17,6 +17,7 @@
 
 package org.apache.poi.hslf.record;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -44,47 +45,48 @@ public final class TestCurrentUserAtom {
 
 	@Test
 	public void readNormal() throws Exception {
-		POIFSFileSystem fs = new POIFSFileSystem(
-				_slTests.openResourceAsStream(normalFile)
-		);
+		POIFSFileSystem fs = new POIFSFileSystem(_slTests.getFile(normalFile));
 
-		CurrentUserAtom cu = new CurrentUserAtom(fs);
+		CurrentUserAtom cu = new CurrentUserAtom(fs.getRoot());
+		fs.close();
 
 		// Check the contents
 		assertEquals("Hogwarts", cu.getLastEditUsername());
 		assertEquals(0x2942, cu.getCurrentEditOffset());
 
 		// Round trip
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		cu.writeOut(baos);
-
-		CurrentUserAtom cu2 = new CurrentUserAtom(baos.toByteArray());
+		POIFSFileSystem poifs = new POIFSFileSystem();
+		cu.writeToFS(poifs);
+		
+		CurrentUserAtom cu2 = new CurrentUserAtom(poifs.getRoot());
 		assertEquals("Hogwarts", cu2.getLastEditUsername());
 		assertEquals(0x2942, cu2.getCurrentEditOffset());
+		
+		poifs.close();
 	}
 
 	@Test(expected = EncryptedPowerPointFileException.class)
 	public void readEnc() throws Exception {
-		POIFSFileSystem fs = new POIFSFileSystem(
-				_slTests.openResourceAsStream(encFile)
-		);
+		POIFSFileSystem fs = new POIFSFileSystem(_slTests.getFile(encFile));
 
-		new CurrentUserAtom(fs);
+		new CurrentUserAtom(fs.getRoot());
 		assertTrue(true); // not yet failed
 		
 		new HSLFSlideShowImpl(fs);
+		
+		fs.close();
 	}
 
 	@Test
 	public void writeNormal() throws Exception {
 		// Get raw contents from a known file
-		POIFSFileSystem fs = new POIFSFileSystem(
-				_slTests.openResourceAsStream(normalFile)
-		);
+		POIFSFileSystem fs = new POIFSFileSystem(_slTests.getFile(normalFile));
 		DocumentEntry docProps = (DocumentEntry)fs.getRoot().getEntry("Current User");
 		byte[] contents = new byte[docProps.getSize()];
 		InputStream in = fs.getRoot().createDocumentInputStream("Current User");
 		in.read(contents);
+		in.close();
+		fs.close();
 
 		// Now build up a new one
 		CurrentUserAtom cu = new CurrentUserAtom();
@@ -96,9 +98,6 @@ public final class TestCurrentUserAtom {
 		cu.writeOut(baos);
 		byte[] out = baos.toByteArray();
 
-		assertEquals(contents.length, out.length);
-		for(int i=0; i<contents.length; i++) {
-			assertEquals("Byte " + i, contents[i], out[i]);
-		}
+		assertArrayEquals(contents, out);
 	}
 }

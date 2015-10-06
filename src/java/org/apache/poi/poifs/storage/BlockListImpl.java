@@ -41,7 +41,7 @@ abstract class BlockListImpl implements BlockList {
      */
     protected void setBlocks(final ListManagedBlock [] blocks)
     {
-        _blocks = blocks;
+        _blocks = blocks.clone();
     }
 
     /**

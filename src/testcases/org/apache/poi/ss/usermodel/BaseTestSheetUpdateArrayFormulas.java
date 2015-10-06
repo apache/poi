@@ -18,12 +18,21 @@
 package org.apache.poi.ss.usermodel;
 
 import static org.junit.Assert.assertArrayEquals;
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.io.IOException;
 
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.formula.FormulaParseException;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
+import org.junit.Test;
 
 /**
  * Common superclass for testing usermodel API for array formulas.<br/>
@@ -32,14 +41,15 @@ import org.apache.poi.ss.util.CellReference;
  * @author Yegor Kozlov
  * @author Josh Micich
  */
-public abstract class BaseTestSheetUpdateArrayFormulas extends TestCase {
+public abstract class BaseTestSheetUpdateArrayFormulas {
     protected final ITestDataProvider _testDataProvider;
 
     protected BaseTestSheetUpdateArrayFormulas(ITestDataProvider testDataProvider) {
         _testDataProvider = testDataProvider;
     }
 
-    public final void testAutoCreateOtherCells() {
+    @Test
+    public final void testAutoCreateOtherCells() throws IOException {
         Workbook workbook = _testDataProvider.createWorkbook();
         Sheet sheet = workbook.createSheet("Sheet1");
 
@@ -55,11 +65,14 @@ public abstract class BaseTestSheetUpdateArrayFormulas extends TestCase {
         assertNotNull(row2);
         assertEquals(formula, row2.getCell(0).getCellFormula());
         assertEquals(formula, row2.getCell(1).getCellFormula());
+        
+        workbook.close();
     }
     /**
      *  Set single-cell array formula
      */
-    public final void testSetArrayFormula_singleCell() {
+    @Test
+    public final void testSetArrayFormula_singleCell() throws IOException {
         Cell[] cells;
 
         Workbook workbook = _testDataProvider.createWorkbook();
@@ -88,12 +101,15 @@ public abstract class BaseTestSheetUpdateArrayFormulas extends TestCase {
         assertEquals(range.formatAsString(), cell.getArrayFormulaRange().formatAsString());
         //check the formula
         assertEquals("SUM(C11:C12*D11:D12)", cell.getCellFormula());
+        
+        workbook.close();
     }
 
     /**
      * Set multi-cell array formula
      */
-    public final void testSetArrayFormula_multiCell() {
+    @Test
+    public final void testSetArrayFormula_multiCell() throws IOException {
         Workbook workbook = _testDataProvider.createWorkbook();
         Sheet sheet = workbook.createSheet();
 
@@ -119,13 +135,16 @@ public abstract class BaseTestSheetUpdateArrayFormulas extends TestCase {
             //retrieve the range and check it is the same
             assertEquals(range.formatAsString(), acell.getArrayFormulaRange().formatAsString());
         }
+        
+        workbook.close();
     }
 
     /**
      * Passing an incorrect formula to sheet.setArrayFormula
      *  should throw FormulaParseException
      */
-    public final void testSetArrayFormula_incorrectFormula() {
+    @Test
+    public final void testSetArrayFormula_incorrectFormula() throws IOException {
         Workbook workbook = _testDataProvider.createWorkbook();
         Sheet sheet = workbook.createSheet();
 
@@ -136,13 +155,16 @@ public abstract class BaseTestSheetUpdateArrayFormulas extends TestCase {
         } catch (FormulaParseException e){
             //expected exception
         }
+        
+        workbook.close();
     }
 
     /**
      * Calls of cell.getArrayFormulaRange and sheet.removeArrayFormula
      * on a not-array-formula cell throw IllegalStateException
      */
-    public final void testArrayFormulas_illegalCalls() {
+    @Test
+    public final void testArrayFormulas_illegalCalls() throws IOException {
         Workbook workbook = _testDataProvider.createWorkbook();
         Sheet sheet = workbook.createSheet();
 
@@ -161,12 +183,15 @@ public abstract class BaseTestSheetUpdateArrayFormulas extends TestCase {
         } catch (IllegalArgumentException e){
             assertEquals("Cell A1 is not part of an array formula.", e.getMessage());
         }
+        
+        workbook.close();
     }
 
     /**
      * create and remove array formulas
      */
-    public final void testRemoveArrayFormula() {
+    @Test
+    public final void testRemoveArrayFormula() throws IOException {
         Workbook workbook = _testDataProvider.createWorkbook();
         Sheet sheet = workbook.createSheet();
 
@@ -196,28 +221,32 @@ public abstract class BaseTestSheetUpdateArrayFormulas extends TestCase {
                 assertEquals("Cell "+ref+" is not part of an array formula.", e.getMessage());
             }
         }
+        
+        workbook.close();
     }
 
     /**
      * Test that when reading a workbook from input stream, array formulas are recognized
      */
-    public final void testReadArrayFormula() {
+    @Test
+    public final void testReadArrayFormula() throws IOException {
         Cell[] cells;
 
-        Workbook workbook = _testDataProvider.createWorkbook();
-        Sheet sheet1 = workbook.createSheet();
+        Workbook workbook1 = _testDataProvider.createWorkbook();
+        Sheet sheet1 = workbook1.createSheet();
         cells = sheet1.setArrayFormula("SUM(A1:A3*B1:B3)", CellRangeAddress.valueOf("C4:C6")).getFlattenedCells();
         assertEquals(3, cells.length);
 
         cells = sheet1.setArrayFormula("MAX(A1:A3*B1:B3)", CellRangeAddress.valueOf("A4:A6")).getFlattenedCells();
         assertEquals(3, cells.length);
 
-        Sheet sheet2 = workbook.createSheet();
+        Sheet sheet2 = workbook1.createSheet();
         cells = sheet2.setArrayFormula("MIN(A1:A3*B1:B3)", CellRangeAddress.valueOf("D2:D4")).getFlattenedCells();
         assertEquals(3, cells.length);
 
-        workbook = _testDataProvider.writeOutAndReadBack(workbook);
-        sheet1 = workbook.getSheetAt(0);
+        Workbook workbook2 = _testDataProvider.writeOutAndReadBack(workbook1);
+        workbook1.close();
+        sheet1 = workbook2.getSheetAt(0);
         for(int rownum=3; rownum <= 5; rownum++) {
             Cell cell1 = sheet1.getRow(rownum).getCell(2);
             assertTrue( cell1.isPartOfArrayFormulaGroup());
@@ -226,17 +255,20 @@ public abstract class BaseTestSheetUpdateArrayFormulas extends TestCase {
             assertTrue( cell2.isPartOfArrayFormulaGroup());
         }
 
-        sheet2 = workbook.getSheetAt(1);
+        sheet2 = workbook2.getSheetAt(1);
         for(int rownum=1; rownum <= 3; rownum++) {
             Cell cell1 = sheet2.getRow(rownum).getCell(3);
             assertTrue( cell1.isPartOfArrayFormulaGroup());
         }
+        
+        workbook2.close();
     }
 
     /**
      * Test that we can set pre-calculated formula result for array formulas
      */
-    public void testModifyArrayCells_setFormulaResult(){
+    @Test
+    public void testModifyArrayCells_setFormulaResult() throws IOException {
         Workbook workbook = _testDataProvider.createWorkbook();
         Sheet sheet = workbook.createSheet();
 
@@ -245,23 +277,25 @@ public abstract class BaseTestSheetUpdateArrayFormulas extends TestCase {
                 sheet.setArrayFormula("SUM(A4:A6,B4:B6)", CellRangeAddress.valueOf("B5"));
         Cell scell = srange.getTopLeftCell();
         assertEquals(Cell.CELL_TYPE_FORMULA, scell.getCellType());
-        assertEquals(0.0, scell.getNumericCellValue());
+        assertEquals(0.0, scell.getNumericCellValue(), 0);
         scell.setCellValue(1.1);
-        assertEquals(1.1, scell.getNumericCellValue());
+        assertEquals(1.1, scell.getNumericCellValue(), 0);
 
         //multi-cell array formula
         CellRange<? extends Cell> mrange =
                 sheet.setArrayFormula("A1:A3*B1:B3", CellRangeAddress.valueOf("C1:C3"));
         for(Cell mcell : mrange){
             assertEquals(Cell.CELL_TYPE_FORMULA, mcell.getCellType());
-            assertEquals(0.0, mcell.getNumericCellValue());
+            assertEquals(0.0, mcell.getNumericCellValue(), 0);
             double fmlaResult = 1.2;
             mcell.setCellValue(fmlaResult);
-            assertEquals(fmlaResult, mcell.getNumericCellValue());
+            assertEquals(fmlaResult, mcell.getNumericCellValue(), 0);
         }
+        workbook.close();
     }
 
-    public void testModifyArrayCells_setCellType(){
+    @Test
+    public void testModifyArrayCells_setCellType() throws IOException {
         Workbook workbook = _testDataProvider.createWorkbook();
         Sheet sheet = workbook.createSheet();
 
@@ -271,7 +305,7 @@ public abstract class BaseTestSheetUpdateArrayFormulas extends TestCase {
                 sheet.setArrayFormula("SUM(A4:A6,B4:B6)", CellRangeAddress.valueOf("B5"));
         Cell scell = srange.getTopLeftCell();
         assertEquals(Cell.CELL_TYPE_FORMULA, scell.getCellType());
-        assertEquals(0.0, scell.getNumericCellValue());
+        assertEquals(0.0, scell.getNumericCellValue(), 0);
         scell.setCellType(Cell.CELL_TYPE_STRING);
         assertEquals(Cell.CELL_TYPE_STRING, scell.getCellType());
         scell.setCellValue("string cell");
@@ -295,9 +329,11 @@ public abstract class BaseTestSheetUpdateArrayFormulas extends TestCase {
             assertEquals(Cell.CELL_TYPE_FORMULA, mcell.getCellType());
             assertTrue(mcell.isPartOfArrayFormulaGroup());
         }
+        workbook.close();
     }
 
-    public void testModifyArrayCells_setCellFormula(){
+    @Test
+    public void testModifyArrayCells_setCellFormula() throws IOException {
         Workbook workbook = _testDataProvider.createWorkbook();
         Sheet sheet = workbook.createSheet();
 
@@ -313,9 +349,9 @@ public abstract class BaseTestSheetUpdateArrayFormulas extends TestCase {
         assertFalse(scell.isPartOfArrayFormulaGroup());
         assertEquals(Cell.CELL_TYPE_FORMULA, scell.getCellType());
         //check that setting formula result works
-        assertEquals(0.0, scell.getNumericCellValue());
+        assertEquals(0.0, scell.getNumericCellValue(), 0);
         scell.setCellValue(33.0);
-        assertEquals(33.0, scell.getNumericCellValue());
+        assertEquals(33.0, scell.getNumericCellValue(), 0);
 
         //multi-cell array formula
         CellRange<? extends Cell> mrange =
@@ -336,9 +372,11 @@ public abstract class BaseTestSheetUpdateArrayFormulas extends TestCase {
             assertEquals("A1:A3*B1:B3", mcell.getCellFormula());
             assertTrue(mcell.isPartOfArrayFormulaGroup());
         }
+        workbook.close();
     }
 
-    public void testModifyArrayCells_removeCell(){
+    @Test
+    public void testModifyArrayCells_removeCell() throws IOException {
         Workbook workbook = _testDataProvider.createWorkbook();
         Sheet sheet = workbook.createSheet();
 
@@ -378,9 +416,12 @@ public abstract class BaseTestSheetUpdateArrayFormulas extends TestCase {
             assertTrue(mcell.isPartOfArrayFormulaGroup());
             assertEquals(Cell.CELL_TYPE_FORMULA, mcell.getCellType());
         }
+        
+        workbook.close();
     }
 
-    public void testModifyArrayCells_removeRow(){
+    @Test
+    public void testModifyArrayCells_removeRow() throws IOException {
         Workbook workbook = _testDataProvider.createWorkbook();
         Sheet sheet = workbook.createSheet();
 
@@ -411,8 +452,8 @@ public abstract class BaseTestSheetUpdateArrayFormulas extends TestCase {
                 sheet.removeRow(mrow);
                 fail("expected exception");
             } catch (IllegalStateException e){
-                String msg = "Row[rownum="+mrow.getRowNum()+"] contains cell(s) included in a multi-cell array formula. You cannot change part of an array.";
-                //assertEquals(msg, e.getMessage());
+                // String msg = "Row[rownum="+mrow.getRowNum()+"] contains cell(s) included in a multi-cell array formula. You cannot change part of an array.";
+                // assertEquals(msg, e.getMessage());
             }
             // a failed invocation of Row.removeCell leaves the row
             // in the state that it was in prior to the invocation
@@ -421,9 +462,12 @@ public abstract class BaseTestSheetUpdateArrayFormulas extends TestCase {
             assertTrue(mcell.isPartOfArrayFormulaGroup());
             assertEquals(Cell.CELL_TYPE_FORMULA, mcell.getCellType());
         }
+        
+        workbook.close();
     }
 
-    public void testModifyArrayCells_mergeCells(){
+    @Test
+    public void testModifyArrayCells_mergeCells() throws IOException {
         Workbook workbook = _testDataProvider.createWorkbook();
         Sheet sheet = workbook.createSheet();
         assertEquals(0, sheet.getNumMergedRegions());
@@ -439,8 +483,7 @@ public abstract class BaseTestSheetUpdateArrayFormulas extends TestCase {
         assertEquals(1, sheet.getNumMergedRegions());
 
         //we cannot merge cells included in an array formula
-        CellRange<? extends Cell> mrange =
-                sheet.setArrayFormula("A1:A3*B1:B3", CellRangeAddress.valueOf("C1:C3"));
+        sheet.setArrayFormula("A1:A3*B1:B3", CellRangeAddress.valueOf("C1:C3"));
         CellRangeAddress cra = CellRangeAddress.valueOf("C1:C3");
         try {
             sheet.addMergedRegion(cra);
@@ -451,9 +494,11 @@ public abstract class BaseTestSheetUpdateArrayFormulas extends TestCase {
         }
         //the number of merged regions remains the same
         assertEquals(1, sheet.getNumMergedRegions());
+        workbook.close();
     }
 
-    public void testModifyArrayCells_shiftRows(){
+    @Test
+    public void testModifyArrayCells_shiftRows() throws IOException {
         Workbook workbook = _testDataProvider.createWorkbook();
         Sheet sheet = workbook.createSheet();
 
@@ -466,8 +511,7 @@ public abstract class BaseTestSheetUpdateArrayFormulas extends TestCase {
         sheet.shiftRows(0, 1, 1);
 
         //we cannot set individual formulas for cells included in an array formula
-        CellRange<? extends Cell> mrange =
-                sheet.setArrayFormula("A1:A3*B1:B3", CellRangeAddress.valueOf("C1:C3"));
+        sheet.setArrayFormula("A1:A3*B1:B3", CellRangeAddress.valueOf("C1:C3"));
 
         try {
             sheet.shiftRows(0, 0, 1);
@@ -491,5 +535,6 @@ public abstract class BaseTestSheetUpdateArrayFormulas extends TestCase {
         }
 
         */
+        workbook.close();
     }
 }

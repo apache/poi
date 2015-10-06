@@ -17,14 +17,23 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import junit.framework.AssertionFailedError;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 
-import org.apache.poi.ss.usermodel.*;
+import java.io.IOException;
+
+import org.apache.poi.ss.usermodel.BaseTestSheetUpdateArrayFormulas;
+import org.apache.poi.ss.usermodel.CellRange;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.XSSFITestDataProvider;
+import org.junit.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellFormula;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellFormulaType;
+
+import junit.framework.AssertionFailedError;
 /**
  * Test array formulas in XSSF
  *
@@ -39,8 +48,8 @@ public final class TestXSSFSheetUpdateArrayFormulas extends BaseTestSheetUpdateA
 
     // Test methods common with HSSF are in superclass
     // Local methods here test XSSF-specific details of updating array formulas
-
-    public void testXSSFSetArrayFormula_singleCell() {
+    @Test
+    public void testXSSFSetArrayFormula_singleCell() throws IOException {
         CellRange<XSSFCell> cells;
 
         XSSFWorkbook workbook = new XSSFWorkbook();
@@ -58,9 +67,12 @@ public final class TestXSSFSheetUpdateArrayFormulas extends BaseTestSheetUpdateA
         //retrieve the range and check it is the same
         assertEquals(range.formatAsString(), firstCell.getArrayFormulaRange().formatAsString());
         confirmArrayFormulaCell(firstCell, "C3", formula1, "C3");
+        
+        workbook.close();
     }
 
-    public void testXSSFSetArrayFormula_multiCell() {
+    @Test
+    public void testXSSFSetArrayFormula_multiCell() throws IOException {
         CellRange<XSSFCell> cells;
 
         String formula2 = "456";
@@ -84,6 +96,7 @@ public final class TestXSSFSheetUpdateArrayFormulas extends BaseTestSheetUpdateA
         confirmArrayFormulaCell(cells.getCell(2, 0), "C6");
 
         assertSame(firstCell, sheet.getFirstCellInArrayFormula(firstCell));
+        workbook.close();
     }
 
     private static void confirmArrayFormulaCell(XSSFCell c, String cellRef) {

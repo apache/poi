@@ -60,7 +60,7 @@ public final class ArrayPtg extends Ptg {
 		_reserved2Byte = reserved2;
 		_nColumns = nColumns;
 		_nRows = nRows;
-		_arrayValues = arrayValues;
+		_arrayValues = arrayValues.clone();
 	}
 	/**
 	 * @param values2d array values arranged in rows

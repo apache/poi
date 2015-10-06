@@ -50,7 +50,7 @@ public final class TabIdRecord extends StandardRecord {
      * @param array of tab id's {0,1,2}
      */
     public void setTabIdArray(short[] array) {
-        _tabids = array;
+        _tabids = array.clone();
     }
 
     public String toString() {

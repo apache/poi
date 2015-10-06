@@ -66,7 +66,7 @@ public class InCellLists {
      * @param outputFilename A String that encapsulates the name of and path to
      *                       the Excel spreadsheet file this code will create.
      */
-    public void demonstrateMethodCalls(String outputFilename) {
+    public void demonstrateMethodCalls(String outputFilename) throws IOException {
         HSSFWorkbook workbook = null;
         HSSFSheet sheet = null;
         HSSFRow row = null;
@@ -75,7 +75,6 @@ public class InCellLists {
         FileOutputStream fos = null;
         ArrayList<MultiLevelListItem> multiLevelListItems = null;
         ArrayList<String> listItems = null;
-        String listItem = null;
         try {
             workbook = new HSSFWorkbook();
             sheet = workbook.createSheet("In Cell Lists");
@@ -188,13 +187,11 @@ public class InCellLists {
             ioEx.printStackTrace(System.out);
         }
         finally {
-            if(fos != null) {
-                try {
-                    fos.close();
-                }
-                catch(IOException ioEx) {
-
-                }
+            if (workbook != null) {
+                workbook.close();
+            }
+            if (fos != null) {
+                fos.close();
             }
         }
     }
@@ -503,8 +500,8 @@ public class InCellLists {
      *
      * @param args the command line arguments.
      */
-    public static void main(String[] args) {
-        new InCellLists().demonstrateMethodCalls("C:/temp/Latest In Cell List.xls");
+    public static void main(String[] args) throws IOException {
+        new InCellLists().demonstrateMethodCalls("Latest In Cell List.xls");
     }
 
     /**
