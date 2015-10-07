@@ -19,6 +19,7 @@ package org.apache.poi.xssf.eventusermodel.examples;
 import java.io.InputStream;
 import java.util.Iterator;
 
+import org.apache.poi.xssf.eventusermodel.XLSX2CSV;
 import org.apache.poi.xssf.eventusermodel.XSSFReader;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
@@ -32,18 +33,21 @@ import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.helpers.XMLReaderFactory;
 
 /**
- * XSSF and SAX (Event API)
+ * XSSF and SAX (Event API) basic example.
+ * See {@link XLSX2CSV} for a fuller example of doing
+ *  XSLX processing with the XSSF Event code.
  */
 public class FromHowTo {
-	public void processOneSheet(String filename) throws Exception {
+	public void processFirstSheet(String filename) throws Exception {
 		OPCPackage pkg = OPCPackage.open(filename);
 		XSSFReader r = new XSSFReader( pkg );
 		SharedStringsTable sst = r.getSharedStringsTable();
 
 		XMLReader parser = fetchSheetParser(sst);
 
-		// rId2 found by processing the Workbook
-		// Seems to either be rId# or rSheet#
+		// To look up the Sheet Name / Sheet Order / rID,
+		//  you need to process the core Workbook stream.
+		// Normally it's of the form rId# or rSheet#
 		InputStream sheet2 = r.getSheet("rId2");
 		InputSource sheetSource = new InputSource(sheet2);
 		parser.parse(sheetSource);
@@ -133,7 +137,7 @@ public class FromHowTo {
 	
 	public static void main(String[] args) throws Exception {
 		FromHowTo howto = new FromHowTo();
-		howto.processOneSheet(args[0]);
+		howto.processFirstSheet(args[0]);
 		howto.processAllSheets(args[0]);
 	}
 }
