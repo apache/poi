@@ -203,8 +203,8 @@ under the License.
     <property name="ooxml.xsds.url.1"
               value="http://www.ecma-international.org/publications/files/ECMA-ST/Office%20Open%20XML%201st%20edition%20Part%204%20(PDF).zip"/>
     <property name="ooxml.xsds.src.dir" location="build/ooxml-xsds-src"/>
-    <property name="ooxml.xsds.src.jar" location="${ooxml.lib}/ooxml-schemas-1.1-sources.jar"/>
-    <property name="ooxml.xsds.jar" location="${ooxml.lib}/ooxml-schemas-1.1.jar"/>
+    <property name="ooxml.xsds.src.jar" location="${ooxml.lib}/ooxml-schemas-1.2-sources.jar"/>
+    <property name="ooxml.xsds.jar" location="${ooxml.lib}/ooxml-schemas-1.2.jar"/>
 
     <!-- additional schemas are packed into the poi schemas jar, -->
     <!-- so we don't have to care about a seperate versioning of the original ooxml schemas -->
@@ -222,6 +222,7 @@ under the License.
     <property name="ooxml.security.src.jar" location="${ooxml.lib}/ooxml-security-1.0-sources.jar"/>
     <property name="ooxml.security.jar" location="${ooxml.lib}/ooxml-security-1.0.jar"/>
     <property name="ooxml.security.xsd.dir" location="src/ooxml/resources/org/apache/poi/poifs/crypt"/>
+    <property name="ooxml.visio.xsd.dir" location="src/ooxml/resources/org/apache/poi/xdgf"/>
 
     <property name="maven.ooxml.xsds.version.id" value="1.0"/>
     <property name="maven.ooxml.xsds.jar" value="ooxml-schemas-${maven.ooxml.xsds.version.id}.jar"/>
@@ -639,6 +640,9 @@ under the License.
         <property name="ooxml.xsds.tmp.dir" location="build/ooxml-xsds"/>
         <mkdir dir="${ooxml.xsds.tmp.dir}"/>
         <unzip src="${ooxml.lib}/${ooxml.xsds.izip.1}" dest="${ooxml.xsds.tmp.dir}"/>
+        <copy todir="${ooxml.xsds.tmp.dir}">
+            <fileset dir="${ooxml.visio.xsd.dir}"/>
+        </copy>
         <xmlbean
                 schema="${ooxml.xsds.tmp.dir}"
                 srcgendir="${ooxml.xsds.src.dir}"
@@ -1788,7 +1792,7 @@ under the License.
             <auxClasspath path="${compile.lib}/bcprov-ext-jdk15on-1.51.jar" />
             <auxClasspath path="${compile.lib}/slf4j-api-1.7.7.jar" />
             <auxClasspath path="${compile.lib}/xmlsec-2.0.1.jar" />
-            <auxClasspath path="ooxml-lib/ooxml-schemas-1.1.jar" />
+            <auxClasspath path="${ooxml.xsds.jar}" />
             <auxClasspath path="ooxml-lib/ooxml-security-1.0.jar" />
             <auxClasspath path="ooxml-lib/xmlbeans-2.6.0.jar" />
             <auxClasspath path="lib/commons-codec-1.9.jar" />
@@ -1811,7 +1815,7 @@ under the License.
             <auxClasspath path="${compile.lib}/bcprov-ext-jdk15on-1.51.jar" />
             <auxClasspath path="${compile.lib}/slf4j-api-1.7.7.jar" />
             <auxClasspath path="${compile.lib}/xmlsec-2.0.1.jar" />
-            <auxClasspath path="ooxml-lib/ooxml-schemas-1.1.jar" />
+            <auxClasspath path="${ooxml.xsds.jar}" />
             <auxClasspath path="ooxml-lib/ooxml-security-1.0.jar" />
             <auxClasspath path="ooxml-lib/xmlbeans-2.6.0.jar" />
             <auxClasspath path="lib/commons-codec-1.9.jar" />

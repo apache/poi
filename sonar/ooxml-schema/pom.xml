@@ -94,6 +94,29 @@
 					</execution>
 				</executions>
 			</plugin>
+      
+      <!-- include the visio schema -->
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.6</version>
+				<executions>
+					<execution>
+						<id>copy-sources</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>target/schemas/</outputDirectory>
+							<resources>
+								<resource>
+									<directory>../../src/ooxml/resources/org/apache/poi/xdgf/</directory>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 			
 			<plugin>
 			  <groupId>org.codehaus.mojo</groupId>
