@@ -30,19 +30,34 @@ public class TestXSSFSheetMergeRegions {
     public void testMergeRegionsSpeed() throws IOException {
         final XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("57893-many-merges.xlsx");
         try {
-            final XSSFSheet sheet = wb.getSheetAt(0);
-            final long start = System.currentTimeMillis();
-            final List<CellRangeAddress> mergedRegions = sheet.getMergedRegions();
-            assertEquals(50000, mergedRegions.size());
-            for (CellRangeAddress cellRangeAddress : mergedRegions) {
-                assertEquals(cellRangeAddress.getFirstRow(), cellRangeAddress.getLastRow());
-                assertEquals(2, cellRangeAddress.getNumberOfCells());
+            long millis = Long.MAX_VALUE;
+
+            // in order to reduce the number of false positives we run it a few times before we fail, 
+            // sometimes it fails on machines that are busy at the moment.  
+            for(int i = 0;i < 5;i++) {
+                millis = runTest(wb);
+                if(millis < 2000) {
+                    break;
+                }
+                System.out.println("Retry " + i + " because run-time is too high: " + millis);
             }
-            long millis = System.currentTimeMillis() - start;
+            
             // This time is typically ~800ms, versus ~7800ms to iterate getMergedRegion(int).
             assertTrue("Should have taken <2000 ms to iterate 50k merged regions but took " + millis, millis < 2000);
         } finally {
             wb.close();
         }
+    }
+
+    private long runTest(final XSSFWorkbook wb) {
+        final long start = System.currentTimeMillis();
+        final XSSFSheet sheet = wb.getSheetAt(0);
+        final List<CellRangeAddress> mergedRegions = sheet.getMergedRegions();
+        assertEquals(50000, mergedRegions.size());
+        for (CellRangeAddress cellRangeAddress : mergedRegions) {
+            assertEquals(cellRangeAddress.getFirstRow(), cellRangeAddress.getLastRow());
+            assertEquals(2, cellRangeAddress.getNumberOfCells());
+        }
+        return System.currentTimeMillis() - start;
     }
 }
