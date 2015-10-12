@@ -465,7 +465,7 @@ public class XSSFCellStyle implements CellStyle {
      * Note - many cells are actually filled with a foreground
      *  fill, not a background fill - see {@link #getFillForegroundColor()}
      * </p>
-     * @see org.apache.poi.xssf.usermodel.XSSFColor#getRgb()
+     * @see org.apache.poi.xssf.usermodel.XSSFColor#getRGB()
      * @return XSSFColor - fill color or <code>null</code> if not set
      */
     public XSSFColor getFillBackgroundXSSFColor() {
