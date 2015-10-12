@@ -149,7 +149,7 @@ public class ToHtml {
         if (wb instanceof HSSFWorkbook)
             helper = new HSSFHtmlHelper((HSSFWorkbook) wb);
         else if (wb instanceof XSSFWorkbook)
-            helper = new XSSFHtmlHelper((XSSFWorkbook) wb);
+            helper = new XSSFHtmlHelper();
         else
             throw new IllegalArgumentException(
                     "unknown workbook type: " + wb.getClass().getSimpleName());

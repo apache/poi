@@ -104,8 +104,8 @@ public final class Word6Extractor extends POIOLE2TextExtractor {
 	            ret[i] = doc.getTextTable().getTextPieces().get(i).getStringBuilder().toString();
 	            
 	            // Fix the line endings
-	            ret[i].replaceAll("\r", "\ufffe");
-                ret[i].replaceAll("\ufffe","\r\n");
+	            ret[i] = ret[i].replaceAll("\r", "\ufffe");
+	            ret[i] = ret[i].replaceAll("\ufffe","\r\n");
 	        }
 	    }
 

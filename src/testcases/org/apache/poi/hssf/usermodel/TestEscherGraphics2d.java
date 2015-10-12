@@ -17,30 +17,44 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.geom.Line2D;
+import java.io.IOException;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests the Graphics2d drawing capability.
- *
- * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class TestEscherGraphics2d extends TestCase {
+public final class TestEscherGraphics2d {
+    private HSSFWorkbook workbook;
 	private HSSFShapeGroup escherGroup;
 	private EscherGraphics2d graphics;
 
-	@Override
-    protected void setUp() {
-		HSSFWorkbook workbook = new HSSFWorkbook();
+	@Before
+    public void setUp() {
+		workbook = new HSSFWorkbook();
 		HSSFSheet sheet = workbook.createSheet("test");
 		escherGroup = sheet.createDrawingPatriarch().createGroup(new HSSFClientAnchor(0,0,1023,255,(short)0,0,(short) 0,0));
 		escherGroup = new HSSFShapeGroup(null, new HSSFChildAnchor());
-		EscherGraphics g = new EscherGraphics(this.escherGroup, workbook, Color.black, 1.0f);
+		EscherGraphics g = new EscherGraphics(escherGroup, workbook, Color.black, 1.0f);
 		graphics = new EscherGraphics2d(g);
 	}
+	
+	@After
+	public void closeResources() throws IOException {
+	    workbook.close();
+	}
 
+	@Test
 	public void testDrawString() {
 		graphics.drawString("This is a test", 10, 10);
 		HSSFTextbox t = (HSSFTextbox) escherGroup.getChildren().get(0);
@@ -71,7 +85,8 @@ public final class TestEscherGraphics2d extends TestCase {
 		}
 	}
 
-	public void testFillRect() {
+	@Test
+    public void testFillRect() {
 		graphics.fillRect( 10, 10, 20, 20 );
 		HSSFSimpleShape s = (HSSFSimpleShape) escherGroup.getChildren().get(0);
 		assertEquals(HSSFSimpleShape.OBJECT_TYPE_RECTANGLE, s.getShapeType());
@@ -81,29 +96,37 @@ public final class TestEscherGraphics2d extends TestCase {
 		assertEquals(30, s.getAnchor().getDx2());
 	}
 
-	public void testGetFontMetrics() {
+	@Test
+    public void testGetFontMetrics() {
 		FontMetrics fontMetrics = graphics.getFontMetrics(graphics.getFont());
-		if (isDialogPresent()) // if dialog is returned we can't run the test properly.
+		if (isDialogPresent()) {
+		    // if dialog is returned we can't run the test properly.
 			return;
+		}
 		assertEquals(7, fontMetrics.charWidth('X'));
 		assertEquals("java.awt.Font[family=Arial,name=Arial,style=plain,size=10]", fontMetrics.getFont().toString());
 	}
 
-	public void testSetFont() {
+	@Test
+    public void testSetFont() {
 		Font f = new Font("Helvetica", 0, 12);
 		graphics.setFont(f);
 		assertEquals(f, graphics.getFont());
 	}
 
-	public void testSetColor() {
+	@Test
+    public void testSetColor() {
 		graphics.setColor(Color.red);
 		assertEquals(Color.red, graphics.getColor());
 	}
 
-	public void testGetFont() {
+	@Test
+    public void testGetFont() {
 		Font f = graphics.getFont();
-		if (isDialogPresent()) // if dialog is returned we can't run the test properly.
+		if (isDialogPresent()) {
+		    // if dialog is returned we can't run the test properly.
 			return;
+        }
 
 		assertEquals("java.awt.Font[family=Arial,name=Arial,style=plain,size=10]", f.toString());
 	}
@@ -113,7 +136,8 @@ public final class TestEscherGraphics2d extends TestCase {
 		return fontDebugStr.indexOf("dialog") != -1 || fontDebugStr.indexOf("Dialog") != -1;
 	}
 
-	public void testDraw() {
+	@Test
+    public void testDraw() {
 		graphics.draw(new Line2D.Double(10,10,20,20));
 		HSSFSimpleShape s = (HSSFSimpleShape) escherGroup.getChildren().get(0);
 		assertTrue(s.getShapeType() == HSSFSimpleShape.OBJECT_TYPE_LINE);

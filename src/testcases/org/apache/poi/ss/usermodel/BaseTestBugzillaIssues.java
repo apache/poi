@@ -68,7 +68,7 @@ public abstract class BaseTestBugzillaIssues {
      * Also tests bug 15353 (problems with hyperlinks to Google)
      */
     @Test
-    public final void bug23094() throws Exception {
+    public final void bug23094() throws IOException {
         Workbook wb1 = _testDataProvider.createWorkbook();
         Sheet s = wb1.createSheet();
         Row r = s.createRow(0);
@@ -92,7 +92,7 @@ public abstract class BaseTestBugzillaIssues {
      * open resulting file in Excel to check results!
      * @param  num the number of strings to generate
      */
-    public final void bug15375(int num) throws Exception {
+    public final void bug15375(int num) throws IOException {
         Workbook wb1 = _testDataProvider.createWorkbook();
         Sheet sheet = wb1.createSheet();
         CreationHelper factory = wb1.getCreationHelper();
@@ -137,7 +137,7 @@ public abstract class BaseTestBugzillaIssues {
      * Merged regions were being removed from the parent in cloned sheets
      */
     @Test
-    public void bug22720() throws Exception {
+    public void bug22720() throws IOException {
        Workbook wb = _testDataProvider.createWorkbook();
        wb.createSheet("TEST");
        Sheet template = wb.getSheetAt(0);
@@ -165,7 +165,7 @@ public abstract class BaseTestBugzillaIssues {
     }
 
     @Test
-    public final void bug28031() throws Exception {
+    public final void bug28031() throws IOException {
         Workbook wb1 = _testDataProvider.createWorkbook();
         Sheet sheet = wb1.createSheet();
         wb1.setSheetName(0, "Sheet1");
@@ -191,7 +191,7 @@ public abstract class BaseTestBugzillaIssues {
      * {=SUM(IF(FREQUENCY(IF(LEN(V4:V220)>0,MATCH(V4:V220,V4:V220,0),""),IF(LEN(V4:V220)>0,MATCH(V4:V220,V4:V220,0),""))>0,1))}
      */
     @Test
-    public final void bug21334() throws Exception {
+    public final void bug21334() throws IOException {
         Workbook wb1 = _testDataProvider.createWorkbook();
         Sheet sh = wb1.createSheet();
         Cell cell = sh.createRow(0).createCell(0);
@@ -208,7 +208,7 @@ public abstract class BaseTestBugzillaIssues {
     /** another test for the number of unique strings issue
      *test opening the resulting file in Excel*/
     @Test
-    public final void bug22568() throws Exception {
+    public final void bug22568() throws IOException {
         int r=2000;int c=3;
 
         Workbook wb1 = _testDataProvider.createWorkbook();
@@ -260,7 +260,7 @@ public abstract class BaseTestBugzillaIssues {
      * Bug 42448: Can't parse SUMPRODUCT(A!C7:A!C67, B8:B68) / B69
      */
     @Test
-    public final void bug42448() throws Exception {
+    public final void bug42448() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         Cell cell = wb.createSheet().createRow(0).createCell(0);
         cell.setCellFormula("SUMPRODUCT(A!C7:A!C67, B8:B68) / B69");
@@ -269,7 +269,7 @@ public abstract class BaseTestBugzillaIssues {
     }
 
     @Test
-    public void bug18800() throws Exception {
+    public void bug18800() throws IOException {
        Workbook wb1 = _testDataProvider.createWorkbook();
        wb1.createSheet("TEST");
        Sheet sheet = wb1.cloneSheet(0);
@@ -300,7 +300,7 @@ public abstract class BaseTestBugzillaIssues {
     }
 
     @Test
-    public void bug43093() throws Exception {
+    public void bug43093() throws IOException {
         Workbook xlw = _testDataProvider.createWorkbook();
 
         addNewSheetWithCellsA1toD4(xlw, 1);
@@ -322,7 +322,7 @@ public abstract class BaseTestBugzillaIssues {
     }
 
     @Test
-    public void bug46729_testMaxFunctionArguments() throws Exception {
+    public void bug46729_testMaxFunctionArguments() throws IOException {
         String[] func = {"COUNT", "AVERAGE", "MAX", "MIN", "OR", "SUBTOTAL", "SKEW"};
 
         SpreadsheetVersion ssVersion = _testDataProvider.getSpreadsheetVersion();
@@ -362,7 +362,7 @@ public abstract class BaseTestBugzillaIssues {
     }
 
     @Test
-    public final void bug50681_testAutoSize() throws Exception {
+    public final void bug50681_testAutoSize() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         BaseTestSheetAutosizeColumn.fixFonts(wb);
         Sheet sheet = wb.createSheet("Sheet1");
@@ -456,7 +456,7 @@ public abstract class BaseTestBugzillaIssues {
      * CreateFreezePane column/row order check
      */
     @Test
-    public void bug49381() throws Exception {
+    public void bug49381() throws IOException {
        Workbook wb = _testDataProvider.createWorkbook();
        int colSplit = 1;
        int rowSplit = 2;
@@ -510,7 +510,7 @@ public abstract class BaseTestBugzillaIssues {
      * open resulting file in excel, and check that there is a link to Google
      */
     @Test
-    public void bug15353() throws Exception {
+    public void bug15353() throws IOException {
         String hyperlinkF = "HYPERLINK(\"http://google.com\",\"Google\")";
 
         Workbook wb1 = _testDataProvider.createWorkbook();
@@ -536,7 +536,7 @@ public abstract class BaseTestBugzillaIssues {
      * HLookup and VLookup with optional arguments
      */
     @Test
-    public void bug51024() throws Exception {
+    public void bug51024() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet s = wb.createSheet();
         Row r1 = s.createRow(0);
@@ -573,7 +573,7 @@ public abstract class BaseTestBugzillaIssues {
     }
 
     @Test
-    public void stackoverflow23114397() throws Exception {
+    public void stackoverflow23114397() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         DataFormat format = wb.getCreationHelper().createDataFormat();
 
@@ -642,7 +642,7 @@ public abstract class BaseTestBugzillaIssues {
      * =ISNUMBER(SEARCH("AM",A1)) evaluation
      */
     @Test
-    public void stackoverflow26437323() throws Exception {
+    public void stackoverflow26437323() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet s = wb.createSheet();
         Row r1 = s.createRow(0);
@@ -799,7 +799,7 @@ public abstract class BaseTestBugzillaIssues {
      */
     @Ignore("Fix this to evaluate for XSSF, Fix this to work at all for HSSF")
     @Test
-    public void bug46670() throws Exception {
+    public void bug46670() throws IOException {
         Workbook wb1 = _testDataProvider.createWorkbook();
         Sheet s = wb1.createSheet();
         Row r1 = s.createRow(0);
@@ -925,7 +925,7 @@ public abstract class BaseTestBugzillaIssues {
      *  that it now is again
      */
     @Test
-    public void bug48718() throws Exception {
+    public void bug48718() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         int startingFonts = wb instanceof HSSFWorkbook ? 4 : 1;
 
@@ -947,7 +947,7 @@ public abstract class BaseTestBugzillaIssues {
     }
 
     @Test
-    public void bug57430() throws Exception {
+    public void bug57430() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         wb.createSheet("Sheet1");
 
@@ -1050,7 +1050,7 @@ public abstract class BaseTestBugzillaIssues {
      *  kind of value from a Formula cell
      */
     @Test
-    public void bug47815() throws Exception {
+    public void bug47815() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet s = wb.createSheet();
         Row r = s.createRow(0);
@@ -1109,7 +1109,7 @@ public abstract class BaseTestBugzillaIssues {
     }
 
     @Test
-    public void test58113() throws Exception {
+    public void test58113() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet = wb.createSheet( "Test" );
 
@@ -1155,7 +1155,7 @@ public abstract class BaseTestBugzillaIssues {
      *  Mid in it, can give #VALUE in Excel
      */
     @Test
-    public void bug55747() throws Exception {
+    public void bug55747() throws IOException {
         Workbook wb1 = _testDataProvider.createWorkbook();
         FormulaEvaluator ev = wb1.getCreationHelper().createFormulaEvaluator();
         Sheet s = wb1.createSheet();
