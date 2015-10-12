@@ -17,11 +17,20 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests the capabilities of the EscherGraphics class.
@@ -29,55 +38,62 @@ import java.io.ByteArrayOutputStream;
  * All tests have two escher groups available to them,
  *  one anchored at 0,0,1022,255 and another anchored
  *  at 20,30,500,200
- *
- * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class TestEscherGraphics extends TestCase {
+public final class TestEscherGraphics {
 	private HSSFWorkbook workbook;
 	private HSSFPatriarch patriarch;
     private HSSFShapeGroup escherGroupA;
-    private HSSFShapeGroup escherGroupB;
     private EscherGraphics graphics;
 
-    protected void setUp() throws Exception
-    {
+    @Before
+    public void setUp() throws IOException {
         workbook = new HSSFWorkbook();
 
         HSSFSheet sheet = workbook.createSheet("test");
         patriarch = sheet.createDrawingPatriarch();
         escherGroupA = patriarch.createGroup(new HSSFClientAnchor(0,0,1022,255,(short)0,0,(short) 0,0));
-        escherGroupB = patriarch.createGroup(new HSSFClientAnchor(20,30,500,200,(short)0,0,(short) 0,0));
-//        escherGroup = new HSSFShapeGroup(null, new HSSFChildAnchor());
-        graphics = new EscherGraphics(this.escherGroupA, workbook, Color.black, 1.0f);
-        super.setUp();
+        patriarch.createGroup(new HSSFClientAnchor(20,30,500,200,(short)0,0,(short) 0,0));
+        graphics = new EscherGraphics(escherGroupA, workbook, Color.black, 1.0f);
+    }
+    
+    @After
+    public void closeResources() throws IOException {
+        workbook.close();
     }
 
+    @Test
     public void testGetFont() {
         Font f = graphics.getFont();
-        if (f.toString().indexOf("dialog") == -1 && f.toString().indexOf("Dialog") == -1)
+        if (f.toString().indexOf("dialog") == -1 && f.toString().indexOf("Dialog") == -1) {
             assertEquals("java.awt.Font[family=Arial,name=Arial,style=plain,size=10]", f.toString());
+        }
     }
 
+    @Test
     public void testGetFontMetrics() {
         Font f = graphics.getFont();
-        if (f.toString().indexOf("dialog") != -1 || f.toString().indexOf("Dialog") != -1)
+        if (f.toString().indexOf("dialog") != -1 || f.toString().indexOf("Dialog") != -1) {
             return;
+        }
         FontMetrics fontMetrics = graphics.getFontMetrics(graphics.getFont());
         assertEquals(7, fontMetrics.charWidth('X'));
         assertEquals("java.awt.Font[family=Arial,name=Arial,style=plain,size=10]", fontMetrics.getFont().toString());
     }
 
+    @Test
     public void testSetFont() {
         Font f = new Font("Helvetica", 0, 12);
         graphics.setFont(f);
         assertEquals(f, graphics.getFont());
     }
 
+    @Test
     public void testSetColor() {
         graphics.setColor(Color.red);
         assertEquals(Color.red, graphics.getColor());
     }
 
+    @Test
     public void testFillRect() {
         graphics.fillRect( 10, 10, 20, 20 );
         HSSFSimpleShape s = (HSSFSimpleShape) escherGroupA.getChildren().get(0);
@@ -88,12 +104,14 @@ public final class TestEscherGraphics extends TestCase {
         assertEquals(30, s.getAnchor().getDx2());
     }
 
+    @Test
     public void testDrawString() {
         graphics.drawString("This is a test", 10, 10);
         HSSFTextbox t = (HSSFTextbox) escherGroupA.getChildren().get(0);
         assertEquals("This is a test", t.getString().getString());
     }
 
+    @Test
     public void testGetDataBackAgain() throws Exception {
     	HSSFSheet s;
     	HSSFShapeGroup s1;
@@ -284,6 +302,6 @@ public final class TestEscherGraphics extends TestCase {
     	assertEquals(200, s2.getAnchor().getDy2());
 
     	// Not working just yet
-    	//assertEquals("I am text box 1", tbox1.getString().getString());
+    	assertEquals("I am text box 1", tbox1.getString().getString());
     }
 }

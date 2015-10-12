@@ -18,20 +18,26 @@
 package org.apache.poi.xssf.usermodel.extensions;
 
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+import java.io.IOException;
+
+import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.junit.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFill;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPatternFill;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPatternType;
 
-import junit.framework.TestCase;
 
+public class TestXSSFCellFill {
 
-public class TestXSSFCellFill extends TestCase {
-
+    @Test
     public void testGetFillBackgroundColor() {
         CTFill ctFill = CTFill.Factory.newInstance();
         XSSFCellFill cellFill = new XSSFCellFill(ctFill);
@@ -42,6 +48,7 @@ public class TestXSSFCellFill extends TestCase {
         assertEquals(2, cellFill.getFillBackgroundColor().getIndexed());
     }
 
+    @Test
     public void testGetFillForegroundColor() {
         CTFill ctFill = CTFill.Factory.newInstance();
         XSSFCellFill cellFill = new XSSFCellFill(ctFill);
@@ -52,14 +59,16 @@ public class TestXSSFCellFill extends TestCase {
         assertEquals(8, cellFill.getFillForegroundColor().getIndexed());
     }
 
+    @Test
     public void testGetSetPatternType() {
         CTFill ctFill = CTFill.Factory.newInstance();
         XSSFCellFill cellFill = new XSSFCellFill(ctFill);
         CTPatternFill ctPatternFill = ctFill.addNewPatternFill();
         ctPatternFill.setPatternType(STPatternType.SOLID);
-        //assertEquals(FillPatternType.SOLID_FOREGROUND.ordinal(), cellFill.getPatternType().ordinal());
+        assertEquals(FillPatternType.SOLID_FOREGROUND.ordinal(), cellFill.getPatternType().intValue()-1);
     }
 
+    @Test
     public void testGetNotModifies() {
         CTFill ctFill = CTFill.Factory.newInstance();
         XSSFCellFill cellFill = new XSSFCellFill(ctFill);
@@ -68,13 +77,14 @@ public class TestXSSFCellFill extends TestCase {
         assertEquals(8, cellFill.getPatternType().intValue());
     }
 
-    public void testColorFromTheme() {
+    @Test
+    public void testColorFromTheme() throws IOException {
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("styles.xlsx");
         XSSFCell cellWithThemeColor = wb.getSheetAt(0).getRow(10).getCell(0);
         //color RGB will be extracted from theme
         XSSFColor foregroundColor = cellWithThemeColor.getCellStyle().getFillForegroundXSSFColor();
-        byte[] rgb = foregroundColor.getRgb();
-        byte[] rgbWithTint = foregroundColor.getRgbWithTint();
+        byte[] rgb = foregroundColor.getRGB();
+        byte[] rgbWithTint = foregroundColor.getRGBWithTint();
         // Dk2
         assertEquals(rgb[0],31);
         assertEquals(rgb[1],73);
@@ -86,5 +96,6 @@ public class TestXSSFCellFill extends TestCase {
         assertEquals(rgbWithTint[0],120);
         assertEquals(rgbWithTint[1],-111);
         assertEquals(rgbWithTint[2],-80);
+        wb.close();
     }
 }

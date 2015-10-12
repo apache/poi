@@ -93,13 +93,16 @@ public class XSSFColor extends ExtendedColor {
      * A boolean value indicating if the ctColor has a tint or not
      */
     public boolean hasTint() {
-        if (! ctColor.isSetRgb()) return false;
+        if (! ctColor.isSetRgb()) {
+            return false;
+        }
         return ctColor.getRgb().length == 4;
     }
 
     /**
      * Indexed ctColor value. Only used for backwards compatibility. References a ctColor in indexedColors.
      */
+    @Override
     public short getIndex() {
         return (short)ctColor.getIndexed();
     }
@@ -121,9 +124,12 @@ public class XSSFColor extends ExtendedColor {
     * Standard Red Green Blue ctColor value (RGB).
     * If there was an A (Alpha) value, it will be stripped.
     */
+   @Override
    public byte[] getRGB() {
       byte[] rgb = getRGBOrARGB();
-      if(rgb == null) return null;
+      if(rgb == null) {
+          return null;
+      }
 
       if(rgb.length == 4) {
          // Need to trim off the alpha
@@ -134,19 +140,16 @@ public class XSSFColor extends ExtendedColor {
          return rgb;
       }
    }
-   /**
-    * @deprecated use {@link #getRGB()}
-    */
-   public byte[] getRgb() {
-       return getRGB();
-   }
 
    /**
     * Standard Alpha Red Green Blue ctColor value (ARGB).
     */
+   @Override
    public byte[] getARGB() {
       byte[] rgb = getRGBOrARGB();
-      if(rgb == null) return null;
+      if(rgb == null) {
+          return null;
+      }
 
       if(rgb.length == 3) {
          // Pad with the default Alpha
@@ -158,34 +161,16 @@ public class XSSFColor extends ExtendedColor {
          return rgb;
       }
    }
-   /**
-    * @deprecated Use {@link #getARGB()}
-    */
-   public byte[] getARgb() {
-       return getARGB();
-   }
 
+   @Override
    protected byte[] getStoredRBG() {
        return ctColor.getRgb();
    }
 
     /**
-     * Standard Red Green Blue ctColor value (RGB) with applied tint.
-     * Alpha values are ignored.
-     */
-    public byte[] getRgbWithTint() {
-        return getRGBWithTint();
-    }
-
-    /**
      * Standard Alpha Red Green Blue ctColor value (ARGB).
      */
-    public void setRgb(byte[] rgb) {
-       setRGB(rgb);
-    }
-    /**
-     * Standard Alpha Red Green Blue ctColor value (ARGB).
-     */
+   @Override
     public void setRGB(byte[] rgb) {
        ctColor.setRgb(rgb);
     }
@@ -194,6 +179,7 @@ public class XSSFColor extends ExtendedColor {
      * Index into the <clrScheme> collection, referencing a particular <sysClr> or
      *  <srgbClr> value expressed in the Theme part.
      */
+   @Override
    public int getTheme() {
       return (int)ctColor.getTheme();
     }
@@ -247,6 +233,7 @@ public class XSSFColor extends ExtendedColor {
      *
      * @return the tint value
      */
+    @Override
     public double getTint() {
         return ctColor.getTint();
     }
@@ -292,6 +279,7 @@ public class XSSFColor extends ExtendedColor {
      *
      * @param tint the tint value
      */
+    @Override
     public void setTint(double tint) {
         ctColor.setTint(tint);
     }
@@ -313,12 +301,16 @@ public class XSSFColor extends ExtendedColor {
         return (XSSFColor)color;
     }
     
+    @Override
     public int hashCode(){
         return ctColor.toString().hashCode();
     }
 
+    @Override
     public boolean equals(Object o){
-        if(o == null || !(o instanceof XSSFColor)) return false;
+        if(!(o instanceof XSSFColor)) {
+            return false;
+        }
 
         XSSFColor cf = (XSSFColor)o;
         return ctColor.toString().equals(cf.getCTColor().toString());

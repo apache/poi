@@ -99,31 +99,33 @@ public class FractionFormat extends Format {
 
     public String format(Number num) {
 
-        double doubleValue = num.doubleValue();
+        final double doubleValue = num.doubleValue();
         
-        boolean isNeg = (doubleValue < 0.0f) ? true : false;
-        double absDoubleValue = Math.abs(doubleValue);
+        final boolean isNeg = (doubleValue < 0.0f) ? true : false;
+        final double absDoubleValue = Math.abs(doubleValue);
         
-        double wholePart = Math.floor(absDoubleValue);
-        double decPart = absDoubleValue - wholePart;
+        final double wholePart = Math.floor(absDoubleValue);
+        final double decPart = absDoubleValue - wholePart;
         if (wholePart + decPart == 0) {
             return "0";
         }
         
-        //if the absolute value is smaller than 1 over the exact or maxDenom
-        //you can stop here and return "0"
-        if (absDoubleValue < (1/Math.max(exactDenom,  maxDenom))){
-            return "0";
-        }
+        // if the absolute value is smaller than 1 over the exact or maxDenom
+        // you can stop here and return "0"
+        // reciprocal is result of an int devision ... and so it's nearly always 0
+        // double reciprocal = 1/Math.max(exactDenom,  maxDenom);
+        // if (absDoubleValue < reciprocal) {
+        //    return "0";
+        // }
         
         //this is necessary to prevent overflow in the maxDenom calculation
-        if (wholePart+(int)decPart == wholePart+decPart){
+        if (Double.compare(decPart, 0) == 0){
             
             StringBuilder sb = new StringBuilder();
             if (isNeg){
                 sb.append("-");
             }
-            sb.append(Integer.toString((int)wholePart));
+            sb.append((int)wholePart);
             return sb.toString();
         }
         

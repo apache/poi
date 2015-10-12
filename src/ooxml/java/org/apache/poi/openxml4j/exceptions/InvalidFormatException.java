@@ -23,4 +23,8 @@ public final class InvalidFormatException extends OpenXML4JException{
 	public InvalidFormatException(String message){
 		super(message);
 	}
+
+    public InvalidFormatException(String message, Throwable cause){
+        super(message,cause);
+    }
 }

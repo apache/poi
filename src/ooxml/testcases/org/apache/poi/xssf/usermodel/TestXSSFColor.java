@@ -17,11 +17,16 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+
+import java.io.IOException;
 
 import org.apache.poi.xssf.XSSFTestDataSamples;
+import org.junit.Test;
 
-public final class TestXSSFColor extends TestCase {
+public final class TestXSSFColor {
+    
+   @Test
    public void testIndexedColour() throws Exception {
       XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("48779.xlsx");
 
@@ -35,8 +40,8 @@ public final class TestXSSFColor extends TestCase {
       // Now check the XSSFColor
       // Note - 64 is a special "auto" one with no rgb equiv
       assertEquals(64, indexed.getIndexed());
-      assertEquals(null, indexed.getRgb());
-      assertEquals(null, indexed.getRgbWithTint());
+      assertEquals(null, indexed.getRGB());
+      assertEquals(null, indexed.getRGBWithTint());
       assertEquals(null, indexed.getARGBHex());
 
       // Now move to one with indexed rgb values
@@ -49,22 +54,25 @@ public final class TestXSSFColor extends TestCase {
       assertEquals(59, indexed.getIndexed());
       assertEquals("FF333300", indexed.getARGBHex());
 
-      assertEquals(3, indexed.getRgb().length);
-      assertEquals(0x33, indexed.getRgb()[0]);
-      assertEquals(0x33, indexed.getRgb()[1]);
-      assertEquals(0x00, indexed.getRgb()[2]);
+      assertEquals(3, indexed.getRGB().length);
+      assertEquals(0x33, indexed.getRGB()[0]);
+      assertEquals(0x33, indexed.getRGB()[1]);
+      assertEquals(0x00, indexed.getRGB()[2]);
 
-      assertEquals(4, indexed.getARgb().length);
-      assertEquals(-1, indexed.getARgb()[0]);
-      assertEquals(0x33, indexed.getARgb()[1]);
-      assertEquals(0x33, indexed.getARgb()[2]);
-      assertEquals(0x00, indexed.getARgb()[3]);
+      assertEquals(4, indexed.getARGB().length);
+      assertEquals(-1, indexed.getARGB()[0]);
+      assertEquals(0x33, indexed.getARGB()[1]);
+      assertEquals(0x33, indexed.getARGB()[2]);
+      assertEquals(0x00, indexed.getARGB()[3]);
 
       // You don't get tinted indexed colours, sorry...
-      assertEquals(null, indexed.getRgbWithTint());
+      assertEquals(null, indexed.getRGBWithTint());
+      
+      wb.close();
    }
 
-   public void testRGBColour() throws Exception {
+   @Test
+   public void testRGBColour() throws IOException {
       XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("50299.xlsx");
 
       // Check the CTColor is as expected
@@ -81,42 +89,45 @@ public final class TestXSSFColor extends TestCase {
       assertEquals(-0.34999, rgb3.getTint(), 0.00001);
 
       assertEquals("FFFFFFFF", rgb3.getARGBHex());
-      assertEquals(3, rgb3.getRgb().length);
-      assertEquals(-1, rgb3.getRgb()[0]);
-      assertEquals(-1, rgb3.getRgb()[1]);
-      assertEquals(-1,  rgb3.getRgb()[2]);
+      assertEquals(3, rgb3.getRGB().length);
+      assertEquals(-1, rgb3.getRGB()[0]);
+      assertEquals(-1, rgb3.getRGB()[1]);
+      assertEquals(-1,  rgb3.getRGB()[2]);
 
-      assertEquals(4, rgb3.getARgb().length);
-      assertEquals(-1, rgb3.getARgb()[0]);
-      assertEquals(-1, rgb3.getARgb()[1]);
-      assertEquals(-1,  rgb3.getARgb()[2]);
-      assertEquals(-1,  rgb3.getARgb()[3]);
+      assertEquals(4, rgb3.getARGB().length);
+      assertEquals(-1, rgb3.getARGB()[0]);
+      assertEquals(-1, rgb3.getARGB()[1]);
+      assertEquals(-1,  rgb3.getARGB()[2]);
+      assertEquals(-1,  rgb3.getARGB()[3]);
 
       // Tint doesn't have the alpha
       // tint = -0.34999
       // 255 * (1 + tint) = 165 truncated
       // or (byte) -91 (which is 165 - 256)
-      assertEquals(3, rgb3.getRgbWithTint().length);
-      assertEquals(-91, rgb3.getRgbWithTint()[0]);
-      assertEquals(-91,  rgb3.getRgbWithTint()[1]);
-      assertEquals(-91,  rgb3.getRgbWithTint()[2]);
+      assertEquals(3, rgb3.getRGBWithTint().length);
+      assertEquals(-91, rgb3.getRGBWithTint()[0]);
+      assertEquals(-91,  rgb3.getRGBWithTint()[1]);
+      assertEquals(-91,  rgb3.getRGBWithTint()[2]);
 
       // Set the color to black (no theme).
-      rgb3.setRgb(new byte[] {0, 0, 0});
+      rgb3.setRGB(new byte[] {0, 0, 0});
       assertEquals("FF000000", rgb3.getARGBHex());
       assertEquals(0, rgb3.getCTColor().getRgb()[0]);
       assertEquals(0, rgb3.getCTColor().getRgb()[1]);
       assertEquals(0, rgb3.getCTColor().getRgb()[2]);
 
       // Set another, is fine
-      rgb3.setRgb(new byte[] {16,17,18});
+      rgb3.setRGB(new byte[] {16,17,18});
       assertEquals("FF101112", rgb3.getARGBHex());
       assertEquals(0x10, rgb3.getCTColor().getRgb()[0]);
       assertEquals(0x11, rgb3.getCTColor().getRgb()[1]);
       assertEquals(0x12, rgb3.getCTColor().getRgb()[2]);
+      
+      wb.close();
    }
 
-   public void testARGBColour() throws Exception {
+   @Test
+   public void testARGBColour() throws IOException {
       XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("48779.xlsx");
 
       // Check the CTColor is as expected
@@ -128,35 +139,37 @@ public final class TestXSSFColor extends TestCase {
 
       // Now check the XSSFColor
       assertEquals(0, rgb4.getIndexed());
-      assertEquals(0.0, rgb4.getTint());
+      assertEquals(0.0, rgb4.getTint(), 0);
 
       assertEquals("FFFF0000", rgb4.getARGBHex());
-      assertEquals(3, rgb4.getRgb().length);
-      assertEquals(-1, rgb4.getRgb()[0]);
-      assertEquals(0,  rgb4.getRgb()[1]);
-      assertEquals(0,  rgb4.getRgb()[2]);
+      assertEquals(3, rgb4.getRGB().length);
+      assertEquals(-1, rgb4.getRGB()[0]);
+      assertEquals(0,  rgb4.getRGB()[1]);
+      assertEquals(0,  rgb4.getRGB()[2]);
 
-      assertEquals(4, rgb4.getARgb().length);
-      assertEquals(-1, rgb4.getARgb()[0]);
-      assertEquals(-1, rgb4.getARgb()[1]);
-      assertEquals(0,  rgb4.getARgb()[2]);
-      assertEquals(0,  rgb4.getARgb()[3]);
+      assertEquals(4, rgb4.getARGB().length);
+      assertEquals(-1, rgb4.getARGB()[0]);
+      assertEquals(-1, rgb4.getARGB()[1]);
+      assertEquals(0,  rgb4.getARGB()[2]);
+      assertEquals(0,  rgb4.getARGB()[3]);
 
       // Tint doesn't have the alpha
-      assertEquals(3, rgb4.getRgbWithTint().length);
-      assertEquals(-1, rgb4.getRgbWithTint()[0]);
-      assertEquals(0,  rgb4.getRgbWithTint()[1]);
-      assertEquals(0,  rgb4.getRgbWithTint()[2]);
+      assertEquals(3, rgb4.getRGBWithTint().length);
+      assertEquals(-1, rgb4.getRGBWithTint()[0]);
+      assertEquals(0,  rgb4.getRGBWithTint()[1]);
+      assertEquals(0,  rgb4.getRGBWithTint()[2]);
 
 
       // Turn on tinting, and check it behaves
       // TODO These values are suspected to be wrong...
       rgb4.setTint(0.4);
-      assertEquals(0.4, rgb4.getTint());
+      assertEquals(0.4, rgb4.getTint(), 0);
 
-      assertEquals(3, rgb4.getRgbWithTint().length);
-      assertEquals(-1, rgb4.getRgbWithTint()[0]);
-      assertEquals(102,  rgb4.getRgbWithTint()[1]);
-      assertEquals(102,  rgb4.getRgbWithTint()[2]);
+      assertEquals(3, rgb4.getRGBWithTint().length);
+      assertEquals(-1, rgb4.getRGBWithTint()[0]);
+      assertEquals(102,  rgb4.getRGBWithTint()[1]);
+      assertEquals(102,  rgb4.getRGBWithTint()[2]);
+      
+      wb.close();
    }
 }
