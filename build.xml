@@ -149,12 +149,12 @@ under the License.
     <property name="excelant.testokfile" location="build/excelant-testokfile.txt"/>
 
     <!-- jars in the /lib directory, see the fetch-jars target-->
-    <property name="main.commons-logging.jar" location="${main.lib}/commons-logging-1.1.3.jar"/>
+    <property name="main.commons-logging.jar" location="${main.lib}/commons-logging-1.2.jar"/>
     <property name="main.commons-logging.url"
-              value="${repository.m2}/maven2/commons-logging/commons-logging/1.1.3/commons-logging-1.1.3.jar"/>
-    <property name="main.commons-codec.jar" location="${main.lib}/commons-codec-1.9.jar"/>
+              value="${repository.m2}/maven2/commons-logging/commons-logging/1.2/commons-logging-1.2.jar"/>
+    <property name="main.commons-codec.jar" location="${main.lib}/commons-codec-1.10.jar"/>
     <property name="main.commons-codec.url"
-              value="${repository.m2}/maven2/commons-codec/commons-codec/1.9/commons-codec-1.9.jar"/>
+              value="${repository.m2}/maven2/commons-codec/commons-codec/1.10/commons-codec-1.10.jar"/>
     <property name="main.log4j.jar" location="${main.lib}/log4j-1.2.17.jar"/>
     <property name="main.log4j.url" value="${repository.m2}/maven2/log4j/log4j/1.2.17/log4j-1.2.17.jar"/>
     <property name="main.junit.jar" location="${main.lib}/junit-4.12.jar"/>
@@ -436,7 +436,8 @@ under the License.
                 <include name="ant-1.8*"/>
                 <include name="asm-all-4*"/>
                 <include name="commons-codec-1.5*"/>
-                <include name="commons-logging-1.1.jar"/>
+                <include name="commons-codec-1.9*"/>
+                <include name="commons-logging-1.1*.jar"/>
                 <include name="jacoco-0.6*"/>
                 <include name="jacoco-0.7.1*"/>
                 <include name="jacoco-0.7.2*"/>
@@ -1796,8 +1797,8 @@ under the License.
             <auxClasspath path="${ooxml.xsds.jar}" />
             <auxClasspath path="ooxml-lib/ooxml-security-1.0.jar" />
             <auxClasspath path="ooxml-lib/xmlbeans-2.6.0.jar" />
-            <auxClasspath path="lib/commons-codec-1.9.jar" />
-            <auxClasspath path="lib/commons-logging-1.1.3.jar" />
+            <auxClasspath path="${main.commons-codec.jar}" />
+            <auxClasspath path="${main.commons-logging.jar}" />
             <auxClasspath path="lib/junit-4.12.jar" />
             <sourcePath path="src/java" />
             <sourcePath path="src/ooxml/java" />
@@ -1819,8 +1820,8 @@ under the License.
             <auxClasspath path="${ooxml.xsds.jar}" />
             <auxClasspath path="ooxml-lib/ooxml-security-1.0.jar" />
             <auxClasspath path="ooxml-lib/xmlbeans-2.6.0.jar" />
-            <auxClasspath path="lib/commons-codec-1.9.jar" />
-            <auxClasspath path="lib/commons-logging-1.1.3.jar" />
+            <auxClasspath path="${main.commons-codec.jar}" />
+            <auxClasspath path="${main.commons-logging.jar}" />
             <auxClasspath path="lib/junit-4.12.jar" />
             <sourcePath path="src/java" />
             <sourcePath path="src/ooxml/java" />
