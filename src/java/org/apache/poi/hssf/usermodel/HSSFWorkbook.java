@@ -1372,36 +1372,38 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
 	public void write(OutputStream stream)
             throws IOException
     {
-        byte[] bytes = getBytes();
         NPOIFSFileSystem fs = new NPOIFSFileSystem();
-
-        // For tracking what we've written out, used if we're
-        //  going to be preserving nodes
-        List<String> excepts = new ArrayList<String>(1);
-
-        // Write out the Workbook stream
-        fs.createDocument(new ByteArrayInputStream(bytes), "Workbook");
-
-        // Write out our HPFS properties, if we have them
-        writeProperties(fs, excepts);
-
-        if (preserveNodes) {
-            // Don't write out the old Workbook, we'll be doing our new one
-            // If the file had an "incorrect" name for the workbook stream,
-            // don't write the old one as we'll use the correct name shortly
-        	excepts.addAll(Arrays.asList(WORKBOOK_DIR_ENTRY_NAMES));
-
-            // Copy over all the other nodes to our new poifs
-            EntryUtils.copyNodes(
-                    new FilteringDirectoryNode(this.directory, excepts)
-                    , new FilteringDirectoryNode(fs.getRoot(), excepts)
-            );
-
-            // YK: preserve StorageClsid, it is important for embedded workbooks,
-            // see Bugzilla 47920
-            fs.getRoot().setStorageClsid(this.directory.getStorageClsid());
+        try {
+            // For tracking what we've written out, used if we're
+            //  going to be preserving nodes
+            List<String> excepts = new ArrayList<String>(1);
+    
+            // Write out the Workbook stream
+            fs.createDocument(new ByteArrayInputStream(getBytes()), "Workbook");
+    
+            // Write out our HPFS properties, if we have them
+            writeProperties(fs, excepts);
+    
+            if (preserveNodes) {
+                // Don't write out the old Workbook, we'll be doing our new one
+                // If the file had an "incorrect" name for the workbook stream,
+                // don't write the old one as we'll use the correct name shortly
+            	excepts.addAll(Arrays.asList(WORKBOOK_DIR_ENTRY_NAMES));
+    
+                // Copy over all the other nodes to our new poifs
+                EntryUtils.copyNodes(
+                        new FilteringDirectoryNode(this.directory, excepts)
+                        , new FilteringDirectoryNode(fs.getRoot(), excepts)
+                );
+    
+                // YK: preserve StorageClsid, it is important for embedded workbooks,
+                // see Bugzilla 47920
+                fs.getRoot().setStorageClsid(this.directory.getStorageClsid());
+            }
+            fs.writeFilesystem(stream);
+        } finally {
+            fs.close();
         }
-        fs.writeFilesystem(stream);
     }
 
     /**
