@@ -20,10 +20,17 @@
 package org.apache.poi.poifs.nio;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.TempFile;
 
 import junit.framework.TestCase;
 
@@ -39,49 +46,147 @@ public class TestDataSource extends TestCase
       
       FileBackedDataSource ds = new FileBackedDataSource(f);
       try {
-          assertEquals(8192, ds.size());
-          
-          // Start of file
-          ByteBuffer bs; 
-          bs = ds.read(4, 0);
-          assertEquals(4, bs.capacity());
-          assertEquals(0, bs.position());
-          assertEquals(0xd0-256, bs.get(0));
-          assertEquals(0xcf-256, bs.get(1));
-          assertEquals(0x11-000, bs.get(2));
-          assertEquals(0xe0-256, bs.get(3));
-          assertEquals(0xd0-256, bs.get());
-          assertEquals(0xcf-256, bs.get());
-          assertEquals(0x11-000, bs.get());
-          assertEquals(0xe0-256, bs.get());
-          
-          // Mid way through
-          bs = ds.read(8, 0x400);
-          assertEquals(8, bs.capacity());
-          assertEquals(0, bs.position());
-          assertEquals((byte)'R', bs.get(0));
-          assertEquals(0, bs.get(1));
-          assertEquals((byte)'o', bs.get(2));
-          assertEquals(0, bs.get(3));
-          assertEquals((byte)'o', bs.get(4));
-          assertEquals(0, bs.get(5));
-          assertEquals((byte)'t', bs.get(6));
-          assertEquals(0, bs.get(7));
-          
-          // Can go to the end, but not past it
-          bs = ds.read(8, 8190);
-          assertEquals(0, bs.position()); // TODO How best to warn of a short read?
-          
-          // Can't go off the end
-          try {
-             bs = ds.read(4, 8192);
-             fail("Shouldn't be able to read off the end of the file");
-          } catch(IllegalArgumentException e) {}
+          checkDataSource(ds, false);
+      } finally {
+          ds.close();
+      }
+      
+      // try a second time
+      ds = new FileBackedDataSource(f);
+      try {
+          checkDataSource(ds, false);
       } finally {
           ds.close();
       }
    }
-   
+
+   public void testFileWritable() throws Exception {
+       File temp = TempFile.createTempFile("TestDataSource", ".test");
+       try {
+           writeDataToFile(temp);
+       
+           FileBackedDataSource ds = new FileBackedDataSource(temp, false);
+           try {
+               checkDataSource(ds, true);
+           } finally {
+               ds.close();
+           }
+           
+           // try a second time
+           ds = new FileBackedDataSource(temp, false);
+           try {
+               checkDataSource(ds, true);
+           } finally {
+               ds.close();
+           }
+
+           writeDataToFile(temp);
+       } finally {
+           assertTrue(temp.exists());
+           assertTrue("Could not delete file " + temp, temp.delete());
+       }
+    }
+
+
+   public void testRewritableFile() throws Exception {
+       File temp = TempFile.createTempFile("TestDataSource", ".test");
+       try {
+           writeDataToFile(temp);
+           
+           FileBackedDataSource ds = new FileBackedDataSource(temp, true);
+           try {
+               ByteBuffer buf = ds.read(0, 10);
+               assertNotNull(buf);
+               buf = ds.read(8, 0x400);
+               assertNotNull(buf);
+           } finally {
+               ds.close();
+           }
+           
+           // try a second time
+           ds = new FileBackedDataSource(temp, true);
+           try {
+               ByteBuffer buf = ds.read(0, 10);
+               assertNotNull(buf);
+               buf = ds.read(8, 0x400);
+               assertNotNull(buf);
+           } finally {
+               ds.close();
+           }
+           
+           writeDataToFile(temp);
+       } finally {
+           assertTrue(temp.exists());
+           assertTrue(temp.delete());
+       }
+    }
+
+    private void writeDataToFile(File temp) throws FileNotFoundException, IOException {
+        OutputStream str = new FileOutputStream(temp);
+           try {
+               InputStream in = data.openResourceAsStream("Notes.ole2");
+               try {
+                   IOUtils.copy(in, str);
+               } finally {
+                   in.close();
+               }
+           } finally {
+               str.close();
+           }
+    }
+    
+    private void checkDataSource(FileBackedDataSource ds, boolean writeable) throws IOException {
+        assertEquals(writeable, ds.isWriteable());
+        assertNotNull(ds.getChannel());
+        
+        // rewriting changes the size
+        if(writeable) {
+            assertTrue("Had: " + ds.size(), ds.size() == 8192 || ds.size() == 8198); 
+        } else {
+            assertEquals(8192, ds.size());
+        }
+
+        // Start of file
+        ByteBuffer bs;
+        bs = ds.read(4, 0);
+        assertEquals(4, bs.capacity());
+        assertEquals(0, bs.position());
+        assertEquals(0xd0 - 256, bs.get(0));
+        assertEquals(0xcf - 256, bs.get(1));
+        assertEquals(0x11 - 000, bs.get(2));
+        assertEquals(0xe0 - 256, bs.get(3));
+        assertEquals(0xd0 - 256, bs.get());
+        assertEquals(0xcf - 256, bs.get());
+        assertEquals(0x11 - 000, bs.get());
+        assertEquals(0xe0 - 256, bs.get());
+
+        // Mid way through
+        bs = ds.read(8, 0x400);
+        assertEquals(8, bs.capacity());
+        assertEquals(0, bs.position());
+        assertEquals((byte) 'R', bs.get(0));
+        assertEquals(0, bs.get(1));
+        assertEquals((byte) 'o', bs.get(2));
+        assertEquals(0, bs.get(3));
+        assertEquals((byte) 'o', bs.get(4));
+        assertEquals(0, bs.get(5));
+        assertEquals((byte) 't', bs.get(6));
+        assertEquals(0, bs.get(7));
+
+        // Can go to the end, but not past it
+        bs = ds.read(8, 8190);
+        assertEquals(0, bs.position()); // TODO How best to warn of a short read?
+
+        // Can't go off the end
+        try {
+            bs = ds.read(4, 8192);
+            if(!writeable) {
+                fail("Shouldn't be able to read off the end of the file");
+            }
+        } catch (IllegalArgumentException e) {
+        }
+    }
+
    public void testByteArray() throws Exception {
       byte[] data = new byte[256];
       byte b;

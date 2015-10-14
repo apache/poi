@@ -56,6 +56,9 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.formula.ptg.Area3DPtg;
 import org.apache.poi.ss.usermodel.BaseTestWorkbook;
 import org.apache.poi.ss.usermodel.Name;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.TempFile;
@@ -1193,5 +1196,51 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         }
         
         assertTrue("Should find some images via Client or Child anchors, but did not find any at all", found);
+    }
+
+    @Test
+    public void testRewriteFileBug58480() throws Exception {
+        final File file = new File(
+                "build/HSSFWorkbookTest-testWriteScenario.xls");
+
+        // create new workbook
+        {
+            final Workbook workbook = new HSSFWorkbook();
+            final Sheet sheet = workbook.createSheet("foo");
+            final Row row = sheet.createRow(1);
+            row.createCell(1).setCellValue("bar");
+            
+            writeAndCloseWorkbook(workbook, file);
+        }
+
+        // edit the workbook
+        {
+            NPOIFSFileSystem fs = new NPOIFSFileSystem(file, false);
+            try {
+                DirectoryNode root = fs.getRoot();
+                final Workbook workbook = new HSSFWorkbook(root, true);
+                final Sheet sheet = workbook.getSheet("foo");
+                sheet.getRow(1).createCell(2).setCellValue("baz");
+                
+                writeAndCloseWorkbook(workbook, file);
+            } finally {
+                fs.close();
+            }
+        }
+    }
+
+    private void writeAndCloseWorkbook(Workbook workbook, File file)
+            throws IOException, InterruptedException {
+        final ByteArrayOutputStream bytesOut = new ByteArrayOutputStream();
+        workbook.write(bytesOut);
+        workbook.close();
+
+        final byte[] byteArray = bytesOut.toByteArray();
+        bytesOut.close();
+
+        final FileOutputStream fileOut = new FileOutputStream(file);
+        fileOut.write(byteArray);
+        fileOut.close();
+
     }
 }
