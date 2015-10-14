@@ -1200,32 +1200,36 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
 
     @Test
     public void testRewriteFileBug58480() throws Exception {
-        final File file = new File(
-                "build/HSSFWorkbookTest-testWriteScenario.xls");
+        final File file = TempFile.createTempFile("TestHSSFWorkbook", ".xls");
 
-        // create new workbook
-        {
-            final Workbook workbook = new HSSFWorkbook();
-            final Sheet sheet = workbook.createSheet("foo");
-            final Row row = sheet.createRow(1);
-            row.createCell(1).setCellValue("bar");
-            
-            writeAndCloseWorkbook(workbook, file);
-        }
-
-        // edit the workbook
-        {
-            NPOIFSFileSystem fs = new NPOIFSFileSystem(file, false);
-            try {
-                DirectoryNode root = fs.getRoot();
-                final Workbook workbook = new HSSFWorkbook(root, true);
-                final Sheet sheet = workbook.getSheet("foo");
-                sheet.getRow(1).createCell(2).setCellValue("baz");
+        try {
+            // create new workbook
+            {
+                final Workbook workbook = new HSSFWorkbook();
+                final Sheet sheet = workbook.createSheet("foo");
+                final Row row = sheet.createRow(1);
+                row.createCell(1).setCellValue("bar");
                 
                 writeAndCloseWorkbook(workbook, file);
-            } finally {
-                fs.close();
             }
+    
+            // edit the workbook
+            {
+                NPOIFSFileSystem fs = new NPOIFSFileSystem(file, false);
+                try {
+                    DirectoryNode root = fs.getRoot();
+                    final Workbook workbook = new HSSFWorkbook(root, true);
+                    final Sheet sheet = workbook.getSheet("foo");
+                    sheet.getRow(1).createCell(2).setCellValue("baz");
+                    
+                    writeAndCloseWorkbook(workbook, file);
+                } finally {
+                    fs.close();
+                }
+            }
+        } finally {
+            assertTrue(file.exists());
+            assertTrue(file.delete());
         }
     }
 
