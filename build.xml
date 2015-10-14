@@ -431,6 +431,7 @@ under the License.
             we often had hard-to-find build/CI-problems because of these! -->
         <mkdir dir="${main.lib}"/>
         <mkdir dir="${compile.lib}"/>
+        <mkdir dir="${ooxml.lib}"/>
         <delete verbose="true">
             <fileset dir="${main.lib}">
                 <include name="ant-1.8*"/>
@@ -453,6 +454,10 @@ under the License.
                 <include name="junit-3*"/>
                 <include name="junit-4.11*"/>
             </fileset>
+        	<fileset dir="${ooxml.lib}">
+        		<include name="ooxml-schemas-1.1-sources.jar"/>
+        		<include name="ooxml-schemas-1.1.jar"/>
+        	</fileset>
         </delete>
 
         <condition property="jars.present">
