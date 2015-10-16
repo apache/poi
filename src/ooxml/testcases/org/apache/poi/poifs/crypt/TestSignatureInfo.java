@@ -240,7 +240,6 @@ public class TestSignatureInfo {
     public void testManipulation() throws Exception {
         // sign & validate
         String testFile = "hello-world-unsigned.xlsx";
-        @SuppressWarnings("resource")
         OPCPackage pkg = OPCPackage.open(copy(testdata.getFile(testFile)), PackageAccess.READ_WRITE);
         sign(pkg, "Test", "CN=Test", 1);
         
@@ -289,7 +288,6 @@ public class TestSignatureInfo {
         pkg.close();
     }
 
-    @SuppressWarnings("resource")
     @Test
     public void testSignEnvelopingDocument() throws Exception {
         String testFile = "hello-world-unsigned.xlsx";
