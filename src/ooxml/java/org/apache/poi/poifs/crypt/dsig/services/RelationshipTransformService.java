@@ -48,6 +48,7 @@ import javax.xml.crypto.dsig.TransformException;
 import javax.xml.crypto.dsig.TransformService;
 import javax.xml.crypto.dsig.spec.TransformParameterSpec;
 
+import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.XmlSort;
@@ -141,7 +142,7 @@ public class RelationshipTransformService extends TransformService {
         Node parentNode = domParent.getNode();
         
         try {
-            TransformDocument transDoc = TransformDocument.Factory.parse(parentNode);
+            TransformDocument transDoc = TransformDocument.Factory.parse(parentNode, POIXMLDocumentPart.DEFAULT_XML_OPTIONS);
             XmlObject xoList[] = transDoc.getTransform().selectChildren(RelationshipReferenceDocument.type.getDocumentElementName());
             if (xoList.length == 0) {
                 LOG.log(POILogger.WARN, "no RelationshipReference/@SourceId parameters present");
@@ -187,7 +188,7 @@ public class RelationshipTransformService extends TransformService {
         
         RelationshipsDocument relDoc;
         try {
-            relDoc = RelationshipsDocument.Factory.parse(octetStream);
+            relDoc = RelationshipsDocument.Factory.parse(octetStream, POIXMLDocumentPart.DEFAULT_XML_OPTIONS);
         } catch (Exception e) {
             throw new TransformException(e.getMessage(), e);
         }

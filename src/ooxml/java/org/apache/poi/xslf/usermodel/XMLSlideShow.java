@@ -41,6 +41,7 @@ import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.apache.poi.sl.usermodel.Resources;
 import org.apache.poi.sl.usermodel.SlideShow;
 import org.apache.poi.util.Beta;
+import org.apache.poi.util.DocumentHelper;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
@@ -127,7 +128,7 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
     protected void onDocumentRead() throws IOException {
         try {
             PresentationDocument doc =
-                    PresentationDocument.Factory.parse(getCorePart().getInputStream());
+                    PresentationDocument.Factory.parse(getCorePart().getInputStream(), POIXMLDocumentPart.DEFAULT_XML_OPTIONS);
             _presentation = doc.getPresentation();
 
             Map<String, XSLFSlideMaster> masterMap = new HashMap<String, XSLFSlideMaster>();

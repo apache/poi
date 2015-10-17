@@ -23,6 +23,7 @@ import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.sl.usermodel.MasterSheet;
 import org.apache.poi.util.Beta;
+import org.apache.poi.util.DocumentHelper;
 import org.apache.poi.util.Internal;
 import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTBackground;
@@ -44,7 +45,7 @@ implements MasterSheet<XSLFShape,XSLFTextParagraph> {
     public XSLFSlideLayout(PackagePart part, PackageRelationship rel) throws IOException, XmlException {
         super(part, rel);
         SldLayoutDocument doc =
-                SldLayoutDocument.Factory.parse(getPackagePart().getInputStream());
+                SldLayoutDocument.Factory.parse(getPackagePart().getInputStream(), POIXMLDocumentPart.DEFAULT_XML_OPTIONS);
         _layout = doc.getSldLayout();
         setCommonSlideData(_layout.getCSld());
     }

@@ -46,6 +46,7 @@ import java.util.UUID;
 
 import javax.xml.crypto.MarshalException;
 
+import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.poifs.crypt.dsig.services.RevocationData;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -128,7 +129,7 @@ public class XAdESXLSignatureFacet extends SignatureFacet {
         NodeList qualNl = document.getElementsByTagNameNS(XADES_132_NS, "QualifyingProperties");
         if (qualNl.getLength() == 1) {
             try {
-                qualDoc = QualifyingPropertiesDocument.Factory.parse(qualNl.item(0));
+                qualDoc = QualifyingPropertiesDocument.Factory.parse(qualNl.item(0), POIXMLDocumentPart.DEFAULT_XML_OPTIONS);
             } catch (XmlException e) {
                 throw new MarshalException(e);
             }

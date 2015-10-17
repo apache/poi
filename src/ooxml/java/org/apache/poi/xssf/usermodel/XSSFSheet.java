@@ -66,6 +66,7 @@ import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.SSCellRange;
 import org.apache.poi.ss.util.SheetUtil;
 import org.apache.poi.util.Beta;
+import org.apache.poi.util.DocumentHelper;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -193,7 +194,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
 
     protected void read(InputStream is) throws IOException {
         try {
-            worksheet = WorksheetDocument.Factory.parse(is).getWorksheet();
+            worksheet = WorksheetDocument.Factory.parse(is, POIXMLDocumentPart.DEFAULT_XML_OPTIONS).getWorksheet();
         } catch (XmlException e){
             throw new POIXMLException(e);
         }

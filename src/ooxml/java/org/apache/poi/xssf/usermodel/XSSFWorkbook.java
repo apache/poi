@@ -64,6 +64,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.WorkbookUtil;
 import org.apache.poi.util.Beta;
+import org.apache.poi.util.DocumentHelper;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
@@ -333,7 +334,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     @SuppressWarnings("deprecation") //  getXYZArray() array accessors are deprecated
     protected void onDocumentRead() throws IOException {
         try {
-            WorkbookDocument doc = WorkbookDocument.Factory.parse(getPackagePart().getInputStream());
+            WorkbookDocument doc = WorkbookDocument.Factory.parse(getPackagePart().getInputStream(), POIXMLDocumentPart.DEFAULT_XML_OPTIONS);
             this.workbook = doc.getWorkbook();
 
             ThemesTable theme = null;

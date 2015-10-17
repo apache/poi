@@ -27,6 +27,7 @@ import org.apache.poi.sl.draw.Drawable;
 import org.apache.poi.sl.usermodel.Notes;
 import org.apache.poi.sl.usermodel.Slide;
 import org.apache.poi.util.Beta;
+import org.apache.poi.util.DocumentHelper;
 import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTBlip;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTGroupShapeProperties;
@@ -70,7 +71,7 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
         super(part, rel);
 
         SldDocument doc =
-            SldDocument.Factory.parse(getPackagePart().getInputStream());
+            SldDocument.Factory.parse(getPackagePart().getInputStream(), POIXMLDocumentPart.DEFAULT_XML_OPTIONS);
         _slide = doc.getSld();
         setCommonSlideData(_slide.getCSld());
     }

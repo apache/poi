@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.poifs.crypt.ChainingMode;
 import org.apache.poi.poifs.crypt.CipherAlgorithm;
 import org.apache.poi.poifs.crypt.EncryptionInfo;
@@ -111,7 +112,7 @@ public class AgileEncryptionInfoBuilder implements EncryptionInfoBuilder {
     
     protected static EncryptionDocument parseDescriptor(String descriptor) {
         try {
-            return EncryptionDocument.Factory.parse(descriptor);
+            return EncryptionDocument.Factory.parse(descriptor, POIXMLDocumentPart.DEFAULT_XML_OPTIONS);
         } catch (XmlException e) {
             throw new EncryptedDocumentException("Unable to parse encryption descriptor", e);
         }
@@ -119,7 +120,7 @@ public class AgileEncryptionInfoBuilder implements EncryptionInfoBuilder {
 
     protected static EncryptionDocument parseDescriptor(InputStream descriptor) {
         try {
-            return EncryptionDocument.Factory.parse(descriptor);
+            return EncryptionDocument.Factory.parse(descriptor, POIXMLDocumentPart.DEFAULT_XML_OPTIONS);
         } catch (Exception e) {
             throw new EncryptedDocumentException("Unable to parse encryption descriptor", e);
         }

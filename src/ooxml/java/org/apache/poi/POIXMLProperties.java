@@ -33,6 +33,7 @@ import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
 import org.apache.poi.openxml4j.util.Nullable;
+import org.apache.poi.util.DocumentHelper;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.officeDocument.x2006.customProperties.CTProperty;
@@ -73,7 +74,7 @@ public class POIXMLProperties {
 		if(extRel.size() == 1) {
 			extPart = pkg.getPart( extRel.getRelationship(0));
 			org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.PropertiesDocument props = org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.PropertiesDocument.Factory.parse(
-				 extPart.getInputStream()
+				 extPart.getInputStream(), POIXMLDocumentPart.DEFAULT_XML_OPTIONS
 			);
 			ext = new ExtendedProperties(props);
 		} else {
@@ -87,7 +88,7 @@ public class POIXMLProperties {
 		if(custRel.size() == 1) {
 			custPart = pkg.getPart( custRel.getRelationship(0));
 			org.openxmlformats.schemas.officeDocument.x2006.customProperties.PropertiesDocument props = org.openxmlformats.schemas.officeDocument.x2006.customProperties.PropertiesDocument.Factory.parse(
-					custPart.getInputStream()
+					custPart.getInputStream(), POIXMLDocumentPart.DEFAULT_XML_OPTIONS
 			);
 			cust = new CustomProperties(props);
 		} else {

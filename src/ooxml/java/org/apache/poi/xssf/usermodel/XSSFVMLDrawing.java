@@ -20,6 +20,7 @@ package org.apache.poi.xssf.usermodel;
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.util.DocumentHelper;
 import org.apache.poi.xssf.util.EvilUnclosedBRFixingInputStream;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
@@ -106,7 +107,7 @@ public final class XSSFVMLDrawing extends POIXMLDocumentPart {
 
     protected void read(InputStream is) throws IOException, XmlException {
         XmlObject root = XmlObject.Factory.parse(
-              new EvilUnclosedBRFixingInputStream(is)
+              new EvilUnclosedBRFixingInputStream(is), POIXMLDocumentPart.DEFAULT_XML_OPTIONS
         );
 
         _qnames = new ArrayList<QName>();
@@ -115,13 +116,13 @@ public final class XSSFVMLDrawing extends POIXMLDocumentPart {
             Node nd = obj.getDomNode();
             QName qname = new QName(nd.getNamespaceURI(), nd.getLocalName());
             if (qname.equals(QNAME_SHAPE_LAYOUT)) {
-                _items.add(CTShapeLayout.Factory.parse(obj.xmlText()));
+                _items.add(CTShapeLayout.Factory.parse(obj.xmlText(), POIXMLDocumentPart.DEFAULT_XML_OPTIONS));
             } else if (qname.equals(QNAME_SHAPE_TYPE)) {
-                CTShapetype st = CTShapetype.Factory.parse(obj.xmlText());
+                CTShapetype st = CTShapetype.Factory.parse(obj.xmlText(), POIXMLDocumentPart.DEFAULT_XML_OPTIONS);
                 _items.add(st);
                 _shapeTypeId = st.getId();
             } else if (qname.equals(QNAME_SHAPE)) {
-                CTShape shape = CTShape.Factory.parse(obj.xmlText());
+                CTShape shape = CTShape.Factory.parse(obj.xmlText(), POIXMLDocumentPart.DEFAULT_XML_OPTIONS);
                 String id = shape.getId();
                 if(id != null) {
                     Matcher m = ptrn_shapeId.matcher(id);
@@ -129,7 +130,7 @@ public final class XSSFVMLDrawing extends POIXMLDocumentPart {
                 }
                 _items.add(shape);
             } else {
-                _items.add(XmlObject.Factory.parse(obj.xmlText()));
+                _items.add(XmlObject.Factory.parse(obj.xmlText(), POIXMLDocumentPart.DEFAULT_XML_OPTIONS));
             }
             _qnames.add(qname);
         }

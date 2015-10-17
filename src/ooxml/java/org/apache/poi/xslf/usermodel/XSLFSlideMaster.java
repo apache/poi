@@ -26,6 +26,7 @@ import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.sl.usermodel.MasterSheet;
 import org.apache.poi.util.Beta;
+import org.apache.poi.util.DocumentHelper;
 import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTColorMapping;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextListStyle;
@@ -69,7 +70,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.SldMasterDocument;
     protected XSLFSlideMaster(PackagePart part, PackageRelationship rel) throws IOException, XmlException {
         super(part, rel);
         SldMasterDocument doc =
-            SldMasterDocument.Factory.parse(getPackagePart().getInputStream());
+            SldMasterDocument.Factory.parse(getPackagePart().getInputStream(), POIXMLDocumentPart.DEFAULT_XML_OPTIONS);
         _slide = doc.getSldMaster();
         setCommonSlideData(_slide.getCSld());
     }

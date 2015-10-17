@@ -33,6 +33,7 @@ import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
+import org.apache.poi.util.DocumentHelper;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTDocProtect;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTOnOff;
@@ -403,7 +404,7 @@ public class XWPFSettings extends POIXMLDocumentPart {
 
     private void readFrom(InputStream inputStream) {
         try {
-            ctSettings = SettingsDocument.Factory.parse(inputStream).getSettings();
+            ctSettings = SettingsDocument.Factory.parse(inputStream, POIXMLDocumentPart.DEFAULT_XML_OPTIONS).getSettings();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
