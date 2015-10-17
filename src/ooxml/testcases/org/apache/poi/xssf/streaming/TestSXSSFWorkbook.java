@@ -28,7 +28,6 @@ import static org.junit.Assert.fail;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.lang.reflect.Field;
 
 import org.apache.poi.ss.usermodel.BaseTestWorkbook;
@@ -209,7 +208,7 @@ public final class TestSXSSFWorkbook extends BaseTestWorkbook {
     }
 
     @Test
-    public void sheetdataWriter(){
+    public void sheetdataWriter() throws IOException{
         SXSSFWorkbook wb = new SXSSFWorkbook();
         SXSSFSheet sh = wb.createSheet();
         SheetDataWriter wr = sh.getSheetDataWriter();
@@ -218,6 +217,7 @@ public final class TestSXSSFWorkbook extends BaseTestWorkbook {
         assertTrue(tmp.getName().startsWith("poi-sxssf-sheet"));
         assertTrue(tmp.getName().endsWith(".xml"));
         assertTrue(wb.dispose());
+        wb.close();
 
         wb = new SXSSFWorkbook();
         wb.setCompressTempFiles(true);
@@ -228,6 +228,7 @@ public final class TestSXSSFWorkbook extends BaseTestWorkbook {
         assertTrue(tmp.getName().startsWith("poi-sxssf-sheet-xml"));
         assertTrue(tmp.getName().endsWith(".gz"));
         assertTrue(wb.dispose());
+        wb.close();
 
         //Test escaping of Unicode control characters
         wb = new SXSSFWorkbook();
@@ -237,6 +238,7 @@ public final class TestSXSSFWorkbook extends BaseTestWorkbook {
         assertEquals("value?", cell.getStringCellValue());
 
         assertTrue(wb.dispose());
+        wb.close();
 
     }
 
@@ -329,80 +331,74 @@ public final class TestSXSSFWorkbook extends BaseTestWorkbook {
 
     // currently writing the same sheet multiple times is not supported...
     @Ignore
-	public void bug53515() throws Exception {
-		Workbook wb = new SXSSFWorkbook(10);
-		populateWorkbook(wb);
-		saveTwice(wb);
-		wb = new XSSFWorkbook();
-		populateWorkbook(wb);
-		saveTwice(wb);
-	}
+    public void bug53515() throws Exception {
+        Workbook wb = new SXSSFWorkbook(10);
+        populateWorkbook(wb);
+        saveTwice(wb);
+        wb = new XSSFWorkbook();
+        populateWorkbook(wb);
+        saveTwice(wb);
+    }
 
-	// Crashes the JVM because of documented JVM behavior with concurrent writing/reading of zip-files
-	// See http://www.oracle.com/technetwork/java/javase/documentation/overview-156328.html
+    // Crashes the JVM because of documented JVM behavior with concurrent writing/reading of zip-files
+    // See http://www.oracle.com/technetwork/java/javase/documentation/overview-156328.html
     @Ignore
-	public void bug53515a() throws Exception {
-		File out = new File("Test.xlsx");
-		out.delete();
-		for (int i = 0; i < 2; i++) {
-			System.out.println("Iteration " + i);
-			final SXSSFWorkbook wb;
-			if (out.exists()) {
-				wb = new SXSSFWorkbook(
-						(XSSFWorkbook) WorkbookFactory.create(out));
-			} else {
-				wb = new SXSSFWorkbook(10);
-			}
+    public void bug53515a() throws Exception {
+        File out = new File("Test.xlsx");
+        out.delete();
+        for (int i = 0; i < 2; i++) {
+            System.out.println("Iteration " + i);
+            final SXSSFWorkbook wb;
+            if (out.exists()) {
+                wb = new SXSSFWorkbook(
+                        (XSSFWorkbook) WorkbookFactory.create(out));
+            } else {
+                wb = new SXSSFWorkbook(10);
+            }
 
-			try {
-				FileOutputStream outSteam = new FileOutputStream(out);
-				if (i == 0) {
-					populateWorkbook(wb);
-				} else {
-					System.gc();
-					System.gc();
-					System.gc();
-				}
+            try {
+                FileOutputStream outSteam = new FileOutputStream(out);
+                if (i == 0) {
+                    populateWorkbook(wb);
+                } else {
+                    System.gc();
+                    System.gc();
+                    System.gc();
+                }
 
-				wb.write(outSteam);
-				// assertTrue(wb.dispose());
-				outSteam.close();
-			} finally {
-				assertTrue(wb.dispose());
-			}
-		}
-		out.delete();
-	}
+                wb.write(outSteam);
+                // assertTrue(wb.dispose());
+                outSteam.close();
+            } finally {
+                assertTrue(wb.dispose());
+            }
+        }
+        out.delete();
+    }
 
-	private static void populateWorkbook(Workbook wb) {
-		Sheet sh = wb.createSheet();
-		for (int rownum = 0; rownum < 100; rownum++) {
-			Row row = sh.createRow(rownum);
-			for (int cellnum = 0; cellnum < 10; cellnum++) {
-				Cell cell = row.createCell(cellnum);
-				String address = new CellReference(cell).formatAsString();
-				cell.setCellValue(address);
-			}
-		}
-	}
+    private static void populateWorkbook(Workbook wb) {
+        Sheet sh = wb.createSheet();
+        for (int rownum = 0; rownum < 100; rownum++) {
+            Row row = sh.createRow(rownum);
+            for (int cellnum = 0; cellnum < 10; cellnum++) {
+                Cell cell = row.createCell(cellnum);
+                String address = new CellReference(cell).formatAsString();
+                cell.setCellValue(address);
+            }
+        }
+    }
 
-	private static void saveTwice(Workbook wb) throws Exception {
-		for (int i = 0; i < 2; i++) {
-			try {
-				NullOutputStream out = new NullOutputStream();
-				wb.write(out);
-				out.close();
-			} catch (Exception e) {
-				throw new Exception("ERROR: failed on " + (i + 1)
-						+ "th time calling " + wb.getClass().getName()
-						+ ".write() with exception " + e.getMessage(), e);
-			}
-		}
-	}
-
-	private static class NullOutputStream extends OutputStream {
-		@Override
-		public void write(int b) throws IOException {
-		}
-	}
+    private static void saveTwice(Workbook wb) throws Exception {
+        for (int i = 0; i < 2; i++) {
+            try {
+                NullOutputStream out = new NullOutputStream();
+                wb.write(out);
+                out.close();
+            } catch (Exception e) {
+                throw new Exception("ERROR: failed on " + (i + 1)
+                        + "th time calling " + wb.getClass().getName()
+                        + ".write() with exception " + e.getMessage(), e);
+            }
+        }
+    }
 }
