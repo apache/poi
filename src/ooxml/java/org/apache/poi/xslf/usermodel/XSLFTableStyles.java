@@ -26,6 +26,7 @@ import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.util.Beta;
+import org.apache.poi.util.DocumentHelper;
 import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTableStyle;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTableStyleList;
@@ -43,7 +44,7 @@ public class XSLFTableStyles extends POIXMLDocumentPart implements Iterable<XSLF
     public XSLFTableStyles(PackagePart part, PackageRelationship rel) throws IOException, XmlException {
         super(part, rel);
 
-        _tblStyleLst = CTTableStyleList.Factory.parse(getPackagePart().getInputStream());
+        _tblStyleLst = CTTableStyleList.Factory.parse(getPackagePart().getInputStream(), POIXMLDocumentPart.DEFAULT_XML_OPTIONS);
         CTTableStyle[] tblStyleArray = _tblStyleLst.getTblStyleArray();
         _styles = new ArrayList<XSLFTableStyle>(tblStyleArray.length);
         for(CTTableStyle c : tblStyleArray){

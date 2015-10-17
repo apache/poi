@@ -34,6 +34,7 @@ import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.BuiltinFormats;
 import org.apache.poi.ss.usermodel.FontFamily;
 import org.apache.poi.ss.usermodel.FontScheme;
+import org.apache.poi.util.DocumentHelper;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFFactory;
 import org.apache.poi.xssf.usermodel.XSSFFont;
@@ -147,7 +148,7 @@ public class StylesTable extends POIXMLDocumentPart {
     @SuppressWarnings("deprecation") //YK: getXYZArray() array accessors are deprecated in xmlbeans with JDK 1.5 support
     protected void readFrom(InputStream is) throws IOException {
         try {
-            doc = StyleSheetDocument.Factory.parse(is);
+            doc = StyleSheetDocument.Factory.parse(is, POIXMLDocumentPart.DEFAULT_XML_OPTIONS);
 
             CTStylesheet styleSheet = doc.getStyleSheet();
 

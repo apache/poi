@@ -25,6 +25,7 @@ import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.sl.usermodel.Notes;
 import org.apache.poi.util.Beta;
+import org.apache.poi.util.DocumentHelper;
 import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTCommonSlideData;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTNotesSlide;
@@ -56,7 +57,7 @@ implements Notes<XSLFShape,XSLFTextParagraph> {
         super(part, rel);
 
         NotesDocument doc =
-            NotesDocument.Factory.parse(getPackagePart().getInputStream());
+            NotesDocument.Factory.parse(getPackagePart().getInputStream(), POIXMLDocumentPart.DEFAULT_XML_OPTIONS);
         _notes = doc.getNotes();
         setCommonSlideData(_notes.getCSld());
     }

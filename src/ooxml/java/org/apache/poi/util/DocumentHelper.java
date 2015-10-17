@@ -33,7 +33,7 @@ import org.xml.sax.SAXException;
 
 public final class DocumentHelper {
     private static POILogger logger = POILogFactory.getLogger(DocumentHelper.class);
-    
+
     private DocumentHelper() {}
 
     /**

@@ -27,6 +27,7 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
+import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.POIXMLException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
@@ -61,7 +62,7 @@ public class XSSFChartSheet extends XSSFSheet  {
         super.read(new ByteArrayInputStream(BLANK_WORKSHEET));
 
         try {
-            chartsheet = ChartsheetDocument.Factory.parse(is).getChartsheet();
+            chartsheet = ChartsheetDocument.Factory.parse(is, POIXMLDocumentPart.DEFAULT_XML_OPTIONS).getChartsheet();
         } catch (XmlException e){
             throw new POIXMLException(e);
         }

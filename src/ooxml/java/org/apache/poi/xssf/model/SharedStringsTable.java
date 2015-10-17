@@ -29,6 +29,7 @@ import java.util.Map;
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.util.DocumentHelper;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
@@ -116,7 +117,7 @@ public class SharedStringsTable extends POIXMLDocumentPart {
     public void readFrom(InputStream is) throws IOException {
         try {
             int cnt = 0;
-            _sstDoc = SstDocument.Factory.parse(is);
+            _sstDoc = SstDocument.Factory.parse(is, POIXMLDocumentPart.DEFAULT_XML_OPTIONS);
             CTSst sst = _sstDoc.getSst();
             count = (int)sst.getCount();
             uniqueCount = (int)sst.getUniqueCount();

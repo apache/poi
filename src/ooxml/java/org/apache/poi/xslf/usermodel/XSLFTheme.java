@@ -27,6 +27,7 @@ import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.util.Beta;
+import org.apache.poi.util.DocumentHelper;
 import org.apache.poi.util.Internal;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
@@ -57,7 +58,7 @@ public class XSLFTheme extends POIXMLDocumentPart {
     public XSLFTheme(PackagePart part, PackageRelationship rel) throws IOException, XmlException {
         super(part, rel);
         ThemeDocument doc =
-            ThemeDocument.Factory.parse(getPackagePart().getInputStream());
+            ThemeDocument.Factory.parse(getPackagePart().getInputStream(), POIXMLDocumentPart.DEFAULT_XML_OPTIONS);
         _theme = doc.getTheme();
         initialize();
     }

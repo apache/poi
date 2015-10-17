@@ -28,6 +28,7 @@ import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.util.DocumentHelper;
 import org.apache.poi.xssf.usermodel.helpers.XSSFXmlColumnPr;
 import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTable;
@@ -69,7 +70,7 @@ public class XSSFTable extends POIXMLDocumentPart {
 
 	public void readFrom(InputStream is) throws IOException {
 		try {
-			TableDocument doc = TableDocument.Factory.parse(is);
+			TableDocument doc = TableDocument.Factory.parse(is, POIXMLDocumentPart.DEFAULT_XML_OPTIONS);
 			ctTable = doc.getTable();
 		} catch (XmlException e) {
 			throw new IOException(e.getLocalizedMessage());

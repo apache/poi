@@ -34,6 +34,7 @@ import org.apache.poi.ss.usermodel.charts.AxisPosition;
 import org.apache.poi.ss.usermodel.charts.ChartAxis;
 import org.apache.poi.ss.usermodel.charts.ChartAxisFactory;
 import org.apache.poi.ss.usermodel.charts.ChartData;
+import org.apache.poi.util.DocumentHelper;
 import org.apache.poi.util.Internal;
 import org.apache.poi.xssf.usermodel.charts.XSSFCategoryAxis;
 import org.apache.poi.xssf.usermodel.charts.XSSFChartAxis;
@@ -100,7 +101,7 @@ public final class XSSFChart extends POIXMLDocumentPart implements Chart, ChartA
 	protected XSSFChart(PackagePart part, PackageRelationship rel) throws IOException, XmlException {
 		super(part, rel);
 
-		chartSpace = ChartSpaceDocument.Factory.parse(part.getInputStream()).getChartSpace(); 
+		chartSpace = ChartSpaceDocument.Factory.parse(part.getInputStream(), POIXMLDocumentPart.DEFAULT_XML_OPTIONS).getChartSpace(); 
 		chart = chartSpace.getChart();
 	}
 

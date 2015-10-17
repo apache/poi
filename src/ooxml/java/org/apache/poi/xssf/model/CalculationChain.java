@@ -25,6 +25,7 @@ import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.util.DocumentHelper;
 
 /**
  * The cells in a workbook can be calculated in different orders depending on various optimizations and
@@ -47,7 +48,7 @@ public class CalculationChain extends POIXMLDocumentPart {
 
     public void readFrom(InputStream is) throws IOException {
         try {
-            CalcChainDocument doc = CalcChainDocument.Factory.parse(is);
+            CalcChainDocument doc = CalcChainDocument.Factory.parse(is, POIXMLDocumentPart.DEFAULT_XML_OPTIONS);
             chain = doc.getCalcChain();
         } catch (XmlException e) {
             throw new IOException(e.getLocalizedMessage());

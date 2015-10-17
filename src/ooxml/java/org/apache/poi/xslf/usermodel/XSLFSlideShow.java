@@ -21,6 +21,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.poi.POIXMLDocument;
+import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -73,7 +74,7 @@ public class XSLFSlideShow extends POIXMLDocument {
 		}
 
 		presentationDoc =
-			PresentationDocument.Factory.parse(getCorePart().getInputStream());
+			PresentationDocument.Factory.parse(getCorePart().getInputStream(), POIXMLDocumentPart.DEFAULT_XML_OPTIONS);
 
 		embedds = new LinkedList<PackagePart>();
 		for (CTSlideIdListEntry ctSlide : getSlideReferences().getSldIdArray()) {
@@ -145,7 +146,7 @@ public class XSLFSlideShow extends POIXMLDocument {
 	public CTSlideMaster getSlideMaster(CTSlideMasterIdListEntry master) throws IOException, XmlException {
 		PackagePart masterPart = getSlideMasterPart(master);
 		SldMasterDocument masterDoc =
-			SldMasterDocument.Factory.parse(masterPart.getInputStream());
+			SldMasterDocument.Factory.parse(masterPart.getInputStream(), POIXMLDocumentPart.DEFAULT_XML_OPTIONS);
 		return masterDoc.getSldMaster();
 	}
 
@@ -165,7 +166,7 @@ public class XSLFSlideShow extends POIXMLDocument {
 	public CTSlide getSlide(CTSlideIdListEntry slide) throws IOException, XmlException {
 		PackagePart slidePart = getSlidePart(slide);
 		SldDocument slideDoc =
-			SldDocument.Factory.parse(slidePart.getInputStream());
+			SldDocument.Factory.parse(slidePart.getInputStream(), POIXMLDocumentPart.DEFAULT_XML_OPTIONS);
 		return slideDoc.getSld();
 	}
 
@@ -208,7 +209,7 @@ public class XSLFSlideShow extends POIXMLDocument {
 			return null;
 
 		NotesDocument notesDoc =
-			NotesDocument.Factory.parse(notesPart.getInputStream());
+			NotesDocument.Factory.parse(notesPart.getInputStream(), POIXMLDocumentPart.DEFAULT_XML_OPTIONS);
 
 		return notesDoc.getNotes();
 	}
@@ -240,7 +241,7 @@ public class XSLFSlideShow extends POIXMLDocument {
 					commentRels.getRelationship(0)
 			);
 			CmLstDocument commDoc =
-				CmLstDocument.Factory.parse(cPart.getInputStream());
+				CmLstDocument.Factory.parse(cPart.getInputStream(), POIXMLDocumentPart.DEFAULT_XML_OPTIONS);
 			return commDoc.getCmLst();
 		} catch(InvalidFormatException e) {
 			throw new IllegalStateException(e);

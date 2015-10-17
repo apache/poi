@@ -21,6 +21,7 @@ import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.util.Beta;
+import org.apache.poi.util.DocumentHelper;
 import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTComment;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTCommentList;
@@ -53,7 +54,7 @@ public class XSLFComments extends POIXMLDocumentPart {
         super(part, rel);
 
         CmLstDocument doc =
-           CmLstDocument.Factory.parse(getPackagePart().getInputStream());
+           CmLstDocument.Factory.parse(getPackagePart().getInputStream(), POIXMLDocumentPart.DEFAULT_XML_OPTIONS);
         _comments = doc.getCmLst();
     }
     

@@ -32,6 +32,7 @@ import org.apache.poi.POIXMLException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.util.DocumentHelper;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTDocDefaults;
@@ -82,7 +83,7 @@ public class XWPFStyles extends POIXMLDocumentPart {
         StylesDocument stylesDoc;
         try {
             InputStream is = getPackagePart().getInputStream();
-            stylesDoc = StylesDocument.Factory.parse(is);
+            stylesDoc = StylesDocument.Factory.parse(is, POIXMLDocumentPart.DEFAULT_XML_OPTIONS);
             setStyles(stylesDoc.getStyles());
             latentStyles = new XWPFLatentStyles(ctStyles.getLatentStyles(), this);
         } catch (XmlException e) {

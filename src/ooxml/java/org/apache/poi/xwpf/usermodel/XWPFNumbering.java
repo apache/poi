@@ -32,6 +32,7 @@ import org.apache.poi.POIXMLException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.util.DocumentHelper;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTAbstractNum;
@@ -75,7 +76,7 @@ public class XWPFNumbering extends POIXMLDocumentPart {
         InputStream is;
         is = getPackagePart().getInputStream();
         try {
-            numberingDoc = NumberingDocument.Factory.parse(is);
+            numberingDoc = NumberingDocument.Factory.parse(is, POIXMLDocumentPart.DEFAULT_XML_OPTIONS);
             ctNumbering = numberingDoc.getNumbering();
             //get any Nums
             for (CTNum ctNum : ctNumbering.getNumArray()) {

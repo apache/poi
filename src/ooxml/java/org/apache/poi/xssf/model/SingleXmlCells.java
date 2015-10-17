@@ -26,6 +26,7 @@ import java.util.Vector;
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.util.DocumentHelper;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.helpers.XSSFSingleXmlCell;
 import org.apache.xmlbeans.XmlException;
@@ -61,7 +62,7 @@ public class SingleXmlCells extends POIXMLDocumentPart {
 
 	public void readFrom(InputStream is) throws IOException {
 		try {
-			SingleXmlCellsDocument doc = SingleXmlCellsDocument.Factory.parse(is);
+			SingleXmlCellsDocument doc = SingleXmlCellsDocument.Factory.parse(is, POIXMLDocumentPart.DEFAULT_XML_OPTIONS);
 			singleXMLCells = doc.getSingleXmlCells();
 		} catch (XmlException e) {
 			throw new IOException(e.getLocalizedMessage());

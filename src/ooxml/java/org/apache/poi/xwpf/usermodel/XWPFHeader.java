@@ -28,6 +28,7 @@ import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.POIXMLException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.util.DocumentHelper;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
@@ -105,7 +106,7 @@ public class XWPFHeader extends XWPFHeaderFooter {
         InputStream is;
         try {
             is = getPackagePart().getInputStream();
-            hdrDocument = HdrDocument.Factory.parse(is);
+            hdrDocument = HdrDocument.Factory.parse(is, POIXMLDocumentPart.DEFAULT_XML_OPTIONS);
             headerFooter = hdrDocument.getHdr();
             // parse the document with cursor and add
             // the XmlObject to its lists

@@ -48,6 +48,7 @@ import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
+import org.apache.poi.util.DocumentHelper;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.IdentifierManager;
 import org.apache.poi.util.Internal;
@@ -155,7 +156,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     @Override
     protected void onDocumentRead() throws IOException {
         try {
-            DocumentDocument doc = DocumentDocument.Factory.parse(getPackagePart().getInputStream());
+            DocumentDocument doc = DocumentDocument.Factory.parse(getPackagePart().getInputStream(), POIXMLDocumentPart.DEFAULT_XML_OPTIONS);
             ctDocument = doc.getDocument();
 
             initFootnotes();
@@ -205,7 +206,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
                     header.onDocumentRead();
                 } else if (relation.equals(XWPFRelation.COMMENT.getRelation())) {
                     // TODO Create according XWPFComment class, extending POIXMLDocumentPart
-                    CommentsDocument cmntdoc = CommentsDocument.Factory.parse(p.getPackagePart().getInputStream());
+                    CommentsDocument cmntdoc = CommentsDocument.Factory.parse(p.getPackagePart().getInputStream(), POIXMLDocumentPart.DEFAULT_XML_OPTIONS);
                     for (CTComment ctcomment : cmntdoc.getComments().getCommentArray()) {
                         comments.add(new XWPFComment(ctcomment, this));
                     }
@@ -262,7 +263,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
                 this.footnotes = (XWPFFootnotes) p;
                 this.footnotes.onDocumentRead();
             } else if (relation.equals(XWPFRelation.ENDNOTE.getRelation())) {
-                EndnotesDocument endnotesDocument = EndnotesDocument.Factory.parse(p.getPackagePart().getInputStream());
+                EndnotesDocument endnotesDocument = EndnotesDocument.Factory.parse(p.getPackagePart().getInputStream(), POIXMLDocumentPart.DEFAULT_XML_OPTIONS);
 
                 for (CTFtnEdn ctFtnEdn : endnotesDocument.getEndnotes().getEndnoteArray()) {
                     endnotes.put(ctFtnEdn.getId().intValue(), new XWPFFootnote(this, ctFtnEdn));
@@ -452,7 +453,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
             throw new IllegalStateException("Expecting one Styles document part, but found " + parts.length);
         }
 
-        StylesDocument sd = StylesDocument.Factory.parse(parts[0].getInputStream());
+        StylesDocument sd = StylesDocument.Factory.parse(parts[0].getInputStream(), POIXMLDocumentPart.DEFAULT_XML_OPTIONS);
         return sd.getStyles();
     }
 

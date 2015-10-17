@@ -22,6 +22,7 @@ import java.io.OutputStream;
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.util.DocumentHelper;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
@@ -80,7 +81,7 @@ public class ThemesTable extends POIXMLDocumentPart {
         super(part, rel);
         
         try {
-           theme = ThemeDocument.Factory.parse(part.getInputStream());
+           theme = ThemeDocument.Factory.parse(part.getInputStream(), POIXMLDocumentPart.DEFAULT_XML_OPTIONS);
         } catch(XmlException e) {
            throw new IOException(e.getLocalizedMessage(), e);
         }
