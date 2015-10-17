@@ -26,14 +26,15 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
-
-import junit.framework.AssertionFailedError;
 
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.junit.Test;
+
+import junit.framework.AssertionFailedError;
 
 /**
  * @author Yegor Kozlov
@@ -753,4 +754,48 @@ public abstract class BaseTestWorkbook {
 					sheets[i], wb.getSheetAt(i).getSheetName());
 		}
 	}
+
+    protected static class NullOutputStream extends OutputStream {
+        public NullOutputStream() {
+        }
+
+        @Override
+        public void write(int b) throws IOException {
+        }
+    }
+
+    @Test
+    public void test58499() throws IOException {
+        Workbook workbook = _testDataProvider.createWorkbook();
+        Sheet sheet = workbook.createSheet();
+        for (int i = 0; i < 900; i++) {
+            Row r = sheet.createRow(i);
+            Cell c = r.createCell(0);
+            CellStyle cs = workbook.createCellStyle();
+            c.setCellStyle(cs);
+            c.setCellValue("AAA");                
+        }
+        OutputStream os = new NullOutputStream();
+        try {
+            workbook.write(os);
+        } finally {
+            os.close();
+        }
+        //workbook.dispose();
+        workbook.close();
+    }
+
+
+    @Test
+    public void windowOneDefaults() throws IOException {
+        Workbook b = _testDataProvider.createWorkbook();
+        try {
+            assertEquals(b.getActiveSheetIndex(), 0);
+            assertEquals(b.getFirstVisibleTab(), 0);
+        } catch (NullPointerException npe) {
+            fail("WindowOneRecord in Workbook is probably not initialized");
+        }
+        
+        b.close();
+    }
 }

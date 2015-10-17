@@ -81,19 +81,6 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         return wb.getWorkbook();
     }
 
-    @Test
-    public void windowOneDefaults() throws IOException {
-        HSSFWorkbook b = new HSSFWorkbook( );
-        try {
-            assertEquals(b.getActiveSheetIndex(), 0);
-            assertEquals(b.getFirstVisibleTab(), 0);
-        } catch (NullPointerException npe) {
-            fail("WindowOneRecord in Workbook is probably not initialized");
-        }
-        
-        b.close();
-    }
-
     /**
      * Tests for {@link HSSFWorkbook#isHidden()} etc
      * @throws IOException 
