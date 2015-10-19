@@ -17,7 +17,6 @@
 
 package org.apache.poi.xdgf.usermodel.section;
 
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
@@ -35,12 +34,19 @@ public class CombinedIterable<T> implements Iterable<T> {
     
     private static final class EmptyIterator<T> implements Iterator<T> {
 
+        @Override
         public boolean hasNext() {
             return false;
         }
 
+        @Override
         public T next() {
             return null;
+        }
+        
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException();
         }
         
     }
