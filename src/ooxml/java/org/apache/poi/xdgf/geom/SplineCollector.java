@@ -20,10 +20,14 @@ package org.apache.poi.xdgf.geom;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
-import org.apache.poi.ss.formula.functions.LookupUtils.ValueVector;
 import org.apache.poi.xdgf.usermodel.XDGFShape;
 import org.apache.poi.xdgf.usermodel.section.geometry.SplineKnot;
 import org.apache.poi.xdgf.usermodel.section.geometry.SplineStart;
+
+import com.graphbuilder.curve.ControlPath;
+import com.graphbuilder.curve.ShapeMultiPath;
+import com.graphbuilder.curve.ValueVector;
+import com.graphbuilder.geom.PointFactory;
 
 public class SplineCollector {
 
