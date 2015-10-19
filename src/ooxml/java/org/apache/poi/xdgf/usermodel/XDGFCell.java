@@ -31,6 +31,10 @@ import com.microsoft.schemas.office.visio.x2012.main.CellType;
  *
  * The various attributes of a Cell are constrained, and are better defined in
  * the XSD 1.1 visio schema
+ * 
+ * Values of a cell are often the result of a formula computation. Luckily for
+ * you, Visio seems to always write the result to the document file, so unless
+ * the values change we don't need to recompute the values.
  */
 public class XDGFCell {
 
@@ -97,7 +101,10 @@ public class XDGFCell {
         }
     }
 
-    // returns a length, converts it to inches?
+    /**
+     * @param cell
+     * @return A value converted to inches
+     */
     public static Double parseVLength(CellType cell) {
         try {
             return Double.parseDouble(cell.getV());
@@ -116,7 +123,7 @@ public class XDGFCell {
     }
 
     @Internal
-    CellType getXmlObject() {
+    protected CellType getXmlObject() {
         return _cell;
     }
 

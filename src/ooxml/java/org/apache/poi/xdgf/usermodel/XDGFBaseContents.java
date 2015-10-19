@@ -40,7 +40,9 @@ import com.microsoft.schemas.office.visio.x2012.main.PageContentsType;
 import com.microsoft.schemas.office.visio.x2012.main.ShapeSheetType;
 
 /**
- * Container of shapes for a page in a visio document
+ * Container of shapes for a page in a Visio diagram. Shapes are not
+ * necessarily literal shapes in the diagram, but is the term that is
+ * used to describe the basic elements that make up a Visio diagram.
  */
 public class XDGFBaseContents extends XDGFXMLDocumentPart {
 
@@ -105,6 +107,7 @@ public class XDGFBaseContents extends XDGFXMLDocumentPart {
     //
 
     /**
+     * Draws the contents of a page onto a Graphics2D object
      *
      * @param graphics
      */
@@ -128,8 +131,7 @@ public class XDGFBaseContents extends XDGFXMLDocumentPart {
     public List<XDGFShape> getTopLevelShapes() {
         return Collections.unmodifiableList(_toplevelShapes);
     }
-
-    // get connections
+    
     public List<XDGFConnection> getConnections() {
         return Collections.unmodifiableList(_connections);
     }

@@ -27,9 +27,12 @@ import org.apache.xmlbeans.XmlException;
 
 import com.microsoft.schemas.office.visio.x2012.main.MasterContentsDocument;
 
+/**
+ * Contains the actual contents of the master/stencil
+ */
 public class XDGFMasterContents extends XDGFBaseContents {
 
-    private XDGFMaster _master;
+    protected XDGFMaster _master;
 
     public XDGFMasterContents(PackagePart part, PackageRelationship rel,
             XDGFDocument document) {

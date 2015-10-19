@@ -33,7 +33,7 @@ public class XDGFRelation extends POIXMLRelation {
 
     public static final XDGFRelation DOCUMENT = new XDGFRelation(
             "application/vnd.ms-visio.drawing.main+xml",
-            "http://schemas.microsoft.com/visio/2010/relationships/document",
+            PackageRelationshipTypes.VISIO_CORE_DOCUMENT,
             "/visio/document.xml", null);
 
     public static final XDGFRelation MASTERS = new XDGFRelation(

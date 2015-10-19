@@ -92,7 +92,11 @@ public abstract class XDGFSheet {
         return _document;
     }
 
-    // A cell is really just a setting
+    /**
+     * A cell is really just a setting
+     *
+     * @param cellName The particular setting you want
+     */
     public XDGFCell getCell(String cellName) {
         return _cells.get(cellName);
     }

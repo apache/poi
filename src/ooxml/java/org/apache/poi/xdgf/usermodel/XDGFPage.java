@@ -31,10 +31,10 @@ import com.microsoft.schemas.office.visio.x2012.main.PageType;
  */
 public class XDGFPage {
 
-    PageType _page;
-    XDGFPageContents _content;
-    XDGFPages _pages;
-    XDGFSheet _pageSheet = null;
+    private PageType _page;
+    protected XDGFPageContents _content;
+    protected XDGFPages _pages;
+    protected XDGFSheet _pageSheet = null;
 
     public XDGFPage(PageType page, XDGFPageContents content,
             XDGFDocument document, XDGFPages pages) {
@@ -48,7 +48,7 @@ public class XDGFPage {
     }
 
     @Internal
-    PageType getXmlObject() {
+    protected PageType getXmlObject() {
         return _page;
     }
 
@@ -72,7 +72,9 @@ public class XDGFPage {
         return _pages.getPageList().indexOf(this) + 1;
     }
 
-    // height/width of page
+    /**
+     * @return width/height of page
+     */
     public Dimension2dDouble getPageSize() {
         XDGFCell w = _pageSheet.getCell("PageWidth");
         XDGFCell h = _pageSheet.getCell("PageHeight");
@@ -84,7 +86,9 @@ public class XDGFPage {
                 Double.parseDouble(h.getValue()));
     }
 
-    // origin of coordinate system
+    /**
+     * @return origin of coordinate system
+     */
     public Point2D.Double getPageOffset() {
         XDGFCell xoffcell = _pageSheet.getCell("XRulerOrigin");
         XDGFCell yoffcell = _pageSheet.getCell("YRulerOrigin");
@@ -101,7 +105,9 @@ public class XDGFPage {
         return new Point2D.Double(xoffset, yoffset);
     }
 
-    // bounding box of page
+    /**
+     * @return bounding box of page
+     */
     public Rectangle2D getBoundingBox() {
         Dimension2dDouble sz = getPageSize();
         Point2D.Double offset = getPageOffset();

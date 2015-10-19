@@ -90,7 +90,9 @@ public class XDGFPages extends XDGFXMLDocumentPart {
         }
     }
 
-    // ordered by page number
+    /**
+     * @return A list of pages ordered by page number
+     */
     public List<XDGFPage> getPageList() {
         return Collections.unmodifiableList(_pages);
     }

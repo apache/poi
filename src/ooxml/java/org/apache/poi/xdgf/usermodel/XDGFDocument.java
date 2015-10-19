@@ -44,7 +44,7 @@ public class XDGFDocument {
 
 
     public XDGFDocument(VisioDocumentType document) {
-
+        
         _document = document;
 
         if (!_document.isSetDocumentSettings())

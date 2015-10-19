@@ -30,6 +30,10 @@ import org.apache.poi.xdgf.usermodel.XDGFShape;
 import org.apache.poi.xdgf.usermodel.XmlVisioDocument;
 import org.apache.poi.xdgf.usermodel.shape.ShapeVisitor;
 
+/**
+ * Debugging tool useful when trying to figure out the hierarchy of the
+ * shapes in a Visio diagram
+ */
 public class HierarchyPrinter {
 
     public static void printHierarchy(XDGFPage page, File outDir)
