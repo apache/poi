@@ -105,7 +105,7 @@ public class TestAllFiles {
         // Visio - binary
         HANDLERS.put(".vsd", new HDGFFileHandler());
         
-        // Visio - ooxml (currently unsupported)
+        // Visio - ooxml
         HANDLERS.put(".vsdm", new XDGFFileHandler());
         HANDLERS.put(".vsdx", new XDGFFileHandler());
         HANDLERS.put(".vssm", new XDGFFileHandler());

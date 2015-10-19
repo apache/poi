@@ -19,6 +19,7 @@ package org.apache.poi.xdgf.usermodel;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -107,15 +108,21 @@ public class XmlVisioDocument extends POIXMLDocument {
         _pages.onDocumentRead();
     }
 
+    /**
+     * Not currently implemented
+     */
     @Override
     public List<PackagePart> getAllEmbedds() throws OpenXML4JException {
-        throw new UnsupportedOperationException("Not implemented");
+        return new ArrayList<PackagePart>();
     }
 
     //
     // Useful public API goes here
     //
     
+    /**
+     * @return pages ordered by page number
+     */
     public Collection<XDGFPage> getPages() {
         return _pages.getPageList();
     }

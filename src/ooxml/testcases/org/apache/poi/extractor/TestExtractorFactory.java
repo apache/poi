@@ -44,6 +44,7 @@ import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.xdgf.extractor.XDGFVisioExtractor;
 import org.apache.poi.xslf.extractor.XSLFPowerPointExtractor;
 import org.apache.poi.xssf.extractor.XSSFEventBasedExcelExtractor;
 import org.apache.poi.xssf.extractor.XSSFExcelExtractor;
@@ -271,12 +272,13 @@ public class TestExtractorFactory {
                 ExtractorFactory.createExtractor(vsd).getText().length() > 50
         );
         // Visio - vsdx
-        try {
-            ExtractorFactory.createExtractor(vsdx);
-            fail();
-        } catch(IllegalArgumentException e) {
-            // Good
-        }
+        assertTrue(
+                ExtractorFactory.createExtractor(vsdx)
+                instanceof XDGFVisioExtractor
+        );
+        assertTrue(
+                ExtractorFactory.createExtractor(vsdx).getText().length() > 20
+        );
 
         // Publisher
         assertTrue(
@@ -391,13 +393,15 @@ public class TestExtractorFactory {
                 ExtractorFactory.createExtractor(new FileInputStream(vsd)).getText().length() > 50
         );
         // Visio - vsdx
-        try {
-            ExtractorFactory.createExtractor(new FileInputStream(vsdx));
-            fail();
-        } catch(IllegalArgumentException e) {
-            // Good
-        }
+        assertTrue(
+                ExtractorFactory.createExtractor(new FileInputStream(vsdx))
+                instanceof XDGFVisioExtractor
+        );
+        assertTrue(
+                ExtractorFactory.createExtractor(new FileInputStream(vsdx)).getText().length() > 20
+        );
 
+        
         // Publisher
         assertTrue(
                 ExtractorFactory.createExtractor(new FileInputStream(pub))
@@ -551,6 +555,15 @@ public class TestExtractorFactory {
                 extractor.getText().length() > 120
         );
         extractor.close();
+        
+        // Visio
+        assertTrue(
+                ExtractorFactory.createExtractor(OPCPackage.open(vsdx.toString()))
+                instanceof XDGFVisioExtractor
+        );
+        assertTrue(
+                extractor.getText().length() > 20
+        );
 
         // Text
         try {
