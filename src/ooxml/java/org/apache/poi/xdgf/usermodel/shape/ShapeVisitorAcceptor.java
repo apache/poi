@@ -21,6 +21,6 @@ import org.apache.poi.xdgf.usermodel.XDGFShape;
 
 public interface ShapeVisitorAcceptor {
 
-	public boolean accept(XDGFShape shape);
-	
+    public boolean accept(XDGFShape shape);
+
 }

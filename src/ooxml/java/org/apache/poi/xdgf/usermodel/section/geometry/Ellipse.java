@@ -29,128 +29,132 @@ import com.microsoft.schemas.office.visio.x2012.main.CellType;
 import com.microsoft.schemas.office.visio.x2012.main.RowType;
 
 public class Ellipse implements GeometryRow {
-	
-	Ellipse _master = null;
-	
-	// x coordinate of center point
-	Double x = null;
-	// y coordinate of center point
-	Double y = null;
-	
-	// x coordinate of first point on ellipse
-	Double a = null;
-	// y coordinate of first point on ellipse
-	Double b = null;
-	
-	// x coordinate of second point on ellipse
-	Double c = null;
-	// y coordinate of second point on ellipse
-	Double d = null;
-	
-	Boolean deleted = null;
-	
-	// TODO: support formulas
-	
-	public Ellipse(RowType row) {
-		
-		if (row.isSetDel()) deleted = row.getDel();
-		
-		for (CellType cell: row.getCellArray()) {
-			String cellName = cell.getN();
-			
-			if (cellName.equals("X")) {
-				x = XDGFCell.parseDoubleValue(cell);
-			} else if (cellName.equals("Y")) {
-				y = XDGFCell.parseDoubleValue(cell);
-			} else if (cellName.equals("A")) {
-				a = XDGFCell.parseDoubleValue(cell);
-			} else if (cellName.equals("B")) {
-				b = XDGFCell.parseDoubleValue(cell);
-			} else if (cellName.equals("C")) {
-				c = XDGFCell.parseDoubleValue(cell);
-			} else if (cellName.equals("D")) {
-				d = XDGFCell.parseDoubleValue(cell);
-			} else {
-				throw new POIXMLException("Invalid cell '" + cellName + "' in Ellipse row");
-			}
-		}
-	}
-	
-	public boolean getDel() {
-		if (deleted != null)
-			return deleted;
-		
-		if (_master != null)
-			return _master.getDel();
-			
-		return false;
-	}
-	
-	public Double getX() {
-		return x == null ? _master.x : x;
-	}
-	
-	public Double getY() {
-		return y == null ? _master.y : y;
-	}
-	
-	public Double getA() {
-		return a == null ? _master.a : a;
-	}
-	
-	public Double getB() {
-		return b == null ? _master.b : b;
-	}
-	
-	public Double getC() {
-		return c == null ? _master.c : c;
-	}
-	
-	public Double getD() {
-		return d == null ? _master.d : d;
-	}
 
-	@Override
-	public void setupMaster(GeometryRow row) {
-		_master = (Ellipse) row;
-	}
+    Ellipse _master = null;
 
-	public Path2D.Double getPath() {
-		
-		if (getDel()) return null;
-		
-		// intentionally shadowing variables here
-		double cx = getX(); // center
-		double cy = getY();
-		double a = getA(); // left
-		double b = getB();
-		double c = getC(); // top
-		double d = getD();
-		
-		// compute radius
-		double rx = Math.hypot(a - cx, b - cy);
-		double ry = Math.hypot(c - cx, d - cy);
-		
-		// compute angle of ellipse
-		double angle = (2.0*Math.PI + (cy > b ? 1.0 : -1.0) * Math.acos((cx - a) / rx)) % (2.0*Math.PI);
-		
-		// create ellipse
-		Ellipse2D.Double ellipse = new Ellipse2D.Double(cx - rx,
-														cy - ry,
-														rx*2, ry*2);
-				
-		// create a path, rotate it about its center
-		Path2D.Double path = new Path2D.Double(ellipse);
-		
-		AffineTransform tr = new AffineTransform();
-		tr.rotate(angle, cx, cy);
-		path.transform(tr);
-		
-		return path;
-	}
+    // x coordinate of center point
+    Double x = null;
+    // y coordinate of center point
+    Double y = null;
 
-	@Override
-	public void addToPath(java.awt.geom.Path2D.Double path, XDGFShape parent) {
-		throw new POIXMLException("Ellipse elements cannot be part of a path");
-	}
+    // x coordinate of first point on ellipse
+    Double a = null;
+    // y coordinate of first point on ellipse
+    Double b = null;
+
+    // x coordinate of second point on ellipse
+    Double c = null;
+    // y coordinate of second point on ellipse
+    Double d = null;
+
+    Boolean deleted = null;
+
+    // TODO: support formulas
+
+    public Ellipse(RowType row) {
+
+        if (row.isSetDel())
+            deleted = row.getDel();
+
+        for (CellType cell : row.getCellArray()) {
+            String cellName = cell.getN();
+
+            if (cellName.equals("X")) {
+                x = XDGFCell.parseDoubleValue(cell);
+            } else if (cellName.equals("Y")) {
+                y = XDGFCell.parseDoubleValue(cell);
+            } else if (cellName.equals("A")) {
+                a = XDGFCell.parseDoubleValue(cell);
+            } else if (cellName.equals("B")) {
+                b = XDGFCell.parseDoubleValue(cell);
+            } else if (cellName.equals("C")) {
+                c = XDGFCell.parseDoubleValue(cell);
+            } else if (cellName.equals("D")) {
+                d = XDGFCell.parseDoubleValue(cell);
+            } else {
+                throw new POIXMLException("Invalid cell '" + cellName
+                        + "' in Ellipse row");
+            }
+        }
+    }
+
+    public boolean getDel() {
+        if (deleted != null)
+            return deleted;
+
+        if (_master != null)
+            return _master.getDel();
+
+        return false;
+    }
+
+    public Double getX() {
+        return x == null ? _master.x : x;
+    }
+
+    public Double getY() {
+        return y == null ? _master.y : y;
+    }
+
+    public Double getA() {
+        return a == null ? _master.a : a;
+    }
+
+    public Double getB() {
+        return b == null ? _master.b : b;
+    }
+
+    public Double getC() {
+        return c == null ? _master.c : c;
+    }
+
+    public Double getD() {
+        return d == null ? _master.d : d;
+    }
+
+    @Override
+    public void setupMaster(GeometryRow row) {
+        _master = (Ellipse) row;
+    }
+
+    public Path2D.Double getPath() {
+
+        if (getDel())
+            return null;
+
+        // intentionally shadowing variables here
+        double cx = getX(); // center
+        double cy = getY();
+        double a = getA(); // left
+        double b = getB();
+        double c = getC(); // top
+        double d = getD();
+
+        // compute radius
+        double rx = Math.hypot(a - cx, b - cy);
+        double ry = Math.hypot(c - cx, d - cy);
+
+        // compute angle of ellipse
+        double angle = (2.0 * Math.PI + (cy > b ? 1.0 : -1.0)
+                * Math.acos((cx - a) / rx))
+                % (2.0 * Math.PI);
+
+        // create ellipse
+        Ellipse2D.Double ellipse = new Ellipse2D.Double(cx - rx, cy - ry,
+                rx * 2, ry * 2);
+
+        // create a path, rotate it about its center
+        Path2D.Double path = new Path2D.Double(ellipse);
+
+        AffineTransform tr = new AffineTransform();
+        tr.rotate(angle, cx, cy);
+        path.transform(tr);
+
+        return path;
+    }
+
+    @Override
+    public void addToPath(java.awt.geom.Path2D.Double path, XDGFShape parent) {
+        throw new POIXMLException("Ellipse elements cannot be part of a path");
+    }
 }

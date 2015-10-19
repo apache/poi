@@ -29,36 +29,39 @@ import com.microsoft.schemas.office.visio.x2012.main.MasterContentsDocument;
 
 public class XDGFMasterContents extends XDGFBaseContents {
 
-	private XDGFMaster _master;
-	
-	public XDGFMasterContents(PackagePart part, PackageRelationship rel, XDGFDocument document) {
-		super(part, rel, document);
-	}
-	
-	@Override
-	protected void onDocumentRead() {
+    private XDGFMaster _master;
 
-		try {
-		
-			try {
-				_pageContents = MasterContentsDocument.Factory.parse(getPackagePart().getInputStream()).getMasterContents();
-			} catch (XmlException | IOException e) {
-				throw new POIXMLException(e);
-			}
-			
-			super.onDocumentRead();
-			
-		} catch (POIXMLException e) {
-			throw XDGFException.wrap(this, e);
-		}
-	}
+    public XDGFMasterContents(PackagePart part, PackageRelationship rel,
+            XDGFDocument document) {
+        super(part, rel, document);
+    }
 
-	public XDGFMaster getMaster() {
-		return _master;
-	}
+    @Override
+    protected void onDocumentRead() {
 
-	protected void setMaster(XDGFMaster master) {
-		_master = master;
-	}
+        try {
+
+            try {
+                _pageContents = MasterContentsDocument.Factory.parse(getPackagePart().getInputStream()).getMasterContents();
+            } catch (XmlException e) {
+                throw new POIXMLException(e);
+            } catch (IOException e) {
+                throw new POIXMLException(e);
+            }
+
+            super.onDocumentRead();
+
+        } catch (POIXMLException e) {
+            throw XDGFException.wrap(this, e);
+        }
+    }
+
+    public XDGFMaster getMaster() {
+        return _master;
+    }
+
+    protected void setMaster(XDGFMaster master) {
+        _master = master;
+    }
 
 }
