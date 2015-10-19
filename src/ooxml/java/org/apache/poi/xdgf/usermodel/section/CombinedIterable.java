@@ -32,6 +32,18 @@ public class CombinedIterable<T> implements Iterable<T> {
 
     final SortedMap<Long, T> _baseItems;
     final SortedMap<Long, T> _masterItems;
+    
+    private static final class EmptyIterator<T> implements Iterator<T> {
+
+        public boolean hasNext() {
+            return false;
+        }
+
+        public T next() {
+            return null;
+        }
+        
+    }
 
     public CombinedIterable(SortedMap<Long, T> baseItems,
             SortedMap<Long, T> masterItems) {
@@ -47,7 +59,7 @@ public class CombinedIterable<T> implements Iterable<T> {
         if (_masterItems != null)
             vmasterI = _masterItems.entrySet().iterator();
         else
-            vmasterI = Collections.emptyIterator();
+            vmasterI = new EmptyIterator<Entry<Long, T>>();
 
         return new Iterator<T>() {
 
