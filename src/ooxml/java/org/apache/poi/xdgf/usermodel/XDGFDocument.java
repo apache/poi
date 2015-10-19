@@ -29,6 +29,9 @@ import com.microsoft.schemas.office.visio.x2012.main.VisioDocumentType;
 
 /**
  * Represents the root document: /visio/document.xml
+ * 
+ * You're probably actually looking for {@link XmlVisioDocument}, this
+ * only contains metadata about the root document in the OOXML package.
  */
 public class XDGFDocument {
 

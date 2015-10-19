@@ -55,6 +55,7 @@ import org.apache.poi.poifs.filesystem.NotOLE2FileException;
 import org.apache.poi.poifs.filesystem.OPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.xdgf.extractor.XDGFVisioExtractor;
 import org.apache.poi.xslf.extractor.XSLFPowerPointExtractor;
 import org.apache.poi.xslf.usermodel.XSLFRelation;
 import org.apache.poi.xslf.usermodel.XSLFSlideShow;
@@ -172,11 +173,9 @@ public class ExtractorFactory {
        }
        if (core.size() == 0) {
            // Could it be a visio one?
-           PackageRelationshipCollection visio =
-                   pkg.getRelationshipsByType(VISIO_DOCUMENT_REL);
-           if (visio.size() == 1) {
-               throw new IllegalArgumentException("Text extraction not supported for Visio OOXML files");
-           }
+           core = pkg.getRelationshipsByType(VISIO_DOCUMENT_REL);
+           if (core.size() == 1)
+               return new XDGFVisioExtractor(pkg);
        }
        
        // Should just be a single core document, complain if not
