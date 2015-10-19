@@ -24,6 +24,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
 
 import org.apache.poi.xdgf.usermodel.XDGFPage;
 import org.apache.poi.xdgf.usermodel.XDGFShape;
@@ -37,13 +38,13 @@ import org.apache.poi.xdgf.usermodel.shape.ShapeVisitor;
 public class HierarchyPrinter {
 
     public static void printHierarchy(XDGFPage page, File outDir)
-            throws FileNotFoundException {
+            throws FileNotFoundException, UnsupportedEncodingException {
 
         File pageFile = new File(outDir, "page" + page.getPageNumber() + "-"
                 + Util.sanitizeFilename(page.getName()) + ".txt");
 
         OutputStream os = new FileOutputStream(pageFile);
-        PrintStream pos = new PrintStream(os);
+        PrintStream pos = new PrintStream(os, false, "utf-8");
 
         printHierarchy(page, pos);
 
@@ -70,7 +71,7 @@ public class HierarchyPrinter {
     }
 
     public static void printHierarchy(XmlVisioDocument document,
-            String outDirname) throws FileNotFoundException {
+            String outDirname) throws FileNotFoundException, UnsupportedEncodingException {
 
         File outDir = new File(outDirname);
 
