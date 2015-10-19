@@ -17,9 +17,11 @@
 
 package org.apache.poi.xdgf.usermodel.section;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
+import java.util.Set;
 import java.util.SortedMap;
 
 /**
@@ -31,25 +33,6 @@ public class CombinedIterable<T> implements Iterable<T> {
 
     final SortedMap<Long, T> _baseItems;
     final SortedMap<Long, T> _masterItems;
-    
-    private static final class EmptyIterator<T> implements Iterator<T> {
-
-        @Override
-        public boolean hasNext() {
-            return false;
-        }
-
-        @Override
-        public T next() {
-            return null;
-        }
-        
-        @Override
-        public void remove() {
-            throw new UnsupportedOperationException();
-        }
-        
-    }
 
     public CombinedIterable(SortedMap<Long, T> baseItems,
             SortedMap<Long, T> masterItems) {
@@ -62,10 +45,12 @@ public class CombinedIterable<T> implements Iterable<T> {
 
         final Iterator<Entry<Long, T>> vmasterI;
 
-        if (_masterItems != null)
+        if (_masterItems != null) {
             vmasterI = _masterItems.entrySet().iterator();
-        else
-            vmasterI = new EmptyIterator<Entry<Long, T>>();
+        } else {
+            final Set<Entry<Long, T>> empty = Collections.emptySet();
+            vmasterI = empty.iterator();
+        }
 
         return new Iterator<T>() {
 
