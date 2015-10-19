@@ -34,6 +34,12 @@ import org.apache.poi.xdgf.usermodel.XmlVisioDocument;
 import org.apache.poi.xdgf.usermodel.shape.ShapeDebuggerRenderer;
 import org.apache.poi.xdgf.usermodel.shape.ShapeRenderer;
 
+/**
+ * Converts a Visio diagram to a PNG file.
+ * 
+ * As more elements and styles are added/supported the output will get
+ * better, but it's very rough right now.
+ */
 public class VsdxToPng {
 
     public static void renderToPng(XDGFPage page, String outFilename,

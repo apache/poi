@@ -22,13 +22,14 @@ import org.apache.poi.util.Internal;
 import com.microsoft.schemas.office.visio.x2012.main.MasterType;
 
 /**
- * Provides the API to work with an underlying master
+ * Provides the API to work with an underlying master. Typically, each set of
+ * stencils used in a Visio diagram are found in a separate master for each.
  */
 public class XDGFMaster {
 
     private MasterType _master;
-    private XDGFMasterContents _content;
-    XDGFSheet _pageSheet = null;
+    protected XDGFMasterContents _content;
+    protected XDGFSheet _pageSheet = null;
 
     public XDGFMaster(MasterType master, XDGFMasterContents content,
             XDGFDocument document) {
@@ -41,7 +42,7 @@ public class XDGFMaster {
     }
 
     @Internal
-    MasterType getXmlObject() {
+    protected MasterType getXmlObject() {
         return _master;
     }
 

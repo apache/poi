@@ -19,6 +19,15 @@ package org.apache.poi.xdgf.usermodel;
 
 import com.microsoft.schemas.office.visio.x2012.main.ConnectType;
 
+/**
+ * Represents connections in a Visio diagram.
+ * 
+ * Note that just because something appears to be visually connected in a
+ * document does not mean that the user actually connected the elements. It
+ * turns out there are a lot of ways that a careless user can neglect to
+ * properly make connections that will not be recorded in the diagram
+ * in a machine readable way.
+ */
 public class XDGFConnection {
 
     // comments on frompart/topart taken from pkgVisio
@@ -126,7 +135,11 @@ public class XDGFConnection {
             return null;
     }
 
-    // see constants above
+    /**
+     * The ToPart property identifies the part of a shape to which another
+     * shape is glued, such as its begin point or endpoint, one of its edges,
+     * or a connection point.
+     */
     public Integer getToPart() {
         if (_connect.isSetToPart())
             return _connect.getToPart();

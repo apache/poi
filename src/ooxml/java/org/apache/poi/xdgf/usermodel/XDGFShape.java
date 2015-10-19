@@ -173,8 +173,6 @@ public class XDGFShape extends XDGFSheet {
      * Shapes that have a 'Master' attribute refer to a specific master in the
      * page, whereas shapes with a 'MasterShape' attribute refer to a subshape
      * of a Master.
-     *
-     *
      */
     protected void setupMaster(XDGFPageContents pageContents,
             XDGFMasterContents master) {
@@ -295,7 +293,9 @@ public class XDGFShape extends XDGFSheet {
         return _geometry.get(idx);
     }
 
-    // only available if this is a shape group
+    /**
+     * Only available if this shape is a shape group, may be null 
+     */
     // -> May be null
     public List<XDGFShape> getShapes() {
         return _shapes;
@@ -334,7 +334,9 @@ public class XDGFShape extends XDGFSheet {
         return _masterShape;
     }
 
-    // returns the parent shape of this shape, if its in a subshape
+    /**
+     * @return The parent shape if this is a subshape, null otherwise
+     */
     public XDGFShape getParentShape() {
         return _parent;
     }
@@ -807,14 +809,20 @@ public class XDGFShape extends XDGFSheet {
                 _masterShape != null ? _masterShape._geometry : null);
     }
 
-    // returns a rectangle in local coordinates
+    /**
+     * @return rectangle in local coordinates
+     */
     public Rectangle2D.Double getBounds() {
         return new Rectangle2D.Double(0, 0, getWidth(), getHeight());
     }
-
-    // returns bounds as a path in local coordinates
-    // -> useful if you need to transform to global coordinates
-    // -> Don't use for 1d objects, fails for infinite line objects
+    
+    /**
+     * @return returns bounds as a path in local coordinates, which is
+     *         userful if you need to transform to global coordinates
+     *         
+     * @warning Don't use this for 1d objects, and will fail for
+     *          infinite line objects
+     */
     public Path2D.Double getBoundsAsPath() {
 
         Double w = getWidth();
@@ -830,7 +838,9 @@ public class XDGFShape extends XDGFSheet {
         return bounds;
     }
 
-    // returns the path in local coordinates
+    /**
+     * @return The outline of the shape in local coordinates
+     */
     public Path2D.Double getPath() {
         for (GeometrySection geoSection : getGeometrySections()) {
             if (geoSection.getNoShow() == true)

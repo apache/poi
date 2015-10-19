@@ -23,7 +23,11 @@ import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.SortedMap;
 
-// iterates over the base and master
+/**
+ * An iterator used to iterate over the base and master items
+ *
+ * @param <T>
+ */
 public class CombinedIterable<T> implements Iterable<T> {
 
     final SortedMap<Long, T> _baseItems;

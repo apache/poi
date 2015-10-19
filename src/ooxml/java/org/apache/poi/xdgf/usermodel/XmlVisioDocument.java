@@ -28,22 +28,39 @@ import org.apache.poi.POIXMLException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.util.PackageHelper;
 import org.apache.xmlbeans.XmlException;
 
 import com.microsoft.schemas.office.visio.x2012.main.VisioDocumentDocument1;
 import com.microsoft.schemas.office.visio.x2012.main.VisioDocumentType;
 
+/**
+ * This is your high-level starting point for working with Visio XML
+ * documents (.vsdx).
+ * 
+ * Currently, only read support has been implemented, and the API is
+ * not mature and is subject to change.
+ * 
+ * For more information about the visio XML format (with an XSD 1.0
+ * schema), you can find documentation at
+ * https://msdn.microsoft.com/en-us/library/hh645006(v=office.12).aspx
+ * 
+ * That document lacks in some areas, but you can find additional
+ * documentation and an updated XSD 1.1 schema at
+ * https://msdn.microsoft.com/en-us/library/office/jj684209(v=office.15).aspx
+ * 
+ * Each provides different details, but the SharePoint reference
+ * has better documentation and is more useful.
+ */
 public class XmlVisioDocument extends POIXMLDocument {
 
-    public static String CORE_DOCUMENT = "http://schemas.microsoft.com/visio/2010/relationships/document";
-
-    XDGFPages _pages;
-    XDGFMasters _masters;
-    XDGFDocument _document;
+    protected XDGFPages _pages;
+    protected XDGFMasters _masters;
+    protected XDGFDocument _document;
 
     public XmlVisioDocument(OPCPackage pkg) throws IOException {
-        super(pkg, CORE_DOCUMENT);
+        super(pkg, PackageRelationshipTypes.VISIO_CORE_DOCUMENT);
 
         VisioDocumentType document;
 
@@ -98,7 +115,7 @@ public class XmlVisioDocument extends POIXMLDocument {
     //
     // Useful public API goes here
     //
-
+    
     public Collection<XDGFPage> getPages() {
         return _pages.getPageList();
     }

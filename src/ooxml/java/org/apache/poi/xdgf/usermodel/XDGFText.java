@@ -52,10 +52,12 @@ public class XDGFText {
         // is a mixed type)
         return ((TextTypeImpl) _text).getStringValue();
     }
-
-    // these are in the shape coordinate system
-    // -> See
-    // https://msdn.microsoft.com/en-us/library/hh644132(v=office.12).aspx
+    
+    /**
+     * These are in the shape coordinate system
+     *
+     * @see https://msdn.microsoft.com/en-us/library/hh644132(v=office.12).aspx
+     */
     public Rectangle2D.Double getTextBounds() {
 
         double txtPinX = _parent.getTxtPinX();
@@ -73,8 +75,10 @@ public class XDGFText {
         return new Rectangle2D.Double(x, y, txtWidth, txtHeight);
     }
 
-    // returns bounds as a path in local coordinates
-    // -> useful if you need to transform to global coordinates
+    /**
+     * @return Text bounds as a path in local coordinates, which is useful
+     *         if you need to transform to global coordinates
+     */
     public Path2D.Double getBoundsAsPath() {
 
         Rectangle2D.Double rect = getTextBounds();
@@ -90,14 +94,19 @@ public class XDGFText {
 
         return bounds;
     }
-
-    // center of text in local coordinates
+    
+    /**
+     * @return Center of text in local coordinates
+     */
     public Point2D.Double getTextCenter() {
         return new Point2D.Double(_parent.getTxtLocPinX(),
                 _parent.getTxtLocPinY());
     }
 
-    // assumes graphics is set properly to draw in the right style
+    /**
+     * When calling this to draw text, it assumes graphics is set properly
+     * to draw in the right style.
+     */
     public void draw(Graphics2D graphics) {
 
         String textContent = getTextContent();

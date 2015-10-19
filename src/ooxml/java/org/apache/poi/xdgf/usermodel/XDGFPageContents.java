@@ -32,8 +32,8 @@ import com.microsoft.schemas.office.visio.x2012.main.PageContentsDocument;
 
 public class XDGFPageContents extends XDGFBaseContents {
 
-    Map<Long, XDGFMaster> _masters = new HashMap<Long, XDGFMaster>();
-    XDGFPage _page;
+    protected Map<Long, XDGFMaster> _masters = new HashMap<Long, XDGFMaster>();
+    protected XDGFPage _page;
 
     public XDGFPageContents(PackagePart part, PackageRelationship rel, XDGFDocument document) {
         super(part, rel, document);
@@ -71,6 +71,9 @@ public class XDGFPageContents extends XDGFBaseContents {
         }
     }
 
+    /**
+     * @return Parent page
+     */
     public XDGFPage getPage() {
         return _page;
     }

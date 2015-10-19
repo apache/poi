@@ -36,19 +36,22 @@ import com.microsoft.schemas.office.visio.x2012.main.MasterType;
 import com.microsoft.schemas.office.visio.x2012.main.MastersDocument;
 import com.microsoft.schemas.office.visio.x2012.main.MastersType;
 
+/**
+ * A collection of masters (typically stencils) in a Visio document
+ */
 public class XDGFMasters extends XDGFXMLDocumentPart {
 
     MastersType _mastersObject;
 
     // key: id of master
-    Map<Long, XDGFMaster> _masters = new HashMap<Long, XDGFMaster>();
+    protected Map<Long, XDGFMaster> _masters = new HashMap<Long, XDGFMaster>();
 
     public XDGFMasters(PackagePart part, PackageRelationship rel, XDGFDocument document) {
         super(part, rel, document);
     }
 
     @Internal
-    MastersType getXmlObject() {
+    protected MastersType getXmlObject() {
         return _mastersObject;
     }
 

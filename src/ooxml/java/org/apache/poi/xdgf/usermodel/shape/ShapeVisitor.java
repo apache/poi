@@ -32,15 +32,17 @@ import org.apache.poi.xdgf.usermodel.XDGFShape;
  */
 public abstract class ShapeVisitor {
 
-    ShapeVisitorAcceptor _acceptor;
+    protected ShapeVisitorAcceptor _acceptor;
 
     public ShapeVisitor() {
         _acceptor = getAcceptor();
     }
-
-    // is only called on construction of the visitor, allows
-    // mixing visitors and acceptors
-    public ShapeVisitorAcceptor getAcceptor() {
+    
+    /**
+     * Is only called on construction of the visitor, allows
+     * mixing visitors and acceptors
+     */
+    protected ShapeVisitorAcceptor getAcceptor() {
         return new ShapeVisitorAcceptor() {
             @Override
             public boolean accept(XDGFShape shape) {
