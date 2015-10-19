@@ -31,83 +31,82 @@ import com.microsoft.schemas.office.visio.x2012.main.PageType;
  */
 public class XDGFPage {
 
-	PageType _page;
-	XDGFPageContents _content;
-	XDGFPages _pages;
-	XDGFSheet _pageSheet = null;
-	
-	public XDGFPage(PageType page, XDGFPageContents content, XDGFDocument document, XDGFPages pages) {
-		_page = page;
-		_content = content;
-		_pages = pages;
-		content.setPage(this);
-		
-		if (page.isSetPageSheet())
-			_pageSheet = new XDGFPageSheet(page.getPageSheet(), document);
-	}
-	
-	@Internal
-	PageType getXmlObject() {
-		return _page;
-	}
-	
-	public long getID() {
-		return _page.getID();
-	}
-	
-	public String getName() {
-		return _page.getName();
-	}
-	
-	public XDGFPageContents getContent() {
-		return _content;
-	}
-	
-	public XDGFSheet getPageSheet() {
-		return _pageSheet;
-	}
-	
-	public long getPageNumber() {
-		return _pages.getPageList().indexOf(this) + 1;
-	}
-	
-	// height/width of page
-	public Dimension2dDouble getPageSize() {
-		XDGFCell w = _pageSheet.getCell("PageWidth");
-		XDGFCell h = _pageSheet.getCell("PageHeight");
-		
-		if (w == null || h == null)
-			throw new POIXMLException("Cannot determine page size");
-		
-		return new Dimension2dDouble(Double.parseDouble(w.getValue()),
-									 Double.parseDouble(h.getValue()));
-	}
-	
-	// origin of coordinate system
-	public Point2D.Double getPageOffset() {
-		XDGFCell xoffcell = _pageSheet.getCell("XRulerOrigin");
-		XDGFCell yoffcell = _pageSheet.getCell("YRulerOrigin");
-		
-		double xoffset = 0;
-		double yoffset = 0;
-		
-		if (xoffcell != null)
-			xoffset = Double.parseDouble(xoffcell.getValue());
-		
-		if (xoffcell != null)
-			yoffset = Double.parseDouble(yoffcell.getValue());
-		
-		return new Point2D.Double(xoffset, yoffset);
-	}
-	
-	// bounding box of page
-	public Rectangle2D getBoundingBox() {
-		Dimension2dDouble sz = getPageSize();
-		Point2D.Double offset = getPageOffset();
-		
-		return new Rectangle2D.Double(-offset.getX(),
-									  -offset.getY(),
-									  sz.getWidth(),
-									  sz.getHeight());
-	}
+    PageType _page;
+    XDGFPageContents _content;
+    XDGFPages _pages;
+    XDGFSheet _pageSheet = null;
+
+    public XDGFPage(PageType page, XDGFPageContents content,
+            XDGFDocument document, XDGFPages pages) {
+        _page = page;
+        _content = content;
+        _pages = pages;
+        content.setPage(this);
+
+        if (page.isSetPageSheet())
+            _pageSheet = new XDGFPageSheet(page.getPageSheet(), document);
+    }
+
+    @Internal
+    PageType getXmlObject() {
+        return _page;
+    }
+
+    public long getID() {
+        return _page.getID();
+    }
+
+    public String getName() {
+        return _page.getName();
+    }
+
+    public XDGFPageContents getContent() {
+        return _content;
+    }
+
+    public XDGFSheet getPageSheet() {
+        return _pageSheet;
+    }
+
+    public long getPageNumber() {
+        return _pages.getPageList().indexOf(this) + 1;
+    }
+
+    // height/width of page
+    public Dimension2dDouble getPageSize() {
+        XDGFCell w = _pageSheet.getCell("PageWidth");
+        XDGFCell h = _pageSheet.getCell("PageHeight");
+
+        if (w == null || h == null)
+            throw new POIXMLException("Cannot determine page size");
+
+        return new Dimension2dDouble(Double.parseDouble(w.getValue()),
+                Double.parseDouble(h.getValue()));
+    }
+
+    // origin of coordinate system
+    public Point2D.Double getPageOffset() {
+        XDGFCell xoffcell = _pageSheet.getCell("XRulerOrigin");
+        XDGFCell yoffcell = _pageSheet.getCell("YRulerOrigin");
+
+        double xoffset = 0;
+        double yoffset = 0;
+
+        if (xoffcell != null)
+            xoffset = Double.parseDouble(xoffcell.getValue());
+
+        if (xoffcell != null)
+            yoffset = Double.parseDouble(yoffcell.getValue());
+
+        return new Point2D.Double(xoffset, yoffset);
+    }
+
+    // bounding box of page
+    public Rectangle2D getBoundingBox() {
+        Dimension2dDouble sz = getPageSize();
+        Point2D.Double offset = getPageOffset();
+
+        return new Rectangle2D.Double(-offset.getX(), -offset.getY(),
+                sz.getWidth(), sz.getHeight());
+    }
 }

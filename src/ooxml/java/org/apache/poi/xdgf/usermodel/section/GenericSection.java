@@ -23,11 +23,11 @@ import com.microsoft.schemas.office.visio.x2012.main.SectionType;
 
 public class GenericSection extends XDGFSection {
 
-	public GenericSection(SectionType section, XDGFSheet containingSheet) {
-		super(section, containingSheet);
-	}
+    public GenericSection(SectionType section, XDGFSheet containingSheet) {
+        super(section, containingSheet);
+    }
 
-	@Override
-	public void setupMaster(XDGFSection section) {
-	}
+    @Override
+    public void setupMaster(XDGFSection section) {
+    }
 }

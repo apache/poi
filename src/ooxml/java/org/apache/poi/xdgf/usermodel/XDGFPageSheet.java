@@ -21,16 +21,16 @@ import com.microsoft.schemas.office.visio.x2012.main.PageSheetType;
 
 public class XDGFPageSheet extends XDGFSheet {
 
-	PageSheetType _pageSheet;
-	
-	public XDGFPageSheet(PageSheetType sheet, XDGFDocument document) {
-		super(sheet, document);
-		_pageSheet = sheet;
-	}
+    PageSheetType _pageSheet;
 
-	@Override
-	PageSheetType getXmlObject() {
-		return _pageSheet;
-	}
+    public XDGFPageSheet(PageSheetType sheet, XDGFDocument document) {
+        super(sheet, document);
+        _pageSheet = sheet;
+    }
+
+    @Override
+    PageSheetType getXmlObject() {
+        return _pageSheet;
+    }
 
 }

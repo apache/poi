@@ -23,11 +23,12 @@ import org.apache.poi.xdgf.usermodel.XDGFDocument;
 
 public class XDGFXMLDocumentPart extends POIXMLDocumentPart {
 
-	protected XDGFDocument _document;
-	
-	public XDGFXMLDocumentPart(PackagePart part, PackageRelationship rel, XDGFDocument document) {
-		super(part, rel);
-		_document = document;
-	}
-	
+    protected XDGFDocument _document;
+
+    public XDGFXMLDocumentPart(PackagePart part, PackageRelationship rel,
+            XDGFDocument document) {
+        super(part, rel);
+        _document = document;
+    }
+
 }

@@ -40,56 +40,58 @@ import com.microsoft.schemas.office.visio.x2012.main.PagesType;
  */
 public class XDGFPages extends XDGFXMLDocumentPart {
 
-	PagesType _pagesObject;
-	
-	// ordered by page number
-	List<XDGFPage> _pages = new ArrayList<>();
-	
-	public XDGFPages(PackagePart part, PackageRelationship rel, XDGFDocument document) {
-		super(part, rel, document);
-	}
-	
-	@Internal
-	PagesType getXmlObject() {
-		return _pagesObject;
-	}
-	
-	@Override
-	protected void onDocumentRead() {
-		try {
-			try {
-				_pagesObject = PagesDocument.Factory.parse(getPackagePart().getInputStream()).getPages();
-			} catch (XmlException | IOException e) {
-				throw new POIXMLException(e);
-			}
-			
-			// this iteration is ordered by page number
-			for (PageType pageSettings: _pagesObject.getPageArray()) {
-				
-				String relId = pageSettings.getRel().getId();
-				
-				POIXMLDocumentPart pageContentsPart = getRelationById(relId);
-				if (pageContentsPart == null)
-					throw new POIXMLException("PageSettings relationship for " + relId + " not found");
-				
-				if (!(pageContentsPart instanceof XDGFPageContents))
-					throw new POIXMLException("Unexpected pages relationship for " + relId + ": " + pageContentsPart);
-				
-				XDGFPageContents contents = (XDGFPageContents)pageContentsPart;
-				XDGFPage page = new XDGFPage(pageSettings, contents, _document, this);
-				
-				contents.onDocumentRead();
-				
-				_pages.add(page);
-			}
-			
-		} catch (POIXMLException e) {
-			throw XDGFException.wrap(this, e);
-		}
-	}
-	
-	// ordered by page number
-	public List<XDGFPage> getPageList() {
-		return Collections.unmodifiableList(_pages);
-	}
+    PagesType _pagesObject;
+
+    // ordered by page number
+    List<XDGFPage> _pages = new ArrayList<XDGFPage>();
+
+    public XDGFPages(PackagePart part, PackageRelationship rel, XDGFDocument document) {
+        super(part, rel, document);
+    }
+
+    @Internal
+    PagesType getXmlObject() {
+        return _pagesObject;
+    }
+
+    @Override
+    protected void onDocumentRead() {
+        try {
+            try {
+                _pagesObject = PagesDocument.Factory.parse(getPackagePart().getInputStream()).getPages();
+            } catch (XmlException e) {
+                throw new POIXMLException(e);
+            } catch (IOException e) {
+                throw new POIXMLException(e);
+            }
+
+            // this iteration is ordered by page number
+            for (PageType pageSettings: _pagesObject.getPageArray()) {
+
+                String relId = pageSettings.getRel().getId();
+
+                POIXMLDocumentPart pageContentsPart = getRelationById(relId);
+                if (pageContentsPart == null)
+                    throw new POIXMLException("PageSettings relationship for " + relId + " not found");
+
+                if (!(pageContentsPart instanceof XDGFPageContents))
+                    throw new POIXMLException("Unexpected pages relationship for " + relId + ": " + pageContentsPart);
+
+                XDGFPageContents contents = (XDGFPageContents)pageContentsPart;
+                XDGFPage page = new XDGFPage(pageSettings, contents, _document, this);
+
+                contents.onDocumentRead();
+
+                _pages.add(page);
+            }
+
+        } catch (POIXMLException e) {
+            throw XDGFException.wrap(this, e);
+        }
+    }
+
+    // ordered by page number
+    public List<XDGFPage> getPageList() {
+        return Collections.unmodifiableList(_pages);
+    }
 }
