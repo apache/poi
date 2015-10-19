@@ -17,7 +17,12 @@
 
 package org.apache.poi.xdgf.geom;
 
-import org.apache.poi.ss.formula.functions.LookupUtils.ValueVector;
+import com.graphbuilder.curve.ControlPath;
+import com.graphbuilder.curve.GroupIterator;
+import com.graphbuilder.curve.NURBSpline;
+import com.graphbuilder.curve.ShapeMultiPath;
+import com.graphbuilder.curve.ValueVector;
+
 
 public class SplineRenderer {
 

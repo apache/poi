@@ -177,6 +177,9 @@ under the License.
     <property name="dsig.sl4j-api.url" value="${repository.m2}/maven2/org/slf4j/slf4j-api/1.7.7/slf4j-api-1.7.7.jar"/>
 
     <!-- jars in the lib-ooxml directory, see the fetch-ooxml-jars target-->
+    <property name="ooxml.curvesapi.jar" location="${ooxml.lib}/curvesapi-1.02.jar"/>
+    <property name="ooxml.curvesapi.url"
+              value="${repository.m2}/maven2/com/github/virtuald/curvesapi/1.02/curvesapi-1.02.jar"/>
     <property name="ooxml.xmlbeans23.jar" location="${ooxml.lib}/xmlbeans-2.3.0.jar"/>
     <property name="ooxml.xmlbeans23.url"
               value="${repository.m2}/maven2/org/apache/xmlbeans/xmlbeans/2.3.0/xmlbeans-2.3.0.jar"/>
@@ -276,6 +279,7 @@ under the License.
     </path>
 
     <path id="ooxml.classpath">
+        <pathelement location="${ooxml.curvesapi.jar}"/>
         <pathelement location="${ooxml.xmlbeans26.jar}"/>
         <pathelement location="${ooxml.xsds.jar}"/>
         <path refid="main.classpath"/>
@@ -319,6 +323,7 @@ under the License.
     </path>
 
     <path id="ooxml-lite.classpath">
+        <pathelement location="${ooxml.curvesapi.jar}"/>
         <pathelement location="${ooxml.xmlbeans26.jar}"/>
         <pathelement location="${ooxml.lite.output.dir}"/> <!-- instead of ooxml-xsds.jar use the filtered classes-->
         <path refid="main.classpath"/>
@@ -558,6 +563,7 @@ under the License.
         <condition property="ooxml.jars.present">
             <or>
                 <and>
+                    <available file="${ooxml.curvesapi.jar}"/>
                     <available file="${ooxml.xmlbeans23.jar}"/>
                     <available file="${ooxml.xmlbeans26.jar}"/>
                 </and>
@@ -567,6 +573,10 @@ under the License.
     </target>
     <target name="fetch-ooxml-jars" depends="check-ooxml-jars" unless="ooxml.jars.present">
         <mkdir dir="${ooxml.lib}"/>
+        <antcall target="downloadfile">
+            <param name="sourcefile" value="${ooxml.curvesapi.url}"/>
+            <param name="destfile" value="${ooxml.curvesapi.jar}"/>
+        </antcall>
         <antcall target="downloadfile">
             <param name="sourcefile" value="${ooxml.xmlbeans23.url}"/>
             <param name="destfile" value="${ooxml.xmlbeans23.jar}"/>

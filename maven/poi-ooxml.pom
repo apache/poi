@@ -69,5 +69,10 @@
       <artifactId>poi-ooxml-schemas</artifactId>
       <version>@VERSION@</version>
     </dependency>
+    <dependency>
+    	<groupId>com.github.virtuald</groupId>
+    	<artifactId>curvesapi</artifactId>
+    	<version>1.02</version>
+    </dependency>
   </dependencies>
 </project>
