@@ -167,14 +167,14 @@ under the License.
     <property name="main.antlauncher.url" value="${repository.m2}/maven2/org/apache/ant/ant-launcher/1.9.4/ant-launcher-1.9.4.jar"/>
 
     <!-- xml signature libs -->
-    <property name="dsig.xmlsec.jar" location="${compile.lib}/xmlsec-2.0.1.jar"/>
-    <property name="dsig.xmlsec.url" value="${repository.m2}/maven2/org/apache/santuario/xmlsec/2.0.1/xmlsec-2.0.1.jar"/>
-    <property name="dsig.bouncycastle-prov.jar" location="${compile.lib}/bcprov-ext-jdk15on-1.51.jar"/>
-    <property name="dsig.bouncycastle-prov.url" value="${repository.m2}/maven2/org/bouncycastle/bcprov-ext-jdk15on/1.51/bcprov-ext-jdk15on-1.51.jar"/>
-    <property name="dsig.bouncycastle-pkix.jar" location="${compile.lib}/bcpkix-jdk15on-1.51.jar"/>
-    <property name="dsig.bouncycastle-pkix.url" value="${repository.m2}/maven2/org/bouncycastle/bcpkix-jdk15on/1.51/bcpkix-jdk15on-1.51.jar"/>
-    <property name="dsig.sl4j-api.jar" location="${compile.lib}/slf4j-api-1.7.7.jar"/>
-    <property name="dsig.sl4j-api.url" value="${repository.m2}/maven2/org/slf4j/slf4j-api/1.7.7/slf4j-api-1.7.7.jar"/>
+    <property name="dsig.xmlsec.jar" location="${compile.lib}/xmlsec-2.0.5.jar"/>
+    <property name="dsig.xmlsec.url" value="${repository.m2}/maven2/org/apache/santuario/xmlsec/2.0.5/xmlsec-2.0.5.jar"/>
+    <property name="dsig.bouncycastle-prov.jar" location="${compile.lib}/bcprov-ext-jdk15on-1.53.jar"/>
+    <property name="dsig.bouncycastle-prov.url" value="${repository.m2}/maven2/org/bouncycastle/bcprov-ext-jdk15on/1.53/bcprov-ext-jdk15on-1.53.jar"/>
+    <property name="dsig.bouncycastle-pkix.jar" location="${compile.lib}/bcpkix-jdk15on-1.53.jar"/>
+    <property name="dsig.bouncycastle-pkix.url" value="${repository.m2}/maven2/org/bouncycastle/bcpkix-jdk15on/1.53/bcpkix-jdk15on-1.53.jar"/>
+    <property name="dsig.sl4j-api.jar" location="${compile.lib}/slf4j-api-1.7.12.jar"/>
+    <property name="dsig.sl4j-api.url" value="${repository.m2}/maven2/org/slf4j/slf4j-api/1.7.12/slf4j-api-1.7.12.jar"/>
 
     <!-- jars in the lib-ooxml directory, see the fetch-ooxml-jars target-->
     <property name="ooxml.curvesapi.jar" location="${ooxml.lib}/curvesapi-1.03.jar"/>
@@ -461,7 +461,15 @@ under the License.
             </fileset>
         	<fileset dir="${ooxml.lib}">
         		<include name="ooxml-schemas-1.1-sources.jar"/>
+        		<include name="ooxml-schemas-src-1.1.jar"/>
         		<include name="ooxml-schemas-1.1.jar"/>
+        	</fileset>
+        	<fileset dir="${compile.lib}">
+                <include name="xercesImpl-*.jar"/>
+            	<include name="xmlsec-2.0.1.jar"/>
+            	<include name="bcprov-ext-jdk15on-1.51.jar"/>
+            	<include name="bcpkix-jdk15on-1.51.jar"/>
+            	<include name="slf4j-api-1.7.7.jar"/>
         	</fileset>
         </delete>
 
@@ -1805,16 +1813,16 @@ under the License.
                 <exclude name="poi-*${version.id}-sources-*.jar"/>
                 <exclude name="poi-*${version.id}-javadocs-*.jar"/>
             </fileset>
-            <auxClasspath path="${compile.lib}/bcpkix-jdk15on-1.51.jar" />
-            <auxClasspath path="${compile.lib}/bcprov-ext-jdk15on-1.51.jar" />
-            <auxClasspath path="${compile.lib}/slf4j-api-1.7.7.jar" />
-            <auxClasspath path="${compile.lib}/xmlsec-2.0.1.jar" />
+            <auxClasspath path="${dsig.bouncycastle-pkix.jar}" />
+            <auxClasspath path="${dsig.bouncycastle-prov.jar}" />
+            <auxClasspath path="${dsig.sl4j-api.jar}" />
+            <auxClasspath path="${dsig.xmlsec.jar}" />
             <auxClasspath path="${ooxml.xsds.jar}" />
-            <auxClasspath path="ooxml-lib/ooxml-security-1.0.jar" />
-            <auxClasspath path="ooxml-lib/xmlbeans-2.6.0.jar" />
+            <auxClasspath path="${ooxml.security.jar}" />
+            <auxClasspath path="${ooxml.xmlbeans26.jar}" />
             <auxClasspath path="${main.commons-codec.jar}" />
             <auxClasspath path="${main.commons-logging.jar}" />
-            <auxClasspath path="lib/junit-4.12.jar" />
+            <auxClasspath path="${main.junit.jar}" />
             <sourcePath path="src/java" />
             <sourcePath path="src/ooxml/java" />
             <sourcePath path="src/scratchpad/src" />
@@ -1828,16 +1836,16 @@ under the License.
                 <exclude name="poi-*${version.id}-sources-*.jar"/>
                 <exclude name="poi-*${version.id}-javadocs-*.jar"/>
             </fileset>
-            <auxClasspath path="${compile.lib}/bcpkix-jdk15on-1.51.jar" />
-            <auxClasspath path="${compile.lib}/bcprov-ext-jdk15on-1.51.jar" />
-            <auxClasspath path="${compile.lib}/slf4j-api-1.7.7.jar" />
-            <auxClasspath path="${compile.lib}/xmlsec-2.0.1.jar" />
+            <auxClasspath path="${dsig.bouncycastle-pkix.jar}" />
+            <auxClasspath path="${dsig.bouncycastle-prov.jar}" />
+            <auxClasspath path="${dsig.sl4j-api.jar}" />
+            <auxClasspath path="${dsig.xmlsec.jar}" />
             <auxClasspath path="${ooxml.xsds.jar}" />
-            <auxClasspath path="ooxml-lib/ooxml-security-1.0.jar" />
-            <auxClasspath path="ooxml-lib/xmlbeans-2.6.0.jar" />
+            <auxClasspath path="${ooxml.security.jar}" />
+            <auxClasspath path="${ooxml.xmlbeans26.jar}" />
             <auxClasspath path="${main.commons-codec.jar}" />
             <auxClasspath path="${main.commons-logging.jar}" />
-            <auxClasspath path="lib/junit-4.12.jar" />
+            <auxClasspath path="${main.junit.jar}" />
             <sourcePath path="src/java" />
             <sourcePath path="src/ooxml/java" />
             <sourcePath path="src/scratchpad/src" />
