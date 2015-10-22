@@ -249,7 +249,7 @@ public class XAdESXLSignatureFacet extends SignatureFacet {
                     ResponderIDType responderId = ocspIdentifier.addNewResponderID();
     
                     RespID respId = basicOcspResp.getResponderId();
-                    ResponderID ocspResponderId = respId.toASN1Object();
+                    ResponderID ocspResponderId = respId.toASN1Primitive();
                     DERTaggedObject derTaggedObject = (DERTaggedObject)ocspResponderId.toASN1Primitive();
                     if (2 == derTaggedObject.getTagNo()) {
                         ASN1OctetString keyHashOctetString = (ASN1OctetString)derTaggedObject.getObject();
