@@ -65,13 +65,13 @@ public final class HSSFClientAnchor extends HSSFAnchor implements ClientAnchor {
         checkRange(dy2, 0, 255, "dy2");
         checkRange(col1, 0, 255, "col1");
         checkRange(col2, 0, 255, "col2");
-        checkRange(row1, 0, 255 * 256, "row1");
-        checkRange(row2, 0, 255 * 256, "row2");
+        checkRange(row1, 0, 256 * 256 - 1, "row1");
+        checkRange(row2, 0, 256 * 256 - 1, "row2");
 
         setCol1((short) Math.min(col1, col2));
         setCol2((short) Math.max(col1, col2));
-        setRow1((short) Math.min(row1, row2));
-        setRow2((short) Math.max(row1, row2));
+        setRow1(Math.min(row1, row2));
+        setRow2(Math.max(row1, row2));
 
         if (col1 > col2){
             _isHorizontallyFlipped = true;
@@ -163,7 +163,7 @@ public final class HSSFClientAnchor extends HSSFAnchor implements ClientAnchor {
      * @return the row(0 based) of the first cell.
      */
     public int getRow1() {
-        return _escherClientAnchor.getRow1();
+        return unsignedValue(_escherClientAnchor.getRow1());
     }
 
     /**
@@ -178,7 +178,7 @@ public final class HSSFClientAnchor extends HSSFAnchor implements ClientAnchor {
      * @return the row(0 based) of the second cell.
      */
     public int getRow2() {
-        return _escherClientAnchor.getRow2();
+        return unsignedValue(_escherClientAnchor.getRow2());
     }
 
     /**
@@ -213,8 +213,8 @@ public final class HSSFClientAnchor extends HSSFAnchor implements ClientAnchor {
         checkRange(getDy2(), 0, 255, "dy2");
         checkRange(getCol1(), 0, 255, "col1");
         checkRange(getCol2(), 0, 255, "col2");
-        checkRange(getRow1(), 0, 255 * 256, "row1");
-        checkRange(getRow2(), 0, 255 * 256, "row2");
+        checkRange(getRow1(), 0, 256 * 256 - 1, "row1");
+        checkRange(getRow2(), 0, 256 * 256 - 1, "row2");
 
         setCol1(col1);
         setRow1(row1);
@@ -265,6 +265,16 @@ public final class HSSFClientAnchor extends HSSFAnchor implements ClientAnchor {
     private void checkRange(int value, int minRange, int maxRange, String varName) {
         if (value < minRange || value > maxRange)
             throw new IllegalArgumentException(varName + " must be between " + minRange + " and " + maxRange + ", but was: " + value);
+    }
+
+    /**
+     * Given a 16-bit unsigned integer stored in a short, return the unsigned value.
+     *
+     * @param s A 16-bit value intended to be interpreted as an unsigned integer.
+     * @return The value represented by <code>s</code>.
+     */
+    private static int unsignedValue(final short s) {
+        return (s < 0 ? 0x10000 + s : s);
     }
 
     @Override
