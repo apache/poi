@@ -458,7 +458,6 @@ under the License.
                 <include name="xercesImpl-*.jar"/>
                 <include name="junit-3*"/>
                 <include name="junit-4.11*"/>
-            	<include name="findbugs-noUpdateChecks-2.0.3.zip"/>
             </fileset>
         	<fileset dir="${ooxml.lib}">
         		<include name="ooxml-schemas-1.1-sources.jar"/>
@@ -1784,15 +1783,16 @@ under the License.
     </target>
 
     <target name="findbugs">
+    	<!-- NOTE: we did not update to 3.x yet because it requires Java 7, but we are still supporting Java 6 currently! -->
         <antcall target="downloadfile">
-            <param name="sourcefile" value="http://prdownloads.sourceforge.net/findbugs/findbugs-noUpdateChecks-3.0.1.zip?download"/>
-            <param name="destfile" value="${main.lib}/findbugs-noUpdateChecks-3.0.1.zip"/>
+            <param name="sourcefile" value="http://prdownloads.sourceforge.net/findbugs/findbugs-noUpdateChecks-2.0.3.zip?download"/>
+            <param name="destfile" value="${main.lib}/findbugs-noUpdateChecks-2.0.3.zip"/>
         </antcall>
 
-        <unzip src="${main.lib}/findbugs-noUpdateChecks-3.0.1.zip"
+        <unzip src="${main.lib}/findbugs-noUpdateChecks-2.0.3.zip"
                dest="build/findbugs/lib">
             <patternset>
-                <include name="findbugs-3.0.1/lib/**"/>
+                <include name="findbugs-2.0.3/lib/**"/>
             </patternset>
             <mapper type="flatten"/>
         </unzip>
