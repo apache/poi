@@ -31,18 +31,19 @@ public class AreaReference {
     private static final char CELL_DELIMITER = ':';
     /** The character (') used to quote sheet names when they contain special characters */
     private static final char SPECIAL_NAME_DELIMITER = '\'';
+    private static final SpreadsheetVersion DEFAULT_SPREADSHEET_VERSION = SpreadsheetVersion.EXCEL97;
     
     private final CellReference _firstCell;
     private final CellReference _lastCell;
     private final boolean _isSingleCell;
-    private SpreadsheetVersion _version;
+    private final SpreadsheetVersion _version; // never null
 
     /**
      * @deprecated Prefer supplying a version.
      */
     @Deprecated
     public AreaReference(String reference) {
-        this(reference, SpreadsheetVersion.EXCEL97);
+        this(reference, DEFAULT_SPREADSHEET_VERSION);
     }
     
     /**
@@ -51,7 +52,7 @@ public class AreaReference {
      * The area reference must be contiguous (i.e. represent a single rectangle, not a union of rectangles)
      */
     public AreaReference(String reference, SpreadsheetVersion version) {
-        _version = version;
+        _version = (null != version) ? version : DEFAULT_SPREADSHEET_VERSION;
         if(! isContiguous(reference)) {
             throw new IllegalArgumentException(
                     "References passed to the AreaReference must be contiguous, " +
@@ -116,6 +117,7 @@ public class AreaReference {
      * Creates an area ref from a pair of Cell References.
      */
     public AreaReference(CellReference topLeft, CellReference botRight) {
+        _version = DEFAULT_SPREADSHEET_VERSION;
         boolean swapRows = topLeft.getRow() > botRight.getRow();
         boolean swapCols = topLeft.getCol() > botRight.getCol();
         if (swapRows || swapCols) {
@@ -180,10 +182,16 @@ public class AreaReference {
     }
 
     public static AreaReference getWholeRow(SpreadsheetVersion version, String start, String end) {
+        if (null == version) {
+            version = DEFAULT_SPREADSHEET_VERSION;
+        }
         return new AreaReference("$A" + start + ":$" + version.getLastColumnName() + end, version);
     }
 
     public static AreaReference getWholeColumn(SpreadsheetVersion version, String start, String end) {
+        if (null == version) {
+            version = DEFAULT_SPREADSHEET_VERSION;
+        }
         return new AreaReference(start + "$1:" + end + "$" + version.getMaxRows(), version);
     }
 
@@ -193,7 +201,7 @@ public class AreaReference {
      */
     public static boolean isWholeColumnReference(SpreadsheetVersion version, CellReference topLeft, CellReference botRight) {
         if (null == version) {
-            version = SpreadsheetVersion.EXCEL97; // how the code used to behave.
+            version = DEFAULT_SPREADSHEET_VERSION; // how the code used to behave. 
         }
         
         // These are represented as something like
