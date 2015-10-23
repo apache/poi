@@ -1435,12 +1435,4 @@ public final class TestXSSFSheet extends BaseTestSheet {
         assertNotNull(sheet.createComment());
         wb.close();
     }
-
-    @Test
-    public void testNoMergedRegionsIsEmptyList() throws IOException {
-        XSSFWorkbook wb = new XSSFWorkbook();
-        XSSFSheet sheet = wb.createSheet();
-        assertTrue(sheet.getMergedRegions().isEmpty());
-        wb.close();
-    }
 }

@@ -1045,4 +1045,12 @@ public abstract class BaseTestSheet {
         
         wb.close();
     }
+    
+    @Test
+    public void testNoMergedRegionsIsEmptyList() throws IOException {
+        Workbook wb = _testDataProvider.createWorkbook();
+        Sheet sheet = wb.createSheet();
+        assertTrue(sheet.getMergedRegions().isEmpty());
+        wb.close();
+    }
 }
