@@ -174,21 +174,16 @@ public class ExternSheetRecord extends StandardRecord {
 	
 	public void removeSheet(int sheetIdx) {
         int nItems = _list.size();
-        int toRemove = -1;
         for (int i = 0; i < nItems; i++) {
             RefSubRecord refSubRecord = _list.get(i);
             if(refSubRecord.getFirstSheetIndex() == sheetIdx && 
                     refSubRecord.getLastSheetIndex() == sheetIdx) {
-                toRemove = i;
+            	// removing the entry would mess up the sheet index in Formula of NameRecord
+            	_list.set(i, new RefSubRecord(refSubRecord.getExtBookIndex(), -1, -1));
             } else if (refSubRecord.getFirstSheetIndex() > sheetIdx && 
                     refSubRecord.getLastSheetIndex() > sheetIdx) {
                 _list.set(i, new RefSubRecord(refSubRecord.getExtBookIndex(), refSubRecord.getFirstSheetIndex()-1, refSubRecord.getLastSheetIndex()-1));
             }
-        }
-        
-        // finally remove entries for sheet indexes that we remove
-        if(toRemove != -1) {
-            _list.remove(toRemove);
         }
 	}
 	
