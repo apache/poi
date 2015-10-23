@@ -697,14 +697,6 @@ public final class TestHSSFSheet extends BaseTestSheet {
         wb2.close();
         wb1.close();
     }
-
-    @Test
-    public void testNoMergedRegionsIsEmptyList() throws IOException {
-        HSSFWorkbook wb = new HSSFWorkbook();
-        HSSFSheet s = wb.createSheet("Sheet1");
-        assertTrue(s.getMergedRegions().isEmpty());
-        wb.close();
-    }
     
     @Test
     public void autoSizeDate() throws IOException {
