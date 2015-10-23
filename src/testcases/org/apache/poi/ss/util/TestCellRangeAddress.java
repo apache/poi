@@ -20,7 +20,9 @@ package org.apache.poi.ss.util;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import junit.framework.TestCase;
+//TODO: replace junit3 with junit4 code
+import junit.framework.TestCase; //junit3
+import static org.junit.Assert.assertNotEquals; //junit4
 
 import org.apache.poi.hssf.record.TestcaseRecordInputStream;
 import org.apache.poi.util.LittleEndianOutputStream;
@@ -189,5 +191,46 @@ public final class TestCellRangeAddress extends TestCase {
         // is this a valid address?
         ref = new CellRangeAddress(-1, -1, -1, -1);
         assertEquals(":", ref.formatAsString());
+    }
+    
+    public void testEquals() {
+        final CellRangeAddress ref1 = new CellRangeAddress(1, 2, 3, 4);
+        final CellRangeAddress ref2 = new CellRangeAddress(1, 2, 3, 4);
+        assertEquals(ref1, ref2);
+        
+        // Invert first/last row, but refer to same area
+        ref2.setFirstRow(2);
+        ref2.setLastRow(1);
+        assertEquals(ref1, ref2);
+        
+        // Invert first/last column, but refer to same area
+        ref2.setFirstColumn(4);
+        ref2.setLastColumn(3);
+        assertEquals(ref1, ref2);
+        
+        // Refer to a different area
+        assertNotEquals(ref1, new CellRangeAddress(3, 4, 1, 2));
+    }
+    
+    public void testGetMinMaxRow() {
+        final CellRangeAddress ref = new CellRangeAddress(1, 2, 3, 4);
+        assertEquals(1, ref.getMinRow());
+        assertEquals(2, ref.getMaxRow());
+        
+        ref.setFirstRow(10);
+        //now ref is CellRangeAddress(10, 2, 3, 4)
+        assertEquals(2, ref.getMinRow());
+        assertEquals(10, ref.getMaxRow());
+    }
+    
+    public void testGetMinMaxColumn() {
+        final CellRangeAddress ref = new CellRangeAddress(1, 2, 3, 4);
+        assertEquals(3, ref.getMinColumn());
+        assertEquals(4, ref.getMaxColumn());
+        
+        ref.setFirstColumn(10);
+        //now ref is CellRangeAddress(1, 2, 10, 4)
+        assertEquals(4, ref.getMinColumn());
+        assertEquals(10, ref.getMaxColumn());
     }
 }
