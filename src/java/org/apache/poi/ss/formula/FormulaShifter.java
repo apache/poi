@@ -142,7 +142,7 @@ public final class FormulaShifter {
             case Row:
                 return adjustPtgDueToRowMove(ptg, currentExternSheetIx);
             case Sheet:
-                return adjustPtgDueToShiftMove(ptg);
+                return adjustPtgDueToSheetMove(ptg);
             default:
                 throw new IllegalStateException("Unsupported shift mode: " + _mode);
         }
@@ -205,7 +205,7 @@ public final class FormulaShifter {
 		return null;
 	}
 
-    private Ptg adjustPtgDueToShiftMove(Ptg ptg) {
+    private Ptg adjustPtgDueToSheetMove(Ptg ptg) {
         Ptg updatedPtg = null;
         if(ptg instanceof Ref3DPtg) {
             Ref3DPtg ref = (Ref3DPtg)ptg;
