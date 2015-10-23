@@ -777,9 +777,9 @@ public final class InternalWorkbook {
         
         if (linkTable != null) {
             // also tell the LinkTable about the removed sheet
-            // +1 because we already removed it from the count of sheets!
-            for(int i = sheetIndex+1;i < getNumSheets()+1;i++) {
-                linkTable.removeSheet(i);
+            //index hasn't change in the linktable
+            if (linkTable != null) {
+                linkTable.removeSheet(sheetIndex);
             }
         }
     }
