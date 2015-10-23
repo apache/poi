@@ -27,6 +27,8 @@ import org.apache.poi.ss.usermodel.ClientAnchor;
  */
 public final class HSSFClientAnchor extends HSSFAnchor implements ClientAnchor {
 
+    public static final int MAX_COL = 255;
+    public static final int MAX_ROW = 256 * 256 - 1;
     private EscherClientAnchorRecord _escherClientAnchor;
 
     public HSSFClientAnchor(EscherClientAnchorRecord escherClientAnchorRecord) {
@@ -63,10 +65,10 @@ public final class HSSFClientAnchor extends HSSFAnchor implements ClientAnchor {
         checkRange(dx2, 0, 1023, "dx2");
         checkRange(dy1, 0, 255, "dy1");
         checkRange(dy2, 0, 255, "dy2");
-        checkRange(col1, 0, 255, "col1");
-        checkRange(col2, 0, 255, "col2");
-        checkRange(row1, 0, 256 * 256 - 1, "row1");
-        checkRange(row2, 0, 256 * 256 - 1, "row2");
+        checkRange(col1, 0, MAX_COL, "col1");
+        checkRange(col2, 0, MAX_COL, "col2");
+        checkRange(row1, 0, MAX_ROW, "row1");
+        checkRange(row2, 0, MAX_ROW, "row2");
 
         setCol1((short) Math.min(col1, col2));
         setCol2((short) Math.max(col1, col2));
@@ -126,7 +128,7 @@ public final class HSSFClientAnchor extends HSSFAnchor implements ClientAnchor {
      * @param col1 the column(0 based) of the first cell.
      */
     public void setCol1(short col1) {
-        checkRange(col1, 0, 255, "col1");
+        checkRange(col1, 0, MAX_COL, "col1");
         _escherClientAnchor.setCol1(col1);
     }
 
@@ -148,7 +150,7 @@ public final class HSSFClientAnchor extends HSSFAnchor implements ClientAnchor {
      * @param col2 the column(0 based) of the second cell.
      */
     public void setCol2(short col2) {
-        checkRange(col2, 0, 255, "col2");
+        checkRange(col2, 0, MAX_COL, "col2");
         _escherClientAnchor.setCol2(col2);
     }
 
@@ -170,7 +172,7 @@ public final class HSSFClientAnchor extends HSSFAnchor implements ClientAnchor {
      * @param row1 0-based row of the first cell.
      */
     public void setRow1(int row1) {
-        checkRange(row1, 0, 256 * 256, "row1");
+        checkRange(row1, 0, MAX_ROW, "row1");
         _escherClientAnchor.setRow1(Integer.valueOf(row1).shortValue());
     }
 
@@ -185,7 +187,7 @@ public final class HSSFClientAnchor extends HSSFAnchor implements ClientAnchor {
      * @param row2 the row(0 based) of the second cell.
      */
     public void setRow2(int row2) {
-        checkRange(row2, 0, 256 * 256, "row2");
+        checkRange(row2, 0, MAX_ROW, "row2");
         _escherClientAnchor.setRow2(Integer.valueOf(row2).shortValue());
     }
 
@@ -211,10 +213,10 @@ public final class HSSFClientAnchor extends HSSFAnchor implements ClientAnchor {
         checkRange(getDx2(), 0, 1023, "dx2");
         checkRange(getDy1(), 0, 255, "dy1");
         checkRange(getDy2(), 0, 255, "dy2");
-        checkRange(getCol1(), 0, 255, "col1");
-        checkRange(getCol2(), 0, 255, "col2");
-        checkRange(getRow1(), 0, 256 * 256 - 1, "row1");
-        checkRange(getRow2(), 0, 256 * 256 - 1, "row2");
+        checkRange(getCol1(), 0, MAX_COL, "col1");
+        checkRange(getCol2(), 0, MAX_COL, "col2");
+        checkRange(getRow1(), 0, MAX_ROW, "row1");
+        checkRange(getRow2(), 0, MAX_ROW, "row2");
 
         setCol1(col1);
         setRow1(row1);

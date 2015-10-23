@@ -129,4 +129,33 @@ public final class TestHSSFClientAnchor extends TestCase {
             // pass
         }
     }
+
+    /**
+     * Check the same maximum value enforced when using {@link HSSFClientAnchor#setRow1}.
+     */
+    public void testCanSetRowUpTo65535() {
+        HSSFClientAnchor anchor = new HSSFClientAnchor();
+        anchor.setRow1(65535);
+        anchor.setRow2(65535);
+
+        assertEquals(65535, anchor.getRow1());
+        assertEquals(65535, anchor.getRow2());
+    }
+
+    public void testCannotSetRow1GreaterThan65535() {
+        try {
+            new HSSFClientAnchor().setRow1(65536);
+            fail("Expected IllegalArgumentException to be thrown");
+        } catch (IllegalArgumentException ex) {
+            // pass
+        }
+    }
+    public void testCannotSetRow2GreaterThan65535() {
+        try {
+            new HSSFClientAnchor().setRow2(65536);
+            fail("Expected IllegalArgumentException to be thrown");
+        } catch (IllegalArgumentException ex) {
+            // pass
+        }
+    }
 }
