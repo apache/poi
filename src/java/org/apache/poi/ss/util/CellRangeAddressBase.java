@@ -164,4 +164,36 @@ public abstract class CellRangeAddressBase {
 		CellReference crB = new CellReference(_lastRow, _lastCol);
 		return getClass().getName() + " [" + crA.formatAsString() + ":" + crB.formatAsString() +"]";
 	}
+	
+	// In case _firstRow > _lastRow or _firstCol > _lastCol
+	protected int getMinRow() {
+		return Math.min(_firstRow, _lastRow);
+	}
+	protected int getMaxRow() {
+		return Math.max(_firstRow, _lastRow);
+	}
+	protected int getMinColumn() {
+		return Math.min(_firstCol, _lastCol);
+	}
+	protected int getMaxColumn() {
+		return Math.max(_firstCol, _lastCol);
+	}
+	
+	@Override
+	public boolean equals(Object other) {
+		if (other instanceof CellRangeAddressBase) {
+			CellRangeAddressBase o = (CellRangeAddressBase) other;
+			return ((getMinRow() == o.getMinRow()) &&
+					(getMaxRow() == o.getMaxRow()) &&
+					(getMinColumn() == o.getMinColumn()) &&
+					(getMaxColumn() == o.getMaxColumn()));
+		}
+		return false;
+	}
+	
+	@Override
+	public int hashCode() {
+		final int[] values = new int[]{getMinRow(), getMaxRow(), getMinColumn(), getMaxColumn()};
+		return values.hashCode();
+	}
 }
