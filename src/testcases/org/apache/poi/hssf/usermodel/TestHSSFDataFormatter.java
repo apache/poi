@@ -39,9 +39,6 @@ import org.junit.Test;
 
 /**
  * Unit tests for HSSFDataFormatter.java
- *
- * @author James May (james dot may at fmr dot com)
- *
  */
 public final class TestHSSFDataFormatter {
 
@@ -128,6 +125,8 @@ public final class TestHSSFDataFormatter {
 				"0.000E+00",
 				"0.00E+00",
 				"[BLACK]0.00;[COLOR 5]##.##",
+				"[>999999]#,,\"M\";[>999]#,\"K\";#", // num/K/M
+				"[>999999]#.000,,\"M\";[>999]#.000,\"K\";#.000", // with decimals
 		};
 
 		// invalid date formats -- will throw exception in DecimalFormat ctor
