@@ -265,8 +265,8 @@ public final class TestHSSFDataFormatter {
             assertTrue( ! "555.47431".equals(fmtval));
 
             // check we found the time properly
-            assertTrue("Format came out incorrect - " + fmt + ": " + fmtval + ", but expected to find '11:23'", 
-                       fmtval.indexOf("11:23") > -1);
+            assertTrue("Format came out incorrect - " + fmt + " - found " + fmtval + 
+                       ", but expected to find '11:23'", fmtval.indexOf("11:23") > -1);
         }
 
         // test number formats
@@ -358,8 +358,10 @@ public final class TestHSSFDataFormatter {
             Cell cell = it.next();
             cell.setCellValue(cell.getNumericCellValue() * Math.random() / 1000000 - 1000);
             log(formatter.formatCellValue(cell));
-            assertTrue(formatter.formatCellValue(cell).startsWith("Balance "));
-            assertTrue(formatter.formatCellValue(cell).endsWith(" USD"));
+            
+            String formatted = formatter.formatCellValue(cell); 
+            assertTrue("Doesn't start with Balance: " + formatted, formatted.startsWith("Balance "));
+            assertTrue("Doesn't end with USD: " + formatted, formatted.endsWith(" USD"));
         }
     }
 

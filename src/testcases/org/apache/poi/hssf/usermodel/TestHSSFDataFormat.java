@@ -52,6 +52,14 @@ public final class TestHSSFDataFormat extends BaseTestDataFormat {
     }
 
     /**
+     * [Bug 58532] Handle formats that go numnum, numK, numM etc 
+     */
+    public void test58532() {
+        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("FormatKM.xls");
+        doTest58532Core(wb);
+    }
+
+    /**
      * Bug 51378: getDataFormatString method call crashes when reading the test file
      */
     public void test51378(){
