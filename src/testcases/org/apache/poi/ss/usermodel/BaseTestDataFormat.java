@@ -87,4 +87,48 @@ public abstract class BaseTestDataFormat extends TestCase {
         assertEquals(poundFmtIdx, dataFormat.getFormat(poundFmt));
         assertEquals(poundFmt, dataFormat.getFormat(poundFmtIdx));
     }
+    
+    public abstract void test58532();
+    public void doTest58532Core(Workbook wb) {
+        Sheet s = wb.getSheetAt(0);
+        DataFormatter fmt = new DataFormatter();
+        FormulaEvaluator eval = wb.getCreationHelper().createFormulaEvaluator();
+        
+        // Column A is the raw values
+        // Column B is the ##/#K/#M values
+        // Column C is strings of what they should look like
+        // Column D is the #.##/#.#K/#.#M values
+        // Column E is strings of what they should look like
+        
+        String formatKMWhole = "[>999999]#,,\"M\";[>999]#,\"K\";#";
+        String formatKM3dp = "[>999999]#.000,,\"M\";[>999]#.000,\"K\";#.000";
+        
+        // Check the formats are as expected
+        Row headers = s.getRow(0);
+        assertNotNull(headers);
+        assertEquals(formatKMWhole, headers.getCell(1).getStringCellValue());
+        assertEquals(formatKM3dp, headers.getCell(3).getStringCellValue());
+        
+        Row r2 = s.getRow(1);
+        assertNotNull(r2);
+        assertEquals(formatKMWhole, r2.getCell(1).getCellStyle().getDataFormatString());
+        assertEquals(formatKM3dp, r2.getCell(3).getCellStyle().getDataFormatString());
+        
+        // For all of the contents rows, check that DataFormatter is able
+        //  to format the cells to the same value as the one next to it
+        for (int rn=1; rn<s.getLastRowNum(); rn++) {
+            Row r = s.getRow(rn);
+            if (r == null) break;
+            
+            double value = r.getCell(0).getNumericCellValue();
+            
+            String expWhole = r.getCell(2).getStringCellValue();
+            String exp3dp   = r.getCell(4).getStringCellValue();
+            
+            assertEquals("Wrong formatting of " + value + " for row " + rn,
+                         expWhole, fmt.formatCellValue(r.getCell(1), eval));
+            assertEquals("Wrong formatting of " + value + " for row " + rn,
+                         exp3dp, fmt.formatCellValue(r.getCell(3), eval));
+        }
+    }
 }

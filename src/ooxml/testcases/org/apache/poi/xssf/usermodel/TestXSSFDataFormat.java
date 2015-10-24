@@ -35,7 +35,7 @@ public final class TestXSSFDataFormat extends BaseTestDataFormat {
     /**
      * [Bug 49928] formatCellValue returns incorrect value for \u00a3 formatted cells
      */
-    public void test49928(){
+    public void test49928() {
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("49928.xlsx");
         doTest49928Core(wb);
 
@@ -48,5 +48,13 @@ public final class TestXSSFDataFormat extends BaseTestDataFormat {
         short customFmtIdx = dataFormat.getFormat("\u00a3##.00[Yellow]");
         assertTrue(customFmtIdx > BuiltinFormats.FIRST_USER_DEFINED_FORMAT_INDEX );
         assertEquals("\u00a3##.00[Yellow]", dataFormat.getFormat(customFmtIdx));
+    }
+    
+    /**
+     * [Bug 58532] Handle formats that go numnum, numK, numM etc 
+     */
+    public void test58532() {
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("FormatKM.xlsx");
+        doTest58532Core(wb);
     }
 }

@@ -40,8 +40,12 @@ import java.util.Observer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.poi.ss.format.CellFormat;
+import org.apache.poi.ss.format.CellFormatResult;
 import org.apache.poi.ss.util.NumberToTextConverter;
 import org.apache.poi.util.LocaleUtil;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 
 /**
@@ -197,6 +201,9 @@ public class DataFormatter implements Observer {
     /** the Observable to notify, when the locale has been changed */
     private final LocaleChangeObservable localeChangedObervable = new LocaleChangeObservable();
     
+    /** For logging any problems we find */
+    private static POILogger logger = POILogFactory.getLogger(DataFormatter.class);
+    
     /**
      * Creates a formatter using the {@link Locale#getDefault() default locale}.
      */
@@ -270,28 +277,30 @@ public class DataFormatter implements Observer {
 //      String formatStr = (i < formatBits.length) ? formatBits[i] : formatBits[0];
 
         String formatStr = formatStrIn;
-        // Excel supports positive/negative/zero, but java
-        // doesn't, so we need to do it specially
-        final int firstAt = formatStr.indexOf(';');
-        final int lastAt = formatStr.lastIndexOf(';');
-        // p and p;n are ok by default. p;n;z and p;n;z;s need to be fixed.
-        if (firstAt != -1 && firstAt != lastAt) {
-            final int secondAt = formatStr.indexOf(';', firstAt + 1);
-            if (secondAt == lastAt) { // p;n;z
-                if (cellValue == 0.0) {
-                    formatStr = formatStr.substring(lastAt + 1);
-                } else {
-                    formatStr = formatStr.substring(0, lastAt);
+        
+        // Excel supports 3+ part conditional data formats, eg positive/negative/zero,
+        //  or (>1000),(>0),(0),(negative). As Java doesn't handle these kinds
+        //  of different formats for different ranges, just +ve/-ve, we need to 
+        //  handle these ourselves in a special way.
+        // For now, if we detect 3+ parts, we call out to CellFormat to handle it
+        // TODO Going forward, we should really merge the logic between the two classes
+        if (formatStr.indexOf(";") != -1 && 
+                formatStr.indexOf(';') != formatStr.lastIndexOf(';')) {
+            try {
+                // Ask CellFormat to get a formatter for it
+                CellFormat cfmt = CellFormat.getInstance(formatStr);
+                // CellFormat requires callers to identify date vs not, so do so
+                Object cellValueO = Double.valueOf(cellValue);
+                if (DateUtil.isADateFormat(formatIndex, formatStr)) {
+                    cellValueO = DateUtil.getJavaDate(cellValue);
                 }
-            } else {
-                if (cellValue == 0.0) { // p;n;z;s
-                    formatStr = formatStr.substring(secondAt + 1, lastAt);
-                } else {
-                    formatStr = formatStr.substring(0, secondAt);
-                }
+                // Wrap and return (non-cachable - CellFormat does that)
+                return new CellFormatResultWrapper( cfmt.apply(cellValueO) );
+            } catch (Exception e) {
+                logger.log(POILogger.WARN, "Formatting failed as " + formatStr + ", falling back", e);
             }
         }
-
+        
        // Excel's # with value 0 will output empty where Java will output 0. This hack removes the # from the format.
        if (emulateCsv && cellValue == 0.0 && formatStr.contains("#") && !formatStr.contains("0")) {
            formatStr = formatStr.replaceAll("#", "");
@@ -310,7 +319,6 @@ public class DataFormatter implements Observer {
         
         // Build a formatter, and cache it
         format = createFormat(cellValue, formatIndex, formatStr);
-        formats.put(formatStr, format);
         return format;
     }
 
@@ -1114,6 +1122,23 @@ public class DataFormatter implements Observer {
         @Override
         public Object parseObject(String source, ParsePosition pos) {
             return df.parseObject(source, pos);
+        }
+    }
+    /**
+     * Workaround until we merge {@link DataFormatter} with {@link CellFormat}.
+     * Constant, non-cachable wrapper around a {@link CellFormatResult} 
+     */
+    @SuppressWarnings("serial")
+    private static final class CellFormatResultWrapper extends Format {
+        private final CellFormatResult result;
+        private CellFormatResultWrapper(CellFormatResult result) {
+            this.result = result;
+        }
+        public StringBuffer format(Object obj, StringBuffer toAppendTo, FieldPosition pos) {
+            return toAppendTo.append(result.text);
+        }
+        public Object parseObject(String source, ParsePosition pos) {
+            return null; // Not supported
         }
     }
 }
