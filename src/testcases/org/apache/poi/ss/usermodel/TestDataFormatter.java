@@ -505,16 +505,29 @@ public class TestDataFormatter {
        assertEquals("1901/01/01", dfUS.formatRawCellContents(367.0, -1, "yyyy\\/mm\\/dd"));
     }
 
-    // TODO Fix this to work
     @Test
-    @Ignore("CellFormat and DataFormatter don't quite agree...")
-    public void testOther() {
+    public void testFormatsWithPadding() {
         DataFormatter dfUS = new DataFormatter(Locale.US, true);
 
-        assertEquals("  12.34 ", dfUS.formatRawCellContents( 12.34, -1, "_-* #,##0.00_-;-* #,##0.00_-;_-* \"-\"??_-;_-@_-"));
-        assertEquals("- 12.34 ", dfUS.formatRawCellContents(-12.34, -1, "_-* #,##0.00_-;-* #,##0.00_-;_-* \"-\"??_-;_-@_-"));
-        assertEquals(" -   ", dfUS.formatRawCellContents(0.0, -1, "_-* #,##0.00_-;-* #,##0.00_-;_-* \"-\"??_-;_-@_-"));
-        assertEquals(" $-   ", dfUS.formatRawCellContents(0.0, -1, "_-$* #,##0.00_-;-$* #,##0.00_-;_-$* \"-\"??_-;_-@_-"));
+        // These request space-padding, based on the cell width
+        // There should always be one space after, variable (non-zero) amount before
+        // Because the Cell Width isn't available, this gets emulated with
+        //  4 leading spaces, or a minus then 3 leading spaces
+        // This isn't all that consistent, but it's the best we can really manage...
+        assertEquals("    1,234.56 ", dfUS.formatRawCellContents( 1234.56, -1, "_-* #,##0.00_-;-* #,##0.00_-;_-* \"-\"??_-;_-@_-"));
+        assertEquals("-   1,234.56 ", dfUS.formatRawCellContents(-1234.56, -1, "_-* #,##0.00_-;-* #,##0.00_-;_-* \"-\"??_-;_-@_-"));
+        assertEquals("    12.34 ", dfUS.formatRawCellContents( 12.34, -1, "_-* #,##0.00_-;-* #,##0.00_-;_-* \"-\"??_-;_-@_-"));
+        assertEquals("-   12.34 ", dfUS.formatRawCellContents(-12.34, -1, "_-* #,##0.00_-;-* #,##0.00_-;_-* \"-\"??_-;_-@_-"));
+        
+        assertEquals("    0.10 ", dfUS.formatRawCellContents( 0.1, -1, "_-* #,##0.00_-;-* #,##0.00_-;_-* \"-\"??_-;_-@_-"));
+        assertEquals("-   0.10 ", dfUS.formatRawCellContents(-0.1, -1, "_-* #,##0.00_-;-* #,##0.00_-;_-* \"-\"??_-;_-@_-"));
+        // TODO Fix this, we are randomly adding a 0 at the end that souldn't be there
+        //assertEquals("     -   ", dfUS.formatRawCellContents(0.0, -1, "_-* #,##0.00_-;-* #,##0.00_-;_-* \"-\"??_-;_-@_-"));
+        
+        assertEquals(" $   1.10 ", dfUS.formatRawCellContents( 1.1, -1, "_-$* #,##0.00_-;-$* #,##0.00_-;_-$* \"-\"??_-;_-@_-"));
+        assertEquals("-$   1.10 ", dfUS.formatRawCellContents(-1.1, -1, "_-$* #,##0.00_-;-$* #,##0.00_-;_-$* \"-\"??_-;_-@_-"));
+        // TODO Fix this, we are randomly adding a 0 at the end that souldn't be there
+        //assertEquals(" $    -   ", dfUS.formatRawCellContents( 0.0, -1, "_-$* #,##0.00_-;-$* #,##0.00_-;_-$* \"-\"??_-;_-@_-"));
     }
     
     @Test
