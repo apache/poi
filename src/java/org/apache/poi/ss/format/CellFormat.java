@@ -66,7 +66,7 @@ import org.apache.poi.ss.util.DateFormatConverter;
  * surround by brackets). </dl>
  * <p/>
  * A given format part may specify a given Locale, by including something
- *  like <tt>[$$-409]</tt> or <tt>[$\u00A3-809]</tt> or <tt>[$-40C]</tt>. These
+ *  like <tt>[$$-409]</tt> or <tt>[$&pound;-809]</tt> or <tt>[$-40C]</tt>. These
  *  are (currently) largely ignored. You can use {@link DateFormatConverter}
  *  to look these up into Java Locales if desired.
  * <p/>
@@ -78,6 +78,8 @@ import org.apache.poi.ss.util.DateFormatConverter;
  *  code for formatting numbers.
  * TODO Re-use parts of this logic with {@link ConditionalFormatting} /
  *  {@link ConditionalFormattingRule} for reporting stylings which do/don't apply
+ * TODO Support the full set of modifiers, including alternate calendars and
+ *  native character numbers, as documented at https://help.libreoffice.org/Common/Number_Format_Codes
  */
 public class CellFormat {
     private final String format;

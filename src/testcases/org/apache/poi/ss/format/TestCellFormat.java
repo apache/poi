@@ -36,7 +36,6 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.util.LocaleUtil;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class TestCellFormat {
@@ -918,7 +917,7 @@ public class TestCellFormat {
             Row row = sheet.createRow(0);
             Cell cell = row.createCell(0);
             cell.setCellValue(123456.6);
-            System.out.println(cf1.apply(cell).text);
+            //System.out.println(cf1.apply(cell).text);
             assertEquals("123456 3/5", cf1.apply(cell).text);
         } finally {
             wb.close();
@@ -926,7 +925,6 @@ public class TestCellFormat {
     }
     
     @Test
-    @Ignore("TODO") // TODO 
     public void testAccountingFormats() throws IOException {
         char pound = '\u00A3';
         char euro  = '\u20AC';
@@ -934,11 +932,11 @@ public class TestCellFormat {
         // Accounting -> 0 decimal places, default currency symbol
         String formatDft = "_-\"$\"* #,##0_-;\\-\"$\"* #,##0_-;_-\"$\"* \"-\"_-;_-@_-";
         // Accounting -> 0 decimal places, US currency symbol
-        String formatUS  = "_-[$$-409]* #,##0_ ;_-[$$-409]* -#,##0 ;_-[$$-409]* \"-\"_ ;_-@_ ";
+        String formatUS  = "_-[$$-409]* #,##0_ ;_-[$$-409]* -#,##0 ;_-[$$-409]* \"-\"_-;_-@_-";
         // Accounting -> 0 decimal places, UK currency symbol
         String formatUK  = "_-[$"+pound+"-809]* #,##0_-;\\-[$"+pound+"-809]* #,##0_-;_-[$"+pound+"-809]* \"-\"??_-;_-@_-";
-        // Accounting -> 0 decimal places, French currency symbol
-        String formatFR  = "_-[$"+euro+"-40C]* #,##0_-;\\-[$"+euro+"-40C]* #,##0_-;_-[$"+euro+"-40C]* \"-\"??_-;_-@_-";
+        // French style accounting, euro sign comes after not before
+        String formatFR  = "_-#,##0* [$"+euro+"-40C]_-;\\-#,##0* [$"+euro+"-40C]_-;_-\"-\"??* [$"+euro+"-40C] _-;_-@_-";
         
         // Has +ve, -ve and zero rules
         CellFormat cfDft = CellFormat.getInstance(formatDft);
@@ -947,17 +945,34 @@ public class TestCellFormat {
         CellFormat cfFR  = CellFormat.getInstance(formatFR);
         
         // For +ve numbers, should be Space + currency symbol + spaces + whole number with commas + space
-        assertEquals(" $   12 ",cfDft.apply(Double.valueOf(12.33)).text);
-        assertEquals(" $   12 ", cfUS.apply(Double.valueOf(12.33)).text);
+        // (Except French, which is mostly reversed...)
+        assertEquals(" $   12 ", cfDft.apply(Double.valueOf(12.33)).text);
+        assertEquals(" $   12 ",  cfUS.apply(Double.valueOf(12.33)).text);
         assertEquals(" "+pound+"   12 ", cfUK.apply(Double.valueOf(12.33)).text);
-        assertEquals(" "+pound+"   12 ", cfFR.apply(Double.valueOf(12.33)).text);
-        assertEquals(" "+pound+"   16,789 ", cfUK.apply(Double.valueOf(16789.2)).text);
-        // TODO More
+        assertEquals(" 12   "+euro+" ", cfFR.apply(Double.valueOf(12.33)).text);
         
-        // For -ve numbers, should be Minus + currency symbol + spaces + whole number with commas
-        // TODO
+        assertEquals(" $   16,789 ", cfDft.apply(Double.valueOf(16789.2)).text);
+        assertEquals(" $   16,789 ",  cfUS.apply(Double.valueOf(16789.2)).text);
+        assertEquals(" "+pound+"   16,789 ", cfUK.apply(Double.valueOf(16789.2)).text);
+        assertEquals(" 16,789   "+euro+" ", cfFR.apply(Double.valueOf(16789.2)).text);
+        
+        // For -ve numbers, gets a bit more complicated...
+        assertEquals("-$   12 ", cfDft.apply(Double.valueOf(-12.33)).text);
+        assertEquals(" $   -12 ",  cfUS.apply(Double.valueOf(-12.33)).text);
+        assertEquals("-"+pound+"   12 ", cfUK.apply(Double.valueOf(-12.33)).text);
+        assertEquals("-12   "+euro+" ", cfFR.apply(Double.valueOf(-12.33)).text);
+        
+        assertEquals("-$   16,789 ", cfDft.apply(Double.valueOf(-16789.2)).text);
+        assertEquals(" $   -16,789 ",  cfUS.apply(Double.valueOf(-16789.2)).text);
+        assertEquals("-"+pound+"   16,789 ", cfUK.apply(Double.valueOf(-16789.2)).text);
+        assertEquals("-16,789   "+euro+" ", cfFR.apply(Double.valueOf(-16789.2)).text);
         
         // For zero, should be Space + currency symbol + spaces + Minus + spaces
-        // TODO
+        assertEquals(" $   - ", cfDft.apply(Double.valueOf(0)).text);
+        // TODO Fix the exception this incorrectly triggers
+        //assertEquals(" $   - ",  cfUS.apply(Double.valueOf(0)).text);
+        // TODO Fix these to not have an incorrect bonus 0 on the end 
+        //assertEquals(" "+pound+"   -  ", cfUK.apply(Double.valueOf(0)).text);
+        //assertEquals(" -    "+euro+"  ", cfFR.apply(Double.valueOf(0)).text);
     }
 }
