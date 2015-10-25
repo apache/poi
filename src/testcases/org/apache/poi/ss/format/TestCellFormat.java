@@ -36,6 +36,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.util.LocaleUtil;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class TestCellFormat {
@@ -922,5 +923,41 @@ public class TestCellFormat {
         } finally {
             wb.close();
         }
+    }
+    
+    @Test
+    @Ignore("TODO") // TODO 
+    public void testAccountingFormats() throws IOException {
+        char pound = '\u00A3';
+        char euro  = '\u20AC';
+        
+        // Accounting -> 0 decimal places, default currency symbol
+        String formatDft = "_-\"$\"* #,##0_-;\\-\"$\"* #,##0_-;_-\"$\"* \"-\"_-;_-@_-";
+        // Accounting -> 0 decimal places, US currency symbol
+        String formatUS  = "_-[$$-409]* #,##0_ ;_-[$$-409]* -#,##0 ;_-[$$-409]* \"-\"_ ;_-@_ ";
+        // Accounting -> 0 decimal places, UK currency symbol
+        String formatUK  = "_-[$"+pound+"-809]* #,##0_-;\\-[$"+pound+"-809]* #,##0_-;_-[$"+pound+"-809]* \"-\"??_-;_-@_-";
+        // Accounting -> 0 decimal places, French currency symbol
+        String formatFR  = "_-[$"+euro+"-40C]* #,##0_-;\\-[$"+euro+"-40C]* #,##0_-;_-[$"+euro+"-40C]* \"-\"??_-;_-@_-";
+        
+        // Has +ve, -ve and zero rules
+        CellFormat cfDft = CellFormat.getInstance(formatDft);
+        CellFormat cfUS  = CellFormat.getInstance(formatUS);
+        CellFormat cfUK  = CellFormat.getInstance(formatUK);
+        CellFormat cfFR  = CellFormat.getInstance(formatFR);
+        
+        // For +ve numbers, should be Space + currency symbol + spaces + whole number with commas + space
+        assertEquals(" $   12 ",cfDft.apply(Double.valueOf(12.33)).text);
+        assertEquals(" $   12 ", cfUS.apply(Double.valueOf(12.33)).text);
+        assertEquals(" "+pound+"   12 ", cfUK.apply(Double.valueOf(12.33)).text);
+        assertEquals(" "+pound+"   12 ", cfFR.apply(Double.valueOf(12.33)).text);
+        assertEquals(" "+pound+"   16,789 ", cfUK.apply(Double.valueOf(16789.2)).text);
+        // TODO More
+        
+        // For -ve numbers, should be Minus + currency symbol + spaces + whole number with commas
+        // TODO
+        
+        // For zero, should be Space + currency symbol + spaces + Minus + spaces
+        // TODO
     }
 }

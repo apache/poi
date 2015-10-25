@@ -42,6 +42,7 @@ import java.util.regex.Pattern;
 
 import org.apache.poi.ss.format.CellFormat;
 import org.apache.poi.ss.format.CellFormatResult;
+import org.apache.poi.ss.util.DateFormatConverter;
 import org.apache.poi.ss.util.NumberToTextConverter;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.POILogFactory;
@@ -105,6 +106,15 @@ import org.apache.poi.util.POILogger;
  *  <li>simulate Excel's handling of a format string of all # when the value is 0.
  *   Excel will output "", <code>DataFormatter</code> will output "0".
  * </ul>
+ * <p>
+ *  Some formats are automatically "localised" by Excel, eg show as mm/dd/yyyy when
+ *   loaded in Excel in some Locales but as dd/mm/yyyy in others. These are always
+ *   returned in the "default" (US) format, as stored in the file. 
+ *  Some format strings request an alternate locale, eg 
+ *   <code>[$-809]d/m/yy h:mm AM/PM</code> which explicitly requests UK locale.
+ *   These locale directives are (currently) ignored.
+ *  You can use {@link DateFormatConverter} to do some of this localisation if
+ *   you need it. 
  */
 public class DataFormatter implements Observer {
     private static final String defaultFractionWholePartFormat = "#";
@@ -1129,13 +1139,17 @@ public class DataFormatter implements Observer {
      * Constant, non-cachable wrapper around a {@link CellFormatResult} 
      */
     @SuppressWarnings("serial")
-    private static final class CellFormatResultWrapper extends Format {
+    private final class CellFormatResultWrapper extends Format {
         private final CellFormatResult result;
         private CellFormatResultWrapper(CellFormatResult result) {
             this.result = result;
         }
         public StringBuffer format(Object obj, StringBuffer toAppendTo, FieldPosition pos) {
-            return toAppendTo.append(result.text);
+            if (emulateCsv) {
+                return toAppendTo.append(result.text);
+            } else {
+                return toAppendTo.append(result.text.trim());
+            }
         }
         public Object parseObject(String source, ParsePosition pos) {
             return null; // Not supported

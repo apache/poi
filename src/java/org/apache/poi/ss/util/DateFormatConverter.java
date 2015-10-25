@@ -42,10 +42,9 @@ import org.apache.poi.util.POILogger;
  *      cellStyle.setDataFormat(poiFormat.getFormat(excelFormatPattern));
  *      cell.setCellValue(new Date());
  *      cell.setCellStyle(cellStyle);  // formats date as '2012\u5e743\u670817\u65e5'
- *
  *  </code></pre>
  *
- *
+ * TODO Generalise this for all Excel format strings
  */
 public class DateFormatConverter  {
 	private static POILogger logger = POILogFactory.getLogger(DateFormatConverter.class);

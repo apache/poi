@@ -33,6 +33,7 @@ import org.apache.poi.ss.usermodel.ConditionalFormatting;
 import org.apache.poi.ss.usermodel.ConditionalFormattingRule;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.ss.util.DateFormatConverter;
 
 /**
  * Format a value according to the standard Excel behavior.  This "standard" is
@@ -63,6 +64,11 @@ import org.apache.poi.ss.usermodel.DateUtil;
  * up to two decimal points). If the value is text, display according to the
  * fourth part (example: text in the cell's usual color, with the text value
  * surround by brackets). </dl>
+ * <p/>
+ * A given format part may specify a given Locale, by including something
+ *  like <tt>[$$-409]</tt> or <tt>[$\u00A3-809]</tt> or <tt>[$-40C]</tt>. These
+ *  are (currently) largely ignored. You can use {@link DateFormatConverter}
+ *  to look these up into Java Locales if desired.
  * <p/>
  * In addition to these, there is a general format that is used when no format
  * is specified.  This formatting is presented by the {@link #GENERAL_FORMAT}
