@@ -131,4 +131,38 @@ public abstract class BaseTestDataFormat extends TestCase {
                          exp3dp, fmt.formatCellValue(r.getCell(3), eval));
         }
     }
+    
+    /**
+     * Localised accountancy formats
+     */
+    public final void test58536() {
+        Workbook wb = _testDataProvider.createWorkbook();
+        DataFormatter formatter = new DataFormatter();
+        DataFormat fmt = wb.createDataFormat();
+        Sheet sheet = wb.createSheet();
+        Row r = sheet.createRow(0);
+        
+        char pound = '\u00A3';
+        String formatUK  = "_-[$"+pound+"-809]* #,##0_-;\\-[$"+pound+"-809]* #,##0_-;_-[$"+pound+"-809]* \"-\"??_-;_-@_-";
+        
+        CellStyle cs = wb.createCellStyle();
+        cs.setDataFormat(fmt.getFormat(formatUK));
+        
+        Cell pve = r.createCell(0);
+        pve.setCellValue(12345);
+        pve.setCellStyle(cs);
+        
+        Cell nve = r.createCell(1);
+        nve.setCellValue(-12345);
+        nve.setCellStyle(cs);
+        
+        Cell zero = r.createCell(2);
+        zero.setCellValue(0);
+        zero.setCellStyle(cs);
+        
+        assertEquals(pound+"   12,345", formatter.formatCellValue(pve)); 
+        assertEquals("-"+pound+"   12,345", formatter.formatCellValue(nve));
+        // TODO Fix this to not have an extra 0 at the end
+        //assertEquals(pound+"   -  ", formatter.formatCellValue(zero)); 
+    }
 }

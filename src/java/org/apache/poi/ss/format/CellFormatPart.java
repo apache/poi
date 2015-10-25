@@ -19,6 +19,7 @@ package org.apache.poi.ss.format;
 import org.apache.poi.hssf.util.HSSFColor;
 
 import javax.swing.*;
+
 import java.awt.*;
 import java.util.Locale;
 import java.util.Map;
@@ -80,6 +81,8 @@ public class CellFormatPart {
     public static final Pattern CONDITION_PAT;
     /** Pattern for the format specification part of a cell format part. */
     public static final Pattern SPECIFICATION_PAT;
+    /** Pattern for the currency symbol part of a cell format part */
+    public static final Pattern CURRENCY_PAT;
     /** Pattern for an entire cell single part. */
     public static final Pattern FORMAT_PAT;
 
@@ -105,6 +108,9 @@ public class CellFormatPart {
         // A condition specification
         String condition = "([<>=]=?|!=|<>)    # The operator\n" +
                 "  \\s*([0-9]+(?:\\.[0-9]*)?)\\s*  # The constant to test against\n";
+        
+        // A currency symbol / string, in a specific locale
+        String currency = "(\\[\\$.{0,3}-[0-9a-f]{3}\\])";
 
         String color =
                 "\\[(black|blue|cyan|green|magenta|red|white|yellow|color [0-9]+)\\]";
@@ -115,6 +121,7 @@ public class CellFormatPart {
         // A part of a specification
         String part = "\\\\.                 # Quoted single character\n" +
                 "|\"([^\\\\\"]|\\\\.)*\"         # Quoted string of characters (handles escaped quotes like \\\") \n" +
+                "|"+currency+"                   # Currency symbol in a given locale\n" +
                 "|_.                             # Space as wide as a given character\n" +
                 "|\\*.                           # Repeating fill character\n" +
                 "|@                              # Text: cell text\n" +
@@ -131,14 +138,15 @@ public class CellFormatPart {
                 "|\\[s{1,2}\\]                   # Elapsed time: second spec\n" +
                 "|[^;]                           # A character\n" + "";
 
-        String format = "(?:" + color + ")?                  # Text color\n" +
-                "(?:\\[" + condition + "\\])?                # Condition\n" +
+        String format = "(?:" + color + ")?                 # Text color\n" +
+                "(?:\\[" + condition + "\\])?               # Condition\n" +
                 "((?:" + part + ")+)                        # Format spec\n";
 
         int flags = Pattern.COMMENTS | Pattern.CASE_INSENSITIVE;
         COLOR_PAT = Pattern.compile(color, flags);
         CONDITION_PAT = Pattern.compile(condition, flags);
         SPECIFICATION_PAT = Pattern.compile(part, flags);
+        CURRENCY_PAT = Pattern.compile(currency, flags);
         FORMAT_PAT = Pattern.compile(format, flags);
 
         // Calculate the group numbers of important groups.  (They shift around
@@ -196,7 +204,7 @@ public class CellFormatPart {
 
     /**
      * Returns the number of the first group that is the same as the marker
-     * string.  The search starts with group 1.
+     * string. Starts from group 1.
      *
      * @param pat    The pattern to use.
      * @param str    The string to match against the pattern.
@@ -278,6 +286,22 @@ public class CellFormatPart {
      */
     private CellFormatter getFormatter(Matcher matcher) {
         String fdesc = matcher.group(SPECIFICATION_GROUP);
+        
+        // For now, we don't support localised currencies, so simplify if there
+        Matcher currencyM = CURRENCY_PAT.matcher(fdesc);
+        if (currencyM.find()) {
+            String currencyPart = currencyM.group(1);
+            String currencyRepl;
+            if (currencyPart.startsWith("[$-")) {
+                // Default $ in a different locale
+                currencyRepl = "$";
+            } else {
+                currencyRepl = currencyPart.substring(2, currencyPart.lastIndexOf('-'));
+            }
+            fdesc = fdesc.replace(currencyPart, currencyRepl);
+        }
+        
+        // Build a formatter for this simplified string
         return type.formatter(fdesc);
     }
 
@@ -298,8 +322,14 @@ public class CellFormatPart {
         boolean seenZero = false;
         while (m.find()) {
             String repl = m.group(0);
+            
             if (repl.length() > 0) {
-                switch (repl.charAt(0)) {
+                char c1 = repl.charAt(0);
+                char c2 = 0;
+                if (repl.length() > 1)
+                    c2 = Character.toLowerCase(repl.charAt(1));
+                
+                switch (c1) {
                 case '@':
                     return CellFormatType.TEXT;
                 case 'd':
@@ -321,7 +351,16 @@ public class CellFormatPart {
                     seenZero = true;
                     break;
                 case '[':
-                    return CellFormatType.ELAPSED;
+                    if (c2 == 'h' || c2 == 'm' || c2 == 's') {
+                        return CellFormatType.ELAPSED;
+                    }
+                    if (c2 == '$') {
+                        // Localised currency
+                        return CellFormatType.NUMBER;
+                    }
+                    // Something else inside [] which isn't supported!
+                    throw new IllegalArgumentException("Unsupported [] format block '" +
+                                                       repl + "' in '" + fdesc + "'");
                 case '#':
                 case '?':
                     return CellFormatType.NUMBER;
