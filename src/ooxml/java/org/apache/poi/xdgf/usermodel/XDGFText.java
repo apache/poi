@@ -56,7 +56,7 @@ public class XDGFText {
     /**
      * These are in the shape coordinate system
      *
-     * @see https://msdn.microsoft.com/en-us/library/hh644132(v=office.12).aspx
+     * @see <a href="https://msdn.microsoft.com/en-us/library/hh644132(v=office.12).aspx">Text Block Coordinate System docs</a>
      */
     public Rectangle2D.Double getTextBounds() {
 
