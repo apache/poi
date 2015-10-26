@@ -1029,7 +1029,7 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
         
         try {
             // as the file is written to, we make a copy before actually working on it
-            FileHelper.copyFile(new File("test-data/spreadsheet/56957.xlsx"), file);
+            FileHelper.copyFile(HSSFTestDataSamples.getSampleFile("56957.xlsx"), file);
             
             assertTrue(file.exists());
             
