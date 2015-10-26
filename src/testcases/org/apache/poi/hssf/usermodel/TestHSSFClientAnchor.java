@@ -99,4 +99,63 @@ public final class TestHSSFClientAnchor extends TestCase {
             assertEquals(ref[i], height, 0);
         }
     }
+
+    /**
+     * Check {@link HSSFClientAnchor} constructor does not treat 32768 as -32768.
+     */
+    public void testCanHaveRowGreaterThan32767() {
+        // Maximum permitted row number should be 65535.
+        HSSFClientAnchor anchor = new HSSFClientAnchor(0, 0, 0, 0, (short) 0, 32768, (short) 0, 32768);
+
+        assertEquals(32768, anchor.getRow1());
+        assertEquals(32768, anchor.getRow2());
+    }
+
+    /**
+     * Check the maximum is not set at 255*256 instead of 256*256 - 1.
+     */
+    public void testCanHaveRowUpTo65535() {
+        HSSFClientAnchor anchor = new HSSFClientAnchor(0, 0, 0, 0, (short) 0, 65535, (short) 0, 65535);
+
+        assertEquals(65535, anchor.getRow1());
+        assertEquals(65535, anchor.getRow2());
+    }
+
+    public void testCannotHaveRowGreaterThan65535() {
+        try {
+            new HSSFClientAnchor(0, 0, 0, 0, (short) 0, 65536, (short) 0, 65536);
+            fail("Expected IllegalArgumentException to be thrown");
+        } catch (IllegalArgumentException ex) {
+            // pass
+        }
+    }
+
+    /**
+     * Check the same maximum value enforced when using {@link HSSFClientAnchor#setRow1}.
+     */
+    public void testCanSetRowUpTo65535() {
+        HSSFClientAnchor anchor = new HSSFClientAnchor();
+        anchor.setRow1(65535);
+        anchor.setRow2(65535);
+
+        assertEquals(65535, anchor.getRow1());
+        assertEquals(65535, anchor.getRow2());
+    }
+
+    public void testCannotSetRow1GreaterThan65535() {
+        try {
+            new HSSFClientAnchor().setRow1(65536);
+            fail("Expected IllegalArgumentException to be thrown");
+        } catch (IllegalArgumentException ex) {
+            // pass
+        }
+    }
+    public void testCannotSetRow2GreaterThan65535() {
+        try {
+            new HSSFClientAnchor().setRow2(65536);
+            fail("Expected IllegalArgumentException to be thrown");
+        } catch (IllegalArgumentException ex) {
+            // pass
+        }
+    }
 }
