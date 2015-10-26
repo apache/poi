@@ -38,6 +38,7 @@ import org.apache.poi.openxml4j.opc.internal.ZipHelper;
 import org.apache.poi.util.DocumentHelper;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.xssf.usermodel.XSSFRelation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -62,6 +63,12 @@ public final class ZipPartMarshaller implements PartMarshaller {
 			throw new OpenXML4JException("ZipOutputStream expected !");
 			// Normally should happen only in developement phase, so just throw
 			// exception
+		}
+		
+		// check if there is anything to save for some parts. We don't do this for all parts as some code
+		// might depend on empty parts being saved, e.g. some unit tests verify this currently.
+		if(part.getSize() == 0 && part.getPartName().getName().equals(XSSFRelation.SHARED_STRINGS.getDefaultFileName())) {
+		    return true;
 		}
 
 		ZipOutputStream zos = (ZipOutputStream) os;

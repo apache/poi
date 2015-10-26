@@ -40,10 +40,12 @@ import org.apache.poi.POIXMLProperties;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.openxml4j.opc.ContentTypes;
 import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
+import org.apache.poi.openxml4j.opc.internal.FileHelper;
 import org.apache.poi.openxml4j.opc.internal.MemoryPackagePart;
 import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
 import org.apache.poi.ss.SpreadsheetVersion;
@@ -1018,6 +1020,43 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
         }
         finally {
             IOUtils.closeQuietly(wb);
+        }
+	}
+
+    @Test
+    public void testBug56957CloseWorkbook() throws Exception {
+        File file = TempFile.createTempFile("TestBug56957_", ".xlsx");
+        
+        try {
+            // as the file is written to, we make a copy before actually working on it
+            FileHelper.copyFile(new File("test-data/spreadsheet/56957.xlsx"), file);
+            
+            assertTrue(file.exists());
+            
+            // read-only mode works!
+            Workbook workbook = WorkbookFactory.create(OPCPackage.open(file, PackageAccess.READ));
+            System.out.println(workbook.getSheetAt(0).getRow(0).getCell(0, Row.CREATE_NULL_AS_BLANK).getDateCellValue().toString());
+            workbook.close();
+            workbook = null;
+    
+            workbook = WorkbookFactory.create(OPCPackage.open(file, PackageAccess.READ));
+            System.out.println(workbook.getSheetAt(0).getRow(0).getCell(0, Row.CREATE_NULL_AS_BLANK).getDateCellValue().toString());
+            workbook.close();
+            workbook = null;
+    
+            // now check read/write mode
+            workbook = WorkbookFactory.create(OPCPackage.open(file, PackageAccess.READ_WRITE));
+            System.out.println(workbook.getSheetAt(0).getRow(0).getCell(0, Row.CREATE_NULL_AS_BLANK).getDateCellValue().toString());
+            workbook.close();
+            workbook = null;
+    
+            workbook = WorkbookFactory.create(OPCPackage.open(file, PackageAccess.READ_WRITE));
+            System.out.println(workbook.getSheetAt(0).getRow(0).getCell(0, Row.CREATE_NULL_AS_BLANK).getDateCellValue().toString());
+            workbook.close();
+            workbook = null;
+        } finally {
+            assertTrue(file.exists());
+            assertTrue(file.delete());
         }
     }
 }
