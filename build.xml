@@ -458,6 +458,7 @@ under the License.
                 <include name="xercesImpl-*.jar"/>
                 <include name="junit-3*"/>
                 <include name="junit-4.11*"/>
+            	<include name="forbiddenapis-1.*.jar"/>
             </fileset>
         	<fileset dir="${ooxml.lib}">
         		<include name="ooxml-schemas-1.1-sources.jar"/>
