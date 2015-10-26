@@ -315,7 +315,7 @@ public class XSSFRichTextString implements RichTextString {
         if(st.sizeOfRArray() == 0) {
             return utfDecode(st.getT());
         }
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         for(CTRElt r : st.getRArray()){
             buf.append(r.getT());
         }
@@ -502,7 +502,7 @@ public class XSSFRichTextString implements RichTextString {
     static String utfDecode(String value){
         if(value == null) return null;
         
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         Matcher m = utfPtrn.matcher(value);
         int idx = 0;
         while(m.find()) {
@@ -517,6 +517,13 @@ public class XSSFRichTextString implements RichTextString {
 
             idx = m.end();
         }
+        
+        // small optimization: don't go via StringBuilder if not necessary, 
+        // the encodings are very rare, so we should almost always go via this shortcut. 
+        if(idx == 0) {
+            return value;
+        }
+        
         buf.append(value.substring(idx));
         return buf.toString();
     }
