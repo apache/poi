@@ -17,6 +17,8 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import java.io.IOException;
+
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
@@ -235,5 +237,38 @@ public final class TestHSSFChart {
 
         HSSFChart chart = charts[ 2 ] ;
         chart.removeSeries( chart.getSeries()[ 0 ] ) ;
+    }
+    
+    /**
+     * Bug 26862: HSSFWorkbook.cloneSheet copies charts
+     */
+    @Test
+    public void test26862() throws IOException, Exception {
+        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("SimpleChart.xls");
+        HSSFSheet srcSheet = wb.getSheetAt(0);
+        HSSFChart[] srcCharts = HSSFChart.getSheetCharts(srcSheet);
+        assertEquals(1, srcCharts.length);
+        HSSFChart srcChart = srcCharts[0];
+        
+        // Clone the sheet
+        HSSFSheet clonedSheet = wb.cloneSheet(0);
+        
+        // Verify the chart was copied
+        HSSFChart[] clonedCharts = HSSFChart.getSheetCharts(clonedSheet);
+        assertEquals(1, clonedCharts.length);
+        HSSFChart clonedChart = clonedCharts[0];
+        assertNotSame(srcChart, clonedChart); //refer to different objects
+        assertEquals(srcChart.getType(), clonedChart.getType());
+        assertEquals(srcChart.getChartTitle(), clonedChart.getChartTitle());
+        assertEquals(srcChart.getChartWidth(), clonedChart.getChartWidth());
+        assertEquals(srcChart.getChartHeight(), clonedChart.getChartHeight());
+        assertEquals(srcChart.getChartX(), clonedChart.getChartX());
+        assertEquals(srcChart.getChartY(), clonedChart.getChartY());
+        
+        // Check if chart was shallow copied or deep copied
+        clonedChart.setChartWidth(clonedChart.getChartWidth()+10);
+        assertEquals(srcChart.getChartWidth()+10, clonedChart.getChartWidth());
+        
+        wb.close();
     }
 }
