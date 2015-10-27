@@ -17,7 +17,11 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertNotSame;
 
 import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.hssf.HSSFTestDataSamples;
@@ -29,8 +33,9 @@ import org.apache.poi.ss.util.CellRangeAddressBase;
 /**
  * Tests for {@link HSSFChart}
  */
-public final class TestHSSFChart extends TestCase {
+public final class TestHSSFChart {
 
+	@Test
 	public void testSingleChart() {
 		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("WithChart.xls");
 
@@ -51,7 +56,7 @@ public final class TestHSSFChart extends TestCase {
 		assertEquals(2, charts[0].getSeries().length);
 		assertEquals("1st Column", charts[0].getSeries()[0].getSeriesTitle());
 		assertEquals("2nd Column", charts[0].getSeries()[1].getSeriesTitle());
-		assertEquals(null, charts[0].getChartTitle());
+		assertNull(charts[0].getChartTitle());
 
 		// Check x, y, width, height
 		assertEquals(0, charts[0].getChartX());
@@ -60,6 +65,7 @@ public final class TestHSSFChart extends TestCase {
 		assertEquals(15040512, charts[0].getChartHeight());
 	}
 
+	@Test
 	public void testTwoCharts() {
 		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("WithTwoCharts.xls");
 
@@ -80,7 +86,7 @@ public final class TestHSSFChart extends TestCase {
 		assertEquals(2, charts[0].getSeries().length);
 		assertEquals("1st Column", charts[0].getSeries()[0].getSeriesTitle());
 		assertEquals("2nd Column", charts[0].getSeries()[1].getSeriesTitle());
-		assertEquals(null, charts[0].getChartTitle());
+		assertNull(charts[0].getChartTitle());
 
 		// And the third sheet
 		charts = HSSFChart.getSheetCharts(s3);
@@ -89,9 +95,10 @@ public final class TestHSSFChart extends TestCase {
 		assertEquals(2, charts[0].getSeries().length);
 		assertEquals("Squares", charts[0].getSeries()[0].getSeriesTitle());
 		assertEquals("Base Numbers", charts[0].getSeries()[1].getSeriesTitle());
-		assertEquals(null, charts[0].getChartTitle());
+		assertNull(charts[0].getChartTitle());
 	}
 
+	@Test
 	public void testThreeCharts() {
 		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("WithThreeCharts.xls");
 
@@ -116,10 +123,10 @@ public final class TestHSSFChart extends TestCase {
 		assertEquals(6, charts[0].getSeries()[1].getNumValues());
 		assertEquals(SeriesRecord.CATEGORY_DATA_TYPE_NUMERIC, charts[0].getSeries()[0].getValueType());
 		assertEquals(SeriesRecord.CATEGORY_DATA_TYPE_NUMERIC, charts[0].getSeries()[1].getValueType());
-		assertEquals(null, charts[0].getChartTitle());
+		assertNull(charts[0].getChartTitle());
 
 		assertEquals(1, charts[1].getSeries().length);
-		assertEquals(null, charts[1].getSeries()[0].getSeriesTitle());
+		assertNull(charts[1].getSeries()[0].getSeriesTitle());
 		assertEquals("Pie Chart Title Thingy", charts[1].getChartTitle());
 
 		// And the third sheet
@@ -132,6 +139,7 @@ public final class TestHSSFChart extends TestCase {
 		assertEquals("Sheet 3 Chart with Title", charts[0].getChartTitle());
 	}
 	
+    @Test
     public void testExistingSheet3() throws Exception {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("49581.xls");
         
@@ -154,6 +162,7 @@ public final class TestHSSFChart extends TestCase {
         assertEquals(0, c.getSeries().length);
     }
 
+    @Test
     public void testExistingSheet2() throws Exception {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("49581.xls");
         HSSFSheet sheet = wb.getSheetAt( 1 ) ;
@@ -185,6 +194,7 @@ public final class TestHSSFChart extends TestCase {
         assertEquals(3, c.getSeries().length);
     }
 
+    @Test
     public void testExistingSheet1() throws Exception {
        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("49581.xls");
         HSSFSheet sheet = wb.getSheetAt( 0 ) ;
