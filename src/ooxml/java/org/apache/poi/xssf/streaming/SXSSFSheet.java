@@ -36,6 +36,7 @@ import org.apache.poi.ss.usermodel.DataValidationHelper;
 import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.usermodel.Footer;
 import org.apache.poi.ss.usermodel.Header;
+import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.PrintSetup;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -45,7 +46,10 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.SheetUtil;
 import org.apache.poi.xssf.usermodel.XSSFDataValidation;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetFormatPr;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetPr;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetProtection;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
 
 /**
@@ -1539,4 +1543,46 @@ public class SXSSFSheet implements Sheet, Cloneable
     public int getColumnOutlineLevel(int columnIndex) {
         return _sh.getColumnOutlineLevel(columnIndex);
     }
+    
+    /**
+     * Enable sheet protection
+     */
+    public void enableLocking() {
+        safeGetProtectionField().setSheet(true);
+    }
+    
+    /**
+     * Disable sheet protection
+     */
+    public void disableLocking() {
+        safeGetProtectionField().setSheet(false);
+    }
+    
+    private CTSheetProtection safeGetProtectionField() {
+        CTWorksheet ct = _sh.getCTWorksheet();
+        if (!isSheetProtectionEnabled()) {
+            return ct.addNewSheetProtection();
+        }
+        return ct.getSheetProtection();
+    }
+    
+    /* package */ boolean isSheetProtectionEnabled() {
+        CTWorksheet ct = _sh.getCTWorksheet();
+        return (ct.isSetSheetProtection());
+    }
+    
+    /**
+     * Set background color of the sheet tab
+     *
+     * @param colorIndex  the indexed color to set, must be a constant from {@link IndexedColors}
+     */
+    public void setTabColor(int colorIndex){
+        CTWorksheet ct = _sh.getCTWorksheet();
+        CTSheetPr pr = ct.getSheetPr();
+        if(pr == null) pr = ct.addNewSheetPr();
+        CTColor color = CTColor.Factory.newInstance();
+        color.setIndexed(colorIndex);
+        pr.setTabColor(color);
+    }
+    
 }
