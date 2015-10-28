@@ -222,16 +222,21 @@ public class SXSSFCell implements Cell {
      */
     public void setCellValue(RichTextString value)
     {
-        ensureRichTextStringType();
-
-        if(value.length() > SpreadsheetVersion.EXCEL2007.getMaxTextLength()){
-            throw new IllegalArgumentException("The maximum length of cell contents (text) is 32,767 characters");
-        }
-
-        ((RichTextValue)_value).setValue(value);
+        XSSFRichTextString xvalue = (XSSFRichTextString)value;
         
-        if (((XSSFRichTextString)value).hasFormatting())
-            logger.log(POILogger.WARN, "SXSSF doesn't support Shared Strings, rich text formatting information has be lost");
+        if (xvalue != null) {
+            ensureRichTextStringType();
+            
+            if (xvalue.length() > SpreadsheetVersion.EXCEL2007.getMaxTextLength()) {
+                throw new IllegalArgumentException("The maximum length of cell contents (text) is 32,767 characters");
+            }
+            if (xvalue.hasFormatting())
+                logger.log(POILogger.WARN, "SXSSF doesn't support Shared Strings, rich text formatting information has be lost");
+            
+            ((RichTextValue)_value).setValue(xvalue);
+        } else {
+            setCellType(CELL_TYPE_BLANK);
+        }
     }
 
     /**
