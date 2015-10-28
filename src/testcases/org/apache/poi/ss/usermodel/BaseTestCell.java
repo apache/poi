@@ -767,7 +767,39 @@ public abstract class BaseTestCell {
 		wb1.close();
 	}
 
-	private void checkUnicodeValues(Workbook wb) {
+    /**
+     * Setting a cell value of a null RichTextString should set
+     *  the cell to Blank, test case for 58558
+     */
+    @Test
+    public void testSetCellValueNullRichTextString() throws IOException {
+        Workbook wb = _testDataProvider.createWorkbook();
+        Sheet sheet = wb.createSheet();
+        Cell cell = sheet.createRow(0).createCell(0);
+
+        RichTextString nullStr = null;
+        cell.setCellValue(nullStr);
+        assertEquals("", cell.getStringCellValue());
+        assertEquals(Cell.CELL_TYPE_BLANK, cell.getCellType());
+
+        cell = sheet.createRow(0).createCell(1);
+        cell.setCellValue(1.2d);
+        assertEquals(Cell.CELL_TYPE_NUMERIC, cell.getCellType());
+        cell.setCellValue(nullStr);
+        assertEquals("", cell.getStringCellValue());
+        assertEquals(Cell.CELL_TYPE_BLANK, cell.getCellType());
+
+        cell = sheet.createRow(0).createCell(1);
+        cell.setCellValue(wb.getCreationHelper().createRichTextString("Test"));
+        assertEquals(Cell.CELL_TYPE_STRING, cell.getCellType());
+        cell.setCellValue(nullStr);
+        assertEquals("", cell.getStringCellValue());
+        assertEquals(Cell.CELL_TYPE_BLANK, cell.getCellType());
+
+        wb.close();
+    }
+
+    private void checkUnicodeValues(Workbook wb) {
 		assertEquals((wb instanceof HSSFWorkbook ? "row 0, cell 0 _x0046_ without changes" : "row 0, cell 0 F without changes"), 
 				wb.getSheetAt(0).getRow(0).getCell(0).toString());
 		assertEquals((wb instanceof HSSFWorkbook ? "row 0, cell 1 _x005fx0046_ with changes" : "row 0, cell 1 _x005fx0046_ with changes"), 
