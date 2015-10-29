@@ -35,8 +35,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import junit.framework.AssertionFailedError;
-
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.ddf.AbstractEscherOptRecord;
 import org.apache.poi.ddf.EscherArrayProperty;
@@ -51,10 +49,14 @@ import org.apache.poi.hslf.record.SlideListWithText;
 import org.apache.poi.hslf.record.SlideListWithText.SlideAtomsSet;
 import org.apache.poi.hslf.record.TextHeaderAtom;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
+import org.apache.poi.sl.usermodel.SlideShow;
+import org.apache.poi.sl.usermodel.SlideShowFactory;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;
 import org.apache.poi.util.Units;
 import org.junit.Test;
+
+import junit.framework.AssertionFailedError;
 
 /**
  * Testcases for bugs entered in bugzilla
@@ -636,5 +638,10 @@ public final class TestBugs {
         } finally {
             inputStream.close();
         }
+    }
+    
+    @Test
+    public void bug58516() throws IOException {
+        SlideShowFactory.create(_slTests.getFile("bug58516.ppt"));
     }
 }
