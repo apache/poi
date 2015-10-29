@@ -1257,6 +1257,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
         int paraIdx = 0;
         for (IndentProp p : paraStyles) {
             for (int ccPara = 0, ccStyle = p.getCharactersCovered(); ccPara < ccStyle; paraIdx++) {
+                if (paraIdx >= paragraphs.size() || ccPara >= ccStyle-1) return;
                 HSLFTextParagraph para = paragraphs.get(paraIdx);
                 int len = 0;
                 for (HSLFTextRun trun : para.getTextRuns()) {
