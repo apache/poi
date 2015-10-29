@@ -33,6 +33,7 @@ import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.sl.usermodel.PaintStyle.GradientPaint;
 import org.apache.poi.sl.usermodel.PaintStyle.TexturePaint;
 import org.apache.poi.sl.usermodel.PlaceableShape;
+import org.apache.poi.sl.usermodel.SimpleShape.Placeholder;
 import org.apache.poi.sl.usermodel.Shape;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;

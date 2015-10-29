@@ -17,9 +17,15 @@
 
 package org.apache.poi.sl.draw;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 
 import org.apache.poi.sl.usermodel.GroupShape;
+import org.apache.poi.sl.usermodel.StrokeStyle;
+import org.apache.poi.sl.usermodel.StrokeStyle.LineCompound;
+import org.apache.poi.sl.usermodel.StrokeStyle.LineDash;
+import org.apache.poi.sl.usermodel.TableCell;
+import org.apache.poi.sl.usermodel.TableCell.BorderEdge;
 import org.apache.poi.sl.usermodel.TableShape;
 
 public class DrawTableShape extends DrawShape {
@@ -57,5 +63,111 @@ public class DrawTableShape extends DrawShape {
         }
     }
 
+    @Override
+    protected TableShape<?,?> getShape() {
+        return (TableShape<?,?>)shape;
+    }    
+    
+    /**
+     * Format the table and apply the specified Line to all cell boundaries,
+     * both outside and inside.
+     * An empty args parameter removes the affected border.
+     *
+     * @param args a varargs array possible containing {@link Double} (width),
+     * {@link StrokeStyle.LineCompound}, {@link Color}, {@link StrokeStyle.LineDash}
+     */
+    public void setAllBorders(Object... args) {
+        TableShape<?,?> table = getShape();
+        final int rows = table.getNumberOfRows();
+        final int cols = table.getNumberOfColumns();
+        
+        BorderEdge edges[] = { BorderEdge.top, BorderEdge.left, null, null };
+        for (int row = 0; row < rows; row++) {
+            for (int col = 0; col < cols; col++) {
+                edges[2] = (col == cols - 1) ? BorderEdge.right : null;
+                edges[3] = (row == rows - 1) ? BorderEdge.bottom : null;
+                setEdges(table.getCell(row, col), edges, args);
+            }
+        }
+    }
+
+    /**
+     * Format the outside border using the specified Line object
+     * An empty args parameter removes the affected border.
+     *
+     * @param args a varargs array possible containing {@link Double} (width),
+     * {@link StrokeStyle.LineCompound}, {@link Color}, {@link StrokeStyle.LineDash}
+     */
+    public void setOutsideBorders(Object... args){
+        if (args.length == 0) return;
+        
+        TableShape<?,?> table = getShape();
+        final int rows = table.getNumberOfRows();
+        final int cols = table.getNumberOfColumns();
+        
+        BorderEdge edges[] = new BorderEdge[4];
+        for (int row = 0; row < rows; row++) {
+            for (int col = 0; col < cols; col++) {
+                edges[0] = (col == 0) ? BorderEdge.left : null;
+                edges[1] = (col == cols - 1) ? BorderEdge.right : null;
+                edges[2] = (row == 0) ? BorderEdge.top : null;
+                edges[3] = (row == rows - 1) ? BorderEdge.bottom : null;
+                setEdges(table.getCell(row, col), edges, args);
+            }
+        }
+    }
+
+    /**
+     * Format the inside border using the specified Line object
+     * An empty args parameter removes the affected border.
+     *
+     * @param args a varargs array possible containing {@link Double} (width),
+     * {@link StrokeStyle.LineCompound}, {@link Color}, {@link StrokeStyle.LineDash}
+     */
+    public void setInsideBorders(Object... args) {
+        if (args.length == 0) return;
+        
+        TableShape<?,?> table = getShape();
+        final int rows = table.getNumberOfRows();
+        final int cols = table.getNumberOfColumns();
+        
+        BorderEdge edges[] = new BorderEdge[2];
+        for (int row = 0; row < rows; row++) {
+            for (int col = 0; col < cols; col++) {
+                edges[0] = (col > 0 && col < cols - 1) ? BorderEdge.right : null;
+                edges[1] = (row > 0 && row < rows - 1) ? BorderEdge.bottom : null;
+                setEdges(table.getCell(row, col), edges, args);
+            }
+        }
+    }
+    
+    /**
+     * Apply the border attributes (args) to the given cell and edges
+     *
+     * @param cell the cell
+     * @param edges the border edges
+     * @param args the border attributes
+     */
+    private static void setEdges(TableCell<?,?> cell, BorderEdge edges[], Object... args) {
+        for (BorderEdge be : edges) {
+            if (be != null) {
+                if (args.length == 0) {
+                    cell.removeBorder(be);
+                } else {
+                    for (Object o : args) {
+                        if (o instanceof Double) {
+                            cell.setBorderWidth(be, (Double)o);
+                        } else if (o instanceof Color) {
+                            cell.setBorderColor(be, (Color)o);
+                        } else if (o instanceof LineDash) {
+                            cell.setBorderDash(be, (LineDash)o);
+                        } else if (o instanceof LineCompound) {
+                            cell.setBorderCompound(be, (LineCompound)o);
+                        }
+                    }
+                }
+            }
+        }
+    }
     
 }

@@ -20,16 +20,25 @@ package org.apache.poi.sl.usermodel;
 public interface StrokeStyle {
     enum LineCap {
         /** Rounded ends */
-        ROUND(1),
+        ROUND(0,1),
         /** Square protrudes by half line width */
-        SQUARE(2),
+        SQUARE(1,2),
         /** Line ends at end point*/
-        FLAT(3);
+        FLAT(2,3);
         
+        public final int nativeId;
         public final int ooxmlId;
         
-        LineCap(int ooxmlId) {
+        LineCap(int nativeId, int ooxmlId) {
+            this.nativeId = nativeId;
             this.ooxmlId = ooxmlId;
+        }
+
+        public static LineCap fromNativeId(int nativeId) {
+            for (LineCap ld : values()) {
+                if (ld.nativeId == nativeId) return ld;
+            }
+            return null;
         }
 
         public static LineCap fromOoxmlId(int ooxmlId) {
@@ -96,25 +105,34 @@ public interface StrokeStyle {
 
     enum LineCompound {
         /** Single line (of width lineWidth) - native 0 / ooxml default */
-        SINGLE(0),
+        SINGLE(0, 1),
         /** Double lines of equal width - native 1 / ooxml "dbl" */
-        DOUBLE(1),
+        DOUBLE(1, 2),
         /** Double lines, one thick, one thin - native 2 / ooxml "thickThin" */
-        THICK_THIN(2),
+        THICK_THIN(2, 3),
         /** Double lines, reverse order - native 3 / ooxml "thinThick" */
-        THIN_THICK(3),
+        THIN_THICK(3, 4),
         /** Three lines, thin, thick, thin - native 4 / ooxml "tri" */
-        TRIPLE(4);
+        TRIPLE(4, 5);
         
         public final int nativeId;
+        public final int ooxmlId;
         
-        LineCompound(int nativeId) {
+        LineCompound(int nativeId, int ooxmlId) {
             this.nativeId = nativeId;
+            this.ooxmlId = ooxmlId;
         }
 
         public static LineCompound fromNativeId(int nativeId) {
             for (LineCompound lc : values()) {
                 if (lc.nativeId == nativeId) return lc;
+            }
+            return null;
+        }
+
+        public static LineCompound fromOoxmlId(int ooxmlId) {
+            for (LineCompound lc : values()) {
+                if (lc.ooxmlId == ooxmlId) return lc;
             }
             return null;
         }

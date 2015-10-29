@@ -17,20 +17,37 @@
 
 package org.apache.poi.hslf.usermodel;
 
-import static org.apache.poi.hslf.record.RecordTypes.*;
+import static org.apache.poi.hslf.record.RecordTypes.OEPlaceholderAtom;
+import static org.apache.poi.hslf.record.RecordTypes.RoundTripHFPlaceholder12;
 
 import java.awt.Rectangle;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
-import org.apache.poi.ddf.*;
+import org.apache.poi.ddf.AbstractEscherOptRecord;
+import org.apache.poi.ddf.EscherContainerRecord;
+import org.apache.poi.ddf.EscherProperties;
+import org.apache.poi.ddf.EscherSimpleProperty;
+import org.apache.poi.ddf.EscherTextboxRecord;
 import org.apache.poi.hslf.exceptions.HSLFException;
-import org.apache.poi.hslf.record.*;
+import org.apache.poi.hslf.record.EscherTextboxWrapper;
+import org.apache.poi.hslf.record.InteractiveInfo;
+import org.apache.poi.hslf.record.InteractiveInfoAtom;
+import org.apache.poi.hslf.record.OEPlaceholderAtom;
+import org.apache.poi.hslf.record.PPDrawing;
+import org.apache.poi.hslf.record.RoundTripHFPlaceholder12;
+import org.apache.poi.hslf.record.TextHeaderAtom;
+import org.apache.poi.hslf.record.TxInteractiveInfoAtom;
 import org.apache.poi.sl.draw.DrawFactory;
 import org.apache.poi.sl.draw.DrawTextShape;
-import org.apache.poi.sl.usermodel.*;
+import org.apache.poi.sl.usermodel.Insets2D;
+import org.apache.poi.sl.usermodel.ShapeContainer;
+import org.apache.poi.sl.usermodel.TextShape;
+import org.apache.poi.sl.usermodel.VerticalAlignment;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.Units;
 
@@ -57,14 +74,35 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
     /* package */ static final int AnchorBottomCenteredBaseline = 9;
 
     /**
-     * How to wrap the text
+     * Specifies that a line of text will continue on subsequent lines instead
+     * of extending into or beyond a margin.
+     * Office Excel 2007, Excel 2010, PowerPoint 97, and PowerPoint 2010 read
+     * and use this value properly but do not write it.
      */
     public static final int WrapSquare = 0;
+    /**
+     * Specifies a wrapping rule that is equivalent to that of WrapSquare
+     * Excel 97, Excel 2000, Excel 2002, and Office Excel 2003 use this value.
+     * All other product versions listed at the beginning of this appendix ignore this value.
+     */
     public static final int WrapByPoints = 1;
+    /**
+     * Specifies that a line of text will extend into or beyond a margin instead
+     * of continuing on subsequent lines.
+     * Excel 97, Word 97, Excel 2000, Word 2000, Excel 2002,
+     * and Office Excel 2003 do not use this value.
+     */
     public static final int WrapNone = 2;
+    /**
+     * Specifies a wrapping rule that is undefined and MUST be ignored.
+     */
     public static final int WrapTopBottom = 3;
+    /**
+     * Specifies a wrapping rule that is undefined and MUST be ignored.
+     */
     public static final int WrapThrough = 4;
 
+    
     /**
      * TextRun object which holds actual text and format data
      */
@@ -302,24 +340,6 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
         setEscherProperty(EscherProperties.TEXT__ANCHORTEXT, align2);
     }
     
-    @Override
-    public VerticalAlignment getVerticalAlignment() {
-        int va = getAlignment();
-        switch (va) {
-        case AnchorTop:
-        case AnchorTopCentered:
-        case AnchorTopBaseline:
-        case AnchorTopCenteredBaseline: return VerticalAlignment.TOP;
-        case AnchorBottom:
-        case AnchorBottomCentered:
-        case AnchorBottomBaseline:
-        case AnchorBottomCenteredBaseline: return VerticalAlignment.BOTTOM;
-        default:
-        case AnchorMiddle:
-        case AnchorMiddleCentered: return VerticalAlignment.MIDDLE;
-        }
-    }
-
     /**
      * @return true, if vertical alignment is relative to baseline
      * this is only used for older versions less equals Office 2003 
@@ -353,21 +373,33 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
             return false;
         }
     }
+
+    @Override
+    public void setHorizontalCentered(Boolean isCentered) {
+        setAlignment(isCentered, getVerticalAlignment());
+    }
     
-    public void setVerticalAlignment(VerticalAlignment vAlign) {
-        setAlignment(isHorizontalCentered(), vAlign);
+    @Override
+    public VerticalAlignment getVerticalAlignment() {
+        int va = getAlignment();
+        switch (va) {
+        case AnchorTop:
+        case AnchorTopCentered:
+        case AnchorTopBaseline:
+        case AnchorTopCenteredBaseline: return VerticalAlignment.TOP;
+        case AnchorBottom:
+        case AnchorBottomCentered:
+        case AnchorBottomBaseline:
+        case AnchorBottomCenteredBaseline: return VerticalAlignment.BOTTOM;
+        default:
+        case AnchorMiddle:
+        case AnchorMiddleCentered: return VerticalAlignment.MIDDLE;
+        }
     }
 
-    /**
-     * Sets if the paragraphs are horizontal centered
-     *
-     * @param isCentered true, if the paragraphs are horizontal centered
-     * A {@code null} values unsets this property.
-     * 
-     * @see TextShape#isHorizontalCentered()
-     */
-    public void setHorizontalCentered(Boolean isCentered){
-        setAlignment(isCentered, getVerticalAlignment());
+    @Override
+    public void setVerticalAlignment(VerticalAlignment vAlign) {
+        setAlignment(isHorizontalCentered(), vAlign);
     }
 
     /**
@@ -479,12 +511,6 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
         setEscherProperty(propId, Units.toEMU(margin));
     }    
     
-    @Override
-    public boolean getWordWrap(){
-        int ww = getWordWrapEx();
-        return (ww != WrapNone);
-    }
-
     /**
      * Returns the value indicating word wrap.
      *
@@ -498,17 +524,28 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
         EscherSimpleProperty prop = getEscherProperty(opt, EscherProperties.TEXT__WRAPTEXT);
         return prop == null ? WrapSquare : prop.getPropertyValue();
     }
-
+    
     /**
      *  Specifies how the text should be wrapped
      *
      * @param wrap  the value indicating how the text should be wrapped.
      *  Must be one of the <code>Wrap*</code> constants defined in this class.
      */
-    public void setWordWrap(int wrap){
+    public void setWordWrapEx(int wrap){
         setEscherProperty(EscherProperties.TEXT__WRAPTEXT, wrap);
     }
 
+    @Override
+    public boolean getWordWrap(){
+        int ww = getWordWrapEx();
+        return (ww != WrapNone);
+    }
+
+    @Override
+    public void setWordWrap(boolean wrap) {
+        setWordWrapEx(wrap ? WrapSquare : WrapNone);
+    }
+    
     /**
      * @return id for the text.
      */
@@ -700,6 +737,14 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
     }
 
     @Override
+    public void setInsets(Insets2D insets) {
+        setTopInset(insets.top);
+        setLeftInset(insets.left);
+        setBottomInset(insets.bottom);
+        setRightInset(insets.right);
+    }
+
+    @Override
     public double getTextHeight(){
         DrawFactory drawFact = DrawFactory.getInstance(null);
         DrawTextShape dts = drawFact.getDrawable(this);
@@ -747,14 +792,7 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
           return HSLFTextParagraph.appendText(paras, text, newParagraph);
       }
 
-      /**
-       * Sets (overwrites) the current text.
-       * Uses the properties of the first paragraph / textrun
-       * 
-       * @param text the text string used by this object.
-       * 
-       * @return the last text run of the splitted text
-       */
+      @Override
       public HSLFTextRun setText(String text) {
           // init paragraphs
           List<HSLFTextParagraph> paras = getTextParagraphs();
@@ -783,5 +821,64 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
         return HSLFHyperlink.find(this);
     }
 
+    @Override
+    public void setTextPlaceholder(TextPlaceholder placeholder) {
+        // TOOD: check for correct placeholder handling - see org.apache.poi.hslf.model.Placeholder
+        Placeholder ph = null;
+        int runType;
+        switch (placeholder) {
+            default:
+            case BODY:
+                runType = TextHeaderAtom.BODY_TYPE;
+                ph = Placeholder.BODY;
+                break;
+            case TITLE:
+                runType = TextHeaderAtom.TITLE_TYPE;
+                ph = Placeholder.TITLE;
+                break;
+            case CENTER_BODY:
+                runType = TextHeaderAtom.CENTRE_BODY_TYPE;
+                ph = Placeholder.BODY;
+                break;
+            case CENTER_TITLE:
+                runType = TextHeaderAtom.CENTER_TITLE_TYPE;
+                ph = Placeholder.TITLE;
+                break;
+            case HALF_BODY:
+                runType = TextHeaderAtom.HALF_BODY_TYPE;
+                ph = Placeholder.BODY;
+                break;
+            case QUARTER_BODY:
+                runType = TextHeaderAtom.QUARTER_BODY_TYPE;
+                ph = Placeholder.BODY;
+                break;
+            case NOTES:
+                runType = TextHeaderAtom.NOTES_TYPE;
+                break;
+            case OTHER:
+                runType = TextHeaderAtom.OTHER_TYPE;
+                break;
+        }
+        setRunType(runType);
+        if (ph != null) {
+            setPlaceholder(ph);
+        }
+    }
 
+    @Override
+    public TextPlaceholder getTextPlaceholder() {
+        switch (getRunType()) {
+            default:
+            case TextHeaderAtom.BODY_TYPE: return TextPlaceholder.BODY;
+            case TextHeaderAtom.TITLE_TYPE: return TextPlaceholder.TITLE;
+            case TextHeaderAtom.NOTES_TYPE: return TextPlaceholder.NOTES;
+            case TextHeaderAtom.OTHER_TYPE: return TextPlaceholder.OTHER;
+            case TextHeaderAtom.CENTRE_BODY_TYPE: return TextPlaceholder.CENTER_BODY;
+            case TextHeaderAtom.CENTER_TITLE_TYPE: return TextPlaceholder.CENTER_TITLE;
+            case TextHeaderAtom.HALF_BODY_TYPE: return TextPlaceholder.HALF_BODY;
+            case TextHeaderAtom.QUARTER_BODY_TYPE: return TextPlaceholder.QUARTER_BODY;
+        }
+    }
+
+    
 }

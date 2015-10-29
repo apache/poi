@@ -54,8 +54,7 @@ public class XSLFTextBox extends XSLFAutoShape
         prst.setPrst(STShapeType.RECT);
         prst.addNewAvLst();
         CTTextBody txBody = ct.addNewTxBody();
-        txBody.addNewBodyPr();
-        txBody.addNewLstStyle();
+        XSLFAutoShape.initTextBody(txBody);
 
         return ct;
     }

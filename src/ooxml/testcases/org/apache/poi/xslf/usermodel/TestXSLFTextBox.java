@@ -19,6 +19,9 @@ package org.apache.poi.xslf.usermodel;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
+import java.io.IOException;
+
+import org.apache.poi.sl.usermodel.SimpleShape.Placeholder;
 import org.junit.Test;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextCharacterProperties;
 
@@ -28,7 +31,7 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTTextCharacterProperties
 public class TestXSLFTextBox {
 
     @Test
-    public void testPlaceholder() {
+    public void testPlaceholder() throws IOException {
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFSlide slide = ppt.createSlide();
 
@@ -39,13 +42,15 @@ public class TestXSLFTextBox {
         shape.setPlaceholder(null);
         assertNull(shape.getTextType());
         shape.setText("Apache POI");
+        
+        ppt.close();
     }
 
     /**
      * text box inherits default text proeprties from presentation.xml
      */
     @Test
-    public void testDefaultTextStyle() {
+    public void testDefaultTextStyle() throws IOException {
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFSlide slide = ppt.createSlide();
 
@@ -79,5 +84,7 @@ public class TestXSLFTextBox {
 
         pPr.unsetSz();  // Should never be
         assertNull(r.getFontSize());
+        
+        ppt.close();
     }
 }

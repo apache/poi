@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.apache.poi.sl.draw.geom.TestPresetGeometries;
+import org.apache.poi.sl.usermodel.SimpleShape.Placeholder;
 import org.apache.poi.sl.usermodel.StrokeStyle.LineCap;
 import org.apache.poi.sl.usermodel.StrokeStyle.LineDash;
 import org.apache.poi.util.Units;
@@ -168,7 +169,7 @@ public class TestXSLFSimpleShape {
     }
 
     @Test
-    public void testDefaultProperties() {
+    public void testDefaultProperties() throws IOException {
         XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("shapes.pptx");
 
         XSLFSlide slide6 = ppt.getSlides().get(5);
@@ -234,10 +235,12 @@ public class TestXSLFSimpleShape {
         assertEquals(50000, ref5.getLumModArray(0).getVal());
         assertEquals("accent1", ref5.getVal().toString());
         assertEquals(new Color(79, 129, 189), s5.getFillColor());
+        
+        ppt.close();
     }
 
     @Test
-    public void testAnchor(){
+    public void testAnchor() throws IOException {
         XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("shapes.pptx");
         List<XSLFSlide> slide = ppt.getSlides();
 
@@ -267,6 +270,7 @@ public class TestXSLFSimpleShape {
         assertNotNull(layout5.getSlideMaster().getTextShapeByType(Placeholder.TITLE).getSpPr().getXfrm());
         assertEquals(shTitle.getAnchor(), layout5.getSlideMaster().getTextShapeByType(Placeholder.TITLE).getAnchor());
 
+        ppt.close();
     }
 
     @SuppressWarnings({ "deprecation", "unused" })

@@ -21,17 +21,16 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.poi.ddf.AbstractEscherOptRecord;
 import org.apache.poi.ddf.EscherArrayProperty;
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherOptRecord;
 import org.apache.poi.ddf.EscherProperties;
-import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.ddf.EscherSimpleProperty;
-import org.apache.poi.ddf.EscherTextboxRecord;
 import org.apache.poi.hslf.record.RecordTypes;
 import org.apache.poi.sl.usermodel.ShapeContainer;
 import org.apache.poi.sl.usermodel.TableShape;
@@ -45,11 +44,6 @@ import org.apache.poi.util.Units;
  */
 public final class HSLFTable extends HSLFGroupShape
 implements HSLFShapeContainer, TableShape<HSLFShape,HSLFTextParagraph> {
-
-    protected static final int BORDER_TOP = 1;
-    protected static final int BORDER_RIGHT = 2;
-    protected static final int BORDER_BOTTOM = 3;
-    protected static final int BORDER_LEFT = 4;
 
     protected static final int BORDERS_ALL = 5;
     protected static final int BORDERS_OUTSIDE = 6;
@@ -65,10 +59,10 @@ implements HSLFShapeContainer, TableShape<HSLFShape,HSLFTextParagraph> {
      * @param numRows the number of rows
      * @param numCols the number of columns
      */
-    public HSLFTable(int numRows, int numCols) {
+    protected HSLFTable(int numRows, int numCols) {
         this(numRows, numCols, null);
     }
-    
+
     /**
      * Create a new Table of the given number of rows and columns
      *
@@ -76,7 +70,7 @@ implements HSLFShapeContainer, TableShape<HSLFShape,HSLFTextParagraph> {
      * @param numCols the number of columns
      * @param parent the parent shape, or null if table is added to sheet
      */
-    public HSLFTable(int numRows, int numCols, ShapeContainer<HSLFShape,HSLFTextParagraph> parent) {
+    protected HSLFTable(int numRows, int numCols, ShapeContainer<HSLFShape,HSLFTextParagraph> parent) {
         super(parent);
 
         if(numRows < 1) throw new IllegalArgumentException("The number of rows must be greater than 1");
@@ -96,13 +90,13 @@ implements HSLFShapeContainer, TableShape<HSLFShape,HSLFTextParagraph> {
         }
         tblWidth = x;
         tblHeight = y;
-        setAnchor(new Rectangle(0, 0, tblWidth, tblHeight));
+        setExteriorAnchor(new Rectangle(0, 0, tblWidth, tblHeight));
 
         EscherContainerRecord spCont = (EscherContainerRecord) getSpContainer().getChild(0);
         AbstractEscherOptRecord opt = new EscherOptRecord();
         opt.setRecordId((short)RecordTypes.EscherUserDefined);
-        opt.addEscherProperty(new EscherSimpleProperty((short)0x39F, 1));
-        EscherArrayProperty p = new EscherArrayProperty((short)(0x4000 | 0x3A0), false, null);
+        opt.addEscherProperty(new EscherSimpleProperty(EscherProperties.GROUPSHAPE__TABLEPROPERTIES, 1));
+        EscherArrayProperty p = new EscherArrayProperty((short)(0x4000 | EscherProperties.GROUPSHAPE__TABLEROWPROPERTIES), false, null);
         p.setSizeOfElements(0x0004);
         p.setNumberOfElementsInArray(numRows);
         p.setNumberOfElementsInMemory(numRows);
@@ -111,12 +105,12 @@ implements HSLFShapeContainer, TableShape<HSLFShape,HSLFTextParagraph> {
     }
 
     /**
-     * Create a Table object and initilize it from the supplied Record container.
+     * Create a Table object and initialize it from the supplied Record container.
      *
      * @param escherRecord <code>EscherSpContainer</code> container which holds information about this shape
      * @param parent       the parent of the shape
      */
-    public HSLFTable(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape,HSLFTextParagraph> parent) {
+    protected HSLFTable(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape,HSLFTextParagraph> parent) {
         super(escherRecord, parent);
     }
 
@@ -131,9 +125,12 @@ implements HSLFShapeContainer, TableShape<HSLFShape,HSLFTextParagraph> {
         return cells[row][col];
     }
 
+    @Override
     public int getNumberOfColumns() {
         return cells[0].length;
     }
+
+    @Override
     public int getNumberOfRows() {
         return cells.length;
     }
@@ -141,88 +138,169 @@ implements HSLFShapeContainer, TableShape<HSLFShape,HSLFTextParagraph> {
     protected void afterInsert(HSLFSheet sh){
         super.afterInsert(sh);
 
-        EscherContainerRecord spCont = (EscherContainerRecord) getSpContainer().getChild(0);
-        List<EscherRecord> lst = spCont.getChildRecords();
-        AbstractEscherOptRecord opt = (AbstractEscherOptRecord)lst.get(lst.size()-2);
-        EscherArrayProperty p = opt.lookup(0x3A0); 
-        for (int i = 0; i < cells.length; i++) {
-            HSLFTableCell cell = cells[i][0];
-            int rowHeight = Units.pointsToMaster(cell.getAnchor().height);
-            byte[] val = new byte[4];
-            LittleEndian.putInt(val, 0, rowHeight);
-            p.setElement(i, val);
-            for (int j = 0; j < cells[i].length; j++) {
-                HSLFTableCell c = cells[i][j];
+        Set<HSLFLine> lineSet = new HashSet<HSLFLine>();
+        for (HSLFTableCell row[] : cells) {
+            for (HSLFTableCell c : row) {
                 addShape(c);
-
-                HSLFLine bt = c.getBorderTop();
-                if(bt != null) addShape(bt);
-
-                HSLFLine br = c.getBorderRight();
-                if(br != null) addShape(br);
-
-                HSLFLine bb = c.getBorderBottom();
-                if(bb != null) addShape(bb);
-
-                HSLFLine bl = c.getBorderLeft();
-                if(bl != null) addShape(bl);
-
+                for (HSLFLine bt : new HSLFLine[]{ c.borderTop, c.borderRight, c.borderBottom, c.borderLeft }) {
+                    if (bt != null) {
+                        lineSet.add(bt);
+                    }
+                }
             }
         }
 
+        for (HSLFLine l : lineSet) {
+            addShape(l);
+        }
+
+        updateRowHeightsProperty();
+    }
+
+    private static class TableCellComparator implements Comparator<HSLFShape> {
+        public int compare( HSLFShape o1, HSLFShape o2 ) {
+            Rectangle anchor1 = o1.getAnchor();
+            Rectangle anchor2 = o2.getAnchor();
+            int delta = anchor1.y - anchor2.y;
+            if (delta == 0) delta = anchor1.x - anchor2.x;
+            // descending size
+            if (delta == 0) delta = (anchor2.width*anchor2.height)-(anchor1.width*anchor1.height);
+            return delta;
+        }
+    }
+
+    private void cellListToArray() {
+        List<HSLFTableCell> htc = new ArrayList<HSLFTableCell>();
+        for (HSLFShape h : getShapes()) {
+            if (h instanceof HSLFTableCell) {
+                htc.add((HSLFTableCell)h);
+            }
+        }
+        
+        if (htc.isEmpty()) {
+            throw new IllegalStateException("HSLFTable without HSLFTableCells");
+        }
+
+        Collections.sort(htc, new TableCellComparator());
+
+        List<HSLFTableCell[]> lst = new ArrayList<HSLFTableCell[]>();
+        List<HSLFTableCell> row = new ArrayList<HSLFTableCell>();
+
+        int y0 = htc.get(0).getAnchor().y;
+        for (HSLFTableCell sh : htc) {
+            Rectangle anchor = sh.getAnchor();
+            boolean isNextRow = (anchor.y > y0);
+            if (isNextRow) {
+                y0 = anchor.y;
+                lst.add(row.toArray(new HSLFTableCell[row.size()]));
+                row.clear();
+            }
+            row.add(sh);
+        }
+        lst.add(row.toArray(new HSLFTableCell[row.size()]));
+
+        cells = lst.toArray(new HSLFTableCell[lst.size()][]);
+    }
+
+    static class LineRect {
+        final HSLFLine l;
+        final double lx1, lx2, ly1, ly2;
+        LineRect(HSLFLine l) {
+            this.l = l;
+            Rectangle r = l.getAnchor();
+            lx1 = r.getMinX();
+            lx2 = r.getMaxX();
+            ly1 = r.getMinY();
+            ly2 = r.getMaxY();
+        }
+        int leftFit(double x1, double x2, double y1, double y2) {
+            return (int)(Math.abs(x1-lx1)+Math.abs(y1-ly1)+Math.abs(x1-lx2)+Math.abs(y2-ly2));
+        }
+        int topFit(double x1, double x2, double y1, double y2) {
+            return (int)(Math.abs(x1-lx1)+Math.abs(y1-ly1)+Math.abs(x2-lx2)+Math.abs(y1-ly2));
+        }
+        int rightFit(double x1, double x2, double y1, double y2) {
+            return (int)(Math.abs(x2-lx1)+Math.abs(y1-ly1)+Math.abs(x2-lx2)+Math.abs(y2-ly2));
+        }
+        int bottomFit(double x1, double x2, double y1, double y2) {
+            return (int)(Math.abs(x1-lx1)+Math.abs(y2-ly1)+Math.abs(x2-lx2)+Math.abs(y2-ly2));
+        }
+    }
+
+    private void fitLinesToCells() {
+        List<LineRect> lines = new ArrayList<LineRect>();
+        for (HSLFShape h : getShapes()) {
+            if (h instanceof HSLFLine) {
+                lines.add(new LineRect((HSLFLine)h));
+            }
+        }
+
+        final int threshold = 5;
+
+        // TODO: this only works for non-rotated tables
+        for (HSLFTableCell[] tca : cells) {
+            for (HSLFTableCell tc : tca) {
+                final Rectangle cellAnchor = tc.getAnchor();
+
+                /**
+                 * x1/y1 --------+
+                 *   |           |
+                 *   +---------x2/y2
+                 */
+                final double x1 = cellAnchor.getMinX();
+                final double x2 = cellAnchor.getMaxX();
+                final double y1 = cellAnchor.getMinY();
+                final double y2 = cellAnchor.getMaxY();
+
+                LineRect lline = null, tline = null, rline = null, bline = null;
+                int lfit = Integer.MAX_VALUE, tfit = Integer.MAX_VALUE, rfit = Integer.MAX_VALUE, bfit = Integer.MAX_VALUE;
+
+                for (LineRect lr : lines) {
+                    // calculate border fit
+                    int lfitx = lr.leftFit(x1, x2, y1, y2);
+                    if (lfitx < lfit) {
+                        lfit = lfitx;
+                        lline = lr;
+                    }
+
+                    int tfitx = lr.topFit(x1, x2, y1, y2);
+                    if (tfitx < tfit) {
+                        tfit = tfitx;
+                        tline = lr;
+                    }
+
+                    int rfitx = lr.rightFit(x1, x2, y1, y2);
+                    if (rfitx < rfit) {
+                        rfit = rfitx;
+                        rline = lr;
+                    }
+
+                    int bfitx = lr.bottomFit(x1, x2, y1, y2);
+                    if (bfitx < bfit) {
+                        bfit = bfitx;
+                        bline = lr;
+                    }
+                }
+
+                if (lfit < threshold) {
+                    tc.borderLeft = lline.l;
+                }
+                if (tfit < threshold) {
+                    tc.borderTop = tline.l;
+                }
+                if (rfit < threshold) {
+                    tc.borderRight = rline.l;
+                }
+                if (bfit < threshold) {
+                    tc.borderBottom = bline.l;
+                }
+            }
+        }
     }
 
     protected void initTable(){
-        List<HSLFShape> shapeList = getShapes();
-
-        Iterator<HSLFShape> shapeIter = shapeList.iterator();
-        while (shapeIter.hasNext()) {
-            HSLFShape shape = shapeIter.next();
-            if (shape instanceof HSLFAutoShape) {
-                HSLFAutoShape autoShape = (HSLFAutoShape)shape;
-                EscherTextboxRecord etr = autoShape.getEscherChild(EscherTextboxRecord.RECORD_ID);
-                if (etr != null) continue;
-            }
-            shapeIter.remove();
-        }        
-        
-        Collections.sort(shapeList, new Comparator<HSLFShape>(){
-            public int compare( HSLFShape o1, HSLFShape o2 ) {
-                Rectangle anchor1 = o1.getAnchor();
-                Rectangle anchor2 = o2.getAnchor();
-                int delta = anchor1.y - anchor2.y;
-                if (delta == 0) delta = anchor1.x - anchor2.x;
-                // descending size
-                if (delta == 0) delta = (anchor2.width*anchor2.height)-(anchor1.width*anchor1.height);
-                return delta;
-            }
-        });
-        
-        int y0 = (shapeList.isEmpty()) ? -1 : shapeList.get(0).getAnchor().y - 1;
-        int maxrowlen = 0;
-        List<List<HSLFShape>> lst = new ArrayList<List<HSLFShape>>();
-        List<HSLFShape> row = null;
-        for (HSLFShape sh : shapeList) {
-            if(sh instanceof HSLFTextShape){
-                Rectangle anchor = sh.getAnchor();
-                if(anchor.y != y0){
-                    y0 = anchor.y;
-                    row = new ArrayList<HSLFShape>();
-                    lst.add(row);
-                }
-                row.add(sh);
-                maxrowlen = Math.max(maxrowlen, row.size());
-            }
-        }
-        cells = new HSLFTableCell[lst.size()][maxrowlen];
-        for (int i = 0; i < lst.size(); i++) {
-            row = lst.get(i);
-            for (int j = 0; j < row.size(); j++) {
-                HSLFTextShape tx = (HSLFTextShape)row.get(j);
-                cells[i][j] = new HSLFTableCell(tx.getSpContainer(), getParent());
-                cells[i][j].setSheet(tx.getSheet());
-            }
-        }
+        cellListToArray();
+        fitLinesToCells();
     }
 
     /**
@@ -232,151 +310,102 @@ implements HSLFShapeContainer, TableShape<HSLFShape,HSLFTextParagraph> {
      */
     public void setSheet(HSLFSheet sheet){
         super.setSheet(sheet);
-        if(cells == null) initTable();
+        if (cells == null) {
+            initTable();
+        } else {
+            for (HSLFTableCell cols[] : cells) {
+                for (HSLFTableCell col : cols) {
+                    col.setSheet(sheet);
+                }
+            }
+        }
     }
 
-    /**
-     * Sets the row height.
-     *
-     * @param row the row index (0-based)
-     * @param height the height to set (in pixels)
-     */
-    public void setRowHeight(int row, int height){
+    @Override
+    public void setRowHeight(int row, double height) {
+        int pxHeight = Units.pointsToPixel(height);
         int currentHeight = cells[row][0].getAnchor().height;
-        int dy = height - currentHeight;
+        int dy = pxHeight - currentHeight;
 
         for (int i = row; i < cells.length; i++) {
             for (int j = 0; j < cells[i].length; j++) {
                 Rectangle anchor = cells[i][j].getAnchor();
-                if(i == row) anchor.height = height;
-                else anchor.y += dy;
+                if(i == row) {
+                    anchor.height = pxHeight;
+                } else {
+                    anchor.y += dy;
+                }
                 cells[i][j].setAnchor(anchor);
             }
         }
         Rectangle tblanchor = getAnchor();
         tblanchor.height += dy;
-        setAnchor(tblanchor);
+        setExteriorAnchor(tblanchor);
 
     }
 
-    /**
-     * Sets the column width.
-     *
-     * @param col the column index (0-based)
-     * @param width the width to set (in pixels)
-     */
-    public void setColumnWidth(int col, int width){
-        int currentWidth = cells[0][col].getAnchor().width;
-        int dx = width - currentWidth;
-        for (int i = 0; i < cells.length; i++) {
-            Rectangle anchor = cells[i][col].getAnchor();
-            anchor.width = width;
-            cells[i][col].setAnchor(anchor);
+    @Override
+    public void setColumnWidth(int col, final double width){
+        if (col < 0 || col >= cells[0].length) {
+            throw new IllegalArgumentException("Column index '"+col+"' is not within range [0-"+(cells[0].length-1)+"]");
+        }
+        double currentWidth = cells[0][col].getAnchor().getWidth();
+        double dx = width - currentWidth;
+        for (HSLFTableCell cols[] : cells) {
+            Rectangle anchor = cols[col].getAnchor();
+            anchor.width = (int)Math.rint(width);
+            cols[col].setAnchor(anchor);
 
-            if(col < cells[i].length - 1) for (int j = col+1; j < cells[i].length; j++) {
-                anchor = cells[i][j].getAnchor();
-                anchor.x += dx;
-                cells[i][j].setAnchor(anchor);
+            if (col < cols.length - 1) {
+                for (int j = col+1; j < cols.length; j++) {
+                    anchor = cols[j].getAnchor();
+                    anchor.x += dx;
+                    cols[j].setAnchor(anchor);
+                }
             }
         }
         Rectangle tblanchor = getAnchor();
         tblanchor.width += dx;
-        setAnchor(tblanchor);
+        setExteriorAnchor(tblanchor);
     }
 
-    /**
-     * Format the table and apply the specified Line to all cell boundaries,
-     * both outside and inside
-     *
-     * @param line the border line
-     */
-    public void setAllBorders(HSLFLine line){
-        for (int i = 0; i < cells.length; i++) {
-            for (int j = 0; j < cells[i].length; j++) {
-                HSLFTableCell cell = cells[i][j];
-                cell.setBorderTop(cloneBorder(line));
-                cell.setBorderLeft(cloneBorder(line));
-                if(j == cells[i].length - 1) cell.setBorderRight(cloneBorder(line));
-                if(i == cells.length - 1) cell.setBorderBottom(cloneBorder(line));
+    protected HSLFTableCell getRelativeCell(HSLFTableCell origin, int row, int col) {
+        int thisRow = 0, thisCol = 0;
+        boolean found = false;
+        outer: for (HSLFTableCell[] tca : cells) {
+            thisCol = 0;
+            for (HSLFTableCell tc : tca) {
+                if (tc == origin) {
+                    found = true;
+                    break outer;
+                }
+                thisCol++;
             }
+            thisRow++;
         }
+
+        int otherRow = thisRow + row;
+        int otherCol = thisCol + col;
+        return (found
+            && 0 <= otherRow && otherRow < cells.length
+            && 0 <= otherCol && otherCol < cells[otherRow].length)
+            ? cells[otherRow][otherCol] : null;
     }
 
-    /**
-     * Format the outside border using the specified Line object
-     *
-     * @param line the border line
-     */
-    public void setOutsideBorders(HSLFLine line){
-        for (int i = 0; i < cells.length; i++) {
-            for (int j = 0; j < cells[i].length; j++) {
-                HSLFTableCell cell = cells[i][j];
-
-                if(j == 0) cell.setBorderLeft(cloneBorder(line));
-                if(j == cells[i].length - 1) cell.setBorderRight(cloneBorder(line));
-                else {
-                    cell.setBorderLeft(null);
-                    cell.setBorderLeft(null);
-                }
-
-                if(i == 0) cell.setBorderTop(cloneBorder(line));
-                else if(i == cells.length - 1) cell.setBorderBottom(cloneBorder(line));
-                else {
-                    cell.setBorderTop(null);
-                    cell.setBorderBottom(null);
-                }
-            }
-        }
+    @Override
+    protected void moveAndScale(Rectangle anchorDest){
+        super.moveAndScale(anchorDest);
+        updateRowHeightsProperty();
     }
 
-    /**
-     * Format the inside border using the specified Line object
-     *
-     * @param line the border line
-     */
-    public void setInsideBorders(HSLFLine line){
-        for (int i = 0; i < cells.length; i++) {
-            for (int j = 0; j < cells[i].length; j++) {
-                HSLFTableCell cell = cells[i][j];
-
-                if(j != cells[i].length - 1)
-                    cell.setBorderRight(cloneBorder(line));
-                else {
-                    cell.setBorderLeft(null);
-                    cell.setBorderLeft(null);
-                }
-                if(i != cells.length - 1) cell.setBorderBottom(cloneBorder(line));
-                else {
-                    cell.setBorderTop(null);
-                    cell.setBorderBottom(null);
-                }
-            }
-        }
-    }
-
-    private HSLFLine cloneBorder(HSLFLine line){
-        HSLFLine border = createBorder();
-        border.setLineWidth(line.getLineWidth());
-        border.setLineDashing(line.getLineDashing());
-        border.setLineColor(line.getLineColor());
-        border.setLineCompound(line.getLineCompound());
-        return border;
-    }
-
-    /**
-     * Create a border to format this table
-     *
-     * @return the created border
-     */
-    public HSLFLine createBorder(){
-        HSLFLine line = new HSLFLine(this);
-
+    private void updateRowHeightsProperty() {
         AbstractEscherOptRecord opt = getEscherOptRecord();
-        setEscherProperty(opt, EscherProperties.GEOMETRY__SHAPEPATH, -1);
-        setEscherProperty(opt, EscherProperties.GEOMETRY__FILLOK, -1);
-        setEscherProperty(opt, EscherProperties.SHADOWSTYLE__SHADOWOBSURED, 0x20000);
-        setEscherProperty(opt, EscherProperties.THREED__LIGHTFACE, 0x80000);
-
-        return line;
+        EscherArrayProperty p = opt.lookup(EscherProperties.GROUPSHAPE__TABLEROWPROPERTIES);
+        byte[] val = new byte[4];
+        for (int rowIdx = 0; rowIdx < cells.length; rowIdx++) {
+            int rowHeight = Units.pointsToMaster(cells[rowIdx][0].getAnchor().height);
+            LittleEndian.putInt(val, 0, rowHeight);
+            p.setElement(rowIdx, val);
+        }
     }
 }

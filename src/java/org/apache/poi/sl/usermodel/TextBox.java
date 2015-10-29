@@ -17,6 +17,13 @@
 
 package org.apache.poi.sl.usermodel;
 
+/**
+ * Represents a TextFrame shape in PowerPoint.
+ * <p>
+ * Contains the text in a text frame as well as the properties and methods
+ * that control alignment and anchoring of the text.
+ * </p>
+ */
 public interface TextBox<
     S extends Shape<S,P>,
     P extends TextParagraph<S,P,?>

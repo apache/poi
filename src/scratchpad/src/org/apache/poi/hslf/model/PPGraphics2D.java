@@ -297,7 +297,7 @@ public final class PPGraphics2D extends Graphics2D implements Cloneable {
         txt.setTopInset(0);
         txt.setLeftInset(0);
         txt.setRightInset(0);
-        txt.setWordWrap(HSLFTextBox.WrapNone);
+        txt.setWordWrap(false);
         txt.setHorizontalCentered(false);
         txt.setVerticalAlignment(VerticalAlignment.MIDDLE);
 
@@ -1826,7 +1826,7 @@ public final class PPGraphics2D extends Graphics2D implements Cloneable {
             float[] dash = bs.getDashArray();
             if (dash != null) {
                 //TODO: implement more dashing styles
-                shape.setLineDashing(StrokeStyle.LineDash.DASH);
+                shape.setLineDash(StrokeStyle.LineDash.DASH);
             }
         }
     }

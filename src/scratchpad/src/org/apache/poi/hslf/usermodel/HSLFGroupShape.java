@@ -43,7 +43,6 @@ import org.apache.poi.util.Units;
  */
 public class HSLFGroupShape extends HSLFShape
 implements HSLFShapeContainer, GroupShape<HSLFShape,HSLFTextParagraph> {
-
     /**
       * Create a new ShapeGroup. This constructor is used when a new shape is created.
       *
@@ -73,34 +72,16 @@ implements HSLFShapeContainer, GroupShape<HSLFShape,HSLFTextParagraph> {
         super(escherRecord, parent);
     }
 
-    /**
-     * Sets the anchor (the bounding box rectangle) of this shape.
-     * All coordinates should be expressed in Master units (576 dpi).
-     *
-     * @param anchor new anchor
-     */
-    public void setAnchor(java.awt.Rectangle anchor){
-
+    @Override
+    public void setAnchor(Rectangle anchor) {
         EscherClientAnchorRecord clientAnchor = getEscherChild(EscherClientAnchorRecord.RECORD_ID);
-        //hack. internal variable EscherClientAnchorRecord.shortRecord can be
-        //initialized only in fillFields(). We need to set shortRecord=false;
-        byte[] header = new byte[16];
-        LittleEndian.putUShort(header, 0, 0);
-        LittleEndian.putUShort(header, 2, 0);
-        LittleEndian.putInt(header, 4, 8);
-        clientAnchor.fillFields(header, 0, null);
-
-        clientAnchor.setFlag((short)Units.pointsToMaster(anchor.y));
-        clientAnchor.setCol1((short)Units.pointsToMaster(anchor.x));
-        clientAnchor.setDx1((short)Units.pointsToMaster(anchor.width + anchor.x));
-        clientAnchor.setRow1((short)Units.pointsToMaster(anchor.height + anchor.y));
-
-        EscherSpgrRecord spgr = getEscherChild(EscherSpgrRecord.RECORD_ID);
-
-        spgr.setRectX1(Units.pointsToMaster(anchor.x));
-        spgr.setRectY1(Units.pointsToMaster(anchor.y));
-        spgr.setRectX2(Units.pointsToMaster(anchor.x + anchor.width));
-        spgr.setRectY2(Units.pointsToMaster(anchor.y + anchor.height));
+        boolean isInitialized = !(clientAnchor.getDx1() == 0 && clientAnchor.getRow1() == 0);
+        
+        if (isInitialized) {
+            moveAndScale(anchor);
+        } else {
+            setExteriorAnchor(anchor);
+        }
     }
 
     @Override
@@ -116,7 +97,6 @@ implements HSLFShapeContainer, GroupShape<HSLFShape,HSLFTextParagraph> {
         spgr.setRectY1(y1);
         spgr.setRectX2(x2);
         spgr.setRectY2(y2);
-
     }
 
     @Override
@@ -129,6 +109,27 @@ implements HSLFShapeContainer, GroupShape<HSLFShape,HSLFTextParagraph> {
         return new Rectangle(x1,y1,x2-x1,y2-y1);
     }
 
+    protected void setExteriorAnchor(Rectangle anchor) {
+        EscherClientAnchorRecord clientAnchor = getEscherChild(EscherClientAnchorRecord.RECORD_ID);
+        
+        //hack. internal variable EscherClientAnchorRecord.shortRecord can be
+        //initialized only in fillFields(). We need to set shortRecord=false;
+        byte[] header = new byte[16];
+        LittleEndian.putUShort(header, 0, 0);
+        LittleEndian.putUShort(header, 2, 0);
+        LittleEndian.putInt(header, 4, 8);
+        clientAnchor.fillFields(header, 0, null);
+
+        // All coordinates need to be converted to Master units (576 dpi)
+        clientAnchor.setFlag((short)Units.pointsToMaster(anchor.y));
+        clientAnchor.setCol1((short)Units.pointsToMaster(anchor.x));
+        clientAnchor.setDx1((short)Units.pointsToMaster(anchor.width + anchor.x));
+        clientAnchor.setRow1((short)Units.pointsToMaster(anchor.height + anchor.y));
+
+        // TODO: does this make sense?
+        setInteriorAnchor(anchor);
+    }
+    
     /**
      * Create a new ShapeGroup and create an instance of <code>EscherSpgrContainer</code> which represents a group of shapes
      */
@@ -174,23 +175,22 @@ implements HSLFShapeContainer, GroupShape<HSLFShape,HSLFTextParagraph> {
     }
 
     /**
-     * Moves this <code>ShapeGroup</code> to the specified location.
-     * <p>
-     * @param x the x coordinate of the top left corner of the shape in new location
-     * @param y the y coordinate of the top left corner of the shape in new location
+     * Moves and scales this <code>ShapeGroup</code> to the specified anchor.
      */
-    public void moveTo(int x, int y){
-        Rectangle anchor = getAnchor();
-        int dx = x - anchor.x;
-        int dy = y - anchor.y;
-        anchor.translate(dx, dy);
-        setAnchor(anchor);
+    protected void moveAndScale(Rectangle anchorDest){
+        Rectangle anchorSrc = getAnchor();
+        double scaleX = (anchorSrc.width == 0) ? 0 : anchorDest.width / (double)anchorSrc.width;
+        double scaleY = (anchorSrc.height == 0) ? 0 : anchorDest.height / (double)anchorSrc.height;
 
+        setExteriorAnchor(anchorDest);
         
         for (HSLFShape shape : getShapes()) {
             Rectangle chanchor = shape.getAnchor();
-            chanchor.translate(dx, dy);
-            shape.setAnchor(chanchor);
+            int x = (int)Math.rint(anchorDest.x+(chanchor.x-anchorSrc.x)*scaleX);
+            int y = (int)Math.rint(anchorDest.y+(chanchor.y-anchorSrc.y)*scaleY);
+            int width = (int)Math.rint(chanchor.width*scaleX);
+            int height = (int)Math.rint(chanchor.height*scaleY);
+            shape.setAnchor(new Rectangle(x, y, width, height));
         }
     }
 
@@ -262,9 +262,6 @@ implements HSLFShapeContainer, GroupShape<HSLFShape,HSLFTextParagraph> {
         throw new UnsupportedOperationException();
     }
 
-    /**
-     * @return the shapes contained in this group container
-     */
     @Override
     public List<HSLFShape> getShapes() {
         // Out escher container record should contain several

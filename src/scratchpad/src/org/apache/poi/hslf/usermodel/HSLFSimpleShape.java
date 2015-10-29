@@ -27,6 +27,7 @@ import org.apache.poi.sl.draw.DrawPaint;
 import org.apache.poi.sl.draw.geom.*;
 import org.apache.poi.sl.usermodel.*;
 import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
+import org.apache.poi.sl.usermodel.StrokeStyle.LineCap;
 import org.apache.poi.sl.usermodel.StrokeStyle.LineCompound;
 import org.apache.poi.sl.usermodel.StrokeStyle.LineDash;
 import org.apache.poi.util.LittleEndian;
@@ -147,11 +148,32 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
     }
 
     /**
+     * Gets line cap.
+     *
+     * @return cap of the line.
+     */
+    public LineCap getLineCap(){
+        AbstractEscherOptRecord opt = getEscherOptRecord();
+        EscherSimpleProperty prop = getEscherProperty(opt, EscherProperties.LINESTYLE__LINEENDCAPSTYLE);
+        return (prop == null) ? LineCap.FLAT : LineCap.fromNativeId(prop.getPropertyValue());
+    }
+
+    /**
+     * Sets line cap.
+     *
+     * @param pen new style of the line.
+     */
+    public void setLineCap(LineCap pen){
+        AbstractEscherOptRecord opt = getEscherOptRecord();
+        setEscherProperty(opt, EscherProperties.LINESTYLE__LINEENDCAPSTYLE, pen == LineCap.FLAT ? -1 : pen.nativeId);
+    }
+    
+    /**
      * Gets line dashing.
      *
      * @return dashing of the line.
      */
-    public LineDash getLineDashing(){
+    public LineDash getLineDash(){
         AbstractEscherOptRecord opt = getEscherOptRecord();
         EscherSimpleProperty prop = getEscherProperty(opt, EscherProperties.LINESTYLE__LINEDASHING);
         return (prop == null) ? LineDash.SOLID : LineDash.fromNativeId(prop.getPropertyValue());
@@ -162,7 +184,7 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
      *
      * @param pen new style of the line.
      */
-    public void setLineDashing(LineDash pen){
+    public void setLineDash(LineDash pen){
         AbstractEscherOptRecord opt = getEscherOptRecord();
         setEscherProperty(opt, EscherProperties.LINESTYLE__LINEDASHING, pen == LineDash.SOLID ? -1 : pen.nativeId);
     }
@@ -177,7 +199,7 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
         EscherSimpleProperty prop = getEscherProperty(opt, EscherProperties.LINESTYLE__LINESTYLE);
         return (prop == null) ? LineCompound.SINGLE : LineCompound.fromNativeId(prop.getPropertyValue());
     }
-    
+
     /**
      * Sets the line compound style
      *
@@ -204,7 +226,7 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
             }
 
             public LineDash getLineDash() {
-                return HSLFSimpleShape.this.getLineDashing();
+                return HSLFSimpleShape.this.getLineDash();
             }
 
             public LineCompound getLineCompound() {
@@ -214,23 +236,17 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
             public double getLineWidth() {
                 return HSLFSimpleShape.this.getLineWidth();
             }
-            
+
         };
     }
 
-    /**
-     * The color used to fill this shape.
-     */
-    public Color getFillColor(){
+    @Override
+    public Color getFillColor() {
         return getFill().getForegroundColor();
     }
 
-    /**
-     * The color used to fill this shape.
-     *
-     * @param color the background color
-     */
-    public void setFillColor(Color color){
+    @Override
+    public void setFillColor(Color color) {
         getFill().setForegroundColor(color);
     }
 
@@ -353,10 +369,10 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
         if (name == null || !name.matches("adj([1-9]|10)?")) {
             throw new IllegalArgumentException("Adjust value '"+name+"' not supported.");
         }
-        
+
         name = name.replace("adj", "");
         if ("".equals(name)) name = "1";
-        
+
         short escherProp;
         switch (Integer.parseInt(name)) {
             case 1: escherProp = EscherProperties.GEOMETRY__ADJUSTVALUE; break;
@@ -371,7 +387,7 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
             case 10: escherProp = EscherProperties.GEOMETRY__ADJUST10VALUE; break;
             default: throw new RuntimeException();
         }
-        
+
         int adjval = getEscherProperty(escherProp, -1);
         return (adjval == -1) ? null : new Guide(name, "val "+adjval);
     }
@@ -386,7 +402,7 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
             logger.log(POILogger.WARN, "No preset shape definition for shapeType: "+name);
             return null;
         }
-        
+
         return geom;
     }
 
@@ -399,7 +415,7 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
         int offY = (prop == null) ? 0 : prop.getPropertyValue();
         return Math.toDegrees(Math.atan2(offY, offX));
     }
-    
+
     public double getShadowDistance() {
         AbstractEscherOptRecord opt = getEscherOptRecord();
         EscherSimpleProperty prop = getEscherProperty(opt, EscherProperties.SHADOWSTYLE__OFFSETX);
@@ -415,13 +431,13 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
     public Color getShadowColor(){
         Color clr = getColor(EscherProperties.SHADOWSTYLE__COLOR, EscherProperties.SHADOWSTYLE__OPACITY, -1);
         return clr == null ? Color.black : clr;
-    }    
-    
+    }
+
     public Shadow<HSLFShape,HSLFTextParagraph> getShadow() {
         AbstractEscherOptRecord opt = getEscherOptRecord();
         EscherProperty shadowType = opt.lookup(EscherProperties.SHADOWSTYLE__TYPE);
         if (shadowType == null) return null;
-        
+
         return new Shadow<HSLFShape,HSLFTextParagraph>(){
             public SimpleShape<HSLFShape,HSLFTextParagraph> getShadowParent() {
                 return HSLFSimpleShape.this;
@@ -443,7 +459,7 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
             public SolidPaint getFillStyle() {
                 return DrawPaint.createSolidPaint(getShadowColor());
             }
-            
+
         };
     }
 
@@ -474,5 +490,124 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
                 return DecorationSize.MEDIUM;
             }
         };
+    }
+
+    protected void setPlaceholder(Placeholder placeholder) {
+        EscherSpRecord spRecord = _escherContainer.getChildById(EscherSpRecord.RECORD_ID);
+        int flags = spRecord.getFlags();
+        flags |= EscherSpRecord.FLAG_HAVEANCHOR | EscherSpRecord.FLAG_HAVEMASTER;
+        spRecord.setFlags(flags);
+
+        EscherClientDataRecord cldata = _escherContainer.getChildById(EscherClientDataRecord.RECORD_ID);
+        if (cldata == null) {
+            cldata = new EscherClientDataRecord();
+            // append placeholder container before EscherTextboxRecord
+            _escherContainer.addChildBefore(cldata, EscherTextboxRecord.RECORD_ID);
+        }
+        cldata.setOptions((short)15);
+
+        AbstractEscherOptRecord opt = getEscherOptRecord();
+
+        // Placeholders can't be grouped
+        setEscherProperty(opt, EscherProperties.PROTECTION__LOCKAGAINSTGROUPING, 262144);
+
+        // OEPlaceholderAtom tells powerpoint that this shape is a placeholder
+        OEPlaceholderAtom oep = new OEPlaceholderAtom();
+
+        /**
+         * Extarct from MSDN:
+         *
+         * There is a special case when the placeholder does not have a position in the layout.
+         * This occurs when the user has moved the placeholder from its original position.
+         * In this case the placeholder ID is -1.
+         */
+        oep.setPlacementId(-1);
+
+        boolean isMaster = (getSheet() instanceof HSLFSlideMaster);
+        boolean isNotes = (getSheet() instanceof HSLFNotes);
+        byte phId;
+        switch (placeholder) {
+            case TITLE:
+                phId = (isMaster) ? OEPlaceholderAtom.MasterTitle : OEPlaceholderAtom.Title;
+                break;
+            case BODY:
+                phId = (isMaster) ? OEPlaceholderAtom.MasterBody :
+                    ((isNotes) ? OEPlaceholderAtom.NotesBody : OEPlaceholderAtom.Body);
+                break;
+            case CENTERED_TITLE:
+                phId = (isMaster) ? OEPlaceholderAtom.MasterCenteredTitle : OEPlaceholderAtom.CenteredTitle;
+                break;
+            case SUBTITLE:
+                phId = (isMaster) ? OEPlaceholderAtom.MasterSubTitle : OEPlaceholderAtom.Subtitle;
+                break;
+            case DATETIME:
+                phId = OEPlaceholderAtom.MasterDate;
+                break;
+            case SLIDE_NUMBER:
+                phId = OEPlaceholderAtom.MasterSlideNumber;
+                break;
+            case FOOTER:
+                phId = OEPlaceholderAtom.MasterFooter;
+                break;
+            case HEADER:
+                phId = OEPlaceholderAtom.MasterHeader;
+                break;
+            case DGM:
+            case CHART:
+                phId = OEPlaceholderAtom.Graph;
+                break;
+            case TABLE:
+                phId = OEPlaceholderAtom.Table;
+                break;
+            case PICTURE:
+            case CLIP_ART:
+                phId = OEPlaceholderAtom.ClipArt;
+                break;
+            case MEDIA:
+                phId = OEPlaceholderAtom.MediaClip;
+                break;
+            case SLIDE_IMAGE:
+                phId = (isMaster) ? OEPlaceholderAtom.MasterNotesSlideImage : OEPlaceholderAtom.NotesSlideImage;
+                break;
+            default:
+            case CONTENT:
+                phId = OEPlaceholderAtom.Object;
+                break;
+        }
+        oep.setPlaceholderId(phId);
+
+        //convert hslf into ddf record
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        try {
+            oep.writeOut(out);
+        } catch(Exception e){
+            throw new HSLFException(e);
+        }
+        cldata.setRemainingData(out.toByteArray());
+    }
+
+
+    @Override
+    public void setStrokeStyle(Object... styles) {
+        if (styles.length == 0) {
+            // remove stroke
+            setLineColor(null);
+            return;
+        }
+        
+        // TODO: handle PaintStyle
+        for (Object st : styles) {
+            if (st instanceof Number) {
+                setLineWidth(((Number)st).doubleValue());
+            } else if (st instanceof LineCap) {
+                setLineCap((LineCap)st);
+            } else if (st instanceof LineDash) {
+                setLineDash((LineDash)st);
+            } else if (st instanceof LineCompound) {
+                setLineCompound((LineCompound)st);
+            } else if (st instanceof Color) {
+                setLineColor((Color)st);
+            }
+        }
     }
 }

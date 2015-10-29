@@ -41,7 +41,6 @@ import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.apache.poi.sl.usermodel.Resources;
 import org.apache.poi.sl.usermodel.SlideShow;
 import org.apache.poi.util.Beta;
-import org.apache.poi.util.DocumentHelper;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
@@ -404,11 +403,7 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
         return slide;
     }
     
-    /**
-     * Returns the current page size
-     *
-     * @return the page size
-     */
+    @Override
     public Dimension getPageSize(){
         CTSlideSize sz = _presentation.getSldSz();
         int cx = sz.getCx();
@@ -416,11 +411,7 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
         return new Dimension((int)Units.toPoints(cx), (int)Units.toPoints(cy));
     }
 
-    /**
-     * Sets the page size to the given <code>Dimension</code> object.
-     *
-     * @param pgSize page size
-     */
+    @Override
     public void setPageSize(Dimension pgSize){
         CTSlideSize sz = CTSlideSize.Factory.newInstance();
         sz.setCx(Units.toEMU(pgSize.getWidth()));

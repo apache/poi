@@ -28,6 +28,7 @@ import java.awt.Color;
 import java.io.IOException;
 import java.util.List;
 
+import org.apache.poi.sl.usermodel.SimpleShape.Placeholder;
 import org.apache.poi.sl.usermodel.TextParagraph.TextAlign;
 import org.apache.poi.sl.usermodel.VerticalAlignment;
 import org.apache.poi.xslf.XSLFTestDataSamples;
@@ -45,7 +46,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.STPlaceholderType;
 public class TestXSLFTextShape {
 
     @Test
-    public void testLayouts(){
+    public void testLayouts() throws IOException {
         XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("layouts.pptx");
 
         List<XSLFSlide> slide = ppt.getSlides();
@@ -57,6 +58,8 @@ public class TestXSLFTextShape {
         verifySlide7(slide.get(6));
         verifySlide8(slide.get(7));
         verifySlide10(slide.get(9));
+        
+        ppt.close();
     }
 
     void verifySlide1(XSLFSlide slide){

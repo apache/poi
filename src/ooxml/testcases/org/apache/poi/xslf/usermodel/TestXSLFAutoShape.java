@@ -268,7 +268,7 @@ public class TestXSLFAutoShape {
 
         assertFalse(r.isUnderlined());
         assertFalse(r.getXmlObject().getRPr().isSetU());
-        r.setUnderline(true);
+        r.setUnderlined(true);
         assertTrue(r.isUnderlined());
         assertEquals(STTextUnderlineType.SNG, r.getXmlObject().getRPr().getU());
 

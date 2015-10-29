@@ -81,27 +81,27 @@ public final class TestLine {
          */
         line = new HSLFLine();
         line.setAnchor(new java.awt.Rectangle(450, 200, 300, 0));
-        line.setLineDashing(LineDash.SOLID);
+        line.setLineDash(LineDash.SOLID);
         slide.addShape(line);
 
         line = new HSLFLine();
         line.setAnchor(new java.awt.Rectangle(450, 230, 300, 0));
-        line.setLineDashing(LineDash.DASH);
+        line.setLineDash(LineDash.DASH);
         slide.addShape(line);
 
         line = new HSLFLine();
         line.setAnchor(new java.awt.Rectangle(450, 260, 300, 0));
-        line.setLineDashing(LineDash.DOT);
+        line.setLineDash(LineDash.DOT);
         slide.addShape(line);
 
         line = new HSLFLine();
         line.setAnchor(new java.awt.Rectangle(450, 290, 300, 0));
-        line.setLineDashing(LineDash.DASH_DOT);
+        line.setLineDash(LineDash.DASH_DOT);
         slide.addShape(line);
 
         line = new HSLFLine();
         line.setAnchor(new java.awt.Rectangle(450, 320, 300, 0));
-        line.setLineDashing(LineDash.LG_DASH_DOT_DOT);
+        line.setLineDash(LineDash.LG_DASH_DOT_DOT);
         slide.addShape(line);
 
         /**
@@ -109,21 +109,21 @@ public final class TestLine {
          */
         line = new HSLFLine();
         line.setAnchor(new java.awt.Rectangle(75, 400, 300, 0));
-        line.setLineDashing(LineDash.DASH_DOT);
+        line.setLineDash(LineDash.DASH_DOT);
         line.setLineCompound(LineCompound.TRIPLE);
         line.setLineWidth(5.0);
         slide.addShape(line);
 
         line = new HSLFLine();
         line.setAnchor(new java.awt.Rectangle(75, 430, 300, 0));
-        line.setLineDashing(LineDash.DASH);
+        line.setLineDash(LineDash.DASH);
         line.setLineCompound(LineCompound.THICK_THIN);
         line.setLineWidth(4.0);
         slide.addShape(line);
 
         line = new HSLFLine();
         line.setAnchor(new java.awt.Rectangle(75, 460, 300, 0));
-        line.setLineDashing(LineDash.DOT);
+        line.setLineDash(LineDash.DOT);
         line.setLineCompound(LineCompound.DOUBLE);
         line.setLineWidth(8.0);
         slide.addShape(line);

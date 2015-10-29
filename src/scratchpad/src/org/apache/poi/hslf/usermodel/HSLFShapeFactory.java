@@ -56,7 +56,7 @@ public final class HSLFShapeFactory {
             EscherPropertyFactory f = new EscherPropertyFactory();
             List<EscherProperty> props = f.createProperties( opt.serialize(), 8, opt.getInstance() );
             for (EscherProperty ep : props) {
-                if (ep.getPropertyNumber() == 0x39F
+                if (ep.getPropertyNumber() == EscherProperties.GROUPSHAPE__TABLEPROPERTIES
                     && ep instanceof EscherSimpleProperty
                     && ((EscherSimpleProperty)ep).getPropertyValue() == 1) {
                     isTable = true;
@@ -65,9 +65,13 @@ public final class HSLFShapeFactory {
             }
         }
         
-        HSLFGroupShape group = (isTable)
-            ? new HSLFTable(spContainer, parent)
-            : new HSLFGroupShape(spContainer, parent);
+        HSLFGroupShape group;
+        if (isTable) {
+            group = new HSLFTable(spContainer, parent);
+            
+        } else {
+            group = new HSLFGroupShape(spContainer, parent);
+        }
         
         return group;
      }
@@ -82,65 +86,73 @@ public final class HSLFShapeFactory {
                 shape = new HSLFTextBox(spContainer, parent);
                 break;
             case HOST_CONTROL:
-            case FRAME: {
-                InteractiveInfo info = getClientDataRecord(spContainer, RecordTypes.InteractiveInfo.typeID);
-                OEShapeAtom oes = getClientDataRecord(spContainer, RecordTypes.OEShapeAtom.typeID);
-                if(info != null && info.getInteractiveInfoAtom() != null){
-                    switch(info.getInteractiveInfoAtom().getAction()){
-                        case InteractiveInfoAtom.ACTION_OLE:
-                            shape = new OLEShape(spContainer, parent);
-                            break;
-                        case InteractiveInfoAtom.ACTION_MEDIA:
-                            shape = new MovieShape(spContainer, parent);
-                            break;
-                        default:
-                            break;
-                    }
-                } else if (oes != null){
-                    shape = new OLEShape(spContainer, parent);
-                }
-
-                if(shape == null) shape = new HSLFPictureShape(spContainer, parent);
+            case FRAME:
+                shape = createFrame(spContainer, parent);
                 break;
-            }
             case LINE:
                 shape = new HSLFLine(spContainer, parent);
                 break;
-            case NOT_PRIMITIVE: {
-                AbstractEscherOptRecord opt = HSLFShape.getEscherChild(spContainer, EscherOptRecord.RECORD_ID);
-                EscherProperty prop = HSLFShape.getEscherProperty(opt, EscherProperties.GEOMETRY__VERTICES);
-                if(prop != null)
-                    shape = new HSLFFreeformShape(spContainer, parent);
-                else {
-                    logger.log(POILogger.INFO, "Creating AutoShape for a NotPrimitive shape");
+            case NOT_PRIMITIVE:
+                shape = createNonPrimitive(spContainer, parent);
+                break;
+            default:
+                EscherTextboxRecord etr = spContainer.getChildById(EscherTextboxRecord.RECORD_ID);
+                if (parent instanceof HSLFTable && etr != null) {
+                    shape = new HSLFTableCell(spContainer, (HSLFTable)parent);
+                } else {
                     shape = new HSLFAutoShape(spContainer, parent);
                 }
                 break;
-            }
-            default:
-                shape = new HSLFAutoShape(spContainer, parent);
-                break;
         }
         return shape;
-
     }
 
+    private static HSLFShape createFrame(EscherContainerRecord spContainer, ShapeContainer<HSLFShape,HSLFTextParagraph> parent) {
+        InteractiveInfo info = getClientDataRecord(spContainer, RecordTypes.InteractiveInfo.typeID);
+        if(info != null && info.getInteractiveInfoAtom() != null){
+            switch(info.getInteractiveInfoAtom().getAction()){
+                case InteractiveInfoAtom.ACTION_OLE:
+                    return new OLEShape(spContainer, parent);
+                case InteractiveInfoAtom.ACTION_MEDIA:
+                    return new MovieShape(spContainer, parent);
+                default:
+                    break;
+            }
+        }
+        
+        OEShapeAtom oes = getClientDataRecord(spContainer, RecordTypes.OEShapeAtom.typeID);
+        if (oes != null){
+            return new OLEShape(spContainer, parent);
+        }
+
+        return new HSLFPictureShape(spContainer, parent);
+    }
+    
+    private static HSLFShape createNonPrimitive(EscherContainerRecord spContainer, ShapeContainer<HSLFShape,HSLFTextParagraph> parent) {
+        AbstractEscherOptRecord opt = HSLFShape.getEscherChild(spContainer, EscherOptRecord.RECORD_ID);
+        EscherProperty prop = HSLFShape.getEscherProperty(opt, EscherProperties.GEOMETRY__VERTICES);
+        if(prop != null) {
+            return new HSLFFreeformShape(spContainer, parent);
+        }
+        
+        logger.log(POILogger.INFO, "Creating AutoShape for a NotPrimitive shape");
+        return new HSLFAutoShape(spContainer, parent);
+    }
+    
     @SuppressWarnings("unchecked")
     protected static <T extends Record> T getClientDataRecord(EscherContainerRecord spContainer, int recordType) {
-        Record oep = null;
         for (Iterator<EscherRecord> it = spContainer.getChildIterator(); it.hasNext();) {
             EscherRecord obj = it.next();
             if (obj.getRecordId() == EscherClientDataRecord.RECORD_ID) {
                 byte[] data = obj.serialize();
-                Record[] records = Record.findChildRecords(data, 8, data.length - 8);
-                for (int j = 0; j < records.length; j++) {
-                    if (records[j].getRecordType() == recordType) {
-                        return (T)records[j];
+                for (Record r : Record.findChildRecords(data, 8, data.length - 8)) {
+                    if (r.getRecordType() == recordType) {
+                        return (T)r;
                     }
                 }
             }
         }
-        return (T)oep;
+        return null;
     }
 
 }

@@ -116,19 +116,11 @@ public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
         return getShapeType().nativeName;
     }
 
-    /**
-     * @return type of the shape.
-     * @see org.apache.poi.hslf.record.RecordTypes
-     */
     public ShapeType getShapeType(){
         EscherSpRecord spRecord = getEscherChild(EscherSpRecord.RECORD_ID);
         return ShapeType.forId(spRecord.getShapeType(), false);
     }
 
-    /**
-     * @param type type of the shape.
-     * @see org.apache.poi.hslf.record.RecordTypes
-     */
     public void setShapeType(ShapeType type){
         EscherSpRecord spRecord = getEscherChild(EscherSpRecord.RECORD_ID);
         spRecord.setShapeType( (short) type.nativeId );
@@ -209,7 +201,9 @@ public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
      * @param x the x coordinate of the top left corner of the shape
      * @param y the y coordinate of the top left corner of the shape
      */
-    public void moveTo(float x, float y){
+    public final void moveTo(float x, float y) {
+        // This convenience method should be implemented via setAnchor in subclasses
+        // see HSLFGroupShape.setAnchor() for a reference
         Rectangle anchor = getAnchor();
         anchor.setRect(x, y, anchor.getWidth(), anchor.getHeight());
         setAnchor(anchor);

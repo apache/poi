@@ -39,6 +39,7 @@ import org.apache.poi.sl.draw.DrawFactory;
 import org.apache.poi.sl.draw.DrawPictureShape;
 import org.apache.poi.sl.draw.Drawable;
 import org.apache.poi.sl.usermodel.PictureData;
+import org.apache.poi.sl.usermodel.SimpleShape.Placeholder;
 import org.apache.poi.sl.usermodel.Sheet;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.IOUtils;

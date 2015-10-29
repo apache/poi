@@ -458,7 +458,7 @@ public abstract class HSLFSheet implements HSLFShapeContainer, Sheet<HSLFShape,H
             throw new IllegalArgumentException("numRows and numCols must be greater than 0");
         }
         HSLFTable s = new HSLFTable(numRows,numCols);
-        s.setAnchor(new Rectangle(0, 0, 100, 100));
+        // anchor is set in constructor based on numRows/numCols
         addShape(s);
         return s;
     }

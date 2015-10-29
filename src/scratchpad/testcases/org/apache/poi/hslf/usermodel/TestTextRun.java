@@ -571,4 +571,13 @@ public final class TestTextRun {
         }
     }
 
+	@Test
+	public void testAppendEmpty() throws IOException {
+        HSLFSlideShow ppt = new HSLFSlideShow();
+        HSLFSlide s = ppt.createSlide();
+        HSLFTextBox title = s.addTitle();
+        title.setText("");
+        title.appendText("\n", true);
+        title.appendText("para", true);
+	}
 }

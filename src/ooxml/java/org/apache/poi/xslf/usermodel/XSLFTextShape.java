@@ -37,8 +37,10 @@ import org.apache.poi.xslf.model.TextBodyPropertyFetcher;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBody;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBodyProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextCharacterProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextListStyle;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraph;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraphProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.STTextAnchoringType;
 import org.openxmlformats.schemas.drawingml.x2006.main.STTextVerticalType;
 import org.openxmlformats.schemas.drawingml.x2006.main.STTextWrappingType;
@@ -91,10 +93,52 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
         txBody.setPArray(null); // remove any existing paragraphs
     }
 
-    public void setText(String text){
-        clearText();
+    @Override
+    public XSLFTextRun setText(String text) {
+        // copy properties from first paragraph / textrun
+        CTTextParagraphProperties pPr = null;
+        CTTextCharacterProperties rPr = null;
+        if (!_paragraphs.isEmpty()) {
+            XSLFTextParagraph p0 = _paragraphs.get(0);
+            pPr = p0.getXmlObject().getPPr();
+            if (!p0.getTextRuns().isEmpty()) {
+                XSLFTextRun r0 = p0.getTextRuns().get(0);
+                rPr = r0.getXmlObject().getRPr();
+            }
+        }
 
-        addNewTextParagraph().addNewTextRun().setText(text);
+        // can't call clearText otherwise we receive a XmlValueDisconnectedException
+        _paragraphs.clear();
+        CTTextBody txBody = getTextBody(true);
+        int cntPs = txBody.sizeOfPArray();
+        
+        // split text by paragraph and new line char
+        XSLFTextRun r = null;
+        for (String paraText : text.split("\\r\\n?|\\n")) {
+            XSLFTextParagraph para = addNewTextParagraph();
+            if (pPr != null) {
+                para.getXmlObject().setPPr(pPr);
+            }
+            boolean first = true;
+            for (String runText : paraText.split("[\u000b]")) {
+                if (!first) {
+                    para.addLineBreak();
+                }
+                r = para.addNewTextRun();
+                r.setText(runText);
+                if (rPr != null) {
+                    r.getXmlObject().setRPr(rPr);
+                }
+                first = false;
+            }
+        }
+        
+        // simply setting a new pArray leads to XmlValueDisconnectedException
+        for (int i = cntPs-1; i >= 0; i--) {
+            txBody.removeP(i);
+        }
+        
+        return r;
     }
 
     @Override
@@ -115,13 +159,7 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
         return paragraph;
     }
 
-
-    /**
-     * Sets the type of vertical alignment for the text.
-     *
-     * @param anchor - the type of alignment.
-     * A {@code null} values unsets this property.
-     */
+    @Override
     public void setVerticalAlignment(VerticalAlignment anchor){
         CTTextBodyProperties bodyPr = getTextBodyPr();
         if (bodyPr != null) {
@@ -133,11 +171,7 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
         }
     }
 
-    /**
-     * Returns the type of vertical alignment for the text.
-     *
-     * @return the type of vertical alignment
-     */
+    @Override
     public VerticalAlignment getVerticalAlignment(){
         PropertyFetcher<VerticalAlignment> fetcher = new TextBodyPropertyFetcher<VerticalAlignment>(){
             public boolean fetch(CTTextBodyProperties props){
@@ -153,14 +187,7 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
         return fetcher.getValue() == null ? VerticalAlignment.TOP : fetcher.getValue();
     }
 
-    /**
-     * Sets if the paragraphs are horizontal centered
-     *
-     * @param isCentered true, if the paragraphs are horizontal centered
-     * A {@code null} values unsets this property.
-     * 
-     * @see TextShape#isHorizontalCentered()
-     */
+    @Override
     public void setHorizontalCentered(Boolean isCentered){
         CTTextBodyProperties bodyPr = getTextBodyPr();
         if (bodyPr != null) {
@@ -369,10 +396,15 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
         return insets;
     }
     
-    
-    /**
-     * @return whether to wrap words within the bounding rectangle
-     */
+    @Override
+    public void setInsets(Insets2D insets) {
+        setTopInset(insets.top);
+        setLeftInset(insets.left);
+        setBottomInset(insets.bottom);
+        setRightInset(insets.right);
+    }
+   
+    @Override
     public boolean getWordWrap(){
         PropertyFetcher<Boolean> fetcher = new TextBodyPropertyFetcher<Boolean>(){
             public boolean fetch(CTTextBodyProperties props){
@@ -387,10 +419,7 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
         return fetcher.getValue() == null ? true : fetcher.getValue();
     }
 
-    /**
-     *
-     * @param wrap  whether to wrap words within the bounding rectangle
-     */
+    @Override
     public void setWordWrap(boolean wrap){
         CTTextBodyProperties bodyPr = getTextBodyPr();
         if (bodyPr != null) {
@@ -532,4 +561,45 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
             tgtP.copy(srcP);
         }
     }
+
+    @Override
+    public void setTextPlaceholder(TextPlaceholder placeholder) {
+        switch (placeholder) {
+            default:
+            case NOTES:
+            case HALF_BODY:
+            case QUARTER_BODY: 
+            case BODY:
+                setPlaceholder(Placeholder.BODY);
+                break;
+            case TITLE:
+                setPlaceholder(Placeholder.TITLE);
+                break;
+            case CENTER_BODY:
+                setPlaceholder(Placeholder.BODY);
+                setHorizontalCentered(true);
+                break;
+            case CENTER_TITLE:
+                setPlaceholder(Placeholder.CENTERED_TITLE);
+                break;
+            case OTHER:
+                setPlaceholder(Placeholder.CONTENT);
+                break;
+        }
+    }
+
+    @Override
+    public TextPlaceholder getTextPlaceholder() {
+        Placeholder ph = getTextType();
+        if (ph == null) return TextPlaceholder.BODY;
+        switch (ph) {
+        case BODY: return TextPlaceholder.BODY;
+        case TITLE: return TextPlaceholder.TITLE;
+        case CENTERED_TITLE: return TextPlaceholder.CENTER_TITLE;
+        default:
+        case CONTENT: return TextPlaceholder.OTHER;
+        }        
+    }
+    
+    
 }
