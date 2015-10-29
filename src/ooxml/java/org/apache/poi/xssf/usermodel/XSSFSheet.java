@@ -690,7 +690,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     /**
      * Get a list of Hyperlinks in this sheet
      *
-     * @return
+     * @return Hyperlinks for the sheet
      */
     public List<XSSFHyperlink> getHyperlinkList() {
         return Collections.unmodifiableList(hyperlinks);
