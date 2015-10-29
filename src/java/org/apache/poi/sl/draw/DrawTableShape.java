@@ -21,7 +21,6 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 
 import org.apache.poi.sl.usermodel.GroupShape;
-import org.apache.poi.sl.usermodel.StrokeStyle;
 import org.apache.poi.sl.usermodel.StrokeStyle.LineCompound;
 import org.apache.poi.sl.usermodel.StrokeStyle.LineDash;
 import org.apache.poi.sl.usermodel.TableCell;
@@ -74,7 +73,7 @@ public class DrawTableShape extends DrawShape {
      * An empty args parameter removes the affected border.
      *
      * @param args a varargs array possible containing {@link Double} (width),
-     * {@link StrokeStyle.LineCompound}, {@link Color}, {@link StrokeStyle.LineDash}
+     * {@link LineCompound}, {@link Color}, {@link LineDash}
      */
     public void setAllBorders(Object... args) {
         TableShape<?,?> table = getShape();
@@ -96,7 +95,7 @@ public class DrawTableShape extends DrawShape {
      * An empty args parameter removes the affected border.
      *
      * @param args a varargs array possible containing {@link Double} (width),
-     * {@link StrokeStyle.LineCompound}, {@link Color}, {@link StrokeStyle.LineDash}
+     * {@link LineCompound}, {@link Color}, {@link LineDash}
      */
     public void setOutsideBorders(Object... args){
         if (args.length == 0) return;
@@ -122,7 +121,7 @@ public class DrawTableShape extends DrawShape {
      * An empty args parameter removes the affected border.
      *
      * @param args a varargs array possible containing {@link Double} (width),
-     * {@link StrokeStyle.LineCompound}, {@link Color}, {@link StrokeStyle.LineDash}
+     * {@link LineCompound}, {@link Color}, {@link LineDash}
      */
     public void setInsideBorders(Object... args) {
         if (args.length == 0) return;
