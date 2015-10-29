@@ -1694,7 +1694,7 @@ under the License.
     </target>
 
     <target name="gump" depends="compile-all, test-all, jar"/>
-    <target name="jenkins" depends="compile-all, test-all, test-integration, jar, javadocs, assemble, findbugs, release-notes, rat-check, forbidden-apis-check"/>
+    <target name="jenkins" depends="compile-all, test-all, test-integration, jar, javadocs, assemble, findbugs, release-notes, rat-check, forbidden-apis-check" description="Target run by Jenkins on a continuous basis"/>
 
     <available property="maven.ant.tasks.present" classname="org.apache.maven.artifact.ant.Pom"/>
     <target name="maven.ant.tasks-check">
