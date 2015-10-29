@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -669,6 +670,13 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
                 vml == null ? null : vml.findCommentShape(row, column));
     }
 
+    /**
+     * Get a Hyperlink in this sheet anchored at row, column
+     *
+     * @param row
+     * @param column
+     * @return hyperlink if there is a hyperlink anchored at row, column; otherwise returns null
+     */
     public XSSFHyperlink getHyperlink(int row, int column) {
         String ref = new CellReference(row, column).formatAsString();
         for(XSSFHyperlink hyperlink : hyperlinks) {
@@ -677,6 +685,15 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
             }
         }
         return null;
+    }
+    
+    /**
+     * Get a list of Hyperlinks in this sheet
+     *
+     * @return
+     */
+    public List<XSSFHyperlink> getHyperlinkList() {
+        return Collections.unmodifiableList(hyperlinks);
     }
 
     @SuppressWarnings("deprecation")
@@ -2610,6 +2627,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
                 // remove row from _rows
                 it.remove();
 
+                // FIXME: (performance optimization) this should be moved outside the for-loop so that comments only needs to be iterated over once.
                 // also remove any comments associated with this row
                 if(sheetComments != null){
                     CTCommentList lst = sheetComments.getCTComments().getCommentList();
@@ -2622,6 +2640,16 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
                             sheetComments.removeComment(strRef);
                             vml.removeCommentShape(ref.getRow(), ref.getCol());
                     	}
+                    }
+                }
+                // FIXME: (performance optimization) this should be moved outside the for-loop so that hyperlinks only needs to be iterated over once.
+                // also remove any hyperlinks associated with this row
+                if (hyperlinks != null) {
+                    for (XSSFHyperlink link : new ArrayList<XSSFHyperlink>(hyperlinks)) {
+                        CellReference ref = new CellReference(link.getCellRef());
+                        if (ref.getRow() == rownum) {
+                            hyperlinks.remove(link);
+                        }
                     }
                 }
             }
@@ -2707,6 +2735,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         rowShifter.updateFormulas(shifter);
         rowShifter.shiftMerged(startRow, endRow, n);
         rowShifter.updateConditionalFormatting(shifter);
+        rowShifter.updateHyperlinks(shifter);
 
         //rebuild the _rows map
         SortedMap<Integer, XSSFRow> map = new TreeMap<Integer, XSSFRow>();
@@ -2902,6 +2931,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      */
     @Internal
     public void removeHyperlink(int row, int column) {
+        // CTHyperlinks is regenerated from scratch when writing out the spreadsheet
+        // so don't worry about maintaining hyperlinks and CTHyperlinks in parallel.
+        // only maintain hyperlinks
         String ref = new CellReference(row, column).formatAsString();
         for (Iterator<XSSFHyperlink> it = hyperlinks.iterator(); it.hasNext();) {
             XSSFHyperlink hyperlink = it.next();

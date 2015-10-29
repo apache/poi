@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.poi.common.usermodel.Hyperlink;
 import org.apache.poi.ss.formula.FormulaParseException;
 import org.apache.poi.ss.formula.FormulaParser;
 import org.apache.poi.ss.formula.FormulaRenderer;
@@ -38,6 +39,7 @@ import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFEvaluationWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFHyperlink;
 import org.apache.poi.xssf.usermodel.XSSFName;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -277,6 +279,30 @@ public final class XSSFRowShifter {
                         cfRule.setFormulaArray(i, shiftedFmla);
                     }
                 }
+            }
+        }
+    }
+    
+    /**
+     * Shift the Hyperlink anchors (not the hyperlink text, even if the hyperlink
+     * is of type LINK_DOCUMENT and refers to a cell that was shifted). Hyperlinks
+     * do not track the content they point to.
+     *
+     * @param shifter
+     */
+    public void updateHyperlinks(FormulaShifter shifter) {
+        int sheetIndex = sheet.getWorkbook().getSheetIndex(sheet);
+        List<XSSFHyperlink> hyperlinkList = sheet.getHyperlinkList();
+        
+        for (XSSFHyperlink hyperlink : hyperlinkList) {
+            String cellRef = hyperlink.getCellRef();
+            CellRangeAddress cra = CellRangeAddress.valueOf(cellRef);
+            CellRangeAddress shiftedRange = shiftRange(shifter, cra, sheetIndex);
+            if (shiftedRange != null && shiftedRange != cra) {
+                // shiftedRange should not be null. If shiftedRange is null, that means
+                // that a hyperlink wasn't deleted at the beginning of shiftRows when
+                // identifying rows that should be removed because they will be overwritten
+                hyperlink.setCellReference(shiftedRange.formatAsString());
             }
         }
     }
