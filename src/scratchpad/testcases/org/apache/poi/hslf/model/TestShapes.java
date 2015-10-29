@@ -91,7 +91,7 @@ public final class TestShapes {
         java.awt.Rectangle lineAnchor = new java.awt.Rectangle(100, 200, 50, 60);
         line.setAnchor(lineAnchor);
         line.setLineWidth(3);
-        line.setLineDashing(LineDash.DASH);
+        line.setLineDash(LineDash.DASH);
         line.setLineColor(Color.red);
         slide.addShape(line);
 
@@ -99,7 +99,7 @@ public final class TestShapes {
         java.awt.Rectangle ellipseAnchor = new Rectangle(320, 154, 55, 111);
         ellipse.setAnchor(ellipseAnchor);
         ellipse.setLineWidth(2);
-        ellipse.setLineDashing(LineDash.SOLID);
+        ellipse.setLineDash(LineDash.SOLID);
         ellipse.setLineColor(Color.green);
         ellipse.setFillColor(Color.lightGray);
         slide.addShape(ellipse);

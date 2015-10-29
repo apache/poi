@@ -23,6 +23,8 @@ import java.awt.Rectangle;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import org.apache.poi.sl.usermodel.SimpleShape.Placeholder;
+
 /**
  * How to set slide title
  *

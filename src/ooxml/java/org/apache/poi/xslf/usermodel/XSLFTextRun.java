@@ -206,12 +206,7 @@ public class XSLFTextRun implements TextRun {
         }
     }
 
-    /**
-     * Specifies the typeface, or name of the font that is to be used for this text run.
-     *
-     * @param typeface  the font to apply to this text run.
-     * The value of <code>null</code> unsets the Typeface attrubute from the underlying xml.
-     */
+    @Override
     public void setFontFamily(String typeface){
         setFontFamily(typeface, (byte)-1, (byte)-1, false);
     }
@@ -236,9 +231,7 @@ public class XSLFTextRun implements TextRun {
         }
     }
 
-    /**
-     * @return  font family or null if not set
-     */
+    @Override
     public String getFontFamily(){
         final XSLFTheme theme = _p.getParentShape().getSheet().getTheme();
 
@@ -281,18 +274,12 @@ public class XSLFTextRun implements TextRun {
         return  visitor.getValue() == null ? 0 : visitor.getValue();
     }
 
-    /**
-     * Specifies whether a run of text will be formatted as strikethrough text.
-     *
-     * @param strike whether a run of text will be formatted as strikethrough text.
-     */
+    @Override
     public void setStrikethrough(boolean strike) {
         getRPr().setStrike(strike ? STTextStrikeType.SNG_STRIKE : STTextStrikeType.NO_STRIKE);
     }
 
-    /**
-     * @return whether a run of text will be formatted as strikethrough text. Default is false.
-     */
+    @Override
     public boolean isStrikethrough() {
         CharacterPropertyFetcher<Boolean> fetcher = new CharacterPropertyFetcher<Boolean>(_p.getIndentLevel()){
             public boolean fetch(CTTextCharacterProperties props){
@@ -307,9 +294,7 @@ public class XSLFTextRun implements TextRun {
         return fetcher.getValue() == null ? false : fetcher.getValue();
     }
 
-    /**
-     * @return whether a run of text will be formatted as a superscript text. Default is false.
-     */
+    @Override
     public boolean isSuperscript() {
         CharacterPropertyFetcher<Boolean> fetcher = new CharacterPropertyFetcher<Boolean>(_p.getIndentLevel()){
             public boolean fetch(CTTextCharacterProperties props){
@@ -357,9 +342,7 @@ public class XSLFTextRun implements TextRun {
         setBaselineOffset(flag ? -25.0 : 0.);
     }
 
-    /**
-     * @return whether a run of text will be formatted as a superscript text. Default is false.
-     */
+    @Override
     public boolean isSubscript() {
         CharacterPropertyFetcher<Boolean> fetcher = new CharacterPropertyFetcher<Boolean>(_p.getIndentLevel()){
             public boolean fetch(CTTextCharacterProperties props){
@@ -392,18 +375,12 @@ public class XSLFTextRun implements TextRun {
         return fetcher.getValue() == null ? TextCap.NONE : fetcher.getValue();
     }
 
-    /**
-     * Specifies whether this run of text will be formatted as bold text
-     *
-     * @param bold whether this run of text will be formatted as bold text
-     */
+    @Override
     public void setBold(boolean bold){
         getRPr().setB(bold);
     }
 
-    /**
-     * @return whether this run of text is formatted as bold text
-     */
+    @Override
     public boolean isBold(){
         CharacterPropertyFetcher<Boolean> fetcher = new CharacterPropertyFetcher<Boolean>(_p.getIndentLevel()){
             public boolean fetch(CTTextCharacterProperties props){
@@ -418,16 +395,12 @@ public class XSLFTextRun implements TextRun {
         return fetcher.getValue() == null ? false : fetcher.getValue();
     }
 
-    /**
-     * @param italic whether this run of text is formatted as italic text
-     */
+    @Override
     public void setItalic(boolean italic){
         getRPr().setI(italic);
     }
 
-    /**
-     * @return whether this run of text is formatted as italic text
-     */
+    @Override
     public boolean isItalic(){
         CharacterPropertyFetcher<Boolean> fetcher = new CharacterPropertyFetcher<Boolean>(_p.getIndentLevel()){
             public boolean fetch(CTTextCharacterProperties props){
@@ -442,16 +415,12 @@ public class XSLFTextRun implements TextRun {
         return fetcher.getValue() == null ? false : fetcher.getValue();
     }
 
-    /**
-     * @param underline whether this run of text is formatted as underlined text
-     */
-    public void setUnderline(boolean underline) {
+    @Override
+    public void setUnderlined(boolean underline) {
         getRPr().setU(underline ? STTextUnderlineType.SNG : STTextUnderlineType.NONE);
     }
 
-    /**
-     * @return whether this run of text is formatted as underlined text
-     */
+    @Override
     public boolean isUnderlined(){
         CharacterPropertyFetcher<Boolean> fetcher = new CharacterPropertyFetcher<Boolean>(_p.getIndentLevel()){
             public boolean fetch(CTTextCharacterProperties props){
@@ -501,6 +470,7 @@ public class XSLFTextRun implements TextRun {
         CTPlaceholder ph = shape.getCTPlaceholder();
         if (ph == null){
             // if it is a plain text box then take defaults from presentation.xml
+            @SuppressWarnings("resource")
             XMLSlideShow ppt = sheet.getSlideShow();
             CTTextParagraphProperties themeProps = ppt.getDefaultParagraphStyle(_p.getIndentLevel());
             if (themeProps != null) {
@@ -543,7 +513,7 @@ public class XSLFTextRun implements TextRun {
         if(italic != isItalic()) setItalic(italic);
 
         boolean underline = r.isUnderlined();
-        if(underline != isUnderlined()) setUnderline(underline);
+        if(underline != isUnderlined()) setUnderlined(underline);
 
         boolean strike = r.isStrikethrough();
         if(strike != isStrikethrough()) setStrikethrough(strike);

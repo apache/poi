@@ -531,9 +531,7 @@ public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagrap
 		return HSLFSoundData.find(_documentRecord);
 	}
 
-	/**
-	 * Return the current page size
-	 */
+	@Override
 	public Dimension getPageSize() {
 		DocumentAtom docatom = _documentRecord.getDocumentAtom();
 		int pgx = (int)Units.masterToPoints((int)docatom.getSlideSizeX());
@@ -541,12 +539,7 @@ public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagrap
 		return new Dimension(pgx, pgy);
 	}
 
-	/**
-	 * Change the current page size
-	 *
-	 * @param pgsize
-	 *            page size (in points)
-	 */
+	@Override
 	public void setPageSize(Dimension pgsize) {
 		DocumentAtom docatom = _documentRecord.getDocumentAtom();
 		docatom.setSlideSizeX(Units.pointsToMaster(pgsize.width));

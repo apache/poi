@@ -48,6 +48,13 @@ public interface SlideShow<
      * @return the page size
      */
     Dimension getPageSize();
+
+    /**
+     * Change the current page size
+     *
+     * @param pgsize page size (in points)
+     */
+    void setPageSize(Dimension pgsize);
     
     /**
      * Returns all Pictures of this slideshow.

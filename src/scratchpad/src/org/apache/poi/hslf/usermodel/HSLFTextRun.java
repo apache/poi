@@ -157,44 +157,32 @@ public final class HSLFTextRun implements TextRun {
 
 	// --------------- Friendly getters / setters on rich text properties -------
 
-	/**
-	 * Is the text bold?
-	 */
+	@Override
 	public boolean isBold() {
 		return isCharFlagsTextPropVal(CharFlagsTextProp.BOLD_IDX);
 	}
 
-	/**
-	 * Is the text bold?
-	 */
+	@Override
 	public void setBold(boolean bold) {
 		setCharFlagsTextPropVal(CharFlagsTextProp.BOLD_IDX, bold);
 	}
 
-	/**
-	 * Is the text italic?
-	 */
+	@Override
 	public boolean isItalic() {
 		return isCharFlagsTextPropVal(CharFlagsTextProp.ITALIC_IDX);
 	}
 
-	/**
-	 * Is the text italic?
-	 */
+	@Override
 	public void setItalic(boolean italic) {
 		setCharFlagsTextPropVal(CharFlagsTextProp.ITALIC_IDX, italic);
 	}
 
-	/**
-	 * Is the text underlined?
-	 */
+	@Override
 	public boolean isUnderlined() {
 		return isCharFlagsTextPropVal(CharFlagsTextProp.UNDERLINE_IDX);
 	}
 
-	/**
-	 * Is the text underlined?
-	 */
+	@Override
 	public void setUnderlined(boolean underlined) {
 		setCharFlagsTextPropVal(CharFlagsTextProp.UNDERLINE_IDX, underlined);
 	}
@@ -227,16 +215,12 @@ public final class HSLFTextRun implements TextRun {
 		setCharFlagsTextPropVal(CharFlagsTextProp.RELIEF_IDX, flag);
 	}
 
-	/**
-	 * Gets the strikethrough flag
-	 */
+	@Override
 	public boolean isStrikethrough() {
 		return isCharFlagsTextPropVal(CharFlagsTextProp.STRIKETHROUGH_IDX);
 	}
 
-	/**
-	 * Sets the strikethrough flag
-	 */
+	@Override
 	public void setStrikethrough(boolean flag) {
 		setCharFlagsTextPropVal(CharFlagsTextProp.STRIKETHROUGH_IDX, flag);
 	}
@@ -288,10 +272,7 @@ public final class HSLFTextRun implements TextRun {
 		setCharTextPropVal("font.index", idx);
 	}
 
-
-	/**
-	 * Sets the font name to use
-	 */
+	@Override
 	public void setFontFamily(String fontFamily) {
 	    HSLFSheet sheet = parentParagraph.getSheet();
 	    HSLFSlideShow slideShow = (sheet == null) ? null : sheet.getSlideShow();
@@ -301,13 +282,10 @@ public final class HSLFTextRun implements TextRun {
 			return;
 		}
 		// Get the index for this font (adding if needed)
-		int fontIdx = slideShow.getFontCollection().addFont(fontFamily);
+		Integer fontIdx = (fontFamily == null) ? null : slideShow.getFontCollection().addFont(fontFamily);
 		setCharTextPropVal("font.index", fontIdx);
 	}
 
-	/**
-	 * Gets the font name
-	 */
 	@Override
 	public String getFontFamily() {
         HSLFSheet sheet = parentParagraph.getSheet();
@@ -373,12 +351,14 @@ public final class HSLFTextRun implements TextRun {
         return TextCap.NONE;
     }
 
+    @Override
     public boolean isSubscript() {
-        return false;
+        return getSuperscript() < 0;
     }
 
+    @Override
     public boolean isSuperscript() {
-        return false;
+        return getSuperscript() > 0;
     }
 
     public byte getPitchAndFamily() {

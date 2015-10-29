@@ -67,7 +67,7 @@ public class HSLFAutoShape extends HSLFTextShape implements AutoShape<HSLFShape,
     protected void setDefaultTextProperties(HSLFTextParagraph _txtrun){
         setVerticalAlignment(VerticalAlignment.MIDDLE);
         setHorizontalCentered(true);
-        setWordWrap(HSLFTextBox.WrapNone);
+        setWordWrap(false);
     }
 
     /**

@@ -30,23 +30,23 @@ public interface TextRun {
         SMALL,
         ALL
     }
-    
-    String getRawText();
-	void setText(String text);
 
-	TextCap getTextCap();
-	
-	/**
-	 * Returns the font color.
-	 * This usually returns a {@link SolidPaint}, but but also other classes are possible
-	 * 
-	 * @return the font color/paint
-	 * 
+    String getRawText();
+    void setText(String text);
+
+    TextCap getTextCap();
+
+    /**
+     * Returns the font color.
+     * This usually returns a {@link SolidPaint}, but but also other classes are possible
+     *
+     * @return the font color/paint
+     *
      * @see org.apache.poi.sl.draw.DrawPaint#getPaint(java.awt.Graphics2D, PaintStyle)
      * @see SolidPaint#getSolidColor()
-	 * @see org.apache.poi.sl.draw.DrawPaint#applyColorTransform(ColorStyle)
-	 */
-	PaintStyle getFontColor();
+     * @see org.apache.poi.sl.draw.DrawPaint#applyColorTransform(ColorStyle)
+     */
+    PaintStyle getFontColor();
 
     /**
      * Sets the (solid) font color - convenience function
@@ -56,41 +56,104 @@ public interface TextRun {
     void setFontColor(Color color);
 
     /**
-	 * Sets the font color
-	 *
-	 * @param color the color
-	 * 
-	 * @see org.apache.poi.sl.draw.DrawPaint#createSolidPaint(Color)
-	 */
-	void setFontColor(PaintStyle color);
-	
-	
+     * Sets the font color
+     *
+     * @param color the color
+     *
+     * @see org.apache.poi.sl.draw.DrawPaint#createSolidPaint(Color)
+     */
+    void setFontColor(PaintStyle color);
+
+
     /**
      * Returns the font size which is either set directly on this text run or
      * given from the slide layout
-     * 
+     *
      * @return font size in points or null if font size is not set.
      */
-	Double getFontSize();
+    Double getFontSize();
 
     /**
      * Sets the font size directly on this text run, if null is given, the
      * font size defaults to the values given from the slide layout
-     * 
+     *
      * @param fontSize font size in points, if null the underlying fontsize will be unset
      */
-	void setFontSize(Double fontSize);
-	String getFontFamily();
-	
-	boolean isBold();
-	boolean isItalic();
-	boolean isUnderlined();
-	boolean isStrikethrough();
-	boolean isSubscript();
-	boolean isSuperscript();
-	
-	/**
-	 * @return the pitch and family id or -1 if not applicable
-	 */
-	byte getPitchAndFamily();
+    void setFontSize(Double fontSize);
+
+    /**
+     * @return  font family or null if not set
+     */
+    String getFontFamily();
+
+    /**
+     * Specifies the typeface, or name of the font that is to be used for this text run.
+     *
+     * @param typeface  the font to apply to this text run.
+     * The value of <code>null</code> unsets the Typeface attrubute from the underlying xml.
+     */
+    void setFontFamily(String typeface);
+
+    /**
+     * @return true, if text is bold
+     */
+    boolean isBold();
+
+    /**
+     * Sets the bold state
+     *
+     * @param bold set to true for bold text, false for normal weight
+     */
+    void setBold(boolean bold);
+    
+    /**
+     * @return true, if text is italic
+     */
+    boolean isItalic();
+
+    /**
+     * Sets the italic state
+     *
+     * @param italic set to true for italic text, false for non-italics
+     */
+    void setItalic(boolean italic);
+
+    /**
+     * @return true, if text is underlined
+     */
+    boolean isUnderlined();
+
+    /**
+     * Sets the underlined state
+     *
+     * @param underlined set to true for underlined text, false for no underlining
+     */
+    void setUnderlined(boolean underlined);
+
+    /**
+     * @return true, if text is stroked
+     */
+    boolean isStrikethrough();
+
+    /**
+     * Sets the strikethrough state
+     *
+     * @param stroked set to true for stroked text, false for no stroking
+     */
+    void setStrikethrough(boolean stroked);
+
+    /**
+     * @return true, if text is sub scripted
+     */
+    boolean isSubscript();
+
+    /**
+     * @return true, if text is super scripted
+     */
+    boolean isSuperscript();
+
+    /**
+     * @return the pitch and family id or -1 if not applicable
+     */
+    byte getPitchAndFamily();
 }

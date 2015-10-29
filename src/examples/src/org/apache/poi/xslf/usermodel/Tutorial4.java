@@ -24,6 +24,7 @@ import java.awt.Rectangle;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import org.apache.poi.sl.usermodel.TableCell.BorderEdge;
 import org.apache.poi.sl.usermodel.TextParagraph.TextAlign;
 
 /**
@@ -56,8 +57,8 @@ public class Tutorial4 {
             r.setBold(true);
             r.setFontColor(Color.white);
             th.setFillColor(new Color(79, 129, 189));
-            th.setBorderBottom(2);
-            th.setBorderBottomColor(Color.white);
+            th.setBorderWidth(BorderEdge.bottom, 2.0);
+            th.setBorderColor(BorderEdge.bottom, Color.white);
 
             tbl.setColumnWidth(i, 150);  // all columns are equally sized
         }

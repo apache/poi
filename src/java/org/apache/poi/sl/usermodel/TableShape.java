@@ -21,5 +21,25 @@ public interface TableShape<
     S extends Shape<S,P>,
     P extends TextParagraph<S,P,?>
 > extends Shape<S,P>, PlaceableShape<S,P> {
-    // to be defined ...
+    int getNumberOfColumns();
+    
+    int getNumberOfRows();
+    
+    TableCell<S,P> getCell(int row, int col);
+    
+    /**
+     * Sets the width (in points) of the n-th column
+     *
+     * @param idx the column index (0-based)
+     * @param width the width (in points)
+     */
+    void setColumnWidth(int idx, double width);
+
+    /**
+     * Sets the row height.
+     *
+     * @param row the row index (0-based)
+     * @param height the height to set (in points)
+     */
+    void setRowHeight(int row, double height);
 }

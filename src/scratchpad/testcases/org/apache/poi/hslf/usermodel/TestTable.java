@@ -19,22 +19,49 @@
 
 package org.apache.poi.hslf.usermodel;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
+import java.awt.Color;
+import java.awt.Rectangle;
 import java.util.List;
 
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.sl.draw.DrawTableShape;
+import org.apache.poi.sl.usermodel.StrokeStyle;
 import org.junit.Test;
 
 
 /**
- * Test that checks numbered list functionality.
- * 
- * @author Alex Nikiforov [mailto:anikif@gmail.com]
+ * Table related tests
  */
 public class TestTable {
     private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
 
+    @Test
+    public void moveTable() throws Exception {
+        HSLFSlideShow ppt = new HSLFSlideShow();
+        HSLFSlide slide = ppt.createSlide();
+        int rows = 3, cols = 5;
+        HSLFTable table = slide.createTable(rows, cols);
+        for (int row=0; row<rows; row++) {
+            for (int col=0; col<cols; col++) {
+                HSLFTableCell c = table.getCell(row, col);
+                c.setText("r"+row+"c"+col);
+            }
+        }
+        
+        new DrawTableShape(table).setAllBorders(1.0, Color.black, StrokeStyle.LineDash.DASH_DOT);
+        
+        table.setAnchor(new Rectangle(100, 100, 400, 400));
+        
+        Rectangle rectExp = new Rectangle(420,367,80,133);
+        Rectangle rectAct = table.getCell(rows-1, cols-1).getAnchor();
+        assertEquals(rectExp, rectAct);
+    }
+    
     @Test
     public void testTable() throws Exception {
 		HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("54111.ppt"));

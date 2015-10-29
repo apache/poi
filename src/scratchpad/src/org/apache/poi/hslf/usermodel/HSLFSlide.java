@@ -27,7 +27,6 @@ import org.apache.poi.ddf.EscherDggRecord;
 import org.apache.poi.ddf.EscherSpRecord;
 import org.apache.poi.hslf.model.Comment;
 import org.apache.poi.hslf.model.HeadersFooters;
-import org.apache.poi.hslf.model.Placeholder;
 import org.apache.poi.hslf.record.ColorSchemeAtom;
 import org.apache.poi.hslf.record.Comment2000;
 import org.apache.poi.hslf.record.EscherTextboxWrapper;
@@ -196,7 +195,7 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFTe
 	 * @return <code>TextBox</code> object that represents the slide's title.
 	 */
 	public HSLFTextBox addTitle() {
-		Placeholder pl = new Placeholder();
+		HSLFPlaceholder pl = new HSLFPlaceholder();
 		pl.setShapeType(ShapeType.RECT);
 		pl.setRunType(TextHeaderAtom.TITLE_TYPE);
 		pl.setText("Click to edit title");

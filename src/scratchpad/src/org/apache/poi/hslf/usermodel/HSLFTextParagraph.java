@@ -69,7 +69,7 @@ import org.apache.poi.util.Units;
  * This class represents a run of text in a powerpoint document. That
  *  run could be text on a sheet, or text in a note.
  *  It is only a very basic class for now
- * 
+ *
  * @author Nick Burch
  */
 
@@ -98,18 +98,18 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
     private int shapeId;
 
     private StyleTextProp9Atom styleTextProp9Atom;
-    
+
     private boolean _dirty = false;
 
     /**
     * Constructs a Text Run from a Unicode text block.
     * Either a {@link TextCharsAtom} or a {@link TextBytesAtom} needs to be provided.
-     * 
+     *
     * @param tha the TextHeaderAtom that defines what's what
     * @param tba the TextBytesAtom containing the text or null if {@link TextCharsAtom} is provided
     * @param tca the TextCharsAtom containing the text or null if {@link TextBytesAtom} is provided
      */
-	/* package */ HSLFTextParagraph(
+    /* package */ HSLFTextParagraph(
         TextHeaderAtom tha,
         TextBytesAtom tba,
         TextCharsAtom tca
@@ -137,10 +137,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
         _runs.add(run);
     }
 
-    /**
-	 * Fetch the rich text runs (runs of text with the same styling) that
-	 *  are contained within this block of text
-     */
+    @Override
     public List<HSLFTextRun> getTextRuns() {
         return _runs;
     }
@@ -193,7 +190,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
 
     /**
      * Sets the index of the paragraph in the SLWT container
-     * 
+     *
      * @param index
      */
     protected void setIndex(int index) {
@@ -241,7 +238,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
     /**
      * Returns records that make up the list of text paragraphs
      * (there can be misc InteractiveInfo, TxInteractiveInfo and other records)
-     * 
+     *
      * @return text run records
      */
     public Record[] getRecords() {
@@ -278,7 +275,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
     }
 
     /** Numbered List info */
-	public void setStyleTextProp9Atom(final StyleTextProp9Atom styleTextProp9Atom) {
+    public void setStyleTextProp9Atom(final StyleTextProp9Atom styleTextProp9Atom) {
         this.styleTextProp9Atom = styleTextProp9Atom;
     }
 
@@ -286,7 +283,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
     public StyleTextProp9Atom getStyleTextProp9Atom() {
         return this.styleTextProp9Atom;
     }
-    
+
     @Override
     public Iterator<HSLFTextRun> iterator() {
         return _runs.iterator();
@@ -342,13 +339,13 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
         if (!_runs.isEmpty()) {
             d = _runs.get(0).getFontSize();
         }
-        
+
         return (d != null) ? d : 12d;
     }
 
     /**
      * Sets the type of horizontal alignment for the paragraph.
-     * 
+     *
      * @param align - the type of alignment
      */
     public void setAlignment(org.apache.poi.sl.usermodel.TextParagraph.TextAlign align) {
@@ -386,7 +383,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
     public FontAlign getFontAlign() {
         TextProp tp = getPropVal(_paragraphStyle, FontAlignmentProp.NAME, this);
         if (tp == null) return null;
-        
+
         switch (tp.getValue()) {
             case FontAlignmentProp.BASELINE: return FontAlign.BASELINE;
             case FontAlignmentProp.TOP: return FontAlign.TOP;
@@ -413,8 +410,8 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
         assert(startAt != null);
         return startAt.intValue();
     }
-    
-    
+
+
     @Override
     public BulletStyle getBulletStyle() {
         if (!isBullet() && getAutoNumberingScheme() == null) return null;
@@ -440,7 +437,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
             public void setBulletFontColor(Color color) {
                 setBulletFontColor(DrawPaint.createSolidPaint(color));
             }
-            
+
             @Override
             public void setBulletFontColor(PaintStyle color) {
                 if (!(color instanceof SolidPaint)) {
@@ -450,7 +447,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
                 Color col = DrawPaint.applyColorTransform(sp.getSolidColor());
                 HSLFTextParagraph.this.setBulletColor(col);
             }
-            
+
             @Override
             public PaintStyle getBulletFontColor() {
                 Color col = HSLFTextParagraph.this.getBulletColor();
@@ -617,7 +614,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
         // TODO: implement
         return null;
     }
-    
+
     private Double getPctOrPoints(String propName) {
         TextProp tp = getPropVal(_paragraphStyle, propName, this);
         if (tp == null) return null;
@@ -632,7 +629,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
         }
         setParagraphTextPropVal(propName, ival);
     }
-    
+
     private boolean getFlag(int index) {
         BitMaskTextProp tp = (BitMaskTextProp)getPropVal(_paragraphStyle, ParagraphFlagsTextProp.NAME, this);
         return (tp == null) ? false : tp.getSubValue(index);
@@ -672,7 +669,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
     /**
      * Returns the named TextProp, either by fetching it (if it exists) or
      * adding it (if it didn't)
-     * 
+     *
      * @param props the TextPropCollection to fetch from / add into
      * @param name the name of the TextProp to fetch/add
      * @param val the value, null if unset
@@ -682,15 +679,15 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
             props.removeByName(name);
             return;
         }
-        
+
         // Fetch / Add the TextProp
         TextProp tp = props.addWithName(name);
         tp.setValue(val);
     }
-    
+
     /**
      * Check and add linebreaks to text runs leading other paragraphs
-     * 
+     *
      * @param paragraphs
      */
     protected static void fixLineEndings(List<HSLFTextParagraph> paragraphs) {
@@ -710,7 +707,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
 
     /**
      * Search for a StyleTextPropAtom is for this text header (list of paragraphs)
-     * 
+     *
      * @param header the header
      * @param textLen the length of the rawtext, or -1 if the length is not known
      */
@@ -868,7 +865,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
                 throw new RuntimeException("failed dummy write", e);
             }
         }
-        
+
         for (HSLFTextParagraph p : paragraphs) {
             p._dirty = false;
         }
@@ -877,7 +874,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
     /**
      * Adds the supplied text onto the end of the TextParagraphs,
      * creating a new RichTextRun for it to sit in.
-     * 
+     *
      * @param text the text string used by this object.
      */
     protected static HSLFTextRun appendText(List<HSLFTextParagraph> paragraphs, String text, boolean newParagraph) {
@@ -889,9 +886,13 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
         HSLFTextParagraph htp = paragraphs.get(paragraphs.size() - 1);
         HSLFTextRun htr = htp.getTextRuns().get(htp.getTextRuns().size() - 1);
 
-        boolean isFirst = !newParagraph;
+        boolean addParagraph = newParagraph;
         for (String rawText : text.split("(?<=\r)")) {
-            if (!isFirst) {
+            // special case, if last text paragraph or run is empty, we will reuse it
+            boolean lastRunEmpty = (htr.getLength() == 0);
+            boolean lastParaEmpty = lastRunEmpty && (htp.getTextRuns().size() == 1);
+
+            if (addParagraph && !lastParaEmpty) {
                 TextPropCollection tpc = htp.getParagraphStyle();
                 HSLFTextParagraph prevHtp = htp;
                 htp = new HSLFTextParagraph(htp._headerAtom, htp._byteAtom, htp._charAtom);
@@ -901,11 +902,10 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
                 htp.supplySheet(prevHtp.getSheet());
                 paragraphs.add(htp);
             }
-            isFirst = false;
+            addParagraph = true;
 
-            TextPropCollection tpc = htr.getCharacterStyle();
-            // special case, last text run is empty, we will reuse it
-            if (htr.getLength() > 0) {
+            if (!lastRunEmpty) {
+                TextPropCollection tpc = htr.getCharacterStyle();
                 htr = new HSLFTextRun(htp);
                 htr.getCharacterStyle().copy(tpc);
                 htp.addTextRun(htr);
@@ -921,7 +921,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
     /**
      * Sets (overwrites) the current text.
      * Uses the properties of the first paragraph / textrun
-     * 
+     *
      * @param text the text string used by this object.
      */
     public static HSLFTextRun setText(List<HSLFTextParagraph> paragraphs, String text) {
@@ -980,7 +980,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
     /**
      * Converts raw text from the text paragraphs to a formatted string,
      * i.e. it converts certain control characters used in the raw txt
-     * 
+     *
      * @param rawText the raw text
      * @param runType the run type of the shape, paragraph or headerAtom.
      *        use -1 if unknown
@@ -1024,7 +1024,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
      * Scans through the supplied record array, looking for
      * a TextHeaderAtom followed by one of a TextBytesAtom or
      * a TextCharsAtom. Builds up TextRuns from these
-     * 
+     *
      * @param wrapper an EscherTextboxWrapper
      */
     protected static List<HSLFTextParagraph> findTextParagraphs(EscherTextboxWrapper wrapper, HSLFSheet sheet) {
@@ -1103,7 +1103,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
      * Scans through the supplied record array, looking for
      * a TextHeaderAtom followed by one of a TextBytesAtom or
      * a TextCharsAtom. Builds up TextRuns from these
-     * 
+     *
      * @param records the records to build from
      */
     protected static List<List<HSLFTextParagraph>> findTextParagraphs(Record[] records) {
@@ -1272,7 +1272,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
         EscherTextboxWrapper wrapper = new EscherTextboxWrapper();
         return createEmptyParagraph(wrapper);
     }
-    
+
     protected static List<HSLFTextParagraph> createEmptyParagraph(EscherTextboxWrapper wrapper) {
         TextHeaderAtom tha = new TextHeaderAtom();
         tha.setParentRecord(wrapper);
@@ -1301,10 +1301,10 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
     public EscherTextboxWrapper getTextboxWrapper() {
         return (EscherTextboxWrapper) _headerAtom.getParentRecord();
     }
-    
+
     protected static Color getColorFromColorIndexStruct(int rgb, HSLFSheet sheet) {
         int cidx = rgb >>> 24;
-        Color tmp; 
+        Color tmp;
         switch (cidx) {
             // Background ... Accent 3 color
             case 0: case 1: case 2: case 3: case 4: case 5: case 6: case 7:
@@ -1333,14 +1333,14 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
         setPropVal(_paragraphStyle, propName, val);
         setDirty();
     }
-    
+
     /**
      * marks this paragraph dirty, so its records will be renewed on save
      */
     public void setDirty() {
         _dirty = true;
     }
-    
+
     public boolean isDirty() {
         return _dirty;
     }

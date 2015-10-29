@@ -17,13 +17,18 @@
 
 package org.apache.poi.hslf.usermodel;
 
+import java.awt.Color;
 import java.awt.Rectangle;
 
 import org.apache.poi.ddf.AbstractEscherOptRecord;
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherProperties;
-import org.apache.poi.sl.usermodel.ShapeContainer;
+import org.apache.poi.sl.draw.DrawPaint;
+import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.sl.usermodel.ShapeType;
+import org.apache.poi.sl.usermodel.StrokeStyle;
+import org.apache.poi.sl.usermodel.StrokeStyle.LineCompound;
+import org.apache.poi.sl.usermodel.StrokeStyle.LineDash;
 import org.apache.poi.sl.usermodel.TableCell;
 
 /**
@@ -35,10 +40,10 @@ public final class HSLFTableCell extends HSLFTextBox implements TableCell<HSLFSh
     protected static final int DEFAULT_WIDTH = 100;
     protected static final int DEFAULT_HEIGHT = 40;
 
-    private HSLFLine borderLeft;
-    private HSLFLine borderRight;
-    private HSLFLine borderTop;
-    private HSLFLine borderBottom;
+    /* package */ HSLFLine borderLeft;
+    /* package */ HSLFLine borderRight;
+    /* package */ HSLFLine borderTop;
+    /* package */ HSLFLine borderBottom;
 
     /**
      * Create a TableCell object and initialize it from the supplied Record container.
@@ -46,7 +51,7 @@ public final class HSLFTableCell extends HSLFTextBox implements TableCell<HSLFSh
      * @param escherRecord       EscherSpContainer which holds information about this shape
      * @param parent    the parent of the shape
      */
-   protected HSLFTableCell(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape,HSLFTextParagraph> parent){
+   protected HSLFTableCell(EscherContainerRecord escherRecord, HSLFTable parent){
         super(escherRecord, parent);
     }
 
@@ -56,7 +61,7 @@ public final class HSLFTableCell extends HSLFTextBox implements TableCell<HSLFSh
      * @param parent    the parent of this Shape. For example, if this text box is a cell
      * in a table then the parent is Table.
      */
-    public HSLFTableCell(ShapeContainer<HSLFShape,HSLFTextParagraph> parent){
+    public HSLFTableCell(HSLFTable parent){
         super(parent);
 
         setShapeType(ShapeType.RECT);
@@ -76,82 +81,320 @@ public final class HSLFTableCell extends HSLFTextBox implements TableCell<HSLFSh
         return _escherContainer;
     }
 
-    protected void anchorBorder(int type, HSLFLine line){
+    private void anchorBorder(BorderEdge edge, final HSLFLine line) {
+        if (line == null) {
+            return;
+        }
         Rectangle cellAnchor = getAnchor();
         Rectangle lineAnchor = new Rectangle();
-        switch(type){
-            case HSLFTable.BORDER_TOP:
+        switch(edge){
+            case top:
                 lineAnchor.x = cellAnchor.x;
                 lineAnchor.y = cellAnchor.y;
                 lineAnchor.width = cellAnchor.width;
                 lineAnchor.height = 0;
                 break;
-            case HSLFTable.BORDER_RIGHT:
+            case right:
                 lineAnchor.x = cellAnchor.x + cellAnchor.width;
                 lineAnchor.y = cellAnchor.y;
                 lineAnchor.width = 0;
                 lineAnchor.height = cellAnchor.height;
                 break;
-            case HSLFTable.BORDER_BOTTOM:
+            case bottom:
                 lineAnchor.x = cellAnchor.x;
                 lineAnchor.y = cellAnchor.y + cellAnchor.height;
                 lineAnchor.width = cellAnchor.width;
                 lineAnchor.height = 0;
                 break;
-            case HSLFTable.BORDER_LEFT:
+            case left:
                 lineAnchor.x = cellAnchor.x;
                 lineAnchor.y = cellAnchor.y;
                 lineAnchor.width = 0;
                 lineAnchor.height = cellAnchor.height;
                 break;
             default:
-                throw new IllegalArgumentException("Unknown border type: " + type);
+                throw new IllegalArgumentException();
         }
         line.setAnchor(lineAnchor);
-    }
-
-    public HSLFLine getBorderLeft() {
-        return borderLeft;
-    }
-
-    public void setBorderLeft(HSLFLine line) {
-        if(line != null) anchorBorder(HSLFTable.BORDER_LEFT, line);
-        this.borderLeft = line;
-    }
-
-    public HSLFLine getBorderRight() {
-        return borderRight;
-    }
-
-    public void setBorderRight(HSLFLine line) {
-        if(line != null) anchorBorder(HSLFTable.BORDER_RIGHT, line);
-        this.borderRight = line;
-    }
-
-    public HSLFLine getBorderTop() {
-        return borderTop;
-    }
-
-    public void setBorderTop(HSLFLine line) {
-        if(line != null) anchorBorder(HSLFTable.BORDER_TOP, line);
-        this.borderTop = line;
-    }
-
-    public HSLFLine getBorderBottom() {
-        return borderBottom;
-    }
-
-    public void setBorderBottom(HSLFLine line) {
-        if(line != null) anchorBorder(HSLFTable.BORDER_BOTTOM, line);
-        this.borderBottom = line;
     }
 
     public void setAnchor(Rectangle anchor){
         super.setAnchor(anchor);
 
-        if(borderTop != null) anchorBorder(HSLFTable.BORDER_TOP, borderTop);
-        if(borderRight != null) anchorBorder(HSLFTable.BORDER_RIGHT, borderRight);
-        if(borderBottom != null) anchorBorder(HSLFTable.BORDER_BOTTOM, borderBottom);
-        if(borderLeft != null) anchorBorder(HSLFTable.BORDER_LEFT, borderLeft);
+        anchorBorder(BorderEdge.top, borderTop);
+        anchorBorder(BorderEdge.right, borderRight);
+        anchorBorder(BorderEdge.bottom, borderBottom);
+        anchorBorder(BorderEdge.left, borderLeft);
+    }
+
+    @Override
+    public StrokeStyle getBorderStyle(final BorderEdge edge) {
+        final Double width = getBorderWidth(edge); 
+        return (width == null) ? null : new StrokeStyle() {
+            public PaintStyle getPaint() {
+                return DrawPaint.createSolidPaint(getBorderColor(edge));
+            }
+
+            public LineCap getLineCap() {
+                return null;
+            }
+
+            public LineDash getLineDash() {
+                return getBorderDash(edge);
+            }
+
+            public LineCompound getLineCompound() {
+                return getBorderCompound(edge);
+            }
+
+            public double getLineWidth() {
+                return width;
+            }
+        };
+    }
+
+    @Override
+    public void setBorderStyle(BorderEdge edge, StrokeStyle style) {
+        if (style == null) {
+            throw new IllegalArgumentException("StrokeStyle needs to be specified.");
+        }
+        
+        // setting the line cap is not implemented, as the border lines aren't connected
+        
+        LineCompound compound = style.getLineCompound();
+        if (compound != null) {
+            setBorderCompound(edge, compound);
+        }
+        
+        LineDash dash = style.getLineDash();
+        if (dash != null) {
+            setBorderDash(edge, dash);
+        }
+        
+        double width = style.getLineWidth();
+        setBorderWidth(edge, width);
+    }
+
+    
+    public Double getBorderWidth(BorderEdge edge) {
+        HSLFLine l;
+        switch (edge) {
+            case bottom: l = borderBottom; break;
+            case top: l = borderTop; break;
+            case right: l = borderRight; break;
+            case left: l = borderLeft; break;
+            default: throw new IllegalArgumentException();
+        }
+        return (l == null) ? null : l.getLineWidth();
+    }
+    
+    @Override
+    public void setBorderWidth(BorderEdge edge, double width) {
+        HSLFLine l = addLine(edge);
+        l.setLineWidth(width);
+    }
+
+    public Color getBorderColor(BorderEdge edge) {
+        HSLFLine l;
+        switch (edge) {
+            case bottom: l = borderBottom; break;
+            case top: l = borderTop; break;
+            case right: l = borderRight; break;
+            case left: l = borderLeft; break;
+            default: throw new IllegalArgumentException();
+        }
+        return (l == null) ? null : l.getLineColor();
+    }
+
+    @Override
+    public void setBorderColor(BorderEdge edge, Color color) {
+        if (edge == null || color == null) {
+            throw new IllegalArgumentException("BorderEdge and/or Color need to be specified.");
+        }
+        
+        HSLFLine l = addLine(edge);
+        l.setLineColor(color);
+    }
+
+    public LineDash getBorderDash(BorderEdge edge) {
+        HSLFLine l;
+        switch (edge) {
+            case bottom: l = borderBottom; break;
+            case top: l = borderTop; break;
+            case right: l = borderRight; break;
+            case left: l = borderLeft; break;
+            default: throw new IllegalArgumentException();
+        }
+        return (l == null) ? null : l.getLineDash();        
+    }
+    
+    @Override
+    public void setBorderDash(BorderEdge edge, LineDash dash) {
+        if (edge == null || dash == null) {
+            throw new IllegalArgumentException("BorderEdge and/or LineDash need to be specified.");
+        }
+        
+        HSLFLine l = addLine(edge);
+        l.setLineDash(dash);
+    }
+
+    public LineCompound getBorderCompound(BorderEdge edge) {
+        HSLFLine l;
+        switch (edge) {
+            case bottom: l = borderBottom; break;
+            case top: l = borderTop; break;
+            case right: l = borderRight; break;
+            case left: l = borderLeft; break;
+            default: throw new IllegalArgumentException();
+        }
+        return (l == null) ? null : l.getLineCompound();        
+    }
+    
+    @Override
+    public void setBorderCompound(BorderEdge edge, LineCompound compound) {
+        if (edge == null || compound == null) {
+            throw new IllegalArgumentException("BorderEdge and/or LineCompound need to be specified.");
+        }
+        
+        HSLFLine l = addLine(edge);
+        l.setLineCompound(compound);
+    }
+
+
+    protected HSLFLine addLine(BorderEdge edge) {
+        switch (edge) {
+            case bottom: {
+                if (borderBottom == null) {
+                    borderBottom = createBorder(edge);
+                    HSLFTableCell c = getSiblingCell(1,0);
+                    if (c != null) {
+                        assert(c.borderTop == null);
+                        c.borderTop = borderBottom;
+                    }
+                }
+                return borderBottom;
+            }
+            case top: {
+                if (borderTop == null) {
+                    borderTop = createBorder(edge);
+                    HSLFTableCell c = getSiblingCell(-1,0);
+                    if (c != null) {
+                        assert(c.borderBottom == null);
+                        c.borderBottom = borderTop;
+                    }
+                }
+                return borderTop;
+            }
+            case right: {
+                if (borderRight == null) {
+                    borderRight = createBorder(edge);
+                    HSLFTableCell c = getSiblingCell(0,1);
+                    if (c != null) {
+                        assert(c.borderLeft == null);
+                        c.borderLeft = borderRight;
+                    }
+                }
+                return borderRight;
+            }
+            case left: {
+                if (borderLeft == null) {
+                    borderLeft = createBorder(edge);
+                    HSLFTableCell c = getSiblingCell(0,-1);
+                    if (c != null) {
+                        assert(c.borderRight == null);
+                        c.borderRight = borderLeft;
+                    }
+                }
+                return borderLeft;
+            }
+            default:
+                throw new IllegalArgumentException();
+        }
+    }
+
+    @Override
+    public void removeBorder(BorderEdge edge) {
+        switch (edge) {
+            case bottom: {
+                if (borderBottom == null) break;
+                getParent().removeShape(borderBottom);
+                borderBottom = null;
+                HSLFTableCell c = getSiblingCell(1,0);
+                if (c != null) {
+                    c.borderTop = null;
+                }
+                break;
+            }
+            case top: {
+                if (borderTop == null) break;
+                getParent().removeShape(borderTop);
+                borderTop = null;
+                HSLFTableCell c = getSiblingCell(-1,0);
+                if (c != null) {
+                    c.borderBottom = null;
+                }
+                break;
+            }
+            case right: {
+                if (borderRight == null) break;
+                getParent().removeShape(borderRight);
+                borderRight = null;
+                HSLFTableCell c = getSiblingCell(0,1);
+                if (c != null) {
+                    c.borderLeft = null;
+                }
+                break;
+            }
+            case left: {
+                if (borderLeft == null) break;
+                getParent().removeShape(borderLeft);
+                borderLeft = null;
+                HSLFTableCell c = getSiblingCell(0,-1);
+                if (c != null) {
+                    c.borderRight = null;
+                }
+                break;
+            }
+            default:
+                throw new IllegalArgumentException();
+        }
+    }
+
+    protected HSLFTableCell getSiblingCell(int row, int col) {
+        return getParent().getRelativeCell(this, row, col);
+    }
+
+    /**
+     * Create a border to format this table
+     *
+     * @return the created border
+     */
+    private HSLFLine createBorder(BorderEdge edge) {
+        HSLFTable table = getParent();
+        HSLFLine line = new HSLFLine(table);
+        table.addShape(line);
+
+        AbstractEscherOptRecord opt = getEscherOptRecord();
+        setEscherProperty(opt, EscherProperties.GEOMETRY__SHAPEPATH, -1);
+        setEscherProperty(opt, EscherProperties.GEOMETRY__FILLOK, -1);
+        setEscherProperty(opt, EscherProperties.SHADOWSTYLE__SHADOWOBSURED, 0x20000);
+        setEscherProperty(opt, EscherProperties.THREED__LIGHTFACE, 0x80000);
+
+        anchorBorder(edge, line);
+        
+        return line;
+    }
+
+    protected void applyLineProperties(BorderEdge edge, HSLFLine other) {
+        HSLFLine line = addLine(edge);
+        line.setLineWidth(other.getLineWidth());
+        line.setLineColor(other.getLineColor());
+        // line.setLineCompound(other.getLineCompound());
+        // line.setLineDashing(other.getLineDashing());
+    }
+
+    @Override
+    public HSLFTable getParent() {
+        return (HSLFTable)super.getParent();
     }
 }

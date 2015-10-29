@@ -20,13 +20,16 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
+import java.io.IOException;
+
+import org.apache.poi.sl.usermodel.SimpleShape.Placeholder;
 import org.apache.poi.xslf.XSLFTestDataSamples;
 import org.junit.Test;
 
 public class TestXSLFNotes {
 
     @Test
-    public void createNewNote() {
+    public void createNewNote() throws IOException {
 
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFSlide slide1 = ppt.createSlide();
@@ -48,10 +51,12 @@ public class TestXSLFNotes {
         }
         assertNotNull(note);
         assertEquals("New Note", note);
+        
+        ppt.close();
     }
 
     @Test
-    public void addNote() {
+    public void addNote() throws IOException {
 
         XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("sample.pptx");
 
@@ -69,10 +74,12 @@ public class TestXSLFNotes {
         }
         assertNotNull(note);
         assertEquals("New Note", note);
+        
+        ppt.close();
     }
 
     @Test
-    public void replaceNotes() {
+    public void replaceNotes() throws IOException {
 
         XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("sample.pptx");
 
@@ -93,5 +100,7 @@ public class TestXSLFNotes {
             assertNotNull(note);
             assertEquals("New Note", note);
         }
+        
+        ppt.close();
     }
 }

@@ -57,15 +57,15 @@ public final class TestTable {
 
         HSLFSlide slide = ppt.createSlide();
 
-        HSLFTable tbl = new HSLFTable(2, 5);
-        slide.addShape(tbl);
+        HSLFTable tbl = slide.createTable(2, 5);
 
         HSLFTableCell cell = tbl.getCell(0, 0);
         //table cells have type=TextHeaderAtom.OTHER_TYPE, see bug #46033
         assertEquals(TextHeaderAtom.OTHER_TYPE, cell.getTextParagraphs().get(0).getRunType());
 
-        assertTrue(slide.getShapes().get(0) instanceof HSLFTable);
-        HSLFTable tbl2 = (HSLFTable)slide.getShapes().get(0);
+        HSLFShape tblSh = slide.getShapes().get(0);
+        assertTrue(tblSh instanceof HSLFTable);
+        HSLFTable tbl2 = (HSLFTable)tblSh;
         assertEquals(tbl.getNumberOfColumns(), tbl2.getNumberOfColumns());
         assertEquals(tbl.getNumberOfRows(), tbl2.getNumberOfRows());
 
@@ -89,10 +89,9 @@ public final class TestTable {
         HSLFSlideShow ppt = new HSLFSlideShow();
         HSLFSlide slide = ppt.createSlide();
         List<HSLFShape> shapes;
-        HSLFTable tbl1 = new HSLFTable(1, 5);
+        HSLFTable tbl1 = slide.createTable(1, 5);
         assertEquals(5, tbl1.getNumberOfColumns());
         assertEquals(1, tbl1.getNumberOfRows());
-        slide.addShape(tbl1);
 
         shapes = slide.getShapes();
         assertEquals(1, shapes.size());
@@ -106,14 +105,16 @@ public final class TestTable {
 
     @Test
     public void testIllegalCOnstruction(){
+        HSLFSlideShow ppt = new HSLFSlideShow();
+        HSLFSlide slide = ppt.createSlide();
         try {
-            new HSLFTable(0, 5);
+            slide.createTable(0, 5);
             fail("Table(rownum, colnum) must throw IllegalArgumentException if any of tghe arguments is less than 1");
         } catch (IllegalArgumentException e){
 
         }
         try {
-            new HSLFTable(5, 0);
+            slide.createTable(5, 0);
             fail("Table(rownum, colnum) must throw IllegalArgumentException if any of tghe arguments is less than 1");
         } catch (IllegalArgumentException e){
 

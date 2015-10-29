@@ -18,6 +18,7 @@
 package org.apache.poi.sl.usermodel;
 
 import java.awt.Color;
+import java.util.List;
 
 
 
@@ -339,4 +340,9 @@ public interface TextParagraph<
 
     
     TextShape<S,P> getParentShape();
+    
+    /**
+     * Fetch the text runs that are contained within this block of text
+     */
+    List<T> getTextRuns();
 }

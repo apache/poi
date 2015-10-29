@@ -80,15 +80,22 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
         for(CTTableRow row : trArray) _rows.add(new XSLFTableRow(row, this));
     }
 
+    @Override
+    public XSLFTableCell getCell(int row, int col) {
+        return getRows().get(row).getCells().get(col);
+    }
+    
     @Internal
     public CTTable getCTTable(){
         return _table;
     }
 
+    @Override
     public int getNumberOfColumns() {
         return _table.getTblGrid().sizeOfGridColArray();
     }
 
+    @Override
     public int getNumberOfRows() {
         return _table.sizeOfTrArray();
     }
@@ -98,10 +105,16 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
                 _table.getTblGrid().getGridColArray(idx).getW());
     }
 
-    public void setColumnWidth(int idx, double width){
+    @Override
+    public void setColumnWidth(int idx, double width) {
         _table.getTblGrid().getGridColArray(idx).setW(Units.toEMU(width));
     }
 
+    @Override
+    public void setRowHeight(int row, double height) {
+        _table.getTrArray(row).setH(Units.toEMU(height));
+    }
+    
     public Iterator<XSLFTableRow> iterator(){
         return _rows.iterator();
     }

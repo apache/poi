@@ -21,6 +21,12 @@ package org.apache.poi.xslf.usermodel;
 
 import java.awt.Color;
 
+import org.apache.poi.sl.draw.DrawPaint;
+import org.apache.poi.sl.usermodel.PaintStyle;
+import org.apache.poi.sl.usermodel.StrokeStyle;
+import org.apache.poi.sl.usermodel.StrokeStyle.LineCap;
+import org.apache.poi.sl.usermodel.StrokeStyle.LineCompound;
+import org.apache.poi.sl.usermodel.StrokeStyle.LineDash;
 import org.apache.poi.sl.usermodel.TableCell;
 import org.apache.poi.sl.usermodel.VerticalAlignment;
 import org.apache.poi.util.Units;
@@ -44,7 +50,6 @@ import org.openxmlformats.schemas.drawingml.x2006.main.STTextAnchoringType;
  * Represents a cell of a table in a .pptx presentation
  */
 public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,XSLFTextParagraph> {
-    static double defaultBorderWidth = 1.0;
     private CTTableCellProperties _tcPr = null;
 
     /*package*/ XSLFTableCell(CTTableCell cell, XSLFSheet sheet){
@@ -57,8 +62,7 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
         CTTextBody txBody = cell.getTxBody();
         if (txBody == null && create) {
             txBody = cell.addNewTxBody();
-            txBody.addNewBodyPr();
-            txBody.addNewLstStyle();
+            XSLFAutoShape.initTextBody(txBody);
         }
         return txBody;
     }
@@ -83,7 +87,7 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
         }
         return _tcPr;
     }
-    
+
     @Override
     public void setLeftInset(double margin){
         CTTableCellProperties pr = getCellProperties(true);
@@ -108,67 +112,174 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
         pr.setMarB(Units.toEMU(margin));
     }
 
-    private CTLineProperties getCTLine(char bltr, boolean create) {
+    private CTLineProperties getCTLine(BorderEdge edge, boolean create) {
+        if (edge == null) {
+            throw new IllegalArgumentException("BorderEdge needs to be specified.");
+        }
+
         CTTableCellProperties pr = getCellProperties(create);
         if (pr == null) return null;
-        
-        switch (bltr) {
-            case 'b':
+
+        switch (edge) {
+            case bottom:
                 return (pr.isSetLnB()) ? pr.getLnB() : (create ? pr.addNewLnB() : null);
-            case 'l':
+            case left:
                 return (pr.isSetLnL()) ? pr.getLnL() : (create ? pr.addNewLnL() : null);
-            case 't':
+            case top:
                 return (pr.isSetLnT()) ? pr.getLnT() : (create ? pr.addNewLnT() : null);
-            case 'r':
+            case right:
                 return (pr.isSetLnR()) ? pr.getLnR() : (create ? pr.addNewLnR() : null);
             default:
                 return null;
         }
     }
+
+    @Override
+    public void removeBorder(BorderEdge edge) {
+        CTTableCellProperties pr = getCellProperties(false);
+        if (pr == null) return;
+        switch (edge) {
+            case bottom:
+                if (pr.isSetLnB()) {
+                    pr.unsetLnB();
+                }
+                break;
+            case left:
+                if (pr.isSetLnL()) {
+                    pr.unsetLnL();
+                }
+                break;
+            case top:
+                if (pr.isSetLnT()) {
+                    pr.unsetLnT();
+                }
+                break;
+            case right:
+                if (pr.isSetLnR()) {
+                    pr.unsetLnB();
+                }
+                break;
+            default:
+                throw new IllegalArgumentException();
+        }
+    }
+
+    @Override
+    public StrokeStyle getBorderStyle(final BorderEdge edge) {
+        final Double width = getBorderWidth(edge);
+        return (width == null) ? null : new StrokeStyle() {
+            public PaintStyle getPaint() {
+                return DrawPaint.createSolidPaint(getBorderColor(edge));
+            }
+
+            public LineCap getLineCap() {
+                return getBorderCap(edge);
+            }
+
+            public LineDash getLineDash() {
+                return getBorderDash(edge);
+            }
+
+            public LineCompound getLineCompound() {
+                return getBorderCompound(edge);
+            }
+
+            public double getLineWidth() {
+                return width;
+            }
+        };
+    }
     
-    private void setBorderWidth(char bltr, double width) {
-        CTLineProperties ln = getCTLine(bltr, true);
+    @Override
+    public void setBorderStyle(BorderEdge edge, StrokeStyle style) {
+        if (style == null) {
+            throw new IllegalArgumentException("StrokeStyle needs to be specified.");
+        }
+        
+        LineCap cap = style.getLineCap();
+        if (cap != null) {
+            setBorderCap(edge, cap);
+        }
+        
+        LineCompound compound = style.getLineCompound();
+        if (compound != null) {
+            setBorderCompound(edge, compound);
+        }
+        
+        LineDash dash = style.getLineDash();
+        if (dash != null) {
+            setBorderDash(edge, dash);
+        }
+        
+        double width = style.getLineWidth();
+        setBorderWidth(edge, width);
+    }
+
+    public Double getBorderWidth(BorderEdge edge) {
+        CTLineProperties ln = getCTLine(edge, false);
+        return (ln == null || !ln.isSetW()) ? null : Units.toPoints(ln.getW());
+    }
+
+    @Override
+    public void setBorderWidth(BorderEdge edge, double width) {
+        CTLineProperties ln = getCTLine(edge, true);
         ln.setW(Units.toEMU(width));
     }
 
-    private double getBorderWidth(char bltr) {
-        CTLineProperties ln = getCTLine(bltr, false);
-        return (ln == null || !ln.isSetW()) ? defaultBorderWidth : Units.toPoints(ln.getW());
-    }
+    private CTLineProperties setBorderDefaults(BorderEdge edge) {
+        CTLineProperties ln = getCTLine(edge, true);
+        if (ln.isSetNoFill()) {
+            ln.unsetNoFill();
+        }
 
-    private void setBorderColor(char bltr, Color color) {
-        CTLineProperties ln = getCTLine(bltr, true);
-
-        if(color == null){
-            ln.addNewNoFill();
-            if(ln.isSetSolidFill()) ln.unsetSolidFill();
-        } else {
-            if(ln.isSetNoFill()) ln.unsetNoFill();
-
-            if(!ln.isSetPrstDash()) ln.addNewPrstDash().setVal(STPresetLineDashVal.SOLID);
+        if(!ln.isSetPrstDash()) {
+            ln.addNewPrstDash().setVal(STPresetLineDashVal.SOLID);
+        }
+        if (!ln.isSetCmpd()) {
             ln.setCmpd(STCompoundLine.SNG);
+        }
+        if (!ln.isSetAlgn()) {
             ln.setAlgn(STPenAlignment.CTR);
+        }
+        if (!ln.isSetCap()) {
             ln.setCap(STLineCap.FLAT);
+        }
+        if (!ln.isSetRound()) {
             ln.addNewRound();
+        }
 
+        if (!ln.isSetHeadEnd()) {
             CTLineEndProperties hd = ln.addNewHeadEnd();
             hd.setType(STLineEndType.NONE);
             hd.setW(STLineEndWidth.MED);
             hd.setLen(STLineEndLength.MED);
+        }
 
+        if (!ln.isSetTailEnd()) {
             CTLineEndProperties tl = ln.addNewTailEnd();
             tl.setType(STLineEndType.NONE);
             tl.setW(STLineEndWidth.MED);
             tl.setLen(STLineEndLength.MED);
-
-            CTSRgbColor rgb = CTSRgbColor.Factory.newInstance();
-            rgb.setVal(new byte[]{(byte)color.getRed(), (byte)color.getGreen(), (byte)color.getBlue()});
-            ln.addNewSolidFill().setSrgbClr(rgb);
         }
-    }    
-    
-    private Color getBorderColor(char bltr) {
-        CTLineProperties ln = getCTLine(bltr,false);
+
+        return ln;
+    }
+
+    @Override
+    public void setBorderColor(BorderEdge edge, Color color) {
+        if (color == null) {
+            throw new IllegalArgumentException("Colors need to be specified.");
+        }
+
+        CTLineProperties ln = setBorderDefaults(edge);
+
+        CTSRgbColor rgb = CTSRgbColor.Factory.newInstance();
+        rgb.setVal(new byte[]{(byte)color.getRed(), (byte)color.getGreen(), (byte)color.getBlue()});
+        ln.addNewSolidFill().setSrgbClr(rgb);
+    }
+
+    public Color getBorderColor(BorderEdge edge) {
+        CTLineProperties ln = getCTLine(edge, false);
         if (ln == null || ln.isSetNoFill() || !ln.isSetSolidFill()) return null;
 
         CTSolidColorFillProperties fill = ln.getSolidFill();
@@ -178,71 +289,65 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
         }
         byte[] val = fill.getSrgbClr().getVal();
         return new Color(0xFF & val[0], 0xFF & val[1], 0xFF & val[2]);
-    }    
-    
-    public void setBorderLeft(double width) {
-        setBorderWidth('l', width);
     }
 
-    public double getBorderLeft() {
-        return getBorderWidth('l');
+    public LineCompound getBorderCompound(BorderEdge edge) {
+        CTLineProperties ln = getCTLine(edge, false);
+        if (ln == null || ln.isSetNoFill() || !ln.isSetSolidFill() || !ln.isSetCmpd()) {
+            return null;
+        }
+
+        return LineCompound.fromOoxmlId(ln.getCmpd().intValue());
     }
 
-    public void setBorderLeftColor(Color color) {
-        setBorderColor('l', color);
+    @Override
+    public void setBorderCompound(BorderEdge edge, LineCompound compound) {
+        if (compound == null) {
+            throw new IllegalArgumentException("LineCompound need to be specified.");
+        }
+
+        CTLineProperties ln = setBorderDefaults(edge);
+        ln.setCmpd(STCompoundLine.Enum.forInt(compound.ooxmlId));
     }
 
-    public Color getBorderLeftColor() {
-        return getBorderColor('l');
+    public LineDash getBorderDash(BorderEdge edge) {
+        CTLineProperties ln = getCTLine(edge, false);
+        if (ln == null || ln.isSetNoFill() || !ln.isSetSolidFill() || !ln.isSetPrstDash()) {
+            return null;
+        }
+
+        return LineDash.fromOoxmlId(ln.getPrstDash().getVal().intValue());
     }
 
-    public void setBorderRight(double width) {
-        setBorderWidth('r', width);
+    @Override
+    public void setBorderDash(BorderEdge edge, LineDash dash) {
+        if (dash == null) {
+            throw new IllegalArgumentException("LineDash need to be specified.");
+        }
+
+        CTLineProperties ln = setBorderDefaults(edge);
+        ln.getPrstDash().setVal(STPresetLineDashVal.Enum.forInt(dash.ooxmlId));
     }
 
-    public double getBorderRight() {
-        return getBorderWidth('r');
+    public LineCap getBorderCap(BorderEdge edge) {
+        CTLineProperties ln = getCTLine(edge, false);
+        if (ln == null || ln.isSetNoFill() || !ln.isSetSolidFill() || !ln.isSetCap()) {
+            return null;
+        }
+        
+        return LineCap.fromOoxmlId(ln.getCap().intValue());
     }
 
-    public void setBorderRightColor(Color color) {
-        setBorderColor('r', color);
+    public void setBorderCap(BorderEdge edge, LineCap cap) {
+        if (cap == null) {
+            throw new IllegalArgumentException("LineCap need to be specified.");
+        }
+
+        CTLineProperties ln = setBorderDefaults(edge);
+        ln.setCap(STLineCap.Enum.forInt(cap.ooxmlId));
     }
 
-    public Color getBorderRightColor() {
-        return getBorderColor('r');
-    }
 
-    public void setBorderTop(double width) {
-        setBorderWidth('t', width);
-    }
-
-    public double getBorderTop() {
-        return getBorderWidth('t');
-    }
-
-    public void setBorderTopColor(Color color) {
-        setBorderColor('t', color);
-    }
-
-    public Color getBorderTopColor() {
-        return getBorderColor('t');
-    }
-
-    public void setBorderBottom(double width) {
-        setBorderWidth('b', width);
-    }
-
-    public double getBorderBottom() {
-        return getBorderWidth('b');
-    }
-
-    public void setBorderBottomColor(Color color) {
-        setBorderColor('b', color);
-    }
-
-    public Color getBorderBottomColor(){
-        return getBorderColor('b');
-    }
 
     /**
      * Specifies a solid color fill. The shape is filled entirely with the specified color.
@@ -299,7 +404,7 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
     void setVMerge(boolean merge_) {
         ((CTTableCell)getXmlObject()).setVMerge(merge_);
     }
-    
+
     @Override
     public void setVerticalAlignment(VerticalAlignment anchor){
     	CTTableCellProperties cellProps = getCellProperties(true);

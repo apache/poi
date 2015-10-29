@@ -16,23 +16,29 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
+import java.awt.Color;
+import java.io.IOException;
+import java.util.List;
+
+import org.apache.poi.sl.usermodel.TableCell.BorderEdge;
 import org.apache.poi.sl.usermodel.VerticalAlignment;
 import org.apache.poi.xslf.XSLFTestDataSamples;
 import org.junit.Test;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTableCell;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTGraphicalObjectFrame;
 
-import java.awt.Color;
-import java.util.List;
-
 /**
  * @author Yegor Kozlov
  */
 public class TestXSLFTable {
     @Test
-    public void testRead(){
+    public void testRead() throws IOException {
         XMLSlideShow  ppt = XSLFTestDataSamples.openSampleDocument("shapes.pptx");
 
         XSLFSlide slide = ppt.getSlides().get(3);
@@ -69,10 +75,12 @@ public class TestXSLFTable {
         assertEquals("A1", cells1.get(0).getText());
         assertEquals("B1", cells1.get(1).getText());
         assertEquals("C1", cells1.get(2).getText());
+        
+        ppt.close();
     }
 
     @Test
-    public void testCreate() {
+    public void testCreate() throws IOException {
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFSlide slide = ppt.createSlide();
 
@@ -121,38 +129,21 @@ public class TestXSLFTable {
         cell1.addNewTextParagraph().addNewTextRun().setText("Apache");
         assertEquals("Apache", cell1.getText());
 
-        assertEquals(1.0, cell1.getBorderBottom(), 0);
-        cell1.setBorderBottom(2.0);
-        assertEquals(2.0, cell1.getBorderBottom(), 0);
-        assertNull(cell1.getBorderBottomColor());
-        cell1.setBorderBottomColor(Color.yellow);
-        assertEquals(Color.yellow, cell1.getBorderBottomColor());
-
-        assertEquals(1.0, cell1.getBorderTop(), 0);
-        cell1.setBorderTop(2.0);
-        assertEquals(2.0, cell1.getBorderTop(), 0);
-        assertNull(cell1.getBorderTopColor());
-        cell1.setBorderTopColor(Color.yellow);
-        assertEquals(Color.yellow, cell1.getBorderTopColor());
-
-        assertEquals(1.0, cell1.getBorderLeft(), 0);
-        cell1.setBorderLeft(2.0);
-        assertEquals(2.0, cell1.getBorderLeft(), 0);
-        assertNull(cell1.getBorderLeftColor());
-        cell1.setBorderLeftColor(Color.yellow);
-        assertEquals(Color.yellow, cell1.getBorderLeftColor());
-
-        assertEquals(1.0, cell1.getBorderRight(), 0);
-        cell1.setBorderRight(2.0);
-        assertEquals(2.0, cell1.getBorderRight(), 0);
-        assertNull(cell1.getBorderRightColor());
-        cell1.setBorderRightColor(Color.yellow);
-        assertEquals(Color.yellow, cell1.getBorderRightColor());
+        for (BorderEdge edge : BorderEdge.values()) {
+            assertNull(cell1.getBorderWidth(edge));
+            cell1.setBorderWidth(edge, 2.0);
+            assertEquals(2.0, cell1.getBorderWidth(edge), 0);
+            assertNull(cell1.getBorderColor(edge));
+            cell1.setBorderColor(edge, Color.yellow);
+            assertEquals(Color.yellow, cell1.getBorderColor(edge));
+        }
 
         assertEquals(VerticalAlignment.TOP, cell1.getVerticalAlignment());
         cell1.setVerticalAlignment(VerticalAlignment.MIDDLE);
         assertEquals(VerticalAlignment.MIDDLE, cell1.getVerticalAlignment());
         cell1.setVerticalAlignment(null);
         assertEquals(VerticalAlignment.TOP, cell1.getVerticalAlignment());
+        
+        ppt.close();
     }
 }

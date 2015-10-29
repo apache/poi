@@ -25,7 +25,12 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualDrawingProps;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPresetGeometry2D;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBody;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBodyProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextCharacterProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraph;
 import org.openxmlformats.schemas.drawingml.x2006.main.STShapeType;
+import org.openxmlformats.schemas.drawingml.x2006.main.STTextAlignType;
+import org.openxmlformats.schemas.drawingml.x2006.main.STTextAnchoringType;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTShapeNonVisual;
 
@@ -71,14 +76,26 @@ public class XSLFAutoShape extends XSLFTextShape
         prst.addNewAvLst();
         return ct;
     }
+    
+    protected static void initTextBody(CTTextBody txBody) {
+        CTTextBodyProperties bodypr = txBody.addNewBodyPr();
+        bodypr.setAnchor(STTextAnchoringType.T);
+        bodypr.setRtlCol(false);
+        CTTextParagraph p = txBody.addNewP();
+        p.addNewPPr().setAlgn(STTextAlignType.L);
+        CTTextCharacterProperties endPr = p.addNewEndParaRPr();
+        endPr.setLang("en-US");
+        endPr.setSz(1100);   
+        p.addNewR().setT("");
+        txBody.addNewLstStyle();
+    }
 
     protected CTTextBody getTextBody(boolean create){
         CTShape shape = (CTShape)getXmlObject();
         CTTextBody txBody = shape.getTxBody();
         if (txBody == null && create) {
             txBody = shape.addNewTxBody();
-            txBody.addNewBodyPr();
-            txBody.addNewLstStyle();
+            initTextBody(txBody);
         }
         return txBody;
     }
