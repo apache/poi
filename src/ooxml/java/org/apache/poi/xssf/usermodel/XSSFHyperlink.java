@@ -23,6 +23,7 @@ import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.util.Internal;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTHyperlink;
 
 /**
@@ -33,8 +34,8 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTHyperlink;
 public class XSSFHyperlink implements Hyperlink {
     private int _type;
     private PackageRelationship _externalRel;
-    private CTHyperlink _ctHyperlink;
-    private String _location;
+    private CTHyperlink _ctHyperlink; //contains a reference to the cell where the hyperlink is anchored, getRef()
+    private String _location; //what the hyperlink refers to
 
     /**
      * Create a new XSSFHyperlink. This method is protected to be used only by XSSFCreationHelper
@@ -94,6 +95,7 @@ public class XSSFHyperlink implements Hyperlink {
     /**
      * @return the underlying CTHyperlink object
      */
+    @Internal
     public CTHyperlink getCTHyperlink() {
         return _ctHyperlink;
     }
@@ -219,7 +221,8 @@ public class XSSFHyperlink implements Hyperlink {
     /**
      * Assigns this hyperlink to the given cell reference
      */
-    protected void setCellReference(String ref) {
+    @Internal
+    public void setCellReference(String ref) {
         _ctHyperlink.setRef(ref);
     }
     protected void setCellReference(CellReference ref) {
