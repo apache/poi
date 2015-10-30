@@ -283,11 +283,13 @@ public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor
                 output.append('\t');
             }
             if (formattedValue != null) {
+                checkMaxTextSize(output, formattedValue);
                 output.append(formattedValue);
             }
             if (includeCellComments && comment != null) {
                 String commentText = comment.getString().getString().replace('\n', ' ');
                 output.append(formattedValue != null ? " Comment by " : "Comment by ");
+                checkMaxTextSize(output, commentText);
                 if (commentText.startsWith(comment.getAuthor() + ": ")) {
                     output.append(commentText);
                 } else {
@@ -363,6 +365,7 @@ public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor
          * Append the cell contents we have collected.
          */
         private void appendCellText(StringBuffer buffer) {
+            checkMaxTextSize(buffer, output.toString());
             buffer.append(output);
         }
 

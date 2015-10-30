@@ -23,6 +23,7 @@ import org.apache.poi.POIXMLProperties.CoreProperties;
 import org.apache.poi.POIXMLProperties.CustomProperties;
 import org.apache.poi.POIXMLProperties.ExtendedProperties;
 import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.openxml4j.util.ZipSecureFile;
 
 public abstract class POIXMLTextExtractor extends POITextExtractor {
 	/** The POIXMLDocument that's open */
@@ -88,4 +89,18 @@ public abstract class POIXMLTextExtractor extends POITextExtractor {
 		}
 		super.close();
 	}
+
+	protected void checkMaxTextSize(StringBuffer text, String string) {
+        if(string == null) {
+            return;
+        }
+
+        int size = text.length() + string.length();
+        if(size > ZipSecureFile.getMaxTextSize()) {
+            throw new IllegalStateException("The text would exceed the max allowed overall size of extracted text. "
+                    + "By default this is prevented as some documents may exhaust available memory and it may indicate that the file is used to inflate memory usage and thus could pose a security risk. "
+                    + "You can adjust this limit via ZipSecureFile.setMaxTextSize() if you need to work with files which have a lot of text. "
+                    + "Size: " + size + ", limit: MAX_TEXT_SIZE: " + ZipSecureFile.getMaxTextSize());
+        }
+    }
 }
