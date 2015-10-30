@@ -168,7 +168,9 @@ public class XSSFExcelExtractor extends POIXMLTextExtractor
                     // Is it a formula one?
                     if(cell.getCellType() == Cell.CELL_TYPE_FORMULA) {
                         if (formulasNotResults) {
-                            text.append(cell.getCellFormula());
+                            String contents = cell.getCellFormula();
+                            checkMaxTextSize(text, contents);
+                            text.append(contents);
                         } else {
                             if (cell.getCachedFormulaResultType() == Cell.CELL_TYPE_STRING) {
                                 handleStringCell(text, cell);
@@ -188,6 +190,7 @@ public class XSSFExcelExtractor extends POIXMLTextExtractor
                         // Replace any newlines with spaces, otherwise it
                         //  breaks the output
                         String commentText = comment.getString().getString().replace('\n', ' ');
+                        checkMaxTextSize(text, commentText);
                         text.append(" Comment by ").append(comment.getAuthor()).append(": ").append(commentText);
                     }
 
@@ -230,8 +233,11 @@ public class XSSFExcelExtractor extends POIXMLTextExtractor
     }
 
     private void handleStringCell(StringBuffer text, Cell cell) {
-        text.append(cell.getRichStringCellValue().getString());
+        String contents = cell.getRichStringCellValue().getString();
+        checkMaxTextSize(text, contents);
+        text.append(contents);
     }
+
     private void handleNonStringCell(StringBuffer text, Cell cell, DataFormatter formatter) {
         int type = cell.getCellType();
         if (type == Cell.CELL_TYPE_FORMULA) {
@@ -242,16 +248,18 @@ public class XSSFExcelExtractor extends POIXMLTextExtractor
             CellStyle cs = cell.getCellStyle();
 
             if (cs != null && cs.getDataFormatString() != null) {
-                text.append(formatter.formatRawCellContents(
-                        cell.getNumericCellValue(), cs.getDataFormat(), cs.getDataFormatString()
-                        ));
+                String contents = formatter.formatRawCellContents(
+                        cell.getNumericCellValue(), cs.getDataFormat(), cs.getDataFormatString());
+                checkMaxTextSize(text, contents);
+                text.append(contents);
                 return;
             }
         }
 
         // No supported styling applies to this cell
-        XSSFCell xcell = (XSSFCell)cell;
-        text.append( xcell.getRawValue() );
+        String contents = ((XSSFCell)cell).getRawValue();
+        checkMaxTextSize(text, contents);
+        text.append( contents );
     }
 
     private String extractHeaderFooter(HeaderFooter hf) {

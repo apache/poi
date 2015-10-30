@@ -50,6 +50,9 @@ public class ZipSecureFile extends ZipFile {
     // don't alert for expanded sizes smaller than 100k
     private static long GRACE_ENTRY_SIZE = 100*1024;
 
+    // The default maximum size of extracted text 
+    private static long MAX_TEXT_SIZE = 10*1024*1024;
+    
     /**
      * Sets the ratio between de- and inflated bytes to detect zipbomb.
      * It defaults to 1% (= 0.01d), i.e. when the compression is better than
@@ -98,6 +101,34 @@ public class ZipSecureFile extends ZipFile {
      */
     public static long getMaxEntrySize() {
         return MAX_ENTRY_SIZE;
+    }
+
+    /**
+     * Sets the maximum number of characters of text that are
+     * extracted before an exception is thrown during extracting
+     * text from documents.
+     * 
+     * This can be used to limit memory consumption and protect against 
+     * security vulnerabilities when documents are provided by users.
+     *
+     * @param maxTextSize the max. file size of a single zip entry
+     */
+    public static void setMaxTextSize(long maxTextSize) {
+        if (maxTextSize < 0 || maxTextSize > 0xFFFFFFFFl) {
+            throw new IllegalArgumentException("Max text size is bounded [0-4GB].");
+        }
+        MAX_TEXT_SIZE = maxTextSize;
+    }
+
+    /**
+     * Returns the current maximum allowed text size.
+     * 
+     * See setMaxTextSize() for details.
+     *
+     * @return The max accepted text size. 
+     */
+    public static long getMaxTextSize() {
+        return MAX_TEXT_SIZE;
     }
 
     public ZipSecureFile(File file, int mode) throws IOException {
