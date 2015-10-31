@@ -19,7 +19,10 @@ package org.apache.poi.hssf.model;
 
 import static org.junit.Assert.assertArrayEquals;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Locale;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
@@ -111,20 +114,68 @@ public final class TestFormulaParser extends TestCase {
 		assertEquals("TOTAL[", ((StringPtg)ptgs[0]).getValue());
 	}
 
-	public void testMacroFunction() {
+	public void testMacroFunction() throws IOException {
 		// testNames.xls contains a VB function called 'myFunc'
-		HSSFWorkbook w = HSSFTestDataSamples.openSampleWorkbook("testNames.xls");
-		HSSFEvaluationWorkbook book = HSSFEvaluationWorkbook.create(w);
+		final String testFile = "testNames.xls";
+		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook(testFile);
+		try {
+			HSSFEvaluationWorkbook book = HSSFEvaluationWorkbook.create(wb);
 
-		Ptg[] ptg = HSSFFormulaParser.parse("myFunc()", w);
-		// myFunc() actually takes 1 parameter.  Don't know if POI will ever be able to detect this problem
+			//Expected ptg stack: [NamePtg(myFunc), StringPtg(arg), (additional operands go here...), FunctionPtg(myFunc)]
+			Ptg[] ptg = FormulaParser.parse("myFunc(\"arg\")", book, FormulaType.CELL, -1);
+			assertEquals(3, ptg.length); 
 
-		// the name gets encoded as the first arg
-		NamePtg tname = (NamePtg) ptg[0];
-		assertEquals("myFunc", tname.toFormulaString(book));
+			// the name gets encoded as the first operand on the stack
+			NamePtg tname = (NamePtg) ptg[0];
+			assertEquals("myFunc", tname.toFormulaString(book));
 
-		AbstractFunctionPtg tfunc = (AbstractFunctionPtg) ptg[1];
-		assertTrue(tfunc.isExternalFunction());
+			// the function's arguments are pushed onto the stack from left-to-right as OperandPtgs
+			StringPtg arg = (StringPtg) ptg[1];
+			assertEquals("arg", arg.getValue());
+
+			// The external FunctionPtg is the last Ptg added to the stack
+			// During formula evaluation, this Ptg pops off the the appropriate number of
+			// arguments (getNumberOfOperands()) and pushes the result on the stack
+			AbstractFunctionPtg tfunc = (AbstractFunctionPtg) ptg[2]; //FuncVarPtg
+			assertTrue(tfunc.isExternalFunction());
+
+			// confirm formula parsing is case-insensitive
+			FormulaParser.parse("mYfUnC(\"arg\")", book, FormulaType.CELL, -1);
+
+			// confirm formula parsing doesn't care about argument count or type
+			// this should only throw an error when evaluating the formula.
+			FormulaParser.parse("myFunc()", book, FormulaType.CELL, -1);
+			FormulaParser.parse("myFunc(\"arg\", 0, TRUE)", book, FormulaType.CELL, -1);
+
+			// A completely unknown formula name (not saved in workbook) should still be parseable and renderable
+			// but will throw an NotImplementedFunctionException or return a #NAME? error value if evaluated.
+			FormulaParser.parse("yourFunc(\"arg\")", book, FormulaType.CELL, -1);
+
+			// Verify that myFunc and yourFunc were successfully added to Workbook names
+			HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb);
+			try {
+			    // HSSFWorkbook/EXCEL97-specific side-effects user-defined function names must be added to Workbook's defined names in order to be saved.
+				assertNotNull(wb2.getName("myFunc"));
+				assertEqualsIgnoreCase("myFunc", wb2.getName("myFunc").getNameName());
+				assertNotNull(wb2.getName("yourFunc"));
+				assertEqualsIgnoreCase("yourFunc", wb2.getName("yourFunc").getNameName());
+
+				// Manually check to make sure file isn't corrupted
+				final File fileIn = HSSFTestDataSamples.getSampleFile(testFile);
+				final File reSavedFile = new File(fileIn.getParentFile(), fileIn.getName().replace(".xls", "-saved.xls"));
+				FileOutputStream fos = new FileOutputStream(reSavedFile);
+				wb2.write(fos);
+				fos.close();
+			} finally {
+				wb2.close();
+			}
+		} finally {
+			wb.close();
+		}
+	}
+	
+	private final static void assertEqualsIgnoreCase(String expected, String actual) {
+	    assertEquals(expected.toLowerCase(Locale.ROOT), actual.toLowerCase(Locale.ROOT));
 	}
 
 	public void testEmbeddedSlash() {
@@ -713,12 +764,19 @@ public final class TestFormulaParser extends TestCase {
 
 		parseExpectedException("IF(TRUE)");
 		parseExpectedException("countif(A1:B5, C1, D1)");
+		
+		parseExpectedException("(");
+		parseExpectedException(")");
+		parseExpectedException("+");
+		parseExpectedException("42+");
+		
+		parseExpectedException("IF(");
 	}
 
 	private static void parseExpectedException(String formula) {
 		try {
 			parseFormula(formula);
-			throw new AssertionFailedError("expected parse exception");
+			throw new AssertionFailedError("Expected FormulaParseException: " + formula);
 		} catch (FormulaParseException e) {
 			// expected during successful test
 			assertNotNull(e.getMessage());

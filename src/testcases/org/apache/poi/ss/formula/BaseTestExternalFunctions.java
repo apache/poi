@@ -19,6 +19,8 @@ package org.apache.poi.ss.formula;
 import junit.framework.TestCase;
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.formula.eval.ErrorEval;
+import org.apache.poi.ss.formula.eval.NotImplementedException;
+import org.apache.poi.ss.formula.eval.NotImplementedFunctionException;
 import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.functions.FreeRefFunction;
@@ -84,6 +86,7 @@ public class BaseTestExternalFunctions extends TestCase {
 
     public void testExternalFunctions() {
         Workbook wb = _testDataProvider.createWorkbook();
+        FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
 
         Sheet sh = wb.createSheet();
 
@@ -92,11 +95,16 @@ public class BaseTestExternalFunctions extends TestCase {
         assertEquals("ISODD(1)+ISEVEN(2)", cell1.getCellFormula());
 
         Cell cell2 = sh.createRow(1).createCell(0);
+        cell2.setCellFormula("MYFUNC(\"B1\")"); //unregistered functions are parseable and renderable, but may not be evaluateable
         try {
-            cell2.setCellFormula("MYFUNC(\"B1\")");
-            fail("Should fail because MYFUNC is an unknown function");
-        } catch (FormulaParseException e){
-            ; //expected
+            evaluator.evaluate(cell2);
+            fail("Expected NotImplementedFunctionException/NotImplementedException");
+        } catch (final NotImplementedException e) {
+            if (!(e.getCause() instanceof NotImplementedFunctionException))
+                throw e;
+            // expected
+            // Alternatively, a future implementation of evaluate could return #NAME? error to align behavior with Excel
+            // assertEquals(ErrorEval.NAME_INVALID, ErrorEval.valueOf(evaluator.evaluate(cell2).getErrorValue()));
         }
 
         wb.addToolPack(customToolpack);
@@ -108,7 +116,6 @@ public class BaseTestExternalFunctions extends TestCase {
         cell3.setCellFormula("MYFUNC2(\"C1\")&\"-\"&A2");  //where A2 is defined above
         assertEquals("MYFUNC2(\"C1\")&\"-\"&A2", cell3.getCellFormula());
 
-        FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
         assertEquals(2.0, evaluator.evaluate(cell1).getNumberValue());
         assertEquals("B1abc", evaluator.evaluate(cell2).getStringValue());
         assertEquals("C1abc2-B1abc", evaluator.evaluate(cell3).getStringValue());

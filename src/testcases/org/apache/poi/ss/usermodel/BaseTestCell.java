@@ -298,6 +298,45 @@ public abstract class BaseTestCell {
 	private Cell createACell() {
 		return _testDataProvider.createWorkbook().createSheet("Sheet1").createRow(0).createCell(0);
 	}
+	
+	/**
+	 * bug 58452: Copy cell formulas containing unregistered function names
+	 * Make sure that formulas with unknown/unregistered UDFs can be written to and read back from a file.
+	 *
+	 * @throws IOException
+	 */
+	@Test
+	public void testFormulaWithUnknownUDF() throws IOException {
+		final Workbook wb1 = _testDataProvider.createWorkbook();
+		final FormulaEvaluator evaluator1 = wb1.getCreationHelper().createFormulaEvaluator();
+		try {
+			final Cell cell1 = wb1.createSheet().createRow(0).createCell(0);
+			final String formula = "myFunc(\"arg\")";
+			cell1.setCellFormula(formula);
+			confirmFormulaWithUnknownUDF(formula, cell1, evaluator1);
+			
+			final Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1);
+			final FormulaEvaluator evaluator2 = wb2.getCreationHelper().createFormulaEvaluator();
+			try {
+				final Cell cell2 = wb2.getSheetAt(0).getRow(0).getCell(0);
+				confirmFormulaWithUnknownUDF(formula, cell2, evaluator2);
+			} finally {
+				wb2.close();
+			}
+		} finally {
+			wb1.close();
+		}
+	}
+	
+	private static void confirmFormulaWithUnknownUDF(String expectedFormula, Cell cell, FormulaEvaluator evaluator) {
+		assertEquals(expectedFormula, cell.getCellFormula());
+		try {
+			evaluator.evaluate(cell);
+			fail("Expected NotImplementedFunctionException/NotImplementedException");
+		} catch (final org.apache.poi.ss.formula.eval.NotImplementedException e) {
+			// expected
+		}
+	}
 
 	@Test
 	public void testChangeTypeStringToBool() {
