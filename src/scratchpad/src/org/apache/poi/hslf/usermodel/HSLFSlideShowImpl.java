@@ -19,6 +19,7 @@ package org.apache.poi.hslf.usermodel;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -64,7 +65,7 @@ import org.apache.poi.util.POILogger;
  *
  * @author Nick Burch
  */
-public final class HSLFSlideShowImpl extends POIDocument {
+public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
     public static final int UNSET_OFFSET = -1;
     
     // For logging
@@ -793,6 +794,14 @@ public final class HSLFSlideShowImpl extends POIDocument {
             _objects = objects.toArray(new HSLFObjectData[objects.size()]);
         }
         return _objects;
+    }
+    
+    @Override
+    public void close() throws IOException {
+        NPOIFSFileSystem fs = directory.getFileSystem();
+        if (fs != null) {
+            fs.close();
+        }
     }
     
     
