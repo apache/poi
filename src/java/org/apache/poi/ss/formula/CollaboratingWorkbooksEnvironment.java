@@ -76,8 +76,9 @@ public final class CollaboratingWorkbooksEnvironment {
     }
     public static void setupFormulaEvaluator(Map<String,FormulaEvaluator> evaluators) {
         Map<String, WorkbookEvaluator> evaluatorsByName = new HashMap<String, WorkbookEvaluator>(evaluators.size());
-        for (String wbName : evaluators.keySet()) {
-            FormulaEvaluator eval = evaluators.get(wbName);
+        for (Map.Entry<String,FormulaEvaluator> swb : evaluators.entrySet()) {
+            String wbName = swb.getKey();
+            FormulaEvaluator eval = swb.getValue();
             if (eval instanceof WorkbookEvaluatorProvider) {
                 evaluatorsByName.put(wbName, ((WorkbookEvaluatorProvider)eval)._getWorkbookEvaluator());
             } else {
