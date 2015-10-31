@@ -256,11 +256,17 @@ public final class TestCellRangeAddress extends TestCase {
     }
     
     private static void assertIntersects(CellRangeAddress regionA, CellRangeAddress regionB) {
-        assertTrue(regionA.intersects(regionB));
-        assertTrue(regionB.intersects(regionA));
+        if (!(regionA.intersects(regionB) && regionB.intersects(regionA))) {
+            final String A = regionA.formatAsString();
+            final String B = regionB.formatAsString();
+            fail("expected: regions "+A+" and "+B+" intersect");
+        }
     }
     private static void assertNotIntersects(CellRangeAddress regionA, CellRangeAddress regionB) {
-        assertFalse(regionA.intersects(regionB));
-        assertFalse(regionB.intersects(regionA));
+        if ((regionA.intersects(regionB) || regionB.intersects(regionA))) {
+            final String A = regionA.formatAsString();
+            final String B = regionB.formatAsString();
+            fail("expected: regions "+A+" and "+B+" do not intersect");
+        }
     }
 }
