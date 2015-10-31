@@ -985,4 +985,26 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
 
         };
     }
+
+    @Override
+    public void setBulletStyle(Object... styles) {
+        if (styles.length == 0) {
+            setBullet(false);
+        } else {
+            setBullet(true);
+            for (Object ostyle : styles) {
+                if (ostyle instanceof Number) {
+                    setBulletFontSize(((Number)ostyle).doubleValue());
+                } else if (ostyle instanceof Color) {
+                    setBulletFontColor((Color)ostyle);
+                } else if (ostyle instanceof Character) {
+                    setBulletCharacter(ostyle.toString());
+                } else if (ostyle instanceof String) {
+                    setBulletFont((String)ostyle);
+                } else if (ostyle instanceof AutoNumberingScheme) {
+                    setBulletAutoNumber((AutoNumberingScheme)ostyle, 0);
+                }
+            }
+        }
+    }
 }
