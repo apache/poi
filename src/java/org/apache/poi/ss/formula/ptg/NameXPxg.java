@@ -40,6 +40,9 @@ public final class NameXPxg extends OperandPtg implements Pxg {
     public NameXPxg(String sheetName, String nameName) {
         this(-1, sheetName, nameName);
     }
+    public NameXPxg(String nameName) {
+        this(-1, null, nameName);
+    }
 
     public String toString(){
         StringBuffer sb = new StringBuffer();

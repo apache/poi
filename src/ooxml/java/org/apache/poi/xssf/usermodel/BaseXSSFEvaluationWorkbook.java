@@ -130,6 +130,15 @@ public abstract class BaseXSSFEvaluationWorkbook implements FormulaRenderingWork
         }
     }
 
+	/**
+	 * Return EvaluationName wrapper around the matching XSSFName (named range)
+	 * @param name case-aware but case-insensitive named range in workbook
+	 * @param sheetIndex index of sheet if named range scope is limited to one sheet
+	 *		 if named range scope is global to the workbook, sheetIndex is -1.
+	 * @return If name is a named range in the workbook, returns
+	 *  EvaluationName corresponding to that named range 
+	 *  Returns null if there is no named range with the same name and scope in the workbook
+	 */
 	public EvaluationName getName(String name, int sheetIndex) {
 		for (int i = 0; i < _uBook.getNumberOfNames(); i++) {
 			XSSFName nm = _uBook.getNameAt(i);
@@ -137,7 +146,7 @@ public abstract class BaseXSSFEvaluationWorkbook implements FormulaRenderingWork
 			int nameSheetindex = nm.getSheetIndex();
 			if (name.equalsIgnoreCase(nameText) && 
 			       (nameSheetindex == -1 || nameSheetindex == sheetIndex)) {
-				return new Name(_uBook.getNameAt(i), i, this);
+				return new Name(nm, i, this);
 			}
 		}
 		return sheetIndex == -1 ? null : getName(name, -1);
@@ -179,6 +188,10 @@ public abstract class BaseXSSFEvaluationWorkbook implements FormulaRenderingWork
 	    
     }
 
+    /**
+     * Return an external name (named range, function, user-defined function) Pxg
+     */
+    @Override
     public NameXPxg getNameXPtg(String name, SheetIdentifier sheet) {
 	    // First, try to find it as a User Defined Function
         IndexedUDFFinder udfFinder = (IndexedUDFFinder)getUDFFinder();
@@ -289,6 +302,10 @@ public abstract class BaseXSSFEvaluationWorkbook implements FormulaRenderingWork
 	public EvaluationName getName(NamePtg namePtg) {
 		int ix = namePtg.getIndex();
 		return new Name(_uBook.getNameAt(ix), ix, this);
+	}
+	@Override
+	public XSSFName createName() {
+		return _uBook.createName();
 	}
 	
     public UDFFinder getUDFFinder(){
