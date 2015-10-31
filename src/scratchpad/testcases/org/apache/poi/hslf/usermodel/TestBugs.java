@@ -22,9 +22,11 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.awt.Color;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -47,10 +49,18 @@ import org.apache.poi.hslf.record.Document;
 import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.SlideListWithText;
 import org.apache.poi.hslf.record.SlideListWithText.SlideAtomsSet;
+import org.apache.poi.hslf.record.StyleTextPropAtom;
 import org.apache.poi.hslf.record.TextHeaderAtom;
+import org.apache.poi.sl.draw.DrawPaint;
+import org.apache.poi.sl.usermodel.PaintStyle;
+import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
+import org.apache.poi.sl.usermodel.Slide;
 import org.apache.poi.sl.usermodel.SlideShow;
 import org.apache.poi.sl.usermodel.SlideShowFactory;
+import org.apache.poi.sl.usermodel.TextBox;
+import org.apache.poi.sl.usermodel.TextParagraph;
+import org.apache.poi.sl.usermodel.TextRun;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;
 import org.apache.poi.util.Units;
@@ -642,6 +652,41 @@ public final class TestBugs {
     
     @Test
     public void bug58516() throws IOException {
-        SlideShowFactory.create(_slTests.getFile("bug58516.ppt"));
+        SlideShowFactory.create(_slTests.getFile("bug58516.ppt")).close();
+    }
+
+    @Test
+    public void bug45124() throws IOException {
+        SlideShow<?,?> ppt = SlideShowFactory.create(_slTests.getFile("bug45124.ppt"));
+        Slide<?,?> slide1 = ppt.getSlides().get(1);
+
+        TextBox<?,?> res = slide1.createTextBox();
+        res.setAnchor(new java.awt.Rectangle(60, 150, 700, 100));
+        res.setText("I am italic-false, bold-true inserted text");
+        
+
+        TextParagraph<?,?,?> tp = res.getTextParagraphs().get(0);
+        TextRun rt = tp.getTextRuns().get(0);
+        rt.setItalic(false);
+        assertTrue(rt.isBold());
+        
+        tp.setBulletStyle(Color.red, 'A');
+
+        SlideShow<?,?> ppt2 = HSLFTestDataSamples.writeOutAndReadBack((HSLFSlideShow)ppt);
+        ppt.close();
+        
+        res = (TextBox<?,?>)ppt2.getSlides().get(1).getShapes().get(1);
+        tp = res.getTextParagraphs().get(0);
+        rt = tp.getTextRuns().get(0);
+        
+        assertFalse(rt.isItalic());
+        assertTrue(rt.isBold());
+        PaintStyle ps = tp.getBulletStyle().getBulletFontColor();
+        assertTrue(ps instanceof SolidPaint);
+        Color actColor = DrawPaint.applyColorTransform(((SolidPaint)ps).getSolidColor());
+        assertEquals(Color.red, actColor);
+        assertEquals("A", tp.getBulletStyle().getBulletCharacter());
+        
+        ppt2.close();
     }
 }

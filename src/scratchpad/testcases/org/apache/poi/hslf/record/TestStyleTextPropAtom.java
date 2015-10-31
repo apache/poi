@@ -23,6 +23,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
 
+import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.hslf.model.textproperties.*;
 import org.apache.poi.util.HexDump;
 import org.junit.Test;
@@ -375,8 +376,7 @@ public final class TestStyleTextPropAtom {
         assertEquals(0x0003, cf_4_1.getValue());
     }
 
-    @SuppressWarnings("unused")
-    @Test
+    @Test(expected=HSLFException.class)
     public void testFindAddTextProp() {
         StyleTextPropAtom stpb = new StyleTextPropAtom(data_b,0,data_b.length);
         stpb.setParentTextSize(data_b_text_len);
@@ -392,6 +392,16 @@ public final class TestStyleTextPropAtom {
         TextPropCollection b_ch_2 = b_ch_l.get(1);
         TextPropCollection b_ch_3 = b_ch_l.get(2);
         TextPropCollection b_ch_4 = b_ch_l.get(3);
+        
+        assertNotNull(b_p_1);
+        assertNotNull(b_p_2);
+        assertNotNull(b_p_3);
+        assertNotNull(b_p_4);
+        
+        assertNotNull(b_ch_1);
+        assertNotNull(b_ch_2);
+        assertNotNull(b_ch_3);
+        assertNotNull(b_ch_4);
 
         // CharFlagsTextProp: 3 doesn't have, 4 does
         assertNull(b_ch_3.findByName("char_flags"));
@@ -419,12 +429,7 @@ public final class TestStyleTextPropAtom {
         assertEquals(new_sa, b_p_2.getTextPropList().get(2));
 
         // Check we get an error with a made up one
-        try {
-            b_p_2.addWithName("madeUpOne");
-            fail();
-        } catch(IllegalArgumentException e) {
-            // Good, as expected
-        }
+        b_p_2.addWithName("madeUpOne");
     }
 
     /**
