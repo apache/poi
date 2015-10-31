@@ -116,7 +116,7 @@ public final class HSLFTextRun implements TextRun {
 
 		BitMaskTextProp prop = (BitMaskTextProp)characterStyle.findByName(CharFlagsTextProp.NAME);
 
-		if (prop == null){
+		if (prop == null || !prop.getSubPropMatches()[index]) {
             int txtype = parentParagraph.getRunType();
 			HSLFSheet sheet = parentParagraph.getSheet();
 			if (sheet != null) {
