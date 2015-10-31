@@ -18,6 +18,7 @@
 package org.apache.poi.sl.usermodel;
 
 import java.awt.Dimension;
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
@@ -27,7 +28,7 @@ import org.apache.poi.sl.usermodel.PictureData.PictureType;
 public interface SlideShow<
     S extends Shape<S,P>,
     P extends TextParagraph<S,P,?>
-> {
+> extends Closeable {
 	Slide<S,P> createSlide() throws IOException;
 
 	List<? extends Slide<S,P>> getSlides();

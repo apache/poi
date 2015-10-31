@@ -20,6 +20,7 @@ package org.apache.poi.hslf.usermodel;
 import java.awt.Dimension;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -88,7 +89,7 @@ import org.apache.poi.util.Units;
  * @author Nick Burch
  * @author Yegor kozlov
  */
-public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagraph> {
+public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagraph>, Closeable {
 	// What we're based on
 	private HSLFSlideShowImpl _hslfSlideShow;
 
@@ -1156,5 +1157,10 @@ public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagrap
     public Resources getResources() {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    @Override
+    public void close() throws IOException {
+        _hslfSlideShow.close();
     }
 }
