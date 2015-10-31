@@ -34,7 +34,6 @@ import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.ss.util.Region;
 import org.apache.poi.util.TempFile;
 
 import junit.framework.TestCase;
@@ -46,7 +45,6 @@ import junit.framework.TestCase;
  * @author Greg Merrill
  * @author Siggi Cherem
  */
-@SuppressWarnings("deprecation")
 public final class TestWorkbook extends TestCase {
     private static final String LAST_NAME_KEY        = "lastName";
     private static final String FIRST_NAME_KEY       = "firstName";
@@ -538,7 +536,13 @@ public final class TestWorkbook extends TestCase {
 
     /**
      * Generate a file to visually/programmatically verify repeating rows and cols made it
+     * 
+     * Test setRepeatingRowsAndColumns with alternating columns -0 and 1.
+     * 
+     * This test intentionally tests the deprecated
+     * {@link HSSFWorkbook#setRepeatingRowsAndColumns(int, int, int, int, int)} function
      */
+    @SuppressWarnings("deprecation")
     public void testRepeatingColsRows() throws IOException
     {
         HSSFWorkbook workbook = new HSSFWorkbook();
@@ -563,6 +567,13 @@ public final class TestWorkbook extends TestCase {
         workbook.close();
     }
 
+    /**
+     * Test setRepeatingRowsAndColumns when startRow and startColumn are -1.
+     * 
+     * This test intentionally tests the deprecated
+     * {@link HSSFWorkbook#setRepeatingRowsAndColumns(int, int, int, int, int)} function
+     */
+    @SuppressWarnings("deprecation")
     public void testRepeatingColsRowsMinusOne() throws IOException
     {
         HSSFWorkbook workbook = new HSSFWorkbook();
@@ -603,8 +614,8 @@ public final class TestWorkbook extends TestCase {
                 c.setCellValue(new HSSFRichTextString("TEST"));
             }
         }
-        s.addMergedRegion(new Region(0, (short)0, 10, (short)10));
-        s.addMergedRegion(new Region(30, (short)5, 40, (short)15));
+        s.addMergedRegion(new CellRangeAddress(0, 10, 0, 10));
+        s.addMergedRegion(new CellRangeAddress(30, 40, 5, 15));
         sanityChecker.checkHSSFWorkbook(wb);
         wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
 
