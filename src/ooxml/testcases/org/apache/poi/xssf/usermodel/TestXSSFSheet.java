@@ -1341,10 +1341,10 @@ public final class TestXSSFSheet extends BaseTestSheet {
 
         assertNotNull(wb);
         assertNotNull(sheet);
-        XSSFPivotTable pivotTable = sheet.createPivotTable(new AreaReference("A1:B2"), new CellReference("H5"));
+        XSSFPivotTable pivotTable = sheet.createPivotTable(new AreaReference("A1:B2", SpreadsheetVersion.EXCEL2007), new CellReference("H5"));
         assertNotNull(pivotTable);
         assertTrue(wb.getPivotTables().size() > 0);
-        XSSFPivotTable pivotTable2 = sheet.createPivotTable(new AreaReference("A1:B2"), new CellReference("L5"), sheet);
+        XSSFPivotTable pivotTable2 = sheet.createPivotTable(new AreaReference("A1:B2", SpreadsheetVersion.EXCEL2007), new CellReference("L5"), sheet);
         assertNotNull(pivotTable2);
         assertTrue(wb.getPivotTables().size() > 1);
         wb.close();
@@ -1357,12 +1357,12 @@ public final class TestXSSFSheet extends BaseTestSheet {
 
         assertNotNull(wb);
         assertNotNull(sheet);
-        XSSFPivotTable pivotTable = sheet.createPivotTable(new AreaReference("A1:B2"), new CellReference("H5"));
+        XSSFPivotTable pivotTable = sheet.createPivotTable(new AreaReference("A1:B2", SpreadsheetVersion.EXCEL2007), new CellReference("H5"));
         assertNotNull(pivotTable);
         assertTrue(wb.getPivotTables().size() > 0);
         assertNotNull(wb);
         XSSFSheet sheet2 = wb.createSheet();
-        XSSFPivotTable pivotTable2 = sheet2.createPivotTable(new AreaReference("A1:B2"), new CellReference("H5"), sheet);
+        XSSFPivotTable pivotTable2 = sheet2.createPivotTable(new AreaReference("A1:B2", SpreadsheetVersion.EXCEL2007), new CellReference("H5"), sheet);
         assertNotNull(pivotTable2);
         assertTrue(wb.getPivotTables().size() > 1);
         wb.close();
@@ -1375,7 +1375,7 @@ public final class TestXSSFSheet extends BaseTestSheet {
 
         assertNotNull(wb);
         assertNotNull(sheet);
-        XSSFPivotTable pivotTable = sheet.createPivotTable(new AreaReference("A1:B2"), new CellReference("H5"));
+        XSSFPivotTable pivotTable = sheet.createPivotTable(new AreaReference("A1:B2", SpreadsheetVersion.EXCEL2007), new CellReference("H5"));
         assertNotNull(pivotTable);
         assertTrue(wb.getPivotTables().size() > 0);
         wb.close();
@@ -1388,7 +1388,7 @@ public final class TestXSSFSheet extends BaseTestSheet {
         XSSFSheet sheet2 = wb.createSheet();
 
         XSSFPivotTable pivotTable = sheet2.createPivotTable
-                (new AreaReference("A1:B2"), new CellReference("H5"), sheet1);
+                (new AreaReference("A1:B2", SpreadsheetVersion.EXCEL2007), new CellReference("H5"), sheet1);
         assertEquals(0, pivotTable.getRowLabelColumns().size());
         
         assertEquals(1, wb.getPivotTables().size());
@@ -1401,10 +1401,11 @@ public final class TestXSSFSheet extends BaseTestSheet {
     public void testCreatePivotTableInOtherSheetThanDataSheetUsingAreaReference() throws IOException {
         XSSFWorkbook wb = setupSheet();
         XSSFSheet sheet = wb.getSheetAt(0);
-        XSSFSheet sheet2 = wb.createSheet();
+        XSSFSheet sheet2 = wb.createSheet("TEST");
 
-        XSSFPivotTable pivotTable = sheet2.createPivotTable
-                (new AreaReference(sheet.getSheetName()+"!A$1:B$2"), new CellReference("H5"));
+        XSSFPivotTable pivotTable = sheet2.createPivotTable(
+                new AreaReference(sheet.getSheetName()+"!A$1:B$2", SpreadsheetVersion.EXCEL2007),
+                new CellReference("H5"));
         assertEquals(0, pivotTable.getRowLabelColumns().size());
         wb.close();
     }
@@ -1413,9 +1414,12 @@ public final class TestXSSFSheet extends BaseTestSheet {
     public void testCreatePivotTableWithConflictingDataSheets() throws IOException {
         XSSFWorkbook wb = setupSheet();
         XSSFSheet sheet = wb.getSheetAt(0);
-        XSSFSheet sheet2 = wb.createSheet();
+        XSSFSheet sheet2 = wb.createSheet("TEST");
 
-        sheet2.createPivotTable(new AreaReference(sheet.getSheetName()+"!A$1:B$2"), new CellReference("H5"), sheet2);
+        sheet2.createPivotTable(
+                new AreaReference(sheet.getSheetName()+"!A$1:B$2", SpreadsheetVersion.EXCEL2007),
+                new CellReference("H5"),
+                sheet2);
     }
     
     @Test(expected=POIXMLException.class)
