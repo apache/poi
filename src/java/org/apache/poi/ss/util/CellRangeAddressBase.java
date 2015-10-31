@@ -129,8 +129,8 @@ public abstract class CellRangeAddressBase {
 	/**
 	 * Determines whether or not this CellRangeAddress and the specified CellRangeAddress intersect.
 	 *
-	 * @param other
-	 * @return
+	 * @param other a candidate cell range address to check for intersection with this range
+	 * @return returns true if this range and other range have at least 1 cell in common
 	 */
 	public boolean intersects(CellRangeAddressBase other) {
 		// see java.awt.Rectangle.intersects
