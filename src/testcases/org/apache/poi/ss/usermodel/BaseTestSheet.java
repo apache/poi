@@ -257,6 +257,46 @@ public abstract class BaseTestSheet {
         assertEquals(3, sheetP.getPrintSetup().getCopies());
         wb2.close();
     }
+    
+    /**
+     * Dissallow creating wholly or partially overlapping merged regions
+     * as this results in a corrupted workbook
+     */
+    @Test
+    public void addOverlappingMergedRegions() {
+        final Workbook wb = _testDataProvider.createWorkbook();
+        final Sheet sheet = wb.createSheet();
+        
+        final CellRangeAddress baseRegion = new CellRangeAddress(0, 1, 0, 1);
+        sheet.addMergedRegion(baseRegion);
+        
+        try {
+            final CellRangeAddress duplicateRegion = new CellRangeAddress(0, 1, 0, 1);
+            sheet.addMergedRegion(duplicateRegion);
+            fail("Should not be able to add a merged region if sheet already contains the same merged region");
+        } catch (final IllegalStateException e) { } //expected
+        
+        try {
+            final CellRangeAddress partiallyOverlappingRegion = new CellRangeAddress(1, 2, 1, 2);
+            sheet.addMergedRegion(partiallyOverlappingRegion);
+            fail("Should not be able to add a merged region if it partially overlaps with an existing merged region");
+        } catch (final IllegalStateException e) { } //expected
+        
+        try {
+            final CellRangeAddress subsetRegion = new CellRangeAddress(0, 1, 0, 0);
+            sheet.addMergedRegion(subsetRegion);
+            fail("Should not be able to add a merged region if it is a formal subset of an existing merged region");
+        } catch (final IllegalStateException e) { } //expected
+        
+        try {
+            final CellRangeAddress supersetRegion = new CellRangeAddress(0, 2, 0, 2);
+            sheet.addMergedRegion(supersetRegion);
+            fail("Should not be able to add a merged region if it is a formal superset of an existing merged region");
+        } catch (final IllegalStateException e) { } //expected
+        
+        final CellRangeAddress disjointRegion = new CellRangeAddress(10, 11, 10, 11);
+        sheet.addMergedRegion(disjointRegion); //allowed
+    }
 
     /**
      * Test adding merged regions. If the region's bounds are outside of the allowed range
@@ -310,13 +350,13 @@ public abstract class BaseTestSheet {
         Sheet sheet = wb.createSheet();
         CellRangeAddress region = new CellRangeAddress(0, 1, 0, 1);
         sheet.addMergedRegion(region);
-        region = new CellRangeAddress(1, 2, 0, 1);
+        region = new CellRangeAddress(2, 3, 0, 1);
         sheet.addMergedRegion(region);
 
         sheet.removeMergedRegion(0);
 
         region = sheet.getMergedRegion(0);
-        assertEquals("Left over region should be starting at row 1", 1, region.getFirstRow());
+        assertEquals("Left over region should be starting at row 2", 2, region.getFirstRow());
 
         sheet.removeMergedRegion(0);
 

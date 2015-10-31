@@ -674,21 +674,12 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
     }
 
     /**
-     * @deprecated (Aug-2008) use <tt>CellRangeAddress</tt> instead of <tt>Region</tt>
-     */
-    public int addMergedRegion(org.apache.poi.ss.util.Region region) {
-        return _sheet.addMergedRegion(region.getRowFrom(),
-                region.getColumnFrom(),
-                //(short) region.getRowTo(),
-                region.getRowTo(),
-                region.getColumnTo());
-    }
-
-    /**
      * adds a merged region of cells (hence those cells form one)
      *
      * @param region (rowfrom/colfrom-rowto/colto) to merge
      * @return index of this region
+     * @throws IllegalStateException if region intersects with an existing merged region
+     * or multi-cell array formula on this sheet
      */
     public int addMergedRegion(CellRangeAddress region) {
         region.validate(SpreadsheetVersion.EXCEL97);
@@ -696,6 +687,10 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
         // throw IllegalStateException if the argument CellRangeAddress intersects with
         // a multi-cell array formula defined in this sheet
         validateArrayFormulas(region);
+        
+        // Throw IllegalStateException if the argument CellRangeAddress intersects with
+        // a merged region already in this sheet
+        validateMergedRegions(region);
 
         return _sheet.addMergedRegion(region.getFirstRow(),
                 region.getFirstColumn(),
@@ -729,6 +724,15 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
             }
         }
 
+    }
+    
+    private void validateMergedRegions(CellRangeAddress candidateRegion) {
+        for (final CellRangeAddress existingRegion : getMergedRegions()) {
+            if (existingRegion.intersects(candidateRegion)) {
+                throw new IllegalStateException("Cannot add merged region " + candidateRegion.formatAsString() +
+                        " to sheet because it overlaps with an existing merged region (" + existingRegion.formatAsString() + ").");
+            }
+        }
     }
 
     /**
