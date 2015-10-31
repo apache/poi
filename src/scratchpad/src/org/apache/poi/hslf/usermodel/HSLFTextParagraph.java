@@ -26,6 +26,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.hslf.model.PPFont;
 import org.apache.poi.hslf.model.textproperties.BitMaskTextProp;
 import org.apache.poi.hslf.model.textproperties.FontAlignmentProp;
@@ -467,6 +468,28 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
     }
 
     @Override
+    public void setBulletStyle(Object... styles) {
+        if (styles.length == 0) {
+            setBullet(false);
+        } else {
+            setBullet(true);
+            for (Object ostyle : styles) {
+                if (ostyle instanceof Number) {
+                    setBulletSize(((Number)ostyle).doubleValue());
+                } else if (ostyle instanceof Color) {
+                    setBulletColor((Color)ostyle);
+                } else if (ostyle instanceof Character) {
+                    setBulletChar((Character)ostyle);
+                } else if (ostyle instanceof String) {
+                    setBulletFont((String)ostyle);
+                } else if (ostyle instanceof AutoNumberingScheme) {
+                    throw new HSLFException("setting bullet auto-numberin scheme for HSLF not supported ... yet");
+                }
+            }
+        }
+    }
+    
+    @Override
     public HSLFTextShape getParentShape() {
         return _parentShape;
     }
@@ -535,6 +558,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
     public void setBulletColor(Color color) {
         Integer val = (color == null) ? null : new Color(color.getBlue(), color.getGreen(), color.getRed(), 254).getRGB();
         setParagraphTextPropVal("bullet.color", val);
+        setFlag(ParagraphFlagsTextProp.BULLET_HARDCOLOR_IDX, (color != null));
     }
 
     /**
@@ -542,7 +566,8 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
      */
     public Color getBulletColor() {
         TextProp tp = getPropVal(_paragraphStyle, "bullet.color", this);
-        if (tp == null) {
+        boolean hasColor = getFlag(ParagraphFlagsTextProp.BULLET_HARDCOLOR_IDX);
+        if (tp == null || !hasColor) {
             // if bullet color is undefined, return color of first run
             if (_runs.isEmpty()) return null;
             SolidPaint sp = _runs.get(0).getFontColor();
@@ -573,7 +598,8 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
      */
     public String getBulletFont() {
         TextProp tp = getPropVal(_paragraphStyle, "bullet.font", this);
-        if (tp == null) return getDefaultFontFamily();
+        boolean hasFont = getFlag(ParagraphFlagsTextProp.BULLET_HARDFONT_IDX);
+        if (tp == null || !hasFont) return getDefaultFontFamily();
         PPFont ppFont = getSheet().getSlideShow().getFont(tp.getValue());
         assert(ppFont != null);
         return ppFont.getFontName();
