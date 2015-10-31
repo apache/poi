@@ -62,6 +62,11 @@ public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
         _uBook = book;
         _iBook = book.getWorkbook();
     }
+    
+    @Override
+    public HSSFName createName() {
+        return _uBook.createName();
+    }
 
     public int getExternalSheetIndex(String sheetName) {
         int sheetIndex = _uBook.getSheetIndex(sheetName);
@@ -79,6 +84,10 @@ public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
         int extIx = getSheetExtIx(sheet);
         return new Area3DPtg(areaRef, extIx);
     }
+    /**
+     * Return an external name (named range, function, user-defined function) Ptg
+     */
+    @Override
     public NameXPtg getNameXPtg(String name, SheetIdentifier sheet) {
         int sheetRefIndex = getSheetExtIx(sheet);
         return _iBook.getNameXPtg(name, sheetRefIndex, _uBook.getUDFFinder());

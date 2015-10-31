@@ -19,6 +19,7 @@ package org.apache.poi.ss.formula;
 
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.ptg.Ptg;
+import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
 
@@ -34,7 +35,15 @@ public interface FormulaParsingWorkbook {
 	 *  named range name matching is case insensitive
 	 */
 	EvaluationName getName(String name, int sheetIndex);
+	
+	/**
+	 * Return the underlying workbook
+	 */
+	Name createName();
 
+	/**
+	 * Return an external name (named range, function, user-defined function) Ptg
+	 */
 	Ptg getNameXPtg(String name, SheetIdentifier sheet);
 	
 	/**

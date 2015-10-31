@@ -44,6 +44,9 @@ public class XSSFTestDataSamples {
     */
    public static final String TEST_OUTPUT_DIR = "poi.test.xssf.output.dir";
 
+   public static File getSampleFile(String sampleFileName) {
+      return HSSFTestDataSamples.getSampleFile(sampleFileName);
+   }
    public static OPCPackage openSamplePackage(String sampleName) {
       try {
          return OPCPackage.open(
