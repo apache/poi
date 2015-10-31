@@ -44,9 +44,9 @@ public abstract class AreaPtgBase extends OperandPtg implements AreaI {
 	/** zero based, unsigned 16 bit */
 	private int             field_2_last_row;
 	/** zero based, unsigned 8 bit */
-	private int             field_3_first_column;
+	private int             field_3_first_column; //BitFields: (first row relative, first col relative, first column number)
 	/** zero based, unsigned 8 bit */
-	private int             field_4_last_column;
+	private int             field_4_last_column; //BitFields: (last row relative, last col relative, last column number)
 
 	private final static BitField   rowRelative = BitFieldFactory.getInstance(0x8000);
 	private final static BitField   colRelative = BitFieldFactory.getInstance(0x4000);
@@ -94,6 +94,35 @@ public abstract class AreaPtgBase extends OperandPtg implements AreaI {
 			setLastColumn(firstColumn);
 			setFirstColRelative(lastColRelative);
 			setLastColRelative(firstColRelative);
+		}
+	}
+	
+	/**
+	 * Sort the first and last row and columns in-place to the preferred (top left:bottom right) order
+	 * Note: Sort only occurs when an instance is constructed or when this method is called.
+	 * 
+	 * <p>For example, <code>$E5:B$10</code> becomes <code>B5:$E$10</code></p>
+	 */
+	public void sortTopLeftToBottomRight() {
+		if (getFirstRow() > getLastRow()) {
+			//swap first row and last row numbers and relativity
+			//Note: cannot just swap the fields because row relativity is stored in fields 3 and 4
+			final int firstRow = getFirstRow();
+			final boolean firstRowRel = isFirstRowRelative();
+			setFirstRow(getLastRow());
+			setFirstRowRelative(isLastRowRelative());
+			setLastRow(firstRow);
+			setLastRowRelative(firstRowRel);
+		}
+		if (getFirstColumn() > getLastColumn()) {
+			//swap first column and last column numbers and relativity
+			//Note: cannot just swap the fields because row relativity is stored in fields 3 and 4
+			final int firstCol = getFirstColumn();
+			final boolean firstColRel = isFirstColRelative();
+			setFirstColumn(getLastColumn());
+			setFirstColRelative(isLastColRelative());
+			setLastColumn(firstCol);
+			setLastColRelative(firstColRel);
 		}
 	}
 
