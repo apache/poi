@@ -143,7 +143,7 @@ public abstract class BaseTestBugzillaIssues {
        Sheet template = wb.getSheetAt(0);
 
        template.addMergedRegion(new CellRangeAddress(0, 1, 0, 2));
-       template.addMergedRegion(new CellRangeAddress(1, 2, 0, 2));
+       template.addMergedRegion(new CellRangeAddress(2, 3, 0, 2));
 
        Sheet clone = wb.cloneSheet(0);
        int originalMerged = template.getNumMergedRegions();

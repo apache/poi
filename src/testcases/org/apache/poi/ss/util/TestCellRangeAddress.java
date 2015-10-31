@@ -17,6 +17,8 @@ limitations under the License.
 
 package org.apache.poi.ss.util;
 
+import static org.junit.Assert.fail;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
@@ -232,5 +234,33 @@ public final class TestCellRangeAddress extends TestCase {
         //now ref is CellRangeAddress(1, 2, 10, 4)
         assertEquals(4, ref.getMinColumn());
         assertEquals(10, ref.getMaxColumn());
+    }
+    
+    public void testIntersects() {
+        final CellRangeAddress baseRegion = new CellRangeAddress(0, 1, 0, 1);
+        
+        final CellRangeAddress duplicateRegion = new CellRangeAddress(0, 1, 0, 1);
+        assertIntersects(baseRegion, duplicateRegion);
+        
+        final CellRangeAddress partiallyOverlappingRegion = new CellRangeAddress(1, 2, 1, 2);
+        assertIntersects(baseRegion, partiallyOverlappingRegion);
+        
+        final CellRangeAddress subsetRegion = new CellRangeAddress(0, 1, 0, 0);
+        assertIntersects(baseRegion, subsetRegion);
+    
+        final CellRangeAddress supersetRegion = new CellRangeAddress(0, 2, 0, 2);
+        assertIntersects(baseRegion, supersetRegion);
+        
+        final CellRangeAddress disjointRegion = new CellRangeAddress(10, 11, 10, 11);
+        assertNotIntersects(baseRegion, disjointRegion);
+    }
+    
+    private static void assertIntersects(CellRangeAddress regionA, CellRangeAddress regionB) {
+        assertTrue(regionA.intersects(regionB));
+        assertTrue(regionB.intersects(regionA));
+    }
+    private static void assertNotIntersects(CellRangeAddress regionA, CellRangeAddress regionB) {
+        assertFalse(regionA.intersects(regionB));
+        assertFalse(regionB.intersects(regionA));
     }
 }
