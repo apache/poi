@@ -33,6 +33,7 @@ public final class TestAreaPtg extends TestCase {
 	AreaPtg relative;
 	AreaPtg absolute;
 	
+	@Override
 	protected void setUp() {
 		short firstRow=5;
 		short lastRow=13;
@@ -40,6 +41,17 @@ public final class TestAreaPtg extends TestCase {
 		short lastCol=17;
 		relative = new AreaPtg(firstRow,lastRow,firstCol,lastCol,true,true,true,true);
 		absolute = new AreaPtg(firstRow,lastRow,firstCol,lastCol,false,false,false,false);
+	}
+	
+	public static void testSortTopLeftToBottomRight() {
+	    AreaPtg ptg = new AreaPtg("A$1:$B5");
+	    assertEquals("A$1:$B5", ptg.toFormulaString());
+	    ptg.setFirstColumn(3);
+	    assertEquals("Area Ptg should not implicitly re-sort itself (except during construction)",
+	            "D$1:$B5", ptg.toFormulaString());
+	    ptg.sortTopLeftToBottomRight();
+	    assertEquals("Area Ptg should restore itself to top-left to lower-right order when explicitly asked",
+	            "$B$1:D5", ptg.toFormulaString());
 	}
 
 	public void testSetColumnsAbsolute()
