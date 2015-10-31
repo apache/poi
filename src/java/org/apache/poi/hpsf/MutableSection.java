@@ -505,10 +505,9 @@ public class MutableSection extends Section
         throws IOException
     {
         int length = TypeWriter.writeUIntToStream(out, dictionary.size());
-        for (final Iterator<Long> i = dictionary.keySet().iterator(); i.hasNext();)
-        {
-            final Long key = i.next();
-            final String value = dictionary.get(key);
+        for (Map.Entry<Long,String> ls : dictionary.entrySet()) {
+            final Long key = ls.getKey();
+            final String value = ls.getValue();
 
             if (codepage == CodePageUtil.CP_UNICODE)
             {
