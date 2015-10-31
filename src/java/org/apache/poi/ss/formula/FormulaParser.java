@@ -50,6 +50,7 @@ import org.apache.poi.ss.formula.ptg.MissingArgPtg;
 import org.apache.poi.ss.formula.ptg.MultiplyPtg;
 import org.apache.poi.ss.formula.ptg.NamePtg;
 import org.apache.poi.ss.formula.ptg.NameXPtg;
+import org.apache.poi.ss.formula.ptg.NameXPxg;
 import org.apache.poi.ss.formula.ptg.NotEqualPtg;
 import org.apache.poi.ss.formula.ptg.NumberPtg;
 import org.apache.poi.ss.formula.ptg.OperandPtg;
@@ -67,9 +68,12 @@ import org.apache.poi.ss.formula.ptg.UnaryPlusPtg;
 import org.apache.poi.ss.formula.ptg.UnionPtg;
 import org.apache.poi.ss.formula.ptg.ValueOperatorPtg;
 import org.apache.poi.ss.usermodel.ErrorConstants;
+import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.CellReference.NameType;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * This class parses a formula string into a List of tokens in RPN order.
@@ -85,6 +89,7 @@ import org.apache.poi.ss.util.CellReference.NameType;
  * <p/>
  */
 public final class FormulaParser {
+	private final static POILogger log = POILogFactory.getLogger(FormulaParser.class);
 	private final String _formulaString;
 	private final int _formulaLength;
 	/** points at the next character to be read (after the {@link #look} char) */
@@ -108,10 +113,10 @@ public final class FormulaParser {
      */
 	private boolean _inIntersection = false;
 
-	private FormulaParsingWorkbook _book;
-	private SpreadsheetVersion _ssVersion;
+	private final FormulaParsingWorkbook _book;
+	private final SpreadsheetVersion _ssVersion;
 
-	private int _sheetIndex;
+	private final int _sheetIndex;
 
 
 	/**
@@ -137,6 +142,7 @@ public final class FormulaParser {
 
 	/**
 	 * Parse a formula into a array of tokens
+	 * Side effect: creates name (Workbook.createName) if formula contains unrecognized names (names are likely UDFs)
 	 *
 	 * @param formula	 the formula to parse
 	 * @param workbook	the parent workbook
@@ -927,6 +933,8 @@ public final class FormulaParser {
 	 * Note - Excel function names are 'case aware but not case sensitive'.  This method may end
 	 * up creating a defined name record in the workbook if the specified name is not an internal
 	 * Excel function, and has not been encountered before.
+	 * 
+	 * Side effect: creates workbook name if name is not recognized (name is probably a UDF)
 	 *
 	 * @param name case preserved function name (as it was entered/appeared in the formula).
 	 */
@@ -940,22 +948,42 @@ public final class FormulaParser {
 				// Only test cases omit the book (expecting it not to be needed)
 				throw new IllegalStateException("Need book to evaluate name '" + name + "'");
 			}
+			// Check to see if name is a named range in the workbook
 			EvaluationName hName = _book.getName(name, _sheetIndex);
-			if (hName == null) {
-				nameToken = _book.getNameXPtg(name, null);
-				if (nameToken == null) {
-					throw new FormulaParseException("Name '" + name
-							+ "' is completely unknown in the current workbook");
-				}
-			} else {
+			if (hName != null) {
 				if (!hName.isFunctionName()) {
 					throw new FormulaParseException("Attempt to use name '" + name
 							+ "' as a function, but defined name in workbook does not refer to a function");
 				}
-
+	
 				// calls to user-defined functions within the workbook
 				// get a Name token which points to a defined name record
 				nameToken = hName.createPtg();
+			} else {
+				// Check if name is an external names table
+				nameToken = _book.getNameXPtg(name, null);
+				if (nameToken == null) {
+					// name is not an internal or external name
+					if (log.check(POILogger.WARN)) {
+						log.log(POILogger.WARN,
+								"FormulaParser.function: Name '" + name + "' is completely unknown in the current workbook.");
+					}
+					// name is probably the name of an unregistered User-Defined Function
+					switch (_book.getSpreadsheetVersion()) {
+						case EXCEL97:
+							// HSSFWorkbooks require a name to be added to Workbook defined names table
+							addName(name);
+							hName = _book.getName(name, _sheetIndex);
+							nameToken = hName.createPtg();
+							break;
+						case EXCEL2007:
+							// XSSFWorkbooks store formula names as strings.
+							nameToken = new NameXPxg(name);
+							break;
+						default:
+							throw new IllegalStateException("Unexpected spreadsheet version: " + _book.getSpreadsheetVersion().name());
+					}
+				}
 			}
 		}
 
@@ -964,6 +992,17 @@ public final class FormulaParser {
 		Match(')');
 
 		return getFunction(name, nameToken, args);
+	}
+	
+	/**
+	 * Adds a name (named range or user defined function) to underlying workbook's names table
+	 * @param functionName
+	 */
+	private final void addName(String functionName) {
+		final Name name = _book.createName();
+		name.setFunction(true);
+		name.setNameName(functionName);
+		name.setSheetIndex(_sheetIndex);
 	}
 
 	/**
