@@ -332,6 +332,15 @@ public interface TextParagraph<
      * @return the bullet style of the paragraph, if {@code null} then no bullets are used 
      */
     BulletStyle getBulletStyle();
+
+    /**
+     * Sets the bullet styles. If no styles are given, the bullets are omitted.
+     * Possible attributes are integer/double (bullet size), Color (bullet color),
+     * character (bullet character), string (bullet font), AutoNumberingScheme
+     *
+     * @param styles
+     */
+    void setBulletStyle(Object... styles);
     
     /**
      * @return the default size for a tab character within this paragraph in points, null if unset
