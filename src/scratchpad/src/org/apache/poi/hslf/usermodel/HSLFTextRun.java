@@ -21,6 +21,7 @@ import static org.apache.poi.hslf.usermodel.HSLFTextParagraph.getPropVal;
 
 import java.awt.Color;
 
+import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.hslf.model.textproperties.BitMaskTextProp;
 import org.apache.poi.hslf.model.textproperties.CharFlagsTextProp;
 import org.apache.poi.hslf.model.textproperties.TextProp;
@@ -97,7 +98,16 @@ public final class HSLFTextRun implements TextRun {
 	 * Change the text
 	 */
 	public void setText(String text) {
-	    _runText = HSLFTextParagraph.toInternalString(text);
+	    if (text == null) {
+	        throw new HSLFException("text must not be null");
+	    }
+	    String newText = HSLFTextParagraph.toInternalString(text);
+	    if (!newText.equals(_runText)) {
+	        _runText = newText;
+	        if (HSLFSlideShow.getLoadSavePhase() == HSLFSlideShow.LoadSavePhase.LOADED) {
+	            parentParagraph.setDirty();
+	        }
+	    }
 	}
 
 	// --------------- Internal helpers on rich text properties -------
@@ -275,7 +285,8 @@ public final class HSLFTextRun implements TextRun {
 	@Override
 	public void setFontFamily(String fontFamily) {
 	    HSLFSheet sheet = parentParagraph.getSheet();
-	    HSLFSlideShow slideShow = (sheet == null) ? null : sheet.getSlideShow();
+	    @SuppressWarnings("resource")
+        HSLFSlideShow slideShow = (sheet == null) ? null : sheet.getSlideShow();
 		if (sheet == null || slideShow == null) {
 			//we can't set font since slideshow is not assigned yet
 			_fontFamily = fontFamily;
@@ -289,6 +300,7 @@ public final class HSLFTextRun implements TextRun {
 	@Override
 	public String getFontFamily() {
         HSLFSheet sheet = parentParagraph.getSheet();
+        @SuppressWarnings("resource")
         HSLFSlideShow slideShow = (sheet == null) ? null : sheet.getSlideShow();
 		if (sheet == null || slideShow == null) {
 			return _fontFamily;

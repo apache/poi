@@ -90,7 +90,12 @@ import org.apache.poi.util.Units;
  * @author Yegor kozlov
  */
 public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagraph>, Closeable {
-	// What we're based on
+    enum LoadSavePhase {
+        INIT, LOADED;
+    }
+    private static ThreadLocal<LoadSavePhase> loadSavePhase = new ThreadLocal<LoadSavePhase>();
+    
+    // What we're based on
 	private HSLFSlideShowImpl _hslfSlideShow;
 
 	// Pointers to the most recent versions of the core records
@@ -127,6 +132,8 @@ public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagrap
 	 * @param hslfSlideShow the HSLFSlideShow to base on
 	 */
 	public HSLFSlideShow(HSLFSlideShowImpl hslfSlideShow) {
+	    loadSavePhase.set(LoadSavePhase.INIT);
+	    
 	    // Get useful things from our base slideshow
 	    _hslfSlideShow = hslfSlideShow;
 
@@ -142,6 +149,8 @@ public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagrap
 
 		// Build up the model level Slides and Notes
 		buildSlidesAndNotes();
+		
+		loadSavePhase.set(LoadSavePhase.LOADED);
 	}
 
 	/**
@@ -154,13 +163,15 @@ public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagrap
 	/**
 	 * Constructs a Powerpoint document from an input stream.
 	 */
-	public HSLFSlideShow(InputStream inputStream) throws IOException {
+	@SuppressWarnings("resource")
+    public HSLFSlideShow(InputStream inputStream) throws IOException {
 		this(new HSLFSlideShowImpl(inputStream));
 	}
 
     /**
      * Constructs a Powerpoint document from an POIFSFileSystem.
      */
+    @SuppressWarnings("resource")
     public HSLFSlideShow(NPOIFSFileSystem npoifs) throws IOException {
         this(new HSLFSlideShowImpl(npoifs));
     }
@@ -168,10 +179,18 @@ public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagrap
     /**
      * Constructs a Powerpoint document from an DirectoryNode.
      */
+    @SuppressWarnings("resource")
     public HSLFSlideShow(DirectoryNode root) throws IOException {
         this(new HSLFSlideShowImpl(root));
     }
 
+    /**
+     * @return the current loading/saving phase
+     */
+    protected static LoadSavePhase getLoadSavePhase() {
+        return loadSavePhase.get();
+    }
+    
 	/**
 	 * Use the PersistPtrHolder entries to figure out what is the "most recent"
 	 * version of all the core records (Document, Notes, Slide etc), and save a
@@ -454,19 +473,25 @@ public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagrap
 	public void write(OutputStream out) throws IOException {
 	    // check for text paragraph modifications
 	    for (HSLFSlide sl : getSlides()) {
-	        for (HSLFShape sh : sl.getShapes()) {
-	            if (!(sh instanceof HSLFTextShape)) continue;
-	            HSLFTextShape hts = (HSLFTextShape)sh;
+	        writeDirtyParagraphs(sl);
+	    }
+	    
+		_hslfSlideShow.write(out);
+	}
+	
+	private void writeDirtyParagraphs(HSLFShapeContainer container) {
+        for (HSLFShape sh : container.getShapes()) {
+            if (sh instanceof HSLFShapeContainer) {
+                writeDirtyParagraphs((HSLFShapeContainer)sh);
+            } else if (sh instanceof HSLFTextShape) {
+                HSLFTextShape hts = (HSLFTextShape)sh;
                 boolean isDirty = false;
                 for (HSLFTextParagraph p : hts.getTextParagraphs()) {
                     isDirty |= p.isDirty();
                 }
-	            if (isDirty) hts.storeText();
-	        }
-	    }
-	    
-	    
-		_hslfSlideShow.write(out);
+                if (isDirty) hts.storeText();
+            }
+        }
 	}
 
 	/*
