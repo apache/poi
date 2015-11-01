@@ -26,7 +26,6 @@ import java.awt.Color;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -49,7 +48,6 @@ import org.apache.poi.hslf.record.Document;
 import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.SlideListWithText;
 import org.apache.poi.hslf.record.SlideListWithText.SlideAtomsSet;
-import org.apache.poi.hslf.record.StyleTextPropAtom;
 import org.apache.poi.hslf.record.TextHeaderAtom;
 import org.apache.poi.sl.draw.DrawPaint;
 import org.apache.poi.sl.usermodel.PaintStyle;
@@ -717,6 +715,77 @@ public final class TestBugs {
         HSLFTextBox tb = (HSLFTextBox)ppt2.getSlides().get(0).getShapes().get(1);
         String textAct = tb.getTextParagraphs().get(0).getTextRuns().get(0).getRawText().trim();
         assertEquals(textExp, textAct);
+        ppt2.close();
+    }
+    
+    @Test
+    public void bug45908() throws IOException {
+        HSLFSlideShow ppt1 = (HSLFSlideShow)SlideShowFactory.create(_slTests.getFile("bug45908.ppt"));
+
+        HSLFSlide slide = ppt1.getSlides().get(0);
+        HSLFAutoShape styleShape = (HSLFAutoShape)slide.getShapes().get(1);
+        HSLFTextParagraph tp0 = styleShape.getTextParagraphs().get(0);
+        HSLFTextRun tr0 = tp0.getTextRuns().get(0);
+
+
+        int rows = 5;
+        int cols = 2;
+        HSLFTable table = slide.createTable(rows, cols);
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+
+                HSLFTableCell cell = table.getCell(i, j);
+                cell.setText("Test");
+
+                HSLFTextParagraph tp = cell.getTextParagraphs().get(0);
+                tp.setBulletStyle('%', tp0.getBulletColor(), tp0.getBulletFont(), tp0.getBulletSize());
+                tp.setIndent(tp0.getIndent());
+                tp.setAlignment(tp0.getTextAlign());
+                tp.setIndentLevel(tp0.getIndentLevel());
+                tp.setSpaceAfter(tp0.getSpaceAfter());
+                tp.setSpaceBefore(tp0.getSpaceBefore());
+                tp.setBulletStyle();
+                
+                HSLFTextRun tr = tp.getTextRuns().get(0);
+                tr.setBold(tr0.isBold());
+                // rt.setEmbossed();
+                tr.setFontColor(Color.BLACK);
+                tr.setFontFamily(tr0.getFontFamily());
+                tr.setFontSize(tr0.getFontSize());
+                tr.setItalic(tr0.isItalic());
+                tr.setShadowed(tr0.isShadowed());
+                tr.setStrikethrough(tr0.isStrikethrough());
+                tr.setUnderlined(tr0.isUnderlined());
+            }
+        }
+
+        table.moveTo(100, 100);
+
+        HSLFSlideShow ppt2 = HSLFTestDataSamples.writeOutAndReadBack(ppt1);
+        ppt1.close();
+
+        HSLFTable tab = (HSLFTable)ppt2.getSlides().get(0).getShapes().get(2);
+        HSLFTableCell c2 = tab.getCell(0, 0);
+        HSLFTextParagraph tp1 = c2.getTextParagraphs().get(0);
+        HSLFTextRun tr1 = tp1.getTextRuns().get(0);
+        assertFalse(tp1.isBullet());
+        assertEquals(tp0.getBulletColor(), tp1.getBulletColor());
+        assertEquals(tp0.getBulletFont(), tp1.getBulletFont());
+        assertEquals(tp0.getBulletSize(), tp1.getBulletSize());
+        assertEquals(tp0.getIndent(), tp1.getIndent());
+        assertEquals(tp0.getTextAlign(), tp1.getTextAlign());
+        assertEquals(tp0.getIndentLevel(), tp1.getIndentLevel());
+        assertEquals(tp0.getSpaceAfter(), tp1.getSpaceAfter());
+        assertEquals(tp0.getSpaceBefore(), tp1.getSpaceBefore());
+        assertEquals(tr0.isBold(), tr1.isBold());
+        assertEquals(Color.black, DrawPaint.applyColorTransform(tr1.getFontColor().getSolidColor()));
+        assertEquals(tr0.getFontFamily(), tr1.getFontFamily());
+        assertEquals(tr0.getFontSize(), tr1.getFontSize());
+        assertEquals(tr0.isItalic(), tr1.isItalic());
+        assertEquals(tr0.isShadowed(), tr1.isShadowed());
+        assertEquals(tr0.isStrikethrough(), tr1.isStrikethrough());
+        assertEquals(tr0.isUnderlined(), tr1.isUnderlined());
+        
         ppt2.close();
     }
 }
