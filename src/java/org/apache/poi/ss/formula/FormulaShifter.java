@@ -39,9 +39,9 @@ import org.apache.poi.ss.formula.ptg.RefPtgBase;
  */
 public final class FormulaShifter {
 
-    static enum ShiftMode {
-        Row,
-        Sheet
+    private static enum ShiftMode {
+        RowMove,
+        SheetMove,
     }
 
     /**
@@ -81,7 +81,7 @@ public final class FormulaShifter {
         _firstMovedIndex = firstMovedIndex;
         _lastMovedIndex = lastMovedIndex;
         _amountToMove = amountToMove;
-        _mode = ShiftMode.Row;
+        _mode = ShiftMode.RowMove;
 
         _srcSheetIndex = _dstSheetIndex = -1;
     }
@@ -97,7 +97,7 @@ public final class FormulaShifter {
 
         _srcSheetIndex = srcSheetIndex;
         _dstSheetIndex = dstSheetIndex;
-        _mode = ShiftMode.Sheet;
+        _mode = ShiftMode.SheetMove;
     }
 
     public static FormulaShifter createForRowShift(int externSheetIndex, String sheetName, int firstMovedRowIndex, int lastMovedRowIndex, int numberOfRowsToMove) {
@@ -139,9 +139,9 @@ public final class FormulaShifter {
 
     private Ptg adjustPtg(Ptg ptg, int currentExternSheetIx) {
         switch(_mode){
-            case Row:
+            case RowMove:
                 return adjustPtgDueToRowMove(ptg, currentExternSheetIx);
-            case Sheet:
+            case SheetMove:
                 return adjustPtgDueToSheetMove(ptg);
             default:
                 throw new IllegalStateException("Unsupported shift mode: " + _mode);
