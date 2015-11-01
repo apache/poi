@@ -689,4 +689,34 @@ public final class TestBugs {
         
         ppt2.close();
     }
+    
+    @Test
+    public void bug45088() throws IOException {
+        String template = "[SYSDATE]";
+        String textExp = "REPLACED_DATE_WITH_A_LONG_ONE";
+        
+        HSLFSlideShow ppt1 = (HSLFSlideShow)SlideShowFactory.create(_slTests.getFile("bug45088.ppt"));
+        for (HSLFSlide slide : ppt1.getSlides()) {
+            for (List<HSLFTextParagraph> paraList : slide.getTextParagraphs()) {
+                for (HSLFTextParagraph para : paraList) {
+                    for (HSLFTextRun run : para.getTextRuns()) {
+                        String text = run.getRawText();
+                        if (text != null && text.contains(template)) {
+                            String replacedText = text.replace(template, textExp);
+                            run.setText(replacedText);
+                            para.setDirty();
+                        }
+                    }
+                }
+            }
+        }
+
+        HSLFSlideShow ppt2 = HSLFTestDataSamples.writeOutAndReadBack(ppt1);
+        ppt1.close();
+        
+        HSLFTextBox tb = (HSLFTextBox)ppt2.getSlides().get(0).getShapes().get(1);
+        String textAct = tb.getTextParagraphs().get(0).getTextRuns().get(0).getRawText().trim();
+        assertEquals(textExp, textAct);
+        ppt2.close();
+    }
 }
