@@ -17,9 +17,12 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import java.io.IOException;
+
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.BaseTestRow;
 import org.apache.poi.xssf.XSSFITestDataProvider;
+import org.junit.Test;
 
 /**
  * Tests for XSSFRow
@@ -30,11 +33,13 @@ public final class TestXSSFRow extends BaseTestRow {
         super(XSSFITestDataProvider.instance);
     }
 
-    public void testRowBounds() {
+    @Test
+    public void testRowBounds() throws IOException {
         baseTestRowBounds(SpreadsheetVersion.EXCEL2007.getLastRowIndex());
     }
 
-    public void testCellBounds() {
+    @Test
+    public void testCellBounds() throws IOException {
         baseTestCellBounds(SpreadsheetVersion.EXCEL2007.getLastColumnIndex());
     }
 }

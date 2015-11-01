@@ -157,11 +157,13 @@ public class ZipSecureFile extends ZipFile {
      * @throws IOException if an I/O error has occurred
      * @throws IllegalStateException if the zip file has been closed
      */
+    @SuppressWarnings("resource")
     public InputStream getInputStream(ZipEntry entry) throws IOException {
         InputStream zipIS = super.getInputStream(entry);
         return addThreshold(zipIS);
     }
 
+    @SuppressWarnings("resource")
     public static ThresholdInputStream addThreshold(InputStream zipIS) throws IOException {
         ThresholdInputStream newInner;
         if (zipIS instanceof InflaterInputStream) {
@@ -246,7 +248,7 @@ public class ZipSecureFile extends ZipFile {
             throw new IOException("Zip bomb detected! The file would exceed the max. ratio of compressed file size to the size of the expanded data. "
                     + "This may indicate that the file is used to inflate memory usage and thus could pose a security risk. "
                     + "You can adjust this limit via ZipSecureFile.setMinInflateRatio() if you need to work with files which exceed this limit. "
-                    + "Counter: " + counter + ", cis.counter: " + (cis == null ? 0 : cis.counter) + ", ratio: " + (cis == null ? 0 : ((double)cis.counter)/counter)
+                    + "Counter: " + counter + ", cis.counter: " + cis.counter + ", ratio: " + (((double)cis.counter)/counter)
                     + "Limits: MIN_INFLATE_RATIO: " + MIN_INFLATE_RATIO);
         }
 

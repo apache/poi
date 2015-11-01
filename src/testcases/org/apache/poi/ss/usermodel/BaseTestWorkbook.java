@@ -34,8 +34,6 @@ import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.junit.Test;
 
-import junit.framework.AssertionFailedError;
-
 /**
  * @author Yegor Kozlov
  */
@@ -48,7 +46,7 @@ public abstract class BaseTestWorkbook {
     }
     
     @Test
-    public void sheetIterator_forEach() {
+    public void sheetIterator_forEach() throws IOException {
         final Workbook wb = _testDataProvider.createWorkbook();
         wb.createSheet("Sheet0");
         wb.createSheet("Sheet1");
@@ -58,10 +56,16 @@ public abstract class BaseTestWorkbook {
             assertEquals("Sheet"+i, sh.getSheetName());
             i++;
         }
+        wb.close();
     }
     
-    @Test
-    public void sheetIterator_sheetsReordered() {
+    /**
+     * Expected ConcurrentModificationException:
+     * should not be able to advance an iterator when the
+     * underlying data has been reordered
+     */
+    @Test(expected=ConcurrentModificationException.class)
+    public void sheetIterator_sheetsReordered() throws IOException {
         final Workbook wb = _testDataProvider.createWorkbook();
         wb.createSheet("Sheet0");
         wb.createSheet("Sheet1");
@@ -74,16 +78,18 @@ public abstract class BaseTestWorkbook {
         // Iterator order should be fixed when iterator is created
         try {
             assertEquals("Sheet1", it.next().getSheetName());
-            fail("Expected ConcurrentModificationException: "+
-                 "should not be able to advance an iterator when the "+
-                 "underlying data has been reordered");
-        } catch (final ConcurrentModificationException e) {
-            // expected
+        } finally {
+            wb.close();
         }
     }
     
-    @Test
-    public void sheetIterator_sheetRemoved() {
+    /**
+     * Expected ConcurrentModificationException:
+     * should not be able to advance an iterator when the
+     * underlying data has been reordered
+     */
+    @Test(expected=ConcurrentModificationException.class)
+    public void sheetIterator_sheetRemoved() throws IOException {
         final Workbook wb = _testDataProvider.createWorkbook();
         wb.createSheet("Sheet0");
         wb.createSheet("Sheet1");
@@ -95,16 +101,17 @@ public abstract class BaseTestWorkbook {
         // Iterator order should be fixed when iterator is created
         try {
             it.next();
-            fail("Expected ConcurrentModificationException: "+
-                 "should not be able to advance an iterator when the "+
-                 "underlying data has been reordered");
-        } catch (final ConcurrentModificationException e) {
-            // expected
+        } finally {
+            wb.close();
         }
     }
     
-    @Test
-    public void sheetIterator_remove() {
+    /**
+     * Expected UnsupportedOperationException:
+     * should not be able to remove sheets from the sheet iterator
+     */
+    @Test(expected=UnsupportedOperationException.class)
+    public void sheetIterator_remove() throws IOException {
         final Workbook wb = _testDataProvider.createWorkbook();
         wb.createSheet("Sheet0");
         
@@ -112,16 +119,14 @@ public abstract class BaseTestWorkbook {
         it.next(); //Sheet0
         try {
             it.remove();
-            fail("Expected UnsupportedOperationException: "+
-                 "should not be able to remove sheets from the sheet iterator");
-        } catch (final UnsupportedOperationException e) {
-            // expected
+        } finally {
+            wb.close();
         }
     }
 
 
     @Test
-    public void createSheet() {
+    public void createSheet() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         assertEquals(0, wb.getNumberOfSheets());
 
@@ -146,7 +151,7 @@ public abstract class BaseTestWorkbook {
         Sheet originalSheet = wb.createSheet("Sheet3");
         Sheet fetchedSheet = wb.getSheet("sheet3");
         if (fetchedSheet == null) {
-            throw new AssertionFailedError("Identified bug 44892");
+            fail("Identified bug 44892");
         }
         assertEquals("Sheet3", fetchedSheet.getSheetName());
         assertEquals(3, wb.getNumberOfSheets());
@@ -212,11 +217,13 @@ public abstract class BaseTestWorkbook {
         assertNull(wb.getSheet("unknown"));
 
         //serialize and read again
-        wb = _testDataProvider.writeOutAndReadBack(wb);
-        assertEquals(3, wb.getNumberOfSheets());
-        assertEquals(0, wb.getSheetIndex("sheet0"));
-        assertEquals(1, wb.getSheetIndex("sheet1"));
-        assertEquals(2, wb.getSheetIndex("I changed!"));
+        Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb);
+        wb.close();
+        assertEquals(3, wb2.getNumberOfSheets());
+        assertEquals(0, wb2.getSheetIndex("sheet0"));
+        assertEquals(1, wb2.getSheetIndex("sheet1"));
+        assertEquals(2, wb2.getSheetIndex("I changed!"));
+        wb2.close();
     }
 
     /**
@@ -228,23 +235,23 @@ public abstract class BaseTestWorkbook {
      * but for the purpose of uniqueness long sheet names are silently truncated to 31 chars.
      */
     @Test
-    public void createSheetWithLongNames() {
-        Workbook wb = _testDataProvider.createWorkbook();
+    public void createSheetWithLongNames() throws IOException {
+        Workbook wb1 = _testDataProvider.createWorkbook();
 
         String sheetName1 = "My very long sheet name which is longer than 31 chars";
         String truncatedSheetName1 = sheetName1.substring(0, 31);
-        Sheet sh1 = wb.createSheet(sheetName1);
+        Sheet sh1 = wb1.createSheet(sheetName1);
         assertEquals(truncatedSheetName1, sh1.getSheetName());
-        assertSame(sh1, wb.getSheet(truncatedSheetName1));
+        assertSame(sh1, wb1.getSheet(truncatedSheetName1));
         // now via wb.setSheetName
-        wb.setSheetName(0, sheetName1);
+        wb1.setSheetName(0, sheetName1);
         assertEquals(truncatedSheetName1, sh1.getSheetName());
-        assertSame(sh1, wb.getSheet(truncatedSheetName1));
+        assertSame(sh1, wb1.getSheet(truncatedSheetName1));
 
         String sheetName2 = "My very long sheet name which is longer than 31 chars " +
                 "and sheetName2.substring(0, 31) == sheetName1.substring(0, 31)";
         try {
-            /*Sheet sh2 =*/ wb.createSheet(sheetName2);
+            /*Sheet sh2 =*/ wb1.createSheet(sheetName2);
             fail("expected exception");
         } catch (IllegalArgumentException e) {
             // expected during successful test
@@ -253,15 +260,17 @@ public abstract class BaseTestWorkbook {
 
         String sheetName3 = "POI allows creating sheets with names longer than 31 characters";
         String truncatedSheetName3 = sheetName3.substring(0, 31);
-        Sheet sh3 = wb.createSheet(sheetName3);
+        Sheet sh3 = wb1.createSheet(sheetName3);
         assertEquals(truncatedSheetName3, sh3.getSheetName());
-        assertSame(sh3, wb.getSheet(truncatedSheetName3));
+        assertSame(sh3, wb1.getSheet(truncatedSheetName3));
 
         //serialize and read again
-        wb = _testDataProvider.writeOutAndReadBack(wb);
-        assertEquals(2, wb.getNumberOfSheets());
-        assertEquals(0, wb.getSheetIndex(truncatedSheetName1));
-        assertEquals(1, wb.getSheetIndex(truncatedSheetName3));
+        Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1);
+        wb1.close();
+        assertEquals(2, wb2.getNumberOfSheets());
+        assertEquals(0, wb2.getSheetIndex(truncatedSheetName1));
+        assertEquals(1, wb2.getSheetIndex(truncatedSheetName3));
+        wb2.close();
     }
 
     @Test
@@ -317,16 +326,17 @@ public abstract class BaseTestWorkbook {
     }
 
     @Test
-    public void defaultValues() {
+    public void defaultValues() throws IOException {
         Workbook b = _testDataProvider.createWorkbook();
         assertEquals(0, b.getActiveSheetIndex());
         assertEquals(0, b.getFirstVisibleTab());
         assertEquals(0, b.getNumberOfNames());
         assertEquals(0, b.getNumberOfSheets());
+        b.close();
     }
 
     @Test
-    public void sheetSelection() {
+    public void sheetSelection() throws IOException {
         Workbook b = _testDataProvider.createWorkbook();
         b.createSheet("Sheet One");
         b.createSheet("Sheet Two");
@@ -335,10 +345,11 @@ public abstract class BaseTestWorkbook {
         b.setFirstVisibleTab(1);
         assertEquals(1, b.getActiveSheetIndex());
         assertEquals(1, b.getFirstVisibleTab());
+        b.close();
     }
 
     @Test
-    public void printArea() {
+    public void printArea() throws IOException {
         Workbook workbook = _testDataProvider.createWorkbook();
         Sheet sheet1 = workbook.createSheet("Test Print Area");
         String sheetName1 = sheet1.getSheetName();
@@ -355,10 +366,11 @@ public abstract class BaseTestWorkbook {
 
         workbook.removePrintArea(0);
         assertNull(workbook.getPrintArea(0));
+        workbook.close();
     }
 
     @Test
-    public void getSetActiveSheet(){
+    public void getSetActiveSheet() throws IOException {
         Workbook workbook = _testDataProvider.createWorkbook();
         assertEquals(0, workbook.getActiveSheetIndex());
 
@@ -373,10 +385,11 @@ public abstract class BaseTestWorkbook {
         workbook.setActiveSheet(0);
         // test if second sheet is set up
         assertEquals(0, workbook.getActiveSheetIndex());
+        workbook.close();
     }
 
     @Test
-    public void setSheetOrder() {
+    public void setSheetOrder() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
 
         for (int i=0; i < 10; i++) {
@@ -420,6 +433,7 @@ public abstract class BaseTestWorkbook {
         assertEquals(9, wb.getSheetIndex("Sheet 1"));
 
         Workbook wbr = _testDataProvider.writeOutAndReadBack(wb);
+        wb.close();
 
         assertEquals(0, wbr.getSheetIndex("Sheet 6"));
         assertEquals(1, wbr.getSheetIndex("Sheet 0"));
@@ -439,10 +453,12 @@ public abstract class BaseTestWorkbook {
         	Sheet s = wbr.getSheetAt(i);
         	assertEquals(i, wbr.getSheetIndex(s));
         }
+        
+        wbr.close();
     }
 
     @Test
-    public void cloneSheet() {
+    public void cloneSheet() throws IOException {
         Workbook book = _testDataProvider.createWorkbook();
         Sheet sheet = book.createSheet("TEST");
         sheet.createRow(0).createCell(0).setCellValue("Test");
@@ -467,14 +483,14 @@ public abstract class BaseTestWorkbook {
         clonedSheet.addMergedRegion(new CellRangeAddress(6, 7, 0, 2));
         assertEquals(3, clonedSheet.getPhysicalNumberOfRows());
         assertEquals(3, clonedSheet.getNumMergedRegions());
-
+        book.close();
     }
 
     @Test
-    public void parentReferences(){
-        Workbook workbook = _testDataProvider.createWorkbook();
-        Sheet sheet = workbook.createSheet();
-        assertSame(workbook, sheet.getWorkbook());
+    public void parentReferences() throws IOException {
+        Workbook wb1 = _testDataProvider.createWorkbook();
+        Sheet sheet = wb1.createSheet();
+        assertSame(wb1, sheet.getWorkbook());
 
         Row row = sheet.createRow(0);
         assertSame(sheet, row.getSheet());
@@ -483,9 +499,10 @@ public abstract class BaseTestWorkbook {
         assertSame(sheet, cell.getSheet());
         assertSame(row, cell.getRow());
 
-        workbook = _testDataProvider.writeOutAndReadBack(workbook);
-        sheet = workbook.getSheetAt(0);
-        assertSame(workbook, sheet.getWorkbook());
+        Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1);
+        wb1.close();
+        sheet = wb2.getSheetAt(0);
+        assertSame(wb2, sheet.getWorkbook());
 
         row = sheet.getRow(0);
         assertSame(sheet, row.getSheet());
@@ -493,6 +510,7 @@ public abstract class BaseTestWorkbook {
         cell = row.getCell(1);
         assertSame(sheet, cell.getSheet());
         assertSame(row, cell.getRow());
+        wb2.close();
     }
 
 
@@ -505,7 +523,7 @@ public abstract class BaseTestWorkbook {
      */
     @Deprecated
     @Test
-    public void setRepeatingRowsAnsColumns(){
+    public void setRepeatingRowsAnsColumns() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet1 = wb.createSheet();
         wb.setRepeatingRowsAndColumns(wb.getSheetIndex(sheet1), 0, 0, 0, 3);
@@ -517,22 +535,23 @@ public abstract class BaseTestWorkbook {
         wb.setRepeatingRowsAndColumns(wb.getSheetIndex(sheet2), 0, 0, 0, 3);
         assertEquals("1:4", sheet2.getRepeatingRows().formatAsString());
         assertEquals("A:A", sheet1.getRepeatingColumns().formatAsString());
+        wb.close();
     }
 
     /**
      * Tests that all of the unicode capable string fields can be set, written and then read back
      */
     @Test
-    public void unicodeInAll() {
-        Workbook wb = _testDataProvider.createWorkbook();
-        CreationHelper factory = wb.getCreationHelper();
+    public void unicodeInAll() throws IOException {
+        Workbook wb1 = _testDataProvider.createWorkbook();
+        CreationHelper factory = wb1.getCreationHelper();
         //Create a unicode dataformat (contains euro symbol)
-        DataFormat df = wb.createDataFormat();
+        DataFormat df = wb1.createDataFormat();
         final String formatStr = "_([$\u20ac-2]\\\\\\ * #,##0.00_);_([$\u20ac-2]\\\\\\ * \\\\\\(#,##0.00\\\\\\);_([$\u20ac-2]\\\\\\ *\\\"\\-\\\\\"??_);_(@_)";
         short fmt = df.getFormat(formatStr);
 
         //Create a unicode sheet name (euro symbol)
-        Sheet s = wb.createSheet("\u20ac");
+        Sheet s = wb1.createSheet("\u20ac");
 
         //Set a unicode header (you guessed it the euro symbol)
         Header h = s.getHeader();
@@ -558,10 +577,11 @@ public abstract class BaseTestWorkbook {
         String formulaString = "TEXT(12.34,\"\u20ac###,##\")";
         c3.setCellFormula(formulaString);
 
-        wb = _testDataProvider.writeOutAndReadBack(wb);
+        Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1);
+        wb1.close();
 
         //Test the sheetname
-        s = wb.getSheet("\u20ac");
+        s = wb2.getSheet("\u20ac");
         assertNotNull(s);
 
         //Test the header
@@ -579,7 +599,7 @@ public abstract class BaseTestWorkbook {
         //Test the dataformat
         r = s.getRow(0);
         c = r.getCell(1);
-        df = wb.createDataFormat();
+        df = wb2.createDataFormat();
         assertEquals(formatStr, df.getFormat(c.getCellStyle().getDataFormat()));
 
         //Test the cell string value
@@ -589,9 +609,10 @@ public abstract class BaseTestWorkbook {
         //Test the cell formula
         c3 = r.getCell(3);
         assertEquals(c3.getCellFormula(), formulaString);
+        wb2.close();
     }
 
-    private Workbook newSetSheetNameTestingWorkbook() throws Exception {
+    private Workbook newSetSheetNameTestingWorkbook() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sh1 = wb.createSheet("Worksheet");
         Sheet sh2 = wb.createSheet("Testing 47100");
@@ -638,15 +659,15 @@ public abstract class BaseTestWorkbook {
      * @see <a href="https://issues.apache.org/bugzilla/show_bug.cgi?id=47100">Bugzilla 47100</a>
      */
     @Test
-    public void setSheetName() throws Exception {
+    public void setSheetName() throws IOException {
 
-        Workbook wb = newSetSheetNameTestingWorkbook();
+        Workbook wb1 = newSetSheetNameTestingWorkbook();
 
-        Sheet sh1 = wb.getSheetAt(0);
+        Sheet sh1 = wb1.getSheetAt(0);
 
-        Name sale_2 = wb.getNameAt(1);
-        Name sale_3 = wb.getNameAt(2);
-        Name sale_4 = wb.getNameAt(3);
+        Name sale_2 = wb1.getNameAt(1);
+        Name sale_3 = wb1.getNameAt(2);
+        Name sale_4 = wb1.getNameAt(3);
 
         assertEquals("sale_2", sale_2.getNameName());
         assertEquals("'Testing 47100'!$A$1", sale_2.getRefersToFormula());
@@ -655,7 +676,7 @@ public abstract class BaseTestWorkbook {
         assertEquals("sale_4", sale_4.getNameName());
         assertEquals("'To be renamed'!$A$3", sale_4.getRefersToFormula());
 
-        FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
+        FormulaEvaluator evaluator = wb1.getCreationHelper().createFormulaEvaluator();
 
         Cell cell0 = sh1.getRow(0).getCell(0);
         Cell cell1 = sh1.getRow(1).getCell(0);
@@ -669,8 +690,8 @@ public abstract class BaseTestWorkbook {
         assertEquals(21.0, evaluator.evaluate(cell1).getNumberValue(), 0);
         assertEquals(6.0, evaluator.evaluate(cell2).getNumberValue(), 0);
 
-        wb.setSheetName(1, "47100 - First");
-        wb.setSheetName(2, "47100 - Second");
+        wb1.setSheetName(1, "47100 - First");
+        wb1.setSheetName(2, "47100 - Second");
 
         assertEquals("sale_2", sale_2.getNameName());
         assertEquals("'47100 - First'!$A$1", sale_2.getRefersToFormula());
@@ -688,13 +709,14 @@ public abstract class BaseTestWorkbook {
         assertEquals(21.0, evaluator.evaluate(cell1).getNumberValue(), 0);
         assertEquals(6.0, evaluator.evaluate(cell2).getNumberValue(), 0);
 
-        wb = _testDataProvider.writeOutAndReadBack(wb);
+        Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1);
+        wb1.close();
 
-        sh1 = wb.getSheetAt(0);
+        sh1 = wb2.getSheetAt(0);
 
-        sale_2 = wb.getNameAt(1);
-        sale_3 = wb.getNameAt(2);
-        sale_4 = wb.getNameAt(3);
+        sale_2 = wb2.getNameAt(1);
+        sale_3 = wb2.getNameAt(2);
+        sale_4 = wb2.getNameAt(3);
 
         cell0 = sh1.getRow(0).getCell(0);
         cell1 = sh1.getRow(1).getCell(0);
@@ -711,13 +733,14 @@ public abstract class BaseTestWorkbook {
         assertEquals("SUM('47100 - First'!A1:C1,'47100 - Second'!A1:A5)", cell1.getCellFormula());
         assertEquals("sale_2+sale_3+'47100 - First'!C1", cell2.getCellFormula());
 
-        evaluator = wb.getCreationHelper().createFormulaEvaluator();
+        evaluator = wb2.getCreationHelper().createFormulaEvaluator();
         assertEquals(6.0, evaluator.evaluate(cell0).getNumberValue(), 0);
         assertEquals(21.0, evaluator.evaluate(cell1).getNumberValue(), 0);
         assertEquals(6.0, evaluator.evaluate(cell2).getNumberValue(), 0);
+        wb2.close();
     }
 
-    public void changeSheetNameWithSharedFormulas(String sampleFile){
+    public void changeSheetNameWithSharedFormulas(String sampleFile) throws IOException {
         Workbook wb = _testDataProvider.openSampleWorkbook(sampleFile);
 
         FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
@@ -740,6 +763,7 @@ public abstract class BaseTestWorkbook {
 
             assertEquals(cellB.getStringCellValue(), evaluator.evaluate(cellA).getStringValue());
         }
+        wb.close();
     }
 
 	protected void assertSheetOrder(Workbook wb, String... sheets) {
