@@ -136,68 +136,73 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
     }
 
     @Test
-    public void readWriteWithCharts() {
-        HSSFWorkbook b;
+    public void readWriteWithCharts() throws IOException {
         HSSFSheet s;
 
         // Single chart, two sheets
-        b = HSSFTestDataSamples.openSampleWorkbook("44010-SingleChart.xls");
-        assertEquals(2, b.getNumberOfSheets());
-        assertEquals("Graph2", b.getSheetName(1));
-        s = b.getSheetAt(1);
+        HSSFWorkbook b1 = HSSFTestDataSamples.openSampleWorkbook("44010-SingleChart.xls");
+        assertEquals(2, b1.getNumberOfSheets());
+        assertEquals("Graph2", b1.getSheetName(1));
+        s = b1.getSheetAt(1);
         assertEquals(0, s.getFirstRowNum());
         assertEquals(8, s.getLastRowNum());
 
         // Has chart on 1st sheet??
         // FIXME
-        assertNotNull(b.getSheetAt(0).getDrawingPatriarch());
-        assertNull(b.getSheetAt(1).getDrawingPatriarch());
-        assertFalse(b.getSheetAt(0).getDrawingPatriarch().containsChart());
+        assertNotNull(b1.getSheetAt(0).getDrawingPatriarch());
+        assertNull(b1.getSheetAt(1).getDrawingPatriarch());
+        assertFalse(b1.getSheetAt(0).getDrawingPatriarch().containsChart());
+        b1.close();
 
         // We've now called getDrawingPatriarch() so
         //  everything will be all screwy
         // So, start again
-        b = HSSFTestDataSamples.openSampleWorkbook("44010-SingleChart.xls");
+        HSSFWorkbook b2 = HSSFTestDataSamples.openSampleWorkbook("44010-SingleChart.xls");
 
-        b = HSSFTestDataSamples.writeOutAndReadBack(b);
-        assertEquals(2, b.getNumberOfSheets());
-        s = b.getSheetAt(1);
+        HSSFWorkbook b3 = HSSFTestDataSamples.writeOutAndReadBack(b2);
+        b2.close();
+
+        assertEquals(2, b3.getNumberOfSheets());
+        s = b3.getSheetAt(1);
         assertEquals(0, s.getFirstRowNum());
         assertEquals(8, s.getLastRowNum());
-
+        b3.close();
 
         // Two charts, three sheets
-        b = HSSFTestDataSamples.openSampleWorkbook("44010-TwoCharts.xls");
-        assertEquals(3, b.getNumberOfSheets());
+        HSSFWorkbook b4 = HSSFTestDataSamples.openSampleWorkbook("44010-TwoCharts.xls");
+        assertEquals(3, b4.getNumberOfSheets());
 
-        s = b.getSheetAt(1);
+        s = b4.getSheetAt(1);
         assertEquals(0, s.getFirstRowNum());
         assertEquals(8, s.getLastRowNum());
-        s = b.getSheetAt(2);
+        s = b4.getSheetAt(2);
         assertEquals(0, s.getFirstRowNum());
         assertEquals(8, s.getLastRowNum());
 
         // Has chart on 1st sheet??
         // FIXME
-        assertNotNull(b.getSheetAt(0).getDrawingPatriarch());
-        assertNull(b.getSheetAt(1).getDrawingPatriarch());
-        assertNull(b.getSheetAt(2).getDrawingPatriarch());
-        assertFalse(b.getSheetAt(0).getDrawingPatriarch().containsChart());
+        assertNotNull(b4.getSheetAt(0).getDrawingPatriarch());
+        assertNull(b4.getSheetAt(1).getDrawingPatriarch());
+        assertNull(b4.getSheetAt(2).getDrawingPatriarch());
+        assertFalse(b4.getSheetAt(0).getDrawingPatriarch().containsChart());
+        b4.close();
 
         // We've now called getDrawingPatriarch() so
         //  everything will be all screwy
         // So, start again
-        b = HSSFTestDataSamples.openSampleWorkbook("44010-TwoCharts.xls");
+        HSSFWorkbook b5 = HSSFTestDataSamples.openSampleWorkbook("44010-TwoCharts.xls");
 
-        b = HSSFTestDataSamples.writeOutAndReadBack(b);
-        assertEquals(3, b.getNumberOfSheets());
+        HSSFWorkbook b6 = HSSFTestDataSamples.writeOutAndReadBack(b5);
+        b5.close();
+        assertEquals(3, b6.getNumberOfSheets());
 
-        s = b.getSheetAt(1);
+        s = b6.getSheetAt(1);
         assertEquals(0, s.getFirstRowNum());
         assertEquals(8, s.getLastRowNum());
-        s = b.getSheetAt(2);
+        s = b6.getSheetAt(2);
         assertEquals(0, s.getFirstRowNum());
         assertEquals(8, s.getLastRowNum());
+        b6.close();
     }
 
     @SuppressWarnings("deprecation")
@@ -399,7 +404,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
      *  that point to deleted sheets
      */
     @Test
-    public void namesToDeleteSheets() {
+    public void namesToDeleteSheets() throws IOException {
         HSSFWorkbook b = HSSFTestDataSamples.openSampleWorkbook("30978-deleted.xls");
         assertEquals(3, b.getNumberOfNames());
 
@@ -478,6 +483,8 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         assertEquals("OnSheet3", n.getNameName());
         assertEquals("Sheet3", n.getSheetName());
         assertEquals("Sheet3!$A$1:$A$2", n.getRefersToFormula());
+        
+        b.close();
     }
 
     /**
@@ -520,30 +527,33 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
      * 1-based sheet tab index (not a 1-based extern sheet index)
      */
     @Test
-    public void findBuiltInNameRecord() {
+    public void findBuiltInNameRecord() throws IOException {
         // testRRaC has multiple (3) built-in name records
         // The second print titles name record has getSheetNumber()==4
-        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("testRRaC.xls");
+        HSSFWorkbook wb1 = HSSFTestDataSamples.openSampleWorkbook("testRRaC.xls");
         NameRecord nr;
-        assertEquals(3, wb.getWorkbook().getNumNames());
-        nr = wb.getWorkbook().getNameRecord(2);
+        assertEquals(3, wb1.getWorkbook().getNumNames());
+        nr = wb1.getWorkbook().getNameRecord(2);
         // TODO - render full row and full column refs properly
-        assertEquals("Sheet2!$A$1:$IV$1", HSSFFormulaParser.toFormulaString(wb, nr.getNameDefinition())); // 1:1
+        assertEquals("Sheet2!$A$1:$IV$1", HSSFFormulaParser.toFormulaString(wb1, nr.getNameDefinition())); // 1:1
 
         try {
-          wb.getSheetAt(3).setRepeatingRows(CellRangeAddress.valueOf("9:12"));
-          wb.getSheetAt(3).setRepeatingColumns(CellRangeAddress.valueOf("E:F"));
+          wb1.getSheetAt(3).setRepeatingRows(CellRangeAddress.valueOf("9:12"));
+          wb1.getSheetAt(3).setRepeatingColumns(CellRangeAddress.valueOf("E:F"));
         } catch (RuntimeException e) {
             if (e.getMessage().equals("Builtin (7) already exists for sheet (4)")) {
                 // there was a problem in the code which locates the existing print titles name record
-                throw new RuntimeException("Identified bug 45720b");
+                fail("Identified bug 45720b");
             }
+            wb1.close();
             throw e;
         }
-        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
-        assertEquals(3, wb.getWorkbook().getNumNames());
-        nr = wb.getWorkbook().getNameRecord(2);
-        assertEquals("Sheet2!E:F,Sheet2!$A$9:$IV$12", HSSFFormulaParser.toFormulaString(wb, nr.getNameDefinition())); // E:F,9:12
+        HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1);
+        wb1.close();
+        assertEquals(3, wb2.getWorkbook().getNumNames());
+        nr = wb2.getWorkbook().getNameRecord(2);
+        assertEquals("Sheet2!E:F,Sheet2!$A$9:$IV$12", HSSFFormulaParser.toFormulaString(wb2, nr.getNameDefinition())); // E:F,9:12
+        wb2.close();
     }
 
     /**
@@ -565,6 +575,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         
         fs2.close();
         wb.close();
+        fs1.close();
     }
     
     /**
@@ -827,20 +838,23 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
             EscherBSERecord bse = iwb.getBSERecord(pictureIndex);
             assertEquals(3, bse.getRef());
         }
+        
+        wb.close();
     }
 
     @Test
-    public void changeSheetNameWithSharedFormulas() {
+    public void changeSheetNameWithSharedFormulas() throws IOException {
         changeSheetNameWithSharedFormulas("shared_formulas.xls");
     }
 
-    @Test
+    // Should throw exception about invalid POIFSFileSystem
+    @Test(expected=IllegalArgumentException.class)
     public void emptyDirectoryNode() throws IOException {
+        POIFSFileSystem fs = new POIFSFileSystem();
         try {
-            assertNotNull(new HSSFWorkbook(new POIFSFileSystem()));
-            fail("Should catch exception about invalid POIFSFileSystem");
-        } catch (IllegalArgumentException e) {
-            assertTrue(e.getMessage(), e.getMessage().contains("does not contain a BIFF8"));
+            new HSSFWorkbook(fs).close();
+        } finally {
+            fs.close();
         }
     }
 
@@ -1060,6 +1074,8 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
 
 		HSSFWorkbook read = HSSFTestDataSamples.writeOutAndReadBack(wb);
 		assertSheetOrder(read, "Invoice", "Invoice1", "Digest", "Deferred", "Received");
+		read.close();
+		wb.close();
 	}
 
     @Test
@@ -1101,6 +1117,8 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
 
 		HSSFWorkbook read = HSSFTestDataSamples.writeOutAndReadBack(wb);
 		assertSheetOrder(read, "Invoice", "Deferred", "Received", "Digest");
+		read.close();
+		wb.close();
 	}
 	
     @Test
@@ -1140,13 +1158,13 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
 		assertSheetOrder(wb, "Sheet1", "Sheet3", "ASheet");
 		assertEquals("ASheet!A1", wb.getName(nameName).getRefersToFormula());
 
-		expectName(
-				new HSSFWorkbook(new ByteArrayInputStream(stream.toByteArray())),
-				nameName, "ASheet!A1");
-		expectName(
-				new HSSFWorkbook(
-						new ByteArrayInputStream(stream2.toByteArray())),
-				nameName, "ASheet!A1");
+		HSSFWorkbook wb2 = new HSSFWorkbook(new ByteArrayInputStream(stream.toByteArray()));
+		expectName(wb2, nameName, "ASheet!A1");
+		HSSFWorkbook wb3 = new HSSFWorkbook(new ByteArrayInputStream(stream2.toByteArray()));
+		expectName(wb3, nameName, "ASheet!A1");
+		wb3.close();
+		wb2.close();
+		wb.close();
 	}
 
 	private void expectName(HSSFWorkbook wb, String name, String expect) {
@@ -1183,10 +1201,11 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         }
         
         assertTrue("Should find some images via Client or Child anchors, but did not find any at all", found);
+        workbook.close();
     }
 
     @Test
-    public void testRewriteFileBug58480() throws Exception {
+    public void testRewriteFileBug58480() throws IOException {
         final File file = TempFile.createTempFile("TestHSSFWorkbook", ".xls");
 
         try {
@@ -1221,7 +1240,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
     }
 
     private void writeAndCloseWorkbook(Workbook workbook, File file)
-            throws IOException, InterruptedException {
+    throws IOException {
         final ByteArrayOutputStream bytesOut = new ByteArrayOutputStream();
         workbook.write(bytesOut);
         workbook.close();

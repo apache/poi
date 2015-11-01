@@ -17,15 +17,19 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import java.io.IOException;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
-import junit.framework.AssertionFailedError;
+import java.io.IOException;
 
 import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.hssf.record.BlankRecord;
 import org.apache.poi.hssf.record.RowRecord;
-import org.apache.poi.ss.usermodel.BaseTestRow;
 import org.apache.poi.ss.SpreadsheetVersion;
+import org.apache.poi.ss.usermodel.BaseTestRow;
+import org.junit.Test;
 
 /**
  * Test HSSFRow is okay.
@@ -38,15 +42,16 @@ public final class TestHSSFRow extends BaseTestRow {
         super(HSSFITestDataProvider.instance);
     }
 
-    public void testRowBounds() {
+    public void testRowBounds() throws IOException {
         baseTestRowBounds(SpreadsheetVersion.EXCEL97.getLastRowIndex());
     }
 
-    public void testCellBounds() {
+    public void testCellBounds() throws IOException {
         baseTestCellBounds(SpreadsheetVersion.EXCEL97.getLastColumnIndex());
     }
 
-    public void testLastAndFirstColumns_bug46654() {
+    @Test
+    public void testLastAndFirstColumns_bug46654() throws IOException {
         int ROW_IX = 10;
         int COL_IX = 3;
         HSSFWorkbook workbook = new HSSFWorkbook();
@@ -64,15 +69,18 @@ public final class TestHSSFRow extends BaseTestRow {
         HSSFCell cell = row.createCellFromRecord(br);
 
         if (row.getFirstCellNum() == 2 && row.getLastCellNum() == 5) {
-            throw new AssertionFailedError("Identified bug 46654a");
+            fail("Identified bug 46654a");
         }
         assertEquals(COL_IX, row.getFirstCellNum());
         assertEquals(COL_IX + 1, row.getLastCellNum());
         row.removeCell(cell);
         assertEquals(-1, row.getFirstCellNum());
         assertEquals(-1, row.getLastCellNum());
+
+        workbook.close();
     }
 
+    @Test
     public void testMoveCell() throws IOException {
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet();
@@ -121,6 +129,7 @@ public final class TestHSSFRow extends BaseTestRow {
         workbook.close();
     }
 
+    @Test
     public void testRowHeight() throws IOException{
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet();

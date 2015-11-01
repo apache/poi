@@ -38,6 +38,7 @@ import java.util.zip.CRC32;
 
 import org.apache.poi.POIXMLProperties;
 import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.ContentTypes;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
@@ -83,36 +84,35 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
 	 * Tests that we can save, and then re-load a new document
 	 */
 	@Test
-	public void saveLoadNew() throws Exception {
-		@SuppressWarnings("resource")
-        XSSFWorkbook workbook = new XSSFWorkbook();
+	public void saveLoadNew() throws IOException, InvalidFormatException {
+        XSSFWorkbook wb1 = new XSSFWorkbook();
 
 		//check that the default date system is set to 1900
-		CTWorkbookPr pr = workbook.getCTWorkbook().getWorkbookPr();
+		CTWorkbookPr pr = wb1.getCTWorkbook().getWorkbookPr();
 		assertNotNull(pr);
 		assertTrue(pr.isSetDate1904());
 		assertFalse("XSSF must use the 1900 date system", pr.getDate1904());
 
-		Sheet sheet1 = workbook.createSheet("sheet1");
-		Sheet sheet2 = workbook.createSheet("sheet2");
-		workbook.createSheet("sheet3");
+		Sheet sheet1 = wb1.createSheet("sheet1");
+		Sheet sheet2 = wb1.createSheet("sheet2");
+		wb1.createSheet("sheet3");
 
-		RichTextString rts = workbook.getCreationHelper().createRichTextString("hello world");
+		RichTextString rts = wb1.getCreationHelper().createRichTextString("hello world");
 
 		sheet1.createRow(0).createCell((short)0).setCellValue(1.2);
 		sheet1.createRow(1).createCell((short)0).setCellValue(rts);
 		sheet2.createRow(0);
 
-		assertEquals(0, workbook.getSheetAt(0).getFirstRowNum());
-		assertEquals(1, workbook.getSheetAt(0).getLastRowNum());
-		assertEquals(0, workbook.getSheetAt(1).getFirstRowNum());
-		assertEquals(0, workbook.getSheetAt(1).getLastRowNum());
-		assertEquals(0, workbook.getSheetAt(2).getFirstRowNum());
-		assertEquals(0, workbook.getSheetAt(2).getLastRowNum());
+		assertEquals(0, wb1.getSheetAt(0).getFirstRowNum());
+		assertEquals(1, wb1.getSheetAt(0).getLastRowNum());
+		assertEquals(0, wb1.getSheetAt(1).getFirstRowNum());
+		assertEquals(0, wb1.getSheetAt(1).getLastRowNum());
+		assertEquals(0, wb1.getSheetAt(2).getFirstRowNum());
+		assertEquals(0, wb1.getSheetAt(2).getLastRowNum());
 
 		File file = TempFile.createTempFile("poi-", ".xlsx");
 		OutputStream out = new FileOutputStream(file);
-		workbook.write(out);
+		wb1.write(out);
 		out.close();
 
 		// Check the package contains what we'd expect it to
@@ -128,26 +128,27 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
 		// Links to the three sheets, shared strings and styles
 		assertTrue(wbPart.hasRelationships());
 		assertEquals(5, wbPart.getRelationships().size());
-		workbook.close();
-		
+		wb1.close();
+
 		// Load back the XSSFWorkbook
-		workbook = new XSSFWorkbook(pkg);
-		assertEquals(3, workbook.getNumberOfSheets());
-		assertNotNull(workbook.getSheetAt(0));
-		assertNotNull(workbook.getSheetAt(1));
-		assertNotNull(workbook.getSheetAt(2));
+		@SuppressWarnings("resource")
+        XSSFWorkbook wb2 = new XSSFWorkbook(pkg);
+		assertEquals(3, wb2.getNumberOfSheets());
+		assertNotNull(wb2.getSheetAt(0));
+		assertNotNull(wb2.getSheetAt(1));
+		assertNotNull(wb2.getSheetAt(2));
 
-		assertNotNull(workbook.getSharedStringSource());
-		assertNotNull(workbook.getStylesSource());
+		assertNotNull(wb2.getSharedStringSource());
+		assertNotNull(wb2.getStylesSource());
 
-		assertEquals(0, workbook.getSheetAt(0).getFirstRowNum());
-		assertEquals(1, workbook.getSheetAt(0).getLastRowNum());
-		assertEquals(0, workbook.getSheetAt(1).getFirstRowNum());
-		assertEquals(0, workbook.getSheetAt(1).getLastRowNum());
-		assertEquals(0, workbook.getSheetAt(2).getFirstRowNum());
-		assertEquals(0, workbook.getSheetAt(2).getLastRowNum());
+		assertEquals(0, wb2.getSheetAt(0).getFirstRowNum());
+		assertEquals(1, wb2.getSheetAt(0).getLastRowNum());
+		assertEquals(0, wb2.getSheetAt(1).getFirstRowNum());
+		assertEquals(0, wb2.getSheetAt(1).getLastRowNum());
+		assertEquals(0, wb2.getSheetAt(2).getFirstRowNum());
+		assertEquals(0, wb2.getSheetAt(2).getLastRowNum());
 
-		sheet1 = workbook.getSheetAt(0);
+		sheet1 = wb2.getSheetAt(0);
 		assertEquals(1.2, sheet1.getRow(0).getCell(0).getNumericCellValue(), 0.0001);
 		assertEquals("hello world", sheet1.getRow(1).getCell(0).getRichStringCellValue().getString());
 
@@ -171,6 +172,7 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
 		assertEquals(6, wbPart.getRelationships().size());
 
 		pkg.close();
+		workbook.close();
 	}
 
     @Test
@@ -181,7 +183,7 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
     		//get default style
     		CellStyle cellStyleAt = workbook.getCellStyleAt(i);
     		assertNotNull(cellStyleAt);
-    
+
     		//get custom style
     		StylesTable styleSource = workbook.getStylesSource();
     		XSSFCellStyle customStyle = new XSSFCellStyle(styleSource);
@@ -205,7 +207,7 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
     		//get default font
     		Font fontAt = workbook.getFontAt(i);
     		assertNotNull(fontAt);
-    
+
     		//get customized font
     		XSSFFont customFont = new XSSFFont();
     		customFont.setItalic(true);
@@ -230,7 +232,7 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
 	}
 
     @Test
-	public void loadSave() {
+	public void loadSave() throws IOException {
 		XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("Formatting.xlsx");
 		assertEquals(3, workbook.getNumberOfSheets());
 		assertEquals("dd/mm/yyyy", workbook.getSheetAt(0).getRow(1).getCell(0).getRichStringCellValue().getString());
@@ -251,13 +253,16 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
 		assertEquals("yy/mm/dd", wb2.getSheetAt(0).getRow(4).getCell(0).getRichStringCellValue().getString());
 		assertNotNull(wb2.getSharedStringSource());
 		assertNotNull(wb2.getStylesSource());
+
+		workbook.close();
+		wb2.close();
 	}
 
     @Test
-	public void styles() {
-		XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("Formatting.xlsx");
+	public void styles() throws IOException {
+		XSSFWorkbook wb1 = XSSFTestDataSamples.openSampleWorkbook("Formatting.xlsx");
 
-		StylesTable ss = workbook.getStylesSource();
+		StylesTable ss = wb1.getStylesSource();
 		assertNotNull(ss);
 		StylesTable st = ss;
 
@@ -281,15 +286,17 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
 
 
 		// Save, load back in again, and check
-		workbook = XSSFTestDataSamples.writeOutAndReadBack(workbook);
+		XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb1);
+		wb1.close();
 
-		ss = workbook.getStylesSource();
+		ss = wb2.getStylesSource();
 		assertNotNull(ss);
 
 		assertEquals(10, st._getNumberFormatSize());
 		assertEquals(2, st.getFonts().size());
 		assertEquals(2, st.getFills().size());
 		assertEquals(1, st.getBorders().size());
+		wb2.close();
 	}
 
     @Test
@@ -300,7 +307,7 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
     		assertEquals(1, sheetId);
     		sheetId = (int)wb.createSheet().sheet.getSheetId();
     		assertEquals(2, sheetId);
-    
+
     		//test file with gaps in the sheetId sequence
     		XSSFWorkbook wbBack = XSSFTestDataSamples.openSampleWorkbook("47089.xlsm");
     		try {
@@ -317,7 +324,7 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
 
 	/**
 	 *  Test setting of core properties such as Title and Author
-	 * @throws IOException 
+	 * @throws IOException
 	 */
     @Test
 	public void workbookProperties() throws IOException {
@@ -327,19 +334,20 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
     		assertNotNull(props);
     		//the Application property must be set for new workbooks, see Bugzilla #47559
     		assertEquals("Apache POI", props.getExtendedProperties().getUnderlyingProperties().getApplication());
-    
+
     		PackagePropertiesPart opcProps = props.getCoreProperties().getUnderlyingProperties();
     		assertNotNull(opcProps);
-    
+
     		opcProps.setTitleProperty("Testing Bugzilla #47460");
     		assertEquals("Apache POI", opcProps.getCreatorProperty().getValue());
     		opcProps.setCreatorProperty("poi-dev@poi.apache.org");
-    
+
     		XSSFWorkbook wbBack = XSSFTestDataSamples.writeOutAndReadBack(workbook);
     		assertEquals("Apache POI", wbBack.getProperties().getExtendedProperties().getUnderlyingProperties().getApplication());
     		opcProps = wbBack.getProperties().getCoreProperties().getUnderlyingProperties();
     		assertEquals("Testing Bugzilla #47460", opcProps.getTitleProperty().getValue());
     		assertEquals("poi-dev@poi.apache.org", opcProps.getCreatorProperty().getValue());
+    		wbBack.close();
 		} finally {
 		    workbook.close();
 		}
@@ -380,13 +388,14 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
 		crc1.update(data1);
 
 		assertEquals(crc0.getValue(), crc1.getValue());
+		workbook.close();
 	}
 
 	/**
 	 * When deleting a sheet make sure that we adjust sheet indices of named ranges
 	 */
     @Test
-	public void bug47737() {
+	public void bug47737() throws IOException {
 		XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("47737.xlsx");
 		assertEquals(2, wb.getNumberOfNames());
 		assertNotNull(wb.getCalculationChain());
@@ -406,6 +415,7 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
 		assertEquals(0, nm2.getCTName().getLocalSheetId());
 		//calculation chain is removed as well
 		assertNull(wb.getCalculationChain());
+		wb.close();
 
 	}
 
@@ -413,27 +423,29 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
 	 * Problems with XSSFWorkbook.removeSheetAt when workbook contains charts
 	 */
     @Test
-	public void bug47813() {
-		XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("47813.xlsx");
-		assertEquals(3, wb.getNumberOfSheets());
-		assertNotNull(wb.getCalculationChain());
+	public void bug47813() throws IOException {
+		XSSFWorkbook wb1 = XSSFTestDataSamples.openSampleWorkbook("47813.xlsx");
+		assertEquals(3, wb1.getNumberOfSheets());
+		assertNotNull(wb1.getCalculationChain());
 
-		assertEquals("Numbers", wb.getSheetName(0));
+		assertEquals("Numbers", wb1.getSheetName(0));
 		//the second sheet is of type 'chartsheet'
-		assertEquals("Chart", wb.getSheetName(1));
-		assertTrue(wb.getSheetAt(1) instanceof XSSFChartSheet);
-		assertEquals("SomeJunk", wb.getSheetName(2));
+		assertEquals("Chart", wb1.getSheetName(1));
+		assertTrue(wb1.getSheetAt(1) instanceof XSSFChartSheet);
+		assertEquals("SomeJunk", wb1.getSheetName(2));
 
-		wb.removeSheetAt(2);
-		assertEquals(2, wb.getNumberOfSheets());
-		assertNull(wb.getCalculationChain());
+		wb1.removeSheetAt(2);
+		assertEquals(2, wb1.getNumberOfSheets());
+		assertNull(wb1.getCalculationChain());
 
-		wb = XSSFTestDataSamples.writeOutAndReadBack(wb);
-		assertEquals(2, wb.getNumberOfSheets());
-		assertNull(wb.getCalculationChain());
+		XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb1);
+		assertEquals(2, wb2.getNumberOfSheets());
+		assertNull(wb2.getCalculationChain());
 
-		assertEquals("Numbers", wb.getSheetName(0));
-		assertEquals("Chart", wb.getSheetName(1));
+		assertEquals("Numbers", wb2.getSheetName(0));
+		assertEquals("Chart", wb2.getSheetName(1));
+		wb2.close();
+		wb1.close();
 	}
 
 	/**
@@ -441,33 +453,33 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
 	 *  coming out wrong
 	 */
     @Test
-	public void bug49702() throws Exception {
+	public void bug49702() throws IOException {
 	    // First try with a new file
-	    XSSFWorkbook wb = new XSSFWorkbook();
+	    XSSFWorkbook wb1 = new XSSFWorkbook();
 
 	    // Should have one style
-	    assertEquals(1, wb.getNumCellStyles());
-	    wb.getCellStyleAt((short)0);
+	    assertEquals(1, wb1.getNumCellStyles());
+	    wb1.getCellStyleAt((short)0);
 	    try {
-	        wb.getCellStyleAt((short)1);
+	        wb1.getCellStyleAt((short)1);
 	        fail("Shouldn't be able to get style at 1 that doesn't exist");
 	    } catch(IndexOutOfBoundsException e) {}
 
 	    // Add another one
-	    CellStyle cs = wb.createCellStyle();
+	    CellStyle cs = wb1.createCellStyle();
 	    cs.setDataFormat((short)11);
 
 	    // Re-check
-	    assertEquals(2, wb.getNumCellStyles());
-	    wb.getCellStyleAt((short)0);
-	    wb.getCellStyleAt((short)1);
+	    assertEquals(2, wb1.getNumCellStyles());
+	    wb1.getCellStyleAt((short)0);
+	    wb1.getCellStyleAt((short)1);
 	    try {
-	        wb.getCellStyleAt((short)2);
+	        wb1.getCellStyleAt((short)2);
 	        fail("Shouldn't be able to get style at 2 that doesn't exist");
 	    } catch(IndexOutOfBoundsException e) {}
 
 	    // Save and reload
-	    XSSFWorkbook nwb = XSSFTestDataSamples.writeOutAndReadBack(wb);
+	    XSSFWorkbook nwb = XSSFTestDataSamples.writeOutAndReadBack(wb1);
 	    assertEquals(2, nwb.getNumCellStyles());
 	    nwb.getCellStyleAt((short)0);
 	    nwb.getCellStyleAt((short)1);
@@ -477,15 +489,19 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
 	    } catch(IndexOutOfBoundsException e) {}
 
 	    // Now with an existing file
-	    wb = XSSFTestDataSamples.openSampleWorkbook("sample.xlsx");
-	    assertEquals(3, wb.getNumCellStyles());
-	    wb.getCellStyleAt((short)0);
-	    wb.getCellStyleAt((short)1);
-	    wb.getCellStyleAt((short)2);
+	    XSSFWorkbook wb2 = XSSFTestDataSamples.openSampleWorkbook("sample.xlsx");
+	    assertEquals(3, wb2.getNumCellStyles());
+	    wb2.getCellStyleAt((short)0);
+	    wb2.getCellStyleAt((short)1);
+	    wb2.getCellStyleAt((short)2);
 	    try {
-	        wb.getCellStyleAt((short)3);
+	        wb2.getCellStyleAt((short)3);
 	        fail("Shouldn't be able to get style at 3 that doesn't exist");
 	    } catch(IndexOutOfBoundsException e) {}
+
+	    wb2.close();
+	    wb1.close();
+	    nwb.close();
 	}
 
     @Test
@@ -495,20 +511,20 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
             assertFalse(wb.getForceFormulaRecalculation());
             CTWorkbook ctWorkbook = wb.getCTWorkbook();
             assertFalse(ctWorkbook.isSetCalcPr());
-    
+
             wb.setForceFormulaRecalculation(true); // resets the EngineId flag to zero
-    
+
             CTCalcPr calcPr = ctWorkbook.getCalcPr();
             assertNotNull(calcPr);
             assertEquals(0, (int) calcPr.getCalcId());
-    
+
             calcPr.setCalcId(100);
             assertTrue(wb.getForceFormulaRecalculation());
-    
+
             wb.setForceFormulaRecalculation(true); // resets the EngineId flag to zero
             assertEquals(0, (int) calcPr.getCalcId());
             assertFalse(wb.getForceFormulaRecalculation());
-    
+
             // calcMode="manual" is unset when forceFormulaRecalculation=true
             calcPr.setCalcMode(STCalcMode.MANUAL);
             wb.setForceFormulaRecalculation(true);
@@ -519,7 +535,7 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
     }
 
     @Test
-    public void changeSheetNameWithSharedFormulas() {
+    public void changeSheetNameWithSharedFormulas() throws IOException {
         changeSheetNameWithSharedFormulas("shared_formulas.xlsx");
     }
 
@@ -549,7 +565,7 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
 		sheet = workbook.createSheet();
         sheet.setColumnWidth(4, 5000);
         sheet.setColumnWidth(5, 5000);
-       
+
         sheet.groupColumn((short) 4, (short) 5);
 
         accessWorkbook(workbook);
@@ -562,6 +578,7 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
 		}
 
 		accessWorkbook(workbook);
+		workbook.close();
 	}
 
 	private void accessWorkbook(XSSFWorkbook workbook) {
@@ -573,39 +590,36 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
 	}
 
     @Test
-	public void bug48495() {
-		try {
-			Workbook wb = XSSFTestDataSamples.openSampleWorkbook("48495.xlsx");
-			
-			assertSheetOrder(wb, "Sheet1");
-			
-			Sheet sheet = wb.getSheetAt(0);
-			sheet.shiftRows(2, sheet.getLastRowNum(), 1, true, false);
-			Row newRow = sheet.getRow(2);
-			if (newRow == null) newRow = sheet.createRow(2);
-			newRow.createCell(0).setCellValue(" Another Header");
-			wb.cloneSheet(0);
+	public void bug48495() throws IOException {
+		Workbook wb = XSSFTestDataSamples.openSampleWorkbook("48495.xlsx");
 
-			assertSheetOrder(wb, "Sheet1", "Sheet1 (2)");
+		assertSheetOrder(wb, "Sheet1");
 
-			//		    FileOutputStream fileOut = new FileOutputStream("/tmp/bug48495.xlsx");
+		Sheet sheet = wb.getSheetAt(0);
+		sheet.shiftRows(2, sheet.getLastRowNum(), 1, true, false);
+		Row newRow = sheet.getRow(2);
+		if (newRow == null) newRow = sheet.createRow(2);
+		newRow.createCell(0).setCellValue(" Another Header");
+		wb.cloneSheet(0);
+
+		assertSheetOrder(wb, "Sheet1", "Sheet1 (2)");
+
+		//		    FileOutputStream fileOut = new FileOutputStream("/tmp/bug48495.xlsx");
 //		    try {
 //		    	wb.write(fileOut);
 //		    } finally {
 //		    	fileOut.close();
 //		    }
-			
-			Workbook read = XSSFTestDataSamples.writeOutAndReadBack(wb);
-			assertNotNull(read);
-			assertSheetOrder(read, "Sheet1", "Sheet1 (2)");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		System.out.println("Done");
+
+		Workbook read = XSSFTestDataSamples.writeOutAndReadBack(wb);
+		assertNotNull(read);
+		assertSheetOrder(read, "Sheet1", "Sheet1 (2)");
+		read.close();
+		wb.close();
 	}
-	
+
     @Test
-	public void bug47090a() {
+	public void bug47090a() throws IOException {
 	    Workbook workbook = XSSFTestDataSamples.openSampleWorkbook("47090.xlsx");
 		assertSheetOrder(workbook, "Sheet1", "Sheet2");
 	    workbook.removeSheetAt(0);
@@ -614,10 +628,12 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
 		assertSheetOrder(workbook, "Sheet2", "Sheet1");
 	    Workbook read = XSSFTestDataSamples.writeOutAndReadBack(workbook);
 		assertSheetOrder(read, "Sheet2", "Sheet1");
+		read.close();
+		workbook.close();
 	}
-	
+
     @Test
-	public void bug47090b() {
+	public void bug47090b() throws IOException {
 	    Workbook workbook = XSSFTestDataSamples.openSampleWorkbook("47090.xlsx");
 	    assertSheetOrder(workbook, "Sheet1", "Sheet2");
 	    workbook.removeSheetAt(1);
@@ -626,39 +642,45 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
 		assertSheetOrder(workbook, "Sheet1", "Sheet0");		// Sheet0 because it uses "Sheet" + sheets.size() as starting point!
 	    Workbook read = XSSFTestDataSamples.writeOutAndReadBack(workbook);
 		assertSheetOrder(read, "Sheet1", "Sheet0");
+		read.close();
+		workbook.close();
 	}
 
     @Test
-	public void bug47090c() {
+	public void bug47090c() throws IOException {
 	    Workbook workbook = XSSFTestDataSamples.openSampleWorkbook("47090.xlsx");
 	    assertSheetOrder(workbook, "Sheet1", "Sheet2");
 	    workbook.removeSheetAt(0);
 		assertSheetOrder(workbook, "Sheet2");
-	    workbook.cloneSheet(0);	
+	    workbook.cloneSheet(0);
 		assertSheetOrder(workbook, "Sheet2", "Sheet2 (2)");
 	    Workbook read = XSSFTestDataSamples.writeOutAndReadBack(workbook);
 		assertSheetOrder(read, "Sheet2", "Sheet2 (2)");
+		read.close();
+		workbook.close();
 	}
-	
+
     @Test
-	public void bug47090d() {
+	public void bug47090d() throws IOException {
 	    Workbook workbook = XSSFTestDataSamples.openSampleWorkbook("47090.xlsx");
 	    assertSheetOrder(workbook, "Sheet1", "Sheet2");
 	    workbook.createSheet();
 		assertSheetOrder(workbook, "Sheet1", "Sheet2", "Sheet0");
 	    workbook.removeSheetAt(0);
 		assertSheetOrder(workbook, "Sheet2", "Sheet0");
-	    workbook.createSheet();	
+	    workbook.createSheet();
 		assertSheetOrder(workbook, "Sheet2", "Sheet0", "Sheet1");
 	    Workbook read = XSSFTestDataSamples.writeOutAndReadBack(workbook);
 		assertSheetOrder(read, "Sheet2", "Sheet0", "Sheet1");
+		read.close();
+		workbook.close();
 	}
-	
+
     @Test
 	public void bug51158() throws IOException {
         // create a workbook
-        final XSSFWorkbook workbook = new XSSFWorkbook();
-        XSSFSheet sheet = workbook.createSheet("Test Sheet");
+        final XSSFWorkbook wb1 = new XSSFWorkbook();
+        XSSFSheet sheet = wb1.createSheet("Test Sheet");
         XSSFRow row = sheet.createRow(2);
         XSSFCell cell = row.createCell(3);
         cell.setCellValue("test1");
@@ -675,52 +697,59 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
 //        row.createCell(0).setCellStyle(cs);
 
         // write the first excel file
-        XSSFWorkbook readBack = XSSFTestDataSamples.writeOutAndReadBack(workbook);
-        assertNotNull(readBack);
-        assertEquals("test1", readBack.getSheetAt(0).getRow(2).getCell(3).getStringCellValue());
-        assertNull(readBack.getSheetAt(0).getRow(2).getCell(4));
+        XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb1);
+        assertNotNull(wb2);
+        sheet = wb2.getSheetAt(0);
+        row = sheet.getRow(2);
+        assertEquals("test1", row.getCell(3).getStringCellValue());
+        assertNull(row.getCell(4));
 
         // add a new cell to the sheet
         cell = row.createCell(4);
         cell.setCellValue("test2");
 
         // write the second excel file
-        readBack = XSSFTestDataSamples.writeOutAndReadBack(workbook);
-        assertNotNull(readBack);
-        assertEquals("test1", readBack.getSheetAt(0).getRow(2).getCell(3).getStringCellValue());
-        assertEquals("test2", readBack.getSheetAt(0).getRow(2).getCell(4).getStringCellValue());
+        XSSFWorkbook wb3 = XSSFTestDataSamples.writeOutAndReadBack(wb2);
+        assertNotNull(wb3);
+        sheet = wb3.getSheetAt(0);
+        row = sheet.getRow(2);        
+        
+        assertEquals("test1", row.getCell(3).getStringCellValue());
+        assertEquals("test2", row.getCell(4).getStringCellValue());
+        wb3.close();
+        wb2.close();
+        wb1.close();
 	}
-	
+
     @Test
 	public void bug51158a() throws IOException {
         // create a workbook
         final XSSFWorkbook workbook = new XSSFWorkbook();
         try {
             workbook.createSheet("Test Sheet");
-    
+
             XSSFSheet sheetBack = workbook.getSheetAt(0);
-    
+
             // committing twice did add the XML twice without clearing the part in between
             sheetBack.commit();
-    
+
             // ensure that a memory based package part does not have lingering data from previous commit() calls
             if(sheetBack.getPackagePart() instanceof MemoryPackagePart) {
                 ((MemoryPackagePart)sheetBack.getPackagePart()).clear();
             }
-    
+
             sheetBack.commit();
-    
+
             String str = new String(IOUtils.toByteArray(sheetBack.getPackagePart().getInputStream()));
-            System.out.println(str);
-            
+
             assertEquals(1, countMatches(str, "<worksheet"));
         } finally {
             workbook.close();
         }
-    }	
-	
+    }
+
     private static final int INDEX_NOT_FOUND = -1;
-    
+
     private static boolean isEmpty(CharSequence cs) {
         return cs == null || cs.length() == 0;
     }
@@ -737,7 +766,7 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
         }
         return count;
     }
-    
+
     private static int indexOf(CharSequence cs, CharSequence searchChar, int start) {
         return cs.toString().indexOf(searchChar.toString(), start);
     }
@@ -796,7 +825,7 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
         XSSFWorkbook wb = new XSSFWorkbook();
         try {
             setPivotData(wb);
-    
+
             FileOutputStream fileOut = new FileOutputStream(file);
             wb.write(fileOut);
             fileOut.close();
@@ -810,7 +839,7 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
         } finally {
             wb2.close();
         }
-        
+
         assertTrue(file.delete());
     }
 
@@ -821,7 +850,7 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
         XSSFWorkbook wb = new XSSFWorkbook();
         try {
             setPivotData(wb);
-    
+
             FileOutputStream fileOut = new FileOutputStream(file);
             try {
                 wb.write(fileOut);
@@ -839,29 +868,29 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
         } finally {
             wb2.close();
         }
-        
+
         assertTrue(file.delete());
     }
-    
+
     @Test
     public void testSetFirstVisibleTab_57373() throws IOException {
         Workbook wb = new XSSFWorkbook();
-        
+
         try {
             /*Sheet sheet1 =*/ wb.createSheet();
             Sheet sheet2 = wb.createSheet();
             int idx2 = wb.getSheetIndex(sheet2);
             Sheet sheet3 = wb.createSheet();
             int idx3 = wb.getSheetIndex(sheet3);
-            
+
             // add many sheets so "first visible" is relevant
             for(int i = 0; i < 30;i++) {
                 wb.createSheet();
             }
-            
+
             wb.setFirstVisibleTab(idx2);
             wb.setActiveSheet(idx3);
-            
+
             //wb.write(new FileOutputStream(new File("C:\\temp\\test.xlsx")));
 
             assertEquals(idx2, wb.getFirstVisibleTab());
@@ -873,6 +902,7 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
             sheet3 = wbBack.getSheetAt(idx3);
             assertEquals(idx2, wb.getFirstVisibleTab());
             assertEquals(idx3, wb.getActiveSheetIndex());
+            wbBack.close();
         } finally {
             wb.close();
         }
@@ -883,175 +913,163 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
      */
     @Test
     public void testSetVBAProject() throws Exception {
-        XSSFWorkbook workbook = null;
-        OutputStream out = null;
         File file;
         final byte[] allBytes = new byte[256];
         for (int i = 0; i < 256; i++) {
             allBytes[i] = (byte) (i - 128);
         }
-        try {
-            workbook = new XSSFWorkbook();
-            workbook.createSheet();
-            workbook.setVBAProject(new ByteArrayInputStream(allBytes));
-            file = TempFile.createTempFile("poi-", ".xlsm");
-            out = new FileOutputStream(file);
-            workbook.write(out);
-        }
-        finally {
-            IOUtils.closeQuietly(out);
-            IOUtils.closeQuietly(workbook);
-        }
 
-        try {
-            // Check the package contains what we'd expect it to
-            OPCPackage pkg = OPCPackage.open(file.toString());
-            PackagePart wbPart = pkg.getPart(PackagingURIHelper.createPartName("/xl/workbook.xml"));
-            assertTrue(wbPart.hasRelationships());
-            final PackageRelationshipCollection relationships = wbPart.getRelationships().getRelationships(XSSFRelation.VBA_MACROS.getRelation());
-            assertEquals(1, relationships.size());
-            assertEquals(XSSFRelation.VBA_MACROS.getDefaultFileName(), relationships.getRelationship(0).getTargetURI().toString());
-            PackagePart vbaPart = pkg.getPart(PackagingURIHelper.createPartName(XSSFRelation.VBA_MACROS.getDefaultFileName()));
-            assertNotNull(vbaPart);
-            assertFalse(vbaPart.isRelationshipPart());
-            assertEquals(XSSFRelation.VBA_MACROS.getContentType(), vbaPart.getContentType());
-            final byte[] fromFile = IOUtils.toByteArray(vbaPart.getInputStream());
-            assertArrayEquals(allBytes, fromFile);
+        XSSFWorkbook wb1 = new XSSFWorkbook();
+        wb1.createSheet();
+        wb1.setVBAProject(new ByteArrayInputStream(allBytes));
+        file = TempFile.createTempFile("poi-", ".xlsm");
+        OutputStream out = new FileOutputStream(file);
+        wb1.write(out);
+        out.close();
+        wb1.close();
 
-            // Load back the XSSFWorkbook just to check nothing explodes
-            workbook = new XSSFWorkbook(pkg);
-            assertEquals(1, workbook.getNumberOfSheets());
-            assertEquals(XSSFWorkbookType.XLSM, workbook.getWorkbookType());
-        }
-        finally {
-            IOUtils.closeQuietly(workbook);
-        }
+        // Check the package contains what we'd expect it to
+        OPCPackage pkg = OPCPackage.open(file.toString());
+        PackagePart wbPart = pkg.getPart(PackagingURIHelper.createPartName("/xl/workbook.xml"));
+        assertTrue(wbPart.hasRelationships());
+        final PackageRelationshipCollection relationships = wbPart.getRelationships().getRelationships(XSSFRelation.VBA_MACROS.getRelation());
+        assertEquals(1, relationships.size());
+        assertEquals(XSSFRelation.VBA_MACROS.getDefaultFileName(), relationships.getRelationship(0).getTargetURI().toString());
+        PackagePart vbaPart = pkg.getPart(PackagingURIHelper.createPartName(XSSFRelation.VBA_MACROS.getDefaultFileName()));
+        assertNotNull(vbaPart);
+        assertFalse(vbaPart.isRelationshipPart());
+        assertEquals(XSSFRelation.VBA_MACROS.getContentType(), vbaPart.getContentType());
+        final byte[] fromFile = IOUtils.toByteArray(vbaPart.getInputStream());
+        assertArrayEquals(allBytes, fromFile);
+
+        // Load back the XSSFWorkbook just to check nothing explodes
+        @SuppressWarnings("resource")
+        XSSFWorkbook wb2 = new XSSFWorkbook(pkg);
+        assertEquals(1, wb2.getNumberOfSheets());
+        assertEquals(XSSFWorkbookType.XLSM, wb2.getWorkbookType());
+        pkg.close();
     }
 
     @Test
     public void testBug54399() throws IOException {
         XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("54399.xlsx");
-              
-        //System.out.println("sheets:" + workbook.getNumberOfSheets());
 
-        for (int i = 0; i < workbook.getNumberOfSheets(); i++) {  
-          //System.out.println("i:" + i);
+        for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
           workbook.setSheetName(i, "SheetRenamed" + (i + 1));
-        }  
+        }
 
-//        FileOutputStream fileOutputStream = new FileOutputStream("/tmp/54399.xlsx"); 
-//        workbook.write(fileOutputStream);
-//        fileOutputStream.close();  
+        workbook.close();
     }
-    
+
     @SuppressWarnings("unchecked")
     @Test
     /**
      *  Iterator<XSSFSheet> XSSFWorkbook.iterator was committed in r700472 on 2008-09-30
      *  and has been replaced with Iterator<Sheet> XSSFWorkbook.iterator
-     * 
+     *
      *  In order to make code for looping over sheets in workbooks standard, regardless
      *  of the type of workbook (HSSFWorkbook, XSSFWorkbook, SXSSFWorkbook), the previously
      *  available Iterator<XSSFSheet> iterator and Iterator<XSSFSheet> sheetIterator
      *  have been replaced with Iterator<Sheet>  {@link #iterator} and
      *  Iterator<Sheet> {@link #sheetIterator}. This makes iterating over sheets in a workbook
      *  similar to iterating over rows in a sheet and cells in a row.
-     *  
+     *
      *  Note: this breaks backwards compatibility! Existing codebases will need to
      *  upgrade their code with either of the following options presented in this test case.
-     *  
+     *
      */
-    public void bug58245_XSSFSheetIterator() {
+    public void bug58245_XSSFSheetIterator() throws IOException {
         final XSSFWorkbook wb = new XSSFWorkbook();
-        try {
-            wb.createSheet();
-            
-            // =====================================================================
-            // Case 1: Existing code uses XSSFSheet for-each loop
-            // =====================================================================
-            // Original code (no longer valid)
-            /*
-            for (XSSFSheet sh : wb) {
-                sh.createRow(0);
-            }
-            */
-            
-            // Option A:
-            for (XSSFSheet sh : (Iterable<XSSFSheet>) (Iterable<? extends Sheet>) wb) {
-                sh.createRow(0);
-            }
-            
-            // Option B (preferred for new code):
-            for (Sheet sh : wb) {
-                sh.createRow(0);
-            }
-    
-            // =====================================================================
-            // Case 2: Existing code creates an iterator variable
-            // =====================================================================
-            // Original code (no longer valid)
-            /*
-            Iterator<XSSFSheet> it = wb.iterator();
+        wb.createSheet();
+
+        // =====================================================================
+        // Case 1: Existing code uses XSSFSheet for-each loop
+        // =====================================================================
+        // Original code (no longer valid)
+        /*
+        for (XSSFSheet sh : wb) {
+            sh.createRow(0);
+        }
+        */
+
+        // Option A:
+        for (XSSFSheet sh : (Iterable<XSSFSheet>) (Iterable<? extends Sheet>) wb) {
+            sh.createRow(0);
+        }
+
+        // Option B (preferred for new code):
+        for (Sheet sh : wb) {
+            sh.createRow(0);
+        }
+
+        // =====================================================================
+        // Case 2: Existing code creates an iterator variable
+        // =====================================================================
+        // Original code (no longer valid)
+        /*
+        Iterator<XSSFSheet> it = wb.iterator();
+        XSSFSheet sh = it.next();
+        sh.createRow(0);
+        */
+
+        // Option A:
+        {
+            Iterator<XSSFSheet> it = (Iterator<XSSFSheet>) (Iterator<? extends Sheet>) wb.iterator();
             XSSFSheet sh = it.next();
             sh.createRow(0);
-            */
-            
-            // Option A:
-            {
-                Iterator<XSSFSheet> it = (Iterator<XSSFSheet>) (Iterator<? extends Sheet>) wb.iterator();
-                XSSFSheet sh = it.next();
-                sh.createRow(0);
-            }
-            
-            // Option B:
-            {
-                @SuppressWarnings("deprecation")
-                Iterator<XSSFSheet> it = wb.xssfSheetIterator();
-                XSSFSheet sh = it.next();
-                sh.createRow(0);
-            }
-            
-            // Option C (preferred for new code):
-            {
-                Iterator<Sheet> it = wb.iterator();
-                Sheet sh = it.next();
-                sh.createRow(0);
-            }
         }
-        finally {
-            IOUtils.closeQuietly(wb);
+
+        // Option B:
+        {
+            @SuppressWarnings("deprecation")
+            Iterator<XSSFSheet> it = wb.xssfSheetIterator();
+            XSSFSheet sh = it.next();
+            sh.createRow(0);
         }
-	}
+
+        // Option C (preferred for new code):
+        {
+            Iterator<Sheet> it = wb.iterator();
+            Sheet sh = it.next();
+            sh.createRow(0);
+        }
+        wb.close();
+    }
 
     @Test
     public void testBug56957CloseWorkbook() throws Exception {
         File file = TempFile.createTempFile("TestBug56957_", ".xlsx");
-        
+        final String dateExp = "Sun Nov 09 00:00:00 CET 2014";
+
         try {
             // as the file is written to, we make a copy before actually working on it
             FileHelper.copyFile(HSSFTestDataSamples.getSampleFile("56957.xlsx"), file);
-            
+
             assertTrue(file.exists());
-            
+
             // read-only mode works!
             Workbook workbook = WorkbookFactory.create(OPCPackage.open(file, PackageAccess.READ));
-            System.out.println(workbook.getSheetAt(0).getRow(0).getCell(0, Row.CREATE_NULL_AS_BLANK).getDateCellValue().toString());
+            String str = workbook.getSheetAt(0).getRow(0).getCell(0, Row.CREATE_NULL_AS_BLANK).getDateCellValue().toString();
+            assertEquals(dateExp, str);
             workbook.close();
             workbook = null;
-    
+
             workbook = WorkbookFactory.create(OPCPackage.open(file, PackageAccess.READ));
-            System.out.println(workbook.getSheetAt(0).getRow(0).getCell(0, Row.CREATE_NULL_AS_BLANK).getDateCellValue().toString());
+            str = workbook.getSheetAt(0).getRow(0).getCell(0, Row.CREATE_NULL_AS_BLANK).getDateCellValue().toString();
+            assertEquals(dateExp, str);
             workbook.close();
             workbook = null;
-    
+
             // now check read/write mode
             workbook = WorkbookFactory.create(OPCPackage.open(file, PackageAccess.READ_WRITE));
-            System.out.println(workbook.getSheetAt(0).getRow(0).getCell(0, Row.CREATE_NULL_AS_BLANK).getDateCellValue().toString());
+            str = workbook.getSheetAt(0).getRow(0).getCell(0, Row.CREATE_NULL_AS_BLANK).getDateCellValue().toString();
+            assertEquals(dateExp, str);
             workbook.close();
             workbook = null;
-    
+
             workbook = WorkbookFactory.create(OPCPackage.open(file, PackageAccess.READ_WRITE));
-            System.out.println(workbook.getSheetAt(0).getRow(0).getCell(0, Row.CREATE_NULL_AS_BLANK).getDateCellValue().toString());
+            str = workbook.getSheetAt(0).getRow(0).getCell(0, Row.CREATE_NULL_AS_BLANK).getDateCellValue().toString();
+            assertEquals(dateExp, str);
             workbook.close();
             workbook = null;
         } finally {
