@@ -32,6 +32,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.zip.CRC32;
@@ -63,6 +64,7 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
@@ -1039,7 +1041,7 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
     @Test
     public void testBug56957CloseWorkbook() throws Exception {
         File file = TempFile.createTempFile("TestBug56957_", ".xlsx");
-        final String dateExp = "Sun Nov 09 00:00:00 CET 2014";
+        final Date dateExp = LocaleUtil.getLocaleCalendar(2014, 10, 9).getTime();
 
         try {
             // as the file is written to, we make a copy before actually working on it
@@ -1049,27 +1051,27 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
 
             // read-only mode works!
             Workbook workbook = WorkbookFactory.create(OPCPackage.open(file, PackageAccess.READ));
-            String str = workbook.getSheetAt(0).getRow(0).getCell(0, Row.CREATE_NULL_AS_BLANK).getDateCellValue().toString();
-            assertEquals(dateExp, str);
+            Date dateAct = workbook.getSheetAt(0).getRow(0).getCell(0, Row.CREATE_NULL_AS_BLANK).getDateCellValue();
+            assertEquals(dateExp, dateAct);
             workbook.close();
             workbook = null;
 
             workbook = WorkbookFactory.create(OPCPackage.open(file, PackageAccess.READ));
-            str = workbook.getSheetAt(0).getRow(0).getCell(0, Row.CREATE_NULL_AS_BLANK).getDateCellValue().toString();
-            assertEquals(dateExp, str);
+            dateAct = workbook.getSheetAt(0).getRow(0).getCell(0, Row.CREATE_NULL_AS_BLANK).getDateCellValue();
+            assertEquals(dateExp, dateAct);
             workbook.close();
             workbook = null;
 
             // now check read/write mode
             workbook = WorkbookFactory.create(OPCPackage.open(file, PackageAccess.READ_WRITE));
-            str = workbook.getSheetAt(0).getRow(0).getCell(0, Row.CREATE_NULL_AS_BLANK).getDateCellValue().toString();
-            assertEquals(dateExp, str);
+            dateAct = workbook.getSheetAt(0).getRow(0).getCell(0, Row.CREATE_NULL_AS_BLANK).getDateCellValue();
+            assertEquals(dateExp, dateAct);
             workbook.close();
             workbook = null;
 
             workbook = WorkbookFactory.create(OPCPackage.open(file, PackageAccess.READ_WRITE));
-            str = workbook.getSheetAt(0).getRow(0).getCell(0, Row.CREATE_NULL_AS_BLANK).getDateCellValue().toString();
-            assertEquals(dateExp, str);
+            dateAct = workbook.getSheetAt(0).getRow(0).getCell(0, Row.CREATE_NULL_AS_BLANK).getDateCellValue();
+            assertEquals(dateExp, dateAct);
             workbook.close();
             workbook = null;
         } finally {
