@@ -32,12 +32,14 @@ import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
+import org.junit.Test;
 
 public final class TestXSSFHyperlink extends BaseTestHyperlink {
 	public TestXSSFHyperlink() {
 		super(XSSFITestDataProvider.instance);
 	}
 
+	@Test
 	public void testLoadExisting() {
 		XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("WithMoreVariousData.xlsx");
 		assertEquals(3, workbook.getNumberOfSheets());
@@ -49,6 +51,7 @@ public final class TestXSSFHyperlink extends BaseTestHyperlink {
 		doTestHyperlinkContents(sheet);
 	}
 
+    @Test
     public void testCreate() throws Exception {
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheet = workbook.createSheet();
@@ -91,6 +94,7 @@ public final class TestXSSFHyperlink extends BaseTestHyperlink {
         }
     }
 
+    @Test
     public void testInvalidURLs() throws IOException {
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFCreationHelper createHelper = workbook.getCreationHelper();
@@ -111,6 +115,7 @@ public final class TestXSSFHyperlink extends BaseTestHyperlink {
         workbook.close();
     }
 
+    @Test
     public void testLoadSave() {
 		XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("WithMoreVariousData.xlsx");
 		CreationHelper createHelper = workbook.getCreationHelper();
@@ -222,6 +227,7 @@ public final class TestXSSFHyperlink extends BaseTestHyperlink {
 				sheet.getRow(16).getCell(2).getHyperlink().getAddress());
 	}
 
+    @Test
     public void test52716() {
         XSSFWorkbook wb1 = XSSFTestDataSamples.openSampleWorkbook("52716.xlsx");
         XSSFSheet sh1 = wb1.getSheetAt(0);
@@ -241,6 +247,7 @@ public final class TestXSSFHyperlink extends BaseTestHyperlink {
         assertEquals("B1", l2.getCellRef());
     }
 
+    @Test
     public void test53734() {
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("53734.xlsx");
         XSSFHyperlink link = wb.getSheetAt(0).getRow(0).getCell(0).getHyperlink();
@@ -251,6 +258,7 @@ public final class TestXSSFHyperlink extends BaseTestHyperlink {
         assertEquals("javascript:///", link.getAddress());
     }
 
+    @Test
     public void test53282() {
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("53282.xlsx");
         XSSFHyperlink link = wb.getSheetAt(0).getRow(0).getCell(14).getHyperlink();
