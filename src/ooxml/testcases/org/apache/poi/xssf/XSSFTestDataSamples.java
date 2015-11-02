@@ -37,53 +37,51 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  * @author Josh Micich
  */
 public class XSSFTestDataSamples {
-   /**
-    * Used by {@link writeOutAndReadBack(R wb, String testName)}.  If a
-    * value is set for this in the System Properties, the xlsx file
-    * will be written out to that directory.
-    */
-   public static final String TEST_OUTPUT_DIR = "poi.test.xssf.output.dir";
+    /**
+     * Used by {@link writeOutAndReadBack(R wb, String testName)}.  If a
+     * value is set for this in the System Properties, the xlsx file
+     * will be written out to that directory.
+     */
+    public static final String TEST_OUTPUT_DIR = "poi.test.xssf.output.dir";
 
-   public static File getSampleFile(String sampleFileName) {
-      return HSSFTestDataSamples.getSampleFile(sampleFileName);
-   }
-   public static OPCPackage openSamplePackage(String sampleName) {
-      try {
-         return OPCPackage.open(
-               HSSFTestDataSamples.openSampleFileStream(sampleName)
-         );
-      } catch(Exception e) {
-         throw new RuntimeException(e);
-      }
-   }
-	public static XSSFWorkbook openSampleWorkbook(String sampleName) {
-		InputStream is = HSSFTestDataSamples.openSampleFileStream(sampleName);
-		try {
-			return new XSSFWorkbook(is);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-	}
+    public static File getSampleFile(String sampleFileName) {
+        return HSSFTestDataSamples.getSampleFile(sampleFileName);
+    }
+    public static OPCPackage openSamplePackage(String sampleName) {
+        try {
+            return OPCPackage.open(HSSFTestDataSamples.openSampleFileStream(sampleName));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public static XSSFWorkbook openSampleWorkbook(String sampleName) {
+        InputStream is = HSSFTestDataSamples.openSampleFileStream(sampleName);
+        try {
+            return new XSSFWorkbook(is);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
     public static <R extends Workbook> R writeOutAndReadBack(R wb) {
-    	Workbook result;
-		try {
+        Workbook result;
+        try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream(8192);
             wb.write(baos);
             InputStream is = new ByteArrayInputStream(baos.toByteArray());
-	    	if (wb instanceof HSSFWorkbook) {
-	    		result = new HSSFWorkbook(is);
-	    	} else if (wb instanceof XSSFWorkbook) {
-    			result = new XSSFWorkbook(is);
-	    	} else {
-	    		throw new RuntimeException("Unexpected workbook type ("
-	    				+ wb.getClass().getName() + ")");
-	    	}
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-		@SuppressWarnings("unchecked")
-		R r = (R) result;
-		return r;
+            if (wb instanceof HSSFWorkbook) {
+                result = new HSSFWorkbook(is);
+            } else if (wb instanceof XSSFWorkbook) {
+                result = new XSSFWorkbook(is);
+            } else {
+                throw new RuntimeException("Unexpected workbook type ("
+                        + wb.getClass().getName() + ")");
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        @SuppressWarnings("unchecked")
+        R r = (R) result;
+        return r;
     }
     
     /**
