@@ -372,7 +372,7 @@ public class SXSSFRow implements Row
      */
     public float getHeightInPoints()
     {
-        return (float)(_height==-1?getSheet().getDefaultRowHeightInPoints():(float)_height/20.0);
+        return (float)(_height==-1?getSheet().getDefaultRowHeightInPoints():_height/20.0);
     }
     
     /**
