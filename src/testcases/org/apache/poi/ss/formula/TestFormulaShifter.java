@@ -19,6 +19,7 @@ package org.apache.poi.ss.formula;
 
 import junit.framework.TestCase;
 
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.ptg.AreaErrPtg;
 import org.apache.poi.ss.formula.ptg.AreaPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
@@ -74,6 +75,56 @@ public final class TestFormulaShifter extends TestCase {
 
 		confirmAreaShift(aptg, 18, 22,  5, 10, 25); // simple expansion at bottom
 	}
+	
+	public void testCopyAreasSourceRowsRelRel() {
+
+		// all these operations are on an area ref spanning rows 10 to 20
+		final AreaPtg aptg  = createAreaPtg(10, 20, true, true);
+
+		confirmAreaCopy(aptg,  0, 30, 20, 30, 40, true);
+		confirmAreaCopy(aptg,  15, 25, -15, -1, -1, true); //DeletedRef
+	}
+	
+	public void testCopyAreasSourceRowsRelAbs() {
+
+		// all these operations are on an area ref spanning rows 10 to 20
+		final AreaPtg aptg  = createAreaPtg(10, 20, true, false);
+
+		// Only first row should move
+		confirmAreaCopy(aptg,  0, 30, 20, 20, 30, true);
+		confirmAreaCopy(aptg,  15, 25, -15, -1, -1, true); //DeletedRef
+	}
+	
+	public void testCopyAreasSourceRowsAbsRel() {
+		// aptg is part of a formula in a cell that was just copied to another row
+		// aptg row references should be updated by the difference in rows that the cell was copied
+		// No other references besides the cells that were involved in the copy need to be updated
+		// this makes the row copy significantly different from the row shift, where all references
+		// in the workbook need to track the row shift
+
+		// all these operations are on an area ref spanning rows 10 to 20
+		final AreaPtg aptg  = createAreaPtg(10, 20, false, true);
+
+		// Only last row should move
+		confirmAreaCopy(aptg,  0, 30, 20, 10, 40, true);
+		confirmAreaCopy(aptg,  15, 25, -15, 5, 10, true); //sortTopLeftToBottomRight swapped firstRow and lastRow because firstRow is absolute
+	}
+	
+	public void testCopyAreasSourceRowsAbsAbs() {
+		// aptg is part of a formula in a cell that was just copied to another row
+		// aptg row references should be updated by the difference in rows that the cell was copied
+		// No other references besides the cells that were involved in the copy need to be updated
+		// this makes the row copy significantly different from the row shift, where all references
+		// in the workbook need to track the row shift
+		
+		// all these operations are on an area ref spanning rows 10 to 20
+		final AreaPtg aptg  = createAreaPtg(10, 20, false, false);
+
+		//AbsFirstRow AbsLastRow references should't change when copied to a different row
+		confirmAreaCopy(aptg,  0, 30, 20, 10, 20, false);
+		confirmAreaCopy(aptg,  15, 25, -15, 10, 20, false);
+	}
+	
 	/**
 	 * Tests what happens to an area ref when some outside rows are moved to overlap
 	 * that area ref
@@ -97,7 +148,7 @@ public final class TestFormulaShifter extends TestCase {
 			int firstRowMoved, int lastRowMoved, int numberRowsMoved,
 			int expectedAreaFirstRow, int expectedAreaLastRow) {
 
-		FormulaShifter fs = FormulaShifter.createForRowShift(0, "", firstRowMoved, lastRowMoved, numberRowsMoved);
+		FormulaShifter fs = FormulaShifter.createForRowShift(0, "", firstRowMoved, lastRowMoved, numberRowsMoved, SpreadsheetVersion.EXCEL2007);
 		boolean expectedChanged = aptg.getFirstRow() != expectedAreaFirstRow || aptg.getLastRow() != expectedAreaLastRow;
 
 		AreaPtg copyPtg = (AreaPtg) aptg.copy(); // clone so we can re-use aptg in calling method
@@ -113,7 +164,36 @@ public final class TestFormulaShifter extends TestCase {
 		assertEquals(expectedAreaLastRow, copyPtg.getLastRow());
 
 	}
+	
+	
+	private static void confirmAreaCopy(AreaPtg aptg,
+			int firstRowCopied, int lastRowCopied, int rowOffset,
+			int expectedFirstRow, int expectedLastRow, boolean expectedChanged) {
+
+		final AreaPtg copyPtg = (AreaPtg) aptg.copy(); // clone so we can re-use aptg in calling method
+		final Ptg[] ptgs = { copyPtg, };
+		final FormulaShifter fs = FormulaShifter.createForRowCopy(0, null, firstRowCopied, lastRowCopied, rowOffset, SpreadsheetVersion.EXCEL2007);
+		final boolean actualChanged = fs.adjustFormula(ptgs, 0);
+		
+		// DeletedAreaRef
+		if (expectedFirstRow < 0 || expectedLastRow < 0) {
+			assertEquals("Reference should have shifted off worksheet, producing #REF! error: " + ptgs[0],
+					AreaErrPtg.class, ptgs[0].getClass());
+			return;
+		}
+		
+		assertEquals("Should this AreaPtg change due to row copy?", expectedChanged, actualChanged);
+		assertEquals("AreaPtgs should be modified in-place when a row containing the AreaPtg is copied", copyPtg, ptgs[0]);  // expected to change in place (although this is not a strict requirement)
+		assertEquals("AreaPtg first row", expectedFirstRow, copyPtg.getFirstRow());
+		assertEquals("AreaPtg last row", expectedLastRow, copyPtg.getLastRow());
+
+	}
+	
 	private static AreaPtg createAreaPtg(int initialAreaFirstRow, int initialAreaLastRow) {
-		return new AreaPtg(initialAreaFirstRow, initialAreaLastRow, 2, 5, false, false, false, false);
+		return createAreaPtg(initialAreaFirstRow, initialAreaLastRow, false, false);
+	}
+	
+	private static AreaPtg createAreaPtg(int initialAreaFirstRow, int initialAreaLastRow, boolean firstRowRelative, boolean lastRowRelative) {
+		return new AreaPtg(initialAreaFirstRow, initialAreaLastRow, 2, 5, firstRowRelative, lastRowRelative, false, false);
 	}
 }
