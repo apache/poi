@@ -528,7 +528,7 @@ public class SXSSFCell implements Cell {
      * <code>workbook.getCellStyleAt(0)</code>
      * @see org.apache.poi.ss.usermodel.Workbook#getCellStyleAt(short)
      */
-    @SuppressWarnings("resource")
+    @Override
     public CellStyle getCellStyle()
     {
         if(_style == null){
