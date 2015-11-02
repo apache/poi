@@ -47,12 +47,12 @@ public class HSSFHyperlink implements Hyperlink {
     /**
      * Low-level record object that stores the actual hyperlink data
      */
-    protected HyperlinkRecord record = null;
+    final protected HyperlinkRecord record;
 
     /**
      * If we create a new hyperlink remember its type
      */
-    protected int link_type;
+    final protected int link_type;
 
     /**
      * Construct a new hyperlink
@@ -99,6 +99,19 @@ public class HSSFHyperlink implements Hyperlink {
               link_type = LINK_URL;
            }
         }
+    }
+    
+    @Override
+    public HSSFHyperlink clone() {
+        return new HSSFHyperlink(record.clone());
+        /*final HSSFHyperlink link = new HSSFHyperlink(link_type);
+        link.setLabel(getLabel());
+        link.setAddress(getAddress());
+        link.setFirstColumn(getFirstColumn());
+        link.setFirstRow(getFirstRow());
+        link.setLastColumn(getLastColumn());
+        link.setLastRow(getLastRow());
+        return link;*/
     }
 
     /**
@@ -239,5 +252,21 @@ public class HSSFHyperlink implements Hyperlink {
      */
     public int getType(){
         return link_type;
+    }
+    
+    /**
+     * @return whether the objects have the same HyperlinkRecord
+     */
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) return true;
+        if (!(other instanceof HSSFHyperlink)) return false;
+        HSSFHyperlink otherLink = (HSSFHyperlink) other;
+        return record == otherLink.record;
+    }
+    
+    @Override
+    public int hashCode() {
+        return record.hashCode();
     }
 }

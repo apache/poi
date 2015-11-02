@@ -32,9 +32,9 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTHyperlink;
  * are largely stored as relations of the sheet
  */
 public class XSSFHyperlink implements Hyperlink {
-    private int _type;
-    private PackageRelationship _externalRel;
-    private CTHyperlink _ctHyperlink; //contains a reference to the cell where the hyperlink is anchored, getRef()
+    final private int _type;
+    final private PackageRelationship _externalRel;
+    final private CTHyperlink _ctHyperlink; //contains a reference to the cell where the hyperlink is anchored, getRef()
     private String _location; //what the hyperlink refers to
 
     /**
@@ -45,10 +45,11 @@ public class XSSFHyperlink implements Hyperlink {
     protected XSSFHyperlink(int type) {
         _type = type;
         _ctHyperlink = CTHyperlink.Factory.newInstance();
+        _externalRel = null;
     }
 
     /**
-     * Create a XSSFHyperlink amd initialize it from the supplied CTHyperlink bean and package relationship
+     * Create a XSSFHyperlink and initialize it from the supplied CTHyperlink bean and package relationship
      *
      * @param ctHyperlink the xml bean containing xml properties
      * @param hyperlinkRel the relationship in the underlying OPC package which stores the actual link's address
@@ -90,6 +91,13 @@ public class XSSFHyperlink implements Hyperlink {
 
 
         }
+    }
+    
+    @Override
+    public Hyperlink clone() {
+        final XSSFHyperlink clone = new XSSFHyperlink((CTHyperlink) _ctHyperlink.copy(), _externalRel);
+        clone.setLocation(_location);
+        return clone;
     }
 
     /**

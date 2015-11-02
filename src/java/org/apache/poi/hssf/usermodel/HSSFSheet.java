@@ -35,8 +35,10 @@ import org.apache.poi.hssf.record.DimensionsRecord;
 import org.apache.poi.hssf.record.DrawingRecord;
 import org.apache.poi.hssf.record.EscherAggregate;
 import org.apache.poi.hssf.record.ExtendedFormatRecord;
+import org.apache.poi.hssf.record.HyperlinkRecord;
 import org.apache.poi.hssf.record.NameRecord;
 import org.apache.poi.hssf.record.Record;
+import org.apache.poi.hssf.record.RecordBase;
 import org.apache.poi.hssf.record.RowRecord;
 import org.apache.poi.hssf.record.SCLRecord;
 import org.apache.poi.hssf.record.WSBoolRecord;
@@ -2045,6 +2047,45 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      */
     public HSSFComment getCellComment(int row, int column) {
         return findCellComment(row, column);
+    }
+    
+    /**
+     * Get a Hyperlink in this sheet anchored at row, column
+     *
+     * @param row
+     * @param column
+     * @return hyperlink if there is a hyperlink anchored at row, column; otherwise returns null
+     */
+    @Override
+    public HSSFHyperlink getHyperlink(int row, int column) {
+        for (Iterator<RecordBase> it = _sheet.getRecords().iterator(); it.hasNext(); ) {
+            RecordBase rec = it.next();
+            if (rec instanceof HyperlinkRecord){
+                HyperlinkRecord link = (HyperlinkRecord)rec;
+                if (link.getFirstColumn() == column && link.getFirstRow() == row) {
+                    return new HSSFHyperlink(link);
+                }
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * Get a list of Hyperlinks in this sheet
+     *
+     * @return Hyperlinks for the sheet
+     */
+    @Override
+    public List<HSSFHyperlink> getHyperlinkList() {
+        final List<HSSFHyperlink> hyperlinkList = new ArrayList<HSSFHyperlink>();
+        for (Iterator<RecordBase> it = _sheet.getRecords().iterator(); it.hasNext(); ) {
+            RecordBase rec = it.next();
+            if (rec instanceof HyperlinkRecord){
+                HyperlinkRecord link = (HyperlinkRecord)rec;
+                hyperlinkList.add(new HSSFHyperlink(link));
+            }
+        }
+        return hyperlinkList;
     }
 
     public HSSFSheetConditionalFormatting getSheetConditionalFormatting() {
