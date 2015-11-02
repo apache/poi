@@ -67,7 +67,6 @@ import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.SSCellRange;
 import org.apache.poi.ss.util.SheetUtil;
 import org.apache.poi.util.Beta;
-import org.apache.poi.util.DocumentHelper;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -3056,7 +3055,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         return sheetPr.isSetPageSetUpPr() ? sheetPr.getPageSetUpPr() : sheetPr.addNewPageSetUpPr();
     }
 
-    private boolean shouldRemoveRow(int startRow, int endRow, int n, int rownum) {
+    private static final boolean shouldRemoveRow(int startRow, int endRow, int n, int rownum) {
         // is this row in the target-window where the moved rows will land?
         if (rownum >= (startRow + n) && rownum <= (endRow + n)) {
             // only remove it if the current row is not part of the data that is copied
