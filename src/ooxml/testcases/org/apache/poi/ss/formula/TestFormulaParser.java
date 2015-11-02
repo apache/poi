@@ -114,11 +114,15 @@ public class TestFormulaParser extends TestCase {
             XSSFTestDataSamples.writeOutAndReadBack(wb).close();
             
             // Manually check to make sure file isn't corrupted
+            // TODO: develop a process for occasionally manually reviewing workbooks
+            // to verify workbooks are not corrupted
+            /*
             final File fileIn = XSSFTestDataSamples.getSampleFile(testFile);
             final File reSavedFile = new File(fileIn.getParentFile(), fileIn.getName().replace(".xlsm", "-saved.xlsm"));
             final FileOutputStream fos = new FileOutputStream(reSavedFile);
             wb.write(fos);
             fos.close();
+            */
         } finally {
             wb.close();
         }
