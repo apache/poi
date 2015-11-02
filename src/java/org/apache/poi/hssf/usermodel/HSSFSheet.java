@@ -1567,7 +1567,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
         String sheetName = _workbook.getSheetName(sheetIndex);
         short externSheetIndex = _book.checkExternSheet(sheetIndex);
         FormulaShifter shifter = FormulaShifter.createForRowShift(
-                         externSheetIndex, sheetName, startRow, endRow, n);
+                         externSheetIndex, sheetName, startRow, endRow, n, SpreadsheetVersion.EXCEL97);
         _sheet.updateFormulasAfterCellShift(shifter, externSheetIndex);
 
         int nSheets = _workbook.getNumberOfSheets();
