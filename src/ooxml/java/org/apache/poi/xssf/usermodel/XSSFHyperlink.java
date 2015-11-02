@@ -97,7 +97,7 @@ public class XSSFHyperlink implements Hyperlink {
      * Create a new XSSFHyperlink. This method is for Internal use only.
      * XSSFHyperlinks can be created by XSSFCreationHelper.
      *
-     * @param type - the type of hyperlink to create, see {@link Hyperlink}
+     * @param other the hyperlink to copy
      */
     @Internal //FIXME: change to protected if/when SXSSFHyperlink class is created
     public XSSFHyperlink(Hyperlink other) {
