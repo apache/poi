@@ -18,6 +18,7 @@
 package org.apache.poi.xssf.usermodel;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -28,6 +29,8 @@ import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.BaseTestXCell;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellCopyPolicy;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
@@ -493,5 +496,64 @@ public final class TestXSSFCell extends BaseTestXCell {
         	xwb.close();
         	wb.close();
         }
+    }
+
+    private XSSFCell srcCell, destCell; //used for testCopyCellFrom_CellCopyPolicy
+    
+    @Test
+    public final void testCopyCellFrom_CellCopyPolicy_default() {
+        setUp_testCopyCellFrom_CellCopyPolicy();
+        
+        // default copy policy
+        final CellCopyPolicy policy = new CellCopyPolicy();
+        destCell.copyCellFrom(srcCell, policy);
+        
+        assertEquals(Cell.CELL_TYPE_FORMULA, destCell.getCellType());
+        assertEquals("2+3", destCell.getCellFormula());
+        assertEquals(srcCell.getCellStyle(), destCell.getCellStyle());
+    }
+    
+    @Test
+    public final void testCopyCellFrom_CellCopyPolicy_value() {
+        setUp_testCopyCellFrom_CellCopyPolicy();
+        
+        // Paste values only
+        final CellCopyPolicy policy = new CellCopyPolicy.Builder().cellFormula(false).build();
+        destCell.copyCellFrom(srcCell, policy);
+        assertEquals(Cell.CELL_TYPE_NUMERIC, destCell.getCellType());
+        System.out.println("ERROR: fix formula evaluation");
+    }
+    
+    @Test
+    public final void testCopyCellFrom_CellCopyPolicy_style() {
+        setUp_testCopyCellFrom_CellCopyPolicy();
+        srcCell.setCellValue((String) null);
+        
+        // Paste styles only
+        final CellCopyPolicy policy = new CellCopyPolicy.Builder().cellValue(false).build();
+        destCell.copyCellFrom(srcCell, policy);
+        assertEquals(srcCell.getCellStyle(), destCell.getCellStyle());
+        
+        // Old cell value should not have been overwritten
+        assertNotEquals(Cell.CELL_TYPE_BLANK, destCell.getCellType());
+        assertEquals(Cell.CELL_TYPE_BOOLEAN, destCell.getCellType());
+        assertEquals(true, destCell.getBooleanCellValue());
+    }
+    
+    private final void setUp_testCopyCellFrom_CellCopyPolicy() {
+        @SuppressWarnings("resource")
+        final XSSFWorkbook wb = new XSSFWorkbook();
+        final XSSFRow row = wb.createSheet().createRow(0);
+        srcCell = row.createCell(0);
+        destCell = row.createCell(1);
+        
+        srcCell.setCellFormula("2+3");
+        
+        final CellStyle style = wb.createCellStyle();
+        style.setBorderTop(CellStyle.BORDER_THICK);
+        style.setFillBackgroundColor((short) 5);
+        srcCell.setCellStyle(style);
+        
+        destCell.setCellValue(true);
     }
 }
