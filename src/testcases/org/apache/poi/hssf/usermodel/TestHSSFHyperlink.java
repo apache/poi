@@ -278,12 +278,12 @@ public final class TestHSSFHyperlink extends BaseTestHyperlink {
         XSSFCreationHelper helper = wb.getCreationHelper();
         XSSFHyperlink xlink = helper.createHyperlink(Hyperlink.LINK_URL);
         xlink.setAddress("http://poi.apache.org/");
-        xlink.setCellReference("C3");
+        xlink.setCellReference("D3");
         xlink.setTooltip("tooltip");
         HSSFHyperlink hlink = new HSSFHyperlink(xlink);
         
         assertEquals("http://poi.apache.org/", hlink.getAddress());
-        assertEquals("C3", new CellReference(hlink.getFirstRow(), hlink.getFirstColumn()).formatAsString());
+        assertEquals("D3", new CellReference(hlink.getFirstRow(), hlink.getFirstColumn()).formatAsString());
         // Are HSSFHyperlink.label and XSSFHyperlink.tooltip the same? If so, perhaps one of these needs renamed for a consistent Hyperlink interface
         // assertEquals("tooltip", hlink.getLabel());
         
