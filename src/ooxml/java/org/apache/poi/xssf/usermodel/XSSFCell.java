@@ -180,6 +180,25 @@ public final class XSSFCell implements Cell {
                 setCellStyle(null);
             }
         }
+        
+        if (policy.isMergeHyperlink()) {
+            // if srcCell doesn't have a hyperlink and destCell has a hyperlink, don't clear destCell's hyperlink
+            final Hyperlink srcHyperlink = srcCell.getHyperlink();
+            if (srcHyperlink != null) {
+                setHyperlink(srcHyperlink.clone());
+            }
+        }
+        else if (policy.isCopyHyperlink()) {
+            // overwrite the hyperlink at dest cell with srcCell's hyperlink
+            // if srcCell doesn't have a hyperlink, clear the hyperlink (if one exists) at destCell
+            final Hyperlink srcHyperlink = srcCell.getHyperlink();
+            if (srcHyperlink == null) {
+                setHyperlink(null);
+            }
+            else {
+                setHyperlink(srcHyperlink.clone());
+            }
+        }
     }
 
     /**
