@@ -122,7 +122,7 @@ public final class XSSFCell implements Cell {
      * Copy cell value, formula, and style, from srcCell per cell copy policy
      * If srcCell is null, clears the cell value and cell style per cell copy policy
      * 
-     * This does not shift references in formulas. Use {@link XSSFRowShifter} to shift references in formulas.
+     * This does not shift references in formulas. Use {@link org.apache.poi.xssf.usermodel.helpers.XSSFRowShifter} to shift references in formulas.
      * 
      * @param srcCell
      * @param policy
