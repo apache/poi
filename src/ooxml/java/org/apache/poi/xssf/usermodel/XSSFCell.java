@@ -188,7 +188,7 @@ public final class XSSFCell implements Cell {
             // if srcCell doesn't have a hyperlink and destCell has a hyperlink, don't clear destCell's hyperlink
             final Hyperlink srcHyperlink = srcCell.getHyperlink();
             if (srcHyperlink != null) {
-                setHyperlink(srcHyperlink.clone());
+                setHyperlink(new XSSFHyperlink(srcHyperlink));
             }
         }
         else if (policy.isCopyHyperlink()) {
@@ -199,7 +199,7 @@ public final class XSSFCell implements Cell {
                 setHyperlink(null);
             }
             else {
-                setHyperlink(srcHyperlink.clone());
+                setHyperlink(new XSSFHyperlink(srcHyperlink));
             }
         }
     }

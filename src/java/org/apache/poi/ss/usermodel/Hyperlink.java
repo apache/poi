@@ -19,7 +19,7 @@ package org.apache.poi.ss.usermodel;
 /**
  * Represents an Excel hyperlink.
  */
-public interface Hyperlink extends org.apache.poi.common.usermodel.Hyperlink, Cloneable {
+public interface Hyperlink extends org.apache.poi.common.usermodel.Hyperlink {
     /**
      * Return the row of the first cell that contains the hyperlink
      *
@@ -75,11 +75,4 @@ public interface Hyperlink extends org.apache.poi.common.usermodel.Hyperlink, Cl
      * @param col the 0-based column of the last cell that contains the hyperlink
      */
     public void setLastColumn(int col);
-    
-    /**
-     * Create a clone of this hyperlink
-     *
-     * @return clone of this Hyperlink
-     */
-    public Hyperlink clone();
 }

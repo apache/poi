@@ -27,7 +27,13 @@ import java.io.IOException;
 import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ss.usermodel.BaseTestHyperlink;
-
+import org.apache.poi.ss.usermodel.Hyperlink;
+/*
+import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.xssf.usermodel.XSSFCreationHelper;
+import org.apache.poi.xssf.usermodel.XSSFHyperlink;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+*/
 
 /**
  * Tests HSSFHyperlink.
@@ -259,4 +265,28 @@ public final class TestHSSFHyperlink extends BaseTestHyperlink {
         assertEquals(5, link2_shifted.getFirstRow());
         assertEquals(5, link2_shifted.getLastRow());
     }
+    
+    @Override
+    public HSSFHyperlink copyHyperlink(Hyperlink link) {
+        return new HSSFHyperlink(link);
+    }
+    
+    /*
+    @Test
+    public void testCopyXSSFHyperlink() throws IOException {
+        XSSFWorkbook wb = new XSSFWorkbook();
+        XSSFCreationHelper helper = wb.getCreationHelper();
+        XSSFHyperlink xlink = helper.createHyperlink(Hyperlink.LINK_URL);
+        xlink.setAddress("http://poi.apache.org/");
+        xlink.setCellReference("C3");
+        xlink.setTooltip("tooltip");
+        HSSFHyperlink hlink = new HSSFHyperlink(xlink);
+        
+        assertEquals("http://poi.apache.org/", hlink.getAddress());
+        assertEquals("C3", new CellReference(hlink.getFirstRow(), hlink.getFirstColumn()).formatAsString());
+        // Are HSSFHyperlink.label and XSSFHyperlink.tooltip the same? If so, perhaps one of these needs renamed for a consistent Hyperlink interface
+        // assertEquals("tooltip", hlink.getLabel());
+        
+        wb.close();
+    }*/
 }
