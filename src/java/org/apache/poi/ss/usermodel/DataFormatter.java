@@ -22,12 +22,14 @@ package org.apache.poi.ss.usermodel;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.DateFormat;
 import java.text.DateFormatSymbols;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.FieldPosition;
 import java.text.Format;
 import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -107,7 +109,7 @@ import org.apache.poi.util.POILogger;
  *   Excel will output "", <code>DataFormatter</code> will output "0".
  * </ul>
  * <p>
- *  Some formats are automatically "localised" by Excel, eg show as mm/dd/yyyy when
+ *  Some formats are automatically "localized" by Excel, eg show as mm/dd/yyyy when
  *   loaded in Excel in some Locales but as dd/mm/yyyy in others. These are always
  *   returned in the "default" (US) format, as stored in the file. 
  *  Some format strings request an alternate locale, eg 
@@ -176,6 +178,11 @@ public class DataFormatter implements Observer {
      */
     private DateFormatSymbols dateSymbols;
 
+    /**
+     * A default date format, if no date format was given
+     */
+    private DateFormat defaultDateformat;
+    
     /** <em>General</em> format for numbers. */
     private Format generalNumberFormat;
 
@@ -690,10 +697,7 @@ public class DataFormatter implements Observer {
      *  supplied Date and format
      */
     private String performDateFormatting(Date d, Format dateFormat) {
-       if(dateFormat != null) {
-          return dateFormat.format(d);
-      }
-      return d.toString();
+       return (dateFormat != null ? dateFormat : defaultDateformat).format(d);
     }
 
     /**
@@ -945,7 +949,7 @@ public class DataFormatter implements Observer {
      * To notify callers, the returned {@link Observable} should be used.
      * The Object in {@link Observer#update(Observable, Object)} is the new Locale.
      *
-     * @return the listener object, where callers can register themself
+     * @return the listener object, where callers can register themselves
      */
     public Observable getLocaleChangedObservable() {
         return localeChangedObervable;
@@ -967,6 +971,10 @@ public class DataFormatter implements Observer {
         dateSymbols = DateFormatSymbols.getInstance(locale);
         decimalSymbols = DecimalFormatSymbols.getInstance(locale);
         generalNumberFormat = new ExcelGeneralNumberFormat(locale);
+
+        // taken from Date.toString()
+        defaultDateformat = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", dateSymbols);
+        defaultDateformat.setTimeZone(LocaleUtil.getUserTimeZone());       
 
         // init built-in formats
 

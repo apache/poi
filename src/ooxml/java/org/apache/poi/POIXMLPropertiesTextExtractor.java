@@ -18,9 +18,14 @@
 package org.apache.poi;
 
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.DateFormatSymbols;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
+import org.apache.poi.util.LocaleUtil;
 import org.openxmlformats.schemas.officeDocument.x2006.customProperties.CTProperty;
 
 /**
@@ -29,20 +34,27 @@ import org.openxmlformats.schemas.officeDocument.x2006.customProperties.CTProper
  *  and title.
  */
 public class POIXMLPropertiesTextExtractor extends POIXMLTextExtractor {
+    
+    private final DateFormat dateFormat;
+    
 	/**
 	 * Creates a new POIXMLPropertiesTextExtractor for the
 	 *  given open document.
 	 */
 	public POIXMLPropertiesTextExtractor(POIXMLDocument doc) {
 		super(doc);
+        DateFormatSymbols dfs = DateFormatSymbols.getInstance(Locale.ROOT);
+        dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", dfs);
+        dateFormat.setTimeZone(LocaleUtil.TIMEZONE_UTC);       
 	}
+	
 	/**
 	 * Creates a new POIXMLPropertiesTextExtractor, for the
 	 *  same file that another TextExtractor is already
 	 *  working on.
 	 */
 	public POIXMLPropertiesTextExtractor(POIXMLTextExtractor otherExtractor) {
-		super(otherExtractor.getDocument());
+		this(otherExtractor.getDocument());
 	}
 	
    private void appendIfPresent(StringBuffer text, String thing, boolean value) {
@@ -53,7 +65,7 @@ public class POIXMLPropertiesTextExtractor extends POIXMLTextExtractor {
    }
    private void appendIfPresent(StringBuffer text, String thing, Date value) {
       if(value == null) { return; }
-      appendIfPresent(text, thing, value.toString());
+      appendIfPresent(text, thing, dateFormat.format(value));
    }
 	private void appendIfPresent(StringBuffer text, String thing, String value) {
 	   if(value == null) { return; }
@@ -66,7 +78,8 @@ public class POIXMLPropertiesTextExtractor extends POIXMLTextExtractor {
 	/**
 	 * Returns the core document properties, eg author
 	 */
-	public String getCorePropertiesText() {
+	@SuppressWarnings("resource")
+    public String getCorePropertiesText() {
 	    POIXMLDocument document = getDocument();
         if(document == null) {  // event based extractor does not have a document
             return "";
@@ -103,7 +116,8 @@ public class POIXMLPropertiesTextExtractor extends POIXMLTextExtractor {
 	 * Returns the extended document properties, eg
 	 *  application
 	 */
-	public String getExtendedPropertiesText() {
+	@SuppressWarnings("resource")
+    public String getExtendedPropertiesText() {
         POIXMLDocument document = getDocument();
         if(document == null) {  // event based extractor does not have a document
             return "";
@@ -135,7 +149,7 @@ public class POIXMLPropertiesTextExtractor extends POIXMLTextExtractor {
     * Returns the custom document properties, if
     *  there are any
     */
-   @SuppressWarnings("deprecation")
+   @SuppressWarnings({ "deprecation", "resource" })
    public String getCustomPropertiesText() {
        POIXMLDocument document = getDocument();
        if(document == null) {  // event based extractor does not have a document

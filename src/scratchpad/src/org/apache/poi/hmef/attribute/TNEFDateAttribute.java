@@ -19,8 +19,12 @@ package org.apache.poi.hmef.attribute;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.DateFormat;
+import java.text.DateFormatSymbols;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 import org.apache.poi.hmef.Attachment;
 import org.apache.poi.hmef.HMEFMessage;
@@ -45,26 +49,26 @@ public final class TNEFDateAttribute extends TNEFAttribute {
    protected TNEFDateAttribute(int id, int type, InputStream inp) throws IOException {
       super(id, type, inp);
       
-      byte[] data = getData();
-      if(data.length == 8) {
+      byte[] binData = getData();
+      if(binData.length == 8) {
          // The value is a 64 bit Windows Filetime
          this.data = Util.filetimeToDate(
                LittleEndian.getLong(getData(), 0)
          );
-      } else if(data.length == 14) {
+      } else if(binData.length == 14) {
          // It's the 7 date fields. We think it's in UTC...
          Calendar c = LocaleUtil.getLocaleCalendar(LocaleUtil.TIMEZONE_UTC);
-         c.set(Calendar.YEAR, LittleEndian.getUShort(data, 0));
-         c.set(Calendar.MONTH, LittleEndian.getUShort(data, 2) - 1); // Java months are 0 based!
-         c.set(Calendar.DAY_OF_MONTH, LittleEndian.getUShort(data, 4));
-         c.set(Calendar.HOUR_OF_DAY, LittleEndian.getUShort(data, 6));
-         c.set(Calendar.MINUTE, LittleEndian.getUShort(data, 8));
-         c.set(Calendar.SECOND, LittleEndian.getUShort(data, 10));
+         c.set(Calendar.YEAR, LittleEndian.getUShort(binData, 0));
+         c.set(Calendar.MONTH, LittleEndian.getUShort(binData, 2) - 1); // Java months are 0 based!
+         c.set(Calendar.DAY_OF_MONTH, LittleEndian.getUShort(binData, 4));
+         c.set(Calendar.HOUR_OF_DAY, LittleEndian.getUShort(binData, 6));
+         c.set(Calendar.MINUTE, LittleEndian.getUShort(binData, 8));
+         c.set(Calendar.SECOND, LittleEndian.getUShort(binData, 10));
          // The 7th field is day of week, which we don't require
          c.clear(Calendar.MILLISECOND); // Not set in the file
          this.data = c.getTime();
       } else {
-         throw new IllegalArgumentException("Invalid date, found " + data.length + " bytes");
+         throw new IllegalArgumentException("Invalid date, found " + binData.length + " bytes");
       }
    }
 
@@ -73,8 +77,11 @@ public final class TNEFDateAttribute extends TNEFAttribute {
    }
    
    public String toString() {
+       DateFormatSymbols dfs = DateFormatSymbols.getInstance(Locale.ROOT);
+       DateFormat df = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", dfs);
+       df.setTimeZone(LocaleUtil.TIMEZONE_UTC);       
       return "Attribute " + getProperty().toString() + ", type=" + getType() + 
-             ", date=" + data.toString(); 
+             ", date=" + df.format(data); 
    }
    
    /**
