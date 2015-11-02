@@ -2056,7 +2056,6 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      *
      * @return the name of this sheet
      */
-    @SuppressWarnings("resource")
     public String getSheetName() {
         HSSFWorkbook wb = getWorkbook();
         int idx = wb.getSheetIndex(this);
