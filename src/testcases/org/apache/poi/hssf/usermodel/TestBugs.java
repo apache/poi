@@ -2949,6 +2949,8 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         } catch (IOException e) {
             Assume.assumeNoException("Downloading a jpg from poi.apache.org should work", e);
             return;
+        } finally {
+            wb.close();
         }
 
         // Convert BufferedImage to byte[]

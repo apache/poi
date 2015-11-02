@@ -73,7 +73,7 @@ class TypedPropertyValue
         return offset - startOffset;
     }
 
-    int readValue( byte[] data, int offset )
+    int readValue( byte[] data, int offset ) // NOSONAR
     {
         switch ( _type )
         {
@@ -82,16 +82,14 @@ class TypedPropertyValue
             _value = null;
             return 0;
 
+        case Variant.VT_R4:
         case Variant.VT_I2:
             _value = Short.valueOf( LittleEndian.getShort( data, offset ) );
             return 4;
 
+        case Variant.VT_INT:
         case Variant.VT_I4:
             _value = Integer.valueOf( LittleEndian.getInt( data, offset ) );
-            return 4;
-
-        case Variant.VT_R4:
-            _value = Short.valueOf( LittleEndian.getShort( data, offset ) );
             return 4;
 
         case Variant.VT_R8:
@@ -109,10 +107,6 @@ class TypedPropertyValue
         case Variant.VT_BSTR:
             _value = new CodePageString( data, offset );
             return ( (CodePageString) _value ).getSize();
-
-        case Variant.VT_ERROR:
-            _value = Long.valueOf( LittleEndian.getUInt( data, offset ) );
-            return 4;
 
         case Variant.VT_BOOL:
             _value = new VariantBool( data, offset );
@@ -134,7 +128,9 @@ class TypedPropertyValue
             _value = Integer.valueOf( LittleEndian.getUShort( data, offset ) );
             return 4;
 
+        case Variant.VT_UINT:
         case Variant.VT_UI4:
+        case Variant.VT_ERROR:
             _value = Long.valueOf( LittleEndian.getUInt( data, offset ) );
             return 4;
 
@@ -145,14 +141,6 @@ class TypedPropertyValue
         case Variant.VT_UI8:
             _value = LittleEndian.getByteArray( data, offset, 8 );
             return 8;
-
-        case Variant.VT_INT:
-            _value = Integer.valueOf( LittleEndian.getInt( data, offset ) );
-            return 4;
-
-        case Variant.VT_UINT:
-            _value = Long.valueOf( LittleEndian.getUInt( data, offset ) );
-            return 4;
 
         case Variant.VT_LPSTR:
             _value = new CodePageString( data, offset );
