@@ -53,7 +53,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellType;
  * High level representation of a cell in a row of a spreadsheet.
  * <p>
  * Cells can be numeric, formula-based or string-based (text).  The cell type
- * specifies this.  String cells cannot conatin numbers and numeric cells cannot
+ * specifies this.  String cells cannot contain numbers and numeric cells cannot
  * contain strings (at least according to our model).  Client apps should do the
  * conversions themselves.  Formula cells have the formula string, as well as
  * the formula result, which can be numeric or string.
@@ -451,7 +451,6 @@ public final class XSSFCell implements Cell {
         cellFormula.setRef(range.formatAsString());
     }
 
-    @SuppressWarnings("resource")
     private void setFormula(String formula, int formulaType) {
         XSSFWorkbook wb = _row.getSheet().getWorkbook();
         if (formula == null) {
@@ -524,6 +523,8 @@ public final class XSSFCell implements Cell {
      *
      * @param style  reference contained in the workbook.
      * If the value is null then the style information is removed causing the cell to used the default workbook style.
+     * 
+     * @throws IllegalArgumentException if style belongs to a different styles source (most likely because style is from a different workbook)
      */
     @Override
     public void setCellStyle(CellStyle style) {
