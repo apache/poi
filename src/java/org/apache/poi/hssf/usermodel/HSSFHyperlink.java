@@ -85,33 +85,41 @@ public class HSSFHyperlink implements Hyperlink {
     protected HSSFHyperlink( HyperlinkRecord record )
     {
         this.record = record;
-        
-        // Figure out the type
-        if(record.isFileLink()) {
-           link_type = LINK_FILE;
-        } else if(record.isDocumentLink()) {
-           link_type = LINK_DOCUMENT;
-        } else {
-           if(record.getAddress() != null &&
-                 record.getAddress().startsWith("mailto:")) {
-              link_type = LINK_EMAIL;
-           } else {
-              link_type = LINK_URL;
-           }
-        }
+        link_type = getType(record);
     }
     
-    @Override
-    public HSSFHyperlink clone() {
-        return new HSSFHyperlink(record.clone());
-        /*final HSSFHyperlink link = new HSSFHyperlink(link_type);
-        link.setLabel(getLabel());
-        link.setAddress(getAddress());
-        link.setFirstColumn(getFirstColumn());
-        link.setFirstRow(getFirstRow());
-        link.setLastColumn(getLastColumn());
-        link.setLastRow(getLastRow());
-        return link;*/
+    private int getType(HyperlinkRecord record) {
+        int link_type;
+        // Figure out the type
+        if (record.isFileLink()) {
+            link_type = LINK_FILE;
+        } else if(record.isDocumentLink()) {
+            link_type = LINK_DOCUMENT;
+        } else {
+            if(record.getAddress() != null &&
+                    record.getAddress().startsWith("mailto:")) {
+                link_type = LINK_EMAIL;
+            } else {
+                link_type = LINK_URL;
+            }
+        }
+        return link_type;
+    }
+    
+    protected HSSFHyperlink(Hyperlink other) {
+        if (other instanceof HSSFHyperlink) {
+            HSSFHyperlink hlink = (HSSFHyperlink) other;
+            record = hlink.record.clone();
+            link_type = getType(record);
+        }
+        else {
+            link_type = other.getType();
+            record = new HyperlinkRecord();
+            setFirstRow(other.getFirstRow());
+            setFirstColumn(other.getFirstColumn());
+            setLastRow(other.getLastRow());
+            setLastColumn(other.getLastColumn());
+        }
     }
 
     /**

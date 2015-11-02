@@ -23,6 +23,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
+import org.apache.poi.hssf.usermodel.HSSFHyperlink;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
 import org.apache.poi.ss.usermodel.BaseTestHyperlink;
@@ -30,6 +31,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.junit.Test;
@@ -267,5 +269,27 @@ public final class TestXSSFHyperlink extends BaseTestHyperlink {
         wb = XSSFTestDataSamples.writeOutAndReadBack(wb);
         link = wb.getSheetAt(0).getRow(0).getCell(14).getHyperlink();
         assertEquals("mailto:nobody@nowhere.uk%C2%A0", link.getAddress());
+    }
+    
+    @Override
+    public XSSFHyperlink copyHyperlink(Hyperlink link) {
+        return new XSSFHyperlink(link);
+    }
+    
+    @Test
+    public void testCopyHSSFHyperlink() {
+        HSSFHyperlink hlink = new HSSFHyperlink(Hyperlink.LINK_URL);
+        hlink.setAddress("http://poi.apache.org/");
+        hlink.setFirstColumn(3);
+        hlink.setFirstRow(2);
+        hlink.setLastColumn(5);
+        hlink.setLastRow(6);
+        hlink.setLabel("label");
+        XSSFHyperlink xlink = new XSSFHyperlink(hlink);
+        
+        assertEquals("http://poi.apache.org/", xlink.getAddress());
+        assertEquals(new CellReference(2, 3), new CellReference(xlink.getCellRef()));
+        // Are HSSFHyperlink.label and XSSFHyperlink.tooltip the same? If so, perhaps one of these needs renamed for a consistent Hyperlink interface
+        // assertEquals("label", xlink.getTooltip());
     }
 }

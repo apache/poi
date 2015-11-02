@@ -93,13 +93,29 @@ public class XSSFHyperlink implements Hyperlink {
         }
     }
     
-    @Override
-    public Hyperlink clone() {
-        final XSSFHyperlink clone = new XSSFHyperlink((CTHyperlink) _ctHyperlink.copy(), _externalRel);
-        clone.setLocation(_location);
-        return clone;
+    /**
+     * Create a new XSSFHyperlink. This method is for Internal use only.
+     * XSSFHyperlinks can be created by XSSFCreationHelper.
+     *
+     * @param type - the type of hyperlink to create, see {@link Hyperlink}
+     */
+    @Internal //FIXME: change to protected if/when SXSSFHyperlink class is created
+    public XSSFHyperlink(Hyperlink other) {
+        if (other instanceof XSSFHyperlink) {
+            XSSFHyperlink xlink = (XSSFHyperlink) other;
+            _type = xlink.getType();
+            _location = xlink._location;
+            _externalRel = xlink._externalRel;
+            _ctHyperlink = (CTHyperlink) xlink._ctHyperlink.copy();
+        }
+        else {
+            _type = other.getType();
+            _location = other.getAddress();
+            _externalRel = null;
+            _ctHyperlink = CTHyperlink.Factory.newInstance();
+            setCellReference(new CellReference(other.getFirstRow(), other.getFirstColumn()));
+        }
     }
-
     /**
      * @return the underlying CTHyperlink object
      */

@@ -97,9 +97,9 @@ public abstract class BaseTestHyperlink {
         assertEquals("'Target Sheet'!A1", link.getAddress());
     }
     
+    // copy a hyperlink via the copy constructor
     @Test
-    public void testClone() {
-        System.out.println("testClone");
+    public void testCopyHyperlink() {
         final Workbook wb = _testDataProvider.createWorkbook();
         final CreationHelper createHelper = wb.getCreationHelper();
 
@@ -116,7 +116,7 @@ public abstract class BaseTestHyperlink {
         link1.setAddress("http://poi.apache.org/");
         cell1.setHyperlink(link1);
         
-        link2 = link1.clone();
+        link2 = copyHyperlink(link1);
         
         // Change address (type is not changeable)
         link2.setAddress("http://apache.org/");
@@ -137,4 +137,6 @@ public abstract class BaseTestHyperlink {
         assertEquals(link1, actualHyperlinks.get(0));
         assertEquals(link2, actualHyperlinks.get(1));
     }
+    
+    public abstract Hyperlink copyHyperlink(Hyperlink link);
 }
