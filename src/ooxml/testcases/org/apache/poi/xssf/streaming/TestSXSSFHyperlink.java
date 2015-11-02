@@ -19,6 +19,8 @@
 
 package org.apache.poi.xssf.streaming;
 
+import org.junit.After;
+
 import org.apache.poi.ss.usermodel.BaseTestHyperlink;
 import org.apache.poi.xssf.SXSSFITestDataProvider;
 
@@ -34,7 +36,7 @@ public class TestSXSSFHyperlink extends BaseTestHyperlink {
     }
 
 
-    @Override
+    @After
     public void tearDown(){
         SXSSFITestDataProvider.instance.cleanup();
     }

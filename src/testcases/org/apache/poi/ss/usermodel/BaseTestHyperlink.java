@@ -17,7 +17,8 @@
 
 package org.apache.poi.ss.usermodel;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import org.junit.Test;
 
 import org.apache.poi.ss.ITestDataProvider;
 
@@ -26,7 +27,7 @@ import org.apache.poi.ss.ITestDataProvider;
  *
  * @author Yegor Kozlov
  */
-public abstract class BaseTestHyperlink extends TestCase {
+public abstract class BaseTestHyperlink {
 
     private final ITestDataProvider _testDataProvider;
 
@@ -34,6 +35,7 @@ public abstract class BaseTestHyperlink extends TestCase {
         _testDataProvider = testDataProvider;
     }
 
+    @Test
     public final void testBasicTypes(){
         Workbook wb = _testDataProvider.createWorkbook();
         CreationHelper createHelper = wb.getCreationHelper();
