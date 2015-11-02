@@ -161,11 +161,15 @@ public final class TestFormulaParser extends TestCase {
 				assertEqualsIgnoreCase("yourFunc", wb2.getName("yourFunc").getNameName());
 
 				// Manually check to make sure file isn't corrupted
+				// TODO: develop a process for occasionally manually reviewing workbooks
+				// to verify workbooks are not corrupted
+				/*
 				final File fileIn = HSSFTestDataSamples.getSampleFile(testFile);
 				final File reSavedFile = new File(fileIn.getParentFile(), fileIn.getName().replace(".xls", "-saved.xls"));
 				FileOutputStream fos = new FileOutputStream(reSavedFile);
 				wb2.write(fos);
 				fos.close();
+				*/
 			} finally {
 				wb2.close();
 			}
