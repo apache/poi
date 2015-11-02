@@ -88,6 +88,7 @@ public final class TestHSSFHyperlink extends BaseTestHyperlink {
         assertEquals(HSSFHyperlink.LINK_DOCUMENT, link.getType());
     }
 
+    @Test
     public void testModify() {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("HyperlinksOnManySheets.xls");
 
@@ -118,6 +119,7 @@ public final class TestHSSFHyperlink extends BaseTestHyperlink {
      *  link.setAddress("'Target Sheet-1'!A1"); //common between XSSF and HSSF
      * @throws IOException 
      */
+    @Test
     public void testCreateDocumentLink() throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
 
@@ -164,6 +166,7 @@ public final class TestHSSFHyperlink extends BaseTestHyperlink {
         wbBack.close();
     }
 
+    @Test
     public void testCloneSheet() {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("HyperlinksOnManySheets.xls");
 
@@ -183,6 +186,7 @@ public final class TestHSSFHyperlink extends BaseTestHyperlink {
         assertEquals("http://poi.apache.org/hssf/", link.getAddress());
     }
 
+    @Test
     public void testCreate() throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
 
@@ -214,6 +218,7 @@ public final class TestHSSFHyperlink extends BaseTestHyperlink {
      * Test that HSSFSheet#shiftRows moves hyperlinks,
      * see bugs #46445 and #29957
      */
+    @Test
     public void testShiftRows(){
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("46445.xls");
 
