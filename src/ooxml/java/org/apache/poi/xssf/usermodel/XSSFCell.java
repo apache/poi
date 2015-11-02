@@ -30,6 +30,7 @@ import org.apache.poi.ss.formula.SharedFormula;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellCopyPolicy;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.DataFormatter;
@@ -40,6 +41,7 @@ import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.xssf.model.SharedStringsTable;
@@ -114,6 +116,70 @@ public final class XSSFCell implements Cell {
         }
         _sharedStringSource = row.getSheet().getWorkbook().getSharedStringSource();
         _stylesSource = row.getSheet().getWorkbook().getStylesSource();
+    }
+    
+    /**
+     * Copy cell value, formula, and style, from srcCell per cell copy policy
+     * If srcCell is null, clears the cell value and cell style per cell copy policy
+     * @param srcCell
+     * @param policy
+     * @throws IllegalArgumentException if copy cell style and srcCell is from a different workbook
+     */
+    @Beta
+    @Internal
+    public void copyCellFrom(Cell srcCell, CellCopyPolicy policy) {
+        // Copy cell value (cell type is updated implicitly)
+        if (policy.isCopyCellValue()) {
+            if (srcCell != null) {
+                int copyCellType = srcCell.getCellType();
+                if (copyCellType == Cell.CELL_TYPE_FORMULA && !policy.isCopyCellFormula()) {
+                    // Copy formula result as value
+                    // FIXME: Cached value may be stale
+                    copyCellType = srcCell.getCachedFormulaResultType();
+                }
+                switch (copyCellType) {
+                    case Cell.CELL_TYPE_BOOLEAN:
+                        setCellValue(srcCell.getBooleanCellValue());
+                        break;
+                    case Cell.CELL_TYPE_ERROR:
+                        setCellErrorValue(srcCell.getErrorCellValue());
+                        break;
+                    case Cell.CELL_TYPE_FORMULA:
+                        setCellFormula(srcCell.getCellFormula());
+                        break;
+                    case Cell.CELL_TYPE_NUMERIC:
+                        // DataFormat is not copied unless policy.isCopyCellStyle is true
+                        if (DateUtil.isCellDateFormatted(srcCell)) {
+                            setCellValue(srcCell.getDateCellValue());
+                        }
+                        else {
+                            setCellValue(srcCell.getNumericCellValue());
+                        }
+                        break;
+                    case Cell.CELL_TYPE_STRING:
+                        setCellValue(srcCell.getStringCellValue());
+                        break;
+                    case Cell.CELL_TYPE_BLANK:
+                        setBlank();
+                        break;
+                    default:
+                        throw new IllegalArgumentException("Invalid cell type " + srcCell.getCellType());
+                }
+            } else { //srcCell is null
+                setBlank();
+            }
+        }
+        
+        // Copy CellStyle
+        if (policy.isCopyCellStyle()) {
+            if (srcCell != null) {
+                setCellStyle(srcCell.getCellStyle());
+            }
+            else {
+                // clear cell style
+                setCellStyle(null);
+            }
+        }
     }
 
     /**
@@ -523,8 +589,7 @@ public final class XSSFCell implements Cell {
      *
      * @param style  reference contained in the workbook.
      * If the value is null then the style information is removed causing the cell to used the default workbook style.
-     * 
-     * @throws IllegalArgumentException if style belongs to a different styles source (most likely because style is from a different workbook)
+     * @throws IllegalArgumentException if style belongs to a different styles source (most likely because style is from a different Workbook)
      */
     @Override
     public void setCellStyle(CellStyle style) {

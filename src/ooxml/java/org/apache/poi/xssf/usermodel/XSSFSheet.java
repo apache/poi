@@ -51,6 +51,7 @@ import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.FormulaShifter;
 import org.apache.poi.ss.formula.SheetNameFormatter;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellCopyPolicy;
 import org.apache.poi.ss.usermodel.CellRange;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.DataValidation;
@@ -1278,6 +1279,37 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     @Override
     public XSSFRow getRow(int rownum) {
         return _rows.get(rownum);
+    }
+    
+    /**
+     * returns all rows between startRow and endRow, inclusive.
+     * Rows between startRow and endRow that haven't been created are not included
+     * in result unless createRowIfMissing is true
+     *
+     * @param startRow the first row number in this sheet to return
+     * @param endRow the last row number in this sheet to return
+     * @param createRowIfMissing
+     * @return
+     * @throws IllegalArgumentException if startRowNum and endRowNum are not in ascending order
+     */
+    private List<XSSFRow> getRows(int startRowNum, int endRowNum, boolean createRowIfMissing) {
+        if (startRowNum > endRowNum) {
+            throw new IllegalArgumentException("getRows: startRowNum must be less than or equal to endRowNum");
+        }
+        final List<XSSFRow> rows = new ArrayList<XSSFRow>();
+        if (createRowIfMissing) {
+            for (int i = startRowNum; i <= endRowNum; i++) {
+                XSSFRow row = getRow(i);
+                if (row == null) {
+                    row = createRow(i);
+                }
+                rows.add(row);
+            }
+        }
+        else {
+            rows.addAll(_rows.subMap(startRowNum, endRowNum+1).values());
+        }
+        return rows;
     }
 
     /**
@@ -2599,6 +2631,119 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         getSheetTypeSheetView().setZoomScale(scale);
     }
 
+
+    /**
+     * copyRows rows from srcRows to this sheet starting at destStartRow
+     *
+     * Additionally copies merged regions that are completely defined in these
+     * rows (ie. merged 2 cells on a row to be shifted).
+     * @param srcRows the rows to copy. Formulas will be offset by the difference
+     * in the row number of the first row in srcRows and destStartRow (even if srcRows
+     * are from a different sheet).
+     * @param destStartRow the row in this sheet to paste the first row of srcRows
+     * the remainder of srcRows will be pasted below destStartRow per the cell copy policy
+     * @param policy is the cell copy policy, which can be used to merge the source and destination
+     * when the source is blank, copy styles only, paste as value, etc
+     */
+    @Beta
+    public void copyRows(List<? extends Row> srcRows, int destStartRow, CellCopyPolicy policy) {
+        if (srcRows == null || srcRows.size() == 0) {
+            throw new IllegalArgumentException("No rows to copy");
+        }
+        final Row srcStartRow = srcRows.get(0);
+        final Row srcEndRow = srcRows.get(srcRows.size() - 1);
+        
+        if (srcStartRow == null) {
+            throw new IllegalArgumentException("copyRows: First row cannot be null");
+        }
+        
+        final int srcStartRowNum = srcStartRow.getRowNum();
+        final int srcEndRowNum = srcEndRow.getRowNum();
+        
+        // check row numbers to make sure they are continuous and increasing (monotonic)
+        // and srcRows does not contain null rows
+        for (int index=1; index < srcRows.size(); index++) {
+            final Row prevRow = srcRows.get(index-1);
+            final Row curRow = srcRows.get(index);
+            if (prevRow == null || curRow == null) {
+                throw new IllegalArgumentException("srcRows may not contain null rows. Found null row at index " +
+                        index + " after Row " + prevRow.getRowNum() + ".");
+            //} else if (curRow.getRowNum() != prevRow.getRowNum() + 1) {
+            //    throw new IllegalArgumentException("srcRows must contain continuously increasing row numbers. " +
+            //            "Got srcRows[" + (index-1) + "]=Row " + prevRow.getRowNum() + ", srcRows[" + index + "]=Row " + curRow.getRowNum() + ".");
+            // FIXME: assumes row objects belong to non-null sheets and sheets belong to non-null workbooks.
+            } else if (srcStartRow.getSheet().getWorkbook() != curRow.getSheet().getWorkbook()) {
+                throw new IllegalArgumentException("All rows in srcRows must belong to the same sheet in the same workbook." +
+                        "Expected all rows from same workbook (" + srcStartRow.getSheet().getWorkbook() + "). " +
+                        "Got srcRows[" + index + "] from different workbook (" + curRow.getSheet().getWorkbook() + ").");
+            } else if (srcStartRow.getSheet() != curRow.getSheet()) {
+                throw new IllegalArgumentException("All rows in srcRows must belong to the same sheet. " +
+                        "Expected all rows from " + srcStartRow.getSheet().getSheetName() + ". " +
+                        "Got srcRows[" + index + "] from " + curRow.getSheet().getSheetName());
+            }
+        }
+        
+        // FIXME: is special behavior needed if srcRows and destRows belong to the same sheets and the regions overlap?
+        
+        final CellCopyPolicy options = policy.clone();
+        // avoid O(N^2) performance scanning through all regions for each row
+        // merged regions will be copied after all the rows have been copied
+        options.setCopyMergedRegions(false);
+        
+        // FIXME: if srcRows contains gaps or null values, clear out those rows that will be overwritten
+        // how will this work with merging (copy just values, leave cell styles in place?)
+        
+        int r = destStartRow;
+        for (Row srcRow : srcRows) {
+            int destRowNum;
+            if (policy.isCondenseRows()) {
+                destRowNum = r++;
+            } else {
+                final int shift = (srcRow.getRowNum() - srcStartRowNum);
+                destRowNum = destStartRow + shift;
+            }
+            //removeRow(destRowNum); //this probably clears all external formula references to destRow, causing unwanted #REF! errors
+            final XSSFRow destRow = createRow(destRowNum);
+            destRow.copyRowFrom(srcRow, options);
+        }
+        
+        // ======================
+        // Only do additional copy operations here that cannot be done with Row.copyFromRow(Row, options)
+        // reasons: operation needs to interact with multiple rows or sheets
+        
+        // Copy merged regions that are contained within the copy region
+        if (policy.isCopyMergedRegions()) {
+            // FIXME: is this something that rowShifter could be doing?
+            final int shift = destStartRow - srcStartRowNum;
+            for (CellRangeAddress srcRegion : srcStartRow.getSheet().getMergedRegions()) {
+                if (srcStartRowNum <= srcRegion.getFirstRow() && srcRegion.getLastRow() <= srcEndRowNum) {
+                    // srcRegion is fully inside the copied rows
+                    final CellRangeAddress destRegion = srcRegion.copy();
+                    destRegion.setFirstRow(destRegion.getFirstRow() + shift);
+                    destRegion.setLastRow(destRegion.getLastRow() + shift);
+                    addMergedRegion(destRegion);
+                }
+            }
+        }
+    }
+    
+    /**
+     * Copies rows between srcStartRow and srcEndRow to the same sheet, starting at destStartRow
+     * Convenience function for {@link #copyRows(List, int, CellCopyPolicy)}
+     * 
+     * Equivalent to copyRows(getRows(srcStartRow, srcEndRow, false), destStartRow, cellCopyPolicy)
+     * 
+     * @param srcStartRow the index of the first row to copy the cells from in this sheet
+     * @param srcEndRow the index of the last row to copy the cells from in this sheet
+     * @param destStartRow the index of the first row to copy the cells to in this sheet
+     * @param cellCopyPolicy the policy to use to determine how cells are copied
+     */
+    @Beta
+    public void copyRows(int srcStartRow, int srcEndRow, int destStartRow, CellCopyPolicy cellCopyPolicy) {
+        final List<XSSFRow> srcRows = getRows(srcStartRow, srcEndRow, false); //FIXME: should be false, no need to create rows where src is only to copy them to dest
+        copyRows(srcRows, destStartRow, cellCopyPolicy);
+    }
+    
     /**
      * Shifts rows between startRow and endRow n number of rows.
      * If you use a negative number, it will shift rows up.

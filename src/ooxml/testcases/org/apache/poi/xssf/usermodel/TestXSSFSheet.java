@@ -29,6 +29,9 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -41,12 +44,15 @@ import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.AutoFilter;
 import org.apache.poi.ss.usermodel.BaseTestSheet;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellCopyPolicy;
+import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.CalculationChain;
@@ -1438,5 +1444,368 @@ public final class TestXSSFSheet extends BaseTestSheet {
         XSSFSheet sheet = wb.createSheet();
         assertNotNull(sheet.createComment());
         wb.close();
+    }
+    
+    protected void testCopyOneRow(String copyRowsTestWorkbook) throws IOException {
+        final double FLOAT_PRECISION = 1e-9;
+        final XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook(copyRowsTestWorkbook);
+        final XSSFSheet sheet = workbook.getSheetAt(0);
+        final CellCopyPolicy defaultCopyPolicy = new CellCopyPolicy();
+        sheet.copyRows(1, 1, 6, defaultCopyPolicy);
+
+        final Row srcRow = sheet.getRow(1);
+        final Row destRow = sheet.getRow(6);
+        int col = 0;
+        Cell cell;
+
+        cell = CellUtil.getCell(destRow, col++);
+        assertEquals("Source row ->", cell.getStringCellValue());
+
+        // Style
+        cell = CellUtil.getCell(destRow, col++);
+        assertEquals("[Style] B7 cell value", "Red", cell.getStringCellValue());
+        assertEquals("[Style] B7 cell style", CellUtil.getCell(srcRow, 1).getCellStyle(), cell.getCellStyle());
+
+        // Blank
+        cell = CellUtil.getCell(destRow, col++);
+        assertEquals("[Blank] C7 cell type", Cell.CELL_TYPE_BLANK, cell.getCellType());
+
+        // Error
+        cell = CellUtil.getCell(destRow, col++);
+        assertEquals("[Error] D7 cell type", Cell.CELL_TYPE_ERROR, cell.getCellType());
+        final FormulaError error = FormulaError.forInt(cell.getErrorCellValue());
+        assertEquals("[Error] D7 cell value", FormulaError.NA, error); //FIXME: XSSFCell and HSSFCell expose different interfaces. getErrorCellString would be helpful here
+
+        // Date
+        cell = CellUtil.getCell(destRow, col++);
+        assertEquals("[Date] E7 cell type", Cell.CELL_TYPE_NUMERIC, cell.getCellType());
+        final Date date = new GregorianCalendar(2000, Calendar.JANUARY, 1).getTime();
+        assertEquals("[Date] E7 cell value", date, cell.getDateCellValue());
+
+        // Boolean
+        cell = CellUtil.getCell(destRow, col++);
+        assertEquals("[Boolean] F7 cell type", Cell.CELL_TYPE_BOOLEAN, cell.getCellType());
+        assertEquals("[Boolean] F7 cell value", true, cell.getBooleanCellValue());
+
+        // String
+        cell = CellUtil.getCell(destRow, col++);
+        assertEquals("[String] G7 cell type", Cell.CELL_TYPE_STRING, cell.getCellType());
+        assertEquals("[String] G7 cell value", "Hello", cell.getStringCellValue());
+        
+        // Int
+        cell = CellUtil.getCell(destRow, col++);
+        assertEquals("[Int] H7 cell type", Cell.CELL_TYPE_NUMERIC, cell.getCellType());
+        assertEquals("[Int] H7 cell value", 15, (int) cell.getNumericCellValue());
+        
+        // Float
+        cell = CellUtil.getCell(destRow, col++);
+        assertEquals("[Float] I7 cell type", Cell.CELL_TYPE_NUMERIC, cell.getCellType());
+        assertEquals("[Float] I7 cell value", 12.5, cell.getNumericCellValue(), FLOAT_PRECISION);
+        
+        // Cell Formula
+        cell = CellUtil.getCell(destRow, col++);
+        assertEquals("J7", new CellReference(cell).formatAsString());
+        assertEquals("[Cell Formula] J7 cell type", Cell.CELL_TYPE_FORMULA, cell.getCellType());
+        assertEquals("[Cell Formula] J7 cell formula", "5+2", cell.getCellFormula());
+        System.out.println("Cell formula evaluation currently unsupported");
+        
+        // Cell Formula with Reference
+        // Formula row references should be adjusted by destRowNum-srcRowNum
+        cell = CellUtil.getCell(destRow, col++);
+        assertEquals("K7", new CellReference(cell).formatAsString());
+        assertEquals("[Cell Formula with Reference] K7 cell type",
+                Cell.CELL_TYPE_FORMULA, cell.getCellType());
+        assertEquals("[Cell Formula with Reference] K7 cell formula",
+                "J7+H$2", cell.getCellFormula());
+        
+        // Cell Formula with Reference spanning multiple rows
+        cell = CellUtil.getCell(destRow, col++);
+        assertEquals("[Cell Formula with Reference spanning multiple rows] L7 cell type",
+                Cell.CELL_TYPE_FORMULA, cell.getCellType());
+        assertEquals("[Cell Formula with Reference spanning multiple rows] L7 cell formula",
+                "G7&\" \"&G8", cell.getCellFormula());
+        
+        // Cell Formula with Reference spanning multiple rows
+        cell = CellUtil.getCell(destRow, col++);
+        assertEquals("[Cell Formula with Area Reference] M7 cell type",
+                Cell.CELL_TYPE_FORMULA, cell.getCellType());
+        assertEquals("[Cell Formula with Area Reference] M7 cell formula",
+                "SUM(H7:I8)", cell.getCellFormula());
+        
+        // Array Formula
+        cell = CellUtil.getCell(destRow, col++);
+        System.out.println("Array formulas currently unsupported");
+        // FIXME: Array Formula set with Sheet.setArrayFormula() instead of cell.setFormula()
+        /*
+        assertEquals("[Array Formula] N7 cell type", Cell.CELL_TYPE_FORMULA, cell.getCellType());
+        assertEquals("[Array Formula] N7 cell formula", "{SUM(H7:J7*{1,2,3})}", cell.getCellFormula());
+        */
+        
+        // Data Format
+        cell = CellUtil.getCell(destRow, col++);
+        assertEquals("[Data Format] O7 cell type;", Cell.CELL_TYPE_NUMERIC, cell.getCellType());
+        assertEquals("[Data Format] O7 cell value", 100.20, cell.getNumericCellValue(), FLOAT_PRECISION);
+        //FIXME: currently fails
+        final String moneyFormat = "\"$\"#,##0.00_);[Red]\\(\"$\"#,##0.00\\)";
+        assertEquals("[Data Format] O7 data format", moneyFormat, cell.getCellStyle().getDataFormatString());
+        
+        // Merged
+        cell = CellUtil.getCell(destRow, col);
+        assertEquals("[Merged] P7:Q7 cell value",
+                "Merged cells", cell.getStringCellValue());
+        assertTrue("[Merged] P7:Q7 merged region",
+                sheet.getMergedRegions().contains(CellRangeAddress.valueOf("P7:Q7")));
+        
+        // Merged across multiple rows
+        // Microsoft Excel 2013 does not copy a merged region unless all rows of
+        // the source merged region are selected
+        // POI's behavior should match this behavior
+        col += 2;
+        cell = CellUtil.getCell(destRow, col);
+        // Note: this behavior deviates from Microsoft Excel,
+        // which will not overwrite a cell in destination row if merged region extends beyond the copied row.
+        // The Excel way would require:
+        //assertEquals("[Merged across multiple rows] R7:S8 merged region", "Should NOT be overwritten", cell.getStringCellValue());
+        //assertFalse("[Merged across multiple rows] R7:S8 merged region", 
+        //        sheet.getMergedRegions().contains(CellRangeAddress.valueOf("R7:S8")));
+        // As currently implemented, cell value is copied but merged region is not copied
+        assertEquals("[Merged across multiple rows] R7:S8 cell value",
+                "Merged cells across multiple rows", cell.getStringCellValue());
+        assertFalse("[Merged across multiple rows] R7:S7 merged region (one row)", 
+                sheet.getMergedRegions().contains(CellRangeAddress.valueOf("R7:S7"))); //shouldn't do 1-row merge
+        assertFalse("[Merged across multiple rows] R7:S8 merged region", 
+                sheet.getMergedRegions().contains(CellRangeAddress.valueOf("R7:S8"))); //shouldn't do 2-row merge
+        
+        // Make sure other rows are blank (off-by-one errors)
+        assertNull(sheet.getRow(5));
+        assertNull(sheet.getRow(7));
+    }
+    
+    public void testCopyMultipleRows(String copyRowsTestWorkbook) throws IOException {
+        final double FLOAT_PRECISION = 1e-9;
+        final XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook(copyRowsTestWorkbook);
+        final XSSFSheet sheet = workbook.getSheetAt(0);
+        final CellCopyPolicy defaultCopyPolicy = new CellCopyPolicy();
+        sheet.copyRows(0, 3, 8, defaultCopyPolicy);
+
+        @SuppressWarnings("unused")
+        final Row srcHeaderRow = sheet.getRow(0);
+        final Row srcRow1 = sheet.getRow(1);
+        final Row srcRow2 = sheet.getRow(2);
+        final Row srcRow3 = sheet.getRow(3);
+        final Row destHeaderRow = sheet.getRow(8);
+        final Row destRow1 = sheet.getRow(9);
+        final Row destRow2 = sheet.getRow(10);
+        final Row destRow3 = sheet.getRow(11);
+        int col = 0;
+        Cell cell;
+        
+        // Header row should be copied
+        assertNotNull(destHeaderRow);
+        
+        // Data rows
+        cell = CellUtil.getCell(destRow1, col);
+        assertEquals("Source row ->", cell.getStringCellValue());
+        
+        // Style
+        col++;
+        cell = CellUtil.getCell(destRow1, col);
+        assertEquals("[Style] B10 cell value", "Red", cell.getStringCellValue());
+        assertEquals("[Style] B10 cell style", CellUtil.getCell(srcRow1, 1).getCellStyle(), cell.getCellStyle());
+        
+        cell = CellUtil.getCell(destRow2, col);
+        assertEquals("[Style] B11 cell value", "Blue", cell.getStringCellValue());
+        assertEquals("[Style] B11 cell style", CellUtil.getCell(srcRow2, 1).getCellStyle(), cell.getCellStyle());
+        
+        // Blank
+        col++;
+        cell = CellUtil.getCell(destRow1, col);
+        assertEquals("[Blank] C10 cell type", Cell.CELL_TYPE_BLANK, cell.getCellType());
+        
+        cell = CellUtil.getCell(destRow2, col);
+        assertEquals("[Blank] C11 cell type", Cell.CELL_TYPE_BLANK, cell.getCellType());
+        
+        // Error
+        col++;
+        cell = CellUtil.getCell(destRow1, col);
+        assertEquals("[Error] D10 cell type", Cell.CELL_TYPE_ERROR, cell.getCellType());
+        FormulaError error = FormulaError.forInt(cell.getErrorCellValue());
+        assertEquals("[Error] D10 cell value", FormulaError.NA, error); //FIXME: XSSFCell and HSSFCell expose different interfaces. getErrorCellString would be helpful here
+        
+        cell = CellUtil.getCell(destRow2, col);
+        assertEquals("[Error] D11 cell type", Cell.CELL_TYPE_ERROR, cell.getCellType());
+        error = FormulaError.forInt(cell.getErrorCellValue());
+        assertEquals("[Error] D11 cell value", FormulaError.NAME, error); //FIXME: XSSFCell and HSSFCell expose different interfaces. getErrorCellString would be helpful here
+        
+        // Date
+        col++;
+        cell = CellUtil.getCell(destRow1, col);
+        assertEquals("[Date] E10 cell type", Cell.CELL_TYPE_NUMERIC, cell.getCellType());
+        Date date = new GregorianCalendar(2000, Calendar.JANUARY, 1).getTime();
+        assertEquals("[Date] E10 cell value", date, cell.getDateCellValue());
+        
+        cell = CellUtil.getCell(destRow2, col);
+        assertEquals("[Date] E11 cell type", Cell.CELL_TYPE_NUMERIC, cell.getCellType());
+        date = new GregorianCalendar(2000, Calendar.JANUARY, 2).getTime();
+        assertEquals("[Date] E11 cell value", date, cell.getDateCellValue());
+        
+        // Boolean
+        col++;
+        cell = CellUtil.getCell(destRow1, col);
+        assertEquals("[Boolean] F10 cell type", Cell.CELL_TYPE_BOOLEAN, cell.getCellType());
+        assertEquals("[Boolean] F10 cell value", true, cell.getBooleanCellValue());
+        
+        cell = CellUtil.getCell(destRow2, col);
+        assertEquals("[Boolean] F11 cell type", Cell.CELL_TYPE_BOOLEAN, cell.getCellType());
+        assertEquals("[Boolean] F11 cell value", false, cell.getBooleanCellValue());
+        
+        // String
+        col++;
+        cell = CellUtil.getCell(destRow1, col);
+        assertEquals("[String] G10 cell type", Cell.CELL_TYPE_STRING, cell.getCellType());
+        assertEquals("[String] G10 cell value", "Hello", cell.getStringCellValue());
+        
+        cell = CellUtil.getCell(destRow2, col);
+        assertEquals("[String] G11 cell type", Cell.CELL_TYPE_STRING, cell.getCellType());
+        assertEquals("[String] G11 cell value", "World", cell.getStringCellValue());
+        
+        // Int
+        col++;
+        cell = CellUtil.getCell(destRow1, col);
+        assertEquals("[Int] H10 cell type", Cell.CELL_TYPE_NUMERIC, cell.getCellType());
+        assertEquals("[Int] H10 cell value", 15, (int) cell.getNumericCellValue());
+        
+        cell = CellUtil.getCell(destRow2, col);
+        assertEquals("[Int] H11 cell type", Cell.CELL_TYPE_NUMERIC, cell.getCellType());
+        assertEquals("[Int] H11 cell value", 42, (int) cell.getNumericCellValue());
+        
+        // Float
+        col++;
+        cell = CellUtil.getCell(destRow1, col);
+        assertEquals("[Float] I10 cell type", Cell.CELL_TYPE_NUMERIC, cell.getCellType());
+        assertEquals("[Float] I10 cell value", 12.5, cell.getNumericCellValue(), FLOAT_PRECISION);
+        
+        cell = CellUtil.getCell(destRow2, col);
+        assertEquals("[Float] I11 cell type", Cell.CELL_TYPE_NUMERIC, cell.getCellType());
+        assertEquals("[Float] I11 cell value", 5.5, cell.getNumericCellValue(), FLOAT_PRECISION);
+        
+        // Cell Formula
+        col++;
+        cell = CellUtil.getCell(destRow1, col);
+        assertEquals("[Cell Formula] J10 cell type", Cell.CELL_TYPE_FORMULA, cell.getCellType());
+        assertEquals("[Cell Formula] J10 cell formula", "5+2", cell.getCellFormula());
+        
+        cell = CellUtil.getCell(destRow2, col);
+        assertEquals("[Cell Formula] J11 cell type", Cell.CELL_TYPE_FORMULA, cell.getCellType());
+        assertEquals("[Cell Formula] J11 cell formula", "6+18", cell.getCellFormula());
+
+        // Cell Formula with Reference
+        col++;
+        // Formula row references should be adjusted by destRowNum-srcRowNum
+        cell = CellUtil.getCell(destRow1, col);
+        assertEquals("[Cell Formula with Reference] K10 cell type",
+                Cell.CELL_TYPE_FORMULA, cell.getCellType());
+        assertEquals("[Cell Formula with Reference] K10 cell formula",
+                "J10+H$2", cell.getCellFormula());
+        
+        cell = CellUtil.getCell(destRow2, col);
+        assertEquals("[Cell Formula with Reference] K11 cell type", Cell.CELL_TYPE_FORMULA, cell.getCellType());
+        assertEquals("[Cell Formula with Reference] K11 cell formula", "J11+H$2", cell.getCellFormula());
+        
+        // Cell Formula with Reference spanning multiple rows
+        col++;
+        cell = CellUtil.getCell(destRow1, col);
+        assertEquals("[Cell Formula with Reference spanning multiple rows] L10 cell type",
+                Cell.CELL_TYPE_FORMULA, cell.getCellType());
+        assertEquals("[Cell Formula with Reference spanning multiple rows] L10 cell formula",
+                "G10&\" \"&G11", cell.getCellFormula());
+        
+        cell = CellUtil.getCell(destRow2, col);
+        assertEquals("[Cell Formula with Reference spanning multiple rows] L11 cell type",
+                Cell.CELL_TYPE_FORMULA, cell.getCellType());
+        assertEquals("[Cell Formula with Reference spanning multiple rows] L11 cell formula",
+                "G11&\" \"&G12", cell.getCellFormula());
+        
+        // Cell Formula with Area Reference
+        col++;
+        cell = CellUtil.getCell(destRow1, col);
+        assertEquals("[Cell Formula with Area Reference] M10 cell type",
+                Cell.CELL_TYPE_FORMULA, cell.getCellType());
+        assertEquals("[Cell Formula with Area Reference] M10 cell formula",
+                "SUM(H10:I11)", cell.getCellFormula());
+        
+        cell = CellUtil.getCell(destRow2, col);
+        assertEquals("[Cell Formula with Area Reference] M11 cell type",
+                Cell.CELL_TYPE_FORMULA, cell.getCellType());
+        assertEquals("[Cell Formula with Area Reference] M11 cell formula",
+                "SUM($H$3:I10)", cell.getCellFormula()); //Also acceptable: SUM($H10:I$3), but this AreaReference isn't in ascending order
+        
+        // Array Formula
+        col++;
+        cell = CellUtil.getCell(destRow1, col);
+        System.out.println("Array formulas currently unsupported");
+    /*
+        // FIXME: Array Formula set with Sheet.setArrayFormula() instead of cell.setFormula()
+        assertEquals("[Array Formula] N10 cell type", Cell.CELL_TYPE_FORMULA, cell.getCellType());
+        assertEquals("[Array Formula] N10 cell formula", "{SUM(H10:J10*{1,2,3})}", cell.getCellFormula());
+        
+        cell = CellUtil.getCell(destRow2, col);
+        // FIXME: Array Formula set with Sheet.setArrayFormula() instead of cell.setFormula() 
+        assertEquals("[Array Formula] N11 cell type", Cell.CELL_TYPE_FORMULA, cell.getCellType());
+        assertEquals("[Array Formula] N11 cell formula", "{SUM(H11:J11*{1,2,3})}", cell.getCellFormula());
+     */
+        
+        // Data Format
+        col++;
+        cell = CellUtil.getCell(destRow2, col);
+        assertEquals("[Data Format] O10 cell type", Cell.CELL_TYPE_NUMERIC, cell.getCellType());
+        assertEquals("[Data Format] O10 cell value", 100.20, cell.getNumericCellValue(), FLOAT_PRECISION);
+        final String moneyFormat = "\"$\"#,##0.00_);[Red]\\(\"$\"#,##0.00\\)";
+        assertEquals("[Data Format] O10 cell data format", moneyFormat, cell.getCellStyle().getDataFormatString());
+        
+        // Merged
+        col++;
+        cell = CellUtil.getCell(destRow1, col);
+        assertEquals("[Merged] P10:Q10 cell value",
+                "Merged cells", cell.getStringCellValue());
+        assertTrue("[Merged] P10:Q10 merged region",
+                sheet.getMergedRegions().contains(CellRangeAddress.valueOf("P10:Q10")));
+        
+        cell = CellUtil.getCell(destRow2, col);
+        assertEquals("[Merged] P11:Q11 cell value", "Merged cells", cell.getStringCellValue());
+        assertTrue("[Merged] P11:Q11 merged region",
+                sheet.getMergedRegions().contains(CellRangeAddress.valueOf("P11:Q11")));
+        
+        // Should Q10/Q11 be checked?
+        
+        // Merged across multiple rows
+        // Microsoft Excel 2013 does not copy a merged region unless all rows of
+        // the source merged region are selected
+        // POI's behavior should match this behavior
+        col += 2;
+        cell = CellUtil.getCell(destRow1, col);
+        assertEquals("[Merged across multiple rows] R10:S11 cell value", 
+                "Merged cells across multiple rows", cell.getStringCellValue());
+        assertTrue("[Merged across multiple rows] R10:S11 merged region", 
+                sheet.getMergedRegions().contains(CellRangeAddress.valueOf("R10:S11")));
+        
+        // Row 3 (zero-based) was empty, so Row 11 (zero-based) should be empty too.
+        if (srcRow3 == null) {
+            assertNull("Row 3 was empty, so Row 11 should be empty", destRow3);
+        }
+        
+        // Make sure other rows are blank (off-by-one errors)
+        assertNull("Off-by-one lower edge case", sheet.getRow(7)); //one row above destHeaderRow
+        assertNull("Off-by-one upper edge case", sheet.getRow(12)); //one row below destRow3
+    }
+    
+    @Test
+    public void testCopyOneRow() throws IOException {
+        testCopyOneRow("XSSFSheet.copyRows.xlsx");
+    }
+    
+    @Test
+    public void testCopyMultipleRows() throws IOException {
+        testCopyMultipleRows("XSSFSheet.copyRows.xlsx");
     }
 }

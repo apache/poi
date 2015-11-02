@@ -35,6 +35,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.xssf.usermodel.XSSFCell;
@@ -164,7 +165,14 @@ public final class XSSFRowShifter {
         }
     }
 
-    private void updateRowFormulas(XSSFRow row, FormulaShifter shifter) {
+    /**
+     * Update the formulas in specified row using the formula shifting policy specified by shifter
+     *
+     * @param row the row to update the formulas on
+     * @param shifter the formula shifting policy
+     */
+    @Internal
+    public void updateRowFormulas(XSSFRow row, FormulaShifter shifter) {
         for (Cell c : row) {
             XSSFCell cell = (XSSFCell) c;
 
