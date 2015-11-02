@@ -21,23 +21,37 @@ import org.apache.poi.util.Beta;
 
 @Beta
 public class CellCopyPolicy implements Cloneable {
+    // cell-level policies
     public static final boolean DEFAULT_COPY_CELL_VALUE_POLICY = true;
     public static final boolean DEFAULT_COPY_CELL_STYLE_POLICY = true;
     public static final boolean DEFAULT_COPY_CELL_FORMULA_POLICY = true;
-    public static final boolean DEFAULT_COPY_MERGED_REGIONS_POLICY = true;
+    public static final boolean DEFAULT_COPY_HYPERLINK_POLICY = true;
+    public static final boolean DEFAULT_MERGE_HYPERLINK_POLICY = false;
+    
+    // row-level policies
     public static final boolean DEFAULT_COPY_ROW_HEIGHT_POLICY = true;
     public static final boolean DEFAULT_CONDENSE_ROWS_POLICY = false;
     
+    // sheet-level policies
+    public static final boolean DEFAULT_COPY_MERGED_REGIONS_POLICY = true;
+    
+    // cell-level policies
     private boolean copyCellValue = DEFAULT_COPY_CELL_VALUE_POLICY;
     private boolean copyCellStyle = DEFAULT_COPY_CELL_STYLE_POLICY;
     private boolean copyCellFormula = DEFAULT_COPY_CELL_FORMULA_POLICY;
-    private boolean copyMergedRegions = DEFAULT_COPY_MERGED_REGIONS_POLICY;
+    private boolean copyHyperlink = DEFAULT_COPY_HYPERLINK_POLICY;
+    private boolean mergeHyperlink = DEFAULT_MERGE_HYPERLINK_POLICY;
+    
+    // row-level policies
     private boolean copyRowHeight = DEFAULT_COPY_ROW_HEIGHT_POLICY;
     private boolean condenseRows = DEFAULT_CONDENSE_ROWS_POLICY;
     
+    // sheet-level policies
+    private boolean copyMergedRegions = DEFAULT_COPY_MERGED_REGIONS_POLICY;
+    
     /** 
      * Default CellCopyPolicy, uses default policy
-     * For custom CellCopyPolicy, use {@link #Builder} class
+     * For custom CellCopyPolicy, use {@link Builder} class
      */
     public CellCopyPolicy() { }
     
@@ -48,18 +62,29 @@ public class CellCopyPolicy implements Cloneable {
         copyCellValue = builder.copyCellValue;
         copyCellStyle = builder.copyCellStyle;
         copyCellFormula = builder.copyCellFormula;
-        copyMergedRegions = builder.copyMergedRegions;
+        copyHyperlink = builder.copyHyperlink;
+        mergeHyperlink = builder.mergeHyperlink;
+        
         copyRowHeight = builder.copyRowHeight;
         condenseRows = builder.condenseRows;
+        
+        copyMergedRegions = builder.copyMergedRegions;
     }
     
     public static class Builder {
+        // cell-level policies
         private boolean copyCellValue = DEFAULT_COPY_CELL_VALUE_POLICY;
         private boolean copyCellStyle = DEFAULT_COPY_CELL_STYLE_POLICY;
         private boolean copyCellFormula = DEFAULT_COPY_CELL_FORMULA_POLICY;
-        private boolean copyMergedRegions = DEFAULT_COPY_MERGED_REGIONS_POLICY;
+        private boolean copyHyperlink = DEFAULT_COPY_HYPERLINK_POLICY;
+        private boolean mergeHyperlink = DEFAULT_MERGE_HYPERLINK_POLICY;
+        
+        // row-level policies
         private boolean copyRowHeight = DEFAULT_COPY_ROW_HEIGHT_POLICY;
         private boolean condenseRows = DEFAULT_CONDENSE_ROWS_POLICY;
+        
+        // sheet-level policies
+        private boolean copyMergedRegions = DEFAULT_COPY_MERGED_REGIONS_POLICY;
         
         /**
          * Builder class for CellCopyPolicy
@@ -67,6 +92,7 @@ public class CellCopyPolicy implements Cloneable {
         public Builder() {
         }
         
+        // cell-level policies
         public Builder cellValue(boolean copyCellValue) {
             this.copyCellValue = copyCellValue;
             return this;
@@ -79,16 +105,28 @@ public class CellCopyPolicy implements Cloneable {
             this.copyCellFormula = copyCellFormula;
             return this;
         }
-        public Builder mergedRegions(boolean copyMergedRegions) {
-            this.copyMergedRegions = copyMergedRegions;
+        public Builder copyHyperlink(boolean copyHyperlink) {
+            this.copyHyperlink = copyHyperlink;
             return this;
         }
+        public Builder mergeHyperlink(boolean mergeHyperlink) {
+            this.mergeHyperlink = mergeHyperlink;
+            return this;
+        }
+        
+        // row-level policies
         public Builder rowHeight(boolean copyRowHeight) {
             this.copyRowHeight = copyRowHeight;
             return this;
         }
         public Builder condenseRows(boolean condenseRows) {
             this.condenseRows = condenseRows;
+            return this;
+        }
+        
+        // sheet-level policies
+        public Builder mergedRegions(boolean copyMergedRegions) {
+            this.copyMergedRegions = copyMergedRegions;
             return this;
         }
         public CellCopyPolicy build() {
@@ -101,9 +139,11 @@ public class CellCopyPolicy implements Cloneable {
                 .cellValue(copyCellValue)
                 .cellStyle(copyCellStyle)
                 .cellFormula(copyCellFormula)
-                .mergedRegions(copyMergedRegions)
+                .copyHyperlink(copyHyperlink)
+                .mergeHyperlink(mergeHyperlink)
                 .rowHeight(copyRowHeight)
-                .condenseRows(condenseRows);
+                .condenseRows(condenseRows)
+                .mergedRegions(copyMergedRegions);
         return builder;
     }
     
@@ -111,7 +151,10 @@ public class CellCopyPolicy implements Cloneable {
     public CellCopyPolicy clone() {
         return createBuilder().build();
     }
-    
+
+/*
+ * Cell-level policies 
+ */
     /**
      * @return the copyCellValue
      */
@@ -153,21 +196,38 @@ public class CellCopyPolicy implements Cloneable {
     public void setCopyCellFormula(boolean copyCellFormula) {
         this.copyCellFormula = copyCellFormula;
     }
-
+    
     /**
-     * @return the copyMergedRegions
+     * @return the copyHyperlink
      */
-    public boolean isCopyMergedRegions() {
-        return copyMergedRegions;
+    public boolean isCopyHyperlink() {
+        return copyHyperlink;
     }
 
     /**
-     * @param copyMergedRegions the copyMergedRegions to set
+     * @param copyHyperlink the copyHyperlink to set
      */
-    public void setCopyMergedRegions(boolean copyMergedRegions) {
-        this.copyMergedRegions = copyMergedRegions;
+    public void setCopyHyperlink(boolean copyHyperlink) {
+        this.copyHyperlink = copyHyperlink;
+    }
+    
+    /**
+     * @return the mergeHyperlink
+     */
+    public boolean isMergeHyperlink() {
+        return mergeHyperlink;
     }
 
+    /**
+     * @param mergeHyperlink the mergeHyperlink to set
+     */
+    public void setMergeHyperlink(boolean mergeHyperlink) {
+        this.mergeHyperlink = mergeHyperlink;
+    }
+
+/*
+ * Row-level policies 
+ */
     /**
      * @return the copyRowHeight
      */
@@ -198,6 +258,24 @@ public class CellCopyPolicy implements Cloneable {
      */
     public void setCondenseRows(boolean condenseRows) {
         this.condenseRows = condenseRows;
+    }
+    
+    
+/*
+ * Sheet-level policies 
+ */
+    /**
+     * @return the copyMergedRegions
+     */
+    public boolean isCopyMergedRegions() {
+        return copyMergedRegions;
+    }
+
+    /**
+     * @param copyMergedRegions the copyMergedRegions to set
+     */
+    public void setCopyMergedRegions(boolean copyMergedRegions) {
+        this.copyMergedRegions = copyMergedRegions;
     }
 
 }
