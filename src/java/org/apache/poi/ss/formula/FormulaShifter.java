@@ -469,7 +469,7 @@ public final class FormulaShifter {
             return rptg;
         }
         return null;
-       }
+    }
 
     /**
      * Modifies aptg in-place and return a reference to aptg if the first or last row of
