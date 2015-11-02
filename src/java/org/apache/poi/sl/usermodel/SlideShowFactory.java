@@ -26,6 +26,7 @@ import java.lang.reflect.Method;
 import java.security.GeneralSecurityException;
 
 import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.OldFileFormatException;
 import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.poi.poifs.crypt.Decryptor;
 import org.apache.poi.poifs.crypt.EncryptionInfo;
@@ -274,6 +275,8 @@ public class SlideShowFactory {
                 throw (IOException)t;
             } else if (t instanceof EncryptedDocumentException) {
                 throw (EncryptedDocumentException)t;
+            } else if (t instanceof OldFileFormatException) {
+                throw (OldFileFormatException)t;
             } else {
                 throw new IOException(t);
             }
