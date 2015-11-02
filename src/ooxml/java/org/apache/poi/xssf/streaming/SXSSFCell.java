@@ -579,6 +579,7 @@ public class SXSSFCell implements Cell {
     /**
      * @return hyperlink associated with this cell or <code>null</code> if not found
      */
+    @Override
     public Hyperlink getHyperlink()
     {
         return (Hyperlink)getPropertyValue(Property.HYPERLINK);
@@ -590,6 +591,7 @@ public class SXSSFCell implements Cell {
      *
      * @param link hyperlink associated with this cell
      */
+    @Override
     public void setHyperlink(Hyperlink link)
     {
         if (link == null) {

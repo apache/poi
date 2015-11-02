@@ -1045,17 +1045,9 @@ public class HSSFCell implements Cell {
     /**
      * @return hyperlink associated with this cell or <code>null</code> if not found
      */
+    @Override
     public HSSFHyperlink getHyperlink(){
-        for (Iterator<RecordBase> it = _sheet.getSheet().getRecords().iterator(); it.hasNext(); ) {
-            RecordBase rec = it.next();
-            if (rec instanceof HyperlinkRecord){
-                HyperlinkRecord link = (HyperlinkRecord)rec;
-                if(link.getFirstColumn() == _record.getColumn() && link.getFirstRow() == _record.getRow()){
-                    return new HSSFHyperlink(link);
-                }
-            }
-        }
-        return null;
+        return _sheet.getHyperlink(_record.getRow(), _record.getColumn());
     }
 
     /**
@@ -1064,6 +1056,7 @@ public class HSSFCell implements Cell {
      *
      * @param hyperlink hyperlink associated with this cell
      */
+    @Override
     public void setHyperlink(Hyperlink hyperlink){
         if (hyperlink == null) {
             removeHyperlink();

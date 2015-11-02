@@ -1067,4 +1067,20 @@ public interface Sheet extends Iterable<Row> {
      *  you take it out of them.
      */
     int getColumnOutlineLevel(int columnIndex);
+    
+    /**
+     * Get a Hyperlink in this sheet anchored at row, column
+     *
+     * @param row
+     * @param column
+     * @return hyperlink if there is a hyperlink anchored at row, column; otherwise returns null
+     */
+    public Hyperlink getHyperlink(int row, int column);
+    
+    /**
+     * Get a list of Hyperlinks in this sheet
+     *
+     * @return Hyperlinks for the sheet
+     */
+    public List<? extends Hyperlink> getHyperlinkList();
 }

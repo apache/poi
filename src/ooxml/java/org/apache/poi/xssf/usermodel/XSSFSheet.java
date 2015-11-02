@@ -703,6 +703,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * @param column
      * @return hyperlink if there is a hyperlink anchored at row, column; otherwise returns null
      */
+    @Override
     public XSSFHyperlink getHyperlink(int row, int column) {
         String ref = new CellReference(row, column).formatAsString();
         for(XSSFHyperlink hyperlink : hyperlinks) {
@@ -718,6 +719,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      *
      * @return Hyperlinks for the sheet
      */
+    @Override
     public List<XSSFHyperlink> getHyperlinkList() {
         return Collections.unmodifiableList(hyperlinks);
     }

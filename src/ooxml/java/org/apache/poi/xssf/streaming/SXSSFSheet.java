@@ -44,6 +44,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.SheetUtil;
 import org.apache.poi.xssf.usermodel.XSSFDataValidation;
+import org.apache.poi.xssf.usermodel.XSSFHyperlink;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetFormatPr;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
@@ -1325,6 +1326,28 @@ public class SXSSFSheet implements Sheet, Cloneable
     public Comment getCellComment(int row, int column)
     {
         return _sh.getCellComment(row, column);
+    }
+    
+    /**
+     * Get a Hyperlink in this sheet anchored at row, column
+     *
+     * @param row
+     * @param column
+     * @return hyperlink if there is a hyperlink anchored at row, column; otherwise returns null
+     */
+    @Override
+    public XSSFHyperlink getHyperlink(int row, int column) {
+        return _sh.getHyperlink(row, column);
+    }
+    
+    /**
+     * Get a list of Hyperlinks in this sheet
+     *
+     * @return Hyperlinks for the sheet
+     */
+    @Override
+    public List<XSSFHyperlink> getHyperlinkList() {
+        return _sh.getHyperlinkList();
     }
 
     /**
