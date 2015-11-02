@@ -17,11 +17,17 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import org.junit.Test;
+
 import java.io.IOException;
 
 import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ss.usermodel.BaseTestHyperlink;
+
 
 /**
  * Tests HSSFHyperlink.
@@ -36,6 +42,7 @@ public final class TestHSSFHyperlink extends BaseTestHyperlink {
     /**
      * Test that we can read hyperlinks.
      */
+    @Test
     public void testRead() {
 
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("HyperlinksOnManySheets.xls");
