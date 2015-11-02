@@ -2755,7 +2755,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         int sheetIndex = getWorkbook().getSheetIndex(this);
         String sheetName = getWorkbook().getSheetName(sheetIndex);
         FormulaShifter shifter = FormulaShifter.createForRowShift(
-                                   sheetIndex, sheetName, startRow, endRow, n);
+                                   sheetIndex, sheetName, startRow, endRow, n, SpreadsheetVersion.EXCEL2007);
 
         rowShifter.updateNamedRanges(shifter);
         rowShifter.updateFormulas(shifter);

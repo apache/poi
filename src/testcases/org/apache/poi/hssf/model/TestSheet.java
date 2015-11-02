@@ -62,6 +62,7 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.usermodel.RecordInspector.RecordCollector;
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.FormulaShifter;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.HexRead;
@@ -680,7 +681,7 @@ public final class TestSheet {
 		List<RecordBase> sheetRecs = sheet.getRecords();
 		assertEquals(23, sheetRecs.size());
 
-		FormulaShifter shifter = FormulaShifter.createForRowShift(0, "", 0, 0, 1);
+		FormulaShifter shifter = FormulaShifter.createForRowShift(0, "", 0, 0, 1, SpreadsheetVersion.EXCEL97);
 		sheet.updateFormulasAfterCellShift(shifter, 0);
 		if (sheetRecs.size() == 24 && sheetRecs.get(22) instanceof ConditionalFormattingTable) {
 			throw new AssertionFailedError("Identified bug 46547a");
