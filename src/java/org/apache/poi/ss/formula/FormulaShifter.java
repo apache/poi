@@ -17,6 +17,7 @@
 
 package org.apache.poi.ss.formula;
 
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.ptg.Area2DPtgBase;
 import org.apache.poi.ss.formula.ptg.Area3DPtg;
 import org.apache.poi.ss.formula.ptg.Area3DPxg;
@@ -41,6 +42,7 @@ public final class FormulaShifter {
 
     private static enum ShiftMode {
         RowMove,
+        RowCopy,
         SheetMove,
     }
 
@@ -61,6 +63,7 @@ public final class FormulaShifter {
 
     private final int _srcSheetIndex;
     private final int _dstSheetIndex;
+    private final SpreadsheetVersion _version;
 
     private final ShiftMode _mode;
 
@@ -69,7 +72,8 @@ public final class FormulaShifter {
      *
      * For example, this will be called on {@link org.apache.poi.hssf.usermodel.HSSFSheet#shiftRows(int, int, int)} }
      */
-    private FormulaShifter(int externSheetIndex, String sheetName, int firstMovedIndex, int lastMovedIndex, int amountToMove) {
+    private FormulaShifter(int externSheetIndex, String sheetName, int firstMovedIndex, int lastMovedIndex, int amountToMove,
+            ShiftMode mode, SpreadsheetVersion version) {
         if (amountToMove == 0) {
             throw new IllegalArgumentException("amountToMove must not be zero");
         }
@@ -81,7 +85,8 @@ public final class FormulaShifter {
         _firstMovedIndex = firstMovedIndex;
         _lastMovedIndex = lastMovedIndex;
         _amountToMove = amountToMove;
-        _mode = ShiftMode.RowMove;
+        _mode = mode;
+        _version = version;
 
         _srcSheetIndex = _dstSheetIndex = -1;
     }
@@ -94,14 +99,36 @@ public final class FormulaShifter {
     private FormulaShifter(int srcSheetIndex, int dstSheetIndex) {
         _externSheetIndex = _firstMovedIndex = _lastMovedIndex = _amountToMove = -1;
         _sheetName = null;
+        _version = null;
 
         _srcSheetIndex = srcSheetIndex;
         _dstSheetIndex = dstSheetIndex;
         _mode = ShiftMode.SheetMove;
     }
 
+    /**
+     * @deprecated As of 3.14 beta 1 (November 2015), replaced by {@link #createForRowShift(int, String, int, int, int, SpreadsheetVersion)}
+     *
+     * @param externSheetIndex
+     * @param sheetName
+     * @param firstMovedRowIndex
+     * @param lastMovedRowIndex
+     * @param numberOfRowsToMove
+     * @return FormulaShifter object that can be passed to a RowShifter to modify formulas.
+     */
+    @Deprecated
     public static FormulaShifter createForRowShift(int externSheetIndex, String sheetName, int firstMovedRowIndex, int lastMovedRowIndex, int numberOfRowsToMove) {
-        return new FormulaShifter(externSheetIndex, sheetName, firstMovedRowIndex, lastMovedRowIndex, numberOfRowsToMove);
+        return createForRowShift(externSheetIndex, sheetName, firstMovedRowIndex, lastMovedRowIndex, numberOfRowsToMove, SpreadsheetVersion.EXCEL97);
+    }
+    
+    public static FormulaShifter createForRowShift(int externSheetIndex, String sheetName, int firstMovedRowIndex, int lastMovedRowIndex, int numberOfRowsToMove,
+            SpreadsheetVersion version) {
+        return new FormulaShifter(externSheetIndex, sheetName, firstMovedRowIndex, lastMovedRowIndex, numberOfRowsToMove, ShiftMode.RowMove, version);
+    }
+    
+    public static FormulaShifter createForRowCopy(int externSheetIndex, String sheetName, int firstMovedRowIndex, int lastMovedRowIndex, int numberOfRowsToMove,
+            SpreadsheetVersion version) {
+        return new FormulaShifter(externSheetIndex, sheetName, firstMovedRowIndex, lastMovedRowIndex, numberOfRowsToMove, ShiftMode.RowCopy, version);
     }
 
     public static FormulaShifter createForSheetShift(int srcSheetIndex, int dstSheetIndex) {
@@ -141,6 +168,11 @@ public final class FormulaShifter {
         switch(_mode){
             case RowMove:
                 return adjustPtgDueToRowMove(ptg, currentExternSheetIx);
+            case RowCopy:
+                // Covered Scenarios:
+                // * row copy on same sheet
+                // * row copy between different sheetsin the same workbook
+                return adjustPtgDueToRowCopy(ptg);
             case SheetMove:
                 return adjustPtgDueToSheetMove(ptg);
             default:
@@ -206,6 +238,49 @@ public final class FormulaShifter {
         }
         return null;
     }
+    
+    /**
+     * Call this on any ptg reference contained in a row of cells that was copied.
+     * If the ptg reference is relative, the references will be shifted by the distance
+     * that the rows were copied.
+     * In the future similar functions could be written due to column copying or
+     * individual cell copying. Just make sure to only call adjustPtgDueToRowCopy on
+     * formula cells that are copied (unless row shifting, where references outside
+     * of the shifted region need to be updated to reflect the shift, a copy is self-contained).
+     * 
+     * @param ptg the ptg to shift
+     * @return deleted ref ptg, in-place modified ptg, or null
+     * If Ptg would be shifted off the first or last row of a sheet, return deleted ref
+     * If Ptg needs to be changed, modifies Ptg in-place
+     * If Ptg doesn't need to be changed, returns <code>null</code>
+     */
+    private Ptg adjustPtgDueToRowCopy(Ptg ptg) {
+        if(ptg instanceof RefPtg) {
+            RefPtg rptg = (RefPtg)ptg;
+            return rowCopyRefPtg(rptg);
+        }
+        if(ptg instanceof Ref3DPtg) {
+            Ref3DPtg rptg = (Ref3DPtg)ptg;
+            return rowCopyRefPtg(rptg);
+        }
+        if(ptg instanceof Ref3DPxg) {
+            Ref3DPxg rpxg = (Ref3DPxg)ptg;
+            return rowCopyRefPtg(rpxg);
+        }
+        if(ptg instanceof Area2DPtgBase) {
+            return rowCopyAreaPtg((Area2DPtgBase)ptg);
+        }
+        if(ptg instanceof Area3DPtg) {
+            Area3DPtg aptg = (Area3DPtg)ptg;
+            return rowCopyAreaPtg(aptg);
+        }
+        if(ptg instanceof Area3DPxg) {
+            Area3DPxg apxg = (Area3DPxg)ptg;
+            return rowCopyAreaPtg(apxg);
+        }
+        return null;
+    }
+
 
     private Ptg adjustPtgDueToSheetMove(Ptg ptg) {
         Ptg updatedPtg = null;
@@ -374,6 +449,61 @@ public final class FormulaShifter {
         }
         throw new IllegalStateException("Situation not covered: (" + _firstMovedIndex + ", " +
                     _lastMovedIndex + ", " + _amountToMove + ", " + aFirstRow + ", " + aLastRow + ")");
+    }
+    
+    /**
+     * Modifies rptg in-place and return a reference to rptg if the cell reference
+     * would move due to a row copy operation
+     * Returns <code>null</code> or {@link #RefErrorPtg} if no change was made
+     *
+     * @param aptg
+     * @return
+     */
+    private Ptg rowCopyRefPtg(RefPtgBase rptg) {
+        final int refRow = rptg.getRow();
+        if (rptg.isRowRelative()) {
+            final int destRowIndex = _firstMovedIndex + _amountToMove;
+            if (destRowIndex < 0 || _version.getLastRowIndex() < destRowIndex)
+                return createDeletedRef(rptg);
+            rptg.setRow(refRow + _amountToMove);
+            return rptg;
+        }
+        return null;
+       }
+
+    /**
+     * Modifies aptg in-place and return a reference to aptg if the first or last row of
+     * of the Area reference would move due to a row copy operation
+     * Returns <code>null</code> or {@link #AreaErrPtg} if no change was made
+     *
+     * @param aptg
+     * @return null, AreaErrPtg, or modified aptg
+     */
+    private Ptg rowCopyAreaPtg(AreaPtgBase aptg) {
+        boolean changed = false;
+    
+        final int aFirstRow = aptg.getFirstRow();
+        final int aLastRow = aptg.getLastRow();
+    
+        if (aptg.isFirstRowRelative()) {
+            final int destFirstRowIndex = aFirstRow + _amountToMove;
+            if (destFirstRowIndex < 0 || _version.getLastRowIndex() < destFirstRowIndex)
+                return createDeletedRef(aptg);
+            aptg.setFirstRow(destFirstRowIndex);
+            changed = true;
+        }
+        if (aptg.isLastRowRelative()) {
+            final int destLastRowIndex = aLastRow + _amountToMove;
+            if (destLastRowIndex < 0 || _version.getLastRowIndex() < destLastRowIndex)
+                return createDeletedRef(aptg);
+            aptg.setLastRow(destLastRowIndex);
+            changed = true;
+        }
+        if (changed) {
+            aptg.sortTopLeftToBottomRight();
+        }
+
+        return changed ? aptg : null;
     }
 
     private static Ptg createDeletedRef(Ptg ptg) {
