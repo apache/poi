@@ -47,10 +47,10 @@ public final class SXSSFITestDataProvider implements ITestDataProvider {
     }
 
     public Workbook openSampleWorkbook(String sampleFileName) {
-    	XSSFWorkbook xssfWorkbook = XSSFITestDataProvider.instance.openSampleWorkbook(sampleFileName);
+        XSSFWorkbook xssfWorkbook = XSSFITestDataProvider.instance.openSampleWorkbook(sampleFileName);
         SXSSFWorkbook swb = new SXSSFWorkbook(xssfWorkbook);
         instances.add(swb);
-    	return swb;
+        return swb;
     }
 
     public Workbook writeOutAndReadBack(Workbook wb) {
