@@ -381,7 +381,7 @@ public abstract class BaseTestBugzillaIssues {
         // autoSize will fail if required fonts are not installed, skip this test then
         Font font = wb.getFontAt(cell0.getCellStyle().getFontIndex());
         Assume.assumeTrue("Cannot verify autoSizeColumn() because the necessary Fonts are not installed on this machine: " + font,
-                SheetUtil.canComputeColumnWidht(font));
+                SheetUtil.canComputeColumnWidth(font));
 
         assertEquals("Expecting no indentation in this test",
                 0, cell0.getCellStyle().getIndention());
@@ -399,7 +399,7 @@ public abstract class BaseTestBugzillaIssues {
         double widthBeforeCol = SheetUtil.getColumnWidth(sheet, 0, false);
 
         String info = widthManual + "/" + widthBeforeCell + "/" + widthBeforeCol + "/" +
-                        SheetUtil.canComputeColumnWidht(font) + "/" + computeCellWidthFixed(font, "1") + "/" + computeCellWidthFixed(font, "w") + "/" +
+                        SheetUtil.canComputeColumnWidth(font) + "/" + computeCellWidthFixed(font, "1") + "/" + computeCellWidthFixed(font, "w") + "/" +
                         computeCellWidthFixed(font, "1w") + "/" + computeCellWidthFixed(font, "0000") + "/" + computeCellWidthFixed(font, longValue);
         assertTrue("Expected to have cell width > 0 when computing manually, but had " + info, widthManual > 0);
         assertTrue("Expected to have cell width > 0 BEFORE auto-size, but had " + info, widthBeforeCell > 0);

@@ -299,7 +299,7 @@ public final class TestXSSFFont extends BaseTestFont{
         Workbook wb = new XSSFWorkbook();
 
         // cannot check on result because on some machines we get back false here!
-        SheetUtil.canComputeColumnWidht(wb.getFontAt((short)0));
+        SheetUtil.canComputeColumnWidth(wb.getFontAt((short)0));
 
         wb.close();        
     }
@@ -310,6 +310,6 @@ public final class TestXSSFFont extends BaseTestFont{
         font.setFontName("some non existing font name");
         
         // Even with invalid fonts we still get back useful data most of the time... 
-        SheetUtil.canComputeColumnWidht(font);
+        SheetUtil.canComputeColumnWidth(font);
     }
 }
