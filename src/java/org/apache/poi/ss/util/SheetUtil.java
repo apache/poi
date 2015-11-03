@@ -275,7 +275,7 @@ public class SheetUtil {
      * @param font The Font that is used in the Cell
      * @return true if computing the size for this Font will succeed, false otherwise
      */
-    public static boolean canComputeColumnWidht(Font font) {
+    public static boolean canComputeColumnWidth(Font font) {
         // not sure what is the best value sample-here, only "1" did not work on some platforms...
         AttributedString str = new AttributedString("1w");
         copyAttributes(font, str, 0, "1w".length());

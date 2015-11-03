@@ -72,7 +72,7 @@ public final class TestSheetUtil extends TestCase {
         Workbook wb = new HSSFWorkbook();
         
         // cannot check on result because on some machines we get back false here!
-        SheetUtil.canComputeColumnWidht(wb.getFontAt((short)0));
+        SheetUtil.canComputeColumnWidth(wb.getFontAt((short)0));
 
         wb.close();        
     }
