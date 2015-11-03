@@ -380,7 +380,7 @@ public abstract class BaseTestBugzillaIssues {
 
         // autoSize will fail if required fonts are not installed, skip this test then
         Font font = wb.getFontAt(cell0.getCellStyle().getFontIndex());
-        Assume.assumeTrue("Cannot verify auoSizeColumn() because the necessary Fonts are not installed on this machine: " + font,
+        Assume.assumeTrue("Cannot verify autoSizeColumn() because the necessary Fonts are not installed on this machine: " + font,
                 SheetUtil.canComputeColumnWidht(font));
 
         assertEquals("Expecting no indentation in this test",
@@ -413,7 +413,7 @@ public abstract class BaseTestBugzillaIssues {
         assertTrue("Expected to have cell width > 0 AFTER auto-size, but had " + width, width > 0);
 
         assertEquals(255*256, sheet.getColumnWidth(0)); // maximum column width is 255 characters
-        sheet.setColumnWidth(0, sheet.getColumnWidth(0)); // Bug 506819 reports exception at this point
+        sheet.setColumnWidth(0, sheet.getColumnWidth(0)); // Bug 50681 reports exception at this point
         wb.close();
     }
 
