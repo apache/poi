@@ -207,31 +207,60 @@ public class SheetUtil {
      * @return  the width in pixels or -1 if cell is empty
      */
     public static double getColumnWidth(Sheet sheet, int column, boolean useMergedCells, int firstRow, int lastRow){
-        Workbook wb = sheet.getWorkbook();
         DataFormatter formatter = new DataFormatter();
-        Font defaultFont = wb.getFontAt((short) 0);
-
-        AttributedString str = new AttributedString(String.valueOf(defaultChar));
-        copyAttributes(defaultFont, str, 0, 1);
-        TextLayout layout = new TextLayout(str.getIterator(), fontRenderContext);
-        int defaultCharWidth = (int)layout.getAdvance();
+        int defaultCharWidth = getDefaultCharWidth(sheet.getWorkbook());
 
         double width = -1;
         for (int rowIdx = firstRow; rowIdx <= lastRow; ++rowIdx) {
             Row row = sheet.getRow(rowIdx);
             if( row != null ) {
-
-                Cell cell = row.getCell(column);
-
-                if (cell == null) {
-                    continue;
-                }
-
-                double cellWidth = getCellWidth(cell, defaultCharWidth, formatter, useMergedCells);
+                double cellWidth = getColumnWidthForRow(row, column, defaultCharWidth, formatter, useMergedCells);
                 width = Math.max(width, cellWidth);
             }
         }
         return width;
+    }
+
+    /**
+     * Get default character width
+     *
+     * @param wb the workbook to get the default character width from
+     * @return default character width
+     */
+    private static int getDefaultCharWidth(final Workbook wb) {
+        Font defaultFont = wb.getFontAt((short) 0);
+
+        AttributedString str = new AttributedString(String.valueOf(defaultChar));
+        copyAttributes(defaultFont, str, 0, 1);
+        TextLayout layout = new TextLayout(str.getIterator(), fontRenderContext);
+        int defaultCharWidth = (int) layout.getAdvance();
+        return defaultCharWidth;
+    }
+
+    /**
+     * Compute width of a single cell in a row
+     * Convenience method for {@link getCellWidth}
+     *
+     * @param row the row that contains the cell of interest
+     * @param column the column number of the cell whose width is to be calculated
+     * @param defaultCharWidth the width of a single character
+     * @param formatter formatter used to prepare the text to be measured
+     * @param useMergedCells    whether to use merged cells
+     * @return  the width in pixels or -1 if cell is empty
+     */
+    private static double getColumnWidthForRow(
+            Row row, int column, int defaultCharWidth, DataFormatter formatter, boolean useMergedCells) {
+        if( row == null ) {
+            return -1;
+        }
+
+        Cell cell = row.getCell(column);
+
+        if (cell == null) {
+            return -1;
+        }
+
+        return getCellWidth(cell, defaultCharWidth, formatter, useMergedCells);
     }
 
     /**
