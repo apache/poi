@@ -165,4 +165,40 @@ public abstract class BaseTestDataFormat extends TestCase {
         // TODO Fix this to not have an extra 0 at the end
         //assertEquals(pound+"   -  ", formatter.formatCellValue(zero)); 
     }
+    
+    /**
+     * Using a single quote (') instead of a comma (,) as
+     *  a number separator, eg 1000 -> 1'000 
+     */
+    public final void test55265() {
+        Workbook wb = _testDataProvider.createWorkbook();
+        DataFormatter formatter = new DataFormatter();
+        DataFormat fmt = wb.createDataFormat();
+        Sheet sheet = wb.createSheet();
+        Row r = sheet.createRow(0);
+        
+        CellStyle cs = wb.createCellStyle();
+        cs.setDataFormat(fmt.getFormat("#'##0"));
+        
+        Cell zero = r.createCell(0);
+        zero.setCellValue(0);
+        zero.setCellStyle(cs);
+        
+        Cell sml = r.createCell(1);
+        sml.setCellValue(12);
+        sml.setCellStyle(cs);
+        
+        Cell med = r.createCell(2);
+        med.setCellValue(1234);
+        med.setCellStyle(cs);
+        
+        Cell lge = r.createCell(3);
+        lge.setCellValue(12345678);
+        lge.setCellStyle(cs);
+        
+        assertEquals("0", formatter.formatCellValue(zero)); 
+        assertEquals("12", formatter.formatCellValue(sml)); 
+        assertEquals("1'234", formatter.formatCellValue(med)); 
+        assertEquals("12'345'678", formatter.formatCellValue(lge)); 
+    }
 }

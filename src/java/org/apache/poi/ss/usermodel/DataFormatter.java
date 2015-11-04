@@ -158,6 +158,12 @@ public class DataFormatter implements Observer {
     private static final Pattern fractionStripper = Pattern.compile("(\"[^\"]*\")|([^ \\?#\\d\\/]+)");
 
     /**
+     * A regex to detect if an alternate grouping character is used
+     *  in a numeric format 
+     */
+    private static final Pattern alternateGrouping = Pattern.compile("([#0]([^.#0])[#0]{3})");
+    
+    /**
       * Cells formatted with a date or time format and which contain invalid date or time values
      *  show 255 pound signs ("#").
       */
@@ -658,10 +664,24 @@ public class DataFormatter implements Observer {
     }
 
     private Format createNumberFormat(String formatStr, double cellValue) {
-        final String format = cleanFormatForNumber(formatStr);
+        String format = cleanFormatForNumber(formatStr);
+        DecimalFormatSymbols symbols = decimalSymbols;
+        
+        // Do we need to change the grouping character?
+        // eg for a format like #'##0 which wants 12'345 not 12,345
+        Matcher agm = alternateGrouping.matcher(format);
+        if (agm.find()) {
+            symbols = DecimalFormatSymbols.getInstance(locale);
+            
+            char grouping = agm.group(2).charAt(0);
+            symbols.setGroupingSeparator(grouping);
+            String oldPart = agm.group(1);
+            String newPart = oldPart.replace(grouping, ',');
+            format = format.replace(oldPart, newPart);
+        }
         
         try {
-            DecimalFormat df = new DecimalFormat(format, decimalSymbols);
+            DecimalFormat df = new DecimalFormat(format, symbols);
             setExcelStyleRoundingMode(df);
             return df;
         } catch(IllegalArgumentException iae) {
