@@ -21,6 +21,7 @@ import java.awt.font.FontRenderContext;
 import java.awt.font.TextAttribute;
 import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
 import java.text.AttributedString;
 import java.util.Locale;
 import java.util.Map;
@@ -165,6 +166,7 @@ public class SheetUtil {
     private static double getCellWidth(int defaultCharWidth, int colspan,
             CellStyle style, double width, AttributedString str) {
         TextLayout layout = new TextLayout(str.getIterator(), fontRenderContext);
+        final Rectangle2D bounds;
         if(style.getRotation() != 0){
             /*
              * Transform the text using a scale so that it's height is increased by a multiple of the leading,
@@ -177,10 +179,13 @@ public class SheetUtil {
             trans.concatenate(
             AffineTransform.getScaleInstance(1, fontHeightMultiple)
             );
-            width = Math.max(width, ((layout.getOutline(trans).getBounds().getWidth() / colspan) / defaultCharWidth) + style.getIndention());
+            bounds = layout.getOutline(trans).getBounds();
         } else {
-            width = Math.max(width, ((layout.getBounds().getWidth() / colspan) / defaultCharWidth) + style.getIndention());
+            bounds = layout.getBounds();
         }
+        // entireWidth accounts for leading spaces which is excluded from bounds.getWidth()
+        final double frameWidth = bounds.getX() + bounds.getWidth();
+        width = Math.max(width, ((frameWidth / colspan) / defaultCharWidth) + style.getIndention());
         return width;
     }
 
@@ -300,6 +305,7 @@ public class SheetUtil {
     }
 
     public static boolean containsCell(CellRangeAddress cr, int rowIx, int colIx) {
+        //FIXME: isn't this the same as cr.isInRange(rowInd, colInd) ?
         if (cr.getFirstRow() <= rowIx && cr.getLastRow() >= rowIx
                 && cr.getFirstColumn() <= colIx && cr.getLastColumn() >= colIx)
         {

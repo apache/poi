@@ -31,6 +31,8 @@ import java.text.AttributedString;
 import java.util.HashMap;
 import java.util.Map;
 
+import java.awt.geom.Rectangle2D;
+
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.PaneInformation;
 import org.apache.poi.ss.ITestDataProvider;
@@ -416,7 +418,64 @@ public abstract class BaseTestBugzillaIssues {
         sheet.setColumnWidth(0, sheet.getColumnWidth(0)); // Bug 50681 reports exception at this point
         wb.close();
     }
+    
+    @Test
+    public final void bug51622_testAutoSizeShouldRecognizeLeadingSpaces() throws IOException {
+        Workbook wb = _testDataProvider.createWorkbook();
+        BaseTestSheetAutosizeColumn.fixFonts(wb);
+        Sheet sheet = wb.createSheet();
+        Row row = sheet.createRow(0);
+        Cell cell0 = row.createCell(0);
+        Cell cell1 = row.createCell(1);
+        Cell cell2 = row.createCell(2);
+        
+        cell0.setCellValue("Test Column AutoSize");
+        cell1.setCellValue("         Test Column AutoSize");
+        cell2.setCellValue("Test Column AutoSize         ");
+        
+        sheet.autoSizeColumn(0);
+        sheet.autoSizeColumn(1);
+        sheet.autoSizeColumn(2);
+        
+        int noWhitespaceColWidth = sheet.getColumnWidth(0);
+        int leadingWhitespaceColWidth = sheet.getColumnWidth(1);
+        int trailingWhitespaceColWidth = sheet.getColumnWidth(2);
+        
+        // Based on the amount of text and whitespace used, and the default font
+        // assume that the cell with whitespace should be at least 20% wider than
+        // the cell without whitespace. This number is arbitrary, but should be large
+        // enough to guarantee that the whitespace cell isn't wider due to chance.
+        // Experimentally, I calculated the ratio as 1.2478181, though this ratio may change
+        // if the default font or margins change.
+        final double expectedRatioThreshold = 1.2f;
+        double leadingWhitespaceRatio = ((double) leadingWhitespaceColWidth)/noWhitespaceColWidth;
+        double trailingWhitespaceRatio = ((double) leadingWhitespaceColWidth)/noWhitespaceColWidth;
+        
+        assertGreaterThan("leading whitespace is longer than no whitespace", leadingWhitespaceRatio, expectedRatioThreshold);
+        assertGreaterThan("trailing whitespace is longer than no whitespace", trailingWhitespaceRatio, expectedRatioThreshold);
+        assertEquals("cells with equal leading and trailing whitespace have equal width",
+                leadingWhitespaceColWidth, trailingWhitespaceColWidth);
+        
+        wb.close();
+    }
+    
+    /**
+     * Test if a > b. Fails if false.
+     *
+     * @param message
+     * @param a
+     * @param b
+     */
+    private void assertGreaterThan(String message, double a, double b) {
+        if (a > b) { // expected
+        } else {
+            String msg = "Expected: " + a + " > " + b;
+            fail(message + ": " + msg);
+        }
+    }
 
+    // FIXME: this function is a self-fulfilling prophecy: this test will always pass as long
+    // as the code-under-test and the testcase code are written the same way (have the same bugs). 
     private double computeCellWidthManually(Cell cell0, Font font) {
         final FontRenderContext fontRenderContext = new FontRenderContext(null, true, true);
         RichTextString rt = cell0.getRichStringCellValue();
@@ -432,7 +491,14 @@ public abstract class BaseTestBugzillaIssues {
         }
 
         TextLayout layout = new TextLayout(str.getIterator(), fontRenderContext);
-        return ((layout.getBounds().getWidth() / 1) / 8);
+        double frameWidth = getFrameWidth(layout);
+        return ((frameWidth / 1) / 8);
+    }
+    
+    private double getFrameWidth(TextLayout layout) {
+        Rectangle2D bounds = layout.getBounds();
+        double frameWidth = bounds.getX() + bounds.getWidth();
+        return frameWidth;
     }
 
     private double computeCellWidthFixed(Font font, String txt) {
@@ -441,7 +507,8 @@ public abstract class BaseTestBugzillaIssues {
         copyAttributes(font, str, 0, txt.length());
 
         TextLayout layout = new TextLayout(str.getIterator(), fontRenderContext);
-        return layout.getBounds().getWidth();
+        double frameWidth = getFrameWidth(layout);
+        return frameWidth;
     }
 
     private static void copyAttributes(Font font, AttributedString str, int startIdx, int endIdx) {
