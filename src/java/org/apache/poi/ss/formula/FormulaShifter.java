@@ -457,7 +457,7 @@ public final class FormulaShifter {
      * Returns <code>null</code> or {@link #RefErrorPtg} if no change was made
      *
      * @param aptg
-     * @return
+     * @return The Ptg reference if the cell would move due to copy, otherwise null
      */
     private Ptg rowCopyRefPtg(RefPtgBase rptg) {
         final int refRow = rptg.getRow();

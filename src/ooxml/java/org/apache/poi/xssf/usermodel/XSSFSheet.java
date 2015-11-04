@@ -1291,7 +1291,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * @param startRow the first row number in this sheet to return
      * @param endRow the last row number in this sheet to return
      * @param createRowIfMissing
-     * @return
+     * @return All rows between startRow and endRow, inclusive
      * @throws IllegalArgumentException if startRowNum and endRowNum are not in ascending order
      */
     private List<XSSFRow> getRows(int startRowNum, int endRowNum, boolean createRowIfMissing) {
