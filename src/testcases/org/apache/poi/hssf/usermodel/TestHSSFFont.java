@@ -17,9 +17,12 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import java.io.IOException;
+
 import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.ss.usermodel.BaseTestFont;
 import org.apache.poi.ss.usermodel.Font;
+import org.junit.Test;
 
 /**
  * Tests various functionality having to do with {@link org.apache.poi.ss.usermodel.Name}.
@@ -32,7 +35,8 @@ public final class TestHSSFFont extends BaseTestFont {
         super(HSSFITestDataProvider.instance);
     }
 
-    public void testDefaultFont() {
+    @Test
+    public void testDefaultFont() throws IOException {
         baseTestDefaultFont(HSSFFont.FONT_ARIAL, (short)200, Font.COLOR_NORMAL);
     }
 }

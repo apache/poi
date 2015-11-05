@@ -18,6 +18,9 @@
 package org.apache.poi.xssf.usermodel;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
 
@@ -31,8 +34,10 @@ import org.apache.poi.ss.usermodel.FontUnderline;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.SheetUtil;
+import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
+import org.junit.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBooleanProperty;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFont;
@@ -52,15 +57,18 @@ public final class TestXSSFFont extends BaseTestFont{
 		super(XSSFITestDataProvider.instance);
 	}
 
-	public void testDefaultFont() {
+	@Test
+	public void testDefaultFont() throws IOException {
 		baseTestDefaultFont("Calibri", (short) 220, IndexedColors.BLACK.getIndex());
 	}
 
+	@Test
 	public void testConstructor() {
 		XSSFFont xssfFont=new XSSFFont();
 		assertNotNull(xssfFont.getCTFont());
 	}
 
+	@Test
 	public void testBoldweight() {
 		CTFont ctFont=CTFont.Factory.newInstance();
 		CTBooleanProperty bool=ctFont.addNewB();
@@ -75,7 +83,8 @@ public final class TestXSSFFont extends BaseTestFont{
 		assertEquals(true, ctFont.getBArray(0).getVal());
 	}
 
-	public void testCharSet() {
+	@Test
+	public void testCharSet() throws IOException {
 		CTFont ctFont=CTFont.Factory.newInstance();
 		CTIntProperty prop=ctFont.addNewCharset();
 		prop.setVal(FontCharset.ANSI.getValue());
@@ -89,37 +98,40 @@ public final class TestXSSFFont extends BaseTestFont{
 
 		// Try with a few less usual ones:
 		// Set with the Charset itself
-      xssfFont.setCharSet(FontCharset.RUSSIAN);
-      assertEquals(FontCharset.RUSSIAN.getValue(), xssfFont.getCharSet());
-      // And set with the Charset index
-      xssfFont.setCharSet(FontCharset.ARABIC.getValue());
-      assertEquals(FontCharset.ARABIC.getValue(), xssfFont.getCharSet());
-      xssfFont.setCharSet((byte)(FontCharset.ARABIC.getValue()));
-      assertEquals(FontCharset.ARABIC.getValue(), xssfFont.getCharSet());
-      
-      // This one isn't allowed
-      assertEquals(null, FontCharset.valueOf(9999));
-      try {
-         xssfFont.setCharSet(9999);
-         fail("Shouldn't be able to set an invalid charset");
-      } catch(POIXMLException e) {}
+        xssfFont.setCharSet(FontCharset.RUSSIAN);
+        assertEquals(FontCharset.RUSSIAN.getValue(), xssfFont.getCharSet());
+        // And set with the Charset index
+        xssfFont.setCharSet(FontCharset.ARABIC.getValue());
+        assertEquals(FontCharset.ARABIC.getValue(), xssfFont.getCharSet());
+        xssfFont.setCharSet((byte)(FontCharset.ARABIC.getValue()));
+        assertEquals(FontCharset.ARABIC.getValue(), xssfFont.getCharSet());
+        
+        // This one isn't allowed
+        assertEquals(null, FontCharset.valueOf(9999));
+        try {
+           xssfFont.setCharSet(9999);
+           fail("Shouldn't be able to set an invalid charset");
+        } catch(POIXMLException e) {}
       
 		
 		// Now try with a few sample files
 		
 		// Normal charset
-      XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("Formatting.xlsx");
-      assertEquals(0, 
-            workbook.getSheetAt(0).getRow(0).getCell(0).getCellStyle().getFont().getCharSet()
-      );
+        XSSFWorkbook wb1 = XSSFTestDataSamples.openSampleWorkbook("Formatting.xlsx");
+        assertEquals(0, 
+              wb1.getSheetAt(0).getRow(0).getCell(0).getCellStyle().getFont().getCharSet()
+        );
+        wb1.close();
 		
 		// GB2312 charact set
-      workbook = XSSFTestDataSamples.openSampleWorkbook("49273.xlsx");
-      assertEquals(134, 
-            workbook.getSheetAt(0).getRow(0).getCell(0).getCellStyle().getFont().getCharSet()
-      );
+        XSSFWorkbook wb2 = XSSFTestDataSamples.openSampleWorkbook("49273.xlsx");
+        assertEquals(134, 
+              wb2.getSheetAt(0).getRow(0).getCell(0).getCellStyle().getFont().getCharSet()
+        );
+        wb2.close();
 	}
 
+	@Test
 	public void testFontName() {
 		CTFont ctFont=CTFont.Factory.newInstance();
 		CTFontName fname=ctFont.addNewName();
@@ -133,6 +145,7 @@ public final class TestXSSFFont extends BaseTestFont{
 		assertEquals("Courier",ctFont.getNameArray(0).getVal());
 	}
 
+	@Test
 	public void testItalic() {
 		CTFont ctFont=CTFont.Factory.newInstance();
 		CTBooleanProperty bool=ctFont.addNewI();
@@ -148,6 +161,7 @@ public final class TestXSSFFont extends BaseTestFont{
 		assertEquals(true,ctFont.getIArray(0).getVal());
 	}
 
+	@Test
 	public void testStrikeout() {
 		CTFont ctFont=CTFont.Factory.newInstance();
 		CTBooleanProperty bool=ctFont.addNewStrike();
@@ -163,6 +177,7 @@ public final class TestXSSFFont extends BaseTestFont{
 		assertEquals(true,ctFont.getStrikeArray(0).getVal());
 	}
 
+	@Test
 	public void testFontHeight() {
 		CTFont ctFont=CTFont.Factory.newInstance();
 		CTFontSize size=ctFont.addNewSz();
@@ -176,6 +191,7 @@ public final class TestXSSFFont extends BaseTestFont{
 		assertEquals(20.0, ctFont.getSzArray(0).getVal(), 0.0);
 	}
 
+	@Test
 	public void testFontHeightInPoint() {
 		CTFont ctFont=CTFont.Factory.newInstance();
 		CTFontSize size=ctFont.addNewSz();
@@ -189,6 +205,7 @@ public final class TestXSSFFont extends BaseTestFont{
 		assertEquals(20.0, ctFont.getSzArray(0).getVal(), 0.0);
 	}
 
+	@Test
 	public void testUnderline() {
 		CTFont ctFont=CTFont.Factory.newInstance();
 		CTUnderlineProperty underlinePropr=ctFont.addNewU();
@@ -207,6 +224,7 @@ public final class TestXSSFFont extends BaseTestFont{
 		assertEquals(STUnderlineValues.DOUBLE_ACCOUNTING,ctFont.getUArray(0).getVal());
 	}
 
+	@Test
 	public void testColor() {
 		CTFont ctFont=CTFont.Factory.newInstance();
 		CTColor color=ctFont.addNewColor();
@@ -220,11 +238,12 @@ public final class TestXSSFFont extends BaseTestFont{
 		assertEquals(IndexedColors.RED.getIndex(), ctFont.getColorArray(0).getIndexed());
 	}
 
+	@Test
 	public void testRgbColor() {
 		CTFont ctFont=CTFont.Factory.newInstance();
 		CTColor color=ctFont.addNewColor();
 
-		color.setRgb(Integer.toHexString(0xFFFFFF).getBytes());
+		color.setRgb(Integer.toHexString(0xFFFFFF).getBytes(LocaleUtil.CHARSET_1252));
 		ctFont.setColorArray(0,color);
 
 		XSSFFont xssfFont=new XSSFFont(ctFont);
@@ -235,7 +254,7 @@ public final class TestXSSFFont extends BaseTestFont{
 
 		xssfFont.setColor((short)23);
 		
-		byte[] bytes = Integer.toHexString(0xF1F1F1).getBytes();
+		byte[] bytes = Integer.toHexString(0xF1F1F1).getBytes(LocaleUtil.CHARSET_1252);
         color.setRgb(bytes);
 		XSSFColor newColor=new XSSFColor(color);
 		xssfFont.setColor(newColor);
@@ -245,6 +264,7 @@ public final class TestXSSFFont extends BaseTestFont{
 		assertEquals(0, xssfFont.getColor());
 	}
 
+	@Test
 	public void testThemeColor() {
 		CTFont ctFont=CTFont.Factory.newInstance();
 		CTColor color=ctFont.addNewColor();
@@ -258,6 +278,7 @@ public final class TestXSSFFont extends BaseTestFont{
 		assertEquals(IndexedColors.RED.getIndex(),ctFont.getColorArray(0).getTheme());
 	}
 
+	@Test
 	public void testFamily() {
 		CTFont ctFont=CTFont.Factory.newInstance();
 		CTIntProperty family=ctFont.addNewFamily();
@@ -268,6 +289,7 @@ public final class TestXSSFFont extends BaseTestFont{
 		assertEquals(FontFamily.MODERN.getValue(),xssfFont.getFamily());
 	}
 
+	@Test
 	public void testScheme() {
 		CTFont ctFont=CTFont.Factory.newInstance();
 		CTFontScheme scheme=ctFont.addNewScheme();
@@ -281,6 +303,7 @@ public final class TestXSSFFont extends BaseTestFont{
 		assertEquals(STFontScheme.NONE,ctFont.getSchemeArray(0).getVal());
 	}
 
+	@Test
 	public void testTypeOffset() {
 		CTFont ctFont=CTFont.Factory.newInstance();
 		CTVerticalAlignFontProperty valign=ctFont.addNewVertAlign();
@@ -295,7 +318,8 @@ public final class TestXSSFFont extends BaseTestFont{
 	}
 
 	// store test from TestSheetUtil here as it uses XSSF
-    public void testCanComputeWidthXSSF() throws IOException {
+	@Test
+	public void testCanComputeWidthXSSF() throws IOException {
         Workbook wb = new XSSFWorkbook();
 
         // cannot check on result because on some machines we get back false here!
@@ -305,7 +329,8 @@ public final class TestXSSFFont extends BaseTestFont{
     }
 
     // store test from TestSheetUtil here as it uses XSSF
-    public void testCanComputeWidthInvalidFont() throws IOException {
+	@Test
+	public void testCanComputeWidthInvalidFont() throws IOException {
         Font font = new XSSFFont(CTFont.Factory.newInstance());
         font.setFontName("some non existing font name");
         

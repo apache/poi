@@ -18,18 +18,23 @@
 package org.apache.poi.xssf.usermodel;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
 
+import java.io.IOException;
 import java.util.List;
 
-import junit.framework.TestCase;
-
+import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.xssf.XSSFTestDataSamples;
+import org.junit.Test;
 
 /**
  * @author Yegor Kozlov
  */
-public final class TestXSSFPictureData extends TestCase {
-    public void testRead(){
+public final class TestXSSFPictureData {
+    @Test
+    public void testRead() throws IOException {
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("WithDrawing.xlsx");
         List<XSSFPictureData> pictures = wb.getAllPictures();
         //wb.getAllPictures() should return the same instance across multiple calls
@@ -54,16 +59,18 @@ public final class TestXSSFPictureData extends TestCase {
         XSSFPictureData pict = pictures.get(idx);
         assertEquals("jpeg", pict.suggestFileExtension());
         assertArrayEquals(pictureData, pict.getData());
+        wb.close();
     }
 
-    public void testNew(){
+    @Test
+    public void testNew() throws IOException {
         XSSFWorkbook wb = new XSSFWorkbook();
         XSSFSheet sheet = wb.createSheet();
         XSSFDrawing drawing = sheet.createDrawingPatriarch();
 
-        byte[] jpegData = "test jpeg data".getBytes();
-        byte[] wmfData =  "test wmf data".getBytes();
-        byte[] pngData =  "test png data".getBytes();
+        byte[] jpegData = "test jpeg data".getBytes(LocaleUtil.CHARSET_1252);
+        byte[] wmfData =  "test wmf data".getBytes(LocaleUtil.CHARSET_1252);
+        byte[] pngData =  "test png data".getBytes(LocaleUtil.CHARSET_1252);
 
         List<XSSFPictureData> pictures = wb.getAllPictures();
         assertEquals(0, pictures.size());
@@ -104,13 +111,15 @@ public final class TestXSSFPictureData extends TestCase {
 
         assertEquals("png", pictures2.get(pngIdx).suggestFileExtension());
         assertArrayEquals(pngData, pictures2.get(pngIdx).getData());
-
+        wbBack.close();
+        wb.close();
     }
 
     /**
      * Bug 53568:  XSSFPicture.getPictureData() can return null.
      */
-    public void test53568(){
+    @Test
+    public void test53568() throws IOException {
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("53568.xlsx");
         List<XSSFPictureData> pictures = wb.getAllPictures();
         assertNotNull(pictures);
@@ -132,6 +141,6 @@ public final class TestXSSFPictureData extends TestCase {
                 }
             }
         }
-
+        wb.close();
     }
 }

@@ -338,7 +338,7 @@ public class TestSignatureInfo {
                 @Override
                 public byte[] timeStamp(byte[] data, RevocationData revocationData) throws Exception {
                     revocationData.addCRL(crl);
-                    return "time-stamp-token".getBytes();                
+                    return "time-stamp-token".getBytes(LocaleUtil.CHARSET_1252);                
                 }
                 @Override
                 public void setSignatureConfig(SignatureConfig config) {

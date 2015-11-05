@@ -17,14 +17,17 @@
 
 package org.apache.poi.ss.usermodel;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+
+import java.io.IOException;
 
 import org.apache.poi.ss.ITestDataProvider;
+import org.junit.Test;
 
 /**
  * @author Yegor Kozlov
  */
-public abstract class BaseTestFont extends TestCase {
+public abstract class BaseTestFont {
 
     private final ITestDataProvider _testDataProvider;
 
@@ -32,7 +35,7 @@ public abstract class BaseTestFont extends TestCase {
         _testDataProvider = testDataProvider;
     }
 
-    protected final void baseTestDefaultFont(String defaultName, short defaultSize, short defaultColor){
+    protected final void baseTestDefaultFont(String defaultName, short defaultSize, short defaultColor) throws IOException {
         //get default font and check against default value
         Workbook workbook = _testDataProvider.createWorkbook();
         Font fontFind=workbook.findFont(Font.BOLDWEIGHT_NORMAL, defaultColor, defaultSize, defaultName, false, false, Font.SS_NONE, Font.U_NONE);
@@ -49,9 +52,11 @@ public abstract class BaseTestFont extends TestCase {
         assertEquals(15, font.getFontHeightInPoints());
         fontFind=workbook.findFont(Font.BOLDWEIGHT_BOLD, defaultColor, (short)(15*20), defaultName, false, false, Font.SS_NONE, Font.U_DOUBLE);
         assertNotNull(fontFind);
+        workbook.close();
     }
 
-    public final void testGetNumberOfFonts(){
+    @Test
+    public final void testGetNumberOfFonts() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         int num0 = wb.getNumberOfFonts();
 
@@ -74,63 +79,68 @@ public abstract class BaseTestFont extends TestCase {
         assertEquals(Font.BOLDWEIGHT_BOLD,wb.getFontAt(idx1).getBoldweight());
         assertEquals(Font.U_DOUBLE,wb.getFontAt(idx2).getUnderline());
         assertEquals(23,wb.getFontAt(idx3).getFontHeightInPoints());
+        wb.close();
 	}
 
     /**
      * Tests that we can define fonts to a new
      *  file, save, load, and still see them
      */
-    public final void testCreateSave() {
-        Workbook wb = _testDataProvider.createWorkbook();
-        Sheet s1 = wb.createSheet();
+    @Test
+    public final void testCreateSave() throws IOException {
+        Workbook wb1 = _testDataProvider.createWorkbook();
+        Sheet s1 = wb1.createSheet();
         Row r1 = s1.createRow(0);
         Cell r1c1 = r1.createCell(0);
         r1c1.setCellValue(2.2);
 
-        int num0 = wb.getNumberOfFonts();
+        int num0 = wb1.getNumberOfFonts();
 
-        Font font=wb.createFont();
+        Font font=wb1.createFont();
         font.setBoldweight(Font.BOLDWEIGHT_BOLD);
         font.setStrikeout(true);
         font.setColor(IndexedColors.YELLOW.getIndex());
         font.setFontName("Courier");
         short font1Idx = font.getIndex();
-        wb.createCellStyle().setFont(font);
-        assertEquals(num0 + 1, wb.getNumberOfFonts());
+        wb1.createCellStyle().setFont(font);
+        assertEquals(num0 + 1, wb1.getNumberOfFonts());
 
-        CellStyle cellStyleTitle=wb.createCellStyle();
+        CellStyle cellStyleTitle=wb1.createCellStyle();
         cellStyleTitle.setFont(font);
         r1c1.setCellStyle(cellStyleTitle);
 
         // Save and re-load
-        wb = _testDataProvider.writeOutAndReadBack(wb);
-        s1 = wb.getSheetAt(0);
+        Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1);
+        wb1.close();
+        s1 = wb2.getSheetAt(0);
 
-        assertEquals(num0 + 1, wb.getNumberOfFonts());
+        assertEquals(num0 + 1, wb2.getNumberOfFonts());
         short idx = s1.getRow(0).getCell(0).getCellStyle().getFontIndex();
-        Font fnt = wb.getFontAt(idx);
+        Font fnt = wb2.getFontAt(idx);
         assertNotNull(fnt);
         assertEquals(IndexedColors.YELLOW.getIndex(), fnt.getColor());
         assertEquals("Courier", fnt.getFontName());
 
         // Now add an orphaned one
-        Font font2 = wb.createFont();
+        Font font2 = wb2.createFont();
         font2.setItalic(true);
         font2.setFontHeightInPoints((short)15);
         short font2Idx = font2.getIndex();
-        wb.createCellStyle().setFont(font2);
-        assertEquals(num0 + 2, wb.getNumberOfFonts());
+        wb2.createCellStyle().setFont(font2);
+        assertEquals(num0 + 2, wb2.getNumberOfFonts());
 
         // Save and re-load
-        wb = _testDataProvider.writeOutAndReadBack(wb);
-        s1 = wb.getSheetAt(0);
+        Workbook wb3 = _testDataProvider.writeOutAndReadBack(wb2);
+        wb2.close();
+        s1 = wb3.getSheetAt(0);
 
-        assertEquals(num0 + 2, wb.getNumberOfFonts());
-        assertNotNull(wb.getFontAt(font1Idx));
-        assertNotNull(wb.getFontAt(font2Idx));
+        assertEquals(num0 + 2, wb3.getNumberOfFonts());
+        assertNotNull(wb3.getFontAt(font1Idx));
+        assertNotNull(wb3.getFontAt(font2Idx));
 
-        assertEquals(15, wb.getFontAt(font2Idx).getFontHeightInPoints());
-        assertEquals(true, wb.getFontAt(font2Idx).getItalic());
+        assertEquals(15, wb3.getFontAt(font2Idx).getFontHeightInPoints());
+        assertEquals(true, wb3.getFontAt(font2Idx).getItalic());
+        wb3.close();
     }
 
     /**
@@ -138,7 +148,8 @@ public abstract class BaseTestFont extends TestCase {
      *
      * @see org.apache.poi.hssf.usermodel.TestBugs#test45338()
      */
-    public final void test45338() {
+    @Test
+    public final void test45338() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         int num0 = wb.getNumberOfFonts();
 
@@ -200,5 +211,6 @@ public abstract class BaseTestFont extends TestCase {
                    "Thingy", false, true, (short)2, (byte)2
                )
         );
+        wb.close();
     }
 }

@@ -31,7 +31,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -53,6 +52,7 @@ import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.CellUtil;
+import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.CalculationChain;
@@ -1479,7 +1479,7 @@ public final class TestXSSFSheet extends BaseTestSheet {
         // Date
         cell = CellUtil.getCell(destRow, col++);
         assertEquals("[Date] E7 cell type", Cell.CELL_TYPE_NUMERIC, cell.getCellType());
-        final Date date = new GregorianCalendar(2000, Calendar.JANUARY, 1).getTime();
+        final Date date = LocaleUtil.getLocaleCalendar(2000, Calendar.JANUARY, 1).getTime();
         assertEquals("[Date] E7 cell value", date, cell.getDateCellValue());
 
         // Boolean
@@ -1641,12 +1641,12 @@ public final class TestXSSFSheet extends BaseTestSheet {
         col++;
         cell = CellUtil.getCell(destRow1, col);
         assertEquals("[Date] E10 cell type", Cell.CELL_TYPE_NUMERIC, cell.getCellType());
-        Date date = new GregorianCalendar(2000, Calendar.JANUARY, 1).getTime();
+        Date date = LocaleUtil.getLocaleCalendar(2000, Calendar.JANUARY, 1).getTime();
         assertEquals("[Date] E10 cell value", date, cell.getDateCellValue());
         
         cell = CellUtil.getCell(destRow2, col);
         assertEquals("[Date] E11 cell type", Cell.CELL_TYPE_NUMERIC, cell.getCellType());
-        date = new GregorianCalendar(2000, Calendar.JANUARY, 2).getTime();
+        date = LocaleUtil.getLocaleCalendar(2000, Calendar.JANUARY, 2).getTime();
         assertEquals("[Date] E11 cell value", date, cell.getDateCellValue());
         
         // Boolean

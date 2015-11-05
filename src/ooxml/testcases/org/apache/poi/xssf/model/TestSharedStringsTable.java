@@ -23,10 +23,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.apache.poi.POIDataSamples;
-import org.apache.poi.POIXMLException;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.XSSFTestDataSamples;
@@ -35,6 +32,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRElt;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRPrElt;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
+
+import junit.framework.TestCase;
 
 /**
  * Test {@link SharedStringsTable}, the cache of strings in a workbook
@@ -114,12 +113,13 @@ public final class TestSharedStringsTable extends TestCase {
         assertEquals("Second string", new XSSFRichTextString(sst.getEntryAt(2)).toString());
     }
 
-    public void testReadWrite() {
-        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("sample.xlsx");
-        SharedStringsTable sst1 = wb.getSharedStringSource();
+    public void testReadWrite() throws IOException {
+        XSSFWorkbook wb1 = XSSFTestDataSamples.openSampleWorkbook("sample.xlsx");
+        SharedStringsTable sst1 = wb1.getSharedStringSource();
 
         //serialize, read back and compare with the original
-        SharedStringsTable sst2 = XSSFTestDataSamples.writeOutAndReadBack(wb).getSharedStringSource();
+        XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb1);
+        SharedStringsTable sst2 = wb2.getSharedStringSource();
 
         assertEquals(sst1.getCount(), sst2.getCount());
         assertEquals(sst1.getUniqueCount(), sst2.getUniqueCount());
@@ -133,7 +133,11 @@ public final class TestSharedStringsTable extends TestCase {
             assertEquals(st1.toString(), st2.toString());
         }
 
-        assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(wb));
+        XSSFWorkbook wb3 = XSSFTestDataSamples.writeOutAndReadBack(wb2);
+        assertNotNull(wb3);
+        wb3.close();
+        wb2.close();
+        wb1.close();
     }
 
     /**
@@ -144,34 +148,34 @@ public final class TestSharedStringsTable extends TestCase {
      * @author Philippe Laflamme
      */
     public void testBug48936() throws IOException {
-        Workbook w = new XSSFWorkbook();
-        Sheet s = w.createSheet();
+        Workbook w1 = new XSSFWorkbook();
+        Sheet s = w1.createSheet();
         int i = 0;
         List<String> lst = readStrings("48936-strings.txt");
         for (String str : lst) {
             s.createRow(i++).createCell(0).setCellValue(str);
         }
 
-        try {
-            w = XSSFTestDataSamples.writeOutAndReadBack(w);
-        } catch (POIXMLException e){
-            fail("Detected Bug #48936");        
-        }
-        s = w.getSheetAt(0);
+        Workbook w2 = XSSFTestDataSamples.writeOutAndReadBack(w1);
+        w1.close();
+        s = w2.getSheetAt(0);
         i = 0;
         for (String str : lst) {
             String val = s.getRow(i++).getCell(0).getStringCellValue();
             assertEquals(str, val);
         }
         
-        assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(w));
+        Workbook w3 = XSSFTestDataSamples.writeOutAndReadBack(w2);
+        w2.close();
+        assertNotNull(w3);
+        w3.close();
     }
 
     private List<String> readStrings(String filename) throws IOException {
         List<String> strs = new ArrayList<String>();
         POIDataSamples samples = POIDataSamples.getSpreadSheetInstance();
         BufferedReader br = new BufferedReader(
-                new InputStreamReader(samples.openResourceAsStream(filename)));
+                new InputStreamReader(samples.openResourceAsStream(filename), "UTF-8"));
         String s;
         while ((s = br.readLine()) != null) {
             if (s.trim().length() > 0) {

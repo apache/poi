@@ -367,7 +367,7 @@ public final class TestUnfixedBugs {
        }
        
        // verify that the resulting XML has the rows in correct order as required by Excel
-       String xml = new String(stream.toByteArray());
+       String xml = new String(stream.toByteArray(), "UTF-8");
        int posR12 = xml.indexOf("<row r=\"12\"");
        int posR13 = xml.indexOf("<row r=\"13\"");
        

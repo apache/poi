@@ -742,7 +742,7 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
 
             sheetBack.commit();
 
-            String str = new String(IOUtils.toByteArray(sheetBack.getPackagePart().getInputStream()));
+            String str = new String(IOUtils.toByteArray(sheetBack.getPackagePart().getInputStream()), "UTF-8");
 
             assertEquals(1, countMatches(str, "<worksheet"));
         } finally {

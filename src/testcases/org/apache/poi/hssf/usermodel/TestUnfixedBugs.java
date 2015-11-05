@@ -17,10 +17,10 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import java.io.IOException;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
+import java.io.IOException;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.RecordFormatException;
@@ -31,6 +31,8 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.Test;
 
+import junit.framework.AssertionFailedError;
+
 /**
  * @author aviks
  * 
@@ -40,8 +42,9 @@ import org.junit.Test;
  * Bugzilla id's PLEASE MOVE tests from this class to TestBugs once the bugs are
  * fixed, so that they are then run automatically.
  */
-public final class TestUnfixedBugs extends TestCase {
+public final class TestUnfixedBugs {
 
+    @Test
 	public void test43493() {
 		// Has crazy corrupt sub-records on
 		// a EmbeddedObjectRefSubRecord
@@ -59,6 +62,7 @@ public final class TestUnfixedBugs extends TestCase {
 	 * Note - some parts of this bug have been fixed, and have been
 	 * transfered over to {@link TestBugs#bug49612_part()}
 	 */
+    @Test
     public void test49612() throws IOException {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("49612.xls");
         HSSFSheet sh = wb.getSheetAt(0);
@@ -79,54 +83,65 @@ public final class TestUnfixedBugs extends TestCase {
         assertEquals("SUM('49612.xls'!BOB+'49612.xls'!JIM)", e1.getCellFormula());
         
         // Problem 3 - fixed and transfered
+        wb.close();
     }
 
+    @Test
     public void testFormulaRecordAggregate_1() throws Exception {
         // fails at formula "=MEHRFACH.OPERATIONEN(E$3;$B$5;$D4)"
         Workbook wb = HSSFTestDataSamples.openSampleWorkbook("44958_1.xls");
-        for(int i = 0;i < wb.getNumberOfSheets();i++) {
-            Sheet sheet = wb.getSheetAt(i);
-            assertNotNull(wb.getSheet(sheet.getSheetName()));
-            sheet.groupColumn((short) 4, (short) 5);
-            sheet.setColumnGroupCollapsed(4, true);
-            sheet.setColumnGroupCollapsed(4, false);
-            
-            for(Row row : sheet) {
-                for(Cell cell : row) {
-                    try {
-                        cell.toString();
-                    } catch (Exception e) {
-                        throw new Exception("While handling: " + sheet.getSheetName() + "/" + row.getRowNum() + "/" + cell.getColumnIndex(), e);
+        try {
+            for(int i = 0;i < wb.getNumberOfSheets();i++) {
+                Sheet sheet = wb.getSheetAt(i);
+                assertNotNull(wb.getSheet(sheet.getSheetName()));
+                sheet.groupColumn((short) 4, (short) 5);
+                sheet.setColumnGroupCollapsed(4, true);
+                sheet.setColumnGroupCollapsed(4, false);
+                
+                for(Row row : sheet) {
+                    for(Cell cell : row) {
+                        try {
+                            cell.toString();
+                        } catch (Exception e) {
+                            throw new Exception("While handling: " + sheet.getSheetName() + "/" + row.getRowNum() + "/" + cell.getColumnIndex(), e);
+                        }
                     }
                 }
             }
-        }
-    }
-
-    public void testFormulaRecordAggregate() throws Exception {
-        // fails at formula "=MEHRFACH.OPERATIONEN(E$3;$B$5;$D4)"
-        Workbook wb = HSSFTestDataSamples.openSampleWorkbook("44958.xls");
-        for(int i = 0;i < wb.getNumberOfSheets();i++) {
-            Sheet sheet = wb.getSheetAt(i);
-            assertNotNull(wb.getSheet(sheet.getSheetName()));
-            sheet.groupColumn((short) 4, (short) 5);
-            sheet.setColumnGroupCollapsed(4, true);
-            sheet.setColumnGroupCollapsed(4, false);
-            
-            for(Row row : sheet) {
-                for(Cell cell : row) {
-                    try {
-                        cell.toString();
-                    } catch (Exception e) {
-                        throw new Exception("While handling: " + sheet.getSheetName() + "/" + row.getRowNum() + "/" + cell.getColumnIndex(), e);
-                    }
-                }
-            }
+        } finally {
+            wb.close();
         }
     }
 
     @Test
-    public void testBug57074() {
+    public void testFormulaRecordAggregate() throws Exception {
+        // fails at formula "=MEHRFACH.OPERATIONEN(E$3;$B$5;$D4)"
+        Workbook wb = HSSFTestDataSamples.openSampleWorkbook("44958.xls");
+        try {
+            for(int i = 0;i < wb.getNumberOfSheets();i++) {
+                Sheet sheet = wb.getSheetAt(i);
+                assertNotNull(wb.getSheet(sheet.getSheetName()));
+                sheet.groupColumn((short) 4, (short) 5);
+                sheet.setColumnGroupCollapsed(4, true);
+                sheet.setColumnGroupCollapsed(4, false);
+                
+                for(Row row : sheet) {
+                    for(Cell cell : row) {
+                        try {
+                            cell.toString();
+                        } catch (Exception e) {
+                            throw new Exception("While handling: " + sheet.getSheetName() + "/" + row.getRowNum() + "/" + cell.getColumnIndex(), e);
+                        }
+                    }
+                }
+            } 
+        } finally {
+            wb.close();
+        }
+    }
+
+    @Test
+    public void testBug57074() throws IOException {
         Workbook wb = HSSFTestDataSamples.openSampleWorkbook("57074.xls");
         Sheet sheet = wb.getSheet("Sheet1");
         Row row = sheet.getRow(0);
@@ -141,5 +156,6 @@ public final class TestUnfixedBugs extends TestCase {
         String fontColorStr = fontColor.getTriplet()[0]+", "+fontColor.getTriplet()[1]+", "+fontColor.getTriplet()[2];
         //System.out.println(fontColorStr);
         assertEquals("0, 128, 128", fontColorStr);
+        wb.close();
     }
 }
