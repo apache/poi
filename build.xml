@@ -1776,9 +1776,9 @@ under the License.
         	<fileset dir="${scratchpad.output.dir}"/>
         	<fileset dir="${ooxml.output.dir}"/>
         	<fileset dir="${main.output.test.dir}"/>
+        	<fileset dir="${ooxml.output.test.dir}"/>
         	<!--
         	<fileset dir="${scratchpad.output.test.dir}"/>
-        	<fileset dir="${ooxml.output.test.dir}"/>
         	-->
         </forbiddenapis>
     </target>

@@ -35,6 +35,7 @@ import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -44,6 +45,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
+import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.POIXMLException;
 import org.apache.poi.openxml4j.OpenXML4JTestDataSamples;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -65,6 +67,7 @@ import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 public final class TestPackage {
     private static final POILogger logger = POILogFactory.getLogger(TestPackage.class);
@@ -73,11 +76,12 @@ public final class TestPackage {
 	 * Test that just opening and closing the file doesn't alter the document.
 	 */
     @Test
-	public void openSave() throws Exception {
+	public void openSave() throws IOException, InvalidFormatException {
 		String originalFile = OpenXML4JTestDataSamples.getSampleFileName("TestPackageCommon.docx");
 		File targetFile = OpenXML4JTestDataSamples.getOutputFile("TestPackageOpenSaveTMP.docx");
 
-		OPCPackage p = OPCPackage.open(originalFile, PackageAccess.READ_WRITE);
+		@SuppressWarnings("resource")
+        OPCPackage p = OPCPackage.open(originalFile, PackageAccess.READ_WRITE);
 		try {
     		p.save(targetFile.getAbsoluteFile());
     
@@ -94,15 +98,21 @@ public final class TestPackage {
 	/**
 	 * Test that when we create a new Package, we give it
 	 *  the correct default content types
+	 * @throws IllegalAccessException 
+	 * @throws NoSuchFieldException 
+	 * @throws IllegalArgumentException 
+	 * @throws SecurityException 
 	 */
     @Test
-	public void createGetsContentTypes() throws Exception {
+	public void createGetsContentTypes()
+    throws IOException, InvalidFormatException, SecurityException, IllegalArgumentException, NoSuchFieldException, IllegalAccessException {
 		File targetFile = OpenXML4JTestDataSamples.getOutputFile("TestCreatePackageTMP.docx");
 
 		// Zap the target file, in case of an earlier run
 		if(targetFile.exists()) targetFile.delete();
 
-		OPCPackage pkg = OPCPackage.create(targetFile);
+		@SuppressWarnings("resource")
+        OPCPackage pkg = OPCPackage.create(targetFile);
 
 		// Check it has content types for rels and xml
 		ContentTypeManager ctm = getContentTypeManager(pkg);
@@ -123,13 +133,15 @@ public final class TestPackage {
 						PackagingURIHelper.createPartName("/foo.txt")
 				)
 		);
+		
+		pkg.revert();
 	}
 
 	/**
 	 * Test package creation.
 	 */
     @Test
-	public void createPackageAddPart() throws Exception {
+	public void createPackageAddPart() throws IOException, InvalidFormatException {
 		File targetFile = OpenXML4JTestDataSamples.getOutputFile("TestCreatePackageTMP.docx");
 
 		File expectedFile = OpenXML4JTestDataSamples.getSampleFile("TestCreatePackageOUTPUT.docx");
@@ -174,9 +186,10 @@ public final class TestPackage {
 	 * Tests that we can create a new package, add a core
 	 *  document and another part, save and re-load and
 	 *  have everything setup as expected
+	 * @throws SAXException 
 	 */
     @Test
-	public void createPackageWithCoreDocument() throws Exception {
+	public void createPackageWithCoreDocument() throws IOException, InvalidFormatException, URISyntaxException, SAXException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		OPCPackage pkg = OPCPackage.create(baos);
 
@@ -188,7 +201,7 @@ public final class TestPackage {
         PackagePart corePart = pkg.createPart(corePartName, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml");
         // Put in some dummy content
         OutputStream coreOut = corePart.getOutputStream();
-        coreOut.write("<dummy-xml />".getBytes());
+        coreOut.write("<dummy-xml />".getBytes("UTF-8"));
         coreOut.close();
 
 		// And another bit
@@ -200,7 +213,7 @@ public final class TestPackage {
 
         // Dummy content again
         coreOut = corePart.getOutputStream();
-        coreOut.write("<dummy-xml2 />".getBytes());
+        coreOut.write("<dummy-xml2 />".getBytes("UTF-8"));
         coreOut.close();
 
         //add a relationship with internal target: "#Sheet1!A1"
@@ -250,7 +263,7 @@ public final class TestPackage {
         }
     }
 
-    private void assertMSCompatibility(OPCPackage pkg) throws Exception {
+    private void assertMSCompatibility(OPCPackage pkg) throws IOException, InvalidFormatException, SAXException {
         PackagePartName relName = PackagingURIHelper.createPartName(PackageRelationship.getContainerPartRelationship());
         PackagePart relPart = pkg.getPart(relName);
 
@@ -271,7 +284,7 @@ public final class TestPackage {
 	 * Test package opening.
 	 */
     @Test
-	public void openPackage() throws Exception {
+	public void openPackage() throws IOException, InvalidFormatException {
 		File targetFile = OpenXML4JTestDataSamples.getOutputFile("TestOpenPackageTMP.docx");
 
 		File inputFile = OpenXML4JTestDataSamples.getSampleFile("TestOpenPackageINPUT.docx");
@@ -331,11 +344,12 @@ public final class TestPackage {
 	 *  to a file
 	 */
     @Test
-	public void saveToOutputStream() throws Exception {
+	public void saveToOutputStream() throws IOException, InvalidFormatException {
 		String originalFile = OpenXML4JTestDataSamples.getSampleFileName("TestPackageCommon.docx");
 		File targetFile = OpenXML4JTestDataSamples.getOutputFile("TestPackageOpenSaveTMP.docx");
 
-		OPCPackage p = OPCPackage.open(originalFile, PackageAccess.READ_WRITE);
+		@SuppressWarnings("resource")
+        OPCPackage p = OPCPackage.open(originalFile, PackageAccess.READ_WRITE);
 		try {
     		FileOutputStream fout = new FileOutputStream(targetFile);
     		try {
@@ -360,12 +374,13 @@ public final class TestPackage {
 	 *  reading from a file
 	 */
     @Test
-	public void openFromInputStream() throws Exception {
+	public void openFromInputStream() throws IOException, InvalidFormatException {
 		String originalFile = OpenXML4JTestDataSamples.getSampleFileName("TestPackageCommon.docx");
 
 		FileInputStream finp = new FileInputStream(originalFile);
 
-		OPCPackage p = OPCPackage.open(finp);
+		@SuppressWarnings("resource")
+        OPCPackage p = OPCPackage.open(finp);
 
 		assertNotNull(p);
 		assertNotNull(p.getRelationships());
@@ -374,19 +389,24 @@ public final class TestPackage {
 		// Check it has the usual bits
 		assertTrue(p.hasRelationships());
 		assertTrue(p.containPart(PackagingURIHelper.createPartName("/_rels/.rels")));
+		
+		p.revert();
+		finp.close();
 	}
 
     /**
      * TODO: fix and enable
+     * @throws URISyntaxException 
      */
     @Test
     @Ignore
-    public void removePartRecursive() throws Exception {
+    public void removePartRecursive() throws IOException, InvalidFormatException, URISyntaxException {
 		String originalFile = OpenXML4JTestDataSamples.getSampleFileName("TestPackageCommon.docx");
 		File targetFile = OpenXML4JTestDataSamples.getOutputFile("TestPackageRemovePartRecursiveOUTPUT.docx");
 		File tempFile = OpenXML4JTestDataSamples.getOutputFile("TestPackageRemovePartRecursiveTMP.docx");
 
-		OPCPackage p = OPCPackage.open(originalFile, PackageAccess.READ_WRITE);
+		@SuppressWarnings("resource")
+        OPCPackage p = OPCPackage.open(originalFile, PackageAccess.READ_WRITE);
 		p.removePartRecursive(PackagingURIHelper.createPartName(new URI(
 				"/word/document.xml")));
 		p.save(tempFile.getAbsoluteFile());
@@ -395,6 +415,8 @@ public final class TestPackage {
 		assertTrue(targetFile.exists());
 		ZipFileAssert.assertEquals(targetFile, tempFile);
 		assertTrue(targetFile.delete());
+		
+		p.revert();
 	}
 
     @Test
@@ -437,7 +459,8 @@ public final class TestPackage {
 
 		String filepath =  OpenXML4JTestDataSamples.getSampleFileName("sample.docx");
 
-		OPCPackage p = OPCPackage.open(filepath, PackageAccess.READ_WRITE);
+		@SuppressWarnings("resource")
+        OPCPackage p = OPCPackage.open(filepath, PackageAccess.READ_WRITE);
 		// Remove the core part
 		p.deletePart(PackagingURIHelper.createPartName("/word/document.xml"));
 
@@ -476,7 +499,8 @@ public final class TestPackage {
 
 		String filepath = OpenXML4JTestDataSamples.getSampleFileName("sample.docx");
 
-		OPCPackage p = OPCPackage.open(filepath, PackageAccess.READ_WRITE);
+		@SuppressWarnings("resource")
+        OPCPackage p = OPCPackage.open(filepath, PackageAccess.READ_WRITE);
 		// Remove the core part
 		p.deletePartRecursive(PackagingURIHelper.createPartName("/word/document.xml"));
 
@@ -499,7 +523,7 @@ public final class TestPackage {
 	 *  write changes to it.
 	 */
     @Test
-	public void openFileThenOverwrite() throws Exception {
+	public void openFileThenOverwrite() throws IOException, InvalidFormatException {
         File tempFile = TempFile.createTempFile("poiTesting","tmp");
         File origFile = OpenXML4JTestDataSamples.getSampleFile("TestPackageCommon.docx");
         FileHelper.copyFile(origFile, tempFile);
@@ -537,7 +561,7 @@ public final class TestPackage {
      *  to another file, then delete both
      */
     @Test
-    public void openFileThenSaveDelete() throws Exception {
+    public void openFileThenSaveDelete() throws IOException, InvalidFormatException {
         File tempFile = TempFile.createTempFile("poiTesting","tmp");
         File tempFile2 = TempFile.createTempFile("poiTesting","tmp");
         File origFile = OpenXML4JTestDataSamples.getSampleFile("TestPackageCommon.docx");
@@ -555,16 +579,18 @@ public final class TestPackage {
         assertTrue(tempFile2.delete());
     }
 
-	private static ContentTypeManager getContentTypeManager(OPCPackage pkg) throws Exception {
+	private static ContentTypeManager getContentTypeManager(OPCPackage pkg)
+    throws IOException, SecurityException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException {
 		Field f = OPCPackage.class.getDeclaredField("contentTypeManager");
 		f.setAccessible(true);
 		return (ContentTypeManager)f.get(pkg);
 	}
 
     @Test
-    public void getPartsByName() throws Exception {
+    public void getPartsByName() throws IOException, InvalidFormatException {
         String filepath =  OpenXML4JTestDataSamples.getSampleFileName("sample.docx");
 
+        @SuppressWarnings("resource")
         OPCPackage pkg = OPCPackage.open(filepath, PackageAccess.READ_WRITE);
         try {
             List<PackagePart> rs =  pkg.getPartsByName(Pattern.compile("/word/.*?\\.xml"));
@@ -587,7 +613,7 @@ public final class TestPackage {
     }
     
     @Test
-    public void getPartSize() throws Exception {
+    public void getPartSize() throws IOException, InvalidFormatException {
        String filepath =  OpenXML4JTestDataSamples.getSampleFileName("sample.docx");
        OPCPackage pkg = OPCPackage.open(filepath, PackageAccess.READ);
        try {
@@ -620,8 +646,10 @@ public final class TestPackage {
     }
 
     @Test
-    public void replaceContentType() throws Exception {
+    public void replaceContentType()
+    throws IOException, InvalidFormatException, SecurityException, IllegalArgumentException, NoSuchFieldException, IllegalAccessException {
         InputStream is = OpenXML4JTestDataSamples.openSampleStream("sample.xlsx");
+        @SuppressWarnings("resource")
         OPCPackage p = OPCPackage.open(is);
 
         ContentTypeManager mgr = getContentTypeManager(p);
@@ -637,10 +665,13 @@ public final class TestPackage {
 
         assertFalse(mgr.isContentTypeRegister("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"));
         assertTrue(mgr.isContentTypeRegister("application/vnd.ms-excel.sheet.macroEnabled.main+xml"));
+        p.revert();
+        is.close();
     }
 
     @Test(expected=IOException.class)
-    public void zipBombCreateAndHandle() throws Exception {
+    public void zipBombCreateAndHandle()
+    throws IOException, EncryptedDocumentException, InvalidFormatException {
         // #50090 / #56865
         ZipFile zipFile = ZipHelper.openZipFile(OpenXML4JTestDataSamples.getSampleFile("sample.xlsx"));
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -668,12 +699,13 @@ public final class TestPackage {
                         append.write(spam);
                         size += spam.length;
                     }
-                    append.write("</Types>".getBytes());
+                    append.write("</Types>".getBytes("UTF-8"));
                     size += 8;
                     e.setSize(size);
                 } else {
                     IOUtils.copy(is, append);
                 }
+                is.close();
             }
             append.closeEntry();
         }
@@ -690,7 +722,8 @@ public final class TestPackage {
     }
     
     @Test
-    public void zipBombCheckSizes() throws Exception {
+    public void zipBombCheckSizes()
+    throws IOException, EncryptedDocumentException, InvalidFormatException {
         File file = OpenXML4JTestDataSamples.getSampleFile("sample.xlsx");
 
         try {
@@ -709,14 +742,12 @@ public final class TestPackage {
             // use values close to, but within the limits 
             ZipSecureFile.setMinInflateRatio(min_ratio-0.002);
             ZipSecureFile.setMaxEntrySize(max_size+1);
-            Workbook wb = WorkbookFactory.create(file, null, true);
-            wb.close();
+            WorkbookFactory.create(file, null, true).close();
     
             // check ratio out of bounds
             ZipSecureFile.setMinInflateRatio(min_ratio+0.002);
             try {
-                wb = WorkbookFactory.create(file, null, true);
-                wb.close();
+                WorkbookFactory.create(file, null, true).close();
                 // this is a bit strange, as there will be different exceptions thrown
                 // depending if this executed via "ant test" or within eclipse
                 // maybe a difference in JDK ...
@@ -730,8 +761,7 @@ public final class TestPackage {
             ZipSecureFile.setMinInflateRatio(min_ratio-0.002);
             ZipSecureFile.setMaxEntrySize(max_size-1);
             try {
-                wb = WorkbookFactory.create(file, null, true);
-                wb.close();
+                WorkbookFactory.create(file, null, true).close();
             } catch (InvalidFormatException e) {
                 checkForZipBombException(e);
             } catch (POIXMLException e) {

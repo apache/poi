@@ -185,13 +185,13 @@ public final class TestPOIXMLProperties {
 
         Date dateCreated = LocaleUtil.getLocaleCalendar(2010, 6, 15, 10, 0, 0).getTime();
         cp.setCreated(new Nullable<Date>(dateCreated));
-        assertEquals(dateCreated.toString(), cp.getCreated().toString());
+        assertEquals(dateCreated, cp.getCreated());
 
         XWPFDocument doc2 = XWPFTestDataSamples.writeOutAndReadBack(doc);
         doc.close();
         cp = doc.getProperties().getCoreProperties();
         Date dt3 = cp.getCreated();
-        assertEquals(dateCreated.toString(), dt3.toString());
+        assertEquals(dateCreated, dt3);
         doc2.close();
     }
 

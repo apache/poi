@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.apache.poi.ss.usermodel.BaseTestPicture;
 import org.apache.poi.ss.usermodel.ClientAnchor;
+import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.junit.Test;
@@ -58,7 +59,7 @@ public final class TestXSSFPicture extends BaseTestPicture {
         XSSFSheet sheet = wb.createSheet();
         XSSFDrawing drawing = sheet.createDrawingPatriarch();
 
-        byte[] jpegData = "test jpeg data".getBytes();
+        byte[] jpegData = "test jpeg data".getBytes(LocaleUtil.CHARSET_1252);
 
         List<XSSFPictureData> pictures = wb.getAllPictures();
         assertEquals(0, pictures.size());
@@ -97,13 +98,13 @@ public final class TestXSSFPicture extends BaseTestPicture {
         XSSFDrawing drawing = sheet.createDrawingPatriarch();
 
         XSSFClientAnchor anchor = new XSSFClientAnchor(0, 0, 0, 0, 1, 1, 10, 30);
-        byte[] jpegData = "picture1".getBytes();
+        byte[] jpegData = "picture1".getBytes(LocaleUtil.CHARSET_1252);
         int jpegIdx = wb.addPicture(jpegData, XSSFWorkbook.PICTURE_TYPE_JPEG);
 
         XSSFPicture shape1 = drawing.createPicture(anchor, jpegIdx);
         assertEquals(1, shape1.getCTPicture().getNvPicPr().getCNvPr().getId());
 
-        jpegData = "picture2".getBytes();
+        jpegData = "picture2".getBytes(LocaleUtil.CHARSET_1252);
         jpegIdx = wb.addPicture(jpegData, XSSFWorkbook.PICTURE_TYPE_JPEG);
         XSSFPicture shape2 = drawing.createPicture(anchor, jpegIdx);
         assertEquals(2, shape2.getCTPicture().getNvPicPr().getCNvPr().getId());
@@ -118,8 +119,8 @@ public final class TestXSSFPicture extends BaseTestPicture {
     public void multiRelationShips() throws IOException {
         XSSFWorkbook wb = new XSSFWorkbook();
 
-        byte[] pic1Data = "test jpeg data".getBytes();
-        byte[] pic2Data = "test png data".getBytes();
+        byte[] pic1Data = "test jpeg data".getBytes(LocaleUtil.CHARSET_1252);
+        byte[] pic2Data = "test png data".getBytes(LocaleUtil.CHARSET_1252);
 
         List<XSSFPictureData> pictures = wb.getAllPictures();
         assertEquals(0, pictures.size());
