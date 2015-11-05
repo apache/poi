@@ -106,6 +106,7 @@ public final class CharacterRun extends Range
    *
    * @return TYPE_CHARACTER
    */
+  @SuppressWarnings("deprecation")
   public int type()
   {
     return TYPE_CHARACTER;

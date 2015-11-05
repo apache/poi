@@ -73,6 +73,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTVerticalAlignRun
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STBrClear;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STBrType;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STFldCharType;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STHighlightColor;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STOnOff;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STUnderline;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STVerticalAlignRun;
@@ -622,6 +623,17 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
         CTHpsMeasure kernmes = pr.isSetKern() ? pr.getKern() : pr.addNewKern();
         kernmes.setVal(BigInteger.valueOf(kern));
     }
+
+    public boolean isHighlighted() {
+        CTRPr pr = run.getRPr();
+        if (pr == null || !pr.isSetHighlight())
+            return false;
+        if (pr.getHighlight().getVal() == STHighlightColor.NONE)
+            return false;
+        return true;
+    }
+    // TODO Provide a wrapper round STHighlightColor, then expose getter/setter
+    //  for the highlight colour. Ideally also then add to CharacterRun interface
 
     public int getCharacterSpacing() {
         CTRPr pr = run.getRPr();

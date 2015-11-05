@@ -55,7 +55,25 @@ public interface CharacterRun {
 
     int getKerning();
     void setKerning(int kern);
+    
+    boolean isHighlighted();
+    
+    // HWPF has colour indexes, XWPF has a highlight enum with the colours in
+//    byte getHighlightedColor();
+//    void setHighlighted(byte color);
+    
+    // HWPF has colour indexes, XWPF colour names
+//  int getColor();
+//  void setColor(int color);
 
+
+    /**
+     * Gets the fonts which shall be used to display the text contents of
+     * this run. Specifies a font which shall be used to format all "normal"
+     * characters in the run
+     *
+     * @return a string representing the font
+     */
     String getFontName();
     
     /**
@@ -70,14 +88,6 @@ public interface CharacterRun {
     // HWPF uses indexes, XWPF special vertical alignments
 //    short getSubSuperScriptIndex();
 //    void setSubSuperScriptIndex(short iss);
-
-    // HWPF uses indexes, XWPF special vertical alignments
-//    int getVerticalOffset();
-//    void setVerticalOffset(int hpsPos);
-
-    // HWPF has colour indexes, XWPF colour names
-//    int getColor();
-//    void setColor(int color);
 
     // TODO Review these, and add to XWPFRun if possible
 /*

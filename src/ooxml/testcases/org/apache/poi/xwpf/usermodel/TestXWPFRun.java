@@ -23,12 +23,14 @@ import java.util.Iterator;
 import java.util.List;
 
 import junit.framework.TestCase;
+
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.apache.poi.xwpf.model.XWPFHeaderFooterPolicy;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRPr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STBrClear;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STHighlightColor;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STOnOff;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STUnderline;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STVerticalAlignRun;
@@ -381,6 +383,19 @@ public class TestXWPFRun extends TestCase {
         }
 
         assertEquals(1, count);
+    }
+    
+    public void testSetGetHighlight() throws Exception {
+        XWPFRun run = p.createRun();
+        assertEquals(false, run.isHighlighted());
+        
+        // TODO Do this using XWPFRun methods
+        run.getCTR().addNewRPr().addNewHighlight().setVal(STHighlightColor.NONE);
+        assertEquals(false, run.isHighlighted());
+        run.getCTR().getRPr().getHighlight().setVal(STHighlightColor.CYAN);
+        assertEquals(true, run.isHighlighted());
+        run.getCTR().getRPr().getHighlight().setVal(STHighlightColor.NONE);
+        assertEquals(false, run.isHighlighted());
     }
 
     public void testAddPicture() throws Exception {
