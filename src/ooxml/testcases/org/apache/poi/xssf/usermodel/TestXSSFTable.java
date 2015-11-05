@@ -34,6 +34,7 @@ import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.junit.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTable;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableColumn;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableStyleInfo;
 
 public final class TestXSSFTable {
 
@@ -70,6 +71,38 @@ public final class TestXSSFTable {
                     headers.get(i), ctTableColumnArray[i].getName());
         }
         assertTrue(outputFile.delete());
+    }
+
+    @Test
+    public void testCTTableStyleInfo(){
+        XSSFWorkbook outputWorkbook = new XSSFWorkbook();
+        XSSFSheet sheet = outputWorkbook.createSheet();
+
+        //Create
+        XSSFTable outputTable = sheet.createTable();
+        outputTable.setDisplayName("Test");
+        CTTable outputCTTable = outputTable.getCTTable();
+
+        //Style configurations
+        CTTableStyleInfo outputStyleInfo = outputCTTable.addNewTableStyleInfo();
+        outputStyleInfo.setName("TableStyleLight1");
+        outputStyleInfo.setShowColumnStripes(false);
+        outputStyleInfo.setShowRowStripes(true);
+
+        XSSFWorkbook inputWorkbook = XSSFTestDataSamples.writeOutAndReadBack(outputWorkbook);
+        List<XSSFTable> tables = inputWorkbook.getSheetAt(0).getTables();
+        assertEquals("Tables number", 1, tables.size());
+
+        XSSFTable inputTable = tables.get(0);
+        assertEquals("Table display name", outputTable.getDisplayName(), inputTable.getDisplayName());
+
+        CTTableStyleInfo inputStyleInfo = inputTable.getCTTable().getTableStyleInfo();
+        assertEquals("Style name", outputStyleInfo.getName(), inputStyleInfo.getName());
+        assertEquals("Show column stripes",
+                outputStyleInfo.getShowColumnStripes(), inputStyleInfo.getShowColumnStripes());
+        assertEquals("Show row stripes",
+                outputStyleInfo.getShowRowStripes(), inputStyleInfo.getShowRowStripes());
+
     }
 
 }
