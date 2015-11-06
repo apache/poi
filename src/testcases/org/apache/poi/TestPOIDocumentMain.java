@@ -22,7 +22,10 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import junit.framework.TestCase;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -35,10 +38,8 @@ import org.apache.poi.poifs.filesystem.OPOIFSFileSystem;
  *
  * This is part 1 of 2 of the tests - it only does the POIDocuments
  *  which are part of the Main (not scratchpad)
- *
- * @author Nick Burch (nick at torchbox dot com)
  */
-public final class TestPOIDocumentMain extends TestCase {
+public final class TestPOIDocumentMain {
 	// The POI Documents to work on
 	private POIDocument doc;
 	private POIDocument doc2;
@@ -46,12 +47,14 @@ public final class TestPOIDocumentMain extends TestCase {
 	/**
 	 * Set things up, two spreadsheets for our testing
 	 */
-	public void setUp() {
+	@Before
+    public void setUp() {
 		doc = HSSFTestDataSamples.openSampleWorkbook("DateFormats.xls");
 		doc2 = HSSFTestDataSamples.openSampleWorkbook("StringFormulas.xls");
 	}
 
-	public void testReadProperties() {
+	@Test
+    public void readProperties() {
 		// We should have both sets
 		assertNotNull(doc.getDocumentSummaryInformation());
 		assertNotNull(doc.getSummaryInformation());
@@ -61,7 +64,8 @@ public final class TestPOIDocumentMain extends TestCase {
 		assertEquals(0, doc.getDocumentSummaryInformation().getByteCount());
 	}
 
-	public void testReadProperties2() {
+	@Test
+    public void readProperties2() {
 		// Check again on the word one
 		assertNotNull(doc2.getDocumentSummaryInformation());
 		assertNotNull(doc2.getSummaryInformation());
@@ -71,7 +75,8 @@ public final class TestPOIDocumentMain extends TestCase {
 		assertEquals(0, doc2.getDocumentSummaryInformation().getByteCount());
 	}
 
-	public void testWriteProperties() throws Exception {
+	@Test
+    public void writeProperties() throws Exception {
 		// Just check we can write them back out into a filesystem
 		NPOIFSFileSystem outFS = new NPOIFSFileSystem();
 		doc.readProperties();
@@ -86,7 +91,8 @@ public final class TestPOIDocumentMain extends TestCase {
 		);
 	}
 
-	public void testWriteReadProperties() throws Exception {
+	@Test
+    public void WriteReadProperties() throws Exception {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
 		// Write them out
@@ -104,10 +110,11 @@ public final class TestPOIDocumentMain extends TestCase {
 		doc.readProperties();
 
 		// Delegate test
-		testReadProperties();
+		readProperties();
 	}
 	
-	public void testCreateNewProperties() throws IOException {
+	@Test
+    public void createNewProperties() throws IOException {
 		POIDocument doc = new HSSFWorkbook();
 		
 		// New document won't have them
@@ -130,7 +137,8 @@ public final class TestPOIDocumentMain extends TestCase {
 		assertNotNull(doc.getDocumentSummaryInformation());
 	}
 	
-	public void testCreateNewPropertiesOnExistingFile() throws IOException {
+	@Test
+    public void createNewPropertiesOnExistingFile() throws IOException {
 		POIDocument doc = new HSSFWorkbook();
 		
 		// New document won't have them
