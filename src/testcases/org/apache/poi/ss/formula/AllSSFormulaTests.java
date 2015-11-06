@@ -31,7 +31,7 @@ public final class AllSSFormulaTests {
 		TestSuite result = new TestSuite(AllSSFormulaTests.class.getName());
 		result.addTestSuite(TestCellCacheEntry.class);
 		result.addTestSuite(TestEvaluationCache.class);
-		result.addTestSuite(TestWorkbookEvaluator.class);
+		// result.addTestSuite(TestWorkbookEvaluator.class); // upgraded to junit4
 		result.addTestSuite(TestForkedEvaluator.class);
 		return result;
 	}
