@@ -17,10 +17,12 @@
 
 package org.apache.poi.ss.formula;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import java.io.IOException;
 
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
+import org.junit.Test;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ss.formula.ptg.AreaErrPtg;
@@ -54,7 +56,9 @@ import org.apache.poi.ss.usermodel.Workbook;
  *
  * @author Josh Micich
  */
-public class TestWorkbookEvaluator extends TestCase {
+public class TestWorkbookEvaluator {
+
+    private static final double EPSILON = 0.0000001;
 
 	private static ValueEval evaluateFormula(Ptg[] ptgs) {
 		OperationEvaluationContext ec = new OperationEvaluationContext(null, null, 0, 0, 0, null);
@@ -65,6 +69,7 @@ public class TestWorkbookEvaluator extends TestCase {
 	 * Make sure that the evaluator can directly handle tAttrSum (instead of relying on re-parsing
 	 * the whole formula which converts tAttrSum to tFuncVar("SUM") )
 	 */
+	@Test
 	public void testAttrSum() {
 
 		Ptg[] ptgs = {
@@ -81,6 +86,7 @@ public class TestWorkbookEvaluator extends TestCase {
 	 * (instead of relying on re-parsing the whole formula which converts these
 	 * to the error constant #REF! )
 	 */
+	@Test
 	public void testRefErr() {
 
 		confirmRefErr(new RefErrorPtg());
@@ -101,6 +107,7 @@ public class TestWorkbookEvaluator extends TestCase {
 	 * Make sure that the evaluator can directly handle tAttrSum (instead of relying on re-parsing
 	 * the whole formula which converts tAttrSum to tFuncVar("SUM") )
 	 */
+	@Test
 	public void testMemFunc() {
 
 		Ptg[] ptgs = {
@@ -113,6 +120,7 @@ public class TestWorkbookEvaluator extends TestCase {
 	}
 
 
+	@Test
 	public void testEvaluateMultipleWorkbooks() {
 		HSSFWorkbook wbA = HSSFTestDataSamples.openSampleWorkbook("multibookFormulaA.xls");
 		HSSFWorkbook wbB = HSSFTestDataSamples.openSampleWorkbook("multibookFormulaB.xls");
@@ -178,6 +186,7 @@ public class TestWorkbookEvaluator extends TestCase {
 	 * This test makes sure that any {@link MissingArgEval} that propagates to
 	 * the result of a function gets translated to {@link BlankEval}.
 	 */
+	@Test
 	public void testMissingArg() {
 		HSSFWorkbook wb = new HSSFWorkbook();
 		HSSFSheet sheet = wb.createSheet("Sheet1");
@@ -185,11 +194,11 @@ public class TestWorkbookEvaluator extends TestCase {
 		HSSFCell cell = row.createCell(0);
 		cell.setCellFormula("1+IF(1,,)");
 		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
-		CellValue cv;
+		CellValue cv = null;
 		try {
 			cv = fe.evaluate(cell);
 		} catch (RuntimeException e) {
-			throw new AssertionFailedError("Missing arg result not being handled correctly.");
+			fail("Missing arg result not being handled correctly.");
 		}
 		assertEquals(HSSFCell.CELL_TYPE_NUMERIC, cv.getCellType());
 		// adding blank to 1.0 gives 1.0
@@ -217,6 +226,7 @@ public class TestWorkbookEvaluator extends TestCase {
 	 * should be dereferenced by the evaluator
 	 * @throws IOException 
 	 */
+	@Test
 	public void testResultOutsideRange() throws IOException {
 		Workbook wb = new HSSFWorkbook();
 		try {
@@ -228,7 +238,7 @@ public class TestWorkbookEvaluator extends TestCase {
     			cv = fe.evaluate(cell);
     		} catch (IllegalArgumentException e) {
     			if ("Specified row index (0) is outside the allowed range (1..4)".equals(e.getMessage())) {
-    				throw new AssertionFailedError("Identified bug in result dereferencing");
+    				fail("Identified bug in result dereferencing");
     			}
     			throw new RuntimeException(e);
     		}
@@ -251,6 +261,7 @@ public class TestWorkbookEvaluator extends TestCase {
    * formulas with defined names.
  * @throws IOException 
    */
+  @Test
   public void testNamesInFormulas() throws IOException {
     Workbook wb = new HSSFWorkbook();
     Sheet sheet = wb.createSheet("Sheet1");
@@ -283,10 +294,10 @@ public class TestWorkbookEvaluator extends TestCase {
     row3.createCell(2).setCellFormula("aConstant+aFormula+SUM(aSet)");
 
     FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();
-    assertEquals(3.14, fe.evaluate(row0.getCell(2)).getNumberValue());
-    assertEquals(10.0, fe.evaluate(row1.getCell(2)).getNumberValue());
-    assertEquals(15.0, fe.evaluate(row2.getCell(2)).getNumberValue());
-    assertEquals(28.14, fe.evaluate(row3.getCell(2)).getNumberValue());
+    assertEquals(3.14, fe.evaluate(row0.getCell(2)).getNumberValue(), EPSILON);
+    assertEquals(10.0, fe.evaluate(row1.getCell(2)).getNumberValue(), EPSILON);
+    assertEquals(15.0, fe.evaluate(row2.getCell(2)).getNumberValue(), EPSILON);
+    assertEquals(28.14, fe.evaluate(row3.getCell(2)).getNumberValue(), EPSILON);
     
     wb.close();
   }
