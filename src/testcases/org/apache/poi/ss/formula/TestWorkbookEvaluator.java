@@ -44,7 +44,6 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellValue;
-import org.apache.poi.ss.usermodel.ErrorConstants;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.usermodel.Row;
@@ -243,7 +242,7 @@ public class TestWorkbookEvaluator {
                 throw new RuntimeException(e);
             }
             assertEquals(Cell.CELL_TYPE_ERROR, cv.getCellType());
-            assertEquals(ErrorConstants.ERROR_VALUE, cv.getErrorValue());
+            assertEquals(ErrorEval.VALUE_INVALID.getErrorCode(), cv.getErrorValue());
 
             // verify circular refs are still detected properly
             fe.clearAllCachedResultValues();
