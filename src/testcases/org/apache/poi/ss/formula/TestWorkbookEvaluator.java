@@ -18,10 +18,12 @@
 package org.apache.poi.ss.formula;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
@@ -299,5 +301,279 @@ public class TestWorkbookEvaluator {
         assertEquals(28.14, fe.evaluate(row3.getCell(2)).getNumberValue(), EPSILON);
         
         wb.close();
+    }
+    
+// Test IF-Equals Formula Evaluation (bug 58591)
+    
+    private Workbook testIFEqualsFormulaEvaluation_setup(String formula, int a1CellType) {
+        Workbook wb = new HSSFWorkbook();
+        Sheet sheet = wb.createSheet("IFEquals");
+        Row row = sheet.createRow(0);
+        Cell A1 = row.createCell(0);
+        Cell B1 = row.createCell(1);
+        Cell C1 = row.createCell(2);
+        Cell D1 = row.createCell(3);
+        
+        switch (a1CellType) {
+            case Cell.CELL_TYPE_NUMERIC:
+                A1.setCellValue(1.0);
+                // "A1=1" should return true
+                break;
+            case Cell.CELL_TYPE_STRING:
+                A1.setCellValue("1");
+                // "A1=1" should return false
+                // "A1=\"1\"" should return true
+                break;
+            case Cell.CELL_TYPE_BOOLEAN:
+                A1.setCellValue(true);
+                // "A1=1" should return true
+                break;
+            case Cell.CELL_TYPE_FORMULA:
+                A1.setCellFormula("1");
+                // "A1=1" should return true
+                break;
+            case Cell.CELL_TYPE_BLANK:
+                A1.setCellValue((String) null);
+                // "A1=1" should return false
+                break;
+        }
+        B1.setCellValue(2.0);
+        C1.setCellValue(3.0);
+        D1.setCellFormula(formula);
+        
+        return wb;
+    }
+    
+    private void testIFEqualsFormulaEvaluation_teardown(Workbook wb) {
+        try {
+            wb.close();
+        } catch (final IOException e) {
+            fail("Unable to close workbook");
+        }
+    }
+    
+    
+    
+    private void testIFEqualsFormulaEvaluation_evaluate(
+        String formula, int cellType, String expectedFormula, double expectedResult) {
+        Workbook wb = testIFEqualsFormulaEvaluation_setup(formula, cellType);
+        Cell D1 = wb.getSheet("IFEquals").getRow(0).getCell(3);
+        
+        FormulaEvaluator eval = wb.getCreationHelper().createFormulaEvaluator();
+        CellValue result = eval.evaluate(D1);
+        
+        // Call should not modify the contents
+        assertEquals(Cell.CELL_TYPE_FORMULA, D1.getCellType());
+        assertEquals(expectedFormula, D1.getCellFormula());
+        
+        assertEquals(Cell.CELL_TYPE_NUMERIC, result.getCellType());
+        assertEquals(expectedResult, result.getNumberValue(), EPSILON);
+        
+        testIFEqualsFormulaEvaluation_teardown(wb);
+    }
+    
+    private void testIFEqualsFormulaEvaluation_eval(
+            final String formula, final int cellType, final String expectedFormula, final double expectedValue) {
+        testIFEqualsFormulaEvaluation_evaluate(formula, cellType, expectedFormula, expectedValue);
+        testIFEqualsFormulaEvaluation_evaluateFormulaCell(formula, cellType, expectedFormula, expectedValue);
+        testIFEqualsFormulaEvaluation_evaluateInCell(formula, cellType, expectedFormula, expectedValue);
+        testIFEqualsFormulaEvaluation_evaluateAll(formula, cellType, expectedFormula, expectedValue);
+        testIFEqualsFormulaEvaluation_evaluateAllFormulaCells(formula, cellType, expectedFormula, expectedValue);
+    }
+    
+    @Test
+    public void testIFEqualsFormulaEvaluation_NumericLiteral() {
+        final String formula = "IF(A1=1, 2, 3)";
+        final int cellType = Cell.CELL_TYPE_NUMERIC;
+        final String expectedFormula = "IF(A1=1,2,3)";
+        final double expectedValue = 2.0;
+        testIFEqualsFormulaEvaluation_eval(formula, cellType, expectedFormula, expectedValue);
+    }
+    
+    @Test
+    public void testIFEqualsFormulaEvaluation_Numeric() {
+        final String formula = "IF(A1=1, B1, C1)";
+        final int cellType = Cell.CELL_TYPE_NUMERIC;
+        final String expectedFormula = "IF(A1=1,B1,C1)";
+        final double expectedValue = 2.0;
+        testIFEqualsFormulaEvaluation_eval(formula, cellType, expectedFormula, expectedValue);
+    }
+    
+    @Test
+    public void testIFEqualsFormulaEvaluation_NumericCoerceToString() {
+        final String formula = "IF(A1&\"\"=\"1\", B1, C1)";
+        final int cellType = Cell.CELL_TYPE_NUMERIC;
+        final String expectedFormula = "IF(A1&\"\"=\"1\",B1,C1)";
+        final double expectedValue = 2.0;
+        testIFEqualsFormulaEvaluation_eval(formula, cellType, expectedFormula, expectedValue);
+    }
+    
+    @Test
+    public void testIFEqualsFormulaEvaluation_String() {
+        final String formula = "IF(A1=1, B1, C1)";
+        final int cellType = Cell.CELL_TYPE_STRING;
+        final String expectedFormula = "IF(A1=1,B1,C1)";
+        final double expectedValue = 3.0;
+        testIFEqualsFormulaEvaluation_eval(formula, cellType, expectedFormula, expectedValue);
+    }
+    
+    @Test
+    public void testIFEqualsFormulaEvaluation_StringCompareToString() {
+        final String formula = "IF(A1=\"1\", B1, C1)";
+        final int cellType = Cell.CELL_TYPE_STRING;
+        final String expectedFormula = "IF(A1=\"1\",B1,C1)";
+        final double expectedValue = 2.0;
+        testIFEqualsFormulaEvaluation_eval(formula, cellType, expectedFormula, expectedValue);
+    }
+    
+    @Test
+    public void testIFEqualsFormulaEvaluation_StringCoerceToNumeric() {
+        final String formula = "IF(A1+0=1, B1, C1)";
+        final int cellType = Cell.CELL_TYPE_STRING;
+        final String expectedFormula = "IF(A1+0=1,B1,C1)";
+        final double expectedValue = 2.0;
+        testIFEqualsFormulaEvaluation_eval(formula, cellType, expectedFormula, expectedValue);
+    }
+    
+    @Ignore("Bug 58591: this test currently fails")
+    @Test
+    public void testIFEqualsFormulaEvaluation_Boolean() {
+        final String formula = "IF(A1=1, B1, C1)";
+        final int cellType = Cell.CELL_TYPE_BOOLEAN;
+        final String expectedFormula = "IF(A1=1,B1,C1)";
+        final double expectedValue = 2.0;
+        testIFEqualsFormulaEvaluation_eval(formula, cellType, expectedFormula, expectedValue);
+    }
+    
+    @Ignore("Bug 58591: this test currently fails")
+    @Test
+    public void testIFEqualsFormulaEvaluation_BooleanSimple() {
+        final String formula = "3-(A1=1)";
+        final int cellType = Cell.CELL_TYPE_BOOLEAN;
+        final String expectedFormula = "3-(A1=1)";
+        final double expectedValue = 2.0;
+        testIFEqualsFormulaEvaluation_eval(formula, cellType, expectedFormula, expectedValue);
+    }
+    
+    @Test
+    public void testIFEqualsFormulaEvaluation_Formula() {
+        final String formula = "IF(A1=1, B1, C1)";
+        final int cellType = Cell.CELL_TYPE_FORMULA;
+        final String expectedFormula = "IF(A1=1,B1,C1)";
+        final double expectedValue = 2.0;
+        testIFEqualsFormulaEvaluation_eval(formula, cellType, expectedFormula, expectedValue);
+    }
+    
+    @Test
+    public void testIFEqualsFormulaEvaluation_Blank() {
+        final String formula = "IF(A1=1, B1, C1)";
+        final int cellType = Cell.CELL_TYPE_BLANK;
+        final String expectedFormula = "IF(A1=1,B1,C1)";
+        final double expectedValue = 3.0;
+        testIFEqualsFormulaEvaluation_eval(formula, cellType, expectedFormula, expectedValue);
+    }
+    
+    @Test
+    public void testIFEqualsFormulaEvaluation_BlankCompareToZero() {
+        final String formula = "IF(A1=0, B1, C1)";
+        final int cellType = Cell.CELL_TYPE_BLANK;
+        final String expectedFormula = "IF(A1=0,B1,C1)";
+        final double expectedValue = 2.0;
+        testIFEqualsFormulaEvaluation_eval(formula, cellType, expectedFormula, expectedValue);
+    }
+    
+    @Ignore("Bug 58591: this test currently fails")
+    @Test
+    public void testIFEqualsFormulaEvaluation_BlankInverted() {
+        final String formula = "IF(NOT(A1)=1, B1, C1)";
+        final int cellType = Cell.CELL_TYPE_BLANK;
+        final String expectedFormula = "IF(NOT(A1)=1,B1,C1)";
+        final double expectedValue = 2.0;
+        testIFEqualsFormulaEvaluation_eval(formula, cellType, expectedFormula, expectedValue);
+    }
+    
+    @Ignore("Bug 58591: this test currently fails")
+    @Test
+    public void testIFEqualsFormulaEvaluation_BlankInvertedSimple() {
+        final String formula = "3-(NOT(A1)=1)";
+        final int cellType = Cell.CELL_TYPE_BLANK;
+        final String expectedFormula = "3-(NOT(A1)=1)";
+        final double expectedValue = 2.0;
+        testIFEqualsFormulaEvaluation_eval(formula, cellType, expectedFormula, expectedValue);
+    }
+    
+    
+    private void testIFEqualsFormulaEvaluation_evaluateFormulaCell(
+            String formula, int cellType, String expectedFormula, double expectedResult) {
+        Workbook wb = testIFEqualsFormulaEvaluation_setup(formula, cellType);
+        Cell D1 = wb.getSheet("IFEquals").getRow(0).getCell(3);
+        
+        FormulaEvaluator eval = wb.getCreationHelper().createFormulaEvaluator();
+        int resultCellType = eval.evaluateFormulaCell(D1);
+        
+        // Call should modify the contents, but leave the formula intact
+        assertEquals(Cell.CELL_TYPE_FORMULA, D1.getCellType());
+        assertEquals(expectedFormula, D1.getCellFormula());
+        assertEquals(Cell.CELL_TYPE_NUMERIC, resultCellType);
+        assertEquals(Cell.CELL_TYPE_NUMERIC, D1.getCachedFormulaResultType());
+        assertEquals(expectedResult, D1.getNumericCellValue(), EPSILON);
+        
+        testIFEqualsFormulaEvaluation_teardown(wb);
+    }
+    
+    private void testIFEqualsFormulaEvaluation_evaluateInCell(
+            String formula, int cellType, String expectedFormula, double expectedResult) {
+        Workbook wb = testIFEqualsFormulaEvaluation_setup(formula, cellType);
+        Cell D1 = wb.getSheet("IFEquals").getRow(0).getCell(3);
+        
+        FormulaEvaluator eval = wb.getCreationHelper().createFormulaEvaluator();
+        Cell result = eval.evaluateInCell(D1);
+        
+        // Call should modify the contents and replace the formula with the result
+        assertSame(D1, result); // returns the same cell that was provided as an argument so that calls can be chained.
+        try {
+            D1.getCellFormula();
+            fail("cell formula should be overwritten with formula result");
+        } catch (final IllegalStateException expected) { }
+        assertEquals(Cell.CELL_TYPE_NUMERIC, D1.getCellType());
+        assertEquals(expectedResult, D1.getNumericCellValue(), EPSILON);
+        
+        testIFEqualsFormulaEvaluation_teardown(wb);
+    }
+    
+    private void testIFEqualsFormulaEvaluation_evaluateAll(
+            String formula, int cellType, String expectedFormula, double expectedResult) {
+        Workbook wb = testIFEqualsFormulaEvaluation_setup(formula, cellType);
+        Cell D1 = wb.getSheet("IFEquals").getRow(0).getCell(3);
+        
+        FormulaEvaluator eval = wb.getCreationHelper().createFormulaEvaluator();
+        eval.evaluateAll();
+        
+        // Call should modify the contents
+        assertEquals(Cell.CELL_TYPE_FORMULA, D1.getCellType());
+        assertEquals(expectedFormula, D1.getCellFormula());
+        
+        assertEquals(Cell.CELL_TYPE_NUMERIC, D1.getCachedFormulaResultType());
+        assertEquals(expectedResult, D1.getNumericCellValue(), EPSILON);
+        
+        testIFEqualsFormulaEvaluation_teardown(wb);
+    }
+    
+    private void testIFEqualsFormulaEvaluation_evaluateAllFormulaCells(
+            String formula, int cellType, String expectedFormula, double expectedResult) {
+        Workbook wb = testIFEqualsFormulaEvaluation_setup(formula, cellType);
+        Cell D1 = wb.getSheet("IFEquals").getRow(0).getCell(3);
+        
+        HSSFFormulaEvaluator.evaluateAllFormulaCells(wb);
+        
+        // Call should modify the contents
+        assertEquals(Cell.CELL_TYPE_FORMULA, D1.getCellType());
+        // whitespace gets deleted because formula is parsed and re-rendered
+        assertEquals(expectedFormula, D1.getCellFormula());
+        
+        assertEquals(Cell.CELL_TYPE_NUMERIC, D1.getCachedFormulaResultType());
+        assertEquals(expectedResult, D1.getNumericCellValue(), EPSILON);
+        
+        testIFEqualsFormulaEvaluation_teardown(wb);
     }
 }
