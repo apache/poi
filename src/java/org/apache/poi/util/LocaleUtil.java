@@ -50,7 +50,7 @@ public class LocaleUtil {
 
     private static final ThreadLocal<TimeZone> userTimeZone = new ThreadLocal<TimeZone>() {
         @Override
-        @SuppressForbidden
+        @SuppressForbidden("implementation around default locales in POI")
         protected TimeZone initialValue() {
             return TimeZone.getDefault();
         }
@@ -58,7 +58,7 @@ public class LocaleUtil {
 
     private static final ThreadLocal<Locale> userLocale = new ThreadLocal<Locale>() {
         @Override
-        @SuppressForbidden
+        @SuppressForbidden("implementation around default locales in POI")
         protected Locale initialValue() {
             return Locale.getDefault();
         }

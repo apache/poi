@@ -22,11 +22,12 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/*
+/**
  * Marking class for elements to be ignored by the forbidden apis check
  */
 @Retention(RetentionPolicy.CLASS)
 @Target({ElementType.METHOD, ElementType.TYPE})
 public @interface SuppressForbidden {
-
+    /** A reason for suppressing should always be given. */
+    String value() default "";
 }

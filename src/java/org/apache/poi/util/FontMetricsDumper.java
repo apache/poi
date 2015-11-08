@@ -29,7 +29,7 @@ import java.util.Properties;
 @SuppressWarnings("deprecation")
 public class FontMetricsDumper
 {
-    @SuppressForbidden
+    @SuppressForbidden("command line tool")
     public static void main( String[] args ) throws IOException
     {
 
