@@ -366,6 +366,15 @@ under the License.
         <path path="${env.CLASSPATH}"/>
     </path>
 
+    <path id="forbiddenapis.classpath">
+        <path refid="main.classpath"/>
+        <path refid="scratchpad.classpath"/>
+        <path refid="ooxml.classpath"/>
+        <path refid="ooxml.xmlsec.classpath"/>
+        <path refid="excelant.classpath"/>
+        <path path="${env.CLASSPATH}"/>
+    </path>
+
     <path id="lib.jacoco">
         <fileset dir="lib">
             <include name="org.jacoco*.jar" />
@@ -1766,7 +1775,7 @@ under the License.
                  classpath="${forbidden.jar}"/>
         <forbiddenapis 
                  internalRuntimeForbidden="true" 
-                 classpathref="javadoc.classpath"
+                 classpathref="forbiddenapis.classpath"
                  suppressAnnotation="org.apache.poi.util.SuppressForbidden"
             >
             <bundledsignatures name="jdk-unsafe-${jdk.version.source}"/>
@@ -1779,10 +1788,7 @@ under the License.
             <fileset dir="${main.output.dir}"/>
             <fileset dir="${ooxml.output.dir}"/>
             <fileset dir="${scratchpad.output.dir}"/>
-            <!--
-            Adding Excelant causes ClassNotFoundException, see https://github.com/policeman-tools/forbidden-apis/issues/85
             <fileset dir="${excelant.output.dir}"/>
-            -->
             <!--
             <fileset dir="${examples.output.dir}"/>
             -->
