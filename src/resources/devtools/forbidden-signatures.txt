@@ -20,7 +20,13 @@
 @ignoreUnresolvable
 @defaultMessage POI forbidden APIs
 
-java.util.Locale#getDefault()
-java.util.Locale#setDefault(java.util.Locale)
-java.util.TimeZone#getDefault()
-java.util.Date#toString()
+# Locale related interfaces which we want to avoid to not have code which depends on the locale of the current machine
+java.util.Locale#getDefault() @ Do not use methods that depend on the current Local, either use Locale.ROOT or let the user define the local, see class LocaleUtil for details
+java.util.Locale#setDefault(java.util.Locale) @ Do not use methods that depend on the current Local, either use Locale.ROOT or let the user define the local, see class LocaleUtil for details
+java.util.TimeZone#getDefault() @ Do not use methods that depend on the current Local, either use Locale.ROOT or let the user define the local, see class LocaleUtil for details
+java.util.Date#toString() @ Do not use methods that depend on the current Local, either use Locale.ROOT or let the user define the local, see class LocaleUtil for details
+
+# disabled as there are still invocations that we could not remove easily
+#java.lang.reflect.AccessibleObject#setAccessible(java.lang.reflect.AccessibleObject[], boolean) @ Reflection usage fails with SecurityManagers and likely will not work any more in Java 9
+#java.lang.reflect.AccessibleObject#setAccessible(boolean) @ Reflection usage fails with SecurityManagers and likely will not work any more in Java 9
+#java.lang.reflect.Method#invoke(java.lang.Object, java.lang.Object[]) @ Reflection usage fails with SecurityManagers and likely will not work any more in Java 9
