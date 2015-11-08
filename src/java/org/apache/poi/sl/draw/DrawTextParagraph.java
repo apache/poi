@@ -43,6 +43,7 @@ import org.apache.poi.sl.usermodel.TextParagraph.TextAlign;
 import org.apache.poi.sl.usermodel.TextRun;
 import org.apache.poi.sl.usermodel.TextRun.TextCap;
 import org.apache.poi.sl.usermodel.TextShape;
+import org.apache.poi.util.StringUtil;
 import org.apache.poi.util.Units;
 
 public class DrawTextParagraph implements Drawable {
@@ -96,7 +97,7 @@ public class DrawTextParagraph implements Drawable {
         if (indent == null) {
             indent = Units.toPoints(347663*indentLevel);
         }
-        if (paragraph.getClass().getName().contains("HSLF")) {
+        if (isHSLF()) {
             // special handling for HSLF
             indent -= leftMargin;
         }
@@ -265,7 +266,7 @@ public class DrawTextParagraph implements Drawable {
         String buFont = bulletStyle.getBulletFont();
         if (buFont == null) buFont = paragraph.getDefaultFontFamily();
         assert(buFont != null);
-
+        
         PlaceableShape<?,?> ps = getParagraphShape();
         PaintStyle fgPaintStyle = bulletStyle.getBulletFontColor();
         Paint fgPaint;
@@ -282,7 +283,7 @@ public class DrawTextParagraph implements Drawable {
         else fontSize = (float)-buSz;
 
         
-        AttributedString str = new AttributedString(buCharacter);
+        AttributedString str = new AttributedString(mapFontCharset(buCharacter,buFont));
         str.addAttribute(TextAttribute.FOREGROUND, fgPaint);
         str.addAttribute(TextAttribute.FAMILY, buFont);
         str.addAttribute(TextAttribute.SIZE, fontSize);
@@ -322,9 +323,9 @@ public class DrawTextParagraph implements Drawable {
      */
     private String tab2space(TextRun tr) {
         AttributedString string = new AttributedString(" ");
-        String typeFace = tr.getFontFamily();
-        if (typeFace == null) typeFace = "Lucida Sans";
-        string.addAttribute(TextAttribute.FAMILY, typeFace);
+        String fontFamily = tr.getFontFamily();
+        if (fontFamily == null) fontFamily = "Lucida Sans";
+        string.addAttribute(TextAttribute.FAMILY, fontFamily);
 
         Double fs = tr.getFontSize();
         if (fs == null) fs = 12d;
@@ -362,6 +363,10 @@ public class DrawTextParagraph implements Drawable {
         Rectangle2D anchor = DrawShape.getAnchor(graphics, paragraph.getParentShape());
 
         int indentLevel = paragraph.getIndentLevel();
+        if (indentLevel == -1) {
+            // default to 0, if indentLevel is not set
+            indentLevel = 0;
+        }
         Double leftMargin = paragraph.getLeftMargin();
         if (leftMargin == null) {
             // if the marL attribute is omitted, then a value of 347663 is implied
@@ -383,7 +388,7 @@ public class DrawTextParagraph implements Drawable {
             width = ts.getSheet().getSlideShow().getPageSize().getWidth() - anchor.getX();
         } else {
             width = anchor.getWidth() - leftInset - rightInset - leftMargin - rightMargin;
-            if (firstLine) {
+            if (firstLine && !isHSLF()) {
                 if (bullet != null){
                     if (indent > 0) width -= indent;
                 } else {
@@ -442,14 +447,6 @@ public class DrawTextParagraph implements Drawable {
             // skip empty runs
             if (runText.isEmpty()) continue;
 
-            int beginIndex = text.length();
-            text.append(runText);
-            int endIndex = text.length();
-
-            PaintStyle fgPaintStyle = run.getFontColor();
-            Paint fgPaint = new DrawPaint(ps).getPaint(graphics, fgPaintStyle);
-            attList.add(new AttributedStringData(TextAttribute.FOREGROUND, fgPaint, beginIndex, endIndex));
-
             // user can pass an custom object to convert fonts
             String fontFamily = run.getFontFamily();
             @SuppressWarnings("unchecked")
@@ -463,7 +460,16 @@ public class DrawTextParagraph implements Drawable {
             if (fontFamily == null) {
                 fontFamily = paragraph.getDefaultFontFamily();
             }
+            
+            int beginIndex = text.length();
+            text.append(mapFontCharset(runText,fontFamily));
+            int endIndex = text.length();
+
             attList.add(new AttributedStringData(TextAttribute.FAMILY, fontFamily, beginIndex, endIndex));
+
+            PaintStyle fgPaintStyle = run.getFontColor();
+            Paint fgPaint = new DrawPaint(ps).getPaint(graphics, fgPaintStyle);
+            attList.add(new AttributedStringData(TextAttribute.FOREGROUND, fgPaint, beginIndex, endIndex));
 
             Double fontSz = run.getFontSize();
             if (fontSz == null) fontSz = paragraph.getDefaultFontSize();
@@ -506,5 +512,41 @@ public class DrawTextParagraph implements Drawable {
         return string;
     }
 
+    protected boolean isHSLF() {
+        return paragraph.getClass().getName().contains("HSLF");        
+    }
+    
+    /**
+     * Map text charset depending on font family.
+     * Currently this only maps for wingdings font (into unicode private use area)
+     *
+     * @param text the raw text
+     * @param fontFamily the font family
+     * @return AttributedString with mapped codepoints
+     * 
+     * @see <a href="http://stackoverflow.com/questions/8692095">Drawing exotic fonts in a java applet</a>
+     * @see StringUtil#mapMsCodepointString(String)
+     */
+    protected String mapFontCharset(String text, String fontFamily) {
+        // TODO: find a real charset mapping solution instead of hard coding for Wingdings
+        String attStr = text;
+        if ("Wingdings".equalsIgnoreCase(fontFamily)) {
+            // wingdings doesn't contain high-surrogates, so chars are ok
+            boolean changed = false;
+            char chrs[] = attStr.toCharArray();
+            for (int i=0; i<chrs.length; i++) {
+                // only change valid chars
+                if ((0x20 <= chrs[i] && chrs[i] <= 0x7f) ||
+                    (0xa0 <= chrs[i] && chrs[i] <= 0xff)) {
+                    chrs[i] |= 0xf000;
+                    changed = true;
+                }
+            }
 
+            if (changed) {
+                attStr = new String(chrs);
+            }
+        }
+        return attStr;
+    }
 }
