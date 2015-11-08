@@ -23,6 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Locale;
 
 import org.apache.poi.ss.excelant.util.ExcelAntWorkbookUtil;
 import org.apache.poi.ss.excelant.util.ExcelAntWorkbookUtilFactory;
@@ -88,7 +89,7 @@ public class ExcelAntTask extends Task {
 		versionBffr.append(  "ExcelAnt version " ) ;
 		versionBffr.append( VERSION ) ;
 		versionBffr.append( " Copyright 2011" ) ;
-		SimpleDateFormat sdf = new SimpleDateFormat( "yyyy" ) ;
+		SimpleDateFormat sdf = new SimpleDateFormat( "yyyy", Locale.ROOT ) ;
 		double currYear = Double.parseDouble( sdf.format( new Date() ) );
 		if( currYear > 2011 ) {
 		    versionBffr.append( "-" ) ;
