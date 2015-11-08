@@ -90,20 +90,20 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
         throw new IllegalStateException("SlideShow was not found");
     }
 
-    protected List<XSLFShape> buildShapes(CTGroupShape spTree){
+    protected static List<XSLFShape> buildShapes(CTGroupShape spTree, XSLFSheet sheet){
         List<XSLFShape> shapes = new ArrayList<XSLFShape>();
         for(XmlObject ch : spTree.selectPath("*")){
             if(ch instanceof CTShape){ // simple shape
-                XSLFAutoShape shape = XSLFAutoShape.create((CTShape)ch, this);
+                XSLFAutoShape shape = XSLFAutoShape.create((CTShape)ch, sheet);
                 shapes.add(shape);
             } else if (ch instanceof CTGroupShape){
-                shapes.add(new XSLFGroupShape((CTGroupShape)ch, this));
+                shapes.add(new XSLFGroupShape((CTGroupShape)ch, sheet));
             } else if (ch instanceof CTConnector){
-                shapes.add(new XSLFConnectorShape((CTConnector)ch, this));
+                shapes.add(new XSLFConnectorShape((CTConnector)ch, sheet));
             } else if (ch instanceof CTPicture){
-                shapes.add(new XSLFPictureShape((CTPicture)ch, this));
+                shapes.add(new XSLFPictureShape((CTPicture)ch, sheet));
             } else if (ch instanceof CTGraphicalObjectFrame){
-                XSLFGraphicFrame shape = XSLFGraphicFrame.create((CTGraphicalObjectFrame)ch, this);
+                XSLFGraphicFrame shape = XSLFGraphicFrame.create((CTGraphicalObjectFrame)ch, sheet);
                 shapes.add(shape);
             }
         }
@@ -156,7 +156,7 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
             _drawing = new XSLFDrawing(this, cgs);
         }
         if (_shapes == null) {
-            _shapes = buildShapes(cgs);
+            _shapes = buildShapes(cgs, this);
         }
     }
 

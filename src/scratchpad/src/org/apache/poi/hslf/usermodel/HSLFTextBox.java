@@ -17,8 +17,12 @@
 
 package org.apache.poi.hslf.usermodel;
 
-import org.apache.poi.ddf.*;
-import org.apache.poi.sl.usermodel.*;
+import org.apache.poi.ddf.EscherContainerRecord;
+import org.apache.poi.ddf.EscherProperties;
+import org.apache.poi.sl.usermodel.ShapeContainer;
+import org.apache.poi.sl.usermodel.ShapeType;
+import org.apache.poi.sl.usermodel.TextBox;
+import org.apache.poi.sl.usermodel.VerticalAlignment;
 
 /**
  * Represents a TextFrame shape in PowerPoint.
@@ -88,5 +92,4 @@ public class HSLFTextBox extends HSLFTextShape implements TextBox<HSLFShape,HSLF
         setVerticalAlignment(VerticalAlignment.TOP);
         setEscherProperty(EscherProperties.TEXT__SIZE_TEXT_TO_FIT_SHAPE, 0x20002);
     }
-
 }

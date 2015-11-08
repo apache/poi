@@ -25,10 +25,15 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.awt.Color;
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import org.apache.poi.POIDataSamples;
+import org.apache.poi.hslf.usermodel.HSLFTextShape;
 import org.apache.poi.sl.usermodel.SimpleShape.Placeholder;
+import org.apache.poi.sl.usermodel.SlideShow;
+import org.apache.poi.sl.usermodel.SlideShowFactory;
 import org.apache.poi.sl.usermodel.TextParagraph.TextAlign;
 import org.apache.poi.sl.usermodel.VerticalAlignment;
 import org.apache.poi.xslf.XSLFTestDataSamples;
@@ -40,9 +45,6 @@ import org.openxmlformats.schemas.drawingml.x2006.main.STTextAlignType;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
 import org.openxmlformats.schemas.presentationml.x2006.main.STPlaceholderType;
 
-/**
- * @author Yegor Kozlov
- */
 public class TestXSLFTextShape {
 
     @Test
@@ -912,5 +914,17 @@ public class TestXSLFTextShape {
         assertEquals(TextAlign.CENTER, p3.getTextAlign());
         
         ppt.close();
+    }
+    
+    @Test
+    public void metroBlob() throws IOException {
+        File f = POIDataSamples.getSlideShowInstance().getFile("bug52297.ppt");
+        SlideShow<?,?> ppt = SlideShowFactory.create(f);
+        HSLFTextShape sh = (HSLFTextShape)ppt.getSlides().get(1).getShapes().get(3);
+        XSLFAutoShape xsh = (XSLFAutoShape)sh.getMetroShape();
+        String textExp = " ___ ___ ___ ________ __  _______ ___  ___________  __________ __ _____ ___ ___ ___ _______ ____ ______ ___________  _____________ ___ _______ ______  ____ ______ __ ___________  __________ ___ _________  _____ ________ __________  ___ _______ __________ ";
+        String textAct = xsh.getText();
+        ppt.close();
+        assertEquals(textExp, textAct);
     }
 }
