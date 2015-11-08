@@ -174,21 +174,19 @@ public class BigGridDemo {
      * @param entry the name of the sheet entry to substitute, e.g. xl/worksheets/sheet1.xml
      * @param out the stream to write the result to
      */
-	private static void substitute(File zipfile, File tmpfile, String entry, OutputStream out) throws IOException {
+    private static void substitute(File zipfile, File tmpfile, String entry, OutputStream out) throws IOException {
         ZipFile zip = ZipHelper.openZipFile(zipfile);
-
         try {
-			ZipOutputStream zos = new ZipOutputStream(out);
-
-			@SuppressWarnings("unchecked")
-			Enumeration<ZipEntry> en = (Enumeration<ZipEntry>) zip.entries();
-			while (en.hasMoreElements()) {
-				ZipEntry ze = en.nextElement();
-				if(!ze.getName().equals(entry)){
-					zos.putNextEntry(new ZipEntry(ze.getName()));
-					InputStream is = zip.getInputStream(ze);
-					copyStream(is, zos);
-					is.close();
+            ZipOutputStream zos = new ZipOutputStream(out);
+    
+            Enumeration<? extends ZipEntry> en = zip.entries();
+            while (en.hasMoreElements()) {
+                ZipEntry ze = en.nextElement();
+                if(!ze.getName().equals(entry)){
+                    zos.putNextEntry(new ZipEntry(ze.getName()));
+                    InputStream is = zip.getInputStream(ze);
+                    copyStream(is, zos);
+                    is.close();
                 }
             }
             zos.putNextEntry(new ZipEntry(entry));
@@ -198,7 +196,7 @@ public class BigGridDemo {
     
             zos.close();
         } finally {
-        	zip.close();
+            zip.close();
         }
     }
 

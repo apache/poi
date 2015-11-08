@@ -34,7 +34,6 @@ import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.BuiltinFormats;
 import org.apache.poi.ss.usermodel.FontFamily;
 import org.apache.poi.ss.usermodel.FontScheme;
-import org.apache.poi.util.DocumentHelper;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFFactory;
 import org.apache.poi.xssf.usermodel.XSSFFont;

@@ -129,7 +129,7 @@ public class XSSFExcelExtractor extends POIXMLTextExtractor
 
 
     /**
-     * Retreives the text contents of the file
+     * Retrieves the text contents of the file
      */
     public String getText() {
         DataFormatter formatter;
@@ -194,8 +194,9 @@ public class XSSFExcelExtractor extends POIXMLTextExtractor
                         text.append(" Comment by ").append(comment.getAuthor()).append(": ").append(commentText);
                     }
 
-                    if(ri.hasNext())
+                    if(ri.hasNext()) {
                         text.append("\t");
+                    }
                 }
                 text.append("\n");
             }
