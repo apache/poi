@@ -28,7 +28,7 @@ import org.apache.poi.ss.formula.functions.*;
 
 /**
  * Mappings from the Excel functions to our evaluation implementations
- *  (where avilable)
+ *  (where available)
  */
 public final class FunctionEval {
     /**
