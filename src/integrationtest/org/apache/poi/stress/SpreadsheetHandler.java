@@ -69,12 +69,17 @@ public abstract class SpreadsheetHandler extends AbstractFileHandler {
 	}
 
 	private void readContent(Workbook wb) {
-		for(int i = 0;i < wb.getNumberOfSheets();i++) {
+	    for(int i = 0;i < wb.getNumberOfSheets();i++) {
 			Sheet sheet = wb.getSheetAt(i);
 			assertNotNull(wb.getSheet(sheet.getSheetName()));
 			sheet.groupColumn((short) 4, (short) 5);
 			sheet.setColumnGroupCollapsed(4, true);
 			sheet.setColumnGroupCollapsed(4, false);
+
+			// don't do this for very large sheets as it will take a long time
+			if(sheet.getPhysicalNumberOfRows() > 1000) {
+			    continue;
+			}
 			
 			for(Row row : sheet) {
 			    for(Cell cell : row) {
