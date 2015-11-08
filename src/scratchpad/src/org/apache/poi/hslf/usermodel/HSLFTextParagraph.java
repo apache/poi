@@ -993,6 +993,15 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
         }
         return sb.toString();
     }
+    
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (HSLFTextRun r : getTextRuns()) {
+            sb.append(r.getRawText());
+        }
+        return toExternalString(sb.toString(), getRunType());
+    }
 
     /**
      * Returns a new string with line breaks converted into internal ppt

@@ -499,4 +499,9 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFTe
         // TODO Auto-generated method stub
 
     }
+    
+    @Override
+    public boolean getFollowMasterGraphics() {
+        return getFollowMasterObjects();
+    }
 }
