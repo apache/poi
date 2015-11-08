@@ -125,7 +125,9 @@ public class KeyInfoSignatureFacet extends SignatureFacet {
         };
 
         Element n = document.getDocumentElement();
-        DOMSignContext domSignContext = new DOMSignContext(key, n, nextSibling);
+        DOMSignContext domSignContext = (nextSibling == null)
+            ? new DOMSignContext(key, n)
+            : new DOMSignContext(key, n, nextSibling);
         for (Map.Entry<String,String> me : signatureConfig.getNamespacePrefixes().entrySet()) {
             domSignContext.putNamespacePrefix(me.getKey(), me.getValue());
         }

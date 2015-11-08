@@ -65,14 +65,14 @@ public class XSSFXmlColumnPr {
 	 * @return the local XPath 
 	 */
 	public String getLocalXPath(){
-		String localXPath = "";
+		StringBuilder localXPath = new StringBuilder();
 		int numberOfCommonXPathAxis = table.getCommonXpath().split("/").length-1;
 		
 		String[] xPathTokens = ctXmlColumnPr.getXpath().split("/");
 		for(int i=numberOfCommonXPathAxis; i<xPathTokens.length;i++){
-			localXPath += "/" +xPathTokens[i];
+			localXPath.append("/" +xPathTokens[i]);
 		}
-		return localXPath;
+		return localXPath.toString();
 	}
 
 	public Enum getXmlDataType() {

@@ -232,7 +232,7 @@ public class XWPFTableCell implements IBody, ICell {
     public XWPFVertAlign getVerticalAlignment() {
         XWPFVertAlign vAlign = null;
         CTTcPr tcpr = ctTc.getTcPr();
-        if (ctTc != null) {
+        if (tcpr != null) {
             CTVerticalJc va = tcpr.getVAlign();
             vAlign = stVertAlignTypeMap.get(va.getVal().intValue());
         }
@@ -488,11 +488,11 @@ public class XWPFTableCell implements IBody, ICell {
         if (table == null) {
             return null;
         }
-        XWPFTableRow tableRow = table.getRow(row);
-        if (tableRow == null) {
+        XWPFTableRow tr = table.getRow(row);
+        if (tr == null) {
             return null;
         }
-        return tableRow.getTableCell(cell);
+        return tr.getTableCell(cell);
     }
 
     public XWPFDocument getXWPFDocument() {

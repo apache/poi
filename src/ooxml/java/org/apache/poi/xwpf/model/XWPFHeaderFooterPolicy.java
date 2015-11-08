@@ -247,26 +247,6 @@ public class XWPFHeaderFooterPolicy {
         return hdr;
     }
 
-    private CTHdrFtr buildHdrFtr(String pStyle, XWPFParagraph[] paragraphs) {
-        CTHdrFtr ftr = CTHdrFtr.Factory.newInstance();
-        if (paragraphs != null) {
-            for (int i = 0; i < paragraphs.length; i++) {
-                CTP p = ftr.addNewP();
-                //ftr.setPArray(0, paragraphs[i].getCTP());		// MB 23 May 2010
-                ftr.setPArray(i, paragraphs[i].getCTP());    // MB 23 May 2010
-            }
-        } else {
-            CTP p = ftr.addNewP();
-            byte[] rsidr = doc.getDocument().getBody().getPArray(0).getRsidR();
-            byte[] rsidrdefault = doc.getDocument().getBody().getPArray(0).getRsidRDefault();
-            p.setRsidP(rsidr);
-            p.setRsidRDefault(rsidrdefault);
-            CTPPr pPr = p.addNewPPr();
-            pPr.addNewPStyle().setVal(pStyle);
-        }
-        return ftr;
-    }
-
     /**
      * MB 24 May 2010. Created this overloaded buildHdrFtr() method because testing demonstrated
      * that the XWPFFooter or XWPFHeader object returned by calls to the createHeader(int, XWPFParagraph[])
