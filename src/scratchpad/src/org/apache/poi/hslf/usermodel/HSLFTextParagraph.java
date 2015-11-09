@@ -1272,7 +1272,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
         int paraIdx = 0;
         for (TextPropCollection p : paraStyles) {
             for (int ccPara = 0, ccStyle = p.getCharactersCovered(); ccPara < ccStyle; paraIdx++) {
-                if (paraIdx >= paragraphs.size() || ccPara >= ccStyle-1) return;
+                if (paraIdx >= paragraphs.size()) return;
                 HSLFTextParagraph htp = paragraphs.get(paraIdx);
                 TextPropCollection pCopy = new TextPropCollection(0, TextPropType.paragraph);
                 pCopy.copy(p);
