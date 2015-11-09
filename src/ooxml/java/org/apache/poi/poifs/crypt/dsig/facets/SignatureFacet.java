@@ -26,8 +26,10 @@ package org.apache.poi.poifs.crypt.dsig.facets;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.security.AccessController;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
+import java.security.PrivilegedAction;
 import java.security.Provider;
 import java.security.Security;
 import java.util.List;
@@ -50,6 +52,7 @@ import org.apache.poi.poifs.crypt.dsig.SignatureConfig;
 import org.apache.poi.poifs.crypt.dsig.SignatureConfig.SignatureConfigurable;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.util.SuppressForbidden;
 import org.w3c.dom.Document;
 
 /**
@@ -156,25 +159,32 @@ public abstract class SignatureFacet implements SignatureConfigurable {
     }
     
     // helper method ... will be removed soon
-    public static void brokenJvmWorkaround(Reference reference) {
-        DigestMethod digestMethod = reference.getDigestMethod();
-        String digestMethodUri = digestMethod.getAlgorithm();
+    public static void brokenJvmWorkaround(final Reference reference) {
+        final DigestMethod digestMethod = reference.getDigestMethod();
+        final String digestMethodUri = digestMethod.getAlgorithm();
         
-        // workaround for https://bugzilla.redhat.com/show_bug.cgi?id=1155012
-        // overwrite standard message digest, if a digest <> SHA1 is used
-        Provider bcProv = Security.getProvider("BC");
+        final Provider bcProv = Security.getProvider("BC");
         if (bcProv != null && !DigestMethod.SHA1.equals(digestMethodUri)) {
-            try {
-                Method m = DOMDigestMethod.class.getDeclaredMethod("getMessageDigestAlgorithm");
-                m.setAccessible(true);
-                String mdAlgo = (String)m.invoke(digestMethod);
-                MessageDigest md = MessageDigest.getInstance(mdAlgo, bcProv);
-                Field f = DOMReference.class.getDeclaredField("md");
-                f.setAccessible(true);
-                f.set(reference, md);
-            } catch (Exception e) {
-                LOG.log(POILogger.WARN, "Can't overwrite message digest (workaround for https://bugzilla.redhat.com/show_bug.cgi?id=1155012)", e);
-            }
+            // workaround for https://bugzilla.redhat.com/show_bug.cgi?id=1155012
+            // overwrite standard message digest, if a digest <> SHA1 is used
+            AccessController.doPrivileged(new PrivilegedAction<Void>() {
+                @Override
+                @SuppressForbidden("Workaround for a bug, needs access to private JDK members (may fail in Java 9): https://bugzilla.redhat.com/show_bug.cgi?id=1155012")
+                public Void run() {
+                    try {
+                        Method m = DOMDigestMethod.class.getDeclaredMethod("getMessageDigestAlgorithm");
+                        m.setAccessible(true);
+                        String mdAlgo = (String)m.invoke(digestMethod);
+                        MessageDigest md = MessageDigest.getInstance(mdAlgo, bcProv);
+                        Field f = DOMReference.class.getDeclaredField("md");
+                        f.setAccessible(true);
+                        f.set(reference, md);
+                    } catch (Exception e) {
+                        LOG.log(POILogger.WARN, "Can't overwrite message digest (workaround for https://bugzilla.redhat.com/show_bug.cgi?id=1155012)", e);
+                    }
+                    return null; // Void
+                }
+            });
         }
     }
 }
