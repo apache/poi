@@ -298,21 +298,26 @@ public class DrawTextParagraph implements Drawable {
         TextCap cap = tr.getTextCap();
         String tabs = null;
         for (char c : tr.getRawText().toCharArray()) {
-            if(c == '\t') {
-                if (tabs == null) {
-                    tabs = tab2space(tr);
-                }
-                buf.append(tabs);
-                continue;
+            switch (c) {
+                case '\t':
+                    if (tabs == null) {
+                        tabs = tab2space(tr);
+                    }
+                    buf.append(tabs);
+                    break;
+                case '\u000b':
+                    buf.append('\n');
+                    break;
+                default:
+                    switch (cap) {
+                        case ALL: c = Character.toUpperCase(c); break;
+                        case SMALL: c = Character.toLowerCase(c); break;
+                        case NONE: break;
+                    }
+    
+                    buf.append(c);
+                    break;
             }
-
-            switch (cap) {
-                case ALL: c = Character.toUpperCase(c); break;
-                case SMALL: c = Character.toLowerCase(c); break;
-                case NONE: break;
-            }
-
-            buf.append(c);
         }
 
         return buf.toString();
