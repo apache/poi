@@ -22,21 +22,27 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.RandomAccessFile;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.WritableByteChannel;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
+import org.apache.poi.util.SuppressForbidden;
 
 /**
  * A POIFS {@link DataSource} backed by a File
  */
 public class FileBackedDataSource extends DataSource {
+   private final static POILogger logger = POILogFactory.getLogger( FileBackedDataSource.class );
+   
    private FileChannel channel;
    private boolean writable;
    // remember file base, which needs to be closed too
@@ -155,26 +161,23 @@ public class FileBackedDataSource extends DataSource {
    // need to use reflection to avoid depending on the sun.nio internal API
    // unfortunately this might break silently with newer/other Java implementations, 
    // but we at least have unit-tests which will indicate this when run on Windows
-    private static void unmap(ByteBuffer bb) {
-        Class<?> fcClass = bb.getClass();
-        try {
-            // invoke bb.cleaner().clean(), but do not depend on sun.nio
-            // interfaces
-            Method cleanerMethod = fcClass.getDeclaredMethod("cleaner");
-            cleanerMethod.setAccessible(true);
-            Object cleaner = cleanerMethod.invoke(bb);
-            Method cleanMethod = cleaner.getClass().getDeclaredMethod("clean");
-            cleanMethod.invoke(cleaner);
-        } catch (NoSuchMethodException e) {
-            // e.printStackTrace();
-        } catch (SecurityException e) {
-            // e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            // e.printStackTrace();
-        } catch (IllegalArgumentException e) {
-            // e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            // e.printStackTrace();
-        }
+   private static void unmap(final ByteBuffer buffer) {
+        AccessController.doPrivileged(new PrivilegedAction<Void>() {
+            @Override
+            @SuppressForbidden("Java 9 Jigsaw whitelists access to sun.misc.Cleaner, so setAccessible works")
+            public Void run() {
+                try {
+                    final Method getCleanerMethod = buffer.getClass().getMethod("cleaner");
+                    getCleanerMethod.setAccessible(true);
+                    final Object cleaner = getCleanerMethod.invoke(buffer);
+                    if (cleaner != null) {
+                        cleaner.getClass().getMethod("clean").invoke(cleaner);
+                    }
+                } catch (Exception e) {
+                    logger.log(POILogger.WARN, "Unable to unmap memory mapped ByteBuffer.", e);
+                }
+                return null; // Void
+            }
+        });
     }
 }
