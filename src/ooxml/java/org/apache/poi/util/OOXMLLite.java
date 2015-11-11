@@ -25,7 +25,9 @@ import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URL;
+import java.security.AccessController;
 import java.security.CodeSource;
+import java.security.PrivilegedAction;
 import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -49,7 +51,6 @@ import org.junit.runner.JUnitCore;import org.junit.runner.Result;
  * @author Yegor Kozlov
  */
 public final class OOXMLLite {
-    private static Field _classes;
 
     /**
      * Destination directory to copy filtered classes
@@ -214,12 +215,19 @@ public final class OOXMLLite {
         // make the field accessible, we defer this from static initialization to here to 
         // allow JDKs which do not have this field (e.g. IBM JDK) to at least load the class
         // without failing, see https://issues.apache.org/bugzilla/show_bug.cgi?id=56550
-        try {
-            _classes = ClassLoader.class.getDeclaredField("classes");
-            _classes.setAccessible(true);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        final Field _classes = AccessController.doPrivileged(new PrivilegedAction<Field>() {
+            @SuppressForbidden("TODO: Reflection works until Java 8 on Oracle/Sun JDKs, but breaks afterwards (different classloader types, access checks)")
+            public Field run() {
+                try {
+                    Field fld = ClassLoader.class.getDeclaredField("classes");
+                    fld.setAccessible(true);
+                    return fld;
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+
+            }
+        });
 
         ClassLoader appLoader = ClassLoader.getSystemClassLoader();
         try {
