@@ -148,7 +148,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
         }
         if (getDrawingPatriarch() != null) {
             HSSFPatriarch patr = HSSFPatriarch.createPatriarch(this.getDrawingPatriarch(), sheet);
-            sheet._sheet.getRecords().add(pos, patr._getBoundAggregate());
+            sheet._sheet.getRecords().add(pos, patr.getBoundAggregate());
             sheet._patriarch = patr;
         }
         return sheet;

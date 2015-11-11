@@ -85,13 +85,13 @@ public final class TestCloneSheet extends TestCase {
         HSSFSheet s = b.createSheet("Test");
         HSSFPatriarch patriarch = s.createDrawingPatriarch();
 
-        EscherAggregate agg1 = patriarch._getBoundAggregate();
+        EscherAggregate agg1 = patriarch.getBoundAggregate();
 
         HSSFSheet s2 = s.cloneSheet(b);
 
         patriarch = s2.getDrawingPatriarch();
 
-        EscherAggregate agg2 = patriarch._getBoundAggregate();
+        EscherAggregate agg2 = patriarch.getBoundAggregate();
 
         EscherSpRecord sp1 = (EscherSpRecord) agg1.getEscherContainer().getChild(1).getChild(0).getChild(1);
         EscherSpRecord sp2 = (EscherSpRecord) agg2.getEscherContainer().getChild(1).getChild(0).getChild(1);

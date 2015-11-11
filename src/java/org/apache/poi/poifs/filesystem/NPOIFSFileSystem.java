@@ -55,6 +55,7 @@ import org.apache.poi.poifs.storage.HeaderBlockConstants;
 import org.apache.poi.poifs.storage.HeaderBlockWriter;
 import org.apache.poi.util.CloseIgnoringInputStream;
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.LongField;
 
 /**
@@ -969,6 +970,16 @@ public class NPOIFSFileSystem extends BlockStore
     @Override
     protected int getBlockStoreBlockSize() {
        return getBigBlockSize();
+    }
+
+    @Internal
+    public NPropertyTable getPropertyTable() {
+        return _property_table;
+    }
+
+    @Internal
+    public HeaderBlock getHeaderBlock() {
+        return _header;
     }
 }
 

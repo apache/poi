@@ -122,7 +122,7 @@ public class HSSFShapeGroup extends HSSFShape implements HSSFShapeContainer {
 
     @Override
     protected void afterRemove(HSSFPatriarch patriarch) {
-        patriarch._getBoundAggregate().removeShapeToObjRecord(getEscherContainer().getChildContainers().get(0)
+        patriarch.getBoundAggregate().removeShapeToObjRecord(getEscherContainer().getChildContainers().get(0)
                 .getChildById(EscherClientDataRecord.RECORD_ID));
         for ( int i=0; i<shapes.size(); i++ ) {
             HSSFShape shape = shapes.get(i);
@@ -314,7 +314,7 @@ public class HSSFShapeGroup extends HSSFShape implements HSSFShapeContainer {
 
     @Override
     void afterInsert(HSSFPatriarch patriarch){
-        EscherAggregate agg = patriarch._getBoundAggregate();
+        EscherAggregate agg = patriarch.getBoundAggregate();
         EscherContainerRecord containerRecord = getEscherContainer().getChildById(EscherContainerRecord.SP_CONTAINER);
         agg.associateShapeToObjRecord(containerRecord.getChildById(EscherClientDataRecord.RECORD_ID), getObjRecord());
     }

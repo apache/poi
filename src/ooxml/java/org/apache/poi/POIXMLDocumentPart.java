@@ -38,6 +38,7 @@ import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
 import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.opc.TargetMode;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.xmlbeans.XmlOptions;
@@ -509,5 +510,16 @@ public class POIXMLDocumentPart {
      */
     protected void onDocumentRemove() throws IOException {
 
+    }
+
+    /**
+     * Internal method, do not use!
+     * <p>
+     * This method only exists to allow access to protected {@link POIXMLDocumentPart#onDocumentRead()}
+     * from {@link org.apache.poi.xwpf.usermodel.XWPFDocument} without reflection. It should be removed.
+     */
+    @Internal @Deprecated
+    public static void _invokeOnDocumentRead(POIXMLDocumentPart part) throws IOException {
+        part.onDocumentRead();
     }
 }

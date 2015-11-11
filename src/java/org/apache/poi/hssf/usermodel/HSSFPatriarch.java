@@ -495,7 +495,8 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
      * Returns the aggregate escher record we're bound to
      * @return - low level representation of sheet drawing data
      */
-    protected EscherAggregate _getBoundAggregate() {
+    @Internal
+    public EscherAggregate getBoundAggregate() {
         return _boundAggregate;
     }
 

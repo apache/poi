@@ -72,7 +72,7 @@ public class HSSFTestHelper {
     }
 
     public static EscherAggregate getEscherAggregate(HSSFPatriarch patriarch){
-        return patriarch._getBoundAggregate();
+        return patriarch.getBoundAggregate();
     }
 
     public static int allocateNewShapeId(HSSFPatriarch patriarch){

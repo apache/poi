@@ -40,7 +40,7 @@ public class TestPatriarch extends TestCase {
 
         assertSame(patriarch, sh.getDrawingPatriarch());
 
-        EscherAggregate agg = patriarch._getBoundAggregate();
+        EscherAggregate agg = patriarch.getBoundAggregate();
 
         EscherDgRecord dg = agg.getEscherContainer().getChildById(EscherDgRecord.RECORD_ID);
         int lastId = dg.getLastMSOSPID();
@@ -50,7 +50,7 @@ public class TestPatriarch extends TestCase {
         wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
         sh = wb.getSheetAt(0);
         patriarch = sh.createDrawingPatriarch();
-        dg = patriarch._getBoundAggregate().getEscherContainer().getChildById(EscherDgRecord.RECORD_ID);
+        dg = patriarch.getBoundAggregate().getEscherContainer().getChildById(EscherDgRecord.RECORD_ID);
 
         assertEquals(lastId, dg.getLastMSOSPID());
     }

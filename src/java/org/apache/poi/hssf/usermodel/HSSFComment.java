@@ -87,7 +87,7 @@ public class HSSFComment extends HSSFTextbox implements Comment {
     @Override
     void afterInsert(HSSFPatriarch patriarch) {
         super.afterInsert(patriarch);
-        patriarch._getBoundAggregate().addTailRecord(getNoteRecord());
+        patriarch.getBoundAggregate().addTailRecord(getNoteRecord());
     }
 
     @Override
@@ -253,7 +253,7 @@ public class HSSFComment extends HSSFTextbox implements Comment {
 
     public void afterRemove(HSSFPatriarch patriarch){
         super.afterRemove(patriarch);
-        patriarch._getBoundAggregate().removeTailRecord(getNoteRecord());
+        patriarch.getBoundAggregate().removeTailRecord(getNoteRecord());
     }
 
     @Override

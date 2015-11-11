@@ -20,7 +20,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -48,7 +47,6 @@ import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
-import org.apache.poi.util.DocumentHelper;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.IdentifierManager;
 import org.apache.poi.util.Internal;
@@ -153,6 +151,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
         }
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     protected void onDocumentRead() throws IOException {
         try {
@@ -224,13 +223,9 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
                     for (POIXMLDocumentPart gp : p.getRelations()) {
                         // Trigger the onDocumentRead for all the child parts
                         // Otherwise we'll hit issues on Styles, Settings etc on save
-                        try {
-                            Method onDocumentRead = gp.getClass().getDeclaredMethod("onDocumentRead");
-                            onDocumentRead.setAccessible(true);
-                            onDocumentRead.invoke(gp);
-                        } catch (Exception e) {
-                            throw new POIXMLException(e);
-                        }
+                        // TODO: Refactor this to not need to access protected method
+                        // from other package! Remove the static helper method once fixed!!!
+                        POIXMLDocumentPart._invokeOnDocumentRead(gp);
                     }
                 }
             }

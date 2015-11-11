@@ -21,7 +21,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
 import java.util.Iterator;
 
@@ -73,11 +72,11 @@ public class POIFSDump {
             dump(root, file);
             
             if (dumpProps) {
-                HeaderBlock header = getHeaderBlock(fs);
+                HeaderBlock header = fs.getHeaderBlock();
                 dump(fs, header.getPropertyStart(), "properties", file);
             }
             if (dumpMini) {
-                NPropertyTable props = getPropertyTable(fs);
+                NPropertyTable props = fs.getPropertyTable();
                 int startBlock = props.getRoot().getStartBlock(); 
                 if (startBlock == POIFSConstants.END_OF_CHAIN) {
                     System.err.println("No Mini Stream in file");
@@ -86,21 +85,8 @@ public class POIFSDump {
                 }
             }
         }
-   }
+    }
     
-    protected static HeaderBlock getHeaderBlock(NPOIFSFileSystem fs) throws Exception {
-        Field headerF = NPOIFSFileSystem.class.getDeclaredField("_header");
-        headerF.setAccessible(true);
-        HeaderBlock header = (HeaderBlock)headerF.get(fs);
-        return header;
-    }
-    protected static NPropertyTable getPropertyTable(NPOIFSFileSystem fs) throws Exception {
-        Field ptF = NPOIFSFileSystem.class.getDeclaredField("_property_table");
-        ptF.setAccessible(true);
-        NPropertyTable table = (NPropertyTable)ptF.get(fs);
-        return table;
-    }
-
     public static void dump(DirectoryEntry root, File parent) throws IOException {
         for(Iterator<Entry> it = root.getEntries(); it.hasNext();){
             Entry entry = it.next();
