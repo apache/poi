@@ -79,6 +79,7 @@ public class POITestCase {
       * Only use this method in test cases!!!
       */
      public static <R,T> R getFieldValue(final Class<? super T> clazz, final T instance, final Class<R> fieldType, final String fieldName) {
+         assertTrue("Reflection of private fields is only allowed for POI classes.", clazz.getName().startsWith("org.apache.poi."));
          try {
             return AccessController.doPrivileged(new PrivilegedExceptionAction<R>() {
                 @Override
@@ -100,6 +101,7 @@ public class POITestCase {
       */
      public static <R,T> R callMethod(final Class<? super T> clazz, final T instance, final Class<R> returnType, final String methodName,
              final Class<?>[] parameterTypes, final Object[] parameters) {
+         assertTrue("Reflection of private methods is only allowed for POI classes.", clazz.getName().startsWith("org.apache.poi."));
          try {
             return AccessController.doPrivileged(new PrivilegedExceptionAction<R>() {
                 @Override
