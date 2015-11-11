@@ -23,6 +23,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PushbackInputStream;
 import java.lang.reflect.Field;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.zip.InflaterInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
@@ -31,6 +33,7 @@ import java.util.zip.ZipInputStream;
 
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.util.SuppressForbidden;
 
 /**
  * This class wraps a {@link ZipFile} in order to check the
@@ -163,20 +166,27 @@ public class ZipSecureFile extends ZipFile {
         return addThreshold(zipIS);
     }
 
-    @SuppressWarnings("resource")
-    public static ThresholdInputStream addThreshold(InputStream zipIS) throws IOException {
+    public static ThresholdInputStream addThreshold(final InputStream zipIS) throws IOException {
         ThresholdInputStream newInner;
         if (zipIS instanceof InflaterInputStream) {
-            try {
-                Field f = FilterInputStream.class.getDeclaredField("in");
-                f.setAccessible(true);
-                InputStream oldInner = (InputStream)f.get(zipIS);
-                newInner = new ThresholdInputStream(oldInner, null);
-                f.set(zipIS, newInner);
-            } catch (Exception ex) {
-                logger.log(POILogger.WARN, "SecurityManager doesn't allow manipulation via reflection for zipbomb detection - continue with original input stream", ex);
-                newInner = null;
-            }
+            newInner = AccessController.doPrivileged(new PrivilegedAction<ThresholdInputStream>() {
+                @SuppressForbidden("TODO: Fix this to not use reflection (it will break in Java 9)! " +
+                        "Better would be to wrap *before* instead of tyring to insert wrapper afterwards.")
+                public ThresholdInputStream run() {
+                    ThresholdInputStream newInner = null;
+                    try {
+                        Field f = FilterInputStream.class.getDeclaredField("in");
+                        f.setAccessible(true);
+                        InputStream oldInner = (InputStream)f.get(zipIS);
+                        newInner = new ThresholdInputStream(oldInner, null);
+                        f.set(zipIS, newInner);
+                    } catch (Exception ex) {
+                        logger.log(POILogger.WARN, "SecurityManager doesn't allow manipulation via reflection for zipbomb detection - continue with original input stream", ex);
+                        newInner = null;
+                    }
+                    return newInner;
+                }
+            });
         } else {
             // the inner stream is a ZipFileInputStream, i.e. the data wasn't compressed
             newInner = null;
