@@ -24,14 +24,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.hssf.model.InternalWorkbook;
 import org.apache.poi.hssf.record.DrawingGroupRecord;
-import org.apache.poi.hssf.record.EscherAggregate;
 import org.apache.poi.hssf.usermodel.HSSFPatriarch;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
@@ -137,7 +135,7 @@ public class BiffDrawingToXml {
     public static void writeToFile(OutputStream fos, InputStream xlsWorkbook, boolean excludeWorkbookRecords, String[] params) throws IOException {
         NPOIFSFileSystem fs = new NPOIFSFileSystem(xlsWorkbook);
         HSSFWorkbook workbook = new HSSFWorkbook(fs);
-        InternalWorkbook internalWorkbook = getInternalWorkbook(workbook);
+        InternalWorkbook internalWorkbook = workbook.getInternalWorkbook();
         DrawingGroupRecord r = (DrawingGroupRecord) internalWorkbook.findFirstRecordBySid(DrawingGroupRecord.sid);
         r.decode();
 
@@ -155,7 +153,7 @@ public class BiffDrawingToXml {
             HSSFPatriarch p = workbook.getSheetAt(i).getDrawingPatriarch();
             if(p != null ) {
                 builder.append(tab).append("<sheet").append(i).append(">\n");
-                builder.append(getHSSFPatriarchBoundAggregate(p).toXml(tab + "\t"));
+                builder.append(p.getBoundAggregate().toXml(tab + "\t"));
                 builder.append(tab).append("</sheet").append(i).append(">\n");
             }
         }
@@ -164,31 +162,4 @@ public class BiffDrawingToXml {
         fos.close();
     }
 
-    private static EscherAggregate getHSSFPatriarchBoundAggregate(HSSFPatriarch patriarch) {
-        Field boundAggregateField = null;
-        try {
-            boundAggregateField = patriarch.getClass().getDeclaredField("_boundAggregate");
-            boundAggregateField.setAccessible(true);
-            return (EscherAggregate) boundAggregateField.get(patriarch);
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    private static InternalWorkbook getInternalWorkbook(HSSFWorkbook workbook) {
-        Field internalSheetField = null;
-        try {
-            internalSheetField = workbook.getClass().getDeclaredField("workbook");
-            internalSheetField.setAccessible(true);
-            return (InternalWorkbook) internalSheetField.get(workbook);
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
 }

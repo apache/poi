@@ -89,6 +89,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.WorkbookUtil;
 import org.apache.poi.util.Configurator;
 import org.apache.poi.util.HexDump;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -2146,5 +2147,10 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
 
     public DirectoryNode getRootDirectory(){
         return directory;
+    }
+    
+    @Internal
+    public InternalWorkbook getInternalWorkbook() {
+        return workbook;
     }
 }

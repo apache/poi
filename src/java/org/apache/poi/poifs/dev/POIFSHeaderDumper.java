@@ -19,8 +19,6 @@ package org.apache.poi.poifs.dev;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 
 import org.apache.poi.poifs.common.POIFSBigBlockSize;
 import org.apache.poi.poifs.common.POIFSConstants;
@@ -118,11 +116,8 @@ public class POIFSHeaderDumper {
         System.out.println("Raw Blocks Details:");
         System.out.println(" Number of blocks: " + data_blocks.blockCount());
 
-        Method gbm = data_blocks.getClass().getSuperclass().getDeclaredMethod("get", int.class);
-        gbm.setAccessible(true);
-
         for(int i=0; i<Math.min(16, data_blocks.blockCount()); i++) {
-            ListManagedBlock block = (ListManagedBlock)gbm.invoke(data_blocks, Integer.valueOf(i));
+            ListManagedBlock block = data_blocks.get(i);
             byte[] data = new byte[Math.min(48, block.getData().length)];
             System.arraycopy(block.getData(), 0, data, 0, data.length);
 
@@ -135,9 +130,7 @@ public class POIFSHeaderDumper {
 
     public static void displayBATReader(String type, BlockAllocationTableReader batReader) throws Exception {
         System.out.println("Sectors, as referenced from the "+type+" FAT:");
-        Field entriesF = batReader.getClass().getDeclaredField("_entries");
-        entriesF.setAccessible(true);
-        IntList entries = (IntList)entriesF.get(batReader);
+        IntList entries = batReader.getEntries();
 
         for(int i=0; i<entries.size(); i++) {
             int bn = entries.get(i);

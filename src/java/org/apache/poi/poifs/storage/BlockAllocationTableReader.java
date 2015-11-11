@@ -312,4 +312,9 @@ public final class BlockAllocationTableReader {
         }
         raw_blocks.setBAT(this);
     }
+
+    @Internal
+    public IntList getEntries() {
+        return _entries;
+    }
 }

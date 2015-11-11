@@ -128,7 +128,7 @@ public class HSSFTextbox extends HSSFSimpleShape {
 
     @Override
     void afterInsert(HSSFPatriarch patriarch) {
-        EscherAggregate agg = patriarch._getBoundAggregate();
+        EscherAggregate agg = patriarch.getBoundAggregate();
         agg.associateShapeToObjRecord(getEscherContainer().getChildById(EscherClientDataRecord.RECORD_ID), getObjRecord());
         if (getTextObjectRecord() != null){
             agg.associateShapeToObjRecord(getEscherContainer().getChildById(EscherTextboxRecord.RECORD_ID), getTextObjectRecord());
@@ -240,7 +240,7 @@ public class HSSFTextbox extends HSSFSimpleShape {
 
     @Override
     protected void afterRemove(HSSFPatriarch patriarch) {
-        patriarch._getBoundAggregate().removeShapeToObjRecord(getEscherContainer().getChildById(EscherClientDataRecord.RECORD_ID));
-        patriarch._getBoundAggregate().removeShapeToObjRecord(getEscherContainer().getChildById(EscherTextboxRecord.RECORD_ID));
+        patriarch.getBoundAggregate().removeShapeToObjRecord(getEscherContainer().getChildById(EscherClientDataRecord.RECORD_ID));
+        patriarch.getBoundAggregate().removeShapeToObjRecord(getEscherContainer().getChildById(EscherTextboxRecord.RECORD_ID));
     }
 }

@@ -19,6 +19,8 @@ package org.apache.poi.poifs.storage;
 
 import java.io.IOException;
 
+import org.apache.poi.util.Internal;
+
 /**
  * A simple implementation of BlockList
  *
@@ -59,10 +61,11 @@ abstract class BlockListImpl implements BlockList {
     }
 
     /**
-     * Unit testing method. Gets, without sanity checks or
+     * Internal method. Gets, without sanity checks or
      *  removing.
      */
-    protected ListManagedBlock get(final int index) {
+    @Internal
+    public ListManagedBlock get(final int index) {
         return _blocks[index];
     }
 

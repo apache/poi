@@ -144,9 +144,9 @@ public class HSSFSimpleShape extends HSSFShape
 
     @Override
     protected void afterRemove(HSSFPatriarch patriarch) {
-        patriarch._getBoundAggregate().removeShapeToObjRecord(getEscherContainer().getChildById(EscherClientDataRecord.RECORD_ID));
+        patriarch.getBoundAggregate().removeShapeToObjRecord(getEscherContainer().getChildById(EscherClientDataRecord.RECORD_ID));
         if (null != getEscherContainer().getChildById(EscherTextboxRecord.RECORD_ID)){
-            patriarch._getBoundAggregate().removeShapeToObjRecord(getEscherContainer().getChildById(EscherTextboxRecord.RECORD_ID));
+            patriarch.getBoundAggregate().removeShapeToObjRecord(getEscherContainer().getChildById(EscherTextboxRecord.RECORD_ID));
         }
     }
 
@@ -177,7 +177,7 @@ public class HSSFSimpleShape extends HSSFShape
 
     @Override
     void afterInsert(HSSFPatriarch patriarch){
-        EscherAggregate agg = patriarch._getBoundAggregate();
+        EscherAggregate agg = patriarch.getBoundAggregate();
         agg.associateShapeToObjRecord(getEscherContainer().getChildById(EscherClientDataRecord.RECORD_ID), getObjRecord());
 
         if (null != getTextObjectRecord()){
@@ -244,7 +244,7 @@ public class HSSFSimpleShape extends HSSFShape
             escherTextbox.setRecordId(EscherTextboxRecord.RECORD_ID);
             escherTextbox.setOptions((short) 0x0000);
             getEscherContainer().addChildRecord(escherTextbox);
-            getPatriarch()._getBoundAggregate().associateShapeToObjRecord(escherTextbox, _textObjectRecord);
+            getPatriarch().getBoundAggregate().associateShapeToObjRecord(escherTextbox, _textObjectRecord);
         }
         return _textObjectRecord;
     }
