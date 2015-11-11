@@ -18,6 +18,8 @@
 package org.apache.poi.hssf.usermodel;
 
 import junit.framework.TestCase;
+
+import org.apache.poi.POITestCase;
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherSpgrRecord;
 import org.apache.poi.hssf.HSSFTestDataSamples;
@@ -228,17 +230,7 @@ public class TestShapeGroup extends TestCase{
     }
 
     private static EscherSpgrRecord getSpgrRecord(HSSFShapeGroup group) {
-        Field spgrField = null;
-        try {
-            spgrField = group.getClass().getDeclaredField("_spgrRecord");
-            spgrField.setAccessible(true);
-            return (EscherSpgrRecord) spgrField.get(group);
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-        return null;
+        return POITestCase.getFieldValue(HSSFShapeGroup.class, group, EscherSpgrRecord.class, "_spgrRecord");
     }
 
     public void testClearShapes(){

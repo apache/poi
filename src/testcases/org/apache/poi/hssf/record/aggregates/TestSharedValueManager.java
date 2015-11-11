@@ -17,13 +17,13 @@
 
 package org.apache.poi.hssf.record.aggregates;
 
-import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.HashMap;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
+import org.apache.poi.POITestCase;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.SharedFormulaRecord;
@@ -176,21 +176,7 @@ public final class TestSharedValueManager extends TestCase {
 	 * {@link RowRecordsAggregate}.
 	 */
 	public static SharedValueManager extractFromRRA(RowRecordsAggregate rra) {
-		Field f;
-		try {
-			f = RowRecordsAggregate.class.getDeclaredField("_sharedValueManager");
-		} catch (NoSuchFieldException e) {
-			throw new RuntimeException(e);
-		}
-
-		f.setAccessible(true);
-		try {
-			return (SharedValueManager) f.get(rra);
-		} catch (IllegalArgumentException e) {
-			throw new RuntimeException(e);
-		} catch (IllegalAccessException e) {
-			throw new RuntimeException(e);
-		}
+		return POITestCase.getFieldValue(RowRecordsAggregate.class, rra, SharedValueManager.class, "_sharedValueManager");
 	}
 
     public void testBug52527() {

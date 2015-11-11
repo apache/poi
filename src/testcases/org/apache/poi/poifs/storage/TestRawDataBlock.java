@@ -20,12 +20,12 @@ package org.apache.poi.poifs.storage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Field;
 import java.util.Random;
 
 import junit.framework.TestCase;
 
 import org.apache.poi.util.DummyPOILogger;
+import org.apache.poi.util.POILogger;
 
 /**
  * Class to test RawDataBlock functionality
@@ -82,50 +82,53 @@ public final class TestRawDataBlock extends TestCase {
 	 */
 	public void testShortConstructor() throws Exception {
 		// Get the logger to be used
+	    POILogger oldLogger = RawDataBlock.log;
 		DummyPOILogger logger = new DummyPOILogger();
-		Field fld = RawDataBlock.class.getDeclaredField("log");
-		fld.setAccessible(true);
-		fld.set(null, logger);
-		assertEquals(0, logger.logged.size());
-
-		// Test for various data sizes
-		for (int k = 1; k <= 512; k++)
-		{
-			byte[] data = new byte[ k ];
-
-			for (int j = 0; j < k; j++)
-			{
-				data[ j ] = ( byte ) j;
-			}
-			RawDataBlock block = null;
-
-			logger.reset();
-			assertEquals(0, logger.logged.size());
-
-			// Have it created
-			block = new RawDataBlock(new ByteArrayInputStream(data));
-			assertNotNull(block);
-
-			// Check for the warning is there for <512
-			if(k < 512) {
-				assertEquals(
-						"Warning on " + k + " byte short block",
-						1, logger.logged.size()
-				);
-
-				// Build the expected warning message, and check
-				String bts = k + " byte";
-				if(k > 1) {
-					bts += "s";
-				}
-
-				assertEquals(
-						"7 - Unable to read entire block; "+bts+" read before EOF; expected 512 bytes. Your document was either written by software that ignores the spec, or has been truncated!",
-						logger.logged.get(0)
-				);
-			} else {
-				assertEquals(0, logger.logged.size());
-			}
+		try {
+    		RawDataBlock.log = logger;
+    		assertEquals(0, logger.logged.size());
+    
+    		// Test for various data sizes
+    		for (int k = 1; k <= 512; k++)
+    		{
+    			byte[] data = new byte[ k ];
+    
+    			for (int j = 0; j < k; j++)
+    			{
+    				data[ j ] = ( byte ) j;
+    			}
+    			RawDataBlock block = null;
+    
+    			logger.reset();
+    			assertEquals(0, logger.logged.size());
+    
+    			// Have it created
+    			block = new RawDataBlock(new ByteArrayInputStream(data));
+    			assertNotNull(block);
+    
+    			// Check for the warning is there for <512
+    			if(k < 512) {
+    				assertEquals(
+    						"Warning on " + k + " byte short block",
+    						1, logger.logged.size()
+    				);
+    
+    				// Build the expected warning message, and check
+    				String bts = k + " byte";
+    				if(k > 1) {
+    					bts += "s";
+    				}
+    
+    				assertEquals(
+    						"7 - Unable to read entire block; "+bts+" read before EOF; expected 512 bytes. Your document was either written by software that ignores the spec, or has been truncated!",
+    						logger.logged.get(0)
+    				);
+    			} else {
+    				assertEquals(0, logger.logged.size());
+    			}
+    		}
+		} finally {
+		    RawDataBlock.log = oldLogger;
 		}
 	}
 
@@ -136,46 +139,49 @@ public final class TestRawDataBlock extends TestCase {
 	 */
 	public void testSlowInputStream() throws Exception {
 		// Get the logger to be used
-		DummyPOILogger logger = new DummyPOILogger();
-		Field fld = RawDataBlock.class.getDeclaredField("log");
-		fld.setAccessible(true);
-		fld.set(null, logger);
-		assertEquals(0, logger.logged.size());
-
-		// Test for various ok data sizes
-		for (int k = 1; k < 512; k++) {
-			byte[] data = new byte[ 512 ];
-			for (int j = 0; j < data.length; j++) {
-				data[j] = (byte) j;
-			}
-
-			// Shouldn't complain, as there is enough data,
-			//  even if it dribbles through
-			RawDataBlock block =
-				new RawDataBlock(new SlowInputStream(data, k));
-			assertFalse(block.eof());
-		}
-
-		// But if there wasn't enough data available, will
-		//  complain
-		for (int k = 1; k < 512; k++) {
-			byte[] data = new byte[ 511 ];
-			for (int j = 0; j < data.length; j++) {
-				data[j] = (byte) j;
-			}
-
-			logger.reset();
-			assertEquals(0, logger.logged.size());
-
-			// Should complain, as there isn't enough data
-			RawDataBlock block =
-				new RawDataBlock(new SlowInputStream(data, k));
-			assertNotNull(block);
-			assertEquals(
-					"Warning on " + k + " byte short block",
-					1, logger.logged.size()
-			);
-		}
+        POILogger oldLogger = RawDataBlock.log;
+        DummyPOILogger logger = new DummyPOILogger();
+        try {
+            RawDataBlock.log = logger;
+     		assertEquals(0, logger.logged.size());
+    
+    		// Test for various ok data sizes
+    		for (int k = 1; k < 512; k++) {
+    			byte[] data = new byte[ 512 ];
+    			for (int j = 0; j < data.length; j++) {
+    				data[j] = (byte) j;
+    			}
+    
+    			// Shouldn't complain, as there is enough data,
+    			//  even if it dribbles through
+    			RawDataBlock block =
+    				new RawDataBlock(new SlowInputStream(data, k));
+    			assertFalse(block.eof());
+    		}
+    
+    		// But if there wasn't enough data available, will
+    		//  complain
+    		for (int k = 1; k < 512; k++) {
+    			byte[] data = new byte[ 511 ];
+    			for (int j = 0; j < data.length; j++) {
+    				data[j] = (byte) j;
+    			}
+    
+    			logger.reset();
+    			assertEquals(0, logger.logged.size());
+    
+    			// Should complain, as there isn't enough data
+    			RawDataBlock block =
+    				new RawDataBlock(new SlowInputStream(data, k));
+    			assertNotNull(block);
+    			assertEquals(
+    					"Warning on " + k + " byte short block",
+    					1, logger.logged.size()
+    			);
+    		}
+        } finally {
+            RawDataBlock.log = oldLogger;
+        }
 	}
 
 	/**

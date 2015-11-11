@@ -19,12 +19,11 @@ package org.apache.poi.poifs.storage;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.lang.reflect.Field;
-
 import junit.framework.TestCase;
 
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.util.DummyPOILogger;
+import org.apache.poi.util.POILogger;
 
 /**
  * Class to test RawDataBlockList functionality
@@ -57,26 +56,29 @@ public final class TestRawDataBlockList extends TestCase {
      */
     public void testShortConstructor() throws Exception {
         // Get the logger to be used
+        POILogger oldLogger = RawDataBlock.log;
         DummyPOILogger logger = new DummyPOILogger();
-        Field fld = RawDataBlock.class.getDeclaredField("log");
-        fld.setAccessible(true);
-        fld.set(null, logger);
-        assertEquals(0, logger.logged.size());
-
-        // Test for various short sizes
-        for (int k = 2049; k < 2560; k++)
-        {
-            byte[] data = new byte[ k ];
-
-            for (int j = 0; j < k; j++)
+        try {
+            RawDataBlock.log = logger;
+            assertEquals(0, logger.logged.size());
+    
+            // Test for various short sizes
+            for (int k = 2049; k < 2560; k++)
             {
-                data[ j ] = ( byte ) j;
+                byte[] data = new byte[ k ];
+    
+                for (int j = 0; j < k; j++)
+                {
+                    data[ j ] = ( byte ) j;
+                }
+    
+                // Check we logged the error
+                logger.reset();
+                new RawDataBlockList(new ByteArrayInputStream(data), POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS);
+                assertEquals(1, logger.logged.size());
             }
-
-            // Check we logged the error
-            logger.reset();
-            new RawDataBlockList(new ByteArrayInputStream(data), POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS);
-            assertEquals(1, logger.logged.size());
+        } finally {
+            RawDataBlock.log = oldLogger;
         }
     }
 }

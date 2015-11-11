@@ -38,7 +38,7 @@ public class RawDataBlock
     private byte[]  _data;
     private boolean _eof;
     private boolean _hasData;
-    private static POILogger log = POILogFactory.getLogger(RawDataBlock.class);
+    static POILogger log = POILogFactory.getLogger(RawDataBlock.class);
 
     /**
      * Constructor RawDataBlock

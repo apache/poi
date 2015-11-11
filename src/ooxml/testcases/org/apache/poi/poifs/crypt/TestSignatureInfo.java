@@ -34,7 +34,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.lang.reflect.Method;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -54,6 +53,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.POITestCase;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.poifs.crypt.dsig.DigestInfo;
@@ -247,9 +247,7 @@ public class TestSignatureInfo {
         XSSFWorkbook wb = new XSSFWorkbook(pkg);
         wb.setSheetName(0, "manipulated");
         // ... I don't know, why commit is protected ...
-        Method m = XSSFWorkbook.class.getDeclaredMethod("commit");
-        m.setAccessible(true);
-        m.invoke(wb);
+        POITestCase.callMethod(XSSFWorkbook.class, wb, Void.class, "commit", new Class[0], new Object[0]);
 
         // todo: test a manipulation on a package part, which is not signed
         // ... maybe in combination with #56164 

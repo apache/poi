@@ -22,8 +22,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.lang.reflect.Field;
-
 import org.junit.Test;
 
 /**
@@ -42,11 +40,9 @@ public final class TestPOILogger extends POILogger {
      */
     @Test
     public void testVariousLogTypes() throws Exception {
-        Field f = POILogFactory.class.getDeclaredField("_loggerClassName");
-        f.setAccessible(true);
-        String oldLCN = (String)f.get(null);
+        String oldLCN = POILogFactory._loggerClassName;
         try {
-            f.set(null, TestPOILogger.class.getName());
+            POILogFactory._loggerClassName = TestPOILogger.class.getName();
             POILogger log = POILogFactory.getLogger( "foo" );
             assertTrue(log instanceof TestPOILogger);
             
@@ -71,7 +67,7 @@ public final class TestPOILogger extends POILogger {
             log.log(POILogger.ERROR, "log\nforging", "\nevil","\nlog");
             assertEquals("log forging evil log", tlog.lastLog);
         } finally {
-            f.set(null, oldLCN);
+            POILogFactory._loggerClassName = oldLCN;
         }
     }
 

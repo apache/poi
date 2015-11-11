@@ -241,19 +241,6 @@ public class TestHexDump {
     }
 
     @Test
-    public void testConstruct() throws Exception {
-        // to cover private constructor
-        // get the default constructor
-        final Constructor<HexDump> c = HexDump.class.getDeclaredConstructor(new Class[] {});
-
-        // make it callable from the outside
-        c.setAccessible(true);
-
-        // call it
-        assertNotNull(c.newInstance((Object[]) null));
-    }
-
-    @Test
     public void testMain() throws Exception {
         File file = TempFile.createTempFile("HexDump", ".dat");
         try {
