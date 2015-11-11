@@ -233,4 +233,9 @@ public abstract class HWPFDocumentCore extends POIDocument
     }
 
     public abstract TextPieceTable getTextTable();
+
+    @Internal
+    public byte[] getMainStream() {
+        return _mainStream;
+    }
 }
