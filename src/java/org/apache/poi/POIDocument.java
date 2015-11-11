@@ -35,6 +35,7 @@ import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.OPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
@@ -305,4 +306,9 @@ public abstract class POIDocument {
      * @throws IOException thrown on errors writing to the stream
      */
     public abstract void write(OutputStream out) throws IOException;
+
+    @Internal
+    public DirectoryNode getDirectory() {
+        return directory;
+    }
 }

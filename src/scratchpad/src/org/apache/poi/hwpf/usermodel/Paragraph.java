@@ -94,7 +94,7 @@ public class Paragraph extends Range implements Cloneable {
     public final static short SPRM_FADJUSTRIGHT = 0x2448;
 
     @Internal
-    static Paragraph newParagraph( Range parent, PAPX papx )
+    public static Paragraph newParagraph( Range parent, PAPX papx )
     {
         HWPFDocumentCore doc = parent._doc;
         ListTables listTables = doc.getListTables();
@@ -658,5 +658,10 @@ public class Paragraph extends Range implements Cloneable {
     public String toString()
     {
         return "Paragraph [" + getStartOffset() + "; " + getEndOffset() + ")";
+    }
+
+    @Internal
+    public ParagraphProperties getProps() {
+        return _props;
     }
 }

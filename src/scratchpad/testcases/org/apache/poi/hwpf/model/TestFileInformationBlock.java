@@ -19,10 +19,14 @@ package org.apache.poi.hwpf.model;
 
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
+import java.security.AccessController;
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
 
 import junit.framework.TestCase;
 
 import org.apache.poi.hwpf.HWPFDocFixture;
+import org.apache.poi.util.SuppressForbidden;
 
 public final class TestFileInformationBlock extends TestCase {
     private FileInformationBlock _fileInformationBlock = null;
@@ -37,9 +41,20 @@ public final class TestFileInformationBlock extends TestCase {
         FileInformationBlock newFileInformationBlock = new FileInformationBlock(
                 buf);
 
-        Field[] fields = FileInformationBlock.class.getSuperclass()
-                .getDeclaredFields();
-        AccessibleObject.setAccessible(fields, true);
+        final Field[] fields;
+        try {
+            fields = AccessController.doPrivileged(new PrivilegedExceptionAction<Field[]>() {
+                @Override
+                @SuppressForbidden("Test only")
+                public Field[] run() throws Exception {
+                    final Field[] fields = FileInformationBlock.class.getSuperclass().getDeclaredFields();
+                    AccessibleObject.setAccessible(fields, true);
+                    return fields;
+                }
+            });
+        } catch (PrivilegedActionException pae) {
+            throw pae.getException();
+        }
 
         for (int x = 0; x < fields.length; x++) {
             assertEquals(fields[x].get(_fileInformationBlock),

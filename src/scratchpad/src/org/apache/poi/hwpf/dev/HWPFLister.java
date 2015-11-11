@@ -23,7 +23,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -32,7 +31,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.poi.POIDocument;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFDocumentCore;
 import org.apache.poi.hwpf.HWPFOldDocument;
@@ -63,7 +61,6 @@ import org.apache.poi.hwpf.usermodel.Picture;
 import org.apache.poi.hwpf.usermodel.Range;
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
-import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.Beta;
@@ -458,12 +455,7 @@ public final class HWPFLister
 
     public void dumpFileSystem() throws Exception
     {
-        java.lang.reflect.Field field = POIDocument.class
-                .getDeclaredField( "directory" );
-        field.setAccessible( true );
-        DirectoryNode directoryNode = (DirectoryNode) field.get( _doc );
-
-        System.out.println( dumpFileSystem( directoryNode ) );
+        System.out.println( dumpFileSystem( _doc.getDirectory() ) );
     }
 
     private String dumpFileSystem( DirectoryEntry directory )
@@ -531,10 +523,7 @@ public final class HWPFLister
 
             HWPFDocument doc = (HWPFDocument) _doc;
 
-            java.lang.reflect.Field fMainStream = HWPFDocumentCore.class
-                    .getDeclaredField( "_mainStream" );
-            fMainStream.setAccessible( true );
-            byte[] mainStream = (byte[]) fMainStream.get( _doc );
+            byte[] mainStream = _doc.getMainStream();
 
             PlexOfCps binTable = new PlexOfCps( doc.getTableStream(), doc
                     .getFileInformationBlock().getFcPlcfbtePapx(), doc
@@ -584,12 +573,6 @@ public final class HWPFLister
             }
         }
 
-        Method newParagraph = Paragraph.class.getDeclaredMethod(
-                "newParagraph", Range.class, PAPX.class );
-        newParagraph.setAccessible( true );
-        java.lang.reflect.Field _props = Paragraph.class
-                .getDeclaredField( "_props" );
-        _props.setAccessible( true );
 
         for ( PAPX papx : _doc.getParagraphTable().getParagraphs() )
         {
@@ -597,9 +580,8 @@ public final class HWPFLister
 
             if ( withProperties )
             {
-                Paragraph paragraph = (Paragraph) newParagraph.invoke( null,
-                        _doc.getOverallRange(), papx );
-                System.out.println( _props.get( paragraph ) );
+                Paragraph paragraph = Paragraph.newParagraph( _doc.getOverallRange(), papx );
+                System.out.println( paragraph.getProps() );
             }
 
             if ( true )

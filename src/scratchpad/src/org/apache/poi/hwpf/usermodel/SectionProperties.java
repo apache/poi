@@ -17,9 +17,6 @@
 
 package org.apache.poi.hwpf.usermodel;
 
-import java.lang.reflect.AccessibleObject;
-import java.lang.reflect.Field;
-
 import org.apache.poi.hwpf.model.types.SEPAbstractType;
 
 public final class SectionProperties extends SEPAbstractType
@@ -45,39 +42,5 @@ public final class SectionProperties extends SEPAbstractType
 
         return copy;
     }
-    
-    @Override
-    public boolean equals( Object obj )
-    {
-        Field[] fields = SectionProperties.class.getSuperclass()
-                .getDeclaredFields();
-        AccessibleObject.setAccessible( fields, true );
-        try
-        {
-            for ( int x = 0; x < fields.length; x++ )
-            {
-                Object obj1 = fields[x].get( this );
-                Object obj2 = fields[x].get( obj );
-                if ( obj1 == null && obj2 == null )
-                {
-                    continue;
-                }
-                if ( obj1 == null || obj2 == null || !obj1.equals( obj2 ) )
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
-        catch ( Exception e )
-        {
-            return false;
-        }
-    }
 
-    @Override
-    public int hashCode() {
-        assert false : "hashCode not designed";
-        return 42; // any arbitrary constant will do
-    }
 }

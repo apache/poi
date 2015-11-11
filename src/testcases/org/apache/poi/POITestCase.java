@@ -91,7 +91,7 @@ public class POITestCase {
                 }
             });
          } catch (PrivilegedActionException pae) {
-             throw new AssertionError("Cannot access field '" + fieldName + "' of class " + clazz);
+             throw new RuntimeException("Cannot access field '" + fieldName + "' of class " + clazz, pae.getException());
          }
      }
      
@@ -112,7 +112,7 @@ public class POITestCase {
                 }
             });
          } catch (PrivilegedActionException pae) {
-             throw new AssertionError("Cannot access method '" + methodName + "' of class " + clazz);
+             throw new RuntimeException("Cannot access method '" + methodName + "' of class " + clazz, pae.getException());
          }
      }
 }
