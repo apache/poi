@@ -46,7 +46,7 @@ public final class POILogFactory {
      * The name of the class to use. Initialised the
      *  first time we need it
      */
-    private static String _loggerClassName = null;
+    static String _loggerClassName = null;
 
     /**
      * Construct a POILogFactory.

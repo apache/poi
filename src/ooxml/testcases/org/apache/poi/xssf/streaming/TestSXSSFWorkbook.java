@@ -28,8 +28,8 @@ import static org.junit.Assert.fail;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Field;
 
+import org.apache.poi.POITestCase;
 import org.apache.poi.ss.usermodel.BaseTestWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -106,9 +106,7 @@ public final class TestSXSSFWorkbook extends BaseTestWorkbook {
         @SuppressWarnings("resource")
         SXSSFWorkbook wb = new SXSSFWorkbook(null, 10, false, true);
 
-        Field f = SXSSFWorkbook.class.getDeclaredField("_sharedStringSource");
-        f.setAccessible(true);
-        SharedStringsTable sss = (SharedStringsTable)f.get(wb);
+        SharedStringsTable sss =  POITestCase.getFieldValue(SXSSFWorkbook.class, wb, SharedStringsTable.class, "_sharedStringSource");
         
         assertNotNull(sss);
 
@@ -119,7 +117,7 @@ public final class TestSXSSFWorkbook extends BaseTestWorkbook {
         row.createCell(2).setCellValue("A");
 
         XSSFWorkbook xssfWorkbook = (XSSFWorkbook) SXSSFITestDataProvider.instance.writeOutAndReadBack(wb);
-        sss = (SharedStringsTable)f.get(wb);
+        sss = POITestCase.getFieldValue(SXSSFWorkbook.class, wb, SharedStringsTable.class, "_sharedStringSource");
         assertEquals(2, sss.getUniqueCount());
         assertTrue(wb.dispose());
 

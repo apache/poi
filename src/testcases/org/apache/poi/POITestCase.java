@@ -21,7 +21,14 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.security.AccessController;
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
 import java.util.Collection;
+
+import org.apache.poi.util.SuppressForbidden;
 
 /**
  * Parent class for POI JUnit TestCases, which provide additional
@@ -66,5 +73,46 @@ public class POITestCase {
            return;
         }
         fail("Unable to find " + needle + " in " + haystack);
+     }
+     
+     /** Utility method to get the value of a private/protected field.
+      * Only use this method in test cases!!!
+      */
+     public static <R,T> R getFieldValue(final Class<? super T> clazz, final T instance, final Class<R> fieldType, final String fieldName) {
+         try {
+            return AccessController.doPrivileged(new PrivilegedExceptionAction<R>() {
+                @Override
+                @SuppressWarnings("unchecked")
+                @SuppressForbidden("For test usage only")
+                public R run() throws Exception {
+                    Field f = clazz.getDeclaredField(fieldName);
+                    f.setAccessible(true);
+                    return (R) f.get(instance);
+                }
+            });
+         } catch (PrivilegedActionException pae) {
+             throw new AssertionError("Cannot access field '" + fieldName + "' of class " + clazz);
+         }
+     }
+     
+     /** Utility method to call a private/protected method.
+      * Only use this method in test cases!!!
+      */
+     public static <R,T> R callMethod(final Class<? super T> clazz, final T instance, final Class<R> returnType, final String methodName,
+             final Class<?>[] parameterTypes, final Object[] parameters) {
+         try {
+            return AccessController.doPrivileged(new PrivilegedExceptionAction<R>() {
+                @Override
+                @SuppressWarnings("unchecked")
+                @SuppressForbidden("For test usage only")
+                public R run() throws Exception {
+                    Method m = clazz.getDeclaredMethod(methodName, parameterTypes);
+                    m.setAccessible(true);
+                    return (R) m.invoke(instance, parameters);
+                }
+            });
+         } catch (PrivilegedActionException pae) {
+             throw new AssertionError("Cannot access method '" + methodName + "' of class " + clazz);
+         }
      }
 }

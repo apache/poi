@@ -947,15 +947,4 @@ public class TestMathX extends AbstractNumericTestCase {
         d = 2d/3; s = 3.33;
         assertEquals("floor ", 0, MathX.floor(d, s));
     }
-
-    public void testCoverage() throws Exception {
-        // get the default constructor
-        final Constructor<MathX> c = MathX.class.getDeclaredConstructor(new Class[] {});
-
-        // make it callable from the outside
-        c.setAccessible(true);
-
-        // call it
-        c.newInstance((Object[]) null);
-    }
 }

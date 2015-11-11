@@ -32,7 +32,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -46,6 +45,7 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.POITestCase;
 import org.apache.poi.POIXMLException;
 import org.apache.poi.openxml4j.OpenXML4JTestDataSamples;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -579,11 +579,8 @@ public final class TestPackage {
         assertTrue(tempFile2.delete());
     }
 
-	private static ContentTypeManager getContentTypeManager(OPCPackage pkg)
-    throws IOException, SecurityException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException {
-		Field f = OPCPackage.class.getDeclaredField("contentTypeManager");
-		f.setAccessible(true);
-		return (ContentTypeManager)f.get(pkg);
+	private static ContentTypeManager getContentTypeManager(OPCPackage pkg) {
+	    return POITestCase.getFieldValue(OPCPackage.class, pkg, ContentTypeManager.class, "contentTypeManager");
 	}
 
     @Test

@@ -20,12 +20,9 @@
 package org.apache.poi.xslf.usermodel;
 
 import java.io.File;
-import java.lang.reflect.Field;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.xslf.util.PPTX2PNG;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
@@ -34,32 +31,6 @@ import org.junit.Test;
  * @author Yegor Kozlov
  */
 public class TestPPTX2PNG {
-    private static boolean jaxpDebugEnable = false;
-    
-    @BeforeClass
-    public static void activateJaxpDebug() {
-        jaxpDebugEnable = setDebugFld(true);
-    }
-
-    @AfterClass
-    public static void resetJaxpDebug() {
-        setDebugFld(jaxpDebugEnable);
-    }    
-    
-    private static boolean setDebugFld(boolean enable) {
-        // enable jaxp debugging because of jaxb/stax error in gump build
-        try {
-            Class<?> clz = Class.forName("javax.xml.stream.FactoryFinder");
-            Field fld = clz.getDeclaredField("debug");
-            fld.setAccessible(true);
-            boolean isDebug = (Boolean)fld.get(null);
-            fld.set(null, enable);
-            return isDebug;
-        } catch (Exception e) {
-            // ignore
-            return false;
-        }
-    }
     
     @Test
     public void render() throws Exception {

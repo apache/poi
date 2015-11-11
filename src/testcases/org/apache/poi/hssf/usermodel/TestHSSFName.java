@@ -23,6 +23,7 @@ import static org.junit.Assert.fail;
 
 import java.lang.reflect.Field;
 
+import org.apache.poi.POITestCase;
 import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.model.HSSFFormulaParser;
@@ -45,21 +46,7 @@ public final class TestHSSFName extends BaseTestNamedRange {
      * @return a reference to the wrapped {@link NameRecord}
      */
     public static NameRecord getNameRecord(HSSFName definedName) {
-
-        Field f;
-        try {
-            f = HSSFName.class.getDeclaredField("_definedNameRec");
-        } catch (NoSuchFieldException e) {
-            throw new RuntimeException(e);
-        }
-        f.setAccessible(true);
-        try {
-            return (NameRecord) f.get(definedName);
-        } catch (IllegalArgumentException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
+        return POITestCase.getFieldValue(HSSFName.class, definedName, NameRecord.class, "_definedNameRec");
     }
 
     public TestHSSFName() {

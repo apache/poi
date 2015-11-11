@@ -19,12 +19,18 @@ package org.apache.poi.hwpf.model;
 
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
+import java.security.AccessController;
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
 import java.util.Arrays;
 
 import junit.framework.TestCase;
 
 import org.apache.poi.hwpf.HWPFDocFixture;
 import org.apache.poi.hwpf.model.types.DOPAbstractType;
+import org.apache.poi.util.SuppressForbidden;
+
+// TODO: Add DocumentProperties#equals ???
 
 public final class TestDocumentProperties
   extends TestCase
@@ -43,9 +49,21 @@ public final class TestDocumentProperties
     DocumentProperties newDocProperties =
       new DocumentProperties(buf, 0, size);
 
-    Field[] fields = DocumentProperties.class.getSuperclass().getDeclaredFields();
-    AccessibleObject.setAccessible(fields, true);
-
+    final Field[] fields;
+    try {
+        fields = AccessController.doPrivileged(new PrivilegedExceptionAction<Field[]>() {
+            @Override
+            @SuppressForbidden("Test only")
+            public Field[] run() throws Exception {
+                final Field[] fields = DocumentProperties.class.getSuperclass().getDeclaredFields();
+                AccessibleObject.setAccessible(fields, true);
+                return fields;
+            }
+        });
+    } catch (PrivilegedActionException pae) {
+        throw pae.getException();
+    }
+    
     for (int x = 0; x < fields.length; x++)
     {
       // JaCoCo Code Coverage adds it's own field, don't look at this one here
