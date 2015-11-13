@@ -271,7 +271,17 @@ public final class FormulaParser {
 
     /** Recognize an Alpha Character */
     private static boolean IsAlpha(int c) {
-        return Character.isLetter(c) || c == '$' || c=='_';
+        return IsLetter(c) || c == '$' || c=='_';
+    }
+
+    /** Recognize a Letter Character */
+    private static boolean IsLetter(int c) {
+        return Character.isLetter(c) || c >= 256;
+    }
+
+    /** Recognize a Letter Character or a Decimal Digit */
+    private static boolean IsLetterOrDigit(int c) {
+        return Character.isLetterOrDigit(c) || c >= 256;
     }
 
     /** Recognize a Decimal Digit */
@@ -921,7 +931,7 @@ public final class FormulaParser {
         StringBuilder sb = new StringBuilder();
 
         // defined names may begin with a letter or underscore or backslash
-        if (!Character.isLetter(look) && look != '_' && look != '\\') {
+        if (!IsLetter(look) && look != '_' && look != '\\') {
             throw expected("number, string, defined name, or data table");
         }
         while (isValidDefinedNameChar(look)) {
@@ -938,7 +948,7 @@ public final class FormulaParser {
      * @return <code>true</code> if the specified character may be used in a defined name
      */
     private static boolean isValidDefinedNameChar(int ch) {
-        if (Character.isLetterOrDigit(ch)) {
+        if (IsLetterOrDigit(ch)) {
             return true;
         }
         // the sheet naming rules are vague on whether unicode characters are allowed
@@ -1019,7 +1029,7 @@ public final class FormulaParser {
             char ch = _formulaString.charAt(ptr);
             if (Character.isDigit(ch)) {
                 hasDigits = true;
-            } else if (Character.isLetter(ch)) {
+            } else if (IsLetter(ch)) {
                 hasLetters = true;
             } else if (ch =='$' || ch =='_') {
                 //
@@ -1189,7 +1199,7 @@ public final class FormulaParser {
         }
 
         // unquoted sheet names must start with underscore or a letter
-        if (look =='_' || Character.isLetter(look)) {
+        if (look =='_' || IsLetter(look)) {
             StringBuilder sb = new StringBuilder();
             // can concatenate idens with dots
             while (isUnquotedSheetNameChar(look)) {
@@ -1234,7 +1244,7 @@ public final class FormulaParser {
      * @param ch unicode codepoint
      */
     private static boolean isUnquotedSheetNameChar(int ch) {
-        if(Character.isLetterOrDigit(ch)) {
+        if(IsLetterOrDigit(ch)) {
             return true;
         }
         // the sheet naming rules are vague on whether unicode characters are allowed
@@ -1780,7 +1790,7 @@ public final class FormulaParser {
             throw expected("unquoted identifier");
         }
         StringBuilder sb = new StringBuilder();
-        while (Character.isLetterOrDigit(look) || look == '.') {
+        while (IsLetterOrDigit(look) || look == '.') {
             sb.appendCodePoint(look);
             GetChar();
         }
