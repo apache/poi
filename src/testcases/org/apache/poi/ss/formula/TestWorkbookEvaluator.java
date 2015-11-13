@@ -51,6 +51,8 @@ import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellUtil;
+import org.apache.poi.ss.util.WorkbookUtil;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -605,5 +607,39 @@ public class TestWorkbookEvaluator {
         assertEquals(expectedResult, D1.getNumericCellValue(), EPSILON);
         
         testIFEqualsFormulaEvaluation_teardown(wb);
+    }
+
+    @Test
+    public void testSheetNameReference() throws IOException {
+        Workbook wb = new HSSFWorkbook();
+
+        Sheet s1 = wb.createSheet("Sheet1");
+        Cell cell1 = CellUtil.getCell(CellUtil.getRow(0, s1), 0);
+        cell1.setCellValue(123);
+        Sheet s2 = wb.createSheet();
+        Cell cell2 = CellUtil.getCell(CellUtil.getRow(0, s2), 0);
+
+        FormulaEvaluator eval = wb.getCreationHelper().createFormulaEvaluator();
+        {
+            cell2.setCellFormula("Sheet1!A1");
+            CellValue value = eval.evaluate(cell2);
+            assertEquals(123d, value.getNumberValue(), 0);
+        }
+
+        for (int i = 256; i <= 65535; i++) {
+            char c = (char) i;
+            String name = String.valueOf(c);
+            try {
+                WorkbookUtil.validateSheetName(name);
+            } catch (IllegalArgumentException e) {
+                continue;
+            }
+            wb.setSheetName(0, name);
+            cell2.setCellFormula(name + "!A1");
+            CellValue value = eval.evaluate(cell2);
+            assertEquals(123d, value.getNumberValue(), 0);
+        }
+
+        wb.close();
     }
 }
