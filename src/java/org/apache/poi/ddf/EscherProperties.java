@@ -176,7 +176,7 @@ public final class EscherProperties {
 	public static final short LINESTYLE__LINESTARTARROWHEAD = 464;
 	public static final short LINESTYLE__LINEENDARROWHEAD = 465;
 	public static final short LINESTYLE__LINESTARTARROWWIDTH = 466;
-	public static final short LINESTYLE__LINEESTARTARROWLENGTH = 467;
+	public static final short LINESTYLE__LINESTARTARROWLENGTH = 467;
 	public static final short LINESTYLE__LINEENDARROWWIDTH = 468;
 	public static final short LINESTYLE__LINEENDARROWLENGTH = 469;
 	public static final short LINESTYLE__LINEJOINSTYLE = 470;
@@ -478,7 +478,7 @@ public final class EscherProperties {
 		addProp(m, LINESTYLE__LINESTARTARROWHEAD, "linestyle.linestartarrowhead");
 		addProp(m, LINESTYLE__LINEENDARROWHEAD, "linestyle.lineendarrowhead");
 		addProp(m, LINESTYLE__LINESTARTARROWWIDTH, "linestyle.linestartarrowwidth");
-		addProp(m, LINESTYLE__LINEESTARTARROWLENGTH, "linestyle.lineestartarrowlength");
+		addProp(m, LINESTYLE__LINESTARTARROWLENGTH, "linestyle.linestartarrowlength");
 		addProp(m, LINESTYLE__LINEENDARROWWIDTH, "linestyle.lineendarrowwidth");
 		addProp(m, LINESTYLE__LINEENDARROWLENGTH, "linestyle.lineendarrowlength");
 		addProp(m, LINESTYLE__LINEJOINSTYLE, "linestyle.linejoinstyle");
