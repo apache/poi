@@ -26,6 +26,7 @@ import org.apache.poi.hslf.record.*;
 import org.apache.poi.sl.draw.DrawPaint;
 import org.apache.poi.sl.draw.geom.*;
 import org.apache.poi.sl.usermodel.*;
+import org.apache.poi.sl.usermodel.LineDecoration.*;
 import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
 import org.apache.poi.sl.usermodel.StrokeStyle.LineCap;
 import org.apache.poi.sl.usermodel.StrokeStyle.LineCompound;
@@ -462,32 +463,100 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
 
         };
     }
+    
+    public DecorationShape getLineHeadDecoration(){
+        AbstractEscherOptRecord opt = getEscherOptRecord();
+        EscherSimpleProperty prop = getEscherProperty(opt, EscherProperties.LINESTYLE__LINESTARTARROWHEAD);
+        return (prop == null) ? null : DecorationShape.fromNativeId(prop.getPropertyValue());
+    }
 
+    public void setLineHeadDecoration(DecorationShape decoShape){
+        AbstractEscherOptRecord opt = getEscherOptRecord();
+        setEscherProperty(opt, EscherProperties.LINESTYLE__LINESTARTARROWHEAD, decoShape == null ? -1 : decoShape.nativeId);
+    }
+    
+    public DecorationSize getLineHeadWidth(){
+        AbstractEscherOptRecord opt = getEscherOptRecord();
+        EscherSimpleProperty prop = getEscherProperty(opt, EscherProperties.LINESTYLE__LINESTARTARROWWIDTH);
+        return (prop == null) ? null : DecorationSize.fromNativeId(prop.getPropertyValue());
+    }
+
+    public void setLineHeadWidth(DecorationSize decoSize){
+        AbstractEscherOptRecord opt = getEscherOptRecord();
+        setEscherProperty(opt, EscherProperties.LINESTYLE__LINESTARTARROWWIDTH, decoSize == null ? -1 : decoSize.nativeId);
+    }
+    
+    public DecorationSize getLineHeadLength(){
+        AbstractEscherOptRecord opt = getEscherOptRecord();
+        EscherSimpleProperty prop = getEscherProperty(opt, EscherProperties.LINESTYLE__LINESTARTARROWLENGTH);
+        return (prop == null) ? null : DecorationSize.fromNativeId(prop.getPropertyValue());
+    }
+
+    public void setLineHeadLength(DecorationSize decoSize){
+        AbstractEscherOptRecord opt = getEscherOptRecord();
+        setEscherProperty(opt, EscherProperties.LINESTYLE__LINESTARTARROWLENGTH, decoSize == null ? -1 : decoSize.nativeId);
+    }
+    
+    public DecorationShape getLineTailDecoration(){
+        AbstractEscherOptRecord opt = getEscherOptRecord();
+        EscherSimpleProperty prop = getEscherProperty(opt, EscherProperties.LINESTYLE__LINEENDARROWHEAD);
+        return (prop == null) ? null : DecorationShape.fromNativeId(prop.getPropertyValue());
+    }
+
+    public void setLineTailDecoration(DecorationShape decoShape){
+        AbstractEscherOptRecord opt = getEscherOptRecord();
+        setEscherProperty(opt, EscherProperties.LINESTYLE__LINEENDARROWHEAD, decoShape == null ? -1 : decoShape.nativeId);
+    }
+    
+    public DecorationSize getLineTailWidth(){
+        AbstractEscherOptRecord opt = getEscherOptRecord();
+        EscherSimpleProperty prop = getEscherProperty(opt, EscherProperties.LINESTYLE__LINEENDARROWWIDTH);
+        return (prop == null) ? null : DecorationSize.fromNativeId(prop.getPropertyValue());
+    }
+
+    public void setLineTailWidth(DecorationSize decoSize){
+        AbstractEscherOptRecord opt = getEscherOptRecord();
+        setEscherProperty(opt, EscherProperties.LINESTYLE__LINEENDARROWWIDTH, decoSize == null ? -1 : decoSize.nativeId);
+    }
+    
+    public DecorationSize getLineTailLength(){
+        AbstractEscherOptRecord opt = getEscherOptRecord();
+        EscherSimpleProperty prop = getEscherProperty(opt, EscherProperties.LINESTYLE__LINEENDARROWLENGTH);
+        return (prop == null) ? null : DecorationSize.fromNativeId(prop.getPropertyValue());
+    }
+
+    public void setLineTailLength(DecorationSize decoSize){
+        AbstractEscherOptRecord opt = getEscherOptRecord();
+        setEscherProperty(opt, EscherProperties.LINESTYLE__LINEENDARROWLENGTH, decoSize == null ? -1 : decoSize.nativeId);
+    }
+
+    
+    
     public LineDecoration getLineDecoration() {
         return new LineDecoration() {
 
             public DecorationShape getHeadShape() {
-                return DecorationShape.NONE;
+                return HSLFSimpleShape.this.getLineHeadDecoration();
             }
 
             public DecorationSize getHeadWidth() {
-                return DecorationSize.MEDIUM;
+                return HSLFSimpleShape.this.getLineHeadWidth();
             }
 
             public DecorationSize getHeadLength() {
-                return DecorationSize.MEDIUM;
+                return HSLFSimpleShape.this.getLineHeadLength();
             }
 
             public DecorationShape getTailShape() {
-                return DecorationShape.NONE;
+                return HSLFSimpleShape.this.getLineTailDecoration();
             }
 
             public DecorationSize getTailWidth() {
-                return DecorationSize.MEDIUM;
+                return HSLFSimpleShape.this.getLineTailWidth();
             }
 
             public DecorationSize getTailLength() {
-                return DecorationSize.MEDIUM;
+                return HSLFSimpleShape.this.getLineTailLength();
             }
         };
     }

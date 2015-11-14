@@ -48,6 +48,7 @@ import org.apache.poi.sl.draw.geom.CustomGeometry;
 import org.apache.poi.sl.draw.geom.Outline;
 import org.apache.poi.sl.draw.geom.Path;
 import org.apache.poi.sl.usermodel.LineDecoration;
+import org.apache.poi.sl.usermodel.LineDecoration.DecorationShape;
 import org.apache.poi.sl.usermodel.LineDecoration.DecorationSize;
 import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
 import org.apache.poi.sl.usermodel.Shadow;
@@ -59,6 +60,8 @@ import org.apache.poi.util.Units;
 
 
 public class DrawSimpleShape extends DrawShape {
+    
+    private static final double DECO_SIZE_POW = 1.5d;
 
     public DrawSimpleShape(SimpleShape<?,?> shape) {
         super(shape);
@@ -73,10 +76,10 @@ public class DrawSimpleShape extends DrawShape {
         graphics.setStroke(stroke);
 
         Collection<Outline> elems = computeOutlines(graphics);
-        
+
         // first paint the shadow
         drawShadow(graphics, elems, fill, line);
-        
+
         // then fill the shape interior
         if (fill != null) {
             graphics.setPaint(fill);
@@ -85,10 +88,10 @@ public class DrawSimpleShape extends DrawShape {
                     java.awt.Shape s = o.getOutline();
                     graphics.setRenderingHint(Drawable.GRADIENT_SHAPE, s);
                     graphics.fill(s);
-                }                
+                }
             }
         }
-        
+
         // then draw any content within this shape (text, image, etc.)
         drawContent(graphics);
 
@@ -103,7 +106,7 @@ public class DrawSimpleShape extends DrawShape {
                 }
             }
         }
-        
+
         // draw line decorations
         drawDecoration(graphics, line, stroke);
     }
@@ -111,44 +114,60 @@ public class DrawSimpleShape extends DrawShape {
     protected void drawDecoration(Graphics2D graphics, Paint line, BasicStroke stroke) {
         if(line == null) return;
         graphics.setPaint(line);
-        
+
         List<Outline> lst = new ArrayList<Outline>();
         LineDecoration deco = getShape().getLineDecoration();
         Outline head = getHeadDecoration(graphics, deco, stroke);
         if (head != null) lst.add(head);
         Outline tail = getTailDecoration(graphics, deco, stroke);
         if (tail != null) lst.add(tail);
-        
-        
+
+
         for(Outline o : lst){
             java.awt.Shape s = o.getOutline();
             Path p = o.getPath();
             graphics.setRenderingHint(Drawable.GRADIENT_SHAPE, s);
-            
+
             if(p.isFilled()) graphics.fill(s);
             if(p.isStroked()) graphics.draw(s);
         }
     }
 
     protected Outline getTailDecoration(Graphics2D graphics, LineDecoration deco, BasicStroke stroke) {
+        if (deco == null || stroke == null) {
+            return null;
+        }
         DecorationSize tailLength = deco.getTailLength();
+        if (tailLength == null) {
+            tailLength = DecorationSize.MEDIUM;
+        }
         DecorationSize tailWidth = deco.getTailWidth();
-    
+        if (tailWidth == null) {
+            tailWidth = DecorationSize.MEDIUM;
+        }
+
         double lineWidth = Math.max(2.5, stroke.getLineWidth());
-    
+
         Rectangle2D anchor = getAnchor(graphics, getShape());
         double x2 = anchor.getX() + anchor.getWidth(),
                y2 = anchor.getY() + anchor.getHeight();
-    
+
         double alpha = Math.atan(anchor.getHeight() / anchor.getWidth());
-    
+
         AffineTransform at = new AffineTransform();
         java.awt.Shape tailShape = null;
         Path p = null;
         Rectangle2D bounds;
-        final double scaleY = Math.pow(2, tailWidth.ordinal()+1);
-        final double scaleX = Math.pow(2, tailLength.ordinal()+1);
-        switch (deco.getTailShape()) {
+        final double scaleY = Math.pow(DECO_SIZE_POW, tailWidth.ordinal()+1);
+        final double scaleX = Math.pow(DECO_SIZE_POW, tailLength.ordinal()+1);
+
+        DecorationShape tailShapeEnum = deco.getTailShape();
+
+        if (tailShapeEnum == null) {
+            return null;
+        }
+
+        switch (tailShapeEnum) {
             case OVAL:
                 p = new Path();
                 tailShape = new Ellipse2D.Double(0, 0, lineWidth * scaleX, lineWidth * scaleY);
@@ -181,32 +200,47 @@ public class DrawSimpleShape extends DrawShape {
             default:
                 break;
         }
-    
+
         if (tailShape != null) {
             tailShape = at.createTransformedShape(tailShape);
         }
         return tailShape == null ? null : new Outline(tailShape, p);
     }
-    
+
     protected Outline getHeadDecoration(Graphics2D graphics, LineDecoration deco, BasicStroke stroke) {
+        if (deco == null || stroke == null) {
+            return null;
+        }
         DecorationSize headLength = deco.getHeadLength();
+        if (headLength == null) {
+            headLength = DecorationSize.MEDIUM;
+        }
         DecorationSize headWidth = deco.getHeadWidth();
-    
+        if (headWidth == null) {
+            headWidth = DecorationSize.MEDIUM;
+        }
+
         double lineWidth = Math.max(2.5, stroke.getLineWidth());
-    
+
         Rectangle2D anchor = getAnchor(graphics, getShape());
         double x1 = anchor.getX(),
                 y1 = anchor.getY();
-    
+
         double alpha = Math.atan(anchor.getHeight() / anchor.getWidth());
-    
+
         AffineTransform at = new AffineTransform();
         java.awt.Shape headShape = null;
         Path p = null;
         Rectangle2D bounds;
-        final double scaleY = Math.pow(2, headWidth.ordinal()+1);
-        final double scaleX = Math.pow(2, headLength.ordinal()+1);
-        switch (deco.getHeadShape()) {
+        final double scaleY = Math.pow(DECO_SIZE_POW, headWidth.ordinal()+1);
+        final double scaleX = Math.pow(DECO_SIZE_POW, headLength.ordinal()+1);
+        DecorationShape headShapeEnum = deco.getHeadShape();
+
+        if (headShapeEnum == null) {
+            return null;
+        }
+
+        switch (headShapeEnum) {
             case OVAL:
                 p = new Path();
                 headShape = new Ellipse2D.Double(0, 0, lineWidth * scaleX, lineWidth * scaleY);
@@ -239,16 +273,16 @@ public class DrawSimpleShape extends DrawShape {
             default:
                 break;
         }
-    
+
         if (headShape != null) {
             headShape = at.createTransformedShape(headShape);
         }
         return headShape == null ? null : new Outline(headShape, p);
     }
-    
+
     public BasicStroke getStroke() {
         StrokeStyle strokeStyle = getShape().getStrokeStyle();
-        
+
         float lineWidth = (float) strokeStyle.getLineWidth();
         if (lineWidth == 0.0f) lineWidth = 0.25f; // Both PowerPoint and OOo draw zero-length lines as 0.25pt
 
@@ -299,7 +333,7 @@ public class DrawSimpleShape extends DrawShape {
 
           SolidPaint shadowPaint = shadow.getFillStyle();
           Color shadowColor = DrawPaint.applyColorTransform(shadowPaint.getSolidColor());
-          
+
           double shapeRotation = getShape().getRotation();
           if(getShape().getFlipVertical()) {
               shapeRotation += 180;
@@ -308,15 +342,15 @@ public class DrawSimpleShape extends DrawShape {
           double dist = shadow.getDistance();
           double dx = dist * Math.cos(Math.toRadians(angle));
           double dy = dist * Math.sin(Math.toRadians(angle));
-          
+
           graphics.translate(dx, dy);
-          
+
           for(Outline o : outlines){
               java.awt.Shape s = o.getOutline();
               Path p = o.getPath();
               graphics.setRenderingHint(Drawable.GRADIENT_SHAPE, s);
               graphics.setPaint(shadowColor);
-              
+
               if(fill != null && p.isFilled()){
                   graphics.fill(s);
               } else if (line != null && p.isStroked()) {
@@ -326,26 +360,26 @@ public class DrawSimpleShape extends DrawShape {
 
           graphics.translate(-dx, -dy);
       }
-      
+
     protected static CustomGeometry getCustomGeometry(String name) {
         return getCustomGeometry(name, null);
     }
-    
+
     protected static CustomGeometry getCustomGeometry(String name, Graphics2D graphics) {
         @SuppressWarnings("unchecked")
         Map<String, CustomGeometry> presets = (graphics == null)
             ? null
             : (Map<String, CustomGeometry>)graphics.getRenderingHint(Drawable.PRESET_GEOMETRY_CACHE);
-        
+
         if (presets == null) {
             presets = new HashMap<String,CustomGeometry>();
             if (graphics != null) {
                 graphics.setRenderingHint(Drawable.PRESET_GEOMETRY_CACHE, presets);
             }
-            
+
             String packageName = "org.apache.poi.sl.draw.binding";
             InputStream presetIS = Drawable.class.getResourceAsStream("presetShapeDefinitions.xml");
-    
+
             // StAX:
             EventFilter startElementFilter = new EventFilter() {
                 @Override
@@ -353,7 +387,7 @@ public class DrawSimpleShape extends DrawShape {
                     return event.isStartElement();
                 }
             };
-            
+
             try {
                 XMLInputFactory staxFactory = XMLInputFactory.newInstance();
                 XMLEventReader staxReader = staxFactory.createXMLEventReader(presetIS);
@@ -363,14 +397,14 @@ public class DrawSimpleShape extends DrawShape {
                 // JAXB:
                 JAXBContext jaxbContext = JAXBContext.newInstance(packageName);
                 Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-        
+
                 while (staxFiltRd.peek() != null) {
                     StartElement evRoot = (StartElement)staxFiltRd.peek();
                     String cusName = evRoot.getName().getLocalPart();
                     // XMLEvent ev = staxReader.nextEvent();
                     JAXBElement<org.apache.poi.sl.draw.binding.CTCustomGeometry2D> el = unmarshaller.unmarshal(staxReader, CTCustomGeometry2D.class);
                     CTCustomGeometry2D cusGeom = el.getValue();
-                    
+
                     presets.put(cusName, new CustomGeometry(cusGeom));
                 }
             } catch (Exception e) {
@@ -383,10 +417,10 @@ public class DrawSimpleShape extends DrawShape {
                 }
             }
         }
-        
+
         return presets.get(name);
     }
-    
+
     protected Collection<Outline> computeOutlines(Graphics2D graphics) {
 
         List<Outline> lst = new ArrayList<Outline>();
