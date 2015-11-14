@@ -37,8 +37,10 @@ public class DrawTextShape extends DrawSimpleShape {
     public void drawContent(Graphics2D graphics) {
         fixFonts(graphics);
         
-        Rectangle2D anchor = DrawShape.getAnchor(graphics, getShape());
-        Insets2D insets = getShape().getInsets();
+        TextShape<?,?> s = getShape();
+        
+        Rectangle2D anchor = DrawShape.getAnchor(graphics, s);
+        Insets2D insets = s.getInsets();
         double x = anchor.getX() + insets.left;
         double y = anchor.getY();
 
@@ -50,39 +52,42 @@ public class DrawTextShape extends DrawSimpleShape {
         // (see DrawShape#applyTransform ), but we need to restore it to avoid painting "upside down".
         // See Bugzilla 54210.
 
-        if(getShape().getFlipVertical()){
-            graphics.translate(anchor.getX(), anchor.getY() + anchor.getHeight());
-            graphics.scale(1, -1);
-            graphics.translate(-anchor.getX(), -anchor.getY());
-
-            // text in vertically flipped shapes is rotated by 180 degrees
-            double centerX = anchor.getX() + anchor.getWidth()/2;
-            double centerY = anchor.getY() + anchor.getHeight()/2;
-            graphics.translate(centerX, centerY);
-            graphics.rotate(Math.toRadians(180));
-            graphics.translate(-centerX, -centerY);
-        }
-
+        boolean vertFlip = s.getFlipVertical();
+        boolean horzFlip = s.getFlipHorizontal();
+        ShapeContainer<?,?> sc = s.getParent();
+        while (sc instanceof PlaceableShape) {
+            PlaceableShape<?,?> ps = (PlaceableShape<?,?>)sc;
+            vertFlip ^= ps.getFlipVertical();
+            horzFlip ^= ps.getFlipHorizontal();
+            sc = ps.getParent();
+        };
+        
         // Horizontal flipping applies only to shape outline and not to the text in the shape.
         // Applying flip second time restores the original not-flipped transform
-        if(getShape().getFlipHorizontal()){
+        if (horzFlip ^ vertFlip) {
             graphics.translate(anchor.getX() + anchor.getWidth(), anchor.getY());
             graphics.scale(-1, 1);
-            graphics.translate(-anchor.getX() , -anchor.getY());
+            graphics.translate(-anchor.getX(), -anchor.getY());
+        }
+        
+        Double textRot = s.getTextRotation();
+        if (textRot != null) {
+            graphics.translate(anchor.getCenterX(), anchor.getCenterY());
+            graphics.rotate(Math.toRadians(textRot));
+            graphics.translate(-anchor.getCenterX(), -anchor.getCenterY());
         }
 
-
         // first dry-run to calculate the total height of the text
-        double textHeight = getShape().getTextHeight();
+        double textHeight = s.getTextHeight();
 
-        switch (getShape().getVerticalAlignment()){
+        switch (s.getVerticalAlignment()){
+            default:
             case TOP:
                 y += insets.top;
                 break;
             case BOTTOM:
                 y += anchor.getHeight() - textHeight - insets.bottom;
                 break;
-            default:
             case MIDDLE:
                 double delta = anchor.getHeight() - textHeight - insets.top - insets.bottom;
                 y += insets.top + delta/2;

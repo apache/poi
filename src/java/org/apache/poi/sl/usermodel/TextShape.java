@@ -199,6 +199,28 @@ public interface TextShape<
      * @return vertical orientation of the text
      */
     TextDirection getTextDirection();
+
+    /**
+     * sets the vertical orientation
+     * @param orientation vertical orientation of the text
+     */
+    void setTextDirection(TextDirection orientation);
+
+    /**
+     * The text rotation can be independent specified from the shape rotation.
+     * For XSLF this can be an arbitrary degree, for HSLF the degree is given in steps of 90 degrees
+     * 
+     * @return text rotation in degrees, returns null if no rotation is given
+     */
+    Double getTextRotation();
+    
+    /**
+     * Sets the text rotation.
+     * For XSLF this can ben an arbitrary degree, for HSLF the rotation is rounded to next 90 degree step
+     * 
+     * @param rotation the text rotation, or null to unset the rotation
+     */
+    void setTextRotation(Double rotation);
     
     /**
      * Sets the text placeholder
