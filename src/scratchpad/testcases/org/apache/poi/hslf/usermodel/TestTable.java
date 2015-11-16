@@ -26,6 +26,9 @@ import static org.junit.Assert.assertTrue;
 
 import java.awt.Color;
 import java.awt.Rectangle;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.List;
 
 import org.apache.poi.POIDataSamples;
@@ -41,7 +44,7 @@ public class TestTable {
     private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
 
     @Test
-    public void moveTable() throws Exception {
+    public void moveTable() throws IOException {
         HSLFSlideShow ppt = new HSLFSlideShow();
         HSLFSlide slide = ppt.createSlide();
         int rows = 3, cols = 5;
@@ -52,26 +55,28 @@ public class TestTable {
                 c.setText("r"+row+"c"+col);
             }
         }
-        
+
         new DrawTableShape(table).setAllBorders(1.0, Color.black, StrokeStyle.LineDash.DASH_DOT);
-        
+
         table.setAnchor(new Rectangle(100, 100, 400, 400));
-        
+
         Rectangle rectExp = new Rectangle(420,367,80,133);
         Rectangle rectAct = table.getCell(rows-1, cols-1).getAnchor();
         assertEquals(rectExp, rectAct);
+        ppt.close();
     }
-    
+
     @Test
-    public void testTable() throws Exception {
+    public void testTable() throws IOException {
 		HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("54111.ppt"));
 		assertTrue("No Exceptions while reading file", true);
 
 		List<HSLFSlide> slides = ppt.getSlides();
 		assertEquals(1, slides.size());
 		checkSlide(slides.get(0));
+		ppt.close();
 	}
-	
+
 	private void checkSlide(final HSLFSlide s) {
 		List<List<HSLFTextParagraph>> textRuns = s.getTextParagraphs();
 		assertEquals(2, textRuns.size());
@@ -82,7 +87,7 @@ public class TestTable {
 		assertFalse(textRun.getTextParagraph().isBullet());
 
 		assertEquals("Dummy text", HSLFTextParagraph.getRawText(textRuns.get(1)));
-		
+
 		List<HSLFShape> shapes = s.getShapes();
 		assertNotNull(shapes);
 		assertEquals(3, shapes.size());
@@ -97,4 +102,58 @@ public class TestTable {
 			}
 		}
 	}
+
+    @Test
+    public void testAddText() throws IOException {
+        HSLFSlideShow ppt1 = new HSLFSlideShow();
+        HSLFSlide slide = ppt1.createSlide();
+        HSLFTable tab = slide.createTable(4, 5);
+
+        int rows = tab.getNumberOfRows();
+        int cols = tab.getNumberOfColumns();
+        for (int row=0; row<rows; row++) {
+            for (int col=0; col<cols; col++) {
+                HSLFTableCell c = tab.getCell(row, col);
+                c.setText("r"+(row+1)+"c"+(col+1));
+            }
+        }
+
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        ppt1.write(bos);
+        ppt1.close();
+
+        ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
+        HSLFSlideShow ppt2 = new HSLFSlideShow(bis);
+        slide = ppt2.getSlides().get(0);
+        tab = (HSLFTable)slide.getShapes().get(0);
+
+        rows = tab.getNumberOfRows();
+        cols = tab.getNumberOfColumns();
+        for (int row=0; row<rows; row++) {
+            for (int col=0; col<cols; col++) {
+                HSLFTableCell c = tab.getCell(row, col);
+                c.setText(c.getText()+"...");
+            }
+        }
+
+        bos.reset();
+        ppt2.write(bos);
+        ppt2.close();
+
+        bis = new ByteArrayInputStream(bos.toByteArray());
+        HSLFSlideShow ppt3 = new HSLFSlideShow(bis);
+        slide = ppt3.getSlides().get(0);
+        tab = (HSLFTable)slide.getShapes().get(0);
+
+        rows = tab.getNumberOfRows();
+        cols = tab.getNumberOfColumns();
+        for (int row=0; row<rows; row++) {
+            for (int col=0; col<cols; col++) {
+                HSLFTableCell c = tab.getCell(row, col);
+                assertEquals("r"+(row+1)+"c"+(col+1)+"...", c.getText());
+            }
+        }
+
+        ppt3.close();
+    }
 }
