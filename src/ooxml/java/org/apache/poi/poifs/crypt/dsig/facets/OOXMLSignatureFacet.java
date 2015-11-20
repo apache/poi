@@ -33,7 +33,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
-import java.util.TimeZone;
 
 import javax.xml.XMLConstants;
 import javax.xml.crypto.XMLStructure;
@@ -113,6 +112,7 @@ public class OOXMLSignatureFacet extends SignatureFacet {
         references.add(reference);
     }
 
+    @SuppressWarnings("resource")
     protected void addManifestReferences(List<Reference> manifestReferences)
     throws XMLSignatureException {
 
@@ -149,7 +149,10 @@ public class OOXMLSignatureFacet extends SignatureFacet {
                 parameterSpec.addRelationshipReference(relationship.getId());
 
                 // TODO: find a better way ...
-                String partName = baseUri + relationship.getTargetURI().toString();
+                String partName = relationship.getTargetURI().toString();
+                if (!partName.startsWith(baseUri)) {
+                    partName = baseUri + partName;
+                }
                 try {
                     partName = new URI(partName).normalize().getPath().replace('\\', '/');
                     LOG.log(POILogger.DEBUG, "part name: " + partName);

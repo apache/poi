@@ -28,6 +28,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -68,11 +70,13 @@ import org.apache.poi.poifs.crypt.dsig.services.RevocationData;
 import org.apache.poi.poifs.crypt.dsig.services.RevocationDataService;
 import org.apache.poi.poifs.crypt.dsig.services.TimeStampService;
 import org.apache.poi.poifs.crypt.dsig.services.TimeStampServiceValidator;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.util.DocumentHelper;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.xmlbeans.XmlObject;
 import org.bouncycastle.asn1.x509.KeyUsage;
@@ -240,6 +244,7 @@ public class TestSignatureInfo {
     public void testManipulation() throws Exception {
         // sign & validate
         String testFile = "hello-world-unsigned.xlsx";
+        @SuppressWarnings("resource")
         OPCPackage pkg = OPCPackage.open(copy(testdata.getFile(testFile)), PackageAccess.READ_WRITE);
         sign(pkg, "Test", "CN=Test", 1);
         
@@ -379,6 +384,7 @@ public class TestSignatureInfo {
         try {
             si.confirmSignature();
         } catch (RuntimeException e) {
+            pkg.close();
             // only allow a ConnectException because of timeout, we see this in Jenkins from time to time...
             if(e.getCause() == null) {
                 throw e;
@@ -545,6 +551,32 @@ public class TestSignatureInfo {
                 if (pkg != null) pkg.close();
             }
         }
+    }
+
+    @Test
+    public void bug58630() throws Exception {
+        // test deletion of sheet 0 and signing
+        File tpl = copy(testdata.getFile("bug58630.xlsx"));
+        SXSSFWorkbook wb1 = new SXSSFWorkbook((XSSFWorkbook)WorkbookFactory.create(tpl), 10);
+        wb1.setCompressTempFiles(true);
+        wb1.removeSheetAt(0);
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        wb1.write(os);
+        wb1.close();
+        OPCPackage pkg = OPCPackage.open(new ByteArrayInputStream(os.toByteArray()));
+        
+        initKeyPair("Test", "CN=Test");
+        SignatureConfig signatureConfig = new SignatureConfig();
+        signatureConfig.setKey(keyPair.getPrivate());
+        signatureConfig.setSigningCertificateChain(Collections.singletonList(x509));
+        signatureConfig.setOpcPackage(pkg);
+        
+        SignatureInfo si = new SignatureInfo();
+        si.setSignatureConfig(signatureConfig);
+        si.confirmSignature();
+        assertTrue("invalid signature", si.verifySignature());
+        
+        pkg.close();
     }
     
     
