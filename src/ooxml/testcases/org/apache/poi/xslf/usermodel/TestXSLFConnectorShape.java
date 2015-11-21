@@ -20,13 +20,18 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
 import java.awt.Color;
-import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
 
 import org.apache.poi.sl.usermodel.LineDecoration.DecorationShape;
 import org.apache.poi.sl.usermodel.LineDecoration.DecorationSize;
-import org.apache.poi.sl.usermodel.*;
+import org.apache.poi.sl.usermodel.ShapeType;
 import org.junit.Test;
-import org.openxmlformats.schemas.drawingml.x2006.main.*;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTConnection;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualConnectorProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.STLineEndLength;
+import org.openxmlformats.schemas.drawingml.x2006.main.STLineEndType;
+import org.openxmlformats.schemas.drawingml.x2006.main.STLineEndWidth;
+import org.openxmlformats.schemas.drawingml.x2006.main.STShapeType;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTConnector;
 
 /**
@@ -122,17 +127,17 @@ public class TestXSLFConnectorShape {
 
         XSLFAutoShape rect1 = slide.createAutoShape();
         rect1.setShapeType(ShapeType.RECT);
-        rect1.setAnchor(new Rectangle(100, 100, 100, 100));
+        rect1.setAnchor(new Rectangle2D.Double(100, 100, 100, 100));
         rect1.setFillColor(Color.blue);
 
         XSLFAutoShape rect2 = slide.createAutoShape();
         rect2.setShapeType(ShapeType.RECT);
-        rect2.setAnchor(new Rectangle(300, 300, 100, 100));
+        rect2.setAnchor(new Rectangle2D.Double(300, 300, 100, 100));
         rect2.setFillColor(Color.red);
 
 
         XSLFConnectorShape connector1 = slide.createConnector();
-        connector1.setAnchor(new Rectangle(200, 150, 100, 200));
+        connector1.setAnchor(new Rectangle2D.Double(200, 150, 100, 200));
 
         CTConnector ctConnector = (CTConnector)connector1.getXmlObject();
         ctConnector.getSpPr().getPrstGeom().setPrst(STShapeType.BENT_CONNECTOR_3);

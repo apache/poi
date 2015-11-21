@@ -24,7 +24,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.List;
@@ -74,7 +74,7 @@ public class TestXSLFTextParagraph {
                 "of text within a shape. Properties here apply to all text " +
                 "residing within the corresponding paragraph.");
 
-        Rectangle anchor = new Rectangle(50, 50, 300, 200);
+        Rectangle2D anchor = new Rectangle2D.Double(50, 50, 300, 200);
         sh.setAnchor(anchor);
         
         DrawTextParagraphProxy dtp = new DrawTextParagraphProxy(p);
@@ -172,7 +172,7 @@ public class TestXSLFTextParagraph {
                 "of text within a shape. Properties here apply to all text " +
                 "residing within the corresponding paragraph.");
 
-        sh.setAnchor(new Rectangle(50, 50, 300, 200));
+        sh.setAnchor(new Rectangle2D.Double(50, 50, 300, 200));
         DrawTextParagraphProxy dtp = new DrawTextParagraphProxy(p);
 
         BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
@@ -184,13 +184,13 @@ public class TestXSLFTextParagraph {
         assertEquals(4, lines.size());
 
         // decrease the shape width from 300 pt to 100 pt
-        sh.setAnchor(new Rectangle(50, 50, 100, 200));
+        sh.setAnchor(new Rectangle2D.Double(50, 50, 100, 200));
         dtp.breakText(graphics);
         lines = dtp.getLines();
         assertEquals(12, lines.size());
 
         // decrease the shape width from 300 pt to 100 pt
-        sh.setAnchor(new Rectangle(50, 50, 600, 200));
+        sh.setAnchor(new Rectangle2D.Double(50, 50, 600, 200));
         dtp.breakText(graphics);
         lines = dtp.getLines();
         assertEquals(2, lines.size());
@@ -224,7 +224,7 @@ public class TestXSLFTextParagraph {
         assertEquals("POI", lines.get(1).getString());
 
         XSLFAutoShape sh2 = slide.createAutoShape();
-        sh2.setAnchor(new Rectangle(50, 50, 300, 200));
+        sh2.setAnchor(new Rectangle2D.Double(50, 50, 300, 200));
         XSLFTextParagraph p2 = sh2.addNewTextParagraph();
         XSLFTextRun r2 = p2.addNewTextRun();
         r2.setFontFamily("serif"); // this should always be available

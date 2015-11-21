@@ -21,7 +21,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
@@ -50,7 +50,7 @@ public final class TestMovieShape {
         HSLFPictureData thumbnailData = ppt.addPicture(_slTests.readFile("tomcat.png"), PictureType.PNG);
 
         MovieShape shape = new MovieShape(movieIdx, thumbnailData);
-        shape.setAnchor(new Rectangle(300,225,120,90));
+        shape.setAnchor(new Rectangle2D.Double(300,225,120,90));
         slide.addShape(shape);
 
         assertEquals(path, shape.getPath());

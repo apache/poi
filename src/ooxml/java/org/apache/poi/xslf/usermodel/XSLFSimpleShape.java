@@ -20,7 +20,7 @@
 package org.apache.poi.xslf.usermodel;
 
 import java.awt.Color;
-import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -121,21 +121,21 @@ public abstract class XSLFSimpleShape extends XSLFShape
     }
 
     @Override
-    public Rectangle getAnchor() {
+    public Rectangle2D getAnchor() {
 
         CTTransform2D xfrm = getXfrm();
 
         CTPoint2D off = xfrm.getOff();
-        int x = (int)Units.toPoints(off.getX());
-        int y = (int)Units.toPoints(off.getY());
+        double x = Units.toPoints(off.getX());
+        double y = Units.toPoints(off.getY());
         CTPositiveSize2D ext = xfrm.getExt();
-        int cx = (int)Units.toPoints(ext.getCx());
-        int cy = (int)Units.toPoints(ext.getCy());
-        return new Rectangle(x, y, cx, cy);
+        double cx = Units.toPoints(ext.getCx());
+        double cy = Units.toPoints(ext.getCy());
+        return new Rectangle2D.Double(x, y, cx, cy);
     }
 
     @Override
-    public void setAnchor(Rectangle anchor) {
+    public void setAnchor(Rectangle2D anchor) {
         CTTransform2D xfrm = getSafeXfrm();
         CTPoint2D off = xfrm.isSetOff() ? xfrm.getOff() : xfrm.addNewOff();
         long x = Units.toEMU(anchor.getX());

@@ -16,6 +16,9 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
+import java.awt.Color;
+import java.awt.geom.Rectangle2D;
+
 import org.apache.poi.util.Beta;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualDrawingProps;
@@ -24,9 +27,6 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTGraphicalObjectFra
 import org.openxmlformats.schemas.presentationml.x2006.main.CTGroupShape;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPicture;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
-
-import java.awt.Color;
-import java.awt.Rectangle;
 
 
 /**
@@ -57,7 +57,7 @@ public class XSLFDrawing {
         CTShape sp = _spTree.addNewSp();
         sp.set(XSLFAutoShape.prototype(_shapeId++));
         XSLFAutoShape shape = new XSLFAutoShape(sp, _sheet);
-        shape.setAnchor(new Rectangle());
+        shape.setAnchor(new Rectangle2D.Double());
         return shape;
     }
 
@@ -65,7 +65,7 @@ public class XSLFDrawing {
         CTShape sp = _spTree.addNewSp();
         sp.set(XSLFFreeformShape.prototype(_shapeId++));
         XSLFFreeformShape shape = new XSLFFreeformShape(sp, _sheet);
-        shape.setAnchor(new Rectangle());
+        shape.setAnchor(new Rectangle2D.Double());
         return shape;
     }
 
@@ -73,7 +73,7 @@ public class XSLFDrawing {
         CTShape sp = _spTree.addNewSp();
         sp.set(XSLFTextBox.prototype(_shapeId++));
         XSLFTextBox shape = new XSLFTextBox(sp, _sheet);
-        shape.setAnchor(new Rectangle());
+        shape.setAnchor(new Rectangle2D.Double());
         return shape;
     }
 
@@ -81,7 +81,7 @@ public class XSLFDrawing {
         CTConnector sp = _spTree.addNewCxnSp();
         sp.set(XSLFConnectorShape.prototype(_shapeId++));
         XSLFConnectorShape shape = new XSLFConnectorShape(sp, _sheet);
-        shape.setAnchor(new Rectangle());
+        shape.setAnchor(new Rectangle2D.Double());
         shape.setLineColor(Color.black);
         shape.setLineWidth(0.75);
         return shape;
@@ -91,7 +91,7 @@ public class XSLFDrawing {
         CTGroupShape obj = _spTree.addNewGrpSp();
         obj.set(XSLFGroupShape.prototype(_shapeId++));
         XSLFGroupShape shape = new XSLFGroupShape(obj, _sheet);
-        shape.setAnchor(new Rectangle());
+        shape.setAnchor(new Rectangle2D.Double());
         return shape;
     }
 
@@ -99,7 +99,7 @@ public class XSLFDrawing {
         CTPicture obj = _spTree.addNewPic();
         obj.set(XSLFPictureShape.prototype(_shapeId++, rel));
         XSLFPictureShape shape = new XSLFPictureShape(obj, _sheet);
-        shape.setAnchor(new Rectangle());
+        shape.setAnchor(new Rectangle2D.Double());
         return shape;
     }
 
@@ -107,7 +107,7 @@ public class XSLFDrawing {
         CTGraphicalObjectFrame obj = _spTree.addNewGraphicFrame();
         obj.set(XSLFTable.prototype(_shapeId++));
         XSLFTable shape = new XSLFTable(obj, _sheet);
-        shape.setAnchor(new Rectangle());
+        shape.setAnchor(new Rectangle2D.Double());
         return shape;
     }
 }

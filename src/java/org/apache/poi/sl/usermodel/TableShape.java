@@ -28,6 +28,14 @@ public interface TableShape<
     TableCell<S,P> getCell(int row, int col);
     
     /**
+     * Gets the width (in points) of the n-th column
+     *
+     * @param idx the column index (0-based)
+     * @return the width (in points)
+     */
+    double getColumnWidth(int idx);
+    
+    /**
      * Sets the width (in points) of the n-th column
      *
      * @param idx the column index (0-based)
@@ -35,6 +43,14 @@ public interface TableShape<
      */
     void setColumnWidth(int idx, double width);
 
+    /**
+     * Gets the row height
+     *
+     * @param row the row index (0-based)
+     * @return the height (in points)
+     */
+    double getRowHeight(int row);
+    
     /**
      * Sets the row height.
      *

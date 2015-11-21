@@ -20,10 +20,11 @@ package org.apache.poi.hslf.model;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
-import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
@@ -50,23 +51,36 @@ public final class TestOleEmbedding {
      * @throws Exception if an error occurs.
      */
     @Test
-    public void testOleEmbedding2003() throws Exception {
+    public void testOleEmbedding2003() throws IOException {
         HSLFSlideShowImpl slideShow = new HSLFSlideShowImpl(_slTests.openResourceAsStream("ole2-embedding-2003.ppt"));
         // Placeholder EMFs for clients that don't support the OLE components.
         List<HSLFPictureData> pictures = slideShow.getPictureData();
         assertEquals("Should be two pictures", 2, pictures.size());
-        //assertDigestEquals("Wrong data for picture 1", "8d1fbadf4814f321bb1ccdd056e3c788", pictures[0].getData());
-        //assertDigestEquals("Wrong data for picture 2", "987a698e83559cf3d38a0deeba1cc63b", pictures[1].getData());
+        
+        long checkSums[] = { 0xD37A4204l, 0x26A62F68l, 0x82853169l, 0xE0E45D2Bl };
+        int checkId = 0;
+        
+        // check for checksum to be uptodate
+        for (HSLFPictureData pd : pictures) {
+            long checkEMF = IOUtils.calculateChecksum(pd.getData());
+            assertEquals(checkSums[checkId++], checkEMF);
+        }
 
         // Actual embedded objects.
         HSLFObjectData[] objects = slideShow.getEmbeddedObjects();
         assertEquals("Should be two objects", 2, objects.length);
-        //assertDigestEquals("Wrong data for objecs 1", "0d1fcc61a83de5c4894dc0c88e9a019d", objects[0].getData());
-        //assertDigestEquals("Wrong data for object 2", "b323604b2003a7299c77c2693b641495", objects[1].getData());
+        for (HSLFObjectData od : objects) {
+            long checkEMF = IOUtils.calculateChecksum(od.getData());
+            assertEquals(checkSums[checkId++], checkEMF);
+        }
+        
+        slideShow.close();
     }
+    
+    
 
     @Test
-    public void testOLEShape() throws Exception {
+    public void testOLEShape() throws IOException {
         HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("ole2-embedding-2003.ppt"));
 
         HSLFSlide slide = ppt.getSlides().get(0);
@@ -97,12 +111,12 @@ public final class TestOleEmbedding {
 
         }
         assertEquals("Expected 2 OLE shapes", 2, cnt);
+        ppt.close();
     }
     
     @Test
-    public void testEmbedding() throws Exception {
-    	HSLFSlideShowImpl _hslfSlideShow = HSLFSlideShowImpl.create();
-    	HSLFSlideShow ppt = new HSLFSlideShow(_hslfSlideShow);
+    public void testEmbedding() throws IOException {
+    	HSLFSlideShow ppt = new HSLFSlideShow();
     	
     	File pict = POIDataSamples.getSlideShowInstance().getFile("clock.jpg");
     	HSLFPictureData pictData = ppt.addPicture(pict, PictureType.JPEG);
@@ -117,7 +131,7 @@ public final class TestOleEmbedding {
     	OLEShape oleShape1 = new OLEShape(pictData);
     	oleShape1.setObjectID(oleObjectId1);
     	slide1.addShape(oleShape1);
-    	oleShape1.setAnchor(new Rectangle(100,100,100,100));
+    	oleShape1.setAnchor(new Rectangle2D.Double(100,100,100,100));
     	
     	// add second slide with different order in object creation
     	HSLFSlide slide2 = ppt.createSlide();
@@ -131,7 +145,7 @@ public final class TestOleEmbedding {
 
         oleShape2.setObjectID(oleObjectId2);
         slide2.addShape(oleShape2);
-        oleShape2.setAnchor(new Rectangle(100,100,100,100));
+        oleShape2.setAnchor(new Rectangle2D.Double(100,100,100,100));
         
     	ByteArrayOutputStream bos = new ByteArrayOutputStream();
     	ppt.write(bos);
@@ -148,6 +162,8 @@ public final class TestOleEmbedding {
     	
     	poiData1.close();
     	poiData2.close();
-    	
+    	ppt.close();
     }
+
+    
 }

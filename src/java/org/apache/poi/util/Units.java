@@ -51,7 +51,7 @@ public class Units {
      * @return emus
      */
     public static int toEMU(double points){
-        return (int)Math.round(EMU_PER_POINT*points);
+        return (int)Math.rint(EMU_PER_POINT*points);
     }
 
     /**
@@ -103,13 +103,13 @@ public class Units {
     public static int pointsToMaster(double points) {
         points *= MASTER_DPI;
         points /= POINT_DPI;
-        return (int)points;
+        return (int)Math.rint(points);
     }
     
     public static int pointsToPixel(double points) {
         points *= PIXEL_DPI;
         points /= POINT_DPI;
-        return (int)points;
+        return (int)Math.rint(points);
     }
 
     public static double pixelToPoints(int pixel) {

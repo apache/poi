@@ -17,7 +17,6 @@
 
 package org.apache.poi.hslf.usermodel;
 
-import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.PathIterator;
@@ -90,7 +89,7 @@ public final class HSLFFreeformShape extends HSLFAutoShape implements FreeformSh
 
     @Override
     public int setPath(GeneralPath path) {
-        Rectangle bounds = path.getBounds();
+        Rectangle2D bounds = path.getBounds2D();
         PathIterator it = path.getPathIterator(new AffineTransform());
 
         List<byte[]> segInfo = new ArrayList<byte[]>();

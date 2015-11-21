@@ -17,7 +17,7 @@
 
 package org.apache.poi.sl.usermodel;
 
-import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
 
 public interface Shape<
     S extends Shape<S,P>,
@@ -37,5 +37,5 @@ public interface Shape<
     *
     * @return the anchor of this shape
     */
-   Rectangle getAnchor();   
+   Rectangle2D getAnchor();   
 }

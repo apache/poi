@@ -19,7 +19,7 @@
 
 package org.apache.poi.xslf.usermodel;
 
-import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -79,19 +79,19 @@ implements XSLFShapeContainer, GroupShape<XSLFShape,XSLFTextParagraph> {
     }
 
     @Override
-    public Rectangle getAnchor(){
+    public Rectangle2D getAnchor(){
         CTGroupTransform2D xfrm = getXfrm();
         CTPoint2D off = xfrm.getOff();
-        int x = (int)Units.toPoints(off.getX());
-        int y = (int)Units.toPoints(off.getY());
+        double x = Units.toPoints(off.getX());
+        double y = Units.toPoints(off.getY());
         CTPositiveSize2D ext = xfrm.getExt();
-        int cx = (int)Units.toPoints(ext.getCx());
-        int cy = (int)Units.toPoints(ext.getCy());
-        return new Rectangle(x,y,cx,cy);
+        double cx = Units.toPoints(ext.getCx());
+        double cy = Units.toPoints(ext.getCy());
+        return new Rectangle2D.Double(x,y,cx,cy);
     }
 
     @Override
-    public void setAnchor(Rectangle anchor){
+    public void setAnchor(Rectangle2D anchor){
         CTGroupTransform2D xfrm = getSafeXfrm();
         CTPoint2D off = xfrm.isSetOff() ? xfrm.getOff() : xfrm.addNewOff();
         long x = Units.toEMU(anchor.getX());
@@ -111,15 +111,16 @@ implements XSLFShapeContainer, GroupShape<XSLFShape,XSLFTextParagraph> {
      * used for calculations of grouping, scaling, and rotation
      * behavior of shapes placed within a group.
      */
-    public Rectangle getInteriorAnchor(){
+    @Override
+    public Rectangle2D getInteriorAnchor(){
         CTGroupTransform2D xfrm = getXfrm();
         CTPoint2D off = xfrm.getChOff();
-        int x = (int)Units.toPoints(off.getX());
-        int y = (int)Units.toPoints(off.getY());
+        double x = Units.toPoints(off.getX());
+        double y = Units.toPoints(off.getY());
         CTPositiveSize2D ext = xfrm.getChExt();
-        int cx = (int)Units.toPoints(ext.getCx());
-        int cy = (int)Units.toPoints(ext.getCy());
-        return new Rectangle(x, y, cx, cy);
+        double cx = Units.toPoints(ext.getCx());
+        double cy = Units.toPoints(ext.getCy());
+        return new Rectangle2D.Double(x, y, cx, cy);
     }
 
     /**
@@ -128,7 +129,8 @@ implements XSLFShapeContainer, GroupShape<XSLFShape,XSLFTextParagraph> {
      * used for calculations of grouping, scaling, and rotation
      * behavior of shapes placed within a group.
      */
-    public void setInteriorAnchor(Rectangle anchor) {
+    @Override
+    public void setInteriorAnchor(Rectangle2D anchor) {
         CTGroupTransform2D xfrm = getSafeXfrm();
         CTPoint2D off = xfrm.isSetChOff() ? xfrm.getChOff() : xfrm.addNewChOff();
         long x = Units.toEMU(anchor.getX());

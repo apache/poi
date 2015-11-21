@@ -22,7 +22,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.awt.Dimension;
-import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.sl.usermodel.PictureData;
@@ -32,6 +32,7 @@ import org.apache.poi.sl.usermodel.Shape;
 import org.apache.poi.sl.usermodel.Slide;
 import org.apache.poi.sl.usermodel.SlideShow;
 import org.apache.poi.sl.usermodel.SlideShowFactory;
+import org.apache.poi.util.Units;
 import org.junit.Test;
 
 public class TestDrawPictureShape {
@@ -54,18 +55,32 @@ public class TestDrawPictureShape {
             PictureData pd = picShape.getPictureData();
             Dimension dimPd = pd.getImageDimension();
             new DrawPictureShape(picShape).resize();
-            Dimension dimShape = picShape.getAnchor().getSize();
+            Dimension dimShape = new Dimension(
+                (int)picShape.getAnchor().getWidth(),
+                (int)picShape.getAnchor().getHeight()
+            );
             assertEquals(dimPd, dimShape);
             
-            int newWidth = (int)(dimPd.getWidth()*(100d/dimPd.getHeight()));
+            double newWidth = (dimPd.getWidth()*(100d/dimPd.getHeight()));
             // ... -1 is a rounding error
-            Rectangle expRect = new Rectangle(50+300-newWidth-1, 50, newWidth, 100);
-            Rectangle target = new Rectangle(50,50,300,100);
+            Rectangle2D expRect = new Rectangle2D.Double(rbf(50+300-newWidth, picShape), 50, rbf(newWidth, picShape), 100);
+            Rectangle2D target = new Rectangle2D.Double(50,50,300,100);
             new DrawPictureShape(picShape).resize(target, RectAlign.BOTTOM_RIGHT);
-            Rectangle actRect = picShape.getAnchor();
-            assertEquals(expRect, actRect);
+            Rectangle2D actRect = picShape.getAnchor();
+            assertEquals(expRect.getX(), actRect.getX(), .0001);
+            assertEquals(expRect.getY(), actRect.getY(), .0001);
+            assertEquals(expRect.getWidth(), actRect.getWidth(), .0001);
+            assertEquals(expRect.getHeight(), actRect.getHeight(), .0001);
+            ss.close();
         }
     }
     
-    
+    // round back and forth - points -> master -> points
+    static double rbf(double val, PictureShape<?,?> picShape) {
+        if (picShape.getClass().getName().contains("HSLF")) {
+            return Units.masterToPoints(Units.pointsToMaster(val));
+        } else {
+            return val;
+        }
+    }
 }

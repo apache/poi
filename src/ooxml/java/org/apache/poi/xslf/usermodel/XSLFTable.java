@@ -100,6 +100,7 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
         return _table.sizeOfTrArray();
     }
 
+    @Override
     public double getColumnWidth(int idx){
         return Units.toPoints(
                 _table.getTblGrid().getGridColArray(idx).getW());
@@ -110,6 +111,11 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
         _table.getTblGrid().getGridColArray(idx).setW(Units.toEMU(width));
     }
 
+    @Override
+    public double getRowHeight(int row) {
+        return Units.toPoints(_table.getTrArray(row).getH());
+    }
+    
     @Override
     public void setRowHeight(int row, double height) {
         _table.getTrArray(row).setH(Units.toEMU(height));

@@ -19,7 +19,7 @@
 
 package org.apache.poi.xslf.usermodel;
 
-import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -518,8 +518,8 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
      *
      * @return a <code>Rectangle2D</code> that is the bounds of this shape.
      */
-    public Rectangle resizeToFitText(){
-        Rectangle anchor = getAnchor();
+    public Rectangle2D resizeToFitText(){
+        Rectangle2D anchor = getAnchor();
         if(anchor.getWidth() == 0.)  throw new POIXMLException(
                 "Anchor of the shape was not set.");
         double height = getTextHeight(); 

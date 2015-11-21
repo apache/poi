@@ -22,8 +22,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.awt.Rectangle;
 import java.awt.geom.GeneralPath;
+import java.awt.geom.Rectangle2D;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.Map;
@@ -38,7 +38,7 @@ public class TestPresetGeometries {
 
         for(String name : shapes.keySet()) {
             CustomGeometry geom = shapes.get(name);
-            Context ctx = new Context(geom, new Rectangle(0, 0, 100, 100), new IAdjustableShape() {
+            Context ctx = new Context(geom, new Rectangle2D.Double(0, 0, 100, 100), new IAdjustableShape() {
                 public Guide getAdjustValue(String presetName) {
                     return null;
                 }

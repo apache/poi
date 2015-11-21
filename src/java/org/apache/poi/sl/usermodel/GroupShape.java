@@ -17,7 +17,7 @@
 
 package org.apache.poi.sl.usermodel;
 
-import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
 
 public interface GroupShape<
     S extends Shape<S,P>,
@@ -30,7 +30,7 @@ public interface GroupShape<
      *
      * @return the coordinate space of this group
      */
-    Rectangle getInteriorAnchor();
+    Rectangle2D getInteriorAnchor();
     
     /**
      * Sets the coordinate space of this group.  All children are constrained
@@ -38,5 +38,5 @@ public interface GroupShape<
      *
      * @param anchor the coordinate space of this group
      */
-    void setInteriorAnchor(Rectangle anchor);
+    void setInteriorAnchor(Rectangle2D anchor);
 }

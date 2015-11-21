@@ -18,7 +18,7 @@
 package org.apache.poi.hslf.usermodel;
 
 import java.awt.Color;
-import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
 
 import org.apache.poi.ddf.AbstractEscherOptRecord;
 import org.apache.poi.ddf.EscherContainerRecord;
@@ -85,40 +85,40 @@ public final class HSLFTableCell extends HSLFTextBox implements TableCell<HSLFSh
         if (line == null) {
             return;
         }
-        Rectangle cellAnchor = getAnchor();
-        Rectangle lineAnchor = new Rectangle();
+        Rectangle2D cellAnchor = getAnchor();
+        double x,y,w,h;
         switch(edge){
             case top:
-                lineAnchor.x = cellAnchor.x;
-                lineAnchor.y = cellAnchor.y;
-                lineAnchor.width = cellAnchor.width;
-                lineAnchor.height = 0;
+                x = cellAnchor.getX();
+                y = cellAnchor.getY();
+                w = cellAnchor.getWidth();
+                h = 0;
                 break;
             case right:
-                lineAnchor.x = cellAnchor.x + cellAnchor.width;
-                lineAnchor.y = cellAnchor.y;
-                lineAnchor.width = 0;
-                lineAnchor.height = cellAnchor.height;
+                x = cellAnchor.getX() + cellAnchor.getWidth();
+                y = cellAnchor.getY();
+                w = 0;
+                h = cellAnchor.getHeight();
                 break;
             case bottom:
-                lineAnchor.x = cellAnchor.x;
-                lineAnchor.y = cellAnchor.y + cellAnchor.height;
-                lineAnchor.width = cellAnchor.width;
-                lineAnchor.height = 0;
+                x = cellAnchor.getX();
+                y = cellAnchor.getY() + cellAnchor.getHeight();
+                w = cellAnchor.getWidth();
+                h = 0;
                 break;
             case left:
-                lineAnchor.x = cellAnchor.x;
-                lineAnchor.y = cellAnchor.y;
-                lineAnchor.width = 0;
-                lineAnchor.height = cellAnchor.height;
+                x = cellAnchor.getX();
+                y = cellAnchor.getY();
+                w = 0;
+                h = cellAnchor.getHeight();
                 break;
             default:
                 throw new IllegalArgumentException();
         }
-        line.setAnchor(lineAnchor);
+        line.setAnchor(new Rectangle2D.Double(x,y,w,h));
     }
 
-    public void setAnchor(Rectangle anchor){
+    public void setAnchor(Rectangle2D anchor){
         super.setAnchor(anchor);
 
         anchorBorder(BorderEdge.top, borderTop);

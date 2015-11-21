@@ -19,7 +19,7 @@
 
 package org.apache.poi.xslf.usermodel;
 
-import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
 
 import javax.xml.namespace.QName;
 
@@ -28,6 +28,7 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.sl.draw.DrawNotImplemented;
+import org.apache.poi.sl.usermodel.PlaceableShape;
 import org.apache.poi.sl.usermodel.ShapeType;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Units;
@@ -44,7 +45,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTGraphicalObjectFra
  */
 @Beta
 @DrawNotImplemented
-public class XSLFGraphicFrame extends XSLFShape {
+public class XSLFGraphicFrame extends XSLFShape implements PlaceableShape<XSLFShape, XSLFTextParagraph> {
     /*package*/ XSLFGraphicFrame(CTGraphicalObjectFrame shape, XSLFSheet sheet){
         super(shape,sheet);
     }
@@ -54,18 +55,19 @@ public class XSLFGraphicFrame extends XSLFShape {
     }
 
     @Override
-    public Rectangle getAnchor(){
+    public Rectangle2D getAnchor(){
         CTTransform2D xfrm = ((CTGraphicalObjectFrame)getXmlObject()).getXfrm();
         CTPoint2D off = xfrm.getOff();
-        int x = (int)Units.toPoints(off.getX());
-        int y = (int)Units.toPoints(off.getY());
+        double x = Units.toPoints(off.getX());
+        double y = Units.toPoints(off.getY());
         CTPositiveSize2D ext = xfrm.getExt();
-        int cx = (int)Units.toPoints(ext.getCx());
-        int cy = (int)Units.toPoints(ext.getCy());
-        return new Rectangle(x, y, cx, cy);
+        double cx = Units.toPoints(ext.getCx());
+        double cy = Units.toPoints(ext.getCy());
+        return new Rectangle2D.Double(x, y, cx, cy);
     }
 
-    public void setAnchor(Rectangle anchor){
+    @Override
+    public void setAnchor(Rectangle2D anchor){
         CTTransform2D xfrm = ((CTGraphicalObjectFrame)getXmlObject()).getXfrm();
         CTPoint2D off = xfrm.isSetOff() ? xfrm.getOff() : xfrm.addNewOff();
         long x = Units.toEMU(anchor.getX());
