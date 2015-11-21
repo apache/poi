@@ -17,13 +17,13 @@
 
 package org.apache.poi.xwpf.usermodel;
 
+import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.xml.namespace.QName;
 
@@ -32,7 +32,6 @@ import org.apache.poi.POIXMLException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
-import org.apache.poi.util.DocumentHelper;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTDocDefaults;
@@ -83,7 +82,7 @@ public class XWPFStyles extends POIXMLDocumentPart {
         StylesDocument stylesDoc;
         try {
             InputStream is = getPackagePart().getInputStream();
-            stylesDoc = StylesDocument.Factory.parse(is, POIXMLDocumentPart.DEFAULT_XML_OPTIONS);
+            stylesDoc = StylesDocument.Factory.parse(is, DEFAULT_XML_OPTIONS);
             setStyles(stylesDoc.getStyles());
             latentStyles = new XWPFLatentStyles(ctStyles.getLatentStyles(), this);
         } catch (XmlException e) {
@@ -99,10 +98,6 @@ public class XWPFStyles extends POIXMLDocumentPart {
 
         XmlOptions xmlOptions = new XmlOptions(DEFAULT_XML_OPTIONS);
         xmlOptions.setSaveSyntheticDocumentElement(new QName(CTStyles.type.getName().getNamespaceURI(), "styles"));
-        Map<String, String> map = new HashMap<String, String>();
-        map.put("http://schemas.openxmlformats.org/officeDocument/2006/relationships", "r");
-        map.put("http://schemas.openxmlformats.org/wordprocessingml/2006/main", "w");
-        xmlOptions.setSaveSuggestedPrefixes(map);
         PackagePart part = getPackagePart();
         OutputStream out = part.getOutputStream();
         ctStyles.save(out, xmlOptions);

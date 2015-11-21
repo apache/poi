@@ -41,7 +41,6 @@ import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.apache.xmlbeans.XmlOptions;
 
 /**
  * Represents an entry of a OOXML package.
@@ -54,16 +53,6 @@ import org.apache.xmlbeans.XmlOptions;
  */
 public class POIXMLDocumentPart {
     private static final POILogger logger = POILogFactory.getLogger(POIXMLDocumentPart.class);
-
-    public static final XmlOptions DEFAULT_XML_OPTIONS;
-    static {
-        DEFAULT_XML_OPTIONS = new XmlOptions();
-        DEFAULT_XML_OPTIONS.setSaveOuter();
-        DEFAULT_XML_OPTIONS.setUseDefaultNamespace();
-        DEFAULT_XML_OPTIONS.setSaveAggressiveNamespaces();
-        DEFAULT_XML_OPTIONS.setCharacterEncoding("UTF-8");
-        DEFAULT_XML_OPTIONS.setLoadEntityBytesLimit(4096);
-    }
 
     private String coreDocumentRel = PackageRelationshipTypes.CORE_DOCUMENT;
     private PackagePart packagePart;

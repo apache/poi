@@ -18,10 +18,11 @@
 
 package org.apache.poi.xslf.usermodel;
 
+import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
-import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
@@ -49,7 +50,7 @@ public class XSLFMetroShape {
         try {
             pkg = OPCPackage.open(new ByteArrayInputStream(metroBytes));
             PackagePart shapePart = pkg.getPart(shapePN);
-            CTGroupShape gs = CTGroupShape.Factory.parse(shapePart.getInputStream(), POIXMLDocumentPart.DEFAULT_XML_OPTIONS);
+            CTGroupShape gs = CTGroupShape.Factory.parse(shapePart.getInputStream(), DEFAULT_XML_OPTIONS);
             XSLFGroupShape xgs = new XSLFGroupShape(gs, null);
             return xgs.getShapes().get(0);               
         } finally {

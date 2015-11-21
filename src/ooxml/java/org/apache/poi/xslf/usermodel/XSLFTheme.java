@@ -16,6 +16,8 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
+import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashMap;
@@ -27,7 +29,6 @@ import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.util.Beta;
-import org.apache.poi.util.DocumentHelper;
 import org.apache.poi.util.Internal;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
@@ -58,7 +59,7 @@ public class XSLFTheme extends POIXMLDocumentPart {
     public XSLFTheme(PackagePart part, PackageRelationship rel) throws IOException, XmlException {
         super(part, rel);
         ThemeDocument doc =
-            ThemeDocument.Factory.parse(getPackagePart().getInputStream(), POIXMLDocumentPart.DEFAULT_XML_OPTIONS);
+            ThemeDocument.Factory.parse(getPackagePart().getInputStream(), DEFAULT_XML_OPTIONS);
         _theme = doc.getTheme();
         initialize();
     }
@@ -128,12 +129,8 @@ public class XSLFTheme extends POIXMLDocumentPart {
 
     protected final void commit() throws IOException {
         XmlOptions xmlOptions = new XmlOptions(DEFAULT_XML_OPTIONS);
-
-        Map<String, String> map = new HashMap<String, String>();
-        map.put("http://schemas.openxmlformats.org/drawingml/2006/main", "a");
-        xmlOptions.setSaveSuggestedPrefixes(map);
         xmlOptions.setSaveSyntheticDocumentElement(
-                new QName("http://schemas.openxmlformats.org/drawingml/2006/main", "theme"));
+            new QName("http://schemas.openxmlformats.org/drawingml/2006/main", "theme"));
 
         PackagePart part = getPackagePart();
         OutputStream out = part.getOutputStream();

@@ -28,7 +28,7 @@ import org.apache.poi.xssf.model.CommentsTable;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
 
-import schemasMicrosoftComVml.CTShape;
+import com.microsoft.schemas.vml.CTShape;
 
 public class XSSFComment implements Comment {
 	

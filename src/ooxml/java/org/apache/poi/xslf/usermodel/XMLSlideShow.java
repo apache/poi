@@ -16,6 +16,8 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
+import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
+
 import java.awt.Dimension;
 import java.io.IOException;
 import java.io.InputStream;
@@ -51,9 +53,7 @@ import org.apache.poi.util.PackageHelper;
 import org.apache.poi.util.Units;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
-import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraphProperties;
-import org.openxmlformats.schemas.officeDocument.x2006.relationships.STRelationshipId;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTNotesMasterIdList;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTNotesMasterIdListEntry;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPresentation;
@@ -127,7 +127,7 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
     protected void onDocumentRead() throws IOException {
         try {
             PresentationDocument doc =
-                    PresentationDocument.Factory.parse(getCorePart().getInputStream(), POIXMLDocumentPart.DEFAULT_XML_OPTIONS);
+                    PresentationDocument.Factory.parse(getCorePart().getInputStream(), DEFAULT_XML_OPTIONS);
             _presentation = doc.getPresentation();
 
             Map<String, XSLFSlideMaster> masterMap = new HashMap<String, XSLFSlideMaster>();
@@ -170,14 +170,9 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
 
     @Override
     protected void commit() throws IOException {
-        XmlOptions xmlOptions = new XmlOptions(DEFAULT_XML_OPTIONS);
-        Map<String, String> map = new HashMap<String, String>();
-        map.put(STRelationshipId.type.getName().getNamespaceURI(), "r");
-        xmlOptions.setSaveSuggestedPrefixes(map);
-
         PackagePart part = getPackagePart();
         OutputStream out = part.getOutputStream();
-        _presentation.save(out, xmlOptions);
+        _presentation.save(out, DEFAULT_XML_OPTIONS);
         out.close();
     }
 

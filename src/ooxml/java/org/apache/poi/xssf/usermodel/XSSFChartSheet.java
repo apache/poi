@@ -17,23 +17,21 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.xml.namespace.QName;
 
-import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.POIXMLException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
-import org.openxmlformats.schemas.officeDocument.x2006.relationships.STRelationshipId;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTChartsheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDrawing;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTLegacyDrawing;
@@ -62,7 +60,7 @@ public class XSSFChartSheet extends XSSFSheet  {
         super.read(new ByteArrayInputStream(BLANK_WORKSHEET));
 
         try {
-            chartsheet = ChartsheetDocument.Factory.parse(is, POIXMLDocumentPart.DEFAULT_XML_OPTIONS).getChartsheet();
+            chartsheet = ChartsheetDocument.Factory.parse(is, DEFAULT_XML_OPTIONS).getChartsheet();
         } catch (XmlException e){
             throw new POIXMLException(e);
         }
@@ -92,10 +90,6 @@ public class XSSFChartSheet extends XSSFSheet  {
         XmlOptions xmlOptions = new XmlOptions(DEFAULT_XML_OPTIONS);
         xmlOptions.setSaveSyntheticDocumentElement(
                 new QName(CTChartsheet.type.getName().getNamespaceURI(), "chartsheet"));
-        Map<String, String> map = new HashMap<String, String>();
-        map.put(STRelationshipId.type.getName().getNamespaceURI(), "r");
-        xmlOptions.setSaveSuggestedPrefixes(map);
-
         chartsheet.save(out, xmlOptions);
 
     }

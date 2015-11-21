@@ -7,11 +7,12 @@
         <groupId>org.apache.poi</groupId>
         <artifactId>poi-parent</artifactId>
         <version>3.14-beta1-SNAPSHOT</version>
+        <relativePath>..</relativePath>
     </parent>
     <artifactId>poi-ooxml-schema-encryption</artifactId>
     <packaging>jar</packaging>
 
-    <name>Apach POI - Openxmlformats Encryption Schema package</name>
+    <name>Apache POI - Openxmlformats Encryption Schema package</name>
 
 	<properties>
 		<!-- see http://docs.codehaus.org/display/SONAR/Narrowing+the+Focus for details of this property -->
@@ -21,28 +22,25 @@
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>xmlbeans-maven-plugin</artifactId>
-				<version>2.3.3</version>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.6</version>
 				<executions>
 					<execution>
+						<id>unzip-schema</id>
 						<phase>generate-sources</phase>
 						<goals>
-							<goal>xmlbeans</goal>
+							<goal>run</goal>
 						</goals>
+						<configuration>
+							<target>
+								<copy todir="target/schemas">
+									<fileset dir="../../src/ooxml/resources/org/apache/poi/poifs/crypt" includes="encryption*.*"/>
+								</copy>
+							</target>
+						</configuration>
 					</execution>
 				</executions>
-				<configuration>
-					<schemaDirectory>../../src/ooxml/resources/org/apache/poi/poifs/crypt</schemaDirectory>
-					<sourceSchemas>
-						<sourceSchema>encryptionInfo.xsd</sourceSchema>
-					</sourceSchemas>
-					<xmlConfigs>
-						<xmlConfig implementation="java.io.File">../../src/ooxml/resources/org/apache/poi/poifs/crypt/encryptionInfo.xsdconfig</xmlConfig>
-					</xmlConfigs>
-					<javaSource>1.5</javaSource>
-					<optimize>yes</optimize>
-				</configuration>
 			</plugin>
 		</plugins>
 	</build>

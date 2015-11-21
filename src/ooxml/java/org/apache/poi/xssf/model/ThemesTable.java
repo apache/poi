@@ -16,16 +16,16 @@
 ==================================================================== */
 package org.apache.poi.xssf.model;
 
+import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
+
 import java.io.IOException;
 import java.io.OutputStream;
 
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
-import org.apache.poi.util.DocumentHelper;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.xmlbeans.XmlException;
-import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTColor;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTColorScheme;
 import org.openxmlformats.schemas.drawingml.x2006.main.ThemeDocument;
@@ -81,7 +81,7 @@ public class ThemesTable extends POIXMLDocumentPart {
         super(part, rel);
         
         try {
-           theme = ThemeDocument.Factory.parse(part.getInputStream(), POIXMLDocumentPart.DEFAULT_XML_OPTIONS);
+           theme = ThemeDocument.Factory.parse(part.getInputStream(), DEFAULT_XML_OPTIONS);
         } catch(XmlException e) {
            throw new IOException(e.getLocalizedMessage(), e);
         }
@@ -166,9 +166,7 @@ public class ThemesTable extends POIXMLDocumentPart {
      * @throws IOException if an error occurs while writing.
      */
     public void writeTo(OutputStream out) throws IOException {
-        XmlOptions options = new XmlOptions(DEFAULT_XML_OPTIONS);
-
-        theme.save(out, options);
+        theme.save(out, DEFAULT_XML_OPTIONS);
     }
 
     @Override

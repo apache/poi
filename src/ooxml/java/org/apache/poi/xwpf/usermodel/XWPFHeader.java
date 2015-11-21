@@ -16,11 +16,11 @@
 ==================================================================== */
 package org.apache.poi.xwpf.usermodel;
 
+import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.xml.namespace.QName;
 
@@ -28,7 +28,6 @@ import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.POIXMLException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
-import org.apache.poi.util.DocumentHelper;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
@@ -77,17 +76,6 @@ public class XWPFHeader extends XWPFHeaderFooter {
     protected void commit() throws IOException {
         XmlOptions xmlOptions = new XmlOptions(DEFAULT_XML_OPTIONS);
         xmlOptions.setSaveSyntheticDocumentElement(new QName(CTNumbering.type.getName().getNamespaceURI(), "hdr"));
-        Map<String, String> map = new HashMap<String, String>();
-        map.put("http://schemas.openxmlformats.org/markup-compatibility/2006", "ve");
-        map.put("urn:schemas-microsoft-com:office:office", "o");
-        map.put("http://schemas.openxmlformats.org/officeDocument/2006/relationships", "r");
-        map.put("http://schemas.openxmlformats.org/officeDocument/2006/math", "m");
-        map.put("urn:schemas-microsoft-com:vml", "v");
-        map.put("http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing", "wp");
-        map.put("urn:schemas-microsoft-com:office:word", "w10");
-        map.put("http://schemas.openxmlformats.org/wordprocessingml/2006/main", "w");
-        map.put("http://schemas.microsoft.com/office/word/2006/wordml", "wne");
-        xmlOptions.setSaveSuggestedPrefixes(map);
         PackagePart part = getPackagePart();
         OutputStream out = part.getOutputStream();
         super._getHdrFtr().save(out, xmlOptions);
@@ -106,7 +94,7 @@ public class XWPFHeader extends XWPFHeaderFooter {
         InputStream is;
         try {
             is = getPackagePart().getInputStream();
-            hdrDocument = HdrDocument.Factory.parse(is, POIXMLDocumentPart.DEFAULT_XML_OPTIONS);
+            hdrDocument = HdrDocument.Factory.parse(is, DEFAULT_XML_OPTIONS);
             headerFooter = hdrDocument.getHdr();
             // parse the document with cursor and add
             // the XmlObject to its lists

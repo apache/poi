@@ -206,8 +206,8 @@ under the License.
     <property name="ooxml.xsds.url.1"
               value="http://www.ecma-international.org/publications/files/ECMA-ST/Office%20Open%20XML%201st%20edition%20Part%204%20(PDF).zip"/>
     <property name="ooxml.xsds.src.dir" location="build/ooxml-xsds-src"/>
-    <property name="ooxml.xsds.src.jar" location="${ooxml.lib}/ooxml-schemas-1.2-sources.jar"/>
-    <property name="ooxml.xsds.jar" location="${ooxml.lib}/ooxml-schemas-1.2.jar"/>
+    <property name="ooxml.xsds.src.jar" location="${ooxml.lib}/ooxml-schemas-1.3-sources.jar"/>
+    <property name="ooxml.xsds.jar" location="${ooxml.lib}/ooxml-schemas-1.3.jar"/>
 
     <!-- additional schemas are packed into the poi schemas jar, -->
     <!-- so we don't have to care about a seperate versioning of the original ooxml schemas -->
@@ -226,6 +226,8 @@ under the License.
     <property name="ooxml.security.jar" location="${ooxml.lib}/ooxml-security-1.0.jar"/>
     <property name="ooxml.security.xsd.dir" location="src/ooxml/resources/org/apache/poi/poifs/crypt"/>
     <property name="ooxml.visio.xsd.dir" location="src/ooxml/resources/org/apache/poi/xdgf"/>
+    <property name="ooxml.schema.xsdconfig.dir" location="src/ooxml/resources/org/apache/poi/schemas"/>
+
 
     <property name="maven.ooxml.xsds.version.id" value="1.0"/>
     <property name="maven.ooxml.xsds.jar" value="ooxml-schemas-${maven.ooxml.xsds.version.id}.jar"/>
@@ -657,77 +659,108 @@ under the License.
             </or>
         </condition>
     </target>
+
+    <macrodef name="compile-ooxml-xmlbean">
+        <attribute name="classes-jar"/>
+        <attribute name="sources-jar"/>
+        <attribute name="noupa" default="false"/>
+        <attribute name="nopvr" default="false"/>
+        <element name="xsds"/>
+        <sequential>
+            <!-- We need a fair amount of memory to compile the xml schema, -->
+            <!-- but limit it in case it goes wrong! -->
+            <!-- Pick the right amount based on 32 vs 64 bit jvm -->
+            <condition property="ooxml.memory" value="768m" else="512m">
+               <equals arg1="${sun.arch.data.model}" arg2="64" />
+            </condition>
+
+            <taskdef name="xmlbean"
+                     classname="org.apache.xmlbeans.impl.tool.XMLBean"
+                     classpath="${ooxml.xmlbeans23.jar}"/>
+
+            <property name="xmlbean.xsds.dir" location="build/xmlbean-xsds"/>
+            <property name="xmlbean.sources.dir" location="build/xmlbean-sources"/>
+            <property name="xmlbean.classes.dir" location="build/xmlbean-classes"/>
+            <delete dir="${xmlbean.xsds.dir}"/>
+            <mkdir dir="${xmlbean.xsds.dir}"/>
+            <delete dir="${xmlbean.sources.dir}"/>
+            <mkdir dir="${xmlbean.sources.dir}"/>
+            <delete dir="${xmlbean.classes.dir}"/>
+            <mkdir dir="${xmlbean.classes.dir}"/>
+
+            <copy todir="${xmlbean.xsds.dir}">
+                <xsds/>
+            </copy>
+
+            <!-- javasource > 1.5 will not generate all array accessor -->
+            <xmlbean
+                    schema="${xmlbean.xsds.dir}"
+                    srcgendir="${xmlbean.sources.dir}"
+                    classgendir="${xmlbean.classes.dir}"
+                    destfile="${xmlbean.xsds.dir}.jar"
+                    srconly="true"
+                    javasource="1.5"
+                    failonerror="true"
+                    fork="true"
+                    memoryMaximumSize="${ooxml.memory}"
+                    noupa="@{noupa}"
+                    nopvr="@{nopvr}"
+                    >
+                <classpath refid="ooxml.classpath"/>
+            </xmlbean>
+
+            <replace dir="${xmlbean.sources.dir}" includes="**/*.java" excludes="**/impl/**">
+                <replacetoken>org.apache.xmlbeans.XmlBeans.getContextTypeLoader()</replacetoken>
+                <replacevalue>org.apache.poi.POIXMLTypeLoader</replacevalue>
+            </replace>
+
+            <copy todir="${xmlbean.sources.dir}">
+                <fileset dir="src/ooxml/java" includes="org/apache/poi/POIXMLTypeLoader.java"/>
+            </copy>
+
+            <javac target="${jdk.version.class}"
+                   source="${jdk.version.source}"
+                   srcdir="${xmlbean.sources.dir}"
+                   destdir="${xmlbean.classes.dir}"
+                   encoding="${java.source.encoding}"
+                   fork="yes"
+                   optimize="true"
+                   memoryMaximumSize="${ooxml.memory}"
+                   includeantruntime="false">
+                   <!-- debug="${compile.debug}" -->
+                <classpath refid="ooxml.classpath"/>
+            </javac>
+
+            <jar basedir="${xmlbean.classes.dir}" destfile="@{classes-jar}" excludes="org/apache/**" level="9" />
+            <jar basedir="${xmlbean.sources.dir}" destfile="@{sources-jar}" excludes="org/apache/**" level="9" />
+
+            <delete file="${xmlbean.xsds.dir}.jar"/>
+            <delete dir="${xmlbean.xsds.dir}"/>
+            <delete dir="${xmlbean.sources.dir}"/>
+            <delete dir="${xmlbean.classes.dir}"/>
+        </sequential>
+    </macrodef>
+
     <target name="compile-ooxml-xsds" unless="ooxml-compiled-xsds.present"
         depends="init,check-compiled-ooxml-xsds"
         description="Unpacks the OOXML xsd files, and compiles them into XmlBeans">
-        <taskdef name="xmlbean"
-                 classname="org.apache.xmlbeans.impl.tool.XMLBean"
-                 classpath="${ooxml.xmlbeans23.jar}"/>
-
-        <!-- We need a fair amount of memory to compile the xml schema, -->
-        <!--  but limit it in case it goes wrong! -->
-        <!-- Pick the right amount based on 32 vs 64 bit jvm -->
-        <condition property="ooxml.memory" value="768m" else="512m">
-           <equals arg1="${sun.arch.data.model}" arg2="64" />
-        </condition>
-
-        <property name="ooxml.xsds.tmp.dir" location="build/ooxml-xsds"/>
-        <mkdir dir="${ooxml.xsds.tmp.dir}"/>
-        <unzip src="${ooxml.lib}/${ooxml.xsds.izip.1}" dest="${ooxml.xsds.tmp.dir}"/>
-        <copy todir="${ooxml.xsds.tmp.dir}">
-            <fileset dir="${ooxml.visio.xsd.dir}"/>
-        </copy>
-        <xmlbean
-                schema="${ooxml.xsds.tmp.dir}"
-                srcgendir="${ooxml.xsds.src.dir}"
-                optimize="yes"
-                destfile="${ooxml.xsds.jar}"
-                javasource="1.5"
-                failonerror="true"
-                fork="true"
-                memoryMaximumSize="${ooxml.memory}"
-                >
-            <classpath refid="ooxml.classpath"/>
-        </xmlbean>
-
-        <!-- Now make a jar of the schema sources -->
-        <jar
-                basedir="${ooxml.xsds.src.dir}"
-                destfile="${ooxml.xsds.src.jar}"
-                />
-
+        <compile-ooxml-xmlbean classes-jar="${ooxml.xsds.jar}" sources-jar="${ooxml.xsds.src.jar}">
+            <xsds>
+                <zipfileset src="${ooxml.lib}/${ooxml.xsds.izip.1}"/>
+                <fileset dir="${ooxml.visio.xsd.dir}"/>
+                <fileset dir="${ooxml.schema.xsdconfig.dir}"/>
+            </xsds>
+        </compile-ooxml-xmlbean>
         <!-- Now do the same for the security schemas -->
-        <property name="ooxml.enc.xsds.tmp.dir" location="build/ooxml-security-xsds"/>
-        <mkdir dir="${ooxml.enc.xsds.tmp.dir}"/>
-        <unzip src="${ooxml.lib}/${ooxml.xsds.izip.2}" dest="${ooxml.enc.xsds.tmp.dir}"/>
-
-        <copy todir="${ooxml.enc.xsds.tmp.dir}">
-            <fileset dir="${ooxml.lib}" includes="dc*.xsd,xmldsig*.xsd,XAdES*.xsd"/>
-            <fileset dir="${ooxml.security.xsd.dir}"/>
-        </copy>
-
         <!-- noupa/nopvr is set because of the dublincore schemas -->
         <!-- https://issues.apache.org/jira/browse/XMLBEANS-340 -->
-        <!-- javasource > 1.5 will not generate all array accessor -->
-        <xmlbean
-                schema="${ooxml.enc.xsds.tmp.dir}"
-                srcgendir="${ooxml.security.src.dir}"
-                optimize="yes"
-                destfile="${ooxml.security.jar}"
-                javasource="1.5"
-                failonerror="true"
-                fork="true"
-                memoryMaximumSize="${ooxml.memory}"
-                noupa="true"
-                nopvr="true"
-                >
-            <classpath refid="ooxml.classpath"/>
-        </xmlbean>
-
-        <jar
-                basedir="${ooxml.security.src.dir}"
-                destfile="${ooxml.security.src.jar}"
-                />
+        <compile-ooxml-xmlbean classes-jar="${ooxml.security.jar}" sources-jar="${ooxml.security.src.jar}" noupa="true" nopvr="true">
+            <xsds>
+                <zipfileset src="${ooxml.lib}/${ooxml.xsds.izip.2}"/>
+                <fileset dir="${ooxml.lib}" includes="dc*.xsd,xmldsig*.xsd,XAdES*.xsd"/>
+                <fileset dir="${ooxml.security.xsd.dir}"/>
+            </xsds>
+        </compile-ooxml-xmlbean>
     </target>
 
     <target name="compile" depends="init, compile-main,

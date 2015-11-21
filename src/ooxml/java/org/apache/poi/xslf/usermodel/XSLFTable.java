@@ -19,6 +19,8 @@
 
 package org.apache.poi.xslf.usermodel;
 
+import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -26,7 +28,6 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
-import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.POIXMLException;
 import org.apache.poi.sl.usermodel.TableShape;
 import org.apache.poi.util.Internal;
@@ -68,7 +69,7 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
         // it never happens when using the full ooxml-schemas jar but may happen with the abridged poi-ooxml-schemas
         if(rs[0] instanceof XmlAnyTypeImpl){
             try {
-                rs[0] = CTTable.Factory.parse(rs[0].toString(), POIXMLDocumentPart.DEFAULT_XML_OPTIONS);
+                rs[0] = CTTable.Factory.parse(rs[0].toString(), DEFAULT_XML_OPTIONS);
             }catch (XmlException e){
                 throw new POIXMLException(e);
             }

@@ -16,6 +16,8 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
+import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
+
 import java.awt.Graphics2D;
 import java.io.IOException;
 
@@ -71,7 +73,7 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
         super(part, rel);
 
         SldDocument doc =
-            SldDocument.Factory.parse(getPackagePart().getInputStream(), POIXMLDocumentPart.DEFAULT_XML_OPTIONS);
+            SldDocument.Factory.parse(getPackagePart().getInputStream(), DEFAULT_XML_OPTIONS);
         _slide = doc.getSld();
         setCommonSlideData(_slide.getCSld());
     }

@@ -17,13 +17,14 @@
 
 package org.apache.poi.xslf.usermodel;
 
+import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
+
 import java.io.IOException;
 
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.util.Beta;
-import org.apache.poi.util.DocumentHelper;
 import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTCommentAuthor;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTCommentAuthorList;
@@ -54,7 +55,7 @@ public class XSLFCommentAuthors extends POIXMLDocumentPart {
         super(part, rel);
 
         CmAuthorLstDocument doc =
-           CmAuthorLstDocument.Factory.parse(getPackagePart().getInputStream(), POIXMLDocumentPart.DEFAULT_XML_OPTIONS);
+           CmAuthorLstDocument.Factory.parse(getPackagePart().getInputStream(), DEFAULT_XML_OPTIONS);
         _authors = doc.getCmAuthorLst();
     }
     

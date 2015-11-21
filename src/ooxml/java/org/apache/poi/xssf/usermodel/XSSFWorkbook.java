@@ -17,6 +17,7 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 import static org.apache.poi.xssf.usermodel.helpers.XSSFPaswordHelper.setPassword;
 import static org.apache.poi.xssf.usermodel.helpers.XSSFPaswordHelper.validatePassword;
 
@@ -80,7 +81,6 @@ import org.apache.poi.xssf.usermodel.helpers.XSSFFormulaUtils;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
-import org.openxmlformats.schemas.officeDocument.x2006.relationships.STRelationshipId;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBookView;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBookViews;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCalcPr;
@@ -333,7 +333,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     @SuppressWarnings("deprecation") //  getXYZArray() array accessors are deprecated
     protected void onDocumentRead() throws IOException {
         try {
-            WorkbookDocument doc = WorkbookDocument.Factory.parse(getPackagePart().getInputStream(), POIXMLDocumentPart.DEFAULT_XML_OPTIONS);
+            WorkbookDocument doc = WorkbookDocument.Factory.parse(getPackagePart().getInputStream(), DEFAULT_XML_OPTIONS);
             this.workbook = doc.getWorkbook();
 
             ThemesTable theme = null;
@@ -1670,9 +1670,6 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
 
         XmlOptions xmlOptions = new XmlOptions(DEFAULT_XML_OPTIONS);
         xmlOptions.setSaveSyntheticDocumentElement(new QName(CTWorkbook.type.getName().getNamespaceURI(), "workbook"));
-        Map<String, String> map = new HashMap<String, String>();
-        map.put(STRelationshipId.type.getName().getNamespaceURI(), "r");
-        xmlOptions.setSaveSuggestedPrefixes(map);
 
         PackagePart part = getPackagePart();
         OutputStream out = part.getOutputStream();

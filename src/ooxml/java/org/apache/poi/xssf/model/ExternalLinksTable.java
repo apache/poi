@@ -16,6 +16,8 @@
 ==================================================================== */
 package org.apache.poi.xssf.model;
 
+import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -28,7 +30,6 @@ import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.ss.usermodel.Name;
-import org.apache.poi.util.DocumentHelper;
 import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTExternalDefinedName;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTExternalLink;
@@ -55,7 +56,7 @@ public class ExternalLinksTable extends POIXMLDocumentPart {
 
     public void readFrom(InputStream is) throws IOException {
         try {
-            ExternalLinkDocument doc = ExternalLinkDocument.Factory.parse(is, POIXMLDocumentPart.DEFAULT_XML_OPTIONS);
+            ExternalLinkDocument doc = ExternalLinkDocument.Factory.parse(is, DEFAULT_XML_OPTIONS);
             link = doc.getExternalLink();
         } catch (XmlException e) {
             throw new IOException(e.getLocalizedMessage());

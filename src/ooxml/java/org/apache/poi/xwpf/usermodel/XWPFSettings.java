@@ -16,14 +16,14 @@
 ==================================================================== */
 package org.apache.poi.xwpf.usermodel;
 
+import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.xml.namespace.QName;
 
@@ -33,7 +33,6 @@ import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
-import org.apache.poi.util.DocumentHelper;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTDocProtect;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTOnOff;
@@ -383,9 +382,6 @@ public class XWPFSettings extends POIXMLDocumentPart {
 
         XmlOptions xmlOptions = new XmlOptions(DEFAULT_XML_OPTIONS);
         xmlOptions.setSaveSyntheticDocumentElement(new QName(CTSettings.type.getName().getNamespaceURI(), "settings"));
-        Map<String, String> map = new HashMap<String, String>();
-        map.put("http://schemas.openxmlformats.org/wordprocessingml/2006/main", "w");
-        xmlOptions.setSaveSuggestedPrefixes(map);
 
         PackagePart part = getPackagePart();
         OutputStream out = part.getOutputStream();
@@ -404,7 +400,7 @@ public class XWPFSettings extends POIXMLDocumentPart {
 
     private void readFrom(InputStream inputStream) {
         try {
-            ctSettings = SettingsDocument.Factory.parse(inputStream, POIXMLDocumentPart.DEFAULT_XML_OPTIONS).getSettings();
+            ctSettings = SettingsDocument.Factory.parse(inputStream, DEFAULT_XML_OPTIONS).getSettings();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

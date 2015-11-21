@@ -17,6 +17,7 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 import static org.apache.poi.xssf.usermodel.helpers.XSSFPaswordHelper.setPassword;
 import static org.apache.poi.xssf.usermodel.helpers.XSSFPaswordHelper.validatePassword;
 
@@ -76,7 +77,6 @@ import org.apache.poi.xssf.usermodel.helpers.ColumnHelper;
 import org.apache.poi.xssf.usermodel.helpers.XSSFRowShifter;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
-import org.openxmlformats.schemas.officeDocument.x2006.relationships.STRelationshipId;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTAutoFilter;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBreak;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCalcPr;
@@ -195,7 +195,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
 
     protected void read(InputStream is) throws IOException {
         try {
-            worksheet = WorksheetDocument.Factory.parse(is, POIXMLDocumentPart.DEFAULT_XML_OPTIONS).getWorksheet();
+            worksheet = WorksheetDocument.Factory.parse(is, DEFAULT_XML_OPTIONS).getWorksheet();
         } catch (XmlException e){
             throw new POIXMLException(e);
         }
@@ -3306,9 +3306,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
 
         XmlOptions xmlOptions = new XmlOptions(DEFAULT_XML_OPTIONS);
         xmlOptions.setSaveSyntheticDocumentElement(new QName(CTWorksheet.type.getName().getNamespaceURI(), "worksheet"));
-        Map<String, String> map = new HashMap<String, String>();
-        map.put(STRelationshipId.type.getName().getNamespaceURI(), "r");
-        xmlOptions.setSaveSuggestedPrefixes(map);
 
         worksheet.save(out, xmlOptions);
 

@@ -19,23 +19,23 @@
 
 package org.apache.poi.xslf.usermodel;
 
+import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
+
+import java.io.IOException;
+import java.io.OutputStream;
+
+import javax.xml.namespace.QName;
+
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.util.Beta;
-import org.apache.poi.util.DocumentHelper;
 import org.apache.poi.util.Internal;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTChartSpace;
 import org.openxmlformats.schemas.drawingml.x2006.chart.ChartSpaceDocument;
-
-import javax.xml.namespace.QName;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Represents a Chart in a .pptx presentation
@@ -66,7 +66,7 @@ public final class XSLFChart extends POIXMLDocumentPart {
 	protected XSLFChart(PackagePart part, PackageRelationship rel) throws IOException, XmlException {
 		super(part, rel);
 
-		chartSpace = ChartSpaceDocument.Factory.parse(part.getInputStream(), POIXMLDocumentPart.DEFAULT_XML_OPTIONS).getChartSpace(); 
+		chartSpace = ChartSpaceDocument.Factory.parse(part.getInputStream(), DEFAULT_XML_OPTIONS).getChartSpace(); 
 		chart = chartSpace.getChart();
 	}
 
@@ -93,13 +93,7 @@ public final class XSLFChart extends POIXMLDocumentPart {
 	@Override
 	protected void commit() throws IOException {
 		XmlOptions xmlOptions = new XmlOptions(DEFAULT_XML_OPTIONS);
-
 		xmlOptions.setSaveSyntheticDocumentElement(new QName(CTChartSpace.type.getName().getNamespaceURI(), "chartSpace", "c"));
-		Map<String, String> map = new HashMap<String, String>();
-		map.put("http://schemas.openxmlformats.org/drawingml/2006/main", "a");
-		map.put("http://schemas.openxmlformats.org/drawingml/2006/chart", "c");
-		map.put("http://schemas.openxmlformats.org/officeDocument/2006/relationships", "r");
-		xmlOptions.setSaveSuggestedPrefixes(map);
 
 		PackagePart part = getPackagePart();
 		OutputStream out = part.getOutputStream();

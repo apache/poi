@@ -17,13 +17,14 @@
 
 package org.apache.poi.util;
 
+import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Comparator;
 
 import javax.xml.namespace.QName;
 
-import org.apache.poi.POIXMLDocumentPart;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
@@ -50,7 +51,7 @@ public final class XmlSort
         File f = new File(args[0]);
         try
         {
-            XmlObject docInstance = XmlObject.Factory.parse(f, POIXMLDocumentPart.DEFAULT_XML_OPTIONS);
+            XmlObject docInstance = XmlObject.Factory.parse(f, DEFAULT_XML_OPTIONS);
             XmlObject element = null;
             if (args.length > 1)
             {

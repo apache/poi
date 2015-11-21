@@ -16,23 +16,27 @@
 ==================================================================== */
 package org.apache.poi.xssf.usermodel;
 
-import java.io.ByteArrayOutputStream;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.apache.poi.POIDataSamples;
 import org.apache.xmlbeans.XmlObject;
 
-import schemasMicrosoftComVml.*;
-import schemasMicrosoftComOfficeOffice.CTShapeLayout;
-import schemasMicrosoftComOfficeOffice.STConnectType;
-import schemasMicrosoftComOfficeOffice.STInsetMode;
-import schemasMicrosoftComOfficeExcel.CTClientData;
-import schemasMicrosoftComOfficeExcel.STObjectType;
+import com.microsoft.schemas.office.excel.CTClientData;
+import com.microsoft.schemas.office.excel.STObjectType;
+import com.microsoft.schemas.office.office.CTShapeLayout;
+import com.microsoft.schemas.office.office.STConnectType;
+import com.microsoft.schemas.office.office.STInsetMode;
+import com.microsoft.schemas.vml.CTShadow;
+import com.microsoft.schemas.vml.CTShape;
+import com.microsoft.schemas.vml.CTShapetype;
+import com.microsoft.schemas.vml.STExt;
+import com.microsoft.schemas.vml.STTrueFalse;
+
+import junit.framework.TestCase;
 
 /**
  * @author Yegor Kozlov

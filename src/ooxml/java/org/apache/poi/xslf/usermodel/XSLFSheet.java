@@ -16,6 +16,8 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
+import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
+
 import java.awt.Graphics2D;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,6 +27,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 import javax.xml.namespace.QName;
 
 import org.apache.poi.POIXMLDocumentPart;
@@ -39,8 +42,8 @@ import org.apache.poi.sl.draw.DrawFactory;
 import org.apache.poi.sl.draw.DrawPictureShape;
 import org.apache.poi.sl.draw.Drawable;
 import org.apache.poi.sl.usermodel.PictureData;
-import org.apache.poi.sl.usermodel.SimpleShape.Placeholder;
 import org.apache.poi.sl.usermodel.Sheet;
+import org.apache.poi.sl.usermodel.SimpleShape.Placeholder;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
@@ -312,12 +315,6 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
 
     protected final void commit() throws IOException {
         XmlOptions xmlOptions = new XmlOptions(DEFAULT_XML_OPTIONS);
-
-        Map<String, String> map = new HashMap<String, String>();
-        map.put(STRelationshipId.type.getName().getNamespaceURI(), "r");
-        map.put("http://schemas.openxmlformats.org/drawingml/2006/main", "a");
-        map.put("http://schemas.openxmlformats.org/presentationml/2006/main", "p");
-        xmlOptions.setSaveSuggestedPrefixes(map);
         String docName = getRootElementName();
         if(docName != null) {
             xmlOptions.setSaveSyntheticDocumentElement(

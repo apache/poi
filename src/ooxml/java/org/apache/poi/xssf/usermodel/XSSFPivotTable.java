@@ -16,6 +16,8 @@
 ==================================================================== */
 package org.apache.poi.xssf.usermodel;
 
+import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
