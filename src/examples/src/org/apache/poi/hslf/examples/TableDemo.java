@@ -78,7 +78,7 @@ public final class TableDemo {
         table1.setColumnWidth(1, 150);
 
         int pgWidth = ppt.getPageSize().width;
-        table1.moveTo((pgWidth - table1.getAnchor().width)/2, 100);
+        table1.moveTo((pgWidth - table1.getAnchor().getWidth())/2., 100.);
 
         //test data for the second taable
         String[][] txt2 = {
@@ -125,5 +125,6 @@ public final class TableDemo {
         ppt.write(out);
         out.close();
 
+        ppt.close();
     }
 }

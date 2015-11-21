@@ -22,6 +22,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
@@ -183,8 +184,8 @@ public final class ApacheconEU08 {
         table1.setRowHeight(1, 80);
 
         Dimension dim = ppt.getPageSize();
-        Rectangle oldAnchor = table1.getAnchor();
-        table1.setAnchor(new Rectangle((dim.width-450)/2, 100, oldAnchor.width, oldAnchor.height));
+        Rectangle2D oldAnchor = table1.getAnchor();
+        table1.setAnchor(new Rectangle2D.Double((dim.width-450)/2, 100, oldAnchor.getWidth(), oldAnchor.getHeight()));
 
         TextBox<?,?> box1 = slide.createTextBox();
         box1.setHorizontalCentered(true);

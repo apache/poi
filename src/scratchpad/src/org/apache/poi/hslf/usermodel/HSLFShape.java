@@ -19,7 +19,7 @@ package org.apache.poi.hslf.usermodel;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
 import java.util.Iterator;
 
 import org.apache.poi.ddf.AbstractEscherOptRecord;
@@ -133,7 +133,7 @@ public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
      *
      * @return the anchor of this shape
      */
-    public Rectangle getAnchor() {
+    public Rectangle2D getAnchor() {
         EscherSpRecord spRecord = getEscherChild(EscherSpRecord.RECORD_ID);
         int flags = spRecord.getFlags();
         int x1,y1,x2,y2;
@@ -156,11 +156,11 @@ public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
         }
 
         // TODO: find out where this -1 value comes from at #57820 (link to ms docs?)
-        Rectangle anchor = new Rectangle(
-            (int)(x1 == -1 ? -1 : Units.masterToPoints(x1)),
-            (int)(y1 == -1 ? -1 : Units.masterToPoints(y1)),
-            (int)(x2 == -1 ? -1 : Units.masterToPoints(x2-x1)),
-            (int)(y2 == -1 ? -1 : Units.masterToPoints(y2-y1))
+        Rectangle2D anchor = new Rectangle2D.Double(
+            (x1 == -1 ? -1 : Units.masterToPoints(x1)),
+            (y1 == -1 ? -1 : Units.masterToPoints(y1)),
+            (x2 == -1 ? -1 : Units.masterToPoints(x2-x1)),
+            (y2 == -1 ? -1 : Units.masterToPoints(y2-y1))
         );
         
         return anchor;
@@ -172,7 +172,7 @@ public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
      *
      * @param anchor new anchor
      */
-    public void setAnchor(Rectangle anchor){
+    public void setAnchor(Rectangle2D anchor){
         int x = Units.pointsToMaster(anchor.getX());
         int y = Units.pointsToMaster(anchor.getY());
         int w = Units.pointsToMaster(anchor.getWidth() + anchor.getX());
@@ -201,10 +201,10 @@ public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
      * @param x the x coordinate of the top left corner of the shape
      * @param y the y coordinate of the top left corner of the shape
      */
-    public final void moveTo(float x, float y) {
+    public final void moveTo(double x, double y) {
         // This convenience method should be implemented via setAnchor in subclasses
         // see HSLFGroupShape.setAnchor() for a reference
-        Rectangle anchor = getAnchor();
+        Rectangle2D anchor = getAnchor();
         anchor.setRect(x, y, anchor.getWidth(), anchor.getHeight());
         setAnchor(anchor);
     }

@@ -18,7 +18,7 @@
 package org.apache.poi.hslf.usermodel;
 
 import java.awt.Insets;
-import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
 import java.util.List;
 
 import org.apache.poi.ddf.AbstractEscherOptRecord;
@@ -113,6 +113,7 @@ public class HSLFPictureShape extends HSLFSimpleShape implements PictureShape<HS
         return _escherContainer;
     }
 
+    @SuppressWarnings("resource")
     @Override
     public HSLFPictureData getPictureData(){
         HSLFSlideShow ppt = getSheet().getSlideShow();
@@ -132,6 +133,7 @@ public class HSLFPictureShape extends HSLFSimpleShape implements PictureShape<HS
         return null;
     }
 
+    @SuppressWarnings("resource")
     protected EscherBSERecord getEscherBSERecord(){
         HSLFSlideShow ppt = getSheet().getSlideShow();
         Document doc = ppt.getDocumentRecord();
@@ -184,7 +186,7 @@ public class HSLFPictureShape extends HSLFSimpleShape implements PictureShape<HS
         EscherBSERecord bse = getEscherBSERecord();
         bse.setRef(bse.getRef() + 1);
 
-        Rectangle anchor = getAnchor();
+        Rectangle2D anchor = getAnchor();
         if (anchor.isEmpty()){
             new DrawPictureShape(this).resize();
         }

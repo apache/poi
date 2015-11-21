@@ -21,7 +21,7 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.awt.Dimension;
-import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
 
 import org.junit.Test;
 
@@ -40,11 +40,11 @@ public class TestXSLFGroupShape {
         XSLFGroupShape group = slide.createGroup();
         assertEquals(1, slide.getShapes().size());
 
-        Rectangle interior = new Rectangle(-10, -10, 20, 20);
+        Rectangle2D interior = new Rectangle2D.Double(-10, -10, 20, 20);
         group.setInteriorAnchor(interior);
         assertEquals(interior, group.getInteriorAnchor());
 
-        Rectangle anchor = new Rectangle(0, 0, 792, 612);
+        Rectangle2D anchor = new Rectangle2D.Double(0, 0, 792, 612);
         group.setAnchor(anchor);
         assertEquals(anchor, group.getAnchor());
 

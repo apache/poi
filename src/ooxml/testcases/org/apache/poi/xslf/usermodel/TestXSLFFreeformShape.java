@@ -16,11 +16,11 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
-import java.awt.Rectangle;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
+import java.awt.geom.Rectangle2D;
 
 import org.junit.Test;
 
@@ -35,7 +35,7 @@ public class TestXSLFFreeformShape {
         XSLFSlide slide = ppt.createSlide();
         XSLFFreeformShape shape1 = slide.createFreeform();
         // comples path consisting of a rectangle and an ellipse inside it
-        GeneralPath path1 = new GeneralPath(new Rectangle(150, 150, 300, 300));
+        GeneralPath path1 = new GeneralPath(new Rectangle2D.Double(150, 150, 300, 300));
         path1.append(new Ellipse2D.Double(200, 200, 100, 50), false);
         shape1.setPath(path1);
 

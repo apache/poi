@@ -19,7 +19,6 @@
 
 package org.apache.poi.xslf.usermodel;
 
-import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.PathIterator;
@@ -61,7 +60,7 @@ public class XSLFFreeformShape extends XSLFAutoShape
     public int setPath(GeneralPath path) {
         CTPath2D ctPath = CTPath2D.Factory.newInstance();
 
-        Rectangle bounds = path.getBounds();
+        Rectangle2D bounds = path.getBounds2D();
         int x0 = Units.toEMU(bounds.getX());
         int y0 = Units.toEMU(bounds.getY());
         PathIterator it = path.getPathIterator(new AffineTransform());

@@ -17,7 +17,7 @@
 
 package org.apache.poi.hslf.usermodel;
 
-import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -73,7 +73,7 @@ implements HSLFShapeContainer, GroupShape<HSLFShape,HSLFTextParagraph> {
     }
 
     @Override
-    public void setAnchor(Rectangle anchor) {
+    public void setAnchor(Rectangle2D anchor) {
         EscherClientAnchorRecord clientAnchor = getEscherChild(EscherClientAnchorRecord.RECORD_ID);
         boolean isInitialized = !(clientAnchor.getDx1() == 0 && clientAnchor.getRow1() == 0);
         
@@ -85,7 +85,7 @@ implements HSLFShapeContainer, GroupShape<HSLFShape,HSLFTextParagraph> {
     }
 
     @Override
-    public void setInteriorAnchor(Rectangle anchor){
+    public void setInteriorAnchor(Rectangle2D anchor){
         EscherSpgrRecord spgr = getEscherChild(EscherSpgrRecord.RECORD_ID);
 
         int x1 = Units.pointsToMaster(anchor.getX());
@@ -100,16 +100,16 @@ implements HSLFShapeContainer, GroupShape<HSLFShape,HSLFTextParagraph> {
     }
 
     @Override
-    public Rectangle getInteriorAnchor(){
+    public Rectangle2D getInteriorAnchor(){
         EscherSpgrRecord rec = getEscherChild(EscherSpgrRecord.RECORD_ID);
-        int x1 = (int)Units.masterToPoints(rec.getRectX1());
-        int y1 = (int)Units.masterToPoints(rec.getRectY1());
-        int x2 = (int)Units.masterToPoints(rec.getRectX2());
-        int y2 = (int)Units.masterToPoints(rec.getRectY2());
-        return new Rectangle(x1,y1,x2-x1,y2-y1);
+        double x1 = Units.masterToPoints(rec.getRectX1());
+        double y1 = Units.masterToPoints(rec.getRectY1());
+        double x2 = Units.masterToPoints(rec.getRectX2());
+        double y2 = Units.masterToPoints(rec.getRectY2());
+        return new Rectangle2D.Double(x1,y1,x2-x1,y2-y1);
     }
 
-    protected void setExteriorAnchor(Rectangle anchor) {
+    protected void setExteriorAnchor(Rectangle2D anchor) {
         EscherClientAnchorRecord clientAnchor = getEscherChild(EscherClientAnchorRecord.RECORD_ID);
         
         //hack. internal variable EscherClientAnchorRecord.shortRecord can be
@@ -121,10 +121,10 @@ implements HSLFShapeContainer, GroupShape<HSLFShape,HSLFTextParagraph> {
         clientAnchor.fillFields(header, 0, null);
 
         // All coordinates need to be converted to Master units (576 dpi)
-        clientAnchor.setFlag((short)Units.pointsToMaster(anchor.y));
-        clientAnchor.setCol1((short)Units.pointsToMaster(anchor.x));
-        clientAnchor.setDx1((short)Units.pointsToMaster(anchor.width + anchor.x));
-        clientAnchor.setRow1((short)Units.pointsToMaster(anchor.height + anchor.y));
+        clientAnchor.setFlag((short)Units.pointsToMaster(anchor.getY()));
+        clientAnchor.setCol1((short)Units.pointsToMaster(anchor.getX()));
+        clientAnchor.setDx1((short)Units.pointsToMaster(anchor.getWidth() + anchor.getX()));
+        clientAnchor.setRow1((short)Units.pointsToMaster(anchor.getHeight() + anchor.getY()));
 
         // TODO: does this make sense?
         setInteriorAnchor(anchor);
@@ -177,20 +177,20 @@ implements HSLFShapeContainer, GroupShape<HSLFShape,HSLFTextParagraph> {
     /**
      * Moves and scales this <code>ShapeGroup</code> to the specified anchor.
      */
-    protected void moveAndScale(Rectangle anchorDest){
-        Rectangle anchorSrc = getAnchor();
-        double scaleX = (anchorSrc.width == 0) ? 0 : anchorDest.width / (double)anchorSrc.width;
-        double scaleY = (anchorSrc.height == 0) ? 0 : anchorDest.height / (double)anchorSrc.height;
+    protected void moveAndScale(Rectangle2D anchorDest){
+        Rectangle2D anchorSrc = getAnchor();
+        double scaleX = (anchorSrc.getWidth() == 0) ? 0 : anchorDest.getWidth() / anchorSrc.getWidth();
+        double scaleY = (anchorSrc.getHeight() == 0) ? 0 : anchorDest.getHeight() / anchorSrc.getHeight();
 
         setExteriorAnchor(anchorDest);
         
         for (HSLFShape shape : getShapes()) {
-            Rectangle chanchor = shape.getAnchor();
-            int x = (int)Math.rint(anchorDest.x+(chanchor.x-anchorSrc.x)*scaleX);
-            int y = (int)Math.rint(anchorDest.y+(chanchor.y-anchorSrc.y)*scaleY);
-            int width = (int)Math.rint(chanchor.width*scaleX);
-            int height = (int)Math.rint(chanchor.height*scaleY);
-            shape.setAnchor(new Rectangle(x, y, width, height));
+            Rectangle2D chanchor = shape.getAnchor();
+            double x = anchorDest.getX()+(chanchor.getX()-anchorSrc.getX())*scaleX;
+            double y = anchorDest.getY()+(chanchor.getY()-anchorSrc.getY())*scaleY;
+            double width = chanchor.getWidth()*scaleX;
+            double height = chanchor.getHeight()*scaleY;
+            shape.setAnchor(new Rectangle2D.Double(x, y, width, height));
         }
     }
 
@@ -200,7 +200,7 @@ implements HSLFShapeContainer, GroupShape<HSLFShape,HSLFTextParagraph> {
      *
      * @return the anchor of this shape group
      */
-    public Rectangle getAnchor(){
+    public Rectangle2D getAnchor(){
         EscherClientAnchorRecord clientAnchor = getEscherChild(EscherClientAnchorRecord.RECORD_ID);
         int x1,y1,x2,y2;
         if(clientAnchor == null){
@@ -216,11 +216,11 @@ implements HSLFShapeContainer, GroupShape<HSLFShape,HSLFTextParagraph> {
             x2 = clientAnchor.getDx1();
             y2 = clientAnchor.getRow1();
         }
-        Rectangle anchor= new Rectangle(
-            (int)(x1 == -1 ? -1 : Units.masterToPoints(x1)),
-            (int)(y1 == -1 ? -1 : Units.masterToPoints(y1)),
-            (int)(x2 == -1 ? -1 : Units.masterToPoints(x2-x1)),
-            (int)(y2 == -1 ? -1 : Units.masterToPoints(y2-y1))
+        Rectangle2D anchor= new Rectangle2D.Double(
+            (x1 == -1 ? -1 : Units.masterToPoints(x1)),
+            (y1 == -1 ? -1 : Units.masterToPoints(y1)),
+            (x2 == -1 ? -1 : Units.masterToPoints(x2-x1)),
+            (y2 == -1 ? -1 : Units.masterToPoints(y2-y1))
         );
 
         return anchor;
@@ -295,7 +295,7 @@ implements HSLFShapeContainer, GroupShape<HSLFShape,HSLFTextParagraph> {
     public HSLFTextBox createTextBox() {
         HSLFTextBox s = new HSLFTextBox(this);
         s.setHorizontalCentered(true);
-        s.setAnchor(new Rectangle(0, 0, 100, 100));
+        s.setAnchor(new Rectangle2D.Double(0, 0, 100, 100));
         addShape(s);
         return s;
     }
@@ -304,7 +304,7 @@ implements HSLFShapeContainer, GroupShape<HSLFShape,HSLFTextParagraph> {
     public HSLFAutoShape createAutoShape() {
         HSLFAutoShape s = new HSLFAutoShape(ShapeType.RECT, this);
         s.setHorizontalCentered(true);
-        s.setAnchor(new Rectangle(0, 0, 100, 100));
+        s.setAnchor(new Rectangle2D.Double(0, 0, 100, 100));
         addShape(s);
         return s;
     }
@@ -313,7 +313,7 @@ implements HSLFShapeContainer, GroupShape<HSLFShape,HSLFTextParagraph> {
     public HSLFFreeformShape createFreeform() {
         HSLFFreeformShape s = new HSLFFreeformShape(this);
         s.setHorizontalCentered(true);
-        s.setAnchor(new Rectangle(0, 0, 100, 100));
+        s.setAnchor(new Rectangle2D.Double(0, 0, 100, 100));
         addShape(s);
         return s;
     }
@@ -321,7 +321,7 @@ implements HSLFShapeContainer, GroupShape<HSLFShape,HSLFTextParagraph> {
     @Override
     public HSLFConnectorShape createConnector() {
         HSLFConnectorShape s = new HSLFConnectorShape(this);
-        s.setAnchor(new Rectangle(0, 0, 100, 100));
+        s.setAnchor(new Rectangle2D.Double(0, 0, 100, 100));
         addShape(s);
         return s;
     }
@@ -329,7 +329,7 @@ implements HSLFShapeContainer, GroupShape<HSLFShape,HSLFTextParagraph> {
     @Override
     public HSLFGroupShape createGroup() {
         HSLFGroupShape s = new HSLFGroupShape(this);
-        s.setAnchor(new Rectangle(0, 0, 100, 100));
+        s.setAnchor(new Rectangle2D.Double(0, 0, 100, 100));
         addShape(s);
         return s;
     }
@@ -340,7 +340,7 @@ implements HSLFShapeContainer, GroupShape<HSLFShape,HSLFTextParagraph> {
             throw new IllegalArgumentException("pictureData needs to be of type HSLFPictureData");
         }
         HSLFPictureShape s = new HSLFPictureShape((HSLFPictureData)pictureData, this);
-        s.setAnchor(new Rectangle(0, 0, 100, 100));
+        s.setAnchor(new Rectangle2D.Double(0, 0, 100, 100));
         addShape(s);
         return s;
     }
@@ -351,7 +351,7 @@ implements HSLFShapeContainer, GroupShape<HSLFShape,HSLFTextParagraph> {
             throw new IllegalArgumentException("numRows and numCols must be greater than 0");
         }
         HSLFTable s = new HSLFTable(numRows,numCols,this);
-        s.setAnchor(new Rectangle(0, 0, 100, 100));
+        s.setAnchor(new Rectangle2D.Double(0, 0, 100, 100));
         addShape(s);
         return s;
     }

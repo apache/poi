@@ -17,7 +17,7 @@
 
 package org.apache.poi.hslf.usermodel;
 
-import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -76,13 +76,13 @@ implements HSLFShapeContainer, TableShape<HSLFShape,HSLFTextParagraph> {
         if(numRows < 1) throw new IllegalArgumentException("The number of rows must be greater than 1");
         if(numCols < 1) throw new IllegalArgumentException("The number of columns must be greater than 1");
 
-        int x=0, y=0, tblWidth=0, tblHeight=0;
+        double x=0, y=0, tblWidth=0, tblHeight=0;
         cells = new HSLFTableCell[numRows][numCols];
         for (int i = 0; i < cells.length; i++) {
             x = 0;
             for (int j = 0; j < cells[i].length; j++) {
                 cells[i][j] = new HSLFTableCell(this);
-                Rectangle anchor = new Rectangle(x, y, HSLFTableCell.DEFAULT_WIDTH, HSLFTableCell.DEFAULT_HEIGHT);
+                Rectangle2D anchor = new Rectangle2D.Double(x, y, HSLFTableCell.DEFAULT_WIDTH, HSLFTableCell.DEFAULT_HEIGHT);
                 cells[i][j].setAnchor(anchor);
                 x += HSLFTableCell.DEFAULT_WIDTH;
             }
@@ -90,7 +90,7 @@ implements HSLFShapeContainer, TableShape<HSLFShape,HSLFTextParagraph> {
         }
         tblWidth = x;
         tblHeight = y;
-        setExteriorAnchor(new Rectangle(0, 0, tblWidth, tblHeight));
+        setExteriorAnchor(new Rectangle2D.Double(0, 0, tblWidth, tblHeight));
 
         EscherContainerRecord spCont = (EscherContainerRecord) getSpContainer().getChild(0);
         AbstractEscherOptRecord opt = new EscherOptRecord();
@@ -159,13 +159,18 @@ implements HSLFShapeContainer, TableShape<HSLFShape,HSLFTextParagraph> {
 
     private static class TableCellComparator implements Comparator<HSLFShape> {
         public int compare( HSLFShape o1, HSLFShape o2 ) {
-            Rectangle anchor1 = o1.getAnchor();
-            Rectangle anchor2 = o2.getAnchor();
-            int delta = anchor1.y - anchor2.y;
-            if (delta == 0) delta = anchor1.x - anchor2.x;
+            Rectangle2D anchor1 = o1.getAnchor();
+            Rectangle2D anchor2 = o2.getAnchor();
+            double delta = anchor1.getY() - anchor2.getY();
+            if (delta == 0) {
+                delta = anchor1.getX() - anchor2.getX();
+            }
             // descending size
-            if (delta == 0) delta = (anchor2.width*anchor2.height)-(anchor1.width*anchor1.height);
-            return delta;
+            if (delta == 0) {
+                delta = (anchor2.getWidth()*anchor2.getHeight())-(anchor1.getWidth()*anchor1.getHeight());
+            }
+            
+            return (int)Math.signum(delta);
         }
     }
 
@@ -176,7 +181,7 @@ implements HSLFShapeContainer, TableShape<HSLFShape,HSLFTextParagraph> {
                 htc.add((HSLFTableCell)h);
             }
         }
-        
+
         if (htc.isEmpty()) {
             throw new IllegalStateException("HSLFTable without HSLFTableCells");
         }
@@ -186,12 +191,12 @@ implements HSLFShapeContainer, TableShape<HSLFShape,HSLFTextParagraph> {
         List<HSLFTableCell[]> lst = new ArrayList<HSLFTableCell[]>();
         List<HSLFTableCell> row = new ArrayList<HSLFTableCell>();
 
-        int y0 = htc.get(0).getAnchor().y;
+        double y0 = htc.get(0).getAnchor().getY();
         for (HSLFTableCell sh : htc) {
-            Rectangle anchor = sh.getAnchor();
-            boolean isNextRow = (anchor.y > y0);
+            Rectangle2D anchor = sh.getAnchor();
+            boolean isNextRow = (anchor.getY() > y0);
             if (isNextRow) {
-                y0 = anchor.y;
+                y0 = anchor.getY();
                 lst.add(row.toArray(new HSLFTableCell[row.size()]));
                 row.clear();
             }
@@ -207,7 +212,7 @@ implements HSLFShapeContainer, TableShape<HSLFShape,HSLFTextParagraph> {
         final double lx1, lx2, ly1, ly2;
         LineRect(HSLFLine l) {
             this.l = l;
-            Rectangle r = l.getAnchor();
+            Rectangle2D r = l.getAnchor();
             lx1 = r.getMinX();
             lx2 = r.getMaxX();
             ly1 = r.getMinY();
@@ -240,7 +245,7 @@ implements HSLFShapeContainer, TableShape<HSLFShape,HSLFTextParagraph> {
         // TODO: this only works for non-rotated tables
         for (HSLFTableCell[] tca : cells) {
             for (HSLFTableCell tc : tca) {
-                final Rectangle cellAnchor = tc.getAnchor();
+                final Rectangle2D cellAnchor = tc.getAnchor();
 
                 /**
                  * x1/y1 --------+
@@ -322,26 +327,50 @@ implements HSLFShapeContainer, TableShape<HSLFShape,HSLFTextParagraph> {
     }
 
     @Override
+    public double getRowHeight(int row) {
+        if (row < 0 || row >= cells.length) {
+            throw new IllegalArgumentException("Row index '"+row+"' is not within range [0-"+(cells.length-1)+"]");
+        }
+        
+        return cells[row][0].getAnchor().getHeight();
+    }
+    
+    @Override
     public void setRowHeight(int row, double height) {
+        if (row < 0 || row >= cells.length) {
+            throw new IllegalArgumentException("Row index '"+row+"' is not within range [0-"+(cells.length-1)+"]");
+        }
+
         int pxHeight = Units.pointsToPixel(height);
-        int currentHeight = cells[row][0].getAnchor().height;
-        int dy = pxHeight - currentHeight;
+        double currentHeight = cells[row][0].getAnchor().getHeight();
+        double dy = pxHeight - currentHeight;
 
         for (int i = row; i < cells.length; i++) {
             for (int j = 0; j < cells[i].length; j++) {
-                Rectangle anchor = cells[i][j].getAnchor();
+                Rectangle2D anchor = cells[i][j].getAnchor();
                 if(i == row) {
-                    anchor.height = pxHeight;
+                    anchor.setRect(anchor.getX(), anchor.getY(), anchor.getWidth(), pxHeight);
                 } else {
-                    anchor.y += dy;
+                    anchor.setRect(anchor.getX(), anchor.getY()+dy, anchor.getWidth(), pxHeight);
                 }
                 cells[i][j].setAnchor(anchor);
             }
         }
-        Rectangle tblanchor = getAnchor();
-        tblanchor.height += dy;
+        Rectangle2D tblanchor = getAnchor();
+        tblanchor.setRect(tblanchor.getX(), tblanchor.getY(), tblanchor.getWidth(), tblanchor.getHeight() + dy);
         setExteriorAnchor(tblanchor);
 
+    }
+
+    @Override
+    public double getColumnWidth(int col) {
+        if (col < 0 || col >= cells[0].length) {
+            throw new IllegalArgumentException("Column index '"+col+"' is not within range [0-"+(cells[0].length-1)+"]");
+        }
+        
+        // TODO: check for merged cols
+        double width = cells[0][col].getAnchor().getWidth();
+        return width;
     }
 
     @Override
@@ -352,20 +381,20 @@ implements HSLFShapeContainer, TableShape<HSLFShape,HSLFTextParagraph> {
         double currentWidth = cells[0][col].getAnchor().getWidth();
         double dx = width - currentWidth;
         for (HSLFTableCell cols[] : cells) {
-            Rectangle anchor = cols[col].getAnchor();
-            anchor.width = (int)Math.rint(width);
+            Rectangle2D anchor = cols[col].getAnchor();
+            anchor.setRect(anchor.getX(), anchor.getY(), width, anchor.getHeight());
             cols[col].setAnchor(anchor);
 
             if (col < cols.length - 1) {
                 for (int j = col+1; j < cols.length; j++) {
                     anchor = cols[j].getAnchor();
-                    anchor.x += dx;
+                    anchor.setRect(anchor.getX()+dx, anchor.getY(), anchor.getWidth(), anchor.getHeight());
                     cols[j].setAnchor(anchor);
                 }
             }
         }
-        Rectangle tblanchor = getAnchor();
-        tblanchor.width += dx;
+        Rectangle2D tblanchor = getAnchor();
+        tblanchor.setRect(tblanchor.getX(), tblanchor.getY(), tblanchor.getWidth() + dx, tblanchor.getHeight());
         setExteriorAnchor(tblanchor);
     }
 
@@ -393,7 +422,7 @@ implements HSLFShapeContainer, TableShape<HSLFShape,HSLFTextParagraph> {
     }
 
     @Override
-    protected void moveAndScale(Rectangle anchorDest){
+    protected void moveAndScale(Rectangle2D anchorDest){
         super.moveAndScale(anchorDest);
         updateRowHeightsProperty();
     }
@@ -403,7 +432,7 @@ implements HSLFShapeContainer, TableShape<HSLFShape,HSLFTextParagraph> {
         EscherArrayProperty p = opt.lookup(EscherProperties.GROUPSHAPE__TABLEROWPROPERTIES);
         byte[] val = new byte[4];
         for (int rowIdx = 0; rowIdx < cells.length; rowIdx++) {
-            int rowHeight = Units.pointsToMaster(cells[rowIdx][0].getAnchor().height);
+            int rowHeight = Units.pointsToMaster(cells[rowIdx][0].getAnchor().getHeight());
             LittleEndian.putInt(val, 0, rowHeight);
             p.setElement(rowIdx, val);
         }

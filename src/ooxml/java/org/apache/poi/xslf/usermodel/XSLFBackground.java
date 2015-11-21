@@ -19,7 +19,7 @@ package org.apache.poi.xslf.usermodel;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
 
 import org.apache.poi.sl.draw.DrawPaint;
 import org.apache.poi.sl.usermodel.Background;
@@ -43,9 +43,9 @@ public class XSLFBackground extends XSLFSimpleShape
     }
 
     @Override
-    public Rectangle getAnchor(){
+    public Rectangle2D getAnchor(){
         Dimension pg = getSheet().getSlideShow().getPageSize();
-        return new Rectangle(0, 0, (int)pg.getWidth(), (int)pg.getHeight());
+        return new Rectangle2D.Double(0, 0, pg.getWidth(), pg.getHeight());
     }
 
     @Override

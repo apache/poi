@@ -18,7 +18,7 @@
 package org.apache.poi.hslf.usermodel;
 
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -402,7 +402,7 @@ public abstract class HSLFSheet implements HSLFShapeContainer, Sheet<HSLFShape,H
     public HSLFTextBox createTextBox() {
         HSLFTextBox s = new HSLFTextBox();
         s.setHorizontalCentered(true);
-        s.setAnchor(new Rectangle(0, 0, 100, 100));
+        s.setAnchor(new Rectangle2D.Double(0, 0, 100, 100));
         addShape(s);
         return s;
     }
@@ -411,7 +411,7 @@ public abstract class HSLFSheet implements HSLFShapeContainer, Sheet<HSLFShape,H
     public HSLFAutoShape createAutoShape() {
         HSLFAutoShape s = new HSLFAutoShape(ShapeType.RECT);
         s.setHorizontalCentered(true);
-        s.setAnchor(new Rectangle(0, 0, 100, 100));
+        s.setAnchor(new Rectangle2D.Double(0, 0, 100, 100));
         addShape(s);
         return s;
     }
@@ -420,7 +420,7 @@ public abstract class HSLFSheet implements HSLFShapeContainer, Sheet<HSLFShape,H
     public HSLFFreeformShape createFreeform() {
         HSLFFreeformShape s = new HSLFFreeformShape();
         s.setHorizontalCentered(true);
-        s.setAnchor(new Rectangle(0, 0, 100, 100));
+        s.setAnchor(new Rectangle2D.Double(0, 0, 100, 100));
         addShape(s);
         return s;
     }
@@ -428,7 +428,7 @@ public abstract class HSLFSheet implements HSLFShapeContainer, Sheet<HSLFShape,H
     @Override
     public HSLFConnectorShape createConnector() {
         HSLFConnectorShape s = new HSLFConnectorShape();
-        s.setAnchor(new Rectangle(0, 0, 100, 100));
+        s.setAnchor(new Rectangle2D.Double(0, 0, 100, 100));
         addShape(s);
         return s;
     }
@@ -436,7 +436,7 @@ public abstract class HSLFSheet implements HSLFShapeContainer, Sheet<HSLFShape,H
     @Override
     public HSLFGroupShape createGroup() {
         HSLFGroupShape s = new HSLFGroupShape();
-        s.setAnchor(new Rectangle(0, 0, 100, 100));
+        s.setAnchor(new Rectangle2D.Double(0, 0, 100, 100));
         addShape(s);
         return s;
     }
@@ -447,7 +447,7 @@ public abstract class HSLFSheet implements HSLFShapeContainer, Sheet<HSLFShape,H
             throw new IllegalArgumentException("pictureData needs to be of type HSLFPictureData");
         }
         HSLFPictureShape s = new HSLFPictureShape((HSLFPictureData)pictureData);
-        s.setAnchor(new Rectangle(0, 0, 100, 100));
+        s.setAnchor(new Rectangle2D.Double(0, 0, 100, 100));
         addShape(s);
         return s;
     }

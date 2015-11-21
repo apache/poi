@@ -20,7 +20,6 @@ package org.apache.poi.sl.draw;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Insets;
-import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 
@@ -70,12 +69,12 @@ public class DrawPictureShape extends DrawSimpleShape {
         PictureShape<?,?> ps = getShape();
         Dimension dim = ps.getPictureData().getImageDimension();
 
-        Rectangle origRect = ps.getAnchor();
-        int x = (int)origRect.getX();
-        int y = (int)origRect.getY();
-        int w = (int)dim.getWidth();
-        int h = (int)dim.getHeight();
-        ps.setAnchor(new Rectangle(x, y, w, h));
+        Rectangle2D origRect = ps.getAnchor();
+        double x = origRect.getX();
+        double y = origRect.getY();
+        double w = dim.getWidth();
+        double h = dim.getHeight();
+        ps.setAnchor(new Rectangle2D.Double(x, y, w, h));
     }
 
 
@@ -85,7 +84,7 @@ public class DrawPictureShape extends DrawSimpleShape {
      *
      * @param target    The target rectangle
      */
-    public void resize(Rectangle target) {
+    public void resize(Rectangle2D target) {
         resize(target, RectAlign.CENTER);
     }
 
@@ -100,7 +99,7 @@ public class DrawPictureShape extends DrawSimpleShape {
      *            The alignment within the target rectangle when resizing.
      *            A null value corresponds to RectAlign.CENTER
      */
-    public void resize(Rectangle target, RectAlign align) {
+    public void resize(Rectangle2D target, RectAlign align) {
         PictureShape<?,?> ps = getShape();
         Dimension dim = ps.getPictureData().getImageDimension();
         if (dim.width <= 0 || dim.height <= 0) {
@@ -170,6 +169,6 @@ public class DrawPictureShape extends DrawSimpleShape {
                 break;
         }
 
-        ps.setAnchor(new Rectangle((int)x, (int)y, (int)w, (int)h));
+        ps.setAnchor(new Rectangle2D.Double(x, y, w, h));
     }
 }

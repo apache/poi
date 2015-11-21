@@ -20,7 +20,6 @@ package org.apache.poi.hslf.usermodel;
 import static org.apache.poi.hslf.record.RecordTypes.OEPlaceholderAtom;
 import static org.apache.poi.hslf.record.RecordTypes.RoundTripHFPlaceholder12;
 
-import java.awt.Rectangle;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
@@ -209,7 +208,11 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
             } catch (IOException e){
                 throw new HSLFException(e);
             }
-            if(getAnchor().equals(new Rectangle()) && !"".equals(getText())) resizeToFitText();
+            boolean isInitialAnchor = getAnchor().equals(new Rectangle2D.Double());
+            boolean isFilledTxt = !"".equals(getText());
+            if (isInitialAnchor && isFilledTxt) {
+                resizeToFitText();
+            }
         }
         for (HSLFTextParagraph htp : _paragraphs) {
             htp.setShapeId(getShapeId());
@@ -250,10 +253,10 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
      * @return a <code>Rectangle2D</code> that is the bounds of this shape.
      */
     public Rectangle2D resizeToFitText(){
-        Rectangle anchor = getAnchor();
+        Rectangle2D anchor = getAnchor();
         if(anchor.getWidth() == 0.) {
             logger.log(POILogger.WARN, "Width of shape wasn't set. Defaulting to 200px");
-            anchor.setSize(200, (int)anchor.getHeight());
+            anchor.setRect(anchor.getX(), anchor.getY(), 200., anchor.getHeight());
             setAnchor(anchor);
         }
         double height = getTextHeight();
