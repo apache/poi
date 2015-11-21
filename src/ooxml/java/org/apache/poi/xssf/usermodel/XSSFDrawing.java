@@ -17,12 +17,12 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.xml.namespace.QName;
 
@@ -41,8 +41,16 @@ import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
-import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.*;
-import org.openxmlformats.schemas.officeDocument.x2006.relationships.STRelationshipId;
+import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTConnector;
+import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTDrawing;
+import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTGraphicalObjectFrame;
+import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTGroupShape;
+import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTMarker;
+import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTOneCellAnchor;
+import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTPicture;
+import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTShape;
+import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTTwoCellAnchor;
+import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.STEditAs;
 
 /**
  * Represents a SpreadsheetML drawing
@@ -117,10 +125,6 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing {
         xmlOptions.setSaveSyntheticDocumentElement(
                 new QName(CTDrawing.type.getName().getNamespaceURI(), "wsDr", "xdr")
         );
-        Map<String, String> map = new HashMap<String, String>();
-        map.put(NAMESPACE_A, "a");
-        map.put(STRelationshipId.type.getName().getNamespaceURI(), "r");
-        xmlOptions.setSaveSuggestedPrefixes(map);
 
         PackagePart part = getPackagePart();
         OutputStream out = part.getOutputStream();
@@ -297,7 +301,7 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing {
         //create comments and vmlDrawing parts if they don't exist
         CommentsTable comments = sheet.getCommentsTable(true);
         XSSFVMLDrawing vml = sheet.getVMLDrawing(true);
-        schemasMicrosoftComVml.CTShape vmlShape = vml.newCommentShape();
+        com.microsoft.schemas.vml.CTShape vmlShape = vml.newCommentShape();
         if(ca.isSet()){
             // convert offsets from emus to pixels since we get a DrawingML-anchor
             // but create a VML Drawing

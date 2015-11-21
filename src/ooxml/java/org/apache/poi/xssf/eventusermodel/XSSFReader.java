@@ -16,6 +16,8 @@
 ==================================================================== */
 package org.apache.poi.xssf.eventusermodel;
 
+import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -25,7 +27,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.POIXMLException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
@@ -209,7 +210,7 @@ public class XSSFReader {
                 }
                 //step 2. Read array of CTSheet elements, wrap it in a ArayList and construct an iterator
                 //Note, using XMLBeans might be expensive, consider refactoring to use SAX or a plain regexp search
-                CTWorkbook wbBean = WorkbookDocument.Factory.parse(wb.getInputStream(), POIXMLDocumentPart.DEFAULT_XML_OPTIONS).getWorkbook();
+                CTWorkbook wbBean = WorkbookDocument.Factory.parse(wb.getInputStream(), DEFAULT_XML_OPTIONS).getWorkbook();
                 sheetIterator = wbBean.getSheets().getSheetList().iterator(); 
             } catch (InvalidFormatException e){
                 throw new POIXMLException(e);

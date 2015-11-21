@@ -17,6 +17,8 @@
 
 package org.apache.poi.xssf.model;
 
+import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -116,7 +118,7 @@ public class SharedStringsTable extends POIXMLDocumentPart {
     public void readFrom(InputStream is) throws IOException {
         try {
             int cnt = 0;
-            _sstDoc = SstDocument.Factory.parse(is, POIXMLDocumentPart.DEFAULT_XML_OPTIONS);
+            _sstDoc = SstDocument.Factory.parse(is, DEFAULT_XML_OPTIONS);
             CTSst sst = _sstDoc.getSst();
             count = (int)sst.getCount();
             uniqueCount = (int)sst.getUniqueCount();

@@ -17,6 +17,8 @@
 
 package org.apache.poi.xssf.model;
 
+import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -27,7 +29,6 @@ import java.util.Map;
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
-import org.apache.poi.util.DocumentHelper;
 import org.apache.poi.xssf.usermodel.XSSFMap;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.xmlbeans.XmlException;
@@ -69,7 +70,7 @@ public class MapInfo extends POIXMLDocumentPart {
     @SuppressWarnings("deprecation")
 	public void readFrom(InputStream is) throws IOException {
 		try {
-			MapInfoDocument doc = MapInfoDocument.Factory.parse(is, POIXMLDocumentPart.DEFAULT_XML_OPTIONS);
+			MapInfoDocument doc = MapInfoDocument.Factory.parse(is, DEFAULT_XML_OPTIONS);
 			mapInfo = doc.getMapInfo();
 
             maps= new HashMap<Integer, XSSFMap>();

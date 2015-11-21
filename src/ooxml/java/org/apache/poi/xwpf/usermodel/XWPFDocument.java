@@ -16,6 +16,8 @@
 ==================================================================== */
 package org.apache.poi.xwpf.usermodel;
 
+import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -155,7 +157,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     @Override
     protected void onDocumentRead() throws IOException {
         try {
-            DocumentDocument doc = DocumentDocument.Factory.parse(getPackagePart().getInputStream(), POIXMLDocumentPart.DEFAULT_XML_OPTIONS);
+            DocumentDocument doc = DocumentDocument.Factory.parse(getPackagePart().getInputStream(), DEFAULT_XML_OPTIONS);
             ctDocument = doc.getDocument();
 
             initFootnotes();
@@ -205,7 +207,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
                     header.onDocumentRead();
                 } else if (relation.equals(XWPFRelation.COMMENT.getRelation())) {
                     // TODO Create according XWPFComment class, extending POIXMLDocumentPart
-                    CommentsDocument cmntdoc = CommentsDocument.Factory.parse(p.getPackagePart().getInputStream(), POIXMLDocumentPart.DEFAULT_XML_OPTIONS);
+                    CommentsDocument cmntdoc = CommentsDocument.Factory.parse(p.getPackagePart().getInputStream(), DEFAULT_XML_OPTIONS);
                     for (CTComment ctcomment : cmntdoc.getComments().getCommentArray()) {
                         comments.add(new XWPFComment(ctcomment, this));
                     }
@@ -258,7 +260,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
                 this.footnotes = (XWPFFootnotes) p;
                 this.footnotes.onDocumentRead();
             } else if (relation.equals(XWPFRelation.ENDNOTE.getRelation())) {
-                EndnotesDocument endnotesDocument = EndnotesDocument.Factory.parse(p.getPackagePart().getInputStream(), POIXMLDocumentPart.DEFAULT_XML_OPTIONS);
+                EndnotesDocument endnotesDocument = EndnotesDocument.Factory.parse(p.getPackagePart().getInputStream(), DEFAULT_XML_OPTIONS);
 
                 for (CTFtnEdn ctFtnEdn : endnotesDocument.getEndnotes().getEndnoteArray()) {
                     endnotes.put(ctFtnEdn.getId().intValue(), new XWPFFootnote(this, ctFtnEdn));
@@ -448,7 +450,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
             throw new IllegalStateException("Expecting one Styles document part, but found " + parts.length);
         }
 
-        StylesDocument sd = StylesDocument.Factory.parse(parts[0].getInputStream(), POIXMLDocumentPart.DEFAULT_XML_OPTIONS);
+        StylesDocument sd = StylesDocument.Factory.parse(parts[0].getInputStream(), DEFAULT_XML_OPTIONS);
         return sd.getStyles();
     }
 
@@ -704,17 +706,6 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     protected void commit() throws IOException {
         XmlOptions xmlOptions = new XmlOptions(DEFAULT_XML_OPTIONS);
         xmlOptions.setSaveSyntheticDocumentElement(new QName(CTDocument1.type.getName().getNamespaceURI(), "document"));
-        Map<String, String> map = new HashMap<String, String>();
-        map.put("http://schemas.openxmlformats.org/officeDocument/2006/math", "m");
-        map.put("urn:schemas-microsoft-com:office:office", "o");
-        map.put("http://schemas.openxmlformats.org/officeDocument/2006/relationships", "r");
-        map.put("urn:schemas-microsoft-com:vml", "v");
-        map.put("http://schemas.openxmlformats.org/markup-compatibility/2006", "ve");
-        map.put("http://schemas.openxmlformats.org/wordprocessingml/2006/main", "w");
-        map.put("urn:schemas-microsoft-com:office:word", "w10");
-        map.put("http://schemas.microsoft.com/office/word/2006/wordml", "wne");
-        map.put("http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing", "wp");
-        xmlOptions.setSaveSuggestedPrefixes(map);
 
         PackagePart part = getPackagePart();
         OutputStream out = part.getOutputStream();

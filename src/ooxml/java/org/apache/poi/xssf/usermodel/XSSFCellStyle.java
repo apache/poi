@@ -17,7 +17,8 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import org.apache.poi.POIXMLDocumentPart;
+import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
+
 import org.apache.poi.POIXMLException;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -154,12 +155,12 @@ public class XSSFCellStyle implements CellStyle {
 
                   // Create a new Xf with the same contents
                   _cellXf = CTXf.Factory.parse(
-                        src.getCoreXf().toString(), POIXMLDocumentPart.DEFAULT_XML_OPTIONS
+                        src.getCoreXf().toString(), DEFAULT_XML_OPTIONS
                   );
 
                   // bug 56295: ensure that the fills is available and set correctly
                   CTFill fill = CTFill.Factory.parse(
-                		  src.getCTFill().toString(), POIXMLDocumentPart.DEFAULT_XML_OPTIONS
+                		  src.getCTFill().toString(), DEFAULT_XML_OPTIONS
                 		  );
                   addFill(fill);
 
@@ -178,7 +179,7 @@ public class XSSFCellStyle implements CellStyle {
                // Copy the font
                try {
                   CTFont ctFont = CTFont.Factory.parse(
-                        src.getFont().getCTFont().toString(), POIXMLDocumentPart.DEFAULT_XML_OPTIONS
+                        src.getFont().getCTFont().toString(), DEFAULT_XML_OPTIONS
                   );
                   XSSFFont font = new XSSFFont(ctFont);
                   font.registerTo(_stylesSource);

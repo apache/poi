@@ -16,6 +16,8 @@
 ==================================================================== */
 package org.apache.poi.xssf.model;
 
+import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -25,7 +27,6 @@ import java.util.Map;
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
-import org.apache.poi.util.DocumentHelper;
 import org.apache.poi.xssf.usermodel.XSSFComment;
 import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
@@ -56,7 +57,7 @@ public class CommentsTable extends POIXMLDocumentPart {
 
     public void readFrom(InputStream is) throws IOException {
         try {
-            CommentsDocument doc = CommentsDocument.Factory.parse(is, POIXMLDocumentPart.DEFAULT_XML_OPTIONS);
+            CommentsDocument doc = CommentsDocument.Factory.parse(is, DEFAULT_XML_OPTIONS);
             comments = doc.getComments();
         } catch (XmlException e) {
             throw new IOException(e.getLocalizedMessage());

@@ -7,50 +7,20 @@
         <groupId>org.apache.poi</groupId>
         <artifactId>poi-parent</artifactId>
         <version>3.14-beta1-SNAPSHOT</version>
+        <relativePath>..</relativePath>
     </parent>
     <artifactId>poi-ooxml-schema</artifactId>
     <packaging>jar</packaging>
 
-    <name>Apach POI - Openxmlformats Schema package</name>
+    <name>Apache POI - Openxmlformats Schema package</name>
 
 	<properties>
 		<!-- see http://docs.codehaus.org/display/SONAR/Narrowing+the+Focus for details of this property -->
 		<sonar.exclusions>target/generated-sources/*</sonar.exclusions>
 		<maven.compiler.fork>true</maven.compiler.fork>
+		<xmlbeans.xsdconfig>${basedir}/../../src/ooxml/resources/org/apache/poi/schemas/ooxmlSchemas.xsdconfig</xmlbeans.xsdconfig>
 	</properties>
 
-	<profiles>
-        <!-- We need a fair amount of memory to compile the xml schema, -->
-        <!-- but limit it in case it goes wrong!                        -->
-        <!-- Pick the right amount based on 32 vs 64 bit jvm            -->
-
-		<profile>
-			<id>32bitstuff</id>
-			<activation>
-				<property>
-					<name>sun.arch.data.model</name>
-					<value>32</value>
-				</property>
-			</activation>
-			<properties>
-				<maven.compiler.maxmem>512m</maven.compiler.maxmem>
-			</properties>
-		</profile>
-		
-		<profile>
-			<id>64bitstuff</id>
-			<activation>
-				<property>
-					<name>sun.arch.data.model</name>
-					<value>64</value>
-				</property>
-			</activation>
-			<properties>
-				<maven.compiler.maxmem>768m</maven.compiler.maxmem>
-			</properties>
-		</profile>
-	</profiles>
-  
     <build>
 		<plugins>
 			<!-- Download and unpack the OfficeOpenXML Schema and use xmlbeans to create classes from the XSDs -->
@@ -60,7 +30,7 @@
 				<version>1.1.0</version>
 				<executions>
 					<execution>
-						<id>install-xsds-part-4</id>
+						<id>download-xsds</id>
 						<phase>generate-sources</phase>
 						<goals>
 							<goal>wget</goal>
@@ -85,7 +55,9 @@
 						<configuration>
 							<target>
 								<echo message="unzip schemas" />
-								<unzip src="target/OfficeOpenXML-XMLSchema.zip" dest="target/schemas/" />
+								<unzip src="target/OfficeOpenXML-XMLSchema.zip" dest="target/schemas" />
+								<copy file="../../src/ooxml/resources/org/apache/poi/xdgf/visio.xsd"
+									todir="target/schemas"/>
 							</target>
 						</configuration>
 						<goals>
@@ -94,49 +66,6 @@
 					</execution>
 				</executions>
 			</plugin>
-      
-      <!-- include the visio schema -->
-			<plugin>
-				<artifactId>maven-resources-plugin</artifactId>
-				<version>2.6</version>
-				<executions>
-					<execution>
-						<id>copy-sources</id>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>copy-resources</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>target/schemas/</outputDirectory>
-							<resources>
-								<resource>
-									<directory>../../src/ooxml/resources/org/apache/poi/xdgf/</directory>
-								</resource>
-							</resources>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			
-			<plugin>
-			  <groupId>org.codehaus.mojo</groupId>
-			  <artifactId>xmlbeans-maven-plugin</artifactId>
-			  <version>2.3.3</version>
-			  <executions>
-				 <execution>
-					<phase>generate-sources</phase>
-					<goals>
-					  <goal>xmlbeans</goal>
-					</goals>
-				 </execution>
-			  </executions>
-				<configuration>
-					<schemaDirectory>target/schemas</schemaDirectory>
-					<javaSource>1.5</javaSource>
-					<optimize>yes</optimize>
-					<noJavac>true</noJavac>
-				</configuration>
-   			</plugin>
 		</plugins>
     </build>
 
@@ -151,11 +80,10 @@
             <artifactId>poi-scratchpad</artifactId>
             <version>${project.version}</version>
         </dependency>
-        
-		<dependency>
-		  <groupId>org.apache.xmlbeans</groupId>
-		  <artifactId>xmlbeans</artifactId>
-		  <version>2.6.0</version>
-		</dependency>
+        <dependency>
+          <groupId>org.apache.xmlbeans</groupId>
+          <artifactId>xmlbeans</artifactId>
+          <version>2.6.0</version>
+        </dependency>
     </dependencies>
 </project>

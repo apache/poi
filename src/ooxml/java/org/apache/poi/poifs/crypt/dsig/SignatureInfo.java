@@ -24,6 +24,7 @@
 
 package org.apache.poi.poifs.crypt.dsig;
 
+import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 import static org.apache.poi.poifs.crypt.dsig.facets.SignatureFacet.XML_DIGSIG_NS;
 
 import java.io.ByteArrayOutputStream;
@@ -68,7 +69,6 @@ import javax.xml.xpath.XPathFactory;
 import org.apache.jcp.xml.dsig.internal.dom.DOMReference;
 import org.apache.jcp.xml.dsig.internal.dom.DOMSignedInfo;
 import org.apache.poi.EncryptedDocumentException;
-import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.ContentTypes;
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -213,7 +213,7 @@ public class SignatureInfo implements SignatureConfigurable {
          */
         public SignatureDocument getSignatureDocument() throws IOException, XmlException {
             // TODO: check for XXE
-            return SignatureDocument.Factory.parse(signaturePart.getInputStream(), POIXMLDocumentPart.DEFAULT_XML_OPTIONS);
+            return SignatureDocument.Factory.parse(signaturePart.getInputStream(), DEFAULT_XML_OPTIONS);
         }
         
         /**
@@ -631,7 +631,7 @@ public class SignatureInfo implements SignatureConfigurable {
         
         try {
             OutputStream os = sigPart.getOutputStream();
-            SignatureDocument sigDoc = SignatureDocument.Factory.parse(document, POIXMLDocumentPart.DEFAULT_XML_OPTIONS);
+            SignatureDocument sigDoc = SignatureDocument.Factory.parse(document, DEFAULT_XML_OPTIONS);
             sigDoc.save(os, xo);
             os.close();
         } catch (Exception e) {

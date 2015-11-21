@@ -16,6 +16,8 @@
 ==================================================================== */
 package org.apache.poi.xwpf.usermodel;
 
+import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
@@ -25,7 +27,6 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
-import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.POIXMLException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.util.Internal;
@@ -177,7 +178,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
             if (pict instanceof XmlAnyTypeImpl) {
                 // Pesky XmlBeans bug - see Bugzilla #49934
                 try {
-                    pict = CTPicture.Factory.parse(pict.toString(), POIXMLDocumentPart.DEFAULT_XML_OPTIONS);
+                    pict = CTPicture.Factory.parse(pict.toString(), DEFAULT_XML_OPTIONS);
                 } catch (XmlException e) {
                     throw new POIXMLException(e);
                 }
@@ -958,7 +959,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
                             "<pic:pic xmlns:pic=\"" + CTPicture.type.getName().getNamespaceURI() + "\" />" +
                             "</a:graphicData>" +
                             "</a:graphic>";
-            inline.set(XmlToken.Factory.parse(xml, POIXMLDocumentPart.DEFAULT_XML_OPTIONS));
+            inline.set(XmlToken.Factory.parse(xml, DEFAULT_XML_OPTIONS));
 
             // Setup the inline
             inline.setDistT(0);

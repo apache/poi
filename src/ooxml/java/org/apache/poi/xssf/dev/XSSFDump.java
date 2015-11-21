@@ -17,6 +17,8 @@
 
 package org.apache.poi.xssf.dev;
 
+import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
@@ -24,7 +26,6 @@ import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.internal.ZipHelper;
 import org.apache.poi.util.IOUtils;
 import org.apache.xmlbeans.XmlObject;
@@ -71,7 +72,7 @@ public final class XSSFDump {
             try {
                 if(entry.getName().endsWith(".xml") || entry.getName().endsWith(".vml") || entry.getName().endsWith(".rels")){
                     try {
-                        XmlObject xml = XmlObject.Factory.parse(zip.getInputStream(entry), POIXMLDocumentPart.DEFAULT_XML_OPTIONS);
+                        XmlObject xml = XmlObject.Factory.parse(zip.getInputStream(entry), DEFAULT_XML_OPTIONS);
                         XmlOptions options = new XmlOptions();
                         options.setSavePrettyPrint();
                         xml.save(out, options);

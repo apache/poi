@@ -16,6 +16,8 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
+import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
+
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -25,7 +27,6 @@ import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.sl.usermodel.MasterSheet;
 import org.apache.poi.util.Beta;
-import org.apache.poi.util.DocumentHelper;
 import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTColorMapping;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTNotesMaster;
@@ -61,7 +62,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.NotesMasterDocument;
     protected XSLFNotesMaster(PackagePart part, PackageRelationship rel) throws IOException, XmlException {
         super(part, rel);
         NotesMasterDocument doc =
-            NotesMasterDocument.Factory.parse(getPackagePart().getInputStream(), POIXMLDocumentPart.DEFAULT_XML_OPTIONS);
+            NotesMasterDocument.Factory.parse(getPackagePart().getInputStream(), DEFAULT_XML_OPTIONS);
         _slide = doc.getNotesMaster();
         setCommonSlideData(_slide.getCSld());
     }
@@ -74,7 +75,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.NotesMasterDocument;
 
         try {
             try {
-                NotesMasterDocument doc = NotesMasterDocument.Factory.parse(is, POIXMLDocumentPart.DEFAULT_XML_OPTIONS);
+                NotesMasterDocument doc = NotesMasterDocument.Factory.parse(is, DEFAULT_XML_OPTIONS);
                 CTNotesMaster slide =  doc.getNotesMaster();
                 return slide;
             } finally {

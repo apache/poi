@@ -7,18 +7,20 @@
         <groupId>org.apache.poi</groupId>
         <artifactId>poi-parent</artifactId>
         <version>3.14-beta1-SNAPSHOT</version>
+        <relativePath>..</relativePath>
     </parent>
     <artifactId>poi-ooxml-schema-security</artifactId>
     <packaging>jar</packaging>
 
-    <name>Apach POI - Openxmlformats Security-Schema package</name>
+    <name>Apache POI - Openxmlformats Security-Schema package</name>
 
 	<properties>
 		<!-- see http://docs.codehaus.org/display/SONAR/Narrowing+the+Focus for details of this property -->
 		<sonar.exclusions>target/generated-sources/*</sonar.exclusions>
 		<maven.compiler.fork>true</maven.compiler.fork>
+		<xmlbeans.noUpa>true</xmlbeans.noUpa>
+		<xmlbeans.noPvr>true</xmlbeans.noPvr>
 	</properties>
-  
     <build>
 		<plugins>
 			<!-- Download and unpack the OfficeOpenXML Schema and use xmlbeans to create classes from the XSDs -->
@@ -104,6 +106,9 @@
 					<execution>
 						<id>unzip-schema</id>
 						<phase>generate-sources</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
 						<configuration>
 							<target>
 								<echo message="unzip schemas" />
@@ -112,34 +117,10 @@
 									todir="target/schemas"/>
 							</target>
 						</configuration>
-						<goals>
-							<goal>run</goal>
-						</goals>
 					</execution>
 				</executions>
 			</plugin>
 
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>xmlbeans-maven-plugin</artifactId>
-				<version>2.3.3</version>
-				<executions>
-					<execution>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>xmlbeans</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<schemaDirectory>target/schemas</schemaDirectory>
-					<noUpa>true</noUpa>
-					<noPvr>true</noPvr>
-					<noJavac>true</noJavac>
-					<javaSource>1.5</javaSource>
-					<optimize>yes</optimize>
-				</configuration>
-			</plugin>
 		</plugins>
     </build>
 

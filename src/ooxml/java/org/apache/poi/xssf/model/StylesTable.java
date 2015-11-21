@@ -17,6 +17,8 @@
 
 package org.apache.poi.xssf.model;
 
+import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -42,7 +44,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellFill;
 import org.apache.xmlbeans.XmlException;
-import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorder;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorders;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellStyleXfs;
@@ -147,7 +148,7 @@ public class StylesTable extends POIXMLDocumentPart {
     @SuppressWarnings("deprecation") //YK: getXYZArray() array accessors are deprecated in xmlbeans with JDK 1.5 support
     protected void readFrom(InputStream is) throws IOException {
         try {
-            doc = StyleSheetDocument.Factory.parse(is, POIXMLDocumentPart.DEFAULT_XML_OPTIONS);
+            doc = StyleSheetDocument.Factory.parse(is, DEFAULT_XML_OPTIONS);
 
             CTStylesheet styleSheet = doc.getStyleSheet();
 
@@ -392,8 +393,6 @@ public class StylesTable extends POIXMLDocumentPart {
      * @throws IOException if an error occurs while writing.
      */
     public void writeTo(OutputStream out) throws IOException {
-        XmlOptions options = new XmlOptions(DEFAULT_XML_OPTIONS);
-
         // Work on the current one
         // Need to do this, as we don't handle
         //  all the possible entries yet
@@ -486,7 +485,7 @@ public class StylesTable extends POIXMLDocumentPart {
         }
 
         // Save
-        doc.save(out, options);
+        doc.save(out, DEFAULT_XML_OPTIONS);
     }
 
     @Override

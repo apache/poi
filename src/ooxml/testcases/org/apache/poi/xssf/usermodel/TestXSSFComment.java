@@ -49,7 +49,7 @@ import org.junit.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRPrElt;
 
-import schemasMicrosoftComVml.CTShape;
+import com.microsoft.schemas.vml.CTShape;
 
 /**
  * @author Yegor Kozlov
@@ -221,7 +221,7 @@ public final class TestXSSFComment extends BaseTestCellComment  {
                     .getSheetAt(0).getCommentsTable(true);
             XSSFVMLDrawing vml = ((SXSSFWorkbook) wb).getXSSFWorkbook()
                     .getSheetAt(0).getVMLDrawing(true);
-            schemasMicrosoftComVml.CTShape vmlShape1 = vml.newCommentShape();
+            CTShape vmlShape1 = vml.newCommentShape();
             if (ca.isSet()) {
                 String position = ca.getCol1() + ", 0, " + ca.getRow1()
                         + ", 0, " + ca.getCol2() + ", 0, " + ca.getRow2()
@@ -235,7 +235,7 @@ public final class TestXSSFComment extends BaseTestCellComment  {
             shape1.setColumn(ca.getCol1());
             shape1.setRow(ca.getRow1());
 
-            schemasMicrosoftComVml.CTShape vmlShape2 = vml.newCommentShape();
+            CTShape vmlShape2 = vml.newCommentShape();
             if (ca.isSet()) {
                 String position = ca.getCol1() + ", 0, " + ca.getRow1()
                         + ", 0, " + ca.getCol2() + ", 0, " + ca.getRow2()

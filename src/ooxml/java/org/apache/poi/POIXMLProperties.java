@@ -16,11 +16,11 @@
 ==================================================================== */
 package org.apache.poi;
 
+import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
@@ -33,9 +33,7 @@ import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
 import org.apache.poi.openxml4j.util.Nullable;
-import org.apache.poi.util.DocumentHelper;
 import org.apache.xmlbeans.XmlException;
-import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.officeDocument.x2006.customProperties.CTProperty;
 
 /**
@@ -74,7 +72,7 @@ public class POIXMLProperties {
 		if(extRel.size() == 1) {
 			extPart = pkg.getPart( extRel.getRelationship(0));
 			org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.PropertiesDocument props = org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.PropertiesDocument.Factory.parse(
-				 extPart.getInputStream(), POIXMLDocumentPart.DEFAULT_XML_OPTIONS
+				 extPart.getInputStream(), DEFAULT_XML_OPTIONS
 			);
 			ext = new ExtendedProperties(props);
 		} else {
@@ -88,7 +86,7 @@ public class POIXMLProperties {
 		if(custRel.size() == 1) {
 			custPart = pkg.getPart( custRel.getRelationship(0));
 			org.openxmlformats.schemas.officeDocument.x2006.customProperties.PropertiesDocument props = org.openxmlformats.schemas.officeDocument.x2006.customProperties.PropertiesDocument.Factory.parse(
-					custPart.getInputStream(), POIXMLDocumentPart.DEFAULT_XML_OPTIONS
+					custPart.getInputStream(), DEFAULT_XML_OPTIONS
 			);
 			cust = new CustomProperties(props);
 		} else {
@@ -142,28 +140,16 @@ public class POIXMLProperties {
 			}
 		}
 		if(extPart != null){
-			XmlOptions xmlOptions = new XmlOptions(POIXMLDocumentPart.DEFAULT_XML_OPTIONS);
-
-			Map<String, String> map = new HashMap<String, String>();
-			map.put("http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes", "vt");
-			xmlOptions.setSaveSuggestedPrefixes(map);
-
 			OutputStream out = extPart.getOutputStream();
 			if (extPart.getSize() > 0) {
 			    extPart.clear();
 			}
-			ext.props.save(out, xmlOptions);
+			ext.props.save(out, DEFAULT_XML_OPTIONS);
 			out.close();
 		}
 		if(custPart != null){
-			XmlOptions xmlOptions = new XmlOptions(POIXMLDocumentPart.DEFAULT_XML_OPTIONS);
-
-			Map<String, String> map = new HashMap<String, String>();
-			map.put("http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes", "vt");
-			xmlOptions.setSaveSuggestedPrefixes(map);
-
 			OutputStream out = custPart.getOutputStream();
-			cust.props.save(out, xmlOptions);
+			cust.props.save(out, DEFAULT_XML_OPTIONS);
 			out.close();
 		}
 	}

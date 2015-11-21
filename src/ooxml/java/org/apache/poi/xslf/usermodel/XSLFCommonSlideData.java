@@ -17,11 +17,12 @@
 
 package org.apache.poi.xslf.usermodel;
 
+import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.POIXMLException;
 import org.apache.poi.util.Beta;
 import org.apache.xmlbeans.XmlCursor;
@@ -68,7 +69,7 @@ public class XSLFCommonSlideData {
                 if (o instanceof XmlAnyTypeImpl) {
                     // Pesky XmlBeans bug - see Bugzilla #49934
                     try {
-                        o = CTTable.Factory.parse(o.toString(), POIXMLDocumentPart.DEFAULT_XML_OPTIONS);
+                        o = CTTable.Factory.parse(o.toString(), DEFAULT_XML_OPTIONS);
                     } catch (XmlException e) {
                         throw new POIXMLException(e);
                     }

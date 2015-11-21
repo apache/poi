@@ -16,6 +16,8 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
+import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
+
 import java.io.IOException;
 
 import org.apache.poi.POIXMLDocumentPart;
@@ -45,7 +47,7 @@ implements MasterSheet<XSLFShape,XSLFTextParagraph> {
     public XSLFSlideLayout(PackagePart part, PackageRelationship rel) throws IOException, XmlException {
         super(part, rel);
         SldLayoutDocument doc =
-                SldLayoutDocument.Factory.parse(getPackagePart().getInputStream(), POIXMLDocumentPart.DEFAULT_XML_OPTIONS);
+                SldLayoutDocument.Factory.parse(getPackagePart().getInputStream(), DEFAULT_XML_OPTIONS);
         _layout = doc.getSldLayout();
         setCommonSlideData(_layout.getCSld());
     }

@@ -16,6 +16,8 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
+import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Locale;
@@ -70,7 +72,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.SldMasterDocument;
     protected XSLFSlideMaster(PackagePart part, PackageRelationship rel) throws IOException, XmlException {
         super(part, rel);
         SldMasterDocument doc =
-            SldMasterDocument.Factory.parse(getPackagePart().getInputStream(), POIXMLDocumentPart.DEFAULT_XML_OPTIONS);
+            SldMasterDocument.Factory.parse(getPackagePart().getInputStream(), DEFAULT_XML_OPTIONS);
         _slide = doc.getSldMaster();
         setCommonSlideData(_slide.getCSld());
     }

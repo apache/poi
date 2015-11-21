@@ -17,12 +17,12 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.xml.namespace.QName;
 
@@ -34,7 +34,6 @@ import org.apache.poi.ss.usermodel.charts.AxisPosition;
 import org.apache.poi.ss.usermodel.charts.ChartAxis;
 import org.apache.poi.ss.usermodel.charts.ChartAxisFactory;
 import org.apache.poi.ss.usermodel.charts.ChartData;
-import org.apache.poi.util.DocumentHelper;
 import org.apache.poi.util.Internal;
 import org.apache.poi.xssf.usermodel.charts.XSSFCategoryAxis;
 import org.apache.poi.xssf.usermodel.charts.XSSFChartAxis;
@@ -54,7 +53,6 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.CTPrintSettings;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTTitle;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTValAx;
 import org.openxmlformats.schemas.drawingml.x2006.chart.ChartSpaceDocument;
-import org.openxmlformats.schemas.officeDocument.x2006.relationships.STRelationshipId;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 
@@ -101,7 +99,7 @@ public final class XSSFChart extends POIXMLDocumentPart implements Chart, ChartA
 	protected XSSFChart(PackagePart part, PackageRelationship rel) throws IOException, XmlException {
 		super(part, rel);
 
-		chartSpace = ChartSpaceDocument.Factory.parse(part.getInputStream(), POIXMLDocumentPart.DEFAULT_XML_OPTIONS).getChartSpace(); 
+		chartSpace = ChartSpaceDocument.Factory.parse(part.getInputStream(), DEFAULT_XML_OPTIONS).getChartSpace(); 
 		chart = chartSpace.getChart();
 	}
 
@@ -164,11 +162,6 @@ public final class XSSFChart extends POIXMLDocumentPart implements Chart, ChartA
 		      xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
 		 */
 		xmlOptions.setSaveSyntheticDocumentElement(new QName(CTChartSpace.type.getName().getNamespaceURI(), "chartSpace", "c"));
-		Map<String, String> map = new HashMap<String, String>();
-		map.put(XSSFDrawing.NAMESPACE_A, "a");
-		map.put(XSSFDrawing.NAMESPACE_C, "c");
-		map.put(STRelationshipId.type.getName().getNamespaceURI(), "r");
-		xmlOptions.setSaveSuggestedPrefixes(map);
 
 		PackagePart part = getPackagePart();
 		OutputStream out = part.getOutputStream();
@@ -199,8 +192,8 @@ public final class XSSFChart extends POIXMLDocumentPart implements Chart, ChartA
 		return this;
 	}
 
-	public void plot(ChartData data, ChartAxis... axis) {
-		data.fillChart(this, axis);
+	public void plot(ChartData data, ChartAxis... chartAxis) {
+		data.fillChart(this, chartAxis);
 	}
 
 	public XSSFValueAxis createValueAxis(AxisPosition pos) {

@@ -16,16 +16,19 @@
 ==================================================================== */
 package org.apache.poi.xssf.model;
 
+import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.apache.poi.POIXMLDocumentPart;
-import org.apache.xmlbeans.XmlException;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
-import org.apache.poi.util.DocumentHelper;
+import org.apache.xmlbeans.XmlException;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCalcCell;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCalcChain;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CalcChainDocument;
 
 /**
  * The cells in a workbook can be calculated in different orders depending on various optimizations and
@@ -48,7 +51,7 @@ public class CalculationChain extends POIXMLDocumentPart {
 
     public void readFrom(InputStream is) throws IOException {
         try {
-            CalcChainDocument doc = CalcChainDocument.Factory.parse(is, POIXMLDocumentPart.DEFAULT_XML_OPTIONS);
+            CalcChainDocument doc = CalcChainDocument.Factory.parse(is, DEFAULT_XML_OPTIONS);
             chain = doc.getCalcChain();
         } catch (XmlException e) {
             throw new IOException(e.getLocalizedMessage());
