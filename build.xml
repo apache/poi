@@ -475,6 +475,8 @@ under the License.
         		<include name="ooxml-schemas-1.1-sources.jar"/>
         		<include name="ooxml-schemas-src-1.1.jar"/>
         		<include name="ooxml-schemas-1.1.jar"/>
+        		<include name="ooxml-schemas-1.2-sources.jar"/>
+        		<include name="ooxml-schemas-1.2.jar"/>
         	</fileset>
         	<fileset dir="${compile.lib}">
                 <include name="xercesImpl-*.jar"/>
