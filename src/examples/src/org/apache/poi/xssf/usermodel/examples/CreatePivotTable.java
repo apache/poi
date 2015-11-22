@@ -34,7 +34,7 @@ public class CreatePivotTable {
 
     public static void main(String[] args) throws FileNotFoundException, IOException, InvalidFormatException {
         XSSFWorkbook wb = new XSSFWorkbook();
-        XSSFSheet sheet = (XSSFSheet) wb.createSheet();
+        XSSFSheet sheet = wb.createSheet();
 
         //Create some data to build the pivot table on
         setCellData(sheet);
@@ -53,6 +53,7 @@ public class CreatePivotTable {
         FileOutputStream fileOut = new FileOutputStream("ooxml-pivottable.xlsx");
         wb.write(fileOut);
         fileOut.close();
+        wb.close();
     }
 
     public static void setCellData(XSSFSheet sheet){

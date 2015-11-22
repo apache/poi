@@ -58,7 +58,7 @@ public final class TestNoteStructureSubRecord extends TestCase {
         NoteStructureSubRecord record = new NoteStructureSubRecord();
         byte[] src = record.serialize();
 
-        NoteStructureSubRecord cloned = (NoteStructureSubRecord)record.clone();
+        NoteStructureSubRecord cloned = record.clone();
         byte[] cln = cloned.serialize();
 
         assertEquals(record.getDataSize(), cloned.getDataSize());

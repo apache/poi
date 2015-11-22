@@ -19,21 +19,27 @@
 
 package org.apache.poi.xssf.streaming;
 
-import java.io.IOException;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
-import junit.framework.TestCase;
+import java.io.IOException;
 
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.junit.Test;
 
-public final class TestOutlining extends TestCase {
-	public void testSetRowGroupCollapsed() throws Exception {
+public final class TestOutlining {
+    @Test
+	public void testSetRowGroupCollapsed() throws IOException {
 		SXSSFWorkbook wb2 = new SXSSFWorkbook(100);
 		wb2.setCompressTempFiles(true);
-		SXSSFSheet sheet2 = (SXSSFSheet) wb2.createSheet("new sheet");
+		SXSSFSheet sheet2 = wb2.createSheet("new sheet");
 
 		int rowCount = 20;
 		for (int i = 0; i < rowCount; i++) {
@@ -45,21 +51,22 @@ public final class TestOutlining extends TestCase {
 
 		sheet2.setRowGroupCollapsed(4, true);
 
-		SXSSFRow r = (SXSSFRow) sheet2.getRow(8);
+		SXSSFRow r = sheet2.getRow(8);
 		assertTrue(r.getHidden());
-		r = (SXSSFRow) sheet2.getRow(10);
+		r = sheet2.getRow(10);
 		assertTrue(r.getCollapsed());
-		r = (SXSSFRow) sheet2.getRow(12);
+		r = sheet2.getRow(12);
 		assertNull(r.getHidden());
 		wb2.dispose();
 		
 		wb2.close();
 	}
 
-	public void testSetRowGroupCollapsedError() throws Exception {
+    @Test
+    public void testSetRowGroupCollapsedError() throws IOException {
 		SXSSFWorkbook wb2 = new SXSSFWorkbook(100);
 		wb2.setCompressTempFiles(true);
-		SXSSFSheet sheet2 = (SXSSFSheet) wb2.createSheet("new sheet");
+		SXSSFSheet sheet2 = wb2.createSheet("new sheet");
 
 		int rowCount = 20;
 		for (int i = 0; i < rowCount; i++) {
@@ -98,18 +105,19 @@ public final class TestOutlining extends TestCase {
 					e.getMessage().contains("Row does not exist"));
 		}
 
-		SXSSFRow r = (SXSSFRow) sheet2.getRow(8);
+		SXSSFRow r = sheet2.getRow(8);
 		assertNotNull(r);
 		assertNull(r.getHidden());
-		r = (SXSSFRow) sheet2.getRow(10);
+		r = sheet2.getRow(10);
 		assertNull(r.getCollapsed());
-		r = (SXSSFRow) sheet2.getRow(12);
+		r = sheet2.getRow(12);
 		assertNull(r.getHidden());
 		wb2.dispose();
 		
 		wb2.close();
 	}
 	
+    @Test
     public void testOutlineGettersHSSF() throws IOException {
         HSSFWorkbook hssfWorkbook = new HSSFWorkbook();
         HSSFSheet hssfSheet = hssfWorkbook.createSheet();
@@ -129,6 +137,7 @@ public final class TestOutlining extends TestCase {
         hssfWorkbook.close();
     }
     
+    @Test
     public void testOutlineGettersXSSF() throws IOException {
         XSSFWorkbook xssfWorkbook = new XSSFWorkbook();
         XSSFSheet xssfSheet = xssfWorkbook.createSheet();
@@ -148,6 +157,7 @@ public final class TestOutlining extends TestCase {
         xssfWorkbook.close();
     }
     
+    @Test
     public void testOutlineGettersSXSSF() throws IOException {
         SXSSFWorkbook sxssfWorkbook = new SXSSFWorkbook();
         Sheet sxssfSheet = sxssfWorkbook.createSheet();
@@ -190,6 +200,7 @@ public final class TestOutlining extends TestCase {
         sxssfWorkbook.close();
     }
     
+    @Test
     public void testOutlineGettersSXSSFSetOutlineLevel() throws IOException {
         SXSSFWorkbook sxssfWorkbook = new SXSSFWorkbook();
         Sheet sxssfSheet = sxssfWorkbook.createSheet();

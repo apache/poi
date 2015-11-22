@@ -70,7 +70,7 @@ public final class TestCruddyExtractor extends TestCase {
 		// Ensure they match
 		assertEquals(allTheText.length,foundTextV.size());
 		for(int i=0; i<allTheText.length; i++) {
-			String foundText = (String)foundTextV.get(i);
+			String foundText = foundTextV.get(i);
 			assertEquals(allTheText[i],foundText);
 		}
 	}

@@ -182,7 +182,7 @@ public class TreeReaderListener implements POIFSReaderListener
                                     final String fsName,
                                     final MutableTreeNode root)
     {
-        MutableTreeNode n = (MutableTreeNode) pathToNode.get(path);
+        MutableTreeNode n = pathToNode.get(path);
         if (n != null)
             /* Node found in map, just return it. */
             return n;
@@ -193,7 +193,7 @@ public class TreeReaderListener implements POIFSReaderListener
              * the POI filesystem itself. This is a tree node with the
              * POI filesystem's name (this the operating system file's
              * name) as its key it the path-to-node map. */
-            n = (MutableTreeNode) pathToNode.get(fsName);
+            n = pathToNode.get(fsName);
             if (n == null)
             {
                 /* A tree node for the POI filesystem does not yet

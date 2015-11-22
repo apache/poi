@@ -17,11 +17,11 @@
 
 package org.apache.poi.hwpf.usermodel;
 
-import junit.framework.TestCase;
-
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFTestDataSamples;
 import org.apache.poi.hwpf.model.PAPX;
+
+import junit.framework.TestCase;
 
 /**
  *	Test to see if Range.delete() works even if the Range contains a
@@ -93,7 +93,7 @@ public final class TestRangeDelete extends TestCase {
 		assertEquals(fillerText, para.text());
 
 
-		paraDef = (PAPX)daDoc.getParagraphTable().getParagraphs().get(2);
+		paraDef = daDoc.getParagraphTable().getParagraphs().get(2);
 		assertEquals(132, paraDef.getStart());
 		assertEquals(400, paraDef.getEnd());
 
@@ -102,7 +102,7 @@ public final class TestRangeDelete extends TestCase {
 		assertEquals(originalText, para.text());
 
 
-		paraDef = (PAPX)daDoc.getParagraphTable().getParagraphs().get(3);
+		paraDef = daDoc.getParagraphTable().getParagraphs().get(3);
 		assertEquals(400, paraDef.getStart());
 		assertEquals(438, paraDef.getEnd());
 

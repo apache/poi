@@ -79,7 +79,7 @@ public abstract class FSPAAbstractType
         LittleEndian.putInt(data, 0x8 + offset, field_3_yaTop);
         LittleEndian.putInt(data, 0xc + offset, field_4_xaRight);
         LittleEndian.putInt(data, 0x10 + offset, field_5_yaBottom);
-        LittleEndian.putShort(data, 0x14 + offset, (short)field_6_flags);
+        LittleEndian.putShort(data, 0x14 + offset, field_6_flags);
         LittleEndian.putInt(data, 0x16 + offset, field_7_cTxbx);
     }
 

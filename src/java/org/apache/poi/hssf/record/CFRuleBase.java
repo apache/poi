@@ -440,10 +440,10 @@ public abstract class CFRuleBase extends StandardRecord implements Cloneable {
         rec.formatting_options = formatting_options;
         rec.formatting_not_used = formatting_not_used;
         if (containsFontFormattingBlock()) {
-            rec._fontFormatting = (FontFormatting) _fontFormatting.clone();
+            rec._fontFormatting = _fontFormatting.clone();
         }
         if (containsBorderFormattingBlock()) {
-            rec._borderFormatting = (BorderFormatting) _borderFormatting.clone();
+            rec._borderFormatting = _borderFormatting.clone();
         }
         if (containsPatternFormattingBlock()) {
             rec._patternFormatting = (PatternFormatting) _patternFormatting.clone();

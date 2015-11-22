@@ -176,7 +176,7 @@ public class CTSRgbColor {
      *     
      */
     public void setVal(byte[] value) {
-        this.val = ((byte[]) value);
+        this.val = (value != null) ? value.clone() : null;
     }
 
     public boolean isSetVal() {

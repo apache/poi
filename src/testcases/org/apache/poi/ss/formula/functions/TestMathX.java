@@ -20,8 +20,6 @@
  */
 package org.apache.poi.ss.formula.functions;
 
-import java.lang.reflect.Constructor;
-
 import org.apache.poi.ss.formula.functions.XYNumericFunction.Accumulator;
 
 
@@ -305,10 +303,10 @@ public class TestMathX extends AbstractNumericTestCase {
 
         assertEquals(0.0, MathX.mod(0, 2));
         assertEquals(Double.NaN, MathX.mod(3, 0));
-        assertEquals((double) 1.4, MathX.mod(3.4, 2));
-        assertEquals((double) -1.4, MathX.mod(-3.4, -2));
-        assertEquals((double) 0.6000000000000001, MathX.mod(-3.4, 2.0));// should actually be 0.6
-        assertEquals((double) -0.6000000000000001, MathX.mod(3.4, -2.0));// should actually be -0.6
+        assertEquals(1.4, MathX.mod(3.4, 2));
+        assertEquals(-1.4, MathX.mod(-3.4, -2));
+        assertEquals(0.6000000000000001, MathX.mod(-3.4, 2.0));// should actually be 0.6
+        assertEquals(-0.6000000000000001, MathX.mod(3.4, -2.0));// should actually be -0.6
         assertEquals(3.0, MathX.mod(3, Double.MAX_VALUE));
         assertEquals(2.0, MathX.mod(Double.MAX_VALUE, 3));
 

@@ -57,7 +57,7 @@ public final class TestAutoFilterInfoRecord extends TestCase {
         record.setNumEntries((short)3);
         byte[] src = record.serialize();
 
-        AutoFilterInfoRecord cloned = (AutoFilterInfoRecord)record.clone();
+        AutoFilterInfoRecord cloned = record.clone();
         assertEquals(3, record.getNumEntries());
         byte[] cln = cloned.serialize();
 
