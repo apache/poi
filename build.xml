@@ -717,7 +717,7 @@ under the License.
             </replace>
 
             <copy todir="${xmlbean.sources.dir}">
-                <fileset dir="src/ooxml/java" includes="org/apache/poi/POIXMLTypeLoader.java"/>
+                <file basedir="${ooxml.src}" file="${ooxml.src}/org/apache/poi/POIXMLTypeLoader.java"/>
             </copy>
 
             <javac target="${jdk.version.class}"
