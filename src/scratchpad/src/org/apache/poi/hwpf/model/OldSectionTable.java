@@ -37,7 +37,6 @@ public final class OldSectionTable extends SectionTable
      * @deprecated Use {@link #OldSectionTable(byte[],int,int)} instead
      */
     @Deprecated
-    @SuppressWarnings( "unused" )
     public OldSectionTable( byte[] documentStream, int offset, int size,
             int fcMin, TextPieceTable tpt )
     {

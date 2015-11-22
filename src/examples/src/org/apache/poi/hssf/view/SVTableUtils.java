@@ -72,7 +72,7 @@ public class SVTableUtils {
    * @return        The aWTColor value
    */
   public final static Color getAWTColor(int index, Color deflt) {
-    HSSFColor clr = (HSSFColor) colors.get(Integer.valueOf(index));
+    HSSFColor clr = colors.get(index);
     if (clr == null) {
       return deflt;
     }

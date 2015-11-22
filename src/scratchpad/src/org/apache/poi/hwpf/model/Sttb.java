@@ -214,7 +214,7 @@ public class Sttb
 
             if ( _fExtend )
             {
-                LittleEndian.putUShort( buffer, offset, (int) entry.length() );
+                LittleEndian.putUShort( buffer, offset, entry.length() );
                 offset += LittleEndian.SHORT_SIZE;
 
                 StringUtil.putUnicodeLE( entry, buffer, offset );

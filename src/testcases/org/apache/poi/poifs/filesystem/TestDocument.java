@@ -159,10 +159,7 @@ public final class TestDocument extends TestCase {
         }
         else
         {
-            copy = new OPOIFSDocument(
-                "test" + input.length,
-                ( SmallDocumentBlock [] ) document.getSmallBlocks(),
-                input.length);
+            copy = new OPOIFSDocument("test"+input.length, document.getSmallBlocks(), input.length);
         }
         return copy;
     }

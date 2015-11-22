@@ -437,7 +437,7 @@ public final class TestCFRuleRecord extends TestCase {
 
         CFRuleRecord record = CFRuleRecord.create(sheet, ComparisonOperator.BETWEEN, "2", "5");
         
-        CFRuleRecord clone = (CFRuleRecord) record.clone();
+        CFRuleRecord clone = record.clone();
         
         byte [] serializedRecord = record.serialize();
         byte [] serializedClone = clone.serialize();

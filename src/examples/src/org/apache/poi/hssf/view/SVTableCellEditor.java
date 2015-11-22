@@ -18,14 +18,25 @@
 
 package org.apache.poi.hssf.view;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.util.EventObject;
+import java.util.Map;
 
-import javax.swing.*;
-import javax.swing.table.*;
+import javax.swing.AbstractCellEditor;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+import javax.swing.table.TableCellEditor;
 
-import org.apache.poi.hssf.usermodel.*;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFFont;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
 
 /**
@@ -42,9 +53,6 @@ public class SVTableCellEditor extends AbstractCellEditor implements TableCellEd
 
   private HSSFWorkbook wb;
   private JTextField editor;
-
-  private HSSFCell editorValue;
-
 
   public SVTableCellEditor(HSSFWorkbook wb) {
     this.wb = wb;
@@ -191,7 +199,7 @@ public class SVTableCellEditor extends AbstractCellEditor implements TableCellEd
      *
      */
     private final Color getAWTColor(int index, Color deflt) {
-      HSSFColor clr = (HSSFColor)colors.get(Integer.valueOf(index));
+      HSSFColor clr = colors.get(index);
       if (clr == null) return deflt;
       return getAWTColor(clr);
     }

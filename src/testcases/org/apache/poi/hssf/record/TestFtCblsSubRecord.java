@@ -56,7 +56,7 @@ public final class TestFtCblsSubRecord extends TestCase {
         FtCblsSubRecord record = new FtCblsSubRecord();
         byte[] src = record.serialize();
 
-        FtCblsSubRecord cloned = (FtCblsSubRecord)record.clone();
+        FtCblsSubRecord cloned = record.clone();
         byte[] cln = cloned.serialize();
 
         assertEquals(record.getDataSize(), cloned.getDataSize());

@@ -209,7 +209,7 @@ public class CTSystemColor {
      *     
      */
     public void setLastClr(byte[] value) {
-        this.lastClr = ((byte[]) value);
+        this.lastClr = (value != null) ? value.clone() : null;
     }
 
     public boolean isSetLastClr() {

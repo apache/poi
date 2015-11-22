@@ -62,7 +62,7 @@ public class TestVariantSupport extends TestCase {
 
         PropertySet ps = PropertySetFactory.create(new ByteArrayInputStream(bytes));
         DocumentSummaryInformation dsi = (DocumentSummaryInformation) ps;
-        Section s = (Section) dsi.getSections().get(0);
+        Section s = dsi.getSections().get(0);
 
         Object hdrs =  s.getProperty(PropertyIDMap.PID_HEADINGPAIR);
 

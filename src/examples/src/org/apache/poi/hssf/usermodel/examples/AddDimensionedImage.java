@@ -250,7 +250,6 @@ public class AddDimensionedImage {
             String imageFile, double reqImageWidthMM, double reqImageHeightMM,
             int resizeBehaviour) throws FileNotFoundException, IOException,
                                                      IllegalArgumentException  {
-        HSSFRow row = null;
         HSSFClientAnchor anchor = null;
         HSSFPatriarch patriarch = null;
         ClientAnchorDetail rowClientAnchorDetail = null;
@@ -720,7 +719,6 @@ public class AddDimensionedImage {
     public static void main(String[] args) {
         String imageFile = null;
         String outputFile = null;
-        FileInputStream fis = null;
         FileOutputStream fos = null;
         HSSFWorkbook workbook = null;
         HSSFSheet sheet = null;
@@ -753,14 +751,20 @@ public class AddDimensionedImage {
             ioEx.printStackTrace(System.out);
         }
         finally {
-            if(fos != null) {
-                try {
+            try {
+                if (workbook != null) {
+                    workbook.close();
+                }
+            } catch(IOException ioEx) {
+                // I G N O R E
+            }
+            try {
+                if(fos != null) {
                     fos.close();
                     fos = null;
                 }
-                catch(IOException ioEx) {
-                    // I G N O R E
-                }
+            } catch(IOException ioEx) {
+                // I G N O R E
             }
         }
     }
@@ -912,7 +916,7 @@ public class AddDimensionedImage {
             int pixels = (widthUnits / EXCEL_COLUMN_WIDTH_FACTOR)
                     * UNIT_OFFSET_LENGTH;
             int offsetWidthUnits = widthUnits % EXCEL_COLUMN_WIDTH_FACTOR;
-            pixels += Math.round((float) offsetWidthUnits /
+            pixels += Math.round(offsetWidthUnits /
                     ((float) EXCEL_COLUMN_WIDTH_FACTOR / UNIT_OFFSET_LENGTH));
             return pixels;
         }

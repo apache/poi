@@ -73,7 +73,7 @@ public final class TestNoteRecord extends TestCase {
         record.setShapeId((short)1026);
         record.setAuthor("Apache Software Foundation");
 
-        NoteRecord cloned = (NoteRecord)record.clone();
+        NoteRecord cloned = record.clone();
         assertEquals(record.getRow(), cloned.getRow());
         assertEquals(record.getColumn(), cloned.getColumn());
         assertEquals(record.getFlags(), cloned.getFlags());

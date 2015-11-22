@@ -42,7 +42,7 @@ public final class TestMergeCellsRecord extends TestCase {
 	public void testCloneReferences() {
 		CellRangeAddress[] cras = { new CellRangeAddress(0, 1, 0, 2), };
 		MergeCellsRecord merge = new MergeCellsRecord(cras, 0, cras.length);
-		MergeCellsRecord clone = (MergeCellsRecord)merge.clone();
+		MergeCellsRecord clone = merge.clone();
 
 		assertNotSame("Merged and cloned objects are the same", merge, clone);
 

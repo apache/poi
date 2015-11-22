@@ -61,7 +61,6 @@ public class PAPBinTable
      *             {@link #PAPBinTable(byte[], byte[], byte[], int, int, CharIndexTranslator)}
      *             instead
      */
-    @SuppressWarnings( "unused" )
     public PAPBinTable( byte[] documentStream, byte[] tableStream,
             byte[] dataStream, int offset, int size, int fcMin,
             TextPieceTable tpt )

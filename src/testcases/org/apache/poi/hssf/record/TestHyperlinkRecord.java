@@ -432,7 +432,7 @@ public final class TestHyperlinkRecord {
         for (int i = 0; i < data.length; i++) {
             RecordInputStream is = TestcaseRecordInputStream.create(HyperlinkRecord.sid, data[i]);
             HyperlinkRecord link = new HyperlinkRecord(is);
-            HyperlinkRecord clone = (HyperlinkRecord)link.clone();
+            HyperlinkRecord clone = link.clone();
             assertArrayEquals(link.serialize(), clone.serialize());
         }
 

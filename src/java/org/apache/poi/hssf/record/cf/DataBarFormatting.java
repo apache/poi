@@ -135,9 +135,9 @@ public final class DataBarFormatting implements Cloneable {
       rec.options = options;
       rec.percentMin = percentMin;
       rec.percentMax = percentMax;
-      rec.color = (ExtendedColor)color.clone();
-      rec.thresholdMin = (DataBarThreshold)thresholdMin.clone();
-      rec.thresholdMax = (DataBarThreshold)thresholdMax.clone();
+      rec.color = color.clone();
+      rec.thresholdMin = thresholdMin.clone();
+      rec.thresholdMax = thresholdMax.clone();
       return rec;
     }
     
