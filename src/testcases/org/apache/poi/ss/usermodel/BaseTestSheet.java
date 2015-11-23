@@ -1036,6 +1036,7 @@ public abstract class BaseTestSheet {
         Workbook workbook = _testDataProvider.createWorkbook();
         Sheet sheet = workbook.createSheet("TEST");
         Drawing dg = sheet.createDrawingPatriarch();
+        ClientAnchor anchor = workbook.getCreationHelper().createClientAnchor();
         
         int nRows = 5;
         int nCols = 6;
@@ -1044,11 +1045,20 @@ public abstract class BaseTestSheet {
             sheet.createRow(r);
             // Create columns in reverse order
             for (int c=nCols-1; c>=0; c--) {
-                Comment comment = dg.createCellComment(workbook.getCreationHelper().createClientAnchor());
+                // When the comment box is visible, have it show in a 1x3 space
+                anchor.setCol1(c);
+                anchor.setCol2(c);
+                anchor.setRow1(r);
+                anchor.setRow2(r);
+                
+                // Create the comment and set the text-author
+                Comment comment = dg.createCellComment(anchor);
                 Cell cell = sheet.getRow(r).createCell(c);
                 comment.setAuthor("Author " + r);
                 RichTextString text = workbook.getCreationHelper().createRichTextString("Test comment at row=" + r + ", column=" + c);
                 comment.setString(text);
+                
+                // Assign the comment to the cell
                 cell.setCellComment(comment);
             }
         }
