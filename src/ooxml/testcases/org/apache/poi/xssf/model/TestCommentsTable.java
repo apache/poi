@@ -34,6 +34,7 @@ import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
@@ -86,9 +87,9 @@ public class TestCommentsTable {
 		comment1.setText(ctrst1);
 
 		// test finding the right comment for a cell
-		assertSame(comment0, sheetComments.getCTComment("A1"));
-		assertSame(comment1, sheetComments.getCTComment("A2"));
-		assertNull(sheetComments.getCTComment("A3"));
+		assertSame(comment0, sheetComments.getCTComment(new CellAddress("A1")));
+		assertSame(comment1, sheetComments.getCTComment(new CellAddress("A2")));
+		assertNull(sheetComments.getCTComment(new CellAddress("A3")));
 	}
 
 
@@ -210,33 +211,37 @@ public class TestCommentsTable {
 
 	@Test
 	public void removeComment() throws Exception {
+	    final CellAddress addrA1 = new CellAddress("A1");
+        final CellAddress addrA2 = new CellAddress("A2");
+        final CellAddress addrA3 = new CellAddress("A3");
+	    
         CommentsTable sheetComments = new CommentsTable();
-        CTComment a1 = sheetComments.newComment("A1");
-        CTComment a2 = sheetComments.newComment("A2");
-        CTComment a3 = sheetComments.newComment("A3");
+        CTComment a1 = sheetComments.newComment(addrA1);
+        CTComment a2 = sheetComments.newComment(addrA2);
+        CTComment a3 = sheetComments.newComment(addrA3);
 
-        assertSame(a1, sheetComments.getCTComment("A1"));
-        assertSame(a2, sheetComments.getCTComment("A2"));
-        assertSame(a3, sheetComments.getCTComment("A3"));
+        assertSame(a1, sheetComments.getCTComment(addrA1));
+        assertSame(a2, sheetComments.getCTComment(addrA2));
+        assertSame(a3, sheetComments.getCTComment(addrA3));
         assertEquals(3, sheetComments.getNumberOfComments());
 
-        assertTrue(sheetComments.removeComment("A1"));
+        assertTrue(sheetComments.removeComment(addrA1));
         assertEquals(2, sheetComments.getNumberOfComments());
-        assertNull(sheetComments.getCTComment("A1"));
-        assertSame(a2, sheetComments.getCTComment("A2"));
-        assertSame(a3, sheetComments.getCTComment("A3"));
+        assertNull(sheetComments.getCTComment(addrA1));
+        assertSame(a2, sheetComments.getCTComment(addrA2));
+        assertSame(a3, sheetComments.getCTComment(addrA3));
 
-        assertTrue(sheetComments.removeComment("A2"));
+        assertTrue(sheetComments.removeComment(addrA2));
         assertEquals(1, sheetComments.getNumberOfComments());
-        assertNull(sheetComments.getCTComment("A1"));
-        assertNull(sheetComments.getCTComment("A2"));
-        assertSame(a3, sheetComments.getCTComment("A3"));
+        assertNull(sheetComments.getCTComment(addrA1));
+        assertNull(sheetComments.getCTComment(addrA2));
+        assertSame(a3, sheetComments.getCTComment(addrA3));
 
-        assertTrue(sheetComments.removeComment("A3"));
+        assertTrue(sheetComments.removeComment(addrA3));
         assertEquals(0, sheetComments.getNumberOfComments());
-        assertNull(sheetComments.getCTComment("A1"));
-        assertNull(sheetComments.getCTComment("A2"));
-        assertNull(sheetComments.getCTComment("A3"));
+        assertNull(sheetComments.getCTComment(addrA1));
+        assertNull(sheetComments.getCTComment(addrA2));
+        assertNull(sheetComments.getCTComment(addrA3));
     }
 
 	@Test

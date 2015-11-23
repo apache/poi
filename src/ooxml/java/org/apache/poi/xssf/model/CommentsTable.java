@@ -23,10 +23,15 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.ss.usermodel.Comment;
+import org.apache.poi.ss.util.CellAddress;
+import org.apache.poi.util.Internal;
 import org.apache.poi.xssf.usermodel.XSSFComment;
 import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
@@ -34,20 +39,26 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCommentList;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComments;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CommentsDocument;
 
+@Internal
 public class CommentsTable extends POIXMLDocumentPart {
+    public static final String DEFAULT_AUTHOR = "";
+    public static final int DEFAULT_AUTHOR_ID = 0;
+    /**
+     * Underlying XML Beans CTComment list.
+     */
     private CTComments comments;
     /**
      * XML Beans uses a list, which is very slow
      *  to search, so we wrap things with our own
      *  map for fast lookup.
      */
-    private Map<String, CTComment> commentRefs;
+    private Map<CellAddress, CTComment> commentRefs;
 
     public CommentsTable() {
         super();
         comments = CTComments.Factory.newInstance();
         comments.addNewCommentList();
-        comments.addNewAuthors().addAuthor("");
+        comments.addNewAuthors().addAuthor(DEFAULT_AUTHOR);
     }
 
     public CommentsTable(PackagePart part, PackageRelationship rel) throws IOException {
@@ -80,11 +91,22 @@ public class CommentsTable extends POIXMLDocumentPart {
     /**
      * Called after the reference is updated, so that
      *  we can reflect that in our cache
+     *  @deprecated 2015-11-23 (circa POI 3.14beta1). Use {@link #referenceUpdated(CellAddress, CTComment)} instead
      */
     public void referenceUpdated(String oldReference, CTComment comment) {
+       referenceUpdated(new CellAddress(oldReference), comment);
+    }
+    
+    /**
+     * Called after the reference is updated, so that
+     *  we can reflect that in our cache
+     *  @param oldReference the comment to remove from the commentRefs map
+     *  @param comment the comment to replace in the commentRefs map
+     */
+    public void referenceUpdated(CellAddress oldReference, CTComment comment) {
        if(commentRefs != null) {
           commentRefs.remove(oldReference);
-          commentRefs.put(comment.getRef(), comment);
+          commentRefs.put(new CellAddress(comment.getRef()), comment);
        }
     }
 
@@ -100,8 +122,8 @@ public class CommentsTable extends POIXMLDocumentPart {
         return comments.getAuthors().getAuthorArray((int)authorId);
     }
 
-    @SuppressWarnings("deprecation")
     public int findAuthor(String author) {
+        @SuppressWarnings("deprecation")
         String[] authorArray = comments.getAuthors().getAuthorArray();
         for (int i = 0 ; i < authorArray.length; i++) {
             if (authorArray[i].equals(author)) {
@@ -111,53 +133,144 @@ public class CommentsTable extends POIXMLDocumentPart {
         return addNewAuthor(author);
     }
 
+    /**
+     * Finds the cell comment at cellAddress, if one exists
+     *
+     * @param cellAddress the address of the cell to find a comment
+     * @return cell comment if one exists, otherwise returns null
+     * @deprecated 2015-11-23 (circa POI 3.14beta1). Use {@link #findCellComment(CellAddress)} instead
+     */
     public XSSFComment findCellComment(String cellRef) {
-        CTComment ct = getCTComment(cellRef);
-        return ct == null ? null : new XSSFComment(this, ct, null);
+        return findCellComment(new CellAddress(cellRef));
     }
 
-    @SuppressWarnings("deprecation") //YK: getXYZArray() array accessors are deprecated in xmlbeans with JDK 1.5 support
-    public CTComment getCTComment(String cellRef) {
+    /**
+     * Finds the cell comment at cellAddress, if one exists
+     *
+     * @param cellAddress the address of the cell to find a comment
+     * @return cell comment if one exists, otherwise returns null
+     */
+    public XSSFComment findCellComment(CellAddress cellAddress) {
+        CTComment ct = getCTComment(cellAddress);
+        return ct == null ? null : new XSSFComment(this, ct, null);
+    }
+    
+
+    /**
+     * Get the underlying CTComment xmlbean for a comment located at cellRef, if it exists
+     *
+     * @param cellRef the location of the cell comment
+     * @return CTComment xmlbean if comment exists, otherwise return null.
+     * @deprecated 2015-11-23 (circa POI 3.14beta1). Use {@link CommentsTable#getCTComment(CellAddress)} instead
+     */
+    @Internal
+    public CTComment getCTComment(String ref) {
+        return getCTComment(new CellAddress(ref));
+    }
+    
+    /**
+     * Get the underlying CTComment xmlbean for a comment located at cellRef, if it exists
+     *
+     * @param cellRef the location of the cell comment
+     * @return CTComment xmlbean if comment exists, otherwise return null.
+     */
+    @Internal
+    public CTComment getCTComment(CellAddress cellRef) {
         // Create the cache if needed
-        if(commentRefs == null) {
-           commentRefs = new HashMap<String, CTComment>();
-           for (CTComment comment : comments.getCommentList().getCommentArray()) {
-              commentRefs.put(comment.getRef(), comment);
-           }
-        }
+        prepareCTCommentCache();
 
         // Return the comment, or null if not known
         return commentRefs.get(cellRef);
     }
+    
+    /**
+     * Returns all cell comments on this sheet.
+     * @return A map of each Comment in this sheet, keyed on the cell address where
+     * the comment is located.
+     */
+    public Map<CellAddress, Comment> getCellComments(){
+        prepareCTCommentCache();
+        final TreeMap<CellAddress, Comment> map = new TreeMap<CellAddress, Comment>();
+        
+        for (final Entry<CellAddress, CTComment> e: commentRefs.entrySet()) {
+            map.put(e.getKey(), new XSSFComment(this, e.getValue(), null));
+        }
+        
+        return map;
+    }
 
     /**
-     * This method is deprecated and should not be used any more as
-     * it silently overwrites the comment in Cell A1 if present
-     * @deprecated Use {@link #newComment(String)} instead to explicitly set the cell reference to create for
+     * Refresh Map<CellAddress, CTComment> commentRefs cache,
+     * Calls that use the commentRefs cache will perform in O(1)
+     * time rather than O(n) lookup time for List<CTComment> comments.
      */
-    @Deprecated
-    public CTComment newComment() {
-        return newComment("A1");
+    @SuppressWarnings("deprecation") //YK: getXYZArray) array accessors are deprecated in xmlbeans with JDK 1.5 support
+    private void prepareCTCommentCache() {
+        // Create the cache if needed
+        if(commentRefs == null) {
+           commentRefs = new HashMap<CellAddress, CTComment>();
+           for (CTComment comment : comments.getCommentList().getCommentArray()) {
+              commentRefs.put(new CellAddress(comment.getRef()), comment);
+           }
+        }
     }
     
+    /**
+     * Create a new comment located at cell address
+     *
+     * @param ref the location to add the comment
+     * @return a new CTComment located at ref with default author
+     * @deprecated 2015-11-23 (circa POI 3.14beta1). Use {@link #newComment(CellAddress)} instead
+     */
+    @Internal
     public CTComment newComment(String ref) {
+        return newComment(new CellAddress(ref));
+    }
+    
+    /**
+     * Create a new comment located` at cell address
+     *
+     * @param ref the location to add the comment
+     * @return a new CTComment located at ref with default author
+     */
+    @Internal
+    public CTComment newComment(CellAddress ref) {
         CTComment ct = comments.getCommentList().addNewComment();
-        ct.setRef(ref);
-        ct.setAuthorId(0);
+        ct.setRef(ref.formatAsString());
+        ct.setAuthorId(DEFAULT_AUTHOR_ID);
         
         if(commentRefs != null) {
-           commentRefs.put(ct.getRef(), ct);
+           commentRefs.put(ref, ct);
         }
         return ct;
     }
-
+    
+    /**
+     * Remove the comment at cellRef location, if one exists
+     *
+     * @param cellRef the location of the comment to remove
+     * @return returns true if a comment was removed
+     * @deprecated 2015-11-23 (circa POI 3.14beta1). Use {@link #removeComment(CellAddress)} instead
+     */
     public boolean removeComment(String cellRef) {
+        return removeComment(new CellAddress(cellRef));
+    }
+
+    /**
+     * Remove the comment at cellRef location, if one exists
+     *
+     * @param cellRef the location of the comment to remove
+     * @return returns true if a comment was removed
+     */
+    public boolean removeComment(CellAddress cellRef) {
+        final String stringRef = cellRef.formatAsString();
         CTCommentList lst = comments.getCommentList();
         if(lst != null) {
+            @SuppressWarnings("deprecation") //YK: getXYZArray() array accessors are deprecated in xmlbeans with JDK 1.5 support
             CTComment[] commentArray = lst.getCommentArray();
             for (int i = 0; i < commentArray.length; i++) {
                 CTComment comment = commentArray[i];
-                if (cellRef.equals(comment.getRef())) {
+                if (stringRef.equals(comment.getRef())) {
                     lst.removeComment(i);
 
                     if(commentRefs != null) {
@@ -170,12 +283,25 @@ public class CommentsTable extends POIXMLDocumentPart {
         return false;
     }
 
+    /**
+     * Add a new author to the CommentsTable.
+     * This does not check if the author already exists.
+     *
+     * @param author the name of the comment author
+     * @return the index of the new author
+     */
     private int addNewAuthor(String author) {
         int index = comments.getAuthors().sizeOfAuthorArray();
         comments.getAuthors().insertAuthor(index, author);
         return index;
     }
 
+    /**
+     * Returns the underlying CTComments list xmlbean
+     *
+     * @return underlying comments list xmlbean
+     */
+    @Internal
     public CTComments getCTComments(){
         return comments;
     }
