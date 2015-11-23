@@ -684,10 +684,10 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
 
     /**
      * Return cell comment at row, column, if one exists. Otherwise returns null.
-     * @row the row where the comment is located
-     * @column the column where the comment is located
+     * @param row the row where the comment is located
+     * @param column the column where the comment is located
      * @return the cell comment, if one exists. Otherwise return null.
-     * @deprecated as of 2015-11-23 (circa POI 3.14beta1). Use {@link #getCellComment(CellReference)} instead.
+     * @deprecated as of 2015-11-23 (circa POI 3.14beta1). Use {@link #getCellComment(CellAddress)} instead.
      */
     @Override
     public XSSFComment getCellComment(int row, int column) {
