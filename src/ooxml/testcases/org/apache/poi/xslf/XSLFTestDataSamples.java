@@ -24,21 +24,24 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 
 /**
  * @author Yegor Kozlov
  */
 public class XSLFTestDataSamples {
 
-    public static XMLSlideShow openSampleDocument(String sampleName) throws IOException {
+    public static XMLSlideShow openSampleDocument(String sampleName) {
         InputStream is = POIDataSamples.getSlideShowInstance().openResourceAsStream(sampleName);
         try {
             return new XMLSlideShow(OPCPackage.open(is));
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
-            is.close();
+            try {
+                is.close();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
@@ -46,7 +49,7 @@ public class XSLFTestDataSamples {
         ByteArrayOutputStream baos = new ByteArrayOutputStream(4096);
         try {
             doc.write(baos);
-        } catch (Exception e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
         
@@ -57,8 +60,12 @@ public class XSLFTestDataSamples {
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
-            baos.close();
-            bais.close();
+            try {
+                baos.close();
+                bais.close();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
         
     }

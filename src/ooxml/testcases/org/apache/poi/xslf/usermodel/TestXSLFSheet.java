@@ -18,6 +18,7 @@ package org.apache.poi.xslf.usermodel;
 
 import static org.junit.Assert.*;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.apache.poi.xslf.XSLFTestDataSamples;
@@ -31,7 +32,7 @@ import org.junit.Test;
 public class TestXSLFSheet {
     
     @Test
-    public void testCreateShapes(){
+    public void testCreateShapes() throws IOException {
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFSlide slide = ppt.createSlide();
         assertTrue(slide.getShapes().isEmpty());
@@ -58,8 +59,8 @@ public class TestXSLFSheet {
         assertSame(shape3, slide.getShapes().get(2));
         assertSame(shape4, slide.getShapes().get(3));
 
-        ppt = XSLFTestDataSamples.writeOutAndReadBack(ppt);
-        slide = ppt.getSlides().get(0);
+        XMLSlideShow ppt2 = XSLFTestDataSamples.writeOutAndReadBack(ppt);
+        slide = ppt2.getSlides().get(0);
         List<XSLFShape> shapes = slide.getShapes();
         assertEquals(4, shapes.size());
 
@@ -67,5 +68,8 @@ public class TestXSLFSheet {
         assertTrue(shapes.get(1) instanceof XSLFTextBox);
         assertTrue(shapes.get(2) instanceof XSLFConnectorShape);
         assertTrue(shapes.get(3) instanceof XSLFGroupShape);
+        
+        ppt.close();
+        ppt2.close();
     }
 }
