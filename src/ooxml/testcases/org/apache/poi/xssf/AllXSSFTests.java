@@ -44,7 +44,7 @@ import org.junit.runners.Suite;
     TestCommentsTable.class,
     TestSharedStringsTable.class,
     TestStylesTable.class,
-    TestCellReference.class,
+    //TestCellReference.class, //converted to junit4
     TestCTColComparator.class,
     TestNumericRanges.class,       
     TestCellFormatPart.class

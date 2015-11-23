@@ -20,15 +20,20 @@ package org.apache.poi.ss.util;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.util.CellReference;
 
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * Tests that the common CellReference works as we need it to.
  * Note - some additional testing is also done in the HSSF class,
  *  {@link org.apache.poi.hssf.util.TestCellReference}
  */
-public final class TestCellReference extends TestCase {
+public final class TestCellReference {
+    @Test
     public void testConstructors() {
         CellReference cellReference;
         final String sheet = "Sheet1";
@@ -54,6 +59,7 @@ public final class TestCellReference extends TestCase {
         assertEquals("Sheet1!A$1", cellReference.formatAsString());
     }
 
+    @Test
     public void testFormatAsString() {
         CellReference cellReference;
 
@@ -73,6 +79,7 @@ public final class TestCellReference extends TestCase {
         assertEquals("'Sheet 1'!A$1", cellReference.formatAsString());
     }
 
+    @Test
     public void testGetCellRefParts() {
         CellReference cellReference;
         String[] parts;
@@ -140,6 +147,7 @@ public final class TestCellReference extends TestCase {
         assertEquals("AABC", parts[2]);
     }
 
+    @Test
     public void testGetColNumFromRef() {
         String cellRef = "A1";
         CellReference cellReference = new CellReference(cellRef);
@@ -183,6 +191,7 @@ public final class TestCellReference extends TestCase {
         assertEquals(54, cellReference.getCol());
     }
 
+    @Test
     public void testGetRowNumFromRef() {
         String cellRef = "A1";
         CellReference cellReference = new CellReference(cellRef);
@@ -197,6 +206,7 @@ public final class TestCellReference extends TestCase {
         assertEquals(120, cellReference.getRow());
     }
 
+    @Test
     public void testConvertNumToColString() {
         short col = 702;
         String collRef = new CellReference(0, col).formatAsString();
@@ -215,6 +225,7 @@ public final class TestCellReference extends TestCase {
         assertEquals("CBA1", collRef4);
     }
 
+    @Test
     public void testBadRowNumber() {
         SpreadsheetVersion v97 = SpreadsheetVersion.EXCEL97;
         SpreadsheetVersion v2007 = SpreadsheetVersion.EXCEL2007;
@@ -229,29 +240,28 @@ public final class TestCellReference extends TestCase {
         confirmCrInRange(false, "XFD", "1048577", v2007);
         confirmCrInRange(false, "XFE", "1048576", v2007);
 
-        if (CellReference.cellReferenceIsWithinRange("B", "0", v97)) {
-            throw new AssertionFailedError("Identified bug 47312a");
-        }
+        assertFalse("Identified bug 47312a", CellReference.cellReferenceIsWithinRange("B", "0", v97));
 
         confirmCrInRange(false, "A", "0", v97);
         confirmCrInRange(false, "A", "0", v2007);
     }
 
+    @Test
     public void testInvalidReference() {
         try {
             new CellReference("Sheet1!#REF!");
             fail("Shouldn't be able to create a #REF! refence");
-        } catch(IllegalArgumentException e) {}
+        } catch(IllegalArgumentException expected) {}
 
         try {
             new CellReference("'MySheetName'!#REF!");
             fail("Shouldn't be able to create a #REF! refence");
-        } catch(IllegalArgumentException e) {}
+        } catch(IllegalArgumentException expected) {}
 
         try {
             new CellReference("#REF!");
             fail("Shouldn't be able to create a #REF! refence");
-        } catch(IllegalArgumentException e) {}
+        } catch(IllegalArgumentException expected) {}
     }
 
     private static void confirmCrInRange(boolean expResult, String colStr, String rowStr,
@@ -259,10 +269,11 @@ public final class TestCellReference extends TestCase {
         if (expResult == CellReference.cellReferenceIsWithinRange(colStr, rowStr, sv)) {
             return;
         }
-        throw new AssertionFailedError("expected (c='" + colStr + "', r='" + rowStr + "' to be "
+        fail("expected (c='" + colStr + "', r='" + rowStr + "' to be "
                 + (expResult ? "within" : "out of") + " bounds for version " + sv.name());
     }
 
+    @Test
     public void testConvertColStringToIndex() {
         assertEquals(0, CellReference.convertColStringToIndex("A"));
         assertEquals(1, CellReference.convertColStringToIndex("B"));
@@ -276,11 +287,12 @@ public final class TestCellReference extends TestCase {
         try {
             CellReference.convertColStringToIndex("A$");
             fail("Should throw exception here");
-        } catch (IllegalArgumentException e) {
-            assertTrue(e.getMessage().contains("A$"));
+        } catch (IllegalArgumentException expected) {
+            assertTrue(expected.getMessage().contains("A$"));
         }
     }
 
+    @Test
     public void testConvertNumColColString() {
         assertEquals("A", CellReference.convertNumToColString(0));
         assertEquals("AV", CellReference.convertNumToColString(47));

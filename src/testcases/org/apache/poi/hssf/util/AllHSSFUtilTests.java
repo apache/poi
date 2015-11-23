@@ -30,7 +30,7 @@ public class AllHSSFUtilTests {
 	public static Test suite() {
 		TestSuite result = new TestSuite(AllHSSFUtilTests.class.getName());
 		result.addTestSuite(TestAreaReference.class);
-		result.addTestSuite(TestCellReference.class);
+		// result.addTestSuite(TestCellReference.class); //converted to junit4
 		result.addTestSuite(TestHSSFColor.class);
 		result.addTestSuite(TestRKUtil.class);
 		return result;
