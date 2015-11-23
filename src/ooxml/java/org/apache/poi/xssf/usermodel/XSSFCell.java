@@ -39,6 +39,7 @@ import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.Beta;
@@ -585,7 +586,7 @@ public final class XSSFCell implements Cell {
     public String getReference() {
         String ref = _cell.getR();
         if(ref == null) {
-            return new CellReference(this).formatAsString();
+            return new CellAddress(this).formatAsString();
         }
         return ref;
     }
@@ -1029,7 +1030,7 @@ public final class XSSFCell implements Cell {
     public void removeCellComment() {
         XSSFComment comment = getCellComment();
         if(comment != null){
-            String ref = getReference();
+            CellAddress ref = new CellAddress(getReference());
             XSSFSheet sh = getSheet();
             sh.getCommentsTable(false).removeComment(ref);
             sh.getVMLDrawing(false).removeCommentShape(getRowIndex(), getColumnIndex());

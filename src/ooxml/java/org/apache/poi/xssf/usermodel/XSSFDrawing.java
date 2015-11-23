@@ -33,6 +33,7 @@ import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.Drawing;
+import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.Units;
@@ -316,7 +317,7 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing {
                     ca.getRow2() + ", " + dy2Pixels;
             vmlShape.getClientDataArray(0).setAnchorArray(0, position);
         }
-        String ref = new CellReference(ca.getRow1(), ca.getCol1()).formatAsString();
+        CellAddress ref = new CellAddress(ca.getRow1(), ca.getCol1());
 
         if(comments.findCellComment(ref) != null) {
             throw new IllegalArgumentException("Multiple cell comments in one cell are not allowed, cell: " + ref);

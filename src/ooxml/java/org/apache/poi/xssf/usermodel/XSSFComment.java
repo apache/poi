@@ -23,6 +23,7 @@ import java.math.BigInteger;
 import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.RichTextString;
+import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.model.CommentsTable;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
@@ -130,9 +131,9 @@ public class XSSFComment implements Comment {
      * @param col the 0-based column of the cell that contains the comment
      */
     public void setColumn(int col) {
-        String oldRef = _comment.getRef();
+        CellAddress oldRef = new CellAddress(_comment.getRef());
         
-        CellReference ref = new CellReference(getRow(), col);
+        CellAddress ref = new CellAddress(getRow(), col);
         _comment.setRef(ref.formatAsString());
         _comments.referenceUpdated(oldRef, _comment);
         
@@ -154,12 +155,11 @@ public class XSSFComment implements Comment {
      * @param row the 0-based row of the cell that contains the comment
      */
 	public void setRow(int row) {
-	   String oldRef = _comment.getRef();
+	   CellAddress oldRef = new CellAddress(_comment.getRef());
 	   
-		String newRef =
-			(new CellReference(row, getColumn())).formatAsString();
-		_comment.setRef(newRef);
-      _comments.referenceUpdated(oldRef, _comment);
+		CellAddress ref = new CellAddress(row, getColumn());
+		_comment.setRef(ref.formatAsString());
+		_comments.referenceUpdated(oldRef, _comment);
       
         if(_vmlShape != null) {
         	_vmlShape.getClientDataArray(0).setRowArray(0, 

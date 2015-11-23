@@ -30,7 +30,6 @@ import org.apache.poi.ss.usermodel.AutoFilter;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellRange;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.DataValidation;
 import org.apache.poi.ss.usermodel.DataValidationHelper;
 import org.apache.poi.ss.usermodel.Drawing;
@@ -41,8 +40,11 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.SheetConditionalFormatting;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.SheetUtil;
+import org.apache.poi.xssf.usermodel.XSSFComment;
 import org.apache.poi.xssf.usermodel.XSSFDataValidation;
 import org.apache.poi.xssf.usermodel.XSSFHyperlink;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -1322,10 +1324,33 @@ public class SXSSFSheet implements Sheet, Cloneable
      * Returns cell comment for the specified row and column
      *
      * @return cell comment or <code>null</code> if not found
+     * @deprecated as of 2015-11-23 (circa POI 3.14beta1). Use {@link #getCellComment(CellReference)} instead.
      */
-    public Comment getCellComment(int row, int column)
+    @Override
+    public XSSFComment getCellComment(int row, int column)
     {
-        return _sh.getCellComment(row, column);
+        return getCellComment(new CellAddress(row, column));
+    }
+    
+    /**
+     * Returns cell comment for the specified row and column
+     *
+     * @return cell comment or <code>null</code> if not found
+     */
+    @Override
+    public XSSFComment getCellComment(CellAddress ref)
+    {
+        return _sh.getCellComment(ref);
+    }
+    
+    /**
+     * Returns all cell comments on this sheet.
+     * @return A map of each Comment in the sheet, keyed on the cell address where
+     * the comment is located.
+     */
+    @Override
+    public Map<CellAddress, XSSFComment> getCellComments() {
+        return _sh.getCellComments();
     }
     
     /**
