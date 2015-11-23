@@ -37,7 +37,7 @@ import org.apache.poi.util.POILogger;
  * 
  * <p>This is for the older-style Excel conditional formattings,
  *  new-style (Excel 2007+) also make use of {@link CFRule12Record}
- *  and {@link CFExRuleRecord} for their rules.
+ *  for their rules.</p>
  */
 public abstract class CFRuleBase extends StandardRecord implements Cloneable {
     public static final class ComparisonOperator {
