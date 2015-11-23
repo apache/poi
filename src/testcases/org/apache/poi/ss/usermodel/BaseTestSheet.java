@@ -23,10 +23,13 @@ import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.poi.hssf.util.PaneInformation;
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.SpreadsheetVersion;
+import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.junit.Rule;
 import org.junit.Test;
@@ -1018,12 +1021,53 @@ public abstract class BaseTestSheet {
         comment.setAuthor("test C10 author");
         cell.setCellComment(comment);
 
-        assertNotNull(sheet.getCellComment(9, 2));
-        assertEquals("test C10 author", sheet.getCellComment(9, 2).getAuthor());
+        CellAddress ref = new CellAddress(9, 2);
+        assertNotNull(sheet.getCellComment(ref));
+        assertEquals("test C10 author", sheet.getCellComment(ref).getAuthor());
         
         assertNotNull(_testDataProvider.writeOutAndReadBack(workbook));
         
         workbook.close();
+    }
+    
+    
+    @Test
+    public void getCellComments() throws IOException {
+        Workbook workbook = _testDataProvider.createWorkbook();
+        Sheet sheet = workbook.createSheet("TEST");
+        Drawing dg = sheet.createDrawingPatriarch();
+        
+        int nRows = 5;
+        int nCols = 6;
+        
+        for (int r=0; r<nRows; r++) {
+            sheet.createRow(r);
+            // Create columns in reverse order
+            for (int c=nCols-1; c>=0; c--) {
+                Comment comment = dg.createCellComment(workbook.getCreationHelper().createClientAnchor());
+                Cell cell = sheet.getRow(r).createCell(c);
+                comment.setAuthor("Author " + r);
+                RichTextString text = workbook.getCreationHelper().createRichTextString("Test comment at row=" + r + ", column=" + c);
+                comment.setString(text);
+                cell.setCellComment(comment);
+            }
+        }
+        
+        Workbook wb = _testDataProvider.writeOutAndReadBack(workbook);
+        Sheet sh = wb.getSheet("TEST");
+        Map<CellAddress, ? extends Comment> cellComments = sh.getCellComments();
+        assertEquals(nRows*nCols, cellComments.size());
+        
+        for (Entry<CellAddress, ? extends Comment> e : cellComments.entrySet()) {
+            CellAddress ref = e.getKey();
+            Comment aComment = e.getValue();
+            assertEquals("Author " + ref.getRow(), aComment.getAuthor());
+            String text = "Test comment at row=" + ref.getRow() + ", column=" + ref.getColumn();
+            assertEquals(text, aComment.getString().getString());
+        }
+        
+        workbook.close();
+        wb.close();
     }
 
 

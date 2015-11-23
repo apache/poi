@@ -29,7 +29,6 @@ import java.util.TreeMap;
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
-import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.util.Internal;
 import org.apache.poi.xssf.usermodel.XSSFComment;
@@ -188,9 +187,9 @@ public class CommentsTable extends POIXMLDocumentPart {
      * @return A map of each Comment in this sheet, keyed on the cell address where
      * the comment is located.
      */
-    public Map<CellAddress, Comment> getCellComments(){
+    public Map<CellAddress, XSSFComment> getCellComments() {
         prepareCTCommentCache();
-        final TreeMap<CellAddress, Comment> map = new TreeMap<CellAddress, Comment>();
+        final TreeMap<CellAddress, XSSFComment> map = new TreeMap<CellAddress, XSSFComment>();
         
         for (final Entry<CellAddress, CTComment> e: commentRefs.entrySet()) {
             map.put(e.getKey(), new XSSFComment(this, e.getValue(), null));

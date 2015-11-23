@@ -19,9 +19,12 @@ package org.apache.poi.ss.usermodel;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.poi.hssf.util.PaneInformation;
+import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.CellReference;
 
 /**
  * High level representation of a Excel worksheet.
@@ -890,8 +893,23 @@ public interface Sheet extends Iterable<Row> {
      * Returns cell comment for the specified row and column
      *
      * @return cell comment or <code>null</code> if not found
+     * @deprecated as of 2015-11-23 (circa POI 3.14beta1). Use {@link #getCellComment(CellReference)} instead.
      */
     Comment getCellComment(int row, int column);
+    
+    /**
+     * Returns cell comment for the specified location
+     *
+     * @return cell comment or <code>null</code> if not found
+     */
+    Comment getCellComment(CellAddress ref);
+
+    /**
+     * Returns all cell comments on this sheet.
+     * @return A map of each Comment in the sheet, keyed on the cell address where
+     * the comment is located.
+     */
+    Map<CellAddress, ? extends Comment> getCellComments();
 
     /**
      * Creates the top-level drawing patriarch. 

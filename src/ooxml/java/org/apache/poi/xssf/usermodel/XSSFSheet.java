@@ -63,6 +63,7 @@ import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.AreaReference;
+import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.ss.util.CellReference;
@@ -681,19 +682,50 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         getPane().setActivePane(STPane.Enum.forInt(activePane));
     }
 
+    /**
+     * Return cell comment at row, column, if one exists. Otherwise returns null.
+     * @row the row where the comment is located
+     * @column the column where the comment is located
+     * @return the cell comment, if one exists. Otherwise return null.
+     * @deprecated as of 2015-11-23 (circa POI 3.14beta1). Use {@link #getCellComment(CellReference)} instead.
+     */
     @Override
     public XSSFComment getCellComment(int row, int column) {
+        return getCellComment(new CellAddress(row, column));
+    }
+    
+    /**
+     * Return cell comment at row, column, if one exists. Otherwise returns null.
+     *
+     * @param address the location of the cell comment
+     * @return the cell comment, if one exists. Otherwise return null.
+     */
+    @Override
+    public XSSFComment getCellComment(CellAddress address) {
         if (sheetComments == null) {
             return null;
         }
 
-        String ref = new CellReference(row, column).formatAsString();
+        final int row = address.getRow();
+        final int column = address.getColumn();
+
+        CellAddress ref = new CellAddress(row, column);
         CTComment ctComment = sheetComments.getCTComment(ref);
         if(ctComment == null) return null;
 
         XSSFVMLDrawing vml = getVMLDrawing(false);
         return new XSSFComment(sheetComments, ctComment,
                 vml == null ? null : vml.findCommentShape(row, column));
+    }
+
+    /**
+     * Returns all cell comments on this sheet.
+     * @return A map of each Comment in the sheet, keyed on the cell address where
+     * the comment is located.
+     */
+    @Override
+    public Map<CellAddress, XSSFComment> getCellComments() {
+        return sheetComments.getCellComments();
     }
 
     /**
@@ -2805,12 +2837,12 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
                     CTCommentList lst = sheetComments.getCTComments().getCommentList();
                     for (CTComment comment : lst.getCommentArray()) {
                     	String strRef = comment.getRef();
-                    	CellReference ref = new CellReference(strRef);
+                    	CellAddress ref = new CellAddress(strRef);
 
                     	// is this comment part of the current row?
                     	if(ref.getRow() == rownum) {
-                            sheetComments.removeComment(strRef);
-                            vml.removeCommentShape(ref.getRow(), ref.getCol());
+                            sheetComments.removeComment(ref);
+                            vml.removeCommentShape(ref.getRow(), ref.getColumn());
                     	}
                     }
                 }

@@ -19,6 +19,8 @@ package org.apache.poi.ss.util;
 
 import java.util.Locale;
 
+import org.apache.poi.ss.usermodel.Cell;
+
 /**
  * <p>This class is a container for POI usermodel row=0 column=0 cell references.
  * It is barely a container for these two coordinates. The implementation
@@ -83,6 +85,15 @@ public class CellAddress implements Comparable<CellAddress> {
      */
     public CellAddress(CellReference reference) {
         this(reference.getRow(), reference.getCol());
+    }
+    
+    /**
+     * Create a new CellAddress object.
+     *
+     * @param cell the Cell to get the location of
+     */
+    public CellAddress(Cell cell) {
+        this(cell.getRowIndex(), cell.getColumnIndex());
     }
     
     /**

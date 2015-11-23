@@ -21,6 +21,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 
 import org.apache.poi.ddf.EscherRecord;
@@ -61,6 +62,7 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.DataValidation;
 import org.apache.poi.ss.usermodel.DataValidationHelper;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.ss.util.CellReference;
@@ -2044,9 +2046,21 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      * Returns cell comment for the specified row and column
      *
      * @return cell comment or <code>null</code> if not found
+     * @deprecated as of 2015-11-23 (circa POI 3.14beta1). Use {@link #getCellComment(CellReference)} instead.
      */
+    @Override
     public HSSFComment getCellComment(int row, int column) {
         return findCellComment(row, column);
+    }
+    
+    /**
+     * Returns cell comment for the specified row and column
+     *
+     * @return cell comment or <code>null</code> if not found
+     */
+    @Override
+    public HSSFComment getCellComment(CellAddress ref) {
+        return findCellComment(ref.getRow(), ref.getColumn());
     }
     
     /**
@@ -2238,6 +2252,43 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
         return null;
     }
 
+    /**
+     * Returns all cell comments on this sheet.
+     * @return A map of each Comment in the sheet, keyed on the cell address where
+     * the comment is located.
+     */
+    @Override
+    public Map<CellAddress, HSSFComment> getCellComments() {
+        HSSFPatriarch patriarch = getDrawingPatriarch();
+        if (null == patriarch) {
+            patriarch = createDrawingPatriarch();
+        }
+        
+        Map<CellAddress, HSSFComment> locations = new TreeMap<CellAddress, HSSFComment>();
+        findCellCommentLocations(patriarch, locations);
+        return locations;
+    }
+    /**
+     * Finds all cell comments in this sheet and adds them to the specified locations map
+     *
+     * @param container a container that may contain HSSFComments
+     * @param locations the map to store the HSSFComments in
+     */
+    private void findCellCommentLocations(HSSFShapeContainer container, Map<CellAddress, HSSFComment> locations) {
+        for (Object object : container.getChildren()) {
+            HSSFShape shape = (HSSFShape) object;
+            if (shape instanceof HSSFShapeGroup) {
+                findCellCommentLocations((HSSFShapeGroup) shape, locations);
+                continue;
+            }
+            if (shape instanceof HSSFComment) {
+                HSSFComment comment = (HSSFComment) shape;
+                if (comment.hasPosition()) {
+                    locations.put(new CellAddress(comment.getRow(), comment.getColumn()), comment);
+                }
+            }
+        }
+    }
 
     public CellRangeAddress getRepeatingRows() {
         return getRepeatingRowsOrColums(true);
