@@ -28,7 +28,7 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
     TestAreaReference.class,
     TestCellRangeAddress.class,
-    TestCellReference.class,
+    //TestCellReference.class, //converted to junit4
     TestDateFormatConverter.class,
     TestExpandedDouble.class,
     TestNumberComparer.class,

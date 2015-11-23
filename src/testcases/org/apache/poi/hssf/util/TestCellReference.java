@@ -17,7 +17,9 @@
 
 package org.apache.poi.hssf.util;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.CellReference.NameType;
@@ -27,7 +29,8 @@ import org.apache.poi.ss.SpreadsheetVersion;
  * Tests for the HSSF and SS versions of CellReference.
  * See also {@link org.apache.poi.ss.util.TestCellReference}
  */
-public final class TestCellReference extends TestCase {
+public final class TestCellReference {
+    @Test
     public void testColNumConversion() {
         assertEquals(0, CellReference.convertColStringToIndex("A"));
         assertEquals(1, CellReference.convertColStringToIndex("B"));
@@ -59,46 +62,55 @@ public final class TestCellReference extends TestCase {
         } catch (IllegalArgumentException e) {}
     }
 
+    @Test
     public void testAbsRef1(){
         CellReference cf = new CellReference("$B$5");
         confirmCell(cf, null, 4, 1, true, true, "$B$5");
     }
 
+    @Test
     public void  testAbsRef2(){
         CellReference cf = new CellReference(4,1,true,true);
         confirmCell(cf, null, 4, 1, true, true, "$B$5");
     }
 
+    @Test
     public void  testAbsRef3(){
         CellReference cf = new CellReference("B$5");
         confirmCell(cf, null, 4, 1, true, false, "B$5");
     }
 
+    @Test
     public void  testAbsRef4(){
         CellReference cf = new CellReference(4,1,true,false);
         confirmCell(cf, null, 4, 1, true, false, "B$5");
     }
 
+    @Test
     public void  testAbsRef5(){
         CellReference cf = new CellReference("$B5");
         confirmCell(cf, null, 4, 1, false, true, "$B5");
     }
 
+    @Test
     public void  testAbsRef6(){
         CellReference cf = new CellReference(4,1,false,true);
         confirmCell(cf, null, 4, 1, false, true, "$B5");
     }
 
+    @Test
     public void  testAbsRef7(){
         CellReference cf = new CellReference("B5");
         confirmCell(cf, null, 4, 1, false, false, "B5");
     }
 
+    @Test
     public void  testAbsRef8(){
         CellReference cf = new CellReference(4,1,false,false);
         confirmCell(cf, null, 4, 1, false, false, "B5");
     }
 
+    @Test
     public void testSpecialSheetNames() {
         CellReference cf;
         cf = new CellReference("'profit + loss'!A1");
@@ -122,6 +134,7 @@ public final class TestCellReference extends TestCase {
         assertEquals("text is wrong", expText, cf.formatAsString());
     }
 
+    @Test
     public void testClassifyCellReference() {
         confirmNameType("a1", NameType.CELL);
         confirmNameType("pfy1", NameType.NAMED_RANGE);
@@ -136,6 +149,7 @@ public final class TestCellReference extends TestCase {
         confirmNameType("A1.", NameType.NAMED_RANGE);
     }
 
+    @Test
     public void testClassificationOfRowReferences(){
         confirmNameType("10", NameType.ROW);
         confirmNameType("$10", NameType.ROW);
