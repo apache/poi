@@ -19,9 +19,11 @@ package org.apache.poi.xslf.usermodel;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.xslf.XSLFTestDataSamples;
@@ -33,7 +35,7 @@ import org.junit.Test;
 public class TestXSLFHyperlink {
 
     @Test
-    public void testRead(){
+    public void testRead() throws IOException{
         XMLSlideShow  ppt = XSLFTestDataSamples.openSampleDocument("shapes.pptx");
 
         XSLFSlide slide = ppt.getSlides().get(4);
@@ -56,10 +58,12 @@ public class TestXSLFHyperlink {
         XSLFHyperlink link3 = cell3.getTextParagraphs().get(0).getTextRuns().get(0).getHyperlink();
         assertNotNull(link3);
         assertEquals(URI.create("mailto:dev@poi.apache.org?subject=Hi%20There"), link3.getTargetURI());
+        
+        ppt.close();
     }
 
     @Test
-    public void testCreate() throws Exception  {
+    public void testCreate() throws IOException, InvalidFormatException  {
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFSlide slide1 = ppt.createSlide();
         XSLFSlide slide2 = ppt.createSlide();
@@ -97,5 +101,7 @@ public class TestXSLFHyperlink {
         assertEquals(id2, rel2.getId());
         assertEquals(TargetMode.INTERNAL, rel2.getTargetMode());
         assertEquals(XSLFRelation.SLIDE.getRelation(), rel2.getRelationshipType());
+        
+        ppt.close();
     }
 }

@@ -23,8 +23,11 @@ import static org.junit.Assert.assertNotNull;
 
 import java.awt.Dimension;
 import java.awt.geom.Rectangle2D;
+import java.io.IOException;
+import java.io.InputStream;
 
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.sl.usermodel.PictureData;
 import org.apache.poi.sl.usermodel.PictureShape;
 import org.apache.poi.sl.usermodel.RectAlign;
@@ -33,16 +36,31 @@ import org.apache.poi.sl.usermodel.Slide;
 import org.apache.poi.sl.usermodel.SlideShow;
 import org.apache.poi.sl.usermodel.SlideShowFactory;
 import org.apache.poi.util.Units;
+import org.apache.poi.xslf.XSLFTestDataSamples;
+import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.junit.Test;
 
 public class TestDrawPictureShape {
     final static POIDataSamples ssSamples = POIDataSamples.getSlideShowInstance();
+    
+    /** a generic way to open a sample slideshow document **/
+    public static SlideShow<?,?> openSampleDocument(String sampleName) throws IOException {
+        InputStream is = ssSamples.openResourceAsStream(sampleName);
+        try {
+            return SlideShowFactory.create(is);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        } finally {
+            is.close();
+        }
+    }
 
     @Test
     public void testResize() throws Exception {
         String files[] = { "pictures.ppt", "shapes.pptx" };
         for (String file : files) {
-            SlideShow<?,?> ss = SlideShowFactory.create(ssSamples.getFile(file));
+            SlideShow<?,?> ss = openSampleDocument(file);
+            
             Slide<?,?> slide = ss.getSlides().get(0);
             PictureShape<?,?> picShape = null;
             for (Shape<?,?> shape : slide.getShapes()) {

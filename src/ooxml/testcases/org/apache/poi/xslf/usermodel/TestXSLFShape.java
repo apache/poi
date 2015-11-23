@@ -22,6 +22,7 @@ import org.apache.poi.xslf.XSLFTestDataSamples;
 import org.junit.Test;
 import org.openxmlformats.schemas.drawingml.x2006.main.STTextUnderlineType;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -30,7 +31,7 @@ import java.util.List;
 public class TestXSLFShape {
 
     @Test
-    public void testReadTextShapes() {
+    public void testReadTextShapes() throws IOException {
         XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("shapes.pptx");
         List<XSLFSlide> slides = ppt.getSlides();
 
@@ -79,9 +80,12 @@ public class TestXSLFShape {
         assertEquals("Subtitle", paragraphs2.get(0).getTextRuns().get(0).getRawText());
         assertTrue(paragraphs2.get(0).getTextRuns().get(0).getXmlObject().getRPr().getB());
         assertEquals("And second line", paragraphs2.get(1).getTextRuns().get(0).getRawText());
+        
+        ppt.close();
     }
 
-    public void testCreateShapes() {
+    @Test
+    public void testCreateShapes() throws IOException {
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFSlide slide = ppt.createSlide();
         assertTrue(slide.getShapes().isEmpty());
@@ -92,11 +96,14 @@ public class TestXSLFShape {
         assertSame(textBox, slide.getShapes().get(0));
 
         assertEquals("", textBox.getText());
-        assertEquals(0, textBox.getTextParagraphs().size());
+        // FIXME: is this correct? Should it be starting out with 0 or 1 text paragraphs?
+        assertEquals(1, textBox.getTextParagraphs().size());
         textBox.addNewTextParagraph().addNewTextRun().setText("Apache");
         textBox.addNewTextParagraph().addNewTextRun().setText("POI");
         assertEquals("Apache\nPOI", textBox.getText());
-        assertEquals(2, textBox.getTextParagraphs().size());
+        assertEquals(3, textBox.getTextParagraphs().size());
+        
+        ppt.close();
     }
 
 }

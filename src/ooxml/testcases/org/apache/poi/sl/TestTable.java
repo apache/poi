@@ -22,43 +22,71 @@ package org.apache.poi.sl;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.sl.usermodel.SlideShow;
 import org.apache.poi.sl.usermodel.SlideShowFactory;
 import org.apache.poi.sl.usermodel.TableShape;
+import org.apache.poi.xslf.XSLFTestDataSamples;
+import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.junit.Test;
 
 public class TestTable {
     private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
     
+    /** a generic way to open a sample slideshow document **/
+    public static SlideShow<?,?> openSampleSlideshow(String sampleName) throws IOException {
+        InputStream is = _slTests.openResourceAsStream(sampleName);
+        try {
+            return SlideShowFactory.create(is);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        } finally {
+            is.close();
+        }
+    }
+    
     @Test
     public void testColWidthRowHeight() throws IOException {
         // Test of table dimensions of same slideshow saved as ppt/x
         // to check if both return similar (points) value
-        SlideShow<?,?> ppt = SlideShowFactory.create(_slTests.getFile("table_test.ppt"));
+        SlideShow<?,?> ppt = openSampleSlideshow("table_test.ppt");
         TableShape<?,?> ts = (TableShape<?,?>)ppt.getSlides().get(0).getShapes().get(0);
-        int cols = ts.getNumberOfColumns();
-        int rows = ts.getNumberOfRows();
 
-        SlideShow<?,?> pptx = SlideShowFactory.create(_slTests.getFile("table_test.pptx"));
+        SlideShow<?,?> pptx = openSampleSlideshow("table_test.pptx");
         TableShape<?,?> tsx = (TableShape<?,?>)pptx.getSlides().get(0).getShapes().get(0);
-        int colsx = tsx.getNumberOfColumns();
-        int rowsx = tsx.getNumberOfRows();
         
-        assertEquals(cols, colsx);
-        assertEquals(rows, rowsx);
+        // assume table shape should be equal to itself
+        confirmTableShapeEqual(ts, ts);
+        confirmTableShapeEqual(tsx, tsx);
         
-        for (int i=0; i<cols; i++) {
-            assertEquals(ts.getColumnWidth(i), tsx.getColumnWidth(i), 0.2);
-        }
-
-        for (int i=0; i<rows; i++) {
-            assertEquals(ts.getRowHeight(i), tsx.getRowHeight(i), 0.3);
-        }
+        // assert ppt and pptx versions of the same table have the same shape
+        confirmTableShapeEqual(ts, tsx);
 
         pptx.close();
         ppt.close();
+    }
+    
+    private void confirmTableShapeEqual(TableShape<?,?> tableA, TableShape<?,?> tableB) {
+        int cols = tableA.getNumberOfColumns();
+        int rows = tableA.getNumberOfRows();
+        
+        int colsx = tableB.getNumberOfColumns();
+        int rowsx = tableB.getNumberOfRows();
+        
+        assertEquals("tables should have same number of columns", cols, colsx);
+        assertEquals("tables should have same number of rows", rows, rowsx);
+        
+        for (int i=0; i<cols; i++) {
+            assertEquals("Width of column " + i + " should be equal",
+                    tableA.getColumnWidth(i), tableB.getColumnWidth(i), 0.2);
+        }
+
+        for (int i=0; i<rows; i++) {
+            assertEquals("Height of row " + i + " should be equal",
+                    tableA.getRowHeight(i), tableB.getRowHeight(i), 0.3);
+        }
     }
 
 }

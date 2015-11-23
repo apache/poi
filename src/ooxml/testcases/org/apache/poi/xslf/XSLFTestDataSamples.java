@@ -22,30 +22,44 @@ import org.apache.poi.xslf.usermodel.XMLSlideShow;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
  * @author Yegor Kozlov
  */
 public class XSLFTestDataSamples {
 
-    public static XMLSlideShow openSampleDocument(String sampleName) {
+    public static XMLSlideShow openSampleDocument(String sampleName) throws IOException {
         InputStream is = POIDataSamples.getSlideShowInstance().openResourceAsStream(sampleName);
         try {
             return new XMLSlideShow(OPCPackage.open(is));
         } catch (Exception e) {
             throw new RuntimeException(e);
+        } finally {
+            is.close();
         }
     }
 
-    public static XMLSlideShow writeOutAndReadBack(XMLSlideShow doc) {
+    public static XMLSlideShow writeOutAndReadBack(XMLSlideShow doc) throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream(4096);
         try {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream(4096);
             doc.write(baos);
-            ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-            return new XMLSlideShow(OPCPackage.open(bais));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+        
+        InputStream bais;
+        bais = new ByteArrayInputStream(baos.toByteArray());
+        try {
+            return new XMLSlideShow(OPCPackage.open(bais));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        } finally {
+            baos.close();
+            bais.close();
+        }
+        
     }
 }

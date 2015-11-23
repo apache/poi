@@ -36,7 +36,7 @@ import org.junit.Test;
 public class TestXSLFSlide {
     
     @Test
-    public void testReadShapes(){
+    public void testReadShapes() throws IOException {
         XMLSlideShow  ppt = XSLFTestDataSamples.openSampleDocument("shapes.pptx");
         List<XSLFSlide> slides = ppt.getSlides();
 
@@ -101,6 +101,8 @@ public class TestXSLFSlide {
         XSLFTable tbl = (XSLFTable)shapes4.get(0);
         assertEquals(3, tbl.getNumberOfColumns());
         assertEquals(6, tbl.getNumberOfRows());
+        
+        ppt.close();
     }
 
     @Test
