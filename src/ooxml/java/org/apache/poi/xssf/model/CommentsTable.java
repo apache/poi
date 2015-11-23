@@ -135,7 +135,7 @@ public class CommentsTable extends POIXMLDocumentPart {
     /**
      * Finds the cell comment at cellAddress, if one exists
      *
-     * @param cellAddress the address of the cell to find a comment
+     * @param cellRef the address of the cell to find a comment
      * @return cell comment if one exists, otherwise returns null
      * @deprecated 2015-11-23 (circa POI 3.14beta1). Use {@link #findCellComment(CellAddress)} instead
      */
@@ -158,7 +158,7 @@ public class CommentsTable extends POIXMLDocumentPart {
     /**
      * Get the underlying CTComment xmlbean for a comment located at cellRef, if it exists
      *
-     * @param cellRef the location of the cell comment
+     * @param ref the location of the cell comment
      * @return CTComment xmlbean if comment exists, otherwise return null.
      * @deprecated 2015-11-23 (circa POI 3.14beta1). Use {@link CommentsTable#getCTComment(CellAddress)} instead
      */
