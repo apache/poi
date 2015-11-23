@@ -26,10 +26,17 @@ import org.apache.poi.ss.formula.SheetNameFormatter;
 import org.apache.poi.ss.usermodel.Cell;
 
 /**
- * Common conversion functions between Excel style A1, C27 style
+ * <p>Common conversion functions between Excel style A1, C27 style
  *  cell references, and POI usermodel style row=0, column=0
  *  style references. Handles sheet-based and sheet-free references
- *  as well, eg "Sheet1!A1" and "$B$72"
+ *  as well, eg "Sheet1!A1" and "$B$72"</p>
+ *  
+ *  <p>Use <tt>CellReference</tt> when the concept of
+ * relative/absolute does apply (such as a cell reference in a formula).
+ * Use {@link CellAddress} when you want to refer to the location of a cell in a sheet
+ * when the concept of relative/absolute does not apply (such as the anchor location 
+ * of a cell comment).
+ * <tt>CellReference</tt>s have a concept of "sheet", while <tt>CellAddress</tt>es do not.</p>
  */
 public class CellReference {
     /**
