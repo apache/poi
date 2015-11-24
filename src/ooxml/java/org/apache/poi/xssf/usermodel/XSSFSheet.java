@@ -2705,7 +2705,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         
         // FIXME: is special behavior needed if srcRows and destRows belong to the same sheets and the regions overlap?
         
-        final CellCopyPolicy options = policy.clone();
+        final CellCopyPolicy options = new CellCopyPolicy(policy);
         // avoid O(N^2) performance scanning through all regions for each row
         // merged regions will be copied after all the rows have been copied
         options.setCopyMergedRegions(false);
