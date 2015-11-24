@@ -537,6 +537,7 @@ public final class Countif extends Fixed2ArgFunction {
     }
     /**
      * Boolean literals ('TRUE', 'FALSE') treated similarly but NOT same as numbers.
+     * @return <code>null</code> to represent blank values
      */
     /* package */ static Boolean parseBoolean(String strRep) {
         if (strRep.length() < 1) {
