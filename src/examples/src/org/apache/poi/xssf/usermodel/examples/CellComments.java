@@ -76,5 +76,6 @@ public class CellComments {
         wb.write(out);
         out.close();
 
+        wb.close();
     }
 }
