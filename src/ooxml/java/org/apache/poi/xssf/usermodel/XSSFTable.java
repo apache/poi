@@ -141,8 +141,9 @@ public class XSSFTable extends POIXMLDocumentPart {
                         commonTokens = tokens;
                         
                     } else {
-                        int maxLenght = commonTokens.length>tokens.length? tokens.length:commonTokens.length;
-                        for (int i =0; i<maxLenght;i++) {
+                        final int maxLength = Math.min(commonTokens.length, tokens.length);
+                         
+                        for (int i =0; i<maxLength; i++) {
                             if (!commonTokens[i].equals(tokens[i])) {
                              List<String> subCommonTokens = Arrays.asList(commonTokens).subList(0, i);
                              
