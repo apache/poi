@@ -158,9 +158,9 @@ public class ImageUtils {
         //space in the leftmost cell
         w = sheet.getColumnWidthInPixels(col2++);
         if (isHSSF) {
-            w *= 1 - anchor.getDx1()/1024d;
+            w *= 1d - anchor.getDx1()/1024d;
         } else {
-            w -= anchor.getDx1()/EMU_PER_PIXEL;
+            w -= anchor.getDx1()/(double)EMU_PER_PIXEL;
         }
         
         while(w < scaledWidth){
@@ -280,6 +280,6 @@ public class ImageUtils {
     private static double getRowHeightInPixels(Sheet sheet, int rowNum) {
         Row r = sheet.getRow(rowNum);
         double points = (r == null) ? sheet.getDefaultRowHeightInPoints() : r.getHeightInPoints();
-        return Units.toEMU(points)/EMU_PER_PIXEL;
+        return Units.toEMU(points)/(double)EMU_PER_PIXEL;
     }
 }
