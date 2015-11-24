@@ -778,9 +778,7 @@ public final class InternalWorkbook {
         if (linkTable != null) {
             // also tell the LinkTable about the removed sheet
             //index hasn't change in the linktable
-            if (linkTable != null) {
-                linkTable.removeSheet(sheetIndex);
-            }
+            linkTable.removeSheet(sheetIndex);
         }
     }
 
