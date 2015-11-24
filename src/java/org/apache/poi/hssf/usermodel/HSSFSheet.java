@@ -1267,7 +1267,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      */
     @Override
     public void setZoom(int scale) {
-        setZoom(scale*100, 100);
+        setZoom(scale, 100);
     }
 
     /**

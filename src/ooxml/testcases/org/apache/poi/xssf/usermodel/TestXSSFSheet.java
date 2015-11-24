@@ -408,12 +408,11 @@ public final class TestXSSFSheet extends BaseTestSheet {
         workbook.close();
     }
 
-    @SuppressWarnings("deprecation")
     @Test(expected=IllegalArgumentException.class)
     public void setZoom() throws IOException {
         XSSFWorkbook workBook = new XSSFWorkbook();
         XSSFSheet sheet1 = workBook.createSheet("new sheet");
-        sheet1.setZoom(3, 4);   // 75 percent magnification
+        sheet1.setZoom(75);   // 75 percent magnification
         long zoom = sheet1.getCTWorksheet().getSheetViews().getSheetViewArray(0).getZoomScale();
         assertEquals(zoom, 75);
 

@@ -523,11 +523,10 @@ public final class TestHSSFSheet extends BaseTestSheet {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet();
         assertEquals(-1, sheet.getSheet().findFirstRecordLocBySid(SCLRecord.sid));
-        sheet.setZoom(3,4);
+        sheet.setZoom(75);
         assertTrue(sheet.getSheet().findFirstRecordLocBySid(SCLRecord.sid) > 0);
         SCLRecord sclRecord = (SCLRecord) sheet.getSheet().findFirstRecordBySid(SCLRecord.sid);
-        assertEquals(3, sclRecord.getNumerator());
-        assertEquals(4, sclRecord.getDenominator());
+        assertEquals(75, 100*sclRecord.getNumerator()/sclRecord.getDenominator());
 
         int sclLoc = sheet.getSheet().findFirstRecordLocBySid(SCLRecord.sid);
         int window2Loc = sheet.getSheet().findFirstRecordLocBySid(WindowTwoRecord.sid);
@@ -535,13 +534,13 @@ public final class TestHSSFSheet extends BaseTestSheet {
         
         // verify limits
         try {
-            sheet.setZoom(0, 2);
+            sheet.setZoom(0);
             fail("Should catch Exception here");
         } catch (IllegalArgumentException e) {
             assertEquals("Numerator must be greater than 0 and less than 65536", e.getMessage());
         }
         try {
-            sheet.setZoom(65536, 2);
+            sheet.setZoom(65536);
             fail("Should catch Exception here");
         } catch (IllegalArgumentException e) {
             assertEquals("Numerator must be greater than 0 and less than 65536", e.getMessage());
