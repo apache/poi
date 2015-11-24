@@ -20,7 +20,7 @@ package org.apache.poi.ss.usermodel;
 import org.apache.poi.util.Beta;
 
 @Beta
-public class CellCopyPolicy implements Cloneable {
+public class CellCopyPolicy {
     // cell-level policies
     public static final boolean DEFAULT_COPY_CELL_VALUE_POLICY = true;
     public static final boolean DEFAULT_COPY_CELL_STYLE_POLICY = true;
@@ -54,6 +54,24 @@ public class CellCopyPolicy implements Cloneable {
      * For custom CellCopyPolicy, use {@link Builder} class
      */
     public CellCopyPolicy() { }
+    
+    /**
+     * Copy constructor
+     *
+     * @param other policy to copy
+     */
+    public CellCopyPolicy(CellCopyPolicy other) {
+        copyCellValue = other.isCopyCellValue();
+        copyCellStyle = other.isCopyCellStyle();
+        copyCellFormula = other.isCopyCellFormula();
+        copyHyperlink = other.isCopyHyperlink();
+        mergeHyperlink = other.isMergeHyperlink();
+        
+        copyRowHeight = other.isCopyRowHeight();
+        condenseRows = other.isCondenseRows();
+        
+        copyMergedRegions = other.isCopyMergedRegions();
+    }
     
     // should builder be replaced with CellCopyPolicy setters that return the object
     // to allow setters to be chained together?
@@ -134,7 +152,7 @@ public class CellCopyPolicy implements Cloneable {
         }
     }
     
-    private Builder createBuilder() {
+    public Builder createBuilder() {
         final Builder builder = new Builder()
                 .cellValue(copyCellValue)
                 .cellStyle(copyCellStyle)
@@ -145,11 +163,6 @@ public class CellCopyPolicy implements Cloneable {
                 .condenseRows(condenseRows)
                 .mergedRegions(copyMergedRegions);
         return builder;
-    }
-    
-    @Override
-    public CellCopyPolicy clone() {
-        return createBuilder().build();
     }
 
 /*
