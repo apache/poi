@@ -607,19 +607,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     }
 
     /**
-     * Creates a new comment for this sheet. You still
-     *  need to assign it to a cell though
-     *
-     * @deprecated since Nov 2009 this method is not compatible with the common SS interfaces,
-     * use {@link org.apache.poi.xssf.usermodel.XSSFDrawing#createCellComment
-     *  (org.apache.poi.ss.usermodel.ClientAnchor)} instead
-     */
-    @Deprecated
-    public XSSFComment createComment() {
-        return createDrawingPatriarch().createCellComment(new XSSFClientAnchor());
-    }
-
-    /**
      * Create a new row within the sheet and return the high level representation
      *
      * Note: If a row already exists at this position, it is removed/overwritten and
@@ -2627,7 +2614,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     }
 
     /**
-     * Sets the zoom magnication for the sheet.  The zoom is expressed as a
+     * Sets the zoom magnification for the sheet.  The zoom is expressed as a
      * fraction.  For example to express a zoom of 75% use 3 for the numerator
      * and 4 for the denominator.
      *
@@ -2697,7 +2684,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         // check row numbers to make sure they are continuous and increasing (monotonic)
         // and srcRows does not contain null rows
         for (int index=1; index < srcRows.size(); index++) {
-            final Row prevRow = srcRows.get(index-1);
             final Row curRow = srcRows.get(index);
             if (curRow == null) {
                 throw new IllegalArgumentException("srcRows may not contain null rows. Found null row at index " + index + ".");
@@ -2989,21 +2975,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         getPane().setTopLeftCell(cellRef);
     }
 
-    /**
-     * Location of the top left visible cell Location of the top left visible cell in the bottom right
-     * pane (when in Left-to-Right mode).
-     *
-     * @param toprow the top row to show in desktop window pane
-     * @param leftcol the left column to show in desktop window pane
-     *
-     * @deprecated Use {@link #showInPane(int, int)} as there can be more than 32767 rows.
-     */
-    @Override
-    @Deprecated
-    public void showInPane(short toprow, short leftcol) {
-        showInPane((int)toprow, (int)leftcol);
-    }
-
     @Override
     public void ungroupColumn(int fromColumn, int toColumn) {
         CTCols cols = worksheet.getColsArray(0);
@@ -3099,21 +3070,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         for (CTSheetView view : views.getSheetViewArray()) {
             view.setTabSelected(value);
         }
-    }
-
-    /**
-     * Assign a cell comment to a cell region in this worksheet
-     *
-     * @param cellRef cell region
-     * @param comment the comment to assign
-     * @deprecated since Nov 2009 use {@link XSSFCell#setCellComment(org.apache.poi.ss.usermodel.Comment)} instead
-     */
-    @Deprecated
-    public static void setCellComment(String cellRef, XSSFComment comment) {
-        CellReference cellReference = new CellReference(cellRef);
-
-        comment.setRow(cellReference.getRow());
-        comment.setColumn(cellReference.getCol());
     }
 
     /**
@@ -3473,28 +3429,12 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     }
 
     /**
-     * Enable Autofilters locking.
-     * @deprecated use {@link #lockAutoFilter(boolean)}
-     */
-    public void lockAutoFilter() {
-        lockAutoFilter(true);
-    }
-
-    /**
      * Enable or disable Autofilters locking.
      * This does not modify sheet protection status.
      * To enforce this un-/locking, call {@link #disableLocking()} or {@link #enableLocking()}
      */
     public void lockAutoFilter(boolean enabled) {
         safeGetProtectionField().setAutoFilter(enabled);
-    }
-
-    /**
-     * Enable Deleting columns locking.
-     * @deprecated use {@link #lockDeleteColumns(boolean)}
-     */
-    public void lockDeleteColumns() {
-        lockDeleteColumns(true);
     }
 
     /**
@@ -3507,28 +3447,12 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     }
 
     /**
-     * Enable Deleting rows locking.
-     * @deprecated use {@link #lockDeleteRows(boolean)}
-     */
-    public void lockDeleteRows() {
-        lockDeleteRows(true);
-    }
-
-    /**
      * Enable or disable Deleting rows locking.
      * This does not modify sheet protection status.
      * To enforce this un-/locking, call {@link #disableLocking()} or {@link #enableLocking()}
      */
     public void lockDeleteRows(boolean enabled) {
         safeGetProtectionField().setDeleteRows(enabled);
-    }
-
-    /**
-     * Enable Formatting cells locking.
-     * @deprecated use {@link #lockFormatCells(boolean)}
-     */
-    public void lockFormatCells() {
-        lockFormatCells(true);
     }
 
     /**
@@ -3541,28 +3465,12 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     }
 
     /**
-     * Enable Formatting columns locking.
-     * @deprecated use {@link #lockFormatColumns(boolean)}
-     */
-    public void lockFormatColumns() {
-        lockFormatColumns(true);
-    }
-
-    /**
      * Enable or disable Formatting columns locking.
      * This does not modify sheet protection status.
      * To enforce this un-/locking, call {@link #disableLocking()} or {@link #enableLocking()}
      */
     public void lockFormatColumns(boolean enabled) {
         safeGetProtectionField().setFormatColumns(enabled);
-    }
-
-    /**
-     * Enable Formatting rows locking.
-     * @deprecated use {@link #lockFormatRows(boolean)}
-     */
-    public void lockFormatRows() {
-        lockFormatRows(true);
     }
 
     /**
@@ -3575,28 +3483,12 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     }
 
     /**
-     * Enable Inserting columns locking.
-     * @deprecated use {@link #lockInsertColumns(boolean)}
-     */
-    public void lockInsertColumns() {
-        lockInsertColumns(true);
-    }
-
-    /**
      * Enable or disable Inserting columns locking.
      * This does not modify sheet protection status.
      * To enforce this un-/locking, call {@link #disableLocking()} or {@link #enableLocking()}
      */
     public void lockInsertColumns(boolean enabled) {
         safeGetProtectionField().setInsertColumns(enabled);
-    }
-
-    /**
-     * Enable Inserting hyperlinks locking.
-     * @deprecated use {@link #lockInsertHyperlinks(boolean)}
-     */
-    public void lockInsertHyperlinks() {
-        lockInsertHyperlinks(true);
     }
 
     /**
@@ -3609,28 +3501,12 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     }
 
     /**
-     * Enable Inserting rows locking.
-     * @deprecated use {@link #lockInsertRows(boolean)}
-     */
-    public void lockInsertRows() {
-        lockInsertRows(true);
-    }
-
-    /**
      * Enable or disable Inserting rows locking.
      * This does not modify sheet protection status.
      * To enforce this un-/locking, call {@link #disableLocking()} or {@link #enableLocking()}
      */
     public void lockInsertRows(boolean enabled) {
         safeGetProtectionField().setInsertRows(enabled);
-    }
-
-    /**
-     * Enable Pivot Tables locking.
-     * @deprecated use {@link #lockPivotTables(boolean)}
-     */
-    public void lockPivotTables() {
-        lockPivotTables(true);
     }
 
     /**
@@ -3643,28 +3519,12 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     }
 
     /**
-     * Enable Sort locking.
-     * @deprecated use {@link #lockSort(boolean)}
-     */
-    public void lockSort() {
-        lockSort(true);
-    }
-
-    /**
      * Enable or disable Sort locking.
      * This does not modify sheet protection status.
      * To enforce this un-/locking, call {@link #disableLocking()} or {@link #enableLocking()}
      */
     public void lockSort(boolean enabled) {
         safeGetProtectionField().setSort(enabled);
-    }
-
-    /**
-     * Enable Objects locking.
-     * @deprecated use {@link #lockObjects(boolean)}
-     */
-    public void lockObjects() {
-        lockObjects(true);
     }
 
     /**
@@ -3677,14 +3537,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     }
 
     /**
-     * Enable Scenarios locking.
-     * @deprecated use {@link #lockScenarios(boolean)}
-     */
-    public void lockScenarios() {
-        lockScenarios(true);
-    }
-
-    /**
      * Enable or disable Scenarios locking.
      * This does not modify sheet protection status.
      * To enforce this un-/locking, call {@link #disableLocking()} or {@link #enableLocking()}
@@ -3694,28 +3546,12 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     }
 
     /**
-     * Enable Selection of locked cells locking.
-     * @deprecated use {@link #lockSelectLockedCells(boolean)}
-     */
-    public void lockSelectLockedCells() {
-        lockSelectLockedCells(true);
-    }
-
-    /**
      * Enable or disable Selection of locked cells locking.
      * This does not modify sheet protection status.
      * To enforce this un-/locking, call {@link #disableLocking()} or {@link #enableLocking()}
      */
     public void lockSelectLockedCells(boolean enabled) {
         safeGetProtectionField().setSelectLockedCells(enabled);
-    }
-
-    /**
-     * Enable Selection of unlocked cells locking.
-     * @deprecated use {@link #lockSelectUnlockedCells(boolean)}
-     */
-    public void lockSelectUnlockedCells() {
-        lockSelectUnlockedCells(true);
     }
 
     /**

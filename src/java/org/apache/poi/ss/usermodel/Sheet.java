@@ -24,7 +24,6 @@ import java.util.Map;
 import org.apache.poi.hssf.util.PaneInformation;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.ss.util.CellReference;
 
 /**
  * High level representation of a Excel worksheet.
@@ -609,17 +608,6 @@ public interface Sheet extends Iterable<Row> {
      * @param leftcol the left column to show in desktop window pane
      */
     void showInPane(int toprow, int leftcol);
-
-    /**
-     * Sets desktop window pane display area, when the
-     * file is first opened in a viewer.
-     *
-     * @param toprow the top row to show in desktop window pane
-     * @param leftcol the left column to show in desktop window pane
-     * @deprecated Use {@link #showInPane(int, int)} as there can be more than 32767 rows.
-     */
-    @Deprecated
-	void showInPane(short toprow, short leftcol);
 
     /**
      * Shifts rows between startRow and endRow n number of rows.

@@ -44,6 +44,7 @@ import org.apache.poi.ss.usermodel.AutoFilter;
 import org.apache.poi.ss.usermodel.BaseTestSheet;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellCopyPolicy;
+import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -1437,12 +1438,19 @@ public final class TestXSSFSheet extends BaseTestSheet {
         sheet.onDocumentRead();
     }
     
-    @SuppressWarnings("deprecation")
+    /** 
+     * This would be better off as a testable example rather than a simple unit test
+     * since Sheet.createComment() was deprecated and removed.
+     * https://poi.apache.org/spreadsheet/quick-guide.html#CellComments
+     * Feel free to relocated or delete this unit test if it doesn't belong here.
+     */
     @Test
     public void testCreateComment() throws IOException {
         XSSFWorkbook wb = new XSSFWorkbook();
+        ClientAnchor anchor = wb.getCreationHelper().createClientAnchor();
         XSSFSheet sheet = wb.createSheet();
-        assertNotNull(sheet.createComment());
+        XSSFComment comment = sheet.createDrawingPatriarch().createCellComment(anchor);
+        assertNotNull(comment);
         wb.close();
     }
     
