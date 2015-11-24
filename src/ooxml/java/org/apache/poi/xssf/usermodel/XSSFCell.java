@@ -1003,7 +1003,7 @@ public final class XSSFCell implements Cell {
      */
     @Override
     public XSSFComment getCellComment() {
-        return getSheet().getCellComment(_row.getRowNum(), getColumnIndex());
+        return getSheet().getCellComment(new CellAddress(this));
     }
 
     /**
