@@ -970,17 +970,17 @@ public interface Sheet extends Iterable<Row> {
     
     public DataValidationHelper getDataValidationHelper();
 
-	/**
+    /**
      * Returns the list of DataValidation in the sheet.
      * @return list of DataValidation in the sheet
      */
     public List<? extends DataValidation> getDataValidations();
 
-	/**
-	 * Creates a data validation object
-	 * @param dataValidation The Data validation object settings
-	 */
-	public void addValidationData(DataValidation dataValidation);
+    /**
+     * Creates a data validation object
+     * @param dataValidation The Data validation object settings
+     */
+    public void addValidationData(DataValidation dataValidation);
 
     /**
      * Enable filtering for a range of cells

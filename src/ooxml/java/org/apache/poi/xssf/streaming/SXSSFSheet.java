@@ -1233,8 +1233,8 @@ public class SXSSFSheet implements Sheet, Cloneable
     private void collapseRow(int rowIndex) {
         SXSSFRow row = getRow(rowIndex);
         if(row == null) {
-			throw new IllegalArgumentException("Invalid row number("+ rowIndex + "). Row does not exist.");
-		} else {
+            throw new IllegalArgumentException("Invalid row number("+ rowIndex + "). Row does not exist.");
+        } else {
             int startRow = findStartOfRowOutlineGroup(rowIndex);
 
             // Hide all the columns until the end of the group
@@ -1254,10 +1254,10 @@ public class SXSSFSheet implements Sheet, Cloneable
      */
     private int findStartOfRowOutlineGroup(int rowIndex) {
         // Find the start of the group.
-		Row row = getRow(rowIndex);
+        Row row = getRow(rowIndex);
         int level = ((SXSSFRow) row).getOutlineLevel();
         if(level == 0) {
-        	throw new IllegalArgumentException("Outline level is zero for the row (" + rowIndex + ").");
+            throw new IllegalArgumentException("Outline level is zero for the row (" + rowIndex + ").");
         }
         int currentRow = rowIndex;
         while (getRow(currentRow) != null) {

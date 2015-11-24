@@ -119,7 +119,7 @@ public final class TestHSSFSheet extends BaseTestSheet {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet s = wb.createSheet();
         GridsetRecord gridsetRec = s.getSheet().getGridsetRecord();
-		assertTrue(gridsetRec.getGridset());
+        assertTrue(gridsetRec.getGridset());
         s.setGridsPrinted(true);
         assertFalse(gridsetRec.getGridset());
         wb.close();
@@ -535,28 +535,28 @@ public final class TestHSSFSheet extends BaseTestSheet {
         
         // verify limits
         try {
-        	sheet.setZoom(0, 2);
-        	fail("Should catch Exception here");
+            sheet.setZoom(0, 2);
+            fail("Should catch Exception here");
         } catch (IllegalArgumentException e) {
-        	assertEquals("Numerator must be greater than 0 and less than 65536", e.getMessage());
+            assertEquals("Numerator must be greater than 0 and less than 65536", e.getMessage());
         }
         try {
-        	sheet.setZoom(65536, 2);
-        	fail("Should catch Exception here");
+            sheet.setZoom(65536, 2);
+            fail("Should catch Exception here");
         } catch (IllegalArgumentException e) {
-        	assertEquals("Numerator must be greater than 0 and less than 65536", e.getMessage());
+            assertEquals("Numerator must be greater than 0 and less than 65536", e.getMessage());
         }
         try {
-        	sheet.setZoom(2, 0);
-        	fail("Should catch Exception here");
+            sheet.setZoom(2, 0);
+            fail("Should catch Exception here");
         } catch (IllegalArgumentException e) {
-        	assertEquals("Denominator must be greater than 0 and less than 65536", e.getMessage());
+            assertEquals("Denominator must be greater than 0 and less than 65536", e.getMessage());
         }
         try {
-        	sheet.setZoom(2, 65536);
-        	fail("Should catch Exception here");
+            sheet.setZoom(2, 65536);
+            fail("Should catch Exception here");
         } catch (IllegalArgumentException e) {
-        	assertEquals("Denominator must be greater than 0 and less than 65536", e.getMessage());
+            assertEquals("Denominator must be greater than 0 and less than 65536", e.getMessage());
         }
         
         wb.close();
@@ -652,7 +652,7 @@ public final class TestHSSFSheet extends BaseTestSheet {
     }
 
     @Test
-	public void autoSizeColumn() throws IOException {
+    public void autoSizeColumn() throws IOException {
         HSSFWorkbook wb1 = HSSFTestDataSamples.openSampleWorkbook("43902.xls");
         String sheetName = "my sheet";
         HSSFSheet sheet = wb1.getSheet(sheetName);
@@ -1161,8 +1161,8 @@ public final class TestHSSFSheet extends BaseTestSheet {
         
         thrown.expect(IllegalArgumentException.class);
         thrown.expectMessage("Maximum row number is 65535");
-    	sheet.showInPane(Integer.MAX_VALUE, 3);
-    	wb.close();
+        sheet.showInPane(Integer.MAX_VALUE, 3);
+        wb.close();
     }
     
     @Test

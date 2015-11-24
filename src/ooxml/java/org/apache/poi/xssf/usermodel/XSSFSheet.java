@@ -2801,9 +2801,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     @Override
     @SuppressWarnings("deprecation") //YK: getXYZArray() array accessors are deprecated in xmlbeans with JDK 1.5 support
     public void shiftRows(int startRow, int endRow, final int n, boolean copyRowHeight, boolean resetOriginalRowHeight) {
-    	XSSFVMLDrawing vml = getVMLDrawing(false);
+        XSSFVMLDrawing vml = getVMLDrawing(false);
 
-    	// first remove all rows which will be overwritten
+        // first remove all rows which will be overwritten
         for (Iterator<Row> it = rowIterator() ; it.hasNext() ; ) {
             XSSFRow row = (XSSFRow)it.next();
             int rownum = row.getRowNum();
@@ -2822,14 +2822,14 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
                 if(sheetComments != null){
                     CTCommentList lst = sheetComments.getCTComments().getCommentList();
                     for (CTComment comment : lst.getCommentArray()) {
-                    	String strRef = comment.getRef();
-                    	CellAddress ref = new CellAddress(strRef);
+                        String strRef = comment.getRef();
+                        CellAddress ref = new CellAddress(strRef);
 
-                    	// is this comment part of the current row?
-                    	if(ref.getRow() == rownum) {
+                        // is this comment part of the current row?
+                        if(ref.getRow() == rownum) {
                             sheetComments.removeComment(ref);
                             vml.removeCommentShape(ref.getRow(), ref.getColumn());
-                    	}
+                        }
                     }
                 }
                 // FIXME: (performance optimization) this should be moved outside the for-loop so that hyperlinks only needs to be iterated over once.
@@ -2849,25 +2849,25 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         // we need to sort it in a way so the shifting does not mess up the structures, 
         // i.e. when shifting down, start from down and go up, when shifting up, vice-versa
         SortedMap<XSSFComment, Integer> commentsToShift = new TreeMap<XSSFComment, Integer>(new Comparator<XSSFComment>() {
-			public int compare(XSSFComment o1, XSSFComment o2) {
-				int row1 = o1.getRow();
-				int row2 = o2.getRow();
-				
-				if(row1 == row2) {
-					// ordering is not important when row is equal, but don't return zero to still 
-					// get multiple comments per row into the map
-					return o1.hashCode() - o2.hashCode();
-				}
+            public int compare(XSSFComment o1, XSSFComment o2) {
+                int row1 = o1.getRow();
+                int row2 = o2.getRow();
+                
+                if(row1 == row2) {
+                    // ordering is not important when row is equal, but don't return zero to still 
+                    // get multiple comments per row into the map
+                    return o1.hashCode() - o2.hashCode();
+                }
 
-				// when shifting down, sort higher row-values first
-				if(n > 0) {
-					return row1 < row2 ? 1 : -1;
-				} else {
-					// sort lower-row values first when shifting up
-					return row1 > row2 ? 1 : -1;
-				}
-			}
-		});
+                // when shifting down, sort higher row-values first
+                if(n > 0) {
+                    return row1 < row2 ? 1 : -1;
+                } else {
+                    // sort lower-row values first when shifting up
+                    return row1 > row2 ? 1 : -1;
+                }
+            }
+        });
 
         
         for (Iterator<Row> it = rowIterator() ; it.hasNext() ; ) {
@@ -2875,26 +2875,26 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
             int rownum = row.getRowNum();
 
             if(sheetComments != null){
-            	// calculate the new rownum
-            	int newrownum = shiftedRowNum(startRow, endRow, n, rownum);
-            	
-            	// is there a change necessary for the current row?
-            	if(newrownum != rownum) {
+                // calculate the new rownum
+                int newrownum = shiftedRowNum(startRow, endRow, n, rownum);
+                
+                // is there a change necessary for the current row?
+                if(newrownum != rownum) {
                     CTCommentList lst = sheetComments.getCTComments().getCommentList();
                     for (CTComment comment : lst.getCommentArray()) {
-                    	String oldRef = comment.getRef();
-                    	CellReference ref = new CellReference(oldRef);
-                    	
-                    	// is this comment part of the current row?
-                    	if(ref.getRow() == rownum) {
-                        	XSSFComment xssfComment = new XSSFComment(sheetComments, comment,
+                        String oldRef = comment.getRef();
+                        CellReference ref = new CellReference(oldRef);
+                        
+                        // is this comment part of the current row?
+                        if(ref.getRow() == rownum) {
+                            XSSFComment xssfComment = new XSSFComment(sheetComments, comment,
                                     vml == null ? null : vml.findCommentShape(rownum, ref.getCol()));
-                        	
-                        	// we should not perform the shifting right here as we would then find
-                        	// already shifted comments and would shift them again...
-                        	commentsToShift.put(xssfComment, newrownum);
+                            
+                            // we should not perform the shifting right here as we would then find
+                            // already shifted comments and would shift them again...
+                            commentsToShift.put(xssfComment, newrownum);
                         }
-                	}
+                    }
                 }
             }
 
@@ -2911,7 +2911,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         // the Map is sorted and thus provides them in the order that we need here, 
         // i.e. from down to up if shifting down, vice-versa otherwise
         for(Map.Entry<XSSFComment, Integer> entry : commentsToShift.entrySet()) {
-        	entry.getKey().setRow(entry.getValue());
+            entry.getKey().setRow(entry.getValue());
         }
         
         XSSFRowShifter rowShifter = new XSSFRowShifter(this);
@@ -2936,31 +2936,31 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     }
 
     private int shiftedRowNum(int startRow, int endRow, int n, int rownum) {
-		// no change if before any affected row
-    	if(rownum < startRow && (n > 0 || (startRow - rownum) > n)) {
-			return rownum;
-		}
-		
-    	// no change if after any affected row
-    	if(rownum > endRow && (n < 0 || (rownum - endRow) > n)) {
-    		return rownum;
-    	}
-    	
-    	// row before and things are moved up
-    	if(rownum < startRow) {
-    		// row is moved down by the shifting
-    		return rownum + (endRow - startRow);
-    	}
-    	
-    	// row is after and things are moved down
-    	if(rownum > endRow) {
-    		// row is moved up by the shifting
-    		return rownum - (endRow - startRow);
-    	}
-    	
-    	// row is part of the shifted block
-		return rownum + n;
-	}
+        // no change if before any affected row
+        if(rownum < startRow && (n > 0 || (startRow - rownum) > n)) {
+            return rownum;
+        }
+        
+        // no change if after any affected row
+        if(rownum > endRow && (n < 0 || (rownum - endRow) > n)) {
+            return rownum;
+        }
+        
+        // row before and things are moved up
+        if(rownum < startRow) {
+            // row is moved down by the shifting
+            return rownum + (endRow - startRow);
+        }
+        
+        // row is after and things are moved down
+        if(rownum > endRow) {
+            // row is moved up by the shifting
+            return rownum - (endRow - startRow);
+        }
+        
+        // row is part of the shifted block
+        return rownum + n;
+    }
 
     /**
      * Location of the top left visible cell Location of the top left visible cell in the bottom right
