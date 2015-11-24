@@ -46,6 +46,8 @@ import java.text.AttributedCharacterIterator;
 import java.util.Arrays;
 import java.util.Map;
 
+import org.apache.poi.util.Internal;
+
 public class DummyGraphics2d extends Graphics2D {
     private BufferedImage bufimg;
     private final Graphics2D g2D;
@@ -706,7 +708,12 @@ public class DummyGraphics2d extends Graphics2D {
         g2D.fillRoundRect( x, y, width, height, arcWidth, arcHeight );
     }
 
-    public void finalize() {
+    // FIXME: should be protected
+    // FindBugs, category MALICIOUS_CODE, FI_PUBLIC_SHOULD_BE_PROTECTED
+    // A class's finalize() method should have protected access, not public
+    @Internal
+    @Override
+    public final void finalize() {
         log.println( "finalize():" );
         g2D.finalize(); // NOSOLAR
         super.finalize();
