@@ -2699,9 +2699,8 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         for (int index=1; index < srcRows.size(); index++) {
             final Row prevRow = srcRows.get(index-1);
             final Row curRow = srcRows.get(index);
-            if (prevRow == null || curRow == null) {
-                throw new IllegalArgumentException("srcRows may not contain null rows. Found null row at index " +
-                        index + " after Row " + prevRow.getRowNum() + ".");
+            if (curRow == null) {
+                throw new IllegalArgumentException("srcRows may not contain null rows. Found null row at index " + index + ".");
             //} else if (curRow.getRowNum() != prevRow.getRowNum() + 1) {
             //    throw new IllegalArgumentException("srcRows must contain continuously increasing row numbers. " +
             //            "Got srcRows[" + (index-1) + "]=Row " + prevRow.getRowNum() + ", srcRows[" + index + "]=Row " + curRow.getRowNum() + ".");
