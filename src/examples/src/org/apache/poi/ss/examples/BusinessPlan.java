@@ -192,7 +192,7 @@ public class BusinessPlan {
         sheet.setColumnWidth(0, 256*6);
         sheet.setColumnWidth(1, 256*33);
         sheet.setColumnWidth(2, 256*20);
-        sheet.setZoom(3, 4);
+        sheet.setZoom(75); //75% scale
 
 
         // Write the output to a file

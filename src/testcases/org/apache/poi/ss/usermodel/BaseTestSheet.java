@@ -933,7 +933,7 @@ public abstract class BaseTestSheet {
         Sheet sheet = wb.createSheet();
         
         // here we can only verify that setting some zoom values works, range-checking is different between the implementations
-        sheet.setZoom(3,4);
+        sheet.setZoom(75);
         wb.close();
     }
     

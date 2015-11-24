@@ -37,9 +37,10 @@ public class ZoomSheet
     {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet1 = wb.createSheet("new sheet");
-        sheet1.setZoom(3,4);   // 75 percent magnification
+        sheet1.setZoom(75);   // 75 percent magnification
         FileOutputStream fileOut = new FileOutputStream("workbook.xls");
         wb.write(fileOut);
         fileOut.close();
+        wb.close();
     }
 }
