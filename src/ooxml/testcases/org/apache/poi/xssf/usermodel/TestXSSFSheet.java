@@ -408,6 +408,7 @@ public final class TestXSSFSheet extends BaseTestSheet {
         workbook.close();
     }
 
+    @SuppressWarnings("deprecation")
     @Test(expected=IllegalArgumentException.class)
     public void setZoom() throws IOException {
         XSSFWorkbook workBook = new XSSFWorkbook();

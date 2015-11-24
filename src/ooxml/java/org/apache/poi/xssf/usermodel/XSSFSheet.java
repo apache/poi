@@ -2620,7 +2620,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      *
      * @param numerator     The numerator for the zoom magnification.
      * @param denominator   The denominator for the zoom magnification.
-     * @see #setZoom(int)
+     * @deprecated 2015-11-23 (circa POI 3.14beta1). Use {@link #setZoom(int)} instead.
      */
     @Override
     public void setZoom(int numerator, int denominator) {
@@ -2647,6 +2647,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * @param scale window zoom magnification
      * @throws IllegalArgumentException if scale is invalid
      */
+    @Override
     public void setZoom(int scale) {
         if(scale < 10 || scale > 400) throw new IllegalArgumentException("Valid scale values range from 10 to 400");
         getSheetTypeSheetView().setZoomScale(scale);

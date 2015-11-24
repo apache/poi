@@ -1233,6 +1233,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      *
      * @param numerator   The numerator for the zoom magnification.
      * @param denominator The denominator for the zoom magnification.
+     * @deprecated 2015-11-23 (circa POI 3.14beta1). Use {@link #setZoom(int)} instead.
      */
     @Override
     public void setZoom(int numerator, int denominator) {
@@ -1245,6 +1246,28 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
         sclRecord.setNumerator((short) numerator);
         sclRecord.setDenominator((short) denominator);
         getSheet().setSCLRecord(sclRecord);
+    }
+    
+    /**
+     * Window zoom magnification for current view representing percent values.
+     * Valid values range from 10 to 400. Horizontal & Vertical scale together.
+     *
+     * For example:
+     * <pre>
+     * 10 - 10%
+     * 20 - 20%
+     * ...
+     * 100 - 100%
+     * ...
+     * 400 - 400%
+     * </pre>
+     *
+     * @param scale window zoom magnification
+     * @throws IllegalArgumentException if scale is invalid
+     */
+    @Override
+    public void setZoom(int scale) {
+        setZoom(scale*100, 100);
     }
 
     /**

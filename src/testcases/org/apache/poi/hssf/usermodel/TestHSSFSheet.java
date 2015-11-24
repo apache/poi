@@ -517,6 +517,7 @@ public final class TestHSSFSheet extends BaseTestSheet {
         workbook.close();
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void zoom() throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
