@@ -42,7 +42,6 @@ import org.apache.poi.ss.usermodel.SheetConditionalFormatting;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.SheetUtil;
 import org.apache.poi.xssf.usermodel.XSSFComment;
 import org.apache.poi.xssf.usermodel.XSSFDataValidation;
@@ -753,6 +752,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      * Sets the protection enabled as well as the password
      * @param password to set for protection. Pass <code>null</code> to remove protection
      */
+    @Override
     public void protectSheet(String password)
     {
         _sh.protectSheet(password);
@@ -763,6 +763,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      *
      * @return true => protection enabled; false => protection disabled
      */
+    @Override
     public boolean getScenarioProtect()
     {
         return _sh.getScenarioProtect();
@@ -776,6 +777,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      * @param numerator     The numerator for the zoom magnification.
      * @param denominator   The denominator for the zoom magnification.
      */
+    @Override
     public void setZoom(int numerator, int denominator)
     {
         _sh.setZoom(numerator,denominator);
@@ -787,6 +789,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      *
      * @return short indicating the rownum (0 based) of the top row
      */
+    @Override
     public short getTopRow()
     {
         return _sh.getTopRow();
@@ -798,6 +801,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      *
      * @return short indicating the rownum (0 based) of the top row
      */
+    @Override
     public short getLeftCol()
     {
         return _sh.getLeftCol();
@@ -810,21 +814,8 @@ public class SXSSFSheet implements Sheet, Cloneable
      * @param toprow the top row to show in desktop window pane
      * @param leftcol the left column to show in desktop window pane
      */
+    @Override
     public void showInPane(int toprow, int leftcol)
-    {
-        _sh.showInPane(toprow, leftcol);
-    }
-
-    /**
-     * Sets desktop window pane display area, when the
-     * file is first opened in a viewer.
-     *
-     * @param toprow the top row to show in desktop window pane
-     * @param leftcol the left column to show in desktop window pane
-     * 
-     * @deprecated Use the version of showInPane() with ints as there can be more than 32767 rows. 
-     */
-    public void showInPane(short toprow, short leftcol)
     {
         _sh.showInPane(toprow, leftcol);
     }

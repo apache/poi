@@ -70,7 +70,7 @@ public class TestSheetProtection extends TestCase {
 	
 	public void testWriteAutoFilter() throws Exception {
 		assertFalse(sheet.isAutoFilterLocked());
-		sheet.lockAutoFilter();
+		sheet.lockAutoFilter(true);
 		assertFalse(sheet.isAutoFilterLocked());
 		sheet.enableLocking();
 		assertTrue(sheet.isAutoFilterLocked());
@@ -80,7 +80,7 @@ public class TestSheetProtection extends TestCase {
 	
 	public void testWriteDeleteColumns() throws Exception {
 		assertFalse(sheet.isDeleteColumnsLocked());
-		sheet.lockDeleteColumns();
+		sheet.lockDeleteColumns(true);
 		assertFalse(sheet.isDeleteColumnsLocked());
 		sheet.enableLocking();
 		assertTrue(sheet.isDeleteColumnsLocked());
@@ -90,7 +90,7 @@ public class TestSheetProtection extends TestCase {
 	
 	public void testWriteDeleteRows() throws Exception {
 		assertFalse(sheet.isDeleteRowsLocked());
-		sheet.lockDeleteRows();
+		sheet.lockDeleteRows(true);
 		assertFalse(sheet.isDeleteRowsLocked());
 		sheet.enableLocking();
 		assertTrue(sheet.isDeleteRowsLocked());
@@ -100,7 +100,7 @@ public class TestSheetProtection extends TestCase {
 	
 	public void testWriteFormatCells() throws Exception {
 		assertFalse(sheet.isFormatCellsLocked());
-		sheet.lockFormatCells();
+		sheet.lockFormatCells(true);
 		assertFalse(sheet.isFormatCellsLocked());
 		sheet.enableLocking();
 		assertTrue(sheet.isFormatCellsLocked());
@@ -110,7 +110,7 @@ public class TestSheetProtection extends TestCase {
 	
 	public void testWriteFormatColumns() throws Exception {
 		assertFalse(sheet.isFormatColumnsLocked());
-		sheet.lockFormatColumns();
+		sheet.lockFormatColumns(true);
 		assertFalse(sheet.isFormatColumnsLocked());
 		sheet.enableLocking();
 		assertTrue(sheet.isFormatColumnsLocked());
@@ -120,7 +120,7 @@ public class TestSheetProtection extends TestCase {
 	
 	public void testWriteFormatRows() throws Exception {
 		assertFalse(sheet.isFormatRowsLocked());
-		sheet.lockFormatRows();
+		sheet.lockFormatRows(true);
 		assertFalse(sheet.isFormatRowsLocked());
 		sheet.enableLocking();
 		assertTrue(sheet.isFormatRowsLocked());
@@ -130,7 +130,7 @@ public class TestSheetProtection extends TestCase {
 	
 	public void testWriteInsertColumns() throws Exception {
 		assertFalse(sheet.isInsertColumnsLocked());
-		sheet.lockInsertColumns();
+		sheet.lockInsertColumns(true);
 		assertFalse(sheet.isInsertColumnsLocked());
 		sheet.enableLocking();
 		assertTrue(sheet.isInsertColumnsLocked());
@@ -140,7 +140,7 @@ public class TestSheetProtection extends TestCase {
 	
 	public void testWriteInsertHyperlinks() throws Exception {
 		assertFalse(sheet.isInsertHyperlinksLocked());
-		sheet.lockInsertHyperlinks();
+		sheet.lockInsertHyperlinks(true);
 		assertFalse(sheet.isInsertHyperlinksLocked());
 		sheet.enableLocking();
 		assertTrue(sheet.isInsertHyperlinksLocked());
@@ -150,7 +150,7 @@ public class TestSheetProtection extends TestCase {
 	
 	public void testWriteInsertRows() throws Exception {
 		assertFalse(sheet.isInsertRowsLocked());
-		sheet.lockInsertRows();
+		sheet.lockInsertRows(true);
 		assertFalse(sheet.isInsertRowsLocked());
 		sheet.enableLocking();
 		assertTrue(sheet.isInsertRowsLocked());
@@ -160,7 +160,7 @@ public class TestSheetProtection extends TestCase {
 	
 	public void testWritePivotTables() throws Exception {
 		assertFalse(sheet.isPivotTablesLocked());
-		sheet.lockPivotTables();
+		sheet.lockPivotTables(true);
 		assertFalse(sheet.isPivotTablesLocked());
 		sheet.enableLocking();
 		assertTrue(sheet.isPivotTablesLocked());
@@ -170,7 +170,7 @@ public class TestSheetProtection extends TestCase {
 	
 	public void testWriteSort() throws Exception {
 		assertFalse(sheet.isSortLocked());
-		sheet.lockSort();
+		sheet.lockSort(true);
 		assertFalse(sheet.isSortLocked());
 		sheet.enableLocking();
 		assertTrue(sheet.isSortLocked());
@@ -180,7 +180,7 @@ public class TestSheetProtection extends TestCase {
 	
 	public void testWriteObjects() throws Exception {
 		assertFalse(sheet.isObjectsLocked());
-		sheet.lockObjects();
+		sheet.lockObjects(true);
 		assertFalse(sheet.isObjectsLocked());
 		sheet.enableLocking();
 		assertTrue(sheet.isObjectsLocked());
@@ -190,7 +190,7 @@ public class TestSheetProtection extends TestCase {
 	
 	public void testWriteScenarios() throws Exception {
 		assertFalse(sheet.isScenariosLocked());
-		sheet.lockScenarios();
+		sheet.lockScenarios(true);
 		assertFalse(sheet.isScenariosLocked());
 		sheet.enableLocking();
 		assertTrue(sheet.isScenariosLocked());
@@ -200,7 +200,7 @@ public class TestSheetProtection extends TestCase {
 	
 	public void testWriteSelectLockedCells() throws Exception {
 		assertFalse(sheet.isSelectLockedCellsLocked());
-		sheet.lockSelectLockedCells();
+		sheet.lockSelectLockedCells(true);
 		assertFalse(sheet.isSelectLockedCellsLocked());
 		sheet.enableLocking();
 		assertTrue(sheet.isSelectLockedCellsLocked());
@@ -210,7 +210,7 @@ public class TestSheetProtection extends TestCase {
 	
 	public void testWriteSelectUnlockedCells() throws Exception {
 		assertFalse(sheet.isSelectUnlockedCellsLocked());
-		sheet.lockSelectUnlockedCells();
+		sheet.lockSelectUnlockedCells(true);
 		assertFalse(sheet.isSelectUnlockedCellsLocked());
 		sheet.enableLocking();
 		assertTrue(sheet.isSelectUnlockedCellsLocked());

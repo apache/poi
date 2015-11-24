@@ -454,42 +454,6 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
         dvt.addDataValidation(dvRecord);
     }
 
-
-    /**
-     * @deprecated (Sep 2008) use {@link #setColumnHidden(int, boolean)}
-     */
-    public void setColumnHidden(short columnIndex, boolean hidden) {
-        setColumnHidden(columnIndex & 0xFFFF, hidden);
-    }
-
-    /**
-     * @deprecated (Sep 2008) use {@link #isColumnHidden(int)}
-     */
-    public boolean isColumnHidden(short columnIndex) {
-        return isColumnHidden(columnIndex & 0xFFFF);
-    }
-
-    /**
-     * @deprecated (Sep 2008) use {@link #setColumnWidth(int, int)}
-     */
-    public void setColumnWidth(short columnIndex, short width) {
-        setColumnWidth(columnIndex & 0xFFFF, width & 0xFFFF);
-    }
-
-    /**
-     * @deprecated (Sep 2008) use {@link #getColumnWidth(int)}
-     */
-    public short getColumnWidth(short columnIndex) {
-        return (short) getColumnWidth(columnIndex & 0xFFFF);
-    }
-
-    /**
-     * @deprecated (Sep 2008) use {@link #setDefaultColumnWidth(int)}
-     */
-    public void setDefaultColumnWidth(short width) {
-        setDefaultColumnWidth(width & 0xFFFF);
-    }
-
     /**
      * Get the visibility state for a given column.
      *
@@ -759,6 +723,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      *              this worksheet values when the workbook is opened
      * @see org.apache.poi.ss.usermodel.Workbook#setForceFormulaRecalculation(boolean)
      */
+    @Override
     public void setForceFormulaRecalculation(boolean value) {
         _sheet.setUncalced(value);
     }
@@ -769,6 +734,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      *
      * @return true if an uncalced record must be inserted or not at generation
      */
+    @Override
     public boolean getForceFormulaRecalculation() {
         return _sheet.getUncalced();
     }
@@ -779,23 +745,15 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      *
      * @param value true to vertically center, false otherwise.
      */
-
+    @Override
     public void setVerticallyCenter(boolean value) {
         _sheet.getPageSettings().getVCenter().setVCenter(value);
     }
 
     /**
-     * TODO: Boolean not needed, remove after next release
-     *
-     * @deprecated (Mar-2008) use getVerticallyCenter() instead
-     */
-    public boolean getVerticallyCenter(boolean value) {
-        return getVerticallyCenter();
-    }
-
-    /**
      * Determine whether printed output for this sheet will be vertically centered.
      */
+    @Override
     public boolean getVerticallyCenter() {
         return _sheet.getPageSettings().getVCenter().getVCenter();
     }
@@ -805,7 +763,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      *
      * @param value true to horizontally center, false otherwise.
      */
-
+    @Override
     public void setHorizontallyCenter(boolean value) {
         _sheet.getPageSettings().getHCenter().setHCenter(value);
     }
@@ -813,9 +771,8 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
     /**
      * Determine whether printed output for this sheet will be horizontally centered.
      */
-
+    @Override
     public boolean getHorizontallyCenter() {
-
         return _sheet.getPageSettings().getHCenter().getHCenter();
     }
 
@@ -824,6 +781,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      *
      * @param value true for right to left, false otherwise.
      */
+    @Override
     public void setRightToLeft(boolean value) {
         _sheet.getWindowTwo().setArabic(value);
     }
@@ -833,6 +791,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      *
      * @return whether the text is displayed in right-to-left mode in the window
      */
+    @Override
     public boolean isRightToLeft() {
         return _sheet.getWindowTwo().getArabic();
     }
@@ -843,6 +802,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      * @param index of the region to unmerge
      */
 
+    @Override
     public void removeMergedRegion(int index) {
         _sheet.removeMergedRegion(index);
     }
@@ -852,24 +812,15 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      *
      * @return number of merged regions
      */
-
+    @Override
     public int getNumMergedRegions() {
         return _sheet.getNumMergedRegions();
     }
 
     /**
-     * @deprecated (Aug-2008) use {@link HSSFSheet#getMergedRegion(int)}
-     */
-    public org.apache.poi.hssf.util.Region getMergedRegionAt(int index) {
-        CellRangeAddress cra = getMergedRegion(index);
-
-        return new org.apache.poi.hssf.util.Region(cra.getFirstRow(), (short) cra.getFirstColumn(),
-                cra.getLastRow(), (short) cra.getLastColumn());
-    }
-
-    /**
      * @return the merged region at the specified index
      */
+    @Override
     public CellRangeAddress getMergedRegion(int index) {
         return _sheet.getMergedRegionAt(index);
     }
@@ -877,6 +828,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
     /**
      * @return the list of merged regions
      */
+    @Override
     public List<CellRangeAddress> getMergedRegions() {
         List<CellRangeAddress> addresses = new ArrayList<CellRangeAddress>();
         for (int i=0; i < _sheet.getNumMergedRegions(); i++) {
@@ -890,6 +842,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      *         be the third row if say for instance the second row is undefined.
      *         Call getRowNum() on each row if you care which one it is.
      */
+    @Override
     public Iterator<Row> rowIterator() {
         @SuppressWarnings("unchecked") // can this clumsy generic syntax be improved?
                 Iterator<Row> result = (Iterator<Row>) (Iterator<? extends Row>) _rows.values().iterator();
@@ -1281,6 +1234,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      * @param numerator   The numerator for the zoom magnification.
      * @param denominator The denominator for the zoom magnification.
      */
+    @Override
     public void setZoom(int numerator, int denominator) {
         if (numerator < 1 || numerator > 65535)
             throw new IllegalArgumentException("Numerator must be greater than 0 and less than 65536");
@@ -1320,6 +1274,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      * @param toprow  the top row to show in desktop window pane
      * @param leftcol the left column to show in desktop window pane
      */
+    @Override
     public void showInPane(int toprow, int leftcol) {
         int maxrow = SpreadsheetVersion.EXCEL97.getLastRowIndex();
         if (toprow > maxrow) throw new IllegalArgumentException("Maximum row number is " + maxrow);
@@ -1333,7 +1288,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      * @param toprow  the top row to show in desktop window pane
      * @param leftcol the left column to show in desktop window pane
      */
-    public void showInPane(short toprow, short leftcol) {
+    private void showInPane(short toprow, short leftcol) {
         _sheet.setTopRow(toprow);
         _sheet.setLeftCol(leftcol);
     }
@@ -1923,27 +1878,6 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
             agg = (EscherAggregate) _sheet.getRecords().get(pos);
         }
         return new HSSFPatriarch(this, agg);
-    }
-
-    /**
-     * @deprecated (Sep 2008) use {@link #setColumnGroupCollapsed(int, boolean)}
-     */
-    public void setColumnGroupCollapsed(short columnNumber, boolean collapsed) {
-        setColumnGroupCollapsed(columnNumber & 0xFFFF, collapsed);
-    }
-
-    /**
-     * @deprecated (Sep 2008) use {@link #groupColumn(int, int)}
-     */
-    public void groupColumn(short fromColumn, short toColumn) {
-        groupColumn(fromColumn & 0xFFFF, toColumn & 0xFFFF);
-    }
-
-    /**
-     * @deprecated (Sep 2008) use {@link #ungroupColumn(int, int)}
-     */
-    public void ungroupColumn(short fromColumn, short toColumn) {
-        ungroupColumn(fromColumn & 0xFFFF, toColumn & 0xFFFF);
     }
 
     /**

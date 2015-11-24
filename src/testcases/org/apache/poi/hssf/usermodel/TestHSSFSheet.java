@@ -128,7 +128,6 @@ public final class TestHSSFSheet extends BaseTestSheet {
     /**
      * Test vertically centered output.
      */
-    @SuppressWarnings("deprecation")
     @Test
     public void verticallyCenter() throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
@@ -136,12 +135,10 @@ public final class TestHSSFSheet extends BaseTestSheet {
         VCenterRecord record = s.getSheet().getPageSettings().getVCenter();
 
         assertFalse(record.getVCenter());
-        assertFalse(s.getVerticallyCenter(true));
-        assertFalse(s.getVerticallyCenter(false));
+        assertFalse(s.getVerticallyCenter());
         s.setVerticallyCenter(true);
         assertTrue(record.getVCenter());
-        assertTrue(s.getVerticallyCenter(true));
-        assertTrue(s.getVerticallyCenter(false));
+        assertTrue(s.getVerticallyCenter());
 
         wb.close();
     }
@@ -156,8 +153,11 @@ public final class TestHSSFSheet extends BaseTestSheet {
         HCenterRecord record = s.getSheet().getPageSettings().getHCenter();
 
         assertFalse(record.getHCenter());
+        assertFalse(s.getHorizontallyCenter());
         s.setHorizontallyCenter(true);
         assertTrue(record.getHCenter());
+        assertTrue(s.getHorizontallyCenter());
+
         wb.close();
     }
 
@@ -650,7 +650,6 @@ public final class TestHSSFSheet extends BaseTestSheet {
         wb2.close();
     }
 
-    @SuppressWarnings("deprecation")
     @Test
 	public void autoSizeColumn() throws IOException {
         HSSFWorkbook wb1 = HSSFTestDataSamples.openSampleWorkbook("43902.xls");
@@ -675,7 +674,7 @@ public final class TestHSSFSheet extends BaseTestSheet {
 
         //create a region over the 2nd row and auto size the first column
         sheet.addMergedRegion(new CellRangeAddress(1,1,0,1));
-        assertNotNull(sheet.getMergedRegionAt(0));
+        assertNotNull(sheet.getMergedRegion(0));
         sheet.autoSizeColumn((short)0);
         HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1);
 
