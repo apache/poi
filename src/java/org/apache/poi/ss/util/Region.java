@@ -159,11 +159,18 @@ public class Region implements Comparable<Region> {
 		return false;
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (this instanceof Region)
+			return equals((Region) o);
+		else
+			return false;
+	}
+
 	public boolean equals(Region r)
 	{
 		return (compareTo(r) == 0);
 	}
-
 
 	@Override
 	public int hashCode() {
