@@ -111,11 +111,11 @@ public class XSSFImportFromXML {
             Node result = (Node) xpath.evaluate(xpathString, doc, XPathConstants.NODE);
             // result can be null if value is optional (xsd:minOccurs=0), see bugzilla 55864
             if (result != null) {
-	            String textContent = result.getTextContent();
-	            logger.log(POILogger.DEBUG, "Extracting with xpath " + xpathString + " : value is '" + textContent + "'");
-	            XSSFCell cell = singleXmlCell.getReferencedCell();
-	            logger.log(POILogger.DEBUG, "Setting '" + textContent + "' to cell " + cell.getColumnIndex() + "-" + cell.getRowIndex() + " in sheet "
-	                                            + cell.getSheet().getSheetName());
+                String textContent = result.getTextContent();
+                logger.log(POILogger.DEBUG, "Extracting with xpath " + xpathString + " : value is '" + textContent + "'");
+                XSSFCell cell = singleXmlCell.getReferencedCell();
+                logger.log(POILogger.DEBUG, "Setting '" + textContent + "' to cell " + cell.getColumnIndex() + "-" + cell.getRowIndex() + " in sheet "
+                                                + cell.getSheet().getSheetName());
                 setCellValue(textContent, cell, xmlDataType);
             }
         }
