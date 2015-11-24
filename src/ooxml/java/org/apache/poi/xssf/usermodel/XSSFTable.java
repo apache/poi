@@ -50,239 +50,224 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.TableDocument;
  */
 public class XSSFTable extends POIXMLDocumentPart {
 
-	private CTTable ctTable;
-	private List<XSSFXmlColumnPr> xmlColumnPr;
-	private CellReference startCellReference;
-	private CellReference endCellReference;	
-	private String commonXPath; 
-	
-	
-	public XSSFTable() {
-		super();
-		ctTable = CTTable.Factory.newInstance();
+    private CTTable ctTable;
+    private List<XSSFXmlColumnPr> xmlColumnPr;
+    private CellReference startCellReference;
+    private CellReference endCellReference;    
+    private String commonXPath; 
 
-	}
 
-	public XSSFTable(PackagePart part, PackageRelationship rel)
-			throws IOException {
-		super(part, rel);
-		readFrom(part.getInputStream());
-	}
+    public XSSFTable() {
+        super();
+        ctTable = CTTable.Factory.newInstance();
+    }
 
-	public void readFrom(InputStream is) throws IOException {
-		try {
-			TableDocument doc = TableDocument.Factory.parse(is, DEFAULT_XML_OPTIONS);
-			ctTable = doc.getTable();
-		} catch (XmlException e) {
-			throw new IOException(e.getLocalizedMessage());
-		}
-	}
-	
-	public XSSFSheet getXSSFSheet(){
-		return (XSSFSheet) getParent();
-	}
+    public XSSFTable(PackagePart part, PackageRelationship rel)
+            throws IOException {
+        super(part, rel);
+        readFrom(part.getInputStream());
+    }
 
-	public void writeTo(OutputStream out) throws IOException {
+    public void readFrom(InputStream is) throws IOException {
+        try {
+            TableDocument doc = TableDocument.Factory.parse(is, DEFAULT_XML_OPTIONS);
+            ctTable = doc.getTable();
+        } catch (XmlException e) {
+            throw new IOException(e.getLocalizedMessage());
+        }
+    }
+    
+    public XSSFSheet getXSSFSheet(){
+        return (XSSFSheet) getParent();
+    }
+
+    public void writeTo(OutputStream out) throws IOException {
         updateHeaders();
 
         TableDocument doc = TableDocument.Factory.newInstance();
-		doc.setTable(ctTable);
-		doc.save(out, DEFAULT_XML_OPTIONS);
-	}
+        doc.setTable(ctTable);
+        doc.save(out, DEFAULT_XML_OPTIONS);
+    }
 
-	@Override
-	protected void commit() throws IOException {
-		PackagePart part = getPackagePart();
-		OutputStream out = part.getOutputStream();
-		writeTo(out);
-		out.close();
-	}
-	
-	public CTTable getCTTable(){
-		return ctTable;
-	}
-	
-	/**
-	 * Checks if this Table element contains even a single mapping to the map identified by id
-	 * @param id the XSSFMap ID
-	 * @return true if the Table element contain mappings
-	 */
-	public boolean mapsTo(long id){
-		boolean maps =false;
-		
-		List<XSSFXmlColumnPr> pointers = getXmlColumnPrs();
-		
-		for(XSSFXmlColumnPr pointer: pointers){
-			if(pointer.getMapId()==id){
-				maps=true;
-				break;
-			}
-		}
-		
-		return maps;
-	}
+    @Override
+    protected void commit() throws IOException {
+        PackagePart part = getPackagePart();
+        OutputStream out = part.getOutputStream();
+        writeTo(out);
+        out.close();
+    }
+    
+    public CTTable getCTTable(){
+        return ctTable;
+    }
+    
+    /**
+     * Checks if this Table element contains even a single mapping to the map identified by id
+     * @param id the XSSFMap ID
+     * @return true if the Table element contain mappings
+     */
+    public boolean mapsTo(long id){
+        boolean maps =false;
+        
+        List<XSSFXmlColumnPr> pointers = getXmlColumnPrs();
+        
+        for (XSSFXmlColumnPr pointer: pointers) {
+            if (pointer.getMapId()==id) {
+                maps=true;
+                break;
+            }
+        }
+        
+        return maps;
+    }
 
-	
-	/**
-	 * 
-	 * Calculates the xpath of the root element for the table. This will be the common part
-	 * of all the mapping's xpaths
-	 * 
-	 * @return the xpath of the table's root element
-	 */
+    
+    /**
+     * 
+     * Calculates the xpath of the root element for the table. This will be the common part
+     * of all the mapping's xpaths
+     * 
+     * @return the xpath of the table's root element
+     */
     @SuppressWarnings("deprecation")
-	public String getCommonXpath() {
-		
-		if(commonXPath == null){
-		
-		String[] commonTokens ={};
-		
-		for(CTTableColumn column :ctTable.getTableColumns().getTableColumnArray()){
-			if(column.getXmlColumnPr()!=null){
-				String xpath = column.getXmlColumnPr().getXpath();
-				String[] tokens =  xpath.split("/");
-				if(commonTokens.length==0){
-					commonTokens = tokens;
-					
-				}else{
-					int maxLenght = commonTokens.length>tokens.length? tokens.length:commonTokens.length;
-					for(int i =0; i<maxLenght;i++){
-						if(!commonTokens[i].equals(tokens[i])){
-						 List<String> subCommonTokens = Arrays.asList(commonTokens).subList(0, i);
-						 
-						 String[] container = {};
-						 
-						 commonTokens = subCommonTokens.toArray(container);
-						 break;
-						 
-						 
-						}
-					}
-				}
-				
-			}
-		}
-		
-		
-		commonXPath ="";
-		
-		for(int i = 1 ; i< commonTokens.length;i++){
-			commonXPath +="/"+commonTokens[i];
-		
-		}
-		}
-		
-		return commonXPath;
-	}
-
-	
-    @SuppressWarnings("deprecation")
-	public List<XSSFXmlColumnPr> getXmlColumnPrs() {
-		
-		if(xmlColumnPr==null){
-			xmlColumnPr = new ArrayList<XSSFXmlColumnPr>();
-			for (CTTableColumn column:ctTable.getTableColumns().getTableColumnArray()){
-				if (column.getXmlColumnPr()!=null){
-					XSSFXmlColumnPr columnPr = new XSSFXmlColumnPr(this,column,column.getXmlColumnPr());
-					xmlColumnPr.add(columnPr);
-				}
-			}
-		}
-		return xmlColumnPr;
-	}
-	
-	/**
-	 * @return the name of the Table, if set
-	 */
-	public String getName() {
-	   return ctTable.getName();
-	}
-	
-	/**
-	 * Changes the name of the Table
-	 */
-	public void setName(String name) {
-	   if(name == null) {
-	      ctTable.unsetName();
-	      return;
-	   }
-	   ctTable.setName(name);
-	}
-
-   /**
-    * @return the display name of the Table, if set
-    */
-   public String getDisplayName() {
-      return ctTable.getDisplayName();
-   }
-
-   /**
-    * Changes the display name of the Table
-    */
-   public void setDisplayName(String name) {
-      ctTable.setDisplayName(name);
-   }
-
-	/**
-	 * @return  the number of mapped table columns (see Open Office XML Part 4: chapter 3.5.1.4)
-	 */
-	public long getNumerOfMappedColumns(){
-		return ctTable.getTableColumns().getCount();
-	}
-	
-	
-	/**
-	 * @return The reference for the cell in the top-left part of the table
-	 * (see Open Office XML Part 4: chapter 3.5.1.2, attribute ref) 
-	 *
-	 */
-	public CellReference getStartCellReference() {
-		
-		if(startCellReference==null){			
-				String ref = ctTable.getRef();
-                if(ref != null) {
-                    String[] boundaries = ref.split(":");
-                    String from = boundaries[0];
-                    startCellReference = new CellReference(from);
+    public String getCommonXpath() {
+        if (commonXPath == null) {
+            String[] commonTokens = {};
+            for (CTTableColumn column :ctTable.getTableColumns().getTableColumnArray()) {
+                if (column.getXmlColumnPr()!=null) {
+                    String xpath = column.getXmlColumnPr().getXpath();
+                    String[] tokens =  xpath.split("/");
+                    if (commonTokens.length==0) {
+                        commonTokens = tokens;
+                        
+                    } else {
+                        int maxLenght = commonTokens.length>tokens.length? tokens.length:commonTokens.length;
+                        for (int i =0; i<maxLenght;i++) {
+                            if (!commonTokens[i].equals(tokens[i])) {
+                             List<String> subCommonTokens = Arrays.asList(commonTokens).subList(0, i);
+                             
+                             String[] container = {};
+                             
+                             commonTokens = subCommonTokens.toArray(container);
+                             break;
+                            }
+                        }
+                    }
                 }
-		}
-		return startCellReference;
-	}
-	
-	/**
-	 * @return The reference for the cell in the bottom-right part of the table
-	 * (see Open Office XML Part 4: chapter 3.5.1.2, attribute ref)
-	 *
-	 */
-	public CellReference getEndCellReference() {
-		
-		if(endCellReference==null){
-			
-				String ref = ctTable.getRef();
-				String[] boundaries = ref.split(":");
-				String from = boundaries[1];
-				endCellReference = new CellReference(from);
-		}
-		return endCellReference;
-	}
-	
-	
-	/**
-	 *  @return the total number of rows in the selection. (Note: in this version autofiltering is ignored)
-	 *
-	 */
-	public int getRowCount(){
-		
-		
-		CellReference from = getStartCellReference();
-		CellReference to = getEndCellReference();
-		
-		int rowCount = -1;
-		if (from!=null && to!=null){
-		 rowCount = to.getRow()-from.getRow();
-		}
-		return rowCount;
-	}
+            }
+
+            commonXPath = "";
+            for (int i = 1 ; i< commonTokens.length;i++) {
+                commonXPath +="/"+commonTokens[i];
+            }
+        }
+        
+        return commonXPath;
+    }
+
+    
+    @SuppressWarnings("deprecation")
+    public List<XSSFXmlColumnPr> getXmlColumnPrs() {
+        
+        if (xmlColumnPr==null) {
+            xmlColumnPr = new ArrayList<XSSFXmlColumnPr>();
+            for (CTTableColumn column:ctTable.getTableColumns().getTableColumnArray()) {
+                if (column.getXmlColumnPr()!=null) {
+                    XSSFXmlColumnPr columnPr = new XSSFXmlColumnPr(this,column,column.getXmlColumnPr());
+                    xmlColumnPr.add(columnPr);
+                }
+            }
+        }
+        return xmlColumnPr;
+    }
+    
+    /**
+     * @return the name of the Table, if set
+     */
+    public String getName() {
+        return ctTable.getName();
+    }
+    
+    /**
+     * Changes the name of the Table
+     */
+    public void setName(String name) {
+        if (name == null) {
+            ctTable.unsetName();
+            return;
+        }
+        ctTable.setName(name);
+    }
+
+    /**
+     * @return the display name of the Table, if set
+     */
+    public String getDisplayName() {
+        return ctTable.getDisplayName();
+    }
+
+    /**
+     * Changes the display name of the Table
+     */
+    public void setDisplayName(String name) {
+        ctTable.setDisplayName(name);
+    }
+
+    /**
+     * @return  the number of mapped table columns (see Open Office XML Part 4: chapter 3.5.1.4)
+     */
+    public long getNumerOfMappedColumns() {
+        return ctTable.getTableColumns().getCount();
+    }
+    
+    
+    /**
+     * @return The reference for the cell in the top-left part of the table
+     * (see Open Office XML Part 4: chapter 3.5.1.2, attribute ref) 
+     *
+     */
+    public CellReference getStartCellReference() {
+        if (startCellReference==null) {
+            String ref = ctTable.getRef();
+            if (ref != null) {
+                String[] boundaries = ref.split(":");
+                String from = boundaries[0];
+                startCellReference = new CellReference(from);
+            }
+        }
+        return startCellReference;
+    }
+    
+    /**
+     * @return The reference for the cell in the bottom-right part of the table
+     * (see Open Office XML Part 4: chapter 3.5.1.2, attribute ref)
+     *
+     */
+    public CellReference getEndCellReference() {
+        if (endCellReference==null) {
+            String ref = ctTable.getRef();
+            String[] boundaries = ref.split(":");
+            String from = boundaries[1];
+            endCellReference = new CellReference(from);
+        }
+        return endCellReference;
+    }
+    
+    
+    /**
+     *  @return the total number of rows in the selection. (Note: in this version autofiltering is ignored)
+     *
+     */
+    public int getRowCount() {
+        CellReference from = getStartCellReference();
+        CellReference to = getEndCellReference();
+        
+        int rowCount = -1;
+        if (from!=null && to!=null) {
+            rowCount = to.getRow()-from.getRow();
+        }
+        return rowCount;
+    }
 
     /**
      * Synchronize table headers with cell values in the parent sheet.
