@@ -226,10 +226,10 @@ public class SheetUtil {
     }
 
     /**
-     * Get default character width
+     * Get default character width using the Workbook's default font
      *
      * @param wb the workbook to get the default character width from
-     * @return default character width
+     * @return default character width in pixels
      */
     private static int getDefaultCharWidth(final Workbook wb) {
         Font defaultFont = wb.getFontAt((short) 0);
