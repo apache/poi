@@ -46,10 +46,8 @@ public class ExcelToHtmlUtils extends AbstractExcelUtils
     public static CellRangeAddress[][] buildMergedRangesMap( HSSFSheet sheet )
     {
         CellRangeAddress[][] mergedRanges = new CellRangeAddress[1][];
-        for ( int m = 0; m < sheet.getNumMergedRegions(); m++ )
+        for ( final CellRangeAddress cellRangeAddress : sheet.getMergedRegions() )
         {
-            final CellRangeAddress cellRangeAddress = sheet.getMergedRegion( m );
-
             final int requiredHeight = cellRangeAddress.getLastRow() + 1;
             if ( mergedRanges.length < requiredHeight )
             {

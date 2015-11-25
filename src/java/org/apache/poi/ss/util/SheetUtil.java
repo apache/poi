@@ -104,8 +104,7 @@ public class SheetUtil {
         int column = cell.getColumnIndex();
 
         int colspan = 1;
-        for (int i = 0 ; i < sheet.getNumMergedRegions(); i++) {
-            CellRangeAddress region = sheet.getMergedRegion(i);
+        for (CellRangeAddress region : sheet.getMergedRegions()) {
             if (containsCell(region, row.getRowNum(), column)) {
                 if (!useMergedCells) {
                     // If we're not using merged cells, skip this one and move on to the next.
@@ -335,8 +334,7 @@ public class SheetUtil {
             }
         }
         
-        for (int mr=0; mr<sheet.getNumMergedRegions(); mr++) {
-            CellRangeAddress mergedRegion = sheet.getMergedRegion(mr);
+        for (CellRangeAddress mergedRegion : sheet.getMergedRegions()) {
             if (mergedRegion.isInRange(rowIx, colIx)) {
                 // The cell wanted is in this merged range
                 // Return the primary (top-left) cell for the range
