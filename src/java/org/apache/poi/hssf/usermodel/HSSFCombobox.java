@@ -19,6 +19,7 @@ package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.ddf.*;
 import org.apache.poi.hssf.record.*;
+import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
 
 /**
  * 
@@ -61,7 +62,7 @@ public class HSSFCombobox extends HSSFSimpleShape {
         opt.addEscherProperty(new EscherSimpleProperty(EscherProperties.GROUPSHAPE__PRINT, 0x00020000));
 
         HSSFClientAnchor userAnchor = (HSSFClientAnchor) getAnchor();
-        userAnchor.setAnchorType(1);
+        userAnchor.setAnchorType(AnchorType.DONT_MOVE_DO_RESIZE);
         EscherRecord anchor = userAnchor.getEscherAnchor();
         clientData.setRecordId(EscherClientDataRecord.RECORD_ID);
         clientData.setOptions((short) 0x0000);

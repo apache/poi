@@ -18,6 +18,7 @@
 package org.apache.poi.hssf.usermodel.examples;
 
 import org.apache.poi.hssf.usermodel.*;
+import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
 
 import java.io.*;
 
@@ -152,15 +153,15 @@ public class OfficeDrawing {
 
         HSSFClientAnchor anchor;
         anchor = new HSSFClientAnchor(0,0,0,255,(short)2,2,(short)4,7);
-        anchor.setAnchorType( 2 );
+        anchor.setAnchorType( AnchorType.MOVE_DONT_RESIZE );
         patriarch.createPicture(anchor, loadPicture( "src/resources/logos/logoKarmokar4.png", wb ));
 
         anchor = new HSSFClientAnchor(0,0,0,255,(short)4,2,(short)5,7);
-        anchor.setAnchorType( 2 );
+        anchor.setAnchorType( AnchorType.MOVE_DONT_RESIZE );
         patriarch.createPicture(anchor, loadPicture( "src/resources/logos/logoKarmokar4edited.png", wb ));
 
         anchor = new HSSFClientAnchor(0,0,1023,255,(short)6,2,(short)8,7);
-        anchor.setAnchorType( 2 );
+        anchor.setAnchorType( AnchorType.MOVE_DONT_RESIZE );
         HSSFPicture picture = patriarch.createPicture(anchor, loadPicture( "src/resources/logos/logoKarmokar4s.png", wb ));
         //Reset the image to the original size.
         picture.resize();

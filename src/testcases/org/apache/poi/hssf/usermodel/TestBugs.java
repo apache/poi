@@ -70,6 +70,7 @@ import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.usermodel.BaseTestBugzillaIssues;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Name;
@@ -2966,7 +2967,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         assertNotNull("Did not find sheet", sheet);
         HSSFPatriarch patriarch = (HSSFPatriarch) sheet.createDrawingPatriarch();
         HSSFClientAnchor anchor = new HSSFClientAnchor(0, 0, 0, 0, (short) 1, 1, (short) 10, 22);
-        anchor.setAnchorType(2);
+        anchor.setAnchorType(AnchorType.MOVE_DONT_RESIZE);
         patriarch.createPicture(anchor, pict);
 
         // Write out destination file

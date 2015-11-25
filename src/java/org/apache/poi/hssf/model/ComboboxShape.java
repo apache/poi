@@ -21,6 +21,7 @@ package org.apache.poi.hssf.model;
 import org.apache.poi.ddf.*;
 import org.apache.poi.hssf.record.*;
 import org.apache.poi.hssf.usermodel.*;
+import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
 
 /**
  * Represents a combobox shape.
@@ -92,7 +93,7 @@ public class ComboboxShape
         opt.addEscherProperty(new EscherSimpleProperty(EscherProperties.GROUPSHAPE__PRINT, 0x00020000));
 
         HSSFClientAnchor userAnchor = (HSSFClientAnchor) shape.getAnchor();
-        userAnchor.setAnchorType(1);
+        userAnchor.setAnchorType(AnchorType.DONT_MOVE_DO_RESIZE);
         EscherRecord anchor = createAnchor(userAnchor);
         clientData.setRecordId(EscherClientDataRecord.RECORD_ID);
         clientData.setOptions((short) 0x0000);

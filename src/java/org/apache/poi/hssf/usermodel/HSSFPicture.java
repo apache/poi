@@ -34,6 +34,7 @@ import org.apache.poi.hssf.model.InternalWorkbook;
 import org.apache.poi.hssf.record.CommonObjectDataSubRecord;
 import org.apache.poi.hssf.record.EscherAggregate;
 import org.apache.poi.hssf.record.ObjRecord;
+import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
 import org.apache.poi.ss.usermodel.Picture;
 import org.apache.poi.ss.util.ImageUtils;
 import org.apache.poi.util.POILogFactory;
@@ -134,7 +135,7 @@ public class HSSFPicture extends HSSFSimpleShape implements Picture {
      */
     public void resize(double scaleX, double scaleY) {
         HSSFClientAnchor anchor = getClientAnchor();
-        anchor.setAnchorType(2);
+        anchor.setAnchorType(AnchorType.MOVE_DONT_RESIZE);
 
         HSSFClientAnchor pref = getPreferredSize(scaleX,scaleY);
 

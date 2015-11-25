@@ -28,6 +28,7 @@ import java.util.Locale;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.ss.usermodel.ClientAnchor;
+import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
 import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -373,10 +374,10 @@ public class AddDimensionedImage {
         anchor.setRow2(rowClientAnchorDetail.getToIndex());
 
         // For now, set the anchor type to do not move or resize the
-        // image as the size of the row/column is adjusted. This could easilly
+        // image as the size of the row/column is adjusted. This could easily
         // become another parameter passed to the method. Please read the note
         // above regarding the behaviour of image resizing.
-        anchor.setAnchorType(ClientAnchor.MOVE_AND_RESIZE);
+        anchor.setAnchorType(AnchorType.MOVE_AND_RESIZE);
 
         // Now, add the picture to the workbook. Note that unlike the similar
         // method in the HSSF Examples section, the image type is checked. First,
@@ -400,14 +401,14 @@ public class AddDimensionedImage {
     }
 
     /**
-     * Determines whether the sheets columns should be re-sized to accomodate
+     * Determines whether the sheets columns should be re-sized to accommodate
      * the image, adjusts the columns width if necessary and creates then
      * returns a ClientAnchorDetail object that facilitates construction of
      * an ClientAnchor that will fix the image on the sheet and establish
      * it's size.
      *
      * @param sheet A reference to the sheet that will 'contain' the image.
-     * @param colNumber A primtive int that contains the index number of a
+     * @param colNumber A primitive int that contains the index number of a
      *                  column on the sheet.
      * @param reqImageWidthMM A primitive double that contains the required
      *                        width of the image in millimetres

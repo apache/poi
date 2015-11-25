@@ -21,6 +21,7 @@ import junit.framework.TestCase;
 import org.apache.poi.ddf.*;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.*;
+import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
 
 /**
  * @author Evgeniy Berlog
@@ -30,7 +31,7 @@ public class TestHSSFAnchor extends TestCase {
 
     public void testDefaultValues(){
         HSSFClientAnchor clientAnchor = new HSSFClientAnchor();
-        assertEquals(clientAnchor.getAnchorType(), 0);
+        assertEquals(clientAnchor.getAnchorType(), AnchorType.MOVE_AND_RESIZE);
         assertEquals(clientAnchor.getCol1(), 0);
         assertEquals(clientAnchor.getCol2(), 0);
         assertEquals(clientAnchor.getDx1(), 0);
@@ -41,7 +42,7 @@ public class TestHSSFAnchor extends TestCase {
         assertEquals(clientAnchor.getRow2(), 0);
 
         clientAnchor = new HSSFClientAnchor(new EscherClientAnchorRecord());
-        assertEquals(clientAnchor.getAnchorType(), 0);
+        assertEquals(clientAnchor.getAnchorType(), AnchorType.MOVE_AND_RESIZE);
         assertEquals(clientAnchor.getCol1(), 0);
         assertEquals(clientAnchor.getCol2(), 0);
         assertEquals(clientAnchor.getDx1(), 0);
@@ -143,7 +144,7 @@ public class TestHSSFAnchor extends TestCase {
 
         HSSFPatriarch drawing = sheet.createDrawingPatriarch();
         HSSFClientAnchor anchor = new HSSFClientAnchor(10, 10, 200, 200, (short)2, 2, (short)15, 15);
-        anchor.setAnchorType(2);
+        anchor.setAnchorType(AnchorType.MOVE_DONT_RESIZE);
 
         HSSFSimpleShape rectangle = drawing.createSimpleShape(anchor);
         rectangle.setShapeType(HSSFSimpleShape.OBJECT_TYPE_RECTANGLE);
@@ -362,9 +363,9 @@ public class TestHSSFAnchor extends TestCase {
         clientAnchor2.setRow2(7);
         assertEquals(clientAnchor1, clientAnchor2);
 
-        clientAnchor2.setAnchorType(3);
+        clientAnchor2.setAnchorType(AnchorType.DONT_MOVE_AND_RESIZE);
         assertNotSame(clientAnchor1, clientAnchor2);
-        clientAnchor2.setAnchorType(0);
+        clientAnchor2.setAnchorType(AnchorType.MOVE_AND_RESIZE);
         assertEquals(clientAnchor1, clientAnchor2);
 
         HSSFChildAnchor childAnchor1 = new HSSFChildAnchor(0, 1, 2, 3);

@@ -35,6 +35,7 @@ import org.apache.poi.hssf.record.CommonObjectDataSubRecord;
 import org.apache.poi.hssf.record.EscherAggregate;
 import org.apache.poi.hssf.record.ObjRecord;
 import org.apache.poi.hssf.usermodel.*;
+import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.util.HexDump;
 
@@ -148,8 +149,8 @@ public class TestDrawingShapes extends TestCase {
 
         HSSFPatriarch drawing = sheet.createDrawingPatriarch();
         HSSFClientAnchor anchor = new HSSFClientAnchor(10, 10, 50, 50, (short) 2, 2, (short) 4, 4);
-        anchor.setAnchorType(2);
-        assertEquals(anchor.getAnchorType(), 2);
+        anchor.setAnchorType(AnchorType.MOVE_DONT_RESIZE);
+        assertEquals(AnchorType.MOVE_DONT_RESIZE, anchor.getAnchorType());
 
         HSSFSimpleShape rectangle = drawing.createSimpleShape(anchor);
         rectangle.setShapeType(HSSFSimpleShape.OBJECT_TYPE_RECTANGLE);
