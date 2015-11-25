@@ -31,6 +31,7 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFClientAnchor;
 import org.apache.poi.hssf.usermodel.HSSFPatriarch;
 import org.apache.poi.hssf.util.CellReference;
+import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
 
 
 /**
@@ -291,7 +292,7 @@ public class AddDimensionedImage {
         // image as the size of the row/column is adjusted. This could easilly
         // become another parameter passed to the method.
         //anchor.setAnchorType(HSSFClientAnchor.DONT_MOVE_AND_RESIZE);
-        anchor.setAnchorType(HSSFClientAnchor.MOVE_AND_RESIZE);
+        anchor.setAnchorType(AnchorType.MOVE_AND_RESIZE);
         
         // Now, add the picture to the workbook. Note that the type is assumed
         // to be a JPEG/JPG, this could easily (and should) be parameterised

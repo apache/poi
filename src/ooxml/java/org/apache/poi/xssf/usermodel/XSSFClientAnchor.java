@@ -28,7 +28,8 @@ import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTMarker;
  * @author Yegor Kozlov
  */
 public final class XSSFClientAnchor extends XSSFAnchor implements ClientAnchor {
-    private int anchorType;
+    private AnchorType DEFAULT_ANCHOR_TYPE = AnchorType.MOVE_AND_RESIZE;
+    private AnchorType anchorType;
 
     /**
      * Starting anchor point
@@ -44,6 +45,7 @@ public final class XSSFClientAnchor extends XSSFAnchor implements ClientAnchor {
      * Creates a new client anchor and defaults all the anchor positions to 0.
      */
     public XSSFClientAnchor() {
+        anchorType = DEFAULT_ANCHOR_TYPE;
         cell1 = CTMarker.Factory.newInstance();
         cell1.setCol(0);
         cell1.setColOff(0);
@@ -88,6 +90,7 @@ public final class XSSFClientAnchor extends XSSFAnchor implements ClientAnchor {
      * @param cell2 ending anchor point
      */
     protected XSSFClientAnchor(CTMarker cell1, CTMarker cell2) {
+        anchorType = DEFAULT_ANCHOR_TYPE;
         this.cell1 = cell1;
         this.cell2 = cell2;
     }
@@ -214,20 +217,20 @@ public final class XSSFClientAnchor extends XSSFAnchor implements ClientAnchor {
 
     /**
      * Sets the anchor type
-     * <p>
-     * 0 = Move and size with Cells, 2 = Move but don't size with cells, 3 = Don't move or size with cells.
+     * @param anchorType the anchor type to set
      */
-    public void setAnchorType( int anchorType )
+    @Override
+    public void setAnchorType( AnchorType anchorType )
     {
         this.anchorType = anchorType;
     }
 
     /**
      * Gets the anchor type
-     * <p>
-     * 0 = Move and size with Cells, 2 = Move but don't size with cells, 3 = Don't move or size with cells.
+     * @return the anchor type
      */
-    public int getAnchorType()
+    @Override
+    public AnchorType getAnchorType()
     {
         return anchorType;
     }

@@ -34,7 +34,6 @@ import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.util.CellAddress;
-import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.Units;
 import org.apache.poi.xssf.model.CommentsTable;
@@ -373,9 +372,9 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing {
         anchor.setFrom(ctAnchor.getFrom());
         STEditAs.Enum aditAs;
         switch(anchor.getAnchorType()) {
-            case ClientAnchor.DONT_MOVE_AND_RESIZE: aditAs = STEditAs.ABSOLUTE; break;
-            case ClientAnchor.MOVE_AND_RESIZE: aditAs = STEditAs.TWO_CELL; break;
-            case ClientAnchor.MOVE_DONT_RESIZE: aditAs = STEditAs.ONE_CELL; break;
+            case DONT_MOVE_AND_RESIZE: aditAs = STEditAs.ABSOLUTE; break;
+            case MOVE_AND_RESIZE: aditAs = STEditAs.TWO_CELL; break;
+            case MOVE_DONT_RESIZE: aditAs = STEditAs.ONE_CELL; break;
             default: aditAs = STEditAs.ONE_CELL;
         }
         ctAnchor.setEditAs(aditAs);

@@ -250,20 +250,20 @@ public final class HSSFClientAnchor extends HSSFAnchor implements ClientAnchor {
 
     /**
      * Gets the anchor type
-     * <p/>
-     * 0 = Move and size with Cells, 2 = Move but don't size with cells, 3 = Don't move or size with cells.
+     * @return the anchor type
      */
-    public int getAnchorType() {
-        return _escherClientAnchor.getFlag();
+    @Override
+    public AnchorType getAnchorType() {
+        return AnchorType.byId(_escherClientAnchor.getFlag());
     }
 
     /**
      * Sets the anchor type
-     * <p/>
-     * 0 = Move and size with Cells, 2 = Move but don't size with cells, 3 = Don't move or size with cells.
+     * @param anchorType the anchor type to set
      */
-    public void setAnchorType(int anchorType) {
-        _escherClientAnchor.setFlag(Integer.valueOf(anchorType).shortValue());
+    @Override
+    public void setAnchorType(AnchorType anchorType) {
+        _escherClientAnchor.setFlag(anchorType.value);
     }
 
     private void checkRange(int value, int minRange, int maxRange, String varName) {

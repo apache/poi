@@ -31,7 +31,7 @@ import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.Ole10Native;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.ss.usermodel.ClientAnchor;
+import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.util.LocaleUtil;
 import org.junit.Test;
@@ -88,25 +88,25 @@ public final class TestOLE2Embeding {
         CreationHelper ch = wb1.getCreationHelper();
         HSSFClientAnchor anchor = (HSSFClientAnchor)ch.createClientAnchor();
         anchor.setAnchor((short)(2+coloffset), 1+rowoffset, 0, 0, (short)(3+coloffset), 5+rowoffset, 0, 0);
-        anchor.setAnchorType(ClientAnchor.DONT_MOVE_AND_RESIZE);
+        anchor.setAnchorType(AnchorType.DONT_MOVE_AND_RESIZE);
     	
         patriarch.createObjectData(anchor, pptIdx, imgPPT);
 
         anchor = (HSSFClientAnchor)ch.createClientAnchor();
         anchor.setAnchor((short)(5+coloffset), 1+rowoffset, 0, 0, (short)(6+coloffset), 5+rowoffset, 0, 0);
-        anchor.setAnchorType(ClientAnchor.DONT_MOVE_AND_RESIZE);
+        anchor.setAnchorType(AnchorType.DONT_MOVE_AND_RESIZE);
         
         patriarch.createObjectData(anchor, xlsIdx, imgIdx);
         
         anchor = (HSSFClientAnchor)ch.createClientAnchor();
         anchor.setAnchor((short)(3+coloffset), 10+rowoffset, 0, 0, (short)(5+coloffset), 11+rowoffset, 0, 0);
-        anchor.setAnchorType(ClientAnchor.DONT_MOVE_AND_RESIZE);
+        anchor.setAnchorType(AnchorType.DONT_MOVE_AND_RESIZE);
         
         patriarch.createObjectData(anchor, txtIdx, imgIdx);
         
         anchor = (HSSFClientAnchor)ch.createClientAnchor();
         anchor.setAnchor((short)(1+coloffset), -2+rowoffset, 0, 0, (short)(7+coloffset), 14+rowoffset, 0, 0);
-        anchor.setAnchorType(ClientAnchor.DONT_MOVE_AND_RESIZE);
+        anchor.setAnchorType(AnchorType.DONT_MOVE_AND_RESIZE);
 
         HSSFSimpleShape circle = patriarch.createSimpleShape(anchor);
         circle.setShapeType(HSSFSimpleShape.OBJECT_TYPE_OVAL);

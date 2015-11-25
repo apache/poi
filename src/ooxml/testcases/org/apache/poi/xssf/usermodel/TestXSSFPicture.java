@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.apache.poi.ss.usermodel.BaseTestPicture;
-import org.apache.poi.ss.usermodel.ClientAnchor;
+import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
@@ -70,9 +70,9 @@ public final class TestXSSFPicture extends BaseTestPicture {
         assertArrayEquals(jpegData, pictures.get(jpegIdx).getData());
 
         XSSFClientAnchor anchor = new XSSFClientAnchor(0, 0, 0, 0, 1, 1, 10, 30);
-        assertEquals(ClientAnchor.MOVE_AND_RESIZE, anchor.getAnchorType());
-        anchor.setAnchorType(ClientAnchor.DONT_MOVE_AND_RESIZE);
-        assertEquals(ClientAnchor.DONT_MOVE_AND_RESIZE, anchor.getAnchorType());
+        assertEquals(AnchorType.MOVE_AND_RESIZE, anchor.getAnchorType());
+        anchor.setAnchorType(AnchorType.DONT_MOVE_AND_RESIZE);
+        assertEquals(AnchorType.DONT_MOVE_AND_RESIZE, anchor.getAnchorType());
 
         XSSFPicture shape = drawing.createPicture(anchor, jpegIdx);
         assertTrue(anchor.equals(shape.getAnchor()));
