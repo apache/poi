@@ -1355,4 +1355,17 @@ public abstract class BaseTestBugzillaIssues {
         
         wb.close();
     }
+    
+    @Ignore
+    @Test
+    public void test58648() throws IOException {
+        Workbook wb = _testDataProvider.createWorkbook();
+        Cell cell = wb.createSheet().createRow(0).createCell(0);
+        cell.setCellFormula("((1 + 1) )");
+        // fails with
+        // org.apache.poi.ss.formula.FormulaParseException: Parse error near char ... ')'
+        // in specified formula '((1 + 1) )'. Expected cell ref or constant literal
+
+        wb.close();
+    }
 }
