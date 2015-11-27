@@ -55,10 +55,10 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
 */
 public class SXSSFSheet implements Sheet, Cloneable
 {
-    XSSFSheet _sh;
-    private SXSSFWorkbook _workbook;
-    private TreeMap<Integer,SXSSFRow> _rows=new TreeMap<Integer,SXSSFRow>();
-    private SheetDataWriter _writer;
+    /*package*/ final XSSFSheet _sh;
+    private final SXSSFWorkbook _workbook;
+    private final TreeMap<Integer,SXSSFRow> _rows=new TreeMap<Integer,SXSSFRow>();
+    private final SheetDataWriter _writer;
     private int _randomAccessWindowSize = SXSSFWorkbook.DEFAULT_WINDOW_SIZE;
     private int outlineLevelRow = 0;
     private int lastFlushedRowNumber = -1;
