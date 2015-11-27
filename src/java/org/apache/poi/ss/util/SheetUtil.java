@@ -103,6 +103,8 @@ public class SheetUtil {
         Row row = cell.getRow();
         int column = cell.getColumnIndex();
 
+        // FIXME: this looks very similar to getCellWithMerges below. Consider consolidating.
+        // We should only be checking merged regions if useMergedCells is true. Why are we doing this for-loop?
         int colspan = 1;
         for (CellRangeAddress region : sheet.getMergedRegions()) {
             if (containsCell(region, row.getRowNum(), column)) {
