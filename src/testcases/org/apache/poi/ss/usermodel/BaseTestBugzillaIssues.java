@@ -56,6 +56,11 @@ public abstract class BaseTestBugzillaIssues {
         _testDataProvider = testDataProvider;
     }
 
+    /**
+     * Unlike org.junit.Assert.assertEquals(double expected, double actual, double delta),
+     * where delta is an absolute error value, this function's factor is a relative error,
+     * so it's easier to express "actual is within 5% of expected".
+     */
     public static void assertAlmostEquals(double expected, double actual, float factor) {
         double diff = Math.abs(expected - actual);
         double fuzz = expected * factor;
