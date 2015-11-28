@@ -164,8 +164,19 @@ public class SheetUtil {
         return width;
     }
 
+    /**
+     * Calculate the best-fit width for a cell
+     * If a merged cell spans multiple columns, evenly distribute the column width among those columns
+     *
+     * @param defaultCharWidth the width of a character using the default font in a workbook
+     * @param colspan the number of columns that is spanned by the cell (1 if the cell is not part of a merged region)
+     * @param style the cell style, which contains text rotation and indention information needed to compute the cell width
+     * @param width the minimum best-fit width. This algorithm will only return values greater than or equal to the minimum width.
+     * @param str the text contained in the cell
+     * @return
+     */
     private static double getCellWidth(int defaultCharWidth, int colspan,
-            CellStyle style, double width, AttributedString str) {
+            CellStyle style, double minWidth, AttributedString str) {
         TextLayout layout = new TextLayout(str.getIterator(), fontRenderContext);
         final Rectangle2D bounds;
         if(style.getRotation() != 0){
@@ -184,9 +195,9 @@ public class SheetUtil {
         } else {
             bounds = layout.getBounds();
         }
-        // entireWidth accounts for leading spaces which is excluded from bounds.getWidth()
+        // frameWidth accounts for leading spaces which is excluded from bounds.getWidth()
         final double frameWidth = bounds.getX() + bounds.getWidth();
-        width = Math.max(width, ((frameWidth / colspan) / defaultCharWidth) + style.getIndention());
+        final double width = Math.max(minWidth, ((frameWidth / colspan) / defaultCharWidth) + style.getIndention());
         return width;
     }
 
