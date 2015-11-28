@@ -173,7 +173,7 @@ public class SheetUtil {
      * @param style the cell style, which contains text rotation and indention information needed to compute the cell width
      * @param width the minimum best-fit width. This algorithm will only return values greater than or equal to the minimum width.
      * @param str the text contained in the cell
-     * @return
+     * @return the best fit cell width
      */
     private static double getCellWidth(int defaultCharWidth, int colspan,
             CellStyle style, double minWidth, AttributedString str) {
