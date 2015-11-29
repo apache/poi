@@ -44,6 +44,7 @@ import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.SheetUtil;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.NotImplemented;
 import org.apache.poi.xssf.usermodel.XSSFComment;
 import org.apache.poi.xssf.usermodel.XSSFDataValidation;
 import org.apache.poi.xssf.usermodel.XSSFHyperlink;
@@ -933,6 +934,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      * @param endRow the row to end shifting
      * @param n the number of rows to shift
      */
+    @NotImplemented
     @Override
     public void shiftRows(int startRow, int endRow, int n)
     {
@@ -956,6 +958,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      * @param copyRowHeight whether to copy the row height during the shift
      * @param resetOriginalRowHeight whether to set the original row's height to the default
      */
+    @NotImplemented
     @Override
     public void shiftRows(int startRow, int endRow, int n, boolean copyRowHeight, boolean resetOriginalRowHeight)
     {
@@ -1306,7 +1309,7 @@ public class SXSSFSheet implements Sheet, Cloneable
             collapseRow(row);
         } else {
             //expandRow(rowIndex);
-            throw new RuntimeException("Not Implemented");
+            throw new RuntimeException("Unable to expand row: Not Implemented");
         }
     }
     
