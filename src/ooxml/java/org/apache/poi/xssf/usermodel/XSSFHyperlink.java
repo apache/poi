@@ -151,6 +151,7 @@ public class XSSFHyperlink implements Hyperlink {
      *
      * @return the type of this hyperlink
      */
+    @Override
     public int getType() {
         return _type;
     }
@@ -168,6 +169,7 @@ public class XSSFHyperlink implements Hyperlink {
      *
      * @return the address of this hyperlink
      */
+    @Override
     public String getAddress() {
         return _location;
     }
@@ -177,6 +179,7 @@ public class XSSFHyperlink implements Hyperlink {
      *
      * @return text to display
      */
+    @Override
     public String getLabel() {
         return _ctHyperlink.getDisplay();
     }
@@ -196,6 +199,7 @@ public class XSSFHyperlink implements Hyperlink {
      *
      * @param label text label for this hyperlink
      */
+    @Override
     public void setLabel(String label) {
         _ctHyperlink.setDisplay(label);
     }
@@ -215,6 +219,7 @@ public class XSSFHyperlink implements Hyperlink {
      *
      * @param address - the address of this hyperlink
      */
+    @Override
     public void setAddress(String address) {
         validate(address);
 
@@ -267,6 +272,7 @@ public class XSSFHyperlink implements Hyperlink {
      *
      * @return the 0-based column of the first cell that contains the hyperlink
      */
+    @Override
     public int getFirstColumn() {
         return buildCellReference().getCol();
     }
@@ -277,6 +283,7 @@ public class XSSFHyperlink implements Hyperlink {
      *
      * @return the 0-based column of the last cell that contains the hyperlink
      */
+    @Override
     public int getLastColumn() {
         return buildCellReference().getCol();
     }
@@ -286,6 +293,7 @@ public class XSSFHyperlink implements Hyperlink {
      *
      * @return the 0-based row of the cell that contains the hyperlink
      */
+    @Override
     public int getFirstRow() {
         return buildCellReference().getRow();
     }
@@ -296,6 +304,7 @@ public class XSSFHyperlink implements Hyperlink {
      *
      * @return the 0-based row of the last cell that contains the hyperlink
      */
+    @Override
     public int getLastRow() {
         return buildCellReference().getRow();
     }
@@ -305,6 +314,7 @@ public class XSSFHyperlink implements Hyperlink {
      *
      * @param col the 0-based column of the first cell that contains the hyperlink
      */
+    @Override
     public void setFirstColumn(int col) {
         setCellReference(new CellReference( getFirstRow(), col ));
     }
@@ -315,6 +325,7 @@ public class XSSFHyperlink implements Hyperlink {
      *
      * @param col the 0-based column of the last cell that contains the hyperlink
      */
+    @Override
     public void setLastColumn(int col) {
         setFirstColumn(col);
     }
@@ -324,6 +335,7 @@ public class XSSFHyperlink implements Hyperlink {
      *
      * @param row the 0-based row of the first cell that contains the hyperlink
      */
+    @Override
     public void setFirstRow(int row) {
         setCellReference(new CellReference( row, getFirstColumn() ));
     }
@@ -334,6 +346,7 @@ public class XSSFHyperlink implements Hyperlink {
      *
      * @param row the 0-based row of the last cell that contains the hyperlink
      */
+    @Override
     public void setLastRow(int row) {
         setFirstRow(row);
 	}
