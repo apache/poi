@@ -21,11 +21,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.ITestDataProvider;
+import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
 import org.junit.Test;
@@ -455,5 +457,125 @@ public abstract class BaseTestSheetShiftRows {
         sheet.createRow(30);
 
         wb.close();
+    }
+    
+    /**
+     * Unified test for:
+     * bug 46742: XSSFSheet.shiftRows should shift hyperlinks
+     * bug 52903: HSSFSheet.shiftRows should shift hyperlinks
+     *
+     * @throws IOException
+     */
+    @Test
+    public void testBug46742_52903_shiftHyperlinks() throws IOException {
+        Workbook wb = _testDataProvider.createWorkbook();
+        Sheet sheet = wb.createSheet("test");
+        Row row = sheet.createRow(0);
+        
+        // How to create hyperlinks
+        // https://poi.apache.org/spreadsheet/quick-guide.html#Hyperlinks
+        CreationHelper helper = wb.getCreationHelper();
+        CellStyle hlinkStyle = wb.createCellStyle();
+        Font hlinkFont = wb.createFont();
+        hlinkFont.setUnderline(Font.U_SINGLE);
+        hlinkFont.setColor(IndexedColors.BLUE.getIndex());
+        hlinkStyle.setFont(hlinkFont);
+
+        // 3D relative document link
+        // CellAddress=A1, shifted to A4
+        Cell cell = row.createCell(0);
+        cell.setCellStyle(hlinkStyle);
+        createHyperlink(helper, cell, Hyperlink.LINK_DOCUMENT, "test!E1");
+        
+        // URL
+        cell = row.createCell(1);
+        // CellAddress=B1, shifted to B4
+        cell.setCellStyle(hlinkStyle);
+        createHyperlink(helper, cell, Hyperlink.LINK_URL, "http://poi.apache.org/");
+        
+        // row0 will be shifted on top of row1, so this URL should be removed from the workbook
+        Row overwrittenRow = sheet.createRow(3);
+        cell = overwrittenRow.createCell(2);
+        // CellAddress=C4, will be overwritten (deleted)
+        cell.setCellStyle(hlinkStyle);
+        createHyperlink(helper, cell, Hyperlink.LINK_EMAIL, "mailto:poi@apache.org");
+        
+        // hyperlinks on this row are unaffected by the row shifting, so the hyperlinks should not move
+        Row unaffectedRow = sheet.createRow(20);
+        cell = unaffectedRow.createCell(3);
+        // CellAddress=D21, will be unaffected
+        cell.setCellStyle(hlinkStyle);
+        createHyperlink(helper, cell, Hyperlink.LINK_FILE, "54524.xlsx");
+        
+        cell = wb.createSheet("other").createRow(0).createCell(0);
+        // CellAddress=Other!A1, will be unaffected
+        cell.setCellStyle(hlinkStyle);
+        createHyperlink(helper, cell, Hyperlink.LINK_URL, "http://apache.org/");
+        
+        int startRow = 0;
+        int endRow = 0;
+        int n = 3;
+        sheet.shiftRows(startRow, endRow, n);
+        
+        Workbook read = _testDataProvider.writeOutAndReadBack(wb);
+        wb.close();
+        
+        Sheet sh = read.getSheet("test");
+        
+        Row shiftedRow = sh.getRow(3);
+        
+        // document link anchored on a shifted cell should be moved
+        // Note that hyperlinks do not track what they point to, so this hyperlink should still refer to test!E1
+        verifyHyperlink(shiftedRow.getCell(0), Hyperlink.LINK_DOCUMENT, "test!E1");
+        
+        // URL, EMAIL, and FILE links anchored on a shifted cell should be moved
+        verifyHyperlink(shiftedRow.getCell(1), Hyperlink.LINK_URL, "http://poi.apache.org/");
+        
+        // Make sure hyperlinks were moved and not copied
+        assertNull("Document hyperlink should be moved, not copied", sh.getHyperlink(0, 0));
+        assertNull("URL hyperlink should be moved, not copied", sh.getHyperlink(0, 1));
+        
+        // Make sure hyperlink in overwritten row is deleted
+        System.out.println(sh.getHyperlinkList());
+        assertEquals(3, sh.getHyperlinkList().size());
+        CellAddress unexpectedLinkAddress = new CellAddress("C4");
+        for (Hyperlink link : sh.getHyperlinkList()) {
+            final CellAddress linkAddress = new CellAddress(link.getFirstRow(), link.getFirstColumn());
+            System.out.println(linkAddress.formatAsString());
+            if (linkAddress.equals(unexpectedLinkAddress)) {
+                fail("Row 4, including the hyperlink at C4, should have " +
+                     "been deleted when Row 1 was shifted on top of it.");
+            }
+        }
+        
+        // Make sure unaffected rows are not shifted
+        Cell unaffectedCell = sh.getRow(20).getCell(3);
+        assertTrue(cellHasHyperlink(unaffectedCell));
+        verifyHyperlink(unaffectedCell, Hyperlink.LINK_FILE, "54524.xlsx");
+        
+        // Make sure cells on other sheets are not affected
+        unaffectedCell = read.getSheet("other").getRow(0).getCell(0);
+        assertTrue(cellHasHyperlink(unaffectedCell));
+        verifyHyperlink(unaffectedCell, Hyperlink.LINK_URL, "http://apache.org/");
+        
+        read.close();
+    }
+    
+    private void createHyperlink(CreationHelper helper, Cell cell, int linkType, String ref) {
+        cell.setCellValue(ref);
+        Hyperlink link = helper.createHyperlink(linkType);
+        link.setAddress(ref);
+        cell.setHyperlink(link);
+    }
+    
+    private void verifyHyperlink(Cell cell, int linkType, String ref) {
+        assertTrue(cellHasHyperlink(cell));
+        Hyperlink link = cell.getHyperlink();
+        assertEquals(linkType, link.getType());
+        assertEquals(ref, link.getAddress());
+    }
+    
+    private boolean cellHasHyperlink(Cell cell) {
+        return (cell != null) && (cell.getHyperlink() != null);
     }
 }
