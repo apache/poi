@@ -1376,6 +1376,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      * @param endRow   the row to end shifting
      * @param n        the number of rows to shift
      */
+    @Override
     public void shiftRows(int startRow, int endRow, int n) {
         shiftRows(startRow, endRow, n, false, false);
     }
@@ -1397,6 +1398,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      * @param copyRowHeight          whether to copy the row height during the shift
      * @param resetOriginalRowHeight whether to set the original row's height to the default
      */
+    @Override
     public void shiftRows(int startRow, int endRow, int n, boolean copyRowHeight, boolean resetOriginalRowHeight) {
         shiftRows(startRow, endRow, n, copyRowHeight, resetOriginalRowHeight, true);
     }
@@ -1422,6 +1424,9 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
     public void shiftRows(int startRow, int endRow, int n,
                           boolean copyRowHeight, boolean resetOriginalRowHeight, boolean moveComments) {
         int s, inc;
+        if (endRow < startRow) {
+            throw new IllegalArgumentException("startRow must be less than or equal to endRow. To shift rows up, use n<0.");
+        }
         if (n < 0) {
             s = startRow;
             inc = 1;
@@ -1433,12 +1438,29 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
             return;
         }
 
+        // Shift comments
         if (moveComments) {
             _sheet.getNoteRecords();
         }
 
+        // Shift Merged Regions
         shiftMerged(startRow, endRow, n, true);
+        
+        // Shift Row Breaks
         _sheet.getPageSettings().shiftRowBreaks(startRow, endRow, n);
+        
+        // Delete overwritten hyperlinks
+        final int firstOverwrittenRow = startRow + n;
+        final int lastOverwrittenRow = endRow + n;
+        for (HSSFHyperlink link : getHyperlinkList()) {
+            // If hyperlink is fully contained in the rows that will be overwritten, delete the hyperlink
+            if (firstOverwrittenRow <= link.getFirstRow() &&
+                    link.getFirstRow() <= lastOverwrittenRow &&
+                    lastOverwrittenRow <= link.getLastRow() &&
+                    link.getLastRow() <= lastOverwrittenRow) {
+                removeHyperlink(link);
+            }
+        }
 
         for (int rowNum = s; rowNum >= startRow && rowNum <= endRow && rowNum >= 0 && rowNum < 65536; rowNum += inc) {
             HSSFRow row = getRow(rowNum);
@@ -1453,7 +1475,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
 
 
             // Remove all the old cells from the row we'll
-            //  be writing too, before we start overwriting
+            //  be writing to, before we start overwriting
             //  any cells. This avoids issues with cells
             //  changing type, and records not being correctly
             //  overwritten
@@ -1475,13 +1497,13 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
             //  the destination row
             for (Iterator<Cell> cells = row.cellIterator(); cells.hasNext(); ) {
                 HSSFCell cell = (HSSFCell) cells.next();
+                HSSFHyperlink link = cell.getHyperlink();
                 row.removeCell(cell);
                 CellValueRecordInterface cellRecord = cell.getCellValueRecord();
                 cellRecord.setRow(rowNum + n);
                 row2Replace.createCellFromRecord(cellRecord);
                 _sheet.addValueRecord(rowNum + n, cellRecord);
 
-                HSSFHyperlink link = cell.getHyperlink();
                 if (link != null) {
                     link.setFirstRow(link.getFirstRow() + n);
                     link.setLastRow(link.getLastRow() + n);
@@ -2057,6 +2079,35 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
             }
         }
         return hyperlinkList;
+    }
+    
+    /**
+     * Remove the underlying HyperlinkRecord from this sheet.
+     * If multiple HSSFHyperlinks refer to the same HyperlinkRecord, all HSSFHyperlinks will be removed.
+     *
+     * @param link the HSSFHyperlink wrapper around the HyperlinkRecord to remove
+     */
+    protected void removeHyperlink(HSSFHyperlink link) {
+        removeHyperlink(link.record);
+    }
+    
+    /**
+     * Remove the underlying HyperlinkRecord from this sheet
+     *
+     * @param link the underlying HyperlinkRecord to remove from this sheet
+     */
+    protected void removeHyperlink(HyperlinkRecord link) {
+        for (Iterator<RecordBase> it = _sheet.getRecords().iterator(); it.hasNext();) {
+            RecordBase rec = it.next();
+            if (rec instanceof HyperlinkRecord) {
+                HyperlinkRecord recLink = (HyperlinkRecord) rec;
+                if (link == recLink) {
+                    it.remove();
+                    // if multiple HSSFHyperlinks refer to the same record
+                    return;
+                }
+            }
+        }
     }
 
     public HSSFSheetConditionalFormatting getSheetConditionalFormatting() {
