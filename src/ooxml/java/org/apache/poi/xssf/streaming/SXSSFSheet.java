@@ -43,6 +43,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.SheetUtil;
+import org.apache.poi.util.Internal;
 import org.apache.poi.xssf.usermodel.XSSFComment;
 import org.apache.poi.xssf.usermodel.XSSFDataValidation;
 import org.apache.poi.xssf.usermodel.XSSFHyperlink;
@@ -74,6 +75,7 @@ public class SXSSFSheet implements Sheet, Cloneable
     /**
      * for testing purposes only
      */
+    @Internal
     SheetDataWriter getSheetDataWriter(){
         return _writer;
     }
@@ -88,6 +90,7 @@ public class SXSSFSheet implements Sheet, Cloneable
     }
 
 //start of interface implementation
+    @Override
     public Iterator<Row> iterator()
     {
         return rowIterator();
@@ -102,6 +105,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      *      a rownum is provided where the row is already flushed to disk.
      * @see #removeRow(Row)
      */
+    @Override
     public SXSSFRow createRow(int rownum)
     {
         int maxrow = SpreadsheetVersion.EXCEL2007.getLastRowIndex();
@@ -158,6 +162,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      *
      * @param row   representing a row to remove.
      */
+    @Override
     public void removeRow(Row row)
     {
         if (row.getSheet() != this) {
@@ -182,6 +187,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      * @param rownum  row to get (0-based)
      * @return Row representing the rownumber or null if its not defined on the sheet
      */
+    @Override
     public SXSSFRow getRow(int rownum)
     {
         return _rows.get(rownum);
@@ -192,6 +198,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      *
      * @return the number of physically defined rows in this sheet
      */
+    @Override
     public int getPhysicalNumberOfRows()
     {
         return _rows.size()+_writer.getNumberOfFlushedRows();
@@ -202,6 +209,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      *
      * @return the number of the first logical row on the sheet (0-based)
      */
+    @Override
     public int getFirstRowNum()
     {
         if(_writer.getNumberOfFlushedRows() > 0)
@@ -214,6 +222,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      *
      * @return last row contained n this sheet (0-based)
      */
+    @Override
     public int getLastRowNum()
     {
         return _rows.size() == 0 ? 0 : _rows.lastKey();
@@ -225,6 +234,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      * @param columnIndex - the column to get (0-based)
      * @param hidden - the visiblity state of the column
      */
+    @Override
     public void setColumnHidden(int columnIndex, boolean hidden)
     {
         _sh.setColumnHidden(columnIndex,hidden);
@@ -236,6 +246,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      * @param columnIndex - the column to set (0-based)
      * @return hidden - <code>false</code> if the column is visible
      */
+    @Override
     public boolean isColumnHidden(int columnIndex)
     {
         return _sh.isColumnHidden(columnIndex);
@@ -252,6 +263,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      * @param columnIndex - the column to set (0-based)
      * @param width - the width in units of 1/256th of a character width
      */
+    @Override
     public void setColumnWidth(int columnIndex, int width)
     {
         _sh.setColumnWidth(columnIndex,width);
@@ -262,6 +274,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      * @param columnIndex - the column to set (0-based)
      * @return width - the width in units of 1/256th of a character width
      */
+    @Override
     public int getColumnWidth(int columnIndex)
     {
         return _sh.getColumnWidth(columnIndex);
@@ -286,6 +299,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      *
      * @param width default column width measured in characters
      */
+    @Override
     public void setDefaultColumnWidth(int width)
     {
         _sh.setDefaultColumnWidth(width);
@@ -297,6 +311,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      *
      * @return default column width measured in characters
      */
+    @Override
     public int getDefaultColumnWidth()
     {
         return _sh.getDefaultColumnWidth();
@@ -309,6 +324,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      *
      * @return  default row height measured in twips (1/20 of  a point)
      */
+    @Override
     public short getDefaultRowHeight()
     {
         return _sh.getDefaultRowHeight();
@@ -320,6 +336,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      *
      * @return  default row height in points
      */
+    @Override
     public float getDefaultRowHeightInPoints()
     {
         return _sh.getDefaultRowHeightInPoints();
@@ -331,6 +348,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      *
      * @param  height default row height measured in twips (1/20 of  a point)
      */
+    @Override
     public void setDefaultRowHeight(short height)
     {
         _sh.setDefaultRowHeight(height);
@@ -341,6 +359,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      * points
      * @param height default row height
      */
+    @Override
     public void setDefaultRowHeightInPoints(float height)
     {
         _sh.setDefaultRowHeightInPoints(height);
@@ -352,6 +371,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      *  (0 based) column, or null if no style has been
      *  set for that column
      */
+    @Override
     public CellStyle getColumnStyle(int column)
     {
         return _sh.getColumnStyle(column);
@@ -369,6 +389,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      * @param region (rowfrom/colfrom-rowto/colto) to merge
      * @return index of this region
      */
+    @Override
     public int addMergedRegion(CellRangeAddress region)
     {
         return _sh.addMergedRegion(region);
@@ -379,6 +400,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      *
      * @param value true to vertically center, false otherwise.
      */
+    @Override
     public void setVerticallyCenter(boolean value)
     {
         _sh.setVerticallyCenter(value);
@@ -389,6 +411,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      *
      * @param value true to horizontally center, false otherwise.
      */
+    @Override
     public void setHorizontallyCenter(boolean value)
     {
         _sh.setHorizontallyCenter(value);
@@ -397,7 +420,7 @@ public class SXSSFSheet implements Sheet, Cloneable
     /**
      * Determine whether printed output for this sheet will be horizontally centered.
      */
-
+    @Override
     public boolean getHorizontallyCenter()
     {
         return _sh.getHorizontallyCenter();
@@ -406,6 +429,7 @@ public class SXSSFSheet implements Sheet, Cloneable
     /**
      * Determine whether printed output for this sheet will be vertically centered.
      */
+    @Override
     public boolean getVerticallyCenter()
     {
         return _sh.getVerticallyCenter();
@@ -416,6 +440,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      *
      * @param index of the region to unmerge
      */
+    @Override
     public void removeMergedRegion(int index)
     {
         _sh.removeMergedRegion(index);
@@ -426,6 +451,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      *
      * @return number of merged regions
      */
+    @Override
     public int getNumMergedRegions()
     {
         return _sh.getNumMergedRegions();
@@ -438,6 +464,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      *
      * @return the merged region at the specified index
      */
+    @Override
     public CellRangeAddress getMergedRegion(int index)
     {
         return _sh.getMergedRegion(index);
@@ -460,6 +487,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      * @return an iterator of the PHYSICAL rows.  Meaning the 3rd element may not
      * be the third row if say for instance the second row is undefined.
      */
+    @Override
     public Iterator<Row> rowIterator()
     {
         @SuppressWarnings("unchecked")
@@ -472,6 +500,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      *
      * @param value <code>true</code> if the sheet displays Automatic Page Breaks.
      */
+    @Override
     public void setAutobreaks(boolean value)
     {
         _sh.setAutobreaks(value);
@@ -482,6 +511,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      *
      * @param value - guts or no guts
      */
+    @Override
     public void setDisplayGuts(boolean value)
     {
         _sh.setDisplayGuts(value);
@@ -493,6 +523,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      *
      * @param value whether to display or hide all zero values on the worksheet
      */
+    @Override
     public void setDisplayZeros(boolean value)
     {
         _sh.setDisplayZeros(value);
@@ -505,6 +536,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      *
      * @return whether all zero values on the worksheet are displayed
      */
+    @Override
     public boolean isDisplayZeros()
     {
         return _sh.isDisplayZeros();
@@ -515,6 +547,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      *
      * @param value true for right to left, false otherwise.
      */
+    @Override
     public void setRightToLeft(boolean value)
     {
        _sh.setRightToLeft(value);
@@ -525,6 +558,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      *
      * @return whether the text is displayed in right-to-left mode in the window
      */
+    @Override
     public boolean isRightToLeft()
     {
        return _sh.isRightToLeft();
@@ -535,6 +569,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      *
      * @param value <code>true</code> if the Fit to Page print option is enabled.
      */
+    @Override
     public void setFitToPage(boolean value)
     {
         _sh.setFitToPage(value);
@@ -553,6 +588,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      * </p>
      * @param value <code>true</code> if row summaries appear below detail in the outline
      */
+    @Override
     public void setRowSumsBelow(boolean value)
     {
         _sh.setRowSumsBelow(value);
@@ -571,6 +607,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      * </p>
      * @param value <code>true</code> if col summaries appear right of the detail in the outline
      */
+    @Override
     public void setRowSumsRight(boolean value)
     {
         _sh.setRowSumsRight(value);
@@ -581,6 +618,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      *
      * @return <code>true</code> if the sheet displays Automatic Page Breaks.
      */
+    @Override
     public boolean getAutobreaks()
     {
         return _sh.getAutobreaks();
@@ -592,6 +630,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      *
      * @return boolean - guts or no guts
      */
+    @Override
     public boolean getDisplayGuts()
     {
         return _sh.getDisplayGuts();
@@ -602,6 +641,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      *
      * @return <code>true</code> if the Fit to Page print option is enabled.
      */
+    @Override
     public boolean getFitToPage()
     {
         return _sh.getFitToPage();
@@ -620,6 +660,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      * </p>
      * @return <code>true</code> if row summaries appear below detail in the outline
      */
+    @Override
     public boolean getRowSumsBelow()
     {
         return _sh.getRowSumsBelow();
@@ -638,6 +679,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      * </p>
      * @return <code>true</code> if col summaries appear right of the detail in the outline
      */
+    @Override
     public boolean getRowSumsRight()
     {
         return _sh.getRowSumsRight();
@@ -650,6 +692,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      * @return <code>true</code> if this sheet displays gridlines.
      * @see #isPrintGridlines() to check if printing of gridlines is turned on or off
      */
+    @Override
     public boolean isPrintGridlines()
     {
         return _sh.isPrintGridlines();
@@ -664,6 +707,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      * @param show <code>true</code> if this sheet should display gridlines.
      * @see #setPrintGridlines(boolean)
      */
+    @Override
     public void setPrintGridlines(boolean show)
     {
         _sh.setPrintGridlines(show);
@@ -674,6 +718,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      *
      * @return The user model for the print setup object.
      */
+    @Override
     public PrintSetup getPrintSetup()
     {
         return _sh.getPrintSetup();
@@ -686,6 +731,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      * </p>
      * @return the document header. Never <code>null</code>
      */
+    @Override
     public Header getHeader()
     {
         return _sh.getHeader();
@@ -698,6 +744,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      *
      * @return the document footer. Never <code>null</code>
      */
+    @Override
     public Footer getFooter()
     {
         return _sh.getFooter();
@@ -711,6 +758,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      * @param value <code>true</code> if this sheet is selected
      * @see Workbook#setActiveSheet(int)
      */
+    @Override
     public void setSelected(boolean value)
     {
         _sh.setSelected(value);
@@ -722,6 +770,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      * @param margin which margin to get
      * @return the size of the margin
      */
+    @Override
     public double getMargin(short margin)
     {
         return _sh.getMargin(margin);
@@ -733,6 +782,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      * @param margin which margin to get
      * @param size the size of the margin
      */
+    @Override
     public void setMargin(short margin, double size)
     {
         _sh.setMargin(margin,size);
@@ -743,6 +793,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      *
      * @return true => protection enabled; false => protection disabled
      */
+    @Override
     public boolean getProtect()
     {
         return _sh.getProtect();
@@ -852,6 +903,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      *  recommended solution, but this may be used for certain cases where
      *  evaluation in POI is not possible.
      */
+    @Override
     public void setForceFormulaRecalculation(boolean value) {
        _sh.setForceFormulaRecalculation(value);
     }
@@ -860,11 +912,14 @@ public class SXSSFSheet implements Sheet, Cloneable
      * Whether Excel will be asked to recalculate all formulas when the
      *  workbook is opened.
      */
+    @Override
     public boolean getForceFormulaRecalculation() {
        return _sh.getForceFormulaRecalculation();
     }
 
     /**
+     * <i>Not implemented for SXSSFSheets</i>
+     * 
      * Shifts rows between startRow and endRow n number of rows.
      * If you use a negative number, it will shift rows up.
      * Code ensures that rows don't wrap around.
@@ -878,12 +933,15 @@ public class SXSSFSheet implements Sheet, Cloneable
      * @param endRow the row to end shifting
      * @param n the number of rows to shift
      */
+    @Override
     public void shiftRows(int startRow, int endRow, int n)
     {
         throw new RuntimeException("NotImplemented");
     }
 
     /**
+     * <i>Not implemented for SXSSFSheets</i>
+     * 
      * Shifts rows between startRow and endRow n number of rows.
      * If you use a negative number, it will shift rows up.
      * Code ensures that rows don't wrap around
@@ -898,6 +956,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      * @param copyRowHeight whether to copy the row height during the shift
      * @param resetOriginalRowHeight whether to set the original row's height to the default
      */
+    @Override
     public void shiftRows(int startRow, int endRow, int n, boolean copyRowHeight, boolean resetOriginalRowHeight)
     {
         throw new RuntimeException("NotImplemented");
@@ -910,6 +969,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      * @param leftmostColumn   Left column visible in right pane.
      * @param topRow        Top row visible in bottom pane
      */
+    @Override
     public void createFreezePane(int colSplit, int rowSplit, int leftmostColumn, int topRow)
     {
         _sh.createFreezePane(colSplit, rowSplit, leftmostColumn, topRow);
@@ -920,6 +980,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      * @param colSplit      Horizonatal position of split.
      * @param rowSplit      Vertical position of split.
      */
+    @Override
     public void createFreezePane(int colSplit, int rowSplit)
     {
         _sh.createFreezePane(colSplit,rowSplit);
@@ -938,6 +999,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      * @see #PANE_UPPER_LEFT
      * @see #PANE_UPPER_RIGHT
      */
+    @Override
     public void createSplitPane(int xSplitPos, int ySplitPos, int leftmostColumn, int topRow, int activePane)
     {
         _sh.createSplitPane(xSplitPos, ySplitPos, leftmostColumn, topRow, activePane);
@@ -948,6 +1010,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      *
      * @return null if no pane configured, or the pane information.
      */
+    @Override
     public PaneInformation getPaneInformation()
     {
         return _sh.getPaneInformation();
@@ -958,6 +1021,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      *
      * @param show whether to show gridlines or not
      */
+    @Override
     public void setDisplayGridlines(boolean show)
     {
         _sh.setDisplayGridlines(show);
@@ -968,6 +1032,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      *
      * @return whether gridlines are displayed
      */
+    @Override
     public boolean isDisplayGridlines()
     {
         return _sh.isDisplayGridlines();
@@ -978,6 +1043,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      *
      * @param show whether to show formulas or not
      */
+    @Override
     public void setDisplayFormulas(boolean show)
     {
         _sh.setDisplayFormulas(show);
@@ -988,6 +1054,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      *
      * @return whether formulas are displayed
      */
+    @Override
     public boolean isDisplayFormulas()
     {
         return _sh.isDisplayFormulas();
@@ -998,6 +1065,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      *
      * @param show whether to show RowColHeadings or not
      */
+    @Override
     public void setDisplayRowColHeadings(boolean show)
     {
         _sh.setDisplayRowColHeadings(show);
@@ -1007,6 +1075,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      * Returns if RowColHeadings are displayed.
      * @return whether RowColHeadings are displayed
      */
+    @Override
     public boolean isDisplayRowColHeadings()
     {
         return _sh.isDisplayRowColHeadings();
@@ -1016,6 +1085,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      * Sets a page break at the indicated row
      * @param row FIXME: Document this!
      */
+    @Override
     public void setRowBreak(int row)
     {
         _sh.setRowBreak(row);
@@ -1026,6 +1096,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      * @param row FIXME: Document this!
      * @return FIXME: Document this!
      */
+    @Override
     public boolean isRowBroken(int row)
     {
         return _sh.isRowBroken(row);
@@ -1035,6 +1106,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      * Removes the page break at the indicated row
      * @param row
      */
+    @Override
     public void removeRowBreak(int row)
     {
         _sh.removeRowBreak(row);
@@ -1044,6 +1116,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      * Retrieves all the horizontal page breaks
      * @return all the horizontal page breaks, or null if there are no row page breaks
      */
+    @Override
     public int[] getRowBreaks()
     {
         return _sh.getRowBreaks();
@@ -1053,6 +1126,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      * Retrieves all the vertical page breaks
      * @return all the vertical page breaks, or null if there are no column page breaks
      */
+    @Override
     public int[] getColumnBreaks()
     {
         return _sh.getColumnBreaks();
@@ -1062,6 +1136,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      * Sets a page break at the indicated column
      * @param column
      */
+    @Override
     public void setColumnBreak(int column)
     {
         _sh.setColumnBreak(column);
@@ -1072,6 +1147,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      * @param column FIXME: Document this!
      * @return FIXME: Document this!
      */
+    @Override
     public boolean isColumnBroken(int column)
     {
         return _sh.isColumnBroken(column);
@@ -1081,6 +1157,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      * Removes a page break at the indicated column
      * @param column
      */
+    @Override
     public void removeColumnBreak(int column)
     {
         _sh.removeColumnBreak(column);
@@ -1092,6 +1169,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      * @param columnNumber      One of the columns in the group.
      * @param collapsed         true = collapse group, false = expand group.
      */
+    @Override
     public void setColumnGroupCollapsed(int columnNumber, boolean collapsed)
     {
         _sh.setColumnGroupCollapsed(columnNumber, collapsed);
@@ -1103,6 +1181,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      * @param fromColumn        beginning of the column range.
      * @param toColumn          end of the column range.
      */
+    @Override
     public void groupColumn(int fromColumn, int toColumn)
     {
         _sh.groupColumn(fromColumn,toColumn);
@@ -1114,6 +1193,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      * @param fromColumn   start column (0-based)
      * @param toColumn     end column (0-based)
      */
+    @Override
     public void ungroupColumn(int fromColumn, int toColumn)
     {
         _sh.ungroupColumn(fromColumn, toColumn);
@@ -1156,6 +1236,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      * @param fromRow   start row (0-based)
      * @param toRow     end row (0-based)
      */
+    @Override
     public void groupRow(int fromRow, int toRow)
     {
         for(SXSSFRow row : _rows.subMap(fromRow, toRow + 1).values()){
@@ -1206,6 +1287,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      * @param fromRow   start row (0-based)
      * @param toRow     end row (0-based)
      */
+    @Override
     public void ungroupRow(int fromRow, int toRow)
     {
         _sh.ungroupRow(fromRow, toRow);
@@ -1217,6 +1299,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      * @param row   start row of a groupped range of rows (0-based)
      * @param collapse whether to expand/collapse the detail rows
      */
+    @Override
     public void setRowGroupCollapsed(int row, boolean collapse)
     {
         if (collapse) {
@@ -1286,6 +1369,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      * @param column the column index
      * @param style the style to set
      */
+    @Override
     public void setDefaultColumnStyle(int column, CellStyle style)
     {
         _sh.setDefaultColumnStyle(column, style);
@@ -1304,6 +1388,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      *
      * @param column the column index
      */
+    @Override
     public void autoSizeColumn(int column)
     {
         autoSizeColumn(column, false);
@@ -1322,6 +1407,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      * @param column the column index
      * @param useMergedCells whether to use the contents of merged cells when calculating the width of the column
      */
+    @Override
     public void autoSizeColumn(int column, boolean useMergedCells)
     {
         double width = SheetUtil.getColumnWidth(this, column, useMergedCells);
@@ -1390,12 +1476,22 @@ public class SXSSFSheet implements Sheet, Cloneable
     public List<XSSFHyperlink> getHyperlinkList() {
         return _sh.getHyperlinkList();
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Drawing getDrawingPatriarch()
+    {
+        return _sh.getDrawingPatriarch();
+    }
 
     /**
      * Creates the top-level drawing patriarch.
      *
      * @return  The new drawing patriarch.
      */
+    @Override
     public Drawing createDrawingPatriarch()
     {
         return _sh.createDrawingPatriarch();
@@ -1407,6 +1503,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      *
      * @return the parent workbook
      */
+    @Override
     public SXSSFWorkbook getWorkbook()
     {
         return _workbook;
@@ -1417,6 +1514,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      *
      * @return the name of this sheet
      */
+    @Override
     public String getSheetName()
     {
         return _sh.getSheetName();
@@ -1426,6 +1524,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      * Note - this is not the same as whether the sheet is focused (isActive)
      * @return <code>true</code> if this sheet is currently selected
      */
+    @Override
     public boolean isSelected()
     {
         return _sh.isSelected();
@@ -1439,6 +1538,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      * @param range Region of array formula for result.
      * @return the {@link CellRange} of cells affected by this change
      */
+    @Override
     public CellRange<? extends Cell> setArrayFormula(String formula, CellRangeAddress range)
     {
         return _sh.setArrayFormula(formula, range);
@@ -1450,16 +1550,19 @@ public class SXSSFSheet implements Sheet, Cloneable
      * @param cell   any cell within Array Formula range
      * @return the {@link CellRange} of cells affected by this change
      */
+    @Override
     public CellRange<? extends Cell> removeArrayFormula(Cell cell)
     {
         return _sh.removeArrayFormula(cell);
     }
     
+    @Override
     public DataValidationHelper getDataValidationHelper()
     {
         return _sh.getDataValidationHelper();
     }
 
+    @Override
     public List<XSSFDataValidation> getDataValidations()
     {
         return _sh.getDataValidations();
@@ -1469,6 +1572,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      * Creates a data validation object
      * @param dataValidation The Data validation object settings
      */
+    @Override
     public void addValidationData(DataValidation dataValidation)
     {
         _sh.addValidationData(dataValidation);
@@ -1479,28 +1583,34 @@ public class SXSSFSheet implements Sheet, Cloneable
      * 
      * @param range the range of cells to filter
      */
+    @Override
     public AutoFilter setAutoFilter(CellRangeAddress range)
     {
         return _sh.setAutoFilter(range);
     }
 
+    @Override
     public SheetConditionalFormatting getSheetConditionalFormatting(){
         return _sh.getSheetConditionalFormatting();
     }
     
     
+    @Override
     public CellRangeAddress getRepeatingRows() {
       return _sh.getRepeatingRows();
     }
     
+    @Override
     public CellRangeAddress getRepeatingColumns() {
       return _sh.getRepeatingColumns();
     }
     
+    @Override
     public void setRepeatingRows(CellRangeAddress rowRangeRef) {
       _sh.setRepeatingRows(rowRangeRef);
     }
     
+    @Override
     public void setRepeatingColumns(CellRangeAddress columnRangeRef) {
       _sh.setRepeatingColumns(columnRangeRef);
     }
@@ -1600,6 +1710,7 @@ public class SXSSFSheet implements Sheet, Cloneable
         return _writer.dispose();
     }
 
+    @Override
     public int getColumnOutlineLevel(int columnIndex) {
         return _sh.getColumnOutlineLevel(columnIndex);
     }

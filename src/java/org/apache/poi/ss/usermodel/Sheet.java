@@ -920,6 +920,15 @@ public interface Sheet extends Iterable<Row> {
     Map<CellAddress, ? extends Comment> getCellComments();
 
     /**
+     * Return the sheet's existing drawing, or null if there isn't yet one.
+     * 
+     * Use {@link #createDrawingPatriarch()} to get or create
+     *
+     * @return a SpreadsheetML drawing
+     */
+    Drawing getDrawingPatriarch();
+    
+    /**
      * Creates the top-level drawing patriarch. 
      * <p>This may then be used to add graphics or charts.</p>
      * <p>Note that this will normally have the effect of removing 
