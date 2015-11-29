@@ -16,6 +16,8 @@
 ==================================================================== */
 package org.apache.poi.ss.usermodel;
 
+import org.apache.poi.util.Internal;
+
 /**
  * A client anchor is attached to an excel worksheet.  It anchors against a
  * top-left and bottom-right cell.
@@ -120,10 +122,19 @@ public interface ClientAnchor {
         DONT_MOVE_AND_RESIZE(3);
         
         public final short value;
-        AnchorType(int value) {
+
+        // disallow non-sequential enum instance creation
+        private AnchorType(int value) {
             this.value = (short) value;
         }
         
+        /**
+         * return the AnchorType corresponding to the code
+         *
+         * @param value the anchor type code
+         * @return the anchor type enum
+         */
+        @Internal
         public static AnchorType byId(int value) {
             return values()[value];
         }
