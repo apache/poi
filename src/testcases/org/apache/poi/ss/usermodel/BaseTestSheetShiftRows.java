@@ -536,12 +536,10 @@ public abstract class BaseTestSheetShiftRows {
         assertNull("URL hyperlink should be moved, not copied", sh.getHyperlink(0, 1));
         
         // Make sure hyperlink in overwritten row is deleted
-        System.out.println(sh.getHyperlinkList());
         assertEquals(3, sh.getHyperlinkList().size());
         CellAddress unexpectedLinkAddress = new CellAddress("C4");
         for (Hyperlink link : sh.getHyperlinkList()) {
             final CellAddress linkAddress = new CellAddress(link.getFirstRow(), link.getFirstColumn());
-            System.out.println(linkAddress.formatAsString());
             if (linkAddress.equals(unexpectedLinkAddress)) {
                 fail("Row 4, including the hyperlink at C4, should have " +
                      "been deleted when Row 1 was shifted on top of it.");
