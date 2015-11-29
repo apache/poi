@@ -44,7 +44,7 @@ public class SXSSFRow implements Row
     // use Boolean to have a tri-state for on/off/undefined 
     Boolean _hidden;
     Boolean _collapsed;
-	
+
     public SXSSFRow(SXSSFSheet sheet, int initialSize)
     {
         _sheet=sheet;
