@@ -17,6 +17,7 @@
 package org.apache.poi.xslf.usermodel;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
@@ -145,5 +146,23 @@ public class TestXSLFTable {
         assertEquals(VerticalAlignment.TOP, cell1.getVerticalAlignment());
         
         ppt.close();
+    }
+    
+    @Test
+    public void removeTable() throws IOException {
+        XMLSlideShow ss = XSLFTestDataSamples.openSampleDocument("shapes.pptx");
+        XSLFSlide sl = ss.getSlides().get(0);
+        XSLFTable tab = (XSLFTable)sl.getShapes().get(4);
+        sl.removeShape(tab);
+        
+        XMLSlideShow ss2 = XSLFTestDataSamples.writeOutAndReadBack(ss);
+        ss.close();
+        
+        sl = ss2.getSlides().get(0);
+        for (XSLFShape s : sl.getShapes()) {
+            assertFalse(s instanceof XSLFTable);
+        }
+        
+        ss2.close();
     }
 }

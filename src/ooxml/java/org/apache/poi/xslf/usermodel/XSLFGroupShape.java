@@ -41,6 +41,7 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualDrawingProps;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPoint2D;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPositiveSize2D;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTConnector;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTGraphicalObjectFrame;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTGroupShape;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTGroupShapeNonVisual;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPicture;
@@ -174,6 +175,8 @@ implements XSLFShapeContainer, GroupShape<XSLFShape,XSLFTextParagraph> {
             grpSp.getGrpSpList().remove(obj);
         } else if (obj instanceof CTConnector){
             grpSp.getCxnSpList().remove(obj);
+        } else if (obj instanceof CTGraphicalObjectFrame) {
+            grpSp.getGraphicFrameList().remove(obj);
         } else if (obj instanceof CTPicture) {
             XSLFPictureShape ps = (XSLFPictureShape)xShape;
             XSLFSheet sh = getSheet();

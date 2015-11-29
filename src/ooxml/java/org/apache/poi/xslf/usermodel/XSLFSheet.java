@@ -278,10 +278,12 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
         CTGroupShape spTree = getSpTree();
         if(obj instanceof CTShape){
             spTree.getSpList().remove(obj);
-        } else if (obj instanceof CTGroupShape){
+        } else if (obj instanceof CTGroupShape) {
             spTree.getGrpSpList().remove(obj);
-        } else if (obj instanceof CTConnector){
+        } else if (obj instanceof CTConnector) {
             spTree.getCxnSpList().remove(obj);
+        } else if (obj instanceof CTGraphicalObjectFrame) {
+            spTree.getGraphicFrameList().remove(obj);
         } else if (obj instanceof CTPicture) {
             XSLFPictureShape ps = (XSLFPictureShape)xShape;
             removePictureRelation(ps);
