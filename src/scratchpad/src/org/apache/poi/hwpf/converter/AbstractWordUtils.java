@@ -37,7 +37,6 @@ import org.apache.poi.hwpf.usermodel.TableRow;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.Beta;
-import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.w3c.dom.Attr;
@@ -484,13 +483,10 @@ public class AbstractWordUtils
     public static HWPFDocumentCore loadDoc( File docFile ) throws IOException
     {
         final FileInputStream istream = new FileInputStream( docFile );
-        try
-        {
+        try {
             return loadDoc( istream );
-        }
-        finally
-        {
-            IOUtils.closeQuietly( istream );
+        } finally {
+            istream.close();
         }
     }
 

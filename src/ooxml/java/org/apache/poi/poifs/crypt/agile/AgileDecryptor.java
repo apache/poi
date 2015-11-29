@@ -278,12 +278,11 @@ public class AgileDecryptor extends Decryptor {
         }
     }
 
+    @SuppressWarnings("resource")
     public InputStream getDataStream(DirectoryNode dir) throws IOException, GeneralSecurityException {
         DocumentInputStream dis = dir.createDocumentInputStream(DEFAULT_POIFS_ENTRY);
         _length = dis.readLong();
-        
-        ChunkedCipherInputStream cipherStream = new AgileCipherInputStream(dis, _length);
-        return cipherStream;
+        return new AgileCipherInputStream(dis, _length);
     }
 
     public long getLength(){

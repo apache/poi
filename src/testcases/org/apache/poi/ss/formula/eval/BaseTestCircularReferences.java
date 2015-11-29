@@ -16,8 +16,11 @@
 ==================================================================== */
 package org.apache.poi.ss.formula.eval;
 
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.io.IOException;
 
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.usermodel.Cell;
@@ -26,12 +29,15 @@ import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.junit.Test;
+
+import junit.framework.AssertionFailedError;
 
 /**
  * Common superclass for testing cases of circular references
  * both for HSSF and XSSF
  */
-public abstract class BaseTestCircularReferences extends TestCase {
+public abstract class BaseTestCircularReferences {
 
     protected final ITestDataProvider _testDataProvider;
 
@@ -68,8 +74,8 @@ public abstract class BaseTestCircularReferences extends TestCase {
      * ASF Bugzilla Bug 44413
      * "INDEX() formula cannot contain its own location in the data array range"
      */
-    public void testIndexFormula() {
-
+    @Test
+    public void testIndexFormula() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet = wb.createSheet("Sheet1");
 
@@ -91,13 +97,14 @@ public abstract class BaseTestCircularReferences extends TestCase {
 
         assertTrue(cellValue.getCellType() == Cell.CELL_TYPE_NUMERIC);
         assertEquals(2, cellValue.getNumberValue(), 0);
+        wb.close();
     }
 
     /**
      * Cell A1 has formula "=A1"
      */
-    public void testSimpleCircularReference() {
-
+    @Test
+    public void testSimpleCircularReference() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet = wb.createSheet("Sheet1");
 
@@ -108,13 +115,15 @@ public abstract class BaseTestCircularReferences extends TestCase {
         CellValue cellValue = evaluateWithCycles(wb, testCell);
 
         confirmCycleErrorCode(cellValue);
+        
+        wb.close();
     }
 
     /**
      * A1=B1, B1=C1, C1=D1, D1=A1
      */
-    public void testMultiLevelCircularReference() {
-
+    @Test
+    public void testMultiLevelCircularReference() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet = wb.createSheet("Sheet1");
 
@@ -128,9 +137,12 @@ public abstract class BaseTestCircularReferences extends TestCase {
         CellValue cellValue = evaluateWithCycles(wb, testCell);
 
         confirmCycleErrorCode(cellValue);
+        
+        wb.close();
     }
 
-    public void testIntermediateCircularReferenceResults_bug46898() {
+    @Test
+    public void testIntermediateCircularReferenceResults_bug46898() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet = wb.createSheet("Sheet1");
 
@@ -162,9 +174,8 @@ public abstract class BaseTestCircularReferences extends TestCase {
         // Show the bug - evaluate another cell from the loop first
         fe.clearAllCachedResultValues();
         cv = fe.evaluate(cellB1);
-        if (cv.getCellType() == ErrorEval.CIRCULAR_REF_ERROR.getErrorCode()) {
-            throw new AssertionFailedError("Identified bug 46898");
-        }
+        // Identified bug 46898
+        assertNotEquals(cv.getCellType(), ErrorEval.CIRCULAR_REF_ERROR.getErrorCode());
         assertEquals(Cell.CELL_TYPE_NUMERIC, cv.getCellType());
         assertEquals(46.0, cv.getNumberValue(), 0.0);
 
@@ -173,5 +184,7 @@ public abstract class BaseTestCircularReferences extends TestCase {
         cv = fe.evaluate(cellE1);
         assertEquals(Cell.CELL_TYPE_NUMERIC, cv.getCellType());
         assertEquals(43.0, cv.getNumberValue(), 0.0);
+        
+        wb.close();
     }
 }
