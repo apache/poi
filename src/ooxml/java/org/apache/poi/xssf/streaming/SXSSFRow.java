@@ -65,10 +65,20 @@ public class SXSSFRow implements Row
         _outlineLevel = level;
     }
     
+    /**
+     * get row hidden state: Hidden (true), Unhidden (false), Undefined (null)
+     *
+     * @return row hidden state
+     */
     public Boolean getHidden() {
         return _hidden;
     }
 
+    /**
+     * set row hidden state: Hidden (true), Unhidden (false), Undefined (null)
+     *
+     * @param hidden row hidden state
+     */
     public void setHidden(Boolean hidden) {
         this._hidden = hidden;
     }
