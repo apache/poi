@@ -396,6 +396,7 @@ public class SXSSFRow implements Row
     
     /**
      * Applies a whole-row cell styling to the row.
+     * The row style can be cleared by passing in <code>null</code>.
      */
     public void setRowStyle(CellStyle style) {
        if(style == null) {
