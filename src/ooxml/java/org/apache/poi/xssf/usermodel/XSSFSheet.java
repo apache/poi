@@ -26,13 +26,13 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -446,6 +446,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      *
      * @return a SpreadsheetML drawing
      */
+    @Override
     public XSSFDrawing getDrawingPatriarch() {
         CTDrawing ctDrawing = getCTDrawing();
         if (ctDrawing != null) {
@@ -1761,7 +1762,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * @param indices A set of the regions to unmerge
      */
     @SuppressWarnings("deprecation")
-    public void removeMergedRegions(Set<Integer> indices) {
+    public void removeMergedRegions(Collection<Integer> indices) {
         if (!worksheet.isSetMergeCells()) return;
         
         CTMergeCells ctMergeCells = worksheet.getMergeCells();
