@@ -34,16 +34,16 @@ import org.apache.poi.util.Internal;
 */
 public class SXSSFRow implements Row
 {
-    SXSSFSheet _sheet;
-    SXSSFCell[] _cells;
-    int _maxColumn=-1;
+    private final SXSSFSheet _sheet;
+    private SXSSFCell[] _cells;
+    private int _maxColumn=-1;
     private short _style=-1;
-    short _height=-1;
-    boolean _zHeight = false;
-    int _outlineLevel = 0;   // Outlining level of the row, when outlining is on
+    private short _height=-1;
+    private boolean _zHeight = false;
+    private int _outlineLevel = 0;   // Outlining level of the row, when outlining is on
     // use Boolean to have a tri-state for on/off/undefined 
-    Boolean _hidden;
-    Boolean _collapsed;
+    private Boolean _hidden;
+    private Boolean _collapsed;
 
     public SXSSFRow(SXSSFSheet sheet, int initialSize)
     {
