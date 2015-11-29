@@ -25,6 +25,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.util.Internal;
 
 /**
  * Streaming version of XSSFRow implementing the "BigGridDemo" strategy.
@@ -36,7 +37,7 @@ public class SXSSFRow implements Row
     SXSSFSheet _sheet;
     SXSSFCell[] _cells;
     int _maxColumn=-1;
-    short _style=-1;
+    private short _style=-1;
     short _height=-1;
     boolean _zHeight = false;
     int _outlineLevel = 0;   // Outlining level of the row, when outlining is on
@@ -402,6 +403,11 @@ public class SXSSFRow implements Row
        if(!isFormatted()) return null;
        
        return getSheet().getWorkbook().getCellStyleAt(_style);
+    }
+    
+    @Internal
+    /*package*/ int getRowStyleIndex() {
+        return _style;
     }
     
     /**
