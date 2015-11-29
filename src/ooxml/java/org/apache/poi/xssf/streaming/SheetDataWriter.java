@@ -161,7 +161,7 @@ public class SheetDataWriter {
         if (row.getZeroHeight())
             _out.write(" hidden=\"true\"");
         if (row.isFormatted()) {
-            _out.write(" s=\"" + row._style + "\"");
+            _out.write(" s=\"" + row.getRowStyleIndex() + "\"");
             _out.write(" customFormat=\"1\"");
         }
         if (row.getOutlineLevel() != 0) {
