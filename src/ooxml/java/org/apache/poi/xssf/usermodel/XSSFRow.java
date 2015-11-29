@@ -149,6 +149,24 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
         return thisRow.compareTo(otherRow);
     }
 
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (!(obj instanceof XSSFRow))
+        {
+            return false;
+        }
+        XSSFRow other = (XSSFRow) obj;
+
+        return (this.getRowNum() == other.getRowNum()) &&
+               (this.getSheet() == other.getSheet());
+    }
+
+    @Override
+    public int hashCode() {
+        return _row.hashCode();
+    }
+
     /**
      * Use this to create new cells within the row and return it.
      * <p>
