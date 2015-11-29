@@ -537,5 +537,25 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
         Integer otherRow = other.getRowNum();
         return thisRow.compareTo(otherRow);
     }
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (!(obj instanceof SXSSFRow))
+        {
+            return false;
+        }
+        SXSSFRow other = (SXSSFRow) obj;
+
+        return (this.getRowNum() == other.getRowNum()) &&
+               (this.getSheet() == other.getSheet());
+    }
+
+    @Override
+    public int hashCode() {
+        return (getSheet().hashCode() << 16) + getRowNum();
+    }
+
+
 }
 
