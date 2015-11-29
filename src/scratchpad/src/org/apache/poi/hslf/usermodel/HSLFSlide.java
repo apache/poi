@@ -43,6 +43,7 @@ import org.apache.poi.sl.draw.DrawFactory;
 import org.apache.poi.sl.draw.Drawable;
 import org.apache.poi.sl.usermodel.Notes;
 import org.apache.poi.sl.usermodel.ShapeType;
+import org.apache.poi.sl.usermodel.SimpleShape.Placeholder;
 import org.apache.poi.sl.usermodel.Slide;
 
 /**
@@ -197,6 +198,7 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFTe
 	public HSLFTextBox addTitle() {
 		HSLFPlaceholder pl = new HSLFPlaceholder();
 		pl.setShapeType(ShapeType.RECT);
+		pl.setPlaceholder(Placeholder.TITLE);
 		pl.setRunType(TextHeaderAtom.TITLE_TYPE);
 		pl.setText("Click to edit title");
 		pl.setAnchor(new java.awt.Rectangle(54, 48, 612, 90));
