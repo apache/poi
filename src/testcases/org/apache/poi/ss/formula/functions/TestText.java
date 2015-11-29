@@ -50,8 +50,9 @@ public final class TestText {
         ValueEval formatArg = new StringEval("#,###.00000");
         ValueEval[] args = { numArg, formatArg };
         ValueEval result = TextFunction.TEXT.evaluate(args, -1, (short)-1);
-        char groupSeparator = new DecimalFormatSymbols(LocaleUtil.getUserLocale()).getGroupingSeparator();
-        char decimalSeparator = new DecimalFormatSymbols(LocaleUtil.getUserLocale()).getDecimalSeparator();
+        DecimalFormatSymbols dfs = DecimalFormatSymbols.getInstance(LocaleUtil.getUserLocale());
+        char groupSeparator = dfs.getGroupingSeparator();
+        char decimalSeparator = dfs.getDecimalSeparator();
         ValueEval testResult = new StringEval("321" + groupSeparator + "321" + decimalSeparator + "32100");
         assertEquals(testResult.toString(), result.toString());
         numArg = new NumberEval(321.321);

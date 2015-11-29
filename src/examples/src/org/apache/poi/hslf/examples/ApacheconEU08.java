@@ -72,7 +72,7 @@ public final class ApacheconEU08 {
         FileOutputStream out = new FileOutputStream("apachecon_eu_08."+ext);
         ppt.write(out);
         out.close();
-
+        ppt.close();
     }
 
     public static void slide1(SlideShow<?,?> ppt) throws IOException {

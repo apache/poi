@@ -29,3 +29,6 @@ java.util.Date#toString() @ Do not use methods that depend on the current Local,
 # Disallow reflection on private object fields/methods
 java.lang.reflect.AccessibleObject#setAccessible(java.lang.reflect.AccessibleObject[], boolean) @ Reflection usage fails with SecurityManagers and likely will not work any more in Java 9
 java.lang.reflect.AccessibleObject#setAccessible(boolean) @ Reflection usage fails with SecurityManagers and likely will not work any more in Java 9
+
+java.text.DecimalFormatSymbols#DecimalFormatSymbols() @ use DecimalFormatSymbols.getInstance()
+java.text.DecimalFormatSymbols#DecimalFormatSymbols(Locale) @ use DecimalFormatSymbols.getInstance()

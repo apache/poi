@@ -50,6 +50,7 @@ public class AligningCells {
         FileOutputStream fileOut = new FileOutputStream("ss-example-align.xlsx");
         wb.write(fileOut);
         fileOut.close();
+        wb.close();
     }
 
     /**

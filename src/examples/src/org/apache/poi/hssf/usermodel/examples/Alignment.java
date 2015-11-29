@@ -19,10 +19,14 @@
 
 package org.apache.poi.hssf.usermodel.examples;
 
-import org.apache.poi.hssf.usermodel.*;
-
 import java.io.FileOutputStream;
 import java.io.IOException;
+
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 /**
  * Shows how various alignment options work.
@@ -46,6 +50,8 @@ public class Alignment {
         FileOutputStream fileOut = new FileOutputStream("workbook.xls");
         wb.write(fileOut);
         fileOut.close();
+        
+        wb.close();
     }
 
     /**
