@@ -121,7 +121,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      * Compares two <code>XSSFRow</code> objects.  Two rows are equal if they belong to the same worksheet and
      * their row indexes are equal.
      *
-     * @param   row   the <code>XSSFRow</code> to be compared.
+     * @param   other   the <code>XSSFRow</code> to be compared.
      * @return  <ul>
      *      <li>
      *      the value <code>0</code> if the row number of this <code>XSSFRow</code> is
