@@ -20,20 +20,24 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.poi.xslf.XSLFTestDataSamples;
+import org.apache.poi.POIDataSamples;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
+import org.apache.poi.xslf.XSLFTestDataSamples;
 import org.junit.Test;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPicture;
 
-/**
- * @author Yegor Kozlov
- */
 public class TestXSLFPictureShape {
+    private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
 
     @Test
     public void testCreate() throws Exception {
@@ -168,6 +172,25 @@ public class TestXSLFPictureShape {
         assertFalse(ctPic2.getNvPicPr().getNvPr().isSetCustDataLst());
 
         ppt1.close();
+        ppt2.close();
+    }
+    
+    @Test
+    public void bug58663() throws IOException {
+        InputStream is = _slTests.openResourceAsStream("shapes.pptx");
+        XMLSlideShow ppt = new XMLSlideShow(is);
+        is.close();
+        
+        XSLFSlide slide = ppt.getSlides().get(0);
+        XSLFPictureShape ps = (XSLFPictureShape)slide.getShapes().get(3);
+        slide.removeShape(ps);
+        
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        ppt.write(bos);
+        ppt.close();
+        
+        XMLSlideShow ppt2 = new XMLSlideShow(new ByteArrayInputStream(bos.toByteArray()));
+        assertTrue(ppt2.getPictureData().isEmpty());
         ppt2.close();
     }
 }

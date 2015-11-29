@@ -144,16 +144,18 @@ public class XSLFPictureShape extends XSLFSimpleShape
         return null;
     }
 
-    private CTBlip getBlip(){
+    protected CTBlip getBlip(){
         CTPicture ct = (CTPicture)getXmlObject();
         return ct.getBlipFill().getBlip();
     }
-    private String getBlipLink(){
+    
+    protected String getBlipLink(){
         String link = getBlip().getLink();
         if (link.isEmpty()) return null;
         return link;
     }
-    private String getBlipId(){
+    
+    protected String getBlipId(){
         String id = getBlip().getEmbed();
         if (id.isEmpty()) return null;
         return id;
