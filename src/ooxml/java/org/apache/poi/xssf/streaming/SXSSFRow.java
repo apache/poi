@@ -32,7 +32,7 @@ import org.apache.poi.util.Internal;
  *
  * @author Alex Geller, Four J's Development Tools
 */
-public class SXSSFRow implements Row
+public class SXSSFRow implements Row, Comparable<SXSSFRow>
 {
     private final SXSSFSheet _sheet;
     private SXSSFCell[] _cells;
@@ -504,6 +504,38 @@ public class SXSSFRow implements Row
         {
             throw new UnsupportedOperationException();
         }
+    }
+    
+    /**
+     * Compares two <code>SXSSFRow</code> objects.  Two rows are equal if they belong to the same worksheet and
+     * their row indexes are equal.
+     *
+     * @param   other   the <code>SXSSFRow</code> to be compared.
+     * @return  <ul>
+     *      <li>
+     *      the value <code>0</code> if the row number of this <code>SXSSFRow</code> is
+     *      equal to the row number of the argument <code>SXSSFRow</code>
+     *      </li>
+     *      <li>
+     *      a value less than <code>0</code> if the row number of this this <code>SXSSFRow</code> is
+     *      numerically less than the row number of the argument <code>SXSSFRow</code>
+     *      </li>
+     *      <li>
+     *      a value greater than <code>0</code> if the row number of this this <code>SXSSFRow</code> is
+     *      numerically greater than the row number of the argument <code>SXSSFRow</code>
+     *      </li>
+     *      </ul>
+     * @throws IllegalArgumentException if the argument row belongs to a different worksheet
+     */
+    @Override
+    public int compareTo(SXSSFRow other) {
+        if (this.getSheet() != other.getSheet()) {
+            throw new IllegalArgumentException("The compared rows must belong to the same sheet");
+        }
+
+        Integer thisRow = this.getRowNum();
+        Integer otherRow = other.getRowNum();
+        return thisRow.compareTo(otherRow);
     }
 }
 
