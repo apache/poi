@@ -74,7 +74,7 @@ public final class TestBugs {
      */
     @Test
     public void bug41384() throws IOException {
-        HSLFSlideShow ppt = (HSLFSlideShow)SlideShowFactory.create(_slTests.getFile("41384.ppt"));
+        HSLFSlideShow ppt = open("41384.ppt");
 
         assertEquals(1, ppt.getSlides().size());
 
@@ -92,7 +92,7 @@ public final class TestBugs {
      */
     @Test
     public void bug42474_1() throws IOException {
-        HSLFSlideShow ppt = (HSLFSlideShow)SlideShowFactory.create(_slTests.getFile("42474-1.ppt"));
+        HSLFSlideShow ppt = open("42474-1.ppt");
         assertEquals(2, ppt.getSlides().size());
 
         List<HSLFTextParagraph> txrun;
@@ -119,7 +119,7 @@ public final class TestBugs {
      */
     @Test
     public void bug42474_2() throws IOException {
-        HSLFSlideShow ppt = (HSLFSlideShow)SlideShowFactory.create(_slTests.getFile("42474-2.ppt"));
+        HSLFSlideShow ppt = open("42474-2.ppt");
 
         //map slide number and starting phrase of its notes
         Map<Integer, String> notesMap = new HashMap<Integer, String>();
@@ -149,7 +149,7 @@ public final class TestBugs {
      */
     @Test
     public void bug42485 () throws IOException {
-        HSLFSlideShow ppt = (HSLFSlideShow)SlideShowFactory.create(_slTests.getFile("42485.ppt"));
+        HSLFSlideShow ppt = open("42485.ppt");
         for (HSLFShape shape : ppt.getSlides().get(0).getShapes()) {
             if(shape instanceof HSLFGroupShape){
                 HSLFGroupShape group = (HSLFGroupShape)shape;
@@ -169,7 +169,7 @@ public final class TestBugs {
      */
     @Test
     public void bug42484 () throws IOException {
-        HSLFSlideShow ppt = (HSLFSlideShow)SlideShowFactory.create(_slTests.getFile("42485.ppt"));
+        HSLFSlideShow ppt = open("42485.ppt");
         for (HSLFShape shape : ppt.getSlides().get(0).getShapes()) {
             if(shape instanceof HSLFGroupShape){
                 HSLFGroupShape  group = (HSLFGroupShape)shape;
@@ -187,7 +187,7 @@ public final class TestBugs {
      */
     @Test
     public void bug41381() throws IOException {
-        HSLFSlideShow ppt = (HSLFSlideShow)SlideShowFactory.create(_slTests.getFile("alterman_security.ppt"));
+        HSLFSlideShow ppt = open("alterman_security.ppt");
         assertTrue("No Exceptions while reading file", true);
 
         assertEquals(1, ppt.getSlideMasters().size());
@@ -208,7 +208,7 @@ public final class TestBugs {
     @SuppressWarnings("unused")
     @Test
     public void bug42486 () throws IOException {
-        HSLFSlideShow ppt = (HSLFSlideShow)SlideShowFactory.create(_slTests.getFile("42486.ppt"));
+        HSLFSlideShow ppt = open("42486.ppt");
         for (HSLFSlide slide : ppt.getSlides()) {
             List<HSLFShape> shape = slide.getShapes();
         }
@@ -220,7 +220,7 @@ public final class TestBugs {
      */
     @Test
     public void bug42524 () throws IOException {
-        HSLFSlideShow ppt = (HSLFSlideShow)SlideShowFactory.create(_slTests.getFile("42486.ppt"));
+        HSLFSlideShow ppt = open("42486.ppt");
         //walk down the tree and see if there were no errors while reading
         for (HSLFSlide slide : ppt.getSlides()) {
             for (HSLFShape shape : slide.getShapes()) {
@@ -243,7 +243,7 @@ public final class TestBugs {
     @SuppressWarnings("unused")
     @Test
     public void bug42520 () throws IOException {
-        HSLFSlideShow ppt = (HSLFSlideShow)SlideShowFactory.create(_slTests.getFile("42520.ppt"));
+        HSLFSlideShow ppt = open("42520.ppt");
 
         //test case from the bug report
         HSLFGroupShape shapeGroup = (HSLFGroupShape)ppt.getSlides().get(11).getShapes().get(10);
@@ -273,7 +273,7 @@ public final class TestBugs {
      */
     @Test
     public void bug38256 () throws IOException {
-        HSLFSlideShow ppt = (HSLFSlideShow)SlideShowFactory.create(_slTests.getFile("38256.ppt"));
+        HSLFSlideShow ppt = open("38256.ppt");
 
         List<HSLFSlide> slide = ppt.getSlides();
         assertEquals(1, slide.size());
@@ -300,7 +300,7 @@ public final class TestBugs {
      */
     @Test
     public void bug43781() throws IOException {
-        HSLFSlideShow ppt = (HSLFSlideShow)SlideShowFactory.create(_slTests.getFile("43781.ppt"));
+        HSLFSlideShow ppt = open("43781.ppt");
 
         // Check the first slide
         HSLFSlide slide = ppt.getSlides().get(0);
@@ -336,7 +336,7 @@ public final class TestBugs {
      */
     @Test
     public void bug44296  () throws IOException {
-        HSLFSlideShow ppt = (HSLFSlideShow)SlideShowFactory.create(_slTests.getFile("44296.ppt"));
+        HSLFSlideShow ppt = open("44296.ppt");
 
         HSLFSlide slide = ppt.getSlides().get(0);
 
@@ -357,7 +357,7 @@ public final class TestBugs {
      */
     @Test
     public void bug44770() throws IOException {
-        SlideShowFactory.create(_slTests.getFile("44770.ppt")).close();
+        open("44770.ppt").close();
     }
 
     /**
@@ -365,7 +365,7 @@ public final class TestBugs {
      */
     @Test
     public void bug41071() throws IOException {
-        HSLFSlideShow ppt = (HSLFSlideShow)SlideShowFactory.create(_slTests.getFile("41071.ppt"));
+        HSLFSlideShow ppt = open("41071.ppt");
 
         HSLFSlide slide = ppt.getSlides().get(0);
         List<HSLFShape> sh = slide.getShapes();
@@ -388,10 +388,10 @@ public final class TestBugs {
     @Test(expected=OldPowerPointFormatException.class)
     public void bug41711() throws IOException {
     	// New file is fine
-        SlideShowFactory.create(_slTests.getFile("SampleShow.ppt")).close();
+        open("SampleShow.ppt").close();
 
         // PowerPoint 95 gives an old format exception
-        SlideShowFactory.create(_slTests.getFile("PPT95.ppt")).close();
+        open("PPT95.ppt").close();
     }
 
     /**
@@ -399,7 +399,7 @@ public final class TestBugs {
      */
     @Test
     public void bug49648() throws IOException {
-        HSLFSlideShow ppt = (HSLFSlideShow)SlideShowFactory.create(_slTests.getFile("49648.ppt"));
+        HSLFSlideShow ppt = open("49648.ppt");
         for (HSLFSlide slide : ppt.getSlides()) {
             for (List<HSLFTextParagraph> run : slide.getTextParagraphs()) {
                 String text = HSLFTextParagraph.getRawText(run);
@@ -415,7 +415,7 @@ public final class TestBugs {
      */
     @Test
     public void bug41246a() throws IOException {
-        HSLFSlideShow ppt = (HSLFSlideShow)SlideShowFactory.create(_slTests.getFile("41246-1.ppt"));
+        HSLFSlideShow ppt = open("41246-1.ppt");
 
         HSLFTestDataSamples.writeOutAndReadBack(ppt).close();
         
@@ -424,7 +424,7 @@ public final class TestBugs {
 
     @Test
     public void bug41246b() throws IOException {
-        HSLFSlideShow ppt = (HSLFSlideShow)SlideShowFactory.create(_slTests.getFile("41246-2.ppt"));
+        HSLFSlideShow ppt = open("41246-2.ppt");
 
         HSLFTestDataSamples.writeOutAndReadBack(ppt).close();
         
@@ -436,7 +436,7 @@ public final class TestBugs {
      */
     @Test
     public void bug45776() throws IOException {
-        HSLFSlideShow ppt = (HSLFSlideShow)SlideShowFactory.create(_slTests.getFile("45776.ppt"));
+        HSLFSlideShow ppt = open("45776.ppt");
 
         // get slides
         for (HSLFSlide slide : ppt.getSlides()) {
@@ -461,7 +461,7 @@ public final class TestBugs {
 
     @Test
     public void bug55732() throws IOException {
-        HSLFSlideShow ppt = (HSLFSlideShow)SlideShowFactory.create(_slTests.getFile("bug55732.ppt"));
+        HSLFSlideShow ppt = open("bug55732.ppt");
 
         List<HSLFSlide> _slides = ppt.getSlides();
 
@@ -476,7 +476,7 @@ public final class TestBugs {
 
     @Test
     public void bug56260() throws IOException {
-        HSLFSlideShow ppt = (HSLFSlideShow)SlideShowFactory.create(_slTests.getFile("56260.ppt"));
+        HSLFSlideShow ppt = open("56260.ppt");
         List<HSLFSlide> _slides = ppt.getSlides();
         assertEquals(13, _slides.size());
 
@@ -509,7 +509,7 @@ public final class TestBugs {
 
     @Test
     public void bug37625() throws IOException {
-        HSLFSlideShow ppt1 = (HSLFSlideShow)SlideShowFactory.create(_slTests.getFile("37625.ppt"));
+        HSLFSlideShow ppt1 = open("37625.ppt");
         assertEquals(29, ppt1.getSlides().size());
 
         HSLFSlideShow ppt2 = HSLFTestDataSamples.writeOutAndReadBack(ppt1);
@@ -521,7 +521,7 @@ public final class TestBugs {
 
     @Test
     public void bug57272() throws IOException {
-        HSLFSlideShow ppt1 = (HSLFSlideShow)SlideShowFactory.create(_slTests.getFile("57272_corrupted_usereditatom.ppt"));
+        HSLFSlideShow ppt1 = open("57272_corrupted_usereditatom.ppt");
         assertEquals(6, ppt1.getSlides().size());
 
         HSLFSlideShow ppt2 = HSLFTestDataSamples.writeOutAndReadBack(ppt1);
@@ -533,7 +533,7 @@ public final class TestBugs {
 
     @Test
     public void bug49541() throws IOException {
-        HSLFSlideShow ppt = (HSLFSlideShow)SlideShowFactory.create(_slTests.getFile("49541_symbol_map.ppt"));
+        HSLFSlideShow ppt = open("49541_symbol_map.ppt");
         HSLFSlide slide = ppt.getSlides().get(0);
         HSLFGroupShape sg = (HSLFGroupShape)slide.getShapes().get(0);
         HSLFTextBox tb = (HSLFTextBox)sg.getShapes().get(0);
@@ -544,7 +544,7 @@ public final class TestBugs {
 
     @Test
     public void bug47261() throws IOException {
-        HSLFSlideShow ppt = (HSLFSlideShow)SlideShowFactory.create(_slTests.getFile("bug47261.ppt"));
+        HSLFSlideShow ppt = open("bug47261.ppt");
         ppt.removeSlide(0);
         ppt.createSlide();
         HSLFTestDataSamples.writeOutAndReadBack(ppt).close();
@@ -553,7 +553,7 @@ public final class TestBugs {
 
     @Test
     public void bug56240() throws IOException {
-        HSLFSlideShow ppt = (HSLFSlideShow)SlideShowFactory.create(_slTests.getFile("bug56240.ppt"));
+        HSLFSlideShow ppt = open("bug56240.ppt");
         int slideCnt = ppt.getSlides().size();
         assertEquals(105, slideCnt);
         HSLFTestDataSamples.writeOutAndReadBack(ppt).close();
@@ -562,7 +562,7 @@ public final class TestBugs {
 
     @Test
     public void bug46441() throws IOException {
-        HSLFSlideShow ppt = (HSLFSlideShow)SlideShowFactory.create(_slTests.getFile("bug46441.ppt"));
+        HSLFSlideShow ppt = open("bug46441.ppt");
         HSLFAutoShape as = (HSLFAutoShape)ppt.getSlides().get(0).getShapes().get(0);
         AbstractEscherOptRecord opt = as.getEscherOptRecord();
         EscherArrayProperty ep = HSLFShape.getEscherProperty(opt, EscherProperties.FILL__SHADECOLORS);
@@ -590,12 +590,12 @@ public final class TestBugs {
 
     @Test
     public void bug58516() throws IOException {
-        SlideShowFactory.create(_slTests.getFile("bug58516.ppt")).close();
+        open("bug58516.ppt").close();
     }
 
     @Test
     public void bug45124() throws IOException {
-        SlideShow<?,?> ppt = SlideShowFactory.create(_slTests.getFile("bug45124.ppt"));
+        SlideShow<?,?> ppt = open("bug45124.ppt");
         Slide<?,?> slide1 = ppt.getSlides().get(1);
 
         TextBox<?,?> res = slide1.createTextBox();
@@ -633,7 +633,7 @@ public final class TestBugs {
         String template = "[SYSDATE]";
         String textExp = "REPLACED_DATE_WITH_A_LONG_ONE";
 
-        HSLFSlideShow ppt1 = (HSLFSlideShow)SlideShowFactory.create(_slTests.getFile("bug45088.ppt"));
+        HSLFSlideShow ppt1 = open("bug45088.ppt");
         for (HSLFSlide slide : ppt1.getSlides()) {
             for (List<HSLFTextParagraph> paraList : slide.getTextParagraphs()) {
                 for (HSLFTextParagraph para : paraList) {
@@ -660,7 +660,7 @@ public final class TestBugs {
 
     @Test
     public void bug45908() throws IOException {
-        HSLFSlideShow ppt1 = (HSLFSlideShow)SlideShowFactory.create(_slTests.getFile("bug45908.ppt"));
+        HSLFSlideShow ppt1 = open("bug45908.ppt");
 
         HSLFSlide slide = ppt1.getSlides().get(0);
         HSLFAutoShape styleShape = (HSLFAutoShape)slide.getShapes().get(1);
@@ -727,5 +727,9 @@ public final class TestBugs {
         assertEquals(tr0.isUnderlined(), tr1.isUnderlined());
 
         ppt2.close();
+    }
+
+    private static HSLFSlideShow open(String fileName) throws IOException {
+        return (HSLFSlideShow)SlideShowFactory.create(_slTests.getFile(fileName));
     }
 }
