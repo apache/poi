@@ -34,7 +34,7 @@ import org.apache.poi.util.Configurator;
  *
  * Only rows that have cells should be added to a Sheet.
  */
-public final class HSSFRow implements Row {
+public final class HSSFRow implements Row, Comparable<HSSFRow> {
 
     // used for collections
     public final static int INITIAL_CAPACITY = Configurator.getIntValue("HSSFRow.ColInitialCapacity", 5);
@@ -663,24 +663,38 @@ public final class HSSFRow implements Row {
       }
 
     }
-
-    public int compareTo(Object obj)
+    
+    /**
+     * Compares two <code>HSSFRow</code> objects.  Two rows are equal if they belong to the same worksheet and
+     * their row indexes are equal.
+     *
+     * @param   row   the <code>HSSFRow</code> to be compared.
+     * @return  <ul>
+     *      <li>
+     *      the value <code>0</code> if the row number of this <code>HSSFRow</code> is
+     *      equal to the row number of the argument <code>HSSFRow</code>
+     *      </li>
+     *      <li>
+     *      a value less than <code>0</code> if the row number of this this <code>HSSFRow</code> is
+     *      numerically less than the row number of the argument <code>HSSFRow</code>
+     *      </li>
+     *      <li>
+     *      a value greater than <code>0</code> if the row number of this this <code>HSSFRow</code> is
+     *      numerically greater than the row number of the argument <code>HSSFRow</code>
+     *      </li>
+     *      </ul>
+     * @throws IllegalArgumentException if the argument row belongs to a different worksheet
+     */
+    @Override
+    public int compareTo(HSSFRow other)
     {
-        HSSFRow loc = (HSSFRow) obj;
+        if (this.getSheet() != other.getSheet()) {
+            throw new IllegalArgumentException("The compared rows must belong to the same sheet");
+        }
 
-        if (this.getRowNum() == loc.getRowNum())
-        {
-            return 0;
-        }
-        if (this.getRowNum() < loc.getRowNum())
-        {
-            return -1;
-        }
-        if (this.getRowNum() > loc.getRowNum())
-        {
-            return 1;
-        }
-        return -1;
+        Integer thisRow = this.getRowNum();
+        Integer otherRow = other.getRowNum();
+        return thisRow.compareTo(otherRow);
     }
 
     @Override
@@ -690,18 +704,14 @@ public final class HSSFRow implements Row {
         {
             return false;
         }
-        HSSFRow loc = (HSSFRow) obj;
+        HSSFRow other = (HSSFRow) obj;
 
-        if (this.getRowNum() == loc.getRowNum())
-        {
-            return true;
-        }
-        return false;
+        return (this.getRowNum() == other.getRowNum()) &&
+               (this.getSheet() == other.getSheet());
     }
 
     @Override
     public int hashCode() {
-        assert false : "hashCode not designed";
-        return 42; // any arbitrary constant will do
+        return row.hashCode();
     }
 }

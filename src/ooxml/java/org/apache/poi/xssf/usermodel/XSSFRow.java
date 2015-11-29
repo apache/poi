@@ -122,20 +122,31 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      * their row indexes are equal.
      *
      * @param   row   the <code>XSSFRow</code> to be compared.
-     * @return	the value <code>0</code> if the row number of this <code>XSSFRow</code> is
-     * 		equal to the row number of the argument <code>XSSFRow</code>; a value less than
-     * 		<code>0</code> if the row number of this this <code>XSSFRow</code> is numerically less
-     * 		than the row number of the argument <code>XSSFRow</code>; and a value greater
-     * 		than <code>0</code> if the row number of this this <code>XSSFRow</code> is numerically
-     * 		 greater than the row number of the argument <code>XSSFRow</code>.
+     * @return  <ul>
+     *      <li>
+     *      the value <code>0</code> if the row number of this <code>XSSFRow</code> is
+     *      equal to the row number of the argument <code>XSSFRow</code>
+     *      </li>
+     *      <li>
+     *      a value less than <code>0</code> if the row number of this this <code>XSSFRow</code> is
+     *      numerically less than the row number of the argument <code>XSSFRow</code>
+     *      </li>
+     *      <li>
+     *      a value greater than <code>0</code> if the row number of this this <code>XSSFRow</code> is
+     *      numerically greater than the row number of the argument <code>XSSFRow</code>
+     *      </li>
+     *      </ul>
      * @throws IllegalArgumentException if the argument row belongs to a different worksheet
      */
-    public int compareTo(XSSFRow row) {
-        int thisVal = this.getRowNum();
-        if(row.getSheet() != getSheet()) throw new IllegalArgumentException("The compared rows must belong to the same XSSFSheet");
+    @Override
+    public int compareTo(XSSFRow other) {
+        if (this.getSheet() != other.getSheet()) {
+            throw new IllegalArgumentException("The compared rows must belong to the same sheet");
+        }
 
-        int anotherVal = row.getRowNum();
-        return (thisVal < anotherVal ? -1 : (thisVal == anotherVal ? 0 : 1));
+        Integer thisRow = this.getRowNum();
+        Integer otherRow = other.getRowNum();
+        return thisRow.compareTo(otherRow);
     }
 
     /**
