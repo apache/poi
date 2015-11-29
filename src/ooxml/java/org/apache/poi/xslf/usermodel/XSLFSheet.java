@@ -49,7 +49,6 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
-import org.openxmlformats.schemas.officeDocument.x2006.relationships.STRelationshipId;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTCommonSlideData;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTConnector;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTGraphicalObjectFrame;
@@ -283,6 +282,10 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
             spTree.getGrpSpList().remove(obj);
         } else if (obj instanceof CTConnector){
             spTree.getCxnSpList().remove(obj);
+        } else if (obj instanceof CTPicture) {
+            XSLFPictureShape ps = (XSLFPictureShape)xShape;
+            removePictureRelation(ps);
+            spTree.getPicList().remove(obj);
         } else {
             throw new IllegalArgumentException("Unsupported shape: " + xShape);
         }
@@ -585,5 +588,15 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
             throw new POIXMLException(e);
         }
         return part;
+    }
+    
+    /**
+     * Helper method for sheet and group shapes
+     *
+     * @param pictureShape the picture shapes whose relation is to be removed
+     */
+    void removePictureRelation(XSLFPictureShape pictureShape) {
+        POIXMLDocumentPart pd = getRelationById(pictureShape.getBlipId());
+        removeRelation(pd);
     }
 }
