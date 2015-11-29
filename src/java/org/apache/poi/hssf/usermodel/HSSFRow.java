@@ -45,17 +45,17 @@ public final class HSSFRow implements Row {
     /**
      * reference to low level representation
      */
-    private RowRecord row;
+    private final RowRecord row;
 
     /**
      * reference to containing low level Workbook
      */
-    private HSSFWorkbook book;
+    private final HSSFWorkbook book;
 
     /**
      * reference to containing Sheet
      */
-    private HSSFSheet sheet;
+    private final HSSFSheet sheet;
 
     /**
      * Creates new HSSFRow from scratch. Only HSSFSheet should do this.
