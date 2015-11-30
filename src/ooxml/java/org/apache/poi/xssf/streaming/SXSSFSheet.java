@@ -1436,7 +1436,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      * @return true if column was tracked prior to this call, false if no action was taken
      * @since 3.14beta1
      * @see #untrackColumnsForAutoSizing(Collection)
-     * @see #untrackAllColumnsForAutoSizing(int)
+     * @see #untrackAllColumnsForAutoSizing()
      */
     public boolean untrackColumnForAutoSizing(int column)
     {
@@ -1450,8 +1450,6 @@ public class SXSSFSheet implements Sheet, Cloneable
      *
      * @param columns the indices of the columns to track for auto-sizing
      * @return true if one or more columns were untracked as a result of this call
-     *
-     * @param columns the columns to track for autosizing
      * @since 3.14beta1
      */
     public boolean untrackColumnsForAutoSizing(Collection<Integer> columns)
