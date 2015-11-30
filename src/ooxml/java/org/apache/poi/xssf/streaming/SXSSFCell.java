@@ -36,6 +36,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.LocaleUtil;
+import org.apache.poi.util.NotImplemented;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.xssf.usermodel.XSSFHyperlink;
@@ -45,12 +46,12 @@ import org.apache.poi.xssf.usermodel.XSSFRichTextString;
  * Streaming version of XSSFRow implementing the "BigGridDemo" strategy.
 */
 public class SXSSFCell implements Cell {
-    private static POILogger logger = POILogFactory.getLogger(SXSSFCell.class);
+    private static final POILogger logger = POILogFactory.getLogger(SXSSFCell.class);
 
-    SXSSFRow _row;
-    Value _value;
-    CellStyle _style;
-    Property _firstProperty;
+    private final SXSSFRow _row;
+    private Value _value;
+    private CellStyle _style;
+    private Property _firstProperty;
 
     public SXSSFCell(SXSSFRow row,int cellType)
     {
@@ -65,6 +66,7 @@ public class SXSSFCell implements Cell {
      *
      * @return zero-based column index of a column in a sheet.
      */
+    @Override
     public int getColumnIndex()
     {
         return _row.getCellIndex(this);
@@ -75,6 +77,7 @@ public class SXSSFCell implements Cell {
      *
      * @return zero-based row index of a row in the sheet that contains this cell
      */
+    @Override
     public int getRowIndex()
     {
         return _row.getRowNum();
@@ -85,6 +88,7 @@ public class SXSSFCell implements Cell {
      *
      * @return the sheet this cell belongs to
      */
+    @Override
     public SXSSFSheet getSheet()
     {
         return _row.getSheet();
@@ -95,10 +99,11 @@ public class SXSSFCell implements Cell {
      *
      * @return the Row that owns this cell
      */
-     public Row getRow()
-     {
-         return _row;
-     }
+    @Override
+    public Row getRow()
+    {
+        return _row;
+    }
 
     /**
      * Set the cells type (numeric, formula or string)
@@ -111,6 +116,7 @@ public class SXSSFCell implements Cell {
      * @see #CELL_TYPE_BOOLEAN
      * @see #CELL_TYPE_ERROR
      */
+    @Override
     public void setCellType(int cellType)
     {
         ensureType(cellType);
@@ -127,6 +133,7 @@ public class SXSSFCell implements Cell {
      * @see Cell#CELL_TYPE_BOOLEAN
      * @see Cell#CELL_TYPE_ERROR
      */
+    @Override
     public int getCellType()
     {
         return _value.getType();
@@ -138,6 +145,7 @@ public class SXSSFCell implements Cell {
      *     {@link #CELL_TYPE_BOOLEAN}, {@link #CELL_TYPE_ERROR}) depending
      * on the cached value of the formula
      */
+    @Override
     public int getCachedFormulaResultType()
     {
         if (_value.getType() != CELL_TYPE_FORMULA) {
@@ -154,6 +162,7 @@ public class SXSSFCell implements Cell {
      *        precalculated value, for numerics we'll set its value. For other types we
      *        will change the cell to a numeric cell and set its value.
      */
+    @Override
     public void setCellValue(double value)
     {
         if(Double.isInfinite(value)) {
@@ -186,6 +195,7 @@ public class SXSSFCell implements Cell {
      *        precalculated value, for numerics we'll set its value. For other types we
      *        will change the cell to a numerics cell and set its value.
      */
+    @Override
     public void setCellValue(Date value) {
         boolean date1904 = getSheet().getWorkbook().isDate1904();
         setCellValue(DateUtil.getExcelDate(value, date1904));
@@ -207,6 +217,7 @@ public class SXSSFCell implements Cell {
      *        precalculated value, for numerics we'll set its value. For othertypes we
      *        will change the cell to a numeric cell and set its value.
      */
+    @Override
     public void setCellValue(Calendar value) {
         boolean date1904 = getSheet().getWorkbook().isDate1904();
         setCellValue( DateUtil.getExcelDate(value, date1904 ));
@@ -220,6 +231,7 @@ public class SXSSFCell implements Cell {
      * change the cell to a string cell and set its value.
      * If value is null then we will change the cell to a Blank cell.
      */
+    @Override
     public void setCellValue(RichTextString value)
     {
         XSSFRichTextString xvalue = (XSSFRichTextString)value;
@@ -247,6 +259,7 @@ public class SXSSFCell implements Cell {
      * change the cell to a string cell and set its value.
      * If value is null then we will change the cell to a Blank cell.
      */
+    @Override
     public void setCellValue(String value)
     {
         ensureTypeOrFormulaType(CELL_TYPE_STRING);
@@ -272,6 +285,7 @@ public class SXSSFCell implements Cell {
      *  If the argument is <code>null</code> then the current formula is removed.
      * @throws FormulaParseException if the formula has incorrect syntax or is otherwise invalid
      */
+    @Override
     public void setCellFormula(String formula) throws FormulaParseException
     {
         if(formula == null) {
@@ -288,6 +302,7 @@ public class SXSSFCell implements Cell {
      * @return a formula for the cell
      * @throws IllegalStateException if the cell type returned by {@link #getCellType()} is not CELL_TYPE_FORMULA
      */
+    @Override
     public String getCellFormula()
     {
        if(_value.getType()!=CELL_TYPE_FORMULA)
@@ -306,6 +321,7 @@ public class SXSSFCell implements Cell {
      * @exception NumberFormatException if the cell value isn't a parsable <code>double</code>.
      * @see org.apache.poi.ss.usermodel.DataFormatter for turning this number into a string similar to that which Excel would render this number as.
      */
+    @Override
     public double getNumericCellValue()
     {
         int cellType = getCellType();
@@ -337,6 +353,7 @@ public class SXSSFCell implements Cell {
      * @exception NumberFormatException if the cell value isn't a parsable <code>double</code>.
      * @see org.apache.poi.ss.usermodel.DataFormatter for formatting  this date into a string similar to how excel does.
      */
+    @Override
     public Date getDateCellValue()
     {
         int cellType = getCellType();
@@ -358,6 +375,7 @@ public class SXSSFCell implements Cell {
      * </p>
      * @return the value of the cell as a XSSFRichTextString
      */
+    @Override
     public RichTextString getRichStringCellValue()
     {
         int cellType = getCellType();
@@ -382,6 +400,7 @@ public class SXSSFCell implements Cell {
      * </p>
      * @return the value of the cell as a string
      */
+    @Override
     public String getStringCellValue()
     {
         int cellType = getCellType();
@@ -415,6 +434,7 @@ public class SXSSFCell implements Cell {
      *        precalculated value, for booleans we'll set its value. For other types we
      *        will change the cell to a boolean cell and set its value.
      */
+    @Override
     public void setCellValue(boolean value)
     {
         ensureTypeOrFormulaType(CELL_TYPE_BOOLEAN);
@@ -433,6 +453,7 @@ public class SXSSFCell implements Cell {
      *        cell and set its value.
      * @see org.apache.poi.ss.usermodel.FormulaError
      */
+    @Override
     public void setCellErrorValue(byte value)
     {
         ensureType(CELL_TYPE_ERROR);
@@ -451,6 +472,7 @@ public class SXSSFCell implements Cell {
      * @throws IllegalStateException if the cell type returned by {@link #getCellType()}
      *   is not CELL_TYPE_BOOLEAN, CELL_TYPE_BLANK or CELL_TYPE_FORMULA
      */
+    @Override
     public boolean getBooleanCellValue()
     {
         int cellType = getCellType();
@@ -485,6 +507,7 @@ public class SXSSFCell implements Cell {
      * @throws IllegalStateException if the cell type returned by {@link #getCellType()} isn't CELL_TYPE_ERROR
      * @see org.apache.poi.ss.usermodel.FormulaError for error codes
      */
+    @Override
     public byte getErrorCellValue()
     {
         int cellType = getCellType();
@@ -516,6 +539,7 @@ public class SXSSFCell implements Cell {
      * If the value is null then the style information is removed causing the cell to used the default workbook style.
      * @see org.apache.poi.ss.usermodel.Workbook#createCellStyle()
      */
+    @Override
     public void setCellStyle(CellStyle style)
     {
         _style=style;
@@ -542,9 +566,12 @@ public class SXSSFCell implements Cell {
     /**
      * Sets this cell as the active cell for the worksheet
      */
+    @NotImplemented
+    @Override
     public void setAsActiveCell()
     {
-//TODO: What needs to be done here? Is there a "the active cell" at the sheet or even the workbook level?
+        throw new RuntimeException("NotImplemented");
+        //TODO: What needs to be done here? Is there a "the active cell" at the sheet or even the workbook level?
         //getRow().setAsActiveCell(this);
     }
 
@@ -553,6 +580,7 @@ public class SXSSFCell implements Cell {
      *
      * @param comment comment associated with this cell
      */
+    @Override
     public void setCellComment(Comment comment)
     {
         setProperty(Property.COMMENT,comment);
@@ -563,6 +591,7 @@ public class SXSSFCell implements Cell {
      *
      * @return comment associated with this cell or <code>null</code> if not found
      */
+    @Override
     public Comment getCellComment()
     {
         return (Comment)getPropertyValue(Property.COMMENT);
@@ -571,6 +600,7 @@ public class SXSSFCell implements Cell {
     /**
      * Removes the comment for this cell, if there is one.
      */
+    @Override
     public void removeCellComment()
     {
         removeProperty(Property.COMMENT);
@@ -613,6 +643,7 @@ public class SXSSFCell implements Cell {
     /**
      * Removes the hyperlink for this cell, if there is one.
      */
+    @Override
     public void removeHyperlink()
     {
         removeProperty(Property.HYPERLINK);
@@ -625,7 +656,8 @@ public class SXSSFCell implements Cell {
      *
      * @return range of the array formula group that the cell belongs to.
      */
-//TODO: What is this?
+// TODO: What is this?
+    @NotImplemented
     public CellRangeAddress getArrayFormulaRange()
     {
         return null;
@@ -635,6 +667,7 @@ public class SXSSFCell implements Cell {
      * @return <code>true</code> if this cell is part of group of cells having a common array formula.
      */
 //TODO: What is this?
+    @NotImplemented
     public boolean isPartOfArrayFormulaGroup()
     {
         return false;
@@ -674,7 +707,7 @@ public class SXSSFCell implements Cell {
         }
     }
 
-    void removeProperty(int type)
+    /*package*/ void removeProperty(int type)
     {
         Property current=_firstProperty;
         Property previous=null;
@@ -695,7 +728,7 @@ public class SXSSFCell implements Cell {
             }
         }
     }
-    void setProperty(int type,Object value)
+    /*package*/ void setProperty(int type,Object value)
     {
         Property current=_firstProperty;
         Property previous=null;
@@ -733,40 +766,43 @@ public class SXSSFCell implements Cell {
             }
         }
     }
-    Object getPropertyValue(int type)
+    /*package*/ Object getPropertyValue(int type)
     {
         return getPropertyValue(type,null);
     }
-    Object getPropertyValue(int type,String defaultValue)
+    /*package*/ Object getPropertyValue(int type,String defaultValue)
     {
         Property current=_firstProperty;
         while(current!=null&&current.getType()!=type) current=current._next;
         return current==null?defaultValue:current.getValue();
     }
-    void ensurePlainStringType()
+    /*package*/ void ensurePlainStringType()
     {
         if(_value.getType()!=CELL_TYPE_STRING
            ||((StringValue)_value).isRichText())
             _value=new PlainStringValue();
     }
-    void ensureRichTextStringType()
+    /*package*/ void ensureRichTextStringType()
     {
         if(_value.getType()!=CELL_TYPE_STRING
            ||!((StringValue)_value).isRichText())
             _value=new RichTextValue();
     }
-    void ensureType(int type)
+    /*package*/ void ensureType(int type)
     {
         if(_value.getType()!=type)
             setType(type);
     }
-    void ensureFormulaType(int type)
+    /*package*/ void ensureFormulaType(int type)
     {
         if(_value.getType()!=CELL_TYPE_FORMULA
            ||((FormulaValue)_value).getFormulaType()!=type)
             setFormulaType(type);
     }
-    void ensureTypeOrFormulaType(int type)
+    /*
+     * Sets the cell type to type if it is different
+     */
+    /*package*/ void ensureTypeOrFormulaType(int type)
     {
         if(_value.getType()==type)
         {
@@ -783,7 +819,14 @@ public class SXSSFCell implements Cell {
         }
         setType(type);
     }
-    void setType(int type)
+    /**
+     * changes the cell type to the specified type, and resets the value to the default value for that type
+     * If cell type is the same as specified type, this will reset the value to the default value for that type
+     *
+     * @param type the cell type to set
+     * @throws IllegalArgumentException if type is not a recognized type
+     */
+    /*package*/ void setType(int type)
     {
         switch(type)
         {
@@ -835,7 +878,7 @@ public class SXSSFCell implements Cell {
             }
         }
     }
-    void setFormulaType(int type)
+    /*package*/ void setFormulaType(int type)
     {
         switch(type)
         {
@@ -866,7 +909,8 @@ public class SXSSFCell implements Cell {
         }
     }
 //TODO: implement this correctly
-    int computeTypeFromFormula(String formula)
+    @NotImplemented
+    /*package*/ int computeTypeFromFormula(String formula)
     {
         return CELL_TYPE_NUMERIC;
     }
