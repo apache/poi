@@ -23,6 +23,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.BaseTestSheet;
@@ -44,6 +46,12 @@ public class TestSXSSFSheet extends BaseTestSheet {
     @After
     public void tearDown(){
         SXSSFITestDataProvider.instance.cleanup();
+    }
+    
+    @Override
+    protected void trackColumnsForAutoSizingIfSXSSF(Sheet sheet) {
+        SXSSFSheet sxSheet = (SXSSFSheet) sheet;
+        sxSheet.trackAllColumnsForAutoSizing();
     }
 
 
