@@ -46,6 +46,7 @@ public final class SXSSFITestDataProvider implements ITestDataProvider {
         // enforce singleton
     }
 
+    @Override
     public Workbook openSampleWorkbook(String sampleFileName) {
         XSSFWorkbook xssfWorkbook = XSSFITestDataProvider.instance.openSampleWorkbook(sampleFileName);
         SXSSFWorkbook swb = new SXSSFWorkbook(xssfWorkbook);
@@ -53,12 +54,16 @@ public final class SXSSFITestDataProvider implements ITestDataProvider {
         return swb;
     }
 
-    public Workbook writeOutAndReadBack(Workbook wb) {
+    /**
+     * Returns an XSSFWorkbook since SXSSFWorkbook is write-only
+     */
+    @Override
+    public XSSFWorkbook writeOutAndReadBack(Workbook wb) {
         if(!(wb instanceof SXSSFWorkbook)) {
             throw new IllegalArgumentException("Expected an instance of SXSSFWorkbook");
         }
 
-        Workbook result;
+        XSSFWorkbook result;
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream(8192);
             wb.write(baos);
@@ -70,24 +75,29 @@ public final class SXSSFITestDataProvider implements ITestDataProvider {
         return result;
     }
 
+    @Override
     public SXSSFWorkbook createWorkbook(){
         SXSSFWorkbook wb = new SXSSFWorkbook();
         instances.add(wb);
         return wb;
     }
     
+    @Override
     public FormulaEvaluator createFormulaEvaluator(Workbook wb) {
         return new XSSFFormulaEvaluator(((SXSSFWorkbook) wb).getXSSFWorkbook());
     }
 
+    @Override
     public byte[] getTestDataFileContent(String fileName) {
         return POIDataSamples.getSpreadSheetInstance().readFile(fileName);
     }
 
+    @Override
     public SpreadsheetVersion getSpreadsheetVersion(){
         return SpreadsheetVersion.EXCEL2007;
     }
 
+    @Override
     public String getStandardFileNameExtension() {
         return "xlsx";
     }
