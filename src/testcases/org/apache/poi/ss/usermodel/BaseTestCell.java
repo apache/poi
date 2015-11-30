@@ -156,13 +156,16 @@ public abstract class BaseTestCell {
         assertEquals(0, c.getRowIndex());
         assertEquals(1, c.getColumnIndex());
         c.setCellValue(true);
+        assertEquals("B1 value", true, c.getBooleanCellValue());
 
         // C1
         c=r.createCell(2);
         assertEquals(0, c.getRowIndex());
         assertEquals(2, c.getColumnIndex());
         c.setCellValue(false);
+        assertEquals("C1 value", false, c.getBooleanCellValue());
 
+        // Make sure values are saved and re-read correctly.
         Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1);
         wb1.close();
         
@@ -203,12 +206,14 @@ public abstract class BaseTestCell {
         assertEquals(0, c.getRowIndex());
         assertEquals(1, c.getColumnIndex());
         c.setCellErrorValue(FormulaError.NULL.getCode());
+        assertEquals("B1 value == #NULL!", FormulaError.NULL.getCode(), c.getErrorCellValue());
 
         // C1
         c=r.createCell(2);
         assertEquals(0, c.getRowIndex());
         assertEquals(2, c.getColumnIndex());
         c.setCellErrorValue(FormulaError.DIV0.getCode());
+        assertEquals("C1 value == #DIV/0!", FormulaError.DIV0.getCode(), c.getErrorCellValue());
 
         Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1);
         wb1.close();
@@ -219,12 +224,16 @@ public abstract class BaseTestCell {
         assertEquals("Row 1 should have 2 cells", 2, r.getPhysicalNumberOfCells());
 
         c = r.getCell(1);
+        assertEquals(0, c.getRowIndex());
+        assertEquals(1, c.getColumnIndex());
         assertEquals(Cell.CELL_TYPE_ERROR, c.getCellType());
-        assertEquals("B2 value == #NULL!", FormulaError.NULL.getCode(), c.getErrorCellValue());
+        assertEquals("B1 value == #NULL!", FormulaError.NULL.getCode(), c.getErrorCellValue());
 
         c = r.getCell(2);
+        assertEquals(0, c.getRowIndex());
+        assertEquals(2, c.getColumnIndex());
         assertEquals(Cell.CELL_TYPE_ERROR, c.getCellType());
-        assertEquals("C2 value == #DIV/0!", FormulaError.DIV0.getCode(), c.getErrorCellValue());
+        assertEquals("C1 value == #DIV/0!", FormulaError.DIV0.getCode(), c.getErrorCellValue());
 
         wb2.close();
     }
