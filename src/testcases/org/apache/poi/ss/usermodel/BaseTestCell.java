@@ -23,7 +23,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.junit.Assume.assumeTrue;
 
 import java.io.IOException;
 import java.util.Calendar;
@@ -154,14 +153,14 @@ public abstract class BaseTestCell {
         // B1
         r = s.createRow(0);
         c=r.createCell(1);
-        assumeTrue(0 == c.getRowIndex());
-        assumeTrue(1 == c.getColumnIndex());
+        assertEquals(0, c.getRowIndex());
+        assertEquals(1, c.getColumnIndex());
         c.setCellValue(true);
 
         // C1
         c=r.createCell(2);
-        assumeTrue(0 == c.getRowIndex());
-        assumeTrue(2 == c.getColumnIndex());
+        assertEquals(0, c.getRowIndex());
+        assertEquals(2, c.getColumnIndex());
         c.setCellValue(false);
 
         Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1);
@@ -169,17 +168,17 @@ public abstract class BaseTestCell {
         
         s = wb2.getSheet("testSheet1");
         r = s.getRow(0);
-        assumeTrue("Row 1 should have 2 cells", 2 == r.getPhysicalNumberOfCells());
+        assertEquals("Row 1 should have 2 cells", 2, r.getPhysicalNumberOfCells());
         
         c = r.getCell(1);
-        assumeTrue(0 == c.getRowIndex());
-        assumeTrue(1 == c.getColumnIndex());
+        assertEquals(0, c.getRowIndex());
+        assertEquals(1, c.getColumnIndex());
         assertEquals(Cell.CELL_TYPE_BOOLEAN, c.getCellType());
         assertEquals("B1 value", true, c.getBooleanCellValue());
         
         c = r.getCell(2);
-        assumeTrue(0 == c.getRowIndex());
-        assumeTrue(2 == c.getColumnIndex());
+        assertEquals(0, c.getRowIndex());
+        assertEquals(2, c.getColumnIndex());
         assertEquals(Cell.CELL_TYPE_BOOLEAN, c.getCellType());
         assertEquals("C1 value", false, c.getBooleanCellValue());
         
@@ -199,16 +198,16 @@ public abstract class BaseTestCell {
         Cell c;
 
         // B1
-        r = s.createRow(1);
+        r = s.createRow(0);
         c=r.createCell(1);
-        assumeTrue(0 == c.getRowIndex());
-        assumeTrue(1 == c.getColumnIndex());
+        assertEquals(0, c.getRowIndex());
+        assertEquals(1, c.getColumnIndex());
         c.setCellErrorValue(FormulaError.NULL.getCode());
 
         // C1
         c=r.createCell(2);
-        assumeTrue(0 == c.getRowIndex());
-        assumeTrue(2 == c.getColumnIndex());
+        assertEquals(0, c.getRowIndex());
+        assertEquals(2, c.getColumnIndex());
         c.setCellErrorValue(FormulaError.DIV0.getCode());
 
         Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1);
@@ -217,7 +216,7 @@ public abstract class BaseTestCell {
         s = wb2.getSheet("testSheet1");
 
         r = s.getRow(0);
-        assumeTrue("Row 1 should have 2 cells", 2 == r.getPhysicalNumberOfCells());
+        assertEquals("Row 1 should have 2 cells", 2, r.getPhysicalNumberOfCells());
 
         c = r.getCell(1);
         assertEquals(Cell.CELL_TYPE_ERROR, c.getCellType());
