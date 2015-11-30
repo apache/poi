@@ -18,7 +18,10 @@
 package org.apache.poi.xssf.streaming;
 
 import java.util.Iterator;
+import java.util.Map.Entry;
 import java.util.NoSuchElementException;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.Cell;
@@ -35,8 +38,7 @@ import org.apache.poi.util.Internal;
 public class SXSSFRow implements Row, Comparable<SXSSFRow>
 {
     private final SXSSFSheet _sheet;
-    private SXSSFCell[] _cells;
-    private int _maxColumn=-1;
+    private final SortedMap<Integer, SXSSFCell> _cells = new TreeMap<Integer, SXSSFCell>();
     private short _style=-1;
     private short _height=-1;
     private boolean _zHeight = false;
@@ -45,11 +47,25 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
     private Boolean _hidden;
     private Boolean _collapsed;
 
+    /**
+     *
+     * @param sheet the parent sheet the row belongs to
+     * @param initialSize - no longer needed
+     * @deprecated 2015-11-30 (circa POI 3.14beta1). Use {@link #SXSSFRow(SXSSFSheet)} instead.
+     */
     public SXSSFRow(SXSSFSheet sheet, int initialSize)
     {
-        _sheet=sheet;
-        _cells=new SXSSFCell[initialSize];
+        this(sheet);
     }
+    
+    public SXSSFRow(SXSSFSheet sheet)
+    {
+        _sheet=sheet;
+    }
+    
+    /**
+     * @deprecated 3.14beta1 (circa 2015-11-30). Use {@link #cellIterator} instead.
+     */
     public Iterator<Cell> allCellsIterator()
     {
         return new CellIterator();
@@ -59,7 +75,6 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
         return _height!=-1;
     }
 
-    @Override
     public int getOutlineLevel(){
         return _outlineLevel;
     }
@@ -93,6 +108,9 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
         this._collapsed = collapsed;
     }
 //begin of interface implementation
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Iterator<Cell> iterator()
     {
@@ -113,7 +131,7 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
     @Override
     public SXSSFCell createCell(int column)
     {
-        return createCell(column,Cell.CELL_TYPE_BLANK);
+        return createCell(column, Cell.CELL_TYPE_BLANK);
     }
 
     /**
@@ -131,16 +149,9 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
     public SXSSFCell createCell(int column, int type)
     {
         checkBounds(column);
-
-        if(column>=_cells.length)
-        {
-            SXSSFCell[] newCells=new SXSSFCell[Math.max(column+1,_cells.length*2)];
-            System.arraycopy(_cells,0,newCells,0,_cells.length);
-            _cells=newCells;
-        }
-        _cells[column]=new SXSSFCell(this,type);
-        if(column>_maxColumn) _maxColumn=column;
-        return _cells[column];
+        SXSSFCell cell = new SXSSFCell(this, type);
+        _cells.put(column, cell);
+        return cell;
     }
 
     /**
@@ -164,19 +175,23 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
     @Override
     public void removeCell(Cell cell)
     {
-        int index=getCellIndex(cell);
-        if(index>=0)
-        {
-            _cells[index]=null;
-            while(_maxColumn>=0&&_cells[_maxColumn]==null) _maxColumn--;
-        }
+        int index = getCellIndex((SXSSFCell) cell);
+        _cells.remove(index);
     }
 
-    int getCellIndex(Cell cell)
+    /**
+     * Return the column number of a cell if it is in this row
+     * Otherwise return -1
+     *
+     * @param cell the cell to get the index of
+     * @return cell column index if it is in this row, -1 otherwise
+     */
+    /*package*/ int getCellIndex(SXSSFCell cell)
     {
-        for(int i=0;i<=_maxColumn;i++)
-        {
-            if(_cells[i]==cell) return i;
+        for (Entry<Integer, SXSSFCell> entry : _cells.entrySet()) {
+            if (entry.getValue()==cell) {
+                return entry.getKey();
+            }
         }
         return -1;
     }
@@ -205,37 +220,19 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
     }
 
     /**
-     * Get the cell representing a given column (logical cell) 0-based.  If you
-     * ask for a cell that is not defined....you get a null.
+     * Get the cell representing a given column (logical cell) 0-based.
+     * If cell is missing or blank, uses the workbook's MissingCellPolicy
+     * to determine the return value.
      *
      * @param cellnum  0 based column number
      * @return Cell representing that column or null if undefined.
      * @see #getCell(int, org.apache.poi.ss.usermodel.Row.MissingCellPolicy)
+     * @throws RuntimeException if cellnum is out of bounds
      */
     @Override
     public SXSSFCell getCell(int cellnum) {
-        if(cellnum < 0) throw new IllegalArgumentException("Cell index must be >= 0");
-
-        SXSSFCell cell = cellnum > _maxColumn ? null : _cells[cellnum];
-
         MissingCellPolicy policy = _sheet.getWorkbook().getMissingCellPolicy();
-        if(policy == RETURN_NULL_AND_BLANK) {
-            return cell;
-        }
-        if (policy == RETURN_BLANK_AS_NULL) {
-            if (cell == null) return cell;
-            if (cell.getCellType() == Cell.CELL_TYPE_BLANK) {
-                return null;
-            }
-            return cell;
-        }
-        if (policy == CREATE_NULL_AS_BLANK) {
-            if (cell == null) {
-                return createCell((short) cellnum, Cell.CELL_TYPE_BLANK);
-            }
-            return cell;
-        }
-        throw new IllegalArgumentException("Illegal policy " + policy + " (" + policy.id + ")");
+        return getCell(cellnum, policy);
     }
 
     /**
@@ -248,25 +245,27 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
      * @see Row#CREATE_NULL_AS_BLANK
      */
     @Override
-    public Cell getCell(int cellnum, MissingCellPolicy policy)
+    public SXSSFCell getCell(int cellnum, MissingCellPolicy policy)
     {
-        Cell cell = getCell(cellnum);
-        if(policy == RETURN_NULL_AND_BLANK)
+        checkBounds(cellnum);
+        
+        // FIXME: replace with switch(enum)
+        final SXSSFCell cell = _cells.get(cellnum);
+        if (policy == RETURN_NULL_AND_BLANK)
         {
             return cell;
         }
-        if(policy == RETURN_BLANK_AS_NULL)
+        else if (policy == RETURN_BLANK_AS_NULL)
         {
-            if(cell == null) return cell;
-            if(cell.getCellType() == Cell.CELL_TYPE_BLANK)
+            if (cell == null || cell.getCellType() == Cell.CELL_TYPE_BLANK)
             {
                 return null;
             }
             return cell;
         }
-        if(policy == CREATE_NULL_AS_BLANK)
+        else if (policy == CREATE_NULL_AS_BLANK)
         {
-            if(cell == null)
+            if (cell == null)
             {
                 return createCell(cellnum, Cell.CELL_TYPE_BLANK);
             }
@@ -284,9 +283,11 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
     @Override
     public short getFirstCellNum()
     {
-        for(int i=0;i<=_maxColumn;i++)
-            if(_cells[i]!=null) return (short)i;
-        return -1;
+        try {
+            return _cells.firstKey().shortValue();
+        } catch (final NoSuchElementException e) {
+            return -1;
+        }
     }
 
     /**
@@ -311,7 +312,7 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
     @Override
     public short getLastCellNum()
     {
-        return _maxColumn == -1 ? -1 : (short)(_maxColumn+1);
+        return _cells.isEmpty() ? -1 : (short)(_cells.lastKey() + 1);
     }
 
     /**
@@ -323,12 +324,7 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
     @Override
     public int getPhysicalNumberOfCells()
     {
-        int count=0;
-        for(int i=0;i<=_maxColumn;i++)
-        {
-            if(_cells[i]!=null) count++;
-        }
-        return count;
+        return _cells.size();
     }
 
     /**
@@ -445,8 +441,7 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
     }
 
     /**
-     * @return Cell iterator of the physically defined cells.  Note element 4 may
-     * actually be row cell depending on how many are defined!
+     * {@inheritDoc}
      */
     @Override
     public Iterator<Cell> cellIterator()
@@ -473,8 +468,9 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
         int pos=0;
 
         FilledCellIterator(){
-            for (int i = 0; i <= _maxColumn; i++) {
-                if (_cells[i] != null) {
+            int maxColumn = getLastCellNum(); //last column PLUS ONE
+            for (int i = 0; i < maxColumn; i++) {
+                if (_cells.get(i) != null) {
                     pos = i;
                     break;
                 }
@@ -483,18 +479,22 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
 
         public boolean hasNext()
         {
-            return pos <= _maxColumn;
+            int maxColumn = getLastCellNum(); //last column PLUS ONE
+            return pos < maxColumn; 
         }
         void advanceToNext()
         {
-            pos++;
-            while(pos<=_maxColumn&&_cells[pos]==null) pos++;
+            int maxColumn = getLastCellNum(); //last column PLUS ONE
+            do {
+                pos++;
+            }
+            while (pos<maxColumn && _cells.get(pos)==null);
         }
         public Cell next() throws NoSuchElementException
         {
             if (hasNext())
             {
-                Cell retval=_cells[pos];
+                Cell retval=_cells.get(pos);
                 advanceToNext();
                 return retval;
             }
@@ -514,12 +514,13 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
         int pos=0;
         public boolean hasNext()
         {
-            return pos <= _maxColumn;
+            int maxColumn = getLastCellNum(); //last column PLUS ONE
+            return pos < maxColumn;
         }
         public Cell next() throws NoSuchElementException
         {
             if (hasNext())
-                return _cells[pos++];
+                return _cells.get(pos++);
             else
                 throw new NoSuchElementException();
         }
