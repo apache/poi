@@ -19,9 +19,11 @@ package org.apache.poi.xssf.streaming;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import org.apache.poi.hssf.util.PaneInformation;
@@ -62,6 +64,7 @@ public class SXSSFSheet implements Sheet, Cloneable
     private final TreeMap<Integer,SXSSFRow> _rows=new TreeMap<Integer,SXSSFRow>();
     private final SheetDataWriter _writer;
     private int _randomAccessWindowSize = SXSSFWorkbook.DEFAULT_WINDOW_SIZE;
+    private final AutoSizeColumnTracker _autoSizeColumnTracker;
     private int outlineLevelRow = 0;
     private int lastFlushedRowNumber = -1;
     private boolean allFlushed = false;
@@ -71,6 +74,7 @@ public class SXSSFSheet implements Sheet, Cloneable
         _sh = xSheet;
         _writer = workbook.createSheetDataWriter();
         setRandomAccessWindowSize(_workbook.getRandomAccessWindowSize());
+        _autoSizeColumnTracker = new AutoSizeColumnTracker(this);
     }
 
     /**
@@ -1377,6 +1381,118 @@ public class SXSSFSheet implements Sheet, Cloneable
     {
         _sh.setDefaultColumnStyle(column, style);
     }
+    
+    
+    /**
+     * Track a column in the sheet for auto-sizing.
+     * Note this has undefined behavior if a column is tracked after one or more rows are written to the sheet.
+     * If <code>column</code> is already tracked, this call does nothing.
+     *
+     * @param column the column to track for autosizing
+     * @since 3.14beta1
+     * @see #trackColumnsForAutoSizing(Collection)
+     * @see #trackAllColumnsForAutoSizing()
+     */
+    public void trackColumnForAutoSizing(int column)
+    {
+        _autoSizeColumnTracker.trackColumn(column);
+    }
+    
+    /**
+     * Track several columns in the sheet for auto-sizing.
+     * Note this has undefined behavior if columns are tracked after one or more rows are written to the sheet.
+     * Any column in <code>columns</code> that are already tracked are ignored by this call.
+     *
+     * @param columns the columns to track for autosizing
+     * @since 3.14beta1
+     */
+    public void trackColumnsForAutoSizing(Collection<Integer> columns)
+    {
+        _autoSizeColumnTracker.trackColumns(columns);
+    }
+    
+    /**
+     * Tracks all columns in the sheet for auto-sizing. If this is called, individual columns do not need to be tracked.
+     * Because determining the best-fit width for a cell is expensive, this may affect the performance.
+     * @since 3.14beta1
+     */
+    public void trackAllColumnsForAutoSizing()
+    {
+        _autoSizeColumnTracker.trackAllColumns();
+    }
+    
+    /**
+     * Removes a column that was previously marked for inclusion in auto-size column tracking.
+     * When a column is untracked, the best-fit width is forgotten.
+     * If <code>column</code> is not tracked, it will be ignored by this call.
+     *
+     * @param column the index of the column to track for auto-sizing
+     * @return true if column was tracked prior to being untracked, false if no action was taken
+     */
+    /**
+     * 
+     *
+     * @param column the index of the column to track for auto-sizing
+     * @return true if column was tracked prior to this call, false if no action was taken
+     * @since 3.14beta1
+     * @see #untrackColumnsForAutoSizing(Collection)
+     * @see #untrackAllColumnsForAutoSizing(int)
+     */
+    public boolean untrackColumnForAutoSizing(int column)
+    {
+        return _autoSizeColumnTracker.untrackColumn(column);
+    }
+    
+    /**
+     * Untracks several columns in the sheet for auto-sizing.
+     * When a column is untracked, the best-fit width is forgotten.
+     * Any column in <code>columns</code> that is not tracked will be ignored by this call.
+     *
+     * @param columns the indices of the columns to track for auto-sizing
+     * @return true if one or more columns were untracked as a result of this call
+     *
+     * @param columns the columns to track for autosizing
+     * @since 3.14beta1
+     */
+    public boolean untrackColumnsForAutoSizing(Collection<Integer> columns)
+    {
+        return _autoSizeColumnTracker.untrackColumns(columns);
+    }
+    
+    /**
+     * Untracks all columns in the sheet for auto-sizing. Best-fit column widths are forgotten.
+     * If this is called, individual columns do not need to be untracked.
+     * @since 3.14beta1
+     */
+    public void untrackAllColumnsForAutoSizing()
+    {
+        _autoSizeColumnTracker.untrackAllColumns();
+    }
+    
+    /**
+     * Returns true if column is currently tracked for auto-sizing.
+     *
+     * @param column the index of the column to check
+     * @return true if column is tracked
+     * @since 3.14beta1
+     */
+    public boolean isColumnTrackedForAutoSizing(int column)
+    {
+        return _autoSizeColumnTracker.isColumnTracked(column);
+    }
+    
+    /**
+     * Get the currently tracked columns for auto-sizing.
+     * Note if all columns are tracked, this will only return the columns that have been explicitly or implicitly tracked,
+     * which is probably only columns containing 1 or more non-blank values
+     *
+     * @return a set of the indices of all tracked columns
+     * @since 3.14beta1
+     */
+    public Set<Integer> getTrackedColumnsForAutoSizing()
+    {
+        return _autoSizeColumnTracker.getTrackedColumns();
+    }
 
     /**
      * Adjusts the column width to fit the contents.
@@ -1388,8 +1504,17 @@ public class SXSSFSheet implements Sheet, Cloneable
      * </p>
      * You can specify whether the content of merged cells should be considered or ignored.
      *  Default is to ignore merged cells.
+     *  
+     *  <p>
+     *  Special note about SXSSF implementation: You must register the columns you wish to track with
+     *  the SXSSFSheet using {@link #trackColumnForAutoSizing(int)} or {@link #trackAllColumnsForAutoSizing()}.
+     *  This is needed because the rows needed to compute the column width may have fallen outside the
+     *  random access window and been flushed to disk.
+     *  Tracking columns is required even if all rows are in the random access window.
+     *  </p>
+     *  <p><i>New in POI 3.14 beta 1: auto-sizes columns using cells from current and flushed rows.</i></p>
      *
-     * @param column the column index
+     * @param column the column index to auto-size
      */
     @Override
     public void autoSizeColumn(int column)
@@ -1406,22 +1531,54 @@ public class SXSSFSheet implements Sheet, Cloneable
      * </p>
      * You can specify whether the content of merged cells should be considered or ignored.
      *  Default is to ignore merged cells.
+     *  
+     *  <p>
+     *  Special note about SXSSF implementation: You must register the columns you wish to track with
+     *  the SXSSFSheet using {@link #trackColumnForAutoSizing(int)} or {@link #trackAllColumnsForAutoSizing()}.
+     *  This is needed because the rows needed to compute the column width may have fallen outside the
+     *  random access window and been flushed to disk.
+     *  Tracking columns is required even if all rows are in the random access window.
+     *  </p>
+     *  <p><i>New in POI 3.14 beta 1: auto-sizes columns using cells from current and flushed rows.</i></p>
      *
-     * @param column the column index
+     * @param column the column index to auto-size
      * @param useMergedCells whether to use the contents of merged cells when calculating the width of the column
      */
     @Override
     public void autoSizeColumn(int column, boolean useMergedCells)
     {
-        double width = SheetUtil.getColumnWidth(this, column, useMergedCells);
+        // Multiple calls to autoSizeColumn need to look up the best-fit width
+        // of rows already flushed to disk plus re-calculate the best-fit width
+        // of rows in the current window. It isn't safe to update the column
+        // widths before flushing to disk because columns in the random access
+        // window rows may change in best-fit width. The best-fit width of a cell
+        // is only fixed when it becomes inaccessible for modification.
+        // Changes to the shared strings table, styles table, or formulas might
+        // be able to invalidate the auto-size width without the opportunity
+        // to recalculate the best-fit width for the flushed rows. This is an
+        // inherent limitation of SXSSF. If having correct auto-sizing is
+        // critical, the flushed rows would need to be re-read by the read-only
+        // XSSF eventmodel (SAX) or the memory-heavy XSSF usermodel (DOM). 
+        final int flushedWidth;
+        try {
+            // get the best fit width of rows already flushed to disk
+            flushedWidth = _autoSizeColumnTracker.getBestFitColumnWidth(column, useMergedCells);
+        }
+        catch (final IllegalStateException e) {
+            throw new IllegalStateException("Could not auto-size column. Make sure the column was tracked prior to auto-sizing the column.", e);
+        }
+        
+        // get the best-fit width of rows currently in the random access window
+        final int activeWidth = (int) (256 * SheetUtil.getColumnWidth(this, column, useMergedCells));
 
-        if (width != -1) {
-            width *= 256;
-            int maxColumnWidth = 255*256; // The maximum column width for an individual cell is 255 characters
-            if (width > maxColumnWidth) {
-                width = maxColumnWidth;
-            }
-            setColumnWidth(column, (int)(width));
+        // the best-fit width for both flushed rows and random access window rows
+        // flushedWidth or activeWidth may be negative if column contains only blank cells
+        final int bestFitWidth = Math.max(flushedWidth,  activeWidth);
+        
+        if (bestFitWidth > 0) {
+            final int maxColumnWidth = 255*256; // The maximum column width for an individual cell is 255 characters
+            final int width = Math.min(bestFitWidth,  maxColumnWidth);
+            setColumnWidth(column, width);
         }
     }
 
@@ -1681,6 +1838,8 @@ public class SXSSFSheet implements Sheet, Cloneable
         if (firstRowNum!=null) {
             int rowIndex = firstRowNum.intValue();
             SXSSFRow row = _rows.get(firstRowNum);
+            // Update the best fit column widths for auto-sizing just before the rows are flushed
+            _autoSizeColumnTracker.updateColumnWidths(row);
             _writer.writeRow(rowIndex, row);
             _rows.remove(firstRowNum);
             lastFlushedRowNumber = rowIndex;

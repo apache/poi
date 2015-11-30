@@ -24,6 +24,7 @@ import org.apache.poi.ss.usermodel.PrintSetup;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.SXSSFITestDataProvider;
+import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -31,6 +32,12 @@ import org.junit.Test;
 public final class TestSXSSFBugs extends BaseTestBugzillaIssues {
     public TestSXSSFBugs() {
         super(SXSSFITestDataProvider.instance);
+    }
+    
+    @Override
+    protected void trackColumnsForAutoSizingIfSXSSF(Sheet sheet) {
+        SXSSFSheet sxSheet = (SXSSFSheet) sheet;
+        sxSheet.trackAllColumnsForAutoSizing();
     }
 
     // override some tests which do not work for SXSSF

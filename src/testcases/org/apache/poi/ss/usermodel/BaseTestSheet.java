@@ -50,6 +50,10 @@ public abstract class BaseTestSheet {
     protected BaseTestSheet(ITestDataProvider testDataProvider) {
     	_testDataProvider = testDataProvider;
     }
+    
+    protected void trackColumnsForAutoSizingIfSXSSF(Sheet sheet) {
+        // do nothing for Sheet base class. This will be overridden for SXSSFSheets.
+    }
 
     @Test
     public void createRow() throws IOException {
@@ -994,6 +998,7 @@ public abstract class BaseTestSheet {
     public void bug48325() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet = wb.createSheet("Test");
+        trackColumnsForAutoSizingIfSXSSF(sheet);
         CreationHelper factory = wb.getCreationHelper();
 
         Row row = sheet.createRow(0);

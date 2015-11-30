@@ -56,6 +56,10 @@ public abstract class BaseTestSheetAutosizeColumn {
     protected BaseTestSheetAutosizeColumn(ITestDataProvider testDataProvider) {
         _testDataProvider = testDataProvider;
     }
+    
+    protected void trackColumnsForAutoSizingIfSXSSF(Sheet sheet) {
+        // do nothing for Sheet base class. This will be overridden for SXSSFSheets.
+    }
 
     @Test
     public void numericCells() throws Exception {
@@ -63,6 +67,7 @@ public abstract class BaseTestSheetAutosizeColumn {
         fixFonts(workbook);
         DataFormat df = workbook.getCreationHelper().createDataFormat();
         Sheet sheet = workbook.createSheet();
+        trackColumnsForAutoSizingIfSXSSF(sheet);
 
         Row row = sheet.createRow(0);
         row.createCell(0).setCellValue(0); // getCachedFormulaResult() returns 0 for not evaluated formula cells
@@ -104,6 +109,7 @@ public abstract class BaseTestSheetAutosizeColumn {
         Workbook workbook = _testDataProvider.createWorkbook();
         fixFonts(workbook);
         Sheet sheet = workbook.createSheet();
+        trackColumnsForAutoSizingIfSXSSF(sheet);
 
         Row row = sheet.createRow(0);
         row.createCell(0).setCellValue(0); // getCachedFormulaResult() returns 0 for not evaluated formula cells
@@ -135,6 +141,7 @@ public abstract class BaseTestSheetAutosizeColumn {
         Workbook workbook = _testDataProvider.createWorkbook();
         fixFonts(workbook);
         Sheet sheet = workbook.createSheet();
+        trackColumnsForAutoSizingIfSXSSF(sheet);
         DataFormat df = workbook.getCreationHelper().createDataFormat();
 
         CellStyle style1 = workbook.createCellStyle();
@@ -202,6 +209,7 @@ public abstract class BaseTestSheetAutosizeColumn {
         Workbook workbook = _testDataProvider.createWorkbook();
         fixFonts(workbook);
         Sheet sheet = workbook.createSheet();
+        trackColumnsForAutoSizingIfSXSSF(sheet);
         Row row = sheet.createRow(0);
         
         Font defaultFont = workbook.getFontAt((short)0);
@@ -237,6 +245,7 @@ public abstract class BaseTestSheetAutosizeColumn {
         Workbook workbook = _testDataProvider.createWorkbook();
         fixFonts(workbook);
         Sheet sheet = workbook.createSheet();
+        trackColumnsForAutoSizingIfSXSSF(sheet);
         Row row = sheet.createRow(0);
 
         CellStyle style1 = workbook.createCellStyle();
@@ -264,6 +273,7 @@ public abstract class BaseTestSheetAutosizeColumn {
         Workbook workbook = _testDataProvider.createWorkbook();
         fixFonts(workbook);
         Sheet sheet = workbook.createSheet();
+        trackColumnsForAutoSizingIfSXSSF(sheet);
 
         Row row = sheet.createRow(0);
         sheet.addMergedRegion(CellRangeAddress.valueOf("A1:B1"));
@@ -292,6 +302,7 @@ public abstract class BaseTestSheetAutosizeColumn {
        Workbook workbook = _testDataProvider.createWorkbook();
        fixFonts(workbook);
        Sheet sheet = workbook.createSheet();
+       trackColumnsForAutoSizingIfSXSSF(sheet);
        
        Row r0 = sheet.createRow(0);
        r0.createCell(0).setCellValue("I am ROW 0");

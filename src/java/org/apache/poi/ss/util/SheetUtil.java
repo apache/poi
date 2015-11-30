@@ -36,6 +36,7 @@ import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.util.Internal;
 
 
 /**
@@ -244,7 +245,8 @@ public class SheetUtil {
      * @param wb the workbook to get the default character width from
      * @return default character width in pixels
      */
-    private static int getDefaultCharWidth(final Workbook wb) {
+    @Internal
+    public static int getDefaultCharWidth(final Workbook wb) {
         Font defaultFont = wb.getFontAt((short) 0);
 
         AttributedString str = new AttributedString(String.valueOf(defaultChar));
