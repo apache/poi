@@ -59,6 +59,7 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
         return _height!=-1;
     }
 
+    @Override
     public int getOutlineLevel(){
         return _outlineLevel;
     }
@@ -92,6 +93,7 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
         this._collapsed = collapsed;
     }
 //begin of interface implementation
+    @Override
     public Iterator<Cell> iterator()
     {
         return new FilledCellIterator();
@@ -108,6 +110,7 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
      * @throws IllegalArgumentException if columnIndex < 0 or greater than the maximum number of supported columns
      * (255 for *.xls, 1048576 for *.xlsx)
      */
+    @Override
     public SXSSFCell createCell(int column)
     {
         return createCell(column,Cell.CELL_TYPE_BLANK);
@@ -124,6 +127,7 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
      * @throws IllegalArgumentException if columnIndex < 0 or greate than a maximum number of supported columns
      * (255 for *.xls, 1048576 for *.xlsx)
      */
+    @Override
     public SXSSFCell createCell(int column, int type)
     {
         checkBounds(column);
@@ -157,6 +161,7 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
      *
      * @param cell the cell to remove
      */
+    @Override
     public void removeCell(Cell cell)
     {
         int index=getCellIndex(cell);
@@ -182,6 +187,7 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
      * @param rowNum  the row number (0-based)
      * @throws IllegalArgumentException if rowNum < 0
      */
+    @Override
     public void setRowNum(int rowNum)
     {
         _sheet.changeRowNum(this,rowNum);
@@ -192,6 +198,7 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
      *
      * @return the row number (0 based)
      */
+    @Override
     public int getRowNum()
     {
         return _sheet.getRowNum(this);
@@ -205,6 +212,7 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
      * @return Cell representing that column or null if undefined.
      * @see #getCell(int, org.apache.poi.ss.usermodel.Row.MissingCellPolicy)
      */
+    @Override
     public SXSSFCell getCell(int cellnum) {
         if(cellnum < 0) throw new IllegalArgumentException("Cell index must be >= 0");
 
@@ -239,6 +247,7 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
      * @see Row#RETURN_BLANK_AS_NULL
      * @see Row#CREATE_NULL_AS_BLANK
      */
+    @Override
     public Cell getCell(int cellnum, MissingCellPolicy policy)
     {
         Cell cell = getCell(cellnum);
@@ -272,6 +281,7 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
      * @return short representing the first logical cell in the row,
      *  or -1 if the row does not contain any cells.
      */
+    @Override
     public short getFirstCellNum()
     {
         for(int i=0;i<=_maxColumn;i++)
@@ -298,6 +308,7 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
      * @return short representing the last logical cell in the row <b>PLUS ONE</b>,
      *   or -1 if the row does not contain any cells.
      */
+    @Override
     public short getLastCellNum()
     {
         return _maxColumn == -1 ? -1 : (short)(_maxColumn+1);
@@ -309,6 +320,7 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
      *
      * @return int representing the number of defined cells in the row.
      */
+    @Override
     public int getPhysicalNumberOfCells()
     {
         int count=0;
@@ -325,6 +337,7 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
      *
      * @param height  rowheight or 0xff for undefined (use sheet default)
      */
+    @Override
     public void setHeight(short height)
     {
         _height=height;
@@ -335,6 +348,7 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
      *
      * @param zHeight  height is zero or not.
      */
+    @Override
     public void setZeroHeight(boolean zHeight)
     {
         _zHeight=zHeight;
@@ -345,6 +359,7 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
      *
      * @return - zHeight height is zero or not.
      */
+    @Override
     public boolean getZeroHeight()
     {
         return _zHeight;
@@ -355,6 +370,7 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
      *
      * @param height the height in points. <code>-1</code>  resets to the default height
      */
+    @Override
     public void setHeightInPoints(float height)
     {
         if(height==-1)
@@ -369,6 +385,7 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
      *
      * @return row height measured in twips (1/20th of a point)
      */
+    @Override
     public short getHeight()
     {
         return (short)(_height==-1?getSheet().getDefaultRowHeightInPoints()*20:_height);
@@ -381,6 +398,7 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
      * @return row height measured in point size
      * @see Sheet#getDefaultRowHeightInPoints()
      */
+    @Override
     public float getHeightInPoints()
     {
         return (float)(_height==-1?getSheet().getDefaultRowHeightInPoints():_height/20.0);
@@ -391,6 +409,7 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
      *  do have whole-row styles. For those that do, you
      *  can get the formatting from {@link #getRowStyle()}
      */
+    @Override
     public boolean isFormatted() {
         return _style > -1;
     }
@@ -399,6 +418,7 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
      *  have one of these, so will return null. Call
      *  {@link #isFormatted()} to check first.
      */
+    @Override
     public CellStyle getRowStyle() {
        if(!isFormatted()) return null;
        
@@ -414,6 +434,7 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
      * Applies a whole-row cell styling to the row.
      * The row style can be cleared by passing in <code>null</code>.
      */
+    @Override
     public void setRowStyle(CellStyle style) {
        if(style == null) {
           _style = -1;
@@ -427,6 +448,7 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
      * @return Cell iterator of the physically defined cells.  Note element 4 may
      * actually be row cell depending on how many are defined!
      */
+    @Override
     public Iterator<Cell> cellIterator()
     {
         return iterator();
@@ -437,6 +459,7 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
      *
      * @return the Sheet that owns this row
      */
+    @Override
     public SXSSFSheet getSheet()
     {
         return _sheet;
