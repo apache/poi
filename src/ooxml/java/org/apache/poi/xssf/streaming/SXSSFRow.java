@@ -37,15 +37,17 @@ import org.apache.poi.util.Internal;
 */
 public class SXSSFRow implements Row, Comparable<SXSSFRow>
 {
-    private final SXSSFSheet _sheet;
+    private static final Boolean UNDEFINED = null;
+    
+    private final SXSSFSheet _sheet; // parent sheet
     private final SortedMap<Integer, SXSSFCell> _cells = new TreeMap<Integer, SXSSFCell>();
-    private short _style=-1;
-    private short _height=-1;
-    private boolean _zHeight = false;
+    private short _style = -1; // index of cell style in style table
+    private short _height = -1; // row height in twips (1/20 point)
+    private boolean _zHeight = false; // row zero-height (this is somehow different than being hidden)
     private int _outlineLevel = 0;   // Outlining level of the row, when outlining is on
     // use Boolean to have a tri-state for on/off/undefined 
-    private Boolean _hidden;
-    private Boolean _collapsed;
+    private Boolean _hidden = UNDEFINED;
+    private Boolean _collapsed = UNDEFINED;
 
     /**
      *
@@ -63,9 +65,6 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
         _sheet=sheet;
     }
     
-    /**
-     * @deprecated 3.14beta1 (circa 2015-11-30). Use {@link #cellIterator} instead.
-     */
     public Iterator<Cell> allCellsIterator()
     {
         return new CellIterator();
@@ -462,61 +461,52 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
 //end of interface implementation
 
 
-/** returns all filled cells (created via Row.createCell())*/
+    /**
+     * Create an iterator over the cells from [0, getLastCellNum()).
+     * Includes blank cells, excludes empty cells
+     * 
+     * @return an iterator over all filled cells (created via Row.createCell())
+     * @throws ConcurrentModificationException if cells are added, moved, or
+     * removed after the iterator is created.
+     */
     public class FilledCellIterator implements Iterator<Cell>
     {
-        int pos=0;
+        private final Iterator<SXSSFCell> iter = _cells.values().iterator();
 
-        FilledCellIterator(){
-            int maxColumn = getLastCellNum(); //last column PLUS ONE
-            for (int i = 0; i < maxColumn; i++) {
-                if (_cells.get(i) != null) {
-                    pos = i;
-                    break;
-                }
-            }
-        }
-
+        @Override
         public boolean hasNext()
         {
-            int maxColumn = getLastCellNum(); //last column PLUS ONE
-            return pos < maxColumn; 
+            return iter.hasNext();
         }
-        void advanceToNext()
-        {
-            int maxColumn = getLastCellNum(); //last column PLUS ONE
-            do {
-                pos++;
-            }
-            while (pos<maxColumn && _cells.get(pos)==null);
-        }
+        @Override
         public Cell next() throws NoSuchElementException
         {
-            if (hasNext())
-            {
-                Cell retval=_cells.get(pos);
-                advanceToNext();
-                return retval;
-            }
-            else
-            {
-                throw new NoSuchElementException();
-            }
+            return iter.next();
         }
+        @Override
         public void remove()
         {
             throw new UnsupportedOperationException();
         }
     }
-/** returns all cells including empty cells in which case "null" is returned*/
+    /**
+     * returns all cells including empty cells (<code>null</code> values are returned
+     * for empty cells).
+     * This method is not synchronized. This iterator should not be used after
+     * cells are added, moved, or removed, though a ConcurrentModificationException
+     * is NOT thrown.
+     */
     public class CellIterator implements Iterator<Cell>
     {
-        int pos=0;
+        final int maxColumn = getLastCellNum(); //last column PLUS ONE
+        int pos = 0;
+
+        @Override
         public boolean hasNext()
         {
-            int maxColumn = getLastCellNum(); //last column PLUS ONE
             return pos < maxColumn;
         }
+        @Override
         public Cell next() throws NoSuchElementException
         {
             if (hasNext())
@@ -524,6 +514,7 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
             else
                 throw new NoSuchElementException();
         }
+        @Override
         public void remove()
         {
             throw new UnsupportedOperationException();
@@ -577,7 +568,7 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
 
     @Override
     public int hashCode() {
-        return (getSheet().hashCode() << 16) + getRowNum();
+        return _cells.hashCode();
     }
 
 
