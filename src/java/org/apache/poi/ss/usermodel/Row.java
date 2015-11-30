@@ -226,11 +226,11 @@ public interface Row extends Iterable<Cell> {
         RETURN_BLANK_AS_NULL(),
         CREATE_NULL_AS_BLANK();
         
-    	private int NEXT_ID = 1;
-    	public final int id;
-    	private MissingCellPolicy() {
-    		this.id = NEXT_ID++;
-    	}
+        private int NEXT_ID = 1;
+        public final int id;
+        private MissingCellPolicy() {
+            this.id = NEXT_ID++;
+        }
     }
     /** Missing cells are returned as null, Blank cells are returned as normal */
     public static final MissingCellPolicy RETURN_NULL_AND_BLANK = MissingCellPolicy.RETURN_NULL_AND_BLANK;
