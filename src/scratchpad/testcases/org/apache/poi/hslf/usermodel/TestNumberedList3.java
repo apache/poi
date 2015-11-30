@@ -19,14 +19,20 @@
 
 package org.apache.poi.hslf.usermodel;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hslf.model.textproperties.TextPFException9;
 import org.apache.poi.hslf.model.textproperties.TextPropCollection;
-import org.apache.poi.hslf.record.*;
+import org.apache.poi.hslf.record.EscherTextboxWrapper;
+import org.apache.poi.hslf.record.StyleTextProp9Atom;
+import org.apache.poi.hslf.record.StyleTextPropAtom;
 import org.apache.poi.sl.usermodel.AutoNumberingScheme;
 import org.junit.Test;
 
@@ -43,7 +49,7 @@ public final class TestNumberedList3 {
     private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
 
     @Test
-    public void testNumberedList() throws Exception {
+    public void testNumberedList() throws IOException {
 		HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("numbers3.ppt"));
 		assertTrue("No Exceptions while reading file", true);
 
@@ -51,6 +57,7 @@ public final class TestNumberedList3 {
 		assertEquals(1, slides.size());
 		final HSLFSlide slide = slides.get(0);
 		checkSlide(slide);
+		ppt.close();
 	}
 	private void checkSlide(final HSLFSlide s) {
 		final StyleTextProp9Atom[] numberedListArray = s.getNumberedListInfo();

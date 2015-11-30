@@ -312,11 +312,21 @@ public interface TextParagraph<
     /**
      * Returns the alignment that is applied to the paragraph.
      *
-     * If this attribute is omitted, then a value of left is implied.
-     * @return ??? alignment that is applied to the paragraph
+     * If this attribute is omitted, then null is returned.
+     * User code can imply the value {@link org.apache.poi.sl.usermodel.TextParagraph.TextAlign#LEFT} then.
+     *
+     * @return alignment that is applied to the paragraph
      */
     TextAlign getTextAlign();
-    
+
+    /**
+     * Specifies the alignment that is to be applied to the paragraph.
+     * Possible values for this include left, right, centered, justified and distributed,
+     * see {@link org.apache.poi.sl.usermodel.TextParagraph.TextAlign}.
+     *
+     * @param align text align
+     */    
+    void setTextAlign(TextAlign align);
     
     /**
      * Returns the font alignment that is applied to the paragraph.

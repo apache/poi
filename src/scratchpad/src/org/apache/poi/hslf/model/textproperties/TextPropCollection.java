@@ -17,8 +17,13 @@
 
 package org.apache.poi.hslf.model.textproperties;
 
-import java.io.*;
-import java.util.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.hslf.record.StyleTextPropAtom;
@@ -239,6 +244,9 @@ public class TextPropCollection {
      * Clones the given text properties
      */
 	public void copy(TextPropCollection other) {
+	    if (other == null) {
+	        throw new HSLFException("trying to copy null TextPropCollection");
+	    }
 	    if (this == other) return;
         this.charactersCovered = other.charactersCovered;
         this.indentLevel = other.indentLevel;
@@ -260,12 +268,22 @@ public class TextPropCollection {
 		charactersCovered = textSize;
 	}
 
+	   /**
+     * Writes out to disk the header, and then all the properties
+     */
+    public void writeOut(OutputStream o) throws IOException {
+        writeOut(o, false);
+    }
+	
 	/**
 	 * Writes out to disk the header, and then all the properties
 	 */
-	public void writeOut(OutputStream o) throws IOException {
-		// First goes the number of characters we affect
-		StyleTextPropAtom.writeLittleEndian(charactersCovered,o);
+	public void writeOut(OutputStream o, boolean isMasterStyle) throws IOException {
+	    if (!isMasterStyle) {
+	        // First goes the number of characters we affect
+	        // MasterStyles don't have this field
+	        StyleTextPropAtom.writeLittleEndian(charactersCovered,o);
+	    }
 
 		// Then we have the indentLevel field if it's a paragraph collection
 		if (textPropType == TextPropType.paragraph && indentLevel > -1) {

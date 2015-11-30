@@ -68,6 +68,7 @@ import org.apache.poi.hslf.record.RecordTypes;
 import org.apache.poi.hslf.record.SlideListWithText;
 import org.apache.poi.hslf.record.SlideListWithText.SlideAtomsSet;
 import org.apache.poi.hslf.record.SlidePersistAtom;
+import org.apache.poi.hslf.record.TxMasterStyleAtom;
 import org.apache.poi.hslf.record.UserEditAtom;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
@@ -474,6 +475,23 @@ public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagrap
 	    // check for text paragraph modifications
 	    for (HSLFSlide sl : getSlides()) {
 	        writeDirtyParagraphs(sl);
+	    }
+
+	    for (HSLFSlideMaster sl : getSlideMasters()) {
+	        boolean isDirty = false;
+	        for (List<HSLFTextParagraph> paras : sl.getTextParagraphs()) {
+	            for (HSLFTextParagraph p : paras) {
+	                isDirty |= p.isDirty();
+	            }
+	        }
+	        if (isDirty) {
+	            for (TxMasterStyleAtom sa : sl.getTxMasterStyleAtoms()) {
+	                if (sa != null) {
+	                    // not all master style atoms are set - index 3 is typically null
+	                    sa.updateStyles();
+	                }
+	            }
+	        }
 	    }
 	    
 		_hslfSlideShow.write(out);

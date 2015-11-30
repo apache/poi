@@ -20,9 +20,11 @@ package org.apache.poi.hslf.usermodel;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.hslf.model.textproperties.TextProp;
 import org.apache.poi.hslf.model.textproperties.TextPropCollection;
 import org.apache.poi.hslf.record.*;
+import org.apache.poi.util.Internal;
 
 /**
  * SlideMaster determines the graphics, layout, and formatting for all the slides in a given presentation.
@@ -73,7 +75,7 @@ public final class HSLFSlideMaster extends HSLFMasterSheet {
 
     /**
      * Pickup a style attribute from the master.
-     * This is the "workhorse" which returns the default style attrubutes.
+     * This is the "workhorse" which returns the default style attributes.
      */
     public TextProp getStyleAttribute(int txtype, int level, String name, boolean isCharacter) {
         if (_txmaster.length <= txtype) return null;
@@ -102,25 +104,50 @@ public final class HSLFSlideMaster extends HSLFMasterSheet {
 
         return getStyleAttribute(txtype, level, name, isCharacter);
     }
-
+    
     /**
      * Assign SlideShow for this slide master.
-     * (Used interanlly)
      */
-    public void setSlideShow(HSLFSlideShow ss) {
+    @Internal
+    @Override
+    protected void setSlideShow(HSLFSlideShow ss) {
         super.setSlideShow(ss);
 
         //after the slide show is assigned collect all available style records
-        if (_txmaster == null) {
-            _txmaster = new TxMasterStyleAtom[9];
+        assert (_txmaster == null);
+        _txmaster = new TxMasterStyleAtom[9];
 
-            TxMasterStyleAtom txdoc = getSlideShow().getDocumentRecord().getEnvironment().getTxMasterStyleAtom();
-            _txmaster[txdoc.getTextType()] = txdoc;
+        TxMasterStyleAtom txdoc = getSlideShow().getDocumentRecord().getEnvironment().getTxMasterStyleAtom();
+        _txmaster[txdoc.getTextType()] = txdoc;
 
-            TxMasterStyleAtom[] txrec = ((MainMaster)getSheetContainer()).getTxMasterStyleAtoms();
-            for (int i = 0; i < txrec.length; i++) {
-                int txType = txrec[i].getTextType();
-                if(_txmaster[txType] == null) _txmaster[txType] = txrec[i];
+        TxMasterStyleAtom[] txrec = ((MainMaster)getSheetContainer()).getTxMasterStyleAtoms();
+        for (int i = 0; i < txrec.length; i++) {
+            int txType = txrec[i].getTextType();
+            if (txType < _txmaster.length && _txmaster[txType] == null) {
+                _txmaster[txType] = txrec[i];
+            }
+        }
+        
+        for (List<HSLFTextParagraph> paras : getTextParagraphs()) {
+            for (HSLFTextParagraph htp : paras) {
+                int txType = htp.getRunType();
+                if (txType >= _txmaster.length || _txmaster[txType] == null) {
+                    throw new HSLFException("Master styles not initialized");
+                }
+
+                int level = htp.getIndentLevel();
+
+                List<TextPropCollection> charStyles = _txmaster[txType].getCharacterStyles();
+                List<TextPropCollection> paragraphStyles = _txmaster[txType].getParagraphStyles();
+                if (charStyles == null || paragraphStyles == null ||
+                    charStyles.size() <= level || paragraphStyles.size() <= level) {
+                    throw new HSLFException("Master styles not initialized");
+                }
+                
+                htp.setMasterStyleReference(paragraphStyles.get(level));
+                for (HSLFTextRun htr : htp.getTextRuns()) {
+                    htr.setMasterStyleReference(charStyles.get(level));
+                }
             }
         }
     }
