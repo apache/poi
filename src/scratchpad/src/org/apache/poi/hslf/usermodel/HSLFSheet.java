@@ -27,6 +27,7 @@ import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherDgRecord;
 import org.apache.poi.ddf.EscherDggRecord;
 import org.apache.poi.ddf.EscherRecord;
+import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.hslf.record.CString;
 import org.apache.poi.hslf.record.ColorSchemeAtom;
 import org.apache.poi.hslf.record.OEPlaceholderAtom;
@@ -40,6 +41,7 @@ import org.apache.poi.sl.draw.Drawable;
 import org.apache.poi.sl.usermodel.PictureData;
 import org.apache.poi.sl.usermodel.ShapeType;
 import org.apache.poi.sl.usermodel.Sheet;
+import org.apache.poi.util.Internal;
 
 /**
  * This class defines the common format of "Sheets" in a powerpoint
@@ -119,9 +121,14 @@ public abstract class HSLFSheet implements HSLFShapeContainer, Sheet<HSLFShape,H
 
     /**
      * Set the SlideShow we're attached to.
-     * Also passes it on to our child RichTextRuns
+     * Also passes it on to our child text paragraphs
      */
-    public void setSlideShow(HSLFSlideShow ss) {
+    @Internal
+    protected void setSlideShow(HSLFSlideShow ss) {
+        if (_slideShow != null) {
+            throw new HSLFException("Can't change existing slideshow reference");
+        }
+        
         _slideShow = ss;
         List<List<HSLFTextParagraph>> trs = getTextParagraphs();
         if (trs == null) return;

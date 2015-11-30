@@ -31,6 +31,7 @@ import org.apache.poi.sl.draw.DrawPaint;
 import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
 import org.apache.poi.sl.usermodel.TextRun;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
@@ -66,9 +67,22 @@ public final class HSLFTextRun implements TextRun {
 	}
 
 	public void setCharacterStyle(TextPropCollection characterStyle) {
-	    assert(characterStyle != null);
-	    this.characterStyle = characterStyle;
+	    this.characterStyle.copy(characterStyle);
+	    this.characterStyle.updateTextSize(_runText.length());
 	}
+	
+    /**
+     * Setting a master style reference
+     *
+     * @param characterStyle the master style reference
+     * 
+     * @since 3.14-Beta1
+     */
+	@Internal
+    /* package */ void setMasterStyleReference(TextPropCollection characterStyle) {
+        this.characterStyle = characterStyle;
+    }
+ 
 	
 	/**
 	 * Supply the SlideShow we belong to

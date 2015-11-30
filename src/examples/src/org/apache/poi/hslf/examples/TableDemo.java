@@ -105,7 +105,7 @@ public final class TableDemo {
                 } else {
                     rt.getTextParagraph().setBullet(true);
                     rt.setFontSize(12d);
-                    rt.getTextParagraph().setAlignment(TextAlign.LEFT);
+                    rt.getTextParagraph().setTextAlign(TextAlign.LEFT);
                     cell.setHorizontalCentered(false);
                 }
                 cell.setVerticalAlignment(VerticalAlignment.MIDDLE);

@@ -163,14 +163,7 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
         return run;
     }
 
-    /**
-     * Returns the alignment that is applied to the paragraph.
-     *
-     * If this attribute is omitted, then null is returned.
-     * User code can imply the value {@link org.apache.poi.sl.usermodel.TextParagraph.TextAlign#LEFT} then.
-     *
-     * @return alignment that is applied to the paragraph
-     */
+    @Override
     public TextAlign getTextAlign(){
         ParagraphPropertyFetcher<TextAlign> fetcher = new ParagraphPropertyFetcher<TextAlign>(getIndentLevel()){
             public boolean fetch(CTTextParagraphProperties props){
@@ -186,14 +179,8 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
         return fetcher.getValue();
     }
 
-    /**
-     * Specifies the alignment that is to be applied to the paragraph.
-     * Possible values for this include left, right, centered, justified and distributed,
-     * see {@link org.apache.poi.sl.usermodel.TextParagraph.TextAlign}.
-     *
-     * @param align text align
-     */
-    public void setTextAlign(TextAlign align){
+    @Override
+    public void setTextAlign(TextAlign align) {
         CTTextParagraphProperties pr = _p.isSetPPr() ? _p.getPPr() : _p.addNewPPr();
         if(align == null) {
             if(pr.isSetAlgn()) pr.unsetAlgn();
@@ -816,6 +803,7 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
         CTPlaceholder ph = shape.getCTPlaceholder();
         if(ph == null){
             // if it is a plain text box then take defaults from presentation.xml
+            @SuppressWarnings("resource")
             XMLSlideShow ppt = sheet.getSlideShow();
             CTTextParagraphProperties themeProps = ppt.getDefaultParagraphStyle(getIndentLevel());
             if (themeProps != null) ok = visitor.fetch(themeProps);

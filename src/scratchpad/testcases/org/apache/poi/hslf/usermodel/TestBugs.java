@@ -23,6 +23,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.awt.Color;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -32,7 +33,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.poi.POIDataSamples;
 import org.apache.poi.ddf.AbstractEscherOptRecord;
 import org.apache.poi.ddf.EscherArrayProperty;
 import org.apache.poi.ddf.EscherColorRef;
@@ -54,6 +54,7 @@ import org.apache.poi.sl.usermodel.SlideShow;
 import org.apache.poi.sl.usermodel.SlideShowFactory;
 import org.apache.poi.sl.usermodel.TextBox;
 import org.apache.poi.sl.usermodel.TextParagraph;
+import org.apache.poi.sl.usermodel.TextParagraph.TextAlign;
 import org.apache.poi.sl.usermodel.TextRun;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;
@@ -67,8 +68,6 @@ import org.junit.Test;
  * @author Yegor Kozlov
  */
 public final class TestBugs {
-    private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
-
     /**
      * Bug 41384: Array index wrong in record creation
      */
@@ -680,7 +679,7 @@ public final class TestBugs {
                 HSLFTextParagraph tp = cell.getTextParagraphs().get(0);
                 tp.setBulletStyle('%', tp0.getBulletColor(), tp0.getBulletFont(), tp0.getBulletSize());
                 tp.setIndent(tp0.getIndent());
-                tp.setAlignment(tp0.getTextAlign());
+                tp.setTextAlign(tp0.getTextAlign());
                 tp.setIndentLevel(tp0.getIndentLevel());
                 tp.setSpaceAfter(tp0.getSpaceAfter());
                 tp.setSpaceBefore(tp0.getSpaceBefore());
@@ -729,7 +728,37 @@ public final class TestBugs {
         ppt2.close();
     }
 
+    @Test
+    public void bug47904() throws IOException {
+        HSLFSlideShow ppt1 = new HSLFSlideShow();
+        HSLFSlideMaster sm = ppt1.getSlideMasters().get(0);
+        HSLFAutoShape as = (HSLFAutoShape)sm.getShapes().get(0);
+        HSLFTextParagraph tp = as.getTextParagraphs().get(0);
+        HSLFTextRun tr = tp.getTextRuns().get(0);
+        tr.setFontFamily("Tahoma");
+        tr.setShadowed(true);
+        tr.setFontSize(44.);
+        tr.setFontColor(Color.red);
+        tp.setTextAlign(TextAlign.RIGHT);
+        ppt1.createSlide().addTitle().setText("foobaa");
+        
+        HSLFSlideShow ppt2 = HSLFTestDataSamples.writeOutAndReadBack(ppt1);
+        ppt1.close();
+        
+        HSLFTextShape ts = (HSLFTextShape)ppt2.getSlides().get(0).getShapes().get(0);
+        tp = ts.getTextParagraphs().get(0);
+        tr = tp.getTextRuns().get(0);
+        assertEquals(44., tr.getFontSize(), 0);
+        assertEquals("Tahoma", tr.getFontFamily());
+        Color colorAct = DrawPaint.applyColorTransform(tr.getFontColor().getSolidColor());
+        assertEquals(Color.red, colorAct);
+        assertEquals(TextAlign.RIGHT, tp.getTextAlign());
+        assertEquals("foobaa", tr.getRawText());
+        ppt2.close();
+    }
+    
     private static HSLFSlideShow open(String fileName) throws IOException {
-        return (HSLFSlideShow)SlideShowFactory.create(_slTests.getFile(fileName));
+        File sample = HSLFTestDataSamples.getSampleFile(fileName);
+        return (HSLFSlideShow)SlideShowFactory.create(sample);
     }
 }

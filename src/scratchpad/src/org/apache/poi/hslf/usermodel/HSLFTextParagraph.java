@@ -60,6 +60,7 @@ import org.apache.poi.sl.usermodel.AutoNumberingScheme;
 import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
 import org.apache.poi.sl.usermodel.TextParagraph;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -90,7 +91,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
     private final TextHeaderAtom _headerAtom;
     private TextBytesAtom _byteAtom;
     private TextCharsAtom _charAtom;
-    private final TextPropCollection _paragraphStyle = new TextPropCollection(1, TextPropType.paragraph);
+    private TextPropCollection _paragraphStyle = new TextPropCollection(1, TextPropType.paragraph);
 
     protected TextRulerAtom _ruler;
     protected final List<HSLFTextRun> _runs = new ArrayList<HSLFTextRun>();
@@ -151,6 +152,18 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
         _paragraphStyle.copy(paragraphStyle);
     }
 
+    /**
+     * Setting a master style reference
+     *
+     * @param paragraphStyle the master style reference
+     * 
+     * @since 3.14-Beta1
+     */
+    @Internal
+    /* package */ void setMasterStyleReference(TextPropCollection paragraphStyle) {
+        _paragraphStyle = paragraphStyle;
+    }
+    
     /**
      * Supply the Sheet we belong to, which might have an assigned SlideShow
      * Also passes it on to our child RichTextRuns
@@ -344,12 +357,8 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
         return (d != null) ? d : 12d;
     }
 
-    /**
-     * Sets the type of horizontal alignment for the paragraph.
-     *
-     * @param align - the type of alignment
-     */
-    public void setAlignment(org.apache.poi.sl.usermodel.TextParagraph.TextAlign align) {
+    @Override
+    public void setTextAlign(TextAlign align) {
         Integer alignInt = null;
         if (align != null) switch (align) {
             default:
@@ -365,7 +374,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
     }
 
     @Override
-    public org.apache.poi.sl.usermodel.TextParagraph.TextAlign getTextAlign() {
+    public TextAlign getTextAlign() {
         TextProp tp = getPropVal(_paragraphStyle, "alignment", this);
         if (tp == null) return null;
         switch (tp.getValue()) {
@@ -398,7 +407,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
         if (styleTextProp9Atom == null) return null;
         TextPFException9[] ant = styleTextProp9Atom.getAutoNumberTypes();
         int level = getIndentLevel();
-        if (ant == null || level  >= ant.length) return null;
+        if (ant == null || level == -1 || level  >= ant.length) return null;
         return ant[level].getAutoNumberScheme();
     }
 
@@ -1224,7 +1233,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
                 HSLFTextParagraph para = paragraphs.get(paraIdx);
                 List<HSLFTextRun> runs = para.getTextRuns();
                 trun = runs.get(runIdx);
-                int len = trun.getLength();
+                final int len = trun.getLength();
 
                 if (ccRun + len <= ccStyle) {
                     ccRun += len;
@@ -1239,11 +1248,8 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
                     ccRun += ccStyle - ccRun;
                 }
 
-                TextPropCollection pCopy = new TextPropCollection(0, TextPropType.character);
-                pCopy.copy(p);
-                trun.setCharacterStyle(pCopy);
+                trun.setCharacterStyle(p);
 
-                len = trun.getLength();
                 if (paraIdx == paragraphs.size()-1 && runIdx == runs.size()-1) {
                     if (csIdx < charStyles.size() - 1) {
                         // special case, empty trailing text run
@@ -1253,11 +1259,10 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
                         ccRun++;
                     } else {
                         // need to add +1 to the last run of the last paragraph
-                        len++;
+                        trun.getCharacterStyle().updateTextSize(trun.getLength()+1);
                         ccRun++;
                     }
                 }
-                pCopy.updateTextSize(len);
 
                 // need to compare it again, in case a run has been added after
                 if (++runIdx == runs.size()) {
