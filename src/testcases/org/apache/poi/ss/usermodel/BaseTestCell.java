@@ -23,6 +23,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.junit.Assume.assumeTrue;
 
 import java.io.IOException;
 import java.util.Calendar;
@@ -140,46 +141,92 @@ public abstract class BaseTestCell {
 	}
 
 	/**
-	 * test that Boolean and Error types (BoolErrRecord) are supported properly.
+	 * test that Boolean (BoolErrRecord) are supported properly.
+	 * @see testErr
 	 */
 	@Test
-	public void testBoolErr() throws Exception {
+	public void testBool() throws IOException {
 
 		Workbook wb1 = _testDataProvider.createWorkbook();
 		Sheet s = wb1.createSheet("testSheet1");
 		Row r;
 		Cell c;
+		// B1
 		r = s.createRow(0);
 		c=r.createCell(1);
-		//c.setCellType(HSSFCell.CELL_TYPE_BOOLEAN);
+		assumeTrue(0 == c.getRowIndex());
+		assumeTrue(1 == c.getColumnIndex());
 		c.setCellValue(true);
 
+		// C1
 		c=r.createCell(2);
-		//c.setCellType(HSSFCell.CELL_TYPE_BOOLEAN);
+		assumeTrue(0 == c.getRowIndex());
+		assumeTrue(2 == c.getColumnIndex());
 		c.setCellValue(false);
-
-		r = s.createRow(1);
-		c=r.createCell(1);
-		//c.setCellType(HSSFCell.CELL_TYPE_ERROR);
-		c.setCellErrorValue((byte)0);
-
-		c=r.createCell(2);
-		//c.setCellType(HSSFCell.CELL_TYPE_ERROR);
-		c.setCellErrorValue((byte)7);
 
 		Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1);
 		wb1.close();
-		s = wb2.getSheetAt(0);
+		
+		s = wb2.getSheet("testSheet1");
 		r = s.getRow(0);
+		assumeTrue("Row 1 should have 2 cells", 2 == r.getPhysicalNumberOfCells());
+		
 		c = r.getCell(1);
-		assertTrue("boolean value 0,1 = true",c.getBooleanCellValue());
+		assumeTrue(0 == c.getRowIndex());
+        assumeTrue(1 == c.getColumnIndex());
+		assertEquals(Cell.CELL_TYPE_BOOLEAN, c.getCellType());
+		assertEquals("B1 value", true, c.getBooleanCellValue());
+		
 		c = r.getCell(2);
-		assertTrue("boolean value 0,2 = false",c.getBooleanCellValue()==false);
-		r = s.getRow(1);
+		assumeTrue(0 == c.getRowIndex());
+		assumeTrue(2 == c.getColumnIndex());
+		assertEquals(Cell.CELL_TYPE_BOOLEAN, c.getCellType());
+		assertEquals("C1 value", false, c.getBooleanCellValue());
+		
+		wb2.close();
+	}
+	
+	/**
+	 * test that Error types (BoolErrRecord) are supported properly.
+	 * @see testBool
+	 */
+	@Test
+	public void testErr() throws IOException {
+
+		Workbook wb1 = _testDataProvider.createWorkbook();
+		Sheet s = wb1.createSheet("testSheet1");
+		Row r;
+		Cell c;
+
+		// B1
+		r = s.createRow(1);
+		c=r.createCell(1);
+		assumeTrue(0 == c.getRowIndex());
+		assumeTrue(1 == c.getColumnIndex());
+		c.setCellErrorValue(FormulaError.NULL.getCode());
+
+		// C1
+		c=r.createCell(2);
+		assumeTrue(0 == c.getRowIndex());
+		assumeTrue(2 == c.getColumnIndex());
+		c.setCellErrorValue(FormulaError.DIV0.getCode());
+
+		Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1);
+		wb1.close();
+
+		s = wb2.getSheet("testSheet1");
+
+		r = s.getRow(0);
+		assumeTrue("Row 1 should have 2 cells", 2 == r.getPhysicalNumberOfCells());
+
 		c = r.getCell(1);
-		assertTrue("boolean value 0,1 = 0",c.getErrorCellValue() == 0);
+		assertEquals(Cell.CELL_TYPE_ERROR, c.getCellType());
+		assertEquals("B2 value == #NULL!", FormulaError.NULL.getCode(), c.getErrorCellValue());
+
 		c = r.getCell(2);
-		assertTrue("boolean value 0,2 = 7",c.getErrorCellValue() == 7);
+		assertEquals(Cell.CELL_TYPE_ERROR, c.getCellType());
+		assertEquals("C2 value == #DIV/0!", FormulaError.DIV0.getCode(), c.getErrorCellValue());
+
 		wb2.close();
 	}
 
