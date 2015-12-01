@@ -84,7 +84,7 @@ public abstract class HSLFPictureData implements PictureData {
     }
 
     public void setRawData(byte[] data){
-        rawdata = data;
+        rawdata = (data == null) ? null : data.clone();
     }
 
     /**

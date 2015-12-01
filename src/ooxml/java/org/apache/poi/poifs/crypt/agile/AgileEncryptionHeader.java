@@ -111,7 +111,7 @@ public class AgileEncryptionHeader extends EncryptionHeader {
     }
 
     protected void setEncryptedHmacKey(byte[] encryptedHmacKey) {
-        this.encryptedHmacKey = encryptedHmacKey;
+        this.encryptedHmacKey = (encryptedHmacKey == null) ? null : encryptedHmacKey.clone();
     }
 
     public byte[] getEncryptedHmacValue() {
@@ -119,6 +119,6 @@ public class AgileEncryptionHeader extends EncryptionHeader {
     }
 
     protected void setEncryptedHmacValue(byte[] encryptedHmacValue) {
-        this.encryptedHmacValue = encryptedHmacValue;
+        this.encryptedHmacValue = (encryptedHmacValue == null) ? null : encryptedHmacValue.clone();
     }
 }

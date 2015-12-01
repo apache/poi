@@ -114,15 +114,15 @@ public abstract class Decryptor {
     }
 
     protected void setVerifier(byte[] verifier) {
-        this.verifier = verifier;
+        this.verifier = (verifier == null) ? null : verifier.clone();
     }
 
     protected void setIntegrityHmacKey(byte[] integrityHmacKey) {
-        this.integrityHmacKey = integrityHmacKey;
+        this.integrityHmacKey = (integrityHmacKey == null) ? null : integrityHmacKey.clone();
     }
 
     protected void setIntegrityHmacValue(byte[] integrityHmacValue) {
-        this.integrityHmacValue = integrityHmacValue;
+        this.integrityHmacValue = (integrityHmacValue == null) ? null : integrityHmacValue.clone();
     }
 
     protected int getBlockSizeInBytes() {

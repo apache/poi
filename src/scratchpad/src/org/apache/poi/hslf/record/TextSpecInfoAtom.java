@@ -17,10 +17,13 @@
 
 package org.apache.poi.hslf.record;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianByteArrayInputStream;
 
@@ -136,7 +139,7 @@ public final class TextSpecInfoAtom extends RecordAtom {
             try {
                 run.writeOut(bos);
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                throw new HSLFException(e);
             }
         }
         _data = bos.toByteArray();

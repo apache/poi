@@ -46,7 +46,7 @@ public class TextPFException9 {
 	private final Short autoNumberStartNumber;
 	private final static Short DEFAULT_START_NUMBER = 1;
 	private final int recordLength;
-	public TextPFException9(final byte[] source, final int startIndex) {
+	public TextPFException9(final byte[] source, final int startIndex) { // NOSONAR
 		//this.mask1 = source[startIndex];
 		//this.mask2 = source[startIndex + 1];
 		this.mask3 = source[startIndex + 2];
