@@ -135,7 +135,7 @@ public abstract class EncryptionHeader {
     }
     
     protected void setKeySalt(byte salt[]) {
-        this.keySalt = salt;
+        this.keySalt = (salt == null) ? null : salt.clone();
     }
 
     /**

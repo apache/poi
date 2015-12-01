@@ -91,7 +91,7 @@ public class DataSpaceMapUtils {
         DataSpaceMapEntry entries[];
         
         public DataSpaceMap(DataSpaceMapEntry entries[]) {
-            this.entries = entries;
+            this.entries = entries.clone();
         }
         
         public DataSpaceMap(LittleEndianInput is) {
@@ -113,13 +113,13 @@ public class DataSpaceMapUtils {
     }
     
     public static class DataSpaceMapEntry implements EncryptionRecord {
-        int referenceComponentType[];
-        String referenceComponent[];
-        String dataSpaceName;
+        final int referenceComponentType[];
+        final String referenceComponent[];
+        final String dataSpaceName;
         
         public DataSpaceMapEntry(int referenceComponentType[], String referenceComponent[], String dataSpaceName) {
-            this.referenceComponentType = referenceComponentType;
-            this.referenceComponent = referenceComponent;
+            this.referenceComponentType = referenceComponentType.clone();
+            this.referenceComponent = referenceComponent.clone();
             this.dataSpaceName = dataSpaceName;
         }
         
@@ -152,7 +152,7 @@ public class DataSpaceMapUtils {
         String transformer[];
         
         public DataSpaceDefinition(String transformer[]) {
-            this.transformer = transformer;
+            this.transformer = transformer.clone();
         }
         
         public DataSpaceDefinition(LittleEndianInput is) {

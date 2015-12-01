@@ -305,7 +305,7 @@ public class TextSpecInfoRun {
      * @param smartTagsBytes the unparsed smart tags, null to unset
      */
     public void setSmartTagsBytes(byte[] smartTagsBytes) {
-        this.smartTagsBytes = smartTagsBytes;
+        this.smartTagsBytes = (smartTagsBytes == null) ? null : smartTagsBytes.clone();
         mask = smartTagFld.setBoolean(mask, smartTagsBytes != null);
     }
     

@@ -247,7 +247,7 @@ public abstract class RecordContainer extends Record
      * @param records   the new child records
      */
     public void setChildRecord(Record[] records) {
-        this._children = records;
+        this._children = records.clone();
     }
 
 	/* ===============================================================

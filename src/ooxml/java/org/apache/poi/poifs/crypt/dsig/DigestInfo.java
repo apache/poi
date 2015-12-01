@@ -43,7 +43,7 @@ public class DigestInfo implements Serializable {
      * @param description
      */
     public DigestInfo(byte[] digestValue, HashAlgorithm hashAlgo, String description) {
-        this.digestValue = digestValue;
+        this.digestValue = digestValue.clone();
         this.hashAlgo = hashAlgo;
         this.description = description;
     }

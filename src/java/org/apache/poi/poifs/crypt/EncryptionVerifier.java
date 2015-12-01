@@ -100,19 +100,19 @@ public abstract class EncryptionVerifier {
     }
 
     protected void setSalt(byte[] salt) {
-        this.salt = salt;
+        this.salt = (salt == null) ? null : salt.clone();
     }
 
     protected void setEncryptedVerifier(byte[] encryptedVerifier) {
-        this.encryptedVerifier = encryptedVerifier;
+        this.encryptedVerifier = (encryptedVerifier == null) ? null : encryptedVerifier.clone();
     }
 
     protected void setEncryptedVerifierHash(byte[] encryptedVerifierHash) {
-        this.encryptedVerifierHash = encryptedVerifierHash;
+        this.encryptedVerifierHash = (encryptedVerifierHash == null) ? null : encryptedVerifierHash.clone();
     }
 
     protected void setEncryptedKey(byte[] encryptedKey) {
-        this.encryptedKey = encryptedKey;
+        this.encryptedKey = (encryptedKey == null) ? null : encryptedKey.clone();
     }
 
     protected void setSpinCount(int spinCount) {
