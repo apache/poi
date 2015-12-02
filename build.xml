@@ -1811,6 +1811,8 @@ under the License.
         <taskdef name="forbiddenapis" 
                  classname="de.thetaphi.forbiddenapis.ant.AntTask" 
                  classpath="${forbidden.jar}"/>
+
+        <!-- first check rules that apply to all the source code -->
         <forbiddenapis 
                  internalRuntimeForbidden="true" 
                  classpathref="forbiddenapis.classpath"
@@ -1837,6 +1839,20 @@ under the License.
             <fileset dir="${scratchpad.output.test.dir}"/>
             <fileset dir="${excelant.output.test.dir}"/>
             -->
+        </forbiddenapis>
+
+        <!-- then check some advanced rules which we only apply to the core code and not tests or examples -->
+        <forbiddenapis 
+                 internalRuntimeForbidden="true" 
+                 classpathref="forbiddenapis.classpath"
+                 suppressAnnotation="org.apache.poi.util.SuppressForbidden"
+            >
+            <signaturesFileset file="src/resources/devtools/forbidden-signatures-prod.txt"/>
+            <!-- sources -->
+            <fileset dir="${main.output.dir}"/>
+            <fileset dir="${ooxml.output.dir}"/>
+            <fileset dir="${scratchpad.output.dir}"/>
+            <fileset dir="${excelant.output.dir}"/>
         </forbiddenapis>
     </target>
 

@@ -659,9 +659,9 @@ public class SignatureInfo implements SignatureConfigurable {
      * @param other the reference to wrap, if null
      * @return if other is null, an empty lists is returned, otherwise other is returned
      */
-    @SuppressWarnings("unchecked")
     private static <T> List<T> safe(List<T> other) {
-        return other == null ? Collections.EMPTY_LIST : other;
+        List<T> emptyList = Collections.emptyList();
+        return other == null ? emptyList : other;
     }
 
     private void brokenJvmWorkaround(XMLSignContext context) {
