@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigInteger;
 import java.net.HttpURLConnection;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.URL;
@@ -121,7 +122,7 @@ public class TSPTimeStampService implements TimeStampService {
             URL proxyUrl = new URL(signatureConfig.getProxyUrl());
             String host = proxyUrl.getHost();
             int port = proxyUrl.getPort();
-            proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(host, (port == -1 ? 80 : port)));
+            proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(InetAddress.getByName(host), (port == -1 ? 80 : port)));
         }
         
         HttpURLConnection huc = (HttpURLConnection)new URL(signatureConfig.getTspUrl()).openConnection(proxy);
