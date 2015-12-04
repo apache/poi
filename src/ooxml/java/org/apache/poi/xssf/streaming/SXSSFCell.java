@@ -33,6 +33,7 @@ import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.LocaleUtil;
@@ -81,6 +82,14 @@ public class SXSSFCell implements Cell {
     public int getRowIndex()
     {
         return _row.getRowNum();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public CellAddress getAddress() {
+        return new CellAddress(this);
     }
 
     /**
@@ -564,15 +573,12 @@ public class SXSSFCell implements Cell {
     }
 
     /**
-     * Sets this cell as the active cell for the worksheet
+     * {@inheritDoc}
      */
-    @NotImplemented
     @Override
     public void setAsActiveCell()
     {
-        throw new RuntimeException("NotImplemented");
-        //TODO: What needs to be done here? Is there a "the active cell" at the sheet or even the workbook level?
-        //getRow().setAsActiveCell(this);
+        getSheet().setActiveCell(getAddress());
     }
 
     /**

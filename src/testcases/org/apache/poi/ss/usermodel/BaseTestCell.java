@@ -936,4 +936,22 @@ public abstract class BaseTestCell {
         }
         wb.close();
     }
+
+    /**
+     * Tests that the setAsActiveCell and getActiveCell function pairs work together
+     */
+    @Test
+    public void setAsActiveCell() throws IOException {
+        Workbook wb = _testDataProvider.createWorkbook();
+        Sheet sheet = wb.createSheet();
+        Row row = sheet.createRow(0);
+        Cell A1 = row.createCell(0);
+        Cell B1 = row.createCell(1);
+
+        A1.setAsActiveCell();
+        assertEquals(A1.getAddress(), sheet.getActiveCell());
+
+        B1.setAsActiveCell();
+        assertEquals(B1.getAddress(), sheet.getActiveCell());
+    }
 }

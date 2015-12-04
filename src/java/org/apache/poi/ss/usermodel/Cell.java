@@ -21,6 +21,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import org.apache.poi.ss.formula.FormulaParseException;
+import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
 
 /**
@@ -348,6 +349,14 @@ public interface Cell {
      * Sets this cell as the active cell for the worksheet
      */
     void setAsActiveCell();
+
+   /**
+     * Gets the address of this cell
+     *
+     * @return <code>A1</code> style address of this cell
+     * @since 3.14beta2
+     */
+    CellAddress getAddress();
 
     /**
      * Assign a comment to this cell

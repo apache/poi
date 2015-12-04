@@ -1874,4 +1874,20 @@ public class SXSSFSheet implements Sheet, Cloneable
     public int getColumnOutlineLevel(int columnIndex) {
         return _sh.getColumnOutlineLevel(columnIndex);
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public CellAddress getActiveCell() {
+        return _sh.getActiveCell();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setActiveCell(CellAddress addr) {
+        _sh.setActiveCell(addr);
+    }
 }

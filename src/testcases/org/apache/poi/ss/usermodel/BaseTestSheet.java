@@ -1152,4 +1152,29 @@ public abstract class BaseTestSheet {
         assertTrue(sheet.getMergedRegions().isEmpty());
         wb.close();
     }
+
+    /**
+     * Tests that the setAsActiveCell and getActiveCell function pairs work together
+     */
+    @Test
+    public void setActiveCell() throws IOException {
+        Workbook wb1 = _testDataProvider.createWorkbook();
+        Sheet sheet = wb1.createSheet();
+        CellAddress B42 = new CellAddress("B42");
+        
+        // active cell behavior is undefined if not set.
+        // HSSFSheet defaults to A1 active cell, while XSSFSheet defaults to null.
+        if (sheet.getActiveCell() != null && !sheet.getActiveCell().equals(CellAddress.A1)) {
+            fail("If not set, active cell should default to null or A1");
+        }
+
+        sheet.setActiveCell(B42);
+
+        Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1);
+
+        assertEquals(B42, sheet.getActiveCell());
+
+        wb1.close();
+        wb2.close();
+    }
 }

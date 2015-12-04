@@ -50,6 +50,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.AreaReference;
+import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.CellUtil;
@@ -235,9 +236,10 @@ public final class TestXSSFSheet extends BaseTestSheet {
     public void getActiveCell() throws IOException {
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheet = workbook.createSheet();
-        sheet.setActiveCell("R5");
+        CellAddress R5 = new CellAddress("R5");
+        sheet.setActiveCell(R5);
 
-        assertEquals("R5", sheet.getActiveCell());
+        assertEquals(R5, sheet.getActiveCell());
         workbook.close();
     }
 

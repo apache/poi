@@ -1118,4 +1118,20 @@ public interface Sheet extends Iterable<Row> {
      * @return Hyperlinks for the sheet
      */
     public List<? extends Hyperlink> getHyperlinkList();
+
+    /**
+     * Return location of the active cell, e.g. <code>A1</code>.
+     *
+     * @return the location of the active cell.
+     * @since 3.14beta2
+     */
+    public CellAddress getActiveCell();
+
+    /**
+      * Sets location of the active cell
+      *
+      * @param cellRef the location of the active cell, e.g. <code>A1</code>.
+      * @since 3.14beta2
+      */
+    public void setActiveCell(CellAddress addr);
 }
