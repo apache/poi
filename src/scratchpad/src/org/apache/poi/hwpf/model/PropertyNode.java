@@ -177,8 +177,8 @@ public abstract class PropertyNode<T extends PropertyNode<T>>  implements Compar
     return false;
   }
 
-  public T clone()
-    throws CloneNotSupportedException
+  @SuppressWarnings("unchecked")
+  public T clone() throws CloneNotSupportedException
   {
     return (T) super.clone();
   }

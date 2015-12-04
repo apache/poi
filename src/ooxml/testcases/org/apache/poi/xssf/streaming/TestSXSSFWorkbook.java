@@ -38,6 +38,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.SXSSFITestDataProvider;
+import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.After;
@@ -85,12 +86,10 @@ public final class TestSXSSFWorkbook extends BaseTestWorkbook {
     public void existingWorkbook() throws IOException {
     	XSSFWorkbook xssfWb1 = new XSSFWorkbook();
     	xssfWb1.createSheet("S1");
-    	@SuppressWarnings("resource")
         SXSSFWorkbook wb1 = new SXSSFWorkbook(xssfWb1);
-    	XSSFWorkbook xssfWb2 = (XSSFWorkbook) SXSSFITestDataProvider.instance.writeOutAndReadBack(wb1);
+    	XSSFWorkbook xssfWb2 = SXSSFITestDataProvider.instance.writeOutAndReadBack(wb1);
     	assertTrue(wb1.dispose());
 
-        @SuppressWarnings("resource")
         SXSSFWorkbook wb2 = new SXSSFWorkbook(xssfWb2);
     	assertEquals(1, wb2.getNumberOfSheets());
     	Sheet sheet  = wb2.getSheetAt(0);
@@ -99,11 +98,12 @@ public final class TestSXSSFWorkbook extends BaseTestWorkbook {
 	    assertTrue(wb2.dispose());
 	    xssfWb2.close();
 	    xssfWb1.close();
+	    
+	    wb2.close();
     }
 
     @Test
     public void useSharedStringsTable() throws Exception {
-        @SuppressWarnings("resource")
         SXSSFWorkbook wb = new SXSSFWorkbook(null, 10, false, true);
 
         SharedStringsTable sss =  POITestCase.getFieldValue(SXSSFWorkbook.class, wb, SharedStringsTable.class, "_sharedStringSource");
@@ -116,7 +116,7 @@ public final class TestSXSSFWorkbook extends BaseTestWorkbook {
         row.createCell(1).setCellValue("B");
         row.createCell(2).setCellValue("A");
 
-        XSSFWorkbook xssfWorkbook = (XSSFWorkbook) SXSSFITestDataProvider.instance.writeOutAndReadBack(wb);
+        XSSFWorkbook xssfWorkbook = SXSSFITestDataProvider.instance.writeOutAndReadBack(wb);
         sss = POITestCase.getFieldValue(SXSSFWorkbook.class, wb, SharedStringsTable.class, "_sharedStringSource");
         assertEquals(2, sss.getUniqueCount());
         assertTrue(wb.dispose());
@@ -147,9 +147,8 @@ public final class TestSXSSFWorkbook extends BaseTestWorkbook {
     	Row row = sheet.createRow(1);
     	Cell cell = row.createCell(1);
     	cell.setCellValue("value 2_1_1");
-    	@SuppressWarnings("resource")
         SXSSFWorkbook wb1 = new SXSSFWorkbook(xssfWb1);
-    	XSSFWorkbook xssfWb2 = (XSSFWorkbook) SXSSFITestDataProvider.instance.writeOutAndReadBack(wb1);
+    	XSSFWorkbook xssfWb2 = SXSSFITestDataProvider.instance.writeOutAndReadBack(wb1);
         assertTrue(wb1.dispose());
         xssfWb1.close();
 
@@ -172,7 +171,7 @@ public final class TestSXSSFWorkbook extends BaseTestWorkbook {
     	Cell cell3_1_1 = row3_1.createCell(1);
     	cell3_1_1.setCellValue("value 3_1_1");
 
-    	XSSFWorkbook xssfWb3 = (XSSFWorkbook) SXSSFITestDataProvider.instance.writeOutAndReadBack(wb2);
+    	XSSFWorkbook xssfWb3 = SXSSFITestDataProvider.instance.writeOutAndReadBack(wb2);
     	wb2.close();
     	
     	assertEquals(3, xssfWb3.getNumberOfSheets());
@@ -239,7 +238,7 @@ public final class TestSXSSFWorkbook extends BaseTestWorkbook {
         //Test escaping of Unicode control characters
         wb = new SXSSFWorkbook();
         wb.createSheet("S1").createRow(0).createCell(0).setCellValue("value\u0019");
-        XSSFWorkbook xssfWorkbook = (XSSFWorkbook) SXSSFITestDataProvider.instance.writeOutAndReadBack(wb);
+        XSSFWorkbook xssfWorkbook = SXSSFITestDataProvider.instance.writeOutAndReadBack(wb);
         Cell cell = xssfWorkbook.getSheet("S1").getRow(0).getCell(0);
         assertEquals("value?", cell.getStringCellValue());
 
@@ -250,7 +249,6 @@ public final class TestSXSSFWorkbook extends BaseTestWorkbook {
 
     @Test
     public void gzipSheetdataWriter() throws IOException {
-        @SuppressWarnings("resource")
         SXSSFWorkbook wb = new SXSSFWorkbook();
         wb.setCompressTempFiles(true);
         int rowNum = 1000;
@@ -270,7 +268,7 @@ public final class TestSXSSFWorkbook extends BaseTestWorkbook {
             }
         }
 
-        XSSFWorkbook xwb = (XSSFWorkbook)SXSSFITestDataProvider.instance.writeOutAndReadBack(wb);
+        XSSFWorkbook xwb = SXSSFITestDataProvider.instance.writeOutAndReadBack(wb);
         for(int i = 0; i < sheetNum; i++){
             Sheet sh = xwb.getSheetAt(i);
             assertEquals("sheet" + i, sh.getSheetName());
@@ -322,7 +320,6 @@ public final class TestSXSSFWorkbook extends BaseTestWorkbook {
         }
     }
 
-    @SuppressWarnings("resource")
     @Test
     public void workbookDispose()
     {
@@ -337,8 +334,8 @@ public final class TestSXSSFWorkbook extends BaseTestWorkbook {
 
     }
 
-    // currently writing the same sheet multiple times is not supported...
-    @Ignore
+    @Ignore("currently writing the same sheet multiple times is not supported...")
+    @Test
     public void bug53515() throws Exception {
         Workbook wb1 = new SXSSFWorkbook(10);
         populateWorkbook(wb1);
@@ -350,10 +347,9 @@ public final class TestSXSSFWorkbook extends BaseTestWorkbook {
         wb1.close();
     }
 
-    // Crashes the JVM because of documented JVM behavior with concurrent writing/reading of zip-files
-    // See http://www.oracle.com/technetwork/java/javase/documentation/overview-156328.html
-    @SuppressWarnings("resource")
-    @Ignore
+    @Ignore("Crashes the JVM because of documented JVM behavior with concurrent writing/reading of zip-files, "
+            + "see http://www.oracle.com/technetwork/java/javase/documentation/overview-156328.html")
+    @Test
     public void bug53515a() throws Exception {
         File out = new File("Test.xlsx");
         out.delete();
@@ -411,5 +407,32 @@ public final class TestSXSSFWorkbook extends BaseTestWorkbook {
                         + ".write() with exception " + e.getMessage(), e);
             }
         }
+    }
+
+    @Ignore("Just a local test for http://stackoverflow.com/questions/33627329/apache-poi-streaming-api-using-xssf-template")
+    @Test
+    public void testTemplateFile() throws IOException {
+        XSSFWorkbook workBook = XSSFTestDataSamples.openSampleWorkbook("sample.xlsx");
+        SXSSFWorkbook streamingWorkBook = new SXSSFWorkbook(workBook,10);
+        Sheet sheet = streamingWorkBook.getSheet("Sheet1");
+        for(int rowNum = 10;rowNum < 1000000;rowNum++) {
+            Row row = sheet.createRow(rowNum);
+            for(int cellNum = 0;cellNum < 700;cellNum++) {
+                Cell cell = row.createCell(cellNum);
+                cell.setCellValue("somevalue");
+            }
+            
+            if(rowNum % 100 == 0) {
+                System.out.print(".");
+                if(rowNum % 10000 == 0) {
+                    System.out.println(rowNum);
+                }
+            }
+        }
+
+        streamingWorkBook.write(new FileOutputStream("C:\\temp\\streaming.xlsx"));
+        
+        streamingWorkBook.close();
+        workBook.close();
     }
 }
