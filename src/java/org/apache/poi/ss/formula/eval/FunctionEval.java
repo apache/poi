@@ -54,14 +54,17 @@ public final class FunctionEval {
      */
     protected static final Function[] functions = produceFunctions();
 
+    /**
+     * @see https://www.openoffice.org/sc/excelfileformat.pdf
+     */
     private static Function[] produceFunctions() {
         Function[] retval = new Function[368];
 
         retval[0] = new Count();
-        retval[FunctionID.IF] = new IfFunc();
+        retval[FunctionID.IF] = new IfFunc(); //nominally 1
         retval[2] = LogicalFunction.ISNA;
         retval[3] = LogicalFunction.ISERROR;
-        retval[FunctionID.SUM] = AggregateFunction.SUM;
+        retval[FunctionID.SUM] = AggregateFunction.SUM; //nominally 4
         retval[5] = AggregateFunction.AVERAGE;
         retval[6] = AggregateFunction.MIN;
         retval[7] = AggregateFunction.MAX;
@@ -97,11 +100,19 @@ public final class FunctionEval {
         retval[37] = BooleanFunction.OR;
         retval[38] = BooleanFunction.NOT;
         retval[39] = NumericFunction.MOD;
-
+        // 40: DCOUNT
+        // 41: DSUM
+        // 42: DAVERAGE
         retval[43] = new DStarRunner(DStarRunner.DStarAlgorithmEnum.DMIN);
-
+        // 44: DMAX
+        // 45: DSTDEV
         retval[46] = AggregateFunction.VAR;
+        // 47: DVAR
         retval[48] = TextFunction.TEXT;
+        // 49: LINEST
+        // 50: TREND
+        // 51: LOGEST
+        // 52: GROWTH
 
         retval[56] = FinanceFunction.PV;
         retval[57] = FinanceFunction.FV;
@@ -122,17 +133,20 @@ public final class FunctionEval {
         retval[72] = CalendarFieldFunction.MINUTE;
         retval[73] = CalendarFieldFunction.SECOND;
         retval[74] = new Now();
-
+        // 75: AREAS
         retval[76] = new Rows();
         retval[77] = new Columns();
+        retval[FunctionID.OFFSET] = new Offset(); //nominally 78
+
         retval[82] = TextFunction.SEARCH;
-        retval[FunctionID.OFFSET] = new Offset();
-        retval[82] = TextFunction.SEARCH;
+        // 83: TRANSPOSE
+
+        // 86: TYPE
 
         retval[97] = NumericFunction.ATAN2;
         retval[98] = NumericFunction.ASIN;
         retval[99] = NumericFunction.ACOS;
-        retval[FunctionID.CHOOSE] = new Choose();
+        retval[FunctionID.CHOOSE] = new Choose(); //nominally 100
         retval[101] = new Hlookup();
         retval[102] = new Vlookup();
 
@@ -162,7 +176,8 @@ public final class FunctionEval {
 
         retval[FunctionID.INDIRECT] = null; // Indirect.evaluate has different signature
 
-        retval[162] = TextFunction.CLEAN;    
+        retval[162] = TextFunction.CLEAN;
+
         retval[167] = new IPMT();
         retval[168] = new PPMT();
         retval[169] = new Counta();
@@ -171,16 +186,29 @@ public final class FunctionEval {
         retval[184] = NumericFunction.FACT;
 
         retval[190] = LogicalFunction.ISNONTEXT;
+
         retval[194] = AggregateFunction.VARP;
+
         retval[197] = NumericFunction.TRUNC;
         retval[198] = LogicalFunction.ISLOGICAL;
 
+        //204: USDOLLAR (YEN in BIFF3)
+        //205: FINDB
+        //206: SEARCHB
+        //207: REPLACEB
+        //208: LEFTB
+        //209: RIGHTB
+        //210: MIDB
+        //211: LENB
         retval[212] = NumericFunction.ROUNDUP;
         retval[213] = NumericFunction.ROUNDDOWN;
+        //214: ASC
+        //215: DBCS (JIS in BIFF3)
         retval[216] = new Rank();
         retval[219] = new Address();
         retval[220] = new Days360();
         retval[221] = new Today();
+        //222: VBD
 
         retval[227] = AggregateFunction.MEDIAN;
         retval[228] = new Sumproduct();
@@ -190,61 +218,107 @@ public final class FunctionEval {
         retval[232] = NumericFunction.ASINH;
         retval[233] = NumericFunction.ACOSH;
         retval[234] = NumericFunction.ATANH;
-
         retval[235] = new DStarRunner(DStarRunner.DStarAlgorithmEnum.DGET);
 
-        retval[FunctionID.EXTERNAL_FUNC] = null; // ExternalFunction is a FreeREfFunction
+        // 244: INFO
+
+        // 247: DB
+        
+        retval[FunctionID.EXTERNAL_FUNC] = null; // ExternalFunction is a FreeRefFunction, nominally 255
 
         retval[261] = new Errortype();
 
         retval[269] = AggregateFunction.AVEDEV;
-
+        // 270: BETADIST
+        // 271: GAMMALN
+        // 272: BETAINV
+        // 273: BINOMDIST
+        // 274: CHIDIST
+        // 275: CHIINV
         retval[276] = NumericFunction.COMBIN;
-
+        // 277: CONFIDENCE
+        // 278:CRITBINOM
         retval[279] = new Even();
-
+        // 280: EXPONDIST
+        // 281: FDIST
+        // 282: FINV
+        // 283: FISHER
+        // 284: FISHERINV
         retval[285] = NumericFunction.FLOOR;
-
+        // 286: GAMMADIST
+        // 287: GAMMAINV
         retval[288] = NumericFunction.CEILING;
-
+        // 289: HYPGEOMDIST
+        // 290: LOGNORMDIST
+        // 291: LOGINV
+        // 292: NEGBINOMDIST
+        // 293: NORMDIST
+        // 294: NORMSDIST
+        // 295: NORMINV
+        // 296: NORMSINV
+        // 297: STANDARDIZE
         retval[298] = new Odd();
-
+        // 299: PERMUT
         retval[300] = NumericFunction.POISSON;
-
+        // 301: TDIST
+        // 302: WEIBULL
         retval[303] = new Sumxmy2();
         retval[304] = new Sumx2my2();
         retval[305] = new Sumx2py2();
-
+        // 306: CHITEST
+        // 307: CORREL
+        // 308: COVAR
+        // 309: FORECAST
+        // 310: FTEST
         retval[311] = new Intercept();
+        // 312: PEARSON
+        // 313: RSQ
+        // 314: STEYX
         retval[315] = new Slope();
-
+        // 316: TTEST
+        // 317: PROB
         retval[318] = AggregateFunction.DEVSQ;
-
+        // 319: GEOMEAN
+        // 320: HARMEAN
         retval[321] = AggregateFunction.SUMSQ;
-
+        // 322: KURT
+        // 323: SKEW
+        // 324: ZTEST
         retval[325] = AggregateFunction.LARGE;
         retval[326] = AggregateFunction.SMALL;
+        // 327: QUARTILE
         retval[328] = AggregateFunction.PERCENTILE;
-
+        // 329: PERCENTRANK
         retval[330] = new Mode();
+        // 331: TRIMMEAN
+        // 332: TINV
 
         retval[336] = TextFunction.CONCATENATE;
         retval[337] = NumericFunction.POWER;
 
         retval[342] = NumericFunction.RADIANS;
         retval[343] = NumericFunction.DEGREES;
-
         retval[344] = new Subtotal();
         retval[345] = new Sumif();
         retval[346] = new Countif();
         retval[347] = new Countblank();
 
+        // 350: ISPMT
+        // 351: DATEDIF
+        // 352: DATESTRING
+        // 353: NUMBERSTRING
         retval[354] = new Roman();
 
+        // 358: GETPIVOTDATA
         retval[359] = new Hyperlink();
-
+        // 360: PHONETIC
+        // 361: AVERAGEA
         retval[362] = MinaMaxa.MAXA;
         retval[363] = MinaMaxa.MINA;
+        // 364: STDEVPA
+        // 365: VARPA
+        // 366: STDEVA
+        // 367: VARA
 
         for (int i = 0; i < retval.length; i++) {
             Function f = retval[i];
