@@ -586,9 +586,17 @@ public final class XSSFCell implements Cell {
     public String getReference() {
         String ref = _cell.getR();
         if(ref == null) {
-            return new CellAddress(this).formatAsString();
+            return getAddress().formatAsString();
         }
         return ref;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public CellAddress getAddress() {
+        return new CellAddress(this);
     }
 
     /**
@@ -816,11 +824,11 @@ public final class XSSFCell implements Cell {
     }
 
     /**
-     * Sets this cell as the active cell for the worksheet.
+     * {@inheritDoc}
      */
     @Override
     public void setAsActiveCell() {
-        getSheet().setActiveCell(getReference());
+        getSheet().setActiveCell(getAddress());
     }
 
     /**

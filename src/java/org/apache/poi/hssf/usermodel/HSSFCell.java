@@ -48,6 +48,7 @@ import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.usermodel.RichTextString;
+import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.NumberToTextConverter;
@@ -223,17 +224,9 @@ public class HSSFCell implements Cell {
     /**
      * @return the (zero based) index of the row containing this cell
      */
+    @Override
     public int getRowIndex() {
         return _record.getRow();
-    }
-    /**
-     * Set the cell's number within the row (0 based).
-     * @param num  short the cell number
-     * @deprecated (Jan 2008) Doesn't update the row's idea of what cell this is, use {@link HSSFRow#moveCell(HSSFCell, short)} instead
-     */
-    public void setCellNum(short num)
-    {
-        _record.setColumn(num);
     }
 
     /**
@@ -246,16 +239,19 @@ public class HSSFCell implements Cell {
         _record.setColumn(num);
     }
 
-    /**
-     * @deprecated (Oct 2008) use {@link #getColumnIndex()}
-     */
-    public short getCellNum() {
-        return (short) getColumnIndex();
-    }
-
+    @Override
     public int getColumnIndex() {
         return _record.getColumn() & 0xFFFF;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public CellAddress getAddress() {
+        return new CellAddress(this);
+    }
+    
 
     /**
      * Set the cells type (numeric, formula or string).
@@ -950,8 +946,9 @@ public class HSSFCell implements Cell {
     }
 
     /**
-     * Sets this cell as the active cell for the worksheet
+     * {@inheritDoc}
      */
+    @Override
     public void setAsActiveCell()
     {
         int row=_record.getRow();

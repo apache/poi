@@ -3110,19 +3110,36 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      *
      * @return the location of the active cell.
      */
-    public String getActiveCell() {
-        return getSheetTypeSelection().getActiveCell();
+    @Override
+    public CellAddress getActiveCell() {
+        String address = getSheetTypeSelection().getActiveCell();
+        if (address == null) {
+            return null;
+        }
+        return new CellAddress(address);
     }
 
     /**
      * Sets location of the active cell
      *
      * @param cellRef the location of the active cell, e.g. <code>A1</code>..
+     * @deprecated 3.14beta2 (circa 2015-12-05). Use {@link #setActiveCell(CellAddress)} instead.
      */
     public void setActiveCell(String cellRef) {
         CTSelection ctsel = getSheetTypeSelection();
         ctsel.setActiveCell(cellRef);
         ctsel.setSqref(Arrays.asList(cellRef));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setActiveCell(CellAddress address) {
+        String ref = address.formatAsString();
+        CTSelection ctsel = getSheetTypeSelection();
+        ctsel.setActiveCell(ref);
+        ctsel.setSqref(Arrays.asList(ref));
     }
 
     /**
