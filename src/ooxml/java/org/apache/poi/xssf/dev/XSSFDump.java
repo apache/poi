@@ -45,9 +45,9 @@ public final class XSSFDump {
             System.out.println("Dumping " + args[i]);
             ZipFile zip = ZipHelper.openZipFile(args[i]);
             try {
-            	dump(zip);
+                dump(zip);
             } finally {
-            	zip.close();
+                zip.close();
             }
         }
     }
@@ -79,11 +79,11 @@ public final class XSSFDump {
         System.out.println("Dumping to directory " + root);
 
         Enumeration<? extends ZipEntry> en = zip.entries();
-        while(en.hasMoreElements()){
+        while (en.hasMoreElements()) {
             ZipEntry entry = en.nextElement();
             String name = entry.getName();
             int idx = name.lastIndexOf('/');
-            if(idx != -1){
+            if (idx != -1) {
                 File bs = new File(root, name.substring(0, idx));
                 recursivelyCreateDirIfMissing(bs);
             }
@@ -91,7 +91,7 @@ public final class XSSFDump {
             File f = new File(root, entry.getName());
             OutputStream out = new FileOutputStream(f);
             try {
-                if(entry.getName().endsWith(".xml") || entry.getName().endsWith(".vml") || entry.getName().endsWith(".rels")){
+                if (entry.getName().endsWith(".xml") || entry.getName().endsWith(".vml") || entry.getName().endsWith(".rels")) {
                     try {
                         XmlObject xml = XmlObject.Factory.parse(zip.getInputStream(entry), DEFAULT_XML_OPTIONS);
                         XmlOptions options = new XmlOptions();
@@ -105,7 +105,7 @@ public final class XSSFDump {
                     IOUtils.copy(zip.getInputStream(entry), out);
                 }
             } finally {
-            	out.close();
+                out.close();
             }
         }
     }
