@@ -164,6 +164,12 @@ public class XSSFCellStyle implements CellStyle {
                 		  );
                   addFill(fill);
 
+                  // bug 58084: set borders correctly
+                  CTBorder border = CTBorder.Factory.parse(
+                          src.getCTBorder().toString(), DEFAULT_XML_OPTIONS
+                          );
+                  addBorder(border);
+
                   // Swap it over
                   _stylesSource.replaceCellXfAt(_cellXfId, _cellXf);
                } catch(XmlException e) {
@@ -202,6 +208,13 @@ public class XSSFCellStyle implements CellStyle {
 
 		_cellXf.setFillId(idx);
 		_cellXf.setApplyFill(true);
+	}
+	
+	private void addBorder(CTBorder border) {
+        int idx = _stylesSource.putBorder(new XSSFCellBorder(border, _theme));
+
+        _cellXf.setBorderId(idx);
+        _cellXf.setApplyBorder(true);
 	}
 
     /**

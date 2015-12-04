@@ -1017,4 +1017,48 @@ public class TestXSSFCellStyle {
         
         wb.close();
     }
+
+    public static void copyStyles(Workbook reference, Workbook target) {
+        final short numberOfStyles = reference.getNumCellStyles();
+        for (short i = 0; i < numberOfStyles; i++) {
+            final CellStyle referenceStyle = reference.getCellStyleAt(i);
+            if (i == 0) {
+                continue;
+            }
+            final CellStyle targetStyle = target.createCellStyle();
+            targetStyle.cloneStyleFrom(referenceStyle);
+        }
+        /*System.out.println("Reference : "+reference.getNumCellStyles());
+        System.out.println("Target    : "+target.getNumCellStyles());*/
+    }
+
+    @Test
+    public void test58084() throws IOException {
+        Workbook reference = XSSFTestDataSamples.openSampleWorkbook("template.xlsx");
+        Workbook target = new XSSFWorkbook();
+        copyStyles(reference, target);
+        
+        assertEquals(reference.getNumCellStyles(), target.getNumCellStyles());
+        final Sheet sheet = target.createSheet();
+        final Row row = sheet.createRow(0);
+        int col = 0;
+        for (short i = 1; i < target.getNumCellStyles(); i++) {
+            final Cell cell = row.createCell(col++);
+            cell.setCellValue("Coucou"+i);
+            cell.setCellStyle(target.getCellStyleAt(i));
+        }
+        /*OutputStream out = new FileOutputStream("C:\\temp\\58084.xlsx");
+        target.write(out);
+        out.close();*/
+
+        Workbook copy = XSSFTestDataSamples.writeOutAndReadBack(target);
+
+        // previously this failed because the border-element was not copied over 
+        copy.getCellStyleAt((short)1).getBorderBottom();
+        
+        copy.close();
+        
+        target.close();
+        reference.close();
+    }
 }
