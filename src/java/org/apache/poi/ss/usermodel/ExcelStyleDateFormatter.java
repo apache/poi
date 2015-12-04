@@ -43,13 +43,13 @@ public class ExcelStyleDateFormatter extends SimpleDateFormat {
     public static final char L_BRACKET_SYMBOL = '\ue016';
     public static final char LL_BRACKET_SYMBOL = '\ue017';
 
-    private final DecimalFormat format1digit;
-    private final DecimalFormat format2digits;
+    private static final DecimalFormat format1digit;
+    private static final DecimalFormat format2digits;
 
-    private final DecimalFormat format3digit;
-    private final DecimalFormat format4digits;
+    private static final DecimalFormat format3digit;
+    private static final DecimalFormat format4digits;
 
-    {
+    static {
         DecimalFormatSymbols dfs = DecimalFormatSymbols.getInstance(Locale.ROOT);
         format1digit = new DecimalFormat("0", dfs);
         format2digits = new DecimalFormat("00", dfs);
@@ -59,6 +59,9 @@ public class ExcelStyleDateFormatter extends SimpleDateFormat {
         DataFormatter.setExcelStyleRoundingMode(format2digits, RoundingMode.DOWN);
         DataFormatter.setExcelStyleRoundingMode(format3digit);
         DataFormatter.setExcelStyleRoundingMode(format4digits);
+    }
+    
+    {
         setTimeZone(LocaleUtil.getUserTimeZone());
     }
 
