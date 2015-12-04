@@ -465,8 +465,8 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
      * Create an iterator over the cells from [0, getLastCellNum()).
      * Includes blank cells, excludes empty cells
      * 
-     * @return an iterator over all filled cells (created via Row.createCell())
-     * @throws ConcurrentModificationException if cells are added, moved, or
+     * Returns an iterator over all filled cells (created via Row.createCell())
+     * Throws ConcurrentModificationException if cells are added, moved, or
      * removed after the iterator is created.
      */
     public class FilledCellIterator implements Iterator<Cell>
