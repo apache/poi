@@ -26,11 +26,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFClientAnchor;
 import org.apache.poi.hssf.usermodel.HSSFPatriarch;
-import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
 
 
@@ -721,7 +721,6 @@ public class AddDimensionedImage {
         String imageFile = null;
         String outputFile = null;
         FileOutputStream fos = null;
-        HSSFWorkbook workbook = null;
         HSSFSheet sheet = null;
         try {
             if(args.length < 2){
@@ -731,13 +730,14 @@ public class AddDimensionedImage {
             imageFile = args[0];
             outputFile = args[1];
 
-            workbook = new HSSFWorkbook();
+            HSSFWorkbook workbook = new HSSFWorkbook();
             sheet = workbook.createSheet("Picture Test");
             new AddDimensionedImage().addImageToSheet("A1", sheet,
                     imageFile, 125, 125,
                     AddDimensionedImage.EXPAND_ROW_AND_COLUMN);
             fos = new FileOutputStream(outputFile);
             workbook.write(fos);
+            workbook.close();
         }
         catch(FileNotFoundException fnfEx) {
             System.out.println("Caught an: " + fnfEx.getClass().getName());
@@ -752,13 +752,6 @@ public class AddDimensionedImage {
             ioEx.printStackTrace(System.out);
         }
         finally {
-            try {
-                if (workbook != null) {
-                    workbook.close();
-                }
-            } catch(IOException ioEx) {
-                // I G N O R E
-            }
             try {
                 if(fos != null) {
                     fos.close();

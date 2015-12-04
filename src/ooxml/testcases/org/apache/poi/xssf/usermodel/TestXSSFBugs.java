@@ -2130,7 +2130,6 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
      *  in read-only mode
      * @throws InvalidFormatException 
      */
-    @SuppressWarnings("resource")
     @Test
     public void bug57482() throws IOException, InvalidFormatException {
         for (PackageAccess access : new PackageAccess[] {
