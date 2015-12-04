@@ -179,4 +179,14 @@ public class ExcelStyleDateFormatter extends SimpleDateFormat {
 
         return new StringBuffer(s);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof ExcelStyleDateFormatter)) {
+            return false;
+        }
+        
+        ExcelStyleDateFormatter other = (ExcelStyleDateFormatter) o;
+        return dateToBeFormatted == other.dateToBeFormatted;
+    }
 }
