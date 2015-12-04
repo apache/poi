@@ -413,8 +413,6 @@ public final class TestHSSFCell extends BaseTestCell {
 
         // cover some deprecated methods and other smaller stuff...
         assertEquals(wb.getWorkbook(), cell.getBoundWorkbook());
-        cell.getCellNum();
-        cell.setCellNum((short)0);
 
         try {
             cell.getCachedFormulaResultType();

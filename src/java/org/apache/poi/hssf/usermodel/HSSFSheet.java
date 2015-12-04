@@ -2539,4 +2539,25 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
     public int getColumnOutlineLevel(int columnIndex) {
         return _sheet.getColumnOutlineLevel(columnIndex);
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public CellAddress getActiveCell() {
+        int row = _sheet.getActiveCellRow();
+        int col = _sheet.getActiveCellCol();
+        return new CellAddress(row, col);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setActiveCell(CellAddress addr) {
+        int row = addr.getRow();
+        short col = (short) addr.getColumn();
+        _sheet.setActiveCellRow(row);
+        _sheet.setActiveCellCol(col);
+    }
 }
