@@ -1123,15 +1123,15 @@ public interface Sheet extends Iterable<Row> {
      * Return location of the active cell, e.g. <code>A1</code>.
      *
      * @return the location of the active cell.
-     * @since 3.14beta2
+     * @since 3.14beta1
      */
     public CellAddress getActiveCell();
 
     /**
       * Sets location of the active cell
       *
-      * @param addr the location of the active cell, e.g. <code>A1</code>.
-      * @since 3.14beta2
+      * @param address the location of the active cell, e.g. <code>A1</code>.
+      * @since 3.14beta1
       */
     public void setActiveCell(CellAddress address);
 }

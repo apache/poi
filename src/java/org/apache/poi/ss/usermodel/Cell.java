@@ -354,7 +354,7 @@ public interface Cell {
      * Gets the address of this cell
      *
      * @return <code>A1</code> style address of this cell
-     * @since 3.14beta2
+     * @since 3.14beta1
      */
     CellAddress getAddress();
 
