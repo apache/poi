@@ -189,4 +189,9 @@ public class ExcelStyleDateFormatter extends SimpleDateFormat {
         ExcelStyleDateFormatter other = (ExcelStyleDateFormatter) o;
         return dateToBeFormatted == other.dateToBeFormatted;
     }
+    
+    @Override
+    public int hashCode() {
+        return new Double(dateToBeFormatted).hashCode();
+    }
 }
