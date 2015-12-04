@@ -1130,8 +1130,8 @@ public interface Sheet extends Iterable<Row> {
     /**
       * Sets location of the active cell
       *
-      * @param cellRef the location of the active cell, e.g. <code>A1</code>.
+      * @param addr the location of the active cell, e.g. <code>A1</code>.
       * @since 3.14beta2
       */
-    public void setActiveCell(CellAddress addr);
+    public void setActiveCell(CellAddress address);
 }

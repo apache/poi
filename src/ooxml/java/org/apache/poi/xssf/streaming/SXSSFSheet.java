@@ -1887,7 +1887,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      * {@inheritDoc}
      */
     @Override
-    public void setActiveCell(CellAddress addr) {
-        _sh.setActiveCell(addr);
+    public void setActiveCell(CellAddress address) {
+        _sh.setActiveCell(address);
     }
 }
