@@ -2554,9 +2554,9 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      * {@inheritDoc}
      */
     @Override
-    public void setActiveCell(CellAddress addr) {
-        int row = addr.getRow();
-        short col = (short) addr.getColumn();
+    public void setActiveCell(CellAddress address) {
+        int row = address.getRow();
+        short col = (short) address.getColumn();
         _sheet.setActiveCellRow(row);
         _sheet.setActiveCellCol(col);
     }
