@@ -55,7 +55,8 @@ public final class FunctionEval {
     protected static final Function[] functions = produceFunctions();
 
     /**
-     * @see https://www.openoffice.org/sc/excelfileformat.pdf
+     * See <a href="https://www.openoffice.org/sc/excelfileformat.pdf">Apache Open Office Excel File Format,
+     * Section 3.11 Built-In Sheet Functions</a>
      */
     private static Function[] produceFunctions() {
         Function[] retval = new Function[368];
