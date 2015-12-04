@@ -53,16 +53,16 @@ public class TestDataFormatter {
      */
     @Test
     public void testLocale() {
-       DataFormatter dfUS = new DataFormatter(Locale.US);
-       DataFormatter dfFR = new DataFormatter(Locale.FRENCH);
-       
-       assertEquals("1234", dfUS.formatRawCellContents(1234, -1, "@"));
-       assertEquals("1234", dfFR.formatRawCellContents(1234, -1, "@"));
-       
-       assertEquals("12.34", dfUS.formatRawCellContents(12.34, -1, "@"));
-       assertEquals("12,34", dfFR.formatRawCellContents(12.34, -1, "@"));
+        DataFormatter dfUS = new DataFormatter(Locale.US);
+        DataFormatter dfFR = new DataFormatter(Locale.FRENCH);
+
+        assertEquals("1234", dfUS.formatRawCellContents(1234, -1, "@"));
+        assertEquals("1234", dfFR.formatRawCellContents(1234, -1, "@"));
+
+        assertEquals("12.34", dfUS.formatRawCellContents(12.34, -1, "@"));
+        assertEquals("12,34", dfFR.formatRawCellContents(12.34, -1, "@"));
     }
-    
+
     /**
      * At the moment, we don't decode the locale strings into
      *  a specific locale, but we should format things as if
@@ -70,89 +70,85 @@ public class TestDataFormatter {
      */
     @Test
     public void testLocaleBasedFormats() {
-       DataFormatter dfUS = new DataFormatter(Locale.US);
+        DataFormatter dfUS = new DataFormatter(Locale.US);
 
-       // Standard formats
-       assertEquals("63", dfUS.formatRawCellContents(63.0, -1, "[$-1010409]General"));
-       assertEquals("63", dfUS.formatRawCellContents(63.0, -1, "[$-1010409]@"));
+        // Standard formats
+        assertEquals("63", dfUS.formatRawCellContents(63.0, -1, "[$-1010409]General"));
+        assertEquals("63", dfUS.formatRawCellContents(63.0, -1, "[$-1010409]@"));
 
-       // Regular numeric style formats
-       assertEquals("63", dfUS.formatRawCellContents(63.0, -1, "[$-1010409]##"));
-       assertEquals("63", dfUS.formatRawCellContents(63.0, -1, "[$-1010409]00"));        
+        // Regular numeric style formats
+        assertEquals("63", dfUS.formatRawCellContents(63.0, -1, "[$-1010409]##"));
+        assertEquals("63", dfUS.formatRawCellContents(63.0, -1, "[$-1010409]00"));        
 
     }
-    
+
     /**
      * Ensure that colours get correctly
      *  zapped from within the format strings
      */
     @Test
     public void testColours() {
-       DataFormatter dfUS = new DataFormatter(Locale.US);
-       
-       String[] formats = new String[] {
-             "##.##",
-             "[WHITE]##.##",
-             "[BLACK]##.##;[RED]-##.##",
-             "[COLOR11]##.##;[COLOR 43]-##.00",
-       };
-       for(String format : formats) {
-          assertEquals(
+        DataFormatter dfUS = new DataFormatter(Locale.US);
+
+        String[] formats = new String[] {
+                "##.##",
+                "[WHITE]##.##",
+                "[BLACK]##.##;[RED]-##.##",
+                "[COLOR11]##.##;[COLOR 43]-##.00",
+        };
+        for (String format : formats) {
+            assertEquals(
                 "Wrong format for: " + format,
                 "12.34",
                 dfUS.formatRawCellContents(12.343, -1, format)
-          );
-          assertEquals(
+            );
+            assertEquals(
                 "Wrong format for: " + format,
                 "-12.34",
                 dfUS.formatRawCellContents(-12.343, -1, format)
-          );
-       }
-       
-       // Ensure that random square brackets remain
-       assertEquals("12.34[a]", dfUS.formatRawCellContents(12.343, -1, "##.##[a]"));
-       assertEquals("[ab]12.34[x]", dfUS.formatRawCellContents(12.343, -1, "[ab]##.##[x]"));
+            );
+        }
+
+        // Ensure that random square brackets remain
+        assertEquals("12.34[a]", dfUS.formatRawCellContents(12.343, -1, "##.##[a]"));
+        assertEquals("[ab]12.34[x]", dfUS.formatRawCellContents(12.343, -1, "[ab]##.##[x]"));
     }
-    
+
     @Test
     public void testColoursAndBrackets() {
-       DataFormatter dfUS = new DataFormatter(Locale.US);
-       
-       // Without currency symbols
-       String[] formats = new String[] {
-             "#,##0.00;[Blue](#,##0.00)",
-       };
-       for(String format : formats) {
-          assertEquals(
+        DataFormatter dfUS = new DataFormatter(Locale.US);
+
+        // Without currency symbols
+        String[] formats = new String[] { "#,##0.00;[Blue](#,##0.00)" };
+        for (String format : formats) {
+            assertEquals(
                 "Wrong format for: " + format,
                 "12.34",
                 dfUS.formatRawCellContents(12.343, -1, format)
-          );
-          assertEquals(
+            );
+            assertEquals(
                 "Wrong format for: " + format,
                 "(12.34)",
                 dfUS.formatRawCellContents(-12.343, -1, format)
-          );
-       }
-       
-       // With
-       formats = new String[] {
-             "$#,##0.00;[Red]($#,##0.00)"
-       };
-       for(String format : formats) {
-          assertEquals(
+            );
+        }
+
+        // With
+        formats = new String[] { "$#,##0.00;[Red]($#,##0.00)" };
+        for (String format : formats) {
+            assertEquals(
                 "Wrong format for: " + format,
                 "$12.34",
                 dfUS.formatRawCellContents(12.343, -1, format)
-          );
-          assertEquals(
+            );
+            assertEquals(
                 "Wrong format for: " + format,
                 "($12.34)",
                 dfUS.formatRawCellContents(-12.343, -1, format)
-          );
-       }
+            );
+        }
     }
-    
+
     /**
      * Test how we handle negative and zeros.
      * Note - some tests are disabled as DecimalFormat
@@ -161,115 +157,115 @@ public class TestDataFormatter {
      */
     @Test
     public void testNegativeZero() {
-       DataFormatter dfUS = new DataFormatter(Locale.US);
-       
-       String all2dp = "00.00";
-       String alln1dp = "(00.0)";
-       String p1dp_n1dp = "00.0;(00.0)";
-       String p2dp_n1dp = "00.00;(00.0)";
-       String p2dp_n1dp_z0 = "00.00;(00.0);0";
-       String all2dpTSP = "00.00_x";
-       String p2dp_n2dpTSP = "00.00_x;(00.00)_x";
-       //String p2dp_n1dpTSP = "00.00_x;(00.0)_x";
-       
-       assertEquals("12.34", dfUS.formatRawCellContents(12.343, -1, all2dp));
-       assertEquals("12.34", dfUS.formatRawCellContents(12.343, -1, p2dp_n1dp));
-       assertEquals("12.34", dfUS.formatRawCellContents(12.343, -1, p2dp_n1dp_z0));
-       
-       assertEquals("(12.3)", dfUS.formatRawCellContents(12.343, -1, alln1dp));
-       assertEquals("-(12.3)", dfUS.formatRawCellContents(-12.343, -1, alln1dp));
-       assertEquals("12.3", dfUS.formatRawCellContents(12.343, -1, p1dp_n1dp));
-       assertEquals("(12.3)", dfUS.formatRawCellContents(-12.343, -1, p1dp_n1dp));
-       
-       assertEquals("-12.34", dfUS.formatRawCellContents(-12.343, -1, all2dp));
-       // TODO - fix case of negative subpattern differing from the
-       //  positive one by more than just the prefix+suffix, which
-       //  is all DecimalFormat supports...
-//       assertEquals("(12.3)", dfUS.formatRawCellContents(-12.343, -1, p2dp_n1dp));
-//       assertEquals("(12.3)", dfUS.formatRawCellContents(-12.343, -1, p2dp_n1dp_z0));
-       
-       assertEquals("00.00", dfUS.formatRawCellContents(0, -1, all2dp));
-       assertEquals("00.00", dfUS.formatRawCellContents(0, -1, p2dp_n1dp));
-       assertEquals("0", dfUS.formatRawCellContents(0, -1, p2dp_n1dp_z0));
-       
-       // Spaces are skipped
-       assertEquals("12.34", dfUS.formatRawCellContents(12.343, -1, all2dpTSP));
-       assertEquals("12.34", dfUS.formatRawCellContents(12.343, -1, p2dp_n2dpTSP));
-       assertEquals("(12.34)", dfUS.formatRawCellContents(-12.343, -1, p2dp_n2dpTSP));
-//       assertEquals("12.34", dfUS.formatRawCellContents(12.343, -1, p2dp_n1dpTSP));
-//       assertEquals("(12.3)", dfUS.formatRawCellContents(-12.343, -1, p2dp_n1dpTSP));
+        DataFormatter dfUS = new DataFormatter(Locale.US);
+
+        String all2dp = "00.00";
+        String alln1dp = "(00.0)";
+        String p1dp_n1dp = "00.0;(00.0)";
+        String p2dp_n1dp = "00.00;(00.0)";
+        String p2dp_n1dp_z0 = "00.00;(00.0);0";
+        String all2dpTSP = "00.00_x";
+        String p2dp_n2dpTSP = "00.00_x;(00.00)_x";
+        //String p2dp_n1dpTSP = "00.00_x;(00.0)_x";
+
+        assertEquals("12.34", dfUS.formatRawCellContents(12.343, -1, all2dp));
+        assertEquals("12.34", dfUS.formatRawCellContents(12.343, -1, p2dp_n1dp));
+        assertEquals("12.34", dfUS.formatRawCellContents(12.343, -1, p2dp_n1dp_z0));
+
+        assertEquals("(12.3)", dfUS.formatRawCellContents(12.343, -1, alln1dp));
+        assertEquals("-(12.3)", dfUS.formatRawCellContents(-12.343, -1, alln1dp));
+        assertEquals("12.3", dfUS.formatRawCellContents(12.343, -1, p1dp_n1dp));
+        assertEquals("(12.3)", dfUS.formatRawCellContents(-12.343, -1, p1dp_n1dp));
+
+        assertEquals("-12.34", dfUS.formatRawCellContents(-12.343, -1, all2dp));
+        // TODO - fix case of negative subpattern differing from the
+        //  positive one by more than just the prefix+suffix, which
+        //  is all DecimalFormat supports...
+//        assertEquals("(12.3)", dfUS.formatRawCellContents(-12.343, -1, p2dp_n1dp));
+//        assertEquals("(12.3)", dfUS.formatRawCellContents(-12.343, -1, p2dp_n1dp_z0));
+
+        assertEquals("00.00", dfUS.formatRawCellContents(0, -1, all2dp));
+        assertEquals("00.00", dfUS.formatRawCellContents(0, -1, p2dp_n1dp));
+        assertEquals("0", dfUS.formatRawCellContents(0, -1, p2dp_n1dp_z0));
+
+        // Spaces are skipped
+        assertEquals("12.34", dfUS.formatRawCellContents(12.343, -1, all2dpTSP));
+        assertEquals("12.34", dfUS.formatRawCellContents(12.343, -1, p2dp_n2dpTSP));
+        assertEquals("(12.34)", dfUS.formatRawCellContents(-12.343, -1, p2dp_n2dpTSP));
+//        assertEquals("12.34", dfUS.formatRawCellContents(12.343, -1, p2dp_n1dpTSP));
+//        assertEquals("(12.3)", dfUS.formatRawCellContents(-12.343, -1, p2dp_n1dpTSP));
     }
-    
+
     /**
      * Test that we correctly handle fractions in the
      *  format string, eg # #/#
      */
     @Test
     public void testFractions() {
-       DataFormatter dfUS = new DataFormatter(Locale.US);
-       
-       // Excel often prefers "# #/#"
-       assertEquals("321 1/3",   dfUS.formatRawCellContents(321.321, -1, "# #/#"));
-       assertEquals("321 26/81", dfUS.formatRawCellContents(321.321, -1, "# #/##"));
-       assertEquals("26027/81",  dfUS.formatRawCellContents(321.321, -1, "#/##"));
+        DataFormatter dfUS = new DataFormatter(Locale.US);
 
-       // OOo seems to like the "# ?/?" form
-       assertEquals("321 1/3",   dfUS.formatRawCellContents(321.321, -1, "# ?/?"));
-       assertEquals("321 26/81", dfUS.formatRawCellContents(321.321, -1, "# ?/??"));
-       assertEquals("26027/81",  dfUS.formatRawCellContents(321.321, -1, "?/??"));
-       
-       // p;n;z;s parts
-       assertEquals("321 1/3",  dfUS.formatRawCellContents(321.321,  -1, "# #/#;# ##/#;0;xxx"));
-       assertEquals("321 1/3",  dfUS.formatRawCellContents(-321.321, -1, "# #/#;# ##/#;0;xxx")); // Note the lack of - sign!
-       assertEquals("0",        dfUS.formatRawCellContents(0,       -1, "# #/#;# ##/#;0;xxx"));
-//     assertEquals(".",        dfUS.formatRawCellContents(0,       -1, "# #/#;# ##/#;#.#;xxx")); // Currently shows as 0. not .
-       
-       // Custom formats with text
-       assertEquals("+ve",       dfUS.formatRawCellContents(1,        -1, "+ve;-ve;zero;xxx"));
-       assertEquals("-ve",       dfUS.formatRawCellContents(-1,       -1, "-ve;-ve;zero;xxx"));
-       assertEquals("zero",      dfUS.formatRawCellContents(0,        -1, "zero;-ve;zero;xxx"));
-       
-       // Custom formats - check text is stripped, including multiple spaces
-       assertEquals("321 1/3",   dfUS.formatRawCellContents(321.321, -1, "#   #/#"));
-       assertEquals("321 1/3",   dfUS.formatRawCellContents(321.321, -1, "#\"  \" #/#"));
-       assertEquals("321 1/3",   dfUS.formatRawCellContents(321.321, -1, "#\"FRED\" #/#"));
-       assertEquals("321 1/3",   dfUS.formatRawCellContents(321.321, -1, "#\\ #/#"));
-       assertEquals("321 1/3",   dfUS.formatRawCellContents(321.321, -1, "# \\q#/#"));
+        // Excel often prefers "# #/#"
+        assertEquals("321 1/3",   dfUS.formatRawCellContents(321.321, -1, "# #/#"));
+        assertEquals("321 26/81", dfUS.formatRawCellContents(321.321, -1, "# #/##"));
+        assertEquals("26027/81",  dfUS.formatRawCellContents(321.321, -1, "#/##"));
 
-       // Cases that were very slow
-       assertEquals("321 1/3",   dfUS.formatRawCellContents(321.321, -1, "0\" \"?/?;?/?")); // 0" "?/?;?/?     - length of -ve part was used
-       assertEquals("321 1/3",   dfUS.formatRawCellContents(321.321, -1, "0 \"#\"\\#\\#?/?")); // 0 "#"\#\#?/? - length of text was used
+        // OOo seems to like the "# ?/?" form
+        assertEquals("321 1/3",   dfUS.formatRawCellContents(321.321, -1, "# ?/?"));
+        assertEquals("321 26/81", dfUS.formatRawCellContents(321.321, -1, "# ?/??"));
+        assertEquals("26027/81",  dfUS.formatRawCellContents(321.321, -1, "?/??"));
 
-       assertEquals("321 295/919",  dfUS.formatRawCellContents(321.321, -1, "# #/###"));
-       assertEquals("321 321/1000",  dfUS.formatRawCellContents(321.321, -1, "# #/####")); // Code limits to #### as that is as slow as we want to get
-       assertEquals("321 321/1000",  dfUS.formatRawCellContents(321.321, -1, "# #/##########"));
-       
-       // Not a valid fraction formats (too many #/# or ?/?) - hence the strange expected results
-       
-/*       assertEquals("321 / ?/?",   dfUS.formatRawCellContents(321.321, -1, "# #/# ?/?"));
-       assertEquals("321 / /",     dfUS.formatRawCellContents(321.321, -1, "# #/# #/#"));
-       assertEquals("321 ?/? ?/?",   dfUS.formatRawCellContents(321.321, -1, "# ?/? ?/?"));
-       assertEquals("321 ?/? / /",   dfUS.formatRawCellContents(321.321, -1, "# ?/? #/# #/#"));
+        // p;n;z;s parts
+        assertEquals("321 1/3",  dfUS.formatRawCellContents(321.321,  -1, "# #/#;# ##/#;0;xxx"));
+        assertEquals("321 1/3",  dfUS.formatRawCellContents(-321.321, -1, "# #/#;# ##/#;0;xxx")); // Note the lack of - sign!
+        assertEquals("0",        dfUS.formatRawCellContents(0,       -1, "# #/#;# ##/#;0;xxx"));
+//        assertEquals(".",        dfUS.formatRawCellContents(0,       -1, "# #/#;# ##/#;#.#;xxx")); // Currently shows as 0. not .
+
+        // Custom formats with text
+        assertEquals("+ve",       dfUS.formatRawCellContents(1,        -1, "+ve;-ve;zero;xxx"));
+        assertEquals("-ve",       dfUS.formatRawCellContents(-1,       -1, "-ve;-ve;zero;xxx"));
+        assertEquals("zero",      dfUS.formatRawCellContents(0,        -1, "zero;-ve;zero;xxx"));
+
+        // Custom formats - check text is stripped, including multiple spaces
+        assertEquals("321 1/3",   dfUS.formatRawCellContents(321.321, -1, "#   #/#"));
+        assertEquals("321 1/3",   dfUS.formatRawCellContents(321.321, -1, "#\"  \" #/#"));
+        assertEquals("321 1/3",   dfUS.formatRawCellContents(321.321, -1, "#\"FRED\" #/#"));
+        assertEquals("321 1/3",   dfUS.formatRawCellContents(321.321, -1, "#\\ #/#"));
+        assertEquals("321 1/3",   dfUS.formatRawCellContents(321.321, -1, "# \\q#/#"));
+
+        // Cases that were very slow
+        assertEquals("321 1/3",   dfUS.formatRawCellContents(321.321, -1, "0\" \"?/?;?/?")); // 0" "?/?;?/?     - length of -ve part was used
+        assertEquals("321 1/3",   dfUS.formatRawCellContents(321.321, -1, "0 \"#\"\\#\\#?/?")); // 0 "#"\#\#?/? - length of text was used
+
+        assertEquals("321 295/919",  dfUS.formatRawCellContents(321.321, -1, "# #/###"));
+        assertEquals("321 321/1000",  dfUS.formatRawCellContents(321.321, -1, "# #/####")); // Code limits to #### as that is as slow as we want to get
+        assertEquals("321 321/1000",  dfUS.formatRawCellContents(321.321, -1, "# #/##########"));
+
+        // Not a valid fraction formats (too many #/# or ?/?) - hence the strange expected results
+/*
+        assertEquals("321 / ?/?",   dfUS.formatRawCellContents(321.321, -1, "# #/# ?/?"));
+        assertEquals("321 / /",     dfUS.formatRawCellContents(321.321, -1, "# #/# #/#"));
+        assertEquals("321 ?/? ?/?",   dfUS.formatRawCellContents(321.321, -1, "# ?/? ?/?"));
+        assertEquals("321 ?/? / /",   dfUS.formatRawCellContents(321.321, -1, "# ?/? #/# #/#"));
 */
 
-       //Bug54686 patch sets default behavior of # #/## if there is a failure to parse
-       assertEquals("321 1/3",   dfUS.formatRawCellContents(321.321, -1, "# #/# ?/?"));
-       assertEquals("321 1/3",     dfUS.formatRawCellContents(321.321, -1, "# #/# #/#"));
-       assertEquals("321 1/3",   dfUS.formatRawCellContents(321.321, -1, "# ?/? ?/?"));
-       assertEquals("321 1/3",   dfUS.formatRawCellContents(321.321, -1, "# ?/? #/# #/#"));
+        //Bug54686 patch sets default behavior of # #/## if there is a failure to parse
+        assertEquals("321 1/3",   dfUS.formatRawCellContents(321.321, -1, "# #/# ?/?"));
+        assertEquals("321 1/3",     dfUS.formatRawCellContents(321.321, -1, "# #/# #/#"));
+        assertEquals("321 1/3",   dfUS.formatRawCellContents(321.321, -1, "# ?/? ?/?"));
+        assertEquals("321 1/3",   dfUS.formatRawCellContents(321.321, -1, "# ?/? #/# #/#"));
 
-       // Where +ve has a fraction, but -ve doesnt, we currently show both
-       assertEquals("123 1/3", dfUS.formatRawCellContents( 123.321, -1, "0 ?/?;0"));
-       //assertEquals("123",     dfUS.formatRawCellContents(-123.321, -1, "0 ?/?;0"));
+        // Where +ve has a fraction, but -ve doesnt, we currently show both
+        assertEquals("123 1/3", dfUS.formatRawCellContents( 123.321, -1, "0 ?/?;0"));
+        //assertEquals("123",     dfUS.formatRawCellContents(-123.321, -1, "0 ?/?;0"));
 
-       //Bug54868 patch has a hit on the first string before the ";"
-       assertEquals("-123 1/3", dfUS.formatRawCellContents(-123.321, -1, "0 ?/?;0"));
+        //Bug54868 patch has a hit on the first string before the ";"
+        assertEquals("-123 1/3", dfUS.formatRawCellContents(-123.321, -1, "0 ?/?;0"));
 
-       //Bug53150 formatting a whole number with fractions should just give the number
-       assertEquals("1",   dfUS.formatRawCellContents(1.0, -1, "# #/#"));
-       assertEquals("11",   dfUS.formatRawCellContents(11.0, -1, "# #/#"));
+        //Bug53150 formatting a whole number with fractions should just give the number
+        assertEquals("1",   dfUS.formatRawCellContents(1.0, -1, "# #/#"));
+        assertEquals("11",   dfUS.formatRawCellContents(11.0, -1, "# #/#"));
     }
-    
+
     /**
      * Test that _x (blank with the space taken by "x")
      *  and *x (fill to the column width with "x"s) are
@@ -277,49 +273,49 @@ public class TestDataFormatter {
      */
     @Test
     public void testPaddingSpaces() {
-       DataFormatter dfUS = new DataFormatter(Locale.US);
-       assertEquals("12.34", dfUS.formatRawCellContents(12.343, -1, "##.##_ "));
-       assertEquals("12.34", dfUS.formatRawCellContents(12.343, -1, "##.##_1"));
-       assertEquals("12.34", dfUS.formatRawCellContents(12.343, -1, "##.##_)"));
-       assertEquals("12.34", dfUS.formatRawCellContents(12.343, -1, "_-##.##"));
-       
-       assertEquals("12.34", dfUS.formatRawCellContents(12.343, -1, "##.##* "));
-       assertEquals("12.34", dfUS.formatRawCellContents(12.343, -1, "##.##*1"));
-       assertEquals("12.34", dfUS.formatRawCellContents(12.343, -1, "##.##*)"));
-       assertEquals("12.34", dfUS.formatRawCellContents(12.343, -1, "*-##.##"));
+        DataFormatter dfUS = new DataFormatter(Locale.US);
+        assertEquals("12.34", dfUS.formatRawCellContents(12.343, -1, "##.##_ "));
+        assertEquals("12.34", dfUS.formatRawCellContents(12.343, -1, "##.##_1"));
+        assertEquals("12.34", dfUS.formatRawCellContents(12.343, -1, "##.##_)"));
+        assertEquals("12.34", dfUS.formatRawCellContents(12.343, -1, "_-##.##"));
+
+        assertEquals("12.34", dfUS.formatRawCellContents(12.343, -1, "##.##* "));
+        assertEquals("12.34", dfUS.formatRawCellContents(12.343, -1, "##.##*1"));
+        assertEquals("12.34", dfUS.formatRawCellContents(12.343, -1, "##.##*)"));
+        assertEquals("12.34", dfUS.formatRawCellContents(12.343, -1, "*-##.##"));
     }
-    
+
     /**
      * DataFormatter is the CSV mode preserves spaces
      */
     @Test
     public void testPaddingSpacesCSV() {
-       DataFormatter dfUS = new DataFormatter(Locale.US, true);
-       assertEquals("12.34 ", dfUS.formatRawCellContents(12.343, -1, "##.##_ "));
-       assertEquals("-12.34 ", dfUS.formatRawCellContents(-12.343, -1, "##.##_ "));
-       assertEquals(". ", dfUS.formatRawCellContents(0.0, -1, "##.##_ "));
-       assertEquals("12.34 ", dfUS.formatRawCellContents(12.343, -1, "##.##_1"));
-       assertEquals("-12.34 ", dfUS.formatRawCellContents(-12.343, -1, "##.##_1"));
-       assertEquals(". ", dfUS.formatRawCellContents(0.0, -1, "##.##_1"));
-       assertEquals("12.34 ", dfUS.formatRawCellContents(12.343, -1, "##.##_)"));
-       assertEquals("-12.34 ", dfUS.formatRawCellContents(-12.343, -1, "##.##_)"));
-       assertEquals(". ", dfUS.formatRawCellContents(0.0, -1, "##.##_)"));
-       assertEquals(" 12.34", dfUS.formatRawCellContents(12.343, -1, "_-##.##"));
-       assertEquals("- 12.34", dfUS.formatRawCellContents(-12.343, -1, "_-##.##"));
-       assertEquals(" .", dfUS.formatRawCellContents(0.0, -1, "_-##.##"));
+        DataFormatter dfUS = new DataFormatter(Locale.US, true);
+        assertEquals("12.34 ", dfUS.formatRawCellContents(12.343, -1, "##.##_ "));
+        assertEquals("-12.34 ", dfUS.formatRawCellContents(-12.343, -1, "##.##_ "));
+        assertEquals(". ", dfUS.formatRawCellContents(0.0, -1, "##.##_ "));
+        assertEquals("12.34 ", dfUS.formatRawCellContents(12.343, -1, "##.##_1"));
+        assertEquals("-12.34 ", dfUS.formatRawCellContents(-12.343, -1, "##.##_1"));
+        assertEquals(". ", dfUS.formatRawCellContents(0.0, -1, "##.##_1"));
+        assertEquals("12.34 ", dfUS.formatRawCellContents(12.343, -1, "##.##_)"));
+        assertEquals("-12.34 ", dfUS.formatRawCellContents(-12.343, -1, "##.##_)"));
+        assertEquals(". ", dfUS.formatRawCellContents(0.0, -1, "##.##_)"));
+        assertEquals(" 12.34", dfUS.formatRawCellContents(12.343, -1, "_-##.##"));
+        assertEquals("- 12.34", dfUS.formatRawCellContents(-12.343, -1, "_-##.##"));
+        assertEquals(" .", dfUS.formatRawCellContents(0.0, -1, "_-##.##"));
 
-       assertEquals("12.34", dfUS.formatRawCellContents(12.343, -1, "##.##* "));
-       assertEquals("-12.34", dfUS.formatRawCellContents(-12.343, -1, "##.##* "));
-       assertEquals(".", dfUS.formatRawCellContents(0.0, -1, "##.##* "));
-       assertEquals("12.34", dfUS.formatRawCellContents(12.343, -1, "##.##*1"));
-       assertEquals("-12.34", dfUS.formatRawCellContents(-12.343, -1, "##.##*1"));
-       assertEquals(".", dfUS.formatRawCellContents(0.0, -1, "##.##*1"));
-       assertEquals("12.34", dfUS.formatRawCellContents(12.343, -1, "##.##*)"));
-       assertEquals("-12.34", dfUS.formatRawCellContents(-12.343, -1, "##.##*)"));
-       assertEquals(".", dfUS.formatRawCellContents(0.0, -1, "##.##*)"));
-       assertEquals("12.34", dfUS.formatRawCellContents(12.343, -1, "*-##.##"));
-       assertEquals("-12.34", dfUS.formatRawCellContents(-12.343, -1, "*-##.##"));
-       assertEquals(".", dfUS.formatRawCellContents(0.0, -1, "*-##.##"));
+        assertEquals("12.34", dfUS.formatRawCellContents(12.343, -1, "##.##* "));
+        assertEquals("-12.34", dfUS.formatRawCellContents(-12.343, -1, "##.##* "));
+        assertEquals(".", dfUS.formatRawCellContents(0.0, -1, "##.##* "));
+        assertEquals("12.34", dfUS.formatRawCellContents(12.343, -1, "##.##*1"));
+        assertEquals("-12.34", dfUS.formatRawCellContents(-12.343, -1, "##.##*1"));
+        assertEquals(".", dfUS.formatRawCellContents(0.0, -1, "##.##*1"));
+        assertEquals("12.34", dfUS.formatRawCellContents(12.343, -1, "##.##*)"));
+        assertEquals("-12.34", dfUS.formatRawCellContents(-12.343, -1, "##.##*)"));
+        assertEquals(".", dfUS.formatRawCellContents(0.0, -1, "##.##*)"));
+        assertEquals("12.34", dfUS.formatRawCellContents(12.343, -1, "*-##.##"));
+        assertEquals("-12.34", dfUS.formatRawCellContents(-12.343, -1, "*-##.##"));
+        assertEquals(".", dfUS.formatRawCellContents(0.0, -1, "*-##.##"));
     }
 
     /**
@@ -328,148 +324,148 @@ public class TestDataFormatter {
      */
     @Test
     public void testMMMMM() {
-       DataFormatter dfUS = new DataFormatter(Locale.US);
-       
-       Calendar c = LocaleUtil.getLocaleCalendar(2010, 5, 1, 2, 0, 0);
-       
-       assertEquals("2010-J-1 2:00:00", dfUS.formatRawCellContents(
-             DateUtil.getExcelDate(c, false), -1, "YYYY-MMMMM-D h:mm:ss"
-       ));
+        DataFormatter dfUS = new DataFormatter(Locale.US);
+
+        Calendar c = LocaleUtil.getLocaleCalendar(2010, 5, 1, 2, 0, 0);
+
+        assertEquals("2010-J-1 2:00:00", dfUS.formatRawCellContents(
+                DateUtil.getExcelDate(c, false), -1, "YYYY-MMMMM-D h:mm:ss"
+        ));
     }
-    
+
     /**
      * Tests that we do AM/PM handling properly
      */
     @Test
     public void testAMPM() {
-       DataFormatter dfUS = new DataFormatter(Locale.US);
-       
-       assertEquals("06:00", dfUS.formatRawCellContents(0.25, -1, "hh:mm"));
-       assertEquals("18:00", dfUS.formatRawCellContents(0.75, -1, "hh:mm"));
-       
-       assertEquals("06:00 AM", dfUS.formatRawCellContents(0.25, -1, "hh:mm AM/PM"));
-       assertEquals("06:00 PM", dfUS.formatRawCellContents(0.75, -1, "hh:mm AM/PM"));
-       
-       assertEquals("1904-01-01 06:00:00 AM", dfUS.formatRawCellContents(0.25, -1, "yyyy-mm-dd hh:mm:ss AM/PM", true));
-       assertEquals("1904-01-01 06:00:00 PM", dfUS.formatRawCellContents(0.75, -1, "yyyy-mm-dd hh:mm:ss AM/PM", true));
+        DataFormatter dfUS = new DataFormatter(Locale.US);
+
+        assertEquals("06:00", dfUS.formatRawCellContents(0.25, -1, "hh:mm"));
+        assertEquals("18:00", dfUS.formatRawCellContents(0.75, -1, "hh:mm"));
+
+        assertEquals("06:00 AM", dfUS.formatRawCellContents(0.25, -1, "hh:mm AM/PM"));
+        assertEquals("06:00 PM", dfUS.formatRawCellContents(0.75, -1, "hh:mm AM/PM"));
+
+        assertEquals("1904-01-01 06:00:00 AM", dfUS.formatRawCellContents(0.25, -1, "yyyy-mm-dd hh:mm:ss AM/PM", true));
+        assertEquals("1904-01-01 06:00:00 PM", dfUS.formatRawCellContents(0.75, -1, "yyyy-mm-dd hh:mm:ss AM/PM", true));
     }
-    
+
     /**
      * Test that we can handle elapsed time,
      *  eg formatting 1 day 4 hours as 28 hours
      */
     @Test
     public void testElapsedTime() {
-       DataFormatter dfUS = new DataFormatter(Locale.US);
+        DataFormatter dfUS = new DataFormatter(Locale.US);
 
-       double hour = 1.0/24.0;
+        double hour = 1.0/24.0;
 
-       assertEquals("01:00", dfUS.formatRawCellContents(1*hour, -1, "hh:mm"));
-       assertEquals("05:00", dfUS.formatRawCellContents(5*hour, -1, "hh:mm"));
-       assertEquals("20:00", dfUS.formatRawCellContents(20*hour, -1, "hh:mm"));
-       assertEquals("23:00", dfUS.formatRawCellContents(23*hour, -1, "hh:mm"));
-       assertEquals("00:00", dfUS.formatRawCellContents(24*hour, -1, "hh:mm"));
-       assertEquals("02:00", dfUS.formatRawCellContents(26*hour, -1, "hh:mm"));
-       assertEquals("20:00", dfUS.formatRawCellContents(44*hour, -1, "hh:mm"));
-       assertEquals("02:00", dfUS.formatRawCellContents(50*hour, -1, "hh:mm"));
+        assertEquals("01:00", dfUS.formatRawCellContents(1*hour, -1, "hh:mm"));
+        assertEquals("05:00", dfUS.formatRawCellContents(5*hour, -1, "hh:mm"));
+        assertEquals("20:00", dfUS.formatRawCellContents(20*hour, -1, "hh:mm"));
+        assertEquals("23:00", dfUS.formatRawCellContents(23*hour, -1, "hh:mm"));
+        assertEquals("00:00", dfUS.formatRawCellContents(24*hour, -1, "hh:mm"));
+        assertEquals("02:00", dfUS.formatRawCellContents(26*hour, -1, "hh:mm"));
+        assertEquals("20:00", dfUS.formatRawCellContents(44*hour, -1, "hh:mm"));
+        assertEquals("02:00", dfUS.formatRawCellContents(50*hour, -1, "hh:mm"));
 
-       assertEquals("01:00", dfUS.formatRawCellContents(1*hour, -1, "[hh]:mm"));
-       assertEquals("05:00", dfUS.formatRawCellContents(5*hour, -1, "[hh]:mm"));
-       assertEquals("20:00", dfUS.formatRawCellContents(20*hour, -1, "[hh]:mm"));
-       assertEquals("23:00", dfUS.formatRawCellContents(23*hour, -1, "[hh]:mm"));
-       assertEquals("24:00", dfUS.formatRawCellContents(24*hour, -1, "[hh]:mm"));
-       assertEquals("26:00", dfUS.formatRawCellContents(26*hour, -1, "[hh]:mm"));
-       assertEquals("44:00", dfUS.formatRawCellContents(44*hour, -1, "[hh]:mm"));
-       assertEquals("50:00", dfUS.formatRawCellContents(50*hour, -1, "[hh]:mm"));
+        assertEquals("01:00", dfUS.formatRawCellContents(1*hour, -1, "[hh]:mm"));
+        assertEquals("05:00", dfUS.formatRawCellContents(5*hour, -1, "[hh]:mm"));
+        assertEquals("20:00", dfUS.formatRawCellContents(20*hour, -1, "[hh]:mm"));
+        assertEquals("23:00", dfUS.formatRawCellContents(23*hour, -1, "[hh]:mm"));
+        assertEquals("24:00", dfUS.formatRawCellContents(24*hour, -1, "[hh]:mm"));
+        assertEquals("26:00", dfUS.formatRawCellContents(26*hour, -1, "[hh]:mm"));
+        assertEquals("44:00", dfUS.formatRawCellContents(44*hour, -1, "[hh]:mm"));
+        assertEquals("50:00", dfUS.formatRawCellContents(50*hour, -1, "[hh]:mm"));
 
-       assertEquals("01", dfUS.formatRawCellContents(1*hour, -1, "[hh]"));
-       assertEquals("05", dfUS.formatRawCellContents(5*hour, -1, "[hh]"));
-       assertEquals("20", dfUS.formatRawCellContents(20*hour, -1, "[hh]"));
-       assertEquals("23", dfUS.formatRawCellContents(23*hour, -1, "[hh]"));
-       assertEquals("24", dfUS.formatRawCellContents(24*hour, -1, "[hh]"));
-       assertEquals("26", dfUS.formatRawCellContents(26*hour, -1, "[hh]"));
-       assertEquals("44", dfUS.formatRawCellContents(44*hour, -1, "[hh]"));
-       assertEquals("50", dfUS.formatRawCellContents(50*hour, -1, "[hh]"));
+        assertEquals("01", dfUS.formatRawCellContents(1*hour, -1, "[hh]"));
+        assertEquals("05", dfUS.formatRawCellContents(5*hour, -1, "[hh]"));
+        assertEquals("20", dfUS.formatRawCellContents(20*hour, -1, "[hh]"));
+        assertEquals("23", dfUS.formatRawCellContents(23*hour, -1, "[hh]"));
+        assertEquals("24", dfUS.formatRawCellContents(24*hour, -1, "[hh]"));
+        assertEquals("26", dfUS.formatRawCellContents(26*hour, -1, "[hh]"));
+        assertEquals("44", dfUS.formatRawCellContents(44*hour, -1, "[hh]"));
+        assertEquals("50", dfUS.formatRawCellContents(50*hour, -1, "[hh]"));
 
-       double minute = 1.0/24.0/60.0;
-       assertEquals("01:00", dfUS.formatRawCellContents(1*minute, -1, "[mm]:ss"));
-       assertEquals("05:00", dfUS.formatRawCellContents(5*minute, -1, "[mm]:ss"));
-       assertEquals("20:00", dfUS.formatRawCellContents(20*minute, -1, "[mm]:ss"));
-       assertEquals("23:00", dfUS.formatRawCellContents(23*minute, -1, "[mm]:ss"));
-       assertEquals("24:00", dfUS.formatRawCellContents(24*minute, -1, "[mm]:ss"));
-       assertEquals("26:00", dfUS.formatRawCellContents(26*minute, -1, "[mm]:ss"));
-       assertEquals("44:00", dfUS.formatRawCellContents(44*minute, -1, "[mm]:ss"));
-       assertEquals("50:00", dfUS.formatRawCellContents(50*minute, -1, "[mm]:ss"));
-       assertEquals("59:00", dfUS.formatRawCellContents(59*minute, -1, "[mm]:ss"));
-       assertEquals("60:00", dfUS.formatRawCellContents(60*minute, -1, "[mm]:ss"));
-       assertEquals("61:00", dfUS.formatRawCellContents(61*minute, -1, "[mm]:ss"));
-       assertEquals("119:00", dfUS.formatRawCellContents(119*minute, -1, "[mm]:ss"));
-       assertEquals("120:00", dfUS.formatRawCellContents(120*minute, -1, "[mm]:ss"));
-       assertEquals("121:00", dfUS.formatRawCellContents(121*minute, -1, "[mm]:ss"));
+        double minute = 1.0/24.0/60.0;
+        assertEquals("01:00", dfUS.formatRawCellContents(1*minute, -1, "[mm]:ss"));
+        assertEquals("05:00", dfUS.formatRawCellContents(5*minute, -1, "[mm]:ss"));
+        assertEquals("20:00", dfUS.formatRawCellContents(20*minute, -1, "[mm]:ss"));
+        assertEquals("23:00", dfUS.formatRawCellContents(23*minute, -1, "[mm]:ss"));
+        assertEquals("24:00", dfUS.formatRawCellContents(24*minute, -1, "[mm]:ss"));
+        assertEquals("26:00", dfUS.formatRawCellContents(26*minute, -1, "[mm]:ss"));
+        assertEquals("44:00", dfUS.formatRawCellContents(44*minute, -1, "[mm]:ss"));
+        assertEquals("50:00", dfUS.formatRawCellContents(50*minute, -1, "[mm]:ss"));
+        assertEquals("59:00", dfUS.formatRawCellContents(59*minute, -1, "[mm]:ss"));
+        assertEquals("60:00", dfUS.formatRawCellContents(60*minute, -1, "[mm]:ss"));
+        assertEquals("61:00", dfUS.formatRawCellContents(61*minute, -1, "[mm]:ss"));
+        assertEquals("119:00", dfUS.formatRawCellContents(119*minute, -1, "[mm]:ss"));
+        assertEquals("120:00", dfUS.formatRawCellContents(120*minute, -1, "[mm]:ss"));
+        assertEquals("121:00", dfUS.formatRawCellContents(121*minute, -1, "[mm]:ss"));
 
-       assertEquals("01", dfUS.formatRawCellContents(1*minute, -1, "[mm]"));
-       assertEquals("05", dfUS.formatRawCellContents(5*minute, -1, "[mm]"));
-       assertEquals("20", dfUS.formatRawCellContents(20*minute, -1, "[mm]"));
-       assertEquals("23", dfUS.formatRawCellContents(23*minute, -1, "[mm]"));
-       assertEquals("24", dfUS.formatRawCellContents(24*minute, -1, "[mm]"));
-       assertEquals("26", dfUS.formatRawCellContents(26*minute, -1, "[mm]"));
-       assertEquals("44", dfUS.formatRawCellContents(44*minute, -1, "[mm]"));
-       assertEquals("50", dfUS.formatRawCellContents(50*minute, -1, "[mm]"));
-       assertEquals("59", dfUS.formatRawCellContents(59*minute, -1, "[mm]"));
-       assertEquals("60", dfUS.formatRawCellContents(60*minute, -1, "[mm]"));
-       assertEquals("61", dfUS.formatRawCellContents(61*minute, -1, "[mm]"));
-       assertEquals("119", dfUS.formatRawCellContents(119*minute, -1, "[mm]"));
-       assertEquals("120", dfUS.formatRawCellContents(120*minute, -1, "[mm]"));
-       assertEquals("121", dfUS.formatRawCellContents(121*minute, -1, "[mm]"));
+        assertEquals("01", dfUS.formatRawCellContents(1*minute, -1, "[mm]"));
+        assertEquals("05", dfUS.formatRawCellContents(5*minute, -1, "[mm]"));
+        assertEquals("20", dfUS.formatRawCellContents(20*minute, -1, "[mm]"));
+        assertEquals("23", dfUS.formatRawCellContents(23*minute, -1, "[mm]"));
+        assertEquals("24", dfUS.formatRawCellContents(24*minute, -1, "[mm]"));
+        assertEquals("26", dfUS.formatRawCellContents(26*minute, -1, "[mm]"));
+        assertEquals("44", dfUS.formatRawCellContents(44*minute, -1, "[mm]"));
+        assertEquals("50", dfUS.formatRawCellContents(50*minute, -1, "[mm]"));
+        assertEquals("59", dfUS.formatRawCellContents(59*minute, -1, "[mm]"));
+        assertEquals("60", dfUS.formatRawCellContents(60*minute, -1, "[mm]"));
+        assertEquals("61", dfUS.formatRawCellContents(61*minute, -1, "[mm]"));
+        assertEquals("119", dfUS.formatRawCellContents(119*minute, -1, "[mm]"));
+        assertEquals("120", dfUS.formatRawCellContents(120*minute, -1, "[mm]"));
+        assertEquals("121", dfUS.formatRawCellContents(121*minute, -1, "[mm]"));
 
-       double second = 1.0/24.0/60.0/60.0;
-       assertEquals("86400", dfUS.formatRawCellContents(86400*second, -1, "[ss]"));
-       assertEquals("01", dfUS.formatRawCellContents(1*second, -1, "[ss]"));
-       assertEquals("05", dfUS.formatRawCellContents(5*second, -1, "[ss]"));
-       assertEquals("20", dfUS.formatRawCellContents(20*second, -1, "[ss]"));
-       assertEquals("23", dfUS.formatRawCellContents(23*second, -1, "[ss]"));
-       assertEquals("24", dfUS.formatRawCellContents(24*second, -1, "[ss]"));
-       assertEquals("26", dfUS.formatRawCellContents(26*second, -1, "[ss]"));
-       assertEquals("44", dfUS.formatRawCellContents(44*second, -1, "[ss]"));
-       assertEquals("50", dfUS.formatRawCellContents(50*second, -1, "[ss]"));
-       assertEquals("59", dfUS.formatRawCellContents(59*second, -1, "[ss]"));
-       assertEquals("60", dfUS.formatRawCellContents(60*second, -1, "[ss]"));
-       assertEquals("61", dfUS.formatRawCellContents(61*second, -1, "[ss]"));
-       assertEquals("119", dfUS.formatRawCellContents(119*second, -1, "[ss]"));
-       assertEquals("120", dfUS.formatRawCellContents(120*second, -1, "[ss]"));
-       assertEquals("121", dfUS.formatRawCellContents(121*second, -1, "[ss]"));
+        double second = 1.0/24.0/60.0/60.0;
+        assertEquals("86400", dfUS.formatRawCellContents(86400*second, -1, "[ss]"));
+        assertEquals("01", dfUS.formatRawCellContents(1*second, -1, "[ss]"));
+        assertEquals("05", dfUS.formatRawCellContents(5*second, -1, "[ss]"));
+        assertEquals("20", dfUS.formatRawCellContents(20*second, -1, "[ss]"));
+        assertEquals("23", dfUS.formatRawCellContents(23*second, -1, "[ss]"));
+        assertEquals("24", dfUS.formatRawCellContents(24*second, -1, "[ss]"));
+        assertEquals("26", dfUS.formatRawCellContents(26*second, -1, "[ss]"));
+        assertEquals("44", dfUS.formatRawCellContents(44*second, -1, "[ss]"));
+        assertEquals("50", dfUS.formatRawCellContents(50*second, -1, "[ss]"));
+        assertEquals("59", dfUS.formatRawCellContents(59*second, -1, "[ss]"));
+        assertEquals("60", dfUS.formatRawCellContents(60*second, -1, "[ss]"));
+        assertEquals("61", dfUS.formatRawCellContents(61*second, -1, "[ss]"));
+        assertEquals("119", dfUS.formatRawCellContents(119*second, -1, "[ss]"));
+        assertEquals("120", dfUS.formatRawCellContents(120*second, -1, "[ss]"));
+        assertEquals("121", dfUS.formatRawCellContents(121*second, -1, "[ss]"));
 
         boolean jdk_1_5 = System.getProperty("java.vm.version").startsWith("1.5");
         if(!jdk_1_5) {
-           // YK: the tests below were written under JDK 1.6 and assume that
-           // the rounding mode in the underlying decimal formatters is HALF_UP
-           // It is not so JDK 1.5 where the default rounding mode is HALV_EVEN and cannot be changed.
+            // YK: the tests below were written under JDK 1.6 and assume that
+            // the rounding mode in the underlying decimal formatters is HALF_UP
+            // It is not so JDK 1.5 where the default rounding mode is HALV_EVEN and cannot be changed.
 
-           assertEquals("27:18:08", dfUS.formatRawCellContents(1.1376, -1, "[h]:mm:ss"));
-           assertEquals("28:48:00", dfUS.formatRawCellContents(1.2, -1,  "[h]:mm:ss"));
-           assertEquals("29:31:12", dfUS.formatRawCellContents(1.23, -1, "[h]:mm:ss"));
-           assertEquals("31:26:24", dfUS.formatRawCellContents(1.31, -1, "[h]:mm:ss"));
+            assertEquals("27:18:08", dfUS.formatRawCellContents(1.1376, -1, "[h]:mm:ss"));
+            assertEquals("28:48:00", dfUS.formatRawCellContents(1.2, -1,  "[h]:mm:ss"));
+            assertEquals("29:31:12", dfUS.formatRawCellContents(1.23, -1, "[h]:mm:ss"));
+            assertEquals("31:26:24", dfUS.formatRawCellContents(1.31, -1, "[h]:mm:ss"));
 
-           assertEquals("27:18:08", dfUS.formatRawCellContents(1.1376, -1, "[hh]:mm:ss"));
-           assertEquals("28:48:00", dfUS.formatRawCellContents(1.2, -1,  "[hh]:mm:ss"));
-           assertEquals("29:31:12", dfUS.formatRawCellContents(1.23, -1, "[hh]:mm:ss"));
-           assertEquals("31:26:24", dfUS.formatRawCellContents(1.31, -1, "[hh]:mm:ss"));
+            assertEquals("27:18:08", dfUS.formatRawCellContents(1.1376, -1, "[hh]:mm:ss"));
+            assertEquals("28:48:00", dfUS.formatRawCellContents(1.2, -1,  "[hh]:mm:ss"));
+            assertEquals("29:31:12", dfUS.formatRawCellContents(1.23, -1, "[hh]:mm:ss"));
+            assertEquals("31:26:24", dfUS.formatRawCellContents(1.31, -1, "[hh]:mm:ss"));
 
-           assertEquals("57:07.2", dfUS.formatRawCellContents(.123, -1, "mm:ss.0;@"));
-           assertEquals("57:41.8", dfUS.formatRawCellContents(.1234, -1, "mm:ss.0;@"));
-           assertEquals("57:41.76", dfUS.formatRawCellContents(.1234, -1, "mm:ss.00;@"));
-           assertEquals("57:41.760", dfUS.formatRawCellContents(.1234, -1, "mm:ss.000;@"));
-           assertEquals("24:00.0", dfUS.formatRawCellContents(123456.6, -1, "mm:ss.0"));
+            assertEquals("57:07.2", dfUS.formatRawCellContents(.123, -1, "mm:ss.0;@"));
+            assertEquals("57:41.8", dfUS.formatRawCellContents(.1234, -1, "mm:ss.0;@"));
+            assertEquals("57:41.76", dfUS.formatRawCellContents(.1234, -1, "mm:ss.00;@"));
+            assertEquals("57:41.760", dfUS.formatRawCellContents(.1234, -1, "mm:ss.000;@"));
+            assertEquals("24:00.0", dfUS.formatRawCellContents(123456.6, -1, "mm:ss.0"));
         }
     }
 
     @Test
     public void testDateWindowing() {
-       DataFormatter dfUS = new DataFormatter(Locale.US);
-       
-       assertEquals("1899-12-31 00:00:00", dfUS.formatRawCellContents(0.0, -1, "yyyy-mm-dd hh:mm:ss"));
-       assertEquals("1899-12-31 00:00:00", dfUS.formatRawCellContents(0.0, -1, "yyyy-mm-dd hh:mm:ss", false));
-       assertEquals("1904-01-01 00:00:00", dfUS.formatRawCellContents(0.0, -1, "yyyy-mm-dd hh:mm:ss", true));
+        DataFormatter dfUS = new DataFormatter(Locale.US);
+
+        assertEquals("1899-12-31 00:00:00", dfUS.formatRawCellContents(0.0, -1, "yyyy-mm-dd hh:mm:ss"));
+        assertEquals("1899-12-31 00:00:00", dfUS.formatRawCellContents(0.0, -1, "yyyy-mm-dd hh:mm:ss", false));
+        assertEquals("1904-01-01 00:00:00", dfUS.formatRawCellContents(0.0, -1, "yyyy-mm-dd hh:mm:ss", true));
     }
 
     @Test
@@ -479,7 +475,7 @@ public class TestDataFormatter {
         assertEquals("1.23E+01", dfUS.formatRawCellContents(12.343, -1, "0.00E+00"));
         assertEquals("-1.23E+01", dfUS.formatRawCellContents(-12.343, -1, "0.00E+00"));
         assertEquals("0.00E+00", dfUS.formatRawCellContents(0.0, -1, "0.00E+00"));
-     }
+    }
 
     @Test
     public void testInvalidDate() {
@@ -493,16 +489,16 @@ public class TestDataFormatter {
 
     @Test
     public void testEscapes() {
-       DataFormatter dfUS = new DataFormatter(Locale.US);
+        DataFormatter dfUS = new DataFormatter(Locale.US);
 
-       assertEquals("1901-01-01", dfUS.formatRawCellContents(367.0, -1, "yyyy-mm-dd"));
-       assertEquals("1901-01-01", dfUS.formatRawCellContents(367.0, -1, "yyyy\\-mm\\-dd"));
-       
-       assertEquals("1901.01.01", dfUS.formatRawCellContents(367.0, -1, "yyyy.mm.dd"));
-       assertEquals("1901.01.01", dfUS.formatRawCellContents(367.0, -1, "yyyy\\.mm\\.dd"));
-       
-       assertEquals("1901/01/01", dfUS.formatRawCellContents(367.0, -1, "yyyy/mm/dd"));
-       assertEquals("1901/01/01", dfUS.formatRawCellContents(367.0, -1, "yyyy\\/mm\\/dd"));
+        assertEquals("1901-01-01", dfUS.formatRawCellContents(367.0, -1, "yyyy-mm-dd"));
+        assertEquals("1901-01-01", dfUS.formatRawCellContents(367.0, -1, "yyyy\\-mm\\-dd"));
+
+        assertEquals("1901.01.01", dfUS.formatRawCellContents(367.0, -1, "yyyy.mm.dd"));
+        assertEquals("1901.01.01", dfUS.formatRawCellContents(367.0, -1, "yyyy\\.mm\\.dd"));
+
+        assertEquals("1901/01/01", dfUS.formatRawCellContents(367.0, -1, "yyyy/mm/dd"));
+        assertEquals("1901/01/01", dfUS.formatRawCellContents(367.0, -1, "yyyy\\/mm\\/dd"));
     }
 
     @Test
@@ -518,18 +514,18 @@ public class TestDataFormatter {
         assertEquals("-   1,234.56 ", dfUS.formatRawCellContents(-1234.56, -1, "_-* #,##0.00_-;-* #,##0.00_-;_-* \"-\"??_-;_-@_-"));
         assertEquals("    12.34 ", dfUS.formatRawCellContents( 12.34, -1, "_-* #,##0.00_-;-* #,##0.00_-;_-* \"-\"??_-;_-@_-"));
         assertEquals("-   12.34 ", dfUS.formatRawCellContents(-12.34, -1, "_-* #,##0.00_-;-* #,##0.00_-;_-* \"-\"??_-;_-@_-"));
-        
+
         assertEquals("    0.10 ", dfUS.formatRawCellContents( 0.1, -1, "_-* #,##0.00_-;-* #,##0.00_-;_-* \"-\"??_-;_-@_-"));
         assertEquals("-   0.10 ", dfUS.formatRawCellContents(-0.1, -1, "_-* #,##0.00_-;-* #,##0.00_-;_-* \"-\"??_-;_-@_-"));
         // TODO Fix this, we are randomly adding a 0 at the end that souldn't be there
         //assertEquals("     -   ", dfUS.formatRawCellContents(0.0, -1, "_-* #,##0.00_-;-* #,##0.00_-;_-* \"-\"??_-;_-@_-"));
-        
+
         assertEquals(" $   1.10 ", dfUS.formatRawCellContents( 1.1, -1, "_-$* #,##0.00_-;-$* #,##0.00_-;_-$* \"-\"??_-;_-@_-"));
         assertEquals("-$   1.10 ", dfUS.formatRawCellContents(-1.1, -1, "_-$* #,##0.00_-;-$* #,##0.00_-;_-$* \"-\"??_-;_-@_-"));
         // TODO Fix this, we are randomly adding a 0 at the end that souldn't be there
         //assertEquals(" $    -   ", dfUS.formatRawCellContents( 0.0, -1, "_-$* #,##0.00_-;-$* #,##0.00_-;_-$* \"-\"??_-;_-@_-"));
     }
-    
+
     @Test
     public void testErrors() throws IOException {
         DataFormatter dfUS = new DataFormatter(Locale.US, true);
@@ -540,10 +536,10 @@ public class TestDataFormatter {
             Sheet s = wb.createSheet();
             Row r = s.createRow(0);
             Cell c = r.createCell(0, Cell.CELL_TYPE_ERROR);
-            
+
             c.setCellErrorValue(FormulaError.DIV0.getCode());
             assertEquals(FormulaError.DIV0.getString(), dfUS.formatCellValue(c));
-            
+
             c.setCellErrorValue(FormulaError.REF.getCode());
             assertEquals(FormulaError.REF.getString(), dfUS.formatCellValue(c));
         } finally {
@@ -559,22 +555,22 @@ public class TestDataFormatter {
     @Test
     public void testDatesWithLocales() {
         DataFormatter dfUS = new DataFormatter(Locale.US, true);
-        
+
         String dateFormatEnglish = "[$-409]mmmm dd yyyy  h:mm AM/PM";
         String dateFormatChinese = "[$-804]mmmm dd yyyy  h:mm AM/PM";
-        
+
         // Check we format the English one correctly
         double date = 26995.477777777778;
         assertEquals(
-                "November 27 1973  11:28 AM",
-                dfUS.formatRawCellContents(date, -1, dateFormatEnglish)
+            "November 27 1973  11:28 AM",
+            dfUS.formatRawCellContents(date, -1, dateFormatEnglish)
         );
-        
+
         // Check that, in the absence of locale support, we handle
         //  the Chinese one the same as the English one
         assertEquals(
-                "November 27 1973  11:28 AM",
-                dfUS.formatRawCellContents(date, -1, dateFormatChinese)
+            "November 27 1973  11:28 AM",
+            dfUS.formatRawCellContents(date, -1, dateFormatChinese)
         );
     }
 
@@ -584,50 +580,50 @@ public class TestDataFormatter {
     @Test
     @Ignore
     public void testCustomFormats() {
-       DataFormatter dfUS = new DataFormatter(Locale.US, true);
-       String fmt;
-       
-       fmt = "\"At\" H:MM AM/PM \"on\" DDDD MMMM D\",\" YYYY";
-       assertEquals(
-             "At 4:20 AM on Thursday May 17, 2007",
-             dfUS.formatRawCellContents(39219.1805636921, -1, fmt)
-       );
-       
-       fmt = "0 \"dollars and\" .00 \"cents\"";
-       assertEquals("19 dollars and .99 cents", dfUS.formatRawCellContents(19.99, -1, fmt));
+        DataFormatter dfUS = new DataFormatter(Locale.US, true);
+        String fmt;
+
+        fmt = "\"At\" H:MM AM/PM \"on\" DDDD MMMM D\",\" YYYY";
+        assertEquals(
+            "At 4:20 AM on Thursday May 17, 2007",
+            dfUS.formatRawCellContents(39219.1805636921, -1, fmt)
+        );
+
+        fmt = "0 \"dollars and\" .00 \"cents\"";
+        assertEquals("19 dollars and .99 cents", dfUS.formatRawCellContents(19.99, -1, fmt));
     }
-    
+
     /**
      * ExcelStyleDateFormatter should work for Milliseconds too
      */
     @Test
     public void testExcelStyleDateFormatterStringOnMillis() {
-       // Test directly with the .000 style
-       DateFormat formatter1 = new ExcelStyleDateFormatter("ss.000");
+        // Test directly with the .000 style
+        DateFormat formatter1 = new ExcelStyleDateFormatter("ss.000");
 
-       assertEquals("00.001", formatter1.format(new Date(1L)));
-       assertEquals("00.010", formatter1.format(new Date(10L)));
-       assertEquals("00.100", formatter1.format(new Date(100L)));
-       assertEquals("01.000", formatter1.format(new Date(1000L)));
-       assertEquals("01.001", formatter1.format(new Date(1001L)));
-       assertEquals("10.000", formatter1.format(new Date(10000L)));
-       assertEquals("10.001", formatter1.format(new Date(10001L)));
+        assertEquals("00.001", formatter1.format(new Date(1L)));
+        assertEquals("00.010", formatter1.format(new Date(10L)));
+        assertEquals("00.100", formatter1.format(new Date(100L)));
+        assertEquals("01.000", formatter1.format(new Date(1000L)));
+        assertEquals("01.001", formatter1.format(new Date(1001L)));
+        assertEquals("10.000", formatter1.format(new Date(10000L)));
+        assertEquals("10.001", formatter1.format(new Date(10001L)));
 
-       // Test directly with the .SSS style
-       DateFormat formatter2 = new ExcelStyleDateFormatter("ss.SSS");
-       
-       assertEquals("00.001", formatter2.format(new Date(1L)));
-       assertEquals("00.010", formatter2.format(new Date(10L)));
-       assertEquals("00.100", formatter2.format(new Date(100L)));
-       assertEquals("01.000", formatter2.format(new Date(1000L)));
-       assertEquals("01.001", formatter2.format(new Date(1001L)));
-       assertEquals("10.000", formatter2.format(new Date(10000L)));
-       assertEquals("10.001", formatter2.format(new Date(10001L)));
+        // Test directly with the .SSS style
+        DateFormat formatter2 = new ExcelStyleDateFormatter("ss.SSS");
+
+        assertEquals("00.001", formatter2.format(new Date(1L)));
+        assertEquals("00.010", formatter2.format(new Date(10L)));
+        assertEquals("00.100", formatter2.format(new Date(100L)));
+        assertEquals("01.000", formatter2.format(new Date(1000L)));
+        assertEquals("01.001", formatter2.format(new Date(1001L)));
+        assertEquals("10.000", formatter2.format(new Date(10000L)));
+        assertEquals("10.001", formatter2.format(new Date(10001L)));
 
 
-       // Test via DataFormatter
-       DataFormatter dfUS = new DataFormatter(Locale.US, true);
-       assertEquals("01.010", dfUS.formatRawCellContents(0.0000116898, -1, "ss.000"));
+        // Test via DataFormatter
+        DataFormatter dfUS = new DataFormatter(Locale.US, true);
+        assertEquals("01.010", dfUS.formatRawCellContents(0.0000116898, -1, "ss.000"));
     }
 
     @Test
@@ -680,43 +676,43 @@ public class TestDataFormatter {
 
     @Test
     public void testLargeNumbersAndENotation() throws IOException{
-      assertFormatsTo("1E+86", 99999999999999999999999999999999999999999999999999999999999999999999999999999999999999d);
-      assertFormatsTo("1E-84", 0.000000000000000000000000000000000000000000000000000000000000000000000000000000000001d);
-      // Smallest double
-      assertFormatsTo("1E-323", 0.00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001d);
+        assertFormatsTo("1E+86", 99999999999999999999999999999999999999999999999999999999999999999999999999999999999999d);
+        assertFormatsTo("1E-84", 0.000000000000000000000000000000000000000000000000000000000000000000000000000000000001d);
+        // Smallest double
+        assertFormatsTo("1E-323", 0.00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001d);
 
-      // "up to 11 numeric characters, with the decimal point counting as a numeric character"
-      // https://support.microsoft.com/en-us/kb/65903
-      assertFormatsTo( "12345678911",   12345678911d);
-      assertFormatsTo( "1.23457E+11",   123456789112d);  // 12th digit of integer -> scientific
-      assertFormatsTo( "-12345678911", -12345678911d);
-      assertFormatsTo( "-1.23457E+11", -123456789112d);
-      assertFormatsTo( "0.1",           0.1);
-      assertFormatsTo( "0.000000001",   0.000000001);
-      assertFormatsTo( "1E-10",         0.0000000001);  // 12th digit
-      assertFormatsTo( "-0.000000001", -0.000000001);
-      assertFormatsTo( "-1E-10",       -0.0000000001);
-      assertFormatsTo( "123.4567892",   123.45678919);  // excess decimals are simply rounded away
-      assertFormatsTo("-123.4567892",  -123.45678919);
-      assertFormatsTo( "1.234567893",   1.2345678925);  // rounding mode is half-up
-      assertFormatsTo("-1.234567893",  -1.2345678925);
-      assertFormatsTo( "1.23457E+19",   12345650000000000000d);
-      assertFormatsTo("-1.23457E+19",  -12345650000000000000d);
-      assertFormatsTo( "1.23457E-19",   0.0000000000000000001234565d);
-      assertFormatsTo("-1.23457E-19",  -0.0000000000000000001234565d);
-      assertFormatsTo( "1.000000001",   1.000000001);
-      assertFormatsTo( "1",             1.0000000001);
-      assertFormatsTo( "1234.567891",   1234.567891123456789d);
-      assertFormatsTo( "1234567.891",   1234567.891123456789d);
-      assertFormatsTo( "12345678912",   12345678911.63456789d);  // integer portion uses all 11 digits
-      assertFormatsTo( "12345678913",   12345678912.5d);  // half-up here too
-      assertFormatsTo("-12345678913",  -12345678912.5d);
-      assertFormatsTo( "1.23457E+11",   123456789112.3456789d);
+        // "up to 11 numeric characters, with the decimal point counting as a numeric character"
+        // https://support.microsoft.com/en-us/kb/65903
+        assertFormatsTo( "12345678911",   12345678911d);
+        assertFormatsTo( "1.23457E+11",   123456789112d);  // 12th digit of integer -> scientific
+        assertFormatsTo( "-12345678911", -12345678911d);
+        assertFormatsTo( "-1.23457E+11", -123456789112d);
+        assertFormatsTo( "0.1",           0.1);
+        assertFormatsTo( "0.000000001",   0.000000001);
+        assertFormatsTo( "1E-10",         0.0000000001);  // 12th digit
+        assertFormatsTo( "-0.000000001", -0.000000001);
+        assertFormatsTo( "-1E-10",       -0.0000000001);
+        assertFormatsTo( "123.4567892",   123.45678919);  // excess decimals are simply rounded away
+        assertFormatsTo("-123.4567892",  -123.45678919);
+        assertFormatsTo( "1.234567893",   1.2345678925);  // rounding mode is half-up
+        assertFormatsTo("-1.234567893",  -1.2345678925);
+        assertFormatsTo( "1.23457E+19",   12345650000000000000d);
+        assertFormatsTo("-1.23457E+19",  -12345650000000000000d);
+        assertFormatsTo( "1.23457E-19",   0.0000000000000000001234565d);
+        assertFormatsTo("-1.23457E-19",  -0.0000000000000000001234565d);
+        assertFormatsTo( "1.000000001",   1.000000001);
+        assertFormatsTo( "1",             1.0000000001);
+        assertFormatsTo( "1234.567891",   1234.567891123456789d);
+        assertFormatsTo( "1234567.891",   1234567.891123456789d);
+        assertFormatsTo( "12345678912",   12345678911.63456789d);  // integer portion uses all 11 digits
+        assertFormatsTo( "12345678913",   12345678912.5d);  // half-up here too
+        assertFormatsTo("-12345678913",  -12345678912.5d);
+        assertFormatsTo( "1.23457E+11",   123456789112.3456789d);
     }
 
-   private static void assertFormatsTo(String expected, double input) throws IOException {
-       Workbook wb = new HSSFWorkbook();
-       try {
+    private static void assertFormatsTo(String expected, double input) throws IOException {
+        Workbook wb = new HSSFWorkbook();
+        try {
             Sheet s1 = wb.createSheet();
             Row row = s1.createRow(0);
             Cell rawValue = row.createCell(0);
