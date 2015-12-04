@@ -47,7 +47,7 @@ import org.junit.Test;
 public class TestDataFormatter {
     private static final double _15_MINUTES = 0.041666667;
 
-	/**
+    /**
      * Test that we use the specified locale when deciding
      *   how to format normal numbers
      */
@@ -632,34 +632,34 @@ public class TestDataFormatter {
 
     @Test
     public void testBug54786() {
-		DataFormatter formatter = new DataFormatter();
-		String format = "[h]\"\"h\"\" m\"\"m\"\"";
-		assertTrue(DateUtil.isADateFormat(-1,format));
-		assertTrue(DateUtil.isValidExcelDate(_15_MINUTES));
-		
-		assertEquals("1h 0m", formatter.formatRawCellContents(_15_MINUTES, -1, format, false));
-		assertEquals("0.041666667", formatter.formatRawCellContents(_15_MINUTES, -1, "[h]'h'", false));
-		assertEquals("1h 0m\"", formatter.formatRawCellContents(_15_MINUTES, -1, "[h]\"\"h\"\" m\"\"m\"\"\"", false));
-		assertEquals("1h", formatter.formatRawCellContents(_15_MINUTES, -1, "[h]\"\"h\"\"", false));
-		assertEquals("h1", formatter.formatRawCellContents(_15_MINUTES, -1, "\"\"h\"\"[h]", false));
-		assertEquals("h1", formatter.formatRawCellContents(_15_MINUTES, -1, "\"\"h\"\"h", false));
-		assertEquals(" 60", formatter.formatRawCellContents(_15_MINUTES, -1, " [m]", false));
-		assertEquals("h60", formatter.formatRawCellContents(_15_MINUTES, -1, "\"\"h\"\"[m]", false));
-		assertEquals("m1", formatter.formatRawCellContents(_15_MINUTES, -1, "\"\"m\"\"h", false));
-		
-		try {
-			assertEquals("1h 0m\"", formatter.formatRawCellContents(_15_MINUTES, -1, "[h]\"\"h\"\" m\"\"m\"\"\"\"", false));
-			fail("Catches exception because of invalid format, i.e. trailing quoting");
-		} catch (IllegalArgumentException e) {
-			assertTrue(e.getMessage().contains("Cannot format given Object as a Number"));
-		}
-	}
-	
+        DataFormatter formatter = new DataFormatter();
+        String format = "[h]\"\"h\"\" m\"\"m\"\"";
+        assertTrue(DateUtil.isADateFormat(-1,format));
+        assertTrue(DateUtil.isValidExcelDate(_15_MINUTES));
+        
+        assertEquals("1h 0m", formatter.formatRawCellContents(_15_MINUTES, -1, format, false));
+        assertEquals("0.041666667", formatter.formatRawCellContents(_15_MINUTES, -1, "[h]'h'", false));
+        assertEquals("1h 0m\"", formatter.formatRawCellContents(_15_MINUTES, -1, "[h]\"\"h\"\" m\"\"m\"\"\"", false));
+        assertEquals("1h", formatter.formatRawCellContents(_15_MINUTES, -1, "[h]\"\"h\"\"", false));
+        assertEquals("h1", formatter.formatRawCellContents(_15_MINUTES, -1, "\"\"h\"\"[h]", false));
+        assertEquals("h1", formatter.formatRawCellContents(_15_MINUTES, -1, "\"\"h\"\"h", false));
+        assertEquals(" 60", formatter.formatRawCellContents(_15_MINUTES, -1, " [m]", false));
+        assertEquals("h60", formatter.formatRawCellContents(_15_MINUTES, -1, "\"\"h\"\"[m]", false));
+        assertEquals("m1", formatter.formatRawCellContents(_15_MINUTES, -1, "\"\"m\"\"h", false));
+        
+        try {
+            assertEquals("1h 0m\"", formatter.formatRawCellContents(_15_MINUTES, -1, "[h]\"\"h\"\" m\"\"m\"\"\"\"", false));
+            fail("Catches exception because of invalid format, i.e. trailing quoting");
+        } catch (IllegalArgumentException e) {
+            assertTrue(e.getMessage().contains("Cannot format given Object as a Number"));
+        }
+    }
+    
     @Test
     public void testIsADateFormat() {
-	    // first check some cases that should not be a date, also call multiple times to ensure the cache is used
-	    assertFalse(DateUtil.isADateFormat(-1, null));
-	    assertFalse(DateUtil.isADateFormat(-1, null));
+        // first check some cases that should not be a date, also call multiple times to ensure the cache is used
+        assertFalse(DateUtil.isADateFormat(-1, null));
+        assertFalse(DateUtil.isADateFormat(-1, null));
         assertFalse(DateUtil.isADateFormat(123, null));
         assertFalse(DateUtil.isADateFormat(123, ""));
         assertFalse(DateUtil.isADateFormat(124, ""));
@@ -675,7 +675,7 @@ public class TestDataFormatter {
         assertTrue(DateUtil.isADateFormat(-1, "dd/mm/yy;[red]dd/mm/yy"));
         assertTrue(DateUtil.isADateFormat(-1, "dd/mm/yy;[red]dd/mm/yy"));
         assertTrue(DateUtil.isADateFormat(-1, "[h]"));
-	}
+    }
 
 
     @Test
