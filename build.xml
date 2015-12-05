@@ -19,17 +19,6 @@ under the License.
 -->
 
 <!--
-    POI Build System.  Written by:
-
-        Glen Stampoultzis   glens at apache.org
-
-    Modified by:
-
-        Rainer Klute        klute@rainer-klute.de
-        Bruno Girin         brunogirin@gmail.com
-        Yegor Kozlov        yegor at apache.org
-        Dominik Stadler     centic at apache.org
-
     This build was tested with ant 1.9.4 although it will probably work with
     other versions, however at least 1.8.0 is required.
 
@@ -717,6 +706,12 @@ under the License.
             <replace dir="${xmlbean.sources.dir}" includes="**/*.java" excludes="**/impl/**">
                 <replacetoken>org.apache.xmlbeans.XmlBeans.getContextTypeLoader()</replacetoken>
                 <replacevalue>org.apache.poi.POIXMLTypeLoader</replacevalue>
+            </replace>
+
+    		<!-- remove deprecated warnings, as we prefer the array methods - see #56854 -->
+            <replace dir="${xmlbean.sources.dir}" includes="**/*.java" excludes="**/impl/**">
+                <replacetoken><![CDATA[     * @deprecated
+]]></replacetoken>
             </replace>
 
             <copy todir="${xmlbean.sources.dir}">
