@@ -318,14 +318,16 @@ public class SheetUtil {
         if (font.getUnderline() == Font.U_SINGLE ) str.addAttribute(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON, startIdx, endIdx);
     }
 
+    /**
+     * Check if the cell is in the specified cell range
+     *
+     * @param cr    the cell range to check in
+     * @param rowIx the row to check
+     * @param colIx the column to check
+     * @return true if the range contains the cell [rowIx, colIx]
+     */
     public static boolean containsCell(CellRangeAddress cr, int rowIx, int colIx) {
-        //FIXME: isn't this the same as cr.isInRange(rowInd, colInd) ?
-        if (cr.getFirstRow() <= rowIx && cr.getLastRow() >= rowIx
-                && cr.getFirstColumn() <= colIx && cr.getLastColumn() >= colIx)
-        {
-            return true;
-        }
-        return false;
+        return cr.isInRange(rowIx,  colIx);
     }
 
     /**
