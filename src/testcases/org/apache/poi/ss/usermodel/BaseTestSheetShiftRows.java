@@ -22,14 +22,18 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.junit.Assume.assumeTrue;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -302,7 +306,45 @@ public abstract class BaseTestSheetShiftRows {
         region = sheet.getMergedRegion(0);
         assertEquals("A3:C3", region.formatAsString());
         wb.close();
-   }
+    }
+    
+    @Ignore
+    @Test
+    public final void shiftWithMergedRegions_bug56454() throws IOException {
+        Workbook wb = _testDataProvider.createWorkbook();
+        Sheet sheet = wb.createSheet();
+        // populate sheet cells
+        for (int i = 0; i < 10; i++) {
+            Row row = sheet.createRow(i);
+            
+            for (int j = 0; j < 10; j++) {
+                Cell cell = row.createCell(j, Cell.CELL_TYPE_STRING);
+                cell.setCellValue(i + "x" + j);
+            }
+        }
+        
+        CellRangeAddress A4_B7 = CellRangeAddress.valueOf("A4:B7");
+        CellRangeAddress C4_D7 = CellRangeAddress.valueOf("C4:D7");
+        
+        sheet.addMergedRegion(A4_B7);
+        sheet.addMergedRegion(C4_D7);
+        
+        assumeTrue(sheet.getLastRowNum() > 8);
+        
+        // Insert a row in the middle of both merged regions.
+        sheet.shiftRows(4, sheet.getLastRowNum(), 1);
+        
+        // all regions should still start at row 3, and elongate by 1 row
+        List<CellRangeAddress> expectedMergedRegions = new ArrayList<CellRangeAddress>();
+        CellRangeAddress A4_B8 = CellRangeAddress.valueOf("A4:B8"); //A4:B7 should be elongated by 1 row
+        CellRangeAddress C4_D8 = CellRangeAddress.valueOf("C4:D8"); //C4:B7 should be elongated by 1 row
+        expectedMergedRegions.add(A4_B8);
+        expectedMergedRegions.add(C4_D8);
+        
+        assertEquals(expectedMergedRegions, sheet.getMergedRegions());
+    }
+    
+    
 
     /**
      * See bug #34023
