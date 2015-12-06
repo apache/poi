@@ -401,13 +401,15 @@ public abstract class BaseTestSheet {
         cell = row.createCell(1);
         cell.setCellValue(factory.createRichTextString("second row, second cell"));
 
-        CellRangeAddress region = new CellRangeAddress(1, 1, 0, 1);
+        CellRangeAddress region = CellRangeAddress.valueOf("A2:B2");
         sheet.addMergedRegion(region);
 
         sheet.shiftRows(1, 1, 1);
 
         region = sheet.getMergedRegion(0);
-        assertEquals("Merged region not moved over to row 2", 2, region.getFirstRow());
+        
+        CellRangeAddress expectedRegion = CellRangeAddress.valueOf("A3:B3");
+        assertEquals("Merged region should shift down a row", expectedRegion, region);
         
         wb.close();
     }
