@@ -1388,7 +1388,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      * Note this has undefined behavior if a column is tracked after one or more rows are written to the sheet.
      * If <code>column</code> is already tracked, this call does nothing.
      *
-     * @param column the column to track for autosizing
+     * @param column the column to track for auto-sizing
      * @since 3.14beta1
      * @see #trackColumnsForAutoSizing(Collection)
      * @see #trackAllColumnsForAutoSizing()
@@ -1403,7 +1403,7 @@ public class SXSSFSheet implements Sheet, Cloneable
      * Note this has undefined behavior if columns are tracked after one or more rows are written to the sheet.
      * Any column in <code>columns</code> that are already tracked are ignored by this call.
      *
-     * @param columns the columns to track for autosizing
+     * @param columns the columns to track for auto-sizing
      * @since 3.14beta1
      */
     public void trackColumnsForAutoSizing(Collection<Integer> columns)
@@ -1425,12 +1425,6 @@ public class SXSSFSheet implements Sheet, Cloneable
      * Removes a column that was previously marked for inclusion in auto-size column tracking.
      * When a column is untracked, the best-fit width is forgotten.
      * If <code>column</code> is not tracked, it will be ignored by this call.
-     *
-     * @param column the index of the column to track for auto-sizing
-     * @return true if column was tracked prior to being untracked, false if no action was taken
-     */
-    /**
-     * 
      *
      * @param column the index of the column to track for auto-sizing
      * @return true if column was tracked prior to this call, false if no action was taken
