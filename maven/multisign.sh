@@ -17,6 +17,10 @@
 #
 #   create md5 checksums and gpg signatures 
 
+echo "If you use gpg2 you need to set GPG_BIN accordingly"
+
+GPG_BIN=gpg
+
 stty -echo
 echo "enter your GPG passphrase"
 read passphrase
@@ -33,7 +37,7 @@ for i in *; do
     echo ""
     echo Signing $i
     echo $passphrase | gpg --passphrase-fd 0 --output $i.asc --detach-sig --armor $i
-    gpg --verify $i.asc $i
+    $GPG_BIN --verify $i.asc $i
     echo Hashing $i
 
     if [ "$LACKING_MD5SUM" = "1" ]; then
