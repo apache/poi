@@ -214,13 +214,11 @@ public class TextPropCollection {
 				// Bingo, data contains this property
 				TextProp prop = tp.clone();
 				int val = 0;
-				if (prop instanceof TabStopPropCollection) {
-				    ((TabStopPropCollection)prop).parseProperty(data, dataOffset+bytesPassed);
-				} else if (prop.getSize() == 2) {
+				if (prop.getSize() == 2) {
 					val = LittleEndian.getShort(data,dataOffset+bytesPassed);
 				} else if(prop.getSize() == 4) {
 					val = LittleEndian.getInt(data,dataOffset+bytesPassed);
-				} else if (prop.getSize() == 0) {
+				} else if (prop.getSize() == 0 && !(prop instanceof TabStopPropCollection)) {
                     //remember "special" bits.
                     maskSpecial |= tp.getMask();
                     continue;
@@ -228,6 +226,8 @@ public class TextPropCollection {
 				
 				if (prop instanceof BitMaskTextProp) {
 				    ((BitMaskTextProp)prop).setValueWithMask(val, containsField);
+				} else if (prop instanceof TabStopPropCollection) {
+				    ((TabStopPropCollection)prop).parseProperty(data, dataOffset+bytesPassed);
 				} else {
 				    prop.setValue(val);
 				}

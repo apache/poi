@@ -39,6 +39,7 @@ import org.apache.poi.ddf.EscherColorRef;
 import org.apache.poi.ddf.EscherProperties;
 import org.apache.poi.hslf.HSLFTestDataSamples;
 import org.apache.poi.hslf.exceptions.OldPowerPointFormatException;
+import org.apache.poi.hslf.extractor.PowerPointExtractor;
 import org.apache.poi.hslf.model.HeadersFooters;
 import org.apache.poi.hslf.record.Document;
 import org.apache.poi.hslf.record.Record;
@@ -755,6 +756,17 @@ public final class TestBugs {
         assertEquals(TextAlign.RIGHT, tp.getTextAlign());
         assertEquals("foobaa", tr.getRawText());
         ppt2.close();
+    }
+
+    @Test
+    public void bug58718() throws IOException {
+        String files[] = { "bug58718_008524.ppt","bug58718_008558.ppt","bug58718_349008.ppt","bug58718_008495.ppt",  }; 
+        for (String f : files) {
+            File sample = HSLFTestDataSamples.getSampleFile(f);
+            PowerPointExtractor ex = new PowerPointExtractor(sample.getAbsolutePath());
+            assertNotNull(ex.getText());
+            ex.close();
+        }
     }
     
     private static HSLFSlideShow open(String fileName) throws IOException {
