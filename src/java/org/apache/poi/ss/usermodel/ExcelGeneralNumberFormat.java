@@ -46,7 +46,7 @@ public class ExcelGeneralNumberFormat extends Format {
     private final DecimalFormat scientificFormat;
 
     public ExcelGeneralNumberFormat(final Locale locale) {
-        decimalSymbols = new DecimalFormatSymbols(locale);
+        decimalSymbols = DecimalFormatSymbols.getInstance(locale);
         scientificFormat = new DecimalFormat("0.#####E0", decimalSymbols);
         DataFormatter.setExcelStyleRoundingMode(scientificFormat);
         integerFormat = new DecimalFormat("#", decimalSymbols);
