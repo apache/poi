@@ -30,8 +30,8 @@ java.util.Date#toString() @ Do not use methods that depend on the current Local,
 java.lang.reflect.AccessibleObject#setAccessible(java.lang.reflect.AccessibleObject[], boolean) @ Reflection usage fails with SecurityManagers and likely will not work any more in Java 9
 java.lang.reflect.AccessibleObject#setAccessible(boolean) @ Reflection usage fails with SecurityManagers and likely will not work any more in Java 9
 
-java.text.DecimalFormatSymbols#DecimalFormatSymbols() @ use DecimalFormatSymbols.getInstance()
-java.text.DecimalFormatSymbols#DecimalFormatSymbols(Locale) @ use DecimalFormatSymbols.getInstance()
+java.text.DecimalFormatSymbols#<init>() @ use DecimalFormatSymbols.getInstance()
+java.text.DecimalFormatSymbols#<init>(java.util.Locale) @ use DecimalFormatSymbols.getInstance()
 
 # the following are taken from the Elasticsearch source at https://github.com/elastic/elasticsearch/tree/master/buildSrc/src/main/resources/forbidden
 

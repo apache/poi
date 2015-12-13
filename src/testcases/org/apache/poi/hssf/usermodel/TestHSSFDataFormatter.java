@@ -290,7 +290,7 @@ public final class TestHSSFDataFormatter {
             HSSFCell cell = (HSSFCell) it.next();
             log(formatter.formatCellValue(cell));
             // in some locales the the decimal delimiter is a comma, not a dot
-            char decimalSeparator = new DecimalFormatSymbols(LocaleUtil.getUserLocale()).getDecimalSeparator();
+            char decimalSeparator = DecimalFormatSymbols.getInstance(LocaleUtil.getUserLocale()).getDecimalSeparator();
             assertEquals("12345678" + decimalSeparator + "9", formatter.formatCellValue(cell));
         }
 
@@ -336,7 +336,7 @@ public final class TestHSSFDataFormatter {
         // now with a formula evaluator
         HSSFFormulaEvaluator evaluator = new HSSFFormulaEvaluator(wb);
         log(formatter.formatCellValue(cell, evaluator) + "\t\t\t (with evaluator)");
-        char decimalSeparator = new DecimalFormatSymbols(LocaleUtil.getUserLocale()).getDecimalSeparator();
+        char decimalSeparator = DecimalFormatSymbols.getInstance(LocaleUtil.getUserLocale()).getDecimalSeparator();
         assertEquals("24" + decimalSeparator + "50%", formatter.formatCellValue(cell,evaluator));
 
     }
