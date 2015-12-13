@@ -144,7 +144,7 @@ public final class TxMasterStyleAtom extends RecordAtom {
         charStyles = new ArrayList<TextPropCollection>(levels);
 
         for(short i = 0; i < levels; i++) {
-            TextPropCollection prprops = new TextPropCollection(0, TextPropType.paragraph); //  getParagraphProps(type, j)
+            TextPropCollection prprops = new TextPropCollection(0, TextPropType.paragraph);
             if (type >= TextHeaderAtom.CENTRE_BODY_TYPE) {
                 // Fetch the 2 byte value, that is safe to ignore for some types of text
                 short indentLevel = LittleEndian.getShort(_data, pos);
@@ -162,7 +162,7 @@ public final class TxMasterStyleAtom extends RecordAtom {
 
             head = LittleEndian.getInt(_data, pos);
             pos += LittleEndian.INT_SIZE;
-            TextPropCollection chprops = new TextPropCollection(0, TextPropType.character); //  getCharacterProps(type, j)
+            TextPropCollection chprops = new TextPropCollection(0, TextPropType.character);
             pos += chprops.buildTextPropList( head, _data, pos);
             charStyles.add(chprops);
         }

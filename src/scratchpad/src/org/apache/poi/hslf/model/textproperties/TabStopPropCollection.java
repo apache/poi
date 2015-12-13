@@ -93,13 +93,13 @@ public class TabStopPropCollection extends TextProp {
      */
     public void parseProperty(byte data[], int offset) {
         int count = LittleEndian.getUShort(data, offset);
-        offset += LittleEndianConsts.SHORT_SIZE;
+        int off = offset + LittleEndianConsts.SHORT_SIZE;
         for (int i=0; i<count; i++) {
-            int position = LittleEndian.getShort(data, offset);
-            offset += LittleEndianConsts.SHORT_SIZE;
-            int recVal = LittleEndian.getShort(data, offset);
+            int position = LittleEndian.getShort(data, off);
+            off += LittleEndianConsts.SHORT_SIZE;
+            int recVal = LittleEndian.getShort(data, off);
             TabStopType type = TabStopType.fromRecordVal(recVal);
-            offset += LittleEndianConsts.SHORT_SIZE;
+            off += LittleEndianConsts.SHORT_SIZE;
             tabStops.add(new TabStop(position, type));
             
         }
@@ -108,5 +108,16 @@ public class TabStopPropCollection extends TextProp {
     @Override
     public int getSize() {
         return LittleEndianConsts.SHORT_SIZE + tabStops.size()*LittleEndianConsts.INT_SIZE;
+    }
+    
+    @Override
+    public TabStopPropCollection clone() {
+        TabStopPropCollection other = (TabStopPropCollection)super.clone();
+        other.tabStops = new ArrayList<TabStop>();
+        for (TabStop ts : tabStops) {
+            TabStop tso = new TabStop(ts.getPosition(), ts.getType());
+            other.tabStops.add(tso);
+        }
+        return other;
     }
 }
