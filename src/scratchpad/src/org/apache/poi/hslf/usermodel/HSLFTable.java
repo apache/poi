@@ -52,6 +52,7 @@ implements HSLFShapeContainer, TableShape<HSLFShape,HSLFTextParagraph> {
 
 
     protected HSLFTableCell[][] cells;
+    private int columnCount = -1;
 
     /**
      * Create a new Table of the given number of rows and columns
@@ -114,20 +115,31 @@ implements HSLFShapeContainer, TableShape<HSLFShape,HSLFTextParagraph> {
         super(escherRecord, parent);
     }
 
-    /**
-     * Gets a cell
-     *
-     * @param row the row index (0-based)
-     * @param col the column index (0-based)
-     * @return the cell
-     */
+    @Override
     public HSLFTableCell getCell(int row, int col) {
-        return cells[row][col];
+        if (row < 0 || cells.length <= row) {
+            return null;
+        }
+        HSLFTableCell[] r = cells[row];
+        if (r == null || col < 0 || r.length <= col) {
+            // empty row
+            return null;
+        }
+        // cell can be potentially empty ...
+        return r[col];
     }
 
     @Override
     public int getNumberOfColumns() {
-        return cells[0].length;
+        if (columnCount == -1) {
+            // check all rows in case of merged rows
+            for (HSLFTableCell[] hc : cells) {
+                if (hc != null) {
+                    columnCount = Math.max(columnCount, hc.length);
+                }
+            }
+        }
+        return columnCount;
     }
 
     @Override

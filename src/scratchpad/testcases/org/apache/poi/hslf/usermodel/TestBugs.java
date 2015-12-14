@@ -768,6 +768,15 @@ public final class TestBugs {
             ex.close();
         }
     }
+
+    @Test
+    public void bug58733() throws IOException {
+        File sample = HSLFTestDataSamples.getSampleFile("bug58733_671884.ppt");
+        PowerPointExtractor ex = new PowerPointExtractor(sample.getAbsolutePath());
+        assertNotNull(ex.getText());
+        ex.close();
+    }
+
     
     private static HSLFSlideShow open(String fileName) throws IOException {
         File sample = HSLFTestDataSamples.getSampleFile(fileName);

@@ -58,7 +58,7 @@ public final class HSLFShapeFactory {
             for (EscherProperty ep : props) {
                 if (ep.getPropertyNumber() == EscherProperties.GROUPSHAPE__TABLEPROPERTIES
                     && ep instanceof EscherSimpleProperty
-                    && ((EscherSimpleProperty)ep).getPropertyValue() == 1) {
+                    && (((EscherSimpleProperty)ep).getPropertyValue() & 1) == 1) {
                     isTable = true;
                     break;
                 }
