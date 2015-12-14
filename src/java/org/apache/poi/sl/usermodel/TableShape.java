@@ -21,10 +21,29 @@ public interface TableShape<
     S extends Shape<S,P>,
     P extends TextParagraph<S,P,?>
 > extends Shape<S,P>, PlaceableShape<S,P> {
+    /**
+     * Return the maximum number of columns.
+     * If the table contains merged cells, the number of columns might be less than the maximum.
+     *
+     * @return the maximum number of column
+     */
     int getNumberOfColumns();
     
+    /**
+     * Return the number of rows
+     *
+     * @return the row count
+     */
     int getNumberOfRows();
     
+    /**
+     * Gets a cell
+     *
+     * @param row the row index (0-based)
+     * @param col the column index (0-based)
+     * @return the cell or null if the cell doesn't exists, e.g. when accessing
+     *         a merged cell or if the index is out of bounds
+     */
     TableCell<S,P> getCell(int row, int col);
     
     /**
