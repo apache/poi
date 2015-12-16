@@ -19,6 +19,7 @@ package org.apache.poi;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -300,6 +301,10 @@ public abstract class POIDocument {
     /**
      * Writes the document out to the specified output stream. The
      * stream is not closed as part of this operation.
+     * 
+     * Note - if the Document was opened from a {@link File} rather
+     *  than an {@link InputStream}, you <b>must</b> write out to
+     *  a different file, overwriting via an OutputStream isn't possible.
      * 
      * @param out The stream to write to.
      * 
