@@ -2850,4 +2850,35 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         assertNotNull(wbBack);
         wbBack.close();
     }
+    
+    public void test58731() throws Exception {
+        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("58731.xlsx");
+        Sheet sheet = wb.createSheet("Java Books");
+        
+        Object[][] bookData = {
+                {"Head First Java", "Kathy Serria", 79},
+                {"Effective Java", "Joshua Bloch", 36},
+                {"Clean Code", "Robert martin", 42},
+                {"Thinking in Java", "Bruce Eckel", 35},
+        };
+ 
+        int rowCount = 0;
+        for (Object[] aBook : bookData) {
+            Row row = sheet.createRow(++rowCount);
+             
+            int columnCount = 0;
+            for (Object field : aBook) {
+                Cell cell = row.createCell(++columnCount);
+                if (field instanceof String) {
+                    cell.setCellValue((String) field);
+                } else if (field instanceof Integer) {
+                    cell.setCellValue((Integer) field);
+                }
+            }
+        }
+        
+        Workbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb);
+        sheet = wb.getSheet("Java Books");
+        assertEquals(bookData[0][0], sheet.getRow(0).getCell(0).getStringCellValue());
+    }
 }

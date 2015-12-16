@@ -17,6 +17,7 @@
 package org.apache.poi;
 
 import java.io.Closeable;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -196,6 +197,10 @@ public abstract class POIXMLDocument extends POIXMLDocumentPart implements Close
     /**
      * Write out this document to an Outputstream.
      *
+     * Note - if the Document was opened from a {@link File} rather
+     *  than an {@link InputStream}, you <b>must</b> write out to
+     *  a different file, overwriting via an OutputStream isn't possible.
+     * 
      * @param stream - the java OutputStream you wish to write the file to
      *
      * @exception IOException if anything can't be written.
