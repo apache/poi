@@ -2851,6 +2851,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         wbBack.close();
     }
     
+    @Test
     public void test58731() throws Exception {
         Workbook wb = XSSFTestDataSamples.openSampleWorkbook("58731.xlsx");
         Sheet sheet = wb.createSheet("Java Books");
@@ -2864,11 +2865,11 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
  
         int rowCount = 0;
         for (Object[] aBook : bookData) {
-            Row row = sheet.createRow(++rowCount);
+            Row row = sheet.createRow(rowCount++);
              
             int columnCount = 0;
             for (Object field : aBook) {
-                Cell cell = row.createCell(++columnCount);
+                Cell cell = row.createCell(columnCount++);
                 if (field instanceof String) {
                     cell.setCellValue((String) field);
                 } else if (field instanceof Integer) {
@@ -2878,7 +2879,9 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         }
         
         Workbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb);
-        sheet = wb.getSheet("Java Books");
+        sheet = wb2.getSheet("Java Books");
+        assertNotNull(sheet.getRow(0));
+        assertNotNull(sheet.getRow(0).getCell(0));
         assertEquals(bookData[0][0], sheet.getRow(0).getCell(0).getStringCellValue());
     }
 }
