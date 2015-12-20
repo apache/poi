@@ -193,29 +193,35 @@ public class TestExtractorFactory {
 
 
         // Word
+        extractor = ExtractorFactory.createExtractor(doc);
         assertTrue(
-                ExtractorFactory.createExtractor(doc)
+                extractor
                 instanceof WordExtractor
         );
         assertTrue(
-                ExtractorFactory.createExtractor(doc).getText().length() > 120
+                extractor.getText().length() > 120
         );
+        extractor.close();
 
+        extractor = ExtractorFactory.createExtractor(doc6);
         assertTrue(
-                ExtractorFactory.createExtractor(doc6)
+                extractor
                 instanceof Word6Extractor
         );
         assertTrue(
-                ExtractorFactory.createExtractor(doc6).getText().length() > 20
+                extractor.getText().length() > 20
         );
+        extractor.close();
 
+        extractor = ExtractorFactory.createExtractor(doc95);
         assertTrue(
-                ExtractorFactory.createExtractor(doc95)
+                extractor
                 instanceof Word6Extractor
         );
         assertTrue(
-                ExtractorFactory.createExtractor(doc95).getText().length() > 120
+                extractor.getText().length() > 120
         );
+        extractor.close();
 
         extractor = ExtractorFactory.createExtractor(docx);
         assertTrue(
@@ -241,62 +247,71 @@ public class TestExtractorFactory {
         );
         extractor.close();
 
-        // PowerPoint
+        // PowerPoint (PPT)
+        extractor = ExtractorFactory.createExtractor(ppt);
         assertTrue(
-                ExtractorFactory.createExtractor(ppt)
+                extractor
                 instanceof PowerPointExtractor
         );
         assertTrue(
-                ExtractorFactory.createExtractor(ppt).getText().length() > 120
+                extractor.getText().length() > 120
         );
+        extractor.close();
 
+        // PowerPoint (PPTX)
         extractor = ExtractorFactory.createExtractor(pptx);
         assertTrue(
                 extractor
                 instanceof XSLFPowerPointExtractor
         );
-        extractor.close();
-
-        extractor = ExtractorFactory.createExtractor(pptx);
         assertTrue(
                 extractor.getText().length() > 120
         );
         extractor.close();
 
         // Visio - binary
+        extractor = ExtractorFactory.createExtractor(vsd);
         assertTrue(
-                ExtractorFactory.createExtractor(vsd)
+                extractor
                 instanceof VisioTextExtractor
         );
         assertTrue(
-                ExtractorFactory.createExtractor(vsd).getText().length() > 50
+                extractor.getText().length() > 50
         );
+        extractor.close();
+
         // Visio - vsdx
+        extractor = ExtractorFactory.createExtractor(vsdx);
         assertTrue(
-                ExtractorFactory.createExtractor(vsdx)
+                extractor
                 instanceof XDGFVisioExtractor
         );
         assertTrue(
-                ExtractorFactory.createExtractor(vsdx).getText().length() > 20
+                extractor.getText().length() > 20
         );
+        extractor.close();
 
         // Publisher
+        extractor = ExtractorFactory.createExtractor(pub);
         assertTrue(
-                ExtractorFactory.createExtractor(pub)
+                extractor
                 instanceof PublisherTextExtractor
         );
         assertTrue(
-                ExtractorFactory.createExtractor(pub).getText().length() > 50
+                extractor.getText().length() > 50
         );
+        extractor.close();
 
         // Outlook msg
+        extractor = ExtractorFactory.createExtractor(msg);
         assertTrue(
-                ExtractorFactory.createExtractor(msg)
+                extractor
                 instanceof OutlookTextExtactor
         );
         assertTrue(
-                ExtractorFactory.createExtractor(msg).getText().length() > 50
+                extractor.getText().length() > 50
         );
+        extractor.close();
 
         // Text
         try {
@@ -557,13 +572,15 @@ public class TestExtractorFactory {
         extractor.close();
         
         // Visio
+        extractor = ExtractorFactory.createExtractor(OPCPackage.open(vsdx.toString()));
         assertTrue(
-                ExtractorFactory.createExtractor(OPCPackage.open(vsdx.toString()))
+                extractor
                 instanceof XDGFVisioExtractor
         );
         assertTrue(
                 extractor.getText().length() > 20
         );
+        extractor.close();
 
         // Text
         try {
@@ -670,6 +687,7 @@ public class TestExtractorFactory {
                 ExtractorFactory.createExtractor(xls);
         embeds = ExtractorFactory.getEmbededDocsTextExtractors(ext);
         assertEquals(0, embeds.length);
+        ext.close();
 
         // Excel
         ext = (POIOLE2TextExtractor)
@@ -690,6 +708,7 @@ public class TestExtractorFactory {
         assertEquals(2, numXls);
         assertEquals(2, numWord);
         assertEquals(0, numMsg);
+        ext.close();
 
         // Word
         ext = (POIOLE2TextExtractor)
@@ -709,6 +728,7 @@ public class TestExtractorFactory {
         assertEquals(2, numXls);
         assertEquals(1, numWord);
         assertEquals(0, numMsg);
+        ext.close();
 
         // Word which contains an OOXML file
         ext = (POIOLE2TextExtractor)
@@ -730,6 +750,7 @@ public class TestExtractorFactory {
         assertEquals(0, numWord);
         assertEquals(1, numWordX);
         assertEquals(0, numMsg);
+        ext.close();
 
         // Outlook
         ext = (OutlookTextExtactor)
@@ -749,6 +770,7 @@ public class TestExtractorFactory {
         assertEquals(0, numXls);
         assertEquals(1, numWord);
         assertEquals(0, numMsg);
+        ext.close();
 
         // Outlook with another outlook file in it
         ext = (OutlookTextExtactor)
@@ -768,7 +790,7 @@ public class TestExtractorFactory {
         assertEquals(0, numXls);
         assertEquals(0, numWord);
         assertEquals(1, numMsg);
-
+        ext.close();
 
         // TODO - PowerPoint
         // TODO - Publisher

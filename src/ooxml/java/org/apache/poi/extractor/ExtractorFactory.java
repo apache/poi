@@ -128,20 +128,25 @@ public class ExtractorFactory {
       return threadPreferEventExtractors.get();
    }
 
-
 	public static POITextExtractor createExtractor(File f) throws IOException, InvalidFormatException, OpenXML4JException, XmlException {
-		InputStream inp = null;
+	    NPOIFSFileSystem fs = null;
         try {
-            try {
-                NPOIFSFileSystem fs = new NPOIFSFileSystem(f);
-                return createExtractor(fs);
-            } catch (OfficeXmlFileException e) {
-                return createExtractor(OPCPackage.open(f.toString(), PackageAccess.READ));
-            } catch (NotOLE2FileException ne) {
-                throw new IllegalArgumentException("Your File was neither an OLE2 file, nor an OOXML file");
+            fs = new NPOIFSFileSystem(f);
+            POIOLE2TextExtractor extractor = createExtractor(fs);
+            extractor.setFilesystem(fs);
+            return extractor;
+        } catch (OfficeXmlFileException e) {
+            // ensure file-handle release
+            if(fs != null) {
+                fs.close();
             }
-        } finally {
-            if(inp != null) inp.close();
+            return createExtractor(OPCPackage.open(f.toString(), PackageAccess.READ));
+        } catch (NotOLE2FileException ne) {
+            // ensure file-handle release
+            if(fs != null) {
+                fs.close();
+            }
+            throw new IllegalArgumentException("Your File was neither an OLE2 file, nor an OOXML file");
         }
     }
 
@@ -161,65 +166,95 @@ public class ExtractorFactory {
 		throw new IllegalArgumentException("Your InputStream was neither an OLE2 stream, nor an OOXML stream");
 	}
 
+	/**
+	 * Tries to determine the actual type of file and produces a matching text-extractor for it.
+	 *
+	 * @param pkg An {@link OPCPackage}.
+	 * @return A {@link POIXMLTextExtractor} for the given file.
+	 * @throws IOException If an error occurs while reading the file 
+	 * @throws OpenXML4JException If an error parsing the OpenXML file format is found. 
+	 * @throws XmlException If an XML parsing error occurs.
+	 * @throws IllegalArgumentException If no matching file type could be found.
+	 */
 	public static POIXMLTextExtractor createExtractor(OPCPackage pkg) throws IOException, OpenXML4JException, XmlException {
-	   // Check for the normal Office core document
-       PackageRelationshipCollection core =
-            pkg.getRelationshipsByType(CORE_DOCUMENT_REL);
-       
-       // If nothing was found, try some of the other OOXML-based core types
-       if (core.size() == 0) {
-           // Could it be an OOXML-Strict one?
-           core = pkg.getRelationshipsByType(STRICT_DOCUMENT_REL);
-       }
-       if (core.size() == 0) {
-           // Could it be a visio one?
-           core = pkg.getRelationshipsByType(VISIO_DOCUMENT_REL);
-           if (core.size() == 1)
-               return new XDGFVisioExtractor(pkg);
-       }
-       
-       // Should just be a single core document, complain if not
-       if (core.size() != 1) {
-           throw new IllegalArgumentException("Invalid OOXML Package received - expected 1 core document, found " + core.size());
-       }
-
-       // Grab the core document part, and try to identify from that
-       PackagePart corePart = pkg.getPart(core.getRelationship(0));
-
-       // Is it XSSF?
-       for(XSSFRelation rel : XSSFExcelExtractor.SUPPORTED_TYPES) {
-          if(corePart.getContentType().equals(rel.getContentType())) {
-             if(getPreferEventExtractor()) {
-                return new XSSFEventBasedExcelExtractor(pkg);
-             }
-
-             return new XSSFExcelExtractor(pkg);
-          }
-       }
-
-       // Is it XWPF?
-       for(XWPFRelation rel : XWPFWordExtractor.SUPPORTED_TYPES) {
-          if(corePart.getContentType().equals(rel.getContentType())) {
-             return new XWPFWordExtractor(pkg);
-          }
-       }
-
-       // Is it XSLF?
-       for(XSLFRelation rel : XSLFPowerPointExtractor.SUPPORTED_TYPES) {
-          if(corePart.getContentType().equals(rel.getContentType())) {
-             return new XSLFPowerPointExtractor(pkg);
-          }
-       }
-
-       // special handling for SlideShow-Theme-files, 
-       if(XSLFRelation.THEME_MANAGER.getContentType().equals(corePart.getContentType())) {
-           return new XSLFPowerPointExtractor(new XSLFSlideShow(pkg));
-       }
-
-       // ensure that we close the package again if there is an error opening it, however
-       // we need to revert the package to not re-write the file via close(), which is very likely not wanted for a TextExtractor!
-       pkg.revert();
-       throw new IllegalArgumentException("No supported documents found in the OOXML package (found "+corePart.getContentType()+")");
+        try {
+    	   // Check for the normal Office core document
+           PackageRelationshipCollection core =
+                pkg.getRelationshipsByType(CORE_DOCUMENT_REL);
+           
+           // If nothing was found, try some of the other OOXML-based core types
+           if (core.size() == 0) {
+               // Could it be an OOXML-Strict one?
+               core = pkg.getRelationshipsByType(STRICT_DOCUMENT_REL);
+           }
+           if (core.size() == 0) {
+               // Could it be a visio one?
+               core = pkg.getRelationshipsByType(VISIO_DOCUMENT_REL);
+               if (core.size() == 1)
+                   return new XDGFVisioExtractor(pkg);
+           }
+           
+           // Should just be a single core document, complain if not
+           if (core.size() != 1) {
+               throw new IllegalArgumentException("Invalid OOXML Package received - expected 1 core document, found " + core.size());
+           }
+    
+           // Grab the core document part, and try to identify from that
+           PackagePart corePart = pkg.getPart(core.getRelationship(0));
+    
+           // Is it XSSF?
+           for(XSSFRelation rel : XSSFExcelExtractor.SUPPORTED_TYPES) {
+              if(corePart.getContentType().equals(rel.getContentType())) {
+                 if(getPreferEventExtractor()) {
+                    return new XSSFEventBasedExcelExtractor(pkg);
+                 }
+    
+                 return new XSSFExcelExtractor(pkg);
+              }
+           }
+    
+           // Is it XWPF?
+           for(XWPFRelation rel : XWPFWordExtractor.SUPPORTED_TYPES) {
+              if(corePart.getContentType().equals(rel.getContentType())) {
+                 return new XWPFWordExtractor(pkg);
+              }
+           }
+    
+           // Is it XSLF?
+           for(XSLFRelation rel : XSLFPowerPointExtractor.SUPPORTED_TYPES) {
+              if(corePart.getContentType().equals(rel.getContentType())) {
+                 return new XSLFPowerPointExtractor(pkg);
+              }
+           }
+    
+           // special handling for SlideShow-Theme-files, 
+           if(XSLFRelation.THEME_MANAGER.getContentType().equals(corePart.getContentType())) {
+               return new XSLFPowerPointExtractor(new XSLFSlideShow(pkg));
+           }
+           
+           throw new IllegalArgumentException("No supported documents found in the OOXML package (found "+corePart.getContentType()+")");
+	    } catch (IOException e) {
+	        // ensure that we close the package again if there is an error opening it, however
+	        // we need to revert the package to not re-write the file via close(), which is very likely not wanted for a TextExtractor!
+	        pkg.revert();
+	        throw e;
+        } catch (OpenXML4JException e) {
+            // ensure that we close the package again if there is an error opening it, however
+            // we need to revert the package to not re-write the file via close(), which is very likely not wanted for a TextExtractor!
+            pkg.revert();
+            throw e;
+        } catch (XmlException e) {
+            // ensure that we close the package again if there is an error opening it, however
+            // we need to revert the package to not re-write the file via close(), which is very likely not wanted for a TextExtractor!
+            pkg.revert();
+            throw e;
+	    } catch (RuntimeException e) {
+           // ensure that we close the package again if there is an error opening it, however
+           // we need to revert the package to not re-write the file via close(), which is very likely not wanted for a TextExtractor!
+           pkg.revert();
+           
+           throw e;
+	    }
 	}
 
 	public static POIOLE2TextExtractor createExtractor(POIFSFileSystem fs) throws IOException, InvalidFormatException, OpenXML4JException, XmlException {
