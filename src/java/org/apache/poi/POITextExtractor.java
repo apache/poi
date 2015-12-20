@@ -31,6 +31,8 @@ import java.io.IOException;
  * @see org.apache.poi.hwpf.extractor.WordExtractor
  */
 public abstract class POITextExtractor implements Closeable {
+    private Closeable fsToClose = null;
+    
 	/**
 	 * Retrieves all the text from the document.
 	 * How cells, paragraphs etc are separated in the text
@@ -46,6 +48,13 @@ public abstract class POITextExtractor implements Closeable {
 	 *  metadata / properties, such as author and title.
 	 */
 	public abstract POITextExtractor getMetadataTextExtractor();
+
+	/**
+	 * Used to ensure file handle cleanup.
+	 */
+	public void setFilesystem(Closeable fs) {
+	    fsToClose = fs;
+	}
 	
 	/**
 	 * Allows to free resources of the Extractor as soon as
@@ -55,6 +64,8 @@ public abstract class POITextExtractor implements Closeable {
 	 * The Extractor cannot be used after close has been called.
 	 */
 	public void close() throws IOException {
-		// nothing to do in abstract class, derived classes may perform actions.
+		if(fsToClose != null) {
+		    fsToClose.close();
+		}
 	}
 }
