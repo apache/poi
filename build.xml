@@ -1791,7 +1791,17 @@ under the License.
            </fileset>
        </rat:report>
 
-       <loadfile property="rat.reportcontent" srcFile="${rat.report}"/>
+	   <!-- remove clutter to compact build output -->
+       <!-- replaceregexp doesn't work within loadfile ... -->
+       <replaceregexp file="${rat.report}" match="\s+Printing headers for files without AL header.++" replace="" flags="s"/>
+    	
+       <loadfile property="rat.reportcontent" srcFile="${rat.report}">
+            <filterchain>
+            	<linecontainsregexp negate="true">
+            		<regexp pattern="^\s+(AL|B|N)\s+"/>
+            	</linecontainsregexp>
+            </filterchain>
+       </loadfile>
        <echo>${rat.reportcontent}</echo>
 
        <!-- fail the build if at least one note is in the report -->
