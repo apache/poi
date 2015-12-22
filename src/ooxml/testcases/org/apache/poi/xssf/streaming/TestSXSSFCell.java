@@ -47,7 +47,7 @@ public class TestSXSSFCell extends BaseTestXCell {
     }
 
     @AfterClass
-    public static void tearDown(){
+    public static void tearDownClass(){
         SXSSFITestDataProvider.instance.cleanup();
     }
 
