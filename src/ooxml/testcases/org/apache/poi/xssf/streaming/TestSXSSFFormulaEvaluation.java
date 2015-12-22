@@ -71,7 +71,8 @@ public final class TestSXSSFFormulaEvaluation {
         XSSFWorkbook xwb = new XSSFWorkbook();
         xwb.createSheet("Open");
         xwb.createSheet("Closed");
-        
+
+        wb.close();
         wb = new SXSSFWorkbook(xwb, 5);
         s = wb.getSheet("Closed");
         s.flushRows();
@@ -83,10 +84,12 @@ public final class TestSXSSFFormulaEvaluation {
             eval.evaluateAll();
             fail("Evaluate All shouldn't work, as sheets flushed");
         } catch (SXSSFFormulaEvaluator.SheetsFlushedException e) {}
+        
+        wb.close();
     }
     
     @Test
-    public void testEvaluateRefOutsideWindowFails() {
+    public void testEvaluateRefOutsideWindowFails() throws IOException {
         SXSSFWorkbook wb = new SXSSFWorkbook(5);
         SXSSFSheet s = wb.createSheet();
         
@@ -108,14 +111,17 @@ public final class TestSXSSFFormulaEvaluation {
         } catch(SXSSFFormulaEvaluator.RowFlushedException e) {
             // Expected
         }
+        
+        wb.close();
     }
     
     /**
      * If all formula cells + their references are inside the window,
      *  then evaluation works
+     * @throws IOException 
      */
     @Test
-    public void testEvaluateAllInWindow() {
+    public void testEvaluateAllInWindow() throws IOException {
         SXSSFWorkbook wb = new SXSSFWorkbook(5);
         SXSSFSheet s = wb.createSheet();
         s.createRow(0).createCell(0).setCellFormula("1+2");
@@ -128,10 +134,12 @@ public final class TestSXSSFFormulaEvaluation {
         assertEquals(3, (int)s.getRow(0).getCell(0).getNumericCellValue());
         assertEquals(13, (int)s.getRow(1).getCell(1).getNumericCellValue());
         assertEquals(113, (int)s.getRow(2).getCell(2).getNumericCellValue());
+        
+        wb.close();
     }
     
     @Test
-    public void testEvaluateRefInsideWindow() {
+    public void testEvaluateRefInsideWindow() throws IOException {
         SXSSFWorkbook wb = new SXSSFWorkbook(5);
         SXSSFSheet s = wb.createSheet();
         
@@ -146,10 +154,12 @@ public final class TestSXSSFFormulaEvaluation {
         assertEquals(0, (int)c.getNumericCellValue());
         eval.evaluateFormulaCell(c);
         assertEquals(3, (int)c.getNumericCellValue());
+        
+        wb.close();
     }
     
     @Test
-    public void testEvaluateSimple() {
+    public void testEvaluateSimple() throws IOException {
         SXSSFWorkbook wb = new SXSSFWorkbook(5);
         SXSSFSheet s = wb.createSheet();
         
@@ -165,5 +175,7 @@ public final class TestSXSSFFormulaEvaluation {
         c.setCellFormula("CONCATENATE(\"hello\",\" \",\"world\")");
         eval.evaluateFormulaCell(c);
         assertEquals("hello world", c.getStringCellValue());
+        
+        wb.close();
     }
 }

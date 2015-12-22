@@ -228,7 +228,7 @@ public final class TestWorkbookFactory extends TestCase {
         );
         assertNotNull(wb);
         assertTrue(wb instanceof XSSFWorkbook);
-
+        wb.close();
 
         // Unprotected, wrong password, opens normally
         wb = WorkbookFactory.create(
@@ -243,7 +243,7 @@ public final class TestWorkbookFactory extends TestCase {
         );
         assertNotNull(wb);
         assertTrue(wb instanceof XSSFWorkbook);
-
+        wb.close();
 
         // Protected, correct password, opens fine
         wb = WorkbookFactory.create(
@@ -258,7 +258,7 @@ public final class TestWorkbookFactory extends TestCase {
         );
         assertNotNull(wb);
         assertTrue(wb instanceof XSSFWorkbook);
-
+        wb.close();
 
         // Protected, wrong password, throws Exception
         try {

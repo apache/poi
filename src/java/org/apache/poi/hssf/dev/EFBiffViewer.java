@@ -44,21 +44,27 @@ public class EFBiffViewer
 
     public void run() throws IOException {
         NPOIFSFileSystem fs   = new NPOIFSFileSystem(new File(file), true);
-        InputStream     din   = BiffViewer.getPOIFSInputStream(fs);
-        HSSFRequest     req   = new HSSFRequest();
-
-        req.addListenerForAllRecords(new HSSFListener()
-        {
-            public void processRecord(Record rec)
-            {
-                System.out.println(rec.toString());
+        try {
+            InputStream     din   = BiffViewer.getPOIFSInputStream(fs);
+            try {
+                HSSFRequest     req   = new HSSFRequest();
+        
+                req.addListenerForAllRecords(new HSSFListener()
+                {
+                    public void processRecord(Record rec)
+                    {
+                        System.out.println(rec.toString());
+                    }
+                });
+                HSSFEventFactory factory = new HSSFEventFactory();
+        
+                factory.processEvents(req, din);
+            } finally {
+                din.close();
             }
-        });
-        HSSFEventFactory factory = new HSSFEventFactory();
-
-        factory.processEvents(req, din);
-        din.close();
-        fs.close();
+        } finally {
+            fs.close();
+        }
     }
 
     public void setFile(String file)

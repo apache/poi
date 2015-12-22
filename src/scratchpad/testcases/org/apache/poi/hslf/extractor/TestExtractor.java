@@ -129,6 +129,7 @@ public final class TestExtractor {
 	 */
     @Test
 	public void testMissingCoreRecords() throws Exception {
+        ppe.close();
 		ppe = new PowerPointExtractor(slTests.openResourceAsStream("missing_core_records.ppt"));
 
 		String text = ppe.getText(true, false);
@@ -171,6 +172,7 @@ public final class TestExtractor {
 
          // Check the first file
          ss = new HSLFSlideShowImpl(dirA);
+         ppe.close();
          ppe = new PowerPointExtractor(ss);
          assertEquals("Sample PowerPoint file\nThis is the 1st file\nNot much too it\n",
                  ppe.getText(true, false)
@@ -178,6 +180,7 @@ public final class TestExtractor {
 
          // And the second
          ss = new HSLFSlideShowImpl(dirB);
+         ppe.close();
          ppe = new PowerPointExtractor(ss);
          assertEquals("Sample PowerPoint file\nThis is the 2nd file\nNot much too it either\n",
                  ppe.getText(true, false)
@@ -192,6 +195,7 @@ public final class TestExtractor {
      @Test
      public void testExtractFromOwnEmbeded() throws Exception {
          String path = "ppt_with_embeded.ppt";
+         ppe.close();
          ppe = new PowerPointExtractor(POIDataSamples.getSlideShowInstance().openResourceAsStream(path));
          List<OLEShape> shapes = ppe.getOLEShapes();
          assertEquals("Expected 6 ole shapes in " + path, 6, shapes.size());
@@ -209,6 +213,7 @@ public final class TestExtractor {
              } else if ("Presentation".equals(name)) {
                  num_ppt++;
                  HSLFSlideShow ppt = new HSLFSlideShow(data);
+                 ppt.close();
              }
              data.close();
          }
@@ -223,6 +228,7 @@ public final class TestExtractor {
     @Test
     public void test52991() throws Exception {
         String path = "badzip.ppt";
+        ppe.close();
         ppe = new PowerPointExtractor(POIDataSamples.getSlideShowInstance().openResourceAsStream(path));
         List<OLEShape> shapes = ppe.getOLEShapes();
         
@@ -236,6 +242,7 @@ public final class TestExtractor {
      */
     @Test
     public void testWithComments() throws Exception {
+        ppe.close();
 		ppe = new PowerPointExtractor(slTests.openResourceAsStream("WithComments.ppt"));
 
 		String text = ppe.getText();
@@ -248,6 +255,7 @@ public final class TestExtractor {
 
 		
 		// And another file
+        ppe.close();
 		ppe = new PowerPointExtractor(slTests.openResourceAsStream("45543.ppt"));
 
 		text = ppe.getText();
@@ -271,6 +279,7 @@ public final class TestExtractor {
        HSLFSlideShow ss = new HSLFSlideShow(hslf);
        assertNotNull(ss.getNotesHeadersFooters());
        assertEquals("testdoc test phrase", ss.getNotesHeadersFooters().getHeaderText());
+       ppe.close();
 
        ppe = new PowerPointExtractor(hslf);
 
@@ -282,13 +291,14 @@ public final class TestExtractor {
        text = ppe.getText();
        assertContains(text, "testdoc");
        assertContains(text, "test phrase");
-
+       ss.close();
 
        // And with a footer, also on notes
        hslf = new HSLFSlideShowImpl(slTests.openResourceAsStream("45537_Footer.ppt"));
        ss = new HSLFSlideShow(hslf);
        assertNotNull(ss.getNotesHeadersFooters());
        assertEquals("testdoc test phrase", ss.getNotesHeadersFooters().getFooterText());
+       ppe.close();
 
        ppe = new PowerPointExtractor(slTests.openResourceAsStream("45537_Footer.ppt"));
 
@@ -309,7 +319,8 @@ public final class TestExtractor {
       String masterRandomText = "This text comes from the Master Slide";
       String masterFooterText = "Footer from the master slide";
       HSLFSlideShowImpl hslf = new HSLFSlideShowImpl(slTests.openResourceAsStream("WithMaster.ppt"));
-      
+      ppe.close();
+
       ppe = new PowerPointExtractor(hslf);
       
       String text = ppe.getText();
@@ -320,6 +331,7 @@ public final class TestExtractor {
 
    @Test
    public void testMasterText() throws Exception {
+       ppe.close();
        ppe = new PowerPointExtractor(slTests.openResourceAsStream("master_text.ppt"));
        
        // Initially not there
@@ -338,7 +350,8 @@ public final class TestExtractor {
        // Will always show up
        String masterText = "Footer from the master slide";
        HSLFSlideShowImpl hslf = new HSLFSlideShowImpl(slTests.openResourceAsStream("WithMaster.ppt"));
-       
+       ppe.close();
+
        ppe = new PowerPointExtractor(hslf);
        
        text = ppe.getText();
@@ -352,6 +365,7 @@ public final class TestExtractor {
     @Test
     public void testChineseText() throws Exception {
        HSLFSlideShowImpl hslf = new HSLFSlideShowImpl(slTests.openResourceAsStream("54880_chinese.ppt"));
+       ppe.close();
        ppe = new PowerPointExtractor(hslf);
        
        String text = ppe.getText();
@@ -409,6 +423,7 @@ public final class TestExtractor {
 //                         "Row 4, Cell 1\tRow 4, Cell 2\tRow 4, Cell 3\tRow 4, Cell 4\n"+ 
 //                         "Row 5, Cell 1\tRow 5, Cell 2\tRow 5, Cell 3\tRow 5, Cell 4\n";
 //        assertTrue(text.contains(target));
+        ppe.close();
 
         ppe = new PowerPointExtractor(slTests.openResourceAsStream("54722.ppt"));
         String text = ppe.getText();

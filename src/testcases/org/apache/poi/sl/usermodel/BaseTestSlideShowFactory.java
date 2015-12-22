@@ -36,27 +36,38 @@ public class BaseTestSlideShowFactory {
         // from file
         ss = SlideShowFactory.create(fromFile(file));
         assertNotNull(ss);
+        ss.close();
+
         // from stream
         ss = SlideShowFactory.create(fromStream(file));
         assertNotNull(ss);
+        ss.close();
+
         // from NPOIFS
         if (!file.contains("pptx")) {
             NPOIFSFileSystem npoifs = new NPOIFSFileSystem(fromFile(file));
             ss = SlideShowFactory.create(npoifs);
             assertNotNull(ss);
             npoifs.close();
+            ss.close();
         }
+
         // from protected file
         ss = SlideShowFactory.create(fromFile(protectedFile), password);
         assertNotNull(ss);
+        ss.close();
+
         // from protected stream
         ss = SlideShowFactory.create(fromStream(protectedFile), password);
         assertNotNull(ss);
+        ss.close();
+
         // from protected NPOIFS
         NPOIFSFileSystem npoifs = new NPOIFSFileSystem(fromFile(protectedFile));
         ss = SlideShowFactory.create(npoifs, password);
         assertNotNull(ss);
         npoifs.close();
+        ss.close();
     }
     
     private static File fromFile(String file) {

@@ -26,9 +26,6 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
-
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.openxml4j.OpenXML4JTestDataSamples;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -40,6 +37,9 @@ import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.TempFile;
+
+import junit.framework.AssertionFailedError;
+import junit.framework.TestCase;
 
 /**
  * Test core properties Open Packaging Convention compliance.
@@ -249,6 +249,7 @@ public final class TestOPCComplianceCoreProperties extends TestCase {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         pkg.save(baos);
         ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+        pkg.revert();
 
         pkg = OPCPackage.open(bais);
 
@@ -257,7 +258,7 @@ public final class TestOPCComplianceCoreProperties extends TestCase {
         assertNotNull(pkg.getPackageProperties());
         assertNotNull(pkg.getPackageProperties().getLanguageProperty());
         assertNull(pkg.getPackageProperties().getLanguageProperty().getValue());
-        
+        pkg.close();
         
         // Open a new copy of it
         pkg = OPCPackage.open(POIDataSamples.getOpenXML4JInstance().getFile(sampleFileName).getPath());
@@ -265,6 +266,8 @@ public final class TestOPCComplianceCoreProperties extends TestCase {
         // Save and re-load, without having touched the properties yet
         baos = new ByteArrayOutputStream();
         pkg.save(baos);
+        pkg.revert();
+
         bais = new ByteArrayInputStream(baos.toByteArray());
         pkg = OPCPackage.open(bais);
         
@@ -285,10 +288,12 @@ public final class TestOPCComplianceCoreProperties extends TestCase {
         // Copy this into a temp file, so we can play with it
         File tmp = TempFile.createTempFile("poi-test", ".opc");
         FileOutputStream out = new FileOutputStream(tmp);
+        InputStream in = POIDataSamples.getOpenXML4JInstance().openResourceAsStream(sampleFileName);
         IOUtils.copy(
-                POIDataSamples.getOpenXML4JInstance().openResourceAsStream(sampleFileName),
+                in,
                 out);
         out.close();
+        in.close();
 
         // Open it from that temp file
         OPCPackage pkg = OPCPackage.open(tmp);
@@ -301,7 +306,6 @@ public final class TestOPCComplianceCoreProperties extends TestCase {
 
         // Save and close
         pkg.close();
-
 
         // Re-open and check
         pkg = OPCPackage.open(tmp);

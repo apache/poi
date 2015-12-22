@@ -69,12 +69,14 @@ public final class TestCurrentUserAtom {
 	public void readEnc() throws Exception {
 		POIFSFileSystem fs = new POIFSFileSystem(_slTests.getFile(encFile));
 
-		new CurrentUserAtom(fs.getRoot());
-		assertTrue(true); // not yet failed
-		
-		new HSLFSlideShowImpl(fs);
-		
-		fs.close();
+		try {
+    		new CurrentUserAtom(fs.getRoot());
+    		assertTrue(true); // not yet failed
+    		
+    		new HSLFSlideShowImpl(fs).close();
+		} finally {
+		    fs.close();
+		}
 	}
 
 	@Test
