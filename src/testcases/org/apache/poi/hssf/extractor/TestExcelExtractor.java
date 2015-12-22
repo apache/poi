@@ -45,12 +45,13 @@ public final class TestExcelExtractor {
         Biff8EncryptionKey.setCurrentUserPassword(null);
     }
 
-	@SuppressWarnings("resource")
     private static ExcelExtractor createExtractor(String sampleFileName) throws IOException {
 		File file = HSSFTestDataSamples.getSampleFile(sampleFileName);
-        return new ExcelExtractor(new POIFSFileSystem(file));
+        POIFSFileSystem fs = new POIFSFileSystem(file);
+        ExcelExtractor extractor = new ExcelExtractor(fs);
+        extractor.setFilesystem(fs);
+        return extractor;
 	}
-
 
 	@Test
 	public void testSimple() throws IOException {

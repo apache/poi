@@ -25,12 +25,15 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.util.LocaleUtil;
+import org.junit.After;
 import org.junit.Test;
 
 import junit.framework.AssertionFailedError;
@@ -43,6 +46,16 @@ import junit.framework.AssertionFailedError;
 public abstract class BaseTestCell {
 
     protected final ITestDataProvider _testDataProvider;
+
+    private List<Workbook> workbooksToClose = new ArrayList<Workbook>(); 
+
+    @After
+    public void tearDown() throws IOException {
+        // free resources correctly
+        for(Workbook wb : workbooksToClose) {
+            wb.close();
+        }
+    }
 
     /**
      * @param testDataProvider an object that provides test data in HSSF / XSSF specific way
@@ -350,8 +363,11 @@ public abstract class BaseTestCell {
         wb.close();
 
     }
+
     private Cell createACell() {
-        return _testDataProvider.createWorkbook().createSheet("Sheet1").createRow(0).createCell(0);
+        Workbook wb = _testDataProvider.createWorkbook();
+        workbooksToClose.add(wb);
+        return wb.createSheet("Sheet1").createRow(0).createCell(0);
     }
     
     /**
@@ -953,5 +969,7 @@ public abstract class BaseTestCell {
 
         B1.setAsActiveCell();
         assertEquals(B1.getAddress(), sheet.getActiveCell());
+        
+        wb.close();
     }
 }

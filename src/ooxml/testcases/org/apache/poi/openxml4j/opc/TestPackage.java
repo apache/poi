@@ -716,6 +716,7 @@ public final class TestPackage {
         Workbook wb = WorkbookFactory.create(new ByteArrayInputStream(buf));
         wb.getSheetAt(0);
         wb.close();
+        zipFile.close();
     }
     
     @Test

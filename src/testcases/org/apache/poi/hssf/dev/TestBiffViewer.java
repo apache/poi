@@ -48,15 +48,18 @@ public class TestBiffViewer extends BaseXLSIteratingTest {
 	@Override
 	void runOneFile(File fileIn) throws IOException {
 	    NPOIFSFileSystem fs  = new NPOIFSFileSystem(fileIn, true);
-		InputStream is = BiffViewer.getPOIFSInputStream(fs);
-		try {
-			// use a NullOutputStream to not write the bytes anywhere for best runtime
-		    PrintWriter dummy = new PrintWriter(new OutputStreamWriter(NULL_OUTPUT_STREAM, LocaleUtil.CHARSET_1252));
-			BiffViewer.runBiffViewer(dummy, is, true, true, true, false);
-		} finally {
-			is.close();
-			fs.close();
-		}
+	    try {
+    		InputStream is = BiffViewer.getPOIFSInputStream(fs);
+    		try {
+    			// use a NullOutputStream to not write the bytes anywhere for best runtime
+    		    PrintWriter dummy = new PrintWriter(new OutputStreamWriter(NULL_OUTPUT_STREAM, LocaleUtil.CHARSET_1252));
+    			BiffViewer.runBiffViewer(dummy, is, true, true, true, false);
+    		} finally {
+    			is.close();
+    		}
+	    } finally {
+    		fs.close();
+	    }
 	}
 	
 //	@Test

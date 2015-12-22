@@ -21,6 +21,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
@@ -31,7 +32,6 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LocaleUtil;
 import org.junit.Test;
 
-@SuppressWarnings("resource")
 public class TestEscherDump {
     @Test
     public void testSimple() throws Exception {
@@ -56,10 +56,15 @@ public class TestEscherDump {
         //new EscherDump().dumpOld(data.length, new ByteArrayInputStream(data), System.out);
         
         data = new byte[2586114];
-        int bytes = IOUtils.readFully(HSSFTestDataSamples.openSampleFileStream("44593.xls"), data);
-        assertTrue(bytes != -1);
-        //new EscherDump().dump(bytes, data, System.out);
-        //new EscherDump().dumpOld(bytes, new ByteArrayInputStream(data), System.out);
+        InputStream stream = HSSFTestDataSamples.openSampleFileStream("44593.xls");
+        try {
+            int bytes = IOUtils.readFully(stream, data);
+            assertTrue(bytes != -1);
+            //new EscherDump().dump(bytes, data, System.out);
+            //new EscherDump().dumpOld(bytes, new ByteArrayInputStream(data), System.out);
+        } finally {
+            stream.close();
+        }
     }
     
     /**

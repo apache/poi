@@ -51,37 +51,42 @@ public class RecordLister
         throws IOException
     {
         NPOIFSFileSystem  fs    = new NPOIFSFileSystem(new File(file), true);
-        InputStream       din   = BiffViewer.getPOIFSInputStream(fs);
-        RecordInputStream rinp  = new RecordInputStream(din);
-
-        while(rinp.hasNextRecord()) {
-           int sid  = rinp.getNextSid();
-           rinp.nextRecord();
-           
-           int size = rinp.available();
-           Class<? extends Record> clz = RecordFactory.getRecordClass(sid);
-           
-           System.out.print(
-                 formatSID(sid) +
-                 " - " +
-                 formatSize(size) +
-                 " bytes"
-           );
-           if(clz != null) {
-              System.out.print("  \t");
-              System.out.print(clz.getName().replace("org.apache.poi.hssf.record.", ""));
-           }
-           System.out.println();
-           
-           byte[] data = rinp.readRemainder();
-           if(data.length > 0) {
-              System.out.print("   ");
-              System.out.println( formatData(data) );
-           }
-        }
+        try {
+            InputStream       din   = BiffViewer.getPOIFSInputStream(fs);
+            try {
+                RecordInputStream rinp  = new RecordInputStream(din);
         
-        din.close();
-        fs.close();
+                while(rinp.hasNextRecord()) {
+                   int sid  = rinp.getNextSid();
+                   rinp.nextRecord();
+                   
+                   int size = rinp.available();
+                   Class<? extends Record> clz = RecordFactory.getRecordClass(sid);
+                   
+                   System.out.print(
+                         formatSID(sid) +
+                         " - " +
+                         formatSize(size) +
+                         " bytes"
+                   );
+                   if(clz != null) {
+                      System.out.print("  \t");
+                      System.out.print(clz.getName().replace("org.apache.poi.hssf.record.", ""));
+                   }
+                   System.out.println();
+                   
+                   byte[] data = rinp.readRemainder();
+                   if(data.length > 0) {
+                      System.out.print("   ");
+                      System.out.println( formatData(data) );
+                   }
+                }
+            } finally {
+                din.close();
+            }
+        } finally {
+            fs.close();
+        }
     }
     
     private static String formatSID(int sid) {
