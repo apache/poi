@@ -38,7 +38,7 @@ import org.apache.poi.sl.usermodel.SlideShowFactory;
 import org.apache.poi.util.JvmBugs;
 
 /**
- * An utulity to convert slides of a .pptx slide show to a PNG image
+ * An utility to convert slides of a .pptx slide show to a PNG image
  *
  * @author Yegor Kozlov
  */
@@ -53,7 +53,7 @@ public class PPTX2PNG {
             "    -slide <integer> 1-based index of a slide to render\n" +
             "    -format <type>   png,gif,jpg (,null for testing)" +
             "    -outdir <dir>    output directory, defaults to origin of the ppt/pptx file" +
-            "    -quite           do not write to console (for normal processing)";
+            "    -quiet           do not write to console (for normal processing)";
 
         System.out.println(msg);
         // no System.exit here, as we also run in junit tests!
@@ -70,7 +70,7 @@ public class PPTX2PNG {
         File file = null;
         String format = "png";
         File outdir = null;
-        boolean quite = false;
+        boolean quiet = false;
 
         for (int i = 0; i < args.length; i++) {
             if (args[i].startsWith("-")) {
@@ -82,8 +82,8 @@ public class PPTX2PNG {
                     format = args[++i];
                 } else if ("-outdir".equals(args[i])) {
                     outdir = new File(args[++i]);
-                } else if ("-quite".equals(args[i])) {
-                    quite = true;
+                } else if ("-quiet".equals(args[i])) {
+                    quiet = true;
                 }
             } else {
                 file = new File(args[i]);
@@ -114,7 +114,7 @@ public class PPTX2PNG {
             return;
         }
     
-        if (!quite) {
+        if (!quiet) {
             System.out.println("Processing " + file);
         }
         SlideShow<?,?> ss = SlideShowFactory.create(file, null, true);
@@ -134,7 +134,7 @@ public class PPTX2PNG {
         for(Slide<?,?> slide : slides) {
             if (slidenum == -1 || slideNo == slidenum) {
                 String title = slide.getTitle();
-                if (!quite) {
+                if (!quiet) {
                     System.out.println("Rendering slide " + slideNo + (title == null ? "" : ": " + title));
                 }
 
@@ -164,9 +164,11 @@ public class PPTX2PNG {
             slideNo++;
         }
         
-        if (!quite) {
+        if (!quiet) {
             System.out.println("Done");
         }
+        
+        ss.close();
     }
 
     @SuppressWarnings("unchecked")
