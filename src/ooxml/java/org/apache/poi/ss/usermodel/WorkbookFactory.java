@@ -278,7 +278,14 @@ public class WorkbookFactory {
 
         try {
             NPOIFSFileSystem fs = new NPOIFSFileSystem(file, readOnly);
-            return create(fs, password);
+            try {
+                return create(fs, password);
+            } catch (RuntimeException e) {
+                // ensure that the file-handle is closed again
+                fs.close();
+                
+                throw e;
+            }
         } catch(OfficeXmlFileException e) {
             // opening as .xls failed => try opening as .xlsx
             OPCPackage pkg = OPCPackage.open(file, readOnly ? PackageAccess.READ : PackageAccess.READ_WRITE);
@@ -291,7 +298,7 @@ public class WorkbookFactory {
 
                 // rethrow exception
                 throw ioe;
-            } catch (IllegalArgumentException ioe) {
+            } catch (RuntimeException ioe) {
                 // ensure that file handles are closed (use revert() to not re-write the file)
                 pkg.revert();
                 //pkg.close();

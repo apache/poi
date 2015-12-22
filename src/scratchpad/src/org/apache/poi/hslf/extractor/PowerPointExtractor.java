@@ -105,6 +105,7 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
     */
    public PowerPointExtractor(NPOIFSFileSystem fs) throws IOException {
       this(fs.getRoot());
+      setFilesystem(fs);
    }
 
    /**

@@ -157,7 +157,6 @@ public class SlideShowFactory {
      *  @throws IOException if an error occurs while reading the data
      *  @throws EncryptedDocumentException If the wrong password is given for a protected file
      */
-    @SuppressWarnings("resource")
     public static SlideShow<?,?> create(InputStream inp, String password) throws IOException, EncryptedDocumentException {
         // If clearly doesn't do mark/reset, wrap up
         if (! inp.markSupported()) {
@@ -231,17 +230,25 @@ public class SlideShowFactory {
      *  @throws IOException if an error occurs while reading the data
      *  @throws EncryptedDocumentException If the wrong password is given for a protected file
      */
-    @SuppressWarnings("resource")
     public static SlideShow<?,?> create(File file, String password, boolean readOnly) throws IOException, EncryptedDocumentException {
         if (!file.exists()) {
             throw new FileNotFoundException(file.toString());
         }
 
+        NPOIFSFileSystem fs = null;
         try {
-            NPOIFSFileSystem fs = new NPOIFSFileSystem(file, readOnly);
+            fs = new NPOIFSFileSystem(file, readOnly);
             return create(fs, password);
         } catch(OfficeXmlFileException e) {
+            if(fs != null) {
+                fs.close();
+            }
             return createXSLFSlideShow(file, readOnly);
+        } catch(RuntimeException e) {
+            if(fs != null) {
+                fs.close();
+            }
+            throw e;
         }
     }
     
