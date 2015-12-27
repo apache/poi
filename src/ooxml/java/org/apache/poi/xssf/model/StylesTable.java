@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -301,19 +302,19 @@ public class StylesTable extends POIXMLDocumentPart {
     }
 
     public List<XSSFCellBorder> getBorders(){
-        return borders;
+        return Collections.unmodifiableList(borders);
     }
 
     public List<XSSFCellFill> getFills(){
-        return fills;
+        return Collections.unmodifiableList(fills);
     }
 
     public List<XSSFFont> getFonts(){
-        return fonts;
+        return Collections.unmodifiableList(fonts);
     }
 
     public Map<Integer, String> getNumberFormats(){
-        return numberFormats;
+        return Collections.unmodifiableMap(numberFormats);
     }
 
     public int putFill(XSSFCellFill fill) {
