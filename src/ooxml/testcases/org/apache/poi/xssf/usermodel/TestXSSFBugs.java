@@ -2507,6 +2507,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             XSSFCellStyle style = wb.createCellStyle();
             assertEquals(i, style.getUIndex());
         }
+        assertEquals(numStyles, wb.getNumCellStyles());
 
         // avoid OOM in gump run
         File file = XSSFTestDataSamples.writeOutAndClose(wb, "bug57880");
@@ -2522,6 +2523,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         //Assume identical cell styles aren't consolidated
         //If XSSFWorkbooks ever implicitly optimize/consolidate cell styles (such as when the workbook is written to disk)
         //then this unit test should be updated
+        assertEquals(numStyles, wb.getNumCellStyles());
         for (int i=1; i<numStyles; i++) {
             XSSFCellStyle style = wb.getCellStyleAt(i);
             assertNotNull(style);

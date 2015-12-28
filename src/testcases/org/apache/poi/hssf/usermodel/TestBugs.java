@@ -2006,7 +2006,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
     @Test
     public void bug49751() throws Exception {
         HSSFWorkbook wb = openSample("49751.xls");
-        short numCellStyles = wb.getNumCellStyles();
+        int numCellStyles = wb.getNumCellStyles();
         List<String> namedStyles = Arrays.asList(
                 "20% - Accent1", "20% - Accent2", "20% - Accent3", "20% - Accent4", "20% - Accent5",
                 "20% - Accent6", "40% - Accent1", "40% - Accent2", "40% - Accent3", "40% - Accent4",
@@ -2017,7 +2017,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
                 "Neutral", "Note", "Output", "Title", "Total", "Warning Text");
 
         List<String> collecteddStyles = new ArrayList<String>();
-        for (short i = 0; i < numCellStyles; i++) {
+        for (int i = 0; i < numCellStyles; i++) {
             HSSFCellStyle cellStyle = wb.getCellStyleAt(i);
             String styleName = cellStyle.getUserStyleName();
             if (styleName != null) {

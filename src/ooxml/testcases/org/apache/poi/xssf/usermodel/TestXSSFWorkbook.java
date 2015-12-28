@@ -225,9 +225,8 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
 	public void getNumCellStyles() throws IOException{
 	 	XSSFWorkbook workbook = new XSSFWorkbook();
 	 	try {
-    		short i = workbook.getNumCellStyles();
     		//get default cellStyles
-    		assertEquals(1, i);
+    		assertEquals(1, workbook.getNumCellStyles());
 	 	} finally {
 	 	    workbook.close();
 	 	}

@@ -1322,11 +1322,10 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      * get the number of styles the workbook contains
      * @return count of cell styles
      */
-
     @Override
-    public short getNumCellStyles()
+    public int getNumCellStyles()
     {
-        return (short) workbook.getNumExFormats();
+        return workbook.getNumExFormats();
     }
 
     /**
@@ -1335,10 +1334,10 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      * @return HSSFCellStyle object at the index
      */
     @Override
-    public HSSFCellStyle getCellStyleAt(short idx)
+    public HSSFCellStyle getCellStyleAt(int idx)
     {
         ExtendedFormatRecord xfr = workbook.getExFormatAt(idx);
-        HSSFCellStyle style = new HSSFCellStyle(idx, xfr, this);
+        HSSFCellStyle style = new HSSFCellStyle((short)idx, xfr, this);
 
         return style;
     }
