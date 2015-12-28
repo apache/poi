@@ -24,11 +24,12 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.util.TempFile;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
@@ -62,20 +63,179 @@ public class XSSFTestDataSamples {
             throw new RuntimeException(e);
         }
     }
+    
+    /**
+     * Write out workbook <code>wb</code> to {@link #TEST_OUTPUT_DIR}/testName.xlsx
+     * (or create a temporary file if <code>TEST_OUTPUT_DIR</code> is not defined).
+     *
+     * @param wb the workbook to write
+     * @param testName a fragment of the filename
+     * @return the location where the workbook was saved
+     * @throws IOException
+     */
+    public static <R extends Workbook> File writeOut(R wb, String testName) throws IOException {
+        final String testOutputDir = System.getProperty(TEST_OUTPUT_DIR);
+        final File file;
+        if (testOutputDir != null) {
+            file = new File(testOutputDir, testName + ".xlsx");
+        }
+        else {
+            file = TempFile.createTempFile(testName, ".xlsx");
+        }
+        if (file.exists()) {
+            file.delete();
+        }
+        final OutputStream out = new FileOutputStream(file);
+        try {
+            wb.write(out);
+        } finally {
+            out.close();
+        }
+        return file;
+    }
+    
+    /**
+     * Write out workbook <code>wb</code> to a memory buffer
+     *
+     * @param wb the workbook to write
+     * @return the memory buffer
+     * @throws IOException
+     */
+    public static <R extends Workbook> ByteArrayOutputStream writeOut(R wb) throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream(8192);
+        wb.write(out);
+        return out;
+    }
+    
+    /**
+     * Write out the workbook then closes the workbook. 
+     * This should be used when there is insufficient memory to have
+     * both workbooks open.
+     * 
+     * Make sure there are no references to any objects in the workbook
+     * so that garbage collection may free the workbook.
+     * 
+     * After calling this method, null the reference to <code>wb</code>,
+     * then call {@link #readBack(File)} or {@link #readBackAndDelete(File)} to re-read the file.
+     * 
+     * Alternatively, use {@link #writeOutAndClose(Workbook)} to use a ByteArrayOutputStream/ByteArrayInputStream
+     * to avoid creating a temporary file. However, this may complicate the calling
+     * code to avoid having the workbook, BAOS, and BAIS open at the same time.
+     *
+     * @param wb
+     * @param testName file name to be used to write to a file. This file will be cleaned up by a call to readBack(String)
+     * @return workbook location
+     * @throws RuntimeException if {@link #TEST_OUTPUT_DIR} System property is not set
+     */
+    public static <R extends Workbook> File writeOutAndClose(R wb, String testName) {
+        try {
+            File file = writeOut(wb, testName);
+            // Do not close the workbook if there was a problem writing the workbook
+            wb.close();
+            return file;
+        }
+        catch (final IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    
+    
+    /**
+     * Write out workbook <code>wb</code> to a memory buffer,
+     * then close the workbook
+     *
+     * @param wb the workbook to write
+     * @return the memory buffer
+     * @throws IOException
+     */
+    public static <R extends Workbook> ByteArrayOutputStream writeOutAndClose(R wb) {
+        try {
+            ByteArrayOutputStream out = writeOut(wb);
+            // Do not close the workbook if there was a problem writing the workbook
+            wb.close();
+            return out;
+        }
+        catch (final IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    
+    /**
+     * Read back a workbook that was written out to a file with
+     * {@link #writeOut(Workbook, String))} or {@link #writeOutAndClose(Workbook, String)}.
+     * Deletes the file after reading back the file.
+     * Does not delete the file if an exception is raised.
+     *
+     * @param file the workbook file to read and delete
+     * @return the read back workbook
+     * @throws IOException
+     */
+    public static XSSFWorkbook readBackAndDelete(File file) throws IOException {
+        XSSFWorkbook wb = readBack(file);
+        // do not delete the file if there's an error--might be helpful for debugging 
+        file.delete();
+        return wb;
+    }
+    
+    /**
+     * Read back a workbook that was written out to a file with
+     * {@link #writeOut(Workbook, String)} or {@link #writeOutAndClose(Workbook, String)}.
+     *
+     * @param file the workbook file to read
+     * @return the read back workbook
+     * @throws IOException
+     */
+    public static XSSFWorkbook readBack(File file) throws IOException {
+        InputStream in = new FileInputStream(file);
+        try {
+            return new XSSFWorkbook(in);
+        }
+        finally {
+            in.close();
+        }
+    }
+    
+    /**
+     * Read back a workbook that was written out to a memory buffer with
+     * {@link #writeOut(Workbook)} or {@link #writeOutAndClose(Workbook)}.
+     *
+     * @param file the workbook file to read
+     * @return the read back workbook
+     * @throws IOException
+     */
+    public static XSSFWorkbook readBack(ByteArrayOutputStream out) throws IOException {
+        InputStream is = new ByteArrayInputStream(out.toByteArray());
+        out.close();
+        try {
+            return new XSSFWorkbook(is);
+        }
+        finally {
+            is.close();
+        }
+    }
+    
+    /**
+     * Write out and read back using a memory buffer to avoid disk I/O.
+     * If there is not enough memory to have two workbooks open at the same time,
+     * consider using:
+     * 
+     * Workbook wb = new XSSFWorkbook();
+     * String testName = "example";
+     * 
+     * <code>
+     * File file = writeOutAndClose(wb, testName);
+     * // clear all references that would prevent the workbook from getting garbage collected
+     * wb = null;
+     * Workbook wbBack = readBackAndDelete(file);
+     * </code>
+     *
+     * @param wb the workbook to write out
+     * @return the read back workbook
+     */
     public static <R extends Workbook> R writeOutAndReadBack(R wb) {
         Workbook result;
         try {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream(8192);
-            wb.write(baos);
-            InputStream is = new ByteArrayInputStream(baos.toByteArray());
-            if (wb instanceof HSSFWorkbook) {
-                result = new HSSFWorkbook(is);
-            } else if (wb instanceof XSSFWorkbook) {
-                result = new XSSFWorkbook(is);
-            } else {
-                throw new RuntimeException("Unexpected workbook type ("
-                        + wb.getClass().getName() + ")");
-            }
+            result = readBack(writeOut(wb));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -85,40 +245,45 @@ public class XSSFTestDataSamples {
     }
     
     /**
-     * Writes the Workbook either into a file or into a byte array, depending on presence of 
-     * the system property {@value #TEST_OUTPUT_DIR}, and reads it in a new instance of the Workbook back.
-     * @param wb workbook to write
-     * @param testName file name to be used if writing into a file. The old file with the same name will be overridden.
-     * @return new instance read from the stream written by the wb parameter.
+     * Write out, close, and read back the workbook using a memory buffer to avoid disk I/O.
+     *
+     * @param wb the workbook to write out and close
+     * @return the read back workbook
      */
-    public static <R extends Workbook> R writeOutAndReadBack(R wb, String testName) {
-        XSSFWorkbook result = null;
-        if (System.getProperty(TEST_OUTPUT_DIR) != null) {
-            try {
-                File file = new File(System.getProperty(TEST_OUTPUT_DIR), testName + ".xlsx");
-                if (file.exists()) {
-                    file.delete();
-                }
-                FileOutputStream out = new FileOutputStream(file);
-                try {
-                    wb.write(out);
-                } finally {
-                    out.close();
-                }
-                FileInputStream in = new FileInputStream(file);
-                try {
-                    result = new XSSFWorkbook(in);
-                } finally {
-                    in.close();
-                }
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        } else {
-            return writeOutAndReadBack(wb);
+    public static <R extends Workbook> R writeOutCloseAndReadBack(R wb) {
+        Workbook result;
+        try {
+            result = readBack(writeOutAndClose(wb));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
         @SuppressWarnings("unchecked")
         R r = (R) result;
         return r;
+        
+    }
+    
+    /**
+     * Writes the Workbook either into a file or into a byte array, depending on presence of 
+     * the system property {@value #TEST_OUTPUT_DIR}, and reads it in a new instance of the Workbook back.
+     * If TEST_OUTPUT_DIR is set, the file will NOT be deleted at the end of this function.
+     * @param wb workbook to write
+     * @param testName file name to be used if writing into a file. The old file with the same name will be overridden.
+     * @return new instance read from the stream written by the wb parameter.
+     */
+    
+    public static <R extends Workbook> R writeOutAndReadBack(R wb, String testName) {
+        if (System.getProperty(TEST_OUTPUT_DIR) == null) {
+            return writeOutAndReadBack(wb);
+        } else {
+            try {
+                Workbook result = readBack(writeOut(wb, testName));
+                @SuppressWarnings("unchecked")
+                R r = (R) result;
+                return r;
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 }
