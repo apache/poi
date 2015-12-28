@@ -74,7 +74,7 @@ import java.util.Map;
  */
 public final class BuiltinFormats {
 	/**
-	 * The first user-defined format starts at 164.
+	 * The first user-defined number format starts at 164.
 	 */
 	public static final int FIRST_USER_DEFINED_FORMAT_INDEX = 164;
 
