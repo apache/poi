@@ -45,9 +45,11 @@ public final class TestXSSFDataFormat extends BaseTestDataFormat {
 
         // now create a custom format with Pound (\u00a3)
         DataFormat dataFormat = wb.createDataFormat();
-        short customFmtIdx = dataFormat.getFormat("\u00a3##.00[Yellow]");
+        String customFmt = "\u00a3##.00[Yellow]";
+        assertNotBuiltInFormat(customFmt);
+        short customFmtIdx = dataFormat.getFormat(customFmt);
         assertTrue(customFmtIdx > BuiltinFormats.FIRST_USER_DEFINED_FORMAT_INDEX );
-        assertEquals("\u00a3##.00[Yellow]", dataFormat.getFormat(customFmtIdx));
+        assertEquals(customFmt, dataFormat.getFormat(customFmtIdx));
     }
     
     /**
