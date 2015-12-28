@@ -37,6 +37,7 @@ import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.BuiltinFormats;
 import org.apache.poi.ss.usermodel.FontFamily;
 import org.apache.poi.ss.usermodel.FontScheme;
+import org.apache.poi.util.Internal;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFFactory;
 import org.apache.poi.xssf.usermodel.XSSFFont;
@@ -326,25 +327,35 @@ public class StylesTable extends POIXMLDocumentPart {
         return fills.size() - 1;
     }
 
+    @Internal
     public CTXf getCellXfAt(int idx) {
         return xfs.get(idx);
     }
+    
+    @Internal
     public int putCellXf(CTXf cellXf) {
         xfs.add(cellXf);
         return xfs.size();
     }
+    
+    @Internal
     public void replaceCellXfAt(int idx, CTXf cellXf) {
         xfs.set(idx, cellXf);
     }
 
+    @Internal
     public CTXf getCellStyleXfAt(int idx) {
         return idx < styleXfs.size() ? styleXfs.get(idx) : null;
     }
+    
+    @Internal
     public int putCellStyleXf(CTXf cellStyleXf) {
         styleXfs.add(cellStyleXf);
         return styleXfs.size();
     }
-    public void replaceCellStyleXfAt(int idx, CTXf cellStyleXf) {
+    
+    @Internal
+    protected void replaceCellStyleXfAt(int idx, CTXf cellStyleXf) {
         styleXfs.set(idx, cellStyleXf);
     }
 
@@ -360,6 +371,7 @@ public class StylesTable extends POIXMLDocumentPart {
     /**
      * For unit testing only
      */
+    @Internal
     public int _getNumberFormatSize() {
         return numberFormats.size();
     }
@@ -367,21 +379,27 @@ public class StylesTable extends POIXMLDocumentPart {
     /**
      * For unit testing only
      */
-    public int _getXfsSize() {
+    @Internal
+    /*package*/ int _getXfsSize() {
         return xfs.size();
     }
     /**
      * For unit testing only
      */
+    @Internal
     public int _getStyleXfsSize() {
         return styleXfs.size();
     }
+    
     /**
      * For unit testing only!
      */
+    @Internal
     public CTStylesheet getCTStylesheet() {
         return doc.getStyleSheet();
     }
+    
+    @Internal
     public int _getDXfsSize() {
         return dxfs.size();
     }
@@ -553,15 +571,22 @@ public class StylesTable extends POIXMLDocumentPart {
         return xssfFont;
     }
 
+    @Internal
     public CTDxf getDxfAt(int idx) {
         return dxfs.get(idx);
     }
 
+    @Internal
     public int putDxf(CTDxf dxf) {
         this.dxfs.add(dxf);
         return this.dxfs.size();
     }
 
+    /**
+     * Create a cell style in this style table.
+     * Note - End users probably want to call {@link XSSFWorkbook#createCellStyle()}
+     * rather than working with the styles table directly.
+     */
     public XSSFCellStyle createCellStyle() {
         if (getNumCellStyles() > MAXIMUM_STYLE_ID) {
             throw new IllegalStateException("The maximum number of Cell Styles was exceeded. " +
