@@ -1020,11 +1020,9 @@ public class TestXSSFCellStyle {
 
     public static void copyStyles(Workbook reference, Workbook target) {
         final short numberOfStyles = reference.getNumCellStyles();
-        for (short i = 0; i < numberOfStyles; i++) {
+        // don't copy default style (style index 0)
+        for (short i = 1; i < numberOfStyles; i++) {
             final CellStyle referenceStyle = reference.getCellStyleAt(i);
-            if (i == 0) {
-                continue;
-            }
             final CellStyle targetStyle = target.createCellStyle();
             targetStyle.cloneStyleFrom(referenceStyle);
         }
