@@ -38,17 +38,20 @@ public final class TestXSSFDataFormat extends BaseTestDataFormat {
     public void test49928() {
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("49928.xlsx");
         doTest49928Core(wb);
+        
+        DataFormat dataFormat = wb.createDataFormat();
 
-        // an attempt to register an existing format returns its index
-        int poundFmtIdx = wb.getSheetAt(0).getRow(0).getCell(0).getCellStyle().getDataFormat();
-        assertEquals(poundFmtIdx, wb.getStylesSource().putNumberFormat(poundFmt));
+        // As of 2015-12-27, there is no way to override a built-in number format with POI XSSFWorkbook
+        // 49928.xlsx has been saved with a poundFmt that overrides the default value (dollar)
+        short poundFmtIdx = wb.getSheetAt(0).getRow(0).getCell(0).getCellStyle().getDataFormat();
+        assertEquals(poundFmtIdx, dataFormat.getFormat(poundFmt));
 
         // now create a custom format with Pound (\u00a3)
-        DataFormat dataFormat = wb.createDataFormat();
+        
         String customFmt = "\u00a3##.00[Yellow]";
         assertNotBuiltInFormat(customFmt);
         short customFmtIdx = dataFormat.getFormat(customFmt);
-        assertTrue(customFmtIdx > BuiltinFormats.FIRST_USER_DEFINED_FORMAT_INDEX );
+        assertTrue(customFmtIdx >= BuiltinFormats.FIRST_USER_DEFINED_FORMAT_INDEX);
         assertEquals(customFmt, dataFormat.getFormat(customFmtIdx));
     }
     
