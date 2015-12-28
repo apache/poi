@@ -344,7 +344,7 @@ public interface Workbook extends Closeable, Iterable<Sheet> {
      *
      * @return count of cell styles
      */
-    short getNumCellStyles();
+    int getNumCellStyles();
 
     /**
      * Get the cell style object at the given index
@@ -352,7 +352,7 @@ public interface Workbook extends Closeable, Iterable<Sheet> {
      * @param idx  index within the set of styles (0-based)
      * @return CellStyle object at the index
      */
-    CellStyle getCellStyleAt(short idx);
+    CellStyle getCellStyleAt(int idx);
 
     /**
      * Write out this workbook to an Outputstream.

@@ -877,7 +877,7 @@ public class SXSSFWorkbook implements Workbook {
      * @return count of cell styles
      */
     @Override
-    public short getNumCellStyles()
+    public int getNumCellStyles()
     {
         return _wb.getNumCellStyles();
     }
@@ -889,7 +889,7 @@ public class SXSSFWorkbook implements Workbook {
      * @return CellStyle object at the index
      */
     @Override
-    public CellStyle getCellStyleAt(short idx)
+    public CellStyle getCellStyleAt(int idx)
     {
         return _wb.getCellStyleAt(idx);
     }

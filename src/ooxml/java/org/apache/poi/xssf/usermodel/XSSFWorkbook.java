@@ -859,16 +859,6 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
      * @param idx  index within the set of styles
      * @return XSSFCellStyle object at the index
      */
-    @Override
-    public XSSFCellStyle getCellStyleAt(short idx) {
-        return getCellStyleAt(idx&0xffff);
-    }
-    /**
-     * Get the cell style object at the given index
-     *
-     * @param idx  index within the set of styles
-     * @return XSSFCellStyle object at the index
-     */
     public XSSFCellStyle getCellStyleAt(int idx) {
         return stylesSource.getStyleAt(idx);
     }
@@ -931,9 +921,8 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
      *
      * @return count of cell styles
      */
-    @Override
-    public short getNumCellStyles() {
-        return (short) (stylesSource).getNumCellStyles();
+    public int getNumCellStyles() {
+        return stylesSource.getNumCellStyles();
     }
 
     /**

@@ -189,9 +189,9 @@ public final class CellUtil {
 
 		// index seems like what index the cellstyle is in the list of styles for a workbook.
 		// not good to compare on!
-		short numberCellStyles = workbook.getNumCellStyles();
+		int numberCellStyles = workbook.getNumCellStyles();
 
-		for (short i = 0; i < numberCellStyles; i++) {
+		for (int i = 0; i < numberCellStyles; i++) {
 			CellStyle wbStyle = workbook.getCellStyleAt(i);
 			Map<String, Object> wbStyleMap = getFormatProperties(wbStyle);
 
