@@ -210,6 +210,14 @@ public class StylesTable extends POIXMLDocumentPart {
         return numberFormats.get(idx);
     }
 
+    /**
+     * Puts <code>fmt</code> in the numberFormats map if the format is not
+     * already in the the number format style table.
+     * Does nothing if <code>fmt</code> is already in number format style table.
+     *
+     * @param fmt the number format to add to number format style table
+     * @return the index of <code>fmt</code> in the number format style table
+     */
     public int putNumberFormat(String fmt) {
         if (numberFormats.containsValue(fmt)) {
             // Find the key, and return that

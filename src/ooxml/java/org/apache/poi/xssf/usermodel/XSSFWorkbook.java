@@ -660,7 +660,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     }
 
     /**
-     * Returns the instance of XSSFDataFormat for this workbook.
+     * Returns the workbook's data format table (a factory for creating data format strings).
      *
      * @return the XSSFDataFormat object
      * @see org.apache.poi.ss.usermodel.DataFormat
