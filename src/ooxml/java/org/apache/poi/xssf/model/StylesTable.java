@@ -25,10 +25,11 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
@@ -67,8 +68,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.StyleSheetDocument;
  * Table of styles shared across all sheets in a workbook.
  */
 public class StylesTable extends POIXMLDocumentPart {
-    private final Map<Integer, String> numberFormats = new HashMap<Integer,String>();
-    private final boolean[] usedNumberFormats = new boolean[SpreadsheetVersion.EXCEL2007.getMaxCellStyles()];
+    private final SortedMap<Integer, String> numberFormats = new TreeMap<Integer,String>();
     private final List<XSSFFont> fonts = new ArrayList<XSSFFont>();
     private final List<XSSFCellFill> fills = new ArrayList<XSSFCellFill>();
     private final List<XSSFCellBorder> borders = new ArrayList<XSSFCellBorder>();
@@ -80,7 +80,12 @@ public class StylesTable extends POIXMLDocumentPart {
     /**
      * The first style id available for use as a custom style
      */
+    // Is this right? Number formats (XSSFDataFormat) and cell styles (XSSFCellStyle) are different.
+    // What's up with the plus 1?
     public static final int FIRST_CUSTOM_STYLE_ID = BuiltinFormats.FIRST_USER_DEFINED_FORMAT_INDEX + 1;
+    
+    private static final int FIRST_USER_DEFINED_NUMBER_FORMAT_ID = BuiltinFormats.FIRST_USER_DEFINED_FORMAT_INDEX;
+    private static final int MAXIMUM_NUMBER_OF_DATA_FORMATS = SpreadsheetVersion.EXCEL2007.getMaxCellStyles(); //FIXME: should be 250
     private static final int MAXIMUM_STYLE_ID = SpreadsheetVersion.EXCEL2007.getMaxCellStyles();
 
     private StyleSheetDocument doc;
@@ -160,7 +165,6 @@ public class StylesTable extends POIXMLDocumentPart {
                 for (CTNumFmt nfmt : ctfmts.getNumFmtArray()) {
                     int formatId = (int)nfmt.getNumFmtId();
                     numberFormats.put(formatId, nfmt.getFormatCode());
-                    usedNumberFormats[formatId] = true;
                 }
             }
 
@@ -219,6 +223,7 @@ public class StylesTable extends POIXMLDocumentPart {
      * @return the index of <code>fmt</code> in the number format style table
      */
     public int putNumberFormat(String fmt) {
+        // Check if number format already exists
         if (numberFormats.containsValue(fmt)) {
             // Find the key, and return that
             for (Entry<Integer,String> numFmt : numberFormats.entrySet()) {
@@ -228,17 +233,28 @@ public class StylesTable extends POIXMLDocumentPart {
             }
             throw new IllegalStateException("Found the format, but couldn't figure out where - should never happen!");
         }
+        
+        if (numberFormats.size() > MAXIMUM_NUMBER_OF_DATA_FORMATS) {
+            throw new IllegalStateException("The maximum number of Data Formats was exceeded. " +
+                    "You can define up to " + MAXIMUM_NUMBER_OF_DATA_FORMATS + " formats in a .xlsx Workbook.");
+        }
 
         // Find a spare key, and add that
-        for (int i=FIRST_CUSTOM_STYLE_ID; i<usedNumberFormats.length; i++) {
-            if (!usedNumberFormats[i]) {
-                usedNumberFormats[i] = true;
-                numberFormats.put(i, fmt);
-                return i;
-            }
+        final int formatIndex;
+        if (numberFormats.isEmpty()) {
+            formatIndex = FIRST_USER_DEFINED_NUMBER_FORMAT_ID;
         }
-        throw new IllegalStateException("The maximum number of Data Formats was exceeded. " +
-                "You can define up to " + usedNumberFormats.length + " formats in a .xlsx Workbook");
+        else {
+            // get next-available numberFormat index.
+            // Assumption: there are never gaps in numberFormats indices
+            formatIndex = Math.max(
+                    numberFormats.lastKey() + 1,
+                    FIRST_USER_DEFINED_NUMBER_FORMAT_ID);
+        }
+        
+        
+        numberFormats.put(formatIndex, fmt);
+        return formatIndex;
     }
 
     public XSSFFont getFontAt(int idx) {
@@ -428,12 +444,10 @@ public class StylesTable extends POIXMLDocumentPart {
         // Formats
         CTNumFmts formats = CTNumFmts.Factory.newInstance();
         formats.setCount(numberFormats.size());
-        for (int fmtId=0; fmtId<usedNumberFormats.length; fmtId++) {
-            if (usedNumberFormats[fmtId]) {
-                CTNumFmt ctFmt = formats.addNewNumFmt();
-                ctFmt.setNumFmtId(fmtId);
-                ctFmt.setFormatCode(numberFormats.get(fmtId));
-            }
+        for (final Entry<Integer, String> entry : numberFormats.entrySet()) {
+            CTNumFmt ctFmt = formats.addNewNumFmt();
+            ctFmt.setNumFmtId(entry.getKey());
+            ctFmt.setFormatCode(entry.getValue());
         }
         styleSheet.setNumFmts(formats);
 
