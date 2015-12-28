@@ -312,6 +312,13 @@ public class StylesTable extends POIXMLDocumentPart {
         return borders.get(idx);
     }
 
+    /**
+     * Adds a border to the border style table if it isn't already in the style table
+     * Does nothing if border is already in borders style table
+     *
+     * @param border border to add
+     * @return the index of the added border
+     */
     public int putBorder(XSSFCellBorder border) {
         int idx = borders.indexOf(border);
         if (idx != -1) {
@@ -342,6 +349,13 @@ public class StylesTable extends POIXMLDocumentPart {
         return Collections.unmodifiableMap(numberFormats);
     }
 
+    /**
+     * Adds a fill to the fill style table if it isn't already in the style table
+     * Does nothing if fill is already in fill style table
+     *
+     * @param fill fill to add
+     * @return the index of the added fill
+     */
     public int putFill(XSSFCellFill fill) {
         int idx = fills.indexOf(fill);
         if (idx != -1) {
@@ -356,6 +370,13 @@ public class StylesTable extends POIXMLDocumentPart {
         return xfs.get(idx);
     }
     
+    /**
+     * Adds a cell to the styles table.
+     * Does not check for duplicates.
+     * 
+     * @param cellXf the cell to add to the styles table
+     * @return the added cell ID in the style table
+     */
     @Internal
     public int putCellXf(CTXf cellXf) {
         xfs.add(cellXf);
@@ -369,12 +390,25 @@ public class StylesTable extends POIXMLDocumentPart {
 
     @Internal
     public CTXf getCellStyleXfAt(int idx) {
-        return idx < styleXfs.size() ? styleXfs.get(idx) : null;
+        try {
+            return styleXfs.get(idx);
+        }
+        catch (final IndexOutOfBoundsException e) {
+            return null;
+        }
     }
     
+    /**
+     * Adds a cell style to the styles table.
+     * Does not check for duplicates.
+     * 
+     * @param cellStyleXf the cell style to add to the styles table
+     * @return the cell style ID in the style table
+     */
     @Internal
     public int putCellStyleXf(CTXf cellStyleXf) {
         styleXfs.add(cellStyleXf);
+        // TODO: check for duplicate
         return styleXfs.size();
     }
     
@@ -598,6 +632,13 @@ public class StylesTable extends POIXMLDocumentPart {
         return dxfs.get(idx);
     }
 
+    /**
+     * Adds a Dxf to the style table
+     * Does not check for duplicates.
+     *
+     * @param dxf the Dxf to add
+     * @return added dxf ID in the style table
+     */
     @Internal
     public int putDxf(CTDxf dxf) {
         this.dxfs.add(dxf);
@@ -608,6 +649,7 @@ public class StylesTable extends POIXMLDocumentPart {
      * Create a cell style in this style table.
      * Note - End users probably want to call {@link XSSFWorkbook#createCellStyle()}
      * rather than working with the styles table directly.
+     * @throws IllegalStateException if the maximum number of cell styles has been reached. 
      */
     public XSSFCellStyle createCellStyle() {
         if (getNumCellStyles() > MAXIMUM_STYLE_ID) {
