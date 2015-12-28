@@ -23,9 +23,16 @@ import org.apache.poi.xssf.model.StylesTable;
 /**
  * Handles data formats for XSSF.
  * 
+ * Per Microsoft Excel 2007+ format limitations:
+ * Workbooks support between 200 and 250 "number formats"
+ * (POI calls them "data formats") So short or even byte
+ * would be acceptable data types to use for referring to
+ * data format indices.
+ * https://support.office.com/en-us/article/excel-specifications-and-limits-1672b34d-7043-467e-8e27-269d656771c3
+ * 
  */
 public class XSSFDataFormat implements DataFormat {
-    private StylesTable stylesSource;
+    private final StylesTable stylesSource;
 
     protected XSSFDataFormat(StylesTable stylesSource) {
         this.stylesSource = stylesSource;
@@ -36,9 +43,10 @@ public class XSSFDataFormat implements DataFormat {
      *  string, creating a new format entry if required.
      * Aliases text to the proper format as required.
      *
-     * @param format string matching a built in format
+     * @param format string matching a built-in format
      * @return index of format.
      */
+    @Override
     public short getFormat(String format) {
         int idx = BuiltinFormats.getBuiltinFormat(format);
         if(idx == -1) idx = stylesSource.putNumberFormat(format);
@@ -48,17 +56,24 @@ public class XSSFDataFormat implements DataFormat {
     /**
      * get the format string that matches the given format index
      * @param index of a format
-     * @return string represented at index of format or null if there is not a  format at that index
+     * @return string represented at index of format or <code>null</code> if there is not a  format at that index
      */
+    @Override
     public String getFormat(short index) {
         return getFormat(index&0xffff);
     }
     /**
      * get the format string that matches the given format index
      * @param index of a format
-     * @return string represented at index of format or null if there is not a  format at that index
+     * @return string represented at index of format or <code>null</code> if there is not a  format at that index
      */
     public String getFormat(int index) {
+        // Indices used for built-in formats may be overridden with
+        // custom formats, such as locale-specific currency.
+        // See org.apache.poi.xssf.usermodel.TestXSSFDataFormat#test49928() 
+        // or bug 49928 for an example.
+        // This is why we need to check stylesSource first and only fall back to
+        // BuiltinFormats if the format hasn't been overridden.
         String fmt = stylesSource.getNumberFormatAt(index);
         if(fmt == null) fmt = BuiltinFormats.getBuiltinFormat(index);
         return fmt;
