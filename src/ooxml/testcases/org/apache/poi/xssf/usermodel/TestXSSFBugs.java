@@ -32,7 +32,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashSet;
@@ -57,6 +56,7 @@ import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
+import org.apache.poi.openxml4j.util.ZipSecureFile;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.formula.WorkbookEvaluator;
@@ -2497,52 +2497,37 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     /**
      * .xlsx supports 64000 cell styles, the style indexes after
      *  32,767 must not be -32,768, then -32,767, -32,766
-     * @throws InvalidFormatException 
      */
     @Test
-    public void bug57880() throws IOException, InvalidFormatException {
+    public void bug57880() throws IOException {
         int numStyles = 33000;
         XSSFWorkbook wb = new XSSFWorkbook();
-        //XSSFSheet s = wb.createSheet("TestSheet");
-        XSSFDataFormat fmt = wb.getCreationHelper().createDataFormat();
         for (int i=1; i<numStyles; i++) {
-            short df = fmt.getFormat("test"+i);
-            // Format indexes will be wrapped beyond 32,676
-            assertEquals(164+i, df&0xffff);
             // Create a style and use it
             XSSFCellStyle style = wb.createCellStyle();
             assertEquals(i, style.getUIndex());
-            style.setDataFormat(df);
-            /*XSSFCell c = s.createRow(i).createCell(0, Cell.CELL_TYPE_NUMERIC);
-            c.setCellStyle(style);
-            c.setCellValue(i);*/
         }
 
-        // using temp file instead of ByteArrayOutputStream because of OOM in gump run
-        File tmp = TempFile.createTempFile("poi-test", ".bug57880");
-        OutputStream fos = new FileOutputStream(tmp);
-        try {
-        wb.write(fos);
-        } finally {
-        fos.close();
-        }
+        // avoid OOM in gump run
+        File file = XSSFTestDataSamples.writeOutAndClose(wb, "bug57880");
+        wb = null;
+        // Garbage collection may happen here
+        
+        // avoid zip bomb detection
+        double ratio = ZipSecureFile.getMinInflateRatio();
+        ZipSecureFile.setMinInflateRatio(0.00005);
+        wb = XSSFTestDataSamples.readBackAndDelete(file);
+        ZipSecureFile.setMinInflateRatio(ratio);
 
-        wb.close();
-        fmt = null; /*s = null;*/ wb = null;
-        // System.gc();
-
-        wb = new XSSFWorkbook(tmp);
-        fmt = wb.getCreationHelper().createDataFormat();
-        // s = wb.getSheetAt(0);
+        //Assume identical cell styles aren't consolidated
+        //If XSSFWorkbooks ever implicitly optimize/consolidate cell styles (such as when the workbook is written to disk)
+        //then this unit test should be updated
         for (int i=1; i<numStyles; i++) {
-            XSSFCellStyle style = wb.getCellStyleAt((short)i);
+            XSSFCellStyle style = wb.getCellStyleAt(i);
             assertNotNull(style);
             assertEquals(i, style.getUIndex());
-            assertEquals(164+i, style.getDataFormat()&0xffff);
-            assertEquals("test"+i, style.getDataFormatString());
         }
         wb.close();
-        tmp.delete();
     }
 
 
