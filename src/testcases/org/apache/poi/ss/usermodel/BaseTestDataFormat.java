@@ -19,6 +19,8 @@ package org.apache.poi.ss.usermodel;
 
 import junit.framework.TestCase;
 
+import java.io.IOException;
+
 import org.apache.poi.ss.ITestDataProvider;
 
 /**
@@ -31,6 +33,11 @@ public abstract class BaseTestDataFormat extends TestCase {
 
     protected BaseTestDataFormat(ITestDataProvider testDataProvider) {
         _testDataProvider = testDataProvider;
+    }
+    
+    public void assertNotBuiltInFormat(String customFmt) {
+        //check it is not in built-in formats
+        assertEquals(-1, BuiltinFormats.getBuiltinFormat(customFmt));
     }
 
     public final void testBuiltinFormats() {
@@ -53,7 +60,7 @@ public abstract class BaseTestDataFormat extends TestCase {
         //create a custom data format
         String customFmt = "#0.00 AM/PM";
         //check it is not in built-in formats
-        assertEquals(-1, BuiltinFormats.getBuiltinFormat(customFmt));
+        assertNotBuiltInFormat(customFmt);
         int customIdx = df.getFormat(customFmt);
         //The first user-defined format starts at 164.
         assertTrue(customIdx >= BuiltinFormats.FIRST_USER_DEFINED_FORMAT_INDEX);
@@ -86,6 +93,27 @@ public abstract class BaseTestDataFormat extends TestCase {
         DataFormat dataFormat = wb.createDataFormat();
         assertEquals(poundFmtIdx, dataFormat.getFormat(poundFmt));
         assertEquals(poundFmt, dataFormat.getFormat(poundFmtIdx));
+    }
+    
+    public void testReadbackFormat() throws IOException {
+        readbackFormat("built-in format", "0.00");
+        readbackFormat("overridden built-in format", poundFmt);
+        
+        String customFormat = "#0.00 AM/PM";
+        assertNotBuiltInFormat(customFormat);
+        readbackFormat("custom format", customFormat);
+    }
+    
+    private void readbackFormat(String msg, String fmt) throws IOException {
+        Workbook wb = _testDataProvider.createWorkbook();
+        try {
+            DataFormat dataFormat = wb.createDataFormat();
+            short fmtIdx = dataFormat.getFormat(fmt);
+            String readbackFmt = dataFormat.getFormat(fmtIdx);
+            assertEquals(msg, fmt, readbackFmt);
+        } finally {
+            wb.close();
+        }
     }
     
     public abstract void test58532();
