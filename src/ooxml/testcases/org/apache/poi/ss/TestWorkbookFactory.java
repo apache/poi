@@ -85,6 +85,7 @@ public final class TestWorkbookFactory extends TestCase {
         assertNotNull(wb);
         assertTrue(wb instanceof XSSFWorkbook);
         // TODO: this re-writes the sample-file?! wb.close();
+        revert(wb);
     }
 
     public void testCreateReadOnly() throws Exception {
