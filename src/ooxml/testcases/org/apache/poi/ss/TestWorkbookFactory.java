@@ -36,19 +36,11 @@ import org.apache.poi.openxml4j.opc.OPCPackage;
 import junit.framework.TestCase;
 
 public final class TestWorkbookFactory extends TestCase {
-    private String xls;
-    private String xlsx;
-    private String[] xls_prot;
-    private String[] xlsx_prot;
-    private String txt;
-
-    protected void setUp() {
-        xls = "SampleSS.xls";
-        xlsx = "SampleSS.xlsx";
-        xls_prot = new String[] {"password.xls", "password"};
-        xlsx_prot = new String[]{"protected_passtika.xlsx", "tika"};
-        txt = "SampleSS.txt";
-    }
+    private static final String xls = "SampleSS.xls";
+    private static final String xlsx = "SampleSS.xlsx";
+    private static final String[] xls_prot = new String[] {"password.xls", "password"};
+    private static final String[] xlsx_prot = new String[]{"protected_passtika.xlsx", "tika"};
+    private static final String txt = "SampleSS.txt";
 
     public void testCreateNative() throws Exception {
         Workbook wb;
