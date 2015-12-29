@@ -234,7 +234,7 @@ public class StylesTable extends POIXMLDocumentPart {
             throw new IllegalStateException("Found the format, but couldn't figure out where - should never happen!");
         }
         
-        if (numberFormats.size() > MAXIMUM_NUMBER_OF_DATA_FORMATS) {
+        if (numberFormats.size() >= MAXIMUM_NUMBER_OF_DATA_FORMATS) {
             throw new IllegalStateException("The maximum number of Data Formats was exceeded. " +
                     "You can define up to " + MAXIMUM_NUMBER_OF_DATA_FORMATS + " formats in a .xlsx Workbook.");
         }
@@ -255,6 +255,20 @@ public class StylesTable extends POIXMLDocumentPart {
         
         numberFormats.put(formatIndex, fmt);
         return formatIndex;
+    }
+    
+    
+    /**
+     * Add a number format with a specific ID into the numberFormats map.
+     * If a format with the same ID already exists, overwrite the format code
+     * with <code>fmt</code>
+     * This may be used to override built-in number formats.
+     *
+     * @param index the number format ID
+     * @param fmt the number format code
+     */
+    public void putNumberFormat(short index, String fmt) {
+        numberFormats.put((int)index, fmt);
     }
 
     public XSSFFont getFontAt(int idx) {
