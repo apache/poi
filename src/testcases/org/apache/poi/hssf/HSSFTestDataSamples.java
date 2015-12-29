@@ -39,7 +39,7 @@ public final class HSSFTestDataSamples {
 		return _inst.openResourceAsStream(sampleFileName);
 	}
 	public static File getSampleFile(String sampleFileName) {
-	   return _inst.getFile(sampleFileName);
+		return _inst.getFile(sampleFileName);
 	}
 	public static byte[] getTestDataFileContent(String fileName) {
 		return _inst.readFile(fileName);
