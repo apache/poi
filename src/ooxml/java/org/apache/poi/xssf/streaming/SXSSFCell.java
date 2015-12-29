@@ -559,7 +559,7 @@ public class SXSSFCell implements Cell {
      *
      * @return the cell's style. Always not-null. Default cell style has zero index and can be obtained as
      * <code>workbook.getCellStyleAt(0)</code>
-     * @see org.apache.poi.ss.usermodel.Workbook#getCellStyleAt(short)
+     * @see org.apache.poi.ss.usermodel.Workbook#getCellStyleAt(int)
      */
     @Override
     public CellStyle getCellStyle()
