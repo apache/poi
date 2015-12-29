@@ -58,9 +58,9 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPatternType;
 public class XSSFCellStyle implements CellStyle {
 
     private int _cellXfId;
-    private StylesTable _stylesSource;
+    private final StylesTable _stylesSource;
     private CTXf _cellXf;
-    private CTXf _cellStyleXf;
+    private final CTXf _cellStyleXf;
     private XSSFFont _font;
     private XSSFCellAlignment _cellAlignment;
     private ThemesTable _theme;
