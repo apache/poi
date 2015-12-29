@@ -70,8 +70,7 @@ public final class TestWorkbookFactory {
      * bug 58779: Closing an XSSFWorkbook that was created with WorkbookFactory modifies the file
      * FIXME: replace this method with wb.close() when bug 58779 is resolved.
      *
-     * @param wb
-     * @throws IOException
+     * @param wb the workbook to close or revert
      */
     private static void closeOrRevert(Workbook wb) throws IOException {
         // TODO: close() re-writes the sample-file?! Resort to revert() for now to close file handle...
