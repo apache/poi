@@ -2871,4 +2871,21 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         assertNotNull(sheet.getRow(0).getCell(0));
         assertEquals(bookData[0][0], sheet.getRow(0).getCell(0).getStringCellValue());
     }
+    
+    /**
+     * Regression between 3.10.1 and 3.13 - 
+     * org.apache.poi.openxml4j.exceptions.InvalidFormatException: 
+     * The part /xl/sharedStrings.xml does not have any content type 
+     * ! Rule: Package require content types when retrieving a part from a package. [M.1.14]
+     */
+    @Test
+    @Ignore
+    public void test58760() throws Exception {
+        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("58760.xlsx");
+        assertEquals(1, wb.getNumberOfSheets());
+        assertEquals("Sheet1", wb.getSheetName(0));
+        wb = XSSFTestDataSamples.writeOutAndReadBack(wb);
+        assertEquals(1, wb.getNumberOfSheets());
+        assertEquals("Sheet1", wb.getSheetName(0));
+    }
 }
