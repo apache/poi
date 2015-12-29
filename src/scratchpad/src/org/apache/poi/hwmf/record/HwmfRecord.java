@@ -19,6 +19,7 @@ package org.apache.poi.hwmf.record;
 
 import java.io.IOException;
 
+import org.apache.poi.hwmf.draw.HwmfGraphics;
 import org.apache.poi.util.LittleEndianInputStream;
 
 public interface HwmfRecord {
@@ -32,4 +33,11 @@ public interface HwmfRecord {
      * @throws IOException
      */
     int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException;
+    
+    /**
+     * Apply the record settings to the graphics context
+     *
+     * @param ctx the graphics context to modify
+     */
+    void draw(HwmfGraphics ctx);
 }

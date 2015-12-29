@@ -285,7 +285,7 @@ public enum HwmfTernaryRasterOp {
         this.opCmd=opCmd;
     }
     
-    public static HwmfTernaryRasterOp fromOpIndex(int opIndex) {
+    public static HwmfTernaryRasterOp valueOf(int opIndex) {
         for (HwmfTernaryRasterOp bb : HwmfTernaryRasterOp.values()) {
             if (bb.opIndex == opIndex) {
                 return bb;

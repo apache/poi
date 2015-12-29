@@ -21,17 +21,17 @@ package org.apache.poi.hwmf.record;
  * The HatchStyle Enumeration specifies the hatch pattern.
  */
 public enum HwmfHatchStyle {
-    /** A horizontal hatch */
+    /** ----- - A horizontal hatch */
     HS_HORIZONTAL(0x0000),
-    /** A vertical hatch */
+    /** ||||| - A vertical hatch */
     HS_VERTICAL(0x0001),
-    /** A 45-degree downward, left-to-right hatch. */
+    /** \\\\\ - A 45-degree downward, left-to-right hatch. */
     HS_FDIAGONAL(0x0002),
-    /** A 45-degree upward, left-to-right hatch. */
+    /** ///// - A 45-degree upward, left-to-right hatch. */
     HS_BDIAGONAL(0x0003),
-    /** A horizontal and vertical cross-hatch. */
+    /** +++++ - A horizontal and vertical cross-hatch. */
     HS_CROSS(0x0004),
-    /** A 45-degree crosshatch. */
+    /** xxxxx - A 45-degree crosshatch. */
     HS_DIAGCROSS(0x0005);
 
     int flag;

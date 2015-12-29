@@ -20,6 +20,7 @@ package org.apache.poi.hwmf.record;
 import java.io.IOException;
 import java.nio.charset.Charset;
 
+import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
 
 /**
@@ -440,7 +441,7 @@ public class HwmfFont {
      *
      * @see WmfClipPrecision
      */
-    int clipPrecision;
+    WmfClipPrecision clipPrecision;
 
     /**
      * An 8-bit unsigned integer that defines the output quality.
@@ -477,22 +478,23 @@ public class HwmfFont {
         strikeOut = leis.readByte() != 0;
         charSet = WmfCharset.valueOf(leis.readUByte());
         outPrecision = WmfOutPrecision.valueOf(leis.readUByte());
+        clipPrecision = WmfClipPrecision.valueOf(leis.readUByte());
         quality = WmfFontQuality.valueOf(leis.readUByte());
         int pitchAndFamily = leis.readUByte();
         family = WmfFontFamilyClass.valueOf(pitchAndFamily & 0xF);
         pitch = WmfFontPitch.valueOf((pitchAndFamily >>> 6) & 3);
         
-        byte buf[] = new byte[32], readBytes;
-        for (readBytes = 0; readBytes < 32; readBytes++) {
-            if ((buf[readBytes] = leis.readByte()) == 0) {
-                break;
+        byte buf[] = new byte[32], b, readBytes = 0;
+        do {
+            if (readBytes == 32) {
+                throw new IOException("Font facename can't be determined.");
             }
-        }
-        if (readBytes == 1 || readBytes == 32) {
-            throw new IOException("Font facename can't be determined.");
-        }
+
+            buf[readBytes++] = b = leis.readByte();
+        } while (b != 0 && b != -1 && readBytes <= 32);
+        
         facename = new String(buf, 0, readBytes-1, Charset.forName("ISO-8859-1"));
         
-        return 17+readBytes;
+        return 5*LittleEndianConsts.SHORT_SIZE+8*LittleEndianConsts.BYTE_SIZE+readBytes;
     }
 }

@@ -19,6 +19,8 @@ package org.apache.poi.hwmf.record;
 
 import java.io.IOException;
 
+import org.apache.poi.hwmf.draw.HwmfGraphics;
+import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
 
@@ -28,26 +30,40 @@ public class HwmfEscape implements HwmfRecord {
      * A 16-bit unsigned integer that defines the escape function. The 
      * value MUST be from the MetafileEscapes enumeration.
      */
-    int escapeFunction;
+    private int escapeFunction;
     /**
      * A 16-bit unsigned integer that specifies the size, in bytes, of the 
      * EscapeData field.
      */
-    int byteCount;
+    private int byteCount;
     /**
      * An array of bytes of size ByteCount.
      */
-    byte escapeData[];
+    private byte escapeData[];
     
+    @Override
     public HwmfRecordType getRecordType() {
         return HwmfRecordType.escape;
     }
     
+    @Override
     public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
         escapeFunction = leis.readUShort();
         byteCount = leis.readUShort();
         escapeData = new byte[byteCount];
         leis.read(escapeData);
         return 2*LittleEndianConsts.SHORT_SIZE+byteCount;
+    }
+
+    @Override
+    public void draw(HwmfGraphics ctx) {
+        
+    }
+    
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("escape - function: "+escapeFunction+"\n");
+        sb.append(HexDump.dump(escapeData, 0, 0));
+        return sb.toString();
     }
 }
