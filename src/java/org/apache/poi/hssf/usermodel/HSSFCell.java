@@ -885,7 +885,7 @@ public class HSSFCell implements Cell {
      *
      * @param style  reference contained in the workbook
      * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#createCellStyle()
-     * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#getCellStyleAt(short)
+     * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#getCellStyleAt(int)
      */
     public void setCellStyle(CellStyle style) {
         setCellStyle( (HSSFCellStyle)style );
@@ -914,7 +914,7 @@ public class HSSFCell implements Cell {
     /**
      * get the style for the cell.  This is a reference to a cell style contained in the workbook
      * object.
-     * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#getCellStyleAt(short)
+     * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#getCellStyleAt(int)
      */
     public HSSFCellStyle getCellStyle()
     {

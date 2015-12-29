@@ -52,7 +52,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPatternType;
  * SpreadsheetML document.
  *
  * @see org.apache.poi.xssf.usermodel.XSSFWorkbook#createCellStyle()
- * @see org.apache.poi.xssf.usermodel.XSSFWorkbook#getCellStyleAt(short)
+ * @see org.apache.poi.xssf.usermodel.XSSFWorkbook#getCellStyleAt(int)
  * @see org.apache.poi.xssf.usermodel.XSSFCell#setCellStyle(org.apache.poi.ss.usermodel.CellStyle)
  */
 public class XSSFCellStyle implements CellStyle {

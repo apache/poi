@@ -341,7 +341,7 @@ public interface Cell {
      *
      * @return the cell's style. Always not-null. Default cell style has zero index and can be obtained as
      * <code>workbook.getCellStyleAt(0)</code>
-     * @see Workbook#getCellStyleAt(short)
+     * @see Workbook#getCellStyleAt(int)
      */
     CellStyle getCellStyle();
 

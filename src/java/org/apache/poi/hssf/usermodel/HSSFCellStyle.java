@@ -33,7 +33,7 @@ import org.apache.poi.ss.usermodel.Font;
  * High level representation of the style of a cell in a sheet of a workbook.
  *
  * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#createCellStyle()
- * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#getCellStyleAt(short)
+ * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#getCellStyleAt(int)
  * @see org.apache.poi.hssf.usermodel.HSSFCell#setCellStyle(HSSFCellStyle)
  */
 public final class HSSFCellStyle implements CellStyle {
