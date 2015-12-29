@@ -67,6 +67,9 @@ public final class TestXSSFDataFormat extends BaseTestDataFormat {
         doTest58532Core(wb);
     }
     
+    /**
+     * [Bug 58778] Built-in number formats can be overridden with XSSFDataFormat.putFormat(int id, String fmt)
+     */
     public void test58778() throws IOException {
         XSSFWorkbook wb = new XSSFWorkbook();
         Cell cell = wb.createSheet("bug58778").createRow(0).createCell(0);

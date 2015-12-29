@@ -268,7 +268,7 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
 		StylesTable st = ss;
 
 		// Has 8 number formats
-		assertEquals(8, st._getNumberFormatSize());
+		assertEquals(8, st.getNumDataFormats());
 		// Has 2 fonts
 		assertEquals(2, st.getFonts().size());
 		// Has 2 fills
@@ -283,7 +283,7 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
 				st.putNumberFormat("testFORMAT"));
 		assertEquals(StylesTable.FIRST_CUSTOM_STYLE_ID + 9,
 				st.putNumberFormat("testFORMAT2"));
-		assertEquals(10, st._getNumberFormatSize());
+		assertEquals(10, st.getNumDataFormats());
 
 
 		// Save, load back in again, and check
@@ -293,7 +293,7 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
 		ss = wb2.getStylesSource();
 		assertNotNull(ss);
 
-		assertEquals(10, st._getNumberFormatSize());
+		assertEquals(10, st.getNumDataFormats());
 		assertEquals(2, st.getFonts().size());
 		assertEquals(2, st.getFills().size());
 		assertEquals(1, st.getBorders().size());

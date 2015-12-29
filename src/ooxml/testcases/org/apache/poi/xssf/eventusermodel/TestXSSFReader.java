@@ -58,7 +58,7 @@ public final class TestXSSFReader extends TestCase {
 		XSSFReader r = new XSSFReader(pkg);
 
 		assertEquals(3, r.getStylesTable().getFonts().size());
-		assertEquals(0, r.getStylesTable()._getNumberFormatSize());
+		assertEquals(0, r.getStylesTable().getNumDataFormats());
 		
 		// The Styles Table should have the themes associated with it too
 		assertNotNull(r.getStylesTable().getTheme());
