@@ -343,7 +343,7 @@ public class StylesTable extends POIXMLDocumentPart {
      * Remove a number format from the style table if it exists.
      * All cell styles with this number format will be modified to use the default number format.
      * 
-     * @param fmt the number format to remove
+     * @param index the number format id to remove
      * @return true if the number format was removed
      */
     public boolean removeNumberFormat(short index) {
