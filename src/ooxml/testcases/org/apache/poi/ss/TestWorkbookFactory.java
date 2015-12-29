@@ -73,7 +73,6 @@ public final class TestWorkbookFactory {
      * @param wb the workbook to close or revert
      */
     private static void closeOrRevert(Workbook wb) throws IOException {
-        // TODO: close() re-writes the sample-file?! Resort to revert() for now to close file handle...
         if (wb instanceof HSSFWorkbook) {
             wb.close();
         }
@@ -83,6 +82,7 @@ public final class TestWorkbookFactory {
                 xwb.close();
             }
             else {
+                // TODO: close() re-writes the sample-file?! Resort to revert() for now to close file handle...
                 LOGGER.log(POILogger.WARN,
                         "reverting XSSFWorkbook rather than closing it to avoid close() modifying the file on disk. " +
                         "Refer to bug 58779.");
