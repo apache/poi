@@ -18,7 +18,6 @@
 package org.apache.poi.hwmf.usermodel;
 
 import java.io.BufferedInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -71,12 +70,12 @@ public class HwmfPicture {
             int remainingSize = (int)(recordSize - consumedSize);
             assert(remainingSize >= 0);
             if (remainingSize > 0) {
-                byte remaining[] = new byte[remainingSize];
-                leis.read(remaining);
-                FileOutputStream fos = new FileOutputStream("remaining.dat");
-                fos.write(remaining);
-                fos.close();
-//                 leis.skip(remainingSize);
+//                byte remaining[] = new byte[remainingSize];
+//                leis.read(remaining);
+//                FileOutputStream fos = new FileOutputStream("remaining.dat");
+//                fos.write(remaining);
+//                fos.close();
+                 leis.skip(remainingSize);
             }
         }
     }
