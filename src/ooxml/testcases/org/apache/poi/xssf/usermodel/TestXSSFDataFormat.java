@@ -17,8 +17,12 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import java.io.IOException;
+
 import org.apache.poi.ss.usermodel.BaseTestDataFormat;
 import org.apache.poi.ss.usermodel.BuiltinFormats;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
@@ -61,5 +65,32 @@ public final class TestXSSFDataFormat extends BaseTestDataFormat {
     public void test58532() {
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("FormatKM.xlsx");
         doTest58532Core(wb);
+    }
+    
+    public void test58778() throws IOException {
+        XSSFWorkbook wb = new XSSFWorkbook();
+        Cell cell = wb.createSheet("bug58778").createRow(0).createCell(0);
+        cell.setCellValue(5.25);
+        CellStyle style = wb.createCellStyle();
+        
+        XSSFDataFormat dataFormat = wb.createDataFormat();
+        
+        short poundFmtIdx = 6;
+        dataFormat.putFormat(poundFmtIdx, poundFmt);
+        style.setDataFormat(poundFmtIdx);
+        cell.setCellStyle(style);
+        // Cell should appear as "<poundsymbol>5"
+        
+        wb = XSSFTestDataSamples.writeOutCloseAndReadBack(wb);
+        cell = wb.getSheet("bug58778").getRow(0).getCell(0);
+        assertEquals(5.25, cell.getNumericCellValue());
+        
+        style = cell.getCellStyle();
+        assertEquals(poundFmt, style.getDataFormatString());
+        assertEquals(poundFmtIdx, style.getDataFormat());
+        
+        // manually check the file to make sure the cell is rendered as "<poundsymbol>5"
+        // Verified with LibreOffice 4.2.8.2 on 2015-12-28
+        wb.close();
     }
 }
