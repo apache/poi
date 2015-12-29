@@ -60,6 +60,7 @@ public final class TestWorkbookFactory {
      */
     private static void assertCloseDoesNotModifyFile(String filename, Workbook wb) throws IOException {
         final byte[] before = HSSFTestDataSamples.getTestDataFileContent(filename);
+        // FIXME: replace with wb.close() when bug 58779 is resolved
         closeOrRevert(wb);
         final byte[] after = HSSFTestDataSamples.getTestDataFileContent(filename);
         assertArrayEquals(filename + " sample file was modified as a result of closing the workbook",
