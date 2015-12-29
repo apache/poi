@@ -18,13 +18,11 @@
 package org.apache.poi.xssf;
 
 import org.apache.poi.ss.format.TestCellFormatPart;
-import org.apache.poi.ss.util.TestCellReference;
 import org.apache.poi.xssf.eventusermodel.TestXSSFReader;
 import org.apache.poi.xssf.extractor.TestXSSFExcelExtractor;
 import org.apache.poi.xssf.io.TestLoadSaveXSSF;
 import org.apache.poi.xssf.model.TestCommentsTable;
 import org.apache.poi.xssf.model.TestSharedStringsTable;
-import org.apache.poi.xssf.model.TestStylesTable;
 import org.apache.poi.xssf.usermodel.AllXSSFUsermodelTests;
 import org.apache.poi.xssf.util.TestCTColComparator;
 import org.apache.poi.xssf.util.TestNumericRanges;
@@ -43,7 +41,7 @@ import org.junit.runners.Suite;
     TestLoadSaveXSSF.class,
     TestCommentsTable.class,
     TestSharedStringsTable.class,
-    TestStylesTable.class,
+    //TestStylesTable.class, //converted to junit4
     //TestCellReference.class, //converted to junit4
     TestCTColComparator.class,
     TestNumericRanges.class,       

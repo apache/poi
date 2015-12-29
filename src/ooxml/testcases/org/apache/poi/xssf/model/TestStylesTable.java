@@ -17,15 +17,19 @@
 
 package org.apache.poi.xssf.model;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-public final class TestStylesTable extends TestCase {
-    private String testFile = "Formatting.xlsx";
+public final class TestStylesTable {
+    private static final String testFile = "Formatting.xlsx";
 
+    @Test
     public void testCreateNew() {
         StylesTable st = new StylesTable();
 
@@ -36,6 +40,7 @@ public final class TestStylesTable extends TestCase {
         assertEquals(0, st._getNumberFormatSize());
     }
 
+    @Test
     public void testCreateSaveLoad() {
         XSSFWorkbook wb = new XSSFWorkbook();
         StylesTable st = wb.getStylesSource();
@@ -55,6 +60,7 @@ public final class TestStylesTable extends TestCase {
         assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(wb));
     }
 
+    @Test
     public void testLoadExisting() {
         XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook(testFile);
         assertNotNull(workbook.getStylesSource());
@@ -66,6 +72,7 @@ public final class TestStylesTable extends TestCase {
         assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(workbook));
     }
 
+    @Test
     public void testLoadSaveLoad() {
         XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook(testFile);
         assertNotNull(workbook.getStylesSource());
@@ -103,7 +110,8 @@ public final class TestStylesTable extends TestCase {
         assertEquals("yyyy/mm/dd", st.getStyleAt(3).getDataFormatString());
     }
 
-    public void testPopulateNew() {
+    @Test
+    public void populateNew() {
         XSSFWorkbook wb = new XSSFWorkbook();
         StylesTable st = wb.getStylesSource();
 
@@ -133,7 +141,8 @@ public final class TestStylesTable extends TestCase {
         assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(wb));
     }
 
-    public void testPopulateExisting() {
+    @Test
+    public void populateExisting() {
         XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook(testFile);
         assertNotNull(workbook.getStylesSource());
 
