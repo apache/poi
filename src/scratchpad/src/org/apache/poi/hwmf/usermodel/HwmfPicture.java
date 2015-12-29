@@ -17,6 +17,8 @@
 
 package org.apache.poi.hwmf.usermodel;
 
+import java.io.BufferedInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -37,7 +39,8 @@ public class HwmfPicture {
     }
     
     public HwmfPicture(InputStream inputStream) throws IOException {
-        LittleEndianInputStream leis = new LittleEndianInputStream(inputStream);
+        BufferedInputStream bis = new BufferedInputStream(inputStream, 10000);
+        LittleEndianInputStream leis = new LittleEndianInputStream(bis);
         HwmfPlaceableHeader placeableHeader = HwmfPlaceableHeader.readHeader(leis);
         HwmfHeader header = new HwmfHeader(leis);
         
@@ -65,8 +68,15 @@ public class HwmfPicture {
             }
             
             consumedSize += wr.init(leis, recordSize, recordFunction);
-            if (consumedSize < recordSize) {
-                leis.skip(recordSize - consumedSize);
+            int remainingSize = (int)(recordSize - consumedSize);
+            assert(remainingSize >= 0);
+            if (remainingSize > 0) {
+                byte remaining[] = new byte[remainingSize];
+                leis.read(remaining);
+                FileOutputStream fos = new FileOutputStream("remaining.dat");
+                fos.write(remaining);
+                fos.close();
+//                 leis.skip(remainingSize);
             }
         }
     }

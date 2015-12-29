@@ -17,12 +17,26 @@
 
 package org.apache.poi.hwmf.record;
 
+import java.awt.geom.Path2D;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 
+import javax.imageio.ImageIO;
+
+import org.apache.poi.hwmf.draw.HwmfGraphics;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
 
 public class HwmfFill {
+    /**
+     * A record which contains an image (to be extracted)
+     */
+    public interface HwmfImageRecord {
+        BufferedImage getImage();
+    }
+    
+    
     /**
      * The META_FILLREGION record fills a region using a specified brush.
      */
@@ -32,22 +46,29 @@ public class HwmfFill {
          * A 16-bit unsigned integer used to index into the WMF Object Table to get
          * the region to be filled.
          */
-        int region;
+        private int region;
 
         /**
          * A 16-bit unsigned integer used to index into the WMF Object Table to get the
          * brush to use for filling the region.
          */
-        int brush;
+        private int brush;
         
+        @Override
         public HwmfRecordType getRecordType() {
             return HwmfRecordType.fillRegion;
         }
         
+        @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
             region = leis.readUShort();
             brush = leis.readUShort();
             return 2*LittleEndianConsts.SHORT_SIZE;
+        }
+
+        @Override
+        public void draw(HwmfGraphics ctx) {
+            
         }
     }
 
@@ -71,6 +92,11 @@ public class HwmfFill {
             region = leis.readUShort();
             return LittleEndianConsts.SHORT_SIZE;
         }
+
+        @Override
+        public void draw(HwmfGraphics ctx) {
+            
+        }
     }
     
     
@@ -83,29 +109,36 @@ public class HwmfFill {
         /**
          * A 32-bit ColorRef Object that defines the color value.
          */
-        HwmfColorRef colorRef;
+        private HwmfColorRef colorRef;
         /**
          * A 16-bit signed integer that defines the y-coordinate, in logical units, of the
          * point where filling is to start.
          */
-        int yStart;
+        private int yStart;
         /**
          * A 16-bit signed integer that defines the x-coordinate, in logical units, of the
          * point where filling is to start.
          */
-        int xStart;
+        private int xStart;
         
         
+        @Override
         public HwmfRecordType getRecordType() {
             return HwmfRecordType.floodFill;
         }
         
+        @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
             colorRef = new HwmfColorRef();
             int size = colorRef.init(leis);
             yStart = leis.readShort();
             xStart = leis.readShort();
             return size+2*LittleEndianConsts.SHORT_SIZE;
+        }
+
+        @Override
+        public void draw(HwmfGraphics ctx) {
+            
         }
     }
 
@@ -114,20 +147,56 @@ public class HwmfFill {
      * graphics operations that fill polygons.
      */
     public static class WmfSetPolyfillMode implements HwmfRecord {
+        /**
+         * A 16-bit unsigned integer that defines polygon fill mode.
+         * This MUST be one of the values: ALTERNATE = 0x0001, WINDING = 0x0002
+         */
+        public enum HwmfPolyfillMode {
+            /**
+             * Selects alternate mode (fills the area between odd-numbered and
+             * even-numbered polygon sides on each scan line).
+             */
+            ALTERNATE(0x0001, Path2D.WIND_EVEN_ODD),
+            /**
+             * Selects winding mode (fills any region with a nonzero winding value).
+             */
+            WINDING(0x0002, Path2D.WIND_NON_ZERO);
+
+            public int wmfFlag;
+            public int awtFlag;
+            HwmfPolyfillMode(int wmfFlag, int awtFlag) {
+                this.wmfFlag = wmfFlag;
+                this.awtFlag = awtFlag;
+            }
+
+            static HwmfPolyfillMode valueOf(int wmfFlag) {
+                for (HwmfPolyfillMode pm : values()) {
+                    if (pm.wmfFlag == wmfFlag) return pm;
+                }
+                return null;
+            }
+        }
         
         /**
          * A 16-bit unsigned integer that defines polygon fill mode.
          * This MUST be one of the values: ALTERNATE = 0x0001, WINDING = 0x0002
          */
-        int polyFillMode;
+        private HwmfPolyfillMode polyfillMode;
         
+        @Override
         public HwmfRecordType getRecordType() {
             return HwmfRecordType.setPolyFillMode;
         }
         
+        @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
-            polyFillMode = leis.readUShort();
+            polyfillMode = HwmfPolyfillMode.valueOf(leis.readUShort());
             return LittleEndianConsts.SHORT_SIZE;
+        }
+
+        @Override
+        public void draw(HwmfGraphics ctx) {
+            ctx.getProperties().setPolyfillMode(polyfillMode);
         }
     }
 
@@ -151,29 +220,31 @@ public class HwmfFill {
          * Filling continues outward in all directions as long as the color is encountered.
          * This style is useful for filling areas with multicolored boundaries.
          */
-        int mode;
+        private int mode;
         
         /**
          * A 32-bit ColorRef Object that defines the color value.
          */
-        HwmfColorRef colorRef;
+        private HwmfColorRef colorRef;
         
         /**
          * A 16-bit signed integer that defines the y-coordinate, in logical units, of the point
          * to be set.
          */
-        int y;
+        private int y;
         
         /**
          * A 16-bit signed integer that defines the x-coordinate, in logical units, of the point
          * to be set.
          */
-        int x;  
+        private int x;  
         
+        @Override
         public HwmfRecordType getRecordType() {
             return HwmfRecordType.extFloodFill;
         }
         
+        @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
             mode = leis.readUShort();
             colorRef = new HwmfColorRef();
@@ -181,6 +252,11 @@ public class HwmfFill {
             y = leis.readShort();
             x = leis.readShort();
             return size+3*LittleEndianConsts.SHORT_SIZE;
+        }
+
+        @Override
+        public void draw(HwmfGraphics ctx) {
+            
         }
     }
 
@@ -193,15 +269,22 @@ public class HwmfFill {
          * A 16-bit unsigned integer used to index into the WMF Object Table to get
          * the region to be inverted.
          */
-        int region;
+        private int region;
         
+        @Override
         public HwmfRecordType getRecordType() {
             return HwmfRecordType.invertRegion;
         }
         
+        @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
             region = leis.readUShort();
             return LittleEndianConsts.SHORT_SIZE;
+        }
+
+        @Override
+        public void draw(HwmfGraphics ctx) {
+            
         }
     }
     
@@ -217,39 +300,41 @@ public class HwmfFill {
          * A 32-bit unsigned integer that defines the raster operation code.
          * This code MUST be one of the values in the Ternary Raster Operation enumeration table.
          */
-        HwmfTernaryRasterOp rasterOperation;
+        private HwmfTernaryRasterOp rasterOperation;
         
         /**
          * A 16-bit signed integer that defines the height, in logical units, of the rectangle.
          */
-        int height;
+        private int height;
         
         /**
          * A 16-bit signed integer that defines the width, in logical units, of the rectangle.
          */
-        int width;
+        private int width;
         
         /**
          * A 16-bit signed integer that defines the y-coordinate, in logical units, of the
          * upper-left corner of the rectangle to be filled.
          */
-        int yLeft;
+        private int yLeft;
         
         /**
          * A 16-bit signed integer that defines the x-coordinate, in logical units, of the
          * upper-left corner of the rectangle to be filled.
          */
-        int xLeft;
+        private int xLeft;
         
+        @Override
         public HwmfRecordType getRecordType() {
             return HwmfRecordType.patBlt;
         }
         
+        @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
-            int rasterOpIndex = leis.readUShort();
             int rasterOpCode = leis.readUShort();
+            int rasterOpIndex = leis.readUShort();
 
-            rasterOperation = HwmfTernaryRasterOp.fromOpIndex(rasterOpIndex);
+            rasterOperation = HwmfTernaryRasterOp.valueOf(rasterOpIndex);
             assert(rasterOpCode == rasterOperation.opCode);
             
             height = leis.readShort();
@@ -258,6 +343,11 @@ public class HwmfFill {
             xLeft = leis.readShort();
 
             return 6*LittleEndianConsts.SHORT_SIZE;
+        }
+
+        @Override
+        public void draw(HwmfGraphics ctx) {
+            
         }
     }
 
@@ -269,44 +359,44 @@ public class HwmfFill {
          * in the playback device context, and the destination pixels are to be combined to form the new 
          * image. This code MUST be one of the values in the Ternary Raster Operation Enumeration
          */
-        HwmfTernaryRasterOp rasterOperation;
+        private HwmfTernaryRasterOp rasterOperation;
         
         /**
          * A 16-bit signed integer that defines the height, in logical units, of the source rectangle.
          */
-        int srcHeight; 
+        private int srcHeight; 
         /**
          * A 16-bit signed integer that defines the width, in logical units, of the source rectangle.
          */
-        int srcWidth; 
+        private int srcWidth; 
         /**
          * A 16-bit signed integer that defines the y-coordinate, in logical units, of the upper-left corner 
          * of the source rectangle.
          */
-        int ySrc;
+        private int ySrc;
         /**
          * A 16-bit signed integer that defines the x-coordinate, in logical units, of the upper-left corner 
          * of the source rectangle.
          */
-        int xSrc;
+        private int xSrc;
         /**
          * A 16-bit signed integer that defines the height, in logical units, of the destination rectangle.
          */
-        int destHeight;
+        private int destHeight;
         /**
          * A 16-bit signed integer that defines the width, in logical units, of the destination rectangle.
          */
-        int destWidth;
+        private int destWidth;
         /**
          * A 16-bit signed integer that defines the y-coordinate, in logical units, of the upper-left 
          * corner of the destination rectangle.
          */
-        int yDest;
+        private int yDest;
         /**
          * A 16-bit signed integer that defines the x-coordinate, in logical units, of the upper-left 
          * corner of the destination rectangle.
          */
-        int xDest;
+        private int xDest;
         
         /**
          * A variable-sized Bitmap16 Object that defines source image content.
@@ -314,19 +404,21 @@ public class HwmfFill {
          */
         HwmfBitmap16 target;
         
+        @Override
         public HwmfRecordType getRecordType() {
             return HwmfRecordType.stretchBlt;
         }
         
         
+        @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
             boolean hasBitmap = (recordSize > ((recordFunction >> 8) + 3));
 
             int size = 0;
-            int rasterOpIndex = leis.readUShort();
             int rasterOpCode = leis.readUShort();
+            int rasterOpIndex = leis.readUShort();
             
-            rasterOperation = HwmfTernaryRasterOp.fromOpIndex(rasterOpIndex);
+            rasterOperation = HwmfTernaryRasterOp.valueOf(rasterOpIndex);
             assert(rasterOpCode == rasterOperation.opCode);
 
             srcHeight = leis.readShort();
@@ -351,6 +443,11 @@ public class HwmfFill {
             
             return size;
         }
+
+        @Override
+        public void draw(HwmfGraphics ctx) {
+            
+        }
     }
 
     /**
@@ -360,13 +457,13 @@ public class HwmfFill {
      * The source of the color data is a DIB, and the destination of the transfer is
      * the current output region in the playback device context.
      */
-    public static class WmfStretchDib implements HwmfRecord {
+    public static class WmfStretchDib implements HwmfRecord, HwmfImageRecord {
         /**
          * A 32-bit unsigned integer that defines how the source pixels, the current brush in
          * the playback device context, and the destination pixels are to be combined to
          * form the new image.
          */
-        HwmfTernaryRasterOp rasterOperation;
+        private HwmfTernaryRasterOp rasterOperation;
 
         /**
          * A 16-bit unsigned integer that defines whether the Colors field of the
@@ -376,63 +473,65 @@ public class HwmfFill {
          * DIB_PAL_COLORS = 0x0001,
          * DIB_PAL_INDICES = 0x0002
          */
-        int colorUsage;
+        private int colorUsage;
         /**
          * A 16-bit signed integer that defines the height, in logical units, of the
          * source rectangle.
          */
-        int srcHeight;
+        private int srcHeight;
         /**
          * A 16-bit signed integer that defines the width, in logical units, of the
          * source rectangle.
          */
-        int srcWidth; 
+        private int srcWidth; 
         /**
          * A 16-bit signed integer that defines the y-coordinate, in logical units, of the
          * source rectangle.
          */
-        int ySrc;
+        private int ySrc;
         /**
          * A 16-bit signed integer that defines the x-coordinate, in logical units, of the 
          * source rectangle.
          */
-        int xSrc;
+        private int xSrc;
         /**
          * A 16-bit signed integer that defines the height, in logical units, of the 
          * destination rectangle.
          */
-        int destHeight;
+        private int destHeight;
         /**
          * A 16-bit signed integer that defines the width, in logical units, of the 
          * destination rectangle.
          */
-        int destWidth;
+        private int destWidth;
         /**
          * A 16-bit signed integer that defines the y-coordinate, in logical units, of the 
          * upper-left corner of the destination rectangle.
          */
-        int yDst;
+        private int yDst;
         /**
          * A 16-bit signed integer that defines the x-coordinate, in logical units, of the 
          * upper-left corner of the destination rectangle.
          */
-        int xDst;
+        private int xDst;
         /**
          * A variable-sized DeviceIndependentBitmap Object (section 2.2.2.9) that is the 
          * source of the color data.
          */
-        HwmfBitmapDib dib;
+        private HwmfBitmapDib dib;
         
+        @Override
         public HwmfRecordType getRecordType() {
             return HwmfRecordType.stretchDib;
         }
         
         
+        @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
-            int rasterOpIndex = leis.readUShort();
             int rasterOpCode = leis.readUShort();
+            int rasterOpIndex = leis.readUShort();
             
-            rasterOperation = HwmfTernaryRasterOp.fromOpIndex(rasterOpIndex);
+            rasterOperation = HwmfTernaryRasterOp.valueOf(rasterOpIndex);
             assert(rasterOpCode == rasterOperation.opCode);
 
             colorUsage = leis.readUShort();
@@ -447,9 +546,20 @@ public class HwmfFill {
             
             int size = 11*LittleEndianConsts.SHORT_SIZE;
             dib = new HwmfBitmapDib();
-            size += dib.init(leis);
+            size += dib.init(leis, (int)(recordSize-6-size));
+
             return size;
         }        
+
+        @Override
+        public void draw(HwmfGraphics ctx) {
+            
+        }
+
+        @Override
+        public BufferedImage getImage() {
+            return dib.getImage();
+        }
     }
     
     public static class WmfBitBlt implements HwmfRecord {
@@ -458,57 +568,59 @@ public class HwmfFill {
          * A 32-bit unsigned integer that defines how the source pixels, the current brush in the playback 
          * device context, and the destination pixels are to be combined to form the new image.
          */
-        HwmfTernaryRasterOp rasterOperation;
+        private HwmfTernaryRasterOp rasterOperation;
         
         /**
          * A 16-bit signed integer that defines the y-coordinate, in logical units, of the upper-left corner 
         of the source rectangle.
          */
-        int ySrc; 
+        private int ySrc; 
         /**
          * A 16-bit signed integer that defines the x-coordinate, in logical units, of the upper-left corner 
         of the source rectangle.
          */
-        int xSrc; 
+        private int xSrc; 
         /**
          * A 16-bit signed integer that defines the height, in logical units, of the source and 
         destination rectangles.
          */
-        int height;
+        private int height;
         /**
          * A 16-bit signed integer that defines the width, in logical units, of the source and destination 
         rectangles.
          */
-        int width;
+        private int width;
         /**
          * A 16-bit signed integer that defines the y-coordinate, in logical units, of the upper-left 
         corner of the destination rectangle.
          */
-        int yDest;
+        private int yDest;
         /**
          * A 16-bit signed integer that defines the x-coordinate, in logical units, of the upper-left 
         corner of the destination rectangle.
          */
-        int xDest;
+        private int xDest;
         
         /**
          * A variable-sized Bitmap16 Object that defines source image content.
          * This object MUST be specified, even if the raster operation does not require a source.
          */
-        HwmfBitmap16 target;
+        private HwmfBitmap16 target;
 
+        @Override
         public HwmfRecordType getRecordType() {
             return HwmfRecordType.bitBlt;
         }
         
+        @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
             boolean hasBitmap = (recordSize > ((recordFunction >> 8) + 3));
 
             int size = 0;
-            int rasterOpIndex = leis.readUShort();
             int rasterOpCode = leis.readUShort();
+            int rasterOpIndex = leis.readUShort();
             
-            rasterOperation = HwmfTernaryRasterOp.fromOpIndex(rasterOpIndex);
+            rasterOperation = HwmfTernaryRasterOp.valueOf(rasterOpIndex);
             assert(rasterOpCode == rasterOperation.opCode);
 
             ySrc = leis.readShort();
@@ -535,6 +647,11 @@ public class HwmfFill {
             
             return size;
         }
+
+        @Override
+        public void draw(HwmfGraphics ctx) {
+            
+        }
     }
 
 
@@ -543,7 +660,7 @@ public class HwmfFill {
      * using deviceindependent color data.
      * The source of the color data is a DIB
      */
-    public static class WmfSetDibToDev implements HwmfRecord {
+    public static class WmfSetDibToDev implements HwmfRecord, HwmfImageRecord {
 
         /**
          * A 16-bit unsigned integer that defines whether the Colors field of the
@@ -553,55 +670,57 @@ public class HwmfFill {
          * DIB_PAL_COLORS = 0x0001,
          * DIB_PAL_INDICES = 0x0002
          */
-        int colorUsage;  
+        private int colorUsage;  
         /**
          * A 16-bit unsigned integer that defines the number of scan lines in the source.
          */
-        int scanCount;
+        private int scanCount;
         /**
          * A 16-bit unsigned integer that defines the starting scan line in the source.
          */
-        int startScan;  
+        private int startScan;  
         /**
          * A 16-bit unsigned integer that defines the y-coordinate, in logical units, of the
          * source rectangle.
          */
-        int yDib;  
+        private int yDib;  
         /**
          * A 16-bit unsigned integer that defines the x-coordinate, in logical units, of the
          * source rectangle.
          */
-        int xDib;  
+        private int xDib;  
         /**
          * A 16-bit unsigned integer that defines the height, in logical units, of the
          * source and destination rectangles.
          */
-        int height;
+        private int height;
         /**
          * A 16-bit unsigned integer that defines the width, in logical units, of the
          * source and destination rectangles.
          */
-        int width;
+        private int width;
         /**
          * A 16-bit unsigned integer that defines the y-coordinate, in logical units, of the
          * upper-left corner of the destination rectangle.
          */
-        int yDest;
+        private int yDest;
         /**
          * A 16-bit unsigned integer that defines the x-coordinate, in logical units, of the
          * upper-left corner of the destination rectangle.
          */
-        int xDest;
+        private int xDest;
         /**
          * A variable-sized DeviceIndependentBitmap Object that is the source of the color data.
          */
-        HwmfBitmapDib dib;        
+        private HwmfBitmapDib dib;        
         
         
+        @Override
         public HwmfRecordType getRecordType() {
             return HwmfRecordType.setDibToDev;
         }
         
+        @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
             colorUsage = leis.readUShort();
             scanCount = leis.readUShort();
@@ -615,14 +734,24 @@ public class HwmfFill {
             
             int size = 9*LittleEndianConsts.SHORT_SIZE;
             dib = new HwmfBitmapDib();
-            size += dib.init(leis);
+            size += dib.init(leis, (int)(recordSize-6-size));
             
             return size;
         }        
+
+        @Override
+        public void draw(HwmfGraphics ctx) {
+            
+        }
+
+        @Override
+        public BufferedImage getImage() {
+            return dib.getImage();
+        }
     }
 
 
-    public static class WmfDibBitBlt implements HwmfRecord {
+    public static class WmfDibBitBlt implements HwmfRecord, HwmfImageRecord {
 
         /**
          * A 32-bit unsigned integer that defines how the source pixels, the current brush
@@ -633,51 +762,53 @@ public class HwmfFill {
         /**
          * A 16-bit signed integer that defines the y-coordinate, in logical units, of the source rectangle.
          */
-        int ySrc;
+        private int ySrc;
         /**
          * A 16-bit signed integer that defines the x-coordinate, in logical units, of the source rectangle.
          */
-        int xSrc;
+        private int xSrc;
         /**
          * A 16-bit signed integer that defines the height, in logical units, of the source and 
          * destination rectangles.
          */
-        int height;
+        private int height;
         /**
          * A 16-bit signed integer that defines the width, in logical units, of the source and destination
          * rectangles.
          */
-        int width;
+        private int width;
         /**
          * A 16-bit signed integer that defines the y-coordinate, in logical units, of the upper-left
          * corner of the destination rectangle.
          */
-        int yDest;
+        private int yDest;
         /**
          * A 16-bit signed integer that defines the x-coordinate, in logical units, of the upper-left 
          * corner of the destination rectangle.
          */
-        int xDest;
+        private int xDest;
         
         /**
          * A variable-sized DeviceIndependentBitmap Object that defines image content.
          * This object MUST be specified, even if the raster operation does not require a source.
          */
-        HwmfBitmapDib target;
+        private HwmfBitmapDib target;
         
         
+        @Override
         public HwmfRecordType getRecordType() {
             return HwmfRecordType.dibBitBlt;
         }
         
+        @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
             boolean hasBitmap = (recordSize > ((recordFunction >> 8) + 3));
 
             int size = 0;
-            int rasterOpIndex = leis.readUShort();
             int rasterOpCode = leis.readUShort();
+            int rasterOpIndex = leis.readUShort();
             
-            rasterOperation = HwmfTernaryRasterOp.fromOpIndex(rasterOpIndex);
+            rasterOperation = HwmfTernaryRasterOp.valueOf(rasterOpIndex);
             assert(rasterOpCode == rasterOperation.opCode);
 
             ySrc = leis.readShort();
@@ -696,76 +827,88 @@ public class HwmfFill {
             size += 4*LittleEndianConsts.SHORT_SIZE;
             if (hasBitmap) {
                 target = new HwmfBitmapDib();
-                size += target.init(leis);
+                size += target.init(leis, (int)(recordSize-6-size));
             }
             
             return size;
         }
+
+        @Override
+        public void draw(HwmfGraphics ctx) {
+            
+        }
+
+        @Override
+        public BufferedImage getImage() {
+            return target.getImage();
+        }
     }
 
-    public static class WmfDibStretchBlt implements HwmfRecord {
+    public static class WmfDibStretchBlt implements HwmfRecord, HwmfImageRecord {
         /**
          * A 32-bit unsigned integer that defines how the source pixels, the current brush
          * in the playback device context, and the destination pixels are to be combined to form the
          * new image. This code MUST be one of the values in the Ternary Raster Operation Enumeration.
          */
-        HwmfTernaryRasterOp rasterOperation;
+        private HwmfTernaryRasterOp rasterOperation;
         /**
          * A 16-bit signed integer that defines the height, in logical units, of the source rectangle.
          */
-        int srcHeight;
+        private int srcHeight;
         /**
          * A 16-bit signed integer that defines the width, in logical units, of the source rectangle.
          */
-        int srcWidth;
+        private int srcWidth;
         /**
          * A 16-bit signed integer that defines the y-coordinate, in logical units, of the
          * upper-left corner of the source rectangle.
          */
-        int ySrc;
+        private int ySrc;
         /**
          * A 16-bit signed integer that defines the x-coordinate, in logical units, of the
          * upper-left corner of the source rectangle.
          */
-        int xSrc;
+        private int xSrc;
         /**
          * A 16-bit signed integer that defines the height, in logical units, of the
          * destination rectangle.
          */
-        int destHeight;
+        private int destHeight;
         /**
          * A 16-bit signed integer that defines the width, in logical units, of the
          * destination rectangle.
          */
-        int destWidth;
+        private int destWidth;
         /**
          * A 16-bit signed integer that defines the y-coordinate, in logical units,
          * of the upper-left corner of the destination rectangle.
          */
-        int yDest;
+        private int yDest;
         /**
          * A 16-bit signed integer that defines the x-coordinate, in logical units,
          * of the upper-left corner of the destination rectangle.
          */
-        int xDest;
+        private int xDest;
         /**
          * A variable-sized DeviceIndependentBitmap Object that defines image content.
          * This object MUST be specified, even if the raster operation does not require a source.
          */
         HwmfBitmapDib target;
         
+        @Override
         public HwmfRecordType getRecordType() {
             return HwmfRecordType.dibStretchBlt;
         }
         
+        @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
             boolean hasBitmap = (recordSize > ((recordFunction >> 8) + 3));
 
             int size = 0;
-            int rasterOpIndex = leis.readUShort();
             int rasterOpCode = leis.readUShort();
+            int rasterOpIndex = leis.readUShort();
             
-            rasterOperation = HwmfTernaryRasterOp.fromOpIndex(rasterOpIndex);
+            rasterOperation = HwmfTernaryRasterOp.valueOf(rasterOpIndex);
             assert(rasterOpCode == rasterOperation.opCode);
 
             srcHeight = leis.readShort();
@@ -785,10 +928,20 @@ public class HwmfFill {
             size += 4*LittleEndianConsts.SHORT_SIZE;
             if (hasBitmap) {
                 target = new HwmfBitmapDib();
-                size += target.init(leis);
+                size += target.init(leis, (int)(recordSize-6-size));
             }
             
             return size;
+        }
+
+        @Override
+        public void draw(HwmfGraphics ctx) {
+            
+        }
+
+        @Override
+        public BufferedImage getImage() {
+            return target.getImage();
         }
     }
 }

@@ -19,6 +19,7 @@ package org.apache.poi.hwmf.record;
 
 import java.io.IOException;
 
+import org.apache.poi.hwmf.draw.HwmfGraphics;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
 
@@ -30,7 +31,7 @@ public class HwmfPalette {
         // Blue (1 byte): An 8-bit unsigned integer that defines the blue intensity value for the palette entry.
         // Green (1 byte): An 8-bit unsigned integer that defines the green intensity value for the palette entry.
         // Red (1 byte): An 8-bit unsigned integer that defines the red intensity value for the palette entry.
-        int values, blue, green, red;
+        private int values, blue, green, red;
         
         public int init(LittleEndianInputStream leis) throws IOException {
             values = leis.readUByte();
@@ -48,16 +49,17 @@ public class HwmfPalette {
          * used with the META_SETPALENTRIES and META_ANIMATEPALETTE record types.
          * When used with META_CREATEPALETTE, it MUST be 0x0300
          */
-        int start;
+        private int start;
         
         /**
          * NumberOfEntries (2 bytes):  A 16-bit unsigned integer that defines the number of objects in
          * aPaletteEntries.  
          */
-        int numberOfEntries;
+        private int numberOfEntries;
         
         PaletteEntry entries[];
         
+        @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
             start = leis.readUShort();
             numberOfEntries = leis.readUShort();
@@ -69,14 +71,25 @@ public class HwmfPalette {
             }
             return size;
         }
+
+        @Override
+        public void draw(HwmfGraphics ctx) {
+
+        }
     }
     
     /**
      * The META_CREATEPALETTE record creates a Palette Object
      */
     public static class WmfCreatePalette extends WmfPaletteParent {
+        @Override
         public HwmfRecordType getRecordType() {
             return HwmfRecordType.createPalette;
+        }
+
+        @Override
+        public void draw(HwmfGraphics ctx) {
+
         }
     }
 
@@ -85,8 +98,14 @@ public class HwmfPalette {
      * palette that is defined in the playback device context.
      */
     public static class WmfSetPaletteEntries extends WmfPaletteParent {
+        @Override
         public HwmfRecordType getRecordType() {
             return HwmfRecordType.setPalEntries;
+        }
+
+        @Override
+        public void draw(HwmfGraphics ctx) {
+
         }
     }
     
@@ -101,14 +120,21 @@ public class HwmfPalette {
          */
         int numberOfEntries;
         
+        @Override
         public HwmfRecordType getRecordType() {
             return HwmfRecordType.resizePalette;
         }
         
+        @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
             numberOfEntries = leis.readUShort();
             return LittleEndianConsts.SHORT_SIZE;
         }        
+
+        @Override
+        public void draw(HwmfGraphics ctx) {
+
+        }
     }
 
     /**
@@ -119,16 +145,23 @@ public class HwmfPalette {
          * A 16-bit unsigned integer used to index into the WMF Object Table to get
          * the Palette Object to be selected.
          */
-        int palette;
+        private int palette;
 
+        @Override
         public HwmfRecordType getRecordType() {
             return HwmfRecordType.selectPalette;
         }
         
+        @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
             palette = leis.readUShort();
             return LittleEndianConsts.SHORT_SIZE;
         }        
+
+        @Override
+        public void draw(HwmfGraphics ctx) {
+
+        }
     }
 
     /**
@@ -136,10 +169,19 @@ public class HwmfPalette {
      * is defined in the playback device context to the system palette.
      */
     public static class WmfRealizePalette implements HwmfRecord {
-        public HwmfRecordType getRecordType() { return HwmfRecordType.realizePalette; }
+        @Override
+        public HwmfRecordType getRecordType() {
+            return HwmfRecordType.realizePalette;
+        }
 
+        @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
             return 0;
+        }
+
+        @Override
+        public void draw(HwmfGraphics ctx) {
+
         }
     }
 
@@ -156,8 +198,14 @@ public class HwmfPalette {
      * this record SHOULD have no effect.
      */
     public static class WmfAnimatePalette extends WmfPaletteParent {
+        @Override
         public HwmfRecordType getRecordType() {
             return HwmfRecordType.animatePalette;
+        }
+
+        @Override
+        public void draw(HwmfGraphics ctx) {
+
         }
     }
 }

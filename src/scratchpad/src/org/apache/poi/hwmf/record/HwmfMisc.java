@@ -17,8 +17,12 @@
 
 package org.apache.poi.hwmf.record;
 
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 
+import org.apache.poi.hwmf.draw.HwmfDrawProperties;
+import org.apache.poi.hwmf.draw.HwmfGraphics;
+import org.apache.poi.hwmf.record.HwmfFill.HwmfImageRecord;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
 
@@ -28,10 +32,19 @@ public class HwmfMisc {
      * The META_SAVEDC record saves the playback device context for later retrieval.
      */
     public static class WmfSaveDc implements HwmfRecord {
-        public HwmfRecordType getRecordType() { return HwmfRecordType.saveDc; }
+        @Override
+        public HwmfRecordType getRecordType() {
+            return HwmfRecordType.saveDc;
+        }
 
+        @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
             return 0;
+        }
+
+        @Override
+        public void draw(HwmfGraphics ctx) {
+
         }
     }
 
@@ -39,10 +52,17 @@ public class HwmfMisc {
      * The META_SETRELABS record is reserved and not supported.
      */
     public static class WmfSetRelabs implements HwmfRecord {
-        public HwmfRecordType getRecordType() { return HwmfRecordType.setRelabs; }
+        public HwmfRecordType getRecordType() {
+            return HwmfRecordType.setRelabs;
+        }
 
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
             return 0;
+        }
+
+        @Override
+        public void draw(HwmfGraphics ctx) {
+
         }
     }
 
@@ -57,15 +77,22 @@ public class HwmfMisc {
          * member is positive, nSavedDC represents a specific instance of the state to be restored. If
          * this member is negative, nSavedDC represents an instance relative to the current state.
          */
-        int nSavedDC;
+        private int nSavedDC;
 
+        @Override
         public HwmfRecordType getRecordType() {
             return HwmfRecordType.restoreDc;
         }
 
+        @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
             nSavedDC = leis.readShort();
             return LittleEndianConsts.SHORT_SIZE;
+        }
+
+        @Override
+        public void draw(HwmfGraphics ctx) {
+
         }
     }
 
@@ -75,15 +102,22 @@ public class HwmfMisc {
      */
     public static class WmfSetBkColor implements HwmfRecord {
 
-        HwmfColorRef colorRef;
+        private HwmfColorRef colorRef;
 
+        @Override
         public HwmfRecordType getRecordType() {
             return HwmfRecordType.setBkColor;
         }
 
+        @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
             colorRef = new HwmfColorRef();
             return colorRef.init(leis);
+        }
+
+        @Override
+        public void draw(HwmfGraphics ctx) {
+            ctx.getProperties().setBackgroundColor(colorRef);
         }
     }
 
@@ -96,17 +130,37 @@ public class HwmfMisc {
 
         /**
          * A 16-bit unsigned integer that defines background mix mode.
-         * This MUST be either TRANSPARENT = 0x0001 or OPAQUE = 0x0002
          */
-        int bkMode;
+        public enum HwmfBkMode {
+            TRANSPARENT(0x0001), OPAQUE(0x0002);
+
+            int flag;
+            HwmfBkMode(int flag) {
+                this.flag = flag;
+            }
+
+            static HwmfBkMode valueOf(int flag) {
+                for (HwmfBkMode bs : values()) {
+                    if (bs.flag == flag) return bs;
+                }
+                return null;
+            }
+        }
+
+        private HwmfBkMode bkMode;
 
         public HwmfRecordType getRecordType() {
             return HwmfRecordType.setBkMode;
         }
 
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
-            bkMode = leis.readUShort();
+            bkMode = HwmfBkMode.valueOf(leis.readUShort());
             return LittleEndianConsts.SHORT_SIZE;
+        }
+
+        @Override
+        public void draw(HwmfGraphics ctx) {
+            ctx.getProperties().setBkMode(bkMode);
         }
     }
 
@@ -122,18 +176,25 @@ public class HwmfMisc {
          * LAYOUT_RTL = 0x0001
          * LAYOUT_BITMAPORIENTATIONPRESERVED = 0x0008
          */
-        int layout;
+        private int layout;
 
+        @Override
         public HwmfRecordType getRecordType() {
             return HwmfRecordType.setLayout;
         }
 
         @SuppressWarnings("unused")
+        @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
             layout = leis.readUShort();
             // A 16-bit field that MUST be ignored.
             int reserved = leis.readShort();
             return 2*LittleEndianConsts.SHORT_SIZE;
+        }
+
+        @Override
+        public void draw(HwmfGraphics ctx) {
+
         }
     }
 
@@ -144,71 +205,22 @@ public class HwmfMisc {
      */
     public static class WmfSetMapMode implements HwmfRecord {
 
-        /**
-         * A 16-bit unsigned integer that defines the mapping mode.
-         *
-         * The MapMode defines how logical units are mapped to physical units;
-         * that is, assuming that the origins in both the logical and physical coordinate systems
-         * are at the same point on the drawing surface, what is the physical coordinate (x',y')
-         * that corresponds to logical coordinate (x,y).
-         *
-         * For example, suppose the mapping mode is MM_TEXT. Given the following definition of that
-         * mapping mode, and an origin (0,0) at the top left corner of the drawing surface, logical
-         * coordinate (4,5) would map to physical coordinate (4,5) in pixels.
-         *
-         * Now suppose the mapping mode is MM_LOENGLISH, with the same origin as the previous
-         * example. Given the following definition of that mapping mode, logical coordinate (4,-5)
-         * would map to physical coordinate (0.04,0.05) in inches.
-         *
-         * This MUST be one of the following:
-         *
-         * MM_TEXT (= 0x0001):
-         *  Each logical unit is mapped to one device pixel.
-         *  Positive x is to the right; positive y is down.
-         *
-         * MM_LOMETRIC (= 0x0002):
-         *  Each logical unit is mapped to 0.1 millimeter.
-         *  Positive x is to the right; positive y is up.
-         *
-         * MM_HIMETRIC (= 0x0003):
-         *  Each logical unit is mapped to 0.01 millimeter.
-         *  Positive x is to the right; positive y is up.
-         *
-         * MM_LOENGLISH (= 0x0004):
-         *  Each logical unit is mapped to 0.01 inch.
-         *  Positive x is to the right; positive y is up.
-         *
-         * MM_HIENGLISH (= 0x0005):
-         *  Each logical unit is mapped to 0.001 inch.
-         *  Positive x is to the right; positive y is up.
-         *
-         * MM_TWIPS (= 0x0006):
-         *  Each logical unit is mapped to one twentieth (1/20) of a point.
-         *  In printing, a point is 1/72 of an inch; therefore, 1/20 of a point is 1/1440 of an inch.
-         *  This unit is also known as a "twip".
-         *  Positive x is to the right; positive y is up.
-         *
-         * MM_ISOTROPIC (= 0x0007):
-         *  Logical units are mapped to arbitrary device units with equally scaled axes;
-         *  that is, one unit along the x-axis is equal to one unit along the y-axis.
-         *  The META_SETWINDOWEXT and META_SETVIEWPORTEXT records specify the units and the
-         *  orientation of the axes.
-         *  The processing application SHOULD make adjustments as necessary to ensure the x and y
-         *  units remain the same size. For example, when the window extent is set, the viewport
-         *  SHOULD be adjusted to keep the units isotropic.
-         *
-         * MM_ANISOTROPIC (= 0x0008):
-         *  Logical units are mapped to arbitrary units with arbitrarily scaled axes.
-         */
-        int mapMode;
+        private HwmfMapMode mapMode;
 
+        @Override
         public HwmfRecordType getRecordType() {
             return HwmfRecordType.setMapMode;
         }
 
+        @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
-            mapMode = leis.readUShort();
+            mapMode = HwmfMapMode.valueOf(leis.readUShort());
             return LittleEndianConsts.SHORT_SIZE;
+        }
+
+        @Override
+        public void draw(HwmfGraphics ctx) {
+            ctx.getProperties().setMapMode(mapMode);
         }
     }
 
@@ -223,15 +235,22 @@ public class HwmfMisc {
          * match a font's aspect ratio to the current device's aspect ratio. If bit 0 is
          * set, the mapper selects only matching fonts.
          */
-        long mapperValues;
+        private long mapperValues;
 
+        @Override
         public HwmfRecordType getRecordType() {
             return HwmfRecordType.setMapperFlags;
         }
 
+        @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
             mapperValues = leis.readUInt();
             return LittleEndianConsts.INT_SIZE;
+        }
+
+        @Override
+        public void draw(HwmfGraphics ctx) {
+
         }
     }
 
@@ -262,15 +281,22 @@ public class HwmfMisc {
          * R2_MERGEPEN = 0x000F,
          * R2_WHITE = 0x0010
          */
-        int drawMode;
+        private int drawMode;
 
+        @Override
         public HwmfRecordType getRecordType() {
             return HwmfRecordType.setRop2;
         }
 
+        @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
             drawMode = leis.readUShort();
             return LittleEndianConsts.SHORT_SIZE;
+        }
+
+        @Override
+        public void draw(HwmfGraphics ctx) {
+
         }
     }
 
@@ -288,15 +314,22 @@ public class HwmfMisc {
          * COLORONCOLOR = 0x0003,
          * HALFTONE = 0x0004
          */
-        int setStretchBltMode;
+        private int setStretchBltMode;
 
+        @Override
         public HwmfRecordType getRecordType() {
             return HwmfRecordType.setStretchBltMode;
         }
 
+        @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
             setStretchBltMode = leis.readUShort();
             return LittleEndianConsts.SHORT_SIZE;
+        }
+
+        @Override
+        public void draw(HwmfGraphics ctx) {
+
         }
     }
 
@@ -304,9 +337,9 @@ public class HwmfMisc {
      * The META_DIBCREATEPATTERNBRUSH record creates a Brush Object with a
      * pattern specified by a DeviceIndependentBitmap (DIB) Object
      */
-    public static class WmfDibCreatePatternBrush implements HwmfRecord {
+    public static class WmfDibCreatePatternBrush implements HwmfRecord, HwmfImageRecord {
 
-        HwmfBrushStyle style;
+        private HwmfBrushStyle style;
 
         /**
          * A 16-bit unsigned integer that defines whether the Colors field of a DIB
@@ -320,15 +353,17 @@ public class HwmfMisc {
          * DIB_PAL_COLORS = 0x0001,
          * DIB_PAL_INDICES = 0x0002
          */
-        int colorUsage;
+        private int colorUsage;
 
-        HwmfBitmapDib patternDib;
-        HwmfBitmap16 pattern16;
+        private HwmfBitmapDib patternDib;
+        private HwmfBitmap16 pattern16;
 
+        @Override
         public HwmfRecordType getRecordType() {
             return HwmfRecordType.dibCreatePatternBrush;
         }
 
+        @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
             style = HwmfBrushStyle.valueOf(leis.readUShort());
             colorUsage = leis.readUShort();
@@ -339,12 +374,9 @@ public class HwmfMisc {
             case BS_DIBPATTERN:
             case BS_DIBPATTERNPT:
             case BS_HATCHED:
-                patternDib = new HwmfBitmapDib();
-                size += patternDib.init(leis);
-                break;
             case BS_PATTERN:
-                pattern16 = new HwmfBitmap16();
-                size += pattern16.init(leis);
+                patternDib = new HwmfBitmapDib();
+                size += patternDib.init(leis, (int)(recordSize-6-size));
                 break;
             case BS_INDEXED:
             case BS_DIBPATTERN8X8:
@@ -353,6 +385,24 @@ public class HwmfMisc {
                 throw new RuntimeException("pattern not supported");
             }
             return size;
+        }
+
+        @Override
+        public void draw(HwmfGraphics ctx) {
+            HwmfDrawProperties prop = ctx.getProperties();
+            prop.setBrushStyle(style);
+            prop.setBrushBitmap(getImage());
+        }
+
+        @Override
+        public BufferedImage getImage() {
+            if (patternDib != null) {
+                return patternDib.getImage();
+            } else if (pattern16 != null) {
+                return pattern16.getImage();
+            } else {
+                return null;
+            }
         }
     }
 
@@ -364,84 +414,94 @@ public class HwmfMisc {
     public static class WmfDeleteObject implements HwmfRecord {
         /**
          * A 16-bit unsigned integer used to index into the WMF Object Table to
-        get the object to be deleted.
+         * get the object to be deleted.
          */
-        int objectIndex;
+        private int objectIndex;
 
-        public HwmfRecordType getRecordType() { return HwmfRecordType.deleteObject; }
+        @Override
+        public HwmfRecordType getRecordType() {
+            return HwmfRecordType.deleteObject;
+        }
 
+        @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
             objectIndex = leis.readUShort();
             return LittleEndianConsts.SHORT_SIZE;
+        }
+
+        @Override
+        public void draw(HwmfGraphics ctx) {
+
         }
     }
 
     public static class WmfCreatePatternBrush implements HwmfRecord {
 
-        HwmfBitmap16 pattern;
+        private HwmfBitmap16 pattern;
 
-        public HwmfRecordType getRecordType() { return HwmfRecordType.createPatternBrush; }
+        @Override
+        public HwmfRecordType getRecordType() {
+            return HwmfRecordType.createPatternBrush;
+        }
 
+        @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
             pattern = new HwmfBitmap16(true);
             return pattern.init(leis);
+        }
+
+        @Override
+        public void draw(HwmfGraphics ctx) {
+
         }
     }
 
     public static class WmfCreatePenIndirect implements HwmfRecord {
 
-        /**
-         * A 16-bit unsigned integer that specifies the pen style.
-         * The value MUST be defined from the PenStyle Enumeration table.
-         *
-         * PS_COSMETIC = 0x0000,
-         * PS_ENDCAP_ROUND = 0x0000,
-         * PS_JOIN_ROUND = 0x0000,
-         * PS_SOLID = 0x0000,
-         * PS_DASH = 0x0001,
-         * PS_DOT = 0x0002,
-         * PS_DASHDOT = 0x0003,
-         * PS_DASHDOTDOT = 0x0004,
-         * PS_NULL = 0x0005,
-         * PS_INSIDEFRAME = 0x0006,
-         * PS_USERSTYLE = 0x0007,
-         * PS_ALTERNATE = 0x0008,
-         * PS_ENDCAP_SQUARE = 0x0100,
-         * PS_ENDCAP_FLAT = 0x0200,
-         * PS_JOIN_BEVEL = 0x1000,
-         * PS_JOIN_MITER = 0x2000
-         */
-        int penStyle;
+        private HwmfPenStyle penStyle;
         /**
          * A 32-bit PointS Object that specifies a point for the object dimensions.
          * The xcoordinate is the pen width. The y-coordinate is ignored.
          */
-        int xWidth, yWidth;
+        private int xWidth;
+        @SuppressWarnings("unused")
+        private int yWidth;
         /**
          * A 32-bit ColorRef Object that specifies the pen color value.
          */
-        HwmfColorRef colorRef;
+        private HwmfColorRef colorRef;
 
-        public HwmfRecordType getRecordType() { return HwmfRecordType.createPenIndirect; }
+        @Override
+        public HwmfRecordType getRecordType() {
+            return HwmfRecordType.createPenIndirect;
+        }
 
+        @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
-            penStyle = leis.readUShort();
+            penStyle = HwmfPenStyle.valueOf(leis.readUShort());
             xWidth = leis.readShort();
             yWidth = leis.readShort();
             colorRef = new HwmfColorRef();
-            int size = 3*LittleEndianConsts.SHORT_SIZE;
-            size += colorRef.init(leis);
-            return size;
+            int size = colorRef.init(leis);
+            return size+3*LittleEndianConsts.SHORT_SIZE;
+        }
+
+        @Override
+        public void draw(HwmfGraphics ctx) {
+            HwmfDrawProperties p = ctx.getProperties();
+            p.setPenStyle(penStyle);
+            p.setPenColor(colorRef);
+            p.setPenWidth(xWidth);
         }
     }
 
     /**
      * The META_CREATEBRUSHINDIRECT record creates a Brush Object
      * from a LogBrush Object.
-     * 
+     *
      * The following table shows the relationship between values in the BrushStyle,
      * ColorRef and BrushHatch fields in a LogBrush Object. Only supported brush styles are listed.
-     * 
+     *
      * <table>
      * <tr>
      *   <th>BrushStyle</th>
@@ -481,26 +541,37 @@ public class HwmfMisc {
      * </table>
      */
     public static class WmfCreateBrushIndirect implements HwmfRecord {
-        HwmfBrushStyle brushStyle;
+        private HwmfBrushStyle brushStyle;
 
-        HwmfColorRef colorRef;
+        private HwmfColorRef colorRef;
 
         /**
          * A 16-bit field that specifies the brush hatch type.
          * Its interpretation depends on the value of BrushStyle.
-         * 
+         *
          */
-        HwmfHatchStyle brushHatch;
+        private HwmfHatchStyle brushHatch;
 
-        public HwmfRecordType getRecordType() { return HwmfRecordType.createBrushIndirect; }
+        @Override
+        public HwmfRecordType getRecordType() {
+            return HwmfRecordType.createBrushIndirect;
+        }
 
+        @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
             brushStyle = HwmfBrushStyle.valueOf(leis.readUShort());
             colorRef = new HwmfColorRef();
             int size = colorRef.init(leis);
             brushHatch = HwmfHatchStyle.valueOf(leis.readUShort());
-            size += 4;
-            return size;
+            return size+2*LittleEndianConsts.SHORT_SIZE;
+        }
+
+        @Override
+        public void draw(HwmfGraphics ctx) {
+            HwmfDrawProperties p = ctx.getProperties();
+            p.setBrushStyle(brushStyle);
+            p.setBrushColor(colorRef);
+            p.setBrushHatch(brushHatch);
         }
     }
 }

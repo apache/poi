@@ -19,9 +19,12 @@ package org.apache.poi.hwmf.record;
 
 import java.io.IOException;
 
+import org.apache.poi.hwmf.draw.HwmfGraphics;
 import org.apache.poi.hwmf.record.HwmfMisc.WmfSetMapMode;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
+import org.apache.poi.util.LocaleUtil;
+import org.apache.poi.util.RecordFormatException;
 
 public class HwmfText {
 
@@ -38,15 +41,22 @@ public class HwmfText {
          * this value is transformed and rounded to the nearest pixel. For details about setting the
          * mapping mode, see META_SETMAPMODE
          */
-        int charExtra;
+        private int charExtra;
         
+        @Override
         public HwmfRecordType getRecordType() {
             return HwmfRecordType.setTextCharExtra;
         }
         
+        @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
             charExtra = leis.readUShort();
             return LittleEndianConsts.SHORT_SIZE;
+        }
+
+        @Override
+        public void draw(HwmfGraphics ctx) {
+
         }
     }
     
@@ -55,15 +65,22 @@ public class HwmfText {
      */
     public static class WmfSetTextColor implements HwmfRecord {
         
-        HwmfColorRef colorRef;
+        private HwmfColorRef colorRef;
         
+        @Override
         public HwmfRecordType getRecordType() {
             return HwmfRecordType.setTextColor;
         }
         
+        @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
             colorRef = new HwmfColorRef();
             return colorRef.init(leis);
+        }
+
+        @Override
+        public void draw(HwmfGraphics ctx) {
+
         }
     }
     
@@ -76,7 +93,7 @@ public class HwmfText {
         /**
          * A 16-bit unsigned integer that specifies the number of space characters in the line.
          */
-        int breakCount;
+        private int breakCount;
         
         /**
          * A 16-bit unsigned integer that specifies the total extra space, in logical
@@ -84,16 +101,23 @@ public class HwmfText {
          * identified by the BreakExtra member is transformed and rounded to the nearest pixel. For
          * details about setting the mapping mode, see {@link WmfSetMapMode}.
          */
-        int breakExtra;
+        private int breakExtra;
         
+        @Override
         public HwmfRecordType getRecordType() {
             return HwmfRecordType.setBkColor;
         }
         
+        @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
             breakCount = leis.readUShort();
             breakExtra = leis.readUShort();
             return 2*LittleEndianConsts.SHORT_SIZE;
+        }
+
+        @Override
+        public void draw(HwmfGraphics ctx) {
+
         }
     }
     
@@ -105,7 +129,7 @@ public class HwmfText {
         /**
          * A 16-bit signed integer that defines the length of the string, in bytes, pointed to by String.
          */
-        int stringLength;
+        private int stringLength;
         /**
          * The size of this field MUST be a multiple of two. If StringLength is an odd
          * number, then this field MUST be of a size greater than or equal to StringLength + 1.
@@ -114,30 +138,37 @@ public class HwmfText {
          * length of the string.
          * The string is written at the location specified by the XStart and YStart fields.
          */
-        String text;
+        private String text;
         /**
          * A 16-bit signed integer that defines the vertical (y-axis) coordinate, in logical
          * units, of the point where drawing is to start.
          */
-        int yStart;
+        private int yStart;
         /**
          * A 16-bit signed integer that defines the horizontal (x-axis) coordinate, in
          * logical units, of the point where drawing is to start.
          */
-        int xStart;  
+        private int xStart;  
         
+        @Override
         public HwmfRecordType getRecordType() {
             return HwmfRecordType.textOut;
         }
         
+        @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
             stringLength = leis.readShort();
-            byte buf[] = new byte[stringLength+(stringLength%2)];
+            byte buf[] = new byte[stringLength+(stringLength&1)];
             leis.readFully(buf);
-            text = new String(buf, "UTF16-LE").trim();
+            text = new String(buf, 0, stringLength, LocaleUtil.CHARSET_1252).trim();
             yStart = leis.readShort();
             xStart = leis.readShort();
             return 3*LittleEndianConsts.SHORT_SIZE+buf.length;
+        }
+
+        @Override
+        public void draw(HwmfGraphics ctx) {
+
         }
     }
     
@@ -152,16 +183,16 @@ public class HwmfText {
          * A 16-bit signed integer that defines the y-coordinate, in logical units, where the 
         text string is to be located.
          */
-        int y;  
+        private int y;  
         /**
          * A 16-bit signed integer that defines the x-coordinate, in logical units, where the 
         text string is to be located.
          */
-        int x;  
+        private int x;  
         /**
          * A 16-bit signed integer that defines the length of the string.
          */
-        int stringLength;
+        private int stringLength;
         /**
          * A 16-bit unsigned integer that defines the use of the application-defined 
          * rectangle. This member can be a combination of one or more values in the 
@@ -196,7 +227,7 @@ public class HwmfText {
          * Indicates that both horizontal and vertical character displacement values 
          * SHOULD be provided.
          */
-        int fwOpts;
+        private int fwOpts;
         /**
          * An optional 8-byte Rect Object (section 2.2.2.18) that defines the 
          * dimensions, in logical coordinates, of a rectangle that is used for clipping, opaquing, or both.
@@ -205,43 +236,58 @@ public class HwmfText {
          * Each value is a 16-bit signed integer that defines the coordinate, in logical coordinates, of 
          * the upper-left corner of the rectangle
          */
-        int left,top,right,bottom;
+        private int left,top,right,bottom;
         /**
          * A variable-length string that specifies the text to be drawn. The string does 
          * not need to be null-terminated, because StringLength specifies the length of the string. If 
          * the length is odd, an extra byte is placed after it so that the following member (optional Dx) is 
          * aligned on a 16-bit boundary.
          */
-        String text;
+        private String text;
         /**
          * An optional array of 16-bit signed integers that indicate the distance between 
          * origins of adjacent character cells. For example, Dx[i] logical units separate the origins of 
          * character cell i and character cell i + 1. If this field is present, there MUST be the same 
          * number of values as there are characters in the string.
          */
-        int dx[];
+        private int dx[];
         
+        @Override
         public HwmfRecordType getRecordType() {
             return HwmfRecordType.extTextOut;
         }
         
+        @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
             y = leis.readShort();
             x = leis.readShort();
             stringLength = leis.readShort();
             fwOpts = leis.readUShort();
-            left = leis.readShort();
-            top = leis.readShort();
-            right = leis.readShort();
-            bottom = leis.readShort();
             
-            byte buf[] = new byte[stringLength+(stringLength%2)];
+            int size = 4*LittleEndianConsts.SHORT_SIZE;
+            
+            if (fwOpts != 0) {
+                // the bounding rectangle is optional and only read when fwOpts are given
+                left = leis.readShort();
+                top = leis.readShort();
+                right = leis.readShort();
+                bottom = leis.readShort();
+                size += 4*LittleEndianConsts.SHORT_SIZE;
+            }
+            
+            byte buf[] = new byte[stringLength+(stringLength&1)];
             leis.readFully(buf);
-            text = new String(buf, "UTF16-LE");
+            text = new String(buf, 0, stringLength, LocaleUtil.CHARSET_1252);
+            size += buf.length;
             
-            int size = 8*LittleEndianConsts.SHORT_SIZE+buf.length;
-            if (size < recordSize) {
-                dx = new int[text.length()];
+            // -6 bytes of record function and length header
+            int remainingRecordSize = (int)(recordSize-6);
+            if (size < remainingRecordSize) {
+                if (size + stringLength*LittleEndianConsts.SHORT_SIZE < remainingRecordSize) {
+                    throw new RecordFormatException("can't read Dx array - given recordSize doesn't contain enough values for string length "+stringLength);
+                }
+                
+                dx = new int[stringLength];
                 for (int i=0; i<dx.length; i++) {
                     dx[i] = leis.readShort();
                 }
@@ -249,6 +295,11 @@ public class HwmfText {
             }
             
             return size;
+        }
+
+        @Override
+        public void draw(HwmfGraphics ctx) {
+
         }
     }
     
@@ -320,28 +371,42 @@ public class HwmfText {
          * VTA_BASELINE (0x0018):
          * The reference point MUST be on the baseline of the text.
          */
-        int textAlignmentMode;
+        private int textAlignmentMode;
         
+        @Override
         public HwmfRecordType getRecordType() {
             return HwmfRecordType.setTextAlign;
         }
         
+        @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
             textAlignmentMode = leis.readUShort();
             return LittleEndianConsts.SHORT_SIZE;
         }
+
+        @Override
+        public void draw(HwmfGraphics ctx) {
+
+        }
     }
     
     public static class WmfCreateFontIndirect implements HwmfRecord {
-        HwmfFont font;
+        private HwmfFont font;
         
+        @Override
         public HwmfRecordType getRecordType() {
             return HwmfRecordType.createFontIndirect;
         }
         
+        @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
             font = new HwmfFont();
             return font.init(leis);
+        }
+
+        @Override
+        public void draw(HwmfGraphics ctx) {
+
         }
     }
 }
