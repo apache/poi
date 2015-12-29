@@ -17,6 +17,8 @@
 
 package org.apache.poi.ss;
 
+import static org.junit.Assert.*;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
@@ -35,9 +37,9 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
-public final class TestWorkbookFactory extends TestCase {
+public final class TestWorkbookFactory {
     private static final String xls = "SampleSS.xls";
     private static final String xlsx = "SampleSS.xlsx";
     private static final String[] xls_prot = new String[] {"password.xls", "password"};
@@ -66,6 +68,7 @@ public final class TestWorkbookFactory extends TestCase {
         }
     }
 
+    @Test
     public void testCreateNative() throws Exception {
         Workbook wb;
 
@@ -88,6 +91,7 @@ public final class TestWorkbookFactory extends TestCase {
         revert(wb);
     }
 
+    @Test
     public void testCreateReadOnly() throws Exception {
         Workbook wb;
 
@@ -109,6 +113,7 @@ public final class TestWorkbookFactory extends TestCase {
      *  checking the mime magic at the start of the
      *  InputStream, then creating what's required.
      */
+    @Test
     public void testCreateGeneric() throws Exception {
         Workbook wb;
 
@@ -161,6 +166,7 @@ public final class TestWorkbookFactory extends TestCase {
     /**
      * Check that the overloaded stream methods which take passwords work properly
      */
+    @Test
     public void testCreateWithPasswordFromStream() throws Exception {
         Workbook wb;
 
@@ -234,6 +240,7 @@ public final class TestWorkbookFactory extends TestCase {
     /**
      * Check that the overloaded file methods which take passwords work properly
      */
+    @Test
     public void testCreateWithPasswordFromFile() throws Exception {
         Workbook wb;
 
@@ -303,6 +310,7 @@ public final class TestWorkbookFactory extends TestCase {
     /**
      * Check that a helpful exception is given on an empty file / stream
      */
+    @Test
     public void testEmptyFile() throws Exception {
         InputStream emptyStream = new ByteArrayInputStream(new byte[0]);
         File emptyFile = TempFile.createTempFile("empty", ".poi");
