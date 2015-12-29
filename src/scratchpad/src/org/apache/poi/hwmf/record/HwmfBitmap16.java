@@ -18,7 +18,6 @@
 package org.apache.poi.hwmf.record;
 
 import java.awt.image.BufferedImage;
-import java.io.FileOutputStream;
 import java.io.IOException;
 
 import org.apache.poi.util.LittleEndianConsts;
@@ -77,9 +76,9 @@ public class HwmfBitmap16 {
         byte buf[] = new byte[bytes];
         leis.read(buf);
         
-        FileOutputStream fos = new FileOutputStream("bla16.bmp");
-        fos.write(buf);
-        fos.close();
+//        FileOutputStream fos = new FileOutputStream("bla16.bmp");
+//        fos.write(buf);
+//        fos.close();
         
         
 //        BufferedImage bi = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
