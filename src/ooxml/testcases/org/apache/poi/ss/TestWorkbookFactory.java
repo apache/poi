@@ -28,6 +28,8 @@ import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -41,6 +43,28 @@ public final class TestWorkbookFactory extends TestCase {
     private static final String[] xls_prot = new String[] {"password.xls", "password"};
     private static final String[] xlsx_prot = new String[]{"protected_passtika.xlsx", "tika"};
     private static final String txt = "SampleSS.txt";
+    
+    private static final POILogger LOGGER = POILogFactory.getLogger(TestWorkbookFactory.class);
+    
+    /**
+     * // TODO: close() re-writes the sample-file?! Resort to revert() for now to close file handle...
+     * Revert the changes that were made to the workbook rather than closing the workbook.
+     * This allows the file handle to be closed to avoid the file handle leak detector.
+     * This is a temporary fix until we figure out why wb.close() writes changes to disk.
+     *
+     * @param wb
+     */
+    private static void revert(Workbook wb) {
+        // TODO: close() re-writes the sample-file?! Resort to revert() for now to close file handle...
+        LOGGER.log(POILogger.WARN,
+                "reverting XSSFWorkbook rather than closing it to avoid close() modifying the file on disk." +
+                "This is a separate bug that isn't tested by this unit test.");
+        if (wb instanceof XSSFWorkbook) {
+            ((XSSFWorkbook) wb).getPackage().revert();
+        } else {
+            throw new RuntimeException("Unsupported workbook type");
+        }
+    }
 
     public void testCreateNative() throws Exception {
         Workbook wb;
@@ -101,6 +125,7 @@ public final class TestWorkbookFactory extends TestCase {
         assertNotNull(wb);
         assertTrue(wb instanceof XSSFWorkbook);
         // TODO: this re-writes the sample-file?! wb.close();
+        revert(wb);
 
         // File -> either
         wb = WorkbookFactory.create(
@@ -115,9 +140,8 @@ public final class TestWorkbookFactory extends TestCase {
         );
         assertNotNull(wb);
         assertTrue(wb instanceof XSSFWorkbook);
-
         // TODO: close() re-writes the sample-file?! Resort to revert() for now to close file handle...
-        ((XSSFWorkbook)wb).getPackage().revert();
+        revert(wb);
 
         // Invalid type -> exception
         try {
@@ -153,6 +177,7 @@ public final class TestWorkbookFactory extends TestCase {
         );
         assertNotNull(wb);
         assertTrue(wb instanceof XSSFWorkbook);
+        revert(wb);
 
 
         // Unprotected, wrong password, opens normally
@@ -168,6 +193,7 @@ public final class TestWorkbookFactory extends TestCase {
         );
         assertNotNull(wb);
         assertTrue(wb instanceof XSSFWorkbook);
+        revert(wb);
 
 
         // Protected, correct password, opens fine
@@ -183,6 +209,7 @@ public final class TestWorkbookFactory extends TestCase {
         );
         assertNotNull(wb);
         assertTrue(wb instanceof XSSFWorkbook);
+        revert(wb);
 
 
         // Protected, wrong password, throws Exception
@@ -190,6 +217,7 @@ public final class TestWorkbookFactory extends TestCase {
             wb = WorkbookFactory.create(
                     HSSFTestDataSamples.openSampleFileStream(xls_prot[0]), "wrong"
             );
+            wb.close();
             fail("Shouldn't be able to open with the wrong password");
         } catch (EncryptedDocumentException e) {}
 
@@ -197,6 +225,7 @@ public final class TestWorkbookFactory extends TestCase {
             wb = WorkbookFactory.create(
                     HSSFTestDataSamples.openSampleFileStream(xlsx_prot[0]), "wrong"
             );
+            revert(wb);
             fail("Shouldn't be able to open with the wrong password");
         } catch (EncryptedDocumentException e) {}
     }
@@ -220,7 +249,7 @@ public final class TestWorkbookFactory extends TestCase {
         );
         assertNotNull(wb);
         assertTrue(wb instanceof XSSFWorkbook);
-        wb.close();
+        revert(wb);
 
         // Unprotected, wrong password, opens normally
         wb = WorkbookFactory.create(
@@ -235,7 +264,7 @@ public final class TestWorkbookFactory extends TestCase {
         );
         assertNotNull(wb);
         assertTrue(wb instanceof XSSFWorkbook);
-        wb.close();
+        revert(wb);
 
         // Protected, correct password, opens fine
         wb = WorkbookFactory.create(
@@ -250,13 +279,14 @@ public final class TestWorkbookFactory extends TestCase {
         );
         assertNotNull(wb);
         assertTrue(wb instanceof XSSFWorkbook);
-        wb.close();
+        revert(wb);
 
         // Protected, wrong password, throws Exception
         try {
             wb = WorkbookFactory.create(
                     HSSFTestDataSamples.getSampleFile(xls_prot[0]), "wrong"
             );
+            wb.close();
             fail("Shouldn't be able to open with the wrong password");
         } catch (EncryptedDocumentException e) {}
 
@@ -264,6 +294,7 @@ public final class TestWorkbookFactory extends TestCase {
             wb = WorkbookFactory.create(
                     HSSFTestDataSamples.getSampleFile(xlsx_prot[0]), "wrong"
             );
+            revert(wb);
             fail("Shouldn't be able to open with the wrong password");
         } catch (EncryptedDocumentException e) {}
     }
