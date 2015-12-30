@@ -325,20 +325,23 @@ public class TestExtractorFactory {
     @Test
     public void testInputStream() throws Exception {
         // Excel
+        POITextExtractor extractor = ExtractorFactory.createExtractor(new FileInputStream(xls));
         assertTrue(
-                ExtractorFactory.createExtractor(new FileInputStream(xls))
+                extractor
                 instanceof ExcelExtractor
         );
         assertTrue(
-                ExtractorFactory.createExtractor(new FileInputStream(xls)).getText().length() > 200
+                extractor.getText().length() > 200
         );
+        extractor.close();
 
+        extractor = ExtractorFactory.createExtractor(new FileInputStream(xlsx));
         assertTrue(
-                ExtractorFactory.createExtractor(new FileInputStream(xlsx))
+                extractor
                 instanceof XSSFExcelExtractor
         );
         assertTrue(
-                ExtractorFactory.createExtractor(new FileInputStream(xlsx)).getText().length() > 200
+                extractor.getText().length() > 200
         );
         // TODO Support OOXML-Strict, see bug #57699
 //        assertTrue(
@@ -348,92 +351,113 @@ public class TestExtractorFactory {
 //        assertTrue(
 //                ExtractorFactory.createExtractor(new FileInputStream(xlsxStrict)).getText().length() > 200
 //        );
+        extractor.close();
 
         // Word
+        extractor = ExtractorFactory.createExtractor(new FileInputStream(doc));
         assertTrue(
-                ExtractorFactory.createExtractor(new FileInputStream(doc))
+                extractor
                 instanceof WordExtractor
         );
         assertTrue(
-                ExtractorFactory.createExtractor(new FileInputStream(doc)).getText().length() > 120
+                extractor.getText().length() > 120
         );
+        extractor.close();
 
+        extractor = ExtractorFactory.createExtractor(new FileInputStream(doc6));
         assertTrue(
-                ExtractorFactory.createExtractor(new FileInputStream(doc6))
+                extractor
                 instanceof Word6Extractor
         );
         assertTrue(
-                ExtractorFactory.createExtractor(new FileInputStream(doc6)).getText().length() > 20
+                extractor.getText().length() > 20
         );
+        extractor.close();
 
+        extractor = ExtractorFactory.createExtractor(new FileInputStream(doc95));
         assertTrue(
-                ExtractorFactory.createExtractor(new FileInputStream(doc95))
+                extractor
                 instanceof Word6Extractor
         );
         assertTrue(
-                ExtractorFactory.createExtractor(new FileInputStream(doc95)).getText().length() > 120
+                extractor.getText().length() > 120
         );
+        extractor.close();
 
+        extractor = ExtractorFactory.createExtractor(new FileInputStream(docx));
         assertTrue(
-                ExtractorFactory.createExtractor(new FileInputStream(docx))
+                extractor
                 instanceof XWPFWordExtractor
         );
         assertTrue(
-                ExtractorFactory.createExtractor(new FileInputStream(docx)).getText().length() > 120
+                extractor.getText().length() > 120
         );
+        extractor.close();
 
         // PowerPoint
+        extractor = ExtractorFactory.createExtractor(new FileInputStream(ppt));
         assertTrue(
-                ExtractorFactory.createExtractor(new FileInputStream(ppt))
+                extractor
                 instanceof PowerPointExtractor
         );
         assertTrue(
-                ExtractorFactory.createExtractor(new FileInputStream(ppt)).getText().length() > 120
+                extractor.getText().length() > 120
         );
+        extractor.close();
 
+        extractor = ExtractorFactory.createExtractor(new FileInputStream(pptx));
         assertTrue(
-                ExtractorFactory.createExtractor(new FileInputStream(pptx))
+                extractor
                 instanceof XSLFPowerPointExtractor
         );
         assertTrue(
-                ExtractorFactory.createExtractor(new FileInputStream(pptx)).getText().length() > 120
+                extractor.getText().length() > 120
         );
+        extractor.close();
 
         // Visio
+        extractor = ExtractorFactory.createExtractor(new FileInputStream(vsd));
         assertTrue(
-                ExtractorFactory.createExtractor(new FileInputStream(vsd))
+                extractor
                 instanceof VisioTextExtractor
         );
         assertTrue(
-                ExtractorFactory.createExtractor(new FileInputStream(vsd)).getText().length() > 50
+                extractor.getText().length() > 50
         );
+        extractor.close();
+
         // Visio - vsdx
+        extractor = ExtractorFactory.createExtractor(new FileInputStream(vsdx));
         assertTrue(
-                ExtractorFactory.createExtractor(new FileInputStream(vsdx))
+                extractor
                 instanceof XDGFVisioExtractor
         );
         assertTrue(
-                ExtractorFactory.createExtractor(new FileInputStream(vsdx)).getText().length() > 20
+                extractor.getText().length() > 20
         );
-
+        extractor.close();
         
         // Publisher
+        extractor = ExtractorFactory.createExtractor(new FileInputStream(pub));
         assertTrue(
-                ExtractorFactory.createExtractor(new FileInputStream(pub))
+                extractor
                 instanceof PublisherTextExtractor
         );
         assertTrue(
-                ExtractorFactory.createExtractor(new FileInputStream(pub)).getText().length() > 50
+                extractor.getText().length() > 50
         );
+        extractor.close();
 
         // Outlook msg
+        extractor = ExtractorFactory.createExtractor(new FileInputStream(msg));
         assertTrue(
-                ExtractorFactory.createExtractor(new FileInputStream(msg))
+                extractor
                 instanceof OutlookTextExtactor
         );
         assertTrue(
-                ExtractorFactory.createExtractor(new FileInputStream(msg)).getText().length() > 50
+                extractor.getText().length() > 50
         );
+        extractor.close();
 
         // Text
         try {
