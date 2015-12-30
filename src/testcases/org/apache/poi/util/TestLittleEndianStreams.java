@@ -21,6 +21,7 @@ import static org.junit.Assert.assertArrayEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
@@ -32,7 +33,7 @@ import junit.framework.TestCase;
  */
 public final class TestLittleEndianStreams extends TestCase {
 
-	public void testRead() {
+	public void testRead() throws IOException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		LittleEndianOutput leo = new LittleEndianOutputStream(baos);
 		leo.writeInt(12345678);
@@ -42,6 +43,7 @@ public final class TestLittleEndianStreams extends TestCase {
 		leo.writeByte(200);
 		leo.writeLong(1234567890123456789L);
 		leo.writeDouble(123.456);
+		((LittleEndianOutputStream)leo).close();
 
 		LittleEndianInput lei = new LittleEndianInputStream(new ByteArrayInputStream(baos.toByteArray()));
 
@@ -52,6 +54,7 @@ public final class TestLittleEndianStreams extends TestCase {
 		assertEquals(200, lei.readUByte());
 		assertEquals(1234567890123456789L, lei.readLong());
 		assertEquals(123.456, lei.readDouble(), 0.0);
+        ((LittleEndianInputStream)lei).close();
 	}
 
 	/**

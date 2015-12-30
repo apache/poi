@@ -17,17 +17,16 @@ limitations under the License.
 
 package org.apache.poi.ss.util;
 
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertNotEquals;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-//TODO: replace junit3 with junit4 code
-import junit.framework.TestCase; //junit3
-import static org.junit.Assert.assertNotEquals; //junit4
-
 import org.apache.poi.hssf.record.TestcaseRecordInputStream;
 import org.apache.poi.util.LittleEndianOutputStream;
+
+//TODO: replace junit3 with junit4 code
+import junit.framework.TestCase; //junit3
 
 public final class TestCellRangeAddress extends TestCase {
     byte[] data = new byte[] { (byte) 0x02, (byte) 0x00, (byte) 0x04,

@@ -278,7 +278,6 @@ public class AgileDecryptor extends Decryptor {
         }
     }
 
-    @SuppressWarnings("resource")
     public InputStream getDataStream(DirectoryNode dir) throws IOException, GeneralSecurityException {
         DocumentInputStream dis = dir.createDocumentInputStream(DEFAULT_POIFS_ENTRY);
         _length = dis.readLong();

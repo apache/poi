@@ -206,7 +206,7 @@ public class NumberRenderingSpreadsheetGenerator {
 	}
 
 	private static void writeLong(byte[] bb, int i, long val) {
-		String oldVal = interpretLong(bb, i);
+		/*String oldVal =*/ interpretLong(bb, i);
 		bb[i+7] = (byte) (val >> 56);
 		bb[i+6] = (byte) (val >> 48);
 		bb[i+5] = (byte) (val >> 40);
