@@ -199,6 +199,7 @@ public class TestAllFiles {
         //EXPECTED_FAILURES.add("poifs/protected_sha512.xlsx");
         //EXPECTED_FAILURES.add("poifs/extenxls_pwd123.xlsx");
         //EXPECTED_FAILURES.add("poifs/protected_agile.docx");
+        EXPECTED_FAILURES.add("spreadsheet/58616.xlsx");
 
         // TODO: fails XMLExportTest, is this ok?
         EXPECTED_FAILURES.add("spreadsheet/CustomXMLMapping-singleattributenamespace.xlsx");
