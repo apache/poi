@@ -205,8 +205,10 @@ public final class TestXSSFReader extends TestCase {
    public void test58747() throws Exception {
        OPCPackage pkg =  XSSFTestDataSamples.openSamplePackage("58747.xlsx");
        ReadOnlySharedStringsTable strings = new ReadOnlySharedStringsTable(pkg);
+       assertNotNull(strings);
        XSSFReader reader = new XSSFReader(pkg);
        StylesTable styles = reader.getStylesTable();
+       assertNotNull(styles);
        
        XSSFReader.SheetIterator iter = (XSSFReader.SheetIterator) reader.getSheetsData();
        assertEquals(true, iter.hasNext());

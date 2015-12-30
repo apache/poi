@@ -1193,4 +1193,33 @@ public final class TestHSSFSheet extends BaseTestSheet {
         assertNotNull(record);
         wb.close();
     }
+    
+    @Test
+    public void test58746() throws IOException {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        
+        HSSFSheet first = wb.createSheet("first");
+        first.createRow(0).createCell(0).setCellValue(1);
+        
+        HSSFSheet second = wb.createSheet("second");
+        second.createRow(0).createCell(0).setCellValue(2);
+        
+        HSSFSheet third = wb.createSheet("third");
+        HSSFRow row = third.createRow(0);
+        row.createCell(0).setCellFormula("first!A1");
+        row.createCell(1).setCellFormula("second!A1");
+
+        // re-order for sheet "third"
+        wb.setSheetOrder("third", 0);
+        
+        // verify results
+        assertEquals("third", wb.getSheetAt(0).getSheetName());
+        assertEquals("first", wb.getSheetAt(1).getSheetName());
+        assertEquals("second", wb.getSheetAt(2).getSheetName());
+        
+        assertEquals("first!A1", wb.getSheetAt(0).getRow(0).getCell(0).getCellFormula());
+        assertEquals("second!A1", wb.getSheetAt(0).getRow(0).getCell(1).getCellFormula());
+        
+        wb.close();
+    }
 }

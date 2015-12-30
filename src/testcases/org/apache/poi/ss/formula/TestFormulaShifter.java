@@ -17,12 +17,14 @@
 
 package org.apache.poi.ss.formula;
 
-import junit.framework.TestCase;
-
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.ptg.AreaErrPtg;
 import org.apache.poi.ss.formula.ptg.AreaPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
+import org.apache.poi.ss.formula.ptg.Ref3DPtg;
+import org.apache.poi.ss.util.CellReference;
+
+import junit.framework.TestCase;
 
 /**
  * Tests for {@link FormulaShifter}.
@@ -196,4 +198,50 @@ public final class TestFormulaShifter extends TestCase {
 	private static AreaPtg createAreaPtg(int initialAreaFirstRow, int initialAreaLastRow, boolean firstRowRelative, boolean lastRowRelative) {
 		return new AreaPtg(initialAreaFirstRow, initialAreaLastRow, 2, 5, firstRowRelative, lastRowRelative, false, false);
 	}
+
+	public void testShiftSheet() {
+	    // 4 sheets, move a sheet from pos 2 to pos 0, i.e. current 0 becomes 1, current 1 becomes pos 2 
+        FormulaShifter shifter = FormulaShifter.createForSheetShift(2, 0);
+        
+        Ptg[] ptgs = new Ptg[] {
+          new Ref3DPtg(new CellReference("first", 0, 0, true, true), 0),
+          new Ref3DPtg(new CellReference("second", 0, 0, true, true), 1),
+          new Ref3DPtg(new CellReference("third", 0, 0, true, true), 2),
+          new Ref3DPtg(new CellReference("fourth", 0, 0, true, true), 3),
+        };
+        
+        shifter.adjustFormula(ptgs, -1);
+        
+        assertEquals("formula previously pointing to sheet 0 should now point to sheet 1", 
+                1, ((Ref3DPtg)ptgs[0]).getExternSheetIndex());
+        assertEquals("formula previously pointing to sheet 1 should now point to sheet 2", 
+                2, ((Ref3DPtg)ptgs[1]).getExternSheetIndex());
+        assertEquals("formula previously pointing to sheet 2 should now point to sheet 0", 
+                0, ((Ref3DPtg)ptgs[2]).getExternSheetIndex());
+        assertEquals("formula previously pointing to sheet 3 should be unchanged", 
+                3, ((Ref3DPtg)ptgs[3]).getExternSheetIndex());
+	}
+
+    public void testShiftSheet2() {
+        // 4 sheets, move a sheet from pos 1 to pos 2, i.e. current 2 becomes 1, current 1 becomes pos 2 
+        FormulaShifter shifter = FormulaShifter.createForSheetShift(1, 2);
+        
+        Ptg[] ptgs = new Ptg[] {
+          new Ref3DPtg(new CellReference("first", 0, 0, true, true), 0),
+          new Ref3DPtg(new CellReference("second", 0, 0, true, true), 1),
+          new Ref3DPtg(new CellReference("third", 0, 0, true, true), 2),
+          new Ref3DPtg(new CellReference("fourth", 0, 0, true, true), 3),
+        };
+
+        shifter.adjustFormula(ptgs, -1);
+        
+        assertEquals("formula previously pointing to sheet 0 should be unchanged", 
+                0, ((Ref3DPtg)ptgs[0]).getExternSheetIndex());
+        assertEquals("formula previously pointing to sheet 1 should now point to sheet 2", 
+                2, ((Ref3DPtg)ptgs[1]).getExternSheetIndex());
+        assertEquals("formula previously pointing to sheet 2 should now point to sheet 1", 
+                1, ((Ref3DPtg)ptgs[2]).getExternSheetIndex());
+        assertEquals("formula previously pointing to sheet 3 should be unchanged", 
+                3, ((Ref3DPtg)ptgs[3]).getExternSheetIndex());
+    }
 }
