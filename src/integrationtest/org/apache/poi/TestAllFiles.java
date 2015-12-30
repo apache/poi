@@ -252,6 +252,9 @@ public class TestAllFiles {
         // non-TNEF files
         EXPECTED_FAILURES.add("ddf/Container.dat");
         EXPECTED_FAILURES.add("ddf/47143.dat");
+        
+        // will be fixed as part of bug 58760
+        EXPECTED_FAILURES.add("spreadsheet/58760.xlsx");
     }
 
     private static final Set<String> IGNORED = new HashSet<String>();
