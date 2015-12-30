@@ -47,10 +47,18 @@ public class XSSFFileHandler extends SpreadsheetHandler {
         // ignore password protected files
         if (POIXMLDocumentHandler.isEncrypted(stream)) return;
 
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        IOUtils.copy(stream, out);
+        final XSSFWorkbook wb;
 
-        XSSFWorkbook wb = new XSSFWorkbook(new ByteArrayInputStream(out.toByteArray()));
+        // make sure the potentially large byte-array is freed up quickly again
+        {
+	        ByteArrayOutputStream out = new ByteArrayOutputStream();
+	        IOUtils.copy(stream, out);
+	        final byte[] bytes = out.toByteArray();
+	
+	        checkXSSFReader(OPCPackage.open(new ByteArrayInputStream(bytes)));
+
+	        wb = new XSSFWorkbook(new ByteArrayInputStream(bytes));
+        }
         
         // use the combined handler for HSSF/XSSF
         handleWorkbook(wb, ".xlsx");
@@ -64,8 +72,6 @@ public class XSSFFileHandler extends SpreadsheetHandler {
         
         // and finally ensure that exporting to XML works
         exportToXML(wb);
-        
-        checkXSSFReader(OPCPackage.open(new ByteArrayInputStream(out.toByteArray())));
     }
 
 

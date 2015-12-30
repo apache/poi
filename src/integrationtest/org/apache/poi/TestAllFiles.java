@@ -68,8 +68,10 @@ import org.junit.runners.Parameterized.Parameters;
 public class TestAllFiles {
     private static final File ROOT_DIR = new File("test-data");
 
+    static final String[] SCAN_EXCLUDES = new String[] { "**/.svn/**", "lost+found" };
+    
     // map file extensions to the actual mappers
-    private static final Map<String, FileHandler> HANDLERS = new HashMap<String, FileHandler>();
+    static final Map<String, FileHandler> HANDLERS = new HashMap<String, FileHandler>();
     static {
         // Excel
         HANDLERS.put(".xls", new HSSFFileHandler());
@@ -112,6 +114,10 @@ public class TestAllFiles {
         HANDLERS.put(".vssx", new XDGFFileHandler());
         HANDLERS.put(".vstm", new XDGFFileHandler());
         HANDLERS.put(".vstx", new XDGFFileHandler());
+
+        // Visio - not handled yet
+        HANDLERS.put(".vst", new NullFileHandler());
+        HANDLERS.put(".vss", new NullFileHandler());
 
         // POIFS
         HANDLERS.put(".ole2", new POIFSFileHandler());
@@ -268,7 +274,7 @@ public class TestAllFiles {
     public static Iterable<Object[]> files() {
         DirectoryScanner scanner = new DirectoryScanner();
         scanner.setBasedir(ROOT_DIR);
-        scanner.setExcludes(new String[] { "**/.svn/**" });
+        scanner.setExcludes(SCAN_EXCLUDES);
 
         scanner.scan();
 
@@ -343,13 +349,13 @@ public class TestAllFiles {
         }
     }
 
-    private static String getExtension(String file) {
+    static String getExtension(String file) {
         int pos = file.lastIndexOf('.');
         if(pos == -1 || pos == file.length()-1) {
             return file;
         }
 
-        return file.substring(pos);
+        return file.substring(pos).toLowerCase();
     }
 
     private static class NullFileHandler implements FileHandler {
