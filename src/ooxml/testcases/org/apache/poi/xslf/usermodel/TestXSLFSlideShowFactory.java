@@ -49,7 +49,7 @@ public final class TestXSLFSlideShowFactory extends BaseTestSlideShowFactory {
         EncryptionInfo info = new EncryptionInfo(EncryptionMode.agile);
         Encryptor enc = info.getEncryptor();
         enc.confirmPassword(password);
-        InputStream fis = _slTests.openResourceAsStream("SampleShow.pptx");
+        InputStream fis = _slTests.openResourceAsStream(basefile);
         OutputStream os = enc.getDataStream(fs);
         IOUtils.copy(fis, os);
         os.close();
