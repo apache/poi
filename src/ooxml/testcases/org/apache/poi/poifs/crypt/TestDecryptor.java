@@ -22,6 +22,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
@@ -33,6 +34,7 @@ import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.junit.Test;
 
 /**
@@ -150,5 +152,14 @@ public class TestDecryptor {
         
         zis.close();
         fs.close();
+    }
+
+    @Test
+    public void test58616() throws IOException, GeneralSecurityException {
+        POIFSFileSystem pfs = new POIFSFileSystem(new FileInputStream(XSSFTestDataSamples.getSampleFile("58616.xlsx")));                
+        EncryptionInfo info = new EncryptionInfo(pfs);             
+        Decryptor dec = Decryptor.getInstance(info);   
+        //dec.verifyPassword(null);
+        dec.getDataStream(pfs);
     }
 }
