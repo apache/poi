@@ -283,18 +283,42 @@ public final class FormulaShifter {
 
 
     private Ptg adjustPtgDueToSheetMove(Ptg ptg) {
-        Ptg updatedPtg = null;
         if(ptg instanceof Ref3DPtg) {
             Ref3DPtg ref = (Ref3DPtg)ptg;
-            if(ref.getExternSheetIndex() == _srcSheetIndex){
+            int oldSheetIndex = ref.getExternSheetIndex();
+            
+            // we have to handle a few cases here
+            
+            // 1. sheet is outside moved sheets, no change necessary
+            if(oldSheetIndex < _srcSheetIndex &&
+                    oldSheetIndex < _dstSheetIndex) {
+                return null;
+            }
+            if(oldSheetIndex > _srcSheetIndex &&
+                    oldSheetIndex > _dstSheetIndex) {
+                return null;
+            }
+            
+            // 2. ptg refers to the moved sheet
+            if(oldSheetIndex == _srcSheetIndex) {
                 ref.setExternSheetIndex(_dstSheetIndex);
-                updatedPtg = ref;
-            } else if (ref.getExternSheetIndex() == _dstSheetIndex){
-                ref.setExternSheetIndex(_srcSheetIndex);
-                updatedPtg = ref;
+                return ref;
+            }
+
+            // 3. new index is lower than old one => sheets get moved up
+            if (_dstSheetIndex < _srcSheetIndex) {
+                ref.setExternSheetIndex(oldSheetIndex+1);
+                return ref;
+            }
+
+            // 4. new index is higher than old one => sheets get moved down
+            if (_dstSheetIndex > _srcSheetIndex) {
+                ref.setExternSheetIndex(oldSheetIndex-1);
+                return ref;
             }
         }
-        return updatedPtg;
+
+        return null;
     }
 
     private Ptg rowMoveRefPtg(RefPtgBase rptg) {
