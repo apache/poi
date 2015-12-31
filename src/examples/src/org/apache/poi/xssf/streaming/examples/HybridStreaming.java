@@ -43,8 +43,8 @@ public class HybridStreaming {
         XSSFWorkbook workbook = new XSSFWorkbook(sourceBytes) {
             /** Avoid DOM parse of large sheet */
             public void parseSheet(java.util.Map<String,XSSFSheet> shIdMap, CTSheet ctSheet) {
-                if (SHEET_TO_STREAM.equals(ctSheet.getName())) {
-                    return;
+                if (!SHEET_TO_STREAM.equals(ctSheet.getName())) {
+                    super.parseSheet(shIdMap, ctSheet);
                 }
             };
         };
