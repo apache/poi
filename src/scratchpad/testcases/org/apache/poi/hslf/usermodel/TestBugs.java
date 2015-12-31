@@ -43,9 +43,7 @@ import org.apache.poi.hslf.exceptions.OldPowerPointFormatException;
 import org.apache.poi.hslf.extractor.PowerPointExtractor;
 import org.apache.poi.hslf.model.HeadersFooters;
 import org.apache.poi.hslf.record.Document;
-import org.apache.poi.hslf.record.OEPlaceholderAtom;
 import org.apache.poi.hslf.record.Record;
-import org.apache.poi.hslf.record.RoundTripHFPlaceholder12;
 import org.apache.poi.hslf.record.SlideListWithText;
 import org.apache.poi.hslf.record.SlideListWithText.SlideAtomsSet;
 import org.apache.poi.hslf.record.TextHeaderAtom;
@@ -783,8 +781,7 @@ public final class TestBugs {
 
     @Test
     public void bug58159() throws IOException {
-        File sample = HSLFTestDataSamples.getSampleFile("bug58159_headers-and-footers.ppt");
-        HSLFSlideShow ppt = (HSLFSlideShow)SlideShowFactory.create(sample);
+        HSLFSlideShow ppt = open("bug58159_headers-and-footers.ppt");
         HeadersFooters hf = ppt.getSlideHeadersFooters();
         assertNull(hf.getHeaderText());
         assertEquals("Slide footer", hf.getFooterText());
@@ -804,6 +801,25 @@ public final class TestBugs {
                 }
             }
         }
+        ppt.close();
+    }
+
+    @Test
+    public void bug55030() throws IOException {
+        HSLFSlideShow ppt = open("bug55030.ppt");
+        
+        String expFamily = "\u96b6\u4e66";
+        
+        HSLFSlide sl = ppt.getSlides().get(0);
+        for (List<HSLFTextParagraph> paraList : sl.getTextParagraphs()) {
+            for (HSLFTextParagraph htp : paraList) {
+                for (HSLFTextRun htr : htp) {
+                    String actFamily = htr.getFontFamily();
+                    assertEquals(expFamily, actFamily);
+                }
+            }
+        }
+        
         ppt.close();
     }
     

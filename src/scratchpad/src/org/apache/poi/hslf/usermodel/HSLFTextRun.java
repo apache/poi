@@ -319,7 +319,7 @@ public final class HSLFTextRun implements TextRun {
 		if (sheet == null || slideShow == null) {
 			return _fontFamily;
 		}
-        TextProp tp = getPropVal(characterStyle, "font.index", parentParagraph);
+        TextProp tp = getPropVal(characterStyle, "font.index,asian.font.index,ansi.font.index,symbol.font.index", parentParagraph);
         if (tp == null) { return null; }
 		return slideShow.getFontCollection().getFontWithId(tp.getValue());
 	}
