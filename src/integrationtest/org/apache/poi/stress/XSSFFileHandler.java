@@ -47,19 +47,13 @@ public class XSSFFileHandler extends SpreadsheetHandler {
         // ignore password protected files
         if (POIXMLDocumentHandler.isEncrypted(stream)) return;
 
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        IOUtils.copy(stream, out);
+
+        final byte[] bytes = out.toByteArray();
         final XSSFWorkbook wb;
+        wb = new XSSFWorkbook(new ByteArrayInputStream(bytes));
 
-        // make sure the potentially large byte-array is freed up quickly again
-        {
-	        ByteArrayOutputStream out = new ByteArrayOutputStream();
-	        IOUtils.copy(stream, out);
-	        final byte[] bytes = out.toByteArray();
-	
-	        checkXSSFReader(OPCPackage.open(new ByteArrayInputStream(bytes)));
-
-	        wb = new XSSFWorkbook(new ByteArrayInputStream(bytes));
-        }
-        
         // use the combined handler for HSSF/XSSF
         handleWorkbook(wb, ".xlsx");
         
@@ -72,6 +66,8 @@ public class XSSFFileHandler extends SpreadsheetHandler {
         
         // and finally ensure that exporting to XML works
         exportToXML(wb);
+
+        checkXSSFReader(OPCPackage.open(new ByteArrayInputStream(bytes)));
     }
 
 
@@ -119,7 +115,7 @@ public class XSSFFileHandler extends SpreadsheetHandler {
     // a test-case to test this locally without executing the full TestAllFiles
     @Test
     public void test() throws Exception {
-        InputStream stream = new BufferedInputStream(new FileInputStream("test-data/openxml4j/50154.xlsx"));
+        InputStream stream = new BufferedInputStream(new FileInputStream("test-data/spreadsheet/ref-56737.xlsx"));
         try {
             handleFile(stream);
         } finally {
@@ -130,6 +126,6 @@ public class XSSFFileHandler extends SpreadsheetHandler {
     // a test-case to test this locally without executing the full TestAllFiles
     @Test
     public void testExtractor() throws Exception {
-        handleExtracting(new File("test-data/spreadsheet/56278.xlsx"));
+        handleExtracting(new File("test-data/spreadsheet/ref-56737.xlsx"));
     }
 }
