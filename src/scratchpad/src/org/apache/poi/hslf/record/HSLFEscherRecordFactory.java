@@ -29,7 +29,7 @@ import org.apache.poi.util.LittleEndian;
  * @see EscherRecordFactory
  */
 public class HSLFEscherRecordFactory extends DefaultEscherRecordFactory {
-    private static Class<?>[] escherRecordClasses = { EscherPlaceholder.class };
+    private static Class<?>[] escherRecordClasses = { EscherPlaceholder.class, HSLFEscherClientDataRecord.class };
     private static Map<Short, Constructor<? extends EscherRecord>> recordsMap = recordsToMap( escherRecordClasses );
 
     
@@ -65,6 +65,10 @@ public class HSLFEscherRecordFactory extends DefaultEscherRecordFactory {
         }
         escherRecord.setRecordId(recordId);
         escherRecord.setOptions(options);
+        if (escherRecord instanceof EscherContainerRecord) {
+            ((EscherContainerRecord)escherRecord).fillFields(data, offset, this);
+        }
+        
         return escherRecord;
     }
 }

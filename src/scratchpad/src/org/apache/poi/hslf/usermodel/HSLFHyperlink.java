@@ -17,10 +17,18 @@
 
 package org.apache.poi.hslf.usermodel;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.ListIterator;
 
-import org.apache.poi.ddf.*;
-import org.apache.poi.hslf.record.*;
+import org.apache.poi.hslf.record.ExHyperlink;
+import org.apache.poi.hslf.record.ExObjList;
+import org.apache.poi.hslf.record.HSLFEscherClientDataRecord;
+import org.apache.poi.hslf.record.InteractiveInfo;
+import org.apache.poi.hslf.record.InteractiveInfoAtom;
+import org.apache.poi.hslf.record.Record;
+import org.apache.poi.hslf.record.TxInteractiveInfoAtom;
 
 /**
  * Represents a hyperlink in a PowerPoint document
@@ -156,6 +164,7 @@ public final class HSLFHyperlink {
      * @param paragraphs  List of <code>TextParagraph</code> to lookup hyperlinks
      * @return found hyperlinks
      */
+    @SuppressWarnings("resource")
     public static List<HSLFHyperlink> find(List<HSLFTextParagraph> paragraphs){
         List<HSLFHyperlink> lst = new ArrayList<HSLFHyperlink>();
         if (paragraphs == null || paragraphs.isEmpty()) return lst;
@@ -165,10 +174,10 @@ public final class HSLFHyperlink {
         HSLFSlideShow ppt = firstPara.getSheet().getSlideShow();
         //document-level container which stores info about all links in a presentation
         ExObjList exobj = ppt.getDocumentRecord().getExObjList();
-        if (exobj == null) return lst;
-        
-        Record[] records = firstPara.getRecords();
-        find(records, exobj, lst);
+        if (exobj != null) {
+            Record[] records = firstPara.getRecords();
+            find(Arrays.asList(records), exobj, lst);
+        }
 
         return lst;
     }
@@ -179,39 +188,38 @@ public final class HSLFHyperlink {
      * @param shape  <code>Shape</code> to lookup hyperlink in
      * @return found hyperlink or <code>null</code>
      */
+    @SuppressWarnings("resource")
     public static HSLFHyperlink find(HSLFShape shape){
-        List<HSLFHyperlink> lst = new ArrayList<HSLFHyperlink>();
         HSLFSlideShow ppt = shape.getSheet().getSlideShow();
         //document-level container which stores info about all links in a presentation
         ExObjList exobj = ppt.getDocumentRecord().getExObjList();
-        if (exobj == null) {
-            return null;
+        HSLFEscherClientDataRecord cldata = shape.getClientData(false);
+
+        if (exobj != null && cldata != null) {
+            List<HSLFHyperlink> lst = new ArrayList<HSLFHyperlink>();
+            find(cldata.getHSLFChildRecords(), exobj, lst);
+            return lst.isEmpty() ? null : (HSLFHyperlink)lst.get(0);
         }
 
-        EscherContainerRecord spContainer = shape.getSpContainer();
-        for (Iterator<EscherRecord> it = spContainer.getChildIterator(); it.hasNext(); ) {
-            EscherRecord obj = it.next();
-            if (obj.getRecordId() ==  EscherClientDataRecord.RECORD_ID){
-                byte[] data = obj.serialize();
-                Record[] records = Record.findChildRecords(data, 8, data.length-8);
-                find(records, exobj, lst);
-            }
-        }
-
-        return lst.size() == 1 ? (HSLFHyperlink)lst.get(0) : null;
+        return null;
     }
 
-    private static void find(Record[] records, ExObjList exobj, List<HSLFHyperlink> out){
-        if (records == null) return;
-        for (int i = 0; i < records.length; i++) {
-            //see if we have InteractiveInfo in the textrun's records
-            if(!(records[i] instanceof InteractiveInfo)) continue;
-            
-            InteractiveInfo hldr = (InteractiveInfo)records[i];
+    private static void find(List<? extends Record> records, ExObjList exobj, List<HSLFHyperlink> out){
+        ListIterator<? extends Record> iter = records.listIterator();
+        while (iter.hasNext()) {
+            Record r = iter.next();
+            // see if we have InteractiveInfo in the textrun's records
+            if (!(r instanceof InteractiveInfo)) {
+                continue;
+            }
+
+            InteractiveInfo hldr = (InteractiveInfo)r;
             InteractiveInfoAtom info = hldr.getInteractiveInfoAtom();
             int id = info.getHyperlinkID();
             ExHyperlink linkRecord = exobj.get(id);
-            if (linkRecord == null) continue;
+            if (linkRecord == null) {
+                continue;
+            }
             
             HSLFHyperlink link = new HSLFHyperlink();
             link.title = linkRecord.getLinkTitle();
@@ -219,8 +227,13 @@ public final class HSLFHyperlink {
             link.type = info.getAction();
             out.add(link);
 
-            if (i+1 < records.length && records[i+1] instanceof TxInteractiveInfoAtom){
-                TxInteractiveInfoAtom txinfo = (TxInteractiveInfoAtom)records[++i];
+            if (iter.hasNext()) {
+                r = iter.next();
+                if (!(r instanceof TxInteractiveInfoAtom)) {
+                    iter.previous();
+                    continue;
+                }
+                TxInteractiveInfoAtom txinfo = (TxInteractiveInfoAtom)r;
                 link.startIndex = txinfo.getStartIndex();
                 link.endIndex = txinfo.getEndIndex();
             }

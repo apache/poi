@@ -22,7 +22,7 @@ import static org.junit.Assert.assertNull;
 
 import java.io.IOException;
 
-import org.apache.poi.sl.usermodel.SimpleShape.Placeholder;
+import org.apache.poi.sl.usermodel.Placeholder;
 import org.apache.poi.xslf.XSLFTestDataSamples;
 import org.junit.Test;
 

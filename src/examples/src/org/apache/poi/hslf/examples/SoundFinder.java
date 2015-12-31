@@ -16,13 +16,10 @@
 ==================================================================== */
 package org.apache.poi.hslf.examples;
 import java.io.FileInputStream;
+import java.io.IOException;
 
-import org.apache.poi.ddf.EscherClientDataRecord;
-import org.apache.poi.ddf.EscherContainerRecord;
-import org.apache.poi.ddf.EscherRecord;
-import org.apache.poi.hslf.record.InteractiveInfo;
 import org.apache.poi.hslf.record.InteractiveInfoAtom;
-import org.apache.poi.hslf.record.Record;
+import org.apache.poi.hslf.record.RecordTypes;
 import org.apache.poi.hslf.usermodel.HSLFShape;
 import org.apache.poi.hslf.usermodel.HSLFSlide;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
@@ -30,12 +27,11 @@ import org.apache.poi.hslf.usermodel.HSLFSoundData;
 
 /**
  * For each slide iterate over shapes and found associated sound data.
- *
- * @author Yegor Kozlov
  */
 public class SoundFinder {
-    public static void main(String[] args) throws Exception {
-        HSLFSlideShow ppt = new HSLFSlideShow(new FileInputStream(args[0]));
+    public static void main(String[] args) throws IOException {
+        FileInputStream fis = new FileInputStream(args[0]);
+        HSLFSlideShow ppt = new HSLFSlideShow(fis);
         HSLFSoundData[] sounds = ppt.getSoundData();
 
         for (HSLFSlide slide : ppt.getSlides()) {
@@ -49,6 +45,8 @@ public class SoundFinder {
                 System.out.println("  " + sounds[soundRef].getSoundType());
             }
         }
+        ppt.close();
+        fis.close();
     }
 
     /**
@@ -59,19 +57,9 @@ public class SoundFinder {
     protected static int getSoundReference(HSLFShape shape){
         int soundRef = -1;
         //dive into the shape container and search for InteractiveInfoAtom
-        EscherContainerRecord spContainer = shape.getSpContainer();
-        for (EscherRecord obj : spContainer.getChildRecords()) {
-            if (obj.getRecordId() == EscherClientDataRecord.RECORD_ID) {
-                byte[] data = obj.serialize();
-                for (Record record : Record.findChildRecords(data, 8, data.length - 8)) {
-                    if (record instanceof InteractiveInfo) {
-                        InteractiveInfoAtom info = ((InteractiveInfo)record).getInteractiveInfoAtom();
-                        if (info.getAction() == InteractiveInfoAtom.ACTION_MEDIA) {
-                            soundRef = info.getSoundRef();
-                        }
-                    }
-                }
-            }
+        InteractiveInfoAtom info = shape.getClientDataRecord(RecordTypes.InteractiveInfo.typeID);
+        if (info != null && info.getAction() == InteractiveInfoAtom.ACTION_MEDIA) {
+            soundRef = info.getSoundRef();
         }
         return soundRef;
     }

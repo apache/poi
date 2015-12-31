@@ -28,6 +28,7 @@ import org.apache.poi.POIXMLException;
 import org.apache.poi.sl.draw.DrawFactory;
 import org.apache.poi.sl.draw.DrawTextShape;
 import org.apache.poi.sl.usermodel.Insets2D;
+import org.apache.poi.sl.usermodel.Placeholder;
 import org.apache.poi.sl.usermodel.TextShape;
 import org.apache.poi.sl.usermodel.VerticalAlignment;
 import org.apache.poi.util.Beta;
@@ -54,7 +55,6 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
     implements TextShape<XSLFShape,XSLFTextParagraph> {
     private final List<XSLFTextParagraph> _paragraphs;
 
-    @SuppressWarnings("deprecation")
     /*package*/ XSLFTextShape(XmlObject shape, XSLFSheet sheet) {
         super(shape, sheet);
 
@@ -497,13 +497,13 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
     public void setPlaceholder(Placeholder placeholder) {
         super.setPlaceholder(placeholder);
     }
-
+    
     public Placeholder getTextType(){
         CTPlaceholder ph = getCTPlaceholder();
         if (ph == null) return null;
 
         int val = ph.getType().intValue();
-        return Placeholder.values()[val - 1];
+        return Placeholder.lookupOoxml(val);
     }
 
     @Override

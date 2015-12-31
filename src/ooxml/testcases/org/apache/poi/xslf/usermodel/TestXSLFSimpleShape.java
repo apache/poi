@@ -28,7 +28,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.apache.poi.sl.draw.geom.TestPresetGeometries;
-import org.apache.poi.sl.usermodel.SimpleShape.Placeholder;
+import org.apache.poi.sl.usermodel.Placeholder;
 import org.apache.poi.sl.usermodel.StrokeStyle.LineCap;
 import org.apache.poi.sl.usermodel.StrokeStyle.LineDash;
 import org.apache.poi.util.Units;

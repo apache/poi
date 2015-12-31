@@ -17,14 +17,24 @@
 
 package org.apache.poi.hslf.model;
 
-import java.io.ByteArrayOutputStream;
-
-import org.apache.poi.ddf.EscherClientDataRecord;
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherProperties;
-import org.apache.poi.hslf.exceptions.HSLFException;
-import org.apache.poi.hslf.record.*;
-import org.apache.poi.hslf.usermodel.*;
+import org.apache.poi.hslf.record.AnimationInfo;
+import org.apache.poi.hslf.record.AnimationInfoAtom;
+import org.apache.poi.hslf.record.ExMCIMovie;
+import org.apache.poi.hslf.record.ExObjList;
+import org.apache.poi.hslf.record.ExObjRefAtom;
+import org.apache.poi.hslf.record.ExVideoContainer;
+import org.apache.poi.hslf.record.HSLFEscherClientDataRecord;
+import org.apache.poi.hslf.record.InteractiveInfo;
+import org.apache.poi.hslf.record.InteractiveInfoAtom;
+import org.apache.poi.hslf.record.Record;
+import org.apache.poi.hslf.record.RecordTypes;
+import org.apache.poi.hslf.usermodel.HSLFPictureData;
+import org.apache.poi.hslf.usermodel.HSLFPictureShape;
+import org.apache.poi.hslf.usermodel.HSLFShape;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
+import org.apache.poi.hslf.usermodel.HSLFTextParagraph;
 import org.apache.poi.sl.usermodel.ShapeContainer;
 
 /**
@@ -82,11 +92,7 @@ public final class MovieShape extends HSLFPictureShape {
         setEscherProperty(EscherProperties.PROTECTION__LOCKAGAINSTGROUPING, 0x1000100);
         setEscherProperty(EscherProperties.FILL__NOFILLHITTEST, 0x10001);
 
-        EscherClientDataRecord cldata = new EscherClientDataRecord();
-        cldata.setOptions((short)0xF);
-        _escherContainer.addChildRecord(cldata);
-
-        OEShapeAtom oe = new OEShapeAtom();
+        ExObjRefAtom oe = new ExObjRefAtom();
         InteractiveInfo info = new InteractiveInfo();
         InteractiveInfoAtom infoAtom = info.getInteractiveInfoAtom();
         infoAtom.setAction(InteractiveInfoAtom.ACTION_MEDIA);
@@ -96,16 +102,10 @@ public final class MovieShape extends HSLFPictureShape {
         AnimationInfoAtom anAtom = an.getAnimationInfoAtom();
         anAtom.setFlag(AnimationInfoAtom.Automatic, true);
 
-        //convert hslf into ddf
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        try {
-            oe.writeOut(out);
-            an.writeOut(out);
-            info.writeOut(out);
-        } catch(Exception e){
-            throw new HSLFException(e);
-        }
-        cldata.setRemainingData(out.toByteArray());
+        HSLFEscherClientDataRecord cldata = getClientData(true);
+        cldata.addChild(oe);
+        cldata.addChild(an);
+        cldata.addChild(info);
 
         return _escherContainer;
     }
@@ -117,8 +117,8 @@ public final class MovieShape extends HSLFPictureShape {
      * @param idx  the index of the movie
      */
     public void setMovieIndex(int idx){
-        OEShapeAtom oe = getClientDataRecord(RecordTypes.OEShapeAtom.typeID);
-        oe.setOptions(idx);
+        ExObjRefAtom oe = getClientDataRecord(RecordTypes.ExObjRefAtom.typeID);
+        oe.setExObjIdRef(idx);
 
         AnimationInfo an = getClientDataRecord(RecordTypes.AnimationInfo.typeID);
         if(an != null) {
@@ -135,7 +135,6 @@ public final class MovieShape extends HSLFPictureShape {
         AnimationInfo an = getClientDataRecord(RecordTypes.AnimationInfo.typeID);
         if(an != null){
             an.getAnimationInfoAtom().setFlag(AnimationInfoAtom.Automatic, flag);
-            updateClientData();
         }
     }
 
@@ -150,13 +149,16 @@ public final class MovieShape extends HSLFPictureShape {
     /**
      * @return UNC or local path to a video file
      */
+    @SuppressWarnings("resource")
     public String getPath(){
-        OEShapeAtom oe = getClientDataRecord(RecordTypes.OEShapeAtom.typeID);
-        int idx = oe.getOptions();
+        ExObjRefAtom oe = getClientDataRecord(RecordTypes.ExObjRefAtom.typeID);
+        int idx = oe.getExObjIdRef();
 
         HSLFSlideShow ppt = getSheet().getSlideShow();
         ExObjList lst = (ExObjList)ppt.getDocumentRecord().findFirstOfType(RecordTypes.ExObjList.typeID);
-        if(lst == null) return null;
+        if(lst == null) {
+            return null;
+        }
 
         Record[]  r = lst.getChildRecords();
         for (int i = 0; i < r.length; i++) {

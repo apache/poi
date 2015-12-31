@@ -17,12 +17,27 @@
 
 package org.apache.poi.hslf.usermodel;
 
-import java.util.Iterator;
 import java.util.List;
 
-import org.apache.poi.ddf.*;
-import org.apache.poi.hslf.model.*;
-import org.apache.poi.hslf.record.*;
+import org.apache.poi.ddf.AbstractEscherOptRecord;
+import org.apache.poi.ddf.EscherClientDataRecord;
+import org.apache.poi.ddf.EscherContainerRecord;
+import org.apache.poi.ddf.EscherOptRecord;
+import org.apache.poi.ddf.EscherProperties;
+import org.apache.poi.ddf.EscherProperty;
+import org.apache.poi.ddf.EscherPropertyFactory;
+import org.apache.poi.ddf.EscherRecord;
+import org.apache.poi.ddf.EscherSimpleProperty;
+import org.apache.poi.ddf.EscherSpRecord;
+import org.apache.poi.ddf.EscherTextboxRecord;
+import org.apache.poi.hslf.model.MovieShape;
+import org.apache.poi.hslf.model.OLEShape;
+import org.apache.poi.hslf.record.ExObjRefAtom;
+import org.apache.poi.hslf.record.HSLFEscherClientDataRecord;
+import org.apache.poi.hslf.record.InteractiveInfo;
+import org.apache.poi.hslf.record.InteractiveInfoAtom;
+import org.apache.poi.hslf.record.Record;
+import org.apache.poi.hslf.record.RecordTypes;
 import org.apache.poi.sl.usermodel.ShapeContainer;
 import org.apache.poi.sl.usermodel.ShapeType;
 import org.apache.poi.util.POILogFactory;
@@ -50,7 +65,7 @@ public final class HSLFShapeFactory {
     public static HSLFGroupShape createShapeGroup(EscherContainerRecord spContainer, ShapeContainer<HSLFShape,HSLFTextParagraph> parent){
         boolean isTable = false;
         EscherContainerRecord ecr = (EscherContainerRecord)spContainer.getChild(0);
-        EscherRecord opt = HSLFShape.getEscherChild(ecr, (short)RecordTypes.EscherUserDefined);
+        EscherRecord opt = HSLFShape.getEscherChild(ecr, RecordTypes.EscherUserDefined);
 
         if (opt != null) {
             EscherPropertyFactory f = new EscherPropertyFactory();
@@ -120,12 +135,10 @@ public final class HSLFShapeFactory {
             }
         }
         
-        OEShapeAtom oes = getClientDataRecord(spContainer, RecordTypes.OEShapeAtom.typeID);
-        if (oes != null){
-            return new OLEShape(spContainer, parent);
-        }
-
-        return new HSLFPictureShape(spContainer, parent);
+        ExObjRefAtom oes = getClientDataRecord(spContainer, RecordTypes.ExObjRefAtom.typeID);
+        return (oes != null)
+            ? new OLEShape(spContainer, parent)
+            : new HSLFPictureShape(spContainer, parent);
     }
     
     private static HSLFShape createNonPrimitive(EscherContainerRecord spContainer, ShapeContainer<HSLFShape,HSLFTextParagraph> parent) {
@@ -141,15 +154,10 @@ public final class HSLFShapeFactory {
     
     @SuppressWarnings("unchecked")
     protected static <T extends Record> T getClientDataRecord(EscherContainerRecord spContainer, int recordType) {
-        for (Iterator<EscherRecord> it = spContainer.getChildIterator(); it.hasNext();) {
-            EscherRecord obj = it.next();
-            if (obj.getRecordId() == EscherClientDataRecord.RECORD_ID) {
-                byte[] data = obj.serialize();
-                for (Record r : Record.findChildRecords(data, 8, data.length - 8)) {
-                    if (r.getRecordType() == recordType) {
-                        return (T)r;
-                    }
-                }
+        HSLFEscherClientDataRecord cldata = spContainer.getChildById(EscherClientDataRecord.RECORD_ID);
+        if (cldata != null) for (Record r : cldata.getHSLFChildRecords()) {
+            if (r.getRecordType() == recordType) {
+                return (T)r;
             }
         }
         return null;

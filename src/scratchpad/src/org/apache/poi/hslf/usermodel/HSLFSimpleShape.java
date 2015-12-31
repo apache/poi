@@ -18,16 +18,40 @@
 package org.apache.poi.hslf.usermodel;
 
 import java.awt.Color;
-import java.io.ByteArrayOutputStream;
+import java.util.List;
 
-import org.apache.poi.ddf.*;
+import org.apache.poi.ddf.AbstractEscherOptRecord;
+import org.apache.poi.ddf.EscherChildAnchorRecord;
+import org.apache.poi.ddf.EscherClientAnchorRecord;
+import org.apache.poi.ddf.EscherContainerRecord;
+import org.apache.poi.ddf.EscherOptRecord;
+import org.apache.poi.ddf.EscherProperties;
+import org.apache.poi.ddf.EscherProperty;
+import org.apache.poi.ddf.EscherRecord;
+import org.apache.poi.ddf.EscherSimpleProperty;
+import org.apache.poi.ddf.EscherSpRecord;
 import org.apache.poi.hslf.exceptions.HSLFException;
-import org.apache.poi.hslf.record.*;
+import org.apache.poi.hslf.record.HSLFEscherClientDataRecord;
+import org.apache.poi.hslf.record.InteractiveInfo;
+import org.apache.poi.hslf.record.InteractiveInfoAtom;
+import org.apache.poi.hslf.record.OEPlaceholderAtom;
+import org.apache.poi.hslf.record.Record;
+import org.apache.poi.hslf.record.RoundTripHFPlaceholder12;
 import org.apache.poi.sl.draw.DrawPaint;
-import org.apache.poi.sl.draw.geom.*;
-import org.apache.poi.sl.usermodel.*;
-import org.apache.poi.sl.usermodel.LineDecoration.*;
+import org.apache.poi.sl.draw.geom.CustomGeometry;
+import org.apache.poi.sl.draw.geom.Guide;
+import org.apache.poi.sl.draw.geom.PresetGeometries;
+import org.apache.poi.sl.usermodel.LineDecoration;
+import org.apache.poi.sl.usermodel.LineDecoration.DecorationShape;
+import org.apache.poi.sl.usermodel.LineDecoration.DecorationSize;
+import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
+import org.apache.poi.sl.usermodel.Placeholder;
+import org.apache.poi.sl.usermodel.Shadow;
+import org.apache.poi.sl.usermodel.ShapeContainer;
+import org.apache.poi.sl.usermodel.ShapeType;
+import org.apache.poi.sl.usermodel.SimpleShape;
+import org.apache.poi.sl.usermodel.StrokeStyle;
 import org.apache.poi.sl.usermodel.StrokeStyle.LineCap;
 import org.apache.poi.sl.usermodel.StrokeStyle.LineCompound;
 import org.apache.poi.sl.usermodel.StrokeStyle.LineDash;
@@ -44,12 +68,6 @@ import org.apache.poi.util.Units;
 public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<HSLFShape,HSLFTextParagraph> {
 
     public final static double DEFAULT_LINE_WIDTH = 0.75;
-
-    /**
-     * Records stored in EscherClientDataRecord
-     */
-    protected Record[] _clientRecords;
-    protected EscherClientDataRecord _clientData;
 
     /**
      * Create a SimpleShape object and initialize it from the supplied Record container.
@@ -82,9 +100,10 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
         opt.setRecordId(EscherOptRecord.RECORD_ID);
         _escherContainer.addChildRecord(opt);
 
-        EscherRecord anchor;
-        if(isChild) anchor = new EscherChildAnchorRecord();
-        else {
+        EscherRecord anchor; 
+        if(isChild) {
+            anchor = new EscherChildAnchorRecord();
+        } else {
             anchor = new EscherClientAnchorRecord();
 
             //hack. internal variable EscherClientAnchorRecord.shortRecord can be
@@ -251,69 +270,10 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
         getFill().setForegroundColor(color);
     }
 
-    /**
-     *  Find a record in the underlying EscherClientDataRecord
-     *
-     * @param recordType type of the record to search
-     */
-    @SuppressWarnings("unchecked")
-    protected <T extends Record> T getClientDataRecord(int recordType) {
-
-        Record[] records = getClientRecords();
-        if(records != null) for (int i = 0; i < records.length; i++) {
-            if(records[i].getRecordType() == recordType){
-                return (T)records[i];
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Search for EscherClientDataRecord, if found, convert its contents into an array of HSLF records
-     *
-     * @return an array of HSLF records contained in the shape's EscherClientDataRecord or <code>null</code>
-     */
-    protected Record[] getClientRecords() {
-        if(_clientData == null){
-            EscherRecord r = getEscherChild(EscherClientDataRecord.RECORD_ID);
-            //ddf can return EscherContainerRecord with recordId=EscherClientDataRecord.RECORD_ID
-            //convert in to EscherClientDataRecord on the fly
-            if(r != null && !(r instanceof EscherClientDataRecord)){
-                byte[] data = r.serialize();
-                r = new EscherClientDataRecord();
-                r.fillFields(data, 0, new HSLFEscherRecordFactory());
-            }
-            _clientData = (EscherClientDataRecord)r;
-        }
-        if(_clientData != null && _clientRecords == null){
-            byte[] data = _clientData.getRemainingData();
-            _clientRecords = Record.findChildRecords(data, 0, data.length);
-        }
-        return _clientRecords;
-    }
-
-    protected void updateClientData() {
-        if(_clientData != null && _clientRecords != null){
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            try {
-                for (int i = 0; i < _clientRecords.length; i++) {
-                    _clientRecords[i].writeOut(out);
-                }
-            } catch(Exception e){
-                throw new HSLFException(e);
-            }
-            _clientData.setRemainingData(out.toByteArray());
-        }
-    }
-
     public void setHyperlink(HSLFHyperlink link){
         if(link.getId() == -1){
             throw new HSLFException("You must call SlideShow.addHyperlink(Hyperlink link) first");
         }
-
-        EscherClientDataRecord cldata = new EscherClientDataRecord();
-        cldata.setOptions((short)0xF);
-        getSpContainer().addChildRecord(cldata); // TODO - junit to prove getChildRecords().add is wrong
 
         InteractiveInfo info = new InteractiveInfo();
         InteractiveInfoAtom infoAtom = info.getInteractiveInfoAtom();
@@ -356,14 +316,8 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
 
         infoAtom.setHyperlinkID(link.getId());
 
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        try {
-            info.writeOut(out);
-        } catch(Exception e){
-            throw new HSLFException(e);
-        }
-        cldata.setRemainingData(out.toByteArray());
-
+        HSLFEscherClientDataRecord cldata = getClientData(true);
+        cldata.addChild(infoAtom);
     }
 
     public Guide getAdjustValue(String name) {
@@ -560,99 +514,119 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
             }
         };
     }
-
-    protected void setPlaceholder(Placeholder placeholder) {
-        EscherSpRecord spRecord = _escherContainer.getChildById(EscherSpRecord.RECORD_ID);
+    
+    @Override
+    public Placeholder getPlaceholder() {
+        List<? extends Record> clRecords = getClientRecords();
+        if (clRecords == null) {
+            return null;
+        }
+        for (Record r : clRecords) {
+            if (r instanceof OEPlaceholderAtom) {
+                OEPlaceholderAtom oep = (OEPlaceholderAtom)r;
+                return Placeholder.lookupNative(oep.getPlaceholderId());
+            } else if (r instanceof RoundTripHFPlaceholder12) {
+                RoundTripHFPlaceholder12 rtp = (RoundTripHFPlaceholder12)r;
+                return Placeholder.lookupNative(rtp.getPlaceholderId());
+            }
+        }
+        
+        return null;
+    }
+    
+    @Override
+    public void setPlaceholder(Placeholder placeholder) {
+        EscherSpRecord spRecord = getEscherChild(EscherSpRecord.RECORD_ID);
         int flags = spRecord.getFlags();
-        flags |= EscherSpRecord.FLAG_HAVEANCHOR | EscherSpRecord.FLAG_HAVEMASTER;
+        if (placeholder == null) {
+            flags ^= EscherSpRecord.FLAG_HAVEMASTER;
+        } else {
+            flags |= EscherSpRecord.FLAG_HAVEANCHOR | EscherSpRecord.FLAG_HAVEMASTER;
+        }
         spRecord.setFlags(flags);
 
-        EscherClientDataRecord cldata = _escherContainer.getChildById(EscherClientDataRecord.RECORD_ID);
-        if (cldata == null) {
-            cldata = new EscherClientDataRecord();
-            // append placeholder container before EscherTextboxRecord
-            _escherContainer.addChildBefore(cldata, EscherTextboxRecord.RECORD_ID);
-        }
-        cldata.setOptions((short)15);
-
-        AbstractEscherOptRecord opt = getEscherOptRecord();
-
         // Placeholders can't be grouped
-        setEscherProperty(opt, EscherProperties.PROTECTION__LOCKAGAINSTGROUPING, 262144);
+        setEscherProperty(EscherProperties.PROTECTION__LOCKAGAINSTGROUPING, (placeholder == null ? -1 : 262144));
+        
+        HSLFEscherClientDataRecord clientData = getClientData(false);
+        if (placeholder == null) {
+            if (clientData != null) {
+                clientData.removeChild(OEPlaceholderAtom.class);
+                clientData.removeChild(RoundTripHFPlaceholder12.class);
+                // remove client data if the placeholder was the only child to be carried
+                if (clientData.getChildRecords().isEmpty()) {
+                    getSpContainer().removeChildRecord(clientData);
+                }
+            }
+            return;
+        }
+        
+        if (clientData == null) {
+            clientData = getClientData(true);
+        }
 
         // OEPlaceholderAtom tells powerpoint that this shape is a placeholder
-        OEPlaceholderAtom oep = new OEPlaceholderAtom();
+        OEPlaceholderAtom oep = null;
+        RoundTripHFPlaceholder12 rtp = null;
+        for (Record r : clientData.getHSLFChildRecords()) {
+            if (r instanceof OEPlaceholderAtom) {
+                oep = (OEPlaceholderAtom)r;
+                break;
+            }
+            if (r instanceof RoundTripHFPlaceholder12) {
+                rtp = (RoundTripHFPlaceholder12)r;
+                break;
+            }
+        }
 
         /**
-         * Extarct from MSDN:
+         * Extract from MSDN:
          *
          * There is a special case when the placeholder does not have a position in the layout.
          * This occurs when the user has moved the placeholder from its original position.
          * In this case the placeholder ID is -1.
          */
-        oep.setPlacementId(-1);
-
-        boolean isMaster = (getSheet() instanceof HSLFSlideMaster);
-        boolean isNotes = (getSheet() instanceof HSLFNotes);
         byte phId;
+        HSLFSheet sheet = getSheet();
+        // TODO: implement/switch NotesMaster
+        if (sheet instanceof HSLFSlideMaster) {
+            phId = (byte)placeholder.nativeSlideMasterId;
+        } else if (sheet instanceof HSLFNotes) {
+            phId = (byte)placeholder.nativeNotesId;
+        } else {
+            phId = (byte)placeholder.nativeSlideId;
+        }
+        
+        if (phId == -2) {
+            throw new HSLFException("Placeholder "+placeholder.name()+" not supported for this sheet type ("+sheet.getClass()+")");
+        }
+        
         switch (placeholder) {
-            case TITLE:
-                phId = (isMaster) ? OEPlaceholderAtom.MasterTitle : OEPlaceholderAtom.Title;
-                break;
-            case BODY:
-                phId = (isMaster) ? OEPlaceholderAtom.MasterBody :
-                    ((isNotes) ? OEPlaceholderAtom.NotesBody : OEPlaceholderAtom.Body);
-                break;
-            case CENTERED_TITLE:
-                phId = (isMaster) ? OEPlaceholderAtom.MasterCenteredTitle : OEPlaceholderAtom.CenteredTitle;
-                break;
-            case SUBTITLE:
-                phId = (isMaster) ? OEPlaceholderAtom.MasterSubTitle : OEPlaceholderAtom.Subtitle;
-                break;
-            case DATETIME:
-                phId = OEPlaceholderAtom.MasterDate;
-                break;
-            case SLIDE_NUMBER:
-                phId = OEPlaceholderAtom.MasterSlideNumber;
-                break;
-            case FOOTER:
-                phId = OEPlaceholderAtom.MasterFooter;
-                break;
             case HEADER:
-                phId = OEPlaceholderAtom.MasterHeader;
-                break;
-            case DGM:
-            case CHART:
-                phId = OEPlaceholderAtom.Graph;
-                break;
-            case TABLE:
-                phId = OEPlaceholderAtom.Table;
-                break;
-            case PICTURE:
-            case CLIP_ART:
-                phId = OEPlaceholderAtom.ClipArt;
-                break;
-            case MEDIA:
-                phId = OEPlaceholderAtom.MediaClip;
-                break;
-            case SLIDE_IMAGE:
-                phId = (isMaster) ? OEPlaceholderAtom.MasterNotesSlideImage : OEPlaceholderAtom.NotesSlideImage;
+            case FOOTER:
+                if (rtp == null) {
+                    rtp = new RoundTripHFPlaceholder12();
+                    rtp.setPlaceholderId(phId);
+                    clientData.addChild(rtp);
+                }
+                if (oep != null) {
+                    clientData.removeChild(OEPlaceholderAtom.class);
+                }
                 break;
             default:
-            case CONTENT:
-                phId = OEPlaceholderAtom.Object;
+                if (rtp != null) {
+                    clientData.removeChild(RoundTripHFPlaceholder12.class);
+                }
+                if (oep == null) {
+                    oep = new OEPlaceholderAtom();
+                    oep.setPlaceholderSize((byte)OEPlaceholderAtom.PLACEHOLDER_FULLSIZE);
+                    // TODO: placement id only "SHOULD" be unique ... check other placeholders on sheet for unique id
+                    oep.setPlacementId(-1);
+                    oep.setPlaceholderId(phId);
+                    clientData.addChild(oep);
+                }
                 break;
         }
-        oep.setPlaceholderId(phId);
-
-        //convert hslf into ddf record
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        try {
-            oep.writeOut(out);
-        } catch(Exception e){
-            throw new HSLFException(e);
-        }
-        cldata.setRemainingData(out.toByteArray());
     }
 
 

@@ -167,7 +167,7 @@ public void walkTree(int depth, int startPos, int maxLen) throws IOException {
 		out.println(String.format(Locale.ROOT, fmt, "", pos, type, len));
 
 		// See if we know about the type of it
-		String recordName = RecordTypes.recordName((int)type);
+		String recordName = RecordTypes.forTypeID((short)type).name();
 
 		// Jump over header, and think about going on more
 		pos += 8;
@@ -293,7 +293,7 @@ public void walkTree(int depth, int startPos, int maxLen) throws IOException {
 	String fmt = ind+"At position %2$d ($2$04x): type is %3$d (%3$04x), len is %4$d (%4$04x)";
 	out.println(String.format(Locale.ROOT, fmt, "", pos, type, atomlen));
 
-	String typeName = RecordTypes.recordName((int)type);
+	String typeName = RecordTypes.forTypeID((short)type).name();
 	out.println(String.format(Locale.ROOT, ind+"%2$s", "That's an Escher Record: ", typeName));
 
 	// Record specific dumps

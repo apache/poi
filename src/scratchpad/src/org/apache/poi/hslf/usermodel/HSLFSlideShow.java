@@ -1162,8 +1162,8 @@ public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagrap
         // For position dependent records, hold where they were and now are
         // As we go along, update, and hand over, to any Position Dependent
         // records we happen across
-		Map<RecordTypes.Type,PositionDependentRecord> interestingRecords =
-                new HashMap<RecordTypes.Type,PositionDependentRecord>();
+		Map<RecordTypes,PositionDependentRecord> interestingRecords =
+                new HashMap<RecordTypes,PositionDependentRecord>();
 
 		try {
             _hslfSlideShow.updateAndWriteDependantRecords(null,interestingRecords);

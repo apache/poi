@@ -45,6 +45,7 @@ import org.apache.poi.hslf.record.TxInteractiveInfoAtom;
 import org.apache.poi.sl.draw.DrawFactory;
 import org.apache.poi.sl.draw.DrawTextShape;
 import org.apache.poi.sl.usermodel.Insets2D;
+import org.apache.poi.sl.usermodel.Placeholder;
 import org.apache.poi.sl.usermodel.ShapeContainer;
 import org.apache.poi.sl.usermodel.TextShape;
 import org.apache.poi.sl.usermodel.VerticalAlignment;
@@ -603,14 +604,29 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
     }
 
     /**
-     * Return <code>OEPlaceholderAtom</code>, the atom that describes a placeholder.
+     * Return {@link OEPlaceholderAtom}, the atom that describes a placeholder.
      *
-     * @return <code>OEPlaceholderAtom</code> or <code>null</code> if not found
+     * @return {@link OEPlaceholderAtom} or {@code null} if not found
      */
     public OEPlaceholderAtom getPlaceholderAtom(){
         return getClientDataRecord(OEPlaceholderAtom.typeID);
     }
 
+    /**
+     * Return {@link RoundTripHFPlaceholder12}, the atom that describes a header/footer placeholder.
+     * Compare the {@link RoundTripHFPlaceholder12#getPlaceholderId()} with
+     * {@link OEPlaceholderAtom#MasterHeader} or {@link OEPlaceholderAtom#MasterFooter}, to find out
+     * what kind of placeholder this is.
+     *
+     * @return {@link RoundTripHFPlaceholder12} or {@code null} if not found
+     * 
+     * @since POI 3.14-Beta2
+     */
+    public RoundTripHFPlaceholder12 getHFPlaceholderAtom() {
+        // special case for files saved in Office 2007
+        return getClientDataRecord(RoundTripHFPlaceholder12.typeID);
+    }
+    
     /**
      *
      * Assigns a hyperlink to this text shape
@@ -644,7 +660,7 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
         if (oep != null) return true;
 
         //special case for files saved in Office 2007
-        RoundTripHFPlaceholder12 hldr = getClientDataRecord(RoundTripHFPlaceholder12.typeID);
+        RoundTripHFPlaceholder12 hldr = getHFPlaceholderAtom();
         if (hldr != null) return true;
 
         return false;

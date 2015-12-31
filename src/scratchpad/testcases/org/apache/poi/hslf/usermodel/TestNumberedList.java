@@ -42,12 +42,11 @@ public final class TestNumberedList {
     @Test
     public void testNumberedList() throws Exception {
 		HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("numbers.ppt"));
-		assertTrue("No Exceptions while reading file", true);
-
 		final List<HSLFSlide> slides = ppt.getSlides();
 		assertEquals(2, slides.size());
 		checkSlide0(slides.get(0));
 		checkSlide1(slides.get(1));
+		ppt.close();
 	}
 
     private void checkSlide0(final HSLFSlide s) {

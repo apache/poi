@@ -95,14 +95,14 @@ implements HSLFShapeContainer, TableShape<HSLFShape,HSLFTextParagraph> {
 
         EscherContainerRecord spCont = (EscherContainerRecord) getSpContainer().getChild(0);
         AbstractEscherOptRecord opt = new EscherOptRecord();
-        opt.setRecordId((short)RecordTypes.EscherUserDefined);
+        opt.setRecordId(RecordTypes.EscherUserDefined.typeID);
         opt.addEscherProperty(new EscherSimpleProperty(EscherProperties.GROUPSHAPE__TABLEPROPERTIES, 1));
         EscherArrayProperty p = new EscherArrayProperty((short)(0x4000 | EscherProperties.GROUPSHAPE__TABLEROWPROPERTIES), false, null);
         p.setSizeOfElements(0x0004);
         p.setNumberOfElementsInArray(numRows);
         p.setNumberOfElementsInMemory(numRows);
         opt.addEscherProperty(p);
-        spCont.addChildBefore(opt, RecordTypes.EscherClientAnchor);
+        spCont.addChildBefore(opt, RecordTypes.EscherClientAnchor.typeID);
     }
 
     /**

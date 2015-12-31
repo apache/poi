@@ -21,11 +21,13 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.geom.Rectangle2D;
 
+import org.apache.poi.POIXMLException;
 import org.apache.poi.sl.draw.DrawPaint;
 import org.apache.poi.sl.usermodel.Background;
 import org.apache.poi.sl.usermodel.ColorStyle;
 import org.apache.poi.sl.usermodel.FillStyle;
 import org.apache.poi.sl.usermodel.PaintStyle;
+import org.apache.poi.sl.usermodel.Placeholder;
 import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTransform2D;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTBackground;
@@ -69,5 +71,11 @@ public class XSLFBackground extends XSLFSimpleShape
     @Override
     protected CTTransform2D getXfrm() {
         return CTTransform2D.Factory.newInstance();
+    }
+    
+    @Override
+    public void setPlaceholder(Placeholder placeholder) {
+        // extending XSLFSimpleShape is a bit unlucky ...
+        throw new POIXMLException("Can't set a placeholder for a background");
     }
 }

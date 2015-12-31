@@ -27,7 +27,7 @@ import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.sl.draw.DrawFactory;
 import org.apache.poi.sl.draw.Drawable;
 import org.apache.poi.sl.usermodel.Notes;
-import org.apache.poi.sl.usermodel.SimpleShape.Placeholder;
+import org.apache.poi.sl.usermodel.Placeholder;
 import org.apache.poi.sl.usermodel.Slide;
 import org.apache.poi.util.Beta;
 import org.apache.xmlbeans.XmlException;

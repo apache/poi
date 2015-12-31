@@ -201,6 +201,7 @@ public final class OEPlaceholderAtom extends RecordAtom{
     private int placementId;
     private int placeholderId;
     private int placeholderSize;
+    private short unusedShort = 0;
 
 
     /**
@@ -227,8 +228,9 @@ public final class OEPlaceholderAtom extends RecordAtom{
         offset += _header.length;
 
         placementId = LittleEndian.getInt(source, offset); offset += 4;
-        placeholderId = LittleEndian.getUnsignedByte(source, offset); offset++;
-        placeholderSize = LittleEndian.getUnsignedByte(source, offset); offset++;
+        placeholderId = LittleEndian.getUByte(source, offset); offset++;
+        placeholderSize = LittleEndian.getUByte(source, offset); offset++;
+        unusedShort = LittleEndian.getShort(source, offset);
 	}
 
     /**
@@ -322,6 +324,7 @@ public final class OEPlaceholderAtom extends RecordAtom{
         LittleEndian.putInt(recdata, 0, placementId);
         recdata[4] = (byte)placeholderId;
         recdata[5] = (byte)placeholderSize;
+        LittleEndian.putShort(recdata, 6, unusedShort);
 
         out.write(recdata);
 	}
