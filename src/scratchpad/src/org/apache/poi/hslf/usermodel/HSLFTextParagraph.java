@@ -680,10 +680,16 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
      * Fetch the value of the given Paragraph related TextProp. Returns null if
      * that TextProp isn't present. If the TextProp isn't present, the value
      * from the appropriate Master Sheet will apply.
+     * 
+     * The propName can be a comma-separated list, in case multiple equivalent values
+     * are queried
      */
     protected static TextProp getPropVal(TextPropCollection props, String propName, HSLFTextParagraph paragraph) {
-        TextProp prop = props.findByName(propName);
-        if (prop != null) return prop;
+        String propNames[] = propName.split(",");
+        for (String pn : propNames) {
+            TextProp prop = props.findByName(pn);
+            if (prop != null) return prop;
+        }
 
         BitMaskTextProp maskProp = (BitMaskTextProp) props.findByName(ParagraphFlagsTextProp.NAME);
         boolean hardAttribute = (maskProp != null && maskProp.getValue() == 0);
@@ -698,7 +704,13 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
         }
 
         boolean isChar = props.getTextPropType() == TextPropType.character;
-        return master.getStyleAttribute(txtype, paragraph.getIndentLevel(), propName, isChar);
+        
+        for (String pn : propNames) {
+            TextProp prop = master.getStyleAttribute(txtype, paragraph.getIndentLevel(), pn, isChar);
+            if (prop != null) return prop;
+        }
+        
+        return null;
     }
 
     /**
