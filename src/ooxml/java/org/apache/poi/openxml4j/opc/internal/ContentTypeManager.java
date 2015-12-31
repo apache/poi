@@ -377,7 +377,7 @@ public abstract class ContentTypeManager {
 			Document xmlContentTypetDoc = DocumentHelper.readDocument(in);
 
 			// Default content types
-			NodeList defaultTypes = xmlContentTypetDoc.getDocumentElement().getElementsByTagName(DEFAULT_TAG_NAME);
+			NodeList defaultTypes = xmlContentTypetDoc.getDocumentElement().getElementsByTagNameNS(TYPES_NAMESPACE_URI, DEFAULT_TAG_NAME);
 			int defaultTypeCount = defaultTypes.getLength();
 			for (int i = 0; i < defaultTypeCount; i++) {
                 Element element = (Element) defaultTypes.item(i);
@@ -387,7 +387,7 @@ public abstract class ContentTypeManager {
 			}
 
 			// Overriden content types
-            NodeList overrideTypes = xmlContentTypetDoc.getDocumentElement().getElementsByTagName(OVERRIDE_TAG_NAME);
+            NodeList overrideTypes = xmlContentTypetDoc.getDocumentElement().getElementsByTagNameNS(TYPES_NAMESPACE_URI, OVERRIDE_TAG_NAME);
             int overrideTypeCount = overrideTypes.getLength();
             for (int i = 0; i < overrideTypeCount; i++) {
 				Element element = (Element) overrideTypes.item(i);
