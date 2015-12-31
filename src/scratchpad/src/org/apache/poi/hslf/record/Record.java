@@ -166,19 +166,19 @@ public abstract class Record
 		// Any special record handling occurs once we have the class
 		Class<? extends Record> c = null;
 		try {
-			c = RecordTypes.recordHandlingClass((int)type);
+			c = RecordTypes.forTypeID((short)type).handlingClass;
 			if(c == null) {
 				// How odd. RecordTypes normally subsitutes in
 				//  a default handler class if it has heard of the record
 				//  type but there's no support for it. Explicitly request
 				//  that now
-				c = RecordTypes.recordHandlingClass( RecordTypes.Unknown.typeID );
+				c = RecordTypes.UnknownRecordPlaceholder.handlingClass;
 			}
 
 			// Grab the right constructor
 			java.lang.reflect.Constructor<? extends Record> con = c.getDeclaredConstructor(new Class[] { byte[].class, Integer.TYPE, Integer.TYPE });
 			// Instantiate
-			toReturn = con.newInstance(new Object[] { b, Integer.valueOf(start), Integer.valueOf(len) });
+			toReturn = con.newInstance(new Object[] { b, start, len });
 		} catch(InstantiationException ie) {
 			throw new RuntimeException("Couldn't instantiate the class for type with id " + type + " on class " + c + " : " + ie, ie);
 		} catch(java.lang.reflect.InvocationTargetException ite) {

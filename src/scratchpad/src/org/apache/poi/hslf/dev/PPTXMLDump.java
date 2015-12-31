@@ -122,7 +122,7 @@ public final class PPTXMLDump {
             pos += LittleEndian.INT_SIZE;
 
             //get name of the record by type
-            String recname = RecordTypes.recordName(type);
+            String recname = RecordTypes.forTypeID(type).name();
             write(out, "<"+recname + " info=\""+info+"\" type=\""+type+"\" size=\""+size+"\" offset=\""+(pos-8)+"\"", padding);
             if (hexHeader){
                 out.write(" header=\"");

@@ -33,7 +33,12 @@ public class DrawMasterSheet extends DrawSheet {
      * for instance, slide masters and layouts don't display placeholders
      */
     @Override
-    protected boolean canDraw(Shape<?,?> shape){
-        return !(shape instanceof SimpleShape) || !((SimpleShape<?,?>)shape).isPlaceholder();
+    protected boolean canDraw(Shape<?,?> shape) {
+        if (shape instanceof SimpleShape) {
+            Placeholder ph = ((SimpleShape<?,?>)shape).getPlaceholder();
+            return ph == null;
+        } else {
+            return true;
+        }
     }
 }

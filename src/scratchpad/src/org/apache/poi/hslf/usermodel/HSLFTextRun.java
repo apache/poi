@@ -76,7 +76,7 @@ public final class HSLFTextRun implements TextRun {
      *
      * @param characterStyle the master style reference
      * 
-     * @since 3.14-Beta1
+     * @since POI 3.14-Beta1
      */
 	@Internal
     /* package */ void setMasterStyleReference(TextPropCollection characterStyle) {

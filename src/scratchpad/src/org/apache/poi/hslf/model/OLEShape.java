@@ -17,14 +17,22 @@
 
 package org.apache.poi.hslf.model;
 
-import org.apache.poi.ddf.*;
-import org.apache.poi.hslf.usermodel.*;
-import org.apache.poi.hslf.record.ExObjList;
-import org.apache.poi.hslf.record.Record;
+import org.apache.poi.ddf.EscherContainerRecord;
+import org.apache.poi.ddf.EscherProperties;
+import org.apache.poi.ddf.EscherSpRecord;
 import org.apache.poi.hslf.record.ExEmbed;
+import org.apache.poi.hslf.record.ExObjList;
+import org.apache.poi.hslf.record.ExObjRefAtom;
+import org.apache.poi.hslf.record.HSLFEscherClientDataRecord;
+import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.RecordTypes;
+import org.apache.poi.hslf.usermodel.HSLFObjectData;
+import org.apache.poi.hslf.usermodel.HSLFPictureData;
+import org.apache.poi.hslf.usermodel.HSLFPictureShape;
+import org.apache.poi.hslf.usermodel.HSLFShape;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
+import org.apache.poi.hslf.usermodel.HSLFTextParagraph;
 import org.apache.poi.sl.usermodel.ShapeContainer;
-import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogger;
 
 
@@ -88,26 +96,19 @@ public final class OLEShape extends HSLFPictureShape {
     	EscherSpRecord spRecord = ecr.getChildById(EscherSpRecord.RECORD_ID);
         spRecord.setFlags(spRecord.getFlags()|EscherSpRecord.FLAG_OLESHAPE);
 
-        EscherContainerRecord uerCont = ecr.getChildById((short)RecordTypes.EscherClientData);
-        if (uerCont == null) {
-        	uerCont = new EscherContainerRecord();
-        	ecr.addChildRecord(uerCont);
+        HSLFEscherClientDataRecord cldata = getClientData(true);
+        ExObjRefAtom uer = null;
+        for (Record r : cldata.getHSLFChildRecords()) {
+            if (r.getRecordType() == RecordTypes.ExObjRefAtom.typeID) {
+                uer = (ExObjRefAtom)r;
+                break;
+            }
         }
-        uerCont.setRecordId((short)RecordTypes.EscherClientData);
-        uerCont.setVersion((short)0x000F); // yes, we are still a container ...
-
-        UnknownEscherRecord uer = uerCont.getChildById((short)RecordTypes.ExObjRefAtom.typeID);
         if (uer == null) {
-        	uer = new UnknownEscherRecord();
-        	uerCont.addChildRecord(uer);
+        	uer = new ExObjRefAtom();
+        	cldata.addChild(uer);
         }
-        
-        byte uerData[] = new byte[12];
-        LittleEndian.putShort( uerData, 0, (short)0 ); // options = 0
-        LittleEndian.putShort( uerData, 2, (short)RecordTypes.ExObjRefAtom.typeID); // recordId
-        LittleEndian.putInt( uerData, 4, 4 ); // remaining bytes
-        LittleEndian.putInt( uerData, 8, objectId ); // the data
-        uer.fillFields(uerData, 0, null);        
+        uer.setExObjIdRef(objectId);
     }
     
     
@@ -116,6 +117,7 @@ public final class OLEShape extends HSLFPictureShape {
      *
      * @return the unique identifier for the OLE object
      */
+    @SuppressWarnings("resource")
     public HSLFObjectData getObjectData(){
         HSLFSlideShow ppt = getSheet().getSlideShow();
         HSLFObjectData[] ole = ppt.getEmbeddedObjects();
@@ -153,6 +155,7 @@ public final class OLEShape extends HSLFPictureShape {
      * 6. MetaFile( 4033), optional
      * </p>
      */
+    @SuppressWarnings("resource")
     public ExEmbed getExEmbed(){
         if(_exEmbed == null){
             HSLFSlideShow ppt = getSheet().getSlideShow();

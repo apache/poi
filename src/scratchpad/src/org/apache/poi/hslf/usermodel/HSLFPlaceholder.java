@@ -18,7 +18,7 @@
 package org.apache.poi.hslf.usermodel;
 
 import org.apache.poi.ddf.EscherContainerRecord;
-import org.apache.poi.sl.usermodel.SimpleShape.Placeholder;
+import org.apache.poi.sl.usermodel.Placeholder;
 import org.apache.poi.sl.usermodel.ShapeContainer;
 
 /**

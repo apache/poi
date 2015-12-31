@@ -171,7 +171,7 @@ public final class TxMasterStyleAtom extends RecordAtom {
     /**
      * Updates the rawdata from the modified paragraph/character styles
      * 
-     * @since 3.14-beta1
+     * @since POI 3.14-beta1
      */
     public void updateStyles() {
         int type = getTextType();

@@ -149,7 +149,7 @@ public abstract class HSLFSheet implements HSLFShapeContainer, Sheet<HSLFShape,H
     public List<HSLFShape> getShapes() {
         PPDrawing ppdrawing = getPPDrawing();
 
-        EscherContainerRecord dg = (EscherContainerRecord) ppdrawing.getEscherRecords()[0];
+        EscherContainerRecord dg = ppdrawing.getDgContainer();
         EscherContainerRecord spgr = null;
 
         for (Iterator<EscherRecord> it = dg.getChildIterator(); it.hasNext();) {
@@ -187,7 +187,7 @@ public abstract class HSLFSheet implements HSLFShapeContainer, Sheet<HSLFShape,H
     public void addShape(HSLFShape shape) {
         PPDrawing ppdrawing = getPPDrawing();
 
-        EscherContainerRecord dgContainer = (EscherContainerRecord) ppdrawing.getEscherRecords()[0];
+        EscherContainerRecord dgContainer = ppdrawing.getDgContainer();
         EscherContainerRecord spgr = (EscherContainerRecord) HSLFShape.getEscherChild(dgContainer, EscherContainerRecord.SPGR_CONTAINER);
         spgr.addChildRecord(shape.getSpContainer());
 
@@ -244,16 +244,8 @@ public abstract class HSLFSheet implements HSLFShapeContainer, Sheet<HSLFShape,H
     public boolean removeShape(HSLFShape shape) {
         PPDrawing ppdrawing = getPPDrawing();
 
-        EscherContainerRecord dg = (EscherContainerRecord) ppdrawing.getEscherRecords()[0];
-        EscherContainerRecord spgr = null;
-
-        for (Iterator<EscherRecord> it = dg.getChildIterator(); it.hasNext();) {
-            EscherRecord rec = it.next();
-            if (rec.getRecordId() == EscherContainerRecord.SPGR_CONTAINER) {
-                spgr = (EscherContainerRecord) rec;
-                break;
-            }
-        }
+        EscherContainerRecord dg = ppdrawing.getDgContainer();
+        EscherContainerRecord spgr = dg.getChildById(EscherContainerRecord.SPGR_CONTAINER);
         if(spgr == null) {
             return false;
         }
@@ -292,7 +284,7 @@ public abstract class HSLFSheet implements HSLFShapeContainer, Sheet<HSLFShape,H
         if (_background == null) {
             PPDrawing ppdrawing = getPPDrawing();
 
-            EscherContainerRecord dg = (EscherContainerRecord) ppdrawing.getEscherRecords()[0];
+            EscherContainerRecord dg = ppdrawing.getDgContainer();
             EscherContainerRecord spContainer = dg.getChildById(EscherContainerRecord.SP_CONTAINER);
             _background = new HSLFBackground(spContainer, null);
             _background.setSheet(this);

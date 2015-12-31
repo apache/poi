@@ -28,25 +28,6 @@ public interface SimpleShape<
     P extends TextParagraph<S,P,?>
 > extends Shape<S,P>, IAdjustableShape, PlaceableShape<S,P> {
 
-    enum Placeholder {
-        TITLE,
-        BODY,
-        CENTERED_TITLE,
-        SUBTITLE,
-        DATETIME,
-        SLIDE_NUMBER,
-        FOOTER,
-        HEADER,
-        CONTENT,
-        CHART,
-        TABLE,
-        CLIP_ART,
-        DGM,
-        MEDIA,
-        SLIDE_IMAGE,
-        PICTURE
-    }
-    
     FillStyle getFillStyle();
     
     LineDecoration getLineDecoration();
@@ -69,7 +50,20 @@ public interface SimpleShape<
     ShapeType getShapeType();
     void setShapeType(ShapeType type);
 
-    boolean isPlaceholder();
+    /**
+     * @return the placeholder or null if none is assigned
+     * @see #setPlaceholder(Placeholder)
+     */
+    Placeholder getPlaceholder();
+    
+    /**
+     * Specifies that the corresponding shape should be represented by the generating application
+     * as a placeholder. When a shape is considered a placeholder by the generating application
+     * it can have special properties to alert the user that they may enter content into the shape.
+     * 
+     * @param placeholder the placeholder or null to remove the reference to the placeholder
+     */
+    void setPlaceholder(Placeholder placeholder);
 
 	Shadow<S,P> getShadow();
 

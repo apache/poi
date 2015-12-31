@@ -20,6 +20,7 @@ package org.apache.poi.hslf.usermodel;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.awt.Color;
@@ -42,7 +43,9 @@ import org.apache.poi.hslf.exceptions.OldPowerPointFormatException;
 import org.apache.poi.hslf.extractor.PowerPointExtractor;
 import org.apache.poi.hslf.model.HeadersFooters;
 import org.apache.poi.hslf.record.Document;
+import org.apache.poi.hslf.record.OEPlaceholderAtom;
 import org.apache.poi.hslf.record.Record;
+import org.apache.poi.hslf.record.RoundTripHFPlaceholder12;
 import org.apache.poi.hslf.record.SlideListWithText;
 import org.apache.poi.hslf.record.SlideListWithText.SlideAtomsSet;
 import org.apache.poi.hslf.record.TextHeaderAtom;
@@ -50,6 +53,7 @@ import org.apache.poi.sl.draw.DrawPaint;
 import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
+import org.apache.poi.sl.usermodel.Placeholder;
 import org.apache.poi.sl.usermodel.Slide;
 import org.apache.poi.sl.usermodel.SlideShow;
 import org.apache.poi.sl.usermodel.SlideShowFactory;
@@ -777,6 +781,31 @@ public final class TestBugs {
         ex.close();
     }
 
+    @Test
+    public void bug58159() throws IOException {
+        File sample = HSLFTestDataSamples.getSampleFile("bug58159_headers-and-footers.ppt");
+        HSLFSlideShow ppt = (HSLFSlideShow)SlideShowFactory.create(sample);
+        HeadersFooters hf = ppt.getSlideHeadersFooters();
+        assertNull(hf.getHeaderText());
+        assertEquals("Slide footer", hf.getFooterText());
+        hf = ppt.getNotesHeadersFooters();
+        assertEquals("Notes header", hf.getHeaderText());
+        assertEquals("Notes footer", hf.getFooterText());
+        HSLFSlide sl = ppt.getSlides().get(0);
+        hf = sl.getHeadersFooters();
+        assertNull(hf.getHeaderText());
+        assertEquals("Slide footer", hf.getFooterText());
+        for (HSLFShape shape : sl.getShapes()) {
+            if (shape instanceof HSLFTextShape) {
+                HSLFTextShape ts = (HSLFTextShape)shape;
+                Placeholder ph = ts.getPlaceholder();
+                if (Placeholder.FOOTER == ph) {
+                    assertEquals("Slide footer", ts.getText());
+                }
+            }
+        }
+        ppt.close();
+    }
     
     private static HSLFSlideShow open(String fileName) throws IOException {
         File sample = HSLFTestDataSamples.getSampleFile(fileName);

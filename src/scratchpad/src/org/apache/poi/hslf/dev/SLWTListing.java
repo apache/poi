@@ -79,7 +79,7 @@ public final class SLWTListing {
 					for(int k=0; k<upTo; k++) {
 						Record r = children[k];
 						int typeID = (int)r.getRecordType();
-						String typeName = RecordTypes.recordName(typeID);
+						String typeName = RecordTypes.forTypeID(typeID).name();
 						System.out.println("   - " + typeID + " (" + typeName + ")");
 					}
 				}

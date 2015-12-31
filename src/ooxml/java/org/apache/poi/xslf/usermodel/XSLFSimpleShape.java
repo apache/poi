@@ -34,6 +34,7 @@ import org.apache.poi.sl.usermodel.LineDecoration;
 import org.apache.poi.sl.usermodel.LineDecoration.DecorationShape;
 import org.apache.poi.sl.usermodel.LineDecoration.DecorationSize;
 import org.apache.poi.sl.usermodel.PaintStyle;
+import org.apache.poi.sl.usermodel.Placeholder;
 import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
 import org.apache.poi.sl.usermodel.ShapeType;
 import org.apache.poi.sl.usermodel.SimpleShape;
@@ -815,7 +816,6 @@ public abstract class XSLFSimpleShape extends XSLFShape
         return ph != null;
     }
 
-    @SuppressWarnings("deprecation")
     public Guide getAdjustValue(String name) {
         CTPresetGeometry2D prst = getSpPr().getPrstGeom();
         if (prst.isSetAvLst()) {
@@ -917,5 +917,10 @@ public abstract class XSLFSimpleShape extends XSLFShape
                 setLineColor((Color)st);
             }
         }
+    }
+    
+    @Override
+    public void setPlaceholder(Placeholder placeholder) {
+        super.setPlaceholder(placeholder);
     }
 }

@@ -76,7 +76,7 @@ public class EscherClientDataRecord
     public String toString()
     {
         String nl = System.getProperty("line.separator");
-        String extraData = HexDump.dump(this.remainingData, 0, 0);
+        String extraData = HexDump.dump(getRemainingData(), 0, 0);
         return getClass().getName() + ":" + nl +
                 "  RecordId: 0x" + HexDump.toHex(RECORD_ID) + nl +
                 "  Version: 0x" + HexDump.toHex(getVersion()) + nl +
@@ -88,7 +88,7 @@ public class EscherClientDataRecord
 
     @Override
     public String toXml(String tab) {
-        String extraData = HexDump.dump(this.remainingData, 0, 0).trim();
+        String extraData = HexDump.dump(getRemainingData(), 0, 0).trim();
         StringBuilder builder = new StringBuilder();
         builder.append(tab).append(formatXmlRecordHeader(getClass().getSimpleName(), HexDump.toHex(getRecordId()),
                 HexDump.toHex(getVersion()), HexDump.toHex(getInstance())))

@@ -19,7 +19,9 @@
 
 package org.apache.poi.xslf.usermodel;
 
+import org.apache.poi.POIXMLException;
 import org.apache.poi.sl.usermodel.ConnectorShape;
+import org.apache.poi.sl.usermodel.Placeholder;
 import org.apache.poi.util.Beta;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualDrawingProps;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPresetGeometry2D;
@@ -69,4 +71,8 @@ public class XSLFConnectorShape extends XSLFSimpleShape
         return null;
     }
 
+    @Override
+    public void setPlaceholder(Placeholder placeholder) {
+        throw new POIXMLException("A connector shape can't be a placeholder.");
+    }
 }

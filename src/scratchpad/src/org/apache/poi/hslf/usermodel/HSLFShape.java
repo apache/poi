@@ -21,6 +21,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.poi.ddf.AbstractEscherOptRecord;
 import org.apache.poi.ddf.EscherChildAnchorRecord;
@@ -33,7 +34,10 @@ import org.apache.poi.ddf.EscherProperty;
 import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.ddf.EscherSimpleProperty;
 import org.apache.poi.ddf.EscherSpRecord;
+import org.apache.poi.ddf.EscherTextboxRecord;
 import org.apache.poi.hslf.record.ColorSchemeAtom;
+import org.apache.poi.hslf.record.HSLFEscherClientDataRecord;
+import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.RecordTypes;
 import org.apache.poi.sl.usermodel.FillStyle;
 import org.apache.poi.sl.usermodel.Shape;
@@ -217,9 +221,23 @@ public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
     public static <T extends EscherRecord> T getEscherChild(EscherContainerRecord owner, int recordId){
         return owner.getChildById((short)recordId);
     }
+    
+    /**
+     * @since POI 3.14-Beta2
+     */
+    public static <T extends EscherRecord> T getEscherChild(EscherContainerRecord owner, RecordTypes recordId){
+        return getEscherChild(owner, recordId.typeID);
+    }
 
     public <T extends EscherRecord> T getEscherChild(int recordId){
         return _escherContainer.getChildById((short)recordId);
+    }
+    
+    /**
+     * @since POI 3.14-Beta2
+     */
+    public <T extends EscherRecord> T getEscherChild(RecordTypes recordId){
+        return getEscherChild(recordId.typeID);
     }
     
     /**
@@ -228,8 +246,7 @@ public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
      * @return escher property or <code>null</code> if not found.
      */
      public static <T extends EscherProperty> T getEscherProperty(AbstractEscherOptRecord opt, int propId){
-         if (opt == null) return null;
-         return opt.lookup(propId);
+         return (opt == null) ? null : opt.<T>lookup(propId);
      }
 
     /**
@@ -443,7 +460,7 @@ public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
     }
 
     public AbstractEscherOptRecord getEscherOptRecord() {
-        AbstractEscherOptRecord opt = getEscherChild(EscherOptRecord.RECORD_ID);
+        AbstractEscherOptRecord opt = getEscherChild(RecordTypes.EscherOPT);
         if (opt == null) {
             opt = getEscherChild(RecordTypes.EscherUserDefined);
         }
@@ -484,5 +501,49 @@ public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
 
     public boolean isPlaceholder() {
         return false;
+    }
+
+    /**
+     *  Find a record in the underlying EscherClientDataRecord
+     *
+     * @param recordType type of the record to search
+     */
+    @SuppressWarnings("unchecked")
+    public <T extends Record> T getClientDataRecord(int recordType) {
+
+        List<? extends Record> records = getClientRecords();
+        if (records != null) for (Record r : records) {
+            if (r.getRecordType() == recordType){
+                return (T)r;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Search for EscherClientDataRecord, if found, convert its contents into an array of HSLF records
+     *
+     * @return an array of HSLF records contained in the shape's EscherClientDataRecord or <code>null</code>
+     */
+    protected List<? extends Record> getClientRecords() {
+        HSLFEscherClientDataRecord clientData = getClientData(false);
+        return (clientData == null) ? null : clientData.getHSLFChildRecords();
+    }
+
+    /**
+     * Create a new HSLF-specific EscherClientDataRecord
+     *
+     * @param create if true, create the missing record 
+     * @return the client record or null if it was missing and create wasn't activated
+     */
+    protected HSLFEscherClientDataRecord getClientData(boolean create) {
+        HSLFEscherClientDataRecord clientData = getEscherChild(HSLFEscherClientDataRecord.RECORD_ID);
+        if (clientData == null && create) {
+            clientData = new HSLFEscherClientDataRecord();
+            clientData.setOptions((short)15);
+            clientData.setRecordId(HSLFEscherClientDataRecord.RECORD_ID);
+            getSpContainer().addChildBefore(clientData, EscherTextboxRecord.RECORD_ID);
+        }
+        return clientData;
     }
 }

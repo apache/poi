@@ -474,7 +474,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
 	 *        May be null, if not needed. 
 	 * @throws IOException
 	 */
-	public void updateAndWriteDependantRecords(OutputStream os, Map<RecordTypes.Type,PositionDependentRecord> interestingRecords)
+	public void updateAndWriteDependantRecords(OutputStream os, Map<RecordTypes,PositionDependentRecord> interestingRecords)
 	throws IOException {
         // For position dependent records, hold where they were and now are
         // As we go along, update, and hand over, to any Position Dependent
@@ -502,7 +502,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
 
             // Grab interesting records as they come past
             // this will only save the very last record of each type
-            RecordTypes.Type saveme = null;
+            RecordTypes saveme = null;
             int recordType = (int)record.getRecordType();
             if (recordType == RecordTypes.PersistPtrIncrementalBlock.typeID) {
                 saveme = RecordTypes.PersistPtrIncrementalBlock;

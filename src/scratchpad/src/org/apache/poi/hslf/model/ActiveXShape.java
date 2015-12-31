@@ -17,21 +17,17 @@
 
 package org.apache.poi.hslf.model;
 
-import java.io.ByteArrayOutputStream;
-import java.util.Iterator;
-
 import org.apache.poi.ddf.AbstractEscherOptRecord;
-import org.apache.poi.ddf.EscherClientDataRecord;
 import org.apache.poi.ddf.EscherComplexProperty;
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherProperties;
-import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.ddf.EscherSpRecord;
 import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.hslf.record.Document;
 import org.apache.poi.hslf.record.ExControl;
 import org.apache.poi.hslf.record.ExObjList;
-import org.apache.poi.hslf.record.OEShapeAtom;
+import org.apache.poi.hslf.record.ExObjRefAtom;
+import org.apache.poi.hslf.record.HSLFEscherClientDataRecord;
 import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.RecordTypes;
 import org.apache.poi.hslf.usermodel.HSLFPictureData;
@@ -41,7 +37,6 @@ import org.apache.poi.hslf.usermodel.HSLFSheet;
 import org.apache.poi.hslf.usermodel.HSLFTextParagraph;
 import org.apache.poi.sl.usermodel.ShapeContainer;
 import org.apache.poi.sl.usermodel.ShapeType;
-import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;
 
 /**
@@ -92,20 +87,8 @@ public final class ActiveXShape extends HSLFPictureShape {
         setEscherProperty(EscherProperties.SHADOWSTYLE__COLOR, 0x8000002);
         setEscherProperty(EscherProperties.PROTECTION__LOCKAGAINSTGROUPING, -1);
 
-        EscherClientDataRecord cldata = new EscherClientDataRecord();
-        cldata.setOptions((short)0xF);
-        _escherContainer.addChildRecord(cldata); // TODO unit test to prove getChildRecords().add is wrong
-
-        OEShapeAtom oe = new OEShapeAtom();
-
-        //convert hslf into ddf
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        try {
-            oe.writeOut(out);
-        } catch(Exception e){
-            throw new HSLFException(e);
-        }
-        cldata.setRemainingData(out.toByteArray());
+        HSLFEscherClientDataRecord cldata = getClientData(true);
+        cldata.addChild(new ExObjRefAtom());
 
         return _escherContainer;
     }
@@ -116,22 +99,18 @@ public final class ActiveXShape extends HSLFPictureShape {
      * @see org.apache.poi.hslf.usermodel.HSLFSlideShow#addMovie(String, int)
      * @param idx  the index of the movie
      */
-    public void setActiveXIndex(int idx){
-        EscherContainerRecord spContainer = getSpContainer();
-        for (Iterator<EscherRecord> it = spContainer.getChildIterator(); it.hasNext();) {
-            EscherRecord obj = it.next();
-            if (obj.getRecordId() == EscherClientDataRecord.RECORD_ID) {
-                EscherClientDataRecord clientRecord = (EscherClientDataRecord)obj;
-                byte[] recdata = clientRecord.getRemainingData();
-                LittleEndian.putInt(recdata, 8, idx);
-            }
+    public void setActiveXIndex(int idx) {
+        ExObjRefAtom oe = getClientDataRecord(RecordTypes.ExObjRefAtom.typeID);
+        if (oe == null) {
+            throw new HSLFException("OEShapeAtom for ActiveX doesn't exist");
         }
+        oe.setExObjIdRef(idx);
     }
 
     public int getControlIndex(){
         int idx = -1;
-        OEShapeAtom oe = getClientDataRecord(RecordTypes.OEShapeAtom.typeID);
-        if(oe != null) idx = oe.getOptions();
+        ExObjRefAtom oe = getClientDataRecord(RecordTypes.ExObjRefAtom.typeID);
+        if(oe != null) idx = oe.getExObjIdRef();
         return idx;
     }
 

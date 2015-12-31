@@ -20,6 +20,8 @@ package org.apache.poi.hslf.record;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.apache.poi.util.LittleEndian;
+
 /**
  * An atom record that specifies that a shape is a header or footer placeholder shape
  *
@@ -40,6 +42,17 @@ public final class RoundTripHFPlaceholder12 extends RecordAtom {
      */
     private byte _placeholderId;
 
+    /**
+     * Create a new instance of <code>RoundTripHFPlaceholder12</code>
+     */
+    public RoundTripHFPlaceholder12(){
+        _header = new byte[8];
+        LittleEndian.putUShort(_header, 0, 0);
+        LittleEndian.putUShort(_header, 2, (int)getRecordType());
+        LittleEndian.putInt(_header, 4, 8);
+        _placeholderId = 0;
+    }
+    
     /**
      * Constructs the comment atom record from its source data.
      *

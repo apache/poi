@@ -157,7 +157,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
      *
      * @param paragraphStyle the master style reference
      * 
-     * @since 3.14-Beta1
+     * @since POI 3.14-Beta1
      */
     @Internal
     /* package */ void setMasterStyleReference(TextPropCollection paragraphStyle) {

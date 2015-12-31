@@ -33,7 +33,7 @@ import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.sl.usermodel.PaintStyle.GradientPaint;
 import org.apache.poi.sl.usermodel.PaintStyle.TexturePaint;
 import org.apache.poi.sl.usermodel.PlaceableShape;
-import org.apache.poi.sl.usermodel.SimpleShape.Placeholder;
+import org.apache.poi.sl.usermodel.Placeholder;
 import org.apache.poi.sl.usermodel.Shape;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
@@ -255,6 +255,14 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
         return _ph;
     }
 
+    public Placeholder getPlaceholder() {
+        CTPlaceholder ph = getCTPlaceholder();
+        if (ph == null || !ph.isSetType()) {
+            return null;
+        }
+        return Placeholder.lookupOoxml(ph.getType().intValue());
+    }
+    
     /**
      * Specifies that the corresponding shape should be represented by the generating application
      * as a placeholder. When a shape is considered a placeholder by the generating application
@@ -272,7 +280,7 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
             if (nv.isSetPh()) nv.unsetPh();
             _ph = null;
         } else {
-            nv.addNewPh().setType(STPlaceholderType.Enum.forInt(placeholder.ordinal() + 1));
+            nv.addNewPh().setType(STPlaceholderType.Enum.forInt(placeholder.ooxmlId));
         }
     }
     
@@ -442,7 +450,6 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
     
     protected PaintStyle selectPaint(final CTGradientFillProperties gradFill, CTSchemeColor phClr) {
 
-        @SuppressWarnings("deprecation")
         final CTGradientStop[] gs = gradFill.getGsLst().getGsArray();
 
         Arrays.sort(gs, new Comparator<CTGradientStop>() {

@@ -28,6 +28,7 @@ import org.apache.poi.POIXMLException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.sl.usermodel.PictureShape;
+import org.apache.poi.sl.usermodel.Placeholder;
 import org.apache.poi.util.Beta;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
@@ -118,6 +119,12 @@ public class XSLFPictureShape extends XSLFSimpleShape
         }
         return _data;
     }
+
+    @Override
+    public void setPlaceholder(Placeholder placeholder) {
+        super.setPlaceholder(placeholder);
+    }
+    
     
     /**
      * For an external linked picture, return the last-seen
@@ -168,7 +175,6 @@ public class XSLFPictureShape extends XSLFSimpleShape
         return (r == null) ? null : new Insets(r.getT(), r.getL(), r.getB(), r.getR());
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     void copy(XSLFShape sh){
         super.copy(sh);
