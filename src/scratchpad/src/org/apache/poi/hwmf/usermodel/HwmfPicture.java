@@ -70,12 +70,8 @@ public class HwmfPicture {
             int remainingSize = (int)(recordSize - consumedSize);
             assert(remainingSize >= 0);
             if (remainingSize > 0) {
-//                byte remaining[] = new byte[remainingSize];
-//                leis.read(remaining);
-//                FileOutputStream fos = new FileOutputStream("remaining.dat");
-//                fos.write(remaining);
-//                fos.close();
-                 leis.skip(remainingSize);
+            	// skip size in loops, because not always all bytes are skipped in one call 
+                for (int i=remainingSize; i>0; i-=leis.skip(i));
             }
         }
     }

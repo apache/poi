@@ -614,7 +614,7 @@ public class HwmfFill {
         
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
-            boolean hasBitmap = (recordSize > ((recordFunction >> 8) + 3));
+            boolean hasBitmap = (recordSize/2 != ((recordFunction >> 8) + 3));
 
             int size = 0;
             int rasterOpCode = leis.readUShort();
@@ -802,7 +802,7 @@ public class HwmfFill {
         
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
-            boolean hasBitmap = (recordSize > ((recordFunction >> 8) + 3));
+            boolean hasBitmap = (recordSize/2 != ((recordFunction >> 8) + 3));
 
             int size = 0;
             int rasterOpCode = leis.readUShort();
@@ -840,7 +840,7 @@ public class HwmfFill {
 
         @Override
         public BufferedImage getImage() {
-            return target.getImage();
+            return (target == null) ? null : target.getImage();
         }
     }
 

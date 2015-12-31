@@ -22,6 +22,7 @@ import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -207,7 +208,7 @@ public class HwmfBitmapDib {
     @SuppressWarnings("unused")
     private Color colorTable[];
     @SuppressWarnings("unused")
-    private int colorMaskRed=0,colorMaskGreen=0,colorMaskBlue=0;
+    private int colorMaskR=0,colorMaskG=0,colorMaskB=0;
 
     // size of header and color table, for start of image data calculation
     private int introSize;
@@ -222,7 +223,7 @@ public class HwmfBitmapDib {
         introSize += readColors(leis);
         assert(introSize < 10000);
 
-        int fileSize = (headerImageSize != 0) ? (int)(introSize+headerImageSize) : recordSize;
+        int fileSize = (headerImageSize < headerSize) ? recordSize : (int)Math.min(introSize+headerImageSize,recordSize);
         
         imageData = new byte[fileSize];
         leis.reset();
@@ -316,41 +317,43 @@ public class HwmfBitmapDib {
             return 0;
         case BI_BITCOUNT_1:
             // 2 colors
-            return readRGBQuad(leis, 2);
+            return readRGBQuad(leis, (int)(headerColorUsed == 0 ? 2 : Math.min(headerColorUsed,2)));
         case BI_BITCOUNT_2:
             // 16 colors
-            return readRGBQuad(leis, 16);
+            return readRGBQuad(leis, (int)(headerColorUsed == 0 ? 16 : Math.min(headerColorUsed,16)));
         case BI_BITCOUNT_3:
             // 256 colors
-            return readRGBQuad(leis, (int)headerColorUsed);
-        case BI_BITCOUNT_5:
-            colorMaskRed=0xFF;
-            colorMaskGreen=0xFF;
-            colorMaskBlue=0xFF;
-            return 0;
+            return readRGBQuad(leis, (int)(headerColorUsed == 0 ? 256 : Math.min(headerColorUsed,256)));
         case BI_BITCOUNT_4:
-            if (headerCompression == Compression.BI_RGB) {
-                colorMaskBlue = 0x1F;
-                colorMaskGreen = 0x1F<<5;
-                colorMaskRed = 0x1F<<10;
+            switch (headerCompression) {
+            case BI_RGB:
+                colorMaskB = 0x1F;
+                colorMaskG = 0x1F<<5;
+                colorMaskR = 0x1F<<10;
                 return 0;
-            } else {
-                assert(headerCompression == Compression.BI_BITFIELDS);
-                colorMaskBlue = leis.readInt();
-                colorMaskGreen = leis.readInt();
-                colorMaskRed = leis.readInt();
+            case BI_BITFIELDS:
+                colorMaskB = leis.readInt();
+                colorMaskG = leis.readInt();
+                colorMaskR = leis.readInt();
                 return 3*LittleEndianConsts.INT_SIZE;
+            default:
+                throw new IOException("Invalid compression option ("+headerCompression+") for bitcount ("+headerBitCount+").");
             }
+        case BI_BITCOUNT_5:
         case BI_BITCOUNT_6:
-            if (headerCompression == Compression.BI_RGB) {
-                colorMaskBlue = colorMaskGreen = colorMaskRed = 0xFF;
+            switch (headerCompression) {
+            case BI_RGB:
+                colorMaskR=0xFF;
+                colorMaskG=0xFF;
+                colorMaskB=0xFF;
                 return 0;
-            } else {
-                assert(headerCompression == Compression.BI_BITFIELDS);
-                colorMaskBlue = leis.readInt();
-                colorMaskGreen = leis.readInt();
-                colorMaskRed = leis.readInt();
+            case BI_BITFIELDS:
+                colorMaskB = leis.readInt();
+                colorMaskG = leis.readInt();
+                colorMaskR = leis.readInt();
                 return 3*LittleEndianConsts.INT_SIZE;
+            default:
+                throw new IOException("Invalid compression option ("+headerCompression+") for bitcount ("+headerBitCount+").");
             }
         }
     }
@@ -372,30 +375,36 @@ public class HwmfBitmapDib {
         return size;
     }
 
-    public BufferedImage getImage() {
+    public InputStream getBMPStream() {
         if (imageData == null) {
             throw new RecordFormatException("bitmap not initialized ... need to call init() before");
         }
 
+        // sometimes there are missing bytes after the imageData which will be 0-filled
+        int imageSize = (int)Math.max(imageData.length, introSize+headerImageSize);
+        
         // create the image data and leave the parsing to the ImageIO api
-        byte buf[] = new byte[BMP_HEADER_SIZE+imageData.length];
+        byte buf[] = new byte[BMP_HEADER_SIZE+imageSize];
 
         // https://en.wikipedia.org/wiki/BMP_file_format #  Bitmap file header
         buf[0] = (byte)'B';
         buf[1] = (byte)'M';
         // the full size of the bmp
-        LittleEndian.putInt(buf, 2, (int)(BMP_HEADER_SIZE + introSize + headerImageSize));
+        LittleEndian.putInt(buf, 2, BMP_HEADER_SIZE+imageSize);
         // the next 4 bytes are unused
         LittleEndian.putInt(buf, 6, 0);
         // start of image = BMP header length + dib header length + color tables length
         LittleEndian.putInt(buf, 10, BMP_HEADER_SIZE + introSize);
-        
+        // fill the "known" image data
         System.arraycopy(imageData, 0, buf, BMP_HEADER_SIZE, imageData.length);
         
+        return new ByteArrayInputStream(buf);
+    }
+    
+    public BufferedImage getImage() {
         try {
-            return ImageIO.read(new ByteArrayInputStream(buf));
+            return ImageIO.read(getBMPStream());
         } catch (IOException e) {
-            // ... shouldn't happen
             throw new RecordFormatException("invalid bitmap data", e);
         }
     }

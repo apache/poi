@@ -259,6 +259,9 @@ public class HwmfText {
         
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
+            // -6 bytes of record function and length header
+            final int remainingRecordSize = (int)(recordSize-6);
+            
             y = leis.readShort();
             x = leis.readShort();
             stringLength = leis.readShort();
@@ -266,7 +269,7 @@ public class HwmfText {
             
             int size = 4*LittleEndianConsts.SHORT_SIZE;
             
-            if (fwOpts != 0) {
+            if (fwOpts != 0 && size+8<=remainingRecordSize) {
                 // the bounding rectangle is optional and only read when fwOpts are given
                 left = leis.readShort();
                 top = leis.readShort();
@@ -280,8 +283,6 @@ public class HwmfText {
             text = new String(buf, 0, stringLength, LocaleUtil.CHARSET_1252);
             size += buf.length;
             
-            // -6 bytes of record function and length header
-            int remainingRecordSize = (int)(recordSize-6);
             if (size < remainingRecordSize) {
                 if (size + stringLength*LittleEndianConsts.SHORT_SIZE < remainingRecordSize) {
                     throw new RecordFormatException("can't read Dx array - given recordSize doesn't contain enough values for string length "+stringLength);
