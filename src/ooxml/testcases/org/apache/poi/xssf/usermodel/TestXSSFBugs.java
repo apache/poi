@@ -2879,7 +2879,6 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
      * ! Rule: Package require content types when retrieving a part from a package. [M.1.14]
      */
     @Test
-    @Ignore
     public void test58760() throws Exception {
         Workbook wb = XSSFTestDataSamples.openSampleWorkbook("58760.xlsx");
         assertEquals(1, wb.getNumberOfSheets());
