@@ -76,33 +76,8 @@ public class HwmfBitmap16 {
         byte buf[] = new byte[bytes];
         leis.read(buf);
         
-//        FileOutputStream fos = new FileOutputStream("bla16.bmp");
-//        fos.write(buf);
-//        fos.close();
-        
-        
-//        BufferedImage bi = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-//        
-//        int size2 = 0;
-//        byte buf[] = new byte[widthBytes];
-//        for (int h=0; h<height; h++) {
-//            leis.read(buf);
-//            size2 += widthBytes;
-//
-//            ImageInputStream iis = new MemoryCacheImageInputStream(new ByteArrayInputStream(buf));
-//
-//            for (int w=0; w<width; w++) {
-//                long bitsAtPixel = iis.readBits(bitsPixel);
-//                // TODO: is bitsPixel a multiple of 3 (r,g,b)
-//                // which colortable should be used for the various bit sizes???
-//                
-//            }
-//        }
-//        
-//        assert (bytes == size2);
-//
-//        size += size2;
-        
+        // TODO: this is not implemented ... please provide a sample, if it
+        // ever happens to you, to come here ...
         
         return size;
     }

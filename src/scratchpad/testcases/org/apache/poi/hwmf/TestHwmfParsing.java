@@ -20,14 +20,17 @@ package org.apache.poi.hwmf;
 import static org.junit.Assert.assertEquals;
 
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FilterInputStream;
 import java.io.IOException;
+import java.net.URL;
 import java.util.List;
 import java.util.Locale;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import javax.imageio.ImageIO;
 
@@ -55,55 +58,70 @@ public class TestHwmfParsing {
 
     @Test
     @Ignore
-    public void extract() throws IOException {
-        File dir = new File("test-data/slideshow");
-        File files[] = dir.listFiles(new FileFilter() {
-            public boolean accept(File pathname) {
-                return pathname.getName().matches("(?i).*\\.pptx?$");
-            }
-        });
-
-        boolean outputFiles = false;
-
+    public void fetchWmfFromGovdocs() throws IOException {
+        URL url = new URL("http://digitalcorpora.org/corpora/files/govdocs1/by_type/ppt.zip");
         File outdir = new File("build/ppt");
-        if (outputFiles) {
-            outdir.mkdirs();
-        }
-        int wmfIdx = 1;
-        for (File f : files) {
+        outdir.mkdirs();
+        ZipInputStream zis = new ZipInputStream(url.openStream());
+        ZipEntry ze;
+        while ((ze = zis.getNextEntry()) != null) {
+            String basename = ze.getName().replaceAll(".*?([^/]+)\\.wmf", "$1");
+            FilterInputStream fis = new FilterInputStream(zis){
+                public void close() throws IOException {}
+            };
             try {
-                SlideShow<?,?> ss = SlideShowFactory.create(f);
+                SlideShow<?,?> ss = SlideShowFactory.create(fis);
+                int wmfIdx = 1;
                 for (PictureData pd : ss.getPictureData()) {
                     if (pd.getType() != PictureType.WMF) continue;
                     byte wmfData[] = pd.getData();
-                    if (outputFiles) {
-                        String filename = String.format(Locale.ROOT, "pic%04d.wmf", wmfIdx);
-                        FileOutputStream fos = new FileOutputStream(new File(outdir, filename));
-                        fos.write(wmfData);
-                        fos.close();
-                    }
-
-                    HwmfPicture wmf = new HwmfPicture(new ByteArrayInputStream(wmfData));
-
-                    int bmpIndex = 1;
-                    for (HwmfRecord r : wmf.getRecords()) {
-                        if (r instanceof HwmfImageRecord) {
-                            BufferedImage bi = ((HwmfImageRecord)r).getImage();
-                            if (outputFiles) {
-                                String filename = String.format(Locale.ROOT, "pic%04d-%04d.png", wmfIdx, bmpIndex);
-                                ImageIO.write(bi, "PNG", new File(outdir, filename));
-                            }
-                            bmpIndex++;
-                        }
-                    }
-
+                    String filename = String.format(Locale.ROOT, "%s-%04d.wmf", basename, wmfIdx);
+                    FileOutputStream fos = new FileOutputStream(new File(outdir, filename));
+                    fos.write(wmfData);
+                    fos.close();
                     wmfIdx++;
                 }
                 ss.close();
             } catch (Exception e) {
-                System.out.println(f+" ignored.");
+                System.out.println(ze.getName()+" ignored.");
             }
         }
     }
-
+    
+    @Test
+    @Ignore
+    public void parseWmfs() throws IOException {
+        boolean outputFiles = false;
+        File indir = new File("build/ppt"), outdir = indir;
+        final String startFile = "";
+        File files[] = indir.listFiles(new FileFilter() {
+            boolean foundStartFile = false;
+            public boolean accept(File pathname) {
+                foundStartFile |= startFile.isEmpty() || pathname.getName().contains(startFile);
+                return foundStartFile && pathname.getName().matches("(?i).*\\.wmf?$");
+            }
+        });
+        for (File f : files) {
+            try {
+                String basename = f.getName().replaceAll(".*?([^/]+)\\.wmf", "$1");
+                FileInputStream fis = new FileInputStream(f);
+                HwmfPicture wmf = new HwmfPicture(fis);
+                fis.close();
+                
+                int bmpIndex = 1;
+                for (HwmfRecord r : wmf.getRecords()) {
+                    if (r instanceof HwmfImageRecord) {
+                        BufferedImage bi = ((HwmfImageRecord)r).getImage();
+                        if (bi != null && outputFiles) {
+                            String filename = String.format(Locale.ROOT, "%s-%04d.png", basename, bmpIndex);
+                            ImageIO.write(bi, "PNG", new File(outdir, filename));
+                        }
+                        bmpIndex++;
+                    }
+                }
+            } catch (Exception e) {
+                System.out.println(f.getName()+" ignored.");                
+            }
+        }
+    }
 }

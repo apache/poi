@@ -542,14 +542,17 @@ public class HwmfWindowing {
             count = leis.readUShort();
             top = leis.readUShort();
             bottom = leis.readUShort();
-            left_scanline = new int[count];
-            right_scanline = new int[count];
-            for (int i=0; i*2<count; i++) {
+            int size = 3*LittleEndianConsts.SHORT_SIZE;
+            left_scanline = new int[count/2];
+            right_scanline = new int[count/2];
+            for (int i=0; i<count/2; i++) {
                 left_scanline[i] = leis.readUShort();
                 right_scanline[i] = leis.readUShort();
+                size += 2*LittleEndianConsts.SHORT_SIZE;
             }
             count2 = leis.readUShort();
-            return 8 + count*4;
+            size += LittleEndianConsts.SHORT_SIZE;
+            return size;
         }
     }
 
@@ -618,26 +621,23 @@ public class HwmfWindowing {
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
             nextInChain = leis.readShort();
             objectType = leis.readShort();
-            objectCount = leis.readUShort();
+            objectCount = leis.readInt();
             regionSize = leis.readShort();
             scanCount = leis.readShort();
             maxScan = leis.readShort();
-            bottom = leis.readShort();
-            right = leis.readShort();
-            top = leis.readShort();
             left = leis.readShort();
+            top = leis.readShort();
+            right = leis.readShort();
+            bottom = leis.readShort();
+            
+            int size = 9*LittleEndianConsts.SHORT_SIZE+LittleEndianConsts.INT_SIZE;
 
-            List<WmfScanObject> soList = new ArrayList<WmfScanObject>();
-            int scanCountI = 0, size = 0;
-            do {
-                WmfScanObject so = new WmfScanObject();
-                size += so.init(leis);
-                scanCountI += so.count;
-                soList.add(so);
-            } while  (scanCountI < scanCount);
-            scanObjects = soList.toArray(new WmfScanObject[soList.size()]);
+            scanObjects = new WmfScanObject[scanCount];
+            for (int i=0; i<scanCount; i++) {
+                size += (scanObjects[i] = new WmfScanObject()).init(leis);
+            }
 
-            return 20 + size;
+            return size;
         }
 
         @Override
