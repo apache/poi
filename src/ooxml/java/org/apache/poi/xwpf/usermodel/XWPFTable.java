@@ -92,7 +92,6 @@ public class XWPFTable implements IBodyElement, ISDTContents {
         }
     }
 
-    @SuppressWarnings("deprecation")
     public XWPFTable(CTTbl table, IBody part) {
         this.part = part;
         this.ctTbl = table;

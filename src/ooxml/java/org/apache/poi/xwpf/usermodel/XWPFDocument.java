@@ -252,7 +252,6 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
         }
     }
 
-    @SuppressWarnings("deprecation")
     private void initFootnotes() throws XmlException, IOException {
         for (POIXMLDocumentPart p : getRelations()) {
             String relation = p.getPackageRelationship().getRelationshipType();
@@ -1212,7 +1211,6 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      * @param table
      */
     @Override
-    @SuppressWarnings("deprecation")
     public void insertTable(int pos, XWPFTable table) {
         bodyElements.add(pos, table);
         int i = 0;

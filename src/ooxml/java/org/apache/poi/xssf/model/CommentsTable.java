@@ -122,7 +122,6 @@ public class CommentsTable extends POIXMLDocumentPart {
     }
 
     public int findAuthor(String author) {
-        @SuppressWarnings("deprecation")
         String[] authorArray = comments.getAuthors().getAuthorArray();
         for (int i = 0 ; i < authorArray.length; i++) {
             if (authorArray[i].equals(author)) {
@@ -203,7 +202,6 @@ public class CommentsTable extends POIXMLDocumentPart {
      * Calls that use the commentRefs cache will perform in O(1)
      * time rather than O(n) lookup time for List<CTComment> comments.
      */
-    @SuppressWarnings("deprecation") //YK: getXYZArray) array accessors are deprecated in xmlbeans with JDK 1.5 support
     private void prepareCTCommentCache() {
         // Create the cache if needed
         if(commentRefs == null) {
@@ -265,7 +263,6 @@ public class CommentsTable extends POIXMLDocumentPart {
         final String stringRef = cellRef.formatAsString();
         CTCommentList lst = comments.getCommentList();
         if(lst != null) {
-            @SuppressWarnings("deprecation") //YK: getXYZArray() array accessors are deprecated in xmlbeans with JDK 1.5 support
             CTComment[] commentArray = lst.getCommentArray();
             for (int i = 0; i < commentArray.length; i++) {
                 CTComment comment = commentArray[i];

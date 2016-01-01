@@ -182,7 +182,6 @@ public class XSSFSheetConditionalFormatting implements SheetConditionalFormattin
         return rule;
     }
     
-    @SuppressWarnings("deprecation")
     public int addConditionalFormatting(CellRangeAddress[] regions, ConditionalFormattingRule[] cfRules) {
         if (regions == null) {
             throw new IllegalArgumentException("regions must not be null");

@@ -126,6 +126,7 @@ public final class XSSFRowShifter {
     /**
      * Updated named ranges
      */
+    @SuppressWarnings("resource")
     public void updateNamedRanges(FormulaShifter shifter) {
         XSSFWorkbook wb = sheet.getWorkbook();
         XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
@@ -145,6 +146,7 @@ public final class XSSFRowShifter {
     /**
      * Update formulas.
      */
+    @SuppressWarnings("resource")
     public void updateFormulas(FormulaShifter shifter) {
         //update formulas on the parent sheet
         updateSheetFormulas(sheet, shifter);
@@ -211,6 +213,7 @@ public final class XSSFRowShifter {
      * @return the shifted formula if the formula was changed,
      *         <code>null</code> if the formula wasn't modified
      */
+    @SuppressWarnings("resource")
     private static String shiftFormula(XSSFRow row, String formula, FormulaShifter shifter) {
         XSSFSheet sheet = row.getSheet();
         XSSFWorkbook wb = sheet.getWorkbook();
@@ -231,7 +234,7 @@ public final class XSSFRowShifter {
         }
     }
 
-    @SuppressWarnings("deprecation")
+    @SuppressWarnings("resource")
     public void updateConditionalFormatting(FormulaShifter shifter) {
         XSSFWorkbook wb = sheet.getWorkbook();
         int sheetIndex = wb.getSheetIndex(sheet);

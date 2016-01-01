@@ -116,7 +116,6 @@ public class ExternalLinksTable extends POIXMLDocumentPart {
         link.getExternalBook().setId(newRel.getId());
     }
 
-    @SuppressWarnings("deprecation")
     public List<String> getSheetNames() {
         CTExternalSheetName[] sheetNames = 
                 link.getExternalBook().getSheetNames().getSheetNameArray();
@@ -127,7 +126,6 @@ public class ExternalLinksTable extends POIXMLDocumentPart {
         return names;
     }
     
-    @SuppressWarnings("deprecation")
     public List<Name> getDefinedNames() {
         CTExternalDefinedName[] extNames = 
                 link.getExternalBook().getDefinedNames().getDefinedNameArray();

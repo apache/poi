@@ -41,7 +41,6 @@ public class XSLFTableStyles extends POIXMLDocumentPart implements Iterable<XSLF
         super();
     }
 
-    @SuppressWarnings("deprecation")
     public XSLFTableStyles(PackagePart part, PackageRelationship rel) throws IOException, XmlException {
         super(part, rel);
 

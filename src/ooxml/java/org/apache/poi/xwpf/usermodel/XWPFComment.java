@@ -29,7 +29,6 @@ public class XWPFComment {
     protected String author;
     protected StringBuffer text;
 
-    @SuppressWarnings("deprecation")
     public XWPFComment(CTComment comment, XWPFDocument document) {
         text = new StringBuffer();
         id = comment.getId().toString();

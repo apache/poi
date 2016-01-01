@@ -206,7 +206,6 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
      * @param layout
      * @return created slide
      */
-    @SuppressWarnings("deprecation")
     public XSLFSlide createSlide(XSLFSlideLayout layout) {
         int slideNumber = 256, cnt = 1;
         CTSlideIdList slideList;
@@ -369,7 +368,6 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
      *
      * @param newIndex 0-based index of the slide
      */
-    @SuppressWarnings("deprecation")
     public void setSlideOrder(XSLFSlide slide, int newIndex){
         int oldIndex = _slides.indexOf(slide);
         if(oldIndex == -1) throw new IllegalArgumentException("Slide not found");

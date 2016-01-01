@@ -129,7 +129,6 @@ public class XSSFTable extends POIXMLDocumentPart {
      * 
      * @return the xpath of the table's root element
      */
-    @SuppressWarnings("deprecation")
     public String getCommonXpath() {
         if (commonXPath == null) {
             String[] commonTokens = {};
@@ -167,7 +166,6 @@ public class XSSFTable extends POIXMLDocumentPart {
     }
 
     
-    @SuppressWarnings("deprecation")
     public List<XSSFXmlColumnPr> getXmlColumnPrs() {
         
         if (xmlColumnPr==null) {
@@ -275,7 +273,6 @@ public class XSSFTable extends POIXMLDocumentPart {
      * Headers <em>must</em> be in sync, otherwise Excel will display a
      * "Found unreadable content" message on startup.
      */
-    @SuppressWarnings("deprecation")
     public void updateHeaders(){
         XSSFSheet sheet = (XSSFSheet)getParent();
         CellReference ref = getStartCellReference();

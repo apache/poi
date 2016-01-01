@@ -38,7 +38,6 @@ public class XSLFTableRow implements Iterable<XSLFTableCell> {
     private List<XSLFTableCell> _cells;
     private XSLFTable _table;
 
-    @SuppressWarnings("deprecation")
     /*package*/ XSLFTableRow(CTTableRow row, XSLFTable table){
         _row = row;
         _table = table;

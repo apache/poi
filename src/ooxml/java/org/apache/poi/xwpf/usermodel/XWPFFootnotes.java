@@ -66,7 +66,6 @@ public class XWPFFootnotes extends POIXMLDocumentPart {
      * Read document
      */
     @Override
-    @SuppressWarnings("deprecation")
     protected void onDocumentRead() throws IOException {
         FootnotesDocument notesDoc;
         try {

@@ -819,7 +819,6 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
         return false;
     }
 
-    @SuppressWarnings("deprecation")
     void copy(XSLFTextParagraph other){
         if (other == this) return;
         

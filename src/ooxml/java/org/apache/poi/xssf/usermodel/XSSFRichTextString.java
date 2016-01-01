@@ -253,7 +253,6 @@ public class XSSFRichTextString implements RichTextString {
      *  it just text in the default style?
      */
     public boolean hasFormatting() {
-        @SuppressWarnings("deprecation")
         CTRElt[] rs = st.getRArray();
         if (rs == null || rs.length == 0) {
             return false;
@@ -310,7 +309,6 @@ public class XSSFRichTextString implements RichTextString {
     /**
      * Returns the plain string representation.
      */
-    @SuppressWarnings("deprecation") //YK: getXYZArray() array accessors are deprecated in xmlbeans with JDK 1.5 support
     public String getString() {
         if(st.sizeOfRArray() == 0) {
             return utfDecode(st.getT());
@@ -409,7 +407,6 @@ public class XSSFRichTextString implements RichTextString {
         return st;
     }
 
-    @SuppressWarnings("deprecation") //YK: getXYZArray() array accessors are deprecated in xmlbeans with JDK 1.5 support
     protected void setStylesTableReference(StylesTable tbl){
         styles = tbl;
         if(st.sizeOfRArray() > 0) {
@@ -558,7 +555,6 @@ public class XSSFRichTextString implements RichTextString {
             while(sub.size() > 1) sub.remove(sub.lastKey());
         }
 
-    @SuppressWarnings("deprecation")
     TreeMap<Integer, CTRPrElt> getFormatMap(CTRst entry){
         int length = 0;
         TreeMap<Integer, CTRPrElt> formats = new TreeMap<Integer, CTRPrElt>();
@@ -577,11 +573,11 @@ public class XSSFRichTextString implements RichTextString {
             throw new IllegalArgumentException("Text length was " + text.length() +
                     " but the last format index was " + formats.lastKey());
         }
-        CTRst st = CTRst.Factory.newInstance();
+        CTRst stf = CTRst.Factory.newInstance();
         int runStartIdx = 0;
         for (Iterator<Integer> it = formats.keySet().iterator(); it.hasNext();) {
             int runEndIdx = it.next();
-            CTRElt run = st.addNewR();
+            CTRElt run = stf.addNewR();
             String fragment = text.substring(runStartIdx, runEndIdx);
             run.setT(fragment);
             preserveSpaces(run.xgetT());
@@ -589,7 +585,7 @@ public class XSSFRichTextString implements RichTextString {
             if(fmt != null) run.setRPr(fmt);
             runStartIdx = runEndIdx;
         }
-        return st;
+        return stf;
     }
     
     private ThemesTable getThemesTable() {

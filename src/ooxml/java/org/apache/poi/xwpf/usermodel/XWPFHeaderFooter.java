@@ -441,7 +441,6 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
      * @param pos
      * @param table
      */
-    @SuppressWarnings("deprecation")
     public void insertTable(int pos, XWPFTable table) {
         bodyElements.add(pos, table);
         int i = 0;

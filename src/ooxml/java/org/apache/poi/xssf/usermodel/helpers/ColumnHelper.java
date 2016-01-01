@@ -46,7 +46,6 @@ public class ColumnHelper {
         cleanColumns();
     }
     
-    @SuppressWarnings("deprecation")
     public void cleanColumns() {
         TreeSet<CTCol> trackedCols = new TreeSet<CTCol>(CTColComparator.BY_MIN_MAX);
         CTCols newCols = CTCols.Factory.newInstance();
@@ -154,7 +153,6 @@ public class ColumnHelper {
         return new long[] { col.getMin(), col.getMax() };
     }
     
-    @SuppressWarnings("deprecation")
     public static void sortColumns(CTCols newCols) {
         CTCol[] colArray = newCols.getColArray();
         Arrays.sort(colArray, CTColComparator.BY_MIN_MAX);
@@ -187,7 +185,6 @@ public class ColumnHelper {
         // Fetching the array is quicker than working on the new style
         //  list, assuming we need to read many of them (which we often do),
         //  and assuming we're not making many changes (which we're not)
-        @SuppressWarnings("deprecation")
         CTCol[] colArray = cols.getColArray();
 
         for (CTCol col : colArray) {
@@ -241,7 +238,6 @@ public class ColumnHelper {
         return columnExists1Based(cols, index+1);
     }
 
-    @SuppressWarnings("deprecation")
     private boolean columnExists1Based(CTCols cols, long index1) {
         for (CTCol col : cols.getColArray()) {
             if (col.getMin() == index1) {
@@ -313,7 +309,6 @@ public class ColumnHelper {
         return -1;
     }
 
-    @SuppressWarnings("deprecation")
     private boolean columnExists(CTCols cols, long min, long max) {
         for (CTCol col : cols.getColArray()) {
             if (col.getMin() == min && col.getMax() == max) {
@@ -323,7 +318,6 @@ public class ColumnHelper {
         return false;
     }
 
-    @SuppressWarnings("deprecation")
     public int getIndexOfColumn(CTCols cols, CTCol searchCol) {
         int i = 0;
         for (CTCol col : cols.getColArray()) {

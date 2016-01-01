@@ -63,7 +63,6 @@ public class XSLFCommentAuthors extends POIXMLDocumentPart {
        return _authors;
     }
     
-    @SuppressWarnings("deprecation")
     public CTCommentAuthor getAuthorById(long id) {
        // TODO Have a map
        for (CTCommentAuthor author : _authors.getCmAuthorArray()) {
