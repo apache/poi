@@ -85,6 +85,7 @@ import org.etsi.uri.x01903.v13.DigestAlgAndValueType;
 import org.etsi.uri.x01903.v13.QualifyingPropertiesType;
 import org.junit.Assume;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.w3.x2000.x09.xmldsig.ReferenceType;
 import org.w3.x2000.x09.xmldsig.SignatureDocument;
@@ -579,6 +580,22 @@ public class TestSignatureInfo {
         pkg.close();
     }
     
+    @Test
+    @Ignore
+    public void testMultiSign() throws Exception {
+        initKeyPair("KeyA", "CN=KeyA");
+        KeyPair keyPairA = keyPair;
+        X509Certificate x509A = x509;
+        initKeyPair("KeyB", "CN=KeyB");
+        KeyPair keyPairB = keyPair;
+        X509Certificate x509B = x509;
+        
+        File tpl = copy(testdata.getFile("bug58630.xlsx"));
+        OPCPackage pkg = OPCPackage.open(tpl);
+        SignatureConfig signatureConfig = new SignatureConfig();
+        
+        
+    }
     
     private void sign(OPCPackage pkgCopy, String alias, String signerDn, int signerCount) throws Exception {
         initKeyPair(alias, signerDn);
