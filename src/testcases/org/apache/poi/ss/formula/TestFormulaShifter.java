@@ -244,4 +244,35 @@ public final class TestFormulaShifter extends TestCase {
         assertEquals("formula previously pointing to sheet 3 should be unchanged", 
                 3, ((Ref3DPtg)ptgs[3]).getExternSheetIndex());
     }
+    
+    public void testInvalidArgument() {
+        try {
+            FormulaShifter.createForRowShift(1, "name", 1, 2, 0, SpreadsheetVersion.EXCEL97);
+            fail("Should catch exception here");
+        } catch (IllegalArgumentException e) {
+            // expected here
+        }
+
+        try {
+            FormulaShifter.createForRowShift(1, "name", 2, 1, 2, SpreadsheetVersion.EXCEL97);
+            fail("Should catch exception here");
+        } catch (IllegalArgumentException e) {
+            // expected here
+        }
+    }
+    
+    @SuppressWarnings("deprecation")
+    public void testConstructor() {
+        assertNotNull(FormulaShifter.createForRowShift(1, "name", 1, 2, 2));
+    }
+
+    public void testToString() {
+        FormulaShifter shifter = FormulaShifter.createForRowShift(0, "sheet", 123, 456, 789,
+                SpreadsheetVersion.EXCEL2007);
+        assertNotNull(shifter);
+        assertNotNull(shifter.toString());
+        assertTrue(shifter.toString().contains("123"));
+        assertTrue(shifter.toString().contains("456"));
+        assertTrue(shifter.toString().contains("789"));
+    }
 }
