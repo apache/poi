@@ -67,7 +67,6 @@ public class MapInfo extends POIXMLDocumentPart {
 		readFrom(part.getInputStream());
 	}
 
-    @SuppressWarnings("deprecation")
 	public void readFrom(InputStream is) throws IOException {
 		try {
 			MapInfoDocument doc = MapInfoDocument.Factory.parse(is, DEFAULT_XML_OPTIONS);
@@ -106,7 +105,6 @@ public class MapInfo extends POIXMLDocumentPart {
 	 * @param schemaId the schema ID
 	 * @return CTSchema by it's ID
 	 */
-    @SuppressWarnings("deprecation")
 	public CTSchema getCTSchemaById(String schemaId){
 		CTSchema xmlSchema = null;
 

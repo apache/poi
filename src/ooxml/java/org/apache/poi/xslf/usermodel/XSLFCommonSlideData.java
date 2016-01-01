@@ -46,7 +46,6 @@ public class XSLFCommonSlideData {
         this.data = data;
     }
     
-    @SuppressWarnings("deprecation")
     public List<DrawingTextBody> getDrawingText() {
         CTGroupShape gs = data.getSpTree();
 
@@ -100,7 +99,6 @@ public class XSLFCommonSlideData {
        return paragraphs;
     }
 
-    @SuppressWarnings("deprecation")
     private void processShape(CTGroupShape gs, List<DrawingTextBody> out) {
         for (CTShape shape : gs.getSpArray()) {
             CTTextBody ctTextBody = shape.getTxBody();

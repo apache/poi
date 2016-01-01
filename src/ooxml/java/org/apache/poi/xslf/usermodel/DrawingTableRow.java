@@ -27,7 +27,6 @@ public class DrawingTableRow {
         this.row = row;
     }
 
-    @SuppressWarnings("deprecation")
     public DrawingTableCell[] getCells() {
         CTTableCell[] ctTableCells = row.getTcArray();
         DrawingTableCell[] o = new DrawingTableCell[ctTableCells.length];

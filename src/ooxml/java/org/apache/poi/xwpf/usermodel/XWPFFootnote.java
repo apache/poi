@@ -124,7 +124,6 @@ public class XWPFFootnote implements Iterable<XWPFParagraph>, IBody {
      * @param table
      * @see org.apache.poi.xwpf.usermodel.IBody#insertTable(int pos, XWPFTable table)
      */
-    @SuppressWarnings("deprecation")
     public void insertTable(int pos, XWPFTable table) {
         bodyElements.add(pos, table);
         int i = 0;

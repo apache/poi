@@ -119,7 +119,6 @@ public class XSLFPowerPointExtractor extends POIXMLTextExtractor {
     * @param notesText Should we retrieve text from notes?
     * @param masterText Should we retrieve text from master slides?
     */
-   @SuppressWarnings("deprecation")
    public String getText(boolean slideText, boolean notesText, boolean masterText) {
       StringBuffer text = new StringBuffer();
 

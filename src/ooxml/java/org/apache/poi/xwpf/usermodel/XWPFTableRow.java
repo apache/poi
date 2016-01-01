@@ -156,7 +156,6 @@ public class XWPFTableRow {
      *
      * @return a list of {@link XWPFTableCell}
      */
-    @SuppressWarnings("deprecation")
     public List<XWPFTableCell> getTableCells() {
         if (tableCells == null) {
             List<XWPFTableCell> cells = new ArrayList<XWPFTableCell>();

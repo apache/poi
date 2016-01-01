@@ -94,7 +94,6 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * @param r the CTR bean which holds the run attributes
      * @param p the parent paragraph
      */
-    @SuppressWarnings("deprecation")
     public XWPFRun(CTR r, IRunBody p) {
         this.run = r;
         this.parent = p;

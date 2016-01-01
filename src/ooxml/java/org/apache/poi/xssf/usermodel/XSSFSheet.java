@@ -231,7 +231,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         hyperlinks = new ArrayList<XSSFHyperlink>();
     }
 
-    @SuppressWarnings("deprecation") //YK: getXYZArray() array accessors are deprecated in xmlbeans with JDK 1.5 support
     private void initRows(CTWorksheet worksheetParam) {
         _rows = new TreeMap<Integer, XSSFRow>();
         tables = new TreeMap<String, XSSFTable>();
@@ -247,7 +246,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * Read hyperlink relations, link them with CTHyperlink beans in this worksheet
      * and initialize the internal array of XSSFHyperlink objects
      */
-    @SuppressWarnings("deprecation") //YK: getXYZArray() array accessors are deprecated in xmlbeans with JDK 1.5 support
     private void initHyperlinks() {
         hyperlinks = new ArrayList<XSSFHyperlink>();
 
@@ -744,7 +742,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         return Collections.unmodifiableList(hyperlinks);
     }
 
-    @SuppressWarnings("deprecation")
     private int[] getBreaks(CTPageBreak ctPageBreak) {
         CTBreak[] brkArray = ctPageBreak.getBrkArray();
         int[] breaks = new int[brkArray.length];
@@ -754,7 +751,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         return breaks;
     }
 
-    @SuppressWarnings("deprecation")
     private void removeBreak(int index, CTPageBreak ctPageBreak) {
         int index1 = index + 1;
         CTBreak[] brkArray = ctPageBreak.getBrkArray();
@@ -1173,7 +1169,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      *
      * @return the list of merged regions
      */
-    @SuppressWarnings("deprecation")
     @Override
     public List<CellRangeAddress> getMergedRegions() {
         List<CellRangeAddress> addresses = new ArrayList<CellRangeAddress>();
@@ -1512,7 +1507,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     /**
      * Do not leave the width attribute undefined (see #52186).
      */
-    @SuppressWarnings("deprecation")
     private void setColWidthAttribute(CTCols ctCols) {
         for (CTCol col : ctCols.getColArray()) {
             if (!col.isSetWidth()) {
@@ -1550,8 +1544,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         return (short) outlineLevel;
     }
 
-
-    @SuppressWarnings("deprecation")
     private short getMaxOutlineLevelCols() {
         CTCols ctCols = worksheet.getColsArray(0);
         int outlineLevel = 0;
@@ -1761,7 +1753,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      *
      * @param indices A set of the regions to unmerge
      */
-    @SuppressWarnings("deprecation")
     public void removeMergedRegions(Collection<Integer> indices) {
         if (!worksheet.isSetMergeCells()) return;
         
@@ -1959,7 +1950,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
 
     }
 
-    @SuppressWarnings("deprecation")
     private void setColumn(int targetColumnIx, Integer style,
                            Integer level, Boolean hidden, Boolean collapsed) {
         CTCols cols = worksheet.getColsArray(0);
@@ -2055,7 +2045,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      *                the col info index of the start of the outline group
      * @return the column index of the last column in the outline group
      */
-    @SuppressWarnings("deprecation")
     private int setGroupHidden(int pIdx, int level, boolean hidden) {
         CTCols cols = worksheet.getColsArray(0);
         int idx = pIdx;
@@ -2084,7 +2073,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         return col.getMax() == other_col.getMin() - 1;
     }
 
-    @SuppressWarnings("deprecation")
     private int findStartOfColumnOutlineGroup(int pIdx) {
         // Find the start of the group.
         CTCols cols = worksheet.getColsArray(0);
@@ -2106,7 +2094,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         return idx;
     }
 
-    @SuppressWarnings("deprecation")
     private int findEndOfColumnOutlineGroup(int colInfoIndex) {
         CTCols cols = worksheet.getColsArray(0);
         // Find the end of the group.
@@ -2129,7 +2116,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         return idx;
     }
 
-    @SuppressWarnings("deprecation")
     private void expandColumn(int columnIndex) {
         CTCols cols = worksheet.getColsArray(0);
         CTCol col = columnHelper.getColumn(columnIndex, false);
@@ -2184,7 +2170,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
                 Boolean.FALSE, Boolean.FALSE);
     }
 
-    @SuppressWarnings("deprecation")
     private boolean isColumnGroupHiddenByParent(int idx) {
         CTCols cols = worksheet.getColsArray(0);
         // Look out outline details of end
@@ -2218,7 +2203,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         return startHidden;
     }
 
-    @SuppressWarnings("deprecation")
     private int findColInfoIdx(int columnValue, int fromColInfoIdx) {
         CTCols cols = worksheet.getColsArray(0);
 
@@ -2258,7 +2242,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * @param idx
      * @return a boolean represented if the column is collapsed
      */
-    @SuppressWarnings("deprecation")
     private boolean isColumnGroupCollapsed(int idx) {
         CTCols cols = worksheet.getColsArray(0);
         CTCol[] colArray = cols.getColArray();
@@ -2800,7 +2783,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * @param resetOriginalRowHeight whether to set the original row's height to the default
      */
     @Override
-    @SuppressWarnings("deprecation") //YK: getXYZArray() array accessors are deprecated in xmlbeans with JDK 1.5 support
     public void shiftRows(int startRow, int endRow, final int n, boolean copyRowHeight, boolean resetOriginalRowHeight) {
         XSSFVMLDrawing vml = getVMLDrawing(false);
 
@@ -3066,7 +3048,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * @param value <code>true</code> if this sheet is selected
      */
     @Override
-    @SuppressWarnings("deprecation") //YK: getXYZArray() array accessors are deprecated in xmlbeans with JDK 1.5 support
     public void setSelected(boolean value) {
         CTSheetViews views = getSheetTypeSheetViews();
         for (CTSheetView view : views.getSheetViewArray()) {
@@ -3674,7 +3655,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         return dataValidationHelper;
     }
 
-    @SuppressWarnings("deprecation") //YK: getXYZArray() array accessors are deprecated in xmlbeans with JDK 1.5 support
     public List<XSSFDataValidation> getDataValidations() {
         List<XSSFDataValidation> xssfValidations = new ArrayList<XSSFDataValidation>();
         CTDataValidations dataValidations = this.worksheet.getDataValidations();

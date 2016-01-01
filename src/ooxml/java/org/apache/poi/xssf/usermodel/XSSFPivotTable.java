@@ -265,7 +265,6 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
     }
     
     @Beta
-    @SuppressWarnings("deprecation")
     public List<Integer> getRowLabelColumns() {
         if (pivotTableDefinition.getRowFields() != null) {
             List<Integer> columnIndexes = new ArrayList<Integer>();

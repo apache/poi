@@ -330,7 +330,6 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     }
 
     @Override
-    @SuppressWarnings("deprecation") //  getXYZArray() array accessors are deprecated
     protected void onDocumentRead() throws IOException {
         try {
             WorkbookDocument doc = WorkbookDocument.Factory.parse(getPackagePart().getInputStream(), DEFAULT_XML_OPTIONS);
@@ -1330,7 +1329,6 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
      * 'Selected' sheet(s) is a distinct concept.
      */
     @Override
-    @SuppressWarnings("deprecation") //YK: getXYZArray() array accessors are deprecated in xmlbeans with JDK 1.5 support
     public void setActiveSheet(int index) {
 
         validateSheetIndex(index);
@@ -1569,7 +1567,6 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
      * @param pos the position that we want to insert the sheet into (0 based)
      */
     @Override
-    @SuppressWarnings("deprecation")
     public void setSheetOrder(String sheetname, int pos) {
         int idx = getSheetIndex(sheetname);
         sheets.add(pos, sheets.remove(idx));
@@ -1632,7 +1629,6 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         }
     }
     
-    @SuppressWarnings("deprecation")
     private void reprocessNamedRanges() {
         namedRanges = new ArrayList<XSSFName>();
         if(workbook.isSetDefinedNames()) {
@@ -1710,7 +1706,6 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
      * @param excludeSheetIdx the sheet to exclude from the check or -1 to include all sheets in the check.
      * @return true if the sheet contains the name, false otherwise.
      */
-    @SuppressWarnings("deprecation") //  getXYZArray() array accessors are deprecated
     private boolean containsSheet(String name, int excludeSheetIdx) {
         CTSheet[] ctSheetArray = workbook.getSheets().getSheetArray();
 

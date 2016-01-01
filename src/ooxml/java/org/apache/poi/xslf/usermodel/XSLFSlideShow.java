@@ -66,7 +66,6 @@ public class XSLFSlideShow extends POIXMLDocument {
 	 */
 	private List<PackagePart> embedds;
 
-	@SuppressWarnings("deprecation")
 	public XSLFSlideShow(OPCPackage container) throws OpenXML4JException, IOException, XmlException {
 		super(container);
 

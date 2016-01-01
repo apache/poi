@@ -119,7 +119,6 @@ public class XSLFFreeformShape extends XSLFAutoShape
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     public GeneralPath getPath() {
         GeneralPath path = new GeneralPath();
         Rectangle2D bounds = getAnchor();

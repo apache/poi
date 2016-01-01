@@ -32,7 +32,6 @@ public abstract class AbstractXWPFSDT implements ISDTContents {
     private final String tag;
     private final IBody part;
 
-    @SuppressWarnings("deprecation")
     public AbstractXWPFSDT(CTSdtPr pr, IBody part) {
 
         CTString[] aliases = pr.getAliasArray();

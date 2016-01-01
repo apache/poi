@@ -1376,7 +1376,6 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
         int beginRunPos = 0, candCharPos = 0;
         boolean newList = false;
         
-        @SuppressWarnings("deprecation")
         CTR[] rArray = paragraph.getRArray();
         for (int runPos = startRun; runPos < rArray.length; runPos++) {
             int beginTextPos = 0, beginCharPos = 0, textPos = 0, charPos = 0;
@@ -1437,7 +1436,6 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      *
      * @param segment
      */
-    @SuppressWarnings("deprecation")
     public String getText(TextSegement segment) {
         int runBegin = segment.getBeginRun();
         int textBegin = segment.getBeginText();

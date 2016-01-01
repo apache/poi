@@ -160,7 +160,6 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
        this(styles, strings, sheetContentsHandler, new DataFormatter(), formulasNotResults);
    }
    
-   @SuppressWarnings("deprecation")
    private void init() {
        if (commentsTable != null) {
            commentCellRefs = new LinkedList<CellAddress>();

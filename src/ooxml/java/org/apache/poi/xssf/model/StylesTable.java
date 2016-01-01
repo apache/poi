@@ -187,7 +187,6 @@ public class StylesTable extends POIXMLDocumentPart {
      * @param is The input stream containing the XML document.
      * @throws IOException if an error occurs while reading.
      */
-    @SuppressWarnings("deprecation") //YK: getXYZArray() array accessors are deprecated in xmlbeans with JDK 1.5 support
     protected void readFrom(InputStream is) throws IOException {
         try {
             doc = StyleSheetDocument.Factory.parse(is, DEFAULT_XML_OPTIONS);

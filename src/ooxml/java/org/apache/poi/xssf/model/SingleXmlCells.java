@@ -96,7 +96,6 @@ public class SingleXmlCells extends POIXMLDocumentPart {
 	 * 
 	 * @return all the SimpleXmlCell contained in this SingleXmlCells element
 	 */
-    @SuppressWarnings("deprecation")
 	public List<XSSFSingleXmlCell> getAllSimpleXmlCell(){
 		List<XSSFSingleXmlCell> list = new Vector<XSSFSingleXmlCell>();
 		

@@ -69,7 +69,6 @@ public class XWPFNumbering extends POIXMLDocumentPart {
      * read numbering form an existing package
      */
     @Override
-    @SuppressWarnings("deprecation")
     protected void onDocumentRead() throws IOException {
         NumberingDocument numberingDoc = null;
         InputStream is;

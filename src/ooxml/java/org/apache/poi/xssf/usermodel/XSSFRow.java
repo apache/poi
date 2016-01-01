@@ -66,7 +66,6 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      * @param row the xml bean containing all cell definitions for this row.
      * @param sheet the parent sheet.
      */
-    @SuppressWarnings("deprecation") //YK: getXYZArray() array accessors are deprecated in xmlbeans with JDK 1.5 support
     protected XSSFRow(CTRow row, XSSFSheet sheet) {
         _row = row;
         _sheet = sheet;
@@ -474,7 +473,6 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      *
      * @see org.apache.poi.xssf.usermodel.XSSFSheet#write(java.io.OutputStream) ()
      */
-    @SuppressWarnings("deprecation")
     protected void onDocumentWrite(){
         // check if cells in the CTRow are ordered
         boolean isOrdered = true;

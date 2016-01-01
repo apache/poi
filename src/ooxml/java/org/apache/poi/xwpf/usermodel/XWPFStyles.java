@@ -129,7 +129,6 @@ public class XWPFStyles extends POIXMLDocumentPart {
      *
      * @param styles
      */
-    @SuppressWarnings("deprecation")
     public void setStyles(CTStyles styles) {
         ctStyles = styles;
 

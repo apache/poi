@@ -33,7 +33,6 @@ public class XWPFCommentsDecorator extends XWPFParagraphDecorator {
         this(nextDecorator.paragraph, nextDecorator);
     }
 
-    @SuppressWarnings("deprecation")
     public XWPFCommentsDecorator(XWPFParagraph paragraph, XWPFParagraphDecorator nextDecorator) {
         super(paragraph, nextDecorator);
 

@@ -50,7 +50,6 @@ public class XSSFColorScaleFormatting implements ColorScaleFormatting {
         }
     }
 
-    @SuppressWarnings("deprecation")
     public XSSFColor[] getColors() {
         CTColor[] ctcols = _scale.getColorArray();
         XSSFColor[] c = new XSSFColor[ctcols.length];
@@ -67,7 +66,6 @@ public class XSSFColorScaleFormatting implements ColorScaleFormatting {
         _scale.setColorArray(ctcols);
     }
 
-    @SuppressWarnings("deprecation")
     public XSSFConditionalFormattingThreshold[] getThresholds() {
         CTCfvo[] cfvos = _scale.getCfvoArray();
         XSSFConditionalFormattingThreshold[] t = 

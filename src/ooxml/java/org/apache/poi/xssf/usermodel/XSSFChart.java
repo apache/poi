@@ -299,14 +299,12 @@ public final class XSSFChart extends POIXMLDocumentPart implements Chart, ChartA
 		parseValueAxis();
 	}
 
-    @SuppressWarnings("deprecation")
 	private void parseCategoryAxis() {
 		for (CTCatAx catAx : chart.getPlotArea().getCatAxArray()) {
 			axis.add(new XSSFCategoryAxis(this, catAx));
 		}
 	}
 
-    @SuppressWarnings("deprecation")
 	private void parseValueAxis() {
 		for (CTValAx valAx : chart.getPlotArea().getValAxArray()) {
 			axis.add(new XSSFValueAxis(this, valAx));

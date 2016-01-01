@@ -27,7 +27,6 @@ public class DrawingTextBody {
        this.textBody = textBody;
     }
 
-    @SuppressWarnings("deprecation")
     public DrawingParagraph[] getParagraphs() {
         CTTextParagraph[] paragraphs = textBody.getPArray();
         DrawingParagraph[] o = new DrawingParagraph[paragraphs.length];

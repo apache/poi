@@ -62,7 +62,6 @@ public class XSSFIconMultiStateFormatting implements IconMultiStateFormatting {
         _iconset.setReverse(reversed);
     }
 
-    @SuppressWarnings("deprecation")
     public XSSFConditionalFormattingThreshold[] getThresholds() {
         CTCfvo[] cfvos = _iconset.getCfvoArray();
         XSSFConditionalFormattingThreshold[] t = 
