@@ -127,7 +127,7 @@ public class SharedStringsTable extends POIXMLDocumentPart {
                 cnt++;
             }
         } catch (XmlException e) {
-            throw new IOException(e.getLocalizedMessage());
+            throw new IOException(e);
         }
     }
 
