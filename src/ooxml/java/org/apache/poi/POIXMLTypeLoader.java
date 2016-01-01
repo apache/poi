@@ -67,53 +67,48 @@ public class POIXMLTypeLoader {
         DEFAULT_XML_OPTIONS.setSaveSuggestedPrefixes(Collections.unmodifiableMap(map));
     }
     
-    public static XmlObject newInstance(SchemaType type, XmlOptions options) {
+    private static XmlOptions getXmlOptions(XmlOptions options) {
         XmlOptions opt = (options == null) ? DEFAULT_XML_OPTIONS : options;
-        return XmlBeans.getContextTypeLoader().newInstance(type, opt);
+        return opt;
+    }
+
+    public static XmlObject newInstance(SchemaType type, XmlOptions options) {
+        return XmlBeans.getContextTypeLoader().newInstance(type, getXmlOptions(options));
     }
 
     public static XmlObject parse(String xmlText, SchemaType type, XmlOptions options) throws XmlException {
-        XmlOptions opt = (options == null) ? DEFAULT_XML_OPTIONS : options;
-        return XmlBeans.getContextTypeLoader().parse(xmlText, type, opt);
+        return XmlBeans.getContextTypeLoader().parse(xmlText, type, getXmlOptions(options));
     }
 
     public static XmlObject parse(File file, SchemaType type, XmlOptions options) throws XmlException, IOException {
-        XmlOptions opt = (options == null) ? DEFAULT_XML_OPTIONS : options;
-        return XmlBeans.getContextTypeLoader().parse(file, type, opt);
+        return XmlBeans.getContextTypeLoader().parse(file, type, getXmlOptions(options));
     }
 
     public static XmlObject parse(URL file, SchemaType type, XmlOptions options) throws XmlException, IOException {
-        XmlOptions opt = (options == null) ? DEFAULT_XML_OPTIONS : options;
-        return XmlBeans.getContextTypeLoader().parse(file, type, opt);
+        return XmlBeans.getContextTypeLoader().parse(file, type, getXmlOptions(options));
     }
 
     public static XmlObject parse(InputStream jiois, SchemaType type, XmlOptions options) throws XmlException, IOException {
-        XmlOptions opt = (options == null) ? DEFAULT_XML_OPTIONS : options;
-        return XmlBeans.getContextTypeLoader().parse(jiois, type, opt);
+        return XmlBeans.getContextTypeLoader().parse(jiois, type, getXmlOptions(options));
     }
 
     public static XmlObject parse(XMLStreamReader xsr, SchemaType type, XmlOptions options) throws XmlException {
-        XmlOptions opt = (options == null) ? DEFAULT_XML_OPTIONS : options;
-        return XmlBeans.getContextTypeLoader().parse(xsr, type, opt);
+        return XmlBeans.getContextTypeLoader().parse(xsr, type, getXmlOptions(options));
     }
 
     public static XmlObject parse(Reader jior, SchemaType type, XmlOptions options) throws XmlException, IOException {
-        XmlOptions opt = (options == null) ? DEFAULT_XML_OPTIONS : options;
-        return XmlBeans.getContextTypeLoader().parse(jior, type, opt);
+        return XmlBeans.getContextTypeLoader().parse(jior, type, getXmlOptions(options));
     }
 
     public static XmlObject parse(Node node, SchemaType type, XmlOptions options) throws XmlException {
-        XmlOptions opt = (options == null) ? DEFAULT_XML_OPTIONS : options;
-        return XmlBeans.getContextTypeLoader().parse(node, type, opt);
+        return XmlBeans.getContextTypeLoader().parse(node, type, getXmlOptions(options));
     }
 
     public static XmlObject parse(XMLInputStream xis, SchemaType type, XmlOptions options) throws XmlException, XMLStreamException {
-        XmlOptions opt = (options == null) ? DEFAULT_XML_OPTIONS : options;
-        return XmlBeans.getContextTypeLoader().parse(xis, type, opt);
+        return XmlBeans.getContextTypeLoader().parse(xis, type, getXmlOptions(options));
     }
     
     public static XMLInputStream newValidatingXMLInputStream ( XMLInputStream xis, SchemaType type, XmlOptions options ) throws XmlException, XMLStreamException {
-        XmlOptions opt = (options == null) ? DEFAULT_XML_OPTIONS : options;
-        return XmlBeans.getContextTypeLoader().newValidatingXMLInputStream(xis, type, opt);
+        return XmlBeans.getContextTypeLoader().newValidatingXMLInputStream(xis, type, getXmlOptions(options));
     }
 }
