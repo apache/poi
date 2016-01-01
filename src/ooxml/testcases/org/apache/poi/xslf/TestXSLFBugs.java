@@ -418,19 +418,4 @@ public class TestXSLFBugs {
         
         ss.close();
     }
-    
-    @Test
-    public void testLayout() throws IOException {
-        XMLSlideShow ppt = new XMLSlideShow();
-        InputStream picIn = POIDataSamples.getSlideShowInstance().openResourceAsStream("clock.jpg");
-        XSLFPictureData pd = ppt.addPicture(IOUtils.toByteArray(picIn), PictureType.JPEG);
-        picIn.close();
-        XSLFSlide slide = ppt.createSlide();
-        XSLFPictureShape ps = slide.createPicture(pd);
-        ps.setAnchor(new Rectangle(100, 100, 100, 100));
-        FileOutputStream fos = new FileOutputStream("picbla.pptx");
-        ppt.write(fos);
-        fos.close();
-        ppt.close();
-    }
 }
