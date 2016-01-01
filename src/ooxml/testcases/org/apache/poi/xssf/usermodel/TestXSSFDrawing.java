@@ -17,28 +17,30 @@
 package org.apache.poi.xssf.usermodel;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 import java.awt.Color;
 import java.io.IOException;
 import java.util.List;
-
-import junit.framework.TestCase;
 
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.FontUnderline;
 import org.apache.poi.xssf.XSSFTestDataSamples;
+import org.junit.Test;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextCharacterProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraph;
 import org.openxmlformats.schemas.drawingml.x2006.main.STTextUnderlineType;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTDrawing;
 
-/**
- * @author Yegor Kozlov
- */
-public class TestXSSFDrawing extends TestCase {
-    public void testRead() throws IOException{
+public class TestXSSFDrawing {
+    @Test
+    public void testRead() throws IOException {
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("WithDrawing.xlsx");
         XSSFSheet sheet = wb.getSheetAt(0);
         //the sheet has one relationship and it is XSSFDrawing
@@ -67,12 +69,14 @@ public class TestXSSFDrawing extends TestCase {
 
         for(XSSFShape sh : shapes) assertNotNull(sh.getAnchor());
 
-        assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(wb));
+        checkRewrite(wb);
+        wb.close();
     }
 
-    public void testNew() throws Exception {
-        XSSFWorkbook wb = new XSSFWorkbook();
-        XSSFSheet sheet = wb.createSheet();
+    @Test
+    public void testNew() throws IOException {
+        XSSFWorkbook wb1 = new XSSFWorkbook();
+        XSSFSheet sheet = wb1.createSheet();
         //multiple calls of createDrawingPatriarch should return the same instance of XSSFDrawing
         XSSFDrawing dr1 = sheet.createDrawingPatriarch();
         XSSFDrawing dr2 = sheet.createDrawingPatriarch();
@@ -102,8 +106,8 @@ public class TestXSSFDrawing extends TestCase {
 
         XSSFTextBox c4 = drawing.createTextbox(new XSSFClientAnchor(0,0,0,0,4,4,5,6));
         XSSFRichTextString rt = new XSSFRichTextString("Test String");
-        rt.applyFont(0, 5, wb.createFont());
-        rt.applyFont(5, 6, wb.createFont());
+        rt.applyFont(0, 5, wb1.createFont());
+        rt.applyFont(5, 6, wb1.createFont());
         c4.setText(rt);
 
         c4.setNoFill(true);
@@ -117,8 +121,9 @@ public class TestXSSFDrawing extends TestCase {
         assertTrue(shapes.get(3) instanceof XSSFSimpleShape); //
 
         // Save and re-load it
-        wb = XSSFTestDataSamples.writeOutAndReadBack(wb);
-        sheet = wb.getSheetAt(0);
+        XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb1);
+        wb1.close();
+        sheet = wb2.getSheetAt(0);
 
         // Check
         dr1 = sheet.createDrawingPatriarch();
@@ -141,9 +146,11 @@ public class TestXSSFDrawing extends TestCase {
         assertTrue(xml.contains("xmlns:xdr=\"http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing\""));
         assertTrue(xml.contains("xmlns:a=\"http://schemas.openxmlformats.org/drawingml/2006/main\""));
         
-        assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(wb));
+        checkRewrite(wb2);
+        wb2.close();
     }
     
+    @Test
     public void testMultipleDrawings() throws IOException{
         XSSFWorkbook wb = new XSSFWorkbook();
         for (int i = 0; i < 3; i++) {
@@ -154,13 +161,14 @@ public class TestXSSFDrawing extends TestCase {
         OPCPackage pkg = wb.getPackage();
         try {
             assertEquals(3, pkg.getPartsByContentType(XSSFRelation.DRAWINGS.getContentType()).size());
-        
-            assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(wb));
+            checkRewrite(wb);
         } finally {
             pkg.close();
         }
+        wb.close();
     }
 
+    @Test
     public void testClone() throws Exception{
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("WithDrawing.xlsx");
         XSSFSheet sheet1 = wb.getSheetAt(0);
@@ -192,7 +200,8 @@ public class TestXSSFDrawing extends TestCase {
             assertEquals(sh1.getShapeProperties().toString(), sh2.getShapeProperties().toString());
         }
         
-        assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(wb));
+        checkRewrite(wb);
+        wb.close();
     }
 
     /**
@@ -201,7 +210,8 @@ public class TestXSSFDrawing extends TestCase {
      *
      * See Bugzilla 52219.
      */
-    public void testRichText(){
+    @Test
+    public void testRichText() throws IOException {
         XSSFWorkbook wb = new XSSFWorkbook();
         XSSFSheet sheet = wb.createSheet();
         XSSFDrawing drawing = sheet.createDrawingPatriarch();
@@ -229,15 +239,17 @@ public class TestXSSFDrawing extends TestCase {
                 new byte[]{0, (byte)128, (byte)128} ,
                 rPr.getSolidFill().getSrgbClr().getVal());
         
-        assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(wb));
+        checkRewrite(wb);
+        wb.close();
     }
 
     /**
      *  test that anchor is not null when reading shapes from existing drawings
      */
-    public void testReadAnchors(){
-        XSSFWorkbook wb = new XSSFWorkbook();
-        XSSFSheet sheet = wb.createSheet();
+    @Test
+    public void testReadAnchors() throws IOException {
+        XSSFWorkbook wb1 = new XSSFWorkbook();
+        XSSFSheet sheet = wb1.createSheet();
         XSSFDrawing drawing = sheet.createDrawingPatriarch();
 
         XSSFClientAnchor anchor1 = new XSSFClientAnchor(0, 0, 0, 0, 2, 2, 3, 4);
@@ -248,20 +260,22 @@ public class TestXSSFDrawing extends TestCase {
         XSSFShape shape2 = drawing.createTextbox(anchor2);
         assertNotNull(shape2);
 
-        int pictureIndex= wb.addPicture(new byte[]{}, XSSFWorkbook.PICTURE_TYPE_PNG);
+        int pictureIndex= wb1.addPicture(new byte[]{}, XSSFWorkbook.PICTURE_TYPE_PNG);
         XSSFClientAnchor anchor3 = new XSSFClientAnchor(0, 0, 0, 0, 2, 2, 3, 6);
         XSSFShape shape3 = drawing.createPicture(anchor3, pictureIndex);
         assertNotNull(shape3);
 
-        wb = XSSFTestDataSamples.writeOutAndReadBack(wb);
-        sheet = wb.getSheetAt(0);
+        XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb1);
+        wb1.close();
+        sheet = wb2.getSheetAt(0);
         drawing = sheet.createDrawingPatriarch();
         List<XSSFShape> shapes = drawing.getShapes();
         assertEquals(shapes.get(0).getAnchor(), anchor1);
         assertEquals(shapes.get(1).getAnchor(), anchor2);
         assertEquals(shapes.get(2).getAnchor(), anchor3);
         
-        assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(wb));
+        checkRewrite(wb2);
+        wb2.close();
     }
     
     /**
@@ -270,7 +284,8 @@ public class TestXSSFDrawing extends TestCase {
      *
      * See Bugzilla 54969.
      */
-    public void testRichTextFontAndColor() {
+    @Test
+    public void testRichTextFontAndColor() throws IOException {
     	XSSFWorkbook wb = new XSSFWorkbook();
         XSSFSheet sheet = wb.createSheet();
         XSSFDrawing drawing = sheet.createDrawingPatriarch();
@@ -293,14 +308,15 @@ public class TestXSSFDrawing extends TestCase {
         assertArrayEquals(
                 new byte[]{0, (byte)128, (byte)128} ,
                 rPr.getSolidFill().getSrgbClr().getVal());
-        
-        assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(wb));
+        checkRewrite(wb);
+        wb.close();
     }
 
     /**
      * Test setText single paragraph to ensure backwards compatibility
      */
-    public void testSetTextSingleParagraph() {
+    @Test
+    public void testSetTextSingleParagraph() throws IOException {
     	XSSFWorkbook wb = new XSSFWorkbook();
         XSSFSheet sheet = wb.createSheet();
         XSSFDrawing drawing = sheet.createDrawingPatriarch();
@@ -328,13 +344,15 @@ public class TestXSSFDrawing extends TestCase {
                 new int[] { 0, 255, 255 } ,
                 new int[] { clr.getRed(), clr.getGreen(), clr.getBlue() });
         
-        assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(wb));
+        checkRewrite(wb);
+        wb.close();
     }
     
     /**
      * Test addNewTextParagraph 
      */
-    public void testAddNewTextParagraph() {
+    @Test
+    public void testAddNewTextParagraph() throws IOException {
     	XSSFWorkbook wb = new XSSFWorkbook();
         XSSFSheet sheet = wb.createSheet();
         XSSFDrawing drawing = sheet.createDrawingPatriarch();
@@ -351,34 +369,37 @@ public class TestXSSFDrawing extends TestCase {
         assertEquals(1, runs.size());
         assertEquals("Line 1", runs.get(0).getText());
         
-        assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(wb));
+        checkRewrite(wb);
+        wb.close();
     }
 
     /**
      * Test addNewTextParagraph using RichTextString
      */
-    public void testAddNewTextParagraphWithRTS() {
-    	XSSFWorkbook wb = new XSSFWorkbook();
-        XSSFSheet sheet = wb.createSheet();
+    @Test
+    public void testAddNewTextParagraphWithRTS() throws IOException {
+    	XSSFWorkbook wb1 = new XSSFWorkbook();
+        XSSFSheet sheet = wb1.createSheet();
         XSSFDrawing drawing = sheet.createDrawingPatriarch();
 
         XSSFTextBox shape = drawing.createTextbox(new XSSFClientAnchor(0, 0, 0, 0, 2, 2, 3, 4));
         XSSFRichTextString rt = new XSSFRichTextString("Test Rich Text String");
 
-        XSSFFont font = wb.createFont();        
+        XSSFFont font = wb1.createFont();        
         font.setColor(new XSSFColor(new Color(0, 255, 255)));
         font.setFontName("Arial");
         rt.applyFont(font);
         
-        XSSFFont midfont = wb.createFont();
+        XSSFFont midfont = wb1.createFont();
         midfont.setColor(new XSSFColor(new Color(0, 255, 0)));
         rt.applyFont(5, 14, midfont);	// set the text "Rich Text" to be green and the default font
         
         XSSFTextParagraph para = shape.addNewTextParagraph(rt);
         
         // Save and re-load it
-        wb = XSSFTestDataSamples.writeOutAndReadBack(wb);
-        sheet = wb.getSheetAt(0);
+        XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb1);
+        wb1.close();
+        sheet = wb2.getSheetAt(0);
 
         // Check
         drawing = sheet.createDrawingPatriarch();
@@ -421,13 +442,15 @@ public class TestXSSFDrawing extends TestCase {
                 new int[] { 0, 255, 255 } ,
                 new int[] { clr.getRed(), clr.getGreen(), clr.getBlue() });
         
-        assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(wb));
+        checkRewrite(wb2);
+        wb2.close();
     }    
     
     /**
      * Test add multiple paragraphs and retrieve text
      */
-    public void testAddMultipleParagraphs() {
+    @Test
+    public void testAddMultipleParagraphs() throws IOException {
     	XSSFWorkbook wb = new XSSFWorkbook();
         XSSFSheet sheet = wb.createSheet();
         XSSFDrawing drawing = sheet.createDrawingPatriarch();
@@ -447,13 +470,15 @@ public class TestXSSFDrawing extends TestCase {
         assertEquals(4, paras.size());	// this should be 4 as XSSFSimpleShape creates a default paragraph (no text), and then we added 3 paragraphs
         assertEquals("Line 1\nLine 2\nLine 3", shape.getText());           
         
-        assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(wb));
+        checkRewrite(wb);
+        wb.close();
     }
     
     /**
      * Test setting the text, then adding multiple paragraphs and retrieve text
      */
-    public void testSetAddMultipleParagraphs() {
+    @Test
+    public void testSetAddMultipleParagraphs() throws IOException {
     	XSSFWorkbook wb = new XSSFWorkbook();
         XSSFSheet sheet = wb.createSheet();
         XSSFDrawing drawing = sheet.createDrawingPatriarch();
@@ -472,13 +497,15 @@ public class TestXSSFDrawing extends TestCase {
         assertEquals(3, paras.size());	// this should be 3 as we overwrote the default paragraph with setText, then added 2 new paragraphs
         assertEquals("Line 1\nLine 2\nLine 3", shape.getText());
         
-        assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(wb));
+        checkRewrite(wb);
+        wb.close();
     }
     
     /**
      * Test reading text from a textbox in an existing file
      */
-    public void testReadTextBox(){
+    @Test
+    public void testReadTextBox() throws IOException {
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("WithDrawing.xlsx");
         XSSFSheet sheet = wb.getSheetAt(0);
         //the sheet has one relationship and it is XSSFDrawing
@@ -503,14 +530,16 @@ public class TestXSSFDrawing extends TestCase {
         XSSFSimpleShape textbox = (XSSFSimpleShape) shapes.get(4); 
         assertEquals("Sheet with various pictures\n(jpeg, png, wmf, emf and pict)", textbox.getText());
         
-        assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(wb));
+        checkRewrite(wb);
+        wb.close();
     }
 
     
     /**
      * Test reading multiple paragraphs from a textbox in an existing file
      */
-    public void testReadTextBoxParagraphs(){
+    @Test
+    public void testReadTextBoxParagraphs() throws IOException {
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("WithTextBox.xlsx");
         XSSFSheet sheet = wb.getSheetAt(0);
         //the sheet has one relationship and it is XSSFDrawing
@@ -563,16 +592,18 @@ public class TestXSSFDrawing extends TestCase {
                 new int[] { 0, 0, 255 } ,
                 new int[] { clr.getRed(), clr.getGreen(), clr.getBlue() });
         
-        assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(wb));
+        checkRewrite(wb);
+        wb.close();
     }
 
     /**
      * Test adding and reading back paragraphs as bullet points
      */
-    public void testAddBulletParagraphs() {
+    @Test
+    public void testAddBulletParagraphs() throws IOException {
     
-        XSSFWorkbook wb = new XSSFWorkbook();
-        XSSFSheet sheet = wb.createSheet();
+        XSSFWorkbook wb1 = new XSSFWorkbook();
+        XSSFSheet sheet = wb1.createSheet();
         XSSFDrawing drawing = sheet.createDrawingPatriarch();
 
         XSSFTextBox shape = drawing.createTextbox(new XSSFClientAnchor(0, 0, 0, 0, 2, 2, 10, 20));
@@ -623,8 +654,9 @@ public class TestXSSFDrawing extends TestCase {
         para.setBullet(ListAutoNumber.ARABIC_PERIOD);
         
         // Save and re-load it
-        wb = XSSFTestDataSamples.writeOutAndReadBack(wb);
-        sheet = wb.getSheetAt(0);
+        XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb1);
+        wb1.close();
+        sheet = wb2.getSheetAt(0);
 
         // Check
         drawing = sheet.createDrawingPatriarch();
@@ -672,13 +704,15 @@ public class TestXSSFDrawing extends TestCase {
         
         assertEquals(builder.toString(), sshape.getText());
         
-        assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(wb));
+        checkRewrite(wb2);
+        wb2.close();
     }  
     
     /**
      * Test reading bullet numbering from a textbox in an existing file
      */
-    public void testReadTextBox2(){
+    @Test
+    public void testReadTextBox2() throws IOException {
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("WithTextBox2.xlsx");
         XSSFSheet sheet = wb.getSheetAt(0);
         XSSFDrawing drawing = sheet.createDrawingPatriarch();
@@ -697,49 +731,51 @@ public class TestXSSFDrawing extends TestCase {
         sb.append("\t\n\t\n\t\n\t");
 
         assertEquals(sb.toString(), extracted);
-        
-        assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(wb));
+        checkRewrite(wb);
+        wb.close();
     }
 
-    public void testXSSFSimpleShapeCausesNPE56514() throws Exception {
-        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("56514.xlsx");
-        XSSFSheet sheet = wb.getSheetAt(0);
+    @Test
+    public void testXSSFSimpleShapeCausesNPE56514() throws IOException {
+        XSSFWorkbook wb1 = XSSFTestDataSamples.openSampleWorkbook("56514.xlsx");
+        XSSFSheet sheet = wb1.getSheetAt(0);
         XSSFDrawing drawing = sheet.createDrawingPatriarch();
         List<XSSFShape> shapes = drawing.getShapes();
         assertEquals(4, shapes.size());
         
-        wb = XSSFTestDataSamples.writeOutAndReadBack(wb);
+        XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb1);
+        wb1.close();
+        sheet = wb2.getSheetAt(0);
+        drawing = sheet.createDrawingPatriarch();
         
         shapes = drawing.getShapes();
         assertEquals(4, shapes.size());
+        wb2.close();
         
-/*        OutputStream stream = new FileOutputStream(new File("C:\\temp\\56514.xlsx"));
-        try {
-            wb.write(stream);
-        } finally {
-            stream.close();
-        }*/
     }
 
-    public void testBug56835CellComment() throws Exception {
+    @Test(expected=IllegalArgumentException.class)
+    public void testBug56835CellComment() throws IOException {
         XSSFWorkbook wb = new XSSFWorkbook();
+        XSSFSheet sheet = wb.createSheet();
+        XSSFDrawing drawing = sheet.createDrawingPatriarch();
+        
+        // first comment works
+        ClientAnchor anchor = new XSSFClientAnchor(1, 1, 2, 2, 3, 3, 4, 4);
+        XSSFComment comment = drawing.createCellComment(anchor);
+        assertNotNull(comment);
+        
+        // Should fail if we try to add the same comment for the same cell
         try {
-            XSSFSheet sheet = wb.createSheet();
-            XSSFDrawing drawing = sheet.createDrawingPatriarch();
-            
-            // first comment works
-            ClientAnchor anchor = new XSSFClientAnchor(1, 1, 2, 2, 3, 3, 4, 4);
-            XSSFComment comment = drawing.createCellComment(anchor);
-            assertNotNull(comment);
-            
-            try {
-                drawing.createCellComment(anchor);
-                fail("Should fail if we try to add the same comment for the same cell");
-            } catch (IllegalArgumentException e) {
-                // expected
-            }
+            drawing.createCellComment(anchor);
         } finally {
             wb.close();
         }
+    }
+
+    private static void checkRewrite(XSSFWorkbook wb) throws IOException {
+        XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb);
+        assertNotNull(wb2);
+        wb2.close();
     }
 }

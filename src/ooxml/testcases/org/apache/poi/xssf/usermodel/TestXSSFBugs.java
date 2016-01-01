@@ -319,20 +319,15 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
                 for(Row r : s) {
                     for(Cell c : r) {
                         if(c.getCellType() == Cell.CELL_TYPE_FORMULA) {
-                            String formula = c.getCellFormula();
-                            CellValue cv;
-                            try {
-                                cv = eval.evaluate(c);
-                            } catch (Exception e) {
-                                throw new RuntimeException("Can't evaluate formula: " + formula, e);
-                            }
+                            CellValue cv = eval.evaluate(c);
 
                             if(cv.getCellType() == Cell.CELL_TYPE_NUMERIC) {
                                 // assert that the calculated value agrees with
                                 // the cached formula result calculated by Excel
+                                String formula = c.getCellFormula();
                                 double cachedFormulaResult = c.getNumericCellValue();
                                 double evaluatedFormulaResult = cv.getNumberValue();
-                                assertEquals(c.getCellFormula(), cachedFormulaResult, evaluatedFormulaResult, 1E-7);
+                                assertEquals(formula, cachedFormulaResult, evaluatedFormulaResult, 1E-7);
                             }
                         }
                     }
@@ -2354,12 +2349,6 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
                 }
             }
 
-//            OutputStream out = new FileOutputStream("/tmp/56467.xls");
-//            try {
-//            	wb.write(out);
-//            } finally {
-//            	out.close();
-//            }
         } finally {
         	wb.close();
         }

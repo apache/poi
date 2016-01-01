@@ -77,7 +77,6 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCalcMode;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPane;
 
 
-@SuppressWarnings("resource")
 public final class TestXSSFSheet extends BaseTestSheet {
 
     public TestXSSFSheet() {
@@ -437,8 +436,8 @@ public final class TestXSSFSheet extends BaseTestSheet {
      */
     @Test
     public void setColumnGroupCollapsed() throws IOException {
-        Workbook wb = new XSSFWorkbook();
-        XSSFSheet sheet1 =(XSSFSheet) wb.createSheet();
+        XSSFWorkbook wb1 = new XSSFWorkbook();
+        XSSFSheet sheet1 = wb1.createSheet();
 
         CTCols cols=sheet1.getCTWorksheet().getColsArray(0);
         assertEquals(0,cols.sizeOfColArray());
@@ -630,8 +629,9 @@ public final class TestXSSFSheet extends BaseTestSheet {
 
 //      write out and give back
         // Save and re-load
-        wb = XSSFTestDataSamples.writeOutAndReadBack(wb);
-        sheet1 = (XSSFSheet)wb.getSheetAt(0);
+        XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb1);
+        wb1.close();
+        sheet1 = wb2.getSheetAt(0);
         assertEquals(6,cols.sizeOfColArray());
 
         assertEquals(false,cols.getColArray(0).isSetHidden());
@@ -659,7 +659,7 @@ public final class TestXSSFSheet extends BaseTestSheet {
         assertEquals(14, cols.getColArray(5).getMin()); // 1 based
         assertEquals(14, cols.getColArray(5).getMax()); // 1 based
         
-        wb.close();
+        wb2.close();
     }
 
     /**
@@ -670,8 +670,8 @@ public final class TestXSSFSheet extends BaseTestSheet {
      */
     @Test
     public void setRowGroupCollapsed() throws IOException {
-        Workbook wb = new XSSFWorkbook();
-        XSSFSheet sheet1 = (XSSFSheet)wb.createSheet();
+        XSSFWorkbook wb1 = new XSSFWorkbook();
+        XSSFSheet sheet1 = wb1.createSheet();
 
         sheet1.groupRow( 5, 14 );
         sheet1.groupRow( 7, 14 );
@@ -725,8 +725,9 @@ public final class TestXSSFSheet extends BaseTestSheet {
 
 
         // Save and re-load
-        wb = XSSFTestDataSamples.writeOutAndReadBack(wb);
-        sheet1 = (XSSFSheet)wb.getSheetAt(0);
+        XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb1);
+        wb1.close();
+        sheet1 = wb2.getSheetAt(0);
 
         assertFalse(sheet1.getRow(6).getCTRow().isSetCollapsed());
         assertFalse(sheet1.getRow(6).getCTRow().isSetHidden());
@@ -741,7 +742,7 @@ public final class TestXSSFSheet extends BaseTestSheet {
         assertFalse(sheet1.getRow(18).getCTRow().isSetCollapsed());
         assertFalse(sheet1.getRow(18).getCTRow().isSetHidden());
         
-        wb.close();
+        wb2.close();
     }
 
     /**
@@ -797,8 +798,8 @@ public final class TestXSSFSheet extends BaseTestSheet {
      */
     @Test
     public void bug47862() throws IOException {
-        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("47862.xlsx");
-        XSSFSheet sheet = wb.getSheetAt(0);
+        XSSFWorkbook wb1 = XSSFTestDataSamples.openSampleWorkbook("47862.xlsx");
+        XSSFSheet sheet = wb1.getSheetAt(0);
         CTCols cols = sheet.getCTWorksheet().getColsArray(0);
         //<cols>
         //  <col min="1" max="5" width="15.77734375" customWidth="1"/>
@@ -839,8 +840,9 @@ public final class TestXSSFSheet extends BaseTestSheet {
         }
 
         //serialize and check again
-        wb = XSSFTestDataSamples.writeOutAndReadBack(wb);
-        sheet = wb.getSheetAt(0);
+        XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb1);
+        wb1.close();
+        sheet = wb2.getSheetAt(0);
         cols = sheet.getCTWorksheet().getColsArray(0);
         assertEquals(5, cols.sizeOfColArray());
         for (int i = 0; i < 5; i++) {
@@ -848,7 +850,7 @@ public final class TestXSSFSheet extends BaseTestSheet {
             assertEquals(cw[i], cols.getColArray(i).getWidth(), 0.0);
         }
         
-        wb.close();
+        wb2.close();
     }
 
     /**
@@ -856,8 +858,8 @@ public final class TestXSSFSheet extends BaseTestSheet {
      */
     @Test
     public void bug47804() throws IOException {
-        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("47804.xlsx");
-        XSSFSheet sheet = wb.getSheetAt(0);
+        XSSFWorkbook wb1 = XSSFTestDataSamples.openSampleWorkbook("47804.xlsx");
+        XSSFSheet sheet = wb1.getSheetAt(0);
         CTCols cols = sheet.getCTWorksheet().getColsArray(0);
         assertEquals(2, cols.sizeOfColArray());
         CTCol col;
@@ -912,8 +914,9 @@ public final class TestXSSFSheet extends BaseTestSheet {
         assertEquals(7, col.getMax());
 
         //serialize and check again
-        wb = XSSFTestDataSamples.writeOutAndReadBack(wb);
-        sheet = wb.getSheetAt(0);
+        XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb1);
+        wb1.close();
+        sheet = wb2.getSheetAt(0);
         assertTrue(sheet.isColumnHidden(2));
         assertTrue(sheet.isColumnHidden(6));
         assertFalse(sheet.isColumnHidden(1));
@@ -921,24 +924,24 @@ public final class TestXSSFSheet extends BaseTestSheet {
         assertFalse(sheet.isColumnHidden(4));
         assertFalse(sheet.isColumnHidden(5));
         
-        wb.close();
+        wb2.close();
     }
 
     @Test
     public void commentsTable() throws IOException {
-        XSSFWorkbook workbook = new XSSFWorkbook();
-        XSSFSheet sheet1 = workbook.createSheet();
+        XSSFWorkbook wb1 = new XSSFWorkbook();
+        XSSFSheet sheet1 = wb1.createSheet();
         CommentsTable comment1 = sheet1.getCommentsTable(false);
         assertNull(comment1);
 
         comment1 = sheet1.getCommentsTable(true);
         assertNotNull(comment1);
-        assertEquals("/xl/comments1.xml", comment1.getPackageRelationship().getTargetURI().toString());
+        assertEquals("/xl/comments1.xml", comment1.getPackagePart().getPartName().getName());
 
         assertSame(comment1, sheet1.getCommentsTable(true));
 
         //second sheet
-        XSSFSheet sheet2 = workbook.createSheet();
+        XSSFSheet sheet2 = wb1.createSheet();
         CommentsTable comment2 = sheet2.getCommentsTable(false);
         assertNull(comment2);
 
@@ -946,20 +949,21 @@ public final class TestXSSFSheet extends BaseTestSheet {
         assertNotNull(comment2);
 
         assertSame(comment2, sheet2.getCommentsTable(true));
-        assertEquals("/xl/comments2.xml", comment2.getPackageRelationship().getTargetURI().toString());
+        assertEquals("/xl/comments2.xml", comment2.getPackagePart().getPartName().getName());
 
         //comment1 and  comment2 are different objects
         assertNotSame(comment1, comment2);
-
+        wb1.close();
+        
         //now test against a workbook containing cell comments
-        workbook = XSSFTestDataSamples.openSampleWorkbook("WithMoreVariousData.xlsx");
-        sheet1 = workbook.getSheetAt(0);
+        XSSFWorkbook wb2 = XSSFTestDataSamples.openSampleWorkbook("WithMoreVariousData.xlsx");
+        sheet1 = wb2.getSheetAt(0);
         comment1 = sheet1.getCommentsTable(true);
         assertNotNull(comment1);
-        assertEquals("/xl/comments1.xml", comment1.getPackageRelationship().getTargetURI().toString());
+        assertEquals("/xl/comments1.xml", comment1.getPackagePart().getPartName().getName());
         assertSame(comment1, sheet1.getCommentsTable(true));
         
-        workbook.close();
+        wb2.close();
     }
 
     /**
@@ -969,8 +973,8 @@ public final class TestXSSFSheet extends BaseTestSheet {
     @Override
     @Test
     public void createRow() throws IOException {
-        XSSFWorkbook workbook = new XSSFWorkbook();
-        XSSFSheet sheet = workbook.createSheet();
+        XSSFWorkbook wb1 = new XSSFWorkbook();
+        XSSFSheet sheet = wb1.createSheet();
         CTWorksheet wsh = sheet.getCTWorksheet();
         CTSheetData sheetData = wsh.getSheetData();
         assertEquals(0, sheetData.sizeOfRowArray());
@@ -1020,8 +1024,9 @@ public final class TestXSSFSheet extends BaseTestSheet {
         assertEquals(0, sheetData.getRowArray(1).sizeOfCArray());
         assertEquals(0, row2.getPhysicalNumberOfCells());
 
-        workbook = XSSFTestDataSamples.writeOutAndReadBack(workbook);
-        sheet = workbook.getSheetAt(0);
+        XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb1);
+        wb1.close();
+        sheet = wb2.getSheetAt(0);
         wsh = sheet.getCTWorksheet();
         xrow = sheetData.getRowArray();
         assertEquals(3, xrow.length);
@@ -1043,7 +1048,7 @@ public final class TestXSSFSheet extends BaseTestSheet {
         assertEquals(2, xrow[2].sizeOfCArray());
         assertEquals(3, xrow[2].getR());
 
-        workbook.close();
+        wb2.close();
     }
     
     @Test(expected=IllegalArgumentException.class)
@@ -1097,16 +1102,17 @@ public final class TestXSSFSheet extends BaseTestSheet {
     @Test
     public void protectSheet_lowlevel_2013() throws IOException {
         String password = "test";
-        XSSFWorkbook wb = new XSSFWorkbook();
-        XSSFSheet xs = wb.createSheet();
+        XSSFWorkbook wb1 = new XSSFWorkbook();
+        XSSFSheet xs = wb1.createSheet();
         xs.setSheetPassword(password, HashAlgorithm.sha384);
-        wb = writeOutAndReadBack(wb);
-        assertTrue(wb.getSheetAt(0).validateSheetPassword(password));
+        XSSFWorkbook wb2 = writeOutAndReadBack(wb1);
+        wb1.close();
+        assertTrue(wb2.getSheetAt(0).validateSheetPassword(password));
+        wb2.close();
         
-        wb = openSampleWorkbook("workbookProtection-sheet_password-2013.xlsx");
-        assertTrue(wb.getSheetAt(0).validateSheetPassword("pwd"));
-        
-        wb.close();
+        XSSFWorkbook wb3 = openSampleWorkbook("workbookProtection-sheet_password-2013.xlsx");
+        assertTrue(wb3.getSheetAt(0).validateSheetPassword("pwd"));
+        wb3.close();
     }
     
 
@@ -1209,12 +1215,10 @@ public final class TestXSSFSheet extends BaseTestSheet {
     }
 
     private void runGetTopRow(String file, boolean isXSSF, int... topRows) throws IOException {
-        final Workbook wb;
-        if(isXSSF) {
-            wb = XSSFTestDataSamples.openSampleWorkbook(file);
-        } else {
-            wb = HSSFTestDataSamples.openSampleWorkbook(file);
-        }
+        final Workbook wb = (isXSSF)
+            ? XSSFTestDataSamples.openSampleWorkbook(file)
+            : HSSFTestDataSamples.openSampleWorkbook(file);
+
         for (int si = 0; si < wb.getNumberOfSheets(); si++) {
             Sheet sh = wb.getSheetAt(si);
             assertNotNull(sh.getSheetName());
@@ -1222,27 +1226,24 @@ public final class TestXSSFSheet extends BaseTestSheet {
         }
 
         // for XSSF also test with SXSSF
-        if(isXSSF) {
+        if (isXSSF) {
             Workbook swb = new SXSSFWorkbook((XSSFWorkbook) wb);
-            try {
-                for (int si = 0; si < swb.getNumberOfSheets(); si++) {
-                    Sheet sh = swb.getSheetAt(si);
-                    assertNotNull(sh.getSheetName());
-                    assertEquals("Did not match for sheet " + si, topRows[si], sh.getTopRow());
-                }
-            } finally {
-                swb.close();
+            for (int si = 0; si < swb.getNumberOfSheets(); si++) {
+                Sheet sh = swb.getSheetAt(si);
+                assertNotNull(sh.getSheetName());
+                assertEquals("Did not match for sheet " + si, topRows[si], sh.getTopRow());
             }
+            swb.close();
         }
+        
+        wb.close();
     }
 
     private void runGetLeftCol(String file, boolean isXSSF, int... topRows) throws IOException {
-        final Workbook wb;
-        if(isXSSF) {
-            wb = XSSFTestDataSamples.openSampleWorkbook(file);
-        } else {
-            wb = HSSFTestDataSamples.openSampleWorkbook(file);
-        }
+        final Workbook wb = (isXSSF)
+            ? XSSFTestDataSamples.openSampleWorkbook(file)
+            : HSSFTestDataSamples.openSampleWorkbook(file);
+
         for (int si = 0; si < wb.getNumberOfSheets(); si++) {
             Sheet sh = wb.getSheetAt(si);
             assertNotNull(sh.getSheetName());
@@ -1259,6 +1260,8 @@ public final class TestXSSFSheet extends BaseTestSheet {
             }
             swb.close();
         }
+        
+        wb.close();
     }
 
     @Test
@@ -1427,6 +1430,7 @@ public final class TestXSSFSheet extends BaseTestSheet {
                 new AreaReference(sheet.getSheetName()+"!A$1:B$2", SpreadsheetVersion.EXCEL2007),
                 new CellReference("H5"),
                 sheet2);
+        wb.close();
     }
     
     @Test(expected=POIXMLException.class)
@@ -1435,7 +1439,11 @@ public final class TestXSSFSheet extends BaseTestSheet {
         XSSFSheet sheet = wb.createSheet();
         
         // Throws exception because we cannot read here
-        sheet.onDocumentRead();
+        try {
+            sheet.onDocumentRead();
+        } finally {
+            wb.close();
+        }
     }
     
     /** 
@@ -1456,8 +1464,8 @@ public final class TestXSSFSheet extends BaseTestSheet {
     
     protected void testCopyOneRow(String copyRowsTestWorkbook) throws IOException {
         final double FLOAT_PRECISION = 1e-9;
-        final XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook(copyRowsTestWorkbook);
-        final XSSFSheet sheet = workbook.getSheetAt(0);
+        final XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook(copyRowsTestWorkbook);
+        final XSSFSheet sheet = wb.getSheetAt(0);
         final CellCopyPolicy defaultCopyPolicy = new CellCopyPolicy();
         sheet.copyRows(1, 1, 6, defaultCopyPolicy);
 
@@ -1587,12 +1595,14 @@ public final class TestXSSFSheet extends BaseTestSheet {
         // Make sure other rows are blank (off-by-one errors)
         assertNull(sheet.getRow(5));
         assertNull(sheet.getRow(7));
+        
+        wb.close();
     }
     
     public void testCopyMultipleRows(String copyRowsTestWorkbook) throws IOException {
         final double FLOAT_PRECISION = 1e-9;
-        final XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook(copyRowsTestWorkbook);
-        final XSSFSheet sheet = workbook.getSheetAt(0);
+        final XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook(copyRowsTestWorkbook);
+        final XSSFSheet sheet = wb.getSheetAt(0);
         final CellCopyPolicy defaultCopyPolicy = new CellCopyPolicy();
         sheet.copyRows(0, 3, 8, defaultCopyPolicy);
 
@@ -1751,7 +1761,7 @@ public final class TestXSSFSheet extends BaseTestSheet {
         // Array Formula
         col++;
         cell = CellUtil.getCell(destRow1, col);
-        System.out.println("Array formulas currently unsupported");
+        // System.out.println("Array formulas currently unsupported");
     /*
         // FIXME: Array Formula set with Sheet.setArrayFormula() instead of cell.setFormula()
         assertEquals("[Array Formula] N10 cell type", Cell.CELL_TYPE_FORMULA, cell.getCellType());
@@ -1805,6 +1815,8 @@ public final class TestXSSFSheet extends BaseTestSheet {
         // Make sure other rows are blank (off-by-one errors)
         assertNull("Off-by-one lower edge case", sheet.getRow(7)); //one row above destHeaderRow
         assertNull("Off-by-one upper edge case", sheet.getRow(12)); //one row below destRow3
+        
+        wb.close();
     }
     
     @Test
