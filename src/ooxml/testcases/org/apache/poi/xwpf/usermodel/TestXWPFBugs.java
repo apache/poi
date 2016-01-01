@@ -51,6 +51,8 @@ public class TestXWPFBugs {
         assertEquals(run.getFontFamily(FontCharRange.hAnsi), "Times New Roman");
         run.setFontFamily("Arial", FontCharRange.hAnsi);
         assertEquals(run.getFontFamily(FontCharRange.hAnsi), "Arial");
+        
+        doc.close();
     }
 
 
@@ -101,4 +103,20 @@ public class TestXWPFBugs {
             assertNotNull(paragraph.getText());
         }
     }
+    
+  /**
+   * Removing a run needs to take into account position of run if paragraph contains hyperlink runs
+   */
+  @Test
+  public void test58618() throws Exception {
+      XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("58618.docx");
+      XWPFParagraph para = (XWPFParagraph)doc.getBodyElements().get(0);
+      assertNotNull(para);
+      assertEquals("Some text  some hyper links link link and some text.....", para.getText());
+      XWPFRun run = para.insertNewRun(para.getRuns().size());
+      run.setText("New Text");
+      assertEquals("Some text  some hyper links link link and some text.....New Text", para.getText());
+      para.removeRun(para.getRuns().size() -2);
+      assertEquals("Some text  some hyper links link linkNew Text", para.getText());
+  }
 }
