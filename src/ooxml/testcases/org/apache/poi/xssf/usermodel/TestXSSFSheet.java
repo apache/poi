@@ -327,7 +327,6 @@ public final class TestXSSFSheet extends BaseTestSheet {
 
 
     @Test
-    @SuppressWarnings("deprecation")
     public void groupUngroupColumn() throws IOException {
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheet = workbook.createSheet();
@@ -969,7 +968,6 @@ public final class TestXSSFSheet extends BaseTestSheet {
      */
     @Override
     @Test
-    @SuppressWarnings("deprecation")
     public void createRow() throws IOException {
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheet = workbook.createSheet();

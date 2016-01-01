@@ -16,55 +16,64 @@
 ==================================================================== */
 package org.apache.poi.xslf;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import java.io.IOException;
 
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.POIXMLProperties.CoreProperties;
+import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.xslf.usermodel.XSLFRelation;
 import org.apache.poi.xslf.usermodel.XSLFSlideShow;
+import org.apache.xmlbeans.XmlException;
+import org.junit.Before;
+import org.junit.Test;
+import org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.CTProperties;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideIdListEntry;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideMasterIdListEntry;
 
-public class TestXSLFSlideShow extends TestCase {
+public class TestXSLFSlideShow {
     private static final POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
     private OPCPackage pack;
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
 		pack = OPCPackage.open(slTests.openResourceAsStream("sample.pptx"));
 	}
 
+    @Test
 	public void testContainsMainContentType() throws Exception {
 		boolean found = false;
 		for(PackagePart part : pack.getParts()) {
 			if(part.getContentType().equals(XSLFRelation.MAIN.getContentType())) {
 				found = true;
 			}
-			//System.out.println(part);
 		}
 		assertTrue(found);
 	}
 
-	public void testOpen() throws Exception {
-
-		XSLFSlideShow xml;
-		
-		// With the finalised uri, should be fine
-		xml = new XSLFSlideShow(pack);
+    @Test
+	public void testOpen() throws IOException, OpenXML4JException, XmlException {
+		// With the finalized uri, should be fine
+		XSLFSlideShow xml = new XSLFSlideShow(pack);
 		// Check the core
 		assertNotNull(xml.getPresentation());
 		
 		// Check it has some slides
-		assertTrue(
-			xml.getSlideReferences().sizeOfSldIdArray() > 0
-		);
-		assertTrue(
-				xml.getSlideMasterReferences().sizeOfSldMasterIdArray() > 0
-			);
+		assertNotEquals(0, xml.getSlideReferences().sizeOfSldIdArray());
+		assertNotEquals(0, xml.getSlideMasterReferences().sizeOfSldMasterIdArray());
+		
+		xml.close();
 	}
 	
-    @SuppressWarnings("deprecation")
-	public void testSlideBasics() throws Exception {
+    @Test
+	public void testSlideBasics() throws IOException, OpenXML4JException, XmlException {
 		XSLFSlideShow xml = new XSLFSlideShow(pack);
 		
 		// Should have 1 master
@@ -95,19 +104,26 @@ public class TestXSLFSlideShow extends TestCase {
 		assertEquals(2147483648l, masters[0].getId());
 		assertEquals("rId1", masters[0].getId2());
 		assertNotNull(xml.getSlideMaster(masters[0]));
+		
+		xml.close();
 	}
 	
-	public void testMetadataBasics() throws Exception {
+    @Test
+	public void testMetadataBasics() throws IOException, OpenXML4JException, XmlException {
 		XSLFSlideShow xml = new XSLFSlideShow(pack);
 		
 		assertNotNull(xml.getProperties().getCoreProperties());
 		assertNotNull(xml.getProperties().getExtendedProperties());
 		
-		assertEquals("Microsoft Office PowerPoint", xml.getProperties().getExtendedProperties().getUnderlyingProperties().getApplication());
-		assertEquals(0, xml.getProperties().getExtendedProperties().getUnderlyingProperties().getCharacters());
-		assertEquals(0, xml.getProperties().getExtendedProperties().getUnderlyingProperties().getLines());
+		CTProperties props = xml.getProperties().getExtendedProperties().getUnderlyingProperties();
+		assertEquals("Microsoft Office PowerPoint", props.getApplication());
+		assertEquals(0, props.getCharacters());
+		assertEquals(0, props.getLines());
 		
-		assertEquals(null, xml.getProperties().getCoreProperties().getTitle());
-		assertEquals(null, xml.getProperties().getCoreProperties().getUnderlyingProperties().getSubjectProperty().getValue());
+		CoreProperties cprops = xml.getProperties().getCoreProperties();
+		assertNull(cprops.getTitle());
+		assertNull(cprops.getUnderlyingProperties().getSubjectProperty().getValue());
+		
+		xml.close();
 	}
 }
