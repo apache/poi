@@ -16,14 +16,21 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import java.io.IOException;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.junit.Before;
 import org.junit.Test;
-import org.openxmlformats.schemas.presentationml.x2006.main.*;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTNotesMasterIdListEntry;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideIdListEntry;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideMasterIdListEntry;
 
 public class TestXMLSlideShow {
    private static final POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
@@ -47,21 +54,20 @@ public class TestXMLSlideShow {
 
    @Test
    public void testOpen() throws Exception {
-      XMLSlideShow xml;
-
       // With the finalised uri, should be fine
-      xml = new XMLSlideShow(pack);
+       XMLSlideShow xml = new XMLSlideShow(pack);
       // Check the core
       assertNotNull(xml.getCTPresentation());
 
       // Check it has some slides
       assertFalse(xml.getSlides().isEmpty());
       assertFalse(xml.getSlideMasters().isEmpty());
+      
+      xml.close();
    }
 
    @Test
-   @SuppressWarnings("deprecation")
-   public void testSlideBasics() throws Exception {
+   public void testSlideBasics() throws IOException {
       XMLSlideShow xml = new XMLSlideShow(pack);
 
       // Should have 1 master
@@ -99,10 +105,12 @@ public class TestXMLSlideShow {
       assertNotNull(notesMaster);
 
       assertNotNull(xml.getNotesMaster());
+      
+      xml.close();
    }
 	
    @Test
-   public void testMetadataBasics() throws Exception {
+   public void testMetadataBasics() throws IOException {
       XMLSlideShow xml = new XMLSlideShow(pack);
 
       assertNotNull(xml.getProperties().getCoreProperties());
@@ -114,6 +122,8 @@ public class TestXMLSlideShow {
 
       assertEquals(null, xml.getProperties().getCoreProperties().getTitle());
       assertEquals(null, xml.getProperties().getCoreProperties().getUnderlyingProperties().getSubjectProperty().getValue());
+      
+      xml.close();
    }
    
    @Test
@@ -128,8 +138,7 @@ public class TestXMLSlideShow {
       }
       
       // Try another with comments
-      OPCPackage packComments = OPCPackage.open(slTests.openResourceAsStream("45545_Comment.pptx"));
-      XMLSlideShow xmlComments = new XMLSlideShow(packComments);
+      XMLSlideShow xmlComments = new XMLSlideShow(slTests.openResourceAsStream("45545_Comment.pptx"));
       
       // Has one author
       assertNotNull(xmlComments.getCommentAuthors());
@@ -155,5 +164,8 @@ public class TestXMLSlideShow {
             assertEquals(null, slide.getComments());
          }
       }
+      
+      xmlComments.close();
+      xml.close();
    }
 }

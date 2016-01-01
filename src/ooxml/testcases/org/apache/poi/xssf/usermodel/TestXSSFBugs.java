@@ -2539,7 +2539,6 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         runTest56574(true);
     }
 
-    @SuppressWarnings("deprecation")
     private void runTest56574(boolean createRow) throws IOException {
         Workbook wb = XSSFTestDataSamples.openSampleWorkbook("56574.xlsx");
 

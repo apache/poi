@@ -17,11 +17,15 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.io.IOException;
 
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.xssf.XSSFTestDataSamples;
+import org.junit.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCol;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCols;
 
@@ -36,7 +40,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCols;
  * </em>
  * 
  */
-public class TestXSSFColGrouping extends TestCase {
+public class TestXSSFColGrouping {
 	
 	private static final POILogger logger = POILogFactory.getLogger(TestXSSFColGrouping.class);
 
@@ -45,10 +49,10 @@ public class TestXSSFColGrouping extends TestCase {
      * Tests that POI doesn't produce "col" elements without "width" attribute. 
      * POI-52186
      */
-    @SuppressWarnings("deprecation")
-    public void testNoColsWithoutWidthWhenGrouping() {
-		XSSFWorkbook wb = new XSSFWorkbook();
-		XSSFSheet sheet = wb.createSheet("test");
+	@Test
+    public void testNoColsWithoutWidthWhenGrouping() throws IOException {
+		XSSFWorkbook wb1 = new XSSFWorkbook();
+		XSSFSheet sheet = wb1.createSheet("test");
 
         sheet.setColumnWidth(4, 5000);
         sheet.setColumnWidth(5, 5000);
@@ -56,24 +60,27 @@ public class TestXSSFColGrouping extends TestCase {
         sheet.groupColumn((short) 4, (short) 7);
         sheet.groupColumn((short) 9, (short) 12);
         
-        wb = XSSFTestDataSamples.writeOutAndReadBack(wb, "testNoColsWithoutWidthWhenGrouping");
-        sheet = wb.getSheet("test");
+        XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb1, "testNoColsWithoutWidthWhenGrouping");
+        sheet = wb2.getSheet("test");
         
         CTCols cols = sheet.getCTWorksheet().getColsArray(0);
         logger.log(POILogger.DEBUG, "test52186/cols:" + cols);
         for (CTCol col : cols.getColArray()) {
 			assertTrue("Col width attribute is unset: " + col.toString(), col.isSetWidth());
 		}
+        
+        wb2.close();
+        wb1.close();
     }
 
     /**
      * Tests that POI doesn't produce "col" elements without "width" attribute. 
      * POI-52186
      */
-    @SuppressWarnings("deprecation")
-    public void testNoColsWithoutWidthWhenGroupingAndCollapsing() {
-		XSSFWorkbook wb = new XSSFWorkbook();
-		XSSFSheet sheet = wb.createSheet("test");
+	@Test
+	public void testNoColsWithoutWidthWhenGroupingAndCollapsing() throws IOException {
+		XSSFWorkbook wb1 = new XSSFWorkbook();
+		XSSFSheet sheet = wb1.createSheet("test");
 
         sheet.setColumnWidth(4, 5000);
         sheet.setColumnWidth(5, 5000);
@@ -85,8 +92,8 @@ public class TestXSSFColGrouping extends TestCase {
         CTCols cols = sheet.getCTWorksheet().getColsArray(0);
         logger.log(POILogger.DEBUG, "test52186_2/cols:" + cols);
 
-        wb = XSSFTestDataSamples.writeOutAndReadBack(wb, "testNoColsWithoutWidthWhenGroupingAndCollapsing");
-        sheet = wb.getSheet("test");
+        XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb1, "testNoColsWithoutWidthWhenGroupingAndCollapsing");
+        sheet = wb2.getSheet("test");
         
         for (int i = 4; i <= 5; i++) {
         	assertEquals("Unexpected width of column "+ i, 5000, sheet.getColumnWidth(i));
@@ -95,14 +102,17 @@ public class TestXSSFColGrouping extends TestCase {
         for (CTCol col : cols.getColArray()) {
 			assertTrue("Col width attribute is unset: " + col.toString(), col.isSetWidth());
 		}
+        wb2.close();
+        wb1.close();
     }
     
     /**
      * Test the cols element is correct in case of NumericRanges.OVERLAPS_2_WRAPS
      */
-    public void testMergingOverlappingCols_OVERLAPS_2_WRAPS() {
-		XSSFWorkbook wb = new XSSFWorkbook();
-		XSSFSheet sheet = wb.createSheet("test");
+	@Test
+    public void testMergingOverlappingCols_OVERLAPS_2_WRAPS() throws IOException {
+		XSSFWorkbook wb1 = new XSSFWorkbook();
+		XSSFSheet sheet = wb1.createSheet("test");
 
         CTCols cols = sheet.getCTWorksheet().getColsArray(0);
         CTCol col = cols.addNewCol();
@@ -133,20 +143,24 @@ public class TestXSSFColGrouping extends TestCase {
         
         assertEquals(3, cols.sizeOfColArray());
 
-        wb = XSSFTestDataSamples.writeOutAndReadBack(wb, "testMergingOverlappingCols_OVERLAPS_2_WRAPS");
-        sheet = wb.getSheet("test");
+        XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb1, "testMergingOverlappingCols_OVERLAPS_2_WRAPS");
+        sheet = wb2.getSheet("test");
         
         for (int i = 1; i <= 4; i++) {
         	assertEquals("Unexpected width of column "+ i, 20 * 256, sheet.getColumnWidth(i));
         }
+        
+        wb2.close();
+        wb1.close();
     }
 
     /**
      * Test the cols element is correct in case of NumericRanges.OVERLAPS_1_WRAPS
      */
-    public void testMergingOverlappingCols_OVERLAPS_1_WRAPS() {
-		XSSFWorkbook wb = new XSSFWorkbook();
-		XSSFSheet sheet = wb.createSheet("test");
+	@Test
+    public void testMergingOverlappingCols_OVERLAPS_1_WRAPS() throws IOException {
+		XSSFWorkbook wb1 = new XSSFWorkbook();
+		XSSFSheet sheet = wb1.createSheet("test");
 
         CTCols cols = sheet.getCTWorksheet().getColsArray(0);
         CTCol col = cols.addNewCol();
@@ -177,20 +191,24 @@ public class TestXSSFColGrouping extends TestCase {
         
         assertEquals(3, cols.sizeOfColArray());
         
-        wb = XSSFTestDataSamples.writeOutAndReadBack(wb, "testMergingOverlappingCols_OVERLAPS_1_WRAPS");
-        sheet = wb.getSheet("test");
+        XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb1, "testMergingOverlappingCols_OVERLAPS_1_WRAPS");
+        sheet = wb2.getSheet("test");
         
         for (int i = 2; i <= 4; i++) {
         	assertEquals("Unexpected width of column "+ i, 20 * 256, sheet.getColumnWidth(i));
         }
+        
+        wb2.close();
+        wb1.close();
     }
 
     /**
      * Test the cols element is correct in case of NumericRanges.OVERLAPS_1_MINOR
      */
-    public void testMergingOverlappingCols_OVERLAPS_1_MINOR() {
-		XSSFWorkbook wb = new XSSFWorkbook();
-		XSSFSheet sheet = wb.createSheet("test");
+	@Test
+    public void testMergingOverlappingCols_OVERLAPS_1_MINOR() throws IOException {
+		XSSFWorkbook wb1 = new XSSFWorkbook();
+		XSSFSheet sheet = wb1.createSheet("test");
 
         CTCols cols = sheet.getCTWorksheet().getColsArray(0);
         CTCol col = cols.addNewCol();
@@ -221,21 +239,25 @@ public class TestXSSFColGrouping extends TestCase {
         
         assertEquals(3, cols.sizeOfColArray());
         
-        wb = XSSFTestDataSamples.writeOutAndReadBack(wb, "testMergingOverlappingCols_OVERLAPS_1_MINOR");
-        sheet = wb.getSheet("test");
+        XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb1, "testMergingOverlappingCols_OVERLAPS_1_MINOR");
+        sheet = wb2.getSheet("test");
         
         for (int i = 2; i <= 4; i++) {
         	assertEquals("Unexpected width of column "+ i, 20 * 256, sheet.getColumnWidth(i));
         }
     	assertEquals("Unexpected width of column "+ 5, sheet.getDefaultColumnWidth() * 256, sheet.getColumnWidth(5));
+    	
+    	wb2.close();
+    	wb1.close();
     }
 
     /**
      * Test the cols element is correct in case of NumericRanges.OVERLAPS_2_MINOR
      */
-   public void testMergingOverlappingCols_OVERLAPS_2_MINOR() {
-		XSSFWorkbook wb = new XSSFWorkbook();
-		XSSFSheet sheet = wb.createSheet("test");
+	@Test
+    public void testMergingOverlappingCols_OVERLAPS_2_MINOR() throws IOException {
+		XSSFWorkbook wb1 = new XSSFWorkbook();
+		XSSFSheet sheet = wb1.createSheet("test");
 
         CTCols cols = sheet.getCTWorksheet().getColsArray(0);
         CTCol col = cols.addNewCol();
@@ -266,13 +288,16 @@ public class TestXSSFColGrouping extends TestCase {
         
         assertEquals(3, cols.sizeOfColArray());
         
-        wb = XSSFTestDataSamples.writeOutAndReadBack(wb, "testMergingOverlappingCols_OVERLAPS_2_MINOR");
-        sheet = wb.getSheet("test");
+        XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb1, "testMergingOverlappingCols_OVERLAPS_2_MINOR");
+        sheet = wb2.getSheet("test");
         
         for (int i = 2; i <= 4; i++) {
         	assertEquals("Unexpected width of column "+ i, 20 * 256, sheet.getColumnWidth(i));
         }
     	assertEquals("Unexpected width of column "+ 1, sheet.getDefaultColumnWidth() * 256, sheet.getColumnWidth(1));
+    	
+    	wb2.close();
+    	wb1.close();
     }
 
 }
