@@ -25,19 +25,25 @@ import static org.junit.Assert.fail;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
+import java.util.Collection;
 import java.util.List;
 
 import javax.imageio.ImageIO;
 
+import org.apache.poi.POIDataSamples;
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.xslf.usermodel.DrawingParagraph;
 import org.apache.poi.xslf.usermodel.DrawingTextBody;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
@@ -63,12 +69,12 @@ public class TestXSLFBugs {
        // Check the relations on it
        // Note - rId3 is a self reference
        XSLFSlide slide0 = ss1.getSlides().get(0);
-
-       assertEquals("/ppt/slides/slide1.xml", slide0.getPackagePart().getPartName().toString());
-       assertEquals("/ppt/slideLayouts/slideLayout12.xml", slide0.getRelationById("rId1").getPackageRelationship().getTargetURI().toString());
-       assertEquals("/ppt/notesSlides/notesSlide1.xml", slide0.getRelationById("rId2").getPackageRelationship().getTargetURI().toString());
-       assertEquals("/ppt/slides/slide1.xml", slide0.getRelationById("rId3").getPackageRelationship().getTargetURI().toString());
-       assertEquals("/ppt/media/image1.png", slide0.getRelationById("rId4").getPackageRelationship().getTargetURI().toString());
+       
+       assertRelation(slide0, "/ppt/slides/slide1.xml", null);
+       assertRelation(slide0, "/ppt/slideLayouts/slideLayout12.xml", "rId1");
+       assertRelation(slide0, "/ppt/notesSlides/notesSlide1.xml", "rId2");
+       assertRelation(slide0, "/ppt/slides/slide1.xml", "rId3");
+       assertRelation(slide0, "/ppt/media/image1.png", "rId4");
        
        // Save and re-load
        XMLSlideShow ss2 = XSLFTestDataSamples.writeOutAndReadBack(ss1);
@@ -76,14 +82,19 @@ public class TestXSLFBugs {
        assertEquals(1, ss2.getSlides().size());
        
        slide0 = ss2.getSlides().get(0);
-       assertEquals("/ppt/slides/slide1.xml", slide0.getPackagePart().getPartName().toString());
-       assertEquals("/ppt/slideLayouts/slideLayout12.xml", slide0.getRelationById("rId1").getPackageRelationship().getTargetURI().toString());
-       assertEquals("/ppt/notesSlides/notesSlide1.xml", slide0.getRelationById("rId2").getPackageRelationship().getTargetURI().toString());
+       assertRelation(slide0, "/ppt/slides/slide1.xml", null);
+       assertRelation(slide0, "/ppt/slideLayouts/slideLayout12.xml", "rId1");
+       assertRelation(slide0, "/ppt/notesSlides/notesSlide1.xml", "rId2");
        // TODO Fix this
-       assertEquals("/ppt/slides/slide1.xml", slide0.getRelationById("rId3").getPackageRelationship().getTargetURI().toString());
-       assertEquals("/ppt/media/image1.png", slide0.getRelationById("rId4").getPackageRelationship().getTargetURI().toString());
+       assertRelation(slide0, "/ppt/slides/slide1.xml", "rId3");
+       assertRelation(slide0, "/ppt/media/image1.png", "rId4");
        
        ss2.close();
+    }
+    
+    private static void assertRelation(XSLFSlide slide, String exp, String rId) {
+        POIXMLDocumentPart pd = (rId != null) ? slide.getRelationById(rId) : slide;
+        assertEquals(exp, pd.getPackagePart().getPartName().getName());
     }
     
     /**
@@ -149,17 +160,17 @@ public class TestXSLFBugs {
         
         // Check the text, to see we got them in order
         slide = ss.getSlides().get(0);
-        assertContains("POI cannot read this", getSlideText(slide));
+        assertContains(getSlideText(slide), "POI cannot read this");
         
         slide = ss.getSlides().get(1);
-        assertContains("POI can read this", getSlideText(slide));
-        assertContains("Has a relationship to another slide", getSlideText(slide));
+        assertContains(getSlideText(slide), "POI can read this");
+        assertContains(getSlideText(slide), "Has a relationship to another slide");
         
         slide = ss.getSlides().get(2);
-        assertContains("POI can read this", getSlideText(slide));
+        assertContains(getSlideText(slide), "POI can read this");
         
         slide = ss.getSlides().get(3);
-        assertContains("POI can read this", getSlideText(slide));
+        assertContains(getSlideText(slide), "POI can read this");
         
         ss.close();
     }
@@ -406,5 +417,20 @@ public class TestXSLFBugs {
         }
         
         ss.close();
+    }
+    
+    @Test
+    public void testLayout() throws IOException {
+        XMLSlideShow ppt = new XMLSlideShow();
+        InputStream picIn = POIDataSamples.getSlideShowInstance().openResourceAsStream("clock.jpg");
+        XSLFPictureData pd = ppt.addPicture(IOUtils.toByteArray(picIn), PictureType.JPEG);
+        picIn.close();
+        XSLFSlide slide = ppt.createSlide();
+        XSLFPictureShape ps = slide.createPicture(pd);
+        ps.setAnchor(new Rectangle(100, 100, 100, 100));
+        FileOutputStream fos = new FileOutputStream("picbla.pptx");
+        ppt.write(fos);
+        fos.close();
+        ppt.close();
     }
 }

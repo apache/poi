@@ -17,6 +17,12 @@
 
 package org.apache.poi;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -25,8 +31,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
@@ -34,11 +38,12 @@ import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.util.PackageHelper;
 import org.apache.poi.util.TempFile;
+import org.junit.Test;
 
 /**
  * Test recursive read and write of OPC packages
  */
-public final class TestPOIXMLDocument extends TestCase {
+public final class TestPOIXMLDocument {
 
     private static class OPCParser extends POIXMLDocument {
 
@@ -65,6 +70,7 @@ public final class TestPOIXMLDocument extends TestCase {
         public TestFactory() {
             //
         }
+
         @Override
         public POIXMLDocumentPart createDocumentPart(POIXMLDocumentPart parent, PackageRelationship rel, PackagePart part){
             return new POIXMLDocumentPart(part, rel);
@@ -74,18 +80,20 @@ public final class TestPOIXMLDocument extends TestCase {
         public POIXMLDocumentPart newDocumentPart(POIXMLRelation descriptor){
             throw new RuntimeException("not supported");
         }
-
     }
 
     /**
      * Recursively traverse a OOXML document and assert that same logical parts have the same physical instances
      */
     private static void traverse(POIXMLDocumentPart part, HashMap<String,POIXMLDocumentPart> context) throws IOException{
-        context.put(part.getPackageRelationship().getTargetURI().toString(), part);
+        assertEquals(part.getPackageRelationship().getTargetURI().toString(), part.getPackagePart().getPartName().getName());
+        
+        context.put(part.getPackagePart().getPartName().getName(), part);
         for(POIXMLDocumentPart p : part.getRelations()){
             assertNotNull(p.toString());
             
-            String uri = p.getPackageRelationship().getTargetURI().toString();
+            String uri = p.getPackagePart().getPartName().getURI().toString();
+            assertEquals(uri, p.getPackageRelationship().getTargetURI().toString());
             if (!context.containsKey(uri)) {
                 traverse(p, context);
             } else {
@@ -108,7 +116,9 @@ public final class TestPOIXMLDocument extends TestCase {
         FileOutputStream out = new FileOutputStream(tmp);
         doc.write(out);
         out.close();
+        doc.close();
 
+        @SuppressWarnings("resource")
         OPCPackage pkg2 = OPCPackage.open(tmp.getAbsolutePath());
         try {
             doc = new OPCParser(pkg1);
@@ -135,30 +145,33 @@ public final class TestPOIXMLDocument extends TestCase {
                 assertEquals(p1.getPartName(), p2.getPartName());
             }
         } finally {
-            pkg2.close();
+            doc.close();
         }
     }
 
+    @Test
     public void testPPTX() throws Exception {
-        assertReadWrite(
-                PackageHelper.open(POIDataSamples.getSlideShowInstance().openResourceAsStream("PPTWithAttachments.pptm"))
-        );
+        POIDataSamples pds = POIDataSamples.getSlideShowInstance();
+        assertReadWrite(PackageHelper.open(pds.openResourceAsStream("PPTWithAttachments.pptm")));
     }
 
+    @Test
     public void testXLSX() throws Exception {
-        assertReadWrite(
-                PackageHelper.open(POIDataSamples.getSpreadSheetInstance().openResourceAsStream("ExcelWithAttachments.xlsm"))
-                );
+        POIDataSamples pds = POIDataSamples.getSpreadSheetInstance();
+        assertReadWrite(PackageHelper.open(pds.openResourceAsStream("ExcelWithAttachments.xlsm")));
     }
 
+    @Test
     public void testDOCX() throws Exception {
-        assertReadWrite(
-                PackageHelper.open(POIDataSamples.getDocumentInstance().openResourceAsStream("WordWithAttachments.docx"))
-                );
+        POIDataSamples pds = POIDataSamples.getDocumentInstance();
+        assertReadWrite(PackageHelper.open(pds.openResourceAsStream("WordWithAttachments.docx")));
     }
 
+    @Test
     public void testRelationOrder() throws Exception {
-        OPCPackage pkg = PackageHelper.open(POIDataSamples.getDocumentInstance().openResourceAsStream("WordWithAttachments.docx"));
+        POIDataSamples pds = POIDataSamples.getDocumentInstance();
+        @SuppressWarnings("resource")
+        OPCPackage pkg = PackageHelper.open(pds.openResourceAsStream("WordWithAttachments.docx"));
         OPCParser doc = new OPCParser(pkg);
         try {
             doc.parse(new TestFactory());
@@ -172,6 +185,7 @@ public final class TestPOIXMLDocument extends TestCase {
         }
     }
 
+    @Test
     public void testCommitNullPart() throws IOException, InvalidFormatException {
         POIXMLDocumentPart part = new POIXMLDocumentPart();
         part.prepareForCommit();
@@ -187,32 +201,40 @@ public final class TestPOIXMLDocument extends TestCase {
         //part.getTargetPart(null);
     }
     
+    @Test
     public void testVSDX() throws Exception {
-        OPCPackage open = PackageHelper.open(POIDataSamples.getDiagramInstance().openResourceAsStream("test.vsdx"));
-        
+        POIDataSamples pds = POIDataSamples.getDiagramInstance();
+        @SuppressWarnings("resource")
+        OPCPackage open = PackageHelper.open(pds.openResourceAsStream("test.vsdx"));
         POIXMLDocument part = new OPCParser(open, PackageRelationshipTypes.VISIO_CORE_DOCUMENT);
         
         assertNotNull(part);
         assertEquals(0, part.getRelationCounter());
+        part.close();
     }
     
-    public void testVSDXPart() throws Exception {
-        OPCPackage open = PackageHelper.open(POIDataSamples.getDiagramInstance().openResourceAsStream("test.vsdx"));
+    @Test
+    public void testVSDXPart() throws IOException {
+        POIDataSamples pds = POIDataSamples.getDiagramInstance();
+        OPCPackage open = PackageHelper.open(pds.openResourceAsStream("test.vsdx"));
         
         POIXMLDocumentPart part = new POIXMLDocumentPart(open, PackageRelationshipTypes.VISIO_CORE_DOCUMENT);
         
         assertNotNull(part);
         assertEquals(0, part.getRelationCounter());
+        
+        open.close();
     }
     
-    public void testInvalidCoreRel() throws Exception {
-        OPCPackage open = PackageHelper.open(POIDataSamples.getDiagramInstance().openResourceAsStream("test.vsdx"));
+    @Test(expected=POIXMLException.class)
+    public void testInvalidCoreRel() throws IOException {
+        POIDataSamples pds = POIDataSamples.getDiagramInstance();
+        OPCPackage open = PackageHelper.open(pds.openResourceAsStream("test.vsdx"));
         
         try {
             new POIXMLDocumentPart(open, "somethingillegal");
-            fail("Unknown core ref will throw exception");
-        } catch (POIXMLException e) {
-            // expected here
+        } finally {
+            open.close();
         }
     }
 }
