@@ -167,7 +167,16 @@ public final class CellUtil {
 	 *@param font The Font that you want to set...
 	 */
 	public static void setFont(Cell cell, Workbook workbook, Font font) {
-		setCellStyleProperty(cell, workbook, FONT, font.getIndex());
+		// Check if font belongs to workbook
+		final short fontIndex = font.getIndex();
+		if (!workbook.getFontAt(fontIndex).equals(font)) {
+			throw new IllegalArgumentException("Font does not belong to this workbook");
+		}
+
+		// Check if cell belongs to workbook
+		// (checked in setCellStyleProperty)
+
+		setCellStyleProperty(cell, workbook, FONT, fontIndex);
 	}
 
 	/**
@@ -247,7 +256,7 @@ public final class CellUtil {
 	public static void setCellStyleProperty(Cell cell, Workbook workbook, String propertyName,
 			Object propertyValue) {
 		if (cell.getSheet().getWorkbook() != workbook) {
-			throw new IllegalArgumentException("Cannot set cell style property. Cell does not belong to workbook");
+			throw new IllegalArgumentException("Cannot set cell style property. Cell does not belong to workbook.");
 		}
 
 		Map<String, Object> values = Collections.singletonMap(propertyName, propertyValue);
