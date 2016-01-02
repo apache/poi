@@ -541,9 +541,12 @@ public class SXSSFCell implements Cell {
     }
 
     /**
-     * Set the style for the cell.  The style should be an CellStyle created/retreived from
-     * the Workbook.
-     *
+     * <p>Set the style for the cell.  The style should be an CellStyle created/retreived from
+     * the Workbook.</p>
+     * 
+     * <p>To change the style of a cell without affecting other cells that use the same style,
+     * use {@link org.apache.poi.ss.util.CellUtil#setCellStyleProperties(Cell, Map<String, Object>)}</p>
+     * 
      * @param style  reference contained in the workbook.
      * If the value is null then the style information is removed causing the cell to used the default workbook style.
      * @see org.apache.poi.ss.usermodel.Workbook#createCellStyle()

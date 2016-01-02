@@ -880,8 +880,11 @@ public class HSSFCell implements Cell {
     }
 
     /**
-     * set the style for the cell.  The style should be an HSSFCellStyle created/retreived from
-     * the HSSFWorkbook.
+     * <p>Set the style for the cell.  The style should be an HSSFCellStyle created/retreived from
+     * the HSSFWorkbook.</p>
+     * 
+     * <p>To change the style of a cell without affecting other cells that use the same style,
+     * use {@link org.apache.poi.ss.util.CellUtil#setCellStyleProperties(Cell, Map<String, Object>)}</p>
      *
      * @param style  reference contained in the workbook
      * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#createCellStyle()

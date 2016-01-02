@@ -615,9 +615,12 @@ public final class XSSFCell implements Cell {
     }
 
     /**
-     * Set the style for the cell.  The style should be an XSSFCellStyle created/retreived from
-     * the XSSFWorkbook.
+     * <p>Set the style for the cell.  The style should be an XSSFCellStyle created/retreived from
+     * the XSSFWorkbook.</p>
      *
+     * <p>To change the style of a cell without affecting other cells that use the same style,
+     * use {@link org.apache.poi.ss.util.CellUtil#setCellStyleProperties(Cell, Map<String, Object>)}</p>
+     * 
      * @param style  reference contained in the workbook.
      * If the value is null then the style information is removed causing the cell to used the default workbook style.
      * @throws IllegalArgumentException if style belongs to a different styles source (most likely because style is from a different Workbook)

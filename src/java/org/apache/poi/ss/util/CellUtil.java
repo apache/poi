@@ -17,6 +17,7 @@
 
 package org.apache.poi.ss.util;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -170,22 +171,36 @@ public final class CellUtil {
 	}
 
 	/**
-	 * This method attempt to find an already existing CellStyle that matches what you want the
-	 * style to be. If it does not find the style, then it creates a new one. If it does create a
-	 * new one, then it applies the propertyName and propertyValue to the style. This is necessary
-	 * because Excel has an upper limit on the number of Styles that it supports.
+	 * <p>This method attempts to find an existing CellStyle that matches the <code>cell</code>'s 
+	 * current style plus styles properties in <code>properties</code>. A new style is created if the
+	 * workbook does not contain a matching style.</p>
+	 * 
+	 * <p>Modifies the cell style of <code>cell</code> without affecting other cells that use the
+	 * same style.</p>
+	 * 
+	 * <p>This is necessary because Excel has an upper limit on the number of styles that it supports.</p>
+	 * 
+	 * <p>This function is more efficient than multiple calls to
+	 * {@link #setCellStyleProperty(org.apache.poi.ss.usermodel.Cell, org.apache.poi.ss.usermodel.Workbook, String, Object)}
+	 * if adding multiple cell styles.</p>
+	 * 
+	 * <p>For performance reasons, if this is the only cell in a workbook that uses a cell style,
+	 * this method does NOT remove the old style from the workbook.
+	 * <!-- NOT IMPLEMENTED: Unused styles should be
+	 * pruned from the workbook with {@link #removeUnusedCellStyles(Workbook)} or
+	 * {@link #removeStyleFromWorkbookIfUnused(CellStyle, Workbook)}. -->
+	 * </p>
 	 *
-	 *@param workbook The workbook that is being worked with.
-	 *@param propertyName The name of the property that is to be changed.
-	 *@param propertyValue The value of the property that is to be changed.
-	 *@param cell The cell that needs it's style changes
+	 * @param cell The cell to change the style of
+	 * @param properties The properties to be added to a cell style, as {propertyName: propertyValue}.
+	 * @since POI 3.14 beta 2
 	 */
-	public static void setCellStyleProperty(Cell cell, Workbook workbook, String propertyName,
-			Object propertyValue) {
+	public static void setCellStyleProperties(Cell cell, Map<String, Object> properties) {
+		Workbook workbook = cell.getSheet().getWorkbook();
 		CellStyle originalStyle = cell.getCellStyle();
 		CellStyle newStyle = null;
 		Map<String, Object> values = getFormatProperties(originalStyle);
-		values.put(propertyName, propertyValue);
+		values.putAll(properties);
 
 		// index seems like what index the cellstyle is in the list of styles for a workbook.
 		// not good to compare on!
@@ -195,12 +210,14 @@ public final class CellUtil {
 			CellStyle wbStyle = workbook.getCellStyleAt(i);
 			Map<String, Object> wbStyleMap = getFormatProperties(wbStyle);
 
+			// the desired style already exists in the workbook. Use the existing style.
 			if (wbStyleMap.equals(values)) {
 				newStyle = wbStyle;
 				break;
 			}
 		}
 
+		// the desired style does not exist in the workbook. Create a new style with desired properties.
 		if (newStyle == null) {
 			newStyle = workbook.createCellStyle();
 			setFormatProperties(newStyle, workbook, values);
@@ -210,7 +227,38 @@ public final class CellUtil {
 	}
 
 	/**
+	 * <p>This method attempts to find an existing CellStyle that matches the <code>cell</code>'s
+	 * current style plus a single style property <code>propertyName</code> with value
+	 * <code>propertyValue<code>.
+	 * A new style is created if the workbook does not contain a matching style.</p>
+	 * 
+	 * <p>Modifies the cell style of <code>cell</code> without affecting other cells that use the
+	 * same style.</p>
+	 * 
+	 * <p>If setting more than one cell style property on a cell, use
+	 * {@link #setCellStyleProperties(org.apache.poi.ss.usermodel.Cell, Map<String, Object>)},
+	 * which is faster and does not add unnecessary intermediate CellStyles to the workbook.</p>
+	 * 
+	 * @param workbook The workbook that is being worked with.
+	 * @param propertyName The name of the property that is to be changed.
+	 * @param propertyValue The value of the property that is to be changed.
+	 * @param cell The cell that needs it's style changes
+	 */
+	public static void setCellStyleProperty(Cell cell, Workbook workbook, String propertyName,
+			Object propertyValue) {
+		if (cell.getSheet().getWorkbook() != workbook) {
+			throw new IllegalArgumentException("Cannot set cell style property. Cell does not belong to workbook");
+		}
+
+		Map<String, Object> values = Collections.singletonMap(propertyName, propertyValue);
+		setCellStyleProperties(cell, values);
+	}
+
+	/**
 	 * Returns a map containing the format properties of the given cell style.
+         * The returned map is not tied to <code>style</code>, so subsequent changes
+         * to <code>style</code> will not modify the map, and changes to the returned
+         * map will not modify the cell style. The returned map is mutable.
 	 *
 	 * @param style cell style
 	 * @return map of format properties (String -> Object)
