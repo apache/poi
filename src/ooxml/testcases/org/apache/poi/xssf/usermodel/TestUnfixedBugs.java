@@ -29,6 +29,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
@@ -175,36 +177,6 @@ public final class TestUnfixedBugs {
         assertEquals(calendar1, calendar2);
         
         assertEquals(DateUtil.getJavaDate(value1, false), DateUtil.getJavaDate(value2, false));
-    }
-
-    @Test
-    public void test57236() throws Exception {
-        // Having very small numbers leads to different formatting, Excel uses the scientific notation, but POI leads to "0"
-        
-        /*
-        DecimalFormat format = new DecimalFormat("#.##########", new DecimalFormatSymbols(Locale.getDefault()));
-        double d = 3.0E-104;
-        assertEquals("3.0E-104", format.format(d));
-         */
-        
-        DataFormatter formatter = new DataFormatter(true);
-
-        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("57236.xlsx");
-        for(int sheetNum = 0;sheetNum < wb.getNumberOfSheets();sheetNum++) {
-            Sheet sheet = wb.getSheetAt(sheetNum);
-            for(int rowNum = sheet.getFirstRowNum();rowNum < sheet.getLastRowNum();rowNum++) {
-                Row row = sheet.getRow(rowNum);
-                for(int cellNum = row.getFirstCellNum();cellNum < row.getLastCellNum();cellNum++) {
-                    Cell cell = row.getCell(cellNum);
-                    String fmtCellValue = formatter.formatCellValue(cell);
-                    
-                    System.out.println("Cell: " + fmtCellValue);
-                    assertNotNull(fmtCellValue);
-                    assertFalse(fmtCellValue.equals("0"));
-                }
-            }
-        }
-        wb.close();
     }
 
     // When this is fixed, the test case should go to BaseTestXCell with 
