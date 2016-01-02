@@ -884,7 +884,7 @@ public class HSSFCell implements Cell {
      * the HSSFWorkbook.</p>
      * 
      * <p>To change the style of a cell without affecting other cells that use the same style,
-     * use {@link org.apache.poi.ss.util.CellUtil#setCellStyleProperties(Cell, Map<String, Object>)}</p>
+     * use {@link org.apache.poi.ss.util.CellUtil#setCellStyleProperties(org.apache.poi.ss.usermodel.Cell, Map)}</p>
      *
      * @param style  reference contained in the workbook
      * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#createCellStyle()
