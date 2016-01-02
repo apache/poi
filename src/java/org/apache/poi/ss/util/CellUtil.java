@@ -187,8 +187,8 @@ public final class CellUtil {
 	 * <p>For performance reasons, if this is the only cell in a workbook that uses a cell style,
 	 * this method does NOT remove the old style from the workbook.
 	 * <!-- NOT IMPLEMENTED: Unused styles should be
-	 * pruned from the workbook with {@link #removeUnusedCellStyles(Workbook)} or
-	 * {@link #removeStyleFromWorkbookIfUnused(CellStyle, Workbook)}. -->
+	 * pruned from the workbook with [@link #removeUnusedCellStyles(Workbook)] or
+	 * [@link #removeStyleFromWorkbookIfUnused(CellStyle, Workbook)]. -->
 	 * </p>
 	 *
 	 * @param cell The cell to change the style of
@@ -236,7 +236,7 @@ public final class CellUtil {
 	 * same style.</p>
 	 * 
 	 * <p>If setting more than one cell style property on a cell, use
-	 * {@link #setCellStyleProperties(org.apache.poi.ss.usermodel.Cell, Map<String, Object>)},
+	 * {@link #setCellStyleProperties(org.apache.poi.ss.usermodel.Cell, Map)},
 	 * which is faster and does not add unnecessary intermediate CellStyles to the workbook.</p>
 	 * 
 	 * @param workbook The workbook that is being worked with.
