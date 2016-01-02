@@ -30,19 +30,24 @@ import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 public class BaseTestSlideShowFactory {
     private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
 
-    public void testFactory(String file, String protectedFile, String password)
-    throws Exception {
+    private static void testFactoryFromFile(String file) throws Exception {
         SlideShow<?,?> ss;
         // from file
         ss = SlideShowFactory.create(fromFile(file));
         assertNotNull(ss);
         ss.close();
+    }
 
+    private static void testFactoryFromStream(String file) throws Exception {
+        SlideShow<?,?> ss;
         // from stream
         ss = SlideShowFactory.create(fromStream(file));
         assertNotNull(ss);
         ss.close();
+    }
 
+    private static void testFactoryFromNative(String file) throws Exception {
+        SlideShow<?,?> ss;
         // from NPOIFS
         if (!file.contains("pptx")) {
             NPOIFSFileSystem npoifs = new NPOIFSFileSystem(fromFile(file));
@@ -51,23 +56,43 @@ public class BaseTestSlideShowFactory {
             npoifs.close();
             ss.close();
         }
+    }
 
-        // from protected file
+    private static void testFactoryFromProtectedFile(String protectedFile, String password) throws Exception {
+        SlideShow<?,?> ss;
+        // from protected file 
         ss = SlideShowFactory.create(fromFile(protectedFile), password);
         assertNotNull(ss);
         ss.close();
+    }
 
+    private static void testFactoryFromProtectedStream(String protectedFile, String password) throws Exception {
+        SlideShow<?,?> ss;
         // from protected stream
         ss = SlideShowFactory.create(fromStream(protectedFile), password);
         assertNotNull(ss);
         ss.close();
+    }
 
+    private static void testFactoryFromProtectedNative(String protectedFile, String password) throws Exception {
+        SlideShow<?,?> ss;
         // from protected NPOIFS
         NPOIFSFileSystem npoifs = new NPOIFSFileSystem(fromFile(protectedFile));
         ss = SlideShowFactory.create(npoifs, password);
         assertNotNull(ss);
         npoifs.close();
         ss.close();
+    }
+
+    public static void testFactory(String file, String protectedFile, String password)
+    throws Exception {
+        testFactoryFromFile(file);
+        testFactoryFromStream(file);
+        testFactoryFromNative(file);
+
+        testFactoryFromProtectedFile(protectedFile, password);
+        testFactoryFromProtectedStream(protectedFile, password);
+        testFactoryFromProtectedNative(protectedFile, password);
     }
     
     private static File fromFile(String file) {
@@ -81,4 +106,5 @@ public class BaseTestSlideShowFactory {
             ? new FileInputStream(file)
             : _slTests.openResourceAsStream(file);
     }
+
 }
