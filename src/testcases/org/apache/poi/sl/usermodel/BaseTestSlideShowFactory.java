@@ -21,21 +21,18 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import java.io.ByteArrayOutputStream;
-
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 
 public class BaseTestSlideShowFactory {
     private static final POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
-    private static final POILogger LOGGER = POILogFactory.getLogger(BaseTestSlideShowFactory.class);
 
     protected static void testFactoryFromFile(String file) throws Exception {
         SlideShow<?,?> ss;
@@ -167,8 +164,23 @@ public class BaseTestSlideShowFactory {
         final byte[] before = readFile(filename);
         ss.close();
         final byte[] after = readFile(filename);
-        assertArrayEquals(filename + " sample file was modified as a result of closing the slideshow",
-                before, after);
+
+        try {
+            assertArrayEquals(filename + " sample file was modified as a result of closing the slideshow",
+                    before, after);
+        } catch (AssertionError e) {
+            // if the file after closing is different, then re-set 
+            // the file to the state before in order to not have a dirty SCM 
+            // working tree when running this test
+            FileOutputStream str = new FileOutputStream(_slTests.getFile(filename));
+            try {
+                str.write(before);
+            } finally {
+                str.close();
+            }
+            
+            throw e;
+        }
     }
 
     private static File fromFile(String file) {
