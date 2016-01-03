@@ -133,9 +133,17 @@ public class XSSFCellAlignment {
      * <code>[degrees below horizon] = 90 - textRotation.</code>
      * </p>
      *
+     * Note: HSSF uses values from -90 to 90 degrees, whereas XSSF 
+     * uses values from 0 to 180 degrees. The implementations of this method will map between these two value-ranges 
+     * accordingly, however the corresponding getter is returning values in the range mandated by the current type
+     * of Excel file-format that this CellStyle is applied to.
+     *
      * @param rotation - the rotation degrees (between 0 and 180 degrees)
      */
     public void setTextRotation(long rotation) {
+        if(rotation < 0 && rotation >= -90) {
+            rotation = 90 + ((-1)*rotation);
+        }
         cellAlignement.setTextRotation(rotation);
     }
 
