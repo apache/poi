@@ -1059,4 +1059,31 @@ public class TestXSSFCellStyle {
         target.close();
         reference.close();
     }
+
+    @Test
+    public void test58043() {
+        assertEquals(0, cellStyle.getRotation());
+
+        cellStyle.setRotation((short)89);
+        assertEquals(89, cellStyle.getRotation());
+        
+        cellStyle.setRotation((short)90);
+        assertEquals(90, cellStyle.getRotation());
+        
+        cellStyle.setRotation((short)179);
+        assertEquals(179, cellStyle.getRotation());
+        
+        cellStyle.setRotation((short)180);
+        assertEquals(180, cellStyle.getRotation());
+        
+        // negative values are mapped to the correct values for compatibility between HSSF and XSSF
+        cellStyle.setRotation((short)-1);
+        assertEquals(91, cellStyle.getRotation());
+        
+        cellStyle.setRotation((short)-89);
+        assertEquals(179, cellStyle.getRotation());
+        
+        cellStyle.setRotation((short)-90);
+        assertEquals(180, cellStyle.getRotation());
+    }
 }

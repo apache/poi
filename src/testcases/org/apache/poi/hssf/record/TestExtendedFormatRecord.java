@@ -129,4 +129,28 @@ public final class TestExtendedFormatRecord extends TestCase {
 		for (int i = 0; i < data.length; i++)
 			assertEquals("At offset " + i, data[i], recordBytes[i + 4]);
 	}
+	
+	public void testRotation() {
+        ExtendedFormatRecord record = createEFR();
+        assertEquals(0, record.getRotation());
+
+        record.setRotation((short)1);
+        assertEquals(1, record.getRotation());
+
+        record.setRotation((short)89);
+        assertEquals(89, record.getRotation());
+
+        record.setRotation((short)90);
+        assertEquals(90, record.getRotation());
+
+        // internally values below zero are stored differently
+        record.setRotation((short)-1);
+        assertEquals(255, record.getRotation());
+
+        record.setRotation((short)-89);
+        assertEquals(-77, 90-record.getRotation());
+
+        record.setRotation((short)-90);
+        assertEquals(-76, 90-record.getRotation());
+	}
 }

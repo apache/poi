@@ -23,8 +23,6 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 
-import junit.framework.TestCase;
-
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -34,6 +32,9 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.TempFile;
+import org.junit.Test;
+
+import junit.framework.TestCase;
 
 /**
  * Class to test cell styling functionality
@@ -506,5 +507,41 @@ public final class TestCellStyle extends TestCase {
 //        } finally {
 //            out.close();
 //        }
+    }
+
+
+    @Test
+    public void test58043() throws IOException {
+        HSSFWorkbook     wb   = new HSSFWorkbook();
+        HSSFCellStyle    cellStyle   = wb.createCellStyle();
+
+        assertEquals(0, cellStyle.getRotation());
+
+        cellStyle.setRotation((short)89);
+        assertEquals(89, cellStyle.getRotation());
+        
+        cellStyle.setRotation((short)90);
+        assertEquals(90, cellStyle.getRotation());
+        
+        cellStyle.setRotation((short)-1);
+        assertEquals(-1, cellStyle.getRotation());
+        
+        cellStyle.setRotation((short)-89);
+        assertEquals(-89, cellStyle.getRotation());
+        
+        cellStyle.setRotation((short)-90);
+        assertEquals(-90, cellStyle.getRotation());
+        
+        cellStyle.setRotation((short)-89);
+        assertEquals(-89, cellStyle.getRotation());
+
+        // values above 90 are mapped to the correct values for compatibility between HSSF and XSSF
+        cellStyle.setRotation((short)179);
+        assertEquals(-89, cellStyle.getRotation());
+        
+        cellStyle.setRotation((short)180);
+        assertEquals(-90, cellStyle.getRotation());
+        
+        wb.close();
     }
 }

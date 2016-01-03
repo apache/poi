@@ -410,7 +410,7 @@ public final class ExtendedFormatRecord
     }
 
     /**
-     * set the degree of rotation.  (I've not actually seen this used anywhere)
+     * set the degree of rotation.
      *
      *
      * @param rotation the degree of rotation
@@ -1145,7 +1145,7 @@ public final class ExtendedFormatRecord
     }
 
     /**
-     * get the degree of rotation.  (I've not actually seen this used anywhere)
+     * get the degree of rotation.
      *
      *
      * @return rotation - the degree of rotation

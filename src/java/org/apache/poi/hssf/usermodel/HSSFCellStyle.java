@@ -324,6 +324,12 @@ public final class HSSFCellStyle implements CellStyle {
 
     /**
      * set the degree of rotation for the text in the cell
+     *
+     * Note: HSSF uses values from -90 to 90 degrees, whereas XSSF 
+     * uses values from 0 to 180 degrees. The implementations of this method will map between these two value-ranges 
+     * accordingly, however the corresponding getter is returning values in the range mandated by the current type
+     * of Excel file-format that this CellStyle is applied to.
+     *
      * @param rotation degrees (between -90 and 90 degrees, of 0xff for vertical)
      */
     @Override
@@ -337,7 +343,11 @@ public final class HSSFCellStyle implements CellStyle {
         //The 4th quadrant (-1 to -90) is stored as (91 to 180)
         rotation = (short)(90 - rotation);
       }
-      else if ((rotation < -90)  ||(rotation > 90)) {
+      else if (rotation > 90 && rotation <= 180) {
+          // stay compatible with the range used by XSSF, map from ]90..180] to ]0..-90]
+          // we actually don't need to do anything here as the internal value is stored in [0-180] anyway!
+      }
+      else if ((rotation < -90)  || (rotation > 90)) {
         //Do not allow an incorrect rotation to be set
         throw new IllegalArgumentException("The rotation must be between -90 and 90 degrees, or 0xff");
       }

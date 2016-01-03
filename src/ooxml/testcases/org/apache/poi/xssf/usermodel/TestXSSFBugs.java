@@ -2906,4 +2906,52 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         
         wb.close();
     }
+
+    private void createXls() throws IOException
+    {
+        Workbook workbook = new HSSFWorkbook();
+        FileOutputStream fileOut = new FileOutputStream("/tmp/rotated.xls");
+        Sheet sheet1 = workbook.createSheet();
+        Row row1 = sheet1.createRow((short) 0);
+
+        Cell cell1 = row1.createCell(0);
+
+        cell1.setCellValue("Successful rotated text.");
+
+        CellStyle style = workbook.createCellStyle();
+        style.setRotation((short) -90);
+
+        cell1.setCellStyle(style);
+
+        workbook.write(fileOut);
+        fileOut.close();
+        workbook.close();
+    }
+
+    private void createXlsx() throws IOException {
+        Workbook workbook = new XSSFWorkbook();
+        FileOutputStream fileOut = new FileOutputStream("/tmp/rotated.xlsx");
+        Sheet sheet1 = workbook.createSheet();
+        Row row1 = sheet1.createRow((short) 0);
+
+        Cell cell1 = row1.createCell(0);
+
+        cell1.setCellValue("Unsuccessful rotated text.");
+
+        CellStyle style = workbook.createCellStyle();
+        style.setRotation((short) -90);
+
+        cell1.setCellStyle(style);
+
+        workbook.write(fileOut);
+        fileOut.close();
+        workbook.close();
+    }
+
+    @Ignore("Creates files for checking results manually, actual values are tested in Test*CellStyle")
+    @Test
+    public void test58043() throws Exception {
+        createXls();
+        createXlsx();
+    }
 }
