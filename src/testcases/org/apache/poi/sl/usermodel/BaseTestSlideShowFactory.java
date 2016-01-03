@@ -125,7 +125,10 @@ public class BaseTestSlideShowFactory {
         byte[] bytes;
         try {
             bytes = _slTests.readFile(filename);
-        } catch (final Exception e) {
+        } catch (final RuntimeException e) {
+            if (!e.getMessage().startsWith("Sample file '" + filename + "' not found in data dir")) {
+                throw e;
+            }
             bytes = readExternalFile(filename);
         }
         return bytes;
