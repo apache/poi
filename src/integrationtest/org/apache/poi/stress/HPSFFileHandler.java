@@ -26,12 +26,14 @@ import org.apache.poi.hpsf.HPSFPropertiesOnlyDocument;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.junit.Test;
 
-public class HPSFFileHandler extends AbstractFileHandler {
+public class HPSFFileHandler extends POIFSFileHandler {
 	@Override
     public void handleFile(InputStream stream) throws Exception {
 		HPSFPropertiesOnlyDocument hpsf = new HPSFPropertiesOnlyDocument(new POIFSFileSystem(stream));
 		assertNotNull(hpsf.getDocumentSummaryInformation());
 		assertNotNull(hpsf.getSummaryInformation());
+		
+		handlePOIDocument(hpsf);
 	}
 	
 	// a test-case to test this locally without executing the full TestAllFiles
