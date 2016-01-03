@@ -215,7 +215,13 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
     public String getText() {
         StringBuffer out = new StringBuffer();
         for (IRunElement run : iruns) {
-            if (run instanceof XWPFSDT) {
+            if (run instanceof XWPFRun) {
+                XWPFRun xRun = (XWPFRun) run;
+                // don't include the text if reviewing is enabled and this is a deleted run
+                if (!xRun.getCTR().isSetRsidDel()) {
+                    out.append(xRun.toString());
+                }
+            } else if (run instanceof XWPFSDT) {
                 out.append(((XWPFSDT) run).getContent().getText());
             } else {
                 out.append(run.toString());
