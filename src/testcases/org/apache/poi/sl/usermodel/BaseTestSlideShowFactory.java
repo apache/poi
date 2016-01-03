@@ -30,7 +30,7 @@ import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 public class BaseTestSlideShowFactory {
     private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
 
-    private static void testFactoryFromFile(String file) throws Exception {
+    protected static void testFactoryFromFile(String file) throws Exception {
         SlideShow<?,?> ss;
         // from file
         ss = SlideShowFactory.create(fromFile(file));
@@ -38,7 +38,7 @@ public class BaseTestSlideShowFactory {
         ss.close();
     }
 
-    private static void testFactoryFromStream(String file) throws Exception {
+    protected static void testFactoryFromStream(String file) throws Exception {
         SlideShow<?,?> ss;
         // from stream
         ss = SlideShowFactory.create(fromStream(file));
@@ -46,7 +46,7 @@ public class BaseTestSlideShowFactory {
         ss.close();
     }
 
-    private static void testFactoryFromNative(String file) throws Exception {
+    protected static void testFactoryFromNative(String file) throws Exception {
         SlideShow<?,?> ss;
         // from NPOIFS
         if (!file.contains("pptx")) {
@@ -58,7 +58,7 @@ public class BaseTestSlideShowFactory {
         }
     }
 
-    private static void testFactoryFromProtectedFile(String protectedFile, String password) throws Exception {
+    protected static void testFactoryFromProtectedFile(String protectedFile, String password) throws Exception {
         SlideShow<?,?> ss;
         // from protected file 
         ss = SlideShowFactory.create(fromFile(protectedFile), password);
@@ -66,7 +66,7 @@ public class BaseTestSlideShowFactory {
         ss.close();
     }
 
-    private static void testFactoryFromProtectedStream(String protectedFile, String password) throws Exception {
+    protected static void testFactoryFromProtectedStream(String protectedFile, String password) throws Exception {
         SlideShow<?,?> ss;
         // from protected stream
         ss = SlideShowFactory.create(fromStream(protectedFile), password);
@@ -74,7 +74,7 @@ public class BaseTestSlideShowFactory {
         ss.close();
     }
 
-    private static void testFactoryFromProtectedNative(String protectedFile, String password) throws Exception {
+    protected static void testFactoryFromProtectedNative(String protectedFile, String password) throws Exception {
         SlideShow<?,?> ss;
         // from protected NPOIFS
         NPOIFSFileSystem npoifs = new NPOIFSFileSystem(fromFile(protectedFile));

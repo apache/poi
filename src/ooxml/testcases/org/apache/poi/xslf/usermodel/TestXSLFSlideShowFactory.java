@@ -36,13 +36,46 @@ import org.junit.Test;
 
 public final class TestXSLFSlideShowFactory extends BaseTestSlideShowFactory {
     private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
-    
+    private static final String filename = "SampleShow.pptx";
+    private static final String password = "opensesame";
+
     @Test
-    public void testFactory() throws Exception {
-        File pFile = createProtected("SampleShow.pptx", "foobaa");
-        testFactory("SampleShow.pptx", pFile.getAbsolutePath(), "foobaa");
+    public void testFactoryFromFile() throws Exception {
+        testFactoryFromFile(filename);
     }
-    
+
+    @Test
+    public void testFactoryFromStream() throws Exception {
+        testFactoryFromStream(filename);
+    }
+
+    @Test
+    public void testFactoryFromNative() throws Exception {
+        testFactoryFromNative(filename);
+    }
+
+    @Test
+    public void testFactoryFromProtectedFile() throws Exception {
+        File pFile = createProtected();
+        testFactoryFromProtectedFile(pFile.getAbsolutePath(), password);
+    }
+
+    @Test
+    public void testFactoryFromProtectedStream() throws Exception {
+        File pFile = createProtected();
+        testFactoryFromProtectedStream(pFile.getAbsolutePath(), password);
+    }
+
+    @Test
+    public void testFactoryFromProtectedNative() throws Exception {
+        File pFile = createProtected();
+        testFactoryFromProtectedNative(pFile.getAbsolutePath(), password);
+    }
+
+    private static File createProtected() throws IOException, GeneralSecurityException {
+        return createProtected(filename, password);
+    }
+
     private static File createProtected(String basefile, String password)
     throws IOException, GeneralSecurityException {
         NPOIFSFileSystem fs = new NPOIFSFileSystem();
