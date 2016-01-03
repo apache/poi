@@ -255,7 +255,7 @@ public final class POIDataSamples {
 
     /**
      * @param  fileName the file to open
-     * @return byte array of sample file content from file found in standard hssf test data dir
+     * @return byte array of sample file content from file found in standard test-data directory
      */
     public byte[] readFile(String fileName) {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();

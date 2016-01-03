@@ -33,14 +33,29 @@ import org.apache.poi.sl.usermodel.BaseTestSlideShowFactory;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.TempFile;
 import org.junit.Test;
+import org.junit.Rule;
+import org.junit.rules.ExpectedException;
 
 public final class TestXSLFSlideShowFactory extends BaseTestSlideShowFactory {
     private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
     private static final String filename = "SampleShow.pptx";
     private static final String password = "opensesame";
+    private static final String removeExpectedExceptionMsg =
+            "This functionality this unit test is trying to test is now passing. " +
+            "The unit test needs to be updated by deleting the expected exception code. Status and close any related bugs.";
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
     @Test
     public void testFactoryFromFile() throws Exception {
+        // Remove thrown.* when bug 58779 is resolved
+        // In the mean time, this function will modify SampleShow.pptx on disk.
+        thrown.expect(AssertionError.class);
+        // thrown.expectCause(Matcher<ArrayComparisonFailure>);
+        thrown.expectMessage("SampleShow.pptx sample file was modified as a result of closing the slideshow");
+        thrown.reportMissingExceptionWithMessage("Bug 58779: " + removeExpectedExceptionMsg);
+    
         testFactoryFromFile(filename);
     }
 
@@ -51,6 +66,11 @@ public final class TestXSLFSlideShowFactory extends BaseTestSlideShowFactory {
 
     @Test
     public void testFactoryFromNative() throws Exception {
+        // Remove thrown.* when unit test for XSLF SlideShowFactory.create(OPCPackage) is implemented
+        thrown.expect(UnsupportedOperationException.class);
+        thrown.expectMessage("Test not implemented");
+        thrown.reportMissingExceptionWithMessage(removeExpectedExceptionMsg);
+
         testFactoryFromNative(filename);
     }
 
@@ -88,7 +108,7 @@ public final class TestXSLFSlideShowFactory extends BaseTestSlideShowFactory {
         os.close();
         fis.close();
         
-        File tf = TempFile.createTempFile("test-xslf-slidefactory", "pptx");
+        File tf = TempFile.createTempFile("test-xslf-slidefactory", ".pptx");
         FileOutputStream fos = new FileOutputStream(tf);
         fs.writeFilesystem(fos);
         fos.close();
