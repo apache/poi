@@ -584,4 +584,15 @@ public final class TestXWPFParagraph {
         assertNull(p.getRun(null));
         doc.close();
     }
+
+    @Test
+    public void test58067() throws IOException {
+        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("58067.docx");
+        
+        StringBuilder str = new StringBuilder();
+        for(XWPFParagraph par : doc.getParagraphs()) {
+            str.append(par.getText()).append("\n");
+        }
+        assertEquals("This is a test.\n\n\n\n3\n4\n5\n\n\n\nThis is a whole paragraph where one word is deleted.\n", str.toString());
+    }
 }
