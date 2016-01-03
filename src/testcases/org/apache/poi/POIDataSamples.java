@@ -236,19 +236,19 @@ public final class POIDataSamples {
         }
 
         @Override
-		public int read() throws IOException {
+        public int read() throws IOException {
             return _is.read();
         }
         @Override
-		public int read(byte[] b, int off, int len) throws IOException {
+        public int read(byte[] b, int off, int len) throws IOException {
             return _is.read(b, off, len);
         }
         @Override
-		public boolean markSupported() {
+        public boolean markSupported() {
             return false;
         }
         @Override
-		public void close() throws IOException {
+        public void close() throws IOException {
             _is.close();
         }
     }
