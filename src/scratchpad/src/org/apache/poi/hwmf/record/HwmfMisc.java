@@ -44,7 +44,7 @@ public class HwmfMisc {
 
         @Override
         public void draw(HwmfGraphics ctx) {
-
+            ctx.saveProperties();
         }
     }
 
@@ -92,7 +92,7 @@ public class HwmfMisc {
 
         @Override
         public void draw(HwmfGraphics ctx) {
-
+            ctx.restoreProperties(nSavedDC);
         }
     }
 
@@ -431,11 +431,11 @@ public class HwmfMisc {
 
         @Override
         public void draw(HwmfGraphics ctx) {
-
+            ctx.unsetObjectTableEntry(objectIndex);
         }
     }
 
-    public static class WmfCreatePatternBrush implements HwmfRecord {
+    public static class WmfCreatePatternBrush implements HwmfRecord, HwmfObjectTableEntry {
 
         private HwmfBitmap16 pattern;
 
@@ -452,16 +452,23 @@ public class HwmfMisc {
 
         @Override
         public void draw(HwmfGraphics ctx) {
-
+            ctx.addObjectTableEntry(this);
+        }
+        
+        @Override
+        public void applyObject(HwmfGraphics ctx) {
+            HwmfDrawProperties dp = ctx.getProperties();
+            dp.setBrushBitmap(pattern.getImage());
+            dp.setBrushStyle(HwmfBrushStyle.BS_PATTERN);
         }
     }
 
-    public static class WmfCreatePenIndirect implements HwmfRecord {
+    public static class WmfCreatePenIndirect implements HwmfRecord, HwmfObjectTableEntry {
 
         private HwmfPenStyle penStyle;
         /**
          * A 32-bit PointS Object that specifies a point for the object dimensions.
-         * The xcoordinate is the pen width. The y-coordinate is ignored.
+         * The x-coordinate is the pen width. The y-coordinate is ignored.
          */
         private int xWidth;
         @SuppressWarnings("unused")
@@ -488,6 +495,11 @@ public class HwmfMisc {
 
         @Override
         public void draw(HwmfGraphics ctx) {
+            ctx.addObjectTableEntry(this);
+        }
+        
+        @Override
+        public void applyObject(HwmfGraphics ctx) {
             HwmfDrawProperties p = ctx.getProperties();
             p.setPenStyle(penStyle);
             p.setPenColor(colorRef);
@@ -540,7 +552,7 @@ public class HwmfMisc {
      * </tr>
      * </table>
      */
-    public static class WmfCreateBrushIndirect implements HwmfRecord {
+    public static class WmfCreateBrushIndirect implements HwmfRecord, HwmfObjectTableEntry {
         private HwmfBrushStyle brushStyle;
 
         private HwmfColorRef colorRef;
@@ -568,6 +580,11 @@ public class HwmfMisc {
 
         @Override
         public void draw(HwmfGraphics ctx) {
+            ctx.addObjectTableEntry(this);
+        }
+        
+        @Override
+        public void applyObject(HwmfGraphics ctx) {
             HwmfDrawProperties p = ctx.getProperties();
             p.setBrushStyle(brushStyle);
             p.setBrushColor(colorRef);

@@ -391,7 +391,7 @@ public class HwmfText {
         }
     }
     
-    public static class WmfCreateFontIndirect implements HwmfRecord {
+    public static class WmfCreateFontIndirect implements HwmfRecord, HwmfObjectTableEntry {
         private HwmfFont font;
         
         @Override
@@ -407,6 +407,11 @@ public class HwmfText {
 
         @Override
         public void draw(HwmfGraphics ctx) {
+            ctx.addObjectTableEntry(this);
+        }
+        
+        @Override
+        public void applyObject(HwmfGraphics ctx) {
 
         }
     }

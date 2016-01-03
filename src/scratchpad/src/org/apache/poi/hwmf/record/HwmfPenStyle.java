@@ -32,7 +32,7 @@ import org.apache.poi.util.BitFieldFactory;
  * The defaults in case the other values of the subsection aren't set are
  * solid, round end caps, round joins and cosmetic type.
  */
-public class HwmfPenStyle {
+public class HwmfPenStyle implements Cloneable {
     public enum HwmfLineCap {
         /** Rounded ends */
         ROUND(0, BasicStroke.CAP_ROUND),
@@ -167,5 +167,23 @@ public class HwmfPenStyle {
      */
     public boolean isAlternateDash() {
         return SUBSECTION_ALTERNATE.isSet(flag);
+    }
+
+
+    /**
+     * Creates a new object of the same class and with the
+     * same contents as this object.
+     * @return     a clone of this instance.
+     * @exception  OutOfMemoryError            if there is not enough memory.
+     * @see        java.lang.Cloneable
+     */
+    @Override
+    public HwmfPenStyle clone() {
+        try {
+            return (HwmfPenStyle)super.clone();
+        } catch (CloneNotSupportedException e) {
+            // this shouldn't happen, since we are Cloneable
+            throw new InternalError();
+        }
     }
 }

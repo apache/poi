@@ -17,7 +17,10 @@
 
 package org.apache.poi.hwmf.record;
 
+import java.awt.Shape;
+import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
+import java.awt.geom.Rectangle2D.Double;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -128,7 +131,9 @@ public class HwmfWindowing {
         @Override
         public void draw(HwmfGraphics ctx) {
             Rectangle2D viewport = ctx.getProperties().getViewport();
-            ctx.getProperties().setViewportOrg(viewport.getX()+xOffset, viewport.getY()+yOffset);
+            double x = (viewport == null) ? 0 : viewport.getX();
+            double y = (viewport == null) ? 0 : viewport.getY();
+            ctx.getProperties().setViewportOrg(x+xOffset, y+yOffset);
         }
     }
 
@@ -162,6 +167,14 @@ public class HwmfWindowing {
         @Override
         public void draw(HwmfGraphics ctx) {
             ctx.getProperties().setWindowOrg(x, y);
+        }
+
+        public int getY() {
+            return y;
+        }
+
+        public int getX() {
+            return x;
         }
     }
 
@@ -198,6 +211,14 @@ public class HwmfWindowing {
         @Override
         public void draw(HwmfGraphics ctx) {
             ctx.getProperties().setWindowExt(width, height);
+        }
+
+        public int getHeight() {
+            return height;
+        }
+
+        public int getWidth() {
+            return width;
         }
     }
 
@@ -338,6 +359,9 @@ public class HwmfWindowing {
         @Override
         public void draw(HwmfGraphics ctx) {
             Rectangle2D viewport = ctx.getProperties().getViewport();
+            if (viewport == null) {
+                viewport = ctx.getProperties().getWindow();
+            }
             double width = viewport.getWidth() * xNum / xDenom;
             double height = viewport.getHeight() * yNum / yDenom;
             ctx.getProperties().setViewportExt(width, height);
@@ -556,7 +580,7 @@ public class HwmfWindowing {
         }
     }
 
-    public static class WmfCreateRegion implements HwmfRecord {
+    public static class WmfCreateRegion implements HwmfRecord, HwmfObjectTableEntry {
         /**
          * A 16-bit signed integer. A value that MUST be ignored.
          */
@@ -642,7 +666,32 @@ public class HwmfWindowing {
 
         @Override
         public void draw(HwmfGraphics ctx) {
+            ctx.addObjectTableEntry(this);
+        }
+        
+        @Override
+        public void applyObject(HwmfGraphics ctx) {
+            Rectangle2D lastRect = null;
+            Area scanLines = new Area();
+            int count = 0;
+            for (WmfScanObject so : scanObjects) {
+                int y = Math.min(so.top, so.bottom);
+                int h = Math.abs(so.top - so.bottom - 1);
+                for (int i=0; i<so.count/2; i++) {
+                    int x = Math.min(so.left_scanline[i], so.right_scanline[i]);
+                    int w = Math.abs(so.right_scanline[i] - so.left_scanline[i] - 1);
+                    lastRect = new Rectangle2D.Double(x,y,w,h);
+                    scanLines.add(new Area(lastRect));
+                    count++;
+                }
+            }
+            
+            Shape region = null;
+            if (count > 0) {
+                region = (count == 1) ? lastRect : scanLines;
+            }
 
+            ctx.getProperties().setRegion(region);
         }
     }
 }

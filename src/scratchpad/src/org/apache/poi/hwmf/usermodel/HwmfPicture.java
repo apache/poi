@@ -17,6 +17,8 @@
 
 package org.apache.poi.hwmf.usermodel;
 
+import java.awt.Graphics2D;
+import java.awt.geom.Rectangle2D;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,24 +26,25 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.poi.hwmf.draw.HwmfGraphics;
 import org.apache.poi.hwmf.record.HwmfHeader;
 import org.apache.poi.hwmf.record.HwmfPlaceableHeader;
 import org.apache.poi.hwmf.record.HwmfRecord;
 import org.apache.poi.hwmf.record.HwmfRecordType;
+import org.apache.poi.hwmf.record.HwmfWindowing.WmfSetWindowExt;
+import org.apache.poi.hwmf.record.HwmfWindowing.WmfSetWindowOrg;
 import org.apache.poi.util.LittleEndianInputStream;
 
 public class HwmfPicture {
-    List<HwmfRecord> records = new ArrayList<HwmfRecord>();
-    
-    public List<HwmfRecord> getRecords() {
-        return Collections.unmodifiableList(records);
-    }
+    final List<HwmfRecord> records = new ArrayList<HwmfRecord>();
+    final HwmfPlaceableHeader placeableHeader;
+    final HwmfHeader header;
     
     public HwmfPicture(InputStream inputStream) throws IOException {
         BufferedInputStream bis = new BufferedInputStream(inputStream, 10000);
         LittleEndianInputStream leis = new LittleEndianInputStream(bis);
-        HwmfPlaceableHeader placeableHeader = HwmfPlaceableHeader.readHeader(leis);
-        HwmfHeader header = new HwmfHeader(leis);
+        placeableHeader = HwmfPlaceableHeader.readHeader(leis);
+        header = new HwmfHeader(leis);
         
         for (;;) {
             // recordSize in DWORDs
@@ -76,5 +79,50 @@ public class HwmfPicture {
         }
     }
 
+    public List<HwmfRecord> getRecords() {
+        return Collections.unmodifiableList(records);
+    }
 
+    public void draw(Graphics2D ctx) {
+        HwmfGraphics g = new HwmfGraphics(ctx, getBounds());
+        for (HwmfRecord r : records)  {
+            r.draw(g);
+        }
+    }
+
+    /**
+     * Returns the bounding box in device-independent units. Usually this is taken from the placeable header.
+     * 
+     * @return the bounding box
+     */
+    public Rectangle2D getBounds() {
+        if (placeableHeader != null) {
+            return placeableHeader.getBounds();
+        } else {
+            WmfSetWindowOrg wOrg = null;
+            WmfSetWindowExt wExt = null;
+            for (HwmfRecord r : getRecords()) {
+                if (wOrg != null && wExt != null) {
+                    break;
+                }
+                if (r instanceof WmfSetWindowOrg) {
+                    wOrg = (WmfSetWindowOrg)r;
+                } else if (r instanceof WmfSetWindowExt) {
+                    wExt = (WmfSetWindowExt)r;
+                }
+            }
+            if (wOrg == null || wExt == null) {
+                throw new RuntimeException("invalid wmf file - window records are incomplete.");
+            }
+            return new Rectangle2D.Double(wOrg.getX(), wOrg.getY(), wExt.getWidth(), wExt.getHeight());
+        }        
+    }
+    
+    public HwmfPlaceableHeader getPlaceableHeader() {
+        return placeableHeader;
+    }
+
+    public HwmfHeader getHeader() {
+        return header;
+    }
 }
