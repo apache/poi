@@ -20,21 +20,45 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.poi.POIDocument;
+import org.apache.poi.hpsf.extractor.HPSFPropertiesExtractor;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.junit.Test;
 
 public class POIFSFileHandler extends AbstractFileHandler {
 
 	@Override
     public void handleFile(InputStream stream) throws Exception {
 		POIFSFileSystem fs = new POIFSFileSystem(stream);
-		handlePOIFSFileSystem(fs);
-		fs.close();
+		try {
+		    handlePOIFSFileSystem(fs);
+		    handleHPSFProperties(fs);
+		} finally {
+		    fs.close();
+		}
 	}
 
-	private void handlePOIFSFileSystem(POIFSFileSystem fs) {
+	private void handleHPSFProperties(POIFSFileSystem fs) throws IOException {
+        HPSFPropertiesExtractor ext = new HPSFPropertiesExtractor(fs);
+        try {
+            // can be null
+            ext.getDocSummaryInformation();
+            ext.getSummaryInformation();
+            
+            assertNotNull(ext.getDocumentSummaryInformationText());
+            assertNotNull(ext.getSummaryInformationText());
+            assertNotNull(ext.getText());
+        } finally {
+            ext.close();
+        }
+    }
+
+    private void handlePOIFSFileSystem(POIFSFileSystem fs) {
 		assertNotNull(fs);
 		assertNotNull(fs.getRoot());
 	}
@@ -48,4 +72,19 @@ public class POIFSFileHandler extends AbstractFileHandler {
 		handlePOIFSFileSystem(fs);
 		fs.close();
 	}
+	
+    // a test-case to test this locally without executing the full TestAllFiles
+    @Test
+    public void test() throws Exception {
+        File file = new File("test-data/poifs/Notes.ole2");
+
+        InputStream stream = new FileInputStream(file);
+        try {
+            handleFile(stream);
+        } finally {
+            stream.close();
+        }
+        
+        //handleExtracting(file);
+    }
 }

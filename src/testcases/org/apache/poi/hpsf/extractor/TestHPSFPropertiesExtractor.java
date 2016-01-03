@@ -166,4 +166,18 @@ public final class TestHPSFPropertiesExtractor extends TestCase {
         assertNotNull(thumbnail.getThumbnailAsWMF());
         wb.close();
     }
+
+    public void test52258() throws Exception {
+        POIFSFileSystem fs = new POIFSFileSystem(_samples.openResourceAsStream("TestVisioWithCodepage.vsd"));
+        HPSFPropertiesExtractor ext = new HPSFPropertiesExtractor(fs);
+        try {
+            assertNotNull(ext.getDocSummaryInformation());
+            assertNotNull(ext.getDocumentSummaryInformationText());
+            assertNotNull(ext.getSummaryInformation());
+            assertNotNull(ext.getSummaryInformationText());
+            assertNotNull(ext.getText());
+        } finally {
+            ext.close();
+        }
+    }
 }
