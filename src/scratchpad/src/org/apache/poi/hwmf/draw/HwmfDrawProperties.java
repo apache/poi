@@ -18,9 +18,13 @@
 package org.apache.poi.hwmf.draw;
 
 import java.awt.Color;
+import java.awt.Shape;
+import java.awt.geom.Area;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.WritableRaster;
 
 import org.apache.poi.hwmf.record.HwmfBrushStyle;
 import org.apache.poi.hwmf.record.HwmfColorRef;
@@ -31,9 +35,9 @@ import org.apache.poi.hwmf.record.HwmfMisc.WmfSetBkMode.HwmfBkMode;
 import org.apache.poi.hwmf.record.HwmfPenStyle;
 
 public class HwmfDrawProperties {
-    private Rectangle2D window = new Rectangle2D.Double(0, 0, 1, 1);
-    private Rectangle2D viewport = new Rectangle2D.Double(0, 0, 1, 1);
-    private Point2D location = new Point2D.Double(0,0);
+    private final Rectangle2D window;
+    private Rectangle2D viewport = null;
+    private final Point2D location;
     private HwmfMapMode mapMode = HwmfMapMode.MM_ANISOTROPIC;
     private HwmfColorRef backgroundColor = new HwmfColorRef(Color.BLACK);
     private HwmfBrushStyle brushStyle = HwmfBrushStyle.BS_SOLID;
@@ -46,7 +50,42 @@ public class HwmfDrawProperties {
     private double penMiterLimit = 10;
     private HwmfBkMode bkMode = HwmfBkMode.OPAQUE;
     private HwmfPolyfillMode polyfillMode = HwmfPolyfillMode.WINDING;
+    private Shape region = null;
 
+    public HwmfDrawProperties() {
+        window = new Rectangle2D.Double(0, 0, 1, 1);
+        viewport = null;
+        location = new Point2D.Double(0,0);
+    }
+    
+    public HwmfDrawProperties(HwmfDrawProperties other) {
+        this.window = (Rectangle2D)other.window.clone();
+        this.viewport = (other.viewport == null) ? null : (Rectangle2D)other.viewport.clone();
+        this.location = (Point2D)other.location.clone();
+        this.mapMode = other.mapMode;
+        this.backgroundColor = (other.backgroundColor == null) ? null : other.backgroundColor.clone();
+        this.brushStyle = other.brushStyle;
+        this.brushColor = other.brushColor.clone();
+        this.brushHatch = other.brushHatch;
+        if (other.brushBitmap != null) {
+            ColorModel cm = other.brushBitmap.getColorModel();
+            boolean isAlphaPremultiplied = cm.isAlphaPremultiplied();
+            WritableRaster raster = other.brushBitmap.copyData(null);
+            this.brushBitmap = new BufferedImage(cm, raster, isAlphaPremultiplied, null);            
+        }
+        this.penWidth = 1;
+        this.penStyle = (other.penStyle == null) ? null : other.penStyle.clone();
+        this.penColor = (other.penColor == null) ? null : other.penColor.clone();
+        this.penMiterLimit = other.penMiterLimit;
+        this.bkMode = other.bkMode;
+        this.polyfillMode = other.polyfillMode;
+        if (other.region instanceof Rectangle2D) {
+            this.region = ((Rectangle2D)other.region).getBounds2D();
+        } else if (other.region instanceof Area) {
+            this.region = new Area(other.region);
+        }
+    }
+    
     public void setViewportExt(double width, double height) {
         double x = viewport.getX();
         double y = viewport.getY();
@@ -62,7 +101,7 @@ public class HwmfDrawProperties {
     }
 
     public Rectangle2D getViewport() {
-        return (Rectangle2D)viewport.clone();
+        return (viewport == null) ? null : (Rectangle2D)viewport.clone();
     }
 
     public void setWindowExt(double width, double height) {
@@ -185,5 +224,24 @@ public class HwmfDrawProperties {
 
     public void setBrushBitmap(BufferedImage brushBitmap) {
         this.brushBitmap = brushBitmap;
+    }
+
+
+    /**
+     * Gets the last stored region
+     *
+     * @return the last stored region
+     */
+    public Shape getRegion() {
+        return region;
+    }
+
+    /**
+     * Sets a region for further usage
+     *
+     * @param region a region object which is usually a rectangle
+     */
+    public void setRegion(Shape region) {
+        this.region = region;
     }
 }

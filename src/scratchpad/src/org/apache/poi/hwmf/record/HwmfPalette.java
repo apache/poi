@@ -81,7 +81,7 @@ public class HwmfPalette {
     /**
      * The META_CREATEPALETTE record creates a Palette Object
      */
-    public static class WmfCreatePalette extends WmfPaletteParent {
+    public static class WmfCreatePalette extends WmfPaletteParent implements HwmfObjectTableEntry {
         @Override
         public HwmfRecordType getRecordType() {
             return HwmfRecordType.createPalette;
@@ -89,6 +89,11 @@ public class HwmfPalette {
 
         @Override
         public void draw(HwmfGraphics ctx) {
+            ctx.addObjectTableEntry(this);
+        }
+        
+        @Override
+        public void applyObject(HwmfGraphics ctx) {
 
         }
     }

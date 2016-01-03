@@ -17,6 +17,7 @@
 
 package org.apache.poi.hwmf.record;
 
+import java.awt.Shape;
 import java.awt.geom.Path2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -25,6 +26,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 import org.apache.poi.hwmf.draw.HwmfGraphics;
+import org.apache.poi.hwmf.record.HwmfWindowing.WmfCreateRegion;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
 
@@ -46,13 +48,13 @@ public class HwmfFill {
          * A 16-bit unsigned integer used to index into the WMF Object Table to get
          * the region to be filled.
          */
-        private int region;
+        private int regionIndex;
 
         /**
          * A 16-bit unsigned integer used to index into the WMF Object Table to get the
          * brush to use for filling the region.
          */
-        private int brush;
+        private int brushIndex;
         
         @Override
         public HwmfRecordType getRecordType() {
@@ -61,13 +63,20 @@ public class HwmfFill {
         
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
-            region = leis.readUShort();
-            brush = leis.readUShort();
+            regionIndex = leis.readUShort();
+            brushIndex = leis.readUShort();
             return 2*LittleEndianConsts.SHORT_SIZE;
         }
 
         @Override
         public void draw(HwmfGraphics ctx) {
+            ctx.applyObjectTableEntry(regionIndex);
+            ctx.applyObjectTableEntry(brushIndex);
+            
+            Shape region = ctx.getProperties().getRegion();
+            if (region != null) {
+                ctx.fill(region);
+            }
             
         }
     }
@@ -82,20 +91,25 @@ public class HwmfFill {
          * A 16-bit unsigned integer used to index into the WMF Object Table to get
          * the region to be painted.
          */
-        int region;
+        int regionIndex;
 
         public HwmfRecordType getRecordType() {
             return HwmfRecordType.paintRegion;
         }
         
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
-            region = leis.readUShort();
+            regionIndex = leis.readUShort();
             return LittleEndianConsts.SHORT_SIZE;
         }
 
         @Override
         public void draw(HwmfGraphics ctx) {
-            
+            ctx.applyObjectTableEntry(regionIndex);
+
+            Shape region = ctx.getProperties().getRegion();
+            if (region != null) {
+                ctx.fill(region);
+            }        
         }
     }
     

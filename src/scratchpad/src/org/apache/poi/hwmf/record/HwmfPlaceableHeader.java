@@ -17,6 +17,7 @@
 
 package org.apache.poi.hwmf.record;
 
+import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 
 import org.apache.poi.util.LittleEndianConsts;
@@ -24,6 +25,8 @@ import org.apache.poi.util.LittleEndianInputStream;
 
 public class HwmfPlaceableHeader {
     public static int WMF_HEADER_MAGIC = 0x9AC6CDD7;
+    
+    final Rectangle2D bounds;
     
     protected HwmfPlaceableHeader(LittleEndianInputStream leis) throws IOException {
         /*
@@ -41,6 +44,7 @@ public class HwmfPlaceableHeader {
         int y1 = leis.readShort();
         int x2 = leis.readShort();
         int y2 = leis.readShort();
+        bounds = new Rectangle2D.Double(x1, y1, x2-x1, y2-y1);
         
         /*
          * Inch (2 bytes):  The number of logical units per inch used to represent the image.
@@ -73,5 +77,9 @@ public class HwmfPlaceableHeader {
             leis.reset();
             return null;
         }
+    }
+
+    public Rectangle2D getBounds() {
+        return bounds;
     }
 }

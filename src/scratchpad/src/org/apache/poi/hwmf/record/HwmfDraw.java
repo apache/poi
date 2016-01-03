@@ -18,9 +18,15 @@
 package org.apache.poi.hwmf.record;
 
 import java.awt.Polygon;
+import java.awt.Rectangle;
+import java.awt.Shape;
+import java.awt.geom.Arc2D;
+import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+import java.awt.geom.RoundRectangle2D;
 import java.io.IOException;
 
 import org.apache.poi.hwmf.draw.HwmfGraphics;
@@ -55,7 +61,7 @@ public class HwmfDraw {
             x = leis.readShort();
             return 2*LittleEndianConsts.SHORT_SIZE;
         }
-        
+
         @Override
         public void draw(HwmfGraphics ctx) {
             ctx.getProperties().setLocation(x, y);
@@ -91,7 +97,7 @@ public class HwmfDraw {
             x = leis.readShort();
             return 2*LittleEndianConsts.SHORT_SIZE;
         }
-        
+
         @Override
         public void draw(HwmfGraphics ctx) {
             Point2D start = ctx.getProperties().getLocation();
@@ -135,12 +141,12 @@ public class HwmfDraw {
 
             return LittleEndianConsts.SHORT_SIZE+numberofPoints*LittleEndianConsts.INT_SIZE;
         }
-        
+
         @Override
         public void draw(HwmfGraphics ctx) {
             ctx.fill(getShape());
         }
-        
+
         protected Polygon getShape() {
             Polygon polygon = new Polygon();
             for(int i = 0; i < numberofPoints; i++) {
@@ -207,10 +213,15 @@ public class HwmfDraw {
             leftRect = leis.readShort();
             return 4*LittleEndianConsts.SHORT_SIZE;
         }
-        
+
         @Override
         public void draw(HwmfGraphics ctx) {
-            
+            int x = Math.min(leftRect, rightRect);
+            int y = Math.min(topRect, bottomRect);
+            int w = Math.abs(leftRect - rightRect - 1);
+            int h = Math.abs(topRect - bottomRect - 1);
+            Shape s = new Ellipse2D.Double(x, y, w, h);
+            ctx.fill(s);
         }
     }
 
@@ -253,10 +264,10 @@ public class HwmfDraw {
             width = leis.readShort();
             return 4*LittleEndianConsts.SHORT_SIZE;
         }
-        
+
         @Override
         public void draw(HwmfGraphics ctx) {
-            
+
         }
     }
 
@@ -372,7 +383,12 @@ public class HwmfDraw {
 
         @Override
         public void draw(HwmfGraphics ctx) {
-
+            int x = Math.min(leftRect, rightRect);
+            int y = Math.min(topRect, bottomRect);
+            int w = Math.abs(leftRect - rightRect - 1);
+            int h = Math.abs(topRect - bottomRect - 1);
+            Shape s = new Rectangle2D.Double(x, y, w, h);
+            ctx.fill(s);
         }
     }
 
@@ -415,7 +431,8 @@ public class HwmfDraw {
 
         @Override
         public void draw(HwmfGraphics ctx) {
-
+            Shape s = new Rectangle2D.Double(x, y, 1, 1);
+            ctx.fill(s);
         }
     }
 
@@ -479,83 +496,15 @@ public class HwmfDraw {
 
         @Override
         public void draw(HwmfGraphics ctx) {
-
+            int x = Math.min(leftRect, rightRect);
+            int y = Math.min(topRect, bottomRect);
+            int w = Math.abs(leftRect - rightRect - 1);
+            int h = Math.abs(topRect - bottomRect - 1);
+            Shape s = new RoundRectangle2D.Double(x, y, w, h, width, height);
+            ctx.fill(s);
         }
     }
 
-
-
-    /**
-     * The META_PIE record draws a pie-shaped wedge bounded by the intersection of an ellipse and two
-     * radials. The pie is outlined by using the pen and filled by using the brush that are defined in the
-     * playback device context.
-     */
-    public static class WmfPie implements HwmfRecord {
-        /**
-         * A 16-bit signed integer that defines the y-coordinate, in logical
-         * coordinates, of the endpoint of the second radial.
-         */
-        private int yRadial2;
-        /**
-         * A 16-bit signed integer that defines the x-coordinate, in logical
-         * coordinates, of the endpoint of the second radial.
-         */
-        private int xRadial2;
-        /**
-         * A 16-bit signed integer that defines the y-coordinate, in logical
-         * coordinates, of the endpoint of the first radial.
-         */
-        private int yRadial1;
-        /**
-         * A 16-bit signed integer that defines the x-coordinate, in logical
-         * coordinates, of the endpoint of the first radial.
-         */
-        private int xRadial1;
-        /**
-         * A 16-bit signed integer that defines the y-coordinate, in logical units, of
-         * the lower-right corner of the bounding rectangle.
-         */
-        private int bottomRect;
-        /**
-         * A 16-bit signed integer that defines the x-coordinate, in logical units, of
-         * the lower-right corner of the bounding rectangle.
-         */
-        private int rightRect;
-        /**
-         * A 16-bit signed integer that defines the y-coordinate, in logical units, of the
-         * upper-left corner of the bounding rectangle.
-         */
-        private int topRect;
-        /**
-         * A 16-bit signed integer that defines the x-coordinate, in logical units, of
-         * the upper-left corner of the bounding rectangle.
-         */
-        private int leftRect;
-
-        @Override
-        public HwmfRecordType getRecordType() {
-            return HwmfRecordType.pie;
-        }
-
-        @Override
-        public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
-            yRadial2 = leis.readShort();
-            xRadial2 = leis.readShort();
-            yRadial1 = leis.readShort();
-            xRadial1 = leis.readShort();
-            bottomRect = leis.readShort();
-            rightRect = leis.readShort();
-            topRect = leis.readShort();
-            leftRect = leis.readShort();
-            return 8*LittleEndianConsts.SHORT_SIZE;
-        }
-
-
-        @Override
-        public void draw(HwmfGraphics ctx) {
-
-        }
-    }
 
     /**
      * The META_ARC record draws an elliptical arc.
@@ -622,7 +571,54 @@ public class HwmfDraw {
 
         @Override
         public void draw(HwmfGraphics ctx) {
+            int x = Math.min(leftRect, rightRect);
+            int y = Math.min(topRect, bottomRect);
+            int w = Math.abs(leftRect - rightRect - 1);
+            int h = Math.abs(topRect - bottomRect - 1);
+            double startAngle = Math.toDegrees(Math.atan2(-(yStartArc - (topRect + h / 2.)), xStartArc - (leftRect + w / 2.)));
+            double endAngle =   Math.toDegrees(Math.atan2(-(yEndArc - (topRect + h / 2.)), xEndArc - (leftRect + w / 2.)));
+            double arcAngle = (endAngle - startAngle) + (endAngle - startAngle > 0 ? 0 : 360);
+            if (startAngle < 0) {
+                startAngle += 360;
+            }
 
+            boolean fillShape;
+            int arcClosure;
+            switch (getRecordType()) {
+                default:
+                case arc:
+                    arcClosure = Arc2D.OPEN;
+                    fillShape = false;
+                    break;
+                case chord:
+                    arcClosure = Arc2D.CHORD;
+                    fillShape = true;
+                    break;
+                case pie:
+                    arcClosure = Arc2D.PIE;
+                    fillShape = true;
+                    break;
+            }
+            
+            Shape s = new Arc2D.Double(x, y, w, h, startAngle, arcAngle, arcClosure);
+            if (fillShape) {
+                ctx.fill(s);
+            } else {
+                ctx.draw(s);
+            }
+        }
+    }
+
+    /**
+     * The META_PIE record draws a pie-shaped wedge bounded by the intersection of an ellipse and two
+     * radials. The pie is outlined by using the pen and filled by using the brush that are defined in the
+     * playback device context.
+     */
+    public static class WmfPie extends WmfArc {
+
+        @Override
+        public HwmfRecordType getRecordType() {
+            return HwmfRecordType.pie;
         }
     }
 
@@ -631,72 +627,13 @@ public class HwmfDraw {
      * an ellipse with a line segment. The chord is outlined using the pen and filled using the brush
      * that are defined in the playback device context.
      */
-    public static class WmfChord implements HwmfRecord {
-        /**
-         * A 16-bit signed integer that defines the y-coordinate, in logical
-         * coordinates, of the endpoint of the second radial.
-         */
-        private int yRadial2;
-        /**
-         * A 16-bit signed integer that defines the x-coordinate, in logical
-         * coordinates, of the endpoint of the second radial.
-         */
-        private int xRadial2;
-        /**
-         * A 16-bit signed integer that defines the y-coordinate, in logical
-         * coordinates, of the endpoint of the first radial.
-         */
-        private int yRadial1;
-        /**
-         * A 16-bit signed integer that defines the x-coordinate, in logical
-         * coordinates, of the endpoint of the first radial.
-         */
-        private int xRadial1;
-        /**
-         * A 16-bit signed integer that defines the y-coordinate, in logical units, of
-         * the lower-right corner of the bounding rectangle.
-         */
-        private int bottomRect;
-        /**
-         * A 16-bit signed integer that defines the x-coordinate, in logical units, of
-         * the lower-right corner of the bounding rectangle.
-         */
-        private int rightRect;
-        /**
-         * A 16-bit signed integer that defines the y-coordinate, in logical units, of the
-         * upper-left corner of the bounding rectangle.
-         */
-        private int topRect;
-        /**
-         * A 16-bit signed integer that defines the x-coordinate, in logical units, of
-         * the upper-left corner of the bounding rectangle.
-         */
-        private int leftRect;
-
+    public static class WmfChord extends WmfArc {
 
         @Override
         public HwmfRecordType getRecordType() {
             return HwmfRecordType.chord;
         }
-
-        @Override
-        public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
-            yRadial2 = leis.readShort();
-            xRadial2 = leis.readShort();
-            yRadial1 = leis.readShort();
-            xRadial1 = leis.readShort();
-            bottomRect = leis.readShort();
-            rightRect = leis.readShort();
-            topRect = leis.readShort();
-            leftRect = leis.readShort();
-            return 8*LittleEndianConsts.SHORT_SIZE;
-        }
-
-        @Override
-        public void draw(HwmfGraphics ctx) {
-
-        }
-}
+    }
 
 
     /**

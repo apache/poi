@@ -19,6 +19,9 @@ package org.apache.poi.hwmf;
 
 import static org.junit.Assert.assertEquals;
 
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileFilter;
@@ -54,6 +57,36 @@ public class TestHwmfParsing {
         fis.close();
         List<HwmfRecord> records = wmf.getRecords();
         assertEquals(581, records.size());
+    }
+    
+    @Test
+    @Ignore
+    public void paint() throws IOException {
+        File f = POIDataSamples.getSlideShowInstance().getFile("santa.wmf");
+        FileInputStream fis = new FileInputStream(f);
+        HwmfPicture wmf = new HwmfPicture(fis);
+        fis.close();
+        
+        Rectangle2D bounds = wmf.getBounds();
+        int width = 300;
+        // keep aspect ratio for height
+        int height = (int)(width*bounds.getHeight()/bounds.getWidth());
+        
+        BufferedImage bufImg = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g = bufImg.createGraphics();
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+        g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+        g.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+        
+        g.scale(width/bounds.getWidth(), height/bounds.getHeight());
+        g.translate(-bounds.getX(), -bounds.getY());
+        
+        wmf.draw(g);
+
+        g.dispose();
+        
+        ImageIO.write(bufImg, "PNG", new File("bla.png"));
     }
 
     @Test

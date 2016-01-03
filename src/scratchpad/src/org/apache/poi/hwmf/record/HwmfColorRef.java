@@ -30,7 +30,7 @@ import org.apache.poi.util.LittleEndianInputStream;
  * Blue (1 byte):  An 8-bit unsigned integer that defines the relative intensity of blue.
  * Reserved (1 byte):  An 8-bit unsigned integer that MUST be 0x00.
  */
-public class HwmfColorRef {
+public class HwmfColorRef implements Cloneable {
     private Color colorRef = Color.BLACK;
     
     public HwmfColorRef() {}
@@ -52,5 +52,22 @@ public class HwmfColorRef {
 
     public Color getColor() {
         return colorRef;
+    }
+
+    /**
+     * Creates a new object of the same class and with the
+     * same contents as this object.
+     * @return     a clone of this instance.
+     * @exception  OutOfMemoryError            if there is not enough memory.
+     * @see        java.lang.Cloneable
+     */
+    @Override
+    public HwmfColorRef clone() {
+        try {
+            return (HwmfColorRef)super.clone();
+        } catch (CloneNotSupportedException e) {
+            // this shouldn't happen, since we are Cloneable
+            throw new InternalError();
+        }
     }
 }
