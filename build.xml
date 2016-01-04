@@ -122,7 +122,7 @@ under the License.
     <property name="ooxml.testokfile" location="build/ooxml-testokfile.txt"/>
     <property name="ooxml.lite.output.dir" location="build/ooxml-lite-classes"/>
 
-    <!-- Integration testing -->
+    <!-- Integration testing: -->
     <property name="integration.src.test" location="src/integrationtest"/>
     <property name="integration.reports.test" location="build/integration-test-results"/>
     <property name="integration.output.test.dir" location="build/integration-test-classes"/>
