@@ -20,6 +20,7 @@ package org.apache.poi.hwmf.draw;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
 import java.awt.Paint;
 import java.awt.Rectangle;
 import java.awt.Shape;
@@ -36,6 +37,7 @@ import java.util.NoSuchElementException;
 
 import org.apache.poi.hwmf.record.HwmfBrushStyle;
 import org.apache.poi.hwmf.record.HwmfHatchStyle;
+import org.apache.poi.hwmf.record.HwmfMapMode;
 import org.apache.poi.hwmf.record.HwmfMisc.WmfSetBkMode.HwmfBkMode;
 import org.apache.poi.hwmf.record.HwmfObjectTableEntry;
 import org.apache.poi.hwmf.record.HwmfPenStyle;
@@ -49,6 +51,7 @@ public class HwmfGraphics {
     private List<HwmfObjectTableEntry> objectTable = new ArrayList<HwmfObjectTableEntry>();
     /** Bounding box from the placeable header */ 
     private final Rectangle2D bbox;
+    private final AffineTransform initialAT;
 
     /**
      * Initialize a graphics context for wmf rendering
@@ -59,6 +62,7 @@ public class HwmfGraphics {
     public HwmfGraphics(Graphics2D graphicsCtx, Rectangle2D bbox) {
         this.graphicsCtx = graphicsCtx;
         this.bbox = (Rectangle2D)bbox.clone();
+        this.initialAT = graphicsCtx.getTransform();
     }
 
     public HwmfDrawProperties getProperties() {
@@ -72,7 +76,6 @@ public class HwmfGraphics {
             return;
         }
 
-        Shape tshape = fitShapeToView(shape);
         BasicStroke stroke = getStroke();
 
         // first draw a solid background line (depending on bkmode)
@@ -80,54 +83,24 @@ public class HwmfGraphics {
         if (prop.getBkMode() == HwmfBkMode.OPAQUE && (lineDash != HwmfLineDash.SOLID && lineDash != HwmfLineDash.INSIDEFRAME)) {
             graphicsCtx.setStroke(new BasicStroke(stroke.getLineWidth()));
             graphicsCtx.setColor(prop.getBackgroundColor().getColor());
-            graphicsCtx.draw(tshape);
+            graphicsCtx.draw(shape);
         }
 
         // then draw the (dashed) line
         graphicsCtx.setStroke(stroke);
         graphicsCtx.setColor(prop.getPenColor().getColor());
-        graphicsCtx.draw(tshape);
+        graphicsCtx.draw(shape);
     }
 
     public void fill(Shape shape) {
         if (prop.getBrushStyle() != HwmfBrushStyle.BS_NULL) {
             GeneralPath gp = new GeneralPath(shape);
             gp.setWindingRule(prop.getPolyfillMode().awtFlag);
-            Shape tshape = fitShapeToView(gp);
             graphicsCtx.setPaint(getFill());
-            graphicsCtx.fill(tshape);
+            graphicsCtx.fill(shape);
         }
 
         draw(shape);
-    }
-
-    protected Shape fitShapeToView(Shape shape) {
-        int scaleUnits = prop.getMapMode().scale;
-        Rectangle2D view = prop.getViewport();
-        Rectangle2D win = prop.getWindow();
-        if (view == null) {
-            view = win;
-        }
-        double scaleX, scaleY;
-        switch (scaleUnits) {
-        case -1:
-            scaleX = view.getWidth() / win.getWidth();
-            scaleY = view.getHeight() / win.getHeight();
-            break;
-        case 0:
-            scaleX = scaleY = 1;
-            break;
-        default:
-            scaleX = scaleY = scaleUnits / (double)Units.POINT_DPI;
-        }
-
-        AffineTransform at = new AffineTransform();
-        at.scale(scaleX, scaleY);
-//        at.translate(-view.getX(), -view.getY());
-        at.translate(bbox.getWidth()/win.getWidth(), bbox.getHeight()/win.getHeight());
-
-        Shape tshape = at.createTransformedShape(shape);
-        return tshape;
     }
 
     protected BasicStroke getStroke() {
@@ -284,5 +257,48 @@ public class HwmfGraphics {
             stackIndex = curIdx + index;
         }
         prop = propStack.remove(stackIndex);
+    }
+
+    public void updateWindowMapMode() {
+        GraphicsConfiguration gc = graphicsCtx.getDeviceConfiguration();
+        Rectangle2D win = prop.getWindow();
+        HwmfMapMode mapMode = prop.getMapMode();
+        graphicsCtx.setTransform(initialAT);
+
+        switch (mapMode) {
+        default:
+        case MM_ANISOTROPIC:
+            // scale output bounds to image bounds
+            graphicsCtx.scale(gc.getBounds().getWidth()/bbox.getWidth(), gc.getBounds().getHeight()/bbox.getHeight());
+            graphicsCtx.translate(-bbox.getX(), -bbox.getY());
+
+            // scale window bounds to output bounds
+            graphicsCtx.translate(win.getCenterX(), win.getCenterY());
+            graphicsCtx.scale(bbox.getWidth()/win.getWidth(), bbox.getHeight()/win.getHeight());
+            graphicsCtx.translate(-win.getCenterX(), -win.getCenterY());
+            break;
+        case MM_ISOTROPIC:
+            // TODO: to be validated ...
+            // like anisotropic, but use x-axis as reference
+            graphicsCtx.scale(gc.getBounds().getWidth()/bbox.getWidth(), gc.getBounds().getWidth()/bbox.getWidth());
+            graphicsCtx.translate(-bbox.getX(), -bbox.getY());
+            graphicsCtx.translate(win.getCenterX(), win.getCenterY());
+            graphicsCtx.scale(bbox.getWidth()/win.getWidth(), bbox.getWidth()/win.getWidth());
+            graphicsCtx.translate(-win.getCenterX(), -win.getCenterY());
+            break;
+        case MM_LOMETRIC:
+        case MM_HIMETRIC:
+        case MM_LOENGLISH:
+        case MM_HIENGLISH:
+        case MM_TWIPS:
+            // TODO: to be validated ...
+            graphicsCtx.transform(gc.getNormalizingTransform());
+            graphicsCtx.scale(1./mapMode.scale, -1./mapMode.scale);
+            graphicsCtx.translate(-bbox.getX(), -bbox.getY());
+            break;
+        case MM_TEXT:
+            // TODO: to be validated ...
+            break;
+        }
     }
 }

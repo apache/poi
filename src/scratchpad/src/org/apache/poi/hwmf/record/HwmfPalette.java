@@ -17,6 +17,7 @@
 
 package org.apache.poi.hwmf.record;
 
+import java.awt.Color;
 import java.io.IOException;
 
 import org.apache.poi.hwmf.draw.HwmfGraphics;
@@ -26,18 +27,58 @@ import org.apache.poi.util.LittleEndianInputStream;
 public class HwmfPalette {
     
     public static class PaletteEntry {
+        enum PaletteEntryFlag {
+            /**
+             * Specifies that the logical palette entry be used for palette animation. This value
+             * prevents other windows from matching colors to the palette entry because the color frequently
+             * changes. If an unused system-palette entry is available, the color is placed in that entry.
+             * Otherwise, the color is not available for animation.
+             */
+            PC_RESERVED(0x01),
+            /**
+             * Specifies that the low-order word of the logical palette entry designates a hardware
+             * palette index. This value allows the application to show the contents of the display device palette.
+             */
+            PC_EXPLICIT(0x02),
+            /**
+             * Specifies that the color be placed in an unused entry in the system palette
+             * instead of being matched to an existing color in the system palette. If there are no unused entries
+             * in the system palette, the color is matched normally. Once this color is in the system palette,
+             * colors in other logical palettes can be matched to this color.
+             */
+            PC_NOCOLLAPSE(0x04)
+            ;
+            
+            int flag;
+            
+            PaletteEntryFlag(int flag) {
+                this.flag = flag;
+            }
+
+            static PaletteEntryFlag valueOf(int flag) {
+                for (PaletteEntryFlag pef : values()) {
+                    if (pef.flag == flag) return pef;
+                }
+                return null;
+            }        
+
+        }
+        
         // Values (1 byte):  An 8-bit unsigned integer that defines how the palette entry is to be used. 
         // The Values field MUST be 0x00 or one of the values in the PaletteEntryFlag Enumeration table.
         // Blue (1 byte): An 8-bit unsigned integer that defines the blue intensity value for the palette entry.
         // Green (1 byte): An 8-bit unsigned integer that defines the green intensity value for the palette entry.
         // Red (1 byte): An 8-bit unsigned integer that defines the red intensity value for the palette entry.
-        private int values, blue, green, red;
+        private PaletteEntryFlag values;
+        private Color colorRef;
         
         public int init(LittleEndianInputStream leis) throws IOException {
-            values = leis.readUByte();
-            blue = leis.readUByte();
-            green = leis.readUByte();
-            red = leis.readUByte();
+            values = PaletteEntryFlag.valueOf(leis.readUByte());
+            int blue = leis.readUByte();
+            int green = leis.readUByte();
+            int red = leis.readUByte();
+            colorRef = new Color(red, green, blue);
+            
             return 4*LittleEndianConsts.BYTE_SIZE;
         }
     }
@@ -57,7 +98,7 @@ public class HwmfPalette {
          */
         private int numberOfEntries;
         
-        PaletteEntry entries[];
+        private PaletteEntry entries[];
         
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {

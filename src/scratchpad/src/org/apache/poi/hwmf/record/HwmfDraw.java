@@ -664,7 +664,7 @@ public class HwmfDraw {
 
         @Override
         public void draw(HwmfGraphics ctx) {
-
+            ctx.applyObjectTableEntry(objectIndex);
         }
     }
  }
