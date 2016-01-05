@@ -79,9 +79,6 @@ public class TestHwmfParsing {
         g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
         g.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
         
-        g.scale(width/bounds.getWidth(), height/bounds.getHeight());
-        g.translate(-bounds.getX(), -bounds.getY());
-        
         wmf.draw(g);
 
         g.dispose();

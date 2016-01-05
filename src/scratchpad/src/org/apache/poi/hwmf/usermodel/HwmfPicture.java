@@ -18,6 +18,7 @@
 package org.apache.poi.hwmf.usermodel;
 
 import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -84,9 +85,14 @@ public class HwmfPicture {
     }
 
     public void draw(Graphics2D ctx) {
-        HwmfGraphics g = new HwmfGraphics(ctx, getBounds());
-        for (HwmfRecord r : records)  {
-            r.draw(g);
+        AffineTransform at = ctx.getTransform();
+        try {
+            HwmfGraphics g = new HwmfGraphics(ctx, getBounds());
+            for (HwmfRecord r : records)  {
+                r.draw(g);
+            }
+        } finally {
+            ctx.setTransform(at);
         }
     }
 

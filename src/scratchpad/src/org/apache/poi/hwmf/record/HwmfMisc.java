@@ -221,6 +221,7 @@ public class HwmfMisc {
         @Override
         public void draw(HwmfGraphics ctx) {
             ctx.getProperties().setMapMode(mapMode);
+            ctx.updateWindowMapMode();
         }
     }
 

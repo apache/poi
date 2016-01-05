@@ -167,6 +167,7 @@ public class HwmfWindowing {
         @Override
         public void draw(HwmfGraphics ctx) {
             ctx.getProperties().setWindowOrg(x, y);
+            ctx.updateWindowMapMode();
         }
 
         public int getY() {
@@ -211,6 +212,7 @@ public class HwmfWindowing {
         @Override
         public void draw(HwmfGraphics ctx) {
             ctx.getProperties().setWindowExt(width, height);
+            ctx.updateWindowMapMode();
         }
 
         public int getHeight() {
@@ -254,6 +256,7 @@ public class HwmfWindowing {
         public void draw(HwmfGraphics ctx) {
             Rectangle2D window = ctx.getProperties().getWindow();
             ctx.getProperties().setWindowOrg(window.getX()+xOffset, window.getY()+yOffset);
+            ctx.updateWindowMapMode();
         }
     }
 
@@ -307,6 +310,7 @@ public class HwmfWindowing {
             double width = window.getWidth() * xNum / xDenom;
             double height = window.getHeight() * yNum / yDenom;
             ctx.getProperties().setWindowExt(width, height);
+            ctx.updateWindowMapMode();
         }
     }
 
