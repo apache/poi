@@ -828,7 +828,7 @@ public interface Sheet extends Iterable<Row> {
     void groupColumn(int fromColumn, int toColumn);
 
     /**
-     * Ungroup a range of columns that were previously groupped
+     * Ungroup a range of columns that were previously grouped
      *
      * @param fromColumn   start column (0-based)
      * @param toColumn     end column (0-based)
@@ -844,7 +844,7 @@ public interface Sheet extends Iterable<Row> {
     void groupRow(int fromRow, int toRow);
 
     /**
-     * Ungroup a range of rows that were previously groupped
+     * Ungroup a range of rows that were previously grouped
      *
      * @param fromRow   start row (0-based)
      * @param toRow     end row (0-based)
@@ -852,9 +852,9 @@ public interface Sheet extends Iterable<Row> {
     void ungroupRow(int fromRow, int toRow);
 
     /**
-     * Set view state of a groupped range of rows
+     * Set view state of a grouped range of rows
      *
-     * @param row   start row of a groupped range of rows (0-based)
+     * @param row   start row of a grouped range of rows (0-based)
      * @param collapse whether to expand/collapse the detail rows
      */
     void setRowGroupCollapsed(int row, boolean collapse);
