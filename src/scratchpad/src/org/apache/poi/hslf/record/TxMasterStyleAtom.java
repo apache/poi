@@ -28,6 +28,8 @@ import org.apache.poi.hslf.model.textproperties.TextPropCollection;
 import org.apache.poi.hslf.model.textproperties.TextPropCollection.TextPropType;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianOutputStream;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * TxMasterStyleAtom atom (4003).
@@ -69,7 +71,7 @@ public final class TxMasterStyleAtom extends RecordAtom {
         try {
             init();
         } catch (Exception e){
-            e.printStackTrace();
+            POILogFactory.getLogger(TxMasterStyleAtom.class).log(POILogger.WARN, "Exception when reading available styles", e);
         }
     }
 
