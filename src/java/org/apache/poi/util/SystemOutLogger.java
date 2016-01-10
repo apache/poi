@@ -57,6 +57,7 @@ public class SystemOutLogger extends POILogger
      * @param obj1 The object to log.  This is converted to a string.
      * @param exception An exception to be logged
      */
+    @SuppressForbidden("uses printStackTrace")
     public void log(final int level, final Object obj1,
                     final Throwable exception) {
         if (check(level)) {

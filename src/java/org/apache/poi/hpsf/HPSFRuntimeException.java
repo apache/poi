@@ -100,47 +100,4 @@ public class HPSFRuntimeException extends RuntimeException
     {
         return reason;
     }
-
-
-
-//    /**
-//     * @see Throwable#printStackTrace()
-//     */
-//    public void printStackTrace()
-//    {
-//        printStackTrace(System.err);
-//    }
-
-
-
-//    /**
-//     * @see Throwable#printStackTrace(java.io.PrintStream)
-//     */
-//    public void printStackTrace(final PrintStream p)
-//    {
-//        final Throwable reason = getReason();
-//        super.printStackTrace(p);
-//        if (reason != null)
-//        {
-//            p.println("Caused by:");
-//            reason.printStackTrace(p);
-//        }
-//    }
-
-
-
-//    /**
-//     * @see Throwable#printStackTrace(java.io.PrintWriter)
-//     */
-//    public void printStackTrace(final PrintWriter p)
-//    {
-//        final Throwable reason = getReason();
-//        super.printStackTrace(p);
-//        if (reason != null)
-//        {
-//            p.println("Caused by:");
-//            reason.printStackTrace(p);
-//        }
-//    }
-
 }

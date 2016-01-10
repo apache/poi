@@ -28,3 +28,5 @@
 
 java.lang.System#gc() @ Please do not try to stop the world
 java.lang.Throwable#printStackTrace() @ Please use POILogger for exceptions
+java.lang.Throwable#printStackTrace(java.io.PrintStream) @ Please use POILogger for exceptions
+java.lang.Throwable#printStackTrace(java.io.PrintWriter) @ Please use POILogger for exceptions
