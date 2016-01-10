@@ -128,13 +128,16 @@ public final class SprmBuffer implements Cloneable
     System.arraycopy( grpprl, offset, _buf, _offset, grpprl.length - offset );
     _offset += grpprl.length - offset;
 }
-  public Object clone()
-    throws CloneNotSupportedException
+  public SprmBuffer clone()
   {
-    SprmBuffer retVal = (SprmBuffer)super.clone();
-    retVal._buf = new byte[_buf.length];
-    System.arraycopy(_buf, 0, retVal._buf, 0, _buf.length);
-    return retVal;
+      try {
+        SprmBuffer retVal = (SprmBuffer)super.clone();
+        retVal._buf = new byte[_buf.length];
+        System.arraycopy(_buf, 0, retVal._buf, 0, _buf.length);
+        return retVal;
+      } catch (CloneNotSupportedException e) {
+          throw new RuntimeException(e);
+      }
   }
   private void ensureCapacity( int addition )
 {

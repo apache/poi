@@ -390,15 +390,9 @@ public final class BiffViewer {
 	 * </table>
 	 *
 	 */
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws IOException, CommandParseException {
 		// args = new String[] { "--out", "", };
-		CommandArgs cmdArgs;
-		try {
-			cmdArgs = CommandArgs.parse(args);
-		} catch (CommandParseException e) {
-			e.printStackTrace();
-			return;
-		}
+		CommandArgs cmdArgs = CommandArgs.parse(args);
 
 		PrintWriter pw;
 		if (cmdArgs.shouldOutputToFile()) {

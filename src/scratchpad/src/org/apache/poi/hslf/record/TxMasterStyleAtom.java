@@ -48,6 +48,8 @@ import org.apache.poi.util.POILogger;
  *  @author Yegor Kozlov
  */
 public final class TxMasterStyleAtom extends RecordAtom {
+    private static final POILogger LOG = POILogFactory.getLogger(TxMasterStyleAtom.class);
+    
     /**
      * Maximum number of indentation levels allowed in PowerPoint documents
      */
@@ -71,7 +73,7 @@ public final class TxMasterStyleAtom extends RecordAtom {
         try {
             init();
         } catch (Exception e){
-            POILogFactory.getLogger(TxMasterStyleAtom.class).log(POILogger.WARN, "Exception when reading available styles", e);
+            LOG.log(POILogger.WARN, "Exception when reading available styles", e);
         }
     }
 

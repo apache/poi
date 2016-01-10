@@ -17,13 +17,16 @@
 package org.apache.poi.hssf.converter;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
@@ -68,8 +71,11 @@ public class ExcelToHtmlConverter extends AbstractExcelConverter
      * </p>
      * Where infile is an input .xls file ( Word 97-2007) which will be rendered
      * as HTML into outfile
+     * @throws TransformerException 
+     * @throws Exception 
      */
     public static void main( String[] args )
+    throws IOException, ParserConfigurationException, TransformerException
     {
         if ( args.length < 2 )
         {
@@ -80,25 +86,19 @@ public class ExcelToHtmlConverter extends AbstractExcelConverter
 
         System.out.println( "Converting " + args[0] );
         System.out.println( "Saving output to " + args[1] );
-        try
-        {
-            Document doc = ExcelToHtmlConverter.process( new File( args[0] ) );
 
-            DOMSource domSource = new DOMSource( doc );
-            StreamResult streamResult = new StreamResult( new File(args[1]) );
+        Document doc = ExcelToHtmlConverter.process( new File( args[0] ) );
 
-            TransformerFactory tf = TransformerFactory.newInstance();
-            Transformer serializer = tf.newTransformer();
-            // TODO set encoding from a command argument
-            serializer.setOutputProperty( OutputKeys.ENCODING, "UTF-8" );
-            serializer.setOutputProperty( OutputKeys.INDENT, "no" );
-            serializer.setOutputProperty( OutputKeys.METHOD, "html" );
-            serializer.transform( domSource, streamResult );
-        }
-        catch ( Exception e )
-        {
-            e.printStackTrace();
-        }
+        DOMSource domSource = new DOMSource( doc );
+        StreamResult streamResult = new StreamResult( new File(args[1]) );
+
+        TransformerFactory tf = TransformerFactory.newInstance();
+        Transformer serializer = tf.newTransformer();
+        // TODO set encoding from a command argument
+        serializer.setOutputProperty( OutputKeys.ENCODING, "UTF-8" );
+        serializer.setOutputProperty( OutputKeys.INDENT, "no" );
+        serializer.setOutputProperty( OutputKeys.METHOD, "html" );
+        serializer.transform( domSource, streamResult );
     }
 
     /**
@@ -107,8 +107,10 @@ public class ExcelToHtmlConverter extends AbstractExcelConverter
      * @param xlsFile
      *            file to process
      * @return DOM representation of result HTML
+     * @throws IOException 
+     * @throws ParserConfigurationException 
      */
-    public static Document process( File xlsFile ) throws Exception
+    public static Document process( File xlsFile ) throws IOException, ParserConfigurationException
     {
         final HSSFWorkbook workbook = ExcelToHtmlUtils.loadXls( xlsFile );
         ExcelToHtmlConverter excelToHtmlConverter = new ExcelToHtmlConverter(

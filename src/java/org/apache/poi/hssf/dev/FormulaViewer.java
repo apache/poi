@@ -18,6 +18,7 @@
 package org.apache.poi.hssf.dev;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
@@ -52,13 +53,14 @@ public class FormulaViewer
 
     /**
      * Method run
+     * @throws IOException 
      *
      *
      * @exception Exception
      *
      */
 
-    public void run() throws Exception {
+    public void run() throws IOException {
         NPOIFSFileSystem fs  = new NPOIFSFileSystem(new File(file), true);
         InputStream is = BiffViewer.getPOIFSInputStream(fs);
         List<Record> records = RecordFactory.createRecords(is);
@@ -206,10 +208,12 @@ public class FormulaViewer
      * pass me a filename and I'll try and parse the formulas from it
      *
      * @param args pass one argument with the filename or --help
+     * @throws IOException 
+     * @throws Exception 
      *
      */
 
-    public static void main(String args[])
+    public static void main(String args[]) throws IOException
     {
         if ((args == null) || (args.length >2 )
                 || args[ 0 ].equals("--help"))
@@ -218,31 +222,17 @@ public class FormulaViewer
                 "FormulaViewer .8 proof that the devil lies in the details (or just in BIFF8 files in general)");
             System.out.println("usage: Give me a big fat file name");
         } else if (args[0].equals("--listFunctions")) { // undocumented attribute to research functions!~
-            try {
-                FormulaViewer viewer = new FormulaViewer();
-                viewer.setFile(args[1]);
-                viewer.setList(true);
-                viewer.run();
-            }
-            catch (Exception e) {
-                System.out.println("Whoops!");
-                e.printStackTrace();
-            }
+            FormulaViewer viewer = new FormulaViewer();
+            viewer.setFile(args[1]);
+            viewer.setList(true);
+            viewer.run();
         }
         else
         {
-            try
-            {
-                FormulaViewer viewer = new FormulaViewer();
+            FormulaViewer viewer = new FormulaViewer();
 
-                viewer.setFile(args[ 0 ]);
-                viewer.run();
-            }
-            catch (Exception e)
-            {
-                System.out.println("Whoops!");
-                e.printStackTrace();
-            }
+            viewer.setFile(args[ 0 ]);
+            viewer.run();
         }
     }
 }

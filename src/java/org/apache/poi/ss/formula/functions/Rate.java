@@ -22,11 +22,15 @@ import org.apache.poi.ss.formula.eval.EvaluationException;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.formula.eval.ValueEval;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * Implements the Excel Rate function
  */
 public class Rate implements Function {
+    private static final POILogger LOG = POILogFactory.getLogger(Rate.class);
+    
    public ValueEval evaluate(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
       if (args.length < 3) { //First 3 parameters are mandatory
          return ErrorEval.VALUE_INVALID;
@@ -61,7 +65,7 @@ public class Rate implements Function {
 
          checkValue(rate);
       } catch (EvaluationException e) {
-         e.printStackTrace() ;
+          LOG.log(POILogger.ERROR, "Can't evaluate rate function", e);
          return e.getErrorEval();
       }
 

@@ -32,6 +32,8 @@ import java.util.regex.Matcher;
 
 import org.apache.poi.ss.format.CellFormatPart.PartHandler;
 import org.apache.poi.util.LocaleUtil;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * This class implements printing out a value using a number format.
@@ -39,6 +41,8 @@ import org.apache.poi.util.LocaleUtil;
  * @author Ken Arnold, Industrious Media LLC
  */
 public class CellNumberFormatter extends CellFormatter {
+    private static final POILogger LOG = POILogFactory.getLogger(CellNumberFormatter.class);
+    
     private final String desc;
     private String printfFmt;
     private double scale;
@@ -843,7 +847,7 @@ public class CellNumberFormatter extends CellFormatter {
             writeSingleInteger(denominatorFmt, d, output, denominatorSpecials,
                     mods);
         } catch (RuntimeException ignored) {
-            ignored.printStackTrace();
+            LOG.log(POILogger.ERROR, "error while fraction evaluation", ignored);
         }
     }
 

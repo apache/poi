@@ -29,6 +29,8 @@ import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.hslf.record.StyleTextPropAtom;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * For a given run of characters, holds the properties (which could
@@ -37,6 +39,8 @@ import org.apache.poi.util.LittleEndian;
  *  properties, and the indent level if required.
  */
 public class TextPropCollection {
+    private static final POILogger LOG = POILogFactory.getLogger(TextPropCollection.class);
+    
     /** All the different kinds of paragraph properties we might handle */
     private static final TextProp[] paragraphTextPropTypes = {
         // TextProp order is according to 2.9.20 TextPFException,
@@ -376,8 +380,8 @@ public class TextPropCollection {
             writeOut(baos);
             byte[] b = baos.toByteArray();
             out.append(HexDump.dump(b, 0, 0));
-        } catch (Exception e ) {
-            e.printStackTrace();
+        } catch (IOException e ) {
+            LOG.log(POILogger.ERROR, "can't dump TextPropCollection", e);
         }
         
         return out.toString();

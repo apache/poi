@@ -25,5 +25,6 @@
 #java.lang.Runtime#exit(int)
 #java.lang.Runtime#halt(int)
 
-@defaultMessage Please do not try to stop the world
-java.lang.System#gc()
+
+java.lang.System#gc() @ Please do not try to stop the world
+java.lang.Throwable#printStackTrace() @ Please use POILogger for exceptions

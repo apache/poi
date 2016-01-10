@@ -46,6 +46,8 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.util.DocumentHelper;
 import org.apache.poi.util.LocaleUtil;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFMap;
 import org.apache.poi.xssf.usermodel.XSSFRow;
@@ -80,6 +82,7 @@ import org.xml.sax.SAXException;
  * </ul>
  */
 public class XSSFExportToXml implements Comparator<String>{
+    private static final POILogger LOG = POILogFactory.getLogger(XSSFExportToXml.class);
 
     private XSSFMap map;
 
@@ -265,7 +268,7 @@ public class XSSFExportToXml implements Comparator<String>{
             //if no exceptions where raised, the document is valid
             return true;
         } catch(IOException e) {
-            e.printStackTrace();
+            LOG.log(POILogger.ERROR, "document is not valid", e);
         }
 
         return false;

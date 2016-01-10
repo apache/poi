@@ -17,13 +17,24 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import org.apache.poi.ddf.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
+import org.apache.poi.ddf.EscherBoolProperty;
+import org.apache.poi.ddf.EscherChildAnchorRecord;
+import org.apache.poi.ddf.EscherClientAnchorRecord;
+import org.apache.poi.ddf.EscherContainerRecord;
+import org.apache.poi.ddf.EscherOptRecord;
+import org.apache.poi.ddf.EscherProperties;
+import org.apache.poi.ddf.EscherProperty;
+import org.apache.poi.ddf.EscherRGBProperty;
+import org.apache.poi.ddf.EscherSimpleProperty;
+import org.apache.poi.ddf.EscherSpRecord;
 import org.apache.poi.hssf.record.CommonObjectDataSubRecord;
 import org.apache.poi.hssf.record.ObjRecord;
 import org.apache.poi.util.LittleEndian;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * An abstract shape.
@@ -34,6 +45,8 @@ import java.io.IOException;
  * setFlipVertical() or setFlipHorizontally(). 
  */
 public abstract class HSSFShape {
+    private static final POILogger LOG = POILogFactory.getLogger(HSSFShape.class);
+    
     public static final int LINEWIDTH_ONE_PT = 12700;
     public static final int LINEWIDTH_DEFAULT = 9525;
     public static final int LINESTYLE__COLOR_DEFAULT = 0x08000040;
@@ -362,7 +375,7 @@ public abstract class HSSFShape {
             LittleEndian.putInt(property.getPropertyValue(), bos);
             return LittleEndian.getShort(bos.toByteArray(), 2);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.log(POILogger.ERROR, "can't determine rotation degree", e);
             return 0;
         }
     }
