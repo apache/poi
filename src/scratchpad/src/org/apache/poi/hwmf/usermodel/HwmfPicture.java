@@ -17,9 +17,12 @@
 
 package org.apache.poi.hwmf.usermodel;
 
+import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
+import java.awt.geom.Rectangle2D.Double;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,6 +38,7 @@ import org.apache.poi.hwmf.record.HwmfRecordType;
 import org.apache.poi.hwmf.record.HwmfWindowing.WmfSetWindowExt;
 import org.apache.poi.hwmf.record.HwmfWindowing.WmfSetWindowOrg;
 import org.apache.poi.util.LittleEndianInputStream;
+import org.apache.poi.util.Units;
 
 public class HwmfPicture {
     final List<HwmfRecord> records = new ArrayList<HwmfRecord>();
@@ -85,9 +89,23 @@ public class HwmfPicture {
     }
 
     public void draw(Graphics2D ctx) {
+        Dimension dim = getSize();
+        int width = Units.pointsToPixel(dim.getWidth());
+        // keep aspect ratio for height
+        int height = Units.pointsToPixel(dim.getHeight());
+        Rectangle2D bounds = new Rectangle2D.Double(0,0,width,height);
+        draw(ctx, bounds);
+    }
+    
+    public void draw(Graphics2D ctx, Rectangle2D graphicsBounds) {
         AffineTransform at = ctx.getTransform();
         try {
-            HwmfGraphics g = new HwmfGraphics(ctx, getBounds());
+            Rectangle2D wmfBounds = getBounds();
+            // scale output bounds to image bounds
+            ctx.scale(graphicsBounds.getWidth()/wmfBounds.getWidth(), graphicsBounds.getHeight()/wmfBounds.getHeight());
+            ctx.translate(-wmfBounds.getX(), -wmfBounds.getY());
+            
+            HwmfGraphics g = new HwmfGraphics(ctx, wmfBounds);
             for (HwmfRecord r : records)  {
                 r.draw(g);
             }
@@ -130,5 +148,19 @@ public class HwmfPicture {
 
     public HwmfHeader getHeader() {
         return header;
+    }
+    
+    /**
+     * Return the image size in points
+     *
+     * @return the image size in points
+     */
+    public Dimension getSize() {
+        double inch = (placeableHeader == null) ? 1440 : placeableHeader.getUnitsPerInch();
+        Rectangle2D bounds = getBounds();
+        
+        //coefficient to translate from WMF dpi to 72dpi
+        double coeff = Units.POINT_DPI/inch;
+        return new Dimension((int)Math.round(bounds.getWidth()*coeff), (int)Math.round(bounds.getHeight()*coeff));
     }
 }

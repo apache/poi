@@ -19,106 +19,121 @@ package org.apache.poi.hwmf.record;
 
 import java.awt.Color;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.apache.poi.hwmf.draw.HwmfDrawProperties;
 import org.apache.poi.hwmf.draw.HwmfGraphics;
+import org.apache.poi.util.BitField;
+import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
 
 public class HwmfPalette {
-    
+
     public static class PaletteEntry {
-        enum PaletteEntryFlag {
-            /**
-             * Specifies that the logical palette entry be used for palette animation. This value
-             * prevents other windows from matching colors to the palette entry because the color frequently
-             * changes. If an unused system-palette entry is available, the color is placed in that entry.
-             * Otherwise, the color is not available for animation.
-             */
-            PC_RESERVED(0x01),
-            /**
-             * Specifies that the low-order word of the logical palette entry designates a hardware
-             * palette index. This value allows the application to show the contents of the display device palette.
-             */
-            PC_EXPLICIT(0x02),
-            /**
-             * Specifies that the color be placed in an unused entry in the system palette
-             * instead of being matched to an existing color in the system palette. If there are no unused entries
-             * in the system palette, the color is matched normally. Once this color is in the system palette,
-             * colors in other logical palettes can be matched to this color.
-             */
-            PC_NOCOLLAPSE(0x04)
-            ;
-            
-            int flag;
-            
-            PaletteEntryFlag(int flag) {
-                this.flag = flag;
-            }
+        private static final BitField PC_RESERVED   = BitFieldFactory.getInstance(0x01);
+        private static final BitField PC_EXPLICIT   = BitFieldFactory.getInstance(0x02);
+        private static final BitField PC_NOCOLLAPSE = BitFieldFactory.getInstance(0x04);
 
-            static PaletteEntryFlag valueOf(int flag) {
-                for (PaletteEntryFlag pef : values()) {
-                    if (pef.flag == flag) return pef;
-                }
-                return null;
-            }        
-
-        }
-        
-        // Values (1 byte):  An 8-bit unsigned integer that defines how the palette entry is to be used. 
-        // The Values field MUST be 0x00 or one of the values in the PaletteEntryFlag Enumeration table.
-        // Blue (1 byte): An 8-bit unsigned integer that defines the blue intensity value for the palette entry.
-        // Green (1 byte): An 8-bit unsigned integer that defines the green intensity value for the palette entry.
-        // Red (1 byte): An 8-bit unsigned integer that defines the red intensity value for the palette entry.
-        private PaletteEntryFlag values;
+        private int values;
         private Color colorRef;
-        
+
+        private PaletteEntry() {
+            this.values = PC_RESERVED.set(0);
+            this.colorRef = Color.BLACK;
+        }
+
+        private PaletteEntry(PaletteEntry other) {
+            this.values = other.values;
+            this.colorRef = other.colorRef;
+        }
+
         public int init(LittleEndianInputStream leis) throws IOException {
-            values = PaletteEntryFlag.valueOf(leis.readUByte());
+            // Values (1 byte):  An 8-bit unsigned integer that defines how the palette entry is to be used.
+            // The Values field MUST be 0x00 or one of the values in the PaletteEntryFlag Enumeration table.
+            values = leis.readUByte();
+            // Blue (1 byte): An 8-bit unsigned integer that defines the blue intensity value for the palette entry.
             int blue = leis.readUByte();
+            // Green (1 byte): An 8-bit unsigned integer that defines the green intensity value for the palette entry.
             int green = leis.readUByte();
+            // Red (1 byte): An 8-bit unsigned integer that defines the red intensity value for the palette entry.
             int red = leis.readUByte();
             colorRef = new Color(red, green, blue);
-            
+
             return 4*LittleEndianConsts.BYTE_SIZE;
         }
+
+        /**
+         * Specifies that the logical palette entry be used for palette animation. This value
+         * prevents other windows from matching colors to the palette entry because the color frequently
+         * changes. If an unused system-palette entry is available, the color is placed in that entry.
+         * Otherwise, the color is not available for animation.
+         */
+        public boolean isReserved() {
+            return PC_RESERVED.isSet(values);
+        }
+
+        /**
+         * Specifies that the low-order word of the logical palette entry designates a hardware
+         * palette index. This value allows the application to show the contents of the display device palette.
+         */
+        public boolean isExplicit() {
+            return PC_EXPLICIT.isSet(values);
+        }
+
+        /**
+         * Specifies that the color be placed in an unused entry in the system palette
+         * instead of being matched to an existing color in the system palette. If there are no unused entries
+         * in the system palette, the color is matched normally. Once this color is in the system palette,
+         * colors in other logical palettes can be matched to this color.
+         */
+        public boolean isNoCollapse() {
+            return PC_NOCOLLAPSE.isSet(values);
+        }
     }
-    
+
     public static abstract class WmfPaletteParent implements HwmfRecord  {
-    
+
         /**
          * Start (2 bytes):  A 16-bit unsigned integer that defines the offset into the Palette Object when
          * used with the META_SETPALENTRIES and META_ANIMATEPALETTE record types.
          * When used with META_CREATEPALETTE, it MUST be 0x0300
          */
         private int start;
-        
-        /**
-         * NumberOfEntries (2 bytes):  A 16-bit unsigned integer that defines the number of objects in
-         * aPaletteEntries.  
-         */
-        private int numberOfEntries;
-        
-        private PaletteEntry entries[];
-        
+
+        private List<PaletteEntry> palette = new ArrayList<PaletteEntry>();
+
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
             start = leis.readUShort();
-            numberOfEntries = leis.readUShort();
+            /**
+             * NumberOfEntries (2 bytes):  A 16-bit unsigned integer that defines the number of objects in
+             * aPaletteEntries.
+             */
+            int numberOfEntries = leis.readUShort();
             int size = 2*LittleEndianConsts.SHORT_SIZE;
-            entries = new PaletteEntry[numberOfEntries];
             for (int i=0; i<numberOfEntries; i++) {
-                entries[i] = new PaletteEntry();
-                size += entries[i].init(leis);
+                PaletteEntry pe = new PaletteEntry();
+                size += pe.init(leis);
+                palette.add(pe);
             }
             return size;
         }
 
-        @Override
-        public void draw(HwmfGraphics ctx) {
+        protected List<PaletteEntry> getPaletteCopy() {
+            List<PaletteEntry> newPalette = new ArrayList<PaletteEntry>();
+            for (PaletteEntry et : palette) {
+                newPalette.add(new PaletteEntry(et));
+            }
+            return newPalette;
+        }
 
+        protected int getPaletteStart() {
+            return start;
         }
     }
-    
+
     /**
      * The META_CREATEPALETTE record creates a Palette Object
      */
@@ -132,10 +147,10 @@ public class HwmfPalette {
         public void draw(HwmfGraphics ctx) {
             ctx.addObjectTableEntry(this);
         }
-        
+
         @Override
         public void applyObject(HwmfGraphics ctx) {
-
+            ctx.getProperties().setPalette(getPaletteCopy());
         }
     }
 
@@ -151,35 +166,62 @@ public class HwmfPalette {
 
         @Override
         public void draw(HwmfGraphics ctx) {
-
+            HwmfDrawProperties props = ctx.getProperties();
+            List<PaletteEntry> palette = props.getPalette();
+            if (palette == null) {
+                palette = new ArrayList<PaletteEntry>();
+            }
+            int start = getPaletteStart();
+            for (int i=palette.size(); i<start; i++) {
+                palette.add(new PaletteEntry());
+            }
+            int index = start;
+            for (PaletteEntry palCopy : getPaletteCopy()) {
+                if (palette.size() <= index) {
+                    palette.add(palCopy);
+                } else {
+                    palette.set(index, palCopy);
+                }
+                index++;
+            }
+            props.setPalette(palette);
         }
     }
-    
+
     /**
      * The META_RESIZEPALETTE record redefines the size of the logical palette that is defined in the
      * playback device context.
      */
     public static class WmfResizePalette implements HwmfRecord {
         /**
-         * A 16-bit unsigned integer that defines the number of entries in 
+         * A 16-bit unsigned integer that defines the number of entries in
          * the logical palette.
          */
         int numberOfEntries;
-        
+
         @Override
         public HwmfRecordType getRecordType() {
             return HwmfRecordType.resizePalette;
         }
-        
+
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
             numberOfEntries = leis.readUShort();
             return LittleEndianConsts.SHORT_SIZE;
-        }        
+        }
 
         @Override
         public void draw(HwmfGraphics ctx) {
-
+            HwmfDrawProperties props = ctx.getProperties();
+            List<PaletteEntry> palette = props.getPalette();
+            if (palette == null) {
+                palette = new ArrayList<PaletteEntry>();
+            }
+            for (int i=palette.size(); i<numberOfEntries; i++) {
+                palette.add(new PaletteEntry());
+            }
+            palette = palette.subList(0, numberOfEntries);
+            props.setPalette(palette);
         }
     }
 
@@ -191,22 +233,22 @@ public class HwmfPalette {
          * A 16-bit unsigned integer used to index into the WMF Object Table to get
          * the Palette Object to be selected.
          */
-        private int palette;
+        private int paletteIndex;
 
         @Override
         public HwmfRecordType getRecordType() {
             return HwmfRecordType.selectPalette;
         }
-        
+
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
-            palette = leis.readUShort();
+            paletteIndex = leis.readUShort();
             return LittleEndianConsts.SHORT_SIZE;
-        }        
+        }
 
         @Override
         public void draw(HwmfGraphics ctx) {
-
+            ctx.applyObjectTableEntry(paletteIndex);
         }
     }
 
@@ -234,7 +276,7 @@ public class HwmfPalette {
     /**
      * The META_ANIMATEPALETTE record redefines entries in the logical palette that
      * is defined in the playback device context with the specified Palette object
-     * 
+     *
      * The logical palette that is specified by the Palette object in this record is the
      * source of the palette changes, and the logical palette that is currently selected
      * into the playback device context is the destination. Entries in the destination
@@ -251,7 +293,28 @@ public class HwmfPalette {
 
         @Override
         public void draw(HwmfGraphics ctx) {
-
+            HwmfDrawProperties props = ctx.getProperties();
+            List<PaletteEntry> dest = props.getPalette();
+            List<PaletteEntry> src = getPaletteCopy();
+            int start = getPaletteStart();
+            if (dest == null) {
+                dest = new ArrayList<PaletteEntry>();
+            }
+            for (int i=dest.size(); i<start; i++) {
+                dest.add(new PaletteEntry());
+            }
+            for (int i=0; i<src.size(); i++) {
+                PaletteEntry pe = src.get(i);
+                if (dest.size() <= start+i) {
+                    dest.add(pe);
+                } else {
+                    PaletteEntry peDst = dest.get(start+i);
+                    if (peDst.isReserved()) {
+                        dest.set(start+i, pe);
+                    }
+                }
+            }
+            props.setPalette(dest);
         }
     }
 }

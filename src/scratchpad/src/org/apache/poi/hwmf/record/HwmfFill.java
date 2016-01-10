@@ -38,6 +38,42 @@ public class HwmfFill {
         BufferedImage getImage();
     }
     
+    /**
+     * The ColorUsage Enumeration (a 16-bit unsigned integer) specifies whether a color table
+     * exists in a device-independent bitmap (DIB) and how to interpret its values,
+     * i.e. if contains explicit RGB values or indexes into a palette.
+     */
+    public enum ColorUsage {
+        /**
+         * The color table contains RGB values
+         */
+        DIB_RGB_COLORS(0x0000),
+        /**
+         * The color table contains 16-bit indices into the current logical palette in
+         * the playback device context.
+         */
+        DIB_PAL_COLORS(0x0001),
+        /**
+         * No color table exists. The pixels in the DIB are indices into the current
+         * logical palette in the playback device context.
+         */
+        DIB_PAL_INDICES(0x0002)
+        ;
+
+
+        int flag;
+        ColorUsage(int flag) {
+            this.flag = flag;
+        }
+
+        static ColorUsage valueOf(int flag) {
+            for (ColorUsage bs : values()) {
+                if (bs.flag == flag) return bs;
+            }
+            return null;
+        }
+    }
+    
     
     /**
      * The META_FILLREGION record fills a region using a specified brush.
@@ -482,12 +518,8 @@ public class HwmfFill {
         /**
          * A 16-bit unsigned integer that defines whether the Colors field of the
          * DIB contains explicit RGB values or indexes into a palette.
-         * This value MUST be in the ColorUsage Enumeration:
-         * DIB_RGB_COLORS = 0x0000,
-         * DIB_PAL_COLORS = 0x0001,
-         * DIB_PAL_INDICES = 0x0002
          */
-        private int colorUsage;
+        private ColorUsage colorUsage;
         /**
          * A 16-bit signed integer that defines the height, in logical units, of the
          * source rectangle.
@@ -548,7 +580,7 @@ public class HwmfFill {
             rasterOperation = HwmfTernaryRasterOp.valueOf(rasterOpIndex);
             assert(rasterOpCode == rasterOperation.opCode);
 
-            colorUsage = leis.readUShort();
+            colorUsage = ColorUsage.valueOf(leis.readUShort());
             srcHeight = leis.readShort();
             srcWidth = leis.readShort();
             ySrc = leis.readShort();
@@ -679,12 +711,8 @@ public class HwmfFill {
         /**
          * A 16-bit unsigned integer that defines whether the Colors field of the
          * DIB contains explicit RGB values or indexes into a palette.
-         * This MUST be one of the values in the ColorUsage Enumeration:
-         * DIB_RGB_COLORS = 0x0000,
-         * DIB_PAL_COLORS = 0x0001,
-         * DIB_PAL_INDICES = 0x0002
          */
-        private int colorUsage;  
+        private ColorUsage colorUsage;  
         /**
          * A 16-bit unsigned integer that defines the number of scan lines in the source.
          */
@@ -736,7 +764,7 @@ public class HwmfFill {
         
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
-            colorUsage = leis.readUShort();
+            colorUsage = ColorUsage.valueOf(leis.readUShort());
             scanCount = leis.readUShort();
             startScan = leis.readUShort();
             yDib = leis.readUShort();

@@ -22,6 +22,7 @@ import java.io.IOException;
 
 import org.apache.poi.hwmf.draw.HwmfDrawProperties;
 import org.apache.poi.hwmf.draw.HwmfGraphics;
+import org.apache.poi.hwmf.record.HwmfFill.ColorUsage;
 import org.apache.poi.hwmf.record.HwmfFill.HwmfImageRecord;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
@@ -349,12 +350,9 @@ public class HwmfMisc {
          * If the Style field specifies BS_PATTERN, a ColorUsage value of DIB_RGB_COLORS MUST be
          * used regardless of the contents of this field.
          *
-         * If the Style field specified anything but BS_PATTERN, this field MUST be one of the values:
-         * DIB_RGB_COLORS = 0x0000,
-         * DIB_PAL_COLORS = 0x0001,
-         * DIB_PAL_INDICES = 0x0002
+         * If the Style field specified anything but BS_PATTERN, this field MUST be one of the ColorUsage values.
          */
-        private int colorUsage;
+        private ColorUsage colorUsage;
 
         private HwmfBitmapDib patternDib;
         private HwmfBitmap16 pattern16;
@@ -367,7 +365,7 @@ public class HwmfMisc {
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
             style = HwmfBrushStyle.valueOf(leis.readUShort());
-            colorUsage = leis.readUShort();
+            colorUsage = ColorUsage.valueOf(leis.readUShort());
             int size = 2*LittleEndianConsts.SHORT_SIZE;
             switch (style) {
             case BS_SOLID:

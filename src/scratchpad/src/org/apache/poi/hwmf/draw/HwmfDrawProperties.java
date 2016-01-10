@@ -25,14 +25,19 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.WritableRaster;
+import java.util.List;
 
 import org.apache.poi.hwmf.record.HwmfBrushStyle;
 import org.apache.poi.hwmf.record.HwmfColorRef;
+import org.apache.poi.hwmf.record.HwmfFont;
 import org.apache.poi.hwmf.record.HwmfFill.WmfSetPolyfillMode.HwmfPolyfillMode;
 import org.apache.poi.hwmf.record.HwmfHatchStyle;
 import org.apache.poi.hwmf.record.HwmfMapMode;
 import org.apache.poi.hwmf.record.HwmfMisc.WmfSetBkMode.HwmfBkMode;
+import org.apache.poi.hwmf.record.HwmfPalette.PaletteEntry;
 import org.apache.poi.hwmf.record.HwmfPenStyle;
+import org.apache.poi.hwmf.record.HwmfText.HwmfTextAlignment;
+import org.apache.poi.hwmf.record.HwmfText.HwmfTextVerticalAlignment;
 
 public class HwmfDrawProperties {
     private final Rectangle2D window;
@@ -51,6 +56,14 @@ public class HwmfDrawProperties {
     private HwmfBkMode bkMode = HwmfBkMode.OPAQUE;
     private HwmfPolyfillMode polyfillMode = HwmfPolyfillMode.WINDING;
     private Shape region = null;
+    private List<PaletteEntry> palette = null;
+    private int paletteOffset = 0;
+    private HwmfFont font = null;
+    private HwmfColorRef textColor = new HwmfColorRef(Color.BLACK);
+    private HwmfTextAlignment textAlignLatin = HwmfTextAlignment.LEFT;
+    private HwmfTextVerticalAlignment textVAlignLatin = HwmfTextVerticalAlignment.TOP;
+    private HwmfTextAlignment textAlignAsian = HwmfTextAlignment.RIGHT;
+    private HwmfTextVerticalAlignment textVAlignAsian = HwmfTextVerticalAlignment.TOP;
 
     public HwmfDrawProperties() {
         window = new Rectangle2D.Double(0, 0, 1, 1);
@@ -84,9 +97,16 @@ public class HwmfDrawProperties {
         } else if (other.region instanceof Area) {
             this.region = new Area(other.region);
         }
+        this.palette = other.palette;
+        this.paletteOffset = other.paletteOffset;
+        this.font = other.font;
+        this.textColor = (other.textColor == null) ? null : other.textColor.clone();
     }
     
     public void setViewportExt(double width, double height) {
+        if (viewport == null) {
+            viewport = (Rectangle2D)window.clone();
+        }
         double x = viewport.getX();
         double y = viewport.getY();
         double w = (width != 0) ? width : viewport.getWidth();
@@ -243,5 +263,81 @@ public class HwmfDrawProperties {
      */
     public void setRegion(Shape region) {
         this.region = region;
+    }
+
+    /**
+     * Returns the current palette.
+     * Callers may modify the palette.
+     * 
+     * @return the current palette or null, if it hasn't been set
+     */
+    public List<PaletteEntry> getPalette() {
+        return palette;
+    }
+
+    /**
+     * Sets the current palette.
+     * It's the callers duty to set a modifiable copy of the palette.
+     *
+     * @param palette
+     */
+    public void setPalette(List<PaletteEntry> palette) {
+        this.palette = palette;
+    }
+
+    public int getPaletteOffset() {
+        return paletteOffset;
+    }
+
+    public void setPaletteOffset(int paletteOffset) {
+        this.paletteOffset = paletteOffset;
+    }
+
+    public HwmfColorRef getTextColor() {
+        return textColor;
+    }
+
+    public void setTextColor(HwmfColorRef textColor) {
+        this.textColor = textColor;
+    }
+
+    public HwmfFont getFont() {
+        return font;
+    }
+
+    public void setFont(HwmfFont font) {
+        this.font = font;
+    }
+
+    public HwmfTextAlignment getTextAlignLatin() {
+        return textAlignLatin;
+    }
+
+    public void setTextAlignLatin(HwmfTextAlignment textAlignLatin) {
+        this.textAlignLatin = textAlignLatin;
+    }
+
+    public HwmfTextVerticalAlignment getTextVAlignLatin() {
+        return textVAlignLatin;
+    }
+
+    public void setTextVAlignLatin(HwmfTextVerticalAlignment textVAlignLatin) {
+        this.textVAlignLatin = textVAlignLatin;
+    }
+
+    public HwmfTextAlignment getTextAlignAsian() {
+        return textAlignAsian;
+    }
+
+    public void setTextAlignAsian(HwmfTextAlignment textAlignAsian) {
+        this.textAlignAsian = textAlignAsian;
+    }
+
+    public HwmfTextVerticalAlignment getTextVAlignAsian() {
+        return textVAlignAsian;
+    }
+
+    public void setTextVAlignAsian(HwmfTextVerticalAlignment textVAlignAsian) {
+        this.textVAlignAsian = textVAlignAsian;
     }
 }
