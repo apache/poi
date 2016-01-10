@@ -55,10 +55,20 @@ public class SingleXmlCells extends POIXMLDocumentPart {
 
 	}
 
-	public SingleXmlCells(PackagePart part, PackageRelationship rel)
-			throws IOException {
-		super(part, rel);
+	/**
+	 * @since POI 3.14-Beta1
+	 */
+	public SingleXmlCells(PackagePart part) throws IOException {
+		super(part);
 		readFrom(part.getInputStream());
+	}
+
+	/**
+	 * @deprecated in POI 3.14, scheduled for removal in POI 3.16
+	 */
+	@Deprecated
+	public SingleXmlCells(PackagePart part, PackageRelationship rel) throws IOException {
+	    this(part);
 	}
 
 	public void readFrom(InputStream is) throws IOException {

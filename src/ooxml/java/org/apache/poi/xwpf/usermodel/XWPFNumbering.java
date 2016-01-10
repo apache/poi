@@ -50,12 +50,22 @@ public class XWPFNumbering extends POIXMLDocumentPart {
 
     /**
      * create a new styles object with an existing document
+     * 
+     * @since POI 3.14-Beta1
      */
-    public XWPFNumbering(PackagePart part, PackageRelationship rel) throws IOException, OpenXML4JException {
-        super(part, rel);
+    public XWPFNumbering(PackagePart part) throws IOException, OpenXML4JException {
+        super(part);
         isNew = true;
     }
 
+    /**
+     * @deprecated in POI 3.14, scheduled for removal in POI 3.16
+     */
+    @Deprecated
+    public XWPFNumbering(PackagePart part, PackageRelationship rel) throws IOException, OpenXML4JException {
+        this(part);
+    }
+    
     /**
      * create a new XWPFNumbering object for use in a new document
      */
@@ -86,6 +96,8 @@ public class XWPFNumbering extends POIXMLDocumentPart {
             isNew = false;
         } catch (XmlException e) {
             throw new POIXMLException();
+        } finally {
+            is.close();
         }
     }
 

@@ -51,10 +51,21 @@ public class XSSFChartSheet extends XSSFSheet  {
 
     protected CTChartsheet chartsheet;
 
-    protected XSSFChartSheet(PackagePart part, PackageRelationship rel) {
-        super(part, rel);
+    /**
+     * @since POI 3.14-Beta1
+     */
+    protected XSSFChartSheet(PackagePart part) {
+        super(part);
     }
 
+    /**
+     * @deprecated in POI 3.14, scheduled for removal in POI 3.16
+     */
+    @Deprecated
+    protected XSSFChartSheet(PackagePart part, PackageRelationship rel) {
+        this(part);
+    }
+    
     protected void read(InputStream is) throws IOException {
         //initialize the supeclass with a blank worksheet
         super.read(new ByteArrayInputStream(BLANK_WORKSHEET));

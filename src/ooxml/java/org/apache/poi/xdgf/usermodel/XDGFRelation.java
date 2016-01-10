@@ -65,12 +65,9 @@ public class XDGFRelation extends POIXMLRelation {
             "http://schemas.microsoft.com/visio/2010/relationships/windows",
             "/visio/windows.xml", null);
 
-    private XDGFRelation(String type, String rel, String defaultName,
-            Class<? extends XDGFXMLDocumentPart> cls) {
+    private XDGFRelation(String type, String rel, String defaultName, Class<? extends XDGFXMLDocumentPart> cls) {
         super(type, rel, defaultName, cls);
-
-        if (cls != null && !_table.containsKey(rel))
-            _table.put(rel, this);
+        _table.put(rel, this);
     }
 
     /**

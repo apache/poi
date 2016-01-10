@@ -53,9 +53,11 @@ implements Notes<XSLFShape,XSLFTextParagraph> {
      * the content type must be <code>application/vnd.openxmlformats-officedocument.notes+xml</code>
      * @param rel  the package relationship holding this notes,
      * the relationship type must be http://schemas.openxmlformats.org/officeDocument/2006/relationships/notes
+     * 
+     * @since POI 3.14-Beta1
      */
-    XSLFNotes(PackagePart part, PackageRelationship rel) throws IOException, XmlException {
-        super(part, rel);
+    XSLFNotes(PackagePart part) throws IOException, XmlException {
+        super(part);
 
         NotesDocument doc =
             NotesDocument.Factory.parse(getPackagePart().getInputStream(), DEFAULT_XML_OPTIONS);
@@ -63,6 +65,14 @@ implements Notes<XSLFShape,XSLFTextParagraph> {
         setCommonSlideData(_notes.getCSld());
     }
 
+    /**
+     * @deprecated in POI 3.14, scheduled for removal in POI 3.16
+     */
+    @Deprecated
+    XSLFNotes(PackagePart part, PackageRelationship rel) throws IOException, XmlException {
+        this(part);
+    }
+    
     private static CTNotesSlide prototype(){
         CTNotesSlide ctNotes = CTNotesSlide.Factory.newInstance();
         CTCommonSlideData cSld = ctNotes.addNewCSld();

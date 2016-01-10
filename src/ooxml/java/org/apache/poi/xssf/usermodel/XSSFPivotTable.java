@@ -88,13 +88,23 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
      *
      * @param part - The package part that holds xml data representing this pivot table.
      * @param rel - the relationship of the given package part in the underlying OPC package
+     * 
+     * @since POI 3.14-Beta1
      */
     @Beta
-    protected XSSFPivotTable(PackagePart part, PackageRelationship rel) throws IOException {
-        super(part, rel);
+    protected XSSFPivotTable(PackagePart part) throws IOException {
+        super(part);
         readFrom(part.getInputStream());
     }
 
+    /**
+     * @deprecated in POI 3.14, scheduled for removal in POI 3.16
+     */
+    @Deprecated
+    protected XSSFPivotTable(PackagePart part, PackageRelationship rel) throws IOException {
+        this(part);
+    }
+    
     @Beta
     public void readFrom(InputStream is) throws IOException {
 	try {

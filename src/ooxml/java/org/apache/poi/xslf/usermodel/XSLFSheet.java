@@ -72,9 +72,20 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
     public XSLFSheet() {
         super();
     }
+    
+    /**
+     * @since POI 3.14-Beta1
+     */
+    public XSLFSheet(PackagePart part) {
+        super(part);
+    }    
 
+    /**
+     * @deprecated in POI 3.14, scheduled for removal in POI 3.16
+     */
+    @Deprecated
     public XSLFSheet(PackagePart part, PackageRelationship rel){
-        super(part, rel);
+        this(part);
     }
 
     /**
@@ -212,11 +223,9 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
         XSLFPictureData xPictureData = (XSLFPictureData)pictureData;
         PackagePart pic = xPictureData.getPackagePart();
 
-        PackageRelationship rel = getPackagePart().addRelationship(
-                pic.getPartName(), TargetMode.INTERNAL, XSLFRelation.IMAGES.getRelation());
-        addRelation(rel.getId(), new XSLFPictureData(pic, rel));
+        RelationPart rp = addRelation(null, XSLFRelation.IMAGES, new XSLFPictureData(pic));
 
-        XSLFPictureShape sh = getDrawing().createPicture(rel.getId());
+        XSLFPictureShape sh = getDrawing().createPicture(rp.getRelationship().getId());
         new DrawPictureShape(sh).resize();
         getShapes().add(sh);
         sh.setParent(this);
@@ -550,17 +559,15 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
         } catch (InvalidFormatException e){
             throw new POIXMLException(e);
         }
-        XSLFPictureData data = new XSLFPictureData(blipPart, null);
+        XSLFPictureData data = new XSLFPictureData(blipPart);
 
         XMLSlideShow ppt = getSlideShow();
         XSLFPictureData pictureData = ppt.addPicture(data.getData(), data.getType());
         PackagePart pic = pictureData.getPackagePart();
 
-        PackageRelationship rel = getPackagePart().addRelationship(
-                pic.getPartName(), TargetMode.INTERNAL, blipRel.getRelationshipType());
-        addRelation(rel.getId(), new XSLFPictureData(pic, rel));
-
-        return rel.getId();
+        RelationPart rp = addRelation(blipId, XSLFRelation.IMAGES, new XSLFPictureData(pic));
+        
+        return rp.getRelationship().getId();
     }
 
     /**

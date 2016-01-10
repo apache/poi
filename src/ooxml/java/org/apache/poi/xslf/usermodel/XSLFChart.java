@@ -55,20 +55,35 @@ public final class XSLFChart extends POIXMLDocumentPart {
 	 */
 	private CTChart chart;
 
-	/**
-	 * Construct a chart from a package part.
-	 *
-	 * @param part the package part holding the chart data,
-	 * the content type must be <code>application/vnd.openxmlformats-officedocument.drawingml.chart+xml</code>
-	 * @param rel  the package relationship holding this chart,
-	 * the relationship type must be http://schemas.openxmlformats.org/officeDocument/2006/relationships/chart
-	 */
-	protected XSLFChart(PackagePart part, PackageRelationship rel) throws IOException, XmlException {
-		super(part, rel);
+    /**
+     * Construct a chart from a package part.
+     *
+     * @param part the package part holding the chart data,
+     * the content type must be <code>application/vnd.openxmlformats-officedocument.drawingml.chart+xml</code>
+     * 
+     * @since POI 3.14-Beta1
+     */
+    protected XSLFChart(PackagePart part) throws IOException, XmlException {
+        super(part);
 
-		chartSpace = ChartSpaceDocument.Factory.parse(part.getInputStream(), DEFAULT_XML_OPTIONS).getChartSpace(); 
-		chart = chartSpace.getChart();
-	}
+        chartSpace = ChartSpaceDocument.Factory.parse(part.getInputStream(), DEFAULT_XML_OPTIONS).getChartSpace(); 
+        chart = chartSpace.getChart();
+    }
+
+    /**
+     * Construct a chart from a package part.
+     *
+     * @param part the package part holding the chart data,
+     * the content type must be <code>application/vnd.openxmlformats-officedocument.drawingml.chart+xml</code>
+     * @param rel  the package relationship holding this chart,
+     * the relationship type must be http://schemas.openxmlformats.org/officeDocument/2006/relationships/chart
+     * 
+     * @deprecated in POI 3.14, scheduled for removal in POI 3.16
+     */
+    @Deprecated
+    protected XSLFChart(PackagePart part, PackageRelationship rel) throws IOException, XmlException {
+        this(part);
+    }
 
 	/**
 	 * Return the underlying CTChartSpace bean, the root element of the Chart part.

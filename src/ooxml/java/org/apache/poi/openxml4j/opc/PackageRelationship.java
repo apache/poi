@@ -55,7 +55,7 @@ public final class PackageRelationship {
 	/* End XML markup */
 
 	/**
-	 * L'ID de la relation.
+	 * Relation id.
 	 */
 	private String id;
 
@@ -65,22 +65,22 @@ public final class PackageRelationship {
 	private OPCPackage container;
 
 	/**
-	 * Type de relation.
+	 * Relationship type
 	 */
 	private String relationshipType;
 
 	/**
-	 * Partie source de cette relation.
+	 * Part of this relationship source
 	 */
 	private PackagePart source;
 
 	/**
-	 * Le mode de ciblage [Internal|External]
+	 * Targeting mode [Internal|External]
 	 */
 	private TargetMode targetMode;
 
 	/**
-	 * URI de la partie cible.
+	 * Target URI
 	 */
 	private URI targetUri;
 

@@ -51,11 +51,21 @@ public class XWPFFootnotes extends POIXMLDocumentPart {
      *
      * @param part the package part holding the data of the footnotes,
      * @param rel  the package relationship of type "http://schemas.openxmlformats.org/officeDocument/2006/relationships/footnotes"
+     * 
+     * @since POI 3.14-Beta1
      */
-    public XWPFFootnotes(PackagePart part, PackageRelationship rel) throws IOException, OpenXML4JException {
-        super(part, rel);
+    public XWPFFootnotes(PackagePart part) throws IOException, OpenXML4JException {
+        super(part);
     }
 
+    /**
+     * @deprecated in POI 3.14, scheduled for removal in POI 3.16
+     */
+    @Deprecated
+    public XWPFFootnotes(PackagePart part, PackageRelationship rel) throws IOException, OpenXML4JException {
+        this(part);
+    }
+    
     /**
      * Construct XWPFFootnotes from scratch for a new document.
      */
@@ -68,12 +78,17 @@ public class XWPFFootnotes extends POIXMLDocumentPart {
     @Override
     protected void onDocumentRead() throws IOException {
         FootnotesDocument notesDoc;
+        InputStream is = null;
         try {
-            InputStream is = getPackagePart().getInputStream();
+            is = getPackagePart().getInputStream();
             notesDoc = FootnotesDocument.Factory.parse(is, DEFAULT_XML_OPTIONS);
             ctFootnotes = notesDoc.getFootnotes();
         } catch (XmlException e) {
             throw new POIXMLException();
+        } finally {
+            if (is != null) {
+                is.close();
+            }
         }
 
         // Find our footnotes

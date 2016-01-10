@@ -41,8 +41,11 @@ public class XSLFTableStyles extends POIXMLDocumentPart implements Iterable<XSLF
         super();
     }
 
-    public XSLFTableStyles(PackagePart part, PackageRelationship rel) throws IOException, XmlException {
-        super(part, rel);
+    /**
+     * @since POI 3.14-Beta1
+     */
+    public XSLFTableStyles(PackagePart part) throws IOException, XmlException {
+        super(part);
 
         _tblStyleLst = CTTableStyleList.Factory.parse(getPackagePart().getInputStream(), DEFAULT_XML_OPTIONS);
         CTTableStyle[] tblStyleArray = _tblStyleLst.getTblStyleArray();
@@ -52,6 +55,14 @@ public class XSLFTableStyles extends POIXMLDocumentPart implements Iterable<XSLF
         }
     }
 
+    /**
+     * @deprecated in POI 3.14, scheduled for removal in POI 3.16
+     */
+    @Deprecated
+    public XSLFTableStyles(PackagePart part, PackageRelationship rel) throws IOException, XmlException {
+        this(part);
+    }
+    
     public CTTableStyleList getXmlObject(){
         return _tblStyleLst;
     }

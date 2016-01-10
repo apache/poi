@@ -25,25 +25,20 @@ import static org.junit.Assert.fail;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.util.Collection;
-import java.util.List;
 
 import javax.imageio.ImageIO;
 
-import org.apache.poi.POIDataSamples;
 import org.apache.poi.POIXMLDocumentPart;
+import org.apache.poi.POIXMLDocumentPart.RelationPart;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
-import org.apache.poi.util.IOUtils;
 import org.apache.poi.xslf.usermodel.DrawingParagraph;
 import org.apache.poi.xslf.usermodel.DrawingTextBody;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
@@ -109,7 +104,7 @@ public class TestXSLFBugs {
        XSLFSlide slide = ss.getSlides().get(0);
        
        // Check the relations from this
-       List<POIXMLDocumentPart> rels = slide.getRelations();
+       Collection<RelationPart> rels = slide.getRelationParts();
        
        // Should have 6 relations:
        //   1 external hyperlink (skipped from list)
@@ -118,10 +113,10 @@ public class TestXSLFBugs {
        assertEquals(5, rels.size());
        int layouts = 0;
        int hyperlinks = 0;
-       for(POIXMLDocumentPart p : rels) {
-          if(p.getPackageRelationship().getRelationshipType().equals(XSLFRelation.HYPERLINK.getRelation())) {
+       for(RelationPart p : rels) {
+          if(p.getRelationship().getRelationshipType().equals(XSLFRelation.HYPERLINK.getRelation())) {
              hyperlinks++;
-          } else if(p instanceof XSLFSlideLayout) {
+          } else if(p.getDocumentPart() instanceof XSLFSlideLayout) {
              layouts++;
           }
        }
@@ -129,9 +124,9 @@ public class TestXSLFBugs {
        assertEquals(4, hyperlinks);
        
        // Hyperlinks should all be to #_ftn1 or #ftnref1
-       for(POIXMLDocumentPart p : rels) {
-          if(p.getPackageRelationship().getRelationshipType().equals(XSLFRelation.HYPERLINK.getRelation())) {
-             URI target = p.getPackageRelationship().getTargetURI();
+       for(RelationPart p : rels) {
+          if(p.getRelationship().getRelationshipType().equals(XSLFRelation.HYPERLINK.getRelation())) {
+             URI target = p.getRelationship().getTargetURI();
              
              if(target.getFragment().equals("_ftn1") ||
                 target.getFragment().equals("_ftnref1")) {
@@ -150,7 +145,6 @@ public class TestXSLFBugs {
      *  rID2 -> slide3.xml
      */
     @Test
-    @Ignore
     public void bug54916() throws Exception {
         XMLSlideShow ss = XSLFTestDataSamples.openSampleDocument("OverlappingRelations.pptx");
         XSLFSlide slide; 

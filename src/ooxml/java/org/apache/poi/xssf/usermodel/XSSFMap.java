@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.POIXMLDocumentPart;
+import org.apache.poi.POIXMLDocumentPart.RelationPart;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.util.Internal;
 import org.apache.poi.xssf.model.MapInfo;
 import org.apache.poi.xssf.model.SingleXmlCells;
@@ -97,15 +99,11 @@ public class XSSFMap {
      * @return the list of all Tables that provide a map rule to this mapping
      */
     public List<XSSFTable> getRelatedTables() {
-
         List<XSSFTable> tables = new ArrayList<XSSFTable>();
-        int sheetNumber = mapInfo.getWorkbook().getNumberOfSheets();
-
-        for (int i = 0; i < sheetNumber; i++) {
-            XSSFSheet sheet = mapInfo.getWorkbook().getSheetAt(i);
-            for (POIXMLDocumentPart p : sheet.getRelations()) {
-                if (p.getPackageRelationship().getRelationshipType().equals(XSSFRelation.TABLE.getRelation())) {
-                    XSSFTable table = (XSSFTable) p;
+        for (Sheet sheet : mapInfo.getWorkbook()) {
+            for (RelationPart rp : ((XSSFSheet)sheet).getRelationParts()) {
+                if (rp.getRelationship().getRelationshipType().equals(XSSFRelation.TABLE.getRelation())) {
+                    XSSFTable table = rp.getDocumentPart();
                     if (table.mapsTo(ctMap.getID())) {
                         tables.add(table);
                     }

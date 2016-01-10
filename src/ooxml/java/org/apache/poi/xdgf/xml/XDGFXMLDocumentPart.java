@@ -24,11 +24,21 @@ import org.apache.poi.xdgf.usermodel.XDGFDocument;
 public class XDGFXMLDocumentPart extends POIXMLDocumentPart {
 
     protected XDGFDocument _document;
-
-    public XDGFXMLDocumentPart(PackagePart part, PackageRelationship rel,
-            XDGFDocument document) {
-        super(part, rel);
+    
+    /**
+     * @since POI 3.14-Beta1
+     */
+    public XDGFXMLDocumentPart(PackagePart part, XDGFDocument document) {
+        super(part);
         _document = document;
+    }
+    
+    /**
+     * @deprecated in POI 3.14, scheduled for removal in POI 3.16
+     */
+    @Deprecated
+    public XDGFXMLDocumentPart(PackagePart part, PackageRelationship rel, XDGFDocument document) {
+        this(part, document);
     }
 
 }

@@ -44,11 +44,22 @@ public class CalculationChain extends POIXMLDocumentPart {
         chain = CTCalcChain.Factory.newInstance();
     }
 
-    public CalculationChain(PackagePart part, PackageRelationship rel) throws IOException {
-        super(part, rel);
+    /**
+     * @since POI 3.14-Beta1
+     */
+    public CalculationChain(PackagePart part) throws IOException {
+        super(part);
         readFrom(part.getInputStream());
     }
 
+    /**
+     * @deprecated in POI 3.14, scheduled for removal in POI 3.16
+     */
+    @Deprecated
+    public CalculationChain(PackagePart part, PackageRelationship rel) throws IOException {
+        this(part);
+    }
+    
     public void readFrom(InputStream is) throws IOException {
         try {
             CalcChainDocument doc = CalcChainDocument.Factory.parse(is, DEFAULT_XML_OPTIONS);

@@ -66,11 +66,11 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
      *
      * @param part the package part holding the slide data,
      * the content type must be <code>application/vnd.openxmlformats-officedocument.slide+xml</code>
-     * @param rel  the package relationship holding this slide,
-     * the relationship type must be http://schemas.openxmlformats.org/officeDocument/2006/relationships/slide
+     * 
+     * @since POI 3.14-Beta1
      */
-    XSLFSlide(PackagePart part, PackageRelationship rel) throws IOException, XmlException {
-        super(part, rel);
+    XSLFSlide(PackagePart part) throws IOException, XmlException {
+        super(part);
 
         SldDocument doc =
             SldDocument.Factory.parse(getPackagePart().getInputStream(), DEFAULT_XML_OPTIONS);
@@ -78,7 +78,15 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
         setCommonSlideData(_slide.getCSld());
     }
 
-
+    /**
+     * @deprecated in POI 3.14, scheduled for removal in POI 3.16
+     */
+    @Deprecated
+    XSLFSlide(PackagePart part, PackageRelationship rel) throws IOException, XmlException {
+        this(part);
+    }
+    
+    
     private static CTSlide prototype(){
         CTSlide ctSlide = CTSlide.Factory.newInstance();
         CTCommonSlideData cSld = ctSlide.addNewCSld();

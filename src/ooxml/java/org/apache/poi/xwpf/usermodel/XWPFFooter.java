@@ -67,8 +67,19 @@ public class XWPFFooter extends XWPFHeaderFooter {
         cursor.dispose();
     }
 
+    /**
+     * @since POI 3.14-Beta1
+     */
+    public XWPFFooter(POIXMLDocumentPart parent, PackagePart part) throws IOException {
+        super(parent, part);
+    }
+    
+    /**
+     * @deprecated in POI 3.14, scheduled for removal in POI 3.16
+     */
+    @Deprecated
     public XWPFFooter(POIXMLDocumentPart parent, PackagePart part, PackageRelationship rel) throws IOException {
-        super(parent, part, rel);
+        this(parent, part);
     }
 
     /**
@@ -88,7 +99,7 @@ public class XWPFFooter extends XWPFHeaderFooter {
     protected void onDocumentRead() throws IOException {
         super.onDocumentRead();
         FtrDocument ftrDocument = null;
-        InputStream is;
+        InputStream is = null;
         try {
             is = getPackagePart().getInputStream();
             ftrDocument = FtrDocument.Factory.parse(is, DEFAULT_XML_OPTIONS);
@@ -117,6 +128,10 @@ public class XWPFFooter extends XWPFHeaderFooter {
             cursor.dispose();
         } catch (Exception e) {
             throw new POIXMLException(e);
+        } finally {
+            if (is != null) {
+                is.close();
+            }
         }
     }
 

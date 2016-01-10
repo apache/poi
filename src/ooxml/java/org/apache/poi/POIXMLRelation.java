@@ -117,7 +117,7 @@ public abstract class POIXMLRelation {
      */
     public Integer getFileNameIndex(POIXMLDocumentPart part) {
         String regex = _defaultName.replace("#", "(\\d+)");
-        return Integer.parseInt(part.getPackageRelationship().getTargetURI().getPath().replaceAll(regex, "$1"));
+        return Integer.valueOf(part.getPackagePart().getPartName().getName().replaceAll(regex, "$1"));
     }
     
     /**

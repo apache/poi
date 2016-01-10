@@ -36,8 +36,6 @@ import org.apache.poi.POIXMLException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackagePartName;
-import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.sl.usermodel.MasterSheet;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.apache.poi.sl.usermodel.Resources;
@@ -132,9 +130,10 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
 
             Map<String, XSLFSlideMaster> masterMap = new HashMap<String, XSLFSlideMaster>();
             Map<String, XSLFSlide> shIdMap = new HashMap<String, XSLFSlide>();
-            for (POIXMLDocumentPart p : getRelations()) {
+            for (RelationPart rp : getRelationParts()) {
+                POIXMLDocumentPart p = rp.getDocumentPart();
                 if (p instanceof XSLFSlide) {
-                    shIdMap.put(p.getPackageRelationship().getId(), (XSLFSlide) p);
+                    shIdMap.put(rp.getRelationship().getId(), (XSLFSlide) p);
                 } else if (p instanceof XSLFSlideMaster) {
                     masterMap.put(getRelationId(p), (XSLFSlideMaster) p);
                 } else if (p instanceof XSLFTableStyles){
@@ -218,19 +217,16 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
             }
         }
 
-        XSLFSlide slide = (XSLFSlide)createRelationship(
-                XSLFRelation.SLIDE, XSLFFactory.getInstance(), cnt);
+        RelationPart rp = createRelationship(
+                XSLFRelation.SLIDE, XSLFFactory.getInstance(), cnt, false);
+        XSLFSlide slide = (XSLFSlide)rp.getDocumentPart();
 
         CTSlideIdListEntry slideId = slideList.addNewSldId();
         slideId.setId(slideNumber);
-        slideId.setId2(slide.getPackageRelationship().getId());
+        slideId.setId2(rp.getRelationship().getId());
 
         layout.copyLayout(slide);
-        slide.addRelation(layout.getPackageRelationship().getId(), layout);
-
-        PackagePartName ppName = layout.getPackagePart().getPartName();
-        slide.getPackagePart().addRelationship(ppName, TargetMode.INTERNAL,
-                layout.getPackageRelationship().getRelationshipType());
+        slide.addRelation(null, XSLFRelation.SLIDE_LAYOUT, layout);
 
         _slides.add(slide);
         return slide;
@@ -271,22 +267,13 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
         
         Integer slideIndex = XSLFRelation.SLIDE.getFileNameIndex(slide);
         
-        XSLFNotes notesSlide = (XSLFNotes) createRelationship(XSLFRelation.NOTES, XSLFFactory.getInstance(), slideIndex);
-        
-        notesSlide.addRelation(_notesMaster.getPackageRelationship().getId(), _notesMaster);
-        PackagePartName notesMasterPackagePartName = _notesMaster.getPackagePart().getPartName();
-        notesSlide.getPackagePart().addRelationship(notesMasterPackagePartName, TargetMode.INTERNAL,
-                _notesMaster.getPackageRelationship().getRelationshipType());
-                
-        slide.addRelation(notesSlide.getPackageRelationship().getId(), notesSlide);
-        PackagePartName notesSlidesPackagePartName = notesSlide.getPackagePart().getPartName();
-        slide.getPackagePart().addRelationship(notesSlidesPackagePartName, TargetMode.INTERNAL, 
-                notesSlide.getPackageRelationship().getRelationshipType());
-
-        notesSlide.addRelation(slide.getPackageRelationship().getId(), slide);
-        PackagePartName slidesPackagePartName = slide.getPackagePart().getPartName();
-        notesSlide.getPackagePart().addRelationship(slidesPackagePartName, TargetMode.INTERNAL, 
-                slide.getPackageRelationship().getRelationshipType());
+        // add notes slide to presentation 
+        XSLFNotes notesSlide = (XSLFNotes) createRelationship
+            (XSLFRelation.NOTES, XSLFFactory.getInstance(), slideIndex);
+        // link slide and notes slide with each other
+        slide.addRelation(null, XSLFRelation.NOTES, notesSlide);
+        notesSlide.addRelation(null, XSLFRelation.NOTES_MASTER, _notesMaster);
+        notesSlide.addRelation(null, XSLFRelation.SLIDE, slide);
 
         notesSlide.importContent(_notesMaster);
         
@@ -297,15 +284,16 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
      * Create a notes master.
      */ 
     public void createNotesMaster() {
-
-        _notesMaster = (XSLFNotesMaster) createRelationship(XSLFRelation.NOTES_MASTER, 
-                XSLFFactory.getInstance(), 1);
+        RelationPart rp = createRelationship
+            (XSLFRelation.NOTES_MASTER, XSLFFactory.getInstance(), 1, false);
+        _notesMaster = (XSLFNotesMaster)rp.getDocumentPart();
         
         CTNotesMasterIdList notesMasterIdList = _presentation.addNewNotesMasterIdLst();
         CTNotesMasterIdListEntry notesMasterId = notesMasterIdList.addNewNotesMasterId();
-        notesMasterId.setId(_notesMaster.getPackageRelationship().getId());
+        notesMasterId.setId(rp.getRelationship().getId());
         
         Integer themeIndex = 1;
+        // TODO: check if that list can be replaced by idx = Math.max(idx,themeIdx)
         List<Integer> themeIndexList = new ArrayList<Integer>();
         for (POIXMLDocumentPart p : getRelations()) {
             if (p instanceof XSLFTheme) {
@@ -326,14 +314,11 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
             }
         }
         
-        XSLFTheme theme = (XSLFTheme) createRelationship(XSLFRelation.THEME, 
-                XSLFFactory.getInstance(), themeIndex);
+        XSLFTheme theme = (XSLFTheme) createRelationship
+            (XSLFRelation.THEME, XSLFFactory.getInstance(), themeIndex);
         theme.importTheme(getSlides().get(0).getTheme());
         
-        _notesMaster.addRelation(theme.getPackageRelationship().getId(), theme);
-        PackagePartName themePackagePartName = theme.getPackagePart().getPartName();
-        _notesMaster.getPackagePart().addRelationship(themePackagePartName, TargetMode.INTERNAL, 
-                theme.getPackageRelationship().getRelationshipType());
+        _notesMaster.addRelation(null, XSLFRelation.THEME, theme);
     }
     
     /**
@@ -436,7 +421,7 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
         if (relType == null) {
             throw new IllegalArgumentException("Picture type "+format+" is not supported.");
         }
-        img = (XSLFPictureData) createRelationship(relType, XSLFFactory.getInstance(), imageNumber + 1, true);
+        img = (XSLFPictureData) createRelationship(relType, XSLFFactory.getInstance(), imageNumber + 1, true).getDocumentPart();
         img.setIndex(imageNumber);
         _pictures.add(img);
         try {

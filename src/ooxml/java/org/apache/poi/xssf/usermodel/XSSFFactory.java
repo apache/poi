@@ -18,26 +18,17 @@
 package org.apache.poi.xssf.usermodel;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 
 import org.apache.poi.POIXMLDocumentPart;
-import org.apache.poi.POIXMLException;
 import org.apache.poi.POIXMLFactory;
 import org.apache.poi.POIXMLRelation;
-import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackageRelationship;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 
 /**
  * Instantiates sub-classes of POIXMLDocumentPart depending on their relationship type
- *
- * @author Yegor Kozlov
  */
 public final class XSSFFactory extends POIXMLFactory  {
-    private static final POILogger logger = POILogFactory.getLogger(XSSFFactory.class);
-
-    private XSSFFactory(){
-
+    private XSSFFactory() {
     }
 
     private static final XSSFFactory inst = new XSSFFactory();
@@ -46,32 +37,22 @@ public final class XSSFFactory extends POIXMLFactory  {
         return inst;
     }
 
+    /**
+     * @since POI 3.14-Beta1
+     */
     @Override
-    public POIXMLDocumentPart createDocumentPart(POIXMLDocumentPart parent, PackageRelationship rel, PackagePart part){
-        POIXMLRelation descriptor = XSSFRelation.getInstance(rel.getRelationshipType());
-        if(descriptor == null || descriptor.getRelationClass() == null){
-            logger.log(POILogger.DEBUG, "using default POIXMLDocumentPart for " + rel.getRelationshipType());
-            return new POIXMLDocumentPart(part, rel);
-        }
-
-        try {
-            Class<? extends POIXMLDocumentPart> cls = descriptor.getRelationClass();
-            Constructor<? extends POIXMLDocumentPart> constructor = cls.getDeclaredConstructor(PackagePart.class, PackageRelationship.class);
-            return constructor.newInstance(part, rel);
-        } catch (Exception e){
-            throw new POIXMLException(e);
-        }
+    protected POIXMLRelation getDescriptor(String relationshipType) {
+        return XSSFRelation.getInstance(relationshipType);
     }
 
+    /**
+     * @since POI 3.14-Beta1
+     */
     @Override
-    public POIXMLDocumentPart newDocumentPart(POIXMLRelation descriptor){
-        try {
-            Class<? extends POIXMLDocumentPart> cls = descriptor.getRelationClass();
-            Constructor<? extends POIXMLDocumentPart> constructor = cls.getDeclaredConstructor();
-            return constructor.newInstance();
-        } catch (Exception e){
-            throw new POIXMLException(e);
-        }
+    protected POIXMLDocumentPart createDocumentPart
+        (Class<? extends POIXMLDocumentPart> cls, Class<?>[] classes, Object[] values)
+    throws SecurityException, NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException {
+        Constructor<? extends POIXMLDocumentPart> constructor = cls.getDeclaredConstructor(classes);
+        return constructor.newInstance(values);
     }
-
 }

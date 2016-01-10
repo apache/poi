@@ -29,6 +29,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.util.RecordFormatException;
 
 public abstract class SpreadsheetHandler extends AbstractFileHandler {
 	public void handleWorkbook(Workbook wb, String extension) throws IOException {
@@ -54,6 +55,10 @@ public abstract class SpreadsheetHandler extends AbstractFileHandler {
 		assertNotNull(read);
 		
 		readContent(read);
+		
+		modifyContent(read);
+
+		read.close();
 	}
 
 	private ByteArrayOutputStream writeToArray(Workbook wb)
@@ -87,5 +92,26 @@ public abstract class SpreadsheetHandler extends AbstractFileHandler {
 			    }
 			}
 		}
+	}
+	
+	private void modifyContent(Workbook wb) {
+	    for (int i=wb.getNumberOfSheets()-1; i>=0; i--) {
+	        try {
+	            wb.cloneSheet(i);
+	        } catch (RecordFormatException e) {
+	            if (e.getCause() instanceof CloneNotSupportedException) {
+	                // ignore me
+	                continue;
+	            }
+	            throw e;
+	        } catch (RuntimeException e) {
+	            if ("Could not find 'internal references' EXTERNALBOOK".equals(e.getMessage())) {
+	                continue;
+	            } else if ("CountryRecord not found".equals(e.getMessage())) {
+                    continue;
+                }
+	            throw e;
+	        }
+	    }
 	}
 }

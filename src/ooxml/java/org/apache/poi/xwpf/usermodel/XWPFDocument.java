@@ -193,8 +193,9 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
                 headerFooterPolicy = new XWPFHeaderFooterPolicy(this);
 
             // Create for each XML-part in the Package a PartClass
-            for (POIXMLDocumentPart p : getRelations()) {
-                String relation = p.getPackageRelationship().getRelationshipType();
+            for (RelationPart rp : getRelationParts()) {
+                POIXMLDocumentPart p = rp.getDocumentPart();
+                String relation = rp.getRelationship().getRelationshipType();
                 if (relation.equals(XWPFRelation.STYLES.getRelation())) {
                     this.styles = (XWPFStyles) p;
                     this.styles.onDocumentRead();
@@ -257,8 +258,9 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     }
 
     private void initFootnotes() throws XmlException, IOException {
-        for (POIXMLDocumentPart p : getRelations()) {
-            String relation = p.getPackageRelationship().getRelationshipType();
+        for (RelationPart rp : getRelationParts()) {
+            POIXMLDocumentPart p = rp.getDocumentPart();
+            String relation = rp.getRelationship().getRelationshipType();
             if (relation.equals(XWPFRelation.FOOTNOTE.getRelation())) {
                 this.footnotes = (XWPFFootnotes) p;
                 this.footnotes.onDocumentRead();
@@ -723,11 +725,9 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      * @return i
      */
     private int getRelationIndex(XWPFRelation relation) {
-        List<POIXMLDocumentPart> relations = getRelations();
         int i = 1;
-        for (Iterator<POIXMLDocumentPart> it = relations.iterator(); it.hasNext(); ) {
-            POIXMLDocumentPart item = it.next();
-            if (item.getPackageRelationship().getRelationshipType().equals(relation.getRelation())) {
+        for (RelationPart rp : getRelationParts()) {
+            if (rp.getRelationship().getRelationshipType().equals(relation.getRelation())) {
                 i++;
             }
         }
@@ -1313,16 +1313,9 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
              * relationship to the already existing part and update
              * POIXMLDocumentPart data.
              */
-            PackagePart picDataPart = xwpfPicData.getPackagePart();
             // TODO add support for TargetMode.EXTERNAL relations.
-            TargetMode targetMode = TargetMode.INTERNAL;
-            PackagePartName partName = picDataPart.getPartName();
-            String relation = relDesc.getRelation();
-            PackageRelationship relShip = getPackagePart().addRelationship(partName, targetMode, relation);
-            String id = relShip.getId();
-            addRelation(id, xwpfPicData);
-            pictures.add(xwpfPicData);
-            return id;
+            RelationPart rp = addRelation(null, XWPFRelation.IMAGES, xwpfPicData);
+            return rp.getRelationship().getId();
         } else {
             /* Part already existed, get relation id and return it */
             return getRelationId(xwpfPicData);

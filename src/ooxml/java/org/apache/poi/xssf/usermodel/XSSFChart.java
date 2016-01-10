@@ -95,14 +95,25 @@ public final class XSSFChart extends POIXMLDocumentPart implements Chart, ChartA
 	 * the content type must be <code>application/vnd.openxmlformats-officedocument.drawingml.chart+xml</code>
 	 * @param rel  the package relationship holding this chart,
 	 * the relationship type must be http://schemas.openxmlformats.org/officeDocument/2006/relationships/chart
+	 * 
+	 * @since POI 3.14-Beta1
 	 */
-	protected XSSFChart(PackagePart part, PackageRelationship rel) throws IOException, XmlException {
-		super(part, rel);
+	protected XSSFChart(PackagePart part) throws IOException, XmlException {
+		super(part);
 
 		chartSpace = ChartSpaceDocument.Factory.parse(part.getInputStream(), DEFAULT_XML_OPTIONS).getChartSpace(); 
 		chart = chartSpace.getChart();
 	}
 
+	/**
+	 * @deprecated in POI 3.14, scheduled for removal in POI 3.16
+	 */
+	@Deprecated
+	protected XSSFChart(PackagePart part, PackageRelationship rel) throws IOException, XmlException {
+	    this(part);
+	}
+
+	
 	/**
 	 * Construct a new CTChartSpace bean.
 	 * By default, it's just an empty placeholder for chart objects.

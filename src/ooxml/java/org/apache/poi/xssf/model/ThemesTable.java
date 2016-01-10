@@ -76,9 +76,11 @@ public class ThemesTable extends POIXMLDocumentPart {
      * Construct a ThemesTable.
      * @param part A PackagePart.
      * @param rel A PackageRelationship.
+     * 
+     * @since POI 3.14-Beta1
      */
-    public ThemesTable(PackagePart part, PackageRelationship rel) throws IOException {
-        super(part, rel);
+    public ThemesTable(PackagePart part) throws IOException {
+        super(part);
         
         try {
            theme = ThemeDocument.Factory.parse(part.getInputStream(), DEFAULT_XML_OPTIONS);
@@ -87,6 +89,14 @@ public class ThemesTable extends POIXMLDocumentPart {
         }
     }
 
+    /**
+     * @deprecated in POI 3.14, scheduled for removal in POI 3.16
+     */
+    @Deprecated
+    public ThemesTable(PackagePart part, PackageRelationship rel) throws IOException {
+        this(part);
+    }
+    
     /**
      * Construct a ThemesTable from an existing ThemeDocument.
      * @param theme A ThemeDocument.

@@ -68,6 +68,8 @@ public class XSSFFileHandler extends SpreadsheetHandler {
         exportToXML(wb);
 
         checkXSSFReader(OPCPackage.open(new ByteArrayInputStream(bytes)));
+        
+        wb.close();
     }
 
 

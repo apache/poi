@@ -103,9 +103,19 @@ public class SharedStringsTable extends POIXMLDocumentPart {
         _sstDoc.addNewSst();
     }
 
-    public SharedStringsTable(PackagePart part, PackageRelationship rel) throws IOException {
-        super(part, rel);
+    /**
+     * @since POI 3.14-Beta1
+     */
+    public SharedStringsTable(PackagePart part) throws IOException {
+        super(part);
         readFrom(part.getInputStream());
+    }    
+    
+    /**
+     * @deprecated in POI 3.14, scheduled for removal in POI 3.16
+     */
+    public SharedStringsTable(PackagePart part, PackageRelationship rel) throws IOException {
+        this(part);
     }
 
     /**

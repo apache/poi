@@ -113,16 +113,22 @@ public class ReadOnlySharedStringsTable extends DefaultHandler {
 
     /**
      * Like POIXMLDocumentPart constructor
-     *
-     * @param part
-     * @param rel_ignored
-     * @throws IOException
+     * 
+     * @since POI 3.14-Beta1
      */
-    public ReadOnlySharedStringsTable(PackagePart part, PackageRelationship rel_ignored)
-            throws IOException, SAXException {
+    public ReadOnlySharedStringsTable(PackagePart part) throws IOException, SAXException {
         readFrom(part.getInputStream());
     }
 
+    /**
+     * @deprecated in POI 3.14, scheduled for removal in POI 3.16
+     */
+    @Deprecated
+    public ReadOnlySharedStringsTable(PackagePart part, PackageRelationship rel_ignored)
+    throws IOException, SAXException {
+        this(part);
+    }
+    
     /**
      * Read this shared strings table from an XML file.
      *

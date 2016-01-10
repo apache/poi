@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.apache.poi.POIXMLDocumentPart;
+import org.apache.poi.POIXMLDocumentPart.RelationPart;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.FontUnderline;
@@ -44,14 +45,15 @@ public class TestXSSFDrawing {
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("WithDrawing.xlsx");
         XSSFSheet sheet = wb.getSheetAt(0);
         //the sheet has one relationship and it is XSSFDrawing
-        List<POIXMLDocumentPart> rels = sheet.getRelations();
+        List<RelationPart> rels = sheet.getRelationParts();
         assertEquals(1, rels.size());
-        assertTrue(rels.get(0) instanceof XSSFDrawing);
+        RelationPart rp = rels.get(0);
+        assertTrue(rp.getDocumentPart() instanceof XSSFDrawing);
 
-        XSSFDrawing drawing = (XSSFDrawing)rels.get(0);
+        XSSFDrawing drawing = (XSSFDrawing)rp.getDocumentPart();
         //sheet.createDrawingPatriarch() should return the same instance of XSSFDrawing
         assertSame(drawing, sheet.createDrawingPatriarch());
-        String drawingId = drawing.getPackageRelationship().getId();
+        String drawingId = rp.getRelationship().getId();
 
         //there should be a relation to this drawing in the worksheet
         assertTrue(sheet.getCTWorksheet().isSetDrawing());
@@ -82,12 +84,13 @@ public class TestXSSFDrawing {
         XSSFDrawing dr2 = sheet.createDrawingPatriarch();
         assertSame(dr1, dr2);
 
-        List<POIXMLDocumentPart> rels = sheet.getRelations();
+        List<RelationPart> rels = sheet.getRelationParts();
         assertEquals(1, rels.size());
-        assertTrue(rels.get(0) instanceof XSSFDrawing);
+        RelationPart rp = rels.get(0);
+        assertTrue(rp.getDocumentPart() instanceof XSSFDrawing);
 
-        XSSFDrawing drawing = (XSSFDrawing)rels.get(0);
-        String drawingId = drawing.getPackageRelationship().getId();
+        XSSFDrawing drawing = rp.getDocumentPart();
+        String drawingId = rp.getRelationship().getId();
 
         //there should be a relation to this drawing in the worksheet
         assertTrue(sheet.getCTWorksheet().isSetDrawing());
@@ -509,14 +512,15 @@ public class TestXSSFDrawing {
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("WithDrawing.xlsx");
         XSSFSheet sheet = wb.getSheetAt(0);
         //the sheet has one relationship and it is XSSFDrawing
-        List<POIXMLDocumentPart> rels = sheet.getRelations();
+        List<RelationPart> rels = sheet.getRelationParts();
         assertEquals(1, rels.size());
-        assertTrue(rels.get(0) instanceof XSSFDrawing);
+        RelationPart rp = rels.get(0);
+        assertTrue(rp.getDocumentPart() instanceof XSSFDrawing);
 
-        XSSFDrawing drawing = (XSSFDrawing)rels.get(0);
+        XSSFDrawing drawing = rp.getDocumentPart();
         //sheet.createDrawingPatriarch() should return the same instance of XSSFDrawing
         assertSame(drawing, sheet.createDrawingPatriarch());
-        String drawingId = drawing.getPackageRelationship().getId();
+        String drawingId = rp.getRelationship().getId();
 
         //there should be a relation to this drawing in the worksheet
         assertTrue(sheet.getCTWorksheet().isSetDrawing());
@@ -543,16 +547,17 @@ public class TestXSSFDrawing {
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("WithTextBox.xlsx");
         XSSFSheet sheet = wb.getSheetAt(0);
         //the sheet has one relationship and it is XSSFDrawing
-        List<POIXMLDocumentPart> rels = sheet.getRelations();
+        List<RelationPart> rels = sheet.getRelationParts();
         assertEquals(1, rels.size());
+        RelationPart rp = rels.get(0);
        
-        assertTrue(rels.get(0) instanceof XSSFDrawing);
+        assertTrue(rp.getDocumentPart() instanceof XSSFDrawing);
 
-        XSSFDrawing drawing = (XSSFDrawing)rels.get(0);
+        XSSFDrawing drawing = rp.getDocumentPart();
         
         //sheet.createDrawingPatriarch() should return the same instance of XSSFDrawing
         assertSame(drawing, sheet.createDrawingPatriarch());
-        String drawingId = drawing.getPackageRelationship().getId();
+        String drawingId = rp.getRelationship().getId();
 
         //there should be a relation to this drawing in the worksheet
         assertTrue(sheet.getCTWorksheet().isSetDrawing());

@@ -162,16 +162,26 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
 
     /**
      * Creates an XSSFSheet representing the given package part and relationship.
-     * Should only be called by XSSFWorkbook when reading in an exisiting file.
+     * Should only be called by XSSFWorkbook when reading in an existing file.
      *
-     * @param part - The package part that holds xml data represenring this sheet.
+     * @param part - The package part that holds xml data representing this sheet.
      * @param rel - the relationship of the given package part in the underlying OPC package
+     * 
+     * @since POI 3.14-Beta1
      */
-    protected XSSFSheet(PackagePart part, PackageRelationship rel) {
-        super(part, rel);
+    protected XSSFSheet(PackagePart part) {
+        super(part);
         dataValidationHelper = new XSSFDataValidationHelper(this);
     }
 
+    /**
+     * @deprecated in POI 3.14, scheduled for removal in POI 3.16
+     */
+    @Deprecated
+    protected XSSFSheet(PackagePart part, PackageRelationship rel) {
+        this(part);
+    }
+    
     /**
      * Returns the parent XSSFWorkbook
      *
@@ -204,12 +214,13 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         initRows(worksheet);
         columnHelper = new ColumnHelper(worksheet);
         // Look for bits we're interested in
-        for(POIXMLDocumentPart p : getRelations()){
+        for(RelationPart rp : getRelationParts()){
+            POIXMLDocumentPart p = rp.getDocumentPart();
             if(p instanceof CommentsTable) {
                sheetComments = (CommentsTable)p;
             }
             if(p instanceof XSSFTable) {
-               tables.put( p.getPackageRelationship().getId(), (XSSFTable)p );
+               tables.put( rp.getRelationship().getId(), (XSSFTable)p );
             }
             if(p instanceof XSSFPivotTable) {
                 getWorkbook().getPivotTables().add((XSSFPivotTable) p);
@@ -449,10 +460,11 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         CTDrawing ctDrawing = getCTDrawing();
         if (ctDrawing != null) {
             // Search the referenced drawing in the list of the sheet's relations
-            for (POIXMLDocumentPart p : getRelations()){
+            for (RelationPart rp : getRelationParts()){
+                POIXMLDocumentPart p = rp.getDocumentPart();
                 if (p instanceof XSSFDrawing) {
                     XSSFDrawing dr = (XSSFDrawing)p;
-                    String drId = dr.getPackageRelationship().getId();
+                    String drId = rp.getRelationship().getId();
                     if (drId.equals(ctDrawing.getId())){
                         return dr;
                     }
@@ -478,8 +490,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         
         //drawingNumber = #drawings.size() + 1
         int drawingNumber = getPackagePart().getPackage().getPartsByContentType(XSSFRelation.DRAWINGS.getContentType()).size() + 1;
-        XSSFDrawing drawing = (XSSFDrawing)createRelationship(XSSFRelation.DRAWINGS, XSSFFactory.getInstance(), drawingNumber);
-        String relId = drawing.getPackageRelationship().getId();
+        RelationPart rp = createRelationship(XSSFRelation.DRAWINGS, XSSFFactory.getInstance(), drawingNumber, false);
+        XSSFDrawing drawing = rp.getDocumentPart();
+        String relId = rp.getRelationship().getId();
 
         //add CT_Drawing element which indicates that this sheet contains drawing components built on the drawingML platform.
         //The relationship Id references the part containing the drawingML definitions.
@@ -504,8 +517,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
             if(autoCreate) {
                 //drawingNumber = #drawings.size() + 1
                 int drawingNumber = getPackagePart().getPackage().getPartsByContentType(XSSFRelation.VML_DRAWINGS.getContentType()).size() + 1;
-                drawing = (XSSFVMLDrawing)createRelationship(XSSFRelation.VML_DRAWINGS, XSSFFactory.getInstance(), drawingNumber);
-                String relId = drawing.getPackageRelationship().getId();
+                RelationPart rp = createRelationship(XSSFRelation.VML_DRAWINGS, XSSFFactory.getInstance(), drawingNumber, false);
+                drawing = rp.getDocumentPart();
+                String relId = rp.getRelationship().getId();
 
                 //add CTLegacyDrawing element which indicates that this sheet contains drawing components built on the drawingML platform.
                 //The relationship Id references the part containing the drawing definitions.
@@ -514,10 +528,11 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
             }
         } else {
             //search the referenced drawing in the list of the sheet's relations
-            for(POIXMLDocumentPart p : getRelations()){
+            for (RelationPart rp : getRelationParts()){
+                POIXMLDocumentPart p = rp.getDocumentPart();
                 if(p instanceof XSSFVMLDrawing) {
                     XSSFVMLDrawing dr = (XSSFVMLDrawing)p;
-                    String drId = dr.getPackageRelationship().getId();
+                    String drId = rp.getRelationship().getId();
                     if(drId.equals(ctDrawing.getId())){
                         drawing = dr;
                         break;
@@ -3695,6 +3710,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
 
     }
 
+    @SuppressWarnings("resource")
     @Override
     public XSSFAutoFilter setAutoFilter(CellRangeAddress range) {
         CTAutoFilter af = worksheet.getAutoFilter();
@@ -3735,8 +3751,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
        // Table numbers need to be unique in the file, not just
        //  unique within the sheet. Find the next one
        int tableNumber = getPackagePart().getPackage().getPartsByContentType(XSSFRelation.TABLE.getContentType()).size() + 1;
-       XSSFTable table = (XSSFTable)createRelationship(XSSFRelation.TABLE, XSSFFactory.getInstance(), tableNumber);
-       tbl.setId(table.getPackageRelationship().getId());
+       RelationPart rp = createRelationship(XSSFRelation.TABLE, XSSFFactory.getInstance(), tableNumber, false);
+       XSSFTable table = rp.getDocumentPart();
+       tbl.setId(rp.getRelationship().getId());
 
        tables.put(tbl.getId(), table);
 
@@ -3933,6 +3950,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * including: pivotCacheDefinition, pivotCacheRecords
      * @return returns a pivotTable
      */
+    @SuppressWarnings("resource")
     @Beta
     private XSSFPivotTable createPivotTable() {
         XSSFWorkbook wb = getWorkbook();

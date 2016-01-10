@@ -259,12 +259,22 @@ public class TestAllFiles {
         // non-TNEF files
         EXPECTED_FAILURES.add("ddf/Container.dat");
         EXPECTED_FAILURES.add("ddf/47143.dat");
+
+        // sheet cloning errors
+        EXPECTED_FAILURES.add("spreadsheet/47813.xlsx");
+        EXPECTED_FAILURES.add("spreadsheet/56450.xls");
+        EXPECTED_FAILURES.add("spreadsheet/57231_MixedGasReport.xls");
+        EXPECTED_FAILURES.add("spreadsheet/OddStyleRecord.xls");
+        EXPECTED_FAILURES.add("spreadsheet/WithChartSheet.xlsx");
+        EXPECTED_FAILURES.add("spreadsheet/chart_sheet.xlsx");
     }
 
     private static final Set<String> IGNORED = new HashSet<String>();
     static {
         // need JDK8+ - https://bugs.openjdk.java.net/browse/JDK-8038081
         IGNORED.add("slideshow/42474-2.ppt");
+        // OPC handler works / XSSF handler fails
+        IGNORED.add("spreadsheet/57181.xlsm");
     }
     
     @Parameters(name="{index}: {0} using {1}")

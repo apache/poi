@@ -28,9 +28,7 @@ import org.apache.poi.POIXMLException;
 import org.apache.poi.POIXMLRelation;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
-import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.xmlbeans.XmlCursor;
@@ -68,13 +66,24 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
         readHdrFtr();
     }
 
-    public XWPFHeaderFooter(POIXMLDocumentPart parent, PackagePart part, PackageRelationship rel) throws IOException {
-        super(parent, part, rel);
+    /**
+     * @since by POI 3.14-Beta1
+     */
+    public XWPFHeaderFooter(POIXMLDocumentPart parent, PackagePart part) throws IOException {
+        super(parent, part);
         this.document = (XWPFDocument) getParent();
 
         if (this.document == null) {
             throw new NullPointerException();
         }
+    }
+    
+    /**
+     * @deprecated in POI 3.14, scheduled for removal in POI 3.16
+     */
+    @Deprecated
+    public XWPFHeaderFooter(POIXMLDocumentPart parent, PackagePart part, PackageRelationship rel) throws IOException {
+        this(parent, part);
     }
 
     @Override
@@ -271,16 +280,10 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
              * relationship to the already existing part and update
              * POIXMLDocumentPart data.
              */
-            PackagePart picDataPart = xwpfPicData.getPackagePart();
             // TODO add support for TargetMode.EXTERNAL relations.
-            TargetMode targetMode = TargetMode.INTERNAL;
-            PackagePartName partName = picDataPart.getPartName();
-            String relation = relDesc.getRelation();
-            PackageRelationship relShip = getPackagePart().addRelationship(partName, targetMode, relation);
-            String id = relShip.getId();
-            addRelation(id, xwpfPicData);
+            RelationPart rp = addRelation(null, XWPFRelation.IMAGES, xwpfPicData);
             pictures.add(xwpfPicData);
-            return id;
+            return rp.getRelationship().getId();
         } else {
             /* Part already existed, get relation id and return it */
             return getRelationId(xwpfPicData);

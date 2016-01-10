@@ -72,13 +72,21 @@ public class XWPFPictureData extends POIXMLDocumentPart {
      * Construct XWPFPictureData from a package part
      *
      * @param part the package part holding the drawing data,
-     * @param rel  the package relationship holding this drawing,
-     *             the relationship type must be http://schemas.openxmlformats.org/officeDocument/2006/relationships/image
+     * 
+     * @since POI 3.14-Beta1
      */
-    public XWPFPictureData(PackagePart part, PackageRelationship rel) {
-        super(part, rel);
+    public XWPFPictureData(PackagePart part) {
+        super(part);
     }
 
+    /**
+     * @deprecated in POI 3.14, scheduled for removal in POI 3.16
+     */
+    @Deprecated
+    public XWPFPictureData(PackagePart part, PackageRelationship rel) {
+        this(part);
+    }
+    
     @Override
     protected void onDocumentRead() throws IOException {
         super.onDocumentRead();
