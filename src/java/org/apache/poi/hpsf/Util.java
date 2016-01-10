@@ -23,6 +23,8 @@ import java.io.StringWriter;
 import java.util.Collection;
 import java.util.Date;
 
+import org.apache.poi.util.SuppressForbidden;
+
 /**
  * <p>Provides various static utility methods.</p>
  *
@@ -332,6 +334,7 @@ public class Util
      * @return a string containing the output of a call to
      * <code>t.printStacktrace()</code>.
      */
+    @SuppressForbidden("uses printStackTrace")
     public static String toString(final Throwable t)
     {
         final StringWriter sw = new StringWriter();
