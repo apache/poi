@@ -338,17 +338,18 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
             ThemesTable theme = null;
             Map<String, XSSFSheet> shIdMap = new HashMap<String, XSSFSheet>();
             Map<String, ExternalLinksTable> elIdMap = new HashMap<String, ExternalLinksTable>();
-            for(POIXMLDocumentPart p : getRelations()){
+            for(RelationPart rp : getRelationParts()){
+                POIXMLDocumentPart p = rp.getDocumentPart();
                 if(p instanceof SharedStringsTable) sharedStringSource = (SharedStringsTable)p;
                 else if(p instanceof StylesTable) stylesSource = (StylesTable)p;
                 else if(p instanceof ThemesTable) theme = (ThemesTable)p;
                 else if(p instanceof CalculationChain) calcChain = (CalculationChain)p;
                 else if(p instanceof MapInfo) mapInfo = (MapInfo)p;
                 else if (p instanceof XSSFSheet) {
-                    shIdMap.put(p.getPackageRelationship().getId(), (XSSFSheet)p);
+                    shIdMap.put(rp.getRelationship().getId(), (XSSFSheet)p);
                 }
                 else if (p instanceof ExternalLinksTable) {
-                    elIdMap.put(p.getPackageRelationship().getId(), (ExternalLinksTable)p);
+                    elIdMap.put(rp.getRelationship().getId(), (ExternalLinksTable)p);
                 }
             }
             boolean packageReadOnly = (getPackage().getPackageAccess() == PackageAccess.READ);
@@ -492,7 +493,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     @Override
     public int addPicture(byte[] pictureData, int format) {
         int imageNumber = getAllPictures().size() + 1;
-        XSSFPictureData img = (XSSFPictureData)createRelationship(XSSFPictureData.RELATIONS[format], XSSFFactory.getInstance(), imageNumber, true);
+        XSSFPictureData img = (XSSFPictureData)createRelationship(XSSFPictureData.RELATIONS[format], XSSFFactory.getInstance(), imageNumber, true).getDocumentPart();
         try {
             OutputStream out = img.getPackagePart().getOutputStream();
             out.write(pictureData);
@@ -521,7 +522,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
      */
     public int addPicture(InputStream is, int format) throws IOException {
         int imageNumber = getAllPictures().size() + 1;
-        XSSFPictureData img = (XSSFPictureData)createRelationship(XSSFPictureData.RELATIONS[format], XSSFFactory.getInstance(), imageNumber, true);
+        XSSFPictureData img = (XSSFPictureData)createRelationship(XSSFPictureData.RELATIONS[format], XSSFFactory.getInstance(), imageNumber, true).getDocumentPart();
         OutputStream out = img.getPackagePart().getOutputStream();
         IOUtils.copy(is, out);
         out.close();
@@ -546,6 +547,34 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         String clonedName = getUniqueSheetName(srcName);
 
         XSSFSheet clonedSheet = createSheet(clonedName);
+
+        // copy sheet's relations
+        List<RelationPart> rels = srcSheet.getRelationParts();
+        // if the sheet being cloned has a drawing then rememebr it and re-create it too
+        XSSFDrawing dg = null;
+        for(RelationPart rp : rels) {
+            POIXMLDocumentPart r = rp.getDocumentPart();
+            // do not copy the drawing relationship, it will be re-created
+            if(r instanceof XSSFDrawing) {
+                dg = (XSSFDrawing)r;
+                continue;
+            }
+
+            addRelation(rp, clonedSheet);
+        }
+
+        try {
+            for(PackageRelationship pr : srcSheet.getPackagePart().getRelationships()) {
+                if (pr.getTargetMode() == TargetMode.EXTERNAL) {
+                    clonedSheet.getPackagePart().addExternalRelationship
+                        (pr.getTargetURI().toASCIIString(), pr.getRelationshipType(), pr.getId());
+                }
+            }
+        } catch (InvalidFormatException e) {
+            throw new POIXMLException("Failed to clone sheet", e);
+        }
+        
+        
         try {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             srcSheet.write(out);
@@ -565,23 +594,6 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
 
         clonedSheet.setSelected(false);
 
-        // copy sheet's relations
-        List<POIXMLDocumentPart> rels = srcSheet.getRelations();
-        // if the sheet being cloned has a drawing then rememebr it and re-create tpoo
-        XSSFDrawing dg = null;
-        for(POIXMLDocumentPart r : rels) {
-            // do not copy the drawing relationship, it will be re-created
-            if(r instanceof XSSFDrawing) {
-                dg = (XSSFDrawing)r;
-                continue;
-            }
-
-            PackageRelationship rel = r.getPackageRelationship();
-            clonedSheet.getPackagePart().addRelationship(
-                    rel.getTargetURI(), rel.getTargetMode(),rel.getRelationshipType());
-            clonedSheet.addRelation(rel.getId(), r);
-        }
-
         // clone the sheet drawing alongs with its relationships
         if (dg != null) {
             if(ct.isSetDrawing()) {
@@ -596,19 +608,30 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
             clonedDg = clonedSheet.createDrawingPatriarch();
             
             // Clone drawing relations
-            List<POIXMLDocumentPart> srcRels = srcSheet.createDrawingPatriarch().getRelations();
-            for (POIXMLDocumentPart rel : srcRels) {
-                PackageRelationship relation = rel.getPackageRelationship();
-
-                clonedDg.addRelation(relation.getId(), rel);
-                
-                clonedDg
-						.getPackagePart()
-                        .addRelationship(relation.getTargetURI(), relation.getTargetMode(),
-                                relation.getRelationshipType(), relation.getId());
+            List<RelationPart> srcRels = srcSheet.createDrawingPatriarch().getRelationParts();
+            for (RelationPart rp : srcRels) {
+                addRelation(rp, clonedDg);
             }
         }
         return clonedSheet;
+    }
+    
+    /**
+     * @since 3.14-Beta1
+     */
+    private static void addRelation(RelationPart rp, POIXMLDocumentPart target) {
+        PackageRelationship rel = rp.getRelationship();
+        if (rel.getTargetMode() == TargetMode.EXTERNAL) {
+            target.getPackagePart().addRelationship(
+                rel.getTargetURI(), rel.getTargetMode(), rel.getRelationshipType(), rel.getId());
+        } else {        
+            XSSFRelation xssfRel = XSSFRelation.getInstance(rel.getRelationshipType());
+            if (xssfRel == null) {
+                // Don't copy all relations blindly, but only the ones we know about
+                throw new POIXMLException("Can't clone sheet - unknown relation type found: "+rel.getRelationshipType());
+            }
+            target.addRelation(rel.getId(), xssfRel, rp.getDocumentPart());
+        }
     }
 
     /**
@@ -794,18 +817,21 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
             break;
         }
 
-        XSSFSheet wrapper = (XSSFSheet)createRelationship(XSSFRelation.WORKSHEET, XSSFFactory.getInstance(), sheetNumber);
+        RelationPart rp = createRelationship(XSSFRelation.WORKSHEET, XSSFFactory.getInstance(), sheetNumber, false);
+        XSSFSheet wrapper = rp.getDocumentPart();
         wrapper.sheet = sheet;
-        sheet.setId(wrapper.getPackageRelationship().getId());
+        sheet.setId(rp.getRelationship().getId());
         sheet.setSheetId(sheetNumber);
-        if(sheets.size() == 0) wrapper.setSelected(true);
+        if (sheets.isEmpty()) wrapper.setSelected(true);
         sheets.add(wrapper);
         return wrapper;
     }
 
     protected XSSFDialogsheet createDialogsheet(String sheetname, CTDialogsheet dialogsheet) {
         XSSFSheet sheet = createSheet(sheetname);
-        return new XSSFDialogsheet(sheet);
+        String sheetRelId = getRelationId(sheet);
+        PackageRelationship pr = getPackagePart().getRelationship(sheetRelId);
+        return new XSSFDialogsheet(sheet, pr);
     }
 
     private CTSheet addSheet(String sheetname) {

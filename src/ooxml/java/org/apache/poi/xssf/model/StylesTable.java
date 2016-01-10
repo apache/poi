@@ -138,9 +138,20 @@ public class StylesTable extends POIXMLDocumentPart {
         initialize();
     }
 
-    public StylesTable(PackagePart part, PackageRelationship rel) throws IOException {
-        super(part, rel);
+    /**
+     * @since POI 3.14-Beta1
+     */
+    public StylesTable(PackagePart part) throws IOException {
+        super(part);
         readFrom(part.getInputStream());
+    }
+
+    /**
+     * @deprecated in POI 3.14, scheduled for removal in POI 3.16
+     */
+    @Deprecated
+    public StylesTable(PackagePart part, PackageRelationship rel) throws IOException {
+        this(part);
     }
     
     public void setWorkbook(XSSFWorkbook wb) {

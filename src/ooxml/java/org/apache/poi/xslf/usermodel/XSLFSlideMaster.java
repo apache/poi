@@ -69,14 +69,25 @@ import org.openxmlformats.schemas.presentationml.x2006.main.SldMasterDocument;
         _slide = CTSlideMaster.Factory.newInstance();
     }
 
-    protected XSLFSlideMaster(PackagePart part, PackageRelationship rel) throws IOException, XmlException {
-        super(part, rel);
+    /**
+     * @since POI 3.14-Beta1
+     */
+    protected XSLFSlideMaster(PackagePart part) throws IOException, XmlException {
+        super(part);
         SldMasterDocument doc =
             SldMasterDocument.Factory.parse(getPackagePart().getInputStream(), DEFAULT_XML_OPTIONS);
         _slide = doc.getSldMaster();
         setCommonSlideData(_slide.getCSld());
     }
 
+    /**
+     * @deprecated in POI 3.14, scheduled for removal in POI 3.16
+     */
+    @Deprecated
+    protected XSLFSlideMaster(PackagePart part, PackageRelationship rel) throws IOException, XmlException {
+        this(part);
+    }
+    
     @Override
 	public CTSlideMaster getXmlObject() {
 		return _slide;

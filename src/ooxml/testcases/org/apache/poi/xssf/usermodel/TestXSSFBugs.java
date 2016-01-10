@@ -44,6 +44,7 @@ import java.util.TreeMap;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.POIXMLDocumentPart;
+import org.apache.poi.POIXMLDocumentPart.RelationPart;
 import org.apache.poi.POIXMLException;
 import org.apache.poi.POIXMLProperties;
 import org.apache.poi.hssf.HSSFTestDataSamples;
@@ -55,6 +56,7 @@ import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.util.ZipSecureFile;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
@@ -221,9 +223,9 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         assertEquals(1, wb1.getNumberOfSheets());
         XSSFSheet sh = wb1.getSheetAt(0);
         XSSFDrawing drawing = sh.createDrawingPatriarch();
-        List<POIXMLDocumentPart> rels = drawing.getRelations();
+        List<RelationPart> rels = drawing.getRelationParts();
         assertEquals(1, rels.size());
-        assertEquals("Sheet1!A1", rels.get(0).getPackageRelationship().getTargetURI().getFragment());
+        assertEquals("Sheet1!A1", rels.get(0).getRelationship().getTargetURI().getFragment());
 
         // And again, just to be sure
         XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb1);
@@ -231,9 +233,9 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         assertEquals(1, wb2.getNumberOfSheets());
         sh = wb2.getSheetAt(0);
         drawing = sh.createDrawingPatriarch();
-        rels = drawing.getRelations();
+        rels = drawing.getRelationParts();
         assertEquals(1, rels.size());
-        assertEquals("Sheet1!A1", rels.get(0).getPackageRelationship().getTargetURI().getFragment());
+        assertEquals("Sheet1!A1", rels.get(0).getRelationship().getTargetURI().getFragment());
         wb2.close();
     }
 
@@ -1262,12 +1264,20 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("51470.xlsx");
         XSSFSheet sh0 = wb.getSheetAt(0);
         XSSFSheet sh1 = wb.cloneSheet(0);
-        List<POIXMLDocumentPart> rels0 = sh0.getRelations();
-        List<POIXMLDocumentPart> rels1 = sh1.getRelations();
+        List<RelationPart> rels0 = sh0.getRelationParts();
+        List<RelationPart> rels1 = sh1.getRelationParts();
         assertEquals(1, rels0.size());
         assertEquals(1, rels1.size());
 
-        assertEquals(rels0.get(0).getPackageRelationship(), rels1.get(0).getPackageRelationship());
+        PackageRelationship pr0 = rels0.get(0).getRelationship();
+        PackageRelationship pr1 = rels1.get(0).getRelationship();
+        
+        assertEquals(pr0.getTargetMode(), pr1.getTargetMode());
+        assertEquals(pr0.getTargetURI(), pr1.getTargetURI());
+        POIXMLDocumentPart doc0 = rels0.get(0).getDocumentPart();
+        POIXMLDocumentPart doc1 = rels1.get(0).getDocumentPart();
+        
+        assertEquals(doc0, doc1);
         wb.close();
     }
 

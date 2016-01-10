@@ -46,10 +46,21 @@ public class XDGFMasters extends XDGFXMLDocumentPart {
     // key: id of master
     protected Map<Long, XDGFMaster> _masters = new HashMap<Long, XDGFMaster>();
 
-    public XDGFMasters(PackagePart part, PackageRelationship rel, XDGFDocument document) {
-        super(part, rel, document);
+    /**
+     * @since POI 3.14-Beta1
+     */
+    public XDGFMasters(PackagePart part, XDGFDocument document) {
+        super(part, document);
     }
 
+    /**
+     * @deprecated in POI 3.14, scheduled for removal in POI 3.16
+     */
+    @Deprecated
+    public XDGFMasters(PackagePart part, PackageRelationship rel, XDGFDocument document) {
+        this(part, document);
+    }
+    
     @Internal
     protected MastersType getXmlObject() {
         return _mastersObject;
@@ -72,16 +83,19 @@ public class XDGFMasters extends XDGFXMLDocumentPart {
             }
 
             // create the masters
-            for (POIXMLDocumentPart part: getRelations()) {
+            for (RelationPart rp : getRelationParts()) {
+                POIXMLDocumentPart part = rp.getDocumentPart();
 
-                String relId = part.getPackageRelationship().getId();
+                String relId = rp.getRelationship().getId();
                 MasterType settings = masterSettings.get(relId);
 
-                if (settings == null)
+                if (settings == null) {
                     throw new POIXMLException("Master relationship for " + relId + " not found");
+                }
 
-                if (!(part instanceof XDGFMasterContents))
+                if (!(part instanceof XDGFMasterContents)) {
                     throw new POIXMLException("Unexpected masters relationship for " + relId + ": " + part);
+                }
 
                 XDGFMasterContents contents = (XDGFMasterContents)part;
                 contents.onDocumentRead();

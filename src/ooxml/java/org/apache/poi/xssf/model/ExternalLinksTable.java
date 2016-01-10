@@ -49,11 +49,22 @@ public class ExternalLinksTable extends POIXMLDocumentPart {
         link.addNewExternalBook();
     }
 
-    public ExternalLinksTable(PackagePart part, PackageRelationship rel) throws IOException {
-        super(part, rel);
+    /**
+     * @since POI 3.14-Beta1
+     */
+    public ExternalLinksTable(PackagePart part) throws IOException {
+        super(part);
         readFrom(part.getInputStream());
     }
 
+    /**
+     * @deprecated in POI 3.14, scheduled for removal in POI 3.16
+     */
+    @Deprecated
+    public ExternalLinksTable(PackagePart part, PackageRelationship rel) throws IOException {
+        this(part);
+    }
+    
     public void readFrom(InputStream is) throws IOException {
         try {
             ExternalLinkDocument doc = ExternalLinkDocument.Factory.parse(is, DEFAULT_XML_OPTIONS);

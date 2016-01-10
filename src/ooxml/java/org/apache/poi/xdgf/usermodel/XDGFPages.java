@@ -45,10 +45,21 @@ public class XDGFPages extends XDGFXMLDocumentPart {
     // ordered by page number
     List<XDGFPage> _pages = new ArrayList<XDGFPage>();
 
-    public XDGFPages(PackagePart part, PackageRelationship rel, XDGFDocument document) {
-        super(part, rel, document);
+    /**
+     * @since POI 3.14-Beta1
+     */
+    public XDGFPages(PackagePart part, XDGFDocument document) {
+        super(part, document);
     }
 
+    /**
+     * @deprecated in POI 3.14, scheduled for removal in POI 3.16
+     */
+    @Deprecated
+    public XDGFPages(PackagePart part, PackageRelationship rel, XDGFDocument document) {
+        this(part, document);
+    }
+    
     @Internal
     PagesType getXmlObject() {
         return _pagesObject;

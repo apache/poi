@@ -20,10 +20,9 @@ import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Iterator;
-import java.util.List;
 
 import org.apache.poi.POIXMLDocumentPart;
+import org.apache.poi.POIXMLDocumentPart.RelationPart;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
@@ -221,11 +220,9 @@ public class XWPFHeaderFooterPolicy {
     }
 
     private int getRelationIndex(XWPFRelation relation) {
-        List<POIXMLDocumentPart> relations = doc.getRelations();
         int i = 1;
-        for (Iterator<POIXMLDocumentPart> it = relations.iterator(); it.hasNext(); ) {
-            POIXMLDocumentPart item = it.next();
-            if (item.getPackageRelationship().getRelationshipType().equals(relation.getRelation())) {
+        for (RelationPart rp : doc.getRelationParts()) {
+            if (rp.getRelationship().getRelationshipType().equals(relation.getRelation())) {
                 i++;
             }
         }
@@ -287,17 +284,16 @@ public class XWPFHeaderFooterPolicy {
     private void setFooterReference(Enum type, XWPFHeaderFooter wrapper) {
         CTHdrFtrRef ref = doc.getDocument().getBody().getSectPr().addNewFooterReference();
         ref.setType(type);
-        ref.setId(wrapper.getPackageRelationship().getId());
+        ref.setId(doc.getRelationId(wrapper));
     }
 
 
     private void setHeaderReference(Enum type, XWPFHeaderFooter wrapper) {
         CTHdrFtrRef ref = doc.getDocument().getBody().getSectPr().addNewHeaderReference();
         ref.setType(type);
-        ref.setId(wrapper.getPackageRelationship().getId());
+        ref.setId(doc.getRelationId(wrapper));
     }
-
-
+    
     public XWPFHeader getFirstPageHeader() {
         return firstPageHeader;
     }

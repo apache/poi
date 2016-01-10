@@ -28,9 +28,7 @@ import javax.xml.namespace.QName;
 
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
-import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.util.CellAddress;
@@ -84,15 +82,25 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing {
      * the content type must be <code>application/vnd.openxmlformats-officedocument.drawing+xml</code>
      * @param rel  the package relationship holding this drawing,
      * the relationship type must be http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing
+     * 
+     * @since POI 3.14-Beta1
      */
-    public XSSFDrawing(PackagePart part, PackageRelationship rel) throws IOException, XmlException {
-        super(part, rel);
+    public XSSFDrawing(PackagePart part) throws IOException, XmlException {
+        super(part);
         XmlOptions options  = new XmlOptions(DEFAULT_XML_OPTIONS);
         //Removing root element
         options.setLoadReplaceDocumentElement(null);
         drawing = CTDrawing.Factory.parse(part.getInputStream(),options);
     }
 
+    /**
+     * @deprecated in POI 3.14, scheduled for removal in POI 3.16
+     */
+    @Deprecated
+    public XSSFDrawing(PackagePart part, PackageRelationship rel) throws IOException, XmlException {
+        this(part);
+    }
+    
     /**
      * Construct a new CTDrawing bean. By default, it's just an empty placeholder for drawing objects
      *
@@ -199,9 +207,10 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing {
         int chartNumber = getPackagePart().getPackage().
             getPartsByContentType(XSSFRelation.CHART.getContentType()).size() + 1;
 
-        XSSFChart chart = (XSSFChart) createRelationship(
-                XSSFRelation.CHART, XSSFFactory.getInstance(), chartNumber);
-        String chartRelId = chart.getPackageRelationship().getId();
+        RelationPart rp = createRelationship(
+            XSSFRelation.CHART, XSSFFactory.getInstance(), chartNumber, false);
+        XSSFChart chart = rp.getDocumentPart();
+        String chartRelId = rp.getRelationship().getId();
 
         XSSFGraphicFrame frame = createGraphicFrame(anchor);
         frame.setChart(chart, chartRelId);
@@ -220,13 +229,13 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing {
      * @param pictureIndex the index of the picture in the workbook collection of pictures,
      *   {@link org.apache.poi.xssf.usermodel.XSSFWorkbook#getAllPictures()} .
      */
+    @SuppressWarnings("resource")
     protected PackageRelationship addPictureReference(int pictureIndex){
         XSSFWorkbook wb = (XSSFWorkbook)getParent().getParent();
         XSSFPictureData data = wb.getAllPictures().get(pictureIndex);
-        PackagePartName ppName = data.getPackagePart().getPartName();
-        PackageRelationship rel = getPackagePart().addRelationship(ppName, TargetMode.INTERNAL, XSSFRelation.IMAGES.getRelation());
-        addRelation(rel.getId(),new XSSFPictureData(data.getPackagePart(), rel));
-        return rel;
+        XSSFPictureData pic = new XSSFPictureData(data.getPackagePart(), null);
+        RelationPart rp = addRelation(null, XSSFRelation.IMAGES, pic);
+        return rp.getRelationship();
     }
 
     /**

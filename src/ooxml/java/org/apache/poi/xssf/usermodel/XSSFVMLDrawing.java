@@ -110,12 +110,21 @@ public final class XSSFVMLDrawing extends POIXMLDocumentPart {
      * the content type must be <code>application/vnd.openxmlformats-officedocument.drawing+xml</code>
      * @param rel  the package relationship holding this drawing,
      * the relationship type must be http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing
+     * 
+     * @since POI 3.14-Beta1
      */
-    protected XSSFVMLDrawing(PackagePart part, PackageRelationship rel) throws IOException, XmlException {
-        super(part, rel);
+    protected XSSFVMLDrawing(PackagePart part) throws IOException, XmlException {
+        super(part);
         read(getPackagePart().getInputStream());
     }
 
+    /**
+     * @deprecated in POI 3.14, scheduled for removal in POI 3.16
+     */
+    @Deprecated
+    protected XSSFVMLDrawing(PackagePart part, PackageRelationship rel) throws IOException, XmlException {
+        this(part);
+    }
 
     protected void read(InputStream is) throws IOException, XmlException {
         XmlObject root = XmlObject.Factory.parse(

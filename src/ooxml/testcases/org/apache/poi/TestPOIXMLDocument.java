@@ -26,6 +26,7 @@ import static org.junit.Assert.assertSame;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -34,7 +35,6 @@ import java.util.List;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.util.PackageHelper;
 import org.apache.poi.util.TempFile;
@@ -71,14 +71,18 @@ public final class TestPOIXMLDocument {
             //
         }
 
-        @Override
-        public POIXMLDocumentPart createDocumentPart(POIXMLDocumentPart parent, PackageRelationship rel, PackagePart part){
-            return new POIXMLDocumentPart(part, rel);
+        protected POIXMLRelation getDescriptor(String relationshipType) {
+            return null;
         }
 
+        /**
+         * @since POI 3.14-Beta1
+         */
         @Override
-        public POIXMLDocumentPart newDocumentPart(POIXMLRelation descriptor){
-            throw new RuntimeException("not supported");
+        protected POIXMLDocumentPart createDocumentPart
+            (Class<? extends POIXMLDocumentPart> cls, Class<?>[] classes, Object[] values)
+        throws SecurityException, NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException {
+            return null;
         }
     }
 

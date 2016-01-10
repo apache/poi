@@ -35,10 +35,21 @@ public class XDGFPageContents extends XDGFBaseContents {
     protected Map<Long, XDGFMaster> _masters = new HashMap<Long, XDGFMaster>();
     protected XDGFPage _page;
 
-    public XDGFPageContents(PackagePart part, PackageRelationship rel, XDGFDocument document) {
-        super(part, rel, document);
+    /**
+     * @since POI 3.14-Beta1
+     */
+    public XDGFPageContents(PackagePart part, XDGFDocument document) {
+        super(part, document);
     }
 
+    /**
+     * @deprecated in POI 3.14, scheduled for removal in POI 3.16
+     */
+    @Deprecated
+    public XDGFPageContents(PackagePart part, PackageRelationship rel, XDGFDocument document) {
+        this(part, document);
+    }
+    
     @Override
     protected void onDocumentRead() {
         try {

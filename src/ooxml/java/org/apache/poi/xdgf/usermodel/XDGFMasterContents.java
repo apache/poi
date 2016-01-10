@@ -34,11 +34,22 @@ public class XDGFMasterContents extends XDGFBaseContents {
 
     protected XDGFMaster _master;
 
-    public XDGFMasterContents(PackagePart part, PackageRelationship rel,
-            XDGFDocument document) {
-        super(part, rel, document);
+    /**
+     * @since POI 3.14-Beta1
+     */
+    public XDGFMasterContents(PackagePart part, XDGFDocument document) {
+        super(part, document);
     }
 
+    /**
+     * @deprecated in POI 3.14, scheduled for removal in POI 3.16
+     */
+    @Deprecated
+    public XDGFMasterContents(PackagePart part, PackageRelationship rel, XDGFDocument document) {
+        this(part, document);
+    }
+
+    
     @Override
     protected void onDocumentRead() {
 

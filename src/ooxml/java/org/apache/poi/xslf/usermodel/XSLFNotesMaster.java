@@ -59,14 +59,25 @@ import org.openxmlformats.schemas.presentationml.x2006.main.NotesMasterDocument;
         _slide = prototype();
     }
 
-    protected XSLFNotesMaster(PackagePart part, PackageRelationship rel) throws IOException, XmlException {
-        super(part, rel);
+    /**
+     * @since POI 3.14-Beta1
+     */
+    protected XSLFNotesMaster(PackagePart part) throws IOException, XmlException {
+        super(part);
         NotesMasterDocument doc =
             NotesMasterDocument.Factory.parse(getPackagePart().getInputStream(), DEFAULT_XML_OPTIONS);
         _slide = doc.getNotesMaster();
         setCommonSlideData(_slide.getCSld());
     }
 
+    /**
+     * @deprecated in POI 3.14, scheduled for removal in POI 3.16
+     */
+    @Deprecated
+    protected XSLFNotesMaster(PackagePart part, PackageRelationship rel) throws IOException, XmlException {
+        this(part);
+    }
+    
     private static CTNotesMaster prototype() {
         InputStream is = XSLFNotesMaster.class.getResourceAsStream("notesMaster.xml");
         if (is == null) {

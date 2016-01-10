@@ -347,8 +347,7 @@ public final class XSSFRelation extends POIXMLRelation {
 
     private XSSFRelation(String type, String rel, String defaultName, Class<? extends POIXMLDocumentPart> cls) {
         super(type, rel, defaultName, cls);
-
-        if(cls != null && !_table.containsKey(rel)) _table.put(rel, this);
+        _table.put(rel, this);
     }
 
     /**

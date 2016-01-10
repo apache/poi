@@ -62,12 +62,21 @@ public class XWPFStyles extends POIXMLDocumentPart {
      * Construct XWPFStyles from a package part
      *
      * @param part the package part holding the data of the styles,
-     * @param rel  the package relationship of type "http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles"
+     * 
+     * @since POI 3.14-Beta1
      */
-    public XWPFStyles(PackagePart part, PackageRelationship rel) throws IOException, OpenXML4JException {
-        super(part, rel);
+    public XWPFStyles(PackagePart part) throws IOException, OpenXML4JException {
+        super(part);
     }
 
+    /**
+     * @deprecated in POI 3.14, scheduled for removal in POI 3.16
+     */
+    @Deprecated
+    public XWPFStyles(PackagePart part, PackageRelationship rel) throws IOException, OpenXML4JException {
+        this(part);
+    }
+    
     /**
      * Construct XWPFStyles from scratch for a new document.
      */
@@ -80,13 +89,15 @@ public class XWPFStyles extends POIXMLDocumentPart {
     @Override
     protected void onDocumentRead() throws IOException {
         StylesDocument stylesDoc;
+        InputStream is = getPackagePart().getInputStream();
         try {
-            InputStream is = getPackagePart().getInputStream();
             stylesDoc = StylesDocument.Factory.parse(is, DEFAULT_XML_OPTIONS);
             setStyles(stylesDoc.getStyles());
             latentStyles = new XWPFLatentStyles(ctStyles.getLatentStyles(), this);
         } catch (XmlException e) {
             throw new POIXMLException("Unable to read styles", e);
+        } finally {
+            is.close();
         }
     }
 

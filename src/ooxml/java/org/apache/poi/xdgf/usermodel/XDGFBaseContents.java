@@ -53,10 +53,21 @@ public class XDGFBaseContents extends XDGFXMLDocumentPart {
     protected Map<Long, XDGFShape> _shapes = new HashMap<Long, XDGFShape>();
     protected List<XDGFConnection> _connections = new ArrayList<XDGFConnection>();
 
-    public XDGFBaseContents(PackagePart part, PackageRelationship rel, XDGFDocument document) {
-        super(part, rel, document);
+    /**
+     * @since POI 3.14-Beta1
+     */
+    public XDGFBaseContents(PackagePart part, XDGFDocument document) {
+        super(part, document);
     }
 
+    /**
+     * @deprecated in POI 3.14, scheduled for removal in POI 3.16
+     */
+    @Deprecated
+    public XDGFBaseContents(PackagePart part, PackageRelationship rel, XDGFDocument document) {
+        this(part, document);
+    }
+    
     @Internal
     public PageContentsType getXmlObject() {
         return _pageContents;

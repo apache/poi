@@ -48,16 +48,30 @@ public class XSLFCommentAuthors extends POIXMLDocumentPart {
      *
      * @param part the package part holding the comment authors data,
      * the content type must be <code>application/vnd.openxmlformats-officedocument.commentAuthors+xml</code>
-     * @param rel  the package relationship holding this comment authors,
-     * the relationship type must be http://schemas.openxmlformats.org/officeDocument/2006/relationships/commentAuthors
+     * 
+     * @since POI 3.14-Beta1
      */
-    XSLFCommentAuthors(PackagePart part, PackageRelationship rel) throws IOException, XmlException {
-        super(part, rel);
-
+    XSLFCommentAuthors(PackagePart part) throws IOException, XmlException {
+        super(part);
         CmAuthorLstDocument doc =
            CmAuthorLstDocument.Factory.parse(getPackagePart().getInputStream(), DEFAULT_XML_OPTIONS);
         _authors = doc.getCmAuthorLst();
     }
+
+    /**
+     * Construct a SpreadsheetML slide authors from a package part
+     *
+     * @param part the package part holding the comment authors data,
+     * the content type must be <code>application/vnd.openxmlformats-officedocument.commentAuthors+xml</code>
+     * @param rel  the package relationship holding this comment authors,
+     * the relationship type must be http://schemas.openxmlformats.org/officeDocument/2006/relationships/commentAuthors
+     * 
+     * @deprecated in POI 3.14, scheduled for removal in POI 3.16
+     */
+    @Deprecated
+    XSLFCommentAuthors(PackagePart part, PackageRelationship rel) throws IOException, XmlException {
+        this(part);
+    }    
     
     public CTCommentAuthorList getCTCommentAuthorsList() {
        return _authors;

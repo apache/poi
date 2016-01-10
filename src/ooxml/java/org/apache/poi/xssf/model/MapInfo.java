@@ -61,10 +61,19 @@ public class MapInfo extends POIXMLDocumentPart {
 
 	}
 
-	public MapInfo(PackagePart part, PackageRelationship rel)
-			throws IOException {
-		super(part, rel);
-		readFrom(part.getInputStream());
+	/**
+     * @since POI 3.14-Beta1
+     */
+	public MapInfo(PackagePart part) throws IOException {
+	    super(part);
+	    readFrom(part.getInputStream());
+    }	
+	
+   /**
+    * @deprecated in POI 3.14, scheduled for removal in POI 3.16
+    */
+	public MapInfo(PackagePart part, PackageRelationship rel) throws IOException {
+		this(part);
 	}
 
 	public void readFrom(InputStream is) throws IOException {

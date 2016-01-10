@@ -56,12 +56,23 @@ public class XSLFTheme extends POIXMLDocumentPart {
         _theme = CTOfficeStyleSheet.Factory.newInstance();
     }
     
-    public XSLFTheme(PackagePart part, PackageRelationship rel) throws IOException, XmlException {
-        super(part, rel);
+    /**
+     * @since POI 3.14-Beta1
+     */
+    public XSLFTheme(PackagePart part) throws IOException, XmlException {
+        super(part);
         ThemeDocument doc =
             ThemeDocument.Factory.parse(getPackagePart().getInputStream(), DEFAULT_XML_OPTIONS);
         _theme = doc.getTheme();
         initialize();
+    }
+
+    /**
+     * @deprecated in POI 3.14, scheduled for removal in POI 3.16
+     */
+    @Deprecated
+    public XSLFTheme(PackagePart part, PackageRelationship rel) throws IOException, XmlException {
+        this(part);
     }
     
     public void importTheme(XSLFTheme theme) {

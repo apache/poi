@@ -208,13 +208,12 @@ public final class XWPFRelation extends POIXMLRelation {
             null,
             "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
             null,
-            null
+            XWPFPictureData.class
     );
 
     private XWPFRelation(String type, String rel, String defaultName, Class<? extends POIXMLDocumentPart> cls) {
         super(type, rel, defaultName, cls);
-
-        if (cls != null && !_table.containsKey(rel)) _table.put(rel, this);
+        _table.put(rel, this);
     }
 
     /**

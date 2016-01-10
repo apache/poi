@@ -221,7 +221,7 @@ public class XSLFRelation extends POIXMLRelation {
             null,
      		"http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
     		null,
-    		null
+    		XSLFPictureData.class
     );
 
     public static final XSLFRelation TABLE_STYLES = new XSLFRelation(
@@ -233,8 +233,7 @@ public class XSLFRelation extends POIXMLRelation {
 
    private XSLFRelation(String type, String rel, String defaultName, Class<? extends POIXMLDocumentPart> cls) {
       super(type, rel, defaultName, cls);
-
-      if(cls != null && !_table.containsKey(rel)) _table.put(rel, this);
+      _table.put(rel, this);
    }
 
    /**
