@@ -52,6 +52,8 @@ import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.IdentifierManager;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 import org.apache.poi.util.PackageHelper;
 import org.apache.poi.xwpf.model.XWPFHeaderFooterPolicy;
 import org.apache.xmlbeans.XmlCursor;
@@ -88,6 +90,8 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.StylesDocument;
  * at some point in your use.</p>
  */
 public class XWPFDocument extends POIXMLDocument implements Document, IBody {
+    private static final POILogger LOG = POILogFactory.getLogger(XWPFDocument.class);
+    
     protected List<XWPFFooter> footers = new ArrayList<XWPFFooter>();
     protected List<XWPFHeader> headers = new ArrayList<XWPFHeader>();
     protected List<XWPFComment> comments = new ArrayList<XWPFComment>();
@@ -899,7 +903,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
                     int level = Integer.parseInt(parStyle.substring("Heading".length()));
                     toc.addRow(level, par.getText(), 1, "112723803");
                 } catch (NumberFormatException e) {
-                    e.printStackTrace();
+                    LOG.log(POILogger.ERROR, "can't format number in TOC heading", e);
                 }
             }
         }

@@ -332,7 +332,7 @@ public final class WorkbookEvaluator {
 			return new NotImplementedException(msg, inner);
 		} catch (Exception e) {
 			// avoid bombing out during exception handling
-			e.printStackTrace();
+		    LOG.log(POILogger.ERROR, "Can't add exception info", e);
 			return inner; // preserve original exception
 		}
 	}

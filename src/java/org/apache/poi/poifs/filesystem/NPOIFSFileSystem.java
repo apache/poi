@@ -57,6 +57,8 @@ import org.apache.poi.util.CloseIgnoringInputStream;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LongField;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * <p>This is the main class of the POIFS system; it manages the entire
@@ -67,8 +69,7 @@ import org.apache.poi.util.LongField;
 public class NPOIFSFileSystem extends BlockStore
     implements POIFSViewable, Closeable
 {
-//	private static final POILogger _logger =
-//		POILogFactory.getLogger(NPOIFSFileSystem.class);
+	private static final POILogger LOG = POILogFactory.getLogger(NPOIFSFileSystem.class);
 
     /**
      * Convenience method for clients that want to avoid the auto-close behaviour of the constructor.
@@ -346,7 +347,7 @@ public class NPOIFSFileSystem extends BlockStore
             }
             // else not success? Try block did not complete normally
             // just print stack trace and leave original ex to be thrown
-            e.printStackTrace();
+            LOG.log(POILogger.ERROR, "can't close input stream", e);
         }
     }
 

@@ -194,7 +194,7 @@ public class OPOIFSFileSystem
             }
             // else not success? Try block did not complete normally
             // just print stack trace and leave original ex to be thrown
-            e.printStackTrace();
+            _logger.log(POILogger.ERROR, "can't close input stream", e);
         }
     }
 

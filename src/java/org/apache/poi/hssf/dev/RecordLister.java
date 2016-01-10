@@ -180,21 +180,14 @@ public class RecordLister
         this.file = file;
     }
 
-    public static void main(String [] args)
+    public static void main(String [] args) throws IOException
     {
         if ((args.length == 1) && !args[ 0 ].equals("--help"))
         {
-            try
-            {
-                RecordLister viewer = new RecordLister();
+            RecordLister viewer = new RecordLister();
 
-                viewer.setFile(args[ 0 ]);
-                viewer.run();
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-            }
+            viewer.setFile(args[ 0 ]);
+            viewer.run();
         }
         else
         {

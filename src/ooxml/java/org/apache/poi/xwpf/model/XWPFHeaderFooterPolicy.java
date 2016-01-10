@@ -24,6 +24,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.poi.POIXMLDocumentPart;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFFactory;
 import org.apache.poi.xwpf.usermodel.XWPFFooter;
@@ -66,6 +68,8 @@ import com.microsoft.schemas.vml.STTrueFalse;
  * the right headers and footers for the document.
  */
 public class XWPFHeaderFooterPolicy {
+    private static final POILogger LOG = POILogFactory.getLogger(XWPFHeaderFooterPolicy.class);
+    
     public static final Enum DEFAULT = STHdrFtr.DEFAULT;
     public static final Enum EVEN = STHdrFtr.EVEN;
     public static final Enum FIRST = STHdrFtr.FIRST;
@@ -376,8 +380,7 @@ public class XWPFHeaderFooterPolicy {
             pars[0] = getWatermarkParagraph(text, 3);
             createHeader(EVEN, pars);
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LOG.log(POILogger.ERROR, "error while creating watermark", e);
         }
     }
 

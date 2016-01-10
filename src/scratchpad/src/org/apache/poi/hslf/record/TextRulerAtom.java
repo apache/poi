@@ -25,11 +25,8 @@ import org.apache.poi.util.POILogger;
 
 /**
  * Ruler of a text as it differs from the style's ruler settings.
- *
- * @author Yegor Kozlov
  */
 public final class TextRulerAtom extends RecordAtom {
-
     /**
      * Record header.
      */
@@ -79,7 +76,6 @@ public final class TextRulerAtom extends RecordAtom {
             read();
         } catch (Exception e){
             logger.log(POILogger.ERROR, "Failed to parse TextRulerAtom: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 

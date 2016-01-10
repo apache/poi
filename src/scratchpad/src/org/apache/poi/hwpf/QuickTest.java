@@ -18,6 +18,8 @@
 package org.apache.poi.hwpf;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import org.apache.poi.hwpf.usermodel.CharacterRun;
 import org.apache.poi.hwpf.usermodel.Paragraph;
@@ -30,10 +32,8 @@ public final class QuickTest
   {
   }
 
-  public static void main(String[] args)
+  public static void main(String[] args) throws IOException
   {
-    try
-    {
       HWPFDocument doc = new HWPFDocument (new FileInputStream (args[0]));
       Range r = doc.getRange();
 
@@ -81,12 +81,6 @@ public final class QuickTest
 //          System.out.println();
 //        }
 //      }
-
-    }
-    catch (Exception t)
-    {
-      t.printStackTrace();
-    }
   }
 
 }
