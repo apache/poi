@@ -17,10 +17,15 @@
 
 package org.apache.poi.hwmf.record;
 
+import java.awt.geom.Rectangle2D;
 import java.io.IOException;
+import java.text.AttributedString;
 
+import org.apache.poi.hwmf.draw.HwmfDrawProperties;
 import org.apache.poi.hwmf.draw.HwmfGraphics;
 import org.apache.poi.hwmf.record.HwmfMisc.WmfSetMapMode;
+import org.apache.poi.util.BitField;
+import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
 import org.apache.poi.util.LocaleUtil;
@@ -80,7 +85,7 @@ public class HwmfText {
 
         @Override
         public void draw(HwmfGraphics ctx) {
-
+            ctx.getProperties().setTextColor(colorRef);
         }
     }
     
@@ -168,7 +173,8 @@ public class HwmfText {
 
         @Override
         public void draw(HwmfGraphics ctx) {
-
+            Rectangle2D bounds = new Rectangle2D.Double(xStart, yStart, 0, 0);
+            ctx.drawString(text, bounds);
         }
     }
     
@@ -304,73 +310,124 @@ public class HwmfText {
         }
     }
     
-
+    public enum HwmfTextAlignment {
+        LEFT,
+        RIGHT,
+        CENTER;
+    }
     
+    public enum HwmfTextVerticalAlignment {
+        TOP,
+        BOTTOM,
+        BASELINE;
+    }
     
     /**
      * The META_SETTEXTALIGN record defines text-alignment values in the playback device context.
      */
     public static class WmfSetTextAlign implements HwmfRecord {
         
+        // ***********************************************************************************
+        // TextAlignmentMode Flags:
+        // ***********************************************************************************
+        
+        /** 
+         * The drawing position in the playback device context MUST NOT be updated after each
+         * text output call. The reference point MUST be passed to the text output function.
+         */
+        @SuppressWarnings("unused")
+        private static final BitField TA_NOUPDATECP = BitFieldFactory.getInstance(0x0000);
+        
+        /**
+         * The reference point MUST be on the left edge of the bounding rectangle.
+         */
+        @SuppressWarnings("unused")
+        private static final BitField TA_LEFT = BitFieldFactory.getInstance(0x0000);
+        
+        /**
+         * The reference point MUST be on the top edge of the bounding rectangle.
+         */
+        @SuppressWarnings("unused")
+        private static final BitField TA_TOP = BitFieldFactory.getInstance(0x0000);
+        
+        /**
+         * The drawing position in the playback device context MUST be updated after each text
+         * output call. It MUST be used as the reference point.
+         */
+        @SuppressWarnings("unused")
+        private static final BitField TA_UPDATECP = BitFieldFactory.getInstance(0x0001);
+        
+        /**
+         * The reference point MUST be on the right edge of the bounding rectangle.
+         */
+        private static final BitField TA_RIGHT = BitFieldFactory.getInstance(0x0002);
+        
+        /**
+         * The reference point MUST be aligned horizontally with the center of the bounding
+         * rectangle.
+         */
+        private static final BitField TA_CENTER = BitFieldFactory.getInstance(0x0006);
+        
+        /**
+         * The reference point MUST be on the bottom edge of the bounding rectangle.
+         */
+        private static final BitField TA_BOTTOM = BitFieldFactory.getInstance(0x0008);
+        
+        /**
+         * The reference point MUST be on the baseline of the text.
+         */
+        private static final BitField TA_BASELINE = BitFieldFactory.getInstance(0x0018);
+        
+        /**
+         * The text MUST be laid out in right-to-left reading order, instead of the default
+         * left-to-right order. This SHOULD be applied only when the font that is defined in the
+         * playback device context is either Hebrew or Arabic.
+         */
+        @SuppressWarnings("unused")
+        private static final BitField TA_RTLREADING = BitFieldFactory.getInstance(0x0100);
+        
+        // ***********************************************************************************
+        // VerticalTextAlignmentMode Flags (e.g. for Kanji fonts)
+        // ***********************************************************************************
+        
+        /**
+         * The reference point MUST be on the top edge of the bounding rectangle.
+         */
+        @SuppressWarnings("unused")
+        private static final BitField VTA_TOP = BitFieldFactory.getInstance(0x0000);
+        
+        /**
+         * The reference point MUST be on the right edge of the bounding rectangle.
+         */
+        @SuppressWarnings("unused")
+        private static final BitField VTA_RIGHT = BitFieldFactory.getInstance(0x0000);
+        
+        /**
+         * The reference point MUST be on the bottom edge of the bounding rectangle.
+         */
+        private static final BitField VTA_BOTTOM = BitFieldFactory.getInstance(0x0002);
+        
+        /**
+         * The reference point MUST be aligned vertically with the center of the bounding
+         * rectangle.
+         */
+        private static final BitField VTA_CENTER = BitFieldFactory.getInstance(0x0006);
+        
+        /**
+         * The reference point MUST be on the left edge of the bounding rectangle.
+         */
+        private static final BitField VTA_LEFT = BitFieldFactory.getInstance(0x0008);
+        
+        /**
+         * The reference point MUST be on the baseline of the text.
+         */
+        private static final BitField VTA_BASELINE = BitFieldFactory.getInstance(0x0018);
+        
         /**
          * A 16-bit unsigned integer that defines text alignment.
          * This value MUST be a combination of one or more TextAlignmentMode Flags
          * for text with a horizontal baseline, and VerticalTextAlignmentMode Flags
          * for text with a vertical baseline.
-         * 
-         * TextAlignmentMode Flags:
-         * TA_NOUPDATECP (0x0000):
-         * The drawing position in the playback device context MUST NOT be updated after each
-         * text output call. The reference point MUST be passed to the text output function.
-         * 
-         * TA_LEFT (0x0000):
-         * The reference point MUST be on the left edge of the bounding rectangle.
-         * 
-         * TA_TOP (0x0000):
-         * The reference point MUST be on the top edge of the bounding rectangle.
-         * 
-         * TA_UPDATECP (0x0001):
-         * The drawing position in the playback device context MUST be updated after each text
-         * output call. It MUST be used as the reference point.
-         * 
-         * TA_RIGHT (0x0002):
-         * The reference point MUST be on the right edge of the bounding rectangle.
-         * 
-         * TA_CENTER (0x0006):
-         * The reference point MUST be aligned horizontally with the center of the bounding
-         * rectangle.
-         * 
-         * TA_BOTTOM (0x0008):
-         * The reference point MUST be on the bottom edge of the bounding rectangle.
-         * 
-         * TA_BASELINE (0x0018):
-         * The reference point MUST be on the baseline of the text.
-         * 
-         * TA_RTLREADING (0x0100):
-         * The text MUST be laid out in right-to-left reading order, instead of the default
-         * left-toright order. This SHOULD be applied only when the font that is defined in the
-         * playback device context is either Hebrew or Arabic.
-         * 
-         * 
-         * VerticalTextAlignmentMode Flags (e.g. for Kanji fonts)
-         * VTA_TOP (0x0000):
-         * The reference point MUST be on the top edge of the bounding rectangle.
-         * 
-         * VTA_RIGHT (0x0000):
-         * The reference point MUST be on the right edge of the bounding rectangle.
-         * 
-         * VTA_BOTTOM (0x0002):
-         * The reference point MUST be on the bottom edge of the bounding rectangle.
-         * 
-         * VTA_CENTER (0x0006):
-         * The reference point MUST be aligned vertically with the center of the bounding
-         * rectangle.
-         * 
-         * VTA_LEFT (0x0008):
-         * The reference point MUST be on the left edge of the bounding rectangle.
-         * 
-         * VTA_BASELINE (0x0018):
-         * The reference point MUST be on the baseline of the text.
          */
         private int textAlignmentMode;
         
@@ -387,7 +444,38 @@ public class HwmfText {
 
         @Override
         public void draw(HwmfGraphics ctx) {
+            HwmfDrawProperties props = ctx.getProperties();
+            if (TA_CENTER.isSet(textAlignmentMode)) {
+                props.setTextAlignLatin(HwmfTextAlignment.CENTER);
+            } else if (TA_RIGHT.isSet(textAlignmentMode)) {
+                props.setTextAlignLatin(HwmfTextAlignment.RIGHT);
+            } else {
+                props.setTextAlignLatin(HwmfTextAlignment.LEFT);
+            }
 
+            if (VTA_CENTER.isSet(textAlignmentMode)) {
+                props.setTextAlignAsian(HwmfTextAlignment.CENTER);
+            } else if (VTA_LEFT.isSet(textAlignmentMode)) {
+                props.setTextAlignAsian(HwmfTextAlignment.LEFT);
+            } else {
+                props.setTextAlignAsian(HwmfTextAlignment.RIGHT);
+            }
+
+            if (TA_BASELINE.isSet(textAlignmentMode)) {
+                props.setTextVAlignLatin(HwmfTextVerticalAlignment.BASELINE);
+            } else if (TA_BOTTOM.isSet(textAlignmentMode)) {
+                props.setTextVAlignLatin(HwmfTextVerticalAlignment.BOTTOM);
+            } else {
+                props.setTextVAlignLatin(HwmfTextVerticalAlignment.TOP);
+            }
+
+            if (VTA_BASELINE.isSet(textAlignmentMode)) {
+                props.setTextVAlignAsian(HwmfTextVerticalAlignment.BASELINE);
+            } else if (VTA_BOTTOM.isSet(textAlignmentMode)) {
+                props.setTextVAlignAsian(HwmfTextVerticalAlignment.BOTTOM);
+            } else {
+                props.setTextVAlignAsian(HwmfTextVerticalAlignment.TOP);
+            }
         }
     }
     
@@ -412,7 +500,7 @@ public class HwmfText {
         
         @Override
         public void applyObject(HwmfGraphics ctx) {
-
+            ctx.getProperties().setFont(font);
         }
     }
 }

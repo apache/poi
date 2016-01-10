@@ -497,4 +497,64 @@ public class HwmfFont {
         
         return 5*LittleEndianConsts.SHORT_SIZE+8*LittleEndianConsts.BYTE_SIZE+readBytes;
     }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getEscapement() {
+        return escapement;
+    }
+
+    public int getOrientation() {
+        return orientation;
+    }
+
+    public int getWeight() {
+        return weight;
+    }
+
+    public boolean isItalic() {
+        return italic;
+    }
+
+    public boolean isUnderline() {
+        return underline;
+    }
+
+    public boolean isStrikeOut() {
+        return strikeOut;
+    }
+
+    public WmfCharset getCharSet() {
+        return charSet;
+    }
+
+    public WmfOutPrecision getOutPrecision() {
+        return outPrecision;
+    }
+
+    public WmfClipPrecision getClipPrecision() {
+        return clipPrecision;
+    }
+
+    public WmfFontQuality getQuality() {
+        return quality;
+    }
+
+    public WmfFontFamilyClass getFamily() {
+        return family;
+    }
+
+    public WmfFontPitch getPitch() {
+        return pitch;
+    }
+
+    public String getFacename() {
+        return facename;
+    }
 }

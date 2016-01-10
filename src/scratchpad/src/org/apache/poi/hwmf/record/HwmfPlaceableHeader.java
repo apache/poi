@@ -27,6 +27,7 @@ public class HwmfPlaceableHeader {
     public static int WMF_HEADER_MAGIC = 0x9AC6CDD7;
     
     final Rectangle2D bounds;
+    final int unitsPerInch;
     
     protected HwmfPlaceableHeader(LittleEndianInputStream leis) throws IOException {
         /*
@@ -53,7 +54,7 @@ public class HwmfPlaceableHeader {
          * Thus, a value of 720 specifies that the image SHOULD be rendered at twice its normal size,
          * and a value of 2880 specifies that the image SHOULD be rendered at half its normal size.
          */
-        int inch = leis.readShort();
+        unitsPerInch = leis.readShort();
         
         /*
          * Reserved (4 bytes):  A field that is not used and MUST be set to 0x00000000.
@@ -81,5 +82,9 @@ public class HwmfPlaceableHeader {
 
     public Rectangle2D getBounds() {
         return bounds;
+    }
+
+    public int getUnitsPerInch() {
+        return unitsPerInch;
     }
 }

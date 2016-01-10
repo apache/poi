@@ -25,10 +25,12 @@ import java.awt.Paint;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.TexturePaint;
+import java.awt.font.TextAttribute;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.text.AttributedString;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -36,13 +38,13 @@ import java.util.ListIterator;
 import java.util.NoSuchElementException;
 
 import org.apache.poi.hwmf.record.HwmfBrushStyle;
+import org.apache.poi.hwmf.record.HwmfFont;
 import org.apache.poi.hwmf.record.HwmfHatchStyle;
 import org.apache.poi.hwmf.record.HwmfMapMode;
 import org.apache.poi.hwmf.record.HwmfMisc.WmfSetBkMode.HwmfBkMode;
 import org.apache.poi.hwmf.record.HwmfObjectTableEntry;
 import org.apache.poi.hwmf.record.HwmfPenStyle;
 import org.apache.poi.hwmf.record.HwmfPenStyle.HwmfLineDash;
-import org.apache.poi.util.Units;
 
 public class HwmfGraphics {
     private final Graphics2D graphicsCtx;
@@ -118,7 +120,7 @@ public class HwmfGraphics {
         boolean dashAlt = ps.isAlternateDash();
         // This value is not an integer index into the dash pattern array.
         // Instead, it is a floating-point value that specifies a linear distance.
-        float dashStart = (dashAlt && dashes.length > 1) ? dashes[0] : 0;
+        float dashStart = (dashAlt && dashes != null && dashes.length > 1) ? dashes[0] : 0;
 
         return new BasicStroke(width, cap, join, miterLimit, dashes, dashStart);
     }
@@ -243,8 +245,8 @@ public class HwmfGraphics {
     /**
      * Restores the properties from the stack
      *
-     * @param index if the index is positive, the n-th element from the start is removed and activated.
-     *      If the index is negative, the n-th previous element relative to the current properties element is removed and activated.
+     * @param index if the index is positive, the n-th element from the start is activated.
+     *      If the index is negative, the n-th previous element relative to the current properties element is activated.
      */
     public void restoreProperties(int index) {
         if (index == 0) {
@@ -253,12 +255,20 @@ public class HwmfGraphics {
         int stackIndex = index;
         if (stackIndex < 0) {
             int curIdx = propStack.indexOf(prop);
-            assert (curIdx != -1);
+            if (curIdx == -1) {
+                // the current element is not pushed to the stacked, i.e. it's the last
+                curIdx = propStack.size();
+            }
             stackIndex = curIdx + index;
         }
-        prop = propStack.remove(stackIndex);
+        prop = propStack.get(stackIndex);
     }
 
+    /**
+     * After setting various window and viewport related properties,
+     * the underlying graphics context needs to be adapted.
+     * This methods gathers and sets the corresponding graphics transformations.
+     */
     public void updateWindowMapMode() {
         GraphicsConfiguration gc = graphicsCtx.getDeviceConfiguration();
         Rectangle2D win = prop.getWindow();
@@ -268,23 +278,15 @@ public class HwmfGraphics {
         switch (mapMode) {
         default:
         case MM_ANISOTROPIC:
-            // scale output bounds to image bounds
-            graphicsCtx.scale(gc.getBounds().getWidth()/bbox.getWidth(), gc.getBounds().getHeight()/bbox.getHeight());
-            graphicsCtx.translate(-bbox.getX(), -bbox.getY());
-
             // scale window bounds to output bounds
-            graphicsCtx.translate(win.getCenterX(), win.getCenterY());
             graphicsCtx.scale(bbox.getWidth()/win.getWidth(), bbox.getHeight()/win.getHeight());
-            graphicsCtx.translate(-win.getCenterX(), -win.getCenterY());
+            graphicsCtx.translate(-win.getX(), -win.getY());
             break;
         case MM_ISOTROPIC:
             // TODO: to be validated ...
             // like anisotropic, but use x-axis as reference
-            graphicsCtx.scale(gc.getBounds().getWidth()/bbox.getWidth(), gc.getBounds().getWidth()/bbox.getWidth());
-            graphicsCtx.translate(-bbox.getX(), -bbox.getY());
-            graphicsCtx.translate(win.getCenterX(), win.getCenterY());
             graphicsCtx.scale(bbox.getWidth()/win.getWidth(), bbox.getWidth()/win.getWidth());
-            graphicsCtx.translate(-win.getCenterX(), -win.getCenterY());
+            graphicsCtx.translate(-win.getX(), -win.getY());
             break;
         case MM_LOMETRIC:
         case MM_HIMETRIC:
@@ -294,11 +296,48 @@ public class HwmfGraphics {
             // TODO: to be validated ...
             graphicsCtx.transform(gc.getNormalizingTransform());
             graphicsCtx.scale(1./mapMode.scale, -1./mapMode.scale);
-            graphicsCtx.translate(-bbox.getX(), -bbox.getY());
+            graphicsCtx.translate(-win.getX(), -win.getY());
             break;
         case MM_TEXT:
             // TODO: to be validated ...
             break;
+        }
+    }
+    
+    public void drawString(String text, Rectangle2D bounds) {
+        HwmfFont font = prop.getFont();
+        if (font == null) {
+            return;
+        }
+        AttributedString as = new AttributedString(text);
+        as.addAttribute(TextAttribute.FAMILY, font.getFacename());
+        // TODO: fix font height calculation
+        as.addAttribute(TextAttribute.SIZE, Math.abs(font.getHeight()));
+        as.addAttribute(TextAttribute.STRIKETHROUGH, font.isStrikeOut());
+        if (font.isUnderline()) {
+            as.addAttribute(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
+        }
+        if (font.isItalic()) {
+            as.addAttribute(TextAttribute.POSTURE, TextAttribute.POSTURE_OBLIQUE);
+        }
+        as.addAttribute(TextAttribute.WEIGHT, font.getWeight());
+        
+        double angle = Math.toRadians(-font.getEscapement()/10.);
+        
+        
+        final AffineTransform at = graphicsCtx.getTransform();
+        try {
+            graphicsCtx.translate(bounds.getX(), bounds.getY());
+            graphicsCtx.rotate(angle);
+            if (prop.getBkMode() == HwmfBkMode.OPAQUE) {
+                // TODO: validate bounds
+                graphicsCtx.setBackground(prop.getBackgroundColor().getColor());
+                graphicsCtx.fill(bounds);
+            }
+            graphicsCtx.setColor(prop.getTextColor().getColor());
+            graphicsCtx.drawString(as.getIterator(), 0, 0); // (float)bounds.getX(), (float)bounds.getY());
+        } finally {
+            graphicsCtx.setTransform(at);
         }
     }
 }

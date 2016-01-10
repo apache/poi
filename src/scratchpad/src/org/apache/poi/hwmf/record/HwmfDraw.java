@@ -17,17 +17,18 @@
 
 package org.apache.poi.hwmf.record;
 
-import java.awt.Polygon;
-import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.Arc2D;
+import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
-import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
+import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.poi.hwmf.draw.HwmfGraphics;
 import org.apache.poi.util.LittleEndianConsts;
@@ -114,13 +115,8 @@ public class HwmfDraw {
      */
     public static class WmfPolygon implements HwmfRecord {
 
-        /**
-         * A 16-bit signed integer that defines the number of points in the array.
-         */
-        private int numberofPoints;
-
-        short xPoints[], yPoints[];
-
+        private Path2D poly = new Path2D.Double();
+        
         @Override
         public HwmfRecordType getRecordType() {
             return HwmfRecordType.polygon;
@@ -128,15 +124,21 @@ public class HwmfDraw {
 
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
-            numberofPoints = leis.readShort();
-            xPoints = new short[numberofPoints];
-            yPoints = new short[numberofPoints];
+            /**
+             * A 16-bit signed integer that defines the number of points in the array.
+             */
+            int numberofPoints = leis.readShort();
 
             for (int i=0; i<numberofPoints; i++) {
                 // A 16-bit signed integer that defines the horizontal (x) coordinate of the point.
-                xPoints[i] = leis.readShort();
+                int x = leis.readShort();
                 // A 16-bit signed integer that defines the vertical (y) coordinate of the point.
-                yPoints[i] = leis.readShort();
+                int y = leis.readShort();
+                if (i==0) {
+                    poly.moveTo(x, y);
+                } else {
+                    poly.lineTo(x, y);
+                }
             }
 
             return LittleEndianConsts.SHORT_SIZE+numberofPoints*LittleEndianConsts.INT_SIZE;
@@ -144,15 +146,14 @@ public class HwmfDraw {
 
         @Override
         public void draw(HwmfGraphics ctx) {
-            ctx.fill(getShape());
+            Path2D p = getShape();
+            p.closePath();
+            p.setWindingRule(ctx.getProperties().getPolyfillMode().awtFlag);
+            ctx.fill(p);
         }
 
-        protected Polygon getShape() {
-            Polygon polygon = new Polygon();
-            for(int i = 0; i < numberofPoints; i++) {
-                polygon.addPoint(xPoints[i], yPoints[i]);
-            }
-            return polygon;
+        protected Path2D getShape() {
+            return (Path2D)poly.clone();
         }
     }
 
@@ -169,7 +170,9 @@ public class HwmfDraw {
 
         @Override
         public void draw(HwmfGraphics ctx) {
-            ctx.draw(getShape());
+            Path2D p = getShape();
+            p.setWindingRule(ctx.getProperties().getPolyfillMode().awtFlag);
+            ctx.draw(p);
         }
     }
 
@@ -234,12 +237,12 @@ public class HwmfDraw {
          * A 16-bit unsigned integer used to index into the WMF Object Table to get
          * the region to be framed.
          */
-        private int region;
+        private int regionIndex;
         /**
          * A 16-bit unsigned integer used to index into the WMF Object Table to get the
          * Brush to use for filling the region.
          */
-        private int brush;
+        private int brushIndex;
         /**
          * A 16-bit signed integer that defines the height, in logical units, of the
          * region frame.
@@ -258,8 +261,8 @@ public class HwmfDraw {
 
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
-            region = leis.readUShort();
-            brush = leis.readUShort();
+            regionIndex = leis.readUShort();
+            brushIndex = leis.readUShort();
             height = leis.readShort();
             width = leis.readShort();
             return 4*LittleEndianConsts.SHORT_SIZE;
@@ -267,7 +270,17 @@ public class HwmfDraw {
 
         @Override
         public void draw(HwmfGraphics ctx) {
-
+            ctx.applyObjectTableEntry(brushIndex);
+            ctx.applyObjectTableEntry(regionIndex);
+            Rectangle2D inner = ctx.getProperties().getRegion().getBounds();
+            double x = inner.getX()-width;
+            double y = inner.getY()-height;
+            double w = inner.getWidth()+2*width;
+            double h = inner.getHeight()+2*height;
+            Rectangle2D outer = new Rectangle2D.Double(x,y,w,h);
+            Area frame = new Area(outer);
+            frame.subtract(new Area(inner));
+            ctx.fill(frame);
         }
     }
 
@@ -278,28 +291,8 @@ public class HwmfDraw {
      */
     public static class WmfPolyPolygon implements HwmfRecord {
 
-        /**
-         * A 16-bit unsigned integer that defines the number of polygons in the object.
-         */
-        private int numberOfPolygons;
-
-        /**
-         * A NumberOfPolygons array of 16-bit unsigned integers that define the number of
-         * points for each polygon in the object.
-         */
-        private int pointsPerPolygon[];
-
-        /**
-         * An array of 16-bit unsigned integers that define the coordinates of the polygons.
-         */
-        private int xPoints[][];
-
-        /**
-         * An array of 16-bit unsigned integers that define the coordinates of the polygons.
-         */
-        private int yPoints[][];
-
-
+        private List<Path2D> polyList = new ArrayList<Path2D>();
+        
         @Override
         public HwmfRecordType getRecordType() {
             return HwmfRecordType.polyPolygon;
@@ -308,10 +301,15 @@ public class HwmfDraw {
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
             // see http://secunia.com/gfx/pdf/SA31675_BA.pdf ;)
-            numberOfPolygons = leis.readUShort();
-            pointsPerPolygon = new int[numberOfPolygons];
-            xPoints = new int[numberOfPolygons][];
-            yPoints = new int[numberOfPolygons][];
+            /**
+             * A 16-bit unsigned integer that defines the number of polygons in the object.
+             */
+            int numberOfPolygons = leis.readUShort();
+            /**
+             * A NumberOfPolygons array of 16-bit unsigned integers that define the number of
+             * points for each polygon in the object.
+             */
+            int[] pointsPerPolygon = new int[numberOfPolygons];
 
             int size = LittleEndianConsts.SHORT_SIZE;
 
@@ -320,16 +318,23 @@ public class HwmfDraw {
                 size += LittleEndianConsts.SHORT_SIZE;
             }
 
-            for (int i=0; i<numberOfPolygons; i++) {
-
-                xPoints[i] = new int[pointsPerPolygon[i]];
-                yPoints[i] = new int[pointsPerPolygon[i]];
-
-                for (int j=0; j<pointsPerPolygon[i]; j++) {
-                    xPoints[i][j] = leis.readUShort();
-                    yPoints[i][j] = leis.readUShort();
+            for (int nPoints : pointsPerPolygon) {
+                /**
+                 * An array of 16-bit unsigned integers that define the coordinates of the polygons.
+                 */
+                Path2D poly = new Path2D.Double();
+                for (int i=0; i<nPoints; i++) {
+                    int x = leis.readUShort();
+                    int y = leis.readUShort();
                     size += 2*LittleEndianConsts.SHORT_SIZE;
+                    if (i == 0) {
+                        poly.moveTo(x, y);
+                    } else {
+                        poly.lineTo(x, y);
+                    }
                 }
+                poly.closePath();
+                polyList.add(poly);
             }
 
             return size;
@@ -337,7 +342,14 @@ public class HwmfDraw {
 
         @Override
         public void draw(HwmfGraphics ctx) {
-
+            int windingRule = ctx.getProperties().getPolyfillMode().awtFlag;
+            Area area = new Area();
+            for (Path2D poly : polyList) {
+                Path2D p = (Path2D)poly.clone();
+                p.setWindingRule(windingRule);
+                area.add(new Area(p));
+            }
+            ctx.draw(area);
         }
     }
 

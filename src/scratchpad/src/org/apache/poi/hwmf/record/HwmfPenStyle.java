@@ -86,7 +86,7 @@ public class HwmfPenStyle implements Cloneable {
         /**
          * The pen is solid.
          */
-        SOLID(0x0000, 10),
+        SOLID(0x0000, null),
         /**
          * The pen is dashed. (-----) 
          */
@@ -106,19 +106,19 @@ public class HwmfPenStyle implements Cloneable {
         /**
          * The pen is invisible.
          */
-        NULL(0x0005),
+        NULL(0x0005, null),
         /**
          * The pen is solid. When this pen is used in any drawing record that takes a
          * bounding rectangle, the dimensions of the figure are shrunk so that it fits
          * entirely in the bounding rectangle, taking into account the width of the pen.
          */
-        INSIDEFRAME(0x0006, 10),
+        INSIDEFRAME(0x0006, null),
         /**
          * The pen uses a styling array supplied by the user.
          * (this is currently not supported and drawn as solid ... no idea where the user
          * styling is supposed to come from ...)
          */
-        USERSTYLE(0x0007, 10);
+        USERSTYLE(0x0007, null);
         
 
         public int wmfFlag;

@@ -19,9 +19,9 @@ package org.apache.poi.hwmf;
 
 import static org.junit.Assert.assertEquals;
 
+import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileFilter;
@@ -45,6 +45,7 @@ import org.apache.poi.sl.usermodel.PictureData;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.apache.poi.sl.usermodel.SlideShow;
 import org.apache.poi.sl.usermodel.SlideShowFactory;
+import org.apache.poi.util.Units;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -60,17 +61,18 @@ public class TestHwmfParsing {
     }
     
     @Test
-    @Ignore
+    @Ignore("This is work-in-progress and not a real unit test ...")
     public void paint() throws IOException {
         File f = POIDataSamples.getSlideShowInstance().getFile("santa.wmf");
+//        File f = new File("E:\\project\\poi\\misc\\govdocs-ppt", "000133-0001.wmf");
         FileInputStream fis = new FileInputStream(f);
         HwmfPicture wmf = new HwmfPicture(fis);
         fis.close();
         
-        Rectangle2D bounds = wmf.getBounds();
-        int width = 300;
+        Dimension dim = wmf.getSize();
+        int width = Units.pointsToPixel(dim.getWidth());
         // keep aspect ratio for height
-        int height = (int)(width*bounds.getHeight()/bounds.getWidth());
+        int height = Units.pointsToPixel(dim.getHeight());
         
         BufferedImage bufImg = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = bufImg.createGraphics();
@@ -87,7 +89,7 @@ public class TestHwmfParsing {
     }
 
     @Test
-    @Ignore
+    @Ignore("This is work-in-progress and not a real unit test ...")
     public void fetchWmfFromGovdocs() throws IOException {
         URL url = new URL("http://digitalcorpora.org/corpora/files/govdocs1/by_type/ppt.zip");
         File outdir = new File("build/ppt");
@@ -117,12 +119,16 @@ public class TestHwmfParsing {
             }
         }
     }
-    
+
     @Test
-    @Ignore
+    @Ignore("This is work-in-progress and not a real unit test ...")
     public void parseWmfs() throws IOException {
+        // parse and render the extracted wmfs from the fetchWmfFromGovdocs step
         boolean outputFiles = false;
-        File indir = new File("build/ppt"), outdir = indir;
+        boolean renderWmf = true;
+        File indir = new File("E:\\project\\poi\\misc\\govdocs-ppt");
+        File outdir = new File("build/wmf");
+        outdir.mkdirs();
         final String startFile = "";
         File files[] = indir.listFiles(new FileFilter() {
             boolean foundStartFile = false;
@@ -148,6 +154,26 @@ public class TestHwmfParsing {
                         }
                         bmpIndex++;
                     }
+                }
+
+                if (renderWmf) {
+                    Dimension dim = wmf.getSize();
+                    int width = Units.pointsToPixel(dim.getWidth());
+                    // keep aspect ratio for height
+                    int height = Units.pointsToPixel(dim.getHeight());
+                    
+                    BufferedImage bufImg = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+                    Graphics2D g = bufImg.createGraphics();
+                    g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                    g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+                    g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+                    g.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+                    
+                    wmf.draw(g);
+
+                    g.dispose();
+                    
+                    ImageIO.write(bufImg, "PNG", new File(outdir, basename+".png"));
                 }
             } catch (Exception e) {
                 System.out.println(f.getName()+" ignored.");                
