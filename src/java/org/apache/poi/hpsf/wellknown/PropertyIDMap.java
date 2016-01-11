@@ -241,6 +241,50 @@ public class PropertyIDMap extends HashMap<Long,String> {
     // 0x15 GKPIDDSI_HLINKS - Must not be written
 
     /**
+     * <p>This entry contains a boolean which marks if the User Defined
+     *  Property Set has been updated outside of the Application, if so the
+     *  hyperlinks should be updated on document load.
+     */
+    public static final int PID_HYPERLINKSCHANGED = 0x16;
+    
+    /**
+     * <p>This entry contains the version of the Application which wrote the
+     *  Property set, stored with the two high order bytes having the major
+     *  version number, and hte two low order bytes the minor version number.
+     */
+    public static final int PID_VERSION = 0x17;
+    
+    /**
+     * <p>This entry contains the VBA digital signature for the VBA project 
+     *  embedded in the document.
+     */
+    public static final int PID_DIGSIG = 0x18;
+    
+    // 0x19 Unused
+    
+    /**
+     * <p>This entry contains a string of the content type of the file.
+     */
+    public static final int PID_CONTENTTYPE = 0x1A;
+    
+    /**
+     * <p>This entry contains a string of the document status.
+     */
+    public static final int PID_CONTENTSTATUS = 0x1B;
+    
+    /**
+     * <p>This entry contains a string of the document language, but
+     *  normally should be empty.
+     */
+    public static final int PID_LANGUAGE = 0x1C;
+    
+    /**
+     * <p>This entry contains a string of the document version, but
+     *  normally should be empty
+     */
+    public static final int PID_DOCVERSION = 0x1D;
+    
+    /**
      * <p>The highest well-known property ID. Applications are free to use 
      *  higher values for custom purposes. (This value is based on Office 12,
      *  earlier versions of Office had lower values)</p>
