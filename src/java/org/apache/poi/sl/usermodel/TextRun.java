@@ -156,4 +156,11 @@ public interface TextRun {
      * @return the pitch and family id or -1 if not applicable
      */
     byte getPitchAndFamily();
+
+    /**
+     * Return the associated hyperlink
+     * 
+     * @return the associated hyperlink or null if no hyperlink was set
+     */
+    Hyperlink getHyperlink();
 }

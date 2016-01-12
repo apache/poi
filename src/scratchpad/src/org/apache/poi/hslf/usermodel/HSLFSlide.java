@@ -94,12 +94,6 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFTe
 		for (List<HSLFTextParagraph> l : HSLFTextParagraph.findTextParagraphs(getPPDrawing(), this)) {
 		    if (!_paragraphs.contains(l)) _paragraphs.add(l);
 		}
-
-        for(List<HSLFTextParagraph> ltp : _paragraphs) {
-            for (HSLFTextParagraph tp : ltp) {
-                tp.supplySheet(this);
-            }
-        }
 	}
 
 	/**

@@ -594,13 +594,8 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
         // (We can't do it in the constructor because the sheet
         //  is not assigned then, it's only built once we have
         //  all the records)
-        List<HSLFTextParagraph> paras = getTextParagraphs();
-        if (paras != null) {
-            for (HSLFTextParagraph htp : paras) {
-                // Supply the sheet to our child RichTextRuns
-                htp.supplySheet(_sheet);
-            }
-        }
+        List<HSLFTextParagraph> ltp = getTextParagraphs();
+        HSLFTextParagraph.supplySheet(ltp, sheet);
     }
 
     /**

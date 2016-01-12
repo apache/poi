@@ -449,6 +449,7 @@ public class XSLFTextRun implements TextRun {
         return link;
     }
 
+    @Override
     public XSLFHyperlink getHyperlink(){
         if(!_r.getRPr().isSetHlinkClick()) return null;
 

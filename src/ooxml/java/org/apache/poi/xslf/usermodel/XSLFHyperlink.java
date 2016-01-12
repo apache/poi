@@ -18,15 +18,13 @@ package org.apache.poi.xslf.usermodel;
 
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.TargetMode;
+import org.apache.poi.sl.usermodel.Hyperlink;
 import org.apache.poi.util.Internal;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTHyperlink;
 
 import java.net.URI;
 
-/**
- * @author Yegor Kozlov
- */
-public class XSLFHyperlink {
+public class XSLFHyperlink implements Hyperlink {
     final XSLFTextRun _r;
     final CTHyperlink _link;
 
@@ -40,15 +38,39 @@ public class XSLFHyperlink {
         return _link;
     }
 
+    @Override
     public void setAddress(String address){
         XSLFSheet sheet = _r.getParentParagraph().getParentShape().getSheet();
         PackageRelationship rel =
                 sheet.getPackagePart().
                         addExternalRelationship(address, XSLFRelation.HYPERLINK.getRelation());
         _link.setId(rel.getId());
-
+    }
+    
+    @Override
+    public String getAddress() {
+        return getTargetURI().toASCIIString();
     }
 
+    @Override
+    public String getLabel() {
+        return _link.getTooltip();
+    }
+    
+    @Override
+    public void setLabel(String label) {
+        _link.setTooltip(label);
+    }
+
+    @Override
+    public int getType() {
+        // TODO: currently this just returns nonsense
+        if ("ppaction://hlinksldjump".equals(_link.getAction())) {
+            return LINK_DOCUMENT;
+        }
+        return LINK_URL;
+    }
+    
     public void setAddress(XSLFSlide slide){
         XSLFSheet sheet = _r.getParentParagraph().getParentShape().getSheet();
         PackageRelationship rel =

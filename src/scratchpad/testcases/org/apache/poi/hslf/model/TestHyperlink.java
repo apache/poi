@@ -57,11 +57,11 @@ public final class TestHyperlink {
         assertNotNull(links);
         assertEquals(2, links.size());
 
-        assertEquals("http://jakarta.apache.org/poi/", links.get(0).getTitle());
+        assertEquals("http://jakarta.apache.org/poi/", links.get(0).getLabel());
         assertEquals("http://jakarta.apache.org/poi/", links.get(0).getAddress());
         assertEquals("http://jakarta.apache.org/poi/", rawText.substring(links.get(0).getStartIndex(), links.get(0).getEndIndex()-1));
 
-        assertEquals("http://slashdot.org/", links.get(1).getTitle());
+        assertEquals("http://slashdot.org/", links.get(1).getLabel());
         assertEquals("http://slashdot.org/", links.get(1).getAddress());
         assertEquals("http://slashdot.org/", rawText.substring(links.get(1).getStartIndex(), links.get(1).getEndIndex()-1));
 
@@ -77,7 +77,7 @@ public final class TestHyperlink {
         assertNotNull(links);
         assertEquals(1, links.size());
 
-        assertEquals("http://jakarta.apache.org/poi/hssf/", links.get(0).getTitle());
+        assertEquals("Open Jakarta POI HSSF module test  ", links.get(0).getLabel());
         assertEquals("http://jakarta.apache.org/poi/hssf/", links.get(0).getAddress());
         assertEquals("Jakarta HSSF", rawText.substring(links.get(0).getStartIndex(), links.get(0).getEndIndex()-1));
     }
