@@ -24,6 +24,7 @@ import java.awt.font.LineBreakMeasurer;
 import java.awt.font.TextAttribute;
 import java.awt.font.TextLayout;
 import java.awt.geom.Rectangle2D;
+import java.io.InvalidObjectException;
 import java.text.AttributedCharacterIterator;
 import java.text.AttributedCharacterIterator.Attribute;
 import java.text.AttributedString;
@@ -32,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.poi.sl.usermodel.AutoNumberingScheme;
+import org.apache.poi.sl.usermodel.Hyperlink;
 import org.apache.poi.sl.usermodel.Insets2D;
 import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.sl.usermodel.PlaceableShape;
@@ -46,6 +48,10 @@ import org.apache.poi.util.StringUtil;
 import org.apache.poi.util.Units;
 
 public class DrawTextParagraph implements Drawable {
+    /** Keys for passing hyperlinks to the graphics context */
+    public static final XlinkAttribute HYPERLINK_HREF = new XlinkAttribute("href");
+    public static final XlinkAttribute HYPERLINK_LABEL = new XlinkAttribute("label");
+
     protected TextParagraph<?,?,?> paragraph;
     double x, y;
     protected List<DrawTextFragment> lines = new ArrayList<DrawTextFragment>();
@@ -57,6 +63,31 @@ public class DrawTextParagraph implements Drawable {
      * the highest line in this paragraph. Used for line spacing.
      */
     protected double maxLineHeight;
+
+    /**
+     * Defines an attribute used for storing the hyperlink associated with
+     * some renderable text.
+     */
+    private static class XlinkAttribute extends Attribute {
+
+        XlinkAttribute(String name) {
+            super(name);
+        }
+
+        /**
+         * Resolves instances being deserialized to the predefined constants.
+         */
+        protected Object readResolve() throws InvalidObjectException {
+            if (HYPERLINK_HREF.getName().equals(getName())) {
+                return HYPERLINK_HREF;
+            }
+            if (HYPERLINK_LABEL.getName().equals(getName())) {
+                return HYPERLINK_LABEL;
+            }
+            throw new InvalidObjectException("unknown attribute name");
+        }
+    }
+
 
     public DrawTextParagraph(TextParagraph<?,?,?> paragraph) {
         this.paragraph = paragraph;
@@ -79,10 +110,10 @@ public class DrawTextParagraph implements Drawable {
     public void setAutoNumberingIdx(int index) {
         autoNbrIdx = index;
     }
-    
+
     public void draw(Graphics2D graphics){
         if (lines.isEmpty()) return;
-        
+
         double penY = y;
 
         boolean firstLine = true;
@@ -100,7 +131,7 @@ public class DrawTextParagraph implements Drawable {
             // special handling for HSLF
             indent -= leftMargin;
         }
-        
+
 //        Double rightMargin = paragraph.getRightMargin();
 //        if (rightMargin == null) {
 //            rightMargin = 0d;
@@ -109,7 +140,7 @@ public class DrawTextParagraph implements Drawable {
         //The vertical line spacing
         Double spacing = paragraph.getLineSpacing();
         if (spacing == null) spacing = 100d;
-        
+
         for(DrawTextFragment line : lines){
             double penX;
 
@@ -118,7 +149,7 @@ public class DrawTextParagraph implements Drawable {
                     // TODO: find out character style for empty, but bulleted/numbered lines
                     bullet = getBullet(graphics, line.getAttributedString().getIterator());
                 }
-                
+
                 if (bullet != null){
                     bullet.setPosition(x+leftMargin+indent, penY);
                     bullet.draw(graphics);
@@ -168,7 +199,7 @@ public class DrawTextParagraph implements Drawable {
 
         y = penY - y;
     }
-    
+
     public float getFirstLineHeight() {
         return (lines.isEmpty()) ? 0 : lines.get(0).getHeight();
     }
@@ -180,7 +211,7 @@ public class DrawTextParagraph implements Drawable {
     public boolean isEmptyParagraph() {
         return (lines.isEmpty() || rawText.trim().isEmpty());
     }
-    
+
     public void applyTransform(Graphics2D graphics) {
     }
 
@@ -265,7 +296,7 @@ public class DrawTextParagraph implements Drawable {
         String buFont = bulletStyle.getBulletFont();
         if (buFont == null) buFont = paragraph.getDefaultFontFamily();
         assert(buFont != null);
-        
+
         PlaceableShape<?,?> ps = getParagraphShape();
         PaintStyle fgPaintStyle = bulletStyle.getBulletFontColor();
         Paint fgPaint;
@@ -277,11 +308,11 @@ public class DrawTextParagraph implements Drawable {
 
         float fontSize = (Float)firstLineAttr.getAttribute(TextAttribute.SIZE);
         Double buSz = bulletStyle.getBulletFontSize();
-        if (buSz == null) buSz = 100d; 
+        if (buSz == null) buSz = 100d;
         if (buSz > 0) fontSize *= buSz* 0.01;
         else fontSize = (float)-buSz;
 
-        
+
         AttributedString str = new AttributedString(mapFontCharset(buCharacter,buFont));
         str.addAttribute(TextAttribute.FOREGROUND, fgPaint);
         str.addAttribute(TextAttribute.FAMILY, buFont);
@@ -313,7 +344,7 @@ public class DrawTextParagraph implements Drawable {
                         case SMALL: c = Character.toLowerCase(c); break;
                         case NONE: break;
                     }
-    
+
                     buf.append(c);
                     break;
             }
@@ -321,7 +352,7 @@ public class DrawTextParagraph implements Drawable {
 
         return buf.toString();
     }
-    
+
     /**
      * Replace a tab with the effective number of white spaces.
      */
@@ -334,7 +365,7 @@ public class DrawTextParagraph implements Drawable {
         Double fs = tr.getFontSize();
         if (fs == null) fs = 12d;
         string.addAttribute(TextAttribute.SIZE, fs.floatValue());
-        
+
         TextLayout l = new TextLayout(string.getIterator(), new FontRenderContext(null, true, true));
         double wspace = l.getAdvance();
 
@@ -348,7 +379,7 @@ public class DrawTextParagraph implements Drawable {
         }
         return buf.toString();
     }
-    
+
 
     /**
      * Returns wrapping width to break lines in this paragraph
@@ -418,7 +449,7 @@ public class DrawTextParagraph implements Drawable {
             this.endIndex = endIndex;
         }
     }
-    
+
     /**
      * Helper method for paint style relative to bounds, e.g. gradient paint
      */
@@ -443,7 +474,7 @@ public class DrawTextParagraph implements Drawable {
         if (text == null) text = new StringBuilder();
 
         PlaceableShape<?,?> ps = getParagraphShape();
-        
+
         DrawFontManager fontHandler = (DrawFontManager)graphics.getRenderingHint(Drawable.FONT_HANDLER);
 
         for (TextRun run : paragraph){
@@ -464,7 +495,7 @@ public class DrawTextParagraph implements Drawable {
             if (fontFamily == null) {
                 fontFamily = paragraph.getDefaultFontFamily();
             }
-            
+
             int beginIndex = text.length();
             text.append(mapFontCharset(runText,fontFamily));
             int endIndex = text.length();
@@ -498,6 +529,12 @@ public class DrawTextParagraph implements Drawable {
             if(run.isSuperscript()) {
                 attList.add(new AttributedStringData(TextAttribute.SUPERSCRIPT, TextAttribute.SUPERSCRIPT_SUPER, beginIndex, endIndex));
             }
+            
+            Hyperlink hl = run.getHyperlink();
+            if (hl != null) {
+                attList.add(new AttributedStringData(HYPERLINK_HREF, hl.getAddress(), beginIndex, endIndex));
+                attList.add(new AttributedStringData(HYPERLINK_LABEL, hl.getLabel(), beginIndex, endIndex));
+            }
         }
 
         // ensure that the paragraph contains at least one character
@@ -517,9 +554,9 @@ public class DrawTextParagraph implements Drawable {
     }
 
     protected boolean isHSLF() {
-        return paragraph.getClass().getName().contains("HSLF");        
+        return paragraph.getClass().getName().contains("HSLF");
     }
-    
+
     /**
      * Map text charset depending on font family.
      * Currently this only maps for wingdings font (into unicode private use area)
@@ -527,7 +564,7 @@ public class DrawTextParagraph implements Drawable {
      * @param text the raw text
      * @param fontFamily the font family
      * @return AttributedString with mapped codepoints
-     * 
+     *
      * @see <a href="http://stackoverflow.com/questions/8692095">Drawing exotic fonts in a java applet</a>
      * @see StringUtil#mapMsCodepointString(String)
      */

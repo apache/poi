@@ -51,12 +51,6 @@ public final class HSLFSlideMaster extends HSLFMasterSheet {
         for (List<HSLFTextParagraph> l : HSLFTextParagraph.findTextParagraphs(getPPDrawing(), this)) {
             if (!_paragraphs.contains(l)) _paragraphs.add(l);
         }
-
-        for (List<HSLFTextParagraph> p : _paragraphs) {
-            for (HSLFTextParagraph htp : p) {
-                htp.supplySheet(this);
-            }
-        }
     }
 
     /**

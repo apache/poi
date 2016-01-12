@@ -26,6 +26,10 @@ import static org.junit.Assert.assertTrue;
 import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.text.AttributedCharacterIterator;
+import java.text.AttributedCharacterIterator.Attribute;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -47,7 +51,9 @@ import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.SlideListWithText;
 import org.apache.poi.hslf.record.SlideListWithText.SlideAtomsSet;
 import org.apache.poi.hslf.record.TextHeaderAtom;
+import org.apache.poi.hssf.usermodel.DummyGraphics2d;
 import org.apache.poi.sl.draw.DrawPaint;
+import org.apache.poi.sl.draw.DrawTextParagraph;
 import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
@@ -67,8 +73,6 @@ import org.junit.Test;
 /**
  * Testcases for bugs entered in bugzilla
  * the Test name contains the bugzilla bug id
- *
- * @author Yegor Kozlov
  */
 public final class TestBugs {
     /**
@@ -819,6 +823,59 @@ public final class TestBugs {
                 }
             }
         }
+        
+        ppt.close();
+    }
+
+    @Test
+    public void bug57796() throws IOException {
+        HSLFSlideShow ppt = open("WithLinks.ppt");
+        HSLFSlide slide = ppt.getSlides().get(0);
+        HSLFTextShape shape = (HSLFTextShape)slide.getShapes().get(1);
+        List<HSLFHyperlink> hlList =  HSLFHyperlink.find(shape);
+        HSLFHyperlink hlShape = hlList.get(0);
+        HSLFTextRun r = shape.getTextParagraphs().get(1).getTextRuns().get(0);
+        HSLFHyperlink hlRun = r.getHyperlink();
+        assertEquals(hlRun.getId(), hlShape.getId());
+        assertEquals(hlRun.getAddress(), hlShape.getAddress());
+        assertEquals(hlRun.getLabel(), hlShape.getLabel());
+        assertEquals(hlRun.getType(), hlShape.getType());
+        assertEquals(hlRun.getStartIndex(), hlShape.getStartIndex());
+        assertEquals(hlRun.getEndIndex(), hlShape.getEndIndex());
+
+        OutputStream nullOutput = new OutputStream(){
+            public void write(int b) throws IOException {}
+        };
+        
+        final boolean found[] = { false }; 
+        DummyGraphics2d dgfx = new DummyGraphics2d(new PrintStream(nullOutput)){
+            public void drawString(AttributedCharacterIterator iterator, float x, float y) {
+                // For the test file, common sl draws textruns one by one and not mixed
+                // so we evaluate the whole iterator
+                Map<Attribute, Object> attributes = null;
+                StringBuffer sb = new StringBuffer();
+                
+                for (char c = iterator.first();
+                        c != AttributedCharacterIterator.DONE;
+                        c = iterator.next()) {
+                    sb.append(c);
+                    attributes = iterator.getAttributes();
+                }
+
+                if ("Jakarta HSSF".equals(sb.toString())) {
+                    // this is a test for a manually modified ppt, for real hyperlink label
+                    // one would need to access the screen tip record
+                    String href = (String)attributes.get(DrawTextParagraph.HYPERLINK_HREF);
+                    String label = (String)attributes.get(DrawTextParagraph.HYPERLINK_LABEL);
+                    assertEquals("http://jakarta.apache.org/poi/hssf/", href);
+                    assertEquals("Open Jakarta POI HSSF module test  ", label);
+                    found[0] = true;
+                }
+            }
+        };
+        
+        ppt.getSlides().get(1).draw(dgfx);
+        assertTrue(found[0]);
         
         ppt.close();
     }

@@ -29,13 +29,12 @@ import org.apache.poi.hslf.record.InteractiveInfo;
 import org.apache.poi.hslf.record.InteractiveInfoAtom;
 import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.TxInteractiveInfoAtom;
+import org.apache.poi.sl.usermodel.Hyperlink;
 
 /**
  * Represents a hyperlink in a PowerPoint document
- *
- * @author Yegor Kozlov
  */
-public final class HSLFHyperlink {
+public final class HSLFHyperlink implements Hyperlink {
     public static final byte LINK_NEXTSLIDE = InteractiveInfoAtom.LINK_NextSlide;
     public static final byte LINK_PREVIOUSSLIDE = InteractiveInfoAtom.LINK_PreviousSlide;
     public static final byte LINK_FIRSTSLIDE = InteractiveInfoAtom.LINK_FirstSlide;
@@ -47,7 +46,7 @@ public final class HSLFHyperlink {
     private int id=-1;
     private int type;
     private String address;
-    private String title;
+    private String label;
     private int startIndex, endIndex;
 
     /**
@@ -57,6 +56,7 @@ public final class HSLFHyperlink {
      * @return the hyperlink URL
      * @see InteractiveInfoAtom
      */
+    @Override
     public int getType() {
         return type;
     }
@@ -65,35 +65,31 @@ public final class HSLFHyperlink {
         type = val;
         switch(type){
             case LINK_NEXTSLIDE:
-                title = "NEXT";
+                label = "NEXT";
                 address = "1,-1,NEXT";
                 break;
             case LINK_PREVIOUSSLIDE:
-                title = "PREV";
+                label = "PREV";
                 address = "1,-1,PREV";
                 break;
             case LINK_FIRSTSLIDE:
-                title = "FIRST";
+                label = "FIRST";
                 address = "1,-1,FIRST";
                 break;
             case LINK_LASTSLIDE:
-                title = "LAST";
+                label = "LAST";
                 address = "1,-1,LAST";
                 break;
             case LINK_SLIDENUMBER:
                 break;
             default:
-                title = "";
+                label = "";
                 address = "";
                 break;
         }
     }
 
-    /**
-     * Gets the hyperlink URL
-     *
-     * @return the hyperlink URL
-     */
+    @Override
     public String getAddress() {
         return address;
     }
@@ -101,10 +97,11 @@ public final class HSLFHyperlink {
     public void setAddress(HSLFSlide slide) {
         String href = slide._getSheetNumber() + ","+slide.getSlideNumber()+",Slide " + slide.getSlideNumber();
         setAddress(href);;
-        setTitle("Slide " + slide.getSlideNumber());
+        setLabel("Slide " + slide.getSlideNumber());
         setType(HSLFHyperlink.LINK_SLIDENUMBER);
     }
 
+    @Override
     public void setAddress(String str) {
         address = str;
     }
@@ -117,17 +114,14 @@ public final class HSLFHyperlink {
         this.id = id;
     }
 
-    /**
-     * Gets the hyperlink user-friendly title (if different from URL)
-     *
-     * @return the  hyperlink user-friendly title
-     */
-    public String getTitle() {
-        return title;
+    @Override
+    public String getLabel() {
+        return label;
     }
 
-    public void setTitle(String str) {
-        title = str;
+    @Override
+    public void setLabel(String str) {
+        label = str;
     }
 
     /**
@@ -140,6 +134,15 @@ public final class HSLFHyperlink {
     }
 
     /**
+     * Sets the beginning character position
+     *
+     * @param startIndex the beginning character position
+     */
+    public void setStartIndex(int startIndex) {
+        this.startIndex = startIndex;
+    }
+    
+    /**
      * Gets the ending character position
      *
      * @return the ending character position
@@ -148,6 +151,15 @@ public final class HSLFHyperlink {
         return endIndex;
     }
 
+    /**
+     * Sets the ending character position
+     *
+     * @param endIndex the ending character position
+     */
+    public void setEndIndex(int endIndex) {
+        this.endIndex = endIndex;
+    }
+    
     /**
      * Find hyperlinks in a text shape
      *
@@ -222,9 +234,10 @@ public final class HSLFHyperlink {
             }
             
             HSLFHyperlink link = new HSLFHyperlink();
-            link.title = linkRecord.getLinkTitle();
-            link.address = linkRecord.getLinkURL();
-            link.type = info.getAction();
+            link.setId(id);
+            link.setType(info.getAction());
+            link.setLabel(linkRecord.getLinkTitle());
+            link.setAddress(linkRecord.getLinkURL());
             out.add(link);
 
             if (iter.hasNext()) {
@@ -234,8 +247,8 @@ public final class HSLFHyperlink {
                     continue;
                 }
                 TxInteractiveInfoAtom txinfo = (TxInteractiveInfoAtom)r;
-                link.startIndex = txinfo.getStartIndex();
-                link.endIndex = txinfo.getEndIndex();
+                link.setStartIndex(txinfo.getStartIndex());
+                link.setEndIndex(txinfo.getEndIndex());
             }
         }
     }

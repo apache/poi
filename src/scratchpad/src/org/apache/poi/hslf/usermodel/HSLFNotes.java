@@ -56,13 +56,6 @@ public final class HSLFNotes extends HSLFSheet implements Notes<HSLFShape,HSLFTe
         if (_paragraphs.isEmpty()) {
             logger.log(POILogger.WARN, "No text records found for notes sheet");
         }
-
-        // Set the sheet on each TextRun
-        for (List<HSLFTextParagraph> ltp : _paragraphs) {
-            for (HSLFTextParagraph tp : ltp) {
-                tp.supplySheet(this);
-            }
-        }
     }
 
     /**

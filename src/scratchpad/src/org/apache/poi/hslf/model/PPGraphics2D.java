@@ -282,7 +282,7 @@ public final class PPGraphics2D extends Graphics2D implements Cloneable {
      */
     public void drawString(String s, float x, float y) {
         HSLFTextBox txt = new HSLFTextBox(_group);
-        txt.getTextParagraphs().get(0).supplySheet(_group.getSheet());
+        txt.setSheet(_group.getSheet());
         txt.setText(s);
 
         HSLFTextRun rt = txt.getTextParagraphs().get(0).getTextRuns().get(0);

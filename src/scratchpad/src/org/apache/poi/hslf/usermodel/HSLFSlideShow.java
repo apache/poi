@@ -33,6 +33,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.poi.hslf.record.MainMaster;
 import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherOptRecord;
@@ -59,12 +60,14 @@ import org.apache.poi.hslf.record.ExVideoContainer;
 import org.apache.poi.hslf.record.FontCollection;
 import org.apache.poi.hslf.record.FontEntityAtom;
 import org.apache.poi.hslf.record.HeadersFootersContainer;
+import org.apache.poi.hslf.record.Notes;
 import org.apache.poi.hslf.record.PersistPtrHolder;
 import org.apache.poi.hslf.record.PositionDependentRecord;
 import org.apache.poi.hslf.record.PositionDependentRecordContainer;
 import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.RecordContainer;
 import org.apache.poi.hslf.record.RecordTypes;
+import org.apache.poi.hslf.record.Slide;
 import org.apache.poi.hslf.record.SlideListWithText;
 import org.apache.poi.hslf.record.SlideListWithText.SlideAtomsSet;
 import org.apache.poi.hslf.record.SlidePersistAtom;
@@ -118,12 +121,6 @@ public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagrap
 
 	// For logging
 	private POILogger logger = POILogFactory.getLogger(this.getClass());
-
-
-	/* ===============================================================
-	 *                       Setup Code
-	 * ===============================================================
-	 */
 
 
 	/**
@@ -338,138 +335,133 @@ public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagrap
 		// We always use the latest versions of these records, and use the
 		// SlideAtom/NotesAtom to match them with the StyleAtomSet
 
-		SlideListWithText masterSLWT = _documentRecord.getMasterSlideListWithText();
-		SlideListWithText slidesSLWT = _documentRecord.getSlideSlideListWithText();
-		SlideListWithText notesSLWT = _documentRecord.getNotesSlideListWithText();
-
-		// Find master slides
-		// These can be MainMaster records, but oddly they can also be
-		// Slides or Notes, and possibly even other odd stuff....
-		// About the only thing you can say is that the master details are in
-		// the first SLWT.
-		if (masterSLWT != null) {
-			for (SlideAtomsSet sas : masterSLWT.getSlideAtomsSets()) {
-				Record r = getCoreRecordForSAS(sas);
-				int sheetNo = sas.getSlidePersistAtom().getSlideIdentifier();
-				if (r instanceof org.apache.poi.hslf.record.Slide) {
-					HSLFTitleMaster master = new HSLFTitleMaster((org.apache.poi.hslf.record.Slide) r,
-							sheetNo);
-					master.setSlideShow(this);
-					_titleMasters.add(master);
-				} else if (r instanceof org.apache.poi.hslf.record.MainMaster) {
-					HSLFSlideMaster master = new HSLFSlideMaster((org.apache.poi.hslf.record.MainMaster) r,
-							sheetNo);
-					master.setSlideShow(this);
-					_masters.add(master);
-				}
-			}
-		}
-
+		findMasterSlides();
+		
 		// Having sorted out the masters, that leaves the notes and slides
+        Map<Integer,Integer> slideIdToNotes = new HashMap<Integer,Integer>();
 
-		// Start by finding the notes records to go with the entries in
-		// notesSLWT
-		org.apache.poi.hslf.record.Notes[] notesRecords;
-		Map<Integer,Integer> slideIdToNotes = new HashMap<Integer,Integer>();
-		if (notesSLWT == null) {
-			// None
-			notesRecords = new org.apache.poi.hslf.record.Notes[0];
-		} else {
-			// Match up the records and the SlideAtomSets
-			List<org.apache.poi.hslf.record.Notes> notesRecordsL = 
-			   new ArrayList<org.apache.poi.hslf.record.Notes>();
-			int idx = -1;
-			for (SlideAtomsSet notesSet : notesSLWT.getSlideAtomsSets()) {
-			    idx++;
-				// Get the right core record
-				Record r = getCoreRecordForSAS(notesSet);
-                SlidePersistAtom spa = notesSet.getSlidePersistAtom();
-
-				String loggerLoc = "A Notes SlideAtomSet at "+idx+" said its record was at refID "+spa.getRefID();
-				        
-				// Ensure it really is a notes record
-				if (r == null || r instanceof org.apache.poi.hslf.record.Notes) {
-				    if (r == null) {
-	                    logger.log(POILogger.WARN, loggerLoc+", but that record didn't exist - record ignored.");
-				    }
-				    // we need to add also null-records, otherwise the index references to other existing
-				    // don't work anymore
-					org.apache.poi.hslf.record.Notes notesRecord = (org.apache.poi.hslf.record.Notes) r;
-					notesRecordsL.add(notesRecord);
-
-					// Record the match between slide id and these notes
-					int slideId = spa.getSlideIdentifier();
-					slideIdToNotes.put(slideId, idx);
-				} else {
-					logger.log(POILogger.ERROR, loggerLoc+", but that was actually a " + r);
-				}
-			}
-			notesRecords = new org.apache.poi.hslf.record.Notes[notesRecordsL.size()];
-			notesRecords = notesRecordsL.toArray(notesRecords);
-		}
+        // Start by finding the notes records
+        findNotesSlides(slideIdToNotes);
 
 		// Now, do the same thing for our slides
-		org.apache.poi.hslf.record.Slide[] slidesRecords;
-		SlideAtomsSet[] slidesSets = new SlideAtomsSet[0];
-		if (slidesSLWT == null) {
-			// None
-			slidesRecords = new org.apache.poi.hslf.record.Slide[0];
-		} else {
-			// Match up the records and the SlideAtomSets
-			slidesSets = slidesSLWT.getSlideAtomsSets();
-			slidesRecords = new org.apache.poi.hslf.record.Slide[slidesSets.length];
-			for (int i = 0; i < slidesSets.length; i++) {
-				// Get the right core record
-				Record r = getCoreRecordForSAS(slidesSets[i]);
-
-				// Ensure it really is a slide record
-				if (r instanceof org.apache.poi.hslf.record.Slide) {
-					slidesRecords[i] = (org.apache.poi.hslf.record.Slide) r;
-				} else {
-					logger.log(POILogger.ERROR, "A Slide SlideAtomSet at " + i
-							+ " said its record was at refID "
-							+ slidesSets[i].getSlidePersistAtom().getRefID()
-							+ ", but that was actually a " + r);
-				}
-			}
-		}
-
-		// Finally, generate model objects for everything
-		// Notes first
-		for (org.apache.poi.hslf.record.Notes n : notesRecords) {
-		    HSLFNotes hn = null;
-		    if (n != null) {
-    		    hn = new HSLFNotes(n);
-    		    hn.setSlideShow(this);
-		    }
-		    _notes.add(hn);
-		}
-		// Then slides
-		for (int i = 0; i < slidesRecords.length; i++) {
-			SlideAtomsSet sas = slidesSets[i];
-			int slideIdentifier = sas.getSlidePersistAtom().getSlideIdentifier();
-
-			// Do we have a notes for this?
-			HSLFNotes notes = null;
-			// Slide.SlideAtom.notesId references the corresponding notes slide.
-			// 0 if slide has no notes.
-			int noteId = slidesRecords[i].getSlideAtom().getNotesID();
-			if (noteId != 0) {
-				Integer notesPos = slideIdToNotes.get(noteId);
-				if (notesPos != null) {
-					notes = _notes.get(notesPos);
-				} else {
-					logger.log(POILogger.ERROR, "Notes not found for noteId=" + noteId);
-				}
-			}
-
-			// Now, build our slide
-			HSLFSlide hs = new HSLFSlide(slidesRecords[i], notes, sas, slideIdentifier, (i + 1));
-			hs.setSlideShow(this);
-			_slides.add(hs);
-		}
+		findSlides(slideIdToNotes);
 	}
 
+	/**
+     * Find master slides
+     * These can be MainMaster records, but oddly they can also be
+     * Slides or Notes, and possibly even other odd stuff....
+     * About the only thing you can say is that the master details are in the first SLWT.
+	 */
+	private void findMasterSlides() {
+        SlideListWithText masterSLWT = _documentRecord.getMasterSlideListWithText();
+        if (masterSLWT == null) {
+            return;
+        }
+        
+        for (SlideAtomsSet sas : masterSLWT.getSlideAtomsSets()) {
+            Record r = getCoreRecordForSAS(sas);
+            int sheetNo = sas.getSlidePersistAtom().getSlideIdentifier();
+            if (r instanceof Slide) {
+                HSLFTitleMaster master = new HSLFTitleMaster((Slide)r, sheetNo);
+                master.setSlideShow(this);
+                _titleMasters.add(master);
+            } else if (r instanceof MainMaster) {
+                HSLFSlideMaster master = new HSLFSlideMaster((MainMaster)r, sheetNo);
+                master.setSlideShow(this);
+                _masters.add(master);
+            }
+        }
+	}
+	
+	private void findNotesSlides(Map<Integer,Integer> slideIdToNotes) {
+        SlideListWithText notesSLWT = _documentRecord.getNotesSlideListWithText();
+
+        if (notesSLWT == null) {
+            return;
+        }
+        
+        // Match up the records and the SlideAtomSets
+        int idx = -1;
+        for (SlideAtomsSet notesSet : notesSLWT.getSlideAtomsSets()) {
+            idx++;
+            // Get the right core record
+            Record r = getCoreRecordForSAS(notesSet);
+            SlidePersistAtom spa = notesSet.getSlidePersistAtom();
+
+            String loggerLoc = "A Notes SlideAtomSet at "+idx+" said its record was at refID "+spa.getRefID();
+
+            // we need to add null-records, otherwise the index references to other existing don't work anymore
+            if (r == null) {
+                logger.log(POILogger.WARN, loggerLoc+", but that record didn't exist - record ignored.");
+                continue;
+            }
+
+            // Ensure it really is a notes record
+            if (!(r instanceof Notes)) {
+                logger.log(POILogger.ERROR, loggerLoc+", but that was actually a " + r);
+                continue;
+            }
+            
+            Notes notesRecord = (Notes) r;
+
+            // Record the match between slide id and these notes
+            int slideId = spa.getSlideIdentifier();
+            slideIdToNotes.put(slideId, idx);
+            
+            HSLFNotes hn = new HSLFNotes(notesRecord);
+            hn.setSlideShow(this);
+            _notes.add(hn);
+        }
+	}
+
+	private void findSlides(Map<Integer,Integer> slideIdToNotes) {
+        SlideListWithText slidesSLWT = _documentRecord.getSlideSlideListWithText();
+        if (slidesSLWT == null) {
+            return;
+        }
+
+        // Match up the records and the SlideAtomSets
+        int idx = -1;
+        for (SlideAtomsSet sas : slidesSLWT.getSlideAtomsSets()) {
+            idx++;
+            // Get the right core record
+            SlidePersistAtom spa = sas.getSlidePersistAtom();
+            Record r = getCoreRecordForSAS(sas);
+
+            // Ensure it really is a slide record
+            if (!(r instanceof Slide)) {
+                logger.log(POILogger.ERROR, "A Slide SlideAtomSet at " + idx
+                        + " said its record was at refID "
+                        + spa.getRefID()
+                        + ", but that was actually a " + r);
+                continue;
+            }
+            
+            Slide slide = (Slide)r;
+
+            // Do we have a notes for this?
+            HSLFNotes notes = null;
+            // Slide.SlideAtom.notesId references the corresponding notes slide.
+            // 0 if slide has no notes.
+            int noteId = slide.getSlideAtom().getNotesID();
+            if (noteId != 0) {
+                Integer notesPos = slideIdToNotes.get(noteId);
+                if (notesPos != null && 0 <= notesPos && notesPos < _notes.size()) {
+                    notes = _notes.get(notesPos);
+                } else {
+                    logger.log(POILogger.ERROR, "Notes not found for noteId=" + noteId);
+                }
+            }
+
+            // Now, build our slide
+            int slideIdentifier = spa.getSlideIdentifier();
+            HSLFSlide hs = new HSLFSlide(slide, notes, sas, slideIdentifier, (idx + 1));
+            hs.setSlideShow(this);
+            _slides.add(hs);
+        }
+	}
+	
 	@Override
 	public void write(OutputStream out) throws IOException {
 	    // check for text paragraph modifications
@@ -511,12 +503,6 @@ public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagrap
             }
         }
 	}
-
-	/*
-	 * ===============================================================
-	 *                         Accessor Code
-	 * ===============================================================
-	 */
 
 	/**
 	 * Returns an array of the most recent version of all the interesting
@@ -603,12 +589,6 @@ public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagrap
 	public Document getDocumentRecord() {
 		return _documentRecord;
 	}
-
-	/*
-	 * ===============================================================
-	 * Re-ordering Code
-	 * ===============================================================
-	 */
 
 	/**
 	 * Re-orders a slide, to a new position.
@@ -720,12 +700,6 @@ public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagrap
 		return removedSlide;
 	}
 
-	/*
-	 * ===============================================================
-	 *  Addition Code
-	 * ===============================================================
-	 */
-
 	/**
 	 * Create a blank <code>Slide</code>.
 	 *
@@ -786,7 +760,7 @@ public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagrap
 				+ " and identifier " + sp.getSlideIdentifier());
 
 		// Add the core records for this new Slide to the record tree
-		org.apache.poi.hslf.record.Slide slideRecord = slide.getSlideRecord();
+		Slide slideRecord = slide.getSlideRecord();
 		int psrId = addPersistentObject(slideRecord);
 		sp.setRefID(psrId);
 		slideRecord.setSheetId(psrId);
@@ -1049,7 +1023,7 @@ public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagrap
         } else {
             ctrl.setLinkURL(link.getAddress());
         }
-		ctrl.setLinkTitle(link.getTitle());
+		ctrl.setLinkTitle(link.getLabel());
 
 		int objectId = addToObjListAtom(ctrl);
 		link.setId(objectId);

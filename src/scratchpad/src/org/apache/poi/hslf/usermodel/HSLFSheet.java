@@ -133,9 +133,7 @@ public abstract class HSLFSheet implements HSLFShapeContainer, Sheet<HSLFShape,H
         List<List<HSLFTextParagraph>> trs = getTextParagraphs();
         if (trs == null) return;
         for (List<HSLFTextParagraph> ltp : trs) {
-            for (HSLFTextParagraph tp : ltp) {
-                tp.supplySheet(this);
-            }
+            HSLFTextParagraph.supplySheet(ltp, this);
         }
     }
 

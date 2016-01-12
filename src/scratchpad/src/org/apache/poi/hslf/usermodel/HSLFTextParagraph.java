@@ -102,6 +102,8 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
     private StyleTextProp9Atom styleTextProp9Atom;
 
     private boolean _dirty = false;
+    
+    private final List<HSLFTextParagraph> parentList;
 
     /**
     * Constructs a Text Run from a Unicode text block.
@@ -110,11 +112,13 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
     * @param tha the TextHeaderAtom that defines what's what
     * @param tba the TextBytesAtom containing the text or null if {@link TextCharsAtom} is provided
     * @param tca the TextCharsAtom containing the text or null if {@link TextBytesAtom} is provided
+    * @param parentList the list which contains this paragraph
      */
     /* package */ HSLFTextParagraph(
         TextHeaderAtom tha,
         TextBytesAtom tba,
-        TextCharsAtom tca
+        TextCharsAtom tca,
+        List<HSLFTextParagraph> parentList
     ) {
         if (tha == null) {
             throw new IllegalArgumentException("TextHeaderAtom must be set.");
@@ -122,6 +126,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
         _headerAtom = tha;
         _byteAtom = tba;
         _charAtom = tca;
+        this.parentList = parentList;
     }
 
     /* package */HSLFTextParagraph(HSLFTextParagraph other) {
@@ -133,6 +138,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
         _ruler = other._ruler;
         shapeId = other.shapeId;
         _paragraphStyle.copy(other._paragraphStyle);
+        parentList = other.parentList;
     }
 
     public void addTextRun(HSLFTextRun run) {
@@ -168,7 +174,23 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
      * Supply the Sheet we belong to, which might have an assigned SlideShow
      * Also passes it on to our child RichTextRuns
      */
-    public void supplySheet(HSLFSheet sheet) {
+    public static void supplySheet(List<HSLFTextParagraph> paragraphs, HSLFSheet sheet) {
+        if (paragraphs == null) {
+            return;
+        }
+        for (HSLFTextParagraph p : paragraphs) {
+            p.supplySheet(sheet);
+        }
+
+        assert(sheet.getSlideShow() != null);
+        applyHyperlinks(paragraphs);
+    }
+    
+    /**
+     * Supply the Sheet we belong to, which might have an assigned SlideShow
+     * Also passes it on to our child RichTextRuns
+     */
+    private void supplySheet(HSLFSheet sheet) {
         this._sheet = sheet;
 
         if (_runs == null) return;
@@ -942,7 +964,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
             if (addParagraph && !lastParaEmpty) {
                 TextPropCollection tpc = htp.getParagraphStyle();
                 HSLFTextParagraph prevHtp = htp;
-                htp = new HSLFTextParagraph(htp._headerAtom, htp._byteAtom, htp._charAtom);
+                htp = new HSLFTextParagraph(htp._headerAtom, htp._byteAtom, htp._charAtom, paragraphs);
                 htp.getParagraphStyle().copy(tpc);
                 htp.setParentShape(prevHtp.getParentShape());
                 htp.setShapeId(prevHtp.getShapeId());
@@ -1211,7 +1233,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
 
             // split, but keep delimiter
             for (String para : rawText.split("(?<=\r)")) {
-                HSLFTextParagraph tpara = new HSLFTextParagraph(header, tbytes, tchars);
+                HSLFTextParagraph tpara = new HSLFTextParagraph(header, tbytes, tchars, paragraphs);
                 paragraphs.add(tpara);
                 tpara._ruler = ruler;
                 tpara.getParagraphStyle().updateTextSize(para.length());
@@ -1235,6 +1257,22 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
         return paragraphCollection;
     }
 
+    protected static void applyHyperlinks(List<HSLFTextParagraph> paragraphs) {
+        List<HSLFHyperlink> links = HSLFHyperlink.find(paragraphs);
+        
+        for (HSLFHyperlink h : links) {
+            int csIdx = 0;
+            for (HSLFTextParagraph p : paragraphs) {
+                for (HSLFTextRun r : p) {
+                    if (h.getStartIndex() <= csIdx && csIdx < h.getEndIndex()) {
+                        r.setHyperlinkId(h.getId());
+                    }
+                    csIdx += r.getLength();
+                }
+            }
+        }
+    }
+    
     protected static void applyCharacterStyles(List<HSLFTextParagraph> paragraphs, List<TextPropCollection> charStyles) {
         int paraIdx = 0, runIdx = 0;
         HSLFTextRun trun;
@@ -1340,15 +1378,17 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
         TextPropCollection charStyle = sta.addCharacterTextPropCollection(1);
         wrapper.appendChildRecord(sta);
 
-        HSLFTextParagraph htp = new HSLFTextParagraph(tha, tba, null);
+        List<HSLFTextParagraph> paragraphs = new ArrayList<HSLFTextParagraph>(1);
+        HSLFTextParagraph htp = new HSLFTextParagraph(tha, tba, null, paragraphs);
         htp.setParagraphStyle(paraStyle);
+        paragraphs.add(htp);
 
         HSLFTextRun htr = new HSLFTextRun(htp);
         htr.setCharacterStyle(charStyle);
         htr.setText("");
         htp.addTextRun(htr);
 
-        return Arrays.asList(htp);
+        return paragraphs;
     }
 
     public EscherTextboxWrapper getTextboxWrapper() {
@@ -1396,5 +1436,24 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
 
     public boolean isDirty() {
         return _dirty;
+    }
+    
+    /**
+     * Calculates the start index of the given text run
+     *
+     * @param textrun the text run to search for
+     * @return the start index with the paragraph collection or -1 if not found
+     */
+    /* package */ int getStartIdxOfTextRun(HSLFTextRun textrun) {
+        int idx = 0;
+        for (HSLFTextParagraph p : parentList) {
+            for (HSLFTextRun r : p) {
+                if (r == textrun) {
+                    return idx;
+                }
+                idx += r.getLength();
+            }
+        }
+        return -1;
     }
 }

@@ -46,7 +46,7 @@ public abstract class CreateHyperlink {
         String text = textBox1.getText();
         HSLFHyperlink link = new HSLFHyperlink();
         link.setAddress("http://www.apache.org");
-        link.setTitle(textBox1.getText());
+        link.setLabel(textBox1.getText());
         int linkId = ppt.addHyperlink(link);
 
         // apply link to the text

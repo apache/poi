@@ -70,6 +70,6 @@ public final class Hyperlinks {
         //in ppt end index is inclusive
         String formatStr = "title: %1$s, address: %2$s" + (rawText == null ? "" : ", start: %3$s, end: %4$s, substring: %5$s");
         String substring = (rawText == null) ? "" : rawText.substring(link.getStartIndex(), link.getEndIndex()-1);
-        return String.format(formatStr, link.getTitle(), link.getAddress(), link.getStartIndex(), link.getEndIndex(), substring);
+        return String.format(formatStr, link.getLabel(), link.getAddress(), link.getStartIndex(), link.getEndIndex(), substring);
     }
 }

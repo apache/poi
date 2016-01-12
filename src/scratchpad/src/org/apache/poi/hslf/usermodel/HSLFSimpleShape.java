@@ -310,7 +310,7 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
                 infoAtom.setHyperlinkType(InteractiveInfoAtom.LINK_SlideNumber);
                 break;
             default:
-                logger.log(POILogger.WARN, "Ignore unknown hyperlink type : "+link.getTitle());
+                logger.log(POILogger.WARN, "Ignore unknown hyperlink type : "+link.getLabel());
                 break;
         }
 
