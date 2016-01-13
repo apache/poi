@@ -556,8 +556,249 @@ public class DocumentSummaryInformation extends SpecialPropertySet
         final MutableSection s = (MutableSection) getFirstSection();
         s.removeProperty(PropertyIDMap.PID_LINKSDIRTY);
     }
+    
+    
+    /**
+     * <p>Returns the character count including whitespace, or 0 if the 
+     *  {@link DocumentSummaryInformation} does not contain this char count.</p>
+     * <p>This is the whitespace-including version of {@link SummaryInformation#getCharCount()}
+     *
+     * @return The character count or <code>null</code>
+     */
+    public int getCharCountWithSpaces()
+    {
+        return getPropertyIntValue(PropertyIDMap.PID_CCHWITHSPACES);
+    }
 
+    /**
+     * Sets the character count including whitespace
+     * 
+     * @param charCount The character count to set.
+     */
+    public void setCharCountWithSpaces(int count)
+    {
+        final MutableSection s = (MutableSection) getFirstSection();
+        s.setProperty(PropertyIDMap.PID_CCHWITHSPACES, count);
+    }
+    
+    /**
+     * Removes the character count
+     */
+    public void removeCharCountWithSpaces()
+    {
+        final MutableSection s = (MutableSection) getFirstSection();
+        s.removeProperty(PropertyIDMap.PID_CCHWITHSPACES);
+    }
+    
+    
+    /**
+     * <p>Get if the User Defined Property Set has been updated outside of the 
+     * Application.</p>
+     * <p>If it has (true), the hyperlinks should be updated on document load.</p>
+     */
+    public boolean getHyperlinksChanged()
+    {
+        return getPropertyBooleanValue(PropertyIDMap.PID_HYPERLINKSCHANGED);
+    }
+    
+    /**
+     * Set the flag for if the User Defined Property Set has been updated outside 
+     *  of the Application.
+     */
+    public void setHyperlinksChanged(boolean changed)
+    {
+        final MutableSection s = (MutableSection) getFirstSection();
+        s.setProperty(PropertyIDMap.PID_HYPERLINKSCHANGED, changed);
+    }
+    
+    /**
+     * Removes the flag for if the User Defined Property Set has been updated
+     *  outside of the Application.
+     */
+    public void removeHyperlinksChanged()
+    {
+        final MutableSection s = (MutableSection) getFirstSection();
+        s.removeProperty(PropertyIDMap.PID_HYPERLINKSCHANGED);
+    }
 
+    
+    /**
+     * <p>Gets the version of the Application which wrote the
+     *  Property set, stored with the two high order bytes having the major
+     *  version number, and the two low order bytes the minor version number.</p>
+     * <p>This will be 0 if no version is set.</p>
+     */
+    public int getApplicationVersion()
+    {
+        return getPropertyIntValue(PropertyIDMap.PID_VERSION);
+    }
+    
+    /**
+     * Sets the Application version, which must be a 4 byte int with
+     *  the  two high order bytes having the major version number, and the 
+     *  two low order bytes the minor version number.
+     */
+    public void setApplicationVersion(int version)
+    {
+        final MutableSection s = (MutableSection) getFirstSection();
+        s.setProperty(PropertyIDMap.PID_VERSION, version);
+    }
+    
+    /**
+     * Removes the Application Version
+     */
+    public void removeApplicationVersion()
+    {
+        final MutableSection s = (MutableSection) getFirstSection();
+        s.removeProperty(PropertyIDMap.PID_VERSION);
+    }
+
+    
+    /**
+     * <p>Returns the VBA digital signature for the VBA project 
+     *  embedded in the document (or <code>null</code>).</p>
+     */
+    public byte[] getVBADigitalSignature()
+    {
+        Object value = getProperty(PropertyIDMap.PID_DIGSIG);
+        if (value != null && value instanceof byte[]) {
+            return (byte[])value;
+        }
+        return null;
+    }
+    
+    /**
+     * <p>Sets the VBA digital signature for the VBA project 
+     *  embedded in the document.</p>
+     *  
+     * @param signature VBA Digital Signature for the project
+     */
+    public void setVBADigitalSignature(byte[] signature)
+    {
+        final MutableSection s = (MutableSection) getFirstSection();
+        s.setProperty(PropertyIDMap.PID_DIGSIG, signature);
+    }
+    
+    /**
+     * Removes the VBA Digital Signature
+     */
+    public void removeVBADigitalSignature()
+    {
+        final MutableSection s = (MutableSection) getFirstSection();
+        s.removeProperty(PropertyIDMap.PID_DIGSIG);
+    }
+
+    
+    /**
+     * <p>Gets the content type of the file (or <code>null</code>).</p>
+     */
+    public String getContentType()
+    {
+        return getPropertyStringValue(PropertyIDMap.PID_CONTENTTYPE);
+    }
+    
+    /**
+     * Sets the content type of the file
+     */
+    public void setContentType(String type)
+    {
+        final MutableSection s = (MutableSection) getFirstSection();
+        s.setProperty(PropertyIDMap.PID_CONTENTTYPE, type);
+    }
+    
+    /**
+     * Removes the content type of the file
+     */
+    public void removeContentType()
+    {
+        final MutableSection s = (MutableSection) getFirstSection();
+        s.removeProperty(PropertyIDMap.PID_CONTENTTYPE);
+    }
+
+    
+    /**
+     * <p>Gets the content status of the file (or <code>null</code>).</p>
+     */
+    public String getContentStatus()
+    {
+        return getPropertyStringValue(PropertyIDMap.PID_CONTENTSTATUS);
+    }
+    
+    /**
+     * Sets the content type of the file
+     */
+    public void setContentStatus(String status)
+    {
+        final MutableSection s = (MutableSection) getFirstSection();
+        s.setProperty(PropertyIDMap.PID_CONTENTSTATUS, status);
+    }
+    
+    /**
+     * Removes the content status of the file
+     */
+    public void removeContentStatus()
+    {
+        final MutableSection s = (MutableSection) getFirstSection();
+        s.removeProperty(PropertyIDMap.PID_CONTENTSTATUS);
+    }
+
+    
+    /**
+     * <p>Gets the document language, which is normally unset and empty
+     *  (or <code>null</code>).</p>
+     */
+    public String getLanguage()
+    {
+        return getPropertyStringValue(PropertyIDMap.PID_LANGUAGE);
+    }
+    
+    /**
+     * Set the document language
+     */
+    public void setLanguage(String language)
+    {
+        final MutableSection s = (MutableSection) getFirstSection();
+        s.setProperty(PropertyIDMap.PID_LANGUAGE, language);
+    }
+    
+    /**
+     * Removes the document language
+     */
+    public void removeLanguage()
+    {
+        final MutableSection s = (MutableSection) getFirstSection();
+        s.removeProperty(PropertyIDMap.PID_LANGUAGE);
+    }
+
+    
+    /**
+     * <p>Gets the document version as a string, which is normally unset and empty
+     *  (or <code>null</code>).</p>
+     */
+    public String getDocumentVersion()
+    {
+        return getPropertyStringValue(PropertyIDMap.PID_DOCVERSION);
+    }
+    
+    /**
+     * Sets the document version string
+     */
+    public void setDocumentVersion(String version)
+    {
+        final MutableSection s = (MutableSection) getFirstSection();
+        s.setProperty(PropertyIDMap.PID_DOCVERSION, version);
+    }
+    
+    /**
+     * Removes the document version string
+     */
+    public void removeDocumentVersion()
+    {
+        final MutableSection s = (MutableSection) getFirstSection();
+        s.removeProperty(PropertyIDMap.PID_DOCVERSION);
+    }
+
+    
     /**
      * <p>Gets the custom properties.</p>
      *
