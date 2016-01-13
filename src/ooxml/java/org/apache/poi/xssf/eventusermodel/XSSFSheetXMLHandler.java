@@ -16,14 +16,12 @@
 ==================================================================== */
 package org.apache.poi.xssf.eventusermodel;
 
-import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.Queue;
 
 import org.apache.poi.ss.usermodel.BuiltinFormats;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.util.CellAddress;
-import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.xssf.model.CommentsTable;

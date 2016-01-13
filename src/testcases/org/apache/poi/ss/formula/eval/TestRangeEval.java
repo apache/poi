@@ -24,12 +24,12 @@ import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.util.AreaReference;
-import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.ss.formula.TwoDEval;
 import org.apache.poi.ss.formula.ptg.AreaI;
 import org.apache.poi.ss.formula.ptg.AreaI.OffsetArea;
 import org.apache.poi.ss.usermodel.CellValue;
+import org.apache.poi.ss.util.AreaReference;
+import org.apache.poi.ss.util.CellReference;
 
 /**
  * Test for unary plus operator evaluator.
@@ -54,7 +54,8 @@ public final class TestRangeEval extends TestCase {
 			createRefEval(refA),
 			createRefEval(refB),
 		};
-		AreaReference ar = new AreaReference(expectedAreaRef);
+		@SuppressWarnings("deprecation")
+        AreaReference ar = new AreaReference(expectedAreaRef);
 		ValueEval result = EvalInstances.Range.evaluate(args, 0, (short)0);
 		assertTrue(result instanceof AreaEval);
 		AreaEval ae = (AreaEval) result;

@@ -52,7 +52,7 @@ public final class TestMetaDataIPI extends TestCase{
 	 * Setup is used to get the document ready. Gets the DocumentSummaryInformation and the
 	 * SummaryInformation to reasonable values
 	 */
-	public void setUp() {
+	public void setUp() throws Exception {
 		bout = new ByteArrayOutputStream();
 		poifs = new POIFSFileSystem();
 		dir = poifs.getRoot();
@@ -72,9 +72,6 @@ public final class TestMetaDataIPI extends TestCase{
 			 */
 			dsi = PropertySetFactory.newDocumentSummaryInformation();
 			assertNotNull(dsi);
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail();
 		}
 		assertNotNull(dsi);
 		try {
@@ -92,9 +89,6 @@ public final class TestMetaDataIPI extends TestCase{
 			 */
 			si = PropertySetFactory.newSummaryInformation();
 			assertNotNull(si);
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail();
 		}
 		assertNotNull(dsi);
 	}
@@ -111,13 +105,8 @@ public final class TestMetaDataIPI extends TestCase{
 
 		si = null;
 		dsi = null;
-		try {
-			poifs.writeFilesystem(bout);
-			bout.flush();
-		} catch (IOException e) {
-			e.printStackTrace();
-			fail();
-		}
+        poifs.writeFilesystem(bout);
+        bout.flush();
 
 		InputStream is = new ByteArrayInputStream(bout.toByteArray());
 		assertNotNull(is);
