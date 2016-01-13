@@ -33,6 +33,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.poi.POIXMLException;
@@ -68,6 +69,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCol;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCols;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComments;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTIgnoredError;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRow;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetData;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetProtection;
@@ -1827,5 +1829,76 @@ public final class TestXSSFSheet extends BaseTestSheet {
     @Test
     public void testCopyMultipleRows() throws IOException {
         testCopyMultipleRows("XSSFSheet.copyRows.xlsx");
+    }
+
+    @Test
+    public void testIgnoredErrors() throws IOException {
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        XSSFSheet sheet = workbook.createSheet();
+        CellRangeAddress region = CellRangeAddress.valueOf("B2:D4");
+        sheet.addIgnoredErrors(region, IgnoredErrorType.NUMBER_STORED_AS_TEXT);
+        final CTIgnoredError ignoredError = sheet.getCTWorksheet().getIgnoredErrors().getIgnoredErrorArray(0);
+        assertEquals(1, ignoredError.getSqref().size());
+        assertEquals("B2:D4", ignoredError.getSqref().get(0));
+        assertTrue(ignoredError.getNumberStoredAsText());
+        
+        Map<IgnoredErrorType, Set<CellRangeAddress>> ignoredErrors = sheet.getIgnoredErrors();
+        assertEquals(1, ignoredErrors.size());
+        assertEquals(1, ignoredErrors.get(IgnoredErrorType.NUMBER_STORED_AS_TEXT).size());
+        assertEquals("B2:D4", ignoredErrors.get(IgnoredErrorType.NUMBER_STORED_AS_TEXT).iterator().next().formatAsString());
+        
+        workbook.close();
+    }
+
+    @Test
+    public void testIgnoredErrorsMultipleTypes() throws IOException {
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        XSSFSheet sheet = workbook.createSheet();
+        CellRangeAddress region = CellRangeAddress.valueOf("B2:D4");
+        sheet.addIgnoredErrors(region, IgnoredErrorType.FORMULA, IgnoredErrorType.EVALUATION_ERROR);
+        final CTIgnoredError ignoredError = sheet.getCTWorksheet().getIgnoredErrors().getIgnoredErrorArray(0);
+        assertEquals(1, ignoredError.getSqref().size());
+        assertEquals("B2:D4", ignoredError.getSqref().get(0));
+        assertFalse(ignoredError.getNumberStoredAsText());
+        assertTrue(ignoredError.getFormula());
+        assertTrue(ignoredError.getEvalError());
+        
+        Map<IgnoredErrorType, Set<CellRangeAddress>> ignoredErrors = sheet.getIgnoredErrors();
+        assertEquals(2, ignoredErrors.size());
+        assertEquals(1, ignoredErrors.get(IgnoredErrorType.FORMULA).size());
+        assertEquals("B2:D4", ignoredErrors.get(IgnoredErrorType.FORMULA).iterator().next().formatAsString());
+        assertEquals(1, ignoredErrors.get(IgnoredErrorType.EVALUATION_ERROR).size());
+        assertEquals("B2:D4", ignoredErrors.get(IgnoredErrorType.EVALUATION_ERROR).iterator().next().formatAsString());
+        workbook.close();
+    }
+
+    @Test
+    public void testIgnoredErrorsMultipleCalls() throws IOException {
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        XSSFSheet sheet = workbook.createSheet();
+        CellRangeAddress region = CellRangeAddress.valueOf("B2:D4");
+        // Two calls means two elements, no clever collapsing just yet.
+        sheet.addIgnoredErrors(region, IgnoredErrorType.EVALUATION_ERROR);
+        sheet.addIgnoredErrors(region, IgnoredErrorType.FORMULA);
+        
+        CTIgnoredError ignoredError = sheet.getCTWorksheet().getIgnoredErrors().getIgnoredErrorArray(0);
+        assertEquals(1, ignoredError.getSqref().size());
+        assertEquals("B2:D4", ignoredError.getSqref().get(0));
+        assertFalse(ignoredError.getFormula());
+        assertTrue(ignoredError.getEvalError());
+        
+        ignoredError = sheet.getCTWorksheet().getIgnoredErrors().getIgnoredErrorArray(1);
+        assertEquals(1, ignoredError.getSqref().size());
+        assertEquals("B2:D4", ignoredError.getSqref().get(0));
+        assertTrue(ignoredError.getFormula());
+        assertFalse(ignoredError.getEvalError());
+        
+        Map<IgnoredErrorType, Set<CellRangeAddress>> ignoredErrors = sheet.getIgnoredErrors();
+        assertEquals(2, ignoredErrors.size());
+        assertEquals(1, ignoredErrors.get(IgnoredErrorType.FORMULA).size());
+        assertEquals("B2:D4", ignoredErrors.get(IgnoredErrorType.FORMULA).iterator().next().formatAsString());
+        assertEquals(1, ignoredErrors.get(IgnoredErrorType.EVALUATION_ERROR).size());
+        assertEquals("B2:D4", ignoredErrors.get(IgnoredErrorType.EVALUATION_ERROR).iterator().next().formatAsString());
+        workbook.close();
     }
 }
