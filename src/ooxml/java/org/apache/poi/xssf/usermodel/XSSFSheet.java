@@ -31,8 +31,11 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -78,47 +81,7 @@ import org.apache.poi.xssf.usermodel.helpers.ColumnHelper;
 import org.apache.poi.xssf.usermodel.helpers.XSSFRowShifter;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTAutoFilter;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBreak;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCalcPr;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellFormula;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCol;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCols;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCommentList;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDataValidation;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDataValidations;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDrawing;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTHeaderFooter;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTHyperlink;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTLegacyDrawing;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTMergeCell;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTMergeCells;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTOutlinePr;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageBreak;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageMargins;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageSetUpPr;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPane;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPrintOptions;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRow;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSelection;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheet;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetCalcPr;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetFormatPr;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetPr;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetProtection;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetView;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetViews;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTablePart;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableParts;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCalcMode;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellFormulaType;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPane;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPaneState;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.WorksheetDocument;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
 
 /**
  * High level representation of a SpreadsheetML worksheet.
@@ -4051,4 +4014,69 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         }
         return col.getOutlineLevel();
     }
+    
+    /**
+     * Add ignored errors (usually to suppress them in the UI of a consuming
+     * application).
+     *
+     * @param cell Cell.
+     * @param ignoredErrorTypes Types of error to ignore there.
+     */
+    public void addIgnoredErrors(CellReference cell, IgnoredErrorType... ignoredErrorTypes) {
+        addIgnoredErrors(cell.formatAsString(), ignoredErrorTypes);
+    }
+    
+    /**
+     * Ignore errors across a range of cells.
+     * 
+     * @param region Range of cells.
+     * @param ignoredErrorTypes Types of error to ignore there.
+     */
+    public void addIgnoredErrors(CellRangeAddress region, IgnoredErrorType... ignoredErrorTypes) {
+        region.validate(SpreadsheetVersion.EXCEL2007);
+        addIgnoredErrors(region.formatAsString(), ignoredErrorTypes);
+    }
+    
+    /**
+     * Returns the errors currently being ignored and the ranges
+     * where they are ignored.
+     *
+     * @return Map of error type to the range(s) where they are ignored.
+     */
+    public Map<IgnoredErrorType, Set<CellRangeAddress>> getIgnoredErrors() {
+        Map<IgnoredErrorType, Set<CellRangeAddress>> result = new LinkedHashMap<IgnoredErrorType, Set<CellRangeAddress>>();
+        if (worksheet.isSetIgnoredErrors()) {
+            for (CTIgnoredError err : worksheet.getIgnoredErrors().getIgnoredErrorList()) {
+                for (IgnoredErrorType errType : getErrorTypes(err)) {
+                    if (!result.containsKey(errType)) {
+                        result.put(errType, new LinkedHashSet<CellRangeAddress>());
+                    }
+                    for (Object ref : err.getSqref()) {
+                        result.get(errType).add(CellRangeAddress.valueOf(ref.toString()));
+                    }
+                }
+            }
+        }
+        return result;
+    }
+    
+    private void addIgnoredErrors(String ref, IgnoredErrorType... ignoredErrorTypes) {
+        CTIgnoredErrors ctIgnoredErrors = worksheet.isSetIgnoredErrors() ? worksheet.getIgnoredErrors() : worksheet.addNewIgnoredErrors();
+        CTIgnoredError ctIgnoredError = ctIgnoredErrors.addNewIgnoredError();
+        ctIgnoredError.setSqref(Arrays.asList(ref));
+        for (IgnoredErrorType errType : ignoredErrorTypes) {
+            errType.set(ctIgnoredError);
+        }
+    }
+
+    private Set<IgnoredErrorType> getErrorTypes(CTIgnoredError err) {
+        Set<IgnoredErrorType> result = new LinkedHashSet<IgnoredErrorType>();
+        for (IgnoredErrorType errType : IgnoredErrorType.values()) {
+            if (errType.isSet(err)) {
+                result.add(errType);
+            }
+        }
+        return result;
+    }
+    
 }
