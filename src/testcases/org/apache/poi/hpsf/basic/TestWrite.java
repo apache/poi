@@ -327,11 +327,7 @@ public class TestWrite
                     }
                     catch (Exception ex)
                     {
-                        ex.printStackTrace();
-                        throw new RuntimeException(ex.toString());
-                        /* FIXME (2): Replace the previous line by the following
-                         * one once we no longer need JDK 1.3 compatibility. */
-                        // throw new RuntimeException(ex);
+                        throw new RuntimeException(ex);
                     }
                 }
             },
@@ -716,7 +712,7 @@ public class TestWrite
 
 
     /**
-     * <p>Performs the check described in {@link #testRecreate()} for a single
+     * <p>Performs the check described in {@link #recreate()} for a single
      * POI filesystem.</p>
      *
      * @param f the POI filesystem to check

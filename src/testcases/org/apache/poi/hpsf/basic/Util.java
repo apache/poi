@@ -152,8 +152,7 @@ final class Util {
                 }
                 catch (IOException ex)
                 {
-                    ex.printStackTrace();
-                    throw new RuntimeException(ex.getMessage());
+                    throw new RuntimeException(ex);
                 }
             }
         };
@@ -224,8 +223,7 @@ final class Util {
                 }
                 catch (Exception ex)
                 {
-                    ex.printStackTrace();
-                    throw new RuntimeException(ex.getMessage());
+                    throw new RuntimeException(ex);
                 }
             }
         };

@@ -38,15 +38,21 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.STVerticalAlignRun
 /**
  * Tests for XWPF Run
  */
+@SuppressWarnings("deprecation")
 public class TestXWPFRun extends TestCase {
-    public CTR ctRun;
-    public XWPFParagraph p;
+    private CTR ctRun;
+    private XWPFParagraph p;
+    private XWPFDocument doc;
 
     protected void setUp() {
-        XWPFDocument doc = new XWPFDocument();
+        doc = new XWPFDocument();
         p = doc.createParagraph();
 
         this.ctRun = CTR.Factory.newInstance();
+    }
+    
+    protected void tearDown() throws Exception {
+        doc.close();
     }
 
     public void testSetGetText() {
@@ -410,6 +416,13 @@ public class TestXWPFRun extends TestCase {
 
         assertEquals(1, doc.getAllPictures().size());
         assertEquals(1, r.getEmbeddedPictures().size());
+        
+        XWPFDocument docBack = XWPFTestDataSamples.writeOutAndReadBack(doc);
+        XWPFParagraph pBack = docBack.getParagraphArray(2);
+        XWPFRun rBack = pBack.getRuns().get(0);
+        
+        assertEquals(1, docBack.getAllPictures().size());
+        assertEquals(1, rBack.getEmbeddedPictures().size());
     }
 
     /**

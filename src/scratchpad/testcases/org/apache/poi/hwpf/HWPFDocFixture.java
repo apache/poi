@@ -22,6 +22,8 @@ import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.POIDataSamples;
 
+import java.io.IOException;
+
 
 public final class HWPFDocFixture
 {
@@ -37,10 +39,7 @@ public final class HWPFDocFixture
     _testFile = testFile;
   }
 
-  public void setUp()
-  {
-    try
-    {
+  public void setUp() throws IOException {
       POIFSFileSystem filesystem = new POIFSFileSystem(
               POIDataSamples.getDocumentInstance().openResourceAsStream(_testFile));
 
@@ -65,11 +64,6 @@ public final class HWPFDocFixture
       filesystem.createDocumentInputStream(name).read(_tableStream);
 
       _fib.fillVariableFields(_mainStream, _tableStream);
-    }
-    catch (Throwable t)
-    {
-      t.printStackTrace();
-    }
   }
 
   public void tearDown()
