@@ -573,7 +573,7 @@ public class DocumentSummaryInformation extends SpecialPropertySet
     /**
      * Sets the character count including whitespace
      * 
-     * @param charCount The character count to set.
+     * @param count The character count to set.
      */
     public void setCharCountWithSpaces(int count)
     {
