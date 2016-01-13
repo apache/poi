@@ -140,6 +140,9 @@ public class CellFormatPart {
 
         String format = "(?:" + color + ")?                 # Text color\n" +
                 "(?:\\[" + condition + "\\])?               # Condition\n" +
+                // see https://msdn.microsoft.com/en-ca/goglobal/bb964664.aspx and https://bz.apache.org/ooo/show_bug.cgi?id=70003
+                // we ignore these for now though
+                "(?:\\[\\$-[0-9a-fA-F]+\\])?                # Optional locale id, ignored currently\n" +
                 "((?:" + part + ")+)                        # Format spec\n";
 
         int flags = Pattern.COMMENTS | Pattern.CASE_INSENSITIVE;
@@ -360,7 +363,7 @@ public class CellFormatPart {
                     }
                     // Something else inside [] which isn't supported!
                     throw new IllegalArgumentException("Unsupported [] format block '" +
-                                                       repl + "' in '" + fdesc + "'");
+                                                       repl + "' in '" + fdesc + "' with c2: " + c2);
                 case '#':
                 case '?':
                     return CellFormatType.NUMBER;

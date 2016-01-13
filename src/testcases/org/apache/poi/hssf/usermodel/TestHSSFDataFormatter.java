@@ -96,7 +96,11 @@ public final class TestHSSFDataFormatter {
             "[$-409]mmmmm;@",
             "[$-409]mmmmm\\-yy;@",
             "mmmm/d/yyyy;@",
-            "[$-409]d\\-mmm\\-yyyy;@"
+            "[$-409]d\\-mmm\\-yyyy;@",
+            "[$-409]d\\-mmm;[$-3]d\\-mmm;@",      // international three-part
+            "[$-41f]d\\-mmm;[$-41f]d\\-mmm;@",      // turkish international three-part
+            "[$-F40f]d\\-mmm;[$-F40f]d\\-mmm;@",      // custom international three-part
+            "[$-F40f]d\\-mmm;[$-F40f]d\\-mmm;0;@"      // custom international four-part
         };
 
         //valid time formats - all should have 11:23 in output
@@ -120,12 +124,16 @@ public final class TestHSSFDataFormatter {
             "$#,##0.00",
             "[$-809]#,##0.00", // international format
             "[$-2]#,##0.00", // international format
+            "[$-041f]#,##0.00", // international format
             "0000.00000%",
             "0.000E+00",
             "0.00E+00",
             "[BLACK]0.00;[COLOR 5]##.##",
             "[>999999]#,,\"M\";[>999]#,\"K\";#", // num/K/M
             "[>999999]#.000,,\"M\";[>999]#.000,\"K\";#.000", // with decimals
+            "[$-809]#,##0.00;[$-809]#,##0.00", // two-part international format
+            "[$-809]#,##0.00;[$-809]#,##0.00;0", // three-part international format
+            "[$-809]#,##0.00;[$-809]#,##0.00;0;@", // four-part international format
         };
 
         // invalid date formats -- will throw exception in DecimalFormat ctor
