@@ -19,6 +19,7 @@ package org.apache.poi.stress;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
@@ -57,4 +58,10 @@ public class HSLFFileHandler extends SlideShowHandler {
 			stream.close();
 		}
 	}
+
+    // a test-case to test this locally without executing the full TestAllFiles
+    @Test
+    public void testExtractor() throws Exception {
+        handleExtracting(new File("test-data/slideshow/ae.ac.uaeu.faculty_nafaachbili_GeomLec1.pptx"));
+   }
 }

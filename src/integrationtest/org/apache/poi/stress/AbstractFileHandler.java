@@ -114,7 +114,7 @@ public abstract class AbstractFileHandler implements FileHandler {
             }
         } catch (IllegalArgumentException e) {
             if(!EXPECTED_EXTRACTOR_FAILURES.contains(file)) {
-                throw new Exception("While handling " + file, e);
+                throw e;
             }
         } finally {
             extractor.close();

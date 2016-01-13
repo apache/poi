@@ -235,7 +235,7 @@ public class CellFormat {
             if (DateUtil.isValidExcelDate(numericValue)) {
                 return getApplicableFormatPart(numericValue).apply(value);
             } else {
-                throw new IllegalArgumentException("value not a valid Excel date");
+                throw new IllegalArgumentException("value " + numericValue + " of date " + value + " is not a valid Excel date");
             }
         } else {
             return textFmt.apply(value);
