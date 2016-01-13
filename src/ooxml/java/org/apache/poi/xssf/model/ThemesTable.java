@@ -75,7 +75,6 @@ public class ThemesTable extends POIXMLDocumentPart {
     /**
      * Construct a ThemesTable.
      * @param part A PackagePart.
-     * @param rel A PackageRelationship.
      * 
      * @since POI 3.14-Beta1
      */

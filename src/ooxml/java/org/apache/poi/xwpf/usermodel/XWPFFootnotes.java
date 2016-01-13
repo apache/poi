@@ -50,7 +50,6 @@ public class XWPFFootnotes extends POIXMLDocumentPart {
      * Construct XWPFFootnotes from a package part
      *
      * @param part the package part holding the data of the footnotes,
-     * @param rel  the package relationship of type "http://schemas.openxmlformats.org/officeDocument/2006/relationships/footnotes"
      * 
      * @since POI 3.14-Beta1
      */

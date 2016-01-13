@@ -93,8 +93,6 @@ public final class XSSFChart extends POIXMLDocumentPart implements Chart, ChartA
 	 *
 	 * @param part the package part holding the chart data,
 	 * the content type must be <code>application/vnd.openxmlformats-officedocument.drawingml.chart+xml</code>
-	 * @param rel  the package relationship holding this chart,
-	 * the relationship type must be http://schemas.openxmlformats.org/officeDocument/2006/relationships/chart
 	 * 
 	 * @since POI 3.14-Beta1
 	 */

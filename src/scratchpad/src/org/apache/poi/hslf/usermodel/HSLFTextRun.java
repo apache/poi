@@ -400,7 +400,7 @@ public final class HSLFTextRun implements TextRun {
      * Sets the associated hyperlink id - currently this is only used while parsing and
      * can't be used for update a ppt
      *
-     * @param hyperlink the id or -1 to unset it
+     * @param hyperlinkId the id or -1 to unset it
      */
     public void setHyperlinkId(int hyperlinkId) {
         this.hyperlinkId = hyperlinkId;

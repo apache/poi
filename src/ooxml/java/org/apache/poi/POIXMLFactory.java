@@ -40,7 +40,6 @@ public abstract class POIXMLFactory {
      * from {@link POIXMLDocument#load(POIXMLFactory)} when parsing a document
      *
      * @param parent parent part
-     * @param rel   the package part relationship
      * @param part  the PackagePart representing the created instance
      * @return A new instance of a POIXMLDocumentPart.
      * 
