@@ -600,8 +600,15 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
         boolean hasColor = getFlag(ParagraphFlagsTextProp.BULLET_HARDCOLOR_IDX);
         if (tp == null || !hasColor) {
             // if bullet color is undefined, return color of first run
-            if (_runs.isEmpty()) return null;
+            if (_runs.isEmpty()) {
+                return null;
+            }
+            
             SolidPaint sp = _runs.get(0).getFontColor();
+            if(sp == null) {
+                return null;
+            }
+            
             return DrawPaint.applyColorTransform(sp.getSolidColor());
         }
 
