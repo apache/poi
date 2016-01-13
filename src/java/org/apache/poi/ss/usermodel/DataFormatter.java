@@ -314,13 +314,15 @@ public class DataFormatter implements Observer {
                 CellFormat cfmt = CellFormat.getInstance(formatStr);
                 // CellFormat requires callers to identify date vs not, so do so
                 Object cellValueO = Double.valueOf(cellValue);
-                if (DateUtil.isADateFormat(formatIndex, formatStr)) {
+                if (DateUtil.isADateFormat(formatIndex, formatStr) && 
+                        // don't try to handle Date value 0, let a 3 or 4-part format take care of it 
+                        ((Double)cellValueO).doubleValue() != 0.0) {
                     cellValueO = DateUtil.getJavaDate(cellValue);
                 }
                 // Wrap and return (non-cachable - CellFormat does that)
                 return new CellFormatResultWrapper( cfmt.apply(cellValueO) );
             } catch (Exception e) {
-                logger.log(POILogger.WARN, "Formatting failed as " + formatStr + ", falling back", e);
+                logger.log(POILogger.WARN, "Formatting failed for format " + formatStr + ", falling back", e);
             }
         }
         

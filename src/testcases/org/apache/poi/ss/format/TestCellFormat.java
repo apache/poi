@@ -16,7 +16,7 @@
 ==================================================================== */
 package org.apache.poi.ss.format;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -974,5 +974,41 @@ public class TestCellFormat {
         // TODO Fix these to not have an incorrect bonus 0 on the end 
         //assertEquals(" "+pound+"   -  ", cfUK.apply(Double.valueOf(0)).text);
         //assertEquals(" -    "+euro+"  ", cfFR.apply(Double.valueOf(0)).text);
+    }
+
+    @Test
+    public void testThreePartComplexFormat1() {
+        // verify a rather complex format found e.g. in http://wahl.land-oberoesterreich.gv.at/Downloads/bp10.xls
+        CellFormatPart posPart = new CellFormatPart("[$-F400]h:mm:ss\\ AM/PM");
+        assertNotNull(posPart);
+        assertEquals("1:00:12 AM", posPart.apply(new Date(12345)).text);
+        
+        CellFormatPart negPart = new CellFormatPart("[$-F40]h:mm:ss\\ AM/PM");
+        assertNotNull(negPart);
+        assertEquals("1:00:12 AM", posPart.apply(new Date(12345)).text);
+
+        //assertNotNull(new CellFormatPart("_-* \"\"??_-;_-@_-"));
+        
+        CellFormat instance = CellFormat.getInstance("[$-F400]h:mm:ss\\ AM/PM;[$-F40]h:mm:ss\\ AM/PM;_-* \"\"??_-;_-@_-");
+        assertNotNull(instance);
+        assertEquals("1:00:12 AM", instance.apply(new Date(12345)).text);
+    }
+    
+    @Test
+    public void testThreePartComplexFormat2() {
+        // verify a rather complex format found e.g. in http://wahl.land-oberoesterreich.gv.at/Downloads/bp10.xls
+        CellFormatPart posPart = new CellFormatPart("dd/mm/yyyy");
+        assertNotNull(posPart);
+        assertEquals("01/01/1970", posPart.apply(new Date(12345)).text);
+        
+        CellFormatPart negPart = new CellFormatPart("dd/mm/yyyy");
+        assertNotNull(negPart);
+        assertEquals("01/01/1970", posPart.apply(new Date(12345)).text);
+
+        //assertNotNull(new CellFormatPart("_-* \"\"??_-;_-@_-"));
+        
+        CellFormat instance = CellFormat.getInstance("dd/mm/yyyy;dd/mm/yyyy;_-* \"\"??_-;_-@_-");
+        assertNotNull(instance);
+        assertEquals("01/01/1970", instance.apply(new Date(12345)).text);
     }
 }
