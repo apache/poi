@@ -34,7 +34,6 @@ public class XSSFVBAPart extends POIXMLDocumentPart {
      * Construct XSSFVBAPart from a package part
      *
      * @param part the package part holding the VBA data,
-     * @param rel  the package relationship holding this part
      * 
      * @since POI 3.14-Beta1
      */

@@ -66,8 +66,6 @@ public class XSSFPictureData extends POIXMLDocumentPart implements PictureData {
      * Construct XSSFPictureData from a package part
      *
      * @param part the package part holding the drawing data,
-     * @param rel  the package relationship holding this drawing,
-     * the relationship type must be http://schemas.openxmlformats.org/officeDocument/2006/relationships/image
      * 
      * @since POI 3.14-Beta1
      */

@@ -57,7 +57,6 @@ public class XSSFPivotCacheDefinition extends POIXMLDocumentPart{
      * Should only be called when reading in an existing file.
      *
      * @param part - The package part that holds xml data representing this pivot cache definition.
-     * @param rel - the relationship of the given package part in the underlying OPC package
      * 
      * @since POI 3.14-Beta1
      */

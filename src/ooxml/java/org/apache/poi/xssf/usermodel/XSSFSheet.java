@@ -165,7 +165,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * Should only be called by XSSFWorkbook when reading in an existing file.
      *
      * @param part - The package part that holds xml data representing this sheet.
-     * @param rel - the relationship of the given package part in the underlying OPC package
      * 
      * @since POI 3.14-Beta1
      */
