@@ -48,7 +48,7 @@ public final class PackagePropertiesPart extends PackagePart implements
 
 	public final static String NAMESPACE_DCTERMS_URI = "http://purl.org/dc/terms/";
 
-	private final static String DEFAULT_DATEFORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+	private final static String DEFAULT_DATEFORMAT =     "yyyy-MM-dd'T'HH:mm:ss'Z'";
 	private final static String ALTERNATIVE_DATEFORMAT = "yyyy-MM-dd'T'HH:mm:ss.SS'Z'";
 	
 	
@@ -390,8 +390,7 @@ public final class PackagePropertiesPart extends PackagePart implements
 		try {
 			this.created = setDateValue(created);
 		} catch (InvalidFormatException e) {
-			throw new IllegalArgumentException("created  : "
-					+ e.getLocalizedMessage(), e);
+			throw new IllegalArgumentException("Date for created could not be parsed: " + created, e);
 		}
 	}
 
@@ -573,7 +572,8 @@ public final class PackagePropertiesPart extends PackagePart implements
 		    d = df.parse(dateTzStr, new ParsePosition(0));
 		}
 		if (d == null) {
-			throw new InvalidFormatException("Date not well formated");
+			throw new InvalidFormatException("Date " + dateTzStr + " not well formated, "
+			        + "expected format " + DEFAULT_DATEFORMAT + " or " + ALTERNATIVE_DATEFORMAT);
 		}
 		return new Nullable<Date>(d);
 	}

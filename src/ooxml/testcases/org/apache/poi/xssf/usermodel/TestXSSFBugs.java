@@ -2586,8 +2586,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         wb.getCreationHelper().createFormulaEvaluator().evaluateAll();
 
         CalculationChain chain = ((XSSFWorkbook)wb).getCalculationChain();
-        CTCalcCell[] cArray = chain.getCTCalcChain().getCArray();
-        for(CTCalcCell calc : cArray) {
+        for(CTCalcCell calc : chain.getCTCalcChain().getCList()) {
             // A2 to A6 should be gone
             assertFalse(calc.getR().equals("A2"));
             assertFalse(calc.getR().equals("A3"));
@@ -2601,8 +2600,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         assertNotNull(sheetBack);
 
         chain = ((XSSFWorkbook)wbBack).getCalculationChain();
-        cArray = chain.getCTCalcChain().getCArray();
-        for(CTCalcCell calc : cArray) {
+        for(CTCalcCell calc : chain.getCTCalcChain().getCList()) {
             // A2 to A6 should be gone
             assertFalse(calc.getR().equals("A2"));
             assertFalse(calc.getR().equals("A3"));
