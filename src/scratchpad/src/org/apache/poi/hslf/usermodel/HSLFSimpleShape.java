@@ -317,7 +317,7 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
         infoAtom.setHyperlinkID(link.getId());
 
         HSLFEscherClientDataRecord cldata = getClientData(true);
-        cldata.addChild(infoAtom);
+        cldata.addChild(info);
     }
 
     public Guide getAdjustValue(String name) {
