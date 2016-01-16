@@ -24,7 +24,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.ss.ITestDataProvider;
@@ -43,7 +43,7 @@ public final class SXSSFITestDataProvider implements ITestDataProvider {
 
     // an instance of all SXSSFWorkbooks opened by this TestDataProvider,
     // so that the temporary files created can be disposed up by cleanup() 
-    private final List<SXSSFWorkbook> instances = new ArrayList<SXSSFWorkbook>();
+    private final Collection<SXSSFWorkbook> instances = new ArrayList<SXSSFWorkbook>();
 
     private SXSSFITestDataProvider() {
         // enforce singleton
@@ -107,11 +107,10 @@ public final class SXSSFITestDataProvider implements ITestDataProvider {
 
     public synchronized boolean cleanup(){
         boolean ok = true;
-        for(int i = 0; i < instances.size(); i++){
-            SXSSFWorkbook wb = instances.get(i);
+        for(final SXSSFWorkbook wb : instances) {
             ok = ok && wb.dispose();
-            instances.remove(i);
         }
+        instances.clear();
         return ok;
     }
 }
