@@ -102,11 +102,11 @@ public class HwmfPicture {
         try {
             Rectangle2D wmfBounds = getBounds();
             // scale output bounds to image bounds
+            ctx.translate(graphicsBounds.getX(), graphicsBounds.getY());
             ctx.scale(graphicsBounds.getWidth()/wmfBounds.getWidth(), graphicsBounds.getHeight()/wmfBounds.getHeight());
-            ctx.translate(-wmfBounds.getX(), -wmfBounds.getY());
             
             HwmfGraphics g = new HwmfGraphics(ctx, wmfBounds);
-            for (HwmfRecord r : records)  {
+            for (HwmfRecord r : records) {
                 r.draw(g);
             }
         } finally {

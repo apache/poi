@@ -37,6 +37,7 @@ public class TestPPTX2PNG {
         POIDataSamples samples = POIDataSamples.getSlideShowInstance();
 
         String[] testFiles = {"alterman_security.ppt","alterman_security.pptx","KEY02.pptx","themes.pptx","backgrounds.pptx","layouts.pptx", "sample.pptx", "shapes.pptx",};
+//        String[] testFiles = {"41246-2.ppt","45543.ppt","53446.ppt","ParagraphStylesShorterThanCharStyles.ppt"};
         String[] args = {
             "-format", "null", // png,gif,jpg or null for test
             "-slide", "-1", // -1 for all

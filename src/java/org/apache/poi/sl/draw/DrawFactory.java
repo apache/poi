@@ -26,6 +26,7 @@ import java.text.AttributedString;
 import org.apache.poi.sl.usermodel.Background;
 import org.apache.poi.sl.usermodel.ConnectorShape;
 import org.apache.poi.sl.usermodel.FreeformShape;
+import org.apache.poi.sl.usermodel.GraphicalFrame;
 import org.apache.poi.sl.usermodel.GroupShape;
 import org.apache.poi.sl.usermodel.MasterSheet;
 import org.apache.poi.sl.usermodel.PictureShape;
@@ -87,6 +88,8 @@ public class DrawFactory {
             return getDrawable((GroupShape<?,?>)shape);
         } else if (shape instanceof PictureShape) {
             return getDrawable((PictureShape<?,?>)shape);
+        } else if (shape instanceof GraphicalFrame) {
+            return getDrawable((GraphicalFrame<?,?>)shape);
         } else if (shape instanceof Background) {
             return getDrawable((Background<?,?>)shape);
         } else if (shape instanceof ConnectorShape) {
@@ -142,6 +145,10 @@ public class DrawFactory {
     
     public DrawPictureShape getDrawable(PictureShape<?,?> shape) {
         return new DrawPictureShape(shape);
+    }
+    
+    public DrawGraphicalFrame getDrawable(GraphicalFrame<?,?> shape) {
+        return new DrawGraphicalFrame(shape);
     }
     
     public DrawTextParagraph getDrawable(TextParagraph<?,?,?> paragraph) {

@@ -27,25 +27,26 @@ import org.apache.poi.POIXMLException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
-import org.apache.poi.sl.draw.DrawNotImplemented;
-import org.apache.poi.sl.usermodel.PlaceableShape;
+import org.apache.poi.sl.usermodel.GraphicalFrame;
 import org.apache.poi.sl.usermodel.ShapeType;
 import org.apache.poi.util.Beta;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 import org.apache.poi.util.Units;
 import org.apache.xmlbeans.XmlCursor;
+import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTGraphicalObjectData;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPoint2D;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPositiveSize2D;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTransform2D;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTGraphicalObjectFrame;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTGroupShape;
 
-/**
- * @author Yegor Kozlov
- */
 @Beta
-@DrawNotImplemented
-public class XSLFGraphicFrame extends XSLFShape implements PlaceableShape<XSLFShape, XSLFTextParagraph> {
+public class XSLFGraphicFrame extends XSLFShape implements GraphicalFrame<XSLFShape, XSLFTextParagraph> {
+    private static final POILogger LOG = POILogFactory.getLogger(XSLFGraphicFrame.class);
+
     /*package*/ XSLFGraphicFrame(CTGraphicalObjectFrame shape, XSLFSheet sheet){
         super(shape,sheet);
     }
@@ -104,7 +105,7 @@ public class XSLFGraphicFrame extends XSLFShape implements PlaceableShape<XSLFSh
     public void setRotation(double theta){
     	throw new IllegalArgumentException("Operation not supported");
     }
-   
+
     /**
      * Rotation angle in degrees
      * <p>
@@ -125,7 +126,7 @@ public class XSLFGraphicFrame extends XSLFShape implements PlaceableShape<XSLFSh
     public void setFlipVertical(boolean flip){
     	throw new IllegalArgumentException("Operation not supported");
     }
-    
+
     /**
      * Whether the shape is horizontally flipped
      *
@@ -189,4 +190,30 @@ public class XSLFGraphicFrame extends XSLFShape implements PlaceableShape<XSLFSh
         }
     }
 
+    @Override
+    public XSLFPictureShape getFallbackPicture() {
+        String xquery =
+                  "declare namespace p='http://schemas.openxmlformats.org/presentationml/2006/main'; "
+                + "declare namespace mc='http://schemas.openxmlformats.org/markup-compatibility/2006' "
+                + ".//mc:Fallback/*/p:pic"
+                ;
+        XmlObject xo = selectProperty(XmlObject.class, xquery);
+        if (xo == null) {
+            return null;
+        }
+
+        CTGroupShape gs;
+        try {
+            gs = CTGroupShape.Factory.parse(xo.newDomNode());
+        } catch (XmlException e) {
+            LOG.log(POILogger.WARN, "Can't parse fallback picture stream of graphical frame", e);
+            return null;
+        }
+
+        if (gs.sizeOfPicArray() == 0) {
+            return null;
+        }
+
+        return new XSLFPictureShape(gs.getPicArray(0), getSheet());
+    }
 }

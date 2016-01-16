@@ -98,6 +98,7 @@ public class DrawSimpleShape extends DrawShape {
         // then stroke the shape outline
         if(line != null) {
             graphics.setPaint(line);
+            graphics.setStroke(stroke);
             for(Outline o : elems){
                 if(o.getPath().isStroked()){
                     java.awt.Shape s = o.getOutline();

@@ -24,11 +24,17 @@ import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 
 import org.apache.poi.sl.usermodel.PictureData;
+import org.apache.poi.sl.usermodel.PictureData.PictureType;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 import org.apache.poi.sl.usermodel.PictureShape;
 import org.apache.poi.sl.usermodel.RectAlign;
 
 
 public class DrawPictureShape extends DrawSimpleShape {
+    private static final POILogger LOG = POILogFactory.getLogger(DrawPictureShape.class);
+    private static final String WMF_IMAGE_RENDERER = "org.apache.poi.hwmf.draw.HwmfSLImageRenderer";
+    
     public DrawPictureShape(PictureShape<?,?> shape) {
         super(shape);
     }
@@ -38,14 +44,11 @@ public class DrawPictureShape extends DrawSimpleShape {
         PictureData data = getShape().getPictureData();
         if(data == null) return;
 
-        ImageRenderer renderer = (ImageRenderer)graphics.getRenderingHint(Drawable.IMAGE_RENDERER);
-        if (renderer == null) renderer = new ImageRenderer();
-        
         Rectangle2D anchor = getAnchor(graphics, getShape());
-
         Insets insets = getShape().getClipping();
 
         try {
+            ImageRenderer renderer = getImageRenderer(graphics, data.getContentType());
             renderer.loadImage(data.getData(), data.getContentType());
             renderer.drawImage(graphics, anchor, insets);
         } catch (IOException e) {
@@ -54,6 +57,34 @@ public class DrawPictureShape extends DrawSimpleShape {
         }
     }    
 
+    /**
+     * Returns an ImageRenderer for the PictureData
+     *
+     * @param graphics
+     * @return
+     */
+    public static ImageRenderer getImageRenderer(Graphics2D graphics, String contentType) {
+        ImageRenderer renderer = (ImageRenderer)graphics.getRenderingHint(Drawable.IMAGE_RENDERER);
+        if (renderer != null) {
+            return renderer;
+        }
+        
+        if (PictureType.WMF.contentType.equals(contentType)) {
+            try {
+                @SuppressWarnings("unchecked")
+                Class<? extends ImageRenderer> irc = (Class<? extends ImageRenderer>)
+                    Thread.currentThread().getContextClassLoader().loadClass(WMF_IMAGE_RENDERER);
+                return irc.newInstance();
+            } catch (Exception e) {
+                // WMF image renderer is not on the classpath, continuing with BitmapRenderer
+                // although this doesn't make much sense ...
+                LOG.log(POILogger.ERROR, "WMF image renderer is not on the classpath - include poi-scratchpad jar!", e);
+            }
+        }
+        
+        return new BitmapImageRenderer();
+    }
+    
     @Override
     protected PictureShape<?,?> getShape() {
         return (PictureShape<?,?>)shape;

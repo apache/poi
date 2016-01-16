@@ -100,7 +100,7 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
         opt.setRecordId(EscherOptRecord.RECORD_ID);
         _escherContainer.addChildRecord(opt);
 
-        EscherRecord anchor; 
+        EscherRecord anchor;
         if(isChild) {
             anchor = new EscherChildAnchorRecord();
         } else {
@@ -155,7 +155,7 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
     }
 
     /**
-     * @return color of the line. If color is not set returns <code>java.awt.Color.black</code>
+     * @return color of the line. If color is not set returns {@code null}
      */
     public Color getLineColor(){
         AbstractEscherOptRecord opt = getEscherOptRecord();
@@ -164,7 +164,7 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
         if(p != null && (p.getPropertyValue() & 0x8) == 0) return null;
 
         Color clr = getColor(EscherProperties.LINESTYLE__COLOR, EscherProperties.LINESTYLE__OPACITY, -1);
-        return clr == null ? Color.black : clr;
+        return clr == null ? null : clr;
     }
 
     /**
@@ -187,7 +187,7 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
         AbstractEscherOptRecord opt = getEscherOptRecord();
         setEscherProperty(opt, EscherProperties.LINESTYLE__LINEENDCAPSTYLE, pen == LineCap.FLAT ? -1 : pen.nativeId);
     }
-    
+
     /**
      * Gets line dashing.
      *
@@ -417,7 +417,7 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
 
         };
     }
-    
+
     public DecorationShape getLineHeadDecoration(){
         AbstractEscherOptRecord opt = getEscherOptRecord();
         EscherSimpleProperty prop = getEscherProperty(opt, EscherProperties.LINESTYLE__LINESTARTARROWHEAD);
@@ -428,7 +428,7 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
         AbstractEscherOptRecord opt = getEscherOptRecord();
         setEscherProperty(opt, EscherProperties.LINESTYLE__LINESTARTARROWHEAD, decoShape == null ? -1 : decoShape.nativeId);
     }
-    
+
     public DecorationSize getLineHeadWidth(){
         AbstractEscherOptRecord opt = getEscherOptRecord();
         EscherSimpleProperty prop = getEscherProperty(opt, EscherProperties.LINESTYLE__LINESTARTARROWWIDTH);
@@ -439,7 +439,7 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
         AbstractEscherOptRecord opt = getEscherOptRecord();
         setEscherProperty(opt, EscherProperties.LINESTYLE__LINESTARTARROWWIDTH, decoSize == null ? -1 : decoSize.nativeId);
     }
-    
+
     public DecorationSize getLineHeadLength(){
         AbstractEscherOptRecord opt = getEscherOptRecord();
         EscherSimpleProperty prop = getEscherProperty(opt, EscherProperties.LINESTYLE__LINESTARTARROWLENGTH);
@@ -450,7 +450,7 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
         AbstractEscherOptRecord opt = getEscherOptRecord();
         setEscherProperty(opt, EscherProperties.LINESTYLE__LINESTARTARROWLENGTH, decoSize == null ? -1 : decoSize.nativeId);
     }
-    
+
     public DecorationShape getLineTailDecoration(){
         AbstractEscherOptRecord opt = getEscherOptRecord();
         EscherSimpleProperty prop = getEscherProperty(opt, EscherProperties.LINESTYLE__LINEENDARROWHEAD);
@@ -461,7 +461,7 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
         AbstractEscherOptRecord opt = getEscherOptRecord();
         setEscherProperty(opt, EscherProperties.LINESTYLE__LINEENDARROWHEAD, decoShape == null ? -1 : decoShape.nativeId);
     }
-    
+
     public DecorationSize getLineTailWidth(){
         AbstractEscherOptRecord opt = getEscherOptRecord();
         EscherSimpleProperty prop = getEscherProperty(opt, EscherProperties.LINESTYLE__LINEENDARROWWIDTH);
@@ -472,7 +472,7 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
         AbstractEscherOptRecord opt = getEscherOptRecord();
         setEscherProperty(opt, EscherProperties.LINESTYLE__LINEENDARROWWIDTH, decoSize == null ? -1 : decoSize.nativeId);
     }
-    
+
     public DecorationSize getLineTailLength(){
         AbstractEscherOptRecord opt = getEscherOptRecord();
         EscherSimpleProperty prop = getEscherProperty(opt, EscherProperties.LINESTYLE__LINEENDARROWLENGTH);
@@ -484,8 +484,8 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
         setEscherProperty(opt, EscherProperties.LINESTYLE__LINEENDARROWLENGTH, decoSize == null ? -1 : decoSize.nativeId);
     }
 
-    
-    
+
+
     public LineDecoration getLineDecoration() {
         return new LineDecoration() {
 
@@ -514,7 +514,7 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
             }
         };
     }
-    
+
     @Override
     public Placeholder getPlaceholder() {
         List<? extends Record> clRecords = getClientRecords();
@@ -530,10 +530,10 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
                 return Placeholder.lookupNative(rtp.getPlaceholderId());
             }
         }
-        
+
         return null;
     }
-    
+
     @Override
     public void setPlaceholder(Placeholder placeholder) {
         EscherSpRecord spRecord = getEscherChild(EscherSpRecord.RECORD_ID);
@@ -547,7 +547,7 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
 
         // Placeholders can't be grouped
         setEscherProperty(EscherProperties.PROTECTION__LOCKAGAINSTGROUPING, (placeholder == null ? -1 : 262144));
-        
+
         HSLFEscherClientDataRecord clientData = getClientData(false);
         if (placeholder == null) {
             if (clientData != null) {
@@ -560,7 +560,7 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
             }
             return;
         }
-        
+
         if (clientData == null) {
             clientData = getClientData(true);
         }
@@ -596,11 +596,11 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
         } else {
             phId = (byte)placeholder.nativeSlideId;
         }
-        
+
         if (phId == -2) {
             throw new HSLFException("Placeholder "+placeholder.name()+" not supported for this sheet type ("+sheet.getClass()+")");
         }
-        
+
         switch (placeholder) {
             case HEADER:
             case FOOTER:
@@ -637,7 +637,7 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
             setLineColor(null);
             return;
         }
-        
+
         // TODO: handle PaintStyle
         for (Object st : styles) {
             if (st instanceof Number) {

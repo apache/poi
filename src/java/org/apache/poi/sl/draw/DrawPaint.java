@@ -130,8 +130,7 @@ public class DrawPaint {
         if (is == null) return null;
         assert(graphics != null);
         
-        ImageRenderer renderer = (ImageRenderer)graphics.getRenderingHint(Drawable.IMAGE_RENDERER);
-        if (renderer == null) renderer = new ImageRenderer();
+        ImageRenderer renderer = DrawPictureShape.getImageRenderer(graphics, fill.getContentType());
 
         try {
             renderer.loadImage(is, fill.getContentType());

@@ -339,7 +339,7 @@ public class HwmfMisc {
      * The META_DIBCREATEPATTERNBRUSH record creates a Brush Object with a
      * pattern specified by a DeviceIndependentBitmap (DIB) Object
      */
-    public static class WmfDibCreatePatternBrush implements HwmfRecord, HwmfImageRecord {
+    public static class WmfDibCreatePatternBrush implements HwmfRecord, HwmfImageRecord, HwmfObjectTableEntry {
 
         private HwmfBrushStyle style;
 
@@ -388,6 +388,11 @@ public class HwmfMisc {
 
         @Override
         public void draw(HwmfGraphics ctx) {
+            ctx.addObjectTableEntry(this);
+        }
+        
+        @Override
+        public void applyObject(HwmfGraphics ctx) {
             HwmfDrawProperties prop = ctx.getProperties();
             prop.setBrushStyle(style);
             prop.setBrushBitmap(getImage());

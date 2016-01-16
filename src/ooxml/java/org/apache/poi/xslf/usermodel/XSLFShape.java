@@ -257,7 +257,7 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
 
     public Placeholder getPlaceholder() {
         CTPlaceholder ph = getCTPlaceholder();
-        if (ph == null || !ph.isSetType()) {
+        if (ph == null || !(ph.isSetType() || ph.isSetIdx())) {
             return null;
         }
         return Placeholder.lookupOoxml(ph.getType().intValue());

@@ -270,7 +270,6 @@ public class HwmfGraphics {
      * This methods gathers and sets the corresponding graphics transformations.
      */
     public void updateWindowMapMode() {
-        GraphicsConfiguration gc = graphicsCtx.getDeviceConfiguration();
         Rectangle2D win = prop.getWindow();
         HwmfMapMode mapMode = prop.getMapMode();
         graphicsCtx.setTransform(initialAT);
@@ -292,12 +291,14 @@ public class HwmfGraphics {
         case MM_HIMETRIC:
         case MM_LOENGLISH:
         case MM_HIENGLISH:
-        case MM_TWIPS:
+        case MM_TWIPS: {
             // TODO: to be validated ...
+            GraphicsConfiguration gc = graphicsCtx.getDeviceConfiguration();
             graphicsCtx.transform(gc.getNormalizingTransform());
             graphicsCtx.scale(1./mapMode.scale, -1./mapMode.scale);
             graphicsCtx.translate(-win.getX(), -win.getY());
             break;
+        }
         case MM_TEXT:
             // TODO: to be validated ...
             break;
