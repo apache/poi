@@ -310,14 +310,16 @@ public final class TestSXSSFWorkbook extends BaseTestWorkbook {
             }
         }
 
-        for (SXSSFSheet sheet : wb._sxFromXHash.keySet()) {
-            assertTrue(sheet.getSheetDataWriter().getTempFile().exists());
+        for (Sheet sheet : wb) {
+            SXSSFSheet sxSheet = (SXSSFSheet) sheet;
+            assertTrue(sxSheet.getSheetDataWriter().getTempFile().exists());
         }
 
         assertTrue(wb.dispose());
 
-        for (SXSSFSheet sheet : wb._sxFromXHash.keySet()) {
-            assertFalse(sheet.getSheetDataWriter().getTempFile().exists());
+        for (Sheet sheet : wb) {
+            SXSSFSheet sxSheet = (SXSSFSheet) sheet;
+            assertFalse(sxSheet.getSheetDataWriter().getTempFile().exists());
         }
     }
 
