@@ -79,7 +79,7 @@ public final class SXSSFITestDataProvider implements ITestDataProvider {
     }
 
     @Override
-    public SXSSFWorkbook createWorkbook(){
+    public SXSSFWorkbook createWorkbook() {
         SXSSFWorkbook wb = new SXSSFWorkbook();
         instances.add(wb);
         return wb;
@@ -96,7 +96,7 @@ public final class SXSSFITestDataProvider implements ITestDataProvider {
     }
 
     @Override
-    public SpreadsheetVersion getSpreadsheetVersion(){
+    public SpreadsheetVersion getSpreadsheetVersion() {
         return SpreadsheetVersion.EXCEL2007;
     }
 
@@ -105,7 +105,7 @@ public final class SXSSFITestDataProvider implements ITestDataProvider {
         return "xlsx";
     }
 
-    public synchronized boolean cleanup(){
+    public synchronized boolean cleanup() {
         boolean ok = true;
         for(final SXSSFWorkbook wb : instances) {
             ok = ok && wb.dispose();
