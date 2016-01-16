@@ -66,7 +66,7 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
         MIDDLE                (1, VerticalAlignment.MIDDLE, false, false),
         BOTTOM                (2, VerticalAlignment.BOTTOM, false, false),
         TOP_CENTER            (3, VerticalAlignment.TOP,    true,  false),
-        MIDDLE_CENTER         (4, VerticalAlignment.MIDDLE, true,  null),
+        MIDDLE_CENTER         (4, VerticalAlignment.MIDDLE, true,  false),
         BOTTOM_CENTER         (5, VerticalAlignment.BOTTOM, true,  false),
         TOP_BASELINE          (6, VerticalAlignment.TOP,    false, true),
         BOTTOM_BASELINE       (7, VerticalAlignment.BOTTOM, false, true),
