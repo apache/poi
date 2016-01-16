@@ -24,6 +24,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.ss.ITestDataProvider;
@@ -40,7 +41,9 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 public final class SXSSFITestDataProvider implements ITestDataProvider {
     public static final SXSSFITestDataProvider instance = new SXSSFITestDataProvider();
 
-    private ArrayList<SXSSFWorkbook> instances = new ArrayList<SXSSFWorkbook>();
+    // an instance of all SXSSFWorkbooks opened by this TestDataProvider,
+    // so that the temporary files created can be disposed up by cleanup() 
+    private final List<SXSSFWorkbook> instances = new ArrayList<SXSSFWorkbook>();
 
     private SXSSFITestDataProvider() {
         // enforce singleton

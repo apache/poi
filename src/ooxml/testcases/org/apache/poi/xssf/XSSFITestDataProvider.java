@@ -35,10 +35,12 @@ public final class XSSFITestDataProvider implements ITestDataProvider {
         // enforce singleton
     }
 
+    @Override
     public XSSFWorkbook openSampleWorkbook(String sampleFileName) {
         return XSSFTestDataSamples.openSampleWorkbook(sampleFileName);
     }
 
+    @Override
     public XSSFWorkbook writeOutAndReadBack(Workbook original) {
         if(!(original instanceof XSSFWorkbook)) {
             throw new IllegalArgumentException("Expected an instance of XSSFWorkbook, but had " + original.getClass());
@@ -46,22 +48,27 @@ public final class XSSFITestDataProvider implements ITestDataProvider {
         return XSSFTestDataSamples.writeOutAndReadBack((XSSFWorkbook)original);
     }
 
-    public XSSFWorkbook createWorkbook(){
+    @Override
+    public XSSFWorkbook createWorkbook() {
         return new XSSFWorkbook();
     }
     
+    @Override
     public FormulaEvaluator createFormulaEvaluator(Workbook wb) {
         return new XSSFFormulaEvaluator((XSSFWorkbook) wb);
     }
 
+    @Override
     public byte[] getTestDataFileContent(String fileName) {
         return POIDataSamples.getSpreadSheetInstance().readFile(fileName);
     }
 
+    @Override
     public SpreadsheetVersion getSpreadsheetVersion(){
         return SpreadsheetVersion.EXCEL2007;
     }
 
+    @Override
     public String getStandardFileNameExtension() {
         return "xlsx";
     }
