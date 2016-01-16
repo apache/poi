@@ -53,6 +53,7 @@ import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.ptg.Area3DPtg;
 import org.apache.poi.ss.usermodel.BaseTestWorkbook;
 import org.apache.poi.ss.usermodel.Name;
@@ -70,8 +71,10 @@ import junit.framework.AssertionFailedError;
  * Tests for {@link HSSFWorkbook}
  */
 public final class TestHSSFWorkbook extends BaseTestWorkbook {
+    private static final HSSFITestDataProvider _testDataProvider = HSSFITestDataProvider.instance;
+    
     public TestHSSFWorkbook() {
-        super(HSSFITestDataProvider.instance);
+        super(_testDataProvider);
     }
 
     /**
@@ -1252,5 +1255,11 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         fileOut.write(byteArray);
         fileOut.close();
 
+    }
+    
+    @Test
+    @Override
+    public void getSpreadsheetVersion() throws IOException {
+        verifySpreadsheetVersion(SpreadsheetVersion.EXCEL97);
     }
 }

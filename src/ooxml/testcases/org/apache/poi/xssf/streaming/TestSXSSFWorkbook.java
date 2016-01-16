@@ -30,6 +30,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import org.apache.poi.POITestCase;
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.BaseTestWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -47,7 +48,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 public final class TestSXSSFWorkbook extends BaseTestWorkbook {
-    public static final SXSSFITestDataProvider _testDataProvider = SXSSFITestDataProvider.instance;
+    private static final SXSSFITestDataProvider _testDataProvider = SXSSFITestDataProvider.instance;
 
     public TestSXSSFWorkbook() {
 		super(_testDataProvider);
@@ -434,5 +435,11 @@ public final class TestSXSSFWorkbook extends BaseTestWorkbook {
         
         streamingWorkBook.close();
         workBook.close();
+    }
+    
+    @Test
+    @Override
+    public void getSpreadsheetVersion() throws IOException {
+        verifySpreadsheetVersion(SpreadsheetVersion.EXCEL2007);
     }
 }
