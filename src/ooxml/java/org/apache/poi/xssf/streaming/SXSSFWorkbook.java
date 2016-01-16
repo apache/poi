@@ -28,6 +28,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -71,29 +72,29 @@ public class SXSSFWorkbook implements Workbook {
     /**
      * Specifies how many rows can be accessed at most via getRow().
      * When a new node is created via createRow() and the total number
-     * of unflushed records would exeed the specified value, then the
+     * of unflushed records would exceed the specified value, then the
      * row with the lowest index value is flushed and cannot be accessed
      * via getRow() anymore.
      */
     public static final int DEFAULT_WINDOW_SIZE = 100;
-    private static POILogger logger = POILogFactory.getLogger(SXSSFWorkbook.class);
+    private static final POILogger logger = POILogFactory.getLogger(SXSSFWorkbook.class);
 
-    XSSFWorkbook _wb;
+    private final XSSFWorkbook _wb;
 
-    HashMap<SXSSFSheet,XSSFSheet> _sxFromXHash=new HashMap<SXSSFSheet,XSSFSheet>();
-    HashMap<XSSFSheet,SXSSFSheet> _xFromSxHash=new HashMap<XSSFSheet,SXSSFSheet>();
+    private final Map<SXSSFSheet,XSSFSheet> _sxFromXHash = new HashMap<SXSSFSheet,XSSFSheet>();
+    private final Map<XSSFSheet,SXSSFSheet> _xFromSxHash = new HashMap<XSSFSheet,SXSSFSheet>();
 
     private int _randomAccessWindowSize = DEFAULT_WINDOW_SIZE;
 
     /**
-     * whetehr temp files should be compressed.
+     * whether temp files should be compressed.
      */
     private boolean _compressTmpFiles = false;
 
     /**
      * shared string table - a cache of strings in this workbook
      */
-    private SharedStringsTable _sharedStringSource = null;
+    private final SharedStringsTable _sharedStringSource;
 
     /**
      * Construct a new workbook
@@ -220,16 +221,12 @@ public class SXSSFWorkbook implements Workbook {
         if (workbook == null)
         {
             _wb=new XSSFWorkbook();
-            if(useSharedStringsTable){
-                _sharedStringSource = _wb.getSharedStringSource();
-            }
+            _sharedStringSource = useSharedStringsTable ? _wb.getSharedStringSource() : null;
         }
         else
         {
             _wb=workbook;
-            if(useSharedStringsTable){
-                _sharedStringSource = _wb.getSharedStringSource();
-            }
+            _sharedStringSource = useSharedStringsTable ? _wb.getSharedStringSource() : null;
             for ( int i = 0; i < _wb.getNumberOfSheets(); i++ )
             {
                 XSSFSheet sheet = _wb.getSheetAt( i );
@@ -1333,7 +1330,7 @@ public class SXSSFWorkbook implements Workbook {
      * @since 3.14 beta 2
      */
     @Override
-    public SpreadsheetVersion getSpreadsheetVersion() { 
+    public SpreadsheetVersion getSpreadsheetVersion() {
         return SpreadsheetVersion.EXCEL2007;
     }
 
