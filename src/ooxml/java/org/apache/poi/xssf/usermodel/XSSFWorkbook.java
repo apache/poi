@@ -54,6 +54,7 @@ import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.SheetNameFormatter;
 import org.apache.poi.ss.formula.udf.IndexedUDFFinder;
 import org.apache.poi.ss.formula.udf.UDFFinder;
@@ -2254,5 +2255,16 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         if (vbaProjectStream != null) {
             setVBAProject(vbaProjectStream);
         }
+    }
+
+    /**
+     * Returns the spreadsheet version (EXCLE2007) of this workbook
+     * 
+     * @return EXCEL2007 SpreadsheetVersion enum
+     * @since 3.14 beta 2
+     */
+    @Override
+    public SpreadsheetVersion getSpreadsheetVersion() {
+        return SpreadsheetVersion.EXCEL2007;
     }
 }

@@ -76,6 +76,7 @@ import org.apache.poi.poifs.filesystem.FilteringDirectoryNode;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.Ole10Native;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.FormulaShifter;
 import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.formula.SheetNameFormatter;
@@ -2151,5 +2152,16 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     @Internal
     public InternalWorkbook getInternalWorkbook() {
         return workbook;
+    }
+    
+    /**
+     * Returns the spreadsheet version (EXCLE97) of this workbook
+     * 
+     * @return EXCEL97 SpreadsheetVersion enum
+     * @since 3.14 beta 2
+     */
+    @Override
+    public SpreadsheetVersion getSpreadsheetVersion() {
+        return SpreadsheetVersion.EXCEL97;
     }
 }

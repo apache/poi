@@ -23,6 +23,7 @@ import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.udf.UDFFinder;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -623,5 +624,13 @@ public interface Workbook extends Closeable, Iterable<Sheet> {
      * @since 3.8
      */
     boolean getForceFormulaRecalculation();
+    
+    /**
+     * Returns the spreadsheet version of this workbook
+     * 
+     * @return SpreadsheetVersion enum
+     * @since 3.14 beta 2
+     */
+    public SpreadsheetVersion getSpreadsheetVersion();
 
 }

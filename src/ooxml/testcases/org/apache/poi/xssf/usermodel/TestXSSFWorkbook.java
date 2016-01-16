@@ -77,9 +77,10 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbookPr;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCalcMode;
 
 public final class TestXSSFWorkbook extends BaseTestWorkbook {
+	private static final XSSFITestDataProvider _testDataProvider = XSSFITestDataProvider.instance;
 
 	public TestXSSFWorkbook() {
-		super(XSSFITestDataProvider.instance);
+		super(_testDataProvider);
 	}
 
 	/**
@@ -1077,5 +1078,11 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
             assertTrue(file.exists());
             assertTrue(file.delete());
         }
+    }
+
+    @Test
+    @Override
+    public void getSpreadsheetVersion() throws IOException {
+        verifySpreadsheetVersion(SpreadsheetVersion.EXCEL2007);
     }
 }

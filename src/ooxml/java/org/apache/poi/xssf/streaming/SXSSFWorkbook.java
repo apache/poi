@@ -35,6 +35,7 @@ import java.util.zip.ZipOutputStream;
 
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.internal.ZipHelper;
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.udf.UDFFinder;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CreationHelper;
@@ -1323,6 +1324,17 @@ public class SXSSFWorkbook implements Workbook {
     @Override
     public boolean getForceFormulaRecalculation(){
         return _wb.getForceFormulaRecalculation();
+    }
+
+    /**
+     * Returns the spreadsheet version (EXCLE2007) of this workbook
+     * 
+     * @return EXCEL2007 SpreadsheetVersion enum
+     * @since 3.14 beta 2
+     */
+    @Override
+    public SpreadsheetVersion getSpreadsheetVersion() { 
+        return SpreadsheetVersion.EXCEL2007;
     }
 
 //end of interface implementation

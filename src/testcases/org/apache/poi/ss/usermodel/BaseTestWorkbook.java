@@ -31,6 +31,7 @@ import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 
 import org.apache.poi.ss.ITestDataProvider;
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.junit.Test;
 
@@ -821,5 +822,14 @@ public abstract class BaseTestWorkbook {
         }
         
         b.close();
+    }
+
+    @Test
+    public abstract void getSpreadsheetVersion() throws IOException;
+    
+    protected void verifySpreadsheetVersion(SpreadsheetVersion expected) throws IOException {
+        final Workbook wb = _testDataProvider.createWorkbook();
+        assertEquals(expected, wb.getSpreadsheetVersion());
+        wb.close();
     }
 }
