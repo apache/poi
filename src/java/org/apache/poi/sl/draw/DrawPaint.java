@@ -27,6 +27,7 @@ import java.awt.RadialGradientPaint;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -145,8 +146,13 @@ public class DrawPaint {
             renderer.setAlpha(alpha/100000.f);
         }
         
+        BufferedImage image = renderer.getImage();
+        if(image == null) {
+            LOG.log(POILogger.ERROR, "Can't load image data");
+            return null;
+        }
         Rectangle2D textAnchor = shape.getAnchor();
-        Paint paint = new java.awt.TexturePaint(renderer.getImage(), textAnchor);
+        Paint paint = new java.awt.TexturePaint(image, textAnchor);
 
         return paint;
     }
