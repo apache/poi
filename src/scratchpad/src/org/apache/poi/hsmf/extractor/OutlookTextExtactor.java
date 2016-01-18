@@ -153,7 +153,7 @@ public class OutlookTextExtactor extends POIOLE2TextExtractor {
       for(AttachmentChunks att : msg.getAttachmentFiles()) {
          StringChunk name = att.attachLongFileName;
          if (name == null) name = att.attachFileName;
-         String attName = name.getValue();
+         String attName = name == null ? null : name.getValue();
           
          if(att.attachMimeTag != null && 
                att.attachMimeTag.getValue() != null) {
