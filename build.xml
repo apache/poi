@@ -1671,6 +1671,7 @@ under the License.
             </zipfileset>
             <zipfileset dir="${ooxml.lib}" prefix="${zipdir}/ooxml-lib">
               <include name="xmlbeans-2.6*.jar"/>
+              <include name="curvesapi-*.jar"/>
             </zipfileset>
             <zipfileset dir="${dist.dir}" prefix="${zipdir}">
                 <patternset refid="bin.dist.jars"/>
@@ -1697,6 +1698,7 @@ under the License.
             </zipfileset>
             <tarfileset dir="${ooxml.lib}" prefix="${zipdir}/ooxml-lib">
               <include name="xmlbeans-2.6*.jar"/>
+              <include name="curvesapi-*.jar"/>              
             </tarfileset>
             <tarfileset dir="${build.site}" prefix="${zipdir}/docs"/>
             <tarfileset dir="${dist.dir}" prefix="${zipdir}">
