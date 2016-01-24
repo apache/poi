@@ -156,8 +156,8 @@ under the License.
     <property name="main.antlauncher.url" value="${repository.m2}/maven2/org/apache/ant/ant-launcher/1.9.4/ant-launcher-1.9.4.jar"/>
 
     <!-- xml signature libs -->
-    <property name="dsig.xmlsec.jar" location="${compile.lib}/xmlsec-2.0.5.jar"/>
-    <property name="dsig.xmlsec.url" value="${repository.m2}/maven2/org/apache/santuario/xmlsec/2.0.5/xmlsec-2.0.5.jar"/>
+    <property name="dsig.xmlsec.jar" location="${compile.lib}/xmlsec-2.0.6.jar"/>
+    <property name="dsig.xmlsec.url" value="${repository.m2}/maven2/org/apache/santuario/xmlsec/2.0.6/xmlsec-2.0.6.jar"/>
     <property name="dsig.bouncycastle-prov.jar" location="${compile.lib}/bcprov-ext-jdk15on-1.53.jar"/>
     <property name="dsig.bouncycastle-prov.url" value="${repository.m2}/maven2/org/bouncycastle/bcprov-ext-jdk15on/1.53/bcprov-ext-jdk15on-1.53.jar"/>
     <property name="dsig.bouncycastle-pkix.jar" location="${compile.lib}/bcpkix-jdk15on-1.53.jar"/>
@@ -473,6 +473,7 @@ under the License.
         	<fileset dir="${compile.lib}">
                 <include name="xercesImpl-*.jar"/>
             	<include name="xmlsec-2.0.1.jar"/>
+        		<include name="xmlsec-2.0.5.jar"/>
             	<include name="bcprov-ext-jdk15on-1.51.jar"/>
             	<include name="bcpkix-jdk15on-1.51.jar"/>
             	<include name="slf4j-api-1.7.7.jar"/>
