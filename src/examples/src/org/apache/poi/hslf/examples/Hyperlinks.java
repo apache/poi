@@ -19,12 +19,15 @@ package org.apache.poi.hslf.examples;
 
 import java.io.FileInputStream;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.poi.hslf.usermodel.HSLFHyperlink;
 import org.apache.poi.hslf.usermodel.HSLFShape;
+import org.apache.poi.hslf.usermodel.HSLFSimpleShape;
 import org.apache.poi.hslf.usermodel.HSLFSlide;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.hslf.usermodel.HSLFTextParagraph;
+import org.apache.poi.hslf.usermodel.HSLFTextRun;
 
 /**
  * Demonstrates how to read hyperlinks from  a presentation
@@ -44,12 +47,14 @@ public final class Hyperlinks {
 
                 // read hyperlinks from the slide's text runs
                 System.out.println("- reading hyperlinks from the text runs");
-                for (List<HSLFTextParagraph> txtParas : slide.getTextParagraphs()) {
-                    List<HSLFHyperlink> links = HSLFHyperlink.find(txtParas);
-                    String text = HSLFTextParagraph.getRawText(txtParas);
-
-                    for (HSLFHyperlink link : links) {
-                        System.out.println(toStr(link, text));
+                for (List<HSLFTextParagraph> paras : slide.getTextParagraphs()) {
+                    for (HSLFTextParagraph para : paras) {
+                        for (HSLFTextRun run : para) {
+                            HSLFHyperlink link = run.getHyperlink();
+                            if (link != null) {
+                                System.out.println(toStr(link, run.getRawText()));
+                            }
+                        }
                     }
                 }
 
@@ -58,18 +63,21 @@ public final class Hyperlinks {
                 // read such hyperlinks
                 System.out.println("- reading hyperlinks from the slide's shapes");
                 for (HSLFShape sh : slide.getShapes()) {
-                    HSLFHyperlink link = HSLFHyperlink.find(sh);
-                    if (link == null) continue;
-                    System.out.println(toStr(link, null));
+                    if (sh instanceof HSLFSimpleShape) {
+                        HSLFHyperlink link = ((HSLFSimpleShape)sh).getHyperlink();
+                        if (link != null) {
+                            System.out.println(toStr(link, null));
+                        }
+                    }
                 }
             }
+            ppt.close();
         }
    }
 
     static String toStr(HSLFHyperlink link, String rawText) {
         //in ppt end index is inclusive
         String formatStr = "title: %1$s, address: %2$s" + (rawText == null ? "" : ", start: %3$s, end: %4$s, substring: %5$s");
-        String substring = (rawText == null) ? "" : rawText.substring(link.getStartIndex(), link.getEndIndex()-1);
-        return String.format(formatStr, link.getLabel(), link.getAddress(), link.getStartIndex(), link.getEndIndex(), substring);
+        return String.format(Locale.ROOT, formatStr, link.getLabel(), link.getAddress(), link.getStartIndex(), link.getEndIndex(), rawText);
     }
 }

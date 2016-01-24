@@ -83,4 +83,24 @@ public interface SimpleShape<
      *              the solid fill attribute from the underlying implementation
      */
 	void setFillColor(Color color);
+
+    /**
+     * Returns the hyperlink assigned to this shape
+     *
+     * @return the hyperlink assigned to this shape
+     * or <code>null</code> if not found.
+     * 
+     * @since POI 3.14-Beta1
+     */
+	Hyperlink<S,P> getHyperlink();
+	
+	/**
+     * Creates a hyperlink and asigns it to this shape.
+     * If the shape has already a hyperlink assigned, return it instead
+     *
+     * @return the hyperlink assigned to this shape
+     * 
+     * @since POI 3.14-Beta1
+     */
+    Hyperlink<S,P> createHyperlink();
 }

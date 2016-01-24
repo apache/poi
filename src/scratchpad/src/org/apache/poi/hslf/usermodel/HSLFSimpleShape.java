@@ -32,8 +32,6 @@ import org.apache.poi.ddf.EscherSimpleProperty;
 import org.apache.poi.ddf.EscherSpRecord;
 import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.hslf.record.HSLFEscherClientDataRecord;
-import org.apache.poi.hslf.record.InteractiveInfo;
-import org.apache.poi.hslf.record.InteractiveInfoAtom;
 import org.apache.poi.hslf.record.OEPlaceholderAtom;
 import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.RoundTripHFPlaceholder12;
@@ -69,6 +67,11 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
 
     public final static double DEFAULT_LINE_WIDTH = 0.75;
 
+    /**
+     * Hyperlink
+     */
+    protected HSLFHyperlink _hyperlink;
+    
     /**
      * Create a SimpleShape object and initialize it from the supplied Record container.
      *
@@ -268,56 +271,6 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
     @Override
     public void setFillColor(Color color) {
         getFill().setForegroundColor(color);
-    }
-
-    public void setHyperlink(HSLFHyperlink link){
-        if(link.getId() == -1){
-            throw new HSLFException("You must call SlideShow.addHyperlink(Hyperlink link) first");
-        }
-
-        InteractiveInfo info = new InteractiveInfo();
-        InteractiveInfoAtom infoAtom = info.getInteractiveInfoAtom();
-
-        switch(link.getType()){
-            case HSLFHyperlink.LINK_FIRSTSLIDE:
-                infoAtom.setAction(InteractiveInfoAtom.ACTION_JUMP);
-                infoAtom.setJump(InteractiveInfoAtom.JUMP_FIRSTSLIDE);
-                infoAtom.setHyperlinkType(InteractiveInfoAtom.LINK_FirstSlide);
-                break;
-            case HSLFHyperlink.LINK_LASTSLIDE:
-                infoAtom.setAction(InteractiveInfoAtom.ACTION_JUMP);
-                infoAtom.setJump(InteractiveInfoAtom.JUMP_LASTSLIDE);
-                infoAtom.setHyperlinkType(InteractiveInfoAtom.LINK_LastSlide);
-                break;
-            case HSLFHyperlink.LINK_NEXTSLIDE:
-                infoAtom.setAction(InteractiveInfoAtom.ACTION_JUMP);
-                infoAtom.setJump(InteractiveInfoAtom.JUMP_NEXTSLIDE);
-                infoAtom.setHyperlinkType(InteractiveInfoAtom.LINK_NextSlide);
-                break;
-            case HSLFHyperlink.LINK_PREVIOUSSLIDE:
-                infoAtom.setAction(InteractiveInfoAtom.ACTION_JUMP);
-                infoAtom.setJump(InteractiveInfoAtom.JUMP_PREVIOUSSLIDE);
-                infoAtom.setHyperlinkType(InteractiveInfoAtom.LINK_PreviousSlide);
-                break;
-            case HSLFHyperlink.LINK_URL:
-                infoAtom.setAction(InteractiveInfoAtom.ACTION_HYPERLINK);
-                infoAtom.setJump(InteractiveInfoAtom.JUMP_NONE);
-                infoAtom.setHyperlinkType(InteractiveInfoAtom.LINK_Url);
-                break;
-            case HSLFHyperlink.LINK_SLIDENUMBER:
-                infoAtom.setAction(InteractiveInfoAtom.ACTION_HYPERLINK);
-                infoAtom.setJump(InteractiveInfoAtom.JUMP_NONE);
-                infoAtom.setHyperlinkType(InteractiveInfoAtom.LINK_SlideNumber);
-                break;
-            default:
-                logger.log(POILogger.WARN, "Ignore unknown hyperlink type : "+link.getLabel());
-                break;
-        }
-
-        infoAtom.setHyperlinkID(link.getId());
-
-        HSLFEscherClientDataRecord cldata = getClientData(true);
-        cldata.addChild(info);
     }
 
     public Guide getAdjustValue(String name) {
@@ -652,5 +605,27 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
                 setLineColor((Color)st);
             }
         }
+    }
+
+    @Override
+    public HSLFHyperlink getHyperlink(){
+        return _hyperlink;
+    }
+    
+    @Override
+    public HSLFHyperlink createHyperlink() {
+        if (_hyperlink == null) {
+            _hyperlink = HSLFHyperlink.createHyperlink(this);
+        }
+        return _hyperlink;
+    }
+    
+    /**
+     * Sets the hyperlink - used when the document is parsed
+     *
+     * @param link the hyperlink
+     */
+    protected void setHyperlink(HSLFHyperlink link) {
+        _hyperlink = link;
     }
 }

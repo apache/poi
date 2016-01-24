@@ -34,8 +34,8 @@ import org.apache.poi.sl.usermodel.LineDecoration;
 import org.apache.poi.sl.usermodel.LineDecoration.DecorationShape;
 import org.apache.poi.sl.usermodel.LineDecoration.DecorationSize;
 import org.apache.poi.sl.usermodel.PaintStyle;
-import org.apache.poi.sl.usermodel.Placeholder;
 import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
+import org.apache.poi.sl.usermodel.Placeholder;
 import org.apache.poi.sl.usermodel.ShapeType;
 import org.apache.poi.sl.usermodel.SimpleShape;
 import org.apache.poi.sl.usermodel.StrokeStyle;
@@ -53,6 +53,7 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTGeomGuide;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTLineEndProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTLineProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTLineStyleList;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualDrawingProps;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTOuterShadowEffect;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPoint2D;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPositiveSize2D;
@@ -922,5 +923,24 @@ public abstract class XSLFSimpleShape extends XSLFShape
     @Override
     public void setPlaceholder(Placeholder placeholder) {
         super.setPlaceholder(placeholder);
+    }
+    
+    @Override
+    public XSLFHyperlink getHyperlink() {
+        CTNonVisualDrawingProps cNvPr = getCNvPr();
+        if (!cNvPr.isSetHlinkClick()) {
+            return null;
+        }
+        return new XSLFHyperlink(cNvPr.getHlinkClick(), getSheet());
+    }
+    
+    @Override
+    public XSLFHyperlink createHyperlink() {
+        XSLFHyperlink hl = getHyperlink();
+        if (hl == null) {
+            CTNonVisualDrawingProps cNvPr = getCNvPr();
+            hl = new XSLFHyperlink(cNvPr.addNewHlinkClick(), getSheet());
+        }
+        return hl;
     }
 }

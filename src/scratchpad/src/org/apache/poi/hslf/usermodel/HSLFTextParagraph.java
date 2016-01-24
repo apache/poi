@@ -22,7 +22,6 @@ import static org.apache.poi.hslf.record.RecordTypes.OutlineTextRefAtom;
 import java.awt.Color;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -40,6 +39,7 @@ import org.apache.poi.hslf.model.textproperties.TextPropCollection.TextPropType;
 import org.apache.poi.hslf.record.ColorSchemeAtom;
 import org.apache.poi.hslf.record.EscherTextboxWrapper;
 import org.apache.poi.hslf.record.FontCollection;
+import org.apache.poi.hslf.record.InteractiveInfo;
 import org.apache.poi.hslf.record.MasterTextPropAtom;
 import org.apache.poi.hslf.record.OutlineTextRefAtom;
 import org.apache.poi.hslf.record.PPDrawing;
@@ -55,6 +55,7 @@ import org.apache.poi.hslf.record.TextCharsAtom;
 import org.apache.poi.hslf.record.TextHeaderAtom;
 import org.apache.poi.hslf.record.TextRulerAtom;
 import org.apache.poi.hslf.record.TextSpecInfoAtom;
+import org.apache.poi.hslf.record.TxInteractiveInfoAtom;
 import org.apache.poi.sl.draw.DrawPaint;
 import org.apache.poi.sl.usermodel.AutoNumberingScheme;
 import org.apache.poi.sl.usermodel.PaintStyle;
@@ -102,7 +103,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
     private StyleTextProp9Atom styleTextProp9Atom;
 
     private boolean _dirty = false;
-    
+
     private final List<HSLFTextParagraph> parentList;
 
     /**
@@ -162,14 +163,14 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
      * Setting a master style reference
      *
      * @param paragraphStyle the master style reference
-     * 
+     *
      * @since POI 3.14-Beta1
      */
     @Internal
     /* package */ void setMasterStyleReference(TextPropCollection paragraphStyle) {
         _paragraphStyle = paragraphStyle;
     }
-    
+
     /**
      * Supply the Sheet we belong to, which might have an assigned SlideShow
      * Also passes it on to our child RichTextRuns
@@ -183,9 +184,8 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
         }
 
         assert(sheet.getSlideShow() != null);
-        applyHyperlinks(paragraphs);
     }
-    
+
     /**
      * Supply the Sheet we belong to, which might have an assigned SlideShow
      * Also passes it on to our child RichTextRuns
@@ -519,7 +519,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
             }
         }
     }
-    
+
     @Override
     public HSLFTextShape getParentShape() {
         return _parentShape;
@@ -603,12 +603,12 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
             if (_runs.isEmpty()) {
                 return null;
             }
-            
+
             SolidPaint sp = _runs.get(0).getFontColor();
             if(sp == null) {
                 return null;
             }
-            
+
             return DrawPaint.applyColorTransform(sp.getSolidColor());
         }
 
@@ -709,7 +709,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
      * Fetch the value of the given Paragraph related TextProp. Returns null if
      * that TextProp isn't present. If the TextProp isn't present, the value
      * from the appropriate Master Sheet will apply.
-     * 
+     *
      * The propName can be a comma-separated list, in case multiple equivalent values
      * are queried
      */
@@ -733,12 +733,12 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
         }
 
         boolean isChar = props.getTextPropType() == TextPropType.character;
-        
+
         for (String pn : propNames) {
             TextProp prop = master.getStyleAttribute(txtype, paragraph.getIndentLevel(), pn, isChar);
             if (prop != null) return prop;
         }
-        
+
         return null;
     }
 
@@ -821,8 +821,21 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
      */
     protected static void storeText(List<HSLFTextParagraph> paragraphs) {
         fixLineEndings(paragraphs);
+        updateTextAtom(paragraphs);
+        updateStyles(paragraphs);
+        updateHyperlinks(paragraphs);
+        refreshRecords(paragraphs);
 
-        String rawText = toInternalString(getRawText(paragraphs));
+        for (HSLFTextParagraph p : paragraphs) {
+            p._dirty = false;
+        }
+    }
+
+    /**
+     * Set the correct text atom depending on the multibyte usage
+     */
+    private static void updateTextAtom(List<HSLFTextParagraph> paragraphs) {
+        final String rawText = toInternalString(getRawText(paragraphs));
 
         // Will it fit in a 8 bit atom?
         boolean isUnicode = StringUtil.hasMultibyte(rawText);
@@ -888,6 +901,16 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
             }
         }
 
+    }
+
+    /**
+     * Update paragraph and character styles - merges them when subsequential styles match
+     */
+    private static void updateStyles(List<HSLFTextParagraph> paragraphs) {
+        final String rawText = toInternalString(getRawText(paragraphs));
+        TextHeaderAtom headerAtom = paragraphs.get(0)._headerAtom;
+        StyleTextPropAtom styleAtom = findStyleAtomPresent(headerAtom, rawText.length());
+
         // Update the text length for its Paragraph and Character stylings
         // * reset the length, to the new string's length
         // * add on +1 if the last block
@@ -933,17 +956,60 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
                 break;
             }
         }
+    }
 
+    private static void updateHyperlinks(List<HSLFTextParagraph> paragraphs) {
+        TextHeaderAtom headerAtom = paragraphs.get(0)._headerAtom;
+        RecordContainer _txtbox = headerAtom.getParentRecord();
+        // remove existing hyperlink records
+        for (Record r : _txtbox.getChildRecords()) {
+            if (r instanceof InteractiveInfo || r instanceof TxInteractiveInfoAtom) {
+                _txtbox.removeChild(r);
+            }
+        }
+        // now go through all the textruns and check for hyperlinks
+        HSLFHyperlink lastLink = null;
+        for (HSLFTextParagraph para : paragraphs) {
+            for (HSLFTextRun run : para) {
+                HSLFHyperlink thisLink = run.getHyperlink();
+                if (thisLink != null && thisLink == lastLink) {
+                    // the hyperlink extends over this text run, increase its length
+                    // TODO: the text run might be longer than the hyperlink
+                    thisLink.setEndIndex(thisLink.getEndIndex()+run.getLength());
+                } else {
+                    if (lastLink != null) {
+                        InteractiveInfo info = lastLink.getInfo();
+                        TxInteractiveInfoAtom txinfo = lastLink.getTextRunInfo();
+                        assert(info != null && txinfo != null);
+                        _txtbox.appendChildRecord(info);
+                        _txtbox.appendChildRecord(txinfo);
+                    }
+                }
+                lastLink = thisLink;
+            }
+        }
+
+        if (lastLink != null) {
+            InteractiveInfo info = lastLink.getInfo();
+            TxInteractiveInfoAtom txinfo = lastLink.getTextRunInfo();
+            assert(info != null && txinfo != null);
+            _txtbox.appendChildRecord(info);
+            _txtbox.appendChildRecord(txinfo);
+        }    
+    }
+    
+    /**
+     * Writes the textbox records back to the document record 
+     */
+    private static void refreshRecords(List<HSLFTextParagraph> paragraphs) {
+        TextHeaderAtom headerAtom = paragraphs.get(0)._headerAtom;
+        RecordContainer _txtbox = headerAtom.getParentRecord();
         if (_txtbox instanceof EscherTextboxWrapper) {
             try {
                 ((EscherTextboxWrapper) _txtbox).writeOut(null);
             } catch (IOException e) {
                 throw new RuntimeException("failed dummy write", e);
             }
-        }
-
-        for (HSLFTextParagraph p : paragraphs) {
-            p._dirty = false;
         }
     }
 
@@ -1043,7 +1109,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
         }
         return sb.toString();
     }
-    
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -1266,20 +1332,46 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
 
     protected static void applyHyperlinks(List<HSLFTextParagraph> paragraphs) {
         List<HSLFHyperlink> links = HSLFHyperlink.find(paragraphs);
-        
+
         for (HSLFHyperlink h : links) {
             int csIdx = 0;
             for (HSLFTextParagraph p : paragraphs) {
-                for (HSLFTextRun r : p) {
-                    if (h.getStartIndex() <= csIdx && csIdx < h.getEndIndex()) {
-                        r.setHyperlinkId(h.getId());
+                if (csIdx > h.getEndIndex()) break;
+                List<HSLFTextRun> runs = p.getTextRuns();
+                for (int rlen=0,rIdx=0; rIdx < runs.size(); csIdx+=rlen, rIdx++) {
+                    HSLFTextRun run = runs.get(rIdx);
+                    rlen = run.getLength();
+                    if (csIdx < h.getEndIndex() && h.getStartIndex() < csIdx+rlen) {
+                        String rawText = run.getRawText();
+                        int startIdx = h.getStartIndex()-csIdx;
+                        if (startIdx > 0) {
+                            // hyperlink starts within current textrun
+                            HSLFTextRun newRun = new HSLFTextRun(p);
+                            newRun.setCharacterStyle(run.getCharacterStyle());
+                            newRun.setText(rawText.substring(startIdx));
+                            run.setText(rawText.substring(0, startIdx));
+                            runs.add(rIdx+1, newRun);
+                            rlen = startIdx;
+                            continue;
+                        }
+                        int endIdx = Math.min(rlen, h.getEndIndex()-h.getStartIndex());
+                        if (endIdx < rlen) {
+                            // hyperlink ends before end of current textrun
+                            HSLFTextRun newRun = new HSLFTextRun(p);
+                            newRun.setCharacterStyle(run.getCharacterStyle());
+                            newRun.setText(rawText.substring(0, endIdx));
+                            run.setText(rawText.substring(endIdx));
+                            runs.add(rIdx, newRun);
+                            rlen = endIdx;
+                            run = newRun;
+                        }
+                        run.setHyperlink(h);
                     }
-                    csIdx += r.getLength();
                 }
             }
         }
     }
-    
+
     protected static void applyCharacterStyles(List<HSLFTextParagraph> paragraphs, List<TextPropCollection> charStyles) {
         int paraIdx = 0, runIdx = 0;
         HSLFTextRun trun;
@@ -1444,7 +1536,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
     public boolean isDirty() {
         return _dirty;
     }
-    
+
     /**
      * Calculates the start index of the given text run
      *

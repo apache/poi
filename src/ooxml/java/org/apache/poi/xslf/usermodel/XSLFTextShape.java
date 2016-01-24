@@ -71,10 +71,7 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
         return getTextParagraphs().iterator();
     }
 
-    /**
-     *
-     * @return  text contained within this shape or empty string
-     */
+    @Override
     public String getText() {
         StringBuilder out = new StringBuilder();
         for (XSLFTextParagraph p : _paragraphs) {
@@ -95,50 +92,76 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
 
     @Override
     public XSLFTextRun setText(String text) {
-        // copy properties from first paragraph / textrun
+        // calling clearText or setting to a new Array leads to a XmlValueDisconnectedException
+        if (!_paragraphs.isEmpty()) {
+            CTTextBody txBody = getTextBody(false);
+            int cntPs = txBody.sizeOfPArray();
+            for (int i = cntPs; i > 1; i--) {
+                txBody.removeP(i-1);
+                _paragraphs.remove(i-1);
+            }
+            
+            _paragraphs.get(0).clearButKeepProperties();
+        }
+        
+        return appendText(text, false);
+    }
+    
+    @Override
+    public XSLFTextRun appendText(String text, boolean newParagraph) {
+        if (text == null) return null;
+
+        // copy properties from last paragraph / textrun or paragraph end marker
         CTTextParagraphProperties pPr = null;
         CTTextCharacterProperties rPr = null;
-        if (!_paragraphs.isEmpty()) {
-            XSLFTextParagraph p0 = _paragraphs.get(0);
-            pPr = p0.getXmlObject().getPPr();
-            if (!p0.getTextRuns().isEmpty()) {
-                XSLFTextRun r0 = p0.getTextRuns().get(0);
+        
+        boolean firstPara;
+        XSLFTextParagraph para;
+        if (_paragraphs.isEmpty()) {
+            firstPara = false;
+            para = null;
+        } else {
+            firstPara = !newParagraph;
+            para = _paragraphs.get(_paragraphs.size()-1);
+            CTTextParagraph ctp = para.getXmlObject();
+            pPr = ctp.getPPr();
+            List<XSLFTextRun> runs = para.getTextRuns();
+            if (!runs.isEmpty()) {
+                XSLFTextRun r0 = runs.get(runs.size()-1);
                 rPr = r0.getXmlObject().getRPr();
+            } else if (ctp.isSetEndParaRPr()) {
+                rPr = ctp.getEndParaRPr();
             }
         }
-
-        // can't call clearText otherwise we receive a XmlValueDisconnectedException
-        _paragraphs.clear();
-        CTTextBody txBody = getTextBody(true);
-        int cntPs = txBody.sizeOfPArray();
         
-        // split text by paragraph and new line char
-        XSLFTextRun r = null;
-        for (String paraText : text.split("\\r\\n?|\\n")) {
-            XSLFTextParagraph para = addNewTextParagraph();
-            if (pPr != null) {
-                para.getXmlObject().setPPr(pPr);
+        XSLFTextRun run = null;
+        for (String lineTxt : text.split("\\r\\n?|\\n")) {
+            if (!firstPara) {
+                if (para != null && para.getXmlObject().isSetEndParaRPr()) {
+                    para.getXmlObject().unsetEndParaRPr();
+                }
+                para = addNewTextParagraph();
+                if (pPr != null) {
+                    para.getXmlObject().setPPr(pPr);
+                }
             }
-            boolean first = true;
-            for (String runText : paraText.split("[\u000b]")) {
-                if (!first) {
+            boolean firstRun = true;
+            for (String runText : lineTxt.split("[\u000b]")) {
+                if (!firstRun) {
                     para.addLineBreak();
                 }
-                r = para.addNewTextRun();
-                r.setText(runText);
+                run = para.addNewTextRun();
+                run.setText(runText);
                 if (rPr != null) {
-                    r.getXmlObject().setRPr(rPr);
+                    run.getXmlObject().setRPr(rPr);
                 }
-                first = false;
+                firstRun = false;
             }
+            firstPara = false;
         }
         
-        // simply setting a new pArray leads to XmlValueDisconnectedException
-        for (int i = cntPs-1; i >= 0; i--) {
-            txBody.removeP(i);
-        }
-        
-        return r;
+        assert(run != null);
+        return run;
     }
 
     @Override

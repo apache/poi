@@ -27,10 +27,6 @@ import org.apache.poi.hslf.model.textproperties.CharFlagsTextProp;
 import org.apache.poi.hslf.model.textproperties.TextProp;
 import org.apache.poi.hslf.model.textproperties.TextPropCollection;
 import org.apache.poi.hslf.model.textproperties.TextPropCollection.TextPropType;
-import org.apache.poi.hslf.record.ExHyperlink;
-import org.apache.poi.hslf.record.InteractiveInfo;
-import org.apache.poi.hslf.record.InteractiveInfoAtom;
-import org.apache.poi.hslf.record.Record;
 import org.apache.poi.sl.draw.DrawPaint;
 import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
@@ -51,7 +47,7 @@ public final class HSLFTextRun implements TextRun {
 	private HSLFTextParagraph parentParagraph;
 	private String _runText = "";
 	private String _fontFamily;
-	private int hyperlinkId = -1;
+	private HSLFHyperlink link;
 	
 	/**
 	 * Our paragraph and character style.
@@ -395,64 +391,27 @@ public final class HSLFTextRun implements TextRun {
     public byte getPitchAndFamily() {
         return 0;
     }
-    
-    /**
-     * Sets the associated hyperlink id - currently this is only used while parsing and
-     * can't be used for update a ppt
-     *
-     * @param hyperlinkId the id or -1 to unset it
-     */
-    public void setHyperlinkId(int hyperlinkId) {
-        this.hyperlinkId = hyperlinkId;
-    }
-    
-    /**
-     * Returns the associated hyperlink id
-     *
-     * @return the hyperlink id
-     */
-    public int getHyperlinkId() {
-        return hyperlinkId;
-    }
-    
 
+    /**
+     * Sets the hyperlink - used when parsing the document
+     *
+     * @param link the hyperlink
+     */
+    protected void setHyperlink(HSLFHyperlink link) {
+        this.link = link;
+    }
+    
     @Override
     public HSLFHyperlink getHyperlink() {
-        if (hyperlinkId == -1) {
-            return null;
+        return link;
+    }
+    
+    @Override
+    public HSLFHyperlink createHyperlink() {
+        if (link == null) {
+            link = HSLFHyperlink.createHyperlink(this);
+            parentParagraph.setDirty();
         }
-        
-        ExHyperlink linkRecord = parentParagraph.getSheet().getSlideShow().getDocumentRecord().getExObjList().get(hyperlinkId);
-        if (linkRecord == null) {
-            return null;
-        }
-        
-        InteractiveInfoAtom info = null;
-        for (Record r : parentParagraph.getRecords()) {
-            if (r instanceof InteractiveInfo) {
-                InteractiveInfo ii = (InteractiveInfo)r;
-                InteractiveInfoAtom iia = ii.getInteractiveInfoAtom();
-                if (iia.getHyperlinkID() == hyperlinkId) {
-                    info = iia;
-                    break;
-                }
-            }
-        }
-        if (info == null) {
-            return null;
-        }
-        
-        // TODO: check previous/next sibling runs for same hyperlink id and return the whole string length
-        int startIdx = parentParagraph.getStartIdxOfTextRun(this);
-
-        HSLFHyperlink link = new HSLFHyperlink();
-        link.setId(hyperlinkId);
-        link.setType(info.getAction());
-        link.setLabel(linkRecord.getLinkTitle());
-        link.setAddress(linkRecord.getLinkURL());
-        link.setStartIndex(startIdx);
-        link.setEndIndex(startIdx+getLength());
-        
         return link;
     }
 }

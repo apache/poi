@@ -38,7 +38,7 @@ public class TestExObjList extends TestCase {
 		// Get the document
 		Document doc = ss.getDocumentRecord();
 		// Get the ExObjList
-		ExObjList exObjList = doc.getExObjList();
+		ExObjList exObjList = doc.getExObjList(false);
 		assertNotNull(exObjList);
 		assertEquals(1033l, exObjList.getRecordType());
 

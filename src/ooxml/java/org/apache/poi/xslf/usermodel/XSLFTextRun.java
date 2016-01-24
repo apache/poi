@@ -444,17 +444,19 @@ public class XSLFTextRun implements TextRun {
         return "[" + getClass() + "]" + getRawText();
     }
 
+    @Override
     public XSLFHyperlink createHyperlink(){
-        XSLFHyperlink link = new XSLFHyperlink(_r.getRPr().addNewHlinkClick(), this);
-        return link;
+        XSLFHyperlink hl = getHyperlink();
+        if (hl == null) {
+            hl = new XSLFHyperlink(_r.getRPr().addNewHlinkClick(), _p.getParentShape().getSheet());
+        }
+        return hl;
     }
 
     @Override
     public XSLFHyperlink getHyperlink(){
         if(!_r.getRPr().isSetHlinkClick()) return null;
-
-
-        return new XSLFHyperlink(_r.getRPr().getHlinkClick(), this);
+        return new XSLFHyperlink(_r.getRPr().getHlinkClick(), _p.getParentShape().getSheet());
     }
 
     private boolean fetchCharacterProperty(CharacterPropertyFetcher<?> fetcher){

@@ -160,7 +160,7 @@ public final class OLEShape extends HSLFPictureShape {
         if(_exEmbed == null){
             HSLFSlideShow ppt = getSheet().getSlideShow();
 
-            ExObjList lst = ppt.getDocumentRecord().getExObjList();
+            ExObjList lst = ppt.getDocumentRecord().getExObjList(false);
             if(lst == null){
                 logger.log(POILogger.WARN, "ExObjList not found");
                 return null;

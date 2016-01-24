@@ -1011,28 +1011,6 @@ public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagrap
 	}
 
 	/**
-	 * Add a hyperlink to this presentation
-	 *
-	 * @return 0-based index of the hyperlink
-	 */
-	public int addHyperlink(HSLFHyperlink link) {
-		ExHyperlink ctrl = new ExHyperlink();
-		ExHyperlinkAtom obj = ctrl.getExHyperlinkAtom();
-        if(link.getType() == HSLFHyperlink.LINK_SLIDENUMBER) {
-            ctrl.setLinkURL(link.getAddress(), 0x30);
-        } else {
-            ctrl.setLinkURL(link.getAddress());
-        }
-		ctrl.setLinkTitle(link.getLabel());
-
-		int objectId = addToObjListAtom(ctrl);
-		link.setId(objectId);
-		obj.setNumber(objectId);
-
-		return objectId;
-	}
-
-	/**
 	 * Add a embedded object to this presentation
 	 *
 	 * @return 0-based index of the embedded object
@@ -1104,11 +1082,7 @@ public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagrap
 	}
 
 	protected int addToObjListAtom(RecordContainer exObj) {
-		ExObjList lst = (ExObjList) _documentRecord.findFirstOfType(RecordTypes.ExObjList.typeID);
-		if (lst == null) {
-			lst = new ExObjList();
-			_documentRecord.addChildAfter(lst, _documentRecord.getDocumentAtom());
-		}
+		ExObjList lst = getDocumentRecord().getExObjList(true);
 		ExObjListAtom objAtom = lst.getExObjListAtom();
 		// increment the object ID seed
 		int objectId = (int) objAtom.getObjectIDSeed() + 1;
