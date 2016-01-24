@@ -119,6 +119,16 @@ public interface TextShape<
     }
 
     /**
+     * Returns the text contained in this text frame, which has been made safe
+     * for printing and other use.
+     * 
+     * @return the text string for this textbox.
+     * 
+     * @since POI 3.14-Beta2
+     */
+    String getText();
+    
+    /**
      * Sets (overwrites) the current text.
      * Uses the properties of the first paragraph / textrun.
      * Text paragraphs are split by \\r or \\n.
@@ -129,6 +139,18 @@ public interface TextShape<
      * @return the last text run of the - potential split - text
      */
     TextRun setText(String text);
+
+    /**
+     * Adds the supplied text onto the end of the TextParagraphs,
+     * creating a new RichTextRun for it to sit in.
+     *
+     * @param text the text string to be appended.
+     * @param newParagraph if true, a new paragraph will be added,
+     *        which will contain the added text
+     *
+     * @since POI 3.14-Beta1
+     */
+    TextRun appendText(String text, boolean newParagraph);
     
     /**
      * @return the TextParagraphs for this text box

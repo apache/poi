@@ -61,7 +61,7 @@ public class DrawPictureShape extends DrawSimpleShape {
      * Returns an ImageRenderer for the PictureData
      *
      * @param graphics
-     * @return
+     * @return the image renderer
      */
     public static ImageRenderer getImageRenderer(Graphics2D graphics, String contentType) {
         ImageRenderer renderer = (ImageRenderer)graphics.getRenderingHint(Drawable.IMAGE_RENDERER);

@@ -35,13 +35,10 @@ import org.apache.poi.ddf.EscherTextboxRecord;
 import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.hslf.model.HSLFMetroShape;
 import org.apache.poi.hslf.record.EscherTextboxWrapper;
-import org.apache.poi.hslf.record.InteractiveInfo;
-import org.apache.poi.hslf.record.InteractiveInfoAtom;
 import org.apache.poi.hslf.record.OEPlaceholderAtom;
 import org.apache.poi.hslf.record.PPDrawing;
 import org.apache.poi.hslf.record.RoundTripHFPlaceholder12;
 import org.apache.poi.hslf.record.TextHeaderAtom;
-import org.apache.poi.hslf.record.TxInteractiveInfoAtom;
 import org.apache.poi.sl.draw.DrawFactory;
 import org.apache.poi.sl.draw.DrawTextShape;
 import org.apache.poi.sl.usermodel.Insets2D;
@@ -622,33 +619,6 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
         return getClientDataRecord(RoundTripHFPlaceholder12.typeID);
     }
     
-    /**
-     *
-     * Assigns a hyperlink to this text shape
-     *
-     * @param linkId    id of the hyperlink, @see org.apache.poi.hslf.usermodel.SlideShow#addHyperlink(Hyperlink)
-     * @param      beginIndex   the beginning index, inclusive.
-     * @param      endIndex     the ending index, exclusive.
-     * @see org.apache.poi.hslf.usermodel.HSLFSlideShow#addHyperlink(HSLFHyperlink)
-     */
-    public void setHyperlink(int linkId, int beginIndex, int endIndex){
-        //TODO validate beginIndex and endIndex and throw IllegalArgumentException
-
-        InteractiveInfo info = new InteractiveInfo();
-        InteractiveInfoAtom infoAtom = info.getInteractiveInfoAtom();
-        infoAtom.setAction(org.apache.poi.hslf.record.InteractiveInfoAtom.ACTION_HYPERLINK);
-        infoAtom.setHyperlinkType(org.apache.poi.hslf.record.InteractiveInfoAtom.LINK_Url);
-        infoAtom.setHyperlinkID(linkId);
-
-        _txtbox.appendChildRecord(info);
-
-        TxInteractiveInfoAtom txiatom = new TxInteractiveInfoAtom();
-        txiatom.setStartIndex(beginIndex);
-        txiatom.setEndIndex(endIndex);
-        _txtbox.appendChildRecord(txiatom);
-
-    }
-
     @Override
     public boolean isPlaceholder() {
         OEPlaceholderAtom oep = getPlaceholderAtom();
@@ -729,50 +699,38 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
         return HSLFTextParagraph.getRawText(getTextParagraphs());
     }
 
-    /**
-     * Returns the text contained in this text frame, which has been made safe
-     * for printing and other use.
-     *
-     * @return the text string for this textbox.
-     */
+    @Override
     public String getText() {
         String rawText = getRawText();
         return HSLFTextParagraph.toExternalString(rawText, getRunType());
     }
 
+    @Override
+    public HSLFTextRun appendText(String text, boolean newParagraph) {
+        // init paragraphs
+        List<HSLFTextParagraph> paras = getTextParagraphs();
+        HSLFTextRun htr = HSLFTextParagraph.appendText(paras, text, newParagraph);
+        setTextId(getRawText().hashCode());
+        return htr; 
+    }
 
-    // Update methods follow
+    @Override
+    public HSLFTextRun setText(String text) {
+        // init paragraphs
+        List<HSLFTextParagraph> paras = getTextParagraphs();
+        HSLFTextRun htr = HSLFTextParagraph.setText(paras, text);
+        setTextId(getRawText().hashCode());
+        return htr;
+    }
 
-      /**
-       * Adds the supplied text onto the end of the TextParagraphs,
-       * creating a new RichTextRun for it to sit in.
-       *
-       * @param text the text string used by this object.
-       */
-      public HSLFTextRun appendText(String text, boolean newParagraph) {
-          // init paragraphs
-          List<HSLFTextParagraph> paras = getTextParagraphs();
-          return HSLFTextParagraph.appendText(paras, text, newParagraph);
-      }
-
-      @Override
-      public HSLFTextRun setText(String text) {
-          // init paragraphs
-          List<HSLFTextParagraph> paras = getTextParagraphs();
-          HSLFTextRun htr = HSLFTextParagraph.setText(paras, text);
-          setTextId(text.hashCode());
-          return htr;
-      }
-
-      /**
-       * Saves the modified paragraphs/textrun to the records.
-       * Also updates the styles to the correct text length.
-       */
-      protected void storeText() {
-          List<HSLFTextParagraph> paras = getTextParagraphs();
-          HSLFTextParagraph.storeText(paras);
-      }
-      // Accesser methods follow
+    /**
+     * Saves the modified paragraphs/textrun to the records.
+     * Also updates the styles to the correct text length.
+     */
+    protected void storeText() {
+        List<HSLFTextParagraph> paras = getTextParagraphs();
+        HSLFTextParagraph.storeText(paras);
+    }
 
     /**
      * Returns the array of all hyperlinks in this text run

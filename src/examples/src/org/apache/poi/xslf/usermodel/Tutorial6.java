@@ -48,7 +48,7 @@ public class Tutorial6 {
         XSLFTextRun r2 = shape2.addNewTextParagraph().addNewTextRun();
         XSLFHyperlink link2 = r2.createHyperlink();
         r2.setText("Go to the second slide"); // visible text
-        link2.setAddress(slide2);  // link address
+        link2.linkToSlide(slide2);  // link address
 
 
 

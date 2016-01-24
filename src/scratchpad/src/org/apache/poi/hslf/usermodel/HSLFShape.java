@@ -28,7 +28,6 @@ import org.apache.poi.ddf.EscherChildAnchorRecord;
 import org.apache.poi.ddf.EscherClientAnchorRecord;
 import org.apache.poi.ddf.EscherColorRef;
 import org.apache.poi.ddf.EscherContainerRecord;
-import org.apache.poi.ddf.EscherOptRecord;
 import org.apache.poi.ddf.EscherProperties;
 import org.apache.poi.ddf.EscherProperty;
 import org.apache.poi.ddf.EscherRecord;
@@ -60,8 +59,6 @@ import org.apache.poi.util.Units;
  *  in points (72 points = 1 inch).
  *  </p>
  * <p>
-  *
-  * @author Yegor Kozlov
  */
 public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
 
@@ -89,7 +86,7 @@ public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
      * Fill
      */
     protected HSLFFill _fill;
-
+    
     /**
      * Create a Shape object. This constructor is used when an existing Shape is read from from a PowerPoint document.
      *
@@ -443,16 +440,6 @@ public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
 
     public FillStyle getFillStyle() {
         return getFill().getFillStyle();
-    }
-
-    /**
-     * Returns the hyperlink assigned to this shape
-     *
-     * @return the hyperlink assigned to this shape
-     * or <code>null</code> if not found.
-     */
-    public HSLFHyperlink getHyperlink(){
-        return HSLFHyperlink.find(this);
     }
 
     public void draw(Graphics2D graphics){

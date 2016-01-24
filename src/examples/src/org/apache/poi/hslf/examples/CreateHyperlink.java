@@ -39,38 +39,26 @@ public abstract class CreateHyperlink {
         HSLFSlide slideC = ppt.createSlide();
 
         // link to a URL
-        HSLFTextBox textBox1 = new HSLFTextBox();
+        HSLFTextBox textBox1 = slideA.createTextBox();
         textBox1.setText("Apache POI");
         textBox1.setAnchor(new Rectangle(100, 100, 200, 50));
 
-        String text = textBox1.getText();
-        HSLFHyperlink link = new HSLFHyperlink();
-        link.setAddress("http://www.apache.org");
-        link.setLabel(textBox1.getText());
-        int linkId = ppt.addHyperlink(link);
-
-        // apply link to the text
-        textBox1.setHyperlink(linkId, 0, text.length());
-
-        slideA.addShape(textBox1);
+        HSLFHyperlink link1 = textBox1.getTextParagraphs().get(0).getTextRuns().get(0).createHyperlink();
+        link1.linkToUrl("http://www.apache.org");
+        link1.setLabel(textBox1.getText());
 
         // link to another slide
-        HSLFTextBox textBox2 = new HSLFTextBox();
+        HSLFTextBox textBox2 = slideA.createTextBox();
         textBox2.setText("Go to slide #3");
         textBox2.setAnchor(new Rectangle(100, 300, 200, 50));
 
-        HSLFHyperlink link2 = new HSLFHyperlink();
-        link2.setAddress(slideC);
-        ppt.addHyperlink(link2);
-
-        // apply link to the whole shape
-        textBox2.setHyperlink(link2);
-
-        slideA.addShape(textBox2);
+        HSLFHyperlink link2 = textBox2.getTextParagraphs().get(0).getTextRuns().get(0).createHyperlink();
+        link2.linkToSlide(slideC);
 
         FileOutputStream out = new FileOutputStream("hyperlink.ppt");
         ppt.write(out);
         out.close();
 
+        ppt.close();
    }
 }

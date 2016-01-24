@@ -134,6 +134,7 @@ public abstract class HSLFSheet implements HSLFShapeContainer, Sheet<HSLFShape,H
         if (trs == null) return;
         for (List<HSLFTextParagraph> ltp : trs) {
             HSLFTextParagraph.supplySheet(ltp, this);
+            HSLFTextParagraph.applyHyperlinks(ltp);
         }
     }
 
@@ -171,6 +172,14 @@ public abstract class HSLFSheet implements HSLFShapeContainer, Sheet<HSLFShape,H
             EscherContainerRecord sp = (EscherContainerRecord) it.next();
             HSLFShape sh = HSLFShapeFactory.createShape(sp, null);
             sh.setSheet(this);
+            
+            if (sh instanceof HSLFSimpleShape) {
+                HSLFHyperlink link = HSLFHyperlink.find(sh);
+                if (link != null) {
+                    ((HSLFSimpleShape)sh).setHyperlink(link);
+                }
+            }
+            
             shapeList.add(sh);
         }
 

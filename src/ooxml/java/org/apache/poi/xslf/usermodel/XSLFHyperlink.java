@@ -16,20 +16,23 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
+import java.net.URI;
+
+import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.sl.usermodel.Hyperlink;
+import org.apache.poi.sl.usermodel.Slide;
 import org.apache.poi.util.Internal;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTHyperlink;
 
-import java.net.URI;
-
-public class XSLFHyperlink implements Hyperlink {
-    final XSLFTextRun _r;
+public class XSLFHyperlink implements Hyperlink<XSLFShape,XSLFTextParagraph> {
+    final XSLFSheet _sheet;
     final CTHyperlink _link;
 
-    XSLFHyperlink(CTHyperlink link, XSLFTextRun r){
-        _r = r;
+    XSLFHyperlink(CTHyperlink link, XSLFSheet sheet){
+        _sheet = sheet;
         _link = link;
     }
 
@@ -39,24 +42,27 @@ public class XSLFHyperlink implements Hyperlink {
     }
 
     @Override
-    public void setAddress(String address){
-        XSLFSheet sheet = _r.getParentParagraph().getParentShape().getSheet();
-        PackageRelationship rel =
-                sheet.getPackagePart().
-                        addExternalRelationship(address, XSLFRelation.HYPERLINK.getRelation());
-        _link.setId(rel.getId());
+    public void setAddress(String address) {
+        linkToUrl(address);
     }
-    
+
     @Override
     public String getAddress() {
-        return getTargetURI().toASCIIString();
+        if (!_link.isSetId()) {
+            return _link.getAction();
+        }
+
+        String id = _link.getId();
+        URI targetURI = _sheet.getPackagePart().getRelationship(id).getTargetURI();
+        
+        return targetURI.toASCIIString();
     }
 
     @Override
     public String getLabel() {
         return _link.getTooltip();
     }
-    
+
     @Override
     public void setLabel(String label) {
         _link.setTooltip(label);
@@ -64,28 +70,88 @@ public class XSLFHyperlink implements Hyperlink {
 
     @Override
     public int getType() {
-        // TODO: currently this just returns nonsense
-        if ("ppaction://hlinksldjump".equals(_link.getAction())) {
+        String action = _link.getAction();
+        if (action == null) {
+            action = "";
+        }
+        if (action.equals("ppaction://hlinksldjump") || action.startsWith("ppaction://hlinkshowjump")) {
             return LINK_DOCUMENT;
         }
-        return LINK_URL;
+        
+        String address = getAddress();
+        if (address == null) {
+            address = "";
+        }
+        if (address.startsWith("mailto:")) {
+            return LINK_EMAIL;
+        } else {
+            return LINK_URL;
+        }
     }
-    
-    public void setAddress(XSLFSlide slide){
-        XSLFSheet sheet = _r.getParentParagraph().getParentShape().getSheet();
+
+    @Override
+    public void linkToEmail(String emailAddress) {
+        linkToExternal("mailto:"+emailAddress);
+        setLabel(emailAddress);
+    }
+
+    @Override
+    public void linkToUrl(String url) {
+        linkToExternal(url);
+        setLabel(url);
+    }
+
+    private void linkToExternal(String url) {
+        PackagePart thisPP = _sheet.getPackagePart();
+        if (_link.isSetId() && !_link.getId().isEmpty()) {
+            thisPP.removeRelationship(_link.getId());
+        }
+        PackageRelationship rel = thisPP.addExternalRelationship(url, XSLFRelation.HYPERLINK.getRelation());
+        _link.setId(rel.getId());
+        if (_link.isSetAction()) {
+            _link.unsetAction();
+        }
+    }
+
+    @Override
+    public void linkToSlide(Slide<XSLFShape,XSLFTextParagraph> slide) {
+        PackagePart thisPP = _sheet.getPackagePart();
+        PackagePartName otherPPN = ((XSLFSheet)slide).getPackagePart().getPartName();
+        if (_link.isSetId() && !_link.getId().isEmpty()) {
+            thisPP.removeRelationship(_link.getId());
+        }
         PackageRelationship rel =
-                sheet.getPackagePart().
-                        addRelationship(slide.getPackagePart().getPartName(),
-                                TargetMode.INTERNAL,
-                                XSLFRelation.SLIDE.getRelation());
+            thisPP.addRelationship(otherPPN, TargetMode.INTERNAL, XSLFRelation.SLIDE.getRelation());
         _link.setId(rel.getId());
         _link.setAction("ppaction://hlinksldjump");
     }
 
-    @Internal
-    public URI getTargetURI(){
-        XSLFSheet sheet = _r.getParentParagraph().getParentShape().getSheet();
-        String id = _link.getId();
-        return sheet.getPackagePart().getRelationship(id).getTargetURI();
+    @Override
+    public void linkToNextSlide() {
+        linkToRelativeSlide("nextslide");
+    }
+
+    @Override
+    public void linkToPreviousSlide() {
+        linkToRelativeSlide("previousslide");
+    }
+
+    @Override
+    public void linkToFirstSlide() {
+        linkToRelativeSlide("firstslide");
+    }
+
+    @Override
+    public void linkToLastSlide() {
+        linkToRelativeSlide("lastslide");
+    }
+    
+    private void linkToRelativeSlide(String jump) {
+        PackagePart thisPP = _sheet.getPackagePart();
+        if (_link.isSetId() && !_link.getId().isEmpty()) {
+            thisPP.removeRelationship(_link.getId());
+        }
+        _link.setId("");
+        _link.setAction("ppaction://hlinkshowjump?jump="+jump);
     }
 }

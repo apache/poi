@@ -161,6 +161,19 @@ public interface TextRun {
      * Return the associated hyperlink
      * 
      * @return the associated hyperlink or null if no hyperlink was set
+     * 
+     * @since POI 3.14-Beta2
      */
-    Hyperlink getHyperlink();
+    Hyperlink<?,?> getHyperlink();
+    
+    
+    /**
+     * Creates a new hyperlink and assigns it to this text run.
+     * If the text run has already a hyperlink assigned, return it instead
+     *
+     * @return the associated hyperlink
+     * 
+     * @since POI 3.14-Beta2
+     */
+    Hyperlink<?,?> createHyperlink();
 }
