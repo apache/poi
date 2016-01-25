@@ -17,29 +17,15 @@
 
 package org.apache.poi.hssf.extractor;
 
-import java.io.BufferedInputStream;
-import java.io.Closeable;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-
 import org.apache.poi.hssf.OldExcelFormatException;
-import org.apache.poi.hssf.record.BOFRecord;
-import org.apache.poi.hssf.record.CodepageRecord;
-import org.apache.poi.hssf.record.FormulaRecord;
-import org.apache.poi.hssf.record.NumberRecord;
-import org.apache.poi.hssf.record.OldFormulaRecord;
-import org.apache.poi.hssf.record.OldLabelRecord;
-import org.apache.poi.hssf.record.OldSheetRecord;
-import org.apache.poi.hssf.record.OldStringRecord;
-import org.apache.poi.hssf.record.RKRecord;
-import org.apache.poi.hssf.record.RecordInputStream;
+import org.apache.poi.hssf.eventusermodel.old.OldHSSFEventFactory;
+import org.apache.poi.hssf.eventusermodel.old.OldHSSFListener;
+import org.apache.poi.hssf.record.*;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
-import org.apache.poi.poifs.filesystem.DocumentNode;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.NotOLE2FileException;
-import org.apache.poi.ss.usermodel.Cell;
+
+import java.io.*;
 
 /**
  * A text extractor for old Excel files, which are too old for
@@ -50,6 +36,7 @@ import org.apache.poi.ss.usermodel.Cell;
  *  suitable for indexing by something like Apache Lucene, or used
  *  by Apache Tika, but not really intended for display to the user.
  * </p>
+ * @see OldHSSFEventFactory
  */
 public class OldExcelExtractor {
     private RecordInputStream ris;
@@ -91,12 +78,7 @@ public class OldExcelExtractor {
         open(fs.getRoot());
     }
     private void open(DirectoryNode directory) throws IOException {
-        DocumentNode book = (DocumentNode)directory.getEntry("Book");
-        if (book == null) {
-            throw new IOException("No Excel 5/95 Book stream found");
-        }
-        
-        ris = new RecordInputStream(directory.createDocumentInputStream(book));
+        ris = OldHSSFEventFactory.getRecordInputStream(directory);
         prepare();
     }
 
@@ -111,31 +93,10 @@ public class OldExcelExtractor {
     }
     
     private void prepare() {
-        if (! ris.hasNextRecord())
-            throw new IllegalArgumentException("File contains no records!"); 
-        ris.nextRecord();
-        
-        // Work out what version we're dealing with
-        int bofSid = ris.getSid();
-        switch (bofSid) {
-            case BOFRecord.biff2_sid:
-                biffVersion = 2;
-                break;
-            case BOFRecord.biff3_sid:
-                biffVersion = 3;
-                break;
-            case BOFRecord.biff4_sid:
-                biffVersion = 4;
-                break;
-            case BOFRecord.biff5_sid:
-                biffVersion = 5;
-                break;
-            default:
-                throw new IllegalArgumentException("File does not begin with a BOF, found sid of " + bofSid); 
-        }
-        
+        OldHSSFEventFactory.BOFEntry bofEntry = OldHSSFEventFactory.processBOFRecord(ris);
+        this.biffVersion = bofEntry.getBiffVersion();
         // Get the type
-        BOFRecord bof = new BOFRecord(ris);
+        BOFRecord bof = bofEntry.getRecord();
         fileType = bof.getType();
     }
 
@@ -159,76 +120,9 @@ public class OldExcelExtractor {
      *  for these old file formats
      */
     public String getText() {
-        StringBuffer text = new StringBuffer();
-        
-        // To track formats and encodings
-        CodepageRecord codepage = null;
-        // TODO track the XFs and Format Strings
-
-        // Process each record in turn, looking for interesting ones
-        while (ris.hasNextRecord()) {
-            int sid = ris.getNextSid();
-            ris.nextRecord();
-
-            switch (sid) {
-                // Biff 5+ only, no sheet names in older formats
-                case OldSheetRecord.sid:
-                    OldSheetRecord shr = new OldSheetRecord(ris);
-                    shr.setCodePage(codepage);
-                    text.append("Sheet: ");
-                    text.append(shr.getSheetname());
-                    text.append('\n');
-                    break;
-            
-                case OldLabelRecord.biff2_sid:
-                case OldLabelRecord.biff345_sid:
-                    OldLabelRecord lr = new OldLabelRecord(ris);
-                    lr.setCodePage(codepage);
-                    text.append(lr.getValue());
-                    text.append('\n');
-                    break;
-                case OldStringRecord.biff2_sid:
-                case OldStringRecord.biff345_sid:
-                    OldStringRecord sr = new OldStringRecord(ris);
-                    sr.setCodePage(codepage);
-                    text.append(sr.getString());
-                    text.append('\n');
-                    break;
-                    
-                case NumberRecord.sid:
-                    NumberRecord nr = new NumberRecord(ris);
-                    handleNumericCell(text, nr.getValue());
-                    break;
-                case OldFormulaRecord.biff2_sid:
-                case OldFormulaRecord.biff3_sid:
-                case OldFormulaRecord.biff4_sid:
-                    // Biff 2 and 5+ share the same SID, due to a bug...
-                    if (biffVersion == 5) {
-                        FormulaRecord fr = new FormulaRecord(ris);
-                        if (fr.getCachedResultType() == Cell.CELL_TYPE_NUMERIC) {
-                            handleNumericCell(text, fr.getValue());
-                        }
-                    } else {
-                        OldFormulaRecord fr = new OldFormulaRecord(ris);
-                        if (fr.getCachedResultType() == Cell.CELL_TYPE_NUMERIC) {
-                            handleNumericCell(text, fr.getValue());
-                        }
-                    }
-                    break;
-                case RKRecord.sid:
-                    RKRecord rr = new RKRecord(ris);
-                    handleNumericCell(text, rr.getRKNumber());
-                    break;
-                    
-                case CodepageRecord.sid:
-                    codepage = new CodepageRecord(ris);
-                    break;
-                    
-                default:
-                    ris.readFully(new byte[ris.remaining()]);
-            }
-        }
-        
+        final StringBuilder text = new StringBuilder();
+        OldHSSFEventFactory hssfEventFactory = new OldHSSFEventFactory();
+        hssfEventFactory.process(ris, biffVersion, new TextCollectingListener(text));
         if (input != null) {
             try {
                 input.close();
@@ -239,10 +133,76 @@ public class OldExcelExtractor {
 
         return text.toString();
     }
-    
-    protected void handleNumericCell(StringBuffer text, double value) {
-        // TODO Need to fetch / use format strings
-        text.append(value);
-        text.append('\n');
+
+    private static final class TextCollectingListener implements OldHSSFListener {
+        private final StringBuilder text;
+
+        private TextCollectingListener(StringBuilder text) {
+            this.text = text;
+        }
+
+        @Override
+        public void onBOFRecord(BOFRecord record, int biffVersion) {
+
+        }
+
+        @Override
+        public void onOldSheetRecord(OldSheetRecord shr) {
+            text.append("Sheet: ");
+            text.append(shr.getSheetname());
+            text.append('\n');
+        }
+
+        @Override
+        public void onOldLabelRecord(OldLabelRecord lr) {
+            text.append(lr.getValue());
+            text.append('\n');
+        }
+
+        @Override
+        public void onOldStringRecord(OldStringRecord sr) {
+            text.append(sr.getString());
+            text.append('\n');
+        }
+
+        @Override
+        public void onNumberRecord(NumberRecord nr) {
+            handleNumericCell(nr.getValue());
+        }
+
+        @Override
+        public void onFormulaRecord(FormulaRecord fr) {
+            handleNumericCell(fr.getValue());
+        }
+
+        @Override
+        public void onOldFormulaRecord(OldFormulaRecord fr) {
+            handleNumericCell(fr.getValue());
+        }
+
+        @Override
+        public void onRKRecord(RKRecord rr) {
+            handleNumericCell(rr.getRKNumber());
+        }
+
+        @Override
+        public void onMulRKRecord(MulRKRecord mrr) {
+            final int columns = mrr.getNumColumns();
+            for (int i = 0; i < columns; i++) {
+                handleNumericCell(mrr.getRKNumberAt(i));
+
+            }
+        }
+
+        @Override
+        public void onBookEnd() {
+
+        }
+
+        private void handleNumericCell(double value) {
+            // TODO Need to fetch / use format strings
+            text.append(value);
+            text.append('\n');
+        }
     }
 }
