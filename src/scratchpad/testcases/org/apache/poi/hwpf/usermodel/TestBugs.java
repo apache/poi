@@ -18,13 +18,13 @@ package org.apache.poi.hwpf.usermodel;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-
-import junit.framework.TestCase;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.poi.POIDataSamples;
@@ -37,6 +37,7 @@ import org.apache.poi.hwpf.extractor.Word6Extractor;
 import org.apache.poi.hwpf.extractor.WordExtractor;
 import org.apache.poi.hwpf.model.FieldsDocumentPart;
 import org.apache.poi.hwpf.model.FileInformationBlock;
+import org.apache.poi.hwpf.model.PicturesTable;
 import org.apache.poi.hwpf.model.PlexOfField;
 import org.apache.poi.hwpf.model.SubdocumentType;
 import org.apache.poi.hwpf.model.io.HWPFOutputStream;
@@ -44,6 +45,8 @@ import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+
+import junit.framework.TestCase;
 
 /**
  * Test different problems reported in Apache Bugzilla
@@ -183,6 +186,7 @@ public class TestBugs extends TestCase
      * Bug 44331 - HWPFDocument.write destroys fields
      * @throws IOException 
      */
+    @SuppressWarnings("deprecation")
     public void test44431() throws IOException
     {
         HWPFDocument doc1 = HWPFTestDataSamples.openSampleFile("Bug44431.doc");
@@ -306,6 +310,7 @@ public class TestBugs extends TestCase
      * 
      * @throws IOException
      */
+    @SuppressWarnings("deprecation")
     public void test47286() throws IOException
     {
         HWPFDocument doc1 = HWPFTestDataSamples.openSampleFile("Bug47286.doc");

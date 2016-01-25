@@ -21,12 +21,15 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.util.List;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFTestDataSamples;
 import org.apache.poi.hwpf.model.PicturesTable;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -356,5 +359,43 @@ public final class TestPictures {
         Picture picture = pictureTable.getAllPictures().get(0);
 
         assertEquals("This is the alternative text for the picture.", picture.getDescription());
+    }
+    
+    @Ignore("This bug is not fixed yet")
+    @Test
+    public void test58804_1() throws Exception {
+        HWPFDocument docA = HWPFTestDataSamples.openSampleFile("58804_1.doc");
+        
+        expectImages(docA, 1);
+
+        HWPFDocument docB = HWPFTestDataSamples.writeOutAndReadBack(docA);
+        
+        OutputStream out = new FileOutputStream("/tmp/58804_1_out.doc");
+        try {
+            docB.write(out);
+        } finally {
+            out.close();
+        }
+
+        expectImages(docB, 1);
+    }
+
+    @Ignore("This bug is not fixed yet")
+    @Test
+    public void test58804() throws Exception {
+        HWPFDocument docA = HWPFTestDataSamples.openSampleFile("58804.doc");
+        
+        expectImages(docA, 7);
+
+        HWPFDocument docB = HWPFTestDataSamples.writeOutAndReadBack(docA);
+
+        expectImages(docB, 7);
+    }
+
+    private void expectImages(HWPFDocument docA, int expectedCount) {
+        assertNotNull(docA.getPicturesTable());
+        PicturesTable picA = docA.getPicturesTable();
+        List<Picture> picturesA = picA.getAllPictures();
+        assertEquals(expectedCount, picturesA.size());
     }
 }
