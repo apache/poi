@@ -1902,6 +1902,7 @@ under the License.
             <auxClasspath path="${dsig.xmlsec.jar}" />
             <auxClasspath path="${ooxml.xsds.jar}" />
             <auxClasspath path="${ooxml.security.jar}" />
+            <auxClasspath path="${ooxml.curvesapi.jar}" />
             <auxClasspath path="${ooxml.xmlbeans26.jar}" />
             <auxClasspath path="${main.commons-codec.jar}" />
             <auxClasspath path="${main.commons-logging.jar}" />
@@ -1925,6 +1926,7 @@ under the License.
             <auxClasspath path="${dsig.xmlsec.jar}" />
             <auxClasspath path="${ooxml.xsds.jar}" />
             <auxClasspath path="${ooxml.security.jar}" />
+            <auxClasspath path="${ooxml.curvesapi.jar}" />
             <auxClasspath path="${ooxml.xmlbeans26.jar}" />
             <auxClasspath path="${main.commons-codec.jar}" />
             <auxClasspath path="${main.commons-logging.jar}" />
