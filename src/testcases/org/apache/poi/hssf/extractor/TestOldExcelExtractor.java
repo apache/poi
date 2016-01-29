@@ -21,10 +21,22 @@ import static org.apache.poi.POITestCase.assertContains;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintStream;
 
+import org.apache.poi.EmptyFileException;
+import org.apache.poi.POIDataSamples;
 import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -32,18 +44,13 @@ import org.junit.Test;
  *  extractor
  */
 public final class TestOldExcelExtractor {
-    private static OldExcelExtractor createExtractor(String sampleFileName) {
+    private static OldExcelExtractor createExtractor(String sampleFileName) throws IOException {
         File file = HSSFTestDataSamples.getSampleFile(sampleFileName);
-
-        try {
-            return new OldExcelExtractor(file);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        return new OldExcelExtractor(file);
     }
-    
+
     @Test
-    public void testSimpleExcel3() {
+    public void testSimpleExcel3() throws Exception {
         OldExcelExtractor extractor = createExtractor("testEXCEL_3.xls");
 
         // Check we can call getText without error
@@ -63,10 +70,21 @@ public final class TestOldExcelExtractor {
         // Check the type
         assertEquals(3, extractor.getBiffVersion());
         assertEquals(0x10, extractor.getFileType());
+
+        extractor.close();
     }
     
+
     @Test
-    public void testSimpleExcel4() {
+    public void testSimpleExcel3NoReading() throws Exception {
+        OldExcelExtractor extractor = createExtractor("testEXCEL_3.xls");
+        assertNotNull(extractor);
+
+        extractor.close();
+    }
+
+    @Test
+    public void testSimpleExcel4() throws Exception {
         OldExcelExtractor extractor = createExtractor("testEXCEL_4.xls");
 
         // Check we can call getText without error
@@ -83,10 +101,12 @@ public final class TestOldExcelExtractor {
         // Check the type
         assertEquals(4, extractor.getBiffVersion());
         assertEquals(0x10, extractor.getFileType());
+
+        extractor.close();
     }
     
     @Test
-    public void testSimpleExcel5() {
+    public void testSimpleExcel5() throws Exception {
         for (String ver : new String[] {"5", "95"}) {
             OldExcelExtractor extractor = createExtractor("testEXCEL_"+ver+".xls");
     
@@ -107,11 +127,13 @@ public final class TestOldExcelExtractor {
             // Check the type
             assertEquals(5, extractor.getBiffVersion());
             assertEquals(0x05, extractor.getFileType());
+
+            extractor.close();
         }
     }
 
     @Test
-    public void testStrings() {
+    public void testStrings() throws Exception {
         OldExcelExtractor extractor = createExtractor("testEXCEL_4.xls");
         String text = extractor.getText();
 
@@ -127,10 +149,12 @@ public final class TestOldExcelExtractor {
         
         // Formula based strings
         // TODO Find some then test
+
+        extractor.close();
     }
 
     @Test
-    public void testFormattedNumbersExcel4() {
+    public void testFormattedNumbersExcel4() throws Exception {
         OldExcelExtractor extractor = createExtractor("testEXCEL_4.xls");
         String text = extractor.getText();
 
@@ -146,10 +170,12 @@ public final class TestOldExcelExtractor {
         // TODO
 //      assertContains(text, "55,624");
 //      assertContains(text, "11,743,477");
+
+        extractor.close();
     }
     
     @Test
-    public void testFormattedNumbersExcel5() {
+    public void testFormattedNumbersExcel5() throws Exception {
         for (String ver : new String[] {"5", "95"}) {
             OldExcelExtractor extractor = createExtractor("testEXCEL_"+ver+".xls");
             String text = extractor.getText();
@@ -170,6 +196,8 @@ public final class TestOldExcelExtractor {
 //          assertContains(text, "1,234,500");
 //          assertContains(text, "$169.00");
 //          assertContains(text, "$1,253.82");
+
+            extractor.close();
         }
     }
     
@@ -183,6 +211,136 @@ public final class TestOldExcelExtractor {
             String text = extractor.getText();
             assertNotNull(text);
             assertTrue(text.length() > 100);
+
+            extractor.close();
+        }
+    }
+
+    @Test
+    public void testOpenInvalidFile() throws Exception {
+        // a file that exists, but is a different format
+        try {
+            createExtractor("WithVariousData.xlsx");
+            fail("Should catch Exception here");
+        } catch (OfficeXmlFileException e) {
+            // expected here
+        }
+        
+    }
+
+    @Test
+    public void testOpenNonExistingFile() throws Exception {
+        // a file that exists, but is a different format
+        try {
+            OldExcelExtractor extractor = new OldExcelExtractor(new File("notexistingfile.xls"));
+            extractor.close();
+            fail("Should catch Exception here");
+        } catch (EmptyFileException e) {
+            // expected here
+        }
+    }
+    
+    @Test
+    public void testInputStream() throws Exception {
+        File file = HSSFTestDataSamples.getSampleFile("testEXCEL_3.xls");
+        InputStream stream = new FileInputStream(file);
+        try {
+            OldExcelExtractor extractor = new OldExcelExtractor(stream);
+            String text = extractor.getText();
+            assertNotNull(text);
+            extractor.close();
+        } finally {
+            stream.close();
+        }
+    }
+
+    @Test
+    public void testInputStreamNPOIHeader() throws Exception {
+        File file = HSSFTestDataSamples.getSampleFile("FormulaRefs.xls");
+        InputStream stream = new FileInputStream(file);
+        try {
+            OldExcelExtractor extractor = new OldExcelExtractor(stream);
+            extractor.close();
+        } finally {
+            stream.close();
+        }
+    }
+
+    @Test
+    public void testNPOIFSFileSystem() throws Exception {
+        File file = HSSFTestDataSamples.getSampleFile("FormulaRefs.xls");
+        NPOIFSFileSystem fs = new NPOIFSFileSystem(file);
+        try {
+            OldExcelExtractor extractor = new OldExcelExtractor(fs);
+            extractor.close();
+        } finally {
+            fs.close();
+        }
+    }
+
+    @Test
+    public void testDirectoryNode() throws Exception {
+        File file = HSSFTestDataSamples.getSampleFile("FormulaRefs.xls");
+        NPOIFSFileSystem fs = new NPOIFSFileSystem(file);
+        try {
+            OldExcelExtractor extractor = new OldExcelExtractor(fs.getRoot());
+            extractor.close();
+        } finally {
+            fs.close();
+        }
+    }
+
+    @Test
+    public void testDirectoryNodeInvalidFile() throws Exception {
+        File file = POIDataSamples.getDocumentInstance().getFile("test.doc");
+        NPOIFSFileSystem fs = new NPOIFSFileSystem(file);
+        try {
+            OldExcelExtractor extractor = new OldExcelExtractor(fs.getRoot());
+            extractor.close();
+            fail("Should catch exception here");
+        } catch (FileNotFoundException e) {
+            // expected here
+        } finally {
+            fs.close();
+        }
+    }
+
+    @Ignore("Calls System.exit()")
+    @Test
+    public void testMainUsage() throws Exception {
+        PrintStream save = System.err;
+        try {
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            try {
+                PrintStream str = new PrintStream(out);
+                System.setErr(str);
+                OldExcelExtractor.main(new String[] {});
+            } finally {
+                out.close();
+            }
+        } finally {
+            System.setErr(save);
+        }
+    }
+
+    @Test
+    public void testMain() throws Exception {
+        File file = HSSFTestDataSamples.getSampleFile("testEXCEL_3.xls");
+        PrintStream save = System.out;
+        try {
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            try {
+                PrintStream str = new PrintStream(out);
+                System.setOut(str);
+                OldExcelExtractor.main(new String[] {file.getAbsolutePath()});
+            } finally {
+                out.close();
+            }
+            String string = new String(out.toByteArray());
+            assertTrue("Had: " + string, 
+                    string.contains("Table C-13--Lemons"));
+        } finally {
+            System.setOut(save);
         }
     }
 }
