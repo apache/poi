@@ -2942,9 +2942,20 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         for (int index = fromColumn; index <= toColumn; index++) {
             CTCol col = columnHelper.getColumn(index, false);
             if (col != null) {
+                if (col.getMin() - 1 < index) {
+                    CTCol noChangeColFst = columnHelper.cloneCol(cols, col);
+                    noChangeColFst.setMax(index);
+                    col.setMin(index + 1);
+                }
+                if (toColumn < col.getMax() - 1) {
+                    CTCol noChangeColSnd = columnHelper.cloneCol(cols, col);
+                    noChangeColSnd.setMin(toColumn + 2);
+                    col.setMax(toColumn + 1);
+                }
+
                 short outlineLevel = col.getOutlineLevel();
                 col.setOutlineLevel((short) (outlineLevel - 1));
-                index = (int) col.getMax();
+                index = (int) col.getMax() - 1;
 
                 if (col.getOutlineLevel() <= 0) {
                     int colIndex = columnHelper.getIndexOfColumn(cols, col);

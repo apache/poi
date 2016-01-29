@@ -365,6 +365,162 @@ public final class TestHSSFSheet extends BaseTestSheet {
     }
 
     @Test
+    public void groupUngroupFor1stLevel() throws IOException {
+        Workbook workbook = new HSSFWorkbook();
+        Sheet sheet = workbook.createSheet();
+
+        // level 1 groups
+        sheet.groupColumn(1, 3);
+        sheet.groupColumn(5, 7);
+        sheet.groupColumn(9, 11);
+
+        assertEquals(0, sheet.getColumnOutlineLevel(0));
+        assertEquals(1, sheet.getColumnOutlineLevel(1));
+        assertEquals(1, sheet.getColumnOutlineLevel(2));
+        assertEquals(1, sheet.getColumnOutlineLevel(3));
+        assertEquals(0, sheet.getColumnOutlineLevel(4));
+        assertEquals(1, sheet.getColumnOutlineLevel(5));
+        assertEquals(1, sheet.getColumnOutlineLevel(6));
+        assertEquals(1, sheet.getColumnOutlineLevel(7));
+        assertEquals(0, sheet.getColumnOutlineLevel(8));
+        assertEquals(1, sheet.getColumnOutlineLevel(9));
+        assertEquals(1, sheet.getColumnOutlineLevel(10));
+        assertEquals(1, sheet.getColumnOutlineLevel(11));
+        assertEquals(0, sheet.getColumnOutlineLevel(12));
+
+        // ungroup the start of the group
+        sheet.ungroupColumn(1, 1);
+        // ungroup the center of the group
+        sheet.ungroupColumn(6, 6);
+        // ungroup the end of the group
+        sheet.ungroupColumn(11, 11);
+
+        // ungrouped only the selected column
+        assertEquals(0, sheet.getColumnOutlineLevel(0));
+        assertEquals(0, sheet.getColumnOutlineLevel(1));
+        assertEquals(1, sheet.getColumnOutlineLevel(2));
+        assertEquals(1, sheet.getColumnOutlineLevel(3));
+        assertEquals(0, sheet.getColumnOutlineLevel(4));
+        assertEquals(1, sheet.getColumnOutlineLevel(5));
+        assertEquals(0, sheet.getColumnOutlineLevel(6));
+        assertEquals(1, sheet.getColumnOutlineLevel(7));
+        assertEquals(0, sheet.getColumnOutlineLevel(8));
+        assertEquals(1, sheet.getColumnOutlineLevel(9));
+        assertEquals(1, sheet.getColumnOutlineLevel(10));
+        assertEquals(0, sheet.getColumnOutlineLevel(11));
+        assertEquals(0, sheet.getColumnOutlineLevel(12));
+
+        workbook.close();
+    }
+
+    @Test
+    public void groupUngroupFor2ndLevel() throws IOException {
+        Workbook workbook = new HSSFWorkbook();
+        Sheet sheet = workbook.createSheet();
+
+        // level 1 groups
+        sheet.groupColumn(1, 7);
+        sheet.groupColumn(9, 15);
+        sheet.groupColumn(17, 23);
+        sheet.groupColumn(25, 31);
+        sheet.groupColumn(33, 39);
+        sheet.groupColumn(41, 47);
+        sheet.groupColumn(49, 55);
+        // level 2 groups
+        sheet.groupColumn(3, 5);
+        sheet.groupColumn(11, 13);
+        sheet.groupColumn(19, 21);
+        sheet.groupColumn(27, 29);
+        sheet.groupColumn(35, 37);
+        sheet.groupColumn(43, 45);
+        sheet.groupColumn(51, 53);
+
+        // ungroup
+        sheet.ungroupColumn(1, 1);
+        sheet.ungroupColumn(10, 10);
+        sheet.ungroupColumn(19, 19);
+        sheet.ungroupColumn(28, 28);
+        sheet.ungroupColumn(37, 37);
+        sheet.ungroupColumn(46, 46);
+        sheet.ungroupColumn(55, 55);
+
+        // ungrouped only the selected column
+        assertEquals(0, sheet.getColumnOutlineLevel(0));
+
+        assertEquals(0, sheet.getColumnOutlineLevel(1));
+        assertEquals(1, sheet.getColumnOutlineLevel(2));
+        assertEquals(2, sheet.getColumnOutlineLevel(3));
+        assertEquals(2, sheet.getColumnOutlineLevel(4));
+        assertEquals(2, sheet.getColumnOutlineLevel(5));
+        assertEquals(1, sheet.getColumnOutlineLevel(6));
+        assertEquals(1, sheet.getColumnOutlineLevel(7));
+
+        assertEquals(0, sheet.getColumnOutlineLevel(8));
+
+        assertEquals(1, sheet.getColumnOutlineLevel(9));
+        assertEquals(0, sheet.getColumnOutlineLevel(10));
+        assertEquals(2, sheet.getColumnOutlineLevel(11));
+        assertEquals(2, sheet.getColumnOutlineLevel(12));
+        assertEquals(2, sheet.getColumnOutlineLevel(13));
+        assertEquals(1, sheet.getColumnOutlineLevel(14));
+        assertEquals(1, sheet.getColumnOutlineLevel(15));
+
+        assertEquals(0, sheet.getColumnOutlineLevel(16));
+
+        assertEquals(1, sheet.getColumnOutlineLevel(17));
+        assertEquals(1, sheet.getColumnOutlineLevel(18));
+        assertEquals(1, sheet.getColumnOutlineLevel(19));
+        assertEquals(2, sheet.getColumnOutlineLevel(20));
+        assertEquals(2, sheet.getColumnOutlineLevel(21));
+        assertEquals(1, sheet.getColumnOutlineLevel(22));
+        assertEquals(1, sheet.getColumnOutlineLevel(23));
+
+        assertEquals(0, sheet.getColumnOutlineLevel(24));
+
+        assertEquals(1, sheet.getColumnOutlineLevel(25));
+        assertEquals(1, sheet.getColumnOutlineLevel(26));
+        assertEquals(2, sheet.getColumnOutlineLevel(27));
+        assertEquals(1, sheet.getColumnOutlineLevel(28));
+        assertEquals(2, sheet.getColumnOutlineLevel(29));
+        assertEquals(1, sheet.getColumnOutlineLevel(30));
+        assertEquals(1, sheet.getColumnOutlineLevel(31));
+
+        assertEquals(0, sheet.getColumnOutlineLevel(32));
+
+        assertEquals(1, sheet.getColumnOutlineLevel(33));
+        assertEquals(1, sheet.getColumnOutlineLevel(34));
+        assertEquals(2, sheet.getColumnOutlineLevel(35));
+        assertEquals(2, sheet.getColumnOutlineLevel(36));
+        assertEquals(1, sheet.getColumnOutlineLevel(37));
+        assertEquals(1, sheet.getColumnOutlineLevel(38));
+        assertEquals(1, sheet.getColumnOutlineLevel(39));
+
+        assertEquals(0, sheet.getColumnOutlineLevel(40));
+
+        assertEquals(1, sheet.getColumnOutlineLevel(41));
+        assertEquals(1, sheet.getColumnOutlineLevel(42));
+        assertEquals(2, sheet.getColumnOutlineLevel(43));
+        assertEquals(2, sheet.getColumnOutlineLevel(44));
+        assertEquals(2, sheet.getColumnOutlineLevel(45));
+        assertEquals(0, sheet.getColumnOutlineLevel(46));
+        assertEquals(1, sheet.getColumnOutlineLevel(47));
+
+        assertEquals(0, sheet.getColumnOutlineLevel(48));
+
+        assertEquals(1, sheet.getColumnOutlineLevel(49));
+        assertEquals(1, sheet.getColumnOutlineLevel(50));
+        assertEquals(2, sheet.getColumnOutlineLevel(51));
+        assertEquals(2, sheet.getColumnOutlineLevel(52));
+        assertEquals(2, sheet.getColumnOutlineLevel(53));
+        assertEquals(1, sheet.getColumnOutlineLevel(54));
+        assertEquals(0, sheet.getColumnOutlineLevel(55));
+
+        assertEquals(0, sheet.getColumnOutlineLevel(56));
+
+        workbook.close();
+    }
+
+    @Test
     public void createDrawings() throws IOException {
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet();
