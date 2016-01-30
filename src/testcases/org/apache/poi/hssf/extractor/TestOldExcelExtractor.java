@@ -312,7 +312,7 @@ public final class TestOldExcelExtractor {
         try {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             try {
-                PrintStream str = new PrintStream(out);
+                PrintStream str = new PrintStream(out, false, "UTF-8");
                 System.setErr(str);
                 OldExcelExtractor.main(new String[] {});
             } finally {
@@ -330,13 +330,13 @@ public final class TestOldExcelExtractor {
         try {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             try {
-                PrintStream str = new PrintStream(out);
+                PrintStream str = new PrintStream(out, false, "UTF-8");
                 System.setOut(str);
                 OldExcelExtractor.main(new String[] {file.getAbsolutePath()});
             } finally {
                 out.close();
             }
-            String string = new String(out.toByteArray());
+            String string = new String(out.toByteArray(), "UTF-8");
             assertTrue("Had: " + string, 
                     string.contains("Table C-13--Lemons"));
         } finally {
