@@ -314,7 +314,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * with this formula, which may result in a corrupt workbook.
      *
      * To check for merged regions overlapping array formulas or other merged regions
-     * after addMergedRegionUnsafe has been called, call {@link #validateArrayFormulas()} and {@link #validateMergedRegions()}
+     * after addMergedRegionUnsafe has been called, call {@link #validateMergedRegions()}, which runs in O(n^2) time.
      *
      * @param region to merge
      * @return index of this region
