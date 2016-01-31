@@ -301,7 +301,7 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
     /**
      * list of "tail" records that need to be serialized after all drawing group records
      */
-    private Map<Integer, NoteRecord> tailRec = new LinkedHashMap<Integer, NoteRecord>();
+    private final Map<Integer, NoteRecord> tailRec = new LinkedHashMap<Integer, NoteRecord>();
 
     /**
      * create new EscherAggregate
@@ -522,8 +522,8 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
             pos += writeDataIntoDrawingRecord(drawingData, writtenEscherBytes, pos, data, i);
         }
 
-        for (i = 0; i < tailRec.size(); i++) {
-            Record rec = (Record) tailRec.values().toArray()[i];
+        for (NoteRecord noteRecord : tailRec.values()) {
+            Record rec = (Record) noteRecord;
             pos += rec.serialize(pos, data);
         }
         int bytesWritten = pos - offset;
