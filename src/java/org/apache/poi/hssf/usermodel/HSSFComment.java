@@ -53,11 +53,11 @@ public class HSSFComment extends HSSFTextbox implements Comment {
       * It seems like HSSFRow should manage a collection of local HSSFComments
       */
 
-    private NoteRecord _note;
+    private final NoteRecord _note;
 
-    public HSSFComment(EscherContainerRecord spContainer, ObjRecord objRecord, TextObjectRecord textObjectRecord, NoteRecord _note) {
+    public HSSFComment(EscherContainerRecord spContainer, ObjRecord objRecord, TextObjectRecord textObjectRecord, NoteRecord note) {
         super(spContainer, objRecord, textObjectRecord);
-        this._note = _note;
+        _note = note;
     }
 
     /**
@@ -67,8 +67,12 @@ public class HSSFComment extends HSSFTextbox implements Comment {
      * @param anchor defines position of this anchor in the sheet
      */
     public HSSFComment(HSSFShape parent, HSSFAnchor anchor) {
+        this(parent, anchor, createNoteRecord());
+    }
+
+    private HSSFComment(HSSFShape parent, HSSFAnchor anchor, NoteRecord note) {
         super(parent, anchor);
-        _note = createNoteRecord();
+        _note = note;
         //default color for comments
         setFillColor(0x08000050);
 
@@ -80,8 +84,7 @@ public class HSSFComment extends HSSFTextbox implements Comment {
     }
 
     protected HSSFComment(NoteRecord note, TextObjectRecord txo) {
-        this(null, new HSSFClientAnchor());
-        _note = note;
+        this(null, new HSSFClientAnchor(), note);
     }
 
     @Override
@@ -120,7 +123,7 @@ public class HSSFComment extends HSSFTextbox implements Comment {
         return obj;
     }
 
-    private NoteRecord createNoteRecord(){
+    private static NoteRecord createNoteRecord() {
         NoteRecord note = new NoteRecord();
         note.setFlags(NoteRecord.NOTE_HIDDEN);
         note.setAuthor("");
