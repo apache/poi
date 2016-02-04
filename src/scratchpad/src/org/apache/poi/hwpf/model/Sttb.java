@@ -16,10 +16,12 @@
 ==================================================================== */
 package org.apache.poi.hwpf.model;
 
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.StringUtil;
-
 import java.util.Arrays;
+
+import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
+import org.apache.poi.util.StringUtil;
 
 /**
  * The STTB is a string table that is made up of a header that is followed by an
@@ -78,10 +80,17 @@ public class Sttb
 
         if ( ffff != (short) 0xffff )
         {
-            // Non-extended character Pascal strings
-            throw new UnsupportedOperationException(
+            POILogFactory.getLogger(Sttb.class).log(
+                    POILogger.WARN,
                     "Non-extended character Pascal strings are not supported right now. "
-                            + "Please, contact POI developers for update." );
+                            + "Creating empty values in the RevisionMarkAuthorTable for now.  " +
+                    "Please, contact POI developers for update.");
+            //set data and extraData to empty values to avoid
+            //downstream NPE in case someone calls getEntries on RevisionMarkAuthorTable
+            _data = new String[0];
+            _extraData = new byte[0][];
+
+            return;
         }
         // strings are extended character strings
 
