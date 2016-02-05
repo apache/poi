@@ -163,7 +163,13 @@ public final class XSLFPictureData extends POIXMLDocumentPart implements Picture
             byte data[] = getData();
             checksum = IOUtils.calculateChecksum(data);
             
-            switch (getType()) {
+            PictureType pt = getType();
+            if (pt == null) {
+                origSize = new Dimension(1,1);
+                return;
+            }
+            
+            switch (pt) {
             case EMF:
                 origSize = new EMF.NativeHeader(data, 0).getSize();
                 break;
