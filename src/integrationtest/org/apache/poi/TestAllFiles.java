@@ -226,7 +226,6 @@ public class TestAllFiles {
         // some files that are broken, eg Word 95, ...
         EXPECTED_FAILURES.add("spreadsheet/43493.xls");
         EXPECTED_FAILURES.add("spreadsheet/46904.xls");
-        EXPECTED_FAILURES.add("document/56880.doc");
         EXPECTED_FAILURES.add("document/Bug50955.doc");
         EXPECTED_FAILURES.add("slideshow/PPT95.ppt");
         EXPECTED_FAILURES.add("openxml4j/OPCCompliance_CoreProperties_DCTermsNamespaceLimitedUseFAIL.docx");
