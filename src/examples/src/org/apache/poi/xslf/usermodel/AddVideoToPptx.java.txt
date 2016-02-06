@@ -1,0 +1,251 @@
+/*
+ *  ====================================================================
+ *    Licensed to the Apache Software Foundation (ASF) under one or more
+ *    contributor license agreements.  See the NOTICE file distributed with
+ *    this work for additional information regarding copyright ownership.
+ *    The ASF licenses this file to You under the Apache License, Version 2.0
+ *    (the "License"); you may not use this file except in compliance with
+ *    the License.  You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ * ==================================================================== 
+ */
+
+package org.apache.poi.xslf.usermodel;
+
+import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URL;
+import java.text.DecimalFormat;
+
+import javax.imageio.ImageIO;
+import javax.xml.namespace.QName;
+
+import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.openxml4j.opc.PackagePartName;
+import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.openxml4j.opc.PackagingURIHelper;
+import org.apache.poi.openxml4j.opc.TargetMode;
+import org.apache.poi.sl.usermodel.PictureData.PictureType;
+import org.apache.xmlbeans.XmlCursor;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTHyperlink;
+import org.openxmlformats.schemas.officeDocument.x2006.relationships.STRelationshipId;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTApplicationNonVisualDrawingProps;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTExtension;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTPicture;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTSlide;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTTLCommonMediaNodeData;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTTLCommonTimeNodeData;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTTimeNodeList;
+import org.openxmlformats.schemas.presentationml.x2006.main.STTLTimeIndefinite;
+import org.openxmlformats.schemas.presentationml.x2006.main.STTLTimeNodeFillType;
+import org.openxmlformats.schemas.presentationml.x2006.main.STTLTimeNodeRestartType;
+import org.openxmlformats.schemas.presentationml.x2006.main.STTLTimeNodeType;
+
+import com.xuggle.mediatool.IMediaReader;
+import com.xuggle.mediatool.MediaListenerAdapter;
+import com.xuggle.mediatool.ToolFactory;
+import com.xuggle.mediatool.event.IVideoPictureEvent;
+import com.xuggle.xuggler.Global;
+import com.xuggle.xuggler.IContainer;
+import com.xuggle.xuggler.io.InputOutputStreamHandler;
+
+/**
+ * Adding multiple videos to a slide
+ * 
+ * need the Xuggler 5.4 jars:
+ *  &lt;repositories&gt;
+ *  &lt;repository&gt;
+ *  &lt;id&gt;xuggle repo&lt;/id&gt;
+ *  &lt;url&gt;http://xuggle.googlecode.com/svn/trunk/repo/share/java/&lt;/url&gt;
+ *  &lt;/repository&gt;
+ *  &lt;/repositories&gt;
+ *  ...
+ *  &lt;dependency&gt;
+ *  &lt;groupId&gt;xuggle&lt;/groupId&gt;
+ *  &lt;artifactId&gt;xuggle-xuggler&lt;/artifactId&gt;
+ *  &lt;version&gt;5.4&lt;/version&gt;
+ *  &lt;/dependency&gt;
+ * 
+ * @see <a href="http://stackoverflow.com/questions/15197300/apache-poi-xslf-adding-movie-to-the-slide">Apache POI XSLF Adding movie to the slide</a>
+ * @see <a href="http://apache-poi.1045710.n5.nabble.com/Question-about-embedded-video-in-PPTX-files-tt5718461.html">Question about embedded video in PPTX files</a>
+ */
+public class AddVideoToPptx {
+    static DecimalFormat df_time = new DecimalFormat("0.####");
+
+    public static void main(String[] args) throws Exception {
+        URL video = new URL("http://archive.org/download/test-mpeg/test-mpeg.mpg");
+        // URL video = new URL("file:test-mpeg.mpg");
+
+        XMLSlideShow pptx = new XMLSlideShow();
+
+        // add video file
+        String videoFileName = video.getPath().substring(video.getPath().lastIndexOf('/')+1);
+        PackagePartName partName = PackagingURIHelper.createPartName("/ppt/media/"+videoFileName);
+        PackagePart part = pptx.getPackage().createPart(partName, "video/mpeg");
+        OutputStream partOs = part.getOutputStream();
+        InputStream fis = video.openStream();
+        byte buf[] = new byte[1024];
+        for (int readBytes; (readBytes = fis.read(buf)) != -1; partOs.write(buf, 0, readBytes));
+        fis.close();
+        partOs.close();
+
+        XSLFSlide slide1 = pptx.createSlide();
+        XSLFPictureShape pv1 = addPreview(pptx, slide1, part, 5, 50, 50);
+        addVideo(pptx, slide1, part, pv1, 5);
+        addTimingInfo(slide1, pv1);
+        XSLFPictureShape pv2 = addPreview(pptx, slide1, part, 9, 50, 250);
+        addVideo(pptx, slide1, part, pv2, 9);
+        addTimingInfo(slide1, pv2);
+
+        FileOutputStream fos = new FileOutputStream("pptx-with-video.pptx");
+        pptx.write(fos);
+        fos.close();
+        
+        pptx.close();
+    }
+
+    static XSLFPictureShape addPreview(XMLSlideShow pptx, XSLFSlide slide1, PackagePart videoPart, double seconds, int x, int y) throws IOException {
+        // get preview after 5 sec.
+        IContainer ic = IContainer.make();
+        InputOutputStreamHandler iosh = new InputOutputStreamHandler(videoPart.getInputStream());
+        if (ic.open(iosh, IContainer.Type.READ, null) < 0) return null;
+
+        IMediaReader mediaReader = ToolFactory.makeReader(ic);
+
+        // stipulate that we want BufferedImages created in BGR 24bit color space
+        mediaReader.setBufferedImageTypeToGenerate(BufferedImage.TYPE_3BYTE_BGR);
+
+        ImageSnapListener isl = new ImageSnapListener(seconds);
+        mediaReader.addListener(isl);
+
+        // read out the contents of the media file and
+        // dispatch events to the attached listener
+        while (!isl.hasFired && mediaReader.readPacket() == null) ;
+
+        mediaReader.close();
+        ic.close();
+
+        // add snapshot
+        BufferedImage image1 = isl.image;
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        ImageIO.write(image1, "jpeg", bos);
+        XSLFPictureData snap = pptx.addPicture(bos.toByteArray(), PictureType.JPEG);
+        XSLFPictureShape pic1 = slide1.createPicture(snap);
+        pic1.setAnchor(new Rectangle(x, y, image1.getWidth(), image1.getHeight()));
+        return pic1;
+    }
+
+    static void addVideo(XMLSlideShow pptx, XSLFSlide slide1, PackagePart videoPart, XSLFPictureShape pic1, double seconds) throws IOException {
+
+        // add video shape
+        PackagePartName partName = videoPart.getPartName();
+        PackageRelationship prsEmbed1 = slide1.getPackagePart().addRelationship(partName, TargetMode.INTERNAL, "http://schemas.microsoft.com/office/2007/relationships/media");
+        PackageRelationship prsExec1 = slide1.getPackagePart().addRelationship(partName, TargetMode.INTERNAL, "http://schemas.openxmlformats.org/officeDocument/2006/relationships/video");
+        CTPicture xpic1 = (CTPicture)pic1.getXmlObject();
+        CTHyperlink link1 = xpic1.getNvPicPr().getCNvPr().addNewHlinkClick();
+        link1.setId("");
+        link1.setAction("ppaction://media");
+
+        // add video relation
+        CTApplicationNonVisualDrawingProps nvPr = xpic1.getNvPicPr().getNvPr();
+        nvPr.addNewVideoFile().setLink(prsExec1.getId());
+        CTExtension ext = nvPr.addNewExtLst().addNewExt();
+        // see http://msdn.microsoft.com/en-us/library/dd950140(v=office.12).aspx
+        ext.setUri("{DAA4B4D4-6D71-4841-9C94-3DE7FCFB9230}");
+        String p14Ns = "http://schemas.microsoft.com/office/powerpoint/2010/main";
+        XmlCursor cur = ext.newCursor();
+        cur.toEndToken();
+        cur.beginElement(new QName(p14Ns, "media", "p14"));
+        cur.insertNamespace("p14", p14Ns);
+        cur.insertAttributeWithValue(new QName(STRelationshipId.type.getName().getNamespaceURI(), "embed"), prsEmbed1.getId());
+        cur.beginElement(new QName(p14Ns, "trim", "p14"));
+        cur.insertAttributeWithValue("st", df_time.format(seconds*1000.0));
+        cur.dispose();
+
+    }
+
+    static void addTimingInfo(XSLFSlide slide1, XSLFPictureShape pic1) {
+        // add slide timing information, so video can be controlled
+        CTSlide xslide = slide1.getXmlObject();
+        CTTimeNodeList ctnl;
+        if (!xslide.isSetTiming()) {
+            CTTLCommonTimeNodeData ctn = xslide.addNewTiming().addNewTnLst().addNewPar().addNewCTn();
+            ctn.setDur(STTLTimeIndefinite.INDEFINITE);
+            ctn.setRestart(STTLTimeNodeRestartType.NEVER);
+            ctn.setNodeType(STTLTimeNodeType.TM_ROOT);
+            ctnl = ctn.addNewChildTnLst();
+        } else {
+            ctnl = xslide.getTiming().getTnLst().getParArray(0).getCTn().getChildTnLst();
+        }
+
+        CTTLCommonMediaNodeData cmedia = ctnl.addNewVideo().addNewCMediaNode();
+        cmedia.setVol(80000);
+        CTTLCommonTimeNodeData ctn = cmedia.addNewCTn();
+        ctn.setFill(STTLTimeNodeFillType.HOLD);
+        ctn.setDisplay(false);
+        ctn.addNewStCondLst().addNewCond().setDelay(STTLTimeIndefinite.INDEFINITE);
+        cmedia.addNewTgtEl().addNewSpTgt().setSpid(""+pic1.getShapeId());
+    }
+
+
+    static class ImageSnapListener extends MediaListenerAdapter {
+        final double SECONDS_BETWEEN_FRAMES;
+        final long MICRO_SECONDS_BETWEEN_FRAMES;
+        boolean hasFired = false;
+        BufferedImage image = null;
+
+        // The video stream index, used to ensure we display frames from one and
+        // only one video stream from the media container.
+        int mVideoStreamIndex = -1;
+
+        // Time of last frame write
+        long mLastPtsWrite = Global.NO_PTS;
+
+        public ImageSnapListener(double seconds) {
+            SECONDS_BETWEEN_FRAMES = seconds;
+            MICRO_SECONDS_BETWEEN_FRAMES =
+                    (long)(Global.DEFAULT_PTS_PER_SECOND * SECONDS_BETWEEN_FRAMES);
+        }
+
+
+        @Override
+        public void onVideoPicture(IVideoPictureEvent event) {
+
+            if (event.getStreamIndex() != mVideoStreamIndex) {
+                // if the selected video stream id is not yet set, go ahead an
+                // select this lucky video stream
+                if (mVideoStreamIndex != -1) return;
+                mVideoStreamIndex = event.getStreamIndex();
+            }
+
+            long evtTS = event.getTimeStamp();
+
+            // if uninitialized, back date mLastPtsWrite to get the very first frame
+            if (mLastPtsWrite == Global.NO_PTS)
+                mLastPtsWrite = Math.max(0, evtTS - MICRO_SECONDS_BETWEEN_FRAMES);
+
+            // if it's time to write the next frame
+            if (evtTS - mLastPtsWrite >= MICRO_SECONDS_BETWEEN_FRAMES) {
+                if (!hasFired) {
+                    image = event.getImage();
+                    hasFired = true;
+                }
+                // update last write time
+                mLastPtsWrite += MICRO_SECONDS_BETWEEN_FRAMES;
+            }
+        }
+    }
+
+}
