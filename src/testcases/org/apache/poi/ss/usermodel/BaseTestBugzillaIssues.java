@@ -1380,4 +1380,27 @@ public abstract class BaseTestBugzillaIssues {
 
         wb.close();
     }
+    
+    /**
+     * If someone sets a null string as a cell value, treat
+     *  it as an empty cell, and avoid a NPE on auto-sizing
+     */
+    @Test
+    public void test57034() throws Exception {
+        Workbook wb = _testDataProvider.createWorkbook();
+        Sheet s = wb.createSheet();
+        Cell cell = s.createRow(0).createCell(0);
+        cell.setCellValue((String)null);
+        assertEquals(Cell.CELL_TYPE_BLANK, cell.getCellType());
+        
+        _testDataProvider.trackColumnsForAutosizing(s, 0);
+        
+        s.autoSizeColumn(0);
+        assertEquals(2048, s.getColumnWidth(0));
+
+        s.autoSizeColumn(0, true);
+        assertEquals(2048, s.getColumnWidth(0));
+
+        wb.close();
+    }
 }
