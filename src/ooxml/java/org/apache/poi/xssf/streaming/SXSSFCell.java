@@ -245,7 +245,7 @@ public class SXSSFCell implements Cell {
     {
         XSSFRichTextString xvalue = (XSSFRichTextString)value;
         
-        if (xvalue != null) {
+        if (xvalue != null && xvalue.getString() != null) {
             ensureRichTextStringType();
             
             if (xvalue.length() > SpreadsheetVersion.EXCEL2007.getMaxTextLength()) {
@@ -271,16 +271,20 @@ public class SXSSFCell implements Cell {
     @Override
     public void setCellValue(String value)
     {
-        ensureTypeOrFormulaType(CELL_TYPE_STRING);
-        
-        if(value != null && value.length() > SpreadsheetVersion.EXCEL2007.getMaxTextLength()){
-            throw new IllegalArgumentException("The maximum length of cell contents (text) is 32,767 characters");
+        if (value != null) {
+            ensureTypeOrFormulaType(CELL_TYPE_STRING);
+            
+            if(value != null && value.length() > SpreadsheetVersion.EXCEL2007.getMaxTextLength()){
+                throw new IllegalArgumentException("The maximum length of cell contents (text) is 32,767 characters");
+            }
+    
+            if(_value.getType()==CELL_TYPE_FORMULA)
+                ((StringFormulaValue)_value).setPreEvaluatedValue(value);
+            else
+                ((PlainStringValue)_value).setValue(value);
+        } else {
+            setCellType(CELL_TYPE_BLANK);
         }
-
-        if(_value.getType()==CELL_TYPE_FORMULA)
-            ((StringFormulaValue)_value).setPreEvaluatedValue(value);
-        else
-            ((PlainStringValue)_value).setValue(value);
     }
 
     /**
