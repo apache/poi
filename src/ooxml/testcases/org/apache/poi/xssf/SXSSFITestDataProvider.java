@@ -30,7 +30,9 @@ import org.apache.poi.POIDataSamples;
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFFormulaEvaluator;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -83,6 +85,13 @@ public final class SXSSFITestDataProvider implements ITestDataProvider {
         SXSSFWorkbook wb = new SXSSFWorkbook();
         instances.add(wb);
         return wb;
+    }
+    
+    @Override
+    public void trackColumnsForAutosizing(Sheet sheet, int...columns) {
+        for (int cn : columns) {
+            ((SXSSFSheet)sheet).trackColumnForAutoSizing(cn);
+        }
     }
     
     @Override
