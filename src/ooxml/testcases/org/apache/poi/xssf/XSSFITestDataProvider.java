@@ -21,6 +21,7 @@ import org.apache.poi.POIDataSamples;
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFFormulaEvaluator;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -53,6 +54,9 @@ public final class XSSFITestDataProvider implements ITestDataProvider {
         return new XSSFWorkbook();
     }
     
+    @Override
+    public void trackColumnsForAutosizing(Sheet sheet, int...columns) {}
+   
     @Override
     public FormulaEvaluator createFormulaEvaluator(Workbook wb) {
         return new XSSFFormulaEvaluator((XSSFWorkbook) wb);

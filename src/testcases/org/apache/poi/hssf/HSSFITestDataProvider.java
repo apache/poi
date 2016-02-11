@@ -25,6 +25,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
 /**
@@ -58,6 +59,9 @@ public final class HSSFITestDataProvider implements ITestDataProvider {
     public HSSFWorkbook createWorkbook(){
         return new HSSFWorkbook();
     }
+    
+    @Override
+    public void trackColumnsForAutosizing(Sheet sheet, int...columns) {}
     
     @Override
     public FormulaEvaluator createFormulaEvaluator(Workbook wb) {

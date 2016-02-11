@@ -18,6 +18,7 @@
 package org.apache.poi.ss;
 
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
 /**
@@ -45,6 +46,12 @@ public interface ITestDataProvider {
      * @return an instance of Workbook
      */
     Workbook createWorkbook();
+    
+    /**
+     * Only matters for SXSSF - enables tracking of the column
+     *  widths so that autosizing can work. No-op on others.
+     */
+    void trackColumnsForAutosizing(Sheet sheet, int...columns);
 
     /**
      * Creates the corresponding {@link FormulaEvaluator} for the
