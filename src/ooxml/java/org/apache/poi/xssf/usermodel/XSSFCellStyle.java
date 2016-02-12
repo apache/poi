@@ -1075,7 +1075,7 @@ public void setBorderTop(short border) {
         CTFill ct = getCTFill();
         CTPatternFill ptrn = ct.getPatternFill();
         if(color == null) {
-            if(ptrn != null) ptrn.unsetBgColor();
+            if(ptrn != null && ptrn.isSetBgColor()) ptrn.unsetBgColor();
         } else {
             if(ptrn == null) ptrn = ct.addNewPatternFill();
             ptrn.setBgColor(color.getCTColor());
@@ -1129,7 +1129,7 @@ public void setBorderTop(short border) {
 
         CTPatternFill ptrn = ct.getPatternFill();
         if(color == null) {
-            if(ptrn != null) ptrn.unsetFgColor();
+            if(ptrn != null && ptrn.isSetFgColor()) ptrn.unsetFgColor();
         } else {
             if(ptrn == null) ptrn = ct.addNewPatternFill();
             ptrn.setFgColor(color.getCTColor());
@@ -1211,8 +1211,8 @@ public void setBorderTop(short border) {
      * @see #setFillForegroundColor(short)
      * @param fp  fill pattern (set to {@link org.apache.poi.ss.usermodel.CellStyle#SOLID_FOREGROUND} to fill w/foreground color)
      */
-   @Override
-public void setFillPattern(short fp) {
+    @Override
+    public void setFillPattern(short fp) {
         CTFill ct = getCTFill();
         CTPatternFill ptrn = ct.isSetPatternFill() ? ct.getPatternFill() : ct.addNewPatternFill();
         if(fp == NO_FILL && ptrn.isSetPatternType()) ptrn.unsetPatternType();
