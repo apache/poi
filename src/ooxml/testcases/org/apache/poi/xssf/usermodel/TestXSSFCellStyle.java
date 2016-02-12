@@ -29,15 +29,7 @@ import java.io.IOException;
 
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.DataFormat;
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
-import org.apache.poi.ss.usermodel.IndexedColors;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.VerticalAlignment;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder;
@@ -1085,5 +1077,32 @@ public class TestXSSFCellStyle {
         
         cellStyle.setRotation((short)-90);
         assertEquals(180, cellStyle.getRotation());
+    }
+
+    @Test
+    public void bug58996_UsedToWorkIn3_11_ButNotIn3_13() throws IOException {
+        XSSFWorkbook workbook = new XSSFWorkbook();
+
+        XSSFCellStyle cellStyle = workbook.createCellStyle();
+        cellStyle.setFillForegroundColor(null);
+        assertNull(cellStyle.getFillForegroundColorColor());
+
+        cellStyle.setFillBackgroundColor(null);
+        assertNull(cellStyle.getFillBackgroundColorColor());
+
+        cellStyle.setFillPattern(FillPatternType.NO_FILL);
+        assertEquals(FillPatternType.NO_FILL, cellStyle.getFillPatternEnum());
+
+        cellStyle.setBottomBorderColor(null);
+        assertNull(cellStyle.getBottomBorderXSSFColor());
+
+        cellStyle.setTopBorderColor(null);
+        assertNull(cellStyle.getTopBorderXSSFColor());
+
+        cellStyle.setLeftBorderColor(null);
+        assertNull(cellStyle.getLeftBorderXSSFColor());
+
+        cellStyle.setRightBorderColor(null);
+        assertNull(cellStyle.getRightBorderXSSFColor());
     }
 }
