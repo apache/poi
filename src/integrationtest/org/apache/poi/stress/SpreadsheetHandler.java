@@ -105,10 +105,11 @@ public abstract class SpreadsheetHandler extends AbstractFileHandler {
 	            }
 	            throw e;
 	        } catch (RuntimeException e) {
-	            if ("Could not find 'internal references' EXTERNALBOOK".equals(e.getMessage())) {
+	            if ("Could not find 'internal references' EXTERNALBOOK".equals(e.getMessage()) ||
+	                    "CountryRecord not found".equals(e.getMessage()) ||
+	                    "Cannot add more than 65535 shapes".equals(e.getMessage()) ) {
+	                // ignore these here for now
 	                continue;
-	            } else if ("CountryRecord not found".equals(e.getMessage())) {
-                    continue;
                 }
 	            throw e;
 	        }
