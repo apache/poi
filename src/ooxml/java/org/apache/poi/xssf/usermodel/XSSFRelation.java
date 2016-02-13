@@ -344,6 +344,12 @@ public final class XSSFRelation extends POIXMLRelation {
             XSSFPivotCacheRecords.class
     );
 
+    public static final XSSFRelation CTRL_PROP_RECORDS = new XSSFRelation(
+            null,
+            "http://schemas.openxmlformats.org/officeDocument/2006/relationships/ctrlProp",
+            "/xl/ctrlProps/ctrlProp#.xml",
+            null
+    );
 
     private XSSFRelation(String type, String rel, String defaultName, Class<? extends POIXMLDocumentPart> cls) {
         super(type, rel, defaultName, cls);
