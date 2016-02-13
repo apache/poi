@@ -214,9 +214,11 @@ public class HSSFPicture extends HSSFSimpleShape implements Picture {
     void afterInsert(HSSFPatriarch patriarch) {
         EscherAggregate agg = patriarch.getBoundAggregate();
         agg.associateShapeToObjRecord(getEscherContainer().getChildById(EscherClientDataRecord.RECORD_ID), getObjRecord());
-        EscherBSERecord bse =
-                patriarch.getSheet().getWorkbook().getWorkbook().getBSERecord(getPictureIndex());
-        bse.setRef(bse.getRef() + 1);
+        if(getPictureIndex() != -1) {
+            EscherBSERecord bse =
+                    patriarch.getSheet().getWorkbook().getWorkbook().getBSERecord(getPictureIndex());
+            bse.setRef(bse.getRef() + 1);
+        }
     }
 
     /**
