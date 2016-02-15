@@ -62,6 +62,7 @@ import org.apache.poi.ss.usermodel.DataValidation;
 import org.apache.poi.ss.usermodel.DataValidationHelper;
 import org.apache.poi.ss.usermodel.Footer;
 import org.apache.poi.ss.usermodel.Header;
+import org.apache.poi.ss.usermodel.IgnoredErrorType;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -78,6 +79,7 @@ import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.xssf.usermodel.helpers.ColumnHelper;
+import org.apache.poi.xssf.usermodel.helpers.XSSFIgnoredErrorHelper;
 import org.apache.poi.xssf.usermodel.helpers.XSSFRowShifter;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
@@ -4149,14 +4151,14 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         CTIgnoredError ctIgnoredError = ctIgnoredErrors.addNewIgnoredError();
         ctIgnoredError.setSqref(Arrays.asList(ref));
         for (IgnoredErrorType errType : ignoredErrorTypes) {
-            errType.set(ctIgnoredError);
+            XSSFIgnoredErrorHelper.set(errType, ctIgnoredError);
         }
     }
 
     private Set<IgnoredErrorType> getErrorTypes(CTIgnoredError err) {
         Set<IgnoredErrorType> result = new LinkedHashSet<IgnoredErrorType>();
         for (IgnoredErrorType errType : IgnoredErrorType.values()) {
-            if (errType.isSet(err)) {
+            if (XSSFIgnoredErrorHelper.isSet(errType, err)) {
                 result.add(errType);
             }
         }
