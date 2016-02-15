@@ -16,24 +16,18 @@
 ==================================================================== */
 package org.apache.poi.xwpf.usermodel;
 
+import junit.framework.TestCase;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.util.Units;
+import org.apache.poi.xwpf.XWPFTestDataSamples;
+import org.apache.poi.xwpf.model.XWPFHeaderFooterPolicy;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.*;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.Iterator;
 import java.util.List;
-
-import junit.framework.TestCase;
-
-import org.apache.poi.xwpf.XWPFTestDataSamples;
-import org.apache.poi.xwpf.model.XWPFHeaderFooterPolicy;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBr;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRPr;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STBrClear;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STHighlightColor;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STOnOff;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STUnderline;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STVerticalAlignRun;
 
 /**
  * Tests for XWPF Run
@@ -443,5 +437,27 @@ public class TestXWPFRun extends TestCase {
                 }
             }
         }
+    }
+
+    public void testBug55476() throws IOException, InvalidFormatException {
+        byte[] image = XWPFTestDataSamples.getImage("abstract1.jpg");
+        XWPFDocument document = new XWPFDocument();
+
+        document.createParagraph().createRun().addPicture(
+                new ByteArrayInputStream(image), Document.PICTURE_TYPE_JPEG, "test.jpg", Units.toEMU(300), Units.toEMU(100));
+
+        XWPFDocument docBack = XWPFTestDataSamples.writeOutAndReadBack(document);
+        List<XWPFPicture> pictures = docBack.getParagraphArray(0).getRuns().get(0).getEmbeddedPictures();
+        assertEquals(1, pictures.size());
+        docBack.close();
+
+        /*OutputStream stream = new FileOutputStream("c:\\temp\\55476.docx");
+        try {
+            document.write(stream);
+        } finally {
+            stream.close();
+        }*/
+
+        document.close();
     }
 }
