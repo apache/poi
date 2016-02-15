@@ -15,37 +15,17 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xssf.usermodel;
+package org.apache.poi.xssf.usermodel.helpers;
 
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTIgnoredError;
+import org.apache.poi.ss.usermodel.IgnoredErrorType;
 
 /**
- * Types of ignored error.
+ * XSSF-specific code for working with ignored errors
  */
-public enum IgnoredErrorType {
-
-    CALCULATED_COLUMN,
-    
-    EMPTY_CELL_REFERENCE,
-    
-    EVALUATION_ERROR,
-    
-    FORMULA,
-    
-    FORMULA_RANGE,
-    
-    LIST_DATA_VALIDATION,
-    
-    NUMBER_STORED_AS_TEXT,
-    
-    TWO_DIGIT_TEXT_YEAR,
-    
-    UNLOCKED_FORMULA;
-    
-    // Methods below are not part of the public API
-    
-    boolean isSet(CTIgnoredError error) {
-        switch(this) {
+public class XSSFIgnoredErrorHelper {
+    public static boolean isSet(IgnoredErrorType errorType, CTIgnoredError error) {
+        switch(errorType) {
             case CALCULATED_COLUMN:
                 return error.isSetCalculatedColumn();
             case EMPTY_CELL_REFERENCE:
@@ -69,8 +49,8 @@ public enum IgnoredErrorType {
             }
     }
     
-    void set(CTIgnoredError error) {
-        switch(this) {
+    public static void set(IgnoredErrorType errorType, CTIgnoredError error) {
+        switch(errorType) {
         case CALCULATED_COLUMN:
             error.setCalculatedColumn(true);
             break;
@@ -102,5 +82,4 @@ public enum IgnoredErrorType {
             throw new IllegalStateException();
         }
     }
-    
 }
