@@ -69,7 +69,9 @@ public final class ZipPackage extends Package {
     	
     	try {
     	    this.contentTypeManager = new ZipContentTypeManager(null, this);
-    	} catch (InvalidFormatException e) {}
+    	} catch (InvalidFormatException e) {
+			logger.log(POILogger.WARN,"Could not parse ZipPackage", e);
+		}
     }
 
     /**
@@ -98,13 +100,11 @@ public final class ZipPackage extends Package {
      *            The path of the file to open or create.
      * @param access
      *            The package access mode.
-     * @throws InvalidFormatException
-     *             If the content type part parsing encounters an error.
      */
     ZipPackage(String path, PackageAccess access) {
     	super(access);
 
-    	ZipFile zipFile = null;
+    	final ZipFile zipFile;
 
     	try {
     		zipFile = ZipHelper.openZipFile(path);
@@ -123,13 +123,11 @@ public final class ZipPackage extends Package {
      *            The file to open or create.
      * @param access
      *            The package access mode.
-     * @throws InvalidFormatException
-     *             If the content type part parsing encounters an error.
      */
     ZipPackage(File file, PackageAccess access) {
     	super(access);
 
-    	ZipFile zipFile = null;
+    	final ZipFile zipFile;
 
     	try {
     		zipFile = ZipHelper.openZipFile(file);
@@ -150,8 +148,6 @@ public final class ZipPackage extends Package {
      *            Zip data to load.
      * @param access
      *            The package access mode.
-     * @throws InvalidFormatException
-     *             If the content type part parsing encounters an error.
      */
     ZipPackage(ZipEntrySource zipEntry, PackageAccess access) {
     	super(access);
@@ -428,8 +424,8 @@ public final class ZipPackage extends Package {
 	public void saveImpl(OutputStream outputStream) {
 		// Check that the document was open in write mode
 		throwExceptionIfReadOnly();
-		ZipOutputStream zos = null;
 
+		final ZipOutputStream zos;
 		try {
 			if (!(outputStream instanceof ZipOutputStream))
 				zos = new ZipOutputStream(outputStream);
@@ -499,6 +495,9 @@ public final class ZipPackage extends Package {
 				}
 			}
 			zos.close();
+		} catch (OpenXML4JRuntimeException e) {
+			// no need to wrap this type of Exception
+			throw e;
 		} catch (Exception e) {
             throw new OpenXML4JRuntimeException(
                     "Fail to save: an error occurs while saving the package : "
