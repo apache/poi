@@ -54,8 +54,7 @@ public class IdentifierManager {
      */
     public IdentifierManager(long lowerbound, long upperbound) {
         if (lowerbound > upperbound) {
-            String message = "lowerbound must not be greater than upperbound";
-            throw new IllegalArgumentException(message);
+            throw new IllegalArgumentException("lowerbound must not be greater than upperbound, had " + lowerbound + " and " + upperbound);
         }
         else if (lowerbound < MIN_ID) { 
             String message = "lowerbound must be greater than or equal to " + Long.toString(MIN_ID);
@@ -64,10 +63,9 @@ public class IdentifierManager {
         else if (upperbound > MAX_ID) {
             /*
              * while MAX_ID is Long.MAX_VALUE, this check is pointless. But if
-             * someone subclasses / tweaks the limits, this check if fine.
+             * someone subclasses / tweaks the limits, this check is fine.
              */
-            String message = "upperbound must be less thean or equal " + Long.toString(MAX_ID);
-            throw new IllegalArgumentException(message);
+            throw new IllegalArgumentException("upperbound must be less than or equal to " + Long.toString(MAX_ID) + " but had " + upperbound);
         }
         this.lowerbound = lowerbound;
         this.upperbound = upperbound;
@@ -77,7 +75,7 @@ public class IdentifierManager {
 
     public long reserve(long id) {
         if (id < lowerbound || id > upperbound) {
-            throw new IllegalArgumentException("Value for parameter 'id' was out of bounds");
+            throw new IllegalArgumentException("Value for parameter 'id' was out of bounds, had " + id + ", but should be within [" + lowerbound + ":" + upperbound + "]");
         }
         verifyIdentifiersLeft();
         
@@ -161,7 +159,7 @@ public class IdentifierManager {
      */
     public boolean release(long id) {
         if (id < lowerbound || id > upperbound) {
-            throw new IllegalArgumentException("Value for parameter 'id' was out of bounds");
+            throw new IllegalArgumentException("Value for parameter 'id' was out of bounds, had " + id + ", but should be within [" + lowerbound + ":" + upperbound + "]");
         }
 
         if (id == upperbound) {
