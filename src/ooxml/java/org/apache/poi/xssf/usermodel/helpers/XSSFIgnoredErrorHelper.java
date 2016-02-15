@@ -17,8 +17,12 @@
 
 package org.apache.poi.xssf.usermodel.helpers;
 
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTIgnoredError;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 import org.apache.poi.ss.usermodel.IgnoredErrorType;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTIgnoredError;
 
 /**
  * XSSF-specific code for working with ignored errors
@@ -81,5 +85,22 @@ public class XSSFIgnoredErrorHelper {
         default:
             throw new IllegalStateException();
         }
+    }
+    
+    public static void addIgnoredErrors(CTIgnoredError err, String ref, IgnoredErrorType... ignoredErrorTypes) {
+        err.setSqref(Arrays.asList(ref));
+        for (IgnoredErrorType errType : ignoredErrorTypes) {
+            XSSFIgnoredErrorHelper.set(errType, err);
+        }
+    }
+
+    public static  Set<IgnoredErrorType> getErrorTypes(CTIgnoredError err) {
+        Set<IgnoredErrorType> result = new LinkedHashSet<IgnoredErrorType>();
+        for (IgnoredErrorType errType : IgnoredErrorType.values()) {
+            if (XSSFIgnoredErrorHelper.isSet(errType, err)) {
+                result.add(errType);
+            }
+        }
+        return result;
     }
 }
