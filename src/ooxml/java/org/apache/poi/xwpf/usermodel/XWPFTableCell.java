@@ -234,7 +234,8 @@ public class XWPFTableCell implements IBody, ICell {
         CTTcPr tcpr = ctTc.getTcPr();
         if (tcpr != null) {
             CTVerticalJc va = tcpr.getVAlign();
-            vAlign = stVertAlignTypeMap.get(va.getVal().intValue());
+			if(va != null)
+				vAlign = stVertAlignTypeMap.get(va.getVal().intValue());
         }
         return vAlign;
     }
