@@ -416,4 +416,11 @@ public final class TestXWPFDocument {
 
         doc.close();
     }
+	
+	@Test
+	public void testEnforcedWith() throws IOException {
+		XWPFDocument docx = XWPFTestDataSamples.openSampleDocument("EnforcedWith.docx");
+		assertTrue(docx.isEnforcedProtection());
+		docx.close();
+	}
 }
