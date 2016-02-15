@@ -919,6 +919,22 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
         tables.set(pos, table);
         ctDocument.getBody().setTblArray(pos, table.getCTTbl());
     }
+	
+	/**
+     * Verifies that the documentProtection tag in settings.xml file <br/>
+     * specifies that the protection is enforced (w:enforcement="1") <br/>
+     * <br/>
+     * sample snippet from settings.xml
+     * <pre>
+     *     &lt;w:settings  ... &gt;
+     *         &lt;w:documentProtection w:edit=&quot;readOnly&quot; w:enforcement=&quot;1&quot;/&gt;
+     * </pre>
+     *
+     * @return true if documentProtection is enforced with option any
+     */
+    public boolean isEnforcedProtection() {
+        return settings.isEnforcedWith();
+    }
 
     /**
      * Verifies that the documentProtection tag in settings.xml file <br/>
