@@ -20,6 +20,7 @@ package org.apache.poi.ss.formula.functions;
 import org.apache.poi.ss.formula.eval.AreaEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.EvaluationException;
+import org.apache.poi.ss.formula.eval.MissingArgEval;
 import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.formula.eval.RefEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
@@ -171,11 +172,17 @@ public final class Offset implements Function {
 			int columnOffset = evaluateIntArg(args[2], srcCellRow, srcCellCol);
 			int height = baseRef.getHeight();
 			int width = baseRef.getWidth();
+			// optional arguments
+			// If height or width is omitted, it is assumed to be the same height or width as reference.
 			switch(args.length) {
 				case 5:
-					width = evaluateIntArg(args[4], srcCellRow, srcCellCol);
+					if(!(args[4] instanceof MissingArgEval)) {
+						width = evaluateIntArg(args[4], srcCellRow, srcCellCol);
+					}
 				case 4:
-					height = evaluateIntArg(args[3], srcCellRow, srcCellCol);
+					if(!(args[3] instanceof MissingArgEval)) {
+						height = evaluateIntArg(args[3], srcCellRow, srcCellCol);
+					}
 			}
 			// Zero height or width raises #REF! error
 			if(height == 0 || width == 0) {
