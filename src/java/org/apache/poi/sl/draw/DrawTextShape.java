@@ -60,7 +60,7 @@ public class DrawTextShape extends DrawSimpleShape {
             vertFlip ^= ps.getFlipVertical();
             horzFlip ^= ps.getFlipHorizontal();
             sc = ps.getParent();
-        };
+        }
         
         // Horizontal flipping applies only to shape outline and not to the text in the shape.
         // Applying flip second time restores the original not-flipped transform
@@ -109,8 +109,9 @@ public class DrawTextShape extends DrawSimpleShape {
         DrawFactory fact = DrawFactory.getInstance(graphics);
 
         double y0 = y;
-        Iterator<? extends TextParagraph<?,?,? extends TextRun>> paragraphs = getShape().iterator();
-        
+        //noinspection RedundantCast
+        Iterator<? extends TextParagraph<?,?,? extends TextRun>> paragraphs = (Iterator<? extends TextParagraph<?, ?, ? extends TextRun>>) getShape().iterator();
+
         boolean isFirstLine = true;
         for (int autoNbrIdx=0; paragraphs.hasNext(); autoNbrIdx++){
             TextParagraph<?,?,? extends TextRun> p = paragraphs.next();
