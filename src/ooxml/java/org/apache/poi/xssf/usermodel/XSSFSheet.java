@@ -4133,7 +4133,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         Map<IgnoredErrorType, Set<CellRangeAddress>> result = new LinkedHashMap<IgnoredErrorType, Set<CellRangeAddress>>();
         if (worksheet.isSetIgnoredErrors()) {
             for (CTIgnoredError err : worksheet.getIgnoredErrors().getIgnoredErrorList()) {
-                for (IgnoredErrorType errType : getErrorTypes(err)) {
+                for (IgnoredErrorType errType : XSSFIgnoredErrorHelper.getErrorTypes(err)) {
                     if (!result.containsKey(errType)) {
                         result.put(errType, new LinkedHashSet<CellRangeAddress>());
                     }
@@ -4149,20 +4149,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     private void addIgnoredErrors(String ref, IgnoredErrorType... ignoredErrorTypes) {
         CTIgnoredErrors ctIgnoredErrors = worksheet.isSetIgnoredErrors() ? worksheet.getIgnoredErrors() : worksheet.addNewIgnoredErrors();
         CTIgnoredError ctIgnoredError = ctIgnoredErrors.addNewIgnoredError();
-        ctIgnoredError.setSqref(Arrays.asList(ref));
-        for (IgnoredErrorType errType : ignoredErrorTypes) {
-            XSSFIgnoredErrorHelper.set(errType, ctIgnoredError);
-        }
+        XSSFIgnoredErrorHelper.addIgnoredErrors(ctIgnoredError, ref, ignoredErrorTypes);
     }
-
-    private Set<IgnoredErrorType> getErrorTypes(CTIgnoredError err) {
-        Set<IgnoredErrorType> result = new LinkedHashSet<IgnoredErrorType>();
-        for (IgnoredErrorType errType : IgnoredErrorType.values()) {
-            if (XSSFIgnoredErrorHelper.isSet(errType, err)) {
-                result.add(errType);
-            }
-        }
-        return result;
-    }
-    
 }

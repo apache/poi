@@ -32,7 +32,8 @@ import org.apache.poi.util.LittleEndianOutput;
  *  for a sheet, stored as part of a Shared Feature. It can be found in 
  *  records such as {@link FeatRecord}.
  * For the full meanings of the flags, see pages 669 and 670
- *  of the Excel binary file format documentation.
+ *  of the Excel binary file format documentation and/or
+ *  https://msdn.microsoft.com/en-us/library/dd924991%28v=office.12%29.aspx
  */
 public final class FeatFormulaErr2 implements SharedFeature {
 	static BitField checkCalculationErrors =

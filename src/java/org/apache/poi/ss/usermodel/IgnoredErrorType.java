@@ -17,29 +17,67 @@
 
 package org.apache.poi.ss.usermodel;
 
-
 /**
  * Types of ignored workbook and worksheet error.
  * 
- * TODO Give more details on what these mean
+ * TODO Implement these for HSSF too, using FeatFormulaErr2,
+ *  see bugzilla bug #46136 for details
  */
 public enum IgnoredErrorType {
-
+    /**
+     * ????. Probably XSSF-only.
+     */
     CALCULATED_COLUMN,
     
+    /**
+     * Whether to check for references to empty cells.
+     * HSSF + XSSF.
+     */
     EMPTY_CELL_REFERENCE,
     
+    /**
+     * Whether to check for calculation/evaluation errors.
+     * HSSF + XSSF.
+     */
     EVALUATION_ERROR,
     
+    /**
+     * Whether to check formulas in the range of the shared feature 
+     *  that are inconsistent with formulas in neighbouring cells.
+     * HSSF + XSSF.
+     */
     FORMULA,
     
+    /**
+     * Whether to check formulas in the range of the shared feature 
+     * with references to less than the entirety of a range containing 
+     * continuous data.
+     * HSSF + XSSF.
+     */
     FORMULA_RANGE,
     
+    /**
+     * ????. Is this XSSF-specific the same as performDataValidation
+     *  in HSSF?
+     */
     LIST_DATA_VALIDATION,
     
+    /**
+     * Whether to check the format of string values and warn
+     *  if they look to actually be numeric values.
+     * HSSF + XSSF.
+     */
     NUMBER_STORED_AS_TEXT,
     
+    /**
+     * ????. Is this XSSF-specific the same as checkDateTimeFormats
+     *  in HSSF?
+     */
     TWO_DIGIT_TEXT_YEAR,
     
+    /**
+     * Whether to check for unprotected formulas.
+     * HSSF + XSSF.
+     */
     UNLOCKED_FORMULA;
 }
