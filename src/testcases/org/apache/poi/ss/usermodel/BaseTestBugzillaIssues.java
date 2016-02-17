@@ -1403,4 +1403,28 @@ public abstract class BaseTestBugzillaIssues {
 
         wb.close();
     }
+
+    @Test
+    public void test52684() {
+        Workbook wb = _testDataProvider.createWorkbook();
+
+        Sheet sheet = wb.createSheet("test");
+        Row row = sheet.createRow(0);
+        Cell cell = row.createCell(0);
+
+        cell.setCellValue(12312345123L);
+
+        DataFormat format = wb.createDataFormat();
+        CellStyle style = wb.createCellStyle();
+        style.setDataFormat(format.getFormat("000-00000-000"));
+        cell.setCellStyle(style);
+
+        assertEquals("000-00000-000",
+                cell.getCellStyle().getDataFormatString());
+        assertEquals(164, cell.getCellStyle().getDataFormat());
+
+        DataFormatter formatter = new DataFormatter();
+
+        assertEquals("12-312-345-123", formatter.formatCellValue(cell));
+    }
 }
