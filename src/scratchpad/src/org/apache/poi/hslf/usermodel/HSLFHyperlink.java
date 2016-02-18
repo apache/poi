@@ -69,7 +69,7 @@ public final class HSLFHyperlink implements Hyperlink<HSLFShape,HSLFTextParagrap
      * @param shape the shape which receives the hyperlink
      * @return the new hyperlink
      * 
-     * @see HSLFShape#createHyperlink()
+     * @see HSLFSimpleShape#createHyperlink()
      */
     /* package */ static HSLFHyperlink createHyperlink(HSLFSimpleShape shape) {
         // TODO: check if a hyperlink already exists
