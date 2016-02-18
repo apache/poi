@@ -274,7 +274,7 @@ public class SXSSFCell implements Cell {
         if (value != null) {
             ensureTypeOrFormulaType(CELL_TYPE_STRING);
             
-            if(value != null && value.length() > SpreadsheetVersion.EXCEL2007.getMaxTextLength()){
+            if (value.length() > SpreadsheetVersion.EXCEL2007.getMaxTextLength()) {
                 throw new IllegalArgumentException("The maximum length of cell contents (text) is 32,767 characters");
             }
     
