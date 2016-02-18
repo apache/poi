@@ -61,8 +61,6 @@ public final class XSSFITestDataProvider implements ITestDataProvider {
     }
     
     @Override
-    public void trackColumnsForAutosizing(Sheet sheet, int...columns) {}
-    @Override
     public void trackAllColumnsForAutosizing(Sheet sheet) {}
     //************ End SXSSF-specific methods ***************//
    
