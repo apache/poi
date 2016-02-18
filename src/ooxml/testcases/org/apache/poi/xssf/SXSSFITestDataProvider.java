@@ -96,13 +96,6 @@ public final class SXSSFITestDataProvider implements ITestDataProvider {
     }
     
     @Override
-    public void trackColumnsForAutosizing(Sheet sheet, int...columns) {
-        for (int cn : columns) {
-            ((SXSSFSheet)sheet).trackColumnForAutoSizing(cn);
-        }
-    }
-    
-    @Override
     public void trackAllColumnsForAutosizing(Sheet sheet) {
         ((SXSSFSheet)sheet).trackAllColumnsForAutoSizing();
     }

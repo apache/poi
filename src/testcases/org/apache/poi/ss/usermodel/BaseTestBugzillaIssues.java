@@ -55,10 +55,6 @@ public abstract class BaseTestBugzillaIssues {
     protected BaseTestBugzillaIssues(ITestDataProvider testDataProvider) {
         _testDataProvider = testDataProvider;
     }
-    
-    protected void trackColumnsForAutoSizingIfSXSSF(Sheet sheet) {
-        // do nothing for Sheet base class. This will be overridden for SXSSFSheets.
-    }
 
     /**
      * Unlike org.junit.Assert.assertEquals(double expected, double actual, double delta),
@@ -377,7 +373,7 @@ public abstract class BaseTestBugzillaIssues {
         Workbook wb = _testDataProvider.createWorkbook();
         BaseTestSheetAutosizeColumn.fixFonts(wb);
         Sheet sheet = wb.createSheet("Sheet1");
-        trackColumnsForAutoSizingIfSXSSF(sheet);
+        _testDataProvider.trackAllColumnsForAutosizing(sheet);
         Row row = sheet.createRow(0);
         Cell cell0 = row.createCell(0);
 
@@ -434,7 +430,7 @@ public abstract class BaseTestBugzillaIssues {
         Workbook wb = _testDataProvider.createWorkbook();
         BaseTestSheetAutosizeColumn.fixFonts(wb);
         Sheet sheet = wb.createSheet();
-        trackColumnsForAutoSizingIfSXSSF(sheet);
+        _testDataProvider.trackAllColumnsForAutosizing(sheet);
         Row row = sheet.createRow(0);
         Cell cell0 = row.createCell(0);
         Cell cell1 = row.createCell(1);
@@ -670,7 +666,7 @@ public abstract class BaseTestBugzillaIssues {
         d2Percent.setDataFormat(format.getFormat("0.00%"));
 
         Sheet s = wb.createSheet();
-        trackColumnsForAutoSizingIfSXSSF(s);
+        _testDataProvider.trackAllColumnsForAutosizing(s);
         Row r1 = s.createRow(0);
 
         for (int i=0; i<3; i++) {
@@ -1393,7 +1389,7 @@ public abstract class BaseTestBugzillaIssues {
         cell.setCellValue((String)null);
         assertEquals(Cell.CELL_TYPE_BLANK, cell.getCellType());
         
-        _testDataProvider.trackColumnsForAutosizing(s, 0);
+        _testDataProvider.trackAllColumnsForAutosizing(s);
         
         s.autoSizeColumn(0);
         assertEquals(2048, s.getColumnWidth(0));
@@ -1480,11 +1476,11 @@ public abstract class BaseTestBugzillaIssues {
         }
     }
     
-    public long time() {
+    protected long time() {
         final long currentTime = System.currentTimeMillis();
         return currentTime;
     }
-    public double delta(long startTimeMillis) {
+    protected double delta(long startTimeMillis) {
         return time() - startTimeMillis;
     }
 }

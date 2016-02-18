@@ -33,12 +33,6 @@ public final class TestSXSSFBugs extends BaseTestBugzillaIssues {
     public TestSXSSFBugs() {
         super(SXSSFITestDataProvider.instance);
     }
-    
-    @Override
-    protected void trackColumnsForAutoSizingIfSXSSF(Sheet sheet) {
-        SXSSFSheet sxSheet = (SXSSFSheet) sheet;
-        sxSheet.trackAllColumnsForAutoSizing();
-    }
 
     // override some tests which do not work for SXSSF
     @Override @Ignore("cloneSheet() not implemented") @Test public void bug18800() { /* cloneSheet() not implemented */ }

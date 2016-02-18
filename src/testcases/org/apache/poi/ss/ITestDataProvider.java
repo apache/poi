@@ -60,7 +60,6 @@ public interface ITestDataProvider {
      * Only matters for SXSSF - enables tracking of the column
      *  widths so that autosizing can work. No-op on others.
      */
-    void trackColumnsForAutosizing(Sheet sheet, int...columns);
     void trackAllColumnsForAutosizing(Sheet sheet);
     //************ End SXSSF-specific methods ***************//
 
