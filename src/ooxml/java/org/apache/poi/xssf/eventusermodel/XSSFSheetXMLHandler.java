@@ -41,7 +41,7 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class XSSFSheetXMLHandler extends DefaultHandler {
     private static final POILogger logger = POILogFactory.getLogger(XSSFSheetXMLHandler.class);
-    
+    static final String SPREADSHEETML_NS = "http://schemas.openxmlformats.org/spreadsheetml/2006/main";
     /**
     * These are the different kinds of cells we support.
     * We keep track of the current one between
@@ -186,17 +186,21 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
    
    @Override
    @SuppressWarnings("unused")
-   public void startElement(String uri, String localName, String name,
+   public void startElement(String uri, String localName, String qName,
                             Attributes attributes) throws SAXException {
 
-       if (isTextTag(name)) {
+       if (uri != null && ! uri.equals(SPREADSHEETML_NS)) {
+           return;
+       }
+
+       if (isTextTag(localName)) {
            vIsOpen = true;
            // Clear contents cache
            value.setLength(0);
-       } else if ("is".equals(name)) {
+       } else if ("is".equals(localName)) {
           // Inline string outer tag
           isIsOpen = true;
-       } else if ("f".equals(name)) {
+       } else if ("f".equals(localName)) {
           // Clear contents cache
           formula.setLength(0);
           
@@ -231,14 +235,14 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
              fIsOpen = true;
           }
        }
-       else if("oddHeader".equals(name) || "evenHeader".equals(name) ||
-             "firstHeader".equals(name) || "firstFooter".equals(name) ||
-             "oddFooter".equals(name) || "evenFooter".equals(name)) {
+       else if("oddHeader".equals(localName) || "evenHeader".equals(localName) ||
+             "firstHeader".equals(localName) || "firstFooter".equals(localName) ||
+             "oddFooter".equals(localName) || "evenFooter".equals(localName)) {
           hfIsOpen = true;
           // Clear contents cache
           headerFooter.setLength(0);
        }
-       else if("row".equals(name)) {
+       else if("row".equals(localName)) {
            String rowNumStr = attributes.getValue("r");
            if(rowNumStr != null) {
                rowNum = Integer.parseInt(rowNumStr) - 1;
@@ -248,7 +252,7 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
            output.startRow(rowNum);
        }
        // c => cell
-       else if ("c".equals(name)) {
+       else if ("c".equals(localName)) {
            // Set up defaults.
            this.nextDataType = xssfDataType.NUMBER;
            this.formatIndex = -1;
@@ -269,11 +273,13 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
            else {
                // Number, but almost certainly with a special style or format
                XSSFCellStyle style = null;
-               if (cellStyleStr != null) {
-                   int styleIndex = Integer.parseInt(cellStyleStr);
-                   style = stylesTable.getStyleAt(styleIndex);
-               } else if (stylesTable.getNumCellStyles() > 0) {
-                   style = stylesTable.getStyleAt(0);
+               if (stylesTable != null) {
+                   if (cellStyleStr != null) {
+                       int styleIndex = Integer.parseInt(cellStyleStr);
+                       style = stylesTable.getStyleAt(styleIndex);
+                   } else if (stylesTable.getNumCellStyles() > 0) {
+                       style = stylesTable.getStyleAt(0);
+                   }
                }
                if (style != null) {
                    this.formatIndex = style.getDataFormat();
@@ -286,12 +292,17 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
    }
 
    @Override
-   public void endElement(String uri, String localName, String name)
+   public void endElement(String uri, String localName, String qName)
            throws SAXException {
+
+       if (uri != null && ! uri.equals(SPREADSHEETML_NS)) {
+           return;
+       }
+
        String thisStr = null;
 
        // v => contents of a cell
-       if (isTextTag(name)) {
+       if (isTextTag(localName)) {
            vIsOpen = false;
            
            // Process the value contents as required, now we have it all
@@ -364,11 +375,11 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
            
            // Output
            output.cell(cellRef, thisStr, comment);
-       } else if ("f".equals(name)) {
+       } else if ("f".equals(localName)) {
           fIsOpen = false;
-       } else if ("is".equals(name)) {
+       } else if ("is".equals(localName)) {
           isIsOpen = false;
-       } else if ("row".equals(name)) {
+       } else if ("row".equals(localName)) {
           // Handle any "missing" cells which had comments attached
           checkForEmptyCellComments(EmptyCellCommentsCheckType.END_OF_ROW);
           
@@ -377,19 +388,19 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
           
           // some sheets do not have rowNum set in the XML, Excel can read them so we should try to read them as well
           nextRowNum = rowNum + 1;
-       } else if ("sheetData".equals(name)) {
+       } else if ("sheetData".equals(localName)) {
            // Handle any "missing" cells which had comments attached
            checkForEmptyCellComments(EmptyCellCommentsCheckType.END_OF_SHEET_DATA);
        }
-       else if("oddHeader".equals(name) || "evenHeader".equals(name) ||
-             "firstHeader".equals(name)) {
+       else if("oddHeader".equals(localName) || "evenHeader".equals(localName) ||
+             "firstHeader".equals(localName)) {
           hfIsOpen = false;
-          output.headerFooter(headerFooter.toString(), true, name);
+          output.headerFooter(headerFooter.toString(), true, localName);
        }
-       else if("oddFooter".equals(name) || "evenFooter".equals(name) ||
-             "firstFooter".equals(name)) {
+       else if("oddFooter".equals(localName) || "evenFooter".equals(localName) ||
+             "firstFooter".equals(localName)) {
           hfIsOpen = false;
-          output.headerFooter(headerFooter.toString(), false, name);
+          output.headerFooter(headerFooter.toString(), false, localName);
        }
    }
 

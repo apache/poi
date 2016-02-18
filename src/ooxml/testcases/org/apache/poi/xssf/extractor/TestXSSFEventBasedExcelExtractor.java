@@ -337,4 +337,13 @@ public class TestXSSFEventBasedExcelExtractor extends TestCase {
             extractor.close();
         }
     }
+
+	public void test59021() throws Exception {
+		XSSFEventBasedExcelExtractor ex =
+				new XSSFEventBasedExcelExtractor(
+						XSSFTestDataSamples.openSamplePackage("59021.xlsx"));
+		String text = ex.getText();
+		assertTrue("can't find Abhkazia", text.contains("Abkhazia - Fixed"));
+		assertTrue("can't find 10/02/2016", text.contains("10/02/2016"));
+	}
 }
