@@ -1471,9 +1471,9 @@ public abstract class BaseTestBugzillaIssues {
         //    fail("Best fit width time per cell exceeded 50000 ns: " + bestFitWidthTimePerCell_ns + " ns");
         //}
         
-        if (totalTime_s > 10) {
-            fail("Total time exceeded 10 seconds: " + totalTime_s + " s");
-        }
+        //if (totalTime_s > 10) {
+        //    fail("Total time exceeded 10 seconds: " + totalTime_s + " s");
+        //}
     }
     
     protected long time() {
