@@ -662,11 +662,15 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      *
      * @param region (rowfrom/colfrom-rowto/colto) to merge
      * @return index of this region
+     * @throws IllegalArgumentException if region contains fewer than 2 cells
      * @throws IllegalStateException if region intersects with an existing merged region
      * or multi-cell array formula on this sheet
      */
     @Override
     public int addMergedRegion(CellRangeAddress region) {
+        if (region.getNumberOfCells() < 2) {
+            throw new IllegalArgumentException("Merged region " + region.formatAsString() + " must contain 2 or more cells");
+        }
         region.validate(SpreadsheetVersion.EXCEL97);
 
         // throw IllegalStateException if the argument CellRangeAddress intersects with
