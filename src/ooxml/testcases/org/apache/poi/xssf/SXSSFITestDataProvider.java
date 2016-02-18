@@ -87,12 +87,26 @@ public final class SXSSFITestDataProvider implements ITestDataProvider {
         return wb;
     }
     
+    //************ SXSSF-specific methods ***************//
+    @Override
+    public SXSSFWorkbook createWorkbook(int rowAccessWindowSize) {
+        SXSSFWorkbook wb = new SXSSFWorkbook(rowAccessWindowSize);
+        instances.add(wb);
+        return wb;
+    }
+    
     @Override
     public void trackColumnsForAutosizing(Sheet sheet, int...columns) {
         for (int cn : columns) {
             ((SXSSFSheet)sheet).trackColumnForAutoSizing(cn);
         }
     }
+    
+    @Override
+    public void trackAllColumnsForAutosizing(Sheet sheet) {
+        ((SXSSFSheet)sheet).trackAllColumnsForAutoSizing();
+    }
+    //************ End SXSSF-specific methods ***************//
     
     @Override
     public FormulaEvaluator createFormulaEvaluator(Workbook wb) {

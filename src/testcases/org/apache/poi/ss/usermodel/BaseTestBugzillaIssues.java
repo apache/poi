@@ -1427,4 +1427,64 @@ public abstract class BaseTestBugzillaIssues {
 
         assertEquals("12-312-345-123", formatter.formatCellValue(cell));
     }
+    
+    @Test
+    public void test58896() throws IOException {
+        final int nrows = 160;
+        final int ncols = 139;
+        final java.io.PrintStream out = System.out;
+        
+        // Create a workbook
+        final Workbook wb = _testDataProvider.createWorkbook(nrows+1);
+        final Sheet sh = wb.createSheet();
+        out.println(wb.getClass().getName() + " column autosizing timing...");
+        
+        final long t0 = time();
+        _testDataProvider.trackAllColumnsForAutosizing(sh);
+        for (int r=0; r<nrows; r++) {
+            final Row row = sh.createRow(r);
+            for (int c=0; c<ncols; c++) {
+                final Cell cell = row.createCell(c);
+                cell.setCellValue("Cell[r="+r+",c="+c+"]");
+            }
+        }
+        final double populateSheetTime = delta(t0);
+        final double populateSheetTimePerCell_ns = (1000000 * populateSheetTime / (nrows*ncols));
+        out.println("Populate sheet time: " + populateSheetTime + " ms (" + populateSheetTimePerCell_ns + " ns/cell)");
+        
+        out.println("\nAutosizing...");
+        final long t1 = time();
+        for (int c=0; c<ncols; c++) {
+            final long t2 = time();
+            sh.autoSizeColumn(c);
+            out.println("Column " + c + " took " + delta(t2) + " ms");
+        }
+        final double autoSizeColumnsTime = delta(t1);
+        final double autoSizeColumnsTimePerColumn = autoSizeColumnsTime / ncols;
+        final double bestFitWidthTimePerCell_ns = 1000000 * autoSizeColumnsTime / (ncols * nrows);
+        
+        out.println("Auto sizing columns took a total of " + autoSizeColumnsTime + " ms (" + autoSizeColumnsTimePerColumn + " ms per column)");
+        out.println("Best fit width time per cell: " + bestFitWidthTimePerCell_ns + " ns");
+        
+        final double totalTime_s = (populateSheetTime + autoSizeColumnsTime) / 1000;
+        out.println("Total time: " + totalTime_s + " s");
+        
+        wb.close();
+        
+        //if (bestFitWidthTimePerCell_ns > 50000) {
+        //    fail("Best fit width time per cell exceeded 50000 ns: " + bestFitWidthTimePerCell_ns + " ns");
+        //}
+        
+        if (totalTime_s > 10) {
+            fail("Total time exceeded 10 seconds: " + totalTime_s + " s");
+        }
+    }
+    
+    public long time() {
+        final long currentTime = System.currentTimeMillis();
+        return currentTime;
+    }
+    public double delta(long startTimeMillis) {
+        return time() - startTimeMillis;
+    }
 }
