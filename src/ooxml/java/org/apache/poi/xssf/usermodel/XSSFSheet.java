@@ -301,6 +301,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      *
      * @param region to merge
      * @return index of this region
+     * @throws IllegalArgumentException if region contains fewer than 2 cells
      * @throws IllegalStateException if region intersects with a multi-cell array formula
      * @throws IllegalStateException if region intersects with an existing region on this sheet
      */
@@ -320,6 +321,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      *
      * @param region to merge
      * @return index of this region
+     * @throws IllegalArgumentException if region contains fewer than 2 cells
      */
     public int addMergedRegionUnsafe(CellRangeAddress region) {
         return addMergedRegion(region, false);
@@ -333,6 +335,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * @param region to merge
      * @param validate whether to validate merged region
      * @return index of this region
+     * @throws IllegalArgumentException if region contains fewer than 2 cells (this check is inexpensive and is performed regardless of <tt>validate</tt>)
      * @throws IllegalStateException if region intersects with a multi-cell array formula
      * @throws IllegalStateException if region intersects with an existing region on this sheet
      */

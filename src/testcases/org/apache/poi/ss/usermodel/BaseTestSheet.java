@@ -274,35 +274,57 @@ public abstract class BaseTestSheet {
         final Workbook wb = _testDataProvider.createWorkbook();
         final Sheet sheet = wb.createSheet();
         
-        final CellRangeAddress baseRegion = new CellRangeAddress(0, 1, 0, 1);
+        final CellRangeAddress baseRegion = new CellRangeAddress(0, 1, 0, 1); //A1:B2
         sheet.addMergedRegion(baseRegion);
         
         try {
-            final CellRangeAddress duplicateRegion = new CellRangeAddress(0, 1, 0, 1);
+            final CellRangeAddress duplicateRegion = new CellRangeAddress(0, 1, 0, 1); //A1:B2
             sheet.addMergedRegion(duplicateRegion);
-            fail("Should not be able to add a merged region if sheet already contains the same merged region");
+            fail("Should not be able to add a merged region (" + duplicateRegion.formatAsString() + ") " +
+                 "if sheet already contains the same merged region (" + baseRegion.formatAsString() + ")");
         } catch (final IllegalStateException e) { } //expected
         
         try {
-            final CellRangeAddress partiallyOverlappingRegion = new CellRangeAddress(1, 2, 1, 2);
+            final CellRangeAddress partiallyOverlappingRegion = new CellRangeAddress(1, 2, 1, 2); //B2:C3
             sheet.addMergedRegion(partiallyOverlappingRegion);
-            fail("Should not be able to add a merged region if it partially overlaps with an existing merged region");
+            fail("Should not be able to add a merged region (" + partiallyOverlappingRegion.formatAsString() + ") " +
+                 "if it partially overlaps with an existing merged region (" + baseRegion.formatAsString() + ")");
         } catch (final IllegalStateException e) { } //expected
         
         try {
-            final CellRangeAddress subsetRegion = new CellRangeAddress(0, 1, 0, 0);
+            final CellRangeAddress subsetRegion = new CellRangeAddress(0, 1, 0, 0); //A1:A2
             sheet.addMergedRegion(subsetRegion);
-            fail("Should not be able to add a merged region if it is a formal subset of an existing merged region");
+            fail("Should not be able to add a merged region (" + subsetRegion.formatAsString() + ") " +
+                 "if it is a formal subset of an existing merged region (" + baseRegion.formatAsString() + ")");
         } catch (final IllegalStateException e) { } //expected
         
         try {
-            final CellRangeAddress supersetRegion = new CellRangeAddress(0, 2, 0, 2);
+            final CellRangeAddress supersetRegion = new CellRangeAddress(0, 2, 0, 2); //A1:C3
             sheet.addMergedRegion(supersetRegion);
-            fail("Should not be able to add a merged region if it is a formal superset of an existing merged region");
+            fail("Should not be able to add a merged region (" + supersetRegion.formatAsString() + ") " +
+                 "if it is a formal superset of an existing merged region (" + baseRegion.formatAsString() + ")");
         } catch (final IllegalStateException e) { } //expected
         
         final CellRangeAddress disjointRegion = new CellRangeAddress(10, 11, 10, 11);
         sheet.addMergedRegion(disjointRegion); //allowed
+    }
+
+    /*
+     * Bug 56345: Reject single-cell merged regions
+     */
+    @Test
+    public void addMergedRegionWithSingleCellShouldFail() throws IOException {
+        final Workbook wb = _testDataProvider.createWorkbook();
+
+        final Sheet sheet = wb.createSheet();
+        final CellRangeAddress region = CellRangeAddress.valueOf("A1:A1");
+        try {
+            sheet.addMergedRegion(region);
+            fail("Should not be able to add a single-cell merged region (" + region.formatAsString() + ")");
+        } catch (final IllegalArgumentException e) {
+            // expected
+        }
+        wb.close();
     }
 
     /**
