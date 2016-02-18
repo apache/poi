@@ -352,8 +352,8 @@ public class POIXMLDocumentPart {
     /**
      * Check if the new part was already added before via PackagePart.addRelationship()
      *
-     * @param part
-     * @return
+     * @param part to find the relationship for
+     * @return The existing relationship, or null if there isn't yet one
      */
     private PackageRelationship findExistingRelation(POIXMLDocumentPart part) {
         String ppn = part.getPackagePart().getPartName().getName();
