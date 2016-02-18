@@ -54,8 +54,17 @@ public final class XSSFITestDataProvider implements ITestDataProvider {
         return new XSSFWorkbook();
     }
     
+    //************ SXSSF-specific methods ***************//
+    @Override
+    public XSSFWorkbook createWorkbook(int rowAccessWindowSize) {
+        return createWorkbook();
+    }
+    
     @Override
     public void trackColumnsForAutosizing(Sheet sheet, int...columns) {}
+    @Override
+    public void trackAllColumnsForAutosizing(Sheet sheet) {}
+    //************ End SXSSF-specific methods ***************//
    
     @Override
     public FormulaEvaluator createFormulaEvaluator(Workbook wb) {

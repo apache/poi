@@ -60,8 +60,17 @@ public final class HSSFITestDataProvider implements ITestDataProvider {
         return new HSSFWorkbook();
     }
     
+    //************ SXSSF-specific methods ***************//
+    @Override
+    public HSSFWorkbook createWorkbook(int rowAccessWindowSize) {
+        return createWorkbook();
+    }
+    
     @Override
     public void trackColumnsForAutosizing(Sheet sheet, int...columns) {}
+    @Override
+    public void trackAllColumnsForAutosizing(Sheet sheet) {}
+    //************ End SXSSF-specific methods ***************//
     
     @Override
     public FormulaEvaluator createFormulaEvaluator(Workbook wb) {
