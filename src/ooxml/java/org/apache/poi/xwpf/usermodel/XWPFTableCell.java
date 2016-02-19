@@ -227,14 +227,17 @@ public class XWPFTableCell implements IBody, ICell {
     /**
      * Get the vertical alignment of the cell.
      *
-     * @return the cell alignment enum value
+     * @return the cell alignment enum value or <code>null</code>
+     * if no vertical alignment is set.
      */
     public XWPFVertAlign getVerticalAlignment() {
         XWPFVertAlign vAlign = null;
         CTTcPr tcpr = ctTc.getTcPr();
         if (tcpr != null) {
             CTVerticalJc va = tcpr.getVAlign();
-            vAlign = stVertAlignTypeMap.get(va.getVal().intValue());
+            if (va != null && va.getVal() != null) {
+                vAlign = stVertAlignTypeMap.get(va.getVal().intValue());
+            }
         }
         return vAlign;
     }

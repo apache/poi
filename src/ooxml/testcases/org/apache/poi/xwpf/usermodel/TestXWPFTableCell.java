@@ -19,8 +19,11 @@
 
 package org.apache.poi.xwpf.usermodel;
 
+import java.util.List;
+
 import junit.framework.TestCase;
 
+import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.apache.poi.xwpf.usermodel.XWPFTableCell.XWPFVertAlign;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTHMerge;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTShd;
@@ -102,5 +105,21 @@ public class TestXWPFTableCell extends TestCase {
 
         CTTcBorders tblBorders = tcPr.addNewTcBorders();
         CTVMerge vMerge = tcPr.addNewVMerge();
+    }
+
+    public void testCellVerticalAlign() throws Exception{
+        XWPFDocument docx = XWPFTestDataSamples.openSampleDocument("59030.docx");
+        List<XWPFTable> tables = docx.getTables();
+        assertEquals(1, tables.size());
+
+        XWPFTable table = tables.get(0);
+
+        List<XWPFTableRow> tableRows = table.getRows();
+        assertEquals(2, tableRows.size());
+
+        assertNull(tableRows.get(0).getCell(0).getVerticalAlignment());
+        assertEquals(XWPFVertAlign.BOTTOM, tableRows.get(0).getCell(1).getVerticalAlignment());
+        assertEquals(XWPFVertAlign.CENTER, tableRows.get(1).getCell(0).getVerticalAlignment());
+        assertNull(tableRows.get(1).getCell(1).getVerticalAlignment());
     }
 }
