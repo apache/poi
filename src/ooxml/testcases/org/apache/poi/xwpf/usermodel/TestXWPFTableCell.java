@@ -20,6 +20,9 @@
 package org.apache.poi.xwpf.usermodel;
 
 import junit.framework.TestCase;
+import org.junit.Test;
+
+import java.util.List;
 
 import org.apache.poi.xwpf.usermodel.XWPFTableCell.XWPFVertAlign;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTHMerge;
@@ -33,6 +36,8 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTVerticalJc;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STMerge;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STShd;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STVerticalJc;
+
+import org.apache.poi.xwpf.XWPFTestDataSamples;
 
 public class TestXWPFTableCell extends TestCase {
     @Override
@@ -103,4 +108,19 @@ public class TestXWPFTableCell extends TestCase {
         CTTcBorders tblBorders = tcPr.addNewTcBorders();
         CTVMerge vMerge = tcPr.addNewVMerge();
     }
+	
+	@Test
+	public void testCellVerticalAlign() throws Exception{
+		XWPFDocument docx = XWPFTestDataSamples.openSampleDocument("TestTableCellAlign.docx");
+		List<XWPFTable> tables = docx.getTables();
+        for (XWPFTable table : tables) {
+            List<XWPFTableRow> tableRows = table.getRows();
+            for (XWPFTableRow tableRow : tableRows) {
+                List<XWPFTableCell> tableCells = tableRow.getTableCells();
+                for (XWPFTableCell tableCell : tableCells) {
+					assertNotNull(tableCell.getVerticalAlignment());
+				}
+			}
+		}			
+	}
 }
