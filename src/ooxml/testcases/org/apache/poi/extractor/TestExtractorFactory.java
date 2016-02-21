@@ -26,6 +26,8 @@ import static org.junit.Assert.fail;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.POIOLE2TextExtractor;
@@ -41,6 +43,7 @@ import org.apache.poi.hssf.extractor.ExcelExtractor;
 import org.apache.poi.hwpf.extractor.Word6Extractor;
 import org.apache.poi.hwpf.extractor.WordExtractor;
 import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
+import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
@@ -49,6 +52,7 @@ import org.apache.poi.xslf.extractor.XSLFPowerPointExtractor;
 import org.apache.poi.xssf.extractor.XSSFEventBasedExcelExtractor;
 import org.apache.poi.xssf.extractor.XSSFExcelExtractor;
 import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
+import org.apache.xmlbeans.XmlException;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -819,5 +823,101 @@ public class TestExtractorFactory {
         // TODO - PowerPoint
         // TODO - Publisher
         // TODO - Visio
+    }
+
+    private static final String[] EXPECTED_FAILURES = new String[] {
+        // password protected files
+        "spreadsheet/password.xls",
+        "spreadsheet/protected_passtika.xlsx",
+        "spreadsheet/51832.xls",
+        "document/PasswordProtected.doc",
+        "slideshow/Password_Protected-hello.ppt",
+        "slideshow/Password_Protected-56-hello.ppt",
+        "slideshow/Password_Protected-np-hello.ppt",
+        "slideshow/cryptoapi-proc2356.ppt",
+        //"document/bug53475-password-is-pass.docx",
+        //"document/bug53475-password-is-solrcell.docx",
+        "spreadsheet/xor-encryption-abc.xls",
+        "spreadsheet/35897-type4.xls",
+        //"poifs/protect.xlsx",
+        //"poifs/protected_sha512.xlsx",
+        //"poifs/extenxls_pwd123.xlsx",
+        //"poifs/protected_agile.docx",
+        "spreadsheet/58616.xlsx",
+
+        // TODO: fails XMLExportTest, is this ok?
+        "spreadsheet/CustomXMLMapping-singleattributenamespace.xlsx",
+        "spreadsheet/55864.xlsx",
+        "spreadsheet/57890.xlsx",
+
+        // TODO: these fail now with some NPE/file read error because we now try to compute every value via Cell.toString()!
+        "spreadsheet/44958.xls",
+        "spreadsheet/44958_1.xls",
+        "spreadsheet/testArraysAndTables.xls",
+
+        // TODO: good to ignore?
+        "spreadsheet/sample-beta.xlsx",
+
+        // This is actually a spreadsheet!
+        "hpsf/TestRobert_Flaherty.doc",
+
+        // some files that are broken, eg Word 95, ...
+        "spreadsheet/43493.xls",
+        "spreadsheet/46904.xls",
+        "document/Bug50955.doc",
+        "slideshow/PPT95.ppt",
+        "openxml4j/OPCCompliance_CoreProperties_DCTermsNamespaceLimitedUseFAIL.docx",
+        "openxml4j/OPCCompliance_CoreProperties_DoNotUseCompatibilityMarkupFAIL.docx",
+        "openxml4j/OPCCompliance_CoreProperties_LimitedXSITypeAttribute_NotPresentFAIL.docx",
+        "openxml4j/OPCCompliance_CoreProperties_LimitedXSITypeAttribute_PresentWithUnauthorizedValueFAIL.docx",
+        "openxml4j/OPCCompliance_CoreProperties_OnlyOneCorePropertiesPartFAIL.docx",
+        "openxml4j/OPCCompliance_CoreProperties_UnauthorizedXMLLangAttributeFAIL.docx",
+        "openxml4j/OPCCompliance_DerivedPartNameFAIL.docx",
+        "spreadsheet/54764-2.xlsx",   // see TestXSSFBugs.bug54764()
+        "spreadsheet/54764.xlsx",     // see TestXSSFBugs.bug54764()
+        "spreadsheet/Simple.xlsb",
+        "poifs/unknown_properties.msg", // POIFS properties corrupted
+        "poifs/only-zero-byte-streams.ole2", // No actual contents
+        "spreadsheet/poc-xmlbomb.xlsx",  // contains xml-entity-expansion
+        "spreadsheet/poc-shared-strings.xlsx",  // contains shared-string-entity-expansion
+
+        // old Excel files, which we only support simple text extraction of
+        "spreadsheet/testEXCEL_2.xls",
+        "spreadsheet/testEXCEL_3.xls",
+        "spreadsheet/testEXCEL_4.xls",
+        "spreadsheet/testEXCEL_5.xls",
+        "spreadsheet/testEXCEL_95.xls",
+
+        // OOXML Strict is not yet supported, see bug #57699
+        "spreadsheet/SampleSS.strict.xlsx",
+        "spreadsheet/SimpleStrict.xlsx",
+        "spreadsheet/sample.strict.xlsx",
+
+        // non-TNEF files
+        "ddf/Container.dat",
+        "ddf/47143.dat",
+
+        // sheet cloning errors
+        "spreadsheet/47813.xlsx",
+        "spreadsheet/56450.xls",
+        "spreadsheet/57231_MixedGasReport.xls",
+        "spreadsheet/OddStyleRecord.xls",
+        "spreadsheet/WithChartSheet.xlsx",
+        "spreadsheet/chart_sheet.xlsx",
+    };
+    
+    @Test
+    public void testFileLeak() throws Exception {
+        // run a number of files that might fail in order to catch 
+        // leaked file resources when using file-leak-detector while
+        // running the test
+        
+        for(String file : EXPECTED_FAILURES) {
+            try {
+                ExtractorFactory.createExtractor(POIDataSamples.getSpreadSheetInstance().getFile(file));
+            } catch (Exception e) {
+                // catch all exceptions here as we are only interested in file-handle leaks
+            }
+        }
     }
 }
