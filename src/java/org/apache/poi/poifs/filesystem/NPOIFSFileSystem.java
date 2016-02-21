@@ -483,7 +483,9 @@ public class NPOIFSFileSystem extends BlockStore
        try {
            return _data.read(bigBlockSize.getBigBlockSize(), startAt);
        } catch (IndexOutOfBoundsException e) {
-           throw new IndexOutOfBoundsException("Block " + offset + " not found - " + e);
+           IndexOutOfBoundsException wrapped = new IndexOutOfBoundsException("Block " + offset + " not found");
+           wrapped.initCause(e);
+           throw wrapped;
        }
     }
     
