@@ -81,6 +81,7 @@ public class ExtractorFactory {
 		@Override
 		protected Boolean initialValue() { return Boolean.FALSE; }
 	};
+
 	/** Should all threads prefer event based over usermodel based extractors? */
 	private static Boolean allPreferEventExtractors;
 
@@ -92,6 +93,7 @@ public class ExtractorFactory {
 	public static boolean getThreadPrefersEventExtractors() {
 	   return threadPreferEventExtractors.get();
 	}
+
    /**
     * Should all threads prefer event based over usermodel based extractors?
     * (usermodel extractors tend to be more accurate, but use more memory)
@@ -108,6 +110,7 @@ public class ExtractorFactory {
    public static void setThreadPrefersEventExtractors(boolean preferEventExtractors) {
       threadPreferEventExtractors.set(preferEventExtractors);
    }
+
    /**
     * Should all threads prefer event based over usermodel based extractors?
     * If set, will take preference over the Thread level setting.
@@ -115,7 +118,6 @@ public class ExtractorFactory {
    public static void setAllThreadsPreferEventExtractors(Boolean preferEventExtractors) {
       allPreferEventExtractors = preferEventExtractors;
    }
-
 
    /**
     * Should this thread use event based extractors is available?
@@ -147,7 +149,31 @@ public class ExtractorFactory {
                 fs.close();
             }
             throw new IllegalArgumentException("Your File was neither an OLE2 file, nor an OOXML file");
-        }
+		} catch (OpenXML4JException e) {
+			// ensure file-handle release
+			if(fs != null) {
+				fs.close();
+			}
+			throw e;
+		} catch (XmlException e) {
+			// ensure file-handle release
+			if(fs != null) {
+				fs.close();
+			}
+			throw e;
+		} catch (IOException e) {
+			// ensure file-handle release
+			if(fs != null) {
+				fs.close();
+			}
+			throw e;
+        } catch (RuntimeException e) {
+			// ensure file-handle release
+			if(fs != null) {
+				fs.close();
+			}
+			throw e;
+		}
     }
 
 	public static POITextExtractor createExtractor(InputStream inp) throws IOException, InvalidFormatException, OpenXML4JException, XmlException {
