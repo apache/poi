@@ -18,6 +18,7 @@
 package org.apache.poi.xssf.model;
 
 import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
+import static org.apache.poi.xssf.usermodel.XSSFRelation.SPREADSHEETML_NS;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,7 +37,6 @@ import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSst;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.SstDocument;
-
 
 /**
  * Table of strings shared across all sheets in a workbook.
@@ -58,9 +58,6 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.SstDocument;
  * The shared string table contains all the necessary information for displaying the string: the text, formatting
  * properties, and phonetic properties (for East Asian languages).
  * </p>
- *
- * @author Nick Birch
- * @author Yegor Kozlov
  */
 public class SharedStringsTable extends POIXMLDocumentPart {
 
@@ -94,7 +91,7 @@ public class SharedStringsTable extends POIXMLDocumentPart {
         options.put( XmlOptions.SAVE_INNER );
      	options.put( XmlOptions.SAVE_AGGRESSIVE_NAMESPACES );
      	options.put( XmlOptions.SAVE_USE_DEFAULT_NAMESPACE );
-        options.setSaveImplicitNamespaces(Collections.singletonMap("", "http://schemas.openxmlformats.org/spreadsheetml/2006/main"));
+        options.setSaveImplicitNamespaces(Collections.singletonMap("", SPREADSHEETML_NS));
     }
 
     public SharedStringsTable() {
