@@ -18,7 +18,7 @@
 package org.apache.poi.xssf.model;
 
 import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
-import static org.apache.poi.xssf.usermodel.XSSFRelation.SPREADSHEETML_NS;
+import static org.apache.poi.xssf.usermodel.XSSFRelation.NS_SPREADSHEETML;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -91,7 +91,7 @@ public class SharedStringsTable extends POIXMLDocumentPart {
         options.put( XmlOptions.SAVE_INNER );
      	options.put( XmlOptions.SAVE_AGGRESSIVE_NAMESPACES );
      	options.put( XmlOptions.SAVE_USE_DEFAULT_NAMESPACE );
-        options.setSaveImplicitNamespaces(Collections.singletonMap("", SPREADSHEETML_NS));
+        options.setSaveImplicitNamespaces(Collections.singletonMap("", NS_SPREADSHEETML));
     }
 
     public SharedStringsTable() {

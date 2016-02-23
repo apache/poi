@@ -352,7 +352,9 @@ public final class XSSFRelation extends POIXMLRelation {
             null
     );
     
-    public static final String SPREADSHEETML_NS = "http://schemas.openxmlformats.org/spreadsheetml/2006/main";
+    public static final String NS_SPREADSHEETML = "http://schemas.openxmlformats.org/spreadsheetml/2006/main";
+    public static final String NS_DRAWINGML = "http://schemas.openxmlformats.org/drawingml/2006/main";
+    public static final String NS_CHART = "http://schemas.openxmlformats.org/drawingml/2006/chart";
 
     private XSSFRelation(String type, String rel, String defaultName, Class<? extends POIXMLDocumentPart> cls) {
         super(type, rel, defaultName, cls);
