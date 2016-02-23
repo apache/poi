@@ -16,6 +16,8 @@
 ==================================================================== */
 package org.apache.poi.xssf.eventusermodel;
 
+import static org.apache.poi.xssf.usermodel.XSSFRelation.SPREADSHEETML_NS;
+
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -41,7 +43,7 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class XSSFSheetXMLHandler extends DefaultHandler {
     private static final POILogger logger = POILogFactory.getLogger(XSSFSheetXMLHandler.class);
-    static final String SPREADSHEETML_NS = "http://schemas.openxmlformats.org/spreadsheetml/2006/main";
+
     /**
     * These are the different kinds of cells we support.
     * We keep track of the current one between

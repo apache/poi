@@ -44,7 +44,8 @@ import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.model.ThemesTable;
 
 /**
- *
+ * Defines namespaces, content types and normal file names / naming
+ *  patterns, for the well-known XSSF format parts. 
  */
 public final class XSSFRelation extends POIXMLRelation {
 
@@ -350,6 +351,8 @@ public final class XSSFRelation extends POIXMLRelation {
             "/xl/ctrlProps/ctrlProp#.xml",
             null
     );
+    
+    public static final String SPREADSHEETML_NS = "http://schemas.openxmlformats.org/spreadsheetml/2006/main";
 
     private XSSFRelation(String type, String rel, String defaultName, Class<? extends POIXMLDocumentPart> cls) {
         super(type, rel, defaultName, cls);
