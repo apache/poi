@@ -17,7 +17,7 @@
 
 package org.apache.poi.xssf.extractor;
 
-import static org.apache.poi.xssf.usermodel.XSSFRelation.SPREADSHEETML_NS;
+import static org.apache.poi.xssf.usermodel.XSSFRelation.NS_SPREADSHEETML;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -98,7 +98,7 @@ public class TestXSSFImportFromXML {
     		String cellC8 = "c8";
     		String cellC9 = "c9";
     		
-    		String testXML = "<ns1:MapInfo xmlns:ns1=\""+SPREADSHEETML_NS+"\" SelectionNamespaces=\"\">" +
+    		String testXML = "<ns1:MapInfo xmlns:ns1=\""+NS_SPREADSHEETML+"\" SelectionNamespaces=\"\">" +
     						 "<ns1:Schema ID=\""+cellC6+"\" SchemaRef=\"a\" />"+ 
     						 "<ns1:Schema ID=\""+cellC7+"\" SchemaRef=\"b\" />"+ 
     						 "<ns1:Schema ID=\""+cellC8+"\" SchemaRef=\"c\" />"+ 
@@ -143,7 +143,7 @@ public class TestXSSFImportFromXML {
     		int count = 21;
     		
     		String testXML = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\" ?>"+ 
-    						 "<ns1:table xmlns:ns1=\""+SPREADSHEETML_NS+"\" id=\""+id+"\" displayName=\""+displayName+"\" ref=\""+ref+"\">"+
+    						 "<ns1:table xmlns:ns1=\""+NS_SPREADSHEETML+"\" id=\""+id+"\" displayName=\""+displayName+"\" ref=\""+ref+"\">"+
     						 "<ns1:tableColumns count=\""+count+"\" />"+ 
     						 "</ns1:table>\u0000"; 
     		XSSFMap map = wb.getMapInfo().getXSSFMapByName("table_mapping");

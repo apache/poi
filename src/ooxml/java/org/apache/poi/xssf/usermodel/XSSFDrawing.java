@@ -52,8 +52,6 @@ import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.STEditAs;
 
 /**
  * Represents a SpreadsheetML drawing
- *
- * @author Yegor Kozlov
  */
 public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing {
     /**
@@ -62,8 +60,8 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing {
     private CTDrawing drawing;
     private long numOfGraphicFrames = 0L;
     
-    protected static final String NAMESPACE_A = "http://schemas.openxmlformats.org/drawingml/2006/main";
-    protected static final String NAMESPACE_C = "http://schemas.openxmlformats.org/drawingml/2006/chart";
+    protected static final String NAMESPACE_A = XSSFRelation.NS_DRAWINGML;
+    protected static final String NAMESPACE_C = XSSFRelation.NS_CHART;
 
     /**
      * Create a new SpreadsheetML drawing

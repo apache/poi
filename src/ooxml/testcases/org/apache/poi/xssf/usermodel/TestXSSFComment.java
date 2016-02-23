@@ -17,7 +17,7 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import static org.apache.poi.xssf.usermodel.XSSFRelation.SPREADSHEETML_NS;
+import static org.apache.poi.xssf.usermodel.XSSFRelation.NS_SPREADSHEETML;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
@@ -147,7 +147,7 @@ public final class TestXSSFComment extends BaseTestCellComment  {
 
         CTComment ctComment = comment.getCTComment();
         XmlObject[] obj = ctComment.selectPath(
-                "declare namespace w='"+SPREADSHEETML_NS+"' .//w:text");
+                "declare namespace w='"+NS_SPREADSHEETML+"' .//w:text");
         assertEquals(1, obj.length);
         assertEquals(TEST_RICHTEXTSTRING, comment.getString().getString());
 
@@ -165,7 +165,7 @@ public final class TestXSSFComment extends BaseTestCellComment  {
         //check the low-level stuff
         comment.setString(richText);
         obj = ctComment.selectPath(
-                "declare namespace w='"+SPREADSHEETML_NS+"' .//w:text");
+                "declare namespace w='"+NS_SPREADSHEETML+"' .//w:text");
         assertEquals(1, obj.length);
         assertSame(comment.getString(), richText);
         //check that the rich text is set in the comment

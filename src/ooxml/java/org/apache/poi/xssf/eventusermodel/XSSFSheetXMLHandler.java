@@ -16,7 +16,7 @@
 ==================================================================== */
 package org.apache.poi.xssf.eventusermodel;
 
-import static org.apache.poi.xssf.usermodel.XSSFRelation.SPREADSHEETML_NS;
+import static org.apache.poi.xssf.usermodel.XSSFRelation.NS_SPREADSHEETML;
 
 import java.util.LinkedList;
 import java.util.Queue;
@@ -191,7 +191,7 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
    public void startElement(String uri, String localName, String qName,
                             Attributes attributes) throws SAXException {
 
-       if (uri != null && ! uri.equals(SPREADSHEETML_NS)) {
+       if (uri != null && ! uri.equals(NS_SPREADSHEETML)) {
            return;
        }
 
@@ -297,7 +297,7 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
    public void endElement(String uri, String localName, String qName)
            throws SAXException {
 
-       if (uri != null && ! uri.equals(SPREADSHEETML_NS)) {
+       if (uri != null && ! uri.equals(NS_SPREADSHEETML)) {
            return;
        }
 

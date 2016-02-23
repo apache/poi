@@ -63,9 +63,6 @@ import org.w3c.dom.Text;
 
 /**
  * Represents a SpreadsheetML Chart
- * @author Nick Burch
- * @author Roman Kashitsyn
- * @author Martin Andersson
  */
 public final class XSSFChart extends POIXMLDocumentPart implements Chart, ChartAxisFactory {
 
