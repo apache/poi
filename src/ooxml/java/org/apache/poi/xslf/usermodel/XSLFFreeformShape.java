@@ -20,7 +20,7 @@
 package org.apache.poi.xslf.usermodel;
 
 import java.awt.geom.AffineTransform;
-import java.awt.geom.GeneralPath;
+import java.awt.geom.Path2D;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Rectangle2D;
 
@@ -57,7 +57,7 @@ public class XSLFFreeformShape extends XSLFAutoShape
     }
 
     @Override
-    public int setPath(GeneralPath path) {
+    public int setPath(Path2D.Double path) {
         CTPath2D ctPath = CTPath2D.Factory.newInstance();
 
         Rectangle2D bounds = path.getBounds2D();
@@ -119,8 +119,8 @@ public class XSLFFreeformShape extends XSLFAutoShape
     }
 
     @Override
-    public GeneralPath getPath() {
-        GeneralPath path = new GeneralPath();
+    public Path2D.Double getPath() {
+        Path2D.Double path = new Path2D.Double();
         Rectangle2D bounds = getAnchor();
 
         CTCustomGeometry2D geom = getSpPr().getCustGeom();
@@ -168,7 +168,7 @@ public class XSLFFreeformShape extends XSLFAutoShape
         // The returned path should fit in the bounding rectangle
         AffineTransform at = new AffineTransform();
         at.translate(bounds.getX(), bounds.getY());
-        return new GeneralPath(at.createTransformedShape(path));
+        return new Path2D.Double(at.createTransformedShape(path));
     }
     /**
      * @param shapeId 1-based shapeId

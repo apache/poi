@@ -22,6 +22,7 @@ import static org.junit.Assert.assertEquals;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileFilter;
@@ -64,7 +65,7 @@ public class TestHwmfParsing {
     @Ignore("This is work-in-progress and not a real unit test ...")
     public void paint() throws IOException {
         File f = POIDataSamples.getSlideShowInstance().getFile("santa.wmf");
-//        File f = new File("E:\\project\\poi\\misc\\govdocs-ppt", "000133-0001.wmf");
+        // File f = new File("bla.wmf");
         FileInputStream fis = new FileInputStream(f);
         HwmfPicture wmf = new HwmfPicture(fis);
         fis.close();
@@ -73,6 +74,11 @@ public class TestHwmfParsing {
         int width = Units.pointsToPixel(dim.getWidth());
         // keep aspect ratio for height
         int height = Units.pointsToPixel(dim.getHeight());
+        double max = Math.max(width, height);
+        if (max > 1500) {
+            width *= 1500/max;
+            height *= 1500/max;
+        }
         
         BufferedImage bufImg = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = bufImg.createGraphics();
@@ -81,7 +87,7 @@ public class TestHwmfParsing {
         g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
         g.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
         
-        wmf.draw(g);
+        wmf.draw(g, new Rectangle2D.Double(0,0,width,height));
 
         g.dispose();
         

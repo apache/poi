@@ -19,11 +19,19 @@
 
 package org.apache.poi.sl.draw.geom;
 
-import java.awt.geom.GeneralPath;
+import java.awt.geom.Path2D;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.poi.sl.draw.binding.*;
+import org.apache.poi.sl.draw.binding.CTAdjPoint2D;
+import org.apache.poi.sl.draw.binding.CTPath2D;
+import org.apache.poi.sl.draw.binding.CTPath2DArcTo;
+import org.apache.poi.sl.draw.binding.CTPath2DClose;
+import org.apache.poi.sl.draw.binding.CTPath2DCubicBezierTo;
+import org.apache.poi.sl.draw.binding.CTPath2DLineTo;
+import org.apache.poi.sl.draw.binding.CTPath2DMoveTo;
+import org.apache.poi.sl.draw.binding.CTPath2DQuadBezierTo;
+import org.apache.poi.sl.draw.binding.STPathFillMode;
 
 /**
  * Specifies a creation path consisting of a series of moves, lines and curves
@@ -90,10 +98,10 @@ public class Path {
     }
 
     /**
-     * Convert the internal represenation to java.awt.GeneralPath
+     * Convert the internal represenation to java.awt.geom.Path2D
      */
-    public GeneralPath getPath(Context ctx) {
-        GeneralPath path = new GeneralPath();
+    public Path2D.Double getPath(Context ctx) {
+        Path2D.Double path = new Path2D.Double();
         for(PathCommand cmd : commands)
             cmd.execute(path, ctx);
         return path;

@@ -346,7 +346,13 @@ public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
         int val = (p == null) ? defaultColor : p.getPropertyValue();
 
         EscherColorRef ecr = new EscherColorRef(val);
-        
+        Color col = getColor(ecr);
+
+        double alpha = getAlpha(opacityProperty);
+        return new Color(col.getRed(), col.getGreen(), col.getBlue(), (int)(alpha*255.0));
+    }
+
+    Color getColor(EscherColorRef ecr) {
         boolean fPaletteIndex = ecr.hasPaletteIndexFlag();
         boolean fPaletteRGB = ecr.hasPaletteRGBFlag();
         boolean fSystemRGB = ecr.hasSystemRGBFlag();
@@ -373,11 +379,10 @@ public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
         } else if (fSysIndex){
             //TODO
         }
-
-        double alpha = getAlpha(opacityProperty);
-        return new Color(rgb[0], rgb[1], rgb[2], (int)(alpha*255.0));
+        
+        return new Color(rgb[0], rgb[1], rgb[2]);
     }
-
+    
     double getAlpha(short opacityProperty) {
         AbstractEscherOptRecord opt = getEscherOptRecord();
         EscherSimpleProperty op = getEscherProperty(opt, opacityProperty);

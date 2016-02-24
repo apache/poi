@@ -93,7 +93,7 @@ public class HwmfPalette {
         }
     }
 
-    public static abstract class WmfPaletteParent implements HwmfRecord  {
+    public static abstract class WmfPaletteParent implements HwmfRecord, HwmfObjectTableEntry  {
 
         /**
          * Start (2 bytes):  A 16-bit unsigned integer that defines the offset into the Palette Object when
@@ -121,6 +121,11 @@ public class HwmfPalette {
             return size;
         }
 
+        @Override
+        public final void draw(HwmfGraphics ctx) {
+            ctx.addObjectTableEntry(this);
+        }
+        
         protected List<PaletteEntry> getPaletteCopy() {
             List<PaletteEntry> newPalette = new ArrayList<PaletteEntry>();
             for (PaletteEntry et : palette) {
@@ -144,11 +149,6 @@ public class HwmfPalette {
         }
 
         @Override
-        public void draw(HwmfGraphics ctx) {
-            ctx.addObjectTableEntry(this);
-        }
-
-        @Override
         public void applyObject(HwmfGraphics ctx) {
             ctx.getProperties().setPalette(getPaletteCopy());
         }
@@ -165,7 +165,7 @@ public class HwmfPalette {
         }
 
         @Override
-        public void draw(HwmfGraphics ctx) {
+        public void applyObject(HwmfGraphics ctx) {
             HwmfDrawProperties props = ctx.getProperties();
             List<PaletteEntry> palette = props.getPalette();
             if (palette == null) {
@@ -192,7 +192,7 @@ public class HwmfPalette {
      * The META_RESIZEPALETTE record redefines the size of the logical palette that is defined in the
      * playback device context.
      */
-    public static class WmfResizePalette implements HwmfRecord {
+    public static class WmfResizePalette implements HwmfRecord, HwmfObjectTableEntry {
         /**
          * A 16-bit unsigned integer that defines the number of entries in
          * the logical palette.
@@ -212,6 +212,11 @@ public class HwmfPalette {
 
         @Override
         public void draw(HwmfGraphics ctx) {
+            ctx.addObjectTableEntry(this);
+        }
+        
+        @Override
+        public void applyObject(HwmfGraphics ctx) {
             HwmfDrawProperties props = ctx.getProperties();
             List<PaletteEntry> palette = props.getPalette();
             if (palette == null) {
@@ -292,7 +297,7 @@ public class HwmfPalette {
         }
 
         @Override
-        public void draw(HwmfGraphics ctx) {
+        public void applyObject(HwmfGraphics ctx) {
             HwmfDrawProperties props = ctx.getProperties();
             List<PaletteEntry> dest = props.getPalette();
             List<PaletteEntry> src = getPaletteCopy();

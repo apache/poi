@@ -23,23 +23,28 @@ import java.io.InputStream;
 import java.util.List;
 
 import org.apache.poi.ddf.AbstractEscherOptRecord;
+import org.apache.poi.ddf.EscherArrayProperty;
 import org.apache.poi.ddf.EscherBSERecord;
+import org.apache.poi.ddf.EscherColorRef;
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherProperties;
 import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.ddf.EscherSimpleProperty;
 import org.apache.poi.hslf.record.Document;
 import org.apache.poi.sl.draw.DrawPaint;
+import org.apache.poi.sl.usermodel.ColorStyle;
 import org.apache.poi.sl.usermodel.FillStyle;
 import org.apache.poi.sl.usermodel.PaintStyle;
+import org.apache.poi.sl.usermodel.PaintStyle.GradientPaint;
+import org.apache.poi.sl.usermodel.PaintStyle.GradientPaint.GradientType;
 import org.apache.poi.sl.usermodel.PaintStyle.TexturePaint;
+import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.util.Units;
 
 /**
  * Represents functionality provided by the 'Fill Effects' dialog in PowerPoint.
- *
- * @author Yegor Kozlov
  */
 public final class HSLFFill {
     // For logging
@@ -118,36 +123,110 @@ public final class HSLFFill {
     public FillStyle getFillStyle() {
         return new FillStyle() {
             public PaintStyle getPaint() {
-                switch (getFillType()) {
+                final int fillType = getFillType();
+                // TODO: fix gradient types, this mismatches with the MS-ODRAW definition ...
+                // need to handle (not only) the type (radial,rectangular,linear),
+                // the direction, e.g. top right, and bounds (e.g. for rectangular boxes)
+                switch (fillType) {
                     case FILL_SOLID:
                         return DrawPaint.createSolidPaint(getForegroundColor());
-                    case FILL_PICTURE: {
-                        final HSLFPictureData pd = getPictureData();
-                        if (pd == null) break;
-                        
-                        return new TexturePaint() {
-                            public InputStream getImageData() {
-                                return new ByteArrayInputStream(pd.getData());
-                            }
-
-                            public String getContentType() {
-                                return pd.getContentType();
-                            }
-
-                            public int getAlpha() {
-                                return (int)(shape.getAlpha(EscherProperties.FILL__FILLOPACITY)*100000.0);
-                            }
-                        };
-                    }
+                    case FILL_SHADE_SHAPE:
+                        return getGradientPaint(GradientType.shape);
+                    case FILL_SHADE_CENTER:
+                    case FILL_SHADE_TITLE:
+                        return getGradientPaint(GradientType.circular);
+                    case FILL_SHADE:
+                    case FILL_SHADE_SCALE:
+                        return getGradientPaint(GradientType.linear);
+                    case FILL_PICTURE:
+                        return getTexturePaint();
                     default:
-                        logger.log(POILogger.WARN, "unsuported fill type: " + getFillType());
-                        break;
+                        logger.log(POILogger.WARN, "unsuported fill type: " + fillType);
+                        return null;
                 }
-                return null;
             }
         };
     }
     
+    
+
+    private GradientPaint getGradientPaint(final GradientType gradientType) {
+        final AbstractEscherOptRecord opt = shape.getEscherOptRecord();
+        final EscherArrayProperty ep = HSLFShape.getEscherProperty(opt, EscherProperties.FILL__SHADECOLORS);
+        final int colorCnt = (ep == null) ? 0 : ep.getNumberOfElementsInArray();
+
+        return new GradientPaint() {
+            public double getGradientAngle() {
+                // A value of type FixedPoint, as specified in [MS-OSHARED] section 2.2.1.6,
+                // that specifies the angle of the gradient fill. Zero degrees represents a vertical vector from
+                // bottom to top. The default value for this property is 0x00000000.
+                int rot = shape.getEscherProperty(EscherProperties.FILL__ANGLE);
+                return 90-Units.fixedPointToDouble(rot);
+            }
+            public ColorStyle[] getGradientColors() {
+                ColorStyle cs[];
+                if (colorCnt == 0) {
+                    cs = new ColorStyle[2];
+                    cs[0] = wrapColor(getBackgroundColor());
+                    cs[1] = wrapColor(getForegroundColor());
+                } else {
+                    cs = new ColorStyle[colorCnt];
+                    int idx = 0;
+                    // TODO: handle palette colors and alpha(?) value 
+                    for (byte data[] : ep) {
+                        EscherColorRef ecr = new EscherColorRef(data, 0, 4);
+                        cs[idx++] = wrapColor(shape.getColor(ecr));
+                    }
+                }
+                return cs;
+            }
+            private ColorStyle wrapColor(Color col) {
+                return (col == null) ? null : DrawPaint.createSolidPaint(col).getSolidColor();
+            }
+            public float[] getGradientFractions() {
+                float frc[];
+                if (colorCnt == 0) {
+                    frc = new float[]{0, 1};
+                } else {
+                    frc = new float[colorCnt];
+                    int idx = 0;
+                    for (byte data[] : ep) {
+                        double pos = Units.fixedPointToDouble(LittleEndian.getInt(data, 4));
+                        frc[idx++] = (float)pos;
+                    }
+                }
+                return frc;
+            }
+            public boolean isRotatedWithShape() {
+                return false;
+            }
+            public GradientType getGradientType() {
+                return gradientType;
+            }
+        };
+    }
+    
+    private TexturePaint getTexturePaint() {
+        final HSLFPictureData pd = getPictureData();
+        if (pd == null) {
+            return null;
+        }
+
+        return new TexturePaint() {
+            public InputStream getImageData() {
+                return new ByteArrayInputStream(pd.getData());
+            }
+
+            public String getContentType() {
+                return pd.getContentType();
+            }
+
+            public int getAlpha() {
+                return (int)(shape.getAlpha(EscherProperties.FILL__FILLOPACITY)*100000.0);
+            }
+        };
+    }
+
     /**
      * Returns fill type.
      * Must be one of the <code>FILL_*</code> constants defined in this class.
@@ -172,6 +251,7 @@ public final class HSLFFill {
         }
     }
 
+    @SuppressWarnings("resource")
     protected EscherBSERecord getEscherBSERecord(int idx){
         HSLFSheet sheet = shape.getSheet();
         if(sheet == null) {
@@ -258,6 +338,7 @@ public final class HSLFFill {
     /**
      * <code>PictureData</code> object used in a texture, pattern of picture fill.
      */
+    @SuppressWarnings("resource")
     public HSLFPictureData getPictureData(){
         AbstractEscherOptRecord opt = shape.getEscherOptRecord();
         EscherSimpleProperty p = HSLFShape.getEscherProperty(opt, EscherProperties.FILL__PATTERNTEXTURE);

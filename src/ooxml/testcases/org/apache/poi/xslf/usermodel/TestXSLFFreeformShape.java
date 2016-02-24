@@ -19,8 +19,9 @@ package org.apache.poi.xslf.usermodel;
 import static org.junit.Assert.assertEquals;
 
 import java.awt.geom.Ellipse2D;
-import java.awt.geom.GeneralPath;
+import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
+import java.io.IOException;
 
 import org.junit.Test;
 
@@ -30,16 +31,16 @@ import org.junit.Test;
 public class TestXSLFFreeformShape {
 
     @Test
-    public void testSetPath() {
+    public void testSetPath() throws IOException {
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFSlide slide = ppt.createSlide();
         XSLFFreeformShape shape1 = slide.createFreeform();
         // comples path consisting of a rectangle and an ellipse inside it
-        GeneralPath path1 = new GeneralPath(new Rectangle2D.Double(150, 150, 300, 300));
+        Path2D.Double path1 = new Path2D.Double(new Rectangle2D.Double(150, 150, 300, 300));
         path1.append(new Ellipse2D.Double(200, 200, 100, 50), false);
         shape1.setPath(path1);
 
-        GeneralPath path2 = shape1.getPath();
+        Path2D.Double path2 = shape1.getPath();
 
         // YK: how to compare the original path1 and the value returned by XSLFFreeformShape.getPath() ?
         // one way is to create another XSLFFreeformShape from path2 and compare the resulting xml
@@ -49,5 +50,7 @@ public class TestXSLFFreeformShape {
         shape2.setPath(path2);
 
         assertEquals(shape1.getSpPr().getCustGeom().toString(), shape2.getSpPr().getCustGeom().toString());
+        
+        ppt.close();
     }
 }

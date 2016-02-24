@@ -17,6 +17,68 @@
 
 package org.apache.poi.hwmf.record;
 
+/**
+ * Each ternary raster operation code represents a Boolean operation in which the values of the pixels in
+ * the source, the selected brush, and the destination are combined. Following are the three operands
+ * used in these operations.
+ *
+ * <table>
+ * <tr><th>Operand</th><th>Meaning</th></tr>
+ * <tr><td>D</td><td>Destination bitmap</td></tr>
+ * <tr><td>P</td><td>Selected brush (also called pattern)</td></tr>
+ * <tr><td>S</td><td>Source bitmap</td></tr>
+ * </table>
+ *
+ * Following are the Boolean operators used in these operations.
+ * <table>
+ * <tr><th>Operand</th><th>Meaning</th></tr>
+ * <tr><td>a</td><td>Bitwise AND</td></tr>
+ * <tr><td>n</td><td>Bitwise NOT (inverse)</td></tr>
+ * <tr><td>o</td><td>Bitwise OR</td></tr>
+ * <tr><td>x</td><td>Bitwise exclusive OR (XOR)</td></tr>
+ * </table>
+ *
+ * All Boolean operations are presented in reverse Polish notation. For example, the following operation
+ * replaces the values of the pixels in the destination bitmap with a combination of the pixel values of the
+ * source and brush: PSo.
+ * 
+ * The following operation combines the values of the pixels in the source and brush with the pixel values
+ * of the destination bitmap: DPSoo (there are alternative spellings of some functions, so although a
+ * particular spelling MAY NOT be listed in the enumeration, an equivalent form SHOULD be).
+ * 
+ * Each raster operation code is a 32-bit integer whose high-order word is a Boolean operation index and
+ * whose low-order word is the operation code. The 16-bit operation index is a zero-extended, 8-bit
+ * value that represents the result of the Boolean operation on predefined brush, source, and destination
+ * values. For example, the operation indexes for the PSo and DPSoo operations are shown in the
+ * following list.
+ * 
+ * <table>
+ * <tr><th>P</th><th>S</th><th>D</th><th>DPo</th><th>DPan</th></tr>
+ * <tr><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+ * <tr><td>0</td><td>0</td><td>1</td><td>0</td><td>1</td></tr>
+ * <tr><td>0</td><td>1</td><td>0</td><td>1</td><td>1</td></tr>
+ * <tr><td>0</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+ * <tr><td>1</td><td>0</td><td>0</td><td>1</td><td>1</td></tr>
+ * <tr><td>1</td><td>0</td><td>1</td><td>1</td><td>1</td></tr>
+ * <tr><td>1</td><td>1</td><td>0</td><td>1</td><td>1</td></tr>
+ * <tr><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+ * </table>
+ * 
+ * The operation indexes are determined by reading the binary values in a column of the table from the
+ * bottom up. For example, in the PSo column, the binary value is 11111100, which is equivalent to 00FC
+ * (hexadecimal is implicit for these values), which is the operation index for PSo.
+ * 
+ * Using this method, DPSoo can be seen to have the operation index 00FE. Operation indexes define the
+ * locations of corresponding raster operation codes in the preceding enumeration. The PSo operation is
+ * in line 252 (0x00FC) of the enumeration; DPSoo is in line 254 (0x00FE).
+ * 
+ * The most commonly used raster operations have been given explicit enumeration names, which
+ * SHOULD be used; examples are PATCOPY and WHITENESS.
+ * 
+ * When the source and destination bitmaps are monochrome, a bit value of 0 represents a black pixel
+ * and a bit value of 1 represents a white pixel. When the source and the destination bitmaps are color,
+ * those colors are represented with red green blue (RGB) values.
+ */
 public enum HwmfTernaryRasterOp {
     BLACKNESS(0x0000,0x0042,"0"),
     DPSOON(0x0001,0x0289,"DPSoon"),
@@ -274,17 +336,17 @@ public enum HwmfTernaryRasterOp {
     PSDNOO(0x00FD,0x0A0A,"PSDnoo"),
     DPSOO(0x00FE,0x02A9,"DPSoo"),
     WHITENESS(0x00FF,0x0062,"1");
-    
+
     int opIndex;
     int opCode;
     String opCmd;
-    
+
     HwmfTernaryRasterOp(int opIndex, int opCode, String opCmd) {
         this.opIndex=opIndex;
         this.opCode=opCode;
         this.opCmd=opCmd;
     }
-    
+
     public static HwmfTernaryRasterOp valueOf(int opIndex) {
         for (HwmfTernaryRasterOp bb : HwmfTernaryRasterOp.values()) {
             if (bb.opIndex == opIndex) {
@@ -293,11 +355,11 @@ public enum HwmfTernaryRasterOp {
         }
         return null;
     }
-    
+
     public String describeCmd() {
         String stack[] = new String[10];
         int stackPnt = 0;
-        
+
         for (char c : opCmd.toCharArray()) {
             switch (c) {
                 case 'S':

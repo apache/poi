@@ -21,11 +21,15 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.util.*;
+import java.util.Iterator;
 
-import org.apache.poi.sl.usermodel.*;
+import org.apache.poi.sl.usermodel.Insets2D;
+import org.apache.poi.sl.usermodel.PlaceableShape;
+import org.apache.poi.sl.usermodel.ShapeContainer;
+import org.apache.poi.sl.usermodel.TextParagraph;
 import org.apache.poi.sl.usermodel.TextParagraph.BulletStyle;
-import org.apache.poi.util.JvmBugs;
+import org.apache.poi.sl.usermodel.TextRun;
+import org.apache.poi.sl.usermodel.TextShape;
 
 public class DrawTextShape extends DrawSimpleShape {
 
@@ -35,7 +39,7 @@ public class DrawTextShape extends DrawSimpleShape {
 
     @Override
     public void drawContent(Graphics2D graphics) {
-        fixFonts(graphics);
+        DrawFactory.getInstance(graphics).fixFonts(graphics);
         
         TextShape<?,?> s = getShape();
         
@@ -71,7 +75,7 @@ public class DrawTextShape extends DrawSimpleShape {
         }
         
         Double textRot = s.getTextRotation();
-        if (textRot != null) {
+        if (textRot != null && textRot != 0) {
             graphics.translate(anchor.getCenterX(), anchor.getCenterY());
             graphics.rotate(Math.toRadians(textRot));
             graphics.translate(-anchor.getCenterX(), -anchor.getCenterY());
@@ -110,8 +114,9 @@ public class DrawTextShape extends DrawSimpleShape {
 
         double y0 = y;
         //noinspection RedundantCast
-        Iterator<? extends TextParagraph<?,?,? extends TextRun>> paragraphs = (Iterator<? extends TextParagraph<?, ?, ? extends TextRun>>) getShape().iterator();
-
+        Iterator<? extends TextParagraph<?,?,? extends TextRun>> paragraphs =
+            (Iterator<? extends TextParagraph<?,?,? extends TextRun>>) getShape().iterator();
+        
         boolean isFirstLine = true;
         for (int autoNbrIdx=0; paragraphs.hasNext(); autoNbrIdx++){
             TextParagraph<?,?,? extends TextRun> p = paragraphs.next();
@@ -170,23 +175,10 @@ public class DrawTextShape extends DrawSimpleShape {
         // dry-run in a 1x1 image and return the vertical advance
         BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
         Graphics2D graphics = img.createGraphics();
-        fixFonts(graphics);
+        DrawFactory.getInstance(graphics).fixFonts(graphics);
         return drawParagraphs(graphics, 0, 0);
     }
     
-    @SuppressWarnings("unchecked")
-    private static void fixFonts(Graphics2D graphics) {
-        if (!JvmBugs.hasLineBreakMeasurerBug()) return;
-        Map<String,String> fontMap = (Map<String,String>)graphics.getRenderingHint(Drawable.FONT_MAP);
-        if (fontMap == null) {
-            fontMap = new HashMap<String,String>();
-            graphics.setRenderingHint(Drawable.FONT_MAP, fontMap);
-        }
-        
-        if (!fontMap.containsKey("Calibri")) fontMap.put("Calibri", "Lucida Sans");
-        if (!fontMap.containsKey("Cambria")) fontMap.put("Cambria", "Lucida Bright");
-    }
-
     @Override
     protected TextShape<?,?> getShape() {
         return (TextShape<?,?>)shape;

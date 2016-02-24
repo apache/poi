@@ -26,6 +26,11 @@ public interface PlaceableShape<
     ShapeContainer<S,P> getParent();
     
     /**
+     * @return the sheet this shape belongs to
+     */
+    Sheet<S,P> getSheet();
+    
+    /**
      * @return the position of this shape within the drawing canvas.
      *         The coordinates are expressed in points
      */

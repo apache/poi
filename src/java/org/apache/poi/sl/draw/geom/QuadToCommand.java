@@ -19,9 +19,9 @@
 
 package org.apache.poi.sl.draw.geom;
 
-import org.apache.poi.sl.draw.binding.CTAdjPoint2D;
+import java.awt.geom.Path2D;
 
-import java.awt.geom.GeneralPath;
+import org.apache.poi.sl.draw.binding.CTAdjPoint2D;
 
 /**
  * Date: 10/25/11
@@ -38,11 +38,11 @@ public class QuadToCommand implements PathCommand {
         arg4 = pt2.getY().toString();
     }
 
-    public void execute(GeneralPath path, Context ctx){
+    public void execute(Path2D.Double path, Context ctx){
         double x1 = ctx.getValue(arg1);
         double y1 = ctx.getValue(arg2);
         double x2 = ctx.getValue(arg3);
         double y2 = ctx.getValue(arg4);
-        path.quadTo((float)x1, (float)y1, (float)x2, (float)y2);
+        path.quadTo(x1, y1, x2, y2);
     }
 }

@@ -18,13 +18,11 @@
 package org.apache.poi.hwmf.record;
 
 import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.imageio.ImageIO;
 
@@ -32,6 +30,8 @@ import org.apache.poi.hssf.record.RecordFormatException;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * The DeviceIndependentBitmap Object defines an image in device-independent bitmap (DIB) format.
@@ -188,6 +188,7 @@ public class HwmfBitmapDib {
         }
     }
 
+    private static POILogger logger = POILogFactory.getLogger(HwmfBitmapDib.class);
     private static final int BMP_HEADER_SIZE = 14;
     
     private int headerSize;
@@ -204,8 +205,6 @@ public class HwmfBitmapDib {
     private long headerColorUsed = -1;
     @SuppressWarnings("unused")
     private long headerColorImportant = -1;
-
-    @SuppressWarnings("unused")
     private Color colorTable[];
     @SuppressWarnings("unused")
     private int colorMaskR=0,colorMaskG=0,colorMaskB=0;
@@ -360,22 +359,24 @@ public class HwmfBitmapDib {
 
     protected int readRGBQuad(LittleEndianInputStream leis, int count) throws IOException {
         int size = 0;
-        List<Color> colorList = new ArrayList<Color>();
+        colorTable = new Color[count];
         for (int i=0; i<count; i++) {
             int blue = leis.readUByte();
             int green = leis.readUByte();
             int red = leis.readUByte();
             @SuppressWarnings("unused")
             int reserved = leis.readUByte();
-            Color c = new Color(red, green, blue);
-            colorList.add(c);
+            colorTable[i] = new Color(red, green, blue);
             size += 4 * LittleEndianConsts.BYTE_SIZE;
         }
-        colorTable = colorList.toArray(new Color[colorList.size()]);
         return size;
     }
 
     public InputStream getBMPStream() {
+        return new ByteArrayInputStream(getBMPData());
+    }
+
+    private byte[] getBMPData() {
         if (imageData == null) {
             throw new RecordFormatException("bitmap not initialized ... need to call init() before");
         }
@@ -398,14 +399,20 @@ public class HwmfBitmapDib {
         // fill the "known" image data
         System.arraycopy(imageData, 0, buf, BMP_HEADER_SIZE, imageData.length);
         
-        return new ByteArrayInputStream(buf);
+        return buf;
     }
     
     public BufferedImage getImage() {
         try {
             return ImageIO.read(getBMPStream());
         } catch (IOException e) {
-            throw new RecordFormatException("invalid bitmap data", e);
+            logger.log(POILogger.ERROR, "invalid bitmap data - returning black opaque image");
+            BufferedImage bi = new BufferedImage(headerWidth, headerHeight, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g = bi.createGraphics();
+            g.setPaint(Color.black);
+            g.fillRect(0, 0, headerWidth, headerHeight);
+            g.dispose();
+            return bi;
         }
     }
 }

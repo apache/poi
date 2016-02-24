@@ -19,10 +19,8 @@ package org.apache.poi.hwmf.usermodel;
 
 import java.awt.Dimension;
 import java.awt.Graphics2D;
-import java.awt.GraphicsConfiguration;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
-import java.awt.geom.Rectangle2D.Double;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,9 +36,13 @@ import org.apache.poi.hwmf.record.HwmfRecordType;
 import org.apache.poi.hwmf.record.HwmfWindowing.WmfSetWindowExt;
 import org.apache.poi.hwmf.record.HwmfWindowing.WmfSetWindowOrg;
 import org.apache.poi.util.LittleEndianInputStream;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 import org.apache.poi.util.Units;
 
 public class HwmfPicture {
+    private static final POILogger logger = POILogFactory.getLogger(HwmfPicture.class);
+    
     final List<HwmfRecord> records = new ArrayList<HwmfRecord>();
     final HwmfPlaceableHeader placeableHeader;
     final HwmfHeader header;
@@ -52,6 +54,10 @@ public class HwmfPicture {
         header = new HwmfHeader(leis);
         
         for (;;) {
+            if (leis.available() < 6) {
+                logger.log(POILogger.ERROR, "unexpected eof - wmf file was truncated");
+                break;
+            }
             // recordSize in DWORDs
             long recordSize = leis.readUInt()*2;
             int recordFunction = leis.readShort();

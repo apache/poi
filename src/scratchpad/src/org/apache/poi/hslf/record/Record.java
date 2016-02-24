@@ -168,7 +168,7 @@ public abstract class Record
 		try {
 			c = RecordTypes.forTypeID((short)type).handlingClass;
 			if(c == null) {
-				// How odd. RecordTypes normally subsitutes in
+				// How odd. RecordTypes normally substitutes in
 				//  a default handler class if it has heard of the record
 				//  type but there's no support for it. Explicitly request
 				//  that now

@@ -48,11 +48,11 @@ public class XSLFHyperlink implements Hyperlink<XSLFShape,XSLFTextParagraph> {
 
     @Override
     public String getAddress() {
-        if (!_link.isSetId()) {
+        String id = _link.getId();
+        if (id == null || "".equals(id)) {
             return _link.getAction();
         }
 
-        String id = _link.getId();
         URI targetURI = _sheet.getPackagePart().getRelationship(id).getTargetURI();
         
         return targetURI.toASCIIString();

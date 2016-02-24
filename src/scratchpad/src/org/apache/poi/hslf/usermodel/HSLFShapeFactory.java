@@ -111,8 +111,15 @@ public final class HSLFShapeFactory {
                 shape = createNonPrimitive(spContainer, parent);
                 break;
             default:
-                EscherTextboxRecord etr = spContainer.getChildById(EscherTextboxRecord.RECORD_ID);
-                if (parent instanceof HSLFTable && etr != null) {
+                if (parent instanceof HSLFTable) {
+                    EscherTextboxRecord etr = spContainer.getChildById(EscherTextboxRecord.RECORD_ID);
+                    if (etr == null) {
+                        logger.log(POILogger.WARN, "invalid ppt - add EscherTextboxRecord to cell");
+                        etr = new EscherTextboxRecord();
+                        etr.setRecordId(EscherTextboxRecord.RECORD_ID);
+                        etr.setOptions((short)15);
+                        spContainer.addChildRecord(etr);
+                    }
                     shape = new HSLFTableCell(spContainer, (HSLFTable)parent);
                 } else {
                     shape = new HSLFAutoShape(spContainer, parent);

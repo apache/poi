@@ -25,8 +25,7 @@ public interface Shape<
 > {
 	ShapeContainer<S,P> getParent();
 	
-    /**
-    *
+   /**
     * @return the sheet this shape belongs to
     */
    Sheet<S,P> getSheet();

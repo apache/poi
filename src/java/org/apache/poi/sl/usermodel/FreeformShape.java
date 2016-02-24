@@ -17,7 +17,7 @@
 
 package org.apache.poi.sl.usermodel;
 
-import java.awt.geom.GeneralPath;
+import java.awt.geom.Path2D;
 
 public interface FreeformShape<
     S extends Shape<S,P>,
@@ -33,7 +33,7 @@ public interface FreeformShape<
      *
      * @return the path
      */
-    GeneralPath getPath();
+    Path2D.Double getPath();
 
     /**
      * Set the shape path
@@ -41,5 +41,5 @@ public interface FreeformShape<
      * @param path  shape outline
      * @return the number of points written
      */
-    int setPath(GeneralPath path);
+    int setPath(Path2D.Double path);
 }

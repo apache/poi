@@ -90,17 +90,23 @@ public class DrawShape implements Drawable {
 
                 Rectangle2D anchor2 = txs.createTransformedShape(ps.getAnchor()).getBounds2D();
 
-                scaleX = anchor.getWidth() == 0. ? 1.0 : anchor.getWidth() / anchor2.getWidth();
-                scaleY = anchor.getHeight() == 0. ? 1.0 : anchor.getHeight() / anchor2.getHeight();
+                scaleX = safeScale(anchor.getWidth(), anchor2.getWidth());
+                scaleY = safeScale(anchor.getHeight(), anchor2.getHeight());
             } else {
                 quadrant = 0;
             }
 
             // transformation is applied reversed ...
             graphics.translate(centerX, centerY);
-            graphics.rotate(Math.toRadians(rotation-quadrant*90.));
+            double rot = Math.toRadians(rotation-quadrant*90.);
+            if (rot != 0) {
+                graphics.rotate(rot);
+            }
             graphics.scale(scaleX, scaleY);
-            graphics.rotate(Math.toRadians(quadrant*90));
+            rot = Math.toRadians(quadrant*90);
+            if (rot != 0) {
+                graphics.rotate(rot);
+            }
             graphics.translate(-centerX, -centerY);
         }
 
@@ -119,6 +125,12 @@ public class DrawShape implements Drawable {
         }
     }
 
+    private static double safeScale(double dim1, double dim2) {
+        if (dim1 == 0.) {
+            return 1;
+        }
+        return (dim2 == 0.) ? 1 : dim1/dim2;
+    }
 
     public void draw(Graphics2D graphics) {
     }

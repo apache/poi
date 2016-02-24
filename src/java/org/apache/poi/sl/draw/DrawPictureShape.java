@@ -52,8 +52,7 @@ public class DrawPictureShape extends DrawSimpleShape {
             renderer.loadImage(data.getData(), data.getContentType());
             renderer.drawImage(graphics, anchor, insets);
         } catch (IOException e) {
-            // TODO: draw specific runtime exception?
-            throw new RuntimeException(e);
+            LOG.log(POILogger.ERROR, "image can't be loaded/rendered.", e);
         }
     }    
 

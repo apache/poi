@@ -30,23 +30,22 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.BitSet;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.imageio.ImageIO;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.hssf.usermodel.DummyGraphics2d;
-import org.apache.poi.sl.draw.Drawable;
+import org.apache.poi.sl.draw.DrawFactory;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.apache.poi.sl.usermodel.Slide;
 import org.apache.poi.sl.usermodel.SlideShow;
-import org.apache.poi.util.JvmBugs;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -64,7 +63,7 @@ public final class TestPicture {
      *
      */
     @Test
-    public void multiplePictures() throws Exception {
+    public void multiplePictures() throws IOException {
         HSLFSlideShow ppt = new HSLFSlideShow();
 
         HSLFSlide s = ppt.createSlide();
@@ -92,6 +91,8 @@ public final class TestPicture {
         EscherBSERecord bse3 = pict.getEscherBSERecord();
         assertSame(bse2, bse3);
         assertEquals(3, bse1.getRef());
+        
+        ppt.close();
     }
 
     /**
@@ -99,7 +100,7 @@ public final class TestPicture {
      * was not found. The correct behaviour is to return null.
      */
     @Test
-    public void bug46122() {
+    public void bug46122() throws IOException {
         HSLFSlideShow ppt = new HSLFSlideShow();
         HSLFSlide slide = ppt.createSlide();
         HSLFPictureData pd = HSLFPictureData.create(PictureType.PNG);
@@ -112,10 +113,12 @@ public final class TestPicture {
         BufferedImage img = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
         Graphics2D graphics = img.createGraphics();
         pict.draw(graphics);
+        
+        ppt.close();
     }
 
     @Test
-    public void macImages() throws Exception {
+    public void macImages() throws IOException {
         HSLFSlideShowImpl hss = new HSLFSlideShowImpl(_slTests.openResourceAsStream("53446.ppt"));
 
         List<HSLFPictureData> pictures = hss.getPictureData();
@@ -154,11 +157,14 @@ public final class TestPicture {
                     break;
             }
         }
+        
+        hss.close();
     }
 
     @Test
     @Ignore("Just for visual validation - antialiasing is different on various systems")
-    public void bug54541() throws Exception {
+    public void bug54541()
+    throws IOException, ClassNotFoundException, SecurityException, NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
         String files[] = {
 //            "sample_pptx_grouping_issues.pptx",
 //            "54542_cropped_bitmap.pptx",
@@ -196,7 +202,7 @@ public final class TestPicture {
                 } else {
                     BufferedImage img = new BufferedImage(pg.width, pg.height, BufferedImage.TYPE_INT_ARGB);
                     Graphics2D graphics = img.createGraphics();
-                    fixFonts(graphics);
+                    DrawFactory.getInstance(graphics).fixFonts(graphics);
                     slide.draw(graphics);
                     graphics.setColor(Color.BLACK);
                     graphics.setStroke(new BasicStroke(1));
@@ -204,16 +210,8 @@ public final class TestPicture {
                     ImageIO.write(img, "PNG", new File(file.replaceFirst(".pptx?", "-")+slideNo+".png"));
                 }
             }
+            
+            ss.close();
         }
-    }
-    
-    @SuppressWarnings("unchecked")
-    private void fixFonts(Graphics2D graphics) {
-        if (!JvmBugs.hasLineBreakMeasurerBug()) return;
-        Map<String,String> fontMap = (Map<String,String>)graphics.getRenderingHint(Drawable.FONT_MAP);
-        if (fontMap == null) fontMap = new HashMap<String,String>();
-        fontMap.put("Calibri", "Lucida Sans");
-        fontMap.put("Cambria", "Lucida Bright");
-        graphics.setRenderingHint(Drawable.FONT_MAP, fontMap);        
     }
 }

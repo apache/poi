@@ -22,7 +22,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.awt.geom.GeneralPath;
+import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
 import java.net.URL;
 import java.util.Enumeration;
@@ -44,7 +44,7 @@ public class TestPresetGeometries {
                 }
             });
             for(Path p : geom){
-                GeneralPath path = p.getPath(ctx);
+                Path2D path = p.getPath(ctx);
                 assertNotNull(path);
             }
         }

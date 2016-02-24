@@ -134,8 +134,11 @@ public class DrawPaint {
         ImageRenderer renderer = DrawPictureShape.getImageRenderer(graphics, fill.getContentType());
 
         try {
-            renderer.loadImage(is, fill.getContentType());
-            is.close();
+            try {
+                renderer.loadImage(is, fill.getContentType());
+            } finally {
+                is.close();
+            }
         } catch (IOException e) {
             LOG.log(POILogger.ERROR, "Can't load image data - using transparent color", e);
             return null;
@@ -274,15 +277,35 @@ public class DrawPaint {
 
         Point2D p2 = new Point2D.Double(anchor.getX() + anchor.getWidth(), anchor.getY() + anchor.getHeight() / 2);
         p2 = at.transform(p2, null);
-
+        
         snapToAnchor(p1, anchor);
         snapToAnchor(p2, anchor);
+
+        if (p1.equals(p2)) {
+            // gradient paint on the same point throws an exception ... and doesn't make sense
+            return null;
+        }
 
         float[] fractions = fill.getGradientFractions();
         Color[] colors = new Color[fractions.length];
         
         int i = 0;
         for (ColorStyle fc : fill.getGradientColors()) {
+            if (fc == null) {
+                // get color of background
+                fc = new ColorStyle() {
+                    public int getTint() { return -1; }
+                    public int getShade() { return -1; }
+                    public int getSatOff() { return -1; }
+                    public int getSatMod() { return -1; }
+                    public int getLumOff() { return -1; }
+                    public int getLumMod() { return -1; }
+                    public int getHueOff() { return -1; }
+                    public int getHueMod() { return -1; }
+                    public Color getColor() { return Color.white; }
+                    public int getAlpha() { return 0; }
+                };
+            }
             colors[i++] = applyColorTransform(fc);
         }
 

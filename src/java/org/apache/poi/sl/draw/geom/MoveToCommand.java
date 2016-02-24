@@ -19,9 +19,9 @@
 
 package org.apache.poi.sl.draw.geom;
 
-import org.apache.poi.sl.draw.binding.CTAdjPoint2D;
+import java.awt.geom.Path2D;
 
-import java.awt.geom.GeneralPath;
+import org.apache.poi.sl.draw.binding.CTAdjPoint2D;
 
 /**
  * Date: 10/25/11
@@ -41,9 +41,9 @@ public class MoveToCommand implements PathCommand {
         arg2 = s2;
     }
 
-    public void execute(GeneralPath path, Context ctx){
+    public void execute(Path2D.Double path, Context ctx){
         double x = ctx.getValue(arg1);
         double y = ctx.getValue(arg2);
-        path.moveTo((float)x, (float)y);
+        path.moveTo(x, y);
     }
 }

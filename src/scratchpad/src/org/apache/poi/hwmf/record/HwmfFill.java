@@ -20,13 +20,9 @@ package org.apache.poi.hwmf.record;
 import java.awt.Shape;
 import java.awt.geom.Path2D;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 
-import javax.imageio.ImageIO;
-
 import org.apache.poi.hwmf.draw.HwmfGraphics;
-import org.apache.poi.hwmf.record.HwmfWindowing.WmfCreateRegion;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
 
@@ -240,7 +236,7 @@ public class HwmfFill {
         
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
-            polyfillMode = HwmfPolyfillMode.valueOf(leis.readUShort());
+            polyfillMode = HwmfPolyfillMode.valueOf(leis.readUShort() & 3);
             return LittleEndianConsts.SHORT_SIZE;
         }
 
@@ -402,6 +398,15 @@ public class HwmfFill {
     }
 
     /**
+     * The META_STRETCHBLT record specifies the transfer of a block of pixels according to a raster
+     * operation, with possible expansion or contraction.
+     * The destination of the transfer is the current output region in the playback device context.
+     * There are two forms of META_STRETCHBLT, one which specifies a bitmap as the source, and the other
+     * which uses the playback device context as the source. Definitions follow for the fields that are the
+     * same in the two forms of META_STRETCHBLT are defined below. The subsections that follow specify
+     * the packet structures of the two forms of META_STRETCHBLT.
+     * The expansion or contraction is performed according to the stretching mode currently set in the
+     * playback device context, which MUST be a value from the StretchMode.
      */
     public static class WmfStretchBlt implements HwmfRecord {
         /**
@@ -502,12 +507,12 @@ public class HwmfFill {
 
     /**
      * The META_STRETCHDIB record specifies the transfer of color data from a
-     * block of pixels in deviceindependent format according to a raster operation,
+     * block of pixels in device independent format according to a raster operation,
      * with possible expansion or contraction.
      * The source of the color data is a DIB, and the destination of the transfer is
      * the current output region in the playback device context.
      */
-    public static class WmfStretchDib implements HwmfRecord, HwmfImageRecord {
+    public static class WmfStretchDib implements HwmfRecord, HwmfImageRecord, HwmfObjectTableEntry {
         /**
          * A 32-bit unsigned integer that defines how the source pixels, the current brush in
          * the playback device context, and the destination pixels are to be combined to
@@ -599,6 +604,11 @@ public class HwmfFill {
 
         @Override
         public void draw(HwmfGraphics ctx) {
+            ctx.addObjectTableEntry(this);
+        }
+        
+        @Override
+        public void applyObject(HwmfGraphics ctx) {
             
         }
 
@@ -706,7 +716,7 @@ public class HwmfFill {
      * using deviceindependent color data.
      * The source of the color data is a DIB
      */
-    public static class WmfSetDibToDev implements HwmfRecord, HwmfImageRecord {
+    public static class WmfSetDibToDev implements HwmfRecord, HwmfImageRecord, HwmfObjectTableEntry {
 
         /**
          * A 16-bit unsigned integer that defines whether the Colors field of the
@@ -783,6 +793,11 @@ public class HwmfFill {
 
         @Override
         public void draw(HwmfGraphics ctx) {
+            ctx.addObjectTableEntry(this);
+        }
+        
+        @Override
+        public void applyObject(HwmfGraphics ctx) {
             
         }
 
@@ -793,7 +808,7 @@ public class HwmfFill {
     }
 
 
-    public static class WmfDibBitBlt implements HwmfRecord, HwmfImageRecord {
+    public static class WmfDibBitBlt implements HwmfRecord, HwmfImageRecord, HwmfObjectTableEntry {
 
         /**
          * A 32-bit unsigned integer that defines how the source pixels, the current brush
@@ -877,6 +892,11 @@ public class HwmfFill {
 
         @Override
         public void draw(HwmfGraphics ctx) {
+            ctx.addObjectTableEntry(this);
+        }
+        
+        @Override
+        public void applyObject(HwmfGraphics ctx) {
             
         }
 
@@ -886,7 +906,7 @@ public class HwmfFill {
         }
     }
 
-    public static class WmfDibStretchBlt implements HwmfRecord, HwmfImageRecord {
+    public static class WmfDibStretchBlt implements HwmfRecord, HwmfImageRecord, HwmfObjectTableEntry {
         /**
          * A 32-bit unsigned integer that defines how the source pixels, the current brush
          * in the playback device context, and the destination pixels are to be combined to form the
@@ -978,6 +998,11 @@ public class HwmfFill {
 
         @Override
         public void draw(HwmfGraphics ctx) {
+            ctx.addObjectTableEntry(this);
+        }
+        
+        @Override
+        public void applyObject(HwmfGraphics ctx) {
             
         }
 

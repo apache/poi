@@ -455,8 +455,15 @@ public class XSLFTextRun implements TextRun {
 
     @Override
     public XSLFHyperlink getHyperlink(){
-        if(!_r.getRPr().isSetHlinkClick()) return null;
-        return new XSLFHyperlink(_r.getRPr().getHlinkClick(), _p.getParentShape().getSheet());
+        CTTextCharacterProperties rPr = _r.getRPr();
+        if (rPr == null) { 
+            return null;
+        }
+        CTHyperlink hl = rPr.getHlinkClick();
+        if (hl == null) {
+            return null;
+        }
+        return new XSLFHyperlink(hl, _p.getParentShape().getSheet());
     }
 
     private boolean fetchCharacterProperty(CharacterPropertyFetcher<?> fetcher){

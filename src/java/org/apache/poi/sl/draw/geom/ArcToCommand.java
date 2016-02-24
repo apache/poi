@@ -19,11 +19,11 @@
 
 package org.apache.poi.sl.draw.geom;
 
-import org.apache.poi.sl.draw.binding.CTPath2DArcTo;
-
 import java.awt.geom.Arc2D;
-import java.awt.geom.GeneralPath;
+import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
+
+import org.apache.poi.sl.draw.binding.CTPath2DArcTo;
 
 /**
  * ArcTo command within a shape path in DrawingML:
@@ -48,7 +48,7 @@ public class ArcToCommand implements PathCommand {
         swAng = arc.getSwAng().toString();
     }
 
-    public void execute(GeneralPath path, Context ctx){
+    public void execute(Path2D.Double path, Context ctx){
         double rx = ctx.getValue(wr);
         double ry = ctx.getValue(hr);
         double start = ctx.getValue(stAng) / 60000;

@@ -17,11 +17,11 @@
 
 package org.apache.poi.sl.draw;
 
-import static org.apache.poi.sl.draw.Drawable.DRAW_FACTORY;
-
 import java.awt.Graphics2D;
 import java.awt.font.TextLayout;
 import java.text.AttributedString;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.poi.sl.usermodel.Background;
 import org.apache.poi.sl.usermodel.ConnectorShape;
@@ -38,6 +38,7 @@ import org.apache.poi.sl.usermodel.TableShape;
 import org.apache.poi.sl.usermodel.TextBox;
 import org.apache.poi.sl.usermodel.TextParagraph;
 import org.apache.poi.sl.usermodel.TextShape;
+import org.apache.poi.util.JvmBugs;
 
 public class DrawFactory {
     protected static final ThreadLocal<DrawFactory> defaultFactory = new ThreadLocal<DrawFactory>();
@@ -58,7 +59,7 @@ public class DrawFactory {
         DrawFactory factory = null;
         boolean isHint = false;
         if (graphics != null) {
-            factory = (DrawFactory)graphics.getRenderingHint(DRAW_FACTORY);
+            factory = (DrawFactory)graphics.getRenderingHint(Drawable.DRAW_FACTORY);
             isHint = (factory != null);
         }
         // secondly try the thread local default
@@ -70,7 +71,7 @@ public class DrawFactory {
             factory = new DrawFactory();
         }
         if (graphics != null && !isHint) {
-            graphics.setRenderingHint(DRAW_FACTORY, factory);
+            graphics.setRenderingHint(Drawable.DRAW_FACTORY, factory);
         }
         return factory;
     }
@@ -165,5 +166,30 @@ public class DrawFactory {
     
     public DrawPaint getPaint(PlaceableShape<?,?> shape) {
         return new DrawPaint(shape);
+    }
+
+
+    /**
+     * Replace font families for Windows JVM 6, which contains a font rendering error.
+     * This is likely to be removed, when POI upgrades to JDK 7
+     *
+     * @param graphics the graphics context which will contain the font mapping
+     */
+    public void fixFonts(Graphics2D graphics) {
+        if (!JvmBugs.hasLineBreakMeasurerBug()) return;
+        @SuppressWarnings("unchecked")
+        Map<String,String> fontMap = (Map<String,String>)graphics.getRenderingHint(Drawable.FONT_MAP);
+        if (fontMap == null) {
+            fontMap = new HashMap<String,String>();
+            graphics.setRenderingHint(Drawable.FONT_MAP, fontMap);
+        }
+        
+        String fonts[][] = { { "Calibri", "Lucida Sans" }, { "Cambria", "Lucida Bright" } };
+
+        for (String f[] : fonts) {
+            if (!fontMap.containsKey(f[0])) {
+                fontMap.put(f[0], f[1]);
+            }
+        }
     }
 }

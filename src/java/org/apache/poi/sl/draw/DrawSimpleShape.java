@@ -23,7 +23,7 @@ import java.awt.Graphics2D;
 import java.awt.Paint;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
-import java.awt.geom.GeneralPath;
+import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.io.InputStream;
@@ -179,20 +179,20 @@ public class DrawSimpleShape extends DrawShape {
             case STEALTH:
             case ARROW:
                 p = new Path(false, true);
-                GeneralPath arrow = new GeneralPath();
-                arrow.moveTo((float) (-lineWidth * scaleX), (float) (-lineWidth * scaleY / 2));
+                Path2D.Double arrow = new Path2D.Double();
+                arrow.moveTo((-lineWidth * scaleX), (-lineWidth * scaleY / 2));
                 arrow.lineTo(0, 0);
-                arrow.lineTo((float) (-lineWidth * scaleX), (float) (lineWidth * scaleY / 2));
+                arrow.lineTo((-lineWidth * scaleX), (lineWidth * scaleY / 2));
                 tailShape = arrow;
                 at.translate(x2, y2);
                 at.rotate(alpha);
                 break;
             case TRIANGLE:
                 p = new Path();
-                GeneralPath triangle = new GeneralPath();
-                triangle.moveTo((float) (-lineWidth * scaleX), (float) (-lineWidth * scaleY / 2));
+                Path2D.Double triangle = new Path2D.Double();
+                triangle.moveTo((-lineWidth * scaleX), (-lineWidth * scaleY / 2));
                 triangle.lineTo(0, 0);
-                triangle.lineTo((float) (-lineWidth * scaleX), (float) (lineWidth * scaleY / 2));
+                triangle.lineTo((-lineWidth * scaleX), (lineWidth * scaleY / 2));
                 triangle.closePath();
                 tailShape = triangle;
                 at.translate(x2, y2);
@@ -252,20 +252,20 @@ public class DrawSimpleShape extends DrawShape {
             case STEALTH:
             case ARROW:
                 p = new Path(false, true);
-                GeneralPath arrow = new GeneralPath();
-                arrow.moveTo((float) (lineWidth * scaleX), (float) (-lineWidth * scaleY / 2));
+                Path2D.Double arrow = new Path2D.Double();
+                arrow.moveTo((lineWidth * scaleX), (-lineWidth * scaleY / 2));
                 arrow.lineTo(0, 0);
-                arrow.lineTo((float) (lineWidth * scaleX), (float) (lineWidth * scaleY / 2));
+                arrow.lineTo((lineWidth * scaleX), (lineWidth * scaleY / 2));
                 headShape = arrow;
                 at.translate(x1, y1);
                 at.rotate(alpha);
                 break;
             case TRIANGLE:
                 p = new Path();
-                GeneralPath triangle = new GeneralPath();
-                triangle.moveTo((float) (lineWidth * scaleX), (float) (-lineWidth * scaleY / 2));
+                Path2D.Double triangle = new Path2D.Double();
+                triangle.moveTo((lineWidth * scaleX), (-lineWidth * scaleY / 2));
                 triangle.lineTo(0, 0);
-                triangle.lineTo((float) (lineWidth * scaleX), (float) (lineWidth * scaleY / 2));
+                triangle.lineTo((lineWidth * scaleX), (lineWidth * scaleY / 2));
                 triangle.closePath();
                 headShape = triangle;
                 at.translate(x1, y1);

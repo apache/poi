@@ -26,10 +26,8 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
-import org.apache.poi.sl.draw.Drawable;
+import org.apache.poi.sl.draw.DrawFactory;
 import org.apache.poi.sl.usermodel.PictureData;
 import org.apache.poi.sl.usermodel.Shape;
 import org.apache.poi.sl.usermodel.ShapeContainer;
@@ -39,7 +37,6 @@ import org.apache.poi.sl.usermodel.SlideShowFactory;
 import org.apache.poi.sl.usermodel.TextParagraph;
 import org.apache.poi.sl.usermodel.TextRun;
 import org.apache.poi.sl.usermodel.TextShape;
-import org.apache.poi.util.JvmBugs;
 
 public abstract class SlideShowHandler extends POIFSFileHandler {
     public void handleSlideShow(SlideShow<?,?> ss) throws IOException {
@@ -55,10 +52,12 @@ public abstract class SlideShowHandler extends POIFSFileHandler {
 
         // read in the writen file
         SlideShow<?,?> read = SlideShowFactory.create(new ByteArrayInputStream(out.toByteArray()));
-        assertNotNull(read);
-        
-        readContent(read);
-        
+        try {
+            assertNotNull(read);
+            readContent(read);
+        } finally {
+            read.close();
+        }
     }
 
     private ByteArrayOutputStream writeToArray(SlideShow<?,?> ss) throws IOException {
@@ -109,7 +108,7 @@ public abstract class SlideShowHandler extends POIFSFileHandler {
         for (Slide<?,?> s : ss.getSlides()) {
             BufferedImage img = new BufferedImage(pgsize.width, pgsize.height, BufferedImage.TYPE_INT_ARGB);
             Graphics2D graphics = img.createGraphics();
-            fixFonts(graphics);
+            DrawFactory.getInstance(graphics).fixFonts(graphics);
 
             // default rendering options
             graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -124,15 +123,4 @@ public abstract class SlideShowHandler extends POIFSFileHandler {
             img.flush();
         }
     }
-
-    @SuppressWarnings("unchecked")
-    private static void fixFonts(Graphics2D graphics) {
-        if (!JvmBugs.hasLineBreakMeasurerBug()) return;
-        Map<String,String> fontMap = (Map<String,String>)graphics.getRenderingHint(Drawable.FONT_MAP);
-        if (fontMap == null) fontMap = new HashMap<String,String>();
-        fontMap.put("Calibri", "Lucida Sans");
-        fontMap.put("Cambria", "Lucida Bright");
-        graphics.setRenderingHint(Drawable.FONT_MAP, fontMap);        
-    }
-
 }
