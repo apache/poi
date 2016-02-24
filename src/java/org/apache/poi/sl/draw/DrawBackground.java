@@ -25,6 +25,7 @@ import java.awt.geom.Rectangle2D;
 import org.apache.poi.sl.usermodel.Background;
 import org.apache.poi.sl.usermodel.PlaceableShape;
 import org.apache.poi.sl.usermodel.ShapeContainer;
+import org.apache.poi.sl.usermodel.Sheet;
 
 
 public class DrawBackground extends DrawShape {
@@ -47,6 +48,7 @@ public class DrawBackground extends DrawShape {
             public void setFlipVertical(boolean flip) {}
             public boolean getFlipHorizontal() { return false; }
             public boolean getFlipVertical() { return false; }
+            public Sheet<?,?> getSheet() { return shape.getSheet(); }
         };
         
         DrawFactory drawFact = DrawFactory.getInstance(graphics);
@@ -55,6 +57,7 @@ public class DrawBackground extends DrawShape {
         Rectangle2D anchor2 = getAnchor(graphics, anchor);
         
         if(fill != null) {
+            graphics.setRenderingHint(Drawable.GRADIENT_SHAPE, anchor);
             graphics.setPaint(fill);
             graphics.fill(anchor2);
         }

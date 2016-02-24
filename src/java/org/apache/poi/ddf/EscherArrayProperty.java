@@ -43,7 +43,7 @@ public final class EscherArrayProperty extends EscherComplexProperty implements 
     private boolean sizeIncludesHeaderSize = true;
 
     /**
-     * When reading a property from data stream remeber if the complex part is empty and set this flag.
+     * When reading a property from data stream remember if the complex part is empty and set this flag.
      */
     private boolean emptyComplexPart = false;
 
@@ -65,10 +65,7 @@ public final class EscherArrayProperty extends EscherComplexProperty implements 
     }
 
     public int getNumberOfElementsInArray() {
-        if (emptyComplexPart){
-            return 0;
-        }
-        return LittleEndian.getUShort(_complexData, 0);
+        return (emptyComplexPart) ? 0 : LittleEndian.getUShort(_complexData, 0);
     }
 
     public void setNumberOfElementsInArray(int numberOfElements) {
@@ -82,7 +79,7 @@ public final class EscherArrayProperty extends EscherComplexProperty implements 
     }
 
     public int getNumberOfElementsInMemory() {
-        return LittleEndian.getUShort(_complexData, 2);
+        return (emptyComplexPart) ? 0 : LittleEndian.getUShort(_complexData, 2);
     }
 
     public void setNumberOfElementsInMemory(int numberOfElements) {
@@ -96,7 +93,7 @@ public final class EscherArrayProperty extends EscherComplexProperty implements 
     }
 
     public short getSizeOfElements() {
-        return LittleEndian.getShort( _complexData, 4 );
+        return (emptyComplexPart) ? 0 : LittleEndian.getShort( _complexData, 4 );
     }
 
     public void setSizeOfElements(int sizeOfElements) {

@@ -717,9 +717,25 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
         String propNames[] = propName.split(",");
         for (String pn : propNames) {
             TextProp prop = props.findByName(pn);
-            if (prop != null) return prop;
-        }
+            if (prop == null) {
+                continue;
+            }
 
+            // Font properties (maybe other too???) can have an index of -1
+            // so we check the master for this font index then
+            if (pn.contains("font") && prop.getValue() == -1) {
+                return getMasterPropVal(props, pn, paragraph);
+            }
+            
+            return prop;
+        }
+        
+        return getMasterPropVal(props, propName, paragraph);
+    }
+    
+    private static TextProp getMasterPropVal(TextPropCollection props, String propName, HSLFTextParagraph paragraph) {
+        String propNames[] = propName.split(",");
+        
         BitMaskTextProp maskProp = (BitMaskTextProp) props.findByName(ParagraphFlagsTextProp.NAME);
         boolean hardAttribute = (maskProp != null && maskProp.getValue() == 0);
         if (hardAttribute) return null;

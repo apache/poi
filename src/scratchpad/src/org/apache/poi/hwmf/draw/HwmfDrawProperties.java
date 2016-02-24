@@ -115,6 +115,9 @@ public class HwmfDrawProperties {
     }
 
     public void setViewportOrg(double x, double y) {
+        if (viewport == null) {
+            viewport = (Rectangle2D)window.clone();
+        }
         double w = viewport.getWidth();
         double h = viewport.getHeight();
         viewport.setRect(x, y, w, h);

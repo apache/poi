@@ -17,6 +17,7 @@
 
 package org.apache.poi.hwmf.record;
 
+import java.awt.Color;
 import java.awt.Shape;
 import java.awt.geom.Arc2D;
 import java.awt.geom.Area;
@@ -146,9 +147,10 @@ public class HwmfDraw {
 
         @Override
         public void draw(HwmfGraphics ctx) {
-            Path2D p = getShape();
-            p.closePath();
-            p.setWindingRule(ctx.getProperties().getPolyfillMode().awtFlag);
+            Path2D shape = getShape();
+//            shape.closePath();
+            Path2D p = (Path2D)shape.clone();
+            p.setWindingRule(getWindingRule(ctx));
             ctx.fill(p);
         }
 
@@ -170,8 +172,9 @@ public class HwmfDraw {
 
         @Override
         public void draw(HwmfGraphics ctx) {
-            Path2D p = getShape();
-            p.setWindingRule(ctx.getProperties().getPolyfillMode().awtFlag);
+            Path2D shape = getShape();
+            Path2D p = (Path2D)shape.clone();
+            p.setWindingRule(getWindingRule(ctx));
             ctx.draw(p);
         }
     }
@@ -320,12 +323,13 @@ public class HwmfDraw {
 
             for (int nPoints : pointsPerPolygon) {
                 /**
-                 * An array of 16-bit unsigned integers that define the coordinates of the polygons.
+                 * An array of 16-bit signed integers that define the coordinates of the polygons.
+                 * (Note: MS-WMF wrongly says unsigned integers ...)
                  */
                 Path2D poly = new Path2D.Double();
                 for (int i=0; i<nPoints; i++) {
-                    int x = leis.readUShort();
-                    int y = leis.readUShort();
+                    int x = leis.readShort();
+                    int y = leis.readShort();
                     size += 2*LittleEndianConsts.SHORT_SIZE;
                     if (i == 0) {
                         poly.moveTo(x, y);
@@ -342,14 +346,23 @@ public class HwmfDraw {
 
         @Override
         public void draw(HwmfGraphics ctx) {
-            int windingRule = ctx.getProperties().getPolyfillMode().awtFlag;
-            Area area = new Area();
+            if (polyList.isEmpty()) {
+                return;
+            }
+            
+            int windingRule = getWindingRule(ctx);
+            Area area = null;
             for (Path2D poly : polyList) {
                 Path2D p = (Path2D)poly.clone();
                 p.setWindingRule(windingRule);
-                area.add(new Area(p));
+                Area newArea = new Area(p);
+                if (area == null) {
+                    area = newArea;
+                } else {
+                    area.exclusiveOr(newArea);
+                }
             }
-            ctx.draw(area);
+            ctx.fill(area);
         }
     }
 
@@ -678,5 +691,9 @@ public class HwmfDraw {
         public void draw(HwmfGraphics ctx) {
             ctx.applyObjectTableEntry(objectIndex);
         }
+    }
+    
+    private static int getWindingRule(HwmfGraphics ctx) {
+        return ctx.getProperties().getPolyfillMode().awtFlag;
     }
  }

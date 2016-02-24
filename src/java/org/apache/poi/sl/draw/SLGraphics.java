@@ -42,6 +42,7 @@ import java.awt.geom.Arc2D;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
+import java.awt.geom.Path2D;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
@@ -243,7 +244,7 @@ public final class SLGraphics extends Graphics2D implements Cloneable {
      * @see #setComposite
      */
     public void draw(Shape shape){
-        GeneralPath path = new GeneralPath(_transform.createTransformedShape(shape));
+        Path2D.Double path = new Path2D.Double(_transform.createTransformedShape(shape));
         FreeformShape<?,?> p = _group.createFreeform();
         p.setPath(path);
         p.setFillColor(null);
@@ -339,7 +340,7 @@ public final class SLGraphics extends Graphics2D implements Cloneable {
      * @see #setClip
      */
     public void fill(Shape shape){
-        GeneralPath path = new GeneralPath(_transform.createTransformedShape(shape));
+        Path2D.Double path = new Path2D.Double(_transform.createTransformedShape(shape));
         FreeformShape<?,?> p = _group.createFreeform();
         p.setPath(path);
         applyPaint(p);
@@ -450,7 +451,7 @@ public final class SLGraphics extends Graphics2D implements Cloneable {
      */
     public void drawRoundRect(int x, int y, int width, int height,
                               int arcWidth, int arcHeight){
-        RoundRectangle2D rect = new RoundRectangle2D.Float(x, y, width, height, arcWidth, arcHeight);
+        RoundRectangle2D rect = new RoundRectangle2D.Double(x, y, width, height, arcWidth, arcHeight);
         draw(rect);
      }
 
@@ -481,7 +482,7 @@ public final class SLGraphics extends Graphics2D implements Cloneable {
      * @see         java.awt.Graphics#drawOval
      */
     public void fillOval(int x, int y, int width, int height){
-        Ellipse2D oval = new Ellipse2D.Float(x, y, width, height);
+        Ellipse2D oval = new Ellipse2D.Double(x, y, width, height);
         fill(oval);
     }
 
@@ -504,7 +505,7 @@ public final class SLGraphics extends Graphics2D implements Cloneable {
     public void fillRoundRect(int x, int y, int width, int height,
                               int arcWidth, int arcHeight){
 
-        RoundRectangle2D rect = new RoundRectangle2D.Float(x, y, width, height, arcWidth, arcHeight);
+        RoundRectangle2D rect = new RoundRectangle2D.Double(x, y, width, height, arcWidth, arcHeight);
         fill(rect);
     }
 
@@ -544,9 +545,8 @@ public final class SLGraphics extends Graphics2D implements Cloneable {
      *                    relative to the start angle.
      * @see         java.awt.Graphics#drawArc
      */
-    public void fillArc(int x, int y, int width, int height,
-                        int startAngle, int arcAngle){
-        Arc2D arc = new Arc2D.Float(x, y, width, height, startAngle, arcAngle, Arc2D.PIE);
+    public void fillArc(int x, int y, int width, int height, int startAngle, int arcAngle){
+        Arc2D arc = new Arc2D.Double(x, y, width, height, startAngle, arcAngle, Arc2D.PIE);
         fill(arc);
     }
 
@@ -587,9 +587,8 @@ public final class SLGraphics extends Graphics2D implements Cloneable {
      *                    relative to the start angle.
      * @see         java.awt.Graphics#fillArc
      */
-    public void drawArc(int x, int y, int width, int height,
-                        int startAngle, int arcAngle) {
-        Arc2D arc = new Arc2D.Float(x, y, width, height, startAngle, arcAngle, Arc2D.OPEN);
+    public void drawArc(int x, int y, int width, int height, int startAngle, int arcAngle) {
+        Arc2D arc = new Arc2D.Double(x, y, width, height, startAngle, arcAngle, Arc2D.OPEN);
         draw(arc);
     }
 
@@ -636,7 +635,7 @@ public final class SLGraphics extends Graphics2D implements Cloneable {
      * @see         java.awt.Graphics#fillOval
      */
     public void drawOval(int x, int y, int width, int height){
-        Ellipse2D oval = new Ellipse2D.Float(x, y, width, height);
+        Ellipse2D oval = new Ellipse2D.Double(x, y, width, height);
         draw(oval);
     }
 
@@ -932,7 +931,7 @@ public final class SLGraphics extends Graphics2D implements Cloneable {
      * @param   y2  the second point's <i>y</i> coordinate.
      */
     public void drawLine(int x1, int y1, int x2, int y2){
-        Line2D line = new Line2D.Float(x1, y1, x2, y2);
+        Line2D line = new Line2D.Double(x1, y1, x2, y2);
         draw(line);
     }
 

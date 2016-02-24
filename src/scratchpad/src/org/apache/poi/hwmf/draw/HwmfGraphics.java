@@ -27,7 +27,6 @@ import java.awt.Shape;
 import java.awt.TexturePaint;
 import java.awt.font.TextAttribute;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.GeneralPath;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.text.AttributedString;
@@ -35,6 +34,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 import org.apache.poi.hwmf.record.HwmfBrushStyle;
@@ -45,6 +45,9 @@ import org.apache.poi.hwmf.record.HwmfMisc.WmfSetBkMode.HwmfBkMode;
 import org.apache.poi.hwmf.record.HwmfObjectTableEntry;
 import org.apache.poi.hwmf.record.HwmfPenStyle;
 import org.apache.poi.hwmf.record.HwmfPenStyle.HwmfLineDash;
+import org.apache.poi.sl.draw.DrawFactory;
+import org.apache.poi.sl.draw.DrawFontManager;
+import org.apache.poi.sl.draw.Drawable;
 
 public class HwmfGraphics {
     private final Graphics2D graphicsCtx;
@@ -65,6 +68,7 @@ public class HwmfGraphics {
         this.graphicsCtx = graphicsCtx;
         this.bbox = (Rectangle2D)bbox.clone();
         this.initialAT = graphicsCtx.getTransform();
+        DrawFactory.getInstance(graphicsCtx).fixFonts(graphicsCtx);
     }
 
     public HwmfDrawProperties getProperties() {
@@ -96,8 +100,8 @@ public class HwmfGraphics {
 
     public void fill(Shape shape) {
         if (prop.getBrushStyle() != HwmfBrushStyle.BS_NULL) {
-            GeneralPath gp = new GeneralPath(shape);
-            gp.setWindingRule(prop.getPolyfillMode().awtFlag);
+//            GeneralPath gp = new GeneralPath(shape);
+//            gp.setWindingRule(prop.getPolyfillMode().awtFlag);
             graphicsCtx.setPaint(getFill());
             graphicsCtx.fill(shape);
         }
@@ -111,7 +115,12 @@ public class HwmfGraphics {
         if (view == null) {
             view = win;
         }
-        float width = (float)(prop.getPenWidth() * view.getWidth() / win.getWidth());
+        
+        // TODO: fix line width calculation
+        float width = (float)prop.getPenWidth();
+        if (width == 0) {
+            width = 1;
+        }
         HwmfPenStyle ps = prop.getPenStyle();
         int cap = ps.getLineCap().awtFlag;
         int join = ps.getLineJoin().awtFlag;
@@ -261,6 +270,10 @@ public class HwmfGraphics {
             }
             stackIndex = curIdx + index;
         }
+        if (stackIndex == -1) {
+            // roll to last when curIdx == 0
+            stackIndex = propStack.size()-1;
+        }
         prop = propStack.get(stackIndex);
     }
 
@@ -306,14 +319,72 @@ public class HwmfGraphics {
     }
     
     public void drawString(String text, Rectangle2D bounds) {
+        drawString(text, bounds, null);
+    }
+    
+    public void drawString(String text, Rectangle2D bounds, int dx[]) {
         HwmfFont font = prop.getFont();
-        if (font == null) {
+        if (font == null || text == null || text.isEmpty()) {
             return;
         }
+        
+        double fontH = getFontHeight(font);
+        // TODO: another approx. ...
+        double fontW = fontH/1.8;
+        
+        int len = text.length();
         AttributedString as = new AttributedString(text);
-        as.addAttribute(TextAttribute.FAMILY, font.getFacename());
-        // TODO: fix font height calculation
-        as.addAttribute(TextAttribute.SIZE, Math.abs(font.getHeight()));
+        if (dx == null || dx.length == 0) {
+            addAttributes(as, font, 0, len);
+        } else {
+            for (int i=0; i<len; i++) {
+                addAttributes(as, font, i, i+1);
+                // Tracking works as a prefix/advance space on characters whereas
+                // dx[...] is the complete width of the current char
+                // therefore we need to add the additional/suffix width to the next char
+                if (i<len-1) {
+                    as.addAttribute(TextAttribute.TRACKING, (dx[i]-fontW)/fontH, i+1, i+2);
+                }
+            }
+        }
+        
+        
+        double angle = Math.toRadians(-font.getEscapement()/10.);
+        
+        
+        final AffineTransform at = graphicsCtx.getTransform();
+        try {
+            graphicsCtx.translate(bounds.getX(), bounds.getY()+fontH);
+            graphicsCtx.rotate(angle);
+            if (prop.getBkMode() == HwmfBkMode.OPAQUE) {
+                // TODO: validate bounds
+                graphicsCtx.setBackground(prop.getBackgroundColor().getColor());
+                graphicsCtx.fill(new Rectangle2D.Double(0, 0, bounds.getWidth(), bounds.getHeight()));
+            }
+            graphicsCtx.setColor(prop.getTextColor().getColor());
+            graphicsCtx.drawString(as.getIterator(), 0, 0); // (float)bounds.getX(), (float)bounds.getY());
+        } finally {
+            graphicsCtx.setTransform(at);
+        }
+    }
+    
+    private void addAttributes(AttributedString as, HwmfFont font, int start, int end) {
+        DrawFontManager fontHandler = (DrawFontManager)graphicsCtx.getRenderingHint(Drawable.FONT_HANDLER);
+        String fontFamily = null;
+        @SuppressWarnings("unchecked")
+        Map<String,String> fontMap = (Map<String,String>)graphicsCtx.getRenderingHint(Drawable.FONT_MAP);
+        if (fontMap != null && fontMap.containsKey(font.getFacename())) {
+            fontFamily = fontMap.get(font.getFacename());
+        }
+        if (fontHandler != null) {
+            fontFamily = fontHandler.getRendererableFont(font.getFacename(), font.getPitchAndFamily());
+        }
+        if (fontFamily == null) {
+            fontFamily = font.getFacename();
+        }
+        
+        as.addAttribute(TextAttribute.FAMILY, fontFamily);
+        as.addAttribute(TextAttribute.SIZE, getFontHeight(font));
         as.addAttribute(TextAttribute.STRIKETHROUGH, font.isStrikeOut());
         if (font.isUnderline()) {
             as.addAttribute(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
@@ -322,23 +393,20 @@ public class HwmfGraphics {
             as.addAttribute(TextAttribute.POSTURE, TextAttribute.POSTURE_OBLIQUE);
         }
         as.addAttribute(TextAttribute.WEIGHT, font.getWeight());
-        
-        double angle = Math.toRadians(-font.getEscapement()/10.);
-        
-        
-        final AffineTransform at = graphicsCtx.getTransform();
-        try {
-            graphicsCtx.translate(bounds.getX(), bounds.getY());
-            graphicsCtx.rotate(angle);
-            if (prop.getBkMode() == HwmfBkMode.OPAQUE) {
-                // TODO: validate bounds
-                graphicsCtx.setBackground(prop.getBackgroundColor().getColor());
-                graphicsCtx.fill(bounds);
-            }
-            graphicsCtx.setColor(prop.getTextColor().getColor());
-            graphicsCtx.drawString(as.getIterator(), 0, 0); // (float)bounds.getX(), (float)bounds.getY());
-        } finally {
-            graphicsCtx.setTransform(at);
+    }
+    
+    private double getFontHeight(HwmfFont font) {
+        // see HwmfFont#height for details
+        double fontHeight = font.getHeight();
+        if (fontHeight == 0) {
+            return 12;
+        } else if (fontHeight < 0) {
+            return -fontHeight;
+        } else {
+            // TODO: fix font height calculation 
+            // the height is given as font size + ascent + descent
+            // as an approximation we reduce the height by a static factor 
+            return fontHeight*3/4;
         }
     }
 }

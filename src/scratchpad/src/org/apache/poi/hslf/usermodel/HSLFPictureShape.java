@@ -209,6 +209,13 @@ public class HSLFPictureShape extends HSLFSimpleShape implements PictureShape<HS
             ? null
             : new Insets((int)(top*100000), (int)(left*100000), (int)(bottom*100000), (int)(right*100000));
     }
+
+    @Override
+    public ShapeType getShapeType() {
+        // this is kind of a hack, as picture/ole shapes can have a shape type of "frame"
+        // but rendering is handled like a rectangle
+        return ShapeType.RECT;
+    }
     
     /**
      * @return the fractional property or 0 if not defined

@@ -38,6 +38,7 @@ import org.apache.poi.sl.usermodel.Insets2D;
 import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.sl.usermodel.PlaceableShape;
 import org.apache.poi.sl.usermodel.ShapeContainer;
+import org.apache.poi.sl.usermodel.Sheet;
 import org.apache.poi.sl.usermodel.TextParagraph;
 import org.apache.poi.sl.usermodel.TextParagraph.BulletStyle;
 import org.apache.poi.sl.usermodel.TextParagraph.TextAlign;
@@ -465,6 +466,7 @@ public class DrawTextParagraph implements Drawable {
             public void setFlipVertical(boolean flip) {}
             public boolean getFlipHorizontal() { return false; }
             public boolean getFlipVertical() { return false; }
+            public Sheet<?,?> getSheet() { return paragraph.getParentShape().getSheet(); }
         };
         return ps;
     }
@@ -530,7 +532,7 @@ public class DrawTextParagraph implements Drawable {
                 attList.add(new AttributedStringData(TextAttribute.SUPERSCRIPT, TextAttribute.SUPERSCRIPT_SUPER, beginIndex, endIndex));
             }
             
-            Hyperlink hl = run.getHyperlink();
+            Hyperlink<?,?> hl = run.getHyperlink();
             if (hl != null) {
                 attList.add(new AttributedStringData(HYPERLINK_HREF, hl.getAddress(), beginIndex, endIndex));
                 attList.add(new AttributedStringData(HYPERLINK_LABEL, hl.getLabel(), beginIndex, endIndex));

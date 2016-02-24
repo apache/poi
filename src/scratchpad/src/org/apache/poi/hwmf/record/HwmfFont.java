@@ -449,6 +449,13 @@ public class HwmfFont {
     WmfFontQuality quality;
 
     /**
+     * A PitchAndFamily object that defines the pitch and the family of the font.
+     * Font families specify the look of fonts in a general way and are intended for
+     * specifying fonts when the exact typeface wanted is not available.
+     */
+    int pitchAndFamily;
+    
+    /**
      * Font families specify the look of fonts in a general way and are
      * intended for specifying fonts when the exact typeface wanted is not available.
      * (LSB 4 bits)
@@ -480,9 +487,7 @@ public class HwmfFont {
         outPrecision = WmfOutPrecision.valueOf(leis.readUByte());
         clipPrecision = WmfClipPrecision.valueOf(leis.readUByte());
         quality = WmfFontQuality.valueOf(leis.readUByte());
-        int pitchAndFamily = leis.readUByte();
-        family = WmfFontFamilyClass.valueOf(pitchAndFamily & 0xF);
-        pitch = WmfFontPitch.valueOf((pitchAndFamily >>> 6) & 3);
+        pitchAndFamily = leis.readUByte();
         
         byte buf[] = new byte[32], b, readBytes = 0;
         do {
@@ -546,12 +551,16 @@ public class HwmfFont {
         return quality;
     }
 
+    public int getPitchAndFamily() {
+        return pitchAndFamily;
+    }
+
     public WmfFontFamilyClass getFamily() {
-        return family;
+        return WmfFontFamilyClass.valueOf(pitchAndFamily & 0xF);
     }
 
     public WmfFontPitch getPitch() {
-        return pitch;
+        return WmfFontPitch.valueOf((pitchAndFamily >>> 6) & 3);
     }
 
     public String getFacename() {

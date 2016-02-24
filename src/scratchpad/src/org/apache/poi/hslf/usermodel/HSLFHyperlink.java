@@ -363,6 +363,9 @@ public final class HSLFHyperlink implements Hyperlink<HSLFShape,HSLFTextParagrap
 
             InteractiveInfo hldr = (InteractiveInfo)r;
             InteractiveInfoAtom info = hldr.getInteractiveInfoAtom();
+            if (info == null) {
+                continue;
+            }
             int id = info.getHyperlinkID();
             ExHyperlink exHyper = exobj.get(id);
             if (exHyper == null) {

@@ -20,7 +20,10 @@ package org.apache.poi.hslf.model;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.awt.geom.*;
+import java.awt.geom.Area;
+import java.awt.geom.Line2D;
+import java.awt.geom.Path2D;
+import java.awt.geom.Rectangle2D;
 
 import org.apache.poi.hslf.usermodel.HSLFFreeformShape;
 import org.junit.Test;
@@ -38,7 +41,7 @@ public final class TestFreeform {
     @Test
     public void testClosedPath() {
 
-        GeneralPath path1 = new GeneralPath();
+        Path2D.Double path1 = new Path2D.Double();
         path1.moveTo(100, 100);
         path1.lineTo(200, 100);
         path1.lineTo(200, 200);
@@ -55,7 +58,7 @@ public final class TestFreeform {
     @Test
     public void testLine() {
 
-        GeneralPath path1 = new GeneralPath(new Line2D.Double(100, 100, 200, 100));
+        Path2D.Double path1 = new Path2D.Double(new Line2D.Double(100, 100, 200, 100));
 
         HSLFFreeformShape p = new HSLFFreeformShape();
         p.setPath(path1);
@@ -67,7 +70,7 @@ public final class TestFreeform {
     @Test
     public void testRectangle() {
 
-        GeneralPath path1 = new GeneralPath(new Rectangle2D.Double(100, 100, 200, 50));
+        Path2D.Double path1 = new Path2D.Double(new Rectangle2D.Double(100, 100, 200, 50));
 
         HSLFFreeformShape p = new HSLFFreeformShape();
         p.setPath(path1);
@@ -84,8 +87,8 @@ public final class TestFreeform {
     public void test54188() {
 
         HSLFFreeformShape p = new HSLFFreeformShape();
-        GeneralPath path = p.getPath();
-        GeneralPath emptyPath = new GeneralPath();
+        Path2D.Double path = p.getPath();
+        Path2D.Double emptyPath = new Path2D.Double();
         assertEquals(emptyPath.getBounds2D(), path.getBounds2D());
     }
 }

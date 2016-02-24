@@ -36,17 +36,28 @@ public class TestPPTX2PNG {
     public void render() throws Exception {
         POIDataSamples samples = POIDataSamples.getSlideShowInstance();
 
-        String[] testFiles = {"alterman_security.ppt","alterman_security.pptx","KEY02.pptx","themes.pptx","backgrounds.pptx","layouts.pptx", "sample.pptx", "shapes.pptx",};
-//        String[] testFiles = {"41246-2.ppt","45543.ppt","53446.ppt","ParagraphStylesShorterThanCharStyles.ppt"};
+//        File testFilesX[] = new File("tmp_ppt").listFiles(new FileFilter() {
+//            public boolean accept(File pathname) {
+//                return pathname.getName().toLowerCase().contains("ppt");
+//            }
+//        });
+//        String testFiles[] = new String[testFilesX.length];
+//        for (int i=0; i<testFilesX.length; i++) {
+//            testFiles[i] = testFilesX[i].getPath();
+//        }
+        
+
+        String[] testFiles = {"53446.ppt", "alterman_security.ppt","alterman_security.pptx","KEY02.pptx","themes.pptx","backgrounds.pptx","layouts.pptx", "sample.pptx", "shapes.pptx",};
         String[] args = {
             "-format", "null", // png,gif,jpg or null for test
             "-slide", "-1", // -1 for all
             "-outdir", new File("build/tmp/").getCanonicalPath(),
-            "-quite",
+            "-quiet",
             "dummyfile"
         };
         for(String sampleFile : testFiles){
             args[args.length-1] = samples.getFile(sampleFile).getCanonicalPath();
+//            args[args.length-1] = new File(sampleFile).getCanonicalPath();
             try {
                 PPTX2PNG.main(args);
             } catch (IllegalStateException e) {

@@ -275,7 +275,8 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
 
     public Guide getAdjustValue(String name) {
         if (name == null || !name.matches("adj([1-9]|10)?")) {
-            throw new IllegalArgumentException("Adjust value '"+name+"' not supported.");
+            logger.log(POILogger.INFO, "Adjust value '"+name+"' not supported. Using default value.");
+            return null;
         }
 
         name = name.replace("adj", "");
@@ -296,7 +297,13 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
             default: throw new RuntimeException();
         }
 
+        // TODO: the adjust values need to be corrected somehow depending on the shape width/height
+        // see https://social.msdn.microsoft.com/Forums/en-US/3f69ebb3-62a0-4fdd-b367-64790dfb2491/presetshapedefinitionsxml-does-not-specify-width-and-height-form-some-autoshapes?forum=os_binaryfile
+        
+        // the adjust value can be format dependent, e.g. hexagon has different values,
+        // other shape types have the same adjust values in OOXML and native
         int adjval = getEscherProperty(escherProp, -1);
+
         return (adjval == -1) ? null : new Guide(name, "val "+adjval);
     }
 

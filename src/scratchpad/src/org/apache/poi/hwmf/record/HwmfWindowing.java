@@ -376,7 +376,7 @@ public class HwmfWindowing {
      * The META_OFFSETCLIPRGN record moves the clipping region in the playback device context by the
      * specified offsets.
      */
-    public static class WmfOffsetClipRgn implements HwmfRecord {
+    public static class WmfOffsetClipRgn implements HwmfRecord, HwmfObjectTableEntry {
 
         /**
          * A 16-bit signed integer that defines the number of logical units to move up or down.
@@ -402,7 +402,11 @@ public class HwmfWindowing {
 
         @Override
         public void draw(HwmfGraphics ctx) {
-
+            ctx.addObjectTableEntry(this);
+        }
+        
+        @Override
+        public void applyObject(HwmfGraphics ctx) {
         }
     }
 
@@ -410,7 +414,7 @@ public class HwmfWindowing {
      * The META_EXCLUDECLIPRECT record sets the clipping region in the playback device context to the
      * existing clipping region minus the specified rectangle.
      */
-    public static class WmfExcludeClipRect implements HwmfRecord {
+    public static class WmfExcludeClipRect implements HwmfRecord, HwmfObjectTableEntry {
 
         /**
          * A 16-bit signed integer that defines the y-coordinate, in logical units, of the
@@ -452,7 +456,11 @@ public class HwmfWindowing {
 
         @Override
         public void draw(HwmfGraphics ctx) {
-
+            ctx.addObjectTableEntry(this);
+        }
+        
+        @Override
+        public void applyObject(HwmfGraphics ctx) {
         }
     }
 
@@ -461,7 +469,7 @@ public class HwmfWindowing {
      * The META_INTERSECTCLIPRECT record sets the clipping region in the playback device context to the
      * intersection of the existing clipping region and the specified rectangle.
      */
-    public static class WmfIntersectClipRect implements HwmfRecord {
+    public static class WmfIntersectClipRect implements HwmfRecord, HwmfObjectTableEntry {
 
         /**
          * A 16-bit signed integer that defines the y-coordinate, in logical units, of the
@@ -503,7 +511,11 @@ public class HwmfWindowing {
 
         @Override
         public void draw(HwmfGraphics ctx) {
-
+            ctx.addObjectTableEntry(this);
+        }
+        
+        @Override
+        public void applyObject(HwmfGraphics ctx) {
         }
     }
 

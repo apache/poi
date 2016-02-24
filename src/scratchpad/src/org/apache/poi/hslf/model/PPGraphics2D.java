@@ -42,6 +42,7 @@ import java.awt.geom.Arc2D;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
+import java.awt.geom.Path2D;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
@@ -244,7 +245,7 @@ public final class PPGraphics2D extends Graphics2D implements Cloneable {
      * @see #setComposite
      */
     public void draw(Shape shape){
-        GeneralPath path = new GeneralPath(_transform.createTransformedShape(shape));
+        Path2D.Double path = new Path2D.Double(_transform.createTransformedShape(shape));
         HSLFFreeformShape p = new HSLFFreeformShape(_group);
         p.setPath(path);
         p.getFill().setForegroundColor(null);
@@ -346,7 +347,7 @@ public final class PPGraphics2D extends Graphics2D implements Cloneable {
      * @see #setClip
      */
     public void fill(Shape shape){
-        GeneralPath path = new GeneralPath(_transform.createTransformedShape(shape));
+        Path2D.Double path = new Path2D.Double(_transform.createTransformedShape(shape));
         HSLFFreeformShape p = new HSLFFreeformShape(_group);
         p.setPath(path);
         applyPaint(p);

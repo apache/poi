@@ -109,6 +109,6 @@ public enum HwmfMapMode {
         for (HwmfMapMode mm : values()) {
             if (mm.flag == flag) return mm;
         }
-        return null;
+        return MM_ISOTROPIC;
     }        
 }
