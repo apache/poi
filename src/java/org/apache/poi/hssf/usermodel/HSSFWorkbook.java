@@ -18,6 +18,7 @@
 package org.apache.poi.hssf.usermodel;
 
 import static org.apache.poi.hssf.model.InternalWorkbook.WORKBOOK_DIR_ENTRY_NAMES;
+import static org.apache.poi.hssf.model.InternalWorkbook.OLD_WORKBOOK_DIR_ENTRY_NAME;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -267,7 +268,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
 
         // check for previous version of file format
         try {
-            directory.getEntry("Book");
+            directory.getEntry(OLD_WORKBOOK_DIR_ENTRY_NAME);
             throw new OldExcelFormatException("The supplied spreadsheet seems to be Excel 5.0/7.0 (BIFF5) format. "
                     + "POI only supports BIFF8 format (from Excel versions 97/2000/XP/2003)");
         } catch (FileNotFoundException e) {
