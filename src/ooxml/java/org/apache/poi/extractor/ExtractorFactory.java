@@ -16,6 +16,9 @@
 ==================================================================== */
 package org.apache.poi.extractor;
 
+import static org.apache.poi.hssf.model.InternalWorkbook.OLD_WORKBOOK_DIR_ENTRY_NAME;
+import static org.apache.poi.hssf.model.InternalWorkbook.WORKBOOK_DIR_ENTRY_NAMES;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -37,6 +40,7 @@ import org.apache.poi.hsmf.datatypes.AttachmentChunks;
 import org.apache.poi.hsmf.extractor.OutlookTextExtactor;
 import org.apache.poi.hssf.extractor.EventBasedExcelExtractor;
 import org.apache.poi.hssf.extractor.ExcelExtractor;
+import org.apache.poi.hssf.extractor.OldExcelExtractor;
 import org.apache.poi.hwpf.OldWordFileFormatException;
 import org.apache.poi.hwpf.extractor.Word6Extractor;
 import org.apache.poi.hwpf.extractor.WordExtractor;
@@ -65,8 +69,6 @@ import org.apache.poi.xssf.usermodel.XSSFRelation;
 import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
 import org.apache.poi.xwpf.usermodel.XWPFRelation;
 import org.apache.xmlbeans.XmlException;
-
-import static org.apache.poi.hssf.model.InternalWorkbook.WORKBOOK_DIR_ENTRY_NAMES;
 
 /**
  * Figures out the correct POITextExtractor for your supplied
@@ -310,6 +312,9 @@ public class ExtractorFactory {
                 }
                 return new ExcelExtractor(poifsDir);
             }
+        }
+        if (poifsDir.hasEntry(OLD_WORKBOOK_DIR_ENTRY_NAME)) {
+            throw new IllegalArgumentException("Excel 1-95 file found, call OldExcelExtractor directly");
         }
 
         if (poifsDir.hasEntry("WordDocument")) {

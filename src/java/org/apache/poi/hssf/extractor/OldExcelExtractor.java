@@ -17,6 +17,9 @@
 
 package org.apache.poi.hssf.extractor;
 
+import static org.apache.poi.hssf.model.InternalWorkbook.WORKBOOK_DIR_ENTRY_NAMES;
+import static org.apache.poi.hssf.model.InternalWorkbook.OLD_WORKBOOK_DIR_ENTRY_NAME;
+
 import java.io.BufferedInputStream;
 import java.io.Closeable;
 import java.io.File;
@@ -99,10 +102,10 @@ public class OldExcelExtractor implements Closeable {
     private void open(DirectoryNode directory) throws IOException {
         DocumentNode book;
         try {
-            book = (DocumentNode)directory.getEntry("Book");
+            book = (DocumentNode)directory.getEntry(OLD_WORKBOOK_DIR_ENTRY_NAME);
         } catch (FileNotFoundException e) {
             // some files have "Workbook" instead
-            book = (DocumentNode)directory.getEntry("Workbook");
+            book = (DocumentNode)directory.getEntry(WORKBOOK_DIR_ENTRY_NAMES[0]);
         }
 
         if (book == null) {
