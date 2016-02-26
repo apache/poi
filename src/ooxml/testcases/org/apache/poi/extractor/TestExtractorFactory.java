@@ -26,8 +26,6 @@ import static org.junit.Assert.fail;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.POIOLE2TextExtractor;
@@ -38,12 +36,12 @@ import org.apache.poi.hdgf.extractor.VisioTextExtractor;
 import org.apache.poi.hpbf.extractor.PublisherTextExtractor;
 import org.apache.poi.hslf.extractor.PowerPointExtractor;
 import org.apache.poi.hsmf.extractor.OutlookTextExtactor;
+import org.apache.poi.hssf.OldExcelFormatException;
 import org.apache.poi.hssf.extractor.EventBasedExcelExtractor;
 import org.apache.poi.hssf.extractor.ExcelExtractor;
 import org.apache.poi.hwpf.extractor.Word6Extractor;
 import org.apache.poi.hwpf.extractor.WordExtractor;
 import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
-import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
@@ -52,9 +50,7 @@ import org.apache.poi.xslf.extractor.XSLFPowerPointExtractor;
 import org.apache.poi.xssf.extractor.XSSFEventBasedExcelExtractor;
 import org.apache.poi.xssf.extractor.XSSFExcelExtractor;
 import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
-import org.apache.xmlbeans.XmlException;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -923,21 +919,15 @@ public class TestExtractorFactory {
     }
     
     /**
-     *  #59074 - No supported documents found in the OLE2 stream on
-     *   a valid Excel file
+     *  #59074 - Excel 95 files should give a helpful message, not just 
+     *   "No supported documents found in the OLE2 stream"
      */
-    @Ignore
     @Test
     public void a() throws Exception {
-        POITextExtractor ext =  ExtractorFactory.createExtractor(
-                POIDataSamples.getSpreadSheetInstance().getFile("59074.xls"));
-        assertNotNull(ext);
-        
-        String text = ext.getText();
-        ext.close();
-        
-System.err.println(text);
-        assertNotNull(text);
-        assertTrue(text.contains("test"));
+        try {
+            ExtractorFactory.createExtractor(
+                    POIDataSamples.getSpreadSheetInstance().getFile("59074.xls"));
+            fail("Old excel formats not supported via ExtractorFactory");
+        } catch (OldExcelFormatException e) {}
     }
 }

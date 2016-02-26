@@ -38,9 +38,9 @@ import org.apache.poi.hslf.extractor.PowerPointExtractor;
 import org.apache.poi.hsmf.MAPIMessage;
 import org.apache.poi.hsmf.datatypes.AttachmentChunks;
 import org.apache.poi.hsmf.extractor.OutlookTextExtactor;
+import org.apache.poi.hssf.OldExcelFormatException;
 import org.apache.poi.hssf.extractor.EventBasedExcelExtractor;
 import org.apache.poi.hssf.extractor.ExcelExtractor;
-import org.apache.poi.hssf.extractor.OldExcelExtractor;
 import org.apache.poi.hwpf.OldWordFileFormatException;
 import org.apache.poi.hwpf.extractor.Word6Extractor;
 import org.apache.poi.hwpf.extractor.WordExtractor;
@@ -314,7 +314,8 @@ public class ExtractorFactory {
             }
         }
         if (poifsDir.hasEntry(OLD_WORKBOOK_DIR_ENTRY_NAME)) {
-            throw new IllegalArgumentException("Excel 1-95 file found, call OldExcelExtractor directly");
+            throw new OldExcelFormatException("Old Excel Spreadsheet format (1-95) "
+                    + "found. Please call OldExcelExtractor directly for basic text extraction");
         }
 
         if (poifsDir.hasEntry("WordDocument")) {
