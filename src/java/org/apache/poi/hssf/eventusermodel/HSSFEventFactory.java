@@ -25,6 +25,7 @@ import org.apache.poi.hssf.eventusermodel.HSSFUserException;
 import org.apache.poi.hssf.record.*;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import static org.apache.poi.hssf.model.InternalWorkbook.WORKBOOK_DIR_ENTRY_NAMES;
 
 /**
  * Low level event based HSSF reader.  Pass either a DocumentInputStream to
@@ -59,20 +60,20 @@ public class HSSFEventFactory {
     */
     public void processWorkbookEvents(HSSFRequest req, DirectoryNode dir) throws IOException {
         // some old documents have "WORKBOOK" or "BOOK"
-        final String name;
+        String name = null;
         Set<String> entryNames = dir.getEntryNames();
-        if (entryNames.contains("Workbook")) {
-            name = "Workbook";
-        } else if (entryNames.contains("WORKBOOK")) {
-            name = "WORKBOOK";
-        } else if (entryNames.contains("BOOK")) {
-            name = "BOOK";
-        } else {
-            name = "Workbook";
+        for (String potentialName : WORKBOOK_DIR_ENTRY_NAMES) {
+            if (entryNames.contains(potentialName)) {
+                name = potentialName;
+                break;
+            }
+        }
+        // If in doubt, go for the default
+        if (name == null) {
+            name = WORKBOOK_DIR_ENTRY_NAMES[0];
         }
 
         InputStream in = dir.createDocumentInputStream(name);
-
         processEvents(req, in);
     }
 

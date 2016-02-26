@@ -17,6 +17,8 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import static org.apache.poi.hssf.model.InternalWorkbook.WORKBOOK_DIR_ENTRY_NAMES;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
@@ -94,7 +96,6 @@ import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-
 
 /**
  * High level representation of a workbook.  This is the first object most users
@@ -242,17 +243,6 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
             throws IOException {
         this(fs.getRoot(), fs, preserveNodes);
     }
-
-    /**
-     * Normally, the Workbook will be in a POIFS Stream
-     * called "Workbook". However, some weird XLS generators use "WORKBOOK"
-     */
-    private static final String[] WORKBOOK_DIR_ENTRY_NAMES = {
-        "Workbook", // as per BIFF8 spec
-        "WORKBOOK", // Typically from third party programs
-        "BOOK",     // Typically odd Crystal Reports exports
-    };
-
 
     public static String getWorkbookDirEntryName(DirectoryNode directory) {
 

@@ -54,6 +54,7 @@ import org.apache.poi.xssf.extractor.XSSFExcelExtractor;
 import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
 import org.apache.xmlbeans.XmlException;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -919,5 +920,24 @@ public class TestExtractorFactory {
                 // catch all exceptions here as we are only interested in file-handle leaks
             }
         }
+    }
+    
+    /**
+     *  #59074 - No supported documents found in the OLE2 stream on
+     *   a valid Excel file
+     */
+    @Ignore
+    @Test
+    public void a() throws Exception {
+        POITextExtractor ext =  ExtractorFactory.createExtractor(
+                POIDataSamples.getSpreadSheetInstance().getFile("59074.xls"));
+        assertNotNull(ext);
+        
+        String text = ext.getText();
+        ext.close();
+        
+System.err.println(text);
+        assertNotNull(text);
+        assertTrue(text.contains("test"));
     }
 }

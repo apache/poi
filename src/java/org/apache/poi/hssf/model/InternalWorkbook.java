@@ -123,6 +123,16 @@ public final class InternalWorkbook {
      */
     private static final int MAX_SENSITIVE_SHEET_NAME_LEN = 31;
 
+    /**
+     * Normally, the Workbook will be in a POIFS Stream called 
+     *  "Workbook". However, some weird XLS generators use "WORKBOOK"
+     *  or "BOOK".
+     */
+    public static final String[] WORKBOOK_DIR_ENTRY_NAMES = {
+        "Workbook", // as per BIFF8 spec
+        "WORKBOOK", // Typically from third party programs
+        "BOOK",     // Typically odd Crystal Reports exports
+    };
 
     private static final POILogger log = POILogFactory.getLogger(InternalWorkbook.class);
     private static final int DEBUG = POILogger.DEBUG;
