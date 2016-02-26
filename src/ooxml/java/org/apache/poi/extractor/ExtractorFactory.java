@@ -66,6 +66,8 @@ import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
 import org.apache.poi.xwpf.usermodel.XWPFRelation;
 import org.apache.xmlbeans.XmlException;
 
+import static org.apache.poi.hssf.model.InternalWorkbook.WORKBOOK_DIR_ENTRY_NAMES;
+
 /**
  * Figures out the correct POITextExtractor for your supplied
  *  document, and returns it.
@@ -301,13 +303,13 @@ public class ExtractorFactory {
     {
         // Look for certain entries in the stream, to figure it
         // out from
-        if (poifsDir.hasEntry("Workbook") ||
-                // some XLS files have different entry-names
-                poifsDir.hasEntry("WORKBOOK") || poifsDir.hasEntry("BOOK")) {
-            if (getPreferEventExtractor()) {
-                return new EventBasedExcelExtractor(poifsDir);
+        for (String workbookName : WORKBOOK_DIR_ENTRY_NAMES) {
+            if (poifsDir.hasEntry(workbookName)) {
+                if (getPreferEventExtractor()) {
+                    return new EventBasedExcelExtractor(poifsDir);
+                }
+                return new ExcelExtractor(poifsDir);
             }
-            return new ExcelExtractor(poifsDir);
         }
 
         if (poifsDir.hasEntry("WordDocument")) {

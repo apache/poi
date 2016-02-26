@@ -36,6 +36,7 @@ public class TestBiffViewer extends BaseXLSIteratingTest {
 		EXCLUDED.add("43493.xls");	// HSSFWorkbook cannot open it as well
 		EXCLUDED.add("password.xls"); 
 		EXCLUDED.add("46904.xls");
+        EXCLUDED.add("59074.xls"); // Biff 5 / Excel 95
         EXCLUDED.add("35897-type4.xls"); // unsupported crypto api header 
 		EXCLUDED.add("xor-encryption-abc.xls"); // unsupported XOR-encryption
         EXCLUDED.add("testEXCEL_2.xls");  // Biff 2 / Excel 2, pre-OLE2
