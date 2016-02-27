@@ -249,6 +249,7 @@ public class TestAllFiles {
         EXPECTED_FAILURES.add("spreadsheet/testEXCEL_4.xls");
         EXPECTED_FAILURES.add("spreadsheet/testEXCEL_5.xls");
         EXPECTED_FAILURES.add("spreadsheet/testEXCEL_95.xls");
+        EXPECTED_FAILURES.add("spreadsheet/59074.xls");
         
         // OOXML Strict is not yet supported, see bug #57699
         EXPECTED_FAILURES.add("spreadsheet/SampleSS.strict.xlsx");
