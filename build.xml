@@ -177,8 +177,8 @@ under the License.
               value="${repository.m2}/maven2/org/apache/xmlbeans/xmlbeans/2.6.0/xmlbeans-2.6.0.jar"/>
 
     <!-- coverage libs -->
-    <property name="jacoco.zip" location="${main.lib}/jacoco-0.7.4.201502262128.zip"/>
-    <property name="jacoco.url" value="${repository.m2}/maven2/org/jacoco/jacoco/0.7.4.201502262128/jacoco-0.7.4.201502262128.zip"/>
+    <property name="jacoco.zip" location="${main.lib}/jacoco-0.7.6.201602180812.zip"/>
+    <property name="jacoco.url" value="${repository.m2}/maven2/org/jacoco/jacoco/0.7.6.201602180812/jacoco-0.7.6.201602180812.zip"/>
     <property name="asm.jar" location="${main.lib}/asm-all-5.0.3.jar"/>
     <property name="asm.url" value="${repository.m2}/maven2/org/ow2/asm/asm-all/5.0.3/asm-all-5.0.3.jar"/>
 
@@ -448,6 +448,7 @@ under the License.
                 <include name="jacoco-0.7.1*"/>
                 <include name="jacoco-0.7.2*"/>
                 <include name="jacoco-0.7.3*"/>
+                <include name="jacoco-0.7.4*"/>
                 <include name="log4j-1.2.13*"/>
                 <include name="org.jacoco.*-0.6.*"/>
                 <include name="org.jacoco.*-0.7.1*"/>
@@ -1235,16 +1236,11 @@ under the License.
     <target name="test-integration" depends="compile-integration,-test-integration-check,jacocotask"
             unless="integration.test.notRequired" xmlns:jacoco="antlib:org.jacoco.ant">
         <jacoco:coverage enabled="${coverage.enabled}" excludes="${coverage.excludes}" destfile="build/jacoco-integration.exec">
-            <junit printsummary="withOutAndErr" fork="yes" forkmode="once" haltonfailure="${halt.on.test.failure}"
+            <junit printsummary="yes" fork="yes" forkmode="once" haltonfailure="${halt.on.test.failure}"
                    failureproperty="integration.test.failed" showoutput="true">
                 <classpath refid="test.integration.classpath"/>
                 <syspropertyset refid="junit.properties"/>
                 <jvmarg value="-ea"/>
-                <!--
-                  YK: ensure that JUnit has enough memory to run tests.
-                  Without the line below tests fail on Mac OS X with jdk-1.6.26
-                  and on Windows with jdk-1.5.22
-                -->
                 <jvmarg value="-Xmx1512M"/>
                 <formatter type="plain"/>
                 <formatter type="xml"/>
