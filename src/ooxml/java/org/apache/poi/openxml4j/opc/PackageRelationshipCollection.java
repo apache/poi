@@ -273,13 +273,13 @@ public final class PackageRelationshipCollection implements
         if (index < 0 || index > relationshipsByID.values().size())
             throw new IllegalArgumentException("index");
 
-        PackageRelationship retRel = null;
         int i = 0;
         for (PackageRelationship rel : relationshipsByID.values()) {
             if (index == i++)
                 return rel;
         }
-        return retRel;
+
+        return null;
     }
 
     /**

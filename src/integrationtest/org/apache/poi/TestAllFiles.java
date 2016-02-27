@@ -254,6 +254,7 @@ public class TestAllFiles {
         EXPECTED_FAILURES.add("spreadsheet/SampleSS.strict.xlsx");
         EXPECTED_FAILURES.add("spreadsheet/SimpleStrict.xlsx");
         EXPECTED_FAILURES.add("spreadsheet/sample.strict.xlsx");
+        EXPECTED_FAILURES.add("spreadsheet/57914.xlsx");
 
         // non-TNEF files
         EXPECTED_FAILURES.add("ddf/Container.dat");

@@ -69,6 +69,18 @@ public class XSSFReader {
         PackageRelationship coreDocRelationship = this.pkg.getRelationshipsByType(
                 PackageRelationshipTypes.CORE_DOCUMENT).getRelationship(0);
 
+        // strict OOXML likely not fully supported, see #57699
+        // this code is similar to POIXMLDocumentPart.getPartFromOPCPackage(), but I could not combine it
+        // easily due to different return values
+        if(coreDocRelationship == null) {
+            if (this.pkg.getRelationshipsByType(
+                    PackageRelationshipTypes.STRICT_CORE_DOCUMENT).getRelationship(0) != null) {
+                throw new POIXMLException("Strict OOXML isn't currently supported, please see bug #57699");
+            }
+
+            throw new POIXMLException("OOXML file structure broken/invalid - no core document found!");
+        }
+
         // Get the part that holds the workbook
         workbookPart = this.pkg.getPart(coreDocRelationship);
     }
