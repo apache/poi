@@ -30,6 +30,7 @@ public class TestRecordLister extends BaseXLSIteratingTest {
         EXCLUDED.add("testEXCEL_4.xls");   // old unsupported format
         EXCLUDED.add("testEXCEL_5.xls");  // Biff 5 / Excel 5
         EXCLUDED.add("testEXCEL_95.xls"); // Biff 5 / Excel 95
+		EXCLUDED.add("59074.xls");	// Biff 5 / Excel 95
 	}
 	
 	@Override
