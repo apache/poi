@@ -38,6 +38,7 @@ public class TestEFBiffViewer extends BaseXLSIteratingTest {
 		EXCLUDED.add("testEXCEL_5.xls");   // old unsupported format
 		EXCLUDED.add("testEXCEL_95.xls");   // old unsupported format
 		EXCLUDED.add("35897-type4.xls");   // unsupported encryption
+		EXCLUDED.add("59074.xls");	// Biff 5 / Excel 95
 	}
 	
 	@Override
@@ -51,5 +52,12 @@ public class TestEFBiffViewer extends BaseXLSIteratingTest {
 		} finally {
 			System.setOut(save);
 		}
+	}
+
+	//@Test
+	public void testFile() throws IOException {
+		EFBiffViewer viewer = new EFBiffViewer();
+		viewer.setFile(new File("test-data/spreadsheet/59074.xls").getAbsolutePath());
+		viewer.run();
 	}
 }
