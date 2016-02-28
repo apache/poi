@@ -24,7 +24,7 @@ import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
 
 public class HwmfPlaceableHeader {
-    public static int WMF_HEADER_MAGIC = 0x9AC6CDD7;
+    public static final int WMF_HEADER_MAGIC = 0x9AC6CDD7;
     
     final Rectangle2D bounds;
     final int unitsPerInch;
