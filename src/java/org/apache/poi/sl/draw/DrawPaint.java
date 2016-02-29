@@ -49,8 +49,10 @@ import org.apache.poi.util.POILogger;
 public class DrawPaint {
     // HSL code is public domain - see https://tips4java.wordpress.com/contact-us/
     
-    private final static POILogger LOG = POILogFactory.getLogger(DrawPaint.class);
+    private static final POILogger LOG = POILogFactory.getLogger(DrawPaint.class);
 
+    private static final Color TRANSPARENT = new Color(1f,1f,1f,0f);
+    
     protected PlaceableShape<?,?> shape;
     
     public DrawPaint(PlaceableShape<?,?> shape) {
@@ -65,8 +67,10 @@ public class DrawPaint {
                 throw new NullPointerException("Color needs to be specified");
             }
             this.solidColor = new ColorStyle(){
-                    public Color getColor() { return color; }
-                    public int getAlpha() { return -1; }
+                    public Color getColor() {
+                        return new Color(color.getRed(), color.getGreen(), color.getBlue());
+                    }
+                    public int getAlpha() { return (int)Math.round(color.getAlpha()*100000./255.); }
                     public int getHueOff() { return -1; }
                     public int getHueMod() { return -1; }
                     public int getSatOff() { return -1; }
@@ -170,9 +174,11 @@ public class DrawPaint {
     public static Color applyColorTransform(ColorStyle color){
         // TODO: The colors don't match 100% the results of Powerpoint, maybe because we still
         // operate in sRGB and not scRGB ... work in progress ...
-
+        if (color == null || color.getColor() == null) {
+            return TRANSPARENT;
+        }
+        
         Color result = color.getColor();
-        if (result == null) return null;
 
         double alpha = getAlpha(result, color);
         double hsl[] = RGB2HSL(result); // values are in the range [0..100] (usually ...)
@@ -291,22 +297,8 @@ public class DrawPaint {
         
         int i = 0;
         for (ColorStyle fc : fill.getGradientColors()) {
-            if (fc == null) {
-                // get color of background
-                fc = new ColorStyle() {
-                    public int getTint() { return -1; }
-                    public int getShade() { return -1; }
-                    public int getSatOff() { return -1; }
-                    public int getSatMod() { return -1; }
-                    public int getLumOff() { return -1; }
-                    public int getLumMod() { return -1; }
-                    public int getHueOff() { return -1; }
-                    public int getHueMod() { return -1; }
-                    public Color getColor() { return Color.white; }
-                    public int getAlpha() { return 0; }
-                };
-            }
-            colors[i++] = applyColorTransform(fc);
+            // if fc is null, use transparent color to get color of background
+            colors[i++] = (fc == null) ? TRANSPARENT : applyColorTransform(fc);
         }
 
         AffineTransform grAt  = new AffineTransform();
