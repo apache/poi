@@ -19,6 +19,8 @@
 
 package org.apache.poi.xslf.usermodel;
 
+import java.awt.Graphics2D;
+import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -27,6 +29,7 @@ import java.util.Comparator;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.sl.draw.DrawFactory;
 import org.apache.poi.sl.draw.DrawPaint;
 import org.apache.poi.sl.usermodel.ColorStyle;
 import org.apache.poi.sl.usermodel.PaintStyle;
@@ -536,5 +539,10 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
             fillProps = matrix.getBgFillStyleLst().selectPath("*")[idx - 1001];
         }
         return (fillProps == null) ? null : selectPaint(fillProps, phClr, theme.getPackagePart());
+    }
+    
+    @Override
+    public void draw(Graphics2D graphics, Rectangle2D bounds) {
+        DrawFactory.getInstance(graphics).drawShape(graphics, this, bounds);
     }
 }

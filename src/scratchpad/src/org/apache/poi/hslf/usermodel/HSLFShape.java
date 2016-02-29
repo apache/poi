@@ -38,6 +38,7 @@ import org.apache.poi.hslf.record.ColorSchemeAtom;
 import org.apache.poi.hslf.record.HSLFEscherClientDataRecord;
 import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.RecordTypes;
+import org.apache.poi.sl.draw.DrawFactory;
 import org.apache.poi.sl.usermodel.FillStyle;
 import org.apache.poi.sl.usermodel.Shape;
 import org.apache.poi.sl.usermodel.ShapeContainer;
@@ -447,8 +448,9 @@ public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
         return getFill().getFillStyle();
     }
 
-    public void draw(Graphics2D graphics){
-        logger.log(POILogger.INFO, "Rendering " + getShapeName());
+    @Override
+    public void draw(Graphics2D graphics, Rectangle2D bounds){
+        DrawFactory.getInstance(graphics).drawShape(graphics, this, bounds);
     }
 
     public AbstractEscherOptRecord getEscherOptRecord() {
