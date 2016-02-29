@@ -17,6 +17,7 @@
 
 package org.apache.poi.sl.usermodel;
 
+import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 
 public interface Shape<
@@ -24,17 +25,26 @@ public interface Shape<
     P extends TextParagraph<S,P,?>
 > {
 	ShapeContainer<S,P> getParent();
-	
+
    /**
     * @return the sheet this shape belongs to
     */
    Sheet<S,P> getSheet();
-   
+
    /**
     * Returns the anchor (the bounding box rectangle) of this shape.
     * All coordinates are expressed in points (72 dpi).
     *
     * @return the anchor of this shape
     */
-   Rectangle2D getAnchor();   
+   Rectangle2D getAnchor();
+   
+   /**
+    * Convenience method to draw a single shape
+    *
+    * @param graphics the graphics context
+    * @param bounds the rectangle to fit the shape to.
+    *   if null, the bounds of the shape are used.
+    */
+   void draw(Graphics2D graphics, Rectangle2D bounds);
 }

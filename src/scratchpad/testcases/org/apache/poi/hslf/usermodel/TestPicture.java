@@ -27,6 +27,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -106,13 +107,14 @@ public final class TestPicture {
         HSLFPictureData pd = HSLFPictureData.create(PictureType.PNG);
         
         HSLFPictureShape pict = new HSLFPictureShape(pd); //index to non-existing picture data
+        pict.setAnchor(new Rectangle2D.Double(50,50,100,100));
         pict.setSheet(slide);
         HSLFPictureData data = pict.getPictureData();
         assertNull(data);
 
         BufferedImage img = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
         Graphics2D graphics = img.createGraphics();
-        pict.draw(graphics);
+        pict.draw(graphics, null);
         
         ppt.close();
     }

@@ -19,6 +19,8 @@ package org.apache.poi.sl.draw;
 
 import java.awt.Graphics2D;
 import java.awt.font.TextLayout;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
 import java.text.AttributedString;
 import java.util.HashMap;
 import java.util.Map;
@@ -168,7 +170,41 @@ public class DrawFactory {
         return new DrawPaint(shape);
     }
 
+    /**
+     * Convenience method for drawing single shapes.
+     * For drawing whole slides, use {@link Slide#draw(Graphics2D)}
+     *
+     * @param graphics the graphics context to draw to
+     * @param shape the shape
+     * @param bounds the bounds within the graphics context to draw to 
+     */
+    public void drawShape(Graphics2D graphics, Shape<?,?> shape, Rectangle2D bounds) {
+        Rectangle2D shapeBounds = shape.getAnchor();
+        if (shapeBounds.isEmpty() || (bounds != null && bounds.isEmpty())) {
+            return;
+        }
 
+        AffineTransform txg = (AffineTransform)graphics.getRenderingHint(Drawable.GROUP_TRANSFORM);
+        AffineTransform tx = new AffineTransform();
+        try {
+            if (bounds != null) {
+                double scaleX = bounds.getWidth()/shapeBounds.getWidth();
+                double scaleY = bounds.getHeight()/shapeBounds.getHeight();
+                tx.translate(bounds.getCenterX(), bounds.getCenterY());
+                tx.scale(scaleX, scaleY);
+                tx.translate(-shapeBounds.getCenterX(), -shapeBounds.getCenterY());
+            }
+            graphics.setRenderingHint(Drawable.GROUP_TRANSFORM, tx);
+            
+            Drawable d = getDrawable(shape);
+            d.applyTransform(graphics);
+            d.draw(graphics);
+        } finally {
+            graphics.setRenderingHint(Drawable.GROUP_TRANSFORM, txg);
+        }
+    }
+    
+    
     /**
      * Replace font families for Windows JVM 6, which contains a font rendering error.
      * This is likely to be removed, when POI upgrades to JDK 7

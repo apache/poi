@@ -24,6 +24,9 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -52,6 +55,7 @@ import org.apache.poi.hslf.record.SlideListWithText;
 import org.apache.poi.hslf.record.SlideListWithText.SlideAtomsSet;
 import org.apache.poi.hslf.record.TextHeaderAtom;
 import org.apache.poi.hssf.usermodel.DummyGraphics2d;
+import org.apache.poi.sl.draw.DrawFactory;
 import org.apache.poi.sl.draw.DrawPaint;
 import org.apache.poi.sl.draw.DrawTextParagraph;
 import org.apache.poi.sl.usermodel.PaintStyle;
@@ -878,6 +882,26 @@ public final class TestBugs {
         assertTrue(found[0]);
         
         ppt.close();
+    }
+
+    @Test
+    public void bug59056() throws IOException {
+        HSLFSlideShow ppt = open("54541_cropped_bitmap.ppt");
+        
+        for (HSLFShape shape : ppt.getSlides().get(0).getShapes()) {
+            BufferedImage img = new BufferedImage(500, 300, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D graphics = img.createGraphics();
+            Rectangle2D box = new Rectangle2D.Double(50,50,300,100);
+            graphics.setPaint(Color.red);
+            graphics.fill(box);
+            box = new Rectangle2D.Double(box.getX()+1,box.getY()+1,box.getWidth()-2,box.getHeight()-2);
+            DrawFactory.getInstance(graphics).drawShape(graphics, shape, box);
+            graphics.dispose();
+            // ImageIO.write(img, "png", new File("bla"+shape.getShapeId()+".png"));
+        }
+            
+        ppt.close();
+        
     }
     
     private static HSLFSlideShow open(String fileName) throws IOException {
