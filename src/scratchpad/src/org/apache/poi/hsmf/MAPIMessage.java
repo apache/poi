@@ -18,7 +18,6 @@
 package org.apache.poi.hsmf;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -60,7 +59,7 @@ import org.apache.poi.util.POILogger;
  * Reads an Outlook MSG File in and provides hooks into its data structure.
  * 
  * If you want to develop with HSMF, you might find it worth getting
- *  some of the microsoft public documentation, such as:
+ *  some of the Microsoft public documentation, such as:
  *  
  * [MS-OXCMSG]: Message and Attachment Object Protocol Specification
  */
@@ -77,7 +76,6 @@ public class MAPIMessage extends POIDocument {
 
    /**
     * Constructor for creating new files.
-    *
     */
    public MAPIMessage() {
       // TODO - make writing possible
@@ -87,16 +85,30 @@ public class MAPIMessage extends POIDocument {
 
    /**
     * Constructor for reading MSG Files from the file system.
-    * @param filename
+    * 
+    * @param filename Name of the file to read
     * @throws IOException
     */
    public MAPIMessage(String filename) throws IOException {
-      this(new NPOIFSFileSystem(new File(filename)));
+      this(new File(filename));
+   }
+   /**
+    * Constructor for reading MSG Files from the file system.
+    * 
+    * @param file The file to read from
+    * @throws IOException
+    */
+   public MAPIMessage(File file) throws IOException {
+      this(new NPOIFSFileSystem(file));
    }
 
    /**
     * Constructor for reading MSG Files from an input stream.
-    * @param in
+    * 
+    * <p>Note - this will buffer the whole message into memory
+    *  in order to process. For lower memory use, use {@link #MAPIMessage(File)}
+    *  
+    * @param in The InputStream to buffer then read from
     * @throws IOException
     */
    public MAPIMessage(InputStream in) throws IOException {
@@ -104,7 +116,8 @@ public class MAPIMessage extends POIDocument {
    }
    /**
     * Constructor for reading MSG Files from a POIFS filesystem
-    * @param fs
+    * 
+    * @param fs Open POIFS FileSystem containing the message
     * @throws IOException
     */
    public MAPIMessage(NPOIFSFileSystem fs) throws IOException {
@@ -120,7 +133,7 @@ public class MAPIMessage extends POIDocument {
    /**
     * Constructor for reading MSG Files from a certain
     *  point within a POIFS filesystem
-    * @param poifsDir
+    * @param poifsDir Directory containing the message
     * @throws IOException
     */
    public MAPIMessage(DirectoryNode poifsDir) throws IOException {
@@ -133,7 +146,7 @@ public class MAPIMessage extends POIDocument {
       ArrayList<AttachmentChunks> attachments = new ArrayList<AttachmentChunks>();
       ArrayList<RecipientChunks>  recipients  = new ArrayList<RecipientChunks>();
       for(ChunkGroup group : chunkGroups) {
-         // Should only ever be one of these
+         // Should only ever be one of each of these
          if(group instanceof Chunks) {
             mainChunks = (Chunks)group;
          } else if(group instanceof NameIdChunks) {
@@ -142,7 +155,7 @@ public class MAPIMessage extends POIDocument {
             recipients.add( (RecipientChunks)group );
          }
 
-         // Add to list(s)
+         // Can be multiple of these - add to list(s)
          if(group instanceof AttachmentChunks) {
             attachments.add( (AttachmentChunks)group );
          }
