@@ -421,6 +421,14 @@ under the License.
 
     <target name="clean" description="Remove generated artefacts">
         <delete dir="build"/>
+        <delete includeemptydirs="true">
+            <fileset dir="sonar">
+                <include name="*/xmlbeans.marker"/>
+                <include name="*/target/**"/>
+                <include name="*/build/**"/>
+                <include name="*/src/**"/>
+            </fileset>
+        </delete>
     </target>
 
     <target name="testexist">
@@ -454,11 +462,13 @@ under the License.
                 <include name="org.jacoco.*-0.7.1*"/>
                 <include name="org.jacoco.*-0.7.2*"/>
                 <include name="org.jacoco.*-0.7.3*"/>
+                <include name="org.jacoco.*-0.7.4*"/>
                 <include name="dom4j*"/>
                 <include name="apache-rat-0.10*"/>
                 <include name="xercesImpl-*.jar"/>
                 <include name="junit-3*"/>
                 <include name="junit-4.11*"/>
+                <include name="findbugs-*-2.0.3*"/>
             	<include name="forbiddenapis-1.*.jar"/>
             </fileset>
         	<fileset dir="${ooxml.lib}">
