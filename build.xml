@@ -423,7 +423,6 @@ under the License.
         <delete dir="build"/>
         <delete includeemptydirs="true">
             <fileset dir="sonar">
-                <include name="*/xmlbeans.marker"/>
                 <include name="*/target/**"/>
                 <include name="*/build/**"/>
                 <include name="*/src/**"/>
