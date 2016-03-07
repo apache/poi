@@ -32,7 +32,12 @@ under the License.
           ANT_OPTS="-Xmx1024m -XX:MaxPermSize=256m" ant test
 
  -->
-<project name="POI Build" default="help" basedir="." xmlns:mvn="antlib:org.apache.maven.artifact.ant">
+<project name="POI Build" default="help" basedir="."
+    xmlns:mvn="antlib:org.apache.maven.artifact.ant"
+    xmlns:openpgp="antlib:org.apache.commons.openpgp.ant"
+    xmlns:staging="antlib:org.sonatype.nexus.ant.staging"
+    xmlns:if="ant:if"
+    xmlns:unless="ant:unless">
 
     <description>The Apache POI project Ant build.</description>
 
@@ -238,6 +243,16 @@ under the License.
     <property name="dist.dir" location="build/dist"/>
     <property name="halt.on.test.failure" value="true"/>
 
+    <!-- helper jars for pgp signing and nexus staging -->
+    <property name="dist.bouncycastle-prov.jar" location="${compile.lib}/bcprov-ext-jdk15on-1.51.jar"/>
+    <property name="dist.bouncycastle-prov.url" value="${repository.m2}/maven2/org/bouncycastle/bcprov-ext-jdk15on/1.51/bcprov-ext-jdk15on-1.51.jar"/>
+    <property name="dist.bouncycastle-bcpg.jar" location="${compile.lib}/bcpg-jdk15on-1.51.jar"/>
+    <property name="dist.bouncycastle-bcpg.url" value="${repository.m2}/maven2/org/bouncycastle/bcpg-jdk15on/1.51/bcpg-jdk15on-1.51.jar"/>
+    <property name="dist.commons-openpgp.jar" location="${compile.lib}/commons-openpgp-1.0-SNAPSHOT.jar"/>
+    <property name="dist.commons-openpgp.url" value="http://repository.apache.org/snapshots/org/apache/commons/commons-openpgp/1.0-SNAPSHOT/commons-openpgp-1.0-20140717.171036-11.jar"/>
+    <property name="dist.nexus-staging.jar" location="${compile.lib}/nexus-staging-ant-tasks-1.6.3-uber.jar"/>
+    <property name="dist.nexus-staging.url" value="${repository.m2}/maven2/org/sonatype/nexus/ant/nexus-staging-ant-tasks/1.6.3/nexus-staging-ant-tasks-1.6.3-uber.jar"/>
+
     <propertyset id="junit.properties">
         <propertyref name="POI.testdata.path"/>
         <propertyref name="java.awt.headless"/>
@@ -430,13 +445,24 @@ under the License.
         </delete>
     </target>
 
-    <target name="testexist">
-        <echo message="Testing  for ${destfile}" level="debug"/>
-        <available file="${destfile}" property="exist"/>
-    </target>
-    <target name="downloadfile" unless="exist" depends="testexist">
-        <get src="${sourcefile}" dest="${destfile}"/>
-    </target>
+    <macrodef name="downloadfile">
+        <attribute name="src"/>
+        <attribute name="dest"/>
+        <sequential>
+            <local name="exists"/>
+            <available file="@{dest}" property="exists"/>
+            <fail unless:true="${exists}"
+                message="Java version might be uncapable to download https URLs - see http://stackoverflow.com/questions/6851461/java-why-does-ssl-handshake-give-could-not-generate-dh-keypair-exception">
+                <condition>
+                    <and>
+                        <equals arg1="${ant.java.version}" arg2="1.6"/>
+                        <contains string="@{src}" substring="https"/>
+                    </and>
+                </condition>
+            </fail>
+            <get src="@{src}" dest="@{dest}" unless:true="${exists}"/>
+        </sequential>
+    </macrodef>
 
     <target name="check-jars">
         <!-- remove previous versions of third-party jars to prevent them from lingering around,
@@ -517,71 +543,26 @@ under the License.
     <target name="fetch-jars" depends="check-jars" unless="jars.present"
             description="Fetches needed JAR files from the Internet">
         <mkdir dir="${main.lib}"/>
-        <antcall target="downloadfile">
-            <param name="sourcefile" value="${main.commons-logging.url}"/>
-            <param name="destfile" value="${main.commons-logging.jar}"/>
-        </antcall>
-        <antcall target="downloadfile">
-            <param name="sourcefile" value="${main.commons-codec.url}"/>
-            <param name="destfile" value="${main.commons-codec.jar}"/>
-        </antcall>
-        <antcall target="downloadfile">
-            <param name="sourcefile" value="${main.log4j.url}"/>
-            <param name="destfile" value="${main.log4j.jar}"/>
-        </antcall>
-        <antcall target="downloadfile">
-            <param name="sourcefile" value="${main.junit.url}"/>
-            <param name="destfile" value="${main.junit.jar}"/>
-        </antcall>
-        <antcall target="downloadfile">
-            <param name="sourcefile" value="${main.hamcrest.url}"/>
-            <param name="destfile" value="${main.hamcrest.jar}"/>
-        </antcall>
-        <antcall target="downloadfile">
-            <param name="sourcefile" value="${main.ant.url}"/>
-            <param name="destfile" value="${main.ant.jar}"/>
-        </antcall>
-        <antcall target="downloadfile">
-            <param name="sourcefile" value="${main.antlauncher.url}"/>
-            <param name="destfile" value="${main.antlauncher.jar}"/>
-        </antcall>
-        <antcall target="downloadfile">
-            <param name="sourcefile" value="${asm.url}"/>
-            <param name="destfile" value="${asm.jar}"/>
-        </antcall>
-        <antcall target="downloadfile">
-            <param name="sourcefile" value="${jacoco.url}"/>
-            <param name="destfile" value="${jacoco.zip}"/>
-        </antcall>
+        <downloadfile src="${main.commons-logging.url}" dest="${main.commons-logging.jar}"/>
+        <downloadfile src="${main.commons-codec.url}" dest="${main.commons-codec.jar}"/>
+        <downloadfile src="${main.log4j.url}" dest="${main.log4j.jar}"/>
+        <downloadfile src="${main.junit.url}" dest="${main.junit.jar}"/>
+        <downloadfile src="${main.hamcrest.url}" dest="${main.hamcrest.jar}"/>
+        <downloadfile src="${main.ant.url}" dest="${main.ant.jar}"/>
+        <downloadfile src="${main.antlauncher.url}" dest="${main.antlauncher.jar}"/>
+        <downloadfile src="${asm.url}" dest="${asm.jar}"/>
+        <downloadfile src="${jacoco.url}" dest="${jacoco.zip}"/>
         <unzip src="${jacoco.zip}" dest=".">
             <patternset>
                 <include name="lib/*.jar"/>
             </patternset>
         </unzip>
-        <antcall target="downloadfile">
-            <param name="sourcefile" value="${rat.url}"/>
-            <param name="destfile" value="${rat.jar}"/>
-        </antcall>
-        <antcall target="downloadfile">
-            <param name="sourcefile" value="${forbidden.url}"/>
-            <param name="destfile" value="${forbidden.jar}"/>
-        </antcall>
-        <antcall target="downloadfile">
-            <param name="sourcefile" value="${dsig.bouncycastle-prov.url}"/>
-            <param name="destfile" value="${dsig.bouncycastle-prov.jar}"/>
-        </antcall>
-        <antcall target="downloadfile">
-            <param name="sourcefile" value="${dsig.bouncycastle-pkix.url}"/>
-            <param name="destfile" value="${dsig.bouncycastle-pkix.jar}"/>
-        </antcall>
-        <antcall target="downloadfile">
-            <param name="sourcefile" value="${dsig.xmlsec.url}"/>
-            <param name="destfile" value="${dsig.xmlsec.jar}"/>
-        </antcall>
-        <antcall target="downloadfile">
-            <param name="sourcefile" value="${dsig.sl4j-api.url}"/>
-            <param name="destfile" value="${dsig.sl4j-api.jar}"/>
-        </antcall>
+        <downloadfile src="${rat.url}" dest="${rat.jar}"/>
+        <downloadfile src="${forbidden.url}" dest="${forbidden.jar}"/>
+        <downloadfile src="${dsig.bouncycastle-prov.url}" dest="${dsig.bouncycastle-prov.jar}"/>
+        <downloadfile src="${dsig.bouncycastle-pkix.url}" dest="${dsig.bouncycastle-pkix.jar}"/>
+        <downloadfile src="${dsig.xmlsec.url}" dest="${dsig.xmlsec.jar}"/>
+        <downloadfile src="${dsig.sl4j-api.url}" dest="${dsig.sl4j-api.jar}"/>
     </target>
 
     <target name="check-ooxml-jars">
@@ -598,18 +579,9 @@ under the License.
     </target>
     <target name="fetch-ooxml-jars" depends="check-ooxml-jars" unless="ooxml.jars.present">
         <mkdir dir="${ooxml.lib}"/>
-        <antcall target="downloadfile">
-            <param name="sourcefile" value="${ooxml.curvesapi.url}"/>
-            <param name="destfile" value="${ooxml.curvesapi.jar}"/>
-        </antcall>
-        <antcall target="downloadfile">
-            <param name="sourcefile" value="${ooxml.xmlbeans23.url}"/>
-            <param name="destfile" value="${ooxml.xmlbeans23.jar}"/>
-        </antcall>
-        <antcall target="downloadfile">
-            <param name="sourcefile" value="${ooxml.xmlbeans26.url}"/>
-            <param name="destfile" value="${ooxml.xmlbeans26.jar}"/>
-        </antcall>
+        <downloadfile src="${ooxml.curvesapi.url}" dest="${ooxml.curvesapi.jar}"/>
+        <downloadfile src="${ooxml.xmlbeans23.url}" dest="${ooxml.xmlbeans23.jar}"/>
+        <downloadfile src="${ooxml.xmlbeans26.url}" dest="${ooxml.xmlbeans26.jar}"/>
     </target>
 
     <target name="check-ooxml-xsds">
@@ -1441,58 +1413,23 @@ under the License.
             description="Builds the POM files for a maven distribution, and copies these and the jars to the appropriate locations">
 
         <!-- Build the org.apache.poi poms -->
-        <copy file="maven/poi.pom" tofile="${dist.dir}/poi-${version.id}.pom">
+        <copy todir="${dist.dir}/maven">
+            <fileset dir="maven" includes="poi*.pom"/>
+            <chainedmapper>
+                <firstmatchmapper>
+                    <regexpmapper from="^(.*).pom$$" to="\1/\1.pom"/>
+                    <globmapper from="poi.pom" to="poi/poi.pom"/>
+                </firstmatchmapper>
+                <globmapper from="*.pom" to="*-${version.id}.pom"/>
+            </chainedmapper>
             <filterchain>
                 <replacetokens>
                     <token key="VERSION" value="${version.id}"/>
-                </replacetokens>
-            </filterchain>
-        </copy>
-        <copy file="maven/poi-scratchpad.pom" tofile="${dist.dir}/poi-scratchpad-${version.id}.pom">
-            <filterchain>
-                <replacetokens>
-                    <token key="VERSION" value="${version.id}"/>
-                </replacetokens>
-            </filterchain>
-        </copy>
-        <copy file="maven/poi-ooxml.pom" tofile="${dist.dir}/poi-ooxml-${version.id}.pom">
-            <filterchain>
-                <replacetokens>
-                    <token key="VERSION" value="${version.id}"/>
-                </replacetokens>
-            </filterchain>
-        </copy>
-        <copy file="maven/poi-examples.pom" tofile="${dist.dir}/poi-examples-${version.id}.pom">
-            <filterchain>
-                <replacetokens>
-                    <token key="VERSION" value="${version.id}"/>
-                </replacetokens>
-            </filterchain>
-        </copy>
-        <copy file="maven/poi-ooxml-schemas.pom" tofile="${dist.dir}/poi-ooxml-schemas-${version.id}.pom">
-            <filterchain>
-                <replacetokens>
-                    <token key="VERSION" value="${version.id}"/>
-                </replacetokens>
-            </filterchain>
-        </copy>
-        <copy file="maven/poi-excelant.pom" tofile="${dist.dir}/poi-excelant-${version.id}.pom">
-            <filterchain>
-                <replacetokens>
-                    <token key="VERSION" value="${version.id}"/>
-                </replacetokens>
-            </filterchain>
-        </copy>
-        <copy file="maven/mvn-deploy.sh" todir="${dist.dir}">
-            <filterchain>
-                <replacetokens>
-                    <token key="VERSION" value="${version.id}"/>
-                    <token key="DSTAMP" value="${DSTAMP}"/>
                 </replacetokens>
             </filterchain>
         </copy>
         <echo>Maven POMs are located in ${dist.dir}</echo>
-        <echo>Use mvn-deploy.sh to deploy the artifacts in the remote repository</echo>
+        <echo>Use ant dist-nexus to deploy the artifacts in the remote repository</echo>
     </target>
 
     <target name="-manifest">
@@ -1508,65 +1445,48 @@ under the License.
         </manifest>
     </target>
 
+    <macrodef name="maven-jar">
+        <attribute name="dir"/>
+        <sequential>
+            <local name="destfile"/>
+            <pathconvert property="destfile" targetos="unix">
+                <path><pathelement path="@{dir}"/></path>
+                <mapper>
+                    <chainedmapper>
+                        <filtermapper>
+                            <replaceregex pattern="ooxml-lite" replace="ooxml-schemas" flags="g"/>
+                            <replaceregex pattern="(.java|.src)$$" replace="-sources"/>
+                            <replaceregex pattern=".*(?:build|src).?(.*)?" replace="\1"/>
+                            <replaceregex pattern="(.*)(-classes|-sources)" replace="poi-\1/poi-\1-${version.id}\2"/>
+                            <replaceregex pattern="^(classes|sources)$$" replace="poi/poi-${version.id}-\1"/>
+                            <replaceregex pattern="-classes" replace=""/>
+                        </filtermapper>
+                    </chainedmapper>
+                </mapper>
+            </pathconvert>
+            <jar destfile="build/dist/maven/${destfile}.jar"
+                 manifest="build/poi-manifest.mf">
+                <fileset dir="@{dir}"/>
+                <metainf dir="legal/"/>
+            </jar>
+        </sequential>
+    </macrodef>
+
     <target name="jar" depends="compile-all, compile-version, -manifest" description="Creates jar files for distribution">
-        <jar destfile="${dist.dir}/${jar.name}-${version.id}-${DSTAMP}.jar"
-             manifest="build/poi-manifest.mf">
-            <fileset dir="${main.output.dir}"/>
-            <metainf dir="legal/"/>
-        </jar>
-        <jar destfile="${dist.dir}/${jar.name}-scratchpad-${version.id}-${DSTAMP}.jar"
-             manifest="build/poi-manifest.mf">
-            <fileset dir="${scratchpad.output.dir}"/>
-            <metainf dir="legal/"/>
-        </jar>
-        <jar destfile="${dist.dir}/${jar.name}-ooxml-${version.id}-${DSTAMP}.jar"
-             manifest="build/poi-manifest.mf">
-            <fileset dir="${ooxml.output.dir}"/>
-            <metainf dir="legal/"/>
-        </jar>
-        <jar destfile="${dist.dir}/${jar.name}-examples-${version.id}-${DSTAMP}.jar"
-             manifest="build/poi-manifest.mf">
-            <fileset dir="${examples.output.dir}"/>
-            <metainf dir="legal/"/>
-        </jar>
-        <jar destfile="${dist.dir}/${jar.name}-ooxml-schemas-${version.id}-${DSTAMP}.jar"
-             manifest="build/poi-manifest.mf">
-            <fileset dir="${ooxml.lite.output.dir}"/>
-            <metainf dir="legal/"/>
-        </jar>
-        <jar destfile="${dist.dir}/${jar.name}-excelant-${version.id}-${DSTAMP}.jar"
-             manifest="build/poi-manifest.mf">
-            <fileset dir="${excelant.output.dir}"/>
-            <metainf dir="legal/"/>
-        </jar>
+        <maven-jar dir="${main.output.dir}"/>
+        <maven-jar dir="${scratchpad.output.dir}"/>
+        <maven-jar dir="${ooxml.output.dir}"/>
+        <maven-jar dir="${examples.output.dir}"/>
+        <maven-jar dir="${excelant.output.dir}"/>
+        <maven-jar dir="${ooxml.lite.output.dir}"/>
     </target>
 
     <target name="jar-src" depends="compile-all, compile-version, -manifest" description="Sources for Maven">
-        <jar destfile="${dist.dir}/${jar.name}-${version.id}-sources-${DSTAMP}.jar"
-             manifest="build/poi-manifest.mf">
-            <fileset dir="${main.src}"/>
-            <metainf dir="legal/"/>
-        </jar>
-        <jar destfile="${dist.dir}/${jar.name}-scratchpad-${version.id}-sources-${DSTAMP}.jar"
-             manifest="build/poi-manifest.mf">
-            <fileset dir="${scratchpad.src}"/>
-            <metainf dir="legal/"/>
-        </jar>
-        <jar destfile="${dist.dir}/${jar.name}-ooxml-${version.id}-sources-${DSTAMP}.jar"
-             manifest="build/poi-manifest.mf">
-            <fileset dir="${ooxml.src}"/>
-            <metainf dir="legal/"/>
-        </jar>
-        <jar destfile="${dist.dir}/${jar.name}-examples-${version.id}-sources-${DSTAMP}.jar"
-             manifest="build/poi-manifest.mf">
-            <fileset dir="${examples.src}"/>
-            <metainf dir="legal/"/>
-        </jar>
-        <jar destfile="${dist.dir}/${jar.name}-excelant-${version.id}-sources-${DSTAMP}.jar"
-             manifest="build/poi-manifest.mf">
-            <fileset dir="${excelant.src}"/>
-            <metainf dir="legal/"/>
-        </jar>
+        <maven-jar dir="${main.src}"/>
+        <maven-jar dir="${scratchpad.src}"/>
+        <maven-jar dir="${ooxml.src}"/>
+        <maven-jar dir="${examples.src}"/>
+        <maven-jar dir="${excelant.src}"/>
     </target>
 
 
@@ -1582,47 +1502,43 @@ under the License.
         <antcall target="javadocs"/>
     </target>
 
-
     <target name="jar-javadocs" description="JavaDocs for Maven" depends="compile,-manifest,-do-jar-create-javadocs-package-list">
         <property name="build.maven.javadocs" location="build/tmp/maven-javadocs"/>
 
         <!-- Build and package the main javadocs -->
-        <antcall target="-do-jar-javadocs">
-           <param name="srcfolder" value="${main.src}" />
-           <param name="jarname" value="${jar.name}" />
-        </antcall>
+    	<maven-javadocs src="${main.src}" dest="${jar.name}"/>
         <!-- Build and package the scratchpad javadocs -->
-        <antcall target="-do-jar-javadocs">
-           <param name="srcfolder" value="${scratchpad.src}" />
-           <param name="jarname" value="${jar.name}-scratchpad" />
-        </antcall>
+    	<maven-javadocs src="${scratchpad.src}" dest="${jar.name}-scratchpad"/>
         <!-- Build and package the ooxml javadocs -->
-        <antcall target="-do-jar-javadocs">
-           <param name="srcfolder" value="${ooxml.src}" />
-           <param name="jarname" value="${jar.name}-ooxml" />
-        </antcall>
+    	<maven-javadocs src="${ooxml.src}" dest="${jar.name}-ooxml"/>
     </target>
 
-    <target name="-do-jar-javadocs">
-        <echo message="Building ${jarname} javadocs from ${srcfolder}" />
-        <delete dir="${build.maven.javadocs}"/>
-        <mkdir dir="${build.maven.javadocs}"/>
-        <javadoc verbose="false" author="false" destdir="${build.maven.javadocs}"
-                 windowtitle="POI API Documentation" use="false" version="false"
-                 maxmemory="384M" additionalparam="-notimestamp -quiet" locale="en_US"
-                 classpathref="javadoc.classpath">
-            <packageset dir="${srcfolder}" defaultexcludes="yes">
-                <include name="org/apache/poi/**"/>
-            </packageset>
-            <link offline="true" href="https://poi.apache.org/apidocs" packagelistLoc="build/tmp/site/build/site/apidocs"/>
-        </javadoc>
-        <jar destfile="${dist.dir}/${jarname}-${version.id}-javadoc-${DSTAMP}.jar"
-             manifest="build/poi-manifest.mf">
-            <fileset dir="${build.maven.javadocs}"/>
-            <metainf dir="legal/"/>
-        </jar>
-    </target>
-
+    <macrodef name="maven-javadocs">
+        <attribute name="src"/>
+        <attribute name="dest"/>
+        <sequential>
+            <echo message="Building @{dest} javadocs from @{src}" />
+            <local name="build.maven.javadocs"/>
+            <property name="build.maven.javadocs" location="build/tmp/maven-javadocs"/>
+            <delete dir="${build.maven.javadocs}"/>
+            <mkdir dir="${build.maven.javadocs}"/>
+            <javadoc verbose="false" author="false" destdir="${build.maven.javadocs}"
+                     windowtitle="POI API Documentation" use="false" version="false"
+                     maxmemory="384M" additionalparam="-notimestamp -quiet" locale="en_US"
+                     classpathref="javadoc.classpath">
+                <packageset dir="@{src}" defaultexcludes="yes">
+                    <include name="org/apache/poi/**"/>
+                </packageset>
+                <link offline="true" href="https://poi.apache.org/apidocs" packagelistLoc="build/tmp/site/build/site/apidocs"/>
+            </javadoc>
+            <jar destfile="${dist.dir}/maven/@{dest}/@{dest}-${version.id}-javadoc.jar"
+                 manifest="build/poi-manifest.mf">
+                <fileset dir="${build.maven.javadocs}"/>
+                <metainf dir="legal/"/>
+            </jar>
+        </sequential>
+    </macrodef>
+        	
     <target name="release-notes" depends="init">
         <copy file="src/documentation/RELEASE-NOTES.txt" todir="build/dist/">
             <filterset>
@@ -1704,7 +1620,7 @@ under the License.
             </zipfileset>
             <tarfileset dir="${ooxml.lib}" prefix="${zipdir}/ooxml-lib">
               <include name="xmlbeans-2.6*.jar"/>
-              <include name="curvesapi-*.jar"/>              
+              <include name="curvesapi-*.jar"/>
             </tarfileset>
             <tarfileset dir="${build.site}" prefix="${zipdir}/docs"/>
             <tarfileset dir="${dist.dir}" prefix="${zipdir}">
@@ -1802,7 +1718,7 @@ under the License.
 	   <!-- remove clutter to compact build output -->
        <!-- replaceregexp doesn't work within loadfile ... -->
        <replaceregexp file="${rat.report}" match="\s+Printing headers for files without AL header.++" replace="" flags="s"/>
-    	
+
        <loadfile property="rat.reportcontent" srcFile="${rat.report}">
             <filterchain>
             	<linecontainsregexp negate="true">
@@ -1821,19 +1737,19 @@ under the License.
     <!-- See https://github.com/policeman-tools/forbidden-apis for details -->
     <!--  of the checks that this can do -->
     <target name="forbidden-apis-check" depends="init">
-        <taskdef name="forbiddenapis" 
-                 classname="de.thetaphi.forbiddenapis.ant.AntTask" 
+        <taskdef name="forbiddenapis"
+                 classname="de.thetaphi.forbiddenapis.ant.AntTask"
                  classpath="${forbidden.jar}"/>
 
         <!-- first check rules that apply to all the source code -->
-        <forbiddenapis 
-                 internalRuntimeForbidden="true" 
+        <forbiddenapis
+                 internalRuntimeForbidden="true"
                  classpathref="forbiddenapis.classpath"
                  suppressAnnotation="org.apache.poi.util.SuppressForbidden"
             >
             <bundledsignatures name="jdk-unsafe-${jdk.version.source}"/>
             <bundledsignatures name="jdk-deprecated-${jdk.version.source}"/>
-            <!-- 
+            <!--
             <bundledsignatures name="jdk-system-out"/>
             -->
             <signaturesFileset file="src/resources/devtools/forbidden-signatures.txt"/>
@@ -1855,8 +1771,8 @@ under the License.
         </forbiddenapis>
 
         <!-- then check some advanced rules which we only apply to the core code and not tests or examples -->
-        <forbiddenapis 
-                 internalRuntimeForbidden="true" 
+        <forbiddenapis
+                 internalRuntimeForbidden="true"
                  classpathref="forbiddenapis.classpath"
                  suppressAnnotation="org.apache.poi.util.SuppressForbidden"
             >
@@ -1871,10 +1787,9 @@ under the License.
 
     <target name="findbugs">
     	<!-- NOTE: we did not update to 3.x yet because it requires Java 7, but we are still supporting Java 6 currently! -->
-        <antcall target="downloadfile">
-            <param name="sourcefile" value="http://prdownloads.sourceforge.net/findbugs/findbugs-noUpdateChecks-2.0.3.zip?download"/>
-            <param name="destfile" value="${main.lib}/findbugs-noUpdateChecks-2.0.3.zip"/>
-        </antcall>
+        <downloadfile
+            src="http://prdownloads.sourceforge.net/findbugs/findbugs-noUpdateChecks-2.0.3.zip?download"
+            dest="${main.lib}/findbugs-noUpdateChecks-2.0.3.zip"/>
 
         <unzip src="${main.lib}/findbugs-noUpdateChecks-2.0.3.zip"
                dest="build/findbugs/lib">
@@ -1967,4 +1882,90 @@ under the License.
         -->
     </target>
 
+    <target name="dist-checksum" depends="load-maven-server-settings">
+        <fileset id="dist-archives" dir="${dist.dir}" includes="**/*.jar,**/*.pom,**/*.zip,**/*.tar.gz"/>
+
+        <checksum algorithm="sha1" format="MD5SUM">
+            <fileset refid="dist-archives"/>
+        </checksum>
+        <checksum algorithm="md5" format="MD5SUM">
+            <fileset refid="dist-archives"/>
+        </checksum>
+
+        <fixcrlf srcDir="${dist.dir}" includes="**/*.md5,**/*.sha1" eol="unix"/>
+
+        <downloadfile src="${dist.bouncycastle-prov.url}" dest="${dist.bouncycastle-prov.jar}"/>
+        <downloadfile src="${dist.bouncycastle-bcpg.url}" dest="${dist.bouncycastle-bcpg.jar}"/>
+        <downloadfile src="${dist.commons-openpgp.url}" dest="${dist.commons-openpgp.jar}"/>
+
+        <taskdef resource="org/apache/commons/openpgp/ant/antlib.xml" uri="antlib:org.apache.commons.openpgp.ant">
+            <classpath>
+                <pathelement path="${dist.commons-openpgp.jar}"/>
+                <pathelement path="${dist.bouncycastle-prov.jar}"/>
+                <pathelement path="${dist.bouncycastle-bcpg.jar}"/>
+            </classpath>
+        </taskdef>
+
+        <openpgp:signer secring="${settings.poi-signing.privateKey}"
+            pubring="${settings.poi-signing.publicKey}"
+            password="${settings.poi-signing.passphrase}" keyid="${settings.poi-signing.username}"
+            asciiarmor="true">
+            <fileset refid="dist-archives"/>
+        </openpgp:signer>
+    </target>
+
+    <macrodef name="nexus-upload">
+        <attribute name="artifactId"/>
+        <sequential>
+            <downloadfile src="${dist.nexus-staging.url}" dest="${dist.nexus-staging.jar}"/>
+            <taskdef uri="antlib:org.sonatype.nexus.ant.staging" resource="org/sonatype/nexus/ant/staging/antlib.xml">
+                <classpath><pathelement path="${dist.nexus-staging.jar}"/></classpath>
+            </taskdef>
+
+            <staging:stageRemotely keepStagingRepositoryOnFailure="true" description="@{artifactId} ${version.id}">
+                <staging:nexusStagingInfo stagingDirectory="build/dist/maven/@{artifactId}">
+                    <staging:projectInfo groupId="org.apache.poi" artifactId="@{artifactId}" version="${version.id}" />
+                    <staging:connectionInfo baseUrl="https://repository.apache.org">
+                        <staging:authentication username="${settings.apache-nexus.username}" password="${settings.apache-nexus.password}" />
+                    </staging:connectionInfo>
+                </staging:nexusStagingInfo>
+            </staging:stageRemotely>
+        </sequential>
+    </macrodef>
+
+    <target name="dist-nexus" depends="load-maven-server-settings,dist-checksum">
+        <!-- if this throws a "... dh keypair ..." exception, use Java 7+ for executing the task -->
+        <nexus-upload artifactId="poi"/>
+        <nexus-upload artifactId="poi-examples"/>
+        <nexus-upload artifactId="poi-excelant"/>
+        <nexus-upload artifactId="poi-ooxml"/>
+        <nexus-upload artifactId="poi-ooxml-schemas"/>
+        <nexus-upload artifactId="poi-scratchpad"/>
+    </target>
+
+    <!--
+        Configure gpg settings in local maven settings.xml
+        see release-guide.txt for more details
+    -->
+    <target name="load-maven-server-settings">
+        <xslt in="${user.home}/.m2/settings.xml" out="build/tmp/signing.properties">
+            <style>
+                <string><![CDATA[
+                    <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:mvn="http://maven.apache.org/SETTINGS/1.0.0">
+                        <xsl:output method="text" version="1.0" encoding="ISO-8859-1"/>
+                        <xsl:template match="@*|text()"/>
+                        <xsl:template match="//mvn:server[contains('poi-signing|apache-nexus',mvn:id/text())]/*[name(.)!='id']">
+                            <xsl:value-of select="concat('settings.',../mvn:id,'.',name(.),'=',translate(text(),'\','/'),'&#010;')"/>
+                        </xsl:template>
+                    </xsl:stylesheet>
+                ]]></string>
+            </style>
+        </xslt>
+
+        <loadproperties srcFile="build/tmp/signing.properties"/>
+        <pathconvert property="settings.poi-signing.publicKey">
+            <path><pathelement path="${settings.poi-signing.privateKey}"/></path>
+            <mapper><filtermapper><replacestring from="secring" to="pubring"/></filtermapper></mapper>
+        </pathconvert>
+    </target>
 </project>
