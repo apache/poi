@@ -92,17 +92,27 @@ under the License.
 			<sort>
 				<resources>
 					<fileset dir="${dist}">
-						<include name="poi-3.*.jar" />
-						<include name="poi-ooxml-3.*.jar" />
-						<include name="poi-ooxml-schemas-3.*.jar" />
-						<exclude name="*-javadocs-*" />
-						<exclude name="*-sources-*" />
+						<include name="**/poi-3.*.jar" />
+						<include name="**/poi-ooxml-3.*.jar" />
+                        <include name="**/poi-ooxml-schemas-3.*.jar" />
+                        <exclude name="**/*-javadoc*" />
+						<exclude name="**/*-sources*" />
 					</fileset>
 				</resources>
 			</sort>
         </pathconvert>
 
-        <echo message="Found jar packages at ${jarpackage}"/>
+		<fail message="Did not find jar packages looking in directory ${dist}">
+			<condition>
+				<or>
+					<equals arg1="${jarpackage}" arg2=""/>
+					<not>
+						<isset property="jarpackage"/>
+					</not>
+				</or>
+			</condition>
+		</fail>
+		<echo message="Found jar packages at ${jarpackage}, dist: ${dist}"/>
 
 		<path id="libs">
 			<fileset dir="../../lib">
@@ -119,7 +129,7 @@ under the License.
 		<javac srcdir="../examples/src" destdir="${build}"
 			target="1.6"
             source="1.6"
-            debug="trye"
+            debug="true"
             encoding="ASCII"
             fork="yes"
             includeantruntime="false"
@@ -133,22 +143,22 @@ under the License.
 			<sort>
 				<resources>
 					<fileset dir="${dist}">
-						<include name="poi-3.*.jar" />
-						<include name="poi-ooxml-3.*.jar" />
-						<include name="poi-ooxml-schemas-3.*.jar" />
-						<include name="poi-scratchpad-3.*.jar" />
-						<exclude name="*-javadocs-*" />
-						<exclude name="*-sources-*" />
+                        <include name="**/poi-3.*.jar" />
+                        <include name="**/poi-ooxml-3.*.jar" />
+                        <include name="**/poi-ooxml-schemas-3.*.jar" />
+                        <include name="**/poi-scratchpad-3.*.jar" />
+                        <exclude name="**/*-javadoc*" />
+                        <exclude name="**/*-sources*" />
 					</fileset>
 				</resources>
 			</sort>
         </pathconvert>
 
-		<echo message="Compiling all examples with the additinal scratchpad.jar" />
+		<echo message="Compiling all examples with the additional scratchpad.jar" />
 		<javac srcdir="../examples/src" destdir="${build}"
 			target="1.6"
             source="1.6"
-            debug="trye"
+            debug="true"
             encoding="ASCII"
             fork="yes"
             includeantruntime="false"
