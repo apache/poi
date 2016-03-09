@@ -1819,12 +1819,10 @@ under the License.
         </taskdef>
         <findbugs home="${findbugs.home}" output="html" outputFile="build/findbugs.html"
             excludeFilter="src/resources/devtools/findbugs-filters.xml">
-            <fileset dir="${dist.dir}">
-                <include name="poi-${version.id}-*.jar"/>
-                <include name="poi-scratchpad-${version.id}-*.jar"/>
-                <include name="poi-ooxml-${version.id}-*.jar"/>
-                <exclude name="poi-*${version.id}-sources-*.jar"/>
-                <exclude name="poi-*${version.id}-javadocs-*.jar"/>
+            <fileset dir="${dist.dir}/maven">
+                <include name="poi/poi-${version.id}.jar"/>
+                <include name="poi-scratchpad/poi-scratchpad-${version.id}.jar"/>
+                <include name="poi-ooxml/poi-ooxml-${version.id}.jar"/>
             </fileset>
             <auxClasspath path="${dsig.bouncycastle-pkix.jar}" />
             <auxClasspath path="${dsig.bouncycastle-prov.jar}" />
@@ -1843,12 +1841,10 @@ under the License.
         </findbugs>
         <findbugs home="${findbugs.home}" output="xml" outputFile="build/findbugs.xml"
             excludeFilter="src/resources/devtools/findbugs-filters.xml">
-            <fileset dir="${dist.dir}">
-                <include name="poi-${version.id}-*.jar"/>
-                <include name="poi-scratchpad-${version.id}-*.jar"/>
-                <include name="poi-ooxml-${version.id}-*.jar"/>
-                <exclude name="poi-*${version.id}-sources-*.jar"/>
-                <exclude name="poi-*${version.id}-javadocs-*.jar"/>
+            <fileset dir="${dist.dir}/maven">
+                <include name="poi/poi-${version.id}.jar"/>
+                <include name="poi-scratchpad/poi-scratchpad-${version.id}.jar"/>
+                <include name="poi-ooxml/poi-ooxml-${version.id}.jar"/>
             </fileset>
             <auxClasspath path="${dsig.bouncycastle-pkix.jar}" />
             <auxClasspath path="${dsig.bouncycastle-prov.jar}" />
