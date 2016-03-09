@@ -198,7 +198,17 @@
                 <configuration>
                   <target>
                     <copy todir="${basedir}/target/generated-sources/xmlbeans">
-                      <fileset dir="${basedir}/../../src/ooxml/java" includes="org/apache/poi/POIXMLTypeLoader.java"/>
+                      <fileset dir="${basedir}/../../src/ooxml/java">
+                        <include name="org/apache/poi/POIXMLTypeLoader.java"/>
+                        <include name="org/apache/poi/util/DocumentHelper.java"/>
+                        <include name="org/apache/poi/util/SAXHelper.java"/>
+                      </fileset>
+                      <fileset dir="${basedir}/../../src/java">
+                        <include name="org/apache/poi/util/POILogFactory.java"/>
+                        <include name="org/apache/poi/util/POILogger.java"/>
+                        <include name="org/apache/poi/util/NullLogger.java"/>
+                        <include name="org/apache/poi/util/Internal.java"/>
+                      </fileset>
                     </copy>
                     <copy todir="${basedir}/target/schemas">
                       <fileset dir="${basedir}/../../src/ooxml/resources/org/apache/poi/schemas"/>

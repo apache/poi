@@ -698,7 +698,17 @@ under the License.
             </replace>
 
             <copy todir="${xmlbean.sources.dir}">
-                <file basedir="${ooxml.src}" file="${ooxml.src}/org/apache/poi/POIXMLTypeLoader.java"/>
+            	<fileset dir="${ooxml.src}">
+            		<include name="org/apache/poi/POIXMLTypeLoader.java"/>
+            		<include name="org/apache/poi/util/DocumentHelper.java"/>
+            		<include name="org/apache/poi/util/SAXHelper.java"/>
+            	</fileset>
+            	<fileset dir="${main.src}">
+            		<include name="org/apache/poi/util/POILogFactory.java"/>
+            		<include name="org/apache/poi/util/POILogger.java"/>
+                    <include name="org/apache/poi/util/NullLogger.java"/>
+                    <include name="org/apache/poi/util/Internal.java"/>
+            	</fileset>
             </copy>
 
             <javac target="${jdk.version.class}"
