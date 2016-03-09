@@ -688,8 +688,7 @@ public final class InternalSheet {
      */
     public void removeValueRecord(int row, CellValueRecordInterface col) {
 
-        log.logFormatted(POILogger.DEBUG, "remove value record row %",
-                         new int[]{row } );
+        log.log(POILogger.DEBUG, "remove value record row "+row);
         _rowsAggregate.removeCell(col);
     }
 

@@ -51,15 +51,6 @@ public final class TestPOILogger extends POILogger {
             log.log(POILogger.WARN, "Test = ", 1);
             assertEquals("Test = 1", tlog.lastLog);
             
-            log.logFormatted(POILogger.ERROR, "Test param 1 = %, param 2 = %d", "2", 3 );
-            assertEquals("Test param 1 = 2, param 2 = 3", tlog.lastLog);
-            
-            log.logFormatted(POILogger.ERROR, "Test param 1 = %d, param 2 = %", new int[]{4, 5} );
-            assertEquals("Test param 1 = 4, param 2 = 5", tlog.lastLog);
-            
-            log.logFormatted(POILogger.ERROR, "Test param 1 = %1.1, param 2 = %0.1", new double[]{4, 5.23} );
-            assertEquals("Test param 1 = 4, param 2 = 5.2", tlog.lastLog);
-
             log.log(POILogger.ERROR, "Test ", 1,2,new Exception("bla"));
             assertEquals("Test 12", tlog.lastLog);
             assertNotNull(tlog.lastEx);
