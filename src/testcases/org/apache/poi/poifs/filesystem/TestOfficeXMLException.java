@@ -28,16 +28,15 @@ import org.apache.poi.hssf.HSSFTestDataSamples;
 import junit.framework.TestCase;
 
 /**
- * Class to test that POIFS complains when given an Office 2007 XML document
- *
- * @author Marc Johnson
+ * Class to test that POIFS complains when given an Office 2003 XML
+ *  of Office Open XML (OOXML, 2007+) document
  */
-public class TestOffice2007XMLException extends TestCase {
+public class TestOfficeXMLException extends TestCase {
 
 	private static final InputStream openSampleStream(String sampleFileName) {
 		return HSSFTestDataSamples.openSampleFileStream(sampleFileName);
 	}
-	public void testXMLException() throws IOException
+	public void testOOXMLException() throws IOException
 	{
 		InputStream in = openSampleStream("sample.xlsx");
 
@@ -50,12 +49,27 @@ public class TestOffice2007XMLException extends TestCase {
 			assertTrue(e.getMessage().indexOf("You are calling the part of POI that deals with OLE2 Office Documents") > -1);
 		}
 	}
+    public void test2003XMLException() throws IOException
+    {
+        InputStream in = openSampleStream("SampleSS.xml");
+
+        try {
+            new POIFSFileSystem(in).close();
+            fail("expected exception was not thrown");
+        } catch(NotOLE2FileException e) {
+            // expected during successful test
+            assertTrue(e.getMessage().indexOf("The supplied data appears to be a raw XML file") > -1);
+            assertTrue(e.getMessage().indexOf("Formats such as Office 2003 XML") > -1);
+        }
+    }
 	
 	public void testDetectAsPOIFS() throws IOException {
-		
 		// ooxml file isn't
 		confirmIsPOIFS("SampleSS.xlsx", false);
 		
+        // 2003 xml file isn't
+        confirmIsPOIFS("SampleSS.xml", false);
+        
 		// xls file is
 		confirmIsPOIFS("SampleSS.xls", true);
 		
