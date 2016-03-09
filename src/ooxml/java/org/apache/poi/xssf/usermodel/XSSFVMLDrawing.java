@@ -22,6 +22,7 @@ import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.StringReader;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,11 +34,15 @@ import javax.xml.namespace.QName;
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.util.DocumentHelper;
 import org.apache.poi.xssf.util.EvilUnclosedBRFixingInputStream;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
+import org.w3c.dom.Document;
 import org.w3c.dom.Node;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 import com.microsoft.schemas.office.excel.CTClientData;
 import com.microsoft.schemas.office.excel.STObjectType;
@@ -124,10 +129,15 @@ public final class XSSFVMLDrawing extends POIXMLDocumentPart {
         this(part);
     }
 
+    @SuppressWarnings("resource")
     protected void read(InputStream is) throws IOException, XmlException {
-        XmlObject root = XmlObject.Factory.parse(
-              new EvilUnclosedBRFixingInputStream(is), DEFAULT_XML_OPTIONS
-        );
+        Document doc;
+        try {
+            doc = DocumentHelper.readDocument(new EvilUnclosedBRFixingInputStream(is));
+        } catch (SAXException e) {
+            throw new XmlException(e.getMessage(), e);
+        }
+        XmlObject root = XmlObject.Factory.parse(doc, DEFAULT_XML_OPTIONS);
 
         _qnames = new ArrayList<QName>();
         _items = new ArrayList<XmlObject>();
@@ -149,7 +159,15 @@ public final class XSSFVMLDrawing extends POIXMLDocumentPart {
                 }
                 _items.add(shape);
             } else {
-                _items.add(XmlObject.Factory.parse(obj.xmlText(), DEFAULT_XML_OPTIONS));
+                Document doc2;
+                try {
+                    InputSource is2 = new InputSource(new StringReader(obj.xmlText()));
+                    doc2 = DocumentHelper.readDocument(is2);
+                } catch (SAXException e) {
+                    throw new XmlException(e.getMessage(), e);
+                }
+                
+                _items.add(XmlObject.Factory.parse(doc2, DEFAULT_XML_OPTIONS));
             }
             _qnames.add(qname);
         }

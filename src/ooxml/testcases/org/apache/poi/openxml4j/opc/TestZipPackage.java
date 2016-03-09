@@ -67,6 +67,8 @@ public class TestZipPackage {
         assertTrue("Core not found in " + p.getParts(), foundCoreProps);
         assertFalse("Document should not be found in " + p.getParts(), foundDocument);
         assertFalse("Theme1 should not found in " + p.getParts(), foundTheme1);
+        p.close();
+        is.close();
     }
 
     @Test
@@ -89,7 +91,7 @@ public class TestZipPackage {
             writer.close();
         }
         String string = new String(str.toByteArray(), "UTF-8");
-        assertTrue("Had: " + string, string.contains("Exceeded Entity dereference bytes limit"));
+        assertTrue("Had: " + string, string.contains("The parser has encountered more than"));
     }
 
     @Test

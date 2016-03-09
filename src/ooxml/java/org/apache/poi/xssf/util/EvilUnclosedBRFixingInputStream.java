@@ -63,6 +63,9 @@ public class EvilUnclosedBRFixingInputStream extends InputStream {
       // Figure out how much we've done
       int read;
       if(readB == -1 || readB == 0) {
+          if (readA == 0) {
+              return readB;
+          }
          read = readA; 
       } else {
          read = readA + readB;

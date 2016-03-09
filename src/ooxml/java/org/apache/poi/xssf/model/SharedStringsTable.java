@@ -134,7 +134,7 @@ public class SharedStringsTable extends POIXMLDocumentPart {
                 cnt++;
             }
         } catch (XmlException e) {
-            throw new IOException(e);
+            throw new IOException("unable to parse shared strings table", e);
         }
     }
 
@@ -216,18 +216,18 @@ public class SharedStringsTable extends POIXMLDocumentPart {
      * @throws IOException if an error occurs while writing.
      */
     public void writeTo(OutputStream out) throws IOException {
-        XmlOptions options = new XmlOptions(DEFAULT_XML_OPTIONS);
+        XmlOptions xmlOptions = new XmlOptions(DEFAULT_XML_OPTIONS);
         // the following two lines turn off writing CDATA
         // see Bugzilla 48936
-        options.setSaveCDataLengthThreshold(1000000);
-        options.setSaveCDataEntityCountThreshold(-1);
+        xmlOptions.setSaveCDataLengthThreshold(1000000);
+        xmlOptions.setSaveCDataEntityCountThreshold(-1);
 
         //re-create the sst table every time saving a workbook
         CTSst sst = _sstDoc.getSst();
         sst.setCount(count);
         sst.setUniqueCount(uniqueCount);
 
-        _sstDoc.save(out, options);
+        _sstDoc.save(out, xmlOptions);
     }
 
     @Override
