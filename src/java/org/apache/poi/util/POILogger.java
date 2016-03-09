@@ -17,18 +17,11 @@
 
 package org.apache.poi.util;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * A logger interface that strives to make it as easy as possible for
  * developers to write log calls, while simultaneously making those
  * calls as cheap as possible by performing lazy evaluation of the log
  * message.<p>
- *
- * @author Marc Johnson (mjohnson at apache dot org)
- * @author Glen Stampoultzis (glens at apache.org)
- * @author Nicola Ken Barozzi (nicolaken at apache.org)
  */
 @Internal
 public abstract class POILogger {
@@ -108,92 +101,6 @@ public abstract class POILogger {
             log(level, msg);
         } else {
             log(level, msg, lastEx);
-        }
-    }
-
-    /**
-     * Logs a formated message. The message itself may contain %
-     * characters as place holders. This routine will attempt to match
-     * the placeholder by looking at the type of parameter passed to
-     * obj1.<p>
-     *
-     * If the parameter is an array, it traverses the array first and
-     * matches parameters sequentially against the array items.
-     * Otherwise the parameters after <code>message</code> are matched
-     * in order.<p>
-     *
-     * If the place holder matches against a number it is printed as a
-     * whole number. This can be overridden by specifying a precision
-     * in the form %n.m where n is the padding for the whole part and
-     * m is the number of decimal places to display. n can be excluded
-     * if desired. n and m may not be more than 9.<p>
-     *
-     * If the last parameter (after flattening) is a Throwable it is
-     * logged specially.
-     *
-     * @param level One of DEBUG, INFO, WARN, ERROR, FATAL
-     * @param message The message to log.
-     * @param unflatParams The objects to match against.
-     */
-    public void logFormatted(int level, String message, Object... unflatParams) {
-        if (!check(level)) return;
-        Object[] params = flattenArrays(unflatParams);
-        String msg = StringUtil.format(message, params);
-        msg = msg.replaceAll("[\r\n]+", " "); // log forging escape
-
-        if (params.length > 0 && params[params.length-1] instanceof Throwable) {
-            log(level, msg, (Throwable)params[params.length-1]);
-        } else {
-            log(level, msg);
-        }
-    }
-
-    /**
-     * Flattens any contained objects. Only traverses one level deep.
-     */
-    private Object[] flattenArrays(Object... unflatParams) {
-        List<Object> results = new ArrayList<Object>();
-        for (Object obj : unflatParams) {
-            flattenObject(results, obj);
-        }
-        return results.toArray(new Object[results.size()]);
-    }
-
-    private void flattenObject(List<Object> results, Object object) {
-        if (object instanceof byte[]) {
-            for (byte b : (byte[])object) {
-                results.add(Byte.valueOf(b));
-            }
-        } else if (object instanceof char[]) {
-            for (char c : (char[])object) {
-                results.add(Character.valueOf(c));
-            }
-        } else if (object instanceof short[]) {
-            for (short s : (short[])object) {
-                results.add(Short.valueOf(s));
-            }
-        } else if (object instanceof int[]) {
-            for (int i : (int[])object) {
-                results.add(Integer.valueOf(i));
-            }
-        } else if (object instanceof long[]) {
-            for (long l : (long[])object) {
-                results.add(Long.valueOf(l));
-            }
-        } else if (object instanceof float[]) {
-            for (float f : (float[])object) {
-                results.add(Float.valueOf(f));
-            }
-        } else if (object instanceof double[]) {
-            for (double d : (double[])object) {
-                results.add(Double.valueOf(d));
-            }
-        } else if (object instanceof Object[]) {
-            for (Object o : (Object[])object) {
-                results.add(o);
-            }
-        } else {
-            results.add(object);
         }
     }
 }
