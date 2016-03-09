@@ -781,7 +781,8 @@ public final class TestPackage {
             }
         }
         
-        if(e.getMessage().startsWith("Zip bomb detected!")) {
+        String msg = e.getMessage();
+        if(msg != null && msg.startsWith("Zip bomb detected!")) {
             return;
         }
         

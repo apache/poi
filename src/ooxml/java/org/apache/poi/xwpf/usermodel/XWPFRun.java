@@ -20,6 +20,7 @@ import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,6 +30,7 @@ import javax.xml.namespace.QName;
 
 import org.apache.poi.POIXMLException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.util.DocumentHelper;
 import org.apache.poi.util.Internal;
 import org.apache.poi.wp.usermodel.CharacterRun;
 import org.apache.xmlbeans.XmlCursor;
@@ -80,6 +82,8 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.STUnderline;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STVerticalAlignRun;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 /**
  * XWPFRun object defines a region of text with a common set of properties
@@ -171,7 +175,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     }
 
     private List<CTPicture> getCTPictures(XmlObject o) {
-        List<CTPicture> pictures = new ArrayList<CTPicture>();
+        List<CTPicture> pics = new ArrayList<CTPicture>();
         XmlObject[] picts = o.selectPath("declare namespace pic='" + CTPicture.type.getName().getNamespaceURI() + "' .//pic:pic");
         for (XmlObject pict : picts) {
             if (pict instanceof XmlAnyTypeImpl) {
@@ -183,10 +187,10 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
                 }
             }
             if (pict instanceof CTPicture) {
-                pictures.add((CTPicture) pict);
+                pics.add((CTPicture) pict);
             }
         }
-        return pictures;
+        return pics;
     }
 
     /**
@@ -940,6 +944,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
             relationId = headerFooter.addPictureData(pictureData, pictureType);
             picData = (XWPFPictureData) headerFooter.getRelationById(relationId);
         } else {
+            @SuppressWarnings("resource")
             XWPFDocument doc = parent.getDocument();
             relationId = doc.addPictureData(pictureData, pictureType);
             picData = (XWPFPictureData) doc.getRelationById(relationId);
@@ -958,7 +963,9 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
                             "<pic:pic xmlns:pic=\"" + CTPicture.type.getName().getNamespaceURI() + "\" />" +
                             "</a:graphicData>" +
                             "</a:graphic>";
-            inline.set(XmlToken.Factory.parse(xml, DEFAULT_XML_OPTIONS));
+            InputSource is = new InputSource(new StringReader(xml));
+            org.w3c.dom.Document doc = DocumentHelper.readDocument(is);
+            inline.set(XmlToken.Factory.parse(doc.getDocumentElement(), DEFAULT_XML_OPTIONS));
 
             // Setup the inline
             inline.setDistT(0);
@@ -1020,6 +1027,8 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
             pictures.add(xwpfPicture);
             return xwpfPicture;
         } catch (XmlException e) {
+            throw new IllegalStateException(e);
+        } catch (SAXException e) {
             throw new IllegalStateException(e);
         }
     }

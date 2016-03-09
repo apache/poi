@@ -18,9 +18,11 @@
 package org.apache.poi;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.io.StringReader;
 import java.net.URL;
 import java.util.Collections;
 import java.util.HashMap;
@@ -28,6 +30,7 @@ import java.util.Map;
 
 import javax.xml.stream.XMLStreamReader;
 
+import org.apache.poi.util.DocumentHelper;
 import org.apache.xmlbeans.SchemaType;
 import org.apache.xmlbeans.XmlBeans;
 import org.apache.xmlbeans.XmlException;
@@ -35,7 +38,10 @@ import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 import org.apache.xmlbeans.xml.stream.XMLInputStream;
 import org.apache.xmlbeans.xml.stream.XMLStreamException;
+import org.w3c.dom.Document;
 import org.w3c.dom.Node;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 @SuppressWarnings("deprecation")
 public class POIXMLTypeLoader {
@@ -77,19 +83,38 @@ public class POIXMLTypeLoader {
     }
 
     public static XmlObject parse(String xmlText, SchemaType type, XmlOptions options) throws XmlException {
-        return XmlBeans.getContextTypeLoader().parse(xmlText, type, getXmlOptions(options));
+        try {
+            return parse(new StringReader(xmlText), type, options);
+        } catch (IOException e) {
+            throw new XmlException("Unable to parse xml bean", e);
+        }
     }
 
     public static XmlObject parse(File file, SchemaType type, XmlOptions options) throws XmlException, IOException {
-        return XmlBeans.getContextTypeLoader().parse(file, type, getXmlOptions(options));
+        InputStream is = new FileInputStream(file);
+        try {
+            return parse(is, type, options);
+        } finally {
+            is.close();
+        }
     }
 
     public static XmlObject parse(URL file, SchemaType type, XmlOptions options) throws XmlException, IOException {
-        return XmlBeans.getContextTypeLoader().parse(file, type, getXmlOptions(options));
+        InputStream is = file.openStream();
+        try {
+            return parse(is, type, options);
+        } finally {
+            is.close();
+        }
     }
 
     public static XmlObject parse(InputStream jiois, SchemaType type, XmlOptions options) throws XmlException, IOException {
-        return XmlBeans.getContextTypeLoader().parse(jiois, type, getXmlOptions(options));
+        try {
+            Document doc = DocumentHelper.readDocument(jiois);
+            return XmlBeans.getContextTypeLoader().parse(doc.getDocumentElement(), type, getXmlOptions(options));
+        } catch (SAXException e) {
+            throw new IOException("Unable to parse xml bean", e);
+        }
     }
 
     public static XmlObject parse(XMLStreamReader xsr, SchemaType type, XmlOptions options) throws XmlException {
@@ -97,7 +122,12 @@ public class POIXMLTypeLoader {
     }
 
     public static XmlObject parse(Reader jior, SchemaType type, XmlOptions options) throws XmlException, IOException {
-        return XmlBeans.getContextTypeLoader().parse(jior, type, getXmlOptions(options));
+        try {
+            Document doc = DocumentHelper.readDocument(new InputSource(jior));
+            return XmlBeans.getContextTypeLoader().parse(doc.getDocumentElement(), type, getXmlOptions(options));
+        } catch (SAXException e) {
+            throw new XmlException("Unable to parse xml bean", e);
+        }
     }
 
     public static XmlObject parse(Node node, SchemaType type, XmlOptions options) throws XmlException {

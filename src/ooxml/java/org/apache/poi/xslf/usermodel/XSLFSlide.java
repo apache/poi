@@ -30,6 +30,7 @@ import org.apache.poi.sl.usermodel.Notes;
 import org.apache.poi.sl.usermodel.Placeholder;
 import org.apache.poi.sl.usermodel.Slide;
 import org.apache.poi.util.Beta;
+import org.apache.poi.util.DocumentHelper;
 import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTBlip;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTGroupShapeProperties;
@@ -43,6 +44,8 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTGroupShape;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTGroupShapeNonVisual;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTSlide;
 import org.openxmlformats.schemas.presentationml.x2006.main.SldDocument;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 @Beta
 public final class XSLFSlide extends XSLFSheet
@@ -72,8 +75,14 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
     XSLFSlide(PackagePart part) throws IOException, XmlException {
         super(part);
 
-        SldDocument doc =
-            SldDocument.Factory.parse(getPackagePart().getInputStream(), DEFAULT_XML_OPTIONS);
+        Document _doc;
+        try {
+            _doc = DocumentHelper.readDocument(getPackagePart().getInputStream());
+        } catch (SAXException e) {
+            throw new IOException(e);
+        }
+        
+        SldDocument doc = SldDocument.Factory.parse(_doc, DEFAULT_XML_OPTIONS);
         _slide = doc.getSld();
         setCommonSlideData(_slide.getCSld());
     }
