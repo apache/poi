@@ -21,11 +21,15 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import javax.crypto.Cipher;
 
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.openxml4j.OpenXML4JTestDataSamples;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.poifs.crypt.CipherAlgorithm;
 import org.apache.poi.poifs.crypt.Decryptor;
@@ -34,8 +38,10 @@ import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.xmlbeans.XmlException;
 import org.junit.Assume;
 import org.junit.Test;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.DocumentDocument;
 
 public class TestXWPFBugs {
     /**
@@ -105,5 +111,18 @@ public class TestXWPFBugs {
         ex.close();
 
         filesystem.close();
+    }
+
+    
+    @Test
+    public void bug59058() throws IOException, XmlException {
+        String files[] = { "bug57031.docx", "bug59058.docx" };
+        for (String f : files) {
+            ZipFile zf = new ZipFile(POIDataSamples.getDocumentInstance().getFile(f));
+            ZipEntry entry = zf.getEntry("word/document.xml");
+            DocumentDocument document = DocumentDocument.Factory.parse(zf.getInputStream(entry));
+            assertNotNull(document);
+            zf.close();
+        }
     }
 }
