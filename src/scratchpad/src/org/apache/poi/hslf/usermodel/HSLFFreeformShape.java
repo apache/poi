@@ -283,10 +283,8 @@ public final class HSLFFreeformShape extends HSLFAutoShape implements FreeformSh
         Iterator<byte[]> vertIter = verticesProp.iterator();
         Iterator<byte[]> segIter = segmentsProp.iterator();
         
-        byte segPushBack[] = null;
         while (vertIter.hasNext() && segIter.hasNext()) {
-            byte[] segElem = (segPushBack != null) ? segPushBack : segIter.next();
-            segPushBack = null;
+            byte[] segElem = segIter.next();
             PathInfo pi = getPathInfo(segElem);
             switch (pi) {
                 case escape: {
