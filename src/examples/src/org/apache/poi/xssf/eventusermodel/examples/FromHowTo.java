@@ -129,8 +129,7 @@ public class FromHowTo {
 			}
 		}
 
-		public void characters(char[] ch, int start, int length)
-				throws SAXException {
+		public void characters(char[] ch, int start, int length) throws SAXException { // NOSONAR
 			lastContents += new String(ch, start, length);
 		}
 	}
