@@ -294,13 +294,11 @@ public class StringUtil {
     * An Iterator over an array of Strings.
     */
    public static class StringsIterator implements Iterator<String> {
-      private String[] strings;
+      private String[] strings = {};
       private int position = 0;
       public StringsIterator(String[] strings) {
-         if(strings != null) {
-            this.strings = strings;
-         } else {
-            this.strings = new String[0];
+          if (strings != null) {
+              this.strings = strings.clone();
          }
       }
 
@@ -309,8 +307,9 @@ public class StringUtil {
       }
       public String next() {
          int ourPos = position++;
-         if(ourPos >= strings.length)
+         if(ourPos >= strings.length) {
             throw new ArrayIndexOutOfBoundsException(ourPos);
+         }
          return strings[ourPos];
       }
       public void remove() {}

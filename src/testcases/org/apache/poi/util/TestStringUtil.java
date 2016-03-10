@@ -17,24 +17,25 @@
 
 package org.apache.poi.util;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.nio.charset.Charset;
 
 import org.apache.poi.util.StringUtil.StringsIterator;
-
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * Unit test for StringUtil
- *
- * @author  Marc Johnson (mjohnson at apache dot org
- * @author  Glen Stampoultzis (glens at apache.org)
- * @author  Sergei Kozello (sergeikozello at mail.ru)
  */
-public final class TestStringUtil extends TestCase {
+public class TestStringUtil {
 
     /**
      * test getFromUnicodeHigh for symbols with code below and more 127
      */
+    @Test
     public void testGetFromUnicodeHighSymbolsWithCodesMoreThan127() {
         byte[] test_data = new byte[]{0x22, 0x04,
                                       0x35, 0x04,
@@ -52,6 +53,7 @@ public final class TestStringUtil extends TestCase {
                 StringUtil.getFromUnicodeLE( test_data ) );
     }
 
+    @Test
     public void testPutCompressedUnicode() {
         byte[] output = new byte[100];
         byte[] expected_output =
@@ -87,6 +89,7 @@ public final class TestStringUtil extends TestCase {
         }
     }
 
+    @Test
     public void testPutUncompressedUnicode() {
         byte[] output = new byte[100];
         String input = "Hello World";
@@ -124,6 +127,7 @@ public final class TestStringUtil extends TestCase {
         }
     }
 
+    @Test
     public void testStringsIterator() {
        StringsIterator i;
 
