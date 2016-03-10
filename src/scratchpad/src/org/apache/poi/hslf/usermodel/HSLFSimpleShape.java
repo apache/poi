@@ -310,12 +310,13 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
     public CustomGeometry getGeometry() {
         PresetGeometries dict = PresetGeometries.getInstance();
         ShapeType st = getShapeType();
-        String name = st.getOoxmlName();
+        String name = (st != null) ? st.getOoxmlName() : null;
         CustomGeometry geom = dict.get(name);
-        if(geom == null) {
-            if (name == null && st != null) name = st.toString();
+        if (geom == null) {
+            if (name == null) {
+                name = (st != null) ? st.toString() : "<unknown>";
+            }
             logger.log(POILogger.WARN, "No preset shape definition for shapeType: "+name);
-            return null;
         }
 
         return geom;
