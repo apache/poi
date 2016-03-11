@@ -575,14 +575,17 @@ public class XSSFRichTextString implements RichTextString {
         }
         CTRst stf = CTRst.Factory.newInstance();
         int runStartIdx = 0;
-        for (Iterator<Integer> it = formats.keySet().iterator(); it.hasNext();) {
-            int runEndIdx = it.next();
+        for (Map.Entry<Integer, CTRPrElt> me : formats.entrySet()) {
+            int runEndIdx = me.getKey();
             CTRElt run = stf.addNewR();
             String fragment = text.substring(runStartIdx, runEndIdx);
             run.setT(fragment);
             preserveSpaces(run.xgetT());
-            CTRPrElt fmt = formats.get(runEndIdx);
-            if(fmt != null) run.setRPr(fmt);
+
+            CTRPrElt fmt = me.getValue();
+            if (fmt != null) {
+                run.setRPr(fmt);
+            }
             runStartIdx = runEndIdx;
         }
         return stf;

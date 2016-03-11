@@ -582,11 +582,7 @@ public class XDGFShape extends XDGFSheet {
         }
 
         // get default
-        XDGFStyleSheet style = _document.getDefaultLineStyle();
-        if (style != null)
-            return style.getLineCap();
-
-        return null;
+        return _document.getDefaultLineStyle().getLineCap();
     }
 
     @Override
@@ -602,11 +598,7 @@ public class XDGFShape extends XDGFSheet {
         }
 
         // get default
-        XDGFStyleSheet style = _document.getDefaultLineStyle();
-        if (style != null)
-            return style.getLineColor();
-
-        return null;
+        return _document.getDefaultLineStyle().getLineColor();
     }
 
     @Override
@@ -622,11 +614,7 @@ public class XDGFShape extends XDGFSheet {
         }
 
         // get default
-        XDGFStyleSheet style = _document.getDefaultLineStyle();
-        if (style != null)
-            return style.getLinePattern();
-
-        return null;
+        return _document.getDefaultLineStyle().getLinePattern();
     }
 
     @Override
@@ -642,11 +630,7 @@ public class XDGFShape extends XDGFSheet {
         }
 
         // get default
-        XDGFStyleSheet style = _document.getDefaultLineStyle();
-        if (style != null)
-            return style.getLineWeight();
-
-        return null;
+        return _document.getDefaultLineStyle().getLineWeight();
     }
 
     @Override
@@ -662,11 +646,7 @@ public class XDGFShape extends XDGFSheet {
         }
 
         // get default
-        XDGFStyleSheet style = _document.getDefaultTextStyle();
-        if (style != null)
-            return style.getFontColor();
-
-        return null;
+        return _document.getDefaultTextStyle().getFontColor();
     }
 
     @Override
@@ -682,11 +662,7 @@ public class XDGFShape extends XDGFSheet {
         }
 
         // get default
-        XDGFStyleSheet style = _document.getDefaultTextStyle();
-        if (style != null)
-            return style.getFontSize();
-
-        return null;
+        return _document.getDefaultTextStyle().getFontSize();
     }
 
     public Stroke getStroke() {

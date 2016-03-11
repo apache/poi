@@ -92,11 +92,10 @@ public final class ListTables
     ByteArrayOutputStream levelBuf = new ByteArrayOutputStream();
 
     byte[] shortHolder = new byte[2];
-    LittleEndian.putShort(shortHolder, (short)listSize);
+    LittleEndian.putShort(shortHolder, 0, (short)listSize);
     tableStream.write(shortHolder);
 
-    for(Integer x : _listMap.keySet()) {
-      ListData lst = _listMap.get(x);
+    for(ListData lst : _listMap.values()) {
       tableStream.write(lst.toByteArray());
       ListLevel[] lvls = lst.getLevels();
       for (int y = 0; y < lvls.length; y++)

@@ -19,53 +19,70 @@
 
 package org.apache.poi.sl.draw.geom;
 
+import java.lang.reflect.Constructor;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
  * A simple regexp-based parser of shape guide formulas in DrawingML
- *
- * @author Yegor Kozlov
  */
 public class ExpressionParser {
-    static final HashMap<String, Class<? extends Expression>> impls =
-        new HashMap<String, Class<? extends Expression>>();
+    private static final Map<String, ExpressionEntry> impls =
+        new HashMap<String, ExpressionEntry>();
+    
+    private static class ExpressionEntry {
+        final Pattern regex;
+        final Constructor<? extends Expression> con;
+        ExpressionEntry(String regex, Class<? extends Expression> cls)
+        throws SecurityException, NoSuchMethodException {
+            this.regex = Pattern.compile(regex);
+            this.con = cls.getDeclaredConstructor(Matcher.class);
+            impls.put(op(regex), this);
+        }
+    }
     
     static {
-        impls.put("\\*/ +([\\-\\w]+) +([\\-\\w]+) +([\\-\\w]+)", MultiplyDivideExpression.class);
-        impls.put("\\+- +([\\-\\w]+) +([\\-\\w]+) +([\\-\\w]+)( 0)?", AddSubtractExpression.class);
-        impls.put("\\+/ +([\\-\\w]+) +([\\-\\w]+) +([\\-\\w]+)", AddDivideExpression.class);
-        impls.put("\\?: +([\\-\\w]+) +([\\-\\w]+) +([\\-\\w]+)", IfElseExpression.class);
-        impls.put("val +([\\-\\w]+)", LiteralValueExpression.class);
-        impls.put("abs +([\\-\\w]+)", AbsExpression.class);
-        impls.put("sqrt +([\\-\\w]+)", SqrtExpression.class);
-        impls.put("max +([\\-\\w]+) +([\\-\\w]+)", MaxExpression.class);
-        impls.put("min +([\\-\\w]+) +([\\-\\w]+)", MinExpression.class);
-        impls.put("at2 +([\\-\\w]+) +([\\-\\w]+)", ArcTanExpression.class);
-        impls.put("sin +([\\-\\w]+) +([\\-\\w]+)", SinExpression.class);
-        impls.put("cos +([\\-\\w]+) +([\\-\\w]+)", CosExpression.class);
-        impls.put("tan +([\\-\\w]+) +([\\-\\w]+)", TanExpression.class);
-        impls.put("cat2 +([\\-\\w]+) +([\\-\\w]+) +([\\-\\w]+)", CosineArcTanExpression.class);
-        impls.put("sat2 +([\\-\\w]+) +([\\-\\w]+) +([\\-\\w]+)", SinArcTanExpression.class);
-        impls.put("pin +([\\-\\w]+) +([\\-\\w]+) +([\\-\\w]+)", PinExpression.class);
-        impls.put("mod +([\\-\\w]+) +([\\-\\w]+) +([\\-\\w]+)", ModExpression.class);
-
+        try {
+            new ExpressionEntry("\\*/ +([\\-\\w]+) +([\\-\\w]+) +([\\-\\w]+)", MultiplyDivideExpression.class);
+            new ExpressionEntry("\\+- +([\\-\\w]+) +([\\-\\w]+) +([\\-\\w]+)( 0)?", AddSubtractExpression.class);
+            new ExpressionEntry("\\+/ +([\\-\\w]+) +([\\-\\w]+) +([\\-\\w]+)", AddDivideExpression.class);
+            new ExpressionEntry("\\?: +([\\-\\w]+) +([\\-\\w]+) +([\\-\\w]+)", IfElseExpression.class);
+            new ExpressionEntry("val +([\\-\\w]+)", LiteralValueExpression.class);
+            new ExpressionEntry("abs +([\\-\\w]+)", AbsExpression.class);
+            new ExpressionEntry("sqrt +([\\-\\w]+)", SqrtExpression.class);
+            new ExpressionEntry("max +([\\-\\w]+) +([\\-\\w]+)", MaxExpression.class);
+            new ExpressionEntry("min +([\\-\\w]+) +([\\-\\w]+)", MinExpression.class);
+            new ExpressionEntry("at2 +([\\-\\w]+) +([\\-\\w]+)", ArcTanExpression.class);
+            new ExpressionEntry("sin +([\\-\\w]+) +([\\-\\w]+)", SinExpression.class);
+            new ExpressionEntry("cos +([\\-\\w]+) +([\\-\\w]+)", CosExpression.class);
+            new ExpressionEntry("tan +([\\-\\w]+) +([\\-\\w]+)", TanExpression.class);
+            new ExpressionEntry("cat2 +([\\-\\w]+) +([\\-\\w]+) +([\\-\\w]+)", CosineArcTanExpression.class);
+            new ExpressionEntry("sat2 +([\\-\\w]+) +([\\-\\w]+) +([\\-\\w]+)", SinArcTanExpression.class);
+            new ExpressionEntry("pin +([\\-\\w]+) +([\\-\\w]+) +([\\-\\w]+)", PinExpression.class);
+            new ExpressionEntry("mod +([\\-\\w]+) +([\\-\\w]+) +([\\-\\w]+)", ModExpression.class);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public static Expression parse(String str){
-        for(String regexp : impls.keySet()) {
-            Pattern ptrn = Pattern.compile(regexp);
-            Matcher m = ptrn.matcher(str);
-            if(m.matches()) {
-                Class<? extends Expression> c = impls.get(regexp);
-                try {
-                    return c.getDeclaredConstructor(Matcher.class).newInstance(m);
-                } catch (Exception e){
-                    throw new RuntimeException(e);
-                }
-            }
+    private static String op(String str) {
+        return (str == null || !str.contains(" "))
+            ? "" : str.substring(0, str.indexOf(" ")).replace("\\", "");
+    }
+    
+    public static Expression parse(String str) {
+        ExpressionEntry ee = impls.get(op(str));
+        Matcher m = (ee == null) ? null : ee.regex.matcher(str);
+        if (m == null || !m.matches()) {
+            throw new RuntimeException("Unsupported formula: " + str);
         }
-        throw new RuntimeException("Unsupported formula: " + str);
+        
+        try {
+            return ee.con.newInstance(m);
+        } catch (Exception e) {
+            throw new RuntimeException("Unsupported formula: " + str, e);
+        }
     }
 }
