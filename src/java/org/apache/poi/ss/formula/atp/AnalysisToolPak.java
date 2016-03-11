@@ -209,10 +209,10 @@ public final class AnalysisToolPak implements UDFFinder {
     public static Collection<String> getSupportedFunctionNames(){
         AnalysisToolPak inst = (AnalysisToolPak)instance;
         Collection<String> lst = new TreeSet<String>();
-        for(String name : inst._functionsByName.keySet()){
-            FreeRefFunction func = inst._functionsByName.get(name);
+        for(Map.Entry<String, FreeRefFunction> me : inst._functionsByName.entrySet()){
+            FreeRefFunction func = me.getValue();
             if(func != null && !(func instanceof NotImplemented)){
-                lst.add(name);
+                lst.add(me.getKey());
             }
         }
         return Collections.unmodifiableCollection(lst);
@@ -227,10 +227,10 @@ public final class AnalysisToolPak implements UDFFinder {
     public static Collection<String> getNotSupportedFunctionNames(){
         AnalysisToolPak inst = (AnalysisToolPak)instance;
         Collection<String> lst = new TreeSet<String>();
-        for(String name : inst._functionsByName.keySet()){
-            FreeRefFunction func = inst._functionsByName.get(name);
-            if(func != null && (func instanceof NotImplemented)){
-                lst.add(name);
+        for(Map.Entry<String, FreeRefFunction> me : inst._functionsByName.entrySet()){
+            FreeRefFunction func = me.getValue();
+            if (func instanceof NotImplemented) {
+                lst.add(me.getKey());
             }
         }
         return Collections.unmodifiableCollection(lst);

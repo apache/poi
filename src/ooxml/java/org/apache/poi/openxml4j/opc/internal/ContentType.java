@@ -18,6 +18,7 @@
 package org.apache.poi.openxml4j.opc.internal;
 
 import java.util.Hashtable;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -186,11 +187,11 @@ public final class ContentType {
 	    retVal.append(this.getSubType());
 
 	    if (withParameters) {
-	        for (String key : parameters.keySet()) {
+	        for (Map.Entry<String, String> me : parameters.entrySet()) {
 	            retVal.append(";");
-	            retVal.append(key);
+	            retVal.append(me.getKey());
 	            retVal.append("=");
-	            retVal.append(parameters.get(key));
+	            retVal.append(me.getValue());
 	        }
 	    }
 	    return retVal.toString();

@@ -106,14 +106,13 @@ public final class CollaboratingWorkbooksEnvironment {
     }
     private CollaboratingWorkbooksEnvironment(Map<String, WorkbookEvaluator> evaluatorsByName, WorkbookEvaluator[] evaluators) {
         IdentityHashMap<WorkbookEvaluator, String> uniqueEvals = new IdentityHashMap<WorkbookEvaluator, String>(evaluators.length);
-        for (String wbName : evaluatorsByName.keySet()) {
-            WorkbookEvaluator wbEval = evaluatorsByName.get(wbName);
-            if (uniqueEvals.containsKey(wbEval)) {
+        for (Map.Entry<String, WorkbookEvaluator> me : evaluatorsByName.entrySet()) {
+            String uniEval = uniqueEvals.put(me.getValue(), me.getKey());
+            if (uniEval != null) {
                 String msg = "Attempted to register same workbook under names '" +
-                             uniqueEvals.get(wbEval) + "' and '" + wbName + "'";
+                    uniEval + "' and '" + me.getKey() + "'";
                 throw new IllegalArgumentException(msg);
             }
-            uniqueEvals.put(wbEval, wbName);
         }
         unhookOldEnvironments(evaluators);
         hookNewEnvironment(evaluators, this);
