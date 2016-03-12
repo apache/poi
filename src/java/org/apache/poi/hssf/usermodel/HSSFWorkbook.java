@@ -17,8 +17,8 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import static org.apache.poi.hssf.model.InternalWorkbook.WORKBOOK_DIR_ENTRY_NAMES;
 import static org.apache.poi.hssf.model.InternalWorkbook.OLD_WORKBOOK_DIR_ENTRY_NAME;
+import static org.apache.poi.hssf.model.InternalWorkbook.WORKBOOK_DIR_ENTRY_NAMES;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -89,7 +89,6 @@ import org.apache.poi.ss.formula.udf.UDFFinder;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.WorkbookUtil;
 import org.apache.poi.util.Configurator;
 import org.apache.poi.util.HexDump;
@@ -1103,57 +1102,6 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
         return (backupRecord.getBackup() == 0) ? false
                 : true;
     }
-
-    /**
-     * Sets the repeating rows and columns for a sheet (as found in
-     * 2003:File->PageSetup->Sheet, 2007:Page Layout->Print Titles).
-     *   This is function is included in the workbook
-     * because it creates/modifies name records which are stored at the
-     * workbook level.
-     * <p>
-     * To set just repeating columns:
-     * <pre>
-     *  workbook.setRepeatingRowsAndColumns(0,0,1,-1-1);
-     * </pre>
-     * To set just repeating rows:
-     * <pre>
-     *  workbook.setRepeatingRowsAndColumns(0,-1,-1,0,4);
-     * </pre>
-     * To remove all repeating rows and columns for a sheet.
-     * <pre>
-     *  workbook.setRepeatingRowsAndColumns(0,-1,-1,-1,-1);
-     * </pre>
-     *
-     * @param sheetIndex    0 based index to sheet.
-     * @param startColumn   0 based start of repeating columns.
-     * @param endColumn     0 based end of repeating columns.
-     * @param startRow      0 based start of repeating rows.
-     * @param endRow        0 based end of repeating rows.
-     *
-     * @deprecated use {@link HSSFSheet#setRepeatingRows(CellRangeAddress)}
-     *        or {@link HSSFSheet#setRepeatingColumns(CellRangeAddress)}
-     */
-    @Override
-    @Deprecated
-	public void setRepeatingRowsAndColumns(int sheetIndex,
-                                           int startColumn, int endColumn,
-                                           int startRow, int endRow) {
-      HSSFSheet sheet = getSheetAt(sheetIndex);
-
-      CellRangeAddress rows = null;
-      CellRangeAddress cols = null;
-
-      if (startRow != -1) {
-        rows = new CellRangeAddress(startRow, endRow, -1, -1);
-      }
-      if (startColumn != -1) {
-        cols = new CellRangeAddress(-1, -1, startColumn, endColumn);
-      }
-
-      sheet.setRepeatingRows(rows);
-      sheet.setRepeatingColumns(cols);
-    }
-
 
     int findExistingBuiltinNameRecordIdx(int sheetIndex, byte builtinCode) {
         for(int defNameIndex =0; defNameIndex<names.size(); defNameIndex++) {

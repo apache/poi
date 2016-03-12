@@ -1070,18 +1070,18 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
      * Setting repeating rows and columns shouldn't break
      *  any print settings that were there before
      */
-    @SuppressWarnings("deprecation")
     @Test
     public void bug49253() throws IOException {
         XSSFWorkbook wb1 = new XSSFWorkbook();
         XSSFWorkbook wb2 = new XSSFWorkbook();
+        CellRangeAddress cra = CellRangeAddress.valueOf("C2:D3");
 
         // No print settings before repeating
         XSSFSheet s1 = wb1.createSheet();
         assertEquals(false, s1.getCTWorksheet().isSetPageSetup());
         assertEquals(true, s1.getCTWorksheet().isSetPageMargins());
-
-        wb1.setRepeatingRowsAndColumns(0, 2, 3, 1, 2);
+        s1.setRepeatingColumns(cra);
+        s1.setRepeatingRows(cra);
 
         assertEquals(true, s1.getCTWorksheet().isSetPageSetup());
         assertEquals(true, s1.getCTWorksheet().isSetPageMargins());
@@ -1100,8 +1100,8 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         ps2.setLandscape(false);
         assertEquals(true, ps2.getValidSettings());
         assertEquals(false, ps2.getLandscape());
-
-        wb2.setRepeatingRowsAndColumns(0, 2, 3, 1, 2);
+        s2.setRepeatingColumns(cra);
+        s2.setRepeatingRows(cra);
 
         ps2 = s2.getPrintSetup();
         assertEquals(true, s2.getCTWorksheet().isSetPageSetup());
@@ -2133,8 +2133,8 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     /**
      * A .xlsx file with no Shared Strings table should open fine
      *  in read-only mode
-     * @throws InvalidFormatException 
      */
+    @SuppressWarnings("resource")
     @Test
     public void bug57482() throws IOException, InvalidFormatException {
         for (PackageAccess access : new PackageAccess[] {
@@ -2497,6 +2497,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
      * .xlsx supports 64000 cell styles, the style indexes after
      *  32,767 must not be -32,768, then -32,767, -32,766
      */
+    @SuppressWarnings("resource")
     @Test
     public void bug57880() throws IOException {
         int numStyles = 33000;
@@ -2835,7 +2836,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     }
     
     @Test
-    public void test58731() throws Exception {
+    public void test58731() throws IOException {
         Workbook wb = XSSFTestDataSamples.openSampleWorkbook("58731.xlsx");
         Sheet sheet = wb.createSheet("Java Books");
         
@@ -2866,6 +2867,9 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         assertNotNull(sheet.getRow(0));
         assertNotNull(sheet.getRow(0).getCell(0));
         assertEquals(bookData[0][0], sheet.getRow(0).getCell(0).getStringCellValue());
+        
+        wb2.close();
+        wb.close();
     }
     
     /**
@@ -2875,17 +2879,19 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
      * ! Rule: Package require content types when retrieving a part from a package. [M.1.14]
      */
     @Test
-    public void test58760() throws Exception {
-        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("58760.xlsx");
-        assertEquals(1, wb.getNumberOfSheets());
-        assertEquals("Sheet1", wb.getSheetName(0));
-        wb = XSSFTestDataSamples.writeOutAndReadBack(wb);
-        assertEquals(1, wb.getNumberOfSheets());
-        assertEquals("Sheet1", wb.getSheetName(0));
+    public void test58760() throws IOException {
+        Workbook wb1 = XSSFTestDataSamples.openSampleWorkbook("58760.xlsx");
+        assertEquals(1, wb1.getNumberOfSheets());
+        assertEquals("Sheet1", wb1.getSheetName(0));
+        Workbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb1);
+        assertEquals(1, wb2.getNumberOfSheets());
+        assertEquals("Sheet1", wb2.getSheetName(0));
+        wb2.close();
+        wb1.close();
     }
 
     @Test
-    public void test57236() throws Exception {
+    public void test57236() throws IOException {
         // Having very small numbers leads to different formatting, Excel uses the scientific notation, but POI leads to "0"
         
         /*
@@ -2958,7 +2964,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
     @Ignore("Creates files for checking results manually, actual values are tested in Test*CellStyle")
     @Test
-    public void test58043() throws Exception {
+    public void test58043() throws IOException {
         createXls();
         createXlsx();
     }

@@ -21,8 +21,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.lang.reflect.Field;
-
 import org.apache.poi.POITestCase;
 import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.hssf.HSSFTestDataSamples;
@@ -32,6 +30,7 @@ import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.usermodel.BaseTestNamedRange;
 import org.apache.poi.ss.util.AreaReference;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.junit.Test;
 
 /**
@@ -61,20 +60,19 @@ public final class TestHSSFName extends BaseTestNamedRange {
          HSSFSheet sheet = wb.createSheet("FirstSheet");
 
          // set repeating rows and columns twice for the first sheet
+         CellRangeAddress cra = CellRangeAddress.valueOf("A1:A3");
          for (int i = 0; i < 2; i++) {
-             wb.setRepeatingRowsAndColumns(0, 0, 0, 0, 3-1);
+             sheet.setRepeatingColumns(cra);
+             sheet.setRepeatingRows(cra);
              sheet.createFreezePane(0, 3);
          }
          assertEquals(1, wb.getNumberOfNames());
          HSSFName nr1 = wb.getNameAt(0);
 
          assertEquals("Print_Titles", nr1.getNameName());
-//         if (false) {
-//             //     TODO - full column references not rendering properly, absolute markers not present either
-//             assertEquals("FirstSheet!$A:$A,FirstSheet!$1:$3", nr1.getRefersToFormula());
-//         } else {
-             assertEquals("FirstSheet!A:A,FirstSheet!$A$1:$IV$3", nr1.getRefersToFormula());
-//         }
+         // TODO - full column references not rendering properly, absolute markers not present either
+         // assertEquals("FirstSheet!$A:$A,FirstSheet!$1:$3", nr1.getRefersToFormula());
+         assertEquals("FirstSheet!A:A,FirstSheet!$A$1:$IV$3", nr1.getRefersToFormula());
 
          // Save and re-open
          HSSFWorkbook nwb = HSSFTestDataSamples.writeOutAndReadBack(wb);
@@ -89,7 +87,9 @@ public final class TestHSSFName extends BaseTestNamedRange {
          // check that setting RR&C on a second sheet causes a new Print_Titles built-in
          // name to be created
          sheet = nwb.createSheet("SecondSheet");
-         nwb.setRepeatingRowsAndColumns(1, 1, 2, 0, 0);
+         cra = CellRangeAddress.valueOf("B1:C1");
+         sheet.setRepeatingColumns(cra);
+         sheet.setRepeatingRows(cra);
 
          assertEquals(2, nwb.getNumberOfNames());
          HSSFName nr2 = nwb.getNameAt(1);
@@ -97,19 +97,6 @@ public final class TestHSSFName extends BaseTestNamedRange {
          assertEquals("Print_Titles", nr2.getNameName());
          assertEquals("SecondSheet!B:C,SecondSheet!$A$1:$IV$1", nr2.getRefersToFormula());
 
-//         if (false) {
-//             // In case you fancy checking in excel, to ensure it
-//             //  won't complain about the file now
-//             try {
-//                 File tempFile = TempFile.createTempFile("POI-45126-", ".xls");
-//                 FileOutputStream fout = new FileOutputStream(tempFile);
-//                 nwb.write(fout);
-//                 fout.close();
-//                 System.out.println("check out " + tempFile.getAbsolutePath());
-//             } catch (IOException e) {
-//                 throw new RuntimeException(e);
-//             }
-//         }
          nwb.close();
      }
 
