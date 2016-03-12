@@ -33,7 +33,6 @@ import org.junit.runners.Suite;
     TestExpandedDouble.class,
     TestNumberComparer.class,
     TestNumberToTextConverter.class,
-    TestRegion.class,
     TestSheetBuilder.class,
     TestSheetUtil.class,
     TestWorkbookUtil.class

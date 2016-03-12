@@ -163,12 +163,6 @@ public final class HSSFSheetConditionalFormatting implements SheetConditionalFor
     }
 
     /**
-     * @deprecated use <tt>CellRangeAddress</tt> instead of <tt>Region</tt>
-     */
-    public int addConditionalFormatting(org.apache.poi.ss.util.Region[] regions, HSSFConditionalFormattingRule[] cfRules) {
-        return addConditionalFormatting(org.apache.poi.ss.util.Region.convertRegionsToCellRanges(regions), cfRules);
-    }
-    /**
      * Allows to add a new Conditional Formatting set to the sheet.
      *
      * @param regions - list of rectangular regions to apply conditional formatting rules

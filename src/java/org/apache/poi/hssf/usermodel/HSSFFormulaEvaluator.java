@@ -115,18 +115,6 @@ public class HSSFFormulaEvaluator implements FormulaEvaluator, WorkbookEvaluator
         return _bookEvaluator;
     }
     
-    /**
-	 * Does nothing
-	 * @deprecated (Aug 2008) - not needed, since the current row can be derived from the cell
-	 */
-	@Deprecated
-    public void setCurrentRow(HSSFRow row) {
-		// do nothing
-//		if (false) {
-//			row.getClass(); // suppress unused parameter compiler warning
-//		}
-	}
-
 	/**
 	 * Should be called whenever there are major changes (e.g. moving sheets) to input cells
 	 * in the evaluated workbook.  If performance is not critical, a single call to this method

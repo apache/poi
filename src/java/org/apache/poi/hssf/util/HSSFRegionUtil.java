@@ -31,20 +31,6 @@ public final class HSSFRegionUtil {
 		// no instances of this class
 	}
 
-    /**
-     * @deprecated (Aug 2008) use {@link CellRangeAddress} instead of {@link Region}
-     */
-	private static CellRangeAddress toCRA(org.apache.poi.ss.util.Region region) {
-		return org.apache.poi.ss.util.Region.convertToCellRangeAddress(region);
-	}
-
-	/**
-	 * @deprecated (Aug 2008) use {@link CellRangeAddress} instead of {@link Region}
-	 */
-	public static void setBorderLeft(short border, Region region, HSSFSheet sheet,
-			HSSFWorkbook workbook) {
-		setBorderLeft(border, toCRA(region), sheet, workbook);
-	}
 	/**
 	 * Sets the left border for a region of cells by manipulating the cell style
 	 * of the individual cells on the left
@@ -60,13 +46,6 @@ public final class HSSFRegionUtil {
 	}
 
 	/**
-	 * @deprecated (Aug 2008) use {@link CellRangeAddress} instead of {@link Region}
-	 */
-	public static void setLeftBorderColor(short color, Region region, HSSFSheet sheet,
-			HSSFWorkbook workbook) {
-		setLeftBorderColor(color, toCRA(region), sheet, workbook);
-	}
-	/**
 	 * Sets the leftBorderColor attribute of the HSSFRegionUtil object
 	 *
 	 * @param color The color of the border
@@ -79,13 +58,6 @@ public final class HSSFRegionUtil {
 		RegionUtil.setLeftBorderColor(color, region, sheet, workbook);
 	}
 
-	/**
-	 * @deprecated (Aug 2008) use {@link CellRangeAddress} instead of {@link Region}
-	 */
-	public static void setBorderRight(short border, Region region, HSSFSheet sheet,
-			HSSFWorkbook workbook) {
-		setBorderRight(border, toCRA(region), sheet, workbook);
-	}
 	/**
 	 * Sets the borderRight attribute of the HSSFRegionUtil object
 	 *
@@ -100,13 +72,6 @@ public final class HSSFRegionUtil {
 	}
 
 	/**
-	 * @deprecated (Aug 2008) use {@link CellRangeAddress} instead of {@link Region}
-	 */
-	public static void setRightBorderColor(short color, Region region, HSSFSheet sheet,
-			HSSFWorkbook workbook) {
-		setRightBorderColor(color, toCRA(region), sheet, workbook);
-	}
-	/**
 	 * Sets the rightBorderColor attribute of the HSSFRegionUtil object
 	 *
 	 * @param color The color of the border
@@ -119,13 +84,6 @@ public final class HSSFRegionUtil {
 		RegionUtil.setRightBorderColor(color, region, sheet, workbook);
 	}
 
-	/**
-	 * @deprecated (Aug 2008) use {@link CellRangeAddress} instead of {@link Region}
-	 */
-	public static void setBorderBottom(short border, Region region, HSSFSheet sheet,
-			HSSFWorkbook workbook) {
-		setBorderBottom(border, toCRA(region), sheet, workbook);
-	}
 	/**
 	 * Sets the borderBottom attribute of the HSSFRegionUtil object
 	 *
@@ -140,13 +98,6 @@ public final class HSSFRegionUtil {
 	}
 
 	/**
-	 * @deprecated (Aug 2008) use {@link CellRangeAddress} instead of {@link Region}
-	 */
-	public static void setBottomBorderColor(short color, Region region, HSSFSheet sheet,
-			HSSFWorkbook workbook) {
-		setBottomBorderColor(color, toCRA(region), sheet, workbook);
-	}
-	/**
 	 * Sets the bottomBorderColor attribute of the HSSFRegionUtil object
 	 *
 	 * @param color The color of the border
@@ -160,13 +111,6 @@ public final class HSSFRegionUtil {
 	}
 
 	/**
-	 * @deprecated (Aug 2008) use {@link CellRangeAddress} instead of {@link Region}
-	 */
-	public static void setBorderTop(short border, Region region, HSSFSheet sheet,
-			HSSFWorkbook workbook) {
-		setBorderTop(border, toCRA(region), sheet, workbook);
-	}
-	/**
 	 * Sets the borderBottom attribute of the HSSFRegionUtil object
 	 *
 	 * @param border The new border
@@ -179,13 +123,6 @@ public final class HSSFRegionUtil {
 		RegionUtil.setBorderTop(border, region, sheet, workbook);
 	}
 
-	/**
-	 * @deprecated (Aug 2008) use {@link CellRangeAddress} instead of {@link Region}
-	 */
-	public static void setTopBorderColor(short color, Region region, HSSFSheet sheet,
-			HSSFWorkbook workbook) {
-		setTopBorderColor(color, toCRA(region), sheet, workbook);
-	}
 	/**
 	 * Sets the topBorderColor attribute of the HSSFRegionUtil object
 	 *

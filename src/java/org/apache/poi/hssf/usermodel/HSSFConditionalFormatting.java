@@ -92,13 +92,6 @@ public final class HSSFConditionalFormatting  implements ConditionalFormatting {
     }
 
     /**
-     * @deprecated (Aug-2008) use {@link HSSFConditionalFormatting#getFormattingRanges()}
-     */
-    public org.apache.poi.ss.util.Region[] getFormattingRegions() {
-        CellRangeAddress[] cellRanges = getFormattingRanges();
-        return org.apache.poi.ss.util.Region.convertCellRangesToRegions(cellRanges);
-    }
-    /**
      * @return array of <tt>CellRangeAddress</tt>s. never <code>null</code> 
      */
     public CellRangeAddress[] getFormattingRanges() {
