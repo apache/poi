@@ -28,7 +28,6 @@ import java.math.BigInteger;
 import java.util.List;
 
 import org.apache.poi.xwpf.XWPFTestDataSamples;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.openxmlformats.schemas.drawingml.x2006.picture.CTPicture;
 import org.openxmlformats.schemas.drawingml.x2006.picture.PicDocument;
@@ -61,7 +60,6 @@ public final class TestXWPFParagraph {
      * @throws IOException
      */
     @Test
-    @Ignore
     public void testHeaderParagraph() throws IOException {
         XWPFDocument xml = XWPFTestDataSamples.openSampleDocument("ThreeColHead.docx");
 
@@ -84,7 +82,6 @@ public final class TestXWPFParagraph {
      * @throws IOException
      */
     @Test
-    @Ignore
     public void testDocumentParagraph() throws IOException {
         XWPFDocument xml = XWPFTestDataSamples.openSampleDocument("ThreeColHead.docx");
         List<XWPFParagraph> ps = xml.getParagraphs();
