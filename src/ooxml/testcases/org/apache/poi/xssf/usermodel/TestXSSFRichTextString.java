@@ -28,6 +28,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.StylesTable;
 import org.junit.Test;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFont;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRPrElt;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STXstring;
@@ -515,5 +516,21 @@ public final class TestXSSFRichTextString extends TestCase {
         // TODO: normally toString() should never return null, should we adjust this?
         rt = new XSSFRichTextString();
         assertNull(rt.toString());
+    }
+
+    public void test59008Font() {
+        XSSFFont font = new XSSFFont(CTFont.Factory.newInstance());
+
+        XSSFRichTextString rts = new XSSFRichTextString();
+        rts.append("This is correct ");
+        int s1 = rts.length();
+        rts.append("This is Bold Red", font);
+        int s2 = rts.length();
+        rts.append(" This uses the default font rather than the cell style font");
+        int s3 = rts.length();
+
+        assertEquals("<xml-fragment/>", rts.getFontAtIndex(s1-1).toString());
+        assertEquals(font, rts.getFontAtIndex(s2-1));
+        assertEquals("<xml-fragment/>", rts.getFontAtIndex(s3-1).toString());
     }
 }
