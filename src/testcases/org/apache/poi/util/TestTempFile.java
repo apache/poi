@@ -24,13 +24,47 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @author Glen Stampoultzis
- */
 public class TestTempFile {
+    private String previousTempDir;
+
+    private File tempDir;
+
+    @Before
+    public void setUp() throws IOException {
+        previousTempDir = System.getProperty(TempFile.JAVA_IO_TMPDIR);
+
+        // use a separate tempdir for the tests to be able to check for leftover files
+        tempDir = File.createTempFile("TestTempFile", ".tst");
+        assertTrue(tempDir.delete());
+        assertTrue(tempDir.mkdirs());
+        System.setProperty(TempFile.JAVA_IO_TMPDIR, tempDir.getAbsolutePath());
+    }
+
+    @After
+    public void tearDown() {
+        String[] files = tempDir.list();
+        // can have the "poifiles" subdir
+        if(files.length == 1) {
+            assertEquals("Had: " + Arrays.toString(files), "poifiles", files[0]);
+            files = new File(tempDir, files[0]).list();
+            assertEquals("Had: " + Arrays.toString(files), 0, files.length);
+        } else {
+            assertEquals("Had: " + Arrays.toString(files), 0, files.length);
+        }
+
+        if(previousTempDir == null) {
+            System.clearProperty(TempFile.JAVA_IO_TMPDIR);
+        } else {
+            System.setProperty(TempFile.JAVA_IO_TMPDIR, previousTempDir);
+        }
+    }
+
     @Test
     public void testCreateTempFile()
             throws Exception
@@ -43,6 +77,7 @@ public class TestTempFile {
         assertEquals("poifiles", tempFile.getParentFile().getName());
 
         // Can't think of a good way to check whether a file is actually deleted since it would require the VM to stop.
+        assertTrue(tempFile.delete());
     }
     
     @Test

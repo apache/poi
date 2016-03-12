@@ -24,10 +24,12 @@ import java.io.IOException;
  * Interface for creating temporary files. Collects them all into one directory by default.
  */
 public final class TempFile {
-    
     /** The strategy used by {@link #createTempFile(String, String)} to create the temporary files. */
     private static TempFileCreationStrategy strategy = new DefaultTempFileCreationStrategy();
-    
+
+    /** Define a constant for this property as it is sometimes mistypes as "tempdir" otherwise */
+    public static final String JAVA_IO_TMPDIR = "java.io.tmpdir";
+
     /**
      * Configures the strategy used by {@link #createTempFile(String, String)} to create the temporary files.
      *
@@ -93,12 +95,13 @@ public final class TempFile {
         @Override
         public File createTempFile(String prefix, String suffix) throws IOException {
             // Identify and create our temp dir, if needed
-            if (dir == null)
-            {
-                dir = new File(System.getProperty("java.io.tmpdir"), "poifiles");
-                dir.mkdir();
-                if (System.getProperty("poi.keep.tmp.files") == null)
-                    dir.deleteOnExit();
+            if (dir == null) {
+                dir = new File(System.getProperty(JAVA_IO_TMPDIR), "poifiles");
+                if(!dir.exists()) {
+                    if(!dir.mkdirs()) {
+                        throw new IOException("Could not create temporary directory '" + dir + "'");
+                    }
+                }
             }
 
             // Generate a unique new filename 
@@ -111,6 +114,5 @@ public final class TempFile {
             // All done
             return newFile;
         }
-        
     }
 }
