@@ -16,11 +16,7 @@
 ==================================================================== */
 package org.apache.poi.ss.usermodel;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PushbackInputStream;
+import java.io.*;
 import java.security.GeneralSecurityException;
 
 import org.apache.poi.EmptyFileException;
@@ -81,7 +77,7 @@ public class WorkbookFactory {
      *  @throws IOException if an error occurs while reading the data
      *  @throws InvalidFormatException if the contents of the file cannot be parsed into a {@link Workbook}
      */
-    private static Workbook create(NPOIFSFileSystem fs, String password) throws IOException, InvalidFormatException {
+    private static Workbook create(final NPOIFSFileSystem fs, String password) throws IOException, InvalidFormatException {
         DirectoryNode root = fs.getRoot();
 
         // Encrypted OOXML files go inside OLE2 containers, is this one?
@@ -99,7 +95,16 @@ public class WorkbookFactory {
                     passwordCorrect = true;
                 }
                 if (passwordCorrect) {
-                    stream = d.getDataStream(root);
+                    // wrap the stream in a FilterInputStream to close the NPOIFSFileSystem
+                    // as well when the resulting OPCPackage is closed
+                    stream = new FilterInputStream(d.getDataStream(root)) {
+                        @Override
+                        public void close() throws IOException {
+                            fs.close();
+
+                            super.close();
+                        }
+                    };
                 }
             } catch (GeneralSecurityException e) {
                 throw new IOException(e);

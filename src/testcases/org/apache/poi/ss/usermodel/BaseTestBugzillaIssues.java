@@ -104,14 +104,10 @@ public abstract class BaseTestBugzillaIssues {
         Sheet sheet = wb1.createSheet();
         CreationHelper factory = wb1.getCreationHelper();
 
-        String tmp1 = null;
-        String tmp2 = null;
-        String tmp3 = null;
-
         for (int i = 0; i < num; i++) {
-            tmp1 = "Test1" + i;
-            tmp2 = "Test2" + i;
-            tmp3 = "Test3" + i;
+            String tmp1 = "Test1" + i;
+            String tmp2 = "Test2" + i;
+            String tmp3 = "Test3" + i;
 
             Row row = sheet.createRow(i);
 
@@ -127,9 +123,9 @@ public abstract class BaseTestBugzillaIssues {
 
         sheet = wb2.getSheetAt(0);
         for (int i = 0; i < num; i++) {
-            tmp1 = "Test1" + i;
-            tmp2 = "Test2" + i;
-            tmp3 = "Test3" + i;
+            String tmp1 = "Test1" + i;
+            String tmp2 = "Test2" + i;
+            String tmp3 = "Test3" + i;
 
             Row row = sheet.getRow(i);
 
@@ -216,15 +212,11 @@ public abstract class BaseTestBugzillaIssues {
      *test opening the resulting file in Excel*/
     @Test
     public final void bug22568() throws IOException {
-        int r=2000;int c=3;
-
         Workbook wb1 = _testDataProvider.createWorkbook();
         Sheet sheet = wb1.createSheet("ExcelTest") ;
 
-        int col_cnt=0, rw_cnt=0 ;
-
-        col_cnt = c;
-        rw_cnt = r;
+        int col_cnt = 3;
+        int rw_cnt = 2000;
 
         Row rw ;
         rw = sheet.createRow(0) ;
@@ -357,7 +349,7 @@ public abstract class BaseTestBugzillaIssues {
     }
 
     private static String createFunction(String name, int maxArgs){
-        StringBuffer fmla = new StringBuffer();
+        StringBuilder fmla = new StringBuilder();
         fmla.append(name);
         fmla.append("(");
         for(int i=0; i < maxArgs; i++){
@@ -468,14 +460,9 @@ public abstract class BaseTestBugzillaIssues {
     
     /**
      * Test if a > b. Fails if false.
-     *
-     * @param message
-     * @param a
-     * @param b
      */
     private void assertGreaterThan(String message, double a, double b) {
-        if (a > b) { // expected
-        } else {
+        if (a <= b) {
             String msg = "Expected: " + a + " > " + b;
             fail(message + ": " + msg);
         }
@@ -493,9 +480,9 @@ public abstract class BaseTestBugzillaIssues {
         AttributedString str = new AttributedString(txt);
         copyAttributes(font, str, 0, txt.length());
 
-        if (rt.numFormattingRuns() > 0) {
-            // TODO: support rich text fragments
-        }
+        // TODO: support rich text fragments
+        /*if (rt.numFormattingRuns() > 0) {
+        }*/
 
         TextLayout layout = new TextLayout(str.getIterator(), fontRenderContext);
         double frameWidth = getFrameWidth(layout);
@@ -504,8 +491,7 @@ public abstract class BaseTestBugzillaIssues {
     
     private double getFrameWidth(TextLayout layout) {
         Rectangle2D bounds = layout.getBounds();
-        double frameWidth = bounds.getX() + bounds.getWidth();
-        return frameWidth;
+        return bounds.getX() + bounds.getWidth();
     }
 
     private double computeCellWidthFixed(Font font, String txt) {
@@ -514,8 +500,7 @@ public abstract class BaseTestBugzillaIssues {
         copyAttributes(font, str, 0, txt.length());
 
         TextLayout layout = new TextLayout(str.getIterator(), fontRenderContext);
-        double frameWidth = getFrameWidth(layout);
-        return frameWidth;
+        return getFrameWidth(layout);
     }
 
     private static void copyAttributes(Font font, AttributedString str, int startIdx, int endIdx) {
@@ -682,7 +667,7 @@ public abstract class BaseTestBugzillaIssues {
             r1.createCell(i, Cell.CELL_TYPE_NUMERIC).setCellValue(1.2345);
         }
         for (int i=0; i<12; i+=3) {
-            r1.getCell(i+0).setCellStyle(iPercent);
+            r1.getCell(i).setCellStyle(iPercent);
             r1.getCell(i+1).setCellStyle(d1Percent);
             r1.getCell(i+2).setCellStyle(d2Percent);
         }
@@ -916,11 +901,15 @@ public abstract class BaseTestBugzillaIssues {
         try {
             evaluateCell(wb2, c1);
             fail("Shouldn't be able to evaluate without the other file");
-        } catch (Exception e) {}
+        } catch (Exception e) {
+            // expected here
+        }
         try {
             evaluateCell(wb2, c2);
             fail("Shouldn't be able to evaluate without the other file");
-        } catch (Exception e) {}
+        } catch (Exception e) {
+            // expected here
+        }
 
 
         // Set up references to the other file
@@ -1160,25 +1149,33 @@ public abstract class BaseTestBugzillaIssues {
         try {
             cn.getRichStringCellValue();
             fail();
-        } catch(IllegalStateException e) {}
+        } catch(IllegalStateException e) {
+            // expected here
+        }
 
         assertEquals("Testing", cs.getStringCellValue());
         try {
             cs.getNumericCellValue();
             fail();
-        } catch(IllegalStateException e) {}
+        } catch(IllegalStateException e) {
+            // expected here
+        }
 
         assertEquals(1.2, cfn.getNumericCellValue(), 0);
         try {
             cfn.getRichStringCellValue();
             fail();
-        } catch(IllegalStateException e) {}
+        } catch(IllegalStateException e) {
+            // expected here
+        }
 
         assertEquals("Testing", cfs.getStringCellValue());
         try {
             cfs.getNumericCellValue();
             fail();
-        } catch(IllegalStateException e) {}
+        } catch(IllegalStateException e) {
+            // expected here
+        }
         
         wb.close();
     }
@@ -1401,7 +1398,7 @@ public abstract class BaseTestBugzillaIssues {
     }
 
     @Test
-    public void test52684() {
+    public void test52684() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
 
         Sheet sheet = wb.createSheet("test");
@@ -1422,6 +1419,8 @@ public abstract class BaseTestBugzillaIssues {
         DataFormatter formatter = new DataFormatter();
 
         assertEquals("12-312-345-123", formatter.formatCellValue(cell));
+
+        wb.close();
     }
     
     @Test
@@ -1434,7 +1433,7 @@ public abstract class BaseTestBugzillaIssues {
         final Workbook wb = _testDataProvider.createWorkbook(nrows+1);
         final Sheet sh = wb.createSheet();
         out.println(wb.getClass().getName() + " column autosizing timing...");
-        
+
         final long t0 = time();
         _testDataProvider.trackAllColumnsForAutosizing(sh);
         for (int r=0; r<nrows; r++) {
@@ -1477,9 +1476,9 @@ public abstract class BaseTestBugzillaIssues {
     }
     
     protected long time() {
-        final long currentTime = System.currentTimeMillis();
-        return currentTime;
+        return System.currentTimeMillis();
     }
+
     protected double delta(long startTimeMillis) {
         return time() - startTimeMillis;
     }

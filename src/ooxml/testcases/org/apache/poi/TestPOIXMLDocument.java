@@ -150,6 +150,7 @@ public final class TestPOIXMLDocument {
             }
         } finally {
             doc.close();
+            pkg2.close();
         }
     }
 
