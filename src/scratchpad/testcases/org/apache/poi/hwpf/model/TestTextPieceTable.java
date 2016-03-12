@@ -26,13 +26,38 @@ import org.apache.poi.hwpf.HWPFDocFixture;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFTestDataSamples;
 import org.apache.poi.hwpf.model.io.HWPFFileSystem;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 @SuppressWarnings("deprecation")
-public final class TestTextPieceTable extends TestCase {
+public final class TestTextPieceTable {
     private HWPFDocFixture _hWPFDocFixture;
 
-    // private String dirname;
+    @Before
+    public void setUp() throws Exception {
+        System.setProperty("org.apache.poi.hwpf.preserveTextTable",
+                Boolean.TRUE.toString());
 
+        _hWPFDocFixture = new HWPFDocFixture(this,
+                HWPFDocFixture.DEFAULT_TEST_FILE);
+        _hWPFDocFixture.setUp();
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        _hWPFDocFixture.tearDown();
+        _hWPFDocFixture = null;
+
+        System.setProperty("org.apache.poi.hwpf.preserveTextTable",
+                Boolean.FALSE.toString());
+    }
+
+    @Test
     public void testReadWrite() throws Exception {
         FileInformationBlock fib = _hWPFDocFixture._fib;
         byte[] mainStream = _hWPFDocFixture._mainStream;
@@ -63,6 +88,7 @@ public final class TestTextPieceTable extends TestCase {
     /**
      * Check that we do the positions correctly when working with pure-ascii
      */
+    @Test
     public void testAsciiParts() throws Exception {
         HWPFDocument doc = HWPFTestDataSamples
                 .openSampleFile("ThreeColHeadFoot.doc");
@@ -98,6 +124,7 @@ public final class TestTextPieceTable extends TestCase {
      * Check that we do the positions correctly when working with a mix ascii,
      * unicode file
      */
+    @Test
     public void testUnicodeParts() throws Exception {
         HWPFDocument doc = HWPFTestDataSamples
                 .openSampleFile("HeaderFooterUnicode.doc");
@@ -164,25 +191,61 @@ public final class TestTextPieceTable extends TestCase {
         return new HWPFDocument(new ByteArrayInputStream(baos.toByteArray()));
     }
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        System.setProperty("org.apache.poi.hwpf.preserveTextTable",
-                Boolean.TRUE.toString());
+    @Test
+    public void test56549_CharIndexRange() {
+        HWPFDocument doc = HWPFTestDataSamples.openSampleFile("ThreeColHeadFoot.doc");
 
-        _hWPFDocFixture = new HWPFDocFixture(this,
-                HWPFDocFixture.DEFAULT_TEST_FILE);
-        _hWPFDocFixture.setUp();
+        // there is one range from 2048 - 2387
+
+        TextPieceTable tbl = doc.getTextTable();
+        int[][] range = tbl.getCharIndexRanges(0, 0);
+        assertEquals(0, range.length);
+
+        range = tbl.getCharIndexRanges(0, 1);
+        assertEquals(0, range.length);
+
+        range = tbl.getCharIndexRanges(0, 338);
+        assertEquals(0, range.length);
+
+        range = tbl.getCharIndexRanges(0, 339);
+        assertEquals(0, range.length);
+
+        range = tbl.getCharIndexRanges(0, 340);
+        assertEquals(0, range.length);
+
+        range = tbl.getCharIndexRanges(2030, 2048);
+        assertEquals(0, range.length);
+
+        range = tbl.getCharIndexRanges(2030, 2049);
+        assertEquals(1, range.length);
+        assertArrayEquals(new int[] {0,1}, range[0]);
+
+        range = tbl.getCharIndexRanges(2048, 2049);
+        assertEquals(1, range.length);
+        assertArrayEquals(new int[] {0,1}, range[0]);
+
+        range = tbl.getCharIndexRanges(2048, 2300);
+        assertEquals(1, range.length);
+        assertArrayEquals(new int[] {0,252}, range[0]);
+
+        range = tbl.getCharIndexRanges(2049, 2300);
+        assertEquals(1, range.length);
+        assertArrayEquals(new int[] {1,252}, range[0]);
+
+        range = tbl.getCharIndexRanges(2049, 2300);
+        assertEquals(1, range.length);
+        assertArrayEquals(new int[] {1,252}, range[0]);
+
+        range = tbl.getCharIndexRanges(2049, 2387);
+        assertEquals(1, range.length);
+        assertArrayEquals(new int[] {1,339}, range[0]);
+
+        range = tbl.getCharIndexRanges(2049, 2388);
+        assertEquals(1, range.length);
+        assertArrayEquals(new int[] {1,339}, range[0]);
+
+        range = tbl.getCharIndexRanges(2387, 2388);
+        assertEquals(1, range.length);
+        assertArrayEquals(new int[] {339,339}, range[0]);
     }
-
-    @Override
-    protected void tearDown() throws Exception {
-        _hWPFDocFixture.tearDown();
-        _hWPFDocFixture = null;
-
-        System.setProperty("org.apache.poi.hwpf.preserveTextTable",
-                Boolean.FALSE.toString());
-        super.tearDown();
-    }
-
 }

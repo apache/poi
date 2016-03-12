@@ -259,6 +259,7 @@ public class TextPieceTable implements CharIndexTranslator
         return charCount;
     }
 
+    @Override
     public int[][] getCharIndexRanges( int startBytePosInclusive,
             int endBytePosExclusive )
     {
@@ -271,7 +272,7 @@ public class TextPieceTable implements CharIndexTranslator
                     + textPiece.bytesLength();
             if ( startBytePosInclusive > tpEnd )
                 continue;
-            if ( endBytePosExclusive < tpStart )
+            if ( endBytePosExclusive <= tpStart )
                 break;
 
             final int rangeStartBytes = Math.max( tpStart,
