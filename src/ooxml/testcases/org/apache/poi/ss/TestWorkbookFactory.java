@@ -313,6 +313,9 @@ public final class TestWorkbookFactory {
         );
         assertNotNull(wb);
         assertTrue(wb instanceof XSSFWorkbook);
+        assertTrue(wb.getNumberOfSheets() > 0);
+        assertNotNull(wb.getSheetAt(0));
+        assertNotNull(wb.getSheetAt(0).getRow(0));
         assertCloseDoesNotModifyFile(xlsx_prot[0], wb);
 
         // Protected, wrong password, throws Exception
@@ -322,7 +325,9 @@ public final class TestWorkbookFactory {
             );
             assertCloseDoesNotModifyFile(xls_prot[0], wb);
             fail("Shouldn't be able to open with the wrong password");
-        } catch (EncryptedDocumentException e) {}
+        } catch (EncryptedDocumentException e) {
+            // expected here
+        }
 
         try {
             wb = WorkbookFactory.create(
@@ -330,7 +335,9 @@ public final class TestWorkbookFactory {
             );
             assertCloseDoesNotModifyFile(xlsx_prot[0], wb);
             fail("Shouldn't be able to open with the wrong password");
-        } catch (EncryptedDocumentException e) {}
+        } catch (EncryptedDocumentException e) {
+            // expected here
+        }
     }
     
     /**
