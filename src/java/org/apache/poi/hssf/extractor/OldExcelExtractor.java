@@ -44,6 +44,7 @@ import org.apache.poi.poifs.filesystem.DocumentNode;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.NotOLE2FileException;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.util.IOUtils;
 
 /**
  * A text extractor for old Excel files, which are too old for
@@ -74,9 +75,27 @@ public class OldExcelExtractor implements Closeable {
         try {
             open(new NPOIFSFileSystem(f));
         } catch (OldExcelFormatException oe) {
-            open(new FileInputStream(f));
+            FileInputStream biffStream = new FileInputStream(f);
+            try {
+                open(biffStream);
+            } catch (RuntimeException e2) {
+                // ensure that the stream is properly closed here if an Exception
+                // is thrown while opening
+                biffStream.close();
+
+                throw e2;
+            }
         } catch (NotOLE2FileException e) {
-            open(new FileInputStream(f));
+            FileInputStream biffStream = new FileInputStream(f);
+            try {
+                open(biffStream);
+            } catch (RuntimeException e2) {
+                // ensure that the stream is properly closed here if an Exception
+                // is thrown while opening
+                biffStream.close();
+
+                throw e2;
+            }
         }
     }
 
@@ -255,10 +274,7 @@ public class OldExcelExtractor implements Closeable {
     @Override
     public void close() {
         if (input != null) {
-            try {
-                input.close();
-            } catch (IOException e) {}
-            input = null;
+            IOUtils.closeQuietly(input);
         }
     }
     

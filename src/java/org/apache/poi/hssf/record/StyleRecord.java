@@ -51,7 +51,7 @@ public final class StyleRecord extends StandardRecord {
 	 * creates a new style record, initially set to 'built-in'
 	 */
 	public StyleRecord() {
-		field_1_xf_index = isBuiltinFlag.set(field_1_xf_index);
+		field_1_xf_index = isBuiltinFlag.set(0);
 	}
 
 	public StyleRecord(RecordInputStream in) {
@@ -140,7 +140,7 @@ public final class StyleRecord extends StandardRecord {
 
 	@Override
 	public String toString() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		sb.append("[STYLE]\n");
 		sb.append("    .xf_index_raw =").append(HexDump.shortToHex(field_1_xf_index)).append("\n");

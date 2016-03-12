@@ -326,12 +326,20 @@ public class TestXSLFTextParagraph {
         assertEquals(200.0, p.getSpaceAfter(), 0);
         p.setSpaceAfter(-15.);
         assertEquals(-15.0, p.getSpaceAfter(), 0);
+        p.setSpaceAfter(null);
+        assertNull(p.getSpaceAfter());
+        p.setSpaceAfter(null);
+        assertNull(p.getSpaceAfter());
 
         assertNull(p.getSpaceBefore());
         p.setSpaceBefore(200.);
         assertEquals(200.0, p.getSpaceBefore(), 0);
         p.setSpaceBefore(-15.);
         assertEquals(-15.0, p.getSpaceBefore(), 0);
+        p.setSpaceBefore(null);
+        assertNull(p.getSpaceBefore());
+        p.setSpaceBefore(null);
+        assertNull(p.getSpaceBefore());
 
         assertEquals(TextAlign.LEFT, p.getTextAlign());
         p.setTextAlign(TextAlign.RIGHT);

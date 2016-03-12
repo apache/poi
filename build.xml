@@ -1803,15 +1803,15 @@ under the License.
             src="http://prdownloads.sourceforge.net/findbugs/findbugs-noUpdateChecks-2.0.3.zip?download"
             dest="${main.lib}/findbugs-noUpdateChecks-2.0.3.zip"/>
 
+        <property name="findbugs.home" value="build/findbugs" />
         <unzip src="${main.lib}/findbugs-noUpdateChecks-2.0.3.zip"
-               dest="build/findbugs/lib">
+               dest="${findbugs.home}/lib">
             <patternset>
                 <include name="findbugs-2.0.3/lib/**"/>
             </patternset>
             <mapper type="flatten"/>
         </unzip>
 
-        <property name="findbugs.home" value="build/findbugs" />
         <taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask">
             <classpath>
                 <fileset dir="${findbugs.home}/lib">

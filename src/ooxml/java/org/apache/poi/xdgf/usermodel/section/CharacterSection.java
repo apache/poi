@@ -45,13 +45,11 @@ public class CharacterSection extends XDGFSection {
             _characterCells.put(cell.getN(), new XDGFCell(cell));
         }
 
-        if (row != null) {
-            _fontSize = XDGFCell.maybeGetDouble(_characterCells, "Size");
+        _fontSize = XDGFCell.maybeGetDouble(_characterCells, "Size");
 
-            String tmpColor = XDGFCell.maybeGetString(_characterCells, "Color");
-            if (tmpColor != null)
-                _fontColor = Color.decode(tmpColor);
-        }
+        String tmpColor = XDGFCell.maybeGetString(_characterCells, "Color");
+        if (tmpColor != null)
+            _fontColor = Color.decode(tmpColor);
     }
 
     public Double getFontSize() {

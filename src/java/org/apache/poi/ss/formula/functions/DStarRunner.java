@@ -84,6 +84,8 @@ public final class DStarRunner implements Function3Arg {
         switch(algoType) {
             case DGET: algorithm = new DGet(); break;
             case DMIN: algorithm = new DMin(); break;
+            default:
+                throw new IllegalStateException("Unexpected algorithm type " + algoType + " encountered.");
         }
 
         // Iterate over all DB entries.
