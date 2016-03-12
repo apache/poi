@@ -355,7 +355,7 @@ public class TestXWPFWordExtractor extends TestCase {
 
         for (String targ : targs) {
             boolean hit = false;
-            if (s.indexOf(targ) > -1) {
+            if (s.contains(targ)) {
                 hit = true;
                 hits++;
             }
