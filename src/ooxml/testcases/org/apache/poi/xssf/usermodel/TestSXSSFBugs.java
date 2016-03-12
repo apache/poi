@@ -23,8 +23,8 @@ import org.apache.poi.ss.usermodel.BaseTestBugzillaIssues;
 import org.apache.poi.ss.usermodel.PrintSetup;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.SXSSFITestDataProvider;
-import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -45,16 +45,16 @@ public final class TestSXSSFBugs extends BaseTestBugzillaIssues {
      * Setting repeating rows and columns shouldn't break
      *  any print settings that were there before
      */
-    @SuppressWarnings("deprecation")
     @Test
     public void bug49253() throws Exception {
         Workbook wb1 = new SXSSFWorkbook();
         Workbook wb2 = new SXSSFWorkbook();
+        CellRangeAddress cra = CellRangeAddress.valueOf("C2:D3");
 
         // No print settings before repeating
         Sheet s1 = wb1.createSheet(); 
-
-        wb1.setRepeatingRowsAndColumns(0, 2, 3, 1, 2);
+        s1.setRepeatingColumns(cra);
+        s1.setRepeatingRows(cra);
 
         PrintSetup ps1 = s1.getPrintSetup();
         assertEquals(false, ps1.getValidSettings());
@@ -68,8 +68,8 @@ public final class TestSXSSFBugs extends BaseTestBugzillaIssues {
         ps2.setLandscape(false);
         assertEquals(true, ps2.getValidSettings());
         assertEquals(false, ps2.getLandscape());
-
-        wb2.setRepeatingRowsAndColumns(0, 2, 3, 1, 2);
+        s2.setRepeatingColumns(cra);
+        s2.setRepeatingRows(cra);
 
         ps2 = s2.getPrintSetup();
         assertEquals(true, ps2.getValidSettings());

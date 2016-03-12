@@ -20,6 +20,7 @@ import java.io.FileOutputStream;
 
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -63,9 +64,11 @@ public class WorkingWithPageSetup {
         row4.createCell(5).setCellValue(2.5);
 
         // Set the columns to repeat from column 0 to 2 on the first sheet
-        wb.setRepeatingRowsAndColumns(0,0,2,-1,-1);
+        sheet1.setRepeatingColumns(CellRangeAddress.valueOf("A:C"));
         // Set the the repeating rows and columns on the second sheet.
-        wb.setRepeatingRowsAndColumns(1,4,5,1,2);
+        CellRangeAddress cra = CellRangeAddress.valueOf("E2:F3");
+        sheet2.setRepeatingColumns(cra);
+        sheet2.setRepeatingRows(cra);
 
         //set the print area for the first sheet
         wb.setPrintArea(0, 1, 2, 0, 3);
@@ -74,5 +77,7 @@ public class WorkingWithPageSetup {
         FileOutputStream fileOut = new FileOutputStream("xssf-printsetup.xlsx");
         wb.write(fileOut);
         fileOut.close();
+        
+        wb.close();
     }
 }

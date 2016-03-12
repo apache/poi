@@ -17,20 +17,23 @@
 
 package org.apache.poi.hssf.usermodel.examples;
 
-import org.apache.poi.hssf.usermodel.*;
-
-import java.io.IOException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 
-/**
- * @author Glen Stampoultzis (glens at apache.org)
- */
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFFont;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.util.CellRangeAddress;
+
 public class RepeatingRowsAndColumns {
     public static void main(String[] args) throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet1 = wb.createSheet("first sheet");
-        wb.createSheet("second sheet");
-        wb.createSheet("third sheet");
+        HSSFSheet sheet2 = wb.createSheet("second sheet");
+        HSSFSheet sheet3 = wb.createSheet("third sheet");
 
         HSSFFont boldFont = wb.createFont();
         boldFont.setFontHeightInPoints((short)22);
@@ -45,14 +48,17 @@ public class RepeatingRowsAndColumns {
         cell.setCellStyle(boldStyle);
 
         // Set the columns to repeat from column 0 to 2 on the first sheet
-        wb.setRepeatingRowsAndColumns(0,0,2,-1,-1);
+        sheet1.setRepeatingColumns(CellRangeAddress.valueOf("A:C"));
         // Set the rows to repeat from row 0 to 2 on the second sheet.
-        wb.setRepeatingRowsAndColumns(1,-1,-1,0,2);
+        sheet2.setRepeatingRows(CellRangeAddress.valueOf("1:3"));
         // Set the the repeating rows and columns on the third sheet.
-        wb.setRepeatingRowsAndColumns(2,4,5,1,2);
+        CellRangeAddress cra = CellRangeAddress.valueOf("D1:E2"); 
+        sheet3.setRepeatingColumns(cra);
+        sheet3.setRepeatingRows(cra);
 
         FileOutputStream fileOut = new FileOutputStream("workbook.xls");
         wb.write(fileOut);
         fileOut.close();
+        wb.close();
     }
 }

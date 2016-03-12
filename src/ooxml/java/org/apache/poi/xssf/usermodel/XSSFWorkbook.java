@@ -62,7 +62,6 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.WorkbookUtil;
 import org.apache.poi.util.Beta;
@@ -1449,53 +1448,6 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     public void setPrintArea(int sheetIndex, int startColumn, int endColumn, int startRow, int endRow) {
         String reference=getReferencePrintArea(getSheetName(sheetIndex), startColumn, endColumn, startRow, endRow);
         setPrintArea(sheetIndex, reference);
-    }
-
-
-    /**
-     * Sets the repeating rows and columns for a sheet.
-     * <p/>
-     * To set just repeating columns:
-     * <pre>
-     *  workbook.setRepeatingRowsAndColumns(0,0,1,-1,-1);
-     * </pre>
-     * To set just repeating rows:
-     * <pre>
-     *  workbook.setRepeatingRowsAndColumns(0,-1,-1,0,4);
-     * </pre>
-     * To remove all repeating rows and columns for a sheet.
-     * <pre>
-     *  workbook.setRepeatingRowsAndColumns(0,-1,-1,-1,-1);
-     * </pre>
-     *
-     * @param sheetIndex  0 based index to sheet.
-     * @param startColumn 0 based start of repeating columns.
-     * @param endColumn   0 based end of repeating columns.
-     * @param startRow    0 based start of repeating rows.
-     * @param endRow      0 based end of repeating rows.
-     *
-     * @deprecated use {@link XSSFSheet#setRepeatingRows(CellRangeAddress)}
-     *        or {@link XSSFSheet#setRepeatingColumns(CellRangeAddress)}
-     */
-    @Deprecated
-    @Override
-    public void setRepeatingRowsAndColumns(int sheetIndex,
-                                           int startColumn, int endColumn,
-                                           int startRow, int endRow) {
-      XSSFSheet sheet = getSheetAt(sheetIndex);
-
-      CellRangeAddress rows = null;
-      CellRangeAddress cols = null;
-
-      if (startRow != -1) {
-        rows = new CellRangeAddress(startRow, endRow, -1, -1);
-      }
-      if (startColumn != -1) {
-        cols = new CellRangeAddress(-1, -1, startColumn, endColumn);
-      }
-
-      sheet.setRepeatingRows(rows);
-      sheet.setRepeatingColumns(cols);
     }
 
     private static String getReferencePrintArea(String sheetName, int startC, int endC, int startR, int endR) {

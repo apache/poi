@@ -273,37 +273,6 @@ public interface Workbook extends Closeable, Iterable<Sheet> {
     void removeSheetAt(int index);
 
     /**
-     * Sets the repeating rows and columns for a sheet (as found in
-     * File->PageSetup->Sheet).  This is function is included in the workbook
-     * because it creates/modifies name records which are stored at the
-     * workbook level.
-     * <p>
-     * To set just repeating columns:
-     * <pre>
-     *  workbook.setRepeatingRowsAndColumns(0,0,1,-1-1);
-     * </pre>
-     * To set just repeating rows:
-     * <pre>
-     *  workbook.setRepeatingRowsAndColumns(0,-1,-1,0,4);
-     * </pre>
-     * To remove all repeating rows and columns for a sheet.
-     * <pre>
-     *  workbook.setRepeatingRowsAndColumns(0,-1,-1,-1,-1);
-     * </pre>
-     *
-     * @param sheetIndex    0 based index to sheet.
-     * @param startColumn   0 based start of repeating columns.
-     * @param endColumn     0 based end of repeating columns.
-     * @param startRow      0 based start of repeating rows.
-     * @param endRow        0 based end of repeating rows.
-     *
-     * @deprecated use {@link Sheet#setRepeatingRows(CellRangeAddress)}
-     *        or {@link Sheet#setRepeatingColumns(CellRangeAddress)}
-     */
-    @Deprecated
-    void setRepeatingRowsAndColumns(int sheetIndex, int startColumn, int endColumn, int startRow, int endRow);
-
-    /**
      * Create a new Font and add it to the workbook's font table
      *
      * @return new font object

@@ -2199,6 +2199,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      *
      * @return the name of this sheet
      */
+    @SuppressWarnings("resource")
     @Override
     public String getSheetName() {
         HSSFWorkbook wb = getWorkbook();

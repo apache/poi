@@ -35,9 +35,6 @@ import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.junit.Test;
 
-/**
- * @author Yegor Kozlov
- */
 public abstract class BaseTestWorkbook {
 
     private final ITestDataProvider _testDataProvider;
@@ -516,26 +513,29 @@ public abstract class BaseTestWorkbook {
 
 
     /**
-     * Test is kept to ensure stub for deprecated business method passes test.
-     * 
-     * @Deprecated remove this test when 
-     * {@link Workbook#setRepeatingRowsAndColumns(int, int, int, int, int)} 
-     * is removed 
+     * Test to validate that replacement for removed setRepeatingRowsAnsColumns() methods
+     * is still working correctly 
      */
-    @Deprecated
     @Test
     public void setRepeatingRowsAnsColumns() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
+
+        CellRangeAddress cra = new CellRangeAddress(0, 3, 0, 0);
+        String expRows = "1:4", expCols = "A:A";
+
+        
         Sheet sheet1 = wb.createSheet();
-        wb.setRepeatingRowsAndColumns(wb.getSheetIndex(sheet1), 0, 0, 0, 3);
-        assertEquals("1:4", sheet1.getRepeatingRows().formatAsString());
-        assertEquals("A:A", sheet1.getRepeatingColumns().formatAsString());
+        sheet1.setRepeatingRows(cra);
+        sheet1.setRepeatingColumns(cra);
+        assertEquals(expRows, sheet1.getRepeatingRows().formatAsString());
+        assertEquals(expCols, sheet1.getRepeatingColumns().formatAsString());
 
         //must handle sheets with quotas, see Bugzilla #47294
         Sheet sheet2 = wb.createSheet("My' Sheet");
-        wb.setRepeatingRowsAndColumns(wb.getSheetIndex(sheet2), 0, 0, 0, 3);
-        assertEquals("1:4", sheet2.getRepeatingRows().formatAsString());
-        assertEquals("A:A", sheet1.getRepeatingColumns().formatAsString());
+        sheet2.setRepeatingRows(cra);
+        sheet2.setRepeatingColumns(cra);
+        assertEquals(expRows, sheet2.getRepeatingRows().formatAsString());
+        assertEquals(expCols, sheet2.getRepeatingColumns().formatAsString());
         wb.close();
     }
 
