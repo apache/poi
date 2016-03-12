@@ -28,6 +28,7 @@ import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.poifs.filesystem.DocumentFactoryHelper;
 
 /**
  * Class to test that HXF correctly detects OOXML
@@ -47,21 +48,21 @@ public class TestDetectAsOOXML extends TestCase
 		in = new PushbackInputStream(
 				HSSFTestDataSamples.openSampleFileStream("SampleSS.xlsx"), 10
 		);
-		assertTrue(POIXMLDocument.hasOOXMLHeader(in));
+		assertTrue(DocumentFactoryHelper.hasOOXMLHeader(in));
 		in.close();
 		
 		// xls file isn't
 		in = new PushbackInputStream(
 				HSSFTestDataSamples.openSampleFileStream("SampleSS.xls"), 10
 		);
-		assertFalse(POIXMLDocument.hasOOXMLHeader(in));
+		assertFalse(DocumentFactoryHelper.hasOOXMLHeader(in));
 		in.close();
 		
 		// text file isn't
 		in = new PushbackInputStream(
 				HSSFTestDataSamples.openSampleFileStream("SampleSS.txt"), 10
 		);
-		assertFalse(POIXMLDocument.hasOOXMLHeader(in));
+		assertFalse(DocumentFactoryHelper.hasOOXMLHeader(in));
 		in.close();
 	}
     
@@ -73,13 +74,14 @@ public class TestDetectAsOOXML extends TestCase
         
         // detect header
         InputStream in = new PushbackInputStream(testInput, 10);
-        assertFalse(POIXMLDocument.hasOOXMLHeader(in));
+        assertFalse(DocumentFactoryHelper.hasOOXMLHeader(in));
+		//noinspection deprecation
+		assertFalse(POIXMLDocument.hasOOXMLHeader(in));
         
         // check if InputStream is still intact
         byte[] test = new byte[3];
-        in.read(test);
+        assertEquals(3, in.read(test));
         assertTrue(Arrays.equals(testData, test));
         assertEquals(-1, in.read());
 	}
-
 }

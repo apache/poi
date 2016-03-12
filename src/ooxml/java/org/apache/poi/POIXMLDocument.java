@@ -36,6 +36,7 @@ import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
 import org.apache.poi.poifs.common.POIFSConstants;
+import org.apache.poi.poifs.filesystem.DocumentFactoryHelper;
 import org.apache.poi.util.IOUtils;
 import org.apache.xmlbeans.impl.common.SystemCache;
 
@@ -122,30 +123,11 @@ public abstract class POIXMLDocument extends POIXMLDocumentPart implements Close
      *  then wrap it in a PushBackInputStream, then be
      *  sure to always use that, and not the original!
      * @param inp An InputStream which supports either mark/reset, or is a PushbackInputStream
+     *
+     * @deprecated use the method from DocumentFactoryHelper, deprecated as of 3.15-beta1, therefore eligible for removal in 3.17
      */
     public static boolean hasOOXMLHeader(InputStream inp) throws IOException {
-        // We want to peek at the first 4 bytes
-        inp.mark(4);
-
-        byte[] header = new byte[4];
-        int bytesRead = IOUtils.readFully(inp, header);
-
-        // Wind back those 4 bytes
-        if(inp instanceof PushbackInputStream) {
-            PushbackInputStream pin = (PushbackInputStream)inp;
-            pin.unread(header, 0, bytesRead);
-        } else {
-            inp.reset();
-        }
-
-        // Did it match the ooxml zip signature?
-        return (
-                bytesRead == 4 &&
-                header[0] == POIFSConstants.OOXML_FILE_HEADER[0] &&
-                header[1] == POIFSConstants.OOXML_FILE_HEADER[1] &&
-                header[2] == POIFSConstants.OOXML_FILE_HEADER[2] &&
-                header[3] == POIFSConstants.OOXML_FILE_HEADER[3]
-        );
+        return DocumentFactoryHelper.hasOOXMLHeader(inp);
     }
 
     /**
