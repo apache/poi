@@ -17,18 +17,16 @@
 package org.apache.poi.ss.usermodel;
 
 import java.io.*;
-import java.security.GeneralSecurityException;
 
 import org.apache.poi.EmptyFileException;
 import org.apache.poi.EncryptedDocumentException;
-import org.apache.poi.POIXMLDocument;
+import org.apache.poi.poifs.filesystem.DocumentFactoryHelper;
 import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.poifs.crypt.Decryptor;
-import org.apache.poi.poifs.crypt.EncryptionInfo;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
@@ -82,40 +80,7 @@ public class WorkbookFactory {
 
         // Encrypted OOXML files go inside OLE2 containers, is this one?
         if (root.hasEntry(Decryptor.DEFAULT_POIFS_ENTRY)) {
-            EncryptionInfo info = new EncryptionInfo(fs);
-            Decryptor d = Decryptor.getInstance(info);
-
-            boolean passwordCorrect = false;
-            InputStream stream = null;
-            try {
-                if (password != null && d.verifyPassword(password)) {
-                    passwordCorrect = true;
-                }
-                if (!passwordCorrect && d.verifyPassword(Decryptor.DEFAULT_PASSWORD)) {
-                    passwordCorrect = true;
-                }
-                if (passwordCorrect) {
-                    // wrap the stream in a FilterInputStream to close the NPOIFSFileSystem
-                    // as well when the resulting OPCPackage is closed
-                    stream = new FilterInputStream(d.getDataStream(root)) {
-                        @Override
-                        public void close() throws IOException {
-                            fs.close();
-
-                            super.close();
-                        }
-                    };
-                }
-            } catch (GeneralSecurityException e) {
-                throw new IOException(e);
-            }
-
-            if (! passwordCorrect) {
-                if (password != null)
-                    throw new EncryptedDocumentException("Password incorrect");
-                else
-                    throw new EncryptedDocumentException("The supplied spreadsheet is protected, but no password was supplied");
-            }
+            InputStream stream = DocumentFactoryHelper.getDecryptedStream(fs, password);
 
             OPCPackage pkg = OPCPackage.open(stream);
             return create(pkg);
@@ -212,7 +177,7 @@ public class WorkbookFactory {
             NPOIFSFileSystem fs = new NPOIFSFileSystem(inp);
             return create(fs, password);
         }
-        if (POIXMLDocument.hasOOXMLHeader(inp)) {
+        if (DocumentFactoryHelper.hasOOXMLHeader(inp)) {
             return new XSSFWorkbook(OPCPackage.open(inp));
         }
         throw new InvalidFormatException("Your InputStream was neither an OLE2 stream, nor an OOXML stream");
