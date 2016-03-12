@@ -20,8 +20,10 @@
 package org.apache.poi.hssf.record;
 
 /**
- * Title:     Record Format Exception
- * Description: Used by records to indicate invalid format/data.<P>
+ * Used by records to indicate invalid format/data.<P>
+ *
+ * @deprecated as of 3.15-beta1, scheduled for removal in 3.17
+ *      use the class with the same name from the utils-package
  */
 
 public class RecordFormatException
