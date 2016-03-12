@@ -1353,7 +1353,9 @@ under the License.
         <echo>Broken links:</echo>
         <echo file="${build.site}/../tmp/brokenlinks.txt"/>
 
-        <touch>
+    	<fixcrlf srcdir="${build.site}" includes="**/*.html,**/*.css" eol="unix" eof="remove" />
+
+    	<touch>
             <fileset dir="${build.site}"/>
         </touch>
     </target>
