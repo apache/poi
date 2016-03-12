@@ -116,14 +116,17 @@ public class POIFSDump {
     public static void dump(NPOIFSFileSystem fs, int startBlock, String name, File parent) throws IOException {
         File file = new File(parent, name);
         FileOutputStream out = new FileOutputStream(file);
-        NPOIFSStream stream = new NPOIFSStream(fs, startBlock);
-        
-        byte[] b = new byte[fs.getBigBlockSize()];
-        for (ByteBuffer bb : stream) {
-            int len = bb.remaining();
-            bb.get(b);
-            out.write(b, 0, len);
+        try {
+            NPOIFSStream stream = new NPOIFSStream(fs, startBlock);
+
+            byte[] b = new byte[fs.getBigBlockSize()];
+            for (ByteBuffer bb : stream) {
+                int len = bb.remaining();
+                bb.get(b);
+                out.write(b, 0, len);
+            }
+        } finally {
+            out.close();
         }
-        out.close();
     }
 }

@@ -36,6 +36,7 @@ import org.apache.poi.POIDataSamples;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
+import org.apache.poi.util.RecordFormatException;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -225,7 +226,14 @@ public final class TestOldExcelExtractor {
         } catch (OfficeXmlFileException e) {
             // expected here
         }
-        
+
+        // a completely different type of file
+        try {
+            createExtractor("48936-strings.txt");
+            fail("Should catch Exception here");
+        } catch (RecordFormatException e) {
+            // expected here
+        }
     }
 
     @Test

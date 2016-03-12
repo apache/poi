@@ -587,11 +587,26 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
 
     @Override
     public void setSpaceBefore(Double spaceBefore){
-        if (spaceBefore == null && !_p.isSetPPr()) return;
+        if (spaceBefore == null && !_p.isSetPPr()) {
+            return;
+        }
+
+        // unset the space before on null input
+        if (spaceBefore == null) {
+            if(_p.getPPr().isSetSpcBef()) {
+                _p.getPPr().unsetSpcBef();
+            }
+            return;
+        }
+
         CTTextParagraphProperties pr = _p.isSetPPr() ? _p.getPPr() : _p.addNewPPr();
         CTTextSpacing spc = CTTextSpacing.Factory.newInstance();
-        if(spaceBefore >= 0) spc.addNewSpcPct().setVal((int)(spaceBefore*1000));
-        else spc.addNewSpcPts().setVal((int)(-spaceBefore*100));
+
+        if(spaceBefore >= 0) {
+            spc.addNewSpcPct().setVal((int)(spaceBefore*1000));
+        } else {
+            spc.addNewSpcPts().setVal((int)(-spaceBefore*100));
+        }
         pr.setSpcBef(spc);
     }
 
@@ -616,10 +631,26 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
 
     @Override
     public void setSpaceAfter(Double spaceAfter){
+        if (spaceAfter == null && !_p.isSetPPr()) {
+            return;
+        }
+
+        // unset the space before on null input
+        if (spaceAfter == null) {
+            if(_p.getPPr().isSetSpcAft()) {
+                _p.getPPr().unsetSpcAft();
+            }
+            return;
+        }
+
         CTTextParagraphProperties pr = _p.isSetPPr() ? _p.getPPr() : _p.addNewPPr();
         CTTextSpacing spc = CTTextSpacing.Factory.newInstance();
-        if(spaceAfter >= 0) spc.addNewSpcPct().setVal((int)(spaceAfter*1000));
-        else spc.addNewSpcPts().setVal((int)(-spaceAfter*100));
+
+        if(spaceAfter >= 0) {
+            spc.addNewSpcPct().setVal((int)(spaceAfter*1000));
+        } else {
+            spc.addNewSpcPts().setVal((int)(-spaceAfter*100));
+        }
         pr.setSpcAft(spc);
     }
 
