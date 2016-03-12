@@ -335,7 +335,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      */
     @Override
     public XWPFTable getTableArray(int pos) {
-        if (pos > 0 && pos < tables.size()) {
+        if (pos >= 0 && pos < tables.size()) {
             return tables.get(pos);
         }
         return null;
@@ -349,7 +349,10 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     }
 
     public XWPFFooter getFooterArray(int pos) {
-        return footers.get(pos);
+        if(pos >=0 && pos < footers.size()) {
+            return footers.get(pos);
+        }
+        return null;
     }
 
     /**
@@ -360,7 +363,10 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     }
 
     public XWPFHeader getHeaderArray(int pos) {
-        return headers.get(pos);
+        if(pos >=0 && pos < headers.size()) {
+            return headers.get(pos);
+        }
+        return null;
     }
 
     public String getTblStyle(XWPFTable table) {

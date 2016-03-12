@@ -48,10 +48,19 @@ public class Units {
     /**
      * Converts points to EMUs
      * @param points points
-     * @return emus
+     * @return EMUs
      */
     public static int toEMU(double points){
         return (int)Math.rint(EMU_PER_POINT*points);
+    }
+    
+    /**
+     * Converts pixels to EMUs
+     * @param pixels pixels
+     * @return EMUs
+     */
+    public static int pixelToEMU(int pixels) {
+        return pixels*EMU_PER_PIXEL;
     }
 
     /**

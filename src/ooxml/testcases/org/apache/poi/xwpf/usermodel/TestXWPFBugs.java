@@ -21,6 +21,7 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
 
+import org.apache.poi.util.Units;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.apache.poi.xwpf.usermodel.XWPFRun.FontCharRange;
@@ -55,7 +56,6 @@ public class TestXWPFBugs {
         doc.close();
     }
 
-
     @Test
     public void bug57312_NullPointException() throws IOException {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("57312.docx");
@@ -82,6 +82,40 @@ public class TestXWPFBugs {
         }
     }
 
+    @Test
+    public void bug57495_getTableArrayInDoc() {
+        XWPFDocument doc =new XWPFDocument();
+        //let's create a few tables for the test
+        for(int i=0;i<3;i++) {
+            doc.createTable(2, 2);
+        }
+        XWPFTable table = doc.getTableArray(0);
+        assertNotNull(table);
+        //let's check also that returns the correct table
+        XWPFTable same = doc.getTables().get(0);
+        assertEquals(table, same);
+    }
+
+    @Test
+    public void bug57495_getParagraphArrayInTableCell() {
+        XWPFDocument doc =new XWPFDocument();
+        //let's create a table for the test
+        XWPFTable table = doc.createTable(2, 2);       
+        assertNotNull(table);
+        XWPFParagraph p = table.getRow(0).getCell(0).getParagraphArray(0);
+        assertNotNull(p);
+        //let's check also that returns the correct paragraph
+        XWPFParagraph same = table.getRow(0).getCell(0).getParagraphs().get(0);        
+        assertEquals(p, same);
+    }
+    
+    @Test
+    public void bug57495_convertPixelsToEMUs() {
+        int pixels = 100;
+        int expectedEMU = 952500;
+        int result = Units.pixelToEMU(pixels);
+        assertEquals(expectedEMU, result);
+    }
 
     @Test
     public void test56392() throws IOException, OpenXML4JException {

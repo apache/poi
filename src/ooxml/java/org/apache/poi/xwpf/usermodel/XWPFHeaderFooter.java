@@ -212,8 +212,10 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
      * the text of the header or footer.
      */
     public XWPFParagraph getParagraphArray(int pos) {
-
-        return paragraphs.get(pos);
+        if(pos >= 0 && pos<paragraphs.size()){
+            return paragraphs.get(pos);
+        }
+        return null;
     }
 
     /**
@@ -431,8 +433,7 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
      * @see org.apache.poi.xwpf.usermodel.IBody#getTableArray(int)
      */
     public XWPFTable getTableArray(int pos) {
-
-        if (pos > 0 && pos < tables.size()) {
+        if (pos >= 0 && pos < tables.size()) {
             return tables.get(pos);
         }
         return null;
