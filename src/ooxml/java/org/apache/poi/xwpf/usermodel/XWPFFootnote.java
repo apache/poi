@@ -1,4 +1,5 @@
 /* ====================================================================
+/* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
    this work for additional information regarding copyright ownership.
@@ -111,7 +112,7 @@ public class XWPFFootnote implements Iterable<XWPFParagraph>, IBody {
      * @see org.apache.poi.xwpf.usermodel.IBody#getTableArray(int)
      */
     public XWPFTable getTableArray(int pos) {
-        if (pos > 0 && pos < tables.size()) {
+        if (pos >= 0 && pos < tables.size()) {
             return tables.get(pos);
         }
         return null;
@@ -180,8 +181,10 @@ public class XWPFFootnote implements Iterable<XWPFParagraph>, IBody {
      * @see org.apache.poi.xwpf.usermodel.IBody#getParagraphArray(int pos)
      */
     public XWPFParagraph getParagraphArray(int pos) {
-
-        return paragraphs.get(pos);
+        if(pos >=0 && pos < paragraphs.size()) {
+            return paragraphs.get(pos);
+        }
+        return null;
     }
 
     /**
@@ -210,6 +213,9 @@ public class XWPFFootnote implements Iterable<XWPFParagraph>, IBody {
             return null;
         }
         XWPFTableRow tableRow = table.getRow(row);
+        if(tableRow == null){
+            return null;
+        }
         return tableRow.getTableCell(cell);
     }
 

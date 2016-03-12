@@ -343,7 +343,7 @@ public class XWPFTableCell implements IBody, ICell {
      * @see org.apache.poi.xwpf.usermodel.IBody#getParagraphArray(int)
      */
     public XWPFParagraph getParagraphArray(int pos) {
-        if (pos > 0 && pos < paragraphs.size()) {
+        if (pos >= 0 && pos < paragraphs.size()) {
             return paragraphs.get(pos);
         }
         return null;
@@ -381,7 +381,7 @@ public class XWPFTableCell implements IBody, ICell {
      * @see org.apache.poi.xwpf.usermodel.IBody#getTableArray(int)
      */
     public XWPFTable getTableArray(int pos) {
-        if (pos > 0 && pos < tables.size()) {
+        if(pos >= 0 && pos < tables.size()) {
             return tables.get(pos);
         }
         return null;
