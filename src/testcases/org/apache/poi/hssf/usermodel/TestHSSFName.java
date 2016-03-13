@@ -17,10 +17,6 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import org.apache.poi.POITestCase;
 import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.hssf.HSSFTestDataSamples;
@@ -32,6 +28,8 @@ import org.apache.poi.ss.usermodel.BaseTestNamedRange;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 /**
  * Tests various functionality having to do with {@link org.apache.poi.ss.usermodel.Name}.
@@ -119,6 +117,7 @@ public final class TestHSSFName extends BaseTestNamedRange {
         HSSFName namedRange1 = wb1.getNameAt(0);
         //Getting it sheet name
         sheetName = namedRange1.getSheetName();
+        assertNotNull(sheetName);
 
         // sanity check
         SanityChecker c = new SanityChecker();
@@ -198,6 +197,7 @@ public final class TestHSSFName extends BaseTestNamedRange {
         workbook.close();
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void testDeletedReference() throws Exception {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("24207.xls");
@@ -233,8 +233,8 @@ public final class TestHSSFName extends BaseTestNamedRange {
         wb.createSheet("CSCO");
 
         Ptg[] ptgs = HSSFFormulaParser.parse("CSCO!$E$71", wb, FormulaType.NAMEDRANGE, 0);
-        for (int i = 0; i < ptgs.length; i++) {
-            assertEquals('R', ptgs[i].getRVAType());
+        for (Ptg ptg : ptgs) {
+            assertEquals('R', ptg.getRVAType());
         }
         wb.close();
     }

@@ -29,6 +29,8 @@ import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
 import org.junit.Test;
 
+import java.util.List;
+
 /**
  * Tests of implementations of {@link org.apache.poi.ss.usermodel.Name}.
  *
@@ -642,5 +644,34 @@ public abstract class BaseTestNamedRange {
         }
         
         wb.close();
+    }
+
+    @Test
+    public void testBug56930() {
+        Workbook wb = _testDataProvider.createWorkbook();
+
+        // x1 on sheet1 defines "x=1"
+        wb.createSheet("sheet1");
+        Name x1 = wb.createName();
+
+        x1.setNameName("x");
+        x1.setRefersToFormula("1");
+        x1.setSheetIndex(wb.getSheetIndex("sheet1"));
+
+        // x2 on sheet2 defines "x=2"
+        wb.createSheet("sheet2");
+        Name x2 = wb.createName();
+        x2.setNameName("x");
+        x2.setRefersToFormula("2");
+        x2.setSheetIndex(wb.getSheetIndex("sheet2"));
+
+        List<? extends Name> names = wb.getNames("x");
+        assertEquals("Had: " + names, 2, names.size());
+        assertEquals("1", names.get(0).getRefersToFormula());
+        assertEquals("2", names.get(1).getRefersToFormula());
+
+        assertEquals("1", wb.getName("x").getRefersToFormula());
+        wb.removeName("x");
+        assertEquals("2", wb.getName("x").getRefersToFormula());
     }
 }

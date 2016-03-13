@@ -1474,6 +1474,18 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     }
 
     @Override
+    public List<HSSFName> getNames(String name) {
+        List<HSSFName> nameList = new ArrayList<HSSFName>();
+        for(HSSFName nr : names) {
+            if(nr.getNameName().equals(name)) {
+                nameList.add(nr);
+            }
+        }
+
+        return nameList;
+    }
+
+    @Override
     public HSSFName getNameAt(int nameIndex) {
         int nNames = names.size();
         if (nNames < 1) {
