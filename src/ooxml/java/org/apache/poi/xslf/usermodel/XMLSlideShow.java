@@ -103,7 +103,7 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
         this(PackageHelper.open(is));
     }
 
-    static final OPCPackage empty() {
+    static OPCPackage empty() {
         InputStream is = XMLSlideShow.class.getResourceAsStream("empty.pptx");
         if (is == null) {
             throw new POIXMLException("Missing resource 'empty.pptx'");
@@ -215,11 +215,37 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
                 slideNumber = (int)Math.max(slideId.getId() + 1, slideNumber);
                 cnt++;
             }
+
+            // Bug 55791: We also need to check that the resulting file name is not already taken
+            // this can happen when removing/adding slides
+            while(true) {
+                String slideName = XSLFRelation.SLIDE.getFileName(cnt);
+                boolean found = false;
+                for (POIXMLDocumentPart relation : getRelations()) {
+                    if (relation.getPackagePart() != null &&
+                            slideName.equals(relation.getPackagePart().getPartName().getName())) {
+                        // name is taken => try next one
+                        found = true;
+                        break;
+                    }
+                }
+
+                if(!found &&
+                        getPackage().getPartsByName(Pattern.compile(Pattern.quote(slideName))).size() > 0) {
+                    // name is taken => try next one
+                    found = true;
+                }
+
+                if (!found) {
+                    break;
+                }
+                cnt++;
+            }
         }
 
         RelationPart rp = createRelationship(
                 XSLFRelation.SLIDE, XSLFFactory.getInstance(), cnt, false);
-        XSLFSlide slide = (XSLFSlide)rp.getDocumentPart();
+        XSLFSlide slide = rp.getDocumentPart();
 
         CTSlideIdListEntry slideId = slideList.addNewSldId();
         slideId.setId(slideNumber);
@@ -286,7 +312,7 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
     public void createNotesMaster() {
         RelationPart rp = createRelationship
             (XSLFRelation.NOTES_MASTER, XSLFFactory.getInstance(), 1, false);
-        _notesMaster = (XSLFNotesMaster)rp.getDocumentPart();
+        _notesMaster = rp.getDocumentPart();
         
         CTNotesMasterIdList notesMasterIdList = _presentation.addNewNotesMasterIdLst();
         CTNotesMasterIdListEntry notesMasterId = notesMasterIdList.addNewNotesMasterId();
