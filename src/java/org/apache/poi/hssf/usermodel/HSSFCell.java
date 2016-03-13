@@ -346,11 +346,18 @@ public class HSSFCell implements Cell {
                 }
                 if (setValue) {
                     String str = convertCellValueToString();
-                    int sstIndex = _book.getWorkbook().addSSTString(new UnicodeString(str));
-                    lrec.setSSTIndex(sstIndex);
-                    UnicodeString us = _book.getWorkbook().getSSTString(sstIndex);
-                    _stringValue = new HSSFRichTextString();
-                    _stringValue.setUnicodeString(us);
+                    if(str == null) {
+                        // bug 55668: don't try to store null-string when formula
+                        // results in empty/null value
+                        setCellType(CELL_TYPE_BLANK, false, row, col, styleIndex);
+                        return;
+                    } else {
+                        int sstIndex = _book.getWorkbook().addSSTString(new UnicodeString(str));
+                        lrec.setSSTIndex(sstIndex);
+                        UnicodeString us = _book.getWorkbook().getSSTString(sstIndex);
+                        _stringValue = new HSSFRichTextString();
+                        _stringValue.setUnicodeString(us);
+                    }
                 }
                 _record = lrec;
                 break;
@@ -884,7 +891,7 @@ public class HSSFCell implements Cell {
      * the HSSFWorkbook.</p>
      * 
      * <p>To change the style of a cell without affecting other cells that use the same style,
-     * use {@link org.apache.poi.ss.util.CellUtil#setCellStyleProperties(org.apache.poi.ss.usermodel.Cell, Map)}</p>
+     * use {@link org.apache.poi.ss.util.CellUtil#setCellStyleProperties(org.apache.poi.ss.usermodel.Cell, java.util.Map)}</p>
      *
      * @param style  reference contained in the workbook
      * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#createCellStyle()

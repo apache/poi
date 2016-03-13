@@ -2977,4 +2977,28 @@ public final class TestBugs extends BaseTestBugzillaIssues {
 
         wb.close();
     }
+
+    @Test
+    public void test55668() throws IOException {
+        Workbook wb = HSSFTestDataSamples.openSampleWorkbook("55668.xls");
+
+        Sheet sheet = wb.getSheetAt(0);
+        Row row = sheet.getRow(0);
+        Cell cell = row.getCell(0);
+        assertEquals(Cell.CELL_TYPE_FORMULA, cell.getCellType());
+        assertEquals("IF(TRUE,\"\",\"\")", cell.getCellFormula());
+        assertEquals("", cell.getStringCellValue());
+        cell.setCellType(Cell.CELL_TYPE_STRING);
+
+        assertEquals(Cell.CELL_TYPE_BLANK, cell.getCellType());
+        try {
+            assertNull(cell.getCellFormula());
+            fail("Should throw an exception here");
+        } catch (IllegalStateException e) {
+            // expected here
+        }
+        assertEquals("", cell.getStringCellValue());
+
+        wb.close();
+    }
 }
