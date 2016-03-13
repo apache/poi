@@ -18,9 +18,7 @@ package org.apache.poi.xslf;
 
 import static junit.framework.TestCase.assertEquals;
 import static org.apache.poi.POITestCase.assertContains;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -411,5 +409,23 @@ public class TestXSLFBugs {
         }
         
         ss.close();
+    }
+
+    @Test
+    public void bug55791a() {
+        XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("45541_Footer.pptx");
+        removeAndCreateSlide(ppt);
+    }
+
+    @Test
+    public void bug55791b() {
+        XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("SampleShow.pptx");
+        removeAndCreateSlide(ppt);
+    }
+
+    private void removeAndCreateSlide(XMLSlideShow ppt) {
+        assertTrue(ppt.getSlides().size() > 1);
+        ppt.removeSlide(1);
+        assertNotNull(ppt.createSlide());
     }
 }
