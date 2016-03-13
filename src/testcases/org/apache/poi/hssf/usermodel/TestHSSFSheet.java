@@ -1222,4 +1222,23 @@ public final class TestHSSFSheet extends BaseTestSheet {
         
         wb.close();
     }
+
+    @Test
+    public void bug59135() throws IOException {
+        HSSFWorkbook wb1 = new HSSFWorkbook();
+        wb1.createSheet().protectSheet("1111.2222.3333.1234");
+        HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1);
+        wb1.close();
+        
+        assertEquals((short)0xb86b, wb2.getSheetAt(0).getPassword());
+        wb2.close();
+
+        HSSFWorkbook wb3 = new HSSFWorkbook();
+        wb3.createSheet().protectSheet("1111.2222.3333.12345");
+        HSSFWorkbook wb4 = HSSFTestDataSamples.writeOutAndReadBack(wb3);
+        wb3.close();
+        
+        assertEquals((short)0xbecc, wb4.getSheetAt(0).getPassword());
+        wb4.close();
+    }
 }
