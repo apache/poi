@@ -956,6 +956,18 @@ public class SXSSFWorkbook implements Workbook {
     {
         return _wb.getName(name);
     }
+
+    /**
+     * Returns all defined names with the given name.
+     *
+     * @param name the name of the defined name
+     * @return a list of the defined names with the specified name. An empty list is returned if none is found.
+     */
+    @Override
+    public List<? extends Name> getNames(String name) {
+        return _wb.getNames(name);
+    }
+
     /**
      * @param nameIndex position of the named range (0-based)
      * @return the defined name at the specified index

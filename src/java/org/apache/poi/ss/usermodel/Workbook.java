@@ -351,6 +351,15 @@ public interface Workbook extends Closeable, Iterable<Sheet> {
      * @return the defined name with the specified name. <code>null</code> if not found.
      */
     Name getName(String name);
+
+    /**
+     * Returns all defined names with the given name.
+     *
+     * @param name the name of the defined name
+     * @return a list of the defined names with the specified name. An empty list is returned if none is found.
+     */
+    List<? extends Name> getNames(String name);
+
     /**
      * @param nameIndex position of the named range (0-based)
      * @return the defined name at the specified index

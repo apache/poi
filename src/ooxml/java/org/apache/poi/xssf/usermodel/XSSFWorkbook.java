@@ -522,7 +522,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
      */
     public int addPicture(InputStream is, int format) throws IOException {
         int imageNumber = getAllPictures().size() + 1;
-        XSSFPictureData img = (XSSFPictureData)createRelationship(XSSFPictureData.RELATIONS[format], XSSFFactory.getInstance(), imageNumber, true).getDocumentPart();
+        XSSFPictureData img = createRelationship(XSSFPictureData.RELATIONS[format], XSSFFactory.getInstance(), imageNumber, true).getDocumentPart();
         OutputStream out = img.getPackagePart().getOutputStream();
         IOUtils.copy(is, out);
         out.close();
@@ -872,7 +872,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
             List<PackagePart> mediaParts = getPackage().getPartsByName(Pattern.compile("/xl/media/.*?"));
             pictures = new ArrayList<XSSFPictureData>(mediaParts.size());
             for(PackagePart part : mediaParts){
-                pictures.add(new XSSFPictureData(part, null));
+                pictures.add(new XSSFPictureData(part));
             }
         }
         return pictures; //YK: should return Collections.unmodifiableList(pictures);
@@ -906,6 +906,18 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
             return null;
         }
         return namedRanges.get(nameIndex);
+    }
+
+    @Override
+    public List<XSSFName> getNames(String name) {
+        List<XSSFName> names = new ArrayList<XSSFName>();
+        for(XSSFName nr : namedRanges) {
+            if(nr.getNameName().equals(name)) {
+                names.add(nr);
+            }
+        }
+
+        return names;
     }
 
     @Override
