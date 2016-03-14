@@ -17,6 +17,7 @@
 
 package org.apache.poi.sl.usermodel;
 
+import java.awt.Graphics2D;
 import java.util.List;
 
 public interface TextShape<
@@ -173,7 +174,7 @@ public interface TextShape<
      * Compute the cumulative height occupied by the text
      */
     double getTextHeight();
-
+    
     /**
      * Returns the type of vertical alignment for the text.
      *

@@ -19,11 +19,10 @@
 package org.apache.poi.xslf.usermodel;
 
 import java.awt.Color;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.apache.poi.sl.draw.DrawPaint;
 import org.apache.poi.sl.usermodel.ColorStyle;
+import org.apache.poi.sl.usermodel.PresetColor;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
 import org.apache.xmlbeans.XmlObject;
@@ -126,7 +125,10 @@ public class XSLFColor {
             } else if (ch instanceof CTPresetColor) {
                 CTPresetColor prst = (CTPresetColor)ch;
                 String colorName = prst.getVal().toString();
-                color = presetColors.get(colorName);
+                PresetColor pc = PresetColor.valueOfOoxmlId(colorName);
+                if (pc != null) {
+                    color = pc.color;
+                }
             } else if (ch instanceof CTSchemeColor) {
                 CTSchemeColor schemeColor = (CTSchemeColor)ch;
                 String colorRef = schemeColor.getVal().toString();
@@ -401,154 +403,5 @@ public class XSLFColor {
      */
     public int getTint(){
         return getPercentageValue("tint");
-    }
-
-
-    /**
-     * Preset colors defined in DrawingML
-     */
-    static final Map<String, Color> presetColors;
-
-    static {
-        presetColors = new HashMap<String, Color>();    
-        presetColors.put("aliceBlue", new Color(240, 248, 255));
-        presetColors.put("antiqueWhite", new Color(250, 235, 215));
-        presetColors.put("aqua", new Color(0, 255, 255));
-        presetColors.put("aquamarine", new Color(127, 255, 212));
-        presetColors.put("azure", new Color(240, 255, 255));
-        presetColors.put("beige", new Color(245, 245, 220));
-        presetColors.put("bisque", new Color(255, 228, 196));
-        presetColors.put("black", new Color(0, 0, 0));
-        presetColors.put("blanchedAlmond", new Color(255, 235, 205));
-        presetColors.put("blue", new Color(0, 0, 255));
-        presetColors.put("blueViolet", new Color(138, 43, 226));
-        presetColors.put("brown", new Color(165, 42, 42));
-        presetColors.put("burlyWood", new Color(222, 184, 135));
-        presetColors.put("cadetBlue", new Color(95, 158, 160));
-        presetColors.put("chartreuse", new Color(127, 255, 0));
-        presetColors.put("chocolate", new Color(210, 105, 30));
-        presetColors.put("coral", new Color(255, 127, 80));
-        presetColors.put("cornflowerBlue", new Color(100, 149, 237));
-        presetColors.put("crimson", new Color(220, 20, 60));
-        presetColors.put("cyan", new Color(0, 255, 255));
-        presetColors.put("deepPink", new Color(255, 20, 147));
-        presetColors.put("deepSkyBlue", new Color(0, 191, 255));
-        presetColors.put("dimGray", new Color(105, 105, 105));
-        presetColors.put("dkBlue", new Color(0, 0, 139));
-        presetColors.put("dkCyan", new Color(0, 139, 139));
-        presetColors.put("dkGoldenrod", new Color(184, 134, 11));
-        presetColors.put("dkGray", new Color(169, 169, 169));
-        presetColors.put("dkGreen", new Color(0, 100, 0));
-        presetColors.put("dkKhaki", new Color(189, 183, 107));
-        presetColors.put("dkMagenta", new Color(139, 0, 139));
-        presetColors.put("dkOliveGreen", new Color(85, 107, 47));
-        presetColors.put("dkOrange", new Color(255, 140, 0));
-        presetColors.put("dkOrchid", new Color(153, 50, 204));
-        presetColors.put("dkRed", new Color(139, 0, 0));
-        presetColors.put("dkSalmon", new Color(233, 150, 122));
-        presetColors.put("dkSeaGreen", new Color(143, 188, 139));
-        presetColors.put("dkSlateBlue", new Color(72, 61, 139));
-        presetColors.put("dkSlateGray", new Color(47, 79, 79));
-        presetColors.put("dkTurquoise", new Color(0, 206, 209));
-        presetColors.put("dkViolet", new Color(148, 0, 211));
-        presetColors.put("dodgerBlue", new Color(30, 144, 255));
-        presetColors.put("firebrick", new Color(178, 34, 34));
-        presetColors.put("floralWhite", new Color(255, 250, 240));
-        presetColors.put("forestGreen", new Color(34, 139, 34));
-        presetColors.put("fuchsia", new Color(255, 0, 255));
-        presetColors.put("gainsboro", new Color(220, 220, 220));
-        presetColors.put("ghostWhite", new Color(248, 248, 255));
-        presetColors.put("gold", new Color(255, 215, 0));
-        presetColors.put("goldenrod", new Color(218, 165, 32));
-        presetColors.put("gray", new Color(128, 128, 128));
-        presetColors.put("green", new Color(0, 128, 0));
-        presetColors.put("greenYellow", new Color(173, 255, 47));
-        presetColors.put("honeydew", new Color(240, 255, 240));
-        presetColors.put("hotPink", new Color(255, 105, 180));
-        presetColors.put("indianRed", new Color(205, 92, 92));
-        presetColors.put("indigo", new Color(75, 0, 130));
-        presetColors.put("ivory", new Color(255, 255, 240));
-        presetColors.put("khaki", new Color(240, 230, 140));
-        presetColors.put("lavender", new Color(230, 230, 250));
-        presetColors.put("lavenderBlush", new Color(255, 240, 245));
-        presetColors.put("lawnGreen", new Color(124, 252, 0));
-        presetColors.put("lemonChiffon", new Color(255, 250, 205));
-        presetColors.put("lime", new Color(0, 255, 0));
-        presetColors.put("limeGreen", new Color(50, 205, 50));
-        presetColors.put("linen", new Color(250, 240, 230));
-        presetColors.put("ltBlue", new Color(173, 216, 230));
-        presetColors.put("ltCoral", new Color(240, 128, 128));
-        presetColors.put("ltCyan", new Color(224, 255, 255));
-        presetColors.put("ltGoldenrodYellow", new Color(250, 250, 120));
-        presetColors.put("ltGray", new Color(211, 211, 211));
-        presetColors.put("ltGreen", new Color(144, 238, 144));
-        presetColors.put("ltPink", new Color(255, 182, 193));
-        presetColors.put("ltSalmon", new Color(255, 160, 122));
-        presetColors.put("ltSeaGreen", new Color(32, 178, 170));
-        presetColors.put("ltSkyBlue", new Color(135, 206, 250));
-        presetColors.put("ltSlateGray", new Color(119, 136, 153));
-        presetColors.put("ltSteelBlue", new Color(176, 196, 222));
-        presetColors.put("ltYellow", new Color(255, 255, 224));
-        presetColors.put("magenta", new Color(255, 0, 255));
-        presetColors.put("maroon", new Color(128, 0, 0));
-        presetColors.put("medAquamarine", new Color(102, 205, 170));
-        presetColors.put("medBlue", new Color(0, 0, 205));
-        presetColors.put("medOrchid", new Color(186, 85, 211));
-        presetColors.put("medPurple", new Color(147, 112, 219));
-        presetColors.put("medSeaGreen", new Color(60, 179, 113));
-        presetColors.put("medSlateBlue", new Color(123, 104, 238));
-        presetColors.put("medSpringGreen", new Color(0, 250, 154));
-        presetColors.put("medTurquoise", new Color(72, 209, 204));
-        presetColors.put("medVioletRed", new Color(199, 21, 133));
-        presetColors.put("midnightBlue", new Color(25, 25, 112));
-        presetColors.put("mintCream", new Color(245, 255, 250));
-        presetColors.put("mistyRose", new Color(255, 228, 225));
-        presetColors.put("moccasin", new Color(255, 228, 181));
-        presetColors.put("navajoWhite", new Color(255, 222, 173));
-        presetColors.put("navy", new Color(0, 0, 128));
-        presetColors.put("oldLace", new Color(253, 245, 230));
-        presetColors.put("olive", new Color(128, 128, 0));
-        presetColors.put("oliveDrab", new Color(107, 142, 35));
-        presetColors.put("orange", new Color(255, 165, 0));
-        presetColors.put("orangeRed", new Color(255, 69, 0));
-        presetColors.put("orchid", new Color(218, 112, 214));
-        presetColors.put("paleGoldenrod", new Color(238, 232, 170));
-        presetColors.put("paleGreen", new Color(152, 251, 152));
-        presetColors.put("paleTurquoise", new Color(175, 238, 238));
-        presetColors.put("paleVioletRed", new Color(219, 112, 147));
-        presetColors.put("papayaWhip", new Color(255, 239, 213));
-        presetColors.put("peachPuff", new Color(255, 218, 185));
-        presetColors.put("peru", new Color(205, 133, 63));
-        presetColors.put("pink", new Color(255, 192, 203));
-        presetColors.put("plum", new Color(221, 160, 221));
-        presetColors.put("powderBlue", new Color(176, 224, 230));
-        presetColors.put("purple", new Color(128, 0, 128));
-        presetColors.put("red", new Color(255, 0, 0));
-        presetColors.put("rosyBrown", new Color(188, 143, 143));
-        presetColors.put("royalBlue", new Color(65, 105, 225));
-        presetColors.put("saddleBrown", new Color(139, 69, 19));
-        presetColors.put("salmon", new Color(250, 128, 114));
-        presetColors.put("sandyBrown", new Color(244, 164, 96));
-        presetColors.put("seaGreen", new Color(46, 139, 87));
-        presetColors.put("seaShell", new Color(255, 245, 238));
-        presetColors.put("sienna", new Color(160, 82, 45));
-        presetColors.put("silver", new Color(192, 192, 192));
-        presetColors.put("skyBlue", new Color(135, 206, 235));
-        presetColors.put("slateBlue", new Color(106, 90, 205));
-        presetColors.put("slateGray", new Color(112, 128, 144));
-        presetColors.put("snow", new Color(255, 250, 250));
-        presetColors.put("springGreen", new Color(0, 255, 127));
-        presetColors.put("steelBlue", new Color(70, 130, 180));
-        presetColors.put("tan", new Color(210, 180, 140));
-        presetColors.put("teal", new Color(0, 128, 128));
-        presetColors.put("thistle", new Color(216, 191, 216));
-        presetColors.put("tomato", new Color(255, 99, 71));
-        presetColors.put("turquoise", new Color(64, 224, 208));
-        presetColors.put("violet", new Color(238, 130, 238));
-        presetColors.put("wheat", new Color(245, 222, 179));
-        presetColors.put("white", new Color(255, 255, 255));
-        presetColors.put("whiteSmoke", new Color(245, 245, 245));
-        presetColors.put("yellow", new Color(255, 255, 0));
-        presetColors.put("yellowGreen", new Color(154, 205, 50));
     }
 }

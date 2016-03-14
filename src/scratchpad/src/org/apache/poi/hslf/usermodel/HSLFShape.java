@@ -27,6 +27,8 @@ import org.apache.poi.ddf.AbstractEscherOptRecord;
 import org.apache.poi.ddf.EscherChildAnchorRecord;
 import org.apache.poi.ddf.EscherClientAnchorRecord;
 import org.apache.poi.ddf.EscherColorRef;
+import org.apache.poi.ddf.EscherColorRef.SysIndexProcedure;
+import org.apache.poi.ddf.EscherColorRef.SysIndexSource;
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherProperties;
 import org.apache.poi.ddf.EscherProperty;
@@ -40,6 +42,7 @@ import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.RecordTypes;
 import org.apache.poi.sl.draw.DrawFactory;
 import org.apache.poi.sl.usermodel.FillStyle;
+import org.apache.poi.sl.usermodel.PresetColor;
 import org.apache.poi.sl.usermodel.Shape;
 import org.apache.poi.sl.usermodel.ShapeContainer;
 import org.apache.poi.sl.usermodel.ShapeType;
@@ -348,6 +351,9 @@ public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
 
         EscherColorRef ecr = new EscherColorRef(val);
         Color col = getColor(ecr);
+        if (col == null) {
+            return null;
+        }
 
         double alpha = getAlpha(opacityProperty);
         return new Color(col.getRed(), col.getGreen(), col.getBlue(), (int)(alpha*255.0));
@@ -371,17 +377,119 @@ public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
             rgb[0] = (schemeColor >> 0) & 0xFF;
             rgb[1] = (schemeColor >> 8) & 0xFF;
             rgb[2] = (schemeColor >> 16) & 0xFF;
-        } else if (fPaletteIndex){
+        } else if (fPaletteIndex) {
             //TODO
-        } else if (fPaletteRGB){
+        } else if (fPaletteRGB) {
             //TODO
-        } else if (fSystemRGB){
+        } else if (fSystemRGB) {
             //TODO
-        } else if (fSysIndex){
-            //TODO
+        } else if (fSysIndex) {
+            Color col = getSysIndexColor(ecr);
+            col = applySysIndexProcedure(ecr, col);
+            return col;
         }
         
         return new Color(rgb[0], rgb[1], rgb[2]);
+    }
+    
+    private Color getSysIndexColor(EscherColorRef ecr) {
+        SysIndexSource sis = ecr.getSysIndexSource();
+        if (sis == null) {
+            int sysIdx = ecr.getSysIndex();
+            PresetColor pc = PresetColor.valueOfNativeId(sysIdx);
+            return (pc != null) ? pc.color : null;
+        }
+        
+        // TODO: check for recursive loops, when color getter also reference
+        // a different color type
+        switch (sis) {
+            case FILL_COLOR: {
+                return getFill().getForegroundColor();
+            }
+            case LINE_OR_FILL_COLOR: {
+                Color col = null;
+                if (this instanceof HSLFSimpleShape) {
+                    col = ((HSLFSimpleShape)this).getLineColor();
+                }
+                if (col == null) {
+                    col = getFill().getForegroundColor();
+                }
+                return col;
+            }
+            case LINE_COLOR: {
+                if (this instanceof HSLFSimpleShape) {
+                    return ((HSLFSimpleShape)this).getLineColor();
+                }
+                break;
+            }
+            case SHADOW_COLOR: {
+                if (this instanceof HSLFSimpleShape) {
+                    return ((HSLFSimpleShape)this).getShadowColor();
+                }
+                break;
+            }
+            case CURRENT_OR_LAST_COLOR: {
+                // TODO ... read from graphics context???
+                break;
+            }
+            case FILL_BACKGROUND_COLOR: {
+                return getFill().getBackgroundColor();
+            }
+            case LINE_BACKGROUND_COLOR: {
+                if (this instanceof HSLFSimpleShape) {
+                    return ((HSLFSimpleShape)this).getLineBackgroundColor();
+                }
+                break;
+            }
+            case FILL_OR_LINE_COLOR: {
+                Color col = getFill().getForegroundColor();
+                if (col == null && this instanceof HSLFSimpleShape) {
+                    col = ((HSLFSimpleShape)this).getLineColor();
+                }
+                return col;
+            }
+            default:
+                break;
+        }
+            
+        return null;
+    }
+        
+    private Color applySysIndexProcedure(EscherColorRef ecr, Color col) {
+        
+        final SysIndexProcedure sip = ecr.getSysIndexProcedure();
+        if (col == null || sip == null) {
+            return col;
+        }
+        
+        switch (sip) {
+            case DARKEN_COLOR: {
+                // see java.awt.Color#darken()
+                double FACTOR = (ecr.getRGB()[2])/255.;
+                int r = (int)Math.rint(col.getRed()*FACTOR);
+                int g = (int)Math.rint(col.getGreen()*FACTOR);
+                int b = (int)Math.rint(col.getBlue()*FACTOR);
+                return new Color(r,g,b);                
+            }
+            case LIGHTEN_COLOR: {
+                double FACTOR = (0xFF-ecr.getRGB()[2])/255.;
+                               
+                int r = col.getRed();
+                int g = col.getGreen();
+                int b = col.getBlue();
+                
+                r += Math.rint((0xFF-r)*FACTOR);
+                g += Math.rint((0xFF-g)*FACTOR);
+                b += Math.rint((0xFF-b)*FACTOR);
+                
+                return new Color(r,g,b);
+            }
+            default:
+                // TODO ...
+                break;
+        }
+        
+        return col;
     }
     
     double getAlpha(short opacityProperty) {

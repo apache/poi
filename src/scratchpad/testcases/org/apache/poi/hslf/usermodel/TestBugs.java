@@ -25,6 +25,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -58,6 +60,7 @@ import org.apache.poi.hssf.usermodel.DummyGraphics2d;
 import org.apache.poi.sl.draw.DrawFactory;
 import org.apache.poi.sl.draw.DrawPaint;
 import org.apache.poi.sl.draw.DrawTextParagraph;
+import org.apache.poi.sl.usermodel.ColorStyle;
 import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
@@ -832,6 +835,7 @@ public final class TestBugs {
     }
 
     @Test
+    @SuppressWarnings("resource")
     public void bug57796() throws IOException {
         HSLFSlideShow ppt = open("WithLinks.ppt");
         HSLFSlide slide = ppt.getSlides().get(0);
@@ -865,7 +869,7 @@ public final class TestBugs {
                     sb.append(c);
                     attributes = iterator.getAttributes();
                 }
-
+    
                 if ("Jakarta HSSF".equals(sb.toString())) {
                     // this is a test for a manually modified ppt, for real hyperlink label
                     // one would need to access the screen tip record
@@ -907,5 +911,41 @@ public final class TestBugs {
     private static HSLFSlideShow open(String fileName) throws IOException {
         File sample = HSLFTestDataSamples.getSampleFile(fileName);
         return (HSLFSlideShow)SlideShowFactory.create(sample);
+    }
+
+    @Test
+    public void bug55983() throws IOException {
+        HSLFSlideShow ppt1 = new HSLFSlideShow();
+        HSLFSlide sl = ppt1.createSlide();
+        sl.getBackground().getFill().setForegroundColor(Color.blue);
+        HSLFFreeformShape fs = sl.createFreeform();
+        Ellipse2D.Double el = new Ellipse2D.Double(0,0,300,200);
+        fs.setAnchor(new Rectangle2D.Double(100,100,300,200));
+        fs.setPath(new Path2D.Double(el));
+        Color cExp = new Color(50,100,150,200);
+        fs.setFillColor(cExp);
+        
+        HSLFSlideShow ppt2 = HSLFTestDataSamples.writeOutAndReadBack(ppt1);
+        ppt1.close();
+        
+        sl = ppt2.getSlides().get(0);
+        fs = (HSLFFreeformShape)sl.getShapes().get(0);
+        Color cAct = fs.getFillColor();
+        assertEquals(cExp.getRed(), cAct.getRed());
+        assertEquals(cExp.getGreen(), cAct.getGreen());
+        assertEquals(cExp.getBlue(), cAct.getBlue());
+        assertEquals(cExp.getAlpha(), cAct.getAlpha(), 1);
+        
+        PaintStyle ps = fs.getFillStyle().getPaint();
+        assertTrue(ps instanceof SolidPaint);
+        ColorStyle cs = ((SolidPaint)ps).getSolidColor();
+        cAct = cs.getColor();
+        assertEquals(cExp.getRed(), cAct.getRed());
+        assertEquals(cExp.getGreen(), cAct.getGreen());
+        assertEquals(cExp.getBlue(), cAct.getBlue());
+        assertEquals(255, cAct.getAlpha());
+        assertEquals(cExp.getAlpha()*100000./255., cs.getAlpha(), 1);
+        
+        ppt2.close();
     }
 }

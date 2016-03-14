@@ -16,16 +16,25 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
-import junit.framework.TestCase;
-import org.openxmlformats.schemas.drawingml.x2006.main.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.awt.Color;
+import java.io.IOException;
 
-/**
- * @author Yegor Kozlov
- */
-public class TestXSLFColor extends TestCase {
+import org.apache.poi.sl.usermodel.PresetColor;
+import org.junit.Test;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTColor;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTHslColor;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTSRgbColor;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTSystemColor;
+import org.openxmlformats.schemas.drawingml.x2006.main.STPresetColorVal;
+import org.openxmlformats.schemas.drawingml.x2006.main.STSchemeColorVal;
+import org.openxmlformats.schemas.drawingml.x2006.main.STSystemColorVal;
 
+public class TestXSLFColor {
+
+    @Test
     public void testGetters() {
         CTColor xml = CTColor.Factory.newInstance();
         CTSRgbColor c = xml.addNewSrgbClr();
@@ -86,6 +95,7 @@ public class TestXSLFColor extends TestCase {
         assertEquals(50, color.getTint());
     }
 
+    @Test
     public void testHSL() {
         CTColor xml = CTColor.Factory.newInstance();
         CTHslColor c = xml.addNewHslClr();
@@ -97,6 +107,7 @@ public class TestXSLFColor extends TestCase {
         assertEquals(new Color(128, 00, 00), color.getColor());
     }
 
+    @Test
     public void testSRgb() {
         CTColor xml = CTColor.Factory.newInstance();
         xml.addNewSrgbClr().setVal(new byte[]{ (byte)0xFF, (byte)0xFF, 0});
@@ -105,7 +116,8 @@ public class TestXSLFColor extends TestCase {
         assertEquals(new Color(0xFF, 0xFF, 0), color.getColor());
     }
 
-    public void testSchemeColor() {
+    @Test
+    public void testSchemeColor() throws IOException {
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFTheme theme = ppt.createSlide().getTheme();
 
@@ -127,8 +139,11 @@ public class TestXSLFColor extends TestCase {
         color = new XSLFColor(xml, theme, null);
         // <a:sysClr val="windowText" lastClr="000000"/>
         assertEquals(Color.decode("0x000000"), color.getColor());
+
+        ppt.close();
     }
 
+    @Test
     public void testPresetColor() {
         CTColor xml = CTColor.Factory.newInstance();
         xml.addNewPrstClr().setVal(STPresetColorVal.AQUAMARINE);
@@ -136,16 +151,18 @@ public class TestXSLFColor extends TestCase {
         assertEquals(new Color(127, 255, 212), color.getColor());
 
 
-        for(String colorName : XSLFColor.presetColors.keySet()){
+        for(PresetColor pc : PresetColor.values()) {
+            if (pc.ooxmlId == null) continue;
             xml = CTColor.Factory.newInstance();
-            STPresetColorVal.Enum val = STPresetColorVal.Enum.forString(colorName);
-            assertNotNull(colorName, val);
+            STPresetColorVal.Enum val = STPresetColorVal.Enum.forString(pc.ooxmlId);
+            assertNotNull(pc.ooxmlId, val);
             xml.addNewPrstClr().setVal(val);
             color = new XSLFColor(xml, null, null);
-            assertEquals(XSLFColor.presetColors.get(colorName), color.getColor());
+            assertEquals(pc.color, color.getColor());
         }
     }
 
+    @Test
     public void testSys() {
         CTColor xml = CTColor.Factory.newInstance();
         CTSystemColor sys = xml.addNewSysClr();
@@ -159,5 +176,4 @@ public class TestXSLFColor extends TestCase {
         color = new XSLFColor(xml, null, null);
         assertEquals(Color.red, color.getColor());
     }
-
 }

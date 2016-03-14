@@ -243,7 +243,7 @@ public class EscherColorRef {
      */
     public SysIndexProcedure getSysIndexProcedure() {
         if (!hasSysIndexFlag()) return null;
-        int val = FLAG_RED.getValue(colorRef);
+        int val = FLAG_GREEN.getValue(colorRef);
         for (SysIndexProcedure sip : SysIndexProcedure.values()) {
             if (sip == SysIndexProcedure.INVERT_AFTER || sip == SysIndexProcedure.INVERT_HIGHBIT_AFTER) continue;
             if (sip.mask.isSet(val)) return sip;
@@ -277,7 +277,19 @@ public class EscherColorRef {
      * @return index of current palette (color) or -1 if {@link #hasPaletteIndexFlag()} is {@code false}
      */
     public int getPaletteIndex() {
-        if (!hasPaletteIndexFlag()) return -1;
-        return (FLAG_GREEN.getValue(colorRef) << 8) & FLAG_RED.getValue(colorRef);
+        return (hasPaletteIndexFlag()) ? getIndex() : -1;
+    }
+
+    /**
+     * @return index of system color table or -1 if {@link #hasSysIndexFlag()} is {@code false}
+     * 
+     * @see org.apache.poi.sl.usermodel.PresetColor
+     */
+    public int getSysIndex() {
+        return (hasSysIndexFlag()) ? getIndex() : -1;
+    }
+    
+    private int getIndex() {
+        return (FLAG_GREEN.getValue(colorRef) << 8) | FLAG_RED.getValue(colorRef);
     }
 }

@@ -82,7 +82,7 @@ public class DrawTextShape extends DrawSimpleShape {
         }
 
         // first dry-run to calculate the total height of the text
-        double textHeight = s.getTextHeight();
+        double textHeight = getTextHeight(graphics);
 
         switch (s.getVerticalAlignment()){
             default:
@@ -170,11 +170,27 @@ public class DrawTextShape extends DrawSimpleShape {
 
     /**
      * Compute the cumulative height occupied by the text
+     * 
+     * @return the height in points
      */
-    public double getTextHeight(){
+    public double getTextHeight() {
+        return getTextHeight(null);
+    }
+    
+    /**
+     * Compute the cumulative height occupied by the text
+     *
+     * @param oldGraphics the graphics context, which properties are to be copied, may be null
+     * @return the height in points
+     */
+    protected double getTextHeight(Graphics2D oldGraphics) {
         // dry-run in a 1x1 image and return the vertical advance
         BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
         Graphics2D graphics = img.createGraphics();
+        if (oldGraphics != null) {
+            graphics.addRenderingHints(oldGraphics.getRenderingHints());
+            graphics.setTransform(oldGraphics.getTransform());
+        }
         DrawFactory.getInstance(graphics).fixFonts(graphics);
         return drawParagraphs(graphics, 0, 0);
     }
