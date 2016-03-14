@@ -171,6 +171,36 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
     }
 
     /**
+     * @return background color of the line. If color is not set returns {@code null}
+     */
+    public Color getLineBackgroundColor(){
+        AbstractEscherOptRecord opt = getEscherOptRecord();
+
+        EscherSimpleProperty p = getEscherProperty(opt, EscherProperties.LINESTYLE__NOLINEDRAWDASH);
+        if(p != null && (p.getPropertyValue() & 0x8) == 0) return null;
+
+        Color clr = getColor(EscherProperties.LINESTYLE__BACKCOLOR, EscherProperties.LINESTYLE__OPACITY, -1);
+        return clr == null ? null : clr;
+    }
+
+    /**
+     * Sets the background color of line
+     *
+     * @param color new background color of the line
+     */
+    public void setLineBackgroundColor(Color color){
+        AbstractEscherOptRecord opt = getEscherOptRecord();
+        if (color == null) {
+            setEscherProperty(opt, EscherProperties.LINESTYLE__NOLINEDRAWDASH, 0x80000);
+            opt.removeEscherProperty(EscherProperties.LINESTYLE__BACKCOLOR);
+        } else {
+            int rgb = new Color(color.getBlue(), color.getGreen(), color.getRed(), 0).getRGB();
+            setEscherProperty(opt, EscherProperties.LINESTYLE__BACKCOLOR, rgb);
+            setEscherProperty(opt, EscherProperties.LINESTYLE__NOLINEDRAWDASH, 0x180018);
+        }
+    }
+
+    /**
      * Gets line cap.
      *
      * @return cap of the line.

@@ -300,11 +300,19 @@ public final class HSLFFill {
     public void setForegroundColor(Color color){
         AbstractEscherOptRecord opt = shape.getEscherOptRecord();
         if (color == null) {
+            opt.removeEscherProperty(EscherProperties.FILL__FILLCOLOR);
             HSLFShape.setEscherProperty(opt, EscherProperties.FILL__NOFILLHITTEST, 0x150000);
         }
         else {
             int rgb = new Color(color.getBlue(), color.getGreen(), color.getRed(), 0).getRGB();
             HSLFShape.setEscherProperty(opt, EscherProperties.FILL__FILLCOLOR, rgb);
+            int alpha = color.getAlpha();
+            if (alpha == 255) {
+                opt.removeEscherProperty(EscherProperties.FILL__FILLOPACITY);
+            } else {
+                int alphaFP = Units.doubleToFixedPoint(alpha/255d);
+                HSLFShape.setEscherProperty(opt, EscherProperties.FILL__FILLOPACITY, alphaFP);
+            }
             HSLFShape.setEscherProperty(opt, EscherProperties.FILL__NOFILLHITTEST, 0x150011);
         }
     }

@@ -96,8 +96,10 @@ public class Units {
      * @see <a href="http://msdn.microsoft.com/en-us/library/dd910765(v=office.12).aspx">[MS-OSHARED] - 2.2.1.6 FixedPoint</a>
      */
     public static int doubleToFixedPoint(double floatPoint) {
-        int i = (int)Math.floor(floatPoint);
-        int f = (int)((floatPoint % 1d)*65536d);
+        double fractionalPart = floatPoint % 1d;
+        double integralPart = floatPoint - fractionalPart;
+        int i = (int)Math.floor(integralPart);
+        int f = (int)Math.rint(fractionalPart*65536d);
         int fixedPoint = (i << 16) | (f & 0xFFFF);
         return fixedPoint;
     }

@@ -45,8 +45,10 @@ class PathGradientPaint implements Paint {
 
         // determine transparency
         boolean opaque = true;
-        for (int i = 0; i < colors.length; i++){
-            opaque = opaque && (colors[i].getAlpha() == 0xff);
+        for (Color c : colors) {
+            if (c != null) {
+                opaque = opaque && (c.getAlpha() == 0xff);
+            }
         }
         this.transparency = opaque ? OPAQUE : TRANSLUCENT;
     }
