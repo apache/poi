@@ -131,12 +131,14 @@ public final class IOUtils {
 
     /**
      * Same as the normal <tt>channel.read(b)</tt>, but tries to ensure
-     * that the entire len number of bytes is read.
+     * that the buffer is filled completely if possible, i.e. b.remaining()
+     * returns 0.
      * <p>
      * If the end of file is reached before any bytes are read, returns -1. If
      * the end of the file is reached after some bytes are read, returns the
-     * number of bytes read. If the end of the file isn't reached before len
-     * bytes have been read, will return len bytes.
+     * number of bytes read. If the end of the file isn't reached before the
+     * buffer has no more remaining capacity, will return the number of bytes
+     * that were read.
      */
     public static int readFully(ReadableByteChannel channel, ByteBuffer b) throws IOException {
         int total = 0;
@@ -192,7 +194,7 @@ public final class IOUtils {
             }
         }
         return sum.getValue();
-    }    
+    }
     
     
     /**
