@@ -28,7 +28,6 @@ import org.apache.poi.hssf.record.CFRule12Record;
 import org.apache.poi.hssf.record.CFRuleBase;
 import org.apache.poi.hssf.record.CFRuleRecord;
 import org.apache.poi.hssf.record.Record;
-import org.apache.poi.hssf.record.RecordFormatException;
 import org.apache.poi.ss.formula.FormulaShifter;
 import org.apache.poi.ss.formula.ptg.AreaErrPtg;
 import org.apache.poi.ss.formula.ptg.AreaPtg;
@@ -36,6 +35,7 @@ import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.util.RecordFormatException;
 
 /**
  * <p>CFRecordsAggregate - aggregates Conditional Formatting records CFHeaderRecord 
@@ -73,9 +73,9 @@ public final class CFRecordsAggregate extends RecordAggregate {
         }
         header = pHeader;
         rules = new ArrayList<CFRuleBase>(pRules.length);
-        for (int i = 0; i < pRules.length; i++) {
-            checkRuleType(pRules[i]);
-            rules.add(pRules[i]);
+        for (CFRuleBase pRule : pRules) {
+            checkRuleType(pRule);
+            rules.add(pRule);
         }
     }
 
@@ -183,7 +183,7 @@ public final class CFRecordsAggregate extends RecordAggregate {
      * String representation of CFRecordsAggregate
      */
     public String toString() {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         String type = "CF";
         if (header instanceof CFHeader12Record) {
             type = "CF12";
@@ -193,8 +193,7 @@ public final class CFRecordsAggregate extends RecordAggregate {
         if( header != null ) {
             buffer.append(header.toString());
         }
-        for(int i=0; i<rules.size(); i++) {
-            CFRuleBase cfRule = rules.get(i);
+        for (CFRuleBase cfRule : rules) {
             buffer.append(cfRule.toString());
         }
         buffer.append("[/").append(type).append("]\n");
@@ -203,8 +202,7 @@ public final class CFRecordsAggregate extends RecordAggregate {
 
     public void visitContainedRecords(RecordVisitor rv) {
         rv.visitRecord(header);
-        for(int i=0; i<rules.size(); i++) {
-            CFRuleBase rule = rules.get(i);
+        for (CFRuleBase rule : rules) {
             rv.visitRecord(rule);
         }
     }
@@ -216,8 +214,7 @@ public final class CFRecordsAggregate extends RecordAggregate {
         CellRangeAddress[] cellRanges = header.getCellRanges();
         boolean changed = false;
         List<CellRangeAddress> temp = new ArrayList<CellRangeAddress>();
-        for (int i = 0; i < cellRanges.length; i++) {
-            CellRangeAddress craOld = cellRanges[i];
+        for (CellRangeAddress craOld : cellRanges) {
             CellRangeAddress craNew = shiftRange(shifter, craOld, currentExternSheetIx);
             if (craNew == null) {
                 changed = true;
@@ -239,8 +236,7 @@ public final class CFRecordsAggregate extends RecordAggregate {
             header.setCellRanges(newRanges);
         }
 
-        for(int i=0; i<rules.size(); i++) {
-            CFRuleBase rule = rules.get(i);
+        for (CFRuleBase rule : rules) {
             Ptg[] ptgs;
             ptgs = rule.getParsedExpression1();
             if (ptgs != null && shifter.adjustFormula(ptgs, currentExternSheetIx)) {
