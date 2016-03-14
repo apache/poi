@@ -133,19 +133,7 @@ public class SXSSFSheet implements Sheet, Cloneable
                             "in the range [0," + _sh.getLastRowNum() + "] that is already written to disk.");
         }
 
-//Make the initial allocation as big as the row above.
-        Row previousRow=rownum>0?getRow(rownum-1):null;
-        int initialAllocationSize=0;
-//have previous row in memory -> take that value.
-        if(previousRow!=null)
-            initialAllocationSize=previousRow.getLastCellNum();
-//are we called after a flush(0)? If yes, ask the writer for the value.
-        if(initialAllocationSize<=0&&_writer.getNumberOfFlushedRows()>0)
-            initialAllocationSize=_writer.getNumberOfCellsOfLastFlushedRow();
-//default to 10 on the first row.
-        if(initialAllocationSize<=0)
-            initialAllocationSize=10;
-        SXSSFRow newRow=new SXSSFRow(this,initialAllocationSize);
+        SXSSFRow newRow=new SXSSFRow(this);
         _rows.put(rownum,newRow);
         allFlushed = false;
         if(_randomAccessWindowSize>=0&&_rows.size()>_randomAccessWindowSize)
