@@ -19,17 +19,20 @@ package org.apache.poi.openxml4j.opc.internal;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.openxml4j.opc.ZipPackage;
 import org.apache.poi.openxml4j.util.ZipSecureFile;
+import org.apache.poi.openxml4j.util.ZipSecureFile.ThresholdInputStream;
 
 public final class ZipHelper {
     /**
@@ -143,7 +146,21 @@ public final class ZipHelper {
     }
 
     /**
-     * Opens the specified file as a zip, or returns null if no such file exists
+     * Opens the specified stream as a secure zip
+     *
+     * @param stream
+     *            The stream to open.
+     * @return The zip stream freshly open.
+     */
+    public static ThresholdInputStream openZipStream(InputStream stream) throws IOException {
+        InputStream zis = new ZipInputStream(stream);
+        ThresholdInputStream tis = ZipSecureFile.addThreshold(zis);
+        return tis;
+    }
+
+    /**
+     * Opens the specified file as a secure zip, or returns null if no 
+     *  such file exists
      *
      * @param file
      *            The file to open.
@@ -158,7 +175,7 @@ public final class ZipHelper {
     }
 
     /**
-     * Retrieve and open a zip file with the specified path.
+     * Retrieve and open as a secure zip file with the specified path.
      *
      * @param path
      *            The file path.
@@ -166,11 +183,7 @@ public final class ZipHelper {
      */
     public static ZipFile openZipFile(String path) throws IOException {
         File f = new File(path);
-
-        if (!f.exists()) {
-            return null;
-        }
-
-        return new ZipSecureFile(f);
+        
+        return openZipFile(f);
     }
 }

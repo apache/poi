@@ -24,7 +24,6 @@ import java.io.OutputStream;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -42,7 +41,6 @@ import org.apache.poi.openxml4j.opc.internal.marshallers.ZipPartMarshaller;
 import org.apache.poi.openxml4j.util.ZipEntrySource;
 import org.apache.poi.openxml4j.util.ZipFileZipEntrySource;
 import org.apache.poi.openxml4j.util.ZipInputStreamZipEntrySource;
-import org.apache.poi.openxml4j.util.ZipSecureFile;
 import org.apache.poi.openxml4j.util.ZipSecureFile.ThresholdInputStream;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -89,9 +87,8 @@ public final class ZipPackage extends Package {
      */
     ZipPackage(InputStream in, PackageAccess access) throws IOException {
         super(access);
-        InputStream zis = new ZipInputStream(in);
-        ThresholdInputStream tis = ZipSecureFile.addThreshold(zis);
-        this.zipArchive = new ZipInputStreamZipEntrySource(tis);
+        ThresholdInputStream zis = ZipHelper.openZipStream(in);
+        this.zipArchive = new ZipInputStreamZipEntrySource(zis);
     }
 
     /**
