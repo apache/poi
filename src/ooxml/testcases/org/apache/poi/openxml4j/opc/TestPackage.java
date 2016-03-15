@@ -51,6 +51,7 @@ import org.apache.poi.POIXMLException;
 import org.apache.poi.openxml4j.OpenXML4JTestDataSamples;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
+import org.apache.poi.openxml4j.exceptions.NotOfficeXmlFileException;
 import org.apache.poi.openxml4j.exceptions.ODFNotOfficeXmlFileException;
 import org.apache.poi.openxml4j.exceptions.OLE2NotOfficeXmlFileException;
 import org.apache.poi.openxml4j.opc.internal.ContentTypeManager;
@@ -679,14 +680,38 @@ public final class TestPackage {
         POIDataSamples files = POIDataSamples.getSpreadSheetInstance();
         
         // OLE2 - Stream
-//        try {
-//            OPCPackage.open(files.openResourceAsStream("SampleSS.xls"));
-//            fail("Shouldn't be able to open OLE2");
-//        } catch (OLE2NotOfficeXmlFileException e) {
-//            // TODO Check details
-//        }
-        
+        try {
+            OPCPackage.open(files.openResourceAsStream("SampleSS.xls"));
+            fail("Shouldn't be able to open OLE2");
+        } catch (OLE2NotOfficeXmlFileException e) {
+            assertTrue(e.getMessage().indexOf("The supplied data appears to be in the OLE2 Format") > -1);
+            assertTrue(e.getMessage().indexOf("You are calling the part of POI that deals with OOXML") > -1);
+        }
         // OLE2 - File
+        try {
+            OPCPackage.open(files.getFile("SampleSS.xls"));
+            fail("Shouldn't be able to open OLE2");
+        } catch (OLE2NotOfficeXmlFileException e) {
+            assertTrue(e.getMessage().indexOf("The supplied data appears to be in the OLE2 Format") > -1);
+            assertTrue(e.getMessage().indexOf("You are calling the part of POI that deals with OOXML") > -1);
+        }
+        
+        // Raw XML - Stream
+        try {
+            OPCPackage.open(files.openResourceAsStream("SampleSS.xml"));
+            fail("Shouldn't be able to open XML");
+        } catch (NotOfficeXmlFileException e) {
+            assertTrue(e.getMessage().indexOf("The supplied data appears to be a raw XML file") > -1);
+            assertTrue(e.getMessage().indexOf("Formats such as Office 2003 XML") > -1);
+        }
+        // Raw XML - File
+        try {
+            OPCPackage.open(files.getFile("SampleSS.xml"));
+            fail("Shouldn't be able to open XML");
+        } catch (NotOfficeXmlFileException e) {
+            assertTrue(e.getMessage().indexOf("The supplied data appears to be a raw XML file") > -1);
+            assertTrue(e.getMessage().indexOf("Formats such as Office 2003 XML") > -1);
+        }
         
         // ODF / ODS - Stream
         try {
@@ -707,9 +732,6 @@ public final class TestPackage {
         
         // Plain Text - Stream
         // Plain Text - File
-        
-        // Raw XML - Stream
-        // Raw XML - File
     }
 
     @Test(expected=IOException.class)

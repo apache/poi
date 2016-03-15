@@ -18,8 +18,10 @@
 package org.apache.poi.openxml4j.opc.internal;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PushbackInputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Enumeration;
@@ -27,12 +29,18 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
+import org.apache.poi.openxml4j.exceptions.NotOfficeXmlFileException;
+import org.apache.poi.openxml4j.exceptions.OLE2NotOfficeXmlFileException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.openxml4j.opc.ZipPackage;
 import org.apache.poi.openxml4j.util.ZipSecureFile;
 import org.apache.poi.openxml4j.util.ZipSecureFile.ThresholdInputStream;
+import org.apache.poi.poifs.common.POIFSConstants;
+import org.apache.poi.poifs.storage.HeaderBlockConstants;
+import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.LittleEndian;
 
 public final class ZipHelper {
     /**
@@ -144,6 +152,67 @@ public final class ZipHelper {
             return null;
         }
     }
+    
+    /**
+     * Verifies that the given stream starts with a Zip structure.
+     * 
+     * Warning - this will consume the first few bytes of the stream,
+     *  you should push-back or reset the stream after use!
+     */
+    public static void verifyZipHeader(InputStream stream) 
+            throws NotOfficeXmlFileException, IOException {
+        // Grab the first 8 bytes
+        byte[] data = new byte[8];
+        IOUtils.readFully(stream, data);
+        
+        // OLE2?
+        long signature = LittleEndian.getLong(data);
+        if (signature == HeaderBlockConstants._signature) {
+            throw new OLE2NotOfficeXmlFileException(
+                "The supplied data appears to be in the OLE2 Format. " +
+                "You are calling the part of POI that deals with OOXML "+
+                "(Office Open XML) Documents. You need to call a different " +
+                "part of POI to process this data (eg HSSF instead of XSSF)");
+        }
+        
+        // Raw XML?
+        byte[] RAW_XML_FILE_HEADER = POIFSConstants.RAW_XML_FILE_HEADER;
+        if (data[0] == RAW_XML_FILE_HEADER[0] &&
+            data[1] == RAW_XML_FILE_HEADER[1] &&
+            data[2] == RAW_XML_FILE_HEADER[2] &&
+            data[3] == RAW_XML_FILE_HEADER[3] &&
+            data[4] == RAW_XML_FILE_HEADER[4]) {
+            throw new NotOfficeXmlFileException(
+                "The supplied data appears to be a raw XML file. " +
+                "Formats such as Office 2003 XML are not supported");
+        }
+
+        // Don't check for a Zip header, as to maintain backwards
+        //  compatibility we need to let them seek over junk at the
+        //  start before beginning processing.
+        
+        // Put things back
+        if (stream instanceof PushbackInputStream) {
+            ((PushbackInputStream)stream).unread(data);
+        } else if (stream.markSupported()) {
+            stream.reset();
+        } else if (stream instanceof FileInputStream) {
+            // File open check, about to be closed, nothing to do
+        } else {
+            // Oh dear... I hope you know what you're doing!
+        }
+    }
+    
+    private static InputStream prepareToCheckHeader(InputStream stream) {
+        if (stream instanceof PushbackInputStream) {
+            return stream;
+        }
+        if (stream.markSupported()) {
+            stream.mark(8);
+            return stream;
+        }
+        return new PushbackInputStream(stream, 8);
+    }
 
     /**
      * Opens the specified stream as a secure zip
@@ -153,7 +222,12 @@ public final class ZipHelper {
      * @return The zip stream freshly open.
      */
     public static ThresholdInputStream openZipStream(InputStream stream) throws IOException {
-        InputStream zis = new ZipInputStream(stream);
+        // Peek at the first few bytes to sanity check
+        InputStream checkedStream = prepareToCheckHeader(stream);
+        verifyZipHeader(checkedStream);
+        
+        // Open as a proper zip stream
+        InputStream zis = new ZipInputStream(checkedStream);
         ThresholdInputStream tis = ZipSecureFile.addThreshold(zis);
         return tis;
     }
@@ -170,7 +244,13 @@ public final class ZipHelper {
         if (!file.exists()) {
             return null;
         }
+        
+        // Peek at the first few bytes to sanity check
+        FileInputStream input = new FileInputStream(file);
+        verifyZipHeader(input);
+        input.close();
 
+        // Open as a proper zip file
         return new ZipSecureFile(file);
     }
 

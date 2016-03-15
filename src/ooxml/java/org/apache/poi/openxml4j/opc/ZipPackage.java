@@ -28,6 +28,7 @@ import java.util.zip.ZipOutputStream;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
+import org.apache.poi.openxml4j.exceptions.NotOfficeXmlFileException;
 import org.apache.poi.openxml4j.exceptions.ODFNotOfficeXmlFileException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JRuntimeException;
@@ -194,6 +195,7 @@ public final class ZipPackage extends Package {
         // At this point, we should have loaded the content type part
         if (this.contentTypeManager == null) {
             // Is it a different Zip-based format?
+            int numEntries = 0;
             boolean hasMimetype = false;
             boolean hasSettingsXML = false;
             entries = this.zipArchive.getEntries();
@@ -205,11 +207,17 @@ public final class ZipPackage extends Package {
                 if (entry.getName().equals("settings.xml")) {
                     hasSettingsXML = true;
                 }
+                numEntries++;
             }
             if (hasMimetype && hasSettingsXML) {
                 throw new ODFNotOfficeXmlFileException(
                    "The supplied data appears to be in ODF (Open Document) Format. " +
                    "Formats like these (eg ODS, ODP) are not supported, try Apache ODFToolkit");
+            }
+            if (numEntries == 0) {
+                throw new NotOfficeXmlFileException(
+                   "No valid entries or contents found, this is not a valid OOXML " +
+                   "(Office Open XML) file");
             }
 
             // Fallback exception
