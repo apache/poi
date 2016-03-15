@@ -41,6 +41,8 @@ import java.util.List;
 import java.util.TreeMap;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipError;
+import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
@@ -731,7 +733,20 @@ public final class TestPackage {
         }
         
         // Plain Text - Stream
+        try {
+            OPCPackage.open(files.openResourceAsStream("SampleSS.txt"));
+            fail("Shouldn't be able to open Plain Text");
+        } catch (NotOfficeXmlFileException e) {
+            assertTrue(e.getMessage().indexOf("No valid entries or contents found") > -1);
+            assertTrue(e.getMessage().indexOf("not a valid OOXML") > -1);
+        }
         // Plain Text - File
+        try {
+            OPCPackage.open(files.getFile("SampleSS.txt"));
+            fail("Shouldn't be able to open Plain Text");
+        } catch (InvalidOperationException e) {
+            // Unhelpful low-level error, sorry
+        }
     }
 
     @Test(expected=IOException.class)
