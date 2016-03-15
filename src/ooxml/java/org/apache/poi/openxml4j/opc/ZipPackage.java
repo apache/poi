@@ -65,14 +65,14 @@ public final class ZipPackage extends Package {
      * Constructor. Creates a new, empty ZipPackage.
      */
     public ZipPackage() {
-    	super(defaultPackageAccess);
-    	this.zipArchive = null;
-    	
-    	try {
-    	    this.contentTypeManager = new ZipContentTypeManager(null, this);
-    	} catch (InvalidFormatException e) {
-			logger.log(POILogger.WARN,"Could not parse ZipPackage", e);
-		}
+        super(defaultPackageAccess);
+        this.zipArchive = null;
+
+        try {
+            this.contentTypeManager = new ZipContentTypeManager(null, this);
+        } catch (InvalidFormatException e) {
+            logger.log(POILogger.WARN,"Could not parse ZipPackage", e);
+        }
     }
 
     /**
@@ -88,10 +88,10 @@ public final class ZipPackage extends Package {
      *             ZipInputStream.
      */
     ZipPackage(InputStream in, PackageAccess access) throws IOException {
-    	super(access);
-    	InputStream zis = new ZipInputStream(in);
-    	ThresholdInputStream tis = ZipSecureFile.addThreshold(zis);
-    	this.zipArchive = new ZipInputStreamZipEntrySource(tis);
+        super(access);
+        InputStream zis = new ZipInputStream(in);
+        ThresholdInputStream tis = ZipSecureFile.addThreshold(zis);
+        this.zipArchive = new ZipInputStreamZipEntrySource(tis);
     }
 
     /**
@@ -103,18 +103,18 @@ public final class ZipPackage extends Package {
      *            The package access mode.
      */
     ZipPackage(String path, PackageAccess access) {
-    	super(access);
+        super(access);
 
-    	final ZipFile zipFile;
+        final ZipFile zipFile;
 
-    	try {
-    		zipFile = ZipHelper.openZipFile(path);
-    	} catch (IOException e) {
-    		throw new InvalidOperationException(
-    				"Can't open the specified file: '" + path + "'", e);
-    	}
+        try {
+            zipFile = ZipHelper.openZipFile(path);
+        } catch (IOException e) {
+            throw new InvalidOperationException(
+                    "Can't open the specified file: '" + path + "'", e);
+        }
 
-    	this.zipArchive = new ZipFileZipEntrySource(zipFile);
+        this.zipArchive = new ZipFileZipEntrySource(zipFile);
     }
 
     /**
@@ -126,18 +126,18 @@ public final class ZipPackage extends Package {
      *            The package access mode.
      */
     ZipPackage(File file, PackageAccess access) {
-    	super(access);
+        super(access);
 
-    	final ZipFile zipFile;
+        final ZipFile zipFile;
 
-    	try {
-    		zipFile = ZipHelper.openZipFile(file);
-    	} catch (IOException e) {
-    		throw new InvalidOperationException(
-    				"Can't open the specified file: '" + file + "'", e);
-    	}
+        try {
+            zipFile = ZipHelper.openZipFile(file);
+        } catch (IOException e) {
+            throw new InvalidOperationException(
+                    "Can't open the specified file: '" + file + "'", e);
+        }
 
-    	this.zipArchive = new ZipFileZipEntrySource(zipFile);
+        this.zipArchive = new ZipFileZipEntrySource(zipFile);
     }
 
     /**
@@ -151,207 +151,207 @@ public final class ZipPackage extends Package {
      *            The package access mode.
      */
     ZipPackage(ZipEntrySource zipEntry, PackageAccess access) {
-    	super(access);
-    	this.zipArchive = zipEntry;
+        super(access);
+        this.zipArchive = zipEntry;
     }
 
-	/**
-	 * Retrieves the parts from this package. We assume that the package has not
-	 * been yet inspect to retrieve all the parts, this method will open the
-	 * archive and look for all parts contain inside it. If the package part
-	 * list is not empty, it will be emptied.
-	 *
-	 * @return All parts contain in this package.
-	 * @throws InvalidFormatException
-	 *             Throws if the package is not valid.
-	 */
-	@Override
-	protected PackagePart[] getPartsImpl() throws InvalidFormatException {
-		if (this.partList == null) {
-			// The package has just been created, we create an empty part
-			// list.
-			this.partList = new PackagePartCollection();
-		}
+    /**
+     * Retrieves the parts from this package. We assume that the package has not
+     * been yet inspect to retrieve all the parts, this method will open the
+     * archive and look for all parts contain inside it. If the package part
+     * list is not empty, it will be emptied.
+     *
+     * @return All parts contain in this package.
+     * @throws InvalidFormatException
+     *             Throws if the package is not valid.
+     */
+    @Override
+    protected PackagePart[] getPartsImpl() throws InvalidFormatException {
+        if (this.partList == null) {
+            // The package has just been created, we create an empty part
+            // list.
+            this.partList = new PackagePartCollection();
+        }
 
-		if (this.zipArchive == null) {
-			return this.partList.values().toArray(
-					new PackagePart[this.partList.values().size()]);
-		}
-		
-		// First we need to parse the content type part
-		Enumeration<? extends ZipEntry> entries = this.zipArchive.getEntries();
-		while (entries.hasMoreElements()) {
-			ZipEntry entry = entries.nextElement();
-			if (entry.getName().equalsIgnoreCase(
-					ContentTypeManager.CONTENT_TYPES_PART_NAME)) {
-				try {
-					this.contentTypeManager = new ZipContentTypeManager(
-							getZipArchive().getInputStream(entry), this);
-				} catch (IOException e) {
-					throw new InvalidFormatException(e.getMessage());
-				}
-				break;
-			}
-		}
+        if (this.zipArchive == null) {
+            return this.partList.values().toArray(
+                    new PackagePart[this.partList.values().size()]);
+        }
 
-		// At this point, we should have loaded the content type part
-		if (this.contentTypeManager == null) {
-		    // Is it a different Zip-based format?
-		    boolean hasMimetype = false;
-		    boolean hasSettingsXML = false;
-		    entries = this.zipArchive.getEntries();
-	        while (entries.hasMoreElements()) {
-	            ZipEntry entry = entries.nextElement();
-	            if (entry.getName().equals("mimetype")) {
-	                hasMimetype = true;
-	            }
+        // First we need to parse the content type part
+        Enumeration<? extends ZipEntry> entries = this.zipArchive.getEntries();
+        while (entries.hasMoreElements()) {
+            ZipEntry entry = entries.nextElement();
+            if (entry.getName().equalsIgnoreCase(
+                    ContentTypeManager.CONTENT_TYPES_PART_NAME)) {
+                try {
+                    this.contentTypeManager = new ZipContentTypeManager(
+                            getZipArchive().getInputStream(entry), this);
+                } catch (IOException e) {
+                    throw new InvalidFormatException(e.getMessage());
+                }
+                break;
+            }
+        }
+
+        // At this point, we should have loaded the content type part
+        if (this.contentTypeManager == null) {
+            // Is it a different Zip-based format?
+            boolean hasMimetype = false;
+            boolean hasSettingsXML = false;
+            entries = this.zipArchive.getEntries();
+            while (entries.hasMoreElements()) {
+                ZipEntry entry = entries.nextElement();
+                if (entry.getName().equals("mimetype")) {
+                    hasMimetype = true;
+                }
                 if (entry.getName().equals("settings.xml")) {
                     hasSettingsXML = true;
                 }
-	        }
-	        if (hasMimetype && hasSettingsXML) {
-	            throw new ODFNotOfficeXmlFileException(
-	               "The supplied data appears to be in ODF (Open Document) Format. " +
-	               "Formats like these (eg ODS, ODP) are not supported, try Apache ODFToolkit");
-	        }
-		    
-		    // Fallback exception
-			throw new InvalidFormatException(
-					"Package should contain a content type part [M1.13]");
-		}
+            }
+            if (hasMimetype && hasSettingsXML) {
+                throw new ODFNotOfficeXmlFileException(
+                   "The supplied data appears to be in ODF (Open Document) Format. " +
+                   "Formats like these (eg ODS, ODP) are not supported, try Apache ODFToolkit");
+            }
 
-		// Now create all the relationships
-		// (Need to create relationships before other
-		//  parts, otherwise we might create a part before
-		//  its relationship exists, and then it won't tie up)
-		entries = this.zipArchive.getEntries();
-		while (entries.hasMoreElements()) {
-			ZipEntry entry = entries.nextElement();
-			PackagePartName partName = buildPartName(entry);
-			if(partName == null) continue;
+            // Fallback exception
+            throw new InvalidFormatException(
+                    "Package should contain a content type part [M1.13]");
+        }
 
-			// Only proceed for Relationships at this stage
-			String contentType = contentTypeManager.getContentType(partName);
-			if (contentType != null && contentType.equals(ContentTypes.RELATIONSHIPS_PART)) {
-				try {
-					partList.put(partName, new ZipPackagePart(this, entry,
-						partName, contentType));
-				} catch (InvalidOperationException e) {
-					throw new InvalidFormatException(e.getMessage());
-				}
-			}
-		}
+        // Now create all the relationships
+        // (Need to create relationships before other
+        //  parts, otherwise we might create a part before
+        //  its relationship exists, and then it won't tie up)
+        entries = this.zipArchive.getEntries();
+        while (entries.hasMoreElements()) {
+            ZipEntry entry = entries.nextElement();
+            PackagePartName partName = buildPartName(entry);
+            if(partName == null) continue;
 
-		// Then we can go through all the other parts
-		entries = this.zipArchive.getEntries();
-		while (entries.hasMoreElements()) {
-			ZipEntry entry = entries.nextElement();
-			PackagePartName partName = buildPartName(entry);
-			if(partName == null) continue;
+            // Only proceed for Relationships at this stage
+            String contentType = contentTypeManager.getContentType(partName);
+            if (contentType != null && contentType.equals(ContentTypes.RELATIONSHIPS_PART)) {
+                try {
+                    partList.put(partName, new ZipPackagePart(this, entry,
+                                                              partName, contentType));
+                } catch (InvalidOperationException e) {
+                    throw new InvalidFormatException(e.getMessage());
+                }
+            }
+        }
 
-			String contentType = contentTypeManager
-					.getContentType(partName);
-			if (contentType != null && contentType.equals(ContentTypes.RELATIONSHIPS_PART)) {
-				// Already handled
-			}
-			else if (contentType != null) {
-				try {
-					partList.put(partName, new ZipPackagePart(this, entry,
-							partName, contentType));
-				} catch (InvalidOperationException e) {
-					throw new InvalidFormatException(e.getMessage());
-				}
-			} else {
-				throw new InvalidFormatException(
-						"The part "
-								+ partName.getURI().getPath()
-								+ " does not have any content type ! Rule: Package require content types when retrieving a part from a package. [M.1.14]");
-			}
-		}
+        // Then we can go through all the other parts
+        entries = this.zipArchive.getEntries();
+        while (entries.hasMoreElements()) {
+            ZipEntry entry = entries.nextElement();
+            PackagePartName partName = buildPartName(entry);
+            if(partName == null) continue;
 
-		return partList.values().toArray(new ZipPackagePart[partList.size()]);
-	}
+            String contentType = contentTypeManager
+                    .getContentType(partName);
+            if (contentType != null && contentType.equals(ContentTypes.RELATIONSHIPS_PART)) {
+                // Already handled
+            }
+            else if (contentType != null) {
+                try {
+                    partList.put(partName, new ZipPackagePart(this, entry,
+                            partName, contentType));
+                } catch (InvalidOperationException e) {
+                    throw new InvalidFormatException(e.getMessage());
+                }
+            } else {
+                throw new InvalidFormatException(
+                        "The part "
+                                + partName.getURI().getPath()
+                                + " does not have any content type ! Rule: Package require content types when retrieving a part from a package. [M.1.14]");
+            }
+        }
 
-	/**
-	 * Builds a PackagePartName for the given ZipEntry,
-	 *  or null if it's the content types / invalid part
-	 */
-	private PackagePartName buildPartName(ZipEntry entry) {
-		try {
-			// We get an error when we parse [Content_Types].xml
-			// because it's not a valid URI.
-			if (entry.getName().equalsIgnoreCase(
-					ContentTypeManager.CONTENT_TYPES_PART_NAME)) {
-				return null;
-			}
-			return PackagingURIHelper.createPartName(ZipHelper
-					.getOPCNameFromZipItemName(entry.getName()));
-		} catch (Exception e) {
-			// We assume we can continue, even in degraded mode ...
-			logger.log(POILogger.WARN,"Entry "
-							+ entry.getName()
-							+ " is not valid, so this part won't be add to the package.", e);
-			return null;
-		}
-	}
+        return partList.values().toArray(new ZipPackagePart[partList.size()]);
+    }
 
-	/**
-	 * Create a new MemoryPackagePart from the specified URI and content type
-	 *
-	 *
-	 * aram partName The part URI.
-	 *
-	 * @param contentType
-	 *            The part content type.
-	 * @return The newly created zip package part, else <b>null</b>.
-	 */
-	@Override
-	protected PackagePart createPartImpl(PackagePartName partName,
-			String contentType, boolean loadRelationships) {
-		if (contentType == null)
-			throw new IllegalArgumentException("contentType");
+    /**
+     * Builds a PackagePartName for the given ZipEntry,
+     *  or null if it's the content types / invalid part
+     */
+    private PackagePartName buildPartName(ZipEntry entry) {
+        try {
+            // We get an error when we parse [Content_Types].xml
+            // because it's not a valid URI.
+            if (entry.getName().equalsIgnoreCase(
+                    ContentTypeManager.CONTENT_TYPES_PART_NAME)) {
+                return null;
+            }
+            return PackagingURIHelper.createPartName(ZipHelper
+                    .getOPCNameFromZipItemName(entry.getName()));
+        } catch (Exception e) {
+            // We assume we can continue, even in degraded mode ...
+            logger.log(POILogger.WARN,"Entry "
+                                      + entry.getName()
+                                      + " is not valid, so this part won't be add to the package.", e);
+            return null;
+        }
+    }
 
-		if (partName == null)
-			throw new IllegalArgumentException("partName");
+    /**
+     * Create a new MemoryPackagePart from the specified URI and content type
+     *
+     *
+     * aram partName The part URI.
+     *
+     * @param contentType
+     *            The part content type.
+     * @return The newly created zip package part, else <b>null</b>.
+     */
+    @Override
+    protected PackagePart createPartImpl(PackagePartName partName,
+            String contentType, boolean loadRelationships) {
+        if (contentType == null)
+            throw new IllegalArgumentException("contentType");
 
-		try {
-			return new MemoryPackagePart(this, partName, contentType,
-					loadRelationships);
-		} catch (InvalidFormatException e) {
-			logger.log(POILogger.WARN, e);
-			return null;
-		}
-	}
+        if (partName == null)
+            throw new IllegalArgumentException("partName");
 
-	/**
-	 * Delete a part from the package
-	 *
-	 * @throws IllegalArgumentException
-	 *             Throws if the part URI is nulll or invalid.
-	 */
-	@Override
-	protected void removePartImpl(PackagePartName partName) {
-		if (partName == null)
-			throw new IllegalArgumentException("partUri");
-	}
+        try {
+            return new MemoryPackagePart(this, partName, contentType,
+                    loadRelationships);
+        } catch (InvalidFormatException e) {
+            logger.log(POILogger.WARN, e);
+            return null;
+        }
+    }
 
-	/**
-	 * Flush the package. Do nothing.
-	 */
-	@Override
-	protected void flushImpl() {
-		// Do nothing
-	}
+    /**
+     * Delete a part from the package
+     *
+     * @throws IllegalArgumentException
+     *             Throws if the part URI is nulll or invalid.
+     */
+    @Override
+    protected void removePartImpl(PackagePartName partName) {
+        if (partName == null)
+            throw new IllegalArgumentException("partUri");
+    }
 
-	/**
-	 * Close and save the package.
-	 *
-	 * @see #close()
-	 */
-	@Override
-	protected void closeImpl() throws IOException {
-		// Flush the package
-		flush();
+    /**
+     * Flush the package. Do nothing.
+     */
+    @Override
+    protected void flushImpl() {
+        // Do nothing
+    }
+
+    /**
+     * Close and save the package.
+     *
+     * @see #close()
+     */
+    @Override
+    protected void closeImpl() throws IOException {
+        // Flush the package
+        flush();
 
 		// Save the content
 		if (this.originalPackagePath != null
@@ -418,20 +418,20 @@ public final class ZipPackage extends Package {
 		}
 	}
 
-	/**
-	 * Implement the getPart() method to retrieve a part from its URI in the
-	 * current package
-	 *
-	 *
-	 * @see #getPart(PackageRelationship)
-	 */
-	@Override
-	protected PackagePart getPartImpl(PackagePartName partName) {
-		if (partList.containsKey(partName)) {
-			return partList.get(partName);
-		}
-		return null;
-	}
+    /**
+     * Implement the getPart() method to retrieve a part from its URI in the
+     * current package
+     *
+     *
+     * @see #getPart(PackageRelationship)
+     */
+    @Override
+    protected PackagePart getPartImpl(PackagePartName partName) {
+        if (partList.containsKey(partName)) {
+            return partList.get(partName);
+        }
+        return null;
+    }
 
 	/**
 	 * Save this package into the specified stream
@@ -525,14 +525,14 @@ public final class ZipPackage extends Package {
                     "Fail to save: an error occurs while saving the package : "
 							+ e.getMessage(), e);
 		}
-	}
+    }
 
-	/**
-	 * Get the zip archive
-	 *
-	 * @return The zip archive.
-	 */
-	public ZipEntrySource getZipArchive() {
-		return zipArchive;
-	}
+    /**
+     * Get the zip archive
+     *
+     * @return The zip archive.
+     */
+    public ZipEntrySource getZipArchive() {
+        return zipArchive;
+    }
 }
