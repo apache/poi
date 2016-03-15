@@ -45,11 +45,14 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.POIDataSamples;
 import org.apache.poi.POITestCase;
 import org.apache.poi.POIXMLException;
 import org.apache.poi.openxml4j.OpenXML4JTestDataSamples;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
+import org.apache.poi.openxml4j.exceptions.ODFNotOfficeXmlFileException;
+import org.apache.poi.openxml4j.exceptions.OLE2NotOfficeXmlFileException;
 import org.apache.poi.openxml4j.opc.internal.ContentTypeManager;
 import org.apache.poi.openxml4j.opc.internal.FileHelper;
 import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
@@ -664,6 +667,49 @@ public final class TestPackage {
         assertTrue(mgr.isContentTypeRegister("application/vnd.ms-excel.sheet.macroEnabled.main+xml"));
         p.revert();
         is.close();
+    }
+    
+    /**
+     * Verify we give helpful exceptions (or as best we can) when
+     *  supplied with non-OOXML file types (eg OLE2, ODF)
+     */
+    @Test
+    public void NonOOXMLFileTypes() throws Exception {
+        // Spreadsheet has a good mix of alternate file types
+        POIDataSamples files = POIDataSamples.getSpreadSheetInstance();
+        
+        // OLE2 - Stream
+//        try {
+//            OPCPackage.open(files.openResourceAsStream("SampleSS.xls"));
+//            fail("Shouldn't be able to open OLE2");
+//        } catch (OLE2NotOfficeXmlFileException e) {
+//            // TODO Check details
+//        }
+        
+        // OLE2 - File
+        
+        // ODF / ODS - Stream
+        try {
+            OPCPackage.open(files.openResourceAsStream("SampleSS.ods"));
+            fail("Shouldn't be able to open ODS");
+        } catch (ODFNotOfficeXmlFileException e) {
+            assertTrue(e.toString().contains("The supplied data appears to be in ODF"));
+            assertTrue(e.toString().contains("Formats like these (eg ODS"));
+        }
+        // ODF / ODS - File
+        try {
+            OPCPackage.open(files.getFile("SampleSS.ods"));
+            fail("Shouldn't be able to open ODS");
+        } catch (ODFNotOfficeXmlFileException e) {
+            assertTrue(e.toString().contains("The supplied data appears to be in ODF"));
+            assertTrue(e.toString().contains("Formats like these (eg ODS"));
+        }
+        
+        // Plain Text - Stream
+        // Plain Text - File
+        
+        // Raw XML - Stream
+        // Raw XML - File
     }
 
     @Test(expected=IOException.class)

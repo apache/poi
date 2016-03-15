@@ -14,22 +14,16 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-
 package org.apache.poi.openxml4j.exceptions;
 
+import org.apache.poi.UnsupportedFileFormatException;
+
 /**
- * Global exception throws when a critical error occurs. (this exception is not
- * set as Runtime in order to force user to manage the exception in a
- * try/catch).
+ * This exception is thrown when we try to open a file that doesn't
+ *  seem to actually be an OOXML (Office Open XML) file after all
  */
-@SuppressWarnings("serial")
-public class OpenXML4JException extends Exception {
-
-	public OpenXML4JException(String msg) {
-		super(msg);
-	}
-
-    public OpenXML4JException(String msg, Throwable cause) {
-        super(msg, cause);
+public class NotOfficeXmlFileException extends UnsupportedFileFormatException {
+    public NotOfficeXmlFileException(String message) {
+        super(message);
     }
 }

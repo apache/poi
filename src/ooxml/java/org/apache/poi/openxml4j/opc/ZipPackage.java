@@ -29,6 +29,7 @@ import java.util.zip.ZipOutputStream;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
+import org.apache.poi.openxml4j.exceptions.ODFNotOfficeXmlFileException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JRuntimeException;
 import org.apache.poi.openxml4j.opc.internal.ContentTypeManager;
@@ -176,6 +177,7 @@ public final class ZipPackage extends Package {
 			return this.partList.values().toArray(
 					new PackagePart[this.partList.values().size()]);
 		}
+		
 		// First we need to parse the content type part
 		Enumeration<? extends ZipEntry> entries = this.zipArchive.getEntries();
 		while (entries.hasMoreElements()) {
@@ -194,6 +196,26 @@ public final class ZipPackage extends Package {
 
 		// At this point, we should have loaded the content type part
 		if (this.contentTypeManager == null) {
+		    // Is it a different Zip-based format?
+		    boolean hasMimetype = false;
+		    boolean hasSettingsXML = false;
+		    entries = this.zipArchive.getEntries();
+	        while (entries.hasMoreElements()) {
+	            ZipEntry entry = entries.nextElement();
+	            if (entry.getName().equals("mimetype")) {
+	                hasMimetype = true;
+	            }
+                if (entry.getName().equals("settings.xml")) {
+                    hasSettingsXML = true;
+                }
+	        }
+	        if (hasMimetype && hasSettingsXML) {
+	            throw new ODFNotOfficeXmlFileException(
+	               "The supplied data appears to be in ODF (Open Document) Format. " +
+	               "Formats like these (eg ODS, ODP) are not supported, try Apache ODFToolkit");
+	        }
+		    
+		    // Fallback exception
 			throw new InvalidFormatException(
 					"Package should contain a content type part [M1.13]");
 		}
