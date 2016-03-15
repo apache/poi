@@ -14,22 +14,14 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-
 package org.apache.poi.openxml4j.exceptions;
 
 /**
- * Global exception throws when a critical error occurs. (this exception is not
- * set as Runtime in order to force user to manage the exception in a
- * try/catch).
+ * This exception is thrown when we are given an OLE2-based file
+ *  (eg Excel .xls) instead of an actually OOXML (Office Open XML) file
  */
-@SuppressWarnings("serial")
-public class OpenXML4JException extends Exception {
-
-	public OpenXML4JException(String msg) {
-		super(msg);
-	}
-
-    public OpenXML4JException(String msg, Throwable cause) {
-        super(msg, cause);
+public class OLE2NotOfficeXmlFileException extends NotOfficeXmlFileException {
+    public OLE2NotOfficeXmlFileException(String message) {
+        super(message);
     }
 }
