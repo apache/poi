@@ -157,6 +157,7 @@ public class TestAllFiles {
         HANDLERS.put(".pfx", new NullFileHandler());
         HANDLERS.put(".xml", new NullFileHandler());
         HANDLERS.put(".csv", new NullFileHandler());
+        HANDLERS.put(".ods", new NullFileHandler());
 
         // map some files without extension
         HANDLERS.put("spreadsheet/BigSSTRecord", new NullFileHandler());
