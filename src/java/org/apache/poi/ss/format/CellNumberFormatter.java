@@ -641,14 +641,14 @@ public class CellNumberFormatter extends CellFormatter {
                 // New we check to see if we should remove the integer part
                 boolean numNoZero = !hasChar('0', numeratorSpecials);
                 boolean intNoZero = !hasChar('0', integerSpecials);
-                boolean intOnlyHash = integerSpecials.isEmpty() || (integerSpecials.size() == 1 && integerSpecials.contains('#'));
+                boolean intOnlyHash = integerSpecials.isEmpty() || (integerSpecials.size() == 1 && hasChar('#', integerSpecials));
 
                 boolean removeBecauseZero     = fractional == 0 && (intOnlyHash || numNoZero);
                 boolean removeBecauseFraction = fractional != 0 && intNoZero;
 
                 if (value == 0 && (removeBecauseZero || removeBecauseFraction)) {
                     Special start = lastSpecial(integerSpecials);
-                    boolean hasPlaceHolder = integerSpecials.contains('?') || numeratorSpecials.contains('?');
+                    boolean hasPlaceHolder = hasChar('?', integerSpecials, numeratorSpecials);
                     CellNumberStringMod sm = hasPlaceHolder
                         ? replaceMod(start, true, numerator, false, ' ')
                         : deleteMod(start, true, numerator, false);
