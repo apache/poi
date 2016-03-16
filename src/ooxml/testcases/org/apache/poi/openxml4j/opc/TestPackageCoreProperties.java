@@ -70,11 +70,36 @@ public final class TestPackageCoreProperties {
         df.setTimeZone(LocaleUtil.TIMEZONE_UTC);
 		Date dateToInsert = df.parse("2007-05-12T08:00:00Z", new ParsePosition(0));
 
+        SimpleDateFormat msdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.ROOT);
+        msdf.setTimeZone(LocaleUtil.TIMEZONE_UTC);
+
 		PackageProperties props = p.getPackageProperties();
-		props.setCategoryProperty("MyCategory");
+
+        //test various date formats
+        props.setCreatedProperty("2007-05-12T08:00:00Z");
+        assertEquals(dateToInsert, props.getCreatedProperty().getValue());
+
+        props.setCreatedProperty("2007-05-12T08:00:00"); //no Z, assume Z
+        assertEquals(dateToInsert, props.getCreatedProperty().getValue());
+
+        props.setCreatedProperty("2007-05-12T08:00:00.123Z");//millis
+        assertEquals(msdf.parse("2007-05-12T08:00:00.123Z"), props.getCreatedProperty().getValue());
+
+        props.setCreatedProperty("2007-05-12T10:00:00+0200");
+        assertEquals(dateToInsert, props.getCreatedProperty().getValue());
+
+        props.setCreatedProperty("2007-05-12T10:00:00+02:00");//colon in tz
+        assertEquals(dateToInsert, props.getCreatedProperty().getValue());
+
+        props.setCreatedProperty("2007-05-12T06:00:00-0200");
+        assertEquals(dateToInsert, props.getCreatedProperty().getValue());
+
+        props.setCreatedProperty("2007-05-12T10:00:00.123+0200");
+        assertEquals(msdf.parse("2007-05-12T08:00:00.123Z"), props.getCreatedProperty().getValue());
+
+        props.setCategoryProperty("MyCategory");
 		props.setContentStatusProperty("MyContentStatus");
 		props.setContentTypeProperty("MyContentType");
-		props.setCreatedProperty(new Nullable<Date>(dateToInsert));
 		props.setCreatorProperty("MyCreator");
 		props.setDescriptionProperty("MyDescription");
 		props.setIdentifierProperty("MyIdentifier");
