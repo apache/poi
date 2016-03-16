@@ -1171,6 +1171,7 @@ under the License.
                      failureproperty="ooxml.test.failed">
                   <classpath refid="@{classpath}"/>
                   <syspropertyset refid="junit.properties"/>
+              	  <jvmarg value="-XX:MaxPermSize=256m"/>
               	  <jvmarg value="-Xmx768M"/>
                   <jvmarg value="-ea"/>
               	  <!-- jvmarg value="-Duser.timezone=UTC"/ -->
