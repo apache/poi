@@ -185,7 +185,7 @@ public final class ApacheconEU08 {
 
         Dimension dim = ppt.getPageSize();
         Rectangle2D oldAnchor = table1.getAnchor();
-        table1.setAnchor(new Rectangle2D.Double((dim.width-450)/2, 100, oldAnchor.getWidth(), oldAnchor.getHeight()));
+        table1.setAnchor(new Rectangle2D.Double((dim.width-450)/2d, 100, oldAnchor.getWidth(), oldAnchor.getHeight()));
 
         TextBox<?,?> box1 = slide.createTextBox();
         box1.setHorizontalCentered(true);

@@ -252,11 +252,11 @@ public class TestWordToHtmlConverter
         // picture
         assertContains(result, "src=\"0.emf\"");
         // visible size
-        assertContains(result, "width:3.1305554in;height:1.7250001in;");
+        assertContains(result, "width:3.1293333in;height:1.7247736in;");
         // shift due to crop
-        assertContains(result, "left:-0.09375;top:-0.25694445;");
+        assertContains(result, "left:-0.09433333;top:-0.2573611;");
         // size without crop
-        assertContains(result, "width:3.4125in;height:2.325in;");
+        assertContains(result, "width:3.4125in;height:2.3253334in;");
     }
 
     @Test
