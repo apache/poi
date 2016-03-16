@@ -283,7 +283,7 @@ public class HexDump {
      * @return          The result right padded with 0
      */
     public static String toHex(int value) {
-        return xpad(value & 0xFFFFFFFF, 8, "");
+        return xpad(value & 0xFFFFFFFFL, 8, "");
     }
 
     /**
