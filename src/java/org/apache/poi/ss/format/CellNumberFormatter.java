@@ -19,52 +19,48 @@ package org.apache.poi.ss.format;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.FieldPosition;
+import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collections;
 import java.util.Formatter;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.regex.Matcher;
 
-import org.apache.poi.ss.format.CellFormatPart.PartHandler;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
 /**
  * This class implements printing out a value using a number format.
- *
- * @author Ken Arnold, Industrious Media LLC
  */
 public class CellNumberFormatter extends CellFormatter {
     private static final POILogger LOG = POILogFactory.getLogger(CellNumberFormatter.class);
-    
+
     private final String desc;
-    private String printfFmt;
-    private double scale;
-    private Special decimalPoint;
-    private Special slash;
-    private Special exponent;
-    private Special numerator;
-    private Special afterInteger;
-    private Special afterFractional;
-    private boolean integerCommas;
-    private final List<Special> specials;
-    private List<Special> integerSpecials;
-    private List<Special> fractionalSpecials;
-    private List<Special> numeratorSpecials;
-    private List<Special> denominatorSpecials;
-    private List<Special> exponentSpecials;
-    private List<Special> exponentDigitSpecials;
-    private int maxDenominator;
-    private String numeratorFmt;
-    private String denominatorFmt;
-    private boolean improperFraction;
-    private DecimalFormat decimalFmt;
+    private final String printfFmt;
+    private final double scale;
+    private final Special decimalPoint;
+    private final Special slash;
+    private final Special exponent;
+    private final Special numerator;
+    private final Special afterInteger;
+    private final Special afterFractional;
+    private final boolean integerCommas;
+    private final List<Special> specials =  new ArrayList<Special>();
+    private final List<Special> integerSpecials = new ArrayList<Special>();
+    private final List<Special> fractionalSpecials = new ArrayList<Special>();
+    private final List<Special> numeratorSpecials = new ArrayList<Special>();
+    private final List<Special> denominatorSpecials = new ArrayList<Special>();
+    private final List<Special> exponentSpecials = new ArrayList<Special>();
+    private final List<Special> exponentDigitSpecials = new ArrayList<Special>();
+    private final int maxDenominator;
+    private final String numeratorFmt;
+    private final String denominatorFmt;
+    private final boolean improperFraction;
+    private final DecimalFormat decimalFmt;
 
     // The CellNumberFormatter.simpleValue() method uses the SIMPLE_NUMBER
     // CellFormatter defined here. The CellFormat.GENERAL_FORMAT CellFormat
@@ -73,19 +69,28 @@ public class CellNumberFormatter extends CellFormatter {
     // ("#" for integer values, and "#.#" for floating-point values) is
     // different from the 'General' format for numbers ("#" for integer
     // values and "#.#########" for floating-point values).
-    static final CellFormatter SIMPLE_NUMBER = new CellFormatter("General") {
+    private static final CellFormatter SIMPLE_NUMBER = new GeneralNumberFormatter();
+    private static final CellFormatter SIMPLE_INT = new CellNumberFormatter("#");
+    private static final CellFormatter SIMPLE_FLOAT = new CellNumberFormatter("#.#");
+
+    private static class GeneralNumberFormatter extends CellFormatter {
+        private GeneralNumberFormatter() {
+            super("General");
+        }
+
         public void formatValue(StringBuffer toAppendTo, Object value) {
-            if (value == null)
+            if (value == null) {
                 return;
+            }
+
+            CellFormatter cf;
             if (value instanceof Number) {
                 Number num = (Number) value;
-                if (num.doubleValue() % 1.0 == 0)
-                    SIMPLE_INT.formatValue(toAppendTo, value);
-                else
-                    SIMPLE_FLOAT.formatValue(toAppendTo, value);
+                cf = (num.doubleValue() % 1.0 == 0) ? SIMPLE_INT : SIMPLE_FLOAT;
             } else {
-                CellTextFormatter.SIMPLE_TEXT.formatValue(toAppendTo, value);
+                cf = CellTextFormatter.SIMPLE_TEXT;
             }
+            cf.formatValue(toAppendTo, value);
         }
 
         public void simpleValue(StringBuffer toAppendTo, Object value) {
@@ -93,16 +98,12 @@ public class CellNumberFormatter extends CellFormatter {
         }
     };
 
-    private static final CellFormatter SIMPLE_INT = new CellNumberFormatter(
-            "#");
-    private static final CellFormatter SIMPLE_FLOAT = new CellNumberFormatter(
-            "#.#");
 
     /**
      * This class is used to mark where the special characters in the format
      * are, as opposed to the other characters that are simply printed.
      */
-    static class Special {
+    /* package */ static class Special {
         final char ch;
         int pos;
 
@@ -118,137 +119,6 @@ public class CellNumberFormatter extends CellFormatter {
     }
 
     /**
-     * This class represents a single modification to a result string.  The way
-     * this works is complicated, but so is numeric formatting.  In general, for
-     * most formats, we use a DecimalFormat object that will put the string out
-     * in a known format, usually with all possible leading and trailing zeros.
-     * We then walk through the result and the orginal format, and note any
-     * modifications that need to be made.  Finally, we go through and apply
-     * them all, dealing with overlapping modifications.
-     */
-    static class StringMod implements Comparable<StringMod> {
-        final Special special;
-        final int op;
-        CharSequence toAdd;
-        Special end;
-        boolean startInclusive;
-        boolean endInclusive;
-
-        public static final int BEFORE = 1;
-        public static final int AFTER = 2;
-        public static final int REPLACE = 3;
-
-        private StringMod(Special special, CharSequence toAdd, int op) {
-            this.special = special;
-            this.toAdd = toAdd;
-            this.op = op;
-        }
-
-        public StringMod(Special start, boolean startInclusive, Special end,
-                boolean endInclusive, char toAdd) {
-            this(start, startInclusive, end, endInclusive);
-            this.toAdd = toAdd + "";
-        }
-
-        public StringMod(Special start, boolean startInclusive, Special end,
-                boolean endInclusive) {
-            special = start;
-            this.startInclusive = startInclusive;
-            this.end = end;
-            this.endInclusive = endInclusive;
-            op = REPLACE;
-            toAdd = "";
-        }
-
-        public int compareTo(StringMod that) {
-            int diff = special.pos - that.special.pos;
-            if (diff != 0)
-                return diff;
-            else
-                return op - that.op;
-        }
-
-        @Override
-        public boolean equals(Object that) {
-            try {
-                return compareTo((StringMod) that) == 0;
-            } catch (RuntimeException ignored) {
-                // NullPointerException or CastException
-                return false;
-            }
-        }
-
-        @Override
-        public int hashCode() {
-            return special.hashCode() + op;
-        }
-    }
-
-    private class NumPartHandler implements PartHandler {
-        private char insertSignForExponent;
-
-        public String handlePart(Matcher m, String part, CellFormatType type,
-                StringBuffer descBuf) {
-            int pos = descBuf.length();
-            char firstCh = part.charAt(0);
-            switch (firstCh) {
-            case 'e':
-            case 'E':
-                // See comment in writeScientific -- exponent handling is complex.
-                // (1) When parsing the format, remove the sign from after the 'e' and
-                // put it before the first digit of the exponent.
-                if (exponent == null && specials.size() > 0) {
-                    specials.add(exponent = new Special('.', pos));
-                    insertSignForExponent = part.charAt(1);
-                    return part.substring(0, 1);
-                }
-                break;
-
-            case '0':
-            case '?':
-            case '#':
-                if (insertSignForExponent != '\0') {
-                    specials.add(new Special(insertSignForExponent, pos));
-                    descBuf.append(insertSignForExponent);
-                    insertSignForExponent = '\0';
-                    pos++;
-                }
-                for (int i = 0; i < part.length(); i++) {
-                    char ch = part.charAt(i);
-                    specials.add(new Special(ch, pos + i));
-                }
-                break;
-
-            case '.':
-                if (decimalPoint == null && specials.size() > 0)
-                    specials.add(decimalPoint = new Special('.', pos));
-                break;
-
-            case '/':
-                //!! This assumes there is a numerator and a denominator, but these are actually optional
-                if (slash == null && specials.size() > 0) {
-                    numerator = previousNumber();
-                    // If the first number in the whole format is the numerator, the
-                    // entire number should be printed as an improper fraction
-                    if (numerator == firstDigit(specials))
-                        improperFraction = true;
-                    specials.add(slash = new Special('.', pos));
-                }
-                break;
-
-            case '%':
-                // don't need to remember because we don't need to do anything with these
-                scale *= 100;
-                break;
-
-            default:
-                return null;
-            }
-            return part;
-        }
-    }
-
-    /**
      * Creates a new cell number formatter.
      *
      * @param format The format to parse.
@@ -256,71 +126,100 @@ public class CellNumberFormatter extends CellFormatter {
     public CellNumberFormatter(String format) {
         super(format);
 
-        scale = 1;
+        CellNumberPartHandler ph = new CellNumberPartHandler();
+        StringBuffer descBuf = CellFormatPart.parseFormat(format, CellFormatType.NUMBER, ph);
 
-        specials = new LinkedList<Special>();
-
-        NumPartHandler partHandler = new NumPartHandler();
-        StringBuffer descBuf = CellFormatPart.parseFormat(format,
-                CellFormatType.NUMBER, partHandler);
+        exponent = ph.getExponent();
+        specials.addAll(ph.getSpecials());
+        improperFraction = ph.isImproperFraction();
 
         // These are inconsistent settings, so ditch 'em
-        if ((decimalPoint != null || exponent != null) && slash != null) {
+        if ((ph.getDecimalPoint() != null || ph.getExponent() != null) && ph.getSlash() != null) {
             slash = null;
             numerator = null;
+        } else {
+            slash = ph.getSlash();
+            numerator = ph.getNumerator();
         }
 
-        interpretCommas(descBuf);
-
-        int precision;
+        final int precision = interpretPrecision(ph.getDecimalPoint(), specials);
         int fractionPartWidth = 0;
-        if (decimalPoint == null) {
-            precision = 0;
-        } else {
-            precision = interpretPrecision();
+        if (ph.getDecimalPoint() != null) {
             fractionPartWidth = 1 + precision;
             if (precision == 0) {
                 // This means the format has a ".", but that output should have no decimals after it.
                 // We just stop treating it specially
-                specials.remove(decimalPoint);
+                specials.remove(ph.getDecimalPoint());
                 decimalPoint = null;
+            } else {
+                decimalPoint = ph.getDecimalPoint();
             }
-        }
-
-        if (precision == 0)
-            fractionalSpecials = Collections.emptyList();
-        else
-            fractionalSpecials = specials.subList(specials.indexOf(
-                    decimalPoint) + 1, fractionalEnd());
-        if (exponent == null)
-            exponentSpecials = Collections.emptyList();
-        else {
-            int exponentPos = specials.indexOf(exponent);
-            exponentSpecials = specialsFor(exponentPos, 2);
-            exponentDigitSpecials = specialsFor(exponentPos + 2);
-        }
-
-        if (slash == null) {
-            numeratorSpecials = Collections.emptyList();
-            denominatorSpecials = Collections.emptyList();
         } else {
-            if (numerator == null)
-                numeratorSpecials = Collections.emptyList();
-            else
-                numeratorSpecials = specialsFor(specials.indexOf(numerator));
+            decimalPoint = null;
+        }
 
-            denominatorSpecials = specialsFor(specials.indexOf(slash) + 1);
+        if (decimalPoint != null) {
+            afterInteger = decimalPoint;
+        } else if (exponent != null) {
+            afterInteger = exponent;
+        } else if (numerator != null) {
+            afterInteger = numerator;
+        } else {
+            afterInteger = null;
+        }
+
+        if (exponent != null) {
+            afterFractional = exponent;
+        } else if (numerator != null) {
+            afterFractional = numerator;
+        } else {
+            afterFractional = null;
+        }
+        
+        double scaleByRef[] = { ph.getScale() };
+        integerCommas = interpretIntegerCommas(descBuf, specials, decimalPoint, integerEnd(), fractionalEnd(), scaleByRef);
+        if (exponent == null) {
+            scale = scaleByRef[0];
+        } else {
+            // in "e" formats,% and trailing commas have no scaling effect
+            scale = 1;
+        }
+
+        if (precision != 0) {
+            // TODO: if decimalPoint is null (-> index == -1), return the whole list?
+            fractionalSpecials.addAll(specials.subList(specials.indexOf(decimalPoint) + 1, fractionalEnd()));
+        }
+
+        if (exponent != null) {
+            int exponentPos = specials.indexOf(exponent);
+            exponentSpecials.addAll(specialsFor(exponentPos, 2));
+            exponentDigitSpecials.addAll(specialsFor(exponentPos + 2));
+        }
+
+        if (slash != null) {
+            if (numerator != null) {
+                numeratorSpecials.addAll(specialsFor(specials.indexOf(numerator)));
+            }
+
+            denominatorSpecials.addAll(specialsFor(specials.indexOf(slash) + 1));
             if (denominatorSpecials.isEmpty()) {
                 // no denominator follows the slash, drop the fraction idea
-                numeratorSpecials = Collections.emptyList();
+                numeratorSpecials.clear();
+                maxDenominator = 1;
+                numeratorFmt = null;
+                denominatorFmt = null;
             } else {
                 maxDenominator = maxValue(denominatorSpecials);
                 numeratorFmt = singleNumberFormat(numeratorSpecials);
                 denominatorFmt = singleNumberFormat(denominatorSpecials);
             }
+        } else {
+            maxDenominator = 1;
+            numeratorFmt = null;
+            denominatorFmt = null;
         }
 
-        integerSpecials = specials.subList(0, integerEnd());
+        integerSpecials.addAll(specials.subList(0, integerEnd()));
 
         if (exponent == null) {
             StringBuffer fmtBuf = new StringBuffer("%");
@@ -332,6 +231,7 @@ public class CellNumberFormatter extends CellFormatter {
 
             fmtBuf.append("f");
             printfFmt = fmtBuf.toString();
+            decimalFmt = null;
         } else {
             StringBuffer fmtBuf = new StringBuffer();
             boolean first = true;
@@ -358,49 +258,33 @@ public class CellNumberFormatter extends CellFormatter {
                 }
             }
             fmtBuf.append('E');
-            placeZeros(fmtBuf, exponentSpecials.subList(2,
-                    exponentSpecials.size()));
+            placeZeros(fmtBuf, exponentSpecials.subList(2, exponentSpecials.size()));
             DecimalFormatSymbols dfs = DecimalFormatSymbols.getInstance(LocaleUtil.getUserLocale());
             decimalFmt = new DecimalFormat(fmtBuf.toString(), dfs);
+            printfFmt = null;
         }
-
-        if (exponent != null)
-            scale =
-                    1;  // in "e" formats,% and trailing commas have no scaling effect
 
         desc = descBuf.toString();
     }
 
     private static void placeZeros(StringBuffer sb, List<Special> specials) {
         for (Special s : specials) {
-            if (isDigitFmt(s))
+            if (isDigitFmt(s)) {
                 sb.append('0');
+            }
         }
     }
 
-    private static Special firstDigit(List<Special> specials) {
-        for (Special s : specials) {
-            if (isDigitFmt(s))
-                return s;
-        }
-        return null;
+    private static CellNumberStringMod insertMod(Special special, CharSequence toAdd, int where) {
+        return new CellNumberStringMod(special, toAdd, where);
     }
 
-    static StringMod insertMod(Special special, CharSequence toAdd, int where) {
-        return new StringMod(special, toAdd, where);
+    private static CellNumberStringMod deleteMod(Special start, boolean startInclusive, Special end, boolean endInclusive) {
+        return new CellNumberStringMod(start, startInclusive, end, endInclusive);
     }
 
-    static StringMod deleteMod(Special start, boolean startInclusive,
-            Special end, boolean endInclusive) {
-
-        return new StringMod(start, startInclusive, end, endInclusive);
-    }
-
-    static StringMod replaceMod(Special start, boolean startInclusive,
-            Special end, boolean endInclusive, char withChar) {
-
-        return new StringMod(start, startInclusive, end, endInclusive,
-                withChar);
+    private static CellNumberStringMod replaceMod(Special start, boolean startInclusive, Special end, boolean endInclusive, char withChar) {
+        return new CellNumberStringMod(start, startInclusive, end, endInclusive, withChar);
     }
 
     private static String singleNumberFormat(List<Special> numSpecials) {
@@ -412,8 +296,9 @@ public class CellNumberFormatter extends CellFormatter {
     }
 
     private List<Special> specialsFor(int pos, int takeFirst) {
-        if (pos >= specials.size())
+        if (pos >= specials.size()) {
             return Collections.emptyList();
+        }
         ListIterator<Special> it = specials.listIterator(pos + takeFirst);
         Special last = it.next();
         int end = pos + takeFirst;
@@ -435,76 +320,50 @@ public class CellNumberFormatter extends CellFormatter {
         return s.ch == '0' || s.ch == '?' || s.ch == '#';
     }
 
-    private Special previousNumber() {
-        ListIterator<Special> it = specials.listIterator(specials.size());
-        while (it.hasPrevious()) {
-            Special s = it.previous();
-            if (isDigitFmt(s)) {
-                Special numStart = s;
-                Special last = s;
-                while (it.hasPrevious()) {
-                    s = it.previous();
-                    if (last.pos - s.pos > 1) // it has to be continuous digits
-                        break;
-                    if (isDigitFmt(s))
-                        numStart = s;
-                    else
-                        break;
-                    last = s;
-                }
-                return numStart;
-            }
-        }
-        return null;
-    }
-
     private int calculateIntegerPartWidth() {
-        ListIterator<Special> it = specials.listIterator();
         int digitCount = 0;
-        while (it.hasNext()) {
-            Special s = it.next();
+        for (Special s : specials) {
             //!! Handle fractions: The previous set of digits before that is the numerator, so we should stop short of that
-            if (s == afterInteger)
+            if (s == afterInteger) {
                 break;
-            else if (isDigitFmt(s))
+            } else if (isDigitFmt(s)) {
                 digitCount++;
+            }
         }
         return digitCount;
     }
 
-    private int interpretPrecision() {
-        if (decimalPoint == null) {
-            return -1;
-        } else {
-            int precision = 0;
-            ListIterator<Special> it = specials.listIterator(specials.indexOf(
-                    decimalPoint));
-            if (it.hasNext())
-                it.next();  // skip over the decimal point itself
+    private static int interpretPrecision(Special decimalPoint, List<Special> specials) {
+        int idx = specials.indexOf(decimalPoint);
+        int precision = 0;
+        if (idx != -1) {
+            // skip over the decimal point itself
+            ListIterator<Special> it = specials.listIterator(idx+1);
             while (it.hasNext()) {
                 Special s = it.next();
-                if (isDigitFmt(s))
-                    precision++;
-                else
+                if (!isDigitFmt(s)) {
                     break;
+                }
+                precision++;
             }
-            return precision;
         }
+        return precision;
     }
 
-    private void interpretCommas(StringBuffer sb) {
+    private static boolean interpretIntegerCommas
+        (StringBuffer sb, List<Special> specials, Special decimalPoint, int integerEnd, int fractionalEnd, double[] scale) {
         // In the integer part, commas at the end are scaling commas; other commas mean to show thousand-grouping commas
-        ListIterator<Special> it = specials.listIterator(integerEnd());
+        ListIterator<Special> it = specials.listIterator(integerEnd);
 
         boolean stillScaling = true;
-        integerCommas = false;
+        boolean integerCommas = false;
         while (it.hasPrevious()) {
             Special s = it.previous();
             if (s.ch != ',') {
                 stillScaling = false;
             } else {
                 if (stillScaling) {
-                    scale /= 1000;
+                    scale[0] /= 1000;
                 } else {
                     integerCommas = true;
                 }
@@ -512,13 +371,13 @@ public class CellNumberFormatter extends CellFormatter {
         }
 
         if (decimalPoint != null) {
-            it = specials.listIterator(fractionalEnd());
+            it = specials.listIterator(fractionalEnd);
             while (it.hasPrevious()) {
                 Special s = it.previous();
                 if (s.ch != ',') {
                     break;
                 } else {
-                    scale /= 1000;
+                    scale[0] /= 1000;
                 }
             }
         }
@@ -535,32 +394,16 @@ public class CellNumberFormatter extends CellFormatter {
                 sb.deleteCharAt(s.pos);
             }
         }
+
+        return integerCommas;
     }
 
     private int integerEnd() {
-        if (decimalPoint != null)
-            afterInteger = decimalPoint;
-        else if (exponent != null)
-            afterInteger = exponent;
-        else if (numerator != null)
-            afterInteger = numerator;
-        else
-            afterInteger = null;
-        return afterInteger == null ? specials.size() : specials.indexOf(
-                afterInteger);
+        return (afterInteger == null) ? specials.size() : specials.indexOf(afterInteger);
     }
 
     private int fractionalEnd() {
-        int end;
-        if (exponent != null)
-            afterFractional = exponent;
-        else if (numerator != null)
-            afterInteger = numerator;
-        else
-            afterFractional = null;
-        end = afterFractional == null ? specials.size() : specials.indexOf(
-                afterFractional);
-        return end;
+        return (afterFractional == null) ? specials.size() : specials.indexOf(afterFractional);
     }
 
     /** {@inheritDoc} */
@@ -592,7 +435,7 @@ public class CellNumberFormatter extends CellFormatter {
             }
         }
 
-        Set<StringMod> mods = new TreeSet<StringMod>();
+        Set<CellNumberStringMod> mods = new TreeSet<CellNumberStringMod>();
         StringBuffer output = new StringBuffer(desc);
 
         if (exponent != null) {
@@ -610,46 +453,44 @@ public class CellNumberFormatter extends CellFormatter {
 
             if (numerator == null) {
                 writeFractional(result, output);
-                writeInteger(result, output, integerSpecials, mods,
-                        integerCommas);
+                writeInteger(result, output, integerSpecials, mods, integerCommas);
             } else {
                 writeFraction(value, result, fractional, output, mods);
             }
         }
 
         // Now strip out any remaining '#'s and add any pending text ...
-        ListIterator<Special> it = specials.listIterator();
-        Iterator<StringMod> changes = mods.iterator();
-        StringMod nextChange = (changes.hasNext() ? changes.next() : null);
+        Iterator<CellNumberStringMod> changes = mods.iterator();
+        CellNumberStringMod nextChange = (changes.hasNext() ? changes.next() : null);
+        // records chars already deleted
+        BitSet deletedChars = new BitSet();
         int adjust = 0;
-        BitSet deletedChars = new BitSet(); // records chars already deleted
-        while (it.hasNext()) {
-            Special s = it.next();
+        for (Special s : specials) {
             int adjustedPos = s.pos + adjust;
             if (!deletedChars.get(s.pos) && output.charAt(adjustedPos) == '#') {
                 output.deleteCharAt(adjustedPos);
                 adjust--;
                 deletedChars.set(s.pos);
             }
-            while (nextChange != null && s == nextChange.special) {
+            while (nextChange != null && s == nextChange.getSpecial()) {
                 int lenBefore = output.length();
                 int modPos = s.pos + adjust;
-                int posTweak = 0;
-                switch (nextChange.op) {
-                case StringMod.AFTER:
+                switch (nextChange.getOp()) {
+                case CellNumberStringMod.AFTER:
                     // ignore adding a comma after a deleted char (which was a '#')
-                    if (nextChange.toAdd.equals(",") && deletedChars.get(s.pos))
+                    if (nextChange.getToAdd().equals(",") && deletedChars.get(s.pos)) {
                         break;
-                    posTweak = 1;
-                    //noinspection fallthrough
-                case StringMod.BEFORE:
-                    output.insert(modPos + posTweak, nextChange.toAdd);
+                    }
+                    output.insert(modPos + 1, nextChange.getToAdd());
+                    break;
+                case CellNumberStringMod.BEFORE:
+                    output.insert(modPos, nextChange.getToAdd());
                     break;
 
-                case StringMod.REPLACE:
-                    int delPos =
-                            s.pos; // delete starting pos in original coordinates
-                    if (!nextChange.startInclusive) {
+                case CellNumberStringMod.REPLACE:
+                    // delete starting pos in original coordinates
+                    int delPos = s.pos;
+                    if (!nextChange.isStartInclusive()) {
                         delPos++;
                         modPos++;
                     }
@@ -660,51 +501,49 @@ public class CellNumberFormatter extends CellFormatter {
                         modPos++;
                     }
 
-                    int delEndPos =
-                            nextChange.end.pos; // delete end point in original
-                    if (nextChange.endInclusive)
+                    // delete end point in original
+                    int delEndPos = nextChange.getEnd().pos;
+                    if (nextChange.isEndInclusive()) {
                         delEndPos++;
+                    }
 
-                    int modEndPos =
-                            delEndPos + adjust; // delete end point in current
+                    // delete end point in current
+                    int modEndPos = delEndPos + adjust;
 
                     if (modPos < modEndPos) {
-                        if ("".equals(nextChange.toAdd))
+                        if ("".equals(nextChange.getToAdd())) {
                             output.delete(modPos, modEndPos);
+                        }
                         else {
-                            char fillCh = nextChange.toAdd.charAt(0);
-                            for (int i = modPos; i < modEndPos; i++)
+                            char fillCh = nextChange.getToAdd().charAt(0);
+                            for (int i = modPos; i < modEndPos; i++) {
                                 output.setCharAt(i, fillCh);
+                            }
                         }
                         deletedChars.set(delPos, delEndPos);
                     }
                     break;
 
                 default:
-                    throw new IllegalStateException(
-                            "Unknown op: " + nextChange.op);
+                    throw new IllegalStateException("Unknown op: " + nextChange.getOp());
                 }
                 adjust += output.length() - lenBefore;
 
-                if (changes.hasNext())
-                    nextChange = changes.next();
-                else
-                    nextChange = null;
+                nextChange = (changes.hasNext()) ? changes.next() : null;
             }
         }
 
         // Finally, add it to the string
-        if (negative)
+        if (negative) {
             toAppendTo.append('-');
+        }
         toAppendTo.append(output);
     }
 
-    private void writeScientific(double value, StringBuffer output,
-            Set<StringMod> mods) {
+    private void writeScientific(double value, StringBuffer output, Set<CellNumberStringMod> mods) {
 
         StringBuffer result = new StringBuffer();
-        FieldPosition fractionPos = new FieldPosition(
-                DecimalFormat.FRACTION_FIELD);
+        FieldPosition fractionPos = new FieldPosition(DecimalFormat.FRACTION_FIELD);
         decimalFmt.format(value, result, fractionPos);
         writeInteger(result, output, integerSpecials, mods, integerCommas);
         writeFractional(result, output);
@@ -764,19 +603,19 @@ public class CellNumberFormatter extends CellFormatter {
 
         // (4) In the output, remove the sign if it should not be shown or set it to
         // the correct value.
-        if (expSignRes == '-' || expSignFmt == '+')
+        if (expSignRes == '-' || expSignFmt == '+') {
             mods.add(replaceMod(expSign, true, expSign, true, expSignRes));
-        else
+        } else {
             mods.add(deleteMod(expSign, true, expSign, true));
+        }
 
-        StringBuffer exponentNum = new StringBuffer(result.substring(
-                signPos + 1));
+        StringBuffer exponentNum = new StringBuffer(result.substring(signPos + 1));
         writeInteger(exponentNum, output, exponentDigitSpecials, mods, false);
     }
 
     @SuppressWarnings("unchecked")
     private void writeFraction(double value, StringBuffer result,
-            double fractional, StringBuffer output, Set<StringMod> mods) {
+            double fractional, StringBuffer output, Set<CellNumberStringMod> mods) {
 
         // Figure out if we are to suppress either the integer or fractional part.
         // With # the suppressed part is removed; with ? it is replaced with spaces.
@@ -786,11 +625,9 @@ public class CellNumberFormatter extends CellFormatter {
             if (fractional == 0 && !hasChar('0', numeratorSpecials)) {
                 writeInteger(result, output, integerSpecials, mods, false);
 
-                Special start = integerSpecials.get(integerSpecials.size() - 1);
-                Special end = denominatorSpecials.get(
-                        denominatorSpecials.size() - 1);
-                if (hasChar('?', integerSpecials, numeratorSpecials,
-                        denominatorSpecials)) {
+                Special start = lastSpecial(integerSpecials);
+                Special end = lastSpecial(denominatorSpecials);
+                if (hasChar('?', integerSpecials, numeratorSpecials, denominatorSpecials)) {
                     //if any format has '?', then replace the fraction with spaces
                     mods.add(replaceMod(start, false, end, true, ' '));
                 } else {
@@ -802,23 +639,20 @@ public class CellNumberFormatter extends CellFormatter {
                 return;
             } else {
                 // New we check to see if we should remove the integer part
-                boolean allZero = (value == 0 && fractional == 0);
-                boolean willShowFraction = fractional != 0 || hasChar('0',
-                        numeratorSpecials);
-                boolean removeBecauseZero = allZero && (hasOnly('#',
-                        integerSpecials) || !hasChar('0', numeratorSpecials));
-                boolean removeBecauseFraction =
-                        !allZero && value == 0 && willShowFraction && !hasChar(
-                                '0', integerSpecials);
-                if (removeBecauseZero || removeBecauseFraction) {
-                    Special start = integerSpecials.get(
-                            integerSpecials.size() - 1);
-                    if (hasChar('?', integerSpecials, numeratorSpecials)) {
-                        mods.add(replaceMod(start, true, numerator, false,
-                                ' '));
-                    } else {
-                        mods.add(deleteMod(start, true, numerator, false));
-                    }
+                boolean numNoZero = !numeratorSpecials.contains('0');
+                boolean intNoZero = !integerSpecials.contains('0');
+                boolean intOnlyHash = integerSpecials.isEmpty() || (integerSpecials.size() == 1 && integerSpecials.contains('#'));
+
+                boolean removeBecauseZero     = fractional == 0 && (intOnlyHash || numNoZero);
+                boolean removeBecauseFraction = fractional != 0 && intNoZero;
+
+                if (value == 0 && (removeBecauseZero || removeBecauseFraction)) {
+                    Special start = lastSpecial(integerSpecials);
+                    boolean hasPlaceHolder = integerSpecials.contains('?') || numeratorSpecials.contains('?');
+                    CellNumberStringMod sm = hasPlaceHolder
+                        ? replaceMod(start, true, numerator, false, ' ')
+                        : deleteMod(start, true, numerator, false);
+                    mods.add(sm);
                 } else {
                     // Not removing the integer part -- print it out
                     writeInteger(result, output, integerSpecials, mods, false);
@@ -840,12 +674,11 @@ public class CellNumberFormatter extends CellFormatter {
                 n = frac.getNumerator();
                 d = frac.getDenominator();
             }
-            if (improperFraction)
+            if (improperFraction) {
                 n += Math.round(value * d);
-            writeSingleInteger(numeratorFmt, n, output, numeratorSpecials,
-                    mods);
-            writeSingleInteger(denominatorFmt, d, output, denominatorSpecials,
-                    mods);
+            }
+            writeSingleInteger(numeratorFmt, n, output, numeratorSpecials, mods);
+            writeSingleInteger(denominatorFmt, d, output, denominatorSpecials, mods);
         } catch (RuntimeException ignored) {
             LOG.log(POILogger.ERROR, "error while fraction evaluation", ignored);
         }
@@ -862,19 +695,7 @@ public class CellNumberFormatter extends CellFormatter {
         return false;
     }
 
-    private static boolean hasOnly(char ch, List<Special>... numSpecials) {
-        for (List<Special> specials : numSpecials) {
-            for (Special s : specials) {
-                if (s.ch != ch) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
-    private void writeSingleInteger(String fmt, int num, StringBuffer output,
-            List<Special> numSpecials, Set<StringMod> mods) {
+    private void writeSingleInteger(String fmt, int num, StringBuffer output, List<Special> numSpecials, Set<CellNumberStringMod> mods) {
 
         StringBuffer sb = new StringBuffer();
         Formatter formatter = new Formatter(sb, LocaleUtil.getUserLocale());
@@ -887,22 +708,24 @@ public class CellNumberFormatter extends CellFormatter {
     }
 
     private void writeInteger(StringBuffer result, StringBuffer output,
-            List<Special> numSpecials, Set<StringMod> mods,
+            List<Special> numSpecials, Set<CellNumberStringMod> mods,
             boolean showCommas) {
 
         int pos = result.indexOf(".") - 1;
         if (pos < 0) {
-            if (exponent != null && numSpecials == integerSpecials)
+            if (exponent != null && numSpecials == integerSpecials) {
                 pos = result.indexOf("E") - 1;
-            else
+            } else {
                 pos = result.length() - 1;
+            }
         }
 
         int strip;
         for (strip = 0; strip < pos; strip++) {
             char resultCh = result.charAt(strip);
-            if (resultCh != '0' && resultCh != ',')
+            if (resultCh != '0' && resultCh != ',') {
                 break;
+            }
         }
 
         ListIterator<Special> it = numSpecials.listIterator(numSpecials.size());
@@ -911,9 +734,9 @@ public class CellNumberFormatter extends CellFormatter {
         int digit = 0;
         while (it.hasPrevious()) {
             char resultCh;
-            if (pos >= 0)
+            if (pos >= 0) {
                 resultCh = result.charAt(pos);
-            else {
+            } else {
                 // If result is shorter than field, pretend there are leading zeros
                 resultCh = '0';
             }
@@ -926,7 +749,7 @@ public class CellNumberFormatter extends CellFormatter {
                 lastOutputIntegerDigit = s;
             }
             if (followWithComma) {
-                mods.add(insertMod(s, zeroStrip ? " " : ",", StringMod.AFTER));
+                mods.add(insertMod(s, zeroStrip ? " " : ",", CellNumberStringMod.AFTER));
                 followWithComma = false;
             }
             digit++;
@@ -935,41 +758,44 @@ public class CellNumberFormatter extends CellFormatter {
         StringBuffer extraLeadingDigits = new StringBuffer();
         if (pos >= 0) {
             // We ran out of places to put digits before we ran out of digits; put this aside so we can add it later
-            ++pos;  // pos was decremented at the end of the loop above when the iterator was at its end
+            // pos was decremented at the end of the loop above when the iterator was at its end
+            ++pos;
             extraLeadingDigits = new StringBuffer(result.substring(0, pos));
             if (showCommas) {
                 while (pos > 0) {
-                    if (digit > 0 && digit % 3 == 0)
+                    if (digit > 0 && digit % 3 == 0) {
                         extraLeadingDigits.insert(pos, ',');
+                    }
                     digit++;
                     --pos;
                 }
             }
-            mods.add(insertMod(lastOutputIntegerDigit, extraLeadingDigits,
-                    StringMod.BEFORE));
+            mods.add(insertMod(lastOutputIntegerDigit, extraLeadingDigits, CellNumberStringMod.BEFORE));
         }
     }
 
     private void writeFractional(StringBuffer result, StringBuffer output) {
         int digit;
         int strip;
-        ListIterator<Special> it;
         if (fractionalSpecials.size() > 0) {
             digit = result.indexOf(".") + 1;
-            if (exponent != null)
+            if (exponent != null) {
                 strip = result.indexOf("e") - 1;
-            else
+            } else {
                 strip = result.length() - 1;
-            while (strip > digit && result.charAt(strip) == '0')
+            }
+
+            while (strip > digit && result.charAt(strip) == '0') {
                 strip--;
-            it = fractionalSpecials.listIterator();
-            while (it.hasNext()) {
-                Special s = it.next();
+            }
+
+            for (Special s : fractionalSpecials) {
                 char resultCh = result.charAt(digit);
-                if (resultCh != '0' || s.ch == '0' || digit < strip)
+                if (resultCh != '0' || s.ch == '0' || digit < strip) {
                     output.setCharAt(s.pos, resultCh);
-                else if (s.ch == '?') {
-                    // This is when we're in trailing zeros, and the format is '?'.  We still strip out remaining '#'s later
+                } else if (s.ch == '?') {
+                    // This is when we're in trailing zeros, and the format is '?'.
+                    // We still strip out remaining '#'s later
                     output.setCharAt(s.pos, ' ');
                 }
                 digit++;
@@ -987,6 +813,7 @@ public class CellNumberFormatter extends CellFormatter {
         SIMPLE_NUMBER.formatValue(toAppendTo, value);
     }
 
-
-
+    private static Special lastSpecial(List<Special> s)  {
+        return s.get(s.size() - 1);
+    }
 }
