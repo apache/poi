@@ -46,7 +46,8 @@ public final class WMF extends Metafile {
             InputStream is = new ByteArrayInputStream( rawdata );
             Header header = new Header();
             header.read(rawdata, CHECKSUM_SIZE*uidInstanceCount);
-            is.skip(header.getSize() + CHECKSUM_SIZE*uidInstanceCount);
+            long len = is.skip(header.getSize() + CHECKSUM_SIZE*uidInstanceCount);
+            assert(len == header.getSize() + CHECKSUM_SIZE*uidInstanceCount);
 
             NativeHeader aldus = new NativeHeader(header.bounds);
             aldus.write(out);

@@ -70,7 +70,8 @@ public class HwmfHeader {
         bytesLeft -= LittleEndianConsts.SHORT_SIZE;
         
         if (bytesLeft > 0) {
-            leis.skip(bytesLeft);
+            long len = leis.skip(bytesLeft);
+            assert(len == bytesLeft);
         }
     }
 }
