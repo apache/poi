@@ -23,6 +23,8 @@ import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
@@ -49,9 +51,22 @@ public final class PackagePropertiesPart extends PackagePart implements
 	public final static String NAMESPACE_DCTERMS_URI = "http://purl.org/dc/terms/";
 
 	private final static String DEFAULT_DATEFORMAT =     "yyyy-MM-dd'T'HH:mm:ss'Z'";
-	private final static String ALTERNATIVE_DATEFORMAT = "yyyy-MM-dd'T'HH:mm:ss.SS'Z'";
-	
-	
+
+	private final static String[] DATE_FORMATS = new String[]{
+			DEFAULT_DATEFORMAT,
+			"yyyy-MM-dd'T'HH:mm:ss.SS'Z'",
+	};
+
+	//Had to add this and TIME_ZONE_PAT to handle tz with colons.
+	//When we move to Java 7, we should be able to add another
+	//date format to DATE_FORMATS that uses XXX and get rid of this
+	//and TIME_ZONE_PAT
+	private final String[] TZ_DATE_FORMATS = new String[]{
+			"yyyy-MM-dd'T'HH:mm:ssz",
+			"yyyy-MM-dd'T'HH:mm:ss.SSSz"
+	};
+
+	private final Pattern TIME_ZONE_PAT = Pattern.compile("([-+]\\d\\d):?(\\d\\d)");
 	/**
 	 * Constructor.
 	 *
@@ -562,20 +577,43 @@ public final class PackagePropertiesPart extends PackagePart implements
 		if (dateStr == null || dateStr.equals("")) {
 			return new Nullable<Date>();
 		}
+
+		Matcher m = TIME_ZONE_PAT.matcher(dateStr);
+		if (m.find()) {
+			String dateTzStr = dateStr.substring(0, m.start())+
+					m.group(1)+m.group(2);
+			for (String fStr : TZ_DATE_FORMATS) {
+				SimpleDateFormat df = new SimpleDateFormat(fStr, Locale.ROOT);
+				df.setTimeZone(LocaleUtil.TIMEZONE_UTC);
+				Date d = new SimpleDateFormat(fStr).parse(dateTzStr, new ParsePosition(0));
+				if (d != null) {
+					return new Nullable<Date>(d);
+				}
+			}
+		}
 		String dateTzStr = dateStr.endsWith("Z") ? dateStr : (dateStr + "Z");
-		SimpleDateFormat df = new SimpleDateFormat(DEFAULT_DATEFORMAT, Locale.ROOT);
-		df.setTimeZone(LocaleUtil.TIMEZONE_UTC);
-		Date d = df.parse(dateTzStr, new ParsePosition(0));
-		if (d == null) {
-		    df = new SimpleDateFormat(ALTERNATIVE_DATEFORMAT, Locale.ROOT);
-		    df.setTimeZone(LocaleUtil.TIMEZONE_UTC);
-		    d = df.parse(dateTzStr, new ParsePosition(0));
+		for (String fStr : DATE_FORMATS) {
+			SimpleDateFormat df = new SimpleDateFormat(fStr, Locale.ROOT);
+			df.setTimeZone(LocaleUtil.TIMEZONE_UTC);
+			Date d = df.parse(dateTzStr, new ParsePosition(0));
+			if (d != null) {
+				return new Nullable<Date>(d);
+			}
 		}
-		if (d == null) {
-			throw new InvalidFormatException("Date " + dateTzStr + " not well formated, "
-			        + "expected format " + DEFAULT_DATEFORMAT + " or " + ALTERNATIVE_DATEFORMAT);
+		//if you're here, no pattern matched, throw exception
+		StringBuilder sb = new StringBuilder();
+		int i = 0;
+		for (String fStr : TZ_DATE_FORMATS) {
+			if (i++ > 0) {
+				sb.append(", ");
+			}
+			sb.append(fStr);
 		}
-		return new Nullable<Date>(d);
+		for (String fStr : DATE_FORMATS) {
+			sb.append(", ").append(fStr);
+		}
+		throw new InvalidFormatException("Date " + dateStr + " not well formatted, "
+		        + "expected format in: "+sb.toString());
 	}
 
 	/**
