@@ -585,7 +585,7 @@ public final class PackagePropertiesPart extends PackagePart implements
 			for (String fStr : TZ_DATE_FORMATS) {
 				SimpleDateFormat df = new SimpleDateFormat(fStr, Locale.ROOT);
 				df.setTimeZone(LocaleUtil.TIMEZONE_UTC);
-				Date d = new SimpleDateFormat(fStr).parse(dateTzStr, new ParsePosition(0));
+				Date d = df.parse(dateTzStr, new ParsePosition(0));
 				if (d != null) {
 					return new Nullable<Date>(d);
 				}
