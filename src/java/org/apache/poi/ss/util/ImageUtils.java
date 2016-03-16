@@ -189,7 +189,7 @@ public class ImageUtils {
         if (isHSSF) {
             h *= 1 - anchor.getDy1()/256d;
         } else {
-            h -= anchor.getDy1()/EMU_PER_PIXEL;
+            h -= anchor.getDy1()/(double)EMU_PER_PIXEL;
         }
 
         while(h < scaledHeight){

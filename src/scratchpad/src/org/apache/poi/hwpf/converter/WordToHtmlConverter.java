@@ -341,11 +341,11 @@ public class WordToHtmlConverter extends AbstractWordConverter
 
         if ( aspectRatioX > 0 )
         {
-            imageWidth = picture.getDxaGoal() * aspectRatioX / 1000
+            imageWidth = picture.getDxaGoal() * aspectRatioX / 1000.f
                     / TWIPS_PER_INCH;
-            cropRight = picture.getDxaCropRight() * aspectRatioX / 1000
+            cropRight = picture.getDxaCropRight() * aspectRatioX / 1000.f
                     / TWIPS_PER_INCH;
-            cropLeft = picture.getDxaCropLeft() * aspectRatioX / 1000
+            cropLeft = picture.getDxaCropLeft() * aspectRatioX / 1000.f
                     / TWIPS_PER_INCH;
         }
         else
@@ -357,11 +357,11 @@ public class WordToHtmlConverter extends AbstractWordConverter
 
         if ( aspectRatioY > 0 )
         {
-            imageHeight = picture.getDyaGoal() * aspectRatioY / 1000
+            imageHeight = picture.getDyaGoal() * aspectRatioY / 1000.f
                     / TWIPS_PER_INCH;
-            cropTop = picture.getDyaCropTop() * aspectRatioY / 1000
+            cropTop = picture.getDyaCropTop() * aspectRatioY / 1000.f
                     / TWIPS_PER_INCH;
-            cropBottom = picture.getDyaCropBottom() * aspectRatioY / 1000
+            cropBottom = picture.getDyaCropBottom() * aspectRatioY / 1000.f
                     / TWIPS_PER_INCH;
         }
         else
