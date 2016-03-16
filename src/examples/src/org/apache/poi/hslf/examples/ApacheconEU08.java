@@ -374,10 +374,10 @@ public final class ApacheconEU08 {
     public static void slide10(SlideShow<?,?> ppt) throws IOException {
         //bar chart data. The first value is the bar color, the second is the width
         Object[] def = new Object[]{
-            Color.yellow, new Integer(100),
-            Color.green, new Integer(150),
-            Color.gray, new Integer(75),
-            Color.red, new Integer(200),
+            Color.yellow, 100,
+            Color.green, 150,
+            Color.gray, 75,
+            Color.red, 200,
         };
 
         Slide<?,?> slide = ppt.createSlide();
