@@ -86,6 +86,8 @@ public class SimpleTable {
         FileOutputStream out = new FileOutputStream("simpleTable.docx");
         doc.write(out);
         out.close();
+        
+        doc.close();
     }
 
     /**
@@ -174,13 +176,8 @@ public class SimpleTable {
                 	rh.setBold(true);
                     para.setAlignment(ParagraphAlignment.CENTER);
                 }
-            	else if (rowCt % 2 == 0) {
-            		// even row
-                    rh.setText("row " + rowCt + ", col " + colCt);
-                    para.setAlignment(ParagraphAlignment.LEFT);
-            	}
             	else {
-            		// odd row
+            		// other rows
                     rh.setText("row " + rowCt + ", col " + colCt);
                     para.setAlignment(ParagraphAlignment.LEFT);
             	}
@@ -194,6 +191,8 @@ public class SimpleTable {
         FileOutputStream out = new FileOutputStream("styledTable.docx");
         doc.write(out);
         out.close();
+        
+        doc.close();
     }
 
 }

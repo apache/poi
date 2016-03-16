@@ -39,7 +39,7 @@ public class HybridStreaming {
     private static final String SHEET_TO_STREAM = "large sheet";
 
     public static void main(String[] args) throws IOException, SAXException {
-        InputStream sourceBytes = new FileInputStream("/path/too/workbook.xlsx");
+        InputStream sourceBytes = new FileInputStream("workbook.xlsx");
         XSSFWorkbook workbook = new XSSFWorkbook(sourceBytes) {
             /** Avoid DOM parse of large sheet */
             public void parseSheet(java.util.Map<String,XSSFSheet> shIdMap, CTSheet ctSheet) {
@@ -53,6 +53,7 @@ public class HybridStreaming {
         ReadOnlySharedStringsTable strings = new ReadOnlySharedStringsTable(workbook.getPackage());
         new XSSFSheetXMLHandler(workbook.getStylesSource(), strings, createSheetContentsHandler(), false);
         workbook.close();
+        sourceBytes.close();
     }
 
     private static SheetContentsHandler createSheetContentsHandler() {
