@@ -242,12 +242,13 @@ public final class BATBlock extends BigBlock {
      */
     public static long calculateMaximumSize(final POIFSBigBlockSize bigBlockSize,
           final int numBATs) {
-       long size = 1; // Header isn't FAT addressed
+       // Header isn't FAT addressed
+       long size = 1;
        
        // The header has up to 109 BATs, and extra ones are referenced
        //  from XBATs
        // However, all BATs can contain 128/1024 blocks
-       size += (numBATs * bigBlockSize.getBATEntriesPerBlock());
+       size += (((long)numBATs) * bigBlockSize.getBATEntriesPerBlock());
        
        // So far we've been in sector counts, turn into bytes
        return size * bigBlockSize.getBigBlockSize();
