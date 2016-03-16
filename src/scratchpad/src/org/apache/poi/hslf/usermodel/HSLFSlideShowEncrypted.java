@@ -85,7 +85,12 @@ public class HSLFSlideShowEncrypted {
         PersistPtrHolder ptr = (PersistPtrHolder)r;
         
         Integer encOffset = ptr.getSlideLocationsLookup().get(userEditAtomWithEncryption.getEncryptSessionPersistIdRef());
-        assert(encOffset != null);
+        if (encOffset == null) {
+            // encryption info doesn't exist anymore
+        	// SoftMaker Freeoffice produces such invalid files - check for "SMNativeObjData" ole stream
+            dea = null;
+            return;
+        }
         
         r = recordMap.get(encOffset);
         if (r == null) {
