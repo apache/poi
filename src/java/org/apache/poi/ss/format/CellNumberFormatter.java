@@ -639,8 +639,8 @@ public class CellNumberFormatter extends CellFormatter {
                 return;
             } else {
                 // New we check to see if we should remove the integer part
-                boolean numNoZero = !numeratorSpecials.contains('0');
-                boolean intNoZero = !integerSpecials.contains('0');
+                boolean numNoZero = !hasChar('0', numeratorSpecials);
+                boolean intNoZero = !hasChar('0', integerSpecials);
                 boolean intOnlyHash = integerSpecials.isEmpty() || (integerSpecials.size() == 1 && integerSpecials.contains('#'));
 
                 boolean removeBecauseZero     = fractional == 0 && (intOnlyHash || numNoZero);
