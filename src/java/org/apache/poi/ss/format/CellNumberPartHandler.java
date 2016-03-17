@@ -49,7 +49,8 @@ public class CellNumberPartHandler implements PartHandler {
             // (1) When parsing the format, remove the sign from after the 'e' and
             // put it before the first digit of the exponent.
             if (exponent == null && specials.size() > 0) {
-                specials.add(exponent = new Special('.', pos));
+                exponent = new Special('.', pos);
+                specials.add(exponent);
                 insertSignForExponent = part.charAt(1);
                 return part.substring(0, 1);
             }
@@ -71,8 +72,10 @@ public class CellNumberPartHandler implements PartHandler {
             break;
 
         case '.':
-            if (decimalPoint == null && specials.size() > 0)
-                specials.add(decimalPoint = new Special('.', pos));
+            if (decimalPoint == null && specials.size() > 0) {
+                decimalPoint = new Special('.', pos);
+                specials.add(decimalPoint);
+            }
             break;
 
         case '/':
@@ -81,9 +84,9 @@ public class CellNumberPartHandler implements PartHandler {
                 numerator = previousNumber();
                 // If the first number in the whole format is the numerator, the
                 // entire number should be printed as an improper fraction
-                if (numerator == firstDigit(specials))
-                    improperFraction = true;
-                specials.add(slash = new Special('.', pos));
+                improperFraction |= (numerator == firstDigit(specials));
+                slash = new Special('.', pos);
+                specials.add(slash);
             }
             break;
 
@@ -96,10 +99,6 @@ public class CellNumberPartHandler implements PartHandler {
             return null;
         }
         return part;
-    }
-
-    public char getInsertSignForExponent() {
-        return insertSignForExponent;
     }
 
     public double getScale() {
@@ -135,19 +134,16 @@ public class CellNumberPartHandler implements PartHandler {
         while (it.hasPrevious()) {
             Special s = it.previous();
             if (isDigitFmt(s)) {
-                Special numStart = s;
                 Special last = s;
                 while (it.hasPrevious()) {
                     s = it.previous();
-                    if (last.pos - s.pos > 1) // it has to be continuous digits
+                    // it has to be continuous digits
+                    if (last.pos - s.pos > 1 || !isDigitFmt(s)) {
                         break;
-                    if (isDigitFmt(s))
-                        numStart = s;
-                    else
-                        break;
+                    }
                     last = s;
                 }
-                return numStart;
+                return last;
             }
         }
         return null;
@@ -159,8 +155,9 @@ public class CellNumberPartHandler implements PartHandler {
 
     private static Special firstDigit(List<Special> specials) {
         for (Special s : specials) {
-            if (isDigitFmt(s))
+            if (isDigitFmt(s)) {
                 return s;
+            }
         }
         return null;
     }
