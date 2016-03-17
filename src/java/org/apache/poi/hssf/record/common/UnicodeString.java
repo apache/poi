@@ -42,7 +42,8 @@ import org.apache.poi.util.StringUtil;
  * REFERENCE:  PG 264 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<p/>
  * REFERENCE:  PG 951 Excel Binary File Format (.xls) Structure Specification v20091214 
  */
-public class UnicodeString implements Comparable<UnicodeString> { // TODO - make this final when the compatibility version is removed
+public class UnicodeString implements Comparable<UnicodeString> {
+    // TODO - make this final when the compatibility version is removed
     private static POILogger _logger = POILogFactory.getLogger(UnicodeString.class);
 
     private short             field_1_charCount;
@@ -243,26 +244,44 @@ public class UnicodeString implements Comparable<UnicodeString> { // TODO - make
           int result;
           
           result = reserved - o.reserved;
-          if(result != 0) return result;
+          if (result != 0) {
+              return result;
+          }
           result = formattingFontIndex - o.formattingFontIndex;
-          if(result != 0) return result;
+          if (result != 0) {
+              return result;
+          }
           result = formattingOptions - o.formattingOptions;
-          if(result != 0) return result;
+          if (result != 0) {
+              return result;
+          }
           result = numberOfRuns - o.numberOfRuns;
-          if(result != 0) return result;
+          if (result != 0) {
+              return result;
+          }
           
           result = phoneticText.compareTo(o.phoneticText);
-          if(result != 0) return result;
+          if (result != 0) {
+              return result;
+          }
           
           result = phRuns.length - o.phRuns.length;
-          if(result != 0) return result;
+          if (result != 0) {
+              return result;
+          }
           for(int i=0; i<phRuns.length; i++) {
              result = phRuns[i].phoneticTextFirstCharacterOffset - o.phRuns[i].phoneticTextFirstCharacterOffset;
-             if(result != 0) return result;
+             if (result != 0) {
+                 return result;
+             }
              result = phRuns[i].realTextFirstCharacterOffset - o.phRuns[i].realTextFirstCharacterOffset;
-             if(result != 0) return result;
+             if (result != 0) {
+                 return result;
+             }
              result = phRuns[i].realTextLength - o.phRuns[i].realTextLength;
-             if(result != 0) return result;
+             if (result != 0) {
+                 return result;
+             }
           }
           
           result = Arrays.hashCode(extraData)-Arrays.hashCode(o.extraData);
@@ -360,8 +379,9 @@ public class UnicodeString implements Comparable<UnicodeString> { // TODO - make
     public int hashCode()
     {
         int stringHash = 0;
-        if (field_3_string != null)
+        if (field_3_string != null) {
             stringHash = field_3_string.hashCode();
+        }
         return field_1_charCount + stringHash;
     }
 
@@ -380,50 +400,44 @@ public class UnicodeString implements Comparable<UnicodeString> { // TODO - make
         UnicodeString other = (UnicodeString) o;
 
         //OK lets do this in stages to return a quickly, first check the actual string
-        boolean eq = ((field_1_charCount == other.field_1_charCount)
-                && (field_2_optionflags == other.field_2_optionflags)
-                && field_3_string.equals(other.field_3_string));
-        if (!eq) return false;
+        if (field_1_charCount != other.field_1_charCount
+            || field_2_optionflags != other.field_2_optionflags
+            || !field_3_string.equals(other.field_3_string)) {
+            return false;
+        }
 
         //OK string appears to be equal but now lets compare formatting runs
-        if ((field_4_format_runs == null) && (other.field_4_format_runs == null))
-          //Strings are equal, and there are not formatting runs.
-          return true;
-        if (((field_4_format_runs == null) && (other.field_4_format_runs != null)) ||
-             (field_4_format_runs != null) && (other.field_4_format_runs == null))
-           //Strings are equal, but one or the other has formatting runs
-           return false;
+        if (field_4_format_runs == null) {
+            // Strings are equal, and there are not formatting runs.
+            return (other.field_4_format_runs == null);
+        } else if (other.field_4_format_runs == null) {
+            // Strings are equal, but one or the other has formatting runs
+            return false;
+        }
 
         //Strings are equal, so now compare formatting runs.
         int size = field_4_format_runs.size();
-        if (size != other.field_4_format_runs.size())
+        if (size != other.field_4_format_runs.size()) {
           return false;
+        }
 
         for (int i=0;i<size;i++) {
           FormatRun run1 = field_4_format_runs.get(i);
           FormatRun run2 = other.field_4_format_runs.get(i);
 
-          if (!run1.equals(run2))
+          if (!run1.equals(run2)) {
             return false;
+          }
         }
 
         // Well the format runs are equal as well!, better check the ExtRst data
-        if(field_5_ext_rst == null && other.field_5_ext_rst == null) {
-           // Good
-        } else if(field_5_ext_rst != null && other.field_5_ext_rst != null) {
-           int extCmp = field_5_ext_rst.compareTo(other.field_5_ext_rst);
-           if(extCmp == 0) {
-              // Good
-           } else {
-              return false;
-           }
-        } else {
-           return false;
+        if (field_5_ext_rst == null) {
+            return (other.field_5_ext_rst == null);
+        } else if (other.field_5_ext_rst == null) {
+            return false;
         }
-
-        //Phew!! After all of that we have finally worked out that the strings
-        //are identical.
-        return true;
+            
+       return field_5_ext_rst.equals(other.field_5_ext_rst);
     }
 
     /**
@@ -437,23 +451,17 @@ public class UnicodeString implements Comparable<UnicodeString> { // TODO - make
         int runCount = 0;
         int extensionLength = 0;
         //Read the number of rich runs if rich text.
-        if ( isRichText() )
-        {
+        if (isRichText()) {
             runCount = in.readShort();
         }
         //Read the size of extended data if present.
-        if ( isExtendedText() )
-        {
+        if (isExtendedText()) {
             extensionLength = in.readInt();
         }
 
         boolean isCompressed = ((field_2_optionflags & 1) == 0);
-        if (isCompressed) {
-            field_3_string = in.readCompressedUnicode(getCharCount());
-        } else {
-            field_3_string = in.readUnicodeLEString(getCharCount());
-        }
-
+        int cc = getCharCount();
+        field_3_string = (isCompressed) ? in.readCompressedUnicode(cc) : in.readUnicodeLEString(cc);
 
         if (isRichText() && (runCount > 0)) {
           field_4_format_runs = new ArrayList<FormatRun>(runCount);
@@ -554,33 +562,31 @@ public class UnicodeString implements Comparable<UnicodeString> { // TODO - make
         boolean useUTF16 = false;
         int strlen = string.length();
 
-        for ( int j = 0; j < strlen; j++ )
-        {
-            if ( string.charAt( j ) > 255 )
-        {
+        for ( int j = 0; j < strlen; j++ ) {
+            if ( string.charAt( j ) > 255 ) {
                 useUTF16 = true;
                 break;
             }
         }
-        if (useUTF16)
+        if (useUTF16) {
           //Set the uncompressed bit
           field_2_optionflags = highByte.setByte(field_2_optionflags);
-        else field_2_optionflags = highByte.clearByte(field_2_optionflags);
+        } else {
+          field_2_optionflags = highByte.clearByte(field_2_optionflags);
+        }
     }
 
     public int getFormatRunCount() {
-      if (field_4_format_runs == null)
-        return 0;
-      return field_4_format_runs.size();
+        return (field_4_format_runs == null) ? 0 : field_4_format_runs.size();
     }
 
     public FormatRun getFormatRun(int index) {
       if (field_4_format_runs == null) {
 		return null;
-	}
+	  }
       if (index < 0 || index >= field_4_format_runs.size()) {
 		return null;
-	}
+	  }
       return field_4_format_runs.get(index);
     }
 
@@ -588,10 +594,11 @@ public class UnicodeString implements Comparable<UnicodeString> { // TODO - make
       int size = field_4_format_runs.size();
       for (int i=0;i<size;i++) {
         FormatRun r = field_4_format_runs.get(i);
-        if (r._character == characterPos)
+        if (r._character == characterPos) {
           return i;
-        else if (r._character > characterPos)
+        } else if (r._character > characterPos) {
           return -1;
+        }
       }
       return -1;
     }
@@ -604,11 +611,12 @@ public class UnicodeString implements Comparable<UnicodeString> { // TODO - make
     public void addFormatRun(FormatRun r) {
       if (field_4_format_runs == null) {
 		field_4_format_runs = new ArrayList<FormatRun>();
-	}
+	  }
 
       int index = findFormatRunAt(r._character);
-      if (index != -1)
+      if (index != -1) {
          field_4_format_runs.remove(index);
+      }
 
       field_4_format_runs.add(r);
       //Need to sort the font runs to ensure that the font runs appear in
@@ -750,59 +758,51 @@ public class UnicodeString implements Comparable<UnicodeString> { // TODO - make
         int result = getString().compareTo(str.getString());
 
         //As per the equals method lets do this in stages
-        if (result != 0)
+        if (result != 0) {
           return result;
+        }
 
         //OK string appears to be equal but now lets compare formatting runs
-        if ((field_4_format_runs == null) && (str.field_4_format_runs == null))
-          //Strings are equal, and there are no formatting runs.
-          return 0;
-
-        if ((field_4_format_runs == null) && (str.field_4_format_runs != null))
-          //Strings are equal, but one or the other has formatting runs
-          return 1;
-        if ((field_4_format_runs != null) && (str.field_4_format_runs == null))
-          //Strings are equal, but one or the other has formatting runs
-          return -1;
+        if (field_4_format_runs == null) {
+            //Strings are equal, and there are no formatting runs. -> 0
+            //Strings are equal, but one or the other has formatting runs -> 1
+            return (str.field_4_format_runs == null) ? 0 : 1;
+        } else if (str.field_4_format_runs == null) {
+            //Strings are equal, but one or the other has formatting runs
+            return -1;
+        }
 
         //Strings are equal, so now compare formatting runs.
         int size = field_4_format_runs.size();
-        if (size != str.field_4_format_runs.size())
+        if (size != str.field_4_format_runs.size()) {
           return size - str.field_4_format_runs.size();
+        }
 
         for (int i=0;i<size;i++) {
           FormatRun run1 = field_4_format_runs.get(i);
           FormatRun run2 = str.field_4_format_runs.get(i);
 
           result = run1.compareTo(run2);
-          if (result != 0)
+          if (result != 0) {
             return result;
+          }
         }
 
         //Well the format runs are equal as well!, better check the ExtRst data
-        if ((field_5_ext_rst == null) && (str.field_5_ext_rst == null))
-          return 0;
-        if ((field_5_ext_rst == null) && (str.field_5_ext_rst != null))
-         return 1;
-        if ((field_5_ext_rst != null) && (str.field_5_ext_rst == null))
-          return -1;
-
-        result = field_5_ext_rst.compareTo(str.field_5_ext_rst); 
-        if (result != 0)
-           return result;
-
-        //Phew!! After all of that we have finally worked out that the strings
-        //are identical.
-        return 0;
+        if (field_5_ext_rst == null) {
+            return (str.field_5_ext_rst == null) ? 0 : 1;
+        } else if (str.field_5_ext_rst == null) {
+            return -1;
+        } else {
+            return field_5_ext_rst.compareTo(str.field_5_ext_rst);
+        }
     }
 
-    private boolean isRichText()
-    {
+    private boolean isRichText() {
       return richText.isSet(getOptionFlags());
     }
 
-    private boolean isExtendedText()
-        {
+    private boolean isExtendedText() {
         return extBit.isSet(getOptionFlags());
     }
 
