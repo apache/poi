@@ -38,8 +38,8 @@ class PathGradientPaint implements Paint {
     }
     
     public PathGradientPaint(Color colors[], float fractions[], int capStyle, int joinStyle) {
-        this.colors = colors;
-        this.fractions = fractions;
+        this.colors = colors.clone();
+        this.fractions = fractions.clone();
         this.capStyle = capStyle;
         this.joinStyle = joinStyle;
 
