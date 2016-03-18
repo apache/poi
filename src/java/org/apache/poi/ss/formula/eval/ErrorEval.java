@@ -59,7 +59,7 @@ public final class ErrorEval implements ValueEval {
         if (eval != null) {
             return eval;
         } else {
-            throw new RuntimeException("Unhandled error type " + eval + " for code " + errorCode);
+            throw new RuntimeException("Unhandled error type for code " + errorCode);
         }
     }
 
