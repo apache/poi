@@ -580,8 +580,15 @@ under the License.
     <target name="fetch-ooxml-jars" depends="check-ooxml-jars" unless="ooxml.jars.present">
         <mkdir dir="${ooxml.lib}"/>
         <downloadfile src="${ooxml.curvesapi.url}" dest="${ooxml.curvesapi.jar}"/>
-        <downloadfile src="${ooxml.xmlbeans23.url}" dest="${ooxml.xmlbeans23.jar}"/>
-        <downloadfile src="${ooxml.xmlbeans26.url}" dest="${ooxml.xmlbeans26.jar}"/>
+        <downloadfile src="${ooxml.xmlbeans23.url}" dest="${ooxml.xmlbeans23.jar}.orig"/>
+        <downloadfile src="${ooxml.xmlbeans26.url}" dest="${ooxml.xmlbeans26.jar}.orig"/>
+    	<!-- remove piccolo parser, so we don't use unsafe calls to it instead of using jaxp -->
+    	<zip destfile="${ooxml.xmlbeans23.jar}">
+    		<zipfileset src="${ooxml.xmlbeans23.jar}.orig" excludes="org/apache/xmlbeans/impl/piccolo/**"/>
+    	</zip>
+        <zip destfile="${ooxml.xmlbeans26.jar}">
+            <zipfileset src="${ooxml.xmlbeans26.jar}.orig" excludes="org/apache/xmlbeans/impl/piccolo/**"/>
+        </zip>
     </target>
 
     <target name="check-ooxml-xsds">
