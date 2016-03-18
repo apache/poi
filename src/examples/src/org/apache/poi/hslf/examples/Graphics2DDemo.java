@@ -43,10 +43,10 @@ public final class Graphics2DDemo {
 
         //bar chart data. The first value is the bar color, the second is the width
         Object[] def = new Object[]{
-            Color.yellow, new Integer(40),
-            Color.green, new Integer(60),
-            Color.gray, new Integer(30),
-            Color.red, new Integer(80),
+            Color.yellow, 40,
+            Color.green, 60,
+            Color.gray, 30,
+            Color.red, 80,
         };
 
         HSLFSlide slide = ppt.createSlide();
@@ -79,6 +79,7 @@ public final class Graphics2DDemo {
         FileOutputStream out = new FileOutputStream("hslf-graphics.ppt");
         ppt.write(out);
         out.close();
-    }
 
+        ppt.close();
+    }
 }
