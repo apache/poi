@@ -17,11 +17,22 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.io.IOException;
+
 import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.BaseTestDataFormat;
+import org.apache.poi.ss.usermodel.BuiltinFormats;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.DataFormat;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.junit.Test;
 
 /**
  * Tests for {@link HSSFDataFormat}
@@ -36,7 +47,8 @@ public final class TestHSSFDataFormat extends BaseTestDataFormat {
     /**
      * [Bug 49928] formatCellValue returns incorrect value for \u00a3 formatted cells
      */
-    public void test49928(){
+    @Test
+    public void test49928() throws IOException {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("49928.xls");
         doTest49928Core(wb);
 
@@ -49,20 +61,25 @@ public final class TestHSSFDataFormat extends BaseTestDataFormat {
         short customFmtIdx = dataFormat.getFormat("\u00a3##.00[Yellow]");
         assertTrue(customFmtIdx >= BuiltinFormats.FIRST_USER_DEFINED_FORMAT_INDEX );
         assertEquals("\u00a3##.00[Yellow]", dataFormat.getFormat(customFmtIdx));
+        
+        wb.close();
     }
 
     /**
      * [Bug 58532] Handle formats that go numnum, numK, numM etc 
      */
-    public void test58532() {
+    @Test
+    public void test58532() throws IOException {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("FormatKM.xls");
         doTest58532Core(wb);
+        wb.close();
     }
 
     /**
      * Bug 51378: getDataFormatString method call crashes when reading the test file
      */
-    public void test51378(){
+    @Test
+    public void test51378() throws IOException {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("12561-1.xls");
         for (int i = 0; i < wb.getNumberOfSheets(); i++) {
             HSSFSheet sheet = wb.getSheetAt(i);
@@ -77,6 +94,7 @@ public final class TestHSSFDataFormat extends BaseTestDataFormat {
                 }
             }
         }
+        wb.close();
     }
 
 }

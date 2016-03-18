@@ -140,6 +140,8 @@ public class CalendarDemo {
         FileOutputStream out = new FileOutputStream(file);
         wb.write(out);
         out.close();
+        
+        wb.close();
     }
 
     /**

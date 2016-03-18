@@ -28,6 +28,7 @@ import java.io.IOException;
 
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.ss.ITestDataProvider;
+import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.util.Units;
 import org.junit.Test;
 
@@ -47,11 +48,11 @@ public abstract class BaseTestCellComment {
     public final void find() throws IOException {
         Workbook book = _testDataProvider.createWorkbook();
         Sheet sheet = book.createSheet();
-        assertNull(sheet.getCellComment(0, 0));
+        assertNull(sheet.getCellComment(new CellAddress(0, 0)));
 
         Row row = sheet.createRow(0);
         Cell cell = row.createCell(0);
-        assertNull(sheet.getCellComment(0, 0));
+        assertNull(sheet.getCellComment(new CellAddress(0, 0)));
         assertNull(cell.getCellComment());
         book.close();
     }
@@ -68,12 +69,12 @@ public abstract class BaseTestCellComment {
         CreationHelper factory = wb1.getCreationHelper();
 
         Sheet sheet = wb1.createSheet();
-        assertNull(sheet.getCellComment(cellRow, cellColumn));
+        assertNull(sheet.getCellComment(new CellAddress(cellRow, cellColumn)));
 
         Cell cell = sheet.createRow(cellRow).createCell(cellColumn);
         cell.setCellValue(factory.createRichTextString(cellText));
         assertNull(cell.getCellComment());
-        assertNull(sheet.getCellComment(cellRow, cellColumn));
+        assertNull(sheet.getCellComment(new CellAddress(cellRow, cellColumn)));
 
         Drawing patr = sheet.createDrawingPatriarch();
         ClientAnchor anchor = factory.createClientAnchor();
@@ -90,7 +91,7 @@ public abstract class BaseTestCellComment {
         comment.setAuthor(commentAuthor);
         cell.setCellComment(comment);
         assertNotNull(cell.getCellComment());
-        assertNotNull(sheet.getCellComment(cellRow, cellColumn));
+        assertNotNull(sheet.getCellComment(new CellAddress(cellRow, cellColumn)));
 
         //verify our settings
         assertEquals(commentAuthor, comment.getAuthor());
@@ -152,7 +153,7 @@ public abstract class BaseTestCellComment {
             cell = row.getCell(0);
             comment = cell.getCellComment();
             assertNull("Cells in the first column are not commented", comment);
-            assertNull(sheet.getCellComment(rownum, 0));
+            assertNull(sheet.getCellComment(new CellAddress(rownum, 0)));
         }
 
         for (int rownum = 0; rownum < 3; rownum++) {
@@ -160,7 +161,7 @@ public abstract class BaseTestCellComment {
             cell = row.getCell(1);
             comment = cell.getCellComment();
             assertNotNull("Cells in the second column have comments", comment);
-            assertNotNull("Cells in the second column have comments", sheet.getCellComment(rownum, 1));
+            assertNotNull("Cells in the second column have comments", sheet.getCellComment(new CellAddress(rownum, 1)));
 
             assertEquals("Yegor Kozlov", comment.getAuthor());
             assertFalse("cells in the second column have not empyy notes",

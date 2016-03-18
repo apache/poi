@@ -127,6 +127,8 @@ public class CalendarDemo {
         FileOutputStream out = new FileOutputStream("calendar-"+year+".xlsx");
         wb.write(out);
         out.close();
+        
+        wb.close();
     }
 
     /**

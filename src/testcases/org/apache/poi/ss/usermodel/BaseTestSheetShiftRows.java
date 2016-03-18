@@ -168,16 +168,16 @@ public abstract class BaseTestSheetShiftRows {
         assertEquals(3, sheet.getLastRowNum());
 
         // Verify comments are in the position expected
-        assertNotNull(sheet.getCellComment(0,0));
-        assertNull(sheet.getCellComment(1,0));
-        assertNotNull(sheet.getCellComment(2,0));
-        assertNotNull(sheet.getCellComment(3,0));
+        assertNotNull(sheet.getCellComment(new CellAddress(0,0)));
+        assertNull(sheet.getCellComment(new CellAddress(1,0)));
+        assertNotNull(sheet.getCellComment(new CellAddress(2,0)));
+        assertNotNull(sheet.getCellComment(new CellAddress(3,0)));
 
-        String comment1 = sheet.getCellComment(0,0).getString().getString();
+        String comment1 = sheet.getCellComment(new CellAddress(0,0)).getString().getString();
         assertEquals(comment1,"comment top row1 (index0)\n");
-        String comment3 = sheet.getCellComment(2,0).getString().getString();
+        String comment3 = sheet.getCellComment(new CellAddress(2,0)).getString().getString();
         assertEquals(comment3,"comment top row3 (index2)\n");
-        String comment4 = sheet.getCellComment(3,0).getString().getString();
+        String comment4 = sheet.getCellComment(new CellAddress(3,0)).getString().getString();
         assertEquals(comment4,"comment top row4 (index3)\n");
 
         //Workbook wbBack = _testDataProvider.writeOutAndReadBack(wb);
@@ -187,17 +187,17 @@ public abstract class BaseTestSheetShiftRows {
 
         // Test that comments were shifted as expected
         assertEquals(4, sheet.getLastRowNum());
-        assertNotNull(sheet.getCellComment(0,0));
-        assertNull(sheet.getCellComment(1,0));
-        assertNull(sheet.getCellComment(2,0));
-        assertNotNull(sheet.getCellComment(3,0));
-        assertNotNull(sheet.getCellComment(4,0));
+        assertNotNull(sheet.getCellComment(new CellAddress(0,0)));
+        assertNull(sheet.getCellComment(new CellAddress(1,0)));
+        assertNull(sheet.getCellComment(new CellAddress(2,0)));
+        assertNotNull(sheet.getCellComment(new CellAddress(3,0)));
+        assertNotNull(sheet.getCellComment(new CellAddress(4,0)));
 
-        String comment1_shifted = sheet.getCellComment(0,0).getString().getString();
+        String comment1_shifted = sheet.getCellComment(new CellAddress(0,0)).getString().getString();
         assertEquals(comment1,comment1_shifted);
-        String comment3_shifted = sheet.getCellComment(3,0).getString().getString();
+        String comment3_shifted = sheet.getCellComment(new CellAddress(3,0)).getString().getString();
         assertEquals(comment3,comment3_shifted);
-        String comment4_shifted = sheet.getCellComment(4,0).getString().getString();
+        String comment4_shifted = sheet.getCellComment(new CellAddress(4,0)).getString().getString();
         assertEquals(comment4,comment4_shifted);
 
         // Write out and read back in again
@@ -209,17 +209,17 @@ public abstract class BaseTestSheetShiftRows {
         assertEquals(4, sheet.getLastRowNum());
 
         // Verify comments are in the position expected after the shift
-        assertNotNull(sheet.getCellComment(0,0));
-        assertNull(sheet.getCellComment(1,0));
-        assertNull(sheet.getCellComment(2,0));
-        assertNotNull(sheet.getCellComment(3,0));
-        assertNotNull(sheet.getCellComment(4,0));
+        assertNotNull(sheet.getCellComment(new CellAddress(0,0)));
+        assertNull(sheet.getCellComment(new CellAddress(1,0)));
+        assertNull(sheet.getCellComment(new CellAddress(2,0)));
+        assertNotNull(sheet.getCellComment(new CellAddress(3,0)));
+        assertNotNull(sheet.getCellComment(new CellAddress(4,0)));
 
-        comment1_shifted = sheet.getCellComment(0,0).getString().getString();
+        comment1_shifted = sheet.getCellComment(new CellAddress(0,0)).getString().getString();
         assertEquals(comment1,comment1_shifted);
-        comment3_shifted = sheet.getCellComment(3,0).getString().getString();
+        comment3_shifted = sheet.getCellComment(new CellAddress(3,0)).getString().getString();
         assertEquals(comment3,comment3_shifted);
-        comment4_shifted = sheet.getCellComment(4,0).getString().getString();
+        comment4_shifted = sheet.getCellComment(new CellAddress(4,0)).getString().getString();
         assertEquals(comment4,comment4_shifted);
 
         // Shifting back up again, now two rows
@@ -231,15 +231,15 @@ public abstract class BaseTestSheetShiftRows {
         	assertEquals(2, sheet.getLastRowNum());
         	
         	// Verify comments are in the position expected
-        	assertNull("Had: " + (sheet.getCellComment(0,0) == null ? "null" : sheet.getCellComment(0,0).getString()),
-        			sheet.getCellComment(0,0));
-        	assertNotNull(sheet.getCellComment(1,0));
-        	assertNotNull(sheet.getCellComment(2,0));
+        	assertNull("Had: " + (sheet.getCellComment(new CellAddress(0,0)) == null ? "null" : sheet.getCellComment(new CellAddress(0,0)).getString()),
+        			sheet.getCellComment(new CellAddress(0,0)));
+        	assertNotNull(sheet.getCellComment(new CellAddress(1,0)));
+        	assertNotNull(sheet.getCellComment(new CellAddress(2,0)));
         }
 
-        comment1 = sheet.getCellComment(1,0).getString().getString();
+        comment1 = sheet.getCellComment(new CellAddress(1,0)).getString().getString();
         assertEquals(comment1,"comment top row3 (index2)\n");
-        String comment2 = sheet.getCellComment(2,0).getString().getString();
+        String comment2 = sheet.getCellComment(new CellAddress(2,0)).getString().getString();
         assertEquals(comment2,"comment top row4 (index3)\n");
         
         wb2.close();
@@ -342,6 +342,7 @@ public abstract class BaseTestSheetShiftRows {
         expectedMergedRegions.add(C4_D8);
         
         assertEquals(expectedMergedRegions, sheet.getMergedRegions());
+        wb.close();
     }
     
     

@@ -34,6 +34,7 @@ import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 public class BaseTestSlideShowFactory {
     private static final POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
 
+    @SuppressWarnings("resource")
     protected static void testFactoryFromFile(String file) throws Exception {
         SlideShow<?,?> ss;
         // from file
@@ -42,6 +43,7 @@ public class BaseTestSlideShowFactory {
         assertCloseDoesNotModifyFile(file, ss);
     }
 
+    @SuppressWarnings("resource")
     protected static void testFactoryFromStream(String file) throws Exception {
         SlideShow<?,?> ss;
         // from stream
@@ -50,6 +52,7 @@ public class BaseTestSlideShowFactory {
         assertCloseDoesNotModifyFile(file, ss);
     }
 
+    @SuppressWarnings("resource")
     protected static void testFactoryFromNative(String file) throws Exception {
         SlideShow<?,?> ss;
         // from NPOIFS
@@ -70,6 +73,7 @@ public class BaseTestSlideShowFactory {
         }
     }
 
+    @SuppressWarnings("resource")
     protected static void testFactoryFromProtectedFile(String protectedFile, String password) throws Exception {
         SlideShow<?,?> ss;
         // from protected file 
@@ -78,6 +82,7 @@ public class BaseTestSlideShowFactory {
         assertCloseDoesNotModifyFile(protectedFile, ss);
     }
 
+    @SuppressWarnings("resource")
     protected static void testFactoryFromProtectedStream(String protectedFile, String password) throws Exception {
         SlideShow<?,?> ss;
         // from protected stream
@@ -86,6 +91,7 @@ public class BaseTestSlideShowFactory {
         assertCloseDoesNotModifyFile(protectedFile, ss);
     }
 
+    @SuppressWarnings("resource")
     protected static void testFactoryFromProtectedNative(String protectedFile, String password) throws Exception {
         SlideShow<?,?> ss;
         // Encryption layer is a BIFF8 binary format that can be read by NPOIFSFileSystem,
