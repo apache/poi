@@ -41,21 +41,23 @@ public class AgileEncryptionInfoBuilder implements EncryptionInfoBuilder {
     AgileDecryptor decryptor;
     AgileEncryptor encryptor;
 
-    public void initialize(EncryptionInfo info, LittleEndianInput dis) throws IOException {
-        this.info = info;
+    @Override
+    public void initialize(EncryptionInfo ei, LittleEndianInput dis) throws IOException {
+        this.info = ei;
         
         EncryptionDocument ed = parseDescriptor((InputStream)dis);
         header = new AgileEncryptionHeader(ed);
         verifier = new AgileEncryptionVerifier(ed);
-        if (info.getVersionMajor() == EncryptionMode.agile.versionMajor
-            && info.getVersionMinor() == EncryptionMode.agile.versionMinor) {
+        if (ei.getVersionMajor() == EncryptionMode.agile.versionMajor
+            && ei.getVersionMinor() == EncryptionMode.agile.versionMinor) {
             decryptor = new AgileDecryptor(this);
             encryptor = new AgileEncryptor(this);
         }
     }
 
-    public void initialize(EncryptionInfo info, CipherAlgorithm cipherAlgorithm, HashAlgorithm hashAlgorithm, int keyBits, int blockSize, ChainingMode chainingMode) {
-        this.info = info;
+    @Override
+    public void initialize(EncryptionInfo ei, CipherAlgorithm cipherAlgorithm, HashAlgorithm hashAlgorithm, int keyBits, int blockSize, ChainingMode chainingMode) {
+        this.info = ei;
 
         if (cipherAlgorithm == null) {
             cipherAlgorithm = CipherAlgorithm.aes128;
