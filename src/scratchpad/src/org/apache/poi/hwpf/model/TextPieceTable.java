@@ -17,6 +17,7 @@
 package org.apache.poi.hwpf.model;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -497,7 +498,7 @@ public class TextPieceTable implements CharIndexTranslator
         return textPlex.toByteArray();
     }
 
-    private static class FCComparator implements Comparator<TextPiece>
+    private static class FCComparator implements Comparator<TextPiece>, Serializable
     {
         public int compare( TextPiece textPiece, TextPiece textPiece1 )
         {

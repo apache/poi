@@ -18,6 +18,7 @@
 package org.apache.poi.hslf.usermodel;
 
 import java.awt.geom.Rectangle2D;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -169,7 +170,7 @@ implements HSLFShapeContainer, TableShape<HSLFShape,HSLFTextParagraph> {
         updateRowHeightsProperty();
     }
 
-    private static class TableCellComparator implements Comparator<HSLFShape> {
+    private static class TableCellComparator implements Comparator<HSLFShape>, Serializable {
         public int compare( HSLFShape o1, HSLFShape o2 ) {
             Rectangle2D anchor1 = o1.getAnchor();
             Rectangle2D anchor2 = o2.getAnchor();

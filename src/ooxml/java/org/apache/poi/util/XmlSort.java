@@ -21,6 +21,7 @@ import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.Comparator;
 
 import javax.xml.namespace.QName;
@@ -189,7 +190,7 @@ public final class XmlSort
      * The constructor accepts an argument indicating whether the comparison order is the same as
      * the lexicographic order of the strings or the reverse.
      */
-    public static final class QNameComparator implements Comparator<XmlCursor>
+    public static final class QNameComparator implements Comparator<XmlCursor>, Serializable
     {
         public static final int ASCENDING = 1;
         public static final int DESCENDING = 2;
