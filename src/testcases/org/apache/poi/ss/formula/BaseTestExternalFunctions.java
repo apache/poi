@@ -16,7 +16,10 @@
 ==================================================================== */
 package org.apache.poi.ss.formula;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+
+import java.io.IOException;
+
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.NotImplementedException;
@@ -30,13 +33,12 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.junit.Test;
 
 /**
  * Test setting / evaluating of Analysis Toolpack and user-defined functions
- *
- * @author Yegor Kozlov
  */
-public class BaseTestExternalFunctions extends TestCase {
+public class BaseTestExternalFunctions {
     // define two custom user-defined functions
     private static class MyFunc implements FreeRefFunction {
         public MyFunc() {
@@ -75,34 +77,37 @@ public class BaseTestExternalFunctions extends TestCase {
     );
 
 
-    protected final ITestDataProvider _testDataProvider;
+    private final ITestDataProvider _testDataProvider;
+    private final String atpFile;
 
     /**
      * @param testDataProvider an object that provides test data in HSSF / XSSF specific way
      */
-    protected BaseTestExternalFunctions(ITestDataProvider testDataProvider) {
+    protected BaseTestExternalFunctions(ITestDataProvider testDataProvider, String atpFile) {
         _testDataProvider = testDataProvider;
+        this.atpFile = atpFile;
     }
 
-    public void testExternalFunctions() {
+    @Test
+    public void testExternalFunctions() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
 
         Sheet sh = wb.createSheet();
 
         Cell cell1 = sh.createRow(0).createCell(0);
-        cell1.setCellFormula("ISODD(1)+ISEVEN(2)"); // functions from the Excel Analysis Toolpack
+        // functions from the Excel Analysis Toolpack
+        cell1.setCellFormula("ISODD(1)+ISEVEN(2)");
         assertEquals("ISODD(1)+ISEVEN(2)", cell1.getCellFormula());
 
         Cell cell2 = sh.createRow(1).createCell(0);
-        cell2.setCellFormula("MYFUNC(\"B1\")"); //unregistered functions are parseable and renderable, but may not be evaluateable
+        // unregistered functions are parseable and renderable, but may not be evaluateable
+        cell2.setCellFormula("MYFUNC(\"B1\")"); 
         try {
             evaluator.evaluate(cell2);
             fail("Expected NotImplementedFunctionException/NotImplementedException");
         } catch (final NotImplementedException e) {
-            if (!(e.getCause() instanceof NotImplementedFunctionException))
-                throw e;
-            // expected
+            assertTrue(e.getCause() instanceof NotImplementedFunctionException);
             // Alternatively, a future implementation of evaluate could return #NAME? error to align behavior with Excel
             // assertEquals(ErrorEval.NAME_INVALID, ErrorEval.valueOf(evaluator.evaluate(cell2).getErrorValue()));
         }
@@ -116,10 +121,11 @@ public class BaseTestExternalFunctions extends TestCase {
         cell3.setCellFormula("MYFUNC2(\"C1\")&\"-\"&A2");  //where A2 is defined above
         assertEquals("MYFUNC2(\"C1\")&\"-\"&A2", cell3.getCellFormula());
 
-        assertEquals(2.0, evaluator.evaluate(cell1).getNumberValue());
+        assertEquals(2.0, evaluator.evaluate(cell1).getNumberValue(), 0);
         assertEquals("B1abc", evaluator.evaluate(cell2).getStringValue());
         assertEquals("C1abc2-B1abc", evaluator.evaluate(cell3).getStringValue());
 
+        wb.close();
     }
 
     /**
@@ -127,12 +133,13 @@ public class BaseTestExternalFunctions extends TestCase {
      *
      * @param testFile  either atp.xls or atp.xlsx
      */
-    public void baseTestInvokeATP(String testFile){
-        Workbook wb = _testDataProvider.openSampleWorkbook(testFile);
+    @Test
+    public void baseTestInvokeATP() throws IOException {
+        Workbook wb = _testDataProvider.openSampleWorkbook(atpFile);
         FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
 
         Sheet sh  = wb.getSheetAt(0);
-        // these two are not imlemented in r
+        // these two are not implemented in r
         assertEquals("DELTA(1.3,1.5)", sh.getRow(0).getCell(1).getCellFormula());
         assertEquals("COMPLEX(2,4)", sh.getRow(1).getCell(1).getCellFormula());
 
@@ -146,6 +153,7 @@ public class BaseTestExternalFunctions extends TestCase {
         assertEquals(true, evaluator.evaluate(cell3).getBooleanValue());
         assertEquals(Cell.CELL_TYPE_BOOLEAN, evaluator.evaluateFormulaCell(cell3));
 
+        wb.close();
     }
 
 }

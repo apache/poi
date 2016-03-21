@@ -20,9 +20,6 @@ package org.apache.poi.hssf.usermodel;
 import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.ss.usermodel.BaseTestSheetHiding;
 
-/**
- * @author Yegor Kozlov
- */
 public final class TestSheetHiding extends BaseTestSheetHiding {
     public TestSheetHiding() {
         super(HSSFITestDataProvider.instance,

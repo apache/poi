@@ -116,6 +116,7 @@ public class BinaryRC4Decryptor extends Decryptor {
         return skey;
     }
 
+    @SuppressWarnings("resource")
     public InputStream getDataStream(DirectoryNode dir) throws IOException,
             GeneralSecurityException {
         DocumentInputStream dis = dir.createDocumentInputStream(DEFAULT_POIFS_ENTRY);

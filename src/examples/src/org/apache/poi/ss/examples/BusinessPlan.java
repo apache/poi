@@ -201,6 +201,8 @@ public class BusinessPlan {
         FileOutputStream out = new FileOutputStream(file);
         wb.write(out);
         out.close();
+        
+        wb.close();
     }
 
     /**

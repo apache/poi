@@ -80,6 +80,8 @@ public class CellStyleDetails {
            
            System.out.println();
         }
+        
+        wb.close();
     }
     
     private static String renderColor(Color color) {

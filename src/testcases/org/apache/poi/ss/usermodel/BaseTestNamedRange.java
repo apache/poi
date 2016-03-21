@@ -24,12 +24,13 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.IOException;
+import java.util.List;
+
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
 import org.junit.Test;
-
-import java.util.List;
 
 /**
  * Tests of implementations of {@link org.apache.poi.ss.usermodel.Name}.
@@ -647,7 +648,7 @@ public abstract class BaseTestNamedRange {
     }
 
     @Test
-    public void testBug56930() {
+    public void testBug56930() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
 
         // x1 on sheet1 defines "x=1"
@@ -673,5 +674,7 @@ public abstract class BaseTestNamedRange {
         assertEquals("1", wb.getName("x").getRefersToFormula());
         wb.removeName("x");
         assertEquals("2", wb.getName("x").getRefersToFormula());
+        
+        wb.close();
     }
 }

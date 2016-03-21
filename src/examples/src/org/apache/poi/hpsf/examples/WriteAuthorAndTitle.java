@@ -114,7 +114,9 @@ public class WriteAuthorAndTitle
         final POIFSReader r = new POIFSReader();
         final ModifySICopyTheRest msrl = new ModifySICopyTheRest(dstName);
         r.registerListener(msrl);
-        r.read(new FileInputStream(srcName));
+        FileInputStream fis = new FileInputStream(srcName);
+        r.read(fis);
+        fis.close();
         
         /* Write the new POIFS to disk. */
         msrl.close();

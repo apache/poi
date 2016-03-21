@@ -66,7 +66,7 @@ public final class TestXSSFCell extends BaseTestXCell {
      * Shared String Table
      */
     @Test
-    public void test47026_1() throws Exception {
+    public void test47026_1() throws IOException {
         Workbook wb = _testDataProvider.openSampleWorkbook("47026.xlsm");
         Sheet sheet = wb.getSheetAt(0);
         Row row = sheet.getRow(0);
@@ -77,7 +77,7 @@ public final class TestXSSFCell extends BaseTestXCell {
     }
 
     @Test
-    public void test47026_2() throws Exception {
+    public void test47026_2() throws IOException {
         Workbook wb = _testDataProvider.openSampleWorkbook("47026.xlsm");
         Sheet sheet = wb.getSheetAt(0);
         Row row = sheet.getRow(0);
@@ -95,7 +95,7 @@ public final class TestXSSFCell extends BaseTestXCell {
      * instead of using the shared string table. See bug 47206
      */
     @Test
-    public void testInlineString() throws Exception {
+    public void testInlineString() throws IOException {
         XSSFWorkbook wb = (XSSFWorkbook)_testDataProvider.openSampleWorkbook("xlsx-jdbc.xlsx");
         XSSFSheet sheet = wb.getSheetAt(0);
         XSSFRow row = sheet.getRow(1);
@@ -121,7 +121,7 @@ public final class TestXSSFCell extends BaseTestXCell {
      *  Bug 47278 -  xsi:nil attribute for <t> tag caused Excel 2007 to fail to open workbook
      */
     @Test
-    public void test47278() throws Exception {
+    public void test47278() throws IOException {
         XSSFWorkbook wb = (XSSFWorkbook)_testDataProvider.createWorkbook();
         Sheet sheet = wb.createSheet();
         Row row = sheet.createRow(0);
@@ -187,7 +187,7 @@ public final class TestXSSFCell extends BaseTestXCell {
      * Bug 47889: problems when calling XSSFCell.getStringCellValue() on a workbook created in Gnumeric
      */
     @Test
-    public void test47889() throws Exception {
+    public void test47889() throws IOException {
         XSSFWorkbook wb = (XSSFWorkbook)_testDataProvider.openSampleWorkbook("47889.xlsx");
         XSSFSheet sh = wb.getSheetAt(0);
 
@@ -214,7 +214,7 @@ public final class TestXSSFCell extends BaseTestXCell {
     }
 
     @Test
-    public void testMissingRAttribute() throws Exception {
+    public void testMissingRAttribute() throws IOException {
         XSSFWorkbook wb1 = new XSSFWorkbook();
         XSSFSheet sheet = wb1.createSheet();
         XSSFRow row = sheet.createRow(0);
@@ -269,7 +269,7 @@ public final class TestXSSFCell extends BaseTestXCell {
     }
 
     @Test
-    public void testMissingRAttributeBug54288() throws Exception {
+    public void testMissingRAttributeBug54288() throws IOException {
         // workbook with cells missing the R attribute
         XSSFWorkbook wb = (XSSFWorkbook)_testDataProvider.openSampleWorkbook("54288.xlsx");
         // same workbook re-saved in Excel 2010, the R attribute is updated for every cell with the right value.
@@ -453,7 +453,7 @@ public final class TestXSSFCell extends BaseTestXCell {
     }
 
     @Test
-    public void testEncodingbeloAscii() throws Exception {
+    public void testEncodingbeloAscii() throws IOException {
         StringBuffer sb = new StringBuffer();
         // test all possible characters
         for(int i = 0; i < Character.MAX_VALUE; i++) {

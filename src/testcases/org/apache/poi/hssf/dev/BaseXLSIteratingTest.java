@@ -97,15 +97,20 @@ public abstract class BaseXLSIteratingTest {
 			
 			// try to read it in HSSFWorkbook to quickly fail if we cannot read the file there at all and thus probably should use EXCLUDED instead
 			FileInputStream stream = new FileInputStream(file);
+			HSSFWorkbook wb = null;
 			try {
-				assertNotNull(new HSSFWorkbook(stream));
+			    wb = new HSSFWorkbook(stream);
+				assertNotNull(wb);
 			} finally {
+			    if (wb != null) {
+			        wb.close();
+			    }
 				stream.close();
 			}
 		}
 	}
 
-	abstract void runOneFile(File file) throws Exception;
+	abstract void runOneFile(File pFile) throws Exception;
 
 	/**
 	 * Implementation of an OutputStream which does nothing, used

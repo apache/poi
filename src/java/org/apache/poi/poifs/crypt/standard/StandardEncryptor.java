@@ -123,14 +123,9 @@ public class StandardEncryptor extends Encryptor {
         protected long countBytes;
         protected final File fileOut;
         protected final DirectoryNode dir;
-        
-        protected StandardCipherOutputStream(DirectoryNode dir) throws IOException {
-            super(null);
 
-            this.dir = dir;
-            fileOut = TempFile.createTempFile("encrypted_package", "crypt");
-            FileOutputStream rawStream = new FileOutputStream(fileOut);
-
+        @SuppressWarnings("resource")
+        private StandardCipherOutputStream(DirectoryNode dir, File fileOut) throws IOException {
             // although not documented, we need the same padding as with agile encryption
             // and instead of calculating the missing bytes for the block size ourselves
             // we leave it up to the CipherOutputStream, which generates/saves them on close()
@@ -141,9 +136,15 @@ public class StandardEncryptor extends Encryptor {
             // KeyData.blockSize value. Any padding bytes can be used. Note that the StreamSize
             // field of the EncryptedPackage field specifies the number of bytes of 
             // unencrypted data as specified in section 2.3.4.4.
-            CipherOutputStream cryptStream = new CipherOutputStream(rawStream, getCipher(getSecretKey(), "PKCS5Padding"));
-            
-            this.out = cryptStream;
+            super(
+                new CipherOutputStream(new FileOutputStream(fileOut), getCipher(getSecretKey(), "PKCS5Padding"))   
+            );
+            this.fileOut = fileOut;
+            this.dir = dir;
+        }
+        
+        protected StandardCipherOutputStream(DirectoryNode dir) throws IOException {
+            this(dir, TempFile.createTempFile("encrypted_package", "crypt"));
         }
         
         @Override

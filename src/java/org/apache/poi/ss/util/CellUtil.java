@@ -205,7 +205,8 @@ public final class CellUtil {
 	 * @since POI 3.14 beta 2
 	 */
 	public static void setCellStyleProperties(Cell cell, Map<String, Object> properties) {
-		Workbook workbook = cell.getSheet().getWorkbook();
+		@SuppressWarnings("resource")
+        Workbook workbook = cell.getSheet().getWorkbook();
 		CellStyle originalStyle = cell.getCellStyle();
 		CellStyle newStyle = null;
 		Map<String, Object> values = getFormatProperties(originalStyle);
