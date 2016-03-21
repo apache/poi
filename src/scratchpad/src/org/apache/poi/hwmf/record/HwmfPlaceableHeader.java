@@ -45,7 +45,7 @@ public class HwmfPlaceableHeader {
         int y1 = leis.readShort();
         int x2 = leis.readShort();
         int y2 = leis.readShort();
-        bounds = new Rectangle2D.Double(x1, y1, x2-x1, y2-y1);
+        bounds = new Rectangle2D.Double(Math.min(x1,x2), Math.min(y1,y2), Math.abs(x2-x1), Math.abs(y2-y1));
         
         /*
          * Inch (2 bytes):  The number of logical units per inch used to represent the image.

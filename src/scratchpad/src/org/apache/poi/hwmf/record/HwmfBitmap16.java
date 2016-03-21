@@ -20,6 +20,7 @@ package org.apache.poi.hwmf.record;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
 
@@ -72,9 +73,9 @@ public class HwmfBitmap16 {
             size += 18+LittleEndianConsts.INT_SIZE;
         }
 
-        int bytes = (((width * bitsPixel + 15) >> 4) << 1) * height;
-        byte buf[] = new byte[bytes];
-        leis.read(buf);
+        int length = (((width * bitsPixel + 15) >> 4) << 1) * height;
+        @SuppressWarnings("unused")
+        byte buf[] = IOUtils.toByteArray(leis, length);
         
         // TODO: this is not implemented ... please provide a sample, if it
         // ever happens to you, to come here ...

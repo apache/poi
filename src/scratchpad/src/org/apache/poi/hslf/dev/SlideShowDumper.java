@@ -19,6 +19,7 @@ package org.apache.poi.hslf.dev;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.Locale;
 
@@ -28,9 +29,9 @@ import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.ddf.EscherTextboxRecord;
 import org.apache.poi.hslf.record.HSLFEscherRecordFactory;
 import org.apache.poi.hslf.record.RecordTypes;
-import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.util.HexDump;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -94,13 +95,10 @@ public final class SlideShowDumper {
    * @throws IOException if there is a problem while parsing the document.
    */
   public SlideShowDumper(NPOIFSFileSystem filesystem, PrintStream out) throws IOException {
-	// Get the main document stream
-	DocumentEntry docProps =
-		(DocumentEntry)filesystem.getRoot().getEntry("PowerPoint Document");
-
 	// Grab the document stream
-	docstream = new byte[docProps.getSize()];
-	filesystem.createDocumentInputStream("PowerPoint Document").read(docstream);
+	InputStream is = filesystem.createDocumentInputStream("PowerPoint Document");
+	docstream = IOUtils.toByteArray(is);
+	is.close();
 	this.out = out;
   }
 

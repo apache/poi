@@ -33,12 +33,13 @@ import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.NPOIFSStream;
 import org.apache.poi.poifs.property.NPropertyTable;
 import org.apache.poi.poifs.storage.HeaderBlock;
+import org.apache.poi.util.IOUtils;
 
 /**
  * Dump internal structure of a OLE2 file into file system
  */
 public class POIFSDump {
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws IOException {
         if (args.length == 0) {
             System.err.println("Must specify at least one file to dump");
             System.exit(1);
@@ -84,6 +85,8 @@ public class POIFSDump {
                     dump(fs, startBlock, "mini-stream", file);
                 }
             }
+            
+            fs.close();
         }
     }
     
@@ -93,8 +96,7 @@ public class POIFSDump {
             if(entry instanceof DocumentNode){
                 DocumentNode node = (DocumentNode)entry;
                 DocumentInputStream is = new DocumentInputStream(node);
-                byte[] bytes = new byte[node.getSize()];
-                is.read(bytes);
+                byte[] bytes = IOUtils.toByteArray(is);
                 is.close();
 
                 OutputStream out = new FileOutputStream(new File(parent, node.getName().trim()));

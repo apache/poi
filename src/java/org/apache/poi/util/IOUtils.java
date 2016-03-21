@@ -69,20 +69,33 @@ public final class IOUtils {
      * Reads all the data from the input stream, and returns the bytes read.
      */
     public static byte[] toByteArray(InputStream stream) throws IOException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        return toByteArray(stream, Integer.MAX_VALUE);
+    }
+
+    /**
+     * Reads up to {@code length} bytes from the input stream, and returns the bytes read.
+     */
+    public static byte[] toByteArray(InputStream stream, int length) throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream(length == Integer.MAX_VALUE ? 4096 : length);
 
         byte[] buffer = new byte[4096];
-        int read = 0;
-        while (read != -1) {
-            read = stream.read(buffer);
-            if (read > 0) {
-                baos.write(buffer, 0, read);
+        int totalBytes = 0, readBytes = 0; 
+        do {
+            readBytes = stream.read(buffer, 0, Math.min(buffer.length, length-totalBytes)); 
+            totalBytes += Math.max(readBytes,0);
+            if (readBytes > 0) {
+                baos.write(buffer, 0, readBytes);
             }
-        }
+        } while (totalBytes < length && readBytes > -1);
 
+        if (length != Integer.MAX_VALUE && totalBytes < length) {
+            throw new IOException("unexpected EOF");
+        }
+        
         return baos.toByteArray();
     }
 
+    
     /**
      * Returns an array (that shouldn't be written to!) of the
      *  ByteBuffer. Will be of the requested length, or possibly
