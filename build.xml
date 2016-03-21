@@ -690,7 +690,9 @@ under the License.
                     noupa="@{noupa}"
                     nopvr="@{nopvr}"
                     >
-                <classpath refid="ooxml.classpath"/>
+                <classpath>
+                	<path location="${ooxml.xmlbeans23.jar}.orig"/>
+                </classpath>
             </xmlbean>
 
             <replace dir="${xmlbean.sources.dir}" includes="**/*.java" excludes="**/impl/**">
