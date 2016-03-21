@@ -57,13 +57,13 @@ public class CryptoAPIDecryptor extends Decryptor {
         Cipher cipher;
         byte oneByte[] = { 0 };
         
-        public void seek(int pos) {
-            if (pos > count) {
-                throw new ArrayIndexOutOfBoundsException(pos);
+        public void seek(int newpos) {
+            if (newpos > count) {
+                throw new ArrayIndexOutOfBoundsException(newpos);
             }
             
-            this.pos = pos;
-            mark = pos;
+            this.pos = newpos;
+            mark = newpos;
         }
 
         public void setBlock(int block) throws GeneralSecurityException {
@@ -233,9 +233,11 @@ public class CryptoAPIDecryptor extends Decryptor {
             sbis.setBlock(entry.block);
             InputStream is = new BoundedInputStream(sbis, entry.streamSize);
             fsOut.createDocument(is, entry.streamName);
+            is.close();
         }
 
         leis.close();
+        sbis.close();
         sbis = null;
         bos.reset();
         fsOut.writeFilesystem(bos);

@@ -62,7 +62,7 @@ public final class TestHSSFCell extends BaseTestCell {
 	 *  but there's a separate unit test for that.
 	 */
 	@Test
-	public void testDateWindowingRead() throws Exception {
+	public void testDateWindowingRead() throws IOException {
 	    Calendar cal = LocaleUtil.getLocaleCalendar(2000, 0, 1, 0, 0, 0);// Jan. 1, 2000
 		Date date = cal.getTime();
 
@@ -94,7 +94,7 @@ public final class TestHSSFCell extends BaseTestCell {
 	 * results of this test are meaningless.
 	 */
 	@Test
-	public void testDateWindowingWrite() throws Exception {
+	public void testDateWindowingWrite() throws IOException {
 	    Calendar cal = LocaleUtil.getLocaleCalendar(2000,0,1,0,0,0); // Jan. 1, 2000
 		Date date = cal.getTime();
 
@@ -143,7 +143,7 @@ public final class TestHSSFCell extends BaseTestCell {
 	 * Tests that the active cell can be correctly read and set
 	 */
 	@Test
-	public void testActiveCell() throws Exception {
+	public void testActiveCell() throws IOException {
 		//read in sample
 		HSSFWorkbook wb1 = HSSFTestDataSamples.openSampleWorkbook("Simple.xls");
 
@@ -235,7 +235,7 @@ public final class TestHSSFCell extends BaseTestCell {
 	 * Test reading hyperlinks
 	 */
 	@Test
-	public void testWithHyperlink() throws Exception {
+	public void testWithHyperlink() throws IOException {
 
 		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("WithHyperlink.xls");
 
@@ -256,7 +256,7 @@ public final class TestHSSFCell extends BaseTestCell {
 	 * Test reading hyperlinks
 	 */
 	@Test
-	public void testWithTwoHyperlinks() throws Exception {
+	public void testWithTwoHyperlinks() throws IOException {
 
 		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("WithTwoHyperLinks.xls");
 
@@ -286,7 +286,7 @@ public final class TestHSSFCell extends BaseTestCell {
 	 *  to our workbook, and not those from other workbooks.
 	 */
 	@Test
-	public void testCellStyleWorkbookMatch() throws Exception {
+	public void testCellStyleWorkbookMatch() throws IOException {
 		HSSFWorkbook wbA = new HSSFWorkbook();
 		HSSFWorkbook wbB = new HSSFWorkbook();
 
@@ -386,14 +386,14 @@ public final class TestHSSFCell extends BaseTestCell {
      * HSSF prior to version 3.7 had a bug: it could write a NaN but could not read such a file back.
      */
 	@Test
-	public void testReadNaN() throws Exception {
+	public void testReadNaN() throws IOException {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("49761.xls");
         assertNotNull(wb);
         wb.close();
     }
 
 	@Test
-	public void testHSSFCell() throws Exception {
+	public void testHSSFCell() throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet();
         HSSFRow row = sheet.createRow(0);
@@ -403,9 +403,8 @@ public final class TestHSSFCell extends BaseTestCell {
         wb.close();
     }
 
-    @SuppressWarnings("deprecation")
     @Test
-    public void testDeprecatedMethods() throws Exception {
+    public void testDeprecatedMethods() throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet();
         HSSFRow row = sheet.createRow(0);

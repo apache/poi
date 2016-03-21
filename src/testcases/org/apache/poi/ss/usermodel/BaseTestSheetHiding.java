@@ -17,13 +17,19 @@
 
 package org.apache.poi.ss.usermodel;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.io.IOException;
 
 import org.apache.poi.ss.ITestDataProvider;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-/**
- */
-public abstract class BaseTestSheetHiding extends TestCase {
+public abstract class BaseTestSheetHiding {
 
 	protected final ITestDataProvider _testDataProvider;
     protected Workbook wbH;
@@ -41,15 +47,22 @@ public abstract class BaseTestSheetHiding extends TestCase {
         _file2 = file2;
     }
 
-    protected void setUp() {
+	@Before
+    public void setUp() {
         wbH = _testDataProvider.openSampleWorkbook(_file1);
         wbU = _testDataProvider.openSampleWorkbook(_file2);
     }
 
-
-    public final void testSheetHidden() {
+	@After
+	public void teadDown() throws IOException {
+	    wbH.close();
+	    wbU.close();
+	}
+	
+	@Test
+    public final void testSheetHidden() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
-        Sheet sh = wb.createSheet("MySheet");
+        wb.createSheet("MySheet");
 
         assertFalse(wb.isSheetHidden(0));
         assertFalse(wb.isSheetVeryHidden(0));
@@ -78,6 +91,8 @@ public abstract class BaseTestSheetHiding extends TestCase {
         } catch (IllegalArgumentException e){
             // ok
         }
+
+        wb.close();
     }
 
     /**
@@ -85,6 +100,7 @@ public abstract class BaseTestSheetHiding extends TestCase {
      *  with the right text on them, no matter what
      *  the hidden flags are
      */
+	@Test
     public void testTextSheets() {
         // Both should have two sheets
         assertEquals(2, wbH.getNumberOfSheets());
@@ -113,6 +129,7 @@ public abstract class BaseTestSheetHiding extends TestCase {
      * Check that we can get and set the hidden flags
      *  as expected
      */
+	@Test
     public void testHideUnHideFlags() {
         assertTrue(wbH.isSheetHidden(0));
         assertFalse(wbH.isSheetHidden(1));
@@ -124,25 +141,29 @@ public abstract class BaseTestSheetHiding extends TestCase {
      * Turn the sheet with none hidden into the one with
      *  one hidden
      */
-    public void testHide() {
+	@Test
+    public void testHide() throws IOException {
         wbU.setSheetHidden(0, true);
         assertTrue(wbU.isSheetHidden(0));
         assertFalse(wbU.isSheetHidden(1));
         Workbook wb2 = _testDataProvider.writeOutAndReadBack(wbU);
         assertTrue(wb2.isSheetHidden(0));
         assertFalse(wb2.isSheetHidden(1));
+        wb2.close();
     }
 
     /**
      * Turn the sheet with one hidden into the one with
      *  none hidden
      */
-    public void testUnHide() {
+	@Test
+    public void testUnHide() throws IOException {
         wbH.setSheetHidden(0, false);
         assertFalse(wbH.isSheetHidden(0));
         assertFalse(wbH.isSheetHidden(1));
         Workbook wb2 = _testDataProvider.writeOutAndReadBack(wbH);
         assertFalse(wb2.isSheetHidden(0));
         assertFalse(wb2.isSheetHidden(1));
+        wb2.close();
     }
 }

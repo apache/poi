@@ -20,9 +20,6 @@ package org.apache.poi.xssf.usermodel;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.ss.usermodel.BaseTestSheetHiding;
 
-/**
- * @author Yegor Kozlov
- */
 public final class TestSheetHiding extends BaseTestSheetHiding {
     public TestSheetHiding() {
         super(XSSFITestDataProvider.instance,

@@ -17,7 +17,10 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
 
@@ -27,14 +30,12 @@ import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.junit.Test;
 
-/**
- * @author Yegor Kozlov
- */
 public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
 
     public TestXSSFSheetShiftRows(){
@@ -43,7 +44,8 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
 
     @Override
     @Test
-	public void testShiftRowBreaks() { // disabled test from superclass
+	public void testShiftRowBreaks() {
+        // disabled test from superclass
         // TODO - support shifting of page breaks
     }
 
@@ -85,10 +87,10 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
 		// org.apache.xmlbeans.impl.values.XmlValueDisconnectedException.
 		// NOTE: another negative shift on another group of rows is successful, provided no new rows in  
 		// place of previously shifted rows were attempted to be created as explained above.
-		testSheet.shiftRows(6, 7, 1);	// -- CHANGE the shift to positive once the behaviour of  
-										// the above has been tested
+
+		// -- CHANGE the shift to positive once the behaviour of the above has been tested
+		testSheet.shiftRows(6, 7, 1); 
 		
-		//saveReport(wb, new File("/tmp/53798.xlsx"));
 		Workbook read = XSSFTestDataSamples.writeOutAndReadBack(wb);
 		wb.close();
 		assertNotNull(read);
@@ -131,7 +133,6 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
         }
 		testSheet.shiftRows(6, 6, 1);
 		
-		//saveReport(wb, new File("/tmp/53798.xlsx"));
 		Workbook read = XSSFTestDataSamples.writeOutAndReadBack(wb);
 		wb.close();
 		assertNotNull(read);
@@ -155,7 +156,7 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
 
         Sheet sheet = wb.getSheetAt(0);
 
-        Comment comment = sheet.getCellComment(0, 0);
+        Comment comment = sheet.getCellComment(new CellAddress(0, 0));
         assertNotNull(comment);
         assertEquals("Amdocs", comment.getAuthor());
         assertEquals("Amdocs:\ntest\n", comment.getString().getString());
@@ -163,21 +164,14 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
         sheet.shiftRows(0, 1, 1);
 
         // comment in row 0 is gone
-        comment = sheet.getCellComment(0, 0);
+        comment = sheet.getCellComment(new CellAddress(0, 0));
         assertNull(comment);
         
         // comment is now in row 1
-        comment = sheet.getCellComment(1, 0);
+        comment = sheet.getCellComment(new CellAddress(1, 0));
         assertNotNull(comment);
         assertEquals("Amdocs", comment.getAuthor());
         assertEquals("Amdocs:\ntest\n", comment.getString().getString());
-        
-//        FileOutputStream outputStream = new FileOutputStream("/tmp/56017.xlsx");
-//        try {
-//            wb.write(outputStream);
-//        } finally {
-//            outputStream.close();
-//        }
         
         Workbook wbBack = XSSFTestDataSamples.writeOutAndReadBack(wb);
         wb.close();
@@ -186,11 +180,11 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
         Sheet sheetBack = wbBack.getSheetAt(0);
 
         // comment in row 0 is gone
-        comment = sheetBack.getCellComment(0, 0);
+        comment = sheetBack.getCellComment(new CellAddress(0, 0));
         assertNull(comment);
 
         // comment is now in row 1
-        comment = sheetBack.getCellComment(1, 0);
+        comment = sheetBack.getCellComment(new CellAddress(1, 0));
         assertNotNull(comment);
         assertEquals("Amdocs", comment.getAuthor());
         assertEquals("Amdocs:\ntest\n", comment.getString().getString());
@@ -211,7 +205,6 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
         wbRead.removeSheetAt(0);
         assertEquals(0, wbRead.getActiveSheetIndex());
 
-        //wb.write(new FileOutputStream("/tmp/57171.xls"));
         wbRead.close();
     }
 
@@ -222,7 +215,6 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
         wb.removeSheetAt(0);
         assertEquals(4, wb.getActiveSheetIndex());
 
-        //wb.write(new FileOutputStream("/tmp/57163.xls"));
         wb.close();
     }
 
@@ -320,7 +312,6 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
         wb.close();
     }
 
-    // TODO: enable when bug 57165 is fixed
 	@Test
     public void test57165() throws IOException {
         Workbook wb = XSSFTestDataSamples.openSampleWorkbook("57171_57163_57165.xlsx");
@@ -333,19 +324,8 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
         wb.setSheetName(1, "New Sheet");
         assertEquals(0, wb.getActiveSheetIndex());
 
-        //wb.write(new FileOutputStream("/tmp/57165.xls"));
         wb.close();
     }
-
-//    public void test57165b() throws IOException {
-//        Workbook wb = new XSSFWorkbook();
-//        try {
-//            wb.createSheet("New Sheet 1");
-//            wb.createSheet("New Sheet 2");
-//        } finally {
-//            wb.close();
-//        }
-//    }
 
     private static void removeAllSheetsBut(int sheetIndex, Workbook wb) {
         int sheetNb = wb.getNumberOfSheets();
@@ -353,9 +333,8 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
         wb.setSheetOrder(wb.getSheetName(sheetIndex), 0);
         // Must make this sheet active (otherwise, for XLSX, Excel might protest that active sheet no longer exists)
         // I think POI should automatically handle this case when deleting sheets...
-//      wb.setActiveSheet(0);
-        for (int sn = sheetNb - 1; sn > 0; sn--)
-        {
+        // wb.setActiveSheet(0);
+        for (int sn = sheetNb - 1; sn > 0; sn--) {
             wb.removeSheetAt(sn);
         }
     }
@@ -365,32 +344,25 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("57828.xlsx");
         XSSFSheet sheet = wb.getSheetAt(0);
 
-        Comment comment1 = sheet.getCellComment(2, 1);
+        Comment comment1 = sheet.getCellComment(new CellAddress(2, 1));
         assertNotNull(comment1);
 
-        Comment comment2 = sheet.getCellComment(2, 2);
+        Comment comment2 = sheet.getCellComment(new CellAddress(2, 2));
         assertNotNull(comment2);
 
-        Comment comment3 = sheet.getCellComment(1, 1);
+        Comment comment3 = sheet.getCellComment(new CellAddress(1, 1));
         assertNull("NO comment in (1,1) and it should be null", comment3);
 
         sheet.shiftRows(2, 2, -1);
 
-        comment3 = sheet.getCellComment(1, 1);
+        comment3 = sheet.getCellComment(new CellAddress(1, 1));
         assertNotNull("Comment in (2,1) moved to (1,1) so its not null now.", comment3);
 
-        comment1 = sheet.getCellComment(2, 1);
+        comment1 = sheet.getCellComment(new CellAddress(2, 1));
         assertNull("No comment currently in (2,1) and hence it is null", comment1);
 
-        comment2 = sheet.getCellComment(1, 2);
+        comment2 = sheet.getCellComment(new CellAddress(1, 2));
         assertNotNull("Comment in (2,2) should have moved as well because of shift rows. But its not", comment2);
-        
-//        OutputStream stream = new FileOutputStream("/tmp/57828.xlsx");
-//        try {
-//        	wb.write(stream);
-//        } finally {
-//        	stream.close();
-//        }
         
         wb.close();
     }

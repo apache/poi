@@ -91,6 +91,8 @@ public class BigGridDemo {
         FileOutputStream out = new FileOutputStream("big-grid.xlsx");
         substitute(new File("template.xlsx"), tmp, sheetRef.substring(1), out);
         out.close();
+        
+        wb.close();
     }
 
     /**

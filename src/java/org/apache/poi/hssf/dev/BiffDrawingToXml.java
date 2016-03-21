@@ -32,7 +32,6 @@ import org.apache.poi.hssf.model.InternalWorkbook;
 import org.apache.poi.hssf.record.DrawingGroupRecord;
 import org.apache.poi.hssf.usermodel.HSSFPatriarch;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.util.StringUtil;
 
 /**
@@ -133,16 +132,15 @@ public class BiffDrawingToXml {
     }
 
     public static void writeToFile(OutputStream fos, InputStream xlsWorkbook, boolean excludeWorkbookRecords, String[] params) throws IOException {
-        NPOIFSFileSystem fs = new NPOIFSFileSystem(xlsWorkbook);
-        HSSFWorkbook workbook = new HSSFWorkbook(fs);
+        HSSFWorkbook workbook = new HSSFWorkbook(xlsWorkbook);
         InternalWorkbook internalWorkbook = workbook.getInternalWorkbook();
         DrawingGroupRecord r = (DrawingGroupRecord) internalWorkbook.findFirstRecordBySid(DrawingGroupRecord.sid);
-        r.decode();
 
         StringBuilder builder = new StringBuilder();
         builder.append("<workbook>\n");
         String tab = "\t";
-        if (!excludeWorkbookRecords) {
+        if (!excludeWorkbookRecords && r != null) {
+            r.decode();
             List<EscherRecord> escherRecords = r.getEscherRecords();
             for (EscherRecord record : escherRecords) {
                 builder.append(record.toXml(tab));
@@ -160,6 +158,7 @@ public class BiffDrawingToXml {
         builder.append("</workbook>\n");
         fos.write(builder.toString().getBytes(StringUtil.UTF8));
         fos.close();
+        workbook.close();
     }
 
 }

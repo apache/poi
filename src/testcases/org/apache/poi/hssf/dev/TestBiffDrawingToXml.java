@@ -21,33 +21,30 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.PrintStream;
 
-import org.junit.Ignore;
-import org.junit.Test;
-
 public class TestBiffDrawingToXml extends BaseXLSIteratingTest {
 	static {
-		// TODO: is it ok to fail these? 
-		// Look at the output of the test for the detailed stacktrace of the failures...
-//		EXCLUDED.add("password.xls"); 
-//		EXCLUDED.add("XRefCalc.xls"); 
-//		EXCLUDED.add("43493.xls");
-//		EXCLUDED.add("51832.xls"); 
+        EXCLUDED.add("35897-type4.xls"); // unsupported crypto api header 
+        EXCLUDED.add("43493.xls");  // HSSFWorkbook cannot open it as well
+        EXCLUDED.add("46904.xls");
+        EXCLUDED.add("44958_1.xls");
+        EXCLUDED.add("51832.xls");
+        EXCLUDED.add("59074.xls");
+		EXCLUDED.add("password.xls"); 
+        EXCLUDED.add("testEXCEL_2.xls");  // Biff 2 / Excel 2, pre-OLE2
+        EXCLUDED.add("testEXCEL_3.xls");  // Biff 3 / Excel 3, pre-OLE2
+        EXCLUDED.add("testEXCEL_4.xls");  // Biff 4 / Excel 4, pre-OLE2
+        EXCLUDED.add("testEXCEL_5.xls");  // Biff 5 / Excel 5
+        EXCLUDED.add("testEXCEL_95.xls"); // Biff 5 / Excel 95
+		EXCLUDED.add("xor-encryption-abc.xls"); 
 	}
 	
 	@Override
-	@Ignore("Not yet done, nearly all files fail with various errors, remove this method when done to use the one from the abstract base class!...")
-	@Test
-	public void testMain() throws Exception {
-	}
-	
-	@Override
-	void runOneFile(File file)
-			throws Exception {
+	void runOneFile(File pFile) throws Exception {
 		PrintStream save = System.out;
 		try {
 			//System.setOut(new PrintStream(TestBiffViewer.NULL_OUTPUT_STREAM));
 			// use a NullOutputStream to not write the bytes anywhere for best runtime 
-		    InputStream wb = new FileInputStream(file);
+		    InputStream wb = new FileInputStream(pFile);
 		    try {
 		    	BiffDrawingToXml.writeToFile(NULL_OUTPUT_STREAM, wb, false, new String[] {});
 		    } finally {

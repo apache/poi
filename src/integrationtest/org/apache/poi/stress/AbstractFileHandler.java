@@ -89,6 +89,7 @@ public abstract class AbstractFileHandler implements FileHandler {
             assertNotNull(extractor.getText());
             
             // also try metadata
+            @SuppressWarnings("resource")
             POITextExtractor metadataExtractor = extractor.getMetadataTextExtractor();
             assertNotNull(metadataExtractor.getText());
 

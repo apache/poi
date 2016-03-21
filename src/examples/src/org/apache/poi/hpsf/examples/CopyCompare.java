@@ -28,7 +28,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.poi.hpsf.HPSFRuntimeException;
@@ -109,20 +108,15 @@ public class CopyCompare
         String copyFileName = null;
 
         /* Check the command-line arguments. */
-        if (args.length == 1)
-        {
+        if (args.length == 1) {
             originalFileName = args[0];
             File f = TempFile.createTempFile("CopyOfPOIFileSystem-", ".ole2");
             f.deleteOnExit();
             copyFileName = f.getAbsolutePath();
-        }
-        else if (args.length == 2)
-        {
+        } else if (args.length == 2) {
             originalFileName = args[0];
             copyFileName = args[1];
-        }
-        else
-        {
+        } else {
             System.err.println("Usage: " + CopyCompare.class.getName() +
                                "originPOIFS [copyPOIFS]");
             System.exit(1);
@@ -133,25 +127,28 @@ public class CopyCompare
         final POIFSReader r = new POIFSReader();
         final CopyFile cf = new CopyFile(copyFileName);
         r.registerListener(cf);
-        r.read(new FileInputStream(originalFileName));
+        FileInputStream fis = new FileInputStream(originalFileName);
+        r.read(fis);
+        fis.close();
         
         /* Write the new POIFS to disk. */
         cf.close();
 
         /* Read all documents from the original POI file system and compare them
          * with the equivalent document from the copy. */
-        final POIFSFileSystem opfs =
-            new POIFSFileSystem(new FileInputStream(originalFileName));
-        final POIFSFileSystem cpfs =
-            new POIFSFileSystem(new FileInputStream(copyFileName));
+        final POIFSFileSystem opfs = new POIFSFileSystem(new File(originalFileName));
+        final POIFSFileSystem cpfs = new POIFSFileSystem(new File(copyFileName));
 
         final DirectoryEntry oRoot = opfs.getRoot();
         final DirectoryEntry cRoot = cpfs.getRoot();
         final StringBuffer messages = new StringBuffer();
-        if (equal(oRoot, cRoot, messages))
+        if (equal(oRoot, cRoot, messages)) {
             System.out.println("Equal");
-        else
+        } else {
             System.out.println("Not equal: " + messages.toString());
+        }
+        cpfs.close();
+        opfs.close();
     }
 
 
@@ -183,29 +180,23 @@ public class CopyCompare
     {
         boolean equal = true;
         /* Iterate over d1 and compare each entry with its counterpart in d2. */
-        for (final Iterator i = d1.getEntries(); equal && i.hasNext();)
-        {
-            final Entry e1 = (Entry) i.next();
+        for (final Entry e1 : d1) {
             final String n1 = e1.getName();
             Entry e2 = null;
-            try
-            {
+            try {
                 e2 = d2.getEntry(n1);
-            }
-            catch (FileNotFoundException ex)
-            {
+            } catch (FileNotFoundException ex) {
                 msg.append("Document \"" + e1 + "\" exists, document \"" +
                            e2 + "\" does not.\n");
                 equal = false;
                 break;
             }
 
-            if (e1.isDirectoryEntry() && e2.isDirectoryEntry())
+            if (e1.isDirectoryEntry() && e2.isDirectoryEntry()) {
                 equal = equal((DirectoryEntry) e1, (DirectoryEntry) e2, msg);
-            else if (e1.isDocumentEntry() && e2.isDocumentEntry())
+            } else if (e1.isDocumentEntry() && e2.isDocumentEntry()) {
                 equal = equal((DocumentEntry) e1, (DocumentEntry) e2, msg);
-            else
-            {
+            } else {
                 msg.append("One of \"" + e1 + "\" and \"" + e2 + "\" is a " +
                            "document while the other one is a directory.\n");
                 equal = false;
@@ -214,17 +205,12 @@ public class CopyCompare
 
         /* Iterate over d2 just to make sure that there are no entries in d2
          * that are not in d1. */
-        for (final Iterator i = d2.getEntries(); equal && i.hasNext();)
-        {
-            final Entry e2 = (Entry) i.next();
+        for (final Entry e2 : d2) {
             final String n2 = e2.getName();
             Entry e1 = null;
-            try
-            {
+            try {
                 e1 = d1.getEntry(n2);
-            }
-            catch (FileNotFoundException ex)
-            {
+            } catch (FileNotFoundException ex) {
                 msg.append("Document \"" + e2 + "\" exitsts, document \"" +
                            e1 + "\" does not.\n");
                 equal = false;
@@ -263,34 +249,32 @@ public class CopyCompare
         boolean equal = true;
         final DocumentInputStream dis1 = new DocumentInputStream(d1);
         final DocumentInputStream dis2 = new DocumentInputStream(d2);
-        if (PropertySet.isPropertySetStream(dis1) &&
-            PropertySet.isPropertySetStream(dis2))
-        {
-            final PropertySet ps1 = PropertySetFactory.create(dis1);
-            final PropertySet ps2 = PropertySetFactory.create(dis2);
-            equal = ps1.equals(ps2);
-            if (!equal)
-            {
-                msg.append("Property sets are not equal.\n");
-                return equal;
-            }
-        }
-        else
-        {
-            int i1;
-            int i2;
-            do
-            {
-                i1 = dis1.read();
-                i2 = dis2.read();
-                if (i1 != i2)
-                {
-                    equal = false;
-                    msg.append("Documents are not equal.\n");
-                    break;
+        try {
+            if (PropertySet.isPropertySetStream(dis1) &&
+                PropertySet.isPropertySetStream(dis2)) {
+                final PropertySet ps1 = PropertySetFactory.create(dis1);
+                final PropertySet ps2 = PropertySetFactory.create(dis2);
+                equal = ps1.equals(ps2);
+                if (!equal) {
+                    msg.append("Property sets are not equal.\n");
+                    return equal;
                 }
+            } else {
+                int i1;
+                int i2;
+                do {
+                    i1 = dis1.read();
+                    i2 = dis2.read();
+                    if (i1 != i2) {
+                        equal = false;
+                        msg.append("Documents are not equal.\n");
+                        break;
+                    }
+                } while (equal && i1 == -1);
             }
-            while (equal && i1 == -1);
+        } finally {
+            dis2.close();
+            dis1.close();
         }
         return true;
     }
@@ -306,8 +290,7 @@ public class CopyCompare
      * original property set by using the {@link
      * MutablePropertySet#MutablePropertySet(PropertySet)} constructor.</p>
      */
-    static class CopyFile implements POIFSReaderListener
-    {
+    static class CopyFile implements POIFSReaderListener {
         String dstName;
         OutputStream out;
         POIFSFileSystem poiFs;
@@ -321,8 +304,7 @@ public class CopyCompare
          * @param dstName The name of the disk file the destination POIFS is to
          * be written to.
          */
-        public CopyFile(final String dstName)
-        {
+        public CopyFile(final String dstName) {
             this.dstName = dstName;
             poiFs = new POIFSFileSystem();
         }
@@ -332,8 +314,7 @@ public class CopyCompare
          * <p>The method is called by POI's eventing API for each file in the
          * origin POIFS.</p>
          */
-        public void processPOIFSReaderEvent(final POIFSReaderEvent event)
-        {
+        public void processPOIFSReaderEvent(final POIFSReaderEvent event) {
             /* The following declarations are shortcuts for accessing the
              * "event" object. */
             final POIFSDocumentPath path = event.getPath();
@@ -342,21 +323,16 @@ public class CopyCompare
 
             Throwable t = null;
 
-            try
-            {
+            try {
                 /* Find out whether the current document is a property set
                  * stream or not. */
-                if (PropertySet.isPropertySetStream(stream))
-                {
+                if (PropertySet.isPropertySetStream(stream)) {
                     /* Yes, the current document is a property set stream.
                      * Let's create a PropertySet instance from it. */
                     PropertySet ps = null;
-                    try
-                    {
+                    try {
                         ps = PropertySetFactory.create(stream);
-                    }
-                    catch (NoPropertySetStreamException ex)
-                    {
+                    } catch (NoPropertySetStreamException ex) {
                         /* This exception will not be thrown because we already
                          * checked above. */
                     }
@@ -364,22 +340,16 @@ public class CopyCompare
                     /* Copy the property set to the destination POI file
                      * system. */
                     copy(poiFs, path, name, ps);
-                }
-                else
+                } else {
                     /* No, the current document is not a property set stream. We
                      * copy it unmodified to the destination POIFS. */
                     copy(poiFs, event.getPath(), event.getName(), stream);
-            }
-            catch (MarkUnsupportedException ex)
-            {
+                }
+            } catch (MarkUnsupportedException ex) {
                 t = ex;
-            }
-            catch (IOException ex)
-            {
+            } catch (IOException ex) {
                 t = ex;
-            }
-            catch (WritingNotSupportedException ex)
-            {
+            } catch (WritingNotSupportedException ex) {
                 t = ex;
             }
 
@@ -388,8 +358,7 @@ public class CopyCompare
              * lines check whether a checked exception occured and throws an
              * unchecked exception. The message of that exception is that of
              * the underlying checked exception. */
-            if (t != null)
-            {
+            if (t != null) {
                 throw new HPSFRuntimeException
                     ("Could not read file \"" + path + "/" + name +
                      "\". Reason: " + Util.toString(t));
@@ -412,8 +381,7 @@ public class CopyCompare
                          final POIFSDocumentPath path,
                          final String name,
                          final PropertySet ps)
-            throws WritingNotSupportedException, IOException
-        {
+        throws WritingNotSupportedException, IOException {
             final DirectoryEntry de = getPath(poiFs, path);
             final MutablePropertySet mps = new MutablePropertySet(ps);
             de.createDocument(name, mps.toInputStream());
@@ -434,13 +402,14 @@ public class CopyCompare
         public void copy(final POIFSFileSystem poiFs,
                          final POIFSDocumentPath path,
                          final String name,
-                         final DocumentInputStream stream) throws IOException
-        {
+                         final DocumentInputStream stream)
+        throws IOException {
             final DirectoryEntry de = getPath(poiFs, path);
             final ByteArrayOutputStream out = new ByteArrayOutputStream();
             int c;
-            while ((c = stream.read()) != -1)
+            while ((c = stream.read()) != -1) {
                 out.write(c);
+            }
             stream.close();
             out.close();
             final InputStream in =
@@ -455,8 +424,7 @@ public class CopyCompare
          * @throws FileNotFoundException
          * @throws IOException
          */
-        public void close() throws FileNotFoundException, IOException
-        {
+        public void close() throws FileNotFoundException, IOException {
             out = new FileOutputStream(dstName);
             poiFs.writeFilesystem(out);
             out.close();
@@ -467,7 +435,7 @@ public class CopyCompare
         /** Contains the directory paths that have already been created in the
          * output POI filesystem and maps them to their corresponding
          * {@link org.apache.poi.poifs.filesystem.DirectoryNode}s. */
-        private final Map paths = new HashMap();
+        private final Map<String,DirectoryEntry> paths = new HashMap<String,DirectoryEntry>();
 
 
 
@@ -495,13 +463,11 @@ public class CopyCompare
          * should use this {@link DirectoryEntry} to create documents in it.
          */
         public DirectoryEntry getPath(final POIFSFileSystem poiFs,
-                                      final POIFSDocumentPath path)
-        {
-            try
-            {
+                                      final POIFSDocumentPath path) {
+            try {
                 /* Check whether this directory has already been created. */
                 final String s = path.toString();
-                DirectoryEntry de = (DirectoryEntry) paths.get(s);
+                DirectoryEntry de = paths.get(s);
                 if (de != null)
                     /* Yes: return the corresponding DirectoryEntry. */
                     return de;
@@ -509,12 +475,11 @@ public class CopyCompare
                 /* No: We have to create the directory - or return the root's
                  * DirectoryEntry. */
                 int l = path.length();
-                if (l == 0)
+                if (l == 0) {
                     /* Get the root directory. It does not have to be created
                      * since it always exists in a POIFS. */
                     de = poiFs.getRoot();
-                else
-                {
+                } else {
                     /* Create a subordinate directory. The first step is to
                      * ensure that the parent directory exists: */
                     de = getPath(poiFs, path.getParent());
@@ -524,9 +489,7 @@ public class CopyCompare
                 }
                 paths.put(s, de);
                 return de;
-            }
-            catch (IOException ex)
-            {
+            } catch (IOException ex) {
                 /* This exception will be thrown if the directory already
                  * exists. However, since we have full control about directory
                  * creation we can ensure that this will never happen. */

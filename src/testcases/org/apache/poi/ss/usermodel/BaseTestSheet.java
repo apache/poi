@@ -17,9 +17,13 @@
 
 package org.apache.poi.ss.usermodel;
 
-import static junit.framework.TestCase.assertNotNull;
-import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -266,11 +270,11 @@ public abstract class BaseTestSheet {
     }
     
     /**
-     * Dissallow creating wholly or partially overlapping merged regions
+     * Disallow creating wholly or partially overlapping merged regions
      * as this results in a corrupted workbook
      */
     @Test
-    public void addOverlappingMergedRegions() {
+    public void addOverlappingMergedRegions() throws IOException {
         final Workbook wb = _testDataProvider.createWorkbook();
         final Sheet sheet = wb.createSheet();
         
@@ -282,14 +286,14 @@ public abstract class BaseTestSheet {
             sheet.addMergedRegion(duplicateRegion);
             fail("Should not be able to add a merged region (" + duplicateRegion.formatAsString() + ") " +
                  "if sheet already contains the same merged region (" + baseRegion.formatAsString() + ")");
-        } catch (final IllegalStateException e) { } //expected
+        } catch (final IllegalStateException e) { }
         
         try {
             final CellRangeAddress partiallyOverlappingRegion = new CellRangeAddress(1, 2, 1, 2); //B2:C3
             sheet.addMergedRegion(partiallyOverlappingRegion);
             fail("Should not be able to add a merged region (" + partiallyOverlappingRegion.formatAsString() + ") " +
                  "if it partially overlaps with an existing merged region (" + baseRegion.formatAsString() + ")");
-        } catch (final IllegalStateException e) { } //expected
+        } catch (final IllegalStateException e) { }
         
         try {
             final CellRangeAddress subsetRegion = new CellRangeAddress(0, 1, 0, 0); //A1:A2
@@ -303,10 +307,12 @@ public abstract class BaseTestSheet {
             sheet.addMergedRegion(supersetRegion);
             fail("Should not be able to add a merged region (" + supersetRegion.formatAsString() + ") " +
                  "if it is a formal superset of an existing merged region (" + baseRegion.formatAsString() + ")");
-        } catch (final IllegalStateException e) { } //expected
+        } catch (final IllegalStateException e) { }
         
         final CellRangeAddress disjointRegion = new CellRangeAddress(10, 11, 10, 11);
-        sheet.addMergedRegion(disjointRegion); //allowed
+        sheet.addMergedRegion(disjointRegion);
+        
+        wb.close();
     }
 
     /*

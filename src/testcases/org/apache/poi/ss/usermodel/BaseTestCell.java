@@ -17,6 +17,7 @@
 
 package org.apache.poi.ss.usermodel;
 
+import static org.apache.poi.ss.usermodel.FormulaError.forInt;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -25,37 +26,21 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.util.LocaleUtil;
-import org.junit.After;
 import org.junit.Test;
-
-import junit.framework.AssertionFailedError;
 
 /**
  * Common superclass for testing implementations of
  *  {@link org.apache.poi.ss.usermodel.Cell}
  */
-@SuppressWarnings("deprecation")
 public abstract class BaseTestCell {
 
     protected final ITestDataProvider _testDataProvider;
-
-    private List<Workbook> workbooksToClose = new ArrayList<Workbook>(); 
-
-    @After
-    public void tearDown() throws IOException {
-        // free resources correctly
-        for(Workbook wb : workbooksToClose) {
-            wb.close();
-        }
-    }
 
     /**
      * @param testDataProvider an object that provides test data in HSSF / XSSF specific way
@@ -307,7 +292,7 @@ public abstract class BaseTestCell {
         r.createCell(0).setCellValue(true);
         r.createCell(1).setCellValue(1.5);
         r.createCell(2).setCellValue(factory.createRichTextString("Astring"));
-        r.createCell(3).setCellErrorValue((byte)ErrorConstants.ERROR_DIV_0);
+        r.createCell(3).setCellErrorValue(FormulaError.DIV0.getCode());
         r.createCell(4).setCellFormula("A1+B1");
 
         assertEquals("Boolean", "TRUE", r.getCell(0).toString());
@@ -364,9 +349,7 @@ public abstract class BaseTestCell {
 
     }
 
-    private Cell createACell() {
-        Workbook wb = _testDataProvider.createWorkbook();
-        workbooksToClose.add(wb);
+    private Cell createACell(Workbook wb) {
         return wb.createSheet("Sheet1").createRow(0).createCell(0);
     }
     
@@ -410,17 +393,15 @@ public abstract class BaseTestCell {
     }
 
     @Test
-    public void testChangeTypeStringToBool() {
-        Cell cell = createACell();
+    public void testChangeTypeStringToBool() throws IOException {
+        Workbook wb = _testDataProvider.createWorkbook();
+
+        Cell cell = createACell(wb);
 
         cell.setCellValue("TRUE");
         assertEquals(Cell.CELL_TYPE_STRING, cell.getCellType());
-        try {
-            cell.setCellType(Cell.CELL_TYPE_BOOLEAN);
-        } catch (ClassCastException e) {
-            throw new AssertionFailedError(
-                    "Identified bug in conversion of cell from text to boolean");
-        }
+        // test conversion of cell from text to boolean
+        cell.setCellType(Cell.CELL_TYPE_BOOLEAN);
 
         assertEquals(Cell.CELL_TYPE_BOOLEAN, cell.getCellType());
         assertEquals(true, cell.getBooleanCellValue());
@@ -434,52 +415,51 @@ public abstract class BaseTestCell {
         assertEquals(false, cell.getBooleanCellValue());
         cell.setCellType(Cell.CELL_TYPE_STRING);
         assertEquals("FALSE", cell.getRichStringCellValue().getString());
+        
+        wb.close();
     }
 
     @Test
-    public void testChangeTypeBoolToString() {
-        Cell cell = createACell();
+    public void testChangeTypeBoolToString() throws IOException {
+        Workbook wb = _testDataProvider.createWorkbook();
+
+        Cell cell = createACell(wb);
 
         cell.setCellValue(true);
-        try {
-            cell.setCellType(Cell.CELL_TYPE_STRING);
-        } catch (IllegalStateException e) {
-            if (e.getMessage().equals("Cannot get a text value from a boolean cell")) {
-                throw new AssertionFailedError(
-                        "Identified bug in conversion of cell from boolean to text");
-            }
-            throw e;
-        }
+        // test conversion of cell from boolean to text
+        cell.setCellType(Cell.CELL_TYPE_STRING);
         assertEquals("TRUE", cell.getRichStringCellValue().getString());
+        
+        wb.close();
     }
 
     @Test
-    public void testChangeTypeErrorToNumber() {
-        Cell cell = createACell();
-        cell.setCellErrorValue((byte)ErrorConstants.ERROR_NAME);
+    public void testChangeTypeErrorToNumber() throws IOException {
+        Workbook wb = _testDataProvider.createWorkbook();
+
+        Cell cell = createACell(wb);
+        cell.setCellErrorValue(FormulaError.NAME.getCode());
         try {
             cell.setCellValue(2.5);
         } catch (ClassCastException e) {
-            throw new AssertionFailedError("Identified bug 46479b");
+            fail("Identified bug 46479b");
         }
         assertEquals(2.5, cell.getNumericCellValue(), 0.0);
+        
+        wb.close();
     }
 
     @Test
-    public void testChangeTypeErrorToBoolean() {
-        Cell cell = createACell();
-        cell.setCellErrorValue((byte)ErrorConstants.ERROR_NAME);
-        cell.setCellValue(true);
-        try {
-            cell.getBooleanCellValue();
-        } catch (IllegalStateException e) {
-            if (e.getMessage().equals("Cannot get a boolean value from a error cell")) {
+    public void testChangeTypeErrorToBoolean() throws IOException {
+        Workbook wb = _testDataProvider.createWorkbook();
 
-                throw new AssertionFailedError("Identified bug 46479c");
-            }
-            throw e;
-        }
+        Cell cell = createACell(wb);
+        cell.setCellErrorValue(FormulaError.NAME.getCode());
+        cell.setCellValue(true);
+        // Identify bug 46479c
         assertEquals(true, cell.getBooleanCellValue());
+        
+        wb.close();
     }
 
     /**
@@ -488,8 +468,10 @@ public abstract class BaseTestCell {
      * string result type.
      */
     @Test
-    public void testConvertStringFormulaCell() {
-        Cell cellA1 = createACell();
+    public void testConvertStringFormulaCell() throws IOException {
+        Workbook wb = _testDataProvider.createWorkbook();
+
+        Cell cellA1 = createACell(wb);
         cellA1.setCellFormula("\"abc\"");
 
         // default cached formula result is numeric zero
@@ -501,10 +483,10 @@ public abstract class BaseTestCell {
         assertEquals("abc", cellA1.getStringCellValue());
 
         fe.evaluateInCell(cellA1);
-        if (cellA1.getStringCellValue().equals("")) {
-            throw new AssertionFailedError("Identified bug with writing back formula result of type string");
-        }
+        assertFalse("Identified bug with writing back formula result of type string", cellA1.getStringCellValue().equals(""));
         assertEquals("abc", cellA1.getStringCellValue());
+        
+        wb.close();
     }
     
     /**
@@ -512,8 +494,10 @@ public abstract class BaseTestCell {
      * lower level that {#link {@link Cell#setCellType(int)} works properly
      */
     @Test
-    public void testSetTypeStringOnFormulaCell() {
-        Cell cellA1 = createACell();
+    public void testSetTypeStringOnFormulaCell() throws IOException {
+        Workbook wb = _testDataProvider.createWorkbook();
+
+        Cell cellA1 = createACell(wb);
         FormulaEvaluator fe = cellA1.getSheet().getWorkbook().getCreationHelper().createFormulaEvaluator();
 
         cellA1.setCellFormula("\"DEF\"");
@@ -543,9 +527,11 @@ public abstract class BaseTestCell {
         fe.clearAllCachedResultValues();
         fe.evaluateFormulaCell(cellA1);
         confirmCannotReadString(cellA1);
-        assertEquals(ErrorConstants.ERROR_NAME, cellA1.getErrorCellValue());
+        assertEquals(FormulaError.NAME, forInt(cellA1.getErrorCellValue()));
         cellA1.setCellType(Cell.CELL_TYPE_STRING);
         assertEquals("#NAME?", cellA1.getStringCellValue());
+        
+        wb.close();
     }
 
     private static void confirmCannotReadString(Cell cell) {
@@ -556,15 +542,17 @@ public abstract class BaseTestCell {
      * Test for bug in convertCellValueToBoolean to make sure that formula results get converted
      */
     @Test
-    public void testChangeTypeFormulaToBoolean() {
-        Cell cell = createACell();
+    public void testChangeTypeFormulaToBoolean() throws IOException {
+        Workbook wb = _testDataProvider.createWorkbook();
+
+        Cell cell = createACell(wb);
         cell.setCellFormula("1=1");
         cell.setCellValue(true);
         cell.setCellType(Cell.CELL_TYPE_BOOLEAN);
-        if (cell.getBooleanCellValue() == false) {
-            throw new AssertionFailedError("Identified bug 46479d");
-        }
+        assertTrue("Identified bug 46479d", cell.getBooleanCellValue());
         assertEquals(true, cell.getBooleanCellValue());
+        
+        wb.close();
     }
 
     /**
@@ -664,17 +652,17 @@ public abstract class BaseTestCell {
         Cell cell0 = row.createCell(0);
         cell0.setCellValue(Double.NaN);
         assertEquals("Double.NaN should change cell type to CELL_TYPE_ERROR", Cell.CELL_TYPE_ERROR, cell0.getCellType());
-        assertEquals("Double.NaN should change cell value to #NUM!", ErrorConstants.ERROR_NUM, cell0.getErrorCellValue());
+        assertEquals("Double.NaN should change cell value to #NUM!", FormulaError.NUM, forInt(cell0.getErrorCellValue()));
 
         Cell cell1 = row.createCell(1);
         cell1.setCellValue(Double.POSITIVE_INFINITY);
         assertEquals("Double.POSITIVE_INFINITY should change cell type to CELL_TYPE_ERROR", Cell.CELL_TYPE_ERROR, cell1.getCellType());
-        assertEquals("Double.POSITIVE_INFINITY should change cell value to #DIV/0!", ErrorConstants.ERROR_DIV_0, cell1.getErrorCellValue());
+        assertEquals("Double.POSITIVE_INFINITY should change cell value to #DIV/0!", FormulaError.DIV0, forInt(cell1.getErrorCellValue()));
 
         Cell cell2 = row.createCell(2);
         cell2.setCellValue(Double.NEGATIVE_INFINITY);
         assertEquals("Double.NEGATIVE_INFINITY should change cell type to CELL_TYPE_ERROR", Cell.CELL_TYPE_ERROR, cell2.getCellType());
-        assertEquals("Double.NEGATIVE_INFINITY should change cell value to #DIV/0!", ErrorConstants.ERROR_DIV_0, cell2.getErrorCellValue());
+        assertEquals("Double.NEGATIVE_INFINITY should change cell value to #DIV/0!", FormulaError.DIV0, forInt(cell2.getErrorCellValue()));
 
         Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1);
         wb1.close();
@@ -682,15 +670,15 @@ public abstract class BaseTestCell {
 
         cell0 = row.getCell(0);
         assertEquals(Cell.CELL_TYPE_ERROR, cell0.getCellType());
-        assertEquals(ErrorConstants.ERROR_NUM, cell0.getErrorCellValue());
+        assertEquals(FormulaError.NUM, forInt(cell0.getErrorCellValue()));
 
         cell1 = row.getCell(1);
         assertEquals(Cell.CELL_TYPE_ERROR, cell1.getCellType());
-        assertEquals(ErrorConstants.ERROR_DIV_0, cell1.getErrorCellValue());
+        assertEquals(FormulaError.DIV0, forInt(cell1.getErrorCellValue()));
 
         cell2 = row.getCell(2);
         assertEquals(Cell.CELL_TYPE_ERROR, cell2.getCellType());
-        assertEquals(ErrorConstants.ERROR_DIV_0, cell2.getErrorCellValue());
+        assertEquals(FormulaError.DIV0, forInt(cell2.getErrorCellValue()));
         wb2.close();
     }
 

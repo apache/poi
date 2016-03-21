@@ -849,10 +849,14 @@ public class TestWrite
         sinfDoc = (DocumentNode)root.getEntry(SummaryInformation.DEFAULT_STREAM_NAME);
         dinfDoc = (DocumentNode)root.getEntry(DocumentSummaryInformation.DEFAULT_STREAM_NAME);
 
-        sinf = (SummaryInformation)PropertySetFactory.create(new NDocumentInputStream(sinfDoc));
+        InputStream sinfStream = new NDocumentInputStream(sinfDoc);
+        sinf = (SummaryInformation)PropertySetFactory.create(sinfStream);
+        sinfStream.close();
         assertEquals(131077, sinf.getOSVersion());
         
-        dinf = (DocumentSummaryInformation)PropertySetFactory.create(new NDocumentInputStream(dinfDoc));
+        InputStream dinfStream = new NDocumentInputStream(dinfDoc);
+        dinf = (DocumentSummaryInformation)PropertySetFactory.create(dinfStream);
+        dinfStream.close();
         assertEquals(131077, dinf.getOSVersion());
         
         
@@ -874,10 +878,14 @@ public class TestWrite
         sinfDoc = (DocumentNode)root.getEntry(SummaryInformation.DEFAULT_STREAM_NAME);
         dinfDoc = (DocumentNode)root.getEntry(DocumentSummaryInformation.DEFAULT_STREAM_NAME);
         
-        sinf = (SummaryInformation)PropertySetFactory.create(new NDocumentInputStream(sinfDoc));
+        InputStream sinfStream2 = new NDocumentInputStream(sinfDoc);
+        sinf = (SummaryInformation)PropertySetFactory.create(sinfStream2);
+        sinfStream2.close();
         assertEquals(131077, sinf.getOSVersion());
         
-        dinf = (DocumentSummaryInformation)PropertySetFactory.create(new NDocumentInputStream(dinfDoc));
+        InputStream dinfStream2 = new NDocumentInputStream(dinfDoc);
+        dinf = (DocumentSummaryInformation)PropertySetFactory.create(dinfStream2);
+        dinfStream2.close();
         assertEquals(131077, dinf.getOSVersion());
 
         
@@ -896,16 +904,24 @@ public class TestWrite
         sinfDoc = (DocumentNode)root.getEntry(SummaryInformation.DEFAULT_STREAM_NAME);
         dinfDoc = (DocumentNode)root.getEntry(DocumentSummaryInformation.DEFAULT_STREAM_NAME);
 
-        sinf = (SummaryInformation)PropertySetFactory.create(new NDocumentInputStream(sinfDoc));
+        InputStream sinfStream3 = new NDocumentInputStream(sinfDoc);
+        sinf = (SummaryInformation)PropertySetFactory.create(sinfStream3);
+        sinfStream3.close();
         assertEquals(131077, sinf.getOSVersion());
         
-        dinf = (DocumentSummaryInformation)PropertySetFactory.create(new NDocumentInputStream(dinfDoc));
+        InputStream dinfStream3 = new NDocumentInputStream(dinfDoc);
+        dinf = (DocumentSummaryInformation)PropertySetFactory.create(dinfStream3);
+        dinfStream3.close();
         assertEquals(131077, dinf.getOSVersion());
         
         
         // Have them write themselves in-place with no changes, as an OutputStream
-        sinf.write(new NDocumentOutputStream(sinfDoc));
-        dinf.write(new NDocumentOutputStream(dinfDoc));
+        OutputStream soufStream = new NDocumentOutputStream(sinfDoc);
+        sinf.write(soufStream);
+        soufStream.close();
+        OutputStream doufStream = new NDocumentOutputStream(dinfDoc);
+        dinf.write(doufStream);
+        doufStream.close();
         
         // And also write to some bytes for checking
         ByteArrayOutputStream sinfBytes = new ByteArrayOutputStream();
@@ -918,17 +934,25 @@ public class TestWrite
         sinfDoc = (DocumentNode)root.getEntry(SummaryInformation.DEFAULT_STREAM_NAME);
         dinfDoc = (DocumentNode)root.getEntry(DocumentSummaryInformation.DEFAULT_STREAM_NAME);
 
-        byte[] sinfData = IOUtils.toByteArray(new NDocumentInputStream(sinfDoc));
-        byte[] dinfData = IOUtils.toByteArray(new NDocumentInputStream(dinfDoc));
+        InputStream sinfStream4 = new NDocumentInputStream(sinfDoc);
+        byte[] sinfData = IOUtils.toByteArray(sinfStream4);
+        sinfStream4.close();
+        InputStream dinfStream4 = new NDocumentInputStream(dinfDoc);
+        byte[] dinfData = IOUtils.toByteArray(dinfStream4);
+        dinfStream4.close();
         assertThat(sinfBytes.toByteArray(), equalTo(sinfData));
         assertThat(dinfBytes.toByteArray(), equalTo(dinfData));
 
         
         // Read back in as-is
-        sinf = (SummaryInformation)PropertySetFactory.create(new NDocumentInputStream(sinfDoc));
+        InputStream sinfStream5 = new NDocumentInputStream(sinfDoc);
+        sinf = (SummaryInformation)PropertySetFactory.create(sinfStream5);
+        sinfStream5.close();
         assertEquals(131077, sinf.getOSVersion());
         
-        dinf = (DocumentSummaryInformation)PropertySetFactory.create(new NDocumentInputStream(dinfDoc));
+        InputStream dinfStream5 = new NDocumentInputStream(dinfDoc);
+        dinf = (DocumentSummaryInformation)PropertySetFactory.create(dinfStream5);
+        dinfStream5.close();
         assertEquals(131077, dinf.getOSVersion());
         
         assertEquals("Reiichiro Hori", sinf.getAuthor());
@@ -946,17 +970,25 @@ public class TestWrite
         
         
         // Save this into the filesystem
-        sinf.write(new NDocumentOutputStream(sinfDoc));
-        dinf.write(new NDocumentOutputStream(dinfDoc));
+        OutputStream soufStream2 = new NDocumentOutputStream(sinfDoc);
+        sinf.write(soufStream2);
+        soufStream2.close();
+        OutputStream doufStream2 = new NDocumentOutputStream(dinfDoc);
+        dinf.write(doufStream2);
+        doufStream2.close();
         
         
         // Read them back in again
         sinfDoc = (DocumentNode)root.getEntry(SummaryInformation.DEFAULT_STREAM_NAME);
-        sinf = (SummaryInformation)PropertySetFactory.create(new NDocumentInputStream(sinfDoc));
+        InputStream sinfStream6 = new NDocumentInputStream(sinfDoc);
+        sinf = (SummaryInformation)PropertySetFactory.create(sinfStream6);
+        sinfStream6.close();
         assertEquals(131077, sinf.getOSVersion());
         
         dinfDoc = (DocumentNode)root.getEntry(DocumentSummaryInformation.DEFAULT_STREAM_NAME);
-        dinf = (DocumentSummaryInformation)PropertySetFactory.create(new NDocumentInputStream(dinfDoc));
+        InputStream dinfStream6 = new NDocumentInputStream(dinfDoc);
+        dinf = (DocumentSummaryInformation)PropertySetFactory.create(dinfStream6);
+        dinfStream6.close();
         assertEquals(131077, dinf.getOSVersion());
 
         assertEquals("Changed Author", sinf.getAuthor());
@@ -976,11 +1008,15 @@ public class TestWrite
         
         // Re-check on load
         sinfDoc = (DocumentNode)root.getEntry(SummaryInformation.DEFAULT_STREAM_NAME);
-        sinf = (SummaryInformation)PropertySetFactory.create(new NDocumentInputStream(sinfDoc));
+        InputStream sinfStream7 = new NDocumentInputStream(sinfDoc);
+        sinf = (SummaryInformation)PropertySetFactory.create(sinfStream7);
+        sinfStream7.close();
         assertEquals(131077, sinf.getOSVersion());
         
         dinfDoc = (DocumentNode)root.getEntry(DocumentSummaryInformation.DEFAULT_STREAM_NAME);
-        dinf = (DocumentSummaryInformation)PropertySetFactory.create(new NDocumentInputStream(dinfDoc));
+        InputStream dinfStream7 = new NDocumentInputStream(dinfDoc);
+        dinf = (DocumentSummaryInformation)PropertySetFactory.create(dinfStream7);
+        dinfStream7.close();
         assertEquals(131077, dinf.getOSVersion());
 
         assertEquals("Changed Author", sinf.getAuthor());

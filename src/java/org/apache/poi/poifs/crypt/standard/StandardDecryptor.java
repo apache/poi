@@ -122,6 +122,7 @@ public class StandardDecryptor extends Decryptor {
         return CryptoFunctions.getCipher(key, em.getCipherAlgorithm(), cm, null, Cipher.DECRYPT_MODE);
     }
 
+    @SuppressWarnings("resource")
     public InputStream getDataStream(DirectoryNode dir) throws IOException {
         DocumentInputStream dis = dir.createDocumentInputStream(DEFAULT_POIFS_ENTRY);
 
