@@ -18,6 +18,7 @@
 package org.apache.poi.poifs.property;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -119,8 +120,8 @@ public class DirectoryProperty extends Property implements Parent, Iterable<Prop
         return result;
     }
 
-    public static class PropertyComparator implements Comparator<Property> {
-
+    public static class PropertyComparator implements Comparator<Property>, Serializable {
+        
         /**
          * compare method. Assumes both parameters are non-null
          * instances of Property. One property is less than another if

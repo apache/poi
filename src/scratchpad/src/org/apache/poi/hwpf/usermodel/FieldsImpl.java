@@ -16,6 +16,7 @@
 ==================================================================== */
 package org.apache.poi.hwpf.usermodel;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -262,9 +263,7 @@ public class FieldsImpl implements Fields
         }
     }
 
-    private static final class PlexOfFieldComparator implements
-            Comparator<PlexOfField>
-    {
+    private static final class PlexOfFieldComparator implements Comparator<PlexOfField>, Serializable {
         public int compare( PlexOfField o1, PlexOfField o2 )
         {
             int thisVal = o1.getFcStart();

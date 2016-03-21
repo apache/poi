@@ -32,6 +32,7 @@ import static org.apache.poi.hsmf.datatypes.MAPIProperty.ATTACH_RENDERING;
 import static org.apache.poi.hsmf.datatypes.MAPIProperty.ATTACH_SIZE;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -185,7 +186,7 @@ public class AttachmentChunks implements ChunkGroup {
    /**
     * Orders by the attachment number.
     */
-   public static class AttachmentChunksSorter implements Comparator<AttachmentChunks> {
+   public static class AttachmentChunksSorter implements Comparator<AttachmentChunks>, Serializable {
       public int compare(AttachmentChunks a, AttachmentChunks b) {
          return a.poifsName.compareTo(b.poifsName);
       }

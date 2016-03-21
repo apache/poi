@@ -17,6 +17,7 @@
 
 package org.apache.poi.hsmf.datatypes;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -222,7 +223,7 @@ public final class RecipientChunks implements ChunkGroupWithProperties {
    /**
     * Orders by the recipient number.
     */
-   public static class RecipientChunksSorter implements Comparator<RecipientChunks> {
+   public static class RecipientChunksSorter implements Comparator<RecipientChunks>, Serializable {
       public int compare(RecipientChunks a, RecipientChunks b) {
          if(a.recipientNumber < b.recipientNumber)
             return -1;
