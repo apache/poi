@@ -26,12 +26,13 @@ import java.io.InputStream;
 
 import javax.imageio.ImageIO;
 
-import org.apache.poi.hssf.record.RecordFormatException;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.util.RecordFormatException;
 
 /**
  * The DeviceIndependentBitmap Object defines an image in device-independent bitmap (DIB) format.
@@ -224,9 +225,8 @@ public class HwmfBitmapDib {
 
         int fileSize = (headerImageSize < headerSize) ? recordSize : (int)Math.min(introSize+headerImageSize,recordSize);
         
-        imageData = new byte[fileSize];
         leis.reset();
-        leis.read(imageData, 0, fileSize);
+        imageData = IOUtils.toByteArray(leis, fileSize);
         
         assert( headerSize != 0x0C || ((((headerWidth * headerPlanes * headerBitCount.flag + 31) & ~31) / 8) * Math.abs(headerHeight)) == headerImageSize);
 

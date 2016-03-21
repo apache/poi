@@ -21,6 +21,7 @@ import java.io.IOException;
 
 import org.apache.poi.hwmf.draw.HwmfGraphics;
 import org.apache.poi.util.HexDump;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
 
@@ -192,8 +193,8 @@ public class HwmfEscape implements HwmfRecord {
     public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
         escapeFunction = EscapeFunction.valueOf(leis.readUShort());
         byteCount = leis.readUShort();
-        escapeData = new byte[byteCount];
-        leis.read(escapeData);
+        escapeData = IOUtils.toByteArray(leis,byteCount);
+
         return 2*LittleEndianConsts.SHORT_SIZE+byteCount;
     }
 

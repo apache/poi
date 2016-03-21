@@ -19,6 +19,7 @@ package org.apache.poi.hdgf;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.apache.poi.POIDocument;
@@ -30,9 +31,9 @@ import org.apache.poi.hdgf.streams.Stream;
 import org.apache.poi.hdgf.streams.StringsStream;
 import org.apache.poi.hdgf.streams.TrailerStream;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
-import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LocaleUtil;
 
@@ -73,12 +74,10 @@ public final class HDGFDiagram extends POIDocument {
 	public HDGFDiagram(DirectoryNode dir) throws IOException {
 		super(dir);
 
-		DocumentEntry docProps =
-			(DocumentEntry)dir.getEntry("VisioDocument");
-
 		// Grab the document stream
-		_docstream = new byte[docProps.getSize()];
-		dir.createDocumentInputStream("VisioDocument").read(_docstream);
+		InputStream is = dir.createDocumentInputStream("VisioDocument");
+		_docstream = IOUtils.toByteArray(is);
+		is.close();
 
 		// Check it's really visio
 		String typeString = new String(_docstream, 0, 20, LocaleUtil.CHARSET_1252 );

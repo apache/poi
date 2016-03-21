@@ -18,7 +18,6 @@
 package org.apache.poi.hwpf;
 
 import java.io.ByteArrayInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -69,6 +68,7 @@ import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.poifs.filesystem.EntryUtils;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 
 /**
@@ -230,17 +230,14 @@ public final class HWPFDocument extends HWPFDocumentCore
     }
 
     // Grab the table stream.
-    DocumentEntry tableProps;
-    try {
-        tableProps =
-            (DocumentEntry)directory.getEntry(name);
-    } catch(FileNotFoundException fnfe) {
+    if (!directory.hasEntry(name)) {
         throw new IllegalStateException("Table Stream '" + name + "' wasn't found - Either the document is corrupt, or is Word95 (or earlier)");
     }
 
     // read in the table stream.
-    _tableStream = new byte[tableProps.getSize()];
-    directory.createDocumentInputStream(name).read(_tableStream);
+    InputStream is = directory.createDocumentInputStream(name);
+    _tableStream = IOUtils.toByteArray(is);
+    is.close();
 
     _fib.fillVariableFields(_mainStream, _tableStream);
 

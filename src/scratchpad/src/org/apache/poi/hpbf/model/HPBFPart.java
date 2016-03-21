@@ -20,9 +20,10 @@ package org.apache.poi.hpbf.model;
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.apache.poi.poifs.filesystem.DirectoryNode;
-import org.apache.poi.poifs.filesystem.DocumentEntry;
+import org.apache.poi.util.IOUtils;
 
 /**
  * Parent class of all HPBF sub-parts, handling
@@ -39,17 +40,14 @@ public abstract class HPBFPart {
 		DirectoryNode dir = getDir(path, baseDir);
 		String name = path[path.length-1];
 
-		DocumentEntry docProps;
-		try {
-			docProps = (DocumentEntry)dir.getEntry(name);
-		} catch (FileNotFoundException e) {
-			throw new IllegalArgumentException("File invalid - failed to find document entry '"
-					+ name + "'");
+		if (!dir.hasEntry(name)) {
+            throw new IllegalArgumentException("File invalid - failed to find document entry '" + name + "'");
 		}
 
 		// Grab the data from the part stream
-		data = new byte[docProps.getSize()];
-		dir.createDocumentInputStream(name).read(data);
+		InputStream is = dir.createDocumentInputStream(name);
+		data = IOUtils.toByteArray(is);
+		is.close();
 	}
 	private DirectoryNode getDir(String[] path, DirectoryNode baseDir) {
 		DirectoryNode dir = baseDir;

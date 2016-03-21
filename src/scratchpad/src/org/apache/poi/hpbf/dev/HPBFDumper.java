@@ -24,8 +24,8 @@ import java.io.InputStream;
 import org.apache.poi.ddf.DefaultEscherRecordFactory;
 import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
-import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.StringUtil;
@@ -47,12 +47,10 @@ public final class HPBFDumper {
 	}
 
 	private static byte[] getData(DirectoryNode dir, String name) throws IOException {
-		DocumentEntry docProps =
-			(DocumentEntry)dir.getEntry(name);
-
 		// Grab the document stream
-		byte[] d = new byte[docProps.getSize()];
-		dir.createDocumentInputStream(name).read(d);
+		InputStream is = dir.createDocumentInputStream(name);
+		byte[] d = IOUtils.toByteArray(is);
+		is.close();
 
 		// All done
 		return d;

@@ -38,6 +38,7 @@ import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 
 
@@ -85,14 +86,13 @@ public abstract class HWPFDocumentCore extends POIDocument
   }
 
   /**
-   * Takens an InputStream, verifies that it's not RTF or PDF, builds a
+   * Takes an InputStream, verifies that it's not RTF or PDF, builds a
    *  POIFSFileSystem from it, and returns that.
    */
   public static POIFSFileSystem verifyAndBuildPOIFS(InputStream istream) throws IOException {
 	// Open a PushbackInputStream, so we can peek at the first few bytes
 	PushbackInputStream pis = new PushbackInputStream(istream,6);
-	byte[] first6 = new byte[6];
-	pis.read(first6);
+	byte[] first6 = IOUtils.toByteArray(pis, 6);
 
 	// Does it start with {\rtf ? If so, it's really RTF
 	if(first6[0] == '{' && first6[1] == '\\' && first6[2] == 'r'
