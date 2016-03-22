@@ -206,7 +206,7 @@ public class SharedStringsTable extends POIXMLDocumentPart {
      * @return array of CTRst beans
      */
     public List<CTRst> getItems() {
-        return strings;
+        return Collections.unmodifiableList(strings);
     }
 
     /**
