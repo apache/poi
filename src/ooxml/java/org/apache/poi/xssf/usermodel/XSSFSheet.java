@@ -323,6 +323,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * @return index of this region
      * @throws IllegalArgumentException if region contains fewer than 2 cells
      */
+    @Override
     public int addMergedRegionUnsafe(CellRangeAddress region) {
         return addMergedRegion(region, false);
     }
@@ -408,7 +409,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         }
     }
 
-
     /**
      * Verify that candidate region does not intersect with an existing merged region in this sheet
      *
@@ -452,6 +452,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * @throws IllegalStateException if region intersects with a multi-cell array formula
      * @throws IllegalStateException if at least one region intersects with another merged region in this sheet
      */
+    @Override
     public void validateMergedRegions() {
         checkForMergedRegionsIntersectingArrayFormulas();
         checkForIntersectingMergedRegions();

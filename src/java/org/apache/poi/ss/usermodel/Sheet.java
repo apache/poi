@@ -277,6 +277,30 @@ public interface Sheet extends Iterable<Row> {
     int addMergedRegion(CellRangeAddress region);
 
     /**
+     * Adds a merged region of cells (hence those cells form one).
+     * Skips validation. It is possible to create overlapping merged regions
+     * or create a merged region that intersects a multi-cell array formula
+     * with this formula, which may result in a corrupt workbook.
+     *
+     * To check for merged regions overlapping array formulas or other merged regions
+     * after addMergedRegionUnsafe has been called, call {@link #validateMergedRegions()}, which runs in O(n^2) time.
+     *
+     * @param region to merge
+     * @return index of this region
+     * @throws IllegalArgumentException if region contains fewer than 2 cells
+     */
+    int addMergedRegionUnsafe(CellRangeAddress region);
+
+    /**
+     * Verify that merged regions do not intersect multi-cell array formulas and
+     * no merged regions intersect another merged region in this sheet.
+     *
+     * @throws IllegalStateException if region intersects with a multi-cell array formula
+     * @throws IllegalStateException if at least one region intersects with another merged region in this sheet
+     */
+    void validateMergedRegions();
+
+    /**
      * Determines whether the output is vertically centered on the page.
      *
      * @param value true to vertically center, false otherwise.
