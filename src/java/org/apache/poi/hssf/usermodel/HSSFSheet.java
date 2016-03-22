@@ -660,28 +660,75 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
     }
 
     /**
+     * Adds a merged region of cells on a sheet.
+     *
+     * @param region to merge
+     * @return index of this region
+     * @throws IllegalArgumentException if region contains fewer than 2 cells
+     * @throws IllegalStateException if region intersects with a multi-cell array formula
+     * @throws IllegalStateException if region intersects with an existing region on this sheet
+     */
+    @Override
+    public int addMergedRegion(CellRangeAddress region) {
+        return addMergedRegion(region, true);
+    }
+
+    /**
+     * Adds a merged region of cells (hence those cells form one).
+     * Skips validation. It is possible to create overlapping merged regions
+     * or create a merged region that intersects a multi-cell array formula
+     * with this formula, which may result in a corrupt workbook.
+     *
+     * To check for merged regions overlapping array formulas or other merged regions
+     * after addMergedRegionUnsafe has been called, call {@link #validateMergedRegions()}, which runs in O(n^2) time.
+     *
+     * @param region to merge
+     * @return index of this region
+     * @throws IllegalArgumentException if region contains fewer than 2 cells
+     */
+    @Override
+    public int addMergedRegionUnsafe(CellRangeAddress region) {
+        return addMergedRegion(region, false);
+    }
+
+    /**
+     * Verify that merged regions do not intersect multi-cell array formulas and
+     * no merged regions intersect another merged region in this sheet.
+     *
+     * @throws IllegalStateException if region intersects with a multi-cell array formula
+     * @throws IllegalStateException if at least one region intersects with another merged region in this sheet
+     */
+    @Override
+    public void validateMergedRegions() {
+        checkForMergedRegionsIntersectingArrayFormulas();
+        checkForIntersectingMergedRegions();
+    }
+
+    /**
      * adds a merged region of cells (hence those cells form one)
      *
      * @param region (rowfrom/colfrom-rowto/colto) to merge
+     * @param validate whether to validate merged region
      * @return index of this region
      * @throws IllegalArgumentException if region contains fewer than 2 cells
      * @throws IllegalStateException if region intersects with an existing merged region
      * or multi-cell array formula on this sheet
      */
-    @Override
-    public int addMergedRegion(CellRangeAddress region) {
+    private int addMergedRegion(CellRangeAddress region, boolean validate) {
         if (region.getNumberOfCells() < 2) {
             throw new IllegalArgumentException("Merged region " + region.formatAsString() + " must contain 2 or more cells");
         }
         region.validate(SpreadsheetVersion.EXCEL97);
 
-        // throw IllegalStateException if the argument CellRangeAddress intersects with
-        // a multi-cell array formula defined in this sheet
-        validateArrayFormulas(region);
+        if (validate) {
+            // throw IllegalStateException if the argument CellRangeAddress intersects with
+            // a multi-cell array formula defined in this sheet
+            validateArrayFormulas(region);
         
-        // Throw IllegalStateException if the argument CellRangeAddress intersects with
-        // a merged region already in this sheet
-        validateMergedRegions(region);
+            // Throw IllegalStateException if the argument CellRangeAddress intersects with
+            // a merged region already in this sheet
+            validateMergedRegions(region);
+        }
 
         return _sheet.addMergedRegion(region.getFirstRow(),
                 region.getFirstColumn(),
@@ -716,12 +763,45 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
         }
 
     }
-    
+
+    /**
+     * Verify that none of the merged regions intersect a multi-cell array formula in this sheet
+     *
+     * @param region
+     * @throws IllegalStateException if candidate region intersects an existing array formula in this sheet
+     */
+    private void checkForMergedRegionsIntersectingArrayFormulas() {
+        for (CellRangeAddress region : getMergedRegions()) {
+            validateArrayFormulas(region);
+        }
+    }
+
     private void validateMergedRegions(CellRangeAddress candidateRegion) {
         for (final CellRangeAddress existingRegion : getMergedRegions()) {
             if (existingRegion.intersects(candidateRegion)) {
                 throw new IllegalStateException("Cannot add merged region " + candidateRegion.formatAsString() +
                         " to sheet because it overlaps with an existing merged region (" + existingRegion.formatAsString() + ").");
+            }
+        }
+    }
+
+    /**
+     * Verify that no merged regions intersect another merged region in this sheet.
+     *
+     * @throws IllegalStateException if at least one region intersects with another merged region in this sheet
+     */
+    private void checkForIntersectingMergedRegions() {
+        final List<CellRangeAddress> regions = getMergedRegions();
+        final int size = regions.size();
+        for (int i=0; i < size; i++) {
+            final CellRangeAddress region = regions.get(i);
+            for (final CellRangeAddress other : regions.subList(i+1, regions.size())) {
+                if (region.intersects(other)) {
+                    String msg = "The range " + region.formatAsString() +
+                                " intersects with another merged region " +
+                                other.formatAsString() + " in this sheet";
+                    throw new IllegalStateException(msg);
+                }
             }
         }
     }

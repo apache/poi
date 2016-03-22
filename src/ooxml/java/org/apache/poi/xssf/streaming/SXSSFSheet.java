@@ -389,6 +389,30 @@ public class SXSSFSheet implements Sheet, Cloneable
     }
 
     /**
+     * Adds a merged region of cells (hence those cells form one)
+     *
+     * @param region (rowfrom/colfrom-rowto/colto) to merge
+     * @return index of this region
+     */
+    @Override
+    public int addMergedRegionUnsafe(CellRangeAddress region)
+    {
+        return _sh.addMergedRegionUnsafe(region);
+    }
+
+    /**
+     * Verify that merged regions do not intersect multi-cell array formulas and
+     * no merged regions intersect another merged region in this sheet.
+     *
+     * @throws IllegalStateException if region intersects with a multi-cell array formula
+     * @throws IllegalStateException if at least one region intersects with another merged region in this sheet
+     */
+    @Override
+    public void validateMergedRegions() {
+        _sh.validateMergedRegions();
+    }
+
+    /**
      * Determines whether the output is vertically centered on the page.
      *
      * @param value true to vertically center, false otherwise.
