@@ -237,14 +237,15 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     /**
      * For isBold, isItalic etc
      */
-    private boolean isCTOnOff(CTOnOff onoff) {
+    private static boolean isCTOnOff(CTOnOff onoff) {
         if (!onoff.isSetVal())
             return true;
-        if (onoff.getVal() == STOnOff.ON)
-            return true;
-        if (onoff.getVal() == STOnOff.TRUE)
-            return true;
-        return false;
+        final STOnOff.Enum val = onoff.getVal();
+        return (
+            (STOnOff.TRUE == val) ||
+            (STOnOff.X_1 == val) ||
+            (STOnOff.ON == val)
+        );
     }
 
     /**
