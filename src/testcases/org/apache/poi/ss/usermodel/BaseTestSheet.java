@@ -24,6 +24,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.junit.Assume.assumeTrue;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -439,6 +440,54 @@ public abstract class BaseTestSheet {
         CellRangeAddress expectedRegion = CellRangeAddress.valueOf("A3:B3");
         assertEquals("Merged region should shift down a row", expectedRegion, region);
         
+        wb.close();
+    }
+
+    /**
+     * bug 58885: checking for overlapping merged regions when
+     * adding a merged region is safe, but runs in O(n).
+     * the check for merged regions when adding a merged region
+     * can be skipped (unsafe) and run in O(1).
+     */
+    @Test
+    public void addMergedRegionUnsafe() throws IOException {
+        Workbook wb = _testDataProvider.createWorkbook();
+        Sheet sh = wb.createSheet();
+        CellRangeAddress region1 = CellRangeAddress.valueOf("A1:B2");
+        CellRangeAddress region2 = CellRangeAddress.valueOf("B2:C3");
+        CellRangeAddress region3 = CellRangeAddress.valueOf("C3:D4");
+        CellRangeAddress region4 = CellRangeAddress.valueOf("J10:K11");
+        assumeTrue(region1.intersects(region2));
+        assumeTrue(region2.intersects(region3));
+
+        sh.addMergedRegionUnsafe(region1);
+        assertTrue(sh.getMergedRegions().contains(region1));
+
+        // adding a duplicate or overlapping merged region should not
+        // raise an exception with the unsafe version of addMergedRegion.
+
+        sh.addMergedRegionUnsafe(region2);
+
+        // the safe version of addMergedRegion should throw when trying to add a merged region that overlaps an existing region
+        assertTrue(sh.getMergedRegions().contains(region2));
+        try {
+            sh.addMergedRegion(region3);
+            fail("Expected IllegalStateException. region3 overlaps already added merged region2.");
+        } catch (final IllegalStateException e) {
+            // expected
+            assertFalse(sh.getMergedRegions().contains(region3));
+        }
+        // addMergedRegion should not re-validate previously-added merged regions
+        sh.addMergedRegion(region4);
+
+        // validation methods should detect a problem with previously added merged regions (runs in O(n^2) time)
+        try {
+            sh.validateMergedRegions();
+            fail("Expected validation to fail. Sheet contains merged regions A1:B2 and B2:C3, which overlap at B2.");
+        } catch (final IllegalStateException e) {
+            // expected
+        }
+
         wb.close();
     }
 
