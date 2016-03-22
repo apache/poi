@@ -79,9 +79,9 @@ public final class IOUtils {
         ByteArrayOutputStream baos = new ByteArrayOutputStream(length == Integer.MAX_VALUE ? 4096 : length);
 
         byte[] buffer = new byte[4096];
-        int totalBytes = 0, readBytes = 0; 
+        int totalBytes = 0, readBytes;
         do {
-            readBytes = stream.read(buffer, 0, Math.min(buffer.length, length-totalBytes)); 
+            readBytes = stream.read(buffer, 0, Math.min(buffer.length, length-totalBytes));
             totalBytes += Math.max(readBytes,0);
             if (readBytes > 0) {
                 baos.write(buffer, 0, readBytes);
@@ -218,6 +218,11 @@ public final class IOUtils {
      *            resource to close
      */
     public static void closeQuietly( final Closeable closeable ) {
+        // no need to log a NullPointerException here
+        if(closeable == null) {
+            return;
+        }
+
         try {
             closeable.close();
         } catch ( Exception exc ) {
