@@ -66,6 +66,37 @@ public class TestXWPFRun extends TestCase {
         //fail("Position wrong");
     }
 
+    /*
+     * bug 59208
+     * Purpose: test all valid boolean-like values
+     * exercise isCTOnOff(CTOnOff) through all valid permutations
+     */
+    public void testCTOnOff() {
+        CTRPr rpr = ctRun.addNewRPr();
+        CTOnOff bold = rpr.addNewB();        
+        XWPFRun run = new XWPFRun(ctRun, p);
+
+        // True values: "true", "1", "on"
+        bold.setVal(STOnOff.TRUE);
+        assertEquals(true, run.isBold());    
+
+        bold.setVal(STOnOff.X_1);
+        assertEquals(true, run.isBold());
+
+        bold.setVal(STOnOff.ON);
+        assertEquals(true, run.isBold());
+
+        // False values: "false", "0", "off"
+        bold.setVal(STOnOff.FALSE);
+        assertEquals(false, run.isBold());
+
+        bold.setVal(STOnOff.X_0);
+        assertEquals(false, run.isBold());
+
+        bold.setVal(STOnOff.OFF);
+        assertEquals(false, run.isBold());
+    }
+
     public void testSetGetBold() {
         CTRPr rpr = ctRun.addNewRPr();
         rpr.addNewB().setVal(STOnOff.TRUE);
@@ -74,6 +105,8 @@ public class TestXWPFRun extends TestCase {
         assertEquals(true, run.isBold());
 
         run.setBold(false);
+        // Implementation detail: POI natively prefers <w:b w:val="false"/>,
+        // but should correctly read val="0" and val="off"
         assertEquals(STOnOff.FALSE, rpr.getB().getVal());
     }
 
