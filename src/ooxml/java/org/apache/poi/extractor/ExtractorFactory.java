@@ -30,7 +30,6 @@ import java.util.Iterator;
 
 import org.apache.poi.POIOLE2TextExtractor;
 import org.apache.poi.POITextExtractor;
-import org.apache.poi.POIXMLDocument;
 import org.apache.poi.POIXMLTextExtractor;
 import org.apache.poi.hdgf.extractor.VisioTextExtractor;
 import org.apache.poi.hpbf.extractor.PublisherTextExtractor;
@@ -52,6 +51,7 @@ import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
 import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.poifs.filesystem.*;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.xdgf.extractor.XDGFVisioExtractor;
 import org.apache.poi.xslf.extractor.XSLFPowerPointExtractor;
 import org.apache.poi.xslf.usermodel.XSLFRelation;
@@ -67,6 +67,7 @@ import org.apache.xmlbeans.XmlException;
  * Figures out the correct POITextExtractor for your supplied
  *  document, and returns it.
  */
+@SuppressWarnings("WeakerAccess")
 public class ExtractorFactory {
 	public static final String CORE_DOCUMENT_REL = PackageRelationshipTypes.CORE_DOCUMENT;
 	protected static final String VISIO_DOCUMENT_REL = PackageRelationshipTypes.VISIO_CORE_DOCUMENT;
@@ -136,39 +137,33 @@ public class ExtractorFactory {
             return extractor;
         } catch (OfficeXmlFileException e) {
             // ensure file-handle release
-            if(fs != null) {
-                fs.close();
-            }
+			IOUtils.closeQuietly(fs);
+
             return createExtractor(OPCPackage.open(f.toString(), PackageAccess.READ));
         } catch (NotOLE2FileException ne) {
             // ensure file-handle release
-            if(fs != null) {
-                fs.close();
-            }
+			IOUtils.closeQuietly(fs);
+
             throw new IllegalArgumentException("Your File was neither an OLE2 file, nor an OOXML file");
 		} catch (OpenXML4JException e) {
 			// ensure file-handle release
-			if(fs != null) {
-				fs.close();
-			}
+			IOUtils.closeQuietly(fs);
+
 			throw e;
 		} catch (XmlException e) {
 			// ensure file-handle release
-			if(fs != null) {
-				fs.close();
-			}
+			IOUtils.closeQuietly(fs);
+
 			throw e;
 		} catch (IOException e) {
 			// ensure file-handle release
-			if(fs != null) {
-				fs.close();
-			}
+			IOUtils.closeQuietly(fs);
+
 			throw e;
         } catch (RuntimeException e) {
 			// ensure file-handle release
-			if(fs != null) {
-				fs.close();
-			}
+			IOUtils.closeQuietly(fs);
+
 			throw e;
 		}
     }
@@ -280,21 +275,21 @@ public class ExtractorFactory {
 	    }
 	}
 
-	public static POIOLE2TextExtractor createExtractor(POIFSFileSystem fs) throws IOException, InvalidFormatException, OpenXML4JException, XmlException {
+	public static POIOLE2TextExtractor createExtractor(POIFSFileSystem fs) throws IOException, OpenXML4JException, XmlException {
 	   // Only ever an OLE2 one from the root of the FS
 		return (POIOLE2TextExtractor)createExtractor(fs.getRoot());
 	}
-    public static POIOLE2TextExtractor createExtractor(NPOIFSFileSystem fs) throws IOException, InvalidFormatException, OpenXML4JException, XmlException {
+    public static POIOLE2TextExtractor createExtractor(NPOIFSFileSystem fs) throws IOException, OpenXML4JException, XmlException {
         // Only ever an OLE2 one from the root of the FS
          return (POIOLE2TextExtractor)createExtractor(fs.getRoot());
      }
-    public static POIOLE2TextExtractor createExtractor(OPOIFSFileSystem fs) throws IOException, InvalidFormatException, OpenXML4JException, XmlException {
+    public static POIOLE2TextExtractor createExtractor(OPOIFSFileSystem fs) throws IOException, OpenXML4JException, XmlException {
         // Only ever an OLE2 one from the root of the FS
          return (POIOLE2TextExtractor)createExtractor(fs.getRoot());
      }
 
     public static POITextExtractor createExtractor(DirectoryNode poifsDir) throws IOException,
-            InvalidFormatException, OpenXML4JException, XmlException
+            OpenXML4JException, XmlException
     {
         // Look for certain entries in the stream, to figure it
         // out from
@@ -359,7 +354,7 @@ public class ExtractorFactory {
 	 *  empty array. Otherwise, you'll get one open
 	 *  {@link POITextExtractor} for each embedded file.
 	 */
-	public static POITextExtractor[] getEmbededDocsTextExtractors(POIOLE2TextExtractor ext) throws IOException, InvalidFormatException, OpenXML4JException, XmlException {
+	public static POITextExtractor[] getEmbededDocsTextExtractors(POIOLE2TextExtractor ext) throws IOException, OpenXML4JException, XmlException {
 	   // All the embded directories we spotted
 		ArrayList<Entry> dirs = new ArrayList<Entry>();
 		// For anything else not directly held in as a POIFS directory
@@ -392,7 +387,9 @@ public class ExtractorFactory {
 						dirs.add(entry);
 					}
 				}
-			} catch(FileNotFoundException e) {}
+			} catch(FileNotFoundException e) {
+                // ignored here
+            }
 		} else if(ext instanceof PowerPointExtractor) {
 			// Tricky, not stored directly in poifs
 			// TODO
@@ -415,23 +412,23 @@ public class ExtractorFactory {
 		}
 
 		ArrayList<POITextExtractor> e = new ArrayList<POITextExtractor>();
-		for(int i=0; i<dirs.size(); i++) {
-			e.add( createExtractor(
-					(DirectoryNode)dirs.get(i)
-			) );
-		}
-		for(int i=0; i<nonPOIFS.size(); i++) {
-		   try {
-		      e.add( createExtractor(nonPOIFS.get(i)) );
-         } catch(IllegalArgumentException ie) {
-            // Ignore, just means it didn't contain
-            //  a format we support as yet
-		   } catch(XmlException xe) {
-		      throw new IOException(xe.getMessage());
-		   } catch(OpenXML4JException oe) {
-		      throw new IOException(oe.getMessage());
-		   }
-		}
+        for (Entry dir : dirs) {
+            e.add(createExtractor(
+                    (DirectoryNode) dir
+            ));
+        }
+        for (InputStream nonPOIF : nonPOIFS) {
+            try {
+                e.add(createExtractor(nonPOIF));
+            } catch (IllegalArgumentException ie) {
+                // Ignore, just means it didn't contain
+                //  a format we support as yet
+            } catch (XmlException xe) {
+                throw new IOException(xe.getMessage());
+            } catch (OpenXML4JException oe) {
+                throw new IOException(oe.getMessage());
+            }
+        }
 		return e.toArray(new POITextExtractor[e.size()]);
 	}
 
