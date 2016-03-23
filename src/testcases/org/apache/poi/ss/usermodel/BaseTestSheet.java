@@ -27,6 +27,7 @@ import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeTrue;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -1119,6 +1120,10 @@ public abstract class BaseTestSheet {
     public void getCellComments() throws IOException {
         Workbook workbook = _testDataProvider.createWorkbook();
         Sheet sheet = workbook.createSheet("TEST");
+
+        // a sheet with no cell comments should return an empty map (not null or raise NPE).
+        assertEquals(Collections.emptyMap(), sheet.getCellComments());
+
         Drawing dg = sheet.createDrawingPatriarch();
         ClientAnchor anchor = workbook.getCreationHelper().createClientAnchor();
         
