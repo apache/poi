@@ -778,6 +778,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      */
     @Override
     public Map<CellAddress, XSSFComment> getCellComments() {
+        if (sheetComments == null) {
+            return Collections.emptyMap();
+        }
         return sheetComments.getCellComments();
     }
 
