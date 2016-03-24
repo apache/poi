@@ -90,13 +90,23 @@ public class XSSFColor extends ExtendedColor {
     }
     
     /**
-     * A boolean value indicating if the ctColor has a tint or not
+     * A boolean value indicating if the ctColor has a alpha or not
      */
-    public boolean hasTint() {
+    public boolean hasAlpha() {
         if (! ctColor.isSetRgb()) {
             return false;
         }
         return ctColor.getRgb().length == 4;
+    }
+
+    /**
+     * A boolean value indicating if the ctColor has a tint or not
+     */
+    public boolean hasTint() {
+        if (!ctColor.isSetTint()) {
+            return false;
+        }
+        return ctColor.getTint() != 0;
     }
 
     /**
