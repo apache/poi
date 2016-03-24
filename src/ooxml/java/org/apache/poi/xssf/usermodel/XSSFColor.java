@@ -25,7 +25,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
  * Represents a color in SpreadsheetML
  */
 public class XSSFColor extends ExtendedColor {
-    private CTColor ctColor;
+    private final CTColor ctColor;
 
     /**
      * Create an instance of XSSFColor from the supplied XML bean
