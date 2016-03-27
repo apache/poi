@@ -835,6 +835,7 @@ public abstract class BaseTestWorkbook {
         wb.close();
     }
     
+    /* FIXME copied from {@link org.apache.poi.ss.TestWorkbookFactory} */
     protected static void assertCloseDoesNotModifyFile(String filename, Workbook wb) throws IOException {
         final byte[] before = HSSFTestDataSamples.getTestDataFileContent(filename);
         wb.close();
