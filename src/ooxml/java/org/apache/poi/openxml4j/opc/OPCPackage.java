@@ -67,7 +67,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 	/**
 	 * Logger.
 	 */
-    private static POILogger logger = POILogFactory.getLogger(OPCPackage.class);
+    private static final POILogger logger = POILogFactory.getLogger(OPCPackage.class);
 
 	/**
 	 * Default package access.
