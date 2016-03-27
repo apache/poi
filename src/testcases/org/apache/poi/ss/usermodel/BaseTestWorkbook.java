@@ -17,6 +17,7 @@
 
 package org.apache.poi.ss.usermodel;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -30,6 +31,7 @@ import java.io.OutputStream;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 
+import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -831,5 +833,13 @@ public abstract class BaseTestWorkbook {
         final Workbook wb = _testDataProvider.createWorkbook();
         assertEquals(expected, wb.getSpreadsheetVersion());
         wb.close();
+    }
+    
+    protected static void assertCloseDoesNotModifyFile(String filename, Workbook wb) throws IOException {
+        final byte[] before = HSSFTestDataSamples.getTestDataFileContent(filename);
+        wb.close();
+        final byte[] after = HSSFTestDataSamples.getTestDataFileContent(filename);
+        assertArrayEquals(filename + " sample file was modified as a result of closing the workbook",
+                before, after);
     }
 }

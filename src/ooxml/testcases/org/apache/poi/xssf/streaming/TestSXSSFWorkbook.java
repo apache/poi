@@ -26,10 +26,14 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import org.apache.poi.POIDataSamples;
 import org.apache.poi.POITestCase;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.BaseTestWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -443,5 +447,31 @@ public final class TestSXSSFWorkbook extends BaseTestWorkbook {
     @Override
     public void getSpreadsheetVersion() throws IOException {
         verifySpreadsheetVersion(SpreadsheetVersion.EXCEL2007);
+    }
+    
+    @Test
+    public void closeDoesNotModifyWorkbook() throws IOException, InvalidFormatException {
+        final String filename = "SampleSS.xlsx";
+        final File file = POIDataSamples.getSpreadSheetInstance().getFile(filename);
+        SXSSFWorkbook wb;
+        
+        // Some tests commented out because close() modifies the file
+        // See bug 58779
+        
+        // String
+        //wb = new SXSSFWorkbook(new XSSFWorkbook(file.getPath()));
+        //assertCloseDoesNotModifyFile(filename, wb);
+        
+        // File
+        //wb = new SXSSFWorkbook(new XSSFWorkbook(file));
+        //assertCloseDoesNotModifyFile(filename, wb);
+        
+        // InputStream
+        wb = new SXSSFWorkbook(new XSSFWorkbook(new FileInputStream(file)));
+        assertCloseDoesNotModifyFile(filename, wb);
+        
+        // OPCPackage
+        //wb = new SXSSFWorkbook(new XSSFWorkbook(OPCPackage.open(file)));
+        //assertCloseDoesNotModifyFile(filename, wb);
     }
 }
