@@ -28,6 +28,7 @@ import static org.junit.Assert.fail;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -1261,5 +1262,24 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
     @Override
     public void getSpreadsheetVersion() throws IOException {
         verifySpreadsheetVersion(SpreadsheetVersion.EXCEL97);
+    }
+    
+    @Test
+    public void closeDoesNotModifyWorkbook() throws IOException {
+        final String filename = "SampleSS.xls";
+        final File file = POIDataSamples.getSpreadSheetInstance().getFile(filename);
+        Workbook wb;
+        
+        // File via POIFileStream (java.io)
+        wb = new HSSFWorkbook(new POIFSFileSystem(file));
+        assertCloseDoesNotModifyFile(filename, wb);
+        
+        // File via NPOIFileStream (java.nio)
+        wb = new HSSFWorkbook(new NPOIFSFileSystem(file));
+        assertCloseDoesNotModifyFile(filename, wb);
+        
+        // InputStream
+        wb = new HSSFWorkbook(new FileInputStream(file));
+        assertCloseDoesNotModifyFile(filename, wb);
     }
 }

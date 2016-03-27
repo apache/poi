@@ -29,6 +29,7 @@ import static org.junit.Assert.fail;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -37,6 +38,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.zip.CRC32;
 
+import org.apache.poi.POIDataSamples;
 import org.apache.poi.POIXMLProperties;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -1084,5 +1086,31 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
     @Override
     public void getSpreadsheetVersion() throws IOException {
         verifySpreadsheetVersion(SpreadsheetVersion.EXCEL2007);
+    }
+    
+    @Test
+    public void closeDoesNotModifyWorkbook() throws IOException, InvalidFormatException {
+        final String filename = "SampleSS.xlsx";
+        final File file = POIDataSamples.getSpreadSheetInstance().getFile(filename);
+        Workbook wb;
+        
+        // Some tests commented out because close() modifies the file
+        // See bug 58779
+        
+        // String
+        //wb = new XSSFWorkbook(file.getPath());
+        //assertCloseDoesNotModifyFile(filename, wb);
+        
+        // File
+        //wb = new XSSFWorkbook(file);
+        //assertCloseDoesNotModifyFile(filename, wb);
+        
+        // InputStream
+        wb = new XSSFWorkbook(new FileInputStream(file));
+        assertCloseDoesNotModifyFile(filename, wb);
+        
+        // OPCPackage
+        //wb = new XSSFWorkbook(OPCPackage.open(file));
+        //assertCloseDoesNotModifyFile(filename, wb);
     }
 }
