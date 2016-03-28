@@ -221,6 +221,7 @@ public final class ZipHelper {
      *            The stream to open.
      * @return The zip stream freshly open.
      */
+    @SuppressWarnings("resource")
     public static ThresholdInputStream openZipStream(InputStream stream) throws IOException {
         // Peek at the first few bytes to sanity check
         InputStream checkedStream = prepareToCheckHeader(stream);
@@ -228,8 +229,7 @@ public final class ZipHelper {
         
         // Open as a proper zip stream
         InputStream zis = new ZipInputStream(checkedStream);
-        ThresholdInputStream tis = ZipSecureFile.addThreshold(zis);
-        return tis;
+        return ZipSecureFile.addThreshold(zis);
     }
 
     /**
@@ -262,8 +262,6 @@ public final class ZipHelper {
      * @return The zip archive freshly open.
      */
     public static ZipFile openZipFile(String path) throws IOException {
-        File f = new File(path);
-        
-        return openZipFile(f);
+        return openZipFile(new File(path));
     }
 }

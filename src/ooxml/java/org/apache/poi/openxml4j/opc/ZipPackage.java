@@ -18,6 +18,7 @@
 package org.apache.poi.openxml4j.opc;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -88,6 +89,7 @@ public final class ZipPackage extends Package {
      */
     ZipPackage(InputStream in, PackageAccess access) throws IOException {
         super(access);
+        @SuppressWarnings("resource")
         ThresholdInputStream zis = ZipHelper.openZipStream(in);
         this.zipArchive = new ZipInputStreamZipEntrySource(zis);
     }
@@ -101,18 +103,7 @@ public final class ZipPackage extends Package {
      *            The package access mode.
      */
     ZipPackage(String path, PackageAccess access) {
-        super(access);
-
-        final ZipFile zipFile;
-
-        try {
-            zipFile = ZipHelper.openZipFile(path);
-        } catch (IOException e) {
-            throw new InvalidOperationException(
-                    "Can't open the specified file: '" + path + "'", e);
-        }
-
-        this.zipArchive = new ZipFileZipEntrySource(zipFile);
+        this(new File(path), access);
     }
 
     /**
@@ -123,19 +114,33 @@ public final class ZipPackage extends Package {
      * @param access
      *            The package access mode.
      */
+    @SuppressWarnings("resource")
     ZipPackage(File file, PackageAccess access) {
         super(access);
 
-        final ZipFile zipFile;
-
+        ZipEntrySource ze;
         try {
-            zipFile = ZipHelper.openZipFile(file);
+            final ZipFile zipFile = ZipHelper.openZipFile(file);
+            ze = new ZipFileZipEntrySource(zipFile);
         } catch (IOException e) {
-            throw new InvalidOperationException(
-                    "Can't open the specified file: '" + file + "'", e);
+            // probably not happening with write access - not sure how to handle the default read-write access ...
+            if (access == PackageAccess.WRITE) {
+                throw new InvalidOperationException("Can't open the specified file: '" + file + "'", e);
+            }
+            logger.log(POILogger.ERROR, "Error in zip file "+file+" - falling back to stream processing (i.e. ignoring zip central directory)");
+            // some zips can't be opened via ZipFile in JDK6, as the central directory
+            // contains either non-latin entries or the compression type can't be handled
+            // the workaround is to iterate over the stream and not the directory
+            FileInputStream fis;
+            try {
+                fis = new FileInputStream(file);
+                ThresholdInputStream zis = ZipHelper.openZipStream(fis);
+                ze = new ZipInputStreamZipEntrySource(zis);
+            } catch (IOException e2) {
+                throw new InvalidOperationException("Can't open the specified file: '" + file + "'", e);
+            }
         }
-
-        this.zipArchive = new ZipFileZipEntrySource(zipFile);
+        this.zipArchive = ze;
     }
 
     /**
