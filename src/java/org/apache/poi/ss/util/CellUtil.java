@@ -332,11 +332,11 @@ public final class CellUtil {
 
 	/**
 	 * Utility method that returns the named short value form the given map.
-	 * @return zero if the property does not exist, or is not a {@link Short}.
 	 *
 	 * @param properties map of named properties (String -> Object)
 	 * @param name property name
-	 * @return property value, or zero
+	 * @return zero if the property does not exist, or is not a {@link Short}
+	 * 		otherwise the property value
 	 */
 	private static short getShort(Map<String, Object> properties, String name) {
 		Object value = properties.get(name);
@@ -348,14 +348,15 @@ public final class CellUtil {
 
 	/**
 	 * Utility method that returns the named boolean value form the given map.
-	 * @return false if the property does not exist, or is not a {@link Boolean}.
 	 *
 	 * @param properties map of properties (String -> Object)
 	 * @param name property name
-	 * @return property value, or false
+	 * @return false if the property does not exist, or is not a {@link Boolean},
+	 * 		true otherwise
 	 */
 	private static boolean getBoolean(Map<String, Object> properties, String name) {
 		Object value = properties.get(name);
+		//noinspection SimplifiableIfStatement
 		if (value instanceof Boolean) {
 			return ((Boolean) value).booleanValue();
 		}
@@ -397,10 +398,9 @@ public final class CellUtil {
 		boolean foundUnicode = false;
 		String lowerCaseStr = s.toLowerCase(Locale.ROOT);
 
-		for (int i = 0; i < unicodeMappings.length; i++) {
-			UnicodeMapping entry = unicodeMappings[i];
+		for (UnicodeMapping entry : unicodeMappings) {
 			String key = entry.entityName;
-			if (lowerCaseStr.indexOf(key) != -1) {
+			if (lowerCaseStr.contains(key)) {
 				s = s.replaceAll(key, entry.resolvedValue);
 				foundUnicode = true;
 			}

@@ -308,8 +308,8 @@ public final class TestHSSFCell extends BaseTestCell {
 			// expected during successful test
 		}
 
-		HSSFCell cellA = wbA.createSheet().createRow(0).createCell(0);
-		HSSFCell cellB = wbB.createSheet().createRow(0).createCell(0);
+		Cell cellA = wbA.createSheet().createRow(0).createCell(0);
+		Cell cellB = wbB.createSheet().createRow(0).createCell(0);
 
 		cellA.setCellStyle(styA);
 		cellB.setCellStyle(styB);
@@ -378,7 +378,7 @@ public final class TestHSSFCell extends BaseTestCell {
 		} else {
 			assertFalse(StringRecord.class == recs[index].getClass());
 		}
-		Record dbcr = recs[index++];
+		Record dbcr = recs[index];
 		assertEquals(DBCellRecord.class, dbcr.getClass());
 	}
 
@@ -417,12 +417,14 @@ public final class TestHSSFCell extends BaseTestCell {
             cell.getCachedFormulaResultType();
             fail("Should catch exception");
         } catch (IllegalStateException e) {
+			// expected here
         }
         
         try {
             assertNotNull(new HSSFCell(wb, sheet, 0, (short)0, Cell.CELL_TYPE_ERROR+1 ));
             fail("Should catch exception");
         } catch (RuntimeException e) {
+			// expected here
         }
         
         cell.removeCellComment();
