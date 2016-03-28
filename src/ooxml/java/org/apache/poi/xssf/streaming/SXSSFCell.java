@@ -21,6 +21,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Map;
 
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.FormulaParseException;
@@ -206,6 +207,11 @@ public class SXSSFCell implements Cell {
      */
     @Override
     public void setCellValue(Date value) {
+        if(value == null) {
+            setCellType(Cell.CELL_TYPE_BLANK);
+            return;
+        }
+
         boolean date1904 = getSheet().getWorkbook().isDate1904();
         setCellValue(DateUtil.getExcelDate(value, date1904));
     }
@@ -228,6 +234,11 @@ public class SXSSFCell implements Cell {
      */
     @Override
     public void setCellValue(Calendar value) {
+        if(value == null) {
+            setCellType(Cell.CELL_TYPE_BLANK);
+            return;
+        }
+
         boolean date1904 = getSheet().getWorkbook().isDate1904();
         setCellValue( DateUtil.getExcelDate(value, date1904 ));
     }
@@ -549,7 +560,7 @@ public class SXSSFCell implements Cell {
      * the Workbook.</p>
      * 
      * <p>To change the style of a cell without affecting other cells that use the same style,
-     * use {@link org.apache.poi.ss.util.CellUtil#setCellStyleProperties(Cell, Map)}</p>
+     * use {@link org.apache.poi.ss.util.CellUtil#setCellStyleProperties(Cell, Map<String,Object>)}</p>
      * 
      * @param style  reference contained in the workbook.
      * If the value is null then the style information is removed causing the cell to used the default workbook style.

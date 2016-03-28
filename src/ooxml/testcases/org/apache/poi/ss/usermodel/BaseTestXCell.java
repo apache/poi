@@ -20,6 +20,8 @@ package org.apache.poi.ss.usermodel;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
+import java.util.Calendar;
+import java.util.Date;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.ss.ITestDataProvider;
@@ -54,5 +56,17 @@ public abstract class BaseTestXCell extends BaseTestCell {
         // invalid characters are replaced with question marks
         assertEquals("???<>\t\n\u00a0 &\"POI\'\u2122", wb2.getSheetAt(0).getRow(0).getCell(0).getStringCellValue());
         wb2.close();
+    }
+
+    @Test
+    public void testSetNullValues() {
+        Workbook wb = _testDataProvider.createWorkbook();
+        Cell cell = wb.createSheet("test").createRow(0).createCell(0);
+
+        cell.setCellValue((Calendar)null);
+        cell.setCellValue((Date)null);
+        cell.setCellValue((String)null);
+        cell.setCellValue((RichTextString) null);
+        cell.setCellValue((String)null);
     }
 }
