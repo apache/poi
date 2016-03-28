@@ -44,7 +44,6 @@ import org.apache.poi.poifs.filesystem.DocumentNode;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.NotOLE2FileException;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.util.IOUtils;
 
 /**
  * A text extractor for old Excel files, which are too old for
@@ -58,44 +57,40 @@ import org.apache.poi.util.IOUtils;
  */
 public class OldExcelExtractor implements Closeable {
     private RecordInputStream ris;
-    private Closeable input;
     private int biffVersion;
     private int fileType;
 
     public OldExcelExtractor(InputStream input) throws IOException {
-        BufferedInputStream bstream = new BufferedInputStream(input, 8);
-        if (NPOIFSFileSystem.hasPOIFSHeader(bstream)) {
-            open(new NPOIFSFileSystem(bstream));
-        } else {
-            open(bstream);
-        }
+        open(input);
     }
 
     public OldExcelExtractor(File f) throws IOException {
+        NPOIFSFileSystem poifs = null;
         try {
-            open(new NPOIFSFileSystem(f));
-        } catch (OldExcelFormatException oe) {
-            FileInputStream biffStream = new FileInputStream(f);
-            try {
-                open(biffStream);
-            } catch (RuntimeException e2) {
-                // ensure that the stream is properly closed here if an Exception
-                // is thrown while opening
-                biffStream.close();
-
-                throw e2;
+            poifs = new NPOIFSFileSystem(f);
+            open(poifs);
+            return;
+        } catch (OldExcelFormatException e) {
+            // will be handled by workaround below
+            if (poifs != null) {
+                poifs.close();
             }
         } catch (NotOLE2FileException e) {
-            FileInputStream biffStream = new FileInputStream(f);
-            try {
-                open(biffStream);
-            } catch (RuntimeException e2) {
-                // ensure that the stream is properly closed here if an Exception
-                // is thrown while opening
-                biffStream.close();
-
-                throw e2;
+            // will be handled by workaround below
+            if (poifs != null) {
+                poifs.close();
             }
+        }
+        
+        @SuppressWarnings("resource")
+        FileInputStream biffStream = new FileInputStream(f);
+        try {
+            open(biffStream);
+        } catch (IOException e)  {
+            // ensure that the stream is properly closed here if an Exception
+            // is thrown while opening
+            biffStream.close();
+            throw e;
         }
     }
 
@@ -107,14 +102,25 @@ public class OldExcelExtractor implements Closeable {
         open(directory);
     }
 
-    private void open(InputStream biffStream) {
-        input = biffStream;
-        ris = new RecordInputStream(biffStream);
-        prepare();
+    private void open(InputStream biffStream) throws IOException {
+        BufferedInputStream bis = (biffStream instanceof BufferedInputStream) 
+            ? (BufferedInputStream)biffStream
+            : new BufferedInputStream(biffStream, 8);
+
+        if (NPOIFSFileSystem.hasPOIFSHeader(bis)) {
+            NPOIFSFileSystem poifs = new NPOIFSFileSystem(bis);
+            try {
+                open(poifs);
+            } finally {
+                poifs.close();
+            }
+        } else {
+            ris = new RecordInputStream(bis);
+            prepare();
+        }
     }
 
     private void open(NPOIFSFileSystem fs) throws IOException {
-        input = fs;
         open(fs.getRoot());
     }
 
@@ -273,9 +279,7 @@ public class OldExcelExtractor implements Closeable {
 
     @Override
     public void close() {
-        if (input != null) {
-            IOUtils.closeQuietly(input);
-        }
+        // not necessary any more ...
     }
     
     protected void handleNumericCell(StringBuffer text, double value) {
