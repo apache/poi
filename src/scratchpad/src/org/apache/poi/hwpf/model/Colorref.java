@@ -89,7 +89,7 @@ public class Colorref implements Cloneable
     @Override
     public Colorref clone() throws CloneNotSupportedException
     {
-        return new Colorref( this.value );
+        return (Colorref)super.clone();
     }
 
     @Override
