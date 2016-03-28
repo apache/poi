@@ -24,6 +24,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
@@ -35,6 +36,8 @@ import org.apache.poi.POIXMLException;
 import org.apache.poi.extractor.ExtractorFactory;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.openxml4j.OpenXML4JTestDataSamples;
+import org.apache.poi.sl.usermodel.SlideShow;
+import org.apache.poi.sl.usermodel.SlideShowFactory;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.XSSFTestDataSamples;
@@ -163,5 +166,12 @@ public class TestZipPackage {
         } finally {
             ExtractorFactory.setThreadPrefersEventExtractors(before);
         }
+    }
+    
+    @Test
+    public void unparseableCentralDirectory() throws IOException {
+        File f = OpenXML4JTestDataSamples.getSampleFile("at.pzp.www_uploads_media_PP_Scheinecker-jdk6error.pptx");
+        SlideShow<?,?> ppt = SlideShowFactory.create(f);
+        ppt.close();
     }
 }

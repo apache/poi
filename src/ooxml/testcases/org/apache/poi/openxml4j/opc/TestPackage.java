@@ -41,8 +41,6 @@ import java.util.List;
 import java.util.TreeMap;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipError;
-import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
@@ -50,6 +48,7 @@ import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.POITestCase;
 import org.apache.poi.POIXMLException;
+import org.apache.poi.UnsupportedFileFormatException;
 import org.apache.poi.openxml4j.OpenXML4JTestDataSamples;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
@@ -744,7 +743,7 @@ public final class TestPackage {
         try {
             OPCPackage.open(files.getFile("SampleSS.txt"));
             fail("Shouldn't be able to open Plain Text");
-        } catch (InvalidOperationException e) {
+        } catch (UnsupportedFileFormatException e) {
             // Unhelpful low-level error, sorry
         }
     }

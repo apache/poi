@@ -32,6 +32,7 @@ import org.apache.poi.POIOLE2TextExtractor;
 import org.apache.poi.POITextExtractor;
 import org.apache.poi.POIXMLException;
 import org.apache.poi.POIXMLTextExtractor;
+import org.apache.poi.UnsupportedFileFormatException;
 import org.apache.poi.hdgf.extractor.VisioTextExtractor;
 import org.apache.poi.hpbf.extractor.PublisherTextExtractor;
 import org.apache.poi.hslf.extractor.PowerPointExtractor;
@@ -643,10 +644,7 @@ public class TestExtractorFactory {
     public void testPackage() throws Exception {
         // Excel
         POIXMLTextExtractor extractor = ExtractorFactory.createExtractor(OPCPackage.open(xlsx.toString(), PackageAccess.READ));
-        assertTrue(
-                extractor
-                instanceof XSSFExcelExtractor
-        );
+        assertTrue(extractor instanceof XSSFExcelExtractor);
         extractor.close();
         extractor = ExtractorFactory.createExtractor(OPCPackage.open(xlsx.toString()));
         assertTrue(extractor.getText().length() > 200);
@@ -654,48 +652,33 @@ public class TestExtractorFactory {
 
         // Word
         extractor = ExtractorFactory.createExtractor(OPCPackage.open(docx.toString()));
-        assertTrue(
-                extractor
-                instanceof XWPFWordExtractor
-        );
+        assertTrue(extractor instanceof XWPFWordExtractor);
         extractor.close();
 
         extractor = ExtractorFactory.createExtractor(OPCPackage.open(docx.toString()));
-        assertTrue(
-                extractor.getText().length() > 120
-        );
+        assertTrue(extractor.getText().length() > 120);
         extractor.close();
 
         // PowerPoint
         extractor = ExtractorFactory.createExtractor(OPCPackage.open(pptx.toString()));
-        assertTrue(
-                extractor
-                instanceof XSLFPowerPointExtractor
-        );
+        assertTrue(extractor instanceof XSLFPowerPointExtractor);
         extractor.close();
 
         extractor = ExtractorFactory.createExtractor(OPCPackage.open(pptx.toString()));
-        assertTrue(
-                extractor.getText().length() > 120
-        );
+        assertTrue(extractor.getText().length() > 120);
         extractor.close();
         
         // Visio
         extractor = ExtractorFactory.createExtractor(OPCPackage.open(vsdx.toString()));
-        assertTrue(
-                extractor
-                instanceof XDGFVisioExtractor
-        );
-        assertTrue(
-                extractor.getText().length() > 20
-        );
+        assertTrue(extractor instanceof XDGFVisioExtractor);
+        assertTrue(extractor.getText().length() > 20);
         extractor.close();
 
         // Text
         try {
             ExtractorFactory.createExtractor(OPCPackage.open(txt.toString()));
             fail();
-        } catch(InvalidOperationException e) {
+        } catch(UnsupportedFileFormatException e) {
             // Good
         }
     }
