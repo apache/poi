@@ -18,7 +18,10 @@ package org.apache.poi.xslf;
 
 import static junit.framework.TestCase.assertEquals;
 import static org.apache.poi.POITestCase.assertContains;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -36,6 +39,7 @@ import javax.imageio.ImageIO;
 
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.POIXMLDocumentPart.RelationPart;
+import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.apache.poi.xslf.usermodel.DrawingParagraph;
 import org.apache.poi.xslf.usermodel.DrawingTextBody;
@@ -427,5 +431,13 @@ public class TestXSLFBugs {
         assertTrue(ppt.getSlides().size() > 1);
         ppt.removeSlide(1);
         assertNotNull(ppt.createSlide());
+    }
+
+    @Test
+    public void blibFillAlternateContent() throws IOException  {
+        XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("2411-Performance_Up.pptx");
+        XSLFPictureShape ps = (XSLFPictureShape)ppt.getSlides().get(4).getShapes().get(0);
+        assertNotNull(ps.getPictureData());
+        ppt.close();
     }
 }

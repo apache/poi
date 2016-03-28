@@ -99,7 +99,7 @@ public class TestXSLFTheme {
         assertTrue(sameColor(new Color(148, 198, 0), run2.getFontColor()));
         assertNull(sh2.getFillColor());  // no fill
 
-        assertTrue(slide.getSlideLayout().getFollowMasterGraphics());
+        assertFalse(slide.getSlideLayout().getFollowMasterGraphics());
     }
 
     void slide5(XSLFSlide slide){
@@ -113,7 +113,7 @@ public class TestXSLFTheme {
         // font size is 40pt and scale factor is 90%
         assertEquals(36.0, run2.getFontSize(), 0);
 
-        assertTrue(slide.getSlideLayout().getFollowMasterGraphics());
+        assertFalse(slide.getSlideLayout().getFollowMasterGraphics());
     }
 
     void slide6(XSLFSlide slide){

@@ -113,7 +113,7 @@ implements MasterSheet<XSLFShape,XSLFTextParagraph> {
 
     @Override
     public boolean getFollowMasterGraphics() {
-        return !_layout.isSetShowMasterSp() || _layout.getShowMasterSp();
+        return _layout.isSetShowMasterSp() && _layout.getShowMasterSp();
     }
 
     /**
