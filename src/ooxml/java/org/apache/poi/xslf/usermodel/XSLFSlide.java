@@ -215,12 +215,9 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
         }
     }
 
-    /**
-     *
-     * @return whether shapes on the master slide should be shown  or not.
-     */
+    @Override
     public boolean getFollowMasterGraphics(){
-        return !_slide.isSetShowMasterSp() || _slide.getShowMasterSp();
+        return _slide.isSetShowMasterSp() && _slide.getShowMasterSp();
     }
 
     /**

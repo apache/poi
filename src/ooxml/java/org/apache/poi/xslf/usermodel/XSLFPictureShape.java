@@ -31,6 +31,7 @@ import org.apache.poi.sl.usermodel.PictureShape;
 import org.apache.poi.sl.usermodel.Placeholder;
 import org.apache.poi.util.Beta;
 import org.apache.xmlbeans.XmlCursor;
+import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTBlip;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTBlipFillProperties;
@@ -110,7 +111,7 @@ public class XSLFPictureShape extends XSLFSimpleShape
             if (rel != null) {
                 try {
                     PackagePart imgPart = p.getRelatedPart(rel);
-                    _data = new XSLFPictureData(imgPart, rel);
+                    _data = new XSLFPictureData(imgPart);
                 }
                 catch (Exception e) {
                     throw new POIXMLException(e);
@@ -151,9 +152,29 @@ public class XSLFPictureShape extends XSLFSimpleShape
         return null;
     }
 
-    protected CTBlip getBlip(){
+    protected CTBlipFillProperties getBlipFill() {
         CTPicture ct = (CTPicture)getXmlObject();
-        return ct.getBlipFill().getBlip();
+        CTBlipFillProperties bfp = ct.getBlipFill();
+        if (bfp != null) {
+            return bfp;
+        }
+                    
+        String xquery =
+                "declare namespace p='http://schemas.openxmlformats.org/presentationml/2006/main'; "
+              + "declare namespace mc='http://schemas.openxmlformats.org/markup-compatibility/2006' "
+              + ".//mc:Fallback/p:blipFill"
+              ;
+        XmlObject xo = selectProperty(XmlObject.class, xquery);
+        try {
+            xo = CTPicture.Factory.parse(xo.getDomNode());
+        } catch (XmlException xe) {
+            return null;
+        }
+        return ((CTPicture)xo).getBlipFill();
+    }
+    
+    protected CTBlip getBlip(){
+        return getBlipFill().getBlip();
     }
     
     protected String getBlipLink(){
@@ -170,8 +191,7 @@ public class XSLFPictureShape extends XSLFSimpleShape
 
     @Override
     public Insets getClipping(){
-        CTPicture ct = (CTPicture)getXmlObject();
-        CTRelativeRect r = ct.getBlipFill().getSrcRect();
+        CTRelativeRect r = getBlipFill().getSrcRect();
         return (r == null) ? null : new Insets(r.getT(), r.getL(), r.getB(), r.getR());
     }
 
@@ -184,7 +204,7 @@ public class XSLFPictureShape extends XSLFSimpleShape
         String relId = getSheet().importBlip(blipId, p.getSheet().getPackagePart());
 
         CTPicture ct = (CTPicture)getXmlObject();
-        CTBlip blip = ct.getBlipFill().getBlip();
+        CTBlip blip = getBlipFill().getBlip();
         blip.setEmbed(relId);
 
         CTApplicationNonVisualDrawingProps nvPr = ct.getNvPicPr().getNvPr();
