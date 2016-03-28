@@ -120,13 +120,13 @@ public final class XSSFCell implements Cell {
     }
     
     /**
-     * Copy cell value, formula, and style, from srcCell per cell copy policy
+     * Copy cell value, formula and style, from srcCell per cell copy policy
      * If srcCell is null, clears the cell value and cell style per cell copy policy
      * 
      * This does not shift references in formulas. Use {@link org.apache.poi.xssf.usermodel.helpers.XSSFRowShifter} to shift references in formulas.
      * 
-     * @param srcCell
-     * @param policy
+     * @param srcCell The cell to take value, formula and style from
+     * @param policy The policy for copying the information, see {@link CellCopyPolicy}
      * @throws IllegalArgumentException if copy cell style and srcCell is from a different workbook
      */
     @Beta
@@ -619,7 +619,7 @@ public final class XSSFCell implements Cell {
      * the XSSFWorkbook.</p>
      *
      * <p>To change the style of a cell without affecting other cells that use the same style,
-     * use {@link org.apache.poi.ss.util.CellUtil#setCellStyleProperties(Cell, Map)}</p>
+     * use {@link org.apache.poi.ss.util.CellUtil#setCellStyleProperties(Cell, java.util.Map<String, Object>)}</p>
      * 
      * @param style  reference contained in the workbook.
      * If the value is null then the style information is removed causing the cell to used the default workbook style.
@@ -718,8 +718,7 @@ public final class XSSFCell implements Cell {
      */
     @Override
     public Date getDateCellValue() {
-        int cellType = getCellType();
-        if (cellType == CELL_TYPE_BLANK) {
+        if (getCellType() == CELL_TYPE_BLANK) {
             return null;
         }
 
@@ -738,6 +737,11 @@ public final class XSSFCell implements Cell {
      */
     @Override
     public void setCellValue(Date value) {
+        if(value == null) {
+            setCellType(Cell.CELL_TYPE_BLANK);
+            return;
+        }
+
         boolean date1904 = getSheet().getWorkbook().isDate1904();
         setCellValue(DateUtil.getExcelDate(value, date1904));
     }
@@ -760,6 +764,11 @@ public final class XSSFCell implements Cell {
      */
     @Override
     public void setCellValue(Calendar value) {
+        if(value == null) {
+            setCellType(Cell.CELL_TYPE_BLANK);
+            return;
+        }
+
         boolean date1904 = getSheet().getWorkbook().isDate1904();
         setCellValue( DateUtil.getExcelDate(value, date1904 ));
     }
