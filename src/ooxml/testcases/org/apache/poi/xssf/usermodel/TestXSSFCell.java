@@ -409,7 +409,7 @@ public final class TestXSSFCell extends BaseTestXCell {
         ((XSSFRow)row).onDocumentWrite();
         
         for(Cell cell : row) {
-            cell.toString();
+            assertNotNull(cell.toString());
         }
     }    
 
@@ -453,8 +453,8 @@ public final class TestXSSFCell extends BaseTestXCell {
     }
 
     @Test
-    public void testEncodingbeloAscii() throws IOException {
-        StringBuffer sb = new StringBuffer();
+    public void testEncodingBelowAscii() throws IOException {
+        StringBuilder sb = new StringBuilder();
         // test all possible characters
         for(int i = 0; i < Character.MAX_VALUE; i++) {
         	sb.append((char)i);
@@ -466,10 +466,10 @@ public final class TestXSSFCell extends BaseTestXCell {
         int pos = 0;
         while(pos < strAll.length()) {
         	String str = strAll.substring(pos, Math.min(strAll.length(), pos+SpreadsheetVersion.EXCEL2007.getMaxTextLength()));
-        	
+
             Workbook wb = HSSFITestDataProvider.instance.createWorkbook();
             Cell cell = wb.createSheet().createRow(0).createCell(0);
-            
+
             Workbook xwb = XSSFITestDataProvider.instance.createWorkbook();
             Cell xCell = xwb.createSheet().createRow(0).createCell(0);
 
@@ -482,19 +482,19 @@ public final class TestXSSFCell extends BaseTestXCell {
         	assertEquals(str, xCell.getStringCellValue());
         	sCell.setCellValue(str);
         	assertEquals(str, sCell.getStringCellValue());
-        	
+
         	Workbook wbBack = HSSFITestDataProvider.instance.writeOutAndReadBack(wb);
         	Workbook xwbBack = XSSFITestDataProvider.instance.writeOutAndReadBack(xwb);
         	Workbook swbBack = SXSSFITestDataProvider.instance.writeOutAndReadBack(swb);
         	cell = wbBack.getSheetAt(0).createRow(0).createCell(0);
         	xCell = xwbBack.getSheetAt(0).createRow(0).createCell(0);
         	sCell = swbBack.getSheetAt(0).createRow(0).createCell(0);
-        	
+
         	assertEquals(cell.getStringCellValue(), xCell.getStringCellValue());
         	assertEquals(cell.getStringCellValue(), sCell.getStringCellValue());
-        	
+
         	pos += SpreadsheetVersion.EXCEL97.getMaxTextLength();
-        	
+
         	swbBack.close();
         	xwbBack.close();
         	wbBack.close();
@@ -647,7 +647,7 @@ public final class TestXSSFCell extends BaseTestXCell {
         wb.close();
     }
     
-    private final void setUp_testCopyCellFrom_CellCopyPolicy() {
+    private void setUp_testCopyCellFrom_CellCopyPolicy() {
         @SuppressWarnings("resource")
         final XSSFWorkbook wb = new XSSFWorkbook();
         final XSSFRow row = wb.createSheet("Sheet1").createRow(0);
