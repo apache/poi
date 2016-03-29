@@ -57,6 +57,19 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 /**
  * Streaming version of XSSFWorkbook implementing the "BigGridDemo" strategy.
  *
+ * This allows to write very large files without running out of memory as only
+ * a configurable portion of the rows are kept in memory at any one time.
+ *
+ * You can provide a template workbook which is used as basis for the written
+ * data.
+ *
+ * See https://poi.apache.org/spreadsheet/how-to.html#sxssf for details.
+ *
+ * Please note that there are still things that still may consume a large
+ * amount of memory based on which features you are using, e.g. merged regions,
+ * comments, ... are still only stored in memory and thus may require a lot of
+ * memory if used extensively.
+ *
  * SXSSFWorkbook defaults to using inline strings instead of a shared strings
  * table. This is very efficient, since no document content needs to be kept in
  * memory, but is also known to produce documents that are incompatible with
@@ -96,7 +109,7 @@ public class SXSSFWorkbook implements Workbook {
     private final SharedStringsTable _sharedStringSource;
 
     /**
-     * Construct a new workbook
+     * Construct a new workbook with default row window size
      */
     public SXSSFWorkbook(){
     	this(null /*workbook*/);
@@ -160,7 +173,7 @@ public class SXSSFWorkbook implements Workbook {
      * without having a chance to specify any cells.
      * </p>
      *
-     * @param rowAccessWindowSize
+     * @param rowAccessWindowSize the number of rows that are kept in memory until flushed out, see above.
      */
     public SXSSFWorkbook(XSSFWorkbook workbook, int rowAccessWindowSize){
     	this(workbook,rowAccessWindowSize, false);
@@ -184,7 +197,7 @@ public class SXSSFWorkbook implements Workbook {
      * without having a chance to specify any cells.
      * </p>
      *
-     * @param rowAccessWindowSize
+     * @param rowAccessWindowSize the number of rows that are kept in memory until flushed out, see above.
      * @param compressTmpFiles whether to use gzip compression for temporary files
      */
     public SXSSFWorkbook(XSSFWorkbook workbook, int rowAccessWindowSize, boolean compressTmpFiles){
@@ -210,7 +223,7 @@ public class SXSSFWorkbook implements Workbook {
      * </p>
      *
      * @param workbook  the template workbook
-     * @param rowAccessWindowSize
+     * @param rowAccessWindowSize the number of rows that are kept in memory until flushed out, see above.
      * @param compressTmpFiles whether to use gzip compression for temporary files
      * @param useSharedStringsTable whether to use a shared strings table
      */
@@ -251,18 +264,22 @@ public class SXSSFWorkbook implements Workbook {
      * without having a chance to specify any cells.
      * </p>
      *
-     * @param rowAccessWindowSize
+     * @param rowAccessWindowSize the number of rows that are kept in memory until flushed out, see above.
      */
     public SXSSFWorkbook(int rowAccessWindowSize){
     	this(null /*workbook*/, rowAccessWindowSize);
     }
-    
-    public int getRandomAccessWindowSize()
-    {
+
+    /**
+     * See the constructors for a more detailed description of the sliding window of rows.
+     *
+     * @return The number of rows that are kept in memory at once before flushing them out.
+     */
+    public int getRandomAccessWindowSize() {
     	return _randomAccessWindowSize;
     }
-    private void setRandomAccessWindowSize(int rowAccessWindowSize)
-    {
+
+    private void setRandomAccessWindowSize(int rowAccessWindowSize) {
         if(rowAccessWindowSize == 0 || rowAccessWindowSize < -1) {
             throw new IllegalArgumentException("rowAccessWindowSize must be greater than 0 or -1");
         }
@@ -296,14 +313,12 @@ public class SXSSFWorkbook implements Workbook {
 
     XSSFSheet getXSSFSheet(SXSSFSheet sheet)
     {
-        XSSFSheet result=_sxFromXHash.get(sheet);
-        return result;
+        return _sxFromXHash.get(sheet);
     }
 
     SXSSFSheet getSXSSFSheet(XSSFSheet sheet)
     {
-        SXSSFSheet result=_xFromSxHash.get(sheet);
-        return result;
+        return _xFromSxHash.get(sheet);
     }
 
     void registerSheetMapping(SXSSFSheet sxSheet,XSSFSheet xSheet)
@@ -311,6 +326,7 @@ public class SXSSFWorkbook implements Workbook {
         _sxFromXHash.put(sxSheet,xSheet);
         _xFromSxHash.put(xSheet,sxSheet);
     }
+
     void deregisterSheetMapping(XSSFSheet xSheet)
     {
         SXSSFSheet sxSheet=getSXSSFSheet(xSheet);
@@ -326,6 +342,7 @@ public class SXSSFWorkbook implements Workbook {
 
         _xFromSxHash.remove(xSheet);
     }
+
     private XSSFSheet getSheetFromZipEntryName(String sheetRef)
     {
         for(XSSFSheet sheet : _sxFromXHash.values())
@@ -334,6 +351,7 @@ public class SXSSFWorkbook implements Workbook {
         }
         return null;
     }
+
     private void injectData(File zipfile, OutputStream out) throws IOException 
     {
         ZipFile zip = ZipHelper.openZipFile(zipfile);
@@ -629,7 +647,7 @@ public class SXSSFWorkbook implements Workbook {
     }
     SXSSFSheet createAndRegisterSXSSFSheet(XSSFSheet xSheet)
     {
-        SXSSFSheet sxSheet=null;
+        final SXSSFSheet sxSheet;
         try
         {
             sxSheet=new SXSSFSheet(this,xSheet);
@@ -704,8 +722,7 @@ public class SXSSFWorkbook implements Workbook {
         @SuppressWarnings("unchecked")
         public T next() throws NoSuchElementException {
             final XSSFSheet xssfSheet = it.next();
-            final T sxssfSheet = (T) getSXSSFSheet(xssfSheet);
-            return sxssfSheet;
+            return (T) getSXSSFSheet(xssfSheet);
         }
         /**
          * Unexpected behavior may occur if sheets are reordered after iterator
