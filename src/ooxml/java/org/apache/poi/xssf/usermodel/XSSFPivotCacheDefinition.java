@@ -111,6 +111,17 @@ public class XSSFPivotCacheDefinition extends POIXMLDocumentPart{
         //Sets the pivotCacheDefinition tag
         xmlOptions.setSaveSyntheticDocumentElement(new QName(CTPivotCacheDefinition.type.getName().
                 getNamespaceURI(), "pivotCacheDefinition"));
+
+        // ensure the fields have names
+        if(ctPivotCacheDefinition.getCacheFields() != null) {
+            CTCacheFields cFields = ctPivotCacheDefinition.getCacheFields();
+            for(CTCacheField cf : cFields.getCacheFieldArray()) {
+                if(cf.getName() == null || cf.getName().isEmpty()) {
+                    cf.setName("A");
+                }
+            }
+        }
+
         ctPivotCacheDefinition.save(out, xmlOptions);
         out.close();
     }
@@ -144,7 +155,8 @@ public class XSSFPivotCacheDefinition extends POIXMLDocumentPart{
             cf.setNumFmtId(0);
             Cell cell = row.getCell(i);
             cell.setCellType(Cell.CELL_TYPE_STRING);
-            cf.setName(row.getCell(i).getStringCellValue());
+            String stringCellValue = cell.getStringCellValue();
+            cf.setName(stringCellValue);
             cf.addNewSharedItems();
         }
     }

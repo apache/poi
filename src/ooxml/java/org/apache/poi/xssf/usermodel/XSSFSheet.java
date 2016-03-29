@@ -2902,15 +2902,16 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         // we need to sort it in a way so the shifting does not mess up the structures, 
         // i.e. when shifting down, start from down and go up, when shifting up, vice-versa
         SortedMap<XSSFComment, Integer> commentsToShift = new TreeMap<XSSFComment, Integer>(new Comparator<XSSFComment>() {
-            public int compare(XSSFComment o1, XSSFComment o2) {
-                int row1 = o1.getRow();
-                int row2 = o2.getRow();
-                
-                if(row1 == row2) {
-                    // ordering is not important when row is equal, but don't return zero to still 
-                    // get multiple comments per row into the map
-                    return o1.hashCode() - o2.hashCode();
-                }
+			@Override
+			public int compare(XSSFComment o1, XSSFComment o2) {
+				int row1 = o1.getRow();
+				int row2 = o2.getRow();
+				
+				if(row1 == row2) {
+					// ordering is not important when row is equal, but don't return zero to still 
+					// get multiple comments per row into the map
+					return o1.hashCode() - o2.hashCode();
+				}
 
                 // when shifting down, sort higher row-values first
                 if(n > 0) {
@@ -2986,6 +2987,78 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
             map.put(r.getRowNum(), r);
         }
         _rows = map;
+        
+        // bug 57423: also re-order sheetdatamap
+        CTSheetData sheetData = worksheet.getSheetData();
+        SortedMap<Long, CTRow> ctmap = new TreeMap<Long, CTRow>();
+        for(CTRow row : sheetData.getRowArray()) {
+            System.out.println("Having row " + row.getR());
+            ctmap.put(row.getR(), row);
+        }
+        /*Node domNode = sheetData.getDomNode();
+        NodeList childNodes = domNode.getChildNodes();
+        System.out.println("Had: " + childNodes.getLength() + ": " + childNodes);
+        for(int i = 0;i < childNodes.getLength();i++) {
+            Node item = childNodes.item(i);
+            System.out.println("Had: " + i + ": " + item);
+        }*/
+        
+        //CTRow[] ctArray = new CTRow[ctmap.size()];
+        /*int rowNum = 0;
+        int arrayIdx = 0;
+        for(CTRow row : ctmap.values()) {
+            if(row.getR() != (rowNum+1)) {
+                // XMLBeans releases any previous object in the setters, so we need to 
+                // use new objects all the time
+                CTRow newRow = (CTRow) row.copy();
+                
+                // we have to copy the Cells as well here as they are not included by 
+                // the copy() and would be invalidated otherwise!
+                
+                XSSFRow xRow = _rows.get((int)row.getR()-1);
+                int cellCount = 0;
+                for (int cellNum = xRow.getFirstCellNum();cellNum < xRow.getLastCellNum();cellNum++) {
+                    XSSFCell xssfCell = xRow.getCell(cellNum);
+                    if(xssfCell == null) {
+                        continue;
+                    }
+                    xssfCell.setCTCell(newRow.getCArray(cellCount));
+
+                    cellCount++;
+                }
+                
+                CTCell[] cArray = new CTCell[cellCount];
+                int i = 0;
+                for (int cellNum = xRow.getFirstCellNum();cellNum < xRow.getLastCellNum();cellNum++) {
+                    XSSFCell xssfCell = xRow.getCell(cellNum);
+                    if(xssfCell != null) {
+                        cArray[i] = (CTCell) xssfCell.getCTCell().copy();
+                        i++;
+                        
+                        // we have to copy and re-create the XSSFCell here because the 
+                        // elements as otherwise setCArray below invalidates all the columns!
+                        // see Bug 56170, XMLBeans seems to always release previous objects
+                        // in the CArray, so we need to provide completely new ones here!
+                        //_cells.put(entry.getKey(), new XSSFCell(this, cArray[i]));
+                        xssfCell.setCTCell(cArray[cellNum]);
+                    }
+                    cellNum++;
+                }
+
+                newRow.setCArray(cArray);
+
+                sheetData.setRowArray(rowNum, row);
+            }
+            rowNum++;
+        }*/
+        //sheetData.setRowArray(ctArray);
+        
+        /*CTRow row13 = (CTRow) sheetData.getRowArray(10).copy();
+        CTRow row12 = (CTRow) sheetData.getRowArray(11).copy();
+        sheetData.setRowArray(10, row12);
+        sheetData.setRowArray(11, row13);*/
+        
+        //sheetData.getRowList()
     }
 
     private int shiftedRowNum(int startRow, int endRow, int n, int rownum) {
@@ -3498,6 +3571,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         safeGetProtectionField().setSheet(false);
     }
 
+
     /**
      * Enable or disable Autofilters locking.
      * This does not modify sheet protection status.
@@ -3725,6 +3799,8 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         return dataValidationHelper;
     }
 
+    @Override
+    @SuppressWarnings("deprecation") //YK: getXYZArray() array accessors are deprecated in xmlbeans with JDK 1.5 support
     public List<XSSFDataValidation> getDataValidations() {
         List<XSSFDataValidation> xssfValidations = new ArrayList<XSSFDataValidation>();
         CTDataValidations dataValidations = this.worksheet.getDataValidations();
@@ -4100,6 +4176,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         return tables;
     }
     
+    @Override
     public int getColumnOutlineLevel(int columnIndex) {
         CTCol col = columnHelper.getColumn(columnIndex, false);
         if (col == null) {
