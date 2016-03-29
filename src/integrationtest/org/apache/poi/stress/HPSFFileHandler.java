@@ -39,15 +39,17 @@ public class HPSFFileHandler extends POIFSFileHandler {
 	// a test-case to test this locally without executing the full TestAllFiles
 	@Test
 	public void test() throws Exception {
-		File file = new File("test-data/document/52372.doc");
-
-		InputStream stream = new FileInputStream(file);
+		InputStream stream = new FileInputStream("test-data/hpsf/Test0313rur.adm");
 		try {
 			handleFile(stream);
 		} finally {
 			stream.close();
 		}
-
-		handleExtracting(file);
 	}
+
+    // a test-case to test this locally without executing the full TestAllFiles
+    @Test
+    public void testExtractor() throws Exception {
+        handleExtracting(new File("test-data/hpsf/TestBug44375.xls"));
+    }
 }
