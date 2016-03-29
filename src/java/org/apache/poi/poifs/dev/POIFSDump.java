@@ -67,7 +67,7 @@ public class POIFSDump {
             is.close();
 
             DirectoryEntry root = fs.getRoot();
-            File file = new File(new File(args[i]).getName() + "-" + root.getName());
+            File file = new File(root.getName());
             file.mkdir();
 
             dump(root, file);

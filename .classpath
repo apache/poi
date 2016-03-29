@@ -18,9 +18,9 @@
 	<classpathentry kind="lib" path="lib/ant-1.9.4.jar"/>
 	<classpathentry kind="lib" path="lib/ant-launcher-1.9.4.jar"/>
 	<classpathentry kind="lib" path="lib/log4j-1.2.17.jar"/>
-	<classpathentry kind="lib" path="ooxml-lib/xmlbeans-2.6.0.jar" sourcepath="C:/devtools/source/xmlbeans"/>
-	<classpathentry kind="lib" path="lib/hamcrest-core-1.3.jar" sourcepath="/commons-dost/libsrc/hamcrest-all-1.3-sources.jar"/>
-	<classpathentry kind="lib" path="lib/junit-4.12.jar" sourcepath="/commons-dost/libsrc/junit-4.12-sources.jar"/>
+	<classpathentry kind="lib" path="ooxml-lib/xmlbeans-2.6.0.jar"/>
+	<classpathentry kind="lib" path="lib/hamcrest-core-1.3.jar"/>
+	<classpathentry kind="lib" path="lib/junit-4.12.jar"/>
 	<classpathentry kind="lib" path="ooxml-lib/curvesapi-1.03.jar"/>
 	<classpathentry kind="lib" path="ooxml-lib/ooxml-schemas-1.3.jar" sourcepath="ooxml-lib/ooxml-schemas-1.3-sources.jar"/>
 	<classpathentry kind="lib" path="ooxml-lib/ooxml-security-1.1.jar" sourcepath="ooxml-lib/ooxml-security-1.1-sources.jar"/>
@@ -31,5 +31,5 @@
 	<classpathentry kind="lib" path="compile-lib/xmlsec-2.0.6.jar"/>
 	<classpathentry kind="lib" path="lib/commons-codec-1.10.jar"/>
 	<classpathentry kind="lib" path="lib/commons-logging-1.2.jar"/>
-	<classpathentry kind="output" path="bin"/>
+	<classpathentry kind="output" path="build/eclipse"/>
 </classpath>
