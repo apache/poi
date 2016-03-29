@@ -18,10 +18,7 @@
 package org.apache.poi.ss.formula.functions;
 
 import org.apache.poi.ss.formula.ThreeDEval;
-import org.apache.poi.ss.formula.eval.BlankEval;
-import org.apache.poi.ss.formula.eval.NumberEval;
-import org.apache.poi.ss.formula.eval.RefEval;
-import org.apache.poi.ss.formula.eval.ValueEval;
+import org.apache.poi.ss.formula.eval.*;
 import org.apache.poi.ss.formula.functions.CountUtils.I_MatchPredicate;
 
 /**
@@ -54,7 +51,10 @@ public final class Countblank extends Fixed1ArgFunction {
 
 		public boolean matches(ValueEval valueEval) {
 			// Note - only BlankEval counts
-			return valueEval == BlankEval.instance;
+			return valueEval == BlankEval.instance ||
+					// see https://support.office.com/en-us/article/COUNTBLANK-function-6a92d772-675c-4bee-b346-24af6bd3ac22
+					// "Cells with formulas that return "" (empty text) are also counted."
+					(valueEval instanceof StringEval && "".equals(((StringEval)valueEval).getStringValue()));
 		}
 	};
 }
