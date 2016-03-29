@@ -16,11 +16,13 @@
 ==================================================================== */
 package org.apache.poi.xwpf.usermodel;
 
-import junit.framework.TestCase;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.util.Units;
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.apache.poi.xwpf.model.XWPFHeaderFooterPolicy;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.*;
 
 import java.io.ByteArrayInputStream;
@@ -29,26 +31,32 @@ import java.math.BigInteger;
 import java.util.Iterator;
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 /**
  * Tests for XWPF Run
  */
 @SuppressWarnings("deprecation")
-public class TestXWPFRun extends TestCase {
+public class TestXWPFRun {
     private CTR ctRun;
     private XWPFParagraph p;
     private XWPFDocument doc;
 
-    protected void setUp() {
+    @Before
+    public void setUp() {
         doc = new XWPFDocument();
         p = doc.createParagraph();
 
         this.ctRun = CTR.Factory.newInstance();
     }
-    
-    protected void tearDown() throws Exception {
+
+    @After
+    public void tearDown() throws Exception {
         doc.close();
     }
 
+    @Test
     public void testSetGetText() {
         ctRun.addNewT().setStringValue("TEST STRING");
         ctRun.addNewT().setStringValue("TEST2 STRING");
@@ -71,6 +79,7 @@ public class TestXWPFRun extends TestCase {
      * Purpose: test all valid boolean-like values
      * exercise isCTOnOff(CTOnOff) through all valid permutations
      */
+    @Test
     public void testCTOnOff() {
         CTRPr rpr = ctRun.addNewRPr();
         CTOnOff bold = rpr.addNewB();        
@@ -97,6 +106,7 @@ public class TestXWPFRun extends TestCase {
         assertEquals(false, run.isBold());
     }
 
+    @Test
     public void testSetGetBold() {
         CTRPr rpr = ctRun.addNewRPr();
         rpr.addNewB().setVal(STOnOff.TRUE);
@@ -110,6 +120,7 @@ public class TestXWPFRun extends TestCase {
         assertEquals(STOnOff.FALSE, rpr.getB().getVal());
     }
 
+    @Test
     public void testSetGetItalic() {
         CTRPr rpr = ctRun.addNewRPr();
         rpr.addNewI().setVal(STOnOff.TRUE);
@@ -121,6 +132,7 @@ public class TestXWPFRun extends TestCase {
         assertEquals(STOnOff.FALSE, rpr.getI().getVal());
     }
 
+    @Test
     public void testSetGetStrike() {
         CTRPr rpr = ctRun.addNewRPr();
         rpr.addNewStrike().setVal(STOnOff.TRUE);
@@ -132,6 +144,7 @@ public class TestXWPFRun extends TestCase {
         assertEquals(STOnOff.FALSE, rpr.getStrike().getVal());
     }
 
+    @Test
     public void testSetGetUnderline() {
         CTRPr rpr = ctRun.addNewRPr();
         rpr.addNewU().setVal(STUnderline.DASH);
@@ -145,7 +158,7 @@ public class TestXWPFRun extends TestCase {
                 .intValue());
     }
 
-
+    @Test
     public void testSetGetVAlign() {
         CTRPr rpr = ctRun.addNewRPr();
         rpr.addNewVertAlign().setVal(STVerticalAlignRun.SUBSCRIPT);
@@ -157,7 +170,7 @@ public class TestXWPFRun extends TestCase {
         assertEquals(STVerticalAlignRun.BASELINE, rpr.getVertAlign().getVal());
     }
 
-
+    @Test
     public void testSetGetFontFamily() {
         CTRPr rpr = ctRun.addNewRPr();
         rpr.addNewRFonts().setAscii("Times New Roman");
@@ -169,7 +182,7 @@ public class TestXWPFRun extends TestCase {
         assertEquals("Verdana", rpr.getRFonts().getAscii());
     }
 
-
+    @Test
     public void testSetGetFontSize() {
         CTRPr rpr = ctRun.addNewRPr();
         rpr.addNewSz().setVal(new BigInteger("14"));
@@ -181,7 +194,7 @@ public class TestXWPFRun extends TestCase {
         assertEquals(48, rpr.getSz().getVal().longValue());
     }
 
-
+    @Test
     public void testSetGetTextForegroundBackground() {
         CTRPr rpr = ctRun.addNewRPr();
         rpr.addNewPosition().setVal(new BigInteger("4000"));
@@ -193,6 +206,7 @@ public class TestXWPFRun extends TestCase {
         assertEquals(2400, rpr.getPosition().getVal().longValue());
     }
 
+    @Test
     public void testSetGetColor() {
         XWPFRun run = new XWPFRun(ctRun, p);
         run.setColor("0F0F0F");
@@ -200,6 +214,7 @@ public class TestXWPFRun extends TestCase {
         assertEquals("0F0F0F", clr);
     }
 
+    @Test
     public void testAddCarriageReturn() {
         ctRun.addNewT().setStringValue("TEST STRING");
         ctRun.addNewCr();
@@ -219,6 +234,7 @@ public class TestXWPFRun extends TestCase {
         assertEquals("T1\n\nT2\n", run.toString());
     }
 
+    @Test
     public void testAddTabsAndLineBreaks() {
         ctRun.addNewT().setStringValue("TEST STRING");
         ctRun.addNewCr();
@@ -240,6 +256,7 @@ public class TestXWPFRun extends TestCase {
         assertEquals("T1\nT2\tT3", run.toString());
     }
 
+    @Test
     public void testAddPageBreak() {
         ctRun.addNewT().setStringValue("TEST STRING");
         ctRun.addNewBr();
@@ -263,6 +280,7 @@ public class TestXWPFRun extends TestCase {
      *
      * @throws IOException
      */
+    @Test
     public void testExisting() throws IOException {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("TestDocument.docx");
         XWPFParagraph p;
@@ -394,6 +412,7 @@ public class TestXWPFRun extends TestCase {
         assertEquals(null, run.getCTR().getRPr());
     }
 
+    @Test
     public void testPictureInHeader() throws IOException {
         XWPFDocument sampleDoc = XWPFTestDataSamples.openSampleDocument("headerPic.docx");
         XWPFHeaderFooterPolicy policy = sampleDoc.getHeaderFooterPolicy();
@@ -417,7 +436,8 @@ public class TestXWPFRun extends TestCase {
 
         assertEquals(1, count);
     }
-    
+
+    @Test
     public void testSetGetHighlight() throws Exception {
         XWPFRun run = p.createRun();
         assertEquals(false, run.isHighlighted());
@@ -431,6 +451,7 @@ public class TestXWPFRun extends TestCase {
         assertEquals(false, run.isHighlighted());
     }
 
+    @Test
     public void testAddPicture() throws Exception {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("TestDocument.docx");
         XWPFParagraph p = doc.getParagraphArray(2);
@@ -456,6 +477,7 @@ public class TestXWPFRun extends TestCase {
      * Bugzilla #52288 - setting the font family on the
      * run mustn't NPE
      */
+    @Test
     public void testSetFontFamily_52288() throws Exception {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("52288.docx");
         final Iterator<XWPFParagraph> paragraphs = doc.getParagraphsIterator();
@@ -472,6 +494,7 @@ public class TestXWPFRun extends TestCase {
         }
     }
 
+    @Test
     public void testBug55476() throws IOException, InvalidFormatException {
         byte[] image = XWPFTestDataSamples.getImage("abstract1.jpg");
         XWPFDocument document = new XWPFDocument();
@@ -492,5 +515,63 @@ public class TestXWPFRun extends TestCase {
         }*/
 
         document.close();
+    }
+
+    @Test
+    public void testBug58922() {
+        XWPFDocument document = new XWPFDocument();
+
+        final XWPFRun run = document.createParagraph().createRun();
+
+
+        assertEquals(-1, run.getFontSize());
+
+        run.setFontSize(10);
+        assertEquals(10, run.getFontSize());
+
+        run.setFontSize(Short.MAX_VALUE-1);
+        assertEquals(Short.MAX_VALUE-1, run.getFontSize());
+
+        run.setFontSize(Short.MAX_VALUE);
+        assertEquals(Short.MAX_VALUE, run.getFontSize());
+
+        run.setFontSize(Short.MAX_VALUE+1);
+        assertEquals(Short.MAX_VALUE+1, run.getFontSize());
+
+        run.setFontSize(Integer.MAX_VALUE-1);
+        assertEquals(Integer.MAX_VALUE-1, run.getFontSize());
+
+        run.setFontSize(Integer.MAX_VALUE);
+        assertEquals(Integer.MAX_VALUE, run.getFontSize());
+
+        run.setFontSize(-1);
+        assertEquals(-1, run.getFontSize());
+
+
+        assertEquals(-1, run.getTextPosition());
+
+        run.setTextPosition(10);
+        assertEquals(10, run.getTextPosition());
+
+        run.setTextPosition(Short.MAX_VALUE-1);
+        assertEquals(Short.MAX_VALUE-1, run.getTextPosition());
+
+        run.setTextPosition(Short.MAX_VALUE);
+        assertEquals(Short.MAX_VALUE, run.getTextPosition());
+
+        run.setTextPosition(Short.MAX_VALUE+1);
+        assertEquals(Short.MAX_VALUE+1, run.getTextPosition());
+
+        run.setTextPosition(Short.MAX_VALUE+1);
+        assertEquals(Short.MAX_VALUE+1, run.getTextPosition());
+
+        run.setTextPosition(Integer.MAX_VALUE-1);
+        assertEquals(Integer.MAX_VALUE-1, run.getTextPosition());
+
+        run.setTextPosition(Integer.MAX_VALUE);
+        assertEquals(Integer.MAX_VALUE, run.getTextPosition());
+
+        run.setTextPosition(-1);
+        assertEquals(-1, run.getTextPosition());
     }
 }
