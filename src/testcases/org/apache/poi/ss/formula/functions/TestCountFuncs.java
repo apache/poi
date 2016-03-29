@@ -47,35 +47,33 @@ public final class TestCountFuncs extends TestCase {
 	private static final String NULL = null;
 
 	public void testCountBlank() {
-
 		AreaEval range;
 		ValueEval[] values;
 
 		values = new ValueEval[] {
 				new NumberEval(0),
-				new StringEval(""),	// note - does not match blank
+				new StringEval(""),	// note - does match blank
 				BoolEval.TRUE,
 				BoolEval.FALSE,
 				ErrorEval.DIV_ZERO,
 				BlankEval.instance,
 		};
 		range = EvalFactory.createAreaEval("A1:B3", values);
-		confirmCountBlank(1, range);
+		confirmCountBlank(2, range);
 
 		values = new ValueEval[] {
 				new NumberEval(0),
-				new StringEval(""),	// note - does not match blank
+				new StringEval(""),	// does match blank
 				BlankEval.instance,
 				BoolEval.FALSE,
 				BoolEval.TRUE,
 				BlankEval.instance,
 		};
 		range = EvalFactory.createAreaEval("A1:B3", values);
-		confirmCountBlank(2, range);
+		confirmCountBlank(3, range);
 	}
 
 	public void testCountA() {
-
 		ValueEval[] args;
 
 		args = new ValueEval[] {
@@ -105,7 +103,6 @@ public final class TestCountFuncs extends TestCase {
 	}
 
 	public void testCountIf() {
-
 		AreaEval range;
 		ValueEval[] values;
 
@@ -143,6 +140,7 @@ public final class TestCountFuncs extends TestCase {
 
 	public void testCriteriaPredicateNe_Bug46647() {
 		I_MatchPredicate mp = Countif.createCriteriaPredicate(new StringEval("<>aa"), 0, 0);
+		assertNotNull(mp);
 		StringEval seA = new StringEval("aa"); // this should not match the criteria '<>aa'
 		StringEval seB = new StringEval("bb"); // this should match
 		if (mp.matches(seA) && !mp.matches(seB)) {

@@ -362,9 +362,11 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         assertEquals(true, cs.getCoreXf().getApplyFill());
 
         XSSFCellFill fg = wb.getStylesSource().getFillAt(2);
+        assertNotNull(fg.getFillForegroundColor());
         assertEquals(0, fg.getFillForegroundColor().getIndexed());
         assertEquals(0.0, fg.getFillForegroundColor().getTint(), 0);
         assertEquals("FFFF0000", fg.getFillForegroundColor().getARGBHex());
+        assertNotNull(fg.getFillBackgroundColor());
         assertEquals(64, fg.getFillBackgroundColor().getIndexed());
 
         // Now look higher up
@@ -1374,6 +1376,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
      * DISABLED As we can't currently evaluate these
      */
     @Ignore
+    @Test
     public void bug48703() throws IOException {
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("48703.xlsx");
         XSSFSheet sheet = wb.getSheetAt(0);
@@ -1675,16 +1678,14 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
         saveAndReloadReport(wb, xlsOutput);
 
-        Row newRow = null;
-        Cell newCell = null;
         // 2) attempt to create a new row IN PLACE of a removed row by a negative shift causes corrupted
         // xlsx file with  unreadable data in the negative shifted row.
         // NOTE it's ok to create any other row.
-        newRow = testSheet.createRow(3);
+        Row newRow = testSheet.createRow(3);
 
         saveAndReloadReport(wb, xlsOutput);
 
-        newCell = newRow.createCell(0);
+        Cell newCell = newRow.createCell(0);
 
         saveAndReloadReport(wb, xlsOutput);
 
@@ -1962,8 +1963,6 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     /**
      * .xlsb files are not supported, but we should generate a helpful
      *  error message if given one
-     * @throws InvalidFormatException 
-     * @throws  
      */
     @Test
     public void bug56800_xlsb() throws IOException, InvalidFormatException {
@@ -2226,11 +2225,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             //saveWorkbook(wb, fileName);
 
             XSSFWorkbook wbBack = XSSFTestDataSamples.writeOutAndReadBack(wb);
-            try {
-
-            } finally {
-                wbBack.close();
-            }
+            wbBack.close();
         } finally {
             wb.close();
         }
@@ -2246,11 +2241,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             //saveWorkbook(wb, fileName);
 
             XSSFWorkbook wbBack = XSSFTestDataSamples.writeOutAndReadBack(wb);
-            try {
-
-            } finally {
-                wbBack.close();
-            }
+            wbBack.close();
         } finally {
             wb.close();
         }
@@ -2511,6 +2502,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
         // avoid OOM in gump run
         File file = XSSFTestDataSamples.writeOutAndClose(wb, "bug57880");
+        //noinspection UnusedAssignment
         wb = null;
         // Garbage collection may happen here
         
@@ -2967,5 +2959,55 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     public void test58043() throws IOException {
         createXls();
         createXlsx();
+    }
+
+    @Test
+    public void test59132() throws IOException {
+        Workbook workbook = XSSFTestDataSamples.openSampleWorkbook("59132.xlsx");
+        Sheet worksheet = workbook.getSheet("sheet1");
+
+        // B3
+        Row row = worksheet.getRow(2);
+        Cell cell = row.getCell(1);
+
+        cell.setCellValue((String)null);
+
+        FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
+
+        // B3
+        row = worksheet.getRow(2);
+        cell = row.getCell(1);
+
+        assertEquals(Cell.CELL_TYPE_BLANK, cell.getCellType());
+        assertEquals(-1, evaluator.evaluateFormulaCell(cell));
+
+        // A3
+        row = worksheet.getRow(2);
+        cell = row.getCell(0);
+
+        assertEquals(Cell.CELL_TYPE_FORMULA, cell.getCellType());
+        assertEquals("IF(ISBLANK(B3),\"\",B3)", cell.getCellFormula());
+        assertEquals(Cell.CELL_TYPE_STRING, evaluator.evaluateFormulaCell(cell));
+        CellValue value = evaluator.evaluate(cell);
+        assertEquals("", value.getStringValue());
+
+        // A5
+        row = worksheet.getRow(4);
+        cell = row.getCell(0);
+
+        assertEquals(Cell.CELL_TYPE_FORMULA, cell.getCellType());
+        assertEquals("COUNTBLANK(A1:A4)", cell.getCellFormula());
+        assertEquals(Cell.CELL_TYPE_NUMERIC, evaluator.evaluateFormulaCell(cell));
+        value = evaluator.evaluate(cell);
+        assertEquals(1.0, value.getNumberValue(), 0.1);
+
+        /*FileOutputStream output = new FileOutputStream("C:\\temp\\59132.xlsx");
+        try {
+            workbook.write(output);
+        } finally {
+            output.close();
+        }*/
+
+        workbook.close();
     }
 }
