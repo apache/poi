@@ -20,6 +20,7 @@ package org.apache.poi.hssf.usermodel;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -543,5 +544,26 @@ public final class TestCellStyle extends TestCase {
         assertEquals(-90, cellStyle.getRotation());
         
         wb.close();
+    }
+
+
+    @Test
+    public void test58607() throws IOException {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFCellStyle style = wb.createCellStyle();
+
+        style.setDataFormat(wb.createDataFormat().getFormat("dd/MM/yyyy HH:mm:ss"));
+
+        final Cell cell = wb.createSheet("test").createRow(0).createCell(0);
+        cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+        cell.setCellStyle(style);
+        cell.setCellValue(new Date());
+
+        OutputStream out = new FileOutputStream("C:\\temp\\58607.xls");
+        try {
+            wb.write(out);
+        } finally {
+            out.close();
+        }
     }
 }

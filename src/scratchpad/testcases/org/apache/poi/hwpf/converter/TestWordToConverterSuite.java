@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.StringWriter;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.xml.transform.OutputKeys;
@@ -41,8 +42,7 @@ public class TestWordToConverterSuite
     /**
      * YK: a quick hack to exclude failing documents from the suite.
      */
-    private static List<String> failingFiles = Arrays
-            .asList( "ProblemExtracting.doc" );
+    private static List<String> failingFiles = Collections.singletonList("ProblemExtracting.doc");
 
     public static Test suite()
     {

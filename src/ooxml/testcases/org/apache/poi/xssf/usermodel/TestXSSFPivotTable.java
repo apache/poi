@@ -24,11 +24,12 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageField;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageFields;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotFields;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotTableDefinition;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STDataConsolidateFunction;
+import org.apache.poi.xssf.XSSFTestDataSamples;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
+
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.util.List;
 
 public class TestXSSFPivotTable extends TestCase {
     private XSSFPivotTable pivotTable;
@@ -267,5 +268,47 @@ public class TestXSSFPivotTable extends TestCase {
             return;
         }
         fail();
+    }
+
+    public void test58294() throws Exception {
+        XSSFWorkbook wb = new XSSFWorkbook ("C:\\temp\\test1.xlsx");
+        XSSFSheet sheet = wb.getSheetAt(1);
+        XSSFSheet sheet0 = wb.getSheetAt(0);
+        sheet0.setActiveCell("A4");
+        XSSFPivotTable pivotTable = sheet0.createPivotTable(new AreaReference("A3:H6"), new CellReference("A4"), sheet);
+        pivotTable.addRowLabel(1);
+        pivotTable.addRowLabel(3);
+        pivotTable.addRowLabel(5);
+        pivotTable.addColumnLabel(DataConsolidateFunction.SUM, 6, "Sum of days with hauls");
+        pivotTable.addColumnLabel(DataConsolidateFunction.SUM, 7, "Sum of days site cutoff");
+        //checkPivotTables(wb);
+        FileOutputStream fileOut = new FileOutputStream("c:\\temp\\test2new.xlsx");
+        try {
+            wb.write(fileOut);
+        } finally {
+            fileOut.close();
+        }
+
+        XSSFWorkbook wbBack = XSSFTestDataSamples.writeOutAndReadBack(wb);
+        //checkPivotTables(wbBack);
+
+        wb.close();
+    }
+
+    private void checkPivotTables(XSSFWorkbook wb) {
+        final List<XSSFPivotTable> pivotTables = wb.getSheetAt(0).getPivotTables();
+        assertNotNull(pivotTables);
+        assertEquals(3, pivotTables.size());
+        final XSSFPivotTable pivotTable = pivotTables.get(2);
+        checkPivotTable(pivotTable);
+    }
+
+    private void checkPivotTable(XSSFPivotTable pivotTableBack) {
+        assertNotNull(pivotTableBack.getPivotCacheDefinition());
+        assertNotNull(pivotTableBack.getPivotCacheDefinition().getCTPivotCacheDefinition());
+        final CTCacheFields cacheFields = pivotTableBack.getPivotCacheDefinition().getCTPivotCacheDefinition().getCacheFields();
+        assertNotNull(cacheFields);
+        assertEquals(8, cacheFields.sizeOfCacheFieldArray());
+        assertEquals("A", cacheFields.getCacheFieldList().get(0).getName());
     }
 }

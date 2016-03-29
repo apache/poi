@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="org.eclipse.jdt.launching.localJavaApplication">
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
+<listEntry value="/Apache POI/src/ooxml/java/org/apache/poi/util/OOXMLLite.java"/>
+</listAttribute>
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
+<listEntry value="1"/>
+</listAttribute>
+<stringAttribute key="org.eclipse.jdt.launching.JRE_CONTAINER" value="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JDK16"/>
+<stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="org.apache.poi.util.OOXMLLite"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-ooxml build/ooxml-lite-merged/ooxml-lite-merged.jar&#13;&#10;-test build/ooxml-test-classes&#13;&#10;-dest build/ooxml-lite-classes"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="Apache POI"/>
+</launchConfiguration>
