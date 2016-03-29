@@ -48,10 +48,10 @@ public class ZipSecureFile extends ZipFile {
     private static POILogger logger = POILogFactory.getLogger(ZipSecureFile.class);
     
     private static double MIN_INFLATE_RATIO = 0.01d;
-    private static long MAX_ENTRY_SIZE = 0xFFFFFFFFl;
+    private static long MAX_ENTRY_SIZE = 0xFFFFFFFFL;
     
     // don't alert for expanded sizes smaller than 100k
-    private static long GRACE_ENTRY_SIZE = 100*1024;
+    private final static long GRACE_ENTRY_SIZE = 100*1024;
 
     // The default maximum size of extracted text 
     private static long MAX_TEXT_SIZE = 10*1024*1024;
@@ -89,8 +89,8 @@ public class ZipSecureFile extends ZipFile {
      * @param maxEntrySize the max. file size of a single zip entry
      */
     public static void setMaxEntrySize(long maxEntrySize) {
-        if (maxEntrySize < 0 || maxEntrySize > 0xFFFFFFFFl) {
-            throw new IllegalArgumentException("Max entry size is bounded [0-4GB].");
+        if (maxEntrySize < 0 || maxEntrySize > 0xFFFFFFFFL) {   // don't use MAX_ENTRY_SIZE here!
+            throw new IllegalArgumentException("Max entry size is bounded [0-4GB], but had " + maxEntrySize);
         }
         MAX_ENTRY_SIZE = maxEntrySize;
     }
@@ -117,8 +117,8 @@ public class ZipSecureFile extends ZipFile {
      * @param maxTextSize the max. file size of a single zip entry
      */
     public static void setMaxTextSize(long maxTextSize) {
-        if (maxTextSize < 0 || maxTextSize > 0xFFFFFFFFl) {
-            throw new IllegalArgumentException("Max text size is bounded [0-4GB].");
+        if (maxTextSize < 0 || maxTextSize > 0xFFFFFFFFL) {     // don't use MAX_ENTRY_SIZE here!
+            throw new IllegalArgumentException("Max text size is bounded [0-4GB], but had " + maxTextSize);
         }
         MAX_TEXT_SIZE = maxTextSize;
     }
@@ -138,7 +138,7 @@ public class ZipSecureFile extends ZipFile {
         super(file, mode);
     }
 
-    public ZipSecureFile(File file) throws ZipException, IOException {
+    public ZipSecureFile(File file) throws IOException {
         super(file);
     }
 
@@ -173,18 +173,17 @@ public class ZipSecureFile extends ZipFile {
                 @SuppressForbidden("TODO: Fix this to not use reflection (it will break in Java 9)! " +
                         "Better would be to wrap *before* instead of tyring to insert wrapper afterwards.")
                 public ThresholdInputStream run() {
-                    ThresholdInputStream newInner = null;
                     try {
                         Field f = FilterInputStream.class.getDeclaredField("in");
                         f.setAccessible(true);
                         InputStream oldInner = (InputStream)f.get(zipIS);
-                        newInner = new ThresholdInputStream(oldInner, null);
+                        ThresholdInputStream newInner = new ThresholdInputStream(oldInner, null);
                         f.set(zipIS, newInner);
+                        return newInner;
                     } catch (Exception ex) {
                         logger.log(POILogger.WARN, "SecurityManager doesn't allow manipulation via reflection for zipbomb detection - continue with original input stream", ex);
-                        newInner = null;
                     }
-                    return newInner;
+                    return null;
                 }
             });
         } else {
