@@ -46,46 +46,48 @@ public class POIFSDump {
         }
         
         boolean dumpProps = false, dumpMini = false;
-        for (int i = 0; i < args.length; i++) {
-            if (args[i].equalsIgnoreCase("-dumprops") ||
-                args[i].equalsIgnoreCase("-dump-props") ||
-                args[i].equalsIgnoreCase("-dump-properties")) {
+        for (String filename : args) {
+            if (filename.equalsIgnoreCase("-dumprops") ||
+                    filename.equalsIgnoreCase("-dump-props") ||
+                    filename.equalsIgnoreCase("-dump-properties")) {
                 dumpProps = true;
                 continue;
             }
-            if (args[i].equalsIgnoreCase("-dumpmini") ||
-                args[i].equalsIgnoreCase("-dump-mini") ||
-                args[i].equalsIgnoreCase("-dump-ministream") ||
-                args[i].equalsIgnoreCase("-dump-mini-stream")) {
+            if (filename.equalsIgnoreCase("-dumpmini") ||
+                    filename.equalsIgnoreCase("-dump-mini") ||
+                    filename.equalsIgnoreCase("-dump-ministream") ||
+                    filename.equalsIgnoreCase("-dump-mini-stream")) {
                 dumpMini = true;
                 continue;
             }
-            
-            System.out.println("Dumping " + args[i]);
-            FileInputStream is = new FileInputStream(args[i]);
+
+            System.out.println("Dumping " + filename);
+            FileInputStream is = new FileInputStream(filename);
             NPOIFSFileSystem fs = new NPOIFSFileSystem(is);
             is.close();
 
             DirectoryEntry root = fs.getRoot();
-            File file = new File(root.getName());
-            file.mkdir();
+            File file = new File(new File(filename).getName(), root.getName());
+            if (!file.exists() && !file.mkdirs()) {
+                throw new IOException("Could not create directory " + file);
+            }
 
             dump(root, file);
-            
+
             if (dumpProps) {
                 HeaderBlock header = fs.getHeaderBlock();
                 dump(fs, header.getPropertyStart(), "properties", file);
             }
             if (dumpMini) {
                 NPropertyTable props = fs.getPropertyTable();
-                int startBlock = props.getRoot().getStartBlock(); 
+                int startBlock = props.getRoot().getStartBlock();
                 if (startBlock == POIFSConstants.END_OF_CHAIN) {
                     System.err.println("No Mini Stream in file");
                 } else {
                     dump(fs, startBlock, "mini-stream", file);
                 }
             }
-            
+
             fs.close();
         }
     }
@@ -108,7 +110,9 @@ public class POIFSDump {
             } else if (entry instanceof DirectoryEntry){
                 DirectoryEntry dir = (DirectoryEntry)entry;
                 File file = new File(parent, entry.getName());
-                file.mkdir();
+                if(!file.exists() && !file.mkdirs()) {
+                    throw new IOException("Could not create directory " + file);
+                }
                 dump(dir, file);
             } else {
                 System.err.println("Skipping unsupported POIFS entry: " + entry);
