@@ -114,7 +114,9 @@ public final class TestPackage {
 		File targetFile = OpenXML4JTestDataSamples.getOutputFile("TestCreatePackageTMP.docx");
 
 		// Zap the target file, in case of an earlier run
-		if(targetFile.exists()) targetFile.delete();
+		if(targetFile.exists()) {
+			assertTrue(targetFile.delete());
+		}
 
 		@SuppressWarnings("resource")
         OPCPackage pkg = OPCPackage.create(targetFile);
@@ -152,7 +154,9 @@ public final class TestPackage {
 		File expectedFile = OpenXML4JTestDataSamples.getSampleFile("TestCreatePackageOUTPUT.docx");
 
         // Zap the target file, in case of an earlier run
-        if(targetFile.exists()) targetFile.delete();
+        if(targetFile.exists()) {
+			assertTrue(targetFile.delete());
+		}
 
         // Create a package
         OPCPackage pkg = OPCPackage.create(targetFile);
@@ -213,6 +217,8 @@ public final class TestPackage {
         PackagePartName sheetPartName = PackagingURIHelper.createPartName("/xl/worksheets/sheet1.xml");
         PackageRelationship rel =
         	 corePart.addRelationship(sheetPartName, TargetMode.INTERNAL, "http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet", "rSheet1");
+		assertNotNull(rel);
+
         PackagePart part = pkg.createPart(sheetPartName, "application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml");
         assertNotNull(part);
 
@@ -229,6 +235,7 @@ public final class TestPackage {
         	pkg.getRelationshipsByType(PackageRelationshipTypes.CORE_DOCUMENT);
         assertEquals(1, coreRels.size());
         PackageRelationship coreRel = coreRels.getRelationship(0);
+		assertNotNull(coreRel);
         assertEquals("/", coreRel.getSourceURI().toString());
         assertEquals("/xl/workbook.xml", coreRel.getTargetURI().toString());
         assertNotNull(pkg.getPart(coreRel));
@@ -251,7 +258,8 @@ public final class TestPackage {
             coreRels = pkg.getRelationshipsByType(PackageRelationshipTypes.CORE_DOCUMENT);
             assertEquals(1, coreRels.size());
             coreRel = coreRels.getRelationship(0);
-    
+
+			assertNotNull(coreRel);
             assertEquals("/", coreRel.getSourceURI().toString());
             assertEquals("/xl/workbook.xml", coreRel.getTargetURI().toString());
             corePart = pkg.getPart(coreRel);
@@ -260,6 +268,7 @@ public final class TestPackage {
             PackageRelationshipCollection rels = corePart.getRelationshipsByType("http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink");
             assertEquals(1, rels.size());
             rel = rels.getRelationship(0);
+			assertNotNull(rel);
             assertEquals("Sheet1!A1", rel.getTargetURI().getRawFragment());
     
             assertMSCompatibility(pkg);
@@ -548,7 +557,9 @@ public final class TestPackage {
         try {
             p.save(tempFile);
             fail("You shouldn't be able to call save(File) to overwrite the current file");
-        } catch(InvalidOperationException e) {}
+        } catch(InvalidOperationException e) {
+			// expected here
+		}
 
         p.close();
         // Delete it
@@ -625,12 +636,12 @@ public final class TestPackage {
               if (part.getPartName().getName().equals("/word/document.xml")) {
                  checked++;
                  assertEquals(ZipPackagePart.class, part.getClass());
-                 assertEquals(6031l, part.getSize());
+                 assertEquals(6031L, part.getSize());
               }
               if (part.getPartName().getName().equals("/word/fontTable.xml")) {
                  checked++;
                  assertEquals(ZipPackagePart.class, part.getClass());
-                 assertEquals(1312l, part.getSize());
+                 assertEquals(1312L, part.getSize());
               }
               
               // But not from the others
@@ -685,16 +696,16 @@ public final class TestPackage {
             OPCPackage.open(files.openResourceAsStream("SampleSS.xls"));
             fail("Shouldn't be able to open OLE2");
         } catch (OLE2NotOfficeXmlFileException e) {
-            assertTrue(e.getMessage().indexOf("The supplied data appears to be in the OLE2 Format") > -1);
-            assertTrue(e.getMessage().indexOf("You are calling the part of POI that deals with OOXML") > -1);
+            assertTrue(e.getMessage().contains("The supplied data appears to be in the OLE2 Format"));
+            assertTrue(e.getMessage().contains("You are calling the part of POI that deals with OOXML"));
         }
         // OLE2 - File
         try {
             OPCPackage.open(files.getFile("SampleSS.xls"));
             fail("Shouldn't be able to open OLE2");
         } catch (OLE2NotOfficeXmlFileException e) {
-            assertTrue(e.getMessage().indexOf("The supplied data appears to be in the OLE2 Format") > -1);
-            assertTrue(e.getMessage().indexOf("You are calling the part of POI that deals with OOXML") > -1);
+            assertTrue(e.getMessage().contains("The supplied data appears to be in the OLE2 Format"));
+            assertTrue(e.getMessage().contains("You are calling the part of POI that deals with OOXML"));
         }
         
         // Raw XML - Stream
@@ -702,16 +713,16 @@ public final class TestPackage {
             OPCPackage.open(files.openResourceAsStream("SampleSS.xml"));
             fail("Shouldn't be able to open XML");
         } catch (NotOfficeXmlFileException e) {
-            assertTrue(e.getMessage().indexOf("The supplied data appears to be a raw XML file") > -1);
-            assertTrue(e.getMessage().indexOf("Formats such as Office 2003 XML") > -1);
+            assertTrue(e.getMessage().contains("The supplied data appears to be a raw XML file"));
+            assertTrue(e.getMessage().contains("Formats such as Office 2003 XML"));
         }
         // Raw XML - File
         try {
             OPCPackage.open(files.getFile("SampleSS.xml"));
             fail("Shouldn't be able to open XML");
         } catch (NotOfficeXmlFileException e) {
-            assertTrue(e.getMessage().indexOf("The supplied data appears to be a raw XML file") > -1);
-            assertTrue(e.getMessage().indexOf("Formats such as Office 2003 XML") > -1);
+            assertTrue(e.getMessage().contains("The supplied data appears to be a raw XML file"));
+            assertTrue(e.getMessage().contains("Formats such as Office 2003 XML"));
         }
         
         // ODF / ODS - Stream
@@ -736,8 +747,8 @@ public final class TestPackage {
             OPCPackage.open(files.openResourceAsStream("SampleSS.txt"));
             fail("Shouldn't be able to open Plain Text");
         } catch (NotOfficeXmlFileException e) {
-            assertTrue(e.getMessage().indexOf("No valid entries or contents found") > -1);
-            assertTrue(e.getMessage().indexOf("not a valid OOXML") > -1);
+            assertTrue(e.getMessage().contains("No valid entries or contents found"));
+            assertTrue(e.getMessage().contains("not a valid OOXML"));
         }
         // Plain Text - File
         try {
@@ -753,9 +764,11 @@ public final class TestPackage {
     throws IOException, EncryptedDocumentException, InvalidFormatException {
         // #50090 / #56865
         ZipFile zipFile = ZipHelper.openZipFile(OpenXML4JTestDataSamples.getSampleFile("sample.xlsx"));
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        ZipOutputStream append = new ZipOutputStream(bos);
-        // first, copy contents from existing war
+		assertNotNull(zipFile);
+
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		ZipOutputStream append = new ZipOutputStream(bos);
+		// first, copy contents from existing war
         Enumeration<? extends ZipEntry> entries = zipFile.entries();
         while (entries.hasMoreElements()) {
             ZipEntry e2 = entries.nextElement();
@@ -793,7 +806,8 @@ public final class TestPackage {
         zipFile.close();
 
         byte buf[] = bos.toByteArray();
-        bos = null;
+		//noinspection UnusedAssignment
+		bos = null;
         
         Workbook wb = WorkbookFactory.create(new ByteArrayInputStream(buf));
         wb.getSheetAt(0);
@@ -810,6 +824,7 @@ public final class TestPackage {
             double min_ratio = Double.MAX_VALUE;
             long max_size = 0;
             ZipFile zf = ZipHelper.openZipFile(file);
+			assertNotNull(zf);
             Enumeration<? extends ZipEntry> entries = zf.entries();
             while (entries.hasMoreElements()) {
                 ZipEntry ze = entries.nextElement();
@@ -821,7 +836,10 @@ public final class TestPackage {
     
             // use values close to, but within the limits 
             ZipSecureFile.setMinInflateRatio(min_ratio-0.002);
+			assertEquals(min_ratio-0.002, ZipSecureFile.getMinInflateRatio(), 0.00001);
             ZipSecureFile.setMaxEntrySize(max_size+1);
+			assertEquals(max_size+1, ZipSecureFile.getMaxEntrySize());
+			
             WorkbookFactory.create(file, null, true).close();
     
             // check ratio out of bounds
@@ -850,7 +868,7 @@ public final class TestPackage {
         } finally {
             // reset otherwise a lot of ooxml tests will fail
             ZipSecureFile.setMinInflateRatio(0.01d);
-            ZipSecureFile.setMaxEntrySize(0xFFFFFFFFl);            
+            ZipSecureFile.setMaxEntrySize(0xFFFFFFFFL);
         }
     }
 
@@ -876,5 +894,32 @@ public final class TestPackage {
 
         throw new IllegalStateException("Expected to catch an Exception because of a detected Zip Bomb, but did not find the related error message in the exception", e);        
     }
-}
 
+    @Test
+    public void testConstructors() throws IOException {
+        // verify the various ways to construct a ZipSecureFile
+        File file = OpenXML4JTestDataSamples.getSampleFile("sample.xlsx");
+        ZipSecureFile zipFile = new ZipSecureFile(file);
+        assertNotNull(zipFile.getName());
+        zipFile.close();
+
+        zipFile = new ZipSecureFile(file, ZipFile.OPEN_READ);
+        assertNotNull(zipFile.getName());
+        zipFile.close();
+
+        zipFile = new ZipSecureFile(file.getAbsolutePath());
+        assertNotNull(zipFile.getName());
+        zipFile.close();
+    }
+
+    @Test
+    public void testMaxTextSize() {
+        long before = ZipSecureFile.getMaxTextSize();
+        try {
+            ZipSecureFile.setMaxTextSize(12345);
+            assertEquals(12345, ZipSecureFile.getMaxTextSize());
+        } finally {
+            ZipSecureFile.setMaxTextSize(before);
+        }
+    }
+}
