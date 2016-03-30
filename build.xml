@@ -47,6 +47,7 @@ under the License.
     <property environment="env"/>
     <!-- the repository to download jars from -->
     <property name="repository.m2" value="http://repo1.maven.org"/>
+    <property name="repository.pentaho" value="http://repo.pentaho.org/"/>
 
     <property name="main.lib" location="lib"/>
     <property name="ooxml.lib" location="ooxml-lib"/>
@@ -243,7 +244,7 @@ under the License.
     <property name="dist.dir" location="build/dist"/>
     <property name="halt.on.test.failure" value="true"/>
 
-    <!-- helper jars for pgp signing and nexus staging -->
+    <!-- helper jars for pgp signing, building and nexus staging -->
     <property name="dist.bouncycastle-prov.jar" location="${compile.lib}/bcprov-ext-jdk15on-1.51.jar"/>
     <property name="dist.bouncycastle-prov.url" value="${repository.m2}/maven2/org/bouncycastle/bcprov-ext-jdk15on/1.51/bcprov-ext-jdk15on-1.51.jar"/>
     <property name="dist.bouncycastle-bcpg.jar" location="${compile.lib}/bcpg-jdk15on-1.51.jar"/>
@@ -252,6 +253,13 @@ under the License.
     <property name="dist.commons-openpgp.url" value="http://repository.apache.org/snapshots/org/apache/commons/commons-openpgp/1.0-SNAPSHOT/commons-openpgp-1.0-20140717.171036-11.jar"/>
     <property name="dist.nexus-staging.jar" location="${compile.lib}/nexus-staging-ant-tasks-1.6.3-uber.jar"/>
     <property name="dist.nexus-staging.url" value="${repository.m2}/maven2/org/sonatype/nexus/ant/nexus-staging-ant-tasks/1.6.3/nexus-staging-ant-tasks-1.6.3-uber.jar"/>
+
+    <property name="dist.svnant.jar" location="${compile.lib}/svnant-1.3.0.jar"/>
+    <property name="dist.svnant.url" value="${repository.pentaho}/content/groups/omni/tigris/svnant/1.3.0/svnant-1.3.0.jar"/>
+    <property name="dist.svnclient.jar" location="${compile.lib}/svnClientAdapter-1.3.0.jar"/>
+    <property name="dist.svnclient.url" value="${repository.pentaho}/content/groups/omni/tigris/svnClientAdapter/svnant-1.3.0/svnClientAdapter-svnant-1.3.0.jar"/>
+    <property name="dist.svnkit.jar" location="${compile.lib}/svnkit-1.8.11.jar"/>
+    <property name="dist.svnkit.url" value="${repository.m2}/maven2/org/tmatesoft/svnkit/svnkit/1.8.11/svnkit-1.8.11.jar"/>
 
     <propertyset id="junit.properties">
         <propertyref name="POI.testdata.path"/>
@@ -433,6 +441,17 @@ under the License.
 
         <echo message="Using Java: ${java.version}/${java.runtime.version}/${java.vm.version}/${java.vm.name} from ${java.vm.vendor} on ${os.name}: ${os.version}" />
     </target>
+    <target name="init-svn" depends="init,fetch-svn-jars" description="Initialization run before SVN-related targets.">
+      <taskdef resource="org/tigris/subversion/svnant/svnantlib.xml">
+         <classpath>
+            <fileset dir="${compile.lib}" includes="svn*.jar" />
+         </classpath>
+      </taskdef>
+      <!-- TODO Upgrade so this works -->
+<!--
+      <svnSetting client="cli" id="svn.settings"/>
+-->
+    </target>
 
     <target name="clean" description="Remove generated artefacts">
         <delete dir="build"/>
@@ -506,14 +525,14 @@ under the License.
         		<include name="ooxml-security-1.0-sources.jar"/>
         		<include name="ooxml-security-1.0.jar"/>
         	</fileset>
-        	<fileset dir="${compile.lib}">
-                <include name="xercesImpl-*.jar"/>
-            	<include name="xmlsec-2.0.1.jar"/>
-        		<include name="xmlsec-2.0.5.jar"/>
-            	<include name="bcprov-ext-jdk15on-1.51.jar"/>
-            	<include name="bcpkix-jdk15on-1.51.jar"/>
-            	<include name="slf4j-api-1.7.7.jar"/>
-        	</fileset>
+         <fileset dir="${compile.lib}">
+            <include name="xercesImpl-*.jar"/>
+            <include name="xmlsec-2.0.1.jar"/>
+            <include name="xmlsec-2.0.5.jar"/>
+            <include name="bcprov-ext-jdk15on-1.51.jar"/>
+            <include name="bcpkix-jdk15on-1.51.jar"/>
+            <include name="slf4j-api-1.7.7.jar"/>
+         </fileset>
         </delete>
 
         <condition property="jars.present">
@@ -589,6 +608,23 @@ under the License.
         <zip destfile="${ooxml.xmlbeans26.jar}">
             <zipfileset src="${ooxml.xmlbeans26.jar}.orig" excludes="org/apache/xmlbeans/impl/piccolo/**"/>
         </zip>
+    </target>
+    <target name="check-svn-jars">
+        <condition property="svn.jars.present">
+            <or>
+                <and>
+                    <available file="${dist.svnant.jar}"/>
+                    <available file="${dist.svnclient.jar}"/>
+                    <available file="${dist.svnkit.jar}"/>
+                </and>
+                <isset property="disconnected"/>
+            </or>
+        </condition>
+    </target>
+    <target name="fetch-svn-jars" depends="check-svn-jars" unless="svn.jars.present">
+        <downloadfile src="${dist.svnant.url}" dest="${dist.svnant.jar}"/>
+        <downloadfile src="${dist.svnclient.url}" dest="${dist.svnclient.jar}"/>
+        <downloadfile src="${dist.svnkit.url}" dest="${dist.svnkit.jar}"/>
     </target>
 
     <target name="check-ooxml-xsds">
