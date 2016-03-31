@@ -964,7 +964,7 @@ public final class TestHSSFSheet extends BaseTestSheet {
             wb.createSheet(SAME_PREFIX + "Dyyyy"); // identical up to the 32nd char
             fail("Expected exception not thrown");
         } catch (IllegalArgumentException e) {
-            assertEquals("The workbook already contains a sheet of this name", e.getMessage());
+            assertEquals("The workbook already contains a sheet named 'A123456789B123456789C123456789Dyyyy'", e.getMessage());
         }
         wb.createSheet(SAME_PREFIX + "Exxxx"); // OK - differs in the 31st char
         wb.close();

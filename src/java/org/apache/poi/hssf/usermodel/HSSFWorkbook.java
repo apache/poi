@@ -246,8 +246,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
 
     public static String getWorkbookDirEntryName(DirectoryNode directory) {
 
-        for (int i = 0; i < WORKBOOK_DIR_ENTRY_NAMES.length; i++) {
-            String wbName = WORKBOOK_DIR_ENTRY_NAMES[i];
+        for (String wbName : WORKBOOK_DIR_ENTRY_NAMES) {
             try {
                 directory.getEntry(wbName);
                 return wbName;
@@ -547,14 +546,14 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     }
     public void setSelectedTabs(int[] indexes) {
 
-        for (int i = 0; i < indexes.length; i++) {
-            validateSheetIndex(indexes[i]);
+        for (int index : indexes) {
+            validateSheetIndex(index);
         }
         int nSheets = _sheets.size();
         for (int i=0; i<nSheets; i++) {
             boolean bSelect = false;
-            for (int j = 0; j < indexes.length; j++) {
-                if (indexes[j] == i) {
+            for (int index : indexes) {
+                if (index == i) {
                     bSelect = true;
                     break;
                 }
@@ -603,8 +602,10 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
 
     /**
      * sets the first tab that is displayed in the list of tabs
-     * in excel.
-     * @param index
+     * in excel. This method does <b>not</b> hide, select or focus sheets.
+     * It just sets the scroll position in the tab-bar.
+     *
+     * @param index the sheet index of the tab that will become the first in the tab-bar
      */
     @Override
     public void setFirstVisibleTab(int index) {
@@ -651,7 +652,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
         }
 
         if (workbook.doesContainsSheetName(name, sheetIx)) {
-            throw new IllegalArgumentException("The workbook already contains a sheet with this name");
+            throw new IllegalArgumentException("The workbook already contains a sheet named '" + name + "'");
         }
         validateSheetIndex(sheetIx);
         workbook.setSheetName(sheetIx, name);
@@ -896,7 +897,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
         }
 
         if (workbook.doesContainsSheetName( sheetname, _sheets.size() ))
-            throw new IllegalArgumentException( "The workbook already contains a sheet of this name" );
+            throw new IllegalArgumentException("The workbook already contains a sheet named '" + sheetname + "'");
 
         HSSFSheet sheet = new HSSFSheet(this);
 
@@ -907,7 +908,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
         sheet.setActive(isOnlySheet);
         return sheet;
     }
-    
+
     /**
      *  Returns an iterator of the sheets in the workbook
      *  in sheet order. Includes hidden and very hidden sheets.
@@ -1099,8 +1100,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     {
         BackupRecord backupRecord = workbook.getBackupRecord();
 
-        return (backupRecord.getBackup() == 0) ? false
-                : true;
+        return backupRecord.getBackup() != 0;
     }
 
     int findExistingBuiltinNameRecordIdx(int sheetIndex, byte builtinCode) {
@@ -1253,9 +1253,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
         }
         ExtendedFormatRecord xfr = workbook.createCellXF();
         short index = (short) (getNumCellStyles() - 1);
-        HSSFCellStyle style = new HSSFCellStyle(index, xfr, this);
-
-        return style;
+        return new HSSFCellStyle(index, xfr, this);
     }
 
     /**
@@ -1277,9 +1275,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     public HSSFCellStyle getCellStyleAt(int idx)
     {
         ExtendedFormatRecord xfr = workbook.getExFormatAt(idx);
-        HSSFCellStyle style = new HSSFCellStyle((short)idx, xfr, this);
-
-        return style;
+        return new HSSFCellStyle((short)idx, xfr, this);
     }
 
     /**
@@ -1369,9 +1365,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
         }
         public int serialize(int offset, byte[] data) {
             int result = 0;
-            int nRecs = _list.size();
-            for(int i=0; i<nRecs; i++) {
-                Record rec = _list.get(i);
+            for (Record rec : _list) {
                 result += rec.serialize(offset + result, data);
             }
             return result;
@@ -1399,9 +1393,9 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
         // before getting the workbook size we must tell the sheets that
         // serialization is about to occur.
         workbook.preSerialize();
-        for (int i = 0; i < nSheets; i++) {
-            sheets[i].getSheet().preSerialize();
-            sheets[i].preSerialize();
+        for (HSSFSheet sheet : sheets) {
+            sheet.getSheet().preSerialize();
+            sheet.preSerialize();
         }
 
         int totalsize = workbook.getSize();
@@ -1460,8 +1454,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
 
     @Override
     public int getNumberOfNames(){
-        int result = names.size();
-        return result;
+        return names.size();
     }
 
     @Override
@@ -1507,9 +1500,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      * @return named range name
      */
     public String getNameName(int index){
-        String result = getNameAt(index).getNameName();
-
-        return result;
+        return getNameAt(index).getNameName();
     }
 
     /**
@@ -1718,9 +1709,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
         r.decode();
         List<EscherRecord> escherRecords = r.getEscherRecords();
         PrintWriter w = new PrintWriter(new OutputStreamWriter(System.out, Charset.defaultCharset()));
-        for ( Iterator<EscherRecord> iterator = escherRecords.iterator(); iterator.hasNext(); )
-        {
-            EscherRecord escherRecord = iterator.next();
+        for (EscherRecord escherRecord : escherRecords) {
             if (fat)
                 System.out.println(escherRecord.toString());
             else
@@ -1836,12 +1825,8 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     {
         // The drawing group record always exists at the top level, so we won't need to do this recursively.
         List<HSSFPictureData> pictures = new ArrayList<HSSFPictureData>();
-        Iterator<Record> recordIter = workbook.getRecords().iterator();
-        while (recordIter.hasNext())
-        {
-            Record r = recordIter.next();
-            if (r instanceof AbstractEscherHolderRecord)
-            {
+        for (Record r : workbook.getRecords()) {
+            if (r instanceof AbstractEscherHolderRecord) {
                 ((AbstractEscherHolderRecord) r).decode();
                 List<EscherRecord> escherRecords = ((AbstractEscherHolderRecord) r).getEscherRecords();
                 searchForPictures(escherRecords, pictures);
