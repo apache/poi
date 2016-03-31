@@ -20,7 +20,6 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -32,18 +31,18 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.util.RecordFormatException;
 
 public abstract class SpreadsheetHandler extends AbstractFileHandler {
-	public void handleWorkbook(Workbook wb, String extension) throws IOException {
+	public void handleWorkbook(Workbook wb) throws IOException {
 		// try to access some of the content
 		readContent(wb);
 		
 		// write out the file
-		ByteArrayOutputStream out = writeToArray(wb);
+		writeToArray(wb);
 		
 		// access some more content (we had cases where writing corrupts the data in memory)
 		readContent(wb);
 
 		// write once more
-		out = writeToArray(wb);
+		ByteArrayOutputStream out = writeToArray(wb);
 
 		// read in the writen file
 		Workbook read;
@@ -61,8 +60,7 @@ public abstract class SpreadsheetHandler extends AbstractFileHandler {
 		read.close();
 	}
 
-	private ByteArrayOutputStream writeToArray(Workbook wb)
-			throws FileNotFoundException, IOException {
+	private ByteArrayOutputStream writeToArray(Workbook wb) throws IOException {
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();
 		try {
 			wb.write(stream);
@@ -88,7 +86,7 @@ public abstract class SpreadsheetHandler extends AbstractFileHandler {
 			
 			for(Row row : sheet) {
 			    for(Cell cell : row) {
-			        cell.toString();
+			        assertNotNull(cell.toString());
 			    }
 			}
 		}
