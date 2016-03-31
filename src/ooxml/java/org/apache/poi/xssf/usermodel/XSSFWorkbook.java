@@ -534,19 +534,40 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
      * Create an XSSFSheet from an existing sheet in the XSSFWorkbook.
      *  The cloned sheet is a deep copy of the original.
      *
+     * @param sheetNum The index of the sheet to clone
      * @return XSSFSheet representing the cloned sheet.
      * @throws IllegalArgumentException if the sheet index in invalid
      * @throws POIXMLException if there were errors when cloning
      */
     @Override
     public XSSFSheet cloneSheet(int sheetNum) {
+        return cloneSheet(sheetNum, null);
+    }
+
+    /**
+     * Create an XSSFSheet from an existing sheet in the XSSFWorkbook.
+     *  The cloned sheet is a deep copy of the original but with a new given
+     *  name.
+     *
+     * @param sheetNum The index of the sheet to clone
+     * @param newName The name to set for the newly created sheet
+     * @return XSSFSheet representing the cloned sheet.
+     * @throws IllegalArgumentException if the sheet index or the sheet
+     *         name is invalid
+     * @throws POIXMLException if there were errors when cloning
+     */
+    public XSSFSheet cloneSheet(int sheetNum, String newName) {
         validateSheetIndex(sheetNum);
-
         XSSFSheet srcSheet = sheets.get(sheetNum);
-        String srcName = srcSheet.getSheetName();
-        String clonedName = getUniqueSheetName(srcName);
 
-        XSSFSheet clonedSheet = createSheet(clonedName);
+        if (newName == null) {
+            String srcName = srcSheet.getSheetName();
+            newName = getUniqueSheetName(srcName);
+        } else {
+            validateSheetName(newName);
+        }
+
+        XSSFSheet clonedSheet = createSheet(newName);
 
         // copy sheet's relations
         List<RelationPart> rels = srcSheet.getRelationParts();
@@ -785,8 +806,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
             throw new IllegalArgumentException("sheetName must not be null");
         }
 
-        if (containsSheet( sheetname, sheets.size() ))
-               throw new IllegalArgumentException( "The workbook already contains a sheet of this name");
+        validateSheetName(sheetname);
 
         // YK: Mimic Excel and silently truncate sheet names longer than 31 characters
         if(sheetname.length() > 31) sheetname = sheetname.substring(0, 31);
@@ -825,6 +845,12 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         if (sheets.isEmpty()) wrapper.setSelected(true);
         sheets.add(wrapper);
         return wrapper;
+    }
+
+    private void validateSheetName(final String sheetName) throws IllegalArgumentException {
+        if (containsSheet( sheetName, sheets.size() )) {
+            throw new IllegalArgumentException("The workbook already contains a sheet named '" + sheetName + "'");
+        }
     }
 
     protected XSSFDialogsheet createDialogsheet(String sheetname, CTDialogsheet dialogsheet) {

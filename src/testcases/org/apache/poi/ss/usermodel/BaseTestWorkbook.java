@@ -161,7 +161,7 @@ public abstract class BaseTestWorkbook {
             fail("should have thrown exceptiuon due to duplicate sheet name");
         } catch (IllegalArgumentException e) {
             // expected during successful test
-            assertEquals("The workbook already contains a sheet of this name", e.getMessage());
+            assertEquals("The workbook already contains a sheet named 'sHeeT3'", e.getMessage());
         }
 
         //names cannot be blank or contain any of /\*?[]
@@ -255,7 +255,7 @@ public abstract class BaseTestWorkbook {
             fail("expected exception");
         } catch (IllegalArgumentException e) {
             // expected during successful test
-            assertEquals("The workbook already contains a sheet of this name", e.getMessage());
+            assertEquals("The workbook already contains a sheet named 'My very long sheet name which is longer than 31 chars and sheetName2.substring(0, 31) == sheetName1.substring(0, 31)'", e.getMessage());
         }
 
         String sheetName3 = "POI allows creating sheets with names longer than 31 characters";
@@ -843,4 +843,68 @@ public abstract class BaseTestWorkbook {
         assertArrayEquals(filename + " sample file was modified as a result of closing the workbook",
                 before, after);
     }
+
+    @Test
+    public void sheetClone() throws IOException {
+        // First up, try a simple file
+        final Workbook b = _testDataProvider.createWorkbook();
+        assertEquals(0, b.getNumberOfSheets());
+        b.createSheet("Sheet One");
+        b.createSheet("Sheet Two");
+
+        assertEquals(2, b.getNumberOfSheets());
+        b.cloneSheet(0);
+        assertEquals(3, b.getNumberOfSheets());
+
+        // Now try a problem one with drawing records in it
+        Workbook bBack = HSSFTestDataSamples.openSampleWorkbook("SheetWithDrawing.xls");
+        assertEquals(1, bBack.getNumberOfSheets());
+        bBack.cloneSheet(0);
+        assertEquals(2, bBack.getNumberOfSheets());
+
+        bBack.close();
+        b.close();
+    }
+
+    @Test
+    public void getSheetIndex() throws IOException {
+        final Workbook wb = _testDataProvider.createWorkbook();
+        Sheet sheet1 = wb.createSheet("Sheet1");
+        Sheet sheet2 = wb.createSheet("Sheet2");
+        Sheet sheet3 = wb.createSheet("Sheet3");
+        Sheet sheet4 = wb.createSheet("Sheet4");
+
+        assertEquals(0, wb.getSheetIndex(sheet1));
+        assertEquals(1, wb.getSheetIndex(sheet2));
+        assertEquals(2, wb.getSheetIndex(sheet3));
+        assertEquals(3, wb.getSheetIndex(sheet4));
+
+        // remove sheets
+        wb.removeSheetAt(0);
+        wb.removeSheetAt(2);
+
+        // ensure that sheets are moved up and removed sheets are not found any more
+        assertEquals(-1, wb.getSheetIndex(sheet1));
+        assertEquals(0, wb.getSheetIndex(sheet2));
+        assertEquals(1, wb.getSheetIndex(sheet3));
+        assertEquals(-1, wb.getSheetIndex(sheet4));
+
+        wb.close();
+    }
+
+    @Test
+    public void addSheetTwice() throws IOException {
+        final Workbook wb = _testDataProvider.createWorkbook();
+        Sheet sheet1 = wb.createSheet("Sheet1");
+        assertNotNull(sheet1);
+        try {
+            wb.createSheet("Sheet1");
+            fail("Should fail if we add the same sheet twice");
+        } catch (IllegalArgumentException e) {
+            assertTrue(e.getMessage(), e.getMessage().contains("already contains a sheet named 'Sheet1'"));
+        }
+
+        wb.close();
+    }
+
 }

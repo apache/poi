@@ -38,7 +38,7 @@ import org.junit.Test;
 /**
  * Test setting / evaluating of Analysis Toolpack and user-defined functions
  */
-public class BaseTestExternalFunctions {
+public abstract class BaseTestExternalFunctions {
     // define two custom user-defined functions
     private static class MyFunc implements FreeRefFunction {
         public MyFunc() {

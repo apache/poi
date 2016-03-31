@@ -45,7 +45,8 @@ import org.junit.runners.Suite;
     //TestCellReference.class, //converted to junit4
     TestCTColComparator.class,
     TestNumericRanges.class,       
-    TestCellFormatPart.class
+    TestCellFormatPart.class,
+    TestXSSFCloneSheet.class
 })
 public final class AllXSSFTests {
 }

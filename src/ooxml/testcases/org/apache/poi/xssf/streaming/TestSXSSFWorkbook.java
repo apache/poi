@@ -32,6 +32,7 @@ import java.io.IOException;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.POITestCase;
+import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.SpreadsheetVersion;
@@ -71,6 +72,20 @@ public final class TestSXSSFWorkbook extends BaseTestWorkbook {
     public void cloneSheet() throws IOException {
         try {
             super.cloneSheet();
+            fail("expected exception");
+        } catch (RuntimeException e){
+            assertEquals("NotImplemented", e.getMessage());
+        }
+    }
+
+    /**
+     * cloning of sheets is not supported in SXSSF
+     */
+    @Override
+    @Test
+    public void sheetClone() throws IOException {
+        try {
+            super.sheetClone();
             fail("expected exception");
         } catch (RuntimeException e){
             assertEquals("NotImplemented", e.getMessage());

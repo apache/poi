@@ -48,7 +48,6 @@ import org.apache.poi.hssf.record.CFRuleRecord;
 import org.apache.poi.hssf.record.NameRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RecordBase;
-import org.apache.poi.hssf.record.RecordFormatException;
 import org.apache.poi.hssf.record.WindowOneRecord;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
@@ -56,13 +55,10 @@ import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.ptg.Area3DPtg;
-import org.apache.poi.ss.usermodel.BaseTestWorkbook;
-import org.apache.poi.ss.usermodel.Name;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.RecordFormatException;
 import org.apache.poi.util.TempFile;
 import org.junit.Test;
 
@@ -87,7 +83,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
 
     /**
      * Tests for {@link HSSFWorkbook#isHidden()} etc
-     * @throws IOException 
+     * @throws IOException
      */
     @Test
     public void hidden() throws IOException {
@@ -112,36 +108,14 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         wbBack.setHidden(false);
         assertEquals(false, wbBack.isHidden());
         assertEquals(false, w1.getHidden());
-        
+
         wbBack.close();
         wb.close();
     }
 
     @Test
-    public void sheetClone() throws IOException {
-        // First up, try a simple file
-        HSSFWorkbook b = new HSSFWorkbook();
-        assertEquals(0, b.getNumberOfSheets());
-        b.createSheet("Sheet One");
-        b.createSheet("Sheet Two");
-
-        assertEquals(2, b.getNumberOfSheets());
-        b.cloneSheet(0);
-        assertEquals(3, b.getNumberOfSheets());
-
-        // Now try a problem one with drawing records in it
-        HSSFWorkbook bBack = HSSFTestDataSamples.openSampleWorkbook("SheetWithDrawing.xls");
-        assertEquals(1, bBack.getNumberOfSheets());
-        bBack.cloneSheet(0);
-        assertEquals(2, bBack.getNumberOfSheets());
-        
-        bBack.close();
-        b.close();
-    }
-
-    @Test
     public void readWriteWithCharts() throws IOException {
-        HSSFSheet s;
+        Sheet s;
 
         // Single chart, two sheets
         HSSFWorkbook b1 = HSSFTestDataSamples.openSampleWorkbook("44010-SingleChart.xls");
@@ -196,7 +170,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         // So, start again
         HSSFWorkbook b5 = HSSFTestDataSamples.openSampleWorkbook("44010-TwoCharts.xls");
 
-        HSSFWorkbook b6 = HSSFTestDataSamples.writeOutAndReadBack(b5);
+        Workbook b6 = HSSFTestDataSamples.writeOutAndReadBack(b5);
         b5.close();
         assertEquals(3, b6.getNumberOfSheets());
 
@@ -281,7 +255,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         assertEquals(false, sheet1.isActive());
         assertEquals(true, sheet3.isActive());
 
-        if (false) { // helpful if viewing this workbook in excel:
+        /*{ // helpful if viewing this workbook in excel:
             sheet1.createRow(0).createCell(0).setCellValue(new HSSFRichTextString("Sheet1"));
             sheet2.createRow(0).createCell(0).setCellValue(new HSSFRichTextString("Sheet2"));
             sheet3.createRow(0).createCell(0).setCellValue(new HSSFRichTextString("Sheet3"));
@@ -295,7 +269,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-        }
+        }*/
         
         wb.close();
     }
@@ -674,18 +648,17 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
                   HSSFWorkbook hw = new HSSFWorkbook(root, true);
                   List<HSSFObjectData> objects = hw.getAllEmbeddedObjects();
                   boolean found = false;
-                  for (int i = 0; i < objects.size(); i++) {
-                     HSSFObjectData embeddedObject = objects.get(i);
-                     if (embeddedObject.hasDirectoryEntry()) {
-                        DirectoryEntry dir = embeddedObject.getDirectory();
-                        if (dir instanceof DirectoryNode) {
-                           DirectoryNode dNode = (DirectoryNode)dir;
-                           if (hasEntry(dNode,"WordDocument")) {
-                              found = true;
+                   for (HSSFObjectData embeddedObject : objects) {
+                       if (embeddedObject.hasDirectoryEntry()) {
+                           DirectoryEntry dir = embeddedObject.getDirectory();
+                           if (dir instanceof DirectoryNode) {
+                               DirectoryNode dNode = (DirectoryNode) dir;
+                               if (hasEntry(dNode, "WordDocument")) {
+                                   found = true;
+                               }
                            }
-                        }
-                     }
-                  }
+                       }
+                   }
                   assertTrue(found);
                   
                   hw.close();
@@ -731,7 +704,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
 
     @Test
     public void cellStylesLimit() throws IOException {
-        HSSFWorkbook wb = new HSSFWorkbook();
+        Workbook wb = new HSSFWorkbook();
         int numBuiltInStyles = wb.getNumCellStyles();
         int MAX_STYLES = 4030;
         int limit = MAX_STYLES - numBuiltInStyles;
@@ -754,38 +727,38 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
 
     @Test
     public void setSheetOrderHSSF() throws IOException{
-        HSSFWorkbook wb = new HSSFWorkbook();
-        HSSFSheet s1 = wb.createSheet("first sheet");
-        HSSFSheet s2 = wb.createSheet("other sheet");
+        Workbook wb = new HSSFWorkbook();
+        Sheet s1 = wb.createSheet("first sheet");
+        Sheet s2 = wb.createSheet("other sheet");
 
-        HSSFName name1 = wb.createName();
+        Name name1 = wb.createName();
         name1.setNameName("name1");
         name1.setRefersToFormula("'first sheet'!D1");
 
-        HSSFName name2 = wb.createName();
+        Name name2 = wb.createName();
         name2.setNameName("name2");
         name2.setRefersToFormula("'other sheet'!C1");
 
 
-        HSSFRow s1r1 = s1.createRow(2);
-        HSSFCell c1 = s1r1.createCell(3);
+        Row s1r1 = s1.createRow(2);
+        Cell c1 = s1r1.createCell(3);
         c1.setCellValue(30);
-        HSSFCell c2 = s1r1.createCell(2);
+        Cell c2 = s1r1.createCell(2);
         c2.setCellFormula("SUM('other sheet'!C1,'first sheet'!C1)");
 
-        HSSFRow s2r1 = s2.createRow(0);
-        HSSFCell c3 = s2r1.createCell(1);
+        Row s2r1 = s2.createRow(0);
+        Cell c3 = s2r1.createCell(1);
         c3.setCellFormula("'first sheet'!D3");
-        HSSFCell c4 = s2r1.createCell(2);
+        Cell c4 = s2r1.createCell(2);
         c4.setCellFormula("'other sheet'!D3");
 
         // conditional formatting
-        HSSFSheetConditionalFormatting sheetCF = s1.getSheetConditionalFormatting();
+        SheetConditionalFormatting sheetCF = s1.getSheetConditionalFormatting();
 
-        HSSFConditionalFormattingRule rule1 = sheetCF.createConditionalFormattingRule(
+        ConditionalFormattingRule rule1 = sheetCF.createConditionalFormattingRule(
                 CFRuleRecord.ComparisonOperator.BETWEEN, "'first sheet'!D1", "'other sheet'!D1");
 
-        HSSFConditionalFormattingRule [] cfRules = { rule1 };
+        ConditionalFormattingRule [] cfRules = { rule1 };
 
         CellRangeAddress[] regions = {
             new CellRangeAddress(2, 4, 0, 0), // A3:A5
@@ -804,10 +777,10 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         assertEquals("'other sheet'!D3", c4.getCellFormula());
 
         // conditional formatting
-        HSSFConditionalFormatting cf = sheetCF.getConditionalFormattingAt(0);
+        ConditionalFormatting cf = sheetCF.getConditionalFormattingAt(0);
         assertEquals("'first sheet'!D1", cf.getRule(0).getFormula1());
         assertEquals("'other sheet'!D1", cf.getRule(0).getFormula2());
-        
+
         wb.close();
     }
 
@@ -898,47 +871,6 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         assertEquals(2, wb.getFirstVisibleTab());
         assertEquals(2, wb.getDisplayedTab());
 
-        wb.close();
-    }
-
-    @Test
-    public void addSheetTwice() throws IOException {
-        HSSFWorkbook wb=new HSSFWorkbook();
-        HSSFSheet sheet1 = wb.createSheet("Sheet1");
-        assertNotNull(sheet1);
-        try {
-            wb.createSheet("Sheet1");
-            fail("Should fail if we add the same sheet twice");
-        } catch (IllegalArgumentException e) {
-            assertTrue(e.getMessage(), e.getMessage().contains("already contains a sheet of this name"));
-        }
-        
-        wb.close();
-    }
-
-    @Test
-    public void getSheetIndex() throws IOException {
-        HSSFWorkbook wb=new HSSFWorkbook();
-        HSSFSheet sheet1 = wb.createSheet("Sheet1");
-        HSSFSheet sheet2 = wb.createSheet("Sheet2");
-        HSSFSheet sheet3 = wb.createSheet("Sheet3");
-        HSSFSheet sheet4 = wb.createSheet("Sheet4");
-
-        assertEquals(0, wb.getSheetIndex(sheet1));
-        assertEquals(1, wb.getSheetIndex(sheet2));
-        assertEquals(2, wb.getSheetIndex(sheet3));
-        assertEquals(3, wb.getSheetIndex(sheet4));
-
-        // remove sheets
-        wb.removeSheetAt(0);
-        wb.removeSheetAt(2);
-
-        // ensure that sheets are moved up and removed sheets are not found any more
-        assertEquals(-1, wb.getSheetIndex(sheet1));
-        assertEquals(0, wb.getSheetIndex(sheet2));
-        assertEquals(1, wb.getSheetIndex(sheet3));
-        assertEquals(-1, wb.getSheetIndex(sheet4));
-        
         wb.close();
     }
 
@@ -1143,24 +1075,26 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
 		n.setRefersToFormula(sheetName + "!A1");
 
 		assertSheetOrder(wb, "Sheet1", "Sheet2", "Sheet3", "ASheet");
-		assertEquals("ASheet!A1", wb.getName(nameName).getRefersToFormula());
+        final HSSFName name = wb.getName(nameName);
+        assertNotNull(name);
+        assertEquals("ASheet!A1", name.getRefersToFormula());
 		
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();
 		wb.write(stream);
 
 		assertSheetOrder(wb, "Sheet1", "Sheet2", "Sheet3", "ASheet");
-		assertEquals("ASheet!A1", wb.getName(nameName).getRefersToFormula());
+		assertEquals("ASheet!A1", name.getRefersToFormula());
 
 		wb.removeSheetAt(1);
 
 		assertSheetOrder(wb, "Sheet1", "Sheet3", "ASheet");
-		assertEquals("ASheet!A1", wb.getName(nameName).getRefersToFormula());
+		assertEquals("ASheet!A1", name.getRefersToFormula());
 
 		ByteArrayOutputStream stream2 = new ByteArrayOutputStream();
 		wb.write(stream2);
 
 		assertSheetOrder(wb, "Sheet1", "Sheet3", "ASheet");
-		assertEquals("ASheet!A1", wb.getName(nameName).getRefersToFormula());
+		assertEquals("ASheet!A1", name.getRefersToFormula());
 
 		HSSFWorkbook wb2 = new HSSFWorkbook(new ByteArrayInputStream(stream.toByteArray()));
 		expectName(wb2, nameName, "ASheet!A1");
@@ -1172,7 +1106,9 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
 	}
 
 	private void expectName(HSSFWorkbook wb, String name, String expect) {
-		assertEquals(expect, wb.getName(name).getRefersToFormula());
+        final HSSFName hssfName = wb.getName(name);
+        assertNotNull(hssfName);
+        assertEquals(expect, hssfName.getRefersToFormula());
 	}
 
 	@Test

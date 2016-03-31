@@ -17,18 +17,18 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import static org.junit.Assert.assertArrayEquals;
+import org.apache.poi.ddf.EscherDgRecord;
+import org.apache.poi.ddf.EscherSpRecord;
+import org.apache.poi.hssf.HSSFITestDataProvider;
+import org.apache.poi.hssf.record.CommonObjectDataSubRecord;
+import org.apache.poi.hssf.record.EscherAggregate;
+import org.apache.poi.ss.usermodel.BaseTestCloneSheet;
+import org.junit.Test;
 
 import java.io.IOException;
 import java.util.Arrays;
 
-import junit.framework.TestCase;
-
-import org.apache.poi.ddf.EscherDgRecord;
-import org.apache.poi.ddf.EscherSpRecord;
-import org.apache.poi.hssf.record.CommonObjectDataSubRecord;
-import org.apache.poi.hssf.record.EscherAggregate;
-import org.apache.poi.ss.util.CellRangeAddress;
+import static org.junit.Assert.*;
 
 /**
  * Test the ability to clone a sheet.
@@ -36,40 +36,12 @@ import org.apache.poi.ss.util.CellRangeAddress;
  *  add that record to the sheet in the testCloneSheetBasic method.
  * @author  avik
  */
-public final class TestCloneSheet extends TestCase {
+public final class TestCloneSheet extends BaseTestCloneSheet {
+    public TestCloneSheet() {
+        super(HSSFITestDataProvider.instance);
+    }
 
-	public void testCloneSheetBasic() throws IOException{
-		HSSFWorkbook b = new HSSFWorkbook();
-		HSSFSheet s = b.createSheet("Test");
-		s.addMergedRegion(new CellRangeAddress(0, 1, 0, 1));
-		HSSFSheet clonedSheet = b.cloneSheet(0);
-
-		assertEquals("One merged area", 1, clonedSheet.getNumMergedRegions());
-		
-		b.close();
-	}
-
-	/**
-	 * Ensures that pagebreak cloning works properly
-	 * @throws IOException 
-	 */
-	public void testPageBreakClones() throws IOException {
-		HSSFWorkbook b = new HSSFWorkbook();
-		HSSFSheet s = b.createSheet("Test");
-		s.setRowBreak(3);
-		s.setColumnBreak((short) 6);
-
-		HSSFSheet clone = b.cloneSheet(0);
-		assertTrue("Row 3 not broken", clone.isRowBroken(3));
-		assertTrue("Column 6 not broken", clone.isColumnBroken((short) 6));
-
-		s.removeRowBreak(3);
-
-		assertTrue("Row 3 still should be broken", clone.isRowBroken(3));
-		
-		b.close();
-	}
-    
+    @Test
     public void testCloneSheetWithoutDrawings(){
         HSSFWorkbook b = new HSSFWorkbook();
         HSSFSheet s = b.createSheet("Test");
@@ -79,7 +51,8 @@ public final class TestCloneSheet extends TestCase {
         assertNull(s2.getDrawingPatriarch());
         assertEquals(HSSFTestHelper.getSheetForTest(s).getRecords().size(), HSSFTestHelper.getSheetForTest(s2).getRecords().size());
     }
-    
+
+    @Test
     public void testCloneSheetWithEmptyDrawingAggregate(){
         HSSFWorkbook b = new HSSFWorkbook();
         HSSFSheet s = b.createSheet("Test");
@@ -114,7 +87,8 @@ public final class TestCloneSheet extends TestCase {
         assertEquals(agg1.toXml(""), agg2.toXml(""));
         assertArrayEquals(agg1.serialize(), agg2.serialize());
     }
-    
+
+    @Test
     public void testCloneComment() throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sh = wb.createSheet();
