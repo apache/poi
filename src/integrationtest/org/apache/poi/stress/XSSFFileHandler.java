@@ -30,7 +30,6 @@ import java.util.Iterator;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.util.IOUtils;
@@ -55,7 +54,7 @@ public class XSSFFileHandler extends SpreadsheetHandler {
         wb = new XSSFWorkbook(new ByteArrayInputStream(bytes));
 
         // use the combined handler for HSSF/XSSF
-        handleWorkbook(wb, ".xlsx");
+        handleWorkbook(wb);
         
         // TODO: some documents fail currently...
         //XSSFFormulaEvaluator evaluator = new XSSFFormulaEvaluator(wb);
@@ -73,8 +72,7 @@ public class XSSFFileHandler extends SpreadsheetHandler {
     }
 
 
-    private void checkXSSFReader(OPCPackage p)
-            throws IOException, OpenXML4JException, InvalidFormatException {
+    private void checkXSSFReader(OPCPackage p) throws IOException, OpenXML4JException {
         XSSFReader reader = new XSSFReader(p);
         
         // these can be null...

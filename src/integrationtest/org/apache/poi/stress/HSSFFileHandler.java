@@ -28,7 +28,7 @@ public class HSSFFileHandler extends SpreadsheetHandler {
 	@Override
     public void handleFile(InputStream stream) throws Exception {
 		HSSFWorkbook wb = new HSSFWorkbook(stream);
-		handleWorkbook(wb, ".xls");
+		handleWorkbook(wb);
 		
 		// TODO: some documents fail currently...
         //HSSFFormulaEvaluator evaluator = new HSSFFormulaEvaluator(wb);

@@ -22,7 +22,6 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashSet;
@@ -32,7 +31,6 @@ import org.apache.poi.POIOLE2TextExtractor;
 import org.apache.poi.POITextExtractor;
 import org.apache.poi.extractor.ExtractorFactory;
 import org.apache.poi.hpsf.extractor.HPSFPropertiesExtractor;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.xmlbeans.XmlException;
 
@@ -52,9 +50,7 @@ public abstract class AbstractFileHandler implements FileHandler {
         EXPECTED_EXTRACTOR_FAILURES.add("hmef/bug52400-winmail-simple.dat");
         EXPECTED_EXTRACTOR_FAILURES.add("hmef/bug52400-winmail-with-attachments.dat");
         EXPECTED_EXTRACTOR_FAILURES.add("hpsf/Test0313rur.adm");
-        EXPECTED_EXTRACTOR_FAILURES.add("hsmf/attachment_msg_pdf.msg");
         EXPECTED_EXTRACTOR_FAILURES.add("poifs/Notes.ole2");
-        EXPECTED_EXTRACTOR_FAILURES.add("slideshow/testPPT.thmx");
     }
 
     public void handleExtracting(File file) throws Exception {
@@ -94,7 +90,7 @@ public abstract class AbstractFileHandler implements FileHandler {
             assertNotNull(metadataExtractor.getText());
 
             assertFalse("Expected Extraction to fail for file " + file + " and handler " + this + ", but did not fail!", 
-                    EXPECTED_EXTRACTOR_FAILURES.contains(file));
+                    EXPECTED_EXTRACTOR_FAILURES.contains(file.getParentFile().getName() + "/" + file.getName()));
             
             assertEquals("File should not be modified by extractor", length, file.length());
             assertEquals("File should not be modified by extractor", modified, file.lastModified());
@@ -114,7 +110,7 @@ public abstract class AbstractFileHandler implements FileHandler {
             	}
             }
         } catch (IllegalArgumentException e) {
-            if(!EXPECTED_EXTRACTOR_FAILURES.contains(file)) {
+            if(!EXPECTED_EXTRACTOR_FAILURES.contains(file.getParentFile().getName() + "/" + file.getName())) {
                 throw e;
             }
         } finally {
@@ -122,9 +118,7 @@ public abstract class AbstractFileHandler implements FileHandler {
         }
     }
 
-    private void handleExtractingAsStream(File file) throws FileNotFoundException,
-            IOException, InvalidFormatException, OpenXML4JException,
-            XmlException {
+    private void handleExtractingAsStream(File file) throws IOException, OpenXML4JException, XmlException {
         InputStream stream = new FileInputStream(file);
         try {
             POITextExtractor streamExtractor = ExtractorFactory.createExtractor(stream);
