@@ -16,12 +16,18 @@
 ==================================================================== */
 package org.apache.poi.stress;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-
+import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.hssf.OldExcelFormatException;
+import org.apache.poi.hssf.dev.BiffViewer;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.util.RecordFormatException;
 import org.junit.Test;
+
+import java.io.*;
+import java.util.HashSet;
+import java.util.Set;
+
+import static org.junit.Assert.assertFalse;
 
 public class HSSFFileHandler extends SpreadsheetHandler {
 	private POIFSFileHandler delegate = new POIFSFileHandler();
@@ -38,6 +44,54 @@ public class HSSFFileHandler extends SpreadsheetHandler {
 
 		// also try to see if some of the Records behave incorrectly
 		// TODO: still fails on some records... RecordsStresser.handleWorkbook(wb);
+	}
+
+	private static final Set<String> EXPECTED_ADDITIONAL_FAILURES = new HashSet<String>();
+	static {
+		// encrypted
+		EXPECTED_ADDITIONAL_FAILURES.add("spreadsheet/35897-type4.xls");
+		EXPECTED_ADDITIONAL_FAILURES.add("spreadsheet/xor-encryption-abc.xls");
+		EXPECTED_ADDITIONAL_FAILURES.add("spreadsheet/password.xls");
+		// broken files
+		EXPECTED_ADDITIONAL_FAILURES.add("spreadsheet/43493.xls");
+		// TODO: ok to ignore?
+		EXPECTED_ADDITIONAL_FAILURES.add("spreadsheet/50833.xls");
+		EXPECTED_ADDITIONAL_FAILURES.add("spreadsheet/51832.xls");
+		EXPECTED_ADDITIONAL_FAILURES.add("spreadsheet/XRefCalc.xls");
+	}
+
+	@Override
+	public void handleAdditional(File file) throws Exception {
+		// redirect stdout as the examples often write lots of text
+		PrintStream oldOut = System.out;
+		try {
+			System.setOut(new PrintStream(new OutputStream() {
+				@Override
+				public void write(int b) throws IOException {
+				}
+			}));
+
+			BiffViewer.main(new String[]{file.getAbsolutePath()});
+
+			assertFalse("Expected Extraction to fail for file " + file + " and handler " + this + ", but did not fail!",
+					EXPECTED_ADDITIONAL_FAILURES.contains(file.getParentFile().getName() + "/" + file.getName()));
+		} catch (OldExcelFormatException e) {
+			// old excel formats are not supported here
+		} catch (EncryptedDocumentException e) {
+			if(!EXPECTED_ADDITIONAL_FAILURES.contains(file.getParentFile().getName() + "/" + file.getName())) {
+				throw e;
+			}
+		} catch (RecordFormatException e) {
+			if(!EXPECTED_ADDITIONAL_FAILURES.contains(file.getParentFile().getName() + "/" + file.getName())) {
+				throw e;
+			}
+		} catch (RuntimeException e) {
+			if(!EXPECTED_ADDITIONAL_FAILURES.contains(file.getParentFile().getName() + "/" + file.getName())) {
+				throw e;
+			}
+		} finally {
+			System.setOut(oldOut);
+		}
 	}
 
 	// a test-case to test this locally without executing the full TestAllFiles

@@ -28,6 +28,7 @@ import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.SAXHelper;
 import org.apache.poi.xssf.eventusermodel.XSSFSheetXMLHandler.SheetContentsHandler;
@@ -106,7 +107,12 @@ public class XLSX2CSV {
             } else {
                 output.append(',');
             }
-            
+
+            // gracefully handle missing CellRef here in a similar way as XSSFCell does
+            if(cellReference == null) {
+                cellReference = new CellAddress(currentRow, currentCol).formatAsString();
+            }
+
             // Did we miss any cells?
             int thisCol = (new CellReference(cellReference)).getCol();
             int missedCols = thisCol - currentCol - 1;

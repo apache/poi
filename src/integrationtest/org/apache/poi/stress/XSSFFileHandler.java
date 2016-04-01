@@ -16,24 +16,26 @@
 ==================================================================== */
 package org.apache.poi.stress;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
+import org.apache.poi.POIXMLException;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.openxml4j.exceptions.OLE2NotOfficeXmlFileException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.xssf.eventusermodel.XLSX2CSV;
 import org.apache.poi.xssf.eventusermodel.XSSFReader;
+import org.apache.poi.xssf.eventusermodel.examples.FromHowTo;
 import org.apache.poi.xssf.extractor.XSSFExportToXml;
 import org.apache.poi.xssf.usermodel.XSSFMap;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -111,7 +113,67 @@ public class XSSFFileHandler extends SpreadsheetHandler {
             exporter.exportToXML(os, true);
         }
     }
-    
+
+    private static final Set<String> EXPECTED_ADDITIONAL_FAILURES = new HashSet<String>();
+    static {
+        // expected sheet-id not found
+        EXPECTED_ADDITIONAL_FAILURES.add("spreadsheet/52348.xlsx");
+        EXPECTED_ADDITIONAL_FAILURES.add("spreadsheet/59021.xlsx");
+        // zip-bomb
+        EXPECTED_ADDITIONAL_FAILURES.add("spreadsheet/54764.xlsx");
+        EXPECTED_ADDITIONAL_FAILURES.add("spreadsheet/54764-2.xlsx");
+        EXPECTED_ADDITIONAL_FAILURES.add("spreadsheet/54764.xlsx");
+        EXPECTED_ADDITIONAL_FAILURES.add("spreadsheet/poc-xmlbomb.xlsx");
+        // strict OOXML
+        EXPECTED_ADDITIONAL_FAILURES.add("spreadsheet/57914.xlsx");
+        EXPECTED_ADDITIONAL_FAILURES.add("spreadsheet/SampleSS.strict.xlsx");
+        EXPECTED_ADDITIONAL_FAILURES.add("spreadsheet/SimpleStrict.xlsx");
+        EXPECTED_ADDITIONAL_FAILURES.add("spreadsheet/sample.strict.xlsx");
+        // binary format
+        EXPECTED_ADDITIONAL_FAILURES.add("spreadsheet/Simple.xlsb");
+        // TODO: good to ignore?
+        EXPECTED_ADDITIONAL_FAILURES.add("spreadsheet/sample-beta.xlsx");
+    }
+
+    @Override
+    public void handleAdditional(File file) throws Exception {
+        // redirect stdout as the examples often write lots of text
+        PrintStream oldOut = System.out;
+        try {
+            System.setOut(new PrintStream(new OutputStream() {
+                @Override
+                public void write(int b) throws IOException {
+                }
+            }));
+            FromHowTo.main(new String[]{file.getAbsolutePath()});
+            XLSX2CSV.main(new String[]{file.getAbsolutePath()});
+
+            assertFalse("Expected Extraction to fail for file " + file + " and handler " + this + ", but did not fail!",
+                    EXPECTED_ADDITIONAL_FAILURES.contains(file.getParentFile().getName() + "/" + file.getName()));
+
+        } catch (OLE2NotOfficeXmlFileException e) {
+            // we have some files that are not actually OOXML and thus cannot be tested here
+        } catch (IllegalArgumentException e) {
+            if(!EXPECTED_ADDITIONAL_FAILURES.contains(file.getParentFile().getName() + "/" + file.getName())) {
+                throw e;
+            }
+        } catch (InvalidFormatException e) {
+            if(!EXPECTED_ADDITIONAL_FAILURES.contains(file.getParentFile().getName() + "/" + file.getName())) {
+                throw e;
+            }
+        } catch (IOException e) {
+            if(!EXPECTED_ADDITIONAL_FAILURES.contains(file.getParentFile().getName() + "/" + file.getName())) {
+                throw e;
+            }
+        } catch (POIXMLException e) {
+            if(!EXPECTED_ADDITIONAL_FAILURES.contains(file.getParentFile().getName() + "/" + file.getName())) {
+                throw e;
+            }
+        } finally {
+            System.setOut(oldOut);
+        }
+    }
+
     // a test-case to test this locally without executing the full TestAllFiles
     @Test
     public void test() throws Exception {
@@ -127,5 +189,10 @@ public class XSSFFileHandler extends SpreadsheetHandler {
     @Test
     public void testExtractor() throws Exception {
         handleExtracting(new File("test-data/spreadsheet/ref-56737.xlsx"));
+    }
+
+    @Test
+    public void testAdditional() throws Exception {
+        handleAdditional(new File("test-data/spreadsheet/poc-xmlbomb.xlsx"));
     }
 }
