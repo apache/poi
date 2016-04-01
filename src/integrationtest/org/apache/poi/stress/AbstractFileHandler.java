@@ -133,4 +133,9 @@ public abstract class AbstractFileHandler implements FileHandler {
             stream.close();
         }
     }
+
+    @Override
+    public void handleAdditional(File file) throws Exception {
+        // by default we do nothing here
+    }
 }

@@ -334,6 +334,7 @@ under the License.
         <pathelement location="${main.output.test.dir}"/>
         <pathelement location="${ooxml.output.dir}"/>
         <pathelement location="${integration.output.test.dir}"/>
+        <pathelement location="${examples.output.dir}"/>
     </path>
 
     <path id="ooxml-lite.classpath">
@@ -998,6 +999,7 @@ under the License.
                 <path refid="ooxml.classpath"/>
                 <pathelement location="${ooxml.output.dir}"/>
                 <pathelement location="${main.output.test.dir}"/>
+                <pathelement location="${examples.output.dir}"/>
                 <pathelement location="${main.ant.jar}"/>
             </classpath>
         </javac>

@@ -41,4 +41,10 @@ public interface FileHandler {
 	 * is returning some text. 
 	 */
 	void handleExtracting(File file) throws Exception;
+
+	/**
+	 * Allows to perform some additional work, e.g. run
+	 * some of the example applications
+	 */
+	void handleAdditional(File file) throws Exception;
 }

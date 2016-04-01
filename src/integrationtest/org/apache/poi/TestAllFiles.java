@@ -308,6 +308,7 @@ public class TestAllFiles {
         return files;
     }
 
+    @SuppressWarnings("DefaultAnnotationParam")
     @Parameter(value=0)
     public String file;
 
@@ -356,6 +357,9 @@ public class TestAllFiles {
                 throw new Exception("While handling " + file, e);
             }
         }
+
+        // let some file handlers do additional stuff
+        handler.handleAdditional(inputFile);
     }
 
     static String getExtension(String file) {
@@ -374,6 +378,10 @@ public class TestAllFiles {
 
         @Override
         public void handleExtracting(File file) throws Exception {
+        }
+
+        @Override
+        public void handleAdditional(File file) throws Exception {
         }
     }
 }
