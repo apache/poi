@@ -164,10 +164,10 @@ under the License.
     <!-- xml signature libs -->
     <property name="dsig.xmlsec.jar" location="${compile.lib}/xmlsec-2.0.6.jar"/>
     <property name="dsig.xmlsec.url" value="${repository.m2}/maven2/org/apache/santuario/xmlsec/2.0.6/xmlsec-2.0.6.jar"/>
-    <property name="dsig.bouncycastle-prov.jar" location="${compile.lib}/bcprov-ext-jdk15on-1.53.jar"/>
-    <property name="dsig.bouncycastle-prov.url" value="${repository.m2}/maven2/org/bouncycastle/bcprov-ext-jdk15on/1.53/bcprov-ext-jdk15on-1.53.jar"/>
-    <property name="dsig.bouncycastle-pkix.jar" location="${compile.lib}/bcpkix-jdk15on-1.53.jar"/>
-    <property name="dsig.bouncycastle-pkix.url" value="${repository.m2}/maven2/org/bouncycastle/bcpkix-jdk15on/1.53/bcpkix-jdk15on-1.53.jar"/>
+    <property name="dsig.bouncycastle-prov.jar" location="${compile.lib}/bcprov-ext-jdk15on-1.54.jar"/>
+    <property name="dsig.bouncycastle-prov.url" value="${repository.m2}/maven2/org/bouncycastle/bcprov-ext-jdk15on/1.54/bcprov-ext-jdk15on-1.54.jar"/>
+    <property name="dsig.bouncycastle-pkix.jar" location="${compile.lib}/bcpkix-jdk15on-1.54.jar"/>
+    <property name="dsig.bouncycastle-pkix.url" value="${repository.m2}/maven2/org/bouncycastle/bcpkix-jdk15on/1.54/bcpkix-jdk15on-1.54.jar"/>
     <property name="dsig.sl4j-api.jar" location="${compile.lib}/slf4j-api-1.7.12.jar"/>
     <property name="dsig.sl4j-api.url" value="${repository.m2}/maven2/org/slf4j/slf4j-api/1.7.12/slf4j-api-1.7.12.jar"/>
 
