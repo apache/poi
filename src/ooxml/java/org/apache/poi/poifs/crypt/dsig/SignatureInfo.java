@@ -27,23 +27,6 @@ package org.apache.poi.poifs.crypt.dsig;
 import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 import static org.apache.poi.poifs.crypt.dsig.facets.SignatureFacet.XML_DIGSIG_NS;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.security.GeneralSecurityException;
-import java.security.MessageDigest;
-import java.security.Provider;
-import java.security.Security;
-import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
-
 import javax.crypto.Cipher;
 import javax.xml.crypto.MarshalException;
 import javax.xml.crypto.URIDereferencer;
@@ -65,6 +48,22 @@ import javax.xml.crypto.dsig.spec.C14NMethodParameterSpec;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.security.GeneralSecurityException;
+import java.security.MessageDigest;
+import java.security.Provider;
+import java.security.Security;
+import java.security.cert.X509Certificate;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
 
 import org.apache.jcp.xml.dsig.internal.dom.DOMReference;
 import org.apache.jcp.xml.dsig.internal.dom.DOMSignedInfo;
@@ -162,7 +161,7 @@ import org.w3c.dom.events.EventTarget;
  * <p>To use SignatureInfo and its sibling classes, you'll need to have the following libs
  * in the classpath:</p>
  * <ul>
- * <li>BouncyCastle bcpkix and bcprov (tested against 1.53)</li>
+ * <li>BouncyCastle bcpkix and bcprov (tested against 1.54)</li>
  * <li>Apache Santuario "xmlsec" (tested against 2.0.5)</li>
  * <li>and slf4j-api (tested against 1.7.12)</li>
  * </ul>
