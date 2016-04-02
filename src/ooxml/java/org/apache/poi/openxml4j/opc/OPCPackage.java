@@ -255,11 +255,27 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
       }
 
       OPCPackage pack = new ZipPackage(file, access);
-      if (pack.partList == null && access != PackageAccess.WRITE) {
-         pack.getParts();
-      }
-      pack.originalPackagePath = file.getAbsolutePath();
-      return pack;
+	   try {
+		   if (pack.partList == null && access != PackageAccess.WRITE) {
+			   pack.getParts();
+		   }
+		   pack.originalPackagePath = file.getAbsolutePath();
+		   return pack;
+	   } catch (InvalidFormatException e) {
+		   try {
+			   pack.close();
+		   } catch (IOException e1) {
+			   throw new IllegalStateException(e);
+		   }
+		   throw e;
+	   } catch (RuntimeException e) {
+		   try {
+			   pack.close();
+		   } catch (IOException e1) {
+			   throw new IllegalStateException(e);
+		   }
+		   throw e;
+	   }
    }
 
 	/**

@@ -693,7 +693,12 @@ public final class TestPackage {
         
         // OLE2 - Stream
         try {
-            OPCPackage.open(files.openResourceAsStream("SampleSS.xls"));
+			InputStream stream = files.openResourceAsStream("SampleSS.xls");
+			try {
+				OPCPackage.open(stream);
+			} finally {
+				stream.close();
+			}
             fail("Shouldn't be able to open OLE2");
         } catch (OLE2NotOfficeXmlFileException e) {
             assertTrue(e.getMessage().contains("The supplied data appears to be in the OLE2 Format"));
@@ -710,7 +715,12 @@ public final class TestPackage {
         
         // Raw XML - Stream
         try {
-            OPCPackage.open(files.openResourceAsStream("SampleSS.xml"));
+			InputStream stream = files.openResourceAsStream("SampleSS.xml");
+			try {
+				OPCPackage.open(stream);
+			} finally {
+				stream.close();
+			}
             fail("Shouldn't be able to open XML");
         } catch (NotOfficeXmlFileException e) {
             assertTrue(e.getMessage().contains("The supplied data appears to be a raw XML file"));
@@ -727,7 +737,12 @@ public final class TestPackage {
         
         // ODF / ODS - Stream
         try {
-            OPCPackage.open(files.openResourceAsStream("SampleSS.ods"));
+			InputStream stream = files.openResourceAsStream("SampleSS.ods");
+			try {
+				OPCPackage.open(stream);
+			} finally {
+				stream.close();
+			}
             fail("Shouldn't be able to open ODS");
         } catch (ODFNotOfficeXmlFileException e) {
             assertTrue(e.toString().contains("The supplied data appears to be in ODF"));
@@ -744,7 +759,12 @@ public final class TestPackage {
         
         // Plain Text - Stream
         try {
-            OPCPackage.open(files.openResourceAsStream("SampleSS.txt"));
+			InputStream stream = files.openResourceAsStream("SampleSS.txt");
+			try {
+				OPCPackage.open(stream);
+			} finally {
+				stream.close();
+			}
             fail("Shouldn't be able to open Plain Text");
         } catch (NotOfficeXmlFileException e) {
             assertTrue(e.getMessage().contains("No valid entries or contents found"));
