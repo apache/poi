@@ -429,6 +429,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 		if (this.contentTypeManager == null) {
 		    logger.log(POILogger.WARN,
 		            "Unable to call close() on a package that hasn't been fully opened yet");
+			revert();
 		    return;
 		}
 

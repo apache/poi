@@ -247,8 +247,11 @@ public final class ZipHelper {
         
         // Peek at the first few bytes to sanity check
         FileInputStream input = new FileInputStream(file);
-        verifyZipHeader(input);
-        input.close();
+        try {
+            verifyZipHeader(input);
+        } finally {
+            input.close();
+        }
 
         // Open as a proper zip file
         return new ZipSecureFile(file);
