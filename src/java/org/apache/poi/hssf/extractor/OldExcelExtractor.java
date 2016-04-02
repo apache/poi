@@ -44,6 +44,7 @@ import org.apache.poi.poifs.filesystem.DocumentNode;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.NotOLE2FileException;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.util.IOUtils;
 
 /**
  * A text extractor for old Excel files, which are too old for
@@ -57,6 +58,10 @@ import org.apache.poi.ss.usermodel.Cell;
  */
 public class OldExcelExtractor implements Closeable {
     private RecordInputStream ris;
+
+    // sometimes we hold the stream here and thus need to ensure it is closed at some point
+    private Closeable toClose;
+
     private int biffVersion;
     private int fileType;
 
@@ -69,6 +74,7 @@ public class OldExcelExtractor implements Closeable {
         try {
             poifs = new NPOIFSFileSystem(f);
             open(poifs);
+            toClose = poifs;
             return;
         } catch (OldExcelFormatException e) {
             // will be handled by workaround below
@@ -87,6 +93,11 @@ public class OldExcelExtractor implements Closeable {
         try {
             open(biffStream);
         } catch (IOException e)  {
+            // ensure that the stream is properly closed here if an Exception
+            // is thrown while opening
+            biffStream.close();
+            throw e;
+        } catch (RuntimeException e)  {
             // ensure that the stream is properly closed here if an Exception
             // is thrown while opening
             biffStream.close();
@@ -116,6 +127,7 @@ public class OldExcelExtractor implements Closeable {
             }
         } else {
             ris = new RecordInputStream(bis);
+            toClose = bis;
             prepare();
         }
     }
@@ -279,9 +291,13 @@ public class OldExcelExtractor implements Closeable {
 
     @Override
     public void close() {
-        // not necessary any more ...
+        // some cases require this close here
+        if(toClose != null) {
+            IOUtils.closeQuietly(toClose);
+            toClose = null;
+        }
     }
-    
+
     protected void handleNumericCell(StringBuffer text, double value) {
         // TODO Need to fetch / use format strings
         text.append(value);

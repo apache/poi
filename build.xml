@@ -531,7 +531,9 @@ under the License.
             <include name="xmlsec-2.0.1.jar"/>
             <include name="xmlsec-2.0.5.jar"/>
             <include name="bcprov-ext-jdk15on-1.51.jar"/>
+            <include name="bcprov-ext-jdk15on-1.53.jar"/>
             <include name="bcpkix-jdk15on-1.51.jar"/>
+            <include name="bcpkix-jdk15on-1.53.jar"/>
             <include name="slf4j-api-1.7.7.jar"/>
          </fileset>
         </delete>
