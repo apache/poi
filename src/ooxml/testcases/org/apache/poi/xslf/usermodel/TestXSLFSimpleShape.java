@@ -23,12 +23,15 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.awt.Color;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.List;
 
+import org.apache.poi.sl.draw.DrawFactory;
 import org.apache.poi.sl.draw.geom.TestPresetGeometries;
 import org.apache.poi.sl.usermodel.Placeholder;
+import org.apache.poi.sl.usermodel.Slide;
 import org.apache.poi.sl.usermodel.StrokeStyle.LineCap;
 import org.apache.poi.sl.usermodel.StrokeStyle.LineDash;
 import org.apache.poi.util.Units;
@@ -343,6 +346,34 @@ public class TestXSLFSimpleShape {
             TestPresetGeometries.resetPreset();
         }
         
+        ppt.close();
+    }
+
+    @SuppressWarnings("Duplicates")
+    @Test
+    public void testArrayStoreException() throws IOException {
+        XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("aascu.org_workarea_downloadasset.aspx_id=5864.pptx");
+        Dimension pgsize = ppt.getPageSize();
+
+        for (Slide<?,?> s : ppt.getSlides()) {
+            //System.out.println("Slide: " + s);
+
+            BufferedImage img = new BufferedImage(pgsize.width, pgsize.height, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D graphics = img.createGraphics();
+            DrawFactory.getInstance(graphics).fixFonts(graphics);
+
+            // default rendering options
+            graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            graphics.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+            graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+            graphics.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+
+            // draw stuff
+            s.draw(graphics);
+
+            graphics.dispose();
+            img.flush();
+        }
         ppt.close();
     }
 }
