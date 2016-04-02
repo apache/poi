@@ -171,7 +171,7 @@ public class TestZipPackage {
     @Test
     public void unparseableCentralDirectory() throws IOException {
         File f = OpenXML4JTestDataSamples.getSampleFile("at.pzp.www_uploads_media_PP_Scheinecker-jdk6error.pptx");
-        SlideShow<?,?> ppt = SlideShowFactory.create(f);
+        SlideShow<?,?> ppt = SlideShowFactory.create(f, null, true);
         ppt.close();
     }
 }
