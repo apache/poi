@@ -2074,17 +2074,17 @@ under the License.
         <!-- (revision)properties can't be set and read within one svn block -->
         <echo message="updating build.xml and status.xml"/>
         <svn refid="svn.settings">
-            <update dir="." recurse="true"/>
             <commit message="release prepare for ${version.id} - updating build.xml and status.xml" recurse="false">
                 <fileset dir="." includes="build.xml,src/documentation/content/xdocs/status.xml"/>
             </commit>
+            <update dir="." recurse="true"/>
             <status path="." revisionProperty="svn_version1"/>
         </svn>
-        <echo message="pin documentation"/>
+        <echo message="pin documentation - release ${svn_version1}"/>
         <svn refid="svn.settings">
-            <update dir="." recurse="true"/>
             <propset path="src" name="svn:externals" value="documentation -r${svn_version1} https://svn.apache.org/repos/asf/poi/site/src/documentation"/>
             <commit message="release prepare for ${version.id} - pin documentation" dir="src" recurse="false"/>
+            <update dir="." recurse="true"/>
             <status path="." revisionProperty="svn_version2"/>
         </svn>
         <echo message="create release tag"/>
@@ -2092,8 +2092,7 @@ under the License.
             <copy
                 srcUrl="https://svn.apache.org/repos/asf/poi/trunk"
                 destUrl="https://svn.apache.org/repos/asf/poi/tags/${RELEASE_TAG}"
-                message="tag r${svn_version2} as ${version.id}"
-                revision="${svn_version2}"/>
+                message="tag r${svn_version2} as ${version.id}"/>
         </svn>
 
         <!-- update build.xml to the next beta version -->
