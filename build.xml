@@ -42,7 +42,6 @@ under the License.
     <description>The Apache POI project Ant build.</description>
 
     <property name="version.id" value="3.15-beta1"/>
-    <property name="version.rel" value="REL_3_15_BETA1"/>
 
     <property environment="env"/>
     <!-- the repository to download jars from -->
@@ -254,12 +253,21 @@ under the License.
     <property name="dist.nexus-staging.jar" location="${compile.lib}/nexus-staging-ant-tasks-1.6.3-uber.jar"/>
     <property name="dist.nexus-staging.url" value="${repository.m2}/maven2/org/sonatype/nexus/ant/nexus-staging-ant-tasks/1.6.3/nexus-staging-ant-tasks-1.6.3-uber.jar"/>
 
-    <property name="dist.svnant.jar" location="${compile.lib}/svnant-1.3.0.jar"/>
-    <property name="dist.svnant.url" value="${repository.pentaho}/content/groups/omni/tigris/svnant/1.3.0/svnant-1.3.0.jar"/>
-    <property name="dist.svnclient.jar" location="${compile.lib}/svnClientAdapter-1.3.0.jar"/>
+    <property name="dist.svnant.zip" location="${compile.lib}/svnant/svnant-1.3.1.zip"/>
+    <property name="dist.svnant.url" value="http://subclipse.tigris.org/files/documents/906/49042/svnant-1.3.1.zip"/>
+    <property name="dist.svnclient.jar" location="${compile.lib}/svnant/svnClientAdapter-1.3.0.jar"/>
     <property name="dist.svnclient.url" value="${repository.pentaho}/content/groups/omni/tigris/svnClientAdapter/svnant-1.3.0/svnClientAdapter-svnant-1.3.0.jar"/>
-    <property name="dist.svnkit.jar" location="${compile.lib}/svnkit-1.8.11.jar"/>
+    <property name="dist.svnkit.jar" location="${compile.lib}/svnant/svnkit-1.8.11.jar"/>
     <property name="dist.svnkit.url" value="${repository.m2}/maven2/org/tmatesoft/svnkit/svnkit/1.8.11/svnkit-1.8.11.jar"/>
+    <property name="dist.svnkit-javahl16.jar" location="${compile.lib}/svnant/svnkit-javahl16-1.8.11.jar"/>
+    <property name="dist.svnkit-javahl16.url" value="${repository.m2}/maven2/org/tmatesoft/svnkit/svnkit-javahl16/1.8.11/svnkit-javahl16-1.8.11.jar"/>
+    <property name="dist.sqljet.jar" location="${compile.lib}/svnant/sqljet-1.1.10.jar"/>
+    <property name="dist.sqljet.url" value="${repository.m2}/maven2/org/tmatesoft/sqljet/sqljet/1.1.10/sqljet-1.1.10.jar"/>
+    <property name="dist.antlr.jar" location="${compile.lib}/svnant/antlr-runtime-3.5.2.jar"/>
+    <property name="dist.antlr.url" value="${repository.m2}/maven2/org/antlr/antlr-runtime/3.5.2/antlr-runtime-3.5.2.jar"/>
+    <property name="dist.sequence-library.jar" location="${compile.lib}/svnant/sequence-library-1.0.3.jar"/>
+    <property name="dist.sequence-library.url" value="${repository.m2}/maven2/de/regnis/q/sequence/sequence-library/1.0.3/sequence-library-1.0.3.jar"/>
+
 
     <propertyset id="junit.properties">
         <propertyref name="POI.testdata.path"/>
@@ -441,17 +449,13 @@ under the License.
         <mkdir dir="${build.site}"/>
 
         <echo message="Using Java: ${java.version}/${java.runtime.version}/${java.vm.version}/${java.vm.name} from ${java.vm.vendor} on ${os.name}: ${os.version}" />
-    </target>
-    <target name="init-svn" depends="init,fetch-svn-jars" description="Initialization run before SVN-related targets.">
-      <taskdef resource="org/tigris/subversion/svnant/svnantlib.xml">
-         <classpath>
-            <fileset dir="${compile.lib}" includes="svn*.jar" />
-         </classpath>
-      </taskdef>
-      <!-- TODO Upgrade so this works -->
-<!--
-      <svnSetting client="cli" id="svn.settings"/>
--->
+
+        <scriptdef name="release_tag" language="javascript">
+            var rel = ("REL_"+project.getProperty("version.id")).toUpperCase().replace(/\W/g,"_");
+            if (rel.search(/BETA/) == -1) rel += "_FINAL";
+            project.setProperty("RELEASE_TAG", rel);
+        </scriptdef>
+        <release_tag/>
     </target>
 
     <target name="clean" description="Remove generated artefacts">
@@ -616,18 +620,38 @@ under the License.
         <condition property="svn.jars.present">
             <or>
                 <and>
-                    <available file="${dist.svnant.jar}"/>
+                    <available file="${dist.svnant.zip}"/>
                     <available file="${dist.svnclient.jar}"/>
                     <available file="${dist.svnkit.jar}"/>
+                    <available file="${dist.svnkit-javahl16.jar}"/>
+                    <available file="${dist.sqljet.jar}"/>
+                    <available file="${dist.antlr.jar}"/>
+                    <available file="${dist.sequence-library.jar}"/>
                 </and>
                 <isset property="disconnected"/>
             </or>
         </condition>
     </target>
     <target name="fetch-svn-jars" depends="check-svn-jars" unless="svn.jars.present">
-        <downloadfile src="${dist.svnant.url}" dest="${dist.svnant.jar}"/>
+        <mkdir dir="${compile.lib}/svnant"/>
+        <downloadfile src="${dist.svnant.url}" dest="${dist.svnant.zip}"/>
+        <unzip src="${dist.svnant.zip}" dest="${compile.lib}/svnant">
+            <patternset>
+                <include name="lib/svnant.jar"/>
+            </patternset>
+            <mapper>
+                <chainedmapper>
+                    <flattenmapper/>
+                    <globmapper from="svnant.jar" to="svnant-1.3.1.jar"/>
+                </chainedmapper>
+            </mapper>
+        </unzip>
         <downloadfile src="${dist.svnclient.url}" dest="${dist.svnclient.jar}"/>
         <downloadfile src="${dist.svnkit.url}" dest="${dist.svnkit.jar}"/>
+        <downloadfile src="${dist.svnkit-javahl16.url}" dest="${dist.svnkit-javahl16.jar}"/>
+        <downloadfile src="${dist.sqljet.url}" dest="${dist.sqljet.jar}"/>
+        <downloadfile src="${dist.antlr.url}" dest="${dist.antlr.jar}"/>
+        <downloadfile src="${dist.sequence-library.url}" dest="${dist.sequence-library.jar}"/>
     </target>
 
     <target name="check-ooxml-xsds">
@@ -1600,13 +1624,13 @@ under the License.
             </jar>
         </sequential>
     </macrodef>
-        	
+
     <target name="release-notes" depends="init">
-        <copy file="src/documentation/RELEASE-NOTES.txt" todir="build/dist/">
+    	<copy file="src/documentation/RELEASE-NOTES.txt" todir="build/dist/" overwrite="true">
             <filterset>
                 <filter token="VERSION" value="${version.id}"/>
                 <filter token="DSTAMP"  value="${DSTAMP}"/>
-                <filter token="RELEASE_TAG" value="${version.rel}"/>
+                <filter token="RELEASE_TAG" value="${RELEASE_TAG}"/>
             </filterset>
         </copy>
     </target>
@@ -1984,7 +2008,7 @@ under the License.
                 <staging:nexusStagingInfo stagingDirectory="build/dist/maven/@{artifactId}">
                     <staging:projectInfo groupId="org.apache.poi" artifactId="@{artifactId}" version="${version.id}" />
                     <staging:connectionInfo baseUrl="https://repository.apache.org">
-                        <staging:authentication username="${settings.apache-nexus.username}" password="${settings.apache-nexus.password}" />
+                        <staging:authentication username="${settings.apache-id.username}" password="${settings.apache-id.password}" />
                     </staging:connectionInfo>
                 </staging:nexusStagingInfo>
             </staging:stageRemotely>
@@ -2001,6 +2025,112 @@ under the License.
         <nexus-upload artifactId="poi-scratchpad"/>
     </target>
 
+    <!-- experimentel release preparation ... tbd. ... -->
+    <target name="release-prep" depends="init,fetch-svn-jars,load-maven-server-settings">
+        <local name="tstamp_rel"/>
+        <local name="tstamp_next"/>
+        <local name="rel_next"/>
+        <tstamp>
+            <format property="tstamp_rel" pattern="yyyy-MM-dd" offset="7" unit="day"/>
+            <format property="tstamp_next" pattern="yyyy-MM" offset="3" unit="month"/>
+        </tstamp>
+
+        <scriptdef name="getnextrel" language="javascript">
+            var relCurr = new String(project.getProperty("version.id"));
+            var relNext = relCurr.replace(/[0-9]+$/, function(lastNum){ return new String(new Number(lastNum)+1); });
+            if (relNext.search(/beta/i) == -1) relNext += "-beta1";
+            project.setProperty("rel_next", relNext);
+        </scriptdef>
+        <getnextrel/>
+
+        <antcall target="-update-build.xml">
+            <param name="version_id" value="${version.id}"/>
+        </antcall>
+
+        <replaceregexp byline="true">
+            <regexp pattern="&lt;release.*date=&quot;.*\?\?&quot;&gt;"/>
+            <substitution expression="&lt;!-- release version=&quot;${rel_next}&quot; date=&quot;${tstamp_next}-??&quot;&gt;&#10;    &lt;/release --&gt;&#10;&#10;    &lt;release version=&quot;${version.id}&quot; date=&quot;${tstamp_rel}&quot;&gt;"/>
+            <fileset dir="src/documentation/content/xdocs">
+              <include name="status.xml"/>
+            </fileset>
+        </replaceregexp>
+
+        <fixcrlf srcdir="." includes="src/documentation/content/xdocs/status.xml" eol="unix" eof="remove" />
+
+        <path id="path.svnant">
+            <fileset dir="${compile.lib}/svnant" includes="*.jar"/>
+        </path>
+        <taskdef resource="org/tigris/subversion/svnant/svnantlib.xml" classpathref="path.svnant"/>
+
+        <svnSetting
+            svnkit="true"
+            javahl="false"
+            username="${settings.apache-id.username}"
+            password="${settings.apache-id.password}"
+            id="svn.settings"
+        />
+
+        <!-- can't combine updating and pinning of the documentation ... so we need two commits -->
+        <!-- (revision)properties can't be set and read within one svn block -->
+        <echo message="updating build.xml and status.xml"/>
+        <svn refid="svn.settings">
+            <!--update dir="." recurse="true"/-->
+            <commit message="release prepare for ${version.id} - updating build.xml and status.xml" recurse="false">
+                <fileset dir="." includes="build.xml,src/documentation/content/xdocs/status.xml"/>
+            </commit>
+            <status path="." revisionProperty="svn_version1"/>
+        </svn>
+        <echo message="pin documentation"/>
+        <svn refid="svn.settings">
+            <propset path="src" name="svn:externals" value="documentation -r${svn_version1} https://svn.apache.org/repos/asf/poi/site/src/documentation"/>
+            <commit message="release prepare for ${version.id} - pin documentation" dir="src" recurse="false"/>
+            <status path="." revisionProperty="svn_version2"/>
+        </svn>
+        <echo message="create release tag"/>
+        <svn refid="svn.settings">
+            <copy
+                srcUrl="https://svn.apache.org/repos/asf/poi/trunk"
+                destUrl="https://svn.apache.org/repos/asf/poi/tags/${RELEASE_TAG}"
+                message="tag r${svn_version2} as ${version.id}"
+                revision="${svn_version2}"/>
+        </svn>
+
+        <!-- update build.xml to the next beta version -->
+        <antcall target="-update-build.xml">
+            <param name="version_id" value="${rel_next}"/>
+        </antcall>
+
+        <!-- update sonar pom.xmls -->
+        <replaceregexp byline="true">
+            <regexp pattern="&lt;version&gt;.*-SNAPSHOT&lt;/version&gt;"/>
+            <substitution expression="&lt;version&gt;${rel_next}-SNAPSHOT&lt;/version&gt;"/>
+            <fileset dir="sonar">
+              <include name="**/pom.xml"/>
+            </fileset>
+        </replaceregexp>
+
+        <!-- unpin documentation and commit next beta version -->
+        <svn refid="svn.settings">
+            <propset path="src" name="svn:externals" value="documentation https://svn.apache.org/repos/asf/poi/site/src/documentation"/>
+            <commit message="prepare for ${rel_next}" recurse="false">
+                <fileset dir="." includes="build.xml"/>
+                <fileset dir="sonar" includes="**/pom.xml"/>
+                <dirset dir="src"/>
+            </commit>
+        </svn>
+    </target>
+
+    <target name="-update-build.xml">
+        <replaceregexp byline="true">
+            <regexp pattern="(&lt;property name=&quot;version.id&quot; value=&quot;)[^&quot;]+(&quot;/>)"/>
+            <substitution expression="\1${version_id}\2"/>
+            <fileset dir=".">
+                <include name="build.xml"/>
+            </fileset>
+        </replaceregexp>
+        <fixcrlf srcdir="." includes="build.xml" eol="unix" eof="remove" />
+    </target>
+
     <!--
         Configure gpg settings in local maven settings.xml
         see release-guide.txt for more details
@@ -2012,7 +2142,7 @@ under the License.
                     <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:mvn="http://maven.apache.org/SETTINGS/1.0.0">
                         <xsl:output method="text" version="1.0" encoding="ISO-8859-1"/>
                         <xsl:template match="@*|text()"/>
-                        <xsl:template match="//mvn:server[contains('poi-signing|apache-nexus',mvn:id/text())]/*[name(.)!='id']">
+                        <xsl:template match="//mvn:server[contains('poi-signing|apache-id',mvn:id/text())]/*[name(.)!='id']">
                             <xsl:value-of select="concat('settings.',../mvn:id,'.',name(.),'=',translate(text(),'\','/'),'&#010;')"/>
                         </xsl:template>
                     </xsl:stylesheet>
