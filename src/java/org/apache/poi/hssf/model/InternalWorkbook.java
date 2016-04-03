@@ -801,20 +801,24 @@ public final class InternalWorkbook {
 
     /**
      * make the tabid record look like the current situation.
-     *
-     * @return number of bytes written in the TabIdRecord
      */
-    private int fixTabIdRecord() {
-        TabIdRecord tir = ( TabIdRecord ) records.get(records.getTabpos());
-        int sz = tir.getRecordSize();
+    private void fixTabIdRecord() {
+        Record rec = records.get(records.getTabpos());
+
+        // see bug 55982, quite a number of documents do not have a TabIdRecord and
+        // thus there is no way to do the fixup here,
+        // we use the same check on Tabpos as done in other places
+        if(records.getTabpos() <= 0) {
+            return;
+        }
+
+        TabIdRecord tir = ( TabIdRecord ) rec;
         short[]     tia = new short[ boundsheets.size() ];
 
         for (short k = 0; k < tia.length; k++) {
             tia[ k ] = k;
         }
         tir.setTabIdArray(tia);
-        return tir.getRecordSize() - sz;
-
     }
 
     /**
