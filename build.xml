@@ -2074,7 +2074,7 @@ under the License.
         <!-- (revision)properties can't be set and read within one svn block -->
         <echo message="updating build.xml and status.xml"/>
         <svn refid="svn.settings">
-            <!--update dir="." recurse="true"/-->
+            <update dir="." recurse="true"/>
             <commit message="release prepare for ${version.id} - updating build.xml and status.xml" recurse="false">
                 <fileset dir="." includes="build.xml,src/documentation/content/xdocs/status.xml"/>
             </commit>
@@ -2082,6 +2082,7 @@ under the License.
         </svn>
         <echo message="pin documentation"/>
         <svn refid="svn.settings">
+            <update dir="." recurse="true"/>
             <propset path="src" name="svn:externals" value="documentation -r${svn_version1} https://svn.apache.org/repos/asf/poi/site/src/documentation"/>
             <commit message="release prepare for ${version.id} - pin documentation" dir="src" recurse="false"/>
             <status path="." revisionProperty="svn_version2"/>
@@ -2111,6 +2112,7 @@ under the License.
 
         <!-- unpin documentation and commit next beta version -->
         <svn refid="svn.settings">
+            <update dir="." recurse="true"/>
             <propset path="src" name="svn:externals" value="documentation https://svn.apache.org/repos/asf/poi/site/src/documentation"/>
             <commit message="prepare for ${rel_next}" recurse="false">
                 <fileset dir="." includes="build.xml"/>
