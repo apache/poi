@@ -3001,4 +3001,12 @@ public final class TestBugs extends BaseTestBugzillaIssues {
 
         wb.close();
     }
+
+    @Test
+    public void test55982() throws IOException {
+        Workbook wb = HSSFTestDataSamples.openSampleWorkbook("55982.xls");
+        Sheet newSheet = wb.cloneSheet(1);
+        assertNotNull(newSheet);
+        wb.close();
+    }
 }
