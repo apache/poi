@@ -27,85 +27,83 @@ package org.apache.poi.ss.usermodel;
     /**
      * No border
      */
-
-    NONE,
+    NONE(0x0),
 
     /**
      * Thin border
      */
-
-    THIN,
+    THIN(0x1),
 
     /**
      * Medium border
      */
-
-    MEDIUM,
+    MEDIUM(0x2),
 
     /**
      * dash border
      */
-
-    DASHED,
+    DASHED(0x3),
 
     /**
      * dot border
      */
-
-    DOTTED,
+    DOTTED(0x4),
 
     /**
      * Thick border
      */
-
-    THICK,
+    THICK(0x5),
 
     /**
      * double-line border
      */
-
-    DOUBLE,
+    DOUBLE(0x6),
 
     /**
      * hair-line border
      */
-
-    HAIR,
+    HAIR(0x7),
 
     /**
      * Medium dashed border
      */
-
-    MEDIUM_DASHED,
+    MEDIUM_DASHED(0x8),
 
     /**
      * dash-dot border
      */
-
-    DASH_DOT,
+    DASH_DOT(0x9),
 
     /**
      * medium dash-dot border
      */
-
-    MEDIUM_DASH_DOT,
+    MEDIUM_DASH_DOT(0xA),
 
     /**
      * dash-dot-dot border
      */
-
-    DASH_DOT_DOT,
+    DASH_DOT_DOT(0xB),
 
     /**
      * medium dash-dot-dot border
+     * @deprecated POI 3.15 beta 1. Use {@link MEDIUM_DASH_DOT_DOT} instead.
      */
-
-    MEDIUM_DASH_DOT_DOTC,
+    MEDIUM_DASH_DOT_DOTC(0xC),
+    MEDIUM_DASH_DOT_DOT(0xC),
 
     /**
      * slanted dash-dot border
      */
+    SLANTED_DASH_DOT(0xD);
 
-    SLANTED_DASH_DOT;
 
+    private final short code;
+
+    BorderStyle(int code) {
+        this.code = (short)code;
+    }
+
+    public short getCode() {
+        return code;
+    }
 }
