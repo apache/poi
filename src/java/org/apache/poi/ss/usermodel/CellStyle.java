@@ -113,7 +113,7 @@ public interface CellStyle {
      * dot border
      */
 
-    short BORDER_HAIR = 0x7;
+    short BORDER_DOTTED = 0x4;
 
     /**
      * Thick border
@@ -131,7 +131,7 @@ public interface CellStyle {
      * hair-line border
      */
 
-    short BORDER_DOTTED = 0x4;
+    short BORDER_HAIR = 0x7;
 
     /**
      * Medium dashed border
