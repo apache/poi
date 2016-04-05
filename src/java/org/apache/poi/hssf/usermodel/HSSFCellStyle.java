@@ -411,7 +411,7 @@ public final class HSSFCellStyle implements CellStyle {
      * @see #BORDER_DASH_DOT_DOT
      * @see #BORDER_MEDIUM_DASH_DOT_DOT
      * @see #BORDER_SLANTED_DASH_DOT
-     * @deprecated 3.15 beta 1
+     * @deprecated 3.15 beta 2. Use {@link HSSFCellStyle#setBorderLeft(BorderStyle)} instead.
      */
     @Override
     public void setBorderLeft(short border)
@@ -457,7 +457,7 @@ public final class HSSFCellStyle implements CellStyle {
      * @see #BORDER_DASH_DOT_DOT
      * @see #BORDER_MEDIUM_DASH_DOT_DOT
      * @see #BORDER_SLANTED_DASH_DOT
-     * @deprecated 3.15 beta 1
+     * @deprecated 3.15 beta 2. Use {@link HSSFCellStyle#setBorderRight(BorderStyle)} instead.
      */
     @Override
     public void setBorderRight(short border)
@@ -503,7 +503,7 @@ public final class HSSFCellStyle implements CellStyle {
      * @see #BORDER_DASH_DOT_DOT
      * @see #BORDER_MEDIUM_DASH_DOT_DOT
      * @see #BORDER_SLANTED_DASH_DOT
-     * @deprecated 3.15 beta 1
+     * @deprecated 3.15 beta 2. Use {@link HSSFCellStyle#setBorderTop(BorderStyle)} instead.
      */
     @Override
     public void setBorderTop(short border)
@@ -549,7 +549,7 @@ public final class HSSFCellStyle implements CellStyle {
      * @see #BORDER_DASH_DOT_DOT
      * @see #BORDER_MEDIUM_DASH_DOT_DOT
      * @see #BORDER_SLANTED_DASH_DOT
-     * @deprecated 3.15 beta 1
+     * @deprecated 3.15 beta 2. Use {@link HSSFCellStyle#setBorderBottom(BorderStyle)} instead.
      */
     @Override
     public void setBorderBottom(short border)

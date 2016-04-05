@@ -87,100 +87,86 @@ public interface CellStyle {
 
     /**
      * No border
-     * @deprecated 3.15 beta 1. Use {@link BorderStyle} instead.
+     * @deprecated 3.15 beta 2. Use {@link BorderStyle#NONE} instead.
      */
-
     short BORDER_NONE = 0x0;
 
     /**
      * Thin border
-     * @deprecated 3.15 beta 1. Use {@link BorderStyle} instead.
+     * @deprecated 3.15 beta 2. Use {@link BorderStyle#THIN} instead.
      */
-
     short BORDER_THIN = 0x1;
 
     /**
      * Medium border
-     * @deprecated 3.15 beta 1. Use {@link BorderStyle} instead.
+     * @deprecated 3.15 beta 2. Use {@link BorderStyle#MEDIUM} instead.
      */
-
     short BORDER_MEDIUM = 0x2;
 
     /**
      * dash border
-     * @deprecated 3.15 beta 1. Use {@link BorderStyle} instead.
+     * @deprecated 3.15 beta 2. Use {@link BorderStyle#DASHED} instead.
      */
-
     short BORDER_DASHED = 0x3;
 
     /**
      * dot border
-     * @deprecated 3.15 beta 1. Use {@link BorderStyle} instead.
+     * @deprecated 3.15 beta 2. Use {@link BorderStyle#DOTTED} instead.
      */
-
     short BORDER_DOTTED = 0x4;
 
     /**
      * Thick border
-     * @deprecated 3.15 beta 1. Use {@link BorderStyle} instead.
+     * @deprecated 3.15 beta 2. Use {@link BorderStyle#THICK} instead.
      */
-
     short BORDER_THICK = 0x5;
 
     /**
      * double-line border
-     * @deprecated 3.15 beta 1. Use {@link BorderStyle} instead.
+     * @deprecated 3.15 beta 2. Use {@link BorderStyle#DOUBLE} instead.
      */
-
     short BORDER_DOUBLE = 0x6;
 
     /**
      * hair-line border
-     * @deprecated 3.15 beta 1. Use {@link BorderStyle} instead.
+     * @deprecated 3.15 beta 2. Use {@link BorderStyle#HAIR} instead.
      */
-
     short BORDER_HAIR = 0x7;
 
     /**
      * Medium dashed border
-     * @deprecated 3.15 beta 1. Use {@link BorderStyle} instead.
+     * @deprecated 3.15 beta 2. Use {@link BorderStyle#MEDIUM_DASHED} instead.
      */
-
     short BORDER_MEDIUM_DASHED = 0x8;
 
     /**
      * dash-dot border
-     * @deprecated 3.15 beta 1. Use {@link BorderStyle} instead.
+     * @deprecated 3.15 beta 2. Use {@link BorderStyle#DASH_DOT} instead.
      */
-
     short BORDER_DASH_DOT = 0x9;
 
     /**
      * medium dash-dot border
-     * @deprecated 3.15 beta 1. Use {@link BorderStyle} instead.
+     * @deprecated 3.15 beta 2. Use {@link BorderStyle#MEDIUM_DASH_DOT} instead.
      */
-
     short BORDER_MEDIUM_DASH_DOT = 0xA;
 
     /**
      * dash-dot-dot border
-     * @deprecated 3.15 beta 1. Use {@link BorderStyle} instead.
+     * @deprecated 3.15 beta 2. Use {@link BorderStyle#DASH_DOT_DOT} instead.
      */
-
     short BORDER_DASH_DOT_DOT = 0xB;
 
     /**
      * medium dash-dot-dot border
-     * @deprecated 3.15 beta 1. Use {@link BorderStyle} instead.
+     * @deprecated 3.15 beta 2. Use {@link BorderStyle#MEDIUM_DASH_DOT_DOT} instead.
      */
-
     short BORDER_MEDIUM_DASH_DOT_DOT = 0xC;
 
     /**
      * slanted dash-dot border
-     * @deprecated 3.15 beta 1. Use {@link BorderStyle} instead.
+     * @deprecated 3.15 beta 2. Use {@link BorderStyle#SLANTED_DASH_DOT} instead.
      */
-
     short BORDER_SLANTED_DASH_DOT = 0xD;
 
     /**  No background */
@@ -430,7 +416,7 @@ public interface CellStyle {
      * @see #BORDER_DASH_DOT_DOT
      * @see #BORDER_MEDIUM_DASH_DOT_DOT
      * @see #BORDER_SLANTED_DASH_DOT
-     * @deprecated 3.15 beta 1
+     * @deprecated 3.15 beta 2. Use {@link #setBorderLeft(BorderStyle)} instead
      */
     void setBorderLeft(short border);
     
@@ -463,7 +449,7 @@ public interface CellStyle {
      * @see #BORDER_DASH_DOT_DOT
      * @see #BORDER_MEDIUM_DASH_DOT_DOT
      * @see #BORDER_SLANTED_DASH_DOT
-     * @deprecated 3.15 beta 1
+     * @deprecated 3.15 beta 2. Use {@link #setBorderRight(BorderStyle)} instead
      */
     void setBorderRight(short border);
     
@@ -496,7 +482,7 @@ public interface CellStyle {
      * @see #BORDER_DASH_DOT_DOT
      * @see #BORDER_MEDIUM_DASH_DOT_DOT
      * @see #BORDER_SLANTED_DASH_DOT
-     * @deprecated 3.15 beta 1
+     * @deprecated 3.15 beta 2. Use {@link #setBorderTop(BorderStyle)} instead
      */
     void setBorderTop(short border);
     
@@ -529,7 +515,7 @@ public interface CellStyle {
      * @see #BORDER_DASH_DOT_DOT
      * @see #BORDER_MEDIUM_DASH_DOT_DOT
      * @see #BORDER_SLANTED_DASH_DOT
-     * @deprecated 3.15 beta 1
+     * @deprecated 3.15 beta 2. Use {@link #setBorderBottom(BorderStyle)} instead.
      */
     void setBorderBottom(short border);
     

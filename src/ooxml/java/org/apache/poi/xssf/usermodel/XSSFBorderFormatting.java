@@ -136,7 +136,7 @@ public class XSSFBorderFormatting implements BorderFormatting  {
     }
 
     /**
-     * @deprecated 3.15 beta 1. Use {@link #setBorderBottom(BorderStyle)}
+     * @deprecated 3.15 beta 2. Use {@link #setBorderBottom(BorderStyle)}
      */
     @Override
     public void setBorderBottom(short border) {
@@ -150,7 +150,7 @@ public class XSSFBorderFormatting implements BorderFormatting  {
     }
 
     /**
-     * @deprecated 3.15 beta 1. Use {@link #setBorderDiagonal(BorderStyle)}
+     * @deprecated 3.15 beta 2. Use {@link #setBorderDiagonal(BorderStyle)}
      */
     @Override
     public void setBorderDiagonal(short border) {
@@ -164,7 +164,7 @@ public class XSSFBorderFormatting implements BorderFormatting  {
     }
 
     /**
-     * @deprecated 3.15 beta 1. Use {@link #setBorderLeft(BorderStyle)}
+     * @deprecated 3.15 beta 2. Use {@link #setBorderLeft(BorderStyle)}
      */
     @Override
     public void setBorderLeft(short border) {
@@ -178,7 +178,7 @@ public class XSSFBorderFormatting implements BorderFormatting  {
     }
 
     /**
-     * @deprecated 3.15 beta 1. Use {@link #setBorderRight(BorderStyle)}
+     * @deprecated 3.15 beta 2. Use {@link #setBorderRight(BorderStyle)}
      */
     @Override
     public void setBorderRight(short border) {
@@ -192,7 +192,7 @@ public class XSSFBorderFormatting implements BorderFormatting  {
     }
 
     /**
-     * @deprecated 3.15 beta 1. Use {@link #setBorderTop(BorderStyle)}
+     * @deprecated 3.15 beta 2. Use {@link #setBorderTop(BorderStyle)}
      */
     @Override
     public void setBorderTop(short border) {

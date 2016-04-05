@@ -360,7 +360,7 @@ public final class CellUtil {
 		if (value instanceof BorderStyle) {
 			border = (BorderStyle) value;
 		}
-		// @deprecated 3.15 beta 1. getBorderStyle will only work on BorderStyle enums instead of codes in the future.
+		// @deprecated 3.15 beta 2. getBorderStyle will only work on BorderStyle enums instead of codes in the future.
 		else if (value instanceof Short) {
 			short code = Short.valueOf((Short) value);
 			border = BorderStyle.valueOf(code);

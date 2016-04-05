@@ -270,7 +270,7 @@ public class XSSFCellStyle implements CellStyle {
      * Get the type of border to use for the bottom border of the cell
      *
      * @return border type as Java enum
-     * @deprecated 3.15 beta 1. Use {@link #getBorderBottom}
+     * @deprecated 3.15 beta 2. Use {@link #getBorderBottom}
      */
     public BorderStyle getBorderBottomEnum() {
         return getBorderBottom();
@@ -298,7 +298,7 @@ public class XSSFCellStyle implements CellStyle {
      * Get the type of border to use for the left border of the cell
      *
      * @return border type, default value is {@link org.apache.poi.ss.usermodel.BorderStyle#NONE}
-     * @deprecated 3.15 beta 1. Use {@link #getBorderLeft}
+     * @deprecated 3.15 beta 2. Use {@link #getBorderLeft}
      */
     public BorderStyle getBorderLeftEnum() {
         return getBorderLeft();
@@ -326,7 +326,7 @@ public class XSSFCellStyle implements CellStyle {
      * Get the type of border to use for the right border of the cell
      *
      * @return border type, default value is {@link org.apache.poi.ss.usermodel.BorderStyle#NONE}
-     * @deprecated 3.15 beta 1. Use {@link #getBorderRight}
+     * @deprecated 3.15 beta 2. Use {@link #getBorderRight}
      */
     public BorderStyle getBorderRightEnum() {
         return getBorderRight();
@@ -354,7 +354,7 @@ public class XSSFCellStyle implements CellStyle {
      * Get the type of border to use for the top border of the cell
      *
      * @return border type, default value is {@link org.apache.poi.ss.usermodel.BorderStyle#NONE}
-     * @deprecated 3.15 beta 1. Use {@link #getBorderTop}
+     * @deprecated 3.15 beta 2. Use {@link #getBorderTop}
      */
     public BorderStyle getBorderTopEnum() {
          return getBorderTop();
@@ -790,7 +790,7 @@ public class XSSFCellStyle implements CellStyle {
      * Set the type of border to use for the bottom border of the cell
      *
      * @param border the type of border to use
-     * @deprecated 3.15 beta 1. Use {@link #setBorderBottom(BorderStyle)}
+     * @deprecated 3.15 beta 2. Use {@link #setBorderBottom(BorderStyle)}
      */
     @Override
     public void setBorderBottom(short border) {
@@ -819,7 +819,7 @@ public class XSSFCellStyle implements CellStyle {
     /**
      * Set the type of border to use for the left border of the cell
      * @param border the type of border to use
-     * @deprecated 3.15 beta 1. Use {@link #setBorderLeft(BorderStyle)}
+     * @deprecated 3.15 beta 2. Use {@link #setBorderLeft(BorderStyle)}
      */
     @Override
     public void setBorderLeft(short border) {
@@ -848,7 +848,7 @@ public class XSSFCellStyle implements CellStyle {
      * Set the type of border to use for the right border of the cell
      *
      * @param border the type of border to use
-     * @deprecated 3.15 beta 1. Use {@link #setBorderRight(BorderStyle)}
+     * @deprecated 3.15 beta 2. Use {@link #setBorderRight(BorderStyle)}
      */
     @Override
     public void setBorderRight(short border) {
@@ -877,7 +877,7 @@ public class XSSFCellStyle implements CellStyle {
      * Set the type of border to use for the top border of the cell
      *
      * @param border the type of border to use
-     * @deprecated 3.15 beta 1. Use {@link #setBorderTop(BorderStyle)}
+     * @deprecated 3.15 beta 2. Use {@link #setBorderTop(BorderStyle)}
      */
     @Override
     public void setBorderTop(short border) {
