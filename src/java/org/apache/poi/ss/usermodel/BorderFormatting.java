@@ -25,73 +25,73 @@ package org.apache.poi.ss.usermodel;
  */
 public interface BorderFormatting {
     /** No border
-     * @deprecated 3.15 beta 1. Use {@link BorderStyle}
+     * @deprecated 3.15 beta 2. Use {@link BorderStyle#NONE}
      */
     short BORDER_NONE                = 0x0;
     
     /** Thin border
-     * @deprecated 3.15 beta 1. Use {@link BorderStyle}
+     * @deprecated 3.15 beta 2. Use {@link BorderStyle#THIN}
      */
     short BORDER_THIN                = 0x1;
     
     /** Medium border
-     * @deprecated 3.15 beta 1. Use {@link BorderStyle}
+     * @deprecated 3.15 beta 2. Use {@link BorderStyle#MEDIUM}
      */
     short BORDER_MEDIUM              = 0x2;
     
     /** dash border
-     * @deprecated 3.15 beta 1. Use {@link BorderStyle}
+     * @deprecated 3.15 beta 2. Use {@link BorderStyle#DASHED}
      */
     short BORDER_DASHED              = 0x3;
     
     /** dot border 
-     * @deprecated 3.15 beta 1. Use {@link BorderStyle}
+     * @deprecated 3.15 beta 2. Use {@link BorderStyle#DOTTED}
      */
     short BORDER_DOTTED              = 0x4;
     
     /** Thick border 
-     * @deprecated 3.15 beta 1. Use {@link BorderStyle}
+     * @deprecated 3.15 beta 2. Use {@link BorderStyle#THICK}
      */
     short BORDER_THICK               = 0x5;
     
     /** double-line border 
-     * @deprecated 3.15 beta 1. Use {@link BorderStyle}
+     * @deprecated 3.15 beta 2. Use {@link BorderStyle#DOUBLE}
      */
     short BORDER_DOUBLE              = 0x6;
     
     /** hair-line border 
-     * @deprecated 3.15 beta 1. Use {@link BorderStyle}
+     * @deprecated 3.15 beta 2. Use {@link BorderStyle#HAIR}
      */
     short BORDER_HAIR                = 0x7;
     
     /** Medium dashed border 
-     * @deprecated 3.15 beta 1. Use {@link BorderStyle}
+     * @deprecated 3.15 beta 2. Use {@link BorderStyle#MEDIUM_DASHED}
      */
     short BORDER_MEDIUM_DASHED       = 0x8;
     
     
     /** dash-dot border
-     * @deprecated 3.15 beta 1. Use {@link BorderStyle}
+     * @deprecated 3.15 beta 2. Use {@link BorderStyle#DASH_DOT}
      */
     short BORDER_DASH_DOT            = 0x9;
     
     /** medium dash-dot border 
-     * @deprecated 3.15 beta 1. Use {@link BorderStyle}
+     * @deprecated 3.15 beta 2. Use {@link BorderStyle#MEDIUM_DASH_DOT}
      */
     short BORDER_MEDIUM_DASH_DOT     = 0xA;
     
     /** dash-dot-dot border 
-     * @deprecated 3.15 beta 1. Use {@link BorderStyle}
+     * @deprecated 3.15 beta 2. Use {@link BorderStyle#DASH_DOT_DOT}
      */
     short BORDER_DASH_DOT_DOT        = 0xB;
     
     /** medium dash-dot-dot border 
-     * @deprecated 3.15 beta 1. Use {@link BorderStyle}
+     * @deprecated 3.15 beta 2. Use {@link BorderStyle#MEDIUM_DASH_DOT_DOT}
      */
     short BORDER_MEDIUM_DASH_DOT_DOT = 0xC;
     
     /** slanted dash-dot border 
-     * @deprecated 3.15 beta 1. Use {@link BorderStyle}
+     * @deprecated 3.15 beta 2. Use {@link BorderStyle#SLANTED_DASH_DOT}
      */
     short BORDER_SLANTED_DASH_DOT    = 0xD;
 
@@ -124,7 +124,7 @@ public interface BorderFormatting {
      * Set bottom border.
      *
      * @param border  MUST be a BORDER_* constant
-     * @deprecated 3.15 beta 1
+     * @deprecated 3.15 beta 2. Use {@link BorderFormatting#setBorderBottom(BorderStyle)}
      */
     void setBorderBottom(short border);
 
@@ -139,7 +139,7 @@ public interface BorderFormatting {
      * Set diagonal border.
      *
      * @param border  MUST be a BORDER_* constant
-     * @deprecated 3.15 beta 1
+     * @deprecated 3.15 beta 2. Use {@link BorderFormatting#setBorderDiagonal(BorderStyle)}
      */
     void setBorderDiagonal(short border);
     
@@ -154,7 +154,7 @@ public interface BorderFormatting {
      * Set left border.
      *
      * @param border  MUST be a BORDER_* constant
-     * @deprecated 3.15 beta 1
+     * @deprecated 3.15 beta 2. Use {@link BorderFormatting#setBorderLeftBorderStyle)}
      */
     void setBorderLeft(short border);
     
@@ -169,7 +169,7 @@ public interface BorderFormatting {
      * Set right border.
      *
      * @param border  MUST be a BORDER_* constant
-     * @deprecated 3.15 beta 1
+     * @deprecated 3.15 beta 2. Use {@link BorderFormatting#setBorderRight(BorderStyle)}
      */
     void setBorderRight(short border);
     
@@ -184,7 +184,7 @@ public interface BorderFormatting {
      * Set top border.
      *
      * @param border  MUST be a BORDER_* constant
-     * @deprecated 3.15 beta 1
+     * @deprecated 3.15 beta 2. Use {@link BorderFormatting#setBorderTop(BorderStyle)}
      */
     void setBorderTop(short border);
     
