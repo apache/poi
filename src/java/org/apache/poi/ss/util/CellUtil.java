@@ -355,8 +355,20 @@ public final class CellUtil {
 	 * @return Border style if set, otherwise {@link BorderStyle#NONE}
 	 */
 	private static BorderStyle getBorderStyle(Map<String, Object> properties, String name) {
-		BorderStyle value = (BorderStyle) properties.get(name);
-		return (value != null) ? value : BorderStyle.NONE;
+		Object value = properties.get(name);
+		BorderStyle border;
+		if (value instanceof BorderStyle) {
+			border = (BorderStyle) value;
+		}
+		// @deprecated 3.15 beta 1. getBorderStyle will only work on BorderStyle enums instead of codes in the future.
+		else if (value instanceof Short) {
+			short code = Short.valueOf((Short) value);
+			border = BorderStyle.valueOf(code);
+		}
+		else {
+			throw new RuntimeException("Unexpected border style class. Must be BorderStyle or Short (deprecated)");
+		}
+		return (border != null) ? border : BorderStyle.NONE;
 	}
 
 	/**
