@@ -790,33 +790,11 @@ public class XSSFCellStyle implements CellStyle {
      * Set the type of border to use for the bottom border of the cell
      *
      * @param border the type of border to use
-     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_NONE
-     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_THIN
-     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_MEDIUM
-     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_DASHED
-     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_DOTTED
-     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_THICK
-     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_DOUBLE
-     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_HAIR
-     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_MEDIUM_DASHED
-     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_DASH_DOT
-     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_MEDIUM_DASH_DOT
-     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_DASH_DOT_DOT
-     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_MEDIUM_DASH_DOT_DOT
-     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_SLANTED_DASH_DOT
-     * @deprecated 3.15 beta 1
+     * @deprecated 3.15 beta 1. Use {@link #setBorderBottom(BorderStyle)}
      */
     @Override
     public void setBorderBottom(short border) {
-        CTBorder ct = getCTBorder();
-        CTBorderPr pr = ct.isSetBottom() ? ct.getBottom() : ct.addNewBottom();
-        if(border == BORDER_NONE) ct.unsetBottom();
-        else pr.setStyle(STBorderStyle.Enum.forInt(border + 1));
-
-        int idx = _stylesSource.putBorder(new XSSFCellBorder(ct, _theme));
-
-        _cellXf.setBorderId(idx);
-        _cellXf.setApplyBorder(true);
+        setBorderBottom(BorderStyle.valueOf(border));
     }
 
     /**
@@ -827,39 +805,25 @@ public class XSSFCellStyle implements CellStyle {
      */
     @Override
     public void setBorderBottom(BorderStyle border) {
-        setBorderBottom(border.getCode());
-    }
-
-    /**
-     * Set the type of border to use for the left border of the cell
-     * @param border the type of border to use
-     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_NONE
-     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_THIN
-     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_MEDIUM
-     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_DASHED
-     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_DOTTED
-     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_THICK
-     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_DOUBLE
-     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_HAIR
-     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_MEDIUM_DASHED
-     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_DASH_DOT
-     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_MEDIUM_DASH_DOT
-     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_DASH_DOT_DOT
-     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_MEDIUM_DASH_DOT_DOT
-     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_SLANTED_DASH_DOT
-     * @deprecated 3.15 beta 1
-     */
-    @Override
-    public void setBorderLeft(short border) {
         CTBorder ct = getCTBorder();
-        CTBorderPr pr = ct.isSetLeft() ? ct.getLeft() : ct.addNewLeft();
-        if(border == BORDER_NONE) ct.unsetLeft();
-        else pr.setStyle(STBorderStyle.Enum.forInt(border + 1));
+        CTBorderPr pr = ct.isSetBottom() ? ct.getBottom() : ct.addNewBottom();
+        if(border == BorderStyle.NONE) ct.unsetBottom();
+        else pr.setStyle(STBorderStyle.Enum.forInt(border.getCode() + 1));
 
         int idx = _stylesSource.putBorder(new XSSFCellBorder(ct, _theme));
 
         _cellXf.setBorderId(idx);
         _cellXf.setApplyBorder(true);
+    }
+
+    /**
+     * Set the type of border to use for the left border of the cell
+     * @param border the type of border to use
+     * @deprecated 3.15 beta 1. Use {@link #setBorderLeft(BorderStyle)}
+     */
+    @Override
+    public void setBorderLeft(short border) {
+        setBorderLeft(BorderStyle.valueOf(border));
     }
 
      /**
@@ -869,40 +833,26 @@ public class XSSFCellStyle implements CellStyle {
      */
     @Override
     public void setBorderLeft(BorderStyle border) {
-        setBorderLeft(border.getCode());
+        CTBorder ct = getCTBorder();
+        CTBorderPr pr = ct.isSetLeft() ? ct.getLeft() : ct.addNewLeft();
+        if(border == BorderStyle.NONE) ct.unsetLeft();
+        else pr.setStyle(STBorderStyle.Enum.forInt(border.getCode() + 1));
+
+        int idx = _stylesSource.putBorder(new XSSFCellBorder(ct, _theme));
+
+        _cellXf.setBorderId(idx);
+        _cellXf.setApplyBorder(true);
     }
 
     /**
      * Set the type of border to use for the right border of the cell
      *
      * @param border the type of border to use
-     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_NONE
-     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_THIN
-     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_MEDIUM
-     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_DASHED
-     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_DOTTED
-     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_THICK
-     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_DOUBLE
-     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_HAIR
-     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_MEDIUM_DASHED
-     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_DASH_DOT
-     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_MEDIUM_DASH_DOT
-     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_DASH_DOT_DOT
-     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_MEDIUM_DASH_DOT_DOT
-     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_SLANTED_DASH_DOT
-     * @deprecated 3.15 beta 1
+     * @deprecated 3.15 beta 1. Use {@link #setBorderRight(BorderStyle)}
      */
     @Override
     public void setBorderRight(short border) {
-        CTBorder ct = getCTBorder();
-        CTBorderPr pr = ct.isSetRight() ? ct.getRight() : ct.addNewRight();
-        if(border == BORDER_NONE) ct.unsetRight();
-        else pr.setStyle(STBorderStyle.Enum.forInt(border + 1));
-
-        int idx = _stylesSource.putBorder(new XSSFCellBorder(ct, _theme));
-
-        _cellXf.setBorderId(idx);
-        _cellXf.setApplyBorder(true);
+        setBorderRight(BorderStyle.valueOf(border));
     }
 
      /**
@@ -912,35 +862,10 @@ public class XSSFCellStyle implements CellStyle {
      */
     @Override
     public void setBorderRight(BorderStyle border) {
-        setBorderRight(border.getCode());
-    }
-
-    /**
-     * Set the type of border to use for the top border of the cell
-     *
-     * @param border the type of border to use
-     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_NONE
-     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_THIN
-     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_MEDIUM
-     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_DASHED
-     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_DOTTED
-     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_THICK
-     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_DOUBLE
-     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_HAIR
-     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_MEDIUM_DASHED
-     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_DASH_DOT
-     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_MEDIUM_DASH_DOT
-     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_DASH_DOT_DOT
-     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_MEDIUM_DASH_DOT_DOT
-     * @see org.apache.poi.ss.usermodel.CellStyle#BORDER_SLANTED_DASH_DOT
-     * @deprecated 3.15 beta 1
-     */
-    @Override
-    public void setBorderTop(short border) {
         CTBorder ct = getCTBorder();
-        CTBorderPr pr = ct.isSetTop() ? ct.getTop() : ct.addNewTop();
-        if(border == BORDER_NONE) ct.unsetTop();
-        else pr.setStyle(STBorderStyle.Enum.forInt(border + 1));
+        CTBorderPr pr = ct.isSetRight() ? ct.getRight() : ct.addNewRight();
+        if(border == BorderStyle.NONE) ct.unsetRight();
+        else pr.setStyle(STBorderStyle.Enum.forInt(border.getCode() + 1));
 
         int idx = _stylesSource.putBorder(new XSSFCellBorder(ct, _theme));
 
@@ -952,10 +877,29 @@ public class XSSFCellStyle implements CellStyle {
      * Set the type of border to use for the top border of the cell
      *
      * @param border the type of border to use
+     * @deprecated 3.15 beta 1. Use {@link #setBorderTop(BorderStyle)}
+     */
+    @Override
+    public void setBorderTop(short border) {
+        setBorderTop(BorderStyle.valueOf(border));
+    }
+
+    /**
+     * Set the type of border to use for the top border of the cell
+     *
+     * @param border the type of border to use
      */
     @Override
     public void setBorderTop(BorderStyle border) {
-        setBorderTop(border.getCode());
+        CTBorder ct = getCTBorder();
+        CTBorderPr pr = ct.isSetTop() ? ct.getTop() : ct.addNewTop();
+        if(border == BorderStyle.NONE) ct.unsetTop();
+        else pr.setStyle(STBorderStyle.Enum.forInt(border.getCode() + 1));
+
+        int idx = _stylesSource.putBorder(new XSSFCellBorder(ct, _theme));
+
+        _cellXf.setBorderId(idx);
+        _cellXf.setApplyBorder(true);
     }
 
     /**
