@@ -25,6 +25,7 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.hwpf.converter.AbstractWordUtils;
+import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.IOUtils;
@@ -66,28 +67,28 @@ public class AbstractExcelUtils
         }
     }
 
-    public static String getBorderStyle( short xlsBorder )
+    public static String getBorderStyle( BorderStyle xlsBorder )
     {
         final String borderStyle;
         switch ( xlsBorder )
         {
-        case HSSFCellStyle.BORDER_NONE:
+        case NONE:
             borderStyle = "none";
             break;
-        case HSSFCellStyle.BORDER_DASH_DOT:
-        case HSSFCellStyle.BORDER_DASH_DOT_DOT:
-        case HSSFCellStyle.BORDER_DOTTED:
-        case HSSFCellStyle.BORDER_HAIR:
-        case HSSFCellStyle.BORDER_MEDIUM_DASH_DOT:
-        case HSSFCellStyle.BORDER_MEDIUM_DASH_DOT_DOT:
-        case HSSFCellStyle.BORDER_SLANTED_DASH_DOT:
+        case DASH_DOT:
+        case DASH_DOT_DOT:
+        case DOTTED:
+        case HAIR:
+        case MEDIUM_DASH_DOT:
+        case MEDIUM_DASH_DOT_DOT:
+        case SLANTED_DASH_DOT:
             borderStyle = "dotted";
             break;
-        case HSSFCellStyle.BORDER_DASHED:
-        case HSSFCellStyle.BORDER_MEDIUM_DASHED:
+        case DASHED:
+        case MEDIUM_DASHED:
             borderStyle = "dashed";
             break;
-        case HSSFCellStyle.BORDER_DOUBLE:
+        case DOUBLE:
             borderStyle = "double";
             break;
         default:
@@ -97,17 +98,17 @@ public class AbstractExcelUtils
         return borderStyle;
     }
 
-    public static String getBorderWidth( short xlsBorder )
+    public static String getBorderWidth( BorderStyle xlsBorder )
     {
         final String borderWidth;
         switch ( xlsBorder )
         {
-        case HSSFCellStyle.BORDER_MEDIUM_DASH_DOT:
-        case HSSFCellStyle.BORDER_MEDIUM_DASH_DOT_DOT:
-        case HSSFCellStyle.BORDER_MEDIUM_DASHED:
+        case MEDIUM_DASH_DOT:
+        case MEDIUM_DASH_DOT_DOT:
+        case MEDIUM_DASHED:
             borderWidth = "2pt";
             break;
-        case HSSFCellStyle.BORDER_THICK:
+        case THICK:
             borderWidth = "thick";
             break;
         default:

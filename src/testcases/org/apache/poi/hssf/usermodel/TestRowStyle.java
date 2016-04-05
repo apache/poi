@@ -20,6 +20,7 @@ package org.apache.poi.hssf.usermodel;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.ss.usermodel.BorderStyle;
 
 /**
  * Class to test row styling functionality
@@ -110,10 +111,10 @@ public final class TestRowStyle extends TestCase {
         HSSFCellStyle    cs   = wb.createCellStyle();
         HSSFCellStyle    cs2  = wb.createCellStyle();
 
-        cs.setBorderBottom(HSSFCellStyle.BORDER_THIN);
-        cs.setBorderLeft(HSSFCellStyle.BORDER_THIN);
-        cs.setBorderRight(HSSFCellStyle.BORDER_THIN);
-        cs.setBorderTop(HSSFCellStyle.BORDER_THIN);
+        cs.setBorderBottom(BorderStyle.THIN);
+        cs.setBorderLeft(BorderStyle.THIN);
+        cs.setBorderRight(BorderStyle.THIN);
+        cs.setBorderTop(BorderStyle.THIN);
         cs.setFillForegroundColor(( short ) 0xA);
         cs.setFillPattern(( short ) 1);
         fnt.setColor(( short ) 0xf);
@@ -150,12 +151,12 @@ public final class TestRowStyle extends TestCase {
             assertNotNull("Row is not null", r);
             
             cs = r.getRowStyle();
-            assertEquals("FillForegroundColor for row: ", cs.getBorderBottom(), HSSFCellStyle.BORDER_THIN);
-            assertEquals("FillPattern for row: ", cs.getBorderLeft(), HSSFCellStyle.BORDER_THIN);
-            assertEquals("FillForegroundColor for row: ", cs.getBorderRight(), HSSFCellStyle.BORDER_THIN);
-            assertEquals("FillPattern for row: ", cs.getBorderTop(), HSSFCellStyle.BORDER_THIN);
-            assertEquals("FillForegroundColor for row: ", cs.getFillForegroundColor(), 0xA);
-            assertEquals("FillPattern for row: ", cs.getFillPattern(), (short) 0x1);
+            assertEquals("Bottom Border Style for row:", BorderStyle.THIN, cs.getBorderBottom());
+            assertEquals("Left Border Style for row:",   BorderStyle.THIN, cs.getBorderLeft());
+            assertEquals("Right Border Style for row:",  BorderStyle.THIN, cs.getBorderRight());
+            assertEquals("Top Border Style for row:",    BorderStyle.THIN, cs.getBorderTop());
+            assertEquals("FillForegroundColor for row:", 0xA, cs.getFillForegroundColor());
+            assertEquals("FillPattern for row:",         0x1, cs.getFillPattern());
             
             rownum++;
             if (rownum >= 100) break; // I feel too lazy to check if this isreqd :-/ 

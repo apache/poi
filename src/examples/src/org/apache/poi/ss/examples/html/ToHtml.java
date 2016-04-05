@@ -62,22 +62,34 @@ public class ToHtml {
     private static final String COL_HEAD_CLASS = "colHeader";
     private static final String ROW_HEAD_CLASS = "rowHeader";
 
-    private static final Map<Short, String> ALIGN = mapFor(ALIGN_LEFT, "left",
-            ALIGN_CENTER, "center", ALIGN_RIGHT, "right", ALIGN_FILL, "left",
-            ALIGN_JUSTIFY, "left", ALIGN_CENTER_SELECTION, "center");
+    private static final Map<Short, String> ALIGN = mapFor(
+            ALIGN_LEFT, "left",
+            ALIGN_CENTER, "center",
+            ALIGN_RIGHT, "right",
+            ALIGN_FILL, "left",
+            ALIGN_JUSTIFY, "left",
+            ALIGN_CENTER_SELECTION, "center");
 
     private static final Map<Short, String> VERTICAL_ALIGN = mapFor(
-            VERTICAL_BOTTOM, "bottom", VERTICAL_CENTER, "middle", VERTICAL_TOP,
-            "top");
+            VERTICAL_BOTTOM, "bottom",
+            VERTICAL_CENTER, "middle",
+            VERTICAL_TOP, "top");
 
-    private static final Map<Short, String> BORDER = mapFor(BORDER_DASH_DOT,
-            "dashed 1pt", BORDER_DASH_DOT_DOT, "dashed 1pt", BORDER_DASHED,
-            "dashed 1pt", BORDER_DOTTED, "dotted 1pt", BORDER_DOUBLE,
-            "double 3pt", BORDER_HAIR, "solid 1px", BORDER_MEDIUM, "solid 2pt",
-            BORDER_MEDIUM_DASH_DOT, "dashed 2pt", BORDER_MEDIUM_DASH_DOT_DOT,
-            "dashed 2pt", BORDER_MEDIUM_DASHED, "dashed 2pt", BORDER_NONE,
-            "none", BORDER_SLANTED_DASH_DOT, "dashed 2pt", BORDER_THICK,
-            "solid 3pt", BORDER_THIN, "dashed 1pt");
+    private static final Map<BorderStyle, String> BORDER = mapFor(
+            BorderStyle.DASH_DOT, "dashed 1pt",
+            BorderStyle.DASH_DOT_DOT, "dashed 1pt",
+            BorderStyle.DASHED, "dashed 1pt",
+            BorderStyle.DOTTED, "dotted 1pt",
+            BorderStyle.DOUBLE, "double 3pt",
+            BorderStyle.HAIR, "solid 1px",
+            BorderStyle.MEDIUM, "solid 2pt",
+            BorderStyle.MEDIUM_DASH_DOT, "dashed 2pt",
+            BorderStyle.MEDIUM_DASH_DOT_DOT, "dashed 2pt",
+            BorderStyle.MEDIUM_DASHED, "dashed 2pt",
+            BorderStyle.NONE, "none",
+            BorderStyle.SLANTED_DASH_DOT, "dashed 2pt",
+            BorderStyle.THICK, "solid 3pt",
+            BorderStyle.THIN, "dashed 1pt");
 
     @SuppressWarnings({"unchecked"})
     private static <K, V> Map<K, V> mapFor(Object... mapping) {

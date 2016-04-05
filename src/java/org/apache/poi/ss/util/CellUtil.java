@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
@@ -277,10 +278,10 @@ public final class CellUtil {
 	private static Map<String, Object> getFormatProperties(CellStyle style) {
 		Map<String, Object> properties = new HashMap<String, Object>();
 		putShort(properties, ALIGNMENT, style.getAlignment());
-		putShort(properties, BORDER_BOTTOM, style.getBorderBottom());
-		putShort(properties, BORDER_LEFT, style.getBorderLeft());
-		putShort(properties, BORDER_RIGHT, style.getBorderRight());
-		putShort(properties, BORDER_TOP, style.getBorderTop());
+		putBorderStyle(properties, BORDER_BOTTOM, style.getBorderBottom());
+		putBorderStyle(properties, BORDER_LEFT, style.getBorderLeft());
+		putBorderStyle(properties, BORDER_RIGHT, style.getBorderRight());
+		putBorderStyle(properties, BORDER_TOP, style.getBorderTop());
 		putShort(properties, BOTTOM_BORDER_COLOR, style.getBottomBorderColor());
 		putShort(properties, DATA_FORMAT, style.getDataFormat());
 		putShort(properties, FILL_BACKGROUND_COLOR, style.getFillBackgroundColor());
@@ -309,10 +310,10 @@ public final class CellUtil {
 	 */
 	private static void setFormatProperties(CellStyle style, Workbook workbook, Map<String, Object> properties) {
 		style.setAlignment(getShort(properties, ALIGNMENT));
-		style.setBorderBottom(getShort(properties, BORDER_BOTTOM));
-		style.setBorderLeft(getShort(properties, BORDER_LEFT));
-		style.setBorderRight(getShort(properties, BORDER_RIGHT));
-		style.setBorderTop(getShort(properties, BORDER_TOP));
+		style.setBorderBottom(getBorderStyle(properties, BORDER_BOTTOM));
+		style.setBorderLeft(getBorderStyle(properties, BORDER_LEFT));
+		style.setBorderRight(getBorderStyle(properties, BORDER_RIGHT));
+		style.setBorderTop(getBorderStyle(properties, BORDER_TOP));
 		style.setBottomBorderColor(getShort(properties, BOTTOM_BORDER_COLOR));
 		style.setDataFormat(getShort(properties, DATA_FORMAT));
 		style.setFillBackgroundColor(getShort(properties, FILL_BACKGROUND_COLOR));
@@ -345,6 +346,18 @@ public final class CellUtil {
 		}
 		return 0;
 	}
+	
+	/**
+	 * Utility method that returns the named BorderStyle value form the given map.
+	 *
+	 * @param properties map of named properties (String -> Object)
+	 * @param name property name
+	 * @return Border style if set, otherwise {@link BorderStyle#NONE}
+	 */
+	private static BorderStyle getBorderStyle(Map<String, Object> properties, String name) {
+		BorderStyle value = (BorderStyle) properties.get(name);
+		return (value != null) ? value : BorderStyle.NONE;
+	}
 
 	/**
 	 * Utility method that returns the named boolean value form the given map.
@@ -372,6 +385,17 @@ public final class CellUtil {
 	 */
 	private static void putShort(Map<String, Object> properties, String name, short value) {
 		properties.put(name, Short.valueOf(value));
+	}
+	
+	   /**
+	 * Utility method that puts the named short value to the given map.
+	 *
+	 * @param properties map of properties (String -> Object)
+	 * @param name property name
+	 * @param value property value
+	 */
+	private static void putBorderStyle(Map<String, Object> properties, String name, BorderStyle border) {
+		properties.put(name, border);
 	}
 
 	/**

@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
+import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Color;
 import org.apache.poi.ss.usermodel.DateUtil;
@@ -362,23 +363,23 @@ public class ExcelComparator {
         String borderName;
         switch (borderSide) {
             case 't': default:
-                b1 = style1.getBorderTop() == 1;
-                b2 = style2.getBorderTop() == 1;
+                b1 = style1.getBorderTop() == BorderStyle.THIN;
+                b2 = style2.getBorderTop() == BorderStyle.THIN;
                 borderName = "TOP";
                 break;
             case 'b':
-                b1 = style1.getBorderBottom() == 1;
-                b2 = style2.getBorderBottom() == 1;
+                b1 = style1.getBorderBottom() == BorderStyle.THIN;
+                b2 = style2.getBorderBottom() == BorderStyle.THIN;
                 borderName = "BOTTOM";
                 break;
             case 'l':
-                b1 = style1.getBorderLeft() == 1;
-                b2 = style2.getBorderLeft() == 1;
+                b1 = style1.getBorderLeft() == BorderStyle.THIN;
+                b2 = style2.getBorderLeft() == BorderStyle.THIN;
                 borderName = "LEFT";
                 break;
             case 'r':
-                b1 = style1.getBorderRight() == 1;
-                b2 = style2.getBorderRight() == 1;
+                b1 = style1.getBorderRight() == BorderStyle.THIN;
+                b2 = style2.getBorderRight() == BorderStyle.THIN;
                 borderName = "RIGHT";
                 break;
         }

@@ -24,6 +24,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
@@ -180,10 +181,10 @@ public final class TestCellStyle extends TestCase {
         HSSFCellStyle    cs   = wb.createCellStyle();
         HSSFCellStyle    cs2  = wb.createCellStyle();
 
-        cs.setBorderBottom(HSSFCellStyle.BORDER_THIN);
-        cs.setBorderLeft(HSSFCellStyle.BORDER_THIN);
-        cs.setBorderRight(HSSFCellStyle.BORDER_THIN);
-        cs.setBorderTop(HSSFCellStyle.BORDER_THIN);
+        cs.setBorderBottom(BorderStyle.THIN);
+        cs.setBorderLeft(BorderStyle.THIN);
+        cs.setBorderRight(BorderStyle.THIN);
+        cs.setBorderTop(BorderStyle.THIN);
         cs.setFillForegroundColor(( short ) 0xA);
         cs.setFillPattern(( short ) 1);
         fnt.setColor(( short ) 0xf);
@@ -346,40 +347,40 @@ public final class TestCellStyle extends TestCase {
     	HSSFCellStyle cs;
 
     	cs = s.getRow(0).getCell(0).getCellStyle();
-    	assertEquals(CellStyle.BORDER_HAIR, cs.getBorderRight());
+    	assertEquals(BorderStyle.HAIR, cs.getBorderRight());
 
     	cs = s.getRow(1).getCell(1).getCellStyle();
-    	assertEquals(CellStyle.BORDER_DOTTED, cs.getBorderRight());
+    	assertEquals(BorderStyle.DOTTED, cs.getBorderRight());
 
     	cs = s.getRow(2).getCell(2).getCellStyle();
-    	assertEquals(CellStyle.BORDER_DASH_DOT_DOT, cs.getBorderRight());
+    	assertEquals(BorderStyle.DASH_DOT_DOT, cs.getBorderRight());
 
     	cs = s.getRow(3).getCell(3).getCellStyle();
-    	assertEquals(CellStyle.BORDER_DASHED, cs.getBorderRight());
+    	assertEquals(BorderStyle.DASHED, cs.getBorderRight());
 
     	cs = s.getRow(4).getCell(4).getCellStyle();
-    	assertEquals(CellStyle.BORDER_THIN, cs.getBorderRight());
+    	assertEquals(BorderStyle.THIN, cs.getBorderRight());
 
     	cs = s.getRow(5).getCell(5).getCellStyle();
-    	assertEquals(CellStyle.BORDER_MEDIUM_DASH_DOT_DOT, cs.getBorderRight());
+    	assertEquals(BorderStyle.MEDIUM_DASH_DOT_DOT, cs.getBorderRight());
 
     	cs = s.getRow(6).getCell(6).getCellStyle();
-    	assertEquals(CellStyle.BORDER_SLANTED_DASH_DOT, cs.getBorderRight());
+    	assertEquals(BorderStyle.SLANTED_DASH_DOT, cs.getBorderRight());
 
     	cs = s.getRow(7).getCell(7).getCellStyle();
-    	assertEquals(CellStyle.BORDER_MEDIUM_DASH_DOT, cs.getBorderRight());
+    	assertEquals(BorderStyle.MEDIUM_DASH_DOT, cs.getBorderRight());
 
     	cs = s.getRow(8).getCell(8).getCellStyle();
-    	assertEquals(CellStyle.BORDER_MEDIUM_DASHED, cs.getBorderRight());
+    	assertEquals(BorderStyle.MEDIUM_DASHED, cs.getBorderRight());
 
     	cs = s.getRow(9).getCell(9).getCellStyle();
-    	assertEquals(CellStyle.BORDER_MEDIUM, cs.getBorderRight());
+    	assertEquals(BorderStyle.MEDIUM, cs.getBorderRight());
 
     	cs = s.getRow(10).getCell(10).getCellStyle();
-    	assertEquals(CellStyle.BORDER_THICK, cs.getBorderRight());
+    	assertEquals(BorderStyle.THICK, cs.getBorderRight());
 
     	cs = s.getRow(11).getCell(11).getCellStyle();
-    	assertEquals(CellStyle.BORDER_DOUBLE, cs.getBorderRight());
+    	assertEquals(BorderStyle.DOUBLE, cs.getBorderRight());
     }
 
     public void testShrinkToFit() {
@@ -485,7 +486,7 @@ public final class TestCellStyle extends TestCase {
         font.setColor(Font.COLOR_RED);
         
         CellStyle style = wb.createCellStyle();
-        style.setBorderBottom(CellStyle.BORDER_DOTTED);
+        style.setBorderBottom(BorderStyle.DOTTED);
         style.setFont(font);
         
         Cell cell = row.createCell(0);
@@ -498,7 +499,7 @@ public final class TestCellStyle extends TestCase {
         newCell.setCellValue("2testtext2");
 
         CellStyle newStyle = newCell.getCellStyle();
-        assertEquals(CellStyle.BORDER_DOTTED, newStyle.getBorderBottom());
+        assertEquals(BorderStyle.DOTTED, newStyle.getBorderBottom());
         assertEquals(Font.COLOR_RED, ((HSSFCellStyle)newStyle).getFont(wb).getColor());
         
 //        OutputStream out = new FileOutputStream("/tmp/56959.xls");

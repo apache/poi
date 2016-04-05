@@ -38,6 +38,7 @@ import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.hwpf.converter.FoDocumentFacade;
 import org.apache.poi.hwpf.converter.FontReplacer.Triplet;
 import org.apache.poi.ss.formula.eval.ErrorEval;
+import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.Beta;
@@ -192,10 +193,10 @@ public class ExcelToFoConverter extends AbstractExcelConverter
     protected boolean isEmptyStyle( CellStyle cellStyle ) {
         return cellStyle == null || (
                cellStyle.getFillPattern() == 0
-            && cellStyle.getBorderTop() == HSSFCellStyle.BORDER_NONE
-            && cellStyle.getBorderRight() == HSSFCellStyle.BORDER_NONE
-            && cellStyle.getBorderBottom() == HSSFCellStyle.BORDER_NONE
-            && cellStyle.getBorderLeft() == HSSFCellStyle.BORDER_NONE
+            && cellStyle.getBorderTop() == BorderStyle.NONE
+            && cellStyle.getBorderRight() == BorderStyle.NONE
+            && cellStyle.getBorderBottom() == BorderStyle.NONE
+            && cellStyle.getBorderLeft() == BorderStyle.NONE
         );
     }
 
@@ -374,9 +375,9 @@ public class ExcelToFoConverter extends AbstractExcelConverter
     }
 
     protected void processCellStyleBorder( HSSFWorkbook workbook,
-            Element cellTarget, String type, short xlsBorder, short borderColor )
+            Element cellTarget, String type, BorderStyle xlsBorder, short borderColor )
     {
-        if ( xlsBorder == HSSFCellStyle.BORDER_NONE )
+        if ( xlsBorder == BorderStyle.NONE )
             return;
 
         StringBuilder borderStyle = new StringBuilder();

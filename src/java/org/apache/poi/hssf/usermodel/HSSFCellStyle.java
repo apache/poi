@@ -26,6 +26,7 @@ import org.apache.poi.hssf.record.FontRecord;
 import org.apache.poi.hssf.record.FormatRecord;
 import org.apache.poi.hssf.record.StyleRecord;
 import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
 
@@ -410,6 +411,7 @@ public final class HSSFCellStyle implements CellStyle {
      * @see #BORDER_DASH_DOT_DOT
      * @see #BORDER_MEDIUM_DASH_DOT_DOT
      * @see #BORDER_SLANTED_DASH_DOT
+     * @deprecated 3.15 beta 1
      */
     @Override
     public void setBorderLeft(short border)
@@ -417,29 +419,25 @@ public final class HSSFCellStyle implements CellStyle {
         _format.setIndentNotParentBorder(true);
         _format.setBorderLeft(border);
     }
+    
+    /**
+     * set the type of border to use for the left border of the cell
+     * @param border type
+     */
+    @Override
+    public void setBorderLeft(BorderStyle border)
+    {
+        setBorderLeft(border.getCode());
+    }
 
     /**
      * get the type of border to use for the left border of the cell
      * @return border type
-     * @see #BORDER_NONE
-     * @see #BORDER_THIN
-     * @see #BORDER_MEDIUM
-     * @see #BORDER_DASHED
-     * @see #BORDER_DOTTED
-     * @see #BORDER_THICK
-     * @see #BORDER_DOUBLE
-     * @see #BORDER_HAIR
-     * @see #BORDER_MEDIUM_DASHED
-     * @see #BORDER_DASH_DOT
-     * @see #BORDER_MEDIUM_DASH_DOT
-     * @see #BORDER_DASH_DOT_DOT
-     * @see #BORDER_MEDIUM_DASH_DOT_DOT
-     * @see #BORDER_SLANTED_DASH_DOT
      */
     @Override
-    public short getBorderLeft()
+    public BorderStyle getBorderLeft()
     {
-        return _format.getBorderLeft();
+        return BorderStyle.valueOf(_format.getBorderLeft());
     }
 
     /**
@@ -459,6 +457,7 @@ public final class HSSFCellStyle implements CellStyle {
      * @see #BORDER_DASH_DOT_DOT
      * @see #BORDER_MEDIUM_DASH_DOT_DOT
      * @see #BORDER_SLANTED_DASH_DOT
+     * @deprecated 3.15 beta 1
      */
     @Override
     public void setBorderRight(short border)
@@ -466,29 +465,25 @@ public final class HSSFCellStyle implements CellStyle {
         _format.setIndentNotParentBorder(true);
         _format.setBorderRight(border);
     }
+    
+    /**
+     * set the type of border to use for the right border of the cell
+     * @param border type
+     */
+    @Override
+    public void setBorderRight(BorderStyle border)
+    {
+        setBorderRight(border.getCode());
+    }
 
     /**
      * get the type of border to use for the right border of the cell
      * @return border type
-     * @see #BORDER_NONE
-     * @see #BORDER_THIN
-     * @see #BORDER_MEDIUM
-     * @see #BORDER_DASHED
-     * @see #BORDER_DOTTED
-     * @see #BORDER_THICK
-     * @see #BORDER_DOUBLE
-     * @see #BORDER_HAIR
-     * @see #BORDER_MEDIUM_DASHED
-     * @see #BORDER_DASH_DOT
-     * @see #BORDER_MEDIUM_DASH_DOT
-     * @see #BORDER_DASH_DOT_DOT
-     * @see #BORDER_MEDIUM_DASH_DOT_DOT
-     * @see #BORDER_SLANTED_DASH_DOT
      */
     @Override
-    public short getBorderRight()
+    public BorderStyle getBorderRight()
     {
-        return _format.getBorderRight();
+        return BorderStyle.valueOf(_format.getBorderRight());
     }
 
     /**
@@ -508,6 +503,7 @@ public final class HSSFCellStyle implements CellStyle {
      * @see #BORDER_DASH_DOT_DOT
      * @see #BORDER_MEDIUM_DASH_DOT_DOT
      * @see #BORDER_SLANTED_DASH_DOT
+     * @deprecated 3.15 beta 1
      */
     @Override
     public void setBorderTop(short border)
@@ -515,29 +511,25 @@ public final class HSSFCellStyle implements CellStyle {
         _format.setIndentNotParentBorder(true);
         _format.setBorderTop(border);
     }
+    
+    /**
+     * set the type of border to use for the top border of the cell
+     * @param border type
+     */
+    @Override
+    public void setBorderTop(BorderStyle border)
+    {
+        setBorderTop(border.getCode());
+    }
 
     /**
      * get the type of border to use for the top border of the cell
      * @return border type
-     * @see #BORDER_NONE
-     * @see #BORDER_THIN
-     * @see #BORDER_MEDIUM
-     * @see #BORDER_DASHED
-     * @see #BORDER_DOTTED
-     * @see #BORDER_THICK
-     * @see #BORDER_DOUBLE
-     * @see #BORDER_HAIR
-     * @see #BORDER_MEDIUM_DASHED
-     * @see #BORDER_DASH_DOT
-     * @see #BORDER_MEDIUM_DASH_DOT
-     * @see #BORDER_DASH_DOT_DOT
-     * @see #BORDER_MEDIUM_DASH_DOT_DOT
-     * @see #BORDER_SLANTED_DASH_DOT
      */
     @Override
-    public short getBorderTop()
+    public BorderStyle getBorderTop()
     {
-        return _format.getBorderTop();
+        return BorderStyle.valueOf(_format.getBorderTop());
     }
 
     /**
@@ -557,6 +549,7 @@ public final class HSSFCellStyle implements CellStyle {
      * @see #BORDER_DASH_DOT_DOT
      * @see #BORDER_MEDIUM_DASH_DOT_DOT
      * @see #BORDER_SLANTED_DASH_DOT
+     * @deprecated 3.15 beta 1
      */
     @Override
     public void setBorderBottom(short border)
@@ -564,29 +557,25 @@ public final class HSSFCellStyle implements CellStyle {
         _format.setIndentNotParentBorder(true);
         _format.setBorderBottom(border);
     }
+    
+    /**
+     * set the type of border to use for the bottom border of the cell
+     * @param border type
+     */
+    @Override
+    public void setBorderBottom(BorderStyle border)
+    {
+        setBorderBottom(border.getCode());
+    }
 
     /**
      * get the type of border to use for the bottom border of the cell
      * @return border type
-     * @see #BORDER_NONE
-     * @see #BORDER_THIN
-     * @see #BORDER_MEDIUM
-     * @see #BORDER_DASHED
-     * @see #BORDER_DOTTED
-     * @see #BORDER_THICK
-     * @see #BORDER_DOUBLE
-     * @see #BORDER_HAIR
-     * @see #BORDER_MEDIUM_DASHED
-     * @see #BORDER_DASH_DOT
-     * @see #BORDER_MEDIUM_DASH_DOT
-     * @see #BORDER_DASH_DOT_DOT
-     * @see #BORDER_MEDIUM_DASH_DOT_DOT
-     * @see #BORDER_SLANTED_DASH_DOT
      */
     @Override
-    public short getBorderBottom()
+    public BorderStyle getBorderBottom()
     {
-        return _format.getBorderBottom();
+        return BorderStyle.valueOf(_format.getBorderBottom());
     }
 
     /**
