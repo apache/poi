@@ -46,7 +46,7 @@ public final class HSSFCellStyle implements CellStyle {
     /** Creates new HSSFCellStyle why would you want to do this?? */
     protected HSSFCellStyle(short index, ExtendedFormatRecord rec, HSSFWorkbook workbook)
     {
-    	this(index, rec, workbook.getWorkbook());
+        this(index, rec, workbook.getWorkbook());
     }
     protected HSSFCellStyle(short index, ExtendedFormatRecord rec, InternalWorkbook workbook)
     {
@@ -74,14 +74,14 @@ public final class HSSFCellStyle implements CellStyle {
     public HSSFCellStyle getParentStyle() {
         short parentIndex = _format.getParentIndex();
         // parentIndex equal 0xFFF indicates no inheritance from a cell style XF (See 2.4.353 XF)
-    	if(parentIndex == 0 || parentIndex == 0xFFF) {
-    		return null;
-    	}
-    	return new HSSFCellStyle(
-    			parentIndex,
-    			_workbook.getExFormatAt(parentIndex),
-    			_workbook
-    	);
+        if(parentIndex == 0 || parentIndex == 0xFFF) {
+            return null;
+        }
+        return new HSSFCellStyle(
+                parentIndex,
+                _workbook.getExFormatAt(parentIndex),
+                _workbook
+        );
     }
 
     /**
@@ -145,7 +145,7 @@ public final class HSSFCellStyle implements CellStyle {
      * @return the format string or "General" if not found
      */
     public String getDataFormatString(org.apache.poi.ss.usermodel.Workbook workbook) {
-    	HSSFDataFormat format = new HSSFDataFormat( ((HSSFWorkbook)workbook).getWorkbook() );
+        HSSFDataFormat format = new HSSFDataFormat( ((HSSFWorkbook)workbook).getWorkbook() );
 
         int idx = getDataFormat();
         return idx == -1 ? "General" : format.getFormat(getDataFormat());
@@ -156,7 +156,7 @@ public final class HSSFCellStyle implements CellStyle {
      * @see org.apache.poi.hssf.usermodel.HSSFDataFormat
      */
     public String getDataFormatString(org.apache.poi.hssf.model.InternalWorkbook workbook) {
-    	HSSFDataFormat format = new HSSFDataFormat( workbook );
+        HSSFDataFormat format = new HSSFDataFormat( workbook );
 
         return format.getFormat(getDataFormat());
     }
@@ -169,9 +169,9 @@ public final class HSSFCellStyle implements CellStyle {
      */
     @Override
     public void setFont(Font font) {
-		setFont((HSSFFont)font);
-	}
-	public void setFont(HSSFFont font) {
+        setFont((HSSFFont)font);
+    }
+    public void setFont(HSSFFont font) {
         _format.setIndentNotParentFont(true);
         short fontindex = font.getIndex();
         _format.setFontIndex(fontindex);
@@ -194,7 +194,7 @@ public final class HSSFCellStyle implements CellStyle {
      * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#getFontAt(short)
      */
     public HSSFFont getFont(org.apache.poi.ss.usermodel.Workbook parentWorkbook) {
-    	return ((HSSFWorkbook) parentWorkbook).getFontAt(getFontIndex());
+        return ((HSSFWorkbook) parentWorkbook).getFontAt(getFontIndex());
     }
 
     /**
@@ -714,15 +714,15 @@ public final class HSSFCellStyle implements CellStyle {
      */
     private void checkDefaultBackgroundFills() {
       if (_format.getFillForeground() == org.apache.poi.hssf.util.HSSFColor.AUTOMATIC.index) {
-    	  //JMH: Why +1, hell why not. I guess it made some sense to someone at the time. Doesnt
-    	  //to me now.... But experience has shown that when the fore is set to AUTOMATIC then the
-    	  //background needs to be incremented......
-    	  if (_format.getFillBackground() != (org.apache.poi.hssf.util.HSSFColor.AUTOMATIC.index+1))
-    		  setFillBackgroundColor((short)(org.apache.poi.hssf.util.HSSFColor.AUTOMATIC.index+1));
+          //JMH: Why +1, hell why not. I guess it made some sense to someone at the time. Doesnt
+          //to me now.... But experience has shown that when the fore is set to AUTOMATIC then the
+          //background needs to be incremented......
+          if (_format.getFillBackground() != (org.apache.poi.hssf.util.HSSFColor.AUTOMATIC.index+1))
+              setFillBackgroundColor((short)(org.apache.poi.hssf.util.HSSFColor.AUTOMATIC.index+1));
       } else if (_format.getFillBackground() == org.apache.poi.hssf.util.HSSFColor.AUTOMATIC.index+1)
-    	  //Now if the forground changes to a non-AUTOMATIC color the background resets itself!!!
-    	  if (_format.getFillForeground() != org.apache.poi.hssf.util.HSSFColor.AUTOMATIC.index)
-    		  setFillBackgroundColor(org.apache.poi.hssf.util.HSSFColor.AUTOMATIC.index);
+          //Now if the forground changes to a non-AUTOMATIC color the background resets itself!!!
+          if (_format.getFillForeground() != org.apache.poi.hssf.util.HSSFColor.AUTOMATIC.index)
+              setFillBackgroundColor(org.apache.poi.hssf.util.HSSFColor.AUTOMATIC.index);
     }
 
     /**
@@ -767,13 +767,13 @@ public final class HSSFCellStyle implements CellStyle {
     @Override
     public short getFillBackgroundColor()
     {
-    	short result = _format.getFillBackground();
-    	//JMH: Do this ridiculous conversion, and let HSSFCellStyle
-    	//internally migrate back and forth
-    	if (result == (HSSFColor.AUTOMATIC.index+1)) {
-			return HSSFColor.AUTOMATIC.index;
-		}
-    	return result;
+        short result = _format.getFillBackground();
+        //JMH: Do this ridiculous conversion, and let HSSFCellStyle
+        //internally migrate back and forth
+        if (result == (HSSFColor.AUTOMATIC.index+1)) {
+            return HSSFColor.AUTOMATIC.index;
+        }
+        return result;
     }
     
     @Override
@@ -827,14 +827,14 @@ public final class HSSFCellStyle implements CellStyle {
      *  styles where no name has been defined
      */
     public String getUserStyleName() {
-    	StyleRecord sr = _workbook.getStyleRecord(_index);
-    	if(sr == null) {
-    		return null;
-    	}
-    	if(sr.isBuiltin()) {
-    		return null;
-    	}
-    	return sr.getName();
+        StyleRecord sr = _workbook.getStyleRecord(_index);
+        if(sr == null) {
+            return null;
+        }
+        if(sr.isBuiltin()) {
+            return null;
+        }
+        return sr.getName();
     }
 
     /**
@@ -842,16 +842,16 @@ public final class HSSFCellStyle implements CellStyle {
      * Will complain if you try this on a built in style.
      */
     public void setUserStyleName(String styleName) {
-    	StyleRecord sr = _workbook.getStyleRecord(_index);
-    	if(sr == null) {
-    		sr = _workbook.createStyleRecord(_index);
-    	}
-    	// All Style records start as "builtin", but generally
-    	//  only 20 and below really need to be
-    	if(sr.isBuiltin() && _index <= 20) {
-    		throw new IllegalArgumentException("Unable to set user specified style names for built in styles!");
-    	}
-    	sr.setName(styleName);
+        StyleRecord sr = _workbook.getStyleRecord(_index);
+        if(sr == null) {
+            sr = _workbook.createStyleRecord(_index);
+        }
+        // All Style records start as "builtin", but generally
+        //  only 20 and below really need to be
+        if(sr.isBuiltin() && _index <= 20) {
+            throw new IllegalArgumentException("Unable to set user specified style names for built in styles!");
+        }
+        sr.setName(styleName);
     }
 
     /**
@@ -860,7 +860,7 @@ public final class HSSFCellStyle implements CellStyle {
      */
     @Override
     public void setShrinkToFit(boolean shrinkToFit) {
-    	_format.setShrinkToFit(shrinkToFit);
+        _format.setShrinkToFit(shrinkToFit);
     }
     /**
      * Should the Cell be auto-sized by Excel to shrink
@@ -868,9 +868,9 @@ public final class HSSFCellStyle implements CellStyle {
      */
     @Override
     public boolean getShrinkToFit() {
-    	return _format.getShrinkToFit();
+        return _format.getShrinkToFit();
     }
-	
+    
     /**
      * Get the reading order, for RTL/LTR ordering of
      *  the text.
@@ -903,10 +903,10 @@ public final class HSSFCellStyle implements CellStyle {
      * @throws IllegalArgumentException if there's a workbook mis-match
      */
     public void verifyBelongsToWorkbook(HSSFWorkbook wb) {
-		if(wb.getWorkbook() != _workbook) {
-			throw new IllegalArgumentException("This Style does not belong to the supplied Workbook. Are you trying to assign a style from one workbook to the cell of a differnt workbook?");
-		}
-	}
+        if(wb.getWorkbook() != _workbook) {
+            throw new IllegalArgumentException("This Style does not belong to the supplied Workbook. Are you trying to assign a style from one workbook to the cell of a differnt workbook?");
+        }
+    }
 
     /**
      * Clones all the style information from another
@@ -922,71 +922,71 @@ public final class HSSFCellStyle implements CellStyle {
      */
     @Override
     public void cloneStyleFrom(CellStyle source) {
-		if(source instanceof HSSFCellStyle) {
-			this.cloneStyleFrom((HSSFCellStyle)source);
-		} else {
-		    throw new IllegalArgumentException("Can only clone from one HSSFCellStyle to another, not between HSSFCellStyle and XSSFCellStyle");
-		}
-	}
+        if(source instanceof HSSFCellStyle) {
+            this.cloneStyleFrom((HSSFCellStyle)source);
+        } else {
+            throw new IllegalArgumentException("Can only clone from one HSSFCellStyle to another, not between HSSFCellStyle and XSSFCellStyle");
+        }
+    }
     public void cloneStyleFrom(HSSFCellStyle source) {
-    	// First we need to clone the extended format
-    	//  record
-    	_format.cloneStyleFrom(source._format);
+        // First we need to clone the extended format
+        //  record
+        _format.cloneStyleFrom(source._format);
 
-    	// Handle matching things if we cross workbooks
-    	if(_workbook != source._workbook) {
+        // Handle matching things if we cross workbooks
+        if(_workbook != source._workbook) {
 
             lastDateFormat.set(Short.MIN_VALUE);
             lastFormats.set(null);
             getDataFormatStringCache.set(null);
-    	   
-			// Then we need to clone the format string,
-			//  and update the format record for this
-    		short fmt = (short)_workbook.createFormat(source.getDataFormatString() );
-    		setDataFormat(fmt);
+           
+            // Then we need to clone the format string,
+            //  and update the format record for this
+            short fmt = (short)_workbook.createFormat(source.getDataFormatString() );
+            setDataFormat(fmt);
 
-			// Finally we need to clone the font,
-			//  and update the format record for this
-    		FontRecord fr = _workbook.createNewFont();
-    		fr.cloneStyleFrom(
-    				source._workbook.getFontRecordAt(
-    						source.getFontIndex()
-    				)
-    		);
+            // Finally we need to clone the font,
+            //  and update the format record for this
+            FontRecord fr = _workbook.createNewFont();
+            fr.cloneStyleFrom(
+                    source._workbook.getFontRecordAt(
+                            source.getFontIndex()
+                    )
+            );
 
-    		HSSFFont font = new HSSFFont(
-    				(short)_workbook.getFontIndex(fr), fr
-    		);
-    		setFont(font);
-    	}
+            HSSFFont font = new HSSFFont(
+                    (short)_workbook.getFontIndex(fr), fr
+            );
+            setFont(font);
+        }
     }
 
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((_format == null) ? 0 : _format.hashCode());
-		result = prime * result + _index;
-		return result;
-	}
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((_format == null) ? 0 : _format.hashCode());
+        result = prime * result + _index;
+        return result;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) return true;
-		if (obj == null) return false;
-		if (obj instanceof HSSFCellStyle) {
-			final HSSFCellStyle other = (HSSFCellStyle) obj;
-			if (_format == null) {
-				if (other._format != null)
-					return false;
-			} else if (!_format.equals(other._format))
-				return false;
-			if (_index != other._index)
-				return false;
-			return true;
-		}
-		return false;
-	}
-	
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (obj instanceof HSSFCellStyle) {
+            final HSSFCellStyle other = (HSSFCellStyle) obj;
+            if (_format == null) {
+                if (other._format != null)
+                    return false;
+            } else if (!_format.equals(other._format))
+                return false;
+            if (_index != other._index)
+                return false;
+            return true;
+        }
+        return false;
+    }
+    
 }
