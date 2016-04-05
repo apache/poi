@@ -16,6 +16,8 @@
 ==================================================================== */
 package org.apache.poi.hssf.usermodel;
 
+import org.apache.poi.ss.usermodel.BorderStyle;
+
 import junit.framework.TestCase;
 
 public final class TestHSSFOptimiser extends TestCase {
@@ -278,13 +280,13 @@ public final class TestHSSFOptimiser extends TestCase {
 	    assertEquals(21, wb.getNumCellStyles());
 	    
 	    HSSFCellStyle cs1 = wb.createCellStyle();
-	    cs1.setBorderBottom(HSSFCellStyle.BORDER_THICK);
+	    cs1.setBorderBottom(BorderStyle.THICK);
 	    
 	    HSSFCellStyle cs2 = wb.createCellStyle();
-	    cs2.setBorderBottom(HSSFCellStyle.BORDER_DASH_DOT);
+	    cs2.setBorderBottom(BorderStyle.DASH_DOT);
 	    
 	    HSSFCellStyle cs3 = wb.createCellStyle(); // = cs1
-        cs3.setBorderBottom(HSSFCellStyle.BORDER_THICK);
+	    cs3.setBorderBottom(BorderStyle.THICK);
 	    
 	    assertEquals(24, wb.getNumCellStyles());
 	    
@@ -306,8 +308,8 @@ public final class TestHSSFOptimiser extends TestCase {
 	    // Check
 	    assertEquals(23, wb.getNumCellStyles());
 	    
-	    assertEquals(HSSFCellStyle.BORDER_THICK, r.getCell(0).getCellStyle().getBorderBottom());
-	    assertEquals(HSSFCellStyle.BORDER_DASH_DOT, r.getCell(1).getCellStyle().getBorderBottom());
-	    assertEquals(HSSFCellStyle.BORDER_THICK, r.getCell(2).getCellStyle().getBorderBottom());
+	    assertEquals(BorderStyle.THICK, r.getCell(0).getCellStyle().getBorderBottom());
+	    assertEquals(BorderStyle.DASH_DOT, r.getCell(1).getCellStyle().getBorderBottom());
+	    assertEquals(BorderStyle.THICK, r.getCell(2).getCellStyle().getBorderBottom());
 	}
 }

@@ -68,6 +68,7 @@ import org.apache.poi.ss.formula.ptg.Area3DPtg;
 import org.apache.poi.ss.formula.ptg.DeletedArea3DPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.usermodel.BaseTestBugzillaIssues;
+import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
@@ -2564,7 +2565,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         HSSFSheet sheet = wb.getSheetAt(0);
         HSSFRow row = sheet.getRow(0);
         HSSFCellStyle rstyle = row.getRowStyle();
-        assertEquals(rstyle.getBorderBottom(), CellStyle.BORDER_DOUBLE);
+        assertEquals(BorderStyle.DOUBLE, rstyle.getBorderBottom());
         wb.close();
     }
 

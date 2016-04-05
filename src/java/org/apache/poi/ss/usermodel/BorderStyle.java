@@ -19,13 +19,13 @@ package org.apache.poi.ss.usermodel;
 
 /**
  * The enumeration value indicating the line style of a border in a cell,
- * i.e., whether it is borded dash dot, dash dot dot, dashed, dotted, double, hair, medium, 
+ * i.e., whether it is bordered dash dot, dash dot dot, dashed, dotted, double, hair, medium, 
  * medium dash dot, medium dash dot dot, medium dashed, none, slant dash dot, thick or thin.
  */
  public enum BorderStyle {
 
     /**
-     * No border
+     * No border (default)
      */
     NONE(0x0),
 
@@ -86,24 +86,32 @@ package org.apache.poi.ss.usermodel;
 
     /**
      * medium dash-dot-dot border
-     * @deprecated POI 3.15 beta 1. Use {@link MEDIUM_DASH_DOT_DOT} instead.
      */
-    MEDIUM_DASH_DOT_DOTC(0xC),
     MEDIUM_DASH_DOT_DOT(0xC),
 
     /**
      * slanted dash-dot border
      */
     SLANTED_DASH_DOT(0xD);
-
-
+    
     private final short code;
 
-    BorderStyle(int code) {
+    private BorderStyle(int code) {
         this.code = (short)code;
     }
 
     public short getCode() {
         return code;
+    }
+    
+    private static final BorderStyle[] _table = new BorderStyle[0xD + 1];
+    static {
+        for (BorderStyle c : values()) {
+            _table[c.getCode()] = c;
+        }
+    }
+    
+    public static BorderStyle valueOf(short code) {
+        return _table[code];
     }
 }

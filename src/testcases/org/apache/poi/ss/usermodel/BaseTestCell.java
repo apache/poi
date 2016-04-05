@@ -254,10 +254,10 @@ public abstract class BaseTestCell {
         f.setFontName("Arial Unicode MS");
         cs.setFillBackgroundColor((short)3);
         cs.setFont(f);
-        cs.setBorderTop((short)1);
-        cs.setBorderRight((short)1);
-        cs.setBorderLeft((short)1);
-        cs.setBorderBottom((short)1);
+        cs.setBorderTop(BorderStyle.THIN);
+        cs.setBorderRight(BorderStyle.THIN);
+        cs.setBorderLeft(BorderStyle.THIN);
+        cs.setBorderBottom(BorderStyle.THIN);
 
         r = s.createRow(0);
         c=r.createCell(0);
@@ -270,15 +270,15 @@ public abstract class BaseTestCell {
         r = s.getRow(0);
         c = r.getCell(0);
 
-        assertTrue("Formula Cell at 0,0", (c.getCellType()==Cell.CELL_TYPE_FORMULA));
+        assertEquals("Formula Cell at 0,0", Cell.CELL_TYPE_FORMULA, c.getCellType());
         cs = c.getCellStyle();
 
         assertNotNull("Formula Cell Style", cs);
-        assertTrue("Font Index Matches", (cs.getFontIndex() == f.getIndex()));
-        assertTrue("Top Border", (cs.getBorderTop() == (short)1));
-        assertTrue("Left Border", (cs.getBorderLeft() == (short)1));
-        assertTrue("Right Border", (cs.getBorderRight() == (short)1));
-        assertTrue("Bottom Border", (cs.getBorderBottom() == (short)1));
+        assertEquals("Font Index Matches", f.getIndex(), cs.getFontIndex());
+        assertEquals("Top Border", BorderStyle.THIN, cs.getBorderTop());
+        assertEquals("Left Border", BorderStyle.THIN, cs.getBorderLeft());
+        assertEquals("Right Border", BorderStyle.THIN, cs.getBorderRight());
+        assertEquals("Bottom Border", BorderStyle.THIN, cs.getBorderBottom());
         wb2.close();
     }
 

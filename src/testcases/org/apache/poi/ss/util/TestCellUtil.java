@@ -29,13 +29,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-
 import org.junit.Test;
 
 /**
@@ -53,13 +53,13 @@ public final class TestCellUtil {
 
         // Add a border should create a new style
         int styCnt1 = wb.getNumCellStyles();
-        CellUtil.setCellStyleProperty(c, wb, CellUtil.BORDER_BOTTOM, CellStyle.BORDER_THIN);
+        CellUtil.setCellStyleProperty(c, wb, CellUtil.BORDER_BOTTOM, BorderStyle.THIN);
         int styCnt2 = wb.getNumCellStyles();
         assertEquals(styCnt2, styCnt1+1);
 
         // Add same border to another cell, should not create another style
         c = r.createCell(1);
-        CellUtil.setCellStyleProperty(c, wb, CellUtil.BORDER_BOTTOM, CellStyle.BORDER_THIN);
+        CellUtil.setCellStyleProperty(c, wb, CellUtil.BORDER_BOTTOM, BorderStyle.THIN);
         int styCnt3 = wb.getNumCellStyles();
         assertEquals(styCnt3, styCnt2);
 
@@ -76,19 +76,19 @@ public final class TestCellUtil {
         // Add multiple border properties to cell should create a single new style
         int styCnt1 = wb.getNumCellStyles();
         Map<String, Object> props = new HashMap<String, Object>();
-        props.put(CellUtil.BORDER_TOP, CellStyle.BORDER_THIN);
-        props.put(CellUtil.BORDER_BOTTOM, CellStyle.BORDER_THIN);
-        props.put(CellUtil.BORDER_LEFT, CellStyle.BORDER_THIN);
-        props.put(CellUtil.BORDER_RIGHT, CellStyle.BORDER_THIN);
+        props.put(CellUtil.BORDER_TOP, BorderStyle.THIN);
+        props.put(CellUtil.BORDER_BOTTOM, BorderStyle.THIN);
+        props.put(CellUtil.BORDER_LEFT, BorderStyle.THIN);
+        props.put(CellUtil.BORDER_RIGHT, BorderStyle.THIN);
         CellUtil.setCellStyleProperties(c, props);
         int styCnt2 = wb.getNumCellStyles();
-        assertEquals(styCnt2, styCnt1+1);
+        assertEquals(styCnt1+1, styCnt2);
 
         // Add same border another to same cell, should not create another style
         c = r.createCell(1);
         CellUtil.setCellStyleProperties(c, props);
         int styCnt3 = wb.getNumCellStyles();
-        assertEquals(styCnt3, styCnt2);
+        assertEquals(styCnt2, styCnt3);
 
         wb.close();
     }

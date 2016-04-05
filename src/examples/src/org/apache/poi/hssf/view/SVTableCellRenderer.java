@@ -26,11 +26,11 @@ import javax.swing.border.*;
 import java.awt.Component;
 import java.awt.Color;
 import java.awt.Rectangle;
-
 import java.io.Serializable;
 import java.text.*;
 
 import org.apache.poi.hssf.usermodel.*;
+import org.apache.poi.ss.usermodel.BorderStyle;
 
 
 /**
@@ -224,10 +224,10 @@ public class SVTableCellRenderer extends JLabel
                                    SVTableUtils.black,
                                    SVTableUtils.black,
                                    SVTableUtils.black,
-                                   HSSFCellStyle.BORDER_NONE,
-                                   HSSFCellStyle.BORDER_NONE,
-                                   HSSFCellStyle.BORDER_NONE,
-                                   HSSFCellStyle.BORDER_NONE,
+                                   BorderStyle.NONE,
+                                   BorderStyle.NONE,
+                                   BorderStyle.NONE,
+                                   BorderStyle.NONE,
                                    isSelected);
               setBorder(cellBorder);
             }

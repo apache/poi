@@ -42,6 +42,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.hwpf.converter.HtmlDocumentFacade;
 import org.apache.poi.ss.formula.eval.ErrorEval;
+import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.POILogFactory;
@@ -190,9 +191,9 @@ public class ExcelToHtmlConverter extends AbstractExcelConverter
     }
 
     private void buildStyle_border( HSSFWorkbook workbook, StringBuilder style,
-            String type, short xlsBorder, short borderColor )
+            String type, BorderStyle xlsBorder, short borderColor )
     {
-        if ( xlsBorder == HSSFCellStyle.BORDER_NONE ) {
+        if ( xlsBorder == BorderStyle.NONE ) {
             return;
         }
 
