@@ -160,8 +160,8 @@ public class XSSFCellStyle implements CellStyle {
 
                   // bug 56295: ensure that the fills is available and set correctly
                   CTFill fill = CTFill.Factory.parse(
-                		  src.getCTFill().toString(), DEFAULT_XML_OPTIONS
-                		  );
+                          src.getCTFill().toString(), DEFAULT_XML_OPTIONS
+                          );
                   addFill(fill);
 
                   // bug 58084: set borders correctly
@@ -203,19 +203,19 @@ public class XSSFCellStyle implements CellStyle {
         }
     }
 
-	private void addFill(CTFill fill) {
-		int idx = _stylesSource.putFill(new XSSFCellFill(fill));
+    private void addFill(CTFill fill) {
+        int idx = _stylesSource.putFill(new XSSFCellFill(fill));
 
-		_cellXf.setFillId(idx);
-		_cellXf.setApplyFill(true);
-	}
-	
-	private void addBorder(CTBorder border) {
+        _cellXf.setFillId(idx);
+        _cellXf.setApplyFill(true);
+    }
+    
+    private void addBorder(CTBorder border) {
         int idx = _stylesSource.putBorder(new XSSFCellBorder(border, _theme));
 
         _cellXf.setBorderId(idx);
         _cellXf.setApplyBorder(true);
-	}
+    }
 
     /**
      * Get the type of horizontal alignment for the cell
@@ -439,7 +439,7 @@ public class XSSFCellStyle implements CellStyle {
      * @return XSSFColor - fill color or <code>null</code> if not set
      */
     public XSSFColor getFillBackgroundXSSFColor() {
-    	// bug 56295: handle missing applyFill attribute as "true" because Excel does as well
+        // bug 56295: handle missing applyFill attribute as "true" because Excel does as well
         if(_cellXf.isSetApplyFill() && !_cellXf.getApplyFill()) return null;
 
         int fillIndex = (int)_cellXf.getFillId();
@@ -478,7 +478,7 @@ public class XSSFCellStyle implements CellStyle {
      * @return XSSFColor - fill color or <code>null</code> if not set
      */
     public XSSFColor getFillForegroundXSSFColor() {
-    	// bug 56295: handle missing applyFill attribute as "true" because Excel does as well
+        // bug 56295: handle missing applyFill attribute as "true" because Excel does as well
         if(_cellXf.isSetApplyFill() && !_cellXf.getApplyFill()) return null;
 
         int fillIndex = (int)_cellXf.getFillId();
@@ -515,7 +515,7 @@ public class XSSFCellStyle implements CellStyle {
      */
     @Override
     public short getFillPattern() {
-    	// bug 56295: handle missing applyFill attribute as "true" because Excel does as well
+        // bug 56295: handle missing applyFill attribute as "true" because Excel does as well
         if(_cellXf.isSetApplyFill() && !_cellXf.getApplyFill()) return 0;
 
         int fillIndex = (int)_cellXf.getFillId();
@@ -1064,7 +1064,7 @@ public class XSSFCellStyle implements CellStyle {
      */
     private CTFill getCTFill(){
         CTFill ct;
-    	// bug 56295: handle missing applyFill attribute as "true" because Excel does as well
+        // bug 56295: handle missing applyFill attribute as "true" because Excel does as well
         if(!_cellXf.isSetApplyFill() || _cellXf.getApplyFill()) {
             int fillIndex = (int)_cellXf.getFillId();
             XSSFCellFill cf = _stylesSource.getFillAt(fillIndex);
@@ -1138,7 +1138,7 @@ public class XSSFCellStyle implements CellStyle {
      * @see org.apache.poi.ss.usermodel.FillPatternType
      */
     public void setFillPattern(FillPatternType ptrn) {
-	    setFillPattern((short)ptrn.ordinal());
+        setFillPattern((short)ptrn.ordinal());
     }
 
     /**
