@@ -43,7 +43,6 @@ import org.apache.poi.util.LittleEndianOutput;
 public abstract class Ptg {
 	public static final Ptg[] EMPTY_PTG_ARRAY = { };
 
-
 	/**
 	 * Reads <tt>size</tt> bytes of the input stream, to create an array of <tt>Ptg</tt>s.
 	 * Extra data (beyond <tt>size</tt>) may be read if and <tt>ArrayPtg</tt>s are present.
@@ -174,8 +173,8 @@ public abstract class Ptg {
 	 */
 	public static int getEncodedSize(Ptg[] ptgs) {
 		int result = 0;
-		for (int i = 0; i < ptgs.length; i++) {
-			result += ptgs[i].getSize();
+		for (Ptg ptg : ptgs) {
+			result += ptg.getSize();
 		}
 		return result;
 	}
@@ -185,8 +184,7 @@ public abstract class Ptg {
 	 */
 	public static int getEncodedSizeWithoutArrayData(Ptg[] ptgs) {
 		int result = 0;
-		for (int i = 0; i < ptgs.length; i++) {
-			Ptg ptg = ptgs[i];
+		for (Ptg ptg : ptgs) {
 			if (ptg instanceof ArrayPtg) {
 				result += ArrayPtg.PLAIN_TOKEN_SIZE;
 			} else {
@@ -203,15 +201,11 @@ public abstract class Ptg {
 	 * @return number of bytes written
 	 */
 	public static int serializePtgs(Ptg[] ptgs, byte[] array, int offset) {
-		int nTokens = ptgs.length;
-
 		LittleEndianByteArrayOutputStream out = new LittleEndianByteArrayOutputStream(array, offset);
 
 		List<Ptg> arrayPtgs = null;
 
-		for (int k = 0; k < nTokens; k++) {
-			Ptg ptg = ptgs[k];
-
+		for (Ptg ptg : ptgs) {
 			ptg.write(out);
 			if (ptg instanceof ArrayPtg) {
 				if (arrayPtgs == null) {
@@ -221,8 +215,8 @@ public abstract class Ptg {
 			}
 		}
 		if (arrayPtgs != null) {
-			for (int i=0;i<arrayPtgs.size();i++) {
-				ArrayPtg p = (ArrayPtg)arrayPtgs.get(i);
+			for (Ptg arrayPtg : arrayPtgs) {
+				ArrayPtg p = (ArrayPtg) arrayPtg;
 				p.writeTokenValueBytes(out);
 			}
 		}
@@ -294,13 +288,14 @@ public abstract class Ptg {
 	public abstract boolean isBaseToken();
 
 	public static boolean doesFormulaReferToDeletedCell(Ptg[] ptgs) {
-		for (int i = 0; i < ptgs.length; i++) {
-			if (isDeletedCellRef(ptgs[i])) {
+		for (Ptg ptg : ptgs) {
+			if (isDeletedCellRef(ptg)) {
 				return true;
 			}
 		}
 		return false;
 	}
+
 	private static boolean isDeletedCellRef(Ptg ptg) {
 		if (ptg == ErrPtg.REF_INVALID) {
 			return true;

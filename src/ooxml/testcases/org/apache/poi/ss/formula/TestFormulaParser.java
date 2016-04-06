@@ -18,10 +18,6 @@
  */
 package org.apache.poi.ss.formula;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.util.Locale;
-
 import org.apache.poi.hssf.usermodel.HSSFEvaluationWorkbook;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.formula.ptg.AbstractFunctionPtg;
@@ -49,6 +45,7 @@ public class TestFormulaParser extends TestCase {
             fail("Expected exception");
         }
         catch (FormulaParseException expected) {
+            // expected here
         }
     }
 
@@ -69,6 +66,7 @@ public class TestFormulaParser extends TestCase {
             fail("Expected exception");
         }
         catch (FormulaParseException expected) {
+            // expected here
         }
     }
     
@@ -150,8 +148,6 @@ public class TestFormulaParser extends TestCase {
     }
     
     /** confirm formula has invalid syntax and parsing the formula results in FormulaParseException
-     * @param formula
-     * @param wb
      */
     private static void parseExpectedException(String formula, FormulaParsingWorkbook wb) {
         try {
@@ -162,5 +158,4 @@ public class TestFormulaParser extends TestCase {
             assertNotNull(e.getMessage());
         }
     }
-
 }

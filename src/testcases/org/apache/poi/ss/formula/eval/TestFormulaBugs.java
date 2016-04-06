@@ -17,25 +17,16 @@
 
 package org.apache.poi.ss.formula.eval;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.hssf.usermodel.*;
+import org.apache.poi.ss.usermodel.*;
+import org.junit.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellValue;
-import org.apache.poi.ss.usermodel.FormulaEvaluator;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 /**
  * Miscellaneous tests for bugzilla entries.<p/> The test name contains the
@@ -53,21 +44,21 @@ public final class TestFormulaBugs {
 		InputStream is = HSSFTestDataSamples.openSampleFileStream("27349-vlookupAcrossSheets.xls");
         // original bug may have thrown exception here,
         // or output warning to stderr
-		HSSFWorkbook wb = new HSSFWorkbook(is);
+		Workbook wb = new HSSFWorkbook(is);
 
-		HSSFSheet sheet = wb.getSheetAt(0);
-		HSSFRow row = sheet.getRow(1);
-		HSSFCell cell = row.getCell(0);
+		Sheet sheet = wb.getSheetAt(0);
+		Row row = sheet.getRow(1);
+		Cell cell = row.getCell(0);
 
 		// this definitely would have failed due to 27349
 		assertEquals("VLOOKUP(1,'DATA TABLE'!$A$8:'DATA TABLE'!$B$10,2)", cell
 				.getCellFormula());
 
 		// We might as well evaluate the formula
-		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+		FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();
 		CellValue cv = fe.evaluate(cell);
 
-		assertEquals(HSSFCell.CELL_TYPE_NUMERIC, cv.getCellType());
+		assertEquals(Cell.CELL_TYPE_NUMERIC, cv.getCellType());
 		assertEquals(3.0, cv.getNumberValue(), 0.0);
 		
 		wb.close();
@@ -81,13 +72,12 @@ public final class TestFormulaBugs {
 	 */
     @Test
 	public void test27405() throws Exception {
-
-		HSSFWorkbook wb = new HSSFWorkbook();
-		HSSFSheet sheet = wb.createSheet("input");
+		Workbook wb = new HSSFWorkbook();
+		Sheet sheet = wb.createSheet("input");
 		// input row 0
-		HSSFRow row = sheet.createRow(0);
-		HSSFCell cell = row.createCell(0);
-		cell = row.createCell(1);
+		Row row = sheet.createRow(0);
+		/*Cell cell =*/ row.createCell(0);
+		Cell cell = row.createCell(1);
 		cell.setCellValue(1); // B1
 		// input row 1
 		row = sheet.createRow(1);
@@ -113,14 +103,14 @@ public final class TestFormulaBugs {
 //		}
 		
 		// use POI's evaluator as an extra sanity check
-		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+		FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();
 		CellValue cv;
 		cv = fe.evaluate(cell);
-		assertEquals(HSSFCell.CELL_TYPE_NUMERIC, cv.getCellType());
+		assertEquals(Cell.CELL_TYPE_NUMERIC, cv.getCellType());
 		assertEquals(1.0, cv.getNumberValue(), 0.0);
 		
 		cv = fe.evaluate(row.getCell(1));
-		assertEquals(HSSFCell.CELL_TYPE_BOOLEAN, cv.getCellType());
+		assertEquals(Cell.CELL_TYPE_BOOLEAN, cv.getCellType());
 		assertEquals(true, cv.getBooleanValue());
 		
 		wb.close();
@@ -132,14 +122,14 @@ public final class TestFormulaBugs {
 	 */
     @Test
 	public void test42448() throws IOException {
-		HSSFWorkbook wb = new HSSFWorkbook();
-		HSSFSheet sheet1 = wb.createSheet("Sheet1");
+		Workbook wb = new HSSFWorkbook();
+		Sheet sheet1 = wb.createSheet("Sheet1");
 
-		HSSFRow row = sheet1.createRow(0);
-		HSSFCell cell = row.createCell(0);
+		Row row = sheet1.createRow(0);
+		Cell cell = row.createCell(0);
 
 		// it's important to create the referenced sheet first
-		HSSFSheet sheet2 = wb.createSheet("A"); // note name 'A'
+		Sheet sheet2 = wb.createSheet("A"); // note name 'A'
 		// TODO - POI crashes if the formula is added before this sheet
 		// RuntimeException("Zero length string is an invalid sheet name")
 		// Excel doesn't crash but the formula doesn't work until it is
@@ -168,16 +158,16 @@ public final class TestFormulaBugs {
 
 		double expectedResult = (4.0 * 8.0 + 5.0 * 9.0) / 10.0;
 
-		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+		FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();
 		CellValue cv = fe.evaluate(cell);
 
-		assertEquals(HSSFCell.CELL_TYPE_NUMERIC, cv.getCellType());
+		assertEquals(Cell.CELL_TYPE_NUMERIC, cv.getCellType());
 		assertEquals(expectedResult, cv.getNumberValue(), 0.0);
 
 		wb.close();
 	}
 
-	private static void addCell(HSSFSheet sheet, int rowIx, int colIx,
+	private static void addCell(Sheet sheet, int rowIx, int colIx,
 			double value) {
 		sheet.createRow(rowIx).createCell(colIx).setCellValue(value);
 	}
