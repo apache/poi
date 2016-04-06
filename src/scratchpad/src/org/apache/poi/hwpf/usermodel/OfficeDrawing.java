@@ -69,11 +69,11 @@ public interface OfficeDrawing
          * The shape is horizontally positioned at the right side of the page
          * element.
          */
-        RIGHT;
+        RIGHT
     }
 
     public enum HorizontalRelativeElement {
-        CHAR, MARGIN, PAGE, TEXT;
+        CHAR, MARGIN, PAGE, TEXT
     }
 
     public enum VerticalPositioning {
@@ -109,11 +109,11 @@ public interface OfficeDrawing
         /**
          * The shape is vertically positioned at the top of the page element
          */
-        TOP;
+        TOP
     }
 
     public enum VerticalRelativeElement {
-        LINE, MARGIN, PAGE, TEXT;
+        LINE, MARGIN, PAGE, TEXT
     }
 
     /**

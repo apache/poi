@@ -47,7 +47,7 @@ public class CellReference {
         NAMED_RANGE,
         COLUMN,
         ROW,
-        BAD_CELL_OR_NAMED_RANGE;
+        BAD_CELL_OR_NAMED_RANGE
     }
 
     /** The character ($) that signifies a row or column value is absolute instead of relative */

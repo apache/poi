@@ -68,7 +68,6 @@ public class XWPFTableCell implements IBody, ICell {
     protected List<XWPFTable> tables = null;
     protected List<IBodyElement> bodyElements = null;
 
-    ;
     protected IBody part;
     private XWPFTableRow tableRow = null;
 

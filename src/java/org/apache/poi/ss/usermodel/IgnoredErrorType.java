@@ -79,5 +79,5 @@ public enum IgnoredErrorType {
      * Whether to check for unprotected formulas.
      * HSSF + XSSF.
      */
-    UNLOCKED_FORMULA;
+    UNLOCKED_FORMULA
 }

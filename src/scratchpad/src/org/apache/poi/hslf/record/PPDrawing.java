@@ -159,7 +159,7 @@ public final class PPDrawing extends RecordAtom {
 		final Record r1 = progBinaryTag.getChildRecords()[1];
 		
 		if (!(r0 instanceof CString)) { return null; }
-		if (!("___PPT9".equals(((CString) r0).getText()))) { return null; };
+		if (!("___PPT9".equals(((CString) r0).getText()))) { return null; }
 		if (!(r1 instanceof BinaryTagDataBlob )) { return null; }
 		final BinaryTagDataBlob blob = (BinaryTagDataBlob) r1;
 		if (1 != blob.getChildRecords().length) { return null; }

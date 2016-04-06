@@ -46,7 +46,7 @@ public class HybridStreaming {
                 if (!SHEET_TO_STREAM.equals(ctSheet.getName())) {
                     super.parseSheet(shIdMap, ctSheet);
                 }
-            };
+            }
         };
         
         // Having avoided a DOM-based parse of the sheet, we can stream it instead.

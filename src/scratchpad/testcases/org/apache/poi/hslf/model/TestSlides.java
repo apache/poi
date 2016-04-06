@@ -133,7 +133,7 @@ public final class TestSlides {
         s2 = ppt.getSlides().get(1);
         assertEquals(257, s2._getSheetNumber());
         assertEquals(4, s2._getSheetRefId());
-        s3 = ppt.getSlides().get(2);;
+        s3 = ppt.getSlides().get(2);
         assertEquals(3, ppt.getSlides().size());
         assertEquals(258, s3._getSheetNumber());
         assertEquals(5, s3._getSheetRefId());

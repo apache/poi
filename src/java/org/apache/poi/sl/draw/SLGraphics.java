@@ -918,7 +918,6 @@ public final class SLGraphics extends Graphics2D implements Cloneable {
      * @see         java.awt.Graphics#create
      */
     public void dispose() {
-        ;
     }
 
     /**
@@ -1145,7 +1144,6 @@ public final class SLGraphics extends Graphics2D implements Cloneable {
     }
 
     public void copyArea(int x, int y, int width, int height, int dx, int dy) {
-        ;
     }
 
     /**

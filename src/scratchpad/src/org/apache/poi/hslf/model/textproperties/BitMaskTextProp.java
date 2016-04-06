@@ -91,8 +91,8 @@ public abstract class BitMaskTextProp extends TextProp implements Cloneable {
 	 */
 	@Override
 	public int getValue() {
-	    int val = dataValue, i = 0;;
-	    for (int mask : subPropMasks) {
+	    int val = dataValue, i = 0;
+		for (int mask : subPropMasks) {
 	        if (!subPropMatches[i++]) {
 	            val &= ~mask;
 	        }

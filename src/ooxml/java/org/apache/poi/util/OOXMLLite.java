@@ -201,7 +201,7 @@ public final class OOXMLLite {
             if (TestCase.class.isAssignableFrom(testclass)
                 || checkForTestAnnotation(testclass)) {
                 out.add(testclass);
-            };
+            }
         }
     }
 

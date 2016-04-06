@@ -162,7 +162,6 @@ public final class TestSlideMaster {
             }
         }
 
-        ;
         for (List<HSLFTextParagraph> tparas : slide.get(1).getTextParagraphs()) {
             HSLFTextParagraph tpara = tparas.get(0);
             if (tpara.getRunType() == TextHeaderAtom.TITLE_TYPE){

@@ -1227,7 +1227,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      * @param zoomPercent A percent value denoting the zoom setting for this document.
      */
     public void setZoomPercent(long zoomPercent) {
-        settings.setZoomPercent(zoomPercent);;
+        settings.setZoomPercent(zoomPercent);
     }
     
     /**

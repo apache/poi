@@ -95,8 +95,8 @@ import org.apache.poi.util.Units;
  */
 public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagraph>, Closeable {
     enum LoadSavePhase {
-        INIT, LOADED;
-    }
+        INIT, LOADED
+	}
     private static ThreadLocal<LoadSavePhase> loadSavePhase = new ThreadLocal<LoadSavePhase>();
     
     // What we're based on

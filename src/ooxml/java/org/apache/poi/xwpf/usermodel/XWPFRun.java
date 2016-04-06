@@ -150,8 +150,6 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
         }
     }
 
-    ;
-
     /**
      * @deprecated Use {@link XWPFRun#XWPFRun(CTR, IRunBody)}
      */

@@ -182,7 +182,7 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
                     if (paint != null) {
                         setValue(paint);
                         return true;
-                    };
+                    }
                 }
                 
                 return false;

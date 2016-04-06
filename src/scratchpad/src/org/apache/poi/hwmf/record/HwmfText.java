@@ -335,13 +335,13 @@ public class HwmfText {
     public enum HwmfTextAlignment {
         LEFT,
         RIGHT,
-        CENTER;
+        CENTER
     }
     
     public enum HwmfTextVerticalAlignment {
         TOP,
         BOTTOM,
-        BASELINE;
+        BASELINE
     }
     
     /**

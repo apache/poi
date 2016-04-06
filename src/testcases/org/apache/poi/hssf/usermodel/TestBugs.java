@@ -838,7 +838,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
     public void bug28774() throws Exception {
         HSSFWorkbook wb = openSample("28774.xls");
         assertTrue("no errors reading sample xls", true);
-        writeOutAndReadBack(wb).close();;
+        writeOutAndReadBack(wb).close();
         assertTrue("no errors writing sample xls", true);
         wb.close();
     }

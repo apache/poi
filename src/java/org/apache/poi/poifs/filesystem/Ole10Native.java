@@ -63,7 +63,7 @@ public class Ole10Native {
         /**
          * the data is stored raw after the length field and the flags1 field
          */
-        compact;
+        compact
     }
     
     private EncodingMode mode;
