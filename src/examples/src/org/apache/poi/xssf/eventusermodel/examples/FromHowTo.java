@@ -40,35 +40,43 @@ import org.xml.sax.helpers.XMLReaderFactory;
 public class FromHowTo {
 	public void processFirstSheet(String filename) throws Exception {
 		OPCPackage pkg = OPCPackage.open(filename);
-		XSSFReader r = new XSSFReader( pkg );
-		SharedStringsTable sst = r.getSharedStringsTable();
+		try {
+			XSSFReader r = new XSSFReader(pkg);
+			SharedStringsTable sst = r.getSharedStringsTable();
 
-		XMLReader parser = fetchSheetParser(sst);
+			XMLReader parser = fetchSheetParser(sst);
 
-		// To look up the Sheet Name / Sheet Order / rID,
-		//  you need to process the core Workbook stream.
-		// Normally it's of the form rId# or rSheet#
-		InputStream sheet2 = r.getSheet("rId2");
-		InputSource sheetSource = new InputSource(sheet2);
-		parser.parse(sheetSource);
-		sheet2.close();
+			// To look up the Sheet Name / Sheet Order / rID,
+			//  you need to process the core Workbook stream.
+			// Normally it's of the form rId# or rSheet#
+			InputStream sheet2 = r.getSheet("rId2");
+			InputSource sheetSource = new InputSource(sheet2);
+			parser.parse(sheetSource);
+			sheet2.close();
+		} finally {
+			pkg.close();
+		}
 	}
 
 	public void processAllSheets(String filename) throws Exception {
 		OPCPackage pkg = OPCPackage.open(filename);
-		XSSFReader r = new XSSFReader( pkg );
-		SharedStringsTable sst = r.getSharedStringsTable();
+		try {
+			XSSFReader r = new XSSFReader(pkg);
+			SharedStringsTable sst = r.getSharedStringsTable();
 
-		XMLReader parser = fetchSheetParser(sst);
+			XMLReader parser = fetchSheetParser(sst);
 
-		Iterator<InputStream> sheets = r.getSheetsData();
-		while(sheets.hasNext()) {
-			System.out.println("Processing new sheet:\n");
-			InputStream sheet = sheets.next();
-			InputSource sheetSource = new InputSource(sheet);
-			parser.parse(sheetSource);
-			sheet.close();
-			System.out.println("");
+			Iterator<InputStream> sheets = r.getSheetsData();
+			while (sheets.hasNext()) {
+				System.out.println("Processing new sheet:\n");
+				InputStream sheet = sheets.next();
+				InputSource sheetSource = new InputSource(sheet);
+				parser.parse(sheetSource);
+				sheet.close();
+				System.out.println("");
+			}
+		} finally {
+			pkg.close();
 		}
 	}
 
