@@ -78,6 +78,6 @@ public enum FillPatternType {
      LESS_DOTS,
 
     /**  Least Dots */
-     LEAST_DOTS;
+     LEAST_DOTS
 
 }

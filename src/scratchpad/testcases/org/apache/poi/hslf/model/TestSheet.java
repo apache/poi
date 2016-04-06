@@ -49,7 +49,7 @@ public final class TestSheet {
                 HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream(file));
                 doSlideShow(ppt);
             } catch (EncryptedPowerPointFileException e){
-                ; //skip encrypted ppt
+                //skip encrypted ppt
             }
         }
     }

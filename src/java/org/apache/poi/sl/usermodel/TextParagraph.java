@@ -104,7 +104,7 @@ public interface TextParagraph<
          * This is different than BASELINE because of letters such as "g", "q", and "y".
          * Also known as "UpholdFixed"
          */
-        BOTTOM; 
+        BOTTOM
     }
     
     public interface BulletStyle {

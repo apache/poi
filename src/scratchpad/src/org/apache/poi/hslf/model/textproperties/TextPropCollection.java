@@ -86,7 +86,7 @@ public class TextPropCollection {
     };
 
     public enum TextPropType {
-        paragraph, character;
+        paragraph, character
     }
     
     private int charactersCovered;

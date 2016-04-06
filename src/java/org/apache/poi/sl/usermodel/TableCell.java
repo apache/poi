@@ -26,8 +26,8 @@ public interface TableCell<
     S extends Shape<S,P>,
     P extends TextParagraph<S,P,?>
 > extends TextShape<S,P> {
-    enum BorderEdge { bottom, left, top, right };
-    
+    enum BorderEdge { bottom, left, top, right }
+
     /**
      * Return line style of given edge or {@code null} if border is not defined
      *

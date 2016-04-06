@@ -23,8 +23,8 @@ package org.apache.poi.hslf.blip;
  */
 public final class JPEG extends Bitmap {
 
-    public enum ColorSpace { rgb, cymk };
-    
+    public enum ColorSpace { rgb, cymk }
+
     private ColorSpace colorSpace = ColorSpace.rgb;
     
     @Override

@@ -453,8 +453,7 @@ public abstract class PackagePart implements RelationshipSource, Comparable<Pack
                     return true;
             }
         } catch (InvalidFormatException e){
-            ;
-        }
+		}
         return false;
 	}
 

@@ -39,5 +39,5 @@ public enum PaperSize {
     FOLIO_PAPER,
     QUARTO_PAPER,
     STANDARD_PAPER_10_14,
-    STANDARD_PAPER_11_17;
+    STANDARD_PAPER_11_17
 }

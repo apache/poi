@@ -36,8 +36,7 @@ public enum CipherAlgorithm {
     des3_112(null, "DESede", -1, 128, new int[]{128}, 8, 32, "3DES_112", true),
     // only for digital signatures
     rsa(null, "RSA", -1, 1024, new int[]{1024, 2048, 3072, 4096}, -1, -1, "", false);
-    ;
-    
+
     public final CipherProvider provider;
     public final String jceId;
     public final int ecmaId;

@@ -1319,7 +1319,7 @@ public final class TestXSSFSheet extends BaseTestSheet {
 
     @Test(timeout=180000)
     public void bug51585() throws IOException {
-        XSSFTestDataSamples.openSampleWorkbook("51585.xlsx").close();;
+        XSSFTestDataSamples.openSampleWorkbook("51585.xlsx").close();
     }
 
     private XSSFWorkbook setupSheet(){

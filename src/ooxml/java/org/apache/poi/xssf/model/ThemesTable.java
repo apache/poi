@@ -59,7 +59,7 @@ public class ThemesTable extends POIXMLDocumentPart {
        }
        public final int idx;
        public final String name;
-   };
+   }
 
     private ThemeDocument theme;
 

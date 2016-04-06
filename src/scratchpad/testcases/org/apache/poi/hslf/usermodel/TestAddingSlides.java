@@ -238,15 +238,13 @@ public final class TestAddingSlides extends TestCase {
             ppt.removeSlide(-1);
             fail("expected exception");
         } catch (Exception e){
-            ;
-        }
+		}
 
         try {
             ppt.removeSlide(2);
             fail("expected exception");
         } catch (Exception e){
-            ;
-        }
+		}
 
         assertEquals(1, slide1.getSlideNumber());
 

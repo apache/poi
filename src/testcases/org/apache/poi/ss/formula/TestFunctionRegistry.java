@@ -49,8 +49,7 @@ public class TestFunctionRegistry extends TestCase {
 			cv = fe.evaluate(cellA);
             fail("expectecd exception");
 		} catch (NotImplementedException e) {
-			;
-		}
+        }
 
         FunctionEval.registerFunction("FISHER", new Function() {
             public ValueEval evaluate(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
@@ -67,7 +66,6 @@ public class TestFunctionRegistry extends TestCase {
             cv = fe.evaluate(cellB);
             fail("expectecd exception");
         } catch (NotImplementedException e) {
-            ;
         }
 
         AnalysisToolPak.registerFunction("CUBEMEMBERPROPERTY", new FreeRefFunction() {

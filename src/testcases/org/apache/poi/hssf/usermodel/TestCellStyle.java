@@ -452,8 +452,8 @@ public final class TestCellStyle extends TestCase {
         public Throwable getException() {
             return exception;
         }
-    };
-    
+    }
+
     public void test56563() throws Throwable {
         CellFormatBugExample threadA = new CellFormatBugExample("56563a.xls");
         threadA.start();

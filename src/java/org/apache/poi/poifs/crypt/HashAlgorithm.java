@@ -35,7 +35,6 @@ public enum HashAlgorithm {
     whirlpool("Whirlpool",     -1,  "WHIRLPOOL", 64, "HMac-Whirlpool", true),
     // only for xml signing
     sha224   (  "SHA-224",     -1,     "SHA224", 28,     "HmacSHA224", true);
-    ;
 
     public final String jceId;
     public final int ecmaId;

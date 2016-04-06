@@ -303,7 +303,7 @@ public class XSSFExportToXml implements Comparator<String>{
               }
             break;
 
-        default: ;
+        default:
 
         }
         if (node instanceof Element) {

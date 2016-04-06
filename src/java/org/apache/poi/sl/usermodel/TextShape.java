@@ -50,7 +50,7 @@ public interface TextShape<
          * Determines if all of the text is vertical
          * ("one letter on top of another").
          */
-        STACKED;
+        STACKED
     }
 
     /**

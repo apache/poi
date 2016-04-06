@@ -96,7 +96,7 @@ public class CellNumberFormatter extends CellFormatter {
         public void simpleValue(StringBuffer toAppendTo, Object value) {
             formatValue(toAppendTo, value);
         }
-    };
+    }
 
 
     /**
