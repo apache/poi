@@ -19,6 +19,7 @@
 package org.apache.poi.hwpf.model;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.apache.poi.hwpf.model.io.HWPFOutputStream;
 import org.apache.poi.util.Internal;
@@ -88,4 +89,23 @@ public class LFOData
         }
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        LFOData lfoData = (LFOData) o;
+
+        if (_cp != lfoData._cp) return false;
+        // Probably incorrect - comparing Object[] arrays with Arrays.equals
+        return Arrays.equals(_rgLfoLvl, lfoData._rgLfoLvl);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = _cp;
+        result = 31 * result + Arrays.hashCode(_rgLfoLvl);
+        return result;
+    }
 }
