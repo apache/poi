@@ -294,12 +294,28 @@ public abstract class BaseTestCell {
         r.createCell(2).setCellValue(factory.createRichTextString("Astring"));
         r.createCell(3).setCellErrorValue(FormulaError.DIV0.getCode());
         r.createCell(4).setCellFormula("A1+B1");
+        r.createCell(5); // blank
+
+        // create date-formatted cell
+        Calendar c = LocaleUtil.getLocaleCalendar();
+        c.set(2010, 01, 02, 00, 00, 00);
+        r.createCell(6).setCellValue(c);
+        CellStyle dateStyle = wb1.createCellStyle();
+        short formatId = wb1.getCreationHelper().createDataFormat().getFormat("m/d/yy h:mm"); // any date format will do
+        dateStyle.setDataFormat(formatId);
+        r.getCell(6).setCellStyle(dateStyle);
 
         assertEquals("Boolean", "TRUE", r.getCell(0).toString());
         assertEquals("Numeric", "1.5", r.getCell(1).toString());
         assertEquals("String", "Astring", r.getCell(2).toString());
         assertEquals("Error", "#DIV/0!", r.getCell(3).toString());
         assertEquals("Formula", "A1+B1", r.getCell(4).toString());
+        assertEquals("Blank", "", r.getCell(5).toString());
+        // toString on a date-formatted cell displays dates as dd-MMM-yyyy, which has locale problems with the month
+        String dateCell1 = r.getCell(6).toString();
+        assertTrue("Date (Day)", dateCell1.startsWith("02-"));
+        assertTrue("Date (Year)", dateCell1.endsWith("-2010"));
+
 
         //Write out the file, read it in, and then check cell values
         Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1);
@@ -311,6 +327,9 @@ public abstract class BaseTestCell {
         assertEquals("String", "Astring", r.getCell(2).toString());
         assertEquals("Error", "#DIV/0!", r.getCell(3).toString());
         assertEquals("Formula", "A1+B1", r.getCell(4).toString());
+        assertEquals("Blank", "", r.getCell(5).toString());
+        String dateCell2 = r.getCell(6).toString();
+        assertEquals("Date", dateCell1, dateCell2);
         wb2.close();
     }
 
