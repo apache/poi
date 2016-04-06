@@ -44,7 +44,7 @@ public abstract class SpreadsheetHandler extends AbstractFileHandler {
 		// write once more
 		ByteArrayOutputStream out = writeToArray(wb);
 
-		// read in the writen file
+		// read in the written file
 		Workbook read;
 		try {
 			read = WorkbookFactory.create(new ByteArrayInputStream(out.toByteArray()));
@@ -93,6 +93,21 @@ public abstract class SpreadsheetHandler extends AbstractFileHandler {
 	}
 	
 	private void modifyContent(Workbook wb) {
+		/* a number of file fail because of various things: udf, unimplemented functions, ...
+		we would need quite a list of excludes and the large regression tests would probably
+		take a lot longer to run...
+		try {
+			// try to re-compute all formulas to find cases where parsing fails
+			wb.getCreationHelper().createFormulaEvaluator().evaluateAll();
+		} catch (RuntimeException e) {
+			// only allow a specific exception which indicates that an external
+			// reference was not found
+			if(!e.getMessage().contains("Could not resolve external workbook name")) {
+				throw e;
+			}
+
+		}*/
+
 	    for (int i=wb.getNumberOfSheets()-1; i>=0; i--) {
 	        try {
 	            wb.cloneSheet(i);
