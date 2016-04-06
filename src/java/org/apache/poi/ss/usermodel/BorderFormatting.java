@@ -154,7 +154,7 @@ public interface BorderFormatting {
      * Set left border.
      *
      * @param border  MUST be a BORDER_* constant
-     * @deprecated 3.15 beta 2. Use {@link BorderFormatting#setBorderLeftBorderStyle)}
+     * @deprecated 3.15 beta 2. Use {@link BorderFormatting#setBorderLeft(BorderStyle)}
      */
     void setBorderLeft(short border);
     
