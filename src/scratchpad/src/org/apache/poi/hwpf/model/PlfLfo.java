@@ -115,34 +115,28 @@ public class PlfLfo
 
     void add( LFO lfo, LFOData lfoData )
     {
-        final int newLfoMac = _lfoMac + 1;
+        // _lfoMac is the size of the array
+        _rgLfo = Arrays.copyOf(_rgLfo, _lfoMac + 1);
+        _rgLfo[_lfoMac] = lfo;
 
-        _rgLfo = Arrays.copyOf(_rgLfo, newLfoMac);
-        _rgLfo[_lfoMac + 1] = lfo;
+        _rgLfoData = Arrays.copyOf(_rgLfoData, _lfoMac + 1);
+        _rgLfoData[_lfoMac] = lfoData;
 
-        _rgLfoData = Arrays.copyOf(_rgLfoData, newLfoMac);
-        _rgLfoData[_lfoMac + 1] = lfoData;
-
-        this._lfoMac = newLfoMac;
+        _lfoMac = _lfoMac + 1;
     }
 
     @Override
-    public boolean equals( Object obj )
-    {
-        if ( this == obj )
+    public boolean equals( Object obj ) {
+        if (this == obj)
             return true;
-        if ( obj == null )
+        if (obj == null)
             return false;
-        if ( getClass() != obj.getClass() )
+        if (getClass() != obj.getClass())
             return false;
         PlfLfo other = (PlfLfo) obj;
-        if ( _lfoMac != other._lfoMac )
-            return false;
-        if ( !Arrays.equals( _rgLfo, other._rgLfo ) )
-            return false;
-        if ( !Arrays.equals( _rgLfoData, other._rgLfoData ) )
-            return false;
-        return true;
+        return _lfoMac == other._lfoMac &&
+                Arrays.equals(_rgLfo, other._rgLfo) &&
+                Arrays.equals(_rgLfoData, other._rgLfoData);
     }
 
     /**
@@ -167,6 +161,11 @@ public class PlfLfo
                 + " not found" );
     }
 
+    /**
+     * @param ilfo 1-based index
+     * @return The {@link LFO} stored at the given index
+     * @throws NoSuchElementException
+     */
     public LFO getLfo( int ilfo ) throws NoSuchElementException
     {
         if ( ilfo <= 0 || ilfo > _lfoMac )
@@ -177,6 +176,11 @@ public class PlfLfo
         return _rgLfo[ilfo - 1];
     }
 
+    /**
+     * @param ilfo 1-based index
+     * @return The {@link LFOData} stored at the given index
+     * @throws NoSuchElementException
+     */
     public LFOData getLfoData( int ilfo ) throws NoSuchElementException
     {
         if ( ilfo <= 0 || ilfo > _lfoMac )
