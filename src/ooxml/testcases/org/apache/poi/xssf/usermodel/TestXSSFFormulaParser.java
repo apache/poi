@@ -23,6 +23,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFEvaluationWorkbook;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.formula.FormulaParseException;
@@ -31,24 +32,13 @@ import org.apache.poi.ss.formula.FormulaParsingWorkbook;
 import org.apache.poi.ss.formula.FormulaRenderingWorkbook;
 import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.formula.WorkbookDependentFormula;
-import org.apache.poi.ss.formula.ptg.Area3DPtg;
-import org.apache.poi.ss.formula.ptg.Area3DPxg;
-import org.apache.poi.ss.formula.ptg.AreaPtg;
-import org.apache.poi.ss.formula.ptg.AttrPtg;
-import org.apache.poi.ss.formula.ptg.FuncPtg;
-import org.apache.poi.ss.formula.ptg.FuncVarPtg;
-import org.apache.poi.ss.formula.ptg.IntPtg;
-import org.apache.poi.ss.formula.ptg.NamePtg;
-import org.apache.poi.ss.formula.ptg.NameXPxg;
-import org.apache.poi.ss.formula.ptg.Ptg;
-import org.apache.poi.ss.formula.ptg.Ref3DPtg;
-import org.apache.poi.ss.formula.ptg.Ref3DPxg;
-import org.apache.poi.ss.formula.ptg.RefPtg;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.formula.ptg.*;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.junit.Test;
+
+import java.util.Arrays;
 
 public final class TestXSSFFormulaParser {
 	private static Ptg[] parse(FormulaParsingWorkbook fpb, String fmla) {
@@ -63,25 +53,25 @@ public final class TestXSSFFormulaParser {
 
         ptgs = parse(fpb, "ABC10");
         assertEquals(1, ptgs.length);
-        assertTrue("", ptgs[0] instanceof RefPtg);
+        assertTrue("Had " + Arrays.toString(ptgs), ptgs[0] instanceof RefPtg);
 
         ptgs = parse(fpb, "A500000");
         assertEquals(1, ptgs.length);
-        assertTrue("", ptgs[0] instanceof RefPtg);
+        assertTrue("Had " + Arrays.toString(ptgs), ptgs[0] instanceof RefPtg);
 
         ptgs = parse(fpb, "ABC500000");
         assertEquals(1, ptgs.length);
-        assertTrue("", ptgs[0] instanceof RefPtg);
+        assertTrue("Had " + Arrays.toString(ptgs), ptgs[0] instanceof RefPtg);
 
         //highest allowed rows and column (XFD and 0x100000)
         ptgs = parse(fpb, "XFD1048576");
         assertEquals(1, ptgs.length);
-        assertTrue("", ptgs[0] instanceof RefPtg);
+        assertTrue("Had " + Arrays.toString(ptgs), ptgs[0] instanceof RefPtg);
 
 
         //column greater than XFD
         try {
-            ptgs = parse(fpb, "XFE10");
+            /*ptgs =*/ parse(fpb, "XFE10");
             fail("expected exception");
         } catch (FormulaParseException e){
             assertEquals("Specified named range 'XFE10' does not exist in the current workbook.", e.getMessage());
@@ -89,7 +79,7 @@ public final class TestXSSFFormulaParser {
 
         //row greater than 0x100000
         try {
-            ptgs = parse(fpb, "XFD1048577");
+            /*ptgs =*/ parse(fpb, "XFD1048577");
             fail("expected exception");
         } catch (FormulaParseException e){
             assertEquals("Specified named range 'XFD1048577' does not exist in the current workbook.", e.getMessage());
@@ -142,8 +132,8 @@ public final class TestXSSFFormulaParser {
 
         ptgs = parse(fpb, "LOG10(100)");
         assertEquals(2, ptgs.length);
-        assertTrue("", ptgs[0] instanceof IntPtg);
-        assertTrue("", ptgs[1] instanceof FuncPtg);
+        assertTrue("Had " + Arrays.toString(ptgs), ptgs[0] instanceof IntPtg);
+        assertTrue("Had " + Arrays.toString(ptgs), ptgs[1] instanceof FuncPtg);
     }
     
     @Test
@@ -296,16 +286,14 @@ public final class TestXSSFFormulaParser {
             
             
             // Create a formula parser
-            FormulaParsingWorkbook fpb = null;
+            final FormulaParsingWorkbook fpb;
             if (wb instanceof HSSFWorkbook)
                 fpb = HSSFEvaluationWorkbook.create((HSSFWorkbook)wb);
             else
                 fpb = XSSFEvaluationWorkbook.create((XSSFWorkbook)wb);
-            
-            
+
             // Check things parse as expected:
-            
-            
+
             // SUM to one cell over 3 workbooks, relative reference
             ptgs = parse(fpb, "SUM(Sheet1:Sheet3!A1)");
             assertEquals(2, ptgs.length);
@@ -317,8 +305,7 @@ public final class TestXSSFFormulaParser {
             assertEquals("Sheet1:Sheet3!A1", toFormulaString(ptgs[0], fpb));
             assertEquals(AttrPtg.class, ptgs[1].getClass());
             assertEquals("SUM",         toFormulaString(ptgs[1], fpb));
-            
-            
+
             // MAX to one cell over 3 workbooks, absolute row reference
             ptgs = parse(fpb, "MAX(Sheet1:Sheet3!A$1)");
             assertEquals(2, ptgs.length);
@@ -330,8 +317,7 @@ public final class TestXSSFFormulaParser {
             assertEquals("Sheet1:Sheet3!A$1", toFormulaString(ptgs[0], fpb));
             assertEquals(FuncVarPtg.class, ptgs[1].getClass());
             assertEquals("MAX",            toFormulaString(ptgs[1], fpb));
-            
-            
+
             // MIN to one cell over 3 workbooks, absolute reference
             ptgs = parse(fpb, "MIN(Sheet1:Sheet3!$A$1)");
             assertEquals(2, ptgs.length);
@@ -343,8 +329,7 @@ public final class TestXSSFFormulaParser {
             assertEquals("Sheet1:Sheet3!$A$1", toFormulaString(ptgs[0], fpb));
             assertEquals(FuncVarPtg.class, ptgs[1].getClass());
             assertEquals("MIN",            toFormulaString(ptgs[1], fpb));
-            
-            
+
             // SUM to a range of cells over 3 workbooks
             ptgs = parse(fpb, "SUM(Sheet1:Sheet3!A1:B2)");
             assertEquals(2, ptgs.length);
@@ -356,8 +341,7 @@ public final class TestXSSFFormulaParser {
             assertEquals("Sheet1:Sheet3!A1:B2", toFormulaString(ptgs[0], fpb));
             assertEquals(AttrPtg.class, ptgs[1].getClass());
             assertEquals("SUM",         toFormulaString(ptgs[1], fpb));
-            
-            
+
             // MIN to a range of cells over 3 workbooks, absolute reference
             ptgs = parse(fpb, "MIN(Sheet1:Sheet3!$A$1:$B$2)");
             assertEquals(2, ptgs.length);
@@ -369,8 +353,7 @@ public final class TestXSSFFormulaParser {
             assertEquals("Sheet1:Sheet3!$A$1:$B$2", toFormulaString(ptgs[0], fpb));
             assertEquals(FuncVarPtg.class, ptgs[1].getClass());
             assertEquals("MIN",            toFormulaString(ptgs[1], fpb));
-            
-            
+
             // Check we can round-trip - try to set a new one to a new single cell
             Cell newF = s1.getRow(0).createCell(10, Cell.CELL_TYPE_FORMULA);
             newF.setCellFormula("SUM(Sheet2:Sheet3!A1)");
@@ -382,10 +365,169 @@ public final class TestXSSFFormulaParser {
             assertEquals("MIN(Sheet1:Sheet2!A1:B2)", newF.getCellFormula());
         }
     }
+
     private static String toFormulaString(Ptg ptg, FormulaParsingWorkbook wb) {
         if (ptg instanceof WorkbookDependentFormula) {
             return ((WorkbookDependentFormula)ptg).toFormulaString((FormulaRenderingWorkbook)wb);
         }
         return ptg.toFormulaString();
+    }
+
+    @Test
+    public void test58648Single() {
+        XSSFWorkbook wb = new XSSFWorkbook();
+        XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
+        Ptg[] ptgs;
+
+        ptgs = parse(fpb, "(ABC10 )");
+        assertEquals("Had: " + Arrays.toString(ptgs),
+                2, ptgs.length);
+        assertTrue("Had " + Arrays.toString(ptgs), ptgs[0] instanceof RefPtg);
+        assertTrue("Had " + Arrays.toString(ptgs), ptgs[1] instanceof ParenthesisPtg);
+    }
+
+    @Test
+    public void test58648Basic() {
+        XSSFWorkbook wb = new XSSFWorkbook();
+        XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
+        Ptg[] ptgs;
+
+        // verify whitespaces in different places
+        ptgs = parse(fpb, "(ABC10)");
+        assertEquals("Had: " + Arrays.toString(ptgs),
+                2, ptgs.length);
+        assertTrue("Had " + Arrays.toString(ptgs), ptgs[0] instanceof RefPtg);
+        assertTrue("Had " + Arrays.toString(ptgs), ptgs[1] instanceof ParenthesisPtg);
+
+        ptgs = parse(fpb, "( ABC10)");
+        assertEquals("Had: " + Arrays.toString(ptgs),
+                2, ptgs.length);
+        assertTrue("Had " + Arrays.toString(ptgs), ptgs[0] instanceof RefPtg);
+        assertTrue("Had " + Arrays.toString(ptgs), ptgs[1] instanceof ParenthesisPtg);
+
+        ptgs = parse(fpb, "(ABC10 )");
+        assertEquals("Had: " + Arrays.toString(ptgs),
+                2, ptgs.length);
+        assertTrue("Had " + Arrays.toString(ptgs), ptgs[0] instanceof RefPtg);
+        assertTrue("Had " + Arrays.toString(ptgs), ptgs[1] instanceof ParenthesisPtg);
+
+        ptgs = parse(fpb, "((ABC10))");
+        assertEquals("Had: " + Arrays.toString(ptgs),
+                3, ptgs.length);
+        assertTrue("Had " + Arrays.toString(ptgs), ptgs[0] instanceof RefPtg);
+        assertTrue("Had " + Arrays.toString(ptgs), ptgs[1] instanceof ParenthesisPtg);
+        assertTrue("Had " + Arrays.toString(ptgs), ptgs[2] instanceof ParenthesisPtg);
+
+        ptgs = parse(fpb, "((ABC10) )");
+        assertEquals("Had: " + Arrays.toString(ptgs),
+                3, ptgs.length);
+        assertTrue("Had " + Arrays.toString(ptgs), ptgs[0] instanceof RefPtg);
+        assertTrue("Had " + Arrays.toString(ptgs), ptgs[1] instanceof ParenthesisPtg);
+        assertTrue("Had " + Arrays.toString(ptgs), ptgs[2] instanceof ParenthesisPtg);
+
+        ptgs = parse(fpb, "( (ABC10))");
+        assertEquals("Had: " + Arrays.toString(ptgs),
+                3, ptgs.length);
+        assertTrue("Had " + Arrays.toString(ptgs), ptgs[0] instanceof RefPtg);
+        assertTrue("Had " + Arrays.toString(ptgs), ptgs[1] instanceof ParenthesisPtg);
+        assertTrue("Had " + Arrays.toString(ptgs), ptgs[2] instanceof ParenthesisPtg);
+    }
+
+    @Test
+    public void test58648FormulaParsing() {
+        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("58648.xlsx");
+
+        FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
+
+        for (int i = 0; i < wb.getNumberOfSheets(); i++) {
+            Sheet xsheet = wb.getSheetAt(i);
+
+            for (Row row : xsheet) {
+                for (Cell cell : row) {
+                    if (cell.getCellType() == HSSFCell.CELL_TYPE_FORMULA) {
+                        try {
+                            evaluator.evaluateFormulaCell(cell);
+                        } catch (Exception e) {
+                            CellReference cellRef = new CellReference(cell.getRowIndex(), cell.getColumnIndex());
+                            throw new RuntimeException("error at: " + cellRef.toString(), e);
+                        }
+                    }
+                }
+            }
+        }
+
+        Sheet sheet = wb.getSheet("my-sheet");
+        Cell cell = sheet.getRow(1).getCell(4);
+
+        assertEquals(5d, cell.getNumericCellValue(), 0d);
+    }
+
+    @Test
+    public void testWhitespaceInFormula() {
+        XSSFWorkbook wb = new XSSFWorkbook();
+        XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
+        Ptg[] ptgs;
+
+        // verify whitespaces in different places
+        ptgs = parse(fpb, "INTERCEPT(A2:A5, B2:B5)");
+        assertEquals("Had: " + Arrays.toString(ptgs),
+                3, ptgs.length);
+        assertTrue("Had " + Arrays.toString(ptgs), ptgs[0] instanceof AreaPtg);
+        assertTrue("Had " + Arrays.toString(ptgs), ptgs[1] instanceof AreaPtg);
+        assertTrue("Had " + Arrays.toString(ptgs), ptgs[2] instanceof FuncPtg);
+
+        ptgs = parse(fpb, " INTERCEPT ( \t \r A2 : \nA5 , B2 : B5 ) \t");
+        assertEquals("Had: " + Arrays.toString(ptgs),
+                3, ptgs.length);
+        assertTrue("Had " + Arrays.toString(ptgs), ptgs[0] instanceof AreaPtg);
+        assertTrue("Had " + Arrays.toString(ptgs), ptgs[1] instanceof AreaPtg);
+        assertTrue("Had " + Arrays.toString(ptgs), ptgs[2] instanceof FuncPtg);
+
+        ptgs = parse(fpb, "(VLOOKUP(\"item1\", A2:B3, 2, FALSE) - VLOOKUP(\"item2\", A2:B3, 2, FALSE) )");
+        assertEquals("Had: " + Arrays.toString(ptgs),
+                12, ptgs.length);
+        assertTrue("Had " + Arrays.toString(ptgs), ptgs[0] instanceof StringPtg);
+        assertTrue("Had " + Arrays.toString(ptgs), ptgs[1] instanceof AreaPtg);
+        assertTrue("Had " + Arrays.toString(ptgs), ptgs[2] instanceof IntPtg);
+
+        ptgs = parse(fpb, "A1:B1 B1:B2");
+        assertEquals("Had: " + Arrays.toString(ptgs),
+                4, ptgs.length);
+        assertTrue("Had " + Arrays.toString(ptgs), ptgs[0] instanceof MemAreaPtg);
+        assertTrue("Had " + Arrays.toString(ptgs), ptgs[1] instanceof AreaPtg);
+        assertTrue("Had " + Arrays.toString(ptgs), ptgs[2] instanceof AreaPtg);
+        assertTrue("Had " + Arrays.toString(ptgs), ptgs[3] instanceof IntersectionPtg);
+
+        ptgs = parse(fpb, "A1:B1    B1:B2");
+        assertEquals("Had: " + Arrays.toString(ptgs),
+                4, ptgs.length);
+        assertTrue("Had " + Arrays.toString(ptgs), ptgs[0] instanceof MemAreaPtg);
+        assertTrue("Had " + Arrays.toString(ptgs), ptgs[1] instanceof AreaPtg);
+        assertTrue("Had " + Arrays.toString(ptgs), ptgs[2] instanceof AreaPtg);
+        assertTrue("Had " + Arrays.toString(ptgs), ptgs[3] instanceof IntersectionPtg);
+    }
+
+    @Test
+    public void testWhitespaceInComplexFormula() {
+        XSSFWorkbook wb = new XSSFWorkbook();
+        XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
+        Ptg[] ptgs;
+
+        // verify whitespaces in different places
+        ptgs = parse(fpb, "SUM(A1:INDEX(1:1048576,MAX(IFERROR(MATCH(99^99,B:B,1),0),IFERROR(MATCH(\"zzzz\",B:B,1),0)),MAX(IFERROR(MATCH(99^99,1:1,1),0),IFERROR(MATCH(\"zzzz\",1:1,1),0))))");
+        assertEquals("Had: " + Arrays.toString(ptgs),
+                40, ptgs.length);
+        assertTrue("Had " + Arrays.toString(ptgs), ptgs[0] instanceof MemFuncPtg);
+        assertTrue("Had " + Arrays.toString(ptgs), ptgs[1] instanceof RefPtg);
+        assertTrue("Had " + Arrays.toString(ptgs), ptgs[2] instanceof AreaPtg);
+        assertTrue("Had " + Arrays.toString(ptgs), ptgs[3] instanceof NameXPxg);
+
+        ptgs = parse(fpb, "SUM ( A1 : INDEX( 1 : 1048576 , MAX( IFERROR ( MATCH ( 99 ^ 99 , B : B , 1 ) , 0 ) , IFERROR ( MATCH ( \"zzzz\" , B:B , 1 ) , 0 ) ) , MAX ( IFERROR ( MATCH ( 99 ^ 99 , 1 : 1 , 1 ) , 0 ) , IFERROR ( MATCH ( \"zzzz\" , 1 : 1 , 1 )   , 0 )   )   )   )");
+        assertEquals("Had: " + Arrays.toString(ptgs),
+                40, ptgs.length);
+        assertTrue("Had " + Arrays.toString(ptgs), ptgs[0] instanceof MemFuncPtg);
+        assertTrue("Had " + Arrays.toString(ptgs), ptgs[1] instanceof RefPtg);
+        assertTrue("Had " + Arrays.toString(ptgs), ptgs[2] instanceof AreaPtg);
+        assertTrue("Had " + Arrays.toString(ptgs), ptgs[3] instanceof NameXPxg);
     }
 }
