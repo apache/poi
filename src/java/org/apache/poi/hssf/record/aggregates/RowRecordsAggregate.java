@@ -145,7 +145,7 @@ public final class RowRecordsAggregate extends RecordAggregate {
 	public RowRecord getRow(int rowIndex) {
         int maxrow = SpreadsheetVersion.EXCEL97.getLastRowIndex();
         if (rowIndex < 0 || rowIndex > maxrow) {
-			throw new IllegalArgumentException("The row number must be between 0 and " + maxrow);
+			throw new IllegalArgumentException("The row number must be between 0 and " + maxrow + ", but had: " + rowIndex);
 		}
 		return _rowRecords.get(Integer.valueOf(rowIndex));
 	}
@@ -278,9 +278,9 @@ public final class RowRecordsAggregate extends RecordAggregate {
 			// Calculate Offset from the start of a DBCellRecord to the first Row
 			rv.visitRecord(dbcrBuilder.build(pos));
 		}
-		for (int i=0; i< _unknownRecords.size(); i++) {
+		for (Record _unknownRecord : _unknownRecords) {
 			// Potentially breaking the file here since we don't know exactly where to write these records
-			rv.visitRecord(_unknownRecords.get(i));
+			rv.visitRecord(_unknownRecord);
 		}
 	}
 
@@ -364,28 +364,24 @@ public final class RowRecordsAggregate extends RecordAggregate {
 	public boolean isRowGroupCollapsed(int row) {
 		int collapseRow = findEndOfRowOutlineGroup(row) + 1;
 
-		if (getRow(collapseRow) == null) {
-			return false;
-		}
-		return getRow( collapseRow ).getColapsed();
+		return getRow(collapseRow) != null && getRow(collapseRow).getColapsed();
 	}
 
 	public void expandRow(int rowNumber) {
-		int idx = rowNumber;
-		if (idx == -1)
+		if (rowNumber == -1)
 			return;
 
 		// If it is already expanded do nothing.
-		if (!isRowGroupCollapsed(idx)) {
+		if (!isRowGroupCollapsed(rowNumber)) {
 			return;
 		}
 
 		// Find the start of the group.
-		int startIdx = findStartOfRowOutlineGroup(idx);
+		int startIdx = findStartOfRowOutlineGroup(rowNumber);
 		RowRecord row = getRow(startIdx);
 
 		// Find the end of the group.
-		int endIdx = findEndOfRowOutlineGroup(idx);
+		int endIdx = findEndOfRowOutlineGroup(rowNumber);
 
 		// expand:
 		// collapsed bit must be unset
@@ -394,7 +390,7 @@ public final class RowRecordsAggregate extends RecordAggregate {
 		//   to look at the start and the end of the current group to determine which
 		//   is the enclosing group
 		// hidden bit only is altered for this outline level.  ie.  don't un-collapse contained groups
-		if (!isRowGroupHiddenByParent(idx)) {
+		if (!isRowGroupHiddenByParent(rowNumber)) {
 			for (int i = startIdx; i <= endIdx; i++) {
 				RowRecord otherRow = getRow(i);
 				if (row.getOutlineLevel() == otherRow.getOutlineLevel() || !isRowGroupCollapsed(i)) {
@@ -450,6 +446,7 @@ public final class RowRecordsAggregate extends RecordAggregate {
 	 * @deprecated use {@link #getCellValueIterator()} instead
 	 */
 	public CellValueRecordInterface[] getValueRecords() {
+		//noinspection deprecation
 		return _valuesAgg.getValueRecords();
 	}
 

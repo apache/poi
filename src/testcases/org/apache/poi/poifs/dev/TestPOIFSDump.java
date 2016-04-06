@@ -48,12 +48,11 @@ public class TestPOIFSDump {
         "-dump-ministream",
         "-dump-mini-stream",
     };
-    private static final File DUMP_DIR = new File("Root Entry");
 
     @After
     public void tearDown() throws IOException {
         // clean up the directory that POIFSDump writes to
-        deleteDirectory(DUMP_DIR);
+        deleteDirectory(new File(new File(TEST_FILE).getName()));
     }
 
     public static void deleteDirectory(File directory) throws IOException {
