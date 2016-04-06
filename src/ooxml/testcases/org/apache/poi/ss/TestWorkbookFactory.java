@@ -23,6 +23,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.FileNotFoundException;
 
 import org.apache.poi.EmptyFileException;
 import org.apache.poi.EncryptedDocumentException;
@@ -364,4 +365,21 @@ public final class TestWorkbookFactory {
         } catch (final EmptyFileException expected) {}
         emptyFile.delete();
     }
+
+    /**
+      * Check that a helpful exception is raised on a non-existing file
+      */
+    @Test
+    public void testNonExistantFile() throws Exception {
+        File nonExistantFile = new File("notExistantFile");
+        assertFalse(nonExistantFile.exists());
+
+        try {
+            WorkbookFactory.create(nonExistantFile, "password", true);
+            fail("Should not be able to create for a non-existant file");
+        } catch (final FileNotFoundException e) {
+            // expected
+        }
+    }
+
 }
