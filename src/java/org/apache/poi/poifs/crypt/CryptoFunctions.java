@@ -525,7 +525,7 @@ public class CryptoFunctions {
      * @param password the password
      * @return the ansi bytes
      * 
-     * @see <a href="http://www.ecma-international.org/news/TC45_current_work/Office%20Open%20XML%20Part%204%20-%20Markup%20Language%20Reference.pdf">Part 4 - Markup Language Reference - Ecma International</a> (3.2.29 workbookProtection)
+     * @see <a href="http://www.ecma-international.org/news/TC45_current_work/Office%20Open%20XML%20Part%204%20-%20Markup%20Language%20Reference.pdf">Part 4 - Markup Language Reference - Ecma International - section 3.2.29 (workbookProtection)</a>
      */
     private static byte[] toAnsiPassword(String password) {
         // TODO: charset conversion (see ecma spec) 
