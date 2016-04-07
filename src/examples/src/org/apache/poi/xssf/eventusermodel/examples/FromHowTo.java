@@ -19,6 +19,7 @@ package org.apache.poi.xssf.eventusermodel.examples;
 import java.io.InputStream;
 import java.util.Iterator;
 
+import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.xssf.eventusermodel.XLSX2CSV;
 import org.apache.poi.xssf.eventusermodel.XSSFReader;
 import org.apache.poi.xssf.model.SharedStringsTable;
@@ -39,7 +40,7 @@ import org.xml.sax.helpers.XMLReaderFactory;
  */
 public class FromHowTo {
 	public void processFirstSheet(String filename) throws Exception {
-		OPCPackage pkg = OPCPackage.open(filename);
+		OPCPackage pkg = OPCPackage.open(filename, PackageAccess.READ);
 		try {
 			XSSFReader r = new XSSFReader(pkg);
 			SharedStringsTable sst = r.getSharedStringsTable();
@@ -59,7 +60,7 @@ public class FromHowTo {
 	}
 
 	public void processAllSheets(String filename) throws Exception {
-		OPCPackage pkg = OPCPackage.open(filename);
+		OPCPackage pkg = OPCPackage.open(filename, PackageAccess.READ);
 		try {
 			XSSFReader r = new XSSFReader(pkg);
 			SharedStringsTable sst = r.getSharedStringsTable();
