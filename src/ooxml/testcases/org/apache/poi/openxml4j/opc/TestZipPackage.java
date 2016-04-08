@@ -25,8 +25,10 @@ import static org.junit.Assert.fail;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
@@ -173,5 +175,25 @@ public class TestZipPackage {
         File f = OpenXML4JTestDataSamples.getSampleFile("at.pzp.www_uploads_media_PP_Scheinecker-jdk6error.pptx");
         SlideShow<?,?> ppt = SlideShowFactory.create(f, null, true);
         ppt.close();
+    }
+
+    @Test
+    public void testClosingStreamOnException() throws IOException {
+        InputStream is = OpenXML4JTestDataSamples.openSampleStream("dcterms_bug_56479.zip");
+        File tmp = File.createTempFile("poi-test-truncated-zip", "");
+        OutputStream os = new FileOutputStream(tmp);
+        for (int i = 0; i < 100; i++) {
+            os.write(is.read());
+        }
+        os.flush();
+        os.close();
+        is.close();
+
+        try {
+            OPCPackage.open(tmp, PackageAccess.READ);
+        } catch (Exception e) {
+        }
+        assertTrue("Can't delete tmp file", tmp.delete());
+
     }
 }
