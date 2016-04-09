@@ -42,6 +42,7 @@ under the License.
     <description>The Apache POI project Ant build.</description>
 
     <property name="version.id" value="3.15-beta1"/>
+    <property name="release.rc" value="RC1"/>
 
     <property environment="env"/>
     <!-- the repository to download jars from -->
@@ -518,18 +519,18 @@ under the License.
                 <include name="junit-3*"/>
                 <include name="junit-4.11*"/>
                 <include name="findbugs-*-2.0.3*"/>
-            	<include name="forbiddenapis-1.*.jar"/>
+                <include name="forbiddenapis-1.*.jar"/>
             </fileset>
-        	<fileset dir="${ooxml.lib}">
-        		<!-- remove jars from previous versions, but not the current version -->
-        		<include name="ooxml-schemas-src-1.1.jar"/>
-        		<include name="ooxml-schemas-1.1-sources.jar"/>
-        		<include name="ooxml-schemas-1.1.jar"/>
-        		<include name="ooxml-schemas-1.2-sources.jar"/>
-        		<include name="ooxml-schemas-1.2.jar"/>
-        		<include name="ooxml-security-1.0-sources.jar"/>
-        		<include name="ooxml-security-1.0.jar"/>
-        	</fileset>
+            <fileset dir="${ooxml.lib}">
+                <!-- remove jars from previous versions, but not the current version -->
+                <include name="ooxml-schemas-src-1.1.jar"/>
+                <include name="ooxml-schemas-1.1-sources.jar"/>
+                <include name="ooxml-schemas-1.1.jar"/>
+                <include name="ooxml-schemas-1.2-sources.jar"/>
+                <include name="ooxml-schemas-1.2.jar"/>
+                <include name="ooxml-security-1.0-sources.jar"/>
+                <include name="ooxml-security-1.0.jar"/>
+            </fileset>
          <fileset dir="${compile.lib}">
             <include name="xercesImpl-*.jar"/>
             <include name="xmlsec-2.0.1.jar"/>
@@ -608,10 +609,10 @@ under the License.
         <downloadfile src="${ooxml.curvesapi.url}" dest="${ooxml.curvesapi.jar}"/>
         <downloadfile src="${ooxml.xmlbeans23.url}" dest="${ooxml.xmlbeans23.jar}.orig"/>
         <downloadfile src="${ooxml.xmlbeans26.url}" dest="${ooxml.xmlbeans26.jar}.orig"/>
-    	<!-- remove piccolo parser, so we don't use unsafe calls to it instead of using jaxp -->
-    	<zip destfile="${ooxml.xmlbeans23.jar}">
-    		<zipfileset src="${ooxml.xmlbeans23.jar}.orig" excludes="org/apache/xmlbeans/impl/piccolo/**"/>
-    	</zip>
+        <!-- remove piccolo parser, so we don't use unsafe calls to it instead of using jaxp -->
+        <zip destfile="${ooxml.xmlbeans23.jar}">
+            <zipfileset src="${ooxml.xmlbeans23.jar}.orig" excludes="org/apache/xmlbeans/impl/piccolo/**"/>
+        </zip>
         <zip destfile="${ooxml.xmlbeans26.jar}">
             <zipfileset src="${ooxml.xmlbeans26.jar}.orig" excludes="org/apache/xmlbeans/impl/piccolo/**"/>
         </zip>
@@ -754,7 +755,7 @@ under the License.
                     nopvr="@{nopvr}"
                     >
                 <classpath>
-                	<path location="${ooxml.xmlbeans23.jar}.orig"/>
+                    <path location="${ooxml.xmlbeans23.jar}.orig"/>
                 </classpath>
             </xmlbean>
 
@@ -763,24 +764,24 @@ under the License.
                 <replacevalue>org.apache.poi.POIXMLTypeLoader</replacevalue>
             </replace>
 
-    		<!-- remove deprecated warnings, as we prefer the array methods - see #56854 -->
+            <!-- remove deprecated warnings, as we prefer the array methods - see #56854 -->
             <replace dir="${xmlbean.sources.dir}" includes="**/*.java" excludes="**/impl/**">
                 <replacetoken><![CDATA[     * @deprecated
 ]]></replacetoken>
             </replace>
 
             <copy todir="${xmlbean.sources.dir}">
-            	<fileset dir="${ooxml.src}">
-            		<include name="org/apache/poi/POIXMLTypeLoader.java"/>
-            		<include name="org/apache/poi/util/DocumentHelper.java"/>
-            		<include name="org/apache/poi/util/SAXHelper.java"/>
-            	</fileset>
-            	<fileset dir="${main.src}">
-            		<include name="org/apache/poi/util/POILogFactory.java"/>
-            		<include name="org/apache/poi/util/POILogger.java"/>
+                <fileset dir="${ooxml.src}">
+                    <include name="org/apache/poi/POIXMLTypeLoader.java"/>
+                    <include name="org/apache/poi/util/DocumentHelper.java"/>
+                    <include name="org/apache/poi/util/SAXHelper.java"/>
+                </fileset>
+                <fileset dir="${main.src}">
+                    <include name="org/apache/poi/util/POILogFactory.java"/>
+                    <include name="org/apache/poi/util/POILogger.java"/>
                     <include name="org/apache/poi/util/NullLogger.java"/>
                     <include name="org/apache/poi/util/Internal.java"/>
-            	</fileset>
+                </fileset>
             </copy>
 
             <javac target="${jdk.version.class}"
@@ -1162,7 +1163,7 @@ under the License.
                 <syspropertyset refid="junit.properties"/>
                 <jvmarg value="-ea"/>
                 <jvmarg value="-Xmx256m"/>
-            	<!-- jvmarg value="-Duser.timezone=UTC"/ -->
+                <!-- jvmarg value="-Duser.timezone=UTC"/ -->
                 <formatter type="plain"/>
                 <formatter type="xml"/>
                 <batchtest todir="${main.reports.test}">
@@ -1203,7 +1204,7 @@ under the License.
                 <classpath refid="test.scratchpad.classpath"/>
                 <syspropertyset refid="junit.properties"/>
                 <jvmarg value="-ea"/>
-            	<!-- jvmarg value="-Duser.timezone=UTC"/ -->
+                <!-- jvmarg value="-Duser.timezone=UTC"/ -->
                 <!--
                   YK: ensure that JUnit has enough memory to run tests.
                   Without the line below tests fail on Mac OS X with jdk-1.6.26
@@ -1244,10 +1245,10 @@ under the License.
                      failureproperty="ooxml.test.failed">
                   <classpath refid="@{classpath}"/>
                   <syspropertyset refid="junit.properties"/>
-              	  <jvmarg value="-XX:MaxPermSize=256m"/>
-              	  <jvmarg value="-Xmx768M"/>
+                  <jvmarg value="-XX:MaxPermSize=256m"/>
+                  <jvmarg value="-Xmx768M"/>
                   <jvmarg value="-ea"/>
-              	  <!-- jvmarg value="-Duser.timezone=UTC"/ -->
+                  <!-- jvmarg value="-Duser.timezone=UTC"/ -->
                   <formatter type="plain"/>
                   <formatter type="xml"/>
                   <batchtest todir="${ooxml.reports.test}">
@@ -1268,7 +1269,7 @@ under the License.
                       <path refid="ooxml.xmlsec.classpath"/>
                   </classpath>
                   <syspropertyset refid="junit.properties"/>
-              	  <jvmarg value="-Xmx768M"/>
+                  <jvmarg value="-Xmx768M"/>
                   <jvmarg value="-ea"/>
                   <formatter type="plain"/>
                   <formatter type="xml"/>
@@ -1427,9 +1428,9 @@ under the License.
         <echo>Broken links:</echo>
         <echo file="${build.site}/../tmp/brokenlinks.txt"/>
 
-    	<fixcrlf srcdir="${build.site}" includes="**/*.html,**/*.css" eol="unix" eof="remove" />
+        <fixcrlf srcdir="${build.site}" includes="**/*.html,**/*.css" eol="unix" eof="remove" />
 
-    	<touch>
+        <touch>
             <fileset dir="${build.site}"/>
         </touch>
     </target>
@@ -1592,11 +1593,11 @@ under the License.
         <property name="build.maven.javadocs" location="build/tmp/maven-javadocs"/>
 
         <!-- Build and package the main javadocs -->
-    	<maven-javadocs src="${main.src}" dest="${jar.name}"/>
+        <maven-javadocs src="${main.src}" dest="${jar.name}"/>
         <!-- Build and package the scratchpad javadocs -->
-    	<maven-javadocs src="${scratchpad.src}" dest="${jar.name}-scratchpad"/>
+        <maven-javadocs src="${scratchpad.src}" dest="${jar.name}-scratchpad"/>
         <!-- Build and package the ooxml javadocs -->
-    	<maven-javadocs src="${ooxml.src}" dest="${jar.name}-ooxml"/>
+        <maven-javadocs src="${ooxml.src}" dest="${jar.name}-ooxml"/>
     </target>
 
     <macrodef name="maven-javadocs">
@@ -1626,7 +1627,7 @@ under the License.
     </macrodef>
 
     <target name="release-notes" depends="init">
-    	<copy file="src/documentation/RELEASE-NOTES.txt" todir="build/dist/" overwrite="true">
+        <copy file="src/documentation/RELEASE-NOTES.txt" todir="build/dist/" overwrite="true">
             <filterset>
                 <filter token="VERSION" value="${version.id}"/>
                 <filter token="DSTAMP"  value="${DSTAMP}"/>
@@ -1636,19 +1637,47 @@ under the License.
     </target>
 
     <target name="assemble" depends="jar,jar-src,jar-javadocs">
-         <!-- jars to include in binary assemblies -->
-         <patternset id="bin.dist.jars">
-            <include name="${jar.name}-${version.id}-${DSTAMP}.jar"/>
-            <include name="${jar.name}-scratchpad-${version.id}-${DSTAMP}.jar"/>
-            <include name="${jar.name}-ooxml-${version.id}-${DSTAMP}.jar"/>
-            <include name="${jar.name}-examples-${version.id}-${DSTAMP}.jar"/>
-            <include name="${jar.name}-ooxml-schemas-${version.id}-${DSTAMP}.jar"/>
-            <include name="${jar.name}-excelant-${version.id}-${DSTAMP}.jar"/>
-         </patternset>
+        <property name="zipdir" value="${jar.name}-${version.id}"/>
+
+        <mappedresources id="legal-files" cache="true">
+            <fileset dir="legal"/>
+            <globmapper from="*" to="${zipdir}/*"/>
+        </mappedresources>
+
+        <!-- jars to include in binary assemblies -->
+        <union id="bin-files" cache="true">
+            <mappedresources refid="legal-files"/>
+            <mappedresources cache="true">
+                <fileset dir="${main.lib}">
+                    <include name="commons-codec-*.jar"/>
+                    <include name="commons-logging-*.jar"/>
+                    <include name="junit-*.jar"/>
+                    <include name="log4j-*.jar"/>
+                </fileset>
+                <globmapper from="*" to="${zipdir}/lib/*"/>
+            </mappedresources>
+            <mappedresources cache="true">
+                <fileset dir="${ooxml.lib}" includes="xmlbeans-2.6.0.jar.orig,curvesapi-*.jar"/>
+                <regexpmapper from="^(.*\.jar)(\.orig)?$$" to="${zipdir}/ooxml-lib/\1"/>
+            </mappedresources>
+            <mappedresources cache="true">
+                <fileset dir="${dist.dir}/maven" includes="**/*.jar" excludes="**/*-javadoc.jar,**/*-sources.jar"/>
+                <chainedmapper>
+                    <flattenmapper/>
+                    <globmapper from="*" to="${zipdir}/*"/>
+                </chainedmapper>
+            </mappedresources>
+            <mappedresources cache="true">
+                <fileset dir="${build.site}"/>
+                <globmapper from="*" to="${zipdir}/docs/*"/>
+            </mappedresources>
+        </union>
 
         <!-- patterns to exclude from source assemblies -->
-        <patternset id="src.dist.patterns"
-            excludes="build/**,
+        <union id="src-files" cache="true">
+            <mappedresources refid="legal-files"/>
+            <mappedresources cache="true">
+                <fileset dir="." excludes="build/**,
                       dist*/**,
                       maven/**,
                       lib/**,
@@ -1666,71 +1695,31 @@ under the License.
                       .classpath,
                       .settings/**,
                       .project"/>
-
-        <property name="zipdir" value="${jar.name}-${version.id}"/>
+                <globmapper from="*" to="${zipdir}/*"/>
+            </mappedresources>
+        </union>
 
         <zip destfile="${dist.dir}/${jar.name}-bin-${version.id}-${DSTAMP}.zip">
-            <zipfileset dir="legal/" prefix="${zipdir}"/>
-            <zipfileset dir="${main.lib}" prefix="${zipdir}/lib">
-              <include name="commons-codec-*.jar"/>
-              <include name="commons-logging-*.jar"/>
-              <include name="junit-*.jar"/>
-              <include name="log4j-*.jar"/>
-            </zipfileset>
-            <zipfileset dir="${ooxml.lib}" prefix="${zipdir}/ooxml-lib">
-              <include name="xmlbeans-2.6*.jar"/>
-              <include name="curvesapi-*.jar"/>
-            </zipfileset>
-            <zipfileset dir="${dist.dir}" prefix="${zipdir}">
-                <patternset refid="bin.dist.jars"/>
-            </zipfileset>
-            <zipfileset dir="${build.site}" prefix="${zipdir}/docs"/>
+            <union refid="bin-files"/>
         </zip>
+
+        <tar destfile="${dist.dir}/${jar.name}-bin-${version.id}-${DSTAMP}.tar.gz" longfile="gnu" compression="gzip">
+            <union refid="bin-files"/>
+        </tar>
 
         <zip destfile="${dist.dir}/${jar.name}-src-${version.id}-${DSTAMP}.zip">
-            <zipfileset dir="legal/" prefix="${zipdir}" />
-            <zipfileset dir="." prefix="${zipdir}">
-                <patternset refid="src.dist.patterns"/>
-            </zipfileset>
+            <union refid="src-files"/>
         </zip>
 
-        <tar destfile="${dist.dir}/${jar.name}-bin-${version.id}-${DSTAMP}.tar.gz"
-               longfile="gnu"
-               compression="gzip">
-            <tarfileset dir="legal/" prefix="${zipdir}"/>
-            <zipfileset dir="${main.lib}" prefix="${zipdir}/lib">
-              <include name="commons-codec-*.jar"/>
-              <include name="commons-logging-*.jar"/>
-              <include name="junit-*.jar"/>
-              <include name="log4j-*.jar"/>
-            </zipfileset>
-            <tarfileset dir="${ooxml.lib}" prefix="${zipdir}/ooxml-lib">
-              <include name="xmlbeans-2.6*.jar"/>
-              <include name="curvesapi-*.jar"/>
-            </tarfileset>
-            <tarfileset dir="${build.site}" prefix="${zipdir}/docs"/>
-            <tarfileset dir="${dist.dir}" prefix="${zipdir}">
-                <patternset refid="bin.dist.jars"/>
-            </tarfileset>
+        <tar destfile="${dist.dir}/${jar.name}-src-${version.id}-${DSTAMP}.tar.gz" longfile="gnu" compression="gzip">
+            <union refid="src-files"/>
         </tar>
-
-        <tar destfile="${dist.dir}/${jar.name}-src-${version.id}-${DSTAMP}.tar.gz"
-             longfile="gnu"
-             compression="gzip">
-            <tarfileset dir="legal/" prefix="${zipdir}" />
-            <tarfileset dir="." prefix="${zipdir}">
-                <patternset refid="src.dist.patterns"/>
-            </tarfileset>
-        </tar>
-
-        <!-- script to create signatures and hashes -->
-        <copy file="maven/multisign.sh" todir="${dist.dir}"/>
 
         <echo>Creating Maven POMs</echo>
         <antcall target="maven-poms"/>
 
         <echo>Distribution located in ${dist.dir}</echo>
-        <echo>Use ${dist.dir}/multisign.sh to create md5 checksums and GPG signatures</echo>
+        <echo>Use "ant dist-checksum" to create md5/sha1 checksums and GPG signatures</echo>
     </target>
 
     <target name="osgi" depends="mvn-install">
@@ -1801,15 +1790,15 @@ under the License.
            </fileset>
        </rat:report>
 
-	   <!-- remove clutter to compact build output -->
+       <!-- remove clutter to compact build output -->
        <!-- replaceregexp doesn't work within loadfile ... -->
        <replaceregexp file="${rat.report}" match="\s+Printing headers for files without AL header.++" replace="" flags="s"/>
 
        <loadfile property="rat.reportcontent" srcFile="${rat.report}">
             <filterchain>
-            	<linecontainsregexp negate="true">
-            		<regexp pattern="^\s+(AL|B|N)\s+"/>
-            	</linecontainsregexp>
+                <linecontainsregexp negate="true">
+                    <regexp pattern="^\s+(AL|B|N)\s+"/>
+                </linecontainsregexp>
             </filterchain>
        </loadfile>
        <echo>${rat.reportcontent}</echo>
@@ -1872,7 +1861,7 @@ under the License.
     </target>
 
     <target name="findbugs">
-    	<!-- NOTE: we did not update to 3.x yet because it requires Java 7, but we are still supporting Java 6 currently! -->
+        <!-- NOTE: we did not update to 3.x yet because it requires Java 7, but we are still supporting Java 6 currently! -->
         <downloadfile
             src="http://prdownloads.sourceforge.net/findbugs/findbugs-noUpdateChecks-2.0.3.zip?download"
             dest="${main.lib}/findbugs-noUpdateChecks-2.0.3.zip"/>
@@ -2025,8 +2014,33 @@ under the License.
         <nexus-upload artifactId="poi-scratchpad"/>
     </target>
 
-    <!-- experimentel release preparation ... tbd. ... -->
-    <target name="release-prep" depends="init,fetch-svn-jars,load-maven-server-settings">
+    <target name="-init-svn" depends="init,fetch-svn-jars,load-maven-server-settings">
+        <!-- JAVA_HOME needs to point to a JRE/JDK7+, otherwise the svn/https connection throws a "Could not generate DH keypair"-->
+        <fail message="Environment needs to point to a java 7+">
+            <condition>
+                <or>
+                    <equals arg1="${ant.java.version}" arg2="1.6"/>
+                    <equals arg1="${ant.java.version}" arg2="1.5"/>
+                </or>
+            </condition>
+        </fail>
+
+        <path id="path.svnant">
+            <fileset dir="${compile.lib}/svnant" includes="*.jar"/>
+        </path>
+        <taskdef resource="org/tigris/subversion/svnant/svnantlib.xml" classpathref="path.svnant"/>
+
+        <svnSetting
+            svnkit="true"
+            javahl="false"
+            username="${settings.apache-id.username}"
+            password="${settings.apache-id.password}"
+            id="svn.settings"
+        />
+    </target>
+
+    <!-- experimental release preparation ... tbd. ... -->
+    <target name="release-prep1" depends="-init-svn" description="update the documentation and create the svn tag - needs Java7+">
         <local name="tstamp_rel"/>
         <local name="tstamp_next"/>
         <local name="rel_next"/>
@@ -2056,19 +2070,6 @@ under the License.
         </replaceregexp>
 
         <fixcrlf srcdir="." includes="src/documentation/content/xdocs/status.xml" eol="unix" eof="remove" />
-
-        <path id="path.svnant">
-            <fileset dir="${compile.lib}/svnant" includes="*.jar"/>
-        </path>
-        <taskdef resource="org/tigris/subversion/svnant/svnantlib.xml" classpathref="path.svnant"/>
-
-        <svnSetting
-            svnkit="true"
-            javahl="false"
-            username="${settings.apache-id.username}"
-            password="${settings.apache-id.password}"
-            id="svn.settings"
-        />
 
         <!-- can't combine updating and pinning of the documentation ... so we need two commits -->
         <!-- (revision)properties can't be set and read within one svn block -->
@@ -2118,6 +2119,41 @@ under the License.
                 <fileset dir="sonar" includes="**/pom.xml"/>
                 <dirset dir="src"/>
             </commit>
+        </svn>
+
+        <mkdir dir="build/release"/>
+
+        <svn refid="svn.settings">
+            <checkout url="https://svn.apache.org/repos/asf/poi/tags/${RELEASE_TAG}" destPath="build/release"/>
+        </svn>
+    </target>
+
+    <target name="release-prep2" depends="init" description="compile the freshly checked out svn tag and upload it to the nexus - needs a JDK6">
+        <!-- JAVA_HOME needs to point to a JDK6, otherwise the ant invocation is failing on a missing javac -->
+        <fail message="Environment needs to point to a java 6 jdk">
+            <condition>
+                <not><equals arg1="${ant.java.version}" arg2="1.6"/></not>
+            </condition>
+        </fail>
+
+        <local name="DSTAMP"/>
+        <tstamp>
+            <format property="DSTAMP" pattern="yyyyMMdd" offset="7" unit="day"/>
+        </tstamp>
+
+        <ant dir="build/release" inheritAll="false" inheritRefs="false" useNativeBasedir="true">
+            <property name="DSTAMP" value="${DSTAMP}"/>
+            <target name="dist" />
+            <target name="dist-nexus" />
+        </ant>
+    </target>
+
+    <target name="release-prep3" depends="-init-svn" description="write the dist to the release candidate repo - needs Java7+">
+        <svn refid="svn.settings">
+            <import path="build/release/build/dist"
+                url="https://dist.apache.org/repos/dist/dev/poi"
+                newEntry="${version.id}-${release.rc}"
+                message="release candidate POI ${version.id}"/>
         </svn>
     </target>
 

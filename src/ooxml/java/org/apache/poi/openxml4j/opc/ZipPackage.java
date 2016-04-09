@@ -131,12 +131,28 @@ public final class ZipPackage extends Package {
             // some zips can't be opened via ZipFile in JDK6, as the central directory
             // contains either non-latin entries or the compression type can't be handled
             // the workaround is to iterate over the stream and not the directory
-            FileInputStream fis;
+            FileInputStream fis = null;
+            ThresholdInputStream zis = null;
             try {
                 fis = new FileInputStream(file);
-                ThresholdInputStream zis = ZipHelper.openZipStream(fis);
+                zis = ZipHelper.openZipStream(fis);
                 ze = new ZipInputStreamZipEntrySource(zis);
             } catch (IOException e2) {
+                if (zis != null) {
+                    try {
+                        zis.close();
+                    } catch (IOException e3) {
+                        throw new InvalidOperationException("Can't open the specified file: '" + file + "'"+
+                                " and couldn't close the file input stream", e);
+                    }
+                } else if (fis != null) {
+                    try {
+                        fis.close();
+                    } catch (IOException e3) {
+                        throw new InvalidOperationException("Can't open the specified file: '" + file + "'"+
+                                " and couldn't close the file input stream", e);
+                    }
+                }
                 throw new InvalidOperationException("Can't open the specified file: '" + file + "'", e);
             }
         }
