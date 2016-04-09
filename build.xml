@@ -2126,15 +2126,6 @@ under the License.
         <svn refid="svn.settings">
             <checkout url="https://svn.apache.org/repos/asf/poi/tags/${RELEASE_TAG}" destPath="build/release"/>
         </svn>
-
-        <svn refid="svn.settings">
-            <mkdir url="https://dist.apache.org/repos/dist/dev/poi/${version.id}-${release.rc}"
-                message="release candidate POI ${version.id}"/>
-            <import path="build/release/build/dist"
-                url="https://dist.apache.org/repos/dist/dev/poi/${version.id}-${release.rc}"
-                message="release candidate POI ${version.id}"/>
-        </svn>
-
     </target>
 
     <target name="release-prep2" depends="init" description="compile the freshly checked out svn tag and upload it to the nexus - needs a JDK6">
@@ -2161,7 +2152,7 @@ under the License.
         <svn refid="svn.settings">
             <import path="build/release/build/dist"
                 url="https://dist.apache.org/repos/dist/dev/poi"
-                newEntry="${version.id}-${release.rc}-tmp"
+                newEntry="${version.id}-${release.rc}"
                 message="release candidate POI ${version.id}"/>
         </svn>
     </target>
