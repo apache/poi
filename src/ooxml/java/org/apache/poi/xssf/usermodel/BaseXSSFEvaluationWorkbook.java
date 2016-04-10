@@ -38,6 +38,7 @@ import org.apache.poi.ss.formula.udf.IndexedUDFFinder;
 import org.apache.poi.ss.formula.udf.UDFFinder;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.util.NotImplemented;
 import org.apache.poi.xssf.model.ExternalLinksTable;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedName;
 
@@ -280,6 +281,7 @@ public abstract class BaseXSSFEvaluationWorkbook implements FormulaRenderingWork
 	    }
     }
 
+    @NotImplemented
     public int getExternalSheetIndex(String workbookName, String sheetName) {
 		throw new RuntimeException("not implemented yet");
 	}

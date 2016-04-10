@@ -50,6 +50,7 @@ import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.NotImplemented;
 import org.apache.poi.util.StringUtil;
 
 /**
@@ -518,6 +519,7 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
         return new HSSFClientAnchor(dx1, dy1, dx2, dy2, (short) col1, row1, (short) col2, row2);
     }
 
+    @NotImplemented
     public Chart createChart(ClientAnchor anchor) {
         throw new RuntimeException("NotImplemented");
     }

@@ -60,6 +60,7 @@ import org.apache.poi.sl.usermodel.StrokeStyle;
 import org.apache.poi.sl.usermodel.TextBox;
 import org.apache.poi.sl.usermodel.TextRun;
 import org.apache.poi.sl.usermodel.VerticalAlignment;
+import org.apache.poi.util.NotImplemented;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.SuppressForbidden;
@@ -381,6 +382,7 @@ public final class SLGraphics extends Graphics2D implements Cloneable {
      *          <code>Clip</code>.  If <code>s</code> is <code>null</code>,
      *          this method clears the current <code>Clip</code>.
      */
+    @NotImplemented
     public void clip(Shape s){
         if (log.check(POILogger.WARN)) {
             log.log(POILogger.WARN, "Not implemented");
@@ -403,6 +405,7 @@ public final class SLGraphics extends Graphics2D implements Cloneable {
      * @see         java.awt.Graphics#setClip(Shape)
      * @since       JDK1.1
      */
+    @NotImplemented
     public Shape getClip(){
         if (log.check(POILogger.WARN)) {
             log.log(POILogger.WARN, "Not implemented");
@@ -669,6 +672,7 @@ public final class SLGraphics extends Graphics2D implements Cloneable {
      * @see      java.awt.image.ImageObserver
      * @see      java.awt.image.ImageObserver#imageUpdate(java.awt.Image, int, int, int, int, int)
      */
+    @NotImplemented
     public boolean drawImage(Image img, int x, int y,
                              Color bgcolor,
                              ImageObserver observer){
@@ -717,6 +721,7 @@ public final class SLGraphics extends Graphics2D implements Cloneable {
      * @see      java.awt.image.ImageObserver
      * @see      java.awt.image.ImageObserver#imageUpdate(java.awt.Image, int, int, int, int, int)
      */
+    @NotImplemented
     public boolean drawImage(Image img, int x, int y,
                              int width, int height,
                              Color bgcolor,
@@ -776,6 +781,7 @@ public final class SLGraphics extends Graphics2D implements Cloneable {
      * @see         java.awt.image.ImageObserver#imageUpdate(java.awt.Image, int, int, int, int, int)
      * @since       JDK1.1
      */
+    @NotImplemented
     public boolean drawImage(Image img,
                              int dx1, int dy1, int dx2, int dy2,
                              int sx1, int sy1, int sx2, int sy2,
@@ -839,6 +845,7 @@ public final class SLGraphics extends Graphics2D implements Cloneable {
      * @see         java.awt.image.ImageObserver#imageUpdate(java.awt.Image, int, int, int, int, int)
      * @since       JDK1.1
      */
+    @NotImplemented
     public boolean drawImage(Image img,
                              int dx1, int dy1, int dx2, int dy2,
                              int sx1, int sy1, int sx2, int sy2,
@@ -882,6 +889,7 @@ public final class SLGraphics extends Graphics2D implements Cloneable {
      * @see      java.awt.image.ImageObserver
      * @see      java.awt.image.ImageObserver#imageUpdate(java.awt.Image, int, int, int, int, int)
      */
+    @NotImplemented
     public boolean drawImage(Image img, int x, int y,
                              ImageObserver observer) {
         if (log.check(POILogger.WARN)) {
@@ -1069,6 +1077,7 @@ public final class SLGraphics extends Graphics2D implements Cloneable {
      * @see         java.awt.Graphics#setClip(int, int, int, int)
      * @since       JDK1.1
      */
+    @NotImplemented
     public void setClip(Shape clip) {
         if (log.check(POILogger.WARN)) {
             log.log(POILogger.WARN, "Not implemented");
@@ -1368,6 +1377,7 @@ public final class SLGraphics extends Graphics2D implements Cloneable {
      * @see java.awt.Graphics#setPaintMode
      * @see java.awt.AlphaComposite
      */
+    @NotImplemented
     public void setComposite(Composite comp){
         if (log.check(POILogger.WARN)) {
             log.log(POILogger.WARN, "Not implemented");
@@ -1381,6 +1391,7 @@ public final class SLGraphics extends Graphics2D implements Cloneable {
      *              which defines a compositing style.
      * @see #setComposite
      */
+    @NotImplemented
     public Composite getComposite(){
         if (log.check(POILogger.WARN)) {
             log.log(POILogger.WARN, "Not implemented");
@@ -1524,6 +1535,7 @@ public final class SLGraphics extends Graphics2D implements Cloneable {
      * @see #setComposite
      * @see #setClip
      */
+    @NotImplemented
     public void drawString(AttributedCharacterIterator iterator, float x, float y) {
         if (log.check(POILogger.WARN)) {
             log.log(POILogger.WARN, "Not implemented");
@@ -1630,10 +1642,11 @@ public final class SLGraphics extends Graphics2D implements Cloneable {
      * @see #clip
      * @see #setClip(Shape)
      */
-     public boolean drawImage(Image img, AffineTransform xform, ImageObserver obs) {
-         if (log.check(POILogger.WARN)) {
-             log.log(POILogger.WARN, "Not implemented");
-         }
+    @NotImplemented
+    public boolean drawImage(Image img, AffineTransform xform, ImageObserver obs) {
+        if (log.check(POILogger.WARN)) {
+            log.log(POILogger.WARN, "Not implemented");
+        }
         return false;
     }
 
@@ -1673,6 +1686,7 @@ public final class SLGraphics extends Graphics2D implements Cloneable {
      * @see      java.awt.image.ImageObserver
      * @see      java.awt.image.ImageObserver#imageUpdate(java.awt.Image, int, int, int, int, int)
      */
+    @NotImplemented
     public boolean drawImage(Image img, int x, int y,
                              int width, int height,
                              ImageObserver observer) {
@@ -1725,6 +1739,7 @@ public final class SLGraphics extends Graphics2D implements Cloneable {
      * drawn twice, then all pixels are restored to their original values.
      * @param     c1 the XOR alternation color
      */
+    @NotImplemented
     public void setXORMode(Color c1) {
         if (log.check(POILogger.WARN)) {
             log.log(POILogger.WARN, "Not implemented");
@@ -1738,6 +1753,7 @@ public final class SLGraphics extends Graphics2D implements Cloneable {
      * overwrite mode.  All subsequent rendering operations will
      * overwrite the destination with the current color.
      */
+    @NotImplemented
     public void setPaintMode() {
         if (log.check(POILogger.WARN)) {
             log.log(POILogger.WARN, "Not implemented");
@@ -1775,10 +1791,11 @@ public final class SLGraphics extends Graphics2D implements Cloneable {
      * @see #setClip
      * @see #drawRenderedImage
      */
-     public void drawRenderedImage(RenderedImage img, AffineTransform xform) {
-         if (log.check(POILogger.WARN)) {
-             log.log(POILogger.WARN, "Not implemented");
-         }
+    @NotImplemented
+    public void drawRenderedImage(RenderedImage img, AffineTransform xform) {
+        if (log.check(POILogger.WARN)) {
+            log.log(POILogger.WARN, "Not implemented");
+        }
     }
 
     /**
@@ -1802,6 +1819,7 @@ public final class SLGraphics extends Graphics2D implements Cloneable {
      * @see #clip
      * @see #setClip
      */
+    @NotImplemented
     public void drawRenderableImage(RenderableImage img, AffineTransform xform) {
         if (log.check(POILogger.WARN)) {
             log.log(POILogger.WARN, "Not implemented");

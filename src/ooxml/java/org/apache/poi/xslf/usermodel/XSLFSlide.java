@@ -31,6 +31,7 @@ import org.apache.poi.sl.usermodel.Placeholder;
 import org.apache.poi.sl.usermodel.Slide;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.DocumentHelper;
+import org.apache.poi.util.NotImplemented;
 import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTBlip;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTGroupShapeProperties;
@@ -259,6 +260,7 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
         return false;
     }
     
+    @NotImplemented
     public void setFollowMasterBackground(boolean follow) {
         // not implemented ... also not in the specs
         throw new UnsupportedOperationException();
@@ -268,12 +270,14 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
         return false;
     }
     
+    @NotImplemented
     public void setFollowMasterColourScheme(boolean follow) {
         // not implemented ... only for OLE objects in the specs
         throw new UnsupportedOperationException();
     }
 
     @Override
+    @NotImplemented
     public void setNotes(Notes<XSLFShape,XSLFTextParagraph> notes) {
         assert(notes instanceof XSLFNotes);
         // TODO Auto-generated method stub

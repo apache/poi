@@ -53,6 +53,7 @@ import org.apache.poi.openxml4j.opc.internal.marshallers.ZipPackagePropertiesMar
 import org.apache.poi.openxml4j.opc.internal.unmarshallers.PackagePropertiesUnmarshaller;
 import org.apache.poi.openxml4j.opc.internal.unmarshallers.UnmarshallContext;
 import org.apache.poi.openxml4j.util.Nullable;
+import org.apache.poi.util.NotImplemented;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
@@ -1433,6 +1434,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 	 *
 	 * @return <b>true</b> if the package is valid else <b>false</b>
 	 */
+	@NotImplemented
 	public boolean validatePackage(OPCPackage pkg) throws InvalidFormatException {
 		throw new InvalidOperationException("Not implemented yet !!!");
 	}

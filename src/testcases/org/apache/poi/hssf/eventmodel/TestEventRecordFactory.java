@@ -28,6 +28,7 @@ import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RecordFactory;
 import org.apache.poi.hssf.record.TestcaseRecordInputStream;
 import org.apache.poi.hssf.record.UnknownRecord;
+import org.apache.poi.util.NotImplemented;
 
 /**
  * enclosing_type describe the purpose here
@@ -123,6 +124,7 @@ public final class TestEventRecordFactory extends TestCase {
      * constructed record in the case of a continued record.
      * TODO - need a real world example to put in a unit test
      */
+    @NotImplemented
     public void testCreateContinuedRecord()
     {
       //  fail("not implemented");
