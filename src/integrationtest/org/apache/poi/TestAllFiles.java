@@ -28,11 +28,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.poi.hwpf.OldWordFileFormatException;
 import org.apache.poi.stress.*;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 import org.apache.tools.ant.DirectoryScanner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -66,6 +69,8 @@ import org.junit.runners.Parameterized.Parameters;
  */
 @RunWith(Parameterized.class)
 public class TestAllFiles {
+    private final static POILogger logger = POILogFactory.getLogger(TestAllFiles.class);
+
     private static final File ROOT_DIR = new File("test-data");
 
     static final String[] SCAN_EXCLUDES = new String[] { "**/.svn/**", "lost+found" };
@@ -158,6 +163,12 @@ public class TestAllFiles {
         HANDLERS.put(".xml", new NullFileHandler());
         HANDLERS.put(".csv", new NullFileHandler());
         HANDLERS.put(".ods", new NullFileHandler());
+        // VBA source files
+        HANDLERS.put(".vba", new NullFileHandler());
+        HANDLERS.put(".bas", new NullFileHandler());
+        HANDLERS.put(".frm", new NullFileHandler());
+        HANDLERS.put(".frx", new NullFileHandler()); //binary
+        HANDLERS.put(".cls", new NullFileHandler());
 
         // map some files without extension
         HANDLERS.put("spreadsheet/BigSSTRecord", new NullFileHandler());
@@ -317,6 +328,7 @@ public class TestAllFiles {
 
     @Test
     public void testAllFiles() throws Exception {
+        logger.log(POILogger.INFO, "Reading " + file + " with " + handler.getClass());
         assertNotNull("Unknown file extension for file: " + file + ": " + getExtension(file), handler);
         File inputFile = new File(ROOT_DIR, file);
 
@@ -368,7 +380,7 @@ public class TestAllFiles {
             return file;
         }
 
-        return file.substring(pos).toLowerCase();
+        return file.substring(pos).toLowerCase(Locale.ROOT);
     }
 
     private static class NullFileHandler implements FileHandler {
