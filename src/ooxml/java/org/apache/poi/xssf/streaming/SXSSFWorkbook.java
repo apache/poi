@@ -47,6 +47,7 @@ import org.apache.poi.ss.usermodel.PictureData;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.util.NotImplemented;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.TempFile;
@@ -645,6 +646,7 @@ public class SXSSFWorkbook implements Workbook {
     {
         return createAndRegisterSXSSFSheet(_wb.createSheet());
     }
+
     SXSSFSheet createAndRegisterSXSSFSheet(XSSFSheet xSheet)
     {
         final SXSSFSheet sxSheet;
@@ -675,11 +677,14 @@ public class SXSSFWorkbook implements Workbook {
     }
 
     /**
+     * <i>Not implemented for SXSSFWorkbook</i>
+     *
      * Create an Sheet from an existing sheet in the Workbook.
      *
      * @return Sheet representing the cloned sheet.
      */
     @Override
+    @NotImplemented
     public Sheet cloneSheet(int sheetNum)
     {
         throw new RuntimeException("NotImplemented");
@@ -1268,6 +1273,8 @@ public class SXSSFWorkbook implements Workbook {
     }
     
     /**
+     * <i>Not implemented for SXSSFWorkbook</i>
+     *
      * Adds the LinkTable records required to allow formulas referencing
      *  the specified external workbook to be added to this one. Allows
      *  formulas such as "[MyOtherWorkbook]Sheet3!$A$5" to be added to the 
@@ -1276,6 +1283,8 @@ public class SXSSFWorkbook implements Workbook {
      * @param name The name the workbook will be referenced as in formulas
      * @param workbook The open workbook to fetch the link required information from
      */
+    @Override
+    @NotImplemented
     public int linkExternalWorkbook(String name, Workbook workbook) {
         throw new RuntimeException("NotImplemented");
     }
