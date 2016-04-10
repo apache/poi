@@ -120,13 +120,18 @@ public final class IOUtils {
     }
 
     /**
-     * Same as the normal <tt>in.read(b, off, len)</tt>, but tries to ensure
-     * that the entire len number of bytes is read.
-     * <p>
-     * If the end of file is reached before any bytes are read, returns -1. If
+     * <p>Same as the normal {@link InputStream#read(byte[], int, int)}, but tries to ensure
+     * that the entire len number of bytes is read.</p>
+     * 
+     * <p>If the end of file is reached before any bytes are read, returns <tt>-1</tt>. If
      * the end of the file is reached after some bytes are read, returns the
-     * number of bytes read. If the end of the file isn't reached before len
-     * bytes have been read, will return len bytes.
+     * number of bytes read. If the end of the file isn't reached before <tt>len</tt>
+     * bytes have been read, will return <tt>len</tt> bytes.</p>
+     * 
+     * @param in the stream from which the data is read.
+     * @param b the buffer into which the data is read.
+     * @param off the start offset in array <tt>b</tt> at which the data is written.
+     * @param len the maximum number of bytes to read.
      */
     public static int readFully(InputStream in, byte[] b, int off, int len) throws IOException {
         int total = 0;

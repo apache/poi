@@ -31,9 +31,9 @@ import org.apache.poi.poifs.filesystem.POIFSDocumentPath;
 
 public class POIFSReaderEvent
 {
-    private DocumentInputStream stream;
-    private POIFSDocumentPath   path;
-    private String              documentName;
+    private final DocumentInputStream stream;
+    private final POIFSDocumentPath   path;
+    private final String              documentName;
 
     /**
      * package scoped constructor
