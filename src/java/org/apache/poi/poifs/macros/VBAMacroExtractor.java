@@ -27,8 +27,8 @@ import java.util.Map;
 import org.apache.poi.util.StringUtil;
 
 /**
- * This class extracts out the source of all VBA Modules of an office file,
- *  both OOXML and OLE2/POIFS, eg XLSM or DOC
+ * This tool extracts out the source of all VBA Modules of an office file,
+ *  both OOXML (eg XLSM) and OLE2/POIFS (eg DOC), to STDOUT or a directory.
  */
 public class VBAMacroExtractor {
     public static void main(String args[]) throws IOException {
