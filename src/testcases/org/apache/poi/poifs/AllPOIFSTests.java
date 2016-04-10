@@ -19,6 +19,7 @@ package org.apache.poi.poifs;
 
 import org.apache.poi.poifs.eventfilesystem.TestPOIFSReaderRegistry;
 import org.apache.poi.poifs.filesystem.AllPOIFSFileSystemTests;
+import org.apache.poi.poifs.macros.TestVBAMacroReader;
 import org.apache.poi.poifs.nio.TestDataSource;
 import org.apache.poi.poifs.property.AllPOIFSPropertyTests;
 import org.apache.poi.poifs.storage.AllPOIFSStorageTests;
@@ -32,6 +33,7 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
       TestPOIFSReaderRegistry.class
     , TestDataSource.class
+    , TestVBAMacroReader.class
     , AllPOIFSFileSystemTests.class
     , AllPOIFSPropertyTests.class
     , AllPOIFSStorageTests.class
