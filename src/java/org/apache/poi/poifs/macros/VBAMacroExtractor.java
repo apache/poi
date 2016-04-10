@@ -17,172 +17,73 @@
 
 package org.apache.poi.poifs.macros;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.PushbackInputStream;
-import java.nio.charset.Charset;
-import java.util.HashMap;
+import java.io.OutputStreamWriter;
 import java.util.Map;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
-import org.apache.poi.poifs.eventfilesystem.POIFSReader;
-import org.apache.poi.poifs.eventfilesystem.POIFSReaderEvent;
-import org.apache.poi.poifs.eventfilesystem.POIFSReaderListener;
-import org.apache.poi.poifs.filesystem.DocumentInputStream;
-import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.RLEDecompressingInputStream;
+import org.apache.poi.util.StringUtil;
 
 /**
- * This class is able to extract the source of all VBA Modules of an Excel file.
+ * This class extracts out the source of all VBA Modules of an office file,
+ *  both OOXML and OLE2/POIFS, eg XLSM or DOC
  */
 public class VBAMacroExtractor {
-
-    /**
-     * Extract macros from XLSM or XLS file. Automatically detects ZIP (XLSM, DOCX, etc) files.
-     * 
-     * @param in
-     * @return
-     * @throws IOException
-     */
-    public Map<String, String> extractMacros(InputStream in) throws IOException {
-        PushbackInputStream bpin = new PushbackInputStream(in, 2);
-        byte[] header = new byte[2];
-        if (bpin.read(header) != 2) {
-            throw new IllegalArgumentException("Invalid InputStream: cannot read 2 bytes");
+    public static void main(String args[]) throws IOException {
+        if (args.length == 0) {
+            System.err.println("Use:");
+            System.err.println("   VBAMacroExtractor <office.doc> [output]");
+            System.err.println("");
+            System.err.println("If an output directory is given, macros are written there");
+            System.err.println("Otherwise they are output to the screen");
+            System.exit(1);
         }
-        bpin.unread(header);
-        if (header[0] == 'P' && header[1] == 'K') {
-            ZipInputStream zis = new ZipInputStream(bpin);
-            ZipEntry zipEntry;
-            while ((zipEntry = zis.getNextEntry()) != null) {
-                if ("xl/vbaProject.bin".equals(zipEntry.getName())) {
-                    try {
-                        return extractMacrosFromPOIFSInputStream(zis);
-                    } finally {
-                        zis.closeEntry();
-                    }
-                }
-            }
-            return null;
-        } else {
-            return extractMacrosFromPOIFSInputStream(bpin);
+        
+        File input = new File(args[0]);
+        File output = null;
+        if (args.length > 1) {
+            output = new File(args[1]);
         }
+        
+        VBAMacroExtractor extract = new VBAMacroExtractor();
+        extract.extract(input, output);
     }
-
-    /**
-     * Extracts all macros from all modules of the provided input stream. The stream is assumed to be in POIFS format (i.e. XLS file itself or
-     * vbaProject.bin from OOXML files)
-     * 
-     * @param in
-     * @return
-     * @throws IOException
-     */
-    public Map<String, String> extractMacrosFromPOIFSInputStream(InputStream in) throws IOException {
-        class Module {
-
-            Integer offset;
-            byte[] buf;
+    
+    public void extract(File input, File outputDir) throws IOException {
+        if (! input.exists()) throw new FileNotFoundException(input.toString());
+        System.err.print("Extracting VBA Macros from " + input + " to ");
+        if (outputDir != null) {
+            if (! outputDir.exists()) outputDir.mkdir();
+            System.err.println(outputDir);
+        } else {
+            System.err.println("STDOUT");
         }
-        class ModuleMap extends HashMap<String, Module> {
-
-            Charset charset = Charset.forName("Cp1252"); // default charset
-        }
-        try {
-            final ModuleMap modules = new ModuleMap();
-            POIFSReader dirReader = new POIFSReader();
-            dirReader.registerListener(new POIFSReaderListener() {
-
-                public void processPOIFSReaderEvent(POIFSReaderEvent event) {
-                    try {
-                        String name = event.getName();
-                        if (event.getPath().toString().endsWith("\\VBA")) {
-                            if ("dir".equals(name)) {
-                                // process DIR
-                                RLEDecompressingInputStream in = new RLEDecompressingInputStream(event.getStream());
-                                String streamName = null;
-                                while (true) {
-                                    int id = in.readShort();
-                                    if (id == -1 || id == 0x0010) {
-                                        break; // EOF or TERMINATOR
-                                    }
-                                    int len = in.readInt();
-                                    switch (id) {
-                                        case 0x0009: // PROJECTVERSION
-                                            in.skip(6);
-                                            break;
-                                        case 0x0003: // PROJECTCODEPAGE
-                                            int codepage = in.readShort();
-                                            modules.charset = Charset.forName("Cp" + codepage);
-                                            break;
-                                        case 0x001A: // STREAMNAME
-                                            byte[] streamNameBuf = new byte[len];
-                                            int count = in.read(streamNameBuf);
-                                            streamName = new String(streamNameBuf, 0, count, modules.charset);
-                                            break;
-                                        case 0x0031: // MODULEOFFSET
-                                            int moduleOffset = in.readInt();
-                                            Module module = modules.get(streamName);
-                                            if (module != null) {
-                                                ByteArrayOutputStream out = new ByteArrayOutputStream();
-                                                RLEDecompressingInputStream stream = new RLEDecompressingInputStream(new ByteArrayInputStream(
-                                                        module.buf, moduleOffset, module.buf.length - moduleOffset));
-                                                IOUtils.copy(stream, out);
-                                                stream.close();
-                                                out.close();
-                                                module.buf = out.toByteArray();
-                                            } else {
-                                                module = new Module();
-                                                module.offset = moduleOffset;
-                                                modules.put(streamName, module);
-                                            }
-                                            break;
-                                        default:
-                                            in.skip(len);
-                                            break;
-                                    }
-                                }
-                            } else if (!name.startsWith("__SRP") && !name.startsWith("_VBA_PROJECT")) {
-                                // process module, skip __SRP and _VBA_PROJECT since these do not contain macros
-                                Module module = modules.get(name);
-                                final DocumentInputStream stream = event.getStream();
-                                final InputStream in;
-                                if (module == null) {
-                                    // no DIR stream with offsets yet, so store the compressed bytes for later
-                                    module = new Module();
-                                    modules.put(name, module);
-                                    in = stream;
-                                } else {
-                                    // we know the offset already, so decompress immediately on-the-fly
-                                    stream.skip(module.offset);
-                                    in = new RLEDecompressingInputStream(stream);
-                                }
-                                final ByteArrayOutputStream out = new ByteArrayOutputStream();
-                                IOUtils.copy(in, out);
-                                in.close();
-                                out.close();
-                                module.buf = out.toByteArray();
-                            }
-                        }
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-            });
-            dirReader.read(in);
-            Map<String, String> moduleSources = new HashMap<String, String>();
-            for (Map.Entry<String, Module> entry : modules.entrySet()) {
-                Module module = entry.getValue();
-                if (module.buf != null && module.buf.length > 0) { // Skip empty modules
-                    moduleSources.put(entry.getKey(), new String(module.buf, modules.charset));
-                }
+        
+        VBAMacroReader reader = new VBAMacroReader(input);
+        Map<String,String> macros = reader.readMacros();
+        reader.close();
+        
+        final String divider = "---------------------------------------";
+        for (String macro : macros.keySet()) {
+            if (outputDir == null) {
+                System.out.println(divider);
+                System.out.println(macro);
+                System.out.println("");
+                System.out.println(macros.get(macro));
+            } else {
+                File out = new File(outputDir, macro + ".vba");
+                FileOutputStream fout = new FileOutputStream(out);
+                OutputStreamWriter fwriter = new OutputStreamWriter(fout, StringUtil.UTF8);
+                fwriter.write(macros.get(macro));
+                fwriter.close();
+                fout.close();
+                System.out.println("Extracted " + out);
             }
-            return moduleSources;
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw e;
+        }
+        if (outputDir == null) {
+            System.out.println(divider);
         }
     }
 }
