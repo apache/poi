@@ -49,29 +49,23 @@ public class TestVBAMacroReader {
     }
     
     @Test
-    public void fromStream() throws Exception {
-        VBAMacroReader r;
-        
-        r = new VBAMacroReader(HSSFTestDataSamples.openSampleFileStream("SimpleMacro.xls"));
-        assertMacroContents(r);
-        r.close();
-        
-        r = new VBAMacroReader(HSSFTestDataSamples.openSampleFileStream("SimpleMacro.xlsm"));
-        assertMacroContents(r);
-        r.close();
+    public void HSSFfromStream() throws Exception {
+        fromStream(POIDataSamples.getSpreadSheetInstance(), "SimpleMacro.xls");
     }
     @Test
-    public void fromFile() throws Exception {
-        VBAMacroReader r;
-        
-        r = new VBAMacroReader(HSSFTestDataSamples.getSampleFile("SimpleMacro.xls"));
-        assertMacroContents(r);
-        r.close();
-        
-        r = new VBAMacroReader(HSSFTestDataSamples.getSampleFile("SimpleMacro.xlsm"));
-        assertMacroContents(r);
-        r.close();
+    public void XSSFfromStream() throws Exception {
+        fromStream(POIDataSamples.getSpreadSheetInstance(), "SimpleMacro.xlsm");
     }
+
+    @Test
+    public void HSSFfromFile() throws Exception {
+        fromFile(POIDataSamples.getSpreadSheetInstance(), "SimpleMacro.xls");
+    }
+    @Test
+    public void XSSFfromFile() throws Exception {
+        fromFile(POIDataSamples.getSpreadSheetInstance(), "SimpleMacro.xlsm");
+    }
+
     @Test
     public void fromNPOIFS() throws Exception {
         NPOIFSFileSystem fs = new NPOIFSFileSystem(
@@ -79,6 +73,28 @@ public class TestVBAMacroReader {
         VBAMacroReader r = new VBAMacroReader(fs);
         assertMacroContents(r);
         r.close();
+    }
+
+    protected void fromFile(POIDataSamples poiDataSamples, String filename) {   
+        File f = poiDataSamples.getSampleFile(filename);
+        VBAMacroReader r = new VBAMacroReader(f);
+        try {
+            assertMacroContents(r);
+        } finally {
+            r.close();
+        }
+    }
+
+    protected void fromStream(POIDataSamples poiDataSamples, String filename) {   
+        InputStream fis = poiDataSamples.openSampleFileStream(filename);
+        try {
+            VBAMacroReader r = new VBAMacroReader(fis);
+            try {
+                assertMacroContents(r);
+            } finally {
+                r.close();
+            }
+        }
     }
     
     protected void assertMacroContents(VBAMacroReader r) throws Exception {
