@@ -42,7 +42,7 @@ import org.apache.poi.util.RLEDecompressingInputStream;
 
 /**
  * Finds all VBA Macros in an office file (OLE2/POIFS and OOXML/OPC),
- *  and returns them
+ *  and returns them.
  */
 public class VBAMacroReader implements Closeable {
     protected static final String VBA_PROJECT_OOXML = "xl/vbaProject.bin";
