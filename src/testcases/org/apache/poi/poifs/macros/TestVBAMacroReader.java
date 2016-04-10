@@ -24,8 +24,11 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.IOException;
 import java.util.Map;
 
+import org.apache.poi.POIDataSamples;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.util.IOUtils;
@@ -67,16 +70,12 @@ public class TestVBAMacroReader {
     }
 
     @Test
-    public void fromNPOIFS() throws Exception {
-        NPOIFSFileSystem fs = new NPOIFSFileSystem(
-                HSSFTestDataSamples.getSampleFile("SimpleMacro.xls"));
-        VBAMacroReader r = new VBAMacroReader(fs);
-        assertMacroContents(r);
-        r.close();
+    public void HSSFfromNPOIFS() throws Exception {
+        fromNPOIFS(POIDataSamples.getSpreadSheetInstance(), "SimpleMacro.xls");
     }
 
-    protected void fromFile(POIDataSamples poiDataSamples, String filename) {   
-        File f = poiDataSamples.getSampleFile(filename);
+    protected void fromFile(POIDataSamples poiDataSamples, String filename) throws IOException {   
+        File f = poiDataSamples.getFile(filename);
         VBAMacroReader r = new VBAMacroReader(f);
         try {
             assertMacroContents(r);
@@ -85,8 +84,8 @@ public class TestVBAMacroReader {
         }
     }
 
-    protected void fromStream(POIDataSamples poiDataSamples, String filename) {   
-        InputStream fis = poiDataSamples.openSampleFileStream(filename);
+    protected void fromStream(POIDataSamples poiDataSamples, String filename) throws IOException {   
+        InputStream fis = poiDataSamples.openResourceAsStream(filename);
         try {
             VBAMacroReader r = new VBAMacroReader(fis);
             try {
@@ -94,10 +93,27 @@ public class TestVBAMacroReader {
             } finally {
                 r.close();
             }
+        } finally {
+            fis.close();
+        }
+    }
+
+    protected void fromNPOIFS(POIDataSamples poiDataSamples, String filename) throws IOException {   
+        File f = poiDataSamples.getFile(filename);
+        NPOIFSFileSystem fs = new NPOIFSFileSystem(f);
+        try {
+            VBAMacroReader r = new VBAMacroReader(fs);
+            try {
+                assertMacroContents(r);
+            } finally {
+                r.close();
+            }
+        } finally {
+            fs.close();
         }
     }
     
-    protected void assertMacroContents(VBAMacroReader r) throws Exception {
+    protected void assertMacroContents(VBAMacroReader r) throws IOException {
         Map<String,String> contents = r.readMacros();
         
         assertFalse(contents.isEmpty());
