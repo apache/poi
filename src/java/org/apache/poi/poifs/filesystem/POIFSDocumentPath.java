@@ -35,8 +35,8 @@ public class POIFSDocumentPath
 {
     private static final POILogger log = POILogFactory.getLogger(POIFSDocumentPath.class);
           
-    private String[] components;
-    private int      hashcode = 0;
+    private final String[] components;
+    private int hashcode = 0; //lazy-compute hashCode
 
     /**
      * constructor for the path of a document that is not in the root
@@ -199,12 +199,18 @@ public class POIFSDocumentPath
     {
         if (hashcode == 0)
         {
-            for (int j = 0; j < components.length; j++)
-            {
-                hashcode += components[ j ].hashCode();
-            }
+            hashcode = computeHashCode();
         }
         return hashcode;
+    }
+    
+    private int computeHashCode() {
+        int code = 0;
+        for (int j = 0; j < components.length; j++)
+        {
+            code += components[ j ].hashCode();
+        }
+        return code;
     }
 
     /**
@@ -249,16 +255,32 @@ public class POIFSDocumentPath
         {
             return null;
         }
-        POIFSDocumentPath parent = new POIFSDocumentPath(null);
-
-        parent.components = new String[ length ];
-        System.arraycopy(components, 0, parent.components, 0, length);
+        String[] parentComponents = new String[ length ];
+        System.arraycopy(components, 0, parentComponents, 0, length);
+        POIFSDocumentPath parent = new POIFSDocumentPath(parentComponents);
+        
         return parent;
+    }
+    
+    /**
+     * <p>Returns the last name in the document path's name sequence.
+     * If the document path's name sequence is empty, then the empty string is returned.</p>
+     *
+     * @since 2016-04-09
+     * @return The last name in the document path's name sequence, or empty string if this is the root path
+     */
+
+    public String getName()
+    {
+        if (components.length == 0) {
+            return "";
+        }
+        return components[components.length - 1];
     }
 
     /**
      * <p>Returns a string representation of the path. Components are
-     * separated by the platform-specific file separator.</p>
+     * separated by the platform-specific file separator {@link File#separatorChar}</p>
      *
      * @return string representation
      *

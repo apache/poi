@@ -48,8 +48,8 @@ import org.apache.poi.poifs.storage.SmallBlockTableReader;
 
 public class POIFSReader
 {
-    private POIFSReaderRegistry registry;
-    private boolean             registryClosed;
+    private final POIFSReaderRegistry registry;
+    private boolean registryClosed;
 
     /**
      * Create a POIFSReader

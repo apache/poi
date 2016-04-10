@@ -19,6 +19,8 @@ package org.apache.poi.util;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 
 /**
  * Wrapper of InputStream which provides Run Length Encoding (RLE) 
@@ -269,5 +271,19 @@ public class RLEDecompressingInputStream extends InputStream {
             return -1;
         }
         return (b0 & 0xFF) | ((b1 & 0xFF) << 8) | ((b2 & 0xFF) << 16) | ((b3 & 0xFF) << 24);
+    }
+
+    public static final byte[] decompress(byte[] compressed) throws IOException {
+        return decompress(compressed, 0, compressed.length);
+    }
+    
+    public static final byte[] decompress(byte[] compressed, int offset, int length) throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        InputStream instream = new ByteArrayInputStream(compressed, offset, length);
+        InputStream stream = new RLEDecompressingInputStream(instream);
+        IOUtils.copy(stream, out);
+        stream.close();
+        out.close();
+        return out.toByteArray();
     }
 }
