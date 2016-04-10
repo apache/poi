@@ -18,6 +18,7 @@
 package org.apache.poi.xdgf.usermodel.section.geometry;
 
 import org.apache.poi.POIXMLException;
+import org.apache.poi.util.NotImplemented;
 import org.apache.poi.xdgf.usermodel.XDGFCell;
 import org.apache.poi.xdgf.usermodel.XDGFShape;
 
@@ -90,6 +91,7 @@ public class PolyLineTo implements GeometryRow {
     }
 
     @Override
+    @NotImplemented
     public void addToPath(java.awt.geom.Path2D.Double path, XDGFShape parent) {
         if (getDel())
             return;

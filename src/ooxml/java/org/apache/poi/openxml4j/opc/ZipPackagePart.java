@@ -26,6 +26,7 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.internal.marshallers.ZipPartMarshaller;
+import org.apache.poi.util.NotImplemented;
 
 /**
  * Zip implementation of a PackagePart.
@@ -124,16 +125,19 @@ public class ZipPackagePart extends PackagePart {
 	}
 
 	@Override
+	@NotImplemented
 	public boolean load(InputStream ios) {
 		throw new InvalidOperationException("Method not implemented !");
 	}
 
 	@Override
+	@NotImplemented
 	public void close() {
 		throw new InvalidOperationException("Method not implemented !");
 	}
 
 	@Override
+	@NotImplemented
 	public void flush() {
 		throw new InvalidOperationException("Method not implemented !");
 	}

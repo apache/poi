@@ -67,6 +67,7 @@ import org.apache.poi.ss.util.WorkbookUtil;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.NotImplemented;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.PackageHelper;
@@ -1777,11 +1778,13 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     }
 
     @Override
+    @NotImplemented
     public boolean isHidden() {
         throw new RuntimeException("Not implemented yet");
     }
 
     @Override
+    @NotImplemented
     public void setHidden(boolean hiddenFlag) {
         throw new RuntimeException("Not implemented yet");
     }
@@ -1937,6 +1940,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
      * @param name The name the workbook will be referenced as in formulas
      * @param workbook The open workbook to fetch the link required information from
      */
+    @NotImplemented
     public int linkExternalWorkbook(String name, Workbook workbook) {
         throw new RuntimeException("Not Implemented - see bug #57184");
     }
