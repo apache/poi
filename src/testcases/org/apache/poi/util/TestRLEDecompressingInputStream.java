@@ -24,6 +24,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 
 import org.junit.Test;
 
@@ -142,7 +144,7 @@ public class TestRLEDecompressingInputStream {
             0x01, 0x03, (byte)0xB0, 0x02, 0x61, 0x45, 0x00
         };
         final byte[] expanded = RLEDecompressingInputStream.decompress(compressed);
-        final byte[] expected = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa".getBytes();
+        final byte[] expected = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa".getBytes(StringUtil.UTF8);
         assertArrayEquals(expected, expanded);
     }
     
@@ -160,7 +162,12 @@ public class TestRLEDecompressingInputStream {
         } catch (final IOException e) {
             throw new RuntimeException(e);
         }
-        
-        assertEquals(expected, out.toString());
+        String expanded;
+        try {
+            expanded = out.toString(StringUtil.UTF8.name());
+        } catch (final UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
+        assertEquals(expected, expanded);
     }
 }

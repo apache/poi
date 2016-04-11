@@ -19,6 +19,7 @@ package org.apache.poi.util;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Locale;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
@@ -74,7 +75,7 @@ public class RLEDecompressingInputStream extends InputStream {
         pos = 0;
         int header = in.read();
         if (header != 0x01) {
-            throw new IllegalArgumentException(String.format("Header byte 0x01 expected, received 0x%02X", header & 0xFF));
+            throw new IllegalArgumentException(String.format(Locale.ROOT, "Header byte 0x01 expected, received 0x%02X", header & 0xFF));
         }
         len = readChunk();
     }
@@ -159,12 +160,12 @@ public class RLEDecompressingInputStream extends InputStream {
         }
         int chunkSize = (w & 0x0FFF) + 1; // plus 3 bytes minus 2 for the length
         if ((w & 0x7000) != 0x3000) {
-            throw new IllegalArgumentException(String.format("Chunksize header A should be 0x3000, received 0x%04X", w & 0xE000));
+            throw new IllegalArgumentException(String.format(Locale.ROOT, "Chunksize header A should be 0x3000, received 0x%04X", w & 0xE000));
         }
         boolean rawChunk = (w & 0x8000) == 0;
         if (rawChunk) {
             if (in.read(buf, 0, chunkSize) < chunkSize) {
-                throw new IllegalStateException(String.format("Not enough bytes read, expected %d", chunkSize));
+                throw new IllegalStateException(String.format(Locale.ROOT, "Not enough bytes read, expected %d", chunkSize));
             }
             return chunkSize;
         } else {
