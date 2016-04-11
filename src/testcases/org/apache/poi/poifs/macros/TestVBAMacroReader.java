@@ -80,7 +80,7 @@ public class TestVBAMacroReader {
     public void XSSFfromStream() throws Exception {
         fromStream(POIDataSamples.getSpreadSheetInstance(), "SimpleMacro.xlsm");
     }
-    @Ignore("Found 0 macros")
+    @Ignore("bug 59302: Found 0 macros")
     @Test
     public void HSLFfromStream() throws Exception {
         fromStream(POIDataSamples.getSlideShowInstance(), "SimpleMacro.ppt");
@@ -102,6 +102,10 @@ public class TestVBAMacroReader {
     public void HDGFfromStream() throws Exception {
         fromStream(POIDataSamples.getDiagramInstance(), "SimpleMacro.vsd");
     }
+    @Test
+    public void XDGFfromStream() throws Exception {
+        fromStream(POIDataSamples.getDiagramInstance(), "SimpleMacro.vsdm");
+    }
 
     //////////////////////////////// From File /////////////////////////////
     @Test
@@ -112,7 +116,7 @@ public class TestVBAMacroReader {
     public void XSSFfromFile() throws Exception {
         fromFile(POIDataSamples.getSpreadSheetInstance(), "SimpleMacro.xlsm");
     }
-    @Ignore("Found 0 macros")
+    @Ignore("bug 59302: Found 0 macros")
     @Test
     public void HSLFfromFile() throws Exception {
         fromFile(POIDataSamples.getSlideShowInstance(), "SimpleMacro.ppt");
@@ -134,13 +138,17 @@ public class TestVBAMacroReader {
     public void HDGFfromFile() throws Exception {
         fromFile(POIDataSamples.getDiagramInstance(), "SimpleMacro.vsd");
     }
+    @Test
+    public void XDGFfromFile() throws Exception {
+        fromFile(POIDataSamples.getDiagramInstance(), "SimpleMacro.vsdm");
+    }
 
     //////////////////////////////// From NPOIFS /////////////////////////////
     @Test
     public void HSSFfromNPOIFS() throws Exception {
         fromNPOIFS(POIDataSamples.getSpreadSheetInstance(), "SimpleMacro.xls");
     }
-    @Ignore("Found 0 macros")
+    @Ignore("bug 59302: Found 0 macros")
     @Test
     public void HSLFfromNPOIFS() throws Exception {
         fromNPOIFS(POIDataSamples.getSlideShowInstance(), "SimpleMacro.ppt");
