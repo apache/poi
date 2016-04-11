@@ -27,6 +27,7 @@ import java.security.AccessController;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.Collection;
+import java.util.Map;
 
 import org.apache.poi.util.SuppressForbidden;
 
@@ -74,6 +75,17 @@ public class POITestCase {
         }
         fail("Unable to find " + needle + " in " + haystack);
      }
+     
+     /**
+      * @param map haystack
+      * @param key needle
+      */
+     public static  <T> void assertContains(Map<T, ?> map, T key) {
+         if (map.containsKey(key)) {
+            return;
+         }
+         fail("Unable to find " + key + " in " + map);
+      }
      
      /** Utility method to get the value of a private/protected field.
       * Only use this method in test cases!!!

@@ -289,7 +289,23 @@ public class StringUtil {
 	public static boolean isUnicodeString(final String value) {
         return !value.equals(new String(value.getBytes(ISO_8859_1), ISO_8859_1));
 	}
-	
+
+    /**
+     * Tests if the string starts with the specified prefix, ignoring case consideration.
+     */
+    public static boolean startsWithIgnoreCase(String haystack, String prefix) {
+        return haystack.regionMatches(true, 0, prefix, 0, prefix.length());
+    }
+    
+    /**
+     * Tests if the string ends with the specified suffix, ignoring case consideration.
+     */
+    public static boolean endsWithIgnoreCase(String haystack, String suffix) {
+        int length = suffix.length();
+        int start = haystack.length() - length;
+        return haystack.regionMatches(true, start, suffix, 0, length);
+    }
+
    /**
     * An Iterator over an array of Strings.
     */
