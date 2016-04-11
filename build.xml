@@ -1811,7 +1811,7 @@ under the License.
     <!--  spot any cases where we've accidently used methods we shouldn't -->
     <!-- See https://github.com/policeman-tools/forbidden-apis for details -->
     <!--  of the checks that this can do -->
-    <target name="forbidden-apis-check" depends="init">
+    <target name="forbidden-apis-check" depends="init, compile">
         <taskdef name="forbiddenapis"
                  classname="de.thetaphi.forbiddenapis.ant.AntTask"
                  classpath="${forbidden.jar}"/>
