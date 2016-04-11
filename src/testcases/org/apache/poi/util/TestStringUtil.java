@@ -165,5 +165,24 @@ public class TestStringUtil {
           fail();
        } catch(ArrayIndexOutOfBoundsException e) {}
     }
+    
+
+    @Test
+    public void startsWithIgnoreCase() {
+        assertTrue("same string", StringUtil.startsWithIgnoreCase("Apache POI", "Apache POI"));
+        assertTrue("longer string", StringUtil.startsWithIgnoreCase("Apache POI project", "Apache POI"));
+        assertTrue("different case", StringUtil.startsWithIgnoreCase("APACHE POI", "Apache POI"));
+        assertFalse("leading whitespace should not be ignored", StringUtil.startsWithIgnoreCase(" Apache POI project", "Apache POI"));
+        assertFalse("shorter string", StringUtil.startsWithIgnoreCase("Apache", "Apache POI"));;
+    }
+    
+    @Test
+    public void endsWithIgnoreCase() {
+        assertTrue("same string", StringUtil.endsWithIgnoreCase("Apache POI", "Apache POI"));
+        assertTrue("longer string", StringUtil.endsWithIgnoreCase("Project Apache POI", "Apache POI"));
+        assertTrue("different case", StringUtil.endsWithIgnoreCase("APACHE POI", "Apache POI"));
+        assertFalse("trailing whitespace should not be ignored", StringUtil.endsWithIgnoreCase("Apache POI project ", "Apache POI"));
+        assertFalse("shorter string", StringUtil.endsWithIgnoreCase("Apache", "Apache POI"));
+    }
 }
 

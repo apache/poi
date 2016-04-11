@@ -17,6 +17,9 @@
 
 package org.apache.poi.poifs.macros;
 
+import static org.apache.poi.util.StringUtil.startsWithIgnoreCase;
+import static org.apache.poi.util.StringUtil.endsWithIgnoreCase;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
@@ -45,7 +48,7 @@ import org.apache.poi.util.RLEDecompressingInputStream;
  *  and returns them.
  */
 public class VBAMacroReader implements Closeable {
-    protected static final String VBA_PROJECT_OOXML = "xl/vbaProject.bin";
+    protected static final String VBA_PROJECT_OOXML = "vbaProject.bin";
     protected static final String VBA_PROJECT_POIFS = "VBA";
     
     private NPOIFSFileSystem fs;
@@ -76,7 +79,7 @@ public class VBAMacroReader implements Closeable {
         ZipInputStream zis = new ZipInputStream(zipFile);
         ZipEntry zipEntry;
         while ((zipEntry = zis.getNextEntry()) != null) {
-            if (VBA_PROJECT_OOXML.equals(zipEntry.getName())) {
+            if (endsWithIgnoreCase(zipEntry.getName(), VBA_PROJECT_OOXML)) {
                 try {
                     // Make a NPOIFS from the contents, and close the stream
                     this.fs = new NPOIFSFileSystem(zis);
@@ -125,8 +128,17 @@ public class VBAMacroReader implements Closeable {
         Charset charset = Charset.forName("Cp1252"); // default charset
     }
     
+    /**
+     * Recursively traverses directory structure rooted at <tt>dir</tt>.
+     * For each macro module that is found, the module's name and code are
+     * added to <tt>modules<tt>.
+     *
+     * @param dir
+     * @param modules
+     * @throws IOException
+     */
     protected void findMacros(DirectoryNode dir, ModuleMap modules) throws IOException {
-        if (VBA_PROJECT_POIFS.equals(dir.getName())) {
+        if (VBA_PROJECT_POIFS.equalsIgnoreCase(dir.getName())) {
             // VBA project directory, process
             readMacros(dir, modules);
         } else {
@@ -138,6 +150,22 @@ public class VBAMacroReader implements Closeable {
             }
         }
     }
+    
+    /**
+     * Read <tt>length</tt> bytes of MBCS (multi-byte character set) characters from the stream
+     *
+     * @param stream the inputstream to read from
+     * @param length number of bytes to read from stream
+     * @param charset the character set encoding of the bytes in the stream
+     * @return a java String in the supplied character set
+     * @throws IOException
+     */
+    private static String readString(InputStream stream, int length, Charset charset) throws IOException {
+        byte[] buffer = new byte[length];
+        int count = stream.read(buffer);
+        return new String(buffer, 0, count, charset);
+    }
+    
     protected void readMacros(DirectoryNode macroDir, ModuleMap modules) throws IOException {
         for (Entry entry : macroDir) {
             if (! (entry instanceof DocumentNode)) { continue; }
@@ -145,7 +173,7 @@ public class VBAMacroReader implements Closeable {
             String name = entry.getName();
             DocumentNode document = (DocumentNode)entry;
             DocumentInputStream dis = new DocumentInputStream(document);
-            if ("dir".equals(name)) {
+            if ("dir".equalsIgnoreCase(name)) {
                 // process DIR
                 RLEDecompressingInputStream in = new RLEDecompressingInputStream(dis);
                 String streamName = null;
@@ -164,9 +192,7 @@ public class VBAMacroReader implements Closeable {
                         modules.charset = Charset.forName("Cp" + codepage);
                         break;
                     case 0x001A: // STREAMNAME
-                        byte[] streamNameBuf = new byte[len];
-                        int count = in.read(streamNameBuf);
-                        streamName = new String(streamNameBuf, 0, count, modules.charset);
+                        streamName = readString(in, len, modules.charset);
                         break;
                     case 0x0031: // MODULEOFFSET
                         int moduleOffset = in.readInt();
@@ -191,7 +217,8 @@ public class VBAMacroReader implements Closeable {
                     }
                 }
                 in.close();
-            } else if (!name.startsWith("__SRP") && !name.startsWith("_VBA_PROJECT")) {
+            } else if (!startsWithIgnoreCase(name, "__SRP")
+                    && !startsWithIgnoreCase(name, "_VBA_PROJECT")) {
                 // process module, skip __SRP and _VBA_PROJECT since these do not contain macros
                 Module module = modules.get(name);
                 final InputStream in;
