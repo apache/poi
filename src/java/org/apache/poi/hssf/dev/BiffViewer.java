@@ -50,7 +50,7 @@ import org.apache.poi.util.POILogger;
 import org.apache.poi.util.StringUtil;
 
 /**
- *  Utillity for reading in BIFF8 records and displaying data from them.
+ *  Utility for reading in BIFF8 records and displaying data from them.
  * @see        #main
  */
 public final class BiffViewer {
