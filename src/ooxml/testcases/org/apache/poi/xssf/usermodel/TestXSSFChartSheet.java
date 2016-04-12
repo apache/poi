@@ -17,16 +17,12 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
+import org.apache.poi.ss.util.CellAddress;
+import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.junit.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTChartsheet;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.xssf.XSSFTestDataSamples;
+
+import static org.junit.Assert.*;
 
 public final class TestXSSFChartSheet {
 
@@ -40,6 +36,8 @@ public final class TestXSSFChartSheet {
         assertTrue(wb.getSheetAt(2) instanceof XSSFChartSheet);
         assertEquals("Chart1", wb.getSheetAt(2).getSheetName());
 
+        final CTChartsheet ctChartsheet = ((XSSFChartSheet) wb.getSheetAt(2)).getCTChartsheet();
+        assertNotNull(ctChartsheet);
     }
 
     @Test
@@ -47,9 +45,9 @@ public final class TestXSSFChartSheet {
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("chart_sheet.xlsx");
         XSSFChartSheet sheet = (XSSFChartSheet)wb.getSheetAt(2);
 
-        for(Row row : sheet) {
-            fail("Row iterator for charts sheets should return zero rows");
-        }
+        assertFalse("Row iterator for charts sheets should return zero rows",
+                sheet.iterator().hasNext());
+
         //access to a arbitrary row
         assertNull(sheet.getRow(1));
 
@@ -59,7 +57,9 @@ public final class TestXSSFChartSheet {
         assertEquals(0, sheet.getNumMergedRegions());
         assertNull(sheet.getActiveCell());
         assertTrue(sheet.getAutobreaks());
+        //noinspection deprecation
         assertNull(sheet.getCellComment(0, 0));
+        assertNull(sheet.getCellComment(new CellAddress(0, 0)));
         assertEquals(0, sheet.getColumnBreaks().length);
         assertTrue(sheet.getRowSumsBelow());
         assertNotNull(sheet.createDrawingPatriarch());
