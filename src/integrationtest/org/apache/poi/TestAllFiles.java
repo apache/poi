@@ -280,6 +280,7 @@ public class TestAllFiles {
         EXPECTED_FAILURES.add("spreadsheet/OddStyleRecord.xls");
         EXPECTED_FAILURES.add("spreadsheet/WithChartSheet.xlsx");
         EXPECTED_FAILURES.add("spreadsheet/chart_sheet.xlsx");
+        EXPECTED_FAILURES.add("spreadsheet/SimpleScatterChart.xlsx");
     }
 
     private static final Set<String> IGNORED = new HashSet<String>();
