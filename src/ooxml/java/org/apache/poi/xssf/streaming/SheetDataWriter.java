@@ -375,7 +375,12 @@ public class SheetDataWriter {
      * @return true if the file was deleted, false if it wasn't.
      */
     boolean dispose() throws IOException {
-        _out.close();
-        return _fd.delete();
+        final boolean ret;
+        try {
+            _out.close();
+        } finally {
+            ret = _fd.delete();
+        }
+        return ret;
     }
 }
