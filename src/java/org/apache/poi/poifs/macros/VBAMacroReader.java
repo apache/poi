@@ -46,6 +46,8 @@ import org.apache.poi.util.RLEDecompressingInputStream;
 /**
  * Finds all VBA Macros in an office file (OLE2/POIFS and OOXML/OPC),
  *  and returns them.
+ * 
+ * @since 3.15-beta2
  */
 public class VBAMacroReader implements Closeable {
     protected static final String VBA_PROJECT_OOXML = "vbaProject.bin";
@@ -105,6 +107,8 @@ public class VBAMacroReader implements Closeable {
     /**
      * Reads all macros from all modules of the opened office file. 
      * @return All the macros and their contents
+     *
+     * @since 3.15-beta2
      */
     public Map<String, String> readMacros() throws IOException {
         final ModuleMap modules = new ModuleMap();
@@ -136,6 +140,7 @@ public class VBAMacroReader implements Closeable {
      * @param dir
      * @param modules
      * @throws IOException
+     * @since 3.15-beta2
      */
     protected void findMacros(DirectoryNode dir, ModuleMap modules) throws IOException {
         if (VBA_PROJECT_POIFS.equalsIgnoreCase(dir.getName())) {
@@ -165,7 +170,27 @@ public class VBAMacroReader implements Closeable {
         int count = stream.read(buffer);
         return new String(buffer, 0, count, charset);
     }
-    
+
+    /**
+      * Skips <tt>n</tt> bytes in an input stream, throwing IOException if the
+      * number of bytes skipped is different than requested.
+      * @throws IOException
+      */
+    private static void trySkip(InputStream in, long n) throws IOException {
+        long skippedBytes = in.skip(n);
+        if (skippedBytes != n) {
+            throw new IOException(
+                "Skipped only " + skippedBytes + " while trying to skip " + n + " bytes. " +
+                    " This should never happen.");
+        }
+    }
+
+    /*
+     * Reads VBA Project modules from a VBA Project directory located at
+     * <tt>macroDir</tt> into <tt>modules</tt>.
+     *
+     * @since 3.15-beta2
+     */    
     protected void readMacros(DirectoryNode macroDir, ModuleMap modules) throws IOException {
         for (Entry entry : macroDir) {
             if (! (entry instanceof DocumentNode)) { continue; }
@@ -185,7 +210,7 @@ public class VBAMacroReader implements Closeable {
                     int len = in.readInt();
                     switch (id) {
                     case 0x0009: // PROJECTVERSION
-                        in.skip(6);
+                        trySkip(in, 6);
                         break;
                     case 0x0003: // PROJECTCODEPAGE
                         int codepage = in.readShort();
@@ -212,7 +237,7 @@ public class VBAMacroReader implements Closeable {
                         }
                         break;
                     default:
-                        in.skip(len);
+                        trySkip(in, len);
                         break;
                     }
                 }

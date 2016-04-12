@@ -33,7 +33,8 @@ public class RLEDecompressingInputStream extends InputStream {
     /**
      * Bitmasks for performance
      */
-    private static final int[] POWER2 = new int[] { 0x0001, // 0
+    private static final int[] POWER2 = new int[] {
+            0x0001, // 0
             0x0002, // 1
             0x0004, // 2
             0x0008, // 3
@@ -48,14 +49,14 @@ public class RLEDecompressingInputStream extends InputStream {
             0x1000, // 12
             0x2000, // 13
             0x4000, // 14
-            0x8000 // 15
+            0x8000  // 15
     };
 
     /** the wrapped inputstream */
-    private InputStream in;
+    private final InputStream in;
 
     /** a byte buffer with size 4096 for storing a single chunk */
-    private byte[] buf;
+    private final byte[] buf;
 
     /** the current position in the byte buffer for reading */
     private int pos;
@@ -229,7 +230,7 @@ public class RLEDecompressingInputStream extends InputStream {
     /**
      * Convenience method for read a 2-bytes short in little endian encoding.
      * 
-     * @return
+     * @return short value from the stream
      * @throws IOException
      */
     public int readShort() throws IOException {
@@ -239,7 +240,7 @@ public class RLEDecompressingInputStream extends InputStream {
     /**
      * Convenience method for read a 4-bytes int in little endian encoding.
      * 
-     * @return
+     * @return integer value from the stream
      * @throws IOException
      */
     public int readInt() throws IOException {
