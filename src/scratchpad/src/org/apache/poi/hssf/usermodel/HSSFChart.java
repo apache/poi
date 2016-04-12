@@ -1005,14 +1005,21 @@ public final class HSSFChart {
 
 		/* package */ void insertData(LinkedDataRecord data){
 			switch(data.getLinkType()){
-				case 0: dataName = data;
-				break;
-				case 1: dataValues = data;
-				break;
-				case 2: dataCategoryLabels = data;
-				break;
-				case 3: dataSecondaryCategoryLabels = data;
-				break;
+			
+				case LinkedDataRecord.LINK_TYPE_TITLE_OR_TEXT:
+					dataName = data;
+					break;
+				case LinkedDataRecord.LINK_TYPE_VALUES:
+					dataValues = data;
+					break;
+				case LinkedDataRecord.LINK_TYPE_CATEGORIES:
+					dataCategoryLabels = data;
+					break;
+				case LinkedDataRecord.LINK_TYPE_SECONDARY_CATEGORIES:
+					dataSecondaryCategoryLabels = data;
+					break;
+				default:
+					throw new IllegalStateException("Invalid link type: " + data.getLinkType());
 			}
 		}
 		

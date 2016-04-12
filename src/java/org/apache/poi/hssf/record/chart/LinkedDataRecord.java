@@ -40,6 +40,7 @@ public final class LinkedDataRecord extends StandardRecord implements Cloneable 
     public final static byte        LINK_TYPE_TITLE_OR_TEXT        = 0;
     public final static byte        LINK_TYPE_VALUES               = 1;
     public final static byte        LINK_TYPE_CATEGORIES           = 2;
+    public final static byte        LINK_TYPE_SECONDARY_CATEGORIES = 3;
     private  byte       field_2_referenceType;
     public final static byte        REFERENCE_TYPE_DEFAULT_CATEGORIES = 0;
     public final static byte        REFERENCE_TYPE_DIRECT          = 1;
@@ -121,9 +122,10 @@ public final class LinkedDataRecord extends StandardRecord implements Cloneable 
      * Get the link type field for the LinkedData record.
      *
      * @return  One of
-     *        LINK_TYPE_TITLE_OR_TEXT
-     *        LINK_TYPE_VALUES
-     *        LINK_TYPE_CATEGORIES
+     *        {@link #LINK_TYPE_TITLE_OR_TEXT},
+     *        {@link #LINK_TYPE_VALUES}, 
+     *        {@link #LINK_TYPE_CATEGORIES}, or
+     *        {@link #LINK_TYPE_SECONDARY_CATEGORIES}
      */
     public byte getLinkType()
     {
@@ -135,9 +137,10 @@ public final class LinkedDataRecord extends StandardRecord implements Cloneable 
      *
      * @param field_1_linkType
      *        One of
-     *        LINK_TYPE_TITLE_OR_TEXT
-     *        LINK_TYPE_VALUES
-     *        LINK_TYPE_CATEGORIES
+     *        {@link #LINK_TYPE_TITLE_OR_TEXT},
+     *        {@link #LINK_TYPE_VALUES},
+     *        {@link #LINK_TYPE_CATEGORIES}, or
+     *        {@link #LINK_TYPE_SECONDARY_CATEGORIES}
      */
     public void setLinkType(byte field_1_linkType)
     {
@@ -148,11 +151,11 @@ public final class LinkedDataRecord extends StandardRecord implements Cloneable 
      * Get the reference type field for the LinkedData record.
      *
      * @return  One of
-     *        REFERENCE_TYPE_DEFAULT_CATEGORIES
-     *        REFERENCE_TYPE_DIRECT
-     *        REFERENCE_TYPE_WORKSHEET
-     *        REFERENCE_TYPE_NOT_USED
-     *        REFERENCE_TYPE_ERROR_REPORTED
+     *        {@link #REFERENCE_TYPE_DEFAULT_CATEGORIES}
+     *        {@link #REFERENCE_TYPE_DIRECT}
+     *        {@link #REFERENCE_TYPE_WORKSHEET}
+     *        {@link #REFERENCE_TYPE_NOT_USED}
+     *        {@link #REFERENCE_TYPE_ERROR_REPORTED}
      */
     public byte getReferenceType()
     {
@@ -164,11 +167,11 @@ public final class LinkedDataRecord extends StandardRecord implements Cloneable 
      *
      * @param field_2_referenceType
      *        One of
-     *        REFERENCE_TYPE_DEFAULT_CATEGORIES
-     *        REFERENCE_TYPE_DIRECT
-     *        REFERENCE_TYPE_WORKSHEET
-     *        REFERENCE_TYPE_NOT_USED
-     *        REFERENCE_TYPE_ERROR_REPORTED
+     *        {@link #REFERENCE_TYPE_DEFAULT_CATEGORIES}
+     *        {@link #REFERENCE_TYPE_DIRECT}
+     *        {@link #REFERENCE_TYPE_WORKSHEET}
+     *        {@link #REFERENCE_TYPE_NOT_USED}
+     *        {@link #REFERENCE_TYPE_ERROR_REPORTED}
      */
     public void setReferenceType(byte field_2_referenceType)
     {
