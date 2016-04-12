@@ -66,6 +66,8 @@ public class HSSFShapeFactory {
                     case EscherTextboxRecord.RECORD_ID:
                         txtRecord = (TextObjectRecord) shapeToObj.get(record);
                         break;
+                    default:
+                        break;
                 }
             }
             if (isEmbeddedObject(objRecord)) {

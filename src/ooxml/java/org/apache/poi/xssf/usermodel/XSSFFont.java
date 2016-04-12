@@ -505,6 +505,8 @@ public class XSSFFont implements Font {
                 case Font.SS_SUPER:
                     offsetProperty.setVal(STVerticalAlignRun.SUPERSCRIPT);
                     break;
+                default:
+                    throw new IllegalStateException("Invalid type offset: " + offset);
             }
         }
     }

@@ -259,6 +259,8 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
 	        case HSSFWorkbook.PICTURE_TYPE_PICT:
 	            ftCf.setFlags(FtCfSubRecord.BITMAP_BIT);
 	            break;
+	        default:
+	            throw new IllegalStateException("Invalid picture type: " + pictData.getFormat());
         }
         obj.addSubRecord(ftCf);
         // FtPioGrbit (pictFlags)

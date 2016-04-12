@@ -172,10 +172,13 @@ public class HexDump {
         if (Character.isISOControl(charB)) return '.';
         
         switch (charB) {
-        // printable, but not compilable with current compiler encoding
-        case 0xFF: case 0xDD:
-            charB = '.';
-            break;
+            // printable, but not compilable with current compiler encoding
+            case 0xFF:
+            case 0xDD:
+                charB = '.';
+                break;
+            default:
+                break;
         }
         return charB;
     }
