@@ -17,6 +17,11 @@
 
 package org.apache.poi.ss.formula;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.ptg.AreaErrPtg;
 import org.apache.poi.ss.formula.ptg.AreaPtg;
@@ -24,14 +29,14 @@ import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.ptg.Ref3DPtg;
 import org.apache.poi.ss.util.CellReference;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * Tests for {@link FormulaShifter}.
  *
  * @author Josh Micich
  */
-public final class TestFormulaShifter extends TestCase {
+public final class TestFormulaShifter {
     // Note - the expected result row coordinates here were determined/verified
     // in Excel 2007 by manually testing.
 
@@ -39,6 +44,7 @@ public final class TestFormulaShifter extends TestCase {
      * Tests what happens to area refs when a range of rows from inside, or overlapping are
      * moved
      */
+    @Test
     public void testShiftAreasSourceRows() {
 
         // all these operations are on an area ref spanning rows 10 to 20
@@ -78,6 +84,7 @@ public final class TestFormulaShifter extends TestCase {
         confirmAreaShift(aptg, 18, 22,  5, 10, 25); // simple expansion at bottom
     }
     
+    @Test
     public void testCopyAreasSourceRowsRelRel() {
 
         // all these operations are on an area ref spanning rows 10 to 20
@@ -87,6 +94,7 @@ public final class TestFormulaShifter extends TestCase {
         confirmAreaCopy(aptg,  15, 25, -15, -1, -1, true); //DeletedRef
     }
     
+    @Test
     public void testCopyAreasSourceRowsRelAbs() {
 
         // all these operations are on an area ref spanning rows 10 to 20
@@ -97,6 +105,7 @@ public final class TestFormulaShifter extends TestCase {
         confirmAreaCopy(aptg,  15, 25, -15, -1, -1, true); //DeletedRef
     }
     
+    @Test
     public void testCopyAreasSourceRowsAbsRel() {
         // aptg is part of a formula in a cell that was just copied to another row
         // aptg row references should be updated by the difference in rows that the cell was copied
@@ -112,6 +121,7 @@ public final class TestFormulaShifter extends TestCase {
         confirmAreaCopy(aptg,  15, 25, -15, 5, 10, true); //sortTopLeftToBottomRight swapped firstRow and lastRow because firstRow is absolute
     }
     
+    @Test
     public void testCopyAreasSourceRowsAbsAbs() {
         // aptg is part of a formula in a cell that was just copied to another row
         // aptg row references should be updated by the difference in rows that the cell was copied
@@ -131,6 +141,7 @@ public final class TestFormulaShifter extends TestCase {
      * Tests what happens to an area ref when some outside rows are moved to overlap
      * that area ref
      */
+    @Test
     public void testShiftAreasDestRows() {
         // all these operations are on an area ref spanning rows 20 to 25
         AreaPtg aptg  = createAreaPtg(20, 25);
@@ -199,6 +210,7 @@ public final class TestFormulaShifter extends TestCase {
         return new AreaPtg(initialAreaFirstRow, initialAreaLastRow, 2, 5, firstRowRelative, lastRowRelative, false, false);
     }
 
+    @Test
     public void testShiftSheet() {
         // 4 sheets, move a sheet from pos 2 to pos 0, i.e. current 0 becomes 1, current 1 becomes pos 2 
         FormulaShifter shifter = FormulaShifter.createForSheetShift(2, 0);
@@ -222,6 +234,7 @@ public final class TestFormulaShifter extends TestCase {
                 3, ((Ref3DPtg)ptgs[3]).getExternSheetIndex());
     }
 
+    @Test
     public void testShiftSheet2() {
         // 4 sheets, move a sheet from pos 1 to pos 2, i.e. current 2 becomes 1, current 1 becomes pos 2 
         FormulaShifter shifter = FormulaShifter.createForSheetShift(1, 2);
@@ -245,6 +258,7 @@ public final class TestFormulaShifter extends TestCase {
                 3, ((Ref3DPtg)ptgs[3]).getExternSheetIndex());
     }
     
+    @Test
     public void testInvalidArgument() {
         try {
             FormulaShifter.createForRowShift(1, "name", 1, 2, 0, SpreadsheetVersion.EXCEL97);
@@ -261,11 +275,13 @@ public final class TestFormulaShifter extends TestCase {
         }
     }
     
+    @Test
     @SuppressWarnings("deprecation")
     public void testConstructor() {
         assertNotNull(FormulaShifter.createForRowShift(1, "name", 1, 2, 2));
     }
 
+    @Test
     public void testToString() {
         FormulaShifter shifter = FormulaShifter.createForRowShift(0, "sheet", 123, 456, 789,
                 SpreadsheetVersion.EXCEL2007);
