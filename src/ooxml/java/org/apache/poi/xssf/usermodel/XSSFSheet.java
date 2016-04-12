@@ -63,7 +63,6 @@ import org.apache.poi.ss.usermodel.DataValidationHelper;
 import org.apache.poi.ss.usermodel.Footer;
 import org.apache.poi.ss.usermodel.Header;
 import org.apache.poi.ss.usermodel.IgnoredErrorType;
-import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.AreaReference;
@@ -96,6 +95,15 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
  */
 public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     private static final POILogger logger = POILogFactory.getLogger(XSSFSheet.class);
+
+    private static final double DEFAULT_ROW_HEIGHT = 15.0;
+    private static final double DEFAULT_MARGIN_HEADER = 0.3;
+    private static final double DEFAULT_MARGIN_FOOTER = 0.3;
+    private static final double DEFAULT_MARGIN_TOP = 0.75;
+    private static final double DEFAULT_MARGIN_BOTTOM = 0.75;
+    private static final double DEFAULT_MARGIN_LEFT = 0.7;
+    private static final double DEFAULT_MARGIN_RIGHT = 0.7;
+    public static final int TWIPS_PER_POINT = 20;
 
     //TODO make the two variable below private!
     protected CTSheet sheet;
@@ -252,7 +260,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     private static CTWorksheet newSheet(){
         CTWorksheet worksheet = CTWorksheet.Factory.newInstance();
         CTSheetFormatPr ctFormat = worksheet.addNewSheetFormatPr();
-        ctFormat.setDefaultRowHeight(15.0);
+        ctFormat.setDefaultRowHeight(DEFAULT_ROW_HEIGHT);
 
         CTSheetView ctView = worksheet.addNewSheetViews().addNewSheetView();
         ctView.setWorkbookViewId(0);
@@ -262,12 +270,12 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         worksheet.addNewSheetData();
 
         CTPageMargins ctMargins = worksheet.addNewPageMargins();
-        ctMargins.setBottom(0.75);
-        ctMargins.setFooter(0.3);
-        ctMargins.setHeader(0.3);
-        ctMargins.setLeft(0.7);
-        ctMargins.setRight(0.7);
-        ctMargins.setTop(0.75);
+        ctMargins.setBottom(DEFAULT_MARGIN_BOTTOM);
+        ctMargins.setFooter(DEFAULT_MARGIN_FOOTER);
+        ctMargins.setHeader(DEFAULT_MARGIN_HEADER);
+        ctMargins.setLeft(DEFAULT_MARGIN_LEFT);
+        ctMargins.setRight(DEFAULT_MARGIN_RIGHT);
+        ctMargins.setTop(DEFAULT_MARGIN_TOP);
 
         return worksheet;
     }
@@ -894,13 +902,13 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
 
     /**
      * Get the default row height for the sheet (if the rows do not define their own height) in
-     * twips (1/20 of  a point)
+     * twips (1/20 of a point)
      *
      * @return  default row height
      */
     @Override
     public short getDefaultRowHeight() {
-        return (short)(getDefaultRowHeightInPoints() * 20);
+        return (short)(getDefaultRowHeightInPoints() * TWIPS_PER_POINT);
     }
 
 
@@ -1342,7 +1350,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      *  otherwise the given algorithm is used for calculating the hash password (Excel 2013)
      */
     public void setSheetPassword(String password, HashAlgorithm hashAlgo) {
-        if (password == null && !isSheetProtectionEnabled()) return;
+        if (password == null && !isSheetProtectionEnabled()) {
+            return;
+        }
         setPassword(safeGetProtectionField(), password, hashAlgo, null);
     }
 
@@ -1352,7 +1362,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * @return true, if the hashes match (... though original password may differ ...)
      */
     public boolean validateSheetPassword(String password) {
-        if (!isSheetProtectionEnabled()) return (password == null);
+        if (!isSheetProtectionEnabled()) {
+            return (password == null);
+        }
         return validatePassword(safeGetProtectionField(), password, null);
     }
     
@@ -1831,12 +1843,14 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
 
         int idx = 0;
         for (CTMergeCell mc : ctMergeCells.getMergeCellArray()) {
-            if (!indices.contains(idx++)) newMergeCells.add(mc);
+            if (!indices.contains(idx++)) {
+                newMergeCells.add(mc);
+            }
         }
         
         if (newMergeCells.isEmpty()) {
             worksheet.unsetMergeCells();
-        } else{
+        } else {
             CTMergeCell[] newMergeCellsArray = new CTMergeCell[newMergeCells.size()];
             ctMergeCells.setMergeCellArray(newMergeCells.toArray(newMergeCellsArray));
         }
@@ -1854,9 +1868,13 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         }
         // collect cells into a temporary array to avoid ConcurrentModificationException
         ArrayList<XSSFCell> cellsToDelete = new ArrayList<XSSFCell>();
-        for(Cell cell : row) cellsToDelete.add((XSSFCell)cell);
+        for (Cell cell : row) {
+            cellsToDelete.add((XSSFCell)cell);
+        }
 
-        for(XSSFCell cell : cellsToDelete) row.removeCell(cell);
+        for (XSSFCell cell : cellsToDelete) {
+            row.removeCell(cell);
+        }
 
         int idx = _rows.headMap(row.getRowNum()).size();
         _rows.remove(row.getRowNum());
@@ -2139,8 +2157,8 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         return (int) columnInfo.getMax();
     }
 
-    private boolean isAdjacentBefore(CTCol col, CTCol other_col) {
-        return col.getMax() == other_col.getMin() - 1;
+    private boolean isAdjacentBefore(CTCol col, CTCol otherCol) {
+        return col.getMax() == otherCol.getMin() - 1;
     }
 
     private int findStartOfColumnOutlineGroup(int pIdx) {
@@ -2418,7 +2436,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      */
     @Override
     public void setDefaultRowHeight(short height) {
-        setDefaultRowHeightInPoints((float)height / 20);
+        setDefaultRowHeightInPoints((float)height / TWIPS_PER_POINT);
     }
 
     /**
@@ -2703,7 +2721,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      */
     @Override
     public void setZoom(int scale) {
-        if(scale < 10 || scale > 400) throw new IllegalArgumentException("Valid scale values range from 10 to 400");
+        if (scale < 10 || scale > 400) {
+            throw new IllegalArgumentException("Valid scale values range from 10 to 400");
+        }
         getSheetTypeSheetView().setZoomScale(scale);
     }
 
@@ -3259,7 +3279,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         return sheetPr.isSetPageSetUpPr() ? sheetPr.getPageSetUpPr() : sheetPr.addNewPageSetUpPr();
     }
 
-    private static final boolean shouldRemoveRow(int startRow, int endRow, int n, int rownum) {
+    private static boolean shouldRemoveRow(int startRow, int endRow, int n, int rownum) {
         // is this row in the target-window where the moved rows will land?
         if (rownum >= (startRow + n) && rownum <= (endRow + n)) {
             // only remove it if the current row is not part of the data that is copied
@@ -3943,15 +3963,16 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         String r = "";
 
         if (startC != -1 || endC != -1) {
-          c = escapedName + "!$" + colRef.getCellRefParts()[2]
-              + ":$" + colRef2.getCellRefParts()[2];
+          String col1 = colRef.getCellRefParts()[2];
+          String col2 = colRef2.getCellRefParts()[2];
+          c = escapedName + "!$" + col1 + ":$" + col2;
         }
 
         if (startR != -1 || endR != -1) {
-            if (!rowRef.getCellRefParts()[1].equals("0")
-                && !rowRef2.getCellRefParts()[1].equals("0")) {
-               r = escapedName + "!$" + rowRef.getCellRefParts()[1]
-                     + ":$" + rowRef2.getCellRefParts()[1];
+            String row1 = rowRef.getCellRefParts()[1];
+            String row2 = rowRef2.getCellRefParts()[1];
+            if (!row1.equals("0") && !row2.equals("0")) {
+               r = escapedName + "!$" + row1 + ":$" + row2;
             }
         }
 
