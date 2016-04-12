@@ -150,7 +150,7 @@ public class RLEDecompressingInputStream extends InputStream {
     /**
      * Reads a single chunk from the underlying inputstream.
      * 
-     * @return
+     * @return number of bytes that were read, or -1 if the end of the stream was reached.
      * @throws IOException
      */
     private int readChunk() throws IOException {
@@ -216,7 +216,7 @@ public class RLEDecompressingInputStream extends InputStream {
      * Helper method to determine how many bits in the CopyToken are used for the CopyLength.
      * 
      * @param offset
-     * @return
+     * @return returns the number of bits in the copy token (a value between 4 and 12)
      */
     static int getCopyLenBits(int offset) {
         for (int n = 11; n >= 4; n--) {
