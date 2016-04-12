@@ -110,6 +110,8 @@ public class FormulaViewer
                 case Ptg.CLASS_ARRAY :
                     buf.append("ARRAY");
                     break;
+                default:
+                    throwInvalidRVAToken(token);
             }
             
             buf.append(sep);
@@ -125,6 +127,8 @@ public class FormulaViewer
                     case Ptg.CLASS_ARRAY :
                         buf.append("ARRAY");
                         break;
+                    default:
+                        throwInvalidRVAToken(token);
                 }
             }else {
                 buf.append("VALUE");
@@ -173,10 +177,16 @@ public class FormulaViewer
                 case Ptg.CLASS_ARRAY :
                     buf.append("(A)");
                     break;
+                default:
+                    throwInvalidRVAToken(token);
             }
             buf.append(' ');
         } 
         return buf.toString();
+    }
+    
+    private static void throwInvalidRVAToken(Ptg token) {
+        throw new IllegalStateException("Invalid RVA type (" + token.getPtgClass() + "). This should never happen.");
     }
     
     

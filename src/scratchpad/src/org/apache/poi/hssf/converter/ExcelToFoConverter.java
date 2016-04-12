@@ -409,6 +409,7 @@ public class ExcelToFoConverter extends AbstractExcelConverter
             triplet.bold = true;
             break;
         case HSSFFont.BOLDWEIGHT_NORMAL:
+        default:
             triplet.bold = false;
             break;
         }
