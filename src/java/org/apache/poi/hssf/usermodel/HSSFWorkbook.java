@@ -1736,6 +1736,12 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      * @param format            The format of the picture.  One of <code>PICTURE_TYPE_*</code>
      *
      * @return the index to this picture (1 based).
+     * @see #PICTURE_TYPE_WMF
+     * @see #PICTURE_TYPE_EMF
+     * @see #PICTURE_TYPE_PICT
+     * @see #PICTURE_TYPE_PNG
+     * @see #PICTURE_TYPE_JPEG
+     * @see #PICTURE_TYPE_DIB
      */
     @Override
     public int addPicture(byte[] pictureData, int format)
@@ -1792,12 +1798,14 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
             case PICTURE_TYPE_PNG:
                 blipRecord.setOptions(HSSFPictureData.MSOBI_PNG);
                 break;
-            case HSSFWorkbook.PICTURE_TYPE_JPEG:
+            case PICTURE_TYPE_JPEG:
                 blipRecord.setOptions(HSSFPictureData.MSOBI_JPEG);
                 break;
-            case HSSFWorkbook.PICTURE_TYPE_DIB:
+            case PICTURE_TYPE_DIB:
                 blipRecord.setOptions(HSSFPictureData.MSOBI_DIB);
                 break;
+            default:
+                throw new IllegalStateException("Unexpected picture format: " + format);
         }
 
         EscherBSERecord r = new EscherBSERecord();

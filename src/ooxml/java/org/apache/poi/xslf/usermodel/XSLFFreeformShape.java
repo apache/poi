@@ -110,6 +110,8 @@ public class XSLFFreeformShape extends XSLFAutoShape
                     numPoints++;
                     ctPath.addNewClose();
                     break;
+                default:
+                    throw new IllegalStateException("Unrecognized path segment type: " + type);
             }
             it.next();
         }

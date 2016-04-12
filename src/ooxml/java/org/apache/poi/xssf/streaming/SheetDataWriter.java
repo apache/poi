@@ -213,6 +213,8 @@ public class SheetDataWriter {
                             _out.write("<v>" + nval + "</v>");
                         }
                         break;
+                    default:
+                        break;
                 }
                 break;
             }
@@ -255,7 +257,7 @@ public class SheetDataWriter {
                 break;
             }
             default: {
-                throw new RuntimeException("Huh?");
+                throw new IllegalStateException("Invalid cell type: " + cellType);
             }
         }
         _out.write("</c>");

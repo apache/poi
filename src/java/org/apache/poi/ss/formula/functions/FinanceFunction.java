@@ -82,8 +82,9 @@ public abstract class FinanceFunction implements Function3Arg, Function4Arg {
                 }
                 return evaluate(srcRowIndex, srcColumnIndex, args[0], args[1], args[2], arg3, arg4);
             }
+            default:
+                return ErrorEval.VALUE_INVALID;
         }
-        return ErrorEval.VALUE_INVALID;
     }
 
     protected double evaluate(double[] ds) throws EvaluationException {

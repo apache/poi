@@ -160,6 +160,8 @@ public final class FileInformationBlock implements Cloneable
         case 0x0112:
             assertCbRgFcLcb( "0x0112", 0x00B7, "0x00B7", _cbRgFcLcb );
             break;
+        default:
+            throw new IllegalStateException("Invalid file format version number: " + getNFib());
         }
     }
 
@@ -194,6 +196,8 @@ public final class FileInformationBlock implements Cloneable
         case 0x0112:
             assertCswNew( "0x0112", 0x0005, "0x0005", _cswNew );
             break;
+        default:
+            throw new IllegalStateException("Invalid file format version number: " + getNFib());
         }
     }
 

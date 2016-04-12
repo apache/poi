@@ -179,10 +179,16 @@ public final class Offset implements Function {
 					if(!(args[4] instanceof MissingArgEval)) {
 						width = evaluateIntArg(args[4], srcCellRow, srcCellCol);
 					}
+					// fall-through to pick up height
 				case 4:
 					if(!(args[3] instanceof MissingArgEval)) {
 						height = evaluateIntArg(args[3], srcCellRow, srcCellCol);
 					}
+					break;
+				//case 3:
+					// nothing to do
+				default:
+					break;
 			}
 			// Zero height or width raises #REF! error
 			if(height == 0 || width == 0) {

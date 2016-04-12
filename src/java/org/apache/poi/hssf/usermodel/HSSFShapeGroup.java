@@ -49,6 +49,8 @@ public class HSSFShapeGroup extends HSSFShape implements HSSFShapeContainer {
                 case EscherChildAnchorRecord.RECORD_ID:
                     anchor = new HSSFChildAnchor((EscherChildAnchorRecord) ch);
                     break;
+                default:
+                    break;
             }
         }
     }
