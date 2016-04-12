@@ -18,11 +18,13 @@
 package org.apache.poi.xssf.usermodel;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import org.junit.Test;
-
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTChartsheet;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 
@@ -49,17 +51,20 @@ public final class TestXSSFChartSheet {
             fail("Row iterator for charts sheets should return zero rows");
         }
         //access to a arbitrary row
-        assertEquals(null, sheet.getRow(1));
+        assertNull(sheet.getRow(1));
 
         //some basic get* accessors
         assertEquals(0, sheet.getNumberOfComments());
         assertEquals(0, sheet.getNumHyperlinks());
         assertEquals(0, sheet.getNumMergedRegions());
-        assertEquals(null, sheet.getActiveCell());
-        assertEquals(true, sheet.getAutobreaks());
-        assertEquals(null, sheet.getCellComment(0, 0));
+        assertNull(sheet.getActiveCell());
+        assertTrue(sheet.getAutobreaks());
+        assertNull(sheet.getCellComment(0, 0));
         assertEquals(0, sheet.getColumnBreaks().length);
-        assertEquals(true, sheet.getRowSumsBelow());
+        assertTrue(sheet.getRowSumsBelow());
+        assertNotNull(sheet.createDrawingPatriarch());
+        assertNotNull(sheet.getDrawingPatriarch());
+        assertNotNull(sheet.getCTChartsheet());
     }
     
     @Test
@@ -73,6 +78,6 @@ public final class TestXSSFChartSheet {
        assertEquals(1, cs.createDrawingPatriarch().getCharts().size());
        
        XSSFChart chart = cs.createDrawingPatriarch().getCharts().get(0);
-       assertEquals(null, chart.getTitle());
+       assertNull(chart.getTitle());
     }
 }
