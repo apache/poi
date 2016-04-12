@@ -116,6 +116,8 @@ public final class CommentShape extends TextboxShape {
                 case EscherProperties.LINESTYLE__COLOR:
                     iterator.remove();
                     break;
+                default:
+                    break;
             }
         }
 

@@ -334,7 +334,11 @@ public final class InternalWorkbook {
                     if (log.check( POILogger.DEBUG ))
                         log.log(DEBUG, "found NameComment at " + k);
                     retval.commentRecords.put(ncr.getNameText(), ncr);
-                default :
+                    break;
+                default:
+                    if (log.check( POILogger.DEBUG ))
+                        log.log(DEBUG,  "ignoring record (sid=" + rec.getSid() + ") at " + k);
+                    break;
             }
             records.add(rec);
         }
@@ -351,6 +355,8 @@ public final class InternalWorkbook {
             switch (rec.getSid()) {
                 case HyperlinkRecord.sid:
                     retval.hyperlinks.add((HyperlinkRecord)rec);
+                    break;
+                default:
                     break;
             }
         }
@@ -1682,6 +1688,9 @@ public final class InternalWorkbook {
                 retval.setAdtlPaletteOptions(( short ) 0);
                 retval.setFillPaletteOptions(( short ) 0x20c0);
                 break;
+
+            default:
+                throw new IllegalStateException("Unrecognized format id: " + id);
         }
         return retval;
     }
@@ -1754,6 +1763,9 @@ public final class InternalWorkbook {
                 retval.setBuiltinStyle(5);
                 retval.setOutlineStyleLevel(( byte ) 0xffffffff);
                 break;
+
+            default:
+                throw new IllegalStateException("Unrecognized style id: " + id);
         }
         return retval;
     }

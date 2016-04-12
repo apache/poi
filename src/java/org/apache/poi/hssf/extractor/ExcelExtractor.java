@@ -367,6 +367,8 @@ public class ExcelExtractor extends POIOLE2TextExtractor implements org.apache.p
 										case HSSFCell.CELL_TYPE_ERROR:
 											text.append(ErrorEval.getText(cell.getErrorCellValue()));
 											break;
+										default:
+											throw new IllegalStateException("Unexpected cell cached formula result type: " + cell.getCachedFormulaResultType());
 
 									}
 								}

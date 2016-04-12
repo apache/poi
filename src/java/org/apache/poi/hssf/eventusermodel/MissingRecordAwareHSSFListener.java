@@ -134,6 +134,8 @@ public final class MissingRecordAwareHSSFListener implements HSSFListener {
 					thisRow = nrec.getRow();
 					thisColumn = nrec.getColumn();
 					break;
+				default:
+					break;
 			}
 		}
 

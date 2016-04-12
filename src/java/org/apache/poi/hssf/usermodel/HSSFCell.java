@@ -186,6 +186,9 @@ public class HSSFCell implements Cell {
             case CELL_TYPE_FORMULA :
                 _stringValue=new HSSFRichTextString(((FormulaRecordAggregate) cval).getStringValue());
                 break;
+
+            default :
+                break;
         }
     }
 
@@ -422,6 +425,8 @@ public class HSSFCell implements Cell {
                 errRec.setRow(row);
                 _record = errRec;
                 break;
+            default :
+                throw new IllegalStateException("Invalid cell type: " + cellType);
         }
         if (cellType != _cellType &&
             _cellType!=-1 )  // Special Value to indicate an uninitialized Cell
@@ -1087,6 +1092,8 @@ public class HSSFCell implements Cell {
                 break;
             case HSSFHyperlink.LINK_DOCUMENT:
                 link.setLabel("place");
+                break;
+            default:
                 break;
         }
 
