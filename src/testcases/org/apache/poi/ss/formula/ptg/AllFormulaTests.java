@@ -17,7 +17,6 @@
 
 package org.apache.poi.ss.formula.ptg;
 
-import org.apache.poi.ss.formula.TestFormulaShifter;
 import org.apache.poi.ss.formula.TestSheetNameFormatter;
 import org.apache.poi.ss.formula.eval.AllFormulaEvalTests;
 import org.apache.poi.ss.formula.function.AllFormulaFunctionTests;
@@ -40,7 +39,7 @@ import org.junit.runners.Suite;
     TestAttrPtg.class,
     TestErrPtg.class,
     TestExternalFunctionFormulas.class,
-    TestFormulaShifter.class,
+    //TestFormulaShifter.class, //converted to junit4
     TestFuncPtg.class,
     TestFuncVarPtg.class,
     TestIntersectionPtg.class,
