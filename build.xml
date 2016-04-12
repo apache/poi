@@ -1863,7 +1863,7 @@ under the License.
     <target name="findbugs">
     	<!-- NOTE: we did not update to 3.x yet because it requires Java 7, but we are still supporting Java 6 currently! -->
         <downloadfile
-            src="https://prdownloads.sourceforge.net/findbugs/findbugs-noUpdateChecks-2.0.3.zip?download"
+            src="http://prdownloads.sourceforge.net/findbugs/findbugs-noUpdateChecks-2.0.3.zip?download"
             dest="${main.lib}/findbugs-noUpdateChecks-2.0.3.zip"/>
 
         <property name="findbugs.home" value="build/findbugs" />
