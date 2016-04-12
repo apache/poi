@@ -46,7 +46,7 @@ under the License.
 
     <property environment="env"/>
     <!-- the repository to download jars from -->
-    <property name="repository.m2" value="http://repo1.maven.org"/>
+    <property name="repository.m2" value="https://repo1.maven.org"/>
     <property name="repository.pentaho" value="http://repo.pentaho.org/"/>
 
     <property name="main.lib" location="lib"/>
@@ -209,7 +209,7 @@ under the License.
     <property name="ooxml.xsds.dc.1" value="http://dublincore.org/schemas/xmls/qdc/2003/04/02/dc.xsd"/>
     <property name="ooxml.xsds.dc.2" value="http://dublincore.org/schemas/xmls/qdc/2003/04/02/dcterms.xsd"/>
     <property name="ooxml.xsds.dc.3" value="http://dublincore.org/schemas/xmls/qdc/2003/04/02/dcmitype.xsd"/>
-    <property name="ooxml.xsds.dsig.1" value="http://www.w3.org/TR/2002/REC-xmldsig-core-20020212/xmldsig-core-schema.xsd"/>
+    <property name="ooxml.xsds.dsig.1" value="https://www.w3.org/TR/2002/REC-xmldsig-core-20020212/xmldsig-core-schema.xsd"/>
     <property name="ooxml.xsds.dsig.2" value="http://uri.etsi.org/01903/v1.3.2/XAdES.xsd"/>
     <property name="ooxml.xsds.dsig.3" value="http://uri.etsi.org/01903/v1.4.1/XAdESv141.xsd"/>
     <property name="ooxml.xsds.ozip.2" value="OfficeOpenXML-Part2.zip"/>
@@ -250,7 +250,7 @@ under the License.
     <property name="dist.bouncycastle-bcpg.jar" location="${compile.lib}/bcpg-jdk15on-1.51.jar"/>
     <property name="dist.bouncycastle-bcpg.url" value="${repository.m2}/maven2/org/bouncycastle/bcpg-jdk15on/1.51/bcpg-jdk15on-1.51.jar"/>
     <property name="dist.commons-openpgp.jar" location="${compile.lib}/commons-openpgp-1.0-SNAPSHOT.jar"/>
-    <property name="dist.commons-openpgp.url" value="http://repository.apache.org/snapshots/org/apache/commons/commons-openpgp/1.0-SNAPSHOT/commons-openpgp-1.0-20140717.171036-11.jar"/>
+    <property name="dist.commons-openpgp.url" value="https://repository.apache.org/snapshots/org/apache/commons/commons-openpgp/1.0-SNAPSHOT/commons-openpgp-1.0-20140717.171036-11.jar"/>
     <property name="dist.nexus-staging.jar" location="${compile.lib}/nexus-staging-ant-tasks-1.6.3-uber.jar"/>
     <property name="dist.nexus-staging.url" value="${repository.m2}/maven2/org/sonatype/nexus/ant/nexus-staging-ant-tasks/1.6.3/nexus-staging-ant-tasks-1.6.3-uber.jar"/>
 
@@ -477,7 +477,7 @@ under the License.
             <local name="exists"/>
             <available file="@{dest}" property="exists"/>
             <fail unless:true="${exists}"
-                message="Java version might be uncapable to download https URLs - see http://stackoverflow.com/questions/6851461/java-why-does-ssl-handshake-give-could-not-generate-dh-keypair-exception">
+                message="Java version might be uncapable to download https URLs - see https://stackoverflow.com/questions/6851461/java-why-does-ssl-handshake-give-could-not-generate-dh-keypair-exception">
                 <condition>
                     <and>
                         <equals arg1="${ant.java.version}" arg2="1.6"/>
@@ -1402,7 +1402,7 @@ under the License.
 
     <target name="-check-forrest-installed" unless="env.FORREST_HOME">
         <echo>Please install Apache Forrest (see
-            &lt;http://forrest.apache.org/index.html&gt;) and set the
+            &lt;https://forrest.apache.org/index.html&gt;) and set the
             FORREST_HOME environment variable!
         </echo>
         <fail message="Apache Forrest is not installed."/>
@@ -1744,7 +1744,7 @@ under the License.
       Please make sure the maven-ant-tasks jar is in ANT_HOME/lib, or made
       available to Ant using other mechanisms like -lib or CLASSPATH.
 
-      You can download the Maven Ant Tasks from http://maven.apache.org/ant-tasks/download.html
+      You can download the Maven Ant Tasks from https://maven.apache.org/ant-tasks/download.html
       </fail>
     </target>
 
@@ -1863,7 +1863,7 @@ under the License.
     <target name="findbugs">
     	<!-- NOTE: we did not update to 3.x yet because it requires Java 7, but we are still supporting Java 6 currently! -->
         <downloadfile
-            src="http://prdownloads.sourceforge.net/findbugs/findbugs-noUpdateChecks-2.0.3.zip?download"
+            src="https://prdownloads.sourceforge.net/findbugs/findbugs-noUpdateChecks-2.0.3.zip?download"
             dest="${main.lib}/findbugs-noUpdateChecks-2.0.3.zip"/>
 
         <property name="findbugs.home" value="build/findbugs" />
@@ -1935,7 +1935,7 @@ under the License.
         <mkdir dir="build/scratchpad-test-resources"/>
 
         <antcall target="downloadfile">
-            <param name="sourcefile" value="http://sourceforge.net/projects/monafont/files/monafont/monafont-2.90/monafont-ttf-2.90.zip/download"/>
+            <param name="sourcefile" value="https://sourceforge.net/projects/monafont/files/monafont/monafont-2.90/monafont-ttf-2.90.zip/download"/>
             <param name="destfile" value="build/scratchpad-test-resources/monafont-ttf-2.90.zip"/>
         </antcall>
 
