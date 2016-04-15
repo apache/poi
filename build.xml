@@ -1985,27 +1985,9 @@ under the License.
         </openpgp:signer>
     </target>
 
-    <macrodef name="nexus-upload">
-        <attribute name="artifactId"/>
-        <sequential>
-            <downloadfile src="${dist.nexus-staging.url}" dest="${dist.nexus-staging.jar}"/>
-            <taskdef uri="antlib:org.sonatype.nexus.ant.staging" resource="org/sonatype/nexus/ant/staging/antlib.xml">
-                <classpath><pathelement path="${dist.nexus-staging.jar}"/></classpath>
-            </taskdef>
-
-            <staging:stageRemotely keepStagingRepositoryOnFailure="true" description="@{artifactId} ${version.id}">
-                <staging:nexusStagingInfo stagingDirectory="build/dist/maven/@{artifactId}">
-                    <staging:projectInfo groupId="org.apache.poi" artifactId="@{artifactId}" version="${version.id}" />
-                    <staging:connectionInfo baseUrl="https://repository.apache.org">
-                        <staging:authentication username="${settings.apache-id.username}" password="${settings.apache-id.password}" />
-                    </staging:connectionInfo>
-                </staging:nexusStagingInfo>
-            </staging:stageRemotely>
-        </sequential>
-    </macrodef>
-
     <target name="dist-nexus" depends="load-maven-server-settings,dist-checksum">
-        <!-- if this throws a "... dh keypair ..." exception, use Java 7+ for executing the task -->
+        <delete dir="build/repo"/>
+        <delete dir="build/nexus-stage"/>
         <nexus-upload artifactId="poi"/>
         <nexus-upload artifactId="poi-examples"/>
         <nexus-upload artifactId="poi-excelant"/>
@@ -2013,6 +1995,72 @@ under the License.
         <nexus-upload artifactId="poi-ooxml-schemas"/>
         <nexus-upload artifactId="poi-scratchpad"/>
     </target>
+
+    <macrodef name="nexus-upload">
+        <attribute name="artifactId"/>
+        <sequential>
+            <local name="repo"/>
+            <property name="repo" location="build/repo/@{artifactId}"/>
+
+            <copy todir="${repo}">
+                <mappedresources>
+                    <fileset dir="build/dist/maven" includes="@{artifactId}/**"/>
+                    <regexpmapper from="^([^/]+)/(.*)$$" to="org/apache/poi/\1/${version.id}/\2" handledirsep="true"/>
+                </mappedresources>
+            </copy>
+
+            <local name="lastUpdated"/>
+            <tstamp>
+                <format property="lastUpdated" pattern="yyyyMMddHHmmss" timezone="UTC"/>
+            </tstamp>            
+
+            <local name="metadir"/>
+            <property name="metadir" location="${repo}/org/apache/poi/@{artifactId}"/>
+
+            <echo file="${metadir}/maven-metadata.xml"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>org.apache.poi</groupId>
+  <artifactId>@{artifactId}</artifactId>
+  <versioning>
+    <latest>${version.id}</latest>
+    <release>${version.id}</release>
+    <versions>
+      <version>${version.id}</version>
+    </versions>
+    <lastUpdated>${lastUpdated}</lastUpdated>
+  </versioning>
+</metadata>]]></echo>
+            <fixcrlf srcdir="${metadir}" includes="maven-metadata.xml" eol="unix" eof="remove" />
+            <checksum algorithm="sha1" format="MD5SUM">
+                <fileset dir="${metadir}" includes="maven-metadata.xml"/>
+            </checksum>
+            <checksum algorithm="md5" format="MD5SUM">
+                <fileset dir="${metadir}" includes="maven-metadata.xml"/>
+            </checksum>
+
+            <fixcrlf srcDir="${metadir}" includes="*.md5,*.sha1" eol="unix"/>
+
+            <downloadfile src="${dist.nexus-staging.url}" dest="${dist.nexus-staging.jar}"/>
+            <taskdef uri="antlib:org.sonatype.nexus.ant.staging" resource="org/sonatype/nexus/ant/staging/antlib.xml">
+                <classpath><pathelement path="${dist.nexus-staging.jar}"/></classpath>
+            </taskdef>
+
+            <staging:stageLocally description="@{artifactId} ${version.id}">
+                <staging:nexusStagingInfo stagingDirectory="build/nexus-stage/@{artifactId}"/>
+                <fileset dir="${repo}" />
+            </staging:stageLocally>
+
+            <!-- if this throws a "... dh keypair ..." exception, use Java 7+ for executing the task -->
+            <staging:stageRemotely description="@{artifactId} ${version.id}">
+                <staging:nexusStagingInfo stagingDirectory="build/nexus-stage/@{artifactId}">
+                    <staging:projectInfo groupId="org.apache.poi" artifactId="@{artifactId}" version="${version.id}" />
+                    <staging:connectionInfo baseUrl="https://repository.apache.org/">
+                        <staging:authentication username="${settings.apache-id.username}" password="${settings.apache-id.password}" />
+                    </staging:connectionInfo>
+                </staging:nexusStagingInfo>
+            </staging:stageRemotely>
+        </sequential>
+    </macrodef>
 
     <target name="-init-svn" depends="init,fetch-svn-jars,load-maven-server-settings">
         <!-- JAVA_HOME needs to point to a JRE/JDK7+, otherwise the svn/https connection throws a "Could not generate DH keypair"-->
