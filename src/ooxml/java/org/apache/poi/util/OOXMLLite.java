@@ -43,7 +43,8 @@ import junit.framework.TestCase;
 
 import org.junit.Test;
 import org.junit.internal.TextListener;
-import org.junit.runner.JUnitCore;import org.junit.runner.Result;
+import org.junit.runner.JUnitCore;
+import org.junit.runner.Result;
 
 /**
  * Build a 'lite' version of the ooxml-schemas.jar
@@ -90,12 +91,33 @@ public final class OOXMLLite {
     void build() throws IOException, ClassNotFoundException {
         List<Class<?>> lst = new ArrayList<Class<?>>();
         //collect unit tests
+        String exclude = StringUtil.join("|",
+                "BaseTestXCell",
+                "TestSXSSFWorkbook\\$\\d",
+                "TestSXSSFWorkbook\\$NullOutputStream",
+                "TestUnfixedBugs",
+                "MemoryUsage",
+                "TestDataProvider",
+                "TestDataSamples",
+                "All.+Tests",
+                "ZipFileAssert",
+                "PkiTestUtils",
+                "TestCellFormatPart\\$\\d",
+                "TestSignatureInfo\\$\\d",
+                "TestCertificateEncryption\\$CertData",
+                "TestPOIXMLDocument\\$OPCParser",
+                "TestPOIXMLDocument\\$TestFactory",
+                "TestXSLFTextParagraph\\$DrawTextParagraphProxy",
+                "TestXSSFExportToXML\\$\\d",
+                "TestXSSFExportToXML\\$DummyEntityResolver",
+                "TestFormulaEvaluatorOnXSSF\\$Result",
+                "TestFormulaEvaluatorOnXSSF\\$SS",
+                "TestMultiSheetFormulaEvaluatorOnXSSF\\$Result",
+                "TestMultiSheetFormulaEvaluatorOnXSSF\\$SS",
+                "TestXSSFBugs\\$\\d"
+        );
         System.out.println("Collecting unit tests from " + _testDir);
-        collectTests(_testDir, _testDir, lst, ".+.class$", 
-                ".+(BaseTestXCell|TestUnfixedBugs|MemoryUsage|TestDataProvider|TestDataSamples|All.+Tests|ZipFileAssert|PkiTestUtils|TestCellFormatPart\\$\\d|TestSignatureInfo\\$\\d|"
-                + "TestSXSSFWorkbook\\$\\d|TestCertificateEncryption\\$CertData|TestPOIXMLDocument\\$OPCParser|TestPOIXMLDocument\\$TestFactory|TestXSLFTextParagraph\\$DrawTextParagraphProxy|"
-                + "TestXSSFExportToXML\\$\\d|TestXSSFExportToXML\\$DummyEntityResolver|TestSXSSFWorkbook\\$NullOutputStream|TestFormulaEvaluatorOnXSSF\\$Result|TestFormulaEvaluatorOnXSSF\\$SS|"
-                + "TestMultiSheetFormulaEvaluatorOnXSSF\\$Result|TestMultiSheetFormulaEvaluatorOnXSSF\\$SS|TestXSSFBugs\\$\\d).class");
+        collectTests(_testDir, _testDir, lst, ".+.class$", ".+(" + exclude + ").class");
         System.out.println("Found " + lst.size() + " classes");
         
         //run tests

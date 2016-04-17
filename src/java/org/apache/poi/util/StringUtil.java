@@ -574,4 +574,21 @@ public class StringUtil {
        9133, // 0xf0fe bracerightbt
        ' ', // 0xf0ff not defined
    };
+   
+   // Could be replaced with org.apache.commons.lang3.StringUtils#join
+   @Internal
+   public static String join(Object[] array, String separator) {
+       if (array.length == 0) return "";
+       StringBuilder sb = new StringBuilder();
+       sb.append(array[0]);
+       for (int i=1; i<array.length; i++) {
+           sb.append(separator).append(array[i]);
+       }
+       return sb.toString();
+   }
+   
+   @Internal
+   public static String join(String separator, Object... array) {
+       return join(array, separator);
+   }
 }
