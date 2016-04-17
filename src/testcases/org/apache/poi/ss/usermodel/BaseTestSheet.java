@@ -51,10 +51,10 @@ public abstract class BaseTestSheet {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
     
-    protected final ITestDataProvider _testDataProvider;
+    private final ITestDataProvider _testDataProvider;
 
     protected BaseTestSheet(ITestDataProvider testDataProvider) {
-        _testDataProvider = testDataProvider;
+    	_testDataProvider = testDataProvider;
     }
     
     protected void trackColumnsForAutoSizingIfSXSSF(Sheet sheet) {
@@ -116,9 +116,7 @@ public abstract class BaseTestSheet {
         }
     }
     
-    @Test(expected=IllegalArgumentException.class)
-    public void createRowAfterLastRow() throws IOException {
-        final SpreadsheetVersion version = _testDataProvider.getSpreadsheetVersion();
+    protected void createRowAfterLastRow(SpreadsheetVersion version) throws IOException {
         final Workbook workbook = _testDataProvider.createWorkbook();
         final Sheet sh = workbook.createSheet();
         sh.createRow(version.getLastRowIndex());
@@ -129,6 +127,7 @@ public abstract class BaseTestSheet {
             workbook.close();
         }
     }
+
 
     @Test
     public void removeRow() throws IOException {

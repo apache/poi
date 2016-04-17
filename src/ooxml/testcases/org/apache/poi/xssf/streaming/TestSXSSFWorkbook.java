@@ -32,8 +32,11 @@ import java.io.IOException;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.POITestCase;
+import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.ss.usermodel.BaseTestXWorkbook;
+import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.ss.SpreadsheetVersion;
+import org.apache.poi.ss.usermodel.BaseTestWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -49,15 +52,16 @@ import org.junit.Assume;
 import org.junit.Ignore;
 import org.junit.Test;
 
-public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
+public final class TestSXSSFWorkbook extends BaseTestWorkbook {
+    private static final SXSSFITestDataProvider _testDataProvider = SXSSFITestDataProvider.instance;
 
     public TestSXSSFWorkbook() {
-        super(SXSSFITestDataProvider.instance);
-    }
+		super(_testDataProvider);
+	}
 
     @After
     public void tearDown(){
-        ((SXSSFITestDataProvider)_testDataProvider).cleanup();
+        _testDataProvider.cleanup();
     }
 
     /**
@@ -306,7 +310,7 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
         xwb.close();
     }
 
-    protected static void assertWorkbookDispose(SXSSFWorkbook wb)
+    static void assertWorkbookDispose(SXSSFWorkbook wb)
     {
         int rowNum = 1000;
         int sheetNum = 5;
@@ -454,7 +458,12 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
         workBook.close();
     }
     
-
+    @Test
+    @Override
+    public void getSpreadsheetVersion() throws IOException {
+        verifySpreadsheetVersion(SpreadsheetVersion.EXCEL2007);
+    }
+    
     @Test
     public void closeDoesNotModifyWorkbook() throws IOException, InvalidFormatException {
         final String filename = "SampleSS.xlsx";

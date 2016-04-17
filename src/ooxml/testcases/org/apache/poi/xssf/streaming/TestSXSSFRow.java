@@ -19,7 +19,10 @@
 
 package org.apache.poi.xssf.streaming;
 
-import org.apache.poi.ss.usermodel.BaseTestXRow;
+import java.io.IOException;
+
+import org.apache.poi.ss.SpreadsheetVersion;
+import org.apache.poi.ss.usermodel.BaseTestRow;
 import org.apache.poi.xssf.SXSSFITestDataProvider;
 import org.junit.After;
 import org.junit.Test;
@@ -27,7 +30,7 @@ import org.junit.Test;
 /**
  * Tests for XSSFRow
  */
-public final class TestSXSSFRow extends BaseTestXRow {
+public final class TestSXSSFRow extends BaseTestRow {
 
     public TestSXSSFRow() {
         super(SXSSFITestDataProvider.instance);
@@ -36,7 +39,17 @@ public final class TestSXSSFRow extends BaseTestXRow {
 
     @After
     public void tearDown() {
-        ((SXSSFITestDataProvider) _testDataProvider).cleanup();
+        SXSSFITestDataProvider.instance.cleanup();
+    }
+
+    @Test
+    public void testRowBounds() throws IOException {
+        baseTestRowBounds(SpreadsheetVersion.EXCEL2007.getLastRowIndex());
+    }
+
+    @Test
+    public void testCellBounds() throws IOException {
+        baseTestCellBounds(SpreadsheetVersion.EXCEL2007.getLastColumnIndex());
     }
 
 }
