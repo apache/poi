@@ -17,33 +17,35 @@
 
 package org.apache.poi.hssf.record;
 
-import java.util.Iterator;
+import static org.junit.Assert.assertEquals;
+
 import java.util.Map;
-import junit.framework.TestCase;
+import java.util.Map.Entry;
+
 import org.apache.poi.hssf.util.HSSFColor;
+import org.junit.Test;
 
 /**
  * Verifies that custom palette editing works correctly
  *
  * @author Brian Sanders (bsanders at risklabs dot com)
  */
-public final class TestPaletteRecord extends TestCase {
+public final class TestPaletteRecord {
 
     /**
      * Tests that the default palette matches the constants of HSSFColor
      */
+    @Test
     public void testDefaultPalette() {
         PaletteRecord palette = new PaletteRecord();
 
         //make sure all the HSSFColor constants match
-        Map colors = HSSFColor.getIndexHash();
-        Iterator indexes = colors.keySet().iterator();
-        while (indexes.hasNext())
-        {
-            Integer index = (Integer) indexes.next();
-            HSSFColor c = (HSSFColor) colors.get(index);
+        Map<Integer, HSSFColor> colors = HSSFColor.getIndexHash();
+        for (Entry<Integer, HSSFColor> entry : colors.entrySet()) {
+            int index = entry.getKey();
+            HSSFColor c = entry.getValue();
             short[] rgbTriplet = c.getTriplet();
-            byte[] paletteTriplet = palette.getColor(index.shortValue());
+            byte[] paletteTriplet = palette.getColor((short) index);
             String msg = "Expected HSSFColor constant to match PaletteRecord at index 0x"
                 + Integer.toHexString(c.getIndex());
             assertEquals(msg, rgbTriplet[0], paletteTriplet[0] & 0xff);
