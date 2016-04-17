@@ -33,16 +33,15 @@ import java.util.Iterator;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ss.ITestDataProvider;
-import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.junit.Test;
 
 public abstract class BaseTestWorkbook {
 
-    private final ITestDataProvider _testDataProvider;
+    protected final ITestDataProvider _testDataProvider;
 
     protected BaseTestWorkbook(ITestDataProvider testDataProvider) {
-    _testDataProvider = testDataProvider;
+        _testDataProvider = testDataProvider;
     }
     
     @Test
@@ -743,7 +742,7 @@ public abstract class BaseTestWorkbook {
         wb2.close();
     }
 
-    public void changeSheetNameWithSharedFormulas(String sampleFile) throws IOException {
+    protected void changeSheetNameWithSharedFormulas(String sampleFile) throws IOException {
         Workbook wb = _testDataProvider.openSampleWorkbook(sampleFile);
 
         FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
@@ -827,11 +826,9 @@ public abstract class BaseTestWorkbook {
     }
 
     @Test
-    public abstract void getSpreadsheetVersion() throws IOException;
-    
-    protected void verifySpreadsheetVersion(SpreadsheetVersion expected) throws IOException {
+    public void getSpreadsheetVersion() throws IOException {
         final Workbook wb = _testDataProvider.createWorkbook();
-        assertEquals(expected, wb.getSpreadsheetVersion());
+        assertEquals(_testDataProvider.getSpreadsheetVersion(), wb.getSpreadsheetVersion());
         wb.close();
     }
     
