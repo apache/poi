@@ -104,7 +104,7 @@ public final class HSSFCellUtil {
      * @see HSSFCellStyle for alignment options
      */
     public static void setAlignment(HSSFCell cell, HSSFWorkbook workbook, short align) {
-    	CellUtil.setAlignment(cell, workbook, align);
+    	CellUtil.setAlignment(cell, align);
     }
 
     /**
@@ -116,7 +116,7 @@ public final class HSSFCellUtil {
      * @deprecated 3.15 beta2. Removed in 3.17. Use {@link org.apache.poi.ss.util.CellUtil#setFont} instead.
      */
     public static void setFont(HSSFCell cell, HSSFWorkbook workbook, HSSFFont font) {
-    	CellUtil.setFont(cell, workbook, font);
+    	CellUtil.setFont(cell, font);
     }
 
     /**
@@ -134,7 +134,7 @@ public final class HSSFCellUtil {
      */
     public static void setCellStyleProperty(HSSFCell cell, HSSFWorkbook workbook,
 			String propertyName, Object propertyValue) {
-    	CellUtil.setCellStyleProperty(cell, workbook, propertyName, propertyValue);
+    	CellUtil.setCellStyleProperty(cell, propertyName, propertyValue);
     }
 
     /**
