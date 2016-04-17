@@ -773,7 +773,7 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
         }
     }
 
-    public void setPivotData(XSSFWorkbook wb){
+    protected void setPivotData(XSSFWorkbook wb){
         XSSFSheet sheet = wb.createSheet();
 
         Row row1 = sheet.createRow(0);
@@ -948,8 +948,6 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
         workbook.close();
     }
 
-    @SuppressWarnings("unchecked")
-    @Test
     /**
      *  Iterator<XSSFSheet> XSSFWorkbook.iterator was committed in r700472 on 2008-09-30
      *  and has been replaced with Iterator<Sheet> XSSFWorkbook.iterator
@@ -965,6 +963,8 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
      *  upgrade their code with either of the following options presented in this test case.
      *
      */
+    @SuppressWarnings("unchecked")
+    @Test
     public void bug58245_XSSFSheetIterator() throws IOException {
         final XSSFWorkbook wb = new XSSFWorkbook();
         wb.createSheet();
@@ -1065,12 +1065,6 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
         }
     }
 
-    @Test
-    @Override
-    public void getSpreadsheetVersion() throws IOException {
-        verifySpreadsheetVersion(SpreadsheetVersion.EXCEL2007);
-    }
-    
     @Test
     public void closeDoesNotModifyWorkbook() throws IOException, InvalidFormatException {
         final String filename = "SampleSS.xlsx";

@@ -72,6 +72,7 @@ public abstract class BaseTestRow {
      * Make sure that there is no cross-talk between rows especially with getFirstCellNum and getLastCellNum
      * This test was added in response to bug report 44987.
      */
+    @Test
     public void testBoundsInMultipleRows() throws IOException {
         Workbook workbook = _testDataProvider.createWorkbook();
         Sheet sheet = workbook.createSheet();
@@ -97,6 +98,7 @@ public abstract class BaseTestRow {
         workbook.close();
     }
 
+    @Test
     public void testRemoveCell() throws IOException {
         Workbook wb1 = _testDataProvider.createWorkbook();
         {
@@ -139,7 +141,7 @@ public abstract class BaseTestRow {
         wb2.close();
     }
 
-    public void baseTestRowBounds(int maxRowNum) throws IOException {
+    protected void baseTestRowBounds(int maxRowNum) throws IOException {
         Workbook workbook = _testDataProvider.createWorkbook();
         Sheet sheet = workbook.createSheet();
         //Test low row bound
@@ -168,7 +170,7 @@ public abstract class BaseTestRow {
         workbook.close();
     }
 
-    public void baseTestCellBounds(int maxCellNum) throws IOException {
+    protected void baseTestCellBounds(int maxCellNum) throws IOException {
         Workbook wb1 = _testDataProvider.createWorkbook();
         Sheet sheet = wb1.createSheet();
 
@@ -211,6 +213,7 @@ public abstract class BaseTestRow {
      * Prior to patch 43901, POI was producing files with the wrong last-column
      * number on the row
      */
+    @Test
     public void testLastCellNumIsCorrectAfterAddCell_bug43901() throws IOException {
         Workbook workbook = _testDataProvider.createWorkbook();
         Sheet sheet = workbook.createSheet("test");
@@ -234,6 +237,7 @@ public abstract class BaseTestRow {
     /**
      * Tests for the missing/blank cell policy stuff
      */
+    @Test
     public void testGetCellPolicy() throws IOException {
         Workbook workbook = _testDataProvider.createWorkbook();
         Sheet sheet = workbook.createSheet("test");
@@ -305,6 +309,7 @@ public abstract class BaseTestRow {
         workbook.close();
     }
 
+    @Test
     public void testRowHeight() throws IOException {
         Workbook wb1 = _testDataProvider.createWorkbook();
         Sheet sheet = wb1.createSheet();
@@ -360,6 +365,7 @@ public abstract class BaseTestRow {
     /**
      * Test adding cells to a row in various places and see if we can find them again.
      */
+    @Test
     public void testCellIterator() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet = wb.createSheet();
@@ -417,6 +423,7 @@ public abstract class BaseTestRow {
         wb.close();
     }
 
+    @Test
     public void testRowStyle() throws IOException {
        Workbook wb1 = _testDataProvider.createWorkbook();
        Sheet sheet = wb1.createSheet("test");
