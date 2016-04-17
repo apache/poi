@@ -177,35 +177,49 @@ public class HSSFColor implements Color {
     }
 
     /**
+     * returns color standard palette index (0x08)
      * @return index to the standard palette
      */
 
     public short getIndex()
     {
+        // this will be overridden by the specific color subclass
         return BLACK.index;
     }
 
     /**
+     * returns  RGB triplet (0, 0, 0)
      * @return  triplet representation like that in Excel
      */
 
     public short [] getTriplet()
     {
+        // this will be overridden by the specific color subclass
         return BLACK.triplet;
     }
 
-    // its a hack but its a good hack
-
     /**
+     * returns colon-delimited hex string "0:0:0"
      * @return a hex string exactly like a gnumeric triplet
      */
 
     public String getHexString()
     {
+        // this will be overridden by the specific color subclass
         return BLACK.hexString;
     }
     
+    /**
+     * Checked type cast <tt>color</tt> to an HSSFColor.
+     *
+     * @param color the color to type cast
+     * @return the type casted color
+     * @throws IllegalArgumentException if color is null or is not an instance of HSSFColor
+     */
     public static HSSFColor toHSSFColor(Color color) {
+        // FIXME: this method would be more useful if it could convert any Color to an HSSFColor
+        // Currently the only benefit of this method is to throw an IllegalArgumentException
+        // instead of a ClassCastException.
         if (color != null && !(color instanceof HSSFColor)) {
             throw new IllegalArgumentException("Only HSSFColor objects are supported");
         }
