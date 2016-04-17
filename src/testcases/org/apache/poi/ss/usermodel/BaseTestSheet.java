@@ -51,10 +51,10 @@ public abstract class BaseTestSheet {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
     
-    private final ITestDataProvider _testDataProvider;
+    protected final ITestDataProvider _testDataProvider;
 
     protected BaseTestSheet(ITestDataProvider testDataProvider) {
-    	_testDataProvider = testDataProvider;
+        _testDataProvider = testDataProvider;
     }
     
     protected void trackColumnsForAutoSizingIfSXSSF(Sheet sheet) {

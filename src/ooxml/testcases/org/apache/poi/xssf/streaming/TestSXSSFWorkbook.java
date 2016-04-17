@@ -32,11 +32,9 @@ import java.io.IOException;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.POITestCase;
-import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.SpreadsheetVersion;
-import org.apache.poi.ss.usermodel.BaseTestWorkbook;
+import org.apache.poi.ss.usermodel.BaseTestXWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -52,16 +50,15 @@ import org.junit.Assume;
 import org.junit.Ignore;
 import org.junit.Test;
 
-public final class TestSXSSFWorkbook extends BaseTestWorkbook {
-    private static final SXSSFITestDataProvider _testDataProvider = SXSSFITestDataProvider.instance;
+public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
 
     public TestSXSSFWorkbook() {
-		super(_testDataProvider);
-	}
+        super(SXSSFITestDataProvider.instance);
+    }
 
     @After
     public void tearDown(){
-        _testDataProvider.cleanup();
+        ((SXSSFITestDataProvider)_testDataProvider).cleanup();
     }
 
     /**

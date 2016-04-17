@@ -39,10 +39,10 @@ import org.junit.Test;
 
 public abstract class BaseTestWorkbook {
 
-    private final ITestDataProvider _testDataProvider;
+    protected final ITestDataProvider _testDataProvider;
 
     protected BaseTestWorkbook(ITestDataProvider testDataProvider) {
-    _testDataProvider = testDataProvider;
+        _testDataProvider = testDataProvider;
     }
     
     @Test
