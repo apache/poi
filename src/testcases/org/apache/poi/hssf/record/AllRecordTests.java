@@ -68,7 +68,7 @@ import org.junit.runners.Suite;
     TestNoteRecord.class,
     TestNoteStructureSubRecord.class,
     TestObjRecord.class,
-    TestPaletteRecord.class,
+    //TestPaletteRecord.class, //converted to junit4
     TestPaneRecord.class,
     TestPLVRecord.class,
     TestRecalcIdRecord.class,
