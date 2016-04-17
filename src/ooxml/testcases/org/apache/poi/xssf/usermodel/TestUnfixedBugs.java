@@ -254,9 +254,9 @@ public final class TestUnfixedBugs {
            row2.getCell(1).getCellStyle().setBorderBottom(CellStyle.BORDER_THIN);
 
            Cell cell0 = CellUtil.getCell(row3, 0);
-           CellUtil.setCellStyleProperty(cell0, wb, CellUtil.BORDER_BOTTOM, CellStyle.BORDER_THIN);
+           CellUtil.setCellStyleProperty(cell0, CellUtil.BORDER_BOTTOM, CellStyle.BORDER_THIN);
            Cell cell1 = CellUtil.getCell(row3, 1);
-           CellUtil.setCellStyleProperty(cell1, wb, CellUtil.BORDER_BOTTOM, CellStyle.BORDER_THIN);
+           CellUtil.setCellStyleProperty(cell1, CellUtil.BORDER_BOTTOM, CellStyle.BORDER_THIN);
 
            RegionUtil.setBorderBottom(CellStyle.BORDER_THIN, range4, sheet, wb);
     

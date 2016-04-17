@@ -39,13 +39,11 @@ public final class RegionUtil {
 	 */
 	private static final class CellPropertySetter {
 
-		private final Workbook _workbook;
 		private final String _propertyName;
 		private final Short _propertyValue;
 
 
-		public CellPropertySetter(Workbook workbook, String propertyName, int value) {
-			_workbook = workbook;
+		public CellPropertySetter(String propertyName, int value) {
 			_propertyName = propertyName;
 			_propertyValue = Short.valueOf((short) value);
 		}
@@ -53,7 +51,7 @@ public final class RegionUtil {
 
 		public void setProperty(Row row, int column) {
 			Cell cell = CellUtil.getCell(row, column);
-			CellUtil.setCellStyleProperty(cell, _workbook, _propertyName, _propertyValue);
+			CellUtil.setCellStyleProperty(cell, _propertyName, _propertyValue);
 		}
 	}
 
@@ -72,7 +70,7 @@ public final class RegionUtil {
 		int rowEnd = region.getLastRow();
 		int column = region.getFirstColumn();
 
-		CellPropertySetter cps = new CellPropertySetter(workbook, CellUtil.BORDER_LEFT, border);
+		CellPropertySetter cps = new CellPropertySetter(CellUtil.BORDER_LEFT, border);
 		for (int i = rowStart; i <= rowEnd; i++) {
 			cps.setProperty(CellUtil.getRow(i, sheet), column);
 		}
@@ -92,8 +90,7 @@ public final class RegionUtil {
 		int rowEnd = region.getLastRow();
 		int column = region.getFirstColumn();
 
-		CellPropertySetter cps = new CellPropertySetter(workbook, CellUtil.LEFT_BORDER_COLOR,
-				color);
+		CellPropertySetter cps = new CellPropertySetter(CellUtil.LEFT_BORDER_COLOR, color);
 		for (int i = rowStart; i <= rowEnd; i++) {
 			cps.setProperty(CellUtil.getRow(i, sheet), column);
 		}
@@ -113,7 +110,7 @@ public final class RegionUtil {
 		int rowEnd = region.getLastRow();
 		int column = region.getLastColumn();
 
-		CellPropertySetter cps = new CellPropertySetter(workbook, CellUtil.BORDER_RIGHT, border);
+		CellPropertySetter cps = new CellPropertySetter(CellUtil.BORDER_RIGHT, border);
 		for (int i = rowStart; i <= rowEnd; i++) {
 			cps.setProperty(CellUtil.getRow(i, sheet), column);
 		}
@@ -133,8 +130,7 @@ public final class RegionUtil {
 		int rowEnd = region.getLastRow();
 		int column = region.getLastColumn();
 
-		CellPropertySetter cps = new CellPropertySetter(workbook, CellUtil.RIGHT_BORDER_COLOR,
-				color);
+		CellPropertySetter cps = new CellPropertySetter(CellUtil.RIGHT_BORDER_COLOR, color);
 		for (int i = rowStart; i <= rowEnd; i++) {
 			cps.setProperty(CellUtil.getRow(i, sheet), column);
 		}
@@ -153,7 +149,7 @@ public final class RegionUtil {
 		int colStart = region.getFirstColumn();
 		int colEnd = region.getLastColumn();
 		int rowIndex = region.getLastRow();
-		CellPropertySetter cps = new CellPropertySetter(workbook, CellUtil.BORDER_BOTTOM, border);
+		CellPropertySetter cps = new CellPropertySetter(CellUtil.BORDER_BOTTOM, border);
 		Row row = CellUtil.getRow(rowIndex, sheet);
 		for (int i = colStart; i <= colEnd; i++) {
 			cps.setProperty(row, i);
@@ -173,8 +169,7 @@ public final class RegionUtil {
 		int colStart = region.getFirstColumn();
 		int colEnd = region.getLastColumn();
 		int rowIndex = region.getLastRow();
-		CellPropertySetter cps = new CellPropertySetter(workbook, CellUtil.BOTTOM_BORDER_COLOR,
-				color);
+		CellPropertySetter cps = new CellPropertySetter(CellUtil.BOTTOM_BORDER_COLOR, color);
 		Row row = CellUtil.getRow(rowIndex, sheet);
 		for (int i = colStart; i <= colEnd; i++) {
 			cps.setProperty(row, i);
@@ -194,7 +189,7 @@ public final class RegionUtil {
 		int colStart = region.getFirstColumn();
 		int colEnd = region.getLastColumn();
 		int rowIndex = region.getFirstRow();
-		CellPropertySetter cps = new CellPropertySetter(workbook, CellUtil.BORDER_TOP, border);
+		CellPropertySetter cps = new CellPropertySetter(CellUtil.BORDER_TOP, border);
 		Row row = CellUtil.getRow(rowIndex, sheet);
 		for (int i = colStart; i <= colEnd; i++) {
 			cps.setProperty(row, i);
@@ -214,7 +209,7 @@ public final class RegionUtil {
 		int colStart = region.getFirstColumn();
 		int colEnd = region.getLastColumn();
 		int rowIndex = region.getFirstRow();
-		CellPropertySetter cps = new CellPropertySetter(workbook, CellUtil.TOP_BORDER_COLOR, color);
+		CellPropertySetter cps = new CellPropertySetter(CellUtil.TOP_BORDER_COLOR, color);
 		Row row = CellUtil.getRow(rowIndex, sheet);
 		for (int i = colStart; i <= colEnd; i++) {
 			cps.setProperty(row, i);
