@@ -18,9 +18,8 @@
 package org.apache.poi.ss.util;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.fail;
 
@@ -53,13 +52,13 @@ public final class TestCellUtil {
 
         // Add a border should create a new style
         int styCnt1 = wb.getNumCellStyles();
-        CellUtil.setCellStyleProperty(c, wb, CellUtil.BORDER_BOTTOM, BorderStyle.THIN);
+        CellUtil.setCellStyleProperty(c, CellUtil.BORDER_BOTTOM, BorderStyle.THIN);
         int styCnt2 = wb.getNumCellStyles();
         assertEquals(styCnt2, styCnt1+1);
 
         // Add same border to another cell, should not create another style
         c = r.createCell(1);
-        CellUtil.setCellStyleProperty(c, wb, CellUtil.BORDER_BOTTOM, BorderStyle.THIN);
+        CellUtil.setCellStyleProperty(c, CellUtil.BORDER_BOTTOM, BorderStyle.THIN);
         int styCnt3 = wb.getNumCellStyles();
         assertEquals(styCnt3, styCnt2);
 
@@ -82,7 +81,7 @@ public final class TestCellUtil {
         props.put(CellUtil.BORDER_RIGHT, BorderStyle.THIN);
         CellUtil.setCellStyleProperties(c, props);
         int styCnt2 = wb.getNumCellStyles();
-        assertEquals(styCnt1+1, styCnt2);
+        assertEquals("Only one additional style should have been created", styCnt1 + 1, styCnt2);
 
         // Add same border another to same cell, should not create another style
         c = r.createCell(1);
@@ -181,7 +180,7 @@ public final class TestCellUtil {
         assertEquals(CellStyle.ALIGN_GENERAL, B1.getCellStyle().getAlignment());
 
         // get/set alignment modifies the cell's style
-        CellUtil.setAlignment(A1, wb, CellStyle.ALIGN_RIGHT);
+        CellUtil.setAlignment(A1, CellStyle.ALIGN_RIGHT);
         assertEquals(CellStyle.ALIGN_RIGHT, A1.getCellStyle().getAlignment());
 
         // get/set alignment doesn't affect the style of cells with
@@ -214,7 +213,7 @@ public final class TestCellUtil {
         assertEquals(defaultFontIndex, B1.getCellStyle().getFontIndex());
 
         // get/set alignment modifies the cell's style
-        CellUtil.setFont(A1, wb, font);
+        CellUtil.setFont(A1, font);
         assertEquals(customFontIndex, A1.getCellStyle().getFontIndex());
 
         // get/set alignment doesn't affect the style of cells with
@@ -237,12 +236,12 @@ public final class TestCellUtil {
         Cell A1 = wb1.createSheet().createRow(0).createCell(0);
         
         // okay
-        CellUtil.setFont(A1, wb1, font1);
+        CellUtil.setFont(A1, font1);
 
         // font belongs to different workbook
         try {
-            CellUtil.setFont(A1, wb1, font2);
-            fail("setFont not allowed if font belongs to a different workbook"); 
+            CellUtil.setFont(A1, font2);
+            fail("setFont not allowed if font belongs to a different workbook");
         } catch (final IllegalArgumentException e) {
             if (e.getMessage().startsWith("Font does not belong to this workbook")) {
                 // expected
@@ -250,19 +249,9 @@ public final class TestCellUtil {
             else {
                 throw e;
             }
-        }
-
-        // cell belongs to different workbook
-        try {
-            CellUtil.setFont(A1, wb2, font2);
-            fail("setFont not allowed if cell belongs to a different workbook"); 
-        } catch (final IllegalArgumentException e) {
-            if (e.getMessage().startsWith("Cannot set cell style property. Cell does not belong to workbook.")) {
-               // expected
-            }
-            else {
-                throw e;
-            }
+        } finally {
+            wb1.close();
+            wb2.close();
         }
     }
 }

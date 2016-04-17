@@ -146,38 +146,66 @@ public final class CellUtil {
         return createCell(row, column, value, null);
     }
 
-
     /**
      * Take a cell, and align it.
      *
-     *@param cell the cell to set the alignment for
-     *@param workbook The workbook that is being worked with.
-     *@param align the column alignment to use.
+     * @param cell the cell to set the alignment for
+     * @param workbook The workbook that is being worked with.
+     * @param align the column alignment to use.
+     *
+     * @deprecated 3.15-beta2. Removed in 3.17. Use {@link #setAlignment(Cell, short)} instead.
      *
      * @see CellStyle for alignment options
      */
     public static void setAlignment(Cell cell, Workbook workbook, short align) {
-        setCellStyleProperty(cell, workbook, ALIGNMENT, Short.valueOf(align));
+        setAlignment(cell, align);
     }
 
     /**
+     * Take a cell, and align it.
+     *
+     * @param cell the cell to set the alignment for
+     * @param align the column alignment to use.
+     *
+     * @see CellStyle for alignment options
+     */
+    public static void setAlignment(Cell cell, short align) {
+        setCellStyleProperty(cell, ALIGNMENT, Short.valueOf(align));
+    }
+    
+    /**
      * Take a cell, and apply a font to it
      *
-     *@param cell the cell to set the alignment for
-     *@param workbook The workbook that is being worked with.
-     *@param font The Font that you want to set...
+     * @param cell the cell to set the alignment for 
+     * @param workbook The workbook that is being worked with.
+     * @param font The Font that you want to set.
+     * @throws IllegalArgumentException if <tt>font</tt> and <tt>cell</tt> do not belong to the same workbook
+     *
+     * @deprecated 3.15-beta2. Removed in 3.17. Use {@link #setFont(Cell, Font)} instead.
      */
     public static void setFont(Cell cell, Workbook workbook, Font font) {
+        setFont(cell, font);
+    }
+    
+    /**
+     * Take a cell, and apply a font to it
+     *
+     * @param cell the cell to set the alignment for
+     * @param font The Font that you want to set.
+     * @throws IllegalArgumentException if <tt>font</tt> and <tt>cell</tt> do not belong to the same workbook
+     */
+    public static void setFont(Cell cell, Font font) {
         // Check if font belongs to workbook
+        Workbook wb = cell.getSheet().getWorkbook();
         final short fontIndex = font.getIndex();
-        if (!workbook.getFontAt(fontIndex).equals(font)) {
+        if (!wb.getFontAt(fontIndex).equals(font)) {
             throw new IllegalArgumentException("Font does not belong to this workbook");
         }
 
         // Check if cell belongs to workbook
         // (checked in setCellStyleProperty)
 
-        setCellStyleProperty(cell, workbook, FONT, fontIndex);
+        setCellStyleProperty(cell, FONT, fontIndex);
     }
 
     /**
@@ -206,7 +234,6 @@ public final class CellUtil {
      * @since POI 3.14 beta 2
      */
     public static void setCellStyleProperties(Cell cell, Map<String, Object> properties) {
-        @SuppressWarnings("resource")
         Workbook workbook = cell.getSheet().getWorkbook();
         CellStyle originalStyle = cell.getCellStyle();
         CellStyle newStyle = null;
@@ -250,26 +277,45 @@ public final class CellUtil {
      * {@link #setCellStyleProperties(org.apache.poi.ss.usermodel.Cell, Map)},
      * which is faster and does not add unnecessary intermediate CellStyles to the workbook.</p>
      * 
+     * @param cell The cell that is to be changed.
      * @param workbook The workbook that is being worked with.
      * @param propertyName The name of the property that is to be changed.
      * @param propertyValue The value of the property that is to be changed.
-     * @param cell The cell that needs it's style changes
+     * 
+     * @deprecated 3.15-beta2. Removed in 3.17. Use {@link #setCellStyleProperty(Cell, String, Object)} instead.
      */
     public static void setCellStyleProperty(Cell cell, Workbook workbook, String propertyName,
             Object propertyValue) {
-        if (cell.getSheet().getWorkbook() != workbook) {
-            throw new IllegalArgumentException("Cannot set cell style property. Cell does not belong to workbook.");
-        }
+        setCellStyleProperty(cell, propertyName, propertyValue);
+    }
 
-        Map<String, Object> values = Collections.singletonMap(propertyName, propertyValue);
-        setCellStyleProperties(cell, values);
+    /**
+     * <p>This method attempts to find an existing CellStyle that matches the <code>cell</code>'s
+     * current style plus a single style property <code>propertyName</code> with value
+     * <code>propertyValue</code>.
+     * A new style is created if the workbook does not contain a matching style.</p>
+     * 
+     * <p>Modifies the cell style of <code>cell</code> without affecting other cells that use the
+     * same style.</p>
+     * 
+     * <p>If setting more than one cell style property on a cell, use
+     * {@link #setCellStyleProperties(org.apache.poi.ss.usermodel.Cell, Map)},
+     * which is faster and does not add unnecessary intermediate CellStyles to the workbook.</p>
+     * 
+     * @param cell The cell that is to be changed.
+     * @param propertyName The name of the property that is to be changed.
+     * @param propertyValue The value of the property that is to be changed.
+     */
+    public static void setCellStyleProperty(Cell cell, String propertyName, Object propertyValue) {
+        Map<String, Object> property = Collections.singletonMap(propertyName, propertyValue);
+        setCellStyleProperties(cell, property);
     }
 
     /**
      * Returns a map containing the format properties of the given cell style.
-         * The returned map is not tied to <code>style</code>, so subsequent changes
-         * to <code>style</code> will not modify the map, and changes to the returned
-         * map will not modify the cell style. The returned map is mutable.
+     * The returned map is not tied to <code>style</code>, so subsequent changes
+     * to <code>style</code> will not modify the map, and changes to the returned
+     * map will not modify the cell style. The returned map is mutable.
      *
      * @param style cell style
      * @return map of format properties (String -> Object)
