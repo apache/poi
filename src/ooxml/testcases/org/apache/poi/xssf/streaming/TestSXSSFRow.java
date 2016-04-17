@@ -22,7 +22,7 @@ package org.apache.poi.xssf.streaming;
 import java.io.IOException;
 
 import org.apache.poi.ss.SpreadsheetVersion;
-import org.apache.poi.ss.usermodel.BaseTestRow;
+import org.apache.poi.ss.usermodel.BaseTestXRow;
 import org.apache.poi.xssf.SXSSFITestDataProvider;
 import org.junit.After;
 import org.junit.Test;
@@ -30,7 +30,7 @@ import org.junit.Test;
 /**
  * Tests for XSSFRow
  */
-public final class TestSXSSFRow extends BaseTestRow {
+public final class TestSXSSFRow extends BaseTestXRow {
 
     public TestSXSSFRow() {
         super(SXSSFITestDataProvider.instance);
@@ -39,7 +39,7 @@ public final class TestSXSSFRow extends BaseTestRow {
 
     @After
     public void tearDown() {
-        SXSSFITestDataProvider.instance.cleanup();
+        ((SXSSFITestDataProvider) _testDataProvider).cleanup();
     }
 
     @Test

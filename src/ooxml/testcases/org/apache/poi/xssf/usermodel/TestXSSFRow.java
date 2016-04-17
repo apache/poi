@@ -24,7 +24,7 @@ import static org.junit.Assert.assertSame;
 import java.io.IOException;
 
 import org.apache.poi.ss.SpreadsheetVersion;
-import org.apache.poi.ss.usermodel.BaseTestRow;
+import org.apache.poi.ss.usermodel.BaseTestXRow;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellCopyPolicy;
 import org.apache.poi.ss.usermodel.Row;
@@ -35,7 +35,7 @@ import org.junit.Test;
 /**
  * Tests for XSSFRow
  */
-public final class TestXSSFRow extends BaseTestRow {
+public final class TestXSSFRow extends BaseTestXRow {
 
     public TestXSSFRow() {
         super(XSSFITestDataProvider.instance);

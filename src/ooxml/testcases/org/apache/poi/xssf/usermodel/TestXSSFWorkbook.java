@@ -53,7 +53,7 @@ import org.apache.poi.openxml4j.opc.internal.FileHelper;
 import org.apache.poi.openxml4j.opc.internal.MemoryPackagePart;
 import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
 import org.apache.poi.ss.SpreadsheetVersion;
-import org.apache.poi.ss.usermodel.BaseTestWorkbook;
+import org.apache.poi.ss.usermodel.BaseTestXWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
@@ -77,11 +77,10 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbook;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbookPr;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCalcMode;
 
-public final class TestXSSFWorkbook extends BaseTestWorkbook {
-	private static final XSSFITestDataProvider _testDataProvider = XSSFITestDataProvider.instance;
+public final class TestXSSFWorkbook extends BaseTestXWorkbook {
 
 	public TestXSSFWorkbook() {
-		super(_testDataProvider);
+		super(XSSFITestDataProvider.instance);
 	}
 
 	/**

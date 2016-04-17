@@ -36,7 +36,7 @@ import org.junit.Test;
  */
 public abstract class BaseTestRow {
 
-    private final ITestDataProvider _testDataProvider;
+    protected final ITestDataProvider _testDataProvider;
 
     protected BaseTestRow(ITestDataProvider testDataProvider) {
         _testDataProvider = testDataProvider;

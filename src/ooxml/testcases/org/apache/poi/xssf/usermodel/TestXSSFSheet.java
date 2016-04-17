@@ -26,7 +26,6 @@ import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -43,7 +42,7 @@ import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.AutoFilter;
-import org.apache.poi.ss.usermodel.BaseTestSheet;
+import org.apache.poi.ss.usermodel.BaseTestXSheet;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellCopyPolicy;
 import org.apache.poi.ss.usermodel.ClientAnchor;
@@ -82,7 +81,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCalcMode;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPane;
 
 
-public final class TestXSSFSheet extends BaseTestSheet {
+public final class TestXSSFSheet extends BaseTestXSheet {
 
     public TestXSSFSheet() {
         super(XSSFITestDataProvider.instance);
