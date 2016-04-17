@@ -57,7 +57,6 @@ import org.apache.poi.ss.usermodel.BaseTestWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -541,21 +540,6 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
     @Test
     public void changeSheetNameWithSharedFormulas() throws IOException {
         changeSheetNameWithSharedFormulas("shared_formulas.xlsx");
-    }
-
-    @Test
-    public void setTabColor() throws IOException {
-        XSSFWorkbook wb = new XSSFWorkbook();
-        try {
-            XSSFSheet sh = wb.createSheet();
-            assertTrue(sh.getCTWorksheet().getSheetPr() == null || !sh.getCTWorksheet().getSheetPr().isSetTabColor());
-            sh.setTabColor(IndexedColors.RED.index);
-            assertTrue(sh.getCTWorksheet().getSheetPr().isSetTabColor());
-            assertEquals(IndexedColors.RED.index,
-                    sh.getCTWorksheet().getSheetPr().getTabColor().getIndexed());
-        } finally {
-            wb.close();
-        }
     }
 
     @Test
