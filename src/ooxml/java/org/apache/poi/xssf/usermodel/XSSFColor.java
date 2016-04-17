@@ -16,8 +16,11 @@
 ==================================================================== */
 package org.apache.poi.xssf.usermodel;
 
+import java.util.Arrays;
+
 import org.apache.poi.ss.usermodel.Color;
 import org.apache.poi.ss.usermodel.ExtendedColor;
+import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.util.Internal;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
 
@@ -49,6 +52,11 @@ public class XSSFColor extends ExtendedColor {
     public XSSFColor(byte[] rgb) {
         this();
         ctColor.setRgb(rgb);
+    }
+    
+    public XSSFColor(IndexedColors indexedColor) {
+        this();
+        ctColor.setIndexed(indexedColor.index);
     }
 
     /**
@@ -304,7 +312,17 @@ public class XSSFColor extends ExtendedColor {
         return ctColor;
     }
 
+    /**
+     * Checked type cast <tt>color</tt> to an XSSFColor.
+     *
+     * @param color the color to type cast
+     * @return the type casted color
+     * @throws IllegalArgumentException if color is null or is not an instance of XSSFColor
+     */
     public static XSSFColor toXSSFColor(Color color) {
+        // FIXME: this method would be more useful if it could convert any Color to an XSSFColor
+        // Currently the only benefit of this method is to throw an IllegalArgumentException
+        // instead of a ClassCastException.
         if (color != null && !(color instanceof XSSFColor)) {
             throw new IllegalArgumentException("Only XSSFColor objects are supported");
         }
@@ -316,13 +334,62 @@ public class XSSFColor extends ExtendedColor {
         return ctColor.toString().hashCode();
     }
 
+    // Helper methods for {@link #equals(Object)}
+    private boolean sameIndexed(XSSFColor other) {
+        if (isIndexed() == other.isIndexed()) {
+            if (isIndexed()) {
+                return getIndexed() == other.getIndexed();
+            }
+            return true;
+        }
+        return false;
+    }
+    private boolean sameARGB(XSSFColor other) {
+        if (isRGB() == other.isRGB()) {
+            if (isRGB()) {
+                return Arrays.equals(getARGB(), other.getARGB());
+            }
+            return true;
+        }
+        return false;
+    }
+    private boolean sameTheme(XSSFColor other) {
+        if (isThemed() == other.isThemed()) {
+            if (isThemed()) {
+                return getTheme() == other.getTheme();
+            }
+            return true;
+        }
+        return false;
+    }
+    private boolean sameTint(XSSFColor other) {
+        if (hasTint() == other.hasTint()) {
+            if (hasTint()) {
+                return getTint() == other.getTint();
+            }
+            return true;
+        }
+        return false;
+    }
+    private boolean sameAuto(XSSFColor other) {
+        return isAuto() == other.isAuto();
+    }
+    
     @Override
     public boolean equals(Object o){
         if(!(o instanceof XSSFColor)) {
             return false;
         }
 
-        XSSFColor cf = (XSSFColor)o;
-        return ctColor.toString().equals(cf.getCTColor().toString());
+        XSSFColor other = (XSSFColor)o;
+        
+        // Compare each field in ctColor.
+        // Cannot compare ctColor's XML string representation because equivalent
+        // colors may have different relation namespace URI's
+        return sameARGB(other)
+                && sameTheme(other)
+                && sameIndexed(other)
+                && sameTint(other)
+                && sameAuto(other);
     }
 }

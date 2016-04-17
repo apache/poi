@@ -63,6 +63,7 @@ import org.apache.poi.ss.usermodel.DataValidationHelper;
 import org.apache.poi.ss.usermodel.Footer;
 import org.apache.poi.ss.usermodel.Header;
 import org.apache.poi.ss.usermodel.IgnoredErrorType;
+import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.AreaReference;
@@ -3846,20 +3847,44 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     public XSSFSheetConditionalFormatting getSheetConditionalFormatting(){
         return new XSSFSheetConditionalFormatting(this);
     }
+    
+    /**
+     * Get background color of the sheet tab.
+     * Returns <tt>null</tt> if no sheet tab color is set.
+     *
+     * @return the background color of the sheet tab
+     */
+    public XSSFColor getTabColor() {
+        CTSheetPr pr = worksheet.getSheetPr();
+        if(pr == null) pr = worksheet.addNewSheetPr();
+        if (!pr.isSetTabColor()) {
+            return null;
+        }
+        return new XSSFColor(pr.getTabColor());
+    }
 
     /**
      * Set background color of the sheet tab
      *
-     * @param colorIndex  the indexed color to set, must be a constant from {@link IndexedColors}
+     * @param colorIndex  the indexed color to set, must be a constant from {@link org.apache.poi.ss.usermodel.IndexedColors}
+     * @deprecated 3.15-beta2. Removed in 3.17. Use {@link #setTabColor(XSSFColor)}.
      */
-    public void setTabColor(int colorIndex){
+    public void setTabColor(int colorIndex) {
+        IndexedColors indexedColor = IndexedColors.fromInt(colorIndex);
+        XSSFColor color = new XSSFColor(indexedColor);
+        setTabColor(color);
+    }
+    
+    /**
+     * Set background color of the sheet tab
+     *
+     * @param color the color to set
+     */
+    public void setTabColor(XSSFColor color) {
         CTSheetPr pr = worksheet.getSheetPr();
         if(pr == null) pr = worksheet.addNewSheetPr();
-        CTColor color = CTColor.Factory.newInstance();
-        color.setIndexed(colorIndex);
-        pr.setTabColor(color);
+        pr.setTabColor(color.getCTColor());
     }
-
 
     @Override
     public CellRangeAddress getRepeatingRows() {

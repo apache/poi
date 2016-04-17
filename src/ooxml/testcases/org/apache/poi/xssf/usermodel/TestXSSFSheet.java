@@ -1911,10 +1911,46 @@ public final class TestXSSFSheet extends BaseTestSheet {
         try {
             XSSFSheet sh = wb.createSheet();
             assertTrue(sh.getCTWorksheet().getSheetPr() == null || !sh.getCTWorksheet().getSheetPr().isSetTabColor());
-            sh.setTabColor(IndexedColors.RED);
+            sh.setTabColor(new XSSFColor(IndexedColors.RED));
             assertTrue(sh.getCTWorksheet().getSheetPr().isSetTabColor());
             assertEquals(IndexedColors.RED.index,
                     sh.getCTWorksheet().getSheetPr().getTabColor().getIndexed());
+        } finally {
+            wb.close();
+        }
+    }
+    
+    @Test
+    public void getTabColor() throws IOException {
+        XSSFWorkbook wb = new XSSFWorkbook();
+        try {
+            XSSFSheet sh = wb.createSheet();
+            assertTrue(sh.getCTWorksheet().getSheetPr() == null || !sh.getCTWorksheet().getSheetPr().isSetTabColor());
+            assertNull(sh.getTabColor());
+            sh.setTabColor(new XSSFColor(IndexedColors.RED));
+            XSSFColor expected = new XSSFColor(IndexedColors.RED);
+            assertEquals(expected, sh.getTabColor());
+        } finally {
+            wb.close();
+        }
+    }
+    
+    // Test using an existing workbook saved by Excel
+    @Test
+    public void tabColor() throws IOException {
+        XSSFWorkbook wb = openSampleWorkbook("SheetTabColors.xlsx");
+        try {
+            // non-colored sheets do not have a color
+            assertNull(wb.getSheet("default").getTabColor());
+            
+            // test indexed-colored sheet
+            XSSFColor expected = new XSSFColor(IndexedColors.RED);
+            assertEquals(expected, wb.getSheet("indexedRed").getTabColor());
+            
+            // test regular-colored (non-indexed, ARGB) sheet
+            expected = new XSSFColor();
+            expected.setARGBHex("FF7F2700");
+            assertEquals(expected, wb.getSheet("customOrange").getTabColor());
         } finally {
             wb.close();
         }
