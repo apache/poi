@@ -92,6 +92,9 @@ public final class OOXMLLite {
         List<Class<?>> lst = new ArrayList<Class<?>>();
         //collect unit tests
         String exclude = StringUtil.join("|",
+                "BaseTestXWorkbook",
+                "BaseTestXSheet",
+                "BaseTestXRow",
                 "BaseTestXCell",
                 "TestSXSSFWorkbook\\$\\d",
                 "TestSXSSFWorkbook\\$NullOutputStream",

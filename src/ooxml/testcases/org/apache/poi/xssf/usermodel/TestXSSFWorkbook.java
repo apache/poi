@@ -53,7 +53,7 @@ import org.apache.poi.openxml4j.opc.internal.FileHelper;
 import org.apache.poi.openxml4j.opc.internal.MemoryPackagePart;
 import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
 import org.apache.poi.ss.SpreadsheetVersion;
-import org.apache.poi.ss.usermodel.BaseTestWorkbook;
+import org.apache.poi.ss.usermodel.BaseTestXWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
@@ -77,11 +77,10 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbook;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbookPr;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCalcMode;
 
-public final class TestXSSFWorkbook extends BaseTestWorkbook {
-	private static final XSSFITestDataProvider _testDataProvider = XSSFITestDataProvider.instance;
+public final class TestXSSFWorkbook extends BaseTestXWorkbook {
 
 	public TestXSSFWorkbook() {
-		super(_testDataProvider);
+		super(XSSFITestDataProvider.instance);
 	}
 
 	/**
@@ -774,7 +773,7 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
         }
     }
 
-    public void setPivotData(XSSFWorkbook wb){
+    protected void setPivotData(XSSFWorkbook wb){
         XSSFSheet sheet = wb.createSheet();
 
         Row row1 = sheet.createRow(0);
@@ -949,8 +948,6 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
         workbook.close();
     }
 
-    @SuppressWarnings("unchecked")
-    @Test
     /**
      *  Iterator<XSSFSheet> XSSFWorkbook.iterator was committed in r700472 on 2008-09-30
      *  and has been replaced with Iterator<Sheet> XSSFWorkbook.iterator
@@ -966,6 +963,8 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
      *  upgrade their code with either of the following options presented in this test case.
      *
      */
+    @SuppressWarnings("unchecked")
+    @Test
     public void bug58245_XSSFSheetIterator() throws IOException {
         final XSSFWorkbook wb = new XSSFWorkbook();
         wb.createSheet();
@@ -1066,12 +1065,6 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
         }
     }
 
-    @Test
-    @Override
-    public void getSpreadsheetVersion() throws IOException {
-        verifySpreadsheetVersion(SpreadsheetVersion.EXCEL2007);
-    }
-    
     @Test
     public void closeDoesNotModifyWorkbook() throws IOException, InvalidFormatException {
         final String filename = "SampleSS.xlsx";
