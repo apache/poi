@@ -23,8 +23,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
-import org.apache.poi.ss.usermodel.BaseTestXSheet;
+import org.apache.poi.ss.SpreadsheetVersion;
+import org.apache.poi.ss.usermodel.BaseTestSheet;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.SXSSFITestDataProvider;
@@ -33,7 +36,7 @@ import org.junit.After;
 import org.junit.Test;
 
 
-public final class TestSXSSFSheet extends BaseTestXSheet {
+public class TestSXSSFSheet extends BaseTestSheet {
 
     public TestSXSSFSheet() {
         super(SXSSFITestDataProvider.instance);
@@ -153,5 +156,10 @@ public final class TestSXSSFSheet extends BaseTestXSheet {
             wb.close();
             template.close();
         }
+    }
+
+    @Test(expected=IllegalArgumentException.class)
+    public void createRowAfterLastRow() throws IOException {
+        createRowAfterLastRow(SpreadsheetVersion.EXCEL2007);
     }
 }
