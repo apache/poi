@@ -184,5 +184,13 @@ public class TestStringUtil {
         assertFalse("trailing whitespace should not be ignored", StringUtil.endsWithIgnoreCase("Apache POI project ", "Apache POI"));
         assertFalse("shorter string", StringUtil.endsWithIgnoreCase("Apache", "Apache POI"));
     }
+    
+    @Test
+    public void join() {
+        assertEquals("", StringUtil.join(",")); // degenerate case: nothing to join
+        assertEquals("abc", StringUtil.join(",", "abc")); // degenerate case: one thing to join, no trailing comma
+        assertEquals("abc|def|ghi", StringUtil.join("|", "abc", "def", "ghi"));
+        assertEquals("5|8.5|true|string", StringUtil.join("|", 5, 8.5, true, "string")); //assumes Locale prints number decimal point as a period rather than a comma
+    }
 }
 
