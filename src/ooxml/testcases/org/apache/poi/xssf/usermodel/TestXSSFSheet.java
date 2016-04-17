@@ -49,6 +49,7 @@ import org.apache.poi.ss.usermodel.CellCopyPolicy;
 import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.ss.usermodel.IgnoredErrorType;
+import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -1902,5 +1903,20 @@ public final class TestXSSFSheet extends BaseTestSheet {
         assertEquals(1, ignoredErrors.get(IgnoredErrorType.EVALUATION_ERROR).size());
         assertEquals("B2:D4", ignoredErrors.get(IgnoredErrorType.EVALUATION_ERROR).iterator().next().formatAsString());
         workbook.close();
+    }
+    
+    @Test
+    public void setTabColor() throws IOException {
+        XSSFWorkbook wb = new XSSFWorkbook();
+        try {
+            XSSFSheet sh = wb.createSheet();
+            assertTrue(sh.getCTWorksheet().getSheetPr() == null || !sh.getCTWorksheet().getSheetPr().isSetTabColor());
+            sh.setTabColor(IndexedColors.RED);
+            assertTrue(sh.getCTWorksheet().getSheetPr().isSetTabColor());
+            assertEquals(IndexedColors.RED.index,
+                    sh.getCTWorksheet().getSheetPr().getTabColor().getIndexed());
+        } finally {
+            wb.close();
+        }
     }
 }
