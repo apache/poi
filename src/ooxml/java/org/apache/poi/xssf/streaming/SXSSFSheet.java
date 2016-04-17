@@ -47,6 +47,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.SheetUtil;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.NotImplemented;
+import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFComment;
 import org.apache.poi.xssf.usermodel.XSSFDataValidation;
 import org.apache.poi.xssf.usermodel.XSSFHyperlink;
@@ -1898,5 +1899,13 @@ public class SXSSFSheet implements Sheet, Cloneable
     @Override
     public void setActiveCell(CellAddress address) {
         _sh.setActiveCell(address);
+    }
+
+    public XSSFColor getTabColor() {
+        return _sh.getTabColor();
+    }
+
+    public void setTabColor(XSSFColor color) {
+        _sh.setTabColor(color);
     }
 }
