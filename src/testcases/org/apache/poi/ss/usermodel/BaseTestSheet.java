@@ -116,7 +116,9 @@ public abstract class BaseTestSheet {
         }
     }
     
-    protected void createRowAfterLastRow(SpreadsheetVersion version) throws IOException {
+    @Test(expected=IllegalArgumentException.class)
+    public void createRowAfterLastRow() throws IOException {
+        final SpreadsheetVersion version = _testDataProvider.getSpreadsheetVersion();
         final Workbook workbook = _testDataProvider.createWorkbook();
         final Sheet sh = workbook.createSheet();
         sh.createRow(version.getLastRowIndex());
@@ -127,7 +129,6 @@ public abstract class BaseTestSheet {
             workbook.close();
         }
     }
-
 
     @Test
     public void removeRow() throws IOException {

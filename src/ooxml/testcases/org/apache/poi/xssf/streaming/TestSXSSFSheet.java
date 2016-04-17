@@ -24,7 +24,6 @@ import static org.junit.Assert.fail;
 
 import java.io.IOException;
 
-import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.BaseTestXSheet;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -154,10 +153,5 @@ public final class TestSXSSFSheet extends BaseTestXSheet {
             wb.close();
             template.close();
         }
-    }
-
-    @Test(expected=IllegalArgumentException.class)
-    public void createRowAfterLastRow() throws IOException {
-        createRowAfterLastRow(SpreadsheetVersion.EXCEL2007);
     }
 }

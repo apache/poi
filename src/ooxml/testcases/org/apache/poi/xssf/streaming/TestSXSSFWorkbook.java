@@ -33,7 +33,6 @@ import java.io.IOException;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.POITestCase;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.BaseTestXWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -307,7 +306,7 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
         xwb.close();
     }
 
-    static void assertWorkbookDispose(SXSSFWorkbook wb)
+    protected static void assertWorkbookDispose(SXSSFWorkbook wb)
     {
         int rowNum = 1000;
         int sheetNum = 5;
@@ -455,12 +454,7 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
         workBook.close();
     }
     
-    @Test
-    @Override
-    public void getSpreadsheetVersion() throws IOException {
-        verifySpreadsheetVersion(SpreadsheetVersion.EXCEL2007);
-    }
-    
+
     @Test
     public void closeDoesNotModifyWorkbook() throws IOException, InvalidFormatException {
         final String filename = "SampleSS.xlsx";

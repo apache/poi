@@ -1054,11 +1054,6 @@ public final class TestXSSFSheet extends BaseTestXSheet {
 
         wb2.close();
     }
-    
-    @Test(expected=IllegalArgumentException.class)
-    public void createRowAfterLastRow() throws IOException {
-        createRowAfterLastRow(SpreadsheetVersion.EXCEL2007);
-    }
 
     @Test
     public void setAutoFilter() throws IOException {
@@ -1603,7 +1598,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
         wb.close();
     }
     
-    public void testCopyMultipleRows(String copyRowsTestWorkbook) throws IOException {
+    protected void testCopyMultipleRows(String copyRowsTestWorkbook) throws IOException {
         final double FLOAT_PRECISION = 1e-9;
         final XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook(copyRowsTestWorkbook);
         final XSSFSheet sheet = wb.getSheetAt(0);
