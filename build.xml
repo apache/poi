@@ -2185,7 +2185,8 @@ under the License.
         </openpgp:signer>
     </target>
 
-    <target name="dist-nexus" depends="load-maven-server-settings,dist-checksum">
+    <target name="dist-nexus" depends="load-maven-server-settings,dist-checksum"
+            description="upload build artifacts to nexus">
         <delete dir="build/repo"/>
         <delete dir="build/nexus-stage"/>
         <nexus-upload artifactId="poi"/>
