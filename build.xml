@@ -1568,14 +1568,51 @@ under the License.
                 <title>HPSF - Horrible Property Set Format</title>
                 <package name="org.apache.poi.hpsf*"/>
             </group>
+
+            <group>
+                <title>SS - Common Spreadsheet Format</title>
+                <package name="org.apache.poi.ss*"/>
+            </group>
             <group>
                 <title>HSSF - Horrible Spreadsheet Format</title>
                 <package name="org.apache.poi.hssf*"/>
             </group>
             <group>
+                <title>XSSF - Open Office XML Spreadsheet Format</title>
+                <package name="org.apache.poi.xssf*"/>
+            </group>
+
+            <group>
+                <title>SL - Common Slideshow Format</title>
+                <package name="org.apache.poi.sl*"/>
+            </group>
+            <group>
+                <title>HSLF - Horrible Slideshow Format</title>
+                <package name="org.apache.poi.hslf*"/>
+            </group>
+            <group>
+                <title>XSLF - Open Office XML Slideshow Format</title>
+                <package name="org.apache.poi.xslf*"/>
+            </group>
+
+            <group>
                 <title>HWPF - Horrible Word Processor Format</title>
                 <package name="org.apache.poi.hwpf*"/>
             </group>
+            <group>
+                <title>XWPF - Open Office XML Word Processor Format</title>
+                <package name="org.apache.poi.xwpf*"/>
+            </group>
+
+            <group>
+                <title>HDGF - Horrible Diagram Format</title>
+                <package name="org.apache.poi.hdgf*"/>
+            </group>
+            <group>
+                <title>XDGF - Open Office XML Diagram Format</title>
+                <package name="org.apache.poi.xdgf*"/>
+            </group>
+
             <group>
                 <title>POIFS - POI File System</title>
                 <package name="org.apache.poi.poifs*"/>
