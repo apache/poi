@@ -101,6 +101,9 @@ under the License.
     <property name="main.reports.test" location="build/test-results"/>
     <property name="main.testokfile" location="build/main-testokfile.txt"/>
 
+    <!-- HSSF subset of Main: -->
+    <property name="main.hssf.testokfile" location="build/main-hssf-testokfile.txt"/>
+
     <!-- Scratchpad: -->
     <property name="scratchpad.resource1.dir" value="src/resources/scratchpad"/>
     <property name="scratchpad.src" location="src/scratchpad/src"/>
@@ -839,6 +842,7 @@ under the License.
     <target name="compile-all" depends="compile,compile-ooxml-lite"/>
 
     <target name="compile-main" depends="init">
+        <!-- compile the sources -->
         <javac target="${jdk.version.class}"
                source="${jdk.version.source}"
                destdir="${main.output.dir}"
@@ -849,6 +853,7 @@ under the License.
                includeantruntime="false">
             <classpath refid="main.classpath"/>
         </javac>
+        <!-- compile the tests -->
         <javac target="${jdk.version.class}"
                source="${jdk.version.source}"
                destdir="${main.output.test.dir}"
@@ -900,6 +905,7 @@ under the License.
     </target>
 
     <target name="compile-scratchpad" depends="compile-main,generate-geometry">
+        <!-- compile the sources -->
         <javac target="${jdk.version.class}"
                source="${jdk.version.source}"
                destdir="${scratchpad.output.dir}"
@@ -910,6 +916,7 @@ under the License.
                includeantruntime="false">
             <classpath refid="scratchpad.classpath"/>
         </javac>
+        <!-- compile the tests -->
         <javac target="${jdk.version.class}"
                source="${jdk.version.source}"
                destdir="${scratchpad.output.test.dir}"
@@ -965,7 +972,7 @@ under the License.
                 <path refid="ooxml.xmlsec.classpath"/>
             </classpath>
         </javac>
-        <!-- compile the tests-->
+        <!-- compile the tests -->
         <javac target="${jdk.version.class}"
                source="${jdk.version.source}"
                destdir="${ooxml.output.test.dir}"
@@ -1006,7 +1013,7 @@ under the License.
             <include name="org/apache/poi/xssf/**/*.java"/>
             <include name="org/apache/poi/extractor/**/*.java"/>
         </javac>
-        <!-- compile the tests-->
+        <!-- compile the tests -->
         <javac target="${jdk.version.class}"
                source="${jdk.version.source}"
                destdir="${ooxml.output.test.dir}"
@@ -1031,6 +1038,7 @@ under the License.
     </target>
 
     <target name="compile-excelant" depends="compile-main,compile-ooxml">
+        <!-- compile the sources -->
         <javac target="${jdk.version.class}"
                source="${jdk.version.source}"
                destdir="${excelant.output.dir}"
@@ -1041,6 +1049,7 @@ under the License.
                includeantruntime="false">
             <classpath refid="excelant.classpath"/>
         </javac>
+        <!-- compile the tests -->
         <javac target="${jdk.version.class}"
                source="${jdk.version.source}"
                destdir="${excelant.output.test.dir}"
@@ -1236,6 +1245,49 @@ under the License.
 
     <target name="-test-main-write-testfile" unless="main.test.failed">
         <echo file="${main.testokfile}" append="false" message="testok"/>
+    </target>
+
+    <!-- Section: test-hssf -->
+    <target name="-test-main-hssf-check">
+        <uptodate property="main.hssf.test.notRequired" targetfile="${main.hssf.testokfile}">
+            <srcfiles dir="${main.src}"/>
+            <srcfiles dir="${main.src.test}"/>
+        </uptodate>
+    </target>
+
+    <!-- HSSF subset of test-main
+    Purpose: quicker HSSF testing cycles. Skips some tests for speed reasons. This target is not sufficient for committing changes. -->
+    <target name="test-hssf" unless="main.hssf.test.notRequired"
+            depends="compile-main, -test-main-hssf-check,jacocotask" xmlns:jacoco="antlib:org.jacoco.ant">
+        <jacoco:coverage enabled="${coverage.enabled}" excludes="${coverage.excludes}" destfile="build/jacoco-main.exec">
+            <junit fork="yes" forkmode="once" printsummary="yes" haltonfailure="${halt.on.test.failure}"
+                   failureproperty="main.hssf.test.failed" showoutput="true">
+                <classpath refid="test.classpath"/>
+                <syspropertyset refid="junit.properties"/>
+                <jvmarg value="-ea"/>
+                <jvmarg value="-Xmx256m"/>
+                <!-- jvmarg value="-Duser.timezone=UTC"/ -->
+                <formatter type="plain"/>
+                <formatter type="xml"/>
+                <batchtest todir="${main.reports.test}">
+                    <fileset dir="${main.src.test}">
+                        <include name="org/apache/poi/ss/**/${testpattern}.java"/>
+                        <include name="org/apache/poi/hssf/**/${testpattern}.java"/>
+                        <!-- skip slow dev tests, especially TestBiffViewer and TestReSave -->
+                        <exclude name="org/apache/poi/hssf/dev/**/${testpattern}.java"/>
+                        <exclude name="**/All*Tests.java"/>
+                        <exclude name="**/TestUnfixedBugs.java"/>
+                        <exclude name="**/TestcaseRecordInputStream.java"/>
+                    </fileset>
+                </batchtest>
+            </junit>
+        </jacoco:coverage>
+        <delete file="${main.hssf.testokfile}"/>
+        <antcall target="-test-main-hssf-write-testfile"/>
+    </target>
+
+    <target name="-test-main-hssf-write-testfile" unless="main.hssf.test.failed">
+        <echo file="${main.hssf.testokfile}" append="false" message="testok"/>
     </target>
 
     <!-- Section: test-scratchpad -->
