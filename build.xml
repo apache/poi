@@ -1123,9 +1123,13 @@ under the License.
         </taskdef>
     </target>
 
+    <!-- Section: test (execute junit tests on test suites) -->
     <target name="test" depends="compile,jacocotask,test-main,test-scratchpad,test-ooxml,test-excelant"
             description="Tests main, scratchpad and ooxml"/>
-    <target name="test-all" depends="test,test-ooxml-lite,testcoveragereport"/>
+    <target name="test-all" depends="test,test-ooxml-lite,testcoveragereport"
+            description="Tests main, scratchpad, ooxml, ooxml-lite, and coveragereport"/>
+    <target name="test-ss" depends="test-hssf, test-ooxml-ss"
+            description="Test POI Spreadsheet classes (SS, HSSF, XSSF, SXSSF)"/>
 
     <target name="testcoveragereport" depends="jacocotask" description="create test-report" xmlns:jacoco="antlib:org.jacoco.ant" if="coverage.enabled">
         <delete dir="${coverage.dir}"/>
@@ -1213,7 +1217,8 @@ under the License.
     </target>
 
     <target name="test-main" unless="main.test.notRequired"
-            depends="compile-main, -test-main-check,jacocotask" xmlns:jacoco="antlib:org.jacoco.ant">
+            depends="compile-main, -test-main-check,jacocotask" xmlns:jacoco="antlib:org.jacoco.ant"
+            description="tests POI classes that deal with the Microsoft Office binary (BIFF8) file formats (excludes OOXML)">
         <jacoco:coverage enabled="${coverage.enabled}" excludes="${coverage.excludes}" destfile="build/jacoco-main.exec">
             <junit fork="yes" forkmode="once" printsummary="yes" haltonfailure="${halt.on.test.failure}"
                    failureproperty="main.test.failed" showoutput="true">
@@ -1258,7 +1263,8 @@ under the License.
     <!-- HSSF subset of test-main
     Purpose: quicker HSSF testing cycles. Skips some tests for speed reasons. This target is not sufficient for committing changes. -->
     <target name="test-hssf" unless="main.hssf.test.notRequired"
-            depends="compile-main, -test-main-hssf-check,jacocotask" xmlns:jacoco="antlib:org.jacoco.ant">
+            depends="compile-main, -test-main-hssf-check,jacocotask" xmlns:jacoco="antlib:org.jacoco.ant"
+            description="test HSSF classes only">
         <jacoco:coverage enabled="${coverage.enabled}" excludes="${coverage.excludes}" destfile="build/jacoco-main.exec">
             <junit fork="yes" forkmode="once" printsummary="yes" haltonfailure="${halt.on.test.failure}"
                    failureproperty="main.hssf.test.failed" showoutput="true">
@@ -1299,7 +1305,8 @@ under the License.
     </target>
 
     <target name="test-scratchpad" depends="compile-main,compile-scratchpad,-test-scratchpad-check,jacocotask,test-scratchpad-download-resources"
-            unless="scratchpad.test.notRequired" xmlns:jacoco="antlib:org.jacoco.ant">
+            unless="scratchpad.test.notRequired" xmlns:jacoco="antlib:org.jacoco.ant"
+            description="test non-OOXML scratchpad classes">
         <jacoco:coverage enabled="${coverage.enabled}" excludes="${coverage.excludes}" destfile="build/jacoco-scratchpad.exec">
             <junit printsummary="yes" fork="yes" forkmode="once" haltonfailure="${halt.on.test.failure}"
                    failureproperty="scratchpad.test.failed">
@@ -1386,7 +1393,8 @@ under the License.
         </sequential>
     </macrodef>
 
-    <target name="test-ooxml" depends="compile-main,compile-ooxml,-test-ooxml-check,jacocotask" unless="ooxml.test.notRequired">
+    <target name="test-ooxml" depends="compile-main,compile-ooxml,-test-ooxml-check,jacocotask" unless="ooxml.test.notRequired"
+            description="test OOXML classes">
         <ooxml-test-runner classpath="test.ooxml.classpath" type="ooxml"/>
         <delete file="${ooxml.testokfile}"/>
         <antcall target="-test-ooxml-write-testfile"/>
@@ -1433,7 +1441,8 @@ under the License.
     </macrodef>
 
     <!-- XSSF and SXSSF subset of test-ooxml -->
-    <target name="test-ooxml-ss" depends="compile-main,compile-ooxml-ss,-test-ooxml-ss-check,jacocotask" unless="ooxml.ss.test.notRequired">
+    <target name="test-ooxml-ss" depends="compile-main,compile-ooxml-ss,-test-ooxml-ss-check,jacocotask" unless="ooxml.ss.test.notRequired"
+            description="test XSSF and SXSSF classes">
         <ooxml-ss-test-runner classpath="test.ooxml.classpath" type="ooxml"/>
         <delete file="${ooxml.ss.testokfile}"/>
         <antcall target="-test-ooxml-ss-write-testfile"/>
