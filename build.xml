@@ -128,6 +128,9 @@ under the License.
     <property name="ooxml.testokfile" location="build/ooxml-testokfile.txt"/>
     <property name="ooxml.lite.output.dir" location="build/ooxml-lite-classes"/>
 
+    <!-- XSSF/SXSSF subset of OOXML: -->
+    <property name="ooxml.ss.testokfile" location="build/ooxml-ss-testokfile.txt"/>
+
     <!-- Integration testing: -->
     <property name="integration.src.test" location="src/integrationtest"/>
     <property name="integration.reports.test" location="build/integration-test-results"/>
@@ -948,6 +951,7 @@ under the License.
     </target>
 
     <target name="compile-ooxml" depends="compile-main,compile-scratchpad,compile-ooxml-xsds">
+        <!-- compile the sources -->
         <javac target="${jdk.version.class}"
                source="${jdk.version.source}"
                destdir="${ooxml.output.dir}"
@@ -961,6 +965,7 @@ under the License.
                 <path refid="ooxml.xmlsec.classpath"/>
             </classpath>
         </javac>
+        <!-- compile the tests-->
         <javac target="${jdk.version.class}"
                source="${jdk.version.source}"
                destdir="${ooxml.output.test.dir}"
@@ -976,6 +981,49 @@ under the License.
                 <pathelement path="${ooxml.output.dir}"/>
                 <pathelement path="${main.output.test.dir}"/>
             </classpath>
+        </javac>
+        <copy todir="${ooxml.output.dir}">
+            <fileset dir="${ooxml.resource1.dir}"/>
+        </copy>
+    </target>
+
+    <target name="compile-ooxml-ss" depends="compile-main,compile-scratchpad,compile-ooxml-xsds">
+        <!-- depends: compile-scratchpad needed for extractor -->
+        <!-- compile the sources -->
+        <javac target="${jdk.version.class}"
+               source="${jdk.version.source}"
+               destdir="${ooxml.output.dir}"
+               srcdir="${ooxml.src}"
+               debug="${compile.debug}"
+               encoding="${java.source.encoding}"
+               fork="yes"
+               includeantruntime="false">
+            <classpath>
+                <path refid="ooxml.classpath"/>
+                <path refid="ooxml.xmlsec.classpath"/>
+            </classpath>
+            <include name="org/apache/poi/ss/**/*.java"/>
+            <include name="org/apache/poi/xssf/**/*.java"/>
+            <include name="org/apache/poi/extractor/**/*.java"/>
+        </javac>
+        <!-- compile the tests-->
+        <javac target="${jdk.version.class}"
+               source="${jdk.version.source}"
+               destdir="${ooxml.output.test.dir}"
+               srcdir="${ooxml.src.test}"
+               debug="${compile.debug}"
+               encoding="${java.source.encoding}"
+               fork="yes"
+               includeantruntime="false">
+            <classpath>
+                <path refid="ooxml.classpath"/>
+                <path refid="ooxml.xmlsec.classpath"/>
+                <path refid="test.ooxml.classpath"/>
+                <pathelement path="${ooxml.output.dir}"/>
+                <pathelement path="${main.output.test.dir}"/>
+            </classpath>
+            <include name="org/apache/poi/ss/**/*.java"/>
+            <include name="org/apache/poi/xssf/**/*.java"/>
         </javac>
         <copy todir="${ooxml.output.dir}">
             <fileset dir="${ooxml.resource1.dir}"/>
@@ -1147,6 +1195,7 @@ under the License.
         <echo message="Coverage results are available at ${coverage.dir}/index.html, ${coverage.dir}/coverage.xml" />
     </target>
 
+    <!-- Section: test-main -->
     <target name="-test-main-check">
         <uptodate property="main.test.notRequired" targetfile="${main.testokfile}">
             <srcfiles dir="${main.src}"/>
@@ -1189,6 +1238,7 @@ under the License.
         <echo file="${main.testokfile}" append="false" message="testok"/>
     </target>
 
+    <!-- Section: test-scratchpad -->
     <target name="-test-scratchpad-check">
         <uptodate property="scratchpad.test.notRequired" targetfile="${scratchpad.testokfile}">
             <srcfiles dir="${scratchpad.src}"/>
@@ -1229,6 +1279,7 @@ under the License.
         <echo file="${scratchpad.testokfile}" append="false" message="testok"/>
     </target>
 
+    <!-- Section: test-ooxml -->
     <target name="-test-ooxml-check">
         <uptodate property="ooxml.test.notRequired" targetfile="${ooxml.testokfile}">
             <srcfiles dir="${ooxml.src}"/>
@@ -1293,6 +1344,54 @@ under the License.
         <echo file="${ooxml.testokfile}" append="false" message="testok"/>
     </target>
 
+    <!-- Section: test-ooxml-ss -->
+    <target name="-test-ooxml-ss-check">
+        <uptodate property="ooxml.ss.test.notRequired" targetfile="${ooxml.ss.testokfile}">
+            <srcfiles dir="${ooxml.src}"/>
+            <srcfiles dir="${ooxml.src.test}"/>
+        </uptodate>
+    </target>
+
+    <macrodef name="ooxml-ss-test-runner" xmlns:jacoco="antlib:org.jacoco.ant">
+        <attribute name="classpath"/>
+        <attribute name="type"/>
+        <sequential>
+            <jacoco:coverage enabled="${coverage.enabled}" excludes="${coverage.excludes}" destfile="build/jacoco-@{type}.exec">
+              <junit printsummary="yes" fork="yes" forkmode="once" haltonfailure="${halt.on.test.failure}"
+                     failureproperty="ooxml.ss.test.failed">
+                  <classpath refid="@{classpath}"/>
+                  <syspropertyset refid="junit.properties"/>
+                    <jvmarg value="-XX:MaxPermSize=256m"/>
+                    <jvmarg value="-Xmx768M"/>
+                  <jvmarg value="-ea"/>
+                    <!-- jvmarg value="-Duser.timezone=UTC"/ -->
+                  <formatter type="plain"/>
+                  <formatter type="xml"/>
+                  <batchtest todir="${ooxml.reports.test}">
+                      <fileset dir="${ooxml.src.test}">
+                          <include name="**/org/apache/poi/ss/**/${testpattern}.java"/>
+                          <include name="**/org/apache/poi/xssf/**/${testpattern}.java"/>
+                          <exclude name="**/TestUnfixedBugs.java"/>
+                          <exclude name="**/All*Tests.java"/>
+                      </fileset>
+                  </batchtest>
+              </junit>
+            </jacoco:coverage>
+        </sequential>
+    </macrodef>
+
+    <!-- XSSF and SXSSF subset of test-ooxml -->
+    <target name="test-ooxml-ss" depends="compile-main,compile-ooxml-ss,-test-ooxml-ss-check,jacocotask" unless="ooxml.ss.test.notRequired">
+        <ooxml-ss-test-runner classpath="test.ooxml.classpath" type="ooxml"/>
+        <delete file="${ooxml.ss.testokfile}"/>
+        <antcall target="-test-ooxml-ss-write-testfile"/>
+    </target>
+
+    <target name="-test-ooxml-ss-write-testfile" unless="ooxml.ss.test.failed">
+        <echo file="${ooxml.ss.testokfile}" append="false" message="testok"/>
+    </target>
+
+    <!-- Section: test-integration -->
     <target name="-test-integration-check">
         <uptodate property="integration.test.notRequired" targetfile="${integration.testokfile}">
             <srcfiles dir="${integration.src.test}"/>
@@ -1325,6 +1424,7 @@ under the License.
         <echo file="${integration.testokfile}" append="false" message="testok"/>
     </target>
 
+    <!-- Section: test-ooxml-lite -->
     <target name="compile-ooxml-lite" depends="compile-ooxml">
         <property name="ooxml.lite-merged.dir" location="build/ooxml-lite-merged"/>
         <mkdir dir="${ooxml.lite-merged.dir}"/>
@@ -1359,6 +1459,7 @@ under the License.
         <ooxml-test-runner classpath="ooxml-lite.classpath" type="ooxml-lite"/>
     </target>
 
+    <!-- Section: test-excelant -->
     <target name="-test-excelant-check">
         <uptodate property="excelant.test.notRequired" targetfile="${excelant.testokfile}">
             <srcfiles dir="${excelant.src}"/>
@@ -1391,8 +1492,9 @@ under the License.
         <antcall target="-test-excelant-write-testfile"/>
     </target>
 
+    <!-- GENERATE DOCUMENTATION -->
 
-
+    <!-- Section: docs -->
     <target name="-check-docs">
         <echo message="Checking if documentation recreation is necessary, i.e. if any file at ${main.documentation} is newer than ${build.site}/index.html"/>
         <uptodate property="main.docs.notRequired" targetfile="${build.site}/index.html">
