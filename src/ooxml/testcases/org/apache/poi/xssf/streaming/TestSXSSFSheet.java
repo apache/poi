@@ -20,6 +20,7 @@
 package org.apache.poi.xssf.streaming;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
@@ -153,5 +154,22 @@ public final class TestSXSSFSheet extends BaseTestXSheet {
             wb.close();
             template.close();
         }
+    }
+
+    @Test
+    public void changeRowNum() throws IOException {
+        SXSSFWorkbook wb = new SXSSFWorkbook(3);
+        SXSSFSheet sheet = wb.createSheet();
+        SXSSFRow row0 = sheet.createRow(0);
+        SXSSFRow row1 = sheet.createRow(1);
+        sheet.changeRowNum(row0, 2);
+        
+        assertEquals("Row 1 knows its row number", 1, row1.getRowNum());
+        assertEquals("Row 2 knows its row number", 2, row0.getRowNum());
+        assertEquals("Sheet knows Row 1's row number", 1, sheet.getRowNum(row1));
+        assertEquals("Sheet knows Row 2's row number", 2, sheet.getRowNum(row0));
+        assertEquals("Sheet row iteratation order should be ascending", row1, sheet.iterator().next());
+        
+        wb.close();
     }
 }
