@@ -344,6 +344,7 @@ public class DataFormatter implements Observer {
         
         // Build a formatter, and cache it
         format = createFormat(cellValue, formatIndex, formatStr);
+        formats.put(formatStr, format);
         return format;
     }
 
