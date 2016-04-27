@@ -482,7 +482,7 @@ under the License.
         <sequential>
             <local name="exists"/>
             <available file="@{dest}" property="exists"/>
-            <fail unless:true="${exists}"
+            <!--fail unless:true="${exists}"
                 message="Java version might be uncapable to download https URLs - see https://stackoverflow.com/questions/6851461/java-why-does-ssl-handshake-give-could-not-generate-dh-keypair-exception">
                 <condition>
                     <and>
@@ -490,7 +490,7 @@ under the License.
                         <contains string="@{src}" substring="https"/>
                     </and>
                 </condition>
-            </fail>
+            </fail-->
             <get src="@{src}" dest="@{dest}" unless:true="${exists}"/>
         </sequential>
     </macrodef>
