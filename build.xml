@@ -212,9 +212,6 @@ under the License.
 
     <!-- additional schemas are packed into the poi schemas jar, -->
     <!-- so we don't have to care about a seperate versioning of the original ooxml schemas -->
-    <property name="ooxml.xsds.dc.1" value="http://dublincore.org/schemas/xmls/qdc/2003/04/02/dc.xsd"/>
-    <property name="ooxml.xsds.dc.2" value="http://dublincore.org/schemas/xmls/qdc/2003/04/02/dcterms.xsd"/>
-    <property name="ooxml.xsds.dc.3" value="http://dublincore.org/schemas/xmls/qdc/2003/04/02/dcmitype.xsd"/>
     <property name="ooxml.xsds.dsig.1" value="https://www.w3.org/TR/2002/REC-xmldsig-core-20020212/xmldsig-core-schema.xsd"/>
     <property name="ooxml.xsds.dsig.2" value="http://uri.etsi.org/01903/v1.3.2/XAdES.xsd"/>
     <property name="ooxml.xsds.dsig.3" value="http://uri.etsi.org/01903/v1.4.1/XAdESv141.xsd"/>
@@ -678,9 +675,6 @@ under the License.
         <get dest="${ooxml.lib}" skipexisting="true">
             <url url="${ooxml.xsds.url.1}"/>
             <url url="${ooxml.xsds.url.2}"/>
-            <url url="${ooxml.xsds.dc.1}"/>
-            <url url="${ooxml.xsds.dc.2}"/>
-            <url url="${ooxml.xsds.dc.3}"/>
             <url url="${ooxml.xsds.dsig.1}"/>
             <url url="${ooxml.xsds.dsig.2}"/>
             <url url="${ooxml.xsds.dsig.3}"/>
@@ -824,12 +818,10 @@ under the License.
             </xsds>
         </compile-ooxml-xmlbean>
         <!-- Now do the same for the security schemas -->
-        <!-- noupa/nopvr is set because of the dublincore schemas -->
-        <!-- https://issues.apache.org/jira/browse/XMLBEANS-340 -->
-        <compile-ooxml-xmlbean classes-jar="${ooxml.security.jar}" sources-jar="${ooxml.security.src.jar}" noupa="true" nopvr="true">
+        <compile-ooxml-xmlbean classes-jar="${ooxml.security.jar}" sources-jar="${ooxml.security.src.jar}">
             <xsds>
-                <zipfileset src="${ooxml.lib}/${ooxml.xsds.izip.2}"/>
-                <fileset dir="${ooxml.lib}" includes="dc*.xsd,xmldsig*.xsd,XAdES*.xsd"/>
+                <zipfileset src="${ooxml.lib}/${ooxml.xsds.izip.2}" includes="opc-digSig.xsd,opc-relationships.xsd"/>
+                <fileset dir="${ooxml.lib}" includes="xmldsig*.xsd,XAdES*.xsd"/>
                 <fileset dir="${ooxml.security.xsd.dir}"/>
             </xsds>
         </compile-ooxml-xmlbean>
