@@ -660,15 +660,51 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
 
     @Override
     public TextDirection getTextDirection() {
-        // TODO: determine vertical text setting
-        // see 2.3.22.10 Geometry Text Boolean Properties
-        return TextDirection.HORIZONTAL;
+        // see 2.4.5 MSOTXFL
+        AbstractEscherOptRecord opt = getEscherOptRecord();
+        EscherSimpleProperty prop = getEscherProperty(opt, EscherProperties.TEXT__TEXTFLOW);
+        int msotxfl = (prop == null) ? 0 : prop.getPropertyValue();
+        switch (msotxfl) {
+            default:
+            case 0: // msotxflHorzN
+            case 4: // msotxflHorzA
+                return TextDirection.HORIZONTAL;
+            case 1: // msotxflTtoBA
+            case 3: // msotxflTtoBN
+            case 5: // msotxflVertN
+                return TextDirection.VERTICAL;
+            case 2: // msotxflBtoT
+                return TextDirection.VERTICAL_270;
+            // TextDirection.STACKED is not supported
+        }
     }
 
     @Override
     public void setTextDirection(TextDirection orientation) {
-        // TODO: determine vertical text setting
-        // see 2.3.22.10 Geometry Text Boolean Properties / gtextFVertical [MS-ODRAW]
+        AbstractEscherOptRecord opt = getEscherOptRecord();
+        int msotxfl;
+        if (orientation == null) {
+            msotxfl = -1;
+        } else {
+            switch (orientation) {
+                default:
+                case STACKED:
+                    // not supported -> remove
+                    msotxfl = -1;
+                    break;
+                case HORIZONTAL:
+                    msotxfl = 0;
+                    break;
+                case VERTICAL:
+                    msotxfl = 1;
+                    break;
+                case VERTICAL_270:
+                    // always interpreted as horizontal
+                    msotxfl = 2;
+                    break;
+            }
+        }
+        setEscherProperty(opt, EscherProperties.TEXT__TEXTFLOW, msotxfl);
     }
     
     @Override
