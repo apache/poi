@@ -45,6 +45,7 @@ import org.openxmlformats.schemas.drawingml.x2006.main.STLineEndWidth;
 import org.openxmlformats.schemas.drawingml.x2006.main.STPenAlignment;
 import org.openxmlformats.schemas.drawingml.x2006.main.STPresetLineDashVal;
 import org.openxmlformats.schemas.drawingml.x2006.main.STTextAnchoringType;
+import org.openxmlformats.schemas.drawingml.x2006.main.STTextVerticalType;
 
 /**
  * Represents a cell of a table in a .pptx presentation
@@ -429,4 +430,65 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
         return align;
      }
 
+    /**
+     * @since POI 3.15-beta2
+     */
+    @Override
+    public void setTextDirection(TextDirection orientation) {
+        CTTableCellProperties cellProps = getCellProperties(true);
+        if(orientation == null) {
+            if (cellProps.isSetVert()) {
+                cellProps.unsetVert();
+            }
+        } else {
+            STTextVerticalType.Enum vt;
+            switch (orientation) {
+            default:
+            case HORIZONTAL:
+                vt = STTextVerticalType.HORZ;
+                break;
+            case VERTICAL:
+                vt = STTextVerticalType.VERT;
+                break;
+            case VERTICAL_270:
+                vt = STTextVerticalType.VERT_270;
+                break;
+            case STACKED:
+                vt = STTextVerticalType.WORD_ART_VERT;
+                break;
+            }
+            
+            cellProps.setVert(vt);
+        }
+    }
+
+    /**
+     * @since POI 3.15-beta2
+     */
+    @Override
+    public TextDirection getTextDirection() {
+        CTTableCellProperties cellProps = getCellProperties(false);
+
+        STTextVerticalType.Enum orientation;
+        if (cellProps != null && cellProps.isSetVert()) {
+            orientation = cellProps.getVert();
+        } else {
+            orientation = STTextVerticalType.HORZ;
+        }
+                
+        switch (orientation.intValue()) {
+            default:
+            case STTextVerticalType.INT_HORZ:
+                return TextDirection.HORIZONTAL;
+            case STTextVerticalType.INT_VERT:
+            case STTextVerticalType.INT_EA_VERT:
+            case STTextVerticalType.INT_MONGOLIAN_VERT:
+                return TextDirection.VERTICAL;
+            case STTextVerticalType.INT_VERT_270:
+                return TextDirection.VERTICAL_270;
+            case STTextVerticalType.INT_WORD_ART_VERT:
+            case STTextVerticalType.INT_WORD_ART_VERT_RTL:
+                return TextDirection.STACKED;
+        }
+    }
 }

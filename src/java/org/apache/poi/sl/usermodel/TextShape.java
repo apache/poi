@@ -17,7 +17,6 @@
 
 package org.apache.poi.sl.usermodel;
 
-import java.awt.Graphics2D;
 import java.util.List;
 
 public interface TextShape<
@@ -44,11 +43,13 @@ public interface TextShape<
          * (each line is 270 degrees rotated clockwise, so it goes
          * from bottom to top; each next line is to the right from
          * the previous one).
+         * For HSLF: always interpreted by Powerpoint as HORIZONTAL.
          */
         VERTICAL_270,
         /**
          * Determines if all of the text is vertical
          * ("one letter on top of another").
+         * For HSLF: not supported
          */
         STACKED
     }
