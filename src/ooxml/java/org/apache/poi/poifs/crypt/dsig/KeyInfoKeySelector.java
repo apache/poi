@@ -65,7 +65,7 @@ public class KeyInfoKeySelector extends KeySelector implements KeySelectorResult
                 continue;
             }
             X509Data x509Data = (X509Data) keyInfoStructure;
-            List<Object> x509DataList = x509Data.getContent();
+            List<?> x509DataList = x509Data.getContent();
             for (Object x509DataObject : x509DataList) {
                 if (!(x509DataObject instanceof X509Certificate)) {
                     continue;
