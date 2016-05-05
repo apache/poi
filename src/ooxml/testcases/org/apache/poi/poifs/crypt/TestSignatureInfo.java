@@ -36,10 +36,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.ConnectException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.*;
 import java.security.Key;
 import java.security.KeyPair;
 import java.security.KeyStore;
@@ -105,6 +102,7 @@ public class TestSignatureInfo {
 
         /*** TODO : set cal to now ... only set to fixed date for debugging ... */ 
         cal = LocaleUtil.getLocaleCalendar(LocaleUtil.TIMEZONE_UTC);
+        assertNotNull(cal);
 //        cal.set(2014, 7, 6, 21, 42, 12);
 //        cal.clear(Calendar.MILLISECOND);
 
@@ -390,10 +388,11 @@ public class TestSignatureInfo {
             if(e.getCause() == null) {
                 throw e;
             }
-            if(!(e.getCause() instanceof ConnectException)) {
+            if(!(e.getCause() instanceof ConnectException) && !(e.getCause() instanceof SocketTimeoutException)) {
                 throw e;
             }
-            assertTrue("Only allowing ConnectException with 'timed out' as message here, but had: " + e, e.getCause().getMessage().contains("timed out"));
+            assertTrue("Only allowing ConnectException with 'timed out' as message here, but had: " + e,
+                            e.getCause().getMessage().contains("timed out"));
         }
         
         // verify
@@ -584,17 +583,20 @@ public class TestSignatureInfo {
     @Ignore
     public void testMultiSign() throws Exception {
         initKeyPair("KeyA", "CN=KeyA");
-        KeyPair keyPairA = keyPair;
-        X509Certificate x509A = x509;
+        //KeyPair keyPairA = keyPair;
+        //X509Certificate x509A = x509;
         initKeyPair("KeyB", "CN=KeyB");
-        KeyPair keyPairB = keyPair;
-        X509Certificate x509B = x509;
+        //KeyPair keyPairB = keyPair;
+        //X509Certificate x509B = x509;
         
         File tpl = copy(testdata.getFile("bug58630.xlsx"));
         OPCPackage pkg = OPCPackage.open(tpl);
-        SignatureConfig signatureConfig = new SignatureConfig();
-        
-        
+        try {
+            //SignatureConfig signatureConfig = new SignatureConfig();
+            assertNotNull(pkg);
+        } finally {
+            pkg.close();
+        }
     }
     
     private void sign(OPCPackage pkgCopy, String alias, String signerDn, int signerCount) throws Exception {
