@@ -17,20 +17,6 @@
 
 package org.apache.poi.poifs.macros;
 
-import static org.apache.poi.POITestCase.assertContains;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.util.IOUtils;
@@ -38,25 +24,44 @@ import org.apache.poi.util.StringUtil;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.apache.poi.POITestCase.assertContains;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+
 public class TestVBAMacroReader {
-    
     private static final Map<POIDataSamples, String> expectedMacroContents;
+
     protected static String readVBA(POIDataSamples poiDataSamples) {
         File macro = poiDataSamples.getFile("SimpleMacro.vba");
-        byte[] bytes;
+        final byte[] bytes;
         try {
-            bytes = IOUtils.toByteArray(new FileInputStream(macro));
+            FileInputStream stream = new FileInputStream(macro);
+            try {
+                bytes = IOUtils.toByteArray(stream);
+            } finally {
+                stream.close();
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
         String testMacroContents = new String(bytes, StringUtil.UTF8);
         
         if (! testMacroContents.startsWith("Sub ")) {
             throw new IllegalArgumentException("Not a macro");
         }
-        String testMacroNoSub = testMacroContents.substring(testMacroContents.indexOf("()")+3);
-        return testMacroNoSub;
+
+        return testMacroContents.substring(testMacroContents.indexOf("()")+3);
     }
+
     static {
         final Map<POIDataSamples, String> _expectedMacroContents = new HashMap<POIDataSamples, String>();
         final POIDataSamples[] dataSamples = {
