@@ -168,7 +168,9 @@ public class TSPTimeStampService implements TimeStampService {
             ? "application/timestamp-response"
             : "application/timestamp-reply"
         )) {
-            throw new RuntimeException("invalid Content-Type: " + contentType);
+            throw new RuntimeException("invalid Content-Type: " + contentType +
+                    // dump the first few bytes
+                    ": " + HexDump.dump(bos.toByteArray(), 0, 0, 200));
         }
         
         if (bos.size() == 0) {
@@ -248,8 +250,7 @@ public class TSPTimeStampService implements TimeStampService {
         LOG.log(POILogger.DEBUG, "time-stamp token time: "
                 + timeStampToken.getTimeStampInfo().getGenTime());
 
-        byte[] timestamp = timeStampToken.getEncoded();
-        return timestamp;
+        return timeStampToken.getEncoded();
     }
 
     public void setSignatureConfig(SignatureConfig signatureConfig) {
