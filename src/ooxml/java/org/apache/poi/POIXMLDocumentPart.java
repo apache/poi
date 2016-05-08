@@ -359,6 +359,9 @@ public class POIXMLDocumentPart {
         String ppn = part.getPackagePart().getPartName().getName();
         try {
             for (PackageRelationship pr : packagePart.getRelationships()) {
+                if (pr.getTargetMode() == TargetMode.EXTERNAL) {
+                    continue;
+                }
                 PackagePart pp = packagePart.getRelatedPart(pr);
                 if (ppn.equals(pp.getPartName().getName())) {
                     return pr;
