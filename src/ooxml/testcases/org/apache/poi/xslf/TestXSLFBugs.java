@@ -37,13 +37,15 @@ import java.util.Collection;
 
 import javax.imageio.ImageIO;
 
+import org.apache.poi.POIDataSamples;
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.POIXMLDocumentPart.RelationPart;
-import org.apache.poi.sl.usermodel.PaintStyle;
+import org.apache.poi.sl.usermodel.PictureData;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.apache.poi.xslf.usermodel.DrawingParagraph;
 import org.apache.poi.xslf.usermodel.DrawingTextBody;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
+import org.apache.poi.xslf.usermodel.XSLFHyperlink;
 import org.apache.poi.xslf.usermodel.XSLFPictureData;
 import org.apache.poi.xslf.usermodel.XSLFPictureShape;
 import org.apache.poi.xslf.usermodel.XSLFRelation;
@@ -56,7 +58,8 @@ import org.junit.Test;
 
 
 public class TestXSLFBugs {
-
+    private static final POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
+    
     @Test
     public void bug51187() throws Exception {
        XMLSlideShow ss1 = XSLFTestDataSamples.openSampleDocument("51187.pptx");
@@ -416,15 +419,17 @@ public class TestXSLFBugs {
     }
 
     @Test
-    public void bug55791a() {
+    public void bug55791a() throws IOException {
         XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("45541_Footer.pptx");
         removeAndCreateSlide(ppt);
+        ppt.close();
     }
 
     @Test
-    public void bug55791b() {
+    public void bug55791b() throws IOException {
         XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("SampleShow.pptx");
         removeAndCreateSlide(ppt);
+        ppt.close();
     }
 
     private void removeAndCreateSlide(XMLSlideShow ppt) {
@@ -434,10 +439,37 @@ public class TestXSLFBugs {
     }
 
     @Test
-    public void blibFillAlternateContent() throws IOException  {
+    public void blibFillAlternateContent() throws IOException {
         XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("2411-Performance_Up.pptx");
         XSLFPictureShape ps = (XSLFPictureShape)ppt.getSlides().get(4).getShapes().get(0);
         assertNotNull(ps.getPictureData());
         ppt.close();
+    }
+
+    @Test
+    public void bug59434() throws IOException {
+        String url1 = "http://poi.apache.org/changes.html";
+        String url2 = "http://poi.apache.org/faq.html";
+        XMLSlideShow ppt1 = new XMLSlideShow();
+        PictureData pd1 = ppt1.addPicture(slTests.readFile("tomcat.png"), PictureType.PNG);
+        PictureData pd2 = ppt1.addPicture(slTests.readFile("santa.wmf"), PictureType.WMF);
+        XSLFSlide slide = ppt1.createSlide();
+        XSLFPictureShape ps1 = slide.createPicture(pd1);
+        ps1.setAnchor(new Rectangle2D.Double(20, 20, 100, 100));
+        XSLFHyperlink hl1 = ps1.createHyperlink();
+        hl1.linkToUrl(url1);
+        XSLFPictureShape ps2 = slide.createPicture(pd2);
+        ps2.setAnchor(new Rectangle2D.Double(120, 120, 100, 100));
+        XSLFHyperlink hl2 = ps2.createHyperlink();
+        hl2.linkToUrl(url2);
+        XMLSlideShow ppt2 = XSLFTestDataSamples.writeOutAndReadBack(ppt1);
+        ppt1.close();
+        slide = ppt2.getSlides().get(0);
+        ps1 = (XSLFPictureShape)slide.getShapes().get(0);
+        ps2 = (XSLFPictureShape)slide.getShapes().get(1);
+        assertEquals(url1, ps1.getHyperlink().getAddress());
+        assertEquals(url2, ps2.getHyperlink().getAddress());
+    
+        ppt2.close();
     }
 }
