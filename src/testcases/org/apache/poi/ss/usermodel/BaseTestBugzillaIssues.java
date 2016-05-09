@@ -1496,4 +1496,48 @@ public abstract class BaseTestBugzillaIssues {
     protected double delta(long startTimeMillis) {
         return time() - startTimeMillis;
     }
+    
+    @Ignore("bug 59393")
+    @Test
+    public void bug59393_commentsCanHaveSameAnchor() throws IOException
+    {
+        Workbook wb = _testDataProvider.createWorkbook();
+        
+        Sheet sheet = wb.createSheet();
+        
+        CreationHelper helper = wb.getCreationHelper();
+        ClientAnchor anchor = helper.createClientAnchor();
+        Drawing drawing = sheet.createDrawingPatriarch();
+        
+        Row row = sheet.createRow(0);
+        
+        Cell cell1 = row.createCell(0);
+        Cell cell2 = row.createCell(1);
+        Cell cell3 = row.createCell(2);
+
+        Comment comment1 = drawing.createCellComment(anchor);
+        RichTextString richTextString1 = helper.createRichTextString("comment1");
+        comment1.setString(richTextString1);
+        cell1.setCellComment(comment1);
+         
+        // fails with IllegalArgumentException("Multiple cell comments in one cell are not allowed, cell: A1")
+        // because createCellComment tries to create a cell at A1
+        // (from CellAddress(anchor.getRow1(), anchor.getCell1())),
+        // but cell A1 already has a comment (comment1).
+        // Need to atomically create a comment and attach it to a cell.
+        // Current workaround: change anchor between each usage
+        // anchor.setCol1(1);
+        Comment comment2 = drawing.createCellComment(anchor);
+        RichTextString richTextString2 = helper.createRichTextString("comment2");
+        comment2.setString(richTextString2);
+        cell2.setCellComment(comment2);
+
+        // anchor.setCol1(2);
+        Comment comment3 = drawing.createCellComment(anchor);
+        RichTextString richTextString3 = helper.createRichTextString("comment3");
+        comment3.setString(richTextString3);
+        cell3.setCellComment(comment3);
+        
+        wb.close();
+    }
 }
