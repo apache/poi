@@ -27,7 +27,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -42,10 +42,16 @@ import org.junit.Test;
  *
  * @see org.apache.poi.ss.util.CellUtil
  */
-public final class TestCellUtil {
+public class BaseTestCellUtil {
+    protected final ITestDataProvider _testDataProvider;
+
+    protected BaseTestCellUtil(ITestDataProvider testDataProvider) {
+        _testDataProvider = testDataProvider;
+    }
+    
     @Test
     public void setCellStyleProperty() throws IOException {
-        Workbook wb = new HSSFWorkbook();
+        Workbook wb = _testDataProvider.createWorkbook();
         Sheet s = wb.createSheet();
         Row r = s.createRow(0);
         Cell c = r.createCell(0);
@@ -67,7 +73,7 @@ public final class TestCellUtil {
 
     @Test
     public void setCellStyleProperties() throws IOException {
-        Workbook wb = new HSSFWorkbook();
+        Workbook wb = _testDataProvider.createWorkbook();
         Sheet s = wb.createSheet();
         Row r = s.createRow(0);
         Cell c = r.createCell(0);
@@ -94,7 +100,7 @@ public final class TestCellUtil {
 
     @Test
     public void getRow() throws IOException {
-        Workbook wb = new HSSFWorkbook();
+        Workbook wb = _testDataProvider.createWorkbook();
         Sheet sh = wb.createSheet();
         Row row1 = sh.createRow(0);
         
@@ -111,7 +117,7 @@ public final class TestCellUtil {
 
     @Test
     public void getCell() throws IOException {
-        Workbook wb = new HSSFWorkbook();
+        Workbook wb = _testDataProvider.createWorkbook();
         Sheet sh = wb.createSheet();
         Row row = sh.createRow(0);
         Cell A1 = row.createCell(0);
@@ -129,7 +135,7 @@ public final class TestCellUtil {
 
     @Test
     public void createCell() throws IOException {
-        Workbook wb = new HSSFWorkbook();
+        Workbook wb = _testDataProvider.createWorkbook();
         Sheet sh = wb.createSheet();
         Row row = sh.createRow(0);
 
@@ -165,7 +171,7 @@ public final class TestCellUtil {
 
     @Test
     public void setAlignment() throws IOException {
-        Workbook wb = new HSSFWorkbook();
+        Workbook wb = _testDataProvider.createWorkbook();
         Sheet sh = wb.createSheet();
         Row row = sh.createRow(0);
         Cell A1 = row.createCell(0);
@@ -193,7 +199,7 @@ public final class TestCellUtil {
 
     @Test
     public void setFont() throws IOException {
-        Workbook wb = new HSSFWorkbook();
+        Workbook wb = _testDataProvider.createWorkbook();
         Sheet sh = wb.createSheet();
         Row row = sh.createRow(0);
         Cell A1 = row.createCell(0);
@@ -226,8 +232,8 @@ public final class TestCellUtil {
 
     @Test
     public void setFontFromDifferentWorkbook() throws IOException {
-        Workbook wb1 = new HSSFWorkbook();
-        Workbook wb2 = new HSSFWorkbook();
+        Workbook wb1 = _testDataProvider.createWorkbook();
+        Workbook wb2 = _testDataProvider.createWorkbook();
         Font font1 = wb1.createFont();
         Font font2 = wb2.createFont();
         // do something to make font1 and font2 different
