@@ -39,6 +39,7 @@ public interface Comment {
      * Get the address of the cell that this comment is attached to
      *
      * @return comment cell address
+     * @since 3.15-beta1
      */
     CellAddress getAddress();
     
@@ -46,6 +47,7 @@ public interface Comment {
      * Set the address of the cell that this comment is attached to
      *
      * @param addr
+     * @since 3.15-beta1
      */
     void setAddress(CellAddress addr);
     
@@ -54,6 +56,7 @@ public interface Comment {
      *
      * @param row
      * @param col
+     * @since 3.15-beta1
      */
     void setAddress(int row, int col);
 
