@@ -143,6 +143,10 @@ public class XSSFComment implements Comment {
     @Override
     public void setAddress(CellAddress address) {
         CellAddress oldRef = new CellAddress(_comment.getRef());
+        if (address.equals(oldRef)) {
+            // nothing to do
+            return;
+        }
         
         _comment.setRef(address.formatAsString());
         _comments.referenceUpdated(oldRef, _comment);
@@ -161,6 +165,8 @@ public class XSSFComment implements Comment {
 
     /**
      * Set the column of the cell that contains the comment
+     * 
+     * If changing both row and column, use {@link #setAddress}.
      *
      * @param col the 0-based column of the cell that contains the comment
      */
@@ -171,6 +177,8 @@ public class XSSFComment implements Comment {
 
     /**
      * Set the row of the cell that contains the comment
+     * 
+     * If changing both row and column, use {@link #setAddress}.
      *
      * @param row the 0-based row of the cell that contains the comment
      */
