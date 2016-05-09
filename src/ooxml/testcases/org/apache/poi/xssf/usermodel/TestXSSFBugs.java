@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -92,6 +93,7 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.xssf.XLSBUnsupportedException;
@@ -3009,5 +3011,42 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         }*/
 
         workbook.close();
+    }
+    
+    @Ignore("bug 59442")
+    @Test
+    public void testSetRGBBackgroundColor() throws IOException {
+
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        XSSFCell cell = workbook.createSheet().createRow(0).createCell(0);
+
+        XSSFColor color = new XSSFColor(java.awt.Color.RED);
+        XSSFCellStyle style = workbook.createCellStyle();
+        style.setFillForegroundColor(color);
+        style.setFillPattern(XSSFCellStyle.SOLID_FOREGROUND);
+        cell.setCellStyle(style);
+
+        // Everything is fine at this point, cell is red
+
+        Map<String, Object> properties = new HashMap<String, Object>();
+        properties.put(CellUtil.BORDER_BOTTOM, CellStyle.BORDER_THIN); //or BorderStyle.THIN
+        CellUtil.setCellStyleProperties(cell, properties);
+        
+        // Now the cell is all black
+        XSSFColor actual = cell.getCellStyle().getFillBackgroundColorColor();
+        assertNotNull(actual);
+        assertEquals(color.getARGBHex(), actual.getARGBHex());
+        
+        XSSFWorkbook nwb = XSSFTestDataSamples.writeOutAndReadBack(workbook);
+        workbook.close();
+        XSSFCell ncell = nwb.getSheetAt(0).getRow(0).getCell(0);
+        XSSFColor ncolor = new XSSFColor(java.awt.Color.RED);
+
+        // Now the cell is all black
+        XSSFColor nactual = ncell.getCellStyle().getFillBackgroundColorColor();
+        assertNotNull(nactual);
+        assertEquals(ncolor.getARGBHex(), nactual.getARGBHex());
+        
+        nwb.close();
     }
 }
