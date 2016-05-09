@@ -1039,8 +1039,7 @@ public final class XSSFCell implements Cell {
             return;
         }
 
-        comment.setRow(getRowIndex());
-        comment.setColumn(getColumnIndex());
+        comment.setAddress(getRowIndex(), getColumnIndex());
     }
 
     /**

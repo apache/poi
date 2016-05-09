@@ -17,6 +17,7 @@
 package org.apache.poi.xssf.usermodel.examples;
 
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.IOException;
@@ -68,8 +69,7 @@ public class CellComments {
 
         comment2.setString(str2);
         comment2.setAuthor("Apache POI");
-        comment2.setColumn(2);
-        comment2.setRow(2);
+        comment2.setAddress(new CellAddress("C3"));
 
         String fname = "comments.xlsx";
         FileOutputStream out = new FileOutputStream(fname);
