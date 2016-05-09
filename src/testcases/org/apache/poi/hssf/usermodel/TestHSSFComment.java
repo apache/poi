@@ -455,23 +455,4 @@ public final class TestHSSFComment extends BaseTestCellComment {
         
         wb.close();
     }
-    
-    @Test
-    public void attemptToSave2CommentsWithSameCoordinates(){
-        Object err = null;
-        
-        HSSFWorkbook wb = new HSSFWorkbook();
-        HSSFSheet sh = wb.createSheet();
-        HSSFPatriarch patriarch = sh.createDrawingPatriarch();
-        patriarch.createCellComment(new HSSFClientAnchor());
-        patriarch.createCellComment(new HSSFClientAnchor());
-        
-        try{
-            HSSFTestDataSamples.writeOutAndReadBack(wb);
-        } catch (IllegalStateException e){
-            err = 1;
-            assertEquals(e.getMessage(), "found multiple cell comments for cell $A$1");
-        }
-        assertNotNull(err);
-    }
 }

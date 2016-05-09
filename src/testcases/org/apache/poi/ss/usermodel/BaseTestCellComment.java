@@ -23,6 +23,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
 
@@ -353,5 +354,22 @@ public abstract class BaseTestCellComment {
         }
         
         wb.close();
+    }
+    
+    @Test
+    public void attemptToSave2CommentsWithSameCoordinates(){
+        Workbook wb = _testDataProvider.createWorkbook();
+        Sheet sh = wb.createSheet();
+        CreationHelper factory = wb.getCreationHelper();
+        Drawing patriarch = sh.createDrawingPatriarch();
+        patriarch.createCellComment(factory.createClientAnchor());
+        patriarch.createCellComment(factory.createClientAnchor());
+        
+        try{
+            _testDataProvider.writeOutAndReadBack(wb);
+            fail("Expected IllegalStateException(found multiple cell comments for cell $A$1");
+        } catch (IllegalStateException e){
+            assertEquals("found multiple cell comments for cell $A$1", e.getMessage());
+        }
     }
 }
