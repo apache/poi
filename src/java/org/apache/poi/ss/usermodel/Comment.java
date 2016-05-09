@@ -17,6 +17,8 @@
 
 package org.apache.poi.ss.usermodel;
 
+import org.apache.poi.ss.util.CellAddress;
+
 public interface Comment {
 
     /**
@@ -32,6 +34,28 @@ public interface Comment {
      * @return <code>true</code> if the comment is visible, <code>false</code> otherwise
      */
     boolean isVisible();
+    
+    /**
+     * Get the address of the cell that this comment is attached to
+     *
+     * @return comment cell address
+     */
+    CellAddress getAddress();
+    
+    /**
+     * Set the address of the cell that this comment is attached to
+     *
+     * @param addr
+     */
+    void setAddress(CellAddress addr);
+    
+    /**
+     * Set the address of the cell that this comment is attached to
+     *
+     * @param row
+     * @param col
+     */
+    void setAddress(int row, int col);
 
     /**
      * Return the row of the cell that contains the comment
