@@ -357,19 +357,25 @@ public abstract class BaseTestCellComment {
     }
     
     @Test
-    public void attemptToSave2CommentsWithSameCoordinates(){
+    public void attemptToSave2CommentsWithSameCoordinates() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sh = wb.createSheet();
         CreationHelper factory = wb.getCreationHelper();
         Drawing patriarch = sh.createDrawingPatriarch();
         patriarch.createCellComment(factory.createClientAnchor());
-        patriarch.createCellComment(factory.createClientAnchor());
         
-        try{
+        try {
+            patriarch.createCellComment(factory.createClientAnchor());
             _testDataProvider.writeOutAndReadBack(wb);
-            fail("Expected IllegalStateException(found multiple cell comments for cell $A$1");
-        } catch (IllegalStateException e){
+            fail("Should not be able to create a corrupted workbook with multiple cell comments in one cell");
+        } catch (IllegalStateException e) {
+            // HSSFWorkbooks fail when writing out workbook
             assertEquals("found multiple cell comments for cell $A$1", e.getMessage());
+        } catch (IllegalArgumentException e) {
+            // XSSFWorkbooks fail when creating and setting the cell address of the comment
+            assertEquals("Multiple cell comments in one cell are not allowed, cell: A1", e.getMessage());
+        } finally {
+            wb.close();
         }
     }
 }
