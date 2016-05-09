@@ -38,7 +38,7 @@ import org.junit.runners.Suite;
     TestFormulas.class,
     TestHSSFCell.class,
     TestHSSFClientAnchor.class,
-    TestHSSFComment.class,
+    //TestHSSFComment.class, //converted to junit4
     TestHSSFConditionalFormatting.class,
     TestHSSFDataFormat.class,
     TestHSSFDataFormatter.class,
