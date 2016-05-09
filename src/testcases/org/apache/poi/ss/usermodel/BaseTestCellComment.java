@@ -378,4 +378,38 @@ public abstract class BaseTestCellComment {
             wb.close();
         }
     }
+    
+    @Test
+    public void getAddress() {
+        Workbook wb = _testDataProvider.createWorkbook();
+        Sheet sh = wb.createSheet();
+        CreationHelper factory = wb.getCreationHelper();
+        Drawing patriarch = sh.createDrawingPatriarch();
+        Comment comment = patriarch.createCellComment(factory.createClientAnchor());
+        
+        assertEquals(CellAddress.A1, comment.getAddress());
+        Cell C2 = sh.createRow(1).createCell(2);
+        C2.setCellComment(comment);
+        assertEquals(new CellAddress("C2"), comment.getAddress());
+    }
+    
+    @Test
+    public void setAddress() {
+        Workbook wb = _testDataProvider.createWorkbook();
+        Sheet sh = wb.createSheet();
+        CreationHelper factory = wb.getCreationHelper();
+        Drawing patriarch = sh.createDrawingPatriarch();
+        Comment comment = patriarch.createCellComment(factory.createClientAnchor());
+        
+        assertEquals(CellAddress.A1, comment.getAddress());
+        CellAddress C2 = new CellAddress("C2");
+        assertEquals("C2", C2.formatAsString());
+        comment.setAddress(C2);
+        assertEquals(C2, comment.getAddress());
+        
+        CellAddress E10 = new CellAddress(9, 4);
+        assertEquals("E10", E10.formatAsString());
+        comment.setAddress(9, 4);
+        assertEquals(E10, comment.getAddress());
+    }
 }

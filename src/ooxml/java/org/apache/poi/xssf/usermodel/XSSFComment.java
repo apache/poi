@@ -29,6 +29,7 @@ import org.apache.poi.xssf.model.CommentsTable;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
 
+import com.microsoft.schemas.office.excel.CTClientData;
 import com.microsoft.schemas.vml.CTShape;
 
 public class XSSFComment implements Comment {
@@ -55,11 +56,9 @@ public class XSSFComment implements Comment {
         // the same way as we do in setRow()/setColumn()
         if(vmlShape != null && vmlShape.sizeOfClientDataArray() > 0) {
             CellReference ref = new CellReference(comment.getRef());
-            vmlShape.getClientDataArray(0).setRowArray(0, 
-                    new BigInteger(String.valueOf(ref.getRow())));
-    
-            vmlShape.getClientDataArray(0).setColumnArray(0, 
-                    new BigInteger(String.valueOf(ref.getCol())));
+            CTClientData clientData = vmlShape.getClientDataArray(0);
+            clientData.setRowArray(0, new BigInteger(String.valueOf(ref.getRow())));
+            clientData.setColumnArray(0, new BigInteger(String.valueOf(ref.getCol())));
             
             // There is a very odd xmlbeans bug when changing the row
             //  arrays which can lead to corrupt pointer
@@ -72,6 +71,7 @@ public class XSSFComment implements Comment {
      *
      * @return Name of the original comment author. Default value is blank.
      */
+    @Override
     public String getAuthor() {
         return _comments.getAuthor((int) _comment.getAuthorId());
     }
@@ -81,6 +81,7 @@ public class XSSFComment implements Comment {
      *
      * @param author the name of the original author of the comment
      */
+    @Override
     public void setAuthor(String author) {
         _comment.setAuthorId(
                 _comments.findAuthor(author)
@@ -90,20 +91,23 @@ public class XSSFComment implements Comment {
     /**
      * @return the 0-based column of the cell that the comment is associated with.
      */
+    @Override
     public int getColumn() {
-        return new CellReference(_comment.getRef()).getCol();
+        return getAddress().getColumn();
     }
 
     /**
      * @return the 0-based row index of the cell that the comment is associated with.
      */
+    @Override
     public int getRow() {
-        return new CellReference(_comment.getRef()).getRow();
+        return getAddress().getRow();
     }
 
     /**
      * @return whether the comment is visible
      */
+    @Override
     public boolean isVisible() {
         boolean visible = false;
         if(_vmlShape != null){
@@ -116,6 +120,7 @@ public class XSSFComment implements Comment {
     /**
      * @param visible whether the comment is visible
      */
+    @Override
     public void setVisible(boolean visible) {
         if(_vmlShape != null){
             String style;
@@ -124,23 +129,28 @@ public class XSSFComment implements Comment {
             _vmlShape.setStyle(style);
         }
     }
-
-    /**
-     * Set the column of the cell that contains the comment
-     *
-     * @param col the 0-based column of the cell that contains the comment
-     */
-    public void setColumn(int col) {
+    
+    @Override
+    public CellAddress getAddress() {
+        return new CellAddress(_comment.getRef());
+    }
+    
+    @Override
+    public void setAddress(int row, int col) {
+        setAddress(new CellAddress(row, col));
+    }
+    
+    @Override
+    public void setAddress(CellAddress address) {
         CellAddress oldRef = new CellAddress(_comment.getRef());
         
-        CellAddress ref = new CellAddress(getRow(), col);
-        _comment.setRef(ref.formatAsString());
+        _comment.setRef(address.formatAsString());
         _comments.referenceUpdated(oldRef, _comment);
         
-        if(_vmlShape != null) {
-           _vmlShape.getClientDataArray(0).setColumnArray(
-                 new BigInteger[] { new BigInteger(String.valueOf(col)) }
-           );
+        if (_vmlShape != null) {
+            CTClientData clientData = _vmlShape.getClientDataArray(0);
+            clientData.setRowArray(0, new BigInteger(String.valueOf(address.getRow())));
+            clientData.setColumnArray(0, new BigInteger(String.valueOf(address.getColumn())));
            
            // There is a very odd xmlbeans bug when changing the column
            //  arrays which can lead to corrupt pointer
@@ -150,31 +160,29 @@ public class XSSFComment implements Comment {
     }
 
     /**
+     * Set the column of the cell that contains the comment
+     *
+     * @param col the 0-based column of the cell that contains the comment
+     */
+    @Override
+    public void setColumn(int col) {
+        setAddress(getRow(), col);
+    }
+
+    /**
      * Set the row of the cell that contains the comment
      *
      * @param row the 0-based row of the cell that contains the comment
      */
+    @Override
     public void setRow(int row) {
-       CellAddress oldRef = new CellAddress(_comment.getRef());
-       
-        CellAddress ref = new CellAddress(row, getColumn());
-        _comment.setRef(ref.formatAsString());
-        _comments.referenceUpdated(oldRef, _comment);
-      
-        if(_vmlShape != null) {
-            _vmlShape.getClientDataArray(0).setRowArray(0, 
-                    new BigInteger(String.valueOf(row)));
-            
-            // There is a very odd xmlbeans bug when changing the row
-            //  arrays which can lead to corrupt pointer
-            // This call seems to fix them again... See bug #50795
-            _vmlShape.getClientDataList().toString();
-        }
+        setAddress(row, getColumn());
     }
     
     /**
      * @return the rich text string of the comment
      */
+    @Override
     public XSSFRichTextString getString() {
         if(_str == null) {
             CTRst rst = _comment.getText();
@@ -188,6 +196,7 @@ public class XSSFComment implements Comment {
      *
      * @param string  the XSSFRichTextString used by this object.
      */
+    @Override
     public void setString(RichTextString string) {
         if(!(string instanceof XSSFRichTextString)){
             throw new IllegalArgumentException("Only XSSFRichTextString argument is supported");
