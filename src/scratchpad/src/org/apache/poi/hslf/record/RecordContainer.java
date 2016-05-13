@@ -120,9 +120,9 @@ public abstract class RecordContainer extends Record
 	 *  given type. Does not descend.
 	 */
 	public Record findFirstOfType(long type) {
-		for(int i=0; i<_children.length; i++) {
-			if(_children[i].getRecordType() == type) {
-				return _children[i];
+		for (Record r : _children) {
+			if (r.getRecordType() == type) {
+				return r;
 			}
 		}
 		return null;

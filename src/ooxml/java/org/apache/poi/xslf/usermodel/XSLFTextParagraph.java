@@ -755,7 +755,7 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
 
     /* package */ CTTextParagraphProperties getDefaultMasterStyle(){
         CTPlaceholder ph = _shape.getCTPlaceholder();
-        String defaultStyleSelector;   
+        String defaultStyleSelector;  
         switch(ph == null ? -1 : ph.getType().intValue()) {
             case STPlaceholderType.INT_TITLE:
             case STPlaceholderType.INT_CTR_TITLE:
@@ -1045,6 +1045,21 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
                 thisP.removeR(i-1);
             }
             _runs.clear();
+        }
+    }
+
+    @Override
+    public boolean isHeaderOrFooter() {
+        CTPlaceholder ph = _shape.getCTPlaceholder();
+        int phId = (ph == null ? -1 : ph.getType().intValue());
+        switch (phId) {
+            case STPlaceholderType.INT_SLD_NUM:
+            case STPlaceholderType.INT_DT:
+            case STPlaceholderType.INT_FTR:
+            case STPlaceholderType.INT_HDR:
+                return true;
+            default:
+                return false;
         }
     }
 }

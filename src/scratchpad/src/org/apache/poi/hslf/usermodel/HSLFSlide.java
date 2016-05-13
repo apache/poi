@@ -31,7 +31,6 @@ import org.apache.poi.hslf.record.ColorSchemeAtom;
 import org.apache.poi.hslf.record.Comment2000;
 import org.apache.poi.hslf.record.EscherTextboxWrapper;
 import org.apache.poi.hslf.record.HeadersFootersContainer;
-import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.RecordContainer;
 import org.apache.poi.hslf.record.RecordTypes;
 import org.apache.poi.hslf.record.SSSlideInfoAtom;
@@ -422,26 +421,8 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFTe
      *
      * @return Header / Footer settings for this slide
      */
-     public HeadersFooters getHeadersFooters(){
-        HeadersFootersContainer hdd = null;
-        Record[] ch = getSheetContainer().getChildRecords();
-        boolean ppt2007 = false;
-        for (int i = 0; i < ch.length; i++) {
-            if(ch[i] instanceof HeadersFootersContainer){
-                hdd = (HeadersFootersContainer)ch[i];
-            } else if (ch[i].getRecordType() == RecordTypes.RoundTripContentMasterId.typeID){
-                ppt2007 = true;
-            }
-        }
-        boolean newRecord = false;
-        if(hdd == null && !ppt2007) {
-            return getSlideShow().getSlideHeadersFooters();
-        }
-        if(hdd == null) {
-            hdd = new HeadersFootersContainer(HeadersFootersContainer.SlideHeadersFootersContainer);
-            newRecord = true;
-        }
-        return new HeadersFooters(hdd, this, newRecord, ppt2007);
+    public HeadersFooters getHeadersFooters(){
+        return new HeadersFooters(this, HeadersFootersContainer.SlideHeadersFootersContainer);
     }
 
     protected void onAddTextShape(HSLFTextShape shape) {

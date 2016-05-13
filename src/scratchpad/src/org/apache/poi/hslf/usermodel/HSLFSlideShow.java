@@ -33,7 +33,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.poi.hslf.record.MainMaster;
 import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherOptRecord;
@@ -49,8 +48,6 @@ import org.apache.poi.hslf.record.ExAviMovie;
 import org.apache.poi.hslf.record.ExControl;
 import org.apache.poi.hslf.record.ExEmbed;
 import org.apache.poi.hslf.record.ExEmbedAtom;
-import org.apache.poi.hslf.record.ExHyperlink;
-import org.apache.poi.hslf.record.ExHyperlinkAtom;
 import org.apache.poi.hslf.record.ExMCIMovie;
 import org.apache.poi.hslf.record.ExObjList;
 import org.apache.poi.hslf.record.ExObjListAtom;
@@ -60,6 +57,7 @@ import org.apache.poi.hslf.record.ExVideoContainer;
 import org.apache.poi.hslf.record.FontCollection;
 import org.apache.poi.hslf.record.FontEntityAtom;
 import org.apache.poi.hslf.record.HeadersFootersContainer;
+import org.apache.poi.hslf.record.MainMaster;
 import org.apache.poi.hslf.record.Notes;
 import org.apache.poi.hslf.record.PersistPtrHolder;
 import org.apache.poi.hslf.record.PositionDependentRecord;
@@ -905,24 +903,7 @@ public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagrap
 	 * @return Header / Footer settings for slides
 	 */
 	public HeadersFooters getSlideHeadersFooters() {
-		// detect if this ppt was saved in Office2007
-		String tag = getSlideMasters().get(0).getProgrammableTag();
-		boolean ppt2007 = "___PPT12".equals(tag);
-
-		HeadersFootersContainer hdd = null;
-		for (Record ch : _documentRecord.getChildRecords()) {
-			if (ch instanceof HeadersFootersContainer
-				&& ((HeadersFootersContainer) ch).getOptions() == HeadersFootersContainer.SlideHeadersFootersContainer) {
-				hdd = (HeadersFootersContainer) ch;
-				break;
-			}
-		}
-		boolean newRecord = false;
-		if (hdd == null) {
-			hdd = new HeadersFootersContainer(HeadersFootersContainer.SlideHeadersFootersContainer);
-			newRecord = true;
-		}
-		return new HeadersFooters(hdd, this, newRecord, ppt2007);
+		return new HeadersFooters(this, HeadersFootersContainer.SlideHeadersFootersContainer);
 	}
 
 	/**
@@ -931,27 +912,11 @@ public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagrap
 	 * @return Header / Footer settings for notes
 	 */
 	public HeadersFooters getNotesHeadersFooters() {
-		// detect if this ppt was saved in Office2007
-		String tag = getSlideMasters().get(0).getProgrammableTag();
-		boolean ppt2007 = "___PPT12".equals(tag);
-
-		HeadersFootersContainer hdd = null;
-		for (Record ch : _documentRecord.getChildRecords()) {
-			if (ch instanceof HeadersFootersContainer
-					&& ((HeadersFootersContainer) ch).getOptions() == HeadersFootersContainer.NotesHeadersFootersContainer) {
-				hdd = (HeadersFootersContainer) ch;
-				break;
-			}
-		}
-		boolean newRecord = false;
-		if (hdd == null) {
-			hdd = new HeadersFootersContainer(HeadersFootersContainer.NotesHeadersFootersContainer);
-			newRecord = true;
-		}
-		if (ppt2007 && !_notes.isEmpty()) {
-			return new HeadersFooters(hdd, _notes.get(0), newRecord, ppt2007);
-		}
-		return new HeadersFooters(hdd, this, newRecord, ppt2007);
+	    if (_notes.isEmpty()) {
+	        return new HeadersFooters(this, HeadersFootersContainer.NotesHeadersFootersContainer);
+	    } else {
+	        return new HeadersFooters(_notes.get(0), HeadersFootersContainer.NotesHeadersFootersContainer);
+	    }
 	}
 
 	/**

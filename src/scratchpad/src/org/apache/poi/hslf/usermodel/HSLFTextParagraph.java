@@ -41,11 +41,13 @@ import org.apache.poi.hslf.record.EscherTextboxWrapper;
 import org.apache.poi.hslf.record.FontCollection;
 import org.apache.poi.hslf.record.InteractiveInfo;
 import org.apache.poi.hslf.record.MasterTextPropAtom;
+import org.apache.poi.hslf.record.OEPlaceholderAtom;
 import org.apache.poi.hslf.record.OutlineTextRefAtom;
 import org.apache.poi.hslf.record.PPDrawing;
 import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.RecordContainer;
 import org.apache.poi.hslf.record.RecordTypes;
+import org.apache.poi.hslf.record.RoundTripHFPlaceholder12;
 import org.apache.poi.hslf.record.SlideListWithText;
 import org.apache.poi.hslf.record.SlidePersistAtom;
 import org.apache.poi.hslf.record.StyleTextProp9Atom;
@@ -256,7 +258,6 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
 
     public TextRulerAtom getTextRuler() {
         return _ruler;
-
     }
 
     public TextRulerAtom createTextRuler() {
@@ -1570,5 +1571,33 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
             }
         }
         return -1;
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     * @see RoundTripHFPlaceholder12
+     */
+    @Override
+    public boolean isHeaderOrFooter() {
+        HSLFShape s = getParentShape();
+        if (s == null) {
+            return false;
+        }
+        RoundTripHFPlaceholder12 hfPl = s.getClientDataRecord(RecordTypes.RoundTripHFPlaceholder12.typeID);
+        if (hfPl == null) {
+            return false;
+        }
+
+        int plId = hfPl.getPlaceholderId();
+        switch (plId) {
+            case OEPlaceholderAtom.MasterDate:
+            case OEPlaceholderAtom.MasterSlideNumber:
+            case OEPlaceholderAtom.MasterFooter:
+            case OEPlaceholderAtom.MasterHeader:
+                return true;
+            default:
+                return false;
+        }
     }
 }
