@@ -18,6 +18,7 @@
 package org.apache.poi;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -26,73 +27,48 @@ import java.lang.reflect.Method;
 import java.security.AccessController;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
-import java.util.Collection;
 import java.util.Map;
 
 import org.apache.poi.util.SuppressForbidden;
 
 /**
- * Parent class for POI JUnit TestCases, which provide additional
- *  features 
+ * Util class for POI JUnit TestCases, which provide additional features 
  */
-public class POITestCase {
+public final class POITestCase {
     public static void assertContains(String haystack, String needle) {
+        assertNotNull(haystack);
         assertTrue(
               "Unable to find expected text '" + needle + "' in text:\n" + haystack,
               haystack.contains(needle)
         );
-     }
+    }
+    
     public static void assertNotContained(String haystack, String needle) {
+        assertNotNull(haystack);
         assertFalse(
               "Unexpectedly found text '" + needle + "' in text:\n" + haystack,
               haystack.contains(needle)
         );
-     }
+    }
     
-    public static <T> void assertContains(T needle, T[] haystack)
-    {
-       // Check
-       for (T thing : haystack) {
-          if (thing.equals(needle)) {
-             return;
-          }
-       }
-
-       // Failed, try to build a nice error
-       StringBuilder sb = new StringBuilder();
-       sb.append("Unable to find ").append(needle).append(" in [");
-       for (T thing : haystack) {
-           sb.append(" ").append(thing.toString()).append(" ,");
-        }
-        sb.setCharAt(sb.length()-1, ']');
-
-        fail(sb.toString());
-     }
-    
-     public static  <T> void assertContains(T needle, Collection<T> haystack) {
-        if (haystack.contains(needle)) {
-           return;
-        }
-        fail("Unable to find " + needle + " in " + haystack);
-     }
-     
-     /**
-      * @param map haystack
-      * @param key needle
-      */
-     public static  <T> void assertContains(Map<T, ?> map, T key) {
-         if (map.containsKey(key)) {
+    /**
+     * @param map haystack
+     * @param key needle
+     */
+    public static  <T> void assertContains(Map<T, ?> map, T key) {
+        if (map.containsKey(key)) {
             return;
-         }
-         fail("Unable to find " + key + " in " + map);
-      }
+        }
+        fail("Unable to find " + key + " in " + map);
+    }
      
-     /** Utility method to get the value of a private/protected field.
-      * Only use this method in test cases!!!
-      */
-     public static <R,T> R getFieldValue(final Class<? super T> clazz, final T instance, final Class<R> fieldType, final String fieldName) {
-         assertTrue("Reflection of private fields is only allowed for POI classes.", clazz.getName().startsWith("org.apache.poi."));
-         try {
+    /**
+     * Utility method to get the value of a private/protected field.
+     * Only use this method in test cases!!!
+     */
+    public static <R,T> R getFieldValue(final Class<? super T> clazz, final T instance, final Class<R> fieldType, final String fieldName) {
+        assertTrue("Reflection of private fields is only allowed for POI classes.", clazz.getName().startsWith("org.apache.poi."));
+        try {
             return AccessController.doPrivileged(new PrivilegedExceptionAction<R>() {
                 @Override
                 @SuppressWarnings("unchecked")
@@ -103,18 +79,19 @@ public class POITestCase {
                     return (R) f.get(instance);
                 }
             });
-         } catch (PrivilegedActionException pae) {
-             throw new RuntimeException("Cannot access field '" + fieldName + "' of class " + clazz, pae.getException());
-         }
-     }
+        } catch (PrivilegedActionException pae) {
+            throw new RuntimeException("Cannot access field '" + fieldName + "' of class " + clazz, pae.getException());
+        }
+    }
      
-     /** Utility method to call a private/protected method.
-      * Only use this method in test cases!!!
-      */
-     public static <R,T> R callMethod(final Class<? super T> clazz, final T instance, final Class<R> returnType, final String methodName,
-             final Class<?>[] parameterTypes, final Object[] parameters) {
-         assertTrue("Reflection of private methods is only allowed for POI classes.", clazz.getName().startsWith("org.apache.poi."));
-         try {
+    /**
+     * Utility method to call a private/protected method.
+     * Only use this method in test cases!!!
+     */
+    public static <R,T> R callMethod(final Class<? super T> clazz, final T instance, final Class<R> returnType, final String methodName,
+        final Class<?>[] parameterTypes, final Object[] parameters) {
+        assertTrue("Reflection of private methods is only allowed for POI classes.", clazz.getName().startsWith("org.apache.poi."));
+        try {
             return AccessController.doPrivileged(new PrivilegedExceptionAction<R>() {
                 @Override
                 @SuppressWarnings("unchecked")
@@ -125,8 +102,8 @@ public class POITestCase {
                     return (R) m.invoke(instance, parameters);
                 }
             });
-         } catch (PrivilegedActionException pae) {
-             throw new RuntimeException("Cannot access method '" + methodName + "' of class " + clazz, pae.getException());
-         }
-     }
+        } catch (PrivilegedActionException pae) {
+            throw new RuntimeException("Cannot access method '" + methodName + "' of class " + clazz, pae.getException());
+        }
+    }
 }

@@ -191,7 +191,7 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
             List<PackagePart> mediaParts = getPackage().getPartsByName(Pattern.compile("/ppt/media/.*?"));
             _pictures = new ArrayList<XSLFPictureData>(mediaParts.size());
             for(PackagePart part : mediaParts){
-                XSLFPictureData pd = new XSLFPictureData(part, null);
+                XSLFPictureData pd = new XSLFPictureData(part);
                 pd.setIndex(_pictures.size());
                 _pictures.add(pd);
             }
