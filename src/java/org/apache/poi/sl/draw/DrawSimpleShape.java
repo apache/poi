@@ -408,6 +408,9 @@ public class DrawSimpleShape extends DrawShape {
 
                     presets.put(cusName, new CustomGeometry(cusGeom));
                 }
+                
+                staxFiltRd.close();
+                staxReader.close();
             } catch (Exception e) {
                 throw new RuntimeException("Unable to load preset geometries.", e);
             } finally {

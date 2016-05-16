@@ -72,18 +72,22 @@ public class HwmfSLImageRenderer implements ImageRenderer {
 
     @Override
     public BufferedImage getImage() {
+        return getImage(getDimension());
+    }
+
+    @Override
+    public BufferedImage getImage(Dimension dim) {
         if (image == null) {
             return new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB); 
         }
         
-        Dimension dim = getDimension();
         BufferedImage bufImg = new BufferedImage((int)dim.getWidth(), (int)dim.getHeight(), BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = bufImg.createGraphics();
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
         g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
         g.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-        image.draw(g);
+        image.draw(g, new Rectangle2D.Double(0,0,dim.getWidth(),dim.getHeight()));
         g.dispose();
         
         if (alpha != 0) {
@@ -97,7 +101,7 @@ public class HwmfSLImageRenderer implements ImageRenderer {
         
         return bufImg;
     }
-
+    
     @Override
     public boolean drawImage(Graphics2D graphics, Rectangle2D anchor) {
         return drawImage(graphics, anchor, null);

@@ -160,6 +160,9 @@ public class PPTX2PNG {
                     File outfile = new File(outdir, outname);
                     ImageIO.write(img, format, outfile);
                 }
+                
+                graphics.dispose();
+                img.flush();
             }
         } finally {
             ss.close();

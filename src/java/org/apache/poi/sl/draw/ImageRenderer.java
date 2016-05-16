@@ -18,17 +18,13 @@
  */
 package org.apache.poi.sl.draw;
 
-import java.awt.*;
-import java.awt.geom.AffineTransform;
+import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.awt.Insets;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.awt.image.RescaleOp;
-import java.io.*;
-
-import javax.imageio.ImageIO;
-
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Classes can implement this interfaces to support other formats, for
@@ -109,6 +105,14 @@ public interface ImageRenderer {
      * @return the image as buffered image
      */
     BufferedImage getImage();
+
+    /**
+     * @param dim the dimension in pixels of the returned image
+     * @return the image as buffered image
+     * 
+     * @since POI 3.15-beta2
+     */
+    BufferedImage getImage(Dimension dim);
     
     /**
      * Render picture data into the supplied graphics
