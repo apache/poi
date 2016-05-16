@@ -229,7 +229,7 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing {
     protected PackageRelationship addPictureReference(int pictureIndex){
         XSSFWorkbook wb = (XSSFWorkbook)getParent().getParent();
         XSSFPictureData data = wb.getAllPictures().get(pictureIndex);
-        XSSFPictureData pic = new XSSFPictureData(data.getPackagePart(), null);
+        XSSFPictureData pic = new XSSFPictureData(data.getPackagePart());
         RelationPart rp = addRelation(null, XSSFRelation.IMAGES, pic);
         return rp.getRelationship();
     }
