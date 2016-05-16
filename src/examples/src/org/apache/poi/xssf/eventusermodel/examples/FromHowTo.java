@@ -18,6 +18,8 @@ package org.apache.poi.xssf.eventusermodel.examples;
 
 import java.io.InputStream;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.xssf.eventusermodel.XLSX2CSV;
@@ -92,11 +94,26 @@ public class FromHowTo {
 	 * See org.xml.sax.helpers.DefaultHandler javadocs
 	 */
 	private static class SheetHandler extends DefaultHandler {
-		private SharedStringsTable sst;
+		private final SharedStringsTable sst;
 		private String lastContents;
 		private boolean nextIsString;
 		private boolean inlineStr;
+		private final LruCache<Integer,String> lruCache = new LruCache<Integer,String>(50);
 
+		private static class LruCache<A,B> extends LinkedHashMap<A, B> {
+		    private final int maxEntries;
+
+		    public LruCache(final int maxEntries) {
+		        super(maxEntries + 1, 1.0f, true);
+		        this.maxEntries = maxEntries;
+		    }
+
+		    @Override
+		    protected boolean removeEldestEntry(final Map.Entry<A, B> eldest) {
+		        return super.size() > maxEntries;
+		    }
+		}
+		
 		private SheetHandler(SharedStringsTable sst) {
 			this.sst = sst;
 		}
@@ -121,8 +138,12 @@ public class FromHowTo {
 			// Process the last contents as required.
 			// Do now, as characters() may be called more than once
 			if(nextIsString) {
-				int idx = Integer.parseInt(lastContents);
-				lastContents = new XSSFRichTextString(sst.getEntryAt(idx)).toString();
+				Integer idx = Integer.valueOf(lastContents);
+				lastContents = lruCache.get(idx);
+				if (lastContents == null && !lruCache.containsKey(idx)) {
+				    lastContents = new XSSFRichTextString(sst.getEntryAt(idx)).toString();
+				    lruCache.put(idx, lastContents);
+				}
 				nextIsString = false;
 			}
 
