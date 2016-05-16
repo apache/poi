@@ -17,7 +17,7 @@
 
 package org.apache.poi.ss.formula.constant;
 
-import org.apache.poi.ss.usermodel.ErrorConstants;
+import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 /**
@@ -25,28 +25,16 @@ import org.apache.poi.util.POILogger;
  * 
  * This class is a type-safe wrapper for a 16-bit int value performing a similar job to 
  * <tt>ErrorEval</tt>.
- * 
- * @author Josh Micich
  */
 public class ErrorConstant {
-	private static POILogger logger = POILogFactory.getLogger(ErrorConstant.class);
-	// convenient access to name space
-	private static final ErrorConstants EC = null;
-
-	@SuppressWarnings("static-access")
-    private static final ErrorConstant NULL = new ErrorConstant(EC.ERROR_NULL);
-	@SuppressWarnings("static-access")
-    private static final ErrorConstant DIV_0 = new ErrorConstant(EC.ERROR_DIV_0);
-	@SuppressWarnings("static-access")
-    private static final ErrorConstant VALUE = new ErrorConstant(EC.ERROR_VALUE);
-	@SuppressWarnings("static-access")
-    private static final ErrorConstant REF = new ErrorConstant(EC.ERROR_REF);
-	@SuppressWarnings("static-access")
-    private static final ErrorConstant NAME = new ErrorConstant(EC.ERROR_NAME);
-	@SuppressWarnings("static-access")
-    private static final ErrorConstant NUM = new ErrorConstant(EC.ERROR_NUM);
-	@SuppressWarnings("static-access")
-    private static final ErrorConstant NA = new ErrorConstant(EC.ERROR_NA);
+	private static final POILogger logger = POILogFactory.getLogger(ErrorConstant.class);
+    private static final ErrorConstant NULL = new ErrorConstant(FormulaError.NULL.getCode());
+    private static final ErrorConstant DIV_0 = new ErrorConstant(FormulaError.DIV0.getCode());
+    private static final ErrorConstant VALUE = new ErrorConstant(FormulaError.VALUE.getCode());
+    private static final ErrorConstant REF = new ErrorConstant(FormulaError.REF.getCode());
+    private static final ErrorConstant NAME = new ErrorConstant(FormulaError.NAME.getCode());
+    private static final ErrorConstant NUM = new ErrorConstant(FormulaError.NUM.getCode());
+    private static final ErrorConstant NA = new ErrorConstant(FormulaError.NA.getCode());
 
 	private final int _errorCode;
 
@@ -57,26 +45,31 @@ public class ErrorConstant {
 	public int getErrorCode() {
 		return _errorCode;
 	}
+
 	public String getText() {
-		if(ErrorConstants.isValidCode(_errorCode)) {
-			return ErrorConstants.getText(_errorCode);
+		if(FormulaError.isValidCode(_errorCode)) {
+			return FormulaError.forInt(_errorCode).getString();
 		}
 		return "unknown error code (" + _errorCode + ")";
 	}
 
 	public static ErrorConstant valueOf(int errorCode) {
-		switch (errorCode) {
-			case ErrorConstants.ERROR_NULL:  return NULL;
-			case ErrorConstants.ERROR_DIV_0: return DIV_0;
-			case ErrorConstants.ERROR_VALUE: return VALUE;
-			case ErrorConstants.ERROR_REF:   return REF;
-			case ErrorConstants.ERROR_NAME:  return NAME;
-			case ErrorConstants.ERROR_NUM:   return NUM;
-			case ErrorConstants.ERROR_NA:	return NA;
-		}
+	    if (FormulaError.isValidCode(errorCode)) {
+    		switch (FormulaError.forInt(errorCode)) {
+    			case NULL:  return NULL;
+    			case DIV0:  return DIV_0;
+    			case VALUE: return VALUE;
+    			case REF:   return REF;
+    			case NAME:  return NAME;
+    			case NUM:   return NUM;
+    			case NA:	return NA;
+    			default:    break;
+    		}
+	    }
 		logger.log( POILogger.WARN, "Warning - unexpected error code (" + errorCode + ")");
 		return new ErrorConstant(errorCode);
 	}
+
 	public String toString() {
 		StringBuffer sb = new StringBuffer(64);
 		sb.append(getClass().getName()).append(" [");

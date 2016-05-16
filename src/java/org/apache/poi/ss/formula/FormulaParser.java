@@ -40,8 +40,8 @@ import org.apache.poi.ss.formula.ptg.FuncPtg;
 import org.apache.poi.ss.formula.ptg.FuncVarPtg;
 import org.apache.poi.ss.formula.ptg.GreaterEqualPtg;
 import org.apache.poi.ss.formula.ptg.GreaterThanPtg;
-import org.apache.poi.ss.formula.ptg.IntersectionPtg;
 import org.apache.poi.ss.formula.ptg.IntPtg;
+import org.apache.poi.ss.formula.ptg.IntersectionPtg;
 import org.apache.poi.ss.formula.ptg.LessEqualPtg;
 import org.apache.poi.ss.formula.ptg.LessThanPtg;
 import org.apache.poi.ss.formula.ptg.MemAreaPtg;
@@ -67,7 +67,7 @@ import org.apache.poi.ss.formula.ptg.UnaryMinusPtg;
 import org.apache.poi.ss.formula.ptg.UnaryPlusPtg;
 import org.apache.poi.ss.formula.ptg.UnionPtg;
 import org.apache.poi.ss.formula.ptg.ValueOperatorPtg;
-import org.apache.poi.ss.usermodel.ErrorConstants;
+import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
@@ -1356,50 +1356,61 @@ public final class FormulaParser {
 		}
 
 		switch(part1.charAt(0)) {
-			case 'V':
-				if(part1.equals("VALUE")) {
+			case 'V': {
+			    FormulaError fe = FormulaError.VALUE;
+				if(part1.equals(fe.name())) {
 					Match('!');
-					return ErrorConstants.ERROR_VALUE;
+					return fe.getCode();
 				}
-				throw expected("#VALUE!");
-			case 'R':
-				if(part1.equals("REF")) {
+				throw expected(fe.getString());
+			}
+			case 'R': {
+			    FormulaError fe = FormulaError.REF;
+				if(part1.equals(fe.name())) {
 					Match('!');
-					return ErrorConstants.ERROR_REF;
+					return fe.getCode();
 				}
-				throw expected("#REF!");
-			case 'D':
+				throw expected(fe.getString());
+            }
+			case 'D': {
+			    FormulaError fe = FormulaError.DIV0;
 				if(part1.equals("DIV")) {
 					Match('/');
 					Match('0');
 					Match('!');
-					return ErrorConstants.ERROR_DIV_0;
+					return fe.getCode();
 				}
-				throw expected("#DIV/0!");
-			case 'N':
-				if(part1.equals("NAME")) {
-					Match('?');  // only one that ends in '?'
-					return ErrorConstants.ERROR_NAME;
+				throw expected(fe.getString());
+			}
+			case 'N': {
+			    FormulaError fe = FormulaError.NAME;
+				if(part1.equals(fe.name())) {
+				    // only one that ends in '?'
+					Match('?');
+					return fe.getCode();
 				}
-				if(part1.equals("NUM")) {
+				fe = FormulaError.NUM;
+				if(part1.equals(fe.name())) {
 					Match('!');
-					return ErrorConstants.ERROR_NUM;
+					return fe.getCode();
 				}
-				if(part1.equals("NULL")) {
+				fe = FormulaError.NULL;
+				if(part1.equals(fe.name())) {
 					Match('!');
-					return ErrorConstants.ERROR_NULL;
+					return fe.getCode();
 				}
+				fe = FormulaError.NA;
 				if(part1.equals("N")) {
 					Match('/');
 					if(look != 'A' && look != 'a') {
-						throw expected("#N/A");
+						throw expected(fe.getString());
 					}
 					Match(look);
 					// Note - no '!' or '?' suffix
-					return ErrorConstants.ERROR_NA;
+					return fe.getCode();
 				}
 				throw expected("#NAME?, #NUM!, #NULL! or #N/A");
-
+			}
 		}
 		throw expected("#VALUE!, #REF!, #DIV/0!, #NAME?, #NUM!, #NULL! or #N/A");
 	}

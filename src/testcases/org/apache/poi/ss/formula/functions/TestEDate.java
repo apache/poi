@@ -28,7 +28,7 @@ import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.usermodel.DateUtil;
-import org.apache.poi.ss.usermodel.ErrorConstants;
+import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.util.LocaleUtil;
 import org.junit.Test;
 
@@ -58,7 +58,7 @@ public class TestEDate {
     public void testEDateInvalidValues() {
         EDate eDate = new EDate();
         ErrorEval result = (ErrorEval) eDate.evaluate(new ValueEval[]{new NumberEval(1000)}, null);
-        assertEquals(ErrorConstants.ERROR_VALUE, result.getErrorCode(), 0);
+        assertEquals(FormulaError.VALUE.getCode(), result.getErrorCode(), 0);
     }
 
     @Test

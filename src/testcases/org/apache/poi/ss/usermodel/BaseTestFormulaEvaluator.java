@@ -27,9 +27,7 @@ import org.apache.poi.ss.ITestDataProvider;
 import org.junit.Test;
 
 /**
- * Common superclass for testing implementatiosn of{@link FormulaEvaluator}
- *
- * @author Yegor Kozlov
+ * Common superclass for testing implementation of {@link FormulaEvaluator}
  */
 public abstract class BaseTestFormulaEvaluator {
 
@@ -290,7 +288,7 @@ public abstract class BaseTestFormulaEvaluator {
         cellB1.setCellFormula("A1+1");
         FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();
 
-        cellA1.setCellErrorValue((byte)ErrorConstants.ERROR_NAME);
+        cellA1.setCellErrorValue(FormulaError.NAME.getCode());
         fe.evaluateFormulaCell(cellB1);
 
         cellA1.setCellValue(2.5);

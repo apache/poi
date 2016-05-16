@@ -18,18 +18,16 @@
 package org.apache.poi.ss.formula.ptg;
 
 
-import org.apache.poi.ss.usermodel.ErrorConstants;
 import org.apache.poi.ss.formula.FormulaRenderingWorkbook;
 import org.apache.poi.ss.formula.WorkbookDependentFormula;
+import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * Title:        Deleted Reference 3D Ptg <P>
  * Description:  Defined a cell in extern sheet. <P>
- * REFERENCE:  <P>
- * @author Patrick Luby
- * @version 1.0-pre
+ * @since 1.0-pre
  */
 public final class DeletedRef3DPtg extends OperandPtg implements WorkbookDependentFormula {
 	public final static byte sid  = 0x3c;
@@ -48,8 +46,7 @@ public final class DeletedRef3DPtg extends OperandPtg implements WorkbookDepende
 	}
 
 	public String toFormulaString(FormulaRenderingWorkbook book) {
-		return ExternSheetNameResolver.prependSheetName(book, field_1_index_extern_sheet, 
-				ErrorConstants.getText(ErrorConstants.ERROR_REF));
+		return ExternSheetNameResolver.prependSheetName(book, field_1_index_extern_sheet, FormulaError.REF.getString());
 	}
 	public String toFormulaString() {
 		throw new RuntimeException("3D references need a workbook to determine formula text");

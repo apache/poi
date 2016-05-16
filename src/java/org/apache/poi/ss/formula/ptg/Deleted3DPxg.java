@@ -18,7 +18,7 @@
 package org.apache.poi.ss.formula.ptg;
 
 import org.apache.poi.ss.formula.SheetNameFormatter;
-import org.apache.poi.ss.usermodel.ErrorConstants;
+import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.util.LittleEndianOutput;
 
 
@@ -48,7 +48,7 @@ public final class Deleted3DPxg extends OperandPtg implements Pxg {
         }
         sb.append("sheet=").append(getSheetName());
         sb.append(" ! ");
-        sb.append(ErrorConstants.getText(ErrorConstants.ERROR_REF));
+        sb.append(FormulaError.REF.getString());
         sb.append("]");
         return sb.toString();
     }
@@ -75,7 +75,7 @@ public final class Deleted3DPxg extends OperandPtg implements Pxg {
             SheetNameFormatter.appendFormat(sb, sheetName);
         }
         sb.append('!');
-        sb.append(ErrorConstants.getText(ErrorConstants.ERROR_REF));
+        sb.append(FormulaError.REF.getString());
         return sb.toString();
     }
     

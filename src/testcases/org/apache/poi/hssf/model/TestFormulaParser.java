@@ -17,22 +17,16 @@
 
 package org.apache.poi.hssf.model;
 
-import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.*;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Locale;
-
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.NameRecord;
 import org.apache.poi.hssf.record.common.UnicodeString;
 import org.apache.poi.hssf.usermodel.FormulaExtractor;
 import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFErrorConstants;
 import org.apache.poi.hssf.usermodel.HSSFEvaluationWorkbook;
 import org.apache.poi.hssf.usermodel.HSSFName;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -43,8 +37,45 @@ import org.apache.poi.ss.formula.FormulaParseException;
 import org.apache.poi.ss.formula.FormulaParser;
 import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.formula.constant.ErrorConstant;
-import org.apache.poi.ss.formula.ptg.*;
+import org.apache.poi.ss.formula.ptg.AbstractFunctionPtg;
+import org.apache.poi.ss.formula.ptg.AddPtg;
+import org.apache.poi.ss.formula.ptg.Area3DPtg;
+import org.apache.poi.ss.formula.ptg.AreaI;
+import org.apache.poi.ss.formula.ptg.AreaPtg;
+import org.apache.poi.ss.formula.ptg.AreaPtgBase;
+import org.apache.poi.ss.formula.ptg.ArrayPtg;
+import org.apache.poi.ss.formula.ptg.AttrPtg;
+import org.apache.poi.ss.formula.ptg.BoolPtg;
+import org.apache.poi.ss.formula.ptg.ConcatPtg;
+import org.apache.poi.ss.formula.ptg.DividePtg;
+import org.apache.poi.ss.formula.ptg.EqualPtg;
+import org.apache.poi.ss.formula.ptg.ErrPtg;
+import org.apache.poi.ss.formula.ptg.FuncPtg;
+import org.apache.poi.ss.formula.ptg.FuncVarPtg;
+import org.apache.poi.ss.formula.ptg.GreaterThanPtg;
+import org.apache.poi.ss.formula.ptg.IntPtg;
+import org.apache.poi.ss.formula.ptg.IntersectionPtg;
+import org.apache.poi.ss.formula.ptg.MemAreaPtg;
+import org.apache.poi.ss.formula.ptg.MemFuncPtg;
+import org.apache.poi.ss.formula.ptg.MissingArgPtg;
+import org.apache.poi.ss.formula.ptg.MultiplyPtg;
+import org.apache.poi.ss.formula.ptg.NamePtg;
+import org.apache.poi.ss.formula.ptg.NameXPtg;
+import org.apache.poi.ss.formula.ptg.NumberPtg;
+import org.apache.poi.ss.formula.ptg.ParenthesisPtg;
+import org.apache.poi.ss.formula.ptg.PercentPtg;
+import org.apache.poi.ss.formula.ptg.PowerPtg;
+import org.apache.poi.ss.formula.ptg.Ptg;
+import org.apache.poi.ss.formula.ptg.RangePtg;
+import org.apache.poi.ss.formula.ptg.Ref3DPtg;
+import org.apache.poi.ss.formula.ptg.RefPtg;
+import org.apache.poi.ss.formula.ptg.StringPtg;
+import org.apache.poi.ss.formula.ptg.SubtractPtg;
+import org.apache.poi.ss.formula.ptg.UnaryMinusPtg;
+import org.apache.poi.ss.formula.ptg.UnaryPlusPtg;
+import org.apache.poi.ss.formula.ptg.UnionPtg;
 import org.apache.poi.ss.usermodel.BaseTestBugzillaIssues;
+import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.util.HexRead;
 import org.apache.poi.util.LittleEndianByteArrayInputStream;
@@ -54,7 +85,7 @@ import org.junit.Test;
  * Test the low level formula parser functionality. High level tests are to
  * be done via usermodel/HSSFCell.setFormulaValue().
  */
-public final class TestFormulaParser extends TestCase {
+public final class TestFormulaParser {
 
 	/**
 	 * @return parsed token array already confirmed not <code>null</code>
@@ -68,29 +99,35 @@ public final class TestFormulaParser extends TestCase {
 		return HSSFFormulaParser.toFormulaString((HSSFWorkbook)null, ptgs);
 	}
 
+	@Test
 	public void testSimpleFormula() {
 		confirmTokenClasses("2+2",IntPtg.class, IntPtg.class, AddPtg.class);
 	}
 
+	@Test
 	public void testFormulaWithSpace1() {
 		confirmTokenClasses(" 2 + 2 ",IntPtg.class, IntPtg.class, AddPtg.class);
 	}
 
+	@Test
 	public void testFormulaWithSpace2() {
 		Ptg[] ptgs = parseFormula("2+ sum( 3 , 4) ");
 		assertEquals(5, ptgs.length);
 	}
 
+	@Test
 	public void testFormulaWithSpaceNRef() {
 		Ptg[] ptgs = parseFormula("sum( A2:A3 )");
 		assertEquals(2, ptgs.length);
 	}
 
+	@Test
 	public void testFormulaWithString() {
 		Ptg[] ptgs = parseFormula("\"hello\" & \"world\" ");
 		assertEquals(3, ptgs.length);
 	}
 
+	@Test
 	public void testTRUE() {
 		Ptg[] ptgs = parseFormula("TRUE");
 		assertEquals(1, ptgs.length);
@@ -98,6 +135,7 @@ public final class TestFormulaParser extends TestCase {
 		assertEquals(true, flag.getValue());
 	}
 
+	@Test
 	public void testSumIf() {
 		Ptg[] ptgs = parseFormula("SUMIF(A1:A5,\">4000\",B1:B5)");
 		assertEquals(4, ptgs.length);
@@ -108,12 +146,14 @@ public final class TestFormulaParser extends TestCase {
 	 * Refers to Bug <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=17582">#17582</a>
 	 *
 	 */
+	@Test
 	public void testNonAlphaFormula() {
 		Ptg[] ptgs = parseFormula("\"TOTAL[\"&F3&\"]\"");
 		confirmTokenClasses(ptgs, StringPtg.class, RefPtg.class, ConcatPtg.class, StringPtg.class, ConcatPtg.class);
 		assertEquals("TOTAL[", ((StringPtg)ptgs[0]).getValue());
 	}
 
+	@Test
 	public void testMacroFunction() throws IOException {
 		// testNames.xls contains a VB function called 'myFunc'
 		final String testFile = "testNames.xls";
@@ -182,16 +222,19 @@ public final class TestFormulaParser extends TestCase {
 	    assertEquals(expected.toLowerCase(Locale.ROOT), actual.toLowerCase(Locale.ROOT));
 	}
 
+	@Test
 	public void testEmbeddedSlash() {
 		confirmTokenClasses("HYPERLINK(\"http://www.jakarta.org\",\"Jakarta\")",
 						StringPtg.class, StringPtg.class, FuncVarPtg.class);
 	}
 
+	@Test
 	public void testConcatenate() {
 		confirmTokenClasses("CONCATENATE(\"first\",\"second\")",
 				StringPtg.class, StringPtg.class, FuncVarPtg.class);
 	}
 
+	@Test
 	public void testWorksheetReferences() throws IOException {
 		HSSFWorkbook wb = new HSSFWorkbook();
 
@@ -211,10 +254,12 @@ public final class TestFormulaParser extends TestCase {
 		wb.close();
 	}
 
+	@Test
 	public void testUnaryMinus() {
 		confirmTokenClasses("-A1", RefPtg.class, UnaryMinusPtg.class);
 	}
 
+	@Test
 	public void testUnaryPlus() {
 		confirmTokenClasses("+A1", RefPtg.class, UnaryPlusPtg.class);
 	}
@@ -226,6 +271,7 @@ public final class TestFormulaParser extends TestCase {
 	 * POI encodes formulas may cause unnecessary confusion.  These non-critical tests
 	 * check that POI follows the same encoding rules as Excel.
 	 */
+	@Test
 	public void testExactEncodingOfUnaryPlusAndMinus() {
 		// as tested in Excel:
 		confirmUnary("-3", -3, NumberPtg.class);
@@ -255,7 +301,7 @@ public final class TestFormulaParser extends TestCase {
 		}
 	}
 
-
+	@Test
 	public void testLeadingSpaceInString() {
 		String value = "  hi  ";
 		Ptg[] ptgs = parseFormula("\"" + value + "\"");
@@ -263,6 +309,7 @@ public final class TestFormulaParser extends TestCase {
 		assertTrue("ptg0 contains exact value", ((StringPtg)ptgs[0]).getValue().equals(value));
 	}
 
+	@Test
 	public void testLookupAndMatchFunctionArgs() {
 		Ptg[] ptgs = parseFormula("lookup(A1, A3:A52, B3:B52)");
 		confirmTokenClasses(ptgs, RefPtg.class, AreaPtg.class, AreaPtg.class, FuncVarPtg.class);
@@ -274,18 +321,20 @@ public final class TestFormulaParser extends TestCase {
 	}
 
 	/** bug 33160*/
+	@Test
 	public void testLargeInt() {
 		confirmTokenClasses("40", IntPtg.class);
 		confirmTokenClasses("40000", IntPtg.class);
 	}
 
-	/** bug 33160, testcase by Amol Deshmukh*/
+	/** bug 33160 */
+	@Test
 	public void testSimpleLongFormula() {
 		confirmTokenClasses("40000/2", IntPtg.class, IntPtg.class, DividePtg.class);
 	}
 
-	/** bug 35027, underscore in sheet name 
-	 * @throws IOException */
+	/** bug 35027, underscore in sheet name */
+	@Test
 	public void testUnderscore() throws IOException {
 		HSSFWorkbook wb = new HSSFWorkbook();
 
@@ -301,8 +350,8 @@ public final class TestFormulaParser extends TestCase {
 		wb.close();
 	}
 
-    /** bug 49725, defined names with underscore 
-     * @throws IOException */
+    /** bug 49725, defined names with underscore */
+	@Test
     public void testNamesWithUnderscore() throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook(); //or new XSSFWorkbook();
         HSSFSheet sheet = wb.createSheet("NamesWithUnderscore");
@@ -349,12 +398,14 @@ public final class TestFormulaParser extends TestCase {
     }
 
     // bug 38396 : Formula with exponential numbers not parsed correctly.
+	@Test
 	public void testExponentialParsing() {
 		confirmTokenClasses("1.3E21/2",  NumberPtg.class, IntPtg.class, DividePtg.class);
 		confirmTokenClasses("1322E21/2", NumberPtg.class, IntPtg.class, DividePtg.class);
 		confirmTokenClasses("1.3E1/2",   NumberPtg.class, IntPtg.class, DividePtg.class);
 	}
 
+	@Test
 	public void testExponentialInSheet() throws IOException {
 		HSSFWorkbook wb = new HSSFWorkbook();
 
@@ -428,6 +479,7 @@ public final class TestFormulaParser extends TestCase {
 		wb.close();
 	}
 
+	@Test
 	public void testNumbers() throws IOException {
 		HSSFWorkbook wb = new HSSFWorkbook();
 
@@ -469,6 +521,7 @@ public final class TestFormulaParser extends TestCase {
 		wb.close();
 	}
 
+	@Test
 	public void testRanges() throws IOException {
 		HSSFWorkbook wb = new HSSFWorkbook();
 
@@ -494,6 +547,7 @@ public final class TestFormulaParser extends TestCase {
 		wb.close();
 	}
 
+	@Test
 	public void testMultiSheetReference() throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
 
@@ -548,15 +602,19 @@ public final class TestFormulaParser extends TestCase {
 	 * Test for bug observable at svn revision 618865 (5-Feb-2008)<br/>
 	 * a formula consisting of a single no-arg function got rendered without the function braces
 	 */
-	public void testToFormulaStringZeroArgFunction() {
+	@Test
+	public void testToFormulaStringZeroArgFunction() throws IOException {
 		HSSFWorkbook book = new HSSFWorkbook();
 
 		Ptg[] ptgs = {
 				FuncPtg.create(10),
 		};
 		assertEquals("NA()", HSSFFormulaParser.toFormulaString(book, ptgs));
+		
+		book.close();
 	}
 
+	@Test
 	public void testPercent() {
 
 		confirmTokenClasses("5%", IntPtg.class, PercentPtg.class);
@@ -583,6 +641,7 @@ public final class TestFormulaParser extends TestCase {
 	/**
 	 * Tests combinations of various operators in the absence of brackets
 	 */
+	@Test
 	public void testPrecedenceAndAssociativity() {
 
 		// TRUE=TRUE=2=2  evaluates to FALSE
@@ -626,6 +685,7 @@ public final class TestFormulaParser extends TestCase {
 		}
 	}
 
+	@Test
 	public void testPower() {
 		confirmTokenClasses("2^5", IntPtg.class, IntPtg.class, PowerPtg.class);
 	}
@@ -638,6 +698,7 @@ public final class TestFormulaParser extends TestCase {
 		return result;
 	}
 
+	@Test
 	public void testParseNumber() {
 		IntPtg ip;
 
@@ -673,6 +734,7 @@ public final class TestFormulaParser extends TestCase {
 				FuncVarPtg.class);
 	}
 
+	@Test
 	public void testParseErrorLiterals() {
 
 		confirmParseErrorLiteral(ErrPtg.NULL_INTERSECTION, "#NULL!");
@@ -702,6 +764,8 @@ public final class TestFormulaParser extends TestCase {
 		StringPtg sp = (StringPtg) parseSingleToken(formula, StringPtg.class);
 		assertEquals(expectedValue, sp.getValue());
 	}
+	
+	@Test
 	public void testParseStringLiterals_bug28754() throws IOException {
 
 		StringPtg sp;
@@ -709,7 +773,7 @@ public final class TestFormulaParser extends TestCase {
 			sp = (StringPtg) parseSingleToken("\"test\"\"ing\"", StringPtg.class);
 		} catch (RuntimeException e) {
 			if(e.getMessage().startsWith("Cannot Parse")) {
-				throw new AssertionFailedError("Identified bug 28754a");
+				fail("Identified bug 28754a");
 			}
 			throw e;
 		}
@@ -725,7 +789,7 @@ public final class TestFormulaParser extends TestCase {
     		cell.setCellFormula("right(\"test\"\"ing\", 3)");
     		String actualCellFormula = cell.getCellFormula();
     		if("RIGHT(\"test\"ing\",3)".equals(actualCellFormula)) {
-    			throw new AssertionFailedError("Identified bug 28754b");
+    			fail("Identified bug 28754b");
     		}
     		assertEquals("RIGHT(\"test\"\"ing\",3)", actualCellFormula);
 		} finally {
@@ -733,6 +797,7 @@ public final class TestFormulaParser extends TestCase {
 		}
 	}
 
+	@Test
 	public void testParseStringLiterals() {
 		confirmStringParse("goto considered harmful");
 
@@ -745,6 +810,7 @@ public final class TestFormulaParser extends TestCase {
 		confirmStringParse(" ' ");
 	}
 
+	@Test
 	public void testParseSumIfSum() {
 		String formulaString;
 		Ptg[] ptgs;
@@ -756,6 +822,8 @@ public final class TestFormulaParser extends TestCase {
 		formulaString = toFormulaString(ptgs);
 		assertEquals("IF(1<2,SUM(5,2,IF(3>2,SUM(A1:A2),6)),4)", formulaString);
 	}
+	
+	@Test
 	public void testParserErrors() {
 		parseExpectedException(" 12 . 345  ");
 		parseExpectedException("1 .23  ");
@@ -780,13 +848,14 @@ public final class TestFormulaParser extends TestCase {
 	private static void parseExpectedException(String formula) {
 		try {
 			parseFormula(formula);
-			throw new AssertionFailedError("Expected FormulaParseException: " + formula);
+			fail("Expected FormulaParseException: " + formula);
 		} catch (FormulaParseException e) {
 			// expected during successful test
 			assertNotNull(e.getMessage());
 		}
 	}
 
+	@Test
 	public void testSetFormulaWithRowBeyond32768_Bug44539() throws IOException {
 
 		HSSFWorkbook wb = new HSSFWorkbook();
@@ -804,6 +873,7 @@ public final class TestFormulaParser extends TestCase {
 		wb.close();
 	}
 
+	@Test
 	public void testSpaceAtStartOfFormula() {
 		// Simulating cell formula of "= 4" (note space)
 		// The same Ptg array can be observed if an excel file is saved with that exact formula
@@ -815,7 +885,7 @@ public final class TestFormulaParser extends TestCase {
 			formulaString = toFormulaString(ptgs);
 		} catch (IllegalStateException e) {
 			if(e.getMessage().equalsIgnoreCase("too much stuff left on the stack")) {
-				throw new AssertionFailedError("Identified bug 44609");
+				fail("Identified bug 44609");
 			}
 			// else some unexpected error
 			throw e;
@@ -831,6 +901,7 @@ public final class TestFormulaParser extends TestCase {
 	/**
 	 * Checks some internal error detecting logic ('stack underflow error' in toFormulaString)
 	 */
+	@Test
 	public void testTooFewOperandArgs() {
 		// Simulating badly encoded cell formula of "=/1"
 		// Not sure if Excel could ever produce this
@@ -855,40 +926,44 @@ public final class TestFormulaParser extends TestCase {
 	 * Excel tolerates the wrong Ptg and evaluates the formula OK (e.g. SIN), but in some cases
 	 * (e.g. COUNTIF) Excel fails to evaluate the formula, giving '#VALUE!' instead.
 	 */
+	@Test
 	public void testFuncPtgSelection() {
 
 		Ptg[] ptgs = parseFormula("countif(A1:A2, 1)");
 		assertEquals(3, ptgs.length);
 		if(ptgs[2] instanceof FuncVarPtg) {
-			throw new AssertionFailedError("Identified bug 44675");
+			fail("Identified bug 44675");
 		}
 		confirmTokenClasses(ptgs, AreaPtg.class, IntPtg.class, FuncPtg.class);
 
 		confirmTokenClasses("sin(1)", IntPtg.class, FuncPtg.class);
 	}
 
-	public void testWrongNumberOfFunctionArgs() {
+	@Test
+	public void testWrongNumberOfFunctionArgs() throws IOException {
 		confirmArgCountMsg("sin()", "Too few arguments to function 'SIN'. Expected 1 but got 0.");
 		confirmArgCountMsg("countif(1, 2, 3, 4)", "Too many arguments to function 'COUNTIF'. Expected 2 but got 4.");
 		confirmArgCountMsg("index(1, 2, 3, 4, 5, 6)", "Too many arguments to function 'INDEX'. At most 4 were expected but got 6.");
 		confirmArgCountMsg("vlookup(1, 2)", "Too few arguments to function 'VLOOKUP'. At least 3 were expected but got 2.");
 	}
 
-	private static void confirmArgCountMsg(String formula, String expectedMessage) {
+	private static void confirmArgCountMsg(String formula, String expectedMessage) throws IOException {
 		HSSFWorkbook book = new HSSFWorkbook();
 		try {
 			HSSFFormulaParser.parse(formula, book);
-			throw new AssertionFailedError("Didn't get parse exception as expected");
+			fail("Didn't get parse exception as expected");
 		} catch (FormulaParseException e) {
 			confirmParseException(e, expectedMessage);
 		}
+		book.close();
 	}
 
+	@Test
 	public void testParseErrorExpectedMsg() {
 
 		try {
 			parseFormula("round(3.14;2)");
-			throw new AssertionFailedError("Didn't get parse exception as expected");
+			fail("Didn't get parse exception as expected");
 		} catch (FormulaParseException e) {
 			confirmParseException(e,
 					"Parse error near char 10 ';' in specified formula 'round(3.14;2)'. Expected ',' or ')'");
@@ -896,7 +971,7 @@ public final class TestFormulaParser extends TestCase {
 
 		try {
 			parseFormula(" =2+2");
-			throw new AssertionFailedError("Didn't get parse exception as expected");
+			fail("Didn't get parse exception as expected");
 		} catch (FormulaParseException e) {
 			confirmParseException(e,
 					"The specified formula ' =2+2' starts with an equals sign which is not allowed.");
@@ -906,6 +981,7 @@ public final class TestFormulaParser extends TestCase {
 	/**
 	 * this function name has a dot in it.
 	 */
+	@Test
 	public void testParseErrorTypeFunction() {
 
 		Ptg[] ptgs;
@@ -913,7 +989,7 @@ public final class TestFormulaParser extends TestCase {
 			ptgs = parseFormula("error.type(A1)");
 		} catch (IllegalArgumentException e) {
 			if (e.getMessage().equals("Invalid Formula cell reference: 'error'")) {
-				throw new AssertionFailedError("Identified bug 45334");
+				fail("Identified bug 45334");
 			}
 			throw e;
 		}
@@ -921,7 +997,8 @@ public final class TestFormulaParser extends TestCase {
 		assertEquals("ERROR.TYPE", ((FuncPtg) ptgs[1]).getName());
 	}
 
-	public void testNamedRangeThatLooksLikeCell() {
+	@Test
+	public void testNamedRangeThatLooksLikeCell() throws IOException {
 		HSSFWorkbook wb = new HSSFWorkbook();
 		HSSFSheet sheet = wb.createSheet("Sheet1");
 		HSSFName name = wb.createName();
@@ -933,8 +1010,9 @@ public final class TestFormulaParser extends TestCase {
 			ptgs = HSSFFormulaParser.parse("count(pfy1)", wb);
 		} catch (IllegalArgumentException e) {
 			if (e.getMessage().equals("Specified colIx (1012) is out of range")) {
-				throw new AssertionFailedError("Identified bug 45354");
+				fail("Identified bug 45354");
 			}
+			wb.close();
 			throw e;
 		}
 		confirmTokenClasses(ptgs, NamePtg.class, FuncVarPtg.class);
@@ -944,15 +1022,17 @@ public final class TestFormulaParser extends TestCase {
 		assertEquals("COUNT(pfy1)", cell.getCellFormula());
 		try {
 			cell.setCellFormula("count(pf1)");
-			throw new AssertionFailedError("Expected formula parse execption");
+			fail("Expected formula parse execption");
 		} catch (FormulaParseException e) {
 			confirmParseException(e,
 					"Specified named range 'pf1' does not exist in the current workbook.");
 		}
 		cell.setCellFormula("count(fp1)"); // plain cell ref, col is in range
+		wb.close();
 	}
 
-	public void testParseAreaRefHighRow_bug45358() {
+	@Test
+	public void testParseAreaRefHighRow_bug45358() throws IOException {
 		Ptg[] ptgs;
 		AreaI aptg;
 
@@ -962,7 +1042,7 @@ public final class TestFormulaParser extends TestCase {
 		ptgs = HSSFFormulaParser.parse("Sheet1!A10:A40000", book);
 		aptg = (AreaI) ptgs[0];
 		if (aptg.getLastRow() == -25537) {
-			throw new AssertionFailedError("Identified bug 45358");
+			fail("Identified bug 45358");
 		}
 		assertEquals(39999, aptg.getLastRow());
 
@@ -975,7 +1055,10 @@ public final class TestFormulaParser extends TestCase {
 		aptg = (AreaI) ptgs[0];
 		assertEquals(65535, aptg.getLastRow());
 
+		book.close();
 	}
+	
+	@Test
 	public void testParseArray()  {
 		Ptg[] ptgs;
 		ptgs = parseFormula("mode({1,2,2,#REF!;FALSE,3,3,2})");
@@ -984,10 +1067,11 @@ public final class TestFormulaParser extends TestCase {
 
 		ArrayPtg aptg = (ArrayPtg) ptgs[0];
 		Object[][] values = aptg.getTokenArrayValues();
-		assertEquals(ErrorConstant.valueOf(HSSFErrorConstants.ERROR_REF), values[0][3]);
+		assertEquals(ErrorConstant.valueOf(FormulaError.REF.getCode()), values[0][3]);
 		assertEquals(Boolean.FALSE, values[1][0]);
 	}
 
+	@Test
 	public void testParseStringElementInArray() {
 		Ptg[] ptgs;
 		ptgs = parseFormula("MAX({\"5\"},3)");
@@ -995,7 +1079,7 @@ public final class TestFormulaParser extends TestCase {
 		Object element = ((ArrayPtg)ptgs[0]).getTokenArrayValues()[0][0];
 		if (element instanceof UnicodeString) {
 			// this would cause ClassCastException below
-			throw new AssertionFailedError("Wrong encoding of array element value");
+			fail("Wrong encoding of array element value");
 		}
 		assertEquals(String.class, element.getClass());
 
@@ -1016,13 +1100,14 @@ public final class TestFormulaParser extends TestCase {
 		confirmTokenClasses(ptgs2, ArrayPtg.class, IntPtg.class, FuncVarPtg.class);
 	}
 
+	@Test
 	public void testParseArrayNegativeElement() {
 		Ptg[] ptgs;
 		try {
 			ptgs = parseFormula("{-42}");
 		} catch (FormulaParseException e) {
 			if (e.getMessage().equals("Parse error near char 1 '-' in specified formula '{-42}'. Expected Integer")) {
-				throw new AssertionFailedError("Identified bug - failed to parse negative array element.");
+				fail("Identified bug - failed to parse negative array element.");
 			}
 			throw e;
 		}
@@ -1038,6 +1123,7 @@ public final class TestFormulaParser extends TestCase {
 		assertEquals(-5.0, ((Double)element).doubleValue(), 0.0);
 	}
 
+	@Test
 	public void testRangeOperator() throws IOException {
 
 		HSSFWorkbook wb = new HSSFWorkbook();
@@ -1062,6 +1148,7 @@ public final class TestFormulaParser extends TestCase {
 		wb.close();
 	}
 
+	@Test
 	public void testBooleanNamedSheet() throws IOException {
 		HSSFWorkbook wb = new HSSFWorkbook();
 		HSSFSheet sheet = wb.createSheet("true");
@@ -1073,7 +1160,8 @@ public final class TestFormulaParser extends TestCase {
 		wb.close();
 	}
 
-	public void testParseExternalWorkbookReference() {
+	@Test
+	public void testParseExternalWorkbookReference() throws IOException {
 		HSSFWorkbook wbA = HSSFTestDataSamples.openSampleWorkbook("multibookFormulaA.xls");
 		HSSFCell cell = wbA.getSheetAt(0).getRow(0).getCell(0);
 
@@ -1093,7 +1181,10 @@ public final class TestFormulaParser extends TestCase {
 		// try setting the same formula in a cell
 		cell.setCellFormula("[multibookFormulaB.xls]AnotherSheet!B1");
 		assertEquals("[multibookFormulaB.xls]AnotherSheet!B1", cell.getCellFormula());
+		
+		wbA.close();
 	}
+	
 	private static void confirmSingle3DRef(Ptg[] ptgs, int expectedExternSheetIndex) {
 		assertEquals(1, ptgs.length);
 		Ptg ptg0 = ptgs[0];
@@ -1101,7 +1192,8 @@ public final class TestFormulaParser extends TestCase {
 		assertEquals(expectedExternSheetIndex, ((Ref3DPtg)ptg0).getExternSheetIndex());
 	}
 
-	public void testUnion() {
+	@Test
+	public void testUnion() throws IOException {
 		String formula = "Sheet1!$B$2:$C$3,OFFSET(Sheet1!$E$2:$E$4,1,Sheet1!$A$1),Sheet1!$D$6";
 		HSSFWorkbook wb = new HSSFWorkbook();
 		wb.createSheet("Sheet1");
@@ -1124,9 +1216,12 @@ public final class TestFormulaParser extends TestCase {
 
         // We don't check the type of the operands.
         confirmTokenClasses("1,2", MemAreaPtg.class, IntPtg.class, IntPtg.class, UnionPtg.class);
+        
+        wb.close();
 	}
 
-	public void testIntersection() {
+	@Test
+	public void testIntersection() throws IOException {
        String formula = "Sheet1!$B$2:$C$3 OFFSET(Sheet1!$E$2:$E$4, 1,Sheet1!$A$1) Sheet1!$D$6";
         HSSFWorkbook wb = new HSSFWorkbook();
         wb.createSheet("Sheet1");
@@ -1149,8 +1244,11 @@ public final class TestFormulaParser extends TestCase {
 
         // This used to be an error but now parses.  Union has the same behaviour.
         confirmTokenClasses("1 2", MemAreaPtg.class, IntPtg.class, IntPtg.class, IntersectionPtg.class);
+        
+        wb.close();
 	}
 	
+	@Test
 	public void testComparisonInParen() {
 	    confirmTokenClasses("(A1 > B2)", 
             RefPtg.class, 
@@ -1160,6 +1258,7 @@ public final class TestFormulaParser extends TestCase {
         );
 	}
 	
+	@Test
 	public void testUnionInParen() {
 	    confirmTokenClasses("(A1:B2,B2:C3)", 
           MemAreaPtg.class, 
@@ -1170,6 +1269,7 @@ public final class TestFormulaParser extends TestCase {
         );
 	}
 
+	@Test
     public void testIntersectionInParen() {
         confirmTokenClasses("(A1:B2 B2:C3)", 
             MemAreaPtg.class, 
@@ -1180,7 +1280,8 @@ public final class TestFormulaParser extends TestCase {
         );
     }
     
-	public void testRange_bug46643() {
+	@Test
+	public void testRange_bug46643() throws IOException {
 		String formula = "Sheet1!A1:Sheet1!B3";
 		HSSFWorkbook wb = new HSSFWorkbook();
 		wb.createSheet("Sheet1");
@@ -1188,7 +1289,7 @@ public final class TestFormulaParser extends TestCase {
 
 		if (ptgs.length == 3) {
 			confirmTokenClasses(ptgs, Ref3DPtg.class, Ref3DPtg.class, RangePtg.class);
-			throw new AssertionFailedError("Identified bug 46643");
+			fail("Identified bug 46643");
 		}
 
 		confirmTokenClasses(ptgs,
@@ -1199,10 +1300,11 @@ public final class TestFormulaParser extends TestCase {
 		);
 		MemFuncPtg mf = (MemFuncPtg)ptgs[0];
 		assertEquals(15, mf.getLenRefSubexpression());
+		wb.close();
 	}
 
-	/** Named ranges with backslashes, e.g. 'POI\\2009' 
-	 * @throws IOException */
+	/** Named ranges with backslashes, e.g. 'POI\\2009' */
+	@Test
 	public void testBackSlashInNames() throws IOException {
 		HSSFWorkbook wb = new HSSFWorkbook();
 
@@ -1228,27 +1330,32 @@ public final class TestFormulaParser extends TestCase {
 	 * TODO - delete equiv test:
 	 * {@link BaseTestBugzillaIssues#test42448()}
 	 */
-	public void testParseAbnormalSheetNamesAndRanges_bug42448() {
+	@Test
+	public void testParseAbnormalSheetNamesAndRanges_bug42448() throws IOException {
 		HSSFWorkbook wb = new HSSFWorkbook();
 		wb.createSheet("A");
 		try {
 			HSSFFormulaParser.parse("SUM(A!C7:A!C67)", wb);
 		} catch (StringIndexOutOfBoundsException e) {
-			throw new AssertionFailedError("Identified bug 42448");
+			fail("Identified bug 42448");
 		}
 		// the exact example from the bugzilla description:
 		HSSFFormulaParser.parse("SUMPRODUCT(A!C7:A!C67, B8:B68) / B69", wb);
+		
+		wb.close();
 	}
 
-	public void testRangeFuncOperand_bug46951() {
+	@Test
+	public void testRangeFuncOperand_bug46951() throws IOException {
 		HSSFWorkbook wb = new HSSFWorkbook();
 		Ptg[] ptgs;
 		try {
 			ptgs = HSSFFormulaParser.parse("SUM(C1:OFFSET(C1,0,B1))", wb);
 		} catch (RuntimeException e) {
 			if (e.getMessage().equals("Specified named range 'OFFSET' does not exist in the current workbook.")) {
-				throw new AssertionFailedError("Identified bug 46951");
+				fail("Identified bug 46951");
 			}
+			wb.close();
 			throw e;
 		}
 		confirmTokenClasses(ptgs,
@@ -1261,10 +1368,11 @@ public final class TestFormulaParser extends TestCase {
 			RangePtg.class, //
 			AttrPtg.class // [sum ]
 		);
-
+		wb.close();
 	}
 
-	public void testUnionOfFullCollFullRowRef() {
+	@Test
+	public void testUnionOfFullCollFullRowRef() throws IOException {
 		Ptg[] ptgs;
 		ptgs = parseFormula("3:4");
 		ptgs = parseFormula("$Z:$AC");
@@ -1297,10 +1405,12 @@ public final class TestFormulaParser extends TestCase {
 				Area3DPtg.class,
 				UnionPtg.class
 		);
+		
+		wb.close();
 	}
 
-
-	public void testExplicitRangeWithTwoSheetNames() {
+	@Test
+	public void testExplicitRangeWithTwoSheetNames() throws IOException {
 		HSSFWorkbook wb = new HSSFWorkbook();
 		wb.createSheet("Sheet1");
 		Ptg[] ptgs = HSSFFormulaParser.parse("Sheet1!F1:Sheet1!G2", wb);
@@ -1313,12 +1423,14 @@ public final class TestFormulaParser extends TestCase {
 		MemFuncPtg mf;
 		mf = (MemFuncPtg)ptgs[0];
 		assertEquals(15, mf.getLenRefSubexpression());
+		wb.close();
 	}
 
 	/**
 	 * Checks that the area-ref and explicit range operators get the right associativity
 	 * and that the {@link MemFuncPtg} / {@link MemAreaPtg} is added correctly
 	 */
+	@Test
 	public void testComplexExplicitRangeEncodings() {
 
 		Ptg[] ptgs;
@@ -1367,7 +1479,8 @@ public final class TestFormulaParser extends TestCase {
 	 * Mostly confirming that erroneous conditions are detected.  Actual error message wording is not critical.
 	 *
 	 */
-	public void testEdgeCaseParserErrors() {
+	@Test
+	public void testEdgeCaseParserErrors() throws IOException {
 		HSSFWorkbook wb = new HSSFWorkbook();
 		wb.createSheet("Sheet1");
 
@@ -1384,13 +1497,14 @@ public final class TestFormulaParser extends TestCase {
 
 		confirmParseError(wb, "foobar", "Specified named range 'foobar' does not exist in the current workbook.");
 		confirmParseError(wb, "A1:1", "The RHS of the range operator ':' at position 3 is not a proper reference.");
+		wb.close();
 	}
 
 	private static void confirmParseError(HSSFWorkbook wb, String formula, String expectedMessage) {
 
 		try {
 			HSSFFormulaParser.parse(formula, wb);
-			throw new AssertionFailedError("Expected formula parse execption");
+			fail("Expected formula parse execption");
 		} catch (FormulaParseException e) {
 			confirmParseException(e, expectedMessage);
 		}
@@ -1400,7 +1514,8 @@ public final class TestFormulaParser extends TestCase {
 	 * In bug 47078, POI had trouble evaluating a defined name flagged as 'complex'.
 	 * POI should also be able to parse such defined names.
 	 */
-	public void testParseComplexName() {
+	@Test
+	public void testParseComplexName() throws IOException {
 
 		// Mock up a spreadsheet to match the critical details of the sample
 		HSSFWorkbook wb = new HSSFWorkbook();
@@ -1418,11 +1533,14 @@ public final class TestFormulaParser extends TestCase {
 			result = HSSFFormulaParser.parse("1+foo", wb);
 		} catch (FormulaParseException e) {
 			if (e.getMessage().equals("Specified name 'foo' is not a range as expected.")) {
-				throw new AssertionFailedError("Identified bug 47078c");
+				fail("Identified bug 47078c");
 			}
+			wb.close();
 			throw e;
 		}
 		confirmTokenClasses(result, IntPtg.class, NamePtg.class, AddPtg.class);
+		
+		wb.close();
 	}
 
 	/**
@@ -1432,14 +1550,15 @@ public final class TestFormulaParser extends TestCase {
 	 * In addition, leading zeros (on the row component) should be removed from cell
 	 * references during parsing.
 	 */
-	public void testZeroRowRefs() {
+	@Test
+	public void testZeroRowRefs() throws IOException {
 		String badCellRef = "B0"; // bad because zero is not a valid row number
 		String leadingZeroCellRef = "B000001"; // this should get parsed as "B1"
 		HSSFWorkbook wb = new HSSFWorkbook();
 
 		try {
 			HSSFFormulaParser.parse(badCellRef, wb);
-			throw new AssertionFailedError("Identified bug 47312b - Shouldn't be able to parse cell ref '"
+			fail("Identified bug 47312b - Shouldn't be able to parse cell ref '"
 					+ badCellRef + "'.");
 		} catch (FormulaParseException e) {
 			// expected during successful test
@@ -1455,8 +1574,7 @@ public final class TestFormulaParser extends TestCase {
 			confirmParseException(e, "Specified named range '"
 					+ leadingZeroCellRef + "' does not exist in the current workbook.");
 			// close but no cigar
-			throw new AssertionFailedError("Identified bug 47312c - '"
-					+ leadingZeroCellRef + "' should parse as 'B1'.");
+			fail("Identified bug 47312c - '" + leadingZeroCellRef + "' should parse as 'B1'.");
 		}
 
 		// create a defined name called 'B0' and try again
@@ -1465,6 +1583,8 @@ public final class TestFormulaParser extends TestCase {
 		n.setRefersToFormula("1+1");
 		ptgs = HSSFFormulaParser.parse("B0", wb);
 		confirmTokenClasses(ptgs, NamePtg.class);
+		
+		wb.close();
 	}
 
 	private static void confirmParseException(FormulaParseException e, String expMsg) {
@@ -1472,7 +1592,7 @@ public final class TestFormulaParser extends TestCase {
 	}
 
     @Test
-    public void test57196_Formula() {
+    public void test57196_Formula() throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
         Ptg[] ptgs = HSSFFormulaParser.parse("DEC2HEX(HEX2DEC(O8)-O2+D2)", wb, FormulaType.CELL, -1); 
         assertNotNull("Ptg array should not be null", ptgs);
@@ -1501,5 +1621,7 @@ public final class TestFormulaParser extends TestCase {
         assertEquals("O2", o2.toFormulaString());
         assertEquals("D2", d2.toFormulaString());
         assertEquals(255, dec2Hex.getFunctionIndex());
+        
+        wb.close();
     }    
 }

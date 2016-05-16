@@ -17,26 +17,26 @@
 
 package org.apache.poi.ss.formula.constant;
 
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import java.util.Arrays;
 
-import junit.framework.TestCase;
-
 import org.apache.poi.hssf.record.TestcaseRecordInputStream;
-import org.apache.poi.hssf.usermodel.HSSFErrorConstants;
+import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.util.HexRead;
 import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 import org.apache.poi.util.LittleEndianInput;
-/**
- * 
- * @author Josh Micich
- */
-public final class TestConstantValueParser extends TestCase {
+import org.junit.Test;
+
+public final class TestConstantValueParser {
 	private static final Object[] SAMPLE_VALUES = {
 			Boolean.TRUE,
 			null,
 			new Double(1.1),
 			"Sample text",
-			ErrorConstant.valueOf(HSSFErrorConstants.ERROR_DIV_0),
+			ErrorConstant.valueOf(FormulaError.DIV0.getCode()),
 		};
 	private static final byte[] SAMPLE_ENCODING = HexRead.readFromString(
 		"04 01 00 00 00 00 00 00 00 " +
@@ -45,10 +45,13 @@ public final class TestConstantValueParser extends TestCase {
 		"02 0B 00 00 53 61 6D 70 6C 65 20 74 65 78 74 " +
 		"10 07 00 00 00 00 00 00 00");
 	
+	@Test
 	public void testGetEncodedSize() {
 		int actual = ConstantValueParser.getEncodedSize(SAMPLE_VALUES);
 		assertEquals(51, actual);
 	}
+	
+	@Test
 	public void testEncode() {
 		int size = ConstantValueParser.getEncodedSize(SAMPLE_VALUES);
 		byte[] data = new byte[size];
@@ -59,6 +62,8 @@ public final class TestConstantValueParser extends TestCase {
 			fail("Encoding differs");
 		}
 	}
+	
+	@Test
 	public void testDecode() {
 		LittleEndianInput in = TestcaseRecordInputStream.createLittleEndian(SAMPLE_ENCODING);
 		

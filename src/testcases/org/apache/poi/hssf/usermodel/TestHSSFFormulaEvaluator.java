@@ -34,12 +34,9 @@ import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.usermodel.BaseTestFormulaEvaluator;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellValue;
+import org.apache.poi.ss.usermodel.FormulaError;
 import org.junit.Test;
 
-/**
- *
- * @author Josh Micich
- */
 public final class TestHSSFFormulaEvaluator extends BaseTestFormulaEvaluator {
 
     public TestHSSFFormulaEvaluator() {
@@ -77,7 +74,7 @@ public final class TestHSSFFormulaEvaluator extends BaseTestFormulaEvaluator {
 		cellB1.setCellFormula("A1+1");
 		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
 
-		cellA1.setCellErrorValue((byte)HSSFErrorConstants.ERROR_NAME);
+		cellA1.setCellErrorValue(FormulaError.NAME.getCode());
 		fe.evaluateFormulaCell(cellB1);
 
 		cellA1.setCellValue(2.5);

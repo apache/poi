@@ -17,7 +17,7 @@
 
 package org.apache.poi.ss.formula.ptg;
 
-import org.apache.poi.ss.usermodel.ErrorConstants;
+import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
@@ -49,7 +49,7 @@ public final class AreaErrPtg extends OperandPtg {
 	}
 
 	public String toFormulaString() {
-		return ErrorConstants.getText(ErrorConstants.ERROR_REF);
+		return FormulaError.REF.getString();
 	}
 
 	public byte getDefaultOperandClass() {

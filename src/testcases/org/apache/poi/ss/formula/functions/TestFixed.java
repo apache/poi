@@ -17,9 +17,10 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import java.io.IOException;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-import junit.framework.TestCase;
+import java.io.IOException;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
@@ -32,14 +33,16 @@ import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellValue;
-import org.apache.poi.ss.usermodel.ErrorConstants;
+import org.apache.poi.ss.usermodel.FormulaError;
+import org.junit.Before;
+import org.junit.Test;
 
-public final class TestFixed extends TestCase {
+public final class TestFixed {
 
     private HSSFCell cell11;
     private HSSFFormulaEvaluator evaluator;
 
-    @Override
+    @Before
     public void setUp() throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
         try {
@@ -52,6 +55,7 @@ public final class TestFixed extends TestCase {
         }
     }
 
+    @Test
     public void testValid() {
         // thousands separator
         confirm("FIXED(1234.56789,2,TRUE)", "1234.57");
@@ -87,6 +91,7 @@ public final class TestFixed extends TestCase {
         confirm("FIXED(99.9,0,TRUE)", "100");
     }
     
+    @Test
     public void testOptionalParams() {
         Fixed fixed = new Fixed();
         ValueEval evaluate = fixed.evaluate(0, 0, new NumberEval(1234.56789));
@@ -123,6 +128,6 @@ public final class TestFixed extends TestCase {
         CellValue cv = evaluator.evaluate(cell11);
         assertTrue("Wrong result type: " + cv.formatAsString(), 
                 cv.getCellType() == Cell.CELL_TYPE_ERROR
-                && cv.getErrorValue() == ErrorConstants.ERROR_VALUE);
+                && cv.getErrorValue() == FormulaError.VALUE.getCode());
     }
 }
