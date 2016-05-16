@@ -27,8 +27,6 @@ import org.apache.poi.ss.formula.FormulaUsedBlankCellSet.BookSheetKey;
 
 /**
  * Stores the cached result of a formula evaluation, along with the set of sensitive input cells
- * 
- * @author Josh Micich
  */
 final class FormulaCellCacheEntry extends CellCacheEntry {
 	
@@ -57,8 +55,13 @@ final class FormulaCellCacheEntry extends CellCacheEntry {
 	public void setSensitiveInputCells(CellCacheEntry[] sensitiveInputCells) {
 		// need to tell all cells that were previously used, but no longer are, 
 		// that they are not consumed by this cell any more
-		changeConsumingCells(sensitiveInputCells == null ? CellCacheEntry.EMPTY_ARRAY : sensitiveInputCells);
-		_sensitiveInputCells = sensitiveInputCells;
+	    if (sensitiveInputCells == null) {
+            _sensitiveInputCells = null;
+	        changeConsumingCells(CellCacheEntry.EMPTY_ARRAY);
+	    } else {
+	        _sensitiveInputCells = sensitiveInputCells.clone();
+	        changeConsumingCells(_sensitiveInputCells);
+	    }
 	}
 
 	public void clearFormulaEntry() {
