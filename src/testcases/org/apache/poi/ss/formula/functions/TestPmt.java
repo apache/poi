@@ -17,18 +17,16 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import org.apache.poi.ss.formula.eval.ErrorEval;
-import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
-import org.apache.poi.hssf.usermodel.HSSFErrorConstants;
+import org.apache.poi.ss.formula.eval.ValueEval;
+import org.apache.poi.ss.usermodel.FormulaError;
+import org.junit.Test;
 
-/**
- * @author Josh Micich
- */
-public final class TestPmt extends TestCase {
+public final class TestPmt {
 
 	private static void confirm(double expected, NumberEval ne) {
 		// only asserting accuracy to 4 fractional digits
@@ -43,8 +41,7 @@ public final class TestPmt extends TestCase {
 	private static NumberEval invokeNormal(ValueEval[] args) {
 		ValueEval ev = invoke(args);
 		if(ev instanceof ErrorEval) {
-			throw new AssertionFailedError("Normal evaluation failed with error code: "
-					+ ev.toString());
+			fail("Normal evaluation failed with error code: " + ev.toString());
 		}
 		return (NumberEval) ev;
 	}
@@ -60,12 +57,13 @@ public final class TestPmt extends TestCase {
 		confirm(expected, invokeNormal(args));
 	}
 
-
+	@Test
 	public void testBasic() {
 		confirm(-1037.0321, (0.08/12), 10, 10000, 0, false);
 		confirm(-1030.1643, (0.08/12), 10, 10000, 0, true);
 	}
 
+	@Test
 	public void test3args() {
 
 		ValueEval[] args = {
@@ -76,8 +74,8 @@ public final class TestPmt extends TestCase {
 		ValueEval ev = invoke(args);
 		if(ev instanceof ErrorEval) {
 			ErrorEval err = (ErrorEval) ev;
-			if(err.getErrorCode() == HSSFErrorConstants.ERROR_VALUE) {
-				throw new AssertionFailedError("Identified bug 44691");
+			if(err.getErrorCode() == FormulaError.VALUE.getCode()) {
+				fail("Identified bug 44691");
 			}
 		}
 

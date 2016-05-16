@@ -17,7 +17,7 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.ss.usermodel.ErrorConstants;
+import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 
@@ -88,19 +88,20 @@ public final class BoolErrRecord extends CellRecord implements Cloneable {
 	 *                  see bugzilla bug 16560 for an explanation
 	 */
 	public void setValue(byte value) {
-		switch(value) {
-			case ErrorConstants.ERROR_NULL:
-			case ErrorConstants.ERROR_DIV_0:
-			case ErrorConstants.ERROR_VALUE:
-			case ErrorConstants.ERROR_REF:
-			case ErrorConstants.ERROR_NAME:
-			case ErrorConstants.ERROR_NUM:
-			case ErrorConstants.ERROR_NA:
+		switch(FormulaError.forInt(value)) {
+			case NULL:
+			case DIV0:
+			case VALUE:
+			case REF:
+			case NAME:
+			case NUM:
+			case NA:
 				_value = value;
 				_isError = true;
 				return;
+			default:
+		        throw new IllegalArgumentException("Error Value can only be 0,7,15,23,29,36 or 42. It cannot be "+value);
 		}
-		throw new IllegalArgumentException("Error Value can only be 0,7,15,23,29,36 or 42. It cannot be "+value);
 	}
 
 	/**
@@ -150,7 +151,7 @@ public final class BoolErrRecord extends CellRecord implements Cloneable {
 			sb.append(getBooleanValue());
 		} else {
 			sb.append("  .errCode = ");
-			sb.append(ErrorConstants.getText(getErrorValue()));
+			sb.append(FormulaError.forInt(getErrorValue()).getString());
 			sb.append(" (").append(HexDump.byteToHex(getErrorValue())).append(")");
 		}
 	}

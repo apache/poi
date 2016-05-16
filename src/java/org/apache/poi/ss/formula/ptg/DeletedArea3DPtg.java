@@ -17,9 +17,9 @@
 
 package org.apache.poi.ss.formula.ptg;
 
-import org.apache.poi.ss.usermodel.ErrorConstants;
 import org.apache.poi.ss.formula.FormulaRenderingWorkbook;
 import org.apache.poi.ss.formula.WorkbookDependentFormula;
+import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
@@ -48,8 +48,7 @@ public final class DeletedArea3DPtg extends OperandPtg implements WorkbookDepend
 		unused2 = in.readInt();
 	}
 	public String toFormulaString(FormulaRenderingWorkbook book) {
-		return ExternSheetNameResolver.prependSheetName(book, field_1_index_extern_sheet, 
-				ErrorConstants.getText(ErrorConstants.ERROR_REF));
+		return ExternSheetNameResolver.prependSheetName(book, field_1_index_extern_sheet, FormulaError.REF.getString());
 	}
 	public String toFormulaString() {
 		throw new RuntimeException("3D references need a workbook to determine formula text");

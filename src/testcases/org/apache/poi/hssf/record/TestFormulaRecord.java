@@ -17,16 +17,16 @@
 
 package org.apache.poi.hssf.record;
 
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
-
+import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.ss.formula.ptg.AttrPtg;
 import org.apache.poi.ss.formula.ptg.FuncVarPtg;
 import org.apache.poi.ss.formula.ptg.IntPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.ptg.RefPtg;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFErrorConstants;
+import org.apache.poi.ss.usermodel.FormulaError;
+
+import junit.framework.AssertionFailedError;
+import junit.framework.TestCase;
 
 /**
  * Tests for {@link FormulaRecord}
@@ -58,7 +58,7 @@ public final class TestFormulaRecord extends TestCase {
 			// 8 bytes cached number is a 'special value' in this case
 			0x02, // special cached value type 'error'
 			0x00,
-			HSSFErrorConstants.ERROR_DIV_0,
+			FormulaError.DIV0.getCode(),
 			0x00,
 			0x00,
 			0x00,
@@ -179,8 +179,8 @@ public final class TestFormulaRecord extends TestCase {
 		// test some other cached value types 
 		fr0.setValue(3.5);
 		assertEquals(3.5, fr0.getValue(), 0.0);
-		fr0.setCachedResultErrorCode(HSSFErrorConstants.ERROR_REF);
-		assertEquals(HSSFErrorConstants.ERROR_REF, fr0.getCachedErrorValue());
+		fr0.setCachedResultErrorCode(FormulaError.REF.getCode());
+		assertEquals(FormulaError.REF.getCode(), fr0.getCachedErrorValue());
 
 		fr0.setCachedResultBoolean(false);
 		fr1.setCachedResultBoolean(true);

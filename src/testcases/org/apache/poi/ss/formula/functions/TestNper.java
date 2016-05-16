@@ -17,24 +17,26 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
-import org.apache.poi.ss.formula.eval.NumberEval;
-import org.apache.poi.ss.formula.eval.ValueEval;
+import java.io.IOException;
+
 import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFErrorConstants;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.formula.eval.NumberEval;
+import org.apache.poi.ss.formula.eval.ValueEval;
+import org.apache.poi.ss.usermodel.FormulaError;
+import org.junit.Test;
 
 /**
  * Tests for {@link FinanceFunction#NPER}
- *
- * @author Josh Micich
  */
-public final class TestNper extends TestCase {
-	public void testSimpleEvaluate() {
+public final class TestNper {
 
+    @Test
+	public void testSimpleEvaluate() {
 		ValueEval[] args = {
 			new NumberEval(0.05),
 			new NumberEval(250),
@@ -46,7 +48,8 @@ public final class TestNper extends TestCase {
 		assertEquals(4.57353557, ((NumberEval)result).getNumberValue(), 0.00000001);
 	}
 
-	public void testEvaluate_bug_45732() {
+    @Test
+	public void testEvaluate_bug_45732() throws IOException {
 		HSSFWorkbook wb = new HSSFWorkbook();
 		HSSFSheet sheet = wb.createSheet("Sheet1");
 		HSSFCell cell = sheet.createRow(0).createCell(0);
@@ -60,6 +63,7 @@ public final class TestNper extends TestCase {
 		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
 		fe.evaluateFormulaCell(cell);
 		assertEquals(HSSFCell.CELL_TYPE_ERROR, cell.getCachedFormulaResultType());
-		assertEquals(HSSFErrorConstants.ERROR_NUM, cell.getErrorCellValue());
+		assertEquals(FormulaError.NUM.getCode(), cell.getErrorCellValue());
+		wb.close();
 	}
 }

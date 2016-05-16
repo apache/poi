@@ -17,22 +17,24 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+
+import java.io.IOException;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFErrorConstants;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.CellValue;
+import org.apache.poi.ss.usermodel.FormulaError;
+import org.junit.Test;
 
 /**
  * Tests for {@link Financed}
- * 
- * @author Torstein Svendsen (torstei@officenet.no)
  */
-public final class TestFind extends TestCase {
+public final class TestFind {
 
-	public void testFind() {
+    @Test
+	public void testFind() throws IOException {
 		HSSFWorkbook wb = new HSSFWorkbook();
 		HSSFCell cell = wb.createSheet().createRow(0).createCell(0);
 
@@ -48,12 +50,14 @@ public final class TestFind extends TestCase {
 		confirmResult(fe, cell, "find(5, 87654)", 4);
 
 		// Errors
-		confirmError(fe, cell, "find(\"n\", \"haystack\")", HSSFErrorConstants.ERROR_VALUE);
-		confirmError(fe, cell, "find(\"k\", \"haystack\",9)", HSSFErrorConstants.ERROR_VALUE);
-		confirmError(fe, cell, "find(\"k\", \"haystack\",#REF!)", HSSFErrorConstants.ERROR_REF);
-		confirmError(fe, cell, "find(\"k\", \"haystack\",0)", HSSFErrorConstants.ERROR_VALUE);
-		confirmError(fe, cell, "find(#DIV/0!, #N/A, #REF!)", HSSFErrorConstants.ERROR_DIV_0);
-		confirmError(fe, cell, "find(2, #N/A, #REF!)", HSSFErrorConstants.ERROR_NA);
+		confirmError(fe, cell, "find(\"n\", \"haystack\")", FormulaError.VALUE);
+		confirmError(fe, cell, "find(\"k\", \"haystack\",9)", FormulaError.VALUE);
+		confirmError(fe, cell, "find(\"k\", \"haystack\",#REF!)", FormulaError.REF);
+		confirmError(fe, cell, "find(\"k\", \"haystack\",0)", FormulaError.VALUE);
+		confirmError(fe, cell, "find(#DIV/0!, #N/A, #REF!)", FormulaError.DIV0);
+		confirmError(fe, cell, "find(2, #N/A, #REF!)", FormulaError.NA);
+		
+		wb.close();
 	}
 
 	private static void confirmResult(HSSFFormulaEvaluator fe, HSSFCell cell, String formulaText,
@@ -66,11 +70,11 @@ public final class TestFind extends TestCase {
 	}
 
 	private static void confirmError(HSSFFormulaEvaluator fe, HSSFCell cell, String formulaText,
-			int expectedErrorCode) {
+			FormulaError expectedErrorCode) {
 		cell.setCellFormula(formulaText);
 		fe.notifyUpdateCell(cell);
 		CellValue result = fe.evaluate(cell);
 		assertEquals(result.getCellType(), HSSFCell.CELL_TYPE_ERROR);
-		assertEquals(expectedErrorCode, result.getErrorValue());
+		assertEquals(expectedErrorCode.getCode(), result.getErrorValue());
 	}
 }

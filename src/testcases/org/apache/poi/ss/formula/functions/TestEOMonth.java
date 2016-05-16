@@ -30,7 +30,7 @@ import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.usermodel.DateUtil;
-import org.apache.poi.ss.usermodel.ErrorConstants;
+import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.util.LocaleUtil;
 import org.junit.Test;
 
@@ -86,11 +86,11 @@ public class TestEOMonth {
     public void testEOMonthInvalidArguments() {
         ValueEval result = eOMonth.evaluate(new ValueEval[] {new NumberEval(DATE_1902_09_26)}, ec);
         assertTrue(result instanceof ErrorEval);
-        assertEquals(ErrorConstants.ERROR_VALUE, ((ErrorEval) result).getErrorCode(), 0);
+        assertEquals(FormulaError.VALUE.getCode(), ((ErrorEval) result).getErrorCode(), 0);
 
         result = eOMonth.evaluate(new ValueEval[] {new StringEval("a"), new StringEval("b")}, ec);
         assertTrue(result instanceof ErrorEval);
-        assertEquals(ErrorConstants.ERROR_VALUE, ((ErrorEval) result).getErrorCode(), 0);
+        assertEquals(FormulaError.VALUE.getCode(), ((ErrorEval) result).getErrorCode(), 0);
     }
 
     @Test
