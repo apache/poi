@@ -77,6 +77,7 @@ public class XWPFSDTContent implements ISDTContent {
                 bodyElements.add(run);
             }
         }
+        cursor.dispose();
     }
 
     public String getText() {

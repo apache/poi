@@ -258,7 +258,7 @@ public class XWPFTableCell implements IBody, ICell {
      * @param cursor
      * @return the inserted paragraph
      */
-    public XWPFParagraph insertNewParagraph(XmlCursor cursor) {
+    public XWPFParagraph insertNewParagraph(final XmlCursor cursor) {
         if (!isCursorInTableCell(cursor)) {
             return null;
         }
@@ -280,19 +280,23 @@ public class XWPFTableCell implements IBody, ICell {
             paragraphs.add(pos, newP);
         }
         int i = 0;
-        cursor.toCursor(p.newCursor());
+        XmlCursor p2 = p.newCursor();
+        cursor.toCursor(p2);
+        p2.dispose();
         while (cursor.toPrevSibling()) {
             o = cursor.getObject();
             if (o instanceof CTP || o instanceof CTTbl)
                 i++;
         }
         bodyElements.add(i, newP);
-        cursor.toCursor(p.newCursor());
+        p2 = p.newCursor();
+        cursor.toCursor(p2);
+        p2.dispose();
         cursor.toEndToken();
         return newP;
     }
 
-    public XWPFTable insertNewTbl(XmlCursor cursor) {
+    public XWPFTable insertNewTbl(final XmlCursor cursor) {
         if (isCursorInTableCell(cursor)) {
             String uri = CTTbl.type.getName().getNamespaceURI();
             String localPart = "tbl";
@@ -312,15 +316,18 @@ public class XWPFTableCell implements IBody, ICell {
                 tables.add(pos, newT);
             }
             int i = 0;
-            cursor = t.newCursor();
-            while (cursor.toPrevSibling()) {
-                o = cursor.getObject();
+            XmlCursor cursor2 = t.newCursor();
+            while (cursor2.toPrevSibling()) {
+                o = cursor2.getObject();
                 if (o instanceof CTP || o instanceof CTTbl)
                     i++;
             }
+            cursor2.dispose();
             bodyElements.add(i, newT);
-            cursor = t.newCursor();
+            cursor2 = t.newCursor();
+            cursor.toCursor(cursor2);
             cursor.toEndToken();
+            cursor2.dispose();
             return newT;
         }
         return null;
@@ -332,10 +339,9 @@ public class XWPFTableCell implements IBody, ICell {
     private boolean isCursorInTableCell(XmlCursor cursor) {
         XmlCursor verify = cursor.newCursor();
         verify.toParent();
-        if (verify.getObject() == this.ctTc) {
-            return true;
-        }
-        return false;
+        boolean result = (verify.getObject() == this.ctTc);
+        verify.dispose();
+        return result;
     }
 
     /**
