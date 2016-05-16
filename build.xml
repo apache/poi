@@ -90,7 +90,10 @@ under the License.
     </condition>
     <!-- Fix for strange woodstox references in gump build -->
     <property name="javax.xml.stream.XMLInputFactory" value="com.sun.xml.internal.stream.XMLInputFactoryImpl"/>
+	<!-- need to override POILogger property before commons logging works -->
+    <property name="org.apache.commons.logging.Log" value="org.apache.commons.logging.impl.Log4JLogger"/>
 
+	
     <!-- Main: -->
     <property name="main.resource1.dir" value="src/resources/main"/>
     <property name="main.src" location="src/java"/>
@@ -282,6 +285,7 @@ under the License.
         <propertyref name="user.language"/>
         <propertyref name="user.country"/>
         <propertyref name="javax.xml.stream.XMLInputFactory"/>
+    	<propertyref name="org.apache.commons.logging.Log"/>
     </propertyset>
 
     <path id="main.classpath">
@@ -341,6 +345,7 @@ under the License.
     </path>
 
     <path id="test.integration.classpath">
+        <pathelement location="${integration.src.test}"/>
         <path refid="scratchpad.classpath"/>
         <path refid="ooxml.classpath"/>
         <pathelement location="${main.output.test.dir}"/>
@@ -1453,6 +1458,8 @@ under the License.
 
     <target name="test-integration" depends="compile-integration,-test-integration-check,jacocotask"
             unless="integration.test.notRequired" xmlns:jacoco="antlib:org.jacoco.ant">
+    	<propertyreset name="org.apache.poi.util.POILogger" value="org.apache.poi.util.CommonsLogger"/>
+    	<delete dir="build" includes="test-integration.log*"/>
         <jacoco:coverage enabled="${coverage.enabled}" excludes="${coverage.excludes}" destfile="build/jacoco-integration.exec">
             <junit printsummary="yes" fork="yes" forkmode="once" haltonfailure="${halt.on.test.failure}"
                    failureproperty="integration.test.failed" showoutput="true">
@@ -2205,7 +2212,7 @@ under the License.
             <local name="lastUpdated"/>
             <tstamp>
                 <format property="lastUpdated" pattern="yyyyMMddHHmmss" timezone="UTC"/>
-            </tstamp>            
+            </tstamp>
 
             <local name="metadir"/>
             <property name="metadir" location="${repo}/org/apache/poi/@{artifactId}"/>
