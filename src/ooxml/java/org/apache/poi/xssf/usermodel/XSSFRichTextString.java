@@ -73,9 +73,6 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STXstring;
  *     cell2.setCellValue(s2);
  * </pre>
  * </blockquote>
- *
- *
- * @author Yegor Kozlov
  */
 public class XSSFRichTextString implements RichTextString {
     private static final Pattern utfPtrn = Pattern.compile("_x([0-9A-F]{4})_");
@@ -497,7 +494,9 @@ public class XSSFRichTextString implements RichTextString {
      * @return  the decoded string
      */
     static String utfDecode(String value){
-        if(value == null) return null;
+        if(value == null || !value.contains("_x")) {
+            return value;
+        }
         
         StringBuilder buf = new StringBuilder();
         Matcher m = utfPtrn.matcher(value);
