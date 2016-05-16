@@ -17,70 +17,44 @@
 
 package org.apache.poi.hwpf.model;
 
-import java.lang.reflect.AccessibleObject;
-import java.lang.reflect.Field;
-import java.security.AccessController;
-import java.security.PrivilegedActionException;
-import java.security.PrivilegedExceptionAction;
-
-import junit.framework.TestCase;
+import static org.apache.poi.POITestCase.assertReflectEquals;
+import static org.junit.Assert.assertNotNull;
 
 import org.apache.poi.hwpf.HWPFDocFixture;
-import org.apache.poi.util.SuppressForbidden;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-public final class TestFileInformationBlock extends TestCase {
+public final class TestFileInformationBlock {
     private FileInformationBlock _fileInformationBlock = null;
     private HWPFDocFixture _hWPFDocFixture;
 
+    @Test
     public void testReadWrite() throws Exception {
+        final FibBase expected = _fileInformationBlock.getFibBase();
         int size = _fileInformationBlock.getSize();
         byte[] buf = new byte[size];
+        expected.serialize(buf, 0);
 
-        _fileInformationBlock.getFibBase().serialize(buf, 0);
+        FileInformationBlock newFileInformationBlock = new FileInformationBlock(buf);
+        FibBase actual = newFileInformationBlock.getFibBase();
 
-        FileInformationBlock newFileInformationBlock = new FileInformationBlock(
-                buf);
-
-        final Field[] fields;
-        try {
-            fields = AccessController.doPrivileged(new PrivilegedExceptionAction<Field[]>() {
-                @Override
-                @SuppressForbidden("Test only")
-                public Field[] run() throws Exception {
-                    final Field[] fields = FileInformationBlock.class.getSuperclass().getDeclaredFields();
-                    AccessibleObject.setAccessible(fields, true);
-                    return fields;
-                }
-            });
-        } catch (PrivilegedActionException pae) {
-            throw pae.getException();
-        }
-
-        for (int x = 0; x < fields.length; x++) {
-            assertEquals(fields[x].get(_fileInformationBlock),
-                    fields[x].get(newFileInformationBlock));
-        }
-        
+        assertReflectEquals(expected, actual);
         assertNotNull(_fileInformationBlock.toString());
     }
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
         /** @todo verify the constructors */
-        _hWPFDocFixture = new HWPFDocFixture(this,
-                HWPFDocFixture.DEFAULT_TEST_FILE);
-
+        _hWPFDocFixture = new HWPFDocFixture(this, HWPFDocFixture.DEFAULT_TEST_FILE);
         _hWPFDocFixture.setUp();
         _fileInformationBlock = _hWPFDocFixture._fib;
     }
 
-    @Override
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         _fileInformationBlock = null;
         _hWPFDocFixture.tearDown();
-
         _hWPFDocFixture = null;
-        super.tearDown();
     }
 }

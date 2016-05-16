@@ -17,16 +17,21 @@
 
 package org.apache.poi;
 
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.security.AccessController;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.poi.util.SuppressForbidden;
@@ -104,6 +109,53 @@ public final class POITestCase {
             });
         } catch (PrivilegedActionException pae) {
             throw new RuntimeException("Cannot access method '" + methodName + "' of class " + clazz, pae.getException());
+        }
+    }
+
+    /**
+     * Utility method to shallow compare all fields of the objects
+     * Only use this method in test cases!!!
+     */
+    public static void assertReflectEquals(final Object expected, Object actual) throws Exception {
+        final List<Field> fields;
+        try {
+            fields = AccessController.doPrivileged(new PrivilegedExceptionAction<List<Field>>() {
+                @Override
+                @SuppressForbidden("Test only")
+                public List<Field> run() throws Exception {
+                    List<Field> flds = new ArrayList<Field>();
+                    for (Class<?> c = expected.getClass(); c != null; c = c.getSuperclass()) {
+                        Field[] fs = c.getDeclaredFields();
+                        AccessibleObject.setAccessible(fs, true);                        
+                        for (Field f : fs) {
+                            // JaCoCo Code Coverage adds it's own field, don't look at this one here
+                            if(f.getName().equals("$jacocoData")) {
+                                continue;
+                            }
+                            
+                            flds.add(f);
+                        }
+                    }
+                    return flds;
+                }
+            });
+        } catch (PrivilegedActionException pae) {
+            throw pae.getException();
+        }
+        
+        for (Field f : fields) {
+            Class<?> t = f.getType();
+            if (t.isArray()) {
+                if (Object[].class.isAssignableFrom(t)) {
+                    assertArrayEquals((Object[])f.get(expected), (Object[])f.get(actual));
+                } else if (byte[].class.isAssignableFrom(t)) {
+                    assertArrayEquals((byte[])f.get(expected), (byte[])f.get(actual));
+                } else {
+                    fail("Array type is not yet implemented ... add it!");
+                }
+            } else {
+                assertEquals(f.get(expected), f.get(actual));
+            }
         }
     }
 }
