@@ -85,6 +85,7 @@ public class XWPFSDTContentCell implements ISDTContent {
             }
         }
         text = sb.toString();
+        cursor.dispose();
     }
 
 

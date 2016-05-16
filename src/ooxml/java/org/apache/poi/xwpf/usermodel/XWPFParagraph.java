@@ -1396,58 +1396,59 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
         int beginRunPos = 0, candCharPos = 0;
         boolean newList = false;
         
-        @SuppressWarnings("deprecation")
         CTR[] rArray = paragraph.getRArray();
         for (int runPos = startRun; runPos < rArray.length; runPos++) {
             int beginTextPos = 0, beginCharPos = 0, textPos = 0, charPos = 0;
             CTR ctRun = rArray[runPos];
             XmlCursor c = ctRun.newCursor();
             c.selectPath("./*");
-            while (c.toNextSelection()) {
-                XmlObject o = c.getObject();
-                if (o instanceof CTText) {
-                    if (textPos >= startText) {
-                        String candidate = ((CTText) o).getStringValue();
-                        if (runPos == startRun)
-                            charPos = startChar;
-                        else
-                            charPos = 0;
-
-                        for (; charPos < candidate.length(); charPos++) {
-                            if ((candidate.charAt(charPos) == searched.charAt(0)) && (candCharPos == 0)) {
-                                beginTextPos = textPos;
-                                beginCharPos = charPos;
-                                beginRunPos = runPos;
-                                newList = true;
-                            }
-                            if (candidate.charAt(charPos) == searched.charAt(candCharPos)) {
-                                if (candCharPos + 1 < searched.length())
-                                    candCharPos++;
-                                else if (newList) {
-                                    TextSegement segement = new TextSegement();
-                                    segement.setBeginRun(beginRunPos);
-                                    segement.setBeginText(beginTextPos);
-                                    segement.setBeginChar(beginCharPos);
-                                    segement.setEndRun(runPos);
-                                    segement.setEndText(textPos);
-                                    segement.setEndChar(charPos);
-                                    return segement;
+            try {
+                while (c.toNextSelection()) {
+                    XmlObject o = c.getObject();
+                    if (o instanceof CTText) {
+                        if (textPos >= startText) {
+                            String candidate = ((CTText) o).getStringValue();
+                            if (runPos == startRun)
+                                charPos = startChar;
+                            else
+                                charPos = 0;
+    
+                            for (; charPos < candidate.length(); charPos++) {
+                                if ((candidate.charAt(charPos) == searched.charAt(0)) && (candCharPos == 0)) {
+                                    beginTextPos = textPos;
+                                    beginCharPos = charPos;
+                                    beginRunPos = runPos;
+                                    newList = true;
                                 }
-                            } else {
-                                candCharPos = 0;
+                                if (candidate.charAt(charPos) == searched.charAt(candCharPos)) {
+                                    if (candCharPos + 1 < searched.length())
+                                        candCharPos++;
+                                    else if (newList) {
+                                        TextSegement segement = new TextSegement();
+                                        segement.setBeginRun(beginRunPos);
+                                        segement.setBeginText(beginTextPos);
+                                        segement.setBeginChar(beginCharPos);
+                                        segement.setEndRun(runPos);
+                                        segement.setEndText(textPos);
+                                        segement.setEndChar(charPos);
+                                        return segement;
+                                    }
+                                } else {
+                                    candCharPos = 0;
+                                }
                             }
                         }
-                    }
-                    textPos++;
-                } else if (o instanceof CTProofErr) {
-                    c.removeXml();
-                } else if (o instanceof CTRPr) ;
-                    //do nothing
-                else
-                    candCharPos = 0;
+                        textPos++;
+                    } else if (o instanceof CTProofErr) {
+                        c.removeXml();
+                    } else if (o instanceof CTRPr) ;
+                        //do nothing
+                    else
+                        candCharPos = 0;
+                }
+            } finally {
+                c.dispose();
             }
-
-            c.dispose();
         }
         return null;
     }
@@ -1465,10 +1466,8 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
         int textEnd = segment.getEndText();
         int charEnd = segment.getEndChar();
         StringBuilder out = new StringBuilder();
-        @SuppressWarnings("deprecation")
         CTR[] rArray = paragraph.getRArray();
         for (int i = runBegin; i <= runEnd; i++) {
-            @SuppressWarnings("deprecation")
             CTText[] tArray = rArray[i].getTArray();
             int startText = 0, endText = tArray.length - 1;
             if (i == runBegin)

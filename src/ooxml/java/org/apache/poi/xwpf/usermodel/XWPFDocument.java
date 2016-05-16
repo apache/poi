@@ -667,11 +667,9 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     private boolean isCursorInBody(XmlCursor cursor) {
         XmlCursor verify = cursor.newCursor();
         verify.toParent();
-        try {
-            return (verify.getObject() == this.ctDocument.getBody());
-        } finally {
-            verify.dispose();
-        }
+        boolean result = (verify.getObject() == this.ctDocument.getBody());
+        verify.dispose();
+        return result;
     }
 
     private int getPosOfBodyElement(IBodyElement needle) {

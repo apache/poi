@@ -147,6 +147,7 @@ public class XWPFTableRow {
                 cells.add(new XWPFSDTCell((CTSdtCell) o, this, table.getBody()));
             }
         }
+        cursor.dispose();
         return cells;
     }
 

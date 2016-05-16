@@ -269,8 +269,10 @@ public class XWPFFootnote implements Iterable<XWPFParagraph>, IBody {
                     i++;
             }
             bodyElements.add(i, newT);
-            cursor = t.newCursor();
+            XmlCursor c2 = t.newCursor();
+            cursor.toCursor(c2);
             cursor.toEndToken();
+            c2.dispose();
             return newT;
         }
         return null;
@@ -283,7 +285,7 @@ public class XWPFFootnote implements Iterable<XWPFParagraph>, IBody {
      * @return the inserted paragraph
      * @see org.apache.poi.xwpf.usermodel.IBody#insertNewParagraph(XmlCursor cursor)
      */
-    public XWPFParagraph insertNewParagraph(XmlCursor cursor) {
+    public XWPFParagraph insertNewParagraph(final XmlCursor cursor) {
         if (isCursorInFtn(cursor)) {
             String uri = CTP.type.getName().getNamespaceURI();
             String localPart = "p";
@@ -302,15 +304,19 @@ public class XWPFFootnote implements Iterable<XWPFParagraph>, IBody {
                 paragraphs.add(pos, newP);
             }
             int i = 0;
-            cursor.toCursor(p.newCursor());
+            XmlCursor p2 = p.newCursor();
+            cursor.toCursor(p2);
+            p2.dispose();
             while (cursor.toPrevSibling()) {
                 o = cursor.getObject();
                 if (o instanceof CTP || o instanceof CTTbl)
                     i++;
             }
             bodyElements.add(i, newP);
-            cursor.toCursor(p.newCursor());
+            p2 = p.newCursor();
+            cursor.toCursor(p2);
             cursor.toEndToken();
+            p2.dispose();
             return newP;
         }
         return null;
