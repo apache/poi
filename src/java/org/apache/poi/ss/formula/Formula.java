@@ -42,7 +42,7 @@ public class Formula {
 	private final int _encodedTokenLen;
 
 	private Formula(byte[] byteEncoding, int encodedTokenLen) {
-		_byteEncoding = byteEncoding;
+		_byteEncoding = byteEncoding.clone();
 		_encodedTokenLen = encodedTokenLen;
 //		if (false) { // set to true to eagerly check Ptg decoding
 //			LittleEndianByteArrayInputStream in = new LittleEndianByteArrayInputStream(byteEncoding);

@@ -28,8 +28,6 @@ import org.apache.poi.ss.formula.function.FunctionMetadataRegistry;
  * Represents a syntactic element from a formula by encapsulating the corresponding <tt>Ptg</tt>
  * token.  Each <tt>ParseNode</tt> may have child <tt>ParseNode</tt>s in the case when the wrapped
  * <tt>Ptg</tt> is non-atomic.
- *
- * @author Josh Micich
  */
 final class ParseNode {
 
@@ -44,7 +42,7 @@ final class ParseNode {
 			throw new IllegalArgumentException("token must not be null");
 		}
 		_token = token;
-		_children = children;
+		_children = children.clone();
 		_isIf = isIf(token);
 		int tokenCount = 1;
 		for (int i = 0; i < children.length; i++) {

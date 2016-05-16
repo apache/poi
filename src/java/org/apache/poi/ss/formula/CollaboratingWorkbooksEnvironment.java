@@ -117,7 +117,7 @@ public final class CollaboratingWorkbooksEnvironment {
         unhookOldEnvironments(evaluators);
         hookNewEnvironment(evaluators, this);
         _unhooked = false;
-        _evaluators = evaluators;
+        _evaluators = evaluators.clone();
         _evaluatorsByName = evaluatorsByName;
     }
 
