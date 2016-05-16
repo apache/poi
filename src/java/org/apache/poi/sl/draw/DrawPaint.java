@@ -18,6 +18,7 @@
 package org.apache.poi.sl.draw;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.LinearGradientPaint;
 import java.awt.MultipleGradientPaint.ColorSpaceType;
@@ -153,12 +154,20 @@ public class DrawPaint {
             renderer.setAlpha(alpha/100000.f);
         }
         
-        BufferedImage image = renderer.getImage();
+        Rectangle2D textAnchor = shape.getAnchor();
+        BufferedImage image;
+        if ("image/x-wmf".equals(fill.getContentType())) {
+            // don't rely on wmf dimensions, use dimension of anchor
+            // TODO: check pixels vs. points for image dimension 
+            image = renderer.getImage(new Dimension((int)textAnchor.getWidth(), (int)textAnchor.getHeight()));
+        } else {
+            image = renderer.getImage();
+        }
+
         if(image == null) {
             LOG.log(POILogger.ERROR, "Can't load image data");
             return null;
         }
-        Rectangle2D textAnchor = shape.getAnchor();
         Paint paint = new java.awt.TexturePaint(image, textAnchor);
 
         return paint;

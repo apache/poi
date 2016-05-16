@@ -24,6 +24,7 @@ import java.awt.Insets;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.awt.image.RescaleOp;
 import java.io.ByteArrayInputStream;
@@ -69,12 +70,23 @@ public class BitmapImageRenderer implements ImageRenderer {
         return bi;
     }
 
-
-    /**
-     * @return the buffered image
-     */
+    @Override
     public BufferedImage getImage() {
         return img;
+    }
+
+    @Override
+    public BufferedImage getImage(Dimension dim) {
+        double w_old = img.getWidth();
+        double h_old = img.getHeight();
+        BufferedImage scaled = new BufferedImage((int)w_old, (int)h_old, BufferedImage.TYPE_INT_ARGB);
+        double w_new = dim.getWidth();
+        double h_new = dim.getHeight();
+        AffineTransform at = new AffineTransform();
+        at.scale(w_new/w_old, h_new/h_old);
+        AffineTransformOp scaleOp = new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);
+        scaleOp.filter(img, scaled);
+        return scaled;
     }
 
     @Override
