@@ -17,100 +17,42 @@
 
 package org.apache.poi.hwpf.model;
 
-import java.lang.reflect.AccessibleObject;
-import java.lang.reflect.Field;
-import java.security.AccessController;
-import java.security.PrivilegedActionException;
-import java.security.PrivilegedExceptionAction;
-import java.util.Arrays;
-
-import junit.framework.TestCase;
+import static org.apache.poi.POITestCase.assertReflectEquals;
 
 import org.apache.poi.hwpf.HWPFDocFixture;
 import org.apache.poi.hwpf.model.types.DOPAbstractType;
-import org.apache.poi.util.SuppressForbidden;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 // TODO: Add DocumentProperties#equals ???
 
-public final class TestDocumentProperties
-  extends TestCase
-{
-  private DocumentProperties _documentProperties = null;
-  private HWPFDocFixture _hWPFDocFixture;
+public final class TestDocumentProperties {
+    private DocumentProperties _documentProperties = null;
+    private HWPFDocFixture _hWPFDocFixture;
 
-  public void testReadWrite()
-    throws Exception
-  {
-    int size = DOPAbstractType.getSize();
-    byte[] buf = new byte[size];
+    @Test
+    public void testReadWrite() throws Exception  {
+        int size = DOPAbstractType.getSize();
+        byte[] buf = new byte[size];
+        _documentProperties.serialize(buf, 0);
+        DocumentProperties newDocProperties = new DocumentProperties(buf, 0, size);
 
-    _documentProperties.serialize(buf, 0);
-
-    DocumentProperties newDocProperties =
-      new DocumentProperties(buf, 0, size);
-
-    final Field[] fields;
-    try {
-        fields = AccessController.doPrivileged(new PrivilegedExceptionAction<Field[]>() {
-            @Override
-            @SuppressForbidden("Test only")
-            public Field[] run() throws Exception {
-                final Field[] fields = DocumentProperties.class.getSuperclass().getDeclaredFields();
-                AccessibleObject.setAccessible(fields, true);
-                return fields;
-            }
-        });
-    } catch (PrivilegedActionException pae) {
-        throw pae.getException();
-    }
-    
-    for (int x = 0; x < fields.length; x++)
-    {
-      // JaCoCo Code Coverage adds it's own field, don't look at this one here
-      if(fields[x].getName().equals("$jacocoData")) {
-    	  continue;
-      }
-
-      if (!fields[x].getType().isArray())
-      {
-        assertEquals(fields[x].get(_documentProperties),
-                     fields[x].get(newDocProperties));
-      }
-      else
-      {
-    	// ensure that the class was not changed/enhanced, e.g. by code instrumentation like coverage tools
-    	assertEquals("Invalid type for field: " + fields[x].getName(), 
-    			"[B", fields[x].getType().getName());
-    	
-        byte[] buf1 = (byte[])fields[x].get(_documentProperties);
-        byte[] buf2 = (byte[])fields[x].get(newDocProperties);
-        Arrays.equals(buf1, buf2);
-      }
+        assertReflectEquals(_documentProperties, newDocProperties);
     }
 
-  }
+    @Before
+    public void setUp() throws Exception {
+        /** TODO verify the constructors*/
+        _hWPFDocFixture = new HWPFDocFixture(this, HWPFDocFixture.DEFAULT_TEST_FILE);
+        _hWPFDocFixture.setUp();
+        _documentProperties = new DocumentProperties(_hWPFDocFixture._tableStream, _hWPFDocFixture._fib.getFcDop(), _hWPFDocFixture._fib.getLcbDop());
+    }
 
-  protected void setUp()
-    throws Exception
-  {
-    super.setUp();
-    /**@todo verify the constructors*/
-
-    _hWPFDocFixture = new HWPFDocFixture(this, HWPFDocFixture.DEFAULT_TEST_FILE);
-
-    _hWPFDocFixture.setUp();
-
-    _documentProperties = new DocumentProperties(_hWPFDocFixture._tableStream, _hWPFDocFixture._fib.getFcDop(), _hWPFDocFixture._fib.getLcbDop());
-  }
-
-  protected void tearDown()
-    throws Exception
-  {
-    _documentProperties = null;
-    _hWPFDocFixture.tearDown();
-
-    _hWPFDocFixture = null;
-    super.tearDown();
-  }
-
+    @After
+    public void tearDown() throws Exception {
+        _documentProperties = null;
+        _hWPFDocFixture.tearDown();
+        _hWPFDocFixture = null;
+    }
 }
