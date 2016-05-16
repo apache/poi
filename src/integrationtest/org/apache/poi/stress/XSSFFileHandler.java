@@ -22,6 +22,7 @@ import static org.junit.Assert.assertNotNull;
 import java.io.*;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Set;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -135,16 +136,13 @@ public class XSSFFileHandler extends SpreadsheetHandler {
         EXPECTED_ADDITIONAL_FAILURES.add("spreadsheet/sample-beta.xlsx");
     }
 
+    @SuppressWarnings("resource")
     @Override
     public void handleAdditional(File file) throws Exception {
         // redirect stdout as the examples often write lots of text
         PrintStream oldOut = System.out;
         try {
-            System.setOut(new PrintStream(new OutputStream() {
-                @Override
-                public void write(int b) throws IOException {
-                }
-            }));
+            System.setOut(new NullPrintStream());
             FromHowTo.main(new String[]{file.getAbsolutePath()});
             XLSX2CSV.main(new String[]{file.getAbsolutePath()});
 
@@ -194,5 +192,46 @@ public class XSSFFileHandler extends SpreadsheetHandler {
     @Test
     public void testAdditional() throws Exception {
         handleAdditional(new File("test-data/spreadsheet/poc-xmlbomb.xlsx"));
+    }
+    
+    // need to override all methods to omit calls to UTF-handling methods 
+    static class NullPrintStream extends PrintStream {
+        @SuppressWarnings("resource")
+        NullPrintStream() {
+            super(new OutputStream() {
+                public void write(int b) {}
+                public void write(byte[] b) {}
+                public void write(byte[] b, int off, int len) {}
+            });
+        }
+        public void write(int b) {}
+        public void write(byte[] buf, int off, int len) {}
+        public void print(boolean b) {}
+        public void print(char c) {}
+        public void print(int i) {}
+        public void print(long l) {}
+        public void print(float f) {}
+        public void print(double d) {}
+        public void print(char[] s) {}
+        public void print(String s) {}
+        public void print(Object obj) {}
+        public void println() {}
+        public void println(boolean x) {}
+        public void println(char x) {}
+        public void println(int x) {}
+        public void println(long x) {}
+        public void println(float x) {}
+        public void println(double x) {}
+        public void println(char[] x) {}
+        public void println(String x) {}
+        public void println(Object x) {}
+        public PrintStream printf(String format, Object... args) { return this; }
+        public PrintStream printf(Locale l, String format, Object... args) { return this; }
+        public PrintStream format(String format, Object... args) { return this; }
+        public PrintStream format(Locale l, String format, Object... args) { return this; }
+        public PrintStream append(CharSequence csq) { return this; }
+        public PrintStream append(CharSequence csq, int start, int end) { return this; }
+        public PrintStream append(char c) { return this; }
+        public void write(byte[] b) {}
     }
 }
