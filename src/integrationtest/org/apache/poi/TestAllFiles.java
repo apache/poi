@@ -239,7 +239,6 @@ public class TestAllFiles {
         EXPECTED_FAILURES.add("spreadsheet/43493.xls");
         EXPECTED_FAILURES.add("spreadsheet/46904.xls");
         EXPECTED_FAILURES.add("document/Bug50955.doc");
-        EXPECTED_FAILURES.add("slideshow/bug54570.pptx");
         EXPECTED_FAILURES.add("slideshow/PPT95.ppt");
         EXPECTED_FAILURES.add("openxml4j/OPCCompliance_CoreProperties_DCTermsNamespaceLimitedUseFAIL.docx");
         EXPECTED_FAILURES.add("openxml4j/OPCCompliance_CoreProperties_DoNotUseCompatibilityMarkupFAIL.docx");
