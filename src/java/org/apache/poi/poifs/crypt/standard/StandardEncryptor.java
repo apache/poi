@@ -49,9 +49,13 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianOutputStream;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 import org.apache.poi.util.TempFile;
 
 public class StandardEncryptor extends Encryptor {
+    private static final POILogger logger = POILogFactory.getLogger(StandardEncryptor.class);
+
     private final StandardEncryptionInfoBuilder builder;
     
     protected StandardEncryptor(StandardEncryptionInfoBuilder builder) {
@@ -184,7 +188,9 @@ public class StandardEncryptor extends Encryptor {
                 FileInputStream fis = new FileInputStream(fileOut);
                 IOUtils.copy(fis, leos);
                 fis.close();
-                fileOut.delete();
+                if (!fileOut.delete()) {
+                    logger.log(POILogger.ERROR, "Can't delete temporary encryption file: "+fileOut);
+                }
 
                 leos.close();
             } catch (IOException e) {
