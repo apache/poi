@@ -196,6 +196,10 @@ public abstract class POIXMLDocument extends POIXMLDocumentPart implements Close
         //save extended and custom properties
         getProperties().commit();
 
-        getPackage().save(stream);
+        OPCPackage pkg = getPackage();
+        if(pkg == null) {
+            throw new IOException("Cannot write data, document seems to have been closed already");
+        }
+        pkg.save(stream);
     }
 }
