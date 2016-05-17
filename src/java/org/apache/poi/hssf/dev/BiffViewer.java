@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.hssf.record.*;
+import org.apache.poi.hssf.record.RecordFormatException;
 import org.apache.poi.hssf.record.RecordInputStream.LeftoverDataException;
 import org.apache.poi.hssf.record.chart.*;
 import org.apache.poi.hssf.record.pivottable.DataItemRecord;
@@ -43,11 +44,7 @@ import org.apache.poi.hssf.record.pivottable.ViewFieldsRecord;
 import org.apache.poi.hssf.record.pivottable.ViewSourceRecord;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
-import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
-import org.apache.poi.util.StringUtil;
+import org.apache.poi.util.*;
 
 /**
  *  Utility for reading in BIFF8 records and displaying data from them.
@@ -66,10 +63,10 @@ public final class BiffViewer {
      *
      *@param  is the InputStream from which the records will be obtained
      *@return an array of Records created from the InputStream
-     *@exception  RecordFormatException  on error processing the InputStream
+     *@exception  org.apache.poi.util.RecordFormatException  on error processing the InputStream
      */
     public static Record[] createRecords(InputStream is, PrintWriter ps, BiffRecordListener recListener, boolean dumpInterpretedRecords)
-            throws RecordFormatException {
+            throws org.apache.poi.util.RecordFormatException {
         List<Record> temp = new ArrayList<Record>();
 
         RecordInputStream recStream = new RecordInputStream(is);
@@ -403,25 +400,34 @@ public final class BiffViewer {
 			pw = new PrintWriter(new OutputStreamWriter(System.out, Charset.defaultCharset()));
 		}
 
-		NPOIFSFileSystem fs = new NPOIFSFileSystem(cmdArgs.getFile(), true);
-        InputStream is = getPOIFSInputStream(fs);
-		
-		if (cmdArgs.shouldOutputRawHexOnly()) {
-			int size = is.available();
-			byte[] data = new byte[size];
+        try {
+            NPOIFSFileSystem fs = new NPOIFSFileSystem(cmdArgs.getFile(), true);
+            try {
+                InputStream is = getPOIFSInputStream(fs);
 
-			is.read(data);
-			HexDump.dump(data, 0, System.out, 0);
-		} else {
-			boolean dumpInterpretedRecords = cmdArgs.shouldDumpRecordInterpretations();
-			boolean dumpHex = cmdArgs.shouldDumpBiffHex();
-			boolean zeroAlignHexDump = dumpInterpretedRecords;  // TODO - fix non-zeroAlign
-			runBiffViewer(pw, is, dumpInterpretedRecords, dumpHex, zeroAlignHexDump,
-					cmdArgs.suppressHeader());
-		}
-		is.close();
-        fs.close();
-		pw.close();
+                try {
+                    if (cmdArgs.shouldOutputRawHexOnly()) {
+                        int size = is.available();
+                        byte[] data = new byte[size];
+
+                        is.read(data);
+                        HexDump.dump(data, 0, System.out, 0);
+                    } else {
+                        boolean dumpInterpretedRecords = cmdArgs.shouldDumpRecordInterpretations();
+                        boolean dumpHex = cmdArgs.shouldDumpBiffHex();
+                        boolean zeroAlignHexDump = dumpInterpretedRecords;  // TODO - fix non-zeroAlign
+                        runBiffViewer(pw, is, dumpInterpretedRecords, dumpHex, zeroAlignHexDump,
+                                cmdArgs.suppressHeader());
+                    }
+                } finally {
+                    is.close();
+                }
+            } finally {
+                fs.close();
+            }
+        } finally {
+            pw.close();
+        }
 	}
 
 	protected static InputStream getPOIFSInputStream(NPOIFSFileSystem fs)
@@ -472,7 +478,7 @@ public final class BiffViewer {
 		    return result;
 		}
 		private static String formatRecordDetails(int globalOffset, int sid, int size, int recordCounter) {
-			StringBuffer sb = new StringBuffer(64);
+			StringBuilder sb = new StringBuilder(64);
 			sb.append("Offset=").append(HexDump.intToHex(globalOffset)).append("(").append(globalOffset).append(")");
 			sb.append(" recno=").append(recordCounter);
 			sb.append(  " sid=").append(HexDump.shortToHex(sid));
