@@ -35,10 +35,14 @@ import org.apache.poi.poifs.filesystem.POIFSWriterListener;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 import org.apache.poi.util.TempFile;
 
 @Internal
 public abstract class ChunkedCipherOutputStream extends FilterOutputStream {
+    private static final POILogger logger = POILogFactory.getLogger(ChunkedCipherOutputStream.class);
+    
     protected final int chunkSize;
     protected final int chunkMask;
     protected final int chunkBits;
@@ -67,9 +71,11 @@ public abstract class ChunkedCipherOutputStream extends FilterOutputStream {
     protected abstract Cipher initCipherForBlock(Cipher existing, int block, boolean lastChunk)
     throws GeneralSecurityException;    
     
+    @SuppressWarnings("hiding")
     protected abstract void calculateChecksum(File fileOut, int oleStreamSize)
     throws GeneralSecurityException, IOException;
     
+    @SuppressWarnings("hiding")
     protected abstract void createEncryptionInfoEntry(DirectoryNode dir, File tmpFile)
     throws IOException, GeneralSecurityException;
 
@@ -164,7 +170,9 @@ public abstract class ChunkedCipherOutputStream extends FilterOutputStream {
 
                 os.close();
                 
-                fileOut.delete();
+                if (!fileOut.delete()) {
+                    logger.log(POILogger.ERROR, "Can't delete temporary encryption file: "+fileOut);
+                }
             } catch (IOException e) {
                 throw new EncryptedDocumentException(e);
             }

@@ -33,6 +33,8 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
@@ -45,6 +47,8 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellType;
  * so that it was renamed to "SheetDataWriter"
  */
 public class SheetDataWriter {
+    private static final POILogger logger = POILogFactory.getLogger(SheetDataWriter.class);
+    
     private final File _fd;
     private final Writer _out;
     private int _rownum;
@@ -128,7 +132,9 @@ public class SheetDataWriter {
 
     @Override
     protected void finalize() throws Throwable {
-        _fd.delete();
+        if (!_fd.delete()) {
+            logger.log(POILogger.ERROR, "Can't delete temporary encryption file: "+_fd);
+        }
 
         super.finalize();
     }
