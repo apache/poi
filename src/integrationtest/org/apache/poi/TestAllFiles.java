@@ -239,6 +239,7 @@ public class TestAllFiles {
         EXPECTED_FAILURES.add("spreadsheet/43493.xls");
         EXPECTED_FAILURES.add("spreadsheet/46904.xls");
         EXPECTED_FAILURES.add("document/Bug50955.doc");
+        EXPECTED_FAILURES.add("slideshow/bug54570.pptx");
         EXPECTED_FAILURES.add("slideshow/PPT95.ppt");
         EXPECTED_FAILURES.add("openxml4j/OPCCompliance_CoreProperties_DCTermsNamespaceLimitedUseFAIL.docx");
         EXPECTED_FAILURES.add("openxml4j/OPCCompliance_CoreProperties_DoNotUseCompatibilityMarkupFAIL.docx");
@@ -347,7 +348,8 @@ public class TestAllFiles {
             handler.handleExtracting(inputFile);
 
             // special cases where docx-handling breaks, but OPCPackage handling works
-            boolean ignoredOPC = (file.endsWith(".docx") || file.endsWith(".xlsx") || file.endsWith(".xlsb")) && 
+            boolean ignoredOPC = (file.endsWith(".docx") || file.endsWith(".xlsx") ||
+                        file.endsWith(".xlsb") || file.endsWith(".pptx")) &&
                     handler instanceof OPCFileHandler;
 
             assertFalse("Expected to fail for file " + file + " and handler " + handler + ", but did not fail!", 
