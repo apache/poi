@@ -29,6 +29,7 @@ import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
+import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.util.Internal;
 import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTCommentList;
@@ -82,6 +83,9 @@ public class XSLFSlideShow extends POIXMLDocument {
 			PackagePart slidePart = corePart.getRelatedPart(corePart.getRelationship(ctSlide.getId2()));
 
 			for(PackageRelationship rel : slidePart.getRelationshipsByType(OLE_OBJECT_REL_TYPE)) {
+			    if (TargetMode.EXTERNAL == rel.getTargetMode()) {
+			        continue;
+			    }
 				// TODO: Add this reference to each slide as well
 				embedds.add(slidePart.getRelatedPart(rel));
 			}
