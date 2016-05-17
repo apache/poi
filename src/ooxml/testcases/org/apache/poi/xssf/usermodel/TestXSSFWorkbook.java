@@ -1090,4 +1090,21 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
         //wb = new XSSFWorkbook(OPCPackage.open(file));
         //assertCloseDoesNotModifyFile(filename, wb);
     }
+
+	@Test
+	public void testCloseBeforeWrite() throws IOException {
+		Workbook wb = new XSSFWorkbook();
+		wb.createSheet("somesheet");
+
+		// test what happens if we close the Workbook before we write it out
+		wb.close();
+
+		try {
+			XSSFTestDataSamples.writeOutAndReadBack(wb);
+			fail("Expecting IOException here");
+		} catch (RuntimeException e) {
+			// expected here
+			assertTrue("Had: " + e.getCause(), e.getCause() instanceof IOException);
+		}
+	}
 }
