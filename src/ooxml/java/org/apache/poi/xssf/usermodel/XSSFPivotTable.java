@@ -334,9 +334,9 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
     /**
      * Add data field with data from the given column and specified function.
      * @param function the function to be used on the data
-     * @param index the index of the column to be used as column label.
-     * The following functions exists:
-     * Sum, Count, Average, Max, Min, Product, Count numbers, StdDev, StdDevp, Var, Varp
+     *      The following functions exists:
+     *      Sum, Count, Average, Max, Min, Product, Count numbers, StdDev, StdDevp, Var, Varp
+     * @param columnIndex the index of the column to be used as column label.
      * @param valueFieldName the name of pivot table value field
      */
     @Beta
@@ -355,7 +355,8 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         }
         CTDataField dataField = dataFields.addNewDataField();
         dataField.setSubtotal(STDataConsolidateFunction.Enum.forInt(function.getValue()));
-        Cell cell = getDataSheet().getRow(pivotArea.getFirstCell().getRow()).getCell(columnIndex);
+        Cell cell = getDataSheet().getRow(pivotArea.getFirstCell().getRow())
+                .getCell(pivotArea.getFirstCell().getCol() + columnIndex);
         cell.setCellType(Cell.CELL_TYPE_STRING);
         dataField.setName(valueFieldName);
         dataField.setFld(columnIndex);
