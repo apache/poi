@@ -55,7 +55,7 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
      * @param initialSize - no longer needed
      * @deprecated 2015-11-30 (circa POI 3.14beta1). Use {@link #SXSSFRow(SXSSFSheet)} instead.
      */
-    public SXSSFRow(SXSSFSheet sheet, int initialSize)
+    public SXSSFRow(SXSSFSheet sheet, @SuppressWarnings("UnusedParameters") int initialSize)
     {
         this(sheet);
     }
@@ -433,7 +433,6 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
     public void setRowStyle(CellStyle style) {
        if(style == null) {
           _style = -1;
-          return;
        } else {
           _style = style.getIndex();
        }

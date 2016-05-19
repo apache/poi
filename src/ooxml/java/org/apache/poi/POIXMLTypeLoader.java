@@ -77,8 +77,7 @@ public class POIXMLTypeLoader {
     }
     
     private static XmlOptions getXmlOptions(XmlOptions options) {
-        XmlOptions opt = (options == null) ? DEFAULT_XML_OPTIONS : options;
-        return opt;
+        return options == null ? DEFAULT_XML_OPTIONS : options;
     }
 
     public static XmlObject newInstance(SchemaType type, XmlOptions options) {
