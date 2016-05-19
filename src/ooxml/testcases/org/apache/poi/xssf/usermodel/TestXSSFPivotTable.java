@@ -32,6 +32,8 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STDataConsolidateFunc
 
 public class TestXSSFPivotTable extends TestCase {
     private XSSFPivotTable pivotTable;
+    private XSSFPivotTable offsetPivotTable;
+    private Cell offsetOuterCell;
     
     @Override
     public void setUp(){
@@ -71,6 +73,45 @@ public class TestXSSFPivotTable extends TestCase {
 
         AreaReference source = new AreaReference("A1:C2");
         pivotTable = sheet.createPivotTable(source, new CellReference("H5"));
+        
+        XSSFSheet offsetSheet = (XSSFSheet) wb.createSheet();
+        
+        Row tableRow_1 = offsetSheet.createRow(1);
+        offsetOuterCell = tableRow_1.createCell(1);
+        offsetOuterCell.setCellValue(-1);
+        Cell tableCell_1_1 = tableRow_1.createCell(2);
+        tableCell_1_1.setCellValue("Row #");
+        Cell tableCell_1_2 = tableRow_1.createCell(3);
+        tableCell_1_2.setCellValue("Exponent");
+        Cell tableCell_1_3 = tableRow_1.createCell(4);
+        tableCell_1_3.setCellValue("10^Exponent");
+        
+        Row tableRow_2 = offsetSheet.createRow(2);
+        Cell tableCell_2_1 = tableRow_2.createCell(2);
+        tableCell_2_1.setCellValue(0);
+        Cell tableCell_2_2 = tableRow_2.createCell(3);
+        tableCell_2_2.setCellValue(0);
+        Cell tableCell_2_3 = tableRow_2.createCell(4);
+        tableCell_2_3.setCellValue(1);
+        
+        Row tableRow_3= offsetSheet.createRow(3);
+        Cell tableCell_3_1 = tableRow_3.createCell(2);
+        tableCell_3_1.setCellValue(1);
+        Cell tableCell_3_2 = tableRow_3.createCell(3);
+        tableCell_3_2.setCellValue(1);
+        Cell tableCell_3_3 = tableRow_3.createCell(4);
+        tableCell_3_3.setCellValue(10);
+        
+        Row tableRow_4 = offsetSheet.createRow(4);
+        Cell tableCell_4_1 = tableRow_4.createCell(2);
+        tableCell_4_1.setCellValue(2);
+        Cell tableCell_4_2 = tableRow_4.createCell(3);
+        tableCell_4_2.setCellValue(2);
+        Cell tableCell_4_3 = tableRow_4.createCell(4);
+        tableCell_4_3.setCellValue(100);
+        
+        AreaReference offsetSource = new AreaReference(new CellReference("C2"), new CellReference("E4"));
+        offsetPivotTable = offsetSheet.createPivotTable(offsetSource, new CellReference("C6"));
     }
 
     /**
@@ -267,5 +308,16 @@ public class TestXSSFPivotTable extends TestCase {
             return;
         }
         fail();
+    }
+    
+    /**
+     * Verify that the Pivot Table operates only within the referenced area, even when the
+     * first column of the referenced area is not index 0.
+     */
+    public void testAddDataColumnWithOffsetData() {
+        offsetPivotTable.addColumnLabel(DataConsolidateFunction.SUM, 1);
+        assertEquals(Cell.CELL_TYPE_NUMERIC, offsetOuterCell.getCellType());
+        
+        offsetPivotTable.addColumnLabel(DataConsolidateFunction.SUM, 0);
     }
 }
