@@ -59,7 +59,7 @@ public abstract class BaseTestXCell extends BaseTestCell {
     }
 
     @Test
-    public void testSetNullValues() {
+    public void testSetNullValues() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         Cell cell = wb.createSheet("test").createRow(0).createCell(0);
 
@@ -68,5 +68,7 @@ public abstract class BaseTestXCell extends BaseTestCell {
         cell.setCellValue((String)null);
         cell.setCellValue((RichTextString) null);
         cell.setCellValue((String)null);
+
+        wb.close();
     }
 }
