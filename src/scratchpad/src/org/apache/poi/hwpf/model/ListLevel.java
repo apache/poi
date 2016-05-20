@@ -96,8 +96,8 @@ public final class ListLevel
         setStartAt( startAt );
         _lvlf.setNfc( (byte) numberFormatCode );
         _lvlf.setJc( (byte) alignment );
-        _grpprlChpx = numberProperties;
-        _grpprlPapx = entryProperties;
+        _grpprlChpx = numberProperties.clone();
+        _grpprlPapx = entryProperties.clone();
         _xst = new Xst(numberText);
     }
 
