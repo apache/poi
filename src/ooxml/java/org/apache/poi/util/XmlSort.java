@@ -30,10 +30,7 @@ public final class XmlSort {
      * attributes are not touched. When elements are reordered, all the text, comments and PIs
      * follow the element that they come immediately after.
      * @param comp a comparator that is to be used when comparing the <code>QName</code>s of two
-     * elements. See {@link QNameComparator} for a simple
-     * implementation that compares two elements based on the value of their QName, but more
-     * complicated implementations are possible, for instance, ones that compare two elements based
-     * on the value of a specifc attribute etc.
+     * elements. 
      * @throws IllegalArgumentException if the input <code>XmlObject</code> does not represent
      * an element
      */
