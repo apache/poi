@@ -34,8 +34,6 @@ import org.apache.poi.ss.usermodel.Workbook;
  * Represents a workbook being used for forked evaluation. Most operations are delegated to the
  * shared master workbook, except those that potentially involve cell values that may have been
  * updated after a call to {@link #getOrCreateUpdatableCell(String, int, int)}.
- *
- * @author Josh Micich
  */
 final class ForkedEvaluationWorkbook implements EvaluationWorkbook {
 
@@ -69,15 +67,9 @@ final class ForkedEvaluationWorkbook implements EvaluationWorkbook {
 	}
 
 	public void copyUpdatedCells(Workbook workbook) {
-		String[] sheetNames = new String[_sharedSheetsByName.size()];
-		_sharedSheetsByName.keySet().toArray(sheetNames);
-		OrderedSheet[] oss = new OrderedSheet[sheetNames.length];
-		for (int i = 0; i < sheetNames.length; i++) {
-			String sheetName = sheetNames[i];
-			oss[i] = new OrderedSheet(sheetName, _masterBook.getSheetIndex(sheetName));
-		}
-		for (int i = 0; i < oss.length; i++) {
-			String sheetName = oss[i].getSheetName();
+        String[] sheetNames = new String[_sharedSheetsByName.size()];
+        _sharedSheetsByName.keySet().toArray(sheetNames);
+		for (String sheetName : sheetNames) {
 			ForkedEvaluationSheet sheet = _sharedSheetsByName.get(sheetName);
 			sheet.copyUpdatedCells(workbook.getSheet(sheetName));
 		}
@@ -144,20 +136,4 @@ final class ForkedEvaluationWorkbook implements EvaluationWorkbook {
     public UDFFinder getUDFFinder(){
         return _masterBook.getUDFFinder();
     }
-
-	private static final class OrderedSheet implements Comparable<OrderedSheet> {
-		private final String _sheetName;
-		private final int _index;
-
-		public OrderedSheet(String sheetName, int index) {
-			_sheetName = sheetName;
-			_index = index;
-		}
-		public String getSheetName() {
-			return _sheetName;
-		}
-		public int compareTo(OrderedSheet o) {
-			return _index - o._index;
-		}
-	}
 }
