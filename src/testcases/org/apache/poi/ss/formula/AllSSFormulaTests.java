@@ -18,21 +18,18 @@
 package org.apache.poi.ss.formula;
 
 import org.apache.poi.ss.formula.eval.forked.TestForkedEvaluator;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 /**
  * Test suite for org.apache.poi.ss.formula
- *
- * @author Josh Micich
  */
-public final class AllSSFormulaTests {
-	public static Test suite() {
-		TestSuite result = new TestSuite(AllSSFormulaTests.class.getName());
-		result.addTestSuite(TestCellCacheEntry.class);
-		result.addTestSuite(TestEvaluationCache.class);
-		// result.addTestSuite(TestWorkbookEvaluator.class); // upgraded to junit4
-		result.addTestSuite(TestForkedEvaluator.class);
-		return result;
-	}
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+    TestCellCacheEntry.class,
+    TestEvaluationCache.class,
+    TestWorkbookEvaluator.class,
+    TestForkedEvaluator.class
+})
+public class AllSSFormulaTests {
 }
