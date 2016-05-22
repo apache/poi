@@ -59,7 +59,6 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTPoint2D;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPositiveSize2D;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPresetGeometry2D;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPresetLineDashProperties;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTSRgbColor;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTSchemeColor;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeStyle;
@@ -218,25 +217,31 @@ public abstract class XSLFSimpleShape extends XSLFShape
      */
     public void setLineColor(Color color) {
         CTShapeProperties spPr = getSpPr();
+        CTLineProperties ln = spPr.getLn();
         if (color == null) {
-            if (spPr.isSetLn() && spPr.getLn().isSetSolidFill())
-                spPr.getLn().unsetSolidFill();
+            if (ln == null) {
+                return;
+            }
+            
+            if (ln.isSetSolidFill()) {
+                ln.unsetSolidFill();
+            }
+            
+            if (!ln.isSetNoFill()) {
+                ln.addNewNoFill();
+            }
         } else {
-            CTLineProperties ln = spPr.isSetLn() ? spPr.getLn() : spPr
-                    .addNewLn();
+            if (ln == null) {
+                ln = spPr.addNewLn();
+            }
+            if (ln.isSetNoFill()) {
+                ln.unsetNoFill();
+            }
+            
+            CTSolidColorFillProperties fill = ln.isSetSolidFill() ? ln.getSolidFill() : ln.addNewSolidFill();
 
-            CTSRgbColor rgb = CTSRgbColor.Factory.newInstance();
-            rgb.setVal(new byte[]{(byte) color.getRed(),
-                    (byte) color.getGreen(), (byte) color.getBlue()});
-
-            CTSolidColorFillProperties fill = ln.isSetSolidFill() ? ln
-                    .getSolidFill() : ln.addNewSolidFill();
-            fill.setSrgbClr(rgb);
-            if(fill.isSetHslClr()) fill.unsetHslClr();
-            if(fill.isSetPrstClr()) fill.unsetPrstClr();
-            if(fill.isSetSchemeClr()) fill.unsetSchemeClr();
-            if(fill.isSetScrgbClr()) fill.unsetScrgbClr();
-            if(fill.isSetSysClr()) fill.unsetSysClr();
+            XSLFColor col = new XSLFColor(fill, getSheet().getTheme(), fill.getSchemeClr());
+            col.setColor(color);
         }
     }
 
@@ -548,25 +553,22 @@ public abstract class XSLFSimpleShape extends XSLFShape
     public void setFillColor(Color color) {
         CTShapeProperties spPr = getSpPr();
         if (color == null) {
-            if (spPr.isSetSolidFill()) spPr.unsetSolidFill();
+            if (spPr.isSetSolidFill()) {
+                spPr.unsetSolidFill();
+            }
 
-            if (!spPr.isSetNoFill()) spPr.addNewNoFill();
+            if (!spPr.isSetNoFill()) {
+                spPr.addNewNoFill();
+            }
         } else {
-            if (spPr.isSetNoFill()) spPr.unsetNoFill();
+            if (spPr.isSetNoFill()) {
+                spPr.unsetNoFill();
+            }
 
-            CTSolidColorFillProperties fill = spPr.isSetSolidFill() ? spPr
-                    .getSolidFill() : spPr.addNewSolidFill();
-
-            CTSRgbColor rgb = CTSRgbColor.Factory.newInstance();
-            rgb.setVal(new byte[]{(byte) color.getRed(),
-                    (byte) color.getGreen(), (byte) color.getBlue()});
-
-            fill.setSrgbClr(rgb);
-            if(fill.isSetHslClr()) fill.unsetHslClr();
-            if(fill.isSetPrstClr()) fill.unsetPrstClr();
-            if(fill.isSetSchemeClr()) fill.unsetSchemeClr();
-            if(fill.isSetScrgbClr()) fill.unsetScrgbClr();
-            if(fill.isSetSysClr()) fill.unsetSysClr();
+            CTSolidColorFillProperties fill = spPr.isSetSolidFill() ? spPr.getSolidFill() : spPr.addNewSolidFill();
+                    
+            XSLFColor col = new XSLFColor(fill, getSheet().getTheme(), fill.getSchemeClr());
+            col.setColor(color);
         }
     }
 

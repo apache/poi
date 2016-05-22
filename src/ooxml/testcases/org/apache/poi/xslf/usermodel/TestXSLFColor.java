@@ -17,7 +17,7 @@
 package org.apache.poi.xslf.usermodel;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.awt.Color;
 import java.io.IOException;
@@ -154,9 +154,14 @@ public class TestXSLFColor {
         for(PresetColor pc : PresetColor.values()) {
             if (pc.ooxmlId == null) continue;
             xml = CTColor.Factory.newInstance();
-            STPresetColorVal.Enum val = STPresetColorVal.Enum.forString(pc.ooxmlId);
-            assertNotNull(pc.ooxmlId, val);
-            xml.addNewPrstClr().setVal(val);
+            STPresetColorVal.Enum preVal = STPresetColorVal.Enum.forString(pc.ooxmlId);
+            STSystemColorVal.Enum sysVal = STSystemColorVal.Enum.forString(pc.ooxmlId);
+            assertTrue(pc.ooxmlId, preVal != null || sysVal != null);
+            if (preVal != null) {
+                xml.addNewPrstClr().setVal(preVal);
+            } else {
+                xml.addNewSysClr().setVal(sysVal);
+            }
             color = new XSLFColor(xml, null, null);
             assertEquals(pc.color, color.getColor());
         }
@@ -166,7 +171,7 @@ public class TestXSLFColor {
     public void testSys() {
         CTColor xml = CTColor.Factory.newInstance();
         CTSystemColor sys = xml.addNewSysClr();
-        sys.setVal(STSystemColorVal.GRAY_TEXT);
+        sys.setVal(STSystemColorVal.CAPTION_TEXT);
         XSLFColor color = new XSLFColor(xml, null, null);
         assertEquals(Color.black, color.getColor());
 

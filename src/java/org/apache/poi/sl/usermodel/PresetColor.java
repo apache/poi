@@ -36,58 +36,60 @@ public enum PresetColor {
     // default colors for theme-depending colors taken from ... (last post):
     // https://social.technet.microsoft.com/Forums/windows/en-US/ac76cc56-6ff2-4778-b260-8141d7170a3b/windows-7-highlight-text-color-or-selected-text-color-in-aero
     
+    // see ST_SystemColorVal for system color names
+    
     /** The system-defined color of the active window's border. */
-    ActiveBorder            (0xffb4b4b4,   1, null),
+    ActiveBorder            (0xffb4b4b4,   1, "activeBorder"),
     /** The system-defined color of the background of the active window's title bar. */
-    ActiveCaption           (0xff99b4d1,   2, null),
+    ActiveCaption           (0xff99b4d1,   2, "activeCaption"),
     /** The system-defined color of the text in the active window's title bar. */
-    ActiveCaptionText       (0xff000000,   3, null),
+    ActiveCaptionText       (0xff000000,   3, "captionText"),
     /** The application workspace is the area in a multiple-document view that is not being occupied by documents. */
-    AppWorkspace            (0xffababab,   4, null),
+    AppWorkspace            (0xffababab,   4, "appWorkspace"),
     /** The system-defined face color of a 3-D element. */
-    Control                 (0xfff0f0f0,   5, null),
+    Control                 (0xfff0f0f0,   5, "btnFace"),
     /** The system-defined shadow color of a 3-D element. The shadow color is applied to parts of a 3-D element that face away from the light source. */
-    ControlDark             (0xff696969,   6, null),
+    ControlDark             (0xff696969,   6, "btnShadow"),
     /** The system-defined color that is the dark shadow color of a 3-D element. The dark shadow color is applied to the parts of a 3-D element that are the darkest color. */
-    ControlDarkDark         (0xff000000,   7, null),
+    ControlDarkDark         (0xff000000,   7, "3dDkShadow"),
     /** The system-defined color that is the light color of a 3-D element. The light color is applied to parts of a 3-D element that face the light source. */
-    ControlLight            (0xffe3e3e3,   8, null),
+    ControlLight            (0xffe3e3e3,   8, "btnHighlight"),
     /** The system-defined highlight color of a 3-D element. The highlight color is applied to the parts of a 3-D element that are the lightest color. */
-    ControlLightLight       (0xffe3e3e3,   9, null),
+    ControlLightLight       (0xffe3e3e3,   9, "3dLight"),
     /** The system-defined color of text in a 3-D element. */
-    ControlText             (0xff000000,  10, null),
+    ControlText             (0xff000000,  10, "btnText"),
     /** The system-defined color of the desktop. */
-    Desktop                 (0xff000000,  11, null),
+    Desktop                 (0xff000000,  11, "background"),
     /** The system-defined color of dimmed text. Items in a list that are disabled are displayed in dimmed text. */
-    GrayText                (0xff6d6d6d,  12, null),
+    GrayText                (0xff6d6d6d,  12, "grayText"),
     /** The system-defined color of the background of selected items. This includes selected menu items as well as selected text. */
-    Highlight               (0xff3399ff,  13, null),
+    Highlight               (0xff3399ff,  13, "highlight"),
     /** The system-defined color of the text of selected items. */
-    HighlightText           (0xffffffff,  14, null),
+    HighlightText           (0xffffffff,  14, "highlightText"),
     /** The system-defined color used to designate a hot-tracked item. Single-clicking a hot-tracked item executes the item. */
-    HotTrack                (0xff0066cc,  15, null),
+    HotTrack                (0xff0066cc,  15, "hotLight"),
     /** The system-defined color of an inactive window's border. */
-    InactiveBorder          (0xfff4f7fc,  16, null),
+    InactiveBorder          (0xfff4f7fc,  16, "inactiveBorder"),
     /** The system-defined color of the background of an inactive window's title bar. */
-    InactiveCaption         (0xffbfcddb,  17, null),
+    InactiveCaption         (0xffbfcddb,  17, "inactiveCaption"),
     /** The system-defined color of the text in an inactive window's title bar. */
-    InactiveCaptionText     (0xff000000,  18, null),
+    InactiveCaptionText     (0xff000000,  18, "inactiveCaptionText"),
     /** The system-defined color of the background of a ToolTip. */
-    Info                    (0xffffffe1,  19, null),
+    Info                    (0xffffffe1,  19, "infoBk"),
     /** The system-defined color of the text of a ToolTip. */
-    InfoText                (0xff000000,  20, null),
+    InfoText                (0xff000000,  20, "infoText"),
     /** The system-defined color of a menu's background. */
-    Menu                    (0xfff0f0f0,  21, null),
+    Menu                    (0xfff0f0f0,  21, "menu"),
     /** The system-defined color of a menu's text. */
-    MenuText                (0xff000000,  22, null),
+    MenuText                (0xff000000,  22, "menuText"),
     /** The system-defined color of the background of a scroll bar. */
-    ScrollBar               (0xffc8c8c8,  23, null),
+    ScrollBar               (0xffc8c8c8,  23, "scrollBar"),
     /** The system-defined color of the background in the client area of a window. */
-    Window                  (0xffffffff,  24, null),
+    Window                  (0xffffffff,  24, "window"),
     /** The system-defined color of a window frame. */
-    WindowFrame             (0xff646464,  25, null),
+    WindowFrame             (0xff646464,  25, "windowFrame"),
     /** The system-defined color of the text in the client area of a window. */
-    WindowText              (0xff000000,  26, null),
+    WindowText              (0xff000000,  26, "windowText"),
     Transparent             (0x00ffffff,  27, null),
     AliceBlue               (0xfff0f8ff,  28, "aliceBlue"),
     AntiqueWhite            (0xfffaebd7,  29, "antiqueWhite"),
@@ -236,13 +238,13 @@ public enum PresetColor {
     /** The system-defined color that is the shadow color of a 3-D element. This color is applied to parts of a 3-D element that face away from the light source. */
     ButtonShadow            (0xffa0a0a0, 170, null),
     /** The system-defined color of the lightest color in the color gradient of an active window's title bar. */
-    GradientActiveCaption   (0xffb9d1ea, 171, null),
+    GradientActiveCaption   (0xffb9d1ea, 171, "gradientActiveCaption"),
     /** The system-defined color of the lightest color in the color gradient of an inactive window's title bar. */
-    GradientInactiveCaption (0xffd7e4f2, 172, null),
+    GradientInactiveCaption (0xffd7e4f2, 172, "gradientInactiveCaption"),
     /** The system-defined color of the background of a menu bar. */
-    MenuBar                 (0xfff0f0f0, 173, null),
+    MenuBar                 (0xfff0f0f0, 173, "menuBar"),
     /** The system-defined color used to highlight menu items when the menu appears as a flat menu. */
-    MenuHighlight           (0xff3399ff, 174, null)
+    MenuHighlight           (0xff3399ff, 174, "menuHighlight")
     ;
 
     public Color color;
