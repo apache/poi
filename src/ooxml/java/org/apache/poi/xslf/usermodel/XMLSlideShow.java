@@ -19,6 +19,8 @@ package org.apache.poi.xslf.usermodel;
 import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 
 import java.awt.Dimension;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -202,7 +204,7 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
     /**
      * Create a slide and initialize it from the specified layout.
      *
-     * @param layout
+     * @param layout The layout to use for the new slide.
      * @return created slide
      */
     public XSLFSlide createSlide(XSLFSlideLayout layout) {
@@ -460,6 +462,45 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
         
         return img;
     }
+
+
+    /**
+     * Adds a picture to the slideshow.
+     *
+     * @param is                The stream to read image from
+     * @param format              The format of the picture
+     *
+     * @return the picture data
+     */
+    @Override
+    public XSLFPictureData addPicture(InputStream is, PictureType format) throws IOException
+    {
+        return addPicture(IOUtils.toByteArray(is), format);
+    }
+
+
+    /**
+     * Adds a picture to the presentation.
+     *
+     * @param pict             The file containing the image to add
+     * @param format           The format of the picture.
+     *
+     * @return the picture data
+     */
+    @Override
+    public XSLFPictureData addPicture(File pict, PictureType format) throws IOException
+    {
+        int length = (int) pict.length();
+        byte[] data = new byte[length];
+        FileInputStream is = new FileInputStream(pict);
+        try {
+            IOUtils.readFully(is, data);
+        } finally {
+            is.close();
+        }
+        return addPicture(data, format);
+    }
+
 
     /**
      * check if a picture with this picture data already exists in this presentation

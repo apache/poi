@@ -78,6 +78,7 @@ import org.apache.poi.sl.usermodel.MasterSheet;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.apache.poi.sl.usermodel.Resources;
 import org.apache.poi.sl.usermodel.SlideShow;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.Units;
@@ -268,10 +269,10 @@ public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagrap
 					_documentRecord = (Document) record;
 					_fonts = _documentRecord.getEnvironment().getFontCollection();
 				}
-			} else {
+			} /*else {
 				// No record at this number
 				// Odd, but not normally a problem
-			}
+			}*/
 		}
 	}
 
@@ -295,8 +296,7 @@ public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagrap
 	private Record getCoreRecordForRefID(int refID) {
 		Integer coreRecordId = _sheetIdToCoreRecordsLookup.get(refID);
 		if (coreRecordId != null) {
-			Record r = _mostRecentCoreRecords[coreRecordId];
-			return r;
+			return _mostRecentCoreRecords[coreRecordId];
 		}
 		logger.log(POILogger.ERROR,
 				"We tried to look up a reference to a core record, but there was no core ID for reference ID "
@@ -705,12 +705,10 @@ public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagrap
 	 */
 	@Override
 	public HSLFSlide createSlide() {
-		SlideListWithText slist = null;
-
 		// We need to add the records to the SLWT that deals
 		// with Slides.
 		// Add it, if it doesn't exist
-		slist = _documentRecord.getSlideSlideListWithText();
+		SlideListWithText slist = _documentRecord.getSlideSlideListWithText();
 		if (slist == null) {
 			// Need to add a new one
 			slist = new SlideListWithText();
@@ -828,24 +826,43 @@ public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagrap
 	}
 
 	/**
-	 * Adds a picture to this presentation and returns the associated index.
+	 * Adds a picture to the presentation.
+	 *
+	 * @param is	        The stream to read the image from
+	 * @param format        The format of the picture.
+	 *
+	 * @return the picture data.
+	 */
+	@Override
+	public HSLFPictureData addPicture(InputStream is, PictureType format) throws IOException {
+	    if (format == null || format.nativeId == -1) { // fail early
+	        throw new IllegalArgumentException("Unsupported picture format: " + format);
+	    }
+	    return addPicture(IOUtils.toByteArray(is), format);
+	}
+
+	/**
+	 * Adds a picture to the presentation.
 	 *
 	 * @param pict
 	 *            the file containing the image to add
 	 * @param format
-	 *            the format of the picture. One of constans defined in the
-	 *            <code>Picture</code> class.
-	 * @return the index to this picture (1 based).
+	 *            The format of the picture.
+	 *
+	 * @return the picture data.
 	 */
+	@Override
 	public HSLFPictureData addPicture(File pict, PictureType format) throws IOException {
+	    if (format == null || format.nativeId == -1) { // fail early
+	        throw new IllegalArgumentException("Unsupported picture format: " + format);
+	    }
 		int length = (int) pict.length();
 		byte[] data = new byte[length];
-        FileInputStream is = null;
-        try {
-			is = new FileInputStream(pict);
-			is.read(data);
+        FileInputStream is = new FileInputStream(pict);
+		try {
+			IOUtils.readFully(is, data);
 		} finally {
-            if(is != null) is.close();
+            is.close();
         }
 		return addPicture(data, format);
 	}
