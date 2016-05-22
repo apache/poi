@@ -194,7 +194,8 @@ public class TestXSLFAutoShape {
         assertEquals(1000, p.getXmlObject().getPPr().getLnSpc().getSpcPts().getVal());
         assertFalse(p.getXmlObject().getPPr().getLnSpc().isSetSpcPct());
 
-        assertFalse(p.getXmlObject().getPPr().isSetAlgn());
+        // align is set in autoshape prototype
+        assertTrue(p.getXmlObject().getPPr().isSetAlgn());
         assertEquals(TextAlign.LEFT, p.getTextAlign());
         p.setTextAlign(TextAlign.LEFT);
         assertTrue(p.getXmlObject().getPPr().isSetAlgn());
