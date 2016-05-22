@@ -175,8 +175,15 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
      * @return created paragraph run
      */
     public XSLFTextParagraph addNewTextParagraph() {
-        CTTextBody txBody = getTextBody(true);
-        CTTextParagraph p = txBody.addNewP();
+        CTTextBody txBody = getTextBody(false);
+        CTTextParagraph p;
+        if (txBody == null) {
+            txBody = getTextBody(true);
+            p = txBody.getPArray(0);
+            p.removeR(0);
+        } else {
+            p = txBody.addNewP();
+        }
         XSLFTextParagraph paragraph = new XSLFTextParagraph(p, this);
         _paragraphs.add(paragraph);
         return paragraph;
