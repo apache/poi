@@ -25,6 +25,8 @@ import org.apache.poi.sl.usermodel.ColorStyle;
 import org.apache.poi.sl.usermodel.PresetColor;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTColor;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTHslColor;
@@ -32,17 +34,18 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTPresetColor;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTSRgbColor;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTScRgbColor;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTSchemeColor;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTSolidColorFillProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTSystemColor;
 import org.w3c.dom.Node;
 
 /**
  * Encapsulates logic to read color definitions from DrawingML and convert them to java.awt.Color
- *
- * @author Yegor Kozlov
  */
 @Beta
 @Internal
 public class XSLFColor {
+    private static POILogger LOGGER = POILogFactory.getLogger(XSLFColor.class);
+    
     private XmlObject _xmlObject;
     private Color _color;
     private CTSchemeColor _phClr;
@@ -156,10 +159,14 @@ public class XSLFColor {
                     byte[] val = sys.getLastClr();
                     color = new Color(0xFF & val[0], 0xFF & val[1], 0xFF & val[2]);
                 } else {
-                    // YK: color is a string like "menuText" or "windowText", we return black for such cases
-                    @SuppressWarnings("unused")
                     String colorName = sys.getVal().toString();
-                    color = Color.black;
+                    PresetColor pc = PresetColor.valueOfOoxmlId(colorName);
+                    if (pc != null) {
+                        color = pc.color;
+                    }
+                    if (color == null) {
+                        color = Color.black;
+                    }
                 }
             } else {
                 throw new IllegalArgumentException("Unexpected color choice: " + ch.getClass());
@@ -168,6 +175,60 @@ public class XSLFColor {
         return color;
     }
 
+    /**
+     * Sets the solid color
+     *
+     * @param color solid color
+     */
+    @Internal
+    protected void setColor(Color color) {
+        if (!(_xmlObject instanceof CTSolidColorFillProperties)) {
+            LOGGER.log(POILogger.ERROR, "XSLFColor.setColor currently only supports CTSolidColorFillProperties");
+            return;
+        }
+        CTSolidColorFillProperties fill = (CTSolidColorFillProperties)_xmlObject;
+        if (fill.isSetSrgbClr()) {
+            fill.unsetSrgbClr();
+        }
+        
+        CTSRgbColor rgb = fill.addNewSrgbClr();
+        
+        float[] rgbaf = color.getRGBComponents(null);
+        int r = color.getRed(), g = color.getGreen(), b = color.getBlue();
+        if (rgbaf[0]*255f == r && rgbaf[1]*255f == g && rgbaf[2]*255f == b) {
+            rgb.setVal(new byte[]{(byte)r, (byte)g, (byte)b });
+        } else {
+            rgb.addNewRed().setVal((int)(100000 * rgbaf[0]));
+            rgb.addNewGreen().setVal((int)(100000 * rgbaf[1]));
+            rgb.addNewBlue().setVal((int)(100000 * rgbaf[2]));
+        }
+
+        // alpha (%)
+        if (rgbaf.length == 4 && rgbaf[3] < 1f) {
+            rgb.addNewAlpha().setVal((int)(100000 * rgbaf[3]));
+        }
+
+        if (fill.isSetHslClr()) {
+            fill.unsetHslClr();
+        }
+        
+        if (fill.isSetPrstClr()) {
+            fill.unsetPrstClr();
+        }
+        
+        if (fill.isSetSchemeClr()) {
+            fill.unsetSchemeClr();
+        }
+        
+        if (fill.isSetScrgbClr()) {
+            fill.unsetScrgbClr();
+        }
+        
+        if (fill.isSetSysClr()) {
+            fill.unsetSysClr();
+        }
+    }
+    
     private int getRawValue(String elem) {
         String query = "declare namespace a='http://schemas.openxmlformats.org/drawingml/2006/main' $this//a:" + elem;
 

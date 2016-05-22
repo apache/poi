@@ -16,9 +16,9 @@
 ==================================================================== */
 package org.apache.poi.xslf;
 
-import static junit.framework.TestCase.assertEquals;
 import static org.apache.poi.POITestCase.assertContains;
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -40,11 +40,14 @@ import javax.imageio.ImageIO;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.POIXMLDocumentPart.RelationPart;
+import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
 import org.apache.poi.sl.usermodel.PictureData;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
+import org.apache.poi.sl.usermodel.ShapeType;
 import org.apache.poi.xslf.usermodel.DrawingParagraph;
 import org.apache.poi.xslf.usermodel.DrawingTextBody;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
+import org.apache.poi.xslf.usermodel.XSLFAutoShape;
 import org.apache.poi.xslf.usermodel.XSLFHyperlink;
 import org.apache.poi.xslf.usermodel.XSLFPictureData;
 import org.apache.poi.xslf.usermodel.XSLFPictureShape;
@@ -470,6 +473,30 @@ public class TestXSLFBugs {
         assertEquals(url1, ps1.getHyperlink().getAddress());
         assertEquals(url2, ps2.getHyperlink().getAddress());
     
+        ppt2.close();
+    }
+
+    @Test
+    public void bug58217() throws IOException {
+        XMLSlideShow ppt1 = new XMLSlideShow();
+        XSLFSlide sl = ppt1.createSlide();
+        XSLFAutoShape as = sl.createAutoShape();
+        as.setShapeType(ShapeType.STAR_10);
+        as.setAnchor(new Rectangle2D.Double(100,100,300,300));
+        as.setFillColor(new Color(1f,1f,0f,0.1f));
+        as.setLineColor(new Color(1f,1f,0f,0.4f));
+        as.setText("Alpha");
+        as.getTextParagraphs().get(0).getTextRuns().get(0).setFontColor(new Color(1f,1f,0f,0.6f));
+        XMLSlideShow ppt2 = XSLFTestDataSamples.writeOutAndReadBack(ppt1);
+        ppt1.close();
+        sl = ppt2.getSlides().get(0);
+        as = (XSLFAutoShape)sl.getShapes().get(0);
+        SolidPaint ps = (SolidPaint)as.getFillStyle().getPaint();
+        assertEquals(10000, ps.getSolidColor().getAlpha());
+        ps = (SolidPaint)as.getStrokeStyle().getPaint();
+        assertEquals(40000, ps.getSolidColor().getAlpha());
+        ps = (SolidPaint)as.getTextParagraphs().get(0).getTextRuns().get(0).getFontColor();
+        assertEquals(60000, ps.getSolidColor().getAlpha());
         ppt2.close();
     }
 }

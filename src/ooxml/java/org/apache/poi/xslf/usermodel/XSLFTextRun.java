@@ -96,19 +96,13 @@ public class XSLFTextRun implements TextRun {
             throw new IllegalArgumentException("Currently only SolidPaint is supported!");
         }
         SolidPaint sp = (SolidPaint)color;
+        Color c = DrawPaint.applyColorTransform(sp.getSolidColor());
         
         CTTextCharacterProperties rPr = getRPr();
         CTSolidColorFillProperties fill = rPr.isSetSolidFill() ? rPr.getSolidFill() : rPr.addNewSolidFill();
-        CTSRgbColor clr = fill.isSetSrgbClr() ? fill.getSrgbClr() : fill.addNewSrgbClr();
-        Color c = DrawPaint.applyColorTransform(sp.getSolidColor());
-        clr.setVal(new byte[]{(byte)c.getRed(), (byte)c.getGreen(), (byte)c.getBlue()});
-
-        if(fill.isSetHslClr()) fill.unsetHslClr();
-        if(fill.isSetPrstClr()) fill.unsetPrstClr();
-        if(fill.isSetSchemeClr()) fill.unsetSchemeClr();
-        if(fill.isSetScrgbClr()) fill.unsetScrgbClr();
-        if(fill.isSetSysClr()) fill.unsetSysClr();
-
+        
+        XSLFColor col = new XSLFColor(fill, getParentParagraph().getParentShape().getSheet().getTheme(), fill.getSchemeClr());
+        col.setColor(c);
     }
 
     @Override
