@@ -38,11 +38,11 @@ public class Tutorial5 {
         XMLSlideShow ppt = new XMLSlideShow();
 
         XSLFSlide slide = ppt.createSlide();
-        File img = new File(System.getProperty("POI.testdata.path"), "slideshow/clock.jpg");
-        byte[] data = IOUtils.toByteArray(new FileInputStream(img));
-        XSLFPictureData pictureIndex = ppt.addPicture(data, PictureType.PNG);
 
-        /*XSLFPictureShape shape =*/ slide.createPicture(pictureIndex);
+        File img = new File(System.getProperty("POI.testdata.path", "test-data"), "slideshow/clock.jpg");
+        XSLFPictureData pictureData = ppt.addPicture(img, PictureType.PNG);
+
+        /*XSLFPictureShape shape =*/ slide.createPicture(pictureData);
 
         FileOutputStream out = new FileOutputStream("images.pptx");
         ppt.write(out);
