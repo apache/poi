@@ -26,4 +26,64 @@
 		<Class name="org.apache.poi.hssf.usermodel.DummyGraphics2d"/>
 		<Bug code="FI" />
 	</Match>
+
+	<!-- things that were moved or are named equally on purpose -->
+	<Match>
+		<Class name="org.apache.poi.hssf.extractor.ExcelExtractor"/>
+		<Bug code="Nm" />
+	</Match>
+	<Match>
+		<Class name="org.apache.poi.hssf.record.RecordFormatException"/>
+		<Bug code="Nm" />
+	</Match>
+	<Match>
+		<Class name="org.apache.poi.hssf.record.UnicodeString"/>
+		<Bug code="Nm" />
+	</Match>
+	<Match>
+		<Class name="org.apache.poi.hssf.usermodel.HeaderFooter"/>
+		<Bug code="Nm" />
+	</Match>
+	<Match>
+		<Class name="org.apache.poi.hssf.util.AreaReference"/>
+		<Bug code="Nm" />
+	</Match>
+	<Match>
+		<Class name="org.apache.poi.hssf.util.CellRangeAddress"/>
+		<Bug code="Nm" />
+	</Match>
+	<Match>
+		<Class name="org.apache.poi.hssf.util.CellRangeAddressList"/>
+		<Bug code="Nm" />
+	</Match>
+	<Match>
+		<Class name="org.apache.poi.hssf.util.CellReference"/>
+		<Bug code="Nm" />
+	</Match>
+	<Match>
+		<Class name="org.apache.poi.hssf.util.Region"/>
+		<Bug code="Nm" />
+	</Match>
+	<Match>
+		<Class name="org.apache.poi.hwpf.usermodel.CharacterRun"/>
+		<Bug code="Nm" />
+	</Match>
+	<Match>
+		<Class name="org.apache.poi.sl.usermodel.Hyperlink"/>
+		<Bug code="Nm" />
+	</Match>
+	<Match>
+		<Class name="org.apache.poi.ss.usermodel.Hyperlink"/>
+		<Bug code="Nm" />
+	</Match>
+	<Match>
+		<Class name="org.apache.poi.xssf.model.IndexedUDFFinder"/>
+		<Bug code="Nm" />
+	</Match>
+
+	<!-- named this way on purpose -->
+	<Match>
+		<Class name="org.apache.poi.xdgf.exceptions.XDGFException"/>
+		<Bug code="Nm" />
+	</Match>
 </FindBugsFilter>

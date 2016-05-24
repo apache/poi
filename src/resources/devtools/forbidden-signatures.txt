@@ -26,10 +26,6 @@ java.util.Locale#setDefault(java.util.Locale) @ Do not use methods that depend o
 java.util.TimeZone#getDefault() @ Do not use methods that depend on the current Local, either use Locale.ROOT or let the user define the local, see class LocaleUtil for details
 java.util.Date#toString() @ Do not use methods that depend on the current Local, either use Locale.ROOT or let the user define the local, see class LocaleUtil for details
 
-# Disallow reflection on private object fields/methods
-java.lang.reflect.AccessibleObject#setAccessible(java.lang.reflect.AccessibleObject[], boolean) @ Reflection usage fails with SecurityManagers and likely will not work any more in Java 9
-java.lang.reflect.AccessibleObject#setAccessible(boolean) @ Reflection usage fails with SecurityManagers and likely will not work any more in Java 9
-
 java.text.DecimalFormatSymbols#<init>() @ use DecimalFormatSymbols.getInstance()
 java.text.DecimalFormatSymbols#<init>(java.util.Locale) @ use DecimalFormatSymbols.getInstance()
 

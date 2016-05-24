@@ -200,8 +200,8 @@ under the License.
     <!-- license and api checks -->
     <property name="rat.jar" location="${main.lib}/apache-rat-0.11.jar"/>
     <property name="rat.url" value="${repository.m2}/maven2/org/apache/rat/apache-rat/0.11/apache-rat-0.11.jar"/>
-    <property name="forbidden.jar" location="${main.lib}/forbiddenapis-2.0.jar"/>
-    <property name="forbidden.url" value="${repository.m2}/maven2/de/thetaphi/forbiddenapis/2.0/forbiddenapis-2.0.jar"/>
+    <property name="forbidden.jar" location="${main.lib}/forbiddenapis-2.1.jar"/>
+    <property name="forbidden.url" value="${repository.m2}/maven2/de/thetaphi/forbiddenapis/2.1/forbiddenapis-2.1.jar"/>
 
     <!-- See http://www.ecma-international.org/publications/standards/Ecma-376.htm -->
     <!-- "Copy these file(s), free of charge" -->
@@ -528,6 +528,7 @@ under the License.
                 <include name="junit-4.11*"/>
                 <include name="findbugs-*-2.0.3*"/>
                 <include name="forbiddenapis-1.*.jar"/>
+                <include name="forbiddenapis-2.0.jar"/>
             </fileset>
             <fileset dir="${ooxml.lib}">
                 <!-- remove jars from previous versions, but not the current version -->
@@ -2017,12 +2018,15 @@ under the License.
 
         <!-- first check rules that apply to all the source code -->
         <forbiddenapis
-                 internalRuntimeForbidden="true"
                  classpathref="forbiddenapis.classpath"
                  suppressAnnotation="org.apache.poi.util.SuppressForbidden"
+                 targetVersion="${jdk.version.source}"
             >
-            <bundledsignatures name="jdk-unsafe-${jdk.version.source}"/>
-            <bundledsignatures name="jdk-deprecated-${jdk.version.source}"/>
+            <bundledsignatures name="jdk-unsafe"/>
+            <bundledsignatures name="jdk-deprecated"/>
+            <bundledsignatures name="jdk-internal"/>
+            <bundledsignatures name="jdk-non-portable"/>
+            <bundledsignatures name="jdk-reflection"/>
             <!--
             <bundledsignatures name="jdk-system-out"/>
             -->
@@ -2046,9 +2050,9 @@ under the License.
 
         <!-- then check some advanced rules which we only apply to the core code and not tests or examples -->
         <forbiddenapis
-                 internalRuntimeForbidden="true"
                  classpathref="forbiddenapis.classpath"
                  suppressAnnotation="org.apache.poi.util.SuppressForbidden"
+                 targetVersion="${jdk.version.source}"
             >
             <signaturesFileset file="src/resources/devtools/forbidden-signatures-prod.txt"/>
             <!-- sources -->
@@ -2062,14 +2066,14 @@ under the License.
     <target name="findbugs">
         <!-- NOTE: we did not update to 3.x yet because it requires Java 7, but we are still supporting Java 6 currently! -->
         <downloadfile
-            src="http://prdownloads.sourceforge.net/findbugs/findbugs-noUpdateChecks-2.0.3.zip?download"
-            dest="${main.lib}/findbugs-noUpdateChecks-2.0.3.zip"/>
+            src="http://prdownloads.sourceforge.net/findbugs/findbugs-noUpdateChecks-3.0.1.zip?download"
+            dest="${main.lib}/findbugs-noUpdateChecks-3.0.1.zip"/>
 
         <property name="findbugs.home" value="build/findbugs" />
-        <unzip src="${main.lib}/findbugs-noUpdateChecks-2.0.3.zip"
+        <unzip src="${main.lib}/findbugs-noUpdateChecks-3.0.1.zip"
                dest="${findbugs.home}/lib">
             <patternset>
-                <include name="findbugs-2.0.3/lib/**"/>
+                <include name="findbugs-3.0.1/lib/**"/>
             </patternset>
             <mapper type="flatten"/>
         </unzip>
