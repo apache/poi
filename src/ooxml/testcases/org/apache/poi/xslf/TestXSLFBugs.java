@@ -40,10 +40,13 @@ import javax.imageio.ImageIO;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.POIXMLDocumentPart.RelationPart;
+import org.apache.poi.sl.draw.DrawPaint;
+import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
 import org.apache.poi.sl.usermodel.PictureData;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.apache.poi.sl.usermodel.ShapeType;
+import org.apache.poi.sl.usermodel.VerticalAlignment;
 import org.apache.poi.xslf.usermodel.DrawingParagraph;
 import org.apache.poi.xslf.usermodel.DrawingTextBody;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
@@ -56,6 +59,7 @@ import org.apache.poi.xslf.usermodel.XSLFShape;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
 import org.apache.poi.xslf.usermodel.XSLFSlideLayout;
 import org.apache.poi.xslf.usermodel.XSLFSlideMaster;
+import org.apache.poi.xslf.usermodel.XSLFTextRun;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -478,25 +482,39 @@ public class TestXSLFBugs {
 
     @Test
     public void bug58217() throws IOException {
+        Color fillColor = new Color(1f,1f,0f,0.1f);
+        Color lineColor = new Color(25.3f/255f,1f,0f,0.4f);
+        Color textColor = new Color(1f,1f,0f,0.6f);
+        
         XMLSlideShow ppt1 = new XMLSlideShow();
         XSLFSlide sl = ppt1.createSlide();
         XSLFAutoShape as = sl.createAutoShape();
         as.setShapeType(ShapeType.STAR_10);
         as.setAnchor(new Rectangle2D.Double(100,100,300,300));
-        as.setFillColor(new Color(1f,1f,0f,0.1f));
-        as.setLineColor(new Color(1f,1f,0f,0.4f));
+        as.setFillColor(fillColor);
+        as.setLineColor(lineColor);
         as.setText("Alpha");
-        as.getTextParagraphs().get(0).getTextRuns().get(0).setFontColor(new Color(1f,1f,0f,0.6f));
+        as.setVerticalAlignment(VerticalAlignment.MIDDLE);
+        as.setHorizontalCentered(true);
+        XSLFTextRun tr = as.getTextParagraphs().get(0).getTextRuns().get(0);
+        tr.setFontSize(32d);
+        tr.setFontColor(textColor);
         XMLSlideShow ppt2 = XSLFTestDataSamples.writeOutAndReadBack(ppt1);
         ppt1.close();
         sl = ppt2.getSlides().get(0);
         as = (XSLFAutoShape)sl.getShapes().get(0);
-        SolidPaint ps = (SolidPaint)as.getFillStyle().getPaint();
-        assertEquals(10000, ps.getSolidColor().getAlpha());
-        ps = (SolidPaint)as.getStrokeStyle().getPaint();
-        assertEquals(40000, ps.getSolidColor().getAlpha());
-        ps = (SolidPaint)as.getTextParagraphs().get(0).getTextRuns().get(0).getFontColor();
-        assertEquals(60000, ps.getSolidColor().getAlpha());
+        checkColor(fillColor, as.getFillStyle().getPaint());
+        checkColor(lineColor, as.getStrokeStyle().getPaint());
+        checkColor(textColor, as.getTextParagraphs().get(0).getTextRuns().get(0).getFontColor());
         ppt2.close();
+    }
+    
+    private static void checkColor(Color expected, PaintStyle actualStyle) {
+        assertTrue(actualStyle instanceof SolidPaint);
+        SolidPaint ps = (SolidPaint)actualStyle;
+        Color actual = DrawPaint.applyColorTransform(ps.getSolidColor());
+        float expRGB[] = expected.getRGBComponents(null);
+        float actRGB[] = actual.getRGBComponents(null);
+        assertArrayEquals(expRGB, actRGB, 0.0001f);
     }
 }
