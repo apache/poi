@@ -30,6 +30,7 @@ import org.apache.poi.util.POILogger;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTColor;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTHslColor;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTPositiveFixedPercentage;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPresetColor;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTSRgbColor;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTScRgbColor;
@@ -122,9 +123,7 @@ public class XSLFColor {
                 int h = hsl.getHue2();
                 int s = hsl.getSat2();
                 int l = hsl.getLum2();
-                // This conversion is not correct and differs from PowerPoint.
-                // TODO: Revisit and improve.
-                color = Color.getHSBColor(h / 60000f, s / 100000f, l / 100000f);
+                color = DrawPaint.HSL2RGB(h / 60000d, s / 1000d, l / 1000d, 1d);
             } else if (ch instanceof CTPresetColor) {
                 CTPresetColor prst = (CTPresetColor)ch;
                 String colorName = prst.getVal().toString();
@@ -143,13 +142,11 @@ public class XSLFColor {
                 CTColor ctColor = theme.getCTColor(colorRef);
                 if(ctColor != null) color = toColor(ctColor, null);
             } else if (ch instanceof CTScRgbColor) {
-                // same as CTSRgbColor but with values expressed in percents
+                // color in percentage is in linear RGB color space, i.e. needs to be gamma corrected for AWT color
                 CTScRgbColor scrgb = (CTScRgbColor)ch;
-                int r = scrgb.getR();
-                int g = scrgb.getG();
-                int b = scrgb.getB();
-                color = new Color(255 * r / 100000, 255 * g / 100000, 255 * b / 100000);
+                color = new Color(DrawPaint.lin2srgb(scrgb.getR()), DrawPaint.lin2srgb(scrgb.getG()), DrawPaint.lin2srgb(scrgb.getB()));
             } else if (ch instanceof CTSRgbColor) {
+                // color in sRGB color space, i.e. same as AWT Color
                 CTSRgbColor srgb = (CTSRgbColor)ch;
                 byte[] val = srgb.getVal();
                 color = new Color(0xFF & val[0], 0xFF & val[1], 0xFF & val[2]);
@@ -190,24 +187,11 @@ public class XSLFColor {
         if (fill.isSetSrgbClr()) {
             fill.unsetSrgbClr();
         }
-        
-        CTSRgbColor rgb = fill.addNewSrgbClr();
-        
-        float[] rgbaf = color.getRGBComponents(null);
-        int r = color.getRed(), g = color.getGreen(), b = color.getBlue();
-        if (rgbaf[0]*255f == r && rgbaf[1]*255f == g && rgbaf[2]*255f == b) {
-            rgb.setVal(new byte[]{(byte)r, (byte)g, (byte)b });
-        } else {
-            rgb.addNewRed().setVal((int)(100000 * rgbaf[0]));
-            rgb.addNewGreen().setVal((int)(100000 * rgbaf[1]));
-            rgb.addNewBlue().setVal((int)(100000 * rgbaf[2]));
-        }
 
-        // alpha (%)
-        if (rgbaf.length == 4 && rgbaf[3] < 1f) {
-            rgb.addNewAlpha().setVal((int)(100000 * rgbaf[3]));
+        if (fill.isSetScrgbClr()) {
+            fill.unsetScrgbClr();
         }
-
+        
         if (fill.isSetHslClr()) {
             fill.unsetHslClr();
         }
@@ -220,13 +204,41 @@ public class XSLFColor {
             fill.unsetSchemeClr();
         }
         
-        if (fill.isSetScrgbClr()) {
-            fill.unsetScrgbClr();
-        }
-        
         if (fill.isSetSysClr()) {
             fill.unsetSysClr();
         }
+
+        float[] rgbaf = color.getRGBComponents(null);
+        boolean addAlpha = (rgbaf.length == 4 && rgbaf[3] < 1f);
+        CTPositiveFixedPercentage alphaPct;
+        
+        // see office open xml part 4 - 5.1.2.2.30 and 5.1.2.2.32
+        if (isInt(rgbaf[0]) && isInt(rgbaf[1]) && isInt(rgbaf[2])) {
+            // sRGB has a gamma of 2.2
+            CTSRgbColor rgb = fill.addNewSrgbClr();
+            
+            byte rgbBytes[] = { (byte)color.getRed(), (byte)color.getGreen(), (byte)color.getBlue() };
+            rgb.setVal(rgbBytes);
+            alphaPct = (addAlpha) ? rgb.addNewAlpha() : null;
+        } else {
+            CTScRgbColor rgb = fill.addNewScrgbClr();
+            rgb.setR(DrawPaint.srgb2lin(rgbaf[0]));
+            rgb.setG(DrawPaint.srgb2lin(rgbaf[1]));
+            rgb.setB(DrawPaint.srgb2lin(rgbaf[2]));
+            alphaPct = (addAlpha) ? rgb.addNewAlpha() : null;
+        }
+
+        // alpha (%)
+        if (alphaPct != null) {
+            alphaPct.setVal((int)(100000 * rgbaf[3]));
+        }
+    }
+    
+    /**
+     * @return true, if this is an integer color value
+     */
+    private static boolean isInt(float f) {
+        return Math.abs((f*255f) - Math.rint(f*255f)) < 0.00001f;
     }
     
     private int getRawValue(String elem) {

@@ -104,7 +104,7 @@ public class TestXSLFColor {
         c.setLum2(50000);
 
         XSLFColor color = new XSLFColor(xml, null, null);
-        assertEquals(new Color(128, 00, 00), color.getColor());
+        assertEquals(Color.BLUE, color.getColor());
     }
 
     @Test

@@ -384,7 +384,7 @@ public class DrawPaint {
      *
      *  @returns the RGB Color object
      */
-    private static Color HSL2RGB(double h, double s, double l, double alpha) {
+    public static Color HSL2RGB(double h, double s, double l, double alpha) {
         // we clamp the values, as it possible to come up with more than 100% sat/lum
         // (see links in applyColorTransform() for more info)
         s = Math.max(0, Math.min(100, s));
@@ -491,5 +491,34 @@ public class DrawPaint {
 
         return new double[] {h, s * 100, l * 100};
     }
-
+    
+    /**
+     * Convert sRGB float component [0..1] from sRGB to linear RGB [0..100000]
+     * 
+     * @see Color#getRGBColorComponents(float[])
+     */
+    public static int srgb2lin(float sRGB) {
+        // scRGB has a linear gamma of 1.0, scale the AWT-Color which is in sRGB to linear RGB
+        // see https://en.wikipedia.org/wiki/SRGB (the reverse transformation)
+        if (sRGB <= 0.04045d) {
+            return (int)Math.rint(100000d * sRGB / 12.92d);
+        } else {
+            return (int)Math.rint(100000d * Math.pow((sRGB + 0.055d) / 1.055d, 2.4d));
+        }
+    }
+    
+    /**
+     * Convert linear RGB [0..100000] to sRGB float component [0..1]
+     * 
+     * @see Color#getRGBColorComponents(float[])
+     */
+    public static float lin2srgb(int linRGB) {
+        // color in percentage is in linear RGB color space, i.e. needs to be gamma corrected for AWT color
+        // see https://en.wikipedia.org/wiki/SRGB (The forward transformation)
+        if (linRGB <= 0.0031308d) {
+            return (float)(linRGB / 100000d * 12.92d);
+        } else {
+            return (float)(1.055d * Math.pow(linRGB / 100000d, 1.0d/2.4d) - 0.055d);
+        }
+    }
 }
