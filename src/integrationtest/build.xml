@@ -133,9 +133,9 @@ under the License.
             encoding="ASCII"
             fork="yes"
             includeantruntime="false"
-			excludes="org/apache/poi/hslf/**,org/apache/poi/hsmf/**,**/EmbeddedObjects.java,**/EmeddedObjects.java,**/Word2Forrest.java"
-			classpath="${jarpackage}"
-			classpathref="libs">
+            excludes="org/apache/poi/hslf/**,org/apache/poi/hsmf/**,**/EmbeddedObjects.java,**/EmeddedObjects.java,**/Word2Forrest.java"
+            classpath="${jarpackage}"
+            classpathref="libs">
         </javac>
 		
         <!-- select latest built jar files with additionally scratchpad.jar -->
