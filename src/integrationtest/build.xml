@@ -133,7 +133,7 @@ under the License.
             encoding="ASCII"
             fork="yes"
             includeantruntime="false"
-            excludes="org/apache/poi/hslf/**,org/apache/poi/hsmf/**,**/EmbeddedObjects.java,**/EmeddedObjects.java,**/Word2Forrest.java"
+            excludes="org/apache/poi/hslf/**,org/apache/poi/hsmf/**,**/EmbeddedObjects.java,**/EmeddedObjects.java,**/LoadEmbedded.java,**/Word2Forrest.java"
             classpath="${jarpackage}"
             classpathref="libs">
         </javac>
