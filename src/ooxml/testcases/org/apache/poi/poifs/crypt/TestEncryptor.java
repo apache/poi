@@ -208,7 +208,6 @@ public class TestEncryptor {
         byte keySalt[] = infoExpected.getHeader().getKeySalt();
         
         
-        POIFSFileSystem fs = new POIFSFileSystem();
         EncryptionInfo infoActual = new EncryptionInfo(
               EncryptionMode.standard
             , infoExpected.getVerifier().getCipherAlgorithm()
@@ -227,7 +226,6 @@ public class TestEncryptor {
         // now we use a newly generated salt/verifier and check
         // if the file content is still the same 
 
-        fs = new POIFSFileSystem();
         infoActual = new EncryptionInfo(
               EncryptionMode.standard
             , infoExpected.getVerifier().getCipherAlgorithm()
@@ -239,7 +237,8 @@ public class TestEncryptor {
         
         e = Encryptor.getInstance(infoActual);
         e.confirmPassword(pass);
-        
+
+        POIFSFileSystem fs = new POIFSFileSystem();
         OutputStream os = e.getDataStream(fs);
         IOUtils.copy(new ByteArrayInputStream(payloadExpected), os);
         os.close();

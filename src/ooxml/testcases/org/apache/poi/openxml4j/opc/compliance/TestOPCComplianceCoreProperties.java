@@ -111,7 +111,9 @@ public final class TestOPCComplianceCoreProperties extends TestCase {
 	   try {
 	      extractInvalidFormatMessage("OnlyOneCorePropertiesPartFAIL.docx");
 	      fail("M4.1 should be being relaxed");
-	   } catch (AssertionFailedError e) {}
+	   } catch (AssertionFailedError e) {
+		   // expected here
+	   }
 	   
 	   // We will use the first core properties, and ignore the others
       InputStream is = OpenXML4JTestDataSamples.openSampleStream("MultipleCoreProperties.docx");
@@ -167,23 +169,16 @@ public final class TestOPCComplianceCoreProperties extends TestCase {
 	/**
 	 * Test M4.1 rule.
 	 */
-	public void testOnlyOneCorePropertiesPart_AddPart() {
+	public void testOnlyOneCorePropertiesPart_AddPart() throws InvalidFormatException {
 		String sampleFileName = "OPCCompliance_CoreProperties_OnlyOneCorePropertiesPart.docx";
-		OPCPackage pkg = null;
-		try {
-			pkg = OPCPackage.open(POIDataSamples.getOpenXML4JInstance().getFile(sampleFileName).getPath());
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-		
+		OPCPackage pkg = OPCPackage.open(POIDataSamples.getOpenXML4JInstance().getFile(sampleFileName).getPath());
+
 		URI partUri = createURI("/docProps/core2.xml");
 		try {
 			pkg.createPart(PackagingURIHelper.createPartName(partUri),
 					ContentTypes.CORE_PROPERTIES_PART);
 			// no longer fail on compliance error
 			//fail("expected OPC compliance exception was not thrown");
-		} catch (InvalidFormatException e) {
-			throw new RuntimeException(e);
 		} catch (InvalidOperationException e) {
 			// expected during successful test
 			assertEquals("OPC Compliance error [M4.1]: you try to add more than one core properties relationship in the package !", e.getMessage());
@@ -318,6 +313,6 @@ public final class TestOPCComplianceCoreProperties extends TestCase {
 
         // Finish and tidy
         pkg.revert();
-        tmp.delete();
+        assertTrue(tmp.delete());
     }
 }
