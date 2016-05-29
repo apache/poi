@@ -26,6 +26,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 
+import org.apache.poi.poifs.dev.TestPOIFSDump;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,7 +48,7 @@ public class TestTempFile {
     }
 
     @After
-    public void tearDown() {
+    public void tearDown() throws IOException {
         String[] files = tempDir.list();
         // can have the "poifiles" subdir
         if(files.length == 1) {
@@ -58,6 +59,9 @@ public class TestTempFile {
             assertEquals("Had: " + Arrays.toString(files), 0, files.length);
         }
 
+        // remove the directory after the tests
+        TestPOIFSDump.deleteDirectory(tempDir);
+
         if(previousTempDir == null) {
             System.clearProperty(TempFile.JAVA_IO_TMPDIR);
         } else {
@@ -66,8 +70,7 @@ public class TestTempFile {
     }
 
     @Test
-    public void testCreateTempFile()
-            throws Exception
+    public void testCreateTempFile() throws Exception
     {
         File tempFile = TempFile.createTempFile("test", ".txt");
         FileOutputStream fos = new FileOutputStream(tempFile);
