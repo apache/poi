@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.math.BigInteger;
 import java.util.List;
 
+import com.microsoft.schemas.office.excel.STTrueFalseBlank;
 import org.apache.poi.POIDataSamples;
 import org.apache.xmlbeans.XmlObject;
 
@@ -84,6 +85,9 @@ public class TestXSSFVMLDrawing extends TestCase {
         assertEquals("False", cldata.getAutoFillArray(0).toString());
         assertEquals(0, cldata.getRowArray(0).intValue());
         assertEquals(0, cldata.getColumnArray(0).intValue());
+        assertEquals("[]", cldata.getVisibleList().toString());
+        cldata.setVisibleArray(new STTrueFalseBlank.Enum[] { STTrueFalseBlank.Enum.forString("True") });
+        assertEquals("[True]", cldata.getVisibleList().toString());
 
         //serialize and read again
         ByteArrayOutputStream out = new ByteArrayOutputStream();
