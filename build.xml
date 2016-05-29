@@ -286,7 +286,11 @@ under the License.
         <propertyref name="user.country"/>
         <propertyref name="javax.xml.stream.XMLInputFactory"/>
     	<propertyref name="org.apache.commons.logging.Log"/>
+        <propertyref name="java.locale.providers"/>		<!-- required for Java 9 compilation -->
     </propertyset>
+    
+    <!-- this can be overwriten to empty when running with Java 9 -->
+    <property name="maxpermsize" value="-XX:MaxPermSize=256m"/>
 
     <path id="main.classpath">
         <pathelement location="${main.commons-logging.jar}"/>
@@ -1353,7 +1357,7 @@ under the License.
                      failureproperty="ooxml.test.failed">
                   <classpath refid="@{classpath}"/>
                   <syspropertyset refid="junit.properties"/>
-                    <jvmarg value="-XX:MaxPermSize=256m"/>
+                    <jvmarg value="${maxpermsize}"/>
                     <jvmarg value="-Xmx768M"/>
                   <jvmarg value="-ea"/>
                     <!-- jvmarg value="-Duser.timezone=UTC"/ -->
@@ -1419,7 +1423,7 @@ under the License.
                      failureproperty="ooxml.ss.test.failed">
                   <classpath refid="@{classpath}"/>
                   <syspropertyset refid="junit.properties"/>
-                    <jvmarg value="-XX:MaxPermSize=256m"/>
+                    <jvmarg value="${maxpermsize}"/>
                     <jvmarg value="-Xmx768M"/>
                   <jvmarg value="-ea"/>
                     <!-- jvmarg value="-Duser.timezone=UTC"/ -->
@@ -1503,7 +1507,7 @@ under the License.
             <classpath refid="test.ooxml.classpath"/>
             <classpath refid="ooxml.xmlsec.classpath"/>
             <syspropertyset refid="junit.properties"/>
-            <jvmarg value="-XX:MaxPermSize=256m"/>
+            <jvmarg value="${maxpermsize}"/>
             <jvmarg value="-Xmx512m"/>
             <arg value="-ooxml"/>
             <arg value="${ooxml.lite-merged.dir}/ooxml-lite-merged.jar"/>
