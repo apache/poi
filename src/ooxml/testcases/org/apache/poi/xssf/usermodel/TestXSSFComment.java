@@ -18,14 +18,9 @@
 package org.apache.poi.xssf.usermodel;
 
 import static org.apache.poi.xssf.usermodel.XSSFRelation.NS_SPREADSHEETML;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.ss.usermodel.BaseTestCellComment;
@@ -313,5 +308,29 @@ public final class TestXSSFComment extends BaseTestCellComment  {
         } finally {
             wb.close();
         }
+    }
+
+    @Test
+    public void bug57838DeleteRowsWthCommentsBug() throws IOException {
+        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("57838.xlsx");
+        Sheet sheet=wb.getSheetAt(0);
+        Comment comment1 = sheet.getCellComment(new CellAddress(2, 1));
+        assertNotNull(comment1);
+        Comment comment2 = sheet.getCellComment(new CellAddress(2, 2));
+        assertNotNull(comment2);
+        Row row=sheet.getRow(2);
+        assertNotNull(row);
+
+        sheet.removeRow(row); // Remove row from index 2
+
+        row=sheet.getRow(2);
+        assertNull(row); // Row is null since we deleted it.
+
+        comment1 = sheet.getCellComment(new CellAddress(2, 1));
+        assertNull(comment1); // comment should be null but will fail due to bug
+        comment2 = sheet.getCellComment(new CellAddress(2, 2));
+        assertNull(comment2); // comment should be null but will fail due to bug
+
+        wb.close();
     }
 }

@@ -409,7 +409,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     /**
      * Verify that none of the merged regions intersect a multi-cell array formula in this sheet
      *
-     * @param region
      * @throws IllegalStateException if candidate region intersects an existing array formula in this sheet
      */
     private void checkForMergedRegionsIntersectingArrayFormulas() {
@@ -1386,8 +1385,8 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * Rows between startRow and endRow that haven't been created are not included
      * in result unless createRowIfMissing is true
      *
-     * @param startRow the first row number in this sheet to return
-     * @param endRow the last row number in this sheet to return
+     * @param startRowNum the first row number in this sheet to return
+     * @param endRowNum the last row number in this sheet to return
      * @param createRowIfMissing
      * @return All rows between startRow and endRow, inclusive
      * @throws IllegalArgumentException if startRowNum and endRowNum are not in ascending order
@@ -1880,6 +1879,15 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         int idx = _rows.headMap(row.getRowNum()).size();
         _rows.remove(row.getRowNum());
         worksheet.getSheetData().removeRow(idx);
+
+        // also remove any comment located in that row
+        if(sheetComments != null) {
+            for (CellAddress ref : getCellComments().keySet()) {
+                if (ref.getRow() == idx) {
+                    sheetComments.removeComment(ref);
+                }
+            }
+        }
     }
 
     /**
