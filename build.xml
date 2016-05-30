@@ -181,9 +181,9 @@ under the License.
     <property name="dsig.sl4j-api.url" value="${repository.m2}/maven2/org/slf4j/slf4j-api/1.7.12/slf4j-api-1.7.12.jar"/>
 
     <!-- jars in the lib-ooxml directory, see the fetch-ooxml-jars target-->
-    <property name="ooxml.curvesapi.jar" location="${ooxml.lib}/curvesapi-1.03.jar"/>
+    <property name="ooxml.curvesapi.jar" location="${ooxml.lib}/curvesapi-1.04.jar"/>
     <property name="ooxml.curvesapi.url"
-              value="${repository.m2}/maven2/com/github/virtuald/curvesapi/1.03/curvesapi-1.03.jar"/>
+              value="${repository.m2}/maven2/com/github/virtuald/curvesapi/1.04/curvesapi-1.04.jar"/>
     <property name="ooxml.xmlbeans23.jar" location="${ooxml.lib}/xmlbeans-2.3.0.jar"/>
     <property name="ooxml.xmlbeans23.url"
               value="${repository.m2}/maven2/org/apache/xmlbeans/xmlbeans/2.3.0/xmlbeans-2.3.0.jar"/>
