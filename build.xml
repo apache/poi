@@ -1956,8 +1956,8 @@ under the License.
       <attribute name="artifactId"/>
 
       <sequential>
-        <mvn:install file="${dist.dir}/@{artifactId}-${version.id}-${DSTAMP}.jar">
-          <pom file="${dist.dir}/@{artifactId}-${version.id}.pom"/>
+        <mvn:install file="${dist.dir}/maven/@{artifactId}/@{artifactId}-${version.id}.jar">
+          <pom file="${dist.dir}/maven/@{artifactId}/@{artifactId}-${version.id}.pom"/>
         </mvn:install>
       </sequential>
     </macrodef>
