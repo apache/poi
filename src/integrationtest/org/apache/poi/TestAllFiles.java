@@ -17,31 +17,23 @@
 package org.apache.poi;
 
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.poi.hwpf.OldWordFileFormatException;
 import org.apache.poi.stress.*;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.tools.ant.DirectoryScanner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
+
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.util.*;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 
 /**
  *  This is an integration test which performs various actions on all stored test-files and tries
@@ -69,8 +61,6 @@ import org.junit.runners.Parameterized.Parameters;
  */
 @RunWith(Parameterized.class)
 public class TestAllFiles {
-    private final static POILogger logger = POILogFactory.getLogger(TestAllFiles.class);
-
     private static final File ROOT_DIR = new File("test-data");
 
     static final String[] SCAN_EXCLUDES = new String[] { "**/.svn/**", "lost+found" };
@@ -329,7 +319,7 @@ public class TestAllFiles {
 
     @Test
     public void testAllFiles() throws Exception {
-        logger.log(POILogger.INFO, "Reading " + file + " with " + handler.getClass());
+        System.out.println("Reading " + file + " with " + handler.getClass());
         assertNotNull("Unknown file extension for file: " + file + ": " + getExtension(file), handler);
         File inputFile = new File(ROOT_DIR, file);
 
