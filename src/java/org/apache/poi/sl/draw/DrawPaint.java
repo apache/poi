@@ -382,7 +382,7 @@ public class DrawPaint {
      *  @param l Luminance is specified as a percentage in the range 1 - 100.
      *  @param alpha  the alpha value between 0 - 1
      *
-     *  @returns the RGB Color object
+     *  @return the RGB Color object
      */
     public static Color HSL2RGB(double h, double s, double l, double alpha) {
         // we clamp the values, as it possible to come up with more than 100% sat/lum
