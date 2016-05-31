@@ -34,5 +34,5 @@ public interface TempFileCreationStrategy {
      * 
      * @throws IOException If no temporary file could be created.
      */
-    public File createTempFile(String prefix, String suffix) throws IOException;
+    File createTempFile(String prefix, String suffix) throws IOException;
 }

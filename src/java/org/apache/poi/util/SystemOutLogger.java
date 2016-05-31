@@ -87,10 +87,7 @@ public class SystemOutLogger extends POILogger
             currentLevel = POILogger.DEBUG;
         }
 
-        if (level >= currentLevel) {
-            return true;
-        }
-        return false;
+        return level >= currentLevel;
     }
 
 

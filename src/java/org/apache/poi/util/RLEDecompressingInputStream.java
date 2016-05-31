@@ -67,7 +67,7 @@ public class RLEDecompressingInputStream extends InputStream {
     /**
      * Creates a new wrapper RLE Decompression InputStream.
      * 
-     * @param in
+     * @param in The stream to wrap with the RLE Decompression
      * @throws IOException
      */
     public RLEDecompressingInputStream(InputStream in) throws IOException {
@@ -275,11 +275,11 @@ public class RLEDecompressingInputStream extends InputStream {
         return (b0 & 0xFF) | ((b1 & 0xFF) << 8) | ((b2 & 0xFF) << 16) | ((b3 & 0xFF) << 24);
     }
 
-    public static final byte[] decompress(byte[] compressed) throws IOException {
+    public static byte[] decompress(byte[] compressed) throws IOException {
         return decompress(compressed, 0, compressed.length);
     }
     
-    public static final byte[] decompress(byte[] compressed, int offset, int length) throws IOException {
+    public static byte[] decompress(byte[] compressed, int offset, int length) throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         InputStream instream = new ByteArrayInputStream(compressed, offset, length);
         InputStream stream = new RLEDecompressingInputStream(instream);

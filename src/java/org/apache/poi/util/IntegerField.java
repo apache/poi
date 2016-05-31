@@ -182,7 +182,7 @@ public class IntegerField
      */
 
     public void readFromStream(final InputStream stream)
-        throws IOException, BufferUnderrunException
+        throws IOException
     {
         _value = LittleEndian.readInt(stream);
     }

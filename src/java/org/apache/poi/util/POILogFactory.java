@@ -72,8 +72,6 @@ public final class POILogFactory {
      * @return a POILogger for the specified class
      */
     public static POILogger getLogger(final String cat) {
-        POILogger logger = null;
-
         // If we haven't found out what logger to use yet,
         //  then do so now
         // Don't look it up until we're first asked, so
@@ -82,7 +80,9 @@ public final class POILogFactory {
         if(_loggerClassName == null) {
         	try {
         		_loggerClassName = System.getProperty("org.apache.poi.util.POILogger");
-        	} catch(Exception e) {}
+        	} catch(Exception e) {
+                // ignore any exception here
+            }
 
         	// Use the default logger if none specified,
         	//  or none could be fetched
@@ -100,7 +100,7 @@ public final class POILogFactory {
 
         // Fetch the right logger for them, creating
         //  it if that's required
-        logger = _loggers.get(cat);
+        POILogger logger = _loggers.get(cat);
         if (logger == null) {
             try {
                 @SuppressWarnings("unchecked")

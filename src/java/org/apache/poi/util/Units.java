@@ -75,23 +75,22 @@ public class Units {
     /**
      * Converts a value of type FixedPoint to a floating point
      *
-     * @param fixedPoint
+     * @param fixedPoint value in fixed point notation
      * @return floating point (double)
      * 
      * @see <a href="http://msdn.microsoft.com/en-us/library/dd910765(v=office.12).aspx">[MS-OSHARED] - 2.2.1.6 FixedPoint</a>
      */
     public static double fixedPointToDouble(int fixedPoint) {
         int i = (fixedPoint >> 16);
-        int f = (fixedPoint >> 0) & 0xFFFF;
-        double floatPoint = (i + f/65536d);
-        return floatPoint;
+        int f = fixedPoint & 0xFFFF;
+        return (i + f/65536d);
     }
     
     /**
      * Converts a value of type floating point to a FixedPoint
      *
-     * @param floatPoint
-     * @return fixedPoint
+     * @param floatPoint value in floating point notation
+     * @return fixedPoint value in fixed points notation
      * 
      * @see <a href="http://msdn.microsoft.com/en-us/library/dd910765(v=office.12).aspx">[MS-OSHARED] - 2.2.1.6 FixedPoint</a>
      */
@@ -100,8 +99,7 @@ public class Units {
         double integralPart = floatPoint - fractionalPart;
         int i = (int)Math.floor(integralPart);
         int f = (int)Math.rint(fractionalPart*65536d);
-        int fixedPoint = (i << 16) | (f & 0xFFFF);
-        return fixedPoint;
+        return (i << 16) | (f & 0xFFFF);
     }
 
     public static double masterToPoints(int masterDPI) {

@@ -182,7 +182,7 @@ public class ByteField
      */
 
     public void readFromStream(final InputStream stream)
-        throws IOException, BufferUnderrunException
+        throws IOException
     {
     	// TODO - are these ~Field used / necessary
     	int ib = stream.read();
