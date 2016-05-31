@@ -33,7 +33,6 @@ public class CloseIgnoringInputStream extends FilterInputStream {
    }
 
    public void close() {
-      // Does nothing and ignores you
-      return;
+      // Does nothing and ignores closing the wrapped stream
    }
 }

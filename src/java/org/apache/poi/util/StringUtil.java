@@ -283,7 +283,7 @@ public class StringUtil {
 	/**
 	 * Checks to see if a given String needs to be represented as Unicode
 	 *
-	 * @param value
+	 * @param value The string to look at.
 	 * @return true if string needs Unicode to be represented.
 	 */
 	public static boolean isUnicodeString(final String value) {

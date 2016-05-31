@@ -21,8 +21,6 @@ import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.poi.util.LittleEndian.BufferUnderrunException;
-
 /**
  * Wraps an {@link InputStream} providing {@link LittleEndianInput}<p/>
  *
@@ -76,14 +74,12 @@ public class LittleEndianInputStream extends FilterInputStream implements Little
      * get an unsigned int value from an InputStream
      * 
      * @return the unsigned int (32-bit) value
-     * @exception IOException
-     *                will be propagated back to the caller
-     * @exception BufferUnderrunException
-     *                if the stream cannot provide enough bytes
+     * @exception RuntimeException
+     *                wraps any IOException thrown from reading the stream.
      */
     public long readUInt() {
        long retNum = readInt();
-       return retNum & 0x00FFFFFFFFl;
+       return retNum & 0x00FFFFFFFFL;
     }
 	
 	public long readLong() {
