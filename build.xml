@@ -543,6 +543,7 @@ under the License.
                 <include name="ooxml-schemas-1.2.jar"/>
                 <include name="ooxml-security-1.0-sources.jar"/>
                 <include name="ooxml-security-1.0.jar"/>
+                <include name="curvesapi-1.03.jar"/>
             </fileset>
          <fileset dir="${compile.lib}">
             <include name="xercesImpl-*.jar"/>
