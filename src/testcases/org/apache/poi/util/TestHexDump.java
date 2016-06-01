@@ -125,13 +125,12 @@ public class TestHexDump {
                 }
             }
             obj[17] = chrs.toString();
-            format.append("%18$s"+HexDump.EOL);
+            format.append("%18$s").append(HexDump.EOL);
 
             String str = String.format(LocaleUtil.getUserLocale(), format.toString(), obj);
             strExp.append(str);
         }
-        byte bytesExp[] = strExp.toString().getBytes(HexDump.UTF8);
-        return bytesExp;
+        return strExp.toString().getBytes(HexDump.UTF8);
     }
 
     @Test
@@ -157,7 +156,7 @@ public class TestHexDump {
 
         assertEquals("FFFF", HexDump.toHex((short)0xFFFF));
 
-        assertEquals("00000000000004D2", HexDump.toHex(1234l));
+        assertEquals("00000000000004D2", HexDump.toHex(1234L));
 
         assertEquals("0xFE", HexDump.byteToHex(-2));
         assertEquals("0x25", HexDump.byteToHex(37));
@@ -185,18 +184,28 @@ public class TestHexDump {
 
     @Test(expected=ArrayIndexOutOfBoundsException.class)
     public void testDumpToStringOutOfIndex1() throws Exception {
-        HexDump.dump(new byte[ 1 ], 0, -1);
+        HexDump.dump(new byte[1], 0, -1);
     }
 
     @Test(expected=ArrayIndexOutOfBoundsException.class)
     public void testDumpToStringOutOfIndex2() throws Exception {
-        HexDump.dump(new byte[ 1 ], 0, 2);
+        HexDump.dump(new byte[1], 0, 2);
     }
 
+    @Test(expected=ArrayIndexOutOfBoundsException.class)
     public void testDumpToStringOutOfIndex3() throws Exception {
-        HexDump.dump(new byte[ 1 ], 0, 1);
+        HexDump.dump(new byte[1], 0, 1);
     }
 
+    @Test
+    public void testDumpToStringNoDataEOL1() throws Exception {
+        HexDump.dump(new byte[0], 0, 1);
+    }
+
+    @Test
+    public void testDumpToStringNoDataEOL2() throws Exception {
+        HexDump.dump(new byte[0], 0, 0);
+    }
 
     @Test
     public void testDumpToPrintStream() throws IOException {
