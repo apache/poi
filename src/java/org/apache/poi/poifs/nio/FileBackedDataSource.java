@@ -162,22 +162,27 @@ public class FileBackedDataSource extends DataSource {
    // unfortunately this might break silently with newer/other Java implementations, 
    // but we at least have unit-tests which will indicate this when run on Windows
    private static void unmap(final ByteBuffer buffer) {
-        AccessController.doPrivileged(new PrivilegedAction<Void>() {
-            @Override
-            @SuppressForbidden("Java 9 Jigsaw whitelists access to sun.misc.Cleaner, so setAccessible works")
-            public Void run() {
-                try {
-                    final Method getCleanerMethod = buffer.getClass().getMethod("cleaner");
-                    getCleanerMethod.setAccessible(true);
-                    final Object cleaner = getCleanerMethod.invoke(buffer);
-                    if (cleaner != null) {
-                        cleaner.getClass().getMethod("clean").invoke(cleaner);
-                    }
-                } catch (Exception e) {
-                    logger.log(POILogger.WARN, "Unable to unmap memory mapped ByteBuffer.", e);
-                }
-                return null; // Void
-            }
-        });
+       // not necessary for HeapByteBuffer, avoid lots of log-output on this class
+       if(buffer.getClass().getName().endsWith("HeapByteBuffer")) {
+           return;
+       }
+
+       AccessController.doPrivileged(new PrivilegedAction<Void>() {
+           @Override
+           @SuppressForbidden("Java 9 Jigsaw whitelists access to sun.misc.Cleaner, so setAccessible works")
+           public Void run() {
+               try {
+                   final Method getCleanerMethod = buffer.getClass().getMethod("cleaner");
+                   getCleanerMethod.setAccessible(true);
+                   final Object cleaner = getCleanerMethod.invoke(buffer);
+                   if (cleaner != null) {
+                       cleaner.getClass().getMethod("clean").invoke(cleaner);
+                   }
+               } catch (Exception e) {
+                   logger.log(POILogger.WARN, "Unable to unmap memory mapped ByteBuffer.", e);
+               }
+               return null; // Void
+           }
+       });
     }
 }

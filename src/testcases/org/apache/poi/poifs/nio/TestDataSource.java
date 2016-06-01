@@ -19,20 +19,14 @@
 
 package org.apache.poi.poifs.nio;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.BufferUnderflowException;
-import java.nio.ByteBuffer;
-
+import junit.framework.TestCase;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.TempFile;
 
-import junit.framework.TestCase;
+import java.io.*;
+import java.nio.BufferUnderflowException;
+import java.nio.ByteBuffer;
 
 /**
  * Tests for the datasource implementations
@@ -121,7 +115,7 @@ public class TestDataSource extends TestCase
        }
     }
 
-    private void writeDataToFile(File temp) throws FileNotFoundException, IOException {
+    private void writeDataToFile(File temp) throws IOException {
         OutputStream str = new FileOutputStream(temp);
            try {
                InputStream in = data.openResourceAsStream("Notes.ole2");
@@ -153,11 +147,11 @@ public class TestDataSource extends TestCase
         assertEquals(0, bs.position());
         assertEquals(0xd0 - 256, bs.get(0));
         assertEquals(0xcf - 256, bs.get(1));
-        assertEquals(0x11 - 000, bs.get(2));
+        assertEquals(0x11, bs.get(2));
         assertEquals(0xe0 - 256, bs.get(3));
         assertEquals(0xd0 - 256, bs.get());
         assertEquals(0xcf - 256, bs.get());
-        assertEquals(0x11 - 000, bs.get());
+        assertEquals(0x11, bs.get());
         assertEquals(0xe0 - 256, bs.get());
 
         // Mid way through
@@ -179,11 +173,12 @@ public class TestDataSource extends TestCase
 
         // Can't go off the end
         try {
-            bs = ds.read(4, 8192);
+            ds.read(4, 8192);
             if(!writeable) {
                 fail("Shouldn't be able to read off the end of the file");
             }
         } catch (IllegalArgumentException e) {
+            // expected here
         }
     }
 
@@ -228,13 +223,17 @@ public class TestDataSource extends TestCase
       try {
          bs.get();
          fail("Shouldn't be able to read off the end");
-      } catch(BufferUnderflowException e) {}
+      } catch(BufferUnderflowException e) {
+          // expected here
+      }
 
       // Past the end
       try {
-         bs = ds.read(4, 256);
+         ds.read(4, 256);
          fail("Shouldn't be able to read off the end");
-      } catch(IndexOutOfBoundsException e) {}
+      } catch(IndexOutOfBoundsException e) {
+          // expected here
+      }
       
       
       // Overwrite
