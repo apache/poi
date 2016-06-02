@@ -19,23 +19,12 @@
 
 package org.apache.poi.xwpf.usermodel;
 
-import java.util.List;
-
 import junit.framework.TestCase;
-
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.apache.poi.xwpf.usermodel.XWPFTableCell.XWPFVertAlign;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTHMerge;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTShd;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTbl;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTc;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTcBorders;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTcPr;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTVMerge;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTVerticalJc;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STMerge;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STShd;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STVerticalJc;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.*;
+
+import java.util.List;
 
 public class TestXWPFTableCell extends TestCase {
     @Override
@@ -117,9 +106,23 @@ public class TestXWPFTableCell extends TestCase {
         List<XWPFTableRow> tableRows = table.getRows();
         assertEquals(2, tableRows.size());
 
-        assertNull(tableRows.get(0).getCell(0).getVerticalAlignment());
+        assertEquals(XWPFVertAlign.TOP, tableRows.get(0).getCell(0).getVerticalAlignment());
         assertEquals(XWPFVertAlign.BOTTOM, tableRows.get(0).getCell(1).getVerticalAlignment());
         assertEquals(XWPFVertAlign.CENTER, tableRows.get(1).getCell(0).getVerticalAlignment());
-        assertNull(tableRows.get(1).getCell(1).getVerticalAlignment());
+        assertEquals(XWPFVertAlign.TOP, tableRows.get(1).getCell(1).getVerticalAlignment());
     }
+	
+	public void testCellVerticalAlign2() throws Exception{
+		XWPFDocument docx = XWPFTestDataSamples.openSampleDocument("TestTableCellAlign.docx");
+		List<XWPFTable> tables = docx.getTables();
+        for (XWPFTable table : tables) {
+            List<XWPFTableRow> tableRows = table.getRows();
+            for (XWPFTableRow tableRow : tableRows) {
+                List<XWPFTableCell> tableCells = tableRow.getTableCells();
+                for (XWPFTableCell tableCell : tableCells) {
+					assertNotNull(tableCell.getVerticalAlignment());
+				}
+			}
+		}			
+	}
 }

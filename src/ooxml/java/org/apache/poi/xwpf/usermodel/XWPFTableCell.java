@@ -163,7 +163,7 @@ public class XWPFTableCell implements IBody, ICell {
     /**
      * removes a paragraph of this tablecell
      *
-     * @param pos
+     * @param pos The position in the list of paragraphs, 0-based
      */
     public void removeParagraph(int pos) {
         paragraphs.remove(pos);
@@ -234,6 +234,11 @@ public class XWPFTableCell implements IBody, ICell {
         CTTcPr tcpr = ctTc.getTcPr();
         if (tcpr != null) {
             CTVerticalJc va = tcpr.getVAlign();
+            if(va != null) {
+                vAlign = stVertAlignTypeMap.get(va.getVal().intValue());
+            } else {
+                vAlign = XWPFVertAlign.TOP;
+            }
             if (va != null && va.getVal() != null) {
                 vAlign = stVertAlignTypeMap.get(va.getVal().intValue());
             }
@@ -255,7 +260,7 @@ public class XWPFTableCell implements IBody, ICell {
     /**
      * add a new paragraph at position of the cursor
      *
-     * @param cursor
+     * @param cursor The XmlCursor structure created with XmlBeans
      * @return the inserted paragraph
      */
     public XWPFParagraph insertNewParagraph(final XmlCursor cursor) {
@@ -417,7 +422,7 @@ public class XWPFTableCell implements IBody, ICell {
     }
 
     public String getText() {
-        StringBuffer text = new StringBuffer();
+        StringBuilder text = new StringBuilder();
         for (XWPFParagraph p : paragraphs) {
             text.append(p.getText());
         }
@@ -437,7 +442,7 @@ public class XWPFTableCell implements IBody, ICell {
 
         StringBuffer text = new StringBuffer();
         for (int i = 0; i < bodyElements.size(); i++) {
-            boolean isLast = (i == bodyElements.size() - 1) ? true : false;
+            boolean isLast = (i == bodyElements.size() - 1);
             appendBodyElementText(text, bodyElements.get(i), isLast);
         }
 
@@ -447,7 +452,7 @@ public class XWPFTableCell implements IBody, ICell {
     private void appendBodyElementText(StringBuffer text, IBodyElement e, boolean isLast) {
         if (e instanceof XWPFParagraph) {
             text.append(((XWPFParagraph) e).getText());
-            if (isLast == false) {
+            if (!isLast) {
                 text.append('\t');
             }
         } else if (e instanceof XWPFTable) {
@@ -456,18 +461,18 @@ public class XWPFTableCell implements IBody, ICell {
                 for (XWPFTableCell cell : row.getTableCells()) {
                     List<IBodyElement> localBodyElements = cell.getBodyElements();
                     for (int i = 0; i < localBodyElements.size(); i++) {
-                        boolean localIsLast = (i == localBodyElements.size() - 1) ? true : false;
+                        boolean localIsLast = (i == localBodyElements.size() - 1);
                         appendBodyElementText(text, localBodyElements.get(i), localIsLast);
                     }
                 }
             }
 
-            if (isLast == false) {
+            if (!isLast) {
                 text.append('\n');
             }
         } else if (e instanceof XWPFSDT) {
             text.append(((XWPFSDT) e).getContent().getText());
-            if (isLast == false) {
+            if (!isLast) {
                 text.append('\t');
             }
         }
@@ -507,7 +512,7 @@ public class XWPFTableCell implements IBody, ICell {
     }
 
     // Create a map from this XWPF-level enum to the STVerticalJc.Enum values
-    public static enum XWPFVertAlign {
+    public enum XWPFVertAlign {
         TOP, CENTER, BOTH, BOTTOM
     }
 }
