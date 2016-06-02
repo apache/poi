@@ -19,6 +19,8 @@ package org.apache.poi.xwpf.usermodel;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import org.apache.poi.util.Units;
@@ -153,4 +155,18 @@ public class TestXWPFBugs {
       para.removeRun(para.getRuns().size() -2);
       assertEquals("Some text  some hyper links link linkNew Text", para.getText());
   }
+
+    @Test
+    public void test59378() throws Exception {
+        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("59378.docx");
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        doc.write(out);
+        out.close();
+
+        XWPFDocument doc2 = new XWPFDocument(new ByteArrayInputStream(out.toByteArray()));
+        doc2.close();
+
+        XWPFDocument docBack = XWPFTestDataSamples.writeOutAndReadBack(doc);
+        docBack.close();
+    }
 }
