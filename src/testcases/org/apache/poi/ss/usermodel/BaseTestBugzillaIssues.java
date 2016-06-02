@@ -26,6 +26,7 @@ import static org.junit.Assert.fail;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextAttribute;
 import java.awt.font.TextLayout;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.AttributedString;
 import java.util.HashMap;
@@ -35,6 +36,7 @@ import java.awt.geom.Rectangle2D;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.PaneInformation;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -1539,5 +1541,46 @@ public abstract class BaseTestBugzillaIssues {
         cell3.setCellComment(comment3);
         
         wb.close();
+    }
+
+
+    @Test
+    public void bug57798() throws Exception {
+        String fileName = "57798." + _testDataProvider.getStandardFileNameExtension();
+        Workbook workbook = _testDataProvider.openSampleWorkbook(fileName);
+
+        Sheet sheet = workbook.getSheet("Sheet1");
+
+        // *******************************
+        // First cell of array formula, OK
+        int rowId = 0;
+        int cellId = 1;
+        System.out.println("Reading row " + rowId + ", col " + cellId);
+
+        Row row = sheet.getRow(rowId);
+        Cell cell = row.getCell(cellId);
+
+        System.out.println("Formula:" + cell.getCellFormula());
+        if (Cell.CELL_TYPE_FORMULA == cell.getCellType()) {
+            int formulaResultType = cell.getCachedFormulaResultType();
+            System.out.println("Formual Result Type:" + formulaResultType);
+        }
+
+        // *******************************
+        // Second cell of array formula, NOT OK for xlsx files
+        rowId = 1;
+        cellId = 1;
+        System.out.println("Reading row " + rowId + ", col " + cellId);
+
+        row = sheet.getRow(rowId);
+        cell = row.getCell(cellId);
+        System.out.println("Formula:" + cell.getCellFormula());
+
+        if (Cell.CELL_TYPE_FORMULA == cell.getCellType()) {
+            int formulaResultType = cell.getCachedFormulaResultType();
+            System.out.println("Formual Result Type:" + formulaResultType);
+        }
+
+        workbook.close();
     }
 }

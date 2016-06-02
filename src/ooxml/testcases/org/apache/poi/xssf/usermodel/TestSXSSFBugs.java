@@ -40,7 +40,8 @@ public final class TestSXSSFBugs extends BaseTestBugzillaIssues {
     @Override @Ignore("Evaluation is not fully supported") @Test public void bug47815() { /* Evaluation is not supported */ }
     @Override @Ignore("Evaluation is not fully supported") @Test public void test58113() { /* Evaluation is not supported */ }
     @Override @Ignore("Evaluation is not fully supported") @Test public void bug46729_testMaxFunctionArguments() { /* Evaluation is not supported */ }
-    
+    @Override @Ignore("Reading data is not supported") @Test public void bug57798() { /* Reading data is not supported */ }
+
     /**
      * Setting repeating rows and columns shouldn't break
      *  any print settings that were there before
