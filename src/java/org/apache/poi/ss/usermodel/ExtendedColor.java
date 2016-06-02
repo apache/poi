@@ -19,7 +19,6 @@ package org.apache.poi.ss.usermodel;
 import java.util.Locale;
 
 import org.apache.poi.hssf.util.HSSFColor;
-import org.apache.poi.ss.usermodel.Color;
 
 /**
  * Represents a XSSF-style color (based on either a
@@ -80,26 +79,23 @@ public abstract class ExtendedColor implements Color {
      * Sets the Red Green Blue or Alpha Red Green Blue
      */
     public abstract void setRGB(byte[] rgb);
-   
-    protected byte[] getRGBOrARGB() {
-        byte[] rgb = null;
 
+    protected byte[] getRGBOrARGB() {
         if (isIndexed() && getIndex() > 0) {
             int indexNum = getIndex();
             HSSFColor indexed = HSSFColor.getIndexHash().get(indexNum);
             if (indexed != null) {
-               rgb = new byte[3];
-               rgb[0] = (byte) indexed.getTriplet()[0];
-               rgb[1] = (byte) indexed.getTriplet()[1];
-               rgb[2] = (byte) indexed.getTriplet()[2];
-               return rgb;
+                byte[] rgb = new byte[3];
+                rgb[0] = (byte) indexed.getTriplet()[0];
+                rgb[1] = (byte) indexed.getTriplet()[1];
+                rgb[2] = (byte) indexed.getTriplet()[2];
+                return rgb;
             }
-         }
+        }
 
-         // Grab the colour
-         rgb = getStoredRBG();
-         return rgb;
-     }
+        // Grab the colour
+        return getStoredRBG();
+    }
 
     /**
      * Standard Red Green Blue ctColor value (RGB) with applied tint.
@@ -125,12 +121,13 @@ public abstract class ExtendedColor implements Color {
      * Works for both regular and indexed colours.
      */
     public String getARGBHex() {
-       StringBuffer sb = new StringBuffer();
        byte[] rgb = getARGB();
-       if(rgb == null) {
-          return null;
-       }
-       for(byte c : rgb) {
+        if(rgb == null) {
+            return null;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for(byte c : rgb) {
           int i = c & 0xff;
           String cs = Integer.toHexString(i);
           if(cs.length() == 1) {

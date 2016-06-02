@@ -162,9 +162,9 @@ public class ExcelAntTest extends Task{
 	            try {
 	                eval.execute();
 	                ExcelAntEvaluationResult result = eval.getResult();
-	                if( result.didTestPass() && 
-	                        result.evaluationCompleteWithError() == false ) {
-	                    if( showSuccessDetails == true ) {
+	                if( result.didTestPass() &&
+							!result.evaluationCompleteWithError()) {
+	                    if(showSuccessDetails) {
 	                        log("Succeeded when evaluating " + 
 	                         result.getCellName() + ".  It evaluated to " + 
                              result.getReturnValue() + " when the value of " + 
@@ -172,7 +172,7 @@ public class ExcelAntTest extends Task{
                              eval.getPrecision(), Project.MSG_INFO );
 	                    }
 	                } else {
-	                    if( showFailureDetail == true ) {
+	                    if(showFailureDetail) {
 	                        failureMessages.add( "\tFailed to evaluate cell " + 
 	                         result.getCellName() + ".  It evaluated to " + 
 	                         result.getReturnValue() + " when the value of " + 
@@ -183,7 +183,7 @@ public class ExcelAntTest extends Task{
 	                    passed = false;
 	                    failureCount++;
 	                    
-	                    if( eval.requiredToPass() == true ) {
+	                    if(eval.requiredToPass()) {
 	                        throw new BuildException( "\tFailed to evaluate cell " + 
 	                                result.getCellName() + ".  It evaluated to " + 
 	                                result.getReturnValue() + " when the value of " + 
@@ -200,15 +200,14 @@ public class ExcelAntTest extends Task{
 	        }
 	    }
  
-		if( passed == false ) {
+		if(!passed) {
 			log( "Test named " + name + " failed because " + failureCount + 
 					 " of " + testCount + " evaluations failed to " + 
 					 "evaluate correctly.", 
 					 Project.MSG_ERR );
-			if( showFailureDetail == true && failureMessages.size() > 0 ) {
-				Iterator<String> failures = failureMessages.iterator();
-				while( failures.hasNext() ) {
-					log( failures.next(), Project.MSG_ERR );
+			if(showFailureDetail && failureMessages.size() > 0 ) {
+				for (String failureMessage : failureMessages) {
+					log(failureMessage, Project.MSG_ERR);
 				}
 			}
 		}

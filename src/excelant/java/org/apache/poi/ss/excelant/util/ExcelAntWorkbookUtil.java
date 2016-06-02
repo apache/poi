@@ -67,7 +67,8 @@ public class ExcelAntWorkbookUtil extends Typedef {
      * path of the Excel file. This constructor initializes a Workbook instance
      * based on that file name.
      *
-     * @param fName
+     * @param fName The fully qualified path of the Excel file.
+     * @throws BuildException If the workbook cannot be loaded.
      */
     protected ExcelAntWorkbookUtil(String fName) {
         excelFileName = fName;
@@ -78,7 +79,7 @@ public class ExcelAntWorkbookUtil extends Typedef {
     /**
      * Constructs an instance based on a Workbook instance.
      *
-     * @param wb
+     * @param wb The Workbook to use for this instance.
      */
     protected ExcelAntWorkbookUtil(Workbook wb) {
         workbook = wb;
@@ -86,7 +87,8 @@ public class ExcelAntWorkbookUtil extends Typedef {
 
     /**
      * Loads the member variable workbook based on the fileName variable.
-     * @return
+     * @return The opened Workbook-instance
+     * @throws BuildException If the workbook cannot be loaded.
      */
     private Workbook loadWorkbook() {
 

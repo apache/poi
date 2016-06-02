@@ -134,7 +134,7 @@ public abstract class BitMaskTextProp extends TextProp implements Cloneable {
 	            int i=0;
 	            for (int mask : subPropMasks) {
 	                if (!subPropMatches[i] && (val & mask) != 0) {
-	                    sb.append(subPropNames[i]+",");
+	                    sb.append(subPropNames[i]).append(",");
 	                }
 	                i++;
 	            }

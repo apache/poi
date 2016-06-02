@@ -110,12 +110,6 @@ public class HwmfGraphics {
     }
 
     protected BasicStroke getStroke() {
-        Rectangle2D view = prop.getViewport();
-        Rectangle2D win = prop.getWindow();
-        if (view == null) {
-            view = win;
-        }
-        
         // TODO: fix line width calculation
         float width = (float)prop.getPenWidth();
         if (width == 0) {
@@ -335,10 +329,10 @@ public class HwmfGraphics {
         int len = text.length();
         AttributedString as = new AttributedString(text);
         if (dx == null || dx.length == 0) {
-            addAttributes(as, font, 0, len);
+            addAttributes(as, font);
         } else {
             for (int i=0; i<len; i++) {
-                addAttributes(as, font, i, i+1);
+                addAttributes(as, font);
                 // Tracking works as a prefix/advance space on characters whereas
                 // dx[...] is the complete width of the current char
                 // therefore we need to add the additional/suffix width to the next char
@@ -368,7 +362,7 @@ public class HwmfGraphics {
         }
     }
     
-    private void addAttributes(AttributedString as, HwmfFont font, int start, int end) {
+    private void addAttributes(AttributedString as, HwmfFont font) {
         DrawFontManager fontHandler = (DrawFontManager)graphicsCtx.getRenderingHint(Drawable.FONT_HANDLER);
         String fontFamily = null;
         @SuppressWarnings("unchecked")

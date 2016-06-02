@@ -179,9 +179,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      * used internally to set the properties given a Sheet object
      */
     private void setPropertiesFromSheet(InternalSheet sheet) {
-
         RowRecord row = sheet.getNextRow();
-        boolean rowRecordsAlreadyPresent = row != null;
 
         while (row != null) {
             createRowFromRecord(row);
@@ -767,7 +765,6 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
     /**
      * Verify that none of the merged regions intersect a multi-cell array formula in this sheet
      *
-     * @param region
      * @throws IllegalStateException if candidate region intersects an existing array formula in this sheet
      */
     private void checkForMergedRegionsIntersectingArrayFormulas() {
@@ -1451,10 +1448,10 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      * <p/>
      * TODO: MODE , this is only row specific
      *
-     * @param startRow
-     * @param endRow
-     * @param n
-     * @param isRow
+     * @param startRow the start-index of the rows to shift, zero-based
+     * @param endRow the end-index of the rows to shift, zero-based
+     * @param n how far to shift, negative to shift up
+     * @param isRow unused, kept for backwards compatibility
      */
     protected void shiftMerged(int startRow, int endRow, int n, boolean isRow) {
         List<CellRangeAddress> shiftedRegions = new ArrayList<CellRangeAddress>();
@@ -1483,10 +1480,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
         }
 
         //read so it doesn't get shifted again
-        Iterator<CellRangeAddress> iterator = shiftedRegions.iterator();
-        while (iterator.hasNext()) {
-            CellRangeAddress region = iterator.next();
-
+        for (CellRangeAddress region : shiftedRegions) {
             this.addMergedRegion(region);
         }
     }
@@ -1942,7 +1936,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
     /**
      * Removes a page break at the indicated column
      *
-     * @param column
+     * @param column The index of the column for which to remove a page-break, zero-based
      */
     @Override
     public void removeColumnBreak(int column) {
@@ -1952,7 +1946,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
     /**
      * Runs a bounds check for row numbers
      *
-     * @param row
+     * @param row the index of the row to validate, zero-based
      */
     protected void validateRow(int row) {
         int maxrow = SpreadsheetVersion.EXCEL97.getLastRowIndex();
@@ -1963,7 +1957,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
     /**
      * Runs a bounds check for column numbers
      *
-     * @param column
+     * @param column the index of the column to validate, zero-based
      */
     protected void validateColumn(int column) {
         int maxcol = SpreadsheetVersion.EXCEL97.getLastColumnIndex();
@@ -1980,8 +1974,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
 
         EscherAggregate r = (EscherAggregate) getSheet().findFirstRecordBySid(EscherAggregate.sid);
         List<EscherRecord> escherRecords = r.getEscherRecords();
-        for (Iterator<EscherRecord> iterator = escherRecords.iterator(); iterator.hasNext(); ) {
-            EscherRecord escherRecord = iterator.next();
+        for (EscherRecord escherRecord : escherRecords) {
             if (fat) {
                 pw.println(escherRecord.toString());
             } else {
@@ -2013,8 +2006,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
         }
 
         // Grab our aggregate record, and wire it up
-        EscherAggregate agg = (EscherAggregate) _sheet.findFirstRecordBySid(EscherAggregate.sid);
-        return agg;
+        return (EscherAggregate) _sheet.findFirstRecordBySid(EscherAggregate.sid);
     }
 
     /**
@@ -2043,7 +2035,6 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
     }
 
     private HSSFPatriarch getPatriarch(boolean createIfMissing) {
-        HSSFPatriarch patriarch = null;
         if (_patriarch != null) {
             return _patriarch;
         }
@@ -2063,7 +2054,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
                 if (createIfMissing) {
                     pos = _sheet.aggregateDrawingRecords(dm, true);
                     agg = (EscherAggregate) _sheet.getRecords().get(pos);
-                    patriarch = new HSSFPatriarch(this, agg);
+                    HSSFPatriarch patriarch = new HSSFPatriarch(this, agg);
                     patriarch.afterCreate();
                     return patriarch;
                 } else {
@@ -2204,16 +2195,15 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
     /**
      * Get a Hyperlink in this sheet anchored at row, column
      *
-     * @param row
-     * @param column
+     * @param row The index of the row of the hyperlink, zero-based
+     * @param column the index of the column of the hyperlink, zero-based
      * @return hyperlink if there is a hyperlink anchored at row, column; otherwise returns null
      */
     @Override
     public HSSFHyperlink getHyperlink(int row, int column) {
-        for (Iterator<RecordBase> it = _sheet.getRecords().iterator(); it.hasNext(); ) {
-            RecordBase rec = it.next();
-            if (rec instanceof HyperlinkRecord){
-                HyperlinkRecord link = (HyperlinkRecord)rec;
+        for (RecordBase rec : _sheet.getRecords()) {
+            if (rec instanceof HyperlinkRecord) {
+                HyperlinkRecord link = (HyperlinkRecord) rec;
                 if (link.getFirstColumn() == column && link.getFirstRow() == row) {
                     return new HSSFHyperlink(link);
                 }
@@ -2230,10 +2220,9 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
     @Override
     public List<HSSFHyperlink> getHyperlinkList() {
         final List<HSSFHyperlink> hyperlinkList = new ArrayList<HSSFHyperlink>();
-        for (Iterator<RecordBase> it = _sheet.getRecords().iterator(); it.hasNext(); ) {
-            RecordBase rec = it.next();
-            if (rec instanceof HyperlinkRecord){
-                HyperlinkRecord link = (HyperlinkRecord)rec;
+        for (RecordBase rec : _sheet.getRecords()) {
+            if (rec instanceof HyperlinkRecord) {
+                HyperlinkRecord link = (HyperlinkRecord) rec;
                 hyperlinkList.add(new HSSFHyperlink(link));
             }
         }
@@ -2586,16 +2575,14 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
                 if (areaPtg.getFirstColumn() == 0
                         && areaPtg.getLastColumn() == maxColIndex) {
                     if (rows) {
-                        CellRangeAddress rowRange = new CellRangeAddress(
+                        return new CellRangeAddress(
                                 areaPtg.getFirstRow(), areaPtg.getLastRow(), -1, -1);
-                        return rowRange;
                     }
                 } else if (areaPtg.getFirstRow() == 0
                         && areaPtg.getLastRow() == maxRowIndex) {
                     if (!rows) {
-                        CellRangeAddress columnRange = new CellRangeAddress(-1, -1,
+                        return new CellRangeAddress(-1, -1,
                                 areaPtg.getFirstColumn(), areaPtg.getLastColumn());
-                        return columnRange;
                     }
                 }
 
