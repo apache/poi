@@ -229,7 +229,7 @@ public class POIXMLPropertiesTextExtractor extends POIXMLTextExtractor {
             }
          }
 
-         else if (property.isSetArray()) {
+         /*else if (property.isSetArray()) {
             // TODO Fetch the array values and output 
          }
          else if (property.isSetVector()) {
@@ -245,12 +245,9 @@ public class POIXMLPropertiesTextExtractor extends POIXMLTextExtractor {
          }
          else if (property.isSetStorage() || property.isSetOstorage()) {
             // TODO Decode, if possible
-         }
+         }*/
 
-         text.append(
-               property.getName() +
-               " = " + val + "\n"
-         );
+         text.append(property.getName()).append(" = ").append(val).append("\n");
       }
 
       return text.toString();

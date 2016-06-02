@@ -61,11 +61,12 @@ public class EscherClientAnchorRecord
         int size           = 0;
 
         // Always find 4 two byte entries. Sometimes find 9
-        if (bytesRemaining == 4) // Word format only 4 bytes
+        /*if (bytesRemaining == 4) // Word format only 4 bytes
         {
             // Not sure exactly what the format is quite yet, likely a reference to a PLC
         }
-        else
+        else */
+        if (bytesRemaining != 4) // Word format only 4 bytes
         {
             field_1_flag   =  LittleEndian.getShort( data, pos + size );     size += 2;
             field_2_col1   =  LittleEndian.getShort( data, pos + size );     size += 2;
@@ -157,20 +158,18 @@ public class EscherClientAnchorRecord
     @Override
     public String toXml(String tab) {
         String extraData = HexDump.dump(this.remainingData, 0, 0).trim();
-        StringBuilder builder = new StringBuilder();
-        builder.append(tab).append(formatXmlRecordHeader(getClass().getSimpleName(), HexDump.toHex(getRecordId()), HexDump.toHex(getVersion()), HexDump.toHex(getInstance())))
-                .append(tab).append("\t").append("<Flag>").append(field_1_flag).append("</Flag>\n")
-                .append(tab).append("\t").append("<Col1>").append(field_2_col1).append("</Col1>\n")
-                .append(tab).append("\t").append("<DX1>").append(field_3_dx1).append("</DX1>\n")
-                .append(tab).append("\t").append("<Row1>").append(field_4_row1).append("</Row1>\n")
-                .append(tab).append("\t").append("<DY1>").append(field_5_dy1).append("</DY1>\n")
-                .append(tab).append("\t").append("<Col2>").append(field_6_col2).append("</Col2>\n")
-                .append(tab).append("\t").append("<DX2>").append(field_7_dx2).append("</DX2>\n")
-                .append(tab).append("\t").append("<Row2>").append(field_8_row2).append("</Row2>\n")
-                .append(tab).append("\t").append("<DY2>").append(field_9_dy2).append("</DY2>\n")
-                .append(tab).append("\t").append("<ExtraData>").append(extraData).append("</ExtraData>\n");
-        builder.append(tab).append("</").append(getClass().getSimpleName()).append(">\n");
-        return builder.toString();
+        return tab + formatXmlRecordHeader(getClass().getSimpleName(), HexDump.toHex(getRecordId()), HexDump.toHex(getVersion()), HexDump.toHex(getInstance())) +
+                tab + "\t" + "<Flag>" + field_1_flag + "</Flag>\n" +
+                tab + "\t" + "<Col1>" + field_2_col1 + "</Col1>\n" +
+                tab + "\t" + "<DX1>" + field_3_dx1 + "</DX1>\n" +
+                tab + "\t" + "<Row1>" + field_4_row1 + "</Row1>\n" +
+                tab + "\t" + "<DY1>" + field_5_dy1 + "</DY1>\n" +
+                tab + "\t" + "<Col2>" + field_6_col2 + "</Col2>\n" +
+                tab + "\t" + "<DX2>" + field_7_dx2 + "</DX2>\n" +
+                tab + "\t" + "<Row2>" + field_8_row2 + "</Row2>\n" +
+                tab + "\t" + "<DY2>" + field_9_dy2 + "</DY2>\n" +
+                tab + "\t" + "<ExtraData>" + extraData + "</ExtraData>\n" +
+                tab + "</" + getClass().getSimpleName() + ">\n";
     }
 
     /**

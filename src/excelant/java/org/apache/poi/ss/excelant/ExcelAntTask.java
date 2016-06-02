@@ -17,14 +17,6 @@
 
 package org.apache.poi.ss.excelant;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Locale;
-
 import org.apache.poi.ss.excelant.util.ExcelAntWorkbookUtil;
 import org.apache.poi.ss.excelant.util.ExcelAntWorkbookUtilFactory;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -32,6 +24,13 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.Locale;
 
 /**
  * Ant task class for testing Excel workbook cells.
@@ -85,7 +84,7 @@ public class ExcelAntTask extends Task {
 		int totalCount = 0 ;
 		int successCount = 0 ;
 		
-		StringBuffer versionBffr = new StringBuffer() ;
+		StringBuilder versionBffr = new StringBuilder() ;
 		versionBffr.append(  "ExcelAnt version " ) ;
 		versionBffr.append( VERSION ) ;
 		versionBffr.append( " Copyright 2011" ) ;
@@ -107,43 +106,38 @@ public class ExcelAntTask extends Task {
 			return ;
 		}
 		if( tests.size() > 0 ) {
-			
-			Iterator<ExcelAntTest> testsIt = tests.iterator() ;
-			while( testsIt.hasNext() ) {
-				ExcelAntTest test = testsIt.next();
-				
-				log( "executing test: " + test.getName(), Project.MSG_DEBUG ) ;
-		
-				workbookUtil = ExcelAntWorkbookUtilFactory.getInstance( excelFileName ) ;
-				
-				Iterator<ExcelAntUserDefinedFunction> functionsIt = functions.iterator() ;
-				while( functionsIt.hasNext() ) {
-					ExcelAntUserDefinedFunction eaUdf = functionsIt.next() ;
+
+			for (ExcelAntTest test : tests) {
+				log("executing test: " + test.getName(), Project.MSG_DEBUG);
+
+				workbookUtil = ExcelAntWorkbookUtilFactory.getInstance(excelFileName);
+
+				for (ExcelAntUserDefinedFunction eaUdf : functions) {
 					try {
-						workbookUtil.addFunction(eaUdf.getFunctionAlias(), eaUdf.getClassName() ) ;
-					} catch ( Exception e) {
-						throw new BuildException( e.getMessage(), e ); 
+						workbookUtil.addFunction(eaUdf.getFunctionAlias(), eaUdf.getClassName());
+					} catch (Exception e) {
+						throw new BuildException(e.getMessage(), e);
 					}
 				}
-				test.setWorkbookUtil( workbookUtil ) ;
-				
-				if( precision != null && precision.getValue() > 0 ) {
-					log( "setting precision for the test " + test.getName(), Project.MSG_VERBOSE ) ; 
-					test.setPrecision( precision.getValue() ) ;
+				test.setWorkbookUtil(workbookUtil);
+
+				if (precision != null && precision.getValue() > 0) {
+					log("setting precision for the test " + test.getName(), Project.MSG_VERBOSE);
+					test.setPrecision(precision.getValue());
 				}
-				
-				test.execute() ;
-				
-				if( test.didTestPass() ) {
-					successCount++ ;
+
+				test.execute();
+
+				if (test.didTestPass()) {
+					successCount++;
 				} else {
-					if( failOnError == true ) {
-						throw new BuildException( "Test " + test.getName() + " failed." ) ;
+					if (failOnError) {
+						throw new BuildException("Test " + test.getName() + " failed.");
 					}
 				}
-				totalCount++ ;
-				
-				workbookUtil = null ;
+				totalCount++;
+
+				workbookUtil = null;
 			}
 			log( successCount + "/" + totalCount + " tests passed.", Project.MSG_INFO ) ;
 			workbookUtil = null ;

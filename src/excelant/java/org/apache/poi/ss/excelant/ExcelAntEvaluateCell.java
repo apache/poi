@@ -125,13 +125,13 @@ public class ExcelAntEvaluateCell extends Task {
 		}
 		result = wbUtil.evaluateCell(cell, expectedValue, precisionToUse ) ;
 		
-		StringBuffer sb = new StringBuffer() ;
+		StringBuilder sb = new StringBuilder() ;
 		sb.append( "evaluation of cell " ) ;
 		sb.append( cell ) ; 
 		sb.append( " resulted in " ) ;
 		sb.append( result.getReturnValue() ) ;
-		if( showDelta == true ) {
-			sb.append( " with a delta of " + result.getDelta() ) ;
+		if(showDelta) {
+			sb.append(" with a delta of ").append(result.getDelta());
 		}
 		
 		log( sb.toString(), Project.MSG_DEBUG) ;
@@ -141,6 +141,4 @@ public class ExcelAntEvaluateCell extends Task {
 	public ExcelAntEvaluationResult getResult() {
 		return result ;
 	}
-	
-	
 }

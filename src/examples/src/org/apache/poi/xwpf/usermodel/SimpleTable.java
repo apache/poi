@@ -17,6 +17,7 @@
 package org.apache.poi.xwpf.usermodel;
 
 import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.math.BigInteger;
 import java.util.List;
 
@@ -62,32 +63,37 @@ public class SimpleTable {
     public static void createSimpleTable() throws Exception {
         XWPFDocument doc = new XWPFDocument();
 
-        XWPFTable table = doc.createTable(3, 3);
+        try {
+            XWPFTable table = doc.createTable(3, 3);
 
-        table.getRow(1).getCell(1).setText("EXAMPLE OF TABLE");
+            table.getRow(1).getCell(1).setText("EXAMPLE OF TABLE");
 
-        // table cells have a list of paragraphs; there is an initial
-        // paragraph created when the cell is created. If you create a
-        // paragraph in the document to put in the cell, it will also
-        // appear in the document following the table, which is probably
-        // not the desired result.
-        XWPFParagraph p1 = table.getRow(0).getCell(0).getParagraphs().get(0);
+            // table cells have a list of paragraphs; there is an initial
+            // paragraph created when the cell is created. If you create a
+            // paragraph in the document to put in the cell, it will also
+            // appear in the document following the table, which is probably
+            // not the desired result.
+            XWPFParagraph p1 = table.getRow(0).getCell(0).getParagraphs().get(0);
 
-        XWPFRun r1 = p1.createRun();
-        r1.setBold(true);
-        r1.setText("The quick brown fox");
-        r1.setItalic(true);
-        r1.setFontFamily("Courier");
-        r1.setUnderline(UnderlinePatterns.DOT_DOT_DASH);
-        r1.setTextPosition(100);
+            XWPFRun r1 = p1.createRun();
+            r1.setBold(true);
+            r1.setText("The quick brown fox");
+            r1.setItalic(true);
+            r1.setFontFamily("Courier");
+            r1.setUnderline(UnderlinePatterns.DOT_DOT_DASH);
+            r1.setTextPosition(100);
 
-        table.getRow(2).getCell(2).setText("only text");
+            table.getRow(2).getCell(2).setText("only text");
 
-        FileOutputStream out = new FileOutputStream("simpleTable.docx");
-        doc.write(out);
-        out.close();
-        
-        doc.close();
+            OutputStream out = new FileOutputStream("simpleTable.docx");
+            try {
+                doc.write(out);
+            } finally {
+                out.close();
+            }
+        } finally {
+            doc.close();
+        }
     }
 
     /**
@@ -107,92 +113,94 @@ public class SimpleTable {
     public static void createStyledTable() throws Exception {
     	// Create a new document from scratch
         XWPFDocument doc = new XWPFDocument();
-    	// -- OR --
-        // open an existing empty document with styles already defined
-        //XWPFDocument doc = new XWPFDocument(new FileInputStream("base_document.docx"));
 
-    	// Create a new table with 6 rows and 3 columns
-    	int nRows = 6;
-    	int nCols = 3;
-        XWPFTable table = doc.createTable(nRows, nCols);
+        try {
+            // -- OR --
+            // open an existing empty document with styles already defined
+            //XWPFDocument doc = new XWPFDocument(new FileInputStream("base_document.docx"));
 
-        // Set the table style. If the style is not defined, the table style
-        // will become "Normal".
-        CTTblPr tblPr = table.getCTTbl().getTblPr();
-        CTString styleStr = tblPr.addNewTblStyle();
-        styleStr.setVal("StyledTable");
+            // Create a new table with 6 rows and 3 columns
+            int nRows = 6;
+            int nCols = 3;
+            XWPFTable table = doc.createTable(nRows, nCols);
 
-        // Get a list of the rows in the table
-        List<XWPFTableRow> rows = table.getRows();
-        int rowCt = 0;
-        int colCt = 0;
-        for (XWPFTableRow row : rows) {
-        	// get table row properties (trPr)
-        	CTTrPr trPr = row.getCtRow().addNewTrPr();
-        	// set row height; units = twentieth of a point, 360 = 0.25"
-        	CTHeight ht = trPr.addNewTrHeight();
-        	ht.setVal(BigInteger.valueOf(360));
+            // Set the table style. If the style is not defined, the table style
+            // will become "Normal".
+            CTTblPr tblPr = table.getCTTbl().getTblPr();
+            CTString styleStr = tblPr.addNewTblStyle();
+            styleStr.setVal("StyledTable");
 
-	        // get the cells in this row
-        	List<XWPFTableCell> cells = row.getTableCells();
-            // add content to each cell
-        	for (XWPFTableCell cell : cells) {
-        		// get a table cell properties element (tcPr)
-        		CTTcPr tcpr = cell.getCTTc().addNewTcPr();
-        		// set vertical alignment to "center"
-        		CTVerticalJc va = tcpr.addNewVAlign();
-        		va.setVal(STVerticalJc.CENTER);
+            // Get a list of the rows in the table
+            List<XWPFTableRow> rows = table.getRows();
+            int rowCt = 0;
+            int colCt = 0;
+            for (XWPFTableRow row : rows) {
+                // get table row properties (trPr)
+                CTTrPr trPr = row.getCtRow().addNewTrPr();
+                // set row height; units = twentieth of a point, 360 = 0.25"
+                CTHeight ht = trPr.addNewTrHeight();
+                ht.setVal(BigInteger.valueOf(360));
 
-        		// create cell color element
-        		CTShd ctshd = tcpr.addNewShd();
-                ctshd.setColor("auto");
-                ctshd.setVal(STShd.CLEAR);
-                if (rowCt == 0) {
-                	// header row
-                	ctshd.setFill("A7BFDE");
-                }
-            	else if (rowCt % 2 == 0) {
-            		// even row
-                	ctshd.setFill("D3DFEE");
-            	}
-            	else {
-            		// odd row
-                	ctshd.setFill("EDF2F8");
-            	}
+                // get the cells in this row
+                List<XWPFTableCell> cells = row.getTableCells();
+                // add content to each cell
+                for (XWPFTableCell cell : cells) {
+                    // get a table cell properties element (tcPr)
+                    CTTcPr tcpr = cell.getCTTc().addNewTcPr();
+                    // set vertical alignment to "center"
+                    CTVerticalJc va = tcpr.addNewVAlign();
+                    va.setVal(STVerticalJc.CENTER);
 
-                // get 1st paragraph in cell's paragraph list
-                XWPFParagraph para = cell.getParagraphs().get(0);
-                // create a run to contain the content
-                XWPFRun rh = para.createRun();
-                // style cell as desired
-                if (colCt == nCols - 1) {
-                	// last column is 10pt Courier
-                	rh.setFontSize(10);
-                	rh.setFontFamily("Courier");
-                }
-                if (rowCt == 0) {
-                	// header row
-                    rh.setText("header row, col " + colCt);
-                	rh.setBold(true);
-                    para.setAlignment(ParagraphAlignment.CENTER);
-                }
-            	else {
-            		// other rows
-                    rh.setText("row " + rowCt + ", col " + colCt);
-                    para.setAlignment(ParagraphAlignment.LEFT);
-            	}
-                colCt++;
-        	} // for cell
-        	colCt = 0;
-        	rowCt++;
-        } // for row
+                    // create cell color element
+                    CTShd ctshd = tcpr.addNewShd();
+                    ctshd.setColor("auto");
+                    ctshd.setVal(STShd.CLEAR);
+                    if (rowCt == 0) {
+                        // header row
+                        ctshd.setFill("A7BFDE");
+                    } else if (rowCt % 2 == 0) {
+                        // even row
+                        ctshd.setFill("D3DFEE");
+                    } else {
+                        // odd row
+                        ctshd.setFill("EDF2F8");
+                    }
 
-        // write the file
-        FileOutputStream out = new FileOutputStream("styledTable.docx");
-        doc.write(out);
-        out.close();
-        
-        doc.close();
+                    // get 1st paragraph in cell's paragraph list
+                    XWPFParagraph para = cell.getParagraphs().get(0);
+                    // create a run to contain the content
+                    XWPFRun rh = para.createRun();
+                    // style cell as desired
+                    if (colCt == nCols - 1) {
+                        // last column is 10pt Courier
+                        rh.setFontSize(10);
+                        rh.setFontFamily("Courier");
+                    }
+                    if (rowCt == 0) {
+                        // header row
+                        rh.setText("header row, col " + colCt);
+                        rh.setBold(true);
+                        para.setAlignment(ParagraphAlignment.CENTER);
+                    } else {
+                        // other rows
+                        rh.setText("row " + rowCt + ", col " + colCt);
+                        para.setAlignment(ParagraphAlignment.LEFT);
+                    }
+                    colCt++;
+                } // for cell
+                colCt = 0;
+                rowCt++;
+            } // for row
+
+            // write the file
+            OutputStream out = new FileOutputStream("styledTable.docx");
+            try {
+                doc.write(out);
+            } finally {
+                out.close();
+            }
+        } finally {
+            doc.close();
+        }
     }
-
 }

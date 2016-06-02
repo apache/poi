@@ -36,11 +36,7 @@ import org.apache.poi.ss.usermodel.Workbook;
  *
  */
 public interface IExcelAntWorkbookHandler {
-    
-    
     public void setWorkbook( Workbook workbook ) ;
     
     public void execute() ;
-    
-
 }

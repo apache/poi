@@ -17,26 +17,8 @@
 
 package org.apache.poi.ss.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-import java.awt.font.FontRenderContext;
-import java.awt.font.TextAttribute;
-import java.awt.font.TextLayout;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.text.AttributedString;
-import java.util.HashMap;
-import java.util.Map;
-
-import java.awt.geom.Rectangle2D;
-
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.PaneInformation;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -46,6 +28,17 @@ import org.apache.poi.util.POILogger;
 import org.junit.Assume;
 import org.junit.Ignore;
 import org.junit.Test;
+
+import java.awt.font.FontRenderContext;
+import java.awt.font.TextAttribute;
+import java.awt.font.TextLayout;
+import java.awt.geom.Rectangle2D;
+import java.io.IOException;
+import java.text.AttributedString;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.junit.Assert.*;
 
 /**
  * A base class for bugzilla issues that can be described in terms of common ss interfaces.

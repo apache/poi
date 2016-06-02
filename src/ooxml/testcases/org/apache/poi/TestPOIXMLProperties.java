@@ -77,10 +77,6 @@ public final class TestPOIXMLProperties {
 		ctProps.setApplication(application);
 		ctProps.setAppVersion(appVersion);
 
-		ctProps = null;
-		properties = null;
-		props = null;
-
 		XSSFWorkbook newWorkbook =
 				XSSFTestDataSamples.writeOutAndReadBack(workbook);
 		workbook.close();

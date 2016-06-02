@@ -29,17 +29,13 @@ import org.apache.tools.ant.Project;
  *
  */
 public class ExcelAntSetStringCell extends ExcelAntSet {
-	
-	
 	private String stringValue ;
-	
-	
+
 	public ExcelAntSetStringCell() {}
 
-	
 	/**
 	 * Set the value of the cell to the String passed in.
-	 * @param value
+	 * @param value The string-value that should be set when this task is executed.
 	 */
 	public void setValue(String value ) {
 		stringValue = value ;
@@ -47,14 +43,14 @@ public class ExcelAntSetStringCell extends ExcelAntSet {
 
 	/**
 	 * Return the value that will be set into the cell.
-	 * @return
+	 * @return The string-value of the cell as populated via setValue(), null
+	 * 		if the value was not set yet.
 	 */
 	public String getCellValue() {
 		return stringValue;
 	}
 	
 	public void execute() throws BuildException {
-
 		wbUtil.setStringValue(cellStr, stringValue ) ;
 		
 		log( "set cell " + cellStr + " to value " + stringValue + " as String.", Project.MSG_DEBUG ) ;

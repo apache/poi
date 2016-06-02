@@ -355,12 +355,12 @@ public class ExtractorFactory {
 	 *  {@link POITextExtractor} for each embedded file.
 	 */
 	public static POITextExtractor[] getEmbededDocsTextExtractors(POIOLE2TextExtractor ext) throws IOException, OpenXML4JException, XmlException {
-	   // All the embded directories we spotted
+	   // All the embedded directories we spotted
 		ArrayList<Entry> dirs = new ArrayList<Entry>();
 		// For anything else not directly held in as a POIFS directory
 		ArrayList<InputStream> nonPOIFS = new ArrayList<InputStream>();
 
-      // Find all the embeded directories
+      // Find all the embedded directories
 		DirectoryEntry root = ext.getRoot();
 		if(root == null) {
 			throw new IllegalStateException("The extractor didn't know which POIFS it came from!");
@@ -390,7 +390,7 @@ public class ExtractorFactory {
 			} catch(FileNotFoundException e) {
                 // ignored here
             }
-		} else if(ext instanceof PowerPointExtractor) {
+		//} else if(ext instanceof PowerPointExtractor) {
 			// Tricky, not stored directly in poifs
 			// TODO
 		} else if(ext instanceof OutlookTextExtactor) {
@@ -434,12 +434,12 @@ public class ExtractorFactory {
 
 	/**
 	 * Returns an array of text extractors, one for each of
-	 *  the embeded documents in the file (if there are any).
-	 * If there are no embeded documents, you'll get back an
+	 *  the embedded documents in the file (if there are any).
+	 * If there are no embedded documents, you'll get back an
 	 *  empty array. Otherwise, you'll get one open
-	 *  {@link POITextExtractor} for each embeded file.
+	 *  {@link POITextExtractor} for each embedded file.
 	 */
-	public static POITextExtractor[] getEmbededDocsTextExtractors(POIXMLTextExtractor ext) {
+	public static POITextExtractor[] getEmbededDocsTextExtractors(@SuppressWarnings("UnusedParameters") POIXMLTextExtractor ext) {
 		throw new IllegalStateException("Not yet supported");
 	}
 }

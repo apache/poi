@@ -40,15 +40,16 @@ public final class ExcelAntWorkbookUtilFactory {
      * Using the fileName, check the internal map to see if an instance
      * of the WorkbookUtil exists.  If not, then add an instance to the map.
      *
-     * @param fileName
-     * @return
+     * @param fileName The filename to use as key to look for the ExcelAntWorkbookUtil.
+     * @return An instance of ExcelAntWorkbookUtil associated with the filename or
+     *          a freshly instantiated one if none did exist before.
      */
     public static ExcelAntWorkbookUtil getInstance(String fileName) {
         if(workbookUtilMap == null) {
             workbookUtilMap = new HashMap<String, ExcelAntWorkbookUtil>();
         }
-        if(workbookUtilMap != null &&
-                workbookUtilMap.containsKey(fileName)) {
+
+        if(workbookUtilMap.containsKey(fileName)) {
             return workbookUtilMap.get(fileName);
         }
 
