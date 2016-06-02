@@ -174,6 +174,7 @@ public abstract class POIXMLDocument extends POIXMLDocumentPart implements Close
      */
     public final void write(OutputStream stream) throws IOException {
         //force all children to commit their changes into the underlying OOXML Package
+        // TODO Shouldn't they be committing to the new one instead?
         Set<PackagePart> context = new HashSet<PackagePart>();
         onSave(context);
         context.clear();

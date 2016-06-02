@@ -19,22 +19,27 @@ package org.apache.poi.xwpf.usermodel;
 
 import static org.junit.Assert.*;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.poi.POIDataSamples;
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.POIXMLProperties;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.xwpf.XWPFTestDataSamples;
+import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
 import org.apache.xmlbeans.XmlCursor;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
 
@@ -422,5 +427,22 @@ public final class TestXWPFDocument {
 		XWPFDocument docx = XWPFTestDataSamples.openSampleDocument("EnforcedWith.docx");
 		assertTrue(docx.isEnforcedProtection());
 		docx.close();
+	}
+	
+	@Test
+	@Ignore("XWPF should be able to write to a new Stream when opened Read-Only")
+	public void testWriteFromReadOnlyOPC() throws Exception {
+	    OPCPackage opc = OPCPackage.open(
+	            POIDataSamples.getDocumentInstance().getFile("SampleDoc.docx"),
+	            PackageAccess.READ
+	    );
+	    XWPFDocument doc = new XWPFDocument(opc);
+	    XWPFWordExtractor ext = new XWPFWordExtractor(doc);
+	    String origText = ext.getText();
+	    
+	    doc = XWPFTestDataSamples.writeOutAndReadBack(doc);
+	    ext = new XWPFWordExtractor(doc);
+	    
+	    assertEquals(origText, ext.getText());
 	}
 }
