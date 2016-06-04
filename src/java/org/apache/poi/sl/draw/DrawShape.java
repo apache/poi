@@ -17,6 +17,7 @@
 
 package org.apache.poi.sl.draw;
 
+import java.awt.BasicStroke;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
@@ -24,6 +25,9 @@ import java.util.Locale;
 
 import org.apache.poi.sl.usermodel.PlaceableShape;
 import org.apache.poi.sl.usermodel.Shape;
+import org.apache.poi.sl.usermodel.StrokeStyle;
+import org.apache.poi.sl.usermodel.StrokeStyle.LineCap;
+import org.apache.poi.sl.usermodel.StrokeStyle.LineDash;
 
 
 public class DrawShape implements Drawable {
@@ -156,5 +160,45 @@ public class DrawShape implements Drawable {
     
     protected Shape<?,?> getShape() {
         return shape;
+    }
+    
+    protected static BasicStroke getStroke(StrokeStyle strokeStyle) {
+        float lineWidth = (float) strokeStyle.getLineWidth();
+        if (lineWidth == 0.0f) lineWidth = 0.25f; // Both PowerPoint and OOo draw zero-length lines as 0.25pt
+
+        LineDash lineDash = strokeStyle.getLineDash();
+        if (lineDash == null) {
+            lineDash = LineDash.SOLID;
+        }
+
+        int dashPatI[] = lineDash.pattern;
+        final float dash_phase = 0;
+        float[] dashPatF = null;
+        if (dashPatI != null) {
+            dashPatF = new float[dashPatI.length];
+            for (int i=0; i<dashPatI.length; i++) {
+                dashPatF[i] = dashPatI[i]*Math.max(1, lineWidth);
+            }
+        }
+
+        LineCap lineCapE = strokeStyle.getLineCap();
+        if (lineCapE == null) lineCapE = LineCap.FLAT;
+        int lineCap;
+        switch (lineCapE) {
+            case ROUND:
+                lineCap = BasicStroke.CAP_ROUND;
+                break;
+            case SQUARE:
+                lineCap = BasicStroke.CAP_SQUARE;
+                break;
+            default:
+            case FLAT:
+                lineCap = BasicStroke.CAP_BUTT;
+                break;
+        }
+
+        int lineJoin = BasicStroke.JOIN_ROUND;
+
+        return new BasicStroke(lineWidth, lineCap, lineJoin, lineWidth, dashPatF, dash_phase);
     }
 }

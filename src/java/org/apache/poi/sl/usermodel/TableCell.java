@@ -83,4 +83,32 @@ public interface TableCell<
      * @param edge the border edge to be cleared
      */
     void removeBorder(BorderEdge edge);
+
+    /**
+     * Get the number of columns to be spanned/merged
+     *
+     * @return the grid span
+     * 
+     * @since POI 3.15-beta2
+     */
+    int getGridSpan();
+    
+    /**
+     * Get the number of rows to be spanned/merged
+     *
+     * @return the row span
+     * 
+     * @since POI 3.15-beta2
+     */
+    int getRowSpan();
+
+    /**
+     * Return if this cell is part of a merged cell. The top/left cell of a merged region is not regarded as merged -
+     * its grid and/or row span is greater than one. 
+     *
+     * @return true if this a merged cell
+     * 
+     * @since POI 3.15-beta2
+     */
+    boolean isMerged();
 }

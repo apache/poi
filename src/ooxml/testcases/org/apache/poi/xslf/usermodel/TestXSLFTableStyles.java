@@ -19,27 +19,20 @@ package org.apache.poi.xslf.usermodel;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import org.junit.Test;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTableStyle;
+import java.io.IOException;
 
-/**
- * @author Yegor Kozlov
- */
+import org.junit.Test;
+
 public class TestXSLFTableStyles {
 
     @Test
-    public void testRead(){
+    public void testRead() throws IOException {
         XMLSlideShow  ppt = new XMLSlideShow();
         XSLFTableStyles tblStyles = ppt.getTableStyles();
         assertNotNull(tblStyles);
 
         assertEquals(0, tblStyles.getStyles().size());
-    }
-
-    @SuppressWarnings("unused")
-    @Test
-    public void testStyle(){
-        CTTableStyle obj = CTTableStyle.Factory.newInstance();
-        XSLFTableStyle style = new XSLFTableStyle(obj);
+        
+        ppt.close();
     }
 }

@@ -30,6 +30,7 @@ import org.apache.poi.sl.usermodel.TextParagraph;
 import org.apache.poi.sl.usermodel.TextParagraph.BulletStyle;
 import org.apache.poi.sl.usermodel.TextRun;
 import org.apache.poi.sl.usermodel.TextShape;
+import org.apache.poi.sl.usermodel.TextShape.TextDirection;
 
 public class DrawTextShape extends DrawSimpleShape {
 
@@ -50,7 +51,7 @@ public class DrawTextShape extends DrawSimpleShape {
 
         // remember the initial transform
         AffineTransform tx = graphics.getTransform();
-
+    
         // Transform of text in flipped shapes is special.
         // At this point the flip and rotation transform is already applied
         // (see DrawShape#applyTransform ), but we need to restore it to avoid painting "upside down".
@@ -73,7 +74,7 @@ public class DrawTextShape extends DrawSimpleShape {
             graphics.scale(-1, 1);
             graphics.translate(-anchor.getX(), -anchor.getY());
         }
-        
+
         Double textRot = s.getTextRotation();
         if (textRot != null && textRot != 0) {
             graphics.translate(anchor.getCenterX(), anchor.getCenterY());
@@ -96,6 +97,20 @@ public class DrawTextShape extends DrawSimpleShape {
                 double delta = anchor.getHeight() - textHeight - insets.top - insets.bottom;
                 y += insets.top + delta/2;
                 break;
+        }
+
+        TextDirection textDir = s.getTextDirection();
+        if (textDir == TextDirection.VERTICAL || textDir == TextDirection.VERTICAL_270) {
+            double deg = (textDir == TextDirection.VERTICAL) ? 90 : 270;
+            graphics.translate(anchor.getCenterX(), anchor.getCenterY());
+            graphics.rotate(Math.toRadians(deg));
+            graphics.translate(-anchor.getCenterX(), -anchor.getCenterY());
+            
+            // old top/left edge is now bottom/left or top/right - as we operate on the already
+            // rotated drawing context, both verticals can be moved in the same direction
+            double w = anchor.getWidth();
+            double h = anchor.getHeight();
+            graphics.translate((w-h)/2d,(h-w)/2d);
         }
 
         drawParagraphs(graphics, x, y);

@@ -62,7 +62,7 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
         CTTextBody txBody = getTextBody(false);
         if (txBody != null) {
             for (CTTextParagraph p : txBody.getPArray()) {
-                _paragraphs.add(new XSLFTextParagraph(p, this));
+                _paragraphs.add(newTextParagraph(p));
             }
         }
     }
@@ -100,13 +100,13 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
                 txBody.removeP(i-1);
                 _paragraphs.remove(i-1);
             }
-            
+
             _paragraphs.get(0).clearButKeepProperties();
         }
-        
+
         return appendText(text, false);
     }
-    
+
     @Override
     public XSLFTextRun appendText(String text, boolean newParagraph) {
         if (text == null) return null;
@@ -114,7 +114,7 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
         // copy properties from last paragraph / textrun or paragraph end marker
         CTTextParagraphProperties pPr = null;
         CTTextCharacterProperties rPr = null;
-        
+
         boolean firstPara;
         XSLFTextParagraph para;
         if (_paragraphs.isEmpty()) {
@@ -133,7 +133,7 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
                 rPr = ctp.getEndParaRPr();
             }
         }
-        
+
         XSLFTextRun run = null;
         for (String lineTxt : text.split("\\r\\n?|\\n")) {
             if (!firstPara) {
@@ -159,7 +159,7 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
             }
             firstPara = false;
         }
-        
+
         assert(run != null);
         return run;
     }
@@ -184,7 +184,7 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
         } else {
             p = txBody.addNewP();
         }
-        XSLFTextParagraph paragraph = new XSLFTextParagraph(p, this);
+        XSLFTextParagraph paragraph = newTextParagraph(p);
         _paragraphs.add(paragraph);
         return paragraph;
     }
@@ -243,7 +243,7 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
         fetchShapeProperty(fetcher);
         return fetcher.getValue() == null ? false : fetcher.getValue();
     }
-    
+
     @Override
     public void setTextDirection(TextDirection orientation){
         CTTextBodyProperties bodyPr = getTextBodyPr(true);
@@ -274,9 +274,9 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
         if (bodyPr != null && bodyPr.isSetRot()) {
             return bodyPr.getRot() / 60000.;
         }
-        return null;        
+        return null;
     }
-    
+
     @Override
     public void setTextRotation(Double rotation) {
         CTTextBodyProperties bodyPr = getTextBodyPr(true);
@@ -284,8 +284,8 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
             bodyPr.setRot((int)(rotation * 60000.));
         }
     }
-    
-    
+
+
     /**
      * Returns the distance (in points) between the bottom of the text frame
      * and the bottom of the inscribed rectangle of the shape that contains the text.
@@ -437,7 +437,7 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
         Insets2D insets = new Insets2D(getTopInset(), getLeftInset(), getBottomInset(), getRightInset());
         return insets;
     }
-    
+
     @Override
     public void setInsets(Insets2D insets) {
         setTopInset(insets.top);
@@ -445,7 +445,7 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
         setBottomInset(insets.bottom);
         setRightInset(insets.right);
     }
-   
+
     @Override
     public boolean getWordWrap(){
         PropertyFetcher<Boolean> fetcher = new TextBodyPropertyFetcher<Boolean>(){
@@ -520,14 +520,14 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
         }
         return textBodyPr;
     }
-    
+
     protected abstract CTTextBody getTextBody(boolean create);
 
     @Override
     public void setPlaceholder(Placeholder placeholder) {
         super.setPlaceholder(placeholder);
     }
-    
+
     public Placeholder getTextType(){
         CTPlaceholder ph = getCTPlaceholder();
         if (ph == null) return null;
@@ -552,15 +552,15 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
         Rectangle2D anchor = getAnchor();
         if(anchor.getWidth() == 0.)  throw new POIXMLException(
                 "Anchor of the shape was not set.");
-        double height = getTextHeight(); 
+        double height = getTextHeight();
         height += 1; // add a pixel to compensate rounding errors
-        
+
         anchor.setRect(anchor.getX(), anchor.getY(), anchor.getWidth(), height);
         setAnchor(anchor);
-        
+
         return anchor;
-    }   
-    
+    }
+
 
     @Override
     void copy(XSLFShape other){
@@ -572,14 +572,14 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
         if (otherTB == null) {
             return;
         }
-        
+
         thisTB.setBodyPr((CTTextBodyProperties)otherTB.getBodyPr().copy());
 
         if (thisTB.isSetLstStyle()) thisTB.unsetLstStyle();
         if (otherTB.isSetLstStyle()) {
             thisTB.setLstStyle((CTTextListStyle)otherTB.getLstStyle().copy());
         }
-        
+
         boolean srcWordWrap = otherTS.getWordWrap();
         if(srcWordWrap != getWordWrap()){
             setWordWrap(srcWordWrap);
@@ -608,7 +608,7 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
         }
 
         clearText();
-        
+
         for (XSLFTextParagraph srcP : otherTS.getTextParagraphs()) {
             XSLFTextParagraph tgtP = addNewTextParagraph();
             tgtP.copy(srcP);
@@ -621,7 +621,7 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
             default:
             case NOTES:
             case HALF_BODY:
-            case QUARTER_BODY: 
+            case QUARTER_BODY:
             case BODY:
                 setPlaceholder(Placeholder.BODY);
                 break;
@@ -651,8 +651,19 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
         case CENTERED_TITLE: return TextPlaceholder.CENTER_TITLE;
         default:
         case CONTENT: return TextPlaceholder.OTHER;
-        }        
+        }
     }
-    
-    
+
+    /**
+     * Helper method to allow subclasses to provide their own text paragraph
+     *
+     * @param p the xml reference
+     * 
+     * @return a new text paragraph
+     * 
+     * @since POI 3.15-beta2
+     */
+    protected XSLFTextParagraph newTextParagraph(CTTextParagraph p) {
+        return new XSLFTextParagraph(p, this);
+    }
 }

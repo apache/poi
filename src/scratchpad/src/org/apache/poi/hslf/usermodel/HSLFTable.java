@@ -18,13 +18,12 @@
 package org.apache.poi.hslf.usermodel;
 
 import java.awt.geom.Rectangle2D;
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.apache.poi.ddf.AbstractEscherOptRecord;
 import org.apache.poi.ddf.EscherArrayProperty;
@@ -170,23 +169,6 @@ implements HSLFShapeContainer, TableShape<HSLFShape,HSLFTextParagraph> {
         updateRowHeightsProperty();
     }
 
-    private static class TableCellComparator implements Comparator<HSLFShape>, Serializable {
-        public int compare( HSLFShape o1, HSLFShape o2 ) {
-            Rectangle2D anchor1 = o1.getAnchor();
-            Rectangle2D anchor2 = o2.getAnchor();
-            double delta = anchor1.getY() - anchor2.getY();
-            if (delta == 0) {
-                delta = anchor1.getX() - anchor2.getX();
-            }
-            // descending size
-            if (delta == 0) {
-                delta = (anchor2.getWidth()*anchor2.getHeight())-(anchor1.getWidth()*anchor1.getHeight());
-            }
-            
-            return (int)Math.signum(delta);
-        }
-    }
-
     private void cellListToArray() {
         List<HSLFTableCell> htc = new ArrayList<HSLFTableCell>();
         for (HSLFShape h : getShapes()) {
@@ -198,28 +180,52 @@ implements HSLFShapeContainer, TableShape<HSLFShape,HSLFTextParagraph> {
         if (htc.isEmpty()) {
             throw new IllegalStateException("HSLFTable without HSLFTableCells");
         }
-
-        Collections.sort(htc, new TableCellComparator());
-
-        List<HSLFTableCell[]> lst = new ArrayList<HSLFTableCell[]>();
-        List<HSLFTableCell> row = new ArrayList<HSLFTableCell>();
-
-        double y0 = htc.get(0).getAnchor().getY();
+        
+        SortedSet<Double> colSet = new TreeSet<Double>();
+        SortedSet<Double> rowSet = new TreeSet<Double>();
+        
+        // #1 pass - determine cols and rows
         for (HSLFTableCell sh : htc) {
             Rectangle2D anchor = sh.getAnchor();
-            boolean isNextRow = (anchor.getY() > y0);
-            if (isNextRow) {
-                y0 = anchor.getY();
-                lst.add(row.toArray(new HSLFTableCell[row.size()]));
-                row.clear();
-            }
-            row.add(sh);
+            colSet.add(anchor.getX());
+            rowSet.add(anchor.getY());
         }
-        lst.add(row.toArray(new HSLFTableCell[row.size()]));
-
-        cells = lst.toArray(new HSLFTableCell[lst.size()][]);
+        cells = new HSLFTableCell[rowSet.size()][colSet.size()];
+        
+        List<Double> colLst = new ArrayList<Double>(colSet);
+        List<Double> rowLst = new ArrayList<Double>(rowSet);
+        
+        // #2 pass - assign shape to table cells
+        for (HSLFTableCell sh : htc) {
+            Rectangle2D anchor = sh.getAnchor();
+            int row = rowLst.indexOf(anchor.getY());
+            int col = colLst.indexOf(anchor.getX());
+            assert(row != -1 && col != -1);
+            cells[row][col] = sh;
+            
+            // determine gridSpan / rowSpan
+            int gridSpan = calcSpan(colLst, anchor.getWidth(), col);
+            int rowSpan = calcSpan(rowLst, anchor.getHeight(), row);
+            
+            sh.setGridSpan(gridSpan);
+            sh.setRowSpan(rowSpan);
+        }        
     }
 
+    private int calcSpan(List<Double> spaces, double totalSpace, int idx) {
+        if (idx == spaces.size()-1) {
+            return 1;
+        }
+        int span = 0;
+        double remainingSpace = totalSpace;
+        while (idx+1 < spaces.size() && remainingSpace > 0) {
+            remainingSpace -= spaces.get(idx+1)-spaces.get(idx);
+            span++;
+            idx++;
+        }
+        return span;
+    }
+    
     static class LineRect {
         final HSLFLine l;
         final double lx1, lx2, ly1, ly2;
@@ -258,6 +264,9 @@ implements HSLFShapeContainer, TableShape<HSLFShape,HSLFTextParagraph> {
         // TODO: this only works for non-rotated tables
         for (HSLFTableCell[] tca : cells) {
             for (HSLFTableCell tc : tca) {
+                if (tc == null) {
+                    continue;
+                }
                 final Rectangle2D cellAnchor = tc.getAnchor();
 
                 /**

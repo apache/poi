@@ -29,6 +29,7 @@ import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTColor;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTFontReference;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTHslColor;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPositiveFixedPercentage;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPresetColor;
@@ -165,6 +166,8 @@ public class XSLFColor {
                         color = Color.black;
                     }
                 }
+            } else if (ch instanceof CTFontReference) {
+                // try next ...
             } else {
                 throw new IllegalArgumentException("Unexpected color choice: " + ch.getClass());
             }

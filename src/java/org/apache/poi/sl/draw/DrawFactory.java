@@ -56,6 +56,14 @@ public class DrawFactory {
         defaultFactory.set(factory);
     }
 
+    /**
+     * Returns the DrawFactory, preferably via a graphics instance.
+     * If graphics is null, the current thread local is checked or
+     * if it is not set, a new factory is created. 
+     *
+     * @param graphics the current graphics context or null
+     * @return the draw factory
+     */
     public static DrawFactory getInstance(Graphics2D graphics) {
         // first try to find the factory over the rendering hint
         DrawFactory factory = null;
