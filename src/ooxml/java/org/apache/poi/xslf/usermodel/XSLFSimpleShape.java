@@ -77,8 +77,6 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
 
 /**
  * Represents a single (non-group) shape in a .pptx slide show
- *
- * @author Yegor Kozlov
  */
 @Beta
 public abstract class XSLFSimpleShape extends XSLFShape
@@ -259,6 +257,7 @@ public abstract class XSLFSimpleShape extends XSLFShape
     }
 
     protected PaintStyle getLinePaint() {
+        final XSLFTheme theme = getSheet().getTheme();
         PropertyFetcher<PaintStyle> fetcher = new PropertyFetcher<PaintStyle>() {
             public boolean fetch(XSLFShape shape) {
                 CTLineProperties spPr = shape.getSpPr().getLn();
@@ -271,7 +270,7 @@ public abstract class XSLFSimpleShape extends XSLFShape
                     PaintStyle paint = null;
                     PackagePart pp = getSheet().getPackagePart();
                     for (XmlObject obj : spPr.selectPath("*")) {
-                        paint = selectPaint(obj, null, pp);
+                        paint = selectPaint(obj, null, pp, theme);
                         if (paint != null) {
                             setValue(paint);
                             return true;
@@ -280,7 +279,7 @@ public abstract class XSLFSimpleShape extends XSLFShape
 
                     CTShapeStyle style = shape.getSpStyle();
                     if (style != null) {
-                        paint = selectPaint(style.getLnRef());
+                        paint = selectPaint(style.getLnRef(), theme);
                         if (paint != null) {
                             setValue(paint);
                             return true;
@@ -305,7 +304,6 @@ public abstract class XSLFSimpleShape extends XSLFShape
         int idx = (int)lnRef.getIdx();
         CTSchemeColor phClr = lnRef.getSchemeClr();
         if(idx > 0){
-            XSLFTheme theme = getSheet().getTheme();
             XmlObject lnProps = theme.getXmlObject().
                     getThemeElements().getFmtScheme().getLnStyleLst().selectPath("*")[idx - 1];
             paint = getPaint(lnProps, phClr);

@@ -59,7 +59,6 @@ import org.openxmlformats.schemas.presentationml.x2006.main.STPlaceholderType;
  * Represents a paragraph of text within the containing text body.
  * The paragraph is the highest level text separation mechanism.
  *
- * @author Yegor Kozlov
  * @since POI-3.8
  */
 @Beta
@@ -76,19 +75,19 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
         for(XmlObject ch : _p.selectPath("*")){
             if(ch instanceof CTRegularTextRun){
                 CTRegularTextRun r = (CTRegularTextRun)ch;
-                _runs.add(new XSLFTextRun(r, this));
+                _runs.add(newTextRun(r));
             } else if (ch instanceof CTTextLineBreak){
                 CTTextLineBreak br = (CTTextLineBreak)ch;
                 CTRegularTextRun r = CTRegularTextRun.Factory.newInstance();
                 r.setRPr(br.getRPr());
                 r.setT("\n");
-                _runs.add(new XSLFTextRun(r, this));
+                _runs.add(newTextRun(r));
             } else if (ch instanceof CTTextField){
                 CTTextField f = (CTTextField)ch;
                 CTRegularTextRun r = CTRegularTextRun.Factory.newInstance();
                 r.setRPr(f.getRPr());
                 r.setT(f.getT());
-                _runs.add(new XSLFTextRun(r, this));
+                _runs.add(newTextRun(r));
             }
         }
     }
@@ -137,7 +136,7 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
         CTRegularTextRun r = _p.addNewR();
         CTTextCharacterProperties rPr = r.addNewRPr();
         rPr.setLang("en-US");
-        XSLFTextRun run = new XSLFTextRun(r, this);
+        XSLFTextRun run = newTextRun(r);
         _runs.add(run);
         return run;
     }
@@ -774,22 +773,23 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
         int level = getIndentLevel();
 
         // wind up and find the root master sheet which must be slide master
-        final String nsDecl =
-            "declare namespace p='http://schemas.openxmlformats.org/presentationml/2006/main' " +
-            "declare namespace a='http://schemas.openxmlformats.org/drawingml/2006/main' ";
-        final String xpaths[] = {
-            nsDecl+".//p:txStyles/p:" + defaultStyleSelector +"/a:lvl" +(level+1)+ "pPr",
-            nsDecl+".//p:notesStyle/a:lvl" +(level+1)+ "pPr"
-        };
+        final String nsPML = "http://schemas.openxmlformats.org/presentationml/2006/main";
+        final String nsDML = "http://schemas.openxmlformats.org/drawingml/2006/main";
         XSLFSheet masterSheet = _shape.getSheet();
         for (XSLFSheet m = masterSheet; m != null; m = (XSLFSheet)m.getMasterSheet()) {
             masterSheet = m;
             XmlObject xo = masterSheet.getXmlObject();
-            for (String xpath : xpaths) {
-                XmlObject[] o = xo.selectPath(xpath);
-                if (o.length == 1) {
-                    return (CTTextParagraphProperties)o[0];
+            XmlCursor cur = xo.newCursor();
+            try {
+                cur.push();
+                if ((cur.toChild(nsPML, "txStyles") && cur.toChild(nsPML, defaultStyleSelector)) ||
+            		(cur.pop() && cur.toChild(nsPML, "notesStyle"))) {
+                	if (cur.toChild(nsDML, "lvl" +(level+1)+ "pPr")) {
+                		return (CTTextParagraphProperties)cur.getObject();
+                	}
                 }
+            } finally {
+            	cur.dispose();
             }
         }
 
@@ -880,7 +880,7 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
         List<XSLFTextRun> otherRs = other.getTextRuns();
         int i=0;
         for(CTRegularTextRun rtr : thisP.getRArray()) {
-            XSLFTextRun run = new XSLFTextRun(rtr, this);
+            XSLFTextRun run = newTextRun(rtr);
             run.copy(otherRs.get(i++));
             _runs.add(run);
         }
@@ -949,6 +949,9 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
     @Override
     public Double getDefaultFontSize() {
         CTTextCharacterProperties endPr = _p.getEndParaRPr();
+        if (endPr == null || !endPr.isSetSz()) {
+            endPr = getDefaultMasterStyle().getDefRPr();
+        }
         return (endPr == null || !endPr.isSetSz()) ? 12 : (endPr.getSz() / 100.);
     }
 
@@ -1061,5 +1064,18 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
             default:
                 return false;
         }
+    }
+
+    /**
+     * Helper method to allow subclasses to provide their own text run
+     *
+     * @param r the xml reference
+     * 
+     * @return a new text paragraph
+     * 
+     * @since POI 3.15-beta2
+     */
+    protected XSLFTextRun newTextRun(CTRegularTextRun r) {
+        return new XSLFTextRun(r, this);
     }
 }

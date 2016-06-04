@@ -21,6 +21,7 @@ package org.apache.poi.xslf.usermodel;
 
 import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -29,6 +30,9 @@ import java.util.List;
 import javax.xml.namespace.QName;
 
 import org.apache.poi.POIXMLException;
+import org.apache.poi.sl.draw.DrawFactory;
+import org.apache.poi.sl.draw.DrawTableShape;
+import org.apache.poi.sl.draw.DrawTextShape;
 import org.apache.poi.sl.usermodel.TableShape;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.Units;
@@ -45,12 +49,10 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTGraphicalObjectFra
 
 /**
  * Represents a table in a .pptx presentation
- *
- * @author Yegor Kozlov
  */
 public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow>,
     TableShape<XSLFShape,XSLFTextParagraph> {
-    static String TABLE_URI = "http://schemas.openxmlformats.org/drawingml/2006/table";
+    /* package */ static final String TABLE_URI = "http://schemas.openxmlformats.org/drawingml/2006/table";
 
     private CTTable _table;
     private List<XSLFTableRow> _rows;
@@ -77,7 +79,11 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
         _table = (CTTable) rs[0];
         CTTableRow[] trArray = _table.getTrArray();
         _rows = new ArrayList<XSLFTableRow>(trArray.length);
-        for(CTTableRow row : trArray) _rows.add(new XSLFTableRow(row, this));
+        for(CTTableRow row : trArray) {
+            XSLFTableRow xr = new XSLFTableRow(row, this);
+            _rows.add(xr);
+        }
+        updateRowColIndexes();
     }
 
     @Override
@@ -146,8 +152,10 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
     public XSLFTableRow addRow(){
         CTTableRow tr = _table.addNewTr();
         XSLFTableRow row = new XSLFTableRow(tr, this);
-        row.setHeight(20.0);    // default height is 20 points
+        // default height is 20 points
+        row.setHeight(20.0);    
         _rows.add(row);
+        updateRowColIndexes();
         return row;
     }
 
@@ -223,5 +231,111 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
     			}
     		}
     	}
+    }
+    
+    /**
+     * Get assigned TableStyle
+     *
+     * @return the assigned TableStyle
+     * 
+     * @since POI 3.15-beta2
+     */
+    protected XSLFTableStyle getTableStyle() {
+        CTTable tab = getCTTable();
+        // TODO: support inline table style
+        if (!tab.isSetTblPr() || !tab.getTblPr().isSetTableStyleId()) {
+            return null;
+        }
+        
+        String styleId = tab.getTblPr().getTableStyleId();
+        XSLFTableStyles styles = getSheet().getSlideShow().getTableStyles();
+        for (XSLFTableStyle style : styles.getStyles()) {
+            if (style.getStyleId().equals(styleId)) {
+                return style;
+            }
+        }
+        return null;
+    }
+    
+    /* package */ void updateRowColIndexes() {
+        int rowIdx = 0;
+        for (XSLFTableRow xr : this) {
+            int colIdx = 0;
+            for (XSLFTableCell tc : xr) {
+                tc.setRowColIndex(rowIdx, colIdx);
+                colIdx++;
+            }
+            rowIdx++;
+        }
+    }
+
+    /* package */ void updateCellAnchor() {
+        int rows = getNumberOfRows();
+        int cols = getNumberOfColumns();
+
+        double colWidths[] = new double[cols];
+        double rowHeights[] = new double[rows];
+
+        for (int row=0; row<rows; row++) {
+            rowHeights[row] = getRowHeight(row);
+        }
+        for (int col=0; col<cols; col++) {
+            colWidths[col] = getColumnWidth(col);
+        }
+
+        Rectangle2D tblAnc = getAnchor();
+        DrawFactory df = DrawFactory.getInstance(null);
+        
+        double newY = tblAnc.getY();
+
+        // #1 pass - determine row heights, the height values might be too low or 0 ...
+        for (int row=0; row<rows; row++) {
+            double maxHeight = 0;
+            for (int col=0; col<cols; col++) {
+                XSLFTableCell tc = getCell(row, col);
+                if (tc.getGridSpan() != 1 || tc.getRowSpan() != 1) {
+                    continue;
+                }
+                // need to set the anchor before height calculation
+                tc.setAnchor(new Rectangle2D.Double(0,0,colWidths[col],0));
+                DrawTextShape dts = df.getDrawable(tc);
+                maxHeight = Math.max(maxHeight, dts.getTextHeight());
+            }
+            rowHeights[row] = Math.max(rowHeights[row],maxHeight);
+        }
+        
+        // #2 pass - init properties
+        for (int row=0; row<rows; row++) {
+            double newX = tblAnc.getX();
+            for (int col=0; col<cols; col++) {
+                Rectangle2D bounds = new Rectangle2D.Double(newX, newY, colWidths[col], rowHeights[row]);
+                XSLFTableCell tc = getCell(row, col);
+                tc.setAnchor(bounds);
+                newX += colWidths[col]+DrawTableShape.borderSize;
+            }
+            newY += rowHeights[row]+DrawTableShape.borderSize;
+        }
+        
+        // #3 pass - update merge info
+        for (int row=0; row<rows; row++) {
+            for (int col=0; col<cols; col++) {
+                XSLFTableCell tc = getCell(row, col);
+                Rectangle2D mergedBounds = tc.getAnchor();
+                for (int col2=col+1; col2<col+tc.getGridSpan(); col2++) {
+                    assert(col2 < cols);
+                    XSLFTableCell tc2 = getCell(row, col2);
+                    assert(tc2.getGridSpan() == 1 && tc2.getRowSpan() == 1);
+                    mergedBounds.add(tc2.getAnchor());
+                }
+                for (int row2=row+1; row2<row+tc.getRowSpan(); row2++) {
+                    assert(row2 < rows);
+                    XSLFTableCell tc2 = getCell(row2, col);
+                    assert(tc2.getGridSpan() == 1 && tc2.getRowSpan() == 1);
+                    mergedBounds.add(tc2.getAnchor());
+                }
+                tc.setAnchor(mergedBounds);
+            }
+        }
+        
     }
 }

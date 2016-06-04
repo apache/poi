@@ -30,8 +30,6 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTTableRow;
 
 /**
  * Represents a table in a .pptx presentation
- *
- * @author Yegor Kozlov
  */
 public class XSLFTableRow implements Iterable<XSLFTableCell> {
     private CTTableRow _row;
@@ -44,7 +42,7 @@ public class XSLFTableRow implements Iterable<XSLFTableCell> {
         CTTableCell[] tcArray = _row.getTcArray();
         _cells = new ArrayList<XSLFTableCell>(tcArray.length);
         for(CTTableCell cell : tcArray) {
-            _cells.add(new XSLFTableCell(cell, table.getSheet()));
+            _cells.add(new XSLFTableCell(cell, table));
         }
     }
 
@@ -71,12 +69,13 @@ public class XSLFTableRow implements Iterable<XSLFTableCell> {
     public XSLFTableCell addCell(){
         CTTableCell c = _row.addNewTc();
         c.set(XSLFTableCell.prototype());
-        XSLFTableCell cell = new XSLFTableCell(c, _table.getSheet());
+        XSLFTableCell cell = new XSLFTableCell(c, _table);
         _cells.add(cell);
 
         if(_table.getNumberOfColumns() < _row.sizeOfTcArray()) {
             _table.getCTTable().getTblGrid().addNewGridCol().setW(Units.toEMU(100.0));    
         }
+        _table.updateRowColIndexes();
         return cell;
     }
 

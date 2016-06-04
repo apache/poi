@@ -30,15 +30,13 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
 /**
  * Represents a run of text within the containing text body. The run element is the
  * lowest level text separation mechanism within a text body.
- *
- * @author Yegor Kozlov
  */
 @Beta
 public class XSLFTextRun implements TextRun {
     private final CTRegularTextRun _r;
     private final XSLFTextParagraph _p;
 
-    XSLFTextRun(CTRegularTextRun r, XSLFTextParagraph p){
+    protected XSLFTextRun(CTRegularTextRun r, XSLFTextParagraph p){
         _r = r;
         _p = p;
     }

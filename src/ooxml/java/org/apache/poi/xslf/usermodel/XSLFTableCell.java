@@ -20,6 +20,7 @@
 package org.apache.poi.xslf.usermodel;
 
 import java.awt.Color;
+import java.awt.geom.Rectangle2D;
 
 import org.apache.poi.sl.draw.DrawPaint;
 import org.apache.poi.sl.usermodel.PaintStyle;
@@ -30,18 +31,32 @@ import org.apache.poi.sl.usermodel.StrokeStyle.LineDash;
 import org.apache.poi.sl.usermodel.TableCell;
 import org.apache.poi.sl.usermodel.VerticalAlignment;
 import org.apache.poi.util.Units;
+import org.apache.poi.xslf.usermodel.XSLFTableStyle.TablePartStyle;
+import org.apache.xmlbeans.XmlObject;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTFillProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTFontReference;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTLineEndProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTLineProperties;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTSRgbColor;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTPoint2D;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTPositiveSize2D;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTRegularTextRun;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTSchemeColor;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTSolidColorFillProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTable;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTableCell;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTableCellProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTablePartStyle;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTableProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTableStyleTextStyle;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBody;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraph;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTransform2D;
 import org.openxmlformats.schemas.drawingml.x2006.main.STCompoundLine;
 import org.openxmlformats.schemas.drawingml.x2006.main.STLineCap;
 import org.openxmlformats.schemas.drawingml.x2006.main.STLineEndLength;
 import org.openxmlformats.schemas.drawingml.x2006.main.STLineEndType;
 import org.openxmlformats.schemas.drawingml.x2006.main.STLineEndWidth;
+import org.openxmlformats.schemas.drawingml.x2006.main.STOnOffStyleType;
 import org.openxmlformats.schemas.drawingml.x2006.main.STPenAlignment;
 import org.openxmlformats.schemas.drawingml.x2006.main.STPresetLineDashVal;
 import org.openxmlformats.schemas.drawingml.x2006.main.STTextAnchoringType;
@@ -52,14 +67,22 @@ import org.openxmlformats.schemas.drawingml.x2006.main.STTextVerticalType;
  */
 public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,XSLFTextParagraph> {
     private CTTableCellProperties _tcPr = null;
+    private final XSLFTable table;
+    private int row = 0, col = 0;
 
-    /*package*/ XSLFTableCell(CTTableCell cell, XSLFSheet sheet){
-        super(cell, sheet);
+    /**
+     * Volatile/temporary anchor - e.g. for rendering
+     */
+    private Rectangle2D anchor = null;
+
+    /*package*/ XSLFTableCell(CTTableCell cell, XSLFTable table){
+        super(cell, table.getSheet());
+        this.table = table;
     }
 
     @Override
     protected CTTextBody getTextBody(boolean create){
-        CTTableCell cell = (CTTableCell)getXmlObject();
+        CTTableCell cell = getCell();
         CTTextBody txBody = cell.getTxBody();
         if (txBody == null && create) {
             txBody = cell.addNewTxBody();
@@ -80,7 +103,7 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
 
     protected CTTableCellProperties getCellProperties(boolean create) {
         if (_tcPr == null) {
-            CTTableCell cell = (CTTableCell)getXmlObject();
+            CTTableCell cell = getCell();
             _tcPr = cell.getTcPr();
             if (_tcPr == null && create) {
                 _tcPr = cell.addNewTcPr();
@@ -190,28 +213,28 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
             }
         };
     }
-    
+
     @Override
     public void setBorderStyle(BorderEdge edge, StrokeStyle style) {
         if (style == null) {
             throw new IllegalArgumentException("StrokeStyle needs to be specified.");
         }
-        
+
         LineCap cap = style.getLineCap();
         if (cap != null) {
             setBorderCap(edge, cap);
         }
-        
+
         LineCompound compound = style.getLineCompound();
         if (compound != null) {
             setBorderCompound(edge, compound);
         }
-        
+
         LineDash dash = style.getLineDash();
         if (dash != null) {
             setBorderDash(edge, dash);
         }
-        
+
         double width = style.getLineWidth();
         setBorderWidth(edge, width);
     }
@@ -273,10 +296,9 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
         }
 
         CTLineProperties ln = setBorderDefaults(edge);
-
-        CTSRgbColor rgb = CTSRgbColor.Factory.newInstance();
-        rgb.setVal(new byte[]{(byte)color.getRed(), (byte)color.getGreen(), (byte)color.getBlue()});
-        ln.addNewSolidFill().setSrgbClr(rgb);
+        CTSolidColorFillProperties fill = ln.addNewSolidFill();
+        XSLFColor c = new XSLFColor(fill, getSheet().getTheme(), fill.getSchemeClr());
+        c.setColor(color);
     }
 
     public Color getBorderColor(BorderEdge edge) {
@@ -284,12 +306,8 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
         if (ln == null || ln.isSetNoFill() || !ln.isSetSolidFill()) return null;
 
         CTSolidColorFillProperties fill = ln.getSolidFill();
-        if (!fill.isSetSrgbClr()) {
-            // TODO for now return null for all colors except explicit RGB
-            return null;
-        }
-        byte[] val = fill.getSrgbClr().getVal();
-        return new Color(0xFF & val[0], 0xFF & val[1], 0xFF & val[2]);
+        XSLFColor c = new XSLFColor(fill, getSheet().getTheme(), fill.getSchemeClr());
+        return c.getColor();
     }
 
     public LineCompound getBorderCompound(BorderEdge edge) {
@@ -335,7 +353,7 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
         if (ln == null || ln.isSetNoFill() || !ln.isSetSolidFill() || !ln.isSetCap()) {
             return null;
         }
-        
+
         return LineCap.fromOoxmlId(ln.getCap().intValue());
     }
 
@@ -361,14 +379,10 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
         CTTableCellProperties spPr = getCellProperties(true);
         if (color == null) {
             if(spPr.isSetSolidFill()) spPr.unsetSolidFill();
-        }
-        else {
+        } else {
             CTSolidColorFillProperties fill = spPr.isSetSolidFill() ? spPr.getSolidFill() : spPr.addNewSolidFill();
-
-            CTSRgbColor rgb = CTSRgbColor.Factory.newInstance();
-            rgb.setVal(new byte[]{(byte) color.getRed(), (byte) color.getGreen(), (byte) color.getBlue()});
-
-            fill.setSrgbClr(rgb);
+            XSLFColor c = new XSLFColor(fill, getSheet().getTheme(), fill.getSchemeClr());
+            c.setColor(color);
         }
     }
 
@@ -379,31 +393,126 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
     @Override
     public Color getFillColor(){
         CTTableCellProperties spPr = getCellProperties(false);
-        if (spPr == null || !spPr.isSetSolidFill()) return null;
-
-        CTSolidColorFillProperties fill = spPr.getSolidFill();
-        if (!fill.isSetSrgbClr()) {
-            // TODO for now return null for all colors except explicit RGB
+        if (spPr == null || !spPr.isSetSolidFill()) {
             return null;
         }
-        byte[] val = fill.getSrgbClr().getVal();
-        return new Color(0xFF & val[0], 0xFF & val[1], 0xFF & val[2]);
+
+        CTSolidColorFillProperties fill = spPr.getSolidFill();
+        XSLFColor c = new XSLFColor(fill, getSheet().getTheme(), fill.getSchemeClr());
+        return c.getColor();
+    }
+
+    @SuppressWarnings("resource")
+    @Override
+    public PaintStyle getFillPaint() {
+        Color c = getFillColor();
+        if (c != null) {
+            return DrawPaint.createSolidPaint(c);
+        }
+
+        CTTablePartStyle tps = getTablePartStyle(null);
+        if (tps == null || !tps.isSetTcStyle()) {
+            tps = getTablePartStyle(TablePartStyle.wholeTbl);
+            if (tps == null || !tps.isSetTcStyle()) {
+                return null;
+            }
+        }
+
+        XMLSlideShow slideShow = table.getSheet().getSlideShow();
+        assert(slideShow != null);
+        XSLFTheme theme = slideShow.getSlides().get(0).getTheme();
+        CTFillProperties pr = tps.getTcStyle().getFill();
+
+          for (XmlObject obj : pr.selectPath("*")) {
+              PaintStyle paint = XSLFShape.selectPaint(obj, null, slideShow.getPackagePart(), theme);
+
+              if (paint != null) {
+                  return paint;
+              }
+          }
+
+          return null;
+    }
+
+    /**
+     * Retrieves the part style depending on the location of this cell
+     *
+     * @param tablePartStyle the part to be returned, usually this is null
+     *  and only set when used as a helper method
+     * @return the table part style
+     */
+    private CTTablePartStyle getTablePartStyle(TablePartStyle tablePartStyle) {
+        CTTable ct = table.getCTTable();
+        if (!ct.isSetTblPr()) {
+            return null;
+        }
+
+        CTTableProperties pr = ct.getTblPr();
+        boolean bandRow = (pr.isSetBandRow() && pr.getBandRow());
+        boolean firstRow = (pr.isSetFirstRow() && pr.getFirstRow());
+        boolean lastRow = (pr.isSetLastRow() && pr.getLastRow());
+        boolean bandCol = (pr.isSetBandCol() && pr.getBandCol());
+        boolean firstCol = (pr.isSetFirstCol() && pr.getFirstCol());
+        boolean lastCol = (pr.isSetLastCol() && pr.getLastCol());
+
+        TablePartStyle tps;
+        if (tablePartStyle != null) {
+            tps = tablePartStyle;
+        } else if (row == 0 && firstRow) {
+            tps = TablePartStyle.firstRow;
+        } else if (row == table.getNumberOfRows()-1 && lastRow) {
+            tps = TablePartStyle.lastRow;
+        } else if (col == 0 && firstCol) {
+            tps = TablePartStyle.firstCol;
+        } else if (col == table.getNumberOfColumns()-1 && lastCol) {
+            tps = TablePartStyle.lastCol;
+        } else {
+            tps = TablePartStyle.wholeTbl;
+
+            int br = row + (firstRow ? 1 : 0);
+            int bc = col + (firstCol ? 1 : 0);
+            if (bandRow && (br & 1) == 0) {
+                tps = TablePartStyle.band1H;
+            } else if (bandCol && (bc & 1) == 0) {
+                tps = TablePartStyle.band1V;
+            }
+        }
+
+        XSLFTableStyle tabStyle = table.getTableStyle();
+        if (tabStyle == null) {
+            return null;
+        }
+
+        CTTablePartStyle part = tabStyle.getTablePartStyle(tps);
+        return (part == null) ? tabStyle.getTablePartStyle(TablePartStyle.wholeTbl) : part;
     }
 
     void setGridSpan(int gridSpan_) {
-        ((CTTableCell)getXmlObject()).setGridSpan(gridSpan_);
+        getCell().setGridSpan(gridSpan_);
+    }
+
+    @Override
+    public int getGridSpan() {
+        CTTableCell c = getCell();
+        return (c.isSetGridSpan()) ? c.getGridSpan() : 1;
     }
 
     void setRowSpan(int rowSpan_) {
-        ((CTTableCell)getXmlObject()).setRowSpan(rowSpan_);
+        getCell().setRowSpan(rowSpan_);
+    }
+
+    @Override
+    public int getRowSpan() {
+        CTTableCell c = getCell();
+        return (c.isSetRowSpan()) ? c.getRowSpan() : 1;
     }
 
     void setHMerge(boolean merge_) {
-        ((CTTableCell)getXmlObject()).setHMerge(merge_);
+        getCell().setHMerge(merge_);
     }
 
     void setVMerge(boolean merge_) {
-        ((CTTableCell)getXmlObject()).setVMerge(merge_);
+        getCell().setVMerge(merge_);
     }
 
     @Override
@@ -457,7 +566,7 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
                 vt = STTextVerticalType.WORD_ART_VERT;
                 break;
             }
-            
+
             cellProps.setVert(vt);
         }
     }
@@ -475,7 +584,7 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
         } else {
             orientation = STTextVerticalType.HORZ;
         }
-                
+
         switch (orientation.intValue()) {
             default:
             case STTextVerticalType.INT_HORZ:
@@ -489,6 +598,144 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
             case STTextVerticalType.INT_WORD_ART_VERT:
             case STTextVerticalType.INT_WORD_ART_VERT_RTL:
                 return TextDirection.STACKED;
+        }
+    }
+
+    private CTTableCell getCell() {
+        return (CTTableCell)getXmlObject();
+    }
+
+    /* package */ void setRowColIndex(int row, int col) {
+        this.row = row;
+        this.col = col;
+    }
+
+    /**
+     * Return a fake-xfrm which is used for calculating the text height
+     */
+    protected CTTransform2D getXfrm() {
+        Rectangle2D anc = getAnchor();
+        CTTransform2D xfrm = CTTransform2D.Factory.newInstance();
+        CTPoint2D off = xfrm.addNewOff();
+        off.setX(Units.toEMU(anc.getX()));
+        off.setY(Units.toEMU(anc.getY()));
+        CTPositiveSize2D size = xfrm.addNewExt();
+        size.setCx(Units.toEMU(anc.getWidth()));
+        size.setCy(Units.toEMU(anc.getHeight()));
+        return xfrm;
+    }
+
+    /**
+     * There's no real anchor for table cells - this method is used to temporarily store the location
+     * of the cell for a later retrieval, e.g. for rendering
+     *
+     * @since POI 3.15-beta2
+     */
+    @Override
+    public void setAnchor(Rectangle2D anchor) {
+        if (this.anchor == null) {
+            this.anchor = (Rectangle2D)anchor.clone();
+        } else {
+            this.anchor.setRect(anchor);
+        }
+    }
+
+    /**
+     * @since POI 3.15-beta2
+     */
+    @Override
+    public Rectangle2D getAnchor() {
+        if (anchor == null) {
+            table.updateCellAnchor();
+        }
+        // anchor should be set, after updateCellAnchor is through
+        assert(anchor != null);
+        return anchor;
+    }
+
+    /**
+     * @since POI 3.15-beta2
+     */
+    @Override
+    public boolean isMerged() {
+        CTTableCell c = getCell();
+        return (c.isSetHMerge() && c.getHMerge()) || (c.isSetVMerge() && c.getVMerge());
+    }
+
+    /**
+     * @since POI 3.15-beta2
+     */
+    @Override
+    protected XSLFCellTextParagraph newTextParagraph(CTTextParagraph p) {
+        return new XSLFCellTextParagraph(p, this);
+    }
+
+    /**
+     * @since POI 3.15-beta2
+     */
+    private class XSLFCellTextParagraph extends XSLFTextParagraph {
+        protected XSLFCellTextParagraph(CTTextParagraph p, XSLFTextShape shape) {
+            super(p, shape);
+        }
+
+        @Override
+        protected XSLFCellTextRun newTextRun(CTRegularTextRun r) {
+            return new XSLFCellTextRun(r, this);
+        }
+    }
+
+    /**
+     * @since POI 3.15-beta2
+     */
+    private class XSLFCellTextRun extends XSLFTextRun {
+        protected XSLFCellTextRun(CTRegularTextRun r, XSLFTextParagraph p) {
+            super(r, p);
+        }
+
+        @Override
+        public PaintStyle getFontColor(){
+            CTTableStyleTextStyle txStyle = getTextStyle();
+            if (txStyle == null) {
+                return super.getFontColor();
+            }
+
+            CTSchemeColor phClr = null;
+            CTFontReference fontRef = txStyle.getFontRef();
+            if (fontRef != null) {
+                phClr = fontRef.getSchemeClr();
+            }
+            
+            XSLFTheme theme = getSheet().getTheme();
+            final XSLFColor c = new XSLFColor(txStyle, theme, phClr);
+            return DrawPaint.createSolidPaint(c.getColorStyle());
+        }
+
+        @Override
+        public boolean isBold() {
+            CTTableStyleTextStyle txStyle = getTextStyle();
+            if (txStyle == null) {
+                return super.isBold();
+            } else {
+                return txStyle.isSetB() && txStyle.getB().intValue() == STOnOffStyleType.INT_ON;
+            }
+        }
+
+        @Override
+        public boolean isItalic() {
+            CTTableStyleTextStyle txStyle = getTextStyle();
+            if (txStyle == null) {
+                return super.isItalic();
+            } else {
+                return txStyle.isSetI() && txStyle.getI().intValue() == STOnOffStyleType.INT_ON;
+            }
+        }
+ 
+        private CTTableStyleTextStyle getTextStyle() {
+            CTTablePartStyle tps = getTablePartStyle(null);
+            if (tps == null || !tps.isSetTcTxStyle()) {
+                tps = getTablePartStyle(TablePartStyle.wholeTbl);
+            }
+            return (tps == null) ? null : tps.getTcTxStyle();
         }
     }
 }

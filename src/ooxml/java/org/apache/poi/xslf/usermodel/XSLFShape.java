@@ -65,8 +65,6 @@ import org.openxmlformats.schemas.presentationml.x2006.main.STPlaceholderType;
 
 /**
  * Base super-class class for all shapes in PresentationML
- *
- * @author Yegor Kozlov
  */
 @Beta
 public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
@@ -150,6 +148,7 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
     }
     
     protected PaintStyle getFillPaint() {
+        final XSLFTheme theme = getSheet().getTheme();
         PropertyFetcher<PaintStyle> fetcher = new PropertyFetcher<PaintStyle>() {
             public boolean fetch(XSLFShape shape) {
                 XmlObject pr = null;
@@ -178,7 +177,7 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
                 PaintStyle paint = null;
                 PackagePart pp = getSheet().getPackagePart();
                 for (XmlObject obj : pr.selectPath("*")) {
-                    paint = selectPaint(obj, null, pp);
+                    paint = selectPaint(obj, null, pp, theme);
                     if (paint != null) {
                         setValue(paint);
                         return true;
@@ -203,7 +202,7 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
         if (fillRef == null) {
             fillRef = getBgRef();
         }
-        paint = selectPaint(fillRef);
+        paint = selectPaint(fillRef, theme);
 
         return paint;
     }
@@ -365,9 +364,11 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
 
     protected PaintStyle getPaint(XmlObject spPr, CTSchemeColor phClr) {
         PaintStyle paint = null;
-        PackagePart pp = getSheet().getPackagePart();
+        XSLFSheet sheet = getSheet(); 
+        PackagePart pp = sheet.getPackagePart();
+        XSLFTheme theme = sheet.getTheme();
         for (XmlObject obj : spPr.selectPath("*")) {
-            paint = selectPaint(obj, phClr, pp);
+            paint = selectPaint(obj, phClr, pp, theme);
             if(paint != null) break;
         }
         return paint;
@@ -392,24 +393,23 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
      *
      * @return  the applied Paint or null if none was applied
      */
-    protected PaintStyle selectPaint(XmlObject obj, final CTSchemeColor phClr, final PackagePart parentPart) {
+    protected static PaintStyle selectPaint(XmlObject obj, final CTSchemeColor phClr, final PackagePart parentPart, final XSLFTheme theme) {
         if (obj instanceof CTNoFillProperties) {
             return null;
         } else if (obj instanceof CTSolidColorFillProperties) {
-            return selectPaint((CTSolidColorFillProperties)obj, phClr);
+            return selectPaint((CTSolidColorFillProperties)obj, phClr, theme);
         } else if (obj instanceof CTBlipFillProperties) {
             return selectPaint((CTBlipFillProperties)obj, parentPart);
         } else if (obj instanceof CTGradientFillProperties) {
-            return selectPaint((CTGradientFillProperties) obj, phClr);
+            return selectPaint((CTGradientFillProperties) obj, phClr, theme);
         } else if (obj instanceof CTStyleMatrixReference) {
-            return selectPaint((CTStyleMatrixReference)obj);
+            return selectPaint((CTStyleMatrixReference)obj, theme);
         } else {
             return null;
         }
     }
 
-    protected PaintStyle selectPaint(CTSolidColorFillProperties solidFill, CTSchemeColor phClr) {
-        final XSLFTheme theme = getSheet().getTheme();
+    protected static PaintStyle selectPaint(CTSolidColorFillProperties solidFill, CTSchemeColor phClr, final XSLFTheme theme) {
         if (phClr == null && solidFill.isSetSchemeClr()) {
             phClr = solidFill.getSchemeClr();
         }
@@ -417,7 +417,7 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
         return DrawPaint.createSolidPaint(c.getColorStyle());
     }
     
-    protected PaintStyle selectPaint(final CTBlipFillProperties blipFill, final PackagePart parentPart) {
+    protected static PaintStyle selectPaint(final CTBlipFillProperties blipFill, final PackagePart parentPart) {
         final CTBlip blip = blipFill.getBlip();
         return new TexturePaint() {
             private PackagePart getPart() {
@@ -451,7 +451,7 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
         };        
     }
     
-    protected PaintStyle selectPaint(final CTGradientFillProperties gradFill, CTSchemeColor phClr) {
+    protected static PaintStyle selectPaint(final CTGradientFillProperties gradFill, CTSchemeColor phClr, final XSLFTheme theme) {
 
         final CTGradientStop[] gs = gradFill.getGsLst().getGsArray();
 
@@ -465,7 +465,6 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
 
         final ColorStyle cs[] = new ColorStyle[gs.length];
         final float fractions[] = new float[gs.length];
-        XSLFTheme theme = getSheet().getTheme();
         
         int i=0;
         for (CTGradientStop cgs : gs) {
@@ -519,7 +518,7 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
         };        
     }
     
-    protected PaintStyle selectPaint(CTStyleMatrixReference fillRef) {
+    protected static PaintStyle selectPaint(CTStyleMatrixReference fillRef, final XSLFTheme theme) {
         if (fillRef == null) return null;
         
         // The idx attribute refers to the index of a fill style or
@@ -529,8 +528,6 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
         // values 1001 and above refer to the index of a background fill style within the bgFillStyleLst element.
         int idx = (int)fillRef.getIdx();
         CTSchemeColor phClr = fillRef.getSchemeClr();
-        XSLFSheet sheet = getSheet();
-        XSLFTheme theme = sheet.getTheme();
         XmlObject fillProps = null;
         CTStyleMatrix matrix = theme.getXmlObject().getThemeElements().getFmtScheme();
         if (idx >= 1 && idx <= 999) {
@@ -538,7 +535,7 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
         } else if (idx >= 1001 ){
             fillProps = matrix.getBgFillStyleLst().selectPath("*")[idx - 1001];
         }
-        return (fillProps == null) ? null : selectPaint(fillProps, phClr, theme.getPackagePart());
+        return (fillProps == null) ? null : selectPaint(fillProps, phClr, theme.getPackagePart(), theme);
     }
     
     @Override

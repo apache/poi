@@ -17,6 +17,7 @@
 
 package org.apache.poi.sl.draw;
 
+import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Paint;
 import java.awt.font.FontRenderContext;
@@ -45,8 +46,10 @@ import org.apache.poi.sl.usermodel.TextParagraph.TextAlign;
 import org.apache.poi.sl.usermodel.TextRun;
 import org.apache.poi.sl.usermodel.TextRun.TextCap;
 import org.apache.poi.sl.usermodel.TextShape;
+import org.apache.poi.sl.usermodel.TextShape.TextDirection;
 import org.apache.poi.util.StringUtil;
 import org.apache.poi.util.Units;
+
 
 public class DrawTextParagraph implements Drawable {
     /** Keys for passing hyperlinks to the graphics context */
@@ -390,13 +393,12 @@ public class DrawTextParagraph implements Drawable {
      * @return  wrapping width in points
      */
     protected double getWrappingWidth(boolean firstLine, Graphics2D graphics){
-        // internal margins for the text box
+        TextShape<?,?> ts = paragraph.getParentShape();
 
-        Insets2D insets = paragraph.getParentShape().getInsets();
+        // internal margins for the text box
+        Insets2D insets = ts.getInsets();
         double leftInset = insets.left;
         double rightInset = insets.right;
-
-        Rectangle2D anchor = DrawShape.getAnchor(graphics, paragraph.getParentShape());
 
         int indentLevel = paragraph.getIndentLevel();
         if (indentLevel == -1) {
@@ -417,13 +419,33 @@ public class DrawTextParagraph implements Drawable {
             rightMargin = 0d;
         }
 
+        Rectangle2D anchor = DrawShape.getAnchor(graphics, ts);
+        TextDirection textDir = ts.getTextDirection();
         double width;
-        TextShape<?,?> ts = paragraph.getParentShape();
         if (!ts.getWordWrap()) {
-            // if wordWrap == false then we return the advance to the right border of the sheet
-            width = ts.getSheet().getSlideShow().getPageSize().getWidth() - anchor.getX();
+            Dimension pageDim = ts.getSheet().getSlideShow().getPageSize();
+            // if wordWrap == false then we return the advance to the (right) border of the sheet
+            switch (textDir) {
+                default:
+                    width = pageDim.getWidth() - anchor.getX();
+                    break;
+                case VERTICAL:
+                    width = pageDim.getHeight() - anchor.getX();
+                    break;
+                case VERTICAL_270:
+                    width = anchor.getX();
+                    break;
+            }
         } else {
-            width = anchor.getWidth() - leftInset - rightInset - leftMargin - rightMargin;
+            switch (textDir) {
+                default:
+                    width = anchor.getWidth() - leftInset - rightInset - leftMargin - rightMargin;
+                    break;
+                case VERTICAL:
+                case VERTICAL_270:
+                    width = anchor.getHeight() - leftInset - rightInset - leftMargin - rightMargin;
+                    break;
+            }
             if (firstLine && !isHSLF()) {
                 if (bullet != null){
                     if (indent > 0) width -= indent;

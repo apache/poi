@@ -19,21 +19,31 @@ package org.apache.poi.sl.draw;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Paint;
+import java.awt.geom.Line2D;
+import java.awt.geom.Rectangle2D;
 
 import org.apache.poi.sl.usermodel.GroupShape;
+import org.apache.poi.sl.usermodel.StrokeStyle;
 import org.apache.poi.sl.usermodel.StrokeStyle.LineCompound;
 import org.apache.poi.sl.usermodel.StrokeStyle.LineDash;
 import org.apache.poi.sl.usermodel.TableCell;
 import org.apache.poi.sl.usermodel.TableCell.BorderEdge;
+import org.apache.poi.util.Internal;
 import org.apache.poi.sl.usermodel.TableShape;
 
 public class DrawTableShape extends DrawShape {
-    // to be implemented ...
+    /**
+     * Additional spacing between cells
+     */
+    @Internal
+    public static final int borderSize = 2;
+    
     public DrawTableShape(TableShape<?,?> shape) {
         super(shape);
     }
-    
-    protected Drawable getDrawable(Graphics2D graphics) {
+
+    protected Drawable getGroupShape(Graphics2D graphics) {
         if (shape instanceof GroupShape) {
             DrawFactory df = DrawFactory.getInstance(graphics);
             return df.getDrawable((GroupShape<?,?>)shape);
@@ -42,31 +52,102 @@ public class DrawTableShape extends DrawShape {
     }
 
     public void applyTransform(Graphics2D graphics) {
-        Drawable d = getDrawable(graphics);
+        Drawable d = getGroupShape(graphics);
         if (d != null) {
             d.applyTransform(graphics);
+        } else {
+            super.applyTransform(graphics);
         }
     }
 
     public void draw(Graphics2D graphics) {
-        Drawable d = getDrawable(graphics);
+        Drawable d = getGroupShape(graphics);
         if (d != null) {
             d.draw(graphics);
+            return;
         }
+
+        TableShape<?,?> ts = getShape();
+        DrawPaint drawPaint = DrawFactory.getInstance(graphics).getPaint(ts);
+        final int rows = ts.getNumberOfRows();
+        final int cols = ts.getNumberOfColumns();
+        
+        // draw background boxes
+        for (int row=0; row<rows; row++) {
+            for (int col=0; col<cols; col++) {
+                TableCell<?,?> tc = ts.getCell(row, col);
+                if (tc == null || tc.isMerged()) {
+                    continue;
+                }
+
+                Paint fillPaint = drawPaint.getPaint(graphics, tc.getFillStyle().getPaint());
+                graphics.setPaint(fillPaint);
+                Rectangle2D cellAnc = tc.getAnchor();
+                graphics.fill(cellAnc);
+                
+                for (BorderEdge edge : BorderEdge.values()) {
+                    StrokeStyle stroke = tc.getBorderStyle(edge);
+                    if (stroke == null) {
+                        continue;
+                    }
+                    graphics.setStroke(getStroke(stroke));
+                    Paint linePaint = drawPaint.getPaint(graphics, stroke.getPaint());
+                    graphics.setPaint(linePaint);
+
+                    double x=cellAnc.getX(), y=cellAnc.getY(), w=cellAnc.getWidth(), h=cellAnc.getHeight();
+                    Line2D line;
+                    switch (edge) {
+                        default:
+                        case bottom:
+                            line = new Line2D.Double(x-borderSize, y+h, x+w+borderSize, y+h);
+                            break;
+                        case left:
+                            line = new Line2D.Double(x, y, x, y+h+borderSize);
+                            break;
+                        case right:
+                            line = new Line2D.Double(x+w, y, x+w, y+h+borderSize);
+                            break;
+                        case top:
+                            line = new Line2D.Double(x-borderSize, y, x+w+borderSize, y);
+                            break;
+                    }
+
+                    graphics.draw(line);
+                }
+            }
+        }
+
+        // draw text
+        drawContent(graphics);
     }
 
     public void drawContent(Graphics2D graphics) {
-        Drawable d = getDrawable(graphics);
+        Drawable d = getGroupShape(graphics);
         if (d != null) {
             d.drawContent(graphics);
+            return;
+        }
+        
+        TableShape<?,?> ts = getShape();
+        DrawFactory df = DrawFactory.getInstance(graphics);
+
+        final int rows = ts.getNumberOfRows();
+        final int cols = ts.getNumberOfColumns();
+        
+        for (int row=0; row<rows; row++) {
+            for (int col=0; col<cols; col++) {
+                TableCell<?,?> tc = ts.getCell(row, col);
+                DrawTextShape dts = df.getDrawable(tc);
+                dts.drawContent(graphics);
+            }
         }
     }
 
     @Override
     protected TableShape<?,?> getShape() {
         return (TableShape<?,?>)shape;
-    }    
-    
+    }
+
     /**
      * Format the table and apply the specified Line to all cell boundaries,
      * both outside and inside.
@@ -79,7 +160,7 @@ public class DrawTableShape extends DrawShape {
         TableShape<?,?> table = getShape();
         final int rows = table.getNumberOfRows();
         final int cols = table.getNumberOfColumns();
-        
+
         BorderEdge edges[] = { BorderEdge.top, BorderEdge.left, null, null };
         for (int row = 0; row < rows; row++) {
             for (int col = 0; col < cols; col++) {
@@ -99,11 +180,11 @@ public class DrawTableShape extends DrawShape {
      */
     public void setOutsideBorders(Object... args){
         if (args.length == 0) return;
-        
+
         TableShape<?,?> table = getShape();
         final int rows = table.getNumberOfRows();
         final int cols = table.getNumberOfColumns();
-        
+
         BorderEdge edges[] = new BorderEdge[4];
         for (int row = 0; row < rows; row++) {
             for (int col = 0; col < cols; col++) {
@@ -125,11 +206,11 @@ public class DrawTableShape extends DrawShape {
      */
     public void setInsideBorders(Object... args) {
         if (args.length == 0) return;
-        
+
         TableShape<?,?> table = getShape();
         final int rows = table.getNumberOfRows();
         final int cols = table.getNumberOfColumns();
-        
+
         BorderEdge edges[] = new BorderEdge[2];
         for (int row = 0; row < rows; row++) {
             for (int col = 0; col < cols; col++) {
@@ -139,7 +220,7 @@ public class DrawTableShape extends DrawShape {
             }
         }
     }
-    
+
     /**
      * Apply the border attributes (args) to the given cell and edges
      *
@@ -168,5 +249,4 @@ public class DrawTableShape extends DrawShape {
             }
         }
     }
-    
 }
