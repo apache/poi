@@ -127,6 +127,10 @@
 		<!-- We need a fair amount of memory to compile the xml schema, -->
 		<!-- but limit it in case it goes wrong!                        -->
 		<!-- Pick the right amount based on 32 vs 64 bit jvm            -->
+        <!-- ********************************************************** -->
+        <!-- If you are using IntelliJ, you might want to check         -->
+        <!-- http://stackoverflow.com/questions/24115142                -->
+        <!-- ********************************************************** -->
 		<profile>
 			<id>32bitstuff</id>
 			<activation>
@@ -137,6 +141,7 @@
 			</activation>
 			<properties>
 				<maven.compiler.maxmem>512m</maven.compiler.maxmem>
+                <argLine>-Xmx768m -XX:MaxPermSize=128m @{argLine}</argLine>
 			</properties>
 		</profile>
 		
@@ -150,6 +155,7 @@
 			</activation>
 			<properties>
 				<maven.compiler.maxmem>768m</maven.compiler.maxmem>
+                <argLine>-Xmx1024m -XX:MaxPermSize=256m @{argLine}</argLine>
 			</properties>
 		</profile>
 
