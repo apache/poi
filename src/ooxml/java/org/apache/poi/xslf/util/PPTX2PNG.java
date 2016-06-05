@@ -94,11 +94,16 @@ public class PPTX2PNG {
             return;
         }
 
+        if (format == null || !format.matches("^(png|gif|jpg|null)$")) {
+            usage("Invalid format given");
+            return;
+        }
+    
         if (outdir == null) {
             outdir = file.getParentFile();
         }
         
-        if (outdir == null || !outdir.exists() || !outdir.isDirectory()) {
+        if (!"null".equals(format) && (outdir == null || !outdir.exists() || !outdir.isDirectory())) {
             usage("Output directory doesn't exist");
             return;
         }
@@ -108,11 +113,6 @@ public class PPTX2PNG {
             return;
         }
         
-        if (format == null || !format.matches("^(png|gif|jpg|null)$")) {
-            usage("Invalid format given");
-            return;
-        }
-    
         if (!quiet) {
             System.out.println("Processing " + file);
         }
