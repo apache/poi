@@ -96,20 +96,24 @@ public final class TempFile {
         public File createTempFile(String prefix, String suffix) throws IOException {
             // Identify and create our temp dir, if needed
             if (dir == null) {
-                dir = new File(System.getProperty(JAVA_IO_TMPDIR), "poifiles");
-                if(!dir.exists()) {
-                    if(!dir.mkdirs()) {
-                        throw new IOException("Could not create temporary directory '" + dir + "'");
-                    }
+                String tmpDir = System.getProperty(JAVA_IO_TMPDIR);
+                if (tmpDir == null) {
+                    throw new IOException("Systems temporary directory not defined - set the -D"+JAVA_IO_TMPDIR+" jvm property!");
                 }
+                dir = new File(tmpDir, "poifiles");
             }
 
+             if (!(dir.exists() || dir.mkdirs()) || !dir.isDirectory()) {
+                throw new IOException("Could not create temporary directory '" + dir + "'");
+            }
+            
             // Generate a unique new filename 
             File newFile = File.createTempFile(prefix, suffix, dir);
 
             // Set the delete on exit flag, unless explicitly disabled
-            if (System.getProperty("poi.keep.tmp.files") == null)
+            if (System.getProperty("poi.keep.tmp.files") == null) {
                 newFile.deleteOnExit();
+            }
 
             // All done
             return newFile;
