@@ -67,6 +67,14 @@ public class TestTempFile {
         } else {
             System.setProperty(TempFile.JAVA_IO_TMPDIR, previousTempDir);
         }
+
+        // reset strategy to re-create the directory
+        TempFile.setTempFileCreationStrategy(new TempFile.DefaultTempFileCreationStrategy());
+
+        // check that we can still create a tempfile
+        File testFile = TempFile.createTempFile("test", ".tst");
+        assertTrue(testFile.exists());
+        assertTrue(testFile.delete());
     }
 
     @Test
