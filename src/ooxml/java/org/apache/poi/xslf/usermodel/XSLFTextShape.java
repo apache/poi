@@ -112,8 +112,8 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
         if (text == null) return null;
 
         // copy properties from last paragraph / textrun or paragraph end marker
-        CTTextParagraphProperties pPr = null;
-        CTTextCharacterProperties rPr = null;
+        CTTextParagraphProperties otherPPr = null;
+        CTTextCharacterProperties otherRPr = null;
 
         boolean firstPara;
         XSLFTextParagraph para;
@@ -124,25 +124,33 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
             firstPara = !newParagraph;
             para = _paragraphs.get(_paragraphs.size()-1);
             CTTextParagraph ctp = para.getXmlObject();
-            pPr = ctp.getPPr();
+            otherPPr = ctp.getPPr();
             List<XSLFTextRun> runs = para.getTextRuns();
             if (!runs.isEmpty()) {
                 XSLFTextRun r0 = runs.get(runs.size()-1);
-                rPr = r0.getXmlObject().getRPr();
-            } else if (ctp.isSetEndParaRPr()) {
-                rPr = ctp.getEndParaRPr();
+                otherRPr = r0.getRPr(false);
+                if (otherRPr == null) {
+                    otherRPr = ctp.getEndParaRPr();
+                }
             }
+            // don't copy endParaRPr to the run in case there aren't any other runs
+            // this is the case when setText() was called initially
+            // otherwise the master style will be overridden/ignored
         }
 
         XSLFTextRun run = null;
         for (String lineTxt : text.split("\\r\\n?|\\n")) {
             if (!firstPara) {
-                if (para != null && para.getXmlObject().isSetEndParaRPr()) {
-                    para.getXmlObject().unsetEndParaRPr();
+                if (para != null) {
+                    CTTextParagraph ctp = para.getXmlObject();
+                    CTTextCharacterProperties unexpectedRPr = ctp.getEndParaRPr();
+                    if (unexpectedRPr != null && unexpectedRPr != otherRPr) {
+                        ctp.unsetEndParaRPr();
+                    }
                 }
                 para = addNewTextParagraph();
-                if (pPr != null) {
-                    para.getXmlObject().setPPr(pPr);
+                if (otherPPr != null) {
+                    para.getXmlObject().setPPr(otherPPr);
                 }
             }
             boolean firstRun = true;
@@ -152,8 +160,8 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
                 }
                 run = para.addNewTextRun();
                 run.setText(runText);
-                if (rPr != null) {
-                    run.getXmlObject().setRPr(rPr);
+                if (otherRPr != null) {
+                    run.getRPr(true).set(otherRPr);
                 }
                 firstRun = false;
             }
@@ -261,8 +269,21 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
         CTTextBodyProperties bodyPr = getTextBodyPr();
         if (bodyPr != null) {
             STTextVerticalType.Enum val = bodyPr.getVert();
-            if(val != null){
-                return TextDirection.values()[val.intValue() - 1];
+            if(val != null) {
+                switch (val.intValue()) {
+                    default:
+                    case STTextVerticalType.INT_HORZ:
+                        return TextDirection.HORIZONTAL;
+                    case STTextVerticalType.INT_EA_VERT:
+                    case STTextVerticalType.INT_MONGOLIAN_VERT:
+                    case STTextVerticalType.INT_VERT:
+                        return TextDirection.VERTICAL;
+                    case STTextVerticalType.INT_VERT_270:
+                        return TextDirection.VERTICAL_270;
+                    case STTextVerticalType.INT_WORD_ART_VERT_RTL:
+                    case STTextVerticalType.INT_WORD_ART_VERT:
+                        return TextDirection.STACKED;
+                }
             }
         }
         return TextDirection.HORIZONTAL;

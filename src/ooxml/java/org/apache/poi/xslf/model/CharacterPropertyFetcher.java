@@ -22,17 +22,13 @@ package org.apache.poi.xslf.model;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextCharacterProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraphProperties;
 
-/**
- *
- * @author Yegor Kozlov
- */
 public abstract class CharacterPropertyFetcher<T> extends ParagraphPropertyFetcher<T> {
     public CharacterPropertyFetcher(int level) {
         super(level);
     }
 
     public boolean fetch(CTTextParagraphProperties props) {
-        if (props.isSetDefRPr()) {
+        if (props != null && props.isSetDefRPr()) {
             return fetch(props.getDefRPr());
         }
 

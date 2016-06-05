@@ -34,9 +34,6 @@ import org.junit.Test;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTableCell;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTGraphicalObjectFrame;
 
-/**
- * @author Yegor Kozlov
- */
 public class TestXSLFTable {
     @Test
     public void testRead() throws IOException {
@@ -82,8 +79,8 @@ public class TestXSLFTable {
 
     @Test
     public void testCreate() throws IOException {
-        XMLSlideShow ppt = new XMLSlideShow();
-        XSLFSlide slide = ppt.createSlide();
+        XMLSlideShow ppt1 = new XMLSlideShow();
+        XSLFSlide slide = ppt1.createSlide();
 
         XSLFTable tbl = slide.createTable();
         assertNotNull(tbl.getCTTable());
@@ -145,7 +142,17 @@ public class TestXSLFTable {
         cell1.setVerticalAlignment(null);
         assertEquals(VerticalAlignment.TOP, cell1.getVerticalAlignment());
         
-        ppt.close();
+        XMLSlideShow ppt2 = XSLFTestDataSamples.writeOutAndReadBack(ppt1);
+        ppt1.close();
+
+        slide = ppt2.getSlides().get(0);
+        tbl = (XSLFTable)slide.getShapes().get(0);
+        assertEquals(2, tbl.getNumberOfColumns());
+        assertEquals(1, tbl.getNumberOfRows());
+        assertEquals("POI", tbl.getCell(0, 0).getText());
+        assertEquals("Apache", tbl.getCell(0, 1).getText());
+        
+        ppt2.close();
     }
     
     @Test

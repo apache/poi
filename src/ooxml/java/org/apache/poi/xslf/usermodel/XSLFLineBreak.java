@@ -22,9 +22,6 @@ package org.apache.poi.xslf.usermodel;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTRegularTextRun;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextCharacterProperties;
 
-/**
- * @author Yegor Kozlov
- */
 class XSLFLineBreak extends XSLFTextRun {
     private final CTTextCharacterProperties _brProps;
 
@@ -34,7 +31,7 @@ class XSLFLineBreak extends XSLFTextRun {
     }
 
     @Override
-    protected CTTextCharacterProperties getRPr(){
+    protected CTTextCharacterProperties getRPr(boolean create){
         return _brProps;
     }
 
