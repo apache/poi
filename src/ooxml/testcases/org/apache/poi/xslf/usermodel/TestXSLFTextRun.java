@@ -40,7 +40,7 @@ public class TestXSLFTextRun {
         XSLFTextShape sh = slide.createAutoShape();
 
         XSLFTextRun r = sh.addNewTextParagraph().addNewTextRun();
-        assertEquals("en-US", r.getRPr().getLang());
+        assertEquals("en-US", r.getRPr(true).getLang());
 
         assertEquals(0., r.getCharacterSpacing(), 0);
         r.setCharacterSpacing(3);
@@ -49,7 +49,7 @@ public class TestXSLFTextRun {
         assertEquals(-3., r.getCharacterSpacing(), 0);
         r.setCharacterSpacing(0);
         assertEquals(0., r.getCharacterSpacing(), 0);
-        assertFalse(r.getRPr().isSetSpc());
+        assertFalse(r.getRPr(true).isSetSpc());
 
         assertTrue(sameColor(Color.black, r.getFontColor()));
         r.setFontColor(Color.red);

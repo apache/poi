@@ -151,7 +151,7 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
         CTTextCharacterProperties brProps = br.addNewRPr();
         if(_runs.size() > 0){
             // by default line break has the font size of the last text run
-            CTTextCharacterProperties prevRun = _runs.get(_runs.size() - 1).getRPr();
+            CTTextCharacterProperties prevRun = _runs.get(_runs.size() - 1).getRPr(true);
             brProps.set(prevRun);
         }
         CTRegularTextRun r = CTRegularTextRun.Factory.newInstance();
@@ -1043,7 +1043,15 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
         }
         if (!_runs.isEmpty()) {
             int size = _runs.size();
-            thisP.setEndParaRPr(_runs.get(size-1).getRPr());
+            XSLFTextRun lastRun = _runs.get(size-1);
+            CTTextCharacterProperties cpOther = lastRun.getRPr(false);
+            if (cpOther != null) {
+                if (thisP.isSetEndParaRPr()) {
+                    thisP.unsetEndParaRPr();
+                }
+                CTTextCharacterProperties cp = thisP.addNewEndParaRPr();
+                cp.set(cpOther);
+            }
             for (int i=size; i>0; i--) {
                 thisP.removeR(i-1);
             }
