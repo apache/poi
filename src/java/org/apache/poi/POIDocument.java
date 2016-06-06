@@ -70,18 +70,24 @@ public abstract class POIDocument {
 
     /**
      * Constructs from an old-style OPOIFS
+     * 
+     * @param fs the filesystem the document is read from
      */
     protected POIDocument(OPOIFSFileSystem fs) {
        this(fs.getRoot());
     }
     /**
      * Constructs from an old-style OPOIFS
+     * 
+     * @param fs the filesystem the document is read from
      */
     protected POIDocument(NPOIFSFileSystem fs) {
        this(fs.getRoot());
     }
     /**
      * Constructs from the default POIFS
+     * 
+     * @param fs the filesystem the document is read from
      */
     protected POIDocument(POIFSFileSystem fs) {
         this(fs.getRoot());
@@ -180,49 +186,46 @@ public abstract class POIDocument {
         DirectoryNode dirNode = directory;
         
         NPOIFSFileSystem encPoifs = null;
-        if (encryptionInfo != null) {
-            try {
+        String step = "getting";
+        try {
+            if (encryptionInfo != null) {
+                step = "getting encrypted";
                 InputStream is = encryptionInfo.getDecryptor().getDataStream(directory);
-                encPoifs = new NPOIFSFileSystem(is);
-                is.close();
-                dirNode = encPoifs.getRoot();
-            } catch (Exception e) {
-                logger.log(POILogger.ERROR, "Error getting encrypted property set with name " + setName, e);
+                try {
+                    encPoifs = new NPOIFSFileSystem(is);
+                    dirNode = encPoifs.getRoot();
+                } finally {
+                    is.close();
+                }
+            }
+            
+            //directory can be null when creating new documents
+            if (dirNode == null || !dirNode.hasEntry(setName)) {
                 return null;
             }
-        }
-        
-        //directory can be null when creating new documents
-        if (dirNode == null || !dirNode.hasEntry(setName)) 
-            return null;
-
-        DocumentInputStream dis;
-        try {
+    
             // Find the entry, and get an input stream for it
-            dis = dirNode.createDocumentInputStream( dirNode.getEntry(setName) );
-        } catch(IOException ie) {
-            // Oh well, doesn't exist
-            logger.log(POILogger.WARN, "Error getting property set with name " + setName + "\n" + ie);
-            return null;
-        }
-
-        try {
-            // Create the Property Set
-            PropertySet set = PropertySetFactory.create(dis);
-            // Tidy up if needed
-            if (encPoifs != null) {
-                encPoifs.close();
+            step = "getting";
+            DocumentInputStream dis = dirNode.createDocumentInputStream( dirNode.getEntry(setName) );
+            try {
+                // Create the Property Set
+                step = "creating";
+                return PropertySetFactory.create(dis);
+            } finally {
+                dis.close();
             }
-            // Return the properties
-            return set;
-        } catch(IOException ie) {
-            // Must be corrupt or something like that
-            logger.log(POILogger.WARN, "Error creating property set with name " + setName + "\n" + ie);
-        } catch(org.apache.poi.hpsf.HPSFException he) {
-            // Oh well, doesn't exist
-            logger.log(POILogger.WARN, "Error creating property set with name " + setName + "\n" + he);
+        } catch (Exception e) {
+            logger.log(POILogger.WARN, "Error "+step+" property set with name " + setName, e);
+            return null;
+        } finally {
+            if (encPoifs != null) {
+                try {
+                    encPoifs.close();
+                } catch(IOException e) {
+                    logger.log(POILogger.WARN, "Error closing encrypted property poifs", e);
+                }
+            }
         }
-        return null;
     }
     
     /**
