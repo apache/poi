@@ -25,7 +25,6 @@ import org.apache.poi.util.HexDump;
  * of the properties marked as boolean seem to actually contain special values.  In other words
  * they're not true booleans.
  *
- * @author Glen Stampoultzis
  * @see EscherSimpleProperty
  * @see EscherProperty
  */
@@ -45,6 +44,8 @@ public class EscherBoolProperty
 
     /**
      * Whether this boolean property is true
+     * 
+     * @return the boolean property value
      */
     public boolean isTrue()
     {
@@ -53,6 +54,10 @@ public class EscherBoolProperty
 
     /**
      * Whether this boolean property is false
+     * 
+     * @return true, if this boolean property is false
+     * 
+     * @deprecated use !isTrue() instead, planed to be removed in POI 3.17
      */
     public boolean isFalse()
     {
@@ -67,6 +72,7 @@ public class EscherBoolProperty
 //                + ", value: " + (getValue() != 0);
 //    }
 
+    @Override
     public String toXml(String tab){
         StringBuilder builder = new StringBuilder();
         builder.append(tab).append("<").append(getClass().getSimpleName()).append(" id=\"0x").append(HexDump.toHex(getId()))

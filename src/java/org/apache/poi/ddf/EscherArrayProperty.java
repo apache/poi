@@ -26,8 +26,6 @@ import org.apache.poi.util.LittleEndian;
 /**
  * Escher array properties are the most wierd construction ever invented
  * with all sorts of special cases.  I'm hopeful I've got them all.
- *
- * @author Glen Stampoultzis (glens at superlinksoftware.com)
  */
 public final class EscherArrayProperty extends EscherComplexProperty implements Iterable<byte[]> {
     /**
@@ -120,6 +118,7 @@ public final class EscherArrayProperty extends EscherComplexProperty implements 
         System.arraycopy( element, 0, _complexData, FIXED_SIZE + index * actualSize, actualSize);
     }
 
+    @Override
     public String toString() {
         StringBuffer results = new StringBuffer();
         results.append("    {EscherArrayProperty:" + '\n');
@@ -138,6 +137,7 @@ public final class EscherArrayProperty extends EscherComplexProperty implements 
                 + ", data: " + '\n' + results.toString();
     }
 
+    @Override
     public String toXml(String tab){
         StringBuilder builder = new StringBuilder();
         builder.append(tab).append("<").append(getClass().getSimpleName()).append(" id=\"0x").append(HexDump.toHex(getId()))
@@ -185,6 +185,7 @@ public final class EscherArrayProperty extends EscherComplexProperty implements 
      * Needs special code to handle the case when the size doesn't
      *  include the size of the header block
      */
+    @Override
     public int serializeSimplePart(byte[] data, int pos) {
         LittleEndian.putShort(data, pos, getId());
         int recordSize = _complexData.length;
@@ -199,25 +200,29 @@ public final class EscherArrayProperty extends EscherComplexProperty implements 
      * Sometimes the element size is stored as a negative number.  We
      * negate it and shift it to get the real value.
      */
-    public static int getActualSizeOfElements(short sizeOfElements) {
+    private static int getActualSizeOfElements(short sizeOfElements) {
         if (sizeOfElements < 0) {
             return (short) ( ( -sizeOfElements ) >> 2 );
         }
         return sizeOfElements;
     }
 
+    @Override
     public Iterator<byte[]> iterator() {
         return new Iterator<byte[]>(){
             int idx = 0;
+            @Override
             public boolean hasNext() {
                 return (idx < getNumberOfElementsInArray());
             }
             
+            @Override
             public byte[] next() {
                 if (!hasNext()) throw new NoSuchElementException();
                 return getElement(idx++);
             }
             
+            @Override
             public void remove() {
                 throw new UnsupportedOperationException("not yet implemented");
             }

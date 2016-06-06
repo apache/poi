@@ -16,7 +16,11 @@
 ==================================================================== */
 package org.apache.poi.ddf;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
 
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
@@ -24,9 +28,6 @@ import org.apache.poi.util.LittleEndian;
 /**
  * Common abstract class for {@link EscherOptRecord} and
  * {@link EscherTertiaryOptRecord}
- * 
- * @author Sergey Vladimirov (vlsergey {at} gmail {dot} com)
- * @author Glen Stampoultzis
  */
 public abstract class AbstractEscherOptRecord extends EscherRecord
 {
@@ -40,6 +41,7 @@ public abstract class AbstractEscherOptRecord extends EscherRecord
         properties.add( prop );
     }
 
+    @Override
     public int fillFields( byte[] data, int offset,
             EscherRecordFactory recordFactory )
     {
@@ -54,6 +56,8 @@ public abstract class AbstractEscherOptRecord extends EscherRecord
 
     /**
      * The list of properties stored by this record.
+     * 
+     * @return the list of properties
      */
     public List<EscherProperty> getEscherProperties()
     {
@@ -62,12 +66,16 @@ public abstract class AbstractEscherOptRecord extends EscherRecord
 
     /**
      * The list of properties stored by this record.
+     * 
+     * @param index the ordinal index of the property
+     * @return the escher property
      */
     public EscherProperty getEscherProperty( int index )
     {
         return properties.get( index );
     }
 
+    
     private int getPropertiesSize()
     {
         int totalSize = 0;
@@ -99,6 +107,7 @@ public abstract class AbstractEscherOptRecord extends EscherRecord
         return null;
     }
 
+    @Override
     public int serialize( int offset, byte[] data,
             EscherSerializationListener listener )
     {
@@ -127,6 +136,7 @@ public abstract class AbstractEscherOptRecord extends EscherRecord
     {
         Collections.sort( properties, new Comparator<EscherProperty>()
         {
+            @Override
             public int compare( EscherProperty p1, EscherProperty p2 )
             {
                 short s1 = p1.getPropertyNumber();
@@ -166,6 +176,7 @@ public abstract class AbstractEscherOptRecord extends EscherRecord
     /**
      * Retrieve the string representation of this record.
      */
+    @Override
     public String toString()
     {
         String nl = System.getProperty( "line.separator" );

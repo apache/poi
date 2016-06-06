@@ -24,8 +24,6 @@ import org.apache.poi.util.Internal;
  * determining the attributes of a shape. Properties can be of two types: simple
  * or complex. Simple types are fixed length. Complex properties are variable
  * length.
- * 
- * @author Glen Stampoultzis
  */
 public class EscherOptRecord extends AbstractEscherOptRecord
 {
@@ -42,6 +40,7 @@ public class EscherOptRecord extends AbstractEscherOptRecord
     /**
      * Automatically recalculate the correct option
      */
+    @Override
     @Internal
     public short getOptions()
     {
@@ -51,6 +50,7 @@ public class EscherOptRecord extends AbstractEscherOptRecord
         return super.getOptions();
     }
 
+    @Override
     public String getRecordName()
     {
         return "Opt";

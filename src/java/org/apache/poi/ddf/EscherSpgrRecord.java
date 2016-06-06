@@ -24,8 +24,6 @@ import org.apache.poi.util.RecordFormatException;
 /**
  * The spgr record defines information about a shape group.  Groups in escher
  * are simply another form of shape that you can't physically see.
- *
- * @author Glen Stampoultzis (glens at apache.org)
  */
 public class EscherSpgrRecord
     extends EscherRecord
@@ -38,6 +36,7 @@ public class EscherSpgrRecord
     private int field_3_rectX2;
     private int field_4_rectY2;
 
+    @Override
     public int fillFields(byte[] data, int offset, EscherRecordFactory recordFactory) {
         int bytesRemaining = readHeader( data, offset );
         int pos            = offset + 8;
@@ -53,6 +52,7 @@ public class EscherSpgrRecord
         return 8 + size + bytesRemaining;
     }
 
+    @Override
     public int serialize( int offset, byte[] data, EscherSerializationListener listener )
     {
         listener.beforeRecordSerialize( offset, getRecordId(), this );
@@ -70,15 +70,18 @@ public class EscherSpgrRecord
         return 8 + 16;
     }
 
+    @Override
     public int getRecordSize()
     {
         return 8 + 16;
     }
 
+    @Override
     public short getRecordId() {
         return RECORD_ID;
     }
 
+    @Override
     public String getRecordName() {
         return "Spgr";
     }
@@ -86,6 +89,7 @@ public class EscherSpgrRecord
     /**
      * @return  the string representation of this record.
      */
+    @Override
     public String toString() {
         return getClass().getName() + ":" + '\n' +
                 "  RecordId: 0x" + HexDump.toHex(RECORD_ID) + '\n' +
@@ -111,6 +115,8 @@ public class EscherSpgrRecord
 
     /**
      * The starting top-left coordinate of child records.
+     * 
+     * @return the top-left x coordinate
      */
     public int getRectX1()
     {
@@ -118,7 +124,9 @@ public class EscherSpgrRecord
     }
 
     /**
-     * The starting top-left coordinate of child records.
+     * The top-left coordinate of child records.
+     * 
+     * @param x1 the top-left x coordinate
      */
     public void setRectX1( int x1 )
     {
@@ -126,7 +134,9 @@ public class EscherSpgrRecord
     }
 
     /**
-     * The starting top-left coordinate of child records.
+     * The top-left coordinate of child records.
+     * 
+     * @return the top-left y coordinate
      */
     public int getRectY1()
     {
@@ -134,7 +144,9 @@ public class EscherSpgrRecord
     }
 
     /**
-     * The starting top-left coordinate of child records.
+     * The top-left y coordinate of child records.
+     * 
+     * @param y1 the top-left y coordinate
      */
     public void setRectY1( int y1 )
     {
@@ -142,7 +154,9 @@ public class EscherSpgrRecord
     }
 
     /**
-     * The starting bottom-right coordinate of child records.
+     * The bottom-right x coordinate of child records.
+     * 
+     * @return the bottom-right x coordinate
      */
     public int getRectX2()
     {
@@ -150,7 +164,9 @@ public class EscherSpgrRecord
     }
 
     /**
-     * The starting bottom-right coordinate of child records.
+     * The bottom-right x coordinate of child records.
+     * 
+     * @param x2 the bottom-right x coordinate
      */
     public void setRectX2( int x2 )
     {
@@ -158,7 +174,9 @@ public class EscherSpgrRecord
     }
 
     /**
-     * The starting bottom-right coordinate of child records.
+     * The bottom-right y coordinate of child records.
+     * 
+     * @return the bottom-right y coordinate
      */
     public int getRectY2()
     {
@@ -166,7 +184,9 @@ public class EscherSpgrRecord
     }
 
     /**
-     * The starting bottom-right coordinate of child records.
+     * The bottom-right y coordinate of child records.
+     * 
+     * @param rectY2 the bottom-right y coordinate
      */
     public void setRectY2(int rectY2) {
         this.field_4_rectY2 = rectY2;

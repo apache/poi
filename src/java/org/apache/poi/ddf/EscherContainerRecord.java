@@ -30,8 +30,6 @@ import org.apache.poi.util.POILogger;
  * The container records themselves never store any information beyond
  * the standard header used by all escher records.  This one record is
  * used to represent many different types of records.
- *
- * @author Glen Stampoultzis
  */
 public final class EscherContainerRecord extends EscherRecord {
     public static final short DGG_CONTAINER    = (short)0xF000;
@@ -41,7 +39,7 @@ public final class EscherContainerRecord extends EscherRecord {
     public static final short SP_CONTAINER     = (short)0xF004;
     public static final short SOLVER_CONTAINER = (short)0xF005;
 
-    private static POILogger log = POILogFactory.getLogger(EscherContainerRecord.class);
+    private static final POILogger log = POILogFactory.getLogger(EscherContainerRecord.class);
 
     /**
      * in case if document contains any charts we have such document structure:
@@ -69,6 +67,7 @@ public final class EscherContainerRecord extends EscherRecord {
 
     private final List<EscherRecord> _childRecords = new ArrayList<EscherRecord>();
 
+    @Override
     public int fillFields(byte[] data, int pOffset, EscherRecordFactory recordFactory) {
         int bytesRemaining = readHeader(data, pOffset);
         int bytesWritten = 8;
@@ -90,6 +89,7 @@ public final class EscherContainerRecord extends EscherRecord {
         return bytesWritten;
     }
 
+    @Override
     public int serialize( int offset, byte[] data, EscherSerializationListener listener )
     {
         listener.beforeRecordSerialize( offset, getRecordId(), this );
@@ -115,6 +115,7 @@ public final class EscherContainerRecord extends EscherRecord {
         return pos - offset;
     }
 
+    @Override
     public int getRecordSize() {
         int childRecordsSize = 0;
         Iterator<EscherRecord> iterator = _childRecords.iterator();
@@ -126,8 +127,9 @@ public final class EscherContainerRecord extends EscherRecord {
     }
 
     /**
-     * Do any of our (top level) children have the
-     *  given recordId?
+     * Do any of our (top level) children have the given recordId?
+     * 
+     * @return true, if any child has the given recordId
      */
     public boolean hasChildOfType(short recordId) {
         Iterator<EscherRecord> iterator = _childRecords.iterator();
@@ -139,6 +141,7 @@ public final class EscherContainerRecord extends EscherRecord {
         }
         return false;
     }
+    @Override
     public EscherRecord getChild( int index ) {
         return _childRecords.get(index);
     }
@@ -146,10 +149,14 @@ public final class EscherContainerRecord extends EscherRecord {
     /**
      * @return a copy of the list of all the child records of the container.
      */
+    @Override
     public List<EscherRecord> getChildRecords() {
         return new ArrayList<EscherRecord>(_childRecords);
     }
 
+    /**
+     * @return an iterator over the child records
+     */
     public Iterator<EscherRecord> getChildIterator() {
         return Collections.unmodifiableList(_childRecords).iterator();
     }
@@ -157,6 +164,7 @@ public final class EscherContainerRecord extends EscherRecord {
     /**
      * replaces the internal child list with the contents of the supplied <tt>childRecords</tt>
      */
+    @Override
     public void setChildRecords(List<EscherRecord> childRecords) {
         if (childRecords == _childRecords) {
             throw new IllegalStateException("Child records private data member has escaped");
@@ -165,6 +173,12 @@ public final class EscherContainerRecord extends EscherRecord {
         _childRecords.addAll(childRecords);
     }
 
+    /**
+     * Removes the given escher record from the child list
+     *
+     * @param toBeRemoved the escher record to be removed
+     * @return true, if the record was found and removed
+     */
     public boolean removeChildRecord(EscherRecord toBeRemoved) {
         return _childRecords.remove(toBeRemoved);
     }
@@ -188,6 +202,7 @@ public final class EscherContainerRecord extends EscherRecord {
         return containers;
     }
 
+    @Override
     public String getRecordName() {
         switch (getRecordId()) {
             case DGG_CONTAINER:
@@ -207,6 +222,7 @@ public final class EscherContainerRecord extends EscherRecord {
         }
     }
 
+    @Override
     public void display(PrintWriter w, int indent) {
         super.display(w, indent);
         for (Iterator<EscherRecord> iterator = _childRecords.iterator(); iterator.hasNext();)
@@ -216,10 +232,21 @@ public final class EscherContainerRecord extends EscherRecord {
         }
     }
 
+    /**
+     * Append a child record
+     *
+     * @param record the record to be added
+     */
     public void addChildRecord(EscherRecord record) {
         _childRecords.add(record);
     }
 
+    /**
+     * Add a child record before the record with given recordId
+     *
+     * @param record the record to be added
+     * @param insertBeforeRecordId the recordId of the next sibling
+     */
     public void addChildBefore(EscherRecord record, int insertBeforeRecordId) {
         int idx = 0;
         for (EscherRecord rec : _childRecords) {
@@ -230,6 +257,7 @@ public final class EscherContainerRecord extends EscherRecord {
         _childRecords.add(idx, record);
     }
 
+    @Override
     public String toString()
     {
         String nl = System.getProperty( "line.separator" );
@@ -294,6 +322,7 @@ public final class EscherContainerRecord extends EscherRecord {
     /**
      * Recursively find records with the specified record ID
      *
+     * @param recordId the recordId to be searched for
      * @param out - list to store found records
      */
     public void getRecordsById(short recordId, List<EscherRecord> out){

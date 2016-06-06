@@ -27,9 +27,6 @@ import org.apache.poi.util.LittleEndian;
 /**
  * This record is used whenever a escher record is encountered that
  * we do not explicitly support.
- *
- * @author Glen Stampoultzis (glens at apache.org)
- * @author Zhang Zhang (zhangzzh at gmail.com)
  */
 public final class UnknownEscherRecord extends EscherRecord implements Cloneable {
     private static final byte[] NO_BYTES = new byte[0];
@@ -42,13 +39,12 @@ public final class UnknownEscherRecord extends EscherRecord implements Cloneable
         _childRecords = new ArrayList<EscherRecord>();
     }
 
+    @Override
     public int fillFields(byte[] data, int offset, EscherRecordFactory recordFactory) {
         int bytesRemaining = readHeader( data, offset );
 		/*
-		 * Modified by Zhang Zhang
 		 * Have a check between avaliable bytes and bytesRemaining, 
 		 * take the avaliable length if the bytesRemaining out of range.
-		 * July 09, 2010
 		 */
 		int avaliable = data.length - (offset + 8);
 		if (bytesRemaining > avaliable) {
@@ -77,6 +73,7 @@ public final class UnknownEscherRecord extends EscherRecord implements Cloneable
         return bytesRemaining + 8;
     }
 
+    @Override
     public int serialize(int offset, byte[] data, EscherSerializationListener listener) {
         listener.beforeRecordSerialize( offset, getRecordId(), this );
 
@@ -97,18 +94,24 @@ public final class UnknownEscherRecord extends EscherRecord implements Cloneable
         return pos - offset;
     }
 
+    /**
+     * @return the data which makes up this record
+     */
     public byte[] getData() {
         return thedata;
     }
 
+    @Override
     public int getRecordSize() {
         return 8 + thedata.length;
     }
 
+    @Override
     public List<EscherRecord> getChildRecords() {
         return _childRecords;
     }
 
+    @Override
     public void setChildRecords(List<EscherRecord> childRecords) {
         _childRecords = childRecords;
     }
@@ -122,10 +125,12 @@ public final class UnknownEscherRecord extends EscherRecord implements Cloneable
         return uer;
     }
 
+    @Override
     public String getRecordName() {
         return "Unknown 0x" + HexDump.toHex(getRecordId());
     }
 
+    @Override
     public String toString() {
         StringBuffer children = new StringBuffer();
         if (getChildRecords().size() > 0) {

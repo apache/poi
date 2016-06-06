@@ -64,6 +64,7 @@ public final class EscherDggRecord extends EscherRecord {
         }
     }
 
+    @Override
     public int fillFields(byte[] data, int offset, EscherRecordFactory recordFactory) {
         int bytesRemaining = readHeader( data, offset );
         int pos            = offset + 8;
@@ -85,6 +86,7 @@ public final class EscherDggRecord extends EscherRecord {
         return 8 + size + bytesRemaining;
     }
 
+    @Override
     public int serialize(int offset, byte[] data, EscherSerializationListener listener) {
         listener.beforeRecordSerialize( offset, getRecordId(), this );
 
@@ -107,18 +109,22 @@ public final class EscherDggRecord extends EscherRecord {
         return getRecordSize();
     }
 
+    @Override
     public int getRecordSize() {
         return 8 + 16 + (8 * field_5_fileIdClusters.length);
     }
 
+    @Override
     public short getRecordId() {
         return RECORD_ID;
     }
 
+    @Override
     public String getRecordName() {
         return "Dgg";
     }
 
+    @Override
     public String toString() {
 
         StringBuilder field_5_string = new StringBuilder();
@@ -154,12 +160,19 @@ public final class EscherDggRecord extends EscherRecord {
         return builder.toString();
     }
 
+    /**
+     * Gets the next available shape id
+     *
+     * @return the next available shape id
+     */
     public int getShapeIdMax() {
         return field_1_shapeIdMax;
     }
 
     /**
-     * The maximum is actually the next available. shape id.
+     * The maximum is actually the next available shape id.
+     * 
+     * @param shapeIdMax the next available shape id
      */
     public void setShapeIdMax(int shapeIdMax) {
         this.field_1_shapeIdMax = shapeIdMax;
@@ -167,46 +180,90 @@ public final class EscherDggRecord extends EscherRecord {
 
     /**
      * Number of id clusters + 1
+     * 
+     * @return the number of id clusters + 1
      */
     public int getNumIdClusters() {
         return (field_5_fileIdClusters == null ? 0 : (field_5_fileIdClusters.length + 1));
     }
 
+    /**
+     * Gets the number of shapes saved
+     *
+     * @return the number of shapes saved
+     */
     public int getNumShapesSaved() {
         return field_3_numShapesSaved;
     }
 
+    /**
+     * Sets the number of shapes saved
+     * 
+     * @param numShapesSaved the number of shapes saved
+     */
     public void setNumShapesSaved(int numShapesSaved) {
         this.field_3_numShapesSaved = numShapesSaved;
     }
 
+    /**
+     * Gets the number of drawings saved
+     *
+     * @return the number of drawings saved
+     */
     public int getDrawingsSaved() {
         return field_4_drawingsSaved;
     }
 
+    /**
+     * Sets the number of drawings saved
+     *
+     * @param drawingsSaved the number of drawings saved
+     */
     public void setDrawingsSaved(int drawingsSaved) {
         this.field_4_drawingsSaved = drawingsSaved;
     }
 
     /**
+     * Gets the maximum drawing group ID
+     * 
      * @return The maximum drawing group ID
      */
     public int getMaxDrawingGroupId() {
         return maxDgId;
     }
 
+    /**
+     * Sets the maximum drawing group ID
+     * 
+     * @param id the maximum drawing group ID
+     */
     public void setMaxDrawingGroupId(int id) {
         maxDgId = id;
     }
 
+    /**
+     * @return the file id clusters
+     */
     public FileIdCluster[] getFileIdClusters() {
         return field_5_fileIdClusters;
     }
 
+    /**
+     * Sets the file id clusters
+     *
+     * @param fileIdClusters the file id clusters
+     */
     public void setFileIdClusters(FileIdCluster[] fileIdClusters) {
         this.field_5_fileIdClusters = fileIdClusters.clone();
     }
 
+    
+    /**
+     * Add a new cluster
+     *
+     * @param dgId  id of the drawing group (stored in the record options)
+     * @param numShapedUsed initial value of the numShapedUsed field
+     */
     public void addCluster(int dgId, int numShapedUsed) {
         addCluster(dgId, numShapedUsed, true);
     }
@@ -228,6 +285,7 @@ public final class EscherDggRecord extends EscherRecord {
     }
 
     private static final Comparator<FileIdCluster> MY_COMP = new Comparator<FileIdCluster>() {
+        @Override
         public int compare(FileIdCluster f1, FileIdCluster f2) {
             if (f1.getDrawingGroupId() == f2.getDrawingGroupId()) {
                 return 0;

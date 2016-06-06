@@ -23,8 +23,6 @@ import org.apache.poi.util.LittleEndian;
 /**
  * Together the the EscherOptRecord this record defines some of the basic
  * properties of a shape.
- *
- * @author Glen Stampoultzis (glens at apache.org)
  */
 public class EscherSpRecord
     extends EscherRecord
@@ -48,6 +46,7 @@ public class EscherSpRecord
     private int field_1_shapeId;
     private int field_2_flags;
 
+    @Override
     public int fillFields(byte[] data, int offset, EscherRecordFactory recordFactory) {
         /*int bytesRemaining =*/ readHeader( data, offset );
         int pos            = offset + 8;
@@ -70,6 +69,7 @@ public class EscherSpRecord
      *
      * @see NullEscherSerializationListener
      */
+    @Override
     public int serialize( int offset, byte[] data, EscherSerializationListener listener )
     {
         listener.beforeRecordSerialize( offset, getRecordId(), this );
@@ -85,15 +85,18 @@ public class EscherSpRecord
         return 8 + 8;
     }
 
+    @Override
     public int getRecordSize()
     {
         return 8 + 8;
     }
 
+    @Override
     public short getRecordId() {
         return RECORD_ID;
     }
 
+    @Override
     public String getRecordName() {
         return "Sp";
     }
@@ -102,6 +105,7 @@ public class EscherSpRecord
     /**
      * @return  the string representing this shape.
      */
+    @Override
     public String toString()
     {
         String nl = System.getProperty("line.separator");
@@ -162,6 +166,8 @@ public class EscherSpRecord
 
     /**
      * Sets a number that identifies this shape.
+     * 
+     * @param field_1_shapeId the shape id
      */
     public void setShapeId( int field_1_shapeId )
     {
@@ -170,6 +176,8 @@ public class EscherSpRecord
 
     /**
      * The flags that apply to this shape.
+     * 
+     * @return the flags
      *
      * @see #FLAG_GROUP
      * @see #FLAG_CHILD
@@ -191,6 +199,8 @@ public class EscherSpRecord
 
     /**
      * The flags that apply to this shape.
+     * 
+     * @param field_2_flags the flags
      *
      * @see #FLAG_GROUP
      * @see #FLAG_CHILD
