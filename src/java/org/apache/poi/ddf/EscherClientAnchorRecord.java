@@ -26,7 +26,6 @@ import org.apache.poi.util.LittleEndian;
  * of the actual size of the cell.  The EscherClientAnchorRecord only applies to the top-most
  * shapes.  Shapes contained in groups are bound using the EscherChildAnchorRecords.
  *
- * @author Glen Stampoultzis
  * @see EscherChildAnchorRecord
  */
 public class EscherClientAnchorRecord
@@ -55,6 +54,7 @@ public class EscherClientAnchorRecord
     private byte[] remainingData = new byte[0];
     private boolean shortRecord = false;
 
+    @Override
     public int fillFields(byte[] data, int offset, EscherRecordFactory recordFactory) {
         int bytesRemaining = readHeader( data, offset );
         int pos            = offset + 8;
@@ -89,6 +89,7 @@ public class EscherClientAnchorRecord
         return 8 + size + bytesRemaining;
     }
 
+    @Override
     public int serialize( int offset, byte[] data, EscherSerializationListener listener )
     {
         listener.beforeRecordSerialize( offset, getRecordId(), this );
@@ -116,15 +117,18 @@ public class EscherClientAnchorRecord
         return pos - offset;
     }
 
+    @Override
     public int getRecordSize()
     {
         return 8 + (shortRecord ? 8 : 18) + (remainingData == null ? 0 : remainingData.length);
     }
 
+    @Override
     public short getRecordId() {
         return RECORD_ID;
     }
 
+    @Override
     public String getRecordName() {
         return "ClientAnchor";
     }
@@ -134,6 +138,7 @@ public class EscherClientAnchorRecord
      *
      * @return A string
      */
+    @Override
     public String toString()
     {
         String nl = System.getProperty("line.separator");
@@ -174,6 +179,8 @@ public class EscherClientAnchorRecord
 
     /**
      * 0 = Move and size with Cells, 2 = Move but don't size with cells, 3 = Don't move or size with cells.
+     * 
+     * @return the move/size flag
      */
     public short getFlag()
     {
@@ -182,6 +189,8 @@ public class EscherClientAnchorRecord
 
     /**
      * 0 = Move and size with Cells, 2 = Move but don't size with cells, 3 = Don't move or size with cells.
+     * 
+     * @param field_1_flag the move/size flag
      */
     public void setFlag( short field_1_flag )
     {
@@ -190,6 +199,8 @@ public class EscherClientAnchorRecord
 
     /**
      * The column number for the top-left position.  0 based.
+     * 
+     * @return the column number of the top-left corner
      */
     public short getCol1()
     {
@@ -198,6 +209,8 @@ public class EscherClientAnchorRecord
 
     /**
      * The column number for the top-left position.  0 based.
+     * 
+     * @param field_2_col1 the column number of the top-left corner
      */
     public void setCol1( short field_2_col1 )
     {
@@ -206,6 +219,8 @@ public class EscherClientAnchorRecord
 
     /**
      * The x offset within the top-left cell.  Range is from 0 to 1023.
+     * 
+     * @return the x offset of the top-left corner
      */
     public short getDx1()
     {
@@ -214,6 +229,8 @@ public class EscherClientAnchorRecord
 
     /**
      * The x offset within the top-left cell.  Range is from 0 to 1023.
+     * 
+     * @param field_3_dx1 the x offset of the top-left corner
      */
     public void setDx1( short field_3_dx1 )
     {
@@ -222,6 +239,8 @@ public class EscherClientAnchorRecord
 
     /**
      * The row number for the top-left corner of the shape.
+     * 
+     * @return the row number of the top-left corner
      */
     public short getRow1()
     {
@@ -229,7 +248,9 @@ public class EscherClientAnchorRecord
     }
 
     /**
-     * The row number for the top-left corner of the shape.
+     * The row number of the top-left corner of the shape.
+     * 
+     * @param field_4_row1 the row number of the top-left corner
      */
     public void setRow1( short field_4_row1 )
     {
@@ -238,6 +259,8 @@ public class EscherClientAnchorRecord
 
     /**
      * The y offset within the top-left corner of the current shape.
+     * 
+     * @return the y offset of the top-left corner
      */
     public short getDy1()
     {
@@ -246,6 +269,8 @@ public class EscherClientAnchorRecord
 
     /**
      * The y offset within the top-left corner of the current shape.
+     * 
+     * @param field_5_dy1 the y offset of the top-left corner
      */
     public void setDy1( short field_5_dy1 )
     {
@@ -255,6 +280,8 @@ public class EscherClientAnchorRecord
 
     /**
      * The column of the bottom right corner of this shape.
+     * 
+     * @return the column of the bottom right corner
      */
     public short getCol2()
     {
@@ -263,6 +290,8 @@ public class EscherClientAnchorRecord
 
     /**
      * The column of the bottom right corner of this shape.
+     * 
+     * @param field_6_col2 the column of the bottom right corner
      */
     public void setCol2( short field_6_col2 )
     {
@@ -272,6 +301,8 @@ public class EscherClientAnchorRecord
 
     /**
      * The x offset withing the cell for the bottom-right corner of this shape.
+     * 
+     * @return the x offset of the bottom-right corner
      */
     public short getDx2()
     {
@@ -280,6 +311,8 @@ public class EscherClientAnchorRecord
 
     /**
      * The x offset withing the cell for the bottom-right corner of this shape.
+     * 
+     * @param field_7_dx2 the x offset of the bottom-right corner
      */
     public void setDx2( short field_7_dx2 )
     {
@@ -289,6 +322,8 @@ public class EscherClientAnchorRecord
 
     /**
      * The row number for the bottom-right corner of the current shape.
+     * 
+     * @return the row number for the bottom-right corner
      */
     public short getRow2()
     {
@@ -297,6 +332,8 @@ public class EscherClientAnchorRecord
 
     /**
      * The row number for the bottom-right corner of the current shape.
+     * 
+     * @param field_8_row2 the row number for the bottom-right corner
      */
     public void setRow2( short field_8_row2 )
     {
@@ -306,6 +343,8 @@ public class EscherClientAnchorRecord
 
     /**
      * The y offset withing the cell for the bottom-right corner of this shape.
+     * 
+     * @return the y offset of the bottom-right corner
      */
     public short getDy2()
     {
@@ -314,6 +353,8 @@ public class EscherClientAnchorRecord
 
     /**
      * The y offset withing the cell for the bottom-right corner of this shape.
+     * 
+     * @param field_9_dy2 the y offset of the bottom-right corner
      */
     public void setDy2( short field_9_dy2 )
     {
@@ -323,6 +364,8 @@ public class EscherClientAnchorRecord
 
     /**
      * Any remaining data in the record
+     * 
+     * @return the remaining bytes
      */
     public byte[] getRemainingData()
     {
@@ -331,6 +374,8 @@ public class EscherClientAnchorRecord
 
     /**
      * Any remaining data in the record
+     * 
+     * @param remainingData the remaining bytes
      */
     public void setRemainingData( byte[] remainingData ) {
         if (remainingData == null) {

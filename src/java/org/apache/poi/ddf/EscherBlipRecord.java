@@ -20,10 +20,7 @@ package org.apache.poi.ddf;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.HexDump;
 
-/**
- * @author Glen Stampoultzis
- */
-public class EscherBlipRecord extends EscherRecord { // TODO - instantiable superclass
+public class EscherBlipRecord extends EscherRecord {
     public static final short  RECORD_ID_START    = (short) 0xF018;
     public static final short  RECORD_ID_END      = (short) 0xF117;
     public static final String RECORD_DESCRIPTION = "msofbtBlip";
@@ -35,6 +32,7 @@ public class EscherBlipRecord extends EscherRecord { // TODO - instantiable supe
     public EscherBlipRecord() {
     }
 
+    @Override
     public int fillFields(byte[] data, int offset, EscherRecordFactory recordFactory) {
         int bytesAfterHeader = readHeader( data, offset );
         int pos              = offset + HEADER_SIZE;
@@ -45,6 +43,7 @@ public class EscherBlipRecord extends EscherRecord { // TODO - instantiable supe
         return bytesAfterHeader + 8;
     }
 
+    @Override
     public int serialize(int offset, byte[] data, EscherSerializationListener listener) {
         listener.beforeRecordSerialize(offset, getRecordId(), this);
 
@@ -57,18 +56,30 @@ public class EscherBlipRecord extends EscherRecord { // TODO - instantiable supe
         return field_pictureData.length + 4;
     }
 
+    @Override
     public int getRecordSize() {
         return field_pictureData.length + HEADER_SIZE;
     }
 
+    @Override
     public String getRecordName() {
         return "Blip";
     }
 
+    /**
+     * Gets the picture data bytes
+     *
+     * @return the picture data
+     */
     public byte[] getPicturedata() {
         return field_pictureData;
     }
 
+    /**
+     * Sets the picture data bytes
+     *
+     * @param pictureData the picture data
+     */
     public void setPictureData(byte[] pictureData) {
         if (pictureData == null) {
             throw new IllegalArgumentException("picture data can't be null");
@@ -76,6 +87,7 @@ public class EscherBlipRecord extends EscherRecord { // TODO - instantiable supe
         field_pictureData = pictureData.clone();
     }
 
+    @Override
     public String toString() {
         String extraData = HexDump.toHex(field_pictureData, 32);
         return getClass().getName() + ":" + '\n' +

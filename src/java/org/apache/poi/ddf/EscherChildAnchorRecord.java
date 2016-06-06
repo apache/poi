@@ -25,7 +25,6 @@ import org.apache.poi.util.LittleEndian;
  * The escher child achor record is used to specify the position of a shape under an
  * existing group.  The first level of shape records use a EscherClientAnchor record instead.
  *
- * @author Glen Stampoultzis
  * @see EscherChildAnchorRecord
  */
 public class EscherChildAnchorRecord
@@ -39,6 +38,7 @@ public class EscherChildAnchorRecord
     private int field_3_dx2;
     private int field_4_dy2;
 
+    @Override
     public int fillFields(byte[] data, int offset, EscherRecordFactory recordFactory) {
         int bytesRemaining = readHeader( data, offset );
         int pos            = offset + 8;
@@ -63,6 +63,7 @@ public class EscherChildAnchorRecord
         return 8 + size;
     }
 
+    @Override
     public int serialize(int offset, byte[] data, EscherSerializationListener listener) {
         listener.beforeRecordSerialize( offset, getRecordId(), this );
         int pos = offset;
@@ -78,15 +79,18 @@ public class EscherChildAnchorRecord
         return pos - offset;
     }
 
+    @Override
     public int getRecordSize()
     {
         return 8 + 4 * 4;
     }
 
+    @Override
     public short getRecordId() {
         return RECORD_ID;
     }
 
+    @Override
     public String getRecordName() {
         return "ChildAnchor";
     }
@@ -95,6 +99,7 @@ public class EscherChildAnchorRecord
     /**
      * The string representation of this record
      */
+    @Override
     public String toString()
     {
         String nl = System.getProperty("line.separator");
@@ -124,6 +129,8 @@ public class EscherChildAnchorRecord
 
     /**
      * Retrieves offset within the parent coordinate space for the top left point.
+     * 
+     * @return the x offset of the top left point
      */
     public int getDx1()
     {
@@ -132,6 +139,8 @@ public class EscherChildAnchorRecord
 
     /**
      * Sets offset within the parent coordinate space for the top left point.
+     * 
+     * @param field_1_dx1 the x offset of the top left point
      */
     public void setDx1( int field_1_dx1 )
     {
@@ -140,6 +149,8 @@ public class EscherChildAnchorRecord
 
     /**
      * Gets offset within the parent coordinate space for the top left point.
+     * 
+     * @return the y offset of the top left point
      */
     public int getDy1()
     {
@@ -148,6 +159,8 @@ public class EscherChildAnchorRecord
 
     /**
      * Sets offset within the parent coordinate space for the top left point.
+     * 
+     * @param field_2_dy1 the y offset of the top left point 
      */
     public void setDy1( int field_2_dy1 )
     {
@@ -156,6 +169,8 @@ public class EscherChildAnchorRecord
 
     /**
      * Retrieves offset within the parent coordinate space for the bottom right point.
+     * 
+     * @return the x offset of the bottom right point
      */
     public int getDx2()
     {
@@ -164,6 +179,8 @@ public class EscherChildAnchorRecord
 
     /**
      * Sets offset within the parent coordinate space for the bottom right point.
+     * 
+     * @param field_3_dx2 the x offset of the bottom right point
      */
     public void setDx2( int field_3_dx2 )
     {
@@ -172,6 +189,8 @@ public class EscherChildAnchorRecord
 
     /**
      * Gets the offset within the parent coordinate space for the bottom right point.
+     * 
+     * @return the y offset of the bottom right point
      */
     public int getDy2()
     {
@@ -180,6 +199,8 @@ public class EscherChildAnchorRecord
 
     /**
      * Sets the offset within the parent coordinate space for the bottom right point.
+     * 
+     * @param field_4_dy2 the y offset of the bottom right point
      */
     public void setDy2( int field_4_dy2 )
     {

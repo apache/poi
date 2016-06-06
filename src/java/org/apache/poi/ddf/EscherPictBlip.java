@@ -29,9 +29,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.zip.InflaterInputStream;
 
-/**
- * @author Daniel Noll
- */
 public final class EscherPictBlip extends EscherBlipRecord {
     private static final POILogger log = POILogFactory.getLogger(EscherPictBlip.class);
 
@@ -55,6 +52,7 @@ public final class EscherPictBlip extends EscherBlipRecord {
 
     private byte[] raw_pictureData;
 
+    @Override
     public int fillFields(byte[] data, int offset, EscherRecordFactory recordFactory) {
         int bytesAfterHeader = readHeader(data, offset);
         int pos = offset + HEADER_SIZE;
@@ -88,6 +86,7 @@ public final class EscherPictBlip extends EscherBlipRecord {
         return bytesAfterHeader + HEADER_SIZE;
     }
 
+    @Override
     public int serialize(int offset, byte[] data, EscherSerializationListener listener) {
         listener.beforeRecordSerialize(offset, getRecordId(), this);
 
@@ -136,14 +135,27 @@ public final class EscherPictBlip extends EscherBlipRecord {
         }
     }
 
+    @Override
     public int getRecordSize() {
         return 8 + 50 + raw_pictureData.length;
     }
 
+    /**
+     * Gets the first MD4, that specifies the unique identifier of the
+     * uncompressed blip data
+     *
+     * @return the first MD4
+     */
     public byte[] getUID() {
         return field_1_UID;
     }
 
+    /**
+     * Sets the first MD4, that specifies the unique identifier of the
+     * uncompressed blip data
+     *
+     * @param uid the first MD4
+     */
     public void setUID(byte[] uid) {
         if (uid == null || uid.length != 16) {
             throw new IllegalArgumentException("uid must be byte[16]");
@@ -151,14 +163,29 @@ public final class EscherPictBlip extends EscherBlipRecord {
         System.arraycopy(uid, 0, field_1_UID, 0, field_1_UID.length);
     }
 
+    /**
+     * Gets the uncompressed size (in bytes)
+     *
+     * @return the uncompressed size
+     */
     public int getUncompressedSize() {
         return field_2_cb;
     }
 
+    /**
+     * Sets the uncompressed size (in bytes)
+     *
+     * @param uncompressedSize the uncompressed size
+     */
     public void setUncompressedSize(int uncompressedSize) {
         field_2_cb = uncompressedSize;
     }
 
+    /**
+     * Get the clipping region of the pict file
+     *
+     * @return the clipping region
+     */
     public Rectangle getBounds() {
         return new Rectangle(field_3_rcBounds_x1,
                              field_3_rcBounds_y1,
@@ -166,6 +193,11 @@ public final class EscherPictBlip extends EscherBlipRecord {
                              field_3_rcBounds_y2 - field_3_rcBounds_y1);
     }
 
+    /**
+     * Sets the clipping region
+     *
+     * @param bounds the clipping region
+     */
     public void setBounds(Rectangle bounds) {
         field_3_rcBounds_x1 = bounds.x;
         field_3_rcBounds_y1 = bounds.y;
@@ -173,33 +205,64 @@ public final class EscherPictBlip extends EscherBlipRecord {
         field_3_rcBounds_y2 = bounds.y + bounds.height;
     }
 
+    /**
+     * Gets the dimensions of the metafile 
+     *
+     * @return the dimensions of the metafile
+     */
     public Dimension getSizeEMU() {
         return new Dimension(field_4_ptSize_w, field_4_ptSize_h);
     }
 
+    /**
+     * Gets the dimensions of the metafile
+     *
+     * @param sizeEMU the dimensions of the metafile
+     */
     public void setSizeEMU(Dimension sizeEMU) {
         field_4_ptSize_w = sizeEMU.width;
         field_4_ptSize_h = sizeEMU.height;
     }
 
+    /**
+     * Gets the compressed size of the metafile (in bytes)
+     * 
+     * @return the compressed size
+     */
     public int getCompressedSize() {
         return field_5_cbSave;
     }
 
+    /**
+     * Sets the compressed size of the metafile (in bytes)
+     *
+     * @param compressedSize the compressed size
+     */
     public void setCompressedSize(int compressedSize) {
         field_5_cbSave = compressedSize;
     }
 
+    /**
+     * Gets the compression of the metafile
+     *
+     * @return true, if the metafile is compressed
+     */
     public boolean isCompressed() {
         return (field_6_fCompression == 0);
     }
 
+    /**
+     * Sets the compression of the metafile
+     *
+     * @param compressed the compression state, true if it's compressed
+     */
     public void setCompressed(boolean compressed) {
         field_6_fCompression = compressed ? 0 : (byte)0xFE;
     }
 
     // filtering is always 254 according to available docs, so no point giving it a setter method.
 
+    @Override
     public String toString() {
         String extraData = HexDump.toHex(field_pictureData, 32);
         return getClass().getName() + ":" + '\n' +

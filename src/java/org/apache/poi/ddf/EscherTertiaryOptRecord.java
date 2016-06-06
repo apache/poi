@@ -19,13 +19,12 @@ package org.apache.poi.ddf;
 /**
  * "The OfficeArtTertiaryFOPT record specifies a table of OfficeArtRGFOPTE properties, as defined in section 2.3.1."
  * -- [MS-ODRAW] -- v20110608; Office Drawing Binary File Format
- *
- * @author Sergey Vladimirov (vlsergey {at} gmail {dot} com)
  */
 public class EscherTertiaryOptRecord extends AbstractEscherOptRecord
 {
     public static final short RECORD_ID = (short) 0xF122;
 
+    @Override
     public String getRecordName()
     {
         return "TertiaryOpt";

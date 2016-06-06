@@ -27,6 +27,7 @@ import org.apache.poi.poifs.filesystem.DirectoryEntry;
  * You will typically find the implementation of
  *  a given format's text extractor under
  *  org.apache.poi.[format].extractor .
+ *  
  * @see org.apache.poi.hssf.extractor.ExcelExtractor
  * @see org.apache.poi.hslf.extractor.PowerPointExtractor
  * @see org.apache.poi.hdgf.extractor.VisioTextExtractor
@@ -49,6 +50,8 @@ public abstract class POIOLE2TextExtractor extends POITextExtractor {
 	 * Creates a new text extractor, using the same
 	 *  document as another text extractor. Normally
 	 *  only used by properties extractors.
+	 * 
+	 * @param otherExtractor the extractor which document to be used
 	 */
 	protected POIOLE2TextExtractor(POIOLE2TextExtractor otherExtractor) {
 		this.document = otherExtractor.document;
@@ -79,7 +82,8 @@ public abstract class POIOLE2TextExtractor extends POITextExtractor {
 	 *  
 	 * @return an instance of POIExtractor that can extract meta-data.
 	 */
-	public POITextExtractor getMetadataTextExtractor() {
+	@Override
+    public POITextExtractor getMetadataTextExtractor() {
 		return new HPSFPropertiesExtractor(this);
 	}
 

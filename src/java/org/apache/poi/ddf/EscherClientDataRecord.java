@@ -24,8 +24,6 @@ import org.apache.poi.util.LittleEndian;
 /**
  * The EscherClientDataRecord is used to store client specific data about the position of a
  * shape within a container.
- *
- * @author Glen Stampoultzis
  */
 public class EscherClientDataRecord
     extends EscherRecord
@@ -35,6 +33,7 @@ public class EscherClientDataRecord
 
     private byte[] remainingData;
 
+    @Override
     public int fillFields(byte[] data, int offset, EscherRecordFactory recordFactory) {
         int bytesRemaining = readHeader( data, offset );
         int pos            = offset + 8;
@@ -43,6 +42,7 @@ public class EscherClientDataRecord
         return 8 + bytesRemaining;
     }
 
+    @Override
     public int serialize(int offset, byte[] data, EscherSerializationListener listener) {
         listener.beforeRecordSerialize( offset, getRecordId(), this );
 
@@ -57,15 +57,18 @@ public class EscherClientDataRecord
         return pos - offset;
     }
 
+    @Override
     public int getRecordSize()
     {
         return 8 + (remainingData == null ? 0 : remainingData.length);
     }
 
+    @Override
     public short getRecordId() {
         return RECORD_ID;
     }
 
+    @Override
     public String getRecordName() {
         return "ClientData";
     }
@@ -73,6 +76,7 @@ public class EscherClientDataRecord
     /**
      * Returns the string representation of this record.
      */
+    @Override
     public String toString()
     {
         String nl = System.getProperty("line.separator");
@@ -99,6 +103,8 @@ public class EscherClientDataRecord
 
     /**
      * Any data recording this record.
+     * 
+     * @return the remaining bytes
      */
     public byte[] getRemainingData()
     {
@@ -107,6 +113,8 @@ public class EscherClientDataRecord
 
     /**
      * Any data recording this record.
+     * 
+     * @param remainingData the remaining bytes
      */
     public void setRemainingData( byte[] remainingData ) {
         this.remainingData = (remainingData == null)

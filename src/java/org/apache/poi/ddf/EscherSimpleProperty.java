@@ -24,8 +24,6 @@ import org.apache.poi.util.HexDump;
  * A simple property is of fixed length and as a property number in addition
  * to a 32-bit value.  Properties that can't be stored in only 32-bits are
  * stored as EscherComplexProperty objects.
- *
- * @author Glen Stampoultzis (glens at apache.org)
  */
 public class EscherSimpleProperty extends EscherProperty
 {
@@ -56,6 +54,7 @@ public class EscherSimpleProperty extends EscherProperty
      *
      * @return the number of bytes serialized.
      */
+    @Override
     public int serializeSimplePart( byte[] data, int offset )
     {
         LittleEndian.putShort(data, offset, getId());
@@ -67,6 +66,7 @@ public class EscherSimpleProperty extends EscherProperty
      * Escher properties consist of a simple fixed length part and a complex variable length part.
      * The fixed length part is serialized first.
      */
+    @Override
     public int serializeComplexPart( byte[] data, int pos )
     {
         return 0;
@@ -83,6 +83,7 @@ public class EscherSimpleProperty extends EscherProperty
     /**
      * Returns true if one escher property is equal to another.
      */
+    @Override
     public boolean equals( Object o )
     {
         if ( this == o ) return true;
@@ -100,6 +101,7 @@ public class EscherSimpleProperty extends EscherProperty
      * Returns a hashcode so that this object can be stored in collections that
      * require the use of such things.
      */
+    @Override
     public int hashCode()
     {
         return propertyValue;
@@ -108,6 +110,7 @@ public class EscherSimpleProperty extends EscherProperty
     /**
      * @return the string representation of this property.
      */
+    @Override
     public String toString()
     {
         return "propNum: " + getPropertyNumber()
@@ -118,6 +121,7 @@ public class EscherSimpleProperty extends EscherProperty
                 + ", value: " + propertyValue + " (0x" + HexDump.toHex(propertyValue) + ")";
     }
 
+    @Override
     public String toXml(String tab){
         StringBuilder builder = new StringBuilder();
         builder.append(tab).append("<").append(getClass().getSimpleName()).append(" id=\"0x").append(HexDump.toHex(getId()))

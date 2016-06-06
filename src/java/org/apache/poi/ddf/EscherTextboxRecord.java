@@ -40,6 +40,7 @@ public final class EscherTextboxRecord extends EscherRecord implements Cloneable
     {
     }
 
+    @Override
     public int fillFields(byte[] data, int offset, EscherRecordFactory recordFactory) {
         int bytesRemaining = readHeader( data, offset );
 
@@ -50,6 +51,7 @@ public final class EscherTextboxRecord extends EscherRecord implements Cloneable
         return bytesRemaining + 8;
     }
 
+    @Override
     public int serialize( int offset, byte[] data, EscherSerializationListener listener )
     {
         listener.beforeRecordSerialize( offset, getRecordId(), this );
@@ -73,6 +75,8 @@ public final class EscherTextboxRecord extends EscherRecord implements Cloneable
      * does not seem to put anything here, but with PowerPoint this will
      * contain the bytes that make up a TextHeaderAtom followed by a
      * TextBytesAtom/TextCharsAtom
+     * 
+     * @return the extra data
      */
     public byte[] getData()
     {
@@ -83,16 +87,29 @@ public final class EscherTextboxRecord extends EscherRecord implements Cloneable
      * Sets the extra data (in the parent application's format) to be
      * contained by the record. Used when the parent application changes
      * the contents.
+     * 
+     * @param b the buffer which contains the data
+     * @param start the start position in the buffer
+     * @param length the length of the block
      */
     public void setData(byte[] b, int start, int length)
     {
         thedata = new byte[length];
         System.arraycopy(b,start,thedata,0,length);
     }
+    
+    /**
+     * Sets the extra data (in the parent application's format) to be
+     * contained by the record. Used when the parent application changes
+     * the contents.
+     * 
+     * @param b the data
+     */
     public void setData(byte[] b) {
         setData(b,0,b.length);
     }
 
+    @Override
     public int getRecordSize()
     {
         return 8 + thedata.length;
@@ -107,10 +124,12 @@ public final class EscherTextboxRecord extends EscherRecord implements Cloneable
         return etr;
     }
 
+    @Override
     public String getRecordName() {
         return "ClientTextbox";
     }
 
+    @Override
     public String toString()
     {
         String nl = System.getProperty( "line.separator" );

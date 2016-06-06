@@ -26,9 +26,6 @@ import org.apache.poi.util.LittleEndian;
 /**
  * Generates escher records when provided the byte array containing those records.
  *
- * @author Glen Stampoultzis
- * @author Nick Burch   (nick at torchbox . com)
- *
  * @see EscherRecordFactory
  */
 public class DefaultEscherRecordFactory implements EscherRecordFactory {
@@ -56,6 +53,7 @@ public class DefaultEscherRecordFactory implements EscherRecordFactory {
      * @param offset The starting offset into the byte array
      * @return The generated escher record
      */
+    @Override
     public EscherRecord createRecord(byte[] data, int offset) {
         short options = LittleEndian.getShort( data, offset );
         short recordId = LittleEndian.getShort( data, offset + 2 );

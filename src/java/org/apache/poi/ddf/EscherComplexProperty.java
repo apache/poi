@@ -66,6 +66,7 @@ public class EscherComplexProperty extends EscherProperty {
     /**
      * Serializes the simple part of this property.  i.e. the first 6 bytes.
      */
+    @Override
     public int serializeSimplePart(byte[] data, int pos) {
         LittleEndian.putShort(data, pos, getId());
         LittleEndian.putInt(data, pos + 2, _complexData.length);
@@ -79,6 +80,7 @@ public class EscherComplexProperty extends EscherProperty {
      * @param pos  The offset within data to start serializing to.
      * @return The number of bytes serialized.
      */
+    @Override
     public int serializeComplexPart(byte[] data, int pos) {
         System.arraycopy(_complexData, 0, data, pos, _complexData.length);
         return _complexData.length;
@@ -86,6 +88,8 @@ public class EscherComplexProperty extends EscherProperty {
 
     /**
      * Get the complex data value.
+     * 
+     * @return the complex bytes
      */
     public byte[] getComplexData() {
         return _complexData;
@@ -97,6 +101,7 @@ public class EscherComplexProperty extends EscherProperty {
      * @param o The object to compare to.
      * @return True if the objects are equal.
      */
+    @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -117,10 +122,12 @@ public class EscherComplexProperty extends EscherProperty {
      *
      * @return Number of bytes
      */
+    @Override
     public int getPropertySize() {
         return 6 + _complexData.length;
     }
 
+    @Override
     public int hashCode() {
         return getId() * 11;
     }
@@ -128,6 +135,7 @@ public class EscherComplexProperty extends EscherProperty {
     /**
      * Retrieves the string representation for this property.
      */
+    @Override
     public String toString() {
         String dataStr = HexDump.toHex( _complexData, 32);
 
@@ -138,6 +146,7 @@ public class EscherComplexProperty extends EscherProperty {
                 + ", data: " + System.getProperty("line.separator") + dataStr;
     }
 
+    @Override
     public String toXml(String tab){
         StringBuilder builder = new StringBuilder();
         builder.append(tab).append("<").append(getClass().getSimpleName()).append(" id=\"0x").append(HexDump.toHex(getId()))
