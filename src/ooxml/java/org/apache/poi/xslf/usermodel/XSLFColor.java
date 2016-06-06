@@ -168,6 +168,7 @@ public class XSLFColor {
                 }
             } else if (ch instanceof CTFontReference) {
                 // try next ...
+                continue;
             } else {
                 throw new IllegalArgumentException("Unexpected color choice: " + ch.getClass());
             }
