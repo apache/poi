@@ -23,6 +23,9 @@ import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.udf.UDFFinder;
+
+import java.lang.reflect.Method;
+
 import org.apache.poi.hssf.usermodel.HSSFEvaluationWorkbook;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.formula.CollaboratingWorkbooksEnvironment;
@@ -40,8 +43,6 @@ import org.apache.poi.ss.usermodel.Workbook;
  * This class enables a 'master workbook' to be loaded just once and shared between many evaluation
  * clients.  Each evaluation client creates its own {@link ForkedEvaluator} and can set cell values
  * that will be used for local evaluations (and don't disturb evaluations on other evaluators).
- *
- * @author Josh Micich
  */
 public final class ForkedEvaluator {
 
@@ -55,19 +56,19 @@ public final class ForkedEvaluator {
 	private static EvaluationWorkbook createEvaluationWorkbook(Workbook wb) {
 		if (wb instanceof HSSFWorkbook) {
 			return HSSFEvaluationWorkbook.create((HSSFWorkbook) wb);
+		} else {
+		    try {
+		        // TODO: check if this is Java 9 compatible ...
+		        Class<?> evalWB = Class.forName("org.apache.poi.xssf.usermodel.XSSFEvaluationWorkbook");
+		        Class<?> xssfWB = Class.forName("org.apache.poi.xssf.usermodel.XSSFWorkbook");
+		        Method createM = evalWB.getDeclaredMethod("create", xssfWB);
+		        return (EvaluationWorkbook)createM.invoke(null, wb);
+		    } catch (Exception e) {
+		        throw new IllegalArgumentException("Unexpected workbook type (" + wb.getClass().getName() + ") - check for poi-ooxml and poi-ooxml schemas jar in the classpath", e);
+		    }
 		}
-// TODO rearrange POI build to allow this
-//		if (wb instanceof XSSFWorkbook) {
-//			return XSSFEvaluationWorkbook.create((XSSFWorkbook) wb);
-//		}
-		throw new IllegalArgumentException("Unexpected workbook type (" + wb.getClass().getName() + ")");
 	}
-	/**
-	 * @deprecated (Sep 2009) (reduce overloading) use {@link #create(Workbook, IStabilityClassifier, UDFFinder)}
-	 */
-	public static ForkedEvaluator create(Workbook wb, IStabilityClassifier stabilityClassifier) {
-		return create(wb, stabilityClassifier, null);
-	}
+
 	/**
 	 * @param udfFinder pass <code>null</code> for default (AnalysisToolPak only)
 	 */

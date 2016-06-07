@@ -21,29 +21,34 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.formula.IStabilityClassifier;
 import org.apache.poi.ss.formula.eval.NumberEval;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-public final class TestForkedEvaluator {
+public class TestForkedEvaluator {
     
     @Rule
     public ExpectedException expectedEx = ExpectedException.none();
+    
+    protected Workbook newWorkbook() {
+        return new HSSFWorkbook();
+    }
     
 	/**
 	 * set up a calculation workbook with input cells nicely segregated on a
 	 * sheet called "Inputs"
 	 */
-	private static HSSFWorkbook createWorkbook() {
-		HSSFWorkbook wb = new HSSFWorkbook();
-		HSSFSheet sheet1 = wb.createSheet("Inputs");
-		HSSFSheet sheet2 = wb.createSheet("Calculations");
-		HSSFRow row;
+	protected Workbook createWorkbook() {
+		Workbook wb = newWorkbook();
+		Sheet sheet1 = wb.createSheet("Inputs");
+		Sheet sheet2 = wb.createSheet("Calculations");
+		Row row;
 		row = sheet2.createRow(0);
 		row.createCell(0).setCellFormula("B1*Inputs!A1-Inputs!B1");
 		row.createCell(1).setCellValue(5.0); // Calculations!B1
@@ -60,7 +65,7 @@ public final class TestForkedEvaluator {
 	 */
 	@Test
 	public void testBasic() throws IOException {
-		HSSFWorkbook wb = createWorkbook();
+		Workbook wb = createWorkbook();
 
 		// The stability classifier is useful to reduce memory consumption of caching logic
 		IStabilityClassifier stabilityClassifier = new IStabilityClassifier() {
@@ -99,11 +104,11 @@ public final class TestForkedEvaluator {
 	 * <i>read-only</i> with respect to the ForkedEvaluator.
 	 */
 	@Test
-	public void testMissingInputCell() throws IOException {
+	public void testMissingInputCellH() throws IOException {
 	    expectedEx.expect(UnsupportedOperationException.class);
 	    expectedEx.expectMessage("Underlying cell 'A2' is missing in master sheet.");
 	    
-		HSSFWorkbook wb = createWorkbook();
+		Workbook wb = createWorkbook();
 
 		try {
     		ForkedEvaluator fe = ForkedEvaluator.create(wb, null, null);
