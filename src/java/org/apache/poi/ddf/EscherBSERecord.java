@@ -337,6 +337,8 @@ public final class EscherBSERecord extends EscherRecord {
 
     /**
      * Any remaining data in this record.
+     * 
+     * @return the remaining bytes
      */
     public byte[] getRemainingData() {
         return _remainingData;
@@ -344,6 +346,8 @@ public final class EscherBSERecord extends EscherRecord {
 
     /**
      * Any remaining data in this record.
+     * 
+     * @param remainingData the remaining bytes
      */
     public void setRemainingData(byte[] remainingData) {
         if (remainingData == null) {
