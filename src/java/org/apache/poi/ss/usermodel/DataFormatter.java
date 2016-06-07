@@ -674,13 +674,18 @@ public class DataFormatter implements Observer {
         // eg for a format like #'##0 which wants 12'345 not 12,345
         Matcher agm = alternateGrouping.matcher(format);
         if (agm.find()) {
-            symbols = DecimalFormatSymbols.getInstance(locale);
-            
             char grouping = agm.group(2).charAt(0);
-            symbols.setGroupingSeparator(grouping);
-            String oldPart = agm.group(1);
-            String newPart = oldPart.replace(grouping, ',');
-            format = format.replace(oldPart, newPart);
+            // Only replace the grouping character if it is not the default
+            // grouping character for the US locale (',') in order to enable
+            // correct grouping for non-US locales.
+            if (grouping!=',') {
+                symbols = DecimalFormatSymbols.getInstance(locale);
+
+                symbols.setGroupingSeparator(grouping);
+                String oldPart = agm.group(1);
+                String newPart = oldPart.replace(grouping, ',');
+                format = format.replace(oldPart, newPart);
+            }
         }
         
         try {
