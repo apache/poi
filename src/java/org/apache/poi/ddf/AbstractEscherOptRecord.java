@@ -35,6 +35,8 @@ public abstract class AbstractEscherOptRecord extends EscherRecord
 
     /**
      * Add a property to this record.
+     * 
+     * @param prop the escher property to add
      */
     public void addEscherProperty( EscherProperty prop )
     {

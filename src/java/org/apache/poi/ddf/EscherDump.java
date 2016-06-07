@@ -29,8 +29,6 @@ import java.util.zip.InflaterInputStream;
 
 /**
  * Used to dump the contents of escher records to a PrintStream.
- *
- * @author Glen Stampoultzis (glens at apache.org)
  */
 public final class EscherDump {
 
@@ -66,6 +64,9 @@ public final class EscherDump {
      * @param maxLength The number of bytes to read
      * @param in        An input stream to read from.
      * @param out       An output stream to write to.
+     * 
+     * @throws IOException
+     * @throws LittleEndian.BufferUnderrunException
      */
     public void dumpOld(long maxLength, InputStream in, PrintStream out)
             throws IOException, LittleEndian.BufferUnderrunException {
@@ -775,6 +776,8 @@ public final class EscherDump {
 
     /**
      * A simple test stub.
+     * 
+     * @param args the args
      */
     public static void main( String[] args ) {
         main(args, System.out);

@@ -129,6 +129,8 @@ public final class EscherContainerRecord extends EscherRecord {
     /**
      * Do any of our (top level) children have the given recordId?
      * 
+     * @param recordId the recordId of the child
+     * 
      * @return true, if any child has the given recordId
      */
     public boolean hasChildOfType(short recordId) {
@@ -187,8 +189,9 @@ public final class EscherContainerRecord extends EscherRecord {
 
     /**
      * Returns all of our children which are also
-     *  EscherContainers (may be 0, 1, or vary rarely
-     *   2 or 3)
+     * EscherContainers (may be 0, 1, or vary rarely 2 or 3)
+     * 
+     * @return EscherContainer children
      */
     public List<EscherContainerRecord> getChildContainers() {
         List<EscherContainerRecord> containers = new ArrayList<EscherContainerRecord>();
