@@ -82,6 +82,25 @@ public class TestDataFormatter {
 
     }
 
+
+    /**
+     * Test that we use the specified locale when deciding
+     *   how to format normal numbers
+     */
+    @Test
+    public void testGrouping() {
+        DataFormatter dfUS = new DataFormatter(Locale.US);
+        DataFormatter dfDE = new DataFormatter(Locale.GERMAN);
+
+        assertEquals("1,234.57", dfUS.formatRawCellContents(1234.567, -1, "#,##0.00"));
+        assertEquals("1'234.57", dfUS.formatRawCellContents(1234.567, -1, "#'##0.00"));
+        assertEquals("1 234.57", dfUS.formatRawCellContents(1234.567, -1, "# ##0.00"));
+
+        assertEquals("1.234,57", dfDE.formatRawCellContents(1234.567, -1, "#,##0.00"));
+        assertEquals("1'234,57", dfDE.formatRawCellContents(1234.567, -1, "#'##0.00"));
+        assertEquals("1 234,57", dfDE.formatRawCellContents(1234.567, -1, "# ##0.00"));
+    }
+
     /**
      * Ensure that colours get correctly
      *  zapped from within the format strings
