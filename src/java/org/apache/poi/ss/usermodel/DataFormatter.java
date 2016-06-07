@@ -100,7 +100,7 @@ import org.apache.poi.util.POILogger;
  *  The trailing underscore and space ("_ ") in the format adds a space to the end and Excel formats this cell as <code>"12.34 "</code>,
  *  but <code>DataFormatter</code> trims the formatted value and returns <code>"12.34"</code>.
  * </p>
- * You can enable spaces by passing the <code>emulateCsv=true</code> flag in the <code>DateFormatter</code> cosntructor.
+ * You can enable spaces by passing the <code>emulateCSV=true</code> flag in the <code>DateFormatter</code> cosntructor.
  * If set to true, then the output tries to conform to what you get when you take an xls or xlsx in Excel and Save As CSV file:
  * <ul>
  *  <li>returned values are not trimmed</li>
@@ -201,7 +201,7 @@ public class DataFormatter implements Observer {
      */
     private final Map<String,Format> formats = new HashMap<String,Format>();
 
-    private boolean emulateCsv = false;
+    private boolean emulateCSV = false;
 
     /** stores the locale valid it the last formatting call */
     private Locale locale;
@@ -222,7 +222,7 @@ public class DataFormatter implements Observer {
     }
     
     /** the Observable to notify, when the locale has been changed */
-    private final LocaleChangeObservable localeChangedObervable = new LocaleChangeObservable();
+    private final LocaleChangeObservable localeChangedObservable = new LocaleChangeObservable();
     
     /** For logging any problems we find */
     private static POILogger logger = POILogFactory.getLogger(DataFormatter.class);
@@ -238,29 +238,29 @@ public class DataFormatter implements Observer {
     /**
      * Creates a formatter using the {@link Locale#getDefault() default locale}.
      *
-     * @param  emulateCsv whether to emulate CSV output.
+     * @param  emulateCSV whether to emulate CSV output.
      */
-    public DataFormatter(boolean emulateCsv) {
-        this(LocaleUtil.getUserLocale(), emulateCsv);
+    public DataFormatter(boolean emulateCSV) {
+        this(LocaleUtil.getUserLocale(), emulateCSV);
         this.localeIsAdapting = true;
     }
 
     /**
      * Creates a formatter using the given locale.
      *
-     * @param  emulateCsv whether to emulate CSV output.
+     * @param  emulateCSV whether to emulate CSV output.
      */
-    public DataFormatter(Locale locale, boolean emulateCsv) {
+    public DataFormatter(Locale locale, boolean emulateCSV) {
         this(locale);
-        this.emulateCsv = emulateCsv;
+        this.emulateCSV = emulateCSV;
     }
 
     /**
      * Creates a formatter using the given locale.
      */
     public DataFormatter(Locale locale) {
-        localeChangedObervable.addObserver(this);
-        localeChangedObervable.checkForLocaleChange(locale);
+        localeChangedObservable.addObserver(this);
+        localeChangedObservable.checkForLocaleChange(locale);
         this.localeIsAdapting = false;
     }
 
@@ -291,7 +291,7 @@ public class DataFormatter implements Observer {
     }
 
     private Format getFormat(double cellValue, int formatIndex, String formatStrIn) {
-        localeChangedObervable.checkForLocaleChange();
+        localeChangedObservable.checkForLocaleChange();
         
 //      // Might be better to separate out the n p and z formats, falling back to p when n and z are not set.
 //      // That however would require other code to be re factored.
@@ -327,7 +327,7 @@ public class DataFormatter implements Observer {
         }
         
        // Excel's # with value 0 will output empty where Java will output 0. This hack removes the # from the format.
-       if (emulateCsv && cellValue == 0.0 && formatStr.contains("#") && !formatStr.contains("0")) {
+       if (emulateCSV && cellValue == 0.0 && formatStr.contains("#") && !formatStr.contains("0")) {
            formatStr = formatStr.replaceAll("#", "");
        }
        
@@ -363,7 +363,7 @@ public class DataFormatter implements Observer {
     }
 
     private Format createFormat(double cellValue, int formatIndex, String sFormat) {
-        localeChangedObervable.checkForLocaleChange();
+        localeChangedObservable.checkForLocaleChange();
         
         String formatStr = sFormat;
         
@@ -439,7 +439,7 @@ public class DataFormatter implements Observer {
             return createNumberFormat(formatStr, cellValue);
         }
 
-        if (emulateCsv) {
+        if (emulateCSV) {
             return new ConstantStringFormat(cleanFormatForNumber(formatStr));
         }
         // TODO - when does this occur?
@@ -593,7 +593,7 @@ public class DataFormatter implements Observer {
     private String cleanFormatForNumber(String formatStr) {
         StringBuffer sb = new StringBuffer(formatStr);
 
-        if (emulateCsv) {
+        if (emulateCSV) {
             // Requested spacers with "_" are replaced by a single space.
             // Full-column-width padding "*" are removed.
             // Not processing fractions at this time. Replace ? with space.
@@ -709,7 +709,7 @@ public class DataFormatter implements Observer {
         return getDefaultFormat(cell.getNumericCellValue());
     }
     private Format getDefaultFormat(double cellValue) {
-        localeChangedObervable.checkForLocaleChange();
+        localeChangedObservable.checkForLocaleChange();
         
         // for numeric cells try user supplied default
         if (defaultNumFormat != null) {
@@ -782,7 +782,7 @@ public class DataFormatter implements Observer {
      * @see #formatCellValue(Cell)
      */
     public String formatRawCellContents(double value, int formatIndex, String formatString, boolean use1904Windowing) {
-        localeChangedObervable.checkForLocaleChange();
+        localeChangedObservable.checkForLocaleChange();
         
         // Is it a date?
         if(DateUtil.isADateFormat(formatIndex,formatString)) {
@@ -796,7 +796,7 @@ public class DataFormatter implements Observer {
                 return performDateFormatting(d, dateFormat);
             }
             // RK: Invalid dates are 255 #s.
-            if (emulateCsv) {
+            if (emulateCSV) {
                 return invalidDateTimeString;
             }
         }
@@ -862,7 +862,7 @@ public class DataFormatter implements Observer {
      * @return a string value of the cell
      */
     public String formatCellValue(Cell cell, FormulaEvaluator evaluator) {
-        localeChangedObervable.checkForLocaleChange();
+        localeChangedObservable.checkForLocaleChange();
         
         if (cell == null) {
             return "";
@@ -980,7 +980,7 @@ public class DataFormatter implements Observer {
      * @return the listener object, where callers can register themselves
      */
     public Observable getLocaleChangedObservable() {
-        return localeChangedObervable;
+        return localeChangedObservable;
     }
 
     /**
@@ -1181,7 +1181,7 @@ public class DataFormatter implements Observer {
             this.result = result;
         }
         public StringBuffer format(Object obj, StringBuffer toAppendTo, FieldPosition pos) {
-            if (emulateCsv) {
+            if (emulateCSV) {
                 return toAppendTo.append(result.text);
             } else {
                 return toAppendTo.append(result.text.trim());
