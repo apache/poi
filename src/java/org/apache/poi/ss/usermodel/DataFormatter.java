@@ -207,7 +207,7 @@ public class DataFormatter implements Observer {
     private Locale locale;
     
     /** stores if the locale should change according to {@link LocaleUtil#getUserLocale()} */
-    private boolean localeIsAdapting = true;
+    private boolean localeIsAdapting;
     
     private class LocaleChangeObservable extends Observable {
         void checkForLocaleChange() {
@@ -265,8 +265,13 @@ public class DataFormatter implements Observer {
      * @param  emulateCSV whether to emulate CSV output.
      */
     private DataFormatter(Locale locale, boolean localeIsAdapting, boolean emulateCSV) {
+        this.localeIsAdapting = true;
         localeChangedObservable.addObserver(this);
+        // localeIsAdapting must be true prior to this first checkForLocaleChange call.
         localeChangedObservable.checkForLocaleChange(locale);
+        // set localeIsAdapting so subsequent checks perform correctly
+        // (whether a specific locale was provided to this DataFormatter or DataFormatter should
+        // adapt to the current user locale as the locale changes)
         this.localeIsAdapting = localeIsAdapting;
         this.emulateCSV = emulateCSV;
     }
