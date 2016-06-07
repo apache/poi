@@ -201,7 +201,7 @@ public class DataFormatter implements Observer {
      */
     private final Map<String,Format> formats = new HashMap<String,Format>();
 
-    private boolean emulateCSV = false;
+    private final boolean emulateCSV;
 
     /** stores the locale valid it the last formatting call */
     private Locale locale;
@@ -232,7 +232,6 @@ public class DataFormatter implements Observer {
      */
     public DataFormatter() {
         this(false);
-        this.localeIsAdapting = true;
     }
 
     /**
@@ -241,8 +240,14 @@ public class DataFormatter implements Observer {
      * @param  emulateCSV whether to emulate CSV output.
      */
     public DataFormatter(boolean emulateCSV) {
-        this(LocaleUtil.getUserLocale(), emulateCSV);
-        this.localeIsAdapting = true;
+        this(LocaleUtil.getUserLocale(), true, emulateCSV);
+    }
+
+    /**
+     * Creates a formatter using the given locale.
+     */
+    public DataFormatter(Locale locale) {
+        this(locale, false);
     }
 
     /**
@@ -251,17 +256,19 @@ public class DataFormatter implements Observer {
      * @param  emulateCSV whether to emulate CSV output.
      */
     public DataFormatter(Locale locale, boolean emulateCSV) {
-        this(locale);
-        this.emulateCSV = emulateCSV;
+        this(locale, false, emulateCSV);
     }
 
     /**
      * Creates a formatter using the given locale.
+     * @param  localeIsAdapting (true only if locale is not user-specified)
+     * @param  emulateCSV whether to emulate CSV output.
      */
-    public DataFormatter(Locale locale) {
+    private DataFormatter(Locale locale, boolean localeIsAdapting, boolean emulateCSV) {
         localeChangedObservable.addObserver(this);
         localeChangedObservable.checkForLocaleChange(locale);
-        this.localeIsAdapting = false;
+        this.localeIsAdapting = localeIsAdapting;
+        this.emulateCSV = emulateCSV;
     }
 
     /**
