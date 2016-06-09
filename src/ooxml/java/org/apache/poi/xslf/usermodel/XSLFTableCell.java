@@ -41,6 +41,7 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTPoint2D;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPositiveSize2D;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTRegularTextRun;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTSchemeColor;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTSolidColorFillProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTable;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTableCell;
@@ -670,6 +671,19 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
         return new XSLFCellTextParagraph(p, this);
     }
 
+    /**
+     * Return fake shape properties as a fallback for not overridden
+     * methods of XSLFSimpleShape
+     * 
+     * @return fake shape properties
+     * 
+     * @since POI 3.15-beta2
+     */
+    @Override
+    protected CTShapeProperties getSpPr() {
+        return CTShapeProperties.Factory.newInstance();
+    }
+    
     /**
      * @since POI 3.15-beta2
      */
