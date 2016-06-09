@@ -24,6 +24,7 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.awt.Color;
+import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.util.List;
 
@@ -171,5 +172,23 @@ public class TestXSLFTable {
         }
         
         ss2.close();
+    }
+
+    @Test
+    public void checkTextHeight() throws IOException {
+        // from bug 59686
+        XMLSlideShow ppt = new XMLSlideShow();
+        XSLFSlide sl = ppt.createSlide();
+        XSLFTable tab = sl.createTable();
+        tab.setAnchor(new Rectangle2D.Double(50,50,300,50));
+        XSLFTableRow tr = tab.addRow();
+        XSLFTableCell tc0 = tr.addCell();
+        tc0.setText("bla bla bla bla");
+        tab.setColumnWidth(0, 50);
+        
+        assertEquals(88, tc0.getTextHeight(), 0);
+        assertEquals(0, tc0.getLineWidth(), 0);
+        
+        ppt.close();
     }
 }
