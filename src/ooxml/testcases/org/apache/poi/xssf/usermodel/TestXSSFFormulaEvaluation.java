@@ -606,6 +606,16 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
         wb.close();
     }
 
+    // bug 57721
+    @Test
+    public void structuredReferences() throws IOException {
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("evaluate_formula_with_structured_table_references.xlsx");
+        
+        XSSFFormulaEvaluator.evaluateAllFormulaCells(wb);
+
+        wb.close();
+    }
+
     /**
     * @param row 0-based
     * @param column 0-based
