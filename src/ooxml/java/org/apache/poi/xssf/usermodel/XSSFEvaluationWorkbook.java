@@ -52,7 +52,6 @@ public final class XSSFEvaluationWorkbook extends BaseXSSFEvaluationWorkbook {
     @Override    
     public Ptg[] getFormulaTokens(EvaluationCell evalCell) {
         XSSFCell cell = ((XSSFEvaluationCell)evalCell).getXSSFCell();
-        XSSFEvaluationWorkbook frBook = XSSFEvaluationWorkbook.create(_uBook);
-        return FormulaParser.parse(cell.getCellFormula(), frBook, FormulaType.CELL, _uBook.getSheetIndex(cell.getSheet()), cell.getRowIndex());
+        return FormulaParser.parse(cell.getCellFormula(), this, FormulaType.CELL, _uBook.getSheetIndex(cell.getSheet()), cell.getRowIndex());
     }
 }
