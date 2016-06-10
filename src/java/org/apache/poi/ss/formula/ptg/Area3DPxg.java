@@ -36,9 +36,9 @@ public final class Area3DPxg extends AreaPtgBase implements Pxg3D {
     private String firstSheetName;
     private String lastSheetName;
 
-	public Area3DPxg(int externalWorkbookNumber, SheetIdentifier sheetName, String arearef) {
-		this(externalWorkbookNumber, sheetName, new AreaReference(arearef));
-	}
+    public Area3DPxg(int externalWorkbookNumber, SheetIdentifier sheetName, String arearef) {
+        this(externalWorkbookNumber, sheetName, new AreaReference(arearef));
+    }
     public Area3DPxg(int externalWorkbookNumber, SheetIdentifier sheetName, AreaReference arearef) {
         super(arearef);
         this.externalWorkbookNumber = externalWorkbookNumber;
@@ -57,8 +57,8 @@ public final class Area3DPxg extends AreaPtgBase implements Pxg3D {
         this(-1, sheetName, arearef);
     }
 
-	@Override
-	public String toString() {
+    @Override
+    public String toString() {
         StringBuffer sb = new StringBuffer();
         sb.append(getClass().getName());
         sb.append(" [");
@@ -76,8 +76,8 @@ public final class Area3DPxg extends AreaPtgBase implements Pxg3D {
         sb.append(formatReferenceAsString());
         sb.append("]");
         return sb.toString();
-	}
-	
+    }
+    
     public int getExternalWorkbookNumber() {
         return externalWorkbookNumber;
     }

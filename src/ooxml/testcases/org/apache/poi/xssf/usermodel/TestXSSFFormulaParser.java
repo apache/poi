@@ -22,6 +22,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.IOException;
+
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFEvaluationWorkbook;
@@ -41,12 +43,15 @@ import org.junit.Test;
 import java.util.Arrays;
 
 public final class TestXSSFFormulaParser {
-	private static Ptg[] parse(FormulaParsingWorkbook fpb, String fmla) {
-		return FormulaParser.parse(fmla, fpb, FormulaType.CELL, -1);
-	}
+    private static Ptg[] parse(FormulaParsingWorkbook fpb, String fmla) {
+        return FormulaParser.parse(fmla, fpb, FormulaType.CELL, -1);
+    }
+    private static Ptg[] parse(FormulaParsingWorkbook fpb, String fmla, int rowIndex) {
+        return FormulaParser.parse(fmla, fpb, FormulaType.CELL, -1, rowIndex);
+    }
 
-	@Test
-    public void basicParsing() {
+    @Test
+    public void basicParsing() throws IOException {
         XSSFWorkbook wb = new XSSFWorkbook();
         XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
         Ptg[] ptgs;
@@ -118,10 +123,12 @@ public final class TestXSSFFormulaParser {
         assertEquals(AttrPtg.class,  ptgs[1].getClass());
         assertEquals("Sheet1!A1:B3", ptgs[0].toFormulaString());
         assertEquals("SUM",          ptgs[1].toFormulaString());
+
+        wb.close();
     }
 
-	@Test
-    public void builtInFormulas() {
+    @Test
+    public void builtInFormulas() throws IOException {
         XSSFWorkbook wb = new XSSFWorkbook();
         XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
         Ptg[] ptgs;
@@ -134,10 +141,12 @@ public final class TestXSSFFormulaParser {
         assertEquals(2, ptgs.length);
         assertTrue("Had " + Arrays.toString(ptgs), ptgs[0] instanceof IntPtg);
         assertTrue("Had " + Arrays.toString(ptgs), ptgs[1] instanceof FuncPtg);
+
+        wb.close();
     }
     
     @Test
-    public void formaulReferncesSameWorkbook() {
+    public void formulaReferencesSameWorkbook() throws IOException {
         // Use a test file with "other workbook" style references
         //  to itself
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("56737.xlsx");
@@ -153,10 +162,12 @@ public final class TestXSSFFormulaParser {
         assertEquals(null, ((NameXPxg)ptgs[0]).getSheetName());
         assertEquals("NR_Global_B2",((NameXPxg)ptgs[0]).getNameName());
         assertEquals("[0]!NR_Global_B2",((NameXPxg)ptgs[0]).toFormulaString());
+
+        wb.close();
     }
    
-	@Test
-    public void formulaReferencesOtherSheets() {
+    @Test
+    public void formulaReferencesOtherSheets() throws IOException {
         // Use a test file with the named ranges in place
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("56737.xlsx");
         XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
@@ -193,10 +204,12 @@ public final class TestXSSFFormulaParser {
         assertEquals(1, ptgs.length);
         assertEquals(NamePtg.class, ptgs[0].getClass());
         assertEquals("NR_Global_B2",((NamePtg)ptgs[0]).toFormulaString(fpb));
+
+        wb.close();
     }
     
     @Test
-    public void formulaReferencesOtherWorkbook() {
+    public void formulaReferencesOtherWorkbook() throws IOException {
         // Use a test file with the external linked table in place
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("ref-56737.xlsx");
         XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
@@ -228,6 +241,8 @@ public final class TestXSSFFormulaParser {
         assertEquals(null, ((NameXPxg)ptgs[0]).getSheetName());
         assertEquals("NR_Global_B2",((NameXPxg)ptgs[0]).getNameName());
         assertEquals("[1]!NR_Global_B2",((NameXPxg)ptgs[0]).toFormulaString());
+
+        wb.close();
     }
     
     /**
@@ -241,7 +256,7 @@ public final class TestXSSFFormulaParser {
      * (but not evaluate - that's elsewhere in the test suite)
      */
     @Test
-    public void multiSheetReferencesHSSFandXSSF() throws Exception {
+    public void multiSheetReferencesHSSFandXSSF() throws IOException {
         Workbook[] wbs = new Workbook[] {
                 HSSFTestDataSamples.openSampleWorkbook("55906-MultiSheetRefs.xls"),
                 XSSFTestDataSamples.openSampleWorkbook("55906-MultiSheetRefs.xlsx")
@@ -363,6 +378,8 @@ public final class TestXSSFFormulaParser {
             newF = s1.getRow(0).createCell(11, Cell.CELL_TYPE_FORMULA);
             newF.setCellFormula("MIN(Sheet1:Sheet2!A1:B2)");
             assertEquals("MIN(Sheet1:Sheet2!A1:B2)", newF.getCellFormula());
+
+            wb.close();
         }
     }
 
@@ -374,7 +391,7 @@ public final class TestXSSFFormulaParser {
     }
 
     @Test
-    public void test58648Single() {
+    public void test58648Single() throws IOException {
         XSSFWorkbook wb = new XSSFWorkbook();
         XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
         Ptg[] ptgs;
@@ -384,10 +401,12 @@ public final class TestXSSFFormulaParser {
                 2, ptgs.length);
         assertTrue("Had " + Arrays.toString(ptgs), ptgs[0] instanceof RefPtg);
         assertTrue("Had " + Arrays.toString(ptgs), ptgs[1] instanceof ParenthesisPtg);
+
+        wb.close();
     }
 
     @Test
-    public void test58648Basic() {
+    public void test58648Basic() throws IOException {
         XSSFWorkbook wb = new XSSFWorkbook();
         XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
         Ptg[] ptgs;
@@ -431,10 +450,12 @@ public final class TestXSSFFormulaParser {
         assertTrue("Had " + Arrays.toString(ptgs), ptgs[0] instanceof RefPtg);
         assertTrue("Had " + Arrays.toString(ptgs), ptgs[1] instanceof ParenthesisPtg);
         assertTrue("Had " + Arrays.toString(ptgs), ptgs[2] instanceof ParenthesisPtg);
+
+        wb.close();
     }
 
     @Test
-    public void test58648FormulaParsing() {
+    public void test58648FormulaParsing() throws IOException {
         Workbook wb = XSSFTestDataSamples.openSampleWorkbook("58648.xlsx");
 
         FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
@@ -460,10 +481,12 @@ public final class TestXSSFFormulaParser {
         Cell cell = sheet.getRow(1).getCell(4);
 
         assertEquals(5d, cell.getNumericCellValue(), 0d);
+
+        wb.close();
     }
 
     @Test
-    public void testWhitespaceInFormula() {
+    public void testWhitespaceInFormula() throws IOException {
         XSSFWorkbook wb = new XSSFWorkbook();
         XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
         Ptg[] ptgs;
@@ -505,10 +528,12 @@ public final class TestXSSFFormulaParser {
         assertTrue("Had " + Arrays.toString(ptgs), ptgs[1] instanceof AreaPtg);
         assertTrue("Had " + Arrays.toString(ptgs), ptgs[2] instanceof AreaPtg);
         assertTrue("Had " + Arrays.toString(ptgs), ptgs[3] instanceof IntersectionPtg);
+
+        wb.close();
     }
 
     @Test
-    public void testWhitespaceInComplexFormula() {
+    public void testWhitespaceInComplexFormula() throws IOException {
         XSSFWorkbook wb = new XSSFWorkbook();
         XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
         Ptg[] ptgs;
@@ -529,5 +554,172 @@ public final class TestXSSFFormulaParser {
         assertTrue("Had " + Arrays.toString(ptgs), ptgs[1] instanceof RefPtg);
         assertTrue("Had " + Arrays.toString(ptgs), ptgs[2] instanceof AreaPtg);
         assertTrue("Had " + Arrays.toString(ptgs), ptgs[3] instanceof NameXPxg);
+
+        wb.close();
+    }
+
+    @Test
+    public void parseStructuredReferences() throws IOException {
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("StructuredReferences.xlsx");
+
+        XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
+        Ptg[] ptgs;
+
+        /*
+        The following cases are tested (copied from FormulaParser.parseStructuredReference)
+           1 Table1[col]
+           2 Table1[[#Totals],[col]]
+           3 Table1[#Totals]
+           4 Table1[#All]
+           5 Table1[#Data]
+           6 Table1[#Headers]
+           7 Table1[#Totals]
+           8 Table1[#This Row]
+           9 Table1[[#All],[col]]
+          10 Table1[[#Headers],[col]]
+          11 Table1[[#Totals],[col]]
+          12 Table1[[#All],[col1]:[col2]]
+          13 Table1[[#Data],[col1]:[col2]]
+          14 Table1[[#Headers],[col1]:[col2]]
+          15 Table1[[#Totals],[col1]:[col2]]
+          16 Table1[[#Headers],[#Data],[col2]]
+          17 Table1[[#This Row], [col1]]
+          18 Table1[ [col1]:[col2] ]
+        */
+
+        final String tbl = "\\_Prime.1";
+        final String noTotalsRowReason = ": Tables without a Totals row should return #REF! on [#Totals]";
+
+        ////// Case 1: Evaluate Table1[col] with apostrophe-escaped #-signs ////////
+        ptgs = parse(fpb, "SUM("+tbl+"[calc='#*'#])");
+        assertEquals(2, ptgs.length);
+
+        // Area3DPxg [sheet=Table ! A2:A7]
+        assertTrue(ptgs[0] instanceof Area3DPxg);
+        Area3DPxg ptg0 = (Area3DPxg) ptgs[0];
+        assertEquals("Table", ptg0.getSheetName());
+        assertEquals("A2:A7", ptg0.format2DRefAsString());
+        // Note: structured references are evaluated and resolved to regular 3D area references.
+        assertEquals("Table!A2:A7", ptg0.toFormulaString());
+
+        // AttrPtg [sum ]
+        assertTrue(ptgs[1] instanceof AttrPtg);
+        AttrPtg ptg1 = (AttrPtg) ptgs[1];
+        assertTrue(ptg1.isSum());
+
+        ////// Case 1: Evaluate "Table1[col]" ////////
+        ptgs = parse(fpb, tbl+"[Name]");
+        assertEquals(1, ptgs.length);
+        assertEquals("Table1[col]", "Table!B2:B7", ptgs[0].toFormulaString());
+
+        ////// Case 2: Evaluate "Table1[[#Totals],[col]]" ////////
+        ptgs = parse(fpb, tbl+"[[#Totals],[col]]");
+        assertEquals(1, ptgs.length);
+        assertEquals("Table1[[#Totals],[col]]" + noTotalsRowReason, ErrPtg.REF_INVALID, ptgs[0]);
+
+        ////// Case 3: Evaluate "Table1[#Totals]" ////////
+        ptgs = parse(fpb, tbl+"[#Totals]");
+        assertEquals(1, ptgs.length);
+        assertEquals("Table1[#Totals]" + noTotalsRowReason, ErrPtg.REF_INVALID, ptgs[0]);
+
+        ////// Case 4: Evaluate "Table1[#All]" ////////
+        ptgs = parse(fpb, tbl+"[#All]");
+        assertEquals(1, ptgs.length);
+        assertEquals("Table1[#All]", "Table!A1:C7", ptgs[0].toFormulaString());
+
+        ////// Case 5: Evaluate "Table1[#Data]" (excludes Header and Data rows) ////////
+        ptgs = parse(fpb, tbl+"[#Data]");
+        assertEquals(1, ptgs.length);
+        assertEquals("Table1[#Data]", "Table!A2:C7", ptgs[0].toFormulaString());
+
+        ////// Case 6: Evaluate "Table1[#Headers]" ////////
+        ptgs = parse(fpb, tbl+"[#Headers]");
+        assertEquals(1, ptgs.length);
+        assertEquals("Table1[#Headers]", "Table!A1:C1", ptgs[0].toFormulaString());
+
+        ////// Case 7: Evaluate "Table1[#Totals]" ////////
+        ptgs = parse(fpb, tbl+"[#Totals]");
+        assertEquals(1, ptgs.length);
+        assertEquals("Table1[#Totals]" + noTotalsRowReason, ErrPtg.REF_INVALID, ptgs[0]);
+
+        ////// Case 8: Evaluate "Table1[#This Row]" ////////
+        ptgs = parse(fpb, tbl+"[#This Row]", 2);
+        assertEquals(1, ptgs.length);
+        assertEquals("Table1[#This Row]", "Table!A3:C3", ptgs[0].toFormulaString());
+
+        ////// Evaluate "Table1[@]" (equivalent to "Table1[#This Row]") ////////
+        ptgs = parse(fpb, tbl+"[@]", 2);
+        assertEquals(1, ptgs.length);
+        assertEquals("Table!A3:C3", ptgs[0].toFormulaString());
+
+        ////// Evaluate "Table1[#This Row]" when rowIndex is outside Table ////////
+        ptgs = parse(fpb, tbl+"[#This Row]", 10);
+        assertEquals(1, ptgs.length);
+        assertEquals("Table1[#This Row]", ErrPtg.VALUE_INVALID, ptgs[0]);
+
+        ////// Evaluate "Table1[@]" when rowIndex is outside Table ////////
+        ptgs = parse(fpb, tbl+"[@]", 10);
+        assertEquals(1, ptgs.length);
+        assertEquals("Table1[@]", ErrPtg.VALUE_INVALID, ptgs[0]);
+
+        ////// Evaluate "Table1[[#Data],[col]]" ////////
+        ptgs = parse(fpb, tbl+"[[#Data], [Number]]");
+        assertEquals(1, ptgs.length);
+        assertEquals("Table1[[#Data],[col]]", "Table!C2:C7", ptgs[0].toFormulaString());
+
+
+        ////// Case 9: Evaluate "Table1[[#All],[col]]" ////////
+        ptgs = parse(fpb, tbl+"[[#All], [Number]]");
+        assertEquals(1, ptgs.length);
+        assertEquals("Table1[[#All],[col]]", "Table!C1:C7", ptgs[0].toFormulaString());
+
+        ////// Case 10: Evaluate "Table1[[#Headers],[col]]" ////////
+        ptgs = parse(fpb, tbl+"[[#Headers], [Number]]");
+        assertEquals(1, ptgs.length);
+        // also acceptable: Table1!B1
+        assertEquals("Table1[[#Headers],[col]]", "Table!C1:C1", ptgs[0].toFormulaString());
+
+        ////// Case 11: Evaluate "Table1[[#Totals],[col]]" ////////
+        ptgs = parse(fpb, tbl+"[[#Totals],[Name]]");
+        assertEquals(1, ptgs.length);
+        assertEquals("Table1[[#Totals],[col]]" + noTotalsRowReason, ErrPtg.REF_INVALID, ptgs[0]);
+
+        ////// Case 12: Evaluate "Table1[[#All],[col1]:[col2]]" ////////
+        ptgs = parse(fpb, tbl+"[[#All], [Name]:[Number]]");
+        assertEquals(1, ptgs.length);
+        assertEquals("Table1[[#All],[col1]:[col2]]", "Table!B1:C7", ptgs[0].toFormulaString());
+
+        ////// Case 13: Evaluate "Table1[[#Data],[col]:[col2]]" ////////
+        ptgs = parse(fpb, tbl+"[[#Data], [Name]:[Number]]");
+        assertEquals(1, ptgs.length);
+        assertEquals("Table1[[#Data],[col]:[col2]]", "Table!B2:C7", ptgs[0].toFormulaString());
+
+        ////// Case 14: Evaluate "Table1[[#Headers],[col1]:[col2]]" ////////
+        ptgs = parse(fpb, tbl+"[[#Headers], [Name]:[Number]]");
+        assertEquals(1, ptgs.length);
+        assertEquals("Table1[[#Headers],[col1]:[col2]]", "Table!B1:C1", ptgs[0].toFormulaString());
+
+        ////// Case 15: Evaluate "Table1[[#Totals],[col]:[col2]]" ////////
+        ptgs = parse(fpb, tbl+"[[#Totals], [Name]:[Number]]");
+        assertEquals(1, ptgs.length);
+        assertEquals("Table1[[#Totals],[col]:[col2]]" + noTotalsRowReason, ErrPtg.REF_INVALID, ptgs[0]);
+
+        ////// Case 16: Evaluate "Table1[[#Headers],[#Data],[col]]" ////////
+        ptgs = parse(fpb, tbl+"[[#Headers],[#Data],[Number]]");
+        assertEquals(1, ptgs.length);
+        assertEquals("Table1[[#Headers],[#Data],[col]]", "Table!C1:C7", ptgs[0].toFormulaString());
+
+        ////// Case 17: Evaluate "Table1[[#This Row], [col1]]" ////////
+        ptgs = parse(fpb, tbl+"[[#This Row], [Number]]", 2);
+        assertEquals(1, ptgs.length);
+        // also acceptable: Table!C3
+        assertEquals("Table1[[#This Row], [col1]]", "Table!C3:C3", ptgs[0].toFormulaString());
+
+        ////// Case 18: Evaluate "Table1[[col]:[col2]]" ////////
+        ptgs = parse(fpb, tbl+"[[Name]:[Number]]");
+        assertEquals(1, ptgs.length);
+        assertEquals("Table1[[col]:[col2]]", "Table!B2:C7", ptgs[0].toFormulaString());
+
+        wb.close();
     }
 }

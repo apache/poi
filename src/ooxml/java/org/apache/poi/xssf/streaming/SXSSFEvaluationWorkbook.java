@@ -28,7 +28,7 @@ import org.apache.poi.xssf.usermodel.BaseXSSFEvaluationWorkbook;
  * SXSSF wrapper around the SXSSF and XSSF workbooks
  */
 public final class SXSSFEvaluationWorkbook extends BaseXSSFEvaluationWorkbook {
-    private SXSSFWorkbook _uBook;
+    private final SXSSFWorkbook _uBook;
     
     public static SXSSFEvaluationWorkbook create(SXSSFWorkbook book) {
         if (book == null) {
@@ -41,16 +41,19 @@ public final class SXSSFEvaluationWorkbook extends BaseXSSFEvaluationWorkbook {
         super(book.getXSSFWorkbook());
         _uBook = book;
     }
-    
+
+    @Override
     public int getSheetIndex(EvaluationSheet evalSheet) {
         SXSSFSheet sheet = ((SXSSFEvaluationSheet)evalSheet).getSXSSFSheet();
         return _uBook.getSheetIndex(sheet);
     }
-    
+
+    @Override
     public EvaluationSheet getSheet(int sheetIndex) {
         return new SXSSFEvaluationSheet(_uBook.getSheetAt(sheetIndex));
     }
-    
+
+    @Override
     public Ptg[] getFormulaTokens(EvaluationCell evalCell) {
         SXSSFCell cell = ((SXSSFEvaluationCell)evalCell).getSXSSFCell();
         SXSSFEvaluationWorkbook frBook = SXSSFEvaluationWorkbook.create(_uBook);

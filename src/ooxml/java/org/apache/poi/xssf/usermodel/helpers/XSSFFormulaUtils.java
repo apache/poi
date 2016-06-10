@@ -94,7 +94,7 @@ public final class XSSFFormulaUtils {
             String formula = f.getStringValue();
             if (formula != null && formula.length() > 0) {
                 int sheetIndex = _wb.getSheetIndex(cell.getSheet());
-                Ptg[] ptgs = FormulaParser.parse(formula, _fpwb, FormulaType.CELL, sheetIndex);
+                Ptg[] ptgs = FormulaParser.parse(formula, _fpwb, FormulaType.CELL, sheetIndex, cell.getRowIndex());
                 for (Ptg ptg : ptgs) {
                     updatePtg(ptg, oldName, newName);
                 }
@@ -113,7 +113,8 @@ public final class XSSFFormulaUtils {
         String formula = name.getRefersToFormula();
         if (formula != null) {
             int sheetIndex = name.getSheetIndex();
-            Ptg[] ptgs = FormulaParser.parse(formula, _fpwb, FormulaType.NAMEDRANGE, sheetIndex);
+            int rowIndex = -1; //don't care
+            Ptg[] ptgs = FormulaParser.parse(formula, _fpwb, FormulaType.NAMEDRANGE, sheetIndex, rowIndex);
             for (Ptg ptg : ptgs) {
                 updatePtg(ptg, oldName, newName);
             }
