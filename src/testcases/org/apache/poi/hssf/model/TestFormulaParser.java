@@ -1197,7 +1197,7 @@ public final class TestFormulaParser {
         String formula = "Sheet1!$B$2:$C$3,OFFSET(Sheet1!$E$2:$E$4,1,Sheet1!$A$1),Sheet1!$D$6";
         HSSFWorkbook wb = new HSSFWorkbook();
         wb.createSheet("Sheet1");
-        Ptg[] ptgs = FormulaParser.parse(formula, HSSFEvaluationWorkbook.create(wb), FormulaType.CELL, -1,-1);
+        Ptg[] ptgs = FormulaParser.parse(formula, HSSFEvaluationWorkbook.create(wb), FormulaType.CELL, -1);
 
         confirmTokenClasses(ptgs,
                 // TODO - AttrPtg.class, // Excel prepends this
@@ -1486,8 +1486,8 @@ public final class TestFormulaParser {
 
         confirmParseError(wb, "A1:ROUND(B1,1)", "The RHS of the range operator ':' at position 3 is not a proper reference.");
 
-        confirmParseError(wb, "Sheet1!!!", "Parse error near char 7 '!' in specified formula 'Sheet1!!!'. Expected number, string, defined name, or table");
-        confirmParseError(wb, "Sheet1!.Name", "Parse error near char 7 '.' in specified formula 'Sheet1!.Name'. Expected number, string, defined name, or table");
+        confirmParseError(wb, "Sheet1!!!", "Parse error near char 7 '!' in specified formula 'Sheet1!!!'. Expected number, string, defined name, or data table");
+        confirmParseError(wb, "Sheet1!.Name", "Parse error near char 7 '.' in specified formula 'Sheet1!.Name'. Expected number, string, defined name, or data table");
         confirmParseError(wb, "Sheet1!Sheet1", "Specified name 'Sheet1' for sheet Sheet1 not found");
         confirmParseError(wb, "Sheet1!F:Sheet1!G", "'Sheet1!F' is not a proper reference.");
         confirmParseError(wb, "Sheet1!F..foobar", "Complete area reference expected after sheet name at index 11.");

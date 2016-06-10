@@ -299,15 +299,6 @@ public final class WorkbookEvaluator {
             try {
 
                 Ptg[] ptgs = _workbook.getFormulaTokens(srcCell);
-//                System.out.println("=====");
-//                XSSFCell c = ((XSSFEvaluationCell)srcCell).getXSSFCell();
-//                System.out.println("Formula is "+ c);
-//                System.out.println("The cell is " + c.getSheet().getSheetName()+"!"+c.getReference());
-//                System.out.println("Evaluation tokens : ");  // TODO Dlivshen remove
-//                for (Ptg ptg : ptgs) {  // TODO Dlivshen remove
-//                    System.out.println(ptg);  // TODO Dlivshen remove
-//                } // TODO Dlivshen remove
-//                System.out.println("======"); // TODO Dlivshen remove
                 if (evalListener == null) {
                     result = evaluateFormula(ec, ptgs);
                 } else {
@@ -319,9 +310,9 @@ public final class WorkbookEvaluator {
                 tracker.updateCacheResult(result);
             }
              catch (NotImplementedException e) {
-                throw addExceptionInfo(e,  sheetIndex, rowIndex, columnIndex);
+                throw addExceptionInfo(e, sheetIndex, rowIndex, columnIndex);
              } catch (RuntimeException re) {
-                 if (re.getCause() instanceof  WorkbookNotFoundException && _ignoreMissingWorkbooks) {
+                 if (re.getCause() instanceof WorkbookNotFoundException && _ignoreMissingWorkbooks) {
                      logInfo(re.getCause().getMessage() + " - Continuing with cached value!");
                      switch(srcCell.getCachedFormulaResultType()) {
                          case Cell.CELL_TYPE_NUMERIC:

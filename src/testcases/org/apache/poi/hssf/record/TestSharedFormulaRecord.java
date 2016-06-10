@@ -107,7 +107,7 @@ public final class TestSharedFormulaRecord extends TestCase {
 
         SharedFormula sf = new SharedFormula(SpreadsheetVersion.EXCEL97);
 
-        sharedFormula = FormulaParser.parse("A2", fpb, FormulaType.CELL, -1, -1);
+        sharedFormula = FormulaParser.parse("A2", fpb, FormulaType.CELL, -1);
         convertedFormula = sf.convertSharedFormulas(sharedFormula, 0, 0);
         confirmOperandClasses(sharedFormula, convertedFormula);
         //conversion relative to [0,0] should return the original formula
@@ -123,7 +123,7 @@ public final class TestSharedFormulaRecord extends TestCase {
         //one row down and one cell right
         assertEquals("B3", FormulaRenderer.toFormulaString(fpb, convertedFormula));
 
-        sharedFormula = FormulaParser.parse("SUM(A1:C1)", fpb, FormulaType.CELL, -1, -1);
+        sharedFormula = FormulaParser.parse("SUM(A1:C1)", fpb, FormulaType.CELL, -1);
         convertedFormula = sf.convertSharedFormulas(sharedFormula, 0, 0);
         confirmOperandClasses(sharedFormula, convertedFormula);
         assertEquals("SUM(A1:C1)", FormulaRenderer.toFormulaString(fpb, convertedFormula));

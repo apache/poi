@@ -145,17 +145,20 @@ public final class FormulaParser {
     }
 
     /**
-     * Parse a formula into a array of tokens
-     * Side effect: creates name (Workbook.createName) if formula contains unrecognized names (names are likely UDFs)
+     * Parse a formula into an array of tokens
+     * Side effect: creates name ({@link org.apache.poi.ss.usermodel.Workbook#createName})
+     *     if formula contains unrecognized names (names are likely UDFs)
      *
      * @param formula     the formula to parse
      * @param workbook    the parent workbook
      * @param formulaType the type of the formula, see {@link FormulaType}
      * @param sheetIndex  the 0-based index of the sheet this formula belongs to.
+     *     The sheet index is required to resolve sheet-level names. <code>-1</code> means that
+     *     the scope of the name will be ignored and  the parser will match names only by name
      * @param rowIndex  - the related cell's row index in 0-based form (-1 if the formula is not cell related)
      *                     used to handle structured references that have the "#This Row" quantifier.
-     * The sheet index is required to resolve sheet-level names. <code>-1</code> means that
-     * the scope of the name will be ignored and  the parser will match names only by name
+     *                    Use rowIndex=-1 or {@link #parseStructuredReference(String, FormulaParsingWorkbook, int, int) if formula
+     *                    does not contain structured references.
      *
      * @return array of parsed tokens
      * @throws FormulaParseException if the formula has incorrect syntax or is otherwise invalid
@@ -165,7 +168,22 @@ public final class FormulaParser {
         fp.parse();
         return fp.getRPNPtg(formulaType);
     }
-    
+
+    /**
+     * Parse a formula into an array of tokens
+     * Side effect: creates name ({@link org.apache.poi.ss.usermodel.Workbook#createName})
+     *     if formula contains unrecognized names (names are likely UDFs)
+     *
+     * @param formula     the formula to parse
+     * @param workbook    the parent workbook
+     * @param formulaType the type of the formula, see {@link FormulaType}
+     * @param sheetIndex  the 0-based index of the sheet this formula belongs to.
+     *     The sheet index is required to resolve sheet-level names. <code>-1</code> means that
+     *     the scope of the name will be ignored and  the parser will match names only by name
+     *
+     * @return array of parsed tokens
+     * @throws FormulaParseException if the formula has incorrect syntax or is otherwise invalid
+     */
     public static Ptg[] parse(String formula, FormulaParsingWorkbook workbook, int formulaType, int sheetIndex) {
         return parse(formula, workbook, formulaType, sheetIndex, -1);
     }
@@ -180,7 +198,8 @@ public final class FormulaParser {
      * @return the area that being represented by the structured reference.
      */
     public static Area3DPxg parseStructuredReference(String tableText, FormulaParsingWorkbook workbook, int rowIndex) {
-        Ptg[] arr = FormulaParser.parse(tableText, workbook, 0, 0, rowIndex);
+        final int sheetIndex = -1; //don't care?
+        Ptg[] arr = FormulaParser.parse(tableText, workbook, FormulaType.CELL, sheetIndex, rowIndex);
         if (arr.length != 1 || !(arr[0] instanceof Area3DPxg) ) {
             throw new IllegalStateException("Illegal structured reference");
         }
@@ -588,14 +607,14 @@ public final class FormulaParser {
      * @param tableName
      * @return
      */
-    private ParseNode parseStructuredReference(String tableName){
+    private ParseNode parseStructuredReference(String tableName) {
         
         if ( ! (_ssVersion.equals(SpreadsheetVersion.EXCEL2007)) ) {
-            throw new FormulaParseException("Strctured references work only on XSSF (Excel 2007)!");
+            throw new FormulaParseException("Structured references work only on XSSF (Excel 2007+)!");
         }
         Table tbl = _book.getTable(tableName);
         if (tbl == null) {
-           throw new  FormulaParseException("Illegal table name!");
+           throw new FormulaParseException("Illegal table name!");
         }
         String sheetName = tbl.getSheetName();
         
@@ -845,11 +864,9 @@ public final class FormulaParser {
         if (look == '(') {
             return function(name);
         }
-        //TODO Livshen's code
         if(look == '['){
             return parseStructuredReference(name);
         }
-        //TODO End of Livshen's code
         if (name.equalsIgnoreCase("TRUE") || name.equalsIgnoreCase("FALSE")) {
             return  new ParseNode(BoolPtg.valueOf(name.equalsIgnoreCase("TRUE")));
         }
@@ -875,7 +892,7 @@ public final class FormulaParser {
 
         // defined names may begin with a letter or underscore or backslash
         if (!Character.isLetter(look) && look != '_' && look != '\\') {
-            throw expected("number, string, defined name, or table");
+            throw expected("number, string, defined name, or data table");
         }
         while (isValidDefinedNameChar(look)) {
             sb.append(look);

@@ -96,9 +96,6 @@ public final class Indirect implements FreeRefFunction {
     private static ValueEval evaluateIndirect(final OperationEvaluationContext ec, String text,
             boolean isA1style) {
         
-        ec.getRowIndex();
-        ec.getColumnIndex();
-
         // Search backwards for '!' because sheet names can contain '!'
         int plingPos = text.lastIndexOf('!');
 
@@ -119,17 +116,19 @@ public final class Indirect implements FreeRefFunction {
             refText = text.substring(plingPos + 1);
         }
 
-        String refStrPart1;
-        String refStrPart2;
-        if (Table.isStructuredReference.matcher(refText).matches()) { // The argument is structured reference
+        if (Table.isStructuredReference.matcher(refText).matches()) {
+            // The argument is structured reference
             Area3DPxg areaPtg = null;
-            try{
+            try {
                 areaPtg = FormulaParser.parseStructuredReference(refText, (FormulaParsingWorkbook) ec.getWorkbook(), ec.getRowIndex());
-            } catch(FormulaParseException e) {
+            } catch (FormulaParseException e) {
                 return ErrorEval.REF_INVALID;
             }
             return ec.getArea3DEval(areaPtg);
-        } else { // The argumnet is regular reference
+        } else {
+            // The argument is regular reference
+            String refStrPart1;
+            String refStrPart2;
             int colonPos = refText.indexOf(':');
             if (colonPos < 0) {
                  refStrPart1 = refText.trim();

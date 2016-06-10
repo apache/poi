@@ -315,6 +315,10 @@ public abstract class BaseXSSFEvaluationWorkbook implements FormulaRenderingWork
         return _uBook.createName();
     }
 
+    private static String caseInsensitive(String s) {
+        return s.toUpperCase(Locale.ROOT);
+    }
+
     /*
      * TODO: data tables are stored at the workbook level in XSSF, but are bound to a single sheet.
      *       The current code structure has them hanging off XSSFSheet, but formulas reference them
@@ -336,7 +340,7 @@ public abstract class BaseXSSFEvaluationWorkbook implements FormulaRenderingWork
 
         for (Sheet sheet : _uBook) {
             for (XSSFTable tbl : ((XSSFSheet)sheet).getTables()) {
-                String lname = tbl.getName().toLowerCase(Locale.ROOT);
+                String lname = caseInsensitive(tbl.getName());
                 _tableCache.put(lname, tbl);
             }
         }
@@ -356,7 +360,7 @@ public abstract class BaseXSSFEvaluationWorkbook implements FormulaRenderingWork
     @Override
     public XSSFTable getTable(String name) {
         if (name == null) return null;
-        String lname = name.toLowerCase(Locale.ROOT);
+        String lname = caseInsensitive(name);
         return getTableCache().get(lname);
     }
     
