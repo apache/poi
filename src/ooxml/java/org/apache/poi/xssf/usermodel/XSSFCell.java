@@ -406,9 +406,9 @@ public final class XSSFCell implements Cell {
         if (cachedValueType != expectedTypeCode) {
             throw typeMismatch(expectedTypeCode, cachedValueType, true);
         }
-	}
+    }
 
-	/**
+    /**
      * Set a string value for the cell.
      *
      * @param str value to set the cell to.  For formulas we'll set the formula
@@ -925,8 +925,8 @@ public final class XSSFCell implements Cell {
                 throw new IllegalArgumentException("Illegal cell type: " + cellType);
         }
         if (cellType != CELL_TYPE_FORMULA && _cell.isSetF()) {
-			_cell.unsetF();
-		}
+            _cell.unsetF();
+        }
     }
 
     /**

@@ -1762,7 +1762,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
      * Get the document's embedded files.
      */
     @Override
-	public List<PackagePart> getAllEmbedds() throws OpenXML4JException {
+    public List<PackagePart> getAllEmbedds() throws OpenXML4JException {
         List<PackagePart> embedds = new LinkedList<PackagePart>();
 
         for(XSSFSheet sheet : sheets){
@@ -1929,7 +1929,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
      */
     @Internal
     public MapInfo getMapInfo(){
-    	return mapInfo;
+        return mapInfo;
     }
 
     /**
@@ -1946,92 +1946,92 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         throw new RuntimeException("Not Implemented - see bug #57184");
     }
 
-	/**
-	 * Specifies a boolean value that indicates whether structure of workbook is locked. <br/>
-	 * A value true indicates the structure of the workbook is locked. Worksheets in the workbook can't be moved,
-	 * deleted, hidden, unhidden, or renamed, and new worksheets can't be inserted.<br/>
-	 * A value of false indicates the structure of the workbook is not locked.<br/>
-	 *
-	 * @return true if structure of workbook is locked
-	 */
-	public boolean isStructureLocked() {
-		return workbookProtectionPresent() && workbook.getWorkbookProtection().getLockStructure();
-	}
+    /**
+     * Specifies a boolean value that indicates whether structure of workbook is locked. <br/>
+     * A value true indicates the structure of the workbook is locked. Worksheets in the workbook can't be moved,
+     * deleted, hidden, unhidden, or renamed, and new worksheets can't be inserted.<br/>
+     * A value of false indicates the structure of the workbook is not locked.<br/>
+     *
+     * @return true if structure of workbook is locked
+     */
+    public boolean isStructureLocked() {
+        return workbookProtectionPresent() && workbook.getWorkbookProtection().getLockStructure();
+    }
 
-	/**
-	 * Specifies a boolean value that indicates whether the windows that comprise the workbook are locked. <br/>
-	 * A value of true indicates the workbook windows are locked. Windows are the same size and position each time the
-	 * workbook is opened.<br/>
-	 * A value of false indicates the workbook windows are not locked.
-	 *
-	 * @return true if windows that comprise the workbook are locked
-	 */
-	public boolean isWindowsLocked() {
-		return workbookProtectionPresent() && workbook.getWorkbookProtection().getLockWindows();
-	}
+    /**
+     * Specifies a boolean value that indicates whether the windows that comprise the workbook are locked. <br/>
+     * A value of true indicates the workbook windows are locked. Windows are the same size and position each time the
+     * workbook is opened.<br/>
+     * A value of false indicates the workbook windows are not locked.
+     *
+     * @return true if windows that comprise the workbook are locked
+     */
+    public boolean isWindowsLocked() {
+        return workbookProtectionPresent() && workbook.getWorkbookProtection().getLockWindows();
+    }
 
-	/**
-	 * Specifies a boolean value that indicates whether the workbook is locked for revisions.
-	 *
-	 * @return true if the workbook is locked for revisions.
-	 */
-	public boolean isRevisionLocked() {
-		return workbookProtectionPresent() && workbook.getWorkbookProtection().getLockRevision();
-	}
+    /**
+     * Specifies a boolean value that indicates whether the workbook is locked for revisions.
+     *
+     * @return true if the workbook is locked for revisions.
+     */
+    public boolean isRevisionLocked() {
+        return workbookProtectionPresent() && workbook.getWorkbookProtection().getLockRevision();
+    }
 
-	/**
-	 * Locks the structure of workbook.
-	 */
-	public void lockStructure() {
-	    safeGetWorkbookProtection().setLockStructure(true);
-	}
+    /**
+     * Locks the structure of workbook.
+     */
+    public void lockStructure() {
+        safeGetWorkbookProtection().setLockStructure(true);
+    }
 
-	/**
-	 * Unlocks the structure of workbook.
-	 */
-	public void unLockStructure() {
-	    safeGetWorkbookProtection().setLockStructure(false);
-	}
+    /**
+     * Unlocks the structure of workbook.
+     */
+    public void unLockStructure() {
+        safeGetWorkbookProtection().setLockStructure(false);
+    }
 
-	/**
-	 * Locks the windows that comprise the workbook.
-	 */
-	public void lockWindows() {
-	    safeGetWorkbookProtection().setLockWindows(true);
-	}
+    /**
+     * Locks the windows that comprise the workbook.
+     */
+    public void lockWindows() {
+        safeGetWorkbookProtection().setLockWindows(true);
+    }
 
-	/**
-	 * Unlocks the windows that comprise the workbook.
-	 */
-	public void unLockWindows() {
-	    safeGetWorkbookProtection().setLockWindows(false);
-	}
+    /**
+     * Unlocks the windows that comprise the workbook.
+     */
+    public void unLockWindows() {
+        safeGetWorkbookProtection().setLockWindows(false);
+    }
 
-	/**
-	 * Locks the workbook for revisions.
-	 */
-	public void lockRevision() {
-	    safeGetWorkbookProtection().setLockRevision(true);
-	}
+    /**
+     * Locks the workbook for revisions.
+     */
+    public void lockRevision() {
+        safeGetWorkbookProtection().setLockRevision(true);
+    }
 
-	/**
-	 * Unlocks the workbook for revisions.
-	 */
-	public void unLockRevision() {
-	    safeGetWorkbookProtection().setLockRevision(false);
-	}
+    /**
+     * Unlocks the workbook for revisions.
+     */
+    public void unLockRevision() {
+        safeGetWorkbookProtection().setLockRevision(false);
+    }
 
-	/**
-	 * Sets the workbook password. 
-	 * 
-	 * @param password if null, the password will be removed
-	 * @param hashAlgo if null, the password will be set as XOR password (Excel 2010 and earlier)
-	 *  otherwise the given algorithm is used for calculating the hash password (Excel 2013)
-	 */
-	public void setWorkbookPassword(String password, HashAlgorithm hashAlgo) {
+    /**
+     * Sets the workbook password. 
+     * 
+     * @param password if null, the password will be removed
+     * @param hashAlgo if null, the password will be set as XOR password (Excel 2010 and earlier)
+     *  otherwise the given algorithm is used for calculating the hash password (Excel 2013)
+     */
+    public void setWorkbookPassword(String password, HashAlgorithm hashAlgo) {
         if (password == null && !workbookProtectionPresent()) return;
         setPassword(safeGetWorkbookProtection(), password, hashAlgo, "workbook");
-	}
+    }
 
     /**
      * Validate the password against the stored hash, the hashing method will be determined
@@ -2074,9 +2074,9 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         }
     }
     
-	private boolean workbookProtectionPresent() {
-		return workbook.isSetWorkbookProtection();
-	}
+    private boolean workbookProtectionPresent() {
+        return workbook.isSetWorkbookProtection();
+    }
 
     private CTWorkbookProtection safeGetWorkbookProtection() {
         if (!workbookProtectionPresent()){
@@ -2084,7 +2084,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         }
         return workbook.getWorkbookProtection();
     }
-	
+    
     /**
      *
      * Returns the locator of user-defined functions.
