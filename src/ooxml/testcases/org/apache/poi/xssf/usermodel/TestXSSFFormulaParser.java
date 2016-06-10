@@ -51,7 +51,7 @@ public final class TestXSSFFormulaParser {
     }
 
     @Test
-    public void basicParsing() {
+    public void basicParsing() throws IOException {
         XSSFWorkbook wb = new XSSFWorkbook();
         XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
         Ptg[] ptgs;
@@ -123,10 +123,12 @@ public final class TestXSSFFormulaParser {
         assertEquals(AttrPtg.class,  ptgs[1].getClass());
         assertEquals("Sheet1!A1:B3", ptgs[0].toFormulaString());
         assertEquals("SUM",          ptgs[1].toFormulaString());
+
+        wb.close();
     }
 
     @Test
-    public void builtInFormulas() {
+    public void builtInFormulas() throws IOException {
         XSSFWorkbook wb = new XSSFWorkbook();
         XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
         Ptg[] ptgs;
@@ -139,10 +141,12 @@ public final class TestXSSFFormulaParser {
         assertEquals(2, ptgs.length);
         assertTrue("Had " + Arrays.toString(ptgs), ptgs[0] instanceof IntPtg);
         assertTrue("Had " + Arrays.toString(ptgs), ptgs[1] instanceof FuncPtg);
+
+        wb.close();
     }
     
     @Test
-    public void formulaReferencesSameWorkbook() {
+    public void formulaReferencesSameWorkbook() throws IOException {
         // Use a test file with "other workbook" style references
         //  to itself
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("56737.xlsx");
@@ -158,10 +162,12 @@ public final class TestXSSFFormulaParser {
         assertEquals(null, ((NameXPxg)ptgs[0]).getSheetName());
         assertEquals("NR_Global_B2",((NameXPxg)ptgs[0]).getNameName());
         assertEquals("[0]!NR_Global_B2",((NameXPxg)ptgs[0]).toFormulaString());
+
+        wb.close();
     }
    
     @Test
-    public void formulaReferencesOtherSheets() {
+    public void formulaReferencesOtherSheets() throws IOException {
         // Use a test file with the named ranges in place
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("56737.xlsx");
         XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
@@ -198,10 +204,12 @@ public final class TestXSSFFormulaParser {
         assertEquals(1, ptgs.length);
         assertEquals(NamePtg.class, ptgs[0].getClass());
         assertEquals("NR_Global_B2",((NamePtg)ptgs[0]).toFormulaString(fpb));
+
+        wb.close();
     }
     
     @Test
-    public void formulaReferencesOtherWorkbook() {
+    public void formulaReferencesOtherWorkbook() throws IOException {
         // Use a test file with the external linked table in place
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("ref-56737.xlsx");
         XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
@@ -233,6 +241,8 @@ public final class TestXSSFFormulaParser {
         assertEquals(null, ((NameXPxg)ptgs[0]).getSheetName());
         assertEquals("NR_Global_B2",((NameXPxg)ptgs[0]).getNameName());
         assertEquals("[1]!NR_Global_B2",((NameXPxg)ptgs[0]).toFormulaString());
+
+        wb.close();
     }
     
     /**
@@ -246,7 +256,7 @@ public final class TestXSSFFormulaParser {
      * (but not evaluate - that's elsewhere in the test suite)
      */
     @Test
-    public void multiSheetReferencesHSSFandXSSF() throws Exception {
+    public void multiSheetReferencesHSSFandXSSF() throws IOException {
         Workbook[] wbs = new Workbook[] {
                 HSSFTestDataSamples.openSampleWorkbook("55906-MultiSheetRefs.xls"),
                 XSSFTestDataSamples.openSampleWorkbook("55906-MultiSheetRefs.xlsx")
@@ -368,6 +378,8 @@ public final class TestXSSFFormulaParser {
             newF = s1.getRow(0).createCell(11, Cell.CELL_TYPE_FORMULA);
             newF.setCellFormula("MIN(Sheet1:Sheet2!A1:B2)");
             assertEquals("MIN(Sheet1:Sheet2!A1:B2)", newF.getCellFormula());
+
+            wb.close();
         }
     }
 
@@ -379,7 +391,7 @@ public final class TestXSSFFormulaParser {
     }
 
     @Test
-    public void test58648Single() {
+    public void test58648Single() throws IOException {
         XSSFWorkbook wb = new XSSFWorkbook();
         XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
         Ptg[] ptgs;
@@ -389,10 +401,12 @@ public final class TestXSSFFormulaParser {
                 2, ptgs.length);
         assertTrue("Had " + Arrays.toString(ptgs), ptgs[0] instanceof RefPtg);
         assertTrue("Had " + Arrays.toString(ptgs), ptgs[1] instanceof ParenthesisPtg);
+
+        wb.close();
     }
 
     @Test
-    public void test58648Basic() {
+    public void test58648Basic() throws IOException {
         XSSFWorkbook wb = new XSSFWorkbook();
         XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
         Ptg[] ptgs;
@@ -436,10 +450,12 @@ public final class TestXSSFFormulaParser {
         assertTrue("Had " + Arrays.toString(ptgs), ptgs[0] instanceof RefPtg);
         assertTrue("Had " + Arrays.toString(ptgs), ptgs[1] instanceof ParenthesisPtg);
         assertTrue("Had " + Arrays.toString(ptgs), ptgs[2] instanceof ParenthesisPtg);
+
+        wb.close();
     }
 
     @Test
-    public void test58648FormulaParsing() {
+    public void test58648FormulaParsing() throws IOException {
         Workbook wb = XSSFTestDataSamples.openSampleWorkbook("58648.xlsx");
 
         FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
@@ -465,10 +481,12 @@ public final class TestXSSFFormulaParser {
         Cell cell = sheet.getRow(1).getCell(4);
 
         assertEquals(5d, cell.getNumericCellValue(), 0d);
+
+        wb.close();
     }
 
     @Test
-    public void testWhitespaceInFormula() {
+    public void testWhitespaceInFormula() throws IOException {
         XSSFWorkbook wb = new XSSFWorkbook();
         XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
         Ptg[] ptgs;
@@ -510,10 +528,12 @@ public final class TestXSSFFormulaParser {
         assertTrue("Had " + Arrays.toString(ptgs), ptgs[1] instanceof AreaPtg);
         assertTrue("Had " + Arrays.toString(ptgs), ptgs[2] instanceof AreaPtg);
         assertTrue("Had " + Arrays.toString(ptgs), ptgs[3] instanceof IntersectionPtg);
+
+        wb.close();
     }
 
     @Test
-    public void testWhitespaceInComplexFormula() {
+    public void testWhitespaceInComplexFormula() throws IOException {
         XSSFWorkbook wb = new XSSFWorkbook();
         XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
         Ptg[] ptgs;
@@ -534,6 +554,8 @@ public final class TestXSSFFormulaParser {
         assertTrue("Had " + Arrays.toString(ptgs), ptgs[1] instanceof RefPtg);
         assertTrue("Had " + Arrays.toString(ptgs), ptgs[2] instanceof AreaPtg);
         assertTrue("Had " + Arrays.toString(ptgs), ptgs[3] instanceof NameXPxg);
+
+        wb.close();
     }
 
     @Test
