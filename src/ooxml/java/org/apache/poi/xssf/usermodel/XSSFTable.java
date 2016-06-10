@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
@@ -33,6 +34,7 @@ import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.ss.usermodel.Table;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.helpers.XSSFXmlColumnPr;
+import org.apache.poi.util.StringUtil;
 import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTable;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableColumn;
@@ -121,20 +123,22 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
      * @return true if the Table element contain mappings
      */
     public boolean mapsTo(long id){
-        boolean maps =false;
-        
         List<XSSFXmlColumnPr> pointers = getXmlColumnPrs();
         
         for (XSSFXmlColumnPr pointer: pointers) {
             if (pointer.getMapId()==id) {
-                maps=true;
-                break;
+                return true;
             }
         }
         
-        return maps;
+        return false;
     }
 
+    /**
+      * caches table columns for performance.
+      * Updated via updateHeaders
+      * @since 3.15 beta 2
+      */
     private CTTableColumn[] getTableColumns() {
         if (ctColumns == null) {
             ctColumns = ctTable.getTableColumns().getTableColumnArray();
@@ -146,6 +150,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
      * 
      * Calculates the xpath of the root element for the table. This will be the common part
      * of all the mapping's xpaths
+     * Note: this function caches the result for performance. To flush the cache {@link #updateHeaders()} must be called.
      * 
      * @return the xpath of the table's root element
      */
@@ -176,10 +181,8 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
                 }
             }
 
-            commonXPath = "";
-            for (int i = 1 ; i< commonTokens.length;i++) {
-                commonXPath +="/"+commonTokens[i];
-            }
+            commonTokens[0] = "";
+            commonXPath = StringUtil.join(commonTokens, "/");
         }
         
         return commonXPath;
@@ -188,6 +191,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
     
     /**
      * Note this list is static - once read, it does not notice later changes to the underlying column structures
+     * To clear the cache, call {@link #updateHeaders}
      * @return List of XSSFXmlColumnPr
      */
     public List<XSSFXmlColumnPr> getXmlColumnPrs() {
@@ -297,7 +301,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
      * Headers <em>must</em> be in sync, otherwise Excel will display a
      * "Found unreadable content" message on startup.
      */
-    public void updateHeaders(){
+    public void updateHeaders() {
         XSSFSheet sheet = (XSSFSheet)getParent();
         CellReference ref = getStartCellReference();
         if(ref == null) return;
@@ -317,43 +321,80 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
             }
             ctColumns = null;
             columnMap = null;
+            xmlColumnPr = null;
+            commonXPath = null;
         }
     }
 
+    private static String caseInsensitive(String s) {
+        return s.toUpperCase(Locale.ROOT);
+    }
+
+    /**
+     * Gets the relative column index of a column in this table having the header name <code>column</code>.
+     * The column index is relative to the left-most column in the table, 0-indexed.
+     * Returns <code>-1</code> if <code>column</code> is not a header name in table.
+     *
+     * Note: this function caches column names for performance. To flush the cache (because columns
+     * have been moved or column headers have been changed), {@link #updateHeaders()} must be called.
+     *
+     * @since 3.15 beta 2
+     */
     public int findColumnIndex(String column) {
         if (columnMap == null) {
-            columnMap = new HashMap<String, Integer>(getTableColumns().length);
+            // FIXME: replace with org.apache.commons.collections.map.CaseInsensitiveMap
+            int count = getTableColumns().length;
+            columnMap = new HashMap<String, Integer>(count);
             
-            for (int i=0; i < getTableColumns().length; i++) {
-                columnMap.put(getTableColumns()[i].getName().toUpperCase(), Integer.valueOf(i));
+            for (int i=0; i < count; i++) {
+                String columnName = getTableColumns()[i].getName();
+                columnMap.put(caseInsensitive(columnName), i);
             }
         }
         // Table column names with special characters need a single quote escape
         // but the escape is not present in the column definition
-        Integer idx = columnMap.get(column.replace("'", "").toUpperCase());
+        Integer idx = columnMap.get(caseInsensitive(column.replace("'", "")));
         return idx == null ? -1 : idx.intValue();
     }
 
+    /**
+     * @since 3.15 beta 2
+     */
     public String getSheetName() {
         return getXSSFSheet().getSheetName();
     }
 
+    /**
+     * @since 3.15 beta 2
+     */
     public boolean isHasTotalsRow() {
         return ctTable.getTotalsRowShown();
     }
 
+    /**
+     * @since 3.15 beta 2
+     */
     public int getStartColIndex() {
         return getStartCellReference().getCol();
     }
 
+    /**
+     * @since 3.15 beta 2
+     */
     public int getStartRowIndex() {
         return getStartCellReference().getRow();
     }
 
+    /**
+     * @since 3.15 beta 2
+     */
     public int getEndColIndex() {
         return getEndCellReference().getCol();
     }
 
+    /**
+     * @since 3.15 beta 2
+     */
     public int getEndRowIndex() {
         return getEndCellReference().getRow();
     }

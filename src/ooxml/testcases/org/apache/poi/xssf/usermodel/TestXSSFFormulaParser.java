@@ -42,7 +42,7 @@ import java.util.Arrays;
 
 public final class TestXSSFFormulaParser {
     private static Ptg[] parse(FormulaParsingWorkbook fpb, String fmla) {
-        return FormulaParser.parse(fmla, fpb, FormulaType.CELL, -1, -1);
+        return FormulaParser.parse(fmla, fpb, FormulaType.CELL, -1);
     }
 
     @Test
