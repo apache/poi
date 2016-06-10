@@ -157,7 +157,7 @@ public final class FormulaParser {
      *     the scope of the name will be ignored and  the parser will match names only by name
      * @param rowIndex  - the related cell's row index in 0-based form (-1 if the formula is not cell related)
      *                     used to handle structured references that have the "#This Row" quantifier.
-     *                    Use rowIndex=-1 or {@link #parseStructuredReference(String, FormulaParsingWorkbook, int, int)} if formula
+     *                    Use rowIndex=-1 or {@link #parseStructuredReference(String, FormulaParsingWorkbook, int)} if formula
      *                    does not contain structured references.
      *
      * @return array of parsed tokens
