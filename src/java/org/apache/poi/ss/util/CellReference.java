@@ -59,25 +59,33 @@ public class CellReference {
 
     /**
      * Matches a run of one or more letters followed by a run of one or more digits.
+     * Both the letter and number groups are optional.
      * The run of letters is group 1 and the run of digits is group 2.
      * Each group may optionally be prefixed with a single '$'.
      */
-    private static final Pattern CELL_REF_PATTERN = Pattern.compile("\\$?([A-Za-z]+)\\$?([0-9]+)");
+    private static final Pattern CELL_REF_PATTERN = Pattern.compile("(\\$?[A-Z]+)?" + "(\\$?[0-9]+)?", Pattern.CASE_INSENSITIVE);
+    /**
+     * Matches references only where row and column are included.
+     * Matches a run of one or more letters followed by a run of one or more digits.
+     * If a reference does not match this pattern, it might match COLUMN_REF_PATTERN or ROW_REF_PATTERN
+     * References may optionally include a single '$' before each group, but these are excluded from the Matcher.group(int).
+     */
+    private static final Pattern STRICTLY_CELL_REF_PATTERN = Pattern.compile("\\$?([A-Z]+)" + "\\$?([0-9]+)", Pattern.CASE_INSENSITIVE);
     /**
      * Matches a run of one or more letters.  The run of letters is group 1.
-     * The text may optionally be prefixed with a single '$'.
+     * References may optionally include a single '$' before the group, but these are excluded from the Matcher.group(int).
      */
-    private static final Pattern COLUMN_REF_PATTERN = Pattern.compile("\\$?([A-Za-z]+)");
+    private static final Pattern COLUMN_REF_PATTERN = Pattern.compile("\\$?([A-Z]+)", Pattern.CASE_INSENSITIVE);
     /**
-     * Matches a run of one or more digits.  The run of digits is group 1.
-     * The text may optionally be prefixed with a single '$'.
+     * Matches a run of one or more letters.  The run of numbers is group 1.
+     * References may optionally include a single '$' before the group, but these are excluded from the Matcher.group(int).
      */
     private static final Pattern ROW_REF_PATTERN = Pattern.compile("\\$?([0-9]+)");
     /**
      * Named range names must start with a letter or underscore.  Subsequent characters may include
      * digits or dot.  (They can even end in dot).
      */
-    private static final Pattern NAMED_RANGE_NAME_PATTERN = Pattern.compile("[_A-Za-z][_.A-Za-z0-9]*");
+    private static final Pattern NAMED_RANGE_NAME_PATTERN = Pattern.compile("[_A-Z][_.A-Z0-9]*", Pattern.CASE_INSENSITIVE);
     //private static final String BIFF8_LAST_COLUMN = SpreadsheetVersion.EXCEL97.getLastColumnName();
     //private static final int BIFF8_LAST_COLUMN_TEXT_LEN = BIFF8_LAST_COLUMN.length();
     //private static final String BIFF8_LAST_ROW = String.valueOf(SpreadsheetVersion.EXCEL97.getMaxRows());
@@ -221,7 +229,7 @@ public class CellReference {
             // no digits at end of str
             return validateNamedRangeName(str, ssVersion);
         }
-        Matcher cellRefPatternMatcher = CELL_REF_PATTERN.matcher(str);
+        Matcher cellRefPatternMatcher = STRICTLY_CELL_REF_PATTERN.matcher(str);
         if (!cellRefPatternMatcher.matches()) {
             return validateNamedRangeName(str, ssVersion);
         }
@@ -247,14 +255,14 @@ public class CellReference {
         Matcher colMatcher = COLUMN_REF_PATTERN.matcher(str);
         if (colMatcher.matches()) {
             String colStr = colMatcher.group(1);
-            if (isColumnWithnRange(colStr, ssVersion)) {
+            if (isColumnWithinRange(colStr, ssVersion)) {
                 return NameType.COLUMN;
             }
         }
         Matcher rowMatcher = ROW_REF_PATTERN.matcher(str);
         if (rowMatcher.matches()) {
             String rowStr = rowMatcher.group(1);
-            if (isRowWithnRange(rowStr, ssVersion)) {
+            if (isRowWithinRange(rowStr, ssVersion)) {
                 return NameType.ROW;
             }
         }
@@ -302,13 +310,22 @@ public class CellReference {
      * @return <code>true</code> if the row and col parameters are within range of a BIFF8 spreadsheet.
      */
     public static boolean cellReferenceIsWithinRange(String colStr, String rowStr, SpreadsheetVersion ssVersion) {
-        if (!isColumnWithnRange(colStr, ssVersion)) {
+        if (!isColumnWithinRange(colStr, ssVersion)) {
             return false;
         }
-        return isRowWithnRange(rowStr, ssVersion);
+        return isRowWithinRange(rowStr, ssVersion);
     }
 
+    /**
+     * @deprecated 3.15 beta 2. Use {@link #isColumnWithinRange}.
+     */
     public static boolean isColumnWithnRange(String colStr, SpreadsheetVersion ssVersion) {
+        return isColumnWithinRange(colStr, ssVersion);
+    }
+
+    public static boolean isColumnWithinRange(String colStr, SpreadsheetVersion ssVersion) {
+        // Equivalent to 0 <= CellReference.convertColStringToIndex(colStr) <= ssVersion.getLastColumnIndex()
+
         String lastCol = ssVersion.getLastColumnName();
         int lastColLength = lastCol.length();
 
@@ -328,7 +345,14 @@ public class CellReference {
         return true;
     }
 
+    /**
+     * @deprecated 3.15 beta 2. Use {@link #isRowWithinRange}
+     */
     public static boolean isRowWithnRange(String rowStr, SpreadsheetVersion ssVersion) {
+        return isRowWithinRange(rowStr, ssVersion);
+    }
+
+    public static boolean isRowWithinRange(String rowStr, SpreadsheetVersion ssVersion) {
         int rowNum = Integer.parseInt(rowStr);
 
         if (rowNum < 0) {
@@ -349,8 +373,8 @@ public class CellReference {
 
         private CellRefParts(String sheetName, String rowRef, String colRef) {
             this.sheetName = sheetName;
-            this.rowRef = rowRef;
-            this.colRef = colRef;
+            this.rowRef = (rowRef != null) ? rowRef : "";
+            this.colRef = (colRef != null) ? colRef : "";
         }
     }
 
@@ -367,27 +391,12 @@ public class CellReference {
     private static CellRefParts separateRefParts(String reference) {
         int plingPos = reference.lastIndexOf(SHEET_NAME_DELIMITER);
         final String sheetName = parseSheetName(reference, plingPos);
-        String row;
-        String col;
-        int start = plingPos+1;
+        String cell = reference.substring(plingPos+1).toUpperCase(Locale.ROOT);
+        Matcher matcher = CELL_REF_PATTERN.matcher(cell);
+        if (!matcher.matches()) throw new IllegalArgumentException("Invalid CellReference: " + reference);
+        String col = matcher.group(1);
+        String row = matcher.group(2);
 
-        int length = reference.length();
-
-        int loc = start;
-        // skip initial dollars
-        if (reference.charAt(loc)==ABSOLUTE_REFERENCE_MARKER) {
-            loc++;
-        }
-        // step over column name chars until first digit (or dollars) for row number.
-        for (; loc < length; loc++) {
-            char ch = reference.charAt(loc);
-            if (Character.isDigit(ch) || ch == ABSOLUTE_REFERENCE_MARKER) {
-                break;
-            }
-        }
-
-        col = reference.substring(start,loc).toUpperCase(Locale.ROOT);
-        row = reference.substring(loc);
         CellRefParts cellRefParts = new CellRefParts(sheetName, row, col);
         return cellRefParts;
     }

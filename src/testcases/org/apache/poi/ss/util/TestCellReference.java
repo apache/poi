@@ -304,4 +304,17 @@ public final class TestCellReference {
         assertEquals("", CellReference.convertNumToColString(Integer.MAX_VALUE));
         assertEquals("FXSHRXW", CellReference.convertNumToColString(Integer.MAX_VALUE-1));
     }
+
+    /**
+     * bug 59684: separateRefParts fails on entire-column references
+     */
+    @Test
+    public void entireColumnReferences() {
+        CellReference ref = new CellReference("HOME!$169");
+        assertEquals("HOME", ref.getSheetName());
+        assertEquals(168, ref.getRow());
+        assertEquals(-1, ref.getCol());
+        assertTrue("row absolute", ref.isRowAbsolute());
+        //assertFalse("column absolute/relative is undefined", ref.isColAbsolute());
+    }
 }
