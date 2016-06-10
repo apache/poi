@@ -34,27 +34,28 @@ public interface Table {
     Pattern isStructuredReference = Pattern.compile("[a-zA-Z_\\\\][a-zA-Z0-9._]*\\[.*\\]");
     
     /**
-     *  Get the top-left col index
-     * @return
+     *  Get the top-left column index relative to the sheet
+     * @return table start column index on sheet
      */
     int getStartColIndex();
     /**
-     *  Get the top-left row index
-     * @return
+     *  Get the top-left row index on the sheet
+     * @return table start row index on sheet
      */
     int getStartRowIndex();
     /**
-     *  Get the bottom-right col index
-     * @return
+     *  Get the bottom-right column index on the sheet
+     * @return table end column index on sheet
      */
     int getEndColIndex();
     /**
      *  Get the bottom-right row index
-     * @return
+     * @return table end row index on sheet
      */
     int getEndRowIndex();
     /**
      * Get the name of the table.
+     * @return table name
      */
     String getName();
     
@@ -63,14 +64,16 @@ public interface Table {
      * Note this list is lazily loaded and cached for performance. 
      * Changes to the underlying table structure are not reflected in later calls
      * unless <code>XSSFTable.updateHeaders()</code> is called to reset the cache.
+     * @param columnHeader the column header name to get the table column index of
+     * @return column index corresponding to <code>columnHeader</code>
      */
-    int findColumnIndex(String column);
+    int findColumnIndex(String columnHeader);
     /**
      * Returns the sheet name that the table belongs to.
      */
     String getSheetName();
     /**
-     * Returns true iff the table has 'Totals' row
+     * Returns true iff the table has a 'Totals' row
      */
     boolean isHasTotalsRow();
     
