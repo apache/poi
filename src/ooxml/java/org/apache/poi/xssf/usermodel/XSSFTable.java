@@ -113,7 +113,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
         out.close();
     }
     
-    public CTTable getCTTable(){
+    public CTTable getCTTable() {
         return ctTable;
     }
     
