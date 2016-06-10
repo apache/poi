@@ -243,15 +243,25 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
     /**
      * @return  the number of mapped table columns (see Open Office XML Part 4: chapter 3.5.1.4)
      */
-    public long getNumerOfMappedColumns() {
+    public long getNumberOfMappedColumns() {
         return ctTable.getTableColumns().getCount();
     }
+
+    /**
+     * @return  the number of mapped table columns (see Open Office XML Part 4: chapter 3.5.1.4)
+     * @deprecated 3.15 beta 2. Use {@link #getNumberOfMappedColumns}.
+     */
+    public long getNumerOfMappedColumns() {
+        return getNumberOfMappedColumns();
+    }
+
     
     
     /**
      * @return The reference for the cell in the top-left part of the table
      * (see Open Office XML Part 4: chapter 3.5.1.2, attribute ref) 
      *
+     * Does not track updates to underlying changes to CTTable
      */
     public CellReference getStartCellReference() {
         if (startCellReference==null) {
@@ -269,6 +279,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
      * @return The reference for the cell in the bottom-right part of the table
      * (see Open Office XML Part 4: chapter 3.5.1.2, attribute ref)
      *
+     * Does not track updates to underlying changes to CTTable
      */
     public CellReference getEndCellReference() {
         if (endCellReference==null) {
@@ -284,6 +295,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
     /**
      *  @return the total number of rows in the selection. (Note: in this version autofiltering is ignored)
      *
+     * Does not track updates to underlying changes to CTTable
      */
     public int getRowCount() {
         CellReference from = getStartCellReference();

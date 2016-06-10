@@ -18,7 +18,9 @@
 package org.apache.poi.xssf.usermodel;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -29,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
@@ -134,4 +137,92 @@ public final class TestXSSFTable {
         wb.close();
     }
 
+    @Test
+    public void getSheetName() throws IOException {
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("StructuredReferences.xlsx");
+        XSSFTable table = wb.getTable("\\_Prime.1");
+        assertEquals("Table", table.getSheetName());
+        wb.close(); 
+    }
+
+    @Test
+    public void isHasTotalsRow() throws IOException {
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("StructuredReferences.xlsx");
+        XSSFTable table = wb.getTable("\\_Prime.1");
+        assertFalse(table.isHasTotalsRow());
+        wb.close(); 
+    }
+
+    @Test
+    public void getStartColIndex() throws IOException {
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("StructuredReferences.xlsx");
+        XSSFTable table = wb.getTable("\\_Prime.1");
+        assertEquals(0, table.getStartColIndex());
+        wb.close(); 
+    }
+
+    @Test
+    public void getEndColIndex() throws IOException {
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("StructuredReferences.xlsx");
+        XSSFTable table = wb.getTable("\\_Prime.1");
+        assertEquals(2, table.getEndColIndex());
+        wb.close(); 
+    }
+
+    @Test
+    public void getStartRowIndex() throws IOException {
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("StructuredReferences.xlsx");
+        XSSFTable table = wb.getTable("\\_Prime.1");
+        assertEquals(0, table.getStartRowIndex());
+        wb.close(); 
+    }
+
+    @Test
+    public void getEndRowIndex() throws IOException {
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("StructuredReferences.xlsx");
+        XSSFTable table = wb.getTable("\\_Prime.1");
+        assertEquals(6, table.getEndRowIndex());
+        wb.close(); 
+    }
+
+    @Test
+    public void getStartCellReference() throws IOException {
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("StructuredReferences.xlsx");
+        XSSFTable table = wb.getTable("\\_Prime.1");
+        assertEquals(new CellReference("A1"), table.getStartCellReference());
+        wb.close(); 
+    }
+
+    @Test
+    public void getEndCellReference() throws IOException {
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("StructuredReferences.xlsx");
+        XSSFTable table = wb.getTable("\\_Prime.1");
+        assertEquals(new CellReference("C7"), table.getEndCellReference());
+        wb.close(); 
+    }
+
+    @Test
+    public void getNumberOfMappedColumns() throws IOException {
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("StructuredReferences.xlsx");
+        XSSFTable table = wb.getTable("\\_Prime.1");
+        assertEquals(3, table.getNumberOfMappedColumns());
+        wb.close(); 
+    }
+
+    @Test
+    public void getAndSetDisplayName() throws IOException {
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("StructuredReferences.xlsx");
+        XSSFTable table = wb.getTable("\\_Prime.1");
+        assertEquals("\\_Prime.1", table.getDisplayName());
+
+        table.setDisplayName(null);
+        assertNull(table.getDisplayName());
+        assertEquals("\\_Prime.1", table.getName()); // name and display name are different
+
+        table.setDisplayName("Display name");
+        assertEquals("Display name", table.getDisplayName());
+        assertEquals("\\_Prime.1", table.getName()); // name and display name are different
+
+        wb.close();
+    }
 }

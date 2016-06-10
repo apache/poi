@@ -1273,7 +1273,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
         for(XSSFTable table : tables) {
             System.out.println("XPath: " + table.getCommonXpath());
             System.out.println("Name: " + table.getName());
-            System.out.println("Mapped Cols: " + table.getNumerOfMappedColumns());
+            System.out.println("Mapped Cols: " + table.getNumberOfMappedColumns());
             System.out.println("Rowcount: " + table.getRowCount());
             System.out.println("End Cell: " + table.getEndCellReference());
             System.out.println("Start Cell: " + table.getStartCellReference());
