@@ -46,199 +46,199 @@ import org.apache.poi.ss.util.CellReference.NameType;
  * For POI internal use only
  */
 public final class OperationEvaluationContext {
-	public static final FreeRefFunction UDF = UserDefinedFunction.instance;
-	private final EvaluationWorkbook _workbook;
-	private final int _sheetIndex;
-	private final int _rowIndex;
-	private final int _columnIndex;
-	private final EvaluationTracker _tracker;
-	private final WorkbookEvaluator _bookEvaluator;
+    public static final FreeRefFunction UDF = UserDefinedFunction.instance;
+    private final EvaluationWorkbook _workbook;
+    private final int _sheetIndex;
+    private final int _rowIndex;
+    private final int _columnIndex;
+    private final EvaluationTracker _tracker;
+    private final WorkbookEvaluator _bookEvaluator;
 
-	public OperationEvaluationContext(WorkbookEvaluator bookEvaluator, EvaluationWorkbook workbook, int sheetIndex, int srcRowNum,
-			int srcColNum, EvaluationTracker tracker) {
-		_bookEvaluator = bookEvaluator;
-		_workbook = workbook;
-		_sheetIndex = sheetIndex;
-		_rowIndex = srcRowNum;
-		_columnIndex = srcColNum;
-		_tracker = tracker;
-	}
+    public OperationEvaluationContext(WorkbookEvaluator bookEvaluator, EvaluationWorkbook workbook, int sheetIndex, int srcRowNum,
+            int srcColNum, EvaluationTracker tracker) {
+        _bookEvaluator = bookEvaluator;
+        _workbook = workbook;
+        _sheetIndex = sheetIndex;
+        _rowIndex = srcRowNum;
+        _columnIndex = srcColNum;
+        _tracker = tracker;
+    }
 
-	public EvaluationWorkbook getWorkbook() {
-		return _workbook;
-	}
+    public EvaluationWorkbook getWorkbook() {
+        return _workbook;
+    }
 
-	public int getRowIndex() {
-		return _rowIndex;
-	}
+    public int getRowIndex() {
+        return _rowIndex;
+    }
 
-	public int getColumnIndex() {
-		return _columnIndex;
-	}
+    public int getColumnIndex() {
+        return _columnIndex;
+    }
 
-	SheetRangeEvaluator createExternSheetRefEvaluator(ExternSheetReferenceToken ptg) {
-		return createExternSheetRefEvaluator(ptg.getExternSheetIndex());
-	}
-	SheetRangeEvaluator createExternSheetRefEvaluator(String firstSheetName, String lastSheetName, int externalWorkbookNumber) {
+    SheetRangeEvaluator createExternSheetRefEvaluator(ExternSheetReferenceToken ptg) {
+        return createExternSheetRefEvaluator(ptg.getExternSheetIndex());
+    }
+    SheetRangeEvaluator createExternSheetRefEvaluator(String firstSheetName, String lastSheetName, int externalWorkbookNumber) {
         ExternalSheet externalSheet = _workbook.getExternalSheet(firstSheetName, lastSheetName, externalWorkbookNumber);
         return createExternSheetRefEvaluator(externalSheet);
     }
-	SheetRangeEvaluator createExternSheetRefEvaluator(int externSheetIndex) {
-		ExternalSheet externalSheet = _workbook.getExternalSheet(externSheetIndex);
+    SheetRangeEvaluator createExternSheetRefEvaluator(int externSheetIndex) {
+        ExternalSheet externalSheet = _workbook.getExternalSheet(externSheetIndex);
         return createExternSheetRefEvaluator(externalSheet);
-	}
-	SheetRangeEvaluator createExternSheetRefEvaluator(ExternalSheet externalSheet) {
-		WorkbookEvaluator targetEvaluator;
-		int otherFirstSheetIndex;
-		int otherLastSheetIndex = -1;
-		if (externalSheet == null || externalSheet.getWorkbookName() == null) {
-			// sheet is in same workbook
-			targetEvaluator = _bookEvaluator;
-			if(externalSheet == null) {
-			    otherFirstSheetIndex = 0;
-			} else {
-			    otherFirstSheetIndex = _workbook.getSheetIndex(externalSheet.getSheetName());
-			}
-			
-			if (externalSheet instanceof ExternalSheetRange) {
-			    String lastSheetName = ((ExternalSheetRange)externalSheet).getLastSheetName();
-			    otherLastSheetIndex = _workbook.getSheetIndex(lastSheetName);
-			}
-		} else {
-			// look up sheet by name from external workbook
-			String workbookName = externalSheet.getWorkbookName();
-			try {
-				targetEvaluator = _bookEvaluator.getOtherWorkbookEvaluator(workbookName);
-			} catch (WorkbookNotFoundException e) {
-				throw new RuntimeException(e.getMessage(), e);
-			}
-			
-			otherFirstSheetIndex = targetEvaluator.getSheetIndex(externalSheet.getSheetName());
+    }
+    SheetRangeEvaluator createExternSheetRefEvaluator(ExternalSheet externalSheet) {
+        WorkbookEvaluator targetEvaluator;
+        int otherFirstSheetIndex;
+        int otherLastSheetIndex = -1;
+        if (externalSheet == null || externalSheet.getWorkbookName() == null) {
+            // sheet is in same workbook
+            targetEvaluator = _bookEvaluator;
+            if(externalSheet == null) {
+                otherFirstSheetIndex = 0;
+            } else {
+                otherFirstSheetIndex = _workbook.getSheetIndex(externalSheet.getSheetName());
+            }
+            
+            if (externalSheet instanceof ExternalSheetRange) {
+                String lastSheetName = ((ExternalSheetRange)externalSheet).getLastSheetName();
+                otherLastSheetIndex = _workbook.getSheetIndex(lastSheetName);
+            }
+        } else {
+            // look up sheet by name from external workbook
+            String workbookName = externalSheet.getWorkbookName();
+            try {
+                targetEvaluator = _bookEvaluator.getOtherWorkbookEvaluator(workbookName);
+            } catch (WorkbookNotFoundException e) {
+                throw new RuntimeException(e.getMessage(), e);
+            }
+            
+            otherFirstSheetIndex = targetEvaluator.getSheetIndex(externalSheet.getSheetName());
             if (externalSheet instanceof ExternalSheetRange) {
                 String lastSheetName = ((ExternalSheetRange)externalSheet).getLastSheetName();
                 otherLastSheetIndex = targetEvaluator.getSheetIndex(lastSheetName);
             }
-			
-			if (otherFirstSheetIndex < 0) {
-				throw new RuntimeException("Invalid sheet name '" + externalSheet.getSheetName()
-						+ "' in bool '" + workbookName + "'.");
-			}
-		}
-		
-		if (otherLastSheetIndex == -1) {
-		    // Reference to just one sheet
-		    otherLastSheetIndex = otherFirstSheetIndex;
-		}
-		
-		SheetRefEvaluator[] evals = new SheetRefEvaluator[otherLastSheetIndex-otherFirstSheetIndex+1];
-		for (int i=0; i<evals.length; i++) {
-		    int otherSheetIndex = i+otherFirstSheetIndex;
-		    evals[i] = new SheetRefEvaluator(targetEvaluator, _tracker, otherSheetIndex); 
-		}
-		return new SheetRangeEvaluator(otherFirstSheetIndex, otherLastSheetIndex, evals);
-	}
+            
+            if (otherFirstSheetIndex < 0) {
+                throw new RuntimeException("Invalid sheet name '" + externalSheet.getSheetName()
+                        + "' in bool '" + workbookName + "'.");
+            }
+        }
+        
+        if (otherLastSheetIndex == -1) {
+            // Reference to just one sheet
+            otherLastSheetIndex = otherFirstSheetIndex;
+        }
+        
+        SheetRefEvaluator[] evals = new SheetRefEvaluator[otherLastSheetIndex-otherFirstSheetIndex+1];
+        for (int i=0; i<evals.length; i++) {
+            int otherSheetIndex = i+otherFirstSheetIndex;
+            evals[i] = new SheetRefEvaluator(targetEvaluator, _tracker, otherSheetIndex); 
+        }
+        return new SheetRangeEvaluator(otherFirstSheetIndex, otherLastSheetIndex, evals);
+    }
 
-	/**
-	 * @return <code>null</code> if either workbook or sheet is not found
-	 */
-	private SheetRefEvaluator createExternSheetRefEvaluator(String workbookName, String sheetName) {
-		WorkbookEvaluator targetEvaluator;
-		if (workbookName == null) {
-			targetEvaluator = _bookEvaluator;
-		} else {
-			if (sheetName == null) {
-				throw new IllegalArgumentException("sheetName must not be null if workbookName is provided");
-			}
-			try {
-				targetEvaluator = _bookEvaluator.getOtherWorkbookEvaluator(workbookName);
-			} catch (WorkbookNotFoundException e) {
-				return null;
-			}
-		}
-		int otherSheetIndex = sheetName == null ? _sheetIndex : targetEvaluator.getSheetIndex(sheetName);
-		if (otherSheetIndex < 0) {
-			return null;
-		}
-		return new SheetRefEvaluator(targetEvaluator, _tracker, otherSheetIndex);
-	}
+    /**
+     * @return <code>null</code> if either workbook or sheet is not found
+     */
+    private SheetRefEvaluator createExternSheetRefEvaluator(String workbookName, String sheetName) {
+        WorkbookEvaluator targetEvaluator;
+        if (workbookName == null) {
+            targetEvaluator = _bookEvaluator;
+        } else {
+            if (sheetName == null) {
+                throw new IllegalArgumentException("sheetName must not be null if workbookName is provided");
+            }
+            try {
+                targetEvaluator = _bookEvaluator.getOtherWorkbookEvaluator(workbookName);
+            } catch (WorkbookNotFoundException e) {
+                return null;
+            }
+        }
+        int otherSheetIndex = sheetName == null ? _sheetIndex : targetEvaluator.getSheetIndex(sheetName);
+        if (otherSheetIndex < 0) {
+            return null;
+        }
+        return new SheetRefEvaluator(targetEvaluator, _tracker, otherSheetIndex);
+    }
 
-	public SheetRangeEvaluator getRefEvaluatorForCurrentSheet() {
-		SheetRefEvaluator sre = new SheetRefEvaluator(_bookEvaluator, _tracker, _sheetIndex);
-		return new SheetRangeEvaluator(_sheetIndex, sre);
-	}
+    public SheetRangeEvaluator getRefEvaluatorForCurrentSheet() {
+        SheetRefEvaluator sre = new SheetRefEvaluator(_bookEvaluator, _tracker, _sheetIndex);
+        return new SheetRangeEvaluator(_sheetIndex, sre);
+    }
 
 
 
-	/**
-	 * Resolves a cell or area reference dynamically.
-	 * @param workbookName the name of the workbook containing the reference.  If <code>null</code>
-	 * the current workbook is assumed.  Note - to evaluate formulas which use multiple workbooks,
-	 * a {@link CollaboratingWorkbooksEnvironment} must be set up.
-	 * @param sheetName the name of the sheet containing the reference.  May be <code>null</code>
-	 * (when <tt>workbookName</tt> is also null) in which case the current workbook and sheet is
-	 * assumed.
-	 * @param refStrPart1 the single cell reference or first part of the area reference.  Must not
-	 * be <code>null</code>.
-	 * @param refStrPart2 the second part of the area reference. For single cell references this
-	 * parameter must be <code>null</code>
-	 * @param isA1Style specifies the format for <tt>refStrPart1</tt> and <tt>refStrPart2</tt>.
-	 * Pass <code>true</code> for 'A1' style and <code>false</code> for 'R1C1' style.
-	 * TODO - currently POI only supports 'A1' reference style
-	 * @return a {@link RefEval} or {@link AreaEval}
-	 */
-	public ValueEval getDynamicReference(String workbookName, String sheetName, String refStrPart1,
-			String refStrPart2, boolean isA1Style) {
-		if (!isA1Style) {
-			throw new RuntimeException("R1C1 style not supported yet");
-		}
-		SheetRefEvaluator se = createExternSheetRefEvaluator(workbookName, sheetName);
-		if (se == null) {
-			return ErrorEval.REF_INVALID;
-		}
-		SheetRangeEvaluator sre = new SheetRangeEvaluator(_sheetIndex, se);
-		
-		// ugly typecast - TODO - make spreadsheet version more easily accessible
-		SpreadsheetVersion ssVersion = ((FormulaParsingWorkbook)_workbook).getSpreadsheetVersion();
+    /**
+     * Resolves a cell or area reference dynamically.
+     * @param workbookName the name of the workbook containing the reference.  If <code>null</code>
+     * the current workbook is assumed.  Note - to evaluate formulas which use multiple workbooks,
+     * a {@link CollaboratingWorkbooksEnvironment} must be set up.
+     * @param sheetName the name of the sheet containing the reference.  May be <code>null</code>
+     * (when <tt>workbookName</tt> is also null) in which case the current workbook and sheet is
+     * assumed.
+     * @param refStrPart1 the single cell reference or first part of the area reference.  Must not
+     * be <code>null</code>.
+     * @param refStrPart2 the second part of the area reference. For single cell references this
+     * parameter must be <code>null</code>
+     * @param isA1Style specifies the format for <tt>refStrPart1</tt> and <tt>refStrPart2</tt>.
+     * Pass <code>true</code> for 'A1' style and <code>false</code> for 'R1C1' style.
+     * TODO - currently POI only supports 'A1' reference style
+     * @return a {@link RefEval} or {@link AreaEval}
+     */
+    public ValueEval getDynamicReference(String workbookName, String sheetName, String refStrPart1,
+            String refStrPart2, boolean isA1Style) {
+        if (!isA1Style) {
+            throw new RuntimeException("R1C1 style not supported yet");
+        }
+        SheetRefEvaluator se = createExternSheetRefEvaluator(workbookName, sheetName);
+        if (se == null) {
+            return ErrorEval.REF_INVALID;
+        }
+        SheetRangeEvaluator sre = new SheetRangeEvaluator(_sheetIndex, se);
+        
+        // ugly typecast - TODO - make spreadsheet version more easily accessible
+        SpreadsheetVersion ssVersion = ((FormulaParsingWorkbook)_workbook).getSpreadsheetVersion();
 
-		NameType part1refType = classifyCellReference(refStrPart1, ssVersion);
-		switch (part1refType) {
-			case BAD_CELL_OR_NAMED_RANGE:
-				return ErrorEval.REF_INVALID;
-			case NAMED_RANGE:
+        NameType part1refType = classifyCellReference(refStrPart1, ssVersion);
+        switch (part1refType) {
+            case BAD_CELL_OR_NAMED_RANGE:
+                return ErrorEval.REF_INVALID;
+            case NAMED_RANGE:
                 EvaluationName nm = ((FormulaParsingWorkbook)_workbook).getName(refStrPart1, _sheetIndex);
                 if(!nm.isRange()){
                     throw new RuntimeException("Specified name '" + refStrPart1 + "' is not a range as expected.");
                 }
                 return _bookEvaluator.evaluateNameFormula(nm.getNameDefinition(), this);
-		}
-		if (refStrPart2 == null) {
-			// no ':'
-			switch (part1refType) {
-				case COLUMN:
-				case ROW:
-					return ErrorEval.REF_INVALID;
-				case CELL:
-					CellReference cr = new CellReference(refStrPart1);
-					return new LazyRefEval(cr.getRow(), cr.getCol(), sre);
-			}
-			throw new IllegalStateException("Unexpected reference classification of '" + refStrPart1 + "'.");
-		}
-		NameType part2refType = classifyCellReference(refStrPart1, ssVersion);
-		switch (part2refType) {
-			case BAD_CELL_OR_NAMED_RANGE:
-				return ErrorEval.REF_INVALID;
-			case NAMED_RANGE:
-				throw new RuntimeException("Cannot evaluate '" + refStrPart1
-						+ "'. Indirect evaluation of defined names not supported yet");
-		}
+        }
+        if (refStrPart2 == null) {
+            // no ':'
+            switch (part1refType) {
+                case COLUMN:
+                case ROW:
+                    return ErrorEval.REF_INVALID;
+                case CELL:
+                    CellReference cr = new CellReference(refStrPart1);
+                    return new LazyRefEval(cr.getRow(), cr.getCol(), sre);
+            }
+            throw new IllegalStateException("Unexpected reference classification of '" + refStrPart1 + "'.");
+        }
+        NameType part2refType = classifyCellReference(refStrPart1, ssVersion);
+        switch (part2refType) {
+            case BAD_CELL_OR_NAMED_RANGE:
+                return ErrorEval.REF_INVALID;
+            case NAMED_RANGE:
+                throw new RuntimeException("Cannot evaluate '" + refStrPart1
+                        + "'. Indirect evaluation of defined names not supported yet");
+        }
 
-		if (part2refType != part1refType) {
-			// LHS and RHS of ':' must be compatible
-			return ErrorEval.REF_INVALID;
-		}
-		int firstRow, firstCol, lastRow, lastCol;
-		switch (part1refType) {
-			case COLUMN:
+        if (part2refType != part1refType) {
+            // LHS and RHS of ':' must be compatible
+            return ErrorEval.REF_INVALID;
+        }
+        int firstRow, firstCol, lastRow, lastCol;
+        switch (part1refType) {
+            case COLUMN:
                 firstRow =0;
                 if (part2refType.equals(NameType.COLUMN))
                 {
@@ -252,7 +252,7 @@ public final class OperationEvaluationContext {
                     lastCol = parseColRef(refStrPart2);
                 }
                 break;
-			case ROW:
+            case ROW:
                 // support of cell range in the form of integer:integer
                 firstCol = 0;
                 if (part2refType.equals(NameType.ROW))
@@ -265,61 +265,61 @@ public final class OperationEvaluationContext {
                     firstRow = parseRowRef(refStrPart1);
                     lastRow = parseRowRef(refStrPart2);
                 }
-				break;
-			case CELL:
-				CellReference cr;
-				cr = new CellReference(refStrPart1);
-				firstRow = cr.getRow();
-				firstCol = cr.getCol();
-				cr = new CellReference(refStrPart2);
-				lastRow = cr.getRow();
-				lastCol = cr.getCol();
-				break;
-			default:
-				throw new IllegalStateException("Unexpected reference classification of '" + refStrPart1 + "'.");
-		}
-		return new LazyAreaEval(firstRow, firstCol, lastRow, lastCol, sre);
-	}
+                break;
+            case CELL:
+                CellReference cr;
+                cr = new CellReference(refStrPart1);
+                firstRow = cr.getRow();
+                firstCol = cr.getCol();
+                cr = new CellReference(refStrPart2);
+                lastRow = cr.getRow();
+                lastCol = cr.getCol();
+                break;
+            default:
+                throw new IllegalStateException("Unexpected reference classification of '" + refStrPart1 + "'.");
+        }
+        return new LazyAreaEval(firstRow, firstCol, lastRow, lastCol, sre);
+    }
 
-	private static int parseRowRef(String refStrPart) {
-		return CellReference.convertColStringToIndex(refStrPart);
-	}
+    private static int parseRowRef(String refStrPart) {
+        return CellReference.convertColStringToIndex(refStrPart);
+    }
 
-	private static int parseColRef(String refStrPart) {
-		return Integer.parseInt(refStrPart) - 1;
-	}
+    private static int parseColRef(String refStrPart) {
+        return Integer.parseInt(refStrPart) - 1;
+    }
 
-	private static NameType classifyCellReference(String str, SpreadsheetVersion ssVersion) {
-		int len = str.length();
-		if (len < 1) {
-			return CellReference.NameType.BAD_CELL_OR_NAMED_RANGE;
-		}
-		return CellReference.classifyCellReference(str, ssVersion);
-	}
+    private static NameType classifyCellReference(String str, SpreadsheetVersion ssVersion) {
+        int len = str.length();
+        if (len < 1) {
+            return CellReference.NameType.BAD_CELL_OR_NAMED_RANGE;
+        }
+        return CellReference.classifyCellReference(str, ssVersion);
+    }
 
-	public FreeRefFunction findUserDefinedFunction(String functionName) {
-		return _bookEvaluator.findUserDefinedFunction(functionName);
-	}
+    public FreeRefFunction findUserDefinedFunction(String functionName) {
+        return _bookEvaluator.findUserDefinedFunction(functionName);
+    }
 
-	public ValueEval getRefEval(int rowIndex, int columnIndex) {
-	    SheetRangeEvaluator sre = getRefEvaluatorForCurrentSheet();
-		return new LazyRefEval(rowIndex, columnIndex, sre);
-	}
-	public ValueEval getRef3DEval(Ref3DPtg rptg) {
-	    SheetRangeEvaluator sre = createExternSheetRefEvaluator(rptg.getExternSheetIndex());
-		return new LazyRefEval(rptg.getRow(), rptg.getColumn(), sre);
-	}
+    public ValueEval getRefEval(int rowIndex, int columnIndex) {
+        SheetRangeEvaluator sre = getRefEvaluatorForCurrentSheet();
+        return new LazyRefEval(rowIndex, columnIndex, sre);
+    }
+    public ValueEval getRef3DEval(Ref3DPtg rptg) {
+        SheetRangeEvaluator sre = createExternSheetRefEvaluator(rptg.getExternSheetIndex());
+        return new LazyRefEval(rptg.getRow(), rptg.getColumn(), sre);
+    }
     public ValueEval getRef3DEval(Ref3DPxg rptg) {
         SheetRangeEvaluator sre = createExternSheetRefEvaluator(
                 rptg.getSheetName(), rptg.getLastSheetName(), rptg.getExternalWorkbookNumber());
         return new LazyRefEval(rptg.getRow(), rptg.getColumn(), sre);
     }
     
-	public ValueEval getAreaEval(int firstRowIndex, int firstColumnIndex,
-			int lastRowIndex, int lastColumnIndex) {
-	    SheetRangeEvaluator sre = getRefEvaluatorForCurrentSheet();
-		return new LazyAreaEval(firstRowIndex, firstColumnIndex, lastRowIndex, lastColumnIndex, sre);
-	}
+    public ValueEval getAreaEval(int firstRowIndex, int firstColumnIndex,
+            int lastRowIndex, int lastColumnIndex) {
+        SheetRangeEvaluator sre = getRefEvaluatorForCurrentSheet();
+        return new LazyAreaEval(firstRowIndex, firstColumnIndex, lastRowIndex, lastColumnIndex, sre);
+    }
     public ValueEval getArea3DEval(Area3DPtg aptg) {
         SheetRangeEvaluator sre = createExternSheetRefEvaluator(aptg.getExternSheetIndex());
         return new LazyAreaEval(aptg.getFirstRow(), aptg.getFirstColumn(),
@@ -348,8 +348,8 @@ public final class OperationEvaluationContext {
         );
         return getExternalNameXEval(externName, workbookName);
     }
-	public ValueEval getNameXEval(NameXPxg nameXPxg) {
-	    ExternalSheet externSheet = _workbook.getExternalSheet(nameXPxg.getSheetName(), null, nameXPxg.getExternalWorkbookNumber());
+    public ValueEval getNameXEval(NameXPxg nameXPxg) {
+        ExternalSheet externSheet = _workbook.getExternalSheet(nameXPxg.getSheetName(), null, nameXPxg.getExternalWorkbookNumber());
         if(externSheet == null || externSheet.getWorkbookName() == null) {
             // External reference to our own workbook's name
             return getLocalNameXEval(nameXPxg);
@@ -363,8 +363,8 @@ public final class OperationEvaluationContext {
               nameXPxg.getExternalWorkbookNumber()
         );
         return getExternalNameXEval(externName, workbookName);
-	}
-	
+    }
+    
     private ValueEval getLocalNameXEval(NameXPxg nameXPxg) {
         // Look up the sheet, if present
         int sIdx = -1;
@@ -383,7 +383,7 @@ public final class OperationEvaluationContext {
             return new FunctionNameEval(name);
         }
     }
-	private ValueEval getLocalNameXEval(NameXPtg nameXPtg) {
+    private ValueEval getLocalNameXEval(NameXPtg nameXPtg) {
         String name = _workbook.resolveNameXText(nameXPtg);
         
         // Try to parse it as a name
@@ -406,11 +406,11 @@ public final class OperationEvaluationContext {
             // Must be an external function
             return new FunctionNameEval(name);
         }
-	}
-	public int getSheetIndex() {
-	    return _sheetIndex;
-	}
-	
+    }
+    public int getSheetIndex() {
+        return _sheetIndex;
+    }
+    
     private ValueEval getExternalNameXEval(ExternalName externName, String workbookName) {
         try {
             // Fetch the workbook this refers to, and the name as defined with that
