@@ -67,7 +67,7 @@ public final class HSSFFormulaParser {
      * @throws FormulaParseException if the formula has incorrect syntax or is otherwise invalid
      */
     public static Ptg[] parse(String formula, HSSFWorkbook workbook, int formulaType, int sheetIndex) throws FormulaParseException {
-        return FormulaParser.parse(formula, createParsingWorkbook(workbook), formulaType, sheetIndex, -1);
+        return FormulaParser.parse(formula, createParsingWorkbook(workbook), formulaType, sheetIndex);
     }
 
     /**
