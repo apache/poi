@@ -41,11 +41,11 @@ import org.junit.Test;
 import java.util.Arrays;
 
 public final class TestXSSFFormulaParser {
-	private static Ptg[] parse(FormulaParsingWorkbook fpb, String fmla) {
-		return FormulaParser.parse(fmla, fpb, FormulaType.CELL, -1, -1);
-	}
+    private static Ptg[] parse(FormulaParsingWorkbook fpb, String fmla) {
+        return FormulaParser.parse(fmla, fpb, FormulaType.CELL, -1, -1);
+    }
 
-	@Test
+    @Test
     public void basicParsing() {
         XSSFWorkbook wb = new XSSFWorkbook();
         XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
@@ -120,7 +120,7 @@ public final class TestXSSFFormulaParser {
         assertEquals("SUM",          ptgs[1].toFormulaString());
     }
 
-	@Test
+    @Test
     public void builtInFormulas() {
         XSSFWorkbook wb = new XSSFWorkbook();
         XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
@@ -155,7 +155,7 @@ public final class TestXSSFFormulaParser {
         assertEquals("[0]!NR_Global_B2",((NameXPxg)ptgs[0]).toFormulaString());
     }
    
-	@Test
+    @Test
     public void formulaReferencesOtherSheets() {
         // Use a test file with the named ranges in place
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("56737.xlsx");
