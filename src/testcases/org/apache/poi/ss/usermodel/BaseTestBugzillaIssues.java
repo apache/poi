@@ -1556,7 +1556,7 @@ public abstract class BaseTestBugzillaIssues {
         System.out.println("Formula:" + cell.getCellFormula());
         if (Cell.CELL_TYPE_FORMULA == cell.getCellType()) {
             int formulaResultType = cell.getCachedFormulaResultType();
-            System.out.println("Formual Result Type:" + formulaResultType);
+            System.out.println("Formula Result Type:" + formulaResultType);
         }
 
         // *******************************
@@ -1571,7 +1571,7 @@ public abstract class BaseTestBugzillaIssues {
 
         if (Cell.CELL_TYPE_FORMULA == cell.getCellType()) {
             int formulaResultType = cell.getCachedFormulaResultType();
-            System.out.println("Formual Result Type:" + formulaResultType);
+            System.out.println("Formula Result Type:" + formulaResultType);
         }
 
         workbook.close();
