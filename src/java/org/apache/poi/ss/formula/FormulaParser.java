@@ -157,7 +157,7 @@ public final class FormulaParser {
      *     the scope of the name will be ignored and  the parser will match names only by name
      * @param rowIndex  - the related cell's row index in 0-based form (-1 if the formula is not cell related)
      *                     used to handle structured references that have the "#This Row" quantifier.
-     *                    Use rowIndex=-1 or {@link #parseStructuredReference(String, FormulaParsingWorkbook, int, int) if formula
+     *                    Use rowIndex=-1 or {@link #parseStructuredReference(String, FormulaParsingWorkbook, int, int)} if formula
      *                    does not contain structured references.
      *
      * @return array of parsed tokens
@@ -605,7 +605,7 @@ public final class FormulaParser {
      * Table1[ [col1]:[col2] ]
      * </pre>
      * @param tableName
-     * @return
+     * @return Area Reference for the given table
      */
     private ParseNode parseStructuredReference(String tableName) {
         
@@ -810,7 +810,6 @@ public final class FormulaParser {
     /**
      * Tries to parse the next as column - can contain whitespace
      * Caller should save pointer.
-     * @return
     */
     private String parseAsColumnQuantifier() {
         if ( look != '[') {
@@ -834,7 +833,6 @@ public final class FormulaParser {
     /**
      * Tries to parse the next as special quantifier
      * Caller should save pointer.
-     * @return
      */
     private String parseAsSpecialQuantifier(){
         if ( look != '[') {
