@@ -17,13 +17,18 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import org.apache.poi.ss.formula.FormulaParseException;
+import org.apache.poi.ss.formula.FormulaParser;
+import org.apache.poi.ss.formula.FormulaParsingWorkbook;
+import org.apache.poi.ss.formula.OperationEvaluationContext;
 import org.apache.poi.ss.formula.eval.BlankEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.EvaluationException;
 import org.apache.poi.ss.formula.eval.MissingArgEval;
 import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.formula.eval.ValueEval;
-import org.apache.poi.ss.formula.OperationEvaluationContext;
+import org.apache.poi.ss.formula.ptg.Area3DPxg;
+import org.apache.poi.ss.usermodel.Table;
 
 /**
  * Implementation for Excel function INDIRECT<p/>
@@ -42,7 +47,7 @@ import org.apache.poi.ss.formula.OperationEvaluationContext;
  */
 public final class Indirect implements FreeRefFunction {
 
-	public static final FreeRefFunction instance = new Indirect();
+    public static final FreeRefFunction instance = new Indirect();
 
 	private Indirect() {
 		// enforce singleton
@@ -88,8 +93,12 @@ public final class Indirect implements FreeRefFunction {
 		return OperandResolver.coerceValueToBoolean(ve, false).booleanValue();
 	}
 
-	private static ValueEval evaluateIndirect(OperationEvaluationContext ec, String text,
+	private static ValueEval evaluateIndirect(final OperationEvaluationContext ec, String text,
 			boolean isA1style) {
+	    
+	    ec.getRowIndex();
+	    ec.getColumnIndex();
+
 		// Search backwards for '!' because sheet names can contain '!'
 		int plingPos = text.lastIndexOf('!');
 
@@ -112,16 +121,25 @@ public final class Indirect implements FreeRefFunction {
 
 		String refStrPart1;
 		String refStrPart2;
-
-		int colonPos = refText.indexOf(':');
-		if (colonPos < 0) {
-			refStrPart1 = refText.trim();
-			refStrPart2 = null;
-		} else {
-			refStrPart1 = refText.substring(0, colonPos).trim();
-			refStrPart2 = refText.substring(colonPos + 1).trim();
-		}
-		return ec.getDynamicReference(workbookName, sheetName, refStrPart1, refStrPart2, isA1style);
+        if (Table.isStructuredReference.matcher(refText).matches()) { // The argument is structured reference
+            Area3DPxg areaPtg = null;
+            try{
+                areaPtg = FormulaParser.parseStructuredReference(refText, (FormulaParsingWorkbook) ec.getWorkbook(), ec.getRowIndex());
+            } catch(FormulaParseException e) {
+                return ErrorEval.REF_INVALID;
+            }
+            return ec.getArea3DEval(areaPtg);
+        } else { // The argumnet is regular reference
+    		int colonPos = refText.indexOf(':');
+    		if (colonPos < 0) {
+     			refStrPart1 = refText.trim();
+     			refStrPart2 = null;			
+    		} else {
+    			refStrPart1 = refText.substring(0, colonPos).trim();
+    			refStrPart2 = refText.substring(colonPos + 1).trim();
+    		}
+    		return ec.getDynamicReference(workbookName, sheetName, refStrPart1, refStrPart2, isA1style);
+        }
 	}
 
 	/**

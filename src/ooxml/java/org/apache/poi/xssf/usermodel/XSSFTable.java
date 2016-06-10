@@ -24,11 +24,13 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.ss.usermodel.Table;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.helpers.XSSFXmlColumnPr;
 import org.apache.xmlbeans.XmlException;
@@ -48,10 +50,12 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.TableDocument;
  *
  * @author Roberto Manicardi
  */
-public class XSSFTable extends POIXMLDocumentPart {
+public class XSSFTable extends POIXMLDocumentPart implements Table {
 
     private CTTable ctTable;
     private List<XSSFXmlColumnPr> xmlColumnPr;
+    private CTTableColumn[] ctColumns;
+    private HashMap<String, Integer> columnMap;
     private CellReference startCellReference;
     private CellReference endCellReference;    
     private String commonXPath; 
@@ -131,6 +135,12 @@ public class XSSFTable extends POIXMLDocumentPart {
         return maps;
     }
 
+    private CTTableColumn[] getTableColumns() {
+        if (ctColumns == null) {
+            ctColumns = ctTable.getTableColumns().getTableColumnArray();
+        }
+        return ctColumns;
+    }
     
     /**
      * 
@@ -142,7 +152,7 @@ public class XSSFTable extends POIXMLDocumentPart {
     public String getCommonXpath() {
         if (commonXPath == null) {
             String[] commonTokens = {};
-            for (CTTableColumn column :ctTable.getTableColumns().getTableColumnArray()) {
+            for (CTTableColumn column : getTableColumns()) {
                 if (column.getXmlColumnPr()!=null) {
                     String xpath = column.getXmlColumnPr().getXpath();
                     String[] tokens =  xpath.split("/");
@@ -176,11 +186,15 @@ public class XSSFTable extends POIXMLDocumentPart {
     }
 
     
+    /**
+     * Note this list is static - once read, it does not notice later changes to the underlying column structures
+     * @return List of XSSFXmlColumnPr
+     */
     public List<XSSFXmlColumnPr> getXmlColumnPrs() {
         
         if (xmlColumnPr==null) {
             xmlColumnPr = new ArrayList<XSSFXmlColumnPr>();
-            for (CTTableColumn column:ctTable.getTableColumns().getTableColumnArray()) {
+            for (CTTableColumn column: getTableColumns()) {
                 if (column.getXmlColumnPr()!=null) {
                     XSSFXmlColumnPr columnPr = new XSSFXmlColumnPr(this,column,column.getXmlColumnPr());
                     xmlColumnPr.add(columnPr);
@@ -301,6 +315,46 @@ public class XSSFTable extends POIXMLDocumentPart {
                 }
                 cellnum++;
             }
+            ctColumns = null;
+            columnMap = null;
         }
+    }
+
+    public int findColumnIndex(String column) {
+        if (columnMap == null) {
+            columnMap = new HashMap<String, Integer>(getTableColumns().length);
+            
+            for (int i=0; i < getTableColumns().length; i++) {
+                columnMap.put(getTableColumns()[i].getName().toUpperCase(), Integer.valueOf(i));
+            }
+        }
+        // Table column names with special characters need a single quote escape
+        // but the escape is not present in the column definition
+        Integer idx = columnMap.get(column.replace("'", "").toUpperCase());
+        return idx == null ? -1 : idx.intValue();
+    }
+
+    public String getSheetName() {
+        return getXSSFSheet().getSheetName();
+    }
+
+    public boolean isHasTotalsRow() {
+        return ctTable.getTotalsRowShown();
+    }
+
+    public int getStartColIndex() {
+        return getStartCellReference().getCol();
+    }
+
+    public int getStartRowIndex() {
+        return getStartCellReference().getRow();
+    }
+
+    public int getEndColIndex() {
+        return getEndCellReference().getCol();
+    }
+
+    public int getEndRowIndex() {
+        return getEndCellReference().getRow();
     }
 }

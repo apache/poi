@@ -135,7 +135,7 @@ public final class XSSFRowShifter {
             String formula = name.getRefersToFormula();
             int sheetIndex = name.getSheetIndex();
 
-            Ptg[] ptgs = FormulaParser.parse(formula, fpb, FormulaType.NAMEDRANGE, sheetIndex);
+            Ptg[] ptgs = FormulaParser.parse(formula, fpb, FormulaType.NAMEDRANGE, sheetIndex, -1);
             if (shifter.adjustFormula(ptgs, sheetIndex)) {
                 String shiftedFmla = FormulaRenderer.toFormulaString(fpb, ptgs);
                 name.setRefersToFormula(shiftedFmla);
@@ -221,7 +221,7 @@ public final class XSSFRowShifter {
         XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
         
         try {
-            Ptg[] ptgs = FormulaParser.parse(formula, fpb, FormulaType.CELL, sheetIndex);
+            Ptg[] ptgs = FormulaParser.parse(formula, fpb, FormulaType.CELL, sheetIndex, -1);
             String shiftedFmla = null;
             if (shifter.adjustFormula(ptgs, sheetIndex)) {
                 shiftedFmla = FormulaRenderer.toFormulaString(fpb, ptgs);
@@ -283,7 +283,7 @@ public final class XSSFRowShifter {
                 String[] formulaArray = cfRule.getFormulaArray();
                 for (int i = 0; i < formulaArray.length; i++) {
                     String formula = formulaArray[i];
-                    Ptg[] ptgs = FormulaParser.parse(formula, fpb, FormulaType.CELL, sheetIndex);
+                    Ptg[] ptgs = FormulaParser.parse(formula, fpb, FormulaType.CELL, sheetIndex, -1);
                     if (shifter.adjustFormula(ptgs, sheetIndex)) {
                         String shiftedFmla = FormulaRenderer.toFormulaString(fpb, ptgs);
                         cfRule.setFormulaArray(i, shiftedFmla);

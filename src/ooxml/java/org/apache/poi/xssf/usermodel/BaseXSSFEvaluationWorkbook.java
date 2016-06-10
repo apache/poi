@@ -36,6 +36,7 @@ import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.ptg.Ref3DPxg;
 import org.apache.poi.ss.formula.udf.IndexedUDFFinder;
 import org.apache.poi.ss.formula.udf.UDFFinder;
+import org.apache.poi.ss.usermodel.Table;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.NotImplemented;
@@ -308,6 +309,10 @@ public abstract class BaseXSSFEvaluationWorkbook implements FormulaRenderingWork
 	@Override
 	public XSSFName createName() {
 		return _uBook.createName();
+	}
+	
+	public Table getTable(String name) {
+	    return _uBook.getTable(name);
 	}
 	
     public UDFFinder getUDFFinder(){

@@ -506,7 +506,7 @@ public final class XSSFCell implements Cell {
         XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(sheet.getWorkbook());
         SharedFormula sf = new SharedFormula(SpreadsheetVersion.EXCEL2007);
 
-        Ptg[] ptgs = FormulaParser.parse(sharedFormula, fpb, FormulaType.CELL, sheetIndex);
+        Ptg[] ptgs = FormulaParser.parse(sharedFormula, fpb, FormulaType.CELL, sheetIndex, getRowIndex());
         Ptg[] fmla = sf.convertSharedFormulas(ptgs,
                 getRowIndex() - ref.getFirstRow(), getColumnIndex() - ref.getFirstColumn());
         return FormulaRenderer.toFormulaString(fpb, fmla);
@@ -550,7 +550,7 @@ public final class XSSFCell implements Cell {
 
         XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
         //validate through the FormulaParser
-        FormulaParser.parse(formula, fpb, formulaType, wb.getSheetIndex(getSheet()));
+        FormulaParser.parse(formula, fpb, formulaType, wb.getSheetIndex(getSheet()), -1);
 
         CTCellFormula f = CTCellFormula.Factory.newInstance();
         f.setStringValue(formula);
