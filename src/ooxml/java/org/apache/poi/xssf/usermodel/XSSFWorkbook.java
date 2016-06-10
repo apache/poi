@@ -2263,48 +2263,23 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         return SpreadsheetVersion.EXCEL2007;
     }
     
-    /*
-     * TODO: data tables are stored at the workbook level in XSSF, but are bound to a single sheet.
-     *       The current code structure has them hanging off XSSFSheet, but formulas reference them
-     *       only by name (names are global, and case insensitive).
-     *       This map stores names as lower case for case-insensitive lookups.
-     *
-     * FIXME: Caching tables by name here for fast formula lookup means the map is out of date if
-     *       a table is renamed or added/removed to a sheet after the map is created.
-     *
-     *       Perhaps tables can be managed similar to PivotTable references above?
-     */
-    Map<String, XSSFTable> _tableCache = null;
-    private Map<String, XSSFTable> getTableCache() {
-        if ( _tableCache != null ) {
-            return _tableCache;
-        }
-        // FIXME: use org.apache.commons.collections.map.CaseInsensitiveMap
-        _tableCache = new HashMap<String, XSSFTable>();
-
-        if (sheets != null) {
-            for (XSSFSheet sheet : sheets) {
-                for (XSSFTable tbl : sheet.getTables()) {
-                    String lname = tbl.getName().toLowerCase(Locale.ROOT);
-                    _tableCache.put(lname, tbl);
-                }
-            }
-        }
-        return _tableCache;
-    }
-
     /**
      * Returns the data table with the given name (case insensitive).
-     * Tables are cached for performance (formula evaluation looks them up by name repeatedly).
-     * After the first table lookup, adding or removing a table from the document structure will cause trouble.
-     * This is meant to be used on documents whose structure is essentially static at the point formulas are evaluated.
      * 
      * @param name the data table name (case-insensitive)
      * @return The Data table in the workbook named <tt>name</tt>, or <tt>null</tt> if no table is named <tt>name</tt>.
      * @since 3.15 beta 2
      */
     public XSSFTable getTable(String name) {
-        String lname = name.toLowerCase(Locale.ROOT);
-        return getTableCache().get(lname);
+        if (sheets != null) {
+            for (XSSFSheet sheet : sheets) {
+                for (XSSFTable tbl : sheet.getTables()) {
+                    if (name.equalsIgnoreCase(tbl.getName())) {
+                        return tbl;
+                    }
+                }
+            }
+        }
+        return null;
     }
 }
