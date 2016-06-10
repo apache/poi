@@ -1107,4 +1107,36 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
 			assertTrue("Had: " + e.getCause(), e.getCause() instanceof IOException);
 		}
 	}
+
+    /**
+     * See bug #57840 test data tables
+     */
+    @Test
+    public void getTable() throws IOException {
+       XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("WithTable.xlsx");
+       XSSFTable table1 = wb.getTable("Tabella1");
+       assertNotNull("Tabella1 was not found in workbook", table1);
+       assertEquals("Table name", "Tabella1", table1.getName());
+       assertEquals("Sheet name", "Foglio1", table1.getSheetName());
+
+       // Table lookup should be case-insensitive
+       assertSame("Case insensitive table name lookup", table1, wb.getTable("TABELLA1"));
+
+       // If workbook does not contain any data tables matching the provided name, getTable should return null
+       assertNull("Null table name should not throw NPE", wb.getTable(null));
+       assertNull("Should not be able to find non-existent table", wb.getTable("Foglio1"));
+
+       // If a table is added after getTable is called it should still be reachable by XSSFWorkbook.getTable
+       // This test makes sure that if any caching is done that getTable never uses a stale cache
+       XSSFTable table2 = wb.getSheet("Foglio2").createTable();
+       table2.setName("Table2");
+       assertSame("Did not find Table2", table2, wb.getTable("Table2"));
+       
+       // If table name is modified after getTable is called, the table can only be found by its new name
+       // This test makes sure that if any caching is done that getTable never uses a stale cache
+       table1.setName("Table1");
+       assertSame("Did not find Tabella1 renamed to Table1", table1, wb.getTable("TABLE1"));
+
+       wb.close();
+    }
 }

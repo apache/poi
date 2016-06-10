@@ -2271,7 +2271,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
      * @since 3.15 beta 2
      */
     public XSSFTable getTable(String name) {
-        if (sheets != null) {
+        if (name != null && sheets != null) {
             for (XSSFSheet sheet : sheets) {
                 for (XSSFTable tbl : sheet.getTables()) {
                     if (name.equalsIgnoreCase(tbl.getName())) {
