@@ -18,6 +18,11 @@
  */
 package org.apache.poi.ss.formula;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import org.apache.poi.hssf.usermodel.HSSFEvaluationWorkbook;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.formula.ptg.AbstractFunctionPtg;
@@ -28,7 +33,7 @@ import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.usermodel.XSSFEvaluationWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * Test {@link FormulaParser}'s handling of row numbers at the edge of the
@@ -36,8 +41,9 @@ import junit.framework.TestCase;
  * 
  * @author David North
  */
-public class TestFormulaParser extends TestCase {
+public class TestFormulaParser {
 
+    @Test
     public void testHSSFFailsForOver65536() {
         FormulaParsingWorkbook workbook = HSSFEvaluationWorkbook.create(new HSSFWorkbook());
         try {
@@ -49,16 +55,19 @@ public class TestFormulaParser extends TestCase {
         }
     }
 
+    @Test
     public void testHSSFPassCase() {
         FormulaParsingWorkbook workbook = HSSFEvaluationWorkbook.create(new HSSFWorkbook());
         FormulaParser.parse("Sheet1!1:65536", workbook, FormulaType.CELL, 0);
     }
 
+    @Test
     public void testXSSFWorksForOver65536() {
         FormulaParsingWorkbook workbook = XSSFEvaluationWorkbook.create(new XSSFWorkbook());
         FormulaParser.parse("Sheet1!1:65537", workbook, FormulaType.CELL, 0);
     }
 
+    @Test
     public void testXSSFFailCase() {
         FormulaParsingWorkbook workbook = XSSFEvaluationWorkbook.create(new XSSFWorkbook());
         try {
@@ -71,6 +80,7 @@ public class TestFormulaParser extends TestCase {
     }
     
     // copied from org.apache.poi.hssf.model.TestFormulaParser
+    @Test
     public void testMacroFunction() throws Exception {
         // testNames.xlsm contains a VB function called 'myFunc'
         final String testFile = "testNames.xlsm";
@@ -126,6 +136,7 @@ public class TestFormulaParser extends TestCase {
         }
     }
     
+    @Test
     public void testParserErrors() throws Exception {
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("testNames.xlsm");
         try {
