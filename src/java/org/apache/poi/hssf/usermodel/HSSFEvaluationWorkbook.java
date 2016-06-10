@@ -265,10 +265,15 @@ public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
         return extIx;
     }
 
+    @Override
     public SpreadsheetVersion getSpreadsheetVersion(){
         return SpreadsheetVersion.EXCEL97;
     }
 
+    /**
+      * @throws IllegalStateException: data tables are not supported in Excel 97-2003 format
+      */
+    @Override
     public Table getTable(String name) {
         throw new IllegalStateException("XSSF-style tables are not supported for HSSF");
     }

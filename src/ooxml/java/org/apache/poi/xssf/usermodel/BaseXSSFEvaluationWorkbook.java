@@ -353,8 +353,11 @@ public abstract class BaseXSSFEvaluationWorkbook implements FormulaRenderingWork
      * @return The Data table in the workbook named <tt>name</tt>, or <tt>null</tt> if no table is named <tt>name</tt>.
      * @since 3.15 beta 2
      */
+    @Override
     public XSSFTable getTable(String name) {
-        return getTableCache().get(name.toLowerCase(Locale.ROOT));
+        if (name == null) return null;
+        String lname = name.toLowerCase(Locale.ROOT);
+        return getTableCache().get(lname);
     }
     
     public UDFFinder getUDFFinder(){
