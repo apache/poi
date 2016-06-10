@@ -192,7 +192,7 @@ public final class XSSFName implements Name {
     public void setRefersToFormula(String formulaText) {
         XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(_workbook);
         //validate through the FormulaParser
-        FormulaParser.parse(formulaText, fpb, FormulaType.NAMEDRANGE, getSheetIndex());
+        FormulaParser.parse(formulaText, fpb, FormulaType.NAMEDRANGE, getSheetIndex(), -1);
 
         _ctName.setStringValue(formulaText);
     }
@@ -203,7 +203,7 @@ public final class XSSFName implements Name {
             return false;
         }
         XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(_workbook);
-        Ptg[] ptgs = FormulaParser.parse(formulaText, fpb, FormulaType.NAMEDRANGE, getSheetIndex());
+        Ptg[] ptgs = FormulaParser.parse(formulaText, fpb, FormulaType.NAMEDRANGE, getSheetIndex(), -1);
         return Ptg.doesFormulaReferToDeletedCell(ptgs);
     }
 

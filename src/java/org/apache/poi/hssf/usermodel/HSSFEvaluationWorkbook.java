@@ -38,6 +38,7 @@ import org.apache.poi.ss.formula.ptg.NameXPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.ptg.Ref3DPtg;
 import org.apache.poi.ss.formula.udf.UDFFinder;
+import org.apache.poi.ss.usermodel.Table;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.POILogFactory;
@@ -266,5 +267,9 @@ public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
 
     public SpreadsheetVersion getSpreadsheetVersion(){
         return SpreadsheetVersion.EXCEL97;
+    }
+
+    public Table getTable(String name) {
+        throw new IllegalStateException("XSSF-style tables are not supported for HSSF");
     }
 }

@@ -407,6 +407,9 @@ public final class OperationEvaluationContext {
             return new FunctionNameEval(name);
         }
 	}
+	public int getSheetIndex() {
+	    return _sheetIndex;
+	}
 	
     private ValueEval getExternalNameXEval(ExternalName externName, String workbookName) {
         try {

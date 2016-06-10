@@ -20,6 +20,7 @@ package org.apache.poi.ss.formula;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.usermodel.Name;
+import org.apache.poi.ss.usermodel.Table;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
 
@@ -41,6 +42,11 @@ public interface FormulaParsingWorkbook {
 	 */
 	Name createName();
 
+	/**
+	 * XSSF Only - gets a table that exists in the worksheet
+	 */
+	Table getTable(String name);
+	
 	/**
 	 * Return an external name (named range, function, user-defined function) Ptg
 	 */

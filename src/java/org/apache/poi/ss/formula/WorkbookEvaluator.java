@@ -26,20 +26,60 @@ import java.util.TreeSet;
 
 import org.apache.poi.ss.formula.CollaboratingWorkbooksEnvironment.WorkbookNotFoundException;
 import org.apache.poi.ss.formula.atp.AnalysisToolPak;
-import org.apache.poi.ss.formula.eval.*;
+import org.apache.poi.ss.formula.eval.BlankEval;
+import org.apache.poi.ss.formula.eval.BoolEval;
+import org.apache.poi.ss.formula.eval.ErrorEval;
+import org.apache.poi.ss.formula.eval.EvaluationException;
+import org.apache.poi.ss.formula.eval.ExternalNameEval;
+import org.apache.poi.ss.formula.eval.FunctionEval;
+import org.apache.poi.ss.formula.eval.FunctionNameEval;
+import org.apache.poi.ss.formula.eval.MissingArgEval;
+import org.apache.poi.ss.formula.eval.NotImplementedException;
+import org.apache.poi.ss.formula.eval.NumberEval;
+import org.apache.poi.ss.formula.eval.OperandResolver;
+import org.apache.poi.ss.formula.eval.StringEval;
+import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.function.FunctionMetadataRegistry;
 import org.apache.poi.ss.formula.functions.Choose;
 import org.apache.poi.ss.formula.functions.FreeRefFunction;
 import org.apache.poi.ss.formula.functions.Function;
 import org.apache.poi.ss.formula.functions.IfFunc;
-import org.apache.poi.ss.formula.ptg.*;
+import org.apache.poi.ss.formula.ptg.Area3DPtg;
+import org.apache.poi.ss.formula.ptg.Area3DPxg;
+import org.apache.poi.ss.formula.ptg.AreaErrPtg;
+import org.apache.poi.ss.formula.ptg.AreaPtg;
+import org.apache.poi.ss.formula.ptg.AttrPtg;
+import org.apache.poi.ss.formula.ptg.BoolPtg;
+import org.apache.poi.ss.formula.ptg.ControlPtg;
+import org.apache.poi.ss.formula.ptg.DeletedArea3DPtg;
+import org.apache.poi.ss.formula.ptg.DeletedRef3DPtg;
+import org.apache.poi.ss.formula.ptg.ErrPtg;
+import org.apache.poi.ss.formula.ptg.ExpPtg;
+import org.apache.poi.ss.formula.ptg.FuncVarPtg;
+import org.apache.poi.ss.formula.ptg.IntPtg;
+import org.apache.poi.ss.formula.ptg.MemAreaPtg;
+import org.apache.poi.ss.formula.ptg.MemErrPtg;
+import org.apache.poi.ss.formula.ptg.MemFuncPtg;
+import org.apache.poi.ss.formula.ptg.MissingArgPtg;
+import org.apache.poi.ss.formula.ptg.NamePtg;
+import org.apache.poi.ss.formula.ptg.NameXPtg;
+import org.apache.poi.ss.formula.ptg.NameXPxg;
+import org.apache.poi.ss.formula.ptg.NumberPtg;
+import org.apache.poi.ss.formula.ptg.OperationPtg;
+import org.apache.poi.ss.formula.ptg.Ptg;
+import org.apache.poi.ss.formula.ptg.Ref3DPtg;
+import org.apache.poi.ss.formula.ptg.Ref3DPxg;
+import org.apache.poi.ss.formula.ptg.RefErrorPtg;
+import org.apache.poi.ss.formula.ptg.RefPtg;
+import org.apache.poi.ss.formula.ptg.StringPtg;
+import org.apache.poi.ss.formula.ptg.UnionPtg;
+import org.apache.poi.ss.formula.ptg.UnknownPtg;
 import org.apache.poi.ss.formula.udf.AggregatingUDFFinder;
 import org.apache.poi.ss.formula.udf.UDFFinder;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-
 /**
  * Evaluates formula cells.<p/>
  *
@@ -259,6 +299,15 @@ public final class WorkbookEvaluator {
 			try {
 
 				Ptg[] ptgs = _workbook.getFormulaTokens(srcCell);
+//				System.out.println("=====");
+//				XSSFCell c = ((XSSFEvaluationCell)srcCell).getXSSFCell();
+//				System.out.println("Formula is "+ c);
+//				System.out.println("The cell is " + c.getSheet().getSheetName()+"!"+c.getReference());
+//				System.out.println("Evaluation tokens : ");  // TODO Dlivshen remove
+//				for (Ptg ptg : ptgs) {  // TODO Dlivshen remove
+//				    System.out.println(ptg);  // TODO Dlivshen remove
+//				} // TODO Dlivshen remove
+//				System.out.println("======"); // TODO Dlivshen remove
 				if (evalListener == null) {
 					result = evaluateFormula(ec, ptgs);
 				} else {
@@ -270,9 +319,9 @@ public final class WorkbookEvaluator {
 				tracker.updateCacheResult(result);
 			}
 			 catch (NotImplementedException e) {
-				throw addExceptionInfo(e, sheetIndex, rowIndex, columnIndex);
+				throw addExceptionInfo(e,  sheetIndex, rowIndex, columnIndex);
 			 } catch (RuntimeException re) {
-				 if (re.getCause() instanceof WorkbookNotFoundException && _ignoreMissingWorkbooks) {
+				 if (re.getCause() instanceof  WorkbookNotFoundException && _ignoreMissingWorkbooks) {
  					logInfo(re.getCause().getMessage() + " - Continuing with cached value!");
  					switch(srcCell.getCachedFormulaResultType()) {
 	 					case Cell.CELL_TYPE_NUMERIC:

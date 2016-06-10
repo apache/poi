@@ -28,6 +28,7 @@ import org.apache.poi.ss.formula.function.FunctionMetadata;
 import org.apache.poi.ss.formula.function.FunctionMetadataRegistry;
 import org.apache.poi.ss.formula.ptg.AbstractFunctionPtg;
 import org.apache.poi.ss.formula.ptg.AddPtg;
+import org.apache.poi.ss.formula.ptg.Area3DPxg;
 import org.apache.poi.ss.formula.ptg.AreaPtg;
 import org.apache.poi.ss.formula.ptg.ArrayPtg;
 import org.apache.poi.ss.formula.ptg.AttrPtg;
@@ -69,6 +70,7 @@ import org.apache.poi.ss.formula.ptg.UnionPtg;
 import org.apache.poi.ss.formula.ptg.ValueOperatorPtg;
 import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.ss.usermodel.Name;
+import org.apache.poi.ss.usermodel.Table;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.CellReference.NameType;
@@ -117,6 +119,7 @@ public final class FormulaParser {
 	private final SpreadsheetVersion _ssVersion;
 
 	private final int _sheetIndex;
+	private final int _rowIndex; // 0-based
 
 
 	/**
@@ -131,13 +134,14 @@ public final class FormulaParser {
 	 *  model.Workbook, then use the convenience method on
 	 *  usermodel.HSSFFormulaEvaluator
 	 */
-	private FormulaParser(String formula, FormulaParsingWorkbook book, int sheetIndex){
+	private FormulaParser(String formula, FormulaParsingWorkbook book, int sheetIndex, int rowIndex){
 		_formulaString = formula;
 		_pointer=0;
 		_book = book;
 		_ssVersion = book == null ? SpreadsheetVersion.EXCEL97 : book.getSpreadsheetVersion();
 		_formulaLength = _formulaString.length();
 		_sheetIndex = sheetIndex;
+		_rowIndex = rowIndex;
 	}
 
 	/**
@@ -148,18 +152,41 @@ public final class FormulaParser {
 	 * @param workbook	the parent workbook
 	 * @param formulaType the type of the formula, see {@link FormulaType}
 	 * @param sheetIndex  the 0-based index of the sheet this formula belongs to.
+	 * @param rowIndex  - the related cell's row index in 0-based form (-1 if the formula is not cell related)
+	 *                     used to handle structured references that have the "#This Row" quantifier.
 	 * The sheet index is required to resolve sheet-level names. <code>-1</code> means that
 	 * the scope of the name will be ignored and  the parser will match names only by name
 	 *
 	 * @return array of parsed tokens
 	 * @throws FormulaParseException if the formula has incorrect syntax or is otherwise invalid
 	 */
-	public static Ptg[] parse(String formula, FormulaParsingWorkbook workbook, int formulaType, int sheetIndex) {
-		FormulaParser fp = new FormulaParser(formula, workbook, sheetIndex);
+	public static Ptg[] parse(String formula, FormulaParsingWorkbook workbook, int formulaType, int sheetIndex, int rowIndex) {
+		FormulaParser fp = new FormulaParser(formula, workbook, sheetIndex, rowIndex);
 		fp.parse();
 		return fp.getRPNPtg(formulaType);
 	}
 	
+    public static Ptg[] parse(String formula, FormulaParsingWorkbook workbook, int formulaType, int sheetIndex) {
+        return parse(formula, workbook, formulaType, sheetIndex, -1);
+    }
+
+    /**
+     * Parse a structured reference. Converts the structured
+     *  reference to the area that represent it.
+     *
+     * @param tableText - The structured reference text
+     * @param workbook - the parent workbook
+     * @param rowIndex - the 0-based cell's row index ( used to handle "#This Row" quantifiers )
+     * @return the area that being represented by the structured reference.
+     */
+    public static Area3DPxg parseStructuredReference(String tableText, FormulaParsingWorkbook workbook, int rowIndex) {
+        Ptg[] arr = FormulaParser.parse(tableText, workbook, 0, 0, rowIndex);
+        if (arr.length != 1 || !(arr[0] instanceof Area3DPxg) ) {
+            throw new IllegalStateException("Illegal structured reference");
+        }
+        return (Area3DPxg) arr[0];
+    }
+    
 	/** Read New Character From Input Stream */
 	private void GetChar() {
 		// The intersection operator is a space.  We track whether the run of 
@@ -528,6 +555,266 @@ public final class FormulaParser {
 	}
 
 
+	
+	private final static String specHeaders = "Headers";
+	private final static String specAll = "All";
+	private final static String specData = "Data";
+	private final static String specTotals = "Totals";
+	private final static String specThisRow = "This Row";
+	
+	/**
+	 * Parses a structured reference, returns it as area reference.
+	 * Examples:
+	 * <pre>
+	 * Table1[col]
+	 * Table1[[#Totals],[col]]
+	 * Table1[#Totals]
+	 * Table1[#All]
+	 * Table1[#Data]
+	 * Table1[#Headers]
+	 * Table1[#Totals]
+	 * Table1[#This Row]
+	 * Table1[[#All],[col]]
+	 * Table1[[#Headers],[col]]
+	 * Table1[[#Totals],[col]]
+	 * Table1[[#All],[col1]:[col2]]
+	 * Table1[[#Data],[col1]:[col2]]
+	 * Table1[[#Headers],[col1]:[col2]]
+	 * Table1[[#Totals],[col1]:[col2]]
+	 * Table1[[#Headers],[#Data],[col2]]
+	 * Table1[[#This Row], [col1]]
+	 * Table1[ [col1]:[col2] ]
+	 * </pre>
+	 * @param tableName
+	 * @return
+	 */
+	private ParseNode parseStructuredReference(String tableName){
+	    
+        if ( ! (_ssVersion.equals(SpreadsheetVersion.EXCEL2007)) ) {
+            throw new FormulaParseException("Strctured references work only on XSSF (Excel 2007)!");
+        }
+        Table tbl = _book.getTable(tableName);
+        if (tbl == null) {
+           throw new  FormulaParseException("Illegal table name!");
+        }
+        String sheetName = tbl.getSheetName();
+        
+        int startCol = tbl.getStartColIndex();
+        int endCol = tbl.getEndColIndex();
+        int startRow = tbl.getStartRowIndex();
+        int endRow = tbl.getEndRowIndex();
+        
+        int savePtr0 = _pointer;
+        GetChar();
+        
+        boolean isTotalsSpec = false;
+        boolean isThisRowSpec = false;
+        boolean isDataSpec = false;
+        boolean isHeadersSpec = false;
+        boolean isAllSpec = false;
+        int nSpecQuantifiers = 0; // The number of special quantifiers
+        while (true) {
+            int savePtr1 = _pointer;
+            String specName = parseAsSpecialQuantifier();
+            if (specName == null) {
+                resetPointer(savePtr1);
+                break;
+            }
+            if (specName.equals(specAll)) {
+                isAllSpec = true;
+            } else if (specName.equals(specData)) {
+                isDataSpec = true;
+            } else if (specName.equals(specHeaders)) {
+                isHeadersSpec = true;
+            } else if (specName.equals(specThisRow)) {
+                isThisRowSpec = true;
+            } else if (specName.equals(specTotals)) {
+                isTotalsSpec  = true;
+            } else {
+                throw new FormulaParseException("Unknown special qunatifier "+ specName);
+            }
+            nSpecQuantifiers++ ;
+            if (look == ','){
+                GetChar();
+            } else {
+                break;
+            }
+        }
+        boolean isThisRow = false;
+        SkipWhite();
+        if (look == '@') {
+            isThisRow = true;
+            GetChar();
+        }
+        // parse column quantifier
+        String startColumnName = null;
+        String endColumnName = null;
+        int nColQuantifiers = 0;
+        int savePtr1 = _pointer;
+        startColumnName = parseAsColumnQuantifier();
+        if (startColumnName == null) {
+            resetPointer(savePtr1);
+        } else {
+            nColQuantifiers++;
+            if (look == ','){
+                throw new FormulaParseException("The formula "+ _formulaString + "is illegal: you should not use ',' with column quantifiers");
+            } else if (look == ':') {
+                GetChar();
+                endColumnName = parseAsColumnQuantifier();
+                nColQuantifiers++;
+                if (endColumnName == null) {
+                    throw new FormulaParseException("The formula "+ _formulaString + "is illegal: the string after ':' must be column quantifier");
+                }
+            }
+        }
+        
+        if(nColQuantifiers == 0 && nSpecQuantifiers == 0){
+            resetPointer(savePtr0);
+            savePtr0 = _pointer;
+            startColumnName = parseAsColumnQuantifier();
+            if (startColumnName != null) {
+                nColQuantifiers++;
+            } else {
+                resetPointer(savePtr0);
+                String name = parseAsSpecialQuantifier();
+                if (name!=null) {
+                    if (name.equals(specAll)) {
+                        isAllSpec = true;
+                    } else if (name.equals(specData)) {
+                        isDataSpec = true;
+                    } else if (name.equals(specHeaders)) {
+                        isHeadersSpec = true;
+                    } else if (name.equals(specThisRow)) {
+                        isThisRowSpec = true;
+                    } else if (name.equals(specTotals)) {
+                        isTotalsSpec  = true;
+                    } else {
+                        throw new FormulaParseException("Unknown special qunatifier "+ name);
+                    }
+                    nSpecQuantifiers++;
+                } else {
+                    throw new FormulaParseException("The formula "+ _formulaString + " is illegal");
+                }
+            }
+        } else {
+            Match(']');
+        }
+        
+        int actualStartRow = startRow;
+        int actualEndRow = endRow;
+        int actualStartCol = startCol;
+        int actualEndCol = endCol; 
+        if (nSpecQuantifiers > 0) {
+        //Selecting rows
+            if (nSpecQuantifiers == 1 && isAllSpec) {
+                //do nothing
+            } else if (isDataSpec && isHeadersSpec) {
+                if (tbl.isHasTotalsRow()) {
+                    actualEndRow = endRow - 1;
+                }
+            } else if (isDataSpec && isTotalsSpec) {
+                actualStartRow = startRow + 1;
+            } else if (nSpecQuantifiers == 1 && isDataSpec) {
+                actualStartRow = startRow + 1;
+                if (tbl.isHasTotalsRow()) {
+                    actualEndRow = endRow - 1;
+                }
+            } else if (nSpecQuantifiers == 1 && isHeadersSpec) {
+                actualEndRow = actualStartRow;
+            } else if (nSpecQuantifiers == 1 && isTotalsSpec) {
+                actualStartRow = actualEndRow;
+            } else if ((nSpecQuantifiers == 1 && isThisRowSpec) || isThisRow) {
+                actualStartRow = _rowIndex; //The rowNum is 0 based
+                actualEndRow = _rowIndex; 
+            } else {
+                throw new FormulaParseException("The formula "+ _formulaString + " is illegal");
+            }
+        } else {
+            if (isThisRow) { // there is a @
+                actualStartRow = _rowIndex; //The rowNum is 0 based
+                actualEndRow = _rowIndex; 
+            } else { // Really no special quantifiers
+                actualStartRow++;
+            }
+        }
+        //Selecting cols
+
+        if (nColQuantifiers == 2){
+            if (startColumnName == null || endColumnName == null){
+                throw new IllegalStateException("Fatal error");
+            }
+            int startIdx = tbl.findColumnIndex(startColumnName);
+            int endIdx = tbl.findColumnIndex(endColumnName);
+            if (startIdx == -1 || endIdx == -1) {
+                throw new FormulaParseException("One of the columns "+ startColumnName +", "+ endColumnName +" doesn't exist in table "+ tbl.getName()); 
+            } 
+            actualStartCol = startCol+ startIdx;
+            actualEndCol = startCol + endIdx;
+                
+        } else if(nColQuantifiers == 1){
+            if (startColumnName == null){
+                throw new IllegalStateException("Fatal error");
+            }
+            int idx = tbl.findColumnIndex(startColumnName);
+            if (idx == -1) {
+                throw new FormulaParseException("The column "+ startColumnName + " doesn't exist in table "+ tbl.getName());
+            }
+            actualStartCol = startCol + idx;
+            actualEndCol = actualStartCol;
+        }
+        CellReference tl = new CellReference(actualStartRow, actualStartCol);
+        CellReference br = new CellReference(actualEndRow, actualEndCol);
+        SheetIdentifier sheetIden = new SheetIdentifier( null, new NameIdentifier(sheetName, true));
+        Ptg ptg = _book.get3DReferencePtg(new AreaReference(tl, br), sheetIden);
+        return new ParseNode(ptg);
+	}
+	
+	/**
+     * Tries to parse the next as column - can contain whitespace
+     * Caller should save pointer.
+     * @return
+    */
+    private String parseAsColumnQuantifier(){
+        if ( look != '[') {
+            return null;
+        }
+        GetChar();
+        String name = "";
+        if (look == '#') {
+            return null;
+        }
+        if (look == '@') {
+            GetChar();
+        }
+        while (look!=']') {
+           name += look;
+           GetChar();
+        }
+        Match(']');
+        return name;
+    }    
+    /**
+     * Tries to parse the next as special quantifier
+     * Caller should save pointer.
+     * @return
+     */
+    private String parseAsSpecialQuantifier(){
+        if ( look != '[') {
+            return null;
+        }
+        GetChar();
+        if( look != '#') {
+            return null;
+        }
+        GetChar();
+        String name = parseAsName();
+        if ( name.equals("This")) {
+            name = name + ' ' + parseAsName();
+        }
+        Match(']');
+        return name;
+    }
+
 
 	/**
 	 * Parses simple factors that are not primitive ranges or range components
@@ -558,6 +845,11 @@ public final class FormulaParser {
 		if (look == '(') {
 			return function(name);
 		}
+		//TODO Livshen's code
+		if(look == '['){
+		    return parseStructuredReference(name);
+		}
+		//TODO End of Livshen's code
 		if (name.equalsIgnoreCase("TRUE") || name.equalsIgnoreCase("FALSE")) {
 			return  new ParseNode(BoolPtg.valueOf(name.equalsIgnoreCase("TRUE")));
 		}
@@ -581,9 +873,9 @@ public final class FormulaParser {
 	private String parseAsName() {
         StringBuilder sb = new StringBuilder();
 
-        // defined names may begin with a letter or underscore
-        if (!Character.isLetter(look) && look != '_') {
-            throw expected("number, string, or defined name");
+        // defined names may begin with a letter or underscore or backslash
+        if (!Character.isLetter(look) && look != '_' && look != '\\') {
+            throw expected("number, string, defined name, or table");
         }
         while (isValidDefinedNameChar(look)) {
             sb.append(look);
@@ -1175,7 +1467,9 @@ public final class FormulaParser {
 				Match('}');
 				return arrayNode;
 		}
-		if (IsAlpha(look) || Character.isDigit(look) || look == '\'' || look == '['){
+		// named ranges and tables can start with underscore or backslash
+		// see https://support.office.com/en-us/article/Define-and-use-names-in-formulas-4d0f13ac-53b7-422e-afd2-abd7ff379c64?ui=en-US&rs=en-US&ad=US#bmsyntax_rules_for_names
+		if (IsAlpha(look) || Character.isDigit(look) || look == '\'' || look == '[' || look == '_' || look == '\\' ) {
 			return parseRangeExpression();
 		}
 		if (look == '.') {

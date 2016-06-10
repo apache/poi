@@ -68,6 +68,7 @@ public interface EvaluationWorkbook {
      */
     ExternalName getExternalName(String nameName, String sheetName, int externalWorkbookNumber);
     
+    
     EvaluationName getName(NamePtg namePtg);
     EvaluationName getName(String name, int sheetIndex);
     String resolveNameXText(NameXPtg ptg);
