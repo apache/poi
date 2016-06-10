@@ -20,6 +20,7 @@ package org.apache.poi.ss.formula;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.usermodel.Name;
+import org.apache.poi.ss.usermodel.Table;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
 
@@ -31,46 +32,51 @@ import org.apache.poi.ss.util.CellReference;
  * @author Josh Micich
  */
 public interface FormulaParsingWorkbook {
-	/**
-	 *  named range name matching is case insensitive
-	 */
-	EvaluationName getName(String name, int sheetIndex);
-	
-	/**
-	 * Return the underlying workbook
-	 */
-	Name createName();
+    /**
+     *  named range name matching is case insensitive
+     */
+    EvaluationName getName(String name, int sheetIndex);
+    
+    /**
+     * Return the underlying workbook
+     */
+    Name createName();
 
-	/**
-	 * Return an external name (named range, function, user-defined function) Ptg
-	 */
-	Ptg getNameXPtg(String name, SheetIdentifier sheet);
-	
-	/**
-	 * Produce the appropriate Ptg for a 3d cell reference
-	 */
-	Ptg get3DReferencePtg(CellReference cell, SheetIdentifier sheet);
+    /**
+     * XSSF Only - gets a table that exists in the worksheet
+     */
+    Table getTable(String name);
+    
+    /**
+     * Return an external name (named range, function, user-defined function) Ptg
+     */
+    Ptg getNameXPtg(String name, SheetIdentifier sheet);
+    
+    /**
+     * Produce the appropriate Ptg for a 3d cell reference
+     */
+    Ptg get3DReferencePtg(CellReference cell, SheetIdentifier sheet);
 
     /**
      * Produce the appropriate Ptg for a 3d area reference
      */
     Ptg get3DReferencePtg(AreaReference area, SheetIdentifier sheet);
 
-	/**
-	 * gets the externSheet index for a sheet from this workbook
-	 */
-	int getExternalSheetIndex(String sheetName);
-	/**
-	 * gets the externSheet index for a sheet from an external workbook
-	 * @param workbookName e.g. "Budget.xls"
-	 * @param sheetName a name of a sheet in that workbook
-	 */
-	int getExternalSheetIndex(String workbookName, String sheetName);
+    /**
+     * gets the externSheet index for a sheet from this workbook
+     */
+    int getExternalSheetIndex(String sheetName);
+    /**
+     * gets the externSheet index for a sheet from an external workbook
+     * @param workbookName e.g. "Budget.xls"
+     * @param sheetName a name of a sheet in that workbook
+     */
+    int getExternalSheetIndex(String workbookName, String sheetName);
 
-	/**
-	 * Returns an enum holding spreadhseet properties specific to an Excel version (
-	 * max column and row numbers, max arguments to a function, etc.)
-	 */
-	SpreadsheetVersion getSpreadsheetVersion();
+    /**
+     * Returns an enum holding spreadhseet properties specific to an Excel version (
+     * max column and row numbers, max arguments to a function, etc.)
+     */
+    SpreadsheetVersion getSpreadsheetVersion();
 
 }

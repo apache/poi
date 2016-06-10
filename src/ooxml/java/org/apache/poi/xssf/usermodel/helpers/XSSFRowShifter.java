@@ -134,8 +134,9 @@ public final class XSSFRowShifter {
             XSSFName name = wb.getNameAt(i);
             String formula = name.getRefersToFormula();
             int sheetIndex = name.getSheetIndex();
+            final int rowIndex = -1; //don't care, named ranges are not allowed to include structured references
 
-            Ptg[] ptgs = FormulaParser.parse(formula, fpb, FormulaType.NAMEDRANGE, sheetIndex);
+            Ptg[] ptgs = FormulaParser.parse(formula, fpb, FormulaType.NAMEDRANGE, sheetIndex, rowIndex);
             if (shifter.adjustFormula(ptgs, sheetIndex)) {
                 String shiftedFmla = FormulaRenderer.toFormulaString(fpb, ptgs);
                 name.setRefersToFormula(shiftedFmla);
@@ -218,10 +219,11 @@ public final class XSSFRowShifter {
         XSSFSheet sheet = row.getSheet();
         XSSFWorkbook wb = sheet.getWorkbook();
         int sheetIndex = wb.getSheetIndex(sheet);
+        final int rowIndex = row.getRowNum();
         XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
         
         try {
-            Ptg[] ptgs = FormulaParser.parse(formula, fpb, FormulaType.CELL, sheetIndex);
+            Ptg[] ptgs = FormulaParser.parse(formula, fpb, FormulaType.CELL, sheetIndex, rowIndex);
             String shiftedFmla = null;
             if (shifter.adjustFormula(ptgs, sheetIndex)) {
                 shiftedFmla = FormulaRenderer.toFormulaString(fpb, ptgs);
@@ -238,6 +240,7 @@ public final class XSSFRowShifter {
     public void updateConditionalFormatting(FormulaShifter shifter) {
         XSSFWorkbook wb = sheet.getWorkbook();
         int sheetIndex = wb.getSheetIndex(sheet);
+        final int rowIndex = -1; //don't care, structured references not allowed in conditional formatting
 
         XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
         CTWorksheet ctWorksheet = sheet.getCTWorksheet();
@@ -283,7 +286,7 @@ public final class XSSFRowShifter {
                 String[] formulaArray = cfRule.getFormulaArray();
                 for (int i = 0; i < formulaArray.length; i++) {
                     String formula = formulaArray[i];
-                    Ptg[] ptgs = FormulaParser.parse(formula, fpb, FormulaType.CELL, sheetIndex);
+                    Ptg[] ptgs = FormulaParser.parse(formula, fpb, FormulaType.CELL, sheetIndex, rowIndex);
                     if (shifter.adjustFormula(ptgs, sheetIndex)) {
                         String shiftedFmla = FormulaRenderer.toFormulaString(fpb, ptgs);
                         cfRule.setFormulaArray(i, shiftedFmla);

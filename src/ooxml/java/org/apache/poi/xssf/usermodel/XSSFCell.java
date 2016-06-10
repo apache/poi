@@ -406,9 +406,9 @@ public final class XSSFCell implements Cell {
         if (cachedValueType != expectedTypeCode) {
             throw typeMismatch(expectedTypeCode, cachedValueType, true);
         }
-	}
+    }
 
-	/**
+    /**
      * Set a string value for the cell.
      *
      * @param str value to set the cell to.  For formulas we'll set the formula
@@ -506,7 +506,7 @@ public final class XSSFCell implements Cell {
         XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(sheet.getWorkbook());
         SharedFormula sf = new SharedFormula(SpreadsheetVersion.EXCEL2007);
 
-        Ptg[] ptgs = FormulaParser.parse(sharedFormula, fpb, FormulaType.CELL, sheetIndex);
+        Ptg[] ptgs = FormulaParser.parse(sharedFormula, fpb, FormulaType.CELL, sheetIndex, getRowIndex());
         Ptg[] fmla = sf.convertSharedFormulas(ptgs,
                 getRowIndex() - ref.getFirstRow(), getColumnIndex() - ref.getFirstColumn());
         return FormulaRenderer.toFormulaString(fpb, fmla);
@@ -550,7 +550,7 @@ public final class XSSFCell implements Cell {
 
         XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
         //validate through the FormulaParser
-        FormulaParser.parse(formula, fpb, formulaType, wb.getSheetIndex(getSheet()));
+        FormulaParser.parse(formula, fpb, formulaType, wb.getSheetIndex(getSheet()), getRowIndex());
 
         CTCellFormula f = CTCellFormula.Factory.newInstance();
         f.setStringValue(formula);
@@ -925,8 +925,8 @@ public final class XSSFCell implements Cell {
                 throw new IllegalArgumentException("Illegal cell type: " + cellType);
         }
         if (cellType != CELL_TYPE_FORMULA && _cell.isSetF()) {
-			_cell.unsetF();
-		}
+            _cell.unsetF();
+        }
     }
 
     /**

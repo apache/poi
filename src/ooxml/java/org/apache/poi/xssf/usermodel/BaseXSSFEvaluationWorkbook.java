@@ -17,7 +17,10 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.EvaluationName;
@@ -36,6 +39,8 @@ import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.ptg.Ref3DPxg;
 import org.apache.poi.ss.formula.udf.IndexedUDFFinder;
 import org.apache.poi.ss.formula.udf.UDFFinder;
+import org.apache.poi.ss.usermodel.Table;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.NotImplemented;
@@ -46,31 +51,31 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedName;
  * Internal POI use only - parent of XSSF and SXSSF evaluation workbooks
  */
 public abstract class BaseXSSFEvaluationWorkbook implements FormulaRenderingWorkbook, EvaluationWorkbook, FormulaParsingWorkbook {
-	protected final XSSFWorkbook _uBook;
+    protected final XSSFWorkbook _uBook;
 
-	protected BaseXSSFEvaluationWorkbook(XSSFWorkbook book) {
-		_uBook = book;
-	}
+    protected BaseXSSFEvaluationWorkbook(XSSFWorkbook book) {
+        _uBook = book;
+    }
 
-	private int convertFromExternalSheetIndex(int externSheetIndex) {
-		return externSheetIndex;
-	}
-	/**
-	 * XSSF doesn't use external sheet indexes, so when asked treat
-	 * it just as a local index
-	 */
-	public int convertFromExternSheetIndex(int externSheetIndex) {
-		return externSheetIndex;
-	}
-	/**
-	 * @return  the external sheet index of the sheet with the given internal
-	 * index. Used by some of the more obscure formula and named range things.
-	 * Fairly easy on XSSF (we think...) since the internal and external
-	 * indices are the same
-	 */
-	private int convertToExternalSheetIndex(int sheetIndex) {
-		return sheetIndex;
-	}
+    private int convertFromExternalSheetIndex(int externSheetIndex) {
+        return externSheetIndex;
+    }
+    /**
+     * XSSF doesn't use external sheet indexes, so when asked treat
+     * it just as a local index
+     */
+    public int convertFromExternSheetIndex(int externSheetIndex) {
+        return externSheetIndex;
+    }
+    /**
+     * @return  the external sheet index of the sheet with the given internal
+     * index. Used by some of the more obscure formula and named range things.
+     * Fairly easy on XSSF (we think...) since the internal and external
+     * indices are the same
+     */
+    private int convertToExternalSheetIndex(int sheetIndex) {
+        return sheetIndex;
+    }
 
     public int getExternalSheetIndex(String sheetName) {
         int sheetIndex = _uBook.getSheetIndex(sheetName);
@@ -131,37 +136,37 @@ public abstract class BaseXSSFEvaluationWorkbook implements FormulaRenderingWork
         }
     }
 
-	/**
-	 * Return EvaluationName wrapper around the matching XSSFName (named range)
-	 * @param name case-aware but case-insensitive named range in workbook
-	 * @param sheetIndex index of sheet if named range scope is limited to one sheet
-	 *		 if named range scope is global to the workbook, sheetIndex is -1.
-	 * @return If name is a named range in the workbook, returns
-	 *  EvaluationName corresponding to that named range 
-	 *  Returns null if there is no named range with the same name and scope in the workbook
-	 */
-	public EvaluationName getName(String name, int sheetIndex) {
-		for (int i = 0; i < _uBook.getNumberOfNames(); i++) {
-			XSSFName nm = _uBook.getNameAt(i);
-			String nameText = nm.getNameName();
-			int nameSheetindex = nm.getSheetIndex();
-			if (name.equalsIgnoreCase(nameText) && 
-			       (nameSheetindex == -1 || nameSheetindex == sheetIndex)) {
-				return new Name(nm, i, this);
-			}
-		}
-		return sheetIndex == -1 ? null : getName(name, -1);
-	}
+    /**
+     * Return EvaluationName wrapper around the matching XSSFName (named range)
+     * @param name case-aware but case-insensitive named range in workbook
+     * @param sheetIndex index of sheet if named range scope is limited to one sheet
+     *         if named range scope is global to the workbook, sheetIndex is -1.
+     * @return If name is a named range in the workbook, returns
+     *  EvaluationName corresponding to that named range 
+     *  Returns null if there is no named range with the same name and scope in the workbook
+     */
+    public EvaluationName getName(String name, int sheetIndex) {
+        for (int i = 0; i < _uBook.getNumberOfNames(); i++) {
+            XSSFName nm = _uBook.getNameAt(i);
+            String nameText = nm.getNameName();
+            int nameSheetindex = nm.getSheetIndex();
+            if (name.equalsIgnoreCase(nameText) && 
+                   (nameSheetindex == -1 || nameSheetindex == sheetIndex)) {
+                return new Name(nm, i, this);
+            }
+        }
+        return sheetIndex == -1 ? null : getName(name, -1);
+    }
 
-	public String getSheetName(int sheetIndex) {
-		return _uBook.getSheetName(sheetIndex);
-	}
-	
-	public ExternalName getExternalName(int externSheetIndex, int externNameIndex) {
+    public String getSheetName(int sheetIndex) {
+        return _uBook.getSheetName(sheetIndex);
+    }
+    
+    public ExternalName getExternalName(int externSheetIndex, int externNameIndex) {
         throw new IllegalStateException("HSSF-style external references are not supported for XSSF");
-	}
+    }
 
-	public ExternalName getExternalName(String nameName, String sheetName, int externalWorkbookNumber) {
+    public ExternalName getExternalName(String nameName, String sheetName, int externalWorkbookNumber) {
         if (externalWorkbookNumber > 0) {
             // External reference - reference is 1 based, link table is 0 based
             int linkNumber = externalWorkbookNumber - 1;
@@ -186,7 +191,7 @@ public abstract class BaseXSSFEvaluationWorkbook implements FormulaRenderingWork
             int nameIdx = _uBook.getNameIndex(nameName);
             return new ExternalName(nameName, nameIdx, 0);  // TODO Is this right?
         }
-	    
+        
     }
 
     /**
@@ -194,7 +199,7 @@ public abstract class BaseXSSFEvaluationWorkbook implements FormulaRenderingWork
      */
     @Override
     public NameXPxg getNameXPtg(String name, SheetIdentifier sheet) {
-	    // First, try to find it as a User Defined Function
+        // First, try to find it as a User Defined Function
         IndexedUDFFinder udfFinder = (IndexedUDFFinder)getUDFFinder();
         FreeRefFunction func = udfFinder.findFunction(name);
         if (func != null) {
@@ -223,7 +228,7 @@ public abstract class BaseXSSFEvaluationWorkbook implements FormulaRenderingWork
         } else {
             return new NameXPxg(sheetName, name);
         }
-	}
+    }
     public Ptg get3DReferencePtg(CellReference cell, SheetIdentifier sheet) {
         if (sheet._bookName != null) {
             int bookIndex = resolveBookIndex(sheet._bookName);
@@ -259,102 +264,151 @@ public abstract class BaseXSSFEvaluationWorkbook implements FormulaRenderingWork
         return name;
     }
 
-	public ExternalSheet getExternalSheet(int externSheetIndex) {
-	    throw new IllegalStateException("HSSF-style external references are not supported for XSSF");
-	}
-	public ExternalSheet getExternalSheet(String firstSheetName, String lastSheetName, int externalWorkbookNumber) {
-	    String workbookName;
-	    if (externalWorkbookNumber > 0) {
-	        // External reference - reference is 1 based, link table is 0 based
-	        int linkNumber = externalWorkbookNumber - 1;
-	        ExternalLinksTable linkTable = _uBook.getExternalLinksTable().get(linkNumber);
-	        workbookName = linkTable.getLinkedFileName();
-	    } else {
-	        // Internal reference
-	        workbookName = null;
-	    }
-	    
-	    if (lastSheetName == null || firstSheetName.equals(lastSheetName)) {
-	        return new ExternalSheet(workbookName, firstSheetName);
-	    } else {
-	        return new ExternalSheetRange(workbookName, firstSheetName, lastSheetName);
-	    }
+    public ExternalSheet getExternalSheet(int externSheetIndex) {
+        throw new IllegalStateException("HSSF-style external references are not supported for XSSF");
+    }
+    public ExternalSheet getExternalSheet(String firstSheetName, String lastSheetName, int externalWorkbookNumber) {
+        String workbookName;
+        if (externalWorkbookNumber > 0) {
+            // External reference - reference is 1 based, link table is 0 based
+            int linkNumber = externalWorkbookNumber - 1;
+            ExternalLinksTable linkTable = _uBook.getExternalLinksTable().get(linkNumber);
+            workbookName = linkTable.getLinkedFileName();
+        } else {
+            // Internal reference
+            workbookName = null;
+        }
+        
+        if (lastSheetName == null || firstSheetName.equals(lastSheetName)) {
+            return new ExternalSheet(workbookName, firstSheetName);
+        } else {
+            return new ExternalSheetRange(workbookName, firstSheetName, lastSheetName);
+        }
     }
 
     @NotImplemented
     public int getExternalSheetIndex(String workbookName, String sheetName) {
-		throw new RuntimeException("not implemented yet");
-	}
-	public int getSheetIndex(String sheetName) {
-		return _uBook.getSheetIndex(sheetName);
-	}
+        throw new RuntimeException("not implemented yet");
+    }
+    public int getSheetIndex(String sheetName) {
+        return _uBook.getSheetIndex(sheetName);
+    }
 
-	public String getSheetFirstNameByExternSheet(int externSheetIndex) {
-		int sheetIndex = convertFromExternalSheetIndex(externSheetIndex);
-		return _uBook.getSheetName(sheetIndex);
-	}
+    public String getSheetFirstNameByExternSheet(int externSheetIndex) {
+        int sheetIndex = convertFromExternalSheetIndex(externSheetIndex);
+        return _uBook.getSheetName(sheetIndex);
+    }
     public String getSheetLastNameByExternSheet(int externSheetIndex) {
         // XSSF does multi-sheet references differently, so this is the same as the first
         return getSheetFirstNameByExternSheet(externSheetIndex);
     }
 
-	public String getNameText(NamePtg namePtg) {
-		return _uBook.getNameAt(namePtg.getIndex()).getNameName();
-	}
-	public EvaluationName getName(NamePtg namePtg) {
-		int ix = namePtg.getIndex();
-		return new Name(_uBook.getNameAt(ix), ix, this);
-	}
-	@Override
-	public XSSFName createName() {
-		return _uBook.createName();
-	}
-	
+    public String getNameText(NamePtg namePtg) {
+        return _uBook.getNameAt(namePtg.getIndex()).getNameName();
+    }
+    public EvaluationName getName(NamePtg namePtg) {
+        int ix = namePtg.getIndex();
+        return new Name(_uBook.getNameAt(ix), ix, this);
+    }
+    @Override
+    public XSSFName createName() {
+        return _uBook.createName();
+    }
+
+    private static String caseInsensitive(String s) {
+        return s.toUpperCase(Locale.ROOT);
+    }
+
+    /*
+     * TODO: data tables are stored at the workbook level in XSSF, but are bound to a single sheet.
+     *       The current code structure has them hanging off XSSFSheet, but formulas reference them
+     *       only by name (names are global, and case insensitive).
+     *       This map stores names as lower case for case-insensitive lookups.
+     *
+     * FIXME: Caching tables by name here for fast formula lookup means the map is out of date if
+     *       a table is renamed or added/removed to a sheet after the map is created.
+     *
+     *       Perhaps tables can be managed similar to PivotTable references above?
+     */
+    private Map<String, XSSFTable> _tableCache = null;
+    private Map<String, XSSFTable> getTableCache() {
+        if ( _tableCache != null ) {
+            return _tableCache;
+        }
+        // FIXME: use org.apache.commons.collections.map.CaseInsensitiveMap
+        _tableCache = new HashMap<String, XSSFTable>();
+
+        for (Sheet sheet : _uBook) {
+            for (XSSFTable tbl : ((XSSFSheet)sheet).getTables()) {
+                String lname = caseInsensitive(tbl.getName());
+                _tableCache.put(lname, tbl);
+            }
+        }
+        return _tableCache;
+    }
+
+    /**
+     * Returns the data table with the given name (case insensitive).
+     * Tables are cached for performance (formula evaluation looks them up by name repeatedly).
+     * After the first table lookup, adding or removing a table from the document structure will cause trouble.
+     * This is meant to be used on documents whose structure is essentially static at the point formulas are evaluated.
+     * 
+     * @param name the data table name (case-insensitive)
+     * @return The Data table in the workbook named <tt>name</tt>, or <tt>null</tt> if no table is named <tt>name</tt>.
+     * @since 3.15 beta 2
+     */
+    @Override
+    public XSSFTable getTable(String name) {
+        if (name == null) return null;
+        String lname = caseInsensitive(name);
+        return getTableCache().get(lname);
+    }
+    
     public UDFFinder getUDFFinder(){
         return _uBook.getUDFFinder();
     }
 
-	private static final class Name implements EvaluationName {
+    private static final class Name implements EvaluationName {
 
-		private final XSSFName _nameRecord;
-		private final int _index;
-		private final FormulaParsingWorkbook _fpBook;
+        private final XSSFName _nameRecord;
+        private final int _index;
+        private final FormulaParsingWorkbook _fpBook;
 
-		public Name(XSSFName name, int index, FormulaParsingWorkbook fpBook) {
-			_nameRecord = name;
-			_index = index;
-			_fpBook = fpBook;
-		}
+        public Name(XSSFName name, int index, FormulaParsingWorkbook fpBook) {
+            _nameRecord = name;
+            _index = index;
+            _fpBook = fpBook;
+        }
 
-		public Ptg[] getNameDefinition() {
+        public Ptg[] getNameDefinition() {
 
-			return FormulaParser.parse(_nameRecord.getRefersToFormula(), _fpBook, FormulaType.NAMEDRANGE, _nameRecord.getSheetIndex());
-		}
+            return FormulaParser.parse(_nameRecord.getRefersToFormula(), _fpBook, FormulaType.NAMEDRANGE, _nameRecord.getSheetIndex());
+        }
 
-		public String getNameText() {
-			return _nameRecord.getNameName();
-		}
+        public String getNameText() {
+            return _nameRecord.getNameName();
+        }
 
-		public boolean hasFormula() {
-			// TODO - no idea if this is right
-			CTDefinedName ctn = _nameRecord.getCTName();
-			String strVal = ctn.getStringValue();
-			return !ctn.getFunction() && strVal != null && strVal.length() > 0;
-		}
+        public boolean hasFormula() {
+            // TODO - no idea if this is right
+            CTDefinedName ctn = _nameRecord.getCTName();
+            String strVal = ctn.getStringValue();
+            return !ctn.getFunction() && strVal != null && strVal.length() > 0;
+        }
 
-		public boolean isFunctionName() {
-			return _nameRecord.isFunctionName();
-		}
+        public boolean isFunctionName() {
+            return _nameRecord.isFunctionName();
+        }
 
-		public boolean isRange() {
-			return hasFormula(); // TODO - is this right?
-		}
-		public NamePtg createPtg() {
-			return new NamePtg(_index);
-		}
-	}
+        public boolean isRange() {
+            return hasFormula(); // TODO - is this right?
+        }
+        public NamePtg createPtg() {
+            return new NamePtg(_index);
+        }
+    }
 
-	public SpreadsheetVersion getSpreadsheetVersion(){
-		return SpreadsheetVersion.EXCEL2007;
-	}
+    public SpreadsheetVersion getSpreadsheetVersion(){
+        return SpreadsheetVersion.EXCEL2007;
+    }
 }
