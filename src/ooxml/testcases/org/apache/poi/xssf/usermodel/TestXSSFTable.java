@@ -18,6 +18,7 @@
 package org.apache.poi.xssf.usermodel;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -108,6 +109,29 @@ public final class TestXSSFTable {
 
         inputWorkbook.close();
         outputWorkbook.close();
+    }
+
+    @Test
+    public void findColumnIndex() throws IOException {
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("StructuredReferences.xlsx");
+        // FIXME: use a worksheet where upper left cell of table is not A1 so that we test
+        // that XSSFTable.findColumnIndex returns the column index relative to the first
+        // column in the table, not the column number in the sheet
+
+        XSSFTable table = wb.getTable("\\_Prime.1");
+        assertNotNull(table);
+        assertEquals(0, table.findColumnIndex("calc='#*'#"));
+        assertEquals(1, table.findColumnIndex("Name"));
+        assertEquals(2, table.findColumnIndex("Number"));
+
+        assertEquals("case insensitive", 2, table.findColumnIndex("NuMbEr"));
+
+        // findColumnIndex should return -1 if no column header name matches
+        assertEquals(-1, table.findColumnIndex(null));
+        assertEquals(-1, table.findColumnIndex(""));
+        assertEquals(-1, table.findColumnIndex("one"));
+
+        wb.close();
     }
 
 }

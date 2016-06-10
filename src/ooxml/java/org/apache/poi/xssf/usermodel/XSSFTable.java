@@ -335,12 +335,15 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
      * The column index is relative to the left-most column in the table, 0-indexed.
      * Returns <code>-1</code> if <code>column</code> is not a header name in table.
      *
+     * Column Header names are case-insensitive
+     *
      * Note: this function caches column names for performance. To flush the cache (because columns
      * have been moved or column headers have been changed), {@link #updateHeaders()} must be called.
      *
      * @since 3.15 beta 2
      */
-    public int findColumnIndex(String column) {
+    public int findColumnIndex(String columnHeader) {
+        if (columnHeader == null) return -1;
         if (columnMap == null) {
             // FIXME: replace with org.apache.commons.collections.map.CaseInsensitiveMap
             int count = getTableColumns().length;
@@ -353,7 +356,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
         }
         // Table column names with special characters need a single quote escape
         // but the escape is not present in the column definition
-        Integer idx = columnMap.get(caseInsensitive(column.replace("'", "")));
+        Integer idx = columnMap.get(caseInsensitive(columnHeader.replace("'", "")));
         return idx == null ? -1 : idx.intValue();
     }
 
