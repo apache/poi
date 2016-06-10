@@ -816,19 +816,19 @@ public final class FormulaParser {
             return null;
         }
         GetChar();
-        String name = "";
         if (look == '#') {
             return null;
         }
         if (look == '@') {
             GetChar();
         }
+        StringBuilder name = new StringBuilder();
         while (look!=']') {
-           name += look;
+           name.append(look);
            GetChar();
         }
         Match(']');
-        return name;
+        return name.toString();
     }    
     /**
      * Tries to parse the next as special quantifier
