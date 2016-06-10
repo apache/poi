@@ -27,7 +27,6 @@ import org.apache.poi.ss.formula.ptg.Ptg;
  * Internal POI use only
  */
 public final class XSSFEvaluationWorkbook extends BaseXSSFEvaluationWorkbook {
-    @Override
     public static XSSFEvaluationWorkbook create(XSSFWorkbook book) {
         if (book == null) {
             return null;
