@@ -74,16 +74,16 @@ public final class TestPropertyTemplate {
         PropertyTemplate pt = new PropertyTemplate();
         
         pt.drawBorders(a1, CellStyle.BORDER_THIN, Extent.TOP);
-        assertEquals(CellStyle.BORDER_THIN, pt.getTemplateProperty(0, 0, CellUtil.BORDER_TOP));
+        verifyBorderStyle(BorderStyle.THIN, pt, 0, 0, CellUtil.BORDER_TOP);
         
         pt.drawBorders(a1, CellStyle.BORDER_MEDIUM, Extent.BOTTOM);
-        assertEquals(CellStyle.BORDER_MEDIUM, pt.getTemplateProperty(0, 0, CellUtil.BORDER_BOTTOM));
+        verifyBorderStyle(BorderStyle.MEDIUM, pt, 0, 0, CellUtil.BORDER_BOTTOM);
         
         pt.drawBorderColors(a1, IndexedColors.RED.getIndex(), Extent.TOP);
-        assertEquals(IndexedColors.RED.getIndex(), pt.getTemplateProperty(0, 0, CellUtil.TOP_BORDER_COLOR));
+        verifyBorderColor(IndexedColors.RED, pt, 0, 0, CellUtil.TOP_BORDER_COLOR);
         
         pt.drawBorderColors(a1, IndexedColors.BLUE.getIndex(), Extent.BOTTOM);
-        assertEquals(IndexedColors.BLUE.getIndex(), pt.getTemplateProperty(0, 0, CellUtil.BOTTOM_BORDER_COLOR));
+        verifyBorderColor(IndexedColors.BLUE, pt, 0, 0, CellUtil.BOTTOM_BORDER_COLOR);
     }
 
     @Test
@@ -95,10 +95,10 @@ public final class TestPropertyTemplate {
         for (int i = 0; i <= 2; i++) {
             for (int j = 0; j <= 2; j++) {
                 assertEquals(4, pt.getNumBorders(i, j));
-                assertEquals(CellStyle.BORDER_THIN, pt.getTemplateProperty(i, j, CellUtil.BORDER_TOP));
-                assertEquals(CellStyle.BORDER_THIN, pt.getTemplateProperty(i, j, CellUtil.BORDER_BOTTOM));
-                assertEquals(CellStyle.BORDER_THIN, pt.getTemplateProperty(i, j, CellUtil.BORDER_LEFT));
-                assertEquals(CellStyle.BORDER_THIN, pt.getTemplateProperty(i, j, CellUtil.BORDER_RIGHT));
+                verifyBorderStyle(BorderStyle.THIN, pt, i, j, CellUtil.BORDER_TOP);
+                verifyBorderStyle(BorderStyle.THIN, pt, i, j, CellUtil.BORDER_BOTTOM);
+                verifyBorderStyle(BorderStyle.THIN, pt, i, j, CellUtil.BORDER_LEFT);
+                verifyBorderStyle(BorderStyle.THIN, pt, i, j, CellUtil.BORDER_RIGHT);
             }
         }
         
@@ -292,16 +292,17 @@ public final class TestPropertyTemplate {
                 }
             }
         }
+        
         pt.drawBorders(a1c3, CellStyle.BORDER_NONE, Extent.NONE);
         pt.drawBorders(a1c3, CellStyle.BORDER_MEDIUM, Extent.OUTSIDE_VERTICAL);
         for (int i = 0; i <= 2; i++) {
             for (int j = 0; j <= 2; j++) {
                 if (j == 0) {
                     assertEquals(1, pt.getNumBorders(i, j));
-                    assertEquals(CellStyle.BORDER_MEDIUM, pt.getTemplateProperty(i, j, CellUtil.BORDER_LEFT));
+                    verifyBorderStyle(BorderStyle.MEDIUM, pt, i, j, CellUtil.BORDER_LEFT);
                 } else if (j == 2) {
                     assertEquals(1, pt.getNumBorders(i, j));
-                    assertEquals(CellStyle.BORDER_MEDIUM, pt.getTemplateProperty(i ,j, CellUtil.BORDER_RIGHT));
+                    verifyBorderStyle(BorderStyle.MEDIUM, pt, i ,j, CellUtil.BORDER_RIGHT);
                 } else {
                     assertEquals(0, pt.getNumBorders(i, j));
                 }
@@ -660,5 +661,19 @@ public final class TestPropertyTemplate {
         }
         
         wb.close();
+    }
+    
+    // helper functions to make sure template properties were set correctly
+    private static void verifyBorderStyle(BorderStyle expected,
+            PropertyTemplate template, int row, int col, String borderLocation) {
+        short style = template.getTemplateProperty(row, col, borderLocation);
+        BorderStyle actual = BorderStyle.valueOf(style);
+        assertEquals(borderLocation, expected, actual);
+    }
+    private static void verifyBorderColor(IndexedColors expectedColor,
+            PropertyTemplate template, int row, int col, String borderLocation) {
+        short color = template.getTemplateProperty(row, col, borderLocation);
+        IndexedColors actualColor = IndexedColors.fromInt(color);
+        assertEquals(borderLocation, expectedColor, actualColor);
     }
 }
