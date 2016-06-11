@@ -150,8 +150,10 @@ public class TSPTimeStampService implements TimeStampService {
         
         int statusCode = huc.getResponseCode();
         if (statusCode != 200) {
-            LOG.log(POILogger.ERROR, "Error contacting TSP server ", signatureConfig.getTspUrl());
-            throw new IOException("Error contacting TSP server " + signatureConfig.getTspUrl());
+            LOG.log(POILogger.ERROR, "Error contacting TSP server ", signatureConfig.getTspUrl() +
+                    ", had status code " + statusCode + "/" + huc.getResponseMessage());
+            throw new IOException("Error contacting TSP server " + signatureConfig.getTspUrl() +
+                    ", had status code " + statusCode + "/" + huc.getResponseMessage());
         }
 
         // HTTP input validation

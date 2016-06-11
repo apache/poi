@@ -389,10 +389,13 @@ public class TestSignatureInfo {
                 throw e;
             }
             if((e.getCause() instanceof ConnectException) || (e.getCause() instanceof SocketTimeoutException)) {
-                assertTrue("Only allowing ConnectException with 'timed out' as message here, but had: " + e,
+                Assume.assumeTrue("Only allowing ConnectException with 'timed out' as message here, but had: " + e,
                         e.getCause().getMessage().contains("timed out"));
+            } else if (e.getCause() instanceof IOException) {
+                Assume.assumeTrue("Only allowing IOException with 'Error contacting TSP server' as message here, but had: " + e,
+                        e.getCause().getMessage().contains("Error contacting TSP server"));
             } else if (e.getCause() instanceof RuntimeException) {
-                assertTrue("Only allowing RuntimeException with 'This site is cur' as message here, but had: " + e,
+                Assume.assumeTrue("Only allowing RuntimeException with 'This site is cur' as message here, but had: " + e,
                         e.getCause().getMessage().contains("This site is cur"));
             } else {
                 throw e;
