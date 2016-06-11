@@ -469,16 +469,28 @@ public final class XSSFCell implements Cell {
      */
     @Override
     public String getCellFormula() {
+        // existing behavior - create a new XSSFEvaluationWorkbook for every call
+        return getCellFormula(null);
+    }
+    
+    /**
+     * package/hierarchy use only - reuse an existing evaluation workbook if available for caching
+     *
+     * @param fpb evaluation workbook for reuse, if available, or null to create a new one as needed
+     * @return a formula for the cell
+     * @throws IllegalStateException if the cell type returned by {@link #getCellType()} is not CELL_TYPE_FORMULA
+     */
+    protected String getCellFormula(XSSFEvaluationWorkbook fpb) {
         int cellType = getCellType();
         if(cellType != CELL_TYPE_FORMULA) throw typeMismatch(CELL_TYPE_FORMULA, cellType, false);
 
         CTCellFormula f = _cell.getF();
         if (isPartOfArrayFormulaGroup() && f == null) {
             XSSFCell cell = getSheet().getFirstCellInArrayFormula(this);
-            return cell.getCellFormula();
+            return cell.getCellFormula(fpb);
         }
         if (f.getT() == STCellFormulaType.SHARED) {
-            return convertSharedFormula((int)f.getSi());
+            return convertSharedFormula((int)f.getSi(), fpb == null ? XSSFEvaluationWorkbook.create(getSheet().getWorkbook()) : fpb);
         }
         return f.getStringValue();
     }
@@ -489,7 +501,7 @@ public final class XSSFCell implements Cell {
      * @param si Shared Group Index
      * @return non shared formula created for the given shared formula and this cell
      */
-    private String convertSharedFormula(int si){
+    private String convertSharedFormula(int si, XSSFEvaluationWorkbook fpb){
         XSSFSheet sheet = getSheet();
 
         CTCellFormula f = sheet.getSharedFormula(si);
@@ -503,7 +515,6 @@ public final class XSSFCell implements Cell {
         CellRangeAddress ref = CellRangeAddress.valueOf(sharedFormulaRange);
 
         int sheetIndex = sheet.getWorkbook().getSheetIndex(sheet);
-        XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(sheet.getWorkbook());
         SharedFormula sf = new SharedFormula(SpreadsheetVersion.EXCEL2007);
 
         Ptg[] ptgs = FormulaParser.parse(sharedFormula, fpb, FormulaType.CELL, sheetIndex, getRowIndex());
