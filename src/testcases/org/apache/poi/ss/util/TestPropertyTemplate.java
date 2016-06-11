@@ -42,10 +42,13 @@ public final class TestPropertyTemplate {
     public void getNumBorders() throws IOException {
         CellRangeAddress a1 = new CellRangeAddress(0, 0, 0, 0);
         PropertyTemplate pt = new PropertyTemplate();
+        
         pt.drawBorders(a1, CellStyle.BORDER_THIN, Extent.TOP);
         assertEquals(1, pt.getNumBorders(0, 0));
+        
         pt.drawBorders(a1, CellStyle.BORDER_MEDIUM, Extent.BOTTOM);
         assertEquals(2, pt.getNumBorders(0, 0));
+        
         pt.drawBorders(a1, CellStyle.BORDER_MEDIUM, Extent.NONE);
         assertEquals(0, pt.getNumBorders(0, 0));
     }
@@ -54,10 +57,13 @@ public final class TestPropertyTemplate {
     public void getNumBorderColors() throws IOException {
         CellRangeAddress a1 = new CellRangeAddress(0, 0, 0, 0);
         PropertyTemplate pt = new PropertyTemplate();
+        
         pt.drawBorderColors(a1, IndexedColors.RED.getIndex(), Extent.TOP);
         assertEquals(1, pt.getNumBorderColors(0, 0));
+        
         pt.drawBorderColors(a1, IndexedColors.RED.getIndex(), Extent.BOTTOM);
         assertEquals(2, pt.getNumBorderColors(0, 0));
+        
         pt.drawBorderColors(a1, IndexedColors.RED.getIndex(), Extent.NONE);
         assertEquals(0, pt.getNumBorderColors(0, 0));
     }
@@ -66,194 +72,116 @@ public final class TestPropertyTemplate {
     public void getTemplateProperties() throws IOException {
         CellRangeAddress a1 = new CellRangeAddress(0, 0, 0, 0);
         PropertyTemplate pt = new PropertyTemplate();
+        
         pt.drawBorders(a1, CellStyle.BORDER_THIN, Extent.TOP);
-        assertEquals(CellStyle.BORDER_THIN,
-                pt.getTemplateProperty(0, 0, CellUtil.BORDER_TOP));
+        assertEquals(CellStyle.BORDER_THIN, pt.getTemplateProperty(0, 0, CellUtil.BORDER_TOP));
+        
         pt.drawBorders(a1, CellStyle.BORDER_MEDIUM, Extent.BOTTOM);
-        assertEquals(CellStyle.BORDER_MEDIUM,
-                pt.getTemplateProperty(0, 0, CellUtil.BORDER_BOTTOM));
+        assertEquals(CellStyle.BORDER_MEDIUM, pt.getTemplateProperty(0, 0, CellUtil.BORDER_BOTTOM));
+        
         pt.drawBorderColors(a1, IndexedColors.RED.getIndex(), Extent.TOP);
-        assertEquals(IndexedColors.RED.getIndex(),
-                pt.getTemplateProperty(0, 0, CellUtil.TOP_BORDER_COLOR));
+        assertEquals(IndexedColors.RED.getIndex(), pt.getTemplateProperty(0, 0, CellUtil.TOP_BORDER_COLOR));
+        
         pt.drawBorderColors(a1, IndexedColors.BLUE.getIndex(), Extent.BOTTOM);
-        assertEquals(IndexedColors.BLUE.getIndex(),
-                pt.getTemplateProperty(0, 0, CellUtil.BOTTOM_BORDER_COLOR));
+        assertEquals(IndexedColors.BLUE.getIndex(), pt.getTemplateProperty(0, 0, CellUtil.BOTTOM_BORDER_COLOR));
     }
 
     @Test
     public void drawBorders() throws IOException {
         CellRangeAddress a1c3 = new CellRangeAddress(0, 2, 0, 2);
         PropertyTemplate pt = new PropertyTemplate();
-        pt.drawBorders(a1c3, CellStyle.BORDER_THIN,
-                Extent.ALL);
+        
+        pt.drawBorders(a1c3, CellStyle.BORDER_THIN, Extent.ALL);
         for (int i = 0; i <= 2; i++) {
             for (int j = 0; j <= 2; j++) {
                 assertEquals(4, pt.getNumBorders(i, j));
-                assertEquals(CellStyle.BORDER_THIN,
-                        pt.getTemplateProperty(i, j, CellUtil.BORDER_TOP));
-                assertEquals(CellStyle.BORDER_THIN,
-                        pt.getTemplateProperty(i, j, CellUtil.BORDER_BOTTOM));
-                assertEquals(CellStyle.BORDER_THIN,
-                        pt.getTemplateProperty(i, j, CellUtil.BORDER_LEFT));
-                assertEquals(CellStyle.BORDER_THIN,
-                        pt.getTemplateProperty(i, j, CellUtil.BORDER_RIGHT));
+                assertEquals(CellStyle.BORDER_THIN, pt.getTemplateProperty(i, j, CellUtil.BORDER_TOP));
+                assertEquals(CellStyle.BORDER_THIN, pt.getTemplateProperty(i, j, CellUtil.BORDER_BOTTOM));
+                assertEquals(CellStyle.BORDER_THIN, pt.getTemplateProperty(i, j, CellUtil.BORDER_LEFT));
+                assertEquals(CellStyle.BORDER_THIN, pt.getTemplateProperty(i, j, CellUtil.BORDER_RIGHT));
             }
         }
-        pt.drawBorders(a1c3, CellStyle.BORDER_MEDIUM,
-                Extent.OUTSIDE);
+        
+        pt.drawBorders(a1c3, CellStyle.BORDER_MEDIUM, Extent.OUTSIDE);
         for (int i = 0; i <= 2; i++) {
             for (int j = 0; j <= 2; j++) {
                 assertEquals(4, pt.getNumBorders(i, j));
                 if (i == 0) {
                     if (j == 0) {
-                        assertEquals(CellStyle.BORDER_MEDIUM,
-                                pt.getTemplateProperty(i, j,
-                                        CellUtil.BORDER_TOP));
-                        assertEquals(CellStyle.BORDER_THIN,
-                                pt.getTemplateProperty(i, j,
-                                        CellUtil.BORDER_BOTTOM));
-                        assertEquals(CellStyle.BORDER_MEDIUM,
-                                pt.getTemplateProperty(i, j,
-                                        CellUtil.BORDER_LEFT));
-                        assertEquals(CellStyle.BORDER_THIN,
-                                pt.getTemplateProperty(i, j,
-                                        CellUtil.BORDER_RIGHT));
+                        assertEquals(CellStyle.BORDER_MEDIUM, pt.getTemplateProperty(i, j, CellUtil.BORDER_TOP));
+                        assertEquals(CellStyle.BORDER_THIN, pt.getTemplateProperty(i, j, CellUtil.BORDER_BOTTOM));
+                        assertEquals(CellStyle.BORDER_MEDIUM, pt.getTemplateProperty(i, j, CellUtil.BORDER_LEFT));
+                        assertEquals(CellStyle.BORDER_THIN, pt.getTemplateProperty(i, j, CellUtil.BORDER_RIGHT));
                     } else if (j == 2) {
-                        assertEquals(CellStyle.BORDER_MEDIUM,
-                                pt.getTemplateProperty(i, j,
-                                        CellUtil.BORDER_TOP));
-                        assertEquals(CellStyle.BORDER_THIN,
-                                pt.getTemplateProperty(i, j,
-                                        CellUtil.BORDER_BOTTOM));
-                        assertEquals(CellStyle.BORDER_THIN,
-                                pt.getTemplateProperty(i, j,
-                                        CellUtil.BORDER_LEFT));
-                        assertEquals(CellStyle.BORDER_MEDIUM,
-                                pt.getTemplateProperty(i, j,
-                                        CellUtil.BORDER_RIGHT));
+                        assertEquals(CellStyle.BORDER_MEDIUM, pt.getTemplateProperty(i, j, CellUtil.BORDER_TOP));
+                        assertEquals(CellStyle.BORDER_THIN, pt.getTemplateProperty(i, j, CellUtil.BORDER_BOTTOM));
+                        assertEquals(CellStyle.BORDER_THIN, pt.getTemplateProperty(i, j, CellUtil.BORDER_LEFT));
+                        assertEquals(CellStyle.BORDER_MEDIUM, pt.getTemplateProperty(i, j, CellUtil.BORDER_RIGHT));
                     } else {
-                        assertEquals(CellStyle.BORDER_MEDIUM,
-                                pt.getTemplateProperty(i, j,
-                                        CellUtil.BORDER_TOP));
-                        assertEquals(CellStyle.BORDER_THIN,
-                                pt.getTemplateProperty(i, j,
-                                        CellUtil.BORDER_BOTTOM));
-                        assertEquals(CellStyle.BORDER_THIN,
-                                pt.getTemplateProperty(i, j,
-                                        CellUtil.BORDER_LEFT));
-                        assertEquals(CellStyle.BORDER_THIN,
-                                pt.getTemplateProperty(i, j,
-                                        CellUtil.BORDER_RIGHT));
+                        assertEquals(CellStyle.BORDER_MEDIUM, pt.getTemplateProperty(i, j, CellUtil.BORDER_TOP));
+                        assertEquals(CellStyle.BORDER_THIN, pt.getTemplateProperty(i, j, CellUtil.BORDER_BOTTOM));
+                        assertEquals(CellStyle.BORDER_THIN, pt.getTemplateProperty(i, j, CellUtil.BORDER_LEFT));
+                        assertEquals(CellStyle.BORDER_THIN, pt.getTemplateProperty(i, j, CellUtil.BORDER_RIGHT));
                     }
                 } else if (i == 2) {
                     if (j == 0) {
-                        assertEquals(CellStyle.BORDER_THIN,
-                                pt.getTemplateProperty(i, j,
-                                        CellUtil.BORDER_TOP));
-                        assertEquals(CellStyle.BORDER_MEDIUM,
-                                pt.getTemplateProperty(i, j,
-                                        CellUtil.BORDER_BOTTOM));
-                        assertEquals(CellStyle.BORDER_MEDIUM,
-                                pt.getTemplateProperty(i, j,
-                                        CellUtil.BORDER_LEFT));
-                        assertEquals(CellStyle.BORDER_THIN,
-                                pt.getTemplateProperty(i, j,
-                                        CellUtil.BORDER_RIGHT));
+                        assertEquals(CellStyle.BORDER_THIN, pt.getTemplateProperty(i, j, CellUtil.BORDER_TOP));
+                        assertEquals(CellStyle.BORDER_MEDIUM, pt.getTemplateProperty(i, j, CellUtil.BORDER_BOTTOM));
+                        assertEquals(CellStyle.BORDER_MEDIUM, pt.getTemplateProperty(i, j, CellUtil.BORDER_LEFT));
+                        assertEquals(CellStyle.BORDER_THIN, pt.getTemplateProperty(i, j, CellUtil.BORDER_RIGHT));
                     } else if (j == 2) {
-                        assertEquals(CellStyle.BORDER_THIN,
-                                pt.getTemplateProperty(i, j,
-                                        CellUtil.BORDER_TOP));
-                        assertEquals(CellStyle.BORDER_MEDIUM,
-                                pt.getTemplateProperty(i, j,
-                                        CellUtil.BORDER_BOTTOM));
-                        assertEquals(CellStyle.BORDER_THIN,
-                                pt.getTemplateProperty(i, j,
-                                        CellUtil.BORDER_LEFT));
-                        assertEquals(CellStyle.BORDER_MEDIUM,
-                                pt.getTemplateProperty(i, j,
-                                        CellUtil.BORDER_RIGHT));
+                        assertEquals(CellStyle.BORDER_THIN, pt.getTemplateProperty(i, j, CellUtil.BORDER_TOP));
+                        assertEquals(CellStyle.BORDER_MEDIUM, pt.getTemplateProperty(i, j, CellUtil.BORDER_BOTTOM));
+                        assertEquals(CellStyle.BORDER_THIN, pt.getTemplateProperty(i, j, CellUtil.BORDER_LEFT));
+                        assertEquals(CellStyle.BORDER_MEDIUM, pt.getTemplateProperty(i, j, CellUtil.BORDER_RIGHT));
                     } else {
-                        assertEquals(CellStyle.BORDER_THIN,
-                                pt.getTemplateProperty(i, j,
-                                        CellUtil.BORDER_TOP));
-                        assertEquals(CellStyle.BORDER_MEDIUM,
-                                pt.getTemplateProperty(i, j,
-                                        CellUtil.BORDER_BOTTOM));
-                        assertEquals(CellStyle.BORDER_THIN,
-                                pt.getTemplateProperty(i, j,
-                                        CellUtil.BORDER_LEFT));
-                        assertEquals(CellStyle.BORDER_THIN,
-                                pt.getTemplateProperty(i, j,
-                                        CellUtil.BORDER_RIGHT));
+                        assertEquals(CellStyle.BORDER_THIN, pt.getTemplateProperty(i, j, CellUtil.BORDER_TOP));
+                        assertEquals(CellStyle.BORDER_MEDIUM, pt.getTemplateProperty(i, j, CellUtil.BORDER_BOTTOM));
+                        assertEquals(CellStyle.BORDER_THIN, pt.getTemplateProperty(i, j, CellUtil.BORDER_LEFT));
+                        assertEquals(CellStyle.BORDER_THIN, pt.getTemplateProperty(i, j, CellUtil.BORDER_RIGHT));
                     }
                 } else {
                     if (j == 0) {
-                        assertEquals(CellStyle.BORDER_THIN,
-                                pt.getTemplateProperty(i, j,
-                                        CellUtil.BORDER_TOP));
-                        assertEquals(CellStyle.BORDER_THIN,
-                                pt.getTemplateProperty(i, j,
-                                        CellUtil.BORDER_BOTTOM));
-                        assertEquals(CellStyle.BORDER_MEDIUM,
-                                pt.getTemplateProperty(i, j,
-                                        CellUtil.BORDER_LEFT));
-                        assertEquals(CellStyle.BORDER_THIN,
-                                pt.getTemplateProperty(i, j,
-                                        CellUtil.BORDER_RIGHT));
+                        assertEquals(CellStyle.BORDER_THIN, pt.getTemplateProperty(i, j, CellUtil.BORDER_TOP));
+                        assertEquals(CellStyle.BORDER_THIN, pt.getTemplateProperty(i, j, CellUtil.BORDER_BOTTOM));
+                        assertEquals(CellStyle.BORDER_MEDIUM, pt.getTemplateProperty(i, j, CellUtil.BORDER_LEFT));
+                        assertEquals(CellStyle.BORDER_THIN, pt.getTemplateProperty(i, j, CellUtil.BORDER_RIGHT));
                     } else if (j == 2) {
-                        assertEquals(CellStyle.BORDER_THIN,
-                                pt.getTemplateProperty(i, j,
-                                        CellUtil.BORDER_TOP));
-                        assertEquals(CellStyle.BORDER_THIN,
-                                pt.getTemplateProperty(i, j,
-                                        CellUtil.BORDER_BOTTOM));
-                        assertEquals(CellStyle.BORDER_THIN,
-                                pt.getTemplateProperty(i, j,
-                                        CellUtil.BORDER_LEFT));
-                        assertEquals(CellStyle.BORDER_MEDIUM,
-                                pt.getTemplateProperty(i, j,
-                                        CellUtil.BORDER_RIGHT));
+                        assertEquals(CellStyle.BORDER_THIN, pt.getTemplateProperty(i, j, CellUtil.BORDER_TOP));
+                        assertEquals(CellStyle.BORDER_THIN, pt.getTemplateProperty(i, j, CellUtil.BORDER_BOTTOM));
+                        assertEquals(CellStyle.BORDER_THIN, pt.getTemplateProperty(i, j, CellUtil.BORDER_LEFT));
+                        assertEquals(CellStyle.BORDER_MEDIUM, pt.getTemplateProperty(i, j, CellUtil.BORDER_RIGHT));
                     } else {
-                        assertEquals(CellStyle.BORDER_THIN,
-                                pt.getTemplateProperty(i, j,
-                                        CellUtil.BORDER_TOP));
-                        assertEquals(CellStyle.BORDER_THIN,
-                                pt.getTemplateProperty(i, j,
-                                        CellUtil.BORDER_BOTTOM));
-                        assertEquals(CellStyle.BORDER_THIN,
-                                pt.getTemplateProperty(i, j,
-                                        CellUtil.BORDER_LEFT));
-                        assertEquals(CellStyle.BORDER_THIN,
-                                pt.getTemplateProperty(i, j,
-                                        CellUtil.BORDER_RIGHT));
+                        assertEquals(CellStyle.BORDER_THIN, pt.getTemplateProperty(i, j, CellUtil.BORDER_TOP));
+                        assertEquals(CellStyle.BORDER_THIN, pt.getTemplateProperty(i, j, CellUtil.BORDER_BOTTOM));
+                        assertEquals(CellStyle.BORDER_THIN, pt.getTemplateProperty(i, j, CellUtil.BORDER_LEFT));
+                        assertEquals(CellStyle.BORDER_THIN, pt.getTemplateProperty(i, j, CellUtil.BORDER_RIGHT));
                     }
                 }
             }
         }
-        pt.drawBorders(a1c3, CellStyle.BORDER_NONE,
-                Extent.NONE);
+        
+        pt.drawBorders(a1c3, CellStyle.BORDER_NONE, Extent.NONE);
         for (int i = 0; i <= 2; i++) {
             for (int j = 0; j <= 2; j++) {
                 assertEquals(0, pt.getNumBorders(i, j));
             }
         }
-        pt.drawBorders(a1c3, CellStyle.BORDER_MEDIUM,
-                Extent.TOP);
+        
+        pt.drawBorders(a1c3, CellStyle.BORDER_MEDIUM, Extent.TOP);
         for (int i = 0; i <= 2; i++) {
             for (int j = 0; j <= 2; j++) {
                 if (i == 0) {
                     assertEquals(1, pt.getNumBorders(i, j));
-                    assertEquals(CellStyle.BORDER_MEDIUM,
-                            pt.getTemplateProperty(i, j, CellUtil.BORDER_TOP));
+                    assertEquals(CellStyle.BORDER_MEDIUM, pt.getTemplateProperty(i, j, CellUtil.BORDER_TOP));
                 } else {
                     assertEquals(0, pt.getNumBorders(i, j));
                 }
             }
         }
-        pt.drawBorders(a1c3, CellStyle.BORDER_NONE,
-                Extent.NONE);
-        pt.drawBorders(a1c3, CellStyle.BORDER_MEDIUM,
-                Extent.BOTTOM);
+        
+        pt.drawBorders(a1c3, CellStyle.BORDER_NONE, Extent.NONE);
+        pt.drawBorders(a1c3, CellStyle.BORDER_MEDIUM, Extent.BOTTOM);
         for (int i = 0; i <= 2; i++) {
             for (int j = 0; j <= 2; j++) {
                 if (i == 2) {
@@ -265,108 +193,89 @@ public final class TestPropertyTemplate {
                 }
             }
         }
-        pt.drawBorders(a1c3, CellStyle.BORDER_NONE,
-                Extent.NONE);
-        pt.drawBorders(a1c3, CellStyle.BORDER_MEDIUM,
-                Extent.LEFT);
+        
+        pt.drawBorders(a1c3, CellStyle.BORDER_NONE, Extent.NONE);
+        pt.drawBorders(a1c3, CellStyle.BORDER_MEDIUM, Extent.LEFT);
         for (int i = 0; i <= 2; i++) {
             for (int j = 0; j <= 2; j++) {
                 if (j == 0) {
                     assertEquals(1, pt.getNumBorders(i, j));
-                    assertEquals(CellStyle.BORDER_MEDIUM,
-                            pt.getTemplateProperty(i, j, CellUtil.BORDER_LEFT));
+                    assertEquals(CellStyle.BORDER_MEDIUM, pt.getTemplateProperty(i, j, CellUtil.BORDER_LEFT));
                 } else {
                     assertEquals(0, pt.getNumBorders(i, j));
                 }
             }
         }
-        pt.drawBorders(a1c3, CellStyle.BORDER_NONE,
-                Extent.NONE);
-        pt.drawBorders(a1c3, CellStyle.BORDER_MEDIUM,
-                Extent.RIGHT);
+        
+        pt.drawBorders(a1c3, CellStyle.BORDER_NONE, Extent.NONE);
+        pt.drawBorders(a1c3, CellStyle.BORDER_MEDIUM, Extent.RIGHT);
         for (int i = 0; i <= 2; i++) {
             for (int j = 0; j <= 2; j++) {
                 if (j == 2) {
                     assertEquals(1, pt.getNumBorders(i, j));
-                    assertEquals(CellStyle.BORDER_MEDIUM, pt
-                            .getTemplateProperty(i, j, CellUtil.BORDER_RIGHT));
+                    assertEquals(CellStyle.BORDER_MEDIUM, pt.getTemplateProperty(i, j, CellUtil.BORDER_RIGHT));
                 } else {
                     assertEquals(0, pt.getNumBorders(i, j));
                 }
             }
         }
-        pt.drawBorders(a1c3, CellStyle.BORDER_NONE,
-                Extent.NONE);
-        pt.drawBorders(a1c3, CellStyle.BORDER_MEDIUM,
-                Extent.HORIZONTAL);
+        
+        pt.drawBorders(a1c3, CellStyle.BORDER_NONE, Extent.NONE);
+        pt.drawBorders(a1c3, CellStyle.BORDER_MEDIUM, Extent.HORIZONTAL);
         for (int i = 0; i <= 2; i++) {
             for (int j = 0; j <= 2; j++) {
                 assertEquals(2, pt.getNumBorders(i, j));
-                assertEquals(CellStyle.BORDER_MEDIUM,
-                        pt.getTemplateProperty(i, j, CellUtil.BORDER_TOP));
-                assertEquals(CellStyle.BORDER_MEDIUM,
-                        pt.getTemplateProperty(i, j, CellUtil.BORDER_BOTTOM));
+                assertEquals(CellStyle.BORDER_MEDIUM, pt.getTemplateProperty(i, j, CellUtil.BORDER_TOP));
+                assertEquals(CellStyle.BORDER_MEDIUM, pt.getTemplateProperty(i, j, CellUtil.BORDER_BOTTOM));
             }
         }
-        pt.drawBorders(a1c3, CellStyle.BORDER_NONE,
-                Extent.NONE);
-        pt.drawBorders(a1c3, CellStyle.BORDER_MEDIUM,
-                Extent.INSIDE_HORIZONTAL);
+        
+        pt.drawBorders(a1c3, CellStyle.BORDER_NONE, Extent.NONE);
+        pt.drawBorders(a1c3, CellStyle.BORDER_MEDIUM, Extent.INSIDE_HORIZONTAL);
         for (int i = 0; i <= 2; i++) {
             for (int j = 0; j <= 2; j++) {
                 if (i == 0) {
                     assertEquals(1, pt.getNumBorders(i, j));
-                    assertEquals(CellStyle.BORDER_MEDIUM, pt
-                            .getTemplateProperty(i, j, CellUtil.BORDER_BOTTOM));
+                    assertEquals(CellStyle.BORDER_MEDIUM, pt.getTemplateProperty(i, j, CellUtil.BORDER_BOTTOM));
                 } else if (i == 2) {
                     assertEquals(1, pt.getNumBorders(i, j));
-                    assertEquals(CellStyle.BORDER_MEDIUM,
-                            pt.getTemplateProperty(i, j, CellUtil.BORDER_TOP));
+                    assertEquals(CellStyle.BORDER_MEDIUM, pt.getTemplateProperty(i, j, CellUtil.BORDER_TOP));
                 } else {
                     assertEquals(2, pt.getNumBorders(i, j));
-                    assertEquals(CellStyle.BORDER_MEDIUM,
-                            pt.getTemplateProperty(i, j, CellUtil.BORDER_TOP));
-                    assertEquals(CellStyle.BORDER_MEDIUM, pt
-                            .getTemplateProperty(i, j, CellUtil.BORDER_BOTTOM));
+                    assertEquals(CellStyle.BORDER_MEDIUM, pt.getTemplateProperty(i, j, CellUtil.BORDER_TOP));
+                    assertEquals(CellStyle.BORDER_MEDIUM, pt.getTemplateProperty(i, j, CellUtil.BORDER_BOTTOM));
                 }
             }
         }
-        pt.drawBorders(a1c3, CellStyle.BORDER_NONE,
-                Extent.NONE);
-        pt.drawBorders(a1c3, CellStyle.BORDER_MEDIUM,
-                Extent.OUTSIDE_HORIZONTAL);
+        
+        pt.drawBorders(a1c3, CellStyle.BORDER_NONE, Extent.NONE);
+        pt.drawBorders(a1c3, CellStyle.BORDER_MEDIUM, Extent.OUTSIDE_HORIZONTAL);
         for (int i = 0; i <= 2; i++) {
             for (int j = 0; j <= 2; j++) {
                 if (i == 0) {
                     assertEquals(1, pt.getNumBorders(i, j));
-                    assertEquals(CellStyle.BORDER_MEDIUM,
-                            pt.getTemplateProperty(i, j, CellUtil.BORDER_TOP));
+                    assertEquals(CellStyle.BORDER_MEDIUM, pt.getTemplateProperty(i, j, CellUtil.BORDER_TOP));
                 } else if (i == 2) {
                     assertEquals(1, pt.getNumBorders(i, j));
-                    assertEquals(CellStyle.BORDER_MEDIUM, pt
-                            .getTemplateProperty(i, j, CellUtil.BORDER_BOTTOM));
+                    assertEquals(CellStyle.BORDER_MEDIUM, pt.getTemplateProperty(i, j, CellUtil.BORDER_BOTTOM));
                 } else {
                     assertEquals(0, pt.getNumBorders(i, j));
                 }
             }
         }
-        pt.drawBorders(a1c3, CellStyle.BORDER_NONE,
-                Extent.NONE);
-        pt.drawBorders(a1c3, CellStyle.BORDER_MEDIUM,
-                Extent.VERTICAL);
+        
+        pt.drawBorders(a1c3, CellStyle.BORDER_NONE, Extent.NONE);
+        pt.drawBorders(a1c3, CellStyle.BORDER_MEDIUM, Extent.VERTICAL);
         for (int i = 0; i <= 2; i++) {
             for (int j = 0; j <= 2; j++) {
                 assertEquals(2, pt.getNumBorders(i, j));
-                assertEquals(CellStyle.BORDER_MEDIUM,
-                        pt.getTemplateProperty(i, j, CellUtil.BORDER_LEFT));
-                assertEquals(CellStyle.BORDER_MEDIUM,
-                        pt.getTemplateProperty(i, j, CellUtil.BORDER_RIGHT));
+                assertEquals(CellStyle.BORDER_MEDIUM, pt.getTemplateProperty(i, j, CellUtil.BORDER_LEFT));
+                assertEquals(CellStyle.BORDER_MEDIUM, pt.getTemplateProperty(i, j, CellUtil.BORDER_RIGHT));
             }
         }
-        pt.drawBorders(a1c3, CellStyle.BORDER_NONE,
-                Extent.NONE);
-        pt.drawBorders(a1c3, CellStyle.BORDER_MEDIUM,
-                Extent.INSIDE_VERTICAL);
+        
+        pt.drawBorders(a1c3, CellStyle.BORDER_NONE, Extent.NONE);
+        pt.drawBorders(a1c3, CellStyle.BORDER_MEDIUM, Extent.INSIDE_VERTICAL);
         for (int i = 0; i <= 2; i++) {
             for (int j = 0; j <= 2; j++) {
                 if (j == 0) {
@@ -375,31 +284,24 @@ public final class TestPropertyTemplate {
                             .getTemplateProperty(i, j, CellUtil.BORDER_RIGHT));
                 } else if (j == 2) {
                     assertEquals(1, pt.getNumBorders(i, j));
-                    assertEquals(CellStyle.BORDER_MEDIUM,
-                            pt.getTemplateProperty(i, j, CellUtil.BORDER_LEFT));
+                    assertEquals(CellStyle.BORDER_MEDIUM, pt.getTemplateProperty(i, j, CellUtil.BORDER_LEFT));
                 } else {
                     assertEquals(2, pt.getNumBorders(i, j));
-                    assertEquals(CellStyle.BORDER_MEDIUM,
-                            pt.getTemplateProperty(i, j, CellUtil.BORDER_LEFT));
-                    assertEquals(CellStyle.BORDER_MEDIUM, pt
-                            .getTemplateProperty(i, j, CellUtil.BORDER_RIGHT));
+                    assertEquals(CellStyle.BORDER_MEDIUM, pt.getTemplateProperty(i, j, CellUtil.BORDER_LEFT));
+                    assertEquals(CellStyle.BORDER_MEDIUM, pt.getTemplateProperty(i, j, CellUtil.BORDER_RIGHT));
                 }
             }
         }
-        pt.drawBorders(a1c3, CellStyle.BORDER_NONE,
-                Extent.NONE);
-        pt.drawBorders(a1c3, CellStyle.BORDER_MEDIUM,
-                Extent.OUTSIDE_VERTICAL);
+        pt.drawBorders(a1c3, CellStyle.BORDER_NONE, Extent.NONE);
+        pt.drawBorders(a1c3, CellStyle.BORDER_MEDIUM, Extent.OUTSIDE_VERTICAL);
         for (int i = 0; i <= 2; i++) {
             for (int j = 0; j <= 2; j++) {
                 if (j == 0) {
                     assertEquals(1, pt.getNumBorders(i, j));
-                    assertEquals(CellStyle.BORDER_MEDIUM,
-                            pt.getTemplateProperty(i, j, CellUtil.BORDER_LEFT));
+                    assertEquals(CellStyle.BORDER_MEDIUM, pt.getTemplateProperty(i, j, CellUtil.BORDER_LEFT));
                 } else if (j == 2) {
                     assertEquals(1, pt.getNumBorders(i, j));
-                    assertEquals(CellStyle.BORDER_MEDIUM, pt
-                            .getTemplateProperty(i, j, CellUtil.BORDER_RIGHT));
+                    assertEquals(CellStyle.BORDER_MEDIUM, pt.getTemplateProperty(i ,j, CellUtil.BORDER_RIGHT));
                 } else {
                     assertEquals(0, pt.getNumBorders(i, j));
                 }
@@ -411,386 +313,251 @@ public final class TestPropertyTemplate {
     public void drawBorderColors() throws IOException {
         CellRangeAddress a1c3 = new CellRangeAddress(0, 2, 0, 2);
         PropertyTemplate pt = new PropertyTemplate();
-        pt.drawBorderColors(a1c3, IndexedColors.RED.getIndex(),
-                Extent.ALL);
+        
+        pt.drawBorderColors(a1c3, IndexedColors.RED.getIndex(), Extent.ALL);
         for (int i = 0; i <= 2; i++) {
             for (int j = 0; j <= 2; j++) {
                 assertEquals(4, pt.getNumBorders(i, j));
                 assertEquals(4, pt.getNumBorderColors(i, j));
-                assertEquals(IndexedColors.RED.getIndex(), pt
-                        .getTemplateProperty(i, j, CellUtil.TOP_BORDER_COLOR));
-                assertEquals(IndexedColors.RED.getIndex(),
-                        pt.getTemplateProperty(i, j,
-                                CellUtil.BOTTOM_BORDER_COLOR));
-                assertEquals(IndexedColors.RED.getIndex(), pt
-                        .getTemplateProperty(i, j, CellUtil.LEFT_BORDER_COLOR));
-                assertEquals(IndexedColors.RED.getIndex(),
-                        pt.getTemplateProperty(i, j,
-                                CellUtil.RIGHT_BORDER_COLOR));
+                assertEquals(IndexedColors.RED.getIndex(), pt.getTemplateProperty(i, j, CellUtil.TOP_BORDER_COLOR));
+                assertEquals(IndexedColors.RED.getIndex(), pt.getTemplateProperty(i, j, CellUtil.BOTTOM_BORDER_COLOR));
+                assertEquals(IndexedColors.RED.getIndex(), pt.getTemplateProperty(i, j, CellUtil.LEFT_BORDER_COLOR));
+                assertEquals(IndexedColors.RED.getIndex(), pt.getTemplateProperty(i, j, CellUtil.RIGHT_BORDER_COLOR));
             }
         }
-        pt.drawBorderColors(a1c3, IndexedColors.BLUE.getIndex(),
-                Extent.OUTSIDE);
+        
+        pt.drawBorderColors(a1c3, IndexedColors.BLUE.getIndex(), Extent.OUTSIDE);
         for (int i = 0; i <= 2; i++) {
             for (int j = 0; j <= 2; j++) {
                 assertEquals(4, pt.getNumBorders(i, j));
                 assertEquals(4, pt.getNumBorderColors(i, j));
                 if (i == 0) {
                     if (j == 0) {
-                        assertEquals(IndexedColors.BLUE.getIndex(),
-                                pt.getTemplateProperty(i, j,
-                                        CellUtil.TOP_BORDER_COLOR));
-                        assertEquals(IndexedColors.RED.getIndex(),
-                                pt.getTemplateProperty(i, j,
-                                        CellUtil.BOTTOM_BORDER_COLOR));
-                        assertEquals(IndexedColors.BLUE.getIndex(),
-                                pt.getTemplateProperty(i, j,
-                                        CellUtil.LEFT_BORDER_COLOR));
-                        assertEquals(IndexedColors.RED.getIndex(),
-                                pt.getTemplateProperty(i, j,
-                                        CellUtil.RIGHT_BORDER_COLOR));
+                        assertEquals(IndexedColors.BLUE.getIndex(), pt.getTemplateProperty(i, j, CellUtil.TOP_BORDER_COLOR));
+                        assertEquals(IndexedColors.RED.getIndex(), pt.getTemplateProperty(i, j, CellUtil.BOTTOM_BORDER_COLOR));
+                        assertEquals(IndexedColors.BLUE.getIndex(), pt.getTemplateProperty(i, j, CellUtil.LEFT_BORDER_COLOR));
+                        assertEquals(IndexedColors.RED.getIndex(), pt.getTemplateProperty(i, j, CellUtil.RIGHT_BORDER_COLOR));
                     } else if (j == 2) {
-                        assertEquals(IndexedColors.BLUE.getIndex(),
-                                pt.getTemplateProperty(i, j,
-                                        CellUtil.TOP_BORDER_COLOR));
-                        assertEquals(IndexedColors.RED.getIndex(),
-                                pt.getTemplateProperty(i, j,
-                                        CellUtil.BOTTOM_BORDER_COLOR));
-                        assertEquals(IndexedColors.RED.getIndex(),
-                                pt.getTemplateProperty(i, j,
-                                        CellUtil.LEFT_BORDER_COLOR));
-                        assertEquals(IndexedColors.BLUE.getIndex(),
-                                pt.getTemplateProperty(i, j,
-                                        CellUtil.RIGHT_BORDER_COLOR));
+                        assertEquals(IndexedColors.BLUE.getIndex(), pt.getTemplateProperty(i, j, CellUtil.TOP_BORDER_COLOR));
+                        assertEquals(IndexedColors.RED.getIndex(), pt.getTemplateProperty(i, j, CellUtil.BOTTOM_BORDER_COLOR));
+                        assertEquals(IndexedColors.RED.getIndex(), pt.getTemplateProperty(i, j, CellUtil.LEFT_BORDER_COLOR));
+                        assertEquals(IndexedColors.BLUE.getIndex(), pt.getTemplateProperty(i, j, CellUtil.RIGHT_BORDER_COLOR));
                     } else {
-                        assertEquals(IndexedColors.BLUE.getIndex(),
-                                pt.getTemplateProperty(i, j,
-                                        CellUtil.TOP_BORDER_COLOR));
-                        assertEquals(IndexedColors.RED.getIndex(),
-                                pt.getTemplateProperty(i, j,
-                                        CellUtil.BOTTOM_BORDER_COLOR));
-                        assertEquals(IndexedColors.RED.getIndex(),
-                                pt.getTemplateProperty(i, j,
-                                        CellUtil.LEFT_BORDER_COLOR));
-                        assertEquals(IndexedColors.RED.getIndex(),
-                                pt.getTemplateProperty(i, j,
-                                        CellUtil.RIGHT_BORDER_COLOR));
+                        assertEquals(IndexedColors.BLUE.getIndex(), pt.getTemplateProperty(i, j, CellUtil.TOP_BORDER_COLOR));
+                        assertEquals(IndexedColors.RED.getIndex(), pt.getTemplateProperty(i, j, CellUtil.BOTTOM_BORDER_COLOR));
+                        assertEquals(IndexedColors.RED.getIndex(), pt.getTemplateProperty(i, j, CellUtil.LEFT_BORDER_COLOR));
+                        assertEquals(IndexedColors.RED.getIndex(), pt.getTemplateProperty(i, j, CellUtil.RIGHT_BORDER_COLOR));
                     }
                 } else if (i == 2) {
                     if (j == 0) {
-                        assertEquals(IndexedColors.RED.getIndex(),
-                                pt.getTemplateProperty(i, j,
-                                        CellUtil.TOP_BORDER_COLOR));
-                        assertEquals(IndexedColors.BLUE.getIndex(),
-                                pt.getTemplateProperty(i, j,
-                                        CellUtil.BOTTOM_BORDER_COLOR));
-                        assertEquals(IndexedColors.BLUE.getIndex(),
-                                pt.getTemplateProperty(i, j,
-                                        CellUtil.LEFT_BORDER_COLOR));
-                        assertEquals(IndexedColors.RED.getIndex(),
-                                pt.getTemplateProperty(i, j,
-                                        CellUtil.RIGHT_BORDER_COLOR));
+                        assertEquals(IndexedColors.RED.getIndex(), pt.getTemplateProperty(i, j, CellUtil.TOP_BORDER_COLOR));
+                        assertEquals(IndexedColors.BLUE.getIndex(), pt.getTemplateProperty(i, j, CellUtil.BOTTOM_BORDER_COLOR));
+                        assertEquals(IndexedColors.BLUE.getIndex(), pt.getTemplateProperty(i, j, CellUtil.LEFT_BORDER_COLOR));
+                        assertEquals(IndexedColors.RED.getIndex(), pt.getTemplateProperty(i, j, CellUtil.RIGHT_BORDER_COLOR));
                     } else if (j == 2) {
-                        assertEquals(IndexedColors.RED.getIndex(),
-                                pt.getTemplateProperty(i, j,
-                                        CellUtil.TOP_BORDER_COLOR));
-                        assertEquals(IndexedColors.BLUE.getIndex(),
-                                pt.getTemplateProperty(i, j,
-                                        CellUtil.BOTTOM_BORDER_COLOR));
-                        assertEquals(IndexedColors.RED.getIndex(),
-                                pt.getTemplateProperty(i, j,
-                                        CellUtil.LEFT_BORDER_COLOR));
-                        assertEquals(IndexedColors.BLUE.getIndex(),
-                                pt.getTemplateProperty(i, j,
-                                        CellUtil.RIGHT_BORDER_COLOR));
+                        assertEquals(IndexedColors.RED.getIndex(), pt.getTemplateProperty(i, j, CellUtil.TOP_BORDER_COLOR));
+                        assertEquals(IndexedColors.BLUE.getIndex(), pt.getTemplateProperty(i, j, CellUtil.BOTTOM_BORDER_COLOR));
+                        assertEquals(IndexedColors.RED.getIndex(), pt.getTemplateProperty(i, j, CellUtil.LEFT_BORDER_COLOR));
+                        assertEquals(IndexedColors.BLUE.getIndex(), pt.getTemplateProperty(i, j, CellUtil.RIGHT_BORDER_COLOR));
                     } else {
-                        assertEquals(IndexedColors.RED.getIndex(),
-                                pt.getTemplateProperty(i, j,
-                                        CellUtil.TOP_BORDER_COLOR));
-                        assertEquals(IndexedColors.BLUE.getIndex(),
-                                pt.getTemplateProperty(i, j,
-                                        CellUtil.BOTTOM_BORDER_COLOR));
-                        assertEquals(IndexedColors.RED.getIndex(),
-                                pt.getTemplateProperty(i, j,
-                                        CellUtil.LEFT_BORDER_COLOR));
-                        assertEquals(IndexedColors.RED.getIndex(),
-                                pt.getTemplateProperty(i, j,
-                                        CellUtil.RIGHT_BORDER_COLOR));
+                        assertEquals(IndexedColors.RED.getIndex(), pt.getTemplateProperty(i, j, CellUtil.TOP_BORDER_COLOR));
+                        assertEquals(IndexedColors.BLUE.getIndex(), pt.getTemplateProperty(i, j, CellUtil.BOTTOM_BORDER_COLOR));
+                        assertEquals(IndexedColors.RED.getIndex(), pt.getTemplateProperty(i, j, CellUtil.LEFT_BORDER_COLOR));
+                        assertEquals(IndexedColors.RED.getIndex(), pt.getTemplateProperty(i, j, CellUtil.RIGHT_BORDER_COLOR));
                     }
                 } else {
                     if (j == 0) {
-                        assertEquals(IndexedColors.RED.getIndex(),
-                                pt.getTemplateProperty(i, j,
-                                        CellUtil.TOP_BORDER_COLOR));
-                        assertEquals(IndexedColors.RED.getIndex(),
-                                pt.getTemplateProperty(i, j,
-                                        CellUtil.BOTTOM_BORDER_COLOR));
-                        assertEquals(IndexedColors.BLUE.getIndex(),
-                                pt.getTemplateProperty(i, j,
-                                        CellUtil.LEFT_BORDER_COLOR));
-                        assertEquals(IndexedColors.RED.getIndex(),
-                                pt.getTemplateProperty(i, j,
-                                        CellUtil.RIGHT_BORDER_COLOR));
+                        assertEquals(IndexedColors.RED.getIndex(), pt.getTemplateProperty(i, j, CellUtil.TOP_BORDER_COLOR));
+                        assertEquals(IndexedColors.RED.getIndex(), pt.getTemplateProperty(i, j, CellUtil.BOTTOM_BORDER_COLOR));
+                        assertEquals(IndexedColors.BLUE.getIndex(), pt.getTemplateProperty(i, j, CellUtil.LEFT_BORDER_COLOR));
+                        assertEquals(IndexedColors.RED.getIndex(), pt.getTemplateProperty(i, j, CellUtil.RIGHT_BORDER_COLOR));
                     } else if (j == 2) {
-                        assertEquals(IndexedColors.RED.getIndex(),
-                                pt.getTemplateProperty(i, j,
-                                        CellUtil.TOP_BORDER_COLOR));
-                        assertEquals(IndexedColors.RED.getIndex(),
-                                pt.getTemplateProperty(i, j,
-                                        CellUtil.BOTTOM_BORDER_COLOR));
-                        assertEquals(IndexedColors.RED.getIndex(),
-                                pt.getTemplateProperty(i, j,
-                                        CellUtil.LEFT_BORDER_COLOR));
-                        assertEquals(IndexedColors.BLUE.getIndex(),
-                                pt.getTemplateProperty(i, j,
-                                        CellUtil.RIGHT_BORDER_COLOR));
+                        assertEquals(IndexedColors.RED.getIndex(), pt.getTemplateProperty(i, j, CellUtil.TOP_BORDER_COLOR));
+                        assertEquals(IndexedColors.RED.getIndex(), pt.getTemplateProperty(i, j, CellUtil.BOTTOM_BORDER_COLOR));
+                        assertEquals(IndexedColors.RED.getIndex(), pt.getTemplateProperty(i, j, CellUtil.LEFT_BORDER_COLOR));
+                        assertEquals(IndexedColors.BLUE.getIndex(), pt.getTemplateProperty(i, j, CellUtil.RIGHT_BORDER_COLOR));
                     } else {
-                        assertEquals(IndexedColors.RED.getIndex(),
-                                pt.getTemplateProperty(i, j,
-                                        CellUtil.TOP_BORDER_COLOR));
-                        assertEquals(IndexedColors.RED.getIndex(),
-                                pt.getTemplateProperty(i, j,
-                                        CellUtil.BOTTOM_BORDER_COLOR));
-                        assertEquals(IndexedColors.RED.getIndex(),
-                                pt.getTemplateProperty(i, j,
-                                        CellUtil.LEFT_BORDER_COLOR));
-                        assertEquals(IndexedColors.RED.getIndex(),
-                                pt.getTemplateProperty(i, j,
-                                        CellUtil.RIGHT_BORDER_COLOR));
+                        assertEquals(IndexedColors.RED.getIndex(), pt.getTemplateProperty(i, j, CellUtil.TOP_BORDER_COLOR));
+                        assertEquals(IndexedColors.RED.getIndex(), pt.getTemplateProperty(i, j, CellUtil.BOTTOM_BORDER_COLOR));
+                        assertEquals(IndexedColors.RED.getIndex(), pt.getTemplateProperty(i, j, CellUtil.LEFT_BORDER_COLOR));
+                        assertEquals(IndexedColors.RED.getIndex(), pt.getTemplateProperty(i, j, CellUtil.RIGHT_BORDER_COLOR));
                     }
                 }
             }
         }
-        pt.drawBorders(a1c3, CellStyle.BORDER_NONE,
-                Extent.NONE);
-        pt.drawBorderColors(a1c3, IndexedColors.AUTOMATIC.getIndex(),
-                Extent.NONE);
+        
+        pt.drawBorders(a1c3, CellStyle.BORDER_NONE, Extent.NONE);
+        pt.drawBorderColors(a1c3, IndexedColors.AUTOMATIC.getIndex(), Extent.NONE);
         for (int i = 0; i <= 2; i++) {
             for (int j = 0; j <= 2; j++) {
                 assertEquals(0, pt.getNumBorders(i, j));
                 assertEquals(0, pt.getNumBorderColors(i, j));
             }
         }
-        pt.drawBorderColors(a1c3, IndexedColors.BLUE.getIndex(),
-                Extent.TOP);
+        
+        pt.drawBorderColors(a1c3, IndexedColors.BLUE.getIndex(), Extent.TOP);
         for (int i = 0; i <= 2; i++) {
             for (int j = 0; j <= 2; j++) {
                 if (i == 0) {
                     assertEquals(1, pt.getNumBorders(i, j));
                     assertEquals(1, pt.getNumBorderColors(i, j));
-                    assertEquals(IndexedColors.BLUE.getIndex(),
-                            pt.getTemplateProperty(i, j,
-                                    CellUtil.TOP_BORDER_COLOR));
+                    assertEquals(IndexedColors.BLUE.getIndex(), pt.getTemplateProperty(i, j, CellUtil.TOP_BORDER_COLOR));
                 } else {
                     assertEquals(0, pt.getNumBorders(i, j));
                     assertEquals(0, pt.getNumBorderColors(i, j));
                 }
             }
         }
-        pt.drawBorders(a1c3, CellStyle.BORDER_NONE,
-                Extent.NONE);
-        pt.drawBorderColors(a1c3, IndexedColors.AUTOMATIC.getIndex(),
-                Extent.NONE);
-        pt.drawBorderColors(a1c3, IndexedColors.BLUE.getIndex(),
-                Extent.BOTTOM);
+        
+        pt.drawBorders(a1c3, CellStyle.BORDER_NONE, Extent.NONE);
+        pt.drawBorderColors(a1c3, IndexedColors.AUTOMATIC.getIndex(), Extent.NONE);
+        pt.drawBorderColors(a1c3, IndexedColors.BLUE.getIndex(), Extent.BOTTOM);
         for (int i = 0; i <= 2; i++) {
             for (int j = 0; j <= 2; j++) {
                 if (i == 2) {
                     assertEquals(1, pt.getNumBorders(i, j));
                     assertEquals(1, pt.getNumBorderColors(i, j));
-                    assertEquals(IndexedColors.BLUE.getIndex(),
-                            pt.getTemplateProperty(i, j,
-                                    CellUtil.BOTTOM_BORDER_COLOR));
+                    assertEquals(IndexedColors.BLUE.getIndex(), pt.getTemplateProperty(i, j, CellUtil.BOTTOM_BORDER_COLOR));
                 } else {
                     assertEquals(0, pt.getNumBorders(i, j));
                     assertEquals(0, pt.getNumBorderColors(i, j));
                 }
             }
         }
-        pt.drawBorders(a1c3, CellStyle.BORDER_NONE,
-                Extent.NONE);
-        pt.drawBorderColors(a1c3, IndexedColors.AUTOMATIC.getIndex(),
-                Extent.NONE);
-        pt.drawBorderColors(a1c3, IndexedColors.BLUE.getIndex(),
-                Extent.LEFT);
+        
+        pt.drawBorders(a1c3, CellStyle.BORDER_NONE, Extent.NONE);
+        pt.drawBorderColors(a1c3, IndexedColors.AUTOMATIC.getIndex(), Extent.NONE);
+        pt.drawBorderColors(a1c3, IndexedColors.BLUE.getIndex(), Extent.LEFT);
         for (int i = 0; i <= 2; i++) {
             for (int j = 0; j <= 2; j++) {
                 if (j == 0) {
                     assertEquals(1, pt.getNumBorders(i, j));
                     assertEquals(1, pt.getNumBorderColors(i, j));
-                    assertEquals(IndexedColors.BLUE.getIndex(),
-                            pt.getTemplateProperty(i, j,
-                                    CellUtil.LEFT_BORDER_COLOR));
+                    assertEquals(IndexedColors.BLUE.getIndex(), pt.getTemplateProperty(i, j, CellUtil.LEFT_BORDER_COLOR));
                 } else {
                     assertEquals(0, pt.getNumBorders(i, j));
                     assertEquals(0, pt.getNumBorderColors(i, j));
                 }
             }
         }
-        pt.drawBorders(a1c3, CellStyle.BORDER_NONE,
-                Extent.NONE);
-        pt.drawBorderColors(a1c3, IndexedColors.AUTOMATIC.getIndex(),
-                Extent.NONE);
-        pt.drawBorderColors(a1c3, IndexedColors.BLUE.getIndex(),
-                Extent.RIGHT);
+        
+        pt.drawBorders(a1c3, CellStyle.BORDER_NONE, Extent.NONE);
+        pt.drawBorderColors(a1c3, IndexedColors.AUTOMATIC.getIndex(), Extent.NONE);
+        pt.drawBorderColors(a1c3, IndexedColors.BLUE.getIndex(), Extent.RIGHT);
         for (int i = 0; i <= 2; i++) {
             for (int j = 0; j <= 2; j++) {
                 if (j == 2) {
                     assertEquals(1, pt.getNumBorders(i, j));
                     assertEquals(1, pt.getNumBorderColors(i, j));
-                    assertEquals(IndexedColors.BLUE.getIndex(),
-                            pt.getTemplateProperty(i, j,
-                                    CellUtil.RIGHT_BORDER_COLOR));
+                    assertEquals(IndexedColors.BLUE.getIndex(), pt.getTemplateProperty(i, j, CellUtil.RIGHT_BORDER_COLOR));
                 } else {
                     assertEquals(0, pt.getNumBorders(i, j));
                     assertEquals(0, pt.getNumBorderColors(i, j));
                 }
             }
         }
-        pt.drawBorders(a1c3, CellStyle.BORDER_NONE,
-                Extent.NONE);
-        pt.drawBorderColors(a1c3, IndexedColors.AUTOMATIC.getIndex(),
-                Extent.NONE);
-        pt.drawBorderColors(a1c3, IndexedColors.BLUE.getIndex(),
-                Extent.HORIZONTAL);
+        
+        pt.drawBorders(a1c3, CellStyle.BORDER_NONE, Extent.NONE);
+        pt.drawBorderColors(a1c3, IndexedColors.AUTOMATIC.getIndex(), Extent.NONE);
+        pt.drawBorderColors(a1c3, IndexedColors.BLUE.getIndex(), Extent.HORIZONTAL);
         for (int i = 0; i <= 2; i++) {
             for (int j = 0; j <= 2; j++) {
                 assertEquals(2, pt.getNumBorders(i, j));
                 assertEquals(2, pt.getNumBorderColors(i, j));
-                assertEquals(IndexedColors.BLUE.getIndex(), pt
-                        .getTemplateProperty(i, j, CellUtil.TOP_BORDER_COLOR));
-                assertEquals(IndexedColors.BLUE.getIndex(),
-                        pt.getTemplateProperty(i, j,
-                                CellUtil.BOTTOM_BORDER_COLOR));
+                assertEquals(IndexedColors.BLUE.getIndex(), pt.getTemplateProperty(i, j, CellUtil.TOP_BORDER_COLOR));
+                assertEquals(IndexedColors.BLUE.getIndex(), pt.getTemplateProperty(i, j, CellUtil.BOTTOM_BORDER_COLOR));
             }
         }
-        pt.drawBorders(a1c3, CellStyle.BORDER_NONE,
-                Extent.NONE);
-        pt.drawBorderColors(a1c3, IndexedColors.AUTOMATIC.getIndex(),
-                Extent.NONE);
-        pt.drawBorderColors(a1c3, IndexedColors.BLUE.getIndex(),
-                Extent.INSIDE_HORIZONTAL);
+        
+        pt.drawBorders(a1c3, CellStyle.BORDER_NONE, Extent.NONE);
+        pt.drawBorderColors(a1c3, IndexedColors.AUTOMATIC.getIndex(), Extent.NONE);
+        pt.drawBorderColors(a1c3, IndexedColors.BLUE.getIndex(), Extent.INSIDE_HORIZONTAL);
         for (int i = 0; i <= 2; i++) {
             for (int j = 0; j <= 2; j++) {
                 if (i == 0) {
                     assertEquals(1, pt.getNumBorders(i, j));
                     assertEquals(1, pt.getNumBorderColors(i, j));
-                    assertEquals(IndexedColors.BLUE.getIndex(),
-                            pt.getTemplateProperty(i, j,
-                                    CellUtil.BOTTOM_BORDER_COLOR));
+                    assertEquals(IndexedColors.BLUE.getIndex(), pt.getTemplateProperty(i, j, CellUtil.BOTTOM_BORDER_COLOR));
                 } else if (i == 2) {
                     assertEquals(1, pt.getNumBorders(i, j));
                     assertEquals(1, pt.getNumBorderColors(i, j));
-                    assertEquals(IndexedColors.BLUE.getIndex(),
-                            pt.getTemplateProperty(i, j,
-                                    CellUtil.TOP_BORDER_COLOR));
+                    assertEquals(IndexedColors.BLUE.getIndex(), pt.getTemplateProperty(i, j, CellUtil.TOP_BORDER_COLOR));
                 } else {
                     assertEquals(2, pt.getNumBorders(i, j));
                     assertEquals(2, pt.getNumBorderColors(i, j));
-                    assertEquals(IndexedColors.BLUE.getIndex(),
-                            pt.getTemplateProperty(i, j,
-                                    CellUtil.TOP_BORDER_COLOR));
-                    assertEquals(IndexedColors.BLUE.getIndex(),
-                            pt.getTemplateProperty(i, j,
-                                    CellUtil.BOTTOM_BORDER_COLOR));
+                    assertEquals(IndexedColors.BLUE.getIndex(), pt.getTemplateProperty(i, j, CellUtil.TOP_BORDER_COLOR));
+                    assertEquals(IndexedColors.BLUE.getIndex(), pt.getTemplateProperty(i, j, CellUtil.BOTTOM_BORDER_COLOR));
                 }
             }
         }
-        pt.drawBorders(a1c3, CellStyle.BORDER_NONE,
-                Extent.NONE);
-        pt.drawBorderColors(a1c3, IndexedColors.AUTOMATIC.getIndex(),
-                Extent.NONE);
-        pt.drawBorderColors(a1c3, IndexedColors.BLUE.getIndex(),
-                Extent.OUTSIDE_HORIZONTAL);
+        
+        pt.drawBorders(a1c3, CellStyle.BORDER_NONE, Extent.NONE);
+        pt.drawBorderColors(a1c3, IndexedColors.AUTOMATIC.getIndex(), Extent.NONE);
+        pt.drawBorderColors(a1c3, IndexedColors.BLUE.getIndex(), Extent.OUTSIDE_HORIZONTAL);
         for (int i = 0; i <= 2; i++) {
             for (int j = 0; j <= 2; j++) {
                 if (i == 0) {
                     assertEquals(1, pt.getNumBorders(i, j));
                     assertEquals(1, pt.getNumBorderColors(i, j));
-                    assertEquals(IndexedColors.BLUE.getIndex(),
-                            pt.getTemplateProperty(i, j,
-                                    CellUtil.TOP_BORDER_COLOR));
+                    assertEquals(IndexedColors.BLUE.getIndex(), pt.getTemplateProperty(i, j, CellUtil.TOP_BORDER_COLOR));
                 } else if (i == 2) {
                     assertEquals(1, pt.getNumBorders(i, j));
                     assertEquals(1, pt.getNumBorderColors(i, j));
-                    assertEquals(IndexedColors.BLUE.getIndex(),
-                            pt.getTemplateProperty(i, j,
-                                    CellUtil.BOTTOM_BORDER_COLOR));
+                    assertEquals(IndexedColors.BLUE.getIndex(), pt.getTemplateProperty(i, j, CellUtil.BOTTOM_BORDER_COLOR));
                 } else {
                     assertEquals(0, pt.getNumBorders(i, j));
                     assertEquals(0, pt.getNumBorderColors(i, j));
                 }
             }
         }
-        pt.drawBorders(a1c3, CellStyle.BORDER_NONE,
-                Extent.NONE);
-        pt.drawBorderColors(a1c3, IndexedColors.AUTOMATIC.getIndex(),
-                Extent.NONE);
-        pt.drawBorderColors(a1c3, IndexedColors.BLUE.getIndex(),
-                Extent.VERTICAL);
+        
+        pt.drawBorders(a1c3, CellStyle.BORDER_NONE, Extent.NONE);
+        pt.drawBorderColors(a1c3, IndexedColors.AUTOMATIC.getIndex(), Extent.NONE);
+        pt.drawBorderColors(a1c3, IndexedColors.BLUE.getIndex(), Extent.VERTICAL);
         for (int i = 0; i <= 2; i++) {
             for (int j = 0; j <= 2; j++) {
                 assertEquals(2, pt.getNumBorders(i, j));
                 assertEquals(2, pt.getNumBorderColors(i, j));
-                assertEquals(IndexedColors.BLUE.getIndex(), pt
-                        .getTemplateProperty(i, j, CellUtil.LEFT_BORDER_COLOR));
-                assertEquals(IndexedColors.BLUE.getIndex(),
-                        pt.getTemplateProperty(i, j,
-                                CellUtil.RIGHT_BORDER_COLOR));
+                assertEquals(IndexedColors.BLUE.getIndex(), pt.getTemplateProperty(i, j, CellUtil.LEFT_BORDER_COLOR));
+                assertEquals(IndexedColors.BLUE.getIndex(), pt.getTemplateProperty(i, j, CellUtil.RIGHT_BORDER_COLOR));
             }
         }
-        pt.drawBorders(a1c3, CellStyle.BORDER_NONE,
-                Extent.NONE);
-        pt.drawBorderColors(a1c3, IndexedColors.AUTOMATIC.getIndex(),
-                Extent.NONE);
-        pt.drawBorderColors(a1c3, IndexedColors.BLUE.getIndex(),
-                Extent.INSIDE_VERTICAL);
+        
+        pt.drawBorders(a1c3, CellStyle.BORDER_NONE, Extent.NONE);
+        pt.drawBorderColors(a1c3, IndexedColors.AUTOMATIC.getIndex(), Extent.NONE);
+        pt.drawBorderColors(a1c3, IndexedColors.BLUE.getIndex(), Extent.INSIDE_VERTICAL);
         for (int i = 0; i <= 2; i++) {
             for (int j = 0; j <= 2; j++) {
                 if (j == 0) {
                     assertEquals(1, pt.getNumBorders(i, j));
                     assertEquals(1, pt.getNumBorderColors(i, j));
-                    assertEquals(IndexedColors.BLUE.getIndex(),
-                            pt.getTemplateProperty(i, j,
-                                    CellUtil.RIGHT_BORDER_COLOR));
+                    assertEquals(IndexedColors.BLUE.getIndex(), pt.getTemplateProperty(i, j, CellUtil.RIGHT_BORDER_COLOR));
                 } else if (j == 2) {
                     assertEquals(1, pt.getNumBorders(i, j));
                     assertEquals(1, pt.getNumBorderColors(i, j));
-                    assertEquals(IndexedColors.BLUE.getIndex(),
-                            pt.getTemplateProperty(i, j,
-                                    CellUtil.LEFT_BORDER_COLOR));
+                    assertEquals(IndexedColors.BLUE.getIndex(), pt.getTemplateProperty(i, j, CellUtil.LEFT_BORDER_COLOR));
                 } else {
                     assertEquals(2, pt.getNumBorders(i, j));
                     assertEquals(2, pt.getNumBorderColors(i, j));
-                    assertEquals(IndexedColors.BLUE.getIndex(),
-                            pt.getTemplateProperty(i, j,
-                                    CellUtil.LEFT_BORDER_COLOR));
-                    assertEquals(IndexedColors.BLUE.getIndex(),
-                            pt.getTemplateProperty(i, j,
-                                    CellUtil.RIGHT_BORDER_COLOR));
+                    assertEquals(IndexedColors.BLUE.getIndex(), pt.getTemplateProperty(i, j, CellUtil.LEFT_BORDER_COLOR));
+                    assertEquals(IndexedColors.BLUE.getIndex(), pt.getTemplateProperty(i, j, CellUtil.RIGHT_BORDER_COLOR));
                 }
             }
         }
-        pt.drawBorders(a1c3, CellStyle.BORDER_NONE,
-                Extent.NONE);
-        pt.drawBorderColors(a1c3, IndexedColors.AUTOMATIC.getIndex(),
-                Extent.NONE);
-        pt.drawBorderColors(a1c3, IndexedColors.BLUE.getIndex(),
-                Extent.OUTSIDE_VERTICAL);
+        
+        pt.drawBorders(a1c3, CellStyle.BORDER_NONE, Extent.NONE);
+        pt.drawBorderColors(a1c3, IndexedColors.AUTOMATIC.getIndex(), Extent.NONE);
+        pt.drawBorderColors(a1c3, IndexedColors.BLUE.getIndex(), Extent.OUTSIDE_VERTICAL);
         for (int i = 0; i <= 2; i++) {
             for (int j = 0; j <= 2; j++) {
                 if (j == 0) {
                     assertEquals(1, pt.getNumBorders(i, j));
                     assertEquals(1, pt.getNumBorderColors(i, j));
-                    assertEquals(IndexedColors.BLUE.getIndex(),
-                            pt.getTemplateProperty(i, j,
-                                    CellUtil.LEFT_BORDER_COLOR));
+                    assertEquals(IndexedColors.BLUE.getIndex(), pt.getTemplateProperty(i, j, CellUtil.LEFT_BORDER_COLOR));
                 } else if (j == 2) {
                     assertEquals(1, pt.getNumBorders(i, j));
                     assertEquals(1, pt.getNumBorderColors(i, j));
-                    assertEquals(IndexedColors.BLUE.getIndex(),
-                            pt.getTemplateProperty(i, j,
-                                    CellUtil.RIGHT_BORDER_COLOR));
+                    assertEquals(IndexedColors.BLUE.getIndex(), pt.getTemplateProperty(i, j, CellUtil.RIGHT_BORDER_COLOR));
                 } else {
                     assertEquals(0, pt.getNumBorders(i, j));
                     assertEquals(0, pt.getNumBorderColors(i, j));
@@ -809,40 +576,27 @@ public final class TestPropertyTemplate {
             for (int j = 0; j <= 2; j++) {
                 assertEquals(4, pt.getNumBorders(i, j));
                 assertEquals(4, pt.getNumBorderColors(i, j));
-                assertEquals(CellStyle.BORDER_MEDIUM,
-                        pt.getTemplateProperty(i, j, CellUtil.BORDER_TOP));
-                assertEquals(CellStyle.BORDER_MEDIUM,
-                        pt.getTemplateProperty(i, j, CellUtil.BORDER_BOTTOM));
-                assertEquals(CellStyle.BORDER_MEDIUM,
-                        pt.getTemplateProperty(i, j, CellUtil.BORDER_LEFT));
-                assertEquals(CellStyle.BORDER_MEDIUM,
-                        pt.getTemplateProperty(i, j, CellUtil.BORDER_RIGHT));
-                assertEquals(IndexedColors.RED.getIndex(), pt
-                        .getTemplateProperty(i, j, CellUtil.TOP_BORDER_COLOR));
-                assertEquals(IndexedColors.RED.getIndex(),
-                        pt.getTemplateProperty(i, j,
-                                CellUtil.BOTTOM_BORDER_COLOR));
-                assertEquals(IndexedColors.RED.getIndex(), pt
-                        .getTemplateProperty(i, j, CellUtil.LEFT_BORDER_COLOR));
-                assertEquals(IndexedColors.RED.getIndex(),
-                        pt.getTemplateProperty(i, j,
-                                CellUtil.RIGHT_BORDER_COLOR));
+                assertEquals(CellStyle.BORDER_MEDIUM, pt.getTemplateProperty(i, j, CellUtil.BORDER_TOP));
+                assertEquals(CellStyle.BORDER_MEDIUM, pt.getTemplateProperty(i, j, CellUtil.BORDER_BOTTOM));
+                assertEquals(CellStyle.BORDER_MEDIUM, pt.getTemplateProperty(i, j, CellUtil.BORDER_LEFT));
+                assertEquals(CellStyle.BORDER_MEDIUM, pt.getTemplateProperty(i, j, CellUtil.BORDER_RIGHT));
+                assertEquals(IndexedColors.RED.getIndex(), pt.getTemplateProperty(i, j, CellUtil.TOP_BORDER_COLOR));
+                assertEquals(IndexedColors.RED.getIndex(), pt.getTemplateProperty(i, j, CellUtil.BOTTOM_BORDER_COLOR));
+                assertEquals(IndexedColors.RED.getIndex(), pt.getTemplateProperty(i, j, CellUtil.LEFT_BORDER_COLOR));
+                assertEquals(IndexedColors.RED.getIndex(), pt.getTemplateProperty(i, j, CellUtil.RIGHT_BORDER_COLOR));
             }
         }
+        
         pt.drawBorders(a1c3, CellStyle.BORDER_NONE, Extent.NONE);
         pt.drawBorders(a1c3, CellStyle.BORDER_NONE, IndexedColors.RED.getIndex(), Extent.ALL);
         for (int i = 0; i <= 2; i++) {
             for (int j = 0; j <= 2; j++) {
                 assertEquals(4, pt.getNumBorders(i, j));
                 assertEquals(0, pt.getNumBorderColors(i, j));
-                assertEquals(CellStyle.BORDER_NONE,
-                        pt.getTemplateProperty(i, j, CellUtil.BORDER_TOP));
-                assertEquals(CellStyle.BORDER_NONE,
-                        pt.getTemplateProperty(i, j, CellUtil.BORDER_BOTTOM));
-                assertEquals(CellStyle.BORDER_NONE,
-                        pt.getTemplateProperty(i, j, CellUtil.BORDER_LEFT));
-                assertEquals(CellStyle.BORDER_NONE,
-                        pt.getTemplateProperty(i, j, CellUtil.BORDER_RIGHT));
+                assertEquals(CellStyle.BORDER_NONE, pt.getTemplateProperty(i, j, CellUtil.BORDER_TOP));
+                assertEquals(CellStyle.BORDER_NONE, pt.getTemplateProperty(i, j, CellUtil.BORDER_BOTTOM));
+                assertEquals(CellStyle.BORDER_NONE, pt.getTemplateProperty(i, j, CellUtil.BORDER_LEFT));
+                assertEquals(CellStyle.BORDER_NONE, pt.getTemplateProperty(i, j, CellUtil.BORDER_RIGHT));
             }
         }
     }
