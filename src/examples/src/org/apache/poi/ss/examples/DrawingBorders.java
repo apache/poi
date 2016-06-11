@@ -64,24 +64,32 @@ public class DrawingBorders {
         r = sh1.createRow(8);
         c = r.createCell(1);
         c.setCellValue("Colored Borders");
+        
+        CellRangeAddress b2d4 = CellRangeAddress.valueOf("B2:D4");
+        CellRangeAddress b6d8 = CellRangeAddress.valueOf("B6:D8");
+        CellRangeAddress b10d12 = CellRangeAddress.valueOf("B10:D12");
+        CellRangeAddress c11 = CellRangeAddress.valueOf("C11:C11");
+        short red = IndexedColors.RED.getIndex();
+        short green = IndexedColors.GREEN.getIndex();
+        short blue = IndexedColors.BLUE.getIndex();
 
         // draw borders (three 3x3 grids)
         BorderPropertyTemplate pt = new BorderPropertyTemplate();
         
         // #1) these borders will all be medium in default color
-        pt.drawBorders(new CellRangeAddress(1, 3, 1, 3), BorderStyle.MEDIUM, BorderExtent.ALL);
+        pt.drawBorders(b2d4, BorderStyle.MEDIUM, BorderExtent.ALL);
         
         // #2) these cells will have medium outside borders and thin inside borders
-        pt.drawBorders(new CellRangeAddress(5, 7, 1, 3), BorderStyle.MEDIUM, BorderExtent.OUTSIDE);
-        pt.drawBorders(new CellRangeAddress(5, 7, 1, 3), BorderStyle.THIN, BorderExtent.INSIDE);
+        pt.drawBorders(b6d8, BorderStyle.MEDIUM, BorderExtent.OUTSIDE);
+        pt.drawBorders(b6d8, BorderStyle.THIN, BorderExtent.INSIDE);
         
         // #3) these cells will all be medium weight with different colors for the
         //     outside, inside horizontal, and inside vertical borders. The center
         //     cell will have no borders.
-        pt.drawBorders(new CellRangeAddress(9, 11, 1, 3), BorderStyle.MEDIUM, IndexedColors.RED.getIndex(), BorderExtent.OUTSIDE);
-        pt.drawBorders(new CellRangeAddress(9, 11, 1, 3), BorderStyle.MEDIUM, IndexedColors.BLUE.getIndex(), BorderExtent.INSIDE_VERTICAL);
-        pt.drawBorders(new CellRangeAddress(9, 11, 1, 3), BorderStyle.MEDIUM, IndexedColors.GREEN.getIndex(), BorderExtent.INSIDE_HORIZONTAL);
-        pt.drawBorders(new CellRangeAddress(10, 10, 2, 2), BorderStyle.NONE, BorderExtent.ALL);
+        pt.drawBorders(b10d12, BorderStyle.MEDIUM, red, BorderExtent.OUTSIDE);
+        pt.drawBorders(b10d12, BorderStyle.MEDIUM, blue, BorderExtent.INSIDE_VERTICAL);
+        pt.drawBorders(b10d12, BorderStyle.MEDIUM, green, BorderExtent.INSIDE_HORIZONTAL);
+        pt.drawBorders(c11,    BorderStyle.NONE, BorderExtent.ALL);
 
         // apply borders to sheet
         pt.applyBorders(sh1);
@@ -91,7 +99,7 @@ public class DrawingBorders {
         pt.applyBorders(sh2);
 
         // Write the output to a file
-        String file = "db-poi.xls";
+        String file = "DrawingBorders-poi.xls";
         if (wb instanceof XSSFWorkbook)
             file += "x";
         FileOutputStream out = new FileOutputStream(file);
