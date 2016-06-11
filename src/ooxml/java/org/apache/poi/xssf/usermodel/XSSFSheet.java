@@ -222,7 +222,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         arrayFormulas = new ArrayList<CellRangeAddress>();
         for (CTRow row : worksheetParam.getSheetData().getRowArray()) {
             XSSFRow r = new XSSFRow(row, this);
-            _rows.put(r.getRowNum(), r);
+            _rows.put(new Integer(r.getRowNum()), r);
         }
     }
 
@@ -693,7 +693,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     @Override
     public XSSFRow createRow(int rownum) {
         CTRow ctRow;
-        XSSFRow prev = _rows.get(rownum);
+        XSSFRow prev = _rows.get(new Integer(rownum));
         if(prev != null){
             // the Cells in an existing row are invalidated on-purpose, in order to clean up correctly, we
             // need to call the remove, so things like ArrayFormulas and CalculationChain updates are done 
@@ -713,13 +713,13 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
             } else {
                 // get number of rows where row index < rownum
                 // --> this tells us where our row should go
-                int idx = _rows.headMap(rownum).size();
+                int idx = _rows.headMap(new Integer(rownum)).size();
                 ctRow = worksheet.getSheetData().insertNewRow(idx);
             }
         }
         XSSFRow r = new XSSFRow(ctRow, this);
         r.setRowNum(rownum);
-        _rows.put(rownum, r);
+        _rows.put(new Integer(rownum), r);
         return r;
     }
 
@@ -1377,7 +1377,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      */
     @Override
     public XSSFRow getRow(int rownum) {
-        return _rows.get(rownum);
+        return _rows.get(new Integer(rownum));
     }
     
     /**
@@ -1406,7 +1406,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
             }
         }
         else {
-            rows.addAll(_rows.subMap(startRowNum, endRowNum+1).values());
+            rows.addAll(_rows.subMap(new Integer(startRowNum), new Integer(endRowNum+1)).values());
         }
         return rows;
     }
@@ -1876,8 +1876,8 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
             row.removeCell(cell);
         }
 
-        int idx = _rows.headMap(row.getRowNum()).size();
-        _rows.remove(row.getRowNum());
+        int idx = _rows.headMap(new Integer(row.getRowNum())).size();
+        _rows.remove(new Integer(row.getRowNum()));
         worksheet.getSheetData().removeRow(idx);
 
         // also remove any comment located in that row
@@ -2893,7 +2893,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
             // check if we should remove this row as it will be overwritten by the data later
             if (shouldRemoveRow(startRow, endRow, n, rownum)) {
                 // remove row from worksheet.getSheetData row array
-                int idx = _rows.headMap(row.getRowNum()).size();
+                int idx = _rows.headMap(new Integer(row.getRowNum())).size();
                 worksheet.getSheetData().removeRow(idx);
 
                 // remove row from _rows
@@ -3012,7 +3012,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         //rebuild the _rows map
         SortedMap<Integer, XSSFRow> map = new TreeMap<Integer, XSSFRow>();
         for(XSSFRow r : _rows.values()) {
-            map.put(r.getRowNum(), r);
+            map.put(new Integer(r.getRowNum()), r);
         }
         _rows = map;
     }
