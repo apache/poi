@@ -562,7 +562,7 @@ public interface CellStyle {
 
     /**
      * get the color to use for the top border
-     * @return hhe index of the color definition
+     * @return the index of the color definition
      */
     short getTopBorderColor();
 
