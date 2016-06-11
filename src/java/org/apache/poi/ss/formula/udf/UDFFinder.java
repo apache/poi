@@ -26,6 +26,7 @@ import org.apache.poi.ss.formula.functions.FreeRefFunction;
  * @author PUdalau
  */
 public interface UDFFinder {
+    // FIXME: Findbugs error: IC_SUPERCLASS_USES_SUBCLASS_DURING_INITIALIZATION
     public static final UDFFinder DEFAULT = new AggregatingUDFFinder(AnalysisToolPak.instance);
 
     /**

@@ -44,6 +44,7 @@ public class AggregatingUDFFinder implements UDFFinder {
      * @param name Name of function.
      * @return Function executor. <code>null</code> if not found
      */
+    @Override
     public FreeRefFunction findFunction(String name) {
         FreeRefFunction evaluatorForFunction;
         for (UDFFinder pack : _usedToolPacks) {
