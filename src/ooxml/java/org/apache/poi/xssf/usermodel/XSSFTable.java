@@ -1,4 +1,4 @@
-/* ====================================================================
+(count/* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
    this work for additional information regarding copyright ownership.
@@ -358,8 +358,8 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
         if (columnHeader == null) return -1;
         if (columnMap == null) {
             // FIXME: replace with org.apache.commons.collections.map.CaseInsensitiveMap
-            int count = getTableColumns().length;
-            columnMap = new HashMap<String, Integer>(count);
+            final int count = getTableColumns().length;
+            columnMap = new HashMap<String, Integer>(count * 3 / 2);
             
             for (int i=0; i < count; i++) {
                 String columnName = getTableColumns()[i].getName();
