@@ -93,7 +93,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven.plugin.surefire.version}</version>
                 <configuration>
-                    <argLine>-Xmx1024m -XX:MaxPermSize=256m -XX:-OmitStackTraceInFastThrow</argLine>
+                    <argLine>-Duser.language=en -Duser.country=US -Xmx1024m -XX:MaxPermSize=256m -XX:-OmitStackTraceInFastThrow</argLine>
                 </configuration>
             </plugin>
 		</plugins>
