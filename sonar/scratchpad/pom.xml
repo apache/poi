@@ -24,7 +24,7 @@
 			<!-- copy sources, resources and tests in place as otherwise Sonar does not pick them up correctly! -->
 			<plugin>
 				<artifactId>maven-resources-plugin</artifactId>
-				<version>2.6</version>
+				<version>${maven.plugin.resources.version}</version>
 				<executions>
 					<execution>
 						<id>copy-sources</id>
@@ -79,7 +79,7 @@
 			<!-- clean copied sources afterwards -->
 			<plugin>
                 <artifactId>maven-clean-plugin</artifactId>
-                <version>2.5</version>
+                <version>${maven.plugin.clean.version}</version>
                 <configuration>
                     <filesets>
                         <fileset>

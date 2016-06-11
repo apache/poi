@@ -61,6 +61,16 @@
 		<project.build.sourceEncoding>ASCII</project.build.sourceEncoding>
 		<!-- Try to disable running SVN blame as it causes errors here because the source is copied from the actual SVN location here! -->
 		<sonar.scm.disabled>true</sonar.scm.disabled>
+
+		<!-- define some of the third-party or plugin-versions globally to use the same in all modules -->
+		<xmlbeans.version>2.6.0</xmlbeans.version>
+		<junit.version>4.12</junit.version>
+		<maven.plugin.resources.version>3.0.1</maven.plugin.resources.version>
+		<maven.plugin.jar.version>3.0.1</maven.plugin.jar.version>
+		<maven.plugin.clean.version>3.0.0</maven.plugin.clean.version>
+		<maven.plugin.download.version>1.3.0</maven.plugin.download.version>
+		<maven.plugin.antrun.version>1.8</maven.plugin.antrun.version>
+		<maven.plugin.surefire.version>2.19.1</maven.plugin.surefire.version>
 	</properties>
 	
 	<build>
@@ -69,7 +79,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
-					<version>3.3</version>
+					<version>3.5.1</version>
 					<configuration>
 						<source>1.6</source>
 						<target>1.6</target>
@@ -81,12 +91,12 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.19</version>
+				<version>${maven.plugin.surefire.version}</version>
 				<dependencies>
 					<dependency>
 						<groupId>org.apache.maven.surefire</groupId>
 						<artifactId>surefire-junit47</artifactId>
-						<version>2.19</version>
+						<version>${maven.plugin.surefire.version}</version>
 					</dependency>
 				</dependencies>
 				<configuration>
@@ -118,7 +128,7 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.12</version>
+			<version>${junit.version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
@@ -195,7 +205,7 @@
 
           <plugin>
             <artifactId>maven-antrun-plugin</artifactId>
-            <version>1.8</version>
+            <version>${maven.plugin.antrun.version}</version>
             <executions>
               <execution>
                 <id>copy-xmltype-and-xsdconfig</id>
@@ -254,7 +264,7 @@
         <dependency>
           <groupId>org.apache.xmlbeans</groupId>
           <artifactId>xmlbeans</artifactId>
-          <version>2.6.0</version>
+          <version>${xmlbeans.version}</version>
         </dependency>
       </dependencies>
 		</profile>
