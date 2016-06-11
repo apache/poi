@@ -30,57 +30,57 @@ import org.apache.poi.ss.usermodel.Row;
  */
 final class XSSFEvaluationSheet implements EvaluationSheet {
 
-	private final XSSFSheet _xs;
-	private Map<CellKey, EvaluationCell> _cellCache;
+    private final XSSFSheet _xs;
+    private Map<CellKey, EvaluationCell> _cellCache;
 
-	public XSSFEvaluationSheet(XSSFSheet sheet) {
-		_xs = sheet;
-	}
+    public XSSFEvaluationSheet(XSSFSheet sheet) {
+        _xs = sheet;
+    }
 
-	public XSSFSheet getXSSFSheet() {
-		return _xs;
-	}
-	public EvaluationCell getCell(int rowIndex, int columnIndex) {
-	    // cache for performance: ~30% speedup due to caching
-	    if (_cellCache == null) {
-	        _cellCache = new HashMap<CellKey, EvaluationCell>(_xs.getLastRowNum()*3);
-	        for (final Row row : _xs) {
-                    final int rowNum = row.getRowNum();
-	            for (final Cell cell : row) {
-	                // cast is safe, the iterator is just defined using the interface
-                        final CellKey key = new CellKey(rowNum, cell.getColumnIndex());
-                        final EvaluationCell evalcell = new XSSFEvaluationCell((XSSFCell) cell, this);
-	                _cellCache.put(key, evalcell);
-	            }
-	        }
-	    }
-	    
-	    return _cellCache.get(new CellKey(rowIndex, columnIndex));
-		
-	}
-	
-	private static class CellKey {
-	    private final int _row;
-	    private final int _col;
-	    private final int _hash;
-	    
-	    protected CellKey(int row, int col) {
-	        _row = row;
-	        _col = col;
-	        _hash = (17 * 37 + row) * 37 + col;
-	    }
-	    
-	    @Override
-	    public int hashCode() {
-	        return _hash;
-	    }
-	    
-	    @Override
-	    public boolean equals(Object obj) {
-	        if (obj == null) return false;
-	        // assumes other object is one of us, otherwise ClassCastException is thrown
-	        final CellKey oKey = (CellKey) obj;
-	        return _row == oKey._row && _col == oKey._col;
-	    }
-	}
+    public XSSFSheet getXSSFSheet() {
+        return _xs;
+    }
+
+    public EvaluationCell getCell(int rowIndex, int columnIndex) {
+        // cache for performance: ~30% speedup due to caching
+        if (_cellCache == null) {
+            _cellCache = new HashMap<CellKey, EvaluationCell>(_xs.getLastRowNum()*3);
+            for (final Row row : _xs) {
+                final int rowNum = row.getRowNum();
+                for (final Cell cell : row) {
+                    // cast is safe, the iterator is just defined using the interface
+                    final CellKey key = new CellKey(rowNum, cell.getColumnIndex());
+                    final EvaluationCell evalcell = new XSSFEvaluationCell((XSSFCell) cell, this);
+                    _cellCache.put(key, evalcell);
+                }
+            }
+        }
+        
+        return _cellCache.get(new CellKey(rowIndex, columnIndex));
+    }
+    
+    private static class CellKey {
+        private final int _row;
+        private final int _col;
+        private final int _hash;
+        
+        protected CellKey(int row, int col) {
+            _row = row;
+            _col = col;
+            _hash = (17 * 37 + row) * 37 + col;
+        }
+        
+        @Override
+        public int hashCode() {
+            return _hash;
+        }
+        
+        @Override
+        public boolean equals(Object obj) {
+            if (obj == null) return false;
+            // assumes other object is one of us, otherwise ClassCastException is thrown
+            final CellKey oKey = (CellKey) obj;
+            return _row == oKey._row && _col == oKey._col;
+        }
+    }
 }
