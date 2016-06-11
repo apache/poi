@@ -62,16 +62,18 @@ final class XSSFEvaluationSheet implements EvaluationSheet {
     private static class CellKey {
         private final int _row;
         private final int _col;
-        private final int _hash;
+        private int _hash = -1; //lazily computed
         
         protected CellKey(int row, int col) {
             _row = row;
             _col = col;
-            _hash = (17 * 37 + row) * 37 + col;
         }
         
         @Override
         public int hashCode() {
+            if ( _hash == -1 ) {
+                 _hash = (17 * 37 + _row) * 37 + _col;
+            }
             return _hash;
         }
         
