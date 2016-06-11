@@ -27,6 +27,8 @@ import org.apache.poi.ss.formula.ptg.Ptg;
  * Internal POI use only
  */
 public final class XSSFEvaluationWorkbook extends BaseXSSFEvaluationWorkbook {
+    private XSSFEvaluationSheet[] _sheetCache;
+    
     public static XSSFEvaluationWorkbook create(XSSFWorkbook book) {
         if (book == null) {
             return null;
@@ -46,7 +48,21 @@ public final class XSSFEvaluationWorkbook extends BaseXSSFEvaluationWorkbook {
 
     @Override
     public EvaluationSheet getSheet(int sheetIndex) {
-        return new XSSFEvaluationSheet(_uBook.getSheetAt(sheetIndex));
+        // Performance optimization: build sheet cache the first time this is called
+        // to avoid re-creating the XSSFEvaluationSheet each time a new cell is evaluated
+        // EvaluationWorkbooks make not guarentee to syncronize changes made to
+        // the underlying workbook after the EvaluationWorkbook is created.
+        if (_sheetCache == null) {
+            _sheetCache = new XSSFEvaluationSheet[_uBook.getNumberOfSheets()];
+            for (int i=0; i < _uBook.getNumberOfSheets(); i++) {
+                _sheetCache[i] = new XSSFEvaluationSheet(_uBook.getSheetAt(i));
+            }
+        }
+        if (sheetIndex < 0 || sheetIndex >= _sheetCache.length) {
+            // do this to reuse the out-of-bounds logic and message from XSSFWorkbook
+            _uBook.getSheetAt(sheetIndex);
+        }
+        return _sheetCache[sheetIndex];
     }
 
     @Override    
