@@ -223,7 +223,7 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
             assertEquals("In another workbook", cXSLX_nw_cell.getStringCellValue());
 */
         } finally {
-        	alt.close();
+            alt.close();
         }
         
         wb.close();
@@ -361,53 +361,53 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
     
     @Test
     public void testMultisheetFormulaEval() throws IOException {
-    	XSSFWorkbook wb = new XSSFWorkbook();
-    	try {
-    		XSSFSheet sheet1 = wb.createSheet("Sheet1");
-    		XSSFSheet sheet2 = wb.createSheet("Sheet2");
-    		XSSFSheet sheet3 = wb.createSheet("Sheet3");
-    		
-    		// sheet1 A1
-    		XSSFCell cell = sheet1.createRow(0).createCell(0);
-    		cell.setCellType(Cell.CELL_TYPE_NUMERIC);
-    		cell.setCellValue(1.0);
-    		
-    		// sheet2 A1
-    		cell = sheet2.createRow(0).createCell(0);
-    		cell.setCellType(Cell.CELL_TYPE_NUMERIC);
-    		cell.setCellValue(1.0);
-    		
-    		// sheet2 B1
-    		cell = sheet2.getRow(0).createCell(1);
-    		cell.setCellType(Cell.CELL_TYPE_NUMERIC);
-    		cell.setCellValue(1.0);
-    		
-    		// sheet3 A1
-    		cell = sheet3.createRow(0).createCell(0);
-    		cell.setCellType(Cell.CELL_TYPE_NUMERIC);
-    		cell.setCellValue(1.0);
-    		
-    		// sheet1 A2 formulae
-    		cell = sheet1.createRow(1).createCell(0);
-    		cell.setCellType(Cell.CELL_TYPE_FORMULA);
-    		cell.setCellFormula("SUM(Sheet1:Sheet3!A1)");
-    		
-    		// sheet1 A3 formulae
-    		cell = sheet1.createRow(2).createCell(0);
-    		cell.setCellType(Cell.CELL_TYPE_FORMULA);
-    		cell.setCellFormula("SUM(Sheet1:Sheet3!A1:B1)");
-    		
-    		wb.getCreationHelper().createFormulaEvaluator().evaluateAll();
-    		
-    		cell = sheet1.getRow(1).getCell(0);
-    		assertEquals(3.0, cell.getNumericCellValue(), 0);
-    		
-    		cell = sheet1.getRow(2).getCell(0);
-    		assertEquals(4.0, cell.getNumericCellValue(), 0);
-    	} finally {
-    	    wb.close();
-    	}
-	}
+        XSSFWorkbook wb = new XSSFWorkbook();
+        try {
+            XSSFSheet sheet1 = wb.createSheet("Sheet1");
+            XSSFSheet sheet2 = wb.createSheet("Sheet2");
+            XSSFSheet sheet3 = wb.createSheet("Sheet3");
+            
+            // sheet1 A1
+            XSSFCell cell = sheet1.createRow(0).createCell(0);
+            cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+            cell.setCellValue(1.0);
+            
+            // sheet2 A1
+            cell = sheet2.createRow(0).createCell(0);
+            cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+            cell.setCellValue(1.0);
+            
+            // sheet2 B1
+            cell = sheet2.getRow(0).createCell(1);
+            cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+            cell.setCellValue(1.0);
+            
+            // sheet3 A1
+            cell = sheet3.createRow(0).createCell(0);
+            cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+            cell.setCellValue(1.0);
+            
+            // sheet1 A2 formulae
+            cell = sheet1.createRow(1).createCell(0);
+            cell.setCellType(Cell.CELL_TYPE_FORMULA);
+            cell.setCellFormula("SUM(Sheet1:Sheet3!A1)");
+            
+            // sheet1 A3 formulae
+            cell = sheet1.createRow(2).createCell(0);
+            cell.setCellType(Cell.CELL_TYPE_FORMULA);
+            cell.setCellFormula("SUM(Sheet1:Sheet3!A1:B1)");
+            
+            wb.getCreationHelper().createFormulaEvaluator().evaluateAll();
+            
+            cell = sheet1.getRow(1).getCell(0);
+            assertEquals(3.0, cell.getNumericCellValue(), 0);
+            
+            cell = sheet1.getRow(2).getCell(0);
+            assertEquals(4.0, cell.getNumericCellValue(), 0);
+        } finally {
+            wb.close();
+        }
+    }
 
     @Test
     public void testBug55843() throws IOException {
@@ -627,27 +627,27 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
     }
 
     /**
-    * @param row 0-based
-    * @param column 0-based
-    */
-   private void setCellFormula(Sheet sheet, int row, int column, String formula) {
-       Row r = sheet.getRow(row);
-       if (r == null) {
-           r = sheet.createRow(row);
-       }
-       Cell cell = r.getCell(column);
-       if (cell == null) {
-           cell = r.createCell(column);
-       }
-       cell.setCellType(XSSFCell.CELL_TYPE_FORMULA);
-       cell.setCellFormula(formula);
-   }
+     * @param row 0-based
+     * @param column 0-based
+     */
+    private void setCellFormula(Sheet sheet, int row, int column, String formula) {
+        Row r = sheet.getRow(row);
+        if (r == null) {
+            r = sheet.createRow(row);
+        }
+        Cell cell = r.getCell(column);
+        if (cell == null) {
+            cell = r.createCell(column);
+        }
+        cell.setCellType(XSSFCell.CELL_TYPE_FORMULA);
+        cell.setCellFormula(formula);
+    }
 
-   /**
-    * @param rowNo 0-based
-    * @param column 0-based
-    */
-   private Cell getCell(Sheet sheet, int rowNo, int column) {
-       return sheet.getRow(rowNo).getCell(column);
-   }
+    /**
+     * @param rowNo 0-based
+     * @param column 0-based
+     */
+    private Cell getCell(Sheet sheet, int rowNo, int column) {
+        return sheet.getRow(rowNo).getCell(column);
+    }
 }
