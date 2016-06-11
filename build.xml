@@ -276,6 +276,18 @@ under the License.
     <property name="dist.sequence-library.url" value="${repository.m2}/maven2/de/regnis/q/sequence/sequence-library/1.0.3/sequence-library-1.0.3.jar"/>
 
 
+    <!-- ===========================================================================================================
+         NOTE: we did not update to 3.x yet because it requires Java 7, but we are still supporting Java 6 currently
+         ===========================================================================================================
+    -->
+    <condition property="findbugs.jdk6">
+        <equals arg1="${ant.java.version}" arg2="1.6"/>
+    </condition>
+    <property name="findbugs.version" value="2.0.3" if:set="findbugs.jdk6"/>
+    <property name="findbugs.version" value="3.0.1" unless:set="findbugs.jdk6"/>
+	<property name="findbugs.url" value="http://prdownloads.sourceforge.net/findbugs/findbugs-noUpdateChecks-${findbugs.version}.zip?download"/>
+	<property name="findbugs.jar" location="${main.lib}/findbugs-noUpdateChecks-${findbugs.version}.zip"/>
+
     <propertyset id="junit.properties">
         <propertyref name="POI.testdata.path"/>
         <propertyref name="java.awt.headless"/>
@@ -2068,33 +2080,26 @@ under the License.
     </target>
 
     <target name="findbugs">
-        <downloadfile
-            src="http://prdownloads.sourceforge.net/findbugs/findbugs-noUpdateChecks-2.0.3.zip?download"
-            dest="${main.lib}/findbugs-noUpdateChecks-2.0.3.zip"/>
-
-        <!-- ===========================================================================================================
-             NOTE: we did not update to 3.x yet because it requires Java 7, but we are still supporting Java 6 currently
-             ===========================================================================================================
-        -->
+        <downloadfile src="${findbugs.url}" dest="${findbugs.jar}"/>
 
         <property name="findbugs.home" value="build/findbugs" />
-        <unzip src="${main.lib}/findbugs-noUpdateChecks-2.0.3.zip"
-               dest="${findbugs.home}/lib">
-            <patternset>
-                <include name="findbugs-2.0.3/lib/**"/>
-            </patternset>
-            <mapper type="flatten"/>
+    	<delete dir="${findbugs.home}"/>
+        <unzip src="${findbugs.jar}" dest="${findbugs.home}">
+        	<patternset includes="findbugs*/lib/**,findbugs*/plugin/**"/>
+        	<cutdirsmapper dirs="1"/>
         </unzip>
 
         <taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask">
             <classpath>
-                <fileset dir="${findbugs.home}/lib">
-                    <include name="*.jar" />
-                </fileset>
+                <fileset dir="${findbugs.home}/lib" includes="*.jar"/>
             </classpath>
         </taskdef>
-        <findbugs home="${findbugs.home}" output="html" outputFile="build/findbugs.html"
-            excludeFilter="src/resources/devtools/findbugs-filters.xml">
+
+    	<findbugs home="${findbugs.home}"
+    	   output="xml:withMessages"
+    	   outputFile="build/findbugs.xml"
+    	   effort="max"
+           excludeFilter="src/resources/devtools/findbugs-filters.xml">
             <fileset dir="${dist.dir}/maven">
                 <include name="poi/poi-${version.id}.jar"/>
                 <include name="poi-scratchpad/poi-scratchpad-${version.id}.jar"/>
@@ -2115,28 +2120,17 @@ under the License.
             <sourcePath path="src/ooxml/java" />
             <sourcePath path="src/scratchpad/src" />
         </findbugs>
-        <findbugs home="${findbugs.home}" output="xml" outputFile="build/findbugs.xml"
-            excludeFilter="src/resources/devtools/findbugs-filters.xml">
-            <fileset dir="${dist.dir}/maven">
-                <include name="poi/poi-${version.id}.jar"/>
-                <include name="poi-scratchpad/poi-scratchpad-${version.id}.jar"/>
-                <include name="poi-ooxml/poi-ooxml-${version.id}.jar"/>
-            </fileset>
-            <auxClasspath path="${dsig.bouncycastle-pkix.jar}" />
-            <auxClasspath path="${dsig.bouncycastle-prov.jar}" />
-            <auxClasspath path="${dsig.sl4j-api.jar}" />
-            <auxClasspath path="${dsig.xmlsec.jar}" />
-            <auxClasspath path="${ooxml.xsds.jar}" />
-            <auxClasspath path="${ooxml.security.jar}" />
-            <auxClasspath path="${ooxml.curvesapi.jar}" />
-            <auxClasspath path="${ooxml.xmlbeans26.jar}" />
-            <auxClasspath path="${main.commons-codec.jar}" />
-            <auxClasspath path="${main.commons-logging.jar}" />
-            <auxClasspath path="${main.junit.jar}" />
-            <sourcePath path="src/java" />
-            <sourcePath path="src/ooxml/java" />
-            <sourcePath path="src/scratchpad/src" />
-        </findbugs>
+    	
+    	<!-- instead of calling findbugs again, we simply transform the xml --> 
+    	<makeurl file="${findbugs.home}/lib/findbugs.jar" property="findbugs.jarurl"/>
+        <!-- although there's a findbugs history task too, it doesn't make much sense to provide it, -->
+        <!-- as the build directory (i.e. the old findbugs.xml) is deleted regularly -->
+    	<xslt basedir="build" destdir="build" includes="findbugs.xml" force="true">
+    	    <style>
+    	    	<!-- fancy-hist is a bit less bugged than fancy ... -->
+    	        <url url="jar:${findbugs.jarurl}!/fancy-hist.xsl"/>
+    	    </style>
+		</xslt>
     </target>
 
     <target name="test-scratchpad-download-resources">
