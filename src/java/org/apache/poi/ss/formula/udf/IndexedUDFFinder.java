@@ -35,6 +35,7 @@ public class IndexedUDFFinder extends AggregatingUDFFinder {
         _funcMap = new HashMap<Integer, String>();
     }
 
+    @Override
     public FreeRefFunction findFunction(String name) {
         FreeRefFunction func = super.findFunction(name);
         if (func != null) {

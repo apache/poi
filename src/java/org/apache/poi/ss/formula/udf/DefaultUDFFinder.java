@@ -44,6 +44,7 @@ public final class DefaultUDFFinder implements UDFFinder {
         _functionsByName = m;
     }
 
+    @Override
     public FreeRefFunction findFunction(String name) {
         return _functionsByName.get(name.toUpperCase(Locale.ROOT));
     }
