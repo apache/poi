@@ -117,13 +117,11 @@ public final class TestXSSFTable {
     @Test
     public void findColumnIndex() throws IOException {
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("StructuredReferences.xlsx");
-        // FIXME: use a worksheet where upper left cell of table is not A1 so that we test
-        // that XSSFTable.findColumnIndex returns the column index relative to the first
-        // column in the table, not the column number in the sheet
 
         XSSFTable table = wb.getTable("\\_Prime.1");
         assertNotNull(table);
-        assertEquals(0, table.findColumnIndex("calc='#*'#"));
+        assertEquals("column header has special escaped characters",
+                0, table.findColumnIndex("calc='#*'#"));
         assertEquals(1, table.findColumnIndex("Name"));
         assertEquals(2, table.findColumnIndex("Number"));
 
@@ -133,6 +131,21 @@ public final class TestXSSFTable {
         assertEquals(-1, table.findColumnIndex(null));
         assertEquals(-1, table.findColumnIndex(""));
         assertEquals(-1, table.findColumnIndex("one"));
+
+        wb.close();
+    }
+
+    @Test
+    public void findColumnIndexIsRelativeToTableNotSheet() throws IOException {
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("DataTableCities.xlsx");
+        XSSFTable table = wb.getTable("SmallCity");
+
+        // Make sure that XSSFTable.findColumnIndex returns the column index relative to the first
+        // column in the table, not the column number in the sheet
+        assertEquals(0, table.findColumnIndex("City")); // column I in worksheet but 0th column in table
+        assertEquals(1, table.findColumnIndex("Latitude"));
+        assertEquals(2, table.findColumnIndex("Longitude"));
+        assertEquals(3, table.findColumnIndex("Population"));
 
         wb.close();
     }
