@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.regex.Pattern;
+import java.util.Collections;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.poi.EncryptedDocumentException;
@@ -1475,7 +1476,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
             }
         }
 
-        return nameList;
+        return Collections.unmodifiableList(nameList);
     }
 
     @Override
@@ -1721,8 +1722,8 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     void initDrawings(){
         DrawingManager2 mgr = workbook.findDrawingGroup();
         if(mgr != null) {
-            for(int i=0; i < getNumberOfSheets(); i++)  {
-                getSheetAt(i).getDrawingPatriarch();
+            for(HSSFSheet sh : _sheets)  {
+                sh.getDrawingPatriarch();
             }
         } else {
             workbook.createDrawingGroup();
@@ -1840,7 +1841,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
                 searchForPictures(escherRecords, pictures);
             }
         }
-        return pictures;
+        return Collections.unmodifiableList(pictures);
     }
 
     /**
@@ -1976,11 +1977,11 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     public List<HSSFObjectData> getAllEmbeddedObjects()
     {
         List<HSSFObjectData> objects = new ArrayList<HSSFObjectData>();
-        for (int i = 0; i < getNumberOfSheets(); i++)
+        for (HSSFSheet sheet : _sheets)
         {
-            getAllEmbeddedObjects(getSheetAt(i), objects);
+            getAllEmbeddedObjects(sheet, objects);
         }
-        return objects;
+        return Collections.unmodifiableList(objects);
     }
 
     /**
