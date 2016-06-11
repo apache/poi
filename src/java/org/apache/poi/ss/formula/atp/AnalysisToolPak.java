@@ -71,6 +71,7 @@ public final class AnalysisToolPak implements UDFFinder {
         // if you save such a .xlsx workbook as .xls
         if(name.startsWith("_xlfn.")) name = name.substring(6);
 
+        // FIXME: inconsistent case-sensitivity
         return _functionsByName.get(name.toUpperCase(Locale.ROOT));
     }
 
@@ -197,6 +198,7 @@ public final class AnalysisToolPak implements UDFFinder {
 
     public static boolean isATPFunction(String name){
         AnalysisToolPak inst = (AnalysisToolPak)instance;
+        // FIXME: inconsistent case-sensitivity
         return inst._functionsByName.containsKey(name);
     }
 
@@ -261,6 +263,7 @@ public final class AnalysisToolPak implements UDFFinder {
                     ". You cannot override POI's implementations of Excel functions");
         }
 
+        // FIXME: inconsistent case-sensitivity
         inst._functionsByName.put(name, func);
     }
 }
