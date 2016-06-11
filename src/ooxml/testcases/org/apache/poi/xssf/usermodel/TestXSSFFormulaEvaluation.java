@@ -609,10 +609,20 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
     // bug 57721
     @Test
     public void structuredReferences() throws IOException {
-        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("evaluate_formula_with_structured_table_references.xlsx");
-        
-        XSSFFormulaEvaluator.evaluateAllFormulaCells(wb);
+        verifyAllFormulasInWorkbookCanBeEvaluated("evaluate_formula_with_structured_table_references.xlsx");
+    }
+    
+    // bug 57840
+    @Ignore("Takes over a minute to evaluate all formulas in this large workbook. Run this test when profiling for formula evaluation speed.")
+    @Test
+    public void testLotsOfFormulasWithStructuredReferencesToCalculatedTableColumns() throws IOException {
+        verifyAllFormulasInWorkbookCanBeEvaluated("StructuredRefs-lots-with-lookups.xlsx");
+    }
 
+    // FIXME: use junit4 parameterization
+    private static void verifyAllFormulasInWorkbookCanBeEvaluated(String sampleWorkbook) throws IOException {
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook(sampleWorkbook);
+        XSSFFormulaEvaluator.evaluateAllFormulaCells(wb);
         wb.close();
     }
 
