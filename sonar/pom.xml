@@ -68,7 +68,7 @@
 		<maven.plugin.resources.version>3.0.1</maven.plugin.resources.version>
 		<maven.plugin.jar.version>3.0.1</maven.plugin.jar.version>
 		<maven.plugin.clean.version>3.0.0</maven.plugin.clean.version>
-		<maven.plugin.download.version>1.3.0</maven.plugin.download.version>
+		<maven.plugin.download.version>1.1.0</maven.plugin.download.version>
 		<maven.plugin.antrun.version>1.8</maven.plugin.antrun.version>
 		<maven.plugin.surefire.version>2.19.1</maven.plugin.surefire.version>
 	</properties>
