@@ -31,7 +31,6 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
 
 /**
  * <p>
@@ -56,6 +55,9 @@ public final class PropertyTemplate {
 
     /**
      * Provides various extents of the properties being added to the template
+     * Note that the Border Extent differs from a BorderStyle. A BorderStyle 
+     * refers to the border around a single cell while a BorderExtent refers to
+     * borders around and through an area of cells.
      */
     public enum Extent {
         /**
@@ -269,7 +271,7 @@ public final class PropertyTemplate {
         int row = range.getFirstRow();
         int firstCol = range.getFirstColumn();
         int lastCol = range.getLastColumn();
-        boolean addBottom = borderType == BorderStyle.NONE && row > 0;
+        boolean addBottom = (borderType == BorderStyle.NONE && row > 0);
         for (int i = firstCol; i <= lastCol; i++) {
             addProperty(row, i, CellUtil.BORDER_TOP, borderType);
             if (addBottom) {
@@ -290,8 +292,7 @@ public final class PropertyTemplate {
         int row = range.getLastRow();
         int firstCol = range.getFirstColumn();
         int lastCol = range.getLastColumn();
-        boolean addTop = (borderType == BorderStyle.NONE
-                && row < _ss.getLastRowIndex());
+        boolean addTop = (borderType == BorderStyle.NONE && row < _ss.getLastRowIndex());
         for (int i = firstCol; i <= lastCol; i++) {
             addProperty(row, i, CellUtil.BORDER_BOTTOM, borderType);
             if (addTop) {
@@ -312,7 +313,7 @@ public final class PropertyTemplate {
         int firstRow = range.getFirstRow();
         int lastRow = range.getLastRow();
         int col = range.getFirstColumn();
-        boolean addRight = borderType == BorderStyle.NONE && col > 0;
+        boolean addRight = (borderType == BorderStyle.NONE && col > 0);
         for (int i = firstRow; i <= lastRow; i++) {
             addProperty(i, col, CellUtil.BORDER_LEFT, borderType);
             if (addRight) {
@@ -333,8 +334,7 @@ public final class PropertyTemplate {
         int firstRow = range.getFirstRow();
         int lastRow = range.getLastRow();
         int col = range.getLastColumn();
-        boolean addLeft = (borderType == BorderStyle.NONE
-                && col < _ss.getLastColumnIndex());
+        boolean addLeft = (borderType == BorderStyle.NONE && col < _ss.getLastColumnIndex());
         for (int i = firstRow; i <= lastRow; i++) {
             addProperty(i, col, CellUtil.BORDER_RIGHT, borderType);
             if (addLeft) {
@@ -475,12 +475,10 @@ public final class PropertyTemplate {
      * the ones that have been drawn by the {@link #drawBorders} and
      * {@link #drawBorderColors} methods.
      *
-     * @param sheet
-     *            - {@link Sheet} on which to apply borders
+     * @param sheet  Sheet on which to apply borders
      */
     public void applyBorders(Sheet sheet) {
-        Workbook wb = sheet.getWorkbook();
-        SpreadsheetVersion ss = wb.getSpreadsheetVersion();
+        SpreadsheetVersion ss = sheet.getWorkbook().getSpreadsheetVersion();
         int lastValidRow = ss.getLastRowIndex();
         int lastValidCol = ss.getLastColumnIndex();
         for (Entry<CellAddress, Map<String, Object>> entry : _propertyTemplate.entrySet()) {
@@ -499,18 +497,12 @@ public final class PropertyTemplate {
     /**
      * Sets the color for a group of cell borders for a cell range. The borders
      * are not applied to the cells at this time, just the template is drawn. If
-     * the borders do not exist, a BORDER_THIN border is used. To apply the
+     * the borders do not exist, a {@link BorderStyle#THIN} border is used. To apply the
      * drawn borders to a sheet, use {@link #applyBorders}.
      *
-     * @param range
-     *            - range of cells on which colors are
-     *            set.
-     * @param color
-     *            - Color index from {@link IndexedColors} used to draw the
-     *            borders.
-     * @param extent
-     *            - of the borders for which
-     *            colors are set.
+     * @param range  range of cells on which colors are set.
+     * @param color  Color index from {@link IndexedColors} used to draw the borders.
+     * @param extent  Extent of the borders for which colors are set.
      */
     public void drawBorderColors(CellRangeAddress range, short color, Extent extent) {
         switch (extent) {
@@ -566,12 +558,8 @@ public final class PropertyTemplate {
      * Sets the color of the top border for a range of cells.
      * </p>
      *
-     * @param range
-     *            - range of cells on which colors are
-     *            set.
-     * @param color
-     *            - Color index from {@link IndexedColors} used to draw the
-     *            borders.
+     * @param range  range of cells on which colors are set.
+     * @param color  Color index from {@link IndexedColors} used to draw the borders.
      */
     private void drawTopBorderColor(CellRangeAddress range, short color) {
         int row = range.getFirstRow();
@@ -591,12 +579,8 @@ public final class PropertyTemplate {
      * Sets the color of the bottom border for a range of cells.
      * </p>
      *
-     * @param range
-     *            - range of cells on which colors are
-     *            set.
-     * @param color
-     *            - Color index from {@link IndexedColors} used to draw the
-     *            borders.
+     * @param range  range of cells on which colors are set.
+     * @param color  Color index from {@link IndexedColors} used to draw the borders.
      */
     private void drawBottomBorderColor(CellRangeAddress range, short color) {
         int row = range.getLastRow();
@@ -616,12 +600,8 @@ public final class PropertyTemplate {
      * Sets the color of the left border for a range of cells.
      * </p>
      *
-     * @param range
-     *            - range of cells on which colors are
-     *            set.
-     * @param color
-     *            - Color index from {@link IndexedColors} used to draw the
-     *            borders.
+     * @param range  range of cells on which colors are set.
+     * @param color  Color index from {@link IndexedColors} used to draw the borders.
      */
     private void drawLeftBorderColor(CellRangeAddress range, short color) {
         int firstRow = range.getFirstRow();
@@ -639,15 +619,11 @@ public final class PropertyTemplate {
     /**
      * <p>
      * Sets the color of the right border for a range of cells. If the border is
-     * not drawn, it defaults to BORDER_THIN
+     * not drawn, it defaults to {@link BorderStyle#THIN}
      * </p>
      *
-     * @param range
-     *            - range of cells on which colors are
-     *            set.
-     * @param color
-     *            - Color index from {@link IndexedColors} used to draw the
-     *            borders.
+     * @param range  range of cells on which colors are set.
+     * @param color  Color index from {@link IndexedColors} used to draw the borders.
      */
     private void drawRightBorderColor(CellRangeAddress range, short color) {
         int firstRow = range.getFirstRow();
@@ -667,15 +643,9 @@ public final class PropertyTemplate {
      * Sets the color of the outside borders for a range of cells.
      * </p>
      *
-     * @param range
-     *            - range of cells on which colors are
-     *            set.
-     * @param color
-     *            - Color index from {@link IndexedColors} used to draw the
-     *            borders.
-     * @param extent
-     *            - of the borders for which
-     *            colors are set. Valid Values are:
+     * @param range  range of cells on which colors are set.
+     * @param color  Color index from {@link IndexedColors} used to draw the borders.
+     * @param extent  Extent of the borders for which colors are set. Valid Values are:
      *            <ul>
      *            <li>Extent.ALL</li>
      *            <li>Extent.HORIZONTAL</li>
@@ -707,15 +677,9 @@ public final class PropertyTemplate {
      * Sets the color of the horizontal borders for a range of cells.
      * </p>
      *
-     * @param range
-     *            - range of cells on which colors are
-     *            set.
-     * @param color
-     *            - Color index from {@link IndexedColors} used to draw the
-     *            borders.
-     * @param extent
-     *            - of the borders for which
-     *            colors are set. Valid Values are:
+     * @param range  range of cells on which colors are set.
+     * @param color  Color index from {@link IndexedColors} used to draw the borders.
+     * @param extent  Extent of the borders for which colors are set. Valid Values are:
      *            <ul>
      *            <li>Extent.ALL</li>
      *            <li>Extent.INSIDE</li>
@@ -750,15 +714,9 @@ public final class PropertyTemplate {
      * Sets the color of the vertical borders for a range of cells.
      * </p>
      *
-     * @param range
-     *            - range of cells on which colors are
-     *            set.
-     * @param color
-     *            - Color index from {@link IndexedColors} used to draw the
-     *            borders.
-     * @param extent
-     *            - Extent of the borders for which
-     *            colors are set. Valid Values are:
+     * @param range  range of cells on which colors are set.
+     * @param color  Color index from {@link IndexedColors} used to draw the borders.
+     * @param extent  Extent of the borders for which colors are set. Valid Values are:
      *            <ul>
      *            <li>Extent.ALL</li>
      *            <li>Extent.INSIDE</li>
@@ -792,7 +750,7 @@ public final class PropertyTemplate {
      * Removes all border properties from this PropertyTemplate for the
      * specified range.
      * 
-     * @parm range - range of cells to remove borders.
+     * @param range - range of cells to remove borders.
      */
     private void removeBorderColors(CellRangeAddress range) {
         int firstRow = range.getFirstRow();
