@@ -29,8 +29,8 @@ import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.util.PropertyTemplate;
-import org.apache.poi.ss.util.PropertyTemplate.Extent;
+import org.apache.poi.ss.util.BorderPropertyTemplate;
+import org.apache.poi.ss.util.BorderPropertyTemplate.BorderExtent;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -66,22 +66,22 @@ public class DrawingBorders {
         c.setCellValue("Colored Borders");
 
         // draw borders (three 3x3 grids)
-        PropertyTemplate pt = new PropertyTemplate();
+        BorderPropertyTemplate pt = new BorderPropertyTemplate();
         
         // #1) these borders will all be medium in default color
-        pt.drawBorders(new CellRangeAddress(1, 3, 1, 3), BorderStyle.MEDIUM, Extent.ALL);
+        pt.drawBorders(new CellRangeAddress(1, 3, 1, 3), BorderStyle.MEDIUM, BorderExtent.ALL);
         
         // #2) these cells will have medium outside borders and thin inside borders
-        pt.drawBorders(new CellRangeAddress(5, 7, 1, 3), BorderStyle.MEDIUM, Extent.OUTSIDE);
-        pt.drawBorders(new CellRangeAddress(5, 7, 1, 3), BorderStyle.THIN, Extent.INSIDE);
+        pt.drawBorders(new CellRangeAddress(5, 7, 1, 3), BorderStyle.MEDIUM, BorderExtent.OUTSIDE);
+        pt.drawBorders(new CellRangeAddress(5, 7, 1, 3), BorderStyle.THIN, BorderExtent.INSIDE);
         
         // #3) these cells will all be medium weight with different colors for the
         //     outside, inside horizontal, and inside vertical borders. The center
         //     cell will have no borders.
-        pt.drawBorders(new CellRangeAddress(9, 11, 1, 3), BorderStyle.MEDIUM, IndexedColors.RED.getIndex(), Extent.OUTSIDE);
-        pt.drawBorders(new CellRangeAddress(9, 11, 1, 3), BorderStyle.MEDIUM, IndexedColors.BLUE.getIndex(), Extent.INSIDE_VERTICAL);
-        pt.drawBorders(new CellRangeAddress(9, 11, 1, 3), BorderStyle.MEDIUM, IndexedColors.GREEN.getIndex(), Extent.INSIDE_HORIZONTAL);
-        pt.drawBorders(new CellRangeAddress(10, 10, 2, 2), BorderStyle.NONE, Extent.ALL);
+        pt.drawBorders(new CellRangeAddress(9, 11, 1, 3), BorderStyle.MEDIUM, IndexedColors.RED.getIndex(), BorderExtent.OUTSIDE);
+        pt.drawBorders(new CellRangeAddress(9, 11, 1, 3), BorderStyle.MEDIUM, IndexedColors.BLUE.getIndex(), BorderExtent.INSIDE_VERTICAL);
+        pt.drawBorders(new CellRangeAddress(9, 11, 1, 3), BorderStyle.MEDIUM, IndexedColors.GREEN.getIndex(), BorderExtent.INSIDE_HORIZONTAL);
+        pt.drawBorders(new CellRangeAddress(10, 10, 2, 2), BorderStyle.NONE, BorderExtent.ALL);
 
         // apply borders to sheet
         pt.applyBorders(sh1);
