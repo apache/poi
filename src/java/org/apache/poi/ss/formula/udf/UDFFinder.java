@@ -26,13 +26,13 @@ import org.apache.poi.ss.formula.functions.FreeRefFunction;
  * @author PUdalau
  */
 public interface UDFFinder {
-	public static final UDFFinder DEFAULT = new AggregatingUDFFinder(AnalysisToolPak.instance);
+    public static final UDFFinder DEFAULT = new AggregatingUDFFinder(AnalysisToolPak.instance);
 
-	/**
-	 * Returns executor by specified name. Returns <code>null</code> if the function name is unknown.
-	 *
-	 * @param name Name of function.
-	 * @return Function executor.
-	 */
-	FreeRefFunction findFunction(String name);
+    /**
+     * Returns executor by specified name. Returns <code>null</code> if the function name is unknown.
+     *
+     * @param name Name of function.
+     * @return Function executor.
+     */
+    FreeRefFunction findFunction(String name);
 }
