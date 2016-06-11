@@ -530,7 +530,6 @@ under the License.
                 <include name="xercesImpl-*.jar"/>
                 <include name="junit-3*"/>
                 <include name="junit-4.11*"/>
-                <include name="findbugs-*-2.0.3*"/>
                 <include name="forbiddenapis-1.*.jar"/>
                 <include name="forbiddenapis-2.0.jar"/>
             </fileset>
