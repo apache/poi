@@ -17,28 +17,36 @@
 
 package org.apache.poi.hssf.model;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+
+import java.io.IOException;
 
 import org.apache.poi.hssf.record.CountryRecord;
 import org.apache.poi.hssf.record.FontRecord;
 import org.apache.poi.hssf.record.RecalcIdRecord;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.usermodel.TestHSSFWorkbook;
-import org.apache.poi.ss.formula.udf.UDFFinder;
-import org.apache.poi.ss.formula.udf.DefaultUDFFinder;
-import org.apache.poi.ss.formula.udf.AggregatingUDFFinder;
-import org.apache.poi.ss.formula.functions.FreeRefFunction;
-import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.OperationEvaluationContext;
+import org.apache.poi.ss.formula.eval.ValueEval;
+import org.apache.poi.ss.formula.functions.FreeRefFunction;
+import org.apache.poi.ss.formula.udf.AggregatingUDFFinder;
+import org.apache.poi.ss.formula.udf.DefaultUDFFinder;
+import org.apache.poi.ss.formula.udf.UDFFinder;
+import org.junit.Test;
 
 /**
  * Unit test for the Workbook class.
- *
- * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class TestWorkbook extends TestCase {
-	public void testFontStuff() {
-		InternalWorkbook wb = TestHSSFWorkbook.getInternalWorkbook(new HSSFWorkbook());
+public final class TestWorkbook {
+    @Test
+    public void testFontStuff() throws IOException {
+        HSSFWorkbook hwb = new HSSFWorkbook();
+		InternalWorkbook wb = TestHSSFWorkbook.getInternalWorkbook(hwb);
 
 		assertEquals(4, wb.getNumberOfFontRecords());
 		assertEquals(68, wb.getRecords().size());
@@ -90,11 +98,15 @@ public final class TestWorkbook extends TestCase {
 		assertEquals(6, wb.getNumberOfFontRecords());
 		assertEquals(6, wb.getFontIndex(n7));
 		assertEquals(n7, wb.getFontRecordAt(6));
+
+		hwb.close();
 	}
 
-    public void testAddNameX(){
-        InternalWorkbook wb = TestHSSFWorkbook.getInternalWorkbook(new HSSFWorkbook());
-        assertNotNull(wb.getNameXPtg("ISODD", UDFFinder.DEFAULT));
+    @Test
+    public void testAddNameX() throws IOException {
+        HSSFWorkbook hwb = new HSSFWorkbook();
+        InternalWorkbook wb = TestHSSFWorkbook.getInternalWorkbook(hwb);
+        assertNotNull(wb.getNameXPtg("ISODD", UDFFinder.getDefault()));
 
         FreeRefFunction NotImplemented = new FreeRefFunction() {
             public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
@@ -114,9 +126,12 @@ public final class TestWorkbook extends TestCase {
         assertNotNull(wb.getNameXPtg("myFunc2", udff));
 
         assertNull(wb.getNameXPtg("myFunc3", udff));  // myFunc3 is unknown
+
+        hwb.close();
     }
 
-    public void testRecalcId(){
+    @Test
+    public void testRecalcId() throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
         assertFalse(wb.getForceFormulaRecalculation());
 
@@ -139,5 +154,7 @@ public final class TestWorkbook extends TestCase {
         wb.setForceFormulaRecalculation(true); // resets the EngineId flag to zero
         assertEquals(0, record.getEngineId());
         assertFalse(wb.getForceFormulaRecalculation());
+        
+        wb.close();
     }
 }

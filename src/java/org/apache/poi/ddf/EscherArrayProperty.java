@@ -165,7 +165,7 @@ public final class EscherArrayProperty extends EscherComplexProperty implements 
             _complexData = new byte[0];
         } else {
             short numElements = LittleEndian.getShort(data, offset);
-            LittleEndian.getShort(data, offset + 2); // numReserved
+            // LittleEndian.getShort(data, offset + 2); // numReserved
             short sizeOfElements = LittleEndian.getShort(data, offset + 4);
 
             int arraySize = getActualSizeOfElements(sizeOfElements) * numElements;

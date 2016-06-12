@@ -91,15 +91,18 @@ public abstract class BitMaskTextProp extends TextProp implements Cloneable {
 	 */
 	@Override
 	public int getValue() {
-	    int val = dataValue, i = 0;
-		for (int mask : subPropMasks) {
-	        if (!subPropMatches[i++]) {
-	            val &= ~mask;
-	        }
-	    }
-	    return val;
+	    return maskValue(dataValue);
 	}
-	
+
+	private int maskValue(int pVal) {
+        int val = pVal, i = 0;
+        for (int mask : subPropMasks) {
+            if (!subPropMatches[i++]) {
+                val &= ~mask;
+            }
+        }
+        return val;
+	}
 	
 	/**
 	 * Set the value of the text property, and recompute the sub
@@ -125,8 +128,7 @@ public abstract class BitMaskTextProp extends TextProp implements Cloneable {
 	 */
 	public void setValueWithMask(int val, int writeMask) {
 	    setWriteMask(writeMask);
-	    dataValue = val;
-	    dataValue = getValue();
+	    dataValue = maskValue(val);
 	    if (val != dataValue) {
 	        logger.log(POILogger.WARN, "Style properties of '"+getName()+"' don't match mask - output will be sanitized");
 	        if (logger.check(POILogger.DEBUG)) {

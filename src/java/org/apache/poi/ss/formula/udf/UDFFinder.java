@@ -22,12 +22,11 @@ import org.apache.poi.ss.formula.functions.FreeRefFunction;
 
 /**
  * Common interface for "Add-in" libraries and user defined function libraries.
- *
- * @author PUdalau
  */
-public interface UDFFinder {
-    // FIXME: Findbugs error: IC_SUPERCLASS_USES_SUBCLASS_DURING_INITIALIZATION
-    public static final UDFFinder DEFAULT = new AggregatingUDFFinder(AnalysisToolPak.instance);
+public abstract class UDFFinder {
+    public static UDFFinder getDefault() {
+        return new AggregatingUDFFinder(AnalysisToolPak.instance);
+    }
 
     /**
      * Returns executor by specified name. Returns <code>null</code> if the function name is unknown.
@@ -35,5 +34,5 @@ public interface UDFFinder {
      * @param name Name of function.
      * @return Function executor.
      */
-    FreeRefFunction findFunction(String name);
+    public abstract FreeRefFunction findFunction(String name);
 }

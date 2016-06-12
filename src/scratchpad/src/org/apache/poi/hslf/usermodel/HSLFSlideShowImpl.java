@@ -424,7 +424,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
 
 			// If they type (including the bonus 0xF018) is 0, skip it
 			PictureType pt = PictureType.forNativeID(type - 0xF018);
-			if(type == 0 || pt == null) {
+			if (pt == null) {
 				logger.log(POILogger.ERROR, "Problem reading picture: Invalid image type 0, on picture with length " + imgsize + ".\nYou document will probably become corrupted if you save it!");
 				logger.log(POILogger.ERROR, "" + pos);
 			} else {

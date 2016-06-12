@@ -38,6 +38,7 @@ import org.apache.poi.ss.format.CellFormat;
 import org.apache.poi.ss.format.CellFormatResult;
 import org.apache.poi.ss.util.NumberToTextConverter;
 import org.apache.poi.util.LocaleUtil;
+import org.apache.poi.util.SuppressForbidden;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -52,13 +53,15 @@ public class TestDataFormatter {
     private static final double _15_MINUTES = 0.041666667;
 
     @BeforeClass
+    @SuppressForbidden
     public static void setUpClass() {
         // some pre-checks to hunt for a problem in the Maven build
         // these checks ensure that the correct locale is set, so a failure here
         // usually indicates an invalid locale during test-execution
 
         assertFalse(DateUtil.isADateFormat(-1, "_-* #,##0.00_-;-* #,##0.00_-;_-* \"-\"??_-;_-@_-"));
-        assertEquals(Locale.getDefault(), LocaleUtil.getUserLocale());
+        Locale ul = LocaleUtil.getUserLocale();
+        assertTrue(Locale.ROOT.equals(ul) || Locale.getDefault().equals(ul));
         final String textValue = NumberToTextConverter.toText(1234.56);
         assertEquals(-1, textValue.indexOf('E'));
         Object cellValueO = Double.valueOf(1234.56);

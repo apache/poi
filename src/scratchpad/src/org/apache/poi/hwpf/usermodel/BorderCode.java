@@ -133,7 +133,7 @@ public final class BorderCode implements Cloneable {
   }
   
   public void setBorderType(int borderType) {
-    _brcType.setValue(_info, borderType);
+      _info = (short)_brcType.setValue(_info, borderType);
   }
   
   /**
@@ -161,7 +161,7 @@ public final class BorderCode implements Cloneable {
   }
   
   public void setColor(short color) {
-    _ico.setValue(_info2, color);
+      _info2 = (short)_ico.setValue(_info2, color);
   }
   
   /**
@@ -176,7 +176,7 @@ public final class BorderCode implements Cloneable {
   }
   
   public void setSpace(int space) {
-    _dptSpace.setValue(_info2, space);
+      _info2 = (short)_dptSpace.setValue(_info2, space);
   }
   
   /**
@@ -188,7 +188,7 @@ public final class BorderCode implements Cloneable {
   }
   
   public void setShadow(boolean shadow) {
-    _fShadow.setValue(_info2, shadow ? 1 : 0);
+      _info2 = (short)_fShadow.setValue(_info2, shadow ? 1 : 0);
   }
   
   /**
@@ -199,7 +199,7 @@ public final class BorderCode implements Cloneable {
   }
   
   public void setFrame(boolean frame) {
-    _fFrame.setValue(_info2, frame ? 1 : 0);
+      _info2 = (short)_fFrame.setValue(_info2, frame ? 1 : 0);
   }
 
     @Override
