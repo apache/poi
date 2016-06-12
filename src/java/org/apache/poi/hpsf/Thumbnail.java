@@ -22,8 +22,8 @@ import org.apache.poi.util.LittleEndian;
  * <p>Class to manipulate data in the Clipboard Variant ({@link
  * Variant#VT_CF VT_CF}) format.</p>
  *
- * @author Drew Varner (Drew.Varner inOrAround sc.edu)
  * @see SummaryInformation#getThumbnail()
+ * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ms649014(v=vs.85).aspx">Clipboard Operations</a>
  */
 public final class Thumbnail {
 
@@ -116,10 +116,6 @@ public final class Thumbnail {
 
     /**
      * <p>Clipboard Format - Bitmap</p>
-     *
-     * <p>Obsolete, see <a
-     * href="msdn.microsoft.com/library/en-us/dnw98bk/html/clipboardoperations.asp
-     * target="_blank">msdn.microsoft.com/library/en-us/dnw98bk/html/clipboardoperations.asp</a>.</p>
      */
     public static final int CF_BITMAP = 2;
 

@@ -100,7 +100,7 @@ public class PropertyIDMap extends HashMap<Long,String> {
      * document is allowed or whether is should be opened as read-only. It can
      * have the following values:</p>
      *
-     * <table>
+     * <table summary="">
      *  <tbody>
      *   <tr>
      *    <th><p>Value</p></th>

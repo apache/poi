@@ -20,11 +20,9 @@ package org.apache.poi.hssf.record;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Title:        Delta Record (0x0010)<p/>
- * Description:  controls the accuracy of the calculations<p/>
- * REFERENCE:  PG 303 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<p/>
- * @author Andrew C. Oliver (acoliver at apache dot org)
- * @author Jason Height (jheight at chariot dot net dot au)
+ * Title:        Delta Record (0x0010)<p>
+ * Description:  controls the accuracy of the calculations<p>
+ * REFERENCE:  PG 303 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)
  */
 public final class DeltaRecord extends StandardRecord implements Cloneable {
     public final static short sid = 0x0010;

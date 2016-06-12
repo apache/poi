@@ -1075,7 +1075,7 @@ public final class InternalSheet {
      * the column at specified 0-based index. (In this case, an
      * ExtendedFormatRecord index is actually associated with a
      * ColumnInfoRecord which spans 1 or more columns)
-     * <br/>
+     * <p>
      * Returns the index to the default ExtendedFormatRecord (0xF)
      * if no ColumnInfoRecord exists that includes the column
      * index specified.

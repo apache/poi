@@ -33,9 +33,9 @@ import org.apache.poi.util.LittleEndianOutput;
  *               places this is better than others.
  *<P>
  *
- * REFERENCE:  PG 426 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
- * @author Andrew C. Oliver (acoliver at apache dot org)
- * @version 2.0-pre
+ * REFERENCE:  PG 426 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)
+
+ * @since 2.0-pre
  */
 
 public final class ExtendedFormatRecord
@@ -562,8 +562,8 @@ public final class ExtendedFormatRecord
      * <p>Sets whether or not to use the pattern in this XF instead of the
      * parent XF (foreground/background).</p>
      * 
-     * @param pattern <code>true</code> if this XF has a different pattern
-     *        value than its parent,</code> false</code> otherwise.
+     * @param pattern {@code true} if this XF has a different pattern
+     *        value than its parent, {@code false} otherwise.
      * @see #setIndentionOptions(short)
      */
 

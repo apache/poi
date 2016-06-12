@@ -23,10 +23,9 @@ import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 
 /**
- * Title: COLINFO Record (0x007D)<p/>
- * Description:  Defines with width and formatting for a range of columns<p/>
- * REFERENCE:  PG 293 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<p/>
- * @author Andrew C. Oliver (acoliver at apache dot org)
+ * Title: COLINFO Record (0x007D)<p>
+ * Description:  Defines with width and formatting for a range of columns<p>
+ * REFERENCE:  PG 293 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)
  */
 public final class ColumnInfoRecord extends StandardRecord implements Cloneable {
     public static final short sid = 0x007D;

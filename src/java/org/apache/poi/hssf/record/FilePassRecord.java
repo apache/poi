@@ -22,11 +22,9 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Title: File Pass Record (0x002F) <p/>
+ * Title: File Pass Record (0x002F) <p>
  *
  * Description: Indicates that the record after this record are encrypted.
- *
- * @author Jason Height (jheight at chariot dot net dot au)
  */
 public final class FilePassRecord extends StandardRecord implements Cloneable {
 	public static final short sid = 0x002F;

@@ -19,13 +19,11 @@
 package org.apache.poi.hssf.record;
 
 
-import org.apache.poi.util.*;
+import org.apache.poi.util.LittleEndianOutput;
 
 
 /**
- * Record for the bottom margin.<p/>
- * 
- * @author Shawn Laubach (slaubach at apache dot org)
+ * Record for the bottom margin.
  */
 public final class BottomMarginRecord extends StandardRecord implements Margin, Cloneable {
     public final static short sid = 0x29;

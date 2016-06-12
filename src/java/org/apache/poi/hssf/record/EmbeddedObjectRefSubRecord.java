@@ -34,11 +34,9 @@ import org.apache.poi.util.POILogger;
 import org.apache.poi.util.StringUtil;
 
 /**
- * ftPictFmla (0x0009)<br/>
+ * ftPictFmla (0x0009)<p>
  * A sub-record within the OBJ record which stores a reference to an object
  * stored in a separate entry within the OLE2 compound file.
- *
- * @author Daniel Noll
  */
 public final class EmbeddedObjectRefSubRecord extends SubRecord implements Cloneable {
 	private static POILogger logger = POILogFactory.getLogger(EmbeddedObjectRefSubRecord.class);

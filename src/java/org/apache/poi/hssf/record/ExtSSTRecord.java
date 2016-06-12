@@ -24,14 +24,12 @@ import org.apache.poi.util.LittleEndianOutput;
 import java.util.ArrayList;
 
 /**
- * Title:        Extended Static String Table (0x00FF)<p/>
+ * Title:        Extended Static String Table (0x00FF)<p>
  * Description: This record is used for a quick lookup into the SST record. This
  *              record breaks the SST table into a set of buckets. The offsets
  *              to these buckets within the SST record are kept as well as the
- *              position relative to the start of the SST record.
- * REFERENCE:  PG 313 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
- * @author Andrew C. Oliver (acoliver at apache dot org)
- * @author Jason Height (jheight at apache dot org)
+ *              position relative to the start of the SST record.<p>
+ * REFERENCE:  PG 313 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)
  */
 public final class ExtSSTRecord extends ContinuableRecord {
     public final static short sid = 0x00FF;

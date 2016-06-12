@@ -24,11 +24,10 @@ import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.StringUtil;
 
 /**
- * Title:        Font Record (0x0031) <p/>
+ * Title:        Font Record (0x0031) <p>
  * - describes a font in the workbook (index = 0-3,5-infinity - skip 4)<P>
- * Description:  An element in the Font Table<P>
- * REFERENCE:  PG 315 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
- * @author Andrew C. Oliver (acoliver at apache dot org)
+ * Description:  An element in the Font Table<p>
+ * REFERENCE:  PG 315 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)
  */
 public final class FontRecord extends StandardRecord {
 	public final static short     sid                 = 0x0031;                                                 // docs are wrong (0x231 Microsoft Support site article Q184647)

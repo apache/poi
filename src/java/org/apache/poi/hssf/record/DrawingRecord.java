@@ -19,7 +19,7 @@ package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.LittleEndianOutput;
 /**
- * DrawingRecord (0x00EC)<p/>
+ * DrawingRecord (0x00EC)
  */
 public final class DrawingRecord extends StandardRecord implements Cloneable {
     public static final short sid = 0x00EC;

@@ -21,11 +21,9 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Title:        DBCell Record (0x00D7)<p/>
+ * Title:        DBCell Record (0x00D7)<p>
  * Description:  Used by Excel and other MS apps to quickly find rows in the sheets.<P>
- * REFERENCE:  PG 299/440 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
- * @author Andrew C. Oliver (acoliver at apache dot org)
- * @author Jason Height
+ * REFERENCE:  PG 299/440 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)
  */
 public final class DBCellRecord extends StandardRecord implements Cloneable {
     public final static short sid = 0x00D7;

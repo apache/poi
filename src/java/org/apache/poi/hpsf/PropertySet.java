@@ -52,7 +52,7 @@ import org.apache.poi.util.LittleEndian;
  * convenience method {@link #getProperties} returns the properties of
  * a {@link PropertySet}'s {@link Section} (throwing a {@link
  * NoSingleSectionException} if the {@link PropertySet} contains more
- * (or less) than exactly one {@link Section}).</p>
+ * (or less) than exactly one {@link Section}).
  */
 public class PropertySet
 {

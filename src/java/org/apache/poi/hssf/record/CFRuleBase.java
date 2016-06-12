@@ -421,7 +421,7 @@ public abstract class CFRuleBase extends StandardRecord implements Cloneable {
      * TODO - parse conditional format formulas properly i.e. produce tRefN and tAreaN instead of tRef and tArea
      * this call will produce the wrong results if the formula contains any cell references
      * One approach might be to apply the inverse of SharedFormulaRecord.convertSharedFormulas(Stack, int, int)
-     * Note - two extra parameters (rowIx & colIx) will be required. They probably come from one of the Region objects.
+     * Note - two extra parameters (rowIx &amp; colIx) will be required. They probably come from one of the Region objects.
      *
      * @return <code>null</code> if <tt>formula</tt> was null.
      */

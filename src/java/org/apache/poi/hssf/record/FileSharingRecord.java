@@ -21,11 +21,10 @@ import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.StringUtil;
 
 /**
- * Title:        FILESHARING (0x005B) <p/>
+ * Title:        FILESHARING (0x005B) <p>
  * Description:  stores the encrypted readonly for a workbook (write protect) 
- * This functionality is accessed from the options dialog box available when performing 'Save As'.<p/>
- * REFERENCE:  PG 314 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<p/>
- * @author Andrew C. Oliver (acoliver at apache dot org)
+ * This functionality is accessed from the options dialog box available when performing 'Save As'.<p>
+ * REFERENCE:  PG 314 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)
  */
 public final class FileSharingRecord extends StandardRecord implements Cloneable {
 

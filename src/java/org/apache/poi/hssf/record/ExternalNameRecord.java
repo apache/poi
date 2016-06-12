@@ -24,9 +24,7 @@ import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.StringUtil;
 
 /**
- * EXTERNALNAME (0x0023)<p/>
- *
- * @author Josh Micich
+ * EXTERNALNAME (0x0023)
  */
 public final class ExternalNameRecord extends StandardRecord {
 

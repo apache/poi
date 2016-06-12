@@ -21,9 +21,9 @@ import org.apache.poi.ss.formula.constant.ConstantValueParser;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Title:       CRN(0x005A) <p/>
- * Description: This record stores the contents of an external cell or cell range <p/>
- * REFERENCE:   OOO 5.23<p/>
+ * Title:       CRN(0x005A)<p>
+ * Description: This record stores the contents of an external cell or cell range<p>
+ * REFERENCE:   OOO 5.23
  */
 public final class CRNRecord extends StandardRecord {
 	public final static short sid = 0x005A;

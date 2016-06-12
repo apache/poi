@@ -21,14 +21,13 @@ import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * ftEnd (0x0000)<p/>
+ * ftEnd (0x0000)<p>
  * 
- * The end data record is used to denote the end of the subrecords.<p/>
- * 
- * @author Glen Stampoultzis (glens at apache.org)
+ * The end data record is used to denote the end of the subrecords.
  */
 public final class EndSubRecord extends SubRecord implements Cloneable {
-    public final static short sid = 0x0000; // Note - zero sid is somewhat unusual (compared to plain Records)
+    // Note - zero sid is somewhat unusual (compared to plain Records)
+    public final static short sid = 0x0000;
     private static final int ENCODED_SIZE = 0;
 
     public EndSubRecord()

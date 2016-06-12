@@ -43,19 +43,19 @@ import org.apache.poi.util.POILogger;
  * This class is used to aggregate the MSODRAWING and OBJ record
  * combinations.  This is necessary due to the bizare way in which
  * these records are serialized.  What happens is that you get a
- * combination of MSODRAWING -> OBJ -> MSODRAWING -> OBJ records
+ * combination of MSODRAWING -&gt; OBJ -&gt; MSODRAWING -&gt; OBJ records
  * but the escher records are serialized _across_ the MSODRAWING
  * records.
- * <p/>
+ * <p>
  * It gets even worse when you start looking at TXO records.
- * <p/>
+ * <p>
  * So what we do with this class is aggregate lazily.  That is
- * we don't aggregate the MSODRAWING -> OBJ records unless we
+ * we don't aggregate the MSODRAWING -&gt; OBJ records unless we
  * need to modify them.
- * <p/>
+ * <p>
  * At first document contains 4 types of records which belong to drawing layer.
  * There are can be such sequence of record:
- * <p/>
+ * <p>
  * DrawingRecord
  * ContinueRecord
  * ...
@@ -69,18 +69,16 @@ import org.apache.poi.util.POILogger;
  * NoteRecord
  * ...
  * NoteRecord
- * <p/>
+ * <p>
  * To work with shapes we have to read data from Drawing and Continue records into single array of bytes and
  * build escher(office art) records tree from this array.
  * Each shape in drawing layer matches corresponding ObjRecord
  * Each textbox matches corresponding TextObjectRecord
- * <p/>
+ * <p>
  * ObjRecord contains information about shape. Thus each ObjRecord corresponds EscherContainerRecord(SPGR)
- * <p/>
+ * <p>
  * EscherAggrefate contains also NoteRecords
  * NoteRecords must be serial
- *
- * @author Glen Stampoultzis (glens at apache.org)
  */
 
 public final class EscherAggregate extends AbstractEscherHolderRecord {
@@ -368,7 +366,7 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
     /**
      * Collapses the drawing records into an aggregate.
      * read Drawing, Obj, TxtObj, Note and Continue records into single byte array,
-     * create Escher tree from byte array, create map <EscherRecord, Record>
+     * create Escher tree from byte array, create map &lt;EscherRecord, Record&gt;
      *
      * @param records - list of all records inside sheet
      * @param locFirstDrawingRecord - location of the first DrawingRecord inside sheet
@@ -773,7 +771,7 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
     /**
      * @return unmodifiable copy of the mapping  of {@link EscherClientDataRecord} and {@link EscherTextboxRecord}
      * to their {@link TextObjectRecord} or {@link ObjRecord} .
-     * <p/>
+     * <p>
      * We need to access it outside of EscherAggregate when building shapes
      */
     public Map<EscherRecord, Record> getShapeToObjMapping() {

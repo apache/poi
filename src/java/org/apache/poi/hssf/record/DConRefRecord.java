@@ -52,8 +52,8 @@ import org.apache.poi.util.StringUtil;
  * Where
  * <ul>
  * <li><code>DConFile.h = 0x00</code> if the characters in<code>rgb</code> are single byte, and
- * <code>DConFile.h = 0x01</code> if they are double byte. <br/>
- * If they are double byte, then<br/>
+ * <code>DConFile.h = 0x01</code> if they are double byte.<p>
+ * If they are double byte, then
  * <ul>
  * <li> If it exists, the length of <code>DConRef.un = 2</code>. Otherwise it is 1.
  * <li> The length of <code>DConFile.rgb = (2 * DConRef.cch)</code>. Otherwise it is equal to
@@ -64,8 +64,6 @@ import org.apache.poi.util.StringUtil;
  * </ul>
  *
  * At the moment this class is read-only.
- *
- * @author Niklas Rehfeld
  */
 public class DConRefRecord extends StandardRecord
 {

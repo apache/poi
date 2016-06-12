@@ -24,11 +24,9 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * ARRAY (0x0221)<p/>
+ * ARRAY (0x0221)<p>
  *
  * Treated in a similar way to SharedFormulaRecord
- *
- * @author Josh Micich
  */
 public final class ArrayRecord extends SharedValueRecordBase implements Cloneable {
 
