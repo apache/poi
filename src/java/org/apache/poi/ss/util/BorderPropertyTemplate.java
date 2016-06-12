@@ -584,7 +584,7 @@ public final class BorderPropertyTemplate {
         for (int i = firstCol; i <= lastCol; i++) {
             CellAddress cell = new CellAddress(row, i);
             // if BORDER_TOP is not set on BorderPropertyTemplate, make a thin border so that there's something to color
-            if (borderIsNotSetOrBlank(cell, CellUtil.BORDER_TOP)) {
+            if (borderIsNotSet(cell, CellUtil.BORDER_TOP)) {
                 drawTopBorder(new CellRangeAddress(row, row, i, i), BorderStyle.THIN);
             }
             addProperty(cell, CellUtil.TOP_BORDER_COLOR, color);
@@ -606,7 +606,7 @@ public final class BorderPropertyTemplate {
         for (int i = firstCol; i <= lastCol; i++) {
             CellAddress cell = new CellAddress(row, i);
             // if BORDER_BOTTOM is not set on BorderPropertyTemplate, make a thin border so that there's something to color
-            if (borderIsNotSetOrBlank(cell, CellUtil.BORDER_BOTTOM)) {
+            if (borderIsNotSet(cell, CellUtil.BORDER_BOTTOM)) {
                 drawBottomBorder(new CellRangeAddress(row, row, i, i), BorderStyle.THIN);
             }
             addProperty(cell, CellUtil.BOTTOM_BORDER_COLOR, color);
@@ -628,7 +628,7 @@ public final class BorderPropertyTemplate {
         for (int i = firstRow; i <= lastRow; i++) {
             CellAddress cell = new CellAddress(i, col);
             // if BORDER_LEFT is not set on BorderPropertyTemplate, make a thin border so that there's something to color
-            if (borderIsNotSetOrBlank(cell, CellUtil.BORDER_LEFT)) {
+            if (borderIsNotSet(cell, CellUtil.BORDER_LEFT)) {
                 drawLeftBorder(new CellRangeAddress(i, i, col, col), BorderStyle.THIN);
             }
             addProperty(cell, CellUtil.LEFT_BORDER_COLOR, color);
@@ -639,7 +639,7 @@ public final class BorderPropertyTemplate {
      * A helper method to set the border line style before setting the color if the
      * current line style is not set or is set as NONE
      */
-    private boolean borderIsNotSetOrBlank(CellAddress cell, String borderDirection) {
+    private boolean borderIsNotSet(CellAddress cell, String borderDirection) {
         Object borderLineStyle = getTemplateProperty(cell, borderDirection);
         return (borderLineStyle == null);
     }
@@ -660,7 +660,7 @@ public final class BorderPropertyTemplate {
         for (int i = firstRow; i <= lastRow; i++) {
             CellAddress cell = new CellAddress(i, col);
             // if BORDER_RIGHT is not set on BorderPropertyTemplate, make a thin border so that there's something to color
-            if (borderIsNotSetOrBlank(cell, CellUtil.BORDER_RIGHT)) {
+            if (borderIsNotSet(cell, CellUtil.BORDER_RIGHT)) {
                 drawRightBorder(new CellRangeAddress(i, i, col, col), BorderStyle.THIN);
             }
             addProperty(cell, CellUtil.RIGHT_BORDER_COLOR, color);
