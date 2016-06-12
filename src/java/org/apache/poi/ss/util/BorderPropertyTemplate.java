@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
@@ -40,17 +39,20 @@ import org.apache.poi.util.Beta;
  * draw all the borders for a single sheet. That template can be applied to any
  * sheet in any workbook.
  * 
+ * <p>
  * This class requires the full spreadsheet to be in memory so
- * {@link SWorkbook} Spreadsheets are not supported. The same
- * BorderPropertyTemplate can, however, be applied to both
- * {@link org.apache.poi.hssf.usermodel.HSSFWorkbook}, and Workbook objects
- * if necessary. Portions of the border that fall outside the max range of the
- * {@link HSSFWorkbook} sheet are ignored.
+ * {@link org.apache.poi.xssf.streaming.SXSSFWorkbook} spreadsheets may not work. The same
+ * BorderPropertyTemplate can be reused on different types of workbooks, such as
+ * {@link org.apache.poi.hssf.usermodel.HSSFWorkbook} and
+ * {@link org.apache.poi.xssf.usermodel.XSSFWorkbook} instances.
+ * Portions of the border that fall outside the max range of the
+ * sheet are ignored.
  * </p>
  * 
  * <p>
  * This may be merged with {@link RegionUtil} in the future.
  * </p>
+ * @since 3.15 beta 2
  */
 @Beta
 public final class BorderPropertyTemplate {
@@ -60,6 +62,7 @@ public final class BorderPropertyTemplate {
      * Note that the Border BorderExtent differs from a BorderStyle. A BorderStyle 
      * refers to the border around a single cell while a BorderExtent refers to
      * borders around and through an area of cells.
+     * @since 3.15 beta 2
      */
     public enum BorderExtent {
         /**
@@ -181,7 +184,8 @@ public final class BorderPropertyTemplate {
     private final Map<CellAddress, Map<String, Object>> _propertyTemplate;
 
     /**
-     *
+     * Create a new Border Property Template to stage border formatting changes to a spreadsheet
+     * @since 3.15 beta 2
      */
     public BorderPropertyTemplate() {
         _propertyTemplate = new HashMap<CellAddress, Map<String, Object>>();
@@ -195,6 +199,7 @@ public final class BorderPropertyTemplate {
      * @param range  range of cells on which borders are drawn.
      * @param borderType Type of border to draw.
      * @param extent  BorderExtent of the borders to be applied.
+     * @since 3.15 beta 2
      */
     public void drawBorders(CellRangeAddress range, BorderStyle borderType, BorderExtent extent) {
         switch (extent) {
@@ -254,6 +259,7 @@ public final class BorderPropertyTemplate {
      * @param borderType  Type of border to draw.
      * @param color  Color index from {@link IndexedColors} used to draw the borders.
      * @param extent  BorderExtent of the borders to be applied.
+     * @since 3.15 beta 2
      */
     public void drawBorders(CellRangeAddress range, BorderStyle borderType, short color, BorderExtent extent) {
         drawBorders(range, borderType, extent);
@@ -477,6 +483,7 @@ public final class BorderPropertyTemplate {
      * {@link #drawBorderColors} methods.
      *
      * @param sheet  Sheet on which to apply borders
+     * @since 3.15 beta 2
      */
     public void applyBorders(Sheet sheet) {
         SpreadsheetVersion ss = sheet.getWorkbook().getSpreadsheetVersion();
@@ -487,9 +494,9 @@ public final class BorderPropertyTemplate {
             int r = cellAddress.getRow();
             int c = cellAddress.getColumn();
             if (r <= lastValidRow && c <= lastValidCol) {
-                Map<String, Object> properties = entry.getValue();
                 Row row = CellUtil.getRow(r, sheet);
                 Cell cell = CellUtil.getCell(row, c);
+                Map<String, Object> properties = entry.getValue();
                 CellUtil.setCellStyleProperties(cell, properties);
             }
         }
@@ -504,6 +511,7 @@ public final class BorderPropertyTemplate {
      * @param range  range of cells on which colors are set.
      * @param color  Color index from {@link IndexedColors} used to draw the borders.
      * @param extent  BorderExtent of the borders for which colors are set.
+     * @since 3.15 beta 2
      */
     public void drawBorderColors(CellRangeAddress range, short color, BorderExtent extent) {
         switch (extent) {
@@ -806,6 +814,7 @@ public final class BorderPropertyTemplate {
      * Retrieves the number of borders assigned to a cell (a value between 0 and 4)
      *
      * @param cell the cell to count the number of borders on
+     * @since 3.15 beta 2
      */
     public int getNumBorders(CellAddress cell) {
         Map<String, Object> cellProperties = _propertyTemplate.get(cell);
@@ -826,6 +835,7 @@ public final class BorderPropertyTemplate {
      *
      * @param row
      * @param col
+     * @since 3.15 beta 2
      */
     public int getNumBorders(int row, int col) {
         return getNumBorders(new CellAddress(row, col));
@@ -835,6 +845,7 @@ public final class BorderPropertyTemplate {
      * Retrieves the number of border colors assigned to a cell
      *
      * @param cell
+     * @since 3.15 beta 2
      */
     public int getNumBorderColors(CellAddress cell) {
         Map<String, Object> cellProperties = _propertyTemplate.get(cell);
@@ -853,8 +864,9 @@ public final class BorderPropertyTemplate {
     /**
      * Retrieves the number of border colors assigned to a cell
      *
-     * @param row
-     * @param col
+     * @param row  The row number of the cell to get the number of border colors from.
+     * @param col  The column number of the cell to get the number of border colors from.
+     * @since 3.15 beta 2
      */
     public int getNumBorderColors(int row, int col) {
         return getNumBorderColors(new CellAddress(row, col));
@@ -863,8 +875,10 @@ public final class BorderPropertyTemplate {
     /**
      * Retrieves the border style for a given cell
      * 
-     * @param cell
-     * @param property
+     * @param cell      The cell to get a template property from.
+     * @param property  The template property to get from the BorderPropertyTemplate. Example: {@link CellUtil#BORDER_TOP}.
+     * @return          The stored template property. If property has not be set on the BorderPropertyTemplate, returns <code>null</code>.
+     * @since 3.15 beta 2
      */
     public Object getTemplateProperty(CellAddress cell, String property) {
         Map<String, Object> cellProperties = _propertyTemplate.get(cell);
@@ -877,9 +891,10 @@ public final class BorderPropertyTemplate {
     /**
      * Retrieves the border style for a given cell
      * 
-     * @param row
-     * @param col
-     * @param property
+     * @param row  The row number of the cell to get a template property from.
+     * @param col  The column number of the cell to get a template property from.
+     * @param property the template property to get from the BorderPropertyTemplate. Example: {@link CellUtil#BORDER_TOP}.
+     * @since 3.15 beta 2
      */
     public Object getTemplateProperty(int row, int col, String property) {
         return getTemplateProperty(new CellAddress(row, col), property);
