@@ -36,9 +36,6 @@ import org.apache.poi.util.LittleEndianConsts;
  *
  * <p>Please be aware that this class' functionality will be merged into the
  * {@link PropertySet} class at a later time, so the API will change.</p>
- *
- * @author Rainer Klute <a
- * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
  */
 public class MutablePropertySet extends PropertySet
 {

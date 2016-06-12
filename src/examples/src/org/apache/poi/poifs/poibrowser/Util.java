@@ -23,9 +23,6 @@ import javax.swing.*;
 /**
  * <p>Contains various (well, just one at the moment) static utility
  * methods.</p>
- *
- * @author Rainer Klute <a
- * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
  */
 public class Util {
 

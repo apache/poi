@@ -43,9 +43,6 @@ import org.apache.poi.util.POILogger;
  * output stream.</p></li>
  *
  * </ul>
- *
- * @author Rainer Klute <a
- * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
  */
 public class VariantSupport extends Variant
 {

@@ -21,8 +21,6 @@ import org.apache.poi.poifs.filesystem.POIFSDocumentPath;
 
 /**
  * <p>A POI file just for testing.</p>
- *
- * @author Rainer Klute (klute@rainer-klute.de)
  */
 public class POIFile
 {

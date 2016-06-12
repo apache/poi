@@ -68,9 +68,6 @@ import org.apache.poi.util.TempFile;
  * streams, however, are compared logically: they must have the same sections
  * with the same attributs, and the sections must contain the same properties.
  * Details like the ordering of the properties do not matter.</p>
- *
- * @author Rainer Klute <a
- * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
  */
 public class CopyCompare
 {

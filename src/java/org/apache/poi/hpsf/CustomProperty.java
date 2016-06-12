@@ -22,9 +22,6 @@ package org.apache.poi.hpsf;
  * information stream. The difference to normal properties is that custom
  * properties have an optional name. If the name is not <code>null</code> it
  * will be maintained in the section's dictionary.</p>
- * 
- * @author Rainer Klute <a
- *         href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
  */
 public class CustomProperty extends MutableProperty
 {

@@ -24,9 +24,6 @@ import org.apache.poi.util.LittleEndian;
 
 /**
  * <p>Class for writing little-endian data and more.</p>
- *
- * @author Rainer Klute <a
- * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
  */
 public class TypeWriter
 {

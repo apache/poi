@@ -37,9 +37,6 @@ import org.apache.poi.poifs.eventfilesystem.POIFSReader;
  * JTree}. Specify their filenames on the command line!</p>
  *
  * @see POIFSReader
- *
- * @author Rainer Klute <a
- * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
  */
 @SuppressWarnings("serial")
 public class POIBrowser extends JFrame

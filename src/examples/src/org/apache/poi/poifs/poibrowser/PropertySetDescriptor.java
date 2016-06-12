@@ -30,8 +30,6 @@ import org.apache.poi.poifs.filesystem.POIFSDocumentPath;
 /**
  * <p>Describes the most important (whatever that is) features of a
  * stream containing a {@link PropertySet}.</p>
- *
- * @author Rainer Klute (klute@rainer-klute.de)
  */
 public class PropertySetDescriptor extends DocumentDescriptor
 {

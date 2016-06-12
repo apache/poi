@@ -33,9 +33,6 @@ import java.util.*;
  * for the {@link Object} class, rendering is always possible. The
  * default {@link Object} renderer can be replaced by another renderer
  * but it cannot be unregistered.</p>
- *
- * @author Rainer Klute <a
- * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
  */
 public class ExtendableTreeCellRenderer implements TreeCellRenderer
 {

@@ -53,10 +53,6 @@ import org.apache.poi.util.LittleEndian;
  * a {@link PropertySet}'s {@link Section} (throwing a {@link
  * NoSingleSectionException} if the {@link PropertySet} contains more
  * (or less) than exactly one {@link Section}).</p>
- *
- * @author Rainer Klute <a
- * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
- * @author Drew Varner (Drew.Varner hanginIn sc.edu)
  */
 public class PropertySet
 {
