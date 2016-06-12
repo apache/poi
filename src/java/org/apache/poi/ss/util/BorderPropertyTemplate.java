@@ -198,9 +198,10 @@ public final class BorderPropertyTemplate {
     }
 
     /**
-     * Draws a group of cell borders for a cell range. The borders are not
-     * applied to the cells at this time, just the template is drawn. To apply
-     * the drawn borders to a sheet, use {@link #applyBorders}.
+     * Add a group of cell borders for a cell range to the border property template.
+     * The borders are not applied to the cells at this time, just the template is drawn
+     * (<code>drawBorders</code> stages changes using the border property template).
+     * To apply the drawn borders to a sheet, use {@link #applyBorders}.
      * 
      * @param range  range of cells on which borders are drawn.
      * @param borderType Type of border to draw.
@@ -209,57 +210,58 @@ public final class BorderPropertyTemplate {
      */
     public void drawBorders(CellRangeAddress range, BorderStyle borderType, BorderExtent extent) {
         switch (extent) {
-        case NONE:
-            removeBorders(range);
-            break;
-        case ALL:
-            drawHorizontalBorders(range, borderType, BorderExtent.ALL);
-            drawVerticalBorders(range, borderType, BorderExtent.ALL);
-            break;
-        case INSIDE:
-            drawHorizontalBorders(range, borderType, BorderExtent.INSIDE);
-            drawVerticalBorders(range, borderType, BorderExtent.INSIDE);
-            break;
-        case OUTSIDE:
-            drawOutsideBorders(range, borderType, BorderExtent.ALL);
-            break;
-        case TOP:
-            drawTopBorder(range, borderType);
-            break;
-        case BOTTOM:
-            drawBottomBorder(range, borderType);
-            break;
-        case LEFT:
-            drawLeftBorder(range, borderType);
-            break;
-        case RIGHT:
-            drawRightBorder(range, borderType);
-            break;
-        case HORIZONTAL:
-            drawHorizontalBorders(range, borderType, BorderExtent.ALL);
-            break;
-        case INSIDE_HORIZONTAL:
-            drawHorizontalBorders(range, borderType, BorderExtent.INSIDE);
-            break;
-        case OUTSIDE_HORIZONTAL:
-            drawOutsideBorders(range, borderType, BorderExtent.HORIZONTAL);
-            break;
-        case VERTICAL:
-            drawVerticalBorders(range, borderType, BorderExtent.ALL);
-            break;
-        case INSIDE_VERTICAL:
-            drawVerticalBorders(range, borderType, BorderExtent.INSIDE);
-            break;
-        case OUTSIDE_VERTICAL:
-            drawOutsideBorders(range, borderType, BorderExtent.VERTICAL);
-            break;
+            case NONE:
+                removeBorders(range);
+                break;
+            case ALL:
+                drawHorizontalBorders(range, borderType, BorderExtent.ALL);
+                drawVerticalBorders(range, borderType, BorderExtent.ALL);
+                break;
+            case INSIDE:
+                drawHorizontalBorders(range, borderType, BorderExtent.INSIDE);
+                drawVerticalBorders(range, borderType, BorderExtent.INSIDE);
+                break;
+            case OUTSIDE:
+                drawOutsideBorders(range, borderType, BorderExtent.ALL);
+                break;
+            case TOP:
+                drawTopBorder(range, borderType);
+                break;
+            case BOTTOM:
+                drawBottomBorder(range, borderType);
+                break;
+            case LEFT:
+                drawLeftBorder(range, borderType);
+                break;
+            case RIGHT:
+                drawRightBorder(range, borderType);
+                break;
+            case HORIZONTAL:
+                drawHorizontalBorders(range, borderType, BorderExtent.ALL);
+                break;
+            case INSIDE_HORIZONTAL:
+                drawHorizontalBorders(range, borderType, BorderExtent.INSIDE);
+                break;
+            case OUTSIDE_HORIZONTAL:
+                drawOutsideBorders(range, borderType, BorderExtent.HORIZONTAL);
+                break;
+            case VERTICAL:
+                drawVerticalBorders(range, borderType, BorderExtent.ALL);
+                break;
+            case INSIDE_VERTICAL:
+                drawVerticalBorders(range, borderType, BorderExtent.INSIDE);
+                break;
+            case OUTSIDE_VERTICAL:
+                drawOutsideBorders(range, borderType, BorderExtent.VERTICAL);
+                break;
         }
     }
 
     /**
-     * Draws a group of cell borders for a cell range. The borders are not
-     * applied to the cells at this time, just the template is drawn. To apply
-     * the drawn borders to a sheet, use {@link #applyBorders}.
+     * Add a group of cell borders and colors for a cell range to the border property template.
+     * The borders are not applied to the cells at this time, just the template is drawn
+     * (<code>drawBorders</code> stages changes using the border property template).
+     * To apply the drawn borders to a sheet, use {@link #applyBorders}.
      * 
      * @param range  range of cells on which borders are drawn.
      * @param borderType  Type of border to draw.
@@ -374,21 +376,23 @@ public final class BorderPropertyTemplate {
      */
     private void drawOutsideBorders(CellRangeAddress range, BorderStyle borderType, BorderExtent extent) {
         switch (extent) {
-        case ALL:
-        case HORIZONTAL:
-        case VERTICAL:
-            if (extent == BorderExtent.ALL || extent == BorderExtent.HORIZONTAL) {
+            case ALL:
                 drawTopBorder(range, borderType);
                 drawBottomBorder(range, borderType);
-            }
-            if (extent == BorderExtent.ALL || extent == BorderExtent.VERTICAL) {
                 drawLeftBorder(range, borderType);
                 drawRightBorder(range, borderType);
-            }
-            break;
-        default:
-            throw new IllegalArgumentException(
-                    "Illegal BorderExtent. Allowed: ALL, HORIZONTAL, and VERTICAL");
+                break;
+            case HORIZONTAL:
+                drawTopBorder(range, borderType);
+                drawBottomBorder(range, borderType);
+                break;
+            case VERTICAL:
+                drawLeftBorder(range, borderType);
+                drawRightBorder(range, borderType);
+                break;
+            default:
+                throw new IllegalArgumentException(
+                        "Illegal BorderExtent. Allowed: ALL, HORIZONTAL, and VERTICAL");
         }
     }
 
@@ -406,25 +410,27 @@ public final class BorderPropertyTemplate {
      *            </ul>
      */
     private void drawHorizontalBorders(CellRangeAddress range, BorderStyle borderType, BorderExtent extent) {
+        int firstRow = range.getFirstRow();
+        int lastRow = range.getLastRow();
+        int firstCol = range.getFirstColumn();
+        int lastCol = range.getLastColumn();
         switch (extent) {
-        case ALL:
-        case INSIDE:
-            int firstRow = range.getFirstRow();
-            int lastRow = range.getLastRow();
-            int firstCol = range.getFirstColumn();
-            int lastCol = range.getLastColumn();
-            for (int i = firstRow; i <= lastRow; i++) {
-                CellRangeAddress row = new CellRangeAddress(i, i, firstCol, lastCol);
-                if (extent == BorderExtent.ALL || i > firstRow) {
+            case ALL:
+                for (int i = firstRow; i <= lastRow; i++) {
+                    CellRangeAddress row = new CellRangeAddress(i, i, firstCol, lastCol);
                     drawTopBorder(row, borderType);
-                }
-                if (extent == BorderExtent.ALL || i < lastRow) {
                     drawBottomBorder(row, borderType);
                 }
-            }
-            break;
-        default:
-            throw new IllegalArgumentException("Illegal BorderExtent. Allowed: ALL and INSIDE");
+                break;
+            case INSIDE:
+                for (int i = firstRow; i <= lastRow; i++) {
+                    CellRangeAddress row = new CellRangeAddress(i, i, firstCol, lastCol);
+                    if (i > firstRow) drawTopBorder(row, borderType);
+                    if (i < lastRow) drawBottomBorder(row, borderType);
+                }
+                break;
+            default:
+                throw new IllegalArgumentException("Illegal BorderExtent. Allowed: ALL and INSIDE");
         }
     }
 
@@ -442,25 +448,27 @@ public final class BorderPropertyTemplate {
      *            </ul>
      */
     private void drawVerticalBorders(CellRangeAddress range, BorderStyle borderType, BorderExtent extent) {
+        int firstRow = range.getFirstRow();
+        int lastRow = range.getLastRow();
+        int firstCol = range.getFirstColumn();
+        int lastCol = range.getLastColumn();
         switch (extent) {
-        case ALL:
-        case INSIDE:
-            int firstRow = range.getFirstRow();
-            int lastRow = range.getLastRow();
-            int firstCol = range.getFirstColumn();
-            int lastCol = range.getLastColumn();
-            for (int i = firstCol; i <= lastCol; i++) {
-                CellRangeAddress row = new CellRangeAddress(firstRow, lastRow, i, i);
-                if (extent == BorderExtent.ALL || i > firstCol) {
+            case ALL:
+                for (int i = firstCol; i <= lastCol; i++) {
+                    CellRangeAddress row = new CellRangeAddress(firstRow, lastRow, i, i);
                     drawLeftBorder(row, borderType);
-                }
-                if (extent == BorderExtent.ALL || i < lastCol) {
                     drawRightBorder(row, borderType);
                 }
-            }
-            break;
-        default:
-            throw new IllegalArgumentException("Illegal BorderExtent. Allowed: ALL and INSIDE");
+                break;
+            case INSIDE:
+                for (int i = firstCol; i <= lastCol; i++) {
+                    CellRangeAddress row = new CellRangeAddress(firstRow, lastRow, i, i);
+                    if (i > firstCol) drawLeftBorder(row, borderType);
+                    if (i < lastCol) drawRightBorder(row, borderType);
+                }
+                break;
+            default:
+                throw new IllegalArgumentException("Illegal BorderExtent. Allowed: ALL and INSIDE");
         }
     }
 
@@ -488,6 +496,12 @@ public final class BorderPropertyTemplate {
      * Applies the drawn borders to a Sheet. The borders that are applied are
      * the ones that have been drawn by the {@link #drawBorders} and
      * {@link #drawBorderColors} methods.
+     * The same border property template can be applied to multiple sheets
+     * from the same or different workbooks.
+     *
+     * If the border property template contains cell addresses outside the valid range
+     * of <code>sheet</code>, borders for those cell addresses are quietly ignored and
+     * not applied to <code>sheet</code>.
      *
      * @param sheet  Sheet on which to apply borders
      * @since 3.15 beta 2
@@ -510,10 +524,11 @@ public final class BorderPropertyTemplate {
     }
 
     /**
-     * Sets the color for a group of cell borders for a cell range. The borders
-     * are not applied to the cells at this time, just the template is drawn. If
-     * the borders do not exist, a {@link BorderStyle#THIN} border is used. To apply the
-     * drawn borders to a sheet, use {@link #applyBorders}.
+     * Sets the color for a group of cell borders for a cell range to the border property template.
+     * The borders are not applied to the cells at this time, just the template is drawn
+     * (<code>drawBorders</code> stages changes using the border property template).
+     * If the borders do not exist, a {@link BorderStyle#THIN} border is used.
+     * To apply the drawn borders to a sheet, use {@link #applyBorders}.
      *
      * @param range  range of cells on which colors are set.
      * @param color  Color index from {@link IndexedColors} used to draw the borders.
@@ -522,50 +537,50 @@ public final class BorderPropertyTemplate {
      */
     public void drawBorderColors(CellRangeAddress range, short color, BorderExtent extent) {
         switch (extent) {
-        case NONE:
-            removeBorderColors(range);
-            break;
-        case ALL:
-            drawHorizontalBorderColors(range, color, BorderExtent.ALL);
-            drawVerticalBorderColors(range, color, BorderExtent.ALL);
-            break;
-        case INSIDE:
-            drawHorizontalBorderColors(range, color, BorderExtent.INSIDE);
-            drawVerticalBorderColors(range, color, BorderExtent.INSIDE);
-            break;
-        case OUTSIDE:
-            drawOutsideBorderColors(range, color, BorderExtent.ALL);
-            break;
-        case TOP:
-            drawTopBorderColor(range, color);
-            break;
-        case BOTTOM:
-            drawBottomBorderColor(range, color);
-            break;
-        case LEFT:
-            drawLeftBorderColor(range, color);
-            break;
-        case RIGHT:
-            drawRightBorderColor(range, color);
-            break;
-        case HORIZONTAL:
-            drawHorizontalBorderColors(range, color, BorderExtent.ALL);
-            break;
-        case INSIDE_HORIZONTAL:
-            drawHorizontalBorderColors(range, color, BorderExtent.INSIDE);
-            break;
-        case OUTSIDE_HORIZONTAL:
-            drawOutsideBorderColors(range, color, BorderExtent.HORIZONTAL);
-            break;
-        case VERTICAL:
-            drawVerticalBorderColors(range, color, BorderExtent.ALL);
-            break;
-        case INSIDE_VERTICAL:
-            drawVerticalBorderColors(range, color, BorderExtent.INSIDE);
-            break;
-        case OUTSIDE_VERTICAL:
-            drawOutsideBorderColors(range, color, BorderExtent.VERTICAL);
-            break;
+            case NONE:
+                removeBorderColors(range);
+                break;
+            case ALL:
+                drawHorizontalBorderColors(range, color, BorderExtent.ALL);
+                drawVerticalBorderColors(range, color, BorderExtent.ALL);
+                break;
+            case INSIDE:
+                drawHorizontalBorderColors(range, color, BorderExtent.INSIDE);
+                drawVerticalBorderColors(range, color, BorderExtent.INSIDE);
+                break;
+            case OUTSIDE:
+                drawOutsideBorderColors(range, color, BorderExtent.ALL);
+                break;
+            case TOP:
+                drawTopBorderColor(range, color);
+                break;
+            case BOTTOM:
+                drawBottomBorderColor(range, color);
+                break;
+            case LEFT:
+                drawLeftBorderColor(range, color);
+                break;
+            case RIGHT:
+                drawRightBorderColor(range, color);
+                break;
+            case HORIZONTAL:
+                drawHorizontalBorderColors(range, color, BorderExtent.ALL);
+                break;
+            case INSIDE_HORIZONTAL:
+                drawHorizontalBorderColors(range, color, BorderExtent.INSIDE);
+                break;
+            case OUTSIDE_HORIZONTAL:
+                drawOutsideBorderColors(range, color, BorderExtent.HORIZONTAL);
+                break;
+            case VERTICAL:
+                drawVerticalBorderColors(range, color, BorderExtent.ALL);
+                break;
+            case INSIDE_VERTICAL:
+                drawVerticalBorderColors(range, color, BorderExtent.INSIDE);
+                break;
+            case OUTSIDE_VERTICAL:
+                drawOutsideBorderColors(range, color, BorderExtent.VERTICAL);
+                break;
         }
     }
 
@@ -683,21 +698,23 @@ public final class BorderPropertyTemplate {
      */
     private void drawOutsideBorderColors(CellRangeAddress range, short color, BorderExtent extent) {
         switch (extent) {
-        case ALL:
-        case HORIZONTAL:
-        case VERTICAL:
-            if (extent == BorderExtent.ALL || extent == BorderExtent.HORIZONTAL) {
+            case ALL:
                 drawTopBorderColor(range, color);
                 drawBottomBorderColor(range, color);
-            }
-            if (extent == BorderExtent.ALL || extent == BorderExtent.VERTICAL) {
                 drawLeftBorderColor(range, color);
                 drawRightBorderColor(range, color);
-            }
-            break;
-        default:
-            throw new IllegalArgumentException(
-                    "Illegal BorderExtent. Allowed: ALL, HORIZONTAL, and VERTICAL");
+                break;
+            case HORIZONTAL:
+                drawTopBorderColor(range, color);
+                drawBottomBorderColor(range, color);
+                break;
+            case VERTICAL:
+                drawLeftBorderColor(range, color);
+                drawRightBorderColor(range, color);
+                break;
+            default:
+                throw new IllegalArgumentException(
+                        "Illegal BorderExtent. Allowed: ALL, HORIZONTAL, and VERTICAL");
         }
     }
 
@@ -715,25 +732,27 @@ public final class BorderPropertyTemplate {
      *            </ul>
      */
     private void drawHorizontalBorderColors(CellRangeAddress range, short color, BorderExtent extent) {
+        int firstRow = range.getFirstRow();
+        int lastRow = range.getLastRow();
+        int firstCol = range.getFirstColumn();
+        int lastCol = range.getLastColumn();
         switch (extent) {
-        case ALL:
-        case INSIDE:
-            int firstRow = range.getFirstRow();
-            int lastRow = range.getLastRow();
-            int firstCol = range.getFirstColumn();
-            int lastCol = range.getLastColumn();
-            for (int i = firstRow; i <= lastRow; i++) {
-                CellRangeAddress row = new CellRangeAddress(i, i, firstCol, lastCol);
-                if (extent == BorderExtent.ALL || i > firstRow) {
+            case ALL:
+                for (int i = firstRow; i <= lastRow; i++) {
+                    CellRangeAddress row = new CellRangeAddress(i, i, firstCol, lastCol);
                     drawTopBorderColor(row, color);
-                }
-                if (extent == BorderExtent.ALL || i < lastRow) {
                     drawBottomBorderColor(row, color);
                 }
-            }
-            break;
-        default:
-            throw new IllegalArgumentException("Illegal BorderExtent. Allowed: ALL and INSIDE");
+                break;
+            case INSIDE:
+                for (int i = firstRow; i <= lastRow; i++) {
+                    CellRangeAddress row = new CellRangeAddress(i, i, firstCol, lastCol);
+                    if (i > firstRow) drawTopBorderColor(row, color);
+                    if (i < lastRow) drawBottomBorderColor(row, color);
+                }
+                break;
+            default:
+                throw new IllegalArgumentException("Illegal BorderExtent. Allowed: ALL and INSIDE");
         }
     }
 
@@ -751,25 +770,27 @@ public final class BorderPropertyTemplate {
      *            </ul>
      */
     private void drawVerticalBorderColors(CellRangeAddress range, short color, BorderExtent extent) {
+        int firstRow = range.getFirstRow();
+        int lastRow = range.getLastRow();
+        int firstCol = range.getFirstColumn();
+        int lastCol = range.getLastColumn();
         switch (extent) {
-        case ALL:
-        case INSIDE:
-            int firstRow = range.getFirstRow();
-            int lastRow = range.getLastRow();
-            int firstCol = range.getFirstColumn();
-            int lastCol = range.getLastColumn();
-            for (int i = firstCol; i <= lastCol; i++) {
-                CellRangeAddress row = new CellRangeAddress(firstRow, lastRow, i, i);
-                if (extent == BorderExtent.ALL || i > firstCol) {
+            case ALL:
+                for (int i = firstCol; i <= lastCol; i++) {
+                    CellRangeAddress row = new CellRangeAddress(firstRow, lastRow, i, i);
                     drawLeftBorderColor(row, color);
-                }
-                if (extent == BorderExtent.ALL || i < lastCol) {
                     drawRightBorderColor(row, color);
                 }
-            }
-            break;
-        default:
-            throw new IllegalArgumentException("Illegal BorderExtent. Allowed: ALL and INSIDE");
+                break;
+            case INSIDE:
+                for (int i = firstCol; i <= lastCol; i++) {
+                    CellRangeAddress row = new CellRangeAddress(firstRow, lastRow, i, i);
+                    if (i > firstCol) drawLeftBorderColor(row, color);
+                    if (i < lastCol) drawRightBorderColor(row, color);
+                }
+                break;
+            default:
+                throw new IllegalArgumentException("Illegal BorderExtent. Allowed: ALL and INSIDE");
         }
     }
 
