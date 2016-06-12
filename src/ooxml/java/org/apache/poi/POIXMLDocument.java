@@ -16,15 +16,30 @@
 ==================================================================== */
 package org.apache.poi;
 
+import java.io.Closeable;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
-import org.apache.poi.openxml4j.opc.*;
+import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.openxml4j.opc.PackageAccess;
+import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
 import org.apache.poi.poifs.filesystem.DocumentFactoryHelper;
 import org.apache.xmlbeans.impl.common.SystemCache;
 
-import java.io.*;
-import java.util.*;
-
+/**
+ * This holds the common functionality for all POI OOXML Document classes.
+ */
 public abstract class POIXMLDocument extends POIXMLDocumentPart implements Closeable {
     public static final String DOCUMENT_CREATOR = "Apache POI";
 
@@ -52,8 +67,8 @@ public abstract class POIXMLDocument extends POIXMLDocumentPart implements Close
         init(pkg);
     }
     
-    private void init(OPCPackage pkg) {
-        this.pkg = pkg;
+    private void init(OPCPackage p) {
+        this.pkg = p;
         
         // Workaround for XMLBEANS-512 - ensure that when we parse
         //  the file, we start with a fresh XML Parser each time,
@@ -62,18 +77,26 @@ public abstract class POIXMLDocument extends POIXMLDocumentPart implements Close
     }
 
     /**
-     * Wrapper to open a package, returning an IOException
-     *  in the event of a problem.
-     * Works around shortcomings in java's this() constructor calls
+     * Wrapper to open a package, which works around shortcomings in java's this() constructor calls
+     * 
+     * @param path the path to the document
+     * @return the new OPCPackage
+     * 
+     * @exception IOException if there was a problem opening the document
      */
     public static OPCPackage openPackage(String path) throws IOException {
         try {
             return OPCPackage.open(path);
         } catch (InvalidFormatException e) {
-            throw new IOException(e.toString());
+            throw new IOException(e.toString(), e);
         }
     }
 
+    /**
+     * Get the assigned OPCPackage
+     *
+     * @return the assigned OPCPackage
+     */
     public OPCPackage getPackage() {
         return this.pkg;
     }
@@ -83,9 +106,19 @@ public abstract class POIXMLDocument extends POIXMLDocumentPart implements Close
     }
 
     /**
-     * Retrieves all the PackageParts which are defined as
-     *  relationships of the base document with the
-     *  specified content type.
+     * Retrieves all the PackageParts which are defined as relationships of the base document with the
+     * specified content type.
+     * 
+     * @param contentType the content type
+     * 
+     * @return all the base document PackageParts which match the content type
+     * 
+     * @throws InvalidFormatException when the relationships or the parts contain errors
+     * 
+     * @see org.apache.poi.xssf.usermodel.XSSFRelation
+     * @see org.apache.poi.xslf.usermodel.XSLFRelation
+     * @see org.apache.poi.xwpf.usermodel.XWPFRelation
+     * @see org.apache.poi.xdgf.usermodel.XDGFRelation
      */
     protected PackagePart[] getRelatedByType(String contentType) throws InvalidFormatException {
         PackageRelationshipCollection partsC =
@@ -107,10 +140,15 @@ public abstract class POIXMLDocument extends POIXMLDocumentPart implements Close
      * If your InputStream does not support mark / reset,
      *  then wrap it in a PushBackInputStream, then be
      *  sure to always use that, and not the original!
+     *  
      * @param inp An InputStream which supports either mark/reset, or is a PushbackInputStream
+     * @return true, if the InputStream is an ooxml document
+     * 
+     * @throws IOException if the InputStream can't be read
      *
      * @deprecated use the method from DocumentFactoryHelper, deprecated as of 3.15-beta1, therefore eligible for removal in 3.17
      */
+    @Deprecated
     public static boolean hasOOXMLHeader(InputStream inp) throws IOException {
         return DocumentFactoryHelper.hasOOXMLHeader(inp);
     }
@@ -118,6 +156,8 @@ public abstract class POIXMLDocument extends POIXMLDocumentPart implements Close
     /**
      * Get the document properties. This gives you access to the
      *  core ooxml properties, and the extended ooxml properties.
+     *  
+     * @return the document properties
      */
     public POIXMLProperties getProperties() {
         if(properties == null) {
@@ -132,6 +172,10 @@ public abstract class POIXMLDocument extends POIXMLDocumentPart implements Close
 
     /**
      * Get the document's embedded files.
+     * 
+     * @return the document's embedded files
+     * 
+     * @throws OpenXML4JException if the embedded parts can't be determined
      */
     public abstract List<PackagePart> getAllEmbedds() throws OpenXML4JException;
 
@@ -149,7 +193,10 @@ public abstract class POIXMLDocument extends POIXMLDocumentPart implements Close
     /**
      * Closes the underlying {@link OPCPackage} from which this
      *  document was read, if there is one
+     * 
+     * @throws IOException for writable packages, if an IO exception occur during the saving process. 
      */
+    @Override
     public void close() throws IOException {
         if (pkg != null) {
             if (pkg.getPackageAccess() == PackageAccess.READ) {
@@ -172,6 +219,7 @@ public abstract class POIXMLDocument extends POIXMLDocumentPart implements Close
      *
      * @exception IOException if anything can't be written.
      */
+    @SuppressWarnings("resource")
     public final void write(OutputStream stream) throws IOException {
         //force all children to commit their changes into the underlying OOXML Package
         // TODO Shouldn't they be committing to the new one instead?
@@ -182,10 +230,10 @@ public abstract class POIXMLDocument extends POIXMLDocumentPart implements Close
         //save extended and custom properties
         getProperties().commit();
 
-        OPCPackage pkg = getPackage();
-        if(pkg == null) {
+        OPCPackage p = getPackage();
+        if(p == null) {
             throw new IOException("Cannot write data, document seems to have been closed already");
         }
-        pkg.save(stream);
+        p.save(stream);
     }
 }

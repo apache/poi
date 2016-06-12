@@ -46,8 +46,6 @@ import org.apache.poi.util.POILogger;
  * <p>
  * Each POIXMLDocumentPart keeps a reference to the underlying a {@link org.apache.poi.openxml4j.opc.PackagePart}.
  * </p>
- *
- * @author Yegor Kozlov
  */
 public class POIXMLDocumentPart {
     private static final POILogger logger = POILogFactory.getLogger(POIXMLDocumentPart.class);
@@ -80,6 +78,8 @@ public class POIXMLDocumentPart {
         }
         
         /**
+         * @param <T> the cast of the caller to a document sub class
+         * 
          * @return the child document part
          */
         @SuppressWarnings("unchecked")
@@ -110,6 +110,8 @@ public class POIXMLDocumentPart {
 
     /**
      * Construct POIXMLDocumentPart representing a "core document" package part.
+     * 
+     * @param pkg the OPCPackage containing this document
      */
     public POIXMLDocumentPart(OPCPackage pkg) {
         this(pkg, PackageRelationshipTypes.CORE_DOCUMENT);
@@ -117,6 +119,9 @@ public class POIXMLDocumentPart {
 
     /**
      * Construct POIXMLDocumentPart representing a custom "core document" package part.
+     * 
+     * @param pkg the OPCPackage containing this document
+     * @param coreDocumentRel the relation type of this document 
      */
     public POIXMLDocumentPart(OPCPackage pkg, String coreDocumentRel) {
         this(getPartFromOPCPackage(pkg, coreDocumentRel));
@@ -194,6 +199,11 @@ public class POIXMLDocumentPart {
      * When you open something like a theme, call this to
      *  re-base the XML Document onto the core child of the
      *  current core document
+     * 
+     * @param pkg the package to be rebased
+     * 
+     * @throws InvalidFormatException if there was an error in the core document relation 
+     * @throws IllegalStateException if there are more than one core document relations
      */
     protected final void rebase(OPCPackage pkg) throws InvalidFormatException {
         PackageRelationshipCollection cores =
@@ -307,12 +317,13 @@ public class POIXMLDocumentPart {
     /**
      * Add a new child POIXMLDocumentPart
      *
+     * @param id the id of an existing child to replace
      * @param part the child to add
      * 
      * @deprecated in POI 3.14, scheduled for removal in POI 3.16
      */
     @Deprecated
-    public final void addRelation(String id,POIXMLDocumentPart part) {
+    public final void addRelation(String id, POIXMLDocumentPart part) {
         PackageRelationship pr = part.getPackagePart().getRelationship(id);
         addRelation(pr, part);
     }
@@ -323,6 +334,8 @@ public class POIXMLDocumentPart {
      * @param relId the preferred relation id, when null the next free relation id will be used
      * @param relationshipType the package relationship type
      * @param part the child to add
+     * 
+     * @return the new RelationPart
      *
      * @since 3.14-Beta1
      */
@@ -376,6 +389,8 @@ public class POIXMLDocumentPart {
     /**
      * Remove the relation to the specified part in this package and remove the
      * part, if it is no longer needed.
+     * 
+     * @param part the part which relation is to be removed from this document
      */
     protected final void removeRelation(POIXMLDocumentPart part){
         removeRelation(part,true);

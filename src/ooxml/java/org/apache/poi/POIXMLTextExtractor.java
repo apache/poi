@@ -73,7 +73,8 @@ public abstract class POIXMLTextExtractor extends POITextExtractor {
 	 * Returns an OOXML properties text extractor for the
 	 *  document properties metadata, such as title and author.
 	 */
-	public POIXMLPropertiesTextExtractor getMetadataTextExtractor() {
+	@Override
+    public POIXMLPropertiesTextExtractor getMetadataTextExtractor() {
 		return new POIXMLPropertiesTextExtractor(_document);
 	}
 
@@ -81,7 +82,8 @@ public abstract class POIXMLTextExtractor extends POITextExtractor {
 	public void close() throws IOException {
 		// e.g. XSSFEventBaseExcelExtractor passes a null-document
 		if(_document != null) {
-			OPCPackage pkg = _document.getPackage();
+			@SuppressWarnings("resource")
+            OPCPackage pkg = _document.getPackage();
 			if(pkg != null) {
 			    // revert the package to not re-write the file, which is very likely not wanted for a TextExtractor!
 				pkg.revert();
