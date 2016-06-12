@@ -45,8 +45,6 @@ import org.junit.Test;
 
 /**
  * <p>Tests the basic HPSF functionality.</p>
- *
- * @author Rainer Klute (klute@rainer-klute.de)
  */
 public final class TestBasic {
 

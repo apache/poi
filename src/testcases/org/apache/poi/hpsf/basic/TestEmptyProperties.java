@@ -39,9 +39,6 @@ import org.apache.poi.hpsf.Variant;
 /**
  * <p>Test case for OLE2 files with empty properties. An empty property's type
  * is {@link Variant#VT_EMPTY}.</p>
- *
- * @author Rainer Klute <a
- * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
  */
 public final class TestEmptyProperties extends TestCase {
 

@@ -37,9 +37,6 @@ import org.apache.poi.util.HexDump;
  * Call it with the document's file name as command-line parameter.</p>
  *
  * <p>Explanations can be found in the HPSF HOW-TO.</p>
- *
- * @author Rainer Klute <a
- * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
  */
 public class ReadCustomPropertySets
 {

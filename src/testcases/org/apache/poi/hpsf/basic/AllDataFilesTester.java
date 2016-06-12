@@ -27,18 +27,12 @@ import java.util.logging.Logger;
  * <p>Processes a test method for all OLE2 files in the HPSF test data
  * directory. Well, this class does not check whether a file is an OLE2 file but
  * rather whether its name begins with "Test".</p>
- * 
- * @author Rainer Klute <a
- *         href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
  */
 public class AllDataFilesTester {
     private static final POIDataSamples _samples = POIDataSamples.getHPSFInstance();
 
     /**
      * <p>Interface specifying how to run a test on a single file.</p>
-     *
-     * @author Rainer Klute <a
-     * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
      */
     public interface TestTask
     {

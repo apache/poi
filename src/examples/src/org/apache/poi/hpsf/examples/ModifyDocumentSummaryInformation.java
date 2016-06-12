@@ -69,9 +69,6 @@ import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
  * <li><p>Write the POI filesystem back to the original file.</p></li>
  *
  * </ol>
- *
- * @author Rainer Klute <a
- *         href="mailto:klute@rainer-klute.de">klute@rainer-klute.de</a>
  */
 public class ModifyDocumentSummaryInformation {
 

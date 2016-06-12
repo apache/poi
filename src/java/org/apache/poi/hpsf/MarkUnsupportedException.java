@@ -20,9 +20,6 @@ package org.apache.poi.hpsf;
 /**
  * <p>This exception is thrown if an {@link java.io.InputStream} does
  * not support the {@link java.io.InputStream#mark} operation.</p>
- *
- * @author Rainer Klute <a
- * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
  */
 public class MarkUnsupportedException extends HPSFException
 {

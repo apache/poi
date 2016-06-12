@@ -52,9 +52,6 @@ import org.apache.poi.hpsf.wellknown.PropertyIDMap;
  * <p>While this class is roughly HashMap<Long,CustomProperty>, that's the
  *  internal representation. To external calls, it should appear as
  *  HashMap<String,Object> mapping between Names and Custom Property Values.</p>
- *
- * @author Rainer Klute <a
- *         href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
  */
 @SuppressWarnings("serial")
 public class CustomProperties extends HashMap<Object,CustomProperty>

@@ -30,10 +30,6 @@ import org.apache.poi.util.LittleEndian;
 
 /**
  * <p>Represents a section in a {@link PropertySet}.</p>
- *
- * @author Rainer Klute <a
- * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
- * @author Drew Varner (Drew.Varner allUpIn sc.edu)
  */
 public class Section
 {

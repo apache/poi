@@ -30,9 +30,6 @@ import java.util.Map;
  * PropertyIDMap}s. An application that wants to extend these maps
  * should treat them as unmodifiable, copy them and modifiy the
  * copies.</p>
- *
- * @author Rainer Klute <a
- * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
  */
 public class PropertyIDMap extends HashMap<Long,String> {
 

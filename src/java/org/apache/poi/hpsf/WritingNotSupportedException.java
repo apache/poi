@@ -23,9 +23,6 @@ package org.apache.poi.hpsf;
  * 
  * @see ReadingNotSupportedException
  * @see UnsupportedVariantTypeException
- *
- * @author Rainer Klute <a
- * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
  */
 public class WritingNotSupportedException
     extends UnsupportedVariantTypeException

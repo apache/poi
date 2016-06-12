@@ -27,9 +27,6 @@ import org.apache.poi.util.HexDump;
  * <p>{@link TreeCellRenderer} for a {@link DocumentDescriptor}. The
  * renderer is extremly rudimentary since displays only the document's
  * name, its size and its fist few bytes.</p>
- *
- * @author Rainer Klute <a
- * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
  */
 public class DocumentDescriptorRenderer extends DefaultTreeCellRenderer
 {

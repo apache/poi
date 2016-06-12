@@ -23,9 +23,6 @@ import org.apache.poi.poifs.filesystem.*;
 /**
  * <p>Describes the most important (whatever that is) features of a
  * {@link POIFSDocument}.</p>
- *
- * @author Rainer Klute <a
- * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
  */
 public class DocumentDescriptor
 {

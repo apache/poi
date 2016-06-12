@@ -53,9 +53,6 @@ import org.apache.poi.poifs.filesystem.POIFSDocumentPath;
  * as many megabytes, an instance of {@link DocumentDescriptor} is a
  * light-weight object and contains only some meta-information about a
  * document.</p>
- *
- * @author Rainer Klute <a
- * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
  */
 public class TreeReaderListener implements POIFSReaderListener
 {

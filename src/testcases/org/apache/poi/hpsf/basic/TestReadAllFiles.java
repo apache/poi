@@ -33,8 +33,6 @@ import org.apache.poi.hpsf.PropertySetFactory;
  * <p>Tests some HPSF functionality by reading all property sets from all files
  * in the "data" directory. If you want to ensure HPSF can deal with a certain
  * OLE2 file, just add it to the "data" directory and run this test case.</p>
- * 
- * @author Rainer Klute (klute@rainer-klute.de)
  */
 public class TestReadAllFiles extends TestCase {
     private static String[] excludes = new String[] {};

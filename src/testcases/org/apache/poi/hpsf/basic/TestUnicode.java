@@ -36,8 +36,6 @@ import org.apache.poi.util.CodePageUtil;
 /**
  * <p>Tests whether Unicode string can be read from a
  * DocumentSummaryInformation.</p>
- *
- * @author Rainer Klute (klute@rainer-klute.de)
  */
 public class TestUnicode extends TestCase {
 

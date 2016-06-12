@@ -42,8 +42,6 @@ import org.apache.poi.poifs.eventfilesystem.POIFSReaderListener;
 
 /**
  * <p>Static utility methods needed by the HPSF test cases.</p>
- *
- * @author Rainer Klute (klute@rainer-klute.de)
  */
 final class Util {
 

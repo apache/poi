@@ -27,8 +27,6 @@ import org.apache.poi.util.SuppressForbidden;
 
 /**
  * <p>Provides various static utility methods.</p>
- *
- * @author Rainer Klute (klute@rainer-klute.de)
  */
 public class Util
 {

@@ -37,9 +37,6 @@ import org.apache.poi.util.HexDump;
 /**
  * <p>Renders a {@link PropertySetDescriptor} by more or less dumping
  * the stuff into a {@link JTextArea}.</p>
- *
- * @author Rainer Klute <a
- * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
  */
 public class PropertySetDescriptorRenderer extends DocumentDescriptorRenderer
 {

@@ -27,9 +27,6 @@ import org.apache.poi.util.CodePageUtil;
  *
  * <p>Please be aware that this class' functionality will be merged into the
  * {@link Property} class at a later time, so the API will change.</p>
- *
- * @author Rainer Klute <a
- * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
  */
 public class MutableProperty extends Property
 {

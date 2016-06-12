@@ -81,9 +81,6 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  * summary information stream into the output file.</p>
  * 
  * <p>Further explanations can be found in the HPSF HOW-TO.</p>
- *
- * @author Rainer Klute <a
- * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
  */
 public class WriteAuthorAndTitle
 {

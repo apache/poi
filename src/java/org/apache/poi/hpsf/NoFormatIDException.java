@@ -22,9 +22,6 @@ package org.apache.poi.hpsf;
  * but does not have a formatID set (see {@link
  * MutableSection#setFormatID(ClassID)} or
  * {@link org.apache.poi.hpsf.MutableSection#setFormatID(byte[])}. 
- *
- * @author Rainer Klute <a
- * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
  */
 public class NoFormatIDException extends HPSFRuntimeException
 {

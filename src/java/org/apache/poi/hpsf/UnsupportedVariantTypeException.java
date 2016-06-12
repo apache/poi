@@ -25,9 +25,6 @@ import org.apache.poi.util.HexDump;
  * retrieved using the {@link VariantTypeException#getValue} method.</p>
  * 
  * <p>Obviously this class should disappear some day.</p>
- *
- * @author Rainer Klute <a
- * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
  */
 public abstract class UnsupportedVariantTypeException
 extends VariantTypeException

@@ -32,8 +32,6 @@ import java.util.Map;
  * <strong>[T]</strong> - may appear in a TYPEDESC,
  * <strong>[P]</strong> - may appear in an OLE property set,
  * <strong>[S]</strong> - may appear in a Safe Array.</p>
- *
- * @author Rainer Klute (klute@rainer-klute.de)
  */
 public class Variant
 {
