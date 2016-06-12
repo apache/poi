@@ -149,7 +149,7 @@ public class POIXMLPropertiesTextExtractor extends POIXMLTextExtractor {
     * Returns the custom document properties, if
     *  there are any
     */
-   @SuppressWarnings({ "deprecation", "resource" })
+   @SuppressWarnings({ "resource" })
    public String getCustomPropertiesText() {
        POIXMLDocument document = getDocument();
        if(document == null) {  // event based extractor does not have a document
@@ -253,7 +253,8 @@ public class POIXMLPropertiesTextExtractor extends POIXMLTextExtractor {
       return text.toString();
    }
 
-	public String getText() {
+	@Override
+    public String getText() {
 		try {
 			return
 				getCorePropertiesText() +
@@ -264,7 +265,8 @@ public class POIXMLPropertiesTextExtractor extends POIXMLTextExtractor {
 		}
 	}
 
-	public POIXMLPropertiesTextExtractor getMetadataTextExtractor() {
+	@Override
+    public POIXMLPropertiesTextExtractor getMetadataTextExtractor() {
 		throw new IllegalStateException("You already have the Metadata Text Extractor, not recursing!");
 	}
 }

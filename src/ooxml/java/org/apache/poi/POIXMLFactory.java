@@ -16,10 +16,8 @@
 ==================================================================== */
 package org.apache.poi;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
-import org.apache.poi.POIXMLDocumentPart.RelationPart;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
