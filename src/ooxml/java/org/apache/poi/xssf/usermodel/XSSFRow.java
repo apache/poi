@@ -72,7 +72,8 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
         _cells = new TreeMap<Integer, XSSFCell>();
         for (CTCell c : row.getCArray()) {
             XSSFCell cell = new XSSFCell(this, c);
-            _cells.put(new Integer(cell.getColumnIndex()), cell);
+            Integer colI = new Integer(cell.getColumnIndex()); // NOSONAR
+            _cells.put(colI, cell);
             sheet.onReadCell(cell);
         }
     }
@@ -197,8 +198,9 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      * @see Cell#CELL_TYPE_STRING
      */
     public XSSFCell createCell(int columnIndex, int type) {
+        final Integer colI = new Integer(columnIndex); // NOSONAR
         CTCell ctCell;
-        XSSFCell prev = _cells.get(new Integer(columnIndex));
+        XSSFCell prev = _cells.get(colI);
         if(prev != null){
             ctCell = prev.getCTCell();
             ctCell.set(CTCell.Factory.newInstance());
@@ -210,7 +212,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
         if (type != Cell.CELL_TYPE_BLANK) {
         	xcell.setCellType(type);
         }
-        _cells.put(new Integer(columnIndex), xcell);
+        _cells.put(colI, xcell);
         return xcell;
     }
 
@@ -236,7 +238,8 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
     public XSSFCell getCell(int cellnum, MissingCellPolicy policy) {
     	if(cellnum < 0) throw new IllegalArgumentException("Cell index must be >= 0");
 
-        XSSFCell cell = _cells.get(new Integer(cellnum));
+    	Integer colI = new Integer(cellnum); // NOSONAR
+        XSSFCell cell = _cells.get(colI);
     	if(policy == RETURN_NULL_AND_BLANK) {
     		return cell;
     	}
@@ -455,7 +458,8 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
         if(cell.getCellType() == Cell.CELL_TYPE_FORMULA) {
            _sheet.getWorkbook().onDeleteFormula(xcell);
         }
-        _cells.remove(new Integer(cell.getColumnIndex()));
+        Integer colI = new Integer(cell.getColumnIndex()); // NOSONAR
+        _cells.remove(colI);
     }
 
     /**
