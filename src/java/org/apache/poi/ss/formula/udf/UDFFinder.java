@@ -21,7 +21,7 @@ import org.apache.poi.ss.formula.atp.AnalysisToolPak;
 import org.apache.poi.ss.formula.functions.FreeRefFunction;
 
 /**
- * Common interface for "Add-in" libraries and user defined function libraries.
+ * Common abstract class for "Add-in" libraries and user defined function libraries.
  */
 public abstract class UDFFinder {
     public static UDFFinder getDefault() {
