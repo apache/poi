@@ -181,7 +181,7 @@ public class EscherColorRef {
     }
     
     public void setSysIndexFlag(boolean flag) {
-        FLAG_SYS_INDEX.setBoolean(colorRef, flag);
+        colorRef = FLAG_SYS_INDEX.setBoolean(colorRef, flag);
     }
     
     public boolean hasSchemeIndexFlag() {
@@ -189,7 +189,7 @@ public class EscherColorRef {
     }
     
     public void setSchemeIndexFlag(boolean flag) {
-        FLAG_SCHEME_INDEX.setBoolean(colorRef, flag);
+        colorRef = FLAG_SCHEME_INDEX.setBoolean(colorRef, flag);
     }
     
     public boolean hasSystemRGBFlag() {
@@ -197,7 +197,7 @@ public class EscherColorRef {
     }
     
     public void setSystemRGBFlag(boolean flag) {
-        FLAG_SYSTEM_RGB.setBoolean(colorRef, flag);
+        colorRef = FLAG_SYSTEM_RGB.setBoolean(colorRef, flag);
     }
     
     public boolean hasPaletteRGBFlag() {
@@ -205,7 +205,7 @@ public class EscherColorRef {
     }
     
     public void setPaletteRGBFlag(boolean flag) {
-        FLAG_PALETTE_RGB.setBoolean(colorRef, flag);
+        colorRef = FLAG_PALETTE_RGB.setBoolean(colorRef, flag);
     }
     
     public boolean hasPaletteIndexFlag() {
@@ -213,7 +213,7 @@ public class EscherColorRef {
     }
     
     public void setPaletteIndexFlag(boolean flag) {
-        FLAG_PALETTE_INDEX.setBoolean(colorRef, flag);
+        colorRef = FLAG_PALETTE_INDEX.setBoolean(colorRef, flag);
     }
 
     public int[] getRGB() {

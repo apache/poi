@@ -25,10 +25,8 @@ import java.util.Collection;
 
 /**
  * Collects add-in libraries and VB macro functions together into one UDF finder
- *
- * @author PUdalau
  */
-public class AggregatingUDFFinder implements UDFFinder {
+public class AggregatingUDFFinder extends UDFFinder {
 
     private final Collection<UDFFinder> _usedToolPacks;
 

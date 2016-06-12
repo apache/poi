@@ -29,7 +29,7 @@ public class XDGFRelation extends POIXMLRelation {
     /**
      * A map to lookup POIXMLRelation by its relation type
      */
-    protected static final Map<String, XDGFRelation> _table = new HashMap<String, XDGFRelation>();
+    private static final Map<String, XDGFRelation> _table = new HashMap<String, XDGFRelation>();
 
     public static final XDGFRelation DOCUMENT = new XDGFRelation(
             "application/vnd.ms-visio.drawing.main+xml",

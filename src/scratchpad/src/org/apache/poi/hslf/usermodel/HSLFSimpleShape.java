@@ -381,6 +381,7 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
 
     public Shadow<HSLFShape,HSLFTextParagraph> getShadow() {
         AbstractEscherOptRecord opt = getEscherOptRecord();
+        if (opt == null) return null;
         EscherProperty shadowType = opt.lookup(EscherProperties.SHADOWSTYLE__TYPE);
         if (shadowType == null) return null;
 

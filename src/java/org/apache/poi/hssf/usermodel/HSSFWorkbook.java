@@ -181,7 +181,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      * The locator of user-defined functions.
      * By default includes functions from the Excel Analysis Toolpack
      */
-    private UDFFinder _udfFinder = new IndexedUDFFinder(UDFFinder.DEFAULT);
+    private UDFFinder _udfFinder = new IndexedUDFFinder(UDFFinder.getDefault());
 
     public static HSSFWorkbook create(InternalWorkbook book) {
     	return new HSSFWorkbook(book);

@@ -70,7 +70,8 @@ public final class EscherDggRecord extends EscherRecord {
         int pos            = offset + 8;
         int size           = 0;
         field_1_shapeIdMax     =  LittleEndian.getInt( data, pos + size );size+=4;
-        LittleEndian.getInt( data, pos + size );size+=4; // field_2_numIdClusters
+        // field_2_numIdClusters = LittleEndian.getInt( data, pos + size );
+        size+=4; 
         field_3_numShapesSaved =  LittleEndian.getInt( data, pos + size );size+=4;
         field_4_drawingsSaved  =  LittleEndian.getInt( data, pos + size );size+=4;
         field_5_fileIdClusters = new FileIdCluster[(bytesRemaining-size) / 8];  // Can't rely on field_2_numIdClusters

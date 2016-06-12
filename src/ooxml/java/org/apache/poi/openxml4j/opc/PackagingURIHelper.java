@@ -769,7 +769,7 @@ public final class PackagingURIHelper {
     };
 
     private static boolean isUnsafe(int ch) {
-        return ch > 0x80 || Character.isWhitespace(ch) || ch == '\u00A0';
+        return ch > 0x80 || Character.isWhitespace(ch);
     }
 
 }

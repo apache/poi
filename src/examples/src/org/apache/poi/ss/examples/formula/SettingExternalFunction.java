@@ -48,7 +48,7 @@ public class SettingExternalFunction {
     /**
      * wrap external functions in a plugin
      */
-    public static class BloombergAddIn implements UDFFinder {
+    public static class BloombergAddIn extends UDFFinder {
         private final Map<String, FreeRefFunction> _functionsByName;
 
         public BloombergAddIn() {
@@ -89,6 +89,7 @@ public class SettingExternalFunction {
         wb.write(out);
         out.close();
 
+        wb.close();
     }
 
 }

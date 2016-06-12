@@ -160,7 +160,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
      * The locator of user-defined functions.
      * By default includes functions from the Excel Analysis Toolpack
      */
-    private IndexedUDFFinder _udfFinder = new IndexedUDFFinder(UDFFinder.DEFAULT);
+    private IndexedUDFFinder _udfFinder = new IndexedUDFFinder(UDFFinder.getDefault());
 
     /**
      * TODO

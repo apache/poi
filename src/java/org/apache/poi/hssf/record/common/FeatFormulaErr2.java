@@ -36,22 +36,14 @@ import org.apache.poi.util.LittleEndianOutput;
  *  https://msdn.microsoft.com/en-us/library/dd924991%28v=office.12%29.aspx
  */
 public final class FeatFormulaErr2 implements SharedFeature {
-	static BitField checkCalculationErrors =
-		BitFieldFactory.getInstance(0x01);
-	static BitField checkEmptyCellRef =
-		BitFieldFactory.getInstance(0x02);
-	static BitField checkNumbersAsText =
-		BitFieldFactory.getInstance(0x04);
-	static BitField checkInconsistentRanges =
-		BitFieldFactory.getInstance(0x08);
-	static BitField checkInconsistentFormulas =
-		BitFieldFactory.getInstance(0x10);
-	static BitField checkDateTimeFormats =
-		BitFieldFactory.getInstance(0x20);
-	static BitField checkUnprotectedFormulas =
-		BitFieldFactory.getInstance(0x40);
-	static BitField performDataValidation =
-		BitFieldFactory.getInstance(0x80);
+	private static final BitField CHECK_CALCULATION_ERRORS =    BitFieldFactory.getInstance(0x01);
+	private static final BitField CHECK_EMPTY_CELL_REF =        BitFieldFactory.getInstance(0x02);
+	private static final BitField CHECK_NUMBERS_AS_TEXT =       BitFieldFactory.getInstance(0x04);
+	private static final BitField CHECK_INCONSISTENT_RANGES =   BitFieldFactory.getInstance(0x08);
+	private static final BitField CHECK_INCONSISTENT_FORMULAS = BitFieldFactory.getInstance(0x10);
+	private static final BitField CHECK_DATETIME_FORMATS =      BitFieldFactory.getInstance(0x20);
+	private static final BitField CHECK_UNPROTECTED_FORMULAS =  BitFieldFactory.getInstance(0x40);
+	private static final BitField PERFORM_DATA_VALIDATION =     BitFieldFactory.getInstance(0x80);
 	
 	/**
 	 * What errors we should ignore
@@ -93,67 +85,58 @@ public final class FeatFormulaErr2 implements SharedFeature {
 	}
 
 	public boolean getCheckCalculationErrors() {
-		return checkCalculationErrors.isSet(errorCheck);
+		return CHECK_CALCULATION_ERRORS.isSet(errorCheck);
 	}
 	public void setCheckCalculationErrors(boolean checkCalculationErrors) {
-		FeatFormulaErr2.checkCalculationErrors.setBoolean(
-				errorCheck, checkCalculationErrors);
+	    errorCheck = CHECK_CALCULATION_ERRORS.setBoolean(errorCheck, checkCalculationErrors);
 	}
 
 	public boolean getCheckEmptyCellRef() {
-		return checkEmptyCellRef.isSet(errorCheck);
+		return CHECK_EMPTY_CELL_REF.isSet(errorCheck);
 	}
 	public void setCheckEmptyCellRef(boolean checkEmptyCellRef) {
-		FeatFormulaErr2.checkEmptyCellRef.setBoolean(
-				errorCheck, checkEmptyCellRef);
+	    errorCheck = CHECK_EMPTY_CELL_REF.setBoolean(errorCheck, checkEmptyCellRef);
 	}
 
 	public boolean getCheckNumbersAsText() {
-		return checkNumbersAsText.isSet(errorCheck);
+		return CHECK_NUMBERS_AS_TEXT.isSet(errorCheck);
 	}
 	public void setCheckNumbersAsText(boolean checkNumbersAsText) {
-		FeatFormulaErr2.checkNumbersAsText.setBoolean(
-				errorCheck, checkNumbersAsText);
+	    errorCheck = CHECK_NUMBERS_AS_TEXT.setBoolean(errorCheck, checkNumbersAsText);
 	}
 
 	public boolean getCheckInconsistentRanges() {
-		return checkInconsistentRanges.isSet(errorCheck);
+		return CHECK_INCONSISTENT_RANGES.isSet(errorCheck);
 	}
 	public void setCheckInconsistentRanges(boolean checkInconsistentRanges) {
-		FeatFormulaErr2.checkInconsistentRanges.setBoolean(
-				errorCheck, checkInconsistentRanges);
+	    errorCheck = CHECK_INCONSISTENT_RANGES.setBoolean(errorCheck, checkInconsistentRanges);
 	}
 
 	public boolean getCheckInconsistentFormulas() {
-		return checkInconsistentFormulas.isSet(errorCheck);
+		return CHECK_INCONSISTENT_FORMULAS.isSet(errorCheck);
 	}
-	public void setCheckInconsistentFormulas(
-			boolean checkInconsistentFormulas) {
-		FeatFormulaErr2.checkInconsistentFormulas.setBoolean(
-				errorCheck, checkInconsistentFormulas);
+	public void setCheckInconsistentFormulas(boolean checkInconsistentFormulas) {
+	    errorCheck = CHECK_INCONSISTENT_FORMULAS.setBoolean(errorCheck, checkInconsistentFormulas);
 	}
 
 	public boolean getCheckDateTimeFormats() {
-		return checkDateTimeFormats.isSet(errorCheck);
+		return CHECK_DATETIME_FORMATS.isSet(errorCheck);
 	}
 	public void setCheckDateTimeFormats(boolean checkDateTimeFormats) {
-		FeatFormulaErr2.checkDateTimeFormats.setBoolean(
-				errorCheck, checkDateTimeFormats);
+	    errorCheck = CHECK_DATETIME_FORMATS.setBoolean(errorCheck, checkDateTimeFormats);
 	}
 
 	public boolean getCheckUnprotectedFormulas() {
-		return checkUnprotectedFormulas.isSet(errorCheck);
+		return CHECK_UNPROTECTED_FORMULAS.isSet(errorCheck);
 	}
 	public void setCheckUnprotectedFormulas(boolean checkUnprotectedFormulas) {
-		FeatFormulaErr2.checkUnprotectedFormulas.setBoolean(
-				errorCheck, checkUnprotectedFormulas);
+	    errorCheck = CHECK_UNPROTECTED_FORMULAS.setBoolean(errorCheck, checkUnprotectedFormulas);
 	}
 
 	public boolean getPerformDataValidation() {
-		return performDataValidation.isSet(errorCheck);
+		return PERFORM_DATA_VALIDATION.isSet(errorCheck);
 	}
 	public void setPerformDataValidation(boolean performDataValidation) {
-		FeatFormulaErr2.performDataValidation.setBoolean(
-				errorCheck, performDataValidation);
+	    errorCheck = PERFORM_DATA_VALIDATION.setBoolean(errorCheck, performDataValidation);
 	}
 }
