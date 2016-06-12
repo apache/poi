@@ -72,7 +72,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
         _cells = new TreeMap<Integer, XSSFCell>();
         for (CTCell c : row.getCArray()) {
             XSSFCell cell = new XSSFCell(this, c);
-            _cells.put(cell.getColumnIndex(), cell);
+            _cells.put(new Integer(cell.getColumnIndex()), cell);
             sheet.onReadCell(cell);
         }
     }
@@ -198,7 +198,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      */
     public XSSFCell createCell(int columnIndex, int type) {
         CTCell ctCell;
-        XSSFCell prev = _cells.get(columnIndex);
+        XSSFCell prev = _cells.get(new Integer(columnIndex));
         if(prev != null){
             ctCell = prev.getCTCell();
             ctCell.set(CTCell.Factory.newInstance());
@@ -210,7 +210,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
         if (type != Cell.CELL_TYPE_BLANK) {
         	xcell.setCellType(type);
         }
-        _cells.put(columnIndex, xcell);
+        _cells.put(new Integer(columnIndex), xcell);
         return xcell;
     }
 
@@ -236,7 +236,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
     public XSSFCell getCell(int cellnum, MissingCellPolicy policy) {
     	if(cellnum < 0) throw new IllegalArgumentException("Cell index must be >= 0");
 
-        XSSFCell cell = _cells.get(cellnum);
+        XSSFCell cell = _cells.get(new Integer(cellnum));
     	if(policy == RETURN_NULL_AND_BLANK) {
     		return cell;
     	}
@@ -455,7 +455,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
         if(cell.getCellType() == Cell.CELL_TYPE_FORMULA) {
            _sheet.getWorkbook().onDeleteFormula(xcell);
         }
-        _cells.remove(cell.getColumnIndex());
+        _cells.remove(new Integer(cell.getColumnIndex()));
     }
 
     /**
