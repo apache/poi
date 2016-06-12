@@ -477,7 +477,8 @@ public final class BorderPropertyTemplate {
         int lastCol = range.getLastColumn();
         for (int row = firstRow; row <= lastRow; row++) {
             for (int col = firstCol; col <= lastCol; col++) {
-                removeProperties(row, col, BORDER_DIRECTION_PROPERTY_NAMES);
+                CellAddress cell = new CellAddress(row, col);
+                removeProperties(cell, BORDER_DIRECTION_PROPERTY_NAMES);
             }
         }
         removeBorderColors(range);
@@ -581,11 +582,12 @@ public final class BorderPropertyTemplate {
         int firstCol = range.getFirstColumn();
         int lastCol = range.getLastColumn();
         for (int i = firstCol; i <= lastCol; i++) {
+            CellAddress cell = new CellAddress(row, i);
             // if BORDER_TOP is not set on BorderPropertyTemplate, make a thin border so that there's something to color
-            if (getTemplateProperty(row, i, CellUtil.BORDER_TOP) == null) {
+            if (getTemplateProperty(cell, CellUtil.BORDER_TOP) == null) {
                 drawTopBorder(new CellRangeAddress(row, row, i, i), BorderStyle.THIN);
             }
-            addProperty(row, i, CellUtil.TOP_BORDER_COLOR, color);
+            addProperty(cell, CellUtil.TOP_BORDER_COLOR, color);
         }
     }
 
@@ -602,11 +604,12 @@ public final class BorderPropertyTemplate {
         int firstCol = range.getFirstColumn();
         int lastCol = range.getLastColumn();
         for (int i = firstCol; i <= lastCol; i++) {
+            CellAddress cell = new CellAddress(row, i);
             // if BORDER_BOTTOM is not set on BorderPropertyTemplate, make a thin border so that there's something to color
-            if (getTemplateProperty(row, i, CellUtil.BORDER_BOTTOM) == null) {
+            if (getTemplateProperty(cell, CellUtil.BORDER_BOTTOM) == null) {
                 drawBottomBorder(new CellRangeAddress(row, row, i, i), BorderStyle.THIN);
             }
-            addProperty(row, i, CellUtil.BOTTOM_BORDER_COLOR, color);
+            addProperty(cell, CellUtil.BOTTOM_BORDER_COLOR, color);
         }
     }
 
@@ -623,11 +626,12 @@ public final class BorderPropertyTemplate {
         int lastRow = range.getLastRow();
         int col = range.getFirstColumn();
         for (int i = firstRow; i <= lastRow; i++) {
+            CellAddress cell = new CellAddress(i, col);
             // if BORDER_LEFT is not set on BorderPropertyTemplate, make a thin border so that there's something to color
-            if (getTemplateProperty(i, col, CellUtil.BORDER_LEFT) == null) {
+            if (getTemplateProperty(cell, CellUtil.BORDER_LEFT) == null) {
                 drawLeftBorder(new CellRangeAddress(i, i, col, col), BorderStyle.THIN);
             }
-            addProperty(i, col, CellUtil.LEFT_BORDER_COLOR, color);
+            addProperty(cell, CellUtil.LEFT_BORDER_COLOR, color);
         }
     }
 
@@ -645,11 +649,12 @@ public final class BorderPropertyTemplate {
         int lastRow = range.getLastRow();
         int col = range.getLastColumn();
         for (int i = firstRow; i <= lastRow; i++) {
+            CellAddress cell = new CellAddress(i, col);
             // if BORDER_RIGHT is not set on BorderPropertyTemplate, make a thin border so that there's something to color
-            if (getTemplateProperty(i, col, CellUtil.BORDER_RIGHT) == null) {
+            if (getTemplateProperty(cell, CellUtil.BORDER_RIGHT) == null) {
                 drawRightBorder(new CellRangeAddress(i, i, col, col), BorderStyle.THIN);
             }
-            addProperty(i, col, CellUtil.RIGHT_BORDER_COLOR, color);
+            addProperty(cell, CellUtil.RIGHT_BORDER_COLOR, color);
         }
     }
 
@@ -772,7 +777,8 @@ public final class BorderPropertyTemplate {
         int lastColumn = range.getLastColumn();
         for (int row = firstRow; row <= lastRow; row++) {
             for (int col = firstColumn; col <= lastColumn; col++) {
-                removeProperties(row, col, BORDER_COLOR_PROPERTY_NAMES);
+                CellAddress cell = new CellAddress(row, col);
+                removeProperties(cell, BORDER_COLOR_PROPERTY_NAMES);
             }
         }
     }
@@ -780,19 +786,29 @@ public final class BorderPropertyTemplate {
     /**
      * Adds a property to this BorderPropertyTemplate for a given cell
      *
-     * @param row
-     * @param col
-     * @param property
-     * @param value
+     * @param cell  The cell to add the property to in the property template.
+     * @param property The property key to add to the property template.
+     * @param value    The property value to add to the property template.
      */
-    private void addProperty(int row, int col, String property, Object value) {
-        CellAddress cell = new CellAddress(row, col);
+    private void addProperty(CellAddress cell, String property, Object value) {
         Map<String, Object> cellProperties = _propertyTemplate.get(cell);
         if (cellProperties == null) {
             cellProperties = new HashMap<String, Object>();
         }
         cellProperties.put(property, value);
         _propertyTemplate.put(cell, cellProperties);
+    }
+    /**
+     * Adds a property to this BorderPropertyTemplate for a given cell
+     *
+     * @param row      The row number of the cell to add the property to
+     * @param col
+     * @param property The property key to add to the property template.
+     * @param value    The property value to add to the property template.
+     */
+    private void addProperty(int row, int col, String property, Object value) {
+        CellAddress cell = new CellAddress(row, col);
+        addProperty(cell, property, value);
     }
 
     /**
@@ -803,8 +819,7 @@ public final class BorderPropertyTemplate {
      * @param col the column index of the cell to remove properties from
      * @param properties a list of the property names to remove from the cell
      */
-    private void removeProperties(int row, int col, Set<String> properties) {
-        CellAddress cell = new CellAddress(row, col);
+    private void removeProperties(CellAddress cell, Set<String> properties) {
         Map<String, Object> cellProperties = _propertyTemplate.get(cell);
         if (cellProperties != null) {
             cellProperties.keySet().removeAll(properties);
@@ -837,17 +852,6 @@ public final class BorderPropertyTemplate {
     }
 
     /**
-     * Retrieves the number of borders assigned to a cell
-     *
-     * @param row
-     * @param col
-     * @since 3.15 beta 2
-     */
-    public int getNumBorders(int row, int col) {
-        return getNumBorders(new CellAddress(row, col));
-    }
-
-    /**
      * Retrieves the number of border colors assigned to a cell
      *
      * @param cell
@@ -868,17 +872,6 @@ public final class BorderPropertyTemplate {
     }
 
     /**
-     * Retrieves the number of border colors assigned to a cell
-     *
-     * @param row  The row number of the cell to get the number of border colors from.
-     * @param col  The column number of the cell to get the number of border colors from.
-     * @since 3.15 beta 2
-     */
-    public int getNumBorderColors(int row, int col) {
-        return getNumBorderColors(new CellAddress(row, col));
-    }
-
-    /**
      * Retrieves the border style for a given cell
      * 
      * @param cell      The cell to get a template property from.
@@ -892,17 +885,5 @@ public final class BorderPropertyTemplate {
             return cellProperties.get(property);
         }
         return null;
-    }
-
-    /**
-     * Retrieves the border style for a given cell
-     * 
-     * @param row  The row number of the cell to get a template property from.
-     * @param col  The column number of the cell to get a template property from.
-     * @param property the template property to get from the BorderPropertyTemplate. Example: {@link CellUtil#BORDER_TOP}.
-     * @since 3.15 beta 2
-     */
-    public Object getTemplateProperty(int row, int col, String property) {
-        return getTemplateProperty(new CellAddress(row, col), property);
     }
 }

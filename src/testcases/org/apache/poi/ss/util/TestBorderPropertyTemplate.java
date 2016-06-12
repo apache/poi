@@ -41,49 +41,55 @@ public final class TestBorderPropertyTemplate {
     @Test
     public void getNumBorders() throws IOException {
         CellRangeAddress a1a1 = new CellRangeAddress(0, 0, 0, 0); //A1:A1
+        CellAddress a1 = new CellAddress(0, 0); //A1
+
         BorderPropertyTemplate pt = new BorderPropertyTemplate();
         
         pt.drawBorders(a1a1, BorderStyle.THIN, BorderExtent.TOP);
-        assertEquals(1, pt.getNumBorders(0, 0));
+        assertEquals(1, pt.getNumBorders(a1));
         
         pt.drawBorders(a1a1, BorderStyle.MEDIUM, BorderExtent.BOTTOM);
-        assertEquals(2, pt.getNumBorders(0, 0));
+        assertEquals(2, pt.getNumBorders(a1));
         
         pt.drawBorders(a1a1, BorderStyle.MEDIUM, BorderExtent.NONE);
-        assertEquals(0, pt.getNumBorders(0, 0));
+        assertEquals(0, pt.getNumBorders(a1));
     }
 
     @Test
     public void getNumBorderColors() throws IOException {
         CellRangeAddress a1a1 = new CellRangeAddress(0, 0, 0, 0); //A1:A1
+        CellAddress a1 = new CellAddress(0, 0); //A1
+
         BorderPropertyTemplate pt = new BorderPropertyTemplate();
         
         pt.drawBorderColors(a1a1, IndexedColors.RED.getIndex(), BorderExtent.TOP);
-        assertEquals(1, pt.getNumBorderColors(0, 0));
+        assertEquals(1, pt.getNumBorderColors(a1));
         
         pt.drawBorderColors(a1a1, IndexedColors.RED.getIndex(), BorderExtent.BOTTOM);
-        assertEquals(2, pt.getNumBorderColors(0, 0));
+        assertEquals(2, pt.getNumBorderColors(a1));
         
         pt.drawBorderColors(a1a1, IndexedColors.RED.getIndex(), BorderExtent.NONE);
-        assertEquals(0, pt.getNumBorderColors(0, 0));
+        assertEquals(0, pt.getNumBorderColors(a1));
     }
 
     @Test
     public void getTemplateProperties() throws IOException {
         CellRangeAddress a1a1 = new CellRangeAddress(0, 0, 0, 0); //A1:A1
+        CellAddress a1 = new CellAddress(0, 0); //A1
+
         BorderPropertyTemplate pt = new BorderPropertyTemplate();
         
         pt.drawBorders(a1a1, BorderStyle.THIN, BorderExtent.TOP);
-        assertThin(pt.getTemplateProperty(0, 0, CellUtil.BORDER_TOP));
+        assertThin(pt.getTemplateProperty(a1, CellUtil.BORDER_TOP));
         
         pt.drawBorders(a1a1, BorderStyle.MEDIUM, BorderExtent.BOTTOM);
-        assertMedium(pt.getTemplateProperty(0, 0, CellUtil.BORDER_BOTTOM));
+        assertMedium(pt.getTemplateProperty(a1, CellUtil.BORDER_BOTTOM));
         
         pt.drawBorderColors(a1a1, IndexedColors.RED.getIndex(), BorderExtent.TOP);
-        assertRed(pt.getTemplateProperty(0, 0, CellUtil.TOP_BORDER_COLOR));
+        assertRed(pt.getTemplateProperty(a1, CellUtil.TOP_BORDER_COLOR));
         
         pt.drawBorderColors(a1a1, IndexedColors.BLUE.getIndex(), BorderExtent.BOTTOM);
-        assertBlue(pt.getTemplateProperty(0, 0, CellUtil.BOTTOM_BORDER_COLOR));
+        assertBlue(pt.getTemplateProperty(a1, CellUtil.BOTTOM_BORDER_COLOR));
     }
 
     @Test
@@ -313,7 +319,7 @@ public final class TestBorderPropertyTemplate {
                     assertMedium(pt.getTemplateProperty(addr, CellUtil.BORDER_LEFT));
                 } else if (j == 2) {
                     assertEquals(1, pt.getNumBorders(addr));
-                    assertMedium(pt.getTemplateProperty(i ,j, CellUtil.BORDER_RIGHT));
+                    assertMedium(pt.getTemplateProperty(addr, CellUtil.BORDER_RIGHT));
                 } else {
                     assertEquals(0, pt.getNumBorders(addr));
                 }
