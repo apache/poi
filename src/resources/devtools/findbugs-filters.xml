@@ -86,4 +86,16 @@
 		<Class name="org.apache.poi.xdgf.exceptions.XDGFException"/>
 		<Bug code="Nm" />
 	</Match>
+    
+    <!-- invalid performance issues - e.g. see #57840 -->
+    <Match>
+        <Class name="org.apache.poi.xssf.usermodel.XSSFRow"/>
+        <Bug pattern="DM_NUMBER_CTOR" />
+    </Match>
+    <Match>
+        <Class name="org.apache.poi.xssf.usermodel.XSSFSheet"/>
+        <Bug pattern="DM_NUMBER_CTOR" />
+    </Match>
+
+
 </FindBugsFilter>
