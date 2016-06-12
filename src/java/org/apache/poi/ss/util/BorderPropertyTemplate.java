@@ -637,7 +637,7 @@ public final class BorderPropertyTemplate {
 
     /**
      * A helper method to set the border line style before setting the color if the
-     * current line style is not set or is set as NONE
+     * current line style is not set.
      */
     private boolean borderIsNotSet(CellAddress cell, String borderDirection) {
         Object borderLineStyle = getTemplateProperty(cell, borderDirection);
