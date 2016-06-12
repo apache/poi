@@ -23,11 +23,10 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Title: Double Stream Flag Record (0x0161)<p/>
- * Description:  tells if this is a double stream file. (always no for HSSF generated files)<p/>
- *               Double Stream files contain both BIFF8 and BIFF7 workbooks.<p/>
- * REFERENCE:  PG 305 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<p/>
- * @author Andrew C. Oliver (acoliver at apache dot org)
+ * Title: Double Stream Flag Record (0x0161)<p>
+ * Description:  tells if this is a double stream file. (always no for HSSF generated files)<p>
+ *               Double Stream files contain both BIFF8 and BIFF7 workbooks.<p>
+ * REFERENCE:  PG 305 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)
  */
 public final class DSFRecord extends StandardRecord {
     public final static short sid = 0x0161;

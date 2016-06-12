@@ -24,9 +24,7 @@ import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * The common object data record is used to store all common preferences for an excel object.<p/>
- * 
- * @author Glen Stampoultzis (glens at apache.org)
+ * The common object data record is used to store all common preferences for an excel object.
  */
 public final class CommonObjectDataSubRecord extends SubRecord implements Cloneable {
     public final static short sid = 0x0015;

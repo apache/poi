@@ -23,10 +23,8 @@ import java.util.List;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * EXTERNSHEET (0x0017)<br/>
- * A List of Indexes to  EXTERNALBOOK (supplemental book) Records <p/>
- * 
- * @author Libin Roman (Vista Portal LDT. Developer)
+ * EXTERNSHEET (0x0017)<p>
+ * A List of Indexes to  EXTERNALBOOK (supplemental book) Records
  */
 public class ExternSheetRecord extends StandardRecord {
 

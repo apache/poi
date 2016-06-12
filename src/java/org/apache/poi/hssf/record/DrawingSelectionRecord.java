@@ -22,23 +22,21 @@ import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * MsoDrawingSelection (0x00ED)<p/>
+ * MsoDrawingSelection (0x00ED)<p>
  * Reference:
  * [MS-OGRAPH].pdf sec 2.4.69
- * 
- * @author Josh Micich
  */
 public final class DrawingSelectionRecord extends StandardRecord implements Cloneable {
 	public static final short sid = 0x00ED;
 
 	/**
-	 * From [MS-ODRAW].pdf sec 2.2.1<br/>
+	 * From [MS-ODRAW].pdf sec 2.2.1<p>
 	 * TODO - make EscherRecordHeader {@link LittleEndianInput} aware and refactor with this
 	 */
 	private static final class OfficeArtRecordHeader {
 		public static final int ENCODED_SIZE = 8;
 		/**
-		 * lower 4 bits is 'version' usually 0x01 or 0x0F (for containers)<br/>
+		 * lower 4 bits is 'version' usually 0x01 or 0x0F (for containers)
 		 * upper 12 bits is 'instance'
 		 */
 		private final int _verAndInstance;

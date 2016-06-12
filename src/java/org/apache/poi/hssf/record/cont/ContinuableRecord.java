@@ -31,7 +31,7 @@ public abstract class ContinuableRecord extends Record {
 		// no fields to initialise
 	}
 	/**
-	 * Serializes this record's content to the supplied data output.<br/>
+	 * Serializes this record's content to the supplied data output.<p>
 	 * The standard BIFF header (ushort sid, ushort size) has been handled by the superclass, so
 	 * only BIFF data should be written by this method.  Simple data types can be written with the
 	 * standard {@link LittleEndianOutput} methods.  Methods from {@link ContinuableRecordOutput}

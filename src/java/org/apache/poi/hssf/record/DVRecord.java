@@ -28,13 +28,11 @@ import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.StringUtil;
 
 /**
- * Title:        DATAVALIDATION Record (0x01BE)<p/>
+ * Title:        DATAVALIDATION Record (0x01BE)<p>
  * Description:  This record stores data validation settings and a list of cell ranges
  *               which contain these settings. The data validation settings of a sheet
  *               are stored in a sequential list of DV records. This list is followed by
  *               DVAL record(s)
- * @author Dragos Buleandra (dragos.buleandra@trade2b.ro)
- * @author Josh Micich
  */
 public final class DVRecord extends StandardRecord implements Cloneable {
 	public final static short sid = 0x01BE;

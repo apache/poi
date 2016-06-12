@@ -31,10 +31,159 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.poi.hssf.record.*;
-import org.apache.poi.hssf.record.RecordFormatException;
+import org.apache.poi.hssf.record.ArrayRecord;
+import org.apache.poi.hssf.record.AutoFilterInfoRecord;
+import org.apache.poi.hssf.record.BOFRecord;
+import org.apache.poi.hssf.record.BackupRecord;
+import org.apache.poi.hssf.record.BlankRecord;
+import org.apache.poi.hssf.record.BookBoolRecord;
+import org.apache.poi.hssf.record.BoolErrRecord;
+import org.apache.poi.hssf.record.BottomMarginRecord;
+import org.apache.poi.hssf.record.BoundSheetRecord;
+import org.apache.poi.hssf.record.CFHeader12Record;
+import org.apache.poi.hssf.record.CFHeaderRecord;
+import org.apache.poi.hssf.record.CFRule12Record;
+import org.apache.poi.hssf.record.CFRuleRecord;
+import org.apache.poi.hssf.record.CalcCountRecord;
+import org.apache.poi.hssf.record.CalcModeRecord;
+import org.apache.poi.hssf.record.CodepageRecord;
+import org.apache.poi.hssf.record.ColumnInfoRecord;
+import org.apache.poi.hssf.record.ContinueRecord;
+import org.apache.poi.hssf.record.CountryRecord;
+import org.apache.poi.hssf.record.DBCellRecord;
+import org.apache.poi.hssf.record.DConRefRecord;
+import org.apache.poi.hssf.record.DSFRecord;
+import org.apache.poi.hssf.record.DVALRecord;
+import org.apache.poi.hssf.record.DVRecord;
+import org.apache.poi.hssf.record.DateWindow1904Record;
+import org.apache.poi.hssf.record.DefaultColWidthRecord;
+import org.apache.poi.hssf.record.DefaultRowHeightRecord;
+import org.apache.poi.hssf.record.DeltaRecord;
+import org.apache.poi.hssf.record.DimensionsRecord;
+import org.apache.poi.hssf.record.DrawingGroupRecord;
+import org.apache.poi.hssf.record.DrawingRecordForBiffViewer;
+import org.apache.poi.hssf.record.DrawingSelectionRecord;
+import org.apache.poi.hssf.record.EOFRecord;
+import org.apache.poi.hssf.record.ExtSSTRecord;
+import org.apache.poi.hssf.record.ExtendedFormatRecord;
+import org.apache.poi.hssf.record.ExternSheetRecord;
+import org.apache.poi.hssf.record.ExternalNameRecord;
+import org.apache.poi.hssf.record.FeatHdrRecord;
+import org.apache.poi.hssf.record.FeatRecord;
+import org.apache.poi.hssf.record.FilePassRecord;
+import org.apache.poi.hssf.record.FileSharingRecord;
+import org.apache.poi.hssf.record.FnGroupCountRecord;
+import org.apache.poi.hssf.record.FontRecord;
+import org.apache.poi.hssf.record.FooterRecord;
+import org.apache.poi.hssf.record.FormatRecord;
+import org.apache.poi.hssf.record.FormulaRecord;
+import org.apache.poi.hssf.record.GridsetRecord;
+import org.apache.poi.hssf.record.GutsRecord;
+import org.apache.poi.hssf.record.HCenterRecord;
+import org.apache.poi.hssf.record.HeaderRecord;
+import org.apache.poi.hssf.record.HideObjRecord;
+import org.apache.poi.hssf.record.HorizontalPageBreakRecord;
+import org.apache.poi.hssf.record.HyperlinkRecord;
+import org.apache.poi.hssf.record.IndexRecord;
+import org.apache.poi.hssf.record.InterfaceEndRecord;
+import org.apache.poi.hssf.record.InterfaceHdrRecord;
+import org.apache.poi.hssf.record.IterationRecord;
+import org.apache.poi.hssf.record.LabelRecord;
+import org.apache.poi.hssf.record.LabelSSTRecord;
+import org.apache.poi.hssf.record.LeftMarginRecord;
+import org.apache.poi.hssf.record.MMSRecord;
+import org.apache.poi.hssf.record.MergeCellsRecord;
+import org.apache.poi.hssf.record.MulBlankRecord;
+import org.apache.poi.hssf.record.MulRKRecord;
+import org.apache.poi.hssf.record.NameCommentRecord;
+import org.apache.poi.hssf.record.NameRecord;
+import org.apache.poi.hssf.record.NoteRecord;
+import org.apache.poi.hssf.record.NumberRecord;
+import org.apache.poi.hssf.record.ObjRecord;
+import org.apache.poi.hssf.record.PaletteRecord;
+import org.apache.poi.hssf.record.PaneRecord;
+import org.apache.poi.hssf.record.PasswordRecord;
+import org.apache.poi.hssf.record.PasswordRev4Record;
+import org.apache.poi.hssf.record.PrecisionRecord;
+import org.apache.poi.hssf.record.PrintGridlinesRecord;
+import org.apache.poi.hssf.record.PrintHeadersRecord;
+import org.apache.poi.hssf.record.PrintSetupRecord;
+import org.apache.poi.hssf.record.ProtectRecord;
+import org.apache.poi.hssf.record.ProtectionRev4Record;
+import org.apache.poi.hssf.record.RKRecord;
+import org.apache.poi.hssf.record.RecalcIdRecord;
+import org.apache.poi.hssf.record.Record;
+import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.RecordInputStream.LeftoverDataException;
-import org.apache.poi.hssf.record.chart.*;
+import org.apache.poi.hssf.record.RefModeRecord;
+import org.apache.poi.hssf.record.RefreshAllRecord;
+import org.apache.poi.hssf.record.RightMarginRecord;
+import org.apache.poi.hssf.record.RowRecord;
+import org.apache.poi.hssf.record.SCLRecord;
+import org.apache.poi.hssf.record.SSTRecord;
+import org.apache.poi.hssf.record.SaveRecalcRecord;
+import org.apache.poi.hssf.record.SelectionRecord;
+import org.apache.poi.hssf.record.SharedFormulaRecord;
+import org.apache.poi.hssf.record.StringRecord;
+import org.apache.poi.hssf.record.StyleRecord;
+import org.apache.poi.hssf.record.SupBookRecord;
+import org.apache.poi.hssf.record.TabIdRecord;
+import org.apache.poi.hssf.record.TableRecord;
+import org.apache.poi.hssf.record.TableStylesRecord;
+import org.apache.poi.hssf.record.TextObjectRecord;
+import org.apache.poi.hssf.record.TopMarginRecord;
+import org.apache.poi.hssf.record.UncalcedRecord;
+import org.apache.poi.hssf.record.UnknownRecord;
+import org.apache.poi.hssf.record.UseSelFSRecord;
+import org.apache.poi.hssf.record.VCenterRecord;
+import org.apache.poi.hssf.record.VerticalPageBreakRecord;
+import org.apache.poi.hssf.record.WSBoolRecord;
+import org.apache.poi.hssf.record.WindowOneRecord;
+import org.apache.poi.hssf.record.WindowProtectRecord;
+import org.apache.poi.hssf.record.WindowTwoRecord;
+import org.apache.poi.hssf.record.WriteAccessRecord;
+import org.apache.poi.hssf.record.WriteProtectRecord;
+import org.apache.poi.hssf.record.chart.AreaFormatRecord;
+import org.apache.poi.hssf.record.chart.AreaRecord;
+import org.apache.poi.hssf.record.chart.AxisLineFormatRecord;
+import org.apache.poi.hssf.record.chart.AxisOptionsRecord;
+import org.apache.poi.hssf.record.chart.AxisParentRecord;
+import org.apache.poi.hssf.record.chart.AxisRecord;
+import org.apache.poi.hssf.record.chart.AxisUsedRecord;
+import org.apache.poi.hssf.record.chart.BarRecord;
+import org.apache.poi.hssf.record.chart.BeginRecord;
+import org.apache.poi.hssf.record.chart.CatLabRecord;
+import org.apache.poi.hssf.record.chart.CategorySeriesAxisRecord;
+import org.apache.poi.hssf.record.chart.ChartEndBlockRecord;
+import org.apache.poi.hssf.record.chart.ChartEndObjectRecord;
+import org.apache.poi.hssf.record.chart.ChartFRTInfoRecord;
+import org.apache.poi.hssf.record.chart.ChartFormatRecord;
+import org.apache.poi.hssf.record.chart.ChartRecord;
+import org.apache.poi.hssf.record.chart.ChartStartBlockRecord;
+import org.apache.poi.hssf.record.chart.ChartStartObjectRecord;
+import org.apache.poi.hssf.record.chart.DatRecord;
+import org.apache.poi.hssf.record.chart.DataFormatRecord;
+import org.apache.poi.hssf.record.chart.DefaultDataLabelTextPropertiesRecord;
+import org.apache.poi.hssf.record.chart.EndRecord;
+import org.apache.poi.hssf.record.chart.FontBasisRecord;
+import org.apache.poi.hssf.record.chart.FontIndexRecord;
+import org.apache.poi.hssf.record.chart.FrameRecord;
+import org.apache.poi.hssf.record.chart.LegendRecord;
+import org.apache.poi.hssf.record.chart.LineFormatRecord;
+import org.apache.poi.hssf.record.chart.LinkedDataRecord;
+import org.apache.poi.hssf.record.chart.ObjectLinkRecord;
+import org.apache.poi.hssf.record.chart.PlotAreaRecord;
+import org.apache.poi.hssf.record.chart.PlotGrowthRecord;
+import org.apache.poi.hssf.record.chart.SeriesIndexRecord;
+import org.apache.poi.hssf.record.chart.SeriesListRecord;
+import org.apache.poi.hssf.record.chart.SeriesRecord;
+import org.apache.poi.hssf.record.chart.SeriesTextRecord;
+import org.apache.poi.hssf.record.chart.SeriesToChartGroupRecord;
+import org.apache.poi.hssf.record.chart.SheetPropertiesRecord;
+import org.apache.poi.hssf.record.chart.TextRecord;
+import org.apache.poi.hssf.record.chart.TickRecord;
+import org.apache.poi.hssf.record.chart.UnitsRecord;
+import org.apache.poi.hssf.record.chart.ValueRangeRecord;
 import org.apache.poi.hssf.record.pivottable.DataItemRecord;
 import org.apache.poi.hssf.record.pivottable.ExtendedPivotTableViewFieldsRecord;
 import org.apache.poi.hssf.record.pivottable.PageItemRecord;
@@ -44,7 +193,11 @@ import org.apache.poi.hssf.record.pivottable.ViewFieldsRecord;
 import org.apache.poi.hssf.record.pivottable.ViewSourceRecord;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
-import org.apache.poi.util.*;
+import org.apache.poi.util.HexDump;
+import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
+import org.apache.poi.util.StringUtil;
 
 /**
  *  Utility for reading in BIFF8 records and displaying data from them.
@@ -369,15 +522,15 @@ public final class BiffViewer {
 
 	/**
 	 * Method main with 1 argument just run straight biffview against given
-	 * file<P>
+	 * file<p>
 	 *
-	 * <b>Usage</b>:<br/>
+	 * <b>Usage</b>:<p>
 	 *
-	 * BiffViewer [--biffhex] [--noint] [--noescher] [--out] &lt;fileName&gt; <br/>
-	 * BiffViewer --rawhex  [--out] &lt;fileName&gt; <br/>
-	 * <br/>
+	 * BiffViewer [--biffhex] [--noint] [--noescher] [--out] &lt;fileName&gt;<p>
+	 * BiffViewer --rawhex  [--out] &lt;fileName&gt;<p>
+	 * <p>
 	 *
-	 * <table>
+	 * <table summary="BiffViewer options">
 	 * <tr><td>--biffhex</td><td>show hex dump of each BIFF record</td></tr>
 	 * <tr><td>--noint</td><td>do not output interpretation of BIFF records</td></tr>
 	 * <tr><td>--out</td><td>send output to &lt;fileName&gt;.out</td></tr>
