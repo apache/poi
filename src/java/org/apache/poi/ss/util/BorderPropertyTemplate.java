@@ -180,6 +180,12 @@ public final class BorderPropertyTemplate {
     /**
      * This is a list of cell properties for one shot application to a range of
      * cells at a later time.
+     *
+     * Data types:
+     *   _propertyTemplate as {A1: property map}
+     *   property map as {property key : property value}
+     *   property key as String, one of CellUtil.BORDER_* or CellUtil.*_BORDER_COLOR
+     *   property value as (border line style as BorderStyle) or (color as short)
      */
     private final Map<CellAddress, Map<String, Object>> _propertyTemplate;
 
