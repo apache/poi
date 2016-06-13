@@ -74,7 +74,8 @@ public class XWPFTable implements IBodyElement, ISDTContents {
     protected StringBuffer text = new StringBuffer();
     protected List<XWPFTableRow> tableRows;
 
-    protected List<String> styleIDs;
+    // Unused: UUF_UNUSED_PUBLIC_OR_PROTECTED_FIELD
+    //protected List<String> styleIDs;
     protected IBody part;
     private CTTbl ctTbl;
 
