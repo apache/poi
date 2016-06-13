@@ -2079,7 +2079,7 @@ under the License.
         </forbiddenapis>
     </target>
 
-    <target name="findbugs">
+    <target name="findbugs" depends="assemble">
         <downloadfile src="${findbugs.url}" dest="${findbugs.jar}"/>
 
         <property name="findbugs.home" value="build/findbugs" />
