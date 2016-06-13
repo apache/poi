@@ -74,6 +74,14 @@
 		<Bug pattern="URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD" />
 		<Field name="compression" />
 	</Match>
+	<Match>
+		<Class name="org.apache.poi.hwmf.record.HwmfFont"/>
+		<Bug pattern="UUF_UNUSED_FIELD" />
+		<Or>
+			<Field name="family" />
+			<Field name="pitch" />
+		</Or>
+	</Match>
 	
 
     <!-- invalid performance issues - e.g. see #57840 -->
