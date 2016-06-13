@@ -37,7 +37,7 @@ import org.apache.poi.util.Units;
 public abstract class Metafile extends HSLFPictureData {
 
     /**
-     *  A structure which represents a 34-byte header preceeding the compressed metafile data
+     *  A structure which represents a 34-byte header preceding the compressed metafile data
      *
      * @author Yegor Kozlov
      */
@@ -66,7 +66,7 @@ public abstract class Metafile extends HSLFPictureData {
         /**
          * Reserved. Always 0.
          */
-        public int compression;
+        public int compression = 0;
 
         /**
          * Reserved. Always 254.
