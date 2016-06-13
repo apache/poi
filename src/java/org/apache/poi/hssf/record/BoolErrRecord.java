@@ -81,14 +81,25 @@ public final class BoolErrRecord extends CellRecord implements Cloneable {
 	}
 
 	/**
-	 * set the error value for the cell
+	 * set the error value for the cell. See {@link FormulaError} for valid codes.
 	 *
 	 * @param value     error representing the error value
 	 *                  this value can only be 0,7,15,23,29,36 or 42
 	 *                  see bugzilla bug 16560 for an explanation
 	 */
 	public void setValue(byte value) {
-		switch(FormulaError.forInt(value)) {
+		setValue(FormulaError.forInt(value));
+	}
+
+	/**
+	 * set the error value for the cell
+	 *
+	 * @param value     error representing the error value
+	 *                  this value can only be 0,7,15,23,29,36 or 42
+	 *                  see bugzilla bug 16560 for an explanation
+	 */
+	public void setValue(FormulaError value) {
+		switch(value) {
 			case NULL:
 			case DIV0:
 			case VALUE:
@@ -96,11 +107,11 @@ public final class BoolErrRecord extends CellRecord implements Cloneable {
 			case NAME:
 			case NUM:
 			case NA:
-				_value = value;
+				_value = value.getCode();
 				_isError = true;
 				return;
 			default:
-		        throw new IllegalArgumentException("Error Value can only be 0,7,15,23,29,36 or 42. It cannot be "+value);
+		        throw new IllegalArgumentException("Error Value can only be 0,7,15,23,29,36 or 42. It cannot be "+value.getCode()+" ("+value+")");
 		}
 	}
 

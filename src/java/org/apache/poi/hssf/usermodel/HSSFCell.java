@@ -791,16 +791,15 @@ public class HSSFCell implements Cell {
         int row=_record.getRow();
         short col=_record.getColumn();
         short styleIndex=_record.getXFIndex();
-        byte code = error.getCode();
         switch (_cellType) {
             default:
                 setCellType(CELL_TYPE_ERROR, false, row, col, styleIndex);
                 // fall through
             case CELL_TYPE_ERROR:
-                (( BoolErrRecord ) _record).setValue(code);
+                (( BoolErrRecord ) _record).setValue(error);
                 break;
             case CELL_TYPE_FORMULA:
-                ((FormulaRecordAggregate)_record).setCachedErrorResult(code);
+                ((FormulaRecordAggregate)_record).setCachedErrorResult(error.getCode());
                 break;
         }
     }
