@@ -109,7 +109,7 @@ public final class RegionUtil {
      * @deprecated 3.15 beta 2. Use {@link #setLeftBorderColor(int, CellRangeAddress, Sheet).
      */
     public static void setLeftBorderColor(int color, CellRangeAddress region, Sheet sheet, Workbook workbook) {
-        setLeftBorderColor(color, region, sheet, workbook);
+        setLeftBorderColor(color, region, sheet);
     }
     /**
      * Sets the left border color for a region of cells by manipulating the cell style of the individual
