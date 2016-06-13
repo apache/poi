@@ -59,8 +59,8 @@ import org.apache.poi.hssf.record.pivottable.ViewFieldsRecord;
 import org.apache.poi.hssf.record.pivottable.ViewSourceRecord;
 
 /**
- * Title:  Record Factory<P>
- * Description:  Takes a stream and outputs an array of Record objects.<P>
+ * Title:  Record Factory<p>
+ * Description:  Takes a stream and outputs an array of Record objects.
  *
  * @see org.apache.poi.hssf.eventmodel.EventRecordFactory
  */
@@ -291,12 +291,12 @@ public final class RecordFactory {
     private static short[] _allKnownRecordSIDs;
 
     /**
-     * Debug / diagnosis method<br/>
-     * Gets the POI implementation class for a given <tt>sid</tt>.  Only a subset of the any BIFF
+     * Debug / diagnosis method<p>
+     * Gets the POI implementation class for a given {@code sid}.  Only a subset of the any BIFF
      * records are actually interpreted by POI.  A few others are known but not interpreted
      * (see {@link UnknownRecord#getBiffName(int)}).
-     * @return the POI implementation class for the specified record <tt>sid</tt>.
-     * <code>null</code> if the specified record is not interpreted by POI.
+     * @return the POI implementation class for the specified record {@code sid}.
+     * {@code null} if the specified record is not interpreted by POI.
      */
     public static Class<? extends Record> getRecordClass(int sid) {
         I_RecordCreator rc = _recordCreatorsById.get(Integer.valueOf(sid));

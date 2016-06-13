@@ -26,13 +26,8 @@ import org.apache.poi.ss.formula.Formula;
 import org.apache.poi.util.*;
 
 /**
- * Title:        DEFINEDNAME Record (0x0018) <p/>
- * Description:  Defines a named range within a workbook. <P>
- * REFERENCE:  <P>
- * @author Libin Roman (Vista Portal LDT. Developer)
- * @author  Sergei Kozello (sergeikozello at mail.ru)
- * @author Glen Stampoultzis (glens at apache.org)
- * @author Petr Udalau - added method setFunction(boolean)
+ * Title:        DEFINEDNAME Record (0x0018)<p>
+ * Description:  Defines a named range within a workbook.
  */
 public final class NameRecord extends ContinuableRecord {
     public final static short sid = 0x0018;

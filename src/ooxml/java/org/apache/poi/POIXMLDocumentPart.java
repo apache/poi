@@ -405,6 +405,7 @@ public class POIXMLDocumentPart {
      * @param removeUnusedParts
      *            true, if the part shall be removed from the package if not
      *            needed any longer.
+     * @return true, if the relation was removed
      */
     protected final boolean removeRelation(POIXMLDocumentPart part, boolean removeUnusedParts){
         String id = getRelationId(part);
@@ -454,7 +455,7 @@ public class POIXMLDocumentPart {
      * Sub-classes should override and add logic to marshal the "model" into Ooxml4J.
      *
      * For example, the code saving a generic XML entry may look as follows:
-     * <pre><code>
+     * <pre>
      * protected void commit() throws IOException {
      *   PackagePart part = getPackagePart();
      *   OutputStream out = part.getOutputStream();
@@ -462,8 +463,9 @@ public class POIXMLDocumentPart {
      *   bean.save(out, DEFAULT_XML_OPTIONS);
      *   out.close();
      * }
-     *  </code></pre>
-     *
+     * </pre>
+     * 
+     * @throws IOException a subclass may throw an IOException if the changes can't be committed
      */
     protected void commit() throws IOException {
 
@@ -474,6 +476,8 @@ public class POIXMLDocumentPart {
      * Recursively fires {@link #commit()} for each package part
      *
      * @param alreadySaved    context set containing already visited nodes
+     * 
+     * @throws IOException a related part may throw an IOException if the changes can't be saved
      */
     protected final void onSave(Set<PackagePart> alreadySaved) throws IOException{
         // this usually clears out previous content in the part...
@@ -581,6 +585,8 @@ public class POIXMLDocumentPart {
      *
      * @param factory   the factory object that creates POIXMLFactory instances
      * @param context   context map containing already visited noted keyed by targetURI
+     * 
+     * @throws OpenXML4JException thrown when a related part can't be read
      */
     protected void read(POIXMLFactory factory, Map<PackagePart, POIXMLDocumentPart> context) throws OpenXML4JException {
         PackagePart pp = getPackagePart();
@@ -637,7 +643,7 @@ public class POIXMLDocumentPart {
      *
      * @param rel The relationship
      * @return The target part
-     * @throws InvalidFormatException
+     * @throws InvalidFormatException thrown if the related part has is erroneous
      */
     protected PackagePart getTargetPart(PackageRelationship rel) throws InvalidFormatException {
         return getPackagePart().getRelatedPart(rel);
@@ -646,6 +652,8 @@ public class POIXMLDocumentPart {
 
     /**
      * Fired when a new package part is created
+     * 
+     * @throws IOException a subclass may throw an IOException on document creation
      */
     protected void onDocumentCreate() throws IOException {
 
@@ -653,6 +661,8 @@ public class POIXMLDocumentPart {
 
     /**
      * Fired when a package part is read
+     * 
+     * @throws IOException a subclass may throw an IOException when a document is read
      */
     protected void onDocumentRead() throws IOException {
 
@@ -660,6 +670,8 @@ public class POIXMLDocumentPart {
 
     /**
      * Fired when a package part is about to be removed from the package
+     * 
+     * @throws IOException a subclass may throw an IOException when a document is removed
      */
     protected void onDocumentRemove() throws IOException {
 
@@ -670,6 +682,10 @@ public class POIXMLDocumentPart {
      * <p>
      * This method only exists to allow access to protected {@link POIXMLDocumentPart#onDocumentRead()}
      * from {@link org.apache.poi.xwpf.usermodel.XWPFDocument} without reflection. It should be removed.
+     * 
+     * @param part the part which is to be read
+     * 
+     * @throws IOException if the part can't be read
      */
     @Internal @Deprecated
     public static void _invokeOnDocumentRead(POIXMLDocumentPart part) throws IOException {

@@ -22,13 +22,13 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * MULRK (0x00BD) <p/>
+ * MULRK (0x00BD)<p>
  * 
  * Used to store multiple RK numbers on a row.  1 MulRk = Multiple Cell values.
  * HSSF just converts this into multiple NUMBER records.  READ-ONLY SUPPORT!<P>
- * REFERENCE:  PG 330 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
- * @author Andrew C. Oliver (acoliver at apache dot org)
- * @version 2.0-pre
+ * REFERENCE:  PG 330 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)
+ * 
+ * @since 2.0-pre
  */
 public final class MulRKRecord extends StandardRecord {
 	public final static short sid = 0x00BD;

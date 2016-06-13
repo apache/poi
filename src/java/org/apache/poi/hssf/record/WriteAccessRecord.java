@@ -24,13 +24,12 @@ import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.StringUtil;
 
 /**
- * Title: Write Access Record (0x005C)<p/>
+ * Title: Write Access Record (0x005C)<p>
  * 
  * Description: Stores the username of that who owns the spreadsheet generator (on unix the user's 
- * login, on Windoze its the name you typed when you installed the thing)
- * <p/>
+ * login, on Windoze its the name you typed when you installed the thing)<p>
+ * 
  * REFERENCE: PG 424 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)
- * <p/>
  */
 public final class WriteAccessRecord extends StandardRecord {
 	public final static short sid = 0x005C;

@@ -29,11 +29,9 @@ import org.apache.poi.hssf.record.*;
 import org.apache.poi.util.HexDump;
 
 /**
- * Groups the page settings records for a worksheet.<p/>
+ * Groups the page settings records for a worksheet.<p>
  *
  * See OOO excelfileformat.pdf sec 4.4 'Page Settings Block'
- *
- * @author Josh Micich
  */
 public final class PageSettingsBlock extends RecordAggregate {
 

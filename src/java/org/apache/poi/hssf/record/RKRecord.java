@@ -21,19 +21,16 @@ import org.apache.poi.hssf.util.RKUtil;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Title:        RK Record (0x027E)<p/>
+ * Title:        RK Record (0x027E)<p>
  * Description:  An internal 32 bit number with the two most significant bits
  *               storing the type.  This is part of a bizarre scheme to save disk
  *               space and memory (gee look at all the other whole records that
  *               are in the file just "cause"..,far better to waste processor
- *               cycles on this then leave on of those "valuable" records out).<p/>
- * We support this in READ-ONLY mode.  HSSF converts these to NUMBER records<p/>
+ *               cycles on this then leave on of those "valuable" records out).<p>
+ * We support this in READ-ONLY mode.  HSSF converts these to NUMBER records<p>
  *
- *
- *
- * REFERENCE:  PG 376 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
- * @author Andrew C. Oliver (acoliver at apache dot org)
- * @author Jason Height (jheight at chariot dot net dot au)
+ * REFERENCE:  PG 376 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)
+ * 
  * @see org.apache.poi.hssf.record.NumberRecord
  */
 public final class RKRecord extends CellRecord {

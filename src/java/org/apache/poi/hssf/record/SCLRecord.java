@@ -21,10 +21,8 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Specifies the window's zoom magnification.  <p/>
+ * Specifies the window's zoom magnification.<p>
  * If this record isn't present then the windows zoom is 100%. see p384 Excel Dev Kit
- * 
- * @author Andrew C. Oliver (acoliver at apache.org)
  */
 public final class SCLRecord extends StandardRecord {
     public final static short      sid                             = 0x00A0;

@@ -22,13 +22,10 @@ import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Title:        WSBOOL (0x0081) (called SHEETPR in OOO doc)<p/>
+ * Title:        WSBOOL (0x0081) (called SHEETPR in OOO doc)<p>
  * Description:  stores workbook settings  (aka its a big "everything we didn't
- *               put somewhere else")<P>
- * REFERENCE:  PG 425 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
- * @author Andrew C. Oliver (acoliver at apache dot org)
- * @author Glen Stampoultzis (gstamp@iprimus.com.au)
- * @author Jason Height (jheight at chariot dot net dot au)
+ *               put somewhere else")<p>
+ * REFERENCE:  PG 425 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)
  */
 public final class WSBoolRecord extends StandardRecord {
     public final static short     sid = 0x0081;

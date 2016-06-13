@@ -22,11 +22,9 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Title:        Password Record (0x0013)<p/>
+ * Title:        Password Record (0x0013)<p>
  * Description:  stores the encrypted password for a sheet or workbook (HSSF doesn't support encryption)
- * REFERENCE:  PG 371 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<p/>
- * @author Andrew C. Oliver (acoliver at apache dot org)
- *
+ * REFERENCE:  PG 371 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)
  */
 public final class PasswordRecord extends StandardRecord {
     public final static short sid = 0x0013;

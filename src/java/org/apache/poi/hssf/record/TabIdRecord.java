@@ -20,12 +20,10 @@ package org.apache.poi.hssf.record;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Title: Sheet Tab Index Array Record (0x013D)<p/>
+ * Title: Sheet Tab Index Array Record (0x013D)<p>
  * Description:  Contains an array of sheet id's.  Sheets always keep their ID
- *               regardless of what their name is.<p/>
- * REFERENCE:  PG 412 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<p/>
- * @author Andrew C. Oliver (acoliver at apache dot org)
- *
+ *               regardless of what their name is.<p>
+ * REFERENCE:  PG 412 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)
  */
 public final class TabIdRecord extends StandardRecord {
     public final static short sid = 0x013D;

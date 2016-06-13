@@ -22,9 +22,7 @@ import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.StringUtil;
 
 /**
- * TABLESTYLES (0x088E)<br/>
- * 
- * @author Patrick Cheng
+ * TABLESTYLES (0x088E)
  */
 public final class TableStylesRecord extends StandardRecord {
 	public static final short sid = 0x088E;

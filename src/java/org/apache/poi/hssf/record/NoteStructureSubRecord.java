@@ -22,14 +22,10 @@ import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * ftNts (0x000D)<p/>
- * Represents a NoteStructure sub record.
+ * ftNts (0x000D)<p>
+ * Represents a NoteStructure sub record.<p>
  *
- * <p>
  * The docs say nothing about it. The length of this record is always 26 bytes.
- * </p>
- *
- * @author Yegor Kozlov
  */
 public final class NoteStructureSubRecord extends SubRecord implements Cloneable {
     public final static short sid = 0x0D;

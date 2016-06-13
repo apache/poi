@@ -24,14 +24,11 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Title:        Unknown Record (for debugging)<p/>
+ * Title:        Unknown Record (for debugging)<p>
  * Description:  Unknown record just tells you the sid so you can figure out
  *               what records you are missing.  Also helps us read/modify sheets we
- *               don't know all the records to.  (HSSF leaves these alone!) <p/>
- * Company:      SuperLink Software, Inc.<P>
- * @author Andrew C. Oliver (acoliver at apache dot org)
- * @author Jason Height (jheight at chariot dot net dot au)
- * @author Glen Stampoultzis (glens at apache.org)
+ *               don't know all the records to.  (HSSF leaves these alone!)<p>
+ * Company:      SuperLink Software, Inc.
  */
 public final class UnknownRecord extends StandardRecord {
 
@@ -40,7 +37,7 @@ public final class UnknownRecord extends StandardRecord {
      */
     /**
      * seems to be part of the {@link PageSettingsBlock}. Not interpreted by POI.
-     * The name 'PRINTSIZE' was taken from OOO source.<br/>
+     * The name 'PRINTSIZE' was taken from OOO source.<p>
      * The few POI test samples with this record have data { 0x03, 0x00 }.
      */
     public static final int PRINTSIZE_0033       = 0x0033;

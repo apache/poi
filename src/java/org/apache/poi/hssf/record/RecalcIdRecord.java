@@ -21,16 +21,15 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Title: Recalc Id Record (0x01C1)<p/>
+ * Title: Recalc Id Record (0x01C1)<p>
  * Description:  This record contains an ID that marks when a worksheet was last
  *               recalculated. It's an optimization Excel uses to determine if it
  *               needs to  recalculate the spreadsheet when it's opened. So far, only
- *               the two engine ids <code>0x80 0x38 0x01 0x00</code>
- *               and <code>0x60 0x69 0x01 0x00</code> have been seen.
- *               A value of <code>0x00</code> will cause Excel to recalculate
- *               all formulas on the next load.<p/>
- * REFERENCE:  http://chicago.sourceforge.net/devel/docs/excel/biff8.html<p/>
- * @author Luc Girardin (luc dot girardin at macrofocus dot com)
+ *               the two engine ids {@code 0x80 0x38 0x01 0x00}
+ *               and {@code 0x60 0x69 0x01 0x00} have been seen.
+ *               A value of {@code 0x00} will cause Excel to recalculate
+ *               all formulas on the next load.<p>
+ * REFERENCE:  http://chicago.sourceforge.net/devel/docs/excel/biff8.html
  */
 public final class RecalcIdRecord extends StandardRecord {
     public final static short sid = 0x01C1;

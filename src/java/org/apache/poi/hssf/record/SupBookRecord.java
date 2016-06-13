@@ -23,13 +23,10 @@ import org.apache.poi.util.POILogger;
 import org.apache.poi.util.StringUtil;
 
 /**
- * Title:        Sup Book - EXTERNALBOOK (0x01AE) <p/>
+ * Title:        Sup Book - EXTERNALBOOK (0x01AE)<p>
  * Description:  A External Workbook Description (Supplemental Book)
- *               Its only a dummy record for making new ExternSheet Record <P>
- * REFERENCE:  5.38<P>
- * @author Libin Roman (Vista Portal LDT. Developer)
- * @author Andrew C. Oliver (acoliver@apache.org)
- *
+ *               Its only a dummy record for making new ExternSheet Record<p>
+ * REFERENCE:  5.38
  */
 public final class SupBookRecord extends StandardRecord {
 

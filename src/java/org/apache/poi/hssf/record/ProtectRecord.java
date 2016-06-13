@@ -23,12 +23,11 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Title: Protect Record (0x0012) <p/>
- * Description:  defines whether a sheet or workbook is protected (HSSF DOES NOT SUPPORT ENCRYPTION)<p/>
+ * Title: Protect Record (0x0012)<p>
+ * Description:  defines whether a sheet or workbook is protected (HSSF DOES NOT SUPPORT ENCRYPTION)<p>
  * HSSF now supports the simple "protected" sheets (where they are not encrypted and open office et al
  * ignore the password record entirely).
- * REFERENCE:  PG 373 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<p/>
- * @author Andrew C. Oliver (acoliver at apache dot org)
+ * REFERENCE:  PG 373 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)
  */
 public final class ProtectRecord extends StandardRecord {
     public final static short sid = 0x0012;

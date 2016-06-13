@@ -21,10 +21,9 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Title:        Protection Revision 4 password Record (0x01BC) <p/>
- * Description:  Stores the (2 byte??!!) encrypted password for a shared workbook<p/>
- * REFERENCE:  PG 374 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<p/>
- * @author Andrew C. Oliver (acoliver at apache dot org)
+ * Title:        Protection Revision 4 password Record (0x01BC)<p>
+ * Description:  Stores the (2 byte??!!) encrypted password for a shared workbook<p>
+ * REFERENCE:  PG 374 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)
  */
 public final class PasswordRev4Record extends StandardRecord {
     public final static short sid = 0x01BC;

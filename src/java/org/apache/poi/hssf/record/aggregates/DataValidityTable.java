@@ -25,9 +25,8 @@ import org.apache.poi.hssf.record.DVALRecord;
 import org.apache.poi.hssf.record.DVRecord;
 
 /**
- * Manages the DVALRecord and DVRecords for a single sheet<br/>
+ * Manages the DVALRecord and DVRecords for a single sheet<p>
  * See OOO excelfileformat.pdf section 4.14
- * @author Josh Micich
  */
 public final class DataValidityTable extends RecordAggregate {
 

@@ -23,14 +23,9 @@ import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.StringUtil;
 
 /**
- * Title: NAMECMT Record (0x0894)
- * <p/>
+ * Title: NAMECMT Record (0x0894)<p>
+ * 
  * Description: Defines a comment associated with a specified name.
- * <P>
- * REFERENCE:
- * <P>
- *
- * @author Andrew Shirley (aks at corefiling.co.uk)
  */
 public final class NameCommentRecord extends StandardRecord {
   public final static short sid = 0x0894;

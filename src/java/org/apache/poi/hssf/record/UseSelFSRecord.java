@@ -23,11 +23,10 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Title:        USESELFS (0x0160) - Use Natural Language Formulas Flag <p/>
+ * Title:        USESELFS (0x0160) - Use Natural Language Formulas Flag <p>
  * Description:  Tells the GUI if this was written by something that can use
- *               "natural language" formulas. HSSF can't.<p/>
- * REFERENCE:  PG 420 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<p/>
- * @author Andrew C. Oliver (acoliver at apache dot org)
+ *               "natural language" formulas. HSSF can't.<p>
+ * REFERENCE:  PG 420 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)
  */
 public final class UseSelFSRecord extends StandardRecord {
     public final static short sid   = 0x0160;

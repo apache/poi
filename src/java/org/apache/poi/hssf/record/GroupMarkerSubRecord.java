@@ -22,17 +22,16 @@ import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * ftGmo (0x0006)<p/>
+ * ftGmo (0x0006)<p>
  * The group marker record is used as a position holder for groups.
-
- * @author Glen Stampoultzis (glens at apache.org)
  */
 public final class GroupMarkerSubRecord extends SubRecord implements Cloneable {
     public final static short sid = 0x0006;
 
     private static final byte[] EMPTY_BYTE_ARRAY = { };
 
-    private byte[] reserved;    // would really love to know what goes in here.
+    // would really love to know what goes in here.
+    private byte[] reserved;
 
     public GroupMarkerSubRecord() {
         reserved = EMPTY_BYTE_ARRAY;

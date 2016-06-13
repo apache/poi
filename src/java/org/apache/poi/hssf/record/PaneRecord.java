@@ -22,9 +22,7 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Describes the frozen and unfozen panes.<p/>
- * 
- * @author Glen Stampoultzis (glens at apache.org)
+ * Describes the frozen and unfrozen panes.
  */
 public final class PaneRecord extends StandardRecord {
     public final static short      sid                             = 0x41;

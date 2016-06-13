@@ -23,13 +23,12 @@ import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 
 /**
- * Title:        PAGESETUP (0x00A1)<p/>
- * Description:  Stores print setup options -- bogus for HSSF (and marked as such)<p/>
- * REFERENCE:  PG 385 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<p/>
- * REFERENCE:  PG 412 Microsoft Excel Binary File Format Structure v20091214<p/>
- * @author Andrew C. Oliver (acoliver at apache dot org)
- * @author Jason Height (jheight at chariot dot net dot au)
- * @version 2.0-pre
+ * Title:        PAGESETUP (0x00A1)<p>
+ * Description:  Stores print setup options -- bogus for HSSF (and marked as such)<p>
+ * REFERENCE:  PG 385 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<p>
+ * REFERENCE:  PG 412 Microsoft Excel Binary File Format Structure v20091214
+ * 
+ * @since 2.0-pre
  */
 public final class PrintSetupRecord extends StandardRecord {
     public final static short     sid = 0x00A1;

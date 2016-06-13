@@ -97,6 +97,8 @@ public class POIXMLProperties {
 
 	/**
 	 * Returns the core document properties
+	 * 
+	 * @return the core document properties
 	 */
 	public CoreProperties getCoreProperties() {
 		return core;
@@ -104,6 +106,8 @@ public class POIXMLProperties {
 
 	/**
 	 * Returns the extended document properties
+	 * 
+	 * @return the extended document properties
 	 */
 	public ExtendedProperties getExtendedProperties() {
 		return ext;
@@ -111,6 +115,8 @@ public class POIXMLProperties {
 
 	/**
 	 * Returns the custom document properties
+	 * 
+	 * @return the custom document properties
 	 */
 	public CustomProperties getCustomProperties() {
 		return cust;
@@ -118,6 +124,9 @@ public class POIXMLProperties {
 
 	/**
 	 * Commit changes to the underlying OPC package
+	 * 
+	 * @throws IOException if the properties can't be saved
+	 * @throws POIXMLException if the properties are erroneous
 	 */
 	public void commit() throws IOException{
 
@@ -426,6 +435,9 @@ public class POIXMLProperties {
 
 		/**
 		 * Add a new string property
+		 * 
+		 * @param name the property name
+		 * @param value the property value
 		 *
 		 * @throws IllegalArgumentException if a property with this name already exists
 		 */
@@ -437,6 +449,9 @@ public class POIXMLProperties {
 		/**
 		 * Add a new double property
 		 *
+         * @param name the property name
+         * @param value the property value
+         *
 		 * @throws IllegalArgumentException if a property with this name already exists
 		 */
 		public void addProperty(String name, double value){
@@ -447,6 +462,9 @@ public class POIXMLProperties {
 		/**
 		 * Add a new integer property
 		 *
+         * @param name the property name
+         * @param value the property value
+         *
 		 * @throws IllegalArgumentException if a property with this name already exists
 		 */
 		public void addProperty(String name, int value){
@@ -457,6 +475,9 @@ public class POIXMLProperties {
 		/**
 		 * Add a new boolean property
 		 *
+         * @param name the property name
+         * @param value the property value
+         *
 		 * @throws IllegalArgumentException if a property with this name already exists
 		 */
 		public void addProperty(String name, boolean value){
@@ -498,6 +519,8 @@ public class POIXMLProperties {
          *  appropriate value for it.
          *
          * @param name the name of the property to fetch
+         * 
+         * @return the custom property with this name, or null if none exists
          */
         public CTProperty getProperty(String name) {
             for(CTProperty p : props.getProperties().getPropertyArray()){

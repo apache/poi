@@ -20,9 +20,7 @@ package org.apache.poi.hssf.record;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Record for the right margin.<p/>
- * 
- * @author Shawn Laubach (slaubach at apache dot org)
+ * Record for the right margin.
  */
 public final class RightMarginRecord extends StandardRecord implements Margin {
     public final static short sid = 0x27;

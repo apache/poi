@@ -23,14 +23,12 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Title:        Iteration Record (0x0011) <p/>
- * Description:  Tells whether to iterate over forumla calculations or not
- *               (if a formula is dependant upon another formula's result)
+ * Title:        Iteration Record (0x0011)<p>
+ * Description:  Tells whether to iterate over formula calculations or not
+ *               (if a formula is dependent upon another formula's result)
  *               (odd feature for something that can only have 32 elements in
- *                a formula!)<P>
- * REFERENCE:  PG 325 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<p/>
- * @author Andrew C. Oliver (acoliver at apache dot org)
- * @author Jason Height (jheight at chariot dot net dot au)
+ *                a formula!)<p>
+ * REFERENCE:  PG 325 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)
  */
 public final class IterationRecord extends StandardRecord implements Cloneable {
     public final static short sid = 0x0011;
