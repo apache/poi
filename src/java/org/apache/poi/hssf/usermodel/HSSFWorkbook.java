@@ -1744,6 +1744,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      * @see #PICTURE_TYPE_JPEG
      * @see #PICTURE_TYPE_DIB
      */
+    @SuppressWarnings("fallthrough")
     @Override
     public int addPicture(byte[] pictureData, int format)
     {

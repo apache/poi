@@ -457,6 +457,7 @@ public class HSSFCell implements Cell {
      *        precalculated value, for numerics we'll set its value. For other types we
      *        will change the cell to a numeric cell and set its value.
      */
+    @SuppressWarnings("fallthrough")
     public void setCellValue(double value) {
         if(Double.isInfinite(value)) {
             // Excel does not support positive/negative infinities,
@@ -474,6 +475,7 @@ public class HSSFCell implements Cell {
             switch (_cellType) {
                 default:
                     setCellType(CELL_TYPE_NUMERIC, false, row, col, styleIndex);
+                    // fall through
                 case CELL_TYPE_NUMERIC:
                     (( NumberRecord ) _record).setValue(value);
                     break;
@@ -743,6 +745,7 @@ public class HSSFCell implements Cell {
      *        precalculated value, for booleans we'll set its value. For other types we
      *        will change the cell to a boolean cell and set its value.
      */
+    @SuppressWarnings("fallthrough")
     public void setCellValue(boolean value) {
         int row=_record.getRow();
         short col=_record.getColumn();
@@ -751,6 +754,7 @@ public class HSSFCell implements Cell {
         switch (_cellType) {
             default:
                 setCellType(CELL_TYPE_BOOLEAN, false, row, col, styleIndex);
+                // fall through
             case CELL_TYPE_BOOLEAN:
                 (( BoolErrRecord ) _record).setValue(value);
                 break;
@@ -768,6 +772,7 @@ public class HSSFCell implements Cell {
      *        its value. For other types we will change the cell to an error
      *        cell and set its value.
      */
+    @SuppressWarnings("fallthrough")
     public void setCellErrorValue(byte errorCode) {
         int row=_record.getRow();
         short col=_record.getColumn();
@@ -775,6 +780,7 @@ public class HSSFCell implements Cell {
         switch (_cellType) {
             default:
                 setCellType(CELL_TYPE_ERROR, false, row, col, styleIndex);
+                // fall through
             case CELL_TYPE_ERROR:
                 (( BoolErrRecord ) _record).setValue(errorCode);
                 break;

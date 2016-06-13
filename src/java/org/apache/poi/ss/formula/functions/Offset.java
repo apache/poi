@@ -161,6 +161,7 @@ public final class Offset implements Function {
 		}
 	}
 
+	@SuppressWarnings("fallthrough")
 	public ValueEval evaluate(ValueEval[] args, int srcCellRow, int srcCellCol) {
 		if(args.length < 3 || args.length > 5) {
 			return ErrorEval.VALUE_INVALID;
