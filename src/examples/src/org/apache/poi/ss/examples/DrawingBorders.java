@@ -86,10 +86,10 @@ public class DrawingBorders {
         // #3) these cells will all be medium weight with different colors for the
         //     outside, inside horizontal, and inside vertical borders. The center
         //     cell will have no borders.
-        pt.drawBorders(b10d12, BorderStyle.MEDIUM, red, BorderExtent.OUTSIDE);
-        pt.drawBorders(b10d12, BorderStyle.MEDIUM, blue, BorderExtent.INSIDE_VERTICAL);
-        pt.drawBorders(b10d12, BorderStyle.MEDIUM, green, BorderExtent.INSIDE_HORIZONTAL);
-        pt.drawBorders(c11,    BorderStyle.NONE, BorderExtent.ALL);
+        pt.drawColoredBorders(b10d12, BorderStyle.MEDIUM, red, BorderExtent.OUTSIDE);
+        pt.drawColoredBorders(b10d12, BorderStyle.MEDIUM, blue, BorderExtent.INSIDE_VERTICAL);
+        pt.drawColoredBorders(b10d12, BorderStyle.MEDIUM, green, BorderExtent.INSIDE_HORIZONTAL);
+        pt.drawBorders(c11, BorderStyle.NONE, BorderExtent.ALL);
 
         // apply borders to sheet
         pt.applyBorders(sh1);

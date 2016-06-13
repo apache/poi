@@ -293,7 +293,7 @@ public final class BorderPropertyTemplate {
      * @param extent  BorderExtent of the borders to be applied.
      * @since 3.15 beta 2
      */
-    public void drawBorders(CellRangeAddress range, BorderStyle borderType, short color, BorderExtent extent) {
+    public void drawColoredBorders(CellRangeAddress range, BorderStyle borderType, short color, BorderExtent extent) {
         drawBorders(range, borderType, extent);
         if (borderType != BorderStyle.NONE) {
             drawBorderColors(range, color, extent);
@@ -518,8 +518,8 @@ public final class BorderPropertyTemplate {
 
     /**
      * Applies the drawn borders to a Sheet. The borders that are applied are
-     * the ones that have been drawn by the {@link #drawBorders} and
-     * {@link #drawBorderColors} methods.
+     * the ones that have been drawn by {@link #drawColoredBorders}, {@link #drawBorders} and
+     * {@link #drawBorderColors}.
      * The same border property template can be applied to multiple sheets
      * from the same or different workbooks.
      *
