@@ -91,9 +91,11 @@ public class CellReference {
     //private static final String BIFF8_LAST_ROW = String.valueOf(SpreadsheetVersion.EXCEL97.getMaxRows());
     //private static final int BIFF8_LAST_ROW_TEXT_LEN = BIFF8_LAST_ROW.length();
 
+    // FIXME: _sheetName may be null, depending on the entry point.
+    // Perhaps it would be better to declare _sheetName is never null, using an empty string to represent a 2D reference.
+    private final String _sheetName;
     private final int _rowIndex;
     private final int _colIndex;
-    private final String _sheetName;
     private final boolean _isRowAbs;
     private final boolean _isColAbs;
 
@@ -353,17 +355,8 @@ public class CellReference {
     }
 
     public static boolean isRowWithinRange(String rowStr, SpreadsheetVersion ssVersion) {
-        int rowNum = Integer.parseInt(rowStr);
-
-        if (rowNum < 0) {
-            throw new IllegalStateException("Invalid rowStr '" + rowStr + "'.");
-        }
-        if (rowNum == 0) {
-            // execution gets here because caller does first pass of discriminating
-            // potential cell references using a simplistic regex pattern.
-            return false;
-        }
-        return rowNum <= ssVersion.getMaxRows();
+        int rowNum = Integer.parseInt(rowStr) - 1;
+        return 0 <= rowNum && rowNum <= ssVersion.getLastRowIndex();
     }
 
     private static final class CellRefParts {
@@ -408,11 +401,16 @@ public class CellReference {
 
         boolean isQuoted = reference.charAt(0) == SPECIAL_NAME_DELIMITER;
         if(!isQuoted) {
-            return reference.substring(0, indexOfSheetNameDelimiter);
+            // sheet names with spaces must be quoted
+            if (reference.indexOf(' ') == -1) {
+                return reference.substring(0, indexOfSheetNameDelimiter);
+            } else {
+                throw new IllegalArgumentException("Sheet names containing spaces must be quoted: (" + reference + ")");
+            }
         }
         int lastQuotePos = indexOfSheetNameDelimiter-1;
         if(reference.charAt(lastQuotePos) != SPECIAL_NAME_DELIMITER) {
-            throw new RuntimeException("Mismatched quotes: (" + reference + ")");
+            throw new IllegalArgumentException("Mismatched quotes: (" + reference + ")");
         }
 
         // TODO - refactor cell reference parsing logic to one place.
@@ -438,7 +436,7 @@ public class CellReference {
                     continue;
                 }
             }
-            throw new RuntimeException("Bad sheet name quote escaping: (" + reference + ")");
+            throw new IllegalArgumentException("Bad sheet name quote escaping: (" + reference + ")");
         }
         return sb.toString();
     }
@@ -555,7 +553,10 @@ public class CellReference {
         return _rowIndex == cr._rowIndex
                 && _colIndex == cr._colIndex
                 && _isRowAbs == cr._isRowAbs
-                && _isColAbs == cr._isColAbs;
+                && _isColAbs == cr._isColAbs
+                && ((_sheetName == null)
+                        ? (cr._sheetName == null)
+                        : _sheetName.equals(cr._sheetName));
     }
 
     @Override
@@ -565,6 +566,7 @@ public class CellReference {
         result = 31 * result + _colIndex;
         result = 31 * result + (_isRowAbs ? 1 : 0);
         result = 31 * result + (_isColAbs ? 1 : 0);
+        result = 31 * result + (_sheetName == null ? 0 : _sheetName.hashCode());
         return result;
     }
 }
