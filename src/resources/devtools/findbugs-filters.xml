@@ -64,6 +64,16 @@
 		<Bug pattern="URF_UNREAD_FIELD" />
 		<Field name="count2" />
 	</Match>
+	<Match>
+		<Class name="org.apache.poi.xwpf.usermodel.XWPFLatentStyles"/>
+		<Bug pattern="URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD" />
+		<Field name="styles" />
+	</Match>
+	<Match>
+		<Class name="org.apache.poi.hslf.blip.Metafile"/>
+		<Bug pattern="URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD" />
+		<Field name="compression" />
+	</Match>
 	
 
     <!-- invalid performance issues - e.g. see #57840 -->

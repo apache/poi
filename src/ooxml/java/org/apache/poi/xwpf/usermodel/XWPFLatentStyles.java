@@ -20,6 +20,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTLatentStyles;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTLsdException;
 
 public class XWPFLatentStyles {
+    // As of 2016-06-10, POI does not contain a LatentStyle class, nor was one included in the patch for bug 48574.
     protected XWPFStyles styles; //LatentStyle shall know styles
     private CTLatentStyles latentStyles;
 
