@@ -20,9 +20,7 @@ package org.apache.poi.hssf.record;
 import org.apache.poi.util.*;
 
 /**
- * Record for the top margin.<p/>
- * 
- * @author Shawn Laubach (slaubach at apache dot org)
+ * Record for the top margin.
  */
 public final class TopMarginRecord extends StandardRecord implements Margin {
     public final static short sid = 0x28;

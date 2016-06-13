@@ -23,11 +23,10 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Title:        Refresh All Record (0x01B7) <p/>
+ * Title:        Refresh All Record (0x01B7)<p>
  * Description:  Flag whether to refresh all external data when loading a sheet.
- *               (which hssf doesn't support anyhow so who really cares?)<P>
- * REFERENCE:  PG 376 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
- * @author Andrew C. Oliver (acoliver at apache dot org)
+ *               (which hssf doesn't support anyhow so who really cares?)<p>
+ * REFERENCE:  PG 376 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)
  */
 public final class RefreshAllRecord extends StandardRecord {
     public final static short sid = 0x01B7;

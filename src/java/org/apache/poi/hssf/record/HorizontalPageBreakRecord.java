@@ -20,10 +20,9 @@ package org.apache.poi.hssf.record;
 import java.util.Iterator;
 
 /**
- * HorizontalPageBreak (0x001B) record that stores page breaks at rows <p/>
+ * HorizontalPageBreak (0x001B) record that stores page breaks at rows
  * 
  * @see PageBreakRecord
- * @author Danny Mui (dmui at apache dot org)
  */
 public final class HorizontalPageBreakRecord extends PageBreakRecord implements Cloneable {
 
@@ -33,12 +32,10 @@ public final class HorizontalPageBreakRecord extends PageBreakRecord implements 
 	 * Creates an empty horizontal page break record
 	 */
 	public HorizontalPageBreakRecord() {
-		//
 	}
 
 	/**
-	 * @param in
-	 *            the RecordInputstream to read the record from
+	 * @param in the RecordInputstream to read the record from
 	 */
 	public HorizontalPageBreakRecord(RecordInputStream in) {
 		super(in);

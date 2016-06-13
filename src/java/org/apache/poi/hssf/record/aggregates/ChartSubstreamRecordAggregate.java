@@ -24,10 +24,8 @@ import org.apache.poi.hssf.model.RecordStream;
 import org.apache.poi.hssf.record.*;
 
 /**
- * Manages the all the records associated with a chart sub-stream.<br/>
+ * Manages the all the records associated with a chart sub-stream.<p>
  * Includes the initial {@link BOFRecord} and final {@link EOFRecord}.
- *
- * @author Josh Micich
  */
 public final class ChartSubstreamRecordAggregate extends RecordAggregate {
 

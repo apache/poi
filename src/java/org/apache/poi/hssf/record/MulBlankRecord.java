@@ -20,12 +20,11 @@ package org.apache.poi.hssf.record;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Title:        Multiple Blank cell record(0x00BE) <P/>
- * Description:  Represents a  set of columns in a row with no value but with styling.
- * <p/>
- * REFERENCE:  PG 329 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P/>
- * @author Andrew C. Oliver (acoliver at apache dot org)
- * @author Glen Stampoultzis (glens at apache.org)
+ * Title:        Multiple Blank cell record(0x00BE)<p>
+ * Description:  Represents a  set of columns in a row with no value but with styling.<p>
+ *
+ * REFERENCE:  PG 329 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)
+ * 
  * @see BlankRecord
  */
 public final class MulBlankRecord extends StandardRecord {

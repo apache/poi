@@ -23,12 +23,11 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Title:        Row Record (0x0208)<P/>
- * Description:  stores the row information for the sheet. <P/>
- * REFERENCE:  PG 379 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
- * @author Andrew C. Oliver (acoliver at apache dot org)
- * @author Jason Height (jheight at chariot dot net dot au)
- * @version 2.0-pre
+ * Title:        Row Record (0x0208)<p>
+ * Description:  stores the row information for the sheet.<p>
+ * REFERENCE:  PG 379 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)
+ * 
+ * @since 2.0-pre
  */
 public final class RowRecord extends StandardRecord {
     public final static short sid = 0x0208;

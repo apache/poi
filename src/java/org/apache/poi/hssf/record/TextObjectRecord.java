@@ -30,9 +30,7 @@ import org.apache.poi.util.HexDump;
  * The TXO record (0x01B6) is used to define the properties of a text box. It is
  * followed by two or more continue records unless there is no actual text. The
  * first continue records contain the text data and the last continue record
- * contains the formatting runs.<p/>
- *
- * @author Glen Stampoultzis (glens at apache.org)
+ * contains the formatting runs.
  */
 public final class TextObjectRecord extends ContinuableRecord {
 	public final static short sid = 0x01B6;

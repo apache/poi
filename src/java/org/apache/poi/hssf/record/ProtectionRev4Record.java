@@ -23,10 +23,9 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Title:        Protection Revision 4 Record (0x01AF) <p/>
- * Description:  describes whether this is a protected shared/tracked workbook<p/>
- * REFERENCE:  PG 373 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<p/>
- * @author Andrew C. Oliver (acoliver at apache dot org)
+ * Title:        Protection Revision 4 Record (0x01AF)<p>
+ * Description:  describes whether this is a protected shared/tracked workbook<p>
+ * REFERENCE:  PG 373 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)
  */
 public final class ProtectionRev4Record extends StandardRecord {
     public final static short sid = 0x01AF;

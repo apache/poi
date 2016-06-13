@@ -21,9 +21,7 @@ import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.StringUtil;
 
 /**
- * NOTE: Comment Associated with a Cell (0x001C)<p/>
- *
- * @author Yegor Kozlov
+ * NOTE: Comment Associated with a Cell (0x001C)
  */
 public final class NoteRecord extends StandardRecord implements Cloneable {
 	public final static short sid = 0x001C;

@@ -23,9 +23,9 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Title: Window Protect Record (0x0019) <p/>
- * Description:  flags whether workbook windows are protected<p/>
- * REFERENCE:  PG 424 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<p/>
+ * Title: Window Protect Record (0x0019)<p>
+ * Description:  flags whether workbook windows are protected<p>
+ * REFERENCE:  PG 424 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)
  */
 public final class WindowProtectRecord extends StandardRecord {
     public final static short sid = 0x0019;

@@ -24,11 +24,9 @@ import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.StringUtil;
 
 /**
- * Title:        Style Record (0x0293)<p/>
- * Description:  Describes a builtin to the gui or user defined style<P>
- * REFERENCE:  PG 390 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
- * @author Andrew C. Oliver (acoliver at apache dot org)
- * @author aviks : string fixes for UserDefined Style
+ * Title:        Style Record (0x0293)<p>
+ * Description:  Describes a builtin to the gui or user defined style<p>
+ * REFERENCE:  PG 390 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)
  */
 public final class StyleRecord extends StandardRecord {
 	public final static short sid = 0x0293;

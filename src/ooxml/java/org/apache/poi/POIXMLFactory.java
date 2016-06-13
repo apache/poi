@@ -66,6 +66,17 @@ public abstract class POIXMLFactory {
     
     /**
      * Need to delegate instantiation to sub class because of constructor visibility
+     *
+     * @param cls the document class to be instantiated
+     * @param classes the classes of the constructor arguments
+     * @param values the values of the constructor arguments
+     * @return the new document / part
+     * @throws SecurityException thrown if the object can't be instantiated
+     * @throws NoSuchMethodException thrown if there is no constructor found for the given arguments
+     * @throws InstantiationException thrown if the object can't be instantiated
+     * @throws IllegalAccessException thrown if the object can't be instantiated
+     * @throws InvocationTargetException thrown if the object can't be instantiated
+     * 
      * @since POI 3.14-Beta1
      */
     protected abstract POIXMLDocumentPart createDocumentPart
@@ -75,6 +86,7 @@ public abstract class POIXMLFactory {
     /**
      * returns the descriptor for the given relationship type 
      *
+     * @param relationshipType the relationship type of the descriptor
      * @return the descriptor or null if type is unknown
      * 
      * @since POI 3.14-Beta1
@@ -115,6 +127,13 @@ public abstract class POIXMLFactory {
 
      /**
       * Retrieves the package relationship of the child part within the parent
+      * 
+      * @param parent the parent to search for the part
+      * @param part the part to look for
+      * 
+      * @return the relationship
+      * 
+      * @throws POIXMLException if the relations are erroneous or the part is not related
       * 
       * @since POI 3.14-Beta1
       */

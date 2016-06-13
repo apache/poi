@@ -22,12 +22,10 @@ import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.StringUtil;
 
 /**
- * Title:        Format Record (0x041E) <p/>
- * Description:  describes a number format -- those goofy strings like $(#,###)<p/>
+ * Title:        Format Record (0x041E)<p>
+ * Description:  describes a number format -- those goofy strings like $(#,###)<p>
  *
- * REFERENCE:  PG 317 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<p/>
- * @author Andrew C. Oliver (acoliver at apache dot org)
- * @author Shawn M. Laubach (slaubach at apache dot org)
+ * REFERENCE:  PG 317 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)
  */
 public final class FormatRecord extends StandardRecord implements Cloneable {
     public final static short sid = 0x041E;

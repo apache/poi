@@ -25,7 +25,7 @@ import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 /**
- * DATATABLE (0x0236)<p/>
+ * DATATABLE (0x0236)<p>
  *
  * TableRecord - The record specifies a data table.
  * This record is preceded by a single Formula record that

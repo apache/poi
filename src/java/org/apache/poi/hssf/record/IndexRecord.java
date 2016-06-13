@@ -21,13 +21,11 @@ import org.apache.poi.util.IntList;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Title:        Index Record (0x020B)<p/>
+ * Title:        Index Record (0x020B)<p>
  * Description:  Occurs right after BOF, tells you where the DBCELL records are for a sheet
- *               Important for locating cells<p/>
- * NOT USED IN THIS RELEASE
- * REFERENCE:  PG 323 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<p/>
- * @author Andrew C. Oliver (acoliver at apache dot org)
- * @author Jason Height (jheight at chariot dot net dot au)
+ *               Important for locating cells<p>
+ *               
+ * REFERENCE:  PG 323 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)
  */
 public final class IndexRecord extends StandardRecord implements Cloneable {
     public final static short sid = 0x020B;

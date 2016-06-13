@@ -24,10 +24,8 @@ import org.apache.poi.hssf.model.RecordStream;
 import org.apache.poi.hssf.record.*;
 
 /**
- * Manages the all the records associated with a 'Custom View Settings' sub-stream.<br/>
+ * Manages the all the records associated with a 'Custom View Settings' sub-stream.<p>
  * Includes the initial USERSVIEWBEGIN(0x01AA) and final USERSVIEWEND(0x01AB).
- * 
- * @author Josh Micich
  */
 public final class CustomViewSettingsRecordAggregate extends RecordAggregate {
 

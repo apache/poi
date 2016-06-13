@@ -26,13 +26,11 @@ import org.apache.poi.util.IntMapper;
 import org.apache.poi.util.LittleEndianConsts;
 
 /**
- * Title:        Static String Table Record (0x00FC)<p/>
+ * Title:        Static String Table Record (0x00FC)<p>
  *
- * Description:  This holds all the strings for LabelSSTRecords.
- * <P>
- * REFERENCE:    PG 389 Microsoft Excel 97 Developer's Kit (ISBN:
- *               1-57231-498-2)
- * <P>
+ * Description:  This holds all the strings for LabelSSTRecords.<p>
+ * 
+ * REFERENCE:    PG 389 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)
  *
  * @see org.apache.poi.hssf.record.LabelSSTRecord
  * @see org.apache.poi.hssf.record.ContinueRecord
@@ -164,7 +162,7 @@ public final class SSTRecord extends ContinuableRecord {
      * The data consists of sets of string data. This string data is
      * arranged as follows:
      * <P>
-     * <CODE><pre>
+     * <pre>
      * short  string_length;   // length of string data
      * byte   string_flag;     // flag specifying special string
      *                         // handling
@@ -177,11 +175,11 @@ public final class SSTRecord extends ContinuableRecord {
      *                         // array is run_count)
      * byte[] extension;       // optional extension (length of array
      *                         // is extend_length)
-     * </pre></CODE>
+     * </pre>
      * <P>
      * The string_flag is bit mapped as follows:
      * <P>
-     * <TABLE>
+     * <TABLE summary="string_flag mapping">
      *   <TR>
      *      <TH>Bit number</TH>
      *      <TH>Meaning if 0</TH>
@@ -190,42 +188,42 @@ public final class SSTRecord extends ContinuableRecord {
      *   <TR>
      *      <TD>0</TD>
      *      <TD>string_data is byte[]</TD>
-     *      <TD>string_data is short[]</TH>
+     *      <TD>string_data is short[]</TD>
      *   <TR>
      *   <TR>
      *      <TD>1</TD>
      *      <TD>Should always be 0</TD>
-     *      <TD>string_flag is defective</TH>
+     *      <TD>string_flag is defective</TD>
      *   <TR>
      *   <TR>
      *      <TD>2</TD>
      *      <TD>extension is not included</TD>
-     *      <TD>extension is included</TH>
+     *      <TD>extension is included</TD>
      *   <TR>
      *   <TR>
      *      <TD>3</TD>
      *      <TD>formatting run data is not included</TD>
-     *      <TD>formatting run data is included</TH>
+     *      <TD>formatting run data is included</TD>
      *   <TR>
      *   <TR>
      *      <TD>4</TD>
      *      <TD>Should always be 0</TD>
-     *      <TD>string_flag is defective</TH>
+     *      <TD>string_flag is defective</TD>
      *   <TR>
      *   <TR>
      *      <TD>5</TD>
      *      <TD>Should always be 0</TD>
-     *      <TD>string_flag is defective</TH>
+     *      <TD>string_flag is defective</TD>
      *   <TR>
      *   <TR>
      *      <TD>6</TD>
      *      <TD>Should always be 0</TD>
-     *      <TD>string_flag is defective</TH>
+     *      <TD>string_flag is defective</TD>
      *   <TR>
      *   <TR>
      *      <TD>7</TD>
      *      <TD>Should always be 0</TD>
-     *      <TD>string_flag is defective</TH>
+     *      <TD>string_flag is defective</TD>
      *   <TR>
      * </TABLE>
      * <P>

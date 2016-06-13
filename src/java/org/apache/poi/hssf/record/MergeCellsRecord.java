@@ -22,10 +22,9 @@ import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Title: Merged Cells Record (0x00E5)
- * <br/>
- * Description:  Optional record defining a square area of cells to "merged" into one cell. <br>
- * @author Andrew C. Oliver (acoliver at apache dot org)
+ * Title: Merged Cells Record (0x00E5)<p>
+ * 
+ * Description:  Optional record defining a square area of cells to "merged" into one cell.
  */
 public final class MergeCellsRecord extends StandardRecord implements Cloneable {
     public final static short sid = 0x00E5;

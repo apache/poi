@@ -22,11 +22,9 @@ import org.apache.poi.hssf.record.cont.ContinuableRecordOutput;
 import org.apache.poi.util.StringUtil;
 
 /**
- * STRING (0x0207)<p/>
+ * STRING (0x0207)<p>
  * 
  * Stores the cached result of a text formula
- *
- * @author Glen Stampoultzis (glens at apache.org)
  */
 public final class StringRecord extends ContinuableRecord {
 

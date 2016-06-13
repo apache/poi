@@ -27,11 +27,9 @@ import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 import org.apache.poi.util.LittleEndianInputStream;
 
 /**
- * OBJRECORD (0x005D)<p/>
+ * OBJRECORD (0x005D)<p>
  * 
  * The obj record is used to hold various graphic objects and controls.
- *
- * @author Glen Stampoultzis (glens at apache.org)
  */
 public final class ObjRecord extends Record implements Cloneable {
 	public final static short sid = 0x005D;
