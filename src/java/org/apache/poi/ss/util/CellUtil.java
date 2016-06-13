@@ -42,6 +42,7 @@ import org.apache.poi.ss.usermodel.Workbook;
  */
 public final class CellUtil {
 
+    // FIXME: Move these constants into an enum
     public static final String ALIGNMENT = "alignment";
     public static final String BORDER_BOTTOM = "borderBottom";
     public static final String BORDER_LEFT = "borderLeft";
