@@ -58,14 +58,30 @@ public final class RegionUtil {
     /**
      * Sets the left border for a region of cells by manipulating the cell style of the individual
      * cells on the left
+     * 
+     * @see {@link BorderPropertyTemplate#drawBorders} for improved border functionality
+     *
+     * @param border The new border
+     * @param region The region that should have the border
+     * @param workbook The workbook that the region is on.
+     * @param sheet The sheet that the region is on.
+     * @deprecated 3.15 beta 2. Use {@link #setBorderLeft(int, CellRangeAddress, Sheet).
+     */
+    public static void setBorderLeft(int border, CellRangeAddress region, Sheet sheet, Workbook workbook) {
+        setBorderLeft(border, region, sheet);
+    }
+    /**
+     * Sets the left border for a region of cells by manipulating the cell style of the individual
+     * cells on the left
+     * 
+     * @see {@link BorderPropertyTemplate#drawBorders} for improved border functionality
      *
      * @param border The new border
      * @param region The region that should have the border
      * @param workbook The workbook that the region is on.
      * @param sheet The sheet that the region is on.
      */
-    public static void setBorderLeft(int border, CellRangeAddress region, Sheet sheet,
-            Workbook workbook) {
+    public static void setBorderLeft(int border, CellRangeAddress region, Sheet sheet) {
         int rowStart = region.getFirstRow();
         int rowEnd = region.getLastRow();
         int column = region.getFirstColumn();
@@ -77,15 +93,32 @@ public final class RegionUtil {
     }
 
     /**
-     * Sets the leftBorderColor attribute of the RegionUtil object
+     * Sets the left border color for a region of cells by manipulating the cell style of the individual
+     * cells on the left
+     * 
+     * @see {@link BorderPropertyTemplate#drawBorderColors} for improved border functionality
+     *
+     * @param color The color of the border
+     * @param region The region that should have the border
+     * @param workbook The workbook that the region is on.
+     * @param sheet The sheet that the region is on.
+     * @deprecated 3.15 beta 2. Use {@link #setLeftBorderColor(int, CellRangeAddress, Sheet).
+     */
+    public static void setLeftBorderColor(int color, CellRangeAddress region, Sheet sheet, Workbook workbook) {
+        setLeftBorderColor(color, region, sheet, workbook);
+    }
+    /**
+     * Sets the left border color for a region of cells by manipulating the cell style of the individual
+     * cells on the left
+     * 
+     * @see {@link BorderPropertyTemplate#drawBorderColors} for improved border functionality
      *
      * @param color The color of the border
      * @param region The region that should have the border
      * @param workbook The workbook that the region is on.
      * @param sheet The sheet that the region is on.
      */
-    public static void setLeftBorderColor(int color, CellRangeAddress region, Sheet sheet,
-            Workbook workbook) {
+    public static void setLeftBorderColor(int color, CellRangeAddress region, Sheet sheet) {
         int rowStart = region.getFirstRow();
         int rowEnd = region.getLastRow();
         int column = region.getFirstColumn();
@@ -97,15 +130,32 @@ public final class RegionUtil {
     }
 
     /**
-     * Sets the borderRight attribute of the RegionUtil object
+     * Sets the right border for a region of cells by manipulating the cell style of the individual
+     * cells on the right
+     * 
+     * @see {@link BorderPropertyTemplate#drawBorders} for improved border functionality
+     *
+     * @param border The new border
+     * @param region The region that should have the border
+     * @param workbook The workbook that the region is on.
+     * @param sheet The sheet that the region is on.
+     * @deprecated 3.15 beta 2. Use {@link #setBorderRight(int, CellRangeAddress, Sheet).
+     */
+    public static void setBorderRight(int border, CellRangeAddress region, Sheet sheet, Workbook workbook) {
+        setBorderRight(border, region, sheet);
+    }
+    /**
+     * Sets the right border for a region of cells by manipulating the cell style of the individual
+     * cells on the right
+     * 
+     * @see {@link BorderPropertyTemplate#drawBorders} for improved border functionality
      *
      * @param border The new border
      * @param region The region that should have the border
      * @param workbook The workbook that the region is on.
      * @param sheet The sheet that the region is on.
      */
-    public static void setBorderRight(int border, CellRangeAddress region, Sheet sheet,
-            Workbook workbook) {
+    public static void setBorderRight(int border, CellRangeAddress region, Sheet sheet) {
         int rowStart = region.getFirstRow();
         int rowEnd = region.getLastRow();
         int column = region.getLastColumn();
@@ -117,15 +167,32 @@ public final class RegionUtil {
     }
 
     /**
-     * Sets the rightBorderColor attribute of the RegionUtil object
+     * Sets the right border color for a region of cells by manipulating the cell style of the individual
+     * cells on the right
+     * 
+     * @see {@link BorderPropertyTemplate#drawBorderColors} for improved border functionality
+     *
+     * @param color The color of the border
+     * @param region The region that should have the border
+     * @param workbook The workbook that the region is on.
+     * @param sheet The sheet that the region is on.
+     * @deprecated 3.15 beta 2. Use {@link #setRightBorderColor(int, CellRangeAddress, Sheet).
+     */
+    public static void setRightBorderColor(int color, CellRangeAddress region, Sheet sheet, Workbook workbook) {
+        setRightBorderColor(color, region, sheet);
+    }
+    /**
+     * Sets the right border color for a region of cells by manipulating the cell style of the individual
+     * cells on the right
+     * 
+     * @see {@link BorderPropertyTemplate#drawBorderColors} for improved border functionality
      *
      * @param color The color of the border
      * @param region The region that should have the border
      * @param workbook The workbook that the region is on.
      * @param sheet The sheet that the region is on.
      */
-    public static void setRightBorderColor(int color, CellRangeAddress region, Sheet sheet,
-            Workbook workbook) {
+    public static void setRightBorderColor(int color, CellRangeAddress region, Sheet sheet) {
         int rowStart = region.getFirstRow();
         int rowEnd = region.getLastRow();
         int column = region.getLastColumn();
@@ -137,15 +204,32 @@ public final class RegionUtil {
     }
 
     /**
-     * Sets the borderBottom attribute of the RegionUtil object
+     * Sets the bottom border for a region of cells by manipulating the cell style of the individual
+     * cells on the bottom
+     * 
+     * @see {@link BorderPropertyTemplate#drawBorders} for improved border functionality
+     *
+     * @param border The new border
+     * @param region The region that should have the border
+     * @param workbook The workbook that the region is on.
+     * @param sheet The sheet that the region is on.
+     * @deprecated 3.15 beta 2. Use {@link #setBorderBottom(int, CellRangeAddress, Sheet).
+     */
+    public static void setBorderBottom(int border, CellRangeAddress region, Sheet sheet, Workbook workbook) {
+        setBorderBottom(border, region, sheet);
+    }
+    /**
+     * Sets the bottom border for a region of cells by manipulating the cell style of the individual
+     * cells on the bottom
+     * 
+     * @see {@link BorderPropertyTemplate#drawBorders} for improved border functionality
      *
      * @param border The new border
      * @param region The region that should have the border
      * @param workbook The workbook that the region is on.
      * @param sheet The sheet that the region is on.
      */
-    public static void setBorderBottom(int border, CellRangeAddress region, Sheet sheet,
-            Workbook workbook) {
+    public static void setBorderBottom(int border, CellRangeAddress region, Sheet sheet) {
         int colStart = region.getFirstColumn();
         int colEnd = region.getLastColumn();
         int rowIndex = region.getLastRow();
@@ -157,15 +241,32 @@ public final class RegionUtil {
     }
 
     /**
-     * Sets the bottomBorderColor attribute of the RegionUtil object
+     * Sets the bottom border color for a region of cells by manipulating the cell style of the individual
+     * cells on the bottom
+     * 
+     * @see {@link BorderPropertyTemplate#drawBorderColors} for improved border functionality
+     *
+     * @param color The color of the border
+     * @param region The region that should have the border
+     * @param workbook The workbook that the region is on.
+     * @param sheet The sheet that the region is on.
+     * @deprecated 3.15 beta 2. Use {@link #setBottomBorderColor(int, CellRangeAddress, Sheet).
+     */
+    public static void setBottomBorderColor(int color, CellRangeAddress region, Sheet sheet, Workbook workbook) {
+        setBottomBorderColor(color, region, sheet);
+    }
+    /**
+     * Sets the bottom border color for a region of cells by manipulating the cell style of the individual
+     * cells on the bottom
+     * 
+     * @see {@link BorderPropertyTemplate#drawBorderColors} for improved border functionality
      *
      * @param color The color of the border
      * @param region The region that should have the border
      * @param workbook The workbook that the region is on.
      * @param sheet The sheet that the region is on.
      */
-    public static void setBottomBorderColor(int color, CellRangeAddress region, Sheet sheet,
-            Workbook workbook) {
+    public static void setBottomBorderColor(int color, CellRangeAddress region, Sheet sheet) {
         int colStart = region.getFirstColumn();
         int colEnd = region.getLastColumn();
         int rowIndex = region.getLastRow();
@@ -177,15 +278,32 @@ public final class RegionUtil {
     }
 
     /**
-     * Sets the borderBottom attribute of the RegionUtil object
+     * Sets the top border for a region of cells by manipulating the cell style of the individual
+     * cells on the top
+     * 
+     * @see {@link BorderPropertyTemplate#drawBorders} for improved border functionality
+     *
+     * @param border The new border
+     * @param region The region that should have the border
+     * @param workbook The workbook that the region is on.
+     * @param sheet The sheet that the region is on.
+     * @deprecated 3.15 beta 2. Use {@link #setBorderTop(int, CellRangeAddress, Sheet).
+     */
+    public static void setBorderTop(int border, CellRangeAddress region, Sheet sheet, Workbook workbook) {
+        setBorderTop(border, region, sheet);
+    }
+    /**
+     * Sets the top border for a region of cells by manipulating the cell style of the individual
+     * cells on the top
+     * 
+     * @see {@link BorderPropertyTemplate#drawBorders} for improved border functionality
      *
      * @param border The new border
      * @param region The region that should have the border
      * @param workbook The workbook that the region is on.
      * @param sheet The sheet that the region is on.
      */
-    public static void setBorderTop(int border, CellRangeAddress region, Sheet sheet,
-            Workbook workbook) {
+    public static void setBorderTop(int border, CellRangeAddress region, Sheet sheet) {
         int colStart = region.getFirstColumn();
         int colEnd = region.getLastColumn();
         int rowIndex = region.getFirstRow();
@@ -197,15 +315,32 @@ public final class RegionUtil {
     }
 
     /**
-     * Sets the topBorderColor attribute of the RegionUtil object
+     * Sets the top border color for a region of cells by manipulating the cell style of the individual
+     * cells on the top
+     * 
+     * @see {@link BorderPropertyTemplate#drawBorderColors} for improved border functionality
+     *
+     * @param color The color of the border
+     * @param region The region that should have the border
+     * @param workbook The workbook that the region is on.
+     * @param sheet The sheet that the region is on.
+     * @deprecated 3.15 beta 2. Use {@link #setTopBorderColor(int, CellRangeAddress, Sheet)}.
+     */
+    public static void setTopBorderColor(int color, CellRangeAddress region, Sheet sheet, Workbook workbook) {
+        setTopBorderColor(color, region, sheet);
+    }
+    /**
+     * Sets the top border color for a region of cells by manipulating the cell style of the individual
+     * cells on the top
+     * 
+     * @see {@link BorderPropertyTemplate#drawBorderColors} for improved border functionality
      *
      * @param color The color of the border
      * @param region The region that should have the border
      * @param workbook The workbook that the region is on.
      * @param sheet The sheet that the region is on.
      */
-    public static void setTopBorderColor(int color, CellRangeAddress region, Sheet sheet,
-            Workbook workbook) {
+    public static void setTopBorderColor(int color, CellRangeAddress region, Sheet sheet) {
         int colStart = region.getFirstColumn();
         int colEnd = region.getLastColumn();
         int rowIndex = region.getFirstRow();
