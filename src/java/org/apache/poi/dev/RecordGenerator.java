@@ -92,7 +92,9 @@ public class RecordGenerator {
                 // Generate record
                 String destinationPath = destSrcPathDir + "/" + packageName;
                 File destinationPathFile = new File(destinationPath);
-                destinationPathFile.mkdirs();
+                if (destinationPathFile.mkdirs()) {
+                    System.out.println("Created destination directory: " + destinationPath);
+                }
                 String destinationFilepath = destinationPath + "/" + recordName + suffix + ".java";
                 transform(file, new File(destinationFilepath), 
                           new File(recordStyleDir + "/" + extendstg.toLowerCase(Locale.ROOT) + ".xsl"));
@@ -101,7 +103,9 @@ public class RecordGenerator {
                 // Generate test (if not already generated)
                 destinationPath = testSrcPathDir + "/" + packageName;
                 destinationPathFile = new File(destinationPath);
-                destinationPathFile.mkdirs();
+                if (destinationPathFile.mkdirs()) {
+                    System.out.println("Created destination directory: " + destinationPath);
+                }
                 destinationFilepath = destinationPath + "/Test" + recordName + suffix + ".java";
                 if (new File(destinationFilepath).exists() == false) {
                     String temp = (recordStyleDir + "/" + extendstg.toLowerCase(Locale.ROOT) + "_test.xsl");
