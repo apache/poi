@@ -24,6 +24,10 @@ import org.apache.poi.ss.usermodel.Workbook;
 
 /**
  * Various utility functions that make working with a region of cells easier.
+ * 
+ * @see {@link BorderPropertyTemplate} to store border changes to a data structure
+ * and apply the changes to multiple sheets. <code>BorderPropertyTemplate</code>
+ * also supports setting INTERNAL borders within a region.
  *
  * @author Eric Pugh epugh@upstate.com
  * @author (secondary) Avinash Kewalramani akewalramani@accelrys.com
