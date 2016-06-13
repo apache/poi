@@ -779,6 +779,10 @@ public class SXSSFCell implements Cell {
                     current=new HyperlinkProperty(value);
                     break;
                 }
+                default:
+                {
+                    throw new IllegalArgumentException("Invalid type: " + type);
+                }
             }
             if(previous!=null)
             {

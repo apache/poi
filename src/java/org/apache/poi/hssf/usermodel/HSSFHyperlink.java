@@ -78,6 +78,8 @@ public class HSSFHyperlink implements Hyperlink {
             case LINK_DOCUMENT:
                 record.newDocumentLink();
                 break;
+            default:
+                throw new IllegalArgumentException("Invalid type: " + type);
         }
     }
 
