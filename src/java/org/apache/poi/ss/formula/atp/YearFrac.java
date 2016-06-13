@@ -65,6 +65,7 @@ final class YearFrac implements FreeRefFunction {
 			switch(args.length) {
 				case 3:
 					basis = evaluateIntArg(args[2], srcCellRow, srcCellCol);
+					// fall through
 				case 2:
 					break;
 				default:

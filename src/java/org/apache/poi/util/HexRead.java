@@ -101,6 +101,7 @@ public class HexRead
         return readData(stream, section);
     }
 
+    @SuppressWarnings("fallthrough")
     static public byte[] readData( InputStream stream, int eofChar )
             throws IOException
     {
@@ -137,6 +138,7 @@ public class HexRead
                 case 'E':
                 case 'F':
                     baseChar = 'A';
+                    // fall through
                 case 'a':
                 case 'b':
                 case 'c':

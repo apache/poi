@@ -82,6 +82,40 @@
 			<Field name="pitch" />
 		</Or>
 	</Match>
+	<Match>
+		<Class name="org.apache.poi.hssf.usermodel.HSSFCell"/>
+		<Or>
+			<Method name="setCellValue" params="double" />
+			<Method name="setCellValue" params="boolean" />
+			<Method name="setCellErrorValue" params="byte" />
+		</Or>
+		<Bug pattern="SF_SWITCH_FALLTHROUGH" />
+	</Match>
+	<Match>
+		<Class name="org.apache.poi.hssf.usermodel.HSSFWorkbook"/>
+		<Method name="addPicture" />
+		<Bug pattern="SF_SWITCH_FALLTHROUGH" />
+	</Match>
+	<Match>
+		<Class name="org.apache.poi.ss.formula.atp.YearFrac"/>
+		<Method name="evaluate" />
+		<Bug pattern="SF_SWITCH_FALLTHROUGH" />
+	</Match>
+	<Match>
+		<Class name="org.apache.poi.ss.formula.functions.FinanceFunction"/>
+		<Method name="evaluate" />
+		<Bug pattern="SF_SWITCH_FALLTHROUGH" />
+	</Match>
+	<Match>
+		<Class name="org.apache.poi.ss.formula.functions.Offset"/>
+		<Method name="evaluate" />
+		<Bug pattern="SF_SWITCH_FALLTHROUGH" />
+	</Match>
+	<Match>
+		<Class name="org.apache.poi.util.HeadRead"/>
+		<Method name="readData" params="java.io.InputStream,int" />
+		<Bug pattern="SF_SWITCH_FALLTHROUGH" />
+	</Match>
 	
 
     <!-- invalid performance issues - e.g. see #57840 -->

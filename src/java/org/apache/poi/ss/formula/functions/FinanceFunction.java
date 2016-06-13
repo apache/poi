@@ -87,6 +87,7 @@ public abstract class FinanceFunction implements Function3Arg, Function4Arg {
         }
     }
 
+    @SuppressWarnings("fallthrough")
     protected double evaluate(double[] ds) throws EvaluationException {
         // All finance functions have 3 to 5 args, first 4 are numbers, last is boolean
         // default for last 2 args are 0.0 and false
@@ -98,8 +99,10 @@ public abstract class FinanceFunction implements Function3Arg, Function4Arg {
         switch(ds.length) {
             case 5:
                 arg4 = ds[4];
+                // fall through
             case 4:
                 arg3 = ds[3];
+                // fall through
             case 3:
                 break;
             default:

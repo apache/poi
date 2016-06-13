@@ -269,7 +269,8 @@ public final class EmbeddedObjectRefSubRecord extends SubRecord implements Clone
 		switch(idOffset - (pos - 6)) { // 6 for 3 shorts: sid, dataSize, idOffset
 			case 1:
 				out.writeByte(field_4_unknownByte == null ? 0x00 : field_4_unknownByte.intValue());
-				pos ++;
+				pos++;
+				break;
 			case 0:
 				break;
 			default:
