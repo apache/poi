@@ -25,8 +25,10 @@ import org.apache.poi.ss.formula.functions.FreeRefFunction;
 
 /**
  * Default UDF finder - for adding your own user defined functions.
+ *
+ * @author PUdalau
  */
-public final class DefaultUDFFinder extends UDFFinder {
+public final class DefaultUDFFinder implements UDFFinder {
     private final Map<String, FreeRefFunction> _functionsByName;
 
     public DefaultUDFFinder(String[] functionNames, FreeRefFunction[] functionImpls) {

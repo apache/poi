@@ -44,7 +44,7 @@ import org.apache.poi.ss.formula.udf.UDFFinder;
 /**
  * Analysis Toolpack Function Definitions
  */
-public final class AnalysisToolPak extends UDFFinder {
+public final class AnalysisToolPak implements UDFFinder {
 
     public static final UDFFinder instance = new AnalysisToolPak();
 

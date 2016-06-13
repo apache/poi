@@ -106,7 +106,7 @@ public final class TestWorkbook {
     public void testAddNameX() throws IOException {
         HSSFWorkbook hwb = new HSSFWorkbook();
         InternalWorkbook wb = TestHSSFWorkbook.getInternalWorkbook(hwb);
-        assertNotNull(wb.getNameXPtg("ISODD", UDFFinder.getDefault()));
+        assertNotNull(wb.getNameXPtg("ISODD", AggregatingUDFFinder.DEFAULT));
 
         FreeRefFunction NotImplemented = new FreeRefFunction() {
             public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
