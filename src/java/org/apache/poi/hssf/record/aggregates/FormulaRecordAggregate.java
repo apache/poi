@@ -24,12 +24,13 @@ import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RecordFormatException;
 import org.apache.poi.hssf.record.SharedFormulaRecord;
 import org.apache.poi.hssf.record.StringRecord;
+import org.apache.poi.hssf.util.CellRangeAddress8Bit;
 import org.apache.poi.ss.formula.ptg.ExpPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
-import org.apache.poi.hssf.util.CellRangeAddress8Bit;
-import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.formula.Formula;
+import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.CellReference;
 
 /**
  * The formula record aggregate is used to join together the formula record and it's
@@ -179,6 +180,9 @@ public final class FormulaRecordAggregate extends RecordAggregate implements Cel
 	public void setCachedErrorResult(int errorCode) {
 		_stringRecord = null;
 		_formulaRecord.setCachedResultErrorCode(errorCode);
+	}
+	public void setCachedErrorResult(FormulaError error) {
+		setCachedErrorResult(error.getCode());
 	}
 	public void setCachedDoubleResult(double value) {
 		_stringRecord = null;
