@@ -47,11 +47,7 @@ public final class TestBorderPropertyTemplate {
     @Test
     public void createTemplateFromExisting() throws IOException {
         CellRangeAddress a1a1 = new CellRangeAddress(0, 0, 0, 0); //A1:A1
-        CellRangeAddress b2b2 = new CellRangeAddress(1, 1, 1, 1); //B2:B2
-        CellRangeAddress c3c3 = new CellRangeAddress(2, 2, 2, 2); //C3:C3
         CellAddress a1 = new CellAddress(0, 0); //A1
-        CellAddress b2 = new CellAddress(1, 1); //B2
-        CellAddress c3 = new CellAddress(2, 2); //C3
 
         BorderPropertyTemplate pt1 = new BorderPropertyTemplate();
         pt1.drawBorders(a1a1, BorderStyle.THIN, RED, BorderExtent.TOP);
@@ -63,16 +59,18 @@ public final class TestBorderPropertyTemplate {
         assertRed(pt2.getTemplateProperty(a1, CellUtil.TOP_BORDER_COLOR));
 
         // Changes to original template should not affect copied template.
-        pt1.drawBorders(b2b2, BorderStyle.THIN, RED, BorderExtent.TOP);
-        assertEquals(0, pt2.getNumBorders(b2));
-        assertNull(pt2.getTemplateProperty(b2, CellUtil.BORDER_TOP));
-        assertNull(pt2.getTemplateProperty(b2, CellUtil.TOP_BORDER_COLOR));
+        assertEquals(1, pt2.getNumBorders(a1));
+        pt1.drawBorders(a1a1, BorderStyle.THIN, RED, BorderExtent.LEFT);
+        assertEquals(1, pt2.getNumBorders(a1));
+        assertNull(pt2.getTemplateProperty(a1, CellUtil.BORDER_LEFT));
+        assertNull(pt2.getTemplateProperty(a1, CellUtil.LEFT_BORDER_COLOR));
 
         // Changes to copied template should not affect original template
-        pt2.drawBorders(c3c3, BorderStyle.THIN, RED, BorderExtent.TOP);
-        assertEquals(0, pt1.getNumBorders(c3));
-        assertNull(pt1.getTemplateProperty(c3, CellUtil.BORDER_TOP));
-        assertNull(pt1.getTemplateProperty(c3, CellUtil.TOP_BORDER_COLOR));
+        assertEquals(2, pt1.getNumBorders(a1));
+        pt2.drawBorders(a1a1, BorderStyle.THIN, RED, BorderExtent.RIGHT);
+        assertEquals(2, pt1.getNumBorders(a1));
+        assertNull(pt1.getTemplateProperty(a1, CellUtil.BORDER_RIGHT));
+        assertNull(pt1.getTemplateProperty(a1, CellUtil.RIGHT_BORDER_COLOR));
     }
 
     @Test
