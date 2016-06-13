@@ -198,6 +198,30 @@ public final class BorderPropertyTemplate {
     }
 
     /**
+     * Copy constructor
+     *
+     * Create a template from an existing template.
+     * Changes made to either template do not affect the other template.
+     * @since 3.15 beta 2
+     */
+    public BorderPropertyTemplate(BorderPropertyTemplate prototype) {
+        this();
+        // deep copy the _propertyTemplate map from prototype
+        for (Entry<CellAddress, Map<String, Object>> other : prototype._propertyTemplate.entrySet()) {
+            CellAddress cell = other.getKey();
+            Map<String, Object> otherMap = other.getValue();
+
+            // The keys in otherMap are immutable Strings
+            // The values in otherMap are immutable Shorts or BorderStyles
+            // Therefore, this map's data cannot be modified through protoype
+            Map<String, Object> map = new HashMap<String, Object>(otherMap);
+
+            // CellAddress is an immutable class, therefore it is ok to reference the same instance
+            _propertyTemplate.put(cell, map);
+        }
+    }
+
+    /**
      * Add a group of cell borders for a cell range to the border property template.
      * The borders are not applied to the cells at this time, just the template is drawn
      * (<code>drawBorders</code> stages changes using the border property template).
