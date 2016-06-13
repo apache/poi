@@ -41,7 +41,7 @@ import org.apache.poi.util.LittleEndian;
 public final class HMEFMessage {
    public static final int HEADER_SIGNATURE = 0x223e9f78;
    
-   private int fileId; 
+   private int fileId;
    private List<TNEFAttribute> messageAttributes = new ArrayList<TNEFAttribute>();
    private List<MAPIAttribute> mapiAttributes = new ArrayList<MAPIAttribute>();
    private List<Attachment> attachments = new ArrayList<Attachment>();
