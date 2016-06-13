@@ -106,7 +106,7 @@ public class EscherComplexProperty extends EscherProperty {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof EscherComplexProperty)) {
+        if (o == null || !(o instanceof EscherComplexProperty)) {
             return false;
         }
 

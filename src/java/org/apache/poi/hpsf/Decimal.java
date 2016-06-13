@@ -24,6 +24,9 @@ class Decimal
 {
     static final int SIZE = 16;
 
+    /**
+     * Findbugs: UNR_UNREAD_FIELD
+     */
     private short field_1_wReserved;
     private byte field_2_scale;
     private byte field_3_sign;

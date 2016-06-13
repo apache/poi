@@ -80,6 +80,10 @@
 		<Class name="org.apache.poi.xssf.model.IndexedUDFFinder"/>
 		<Bug code="Nm" />
 	</Match>
+		<Match>
+		<Class name="org.apache.poi.hpsf.Decimal"/>
+		<Bug pattern="URF_UNREAD_FIELD" />
+	</Match>
 
 	<!-- named this way on purpose -->
 	<Match>
