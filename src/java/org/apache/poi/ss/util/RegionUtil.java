@@ -25,12 +25,10 @@ import org.apache.poi.ss.usermodel.Workbook;
 /**
  * Various utility functions that make working with a region of cells easier.
  * 
- * @see {@link BorderPropertyTemplate} to store border changes to a data structure
- * and apply the changes to multiple sheets. <code>BorderPropertyTemplate</code>
+ * @see BorderPropertyTemplate <code>BorderPropertyTemplate</code>
+ * to store border changes to a data structure and apply the changes to 
+ * multiple sheets. <code>BorderPropertyTemplate</code>
  * also supports setting INTERNAL borders within a region.
- *
- * @author Eric Pugh epugh@upstate.com
- * @author (secondary) Avinash Kewalramani akewalramani@accelrys.com
  */
 public final class RegionUtil {
 
@@ -63,13 +61,14 @@ public final class RegionUtil {
      * Sets the left border for a region of cells by manipulating the cell style of the individual
      * cells on the left
      * 
-     * @see {@link BorderPropertyTemplate#drawBorders} for improved border functionality
+     * @see BorderPropertyTemplate#drawBorders 
+     * <code>BorderPropertyTemplate#drawBorders</code> for improved border functionality
      *
      * @param border The new border
      * @param region The region that should have the border
      * @param workbook The workbook that the region is on.
      * @param sheet The sheet that the region is on.
-     * @deprecated 3.15 beta 2. Use {@link #setBorderLeft(int, CellRangeAddress, Sheet).
+     * @deprecated 3.15 beta 2. Use {@link #setBorderLeft(int, CellRangeAddress, Sheet)}
      */
     public static void setBorderLeft(int border, CellRangeAddress region, Sheet sheet, Workbook workbook) {
         setBorderLeft(border, region, sheet);
@@ -78,11 +77,11 @@ public final class RegionUtil {
      * Sets the left border for a region of cells by manipulating the cell style of the individual
      * cells on the left
      * 
-     * @see {@link BorderPropertyTemplate#drawBorders} for improved border functionality
+     * @see BorderPropertyTemplate#drawBorders 
+     * <code>BorderPropertyTemplate#drawBorders</code> for improved border functionality
      *
      * @param border The new border
      * @param region The region that should have the border
-     * @param workbook The workbook that the region is on.
      * @param sheet The sheet that the region is on.
      */
     public static void setBorderLeft(int border, CellRangeAddress region, Sheet sheet) {
@@ -100,7 +99,8 @@ public final class RegionUtil {
      * Sets the left border color for a region of cells by manipulating the cell style of the individual
      * cells on the left
      * 
-     * @see {@link BorderPropertyTemplate#drawBorderColors} for improved border functionality
+     * @see BorderPropertyTemplate#drawBorders 
+     * <code>BorderPropertyTemplate#drawBorders</code> for improved border functionality
      *
      * @param color The color of the border
      * @param region The region that should have the border
@@ -115,11 +115,11 @@ public final class RegionUtil {
      * Sets the left border color for a region of cells by manipulating the cell style of the individual
      * cells on the left
      * 
-     * @see {@link BorderPropertyTemplate#drawBorderColors} for improved border functionality
+     * @see BorderPropertyTemplate#drawBorders 
+     * <code>BorderPropertyTemplate#drawBorders</code> for improved border functionality
      *
      * @param color The color of the border
      * @param region The region that should have the border
-     * @param workbook The workbook that the region is on.
      * @param sheet The sheet that the region is on.
      */
     public static void setLeftBorderColor(int color, CellRangeAddress region, Sheet sheet) {
@@ -137,7 +137,8 @@ public final class RegionUtil {
      * Sets the right border for a region of cells by manipulating the cell style of the individual
      * cells on the right
      * 
-     * @see {@link BorderPropertyTemplate#drawBorders} for improved border functionality
+     * @see BorderPropertyTemplate#drawBorders 
+     * <code>BorderPropertyTemplate#drawBorders</code> for improved border functionality
      *
      * @param border The new border
      * @param region The region that should have the border
@@ -152,11 +153,11 @@ public final class RegionUtil {
      * Sets the right border for a region of cells by manipulating the cell style of the individual
      * cells on the right
      * 
-     * @see {@link BorderPropertyTemplate#drawBorders} for improved border functionality
+     * @see BorderPropertyTemplate#drawBorders 
+     * <code>BorderPropertyTemplate#drawBorders</code> for improved border functionality
      *
      * @param border The new border
      * @param region The region that should have the border
-     * @param workbook The workbook that the region is on.
      * @param sheet The sheet that the region is on.
      */
     public static void setBorderRight(int border, CellRangeAddress region, Sheet sheet) {
@@ -174,7 +175,8 @@ public final class RegionUtil {
      * Sets the right border color for a region of cells by manipulating the cell style of the individual
      * cells on the right
      * 
-     * @see {@link BorderPropertyTemplate#drawBorderColors} for improved border functionality
+     * @see BorderPropertyTemplate#drawBorders 
+     * <code>BorderPropertyTemplate#drawBorders</code> for improved border functionality
      *
      * @param color The color of the border
      * @param region The region that should have the border
@@ -189,11 +191,11 @@ public final class RegionUtil {
      * Sets the right border color for a region of cells by manipulating the cell style of the individual
      * cells on the right
      * 
-     * @see {@link BorderPropertyTemplate#drawBorderColors} for improved border functionality
+     * @see BorderPropertyTemplate#drawBorders 
+     * <code>BorderPropertyTemplate#drawBorders</code> for improved border functionality
      *
      * @param color The color of the border
      * @param region The region that should have the border
-     * @param workbook The workbook that the region is on.
      * @param sheet The sheet that the region is on.
      */
     public static void setRightBorderColor(int color, CellRangeAddress region, Sheet sheet) {
@@ -211,13 +213,14 @@ public final class RegionUtil {
      * Sets the bottom border for a region of cells by manipulating the cell style of the individual
      * cells on the bottom
      * 
-     * @see {@link BorderPropertyTemplate#drawBorders} for improved border functionality
+     * @see BorderPropertyTemplate#drawBorders 
+     * <code>BorderPropertyTemplate#drawBorders</code> for improved border functionality
      *
      * @param border The new border
      * @param region The region that should have the border
      * @param workbook The workbook that the region is on.
      * @param sheet The sheet that the region is on.
-     * @deprecated 3.15 beta 2. Use {@link #setBorderBottom(int, CellRangeAddress, Sheet).
+     * @deprecated 3.15 beta 2. Use {@link #setBorderBottom(int, CellRangeAddress, Sheet)}
      */
     public static void setBorderBottom(int border, CellRangeAddress region, Sheet sheet, Workbook workbook) {
         setBorderBottom(border, region, sheet);
@@ -226,11 +229,11 @@ public final class RegionUtil {
      * Sets the bottom border for a region of cells by manipulating the cell style of the individual
      * cells on the bottom
      * 
-     * @see {@link BorderPropertyTemplate#drawBorders} for improved border functionality
+     * @see BorderPropertyTemplate#drawBorders 
+     * <code>BorderPropertyTemplate#drawBorders</code> for improved border functionality
      *
      * @param border The new border
      * @param region The region that should have the border
-     * @param workbook The workbook that the region is on.
      * @param sheet The sheet that the region is on.
      */
     public static void setBorderBottom(int border, CellRangeAddress region, Sheet sheet) {
@@ -248,7 +251,8 @@ public final class RegionUtil {
      * Sets the bottom border color for a region of cells by manipulating the cell style of the individual
      * cells on the bottom
      * 
-     * @see {@link BorderPropertyTemplate#drawBorderColors} for improved border functionality
+     * @see BorderPropertyTemplate#drawBorders 
+     * <code>BorderPropertyTemplate#drawBorders</code> for improved border functionality
      *
      * @param color The color of the border
      * @param region The region that should have the border
@@ -263,11 +267,11 @@ public final class RegionUtil {
      * Sets the bottom border color for a region of cells by manipulating the cell style of the individual
      * cells on the bottom
      * 
-     * @see {@link BorderPropertyTemplate#drawBorderColors} for improved border functionality
+     * @see BorderPropertyTemplate#drawBorders 
+     * <code>BorderPropertyTemplate#drawBorders</code> for improved border functionality
      *
      * @param color The color of the border
      * @param region The region that should have the border
-     * @param workbook The workbook that the region is on.
      * @param sheet The sheet that the region is on.
      */
     public static void setBottomBorderColor(int color, CellRangeAddress region, Sheet sheet) {
@@ -285,7 +289,8 @@ public final class RegionUtil {
      * Sets the top border for a region of cells by manipulating the cell style of the individual
      * cells on the top
      * 
-     * @see {@link BorderPropertyTemplate#drawBorders} for improved border functionality
+     * @see BorderPropertyTemplate#drawBorders 
+     * <code>BorderPropertyTemplate#drawBorders</code> for improved border functionality
      *
      * @param border The new border
      * @param region The region that should have the border
@@ -300,11 +305,11 @@ public final class RegionUtil {
      * Sets the top border for a region of cells by manipulating the cell style of the individual
      * cells on the top
      * 
-     * @see {@link BorderPropertyTemplate#drawBorders} for improved border functionality
+     * @see BorderPropertyTemplate#drawBorders 
+     * <code>BorderPropertyTemplate#drawBorders</code> for improved border functionality
      *
      * @param border The new border
      * @param region The region that should have the border
-     * @param workbook The workbook that the region is on.
      * @param sheet The sheet that the region is on.
      */
     public static void setBorderTop(int border, CellRangeAddress region, Sheet sheet) {
@@ -322,7 +327,8 @@ public final class RegionUtil {
      * Sets the top border color for a region of cells by manipulating the cell style of the individual
      * cells on the top
      * 
-     * @see {@link BorderPropertyTemplate#drawBorderColors} for improved border functionality
+     * @see BorderPropertyTemplate#drawBorders 
+     * <code>BorderPropertyTemplate#drawBorders</code> for improved border functionality
      *
      * @param color The color of the border
      * @param region The region that should have the border
@@ -337,11 +343,11 @@ public final class RegionUtil {
      * Sets the top border color for a region of cells by manipulating the cell style of the individual
      * cells on the top
      * 
-     * @see {@link BorderPropertyTemplate#drawBorderColors} for improved border functionality
+     * @see BorderPropertyTemplate#drawBorders 
+     * <code>BorderPropertyTemplate#drawBorders</code> for improved border functionality
      *
      * @param color The color of the border
      * @param region The region that should have the border
-     * @param workbook The workbook that the region is on.
      * @param sheet The sheet that the region is on.
      */
     public static void setTopBorderColor(int color, CellRangeAddress region, Sheet sheet) {
