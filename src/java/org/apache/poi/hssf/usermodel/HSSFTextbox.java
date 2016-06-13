@@ -48,7 +48,7 @@ public class HSSFTextbox extends HSSFSimpleShape {
         super(spContainer, objRecord, textObjectRecord);
     }
 
-    //Unused: URF_UNREAD_FIELD
+    // Findbugs: URF_UNREAD_FIELD. Do not delete without understanding how this class works.
     //HSSFRichTextString string = new HSSFRichTextString("");
 
     /**

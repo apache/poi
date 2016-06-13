@@ -27,11 +27,12 @@ import org.apache.poi.ss.util.CellRangeAddressList;
  * Helper for working with Data Validation
  */
 public class HSSFDataValidationHelper implements DataValidationHelper {
-	//URF_UNREAD_FIELD
+	// Findbugs: URF_UNREAD_FIELD . Do not delete without understanding how this class works.
 	//private HSSFSheet sheet;
 	
 	public HSSFDataValidationHelper(HSSFSheet sheet) {
 		super();
+		// Findbugs: URF_UNREAD_FIELD . Do not delete without understanding how this class works.
 		//this.sheet = sheet;
 	}
 
