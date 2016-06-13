@@ -48,7 +48,8 @@ public class HSSFTextbox extends HSSFSimpleShape {
         super(spContainer, objRecord, textObjectRecord);
     }
 
-    HSSFRichTextString string = new HSSFRichTextString("");
+    //Unused: URF_UNREAD_FIELD
+    //HSSFRichTextString string = new HSSFRichTextString("");
 
     /**
      * Construct a new textbox with the given parent and anchor.

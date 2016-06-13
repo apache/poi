@@ -35,12 +35,13 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STDataValidationType;
  *
  */
 public class XSSFDataValidationHelper implements DataValidationHelper {
-	private XSSFSheet xssfSheet;
+    //Unused: URF_UNREAD_FIELD
+	//private XSSFSheet xssfSheet;
 	
     
     public XSSFDataValidationHelper(XSSFSheet xssfSheet) {
 		super();
-		this.xssfSheet = xssfSheet;
+		//this.xssfSheet = xssfSheet;
 	}
 
 	/* (non-Javadoc)

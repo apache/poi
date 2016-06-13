@@ -43,7 +43,8 @@ public final class XSSFGraphicFrame extends XSSFShape {
 	private static CTGraphicalObjectFrame prototype = null;
 
 	private CTGraphicalObjectFrame graphicFrame;
-	private XSSFDrawing drawing;
+	// Unused: URF_UNREAD_FIELD
+	//private XSSFDrawing drawing;
 	private XSSFClientAnchor anchor;
 
 	/**

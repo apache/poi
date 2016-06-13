@@ -47,18 +47,31 @@
 		</Or>
 		<Bug code="Nm" />
 	</Match>
+
+	<!-- ignore fields that correspond to the values in a H??F binary record -->
 	<Match>
-		<Class name="org.apache.poi.hpsf.Decimal"/>
+		<Class name="~org\.apache\.poi\.h..f\..*"/>
 		<Bug pattern="URF_UNREAD_FIELD" />
-		<Field name="field_[12345]_.+" />
+		<Field name="~field_[12345].*" />
 	</Match>
+	<Match>
+		<Class name="org.apache.poi.hssf.usermodel.HSSFChart"/>
+		<Bug pattern="URF_UNREAD_FIELD" />
+		<Field name="chartTitleFormat" />
+	</Match>
+	<Match>
+		<Class name="org.apache.poi.hwmf.record.HwmfWindowing"/>
+		<Bug pattern="URF_UNREAD_FIELD" />
+		<Field name="count2" />
+	</Match>
+	
+
     <!-- invalid performance issues - e.g. see #57840 -->
     <Match>
-        <Class name="org.apache.poi.xssf.usermodel.XSSFRow"/>
-        <Bug pattern="DM_NUMBER_CTOR" />
-    </Match>
-    <Match>
-        <Class name="org.apache.poi.xssf.usermodel.XSSFSheet"/>
+        <Or>
+            <Class name="org.apache.poi.xssf.usermodel.XSSFRow"/>
+            <Class name="org.apache.poi.xssf.usermodel.XSSFSheet"/>
+        </Or>
         <Bug pattern="DM_NUMBER_CTOR" />
     </Match>
 
