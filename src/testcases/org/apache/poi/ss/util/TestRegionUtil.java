@@ -51,7 +51,7 @@ public final class TestRegionUtil {
     // Right now this just makes sure that RegionUtil is compiled into poi schemas
     // and that the code doesn't run in an infinite loop.
     // Don't spend too much time getting this unit test to work as this class
-    // will likely be replaced by BorderPropertyTemplate soon.
+    // will likely be replaced by CellStyleTemplate soon.
     @Test
     public void setBorderTop() {
         RegionUtil.setBorderTop(THIN, A1C3, sheet);
