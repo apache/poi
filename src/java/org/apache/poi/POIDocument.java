@@ -54,7 +54,7 @@ public abstract class POIDocument {
     protected DirectoryNode directory;
 
     /** For our own logging use */
-    private final static POILogger logger = POILogFactory.getLogger(POIDocument.class);
+    private static final POILogger logger = POILogFactory.getLogger(POIDocument.class);
 
     /* Have the property streams been read yet? (Only done on-demand) */
     private boolean initialized = false;
@@ -145,18 +145,22 @@ public abstract class POIDocument {
 
         // DocumentSummaryInformation
         ps = getPropertySet(DocumentSummaryInformation.DEFAULT_STREAM_NAME);
-        if (ps != null && ps instanceof DocumentSummaryInformation) {
+        if (ps instanceof DocumentSummaryInformation) {
             dsInf = (DocumentSummaryInformation)ps;
-        } else if(ps != null) {
+        } else if (ps != null) {
             logger.log(POILogger.WARN, "DocumentSummaryInformation property set came back with wrong class - ", ps.getClass());
+        } else {
+            logger.log(POILogger.WARN, "DocumentSummaryInformation property set came back as null");
         }
 
         // SummaryInformation
         ps = getPropertySet(SummaryInformation.DEFAULT_STREAM_NAME);
         if (ps instanceof SummaryInformation) {
             sInf = (SummaryInformation)ps;
-        } else if(ps != null) {
+        } else if (ps != null) {
             logger.log(POILogger.WARN, "SummaryInformation property set came back with wrong class - ", ps.getClass());
+        } else {
+            logger.log(POILogger.WARN, "SummaryInformation property set came back as null");
         }
 
         // Mark the fact that we've now loaded up the properties
