@@ -771,24 +771,41 @@ public class HSSFCell implements Cell {
      *        precalculated value , for errors we'll set
      *        its value. For other types we will change the cell to an error
      *        cell and set its value.
+     *        For error code byte, see {@link FormulaError}.
+     * @deprecated 3.15 beta 2. Use {@link #setCellErrorValue(FormulaError)} instead.
+     */
+    public void setCellErrorValue(byte errorCode) {
+        FormulaError error = FormulaError.forInt(errorCode);
+        setCellErrorValue(error);
+    }
+    /**
+     * set a error value for the cell
+     *
+     * @param error the error value to set this cell to.  For formulas we'll set the
+     *        precalculated value , for errors we'll set
+     *        its value. For other types we will change the cell to an error
+     *        cell and set its value.
      */
     @SuppressWarnings("fallthrough")
-    public void setCellErrorValue(byte errorCode) {
+    public void setCellErrorValue(FormulaError error) {
         int row=_record.getRow();
         short col=_record.getColumn();
         short styleIndex=_record.getXFIndex();
+        byte code = error.getCode();
         switch (_cellType) {
             default:
                 setCellType(CELL_TYPE_ERROR, false, row, col, styleIndex);
                 // fall through
             case CELL_TYPE_ERROR:
-                (( BoolErrRecord ) _record).setValue(errorCode);
+                (( BoolErrRecord ) _record).setValue(code);
                 break;
             case CELL_TYPE_FORMULA:
-                ((FormulaRecordAggregate)_record).setCachedErrorResult(errorCode);
+                ((FormulaRecordAggregate)_record).setCachedErrorResult(code);
                 break;
         }
     }
+
+
     /**
      * Chooses a new boolean value for the cell when its type is changing.<p/>
      *
