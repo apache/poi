@@ -21,12 +21,18 @@ import org.apache.poi.ss.formula.atp.AnalysisToolPak;
 import org.apache.poi.ss.formula.functions.FreeRefFunction;
 
 /**
- * Common abstract class for "Add-in" libraries and user defined function libraries.
+ * Common interface for "Add-in" libraries and user defined function libraries.
  */
-public abstract class UDFFinder {
-    public static UDFFinder getDefault() {
-        return new AggregatingUDFFinder(AnalysisToolPak.instance);
-    }
+public interface UDFFinder {
+    // FIXME: Findbugs error: IC_SUPERCLASS_USES_SUBCLASS_DURING_INITIALIZATION
+    /**
+     * Default UDFFinder implementation
+     * 
+     * @deprecated use AggregatingUDFFinder.DEFAULT instead, deprecated in POI 3.15,
+     *     scheduled for removable in POI 3.17 
+     */
+    @Deprecated
+    public static final UDFFinder DEFAULT = new AggregatingUDFFinder(AnalysisToolPak.instance);
 
     /**
      * Returns executor by specified name. Returns <code>null</code> if the function name is unknown.
@@ -34,5 +40,5 @@ public abstract class UDFFinder {
      * @param name Name of function.
      * @return Function executor.
      */
-    public abstract FreeRefFunction findFunction(String name);
+    FreeRefFunction findFunction(String name);
 }

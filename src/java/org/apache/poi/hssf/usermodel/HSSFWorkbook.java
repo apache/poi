@@ -31,6 +31,7 @@ import java.io.PrintWriter;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -38,7 +39,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.regex.Pattern;
-import java.util.Collections;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.poi.EncryptedDocumentException;
@@ -181,7 +181,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      * The locator of user-defined functions.
      * By default includes functions from the Excel Analysis Toolpack
      */
-    private UDFFinder _udfFinder = new IndexedUDFFinder(UDFFinder.getDefault());
+    private UDFFinder _udfFinder = new IndexedUDFFinder(AggregatingUDFFinder.DEFAULT);
 
     public static HSSFWorkbook create(InternalWorkbook book) {
     	return new HSSFWorkbook(book);

@@ -33,7 +33,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.regex.Pattern;
@@ -57,6 +56,7 @@ import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.SheetNameFormatter;
+import org.apache.poi.ss.formula.udf.AggregatingUDFFinder;
 import org.apache.poi.ss.formula.udf.IndexedUDFFinder;
 import org.apache.poi.ss.formula.udf.UDFFinder;
 import org.apache.poi.ss.usermodel.Row;
@@ -160,7 +160,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
      * The locator of user-defined functions.
      * By default includes functions from the Excel Analysis Toolpack
      */
-    private IndexedUDFFinder _udfFinder = new IndexedUDFFinder(UDFFinder.getDefault());
+    private IndexedUDFFinder _udfFinder = new IndexedUDFFinder(AggregatingUDFFinder.DEFAULT);
 
     /**
      * TODO
