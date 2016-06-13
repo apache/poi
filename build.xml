@@ -1950,8 +1950,11 @@ under the License.
             description="Creates the entire distribution into build/dist, from scratch">
     </target>
 
-    <target name="gump" depends="compile-all, test-all, jar"/>
-    <target name="jenkins" depends="compile-all, test-all, test-integration, jar, javadocs, assemble, findbugs, release-notes, rat-check, forbidden-apis-check" description="Target run by Jenkins on a continuous basis"/>
+    <!-- continuous integration targets -->
+    <target name="gump" depends="compile-all, test-all, jar"
+        description="Target for running with Apache Gump continuous integration. Builds and tests POI and generates jar artifacts." />
+    <target name="jenkins" depends="compile-all, test-all, test-integration, jar, javadocs, assemble, findbugs, release-notes, rat-check, forbidden-apis-check"
+        description="Target run by Jenkins on a continuous basis. Builds and tests POI, generates artifacts and documentation, and searches for problems."/>
 
     <available property="maven.ant.tasks.present" classname="org.apache.maven.artifact.ant.Pom"/>
     <target name="maven.ant.tasks-check">
