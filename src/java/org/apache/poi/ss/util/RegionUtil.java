@@ -69,9 +69,6 @@ public final class RegionUtil {
      * Sets the left border for a region of cells by manipulating the cell style of the individual
      * cells on the left
      * 
-     * @see BorderPropertyTemplate#drawBorders 
-     * <code>BorderPropertyTemplate#drawBorders</code> for improved border functionality.
-     *
      * @param border The new border
      * @param region The region that should have the border
      * @param sheet The sheet that the region is on.
