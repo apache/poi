@@ -488,14 +488,6 @@ final class LinkTable {
         return _externSheetRecord.getLastSheetIndexFromRefIndex(extRefIndex);
     }
 
-	/**
-	 * @deprecated Was prevously used for removing sheets, which we now do differently 
-	 */
-	@Deprecated
-    public void updateIndexToInternalSheet(int extRefIndex, int offset) {
-        _externSheetRecord.adjustIndex(extRefIndex, offset);
-    }
-
 	public void removeSheet(int sheetIdx) {
 		_externSheetRecord.removeSheet(sheetIdx);
 	}

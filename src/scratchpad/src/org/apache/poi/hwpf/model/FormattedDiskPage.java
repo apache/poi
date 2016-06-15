@@ -58,7 +58,7 @@ public abstract class FormattedDiskPage
      */
     public FormattedDiskPage(byte[] documentStream, int offset)
     {
-        _crun = LittleEndian.getUnsignedByte(documentStream, offset + 511);
+        _crun = LittleEndian.getUByte(documentStream, offset + 511);
         _fkp = documentStream;
         _offset = offset;
     }

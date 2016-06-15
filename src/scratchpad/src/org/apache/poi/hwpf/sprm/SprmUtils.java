@@ -46,7 +46,7 @@ public final class SprmUtils
   {
     byte[] sprm = new byte[varParam.length + 4];
     System.arraycopy(varParam, 0, sprm, 4, varParam.length);
-    LittleEndian.putShort(sprm, instruction);
+    LittleEndian.putShort(sprm, 0, instruction);
     LittleEndian.putShort(sprm, 2, (short)(varParam.length + 1));
     list.add(sprm);
     return sprm.length;
@@ -124,7 +124,7 @@ public final class SprmUtils
   public static int convertBrcToInt(short[] brc)
   {
     byte[] buf = new byte[4];
-    LittleEndian.putShort(buf, brc[0]);
+    LittleEndian.putShort(buf, 0, brc[0]);
     LittleEndian.putShort(buf, LittleEndian.SHORT_SIZE, brc[1]);
     return LittleEndian.getInt(buf);
   }

@@ -190,7 +190,7 @@ public class SectionTable
       // write the sepx to the document stream. starts with a 2 byte size
       // followed by the grpprl
       byte[] shortBuf = new byte[2];
-      LittleEndian.putShort(shortBuf, (short)grpprl.length);
+      LittleEndian.putShort(shortBuf, 0, (short)grpprl.length);
 
       wordDocumentStream.write(shortBuf);
       wordDocumentStream.write(grpprl);

@@ -130,7 +130,7 @@ public final class PAPX extends BytePropertyNode<PAPX> {
     }
     if (buf.length == 1)
     {
-      return (short)LittleEndian.getUnsignedByte(buf, 0);
+      return LittleEndian.getUByte(buf, 0);
     }
     return LittleEndian.getShort(buf);
   }

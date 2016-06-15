@@ -38,7 +38,7 @@ public final class Hyphenation extends HRESIAbstractType implements Cloneable
     public Hyphenation( short hres )
     {
         byte[] data = new byte[2];
-        LittleEndian.putShort( data, hres );
+        LittleEndian.putShort( data, 0, hres );
         fillFields( data, 0 );
     }
 

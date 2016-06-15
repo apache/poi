@@ -57,7 +57,7 @@ public final class Ffn
   {
     int offsetTmp = offset;
 
-    _cbFfnM1 = LittleEndian.getUnsignedByte(buf,offset);
+    _cbFfnM1 = LittleEndian.getUByte(buf,offset);
     offset += LittleEndian.BYTE_SIZE;
     _info = buf[offset];
     offset += LittleEndian.BYTE_SIZE;

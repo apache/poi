@@ -780,25 +780,6 @@ public final class InternalSheet {
     }
 
     /**
-     * Get all the value records (from LOC). Records will be returned from the first
-     *  record (starting at LOC) which is a value record.
-     *
-     * <P>
-     * This method is "loc" sensitive.  Meaning you need to set LOC to where you
-     * want it to start searching.  If you don't know do this: setLoc(getDimsLoc).
-     * When adding several rows you can just start at the last one by leaving loc
-     * at what this sets it to.  For this method, set loc to dimsloc to start with,
-     * subsequent calls will return values in (physical) sequence or NULL when you get to the end.
-     *
-     * @return Array of CellValueRecordInterface representing the remaining value records
-     * @deprecated use {@link #getCellValueIterator()} instead
-     */
-    @Deprecated
-    public CellValueRecordInterface[] getValueRecords() {
-        return _rowsAggregate.getValueRecords();
-    }
-
-    /**
      * get the NEXT RowRecord (from LOC).  The first record that is a Row record
      * (starting at LOC) will be returned.
      * <P>

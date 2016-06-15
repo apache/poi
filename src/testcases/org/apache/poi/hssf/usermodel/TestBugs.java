@@ -1140,10 +1140,9 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         confirmCachedValue("70164", nc2);
         confirmCachedValue("90210", nc3);
 
-        @SuppressWarnings("deprecation")
-        CellValueRecordInterface[] cvrs = ns.getSheet().getValueRecords();
-        for (int i = 0; i < cvrs.length; i++) {
-            CellValueRecordInterface cvr = cvrs[i];
+        int i = 0;
+        for (Iterator<CellValueRecordInterface> it = ns.getSheet().getCellValueIterator(); it.hasNext(); i++) {
+            CellValueRecordInterface cvr = it.next();
             if(cvr instanceof FormulaRecordAggregate) {
                 FormulaRecordAggregate fr = (FormulaRecordAggregate)cvr;
 
@@ -1161,7 +1160,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
                 }
             }
         }
-        assertEquals(3, cvrs.length);
+        assertEquals(3, i);
         wb2.close();
     }
 

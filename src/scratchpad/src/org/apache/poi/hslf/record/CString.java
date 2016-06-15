@@ -66,7 +66,7 @@ public final class CString extends RecordAtom {
 	 * The meaning of the count is specific to the type of the parent record
 	 */
 	public void setOptions(int count) {
-		LittleEndian.putShort(_header, (short)count);
+		LittleEndian.putShort(_header, 0, (short)count);
 	}
 
 	/* *************** record code follows ********************** */
