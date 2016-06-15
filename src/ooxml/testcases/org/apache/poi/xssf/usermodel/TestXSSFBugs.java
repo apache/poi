@@ -3049,4 +3049,22 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         
         nwb.close();
     }
+
+    @Ignore("currently fails on POI 3.15 beta 2")
+    @Test
+    public void test55273() {
+        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("ExcelTables.xlsx");
+        Sheet sheet = wb.getSheet("ExcelTable");
+
+        Name name = wb.getName("TableAsRangeName");
+        assertEquals("TableName[#All]", name.getRefersToFormula());
+        // POI 3.15-beta 2 (2016-06-15): getSheetName throws IllegalArgumentException: Invalid CellReference: TableName[#All]
+        assertEquals("TableName", name.getSheetName());
+
+        XSSFSheet xsheet = (XSSFSheet) sheet;
+        List<XSSFTable> tables = xsheet.getTables();
+        assertEquals(2, tables.size()); //FIXME: how many tables are there in this spreadsheet?
+        assertEquals("Table1", tables.get(0).getName()); //FIXME: what is the table name?
+        assertEquals("Table2", tables.get(1).getName()); //FIXME: what is the table name?
+    }
 }
