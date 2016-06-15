@@ -26,7 +26,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.poi.hwpf.model.io.HWPFFileSystem;
 import org.apache.poi.hwpf.model.io.HWPFOutputStream;
 import org.apache.poi.hwpf.sprm.SprmBuffer;
 import org.apache.poi.hwpf.sprm.SprmIterator;
@@ -385,16 +384,6 @@ public class PAPBinTable
     public ArrayList<PAPX> getParagraphs()
     {
         return _paragraphs;
-    }
-
-    @Deprecated
-    public void writeTo( HWPFFileSystem sys, CharIndexTranslator translator )
-            throws IOException
-    {
-        HWPFOutputStream wordDocumentStream = sys.getStream( "WordDocument" );
-        HWPFOutputStream tableStream = sys.getStream( "1Table" );
-
-        writeTo( wordDocumentStream, tableStream, translator );
     }
 
     public void writeTo( HWPFOutputStream wordDocumentStream,
