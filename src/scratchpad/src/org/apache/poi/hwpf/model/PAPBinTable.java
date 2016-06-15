@@ -459,7 +459,7 @@ public class PAPBinTable
       }
 
       byte[] intHolder = new byte[4];
-      LittleEndian.putInt(intHolder, pageNum++);
+      LittleEndian.putInt(intHolder, 0, pageNum++);
       binTable.addProperty(new GenericPropertyNode(start, end, intHolder));
 
     }

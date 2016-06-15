@@ -69,14 +69,7 @@ public class ExcelExtractor extends POIOLE2TextExtractor implements org.apache.p
 	public ExcelExtractor(POIFSFileSystem fs) throws IOException {
 		this(fs.getRoot());
 	}
-	/**
-     * @deprecated Use {@link #ExcelExtractor(DirectoryNode)} instead
-     */
-    @Deprecated
-    public ExcelExtractor(DirectoryNode dir, POIFSFileSystem fs) throws IOException {
-        this( dir );
-    }
-    public ExcelExtractor(DirectoryNode dir) throws IOException {
+	public ExcelExtractor(DirectoryNode dir) throws IOException {
 		this(new HSSFWorkbook(dir, true));
 	}
 

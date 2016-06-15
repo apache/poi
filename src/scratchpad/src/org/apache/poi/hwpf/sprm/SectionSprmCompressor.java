@@ -188,7 +188,7 @@ public final class SectionSprmCompressor
       byte[] buf = new byte[7];
       buf[0] = (byte)(newSEP.getFPropMark() ? 1 : 0);
       int offset = LittleEndian.BYTE_SIZE;
-      LittleEndian.putShort(buf, (short)newSEP.getIbstPropRMark());
+      LittleEndian.putShort(buf, 0, (short)newSEP.getIbstPropRMark());
       offset += LittleEndian.SHORT_SIZE;
       newSEP.getDttmPropRMark().serialize(buf, offset);
       size += SprmUtils.addSprm((short)0xD227, -1, buf, sprmList);

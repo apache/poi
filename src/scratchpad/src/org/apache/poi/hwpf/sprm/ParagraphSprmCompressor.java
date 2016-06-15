@@ -388,7 +388,7 @@ public final class ParagraphSprmCompressor
         {
             // sprmPRsid
             byte[] value = new byte[4];
-            LittleEndian.putUInt( value, newPAP.getRsid() );
+            LittleEndian.putUInt( value, 0, newPAP.getRsid() );
             size += SprmUtils.addSprm( (short) 0x6467, 0, value, sprmList );
         }
 

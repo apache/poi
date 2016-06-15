@@ -36,7 +36,7 @@ public final class TestPlexOfCps
     {
       byte[] intHolder = new byte[4];
       int span = (int)(110.0f * Math.random());
-      LittleEndian.putInt(intHolder, span);
+      LittleEndian.putInt(intHolder, 0, span);
       _plexOfCps.addProperty(new GenericPropertyNode(last, last + span, intHolder));
       last += span;
     }

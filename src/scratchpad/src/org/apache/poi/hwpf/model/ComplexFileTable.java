@@ -97,7 +97,7 @@ public final class ComplexFileTable
         byte[] table = _tpt.writeTo( wordDocumentStream );
 
         byte[] numHolder = new byte[LittleEndian.INT_SIZE];
-        LittleEndian.putInt( numHolder, table.length );
+        LittleEndian.putInt( numHolder, 0, table.length );
         tableStream.write( numHolder );
         tableStream.write( table );
     }
