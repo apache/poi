@@ -112,13 +112,6 @@ public class XSSFFontFormatting implements FontFormatting {
     }
 
     /**
-     * @deprecated use {@link #getFontColor()}
-     */
-    public XSSFColor getXSSFColor(){
-        return getFontColor();
-    }
-
-    /**
      * gets the height of the font in 1/20th point units
      *
      * @return fontheight (in points/20); or -1 if not modified
