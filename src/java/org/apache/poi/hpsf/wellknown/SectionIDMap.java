@@ -145,19 +145,6 @@ public class SectionIDMap extends HashMap {
     }
 
     /**
-     * <p>Returns the {@link PropertyIDMap} for a given section format
-     * ID.</p>
-     *
-     * @param sectionFormatID A section format ID as a <tt>byte[]</tt> .
-     * @deprecated Use {@link #get(byte[])} instead!
-     * @return the property ID map
-     */
-    public PropertyIDMap get(final Object sectionFormatID)
-    {
-        return get((byte[]) sectionFormatID);
-    }
-
-    /**
      * <p>Associates a section format ID with a {@link
      * PropertyIDMap}.</p>
      *
@@ -177,24 +164,5 @@ public class SectionIDMap extends HashMap {
      */
     protected PropertyIDMap put(String key, PropertyIDMap value) {
         return (PropertyIDMap)super.put(key, value);
-    }
-
-    /**
-     * @deprecated Use {@link #put(byte[], PropertyIDMap)} instead!
-     *
-     * @see #put(byte[], PropertyIDMap)
-     *
-     * @param key This parameter remains undocumented since the method is
-     * deprecated.
-     * @param value This parameter remains undocumented since the method is
-     * deprecated.
-     * @return The return value remains undocumented since the method is
-     * deprecated.
-     */
-    public PropertyIDMap put(final Object key, final Object value)
-    {
-        if (key instanceof String)
-            return put((String)key, (PropertyIDMap) value);
-        return put((byte[]) key, (PropertyIDMap) value);
     }
 }
