@@ -18,14 +18,13 @@
 package org.apache.poi.hssf.util;
 
 import org.apache.poi.ss.util.CellRangeAddressBase;
-import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * See OOO documentation: excelfileformat.pdf sec 2.5.14 - 'Cell Range Address'<p/>
  *
- * Like {@link CellRangeAddress} except column fields are 8-bit.
+ * Implements a CellRangeAddress with 8-but column fields.
  */
 public final class CellRangeAddress8Bit extends CellRangeAddressBase {
 
