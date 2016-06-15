@@ -51,8 +51,7 @@ import org.apache.poi.util.TempFile;
 /**
  * Physical zip package.
  */
-@SuppressWarnings("deprecation")
-public final class ZipPackage extends Package {
+public final class ZipPackage extends OPCPackage {
     private static POILogger logger = POILogFactory.getLogger(ZipPackage.class);
 
     /**
