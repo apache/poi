@@ -58,12 +58,6 @@ public class XSSFExcelExtractor extends POIXMLTextExtractor
     private boolean includeHeadersFooters = true;
     private boolean includeTextBoxes = true;
 
-    /**
-     * @deprecated  Use {@link #XSSFExcelExtractor(org.apache.poi.openxml4j.opc.OPCPackage)} instead.
-     */
-    public XSSFExcelExtractor(String path) throws XmlException, OpenXML4JException, IOException {
-        this(new XSSFWorkbook(path));
-    }
     public XSSFExcelExtractor(OPCPackage container) throws XmlException, OpenXML4JException, IOException {
         this(new XSSFWorkbook(container));
     }
