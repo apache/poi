@@ -17,7 +17,6 @@
 
 package org.apache.poi.hwpf.model;
 
-import java.io.ByteArrayOutputStream;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -25,6 +24,7 @@ import junit.framework.TestCase;
 import org.apache.poi.hwpf.HWPFDocFixture;
 import org.apache.poi.hwpf.HWPFTestDataSamples;
 import org.apache.poi.hwpf.model.io.HWPFFileSystem;
+import org.apache.poi.hwpf.model.io.HWPFOutputStream;
 
 public final class TestPAPBinTable extends TestCase
 {
@@ -52,10 +52,9 @@ public final class TestPAPBinTable extends TestCase
                 null, fib.getFcPlcfbtePapx(), fib.getLcbPlcfbtePapx(), fakeTPT );
 
         HWPFFileSystem fileSys = new HWPFFileSystem();
-
-        _pAPBinTable.writeTo( fileSys, fakeTPT );
-        ByteArrayOutputStream tableOut = fileSys.getStream( "1Table" );
-        ByteArrayOutputStream mainOut = fileSys.getStream( "WordDocument" );
+        HWPFOutputStream tableOut = fileSys.getStream( "1Table" );
+        HWPFOutputStream mainOut = fileSys.getStream( "WordDocument" );
+        _pAPBinTable.writeTo( mainOut, tableOut, fakeTPT );
 
         byte[] newTableStream = tableOut.toByteArray();
         byte[] newMainStream = mainOut.toByteArray();
