@@ -347,7 +347,7 @@ public class WriteAuthorAndTitle
         /** Contains the directory paths that have already been created in the
          * output POI filesystem and maps them to their corresponding
          * {@link org.apache.poi.poifs.filesystem.DirectoryNode}s. */
-        private final Map paths = new HashMap();
+        private final Map<String, DirectoryEntry> paths = new HashMap<String, DirectoryEntry>();
 
 
 
@@ -381,7 +381,7 @@ public class WriteAuthorAndTitle
             {
                 /* Check whether this directory has already been created. */
                 final String s = path.toString();
-                DirectoryEntry de = (DirectoryEntry) paths.get(s);
+                DirectoryEntry de = paths.get(s);
                 if (de != null)
                     /* Yes: return the corresponding DirectoryEntry. */
                     return de;
@@ -411,10 +411,7 @@ public class WriteAuthorAndTitle
                  * exists. However, since we have full control about directory
                  * creation we can ensure that this will never happen. */
                 ex.printStackTrace(System.err);
-                throw new RuntimeException(ex.toString());
-                /* FIXME (2): Replace the previous line by the following once we
-                 * no longer need JDK 1.3 compatibility. */
-                // throw new RuntimeException(ex);
+                throw new RuntimeException(ex);
             }
         }
     }
