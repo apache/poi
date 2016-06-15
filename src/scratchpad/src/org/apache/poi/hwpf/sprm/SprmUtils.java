@@ -26,31 +26,31 @@ import org.apache.poi.util.LittleEndian;
 @Internal
 public final class SprmUtils
 {
-  public SprmUtils()
-  {
-  }
-
-  public static byte[] shortArrayToByteArray(short[] convert)
-  {
-    byte[] buf = new byte[convert.length * LittleEndian.SHORT_SIZE];
-
-    for (int x = 0; x < convert.length; x++)
+    public SprmUtils()
     {
-      LittleEndian.putShort(buf, x * LittleEndian.SHORT_SIZE, convert[x]);
     }
 
-    return buf;
-  }
+    public static byte[] shortArrayToByteArray(short[] convert)
+    {
+        byte[] buf = new byte[convert.length * LittleEndian.SHORT_SIZE];
 
-  public static int addSpecialSprm(short instruction, byte[] varParam, List<byte[]> list)
-  {
-    byte[] sprm = new byte[varParam.length + 4];
-    System.arraycopy(varParam, 0, sprm, 4, varParam.length);
-    LittleEndian.putShort(sprm, 0, instruction);
-    LittleEndian.putShort(sprm, 2, (short)(varParam.length + 1));
-    list.add(sprm);
-    return sprm.length;
-  }
+        for (int x = 0; x < convert.length; x++)
+        {
+            LittleEndian.putShort(buf, x * LittleEndian.SHORT_SIZE, convert[x]);
+        }
+
+        return buf;
+    }
+
+    public static int addSpecialSprm(short instruction, byte[] varParam, List<byte[]> list)
+    {
+        byte[] sprm = new byte[varParam.length + 4];
+        System.arraycopy(varParam, 0, sprm, 4, varParam.length);
+        LittleEndian.putShort(sprm, 0, instruction);
+        LittleEndian.putShort(sprm, 2, (short)(varParam.length + 1));
+        list.add(sprm);
+        return sprm.length;
+    }
 
     public static int addSprm( short instruction, boolean param,
             List<byte[]> list )
@@ -58,74 +58,74 @@ public final class SprmUtils
         return addSprm( instruction, param ? 1 : 0, null, list );
     }
 
-  public static int addSprm(short instruction, int param, byte[] varParam, List<byte[]> list)
-  {
-    int type = (instruction & 0xe000) >> 13;
-
-    byte[] sprm = null;
-    switch(type)
+    public static int addSprm(short instruction, int param, byte[] varParam, List<byte[]> list)
     {
-      case 0:
-      case 1:
-        sprm = new byte[3];
-        sprm[2] = (byte)param;
-        break;
-      case 2:
-        sprm = new byte[4];
-        LittleEndian.putShort(sprm, 2, (short)param);
-        break;
-      case 3:
-        sprm = new byte[6];
-        LittleEndian.putInt(sprm, 2, param);
-        break;
-      case 4:
-      case 5:
-        sprm = new byte[4];
-        LittleEndian.putShort(sprm, 2, (short)param);
-        break;
-      case 6:
-        sprm = new byte[3 + varParam.length];
-        sprm[2] = (byte)varParam.length;
-        System.arraycopy(varParam, 0, sprm, 3, varParam.length);
-        break;
-      case 7:
-        sprm = new byte[5];
-        // this is a three byte int so it has to be handled special
-        byte[] temp = new byte[4];
-        LittleEndian.putInt(temp, 0, param);
-        System.arraycopy(temp, 0, sprm, 2, 3);
-        break;
-      default:
-        //should never happen
-        throw new RuntimeException("Invalid sprm type"); 
-    }
-    LittleEndian.putShort(sprm, 0, instruction);
-    list.add(sprm);
-    return sprm.length;
-  }
+        int type = (instruction & 0xe000) >> 13;
 
-  public static byte[] getGrpprl(List<byte[]> sprmList, int size)
-  {
-    // spit out the final grpprl
-    byte[] grpprl = new byte[size];
-    int listSize = sprmList.size() - 1;
-    int index = 0;
-    for (; listSize >= 0; listSize--)
-    {
-      byte[] sprm = sprmList.remove(0);
-      System.arraycopy(sprm, 0, grpprl, index, sprm.length);
-      index += sprm.length;
+        byte[] sprm = null;
+        switch(type)
+        {
+            case 0:
+            case 1:
+                sprm = new byte[3];
+                sprm[2] = (byte)param;
+                break;
+            case 2:
+                sprm = new byte[4];
+                LittleEndian.putShort(sprm, 2, (short)param);
+                break;
+            case 3:
+                sprm = new byte[6];
+                LittleEndian.putInt(sprm, 2, param);
+                break;
+            case 4:
+            case 5:
+                sprm = new byte[4];
+                LittleEndian.putShort(sprm, 2, (short)param);
+                break;
+            case 6:
+                sprm = new byte[3 + varParam.length];
+                sprm[2] = (byte)varParam.length;
+                System.arraycopy(varParam, 0, sprm, 3, varParam.length);
+                break;
+            case 7:
+                sprm = new byte[5];
+                // this is a three byte int so it has to be handled special
+                byte[] temp = new byte[4];
+                LittleEndian.putInt(temp, 0, param);
+                System.arraycopy(temp, 0, sprm, 2, 3);
+                break;
+            default:
+                //should never happen
+                throw new RuntimeException("Invalid sprm type"); 
+        }
+        LittleEndian.putShort(sprm, 0, instruction);
+        list.add(sprm);
+        return sprm.length;
     }
 
-    return grpprl;
+    public static byte[] getGrpprl(List<byte[]> sprmList, int size)
+    {
+        // spit out the final grpprl
+        byte[] grpprl = new byte[size];
+        int listSize = sprmList.size() - 1;
+        int index = 0;
+        for (; listSize >= 0; listSize--)
+        {
+            byte[] sprm = sprmList.remove(0);
+            System.arraycopy(sprm, 0, grpprl, index, sprm.length);
+            index += sprm.length;
+        }
 
-  }
+        return grpprl;
 
-  public static int convertBrcToInt(short[] brc)
-  {
-    byte[] buf = new byte[4];
-    LittleEndian.putShort(buf, 0, brc[0]);
-    LittleEndian.putShort(buf, LittleEndian.SHORT_SIZE, brc[1]);
-    return LittleEndian.getInt(buf);
-  }
+    }
+
+    public static int convertBrcToInt(short[] brc)
+    {
+        byte[] buf = new byte[4];
+        LittleEndian.putShort(buf, 0, brc[0]);
+        LittleEndian.putShort(buf, LittleEndian.SHORT_SIZE, brc[1]);
+        return LittleEndian.getInt(buf);
+    }
 }
