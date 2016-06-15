@@ -72,7 +72,8 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
         _cells = new TreeMap<Integer, XSSFCell>();
         for (CTCell c : row.getCArray()) {
             XSSFCell cell = new XSSFCell(this, c);
-            Integer colI = new Integer(cell.getColumnIndex()); // NOSONAR
+            // Performance optimization for bug 57840: explicit boxing is slightly faster than auto-unboxing, though may use more memory
+            final Integer colI = new Integer(cell.getColumnIndex()); // NOSONAR
             _cells.put(colI, cell);
             sheet.onReadCell(cell);
         }
@@ -198,6 +199,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      * @see Cell#CELL_TYPE_STRING
      */
     public XSSFCell createCell(int columnIndex, int type) {
+        // Performance optimization for bug 57840: explicit boxing is slightly faster than auto-unboxing, though may use more memory
         final Integer colI = new Integer(columnIndex); // NOSONAR
         CTCell ctCell;
         XSSFCell prev = _cells.get(colI);
@@ -238,7 +240,8 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
     public XSSFCell getCell(int cellnum, MissingCellPolicy policy) {
     	if(cellnum < 0) throw new IllegalArgumentException("Cell index must be >= 0");
 
-    	Integer colI = new Integer(cellnum); // NOSONAR
+        // Performance optimization for bug 57840: explicit boxing is slightly faster than auto-unboxing, though may use more memory
+    	final Integer colI = new Integer(cellnum); // NOSONAR
         XSSFCell cell = _cells.get(colI);
     	if(policy == RETURN_NULL_AND_BLANK) {
     		return cell;
@@ -458,7 +461,8 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
         if(cell.getCellType() == Cell.CELL_TYPE_FORMULA) {
            _sheet.getWorkbook().onDeleteFormula(xcell);
         }
-        Integer colI = new Integer(cell.getColumnIndex()); // NOSONAR
+        // Performance optimization for bug 57840: explicit boxing is slightly faster than auto-unboxing, though may use more memory
+        final Integer colI = new Integer(cell.getColumnIndex()); // NOSONAR
         _cells.remove(colI);
     }
 
