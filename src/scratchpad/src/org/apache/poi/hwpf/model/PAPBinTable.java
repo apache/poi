@@ -50,23 +50,11 @@ public class PAPBinTable
     private static final POILogger logger = POILogFactory
             .getLogger( PAPBinTable.class );
 
-  protected ArrayList<PAPX> _paragraphs = new ArrayList<PAPX>();
+  protected final ArrayList<PAPX> _paragraphs = new ArrayList<PAPX>();
 
   public PAPBinTable()
   {
   }
-
-    /**
-     * @deprecated Use
-     *             {@link #PAPBinTable(byte[], byte[], byte[], int, int, CharIndexTranslator)}
-     *             instead
-     */
-    public PAPBinTable( byte[] documentStream, byte[] tableStream,
-            byte[] dataStream, int offset, int size, int fcMin,
-            TextPieceTable tpt )
-    {
-        this( documentStream, tableStream, dataStream, offset, size, tpt );
-    }
 
     public PAPBinTable( byte[] documentStream, byte[] tableStream,
             byte[] dataStream, int offset, int size,
@@ -83,8 +71,7 @@ public class PAPBinTable
                 GenericPropertyNode node = binTable.getProperty( x );
 
                 int pageNum = LittleEndian.getInt( node.getBytes() );
-                int pageOffset = POIFSConstants.SMALLER_BIG_BLOCK_SIZE
-                        * pageNum;
+                int pageOffset = POIFSConstants.SMALLER_BIG_BLOCK_SIZE * pageNum;
 
                 PAPFormattedDiskPage pfkp = new PAPFormattedDiskPage(
                         documentStream, dataStream, pageOffset,
