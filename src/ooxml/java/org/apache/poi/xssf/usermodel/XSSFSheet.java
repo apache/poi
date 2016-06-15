@@ -110,7 +110,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     protected CTSheet sheet;
     protected CTWorksheet worksheet;
 
-    private SortedMap<Integer, XSSFRow> _rows;
+    private final SortedMap<Integer, XSSFRow> _rows = new TreeMap<Integer, XSSFRow>();
     private List<XSSFHyperlink> hyperlinks;
     private ColumnHelper columnHelper;
     private CommentsTable sheetComments;
@@ -216,7 +216,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     }
 
     private void initRows(CTWorksheet worksheetParam) {
-        _rows = new TreeMap<Integer, XSSFRow>();
+        _rows.clear();
         tables = new TreeMap<String, XSSFTable>();
         sharedFormulas = new HashMap<Integer, CTCellFormula>();
         arrayFormulas = new ArrayList<CellRangeAddress>();
@@ -3024,13 +3024,14 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         rowShifter.updateHyperlinks(shifter);
 
         //rebuild the _rows map
-        SortedMap<Integer, XSSFRow> map = new TreeMap<Integer, XSSFRow>();
+        Map<Integer, XSSFRow> map = new HashMap<Integer, XSSFRow>();
         for(XSSFRow r : _rows.values()) {
             // Performance optimization: explicit boxing is slightly faster than auto-unboxing, though may use more memory
             final Integer rownumI = new Integer(r.getRowNum()); // NOSONAR
             map.put(rownumI, r);
         }
-        _rows = map;
+        _rows.clear();
+        _rows.putAll(map);
     }
 
     private int shiftedRowNum(int startRow, int endRow, int n, int rownum) {
