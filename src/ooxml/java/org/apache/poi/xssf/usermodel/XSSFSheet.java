@@ -222,7 +222,8 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         arrayFormulas = new ArrayList<CellRangeAddress>();
         for (CTRow row : worksheetParam.getSheetData().getRowArray()) {
             XSSFRow r = new XSSFRow(row, this);
-            Integer rownumI = new Integer(r.getRowNum()); // NOSONAR
+            // Performance optimization: explicit boxing is slightly faster than auto-unboxing, though may use more memory
+            final Integer rownumI = new Integer(r.getRowNum()); // NOSONAR
             _rows.put(rownumI, r);
         }
     }
@@ -693,6 +694,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      */
     @Override
     public XSSFRow createRow(int rownum) {
+        // Performance optimization: explicit boxing is slightly faster than auto-unboxing, though may use more memory
         final Integer rownumI = new Integer(rownum); // NOSONAR
         CTRow ctRow;
         XSSFRow prev = _rows.get(rownumI);
@@ -1379,7 +1381,8 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      */
     @Override
     public XSSFRow getRow(int rownum) {
-        Integer rownumI = new Integer(rownum); // NOSONAR
+        // Performance optimization: explicit boxing is slightly faster than auto-unboxing, though may use more memory
+        final Integer rownumI = new Integer(rownum); // NOSONAR
         return _rows.get(rownumI);
     }
     
@@ -1409,9 +1412,11 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
             }
         }
         else {
-            Integer startI = new Integer(startRowNum); // NOSONAR
-            Integer endI = new Integer(endRowNum+1); // NOSONAR
-            rows.addAll(_rows.subMap(startI, endI).values());
+            // Performance optimization: explicit boxing is slightly faster than auto-unboxing, though may use more memory
+            final Integer startI = new Integer(startRowNum); // NOSONAR
+            final Integer endI = new Integer(endRowNum+1); // NOSONAR
+            final Collection<XSSFRow> inclusive = _rows.subMap(startI, endI).values();
+            rows.addAll(inclusive);
         }
         return rows;
     }
@@ -1881,7 +1886,8 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
             row.removeCell(cell);
         }
 
-        Integer rownumI = new Integer(row.getRowNum()); // NOSONAR
+        // Performance optimization: explicit boxing is slightly faster than auto-unboxing, though may use more memory
+        final Integer rownumI = new Integer(row.getRowNum()); // NOSONAR
         int idx = _rows.headMap(rownumI).size();
         _rows.remove(rownumI);
         worksheet.getSheetData().removeRow(idx);
@@ -2899,7 +2905,8 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
             // check if we should remove this row as it will be overwritten by the data later
             if (shouldRemoveRow(startRow, endRow, n, rownum)) {
                 // remove row from worksheet.getSheetData row array
-                Integer rownumI = new Integer(row.getRowNum()); // NOSONAR
+                // Performance optimization: explicit boxing is slightly faster than auto-unboxing, though may use more memory
+                final Integer rownumI = new Integer(row.getRowNum()); // NOSONAR
                 int idx = _rows.headMap(rownumI).size();
                 worksheet.getSheetData().removeRow(idx);
 
@@ -3019,7 +3026,8 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         //rebuild the _rows map
         SortedMap<Integer, XSSFRow> map = new TreeMap<Integer, XSSFRow>();
         for(XSSFRow r : _rows.values()) {
-            Integer rownumI = new Integer(r.getRowNum()); // NOSONAR
+            // Performance optimization: explicit boxing is slightly faster than auto-unboxing, though may use more memory
+            final Integer rownumI = new Integer(r.getRowNum()); // NOSONAR
             map.put(rownumI, r);
         }
         _rows = map;
