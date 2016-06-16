@@ -254,10 +254,4 @@ public final class ContentType {
 	public String getParameter(String key) {
 		return parameters.get(key);
 	}
-	/**
-	 * @deprecated Use {@link #getParameter(String)} instead
-	 */
-    public String getParameters(String key) {
-        return getParameter(key);
-    }
 }
