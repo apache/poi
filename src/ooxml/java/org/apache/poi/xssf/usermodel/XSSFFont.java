@@ -297,6 +297,9 @@ public class XSSFFont implements Font {
         }
     }
 
+    /**
+     * @deprecated 3.15 beta 2. Scheduled for removal in 3.17. Use {@link #setBold(boolean)} instead.
+     */
     public void setBoldweight(short boldweight)
     {
         setBold(boldweight == BOLDWEIGHT_BOLD);
@@ -307,8 +310,8 @@ public class XSSFFont implements Font {
      * @return boldweight
      * @see #BOLDWEIGHT_NORMAL
      * @see #BOLDWEIGHT_BOLD
+     * @deprecated 3.15 beta 2. Scheduled for removal in 3.17. Use {@link #getBold} instead.
      */
-
     public short getBoldweight()
     {
         return getBold() ? BOLDWEIGHT_BOLD : BOLDWEIGHT_NORMAL;

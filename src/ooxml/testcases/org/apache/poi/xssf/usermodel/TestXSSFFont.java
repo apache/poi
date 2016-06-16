@@ -69,7 +69,7 @@ public final class TestXSSFFont extends BaseTestFont{
 	}
 
 	@Test
-	public void testBoldweight() {
+	public void testBold() {
 		CTFont ctFont=CTFont.Factory.newInstance();
 		CTBooleanProperty bool=ctFont.addNewB();
 		bool.setVal(false);
