@@ -57,38 +57,65 @@ public class Range { // TODO -instantiable superclass
 
     private POILogger logger = POILogFactory.getLogger( Range.class );
     
+    /**
+     * @deprecated POI 3.8 beta 5
+     */
     @Deprecated
 	public static final int TYPE_PARAGRAPH = 0;
+    
+    /**
+     * @deprecated POI 3.8 beta 5
+     */
     @Deprecated
-	public static final int TYPE_CHARACTER = 1;
+    public static final int TYPE_CHARACTER = 1;
+    
+    /**
+     * @deprecated POI 3.8 beta 5
+     */
     @Deprecated
-	public static final int TYPE_SECTION = 2;
+    public static final int TYPE_SECTION = 2;
+    
+    /**
+     * @deprecated POI 3.8 beta 5
+     */
     @Deprecated
-	public static final int TYPE_TEXT = 3;
+    public static final int TYPE_TEXT = 3;
+    
+    /**
+     * @deprecated POI 3.8 beta 5
+     */
     @Deprecated
-	public static final int TYPE_LISTENTRY = 4;
+    public static final int TYPE_LISTENTRY = 4;
+    
+    /**
+     * @deprecated POI 3.8 beta 5
+     */
     @Deprecated
-	public static final int TYPE_TABLE = 5;
+    public static final int TYPE_TABLE = 5;
+    
+    /**
+     * @deprecated POI 3.8 beta 5
+     */
     @Deprecated
-	public static final int TYPE_UNDEFINED = 6;
+    public static final int TYPE_UNDEFINED = 6;
 
 	/** Needed so inserts and deletes will ripple up through containing Ranges */
-	private WeakReference<Range> _parent;
+	private final WeakReference<Range> _parent;
 
 	/** The starting character offset of this range. */
-	protected int _start;
+	protected final int _start;
 
 	/** The ending character offset of this range. */
 	protected int _end;
 
-	/** The document this range blongs to. */
-	protected HWPFDocumentCore _doc;
+	/** The document this range belongs to. */
+	protected final HWPFDocumentCore _doc;
 
 	/** Have we loaded the section indexes yet */
 	boolean _sectionRangeFound;
 
 	/** All sections that belong to the document this Range belongs to. */
-	protected List<SEPX> _sections;
+	protected final List<SEPX> _sections;
 
 	/** The start index in the sections list for this Range */
 	protected int _sectionStart;
@@ -100,7 +127,7 @@ public class Range { // TODO -instantiable superclass
 	protected boolean _parRangeFound;
 
 	/** All paragraphs that belong to the document this Range belongs to. */
-	protected List<PAPX> _paragraphs;
+	protected final List<PAPX> _paragraphs;
 
 	/** The start index in the paragraphs list for this Range, inclusive */
 	protected int _parStart;
@@ -122,11 +149,6 @@ public class Range { // TODO -instantiable superclass
 
 	protected StringBuilder _text;
 	
-	// protected Range()
-	// {
-	//
-	// }
-
 	/**
 	 * Used to construct a Range from a document. This is generally used to
 	 * create a Range that spans the whole document, or at least one whole part
@@ -176,30 +198,6 @@ public class Range { // TODO -instantiable superclass
 		assert sanityCheck();
 	}
 
-	/**
-	 * Constructor used to build a Range from indexes in one of its internal
-	 * lists.
-	 *
-	 * @param startIdx
-	 *            The starting index in the list, inclusive
-	 * @param endIdx
-	 *            The ending index in the list, exclusive
-	 * @param idxType
-	 *            The list type.
-	 * @param parent
-	 *            The parent Range this range belongs to.
-	 */
-	@Deprecated
-	protected Range(int startIdx, int endIdx, int idxType, Range parent) {
-		_doc = parent._doc;
-		_sections = parent._sections;
-		_paragraphs = parent._paragraphs;
-		_characters = parent._characters;
-		_text = parent._text;
-		_parent = new WeakReference<Range>(parent);
-
-		sanityCheckStartEnd();
-	}
 
 	/**
 	 * Ensures that the start and end were were given are actually valid, to
@@ -214,18 +212,6 @@ public class Range { // TODO -instantiable superclass
 					+ ") must not be before the start (" + _start + ")");
 		}
 	}
-
-    /**
-     * @return always return true
-     * @deprecated Range is not linked to any text piece anymore, so to check if
-     *             unicode is used please access {@link TextPieceTable} during
-     *             document load time
-     */
-    @Deprecated
-    public boolean usesUnicode()
-    {
-        return true;
-    }
 
 	/**
 	 * Gets the text that this Range contains.
@@ -388,10 +374,10 @@ public class Range { // TODO -instantiable superclass
 	 *            The CharacterProperties to give the text.
 	 * @return A new CharacterRun that has the given text and properties and is
 	 *         n ow a part of the document.
-     * @deprecated User code should not work with {@link CharacterProperties}
+     * @deprecated POI 3.8 beta 4. User code should not work with {@link CharacterProperties}
 	 */
     @Deprecated
-	public CharacterRun insertBefore(String text, CharacterProperties props)
+	private CharacterRun insertBefore(String text, CharacterProperties props)
 	{
 		initAll();
 		PAPX papx = _paragraphs.get(_parStart);
@@ -416,10 +402,10 @@ public class Range { // TODO -instantiable superclass
 	 *            The CharacterProperties to give the text.
 	 * @return A new CharacterRun that has the given text and properties and is
 	 *         n ow a part of the document.
-	 * @deprecated User code should not work with {@link CharacterProperties}
+	 * @deprecated POI 3.8 beta 4. User code should not work with {@link CharacterProperties}
 	 */
     @Deprecated
-	public CharacterRun insertAfter(String text, CharacterProperties props)
+	private CharacterRun insertAfter(String text, CharacterProperties props)
 	{
 		initAll();
 		PAPX papx = _paragraphs.get(_parEnd - 1);
@@ -442,10 +428,10 @@ public class Range { // TODO -instantiable superclass
 	 * @param styleIndex
 	 *            The index into the stylesheet for the new paragraph.
 	 * @return The newly inserted paragraph.
-	 * @deprecated Use code shall not work with {@link ParagraphProperties}
+	 * @deprecated POI 3.8 beta 4. Use code shall not work with {@link ParagraphProperties}
 	 */
 	@Deprecated
-	public Paragraph insertBefore(ParagraphProperties props, int styleIndex)
+	private Paragraph insertBefore(ParagraphProperties props, int styleIndex)
 	{
 		return this.insertBefore(props, styleIndex, "\r");
 	}
@@ -464,10 +450,10 @@ public class Range { // TODO -instantiable superclass
 	 * @param text
 	 *            The text to insert.
 	 * @return A newly inserted paragraph.
-     * @deprecated Use code shall not work with {@link ParagraphProperties}
+     * @deprecated POI 3.8 beta 4. Use code shall not work with {@link ParagraphProperties}
 	 */
     @Deprecated
-	protected Paragraph insertBefore(ParagraphProperties props, int styleIndex, String text)
+	private Paragraph insertBefore(ParagraphProperties props, int styleIndex, String text)
 	{
 		initAll();
 		StyleSheet ss = _doc.getStyleSheet();
@@ -493,10 +479,10 @@ public class Range { // TODO -instantiable superclass
 	 * @param styleIndex
 	 *            The index into the stylesheet for the new paragraph.
 	 * @return The newly inserted paragraph.
-     * @deprecated Use code shall not work with {@link ParagraphProperties}
+     * @deprecated POI 3.8 beta 4. Use code shall not work with {@link ParagraphProperties}
 	 */
     @Deprecated
-	public Paragraph insertAfter(ParagraphProperties props, int styleIndex)
+	protected Paragraph insertAfter(ParagraphProperties props, int styleIndex)
 	{
 		return this.insertAfter(props, styleIndex, "\r");
 	}
@@ -515,7 +501,7 @@ public class Range { // TODO -instantiable superclass
 	 * @param text
 	 *            The text to insert.
 	 * @return A newly inserted paragraph.
-     * @deprecated Use code shall not work with {@link ParagraphProperties}
+     * @deprecated POI 3.8 beta 4. Use code shall not work with {@link ParagraphProperties}
 	 */
     @Deprecated
 	protected Paragraph insertAfter(ParagraphProperties props, int styleIndex, String text)
@@ -594,11 +580,11 @@ public class Range { // TODO -instantiable superclass
      * @param rows
      *            The number of rows.
      * @return The empty Table that is now part of the document.
-     * @deprecated Use code shall not work with {@link TableProperties}. Use
+     * @deprecated POI 3.8 beta 4. Use code shall not work with {@link TableProperties}. Use
      *             {@link #insertTableBefore(short, int)} instead
      */
 	@Deprecated
-	public Table insertBefore(TableProperties props, int rows) {
+	private Table insertBefore(TableProperties props, int rows) {
 		ParagraphProperties parProps = new ParagraphProperties();
 		parProps.setFInTable(true);
 		parProps.setItap( 1 );
@@ -675,10 +661,10 @@ public class Range { // TODO -instantiable superclass
 	 * @param styleIndex
 	 *            The base style's index in the stylesheet.
 	 * @return The empty ListEntry that is now part of the document.
-     * @deprecated Use code shall not work with {@link ParagraphProperties}
+     * @deprecated POI 3.8 beta 4. User code shall not work with {@link ParagraphProperties}
 	 */
 	@Deprecated
-	public ListEntry insertBefore(ParagraphProperties props, int listID, int level, int styleIndex) {
+	private ListEntry insertBefore(ParagraphProperties props, int listID, int level, int styleIndex) {
 		ListTables lt = _doc.getListTables();
 		if (lt.getLevel(listID, level) == null) {
 			throw new NoSuchElementException("The specified list and level do not exist");
@@ -704,10 +690,10 @@ public class Range { // TODO -instantiable superclass
 	 * @param styleIndex
 	 *            The base style's index in the stylesheet.
 	 * @return The empty ListEntry that is now part of the document.
-     * @deprecated Use code shall not work with {@link ParagraphProperties}
+     * @deprecated POI 3.8 beta 4. User code shall not work with {@link ParagraphProperties}
 	 */
 	@Deprecated
-	public ListEntry insertAfter(ParagraphProperties props, int listID, int level, int styleIndex) {
+	private ListEntry insertAfter(ParagraphProperties props, int listID, int level, int styleIndex) {
 		ListTables lt = _doc.getListTables();
 		if (lt.getLevel(listID, level) == null) {
 			throw new NoSuchElementException("The specified list and level do not exist");
@@ -879,17 +865,6 @@ public class Range { // TODO -instantiable superclass
 
 		PAPX papx = _paragraphs.get(index + _parStart);
 		return Paragraph.newParagraph( this, papx );
-	}
-
-	/**
-	 * This method is used to determine the type. Handy for switch statements
-	 * compared to the instanceof operator.
-	 *
-	 * @return A TYPE constant.
-	 */
-	@Deprecated
-	public int type() {
-		return TYPE_UNDEFINED;
 	}
 
 	/**
