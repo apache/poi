@@ -131,6 +131,10 @@ public abstract class BaseTestCellComment {
         assertEquals(cellRow, comment.getRow());
         assertEquals(cellColumn, comment.getColumn());
         assertFalse(comment.isVisible());
+
+        // Test Comment.equals and Comment.hashCode
+        assertEquals(comment, cell.getCellComment());
+        assertEquals(comment.hashCode(), cell.getCellComment().hashCode());
         
         wb3.close();
     }
