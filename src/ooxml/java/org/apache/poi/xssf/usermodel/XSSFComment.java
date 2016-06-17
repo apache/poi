@@ -239,4 +239,19 @@ public class XSSFComment implements Comment {
     protected CTShape getCTShape(){
         return _vmlShape;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof XSSFComment)) {
+            return false;
+        }
+        XSSFComment other = (XSSFComment) obj;
+        return ((getCTComment() == other.getCTComment()) &&
+                (getCTShape() == other.getCTShape())); 
+    }
+
+    @Override
+    public int hashCode() {
+        return ((getRow()*17) + getColumn())*31;
+    }
 }

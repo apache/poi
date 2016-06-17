@@ -320,4 +320,18 @@ public class HSSFComment extends HSSFTextbox implements Comment {
             setPropertyValue(new EscherSimpleProperty(EscherProperties.GROUPSHAPE__PRINT, false, false, property.getPropertyValue() & GROUP_SHAPE_NOT_HIDDEN_MASK));
         }
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof HSSFComment)) {
+            return false;
+        }
+        HSSFComment other = (HSSFComment) obj;
+        return getNoteRecord().equals(other.getNoteRecord());
+    }
+
+    @Override
+    public int hashCode() {
+        return ((getRow()*17) + getColumn())*31;
+    }
 }
