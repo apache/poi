@@ -53,13 +53,6 @@ public final class VisioTextExtractor extends POIOLE2TextExtractor {
 	}
 	public VisioTextExtractor(DirectoryNode dir) throws IOException {
 		this(new HDGFDiagram(dir));
-   }
-   /**
-    * @deprecated Use {@link #VisioTextExtractor(DirectoryNode)} instead 
-    */
-   @Deprecated
-	public VisioTextExtractor(DirectoryNode dir, POIFSFileSystem fs) throws IOException {
-		this(new HDGFDiagram(dir, fs));
 	}
 	public VisioTextExtractor(InputStream inp) throws IOException {
 		this(new NPOIFSFileSystem(inp));
