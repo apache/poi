@@ -48,11 +48,11 @@ public final class VisioTextExtractor extends POIOLE2TextExtractor {
 	public VisioTextExtractor(POIFSFileSystem fs) throws IOException {
 		this(fs.getRoot());
 	}
-   public VisioTextExtractor(NPOIFSFileSystem fs) throws IOException {
-      this(fs.getRoot());
-   }
-   public VisioTextExtractor(DirectoryNode dir) throws IOException {
-      this(new HDGFDiagram(dir));
+	public VisioTextExtractor(NPOIFSFileSystem fs) throws IOException {
+		this(fs.getRoot());
+	}
+	public VisioTextExtractor(DirectoryNode dir) throws IOException {
+		this(new HDGFDiagram(dir));
    }
    /**
     * @deprecated Use {@link #VisioTextExtractor(DirectoryNode)} instead 
@@ -91,18 +91,18 @@ public final class VisioTextExtractor extends POIOLE2TextExtractor {
 						chunk.getName() != null &&
 						chunk.getName().equals("Text") &&
 						chunk.getCommands().length > 0) {
-				   
+
 					// First command
 					Command cmd = chunk.getCommands()[0];
 					if(cmd != null && cmd.getValue() != null) {
-					   // Capture the text, as long as it isn't
-					   //  simply an empty string
-					   String str = cmd.getValue().toString();
-					   if(str.equals("") || str.equals("\n")) {
-					      // Ignore empty strings
-					   } else {
-					      text.add( str );
-					   }
+						// Capture the text, as long as it isn't
+						//  simply an empty string
+						String str = cmd.getValue().toString();
+						if(str.equals("") || str.equals("\n")) {
+							// Ignore empty strings
+						} else {
+							text.add( str );
+						}
 					}
 				}
 			}
