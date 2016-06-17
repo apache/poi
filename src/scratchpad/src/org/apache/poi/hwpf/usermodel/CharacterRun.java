@@ -542,19 +542,6 @@ public final class CharacterRun extends Range
     _props.setIco24(colour24);
   }
 
-    /**
-     * clone the CharacterProperties object associated with this characterRun so
-     * that you can apply it to another CharacterRun
-     * 
-     * @deprecated This method shall not be public and should not be called from
-     *             high-level code
-     */
-    @Deprecated
-    public CharacterProperties cloneProperties()
-    {
-        return _props.clone();
-    }
-
   /**
    * Used to create a deep copy of this object.
    *
