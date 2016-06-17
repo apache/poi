@@ -42,7 +42,6 @@ import org.apache.poi.hwpf.model.PicturesTable;
 import org.apache.poi.hwpf.model.RevisionMarkAuthorTable;
 import org.apache.poi.hwpf.model.SavedByTable;
 import org.apache.poi.hwpf.model.SectionTable;
-import org.apache.poi.hwpf.model.ShapesTable;
 import org.apache.poi.hwpf.model.SinglentonTextPiece;
 import org.apache.poi.hwpf.model.StyleSheet;
 import org.apache.poi.hwpf.model.SubdocumentType;
@@ -121,12 +120,6 @@ public final class HWPFDocument extends HWPFDocumentCore
   /** Holds pictures table */
   protected PicturesTable _pictures;
 
-  /** Holds Office Art objects
-   * @deprecated POI 3.8.
-   */
-  @Deprecated
-  protected ShapesTable _officeArts;
-  
   /** Holds Office Art objects */
   protected OfficeDrawingsImpl _officeDrawingsHeaders;
 
@@ -318,8 +311,6 @@ public final class HWPFDocument extends HWPFDocumentCore
 
     // read in the pictures stream
     _pictures = new PicturesTable(this, _dataStream, _mainStream, _fspaMain, _escherRecordHolder);
-    // And the art shapes stream
-    _officeArts = new ShapesTable(_tableStream, _fib);
 
     // And escher pictures
     _officeDrawingsHeaders = new OfficeDrawingsImpl( _fspaHeaders, _escherRecordHolder, _mainStream );
@@ -534,18 +525,6 @@ public final class HWPFDocument extends HWPFDocumentCore
   public EscherRecordHolder getEscherRecordHolder() {
       return _escherRecordHolder;
   }
-
-    /**
-     * @return ShapesTable object, that is able to extract office are shapes
-     *         from this document
-     * @deprecated POI 3.8. Use {@link #getOfficeDrawingsMain()} instead.
-     */
-    @Deprecated
-    @Internal
-    public ShapesTable getShapesTable()
-    {
-        return _officeArts;
-    }
 
     public OfficeDrawings getOfficeDrawingsHeaders()
     {

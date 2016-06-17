@@ -54,7 +54,6 @@ import org.apache.poi.hwpf.usermodel.TestRangeInsertion;
 import org.apache.poi.hwpf.usermodel.TestRangeProperties;
 import org.apache.poi.hwpf.usermodel.TestRangeReplacement;
 import org.apache.poi.hwpf.usermodel.TestRangeSymbols;
-import org.apache.poi.hwpf.usermodel.TestShapes;
 import org.apache.poi.hwpf.usermodel.TestTableRow;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -113,7 +112,6 @@ import org.junit.runners.Suite;
     TestRangeProperties.class,
     TestRangeReplacement.class,
     TestRangeSymbols.class,
-    TestShapes.class,
     TestTableRow.class
 })
 public final class AllHWPFTests {
