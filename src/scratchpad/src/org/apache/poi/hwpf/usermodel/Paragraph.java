@@ -159,39 +159,6 @@ public class Paragraph extends Range implements Cloneable {
   protected ParagraphProperties _props;
   protected SprmBuffer _papx;
 
-    @Deprecated
-    protected Paragraph( int startIdxInclusive, int endIdxExclusive,
-            Table parent )
-    {
-        super( startIdxInclusive, endIdxExclusive, parent );
-
-        initAll();
-        PAPX papx = _paragraphs.get( _parEnd - 1 );
-        _props = papx.getParagraphProperties( _doc.getStyleSheet() );
-        _papx = papx.getSprmBuf();
-        _istd = papx.getIstd();
-    }
-
-    @Deprecated
-    protected Paragraph( PAPX papx, Range parent )
-    {
-        super( Math.max( parent._start, papx.getStart() ), Math.min(
-                parent._end, papx.getEnd() ), parent );
-        _props = papx.getParagraphProperties( _doc.getStyleSheet() );
-        _papx = papx.getSprmBuf();
-        _istd = papx.getIstd();
-    }
-
-    @Deprecated
-    protected Paragraph( PAPX papx, Range parent, int start )
-    {
-        super( Math.max( parent._start, start ), Math.min( parent._end,
-                papx.getEnd() ), parent );
-        _props = papx.getParagraphProperties( _doc.getStyleSheet() );
-        _papx = papx.getSprmBuf();
-        _istd = papx.getIstd();
-    }
-
     @Internal
     Paragraph( PAPX papx, ParagraphProperties properties, Range parent )
     {
@@ -211,12 +178,6 @@ public class Paragraph extends Range implements Cloneable {
   public short getStyleIndex()
   {
      return _istd;
-  }
-
-  @Deprecated
-  public int type()
-  {
-    return TYPE_PARAGRAPH;
   }
 
   public boolean isInTable()
