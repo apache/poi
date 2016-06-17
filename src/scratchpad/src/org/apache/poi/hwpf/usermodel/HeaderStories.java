@@ -82,36 +82,54 @@ public final class HeaderStories {
                 fib.getPlcfHddSize(), 0 );
     }
 
+    /**
+     * @deprecated 3.8 beta 4 
+     */
     @Deprecated
     public String getFootnoteSeparator()
     {
         return getAt( 0 );
     }
 
+    /**
+     * @deprecated 3.8 beta 4 
+     */
     @Deprecated
     public String getFootnoteContSeparator()
     {
         return getAt( 1 );
     }
 
+    /**
+     * @deprecated 3.8 beta 4 
+     */
     @Deprecated
     public String getFootnoteContNote()
     {
         return getAt( 2 );
     }
 
+    /**
+     * @deprecated 3.8 beta 4 
+     */
     @Deprecated
     public String getEndnoteSeparator()
     {
         return getAt( 3 );
     }
 
+    /**
+     * @deprecated 3.8 beta 4 
+     */
     @Deprecated
     public String getEndnoteContSeparator()
     {
         return getAt( 4 );
     }
 
+    /**
+     * @deprecated 3.8 beta 4 
+     */
     @Deprecated
     public String getEndnoteContNote()
     {
@@ -148,16 +166,25 @@ public final class HeaderStories {
         return getSubrangeAt( 5 );
     }
 
+    /**
+     * @deprecated 3.8 beta 4 
+     */
 	@Deprecated
 	public String getEvenHeader() {
 		return getAt(6+0);
 	}
+	/**
+     * @deprecated 3.8 beta 4 
+     */
     @Deprecated
-	public String getOddHeader() {
+    public String getOddHeader() {
 		return getAt(6+1);
 	}
+    /**
+     * @deprecated 3.8 beta 4 
+     */
     @Deprecated
-	public String getFirstHeader() {
+    public String getFirstHeader() {
 		return getAt(6+4);
 	}
 	
@@ -196,18 +223,27 @@ public final class HeaderStories {
 		return getOddHeader();
 	}
 
-	@Deprecated
+	/**
+     * @deprecated 3.8 beta 4 
+     */
+    @Deprecated
     public String getEvenFooter()
     {
         return getAt( 6 + 2 );
     }
 
+	/**
+     * @deprecated 3.8 beta 4 
+     */
     @Deprecated
     public String getOddFooter()
     {
         return getAt( 6 + 3 );
     }
 
+    /**
+     * @deprecated 3.8 beta 4 
+     */
     @Deprecated
     public String getFirstFooter()
     {
@@ -257,6 +293,7 @@ public final class HeaderStories {
 	/**
 	 * Get the string that's pointed to by the
 	 *  given plcfHdd index
+	 * @deprecated 3.8 beta 4
 	 */
     @Deprecated
 	private String getAt(int plcfHddIndex) {
