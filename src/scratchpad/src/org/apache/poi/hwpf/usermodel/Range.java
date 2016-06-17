@@ -572,47 +572,6 @@ public class Range { // TODO -instantiable superclass
 	}
 
     /**
-     * Inserts a simple table into the beginning of this range. The number of
-     * columns is determined by the TableProperties passed into this function.
-     * 
-     * @param props
-     *            The table properties for the table.
-     * @param rows
-     *            The number of rows.
-     * @return The empty Table that is now part of the document.
-     * @deprecated POI 3.8 beta 4. Use code shall not work with {@link TableProperties}. Use
-     *             {@link #insertTableBefore(short, int)} instead
-     */
-	@Deprecated
-	private Table insertBefore(TableProperties props, int rows) {
-		ParagraphProperties parProps = new ParagraphProperties();
-		parProps.setFInTable(true);
-		parProps.setItap( 1 );
-
-		final int oldEnd = this._end;
-		
-		int columns = props.getItcMac();
-        for ( int x = 0; x < rows; x++ )
-        {
-            Paragraph cell = this.insertBefore( parProps, StyleSheet.NIL_STYLE );
-            cell.insertAfter( String.valueOf( '\u0007' ) );
-            for ( int y = 1; y < columns; y++ )
-            {
-                cell = cell.insertAfter( parProps, StyleSheet.NIL_STYLE );
-                cell.insertAfter( String.valueOf( '\u0007' ) );
-            }
-            cell = cell.insertAfter( parProps, StyleSheet.NIL_STYLE,
-                    String.valueOf( '\u0007' ) );
-            cell.setTableRowEnd( props );
-        }
-
-        final int newEnd = this._end;
-        final int diff = newEnd - oldEnd;
-
-        return new Table( _start, _start + diff, this, 1 );
-    }
-
-    /**
      * Inserts a simple table into the beginning of this range.
      * 
      * @param columns
@@ -648,63 +607,6 @@ public class Range { // TODO -instantiable superclass
         return new Table( _start, _start + diff, this, 1 );
 	}
 	
-	/**
-	 * Inserts a list into the beginning of this range.
-	 *
-	 * @param props
-	 *            The properties of the list entry. All list entries are
-	 *            paragraphs.
-	 * @param listID
-	 *            The id of the list that contains the properties.
-	 * @param level
-	 *            The indentation level of the list.
-	 * @param styleIndex
-	 *            The base style's index in the stylesheet.
-	 * @return The empty ListEntry that is now part of the document.
-     * @deprecated POI 3.8 beta 4. User code shall not work with {@link ParagraphProperties}
-	 */
-	@Deprecated
-	private ListEntry insertBefore(ParagraphProperties props, int listID, int level, int styleIndex) {
-		ListTables lt = _doc.getListTables();
-		if (lt.getLevel(listID, level) == null) {
-			throw new NoSuchElementException("The specified list and level do not exist");
-		}
-
-		int ilfo = lt.getOverrideIndexFromListID(listID);
-		props.setIlfo(ilfo);
-		props.setIlvl((byte) level);
-
-		return (ListEntry) insertBefore(props, styleIndex);
-	}
-
-	/**
-	 * Inserts a list into the beginning of this range.
-	 *
-	 * @param props
-	 *            The properties of the list entry. All list entries are
-	 *            paragraphs.
-	 * @param listID
-	 *            The id of the list that contains the properties.
-	 * @param level
-	 *            The indentation level of the list.
-	 * @param styleIndex
-	 *            The base style's index in the stylesheet.
-	 * @return The empty ListEntry that is now part of the document.
-     * @deprecated POI 3.8 beta 4. User code shall not work with {@link ParagraphProperties}
-	 */
-	@Deprecated
-	private ListEntry insertAfter(ParagraphProperties props, int listID, int level, int styleIndex) {
-		ListTables lt = _doc.getListTables();
-		if (lt.getLevel(listID, level) == null) {
-			throw new NoSuchElementException("The specified list and level do not exist");
-		}
-		int ilfo = lt.getOverrideIndexFromListID(listID);
-		props.setIlfo(ilfo);
-		props.setIlvl((byte) level);
-
-		return (ListEntry) insertAfter(props, styleIndex);
-	}
-
     /**
      * Replace range text with new one, adding it to the range and deleting
      * original text from document
