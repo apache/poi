@@ -121,7 +121,9 @@ public final class HWPFDocument extends HWPFDocumentCore
   /** Holds pictures table */
   protected PicturesTable _pictures;
 
-  /** Holds Office Art objects */
+  /** Holds Office Art objects
+   * @deprecated POI 3.8.
+   */
   @Deprecated
   protected ShapesTable _officeArts;
   
@@ -536,7 +538,7 @@ public final class HWPFDocument extends HWPFDocumentCore
     /**
      * @return ShapesTable object, that is able to extract office are shapes
      *         from this document
-     * @deprecated use {@link #getOfficeDrawingsMain()} instead
+     * @deprecated POI 3.8. Use {@link #getOfficeDrawingsMain()} instead.
      */
     @Deprecated
     @Internal
@@ -581,7 +583,7 @@ public final class HWPFDocument extends HWPFDocumentCore
 
   /**
    * @return FieldsTables object, that is able to extract fields descriptors from this document
-   * @deprecated
+   * @deprecated POI 3.8.
    */
     @Deprecated
     @Internal
