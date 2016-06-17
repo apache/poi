@@ -44,38 +44,16 @@ import org.apache.poi.util.StringUtil;
  */
 public final class Picture
 {
-    @Deprecated
-    public static final byte[] BMP = new byte[] { 'B', 'M' };
-
     public static final byte[] COMPRESSED1 = { (byte) 0xFE, 0x78, (byte) 0xDA };
 
     public static final byte[] COMPRESSED2 = { (byte) 0xFE, 0x78, (byte) 0x9C };
 
-    @Deprecated
-    public static final byte[] EMF = { 0x01, 0x00, 0x00, 0x00 };
-
-    @Deprecated
-    public static final byte[] GIF = new byte[] { 'G', 'I', 'F' };
     public static final byte[] IHDR = new byte[] { 'I', 'H', 'D', 'R' };
-    @Deprecated
-    public static final byte[] JPG = new byte[] { (byte) 0xFF, (byte) 0xD8 };
     private static final POILogger log = POILogFactory
             .getLogger( Picture.class );
     @Deprecated
-    public static final byte[] PNG = new byte[] { (byte) 0x89, 0x50, 0x4E,
+    private static final byte[] PNG = new byte[] { (byte) 0x89, 0x50, 0x4E,
             0x47, 0x0D, 0x0A, 0x1A, 0x0A };
-    @Deprecated
-    public static final byte[] TIFF = new byte[] { 0x49, 0x49, 0x2A, 0x00 };
-
-    @Deprecated
-    public static final byte[] TIFF1 = new byte[] { 0x4D, 0x4D, 0x00, 0x2A };
-    @Deprecated
-    public static final byte[] WMF1 = { (byte) 0xD7, (byte) 0xCD, (byte) 0xC6,
-            (byte) 0x9A, 0x00, 0x00 };
-    // Windows 3.x
-    @Deprecated
-    public static final byte[] WMF2 = { 0x01, 0x00, 0x09, 0x00, 0x00, 0x03 }; // Windows
-                                                                              // 3.x
 
     private static int getBigEndianInt( byte[] data, int offset )
     {
@@ -209,7 +187,7 @@ public final class Picture
         /*
          * http://www.codecomments.com/archive281-2004-3-158083.html
          * 
-         * Algorhitm proposed by Patrick TJ McPhee:
+         * Algorithm proposed by Patrick TJ McPhee:
          * 
          * read 2 bytes make sure they are 'ffd8'x repeatedly: read 2 bytes make
          * sure the first one is 'ff'x if the second one is 'd9'x stop else if
@@ -303,26 +281,6 @@ public final class Picture
     }
 
     /**
-     * @return the horizontal aspect ratio for picture provided by user
-     * @deprecated use more precise {@link #getHorizontalScalingFactor()}
-     */
-    @Deprecated
-    public int getAspectRatioX()
-    {
-        return _picf.getMx() / 10;
-    }
-
-    /**
-     * @return the vertical aspect ratio for picture provided by user
-     * @deprecated use more precise {@link #getVerticalScalingFactor()}
-     */
-    @Deprecated
-    public int getAspectRatioY()
-    {
-        return _picf.getMy() / 10;
-    }
-
-    /**
      * @return picture's content as byte array
      */
     public byte[] getContent()
@@ -333,6 +291,7 @@ public final class Picture
 
     /**
      * @return The amount the picture has been cropped on the left in twips
+     * @deprecated POI 3.8 beta 4.
      */
     @Deprecated
     public int getDxaCropLeft()
@@ -360,6 +319,7 @@ public final class Picture
 
     /**
      * @return The amount the picture has been cropped on the right in twips
+     * @deprecated POI 3.8 beta 4.
      */
     @Deprecated
     public int getDxaCropRight()
@@ -380,6 +340,7 @@ public final class Picture
 
     /**
      * @return The amount the picture has been cropped on the bottom in twips
+     * @deprecated POI 3.8 beta 5.
      */
     @Deprecated
     public int getDyaCropBottom()
@@ -389,6 +350,7 @@ public final class Picture
 
     /**
      * @return The amount the picture has been cropped on the top in twips
+     * @deprecated POI 3.8 beta 5.
      */
     @Deprecated
     public int getDyaCropTop()
