@@ -17,7 +17,6 @@
 
 package org.apache.poi.hwpf.usermodel;
 
-import org.apache.poi.hwpf.model.ListTables;
 import org.apache.poi.hwpf.model.PAPX;
 import org.apache.poi.util.Internal;
 
@@ -27,17 +26,5 @@ public final class ListEntry extends Paragraph
     ListEntry( PAPX papx, ParagraphProperties properties, Range parent )
     {
         super( papx, properties, parent );
-    }
-
-    @Deprecated
-    ListEntry( PAPX papx, Range parent, ListTables tables )
-    {
-        super( papx, parent );
-    }
-
-    @Deprecated
-    public int type()
-    {
-        return TYPE_LISTENTRY;
     }
 }
