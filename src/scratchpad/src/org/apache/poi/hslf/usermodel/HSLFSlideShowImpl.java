@@ -141,21 +141,6 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
         this(filesystem.getRoot());
     }
 
-    /**
-     * Constructs a Powerpoint document from a specific point in a
-     *  POIFS Filesystem. Parses the document and places all the
-     *  important stuff into data structures.
-     *
-     * @deprecated Use {@link #HSLFSlideShowImpl(DirectoryNode)} instead
-     * @param dir the POIFS directory to read from
-     * @param filesystem the POIFS FileSystem to read from
-     * @throws IOException if there is a problem while parsing the document.
-     */
-    @Deprecated
-    public HSLFSlideShowImpl(DirectoryNode dir, POIFSFileSystem filesystem) throws IOException {
-        this(dir);
-    }
-   
 	/**
 	 * Constructs a Powerpoint document from a specific point in a
 	 *  POIFS Filesystem. Parses the document and places all the

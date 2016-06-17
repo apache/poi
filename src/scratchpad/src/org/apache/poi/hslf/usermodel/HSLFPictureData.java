@@ -193,16 +193,6 @@ public abstract class HSLFPictureData implements PictureData {
     }
 
     /**
-    * Return image size in bytes
-    *
-    *  @return the size of the picture in bytes
-     * @deprecated Use <code>getData().length</code> instead.
-    */
-    public int getSize(){
-        return getData().length;
-    }
-
-    /**
      * @return the 1-based index of this pictures within the pictures stream
      */
     public int getIndex() {

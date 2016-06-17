@@ -118,14 +118,6 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
       this(new HSLFSlideShowImpl(dir));
    }
 
-   /**
-    * @deprecated Use {@link #PowerPointExtractor(DirectoryNode)} instead
-    */
-   @Deprecated
-	public PowerPointExtractor(DirectoryNode dir, POIFSFileSystem fs) throws IOException {
-		this(new HSLFSlideShowImpl(dir, fs));
-	}
-   
 	/**
 	 * Creates a PowerPointExtractor, from a HSLFSlideShow
 	 *

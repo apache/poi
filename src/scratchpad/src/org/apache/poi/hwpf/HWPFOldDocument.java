@@ -44,11 +44,6 @@ public class HWPFOldDocument extends HWPFDocumentCore {
         this(fs.getRoot());
     }
 
-    @Deprecated
-    public HWPFOldDocument(DirectoryNode directory, POIFSFileSystem fs)
-            throws IOException {
-       this(directory);
-    }
     public HWPFOldDocument(DirectoryNode directory)
             throws IOException {
         super(directory);

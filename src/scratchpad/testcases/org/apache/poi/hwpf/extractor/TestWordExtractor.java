@@ -161,7 +161,7 @@ public final class TestWordExtractor extends TestCase {
 		assertNotNull(dirB.getEntry("WordDocument"));
 
 		// Check each in turn
-		doc = new HWPFDocument(dirA, fs);
+		doc = new HWPFDocument(dirA);
 		extractor3 = new WordExtractor(doc);
 
 		assertNotNull(extractor3.getText());
@@ -171,7 +171,7 @@ public final class TestWordExtractor extends TestCase {
 		assertEquals("Sample Doc 1", extractor3.getSummaryInformation().getTitle());
 		assertEquals("Sample Test", extractor3.getSummaryInformation().getSubject());
 
-		doc = new HWPFDocument(dirB, fs);
+		doc = new HWPFDocument(dirB);
 		extractor3 = new WordExtractor(doc);
 
 		assertNotNull(extractor3.getText());
