@@ -31,6 +31,10 @@ import org.apache.poi.ss.formula.functions.*;
  *  (where available)
  */
 public final class FunctionEval {
+    private FunctionEval() {
+        // no instances of this class
+    }
+
     /**
      * Some function IDs that require special treatment
      */
