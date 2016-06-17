@@ -315,9 +315,8 @@ public final class TestPictures {
         assertEquals(2, pics.size());
 
         Picture pic1 = pics.get(0);
-        assertEquals(27, pic1.getAspectRatioX());
+        assertEquals("FIXME: unable to get image width", -1, pic1.getWidth());
         assertEquals(270, pic1.getHorizontalScalingFactor());
-        assertEquals(27, pic1.getAspectRatioY());
         assertEquals(271, pic1.getVerticalScalingFactor());
         assertEquals(12000, pic1.getDxaGoal());       // 21.17 cm / 2.54 cm/inch * 72dpi * 20 = 12000
         assertEquals(9000, pic1.getDyaGoal());        // 15.88 cm / 2.54 cm/inch * 72dpi * 20 = 9000
@@ -327,10 +326,8 @@ public final class TestPictures {
         assertEquals(0, pic1.getDyaCropBottom());
 
         Picture pic2 = pics.get(1);
-        System.out.println(pic2.getWidth());
-        assertEquals(76, pic2.getAspectRatioX());
+        assertEquals("FIXME: unable to get image width", -1, pic2.getWidth());
         assertEquals(764, pic2.getHorizontalScalingFactor());
-        assertEquals(68, pic2.getAspectRatioY());
         assertEquals(685, pic2.getVerticalScalingFactor());
         assertEquals(12000, pic2.getDxaGoal());       // 21.17 cm / 2.54 cm/inch * 72dpi * 20 = 12000
         assertEquals(9000, pic2.getDyaGoal());        // 15.88 cm / 2.54 cm/inch * 72dpi * 20 = 9000
