@@ -167,15 +167,15 @@ public final class XSSFName implements Name {
         validateName(name);
 
         int sheetIndex = getSheetIndex();
-
-        //Check to ensure no other names have the same case-insensitive name
-        for (int i = 0; i < _workbook.getNumberOfNames(); i++) {
+        int numberOfNames = _workbook.getNumberOfNames();
+        //Check to ensure no other names have the same case-insensitive name at the same scope
+        for (int i = 0; i < numberOfNames; i++) {
             XSSFName nm = _workbook.getNameAt(i);
-            if (nm != this) {
-                if(name.equalsIgnoreCase(nm.getNameName()) && sheetIndex == nm.getSheetIndex()){
-                    String msg = "The "+(sheetIndex == -1 ? "workbook" : "sheet")+" already contains this name: " + name;
-                    throw new IllegalArgumentException(msg);
-               }
+            if ((nm != this)
+                    && name.equalsIgnoreCase(nm.getNameName())
+                    && (sheetIndex == nm.getSheetIndex())) {
+                String msg = "The "+(sheetIndex == -1 ? "workbook" : "sheet")+" already contains this name: " + name;
+                throw new IllegalArgumentException(msg);
             }
         }
         _ctName.setName(name);
