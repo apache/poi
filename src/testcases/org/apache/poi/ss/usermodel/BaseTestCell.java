@@ -979,4 +979,35 @@ public abstract class BaseTestCell {
         
         wb.close();
     }
+
+    @Test
+    public void getCellComment() throws IOException {
+        Workbook wb = _testDataProvider.createWorkbook();
+        Sheet sheet = wb.createSheet();
+        CreationHelper factory = wb.getCreationHelper();
+        Row row = sheet.createRow(0);
+        Cell cell = row.createCell(1);
+        
+        // cell does not have a comment
+        assertNull(cell.getCellComment());
+ 
+        // add a cell comment
+        ClientAnchor anchor = factory.createClientAnchor();
+        anchor.setCol1(cell.getColumnIndex());
+        anchor.setCol2(cell.getColumnIndex()+1);
+        anchor.setRow1(row.getRowNum());
+        anchor.setRow2(row.getRowNum()+3);
+
+        Drawing drawing = sheet.createDrawingPatriarch();
+        Comment comment = drawing.createCellComment(anchor);
+        RichTextString str = factory.createRichTextString("Hello, World!");
+        comment.setString(str);
+
+        comment.setAuthor("Apache POI");
+        cell.setCellComment(comment);
+        // ideally assertSame, but XSSFCell creates a new XSSFCellComment wrapping the same bean for every call to getCellComment.
+        assertEquals(comment, cell.getCellComment());
+
+        wb.close();
+    }
 }
