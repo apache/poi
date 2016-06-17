@@ -64,16 +64,6 @@ public final class WordExtractor extends POIOLE2TextExtractor
         this( new HWPFDocument( fs ) );
     }
 
-    /**
-     * @deprecated Use {@link #WordExtractor(DirectoryNode)} instead
-     */
-    @Deprecated
-    public WordExtractor( DirectoryNode dir, POIFSFileSystem fs )
-            throws IOException
-    {
-        this( dir );
-    }
-
     public WordExtractor( DirectoryNode dir ) throws IOException
     {
         this( new HWPFDocument( dir ) );
@@ -213,6 +203,7 @@ public final class WordExtractor extends POIOLE2TextExtractor
 
     /**
      * Grab the text from the headers
+     * @deprecated 3.8 beta 4
      */
     @Deprecated
     public String getHeaderText()
@@ -238,6 +229,7 @@ public final class WordExtractor extends POIOLE2TextExtractor
 
     /**
      * Grab the text from the footers
+     * @deprecated 3.8 beta 4
      */
     @Deprecated
     public String getFooterText()
