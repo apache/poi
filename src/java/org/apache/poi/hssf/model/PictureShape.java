@@ -24,7 +24,10 @@ import org.apache.poi.hssf.usermodel.*;
 
 /**
  * Represents a picture shape and creates all specific low level records.
+ * @deprecated 3.15 beta 2. Use {@link HSSFPicture} instead.
+ * This should have been deprecated in r1364547 (POI 3.9) with the other AbstractShape deprecations.
  */
+@Deprecated
 public class PictureShape
         extends AbstractShape
 {
