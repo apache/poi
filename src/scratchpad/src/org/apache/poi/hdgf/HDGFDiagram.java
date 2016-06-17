@@ -61,9 +61,9 @@ public final class HDGFDiagram extends POIDocument {
 	public HDGFDiagram(POIFSFileSystem fs) throws IOException {
 		this(fs.getRoot());
 	}
-   public HDGFDiagram(NPOIFSFileSystem fs) throws IOException {
-      this(fs.getRoot());
-   }
+	public HDGFDiagram(NPOIFSFileSystem fs) throws IOException {
+		this(fs.getRoot());
+	}
    /**
     * @deprecated Use {@link #HDGFDiagram(DirectoryNode)} instead 
     */
@@ -171,7 +171,7 @@ public final class HDGFDiagram extends POIDocument {
 	 * For testing only
 	 */
 	public static void main(String args[]) throws Exception {
-	    NPOIFSFileSystem pfs = new NPOIFSFileSystem(new File(args[0]));
+		NPOIFSFileSystem pfs = new NPOIFSFileSystem(new File(args[0]));
 		HDGFDiagram hdgf = new HDGFDiagram(pfs);
 		hdgf.debug();
 		pfs.close();
