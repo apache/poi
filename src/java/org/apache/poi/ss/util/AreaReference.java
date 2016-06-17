@@ -39,11 +39,12 @@ public class AreaReference {
     private final SpreadsheetVersion _version; // never null
 
     /**
-     * @deprecated Prefer supplying a version.
+     * @deprecated POI 3.13 beta 1. Prefer supplying a version.
      */
     @Deprecated
     public AreaReference(String reference) {
         this(reference, DEFAULT_SPREADSHEET_VERSION);
+        // generateContiguous must be updated before this can be deleted.
     }
     
     /**
