@@ -1226,8 +1226,8 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
      *  sh.createRow(0);
      *  </code></pre>
      *  
-     *  New projects should use the preferred options. Note: XSSFWorkbook.xssfSheetIterator
-     *  is deprecated and will be removed in a future version.
+     *  @deprecated 3.13. New projects should use the preferred options. Note: XSSFWorkbook.xssfSheetIterator
+     *  is deprecated and will be removed in 3.15.
      *
      * @return an iterator of the sheets.
      */
