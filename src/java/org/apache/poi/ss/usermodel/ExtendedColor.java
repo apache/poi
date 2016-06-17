@@ -109,8 +109,9 @@ public abstract class ExtendedColor implements Color {
                System.arraycopy(rgb, 1, tmp, 0, 3);
                rgb = tmp;
             }
+            double tint = getTint();
             for (int i = 0; i < rgb.length; i++){
-                rgb[i] = applyTint(rgb[i] & 0xFF, getTint());
+                rgb[i] = applyTint(rgb[i] & 0xFF, tint);
             }
         }
         return rgb;
