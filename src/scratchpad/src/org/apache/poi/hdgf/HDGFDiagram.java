@@ -64,13 +64,6 @@ public final class HDGFDiagram extends POIDocument {
 	public HDGFDiagram(NPOIFSFileSystem fs) throws IOException {
 		this(fs.getRoot());
 	}
-   /**
-    * @deprecated Use {@link #HDGFDiagram(DirectoryNode)} instead 
-    */
-   @Deprecated
-   public HDGFDiagram(DirectoryNode dir, POIFSFileSystem fs) throws IOException {
-      this(dir);
-   }
 	public HDGFDiagram(DirectoryNode dir) throws IOException {
 		super(dir);
 
