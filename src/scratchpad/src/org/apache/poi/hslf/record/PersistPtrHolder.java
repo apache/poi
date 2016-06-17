@@ -85,17 +85,6 @@ public final class PersistPtrHolder extends PositionDependentRecordAtom
 	}
 	
 	/**
-	 * Get the lookup from slide numbers to their offsets inside
-	 *  _ptrData, used when adding or moving slides.
-	 * 
-	 * @deprecated since POI 3.11, not supported anymore
-	 */
-	@Deprecated
-	public Hashtable<Integer,Integer> getSlideOffsetDataLocationsLookup() {
-		throw new UnsupportedOperationException("PersistPtrHolder.getSlideOffsetDataLocationsLookup() is not supported since 3.12-Beta1");
-	}
-
-	/**
 	 * Create a new holder for a PersistPtr record
 	 */
 	protected PersistPtrHolder(byte[] source, int start, int len) {
