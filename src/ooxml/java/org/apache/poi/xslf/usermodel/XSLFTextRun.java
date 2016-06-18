@@ -18,13 +18,25 @@ package org.apache.poi.xslf.usermodel;
 
 import java.awt.Color;
 
+import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.sl.draw.DrawPaint;
 import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
 import org.apache.poi.sl.usermodel.TextRun;
 import org.apache.poi.util.Beta;
 import org.apache.poi.xslf.model.CharacterPropertyFetcher;
-import org.openxmlformats.schemas.drawingml.x2006.main.*;
+import org.apache.poi.xslf.usermodel.XSLFPropertiesDelegate.XSLFFillProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTHyperlink;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTRegularTextRun;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTSchemeColor;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeStyle;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTSolidColorFillProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextCharacterProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextFont;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextNormalAutofit;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraphProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.STTextStrikeType;
+import org.openxmlformats.schemas.drawingml.x2006.main.STTextUnderlineType;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
 
 /**
@@ -107,19 +119,26 @@ public class XSLFTextRun implements TextRun {
     public PaintStyle getFontColor(){
         CharacterPropertyFetcher<PaintStyle> fetcher = new CharacterPropertyFetcher<PaintStyle>(_p.getIndentLevel()){
             public boolean fetch(CTTextCharacterProperties props){
-                if (props != null) {
-                    XSLFShape shape = _p.getParentShape();
-                    CTShapeStyle style = shape.getSpStyle();
-                    CTSchemeColor phClr = null;
-                    if (style != null && style.getFontRef() != null) {
-                        phClr = style.getFontRef().getSchemeClr();
-                    }
-    
-                    PaintStyle ps = shape.getPaint(props, phClr);
-                    if (ps != null)  {
-                        setValue(ps);
-                        return true;
-                    }
+                if (props == null) {
+                    return false;
+                }
+                
+                XSLFShape shape = _p.getParentShape();
+                CTShapeStyle style = shape.getSpStyle();
+                CTSchemeColor phClr = null;
+                if (style != null && style.getFontRef() != null) {
+                    phClr = style.getFontRef().getSchemeClr();
+                }
+
+                XSLFFillProperties fp = XSLFPropertiesDelegate.getFillDelegate(props);
+                XSLFSheet sheet = shape.getSheet();
+                PackagePart pp = sheet.getPackagePart();
+                XSLFTheme theme = sheet.getTheme();
+                PaintStyle ps = XSLFShape.selectPaint(fp, phClr, pp, theme);
+                
+                if (ps != null)  {
+                    setValue(ps);
+                    return true;
                 }
                 
                 return false;

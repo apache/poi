@@ -16,7 +16,9 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
+
 import static org.junit.Assert.assertEquals;
+import static org.apache.poi.xslf.usermodel.TestXSLFSimpleShape.getSpPr;
 
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Path2D;
@@ -25,9 +27,6 @@ import java.io.IOException;
 
 import org.junit.Test;
 
-/**
- * @author Yegor Kozlov
- */
 public class TestXSLFFreeformShape {
 
     @Test
@@ -49,7 +48,7 @@ public class TestXSLFFreeformShape {
         XSLFFreeformShape shape2 = slide.createFreeform();
         shape2.setPath(path2);
 
-        assertEquals(shape1.getSpPr().getCustGeom().toString(), shape2.getSpPr().getCustGeom().toString());
+        assertEquals(getSpPr(shape1).getCustGeom().toString(), getSpPr(shape2).getCustGeom().toString());
         
         ppt.close();
     }
