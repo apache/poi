@@ -33,6 +33,10 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.poi.POIDataSamples;
@@ -210,50 +214,70 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         
         wb.close();
     }
+    
+    private static List<Integer> arrayToList(int[] array) {
+        List<Integer> list = new ArrayList<Integer>(array.length);
+        for ( Integer element : array ) {
+            list.add(element);
+        }
+        return list;
+    }
+    
+    private static void assertCollectionsEquals(Collection<Integer> expected, Collection<Integer> actual) {
+        assertEquals("size", expected.size(), actual.size());
+        for (int e : expected) {
+            assertTrue(actual.contains(e));
+        }
+        for (int a : actual) {
+            assertTrue(expected.contains(a));
+        }
+    }
 
     @Test
     public void selectMultiple() throws IOException {
-        HSSFWorkbook wb=new HSSFWorkbook();
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet0 = wb.createSheet("Sheet0");
         HSSFSheet sheet1 = wb.createSheet("Sheet1");
         HSSFSheet sheet2 = wb.createSheet("Sheet2");
         HSSFSheet sheet3 = wb.createSheet("Sheet3");
         HSSFSheet sheet4 = wb.createSheet("Sheet4");
         HSSFSheet sheet5 = wb.createSheet("Sheet5");
-        HSSFSheet sheet6 = wb.createSheet("Sheet6");
 
-        wb.setSelectedTabs(new int[] { 0, 2, 3});
+        
+        List<Integer> selected = arrayToList(new int[] { 0, 2, 3 });
+        wb.setSelectedTabs(selected);
 
+        assertCollectionsEquals(selected, wb.getSelectedTabs());
+        assertEquals(true, sheet0.isSelected());
+        assertEquals(false, sheet1.isSelected());
+        assertEquals(true, sheet2.isSelected());
+        assertEquals(true, sheet3.isSelected());
+        assertEquals(false, sheet4.isSelected());
+        assertEquals(false, sheet5.isSelected());
+
+        selected = arrayToList(new int[] { 1, 3, 5 });
+        wb.setSelectedTabs(selected);
+
+        // previous selection should be cleared
+        assertCollectionsEquals(selected, wb.getSelectedTabs());
+        assertEquals(false, sheet0.isSelected());
         assertEquals(true, sheet1.isSelected());
         assertEquals(false, sheet2.isSelected());
         assertEquals(true, sheet3.isSelected());
-        assertEquals(true, sheet4.isSelected());
-        assertEquals(false, sheet5.isSelected());
-        assertEquals(false, sheet6.isSelected());
+        assertEquals(false, sheet4.isSelected());
+        assertEquals(true, sheet5.isSelected());
 
-        wb.setSelectedTabs(new int[] { 1, 3, 5});
-
-        assertEquals(false, sheet1.isSelected());
-        assertEquals(true, sheet2.isSelected());
-        assertEquals(false, sheet3.isSelected());
-        assertEquals(true, sheet4.isSelected());
-        assertEquals(false, sheet5.isSelected());
-        assertEquals(true, sheet6.isSelected());
-
-        assertEquals(true, sheet1.isActive());
+        assertEquals(true, sheet0.isActive());
         assertEquals(false, sheet2.isActive());
-
-
-        assertEquals(true, sheet1.isActive());
-        assertEquals(false, sheet3.isActive());
         wb.setActiveSheet(2);
-        assertEquals(false, sheet1.isActive());
-        assertEquals(true, sheet3.isActive());
+        assertEquals(false, sheet0.isActive());
+        assertEquals(true, sheet2.isActive());
 
         /*{ // helpful if viewing this workbook in excel:
+            sheet0.createRow(0).createCell(0).setCellValue(new HSSFRichTextString("Sheet0"));
             sheet1.createRow(0).createCell(0).setCellValue(new HSSFRichTextString("Sheet1"));
             sheet2.createRow(0).createCell(0).setCellValue(new HSSFRichTextString("Sheet2"));
             sheet3.createRow(0).createCell(0).setCellValue(new HSSFRichTextString("Sheet3"));
-            sheet4.createRow(0).createCell(0).setCellValue(new HSSFRichTextString("Sheet4"));
 
             try {
                 File fOut = TempFile.createTempFile("sheetMultiSelect", ".xls");

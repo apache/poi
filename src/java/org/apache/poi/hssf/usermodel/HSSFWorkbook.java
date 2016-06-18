@@ -34,11 +34,13 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.apache.commons.codec.digest.DigestUtils;
@@ -542,27 +544,40 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     /**
      * Selects multiple sheets as a group. This is distinct from
      * the 'active' sheet (which is the sheet with focus).
+     * Unselects sheets that are not in <code>indexes</code>.
      *
      * @param indexes
      */
     public void setSelectedTabs(int[] indexes) {
+        Collection<Integer> list = new ArrayList<Integer>(indexes.length);
+        for (int index : indexes) {
+            list.add(index);
+        }
+        setSelectedTabs(list);
+    }
+    
+    /**
+     * Selects multiple sheets as a group. This is distinct from
+     * the 'active' sheet (which is the sheet with focus).
+     * Unselects sheets that are not in <code>indexes</code>.
+     *
+     * @param indexes
+     */
+    public void setSelectedTabs(Collection<Integer> indexes) {
 
         for (int index : indexes) {
             validateSheetIndex(index);
         }
+        // ignore duplicates
+        Set<Integer> set = new HashSet<Integer>(indexes);
         int nSheets = _sheets.size();
         for (int i=0; i<nSheets; i++) {
-            boolean bSelect = false;
-            for (int index : indexes) {
-                if (index == i) {
-                    bSelect = true;
-                    break;
-                }
-
-            }
-               getSheetAt(i).setSelected(bSelect);
+            boolean bSelect = set.contains(i);
+            getSheetAt(i).setSelected(bSelect);
         }
-        workbook.getWindowOne().setNumSelectedTabs((short)indexes.length);
+        // this is true only if all values in set were valid sheet indexes (between 0 and nSheets-1, inclusive)
+        short nSelected = (short) set.size();
+        workbook.getWindowOne().setNumSelectedTabs(nSelected);
     }
     
     /**
