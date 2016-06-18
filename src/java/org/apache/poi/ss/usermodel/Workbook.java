@@ -26,7 +26,6 @@ import java.util.List;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.udf.UDFFinder;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
-import org.apache.poi.ss.util.CellRangeAddress;
 
 /**
  * High level representation of a Excel workbook.  This is the first object most users
@@ -283,8 +282,16 @@ public interface Workbook extends Closeable, Iterable<Sheet> {
      * Finds a font that matches the one with the supplied attributes
      *
      * @return the font with the matched attributes or <code>null</code>
+     * @deprecated POI 3.15 beta 2. Use {@link #findFont(boolean, short, short, String, boolean, boolean, short, byte)} instead.
      */
     Font findFont(short boldWeight, short color, short fontHeight, String name, boolean italic, boolean strikeout, short typeOffset, byte underline);
+    
+    /**
+     * Finds a font that matches the one with the supplied attributes
+     *
+     * @return the font with the matched attributes or <code>null</code>
+     */
+    Font findFont(boolean bold, short color, short fontHeight, String name, boolean italic, boolean strikeout, short typeOffset, byte underline);
 
     /**
      * Get the number of fonts in the font table

@@ -870,10 +870,19 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
 
     /**
      * Finds a font that matches the one with the supplied attributes
+     * @deprecated POI 3.15. Use {@link #findFont(boolean, short, short, String, boolean, boolean, short, byte)} instead.
      */
     @Override
     public XSSFFont findFont(short boldWeight, short color, short fontHeight, String name, boolean italic, boolean strikeout, short typeOffset, byte underline) {
         return stylesSource.findFont(boldWeight, color, fontHeight, name, italic, strikeout, typeOffset, underline);
+    }
+    
+    /**
+     * Finds a font that matches the one with the supplied attributes
+     */
+    @Override
+    public XSSFFont findFont(boolean bold, short color, short fontHeight, String name, boolean italic, boolean strikeout, short typeOffset, byte underline) {
+        return stylesSource.findFont(bold, color, fontHeight, name, italic, strikeout, typeOffset, underline);
     }
 
     /**
