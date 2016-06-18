@@ -359,33 +359,6 @@ public final class ValueRecordsAggregate implements Iterable<CellValueRecordInte
 		return new ValueIterator();
 	}
 
-	/**
-	 * Gets all the cell records contained in this aggregate. 
-	 * Note {@link BlankRecord}s appear separate (not in {@link MulBlankRecord}s).
-	 * @deprecated use {@link #iterator()} instead
-	 */
-	@Deprecated
-	public CellValueRecordInterface[] getValueRecords() {
-		List<CellValueRecordInterface> temp = new ArrayList<CellValueRecordInterface>();
-
-		for (int rowIx = 0; rowIx < records.length; rowIx++) {
-			CellValueRecordInterface[] rowCells = records[rowIx];
-			if (rowCells == null) {
-				continue;
-			}
-			for (int colIx = 0; colIx < rowCells.length; colIx++) {
-				CellValueRecordInterface cell = rowCells[colIx];
-				if (cell != null) {
-					temp.add(cell);
-				}
-			}
-		}
-
-		CellValueRecordInterface[] result = new CellValueRecordInterface[temp.size()];
-		temp.toArray(result);
-		return result;
-	}
-
 	public Object clone() {
 		throw new RuntimeException("clone() should not be called.  ValueRecordsAggregate should be copied via Sheet.cloneSheet()");
 	}

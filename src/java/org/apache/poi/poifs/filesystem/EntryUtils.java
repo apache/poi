@@ -99,7 +99,7 @@ public class EntryUtils
      *            is the target Directory to copy to
      * @param excepts
      *            is a list of Strings specifying what nodes NOT to copy
-     * @deprecated use {@link FilteringDirectoryNode} instead
+     * @deprecated POI 3.8 beta 5. Use {@link FilteringDirectoryNode} instead
      */
     public static void copyNodes( DirectoryEntry sourceRoot,
             DirectoryEntry targetRoot, List<String> excepts )

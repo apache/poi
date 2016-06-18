@@ -48,17 +48,6 @@ public class HSSFFormulaEvaluator implements FormulaEvaluator, WorkbookEvaluator
 	private WorkbookEvaluator _bookEvaluator;
 	private HSSFWorkbook _book;
 
-	/**
-	 * @deprecated (Sep 2008) HSSFSheet parameter is ignored
-	 */
-	@Deprecated
-    public HSSFFormulaEvaluator(HSSFSheet sheet, HSSFWorkbook workbook) {
-		this(workbook);
-//		if (false) {
-//			sheet.toString(); // suppress unused parameter compiler warning
-//		}
-		this._book = workbook;
-	}
 	public HSSFFormulaEvaluator(HSSFWorkbook workbook) {
 		this(workbook, null);
       this._book = workbook;

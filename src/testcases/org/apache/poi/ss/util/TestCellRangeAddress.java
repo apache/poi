@@ -23,7 +23,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import org.apache.poi.hssf.record.TestcaseRecordInputStream;
+import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 import org.apache.poi.util.LittleEndianOutputStream;
+
 
 //TODO: replace junit3 with junit4 code
 import junit.framework.TestCase; //junit3
@@ -84,33 +86,6 @@ public final class TestCellRangeAddress extends TestCase {
             }
         } finally {
             out.close();
-        }
-    }
-
-    @SuppressWarnings("deprecation")
-    public void testStoreDeprecated() throws IOException {
-        CellRangeAddress ref = new CellRangeAddress(0, 0, 0, 0);
-
-        byte[] recordBytes = new byte[CellRangeAddress.ENCODED_SIZE];
-        // With nothing set
-        ref.serialize(0, recordBytes);
-        assertEquals(recordBytes.length, data.length);
-        for (int i = 0; i < data.length; i++) {
-            assertEquals("At offset " + i, 0, recordBytes[i]);
-        }
-
-        // Now set the flags
-        ref.setFirstRow((short) 2);
-        ref.setLastRow((short) 4);
-        ref.setFirstColumn((short) 0);
-        ref.setLastColumn((short) 3);
-
-        // Re-test
-        ref.serialize(0, recordBytes);
-
-        assertEquals(recordBytes.length, data.length);
-        for (int i = 0; i < data.length; i++) {
-            assertEquals("At offset " + i, data[i], recordBytes[i]);
         }
     }
     

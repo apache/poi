@@ -198,13 +198,7 @@ public final class WindowTwoRecord extends StandardRecord {
     public void setActive(boolean p) {
         field_1_options = active.setShortBoolean(field_1_options, p);
     }
-    /**
-     * deprecated May 2008
-     * @deprecated use setActive()
-     */
-    public void setPaged(boolean p) {
-    	setActive(p);
-    }
+
     /**
      * was the sheet saved in page break view
      * @param p  pagebreaksaved or not
@@ -395,13 +389,6 @@ public final class WindowTwoRecord extends StandardRecord {
 
     public boolean isActive() {
         return active.isSet(field_1_options);
-    }
-    /**
-     * deprecated May 2008
-     * @deprecated use isActive()
-     */
-    public boolean getPaged() {
-        return isActive();
     }
 
     /**

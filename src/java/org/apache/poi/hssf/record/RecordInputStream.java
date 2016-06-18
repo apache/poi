@@ -415,7 +415,7 @@ public final class RecordInputStream implements LittleEndianInput {
   /** Reads all byte data for the current record, including any
    *  that overlaps into any following continue records.
    *
-   *  @deprecated Best to write a input stream that wraps this one where there is
+   *  @deprecated POI 2.0 Best to write a input stream that wraps this one where there is
    *  special sub record that may overlap continue records.
    */
   public byte[] readAllContinuedRemainder() {

@@ -230,19 +230,16 @@ public final class HSSFConditionalFormattingRule implements ConditionalFormattin
     /**
      * @return -  the conditiontype for the cfrule
      */
-    public byte getConditionType() {
-        return cfRuleRecord.getConditionType();
-    }
-    /**
-     * @return -  the conditiontype for the cfrule
-     */
-    public ConditionType getConditionTypeType() {
-        return ConditionType.forId(getConditionType());
+    @Override
+    public ConditionType getConditionType() {
+        byte code = cfRuleRecord.getConditionType();
+        return ConditionType.forId(code);
     }
 
     /**
      * @return - the comparisionoperatation for the cfrule
      */
+    @Override
     public byte getComparisonOperation() {
         return cfRuleRecord.getComparisonOperation();
     }

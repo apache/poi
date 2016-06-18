@@ -31,6 +31,7 @@ import java.io.PrintWriter;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -537,14 +538,13 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
         }
         workbook.getWindowOne().setNumSelectedTabs((short)1);
     }
+
     /**
-     * deprecated May 2008
-     * @deprecated use setSelectedTab(int)
+     * Selects multiple sheets as a group. This is distinct from
+     * the 'active' sheet (which is the sheet with focus).
+     *
+     * @param indexes
      */
-    @Deprecated
-	public void setSelectedTab(short index) {
-        setSelectedTab((int)index);
-    }
     public void setSelectedTabs(int[] indexes) {
 
         for (int index : indexes) {
@@ -564,6 +564,24 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
         }
         workbook.getWindowOne().setNumSelectedTabs((short)indexes.length);
     }
+    
+    /**
+     * Gets the selected sheets (if more than one, Excel calls these a [Group]). 
+     *
+     * @return indices of selected sheets
+     */
+    public Collection<Integer> getSelectedTabs() {
+        Collection<Integer> indexes = new ArrayList<Integer>();
+        int nSheets = _sheets.size();
+        for (int i=0; i<nSheets; i++) {
+            HSSFSheet sheet = getSheetAt(i);
+            if (sheet.isSelected()) {
+                indexes.add(i);
+            }
+        }
+        return Collections.unmodifiableCollection(indexes);
+    }
+    
     /**
      * Convenience method to set the active sheet.  The active sheet is is the sheet
      * which is currently displayed when the workbook is viewed in Excel.
@@ -591,14 +609,6 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     public int getActiveSheetIndex() {
         return workbook.getWindowOne().getActiveSheetIndex();
     }
-    /**
-     * deprecated May 2008
-     * @deprecated - Misleading name - use getActiveSheetIndex()
-     */
-    @Deprecated
-	public short getSelectedTab() {
-        return (short) getActiveSheetIndex();
-    }
 
 
     /**
@@ -612,14 +622,6 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     public void setFirstVisibleTab(int index) {
         workbook.getWindowOne().setFirstVisibleTab(index);
     }
-    /**
-     * deprecated May 2008
-     * @deprecated - Misleading name - use setFirstVisibleTab()
-     */
-    @Deprecated
-	public void setDisplayedTab(short index) {
-       setFirstVisibleTab(index);
-    }
 
     /**
      * sets the first tab that is displayed in the list of tabs in excel.
@@ -627,14 +629,6 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     @Override
     public int getFirstVisibleTab() {
         return workbook.getWindowOne().getFirstVisibleTab();
-    }
-    /**
-     * deprecated May 2008
-     * @deprecated - Misleading name - use getFirstVisibleTab()
-     */
-    @Deprecated
-	public short getDisplayedTab() {
-        return (short) getFirstVisibleTab();
     }
 
     /**
@@ -725,42 +719,6 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
             }
         }
         return -1;
-    }
-
-    /**
-     * Returns the external sheet index of the sheet
-     *  with the given internal index, creating one
-     *  if needed.
-     * Used by some of the more obscure formula and
-     *  named range things.
-     * @deprecated for POI internal use only (formula parsing).  This method is likely to
-     * be removed in future versions of POI.
-     */
-    @Deprecated
-	public int getExternalSheetIndex(int internalSheetIndex) {
-        return workbook.checkExternSheet(internalSheetIndex);
-    }
-    /**
-     * @deprecated for POI internal use only (formula rendering).  This method is likely to
-     * be removed in future versions of POI.
-     */
-    @Deprecated
-	public String findSheetNameFromExternSheet(int externSheetIndex){
-        // TODO - don't expose internal ugliness like externSheet indexes to the user model API
-        return workbook.findSheetFirstNameFromExternSheet(externSheetIndex);
-    }
-    /**
-     * @deprecated for POI internal use only (formula rendering).  This method is likely to
-     * be removed in future versions of POI.
-     *
-     * @param refIndex Index to REF entry in EXTERNSHEET record in the Link Table
-     * @param definedNameIndex zero-based to DEFINEDNAME or EXTERNALNAME record
-     * @return the string representation of the defined or external name
-     */
-    @Deprecated
-	public String resolveNameXText(int refIndex, int definedNameIndex) {
-        // TODO - make this less cryptic / move elsewhere
-        return workbook.resolveNameXText(refIndex, definedNameIndex);
     }
 
     /**
@@ -965,16 +923,6 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     public int getNumberOfSheets()
     {
         return _sheets.size();
-    }
-
-    /**
-     * @deprecated for POI internal use only (formula parsing).  This method is likely to
-     * be removed in future versions of POI.
-     */
-    @Deprecated
-    public int getSheetIndexFromExternSheetIndex(int externSheetNumber) {
-        // TODO - don't expose internal ugliness like externSheet indexes to the user model API
-        return workbook.getFirstSheetIndexFromExternSheetIndex(externSheetNumber);
     }
 
     private HSSFSheet[] getSheets() {
@@ -1431,25 +1379,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
         return retval;
     }
 
-    /** @deprecated Do not call this method from your applications. Use the methods
-     *  available in the HSSFRow to add string HSSFCells
-     */
-    @Deprecated
-	public int addSSTString(String string)
-    {
-        return workbook.addSSTString(new UnicodeString(string));
-    }
-
-    /** @deprecated Do not call this method from your applications. Use the methods
-     *  available in the HSSFRow to get string HSSFCells
-     */
-    @Deprecated
-	public String getSSTString(int index)
-    {
-        return workbook.getSSTString(index).getString();
-    }
-
-    InternalWorkbook getWorkbook() {
+    /*package*/ InternalWorkbook getWorkbook() {
         return workbook;
     }
 

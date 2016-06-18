@@ -96,18 +96,6 @@ public final class HSSFRow implements Row, Comparable<HSSFRow> {
     }
 
     /**
-     * @deprecated (Aug 2008) use {@link HSSFRow#createCell(int) }
-     */
-    public HSSFCell createCell(short columnIndex) {
-        return createCell((int)columnIndex);
-    }
-    /**
-     * @deprecated (Aug 2008) use {@link HSSFRow#createCell(int, int) }
-     */
-    public HSSFCell createCell(short columnIndex, int type) {
-        return createCell((int)columnIndex, type);
-    }
-    /**
      * Use this to create new cells within the row and return it.
      * <p>
      * The cell that is returned is a CELL_TYPE_BLANK. The type can be changed
@@ -340,14 +328,6 @@ public final class HSSFRow implements Row, Comparable<HSSFRow> {
             return null;
         }
         return cells[cellIndex];
-    }
-
-    /**
-     * @deprecated (Aug 2008) use {@link #getCell(int)}
-     */
-    public HSSFCell getCell(short cellnum) {
-        int ushortCellNum = cellnum & 0x0000FFFF; // avoid sign extension
-        return getCell(ushortCellNum);
     }
 
     /**

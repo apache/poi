@@ -53,14 +53,6 @@ public class CellRangeAddress extends CellRangeAddressBase {
 		    throw new IllegalArgumentException("lastRow < firstRow || lastCol < firstCol");
 	}
 
-	/**
-	 * @deprecated use {@link #serialize(LittleEndianOutput)}
-	 */
-	@Deprecated
-    public int serialize(int offset, byte[] data) {
-		serialize(new LittleEndianByteArrayOutputStream(data, offset, ENCODED_SIZE));
-		return ENCODED_SIZE;
-	}
 	public void serialize(LittleEndianOutput out) {
 		out.writeShort(getFirstRow());
 		out.writeShort(getLastRow());

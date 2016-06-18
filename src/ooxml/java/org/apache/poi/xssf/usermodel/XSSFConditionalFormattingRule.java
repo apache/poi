@@ -297,34 +297,22 @@ public class XSSFConditionalFormattingRule implements ConditionalFormattingRule 
 
     /**
      * Type of conditional formatting rule.
-     * <p>
-     * MUST be one of the IDs of a {@link ConditionType}
-     * </p>
-     *
-     * @return the type of condition
      */
-    public byte getConditionType(){
-        ConditionType type = getConditionTypeType();
-        if (type != null) return type.id;
-        return 0;
-    }
-    
-    /**
-     * Type of conditional formatting rule.
-     */
-    public ConditionType getConditionTypeType() {
+    @Override
+    public ConditionType getConditionType() {
         return typeLookup.get(_cfRule.getType());
     }
 
     /**
      * The comparison function used when the type of conditional formatting is set to
-     * {@link ConditionalFormattingRule#CONDITION_TYPE_CELL_VALUE_IS}
+     * {@link ConditionType#CELL_VALUE_IS}
      * <p>
      *     MUST be a constant from {@link org.apache.poi.ss.usermodel.ComparisonOperator}
      * </p>
      *
      * @return the conditional format operator
      */
+    @Override
     public byte getComparisonOperation(){
         STConditionalFormattingOperator.Enum op = _cfRule.getOperator();
         if(op == null) return ComparisonOperator.NO_COMPARISON;
@@ -345,13 +333,13 @@ public class XSSFConditionalFormattingRule implements ConditionalFormattingRule 
     /**
      * The formula used to evaluate the first operand for the conditional formatting rule.
      * <p>
-     * If the condition type is {@link ConditionalFormattingRule#CONDITION_TYPE_CELL_VALUE_IS},
+     * If the condition type is {@link ConditionType#CELL_VALUE_IS},
      * this field is the first operand of the comparison.
-     * If type is {@link ConditionalFormattingRule#CONDITION_TYPE_FORMULA}, this formula is used
+     * If type is {@link ConditionType#FORMULA}, this formula is used
      * to determine if the conditional formatting is applied.
      * </p>
      * <p>
-     * If comparison type is {@link ConditionalFormattingRule#CONDITION_TYPE_FORMULA} the formula MUST be a Boolean function
+     * If comparison type is {@link ConditionType#FORMULA} the formula MUST be a Boolean function
      * </p>
      *
      * @return  the first formula
@@ -362,7 +350,7 @@ public class XSSFConditionalFormattingRule implements ConditionalFormattingRule 
 
     /**
      * The formula used to evaluate the second operand of the comparison when
-     * comparison type is  {@link ConditionalFormattingRule#CONDITION_TYPE_CELL_VALUE_IS} and operator
+     * comparison type is  {@link ConditionType#CELL_VALUE_IS} and operator
      * is either {@link org.apache.poi.ss.usermodel.ComparisonOperator#BETWEEN} or {@link org.apache.poi.ss.usermodel.ComparisonOperator#NOT_BETWEEN}
      *
      * @return  the second formula

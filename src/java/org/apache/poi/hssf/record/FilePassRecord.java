@@ -251,54 +251,6 @@ public final class FilePassRecord extends StandardRecord implements Cloneable {
         }
         return rc4;
     }
-    
-    /**
-     * @deprecated use getRc4KeyData().getSalt()
-     * @return the rc4 salt
-     */
-    public byte[] getDocId() {
-		return checkRc4().getSalt();
-	}
-
-    /**
-     * @deprecated use getRc4KeyData().setSalt()
-     * @param docId the new rc4 salt
-     */
-    public void setDocId(byte[] docId) {
-        checkRc4().setSalt(docId);
-	}
-
-    /**
-     * @deprecated use getRc4KeyData().getEncryptedVerifier()
-     * @return the rc4 encrypted verifier
-     */
-    public byte[] getSaltData() {
-		return checkRc4().getEncryptedVerifier();
-	}
-
-    /**
-     * @deprecated use getRc4KeyData().setEncryptedVerifier()
-     * @param saltData the new rc4 encrypted verifier
-     */
-	public void setSaltData(byte[] saltData) {
-	    getRc4KeyData().setEncryptedVerifier(saltData);
-	}
-
-    /**
-     * @deprecated use getRc4KeyData().getEncryptedVerifierHash()
-     * @return the rc4 encrypted verifier hash
-     */
-	public byte[] getSaltHash() {
-		return getRc4KeyData().getEncryptedVerifierHash();
-	}
-
-    /**
-     * @deprecated use getRc4KeyData().setEncryptedVerifierHash()
-     * @param saltHash the new rc4 encrypted verifier
-     */
-	public void setSaltHash(byte[] saltHash) {
-	    getRc4KeyData().setEncryptedVerifierHash(saltHash);
-	}
 
 	public short getSid() {
 		return sid;

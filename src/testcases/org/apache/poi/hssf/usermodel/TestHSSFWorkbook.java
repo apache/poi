@@ -182,7 +182,6 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         b6.close();
     }
 
-    @SuppressWarnings("deprecation")
     @Test
     public void selectedSheet_bug44523() throws IOException {
         HSSFWorkbook wb=new HSSFWorkbook();
@@ -197,9 +196,6 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         confirmActiveSelected(sheet4, false);
 
         wb.setSelectedTab(1);
-
-        // see Javadoc, in this case selected means "active"
-        assertEquals(wb.getActiveSheetIndex(), wb.getSelectedTab());
 
         // Demonstrate bug 44525:
         // Well... not quite, since isActive + isSelected were also added in the same bug fix
@@ -833,7 +829,6 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         }
     }
 
-    @SuppressWarnings("deprecation")
     @Test
     public void selectedSheetShort() throws IOException {
         HSSFWorkbook wb=new HSSFWorkbook();
@@ -850,9 +845,6 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
 
         wb.setSelectedTab((short)1);
 
-        // see Javadoc, in this case selected means "active"
-        assertEquals(wb.getActiveSheetIndex(), wb.getSelectedTab());
-
         // Demonstrate bug 44525:
         // Well... not quite, since isActive + isSelected were also added in the same bug fix
         assertFalse("Identified bug 44523 a", sheet1.isSelected());
@@ -865,44 +857,9 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         confirmActiveSelected(sheet4, false);
 
         assertEquals(0, wb.getFirstVisibleTab());
-        wb.setDisplayedTab((short)2);
+        wb.setFirstVisibleTab((short)2);
         assertEquals(2, wb.getFirstVisibleTab());
-        assertEquals(2, wb.getDisplayedTab());
 
-        wb.close();
-    }
-
-    @SuppressWarnings("deprecation")
-    @Test
-    public void getExternSheetIndex() throws IOException {
-        HSSFWorkbook wb=new HSSFWorkbook();
-        wb.createSheet("Sheet1");
-        wb.createSheet("Sheet2");
-
-        assertEquals(0, wb.getExternalSheetIndex(0));
-        assertEquals(1, wb.getExternalSheetIndex(1));
-
-        assertEquals("Sheet1", wb.findSheetNameFromExternSheet(0));
-        assertEquals("Sheet2", wb.findSheetNameFromExternSheet(1));
-        //assertEquals(null, wb.findSheetNameFromExternSheet(2));
-
-        assertEquals(0, wb.getSheetIndexFromExternSheetIndex(0));
-        assertEquals(1, wb.getSheetIndexFromExternSheetIndex(1));
-        assertEquals(-1, wb.getSheetIndexFromExternSheetIndex(2));
-        assertEquals(-1, wb.getSheetIndexFromExternSheetIndex(100));
-        
-        wb.close();
-    }
-
-    @SuppressWarnings("deprecation")
-    @Test
-    public void sstString() throws IOException {
-        HSSFWorkbook wb=new HSSFWorkbook();
-
-        int sst = wb.addSSTString("somestring");
-        assertEquals("somestring", wb.getSSTString(sst));
-        //assertNull(wb.getSSTString(sst+1));
-        
         wb.close();
     }
 

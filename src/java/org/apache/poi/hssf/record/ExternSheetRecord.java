@@ -162,14 +162,6 @@ public class ExternSheetRecord extends StandardRecord {
 		return _list.get(i);
 	}
 	
-    /**
-     * @deprecated Was prevously used for removing sheets, which we now do differently 
-     */
-    @Deprecated
-    public void adjustIndex(int extRefIndex, int offset) {
-        getRef(extRefIndex).adjustIndex(offset);
-    }
-	
 	public void removeSheet(int sheetIdx) {
         int nItems = _list.size();
         for (int i = 0; i < nItems; i++) {

@@ -162,24 +162,6 @@ public final class HSSFName implements Name {
         }
     }
 
-    /**
-     * Returns the formula that the name is defined to refer to.
-     *
-     * @deprecated (Nov 2008) Misleading name. Use {@link #getRefersToFormula()} instead.
-     */
-    public String getReference() {
-        return getRefersToFormula();
-    }
-
-    /**
-     * Sets the formula that the name is defined to refer to.
-     *
-     * @deprecated (Nov 2008) Misleading name. Use {@link #setRefersToFormula(String)} instead.
-     */
-    public void setReference(String ref){
-        setRefersToFormula(ref);
-    }
-
     public void setRefersToFormula(String formulaText) {
         Ptg[] ptgs = HSSFFormulaParser.parse(formulaText, _book, FormulaType.NAMEDRANGE, getSheetIndex());
         _definedNameRec.setNameDefinition(ptgs);

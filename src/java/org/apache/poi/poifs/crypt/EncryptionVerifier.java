@@ -37,28 +37,10 @@ public abstract class EncryptionVerifier {
         return salt;
     }
 
-    /**
-     * The method name is misleading - you'll get the encrypted verifier, not the plain verifier
-     * @deprecated use getEncryptedVerifier()
-     */
-    @Deprecated
-    public byte[] getVerifier() {
-        return encryptedVerifier;
-    }
-
     public byte[] getEncryptedVerifier() {
         return encryptedVerifier;
     }    
     
-    /**
-     * The method name is misleading - you'll get the encrypted verifier hash, not the plain verifier hash
-     * @deprecated use getEnryptedVerifierHash
-     */
-    @Deprecated
-    public byte[] getVerifierHash() {
-        return encryptedVerifierHash;
-    }
-
     public byte[] getEncryptedVerifierHash() {
         return encryptedVerifierHash;
     }    
@@ -73,14 +55,6 @@ public abstract class EncryptionVerifier {
 
     public int getAlgorithm() {
         return cipherAlgorithm.ecmaId;
-    }
-
-    /**
-     * @deprecated use getCipherAlgorithm().jceId
-     */
-    @Deprecated
-    public String getAlgorithmName() {
-        return cipherAlgorithm.jceId;
     }
 
     public byte[] getEncryptedKey() {

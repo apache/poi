@@ -22,6 +22,7 @@ import static org.junit.Assert.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.zip.CRC32;
 
@@ -49,12 +50,19 @@ import junit.framework.AssertionFailedError;
 public final class TestValueRecordsAggregate {
 	private static final String ABNORMAL_SHARED_FORMULA_FLAG_TEST_FILE = "AbnormalSharedFormulaFlag.xls";
 	private final ValueRecordsAggregate valueRecord = new ValueRecordsAggregate();
+	
+	private List<CellValueRecordInterface> getValueRecords() {
+	    List<CellValueRecordInterface> list = new ArrayList<CellValueRecordInterface>();
+	    for ( CellValueRecordInterface rec : valueRecord ) {
+	        list.add(rec);
+	    }
+	    return Collections.unmodifiableList(list);
+	}
 
 	/**
 	 * Make sure the shared formula DOESNT makes it to the FormulaRecordAggregate when being parsed
 	 * as part of the value records
 	 */
-    @SuppressWarnings("deprecation") // uses deprecated {@link ValueRecordsAggregate#getValueRecords()}
     @Test
 	public void testSharedFormula() {
 		List<Record> records = new ArrayList<Record>();
@@ -63,11 +71,11 @@ public final class TestValueRecordsAggregate {
 		records.add(new WindowTwoRecord());
 
 		constructValueRecord(records);
-		CellValueRecordInterface[] cvrs = valueRecord.getValueRecords();
+		List<CellValueRecordInterface> cvrs = getValueRecords();
 		//Ensure that the SharedFormulaRecord has been converted
-		assertEquals(1, cvrs.length);
+		assertEquals(1, cvrs.size());
 
-		CellValueRecordInterface record = cvrs[0];
+		CellValueRecordInterface record = cvrs.get(0);
 		assertNotNull( "Row contains a value", record );
 		assertTrue( "First record is a FormulaRecordsAggregate", ( record instanceof FormulaRecordAggregate ) );
 	}
@@ -96,27 +104,22 @@ public final class TestValueRecordsAggregate {
 		return records;
 	}
 
-    @SuppressWarnings("deprecation") // uses deprecated {@link ValueRecordsAggregate#getValueRecords()}
     @Test
 	public void testInsertCell() {
-		CellValueRecordInterface[] cvrs = valueRecord.getValueRecords();
-		assertEquals(0, cvrs.length);
+		assertEquals(0, getValueRecords().size());
 
 		BlankRecord blankRecord = newBlankRecord();
 		valueRecord.insertCell( blankRecord );
-		cvrs = valueRecord.getValueRecords();
-		assertEquals(1, cvrs.length);
+		assertEquals(1, getValueRecords().size());
 	}
 
-    @SuppressWarnings("deprecation") // uses deprecated {@link ValueRecordsAggregate#getValueRecords()}
     @Test
     public void testRemoveCell() {
 		BlankRecord blankRecord1 = newBlankRecord();
 		valueRecord.insertCell( blankRecord1 );
 		BlankRecord blankRecord2 = newBlankRecord();
 		valueRecord.removeCell( blankRecord2 );
-		CellValueRecordInterface[] cvrs = valueRecord.getValueRecords();
-		assertEquals(0, cvrs.length);
+		assertEquals(0, getValueRecords().size());
 
 		// removing an already empty cell just falls through
 		valueRecord.removeCell( blankRecord2 );

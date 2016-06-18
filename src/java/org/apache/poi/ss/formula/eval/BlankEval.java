@@ -24,10 +24,6 @@ package org.apache.poi.ss.formula.eval;
 public final class BlankEval implements ValueEval {
 
 	public static final BlankEval instance = new BlankEval();
-	/**
-	 * @deprecated (Nov 2009) use {@link #instance}
-	 */
-	public static final BlankEval INSTANCE = instance;
 
 	private BlankEval() {
 		// enforce singleton
