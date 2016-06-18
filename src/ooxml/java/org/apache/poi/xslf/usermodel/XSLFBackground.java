@@ -22,20 +22,16 @@ import java.awt.Dimension;
 import java.awt.geom.Rectangle2D;
 
 import org.apache.poi.POIXMLException;
-import org.apache.poi.sl.draw.DrawPaint;
 import org.apache.poi.sl.usermodel.Background;
-import org.apache.poi.sl.usermodel.ColorStyle;
-import org.apache.poi.sl.usermodel.FillStyle;
-import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.sl.usermodel.Placeholder;
-import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
+import org.apache.xmlbeans.XmlObject;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTSolidColorFillProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTransform2D;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTBackground;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTBackgroundProperties;
 
 /**
  * Background shape
- *
- * @author Yegor Kozlov
  */
 public class XSLFBackground extends XSLFSimpleShape
     implements Background<XSLFShape,XSLFTextParagraph> {
@@ -50,32 +46,67 @@ public class XSLFBackground extends XSLFSimpleShape
         return new Rectangle2D.Double(0, 0, pg.getWidth(), pg.getHeight());
     }
 
-    @Override
-    public Color getFillColor(){
-        FillStyle fs = getFillStyle();
-        PaintStyle ps = fs.getPaint();
-        if (ps instanceof SolidPaint) {
-            SolidPaint sp = (SolidPaint)ps;
-            ColorStyle cs = sp.getSolidColor();
-            return DrawPaint.applyColorTransform(cs);
-        }
-        return null;
-    }
-
     /**
-     * background does not have a associated transform.
-     * we return a dummy transform object to prevent exceptions in inherited methods.
+     * background does not have a associated transform, therefore we return null
+     * 
+     * @param create ignored
      *
-     * @return  dummy  CTTransform2D bean
+     * @return null
      */
     @Override
-    protected CTTransform2D getXfrm() {
-        return CTTransform2D.Factory.newInstance();
+    protected CTTransform2D getXfrm(boolean create) {
+        return null;
     }
     
     @Override
     public void setPlaceholder(Placeholder placeholder) {
         // extending XSLFSimpleShape is a bit unlucky ...
         throw new POIXMLException("Can't set a placeholder for a background");
+    }
+
+    protected CTBackgroundProperties getBgPr(boolean create) {
+        CTBackground bg = (CTBackground)getXmlObject();
+        if (!bg.isSetBgPr() && create) {
+            if (bg.isSetBgRef()) {
+                bg.unsetBgRef();
+            }
+            return bg.addNewBgPr();
+        }
+        return bg.getBgPr();
+    }
+    
+    public void setFillColor(Color color) {
+        CTBackgroundProperties bgPr = getBgPr(true);
+        
+        if (color == null) {
+            if (bgPr.isSetSolidFill()) {
+                bgPr.unsetSolidFill();
+            }
+
+            if (!bgPr.isSetNoFill()) {
+                bgPr.addNewNoFill();
+            }
+        } else {
+            if (bgPr.isSetNoFill()) {
+                bgPr.unsetNoFill();
+            }
+
+            CTSolidColorFillProperties fill = bgPr.isSetSolidFill() ? bgPr.getSolidFill() : bgPr.addNewSolidFill();
+                    
+            XSLFColor col = new XSLFColor(fill, getSheet().getTheme(), fill.getSchemeClr());
+            col.setColor(color);
+        }
+    }
+
+    @Override
+    protected XmlObject getShapeProperties() {
+        CTBackground bg = (CTBackground)getXmlObject();
+        if (bg.isSetBgPr()) {
+            return bg.getBgPr();
+        } else if (bg.isSetBgRef()) {
+            return bg.getBgRef();
+        } else {
+            return null;
+        }
     }
 }

@@ -45,8 +45,6 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTShapeNonVisual;
 /**
  * Represents a custom geometric shape.
  * This shape will consist of a series of lines and curves described within a creation path.
- *
- * @author Yegor Kozlov
  */
 @Beta
 public class XSLFFreeformShape extends XSLFAutoShape
@@ -115,7 +113,13 @@ public class XSLFFreeformShape extends XSLFAutoShape
             }
             it.next();
         }
-        getSpPr().getCustGeom().getPathLst().setPathArray(new CTPath2D[]{ctPath});
+        
+        XmlObject xo = getShapeProperties();
+        if (!(xo instanceof CTShapeProperties)) {
+            return -1;
+        }
+
+        ((CTShapeProperties)xo).getCustGeom().getPathLst().setPathArray(new CTPath2D[]{ctPath});
         setAnchor(bounds);
         return numPoints;
     }
@@ -125,7 +129,12 @@ public class XSLFFreeformShape extends XSLFAutoShape
         Path2D.Double path = new Path2D.Double();
         Rectangle2D bounds = getAnchor();
 
-        CTCustomGeometry2D geom = getSpPr().getCustGeom();
+        XmlObject xo = getShapeProperties();
+        if (!(xo instanceof CTShapeProperties)) {
+            return null;
+        }
+        
+        CTCustomGeometry2D geom = ((CTShapeProperties)xo).getCustGeom();
         for(CTPath2D spPath : geom.getPathLst().getPathArray()){
             double scaleW = bounds.getWidth() / Units.toPoints(spPath.getW());
             double scaleH = bounds.getHeight() / Units.toPoints(spPath.getH());

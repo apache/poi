@@ -22,6 +22,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.awt.Color;
+import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 
 import org.apache.poi.POIDataSamples;
@@ -29,7 +31,12 @@ import org.apache.poi.POIXMLProperties.CoreProperties;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.sl.usermodel.ShapeType;
+import org.apache.poi.xslf.usermodel.XMLSlideShow;
+import org.apache.poi.xslf.usermodel.XSLFAutoShape;
+import org.apache.poi.xslf.usermodel.XSLFBackground;
 import org.apache.poi.xslf.usermodel.XSLFRelation;
+import org.apache.poi.xslf.usermodel.XSLFSlide;
 import org.apache.poi.xslf.usermodel.XSLFSlideShow;
 import org.apache.xmlbeans.XmlException;
 import org.junit.Before;
@@ -126,4 +133,24 @@ public class TestXSLFSlideShow {
 		
 		xml.close();
 	}
+    
+    @Test
+    public void testMasterBackground() throws IOException {
+        XMLSlideShow ppt = new XMLSlideShow();
+        XSLFBackground b = ppt.getSlideMasters().get(0).getBackground();
+        b.setFillColor(Color.RED);
+        
+        XSLFSlide sl = ppt.createSlide();
+        XSLFAutoShape as = sl.createAutoShape();
+        as.setAnchor(new Rectangle2D.Double(100,100,100,100));
+        as.setShapeType(ShapeType.CLOUD);
+        
+        XMLSlideShow ppt2 = XSLFTestDataSamples.writeOutAndReadBack(ppt);
+        ppt.close();
+        
+        XSLFBackground b2 = ppt2.getSlideMasters().get(0).getBackground();
+        assertEquals(Color.RED, b2.getFillColor());
+        
+        ppt2.close();
+    }
 }

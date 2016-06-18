@@ -18,9 +18,11 @@ package org.apache.poi.xslf.usermodel;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.apache.poi.xslf.usermodel.TestXSLFSimpleShape.getSpPr;
 
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;
+import java.io.IOException;
 
 import org.apache.poi.sl.usermodel.LineDecoration.DecorationShape;
 import org.apache.poi.sl.usermodel.LineDecoration.DecorationSize;
@@ -34,21 +36,18 @@ import org.openxmlformats.schemas.drawingml.x2006.main.STLineEndWidth;
 import org.openxmlformats.schemas.drawingml.x2006.main.STShapeType;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTConnector;
 
-/**
- * @author Yegor Kozlov
- */
 public class TestXSLFConnectorShape {
 
     @Test
-    public void testLineDecorations() {
+    public void testLineDecorations() throws IOException {
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFSlide slide = ppt.createSlide();
 
         XSLFConnectorShape shape = slide.createConnector();
         assertEquals(1, slide.getShapes().size());
 
-        assertFalse(shape.getSpPr().getLn().isSetHeadEnd());
-        assertFalse(shape.getSpPr().getLn().isSetTailEnd());
+        assertFalse(getSpPr(shape).getLn().isSetHeadEnd());
+        assertFalse(getSpPr(shape).getLn().isSetTailEnd());
 
         // line decorations
         assertEquals(DecorationShape.NONE, shape.getLineHeadDecoration());
@@ -57,22 +56,22 @@ public class TestXSLFConnectorShape {
         shape.setLineTailDecoration(null);
         assertEquals(DecorationShape.NONE, shape.getLineHeadDecoration());
         assertEquals(DecorationShape.NONE, shape.getLineTailDecoration());
-        assertFalse(shape.getSpPr().getLn().getHeadEnd().isSetType());
-        assertFalse(shape.getSpPr().getLn().getTailEnd().isSetType());
+        assertFalse(getSpPr(shape).getLn().getHeadEnd().isSetType());
+        assertFalse(getSpPr(shape).getLn().getTailEnd().isSetType());
 
         shape.setLineHeadDecoration(DecorationShape.ARROW);
         shape.setLineTailDecoration(DecorationShape.DIAMOND);
         assertEquals(DecorationShape.ARROW, shape.getLineHeadDecoration());
         assertEquals(DecorationShape.DIAMOND, shape.getLineTailDecoration());
-        assertEquals(STLineEndType.ARROW, shape.getSpPr().getLn().getHeadEnd().getType());
-        assertEquals(STLineEndType.DIAMOND, shape.getSpPr().getLn().getTailEnd().getType());
+        assertEquals(STLineEndType.ARROW, getSpPr(shape).getLn().getHeadEnd().getType());
+        assertEquals(STLineEndType.DIAMOND, getSpPr(shape).getLn().getTailEnd().getType());
 
         shape.setLineHeadDecoration(DecorationShape.DIAMOND);
         shape.setLineTailDecoration(DecorationShape.ARROW);
         assertEquals(DecorationShape.DIAMOND, shape.getLineHeadDecoration());
         assertEquals(DecorationShape.ARROW, shape.getLineTailDecoration());
-        assertEquals(STLineEndType.DIAMOND, shape.getSpPr().getLn().getHeadEnd().getType());
-        assertEquals(STLineEndType.ARROW, shape.getSpPr().getLn().getTailEnd().getType());
+        assertEquals(STLineEndType.DIAMOND, getSpPr(shape).getLn().getHeadEnd().getType());
+        assertEquals(STLineEndType.ARROW, getSpPr(shape).getLn().getTailEnd().getType());
 
         // line end width
         assertEquals(DecorationSize.MEDIUM, shape.getLineHeadWidth());
@@ -81,20 +80,20 @@ public class TestXSLFConnectorShape {
         shape.setLineHeadWidth(null);
         assertEquals(DecorationSize.MEDIUM, shape.getLineHeadWidth());
         assertEquals(DecorationSize.MEDIUM, shape.getLineTailWidth());
-        assertFalse(shape.getSpPr().getLn().getHeadEnd().isSetW());
-        assertFalse(shape.getSpPr().getLn().getTailEnd().isSetW());
+        assertFalse(getSpPr(shape).getLn().getHeadEnd().isSetW());
+        assertFalse(getSpPr(shape).getLn().getTailEnd().isSetW());
         shape.setLineHeadWidth(DecorationSize.LARGE);
         shape.setLineTailWidth(DecorationSize.MEDIUM);
         assertEquals(DecorationSize.LARGE, shape.getLineHeadWidth());
         assertEquals(DecorationSize.MEDIUM, shape.getLineTailWidth());
-        assertEquals(STLineEndWidth.LG, shape.getSpPr().getLn().getHeadEnd().getW());
-        assertEquals(STLineEndWidth.MED, shape.getSpPr().getLn().getTailEnd().getW());
+        assertEquals(STLineEndWidth.LG, getSpPr(shape).getLn().getHeadEnd().getW());
+        assertEquals(STLineEndWidth.MED, getSpPr(shape).getLn().getTailEnd().getW());
         shape.setLineHeadWidth(DecorationSize.MEDIUM);
         shape.setLineTailWidth(DecorationSize.LARGE);
         assertEquals(DecorationSize.MEDIUM, shape.getLineHeadWidth());
         assertEquals(DecorationSize.LARGE, shape.getLineTailWidth());
-        assertEquals(STLineEndWidth.MED, shape.getSpPr().getLn().getHeadEnd().getW());
-        assertEquals(STLineEndWidth.LG, shape.getSpPr().getLn().getTailEnd().getW());
+        assertEquals(STLineEndWidth.MED, getSpPr(shape).getLn().getHeadEnd().getW());
+        assertEquals(STLineEndWidth.LG, getSpPr(shape).getLn().getTailEnd().getW());
 
         // line end length
         assertEquals(DecorationSize.MEDIUM, shape.getLineHeadLength());
@@ -103,25 +102,26 @@ public class TestXSLFConnectorShape {
         shape.setLineTailLength(null);
         assertEquals(DecorationSize.MEDIUM, shape.getLineHeadLength());
         assertEquals(DecorationSize.MEDIUM, shape.getLineTailLength());
-        assertFalse(shape.getSpPr().getLn().getHeadEnd().isSetLen());
-        assertFalse(shape.getSpPr().getLn().getTailEnd().isSetLen());
+        assertFalse(getSpPr(shape).getLn().getHeadEnd().isSetLen());
+        assertFalse(getSpPr(shape).getLn().getTailEnd().isSetLen());
         shape.setLineHeadLength(DecorationSize.LARGE);
         shape.setLineTailLength(DecorationSize.MEDIUM);
         assertEquals(DecorationSize.LARGE, shape.getLineHeadLength());
         assertEquals(DecorationSize.MEDIUM, shape.getLineTailLength());
-        assertEquals(STLineEndLength.LG, shape.getSpPr().getLn().getHeadEnd().getLen());
-        assertEquals(STLineEndLength.MED, shape.getSpPr().getLn().getTailEnd().getLen());
+        assertEquals(STLineEndLength.LG, getSpPr(shape).getLn().getHeadEnd().getLen());
+        assertEquals(STLineEndLength.MED, getSpPr(shape).getLn().getTailEnd().getLen());
         shape.setLineHeadLength(DecorationSize.MEDIUM);
         shape.setLineTailLength(DecorationSize.LARGE);
         assertEquals(DecorationSize.MEDIUM, shape.getLineHeadLength());
         assertEquals(DecorationSize.LARGE, shape.getLineTailLength());
-        assertEquals(STLineEndLength.MED, shape.getSpPr().getLn().getHeadEnd().getLen());
-        assertEquals(STLineEndLength.LG, shape.getSpPr().getLn().getTailEnd().getLen());
+        assertEquals(STLineEndLength.MED, getSpPr(shape).getLn().getHeadEnd().getLen());
+        assertEquals(STLineEndLength.LG, getSpPr(shape).getLn().getTailEnd().getLen());
 
+        ppt.close();
     }
 
     @Test
-    public void testAddConnector(){
+    public void testAddConnector() throws IOException {
         XMLSlideShow pptx = new XMLSlideShow();
         XSLFSlide slide = pptx.createSlide();
 
@@ -152,6 +152,8 @@ public class TestXSLFConnectorShape {
         end.setId(rect2.getShapeId());
         // side of the rectangle to attach the connector: left=1, bottom=2,right=3, top=4
         end.setIdx(3);
+        
+        pptx.close();
     }
 
 }

@@ -23,7 +23,9 @@ import java.awt.Color;
 import java.awt.geom.Rectangle2D;
 
 import org.apache.poi.sl.draw.DrawPaint;
+import org.apache.poi.sl.usermodel.ColorStyle;
 import org.apache.poi.sl.usermodel.PaintStyle;
+import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
 import org.apache.poi.sl.usermodel.StrokeStyle;
 import org.apache.poi.sl.usermodel.StrokeStyle.LineCap;
 import org.apache.poi.sl.usermodel.StrokeStyle.LineCompound;
@@ -31,9 +33,9 @@ import org.apache.poi.sl.usermodel.StrokeStyle.LineDash;
 import org.apache.poi.sl.usermodel.TableCell;
 import org.apache.poi.sl.usermodel.VerticalAlignment;
 import org.apache.poi.util.Units;
+import org.apache.poi.xslf.usermodel.XSLFPropertiesDelegate.XSLFFillProperties;
 import org.apache.poi.xslf.usermodel.XSLFTableStyle.TablePartStyle;
 import org.apache.xmlbeans.XmlObject;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTFillProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTFontReference;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTLineEndProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTLineProperties;
@@ -41,13 +43,13 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTPoint2D;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPositiveSize2D;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTRegularTextRun;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTSchemeColor;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTSolidColorFillProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTable;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTableCell;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTableCellProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTablePartStyle;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTableProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTableStyleCellStyle;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTableStyleTextStyle;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBody;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraph;
@@ -393,22 +395,27 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
      */
     @Override
     public Color getFillColor(){
-        CTTableCellProperties spPr = getCellProperties(false);
-        if (spPr == null || !spPr.isSetSolidFill()) {
-            return null;
+        PaintStyle ps = getFillPaint();
+        if (ps instanceof SolidPaint) {
+            ColorStyle cs = ((SolidPaint)ps).getSolidColor();
+            return DrawPaint.applyColorTransform(cs);
         }
-
-        CTSolidColorFillProperties fill = spPr.getSolidFill();
-        XSLFColor c = new XSLFColor(fill, getSheet().getTheme(), fill.getSchemeClr());
-        return c.getColor();
+        
+        return null;
     }
 
     @SuppressWarnings("resource")
     @Override
     public PaintStyle getFillPaint() {
-        Color c = getFillColor();
-        if (c != null) {
-            return DrawPaint.createSolidPaint(c);
+        XSLFSheet sheet = getSheet();
+        XSLFTheme theme = sheet.getTheme();
+        XmlObject props = getCellProperties(false);
+        XSLFFillProperties fp = XSLFPropertiesDelegate.getFillDelegate(props);
+        if (fp != null) {
+            PaintStyle paint = selectPaint(fp, null, sheet.getPackagePart(), theme);
+            if (paint != null) {
+                return paint;
+            }
         }
 
         CTTablePartStyle tps = getTablePartStyle(null);
@@ -419,20 +426,25 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
             }
         }
 
-        XMLSlideShow slideShow = table.getSheet().getSlideShow();
-        assert(slideShow != null);
-        XSLFTheme theme = slideShow.getSlides().get(0).getTheme();
-        CTFillProperties pr = tps.getTcStyle().getFill();
-
-          for (XmlObject obj : pr.selectPath("*")) {
-              PaintStyle paint = XSLFShape.selectPaint(obj, null, slideShow.getPackagePart(), theme);
-
-              if (paint != null) {
-                  return paint;
-              }
-          }
-
-          return null;
+        XMLSlideShow slideShow = sheet.getSlideShow();
+        CTTableStyleCellStyle tcStyle = tps.getTcStyle();
+        if (tcStyle.isSetFill()) {
+            props = tcStyle.getFill();
+        } else if (tcStyle.isSetFillRef()) {
+            props = tcStyle.getFillRef();
+        } else {
+            return null;
+        }
+        
+        fp = XSLFPropertiesDelegate.getFillDelegate(props);
+        if (fp != null)  {
+            PaintStyle paint = XSLFShape.selectPaint(fp, null, slideShow.getPackagePart(), theme);
+            if (paint != null) {
+                return paint;
+            }
+        }
+        
+        return null;
     }
 
     /**
@@ -671,17 +683,9 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
         return new XSLFCellTextParagraph(p, this);
     }
 
-    /**
-     * Return fake shape properties as a fallback for not overridden
-     * methods of XSLFSimpleShape
-     * 
-     * @return fake shape properties
-     * 
-     * @since POI 3.15-beta2
-     */
     @Override
-    protected CTShapeProperties getSpPr() {
-        return CTShapeProperties.Factory.newInstance();
+    protected XmlObject getShapeProperties() {
+        return getCellProperties(false);
     }
     
     /**
