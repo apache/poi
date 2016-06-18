@@ -442,14 +442,6 @@ public final class RowRecordsAggregate extends RecordAggregate {
 		return _valuesAgg.iterator();
 	}
 
-	/**
-	 * @deprecated use {@link #getCellValueIterator()} instead
-	 */
-	public CellValueRecordInterface[] getValueRecords() {
-		//noinspection deprecation
-		return _valuesAgg.getValueRecords();
-	}
-
 	public IndexRecord createIndexRecord(int indexRecordOffset, int sizeOfInitialSheetRecords) {
 		IndexRecord result = new IndexRecord();
 		result.setFirstRow(_firstrow);

@@ -19,26 +19,10 @@
 
 package org.apache.poi.ss.usermodel;
 
-import static org.apache.poi.ss.usermodel.ConditionType.*;
-
 /**
  * Represents a description of a conditional formatting rule
  */
 public interface ConditionalFormattingRule {
-    /**
-     * This conditional formatting rule compares a cell value
-     * to a formula calculated result, using an operator
-     * @deprecated Use {@link ConditionType#CELL_VALUE_IS}
-     */
-    public static final byte CONDITION_TYPE_CELL_VALUE_IS = CELL_VALUE_IS.id;
-
-    /**
-     *  This conditional formatting rule contains a formula to evaluate.
-     *  When the formula result is true, the cell is highlighted.
-     * @deprecated Use {@link ConditionType#FORMULA}
-     */
-    public static final byte CONDITION_TYPE_FORMULA = FORMULA.id;
-
     /**
      * Create a new border formatting structure if it does not exist,
      * otherwise just return existing object.
@@ -95,25 +79,14 @@ public interface ConditionalFormattingRule {
     
     /**
      * Type of conditional formatting rule.
-     * <p>
-     * MUST be one of the IDs of a {@link ConditionType}
-     * </p>
-     *
-     * @return the type of condition
-     * @deprecated Use {@link #getConditionTypeType()}
-     */
-    byte getConditionType();
-    
-    /**
-     * Type of conditional formatting rule.
      *
      * @return the type of condition
      */
-    ConditionType getConditionTypeType();
+    ConditionType getConditionType();
 
     /**
      * The comparison function used when the type of conditional formatting is set to
-     * {@link #CONDITION_TYPE_CELL_VALUE_IS}
+     * {@link ConditionType#CELL_VALUE_IS}
      * <p>
      *     MUST be a constant from {@link ComparisonOperator}
      * </p>
@@ -125,13 +98,13 @@ public interface ConditionalFormattingRule {
     /**
      * The formula used to evaluate the first operand for the conditional formatting rule.
      * <p>
-     * If the condition type is {@link #CONDITION_TYPE_CELL_VALUE_IS},
+     * If the condition type is {@link ConditionType#CELL_VALUE_IS},
      * this field is the first operand of the comparison.
-     * If type is {@link #CONDITION_TYPE_FORMULA}, this formula is used
+     * If type is {@link ConditionType#FORMULA}, this formula is used
      * to determine if the conditional formatting is applied.
      * </p>
      * <p>
-     * If comparison type is {@link #CONDITION_TYPE_FORMULA} the formula MUST be a Boolean function
+     * If comparison type is {@link ConditionType#FORMULA} the formula MUST be a Boolean function
      * </p>
      *
      * @return  the first formula
@@ -140,7 +113,7 @@ public interface ConditionalFormattingRule {
 
     /**
      * The formula used to evaluate the second operand of the comparison when
-     * comparison type is  {@link #CONDITION_TYPE_CELL_VALUE_IS} and operator
+     * comparison type is  {@link ConditionType#CELL_VALUE_IS} and operator
      * is either {@link ComparisonOperator#BETWEEN} or {@link ComparisonOperator#NOT_BETWEEN}
      *
      * @return  the second formula

@@ -29,8 +29,6 @@ import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.poi.hssf.record.crypto.Biff8RC4Key;
 import org.apache.poi.hssf.record.crypto.Biff8XORKey;
 import org.apache.poi.poifs.crypt.Decryptor;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 
 /**
  * A stream based way to get at complete records, with

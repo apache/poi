@@ -182,14 +182,6 @@ public final class WindowOneRecord extends StandardRecord {
     public void setActiveSheetIndex(int index) {
     	field_6_active_sheet = index;
 	}
-    /**
-     * deprecated May 2008
-     * @deprecated - Misleading name - use setActiveSheetIndex() 
-     */
-    public void setSelectedTab(short s)
-    {
-        setActiveSheetIndex(s);
-    }
 
     /**
      * Sets the first visible sheet in the worksheet tab-bar.  This method does <b>not</b>
@@ -198,14 +190,6 @@ public final class WindowOneRecord extends StandardRecord {
      */
     public void setFirstVisibleTab(int t) {
         field_7_first_visible_tab = t;
-    }
-
-    /**
-     * deprecated May 2008
-     * @deprecated - Misleading name - use setFirstVisibleTab() 
-     */
-    public void setDisplayedTab(short t) {
-        setFirstVisibleTab(t);
     }
 
     /**
@@ -340,14 +324,6 @@ public final class WindowOneRecord extends StandardRecord {
     public int getActiveSheetIndex() {
     	return field_6_active_sheet;
     }
-    /**
-     * deprecated May 2008
-     * @deprecated - Misleading name - use getActiveSheetIndex() 
-     */
-    public short getSelectedTab()
-    {
-        return (short) getActiveSheetIndex();
-    }
 
     /**
      * @return the first visible sheet in the worksheet tab-bar. 
@@ -355,14 +331,6 @@ public final class WindowOneRecord extends StandardRecord {
      */
     public int getFirstVisibleTab() {
         return field_7_first_visible_tab;
-    }
-    /**
-     * deprecated May 2008
-     * @deprecated - Misleading name - use getFirstVisibleTab() 
-     */
-    public short getDisplayedTab()
-    {
-        return (short) getFirstVisibleTab();
     }
 
     /**

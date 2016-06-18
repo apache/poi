@@ -40,6 +40,7 @@ import org.apache.poi.util.POILogger;
  *  for their rules.</p>
  */
 public abstract class CFRuleBase extends StandardRecord implements Cloneable {
+    // FIXME: Merge with org.apache.poi.ss.usermodel.ComparisonOperator and rewrite as an enum
     public static final class ComparisonOperator {
         public static final byte NO_COMPARISON = 0;
         public static final byte BETWEEN       = 1;

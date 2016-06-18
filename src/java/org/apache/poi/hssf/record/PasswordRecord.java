@@ -39,15 +39,6 @@ public final class PasswordRecord extends StandardRecord {
     }
 
     /**
-     * Return the password hash
-     *
-     * @deprecated use {@link CryptoFunctions#createXorVerifier1(String)}
-     */
-    public static short hashPassword(String password) {
-        return (short)CryptoFunctions.createXorVerifier1(password);
-    }
-
-    /**
      * set the password
      *
      * @param password  representing the password

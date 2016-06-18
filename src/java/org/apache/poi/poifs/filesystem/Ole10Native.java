@@ -114,20 +114,6 @@ public class Ole10Native {
        setDataBuffer(data);
        mode = EncodingMode.parsed;
     }
-
-    /**
-     * Creates an instance and fills the fields based on the data in the given buffer.
-     *
-     * @param data   The buffer containing the Ole10Native record
-     * @param offset The start offset of the record in the buffer
-     * @param plain as of POI 3.11 this parameter is ignored
-     * @throws Ole10NativeException on invalid or unexcepted data format
-     * 
-     * @deprecated parameter plain is ignored, use {@link #Ole10Native(byte[],int)}
-     */
-    public Ole10Native(byte[] data, int offset, boolean plain) throws Ole10NativeException {
-        this(data, offset);
-    }
     
     /**
      * Creates an instance and fills the fields based on the data in the given buffer.

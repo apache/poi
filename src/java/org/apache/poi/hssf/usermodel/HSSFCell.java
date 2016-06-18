@@ -99,7 +99,7 @@ public class HSSFCell implements Cell {
      * @param row   - the row of this cell
      * @param col   - the column for this cell
      *
-     * @see org.apache.poi.hssf.usermodel.HSSFRow#createCell(short)
+     * @see org.apache.poi.hssf.usermodel.HSSFRow#createCell(int)
      */
     protected HSSFCell(HSSFWorkbook book, HSSFSheet sheet, int row, short col)
     {
@@ -145,7 +145,7 @@ public class HSSFCell implements Cell {
      * @param type  - CELL_TYPE_NUMERIC, CELL_TYPE_STRING, CELL_TYPE_FORMULA, CELL_TYPE_BLANK,
      *                CELL_TYPE_BOOLEAN, CELL_TYPE_ERROR
      *                Type of cell
-     * @see org.apache.poi.hssf.usermodel.HSSFRow#createCell(short,int)
+     * @see org.apache.poi.hssf.usermodel.HSSFRow#createCell(int,int)
      */
     protected HSSFCell(HSSFWorkbook book, HSSFSheet sheet, int row, short col,
                        int type)

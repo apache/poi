@@ -53,13 +53,6 @@ public abstract class EncryptionHeader {
     
     protected EncryptionHeader() {}
 
-    /**
-     * @deprecated use getChainingMode().ecmaId
-     */
-    public int getCipherMode() {
-        return chainingMode.ecmaId;
-    }
-    
     public ChainingMode getChainingMode() {
         return chainingMode;
     }
@@ -84,26 +77,12 @@ public abstract class EncryptionHeader {
         this.sizeExtra = sizeExtra;
     }
 
-    /**
-     * @deprecated use getCipherAlgorithm()
-     */
-    public int getAlgorithm() {
-        return cipherAlgorithm.ecmaId;
-    }
-
     public CipherAlgorithm getCipherAlgorithm() {
         return cipherAlgorithm;
     }
     
     protected void setCipherAlgorithm(CipherAlgorithm cipherAlgorithm) {
         this.cipherAlgorithm = cipherAlgorithm;
-    }
-    
-    /**
-     * @deprecated use getHashAlgorithmEx()
-     */
-    public int getHashAlgorithm() {
-        return hashAlgorithm.ecmaId;
     }
     
     public HashAlgorithm getHashAlgorithmEx() {
@@ -136,13 +115,6 @@ public abstract class EncryptionHeader {
     
     protected void setKeySalt(byte salt[]) {
         this.keySalt = (salt == null) ? null : salt.clone();
-    }
-
-    /**
-     * @deprecated use getCipherProvider()
-     */
-    public int getProviderType() {
-        return providerType.ecmaId;
     }
 
     public CipherProvider getCipherProvider() {

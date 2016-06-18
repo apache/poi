@@ -35,10 +35,6 @@ final class LazyRefEval extends RefEvalBase {
 		_evaluator = sre;
 	}
 
-	@Deprecated
-    public ValueEval getInnerValueEval() {
-        return getInnerValueEval(_evaluator.getFirstSheetIndex());
-    }
 	public ValueEval getInnerValueEval(int sheetIndex) {
 		return _evaluator.getEvalForCell(sheetIndex, getRow(), getColumn());
 	}
