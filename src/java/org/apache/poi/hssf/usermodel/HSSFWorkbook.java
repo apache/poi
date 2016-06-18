@@ -1114,18 +1114,48 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
 
     /**
      * Finds a font that matches the one with the supplied attributes
+     * @deprecated 3.15 beta 2. Use {@link #findFont(boolean, short, short, String, boolean, boolean, short, byte)} instead.
      */
     @Override
     public HSSFFont findFont(short boldWeight, short color, short fontHeight,
                              String name, boolean italic, boolean strikeout,
                              short typeOffset, byte underline)
     {
-        for (short i=0; i<=getNumberOfFonts(); i++) {
+        short numberOfFonts = getNumberOfFonts();
+        for (short i=0; i<=numberOfFonts; i++) {
             // Remember - there is no 4!
             if(i == 4) continue;
 
             HSSFFont hssfFont = getFontAt(i);
             if (hssfFont.getBoldweight() == boldWeight
+                    && hssfFont.getColor() == color
+                    && hssfFont.getFontHeight() == fontHeight
+                    && hssfFont.getFontName().equals(name)
+                    && hssfFont.getItalic() == italic
+                    && hssfFont.getStrikeout() == strikeout
+                    && hssfFont.getTypeOffset() == typeOffset
+                    && hssfFont.getUnderline() == underline)
+            {
+                return hssfFont;
+            }
+        }
+
+        return null;
+    }
+    /**
+     * Finds a font that matches the one with the supplied attributes
+     */
+    public HSSFFont findFont(boolean bold, short color, short fontHeight,
+                             String name, boolean italic, boolean strikeout,
+                             short typeOffset, byte underline)
+    {
+        short numberOfFonts = getNumberOfFonts();
+        for (short i=0; i<=numberOfFonts; i++) {
+            // Remember - there is no 4!
+            if(i == 4) continue;
+
+            HSSFFont hssfFont = getFontAt(i);
+            if (hssfFont.getBold() == bold
                     && hssfFont.getColor() == color
                     && hssfFont.getFontHeight() == fontHeight
                     && hssfFont.getFontName().equals(name)

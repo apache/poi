@@ -813,11 +813,23 @@ public class SXSSFWorkbook implements Workbook {
      * Finds a font that matches the one with the supplied attributes
      *
      * @return the font with the matched attributes or <code>null</code>
+     * @deprecated POI 3.15 beta 2. Use {@link #findFont(boolean, short, short, String, boolean, boolean, short, byte)} instead.
      */
     @Override
     public Font findFont(short boldWeight, short color, short fontHeight, String name, boolean italic, boolean strikeout, short typeOffset, byte underline)
     {
         return _wb.findFont(boldWeight, color, fontHeight, name, italic, strikeout, typeOffset, underline);
+    }
+    
+    /**
+     * Finds a font that matches the one with the supplied attributes
+     *
+     * @return the font with the matched attributes or <code>null</code>
+     */
+    @Override
+    public Font findFont(boolean bold, short color, short fontHeight, String name, boolean italic, boolean strikeout, short typeOffset, byte underline)
+    {
+        return _wb.findFont(bold, color, fontHeight, name, italic, strikeout, typeOffset, underline);
     }
    
 
