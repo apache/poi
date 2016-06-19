@@ -37,6 +37,12 @@ public interface DataValidationConstraint {
 	 */
 	public abstract void setOperator(int operator);
 
+    /**
+	 * If validation type is {@link ValidationType#LIST}
+	 * and <code>formula1</code> was comma-separated literal values rather than a range or named range,
+	 * returns list of literal values.
+	 * Otherwise returns <code>null</code>.
+	 */
 	public abstract String[] getExplicitListValues();
 
 	public abstract void setExplicitListValues(String[] explicitListValues);
