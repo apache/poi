@@ -30,8 +30,14 @@ import java.awt.image.RescaleOp;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Iterator;
 
 import javax.imageio.ImageIO;
+import javax.imageio.ImageReadParam;
+import javax.imageio.ImageReader;
+import javax.imageio.ImageTypeSpecifier;
+import javax.imageio.stream.ImageInputStream;
+import javax.imageio.stream.MemoryCacheImageInputStream;
 
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -46,28 +52,92 @@ public class BitmapImageRenderer implements ImageRenderer {
 
     @Override
     public void loadImage(InputStream data, String contentType) throws IOException {
-        img = convertBufferedImage(ImageIO.read(data), contentType);
+        img = readImage(data, contentType);
     }
 
     @Override
     public void loadImage(byte data[], String contentType) throws IOException {
-        img = convertBufferedImage(ImageIO.read(new ByteArrayInputStream(data)), contentType);
+        img = readImage(new ByteArrayInputStream(data), contentType);
     }
-
+    
     /**
-     * Add alpha channel to buffered image
+     * Read the image data via ImageIO and optionally try to workaround metadata errors.
+     * The resulting image is of image image type {@link BufferedImage#TYPE_INT_ARGB}
+     *
+     * @param data the data stream
+     * @param contentType the content type
+     * @return the bufferedImage or null, if there was no image reader for this content type
+     * @throws IOException thrown if there was an error while processing the image
      */
-    private static BufferedImage convertBufferedImage(BufferedImage img, String contentType) {
+    private static BufferedImage readImage(InputStream data, String contentType) throws IOException {
+        IOException lastException = null;
+        BufferedImage img = null;
+        // currently don't use FileCacheImageInputStream,
+        // because of the risk of filling the file handles (see #59166)
+        ImageInputStream iis = new MemoryCacheImageInputStream(data);
+        try {
+            iis = new MemoryCacheImageInputStream(data);
+            iis.mark();
+            
+            Iterator<ImageReader> iter = ImageIO.getImageReaders(iis);
+            while (img==null && iter.hasNext()) {
+                ImageReader reader = iter.next();
+                ImageReadParam param = reader.getDefaultReadParam();
+                // 0:default mode, 1:fallback mode
+                for (int mode=0; img==null && mode<2; mode++) {
+                    iis.reset();
+                    iis.mark();
+
+                    if (mode == 1) {
+                        // fallback mode for invalid image band metadata
+                        // see http://stackoverflow.com/questions/10416378
+                        Iterator<ImageTypeSpecifier> imageTypes = reader.getImageTypes(0);
+                        while (imageTypes.hasNext()) {
+                            ImageTypeSpecifier imageTypeSpecifier = imageTypes.next();
+                            int bufferedImageType = imageTypeSpecifier.getBufferedImageType();
+                            if (bufferedImageType == BufferedImage.TYPE_BYTE_GRAY) {
+                                param.setDestinationType(imageTypeSpecifier);
+                                break;
+                            }
+                        }
+                    }
+                    
+                    try {
+                        reader.setInput(iis, false, true);
+                        img = reader.read(0, param);
+                    } catch (IOException e) {
+                        lastException = e;
+                    } catch (RuntimeException e) {
+                        lastException = new IOException("ImageIO runtime exception - "+(mode==0 ? "normal" : "fallback"), e);
+                    }
+                }
+                reader.dispose();
+            }
+        } finally {
+            iis.close();
+        }
+        
+        // If you don't have an image at the end of all readers
         if (img == null) {
+            if (lastException != null) {
+                // rethrow exception - be aware that the exception source can be in
+                // multiple locations above ...
+                throw lastException;
+            }
             LOG.log(POILogger.WARN, "Content-type: "+contentType+" is not support. Image ignored.");
             return null;
         }
 
-        BufferedImage bi = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_ARGB);
-        Graphics g = bi.getGraphics();
-        g.drawImage(img, 0, 0, null);
-        g.dispose();
-        return bi;
+        // add alpha channel
+        if (img.getType() != BufferedImage.TYPE_INT_ARGB) {
+            BufferedImage argbImg = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_ARGB);
+            Graphics g = argbImg.getGraphics();
+            g.drawImage(img, 0, 0, null);
+            g.dispose();
+            return argbImg;
+        }
+        
+        return img;
     }
 
     @Override

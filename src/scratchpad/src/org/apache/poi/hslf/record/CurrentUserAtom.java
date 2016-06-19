@@ -140,15 +140,18 @@ public class CurrentUserAtom
 		// See how long it is. If it's under 28 bytes long, we can't
 		//  read it
 		if(_contents.length < 28) {
-			if(_contents.length >= 4) {
-				// PPT95 has 4 byte size, then data
+		    boolean isPP95 = dir.hasEntry("PP40");
+		    // PPT95 has 4 byte size, then data
+			if (!isPP95 && _contents.length >= 4) {
 				int size = LittleEndian.getInt(_contents);
-				//System.err.println(size);
-				if(size + 4 == _contents.length) {
-					throw new OldPowerPointFormatException("Based on the Current User stream, you seem to have supplied a PowerPoint95 file, which isn't supported");
-				}
+				isPP95 = (size + 4 == _contents.length);
 			}
-			throw new CorruptPowerPointFileException("The Current User stream must be at least 28 bytes long, but was only " + _contents.length);
+
+			if (isPP95) {
+			    throw new OldPowerPointFormatException("Based on the Current User stream, you seem to have supplied a PowerPoint95 file, which isn't supported");
+			} else {
+			    throw new CorruptPowerPointFileException("The Current User stream must be at least 28 bytes long, but was only " + _contents.length);
+			}
 		}
 
 		// Set everything up
