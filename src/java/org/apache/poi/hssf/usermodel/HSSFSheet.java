@@ -735,15 +735,17 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
     }
 
     private void validateArrayFormulas(CellRangeAddress region) {
+        // FIXME: this may be faster if it looped over array formulas directly rather than looping over each cell in
+        // the region and searching if that cell belongs to an array formula
         int firstRow = region.getFirstRow();
         int firstColumn = region.getFirstColumn();
         int lastRow = region.getLastRow();
         int lastColumn = region.getLastColumn();
         for (int rowIn = firstRow; rowIn <= lastRow; rowIn++) {
+            HSSFRow row = getRow(rowIn);
+            if (row == null) continue;
+            
             for (int colIn = firstColumn; colIn <= lastColumn; colIn++) {
-                HSSFRow row = getRow(rowIn);
-                if (row == null) continue;
-
                 HSSFCell cell = row.getCell(colIn);
                 if (cell == null) continue;
 
