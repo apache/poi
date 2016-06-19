@@ -73,6 +73,7 @@ public class EventBasedExcelExtractor extends POIOLE2TextExtractor implements or
 
    public EventBasedExcelExtractor(POIFSFileSystem fs) {
       this(fs.getRoot());
+      super.setFilesystem(fs);
    }
 
    /**

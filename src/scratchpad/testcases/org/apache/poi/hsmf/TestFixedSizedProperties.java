@@ -144,6 +144,8 @@ public final class TestFixedSizedProperties {
    // @Ignore("TODO Work out why the Fri 22nd vs Monday 25th problem is occurring and fix")
    public void testReadMessageDateSucceedsWithOutlookTextExtractor() throws Exception {
       OutlookTextExtactor ext = new OutlookTextExtactor(mapiMessageSucceeds);
+      ext.setFilesystem(null); // Don't close re-used test resources here
+      
       String text = ext.getText();
       assertContains(text, "Date: Fri, 22 Jun 2012 18:32:54 +0000\n");
       ext.close();
@@ -156,6 +158,8 @@ public final class TestFixedSizedProperties {
    // @Ignore("TODO Work out why the Thu 21st vs Monday 25th problem is occurring and fix")
    public void testReadMessageDateFailsWithOutlookTextExtractor() throws Exception {
       OutlookTextExtactor ext = new OutlookTextExtactor(mapiMessageFails);
+      ext.setFilesystem(null); // Don't close re-used test resources here
+      
       String text = ext.getText();
       assertContains(text, "Date: Thu, 21 Jun 2012 14:14:04 +0000\n");
       ext.close();

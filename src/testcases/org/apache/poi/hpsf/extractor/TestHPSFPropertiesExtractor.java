@@ -115,6 +115,7 @@ public final class TestHPSFPropertiesExtractor extends TestCase {
 
 		final String fsText;
 		HPSFPropertiesExtractor fsExt = new HPSFPropertiesExtractor(fs);
+		fsExt.setFilesystem(null); // Don't close re-used test resources!
 		try {
 		    fsText = fsExt.getText();
 		} finally {
@@ -123,6 +124,7 @@ public final class TestHPSFPropertiesExtractor extends TestCase {
         
         final String hwText; 
 		HPSFPropertiesExtractor hwExt = new HPSFPropertiesExtractor(wb);
+		hwExt.setFilesystem(null); // Don't close re-used test resources!
 		try {
 		    hwText = hwExt.getText();
 		} finally {
@@ -131,6 +133,7 @@ public final class TestHPSFPropertiesExtractor extends TestCase {
 		
         final String eeText;
         HPSFPropertiesExtractor eeExt = new HPSFPropertiesExtractor(excelExt);
+        eeExt.setFilesystem(null); // Don't close re-used test resources!
         try {
             eeText = eeExt.getText();
         } finally {
@@ -142,6 +145,9 @@ public final class TestHPSFPropertiesExtractor extends TestCase {
 
 		assertTrue(fsText.indexOf("AUTHOR = marshall") > -1);
 		assertTrue(fsText.indexOf("TITLE = Titel: \u00c4h") > -1);
+		
+		// Finally tidy
+		wb.close();
 	}
 
 	public void test42726() throws IOException {

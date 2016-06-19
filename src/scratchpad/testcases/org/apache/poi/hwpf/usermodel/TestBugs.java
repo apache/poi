@@ -49,10 +49,8 @@ import org.apache.poi.util.POILogger;
 import junit.framework.TestCase;
 
 /**
- * Test different problems reported in Apache Bugzilla
- * 
- * @author Nick Burch (nick at torchbox dot com)
- * @author Sergey Vladimirov (vlsergey {at} gmail {dot} com)
+ * Test different problems reported in the Apache Bugzilla
+ *  against HWPF
  */
 public class TestBugs extends TestCase
 {
@@ -245,6 +243,7 @@ public class TestBugs extends TestCase
      */
     public void test45473() throws IOException
     {
+        // Fetch the current text
         HWPFDocument doc1 = HWPFTestDataSamples.openSampleFile("Bug45473.doc");
         WordExtractor wordExtractor = new WordExtractor(doc1);
         final String text1;
@@ -254,6 +253,8 @@ public class TestBugs extends TestCase
             wordExtractor.close();
         }
 
+        // Re-load, then re-save and re-check
+        doc1 = HWPFTestDataSamples.openSampleFile("Bug45473.doc");
         HWPFDocument doc2 = HWPFTestDataSamples.writeOutAndReadBack(doc1);
         WordExtractor wordExtractor2 = new WordExtractor(doc2);
         final String text2;
@@ -313,6 +314,7 @@ public class TestBugs extends TestCase
     @SuppressWarnings("deprecation")
     public void test47286() throws IOException
     {
+        // Fetch the current text
         HWPFDocument doc1 = HWPFTestDataSamples.openSampleFile("Bug47286.doc");
         WordExtractor wordExtractor = new WordExtractor(doc1);
         final String text1;
@@ -322,6 +324,8 @@ public class TestBugs extends TestCase
             wordExtractor.close();
         }
 
+        // Re-load, then re-save and re-check
+        doc1 = HWPFTestDataSamples.openSampleFile("Bug47286.doc");
         HWPFDocument doc2 = HWPFTestDataSamples.writeOutAndReadBack(doc1);
         WordExtractor wordExtractor2 = new WordExtractor(doc2);
         final String text2;
