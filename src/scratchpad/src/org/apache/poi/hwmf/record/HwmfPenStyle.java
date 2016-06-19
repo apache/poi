@@ -41,8 +41,8 @@ public class HwmfPenStyle implements Cloneable {
         /** Line ends at end point*/
         FLAT(2, BasicStroke.CAP_BUTT);        
 
-        public int wmfFlag;
-        public int awtFlag;
+        public final int wmfFlag;
+        public final int awtFlag;
         HwmfLineCap(int wmfFlag, int awtFlag) {
             this.wmfFlag = wmfFlag;
             this.awtFlag = awtFlag;
@@ -67,8 +67,8 @@ public class HwmfPenStyle implements Cloneable {
          */
         MITER(2, BasicStroke.JOIN_MITER);
 
-        public int wmfFlag;
-        public int awtFlag;
+        public final int wmfFlag;
+        public final int awtFlag;
         HwmfLineJoin(int wmfFlag, int awtFlag) {
             this.wmfFlag = wmfFlag;
             this.awtFlag = awtFlag;
@@ -121,8 +121,8 @@ public class HwmfPenStyle implements Cloneable {
         USERSTYLE(0x0007, null);
         
 
-        public int wmfFlag;
-        public float[] dashes;
+        public final int wmfFlag;
+        public final float[] dashes;
         HwmfLineDash(int wmfFlag, float... dashes) {
             this.wmfFlag = wmfFlag;
             this.dashes = dashes;

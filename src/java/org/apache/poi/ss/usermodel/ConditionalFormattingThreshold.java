@@ -43,7 +43,7 @@ public interface ConditionalFormattingThreshold {
         FORMULA(7, "formula");
         
         /** Numeric ID of the type */
-        public int id;
+        public final int id;
         /** Name (system) of the type */
         public final String name;
         

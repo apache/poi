@@ -57,7 +57,7 @@ public class HwmfFill {
         ;
 
 
-        int flag;
+        public final int flag;
         ColorUsage(int flag) {
             this.flag = flag;
         }
@@ -208,8 +208,8 @@ public class HwmfFill {
              */
             WINDING(0x0002, Path2D.WIND_NON_ZERO);
 
-            public int wmfFlag;
-            public int awtFlag;
+            public final int wmfFlag;
+            public final int awtFlag;
             HwmfPolyfillMode(int wmfFlag, int awtFlag) {
                 this.wmfFlag = wmfFlag;
                 this.awtFlag = awtFlag;

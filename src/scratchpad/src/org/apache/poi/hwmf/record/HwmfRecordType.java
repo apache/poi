@@ -95,8 +95,8 @@ public enum HwmfRecordType {
     ,textOut(0x0521, HwmfText.WmfTextOut.class)
     ;
     
-    public int id;
-    public Class<? extends HwmfRecord> clazz;
+    public final int id;
+    public final Class<? extends HwmfRecord> clazz;
     
     HwmfRecordType(int id, Class<? extends HwmfRecord> clazz) {
         this.id = id;
