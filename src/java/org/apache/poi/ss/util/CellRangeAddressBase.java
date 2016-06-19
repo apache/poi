@@ -17,15 +17,13 @@
 
 package org.apache.poi.ss.util;
 
-import java.awt.Rectangle;
-
 import org.apache.poi.ss.SpreadsheetVersion;
 
 
 /**
  * See OOO documentation: excelfileformat.pdf sec 2.5.14 - 'Cell Range Address'<p/>
  *
- * Common subclass of 8-bit and 16-bit versions
+ * Common superclass of 8-bit and 16-bit versions
  */
 public abstract class CellRangeAddressBase {
 
@@ -133,37 +131,12 @@ public abstract class CellRangeAddressBase {
 	 * @return returns true if this range and other range have at least 1 cell in common
 	 */
 	public boolean intersects(CellRangeAddressBase other) {
-		// see java.awt.Rectangle.intersects
-		// http://stackoverflow.com/questions/13390333/two-rectangles-intersection
-	    
-		// TODO: Replace with an intersection code that doesn't rely on java.awt
-		return getRectangle().intersects(other.getRectangle());
+		return this._firstRow <= other._lastRow &&
+				this._firstCol <= other._lastCol &&
+				other._firstRow <= this._lastRow &&
+				other._firstCol <= this._lastCol;
 	}
 	
-	// TODO: Replace with an intersection code that doesn't rely on java.awt
-	// Don't let this temporary implementation detail leak outside of this class
-	private final Rectangle getRectangle() {
-		int firstRow, firstCol, lastRow, lastCol;
-		
-		if (!isFullColumnRange()) {
-			firstRow = Math.min(_firstRow, _lastRow);
-			lastRow = Math.max(_firstRow,  _lastRow);
-		}
-		else {
-			firstRow = 0;
-			lastRow = Integer.MAX_VALUE;
-		}
-		if (!isFullRowRange()) {
-			firstCol = Math.min(_firstCol, _lastCol);
-			lastCol = Math.max(_firstCol, _lastCol);
-		}
-		else {
-			firstCol = 0;
-			lastCol = Integer.MAX_VALUE;
-		}
-		return new Rectangle(firstRow, firstCol, lastRow-firstRow+1, lastCol-firstCol+1);
-	}
-
 	/**
 	 * @param firstCol column number for the upper left hand corner
 	 */
