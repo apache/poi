@@ -103,6 +103,7 @@ public final class InternalSheet {
 
     private List<RecordBase>             _records;
     protected PrintGridlinesRecord       printGridlines    =     null;
+    protected PrintHeadersRecord         printHeaders      =     null;
     protected GridsetRecord              gridset           =     null;
     private   GutsRecord                 _gutsRecord;
     protected DefaultColWidthRecord      defaultcolwidth   =     new DefaultColWidthRecord();
@@ -313,6 +314,10 @@ public final class InternalSheet {
             {
                 printGridlines = (PrintGridlinesRecord) rec;
             }
+            else if ( recSid == PrintHeadersRecord.sid )
+            {
+                printHeaders = (PrintHeadersRecord) rec;
+            }
             else if ( recSid == GridsetRecord.sid )
             {
                 gridset = (GridsetRecord) rec;
@@ -455,7 +460,8 @@ public final class InternalSheet {
         records.add(createIteration() );
         records.add(createDelta() );
         records.add(createSaveRecalc() );
-        records.add(createPrintHeaders() );
+        printHeaders = createPrintHeaders();
+        records.add(printHeaders);
         printGridlines = createPrintGridlines();
         records.add( printGridlines );
         gridset = createGridset();
@@ -1344,6 +1350,24 @@ public final class InternalSheet {
     {
         printGridlines = newPrintGridlines;
     }
+    
+    /**
+     * Returns the PrintHeadersRecord.
+     * @return PrintHeadersRecord for the sheet.
+     */
+    public PrintHeadersRecord getPrintHeaders()
+    {
+        return printHeaders;
+    }
+
+    /**
+     * Sets the PrintHeadersRecord.
+     * @param newPrintHeaders The new PrintHeadersRecord for the sheet.
+     */
+    public void setPrintHeaders(PrintHeadersRecord newPrintHeaders)
+    {
+        printHeaders = newPrintHeaders;
+    }
 
     /**
      * Sets whether the sheet is selected
@@ -1508,6 +1532,22 @@ public final class InternalSheet {
      * @return whether RowColHeadings are displayed
      */
     public boolean isDisplayRowColHeadings() {
+        return windowTwo.getDisplayRowColHeadings();
+    }
+    
+    /**
+     * Sets whether the RowColHeadings are shown in a viewer.
+     * @param show whether to show RowColHeadings or not
+     */
+    public void setPrintRowColHeadings(boolean show) {
+        windowTwo.setDisplayRowColHeadings(show);
+    }
+
+    /**
+     * Returns if RowColHeadings are displayed.
+     * @return whether RowColHeadings are displayed
+     */
+    public boolean isPrintRowColHeadings() {
         return windowTwo.getDisplayRowColHeadings();
     }
 

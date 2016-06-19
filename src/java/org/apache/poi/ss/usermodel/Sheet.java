@@ -511,21 +511,35 @@ public interface Sheet extends Iterable<Row> {
      * Gets the flag indicating whether this sheet displays the lines
      * between rows and columns to make editing and reading easier.
      *
-     * @return <code>true</code> if this sheet displays gridlines.
-     * @see #isPrintGridlines() to check if printing of gridlines is turned on or off
+     * @return <code>true</code> if this sheet prints gridlines.
+     * @see #isDisplayGridlines() to check if gridlines are displayed on screen
      */
     boolean isPrintGridlines();
 
     /**
-     * Sets the flag indicating whether this sheet should display the lines
+     * Sets the flag indicating whether this sheet should print the lines
      * between rows and columns to make editing and reading easier.
-     * To turn printing of gridlines use {@link #setPrintGridlines(boolean)}
      *
-     *
-     * @param show <code>true</code> if this sheet should display gridlines.
-     * @see #setPrintGridlines(boolean)
+     * @param show <code>true</code> if this sheet should print gridlines.
+     * @see #setDisplayGridlines(boolean) to display gridlines on screen
      */
     void setPrintGridlines(boolean show);
+    
+    /**
+     * Gets the flag indicating whether this sheet prints the
+     * row and column headings when printing.
+     *
+     * @return <code>true</code> if this sheet prints row and column headings.
+     */
+    boolean isPrintRowAndColumnHeadings();
+
+    /**
+     * Sets the flag indicating whether this sheet should print
+     * row and columns headings when printing.
+     *
+     * @param show <code>true</code> if this sheet should print row and column headings.
+     */
+    void setPrintRowAndColumnHeadings(boolean show);
 
     /**
      * Gets the print setup object.

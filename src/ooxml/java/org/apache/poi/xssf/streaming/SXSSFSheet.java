@@ -704,11 +704,9 @@ public class SXSSFSheet implements Sheet, Cloneable
     }
 
     /**
-     * Gets the flag indicating whether this sheet displays the lines
-     * between rows and columns to make editing and reading easier.
+     * Returns whether gridlines are printed.
      *
-     * @return <code>true</code> if this sheet displays gridlines.
-     * @see #isPrintGridlines() to check if printing of gridlines is turned on or off
+     * @return whether gridlines are printed
      */
     @Override
     public boolean isPrintGridlines()
@@ -717,18 +715,36 @@ public class SXSSFSheet implements Sheet, Cloneable
     }
 
     /**
-     * Sets the flag indicating whether this sheet should display the lines
-     * between rows and columns to make editing and reading easier.
-     * To turn printing of gridlines use {@link #setPrintGridlines(boolean)}
+     * Turns on or off the printing of gridlines.
      *
-     *
-     * @param show <code>true</code> if this sheet should display gridlines.
-     * @see #setPrintGridlines(boolean)
+     * @param show boolean to turn on or off the printing of gridlines
      */
     @Override
     public void setPrintGridlines(boolean show)
     {
         _sh.setPrintGridlines(show);
+    }
+    
+    /**
+     * Returns whether row and column headings are printed.
+     *
+     * @return whether row and column headings are printed
+     */
+    @Override
+    public boolean isPrintRowAndColumnHeadings()
+    {
+        return _sh.isPrintRowAndColumnHeadings();
+    }
+
+    /**
+     * Turns on or off the printing of row and column headings.
+     *
+     * @param show boolean to turn on or off the printing of row and column headings
+     */
+    @Override
+    public void setPrintRowAndColumnHeadings(boolean show)
+    {
+        _sh.setPrintRowAndColumnHeadings(show);
     }
 
     /**
