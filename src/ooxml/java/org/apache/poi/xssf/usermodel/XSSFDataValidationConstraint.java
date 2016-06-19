@@ -17,6 +17,7 @@
 package org.apache.poi.xssf.usermodel;
 
 import java.util.Arrays;
+import java.util.regex.Pattern;
 
 import org.apache.poi.ss.usermodel.DataValidationConstraint;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STDataValidationType;
@@ -27,6 +28,14 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STDataValidationOpera
  *
  */
 public class XSSFDataValidationConstraint implements DataValidationConstraint {
+    /**
+     * Excel validation constraints with static lists are delimited with optional whitespace and the Windows List Separator,
+     * which is typically comma, but can be changed by users.  POI will just assume comma.
+     */
+    private static final String LIST_SEPARATOR = ",";
+    private static final Pattern LIST_SPLIT_REGEX = Pattern.compile("\\s*" + LIST_SEPARATOR + "\\s*");
+    private static final String QUOTE = "\"";
+    
 	private String formula1;
 	private String formula2;
 	private int validationType = -1;
@@ -70,8 +79,14 @@ public class XSSFDataValidationConstraint implements DataValidationConstraint {
 		validate();
 		
 		//FIXME: Need to confirm if this is not a formula.
-		if( ValidationType.LIST==validationType) {
-			explicitListOfValues = formula1.split(",");
+		// empirical testing shows Excel saves explicit lists surrounded by double quotes, 
+		// range formula expressions can't start with quotes (I think - anyone have a creative counter example?)
+		if( ValidationType.LIST==validationType
+				&& formula1 != null
+				&& formula1.startsWith(QUOTE)
+				&& formula1.endsWith(QUOTE) ) {
+            final String formulaWithoutQuotes = formula1.substring(1, formula1.length()-1);
+			explicitListOfValues = LIST_SPLIT_REGEX.split(formulaWithoutQuotes);
 		}
 	}
 
@@ -120,7 +135,7 @@ public class XSSFDataValidationConstraint implements DataValidationConstraint {
 			for (int i = 0; i < explicitListValues.length; i++) {
 				String string = explicitListValues[i];
 				if( builder.length() > 1) {
-					builder.append(",");
+					builder.append(LIST_SEPARATOR);
 				}
 				builder.append(string);
 			}
@@ -136,7 +151,7 @@ public class XSSFDataValidationConstraint implements DataValidationConstraint {
 		this.formula1 = removeLeadingEquals(formula1);
 	}
 
-	protected String removeLeadingEquals(String formula1) {
+	protected static String removeLeadingEquals(String formula1) {
 		return isFormulaEmpty(formula1) ? formula1 : formula1.charAt(0)=='=' ? formula1.substring(1) : formula1;
 	}
 
@@ -178,7 +193,7 @@ public class XSSFDataValidationConstraint implements DataValidationConstraint {
 		}
 	}
 
-	protected boolean isFormulaEmpty(String formula1) {
+	protected static boolean isFormulaEmpty(String formula1) {
 		return formula1 == null || formula1.trim().length()==0;
 	}
 	
@@ -189,10 +204,12 @@ public class XSSFDataValidationConstraint implements DataValidationConstraint {
 		builder.append(vt);
 		builder.append(' ');
 		if (validationType!=ValidationType.ANY) {
-			if (validationType != ValidationType.LIST && validationType != ValidationType.ANY && validationType != ValidationType.FORMULA) {
-				builder.append(",").append(ot).append(", ");
+			if (validationType != ValidationType.LIST
+					&& validationType != ValidationType.ANY
+					&& validationType != ValidationType.FORMULA) {
+				builder.append(LIST_SEPARATOR).append(ot).append(", ");
 			}
-			final String QUOTE = "";
+
 			if (validationType == ValidationType.LIST && explicitListOfValues != null) {
 				builder.append(QUOTE).append(Arrays.asList(explicitListOfValues)).append(QUOTE).append(' ');
 			} else {
