@@ -682,7 +682,7 @@ public abstract class BaseTestSheet {
     }
 
     /**
-     * Test basic display properties
+     * Test basic display and print properties
      */
     @Test
     public void sheetProperties() throws IOException {
@@ -704,6 +704,10 @@ public abstract class BaseTestSheet {
         assertFalse(sheet.isPrintGridlines());
         sheet.setPrintGridlines(true);
         assertTrue(sheet.isPrintGridlines());
+        
+        assertFalse(sheet.isPrintRowAndColumnHeadings());
+        sheet.setPrintRowAndColumnHeadings(true);
+        assertTrue(sheet.isPrintRowAndColumnHeadings());
 
         assertFalse(sheet.isDisplayFormulas());
         sheet.setDisplayFormulas(true);

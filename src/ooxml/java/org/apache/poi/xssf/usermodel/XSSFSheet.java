@@ -1757,6 +1757,29 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
                 worksheet.getPrintOptions() : worksheet.addNewPrintOptions();
         opts.setGridLines(value);
     }
+    
+    /**
+     * Returns whether row and column headings are printed.
+     *
+     * @return whether row and column headings are printed
+     */
+    @Override
+    public boolean isPrintRowAndColumnHeadings() {
+        CTPrintOptions opts = worksheet.getPrintOptions();
+        return opts != null && opts.getHeadings();
+    }
+
+    /**
+     * Turns on or off the printing of row and column headings.
+     *
+     * @param value boolean to turn on or off the printing of row and column headings
+     */
+    @Override
+    public void setPrintRowAndColumnHeadings(boolean value) {
+        CTPrintOptions opts = worksheet.isSetPrintOptions() ?
+                worksheet.getPrintOptions() : worksheet.addNewPrintOptions();
+        opts.setHeadings(value);
+    }
 
     /**
      * Tests if there is a page break at the indicated row

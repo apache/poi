@@ -1199,12 +1199,33 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
     /**
      * Turns on or off the printing of gridlines.
      *
-     * @param newPrintGridlines boolean to turn on or off the printing of
+     * @param show boolean to turn on or off the printing of
      *                          gridlines
      */
     @Override
-    public void setPrintGridlines(boolean newPrintGridlines) {
-        getSheet().getPrintGridlines().setPrintGridlines(newPrintGridlines);
+    public void setPrintGridlines(boolean show) {
+        getSheet().getPrintGridlines().setPrintGridlines(show);
+    }
+    
+    /**
+     * Returns whether row and column headings are printed.
+     *
+     * @return row and column headings are printed
+     */
+    @Override
+    public boolean isPrintRowAndColumnHeadings() {
+        return getSheet().getPrintHeaders().getPrintHeaders();
+    }
+
+    /**
+     * Turns on or off the printing of row and column headings.
+     *
+     * @param show boolean to turn on or off the printing of
+     *                          row and column headings
+     */
+    @Override
+    public void setPrintRowAndColumnHeadings(boolean show) {
+        getSheet().getPrintHeaders().setPrintHeaders(show);
     }
 
     /**
