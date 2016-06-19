@@ -24,6 +24,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeTrue;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
@@ -33,6 +34,7 @@ import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.formula.FormulaParseException;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -572,6 +574,37 @@ public abstract class BaseTestSheetUpdateArrayFormulas {
         }
 
         */
+        workbook.close();
+    }
+    
+    @Ignore
+    @Test
+    public void shouldNotBeAbleToCreateArrayFormulaOnPreexistingMergedRegion() throws IOException {
+        /*
+         *  m  = merged region
+         *  f  = array formula
+         *  fm = cell belongs to a merged region and an array formula (illegal, that's what this tests for)
+         *  
+         *   A  B  C
+         * 1    f  f
+         * 2    fm fm
+         * 3    f  f
+         */
+        Workbook workbook = _testDataProvider.createWorkbook();
+        Sheet sheet = workbook.createSheet();
+        
+        CellRangeAddress mergedRegion = CellRangeAddress.valueOf("B2:C2");
+        sheet.addMergedRegion(mergedRegion);
+        CellRangeAddress arrayFormula = CellRangeAddress.valueOf("C1:C3");
+        assumeTrue(mergedRegion.intersects(arrayFormula));
+        assumeTrue(arrayFormula.intersects(mergedRegion));
+        try {
+            sheet.setArrayFormula("SUM(A1:A3)",  arrayFormula);
+            fail("expected exception: should not be able to create an array formula that intersects with a merged region");
+        } catch (IllegalStateException e) {
+            // expected
+        }
+        
         workbook.close();
     }
 }
