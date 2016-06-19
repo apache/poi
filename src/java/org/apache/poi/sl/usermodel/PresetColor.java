@@ -247,9 +247,9 @@ public enum PresetColor {
     MenuHighlight           (0xff3399ff, 174, "menuHighlight")
     ;
 
-    public Color color;
-    public int nativeId;
-    public String ooxmlId;
+    public final Color color;
+    public final int nativeId;
+    public final String ooxmlId;
 
     PresetColor(Integer rgb, int nativeId, String ooxmlId) {
         this.color = (rgb == null) ? null : new Color(rgb, true);
