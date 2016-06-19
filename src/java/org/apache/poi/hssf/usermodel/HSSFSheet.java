@@ -749,9 +749,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
 
                 if (cell.isPartOfArrayFormulaGroup()) {
                     CellRangeAddress arrayRange = cell.getArrayFormulaRange();
-                    if (arrayRange.getNumberOfCells() > 1 &&
-                            (arrayRange.isInRange(region.getFirstRow(), region.getFirstColumn()) ||
-                                    arrayRange.isInRange(region.getFirstRow(), region.getFirstColumn()))) {
+                    if (arrayRange.getNumberOfCells() > 1 && region.intersects(arrayRange)) {
                         String msg = "The range " + region.formatAsString() + " intersects with a multi-cell array formula. " +
                                 "You cannot merge cells of an array.";
                         throw new IllegalStateException(msg);
