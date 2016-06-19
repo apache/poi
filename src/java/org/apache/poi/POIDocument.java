@@ -19,6 +19,7 @@ package org.apache.poi;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -45,7 +46,7 @@ import org.apache.poi.util.POILogger;
  *  Document classes.
  * Currently, this relates to Document Information Properties 
  */
-public abstract class POIDocument {
+public abstract class POIDocument implements Closeable {
     /** Holds metadata on our document */
     private SummaryInformation sInf;
     /** Holds further metadata on our document */
@@ -318,6 +319,22 @@ public abstract class POIDocument {
      * @throws IOException thrown on errors writing to the stream
      */
     public abstract void write(OutputStream out) throws IOException;
+
+    /**
+     * Closes the underlying {@link NPOIFSFileSystem} from which
+     *  the document was read, if any. Has no effect on documents
+     *  opened from an InputStream, or newly created ones.
+     * <p>Once {@link #close()} has been called, no further operations
+     *  should be called on the document.
+     */
+    public void close() throws IOException {
+        if (directory != null) {
+            if (directory.getNFileSystem() != null) {
+                directory.getNFileSystem().close();
+                directory = null;
+            }
+        }
+    }
 
     @Internal
     public DirectoryNode getDirectory() {

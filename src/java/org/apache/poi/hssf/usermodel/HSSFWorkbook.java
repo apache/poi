@@ -1276,16 +1276,13 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      * Closes the underlying {@link NPOIFSFileSystem} from which
      *  the Workbook was read, if any. Has no effect on Workbooks
      *  opened from an InputStream, or newly created ones.
+     * <p>Once {@link #close()} has been called, no further 
+     *  operations, updates or reads should be performed on the 
+     *  Workbook.
      */
     @Override
-    public void close() throws IOException
-    {
-        if (directory != null) {
-            if (directory.getNFileSystem() != null) {
-                directory.getNFileSystem().close();
-                directory = null;
-            }
-        }
+    public void close() throws IOException {
+        super.close();
     }
 
     /**
