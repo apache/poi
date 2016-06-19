@@ -27,6 +27,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.formula.FormulaParseException;
@@ -467,7 +468,7 @@ public abstract class BaseTestSheetUpdateArrayFormulas {
     }
 
     @Test
-    public void testModifyArrayCells_mergeCells() throws IOException {
+    public void testModifyArrayCells_mergeCellsSingle() throws IOException {
         Workbook workbook = _testDataProvider.createWorkbook();
         Sheet sheet = workbook.createSheet();
         assertEquals(0, sheet.getNumMergedRegions());
@@ -481,19 +482,55 @@ public abstract class BaseTestSheetUpdateArrayFormulas {
         assertEquals(Cell.CELL_TYPE_FORMULA, scell.getCellType());
         assertTrue(scell.isPartOfArrayFormulaGroup());
         assertEquals(1, sheet.getNumMergedRegions());
+        
+        workbook.close();
+    }
+    
+    @Test
+    public void testModifyArrayCells_mergeCellsMulti() throws IOException {
+        Workbook workbook = _testDataProvider.createWorkbook();
+        Sheet sheet = workbook.createSheet();
+        int expectedNumMergedRegions = 0;
+        assertEquals(expectedNumMergedRegions, sheet.getNumMergedRegions());
 
-        //we cannot merge cells included in an array formula
-        sheet.setArrayFormula("A1:A3*B1:B3", CellRangeAddress.valueOf("C1:C3"));
-        CellRangeAddress cra = CellRangeAddress.valueOf("C1:C3");
-        try {
-            sheet.addMergedRegion(cra);
-            fail("expected exception");
-        } catch (IllegalStateException e){
-            String msg = "The range "+cra.formatAsString()+" intersects with a multi-cell array formula. You cannot merge cells of an array.";
-            assertEquals(msg, e.getMessage());
+        // we cannot merge cells included in an array formula
+        sheet.setArrayFormula("A1:A4*B1:B4", CellRangeAddress.valueOf("C2:F5"));
+        for (String ref : Arrays.asList(
+                "C2:F5", // identity
+                "D3:E4", "B1:G6", // contains
+                "B1:C2", "F1:G2", "F5:G6", "B5:C6", // 1x1 corner intersection
+                "B1:C6", "B1:G2", "F1:G6", "B5:G6", // 1-row/1-column intersection
+                "B1:D3", "E1:G3", "E4:G6", "B4:D6", // 2x2 corner intersection
+                "B1:D6", "B1:G3", "E1:G6", "B4:G6"  // 2-row/2-column intersection
+        )) {
+            CellRangeAddress cra = CellRangeAddress.valueOf(ref);
+            try {
+                sheet.addMergedRegion(cra);
+                fail("expected exception with ref " + ref);
+            } catch (IllegalStateException e) {
+                String msg = "The range "+cra.formatAsString()+" intersects with a multi-cell array formula. You cannot merge cells of an array.";
+                assertEquals(msg, e.getMessage());
+            }
         }
         //the number of merged regions remains the same
-        assertEquals(1, sheet.getNumMergedRegions());
+        assertEquals(expectedNumMergedRegions, sheet.getNumMergedRegions());
+        
+        // we can merge non-intersecting cells
+        for (String ref : Arrays.asList(
+                "C1:F1", //above
+                "G2:G5", //right
+                "C6:F6",  //bottom
+                "B2:B5", "H7:J9")) {
+            CellRangeAddress cra = CellRangeAddress.valueOf(ref);
+            try {
+                sheet.addMergedRegion(cra);
+                expectedNumMergedRegions++;
+                assertEquals(expectedNumMergedRegions, sheet.getNumMergedRegions());
+            } catch (IllegalStateException e) {
+                fail("did not expect exception with ref: " + ref + "\n" + e.getMessage());
+            }
+        }
+        
         workbook.close();
     }
 
