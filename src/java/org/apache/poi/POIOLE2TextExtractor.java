@@ -44,6 +44,10 @@ public abstract class POIOLE2TextExtractor extends POITextExtractor {
 	 */
 	public POIOLE2TextExtractor(POIDocument document) {
 		this.document = document;
+		
+		// Ensure any underlying resources, such as open files,
+		//  will get cleaned up if the user calls #close()
+		setFilesystem(document);
 	}
 
 	/**
