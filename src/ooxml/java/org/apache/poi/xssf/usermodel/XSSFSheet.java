@@ -379,21 +379,23 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * @param region
      * @throws IllegalStateException if candidate region intersects an existing array formula in this sheet
      */
-    private void validateArrayFormulas(CellRangeAddress region){
+    private void validateArrayFormulas(CellRangeAddress region) {
+        // FIXME: this may be faster if it looped over array formulas directly rather than looping over each cell in
+        // the region and searching if that cell belongs to an array formula
         int firstRow = region.getFirstRow();
         int firstColumn = region.getFirstColumn();
         int lastRow = region.getLastRow();
         int lastColumn = region.getLastColumn();
         // for each cell in sheet, if cell belongs to an array formula, check if merged region intersects array formula cells
         for (int rowIn = firstRow; rowIn <= lastRow; rowIn++) {
+            XSSFRow row = getRow(rowIn);
+            if (row == null) continue;
+            
             for (int colIn = firstColumn; colIn <= lastColumn; colIn++) {
-                XSSFRow row = getRow(rowIn);
-                if (row == null) continue;
-
                 XSSFCell cell = row.getCell(colIn);
-                if(cell == null) continue;
+                if (cell == null) continue;
 
-                if(cell.isPartOfArrayFormulaGroup()){
+                if (cell.isPartOfArrayFormulaGroup()) {
                     CellRangeAddress arrayRange = cell.getArrayFormulaRange();
                     if (arrayRange.getNumberOfCells() > 1 && region.intersects(arrayRange)) {
                         String msg = "The range " + region.formatAsString() + " intersects with a multi-cell array formula. " +
