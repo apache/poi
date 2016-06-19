@@ -91,7 +91,7 @@ public class XSSFDataValidationConstraint implements DataValidationConstraint {
 	}
 
 	/**
-	 * If validation type is {@link ValidationType#LIST}, returns list of literal values.
+	 * If validation type is {@link org.apache.poi.ss.usermodel.DataValidationConstraint.ValidationType#LIST}, returns list of literal values.
 	 * Otherwise returns <code>null</code>.
 	 * @see org.apache.poi.ss.usermodel.DataValidationConstraint#getExplicitListValues()
 	 */
