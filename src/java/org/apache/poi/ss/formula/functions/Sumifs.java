@@ -54,6 +54,8 @@ public final class Sumifs implements FreeRefFunction {
     public static final FreeRefFunction instance = new Sumifs();
 
     public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
+        // https://support.office.com/en-us/article/SUMIFS-function-c9e748f5-7ea7-455d-9406-611cebce642b
+        // COUNTIFS(sum_range, criteria_range1, criteria1, [criteria_range2, criteria2], ...
         // need at least 3 arguments and need to have an odd number of arguments (sum-range plus x*(criteria_range, criteria))
         if(args.length < 3 || args.length % 2 == 0) {
             return ErrorEval.VALUE_INVALID;
