@@ -25,6 +25,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.poi.ss.ITestDataProvider;
@@ -676,5 +677,48 @@ public abstract class BaseTestNamedRange {
         assertEquals("2", wb.getName("x").getRefersToFormula());
         
         wb.close();
+    }
+    
+    //@Ignore
+    @Test
+    public void test56781() throws IOException {
+        Workbook wb = _testDataProvider.createWorkbook();
+        
+        Name name = wb.createName();
+        for (String valid : Arrays.asList(
+                "Hello",
+                "number1",
+                "_underscore",
+                "p.e.r.o.i.d.s",
+                "\\Backslash",
+                "Backslash\\"
+                )) {
+            name.setNameName(valid);
+        }
+        
+        try {
+            name.setNameName("");
+            fail("expected exception: (blank)");
+        } catch (final IllegalArgumentException e) {
+            assertEquals("Name cannot be blank", e.getMessage());
+        }
+        
+        for (String invalid : Arrays.asList(
+                "1number",
+                "Sheet1!A1",
+                "Exclamation!",
+                "Has Space",
+                "Colon:",
+                "A-Minus",
+                "A+Plus",
+                "Dollar$")) {
+            try {
+                name.setNameName(invalid);
+                fail("expected exception: " + invalid);
+            } catch (final IllegalArgumentException e) {
+                assertEquals("Invalid name: '" + invalid + "'", e.getMessage());
+            }
+        }
+        
     }
 }
