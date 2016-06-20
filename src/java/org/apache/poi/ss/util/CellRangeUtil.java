@@ -15,16 +15,11 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.record.cf;
+package org.apache.poi.ss.util;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.poi.ss.util.CellRangeAddress;
-
-/**
- * TODO Should this move to org.apache.poi.ss.util ?
- */
 public final class CellRangeUtil {
     private CellRangeUtil() {
         // no instance of this class
