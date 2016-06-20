@@ -53,13 +53,13 @@ import org.apache.poi.ss.formula.functions.Countif.ErrorMatcher;
 public final class Sumifs implements FreeRefFunction {
     public static final FreeRefFunction instance = new Sumifs();
 
-	public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
-	    // need at least 3 arguments and need to have an odd number of arguments (sum-range plus x*(criteria_range, criteria))
+    public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
+        // need at least 3 arguments and need to have an odd number of arguments (sum-range plus x*(criteria_range, criteria))
         if(args.length < 3 || args.length % 2 == 0) {
             return ErrorEval.VALUE_INVALID;
         }
 
-		try {
+        try {
             AreaEval sumRange = convertRangeArg(args[0]);
 
             // collect pairs of ranges and criteria
@@ -76,10 +76,10 @@ public final class Sumifs implements FreeRefFunction {
 
             double result = sumMatchingCells(ae, mp, sumRange);
             return new NumberEval(result);
-		} catch (EvaluationException e) {
-			return e.getErrorEval();
-		}
-	}
+        } catch (EvaluationException e) {
+            return e.getErrorEval();
+        }
+    }
 
     /**
      * Verify that each <code>criteriaRanges</code> argument contains the same number of rows and columns
@@ -148,25 +148,25 @@ public final class Sumifs implements FreeRefFunction {
         return result;
     }
 
-	private static double accumulate(AreaEval aeSum, int relRowIndex,
-			int relColIndex) {
+    private static double accumulate(AreaEval aeSum, int relRowIndex,
+            int relColIndex) {
 
-		ValueEval addend = aeSum.getRelativeValue(relRowIndex, relColIndex);
-		if (addend instanceof NumberEval) {
-			return ((NumberEval)addend).getNumberValue();
-		}
-		// everything else (including string and boolean values) counts as zero
-		return 0.0;
-	}
+        ValueEval addend = aeSum.getRelativeValue(relRowIndex, relColIndex);
+        if (addend instanceof NumberEval) {
+            return ((NumberEval)addend).getNumberValue();
+        }
+        // everything else (including string and boolean values) counts as zero
+        return 0.0;
+    }
 
-	private static AreaEval convertRangeArg(ValueEval eval) throws EvaluationException {
-		if (eval instanceof AreaEval) {
-			return (AreaEval) eval;
-		}
-		if (eval instanceof RefEval) {
-			return ((RefEval)eval).offset(0, 0, 0, 0);
-		}
-		throw new EvaluationException(ErrorEval.VALUE_INVALID);
-	}
+    private static AreaEval convertRangeArg(ValueEval eval) throws EvaluationException {
+        if (eval instanceof AreaEval) {
+            return (AreaEval) eval;
+        }
+        if (eval instanceof RefEval) {
+            return ((RefEval)eval).offset(0, 0, 0, 0);
+        }
+        throw new EvaluationException(ErrorEval.VALUE_INVALID);
+    }
 
 }
