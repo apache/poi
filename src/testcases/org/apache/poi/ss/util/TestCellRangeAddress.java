@@ -18,6 +18,7 @@ limitations under the License.
 package org.apache.poi.ss.util;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -32,8 +33,10 @@ import org.apache.poi.util.LittleEndianOutputStream;
 import org.junit.Test;
 
 public final class TestCellRangeAddress {
-    static final byte[] data = new byte[] { (byte) 0x02, (byte) 0x00, (byte) 0x04,
-            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x03, (byte) 0x00, };
+    static final byte[] data = new byte[] {
+            0x02, 0x00, 0x04, 0x00,
+            0x00, 0x00, 0x03, 0x00,
+    };
 
     @Test
     public void testLoad() {
@@ -239,6 +242,28 @@ public final class TestCellRangeAddress {
         
         final CellRangeAddress disjointRegion = new CellRangeAddress(10, 11, 10, 11);
         assertNotIntersects(baseRegion, disjointRegion);
+    }
+    
+    @Test
+    public void containsRow() {
+        final CellRangeAddress region = new CellRangeAddress(10, 12, 3, 5);
+        
+        assertFalse(region.containsRow(9));
+        assertTrue(region.containsRow(10));
+        assertTrue(region.containsRow(11));
+        assertTrue(region.containsRow(12));
+        assertFalse(region.containsRow(13));
+    }
+    
+    @Test
+    public void containsColumn() {
+        final CellRangeAddress region = new CellRangeAddress(10, 12, 3, 5);
+        
+        assertFalse(region.containsColumn(2));
+        assertTrue(region.containsColumn(3));
+        assertTrue(region.containsColumn(4));
+        assertTrue(region.containsColumn(5));
+        assertFalse(region.containsColumn(6));
     }
     
     private static void assertIntersects(CellRangeAddress regionA, CellRangeAddress regionB) {
