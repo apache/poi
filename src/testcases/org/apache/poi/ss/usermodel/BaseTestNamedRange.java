@@ -679,7 +679,6 @@ public abstract class BaseTestNamedRange {
         wb.close();
     }
     
-    //@Ignore
     @Test
     public void test56781() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
