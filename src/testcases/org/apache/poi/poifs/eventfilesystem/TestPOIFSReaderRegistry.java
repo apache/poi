@@ -63,8 +63,8 @@ public final class TestPOIFSReaderRegistry extends TestCase {
         {
             for (int k = 0; k < names.length; k++)
             {
-                Iterator listeners = registry.getListeners(paths[ j ],
-                                                           names[ k ]);
+                Iterator<POIFSReaderListener> listeners =
+                    registry.getListeners(paths[ j ], names[ k ]);
 
                 assertTrue(!listeners.hasNext());
             }
@@ -85,8 +85,8 @@ public final class TestPOIFSReaderRegistry extends TestCase {
                 {
                     if ((j != k) && (k != n))
                     {
-                        registry.registerListener(listeners[ j ], paths[ k ],
-                                                  names[ n ]);
+                        registry.registerListener(
+                                listeners[ j ], paths[ k ], names[ n ]);
                     }
                 }
             }
@@ -95,8 +95,8 @@ public final class TestPOIFSReaderRegistry extends TestCase {
         {
             for (int n = 0; n < names.length; n++)
             {
-                Iterator listeners = registry.getListeners(paths[ k ],
-                                                           names[ n ]);
+                Iterator<POIFSReaderListener> listeners =
+                    registry.getListeners(paths[ k ], names[ n ]);
 
                 if (k == n)
                 {
@@ -104,7 +104,8 @@ public final class TestPOIFSReaderRegistry extends TestCase {
                 }
                 else
                 {
-                    Set registeredListeners = new HashSet();
+                    Set<POIFSReaderListener> registeredListeners =
+                            new HashSet<POIFSReaderListener>();
 
                     while (listeners.hasNext())
                     {
@@ -136,9 +137,10 @@ public final class TestPOIFSReaderRegistry extends TestCase {
         {
             for (int n = 0; n < names.length; n++)
             {
-                Iterator listeners           =
+                Iterator<POIFSReaderListener> listeners =
                     registry.getListeners(paths[ k ], names[ n ]);
-                Set      registeredListeners = new HashSet();
+                Set<POIFSReaderListener> registeredListeners =
+                    new HashSet<POIFSReaderListener>();
 
                 while (listeners.hasNext())
                 {
