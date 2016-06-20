@@ -373,7 +373,7 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
     public void bug59733() throws IOException {
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet();
-        for (int r=0; r<=4; r++) {
+        for (int r=0; r<=3; r++) {
             sheet.createRow(r);
         }
 
