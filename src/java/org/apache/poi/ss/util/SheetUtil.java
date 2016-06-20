@@ -325,6 +325,7 @@ public class SheetUtil {
      * @param rowIx the row to check
      * @param colIx the column to check
      * @return true if the range contains the cell [rowIx, colIx]
+     * @deprecated 3.15 beta 2. Use {@link CellRangeAddressBase#isInRange(int, int)}.
      */
     public static boolean containsCell(CellRangeAddress cr, int rowIx, int colIx) {
         return cr.isInRange(rowIx,  colIx);
