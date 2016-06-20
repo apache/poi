@@ -118,10 +118,31 @@ public abstract class CellRangeAddressBase {
 	 * @param rowInd The row, 0-based.
 	 * @param colInd The column, 0-based.
 	 * @return True if the coordinates lie within the bounds, false otherwise.
+	 * @see #intersects(CellRangeAddressBase) for checking if two ranges overlap
 	 */
 	public boolean isInRange(int rowInd, int colInd) {
-		return _firstRow <= rowInd && rowInd <= _lastRow &&
-				_firstCol <= colInd && colInd <= _lastCol;
+		return _firstRow <= rowInd && rowInd <= _lastRow && //containsRow
+				_firstCol <= colInd && colInd <= _lastCol; //containsColumn
+	}
+	
+	/**
+	 * Check if the row is in the specified cell range
+	 *
+	 * @param rowInd the row to check
+	 * @return true if the range contains the row [rowInd]
+	 */
+	public boolean containsRow(int rowInd) {
+		return _firstRow <= rowInd && rowInd <= _lastRow;
+	}
+	
+	/**
+	 * Check if the column is in the specified cell range
+	 *
+	 * @param colInd the column to check
+	 * @return true if the range contains the column [colInd]
+	 */
+	public boolean containsColumn(int colInd) {
+		return _firstCol <= colInd && colInd <= _lastCol;
 	}
 	
 	/**
@@ -129,6 +150,7 @@ public abstract class CellRangeAddressBase {
 	 *
 	 * @param other a candidate cell range address to check for intersection with this range
 	 * @return returns true if this range and other range have at least 1 cell in common
+	 * @see #isInRange(int, int) for checking if a single cell intersects
 	 */
 	public boolean intersects(CellRangeAddressBase other) {
 		return this._firstRow <= other._lastRow &&
