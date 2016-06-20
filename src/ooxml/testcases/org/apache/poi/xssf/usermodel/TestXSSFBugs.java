@@ -3067,4 +3067,19 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         assertEquals("Table1", tables.get(0).getName()); //FIXME: what is the table name?
         assertEquals("Table2", tables.get(1).getName()); //FIXME: what is the table name?
     }
+    
+    @Test
+    public void test57523() {
+        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("57523.xlsx");
+        Sheet sheet = wb.getSheet("Attribute Master");
+        Row row = sheet.getRow(16);
+
+        int N = CellReference.convertColStringToIndex("N");
+        Cell N16 = row.getCell(N);
+        assertEquals(500.0, N16.getNumericCellValue(), 0.00001);
+        
+        int P = CellReference.convertColStringToIndex("P");
+        Cell P16 = row.getCell(P);
+        assertEquals(10.0, P16.getNumericCellValue(), 0.00001);
+    }
 }
