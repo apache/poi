@@ -18,9 +18,6 @@ package org.apache.poi.xssf.usermodel;
 
 import org.apache.poi.ss.formula.ptg.Ptg;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.apache.poi.ss.formula.FormulaParser;
 import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.usermodel.Name;
@@ -57,11 +54,6 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedName;
  */
 public final class XSSFName implements Name {
     
-    private static final Pattern isValidName = Pattern.compile(
-            "[\\p{IsAlphabetic}_\\\\]" +
-            "[\\p{IsAlphabetic}0-9_.\\\\]*",
-            Pattern.CASE_INSENSITIVE);
-
     /**
      * A built-in defined name that specifies the workbook's print area
      */
@@ -354,10 +346,35 @@ public final class XSSFName implements Name {
         return _ctName.toString().equals(cf.getCTName().toString());
     }
     
-    private static void validateName(String name){
-        if(name.length() == 0)  throw new IllegalArgumentException("Name cannot be blank");
-        if (!isValidName.matcher(name).matches()) {
-            throw new IllegalArgumentException("Invalid name: '"+name+"'");
+    private static void validateName(String name) {
+        /* equivalent to:
+        Pattern.compile(
+                "[\\p{IsAlphabetic}_]" +
+                "[\\p{IsAlphabetic}0-9_\\\\]*",
+                Pattern.CASE_INSENSITIVE).matcher(name).matches();
+        \p{IsAlphabetic} doesn't work on Java 6, and other regex-based character classes don't work on unicode
+        thus we are stuck with Character.isLetter (for now).
+        */
+        
+        if (name.length() == 0) {
+            throw new IllegalArgumentException("Name cannot be blank");
+        }
+        
+        // is first character valid?
+        char c = name.charAt(0);
+        String allowedSymbols = "_";
+        boolean characterIsValid = (Character.isLetter(c) || allowedSymbols.indexOf(c) != -1);
+        if (!characterIsValid) {
+            throw new IllegalArgumentException("Invalid name: '"+name+"': first character must be underscore or a letter");
+        }
+        
+        // are all other characters valid?
+        allowedSymbols = "_\\"; //backslashes needed for unicode escape
+        for (final char ch : name.toCharArray()) {
+            characterIsValid = (Character.isLetterOrDigit(ch) || allowedSymbols.indexOf(ch) != -1);
+            if (!characterIsValid) {
+                throw new IllegalArgumentException("Invalid name: '"+name+"'");
+            }
         }
     }
 }
