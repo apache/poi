@@ -22,7 +22,6 @@ package org.apache.poi.xssf.usermodel;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.poi.hssf.record.cf.CellRangeUtil;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.ComparisonOperator;
 import org.apache.poi.ss.usermodel.ConditionalFormatting;
@@ -31,6 +30,7 @@ import org.apache.poi.ss.usermodel.ExtendedColor;
 import org.apache.poi.ss.usermodel.IconMultiStateFormatting.IconSet;
 import org.apache.poi.ss.usermodel.SheetConditionalFormatting;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.CellRangeUtil;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCfRule;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTConditionalFormatting;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
