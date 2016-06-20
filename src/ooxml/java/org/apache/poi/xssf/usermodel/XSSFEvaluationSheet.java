@@ -79,7 +79,9 @@ final class XSSFEvaluationSheet implements EvaluationSheet {
         
         @Override
         public boolean equals(Object obj) {
-            if (obj == null) return false;
+            if (!(obj instanceof CellKey)) {
+                return false;
+            }
             // assumes other object is one of us, otherwise ClassCastException is thrown
             final CellKey oKey = (CellKey) obj;
             return _row == oKey._row && _col == oKey._col;

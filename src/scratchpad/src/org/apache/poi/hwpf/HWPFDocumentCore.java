@@ -37,6 +37,7 @@ import org.apache.poi.hwpf.usermodel.Range;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
+import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
@@ -147,11 +148,16 @@ public abstract class HWPFDocumentCore extends POIDocument
     super(directory);
 
     // read in the main stream.
-    DocumentEntry documentProps = (DocumentEntry)
-            directory.getEntry("WordDocument");
-    _mainStream = new byte[documentProps.getSize()];
-
-    directory.createDocumentInputStream(STREAM_WORD_DOCUMENT).read(_mainStream);
+    DocumentEntry documentProps = (DocumentEntry)directory.getEntry("WordDocument");
+    DocumentInputStream dis = null;
+    try {
+        dis = directory.createDocumentInputStream(STREAM_WORD_DOCUMENT);
+        _mainStream = IOUtils.toByteArray(dis, documentProps.getSize());
+    } finally {
+        if (dis != null) {
+            dis.close();
+        }
+    }
 
     // Create our FIB, and check for the doc being encrypted
     _fib = new FileInformationBlock(_mainStream);
