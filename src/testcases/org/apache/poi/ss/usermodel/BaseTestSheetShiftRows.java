@@ -602,6 +602,39 @@ public abstract class BaseTestSheetShiftRows {
         read.close();
     }
     
+    // bug 56454
+    @Ignore
+    @Test
+    public void shiftRowsWithMergedRegionsThatDoNotContainColumnZero() throws IOException {
+        Workbook wb = _testDataProvider.createWorkbook();
+        Sheet sheet = wb.createSheet("test");
+        
+        // populate sheet cells
+        for (int i = 0; i < 10; i++) {
+            Row row = sheet.createRow(i);
+            for (int j = 0; j < 12; j++) {
+                Cell cell = row.createCell(j);
+                cell.setCellValue(i + "x" + j);
+            }
+        }
+
+        CellRangeAddress A4_B7 = new CellRangeAddress(3, 6, 0, 1);
+        CellRangeAddress C5_D7 = new CellRangeAddress(4, 6, 2, 3);
+
+        sheet.addMergedRegion(A4_B7);
+        sheet.addMergedRegion(C5_D7);
+
+        // A4:B7 will elongate vertically
+        // C5:D7 will be shifted down with same size
+        sheet.shiftRows(4, sheet.getLastRowNum(), 1);
+
+        assertEquals(2, sheet.getNumMergedRegions());
+        assertEquals(CellRangeAddress.valueOf("A4:B8"), sheet.getMergedRegion(0));
+        assertEquals(CellRangeAddress.valueOf("C5:D8"), sheet.getMergedRegion(1));
+        
+        wb.close();
+    }
+    
     private void createHyperlink(CreationHelper helper, Cell cell, int linkType, String ref) {
         cell.setCellValue(ref);
         Hyperlink link = helper.createHyperlink(linkType);
