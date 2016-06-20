@@ -1867,6 +1867,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      *
      * @param indices A set of the regions to unmerge
      */
+    @Override
     public void removeMergedRegions(Collection<Integer> indices) {
         if (!worksheet.isSetMergeCells()) return;
         

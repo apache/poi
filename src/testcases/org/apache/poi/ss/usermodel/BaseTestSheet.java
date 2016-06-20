@@ -27,10 +27,17 @@ import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeTrue;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.poi.hssf.util.PaneInformation;
 import org.apache.poi.ss.ITestDataProvider;
@@ -417,6 +424,36 @@ public abstract class BaseTestSheet {
         assertEquals("the merged row to doesnt match the one we put in ", 4, region.getLastRow());
         
         wb.close();
+    }
+    
+    /**
+     * Remove multiple merged regions
+     */
+    @Test
+    public void removeMergedRegions() throws IOException {
+        Workbook wb = _testDataProvider.createWorkbook();
+        Sheet sheet = wb.createSheet();
+        
+        Map<Integer, CellRangeAddress> mergedRegions = new HashMap<Integer, CellRangeAddress>();
+        for (int r=0; r<10; r++) {
+            CellRangeAddress region = new CellRangeAddress(r, r, 0, 1);
+            mergedRegions.put(r, region);
+            sheet.addMergedRegion(region);
+        }
+        assertCollectionEquals(mergedRegions.values(), sheet.getMergedRegions());
+        
+        Collection<Integer> removed = Arrays.asList(0, 2, 3, 6, 8);
+        mergedRegions.keySet().removeAll(removed);
+        sheet.removeMergedRegions(removed);
+        assertCollectionEquals(mergedRegions.values(), sheet.getMergedRegions());
+        
+        wb.close();
+    }
+    
+    private static void assertCollectionEquals(Collection<? extends Object> expected, Collection<? extends Object> actual) {
+        Set<Object> e = new HashSet<Object>(expected);
+        Set<Object> a = new HashSet<Object>(actual);
+        assertEquals(e, a);
     }
 
     @Test

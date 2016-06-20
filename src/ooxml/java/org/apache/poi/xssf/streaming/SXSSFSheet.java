@@ -463,6 +463,17 @@ public class SXSSFSheet implements Sheet, Cloneable
     {
         _sh.removeMergedRegion(index);
     }
+    
+    /**
+     * Removes a merged region of cells (hence letting them free)
+     *
+     * @param indices of the regions to unmerge
+     */
+    @Override
+    public void removeMergedRegions(Collection<Integer> indices)
+    {
+        _sh.removeMergedRegions(indices);
+    }
 
     /**
      * Returns the number of merged regions

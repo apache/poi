@@ -17,6 +17,7 @@
 
 package org.apache.poi.ss.usermodel;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -331,6 +332,13 @@ public interface Sheet extends Iterable<Row> {
      * @param index of the region to unmerge
      */
     void removeMergedRegion(int index);
+    
+    /**
+     * Removes a number of merged regions of cells (hence letting them free)
+     *
+     * @param indices A set of the regions to unmerge
+     */
+    void removeMergedRegions(Collection<Integer> indices);
 
     /**
      * Returns the number of merged regions
