@@ -42,6 +42,9 @@ public class XSSFDataValidationConstraint implements DataValidationConstraint {
 	private int operator = -1;
 	private String[] explicitListOfValues;
 
+	/**
+	 * list literal constructor
+	 */
 	public XSSFDataValidationConstraint(String[] explicitListOfValues) {
 		if( explicitListOfValues==null || explicitListOfValues.length==0) {
 			throw new IllegalArgumentException("List validation with explicit values must specify at least one value");
@@ -52,7 +55,7 @@ public class XSSFDataValidationConstraint implements DataValidationConstraint {
 		validate();
 	}
 	
-	public XSSFDataValidationConstraint(int validationType,String formula1) {
+	public XSSFDataValidationConstraint(int validationType, String formula1) {
 		super();
 		setFormula1(formula1);
 		this.validationType = validationType;
@@ -61,7 +64,7 @@ public class XSSFDataValidationConstraint implements DataValidationConstraint {
 
 
 
-	public XSSFDataValidationConstraint(int validationType, int operator,String formula1) {
+	public XSSFDataValidationConstraint(int validationType, int operator, String formula1) {
 		super();
 		setFormula1(formula1);
 		this.validationType = validationType;
@@ -69,7 +72,15 @@ public class XSSFDataValidationConstraint implements DataValidationConstraint {
 		validate();
 	}
 
-	public XSSFDataValidationConstraint(int validationType, int operator,String formula1, String formula2) {
+	/**
+	 * This is the constructor called using the OOXML raw data.  Excel overloads formula1 to also encode explicit value lists,
+	 * so this constructor has to check for and parse that syntax.
+	 * @param validationType
+	 * @param operator
+	 * @param formula1 Overloaded: formula1 or list of explicit values
+	 * @param formula2 (formula1 is a list of explicit values, this is ignored: use <code>null</code>)
+	 */
+	public XSSFDataValidationConstraint(int validationType, int operator, String formula1, String formula2) {
 		super();
 		setFormula1(formula1);
 		setFormula2(formula2);
@@ -130,16 +141,19 @@ public class XSSFDataValidationConstraint implements DataValidationConstraint {
 	 */
 	public void setExplicitListValues(String[] explicitListValues) {
 		this.explicitListOfValues = explicitListValues;
-		if( explicitListOfValues!=null && explicitListOfValues.length > 0 ) {
-			StringBuilder builder = new StringBuilder("\"");
+		
+		// for OOXML we need to set formula1 to the quoted csv list of values (doesn't appear documented, but that's where Excel puts its lists)
+		// further, Excel has no escaping for commas in explicit lists, so we don't need to worry about that.
+		if ( explicitListOfValues!=null && explicitListOfValues.length > 0 ) {
+			StringBuilder builder = new StringBuilder(QUOTE);
 			for (int i = 0; i < explicitListValues.length; i++) {
 				String string = explicitListValues[i];
-				if( builder.length() > 1) {
+				if (builder.length() > 1) {
 					builder.append(LIST_SEPARATOR);
 				}
 				builder.append(string);
 			}
-			builder.append("\"");
+			builder.append(QUOTE);
 			setFormula1(builder.toString());			
 		}
 	}

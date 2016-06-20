@@ -24,25 +24,49 @@ import org.apache.poi.ss.usermodel.DataValidationConstraint.OperatorType;
 import org.junit.Test;
 
 public class TestXSSFDataValidationConstraint {
+    static final int listType = ValidationType.LIST;
+    static final int ignoredType = OperatorType.IGNORED;
 
     // See bug 59719
     @Test
-    public void listLiteralsQuotesAreStripped() {
-        int listType = ValidationType.LIST;
-        int ignoredType = OperatorType.IGNORED;
-        
+    public void listLiteralsQuotesAreStripped_formulaConstructor() {
+        // literal list, using formula constructor
         String literal = "\"one, two, three\"";
         String[] expected = new String[] { "one", "two", "three" };
         DataValidationConstraint constraint = new XSSFDataValidationConstraint(listType, ignoredType, literal, null);
         assertArrayEquals(expected, constraint.getExplicitListValues());
-        
+        // Excel and DataValidationConstraint parser ignore (strip) whitespace; quotes should still be intact
+        // FIXME: whitespace wasn't stripped
+        assertEquals(literal, constraint.getFormula1());
+    }
+    
+    @Test
+    public void listLiteralsQuotesAreStripped_arrayConstructor() {
+        // literal list, using array constructor
+        String literal = "\"one, two, three\"";
+        String[] expected = new String[] { "one", "two", "three" };
+        DataValidationConstraint constraint = new XSSFDataValidationConstraint(expected);
+        assertArrayEquals(expected, constraint.getExplicitListValues());
+        // Excel and DataValidationConstraint parser ignore (strip) whitespace; quotes should still be intact
+        assertEquals(literal.replace(" ", ""), constraint.getFormula1());
+	}
+	
+    @Test
+    public void rangeReference() {
+		// (unnamed range) reference list        
         String reference = "A1:A5";
-        constraint = new XSSFDataValidationConstraint(listType, ignoredType, reference, null);
+        DataValidationConstraint constraint = new XSSFDataValidationConstraint(listType, ignoredType, reference, null);
         assertNull(constraint.getExplicitListValues());
-        
+        assertEquals("A1:A5", constraint.getFormula1());
+    }
+    
+    @Test
+    public void namedRangeReference() {
+        // named range list
         String namedRange = "MyNamedRange";
-        constraint = new XSSFDataValidationConstraint(listType, ignoredType, namedRange, null);
+        DataValidationConstraint constraint = new XSSFDataValidationConstraint(listType, ignoredType, namedRange, null);
         assertNull(constraint.getExplicitListValues());
+        assertEquals("MyNamedRange", constraint.getFormula1());
     }
 
 }        
