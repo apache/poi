@@ -17,23 +17,25 @@ limitations under the License.
 
 package org.apache.poi.ss.util;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import org.apache.poi.hssf.record.TestcaseRecordInputStream;
-import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 import org.apache.poi.util.LittleEndianOutputStream;
 
+import org.junit.Test;
 
-//TODO: replace junit3 with junit4 code
-import junit.framework.TestCase; //junit3
-
-public final class TestCellRangeAddress extends TestCase {
-    byte[] data = new byte[] { (byte) 0x02, (byte) 0x00, (byte) 0x04,
+public final class TestCellRangeAddress {
+    static final byte[] data = new byte[] { (byte) 0x02, (byte) 0x00, (byte) 0x04,
             (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x03, (byte) 0x00, };
 
+    @Test
     public void testLoad() {
         CellRangeAddress ref = new CellRangeAddress(
                 TestcaseRecordInputStream.create(0x000, data));
@@ -45,6 +47,7 @@ public final class TestCellRangeAddress extends TestCase {
         assertEquals(8, CellRangeAddress.ENCODED_SIZE);
     }
 
+    @Test
     public void testLoadInvalid() {
         try {
             assertNotNull(new CellRangeAddress(
@@ -54,6 +57,7 @@ public final class TestCellRangeAddress extends TestCase {
         }
     }
 
+    @Test
     public void testStore() throws IOException {
         CellRangeAddress ref = new CellRangeAddress(0, 0, 0, 0);
 
@@ -89,6 +93,7 @@ public final class TestCellRangeAddress extends TestCase {
         }
     }
     
+    @Test
     public void testCreateIllegal() throws IOException {
         // for some combinations we expected exceptions
         try {
@@ -105,16 +110,19 @@ public final class TestCellRangeAddress extends TestCase {
         }
     }
 
+    @Test
     public void testCopy() throws IOException {
         CellRangeAddress ref = new CellRangeAddress(1, 2, 3, 4);
         CellRangeAddress copy = ref.copy();
         assertEquals(ref.toString(), copy.toString());
     }
 
+    @Test
     public void testGetEncodedSize() throws IOException {
         assertEquals(2*CellRangeAddress.ENCODED_SIZE, CellRangeAddress.getEncodedSize(2));
     }
 
+    @Test
     public void testFormatAsString() throws IOException {
         CellRangeAddress ref = new CellRangeAddress(1, 2, 3, 4);
         
@@ -169,6 +177,7 @@ public final class TestCellRangeAddress extends TestCase {
         assertEquals(":", ref.formatAsString());
     }
     
+    @Test
     public void testEquals() {
         final CellRangeAddress ref1 = new CellRangeAddress(1, 2, 3, 4);
         final CellRangeAddress ref2 = new CellRangeAddress(1, 2, 3, 4);
@@ -188,6 +197,7 @@ public final class TestCellRangeAddress extends TestCase {
         assertNotEquals(ref1, new CellRangeAddress(3, 4, 1, 2));
     }
     
+    @Test
     public void testGetMinMaxRow() {
         final CellRangeAddress ref = new CellRangeAddress(1, 2, 3, 4);
         assertEquals(1, ref.getMinRow());
@@ -199,6 +209,7 @@ public final class TestCellRangeAddress extends TestCase {
         assertEquals(10, ref.getMaxRow());
     }
     
+    @Test
     public void testGetMinMaxColumn() {
         final CellRangeAddress ref = new CellRangeAddress(1, 2, 3, 4);
         assertEquals(3, ref.getMinColumn());
@@ -210,6 +221,7 @@ public final class TestCellRangeAddress extends TestCase {
         assertEquals(10, ref.getMaxColumn());
     }
     
+    @Test
     public void testIntersects() {
         final CellRangeAddress baseRegion = new CellRangeAddress(0, 1, 0, 1);
         
