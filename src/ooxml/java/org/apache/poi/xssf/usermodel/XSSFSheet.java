@@ -3042,7 +3042,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
 
         rowShifter.updateNamedRanges(shifter);
         rowShifter.updateFormulas(shifter);
-        rowShifter.shiftMerged(startRow, endRow, n);
+        rowShifter.shiftMergedRegions(startRow, endRow, n);
         rowShifter.updateConditionalFormatting(shifter);
         rowShifter.updateHyperlinks(shifter);
 

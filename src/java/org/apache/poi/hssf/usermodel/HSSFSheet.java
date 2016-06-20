@@ -50,6 +50,7 @@ import org.apache.poi.hssf.record.aggregates.DataValidityTable;
 import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
 import org.apache.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor;
 import org.apache.poi.hssf.record.aggregates.WorksheetProtectionBlock;
+import org.apache.poi.hssf.usermodel.helpers.HSSFRowShifter;
 import org.apache.poi.hssf.util.PaneInformation;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.FormulaShifter;
@@ -64,6 +65,7 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.DataValidation;
 import org.apache.poi.ss.usermodel.DataValidationHelper;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.helpers.RowShifter;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellRangeAddressList;
@@ -1485,50 +1487,11 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      * @param endRow the end-index of the rows to shift, zero-based
      * @param n how far to shift, negative to shift up
      * @param isRow unused, kept for backwards compatibility
-     * @deprecated POI 3.15 beta 2. This will be made private in future releases.
+     * @deprecated POI 3.15 beta 2. Use {@link HSSFRowShifter#shiftMergedRegions(int, int, int)}.
      */
     protected void shiftMerged(int startRow, int endRow, int n, boolean isRow) {
-        shiftMerged(startRow, endRow, n);
-    }
-
-    /**
-     * Shifts, grows, or shrinks the merged regions due to a row shift
-     *  
-     * @param startRow the start-index of the rows to shift, zero-based
-     * @param endRow the end-index of the rows to shift, zero-based
-     * @param n how far to shift, negative to shift up
-     * This should be kept in sync with {@link org.apache.poi.xssf.usermodel.helpers.XSSFRowShifter#shiftMerged(int, int, int)}
-     */
-    private void shiftMerged(int startRow, int endRow, int n) {
-        List<CellRangeAddress> shiftedRegions = new ArrayList<CellRangeAddress>();
-        //move merged regions completely if they fall within the new region boundaries when they are shifted
-        for (int i = 0; i < getNumMergedRegions(); i++) {
-            CellRangeAddress merged = getMergedRegion(i);
-
-            boolean inStart = (merged.getFirstRow() >= startRow || merged.getLastRow() >= startRow);
-            boolean inEnd = (merged.getFirstRow() <= endRow || merged.getLastRow() <= endRow);
-
-            //don't check if it's not within the shifted area
-            if (!inStart || !inEnd) {
-                continue;
-            }
-
-            //only shift if the region outside the shifted rows is not merged too
-            if (!merged.containsRow(startRow - 1) &&
-                    !merged.containsRow(endRow + 1)) {
-                merged.setFirstRow(merged.getFirstRow() + n);
-                merged.setLastRow(merged.getLastRow() + n);
-                //have to remove/add it back
-                shiftedRegions.add(merged);
-                removeMergedRegion(i);
-                i = i - 1; // we have to back up now since we removed one
-            }
-        }
-
-        //read so it doesn't get shifted again
-        for (CellRangeAddress region : shiftedRegions) {
-            this.addMergedRegion(region);
-        }
+        RowShifter rowShifter = new HSSFRowShifter(this);
+        rowShifter.shiftMergedRegions(startRow, endRow, n);
     }
 
     /**
@@ -1607,6 +1570,8 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
             // Nothing to do
             return;
         }
+        
+        RowShifter rowShifter = new HSSFRowShifter(this);
 
         // Shift comments
         if (moveComments) {
@@ -1614,7 +1579,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
         }
 
         // Shift Merged Regions
-        shiftMerged(startRow, endRow, n);
+        rowShifter.shiftMergedRegions(startRow, endRow, n);
         
         // Shift Row Breaks
         _sheet.getPageSettings().shiftRowBreaks(startRow, endRow, n);

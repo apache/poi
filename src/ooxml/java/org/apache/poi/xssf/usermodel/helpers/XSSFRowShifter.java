@@ -31,8 +31,12 @@ import org.apache.poi.ss.formula.ptg.AreaErrPtg;
 import org.apache.poi.ss.formula.ptg.AreaPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Hyperlink;
+import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.helpers.RowShifter;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
@@ -40,7 +44,6 @@ import org.apache.poi.util.POILogger;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFEvaluationWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFHyperlink;
-import org.apache.poi.xssf.usermodel.XSSFName;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -53,87 +56,37 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellFormulaType;
 
 /**
  * Helper for shifting rows up or down
+ * 
+ * When possible, code should be implemented in the RowShifter abstract class to avoid duplication with {@link org.apache.poi.hssf.usermodel.helpers.HSSFRowShifter}
  */
-public final class XSSFRowShifter {
-    private static POILogger logger = POILogFactory.getLogger(XSSFRowShifter.class);
-    private final XSSFSheet sheet;
+public final class XSSFRowShifter extends RowShifter {
+    private static final POILogger logger = POILogFactory.getLogger(XSSFRowShifter.class);
 
     public XSSFRowShifter(XSSFSheet sh) {
-        sheet = sh;
+        super(sh);
     }
-
+    
     /**
      * Shift merged regions
-     *
+     * 
      * @param startRow the row to start shifting
      * @param endRow   the row to end shifting
      * @param n        the number of rows to shift
-     * @return an array of affected cell regions
-     * 
-     * This should be kept in sync with {@link org.apache.poi.hssf.usermodel.HSSFSheet#shiftMerged(int, int, int)}
+     * @return an array of merged cell regions
+     * @deprecated POI 3.15 beta 2. Use {@link #shiftMergedRegions(int, int, int)} instead.
      */
     public List<CellRangeAddress> shiftMerged(int startRow, int endRow, int n) {
-        List<CellRangeAddress> shiftedRegions = new ArrayList<CellRangeAddress>();
-        Set<Integer> removedIndices = new HashSet<Integer>();
-        //move merged regions completely if they fall within the new region boundaries when they are shifted
-        int size = sheet.getNumMergedRegions();
-        for (int i = 0; i < size; i++) {
-            CellRangeAddress merged = sheet.getMergedRegion(i);
-
-            boolean inStart = (merged.getFirstRow() >= startRow || merged.getLastRow() >= startRow);
-            boolean inEnd = (merged.getFirstRow() <= endRow || merged.getLastRow() <= endRow);
-
-            //don't check if it's not within the shifted area
-            if (!inStart || !inEnd) {
-                continue;
-            }
-
-            //only shift if the region outside the shifted rows is not merged too
-            if (!merged.containsRow(startRow - 1) && !merged.containsRow(endRow + 1)) {
-                merged.setFirstRow(merged.getFirstRow() + n);
-                merged.setLastRow(merged.getLastRow() + n);
-                //have to remove/add it back
-                shiftedRegions.add(merged);
-                removedIndices.add(i);
-            }
-        }
-        
-        if(!removedIndices.isEmpty()) {
-            sheet.removeMergedRegions(removedIndices);
-        }
-
-        //read so it doesn't get shifted again
-        for (CellRangeAddress region : shiftedRegions) {
-            sheet.addMergedRegion(region);
-        }
-        return shiftedRegions;
-    }
-
-    /**
-     * Check if the  row and column are in the specified cell range
-     *
-     * @param cr    the cell range to check in
-     * @param rowIx the row to check
-     * @param colIx the column to check
-     * @return true if the range contains the cell [rowIx,colIx]
-     */
-    private static boolean containsCell(CellRangeAddress cr, int rowIx, int colIx) {
-        if (cr.getFirstRow() <= rowIx && cr.getLastRow() >= rowIx
-                && cr.getFirstColumn() <= colIx && cr.getLastColumn() >= colIx) {
-            return true;
-        }
-        return false;
+        return shiftMergedRegions(startRow, endRow, n);
     }
 
     /**
      * Updated named ranges
      */
-    @SuppressWarnings("resource")
     public void updateNamedRanges(FormulaShifter shifter) {
-        XSSFWorkbook wb = sheet.getWorkbook();
-        XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
+        Workbook wb = sheet.getWorkbook();
+        XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create((XSSFWorkbook) wb);
         for (int i = 0; i < wb.getNumberOfNames(); i++) {
-            XSSFName name = wb.getNameAt(i);
+            Name name = wb.getNameAt(i);
             String formula = name.getRefersToFormula();
             int sheetIndex = name.getSheetIndex();
             final int rowIndex = -1; //don't care, named ranges are not allowed to include structured references
@@ -149,13 +102,12 @@ public final class XSSFRowShifter {
     /**
      * Update formulas.
      */
-    @SuppressWarnings("resource")
     public void updateFormulas(FormulaShifter shifter) {
         //update formulas on the parent sheet
         updateSheetFormulas(sheet, shifter);
 
         //update formulas on other sheets
-        XSSFWorkbook wb = sheet.getWorkbook();
+        Workbook wb = sheet.getWorkbook();
         for (Sheet sh : wb) {
             if (sheet == sh) continue;
             updateSheetFormulas(sh, shifter);
@@ -176,7 +128,8 @@ public final class XSSFRowShifter {
      * @param shifter the formula shifting policy
      */
     @Internal
-    public void updateRowFormulas(XSSFRow row, FormulaShifter shifter) {
+    public void updateRowFormulas(Row row, FormulaShifter shifter) {
+        XSSFSheet sheet = (XSSFSheet) row.getSheet();
         for (Cell c : row) {
             XSSFCell cell = (XSSFCell) c;
 
@@ -190,7 +143,7 @@ public final class XSSFRowShifter {
                         f.setStringValue(shiftedFormula);
                         if(f.getT() == STCellFormulaType.SHARED){
                             int si = (int)f.getSi();
-                            CTCellFormula sf = row.getSheet().getSharedFormula(si);
+                            CTCellFormula sf = sheet.getSharedFormula(si);
                             sf.setStringValue(shiftedFormula);
                         }
                     }
@@ -216,13 +169,12 @@ public final class XSSFRowShifter {
      * @return the shifted formula if the formula was changed,
      *         <code>null</code> if the formula wasn't modified
      */
-    @SuppressWarnings("resource")
-    private static String shiftFormula(XSSFRow row, String formula, FormulaShifter shifter) {
-        XSSFSheet sheet = row.getSheet();
-        XSSFWorkbook wb = sheet.getWorkbook();
+    private static String shiftFormula(Row row, String formula, FormulaShifter shifter) {
+        Sheet sheet = row.getSheet();
+        Workbook wb = sheet.getWorkbook();
         int sheetIndex = wb.getSheetIndex(sheet);
         final int rowIndex = row.getRowNum();
-        XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
+        XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create((XSSFWorkbook) wb);
         
         try {
             Ptg[] ptgs = FormulaParser.parse(formula, fpb, FormulaType.CELL, sheetIndex, rowIndex);
@@ -238,14 +190,14 @@ public final class XSSFRowShifter {
         }
     }
 
-    @SuppressWarnings("resource")
     public void updateConditionalFormatting(FormulaShifter shifter) {
-        XSSFWorkbook wb = sheet.getWorkbook();
+        XSSFSheet xsheet = (XSSFSheet) sheet;
+        XSSFWorkbook wb = xsheet.getWorkbook();
         int sheetIndex = wb.getSheetIndex(sheet);
         final int rowIndex = -1; //don't care, structured references not allowed in conditional formatting
 
         XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
-        CTWorksheet ctWorksheet = sheet.getCTWorksheet();
+        CTWorksheet ctWorksheet = xsheet.getCTWorksheet();
         CTConditionalFormatting[] conditionalFormattingArray = ctWorksheet.getConditionalFormattingArray();
         // iterate backwards due to possible calls to ctWorksheet.removeConditionalFormatting(j)
         for (int j = conditionalFormattingArray.length - 1; j >= 0; j--) {
@@ -307,17 +259,18 @@ public final class XSSFRowShifter {
      */
     public void updateHyperlinks(FormulaShifter shifter) {
         int sheetIndex = sheet.getWorkbook().getSheetIndex(sheet);
-        List<XSSFHyperlink> hyperlinkList = sheet.getHyperlinkList();
+        List<? extends Hyperlink> hyperlinkList = sheet.getHyperlinkList();
         
-        for (XSSFHyperlink hyperlink : hyperlinkList) {
-            String cellRef = hyperlink.getCellRef();
+        for (Hyperlink hyperlink : hyperlinkList) {
+            XSSFHyperlink xhyperlink = (XSSFHyperlink) hyperlink;
+            String cellRef = xhyperlink.getCellRef();
             CellRangeAddress cra = CellRangeAddress.valueOf(cellRef);
             CellRangeAddress shiftedRange = shiftRange(shifter, cra, sheetIndex);
             if (shiftedRange != null && shiftedRange != cra) {
                 // shiftedRange should not be null. If shiftedRange is null, that means
                 // that a hyperlink wasn't deleted at the beginning of shiftRows when
                 // identifying rows that should be removed because they will be overwritten
-                hyperlink.setCellReference(shiftedRange.formatAsString());
+                xhyperlink.setCellReference(shiftedRange.formatAsString());
             }
         }
     }
