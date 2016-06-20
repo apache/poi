@@ -1576,4 +1576,34 @@ public abstract class BaseTestBugzillaIssues {
 
         workbook.close();
     }
+    
+    @Ignore
+    @Test
+    public void test57929() throws IOException {
+        // Create a workbook with print areas on 2 sheets
+        Workbook wb = _testDataProvider.createWorkbook();
+        wb.createSheet("Sheet0");
+        wb.createSheet("Sheet1");
+        wb.setPrintArea(0, "$A$1:$C$6");
+        wb.setPrintArea(1, "$B$1:$C$5");
+        
+        // Verify the print areas were set correctly
+        assertEquals("Sheet0!$A$1:$C$6", wb.getPrintArea(0));
+        assertEquals("Sheet1!$B$1:$C$5", wb.getPrintArea(1));
+        
+        // Remove the print area on Sheet0 and change the print area on Sheet1
+        wb.removePrintArea(0);
+        wb.setPrintArea(1, "$A$1:$A$1");
+        
+        // Verify that the changes were made
+        assertNull("Sheet0 before write", wb.getPrintArea(0));
+        assertEquals("Sheet1 before write", "Sheet1!$A$1:$A$1", wb.getPrintArea(1));
+        
+        // Verify that the changes are non-volatile
+        Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb);
+        wb.close();
+        
+        assertNull("Sheet0 after write", wb2.getPrintArea(0)); // CURRENTLY FAILS with "Sheet0!$A$1:$C$6"
+        assertEquals("Sheet1 after write", "Sheet1!$A$1:$A$1", wb2.getPrintArea(1));
+    }
 }
