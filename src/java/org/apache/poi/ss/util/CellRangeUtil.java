@@ -20,6 +20,11 @@ package org.apache.poi.ss.util;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Utility class that builds on {@link CellRangeAddress}
+ * 
+ * Portions of this class may be moved to {@link CellRangeAddressBase}
+ */
 public final class CellRangeUtil {
     private CellRangeUtil() {
         // no instance of this class
@@ -33,15 +38,18 @@ public final class CellRangeUtil {
     public static final int ENCLOSES = 4;
 
     /**
-     * Intersect this range with the specified range.
+     * Get the type of intersection between two cell ranges
      * 
      * @param crB - the specified range
      * @return code which reflects how the specified range is related to this range.<br/>
-     * Possible return codes are:	
-     * 		NO_INTERSECTION - the specified range is outside of this range;<br/> 
-     * 		OVERLAP - both ranges partially overlap;<br/>
-     * 		INSIDE - the specified range is inside of this one<br/>
-     * 		ENCLOSES - the specified range encloses (possibly exactly the same as) this range<br/>
+     * Possible return codes are:
+     * <ul>
+     *     <li>{@link #NO_INTERSECTION} - the specified range is outside of this range;</li> 
+     *     <li>{@link #OVERLAP} - both ranges partially overlap</li>
+     *     <li>{@link #INSIDE} - the specified range is inside of this one</li>
+     *     <li>{@link #ENCLOSES} - the specified range encloses (possibly exactly the same as) this range</li>
+     * </ul>
+     * @see CellRangeAddressBase#intersects(CellRangeAddressBase)
      */
     public static int intersect(CellRangeAddress crA, CellRangeAddress crB )
     {
@@ -73,22 +81,20 @@ public final class CellRangeUtil {
     }
 
     /**
-     * Do all possible cell merges between cells of the list so that:<br>
-     * 	<li>if a cell range is completely inside of another cell range, it gets removed from the list 
-     * 	<li>if two cells have a shared border, merge them into one bigger cell range
-     * @param cellRanges
-     * @return updated List of cell ranges
+     * Do all possible cell merges between cells of the list so that:<br/>
+     * <ul>
+     *   <li>if a cell range is completely inside of another cell range, it gets removed from the list</li>
+     *   <li>if two cells have a shared border, merge them into one bigger cell range</li>
+     * </ul>
+     * @param cellRanges the ranges to merge
+     * @return list of merged cell ranges
      */
     public static CellRangeAddress[] mergeCellRanges(CellRangeAddress[] cellRanges) {
         if(cellRanges.length < 1) {
-            return cellRanges;
+            return new CellRangeAddress[] {};
         }
-
-        List<CellRangeAddress> lst = new ArrayList<CellRangeAddress>();
-        for(CellRangeAddress cr : cellRanges) {
-            lst.add(cr);
-        }
-        List<CellRangeAddress> temp = mergeCellRanges(lst);
+        List<CellRangeAddress> list = toList(cellRanges);
+        List<CellRangeAddress> temp = mergeCellRanges(list);
         return toArray(temp);
     }
 
@@ -164,21 +170,29 @@ public final class CellRangeUtil {
         temp.toArray(result);
         return result;
     }
+    private static List<CellRangeAddress> toList(CellRangeAddress[] temp) {
+        List<CellRangeAddress> result = new ArrayList<CellRangeAddress>(temp.length);
+        for (CellRangeAddress range : temp) {
+            result.add(range);
+        }
+        return result;
+    }
 
     /**
-     *  Check if the specified range is located inside of this cell range.
-     *  
-     * @param crB
-     * @return true if this cell range contains the argument range inside if it's area
+     * Check if cell range A contains cell range B (B <= A)
+     * 
+     * TODO: move this into {@link CellRangeAddressBase}
+     * 
+     * @param crA cell range A
+     * @param crB cell range B
+     * @return true if cell range A contains cell range B
      */
     public static boolean contains(CellRangeAddress crA, CellRangeAddress crB)
     {
-        int firstRow = crB.getFirstRow();
-        int lastRow = crB.getLastRow();
-        int firstCol = crB.getFirstColumn();
-        int lastCol = crB.getLastColumn();
-        return le(crA.getFirstRow(), firstRow) && ge(crA.getLastRow(), lastRow)
-                && le(crA.getFirstColumn(), firstCol) && ge(crA.getLastColumn(), lastCol);
+        return le(crA.getFirstRow(), crB.getFirstRow()) &&
+                ge(crA.getLastRow(), crB.getLastRow()) &&
+                le(crA.getFirstColumn(), crB.getFirstColumn()) &&
+                ge(crA.getLastColumn(), crB.getLastColumn());
     }
 
     /**
@@ -218,13 +232,13 @@ public final class CellRangeUtil {
         if( crB == null) {
             return crA.copy();
         }
+        
+        int minRow = lt(crB.getFirstRow(),   crA.getFirstRow())   ?crB.getFirstRow()   :crA.getFirstRow();
+        int maxRow = gt(crB.getLastRow(),    crA.getLastRow())    ?crB.getLastRow()    :crA.getLastRow();
+        int minCol = lt(crB.getFirstColumn(),crA.getFirstColumn())?crB.getFirstColumn():crA.getFirstColumn();
+        int maxCol = gt(crB.getLastColumn(), crA.getLastColumn()) ?crB.getLastColumn() :crA.getLastColumn();
 
-        return new CellRangeAddress(
-                lt(crB.getFirstRow(),   crA.getFirstRow())   ?crB.getFirstRow()   :crA.getFirstRow(),
-                gt(crB.getLastRow(),    crA.getLastRow())    ?crB.getLastRow()    :crA.getLastRow(),
-                lt(crB.getFirstColumn(),crA.getFirstColumn())?crB.getFirstColumn():crA.getFirstColumn(),
-                gt(crB.getLastColumn(), crA.getLastColumn()) ?crB.getLastColumn() :crA.getLastColumn()
-        );
+        return new CellRangeAddress(minRow, maxRow, minCol, maxCol);
     }
 
     /**
