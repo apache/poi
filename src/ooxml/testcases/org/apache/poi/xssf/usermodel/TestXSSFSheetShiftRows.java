@@ -34,6 +34,7 @@ import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
@@ -365,5 +366,34 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
         assertNotNull("Comment in (2,2) should have moved as well because of shift rows. But its not", comment2);
         
         wb.close();
+    }
+    
+    @Ignore
+    @Test
+    public void bug59733() throws IOException {
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("mySheet");
+        for (int r=0; r<=4; r++) {
+            Row row = sheet.createRow(r);
+            row.createCell(r*2+0);
+            row.createCell(r*2+1);
+        }
+
+        // Shift the 2nd row on top of the 0th row
+        sheet.shiftRows(2, 2, -2);
+        
+        /*
+         * The following error is thrown when shifting the 3rd row on top of the 0th row
+        org.apache.xmlbeans.impl.values.XmlValueDisconnectedException
+            at org.apache.xmlbeans.impl.values.XmlObjectBase.check_orphaned(XmlObjectBase.java:1258)
+            at org.openxmlformats.schemas.spreadsheetml.x2006.main.impl.CTRowImpl.getR(Unknown Source)
+            at org.apache.poi.xssf.usermodel.XSSFRow.getRowNum(XSSFRow.java:363)
+            at org.apache.poi.xssf.usermodel.XSSFSheet.shiftRows(XSSFSheet.java:2926)
+            at org.apache.poi.xssf.usermodel.XSSFSheet.shiftRows(XSSFSheet.java:2901)
+            at org.apache.poi.xssf.usermodel.TestXSSFSheetShiftRows.bug59733(TestXSSFSheetShiftRows.java:393)
+         */
+        sheet.shiftRows(3, 3, -3);
+        
+        workbook.close();
     }
 }
