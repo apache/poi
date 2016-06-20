@@ -123,7 +123,7 @@ public abstract class BaseTestSheetShiftRows {
     @Test
     public final void testShiftRow() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
-        Sheet s	= wb.createSheet();
+        Sheet s = wb.createSheet();
         s.createRow(0).createCell(0).setCellValue("TEST1");
         s.createRow(3).createCell(0).setCellValue("TEST2");
         s.shiftRows(0,4,1);
@@ -136,7 +136,7 @@ public abstract class BaseTestSheetShiftRows {
     @Test
     public final void testActiveCell() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
-        Sheet s	= wb.createSheet();
+        Sheet s = wb.createSheet();
 
         s.createRow(0).createCell(0).setCellValue("TEST1");
         s.createRow(3).createCell(0).setCellValue("TEST2");
@@ -150,7 +150,7 @@ public abstract class BaseTestSheetShiftRows {
     @Test
     public void testShiftRowBreaks() throws IOException { // TODO - enable XSSF test
         Workbook wb = _testDataProvider.createWorkbook();
-        Sheet s	= wb.createSheet();
+        Sheet s = wb.createSheet();
         Row row = s.createRow(4);
         row.createCell(0).setCellValue("test");
         s.setRowBreak(4);
@@ -228,13 +228,13 @@ public abstract class BaseTestSheetShiftRows {
         // TODO: it seems HSSFSheet does not correctly remove comments from rows that are overwritten
         // by shifting rows...
         if(!(wb2 instanceof HSSFWorkbook)) {
-        	assertEquals(2, sheet.getLastRowNum());
-        	
-        	// Verify comments are in the position expected
-        	assertNull("Had: " + (sheet.getCellComment(new CellAddress(0,0)) == null ? "null" : sheet.getCellComment(new CellAddress(0,0)).getString()),
-        			sheet.getCellComment(new CellAddress(0,0)));
-        	assertNotNull(sheet.getCellComment(new CellAddress(1,0)));
-        	assertNotNull(sheet.getCellComment(new CellAddress(2,0)));
+            assertEquals(2, sheet.getLastRowNum());
+            
+            // Verify comments are in the position expected
+            assertNull("Had: " + (sheet.getCellComment(new CellAddress(0,0)) == null ? "null" : sheet.getCellComment(new CellAddress(0,0)).getString()),
+                    sheet.getCellComment(new CellAddress(0,0)));
+            assertNotNull(sheet.getCellComment(new CellAddress(1,0)));
+            assertNotNull(sheet.getCellComment(new CellAddress(2,0)));
         }
 
         comment1 = sheet.getCellComment(new CellAddress(1,0)).getString().getString();
@@ -293,7 +293,7 @@ public abstract class BaseTestSheetShiftRows {
     @Test
     public final void testShiftWithMergedRegions() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
-        Sheet sheet	= wb.createSheet();
+        Sheet sheet = wb.createSheet();
         Row row = sheet.createRow(0);
         row.createCell(0).setCellValue(1.1);
         row.createCell(1).setCellValue(2.2);
@@ -481,7 +481,7 @@ public abstract class BaseTestSheetShiftRows {
     }
 
     @Test
-	public void testBug55280() throws IOException {
+    public void testBug55280() throws IOException {
         Workbook w = _testDataProvider.createWorkbook();
         Sheet s = w.createSheet();
         for (int row = 0; row < 5000; ++row)
@@ -489,7 +489,7 @@ public abstract class BaseTestSheetShiftRows {
 
         s.shiftRows(0, 4999, 1);        // takes a long time...
         w.close();
-	}
+    }
 
     @Test
     public void test47169() throws IOException {
