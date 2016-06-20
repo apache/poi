@@ -1484,6 +1484,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      * @param startRow the start-index of the rows to shift, zero-based
      * @param endRow the end-index of the rows to shift, zero-based
      * @param n how far to shift, negative to shift up
+     * This should be kept in sync with {@link org.apache.poi.xssf.usermodel.helpers.XSSFRowShifter#shiftMerged(int, int, int)}
      */
     private void shiftMerged(int startRow, int endRow, int n) {
         List<CellRangeAddress> shiftedRegions = new ArrayList<CellRangeAddress>();

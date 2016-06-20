@@ -69,6 +69,8 @@ public final class XSSFRowShifter {
      * @param endRow   the row to end shifting
      * @param n        the number of rows to shift
      * @return an array of affected cell regions
+     * 
+     * This should be kept in sync with {@link org.apache.poi.hssf.usermodel.HSSFSheet#shiftMerged(int, int, int)}
      */
     public List<CellRangeAddress> shiftMerged(int startRow, int endRow, int n) {
         List<CellRangeAddress> shiftedRegions = new ArrayList<CellRangeAddress>();
@@ -87,7 +89,7 @@ public final class XSSFRowShifter {
             }
 
             //only shift if the region outside the shifted rows is not merged too
-            if (!containsCell(merged, startRow - 1, 0) && !containsCell(merged, endRow + 1, 0)) {
+            if (!merged.containsRow(startRow - 1) && !merged.containsRow(endRow + 1)) {
                 merged.setFirstRow(merged.getFirstRow() + n);
                 merged.setLastRow(merged.getLastRow() + n);
                 //have to remove/add it back
