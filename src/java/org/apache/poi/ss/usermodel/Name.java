@@ -55,7 +55,7 @@ public interface Name {
     /**
      * Get the sheets name which this named range is referenced to
      *
-     * @return sheet name, which this named range refered to
+     * @return sheet name, which this named range referred to
      */
     String getSheetName();
 

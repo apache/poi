@@ -17,6 +17,8 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import java.util.regex.Pattern;
+
 import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.model.InternalWorkbook;
 import org.apache.poi.hssf.record.NameCommentRecord;
@@ -30,6 +32,11 @@ import org.apache.poi.ss.usermodel.Name;
  * 'named range' or name of a user defined function.
  */
 public final class HSSFName implements Name {
+    private static final Pattern isValidName = Pattern.compile(
+            "[\\p{IsAlphabetic}_\\\\]" +
+            "[\\p{IsAlphabetic}0-9_.\\\\]*",
+            Pattern.CASE_INSENSITIVE);
+    
     private HSSFWorkbook _book;
     private NameRecord _definedNameRec;
     private NameCommentRecord _commentRec;
@@ -155,10 +162,8 @@ public final class HSSFName implements Name {
 
     private static void validateName(String name){
         if(name.length() == 0)  throw new IllegalArgumentException("Name cannot be blank");
-
-        char c = name.charAt(0);
-        if(!(c == '_' || Character.isLetter(c)) || name.indexOf(' ') != -1) {
-            throw new IllegalArgumentException("Invalid name: '"+name+"'; Names must begin with a letter or underscore and not contain spaces");
+        if(!isValidName.matcher(name).matches()) {
+            throw new IllegalArgumentException("Invalid name: '"+name+"'");
         }
     }
 
