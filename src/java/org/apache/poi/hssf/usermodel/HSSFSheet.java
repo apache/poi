@@ -931,7 +931,8 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
     @Override
     public List<CellRangeAddress> getMergedRegions() {
         List<CellRangeAddress> addresses = new ArrayList<CellRangeAddress>();
-        for (int i=0; i < _sheet.getNumMergedRegions(); i++) {
+        int count = _sheet.getNumMergedRegions();
+        for (int i=0; i < count; i++) {
             addresses.add(_sheet.getMergedRegionAt(i));
         }
         return addresses;
@@ -1463,18 +1464,28 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
         _sheet.setTopRow(toprow);
         _sheet.setLeftCol(leftcol);
     }
-
+    
     /**
-     * Shifts the merged regions left or right depending on mode
-     * <p/>
-     * TODO: MODE , this is only row specific
-     *
+     * Shifts, grows, or shrinks the merged regions due to a row shift
+     * 
      * @param startRow the start-index of the rows to shift, zero-based
      * @param endRow the end-index of the rows to shift, zero-based
      * @param n how far to shift, negative to shift up
      * @param isRow unused, kept for backwards compatibility
+     * @deprecated POI 3.15 beta 2. This will be made private in future releases.
      */
     protected void shiftMerged(int startRow, int endRow, int n, boolean isRow) {
+        shiftMerged(startRow, endRow, n);
+    }
+
+    /**
+     * Shifts, grows, or shrinks the merged regions due to a row shift
+     *  
+     * @param startRow the start-index of the rows to shift, zero-based
+     * @param endRow the end-index of the rows to shift, zero-based
+     * @param n how far to shift, negative to shift up
+     */
+    private void shiftMerged(int startRow, int endRow, int n) {
         List<CellRangeAddress> shiftedRegions = new ArrayList<CellRangeAddress>();
         //move merged regions completely if they fall within the new region boundaries when they are shifted
         for (int i = 0; i < getNumMergedRegions(); i++) {
@@ -1489,8 +1500,8 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
             }
 
             //only shift if the region outside the shifted rows is not merged too
-            if (!SheetUtil.containsCell(merged, startRow - 1, 0) &&
-                    !SheetUtil.containsCell(merged, endRow + 1, 0)) {
+            if (!merged.containsRow(startRow - 1) &&
+                    !merged.containsRow(endRow + 1)) {
                 merged.setFirstRow(merged.getFirstRow() + n);
                 merged.setLastRow(merged.getLastRow() + n);
                 //have to remove/add it back
@@ -1589,7 +1600,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
         }
 
         // Shift Merged Regions
-        shiftMerged(startRow, endRow, n, true);
+        shiftMerged(startRow, endRow, n);
         
         // Shift Row Breaks
         _sheet.getPageSettings().shiftRowBreaks(startRow, endRow, n);
