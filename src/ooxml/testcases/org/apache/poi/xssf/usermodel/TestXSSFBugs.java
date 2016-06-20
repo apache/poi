@@ -3072,7 +3072,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     public void test57523() {
         Workbook wb = XSSFTestDataSamples.openSampleWorkbook("57523.xlsx");
         Sheet sheet = wb.getSheet("Attribute Master");
-        Row row = sheet.getRow(16);
+        Row row = sheet.getRow(15);
 
         int N = CellReference.convertColStringToIndex("N");
         Cell N16 = row.getCell(N);
