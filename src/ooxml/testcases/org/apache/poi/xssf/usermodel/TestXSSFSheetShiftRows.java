@@ -372,11 +372,9 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
     @Test
     public void bug59733() throws IOException {
         Workbook workbook = new XSSFWorkbook();
-        Sheet sheet = workbook.createSheet("mySheet");
+        Sheet sheet = workbook.createSheet();
         for (int r=0; r<=4; r++) {
-            Row row = sheet.createRow(r);
-            row.createCell(r*2+0);
-            row.createCell(r*2+1);
+            sheet.createRow(r);
         }
 
         // Shift the 2nd row on top of the 0th row
@@ -384,6 +382,8 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
         
         /*
          * The following error is thrown when shifting the 3rd row on top of the 0th row
+         * If the rows are not created, the error does not occur
+
         org.apache.xmlbeans.impl.values.XmlValueDisconnectedException
             at org.apache.xmlbeans.impl.values.XmlObjectBase.check_orphaned(XmlObjectBase.java:1258)
             at org.openxmlformats.schemas.spreadsheetml.x2006.main.impl.CTRowImpl.getR(Unknown Source)
