@@ -51,12 +51,9 @@ public final class CellRangeUtil {
         int firstCol = crB.getFirstColumn();
         int lastCol  = crB.getLastColumn();
 
-        if
-        ( 
-				gt(crA.getFirstRow(),lastRow) || 
-				lt(crA.getLastRow(),firstRow) ||
-				gt(crA.getFirstColumn(),lastCol) || 
-				lt(crA.getLastColumn(),firstCol) 
+        if ( 
+            gt(crA.getFirstRow(),    lastRow) || lt(crA.getLastRow(),    firstRow) ||
+            gt(crA.getFirstColumn(), lastCol) || lt(crA.getLastColumn(), firstCol) 
         )
         {
             return NO_INTERSECTION;
@@ -140,27 +137,27 @@ public final class CellRangeUtil {
         int x = intersect(range1, range2);
         switch(x)
         {
-			case CellRangeUtil.NO_INTERSECTION: 
-			    // nothing in common: at most they could be adjacent to each other and thus form a single bigger area  
-				if(hasExactSharedBorder(range1, range2)) {
-					return new CellRangeAddress[] { createEnclosingCellRange(range1, range2), };
-				}
-				// else - No intersection and no shared border: do nothing 
-				return null;
-			case CellRangeUtil.OVERLAP:
-			    // commented out the cells overlap implementation, it caused endless loops, see Bug 55380
-			    // disabled for now, the algorithm will not detect some border cases this way currently!
-				//return resolveRangeOverlap(range1, range2);
-			    return null;
-			case CellRangeUtil.INSIDE:
-				// Remove range2, since it is completely inside of range1
-				return new CellRangeAddress[] { range1 };
-			case CellRangeUtil.ENCLOSES:
-				// range2 encloses range1, so replace it with the enclosing one
-				return new CellRangeAddress[] { range2 };
-		}
-		throw new RuntimeException("unexpected intersection result (" + x + ")");
-	}
+            case CellRangeUtil.NO_INTERSECTION: 
+                // nothing in common: at most they could be adjacent to each other and thus form a single bigger area  
+                if(hasExactSharedBorder(range1, range2)) {
+                    return new CellRangeAddress[] { createEnclosingCellRange(range1, range2), };
+                }
+                // else - No intersection and no shared border: do nothing 
+                return null;
+            case CellRangeUtil.OVERLAP:
+                // commented out the cells overlap implementation, it caused endless loops, see Bug 55380
+                // disabled for now, the algorithm will not detect some border cases this way currently!
+                //return resolveRangeOverlap(range1, range2);
+                return null;
+            case CellRangeUtil.INSIDE:
+                // Remove range2, since it is completely inside of range1
+                return new CellRangeAddress[] { range1 };
+            case CellRangeUtil.ENCLOSES:
+                // range2 encloses range1, so replace it with the enclosing one
+                return new CellRangeAddress[] { range2 };
+        }
+        throw new RuntimeException("unexpected intersection result (" + x + ")");
+    }
 
     private static CellRangeAddress[] toArray(List<CellRangeAddress> temp) {
         CellRangeAddress[] result = new CellRangeAddress[temp.size()];
@@ -223,10 +220,10 @@ public final class CellRangeUtil {
         }
 
         return new CellRangeAddress(
-                   lt(crB.getFirstRow(),   crA.getFirstRow())   ?crB.getFirstRow()   :crA.getFirstRow(),
-                   gt(crB.getLastRow(),    crA.getLastRow())    ?crB.getLastRow()    :crA.getLastRow(),
-                   lt(crB.getFirstColumn(),crA.getFirstColumn())?crB.getFirstColumn():crA.getFirstColumn(),
-                   gt(crB.getLastColumn(), crA.getLastColumn()) ?crB.getLastColumn() :crA.getLastColumn()
+                lt(crB.getFirstRow(),   crA.getFirstRow())   ?crB.getFirstRow()   :crA.getFirstRow(),
+                gt(crB.getLastRow(),    crA.getLastRow())    ?crB.getLastRow()    :crA.getLastRow(),
+                lt(crB.getFirstColumn(),crA.getFirstColumn())?crB.getFirstColumn():crA.getFirstColumn(),
+                gt(crB.getLastColumn(), crA.getLastColumn()) ?crB.getLastColumn() :crA.getLastColumn()
         );
     }
 
