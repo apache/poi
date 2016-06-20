@@ -19,10 +19,12 @@ package org.apache.poi.hssf.usermodel;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.hssf.model.DrawingManager2;
@@ -901,10 +903,21 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      *
      * @param index of the region to unmerge
      */
-
     @Override
     public void removeMergedRegion(int index) {
         _sheet.removeMergedRegion(index);
+    }
+    
+    /**
+     * Removes a number of merged regions of cells (hence letting them free)
+     *
+     * @param indices A set of the regions to unmerge
+     */
+    @Override
+    public void removeMergedRegions(Collection<Integer> indices) {
+        for (int i : (new TreeSet<Integer>(indices)).descendingSet()) {
+            _sheet.removeMergedRegion(i);
+        }
     }
 
     /**
