@@ -60,7 +60,7 @@ public interface IconMultiStateFormatting {
         protected static final IconSet DEFAULT_ICONSET = IconSet.GYR_3_TRAFFIC_LIGHTS;
         
         /** Numeric ID of the icon set */
-        public int id;
+        public final int id;
         /** How many icons in the set */
         public final int num;
         /** Name (system) of the set */

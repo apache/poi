@@ -221,16 +221,17 @@ public final class HWPFDocument extends HWPFDocumentCore
     _fib.fillVariableFields(_mainStream, _tableStream);
 
     // read in the data stream.
-    try
-    {
-      DocumentEntry dataProps =
-          (DocumentEntry)directory.getEntry(STREAM_DATA);
-      _dataStream = new byte[dataProps.getSize()];
-      directory.createDocumentInputStream(STREAM_DATA).read(_dataStream);
-    }
-    catch(java.io.FileNotFoundException e)
-    {
+    InputStream dis = null;
+    try {
+      DocumentEntry dataProps = (DocumentEntry)directory.getEntry(STREAM_DATA);
+      dis = directory.createDocumentInputStream(STREAM_DATA);
+      _dataStream = IOUtils.toByteArray(dis, dataProps.getSize());
+    } catch(IOException e) {
         _dataStream = new byte[0];
+    } finally {
+        if (dis != null) {
+            dis.close();
+        }
     }
 
     // Get the cp of the start of text in the main stream
