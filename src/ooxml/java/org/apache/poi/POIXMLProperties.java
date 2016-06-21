@@ -19,17 +19,20 @@ package org.apache.poi;
 import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Date;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
+import org.apache.poi.openxml4j.opc.ContentTypes;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
 import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
+import org.apache.poi.openxml4j.opc.StreamHelper;
 import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
 import org.apache.poi.openxml4j.util.Nullable;
@@ -37,8 +40,9 @@ import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.officeDocument.x2006.customProperties.CTProperty;
 
 /**
- * Wrapper around the two different kinds of OOXML properties
- *  a document can have
+ * Wrapper around the three different kinds of OOXML properties
+ *  and metadata a document can have (Core, Extended and Custom), 
+ *  as well Thumbnails.
  */
 public class POIXMLProperties {
 	private OPCPackage pkg;
@@ -120,6 +124,69 @@ public class POIXMLProperties {
 	 */
 	public CustomProperties getCustomProperties() {
 		return cust;
+	}
+	
+	/**
+	 * Returns the {@link PackagePart} for the Document
+	 *  Thumbnail, or <code>null</code> if there isn't one
+	 *
+	 * @return The Document Thumbnail part or null
+	 */
+	protected PackagePart getThumbnailPart() {
+        PackageRelationshipCollection rels =
+                pkg.getRelationshipsByType(PackageRelationshipTypes.THUMBNAIL);
+        if(rels.size() == 1) {
+            return pkg.getPart(rels.getRelationship(0));
+        }
+        return null;
+	}
+	/**
+	 * Returns the name of the Document thumbnail, eg 
+	 *  <code>thumbnail.jpeg</code>, or <code>null</code> if there
+	 *  isn't one.
+	 *
+	 * @return The thumbnail filename, or null
+	 */
+	public String getThumbnailFilename() {
+	    PackagePart tPart = getThumbnailPart();
+	    if (tPart == null) return null;
+	    String name = tPart.getPartName().getName();
+	    return name.substring(name.lastIndexOf('/'));
+	}
+    /**
+     * Returns the Document thumbnail image data, or
+     *  <code>null</code> if there isn't one.
+     *
+     * @return The thumbnail data, or null
+     */
+    public InputStream getThumbnailImage() throws IOException {
+        PackagePart tPart = getThumbnailPart();
+        if (tPart == null) return null;
+        return tPart.getInputStream();
+    }
+	
+	/**
+	 * Sets the Thumbnail for the document, replacing any existing
+	 *  one.
+	 *
+	 * @param name The filename for the thumbnail image, eg <code>thumbnail.jpg</code>
+	 * @param imageData The inputstream to read the thumbnail image from
+	 */
+	public void setThumbnail(String filename, InputStream imageData) throws IOException {
+        PackagePart tPart = getThumbnailPart();
+        if (tPart == null) {
+            // New thumbnail
+            pkg.addThumbnail(filename, imageData);
+        } else {
+            // Change existing
+            String newType = ContentTypes.getContentTypeFromFileExtension(filename); 
+            if (! newType.equals(tPart.getContentType())) {
+                throw new IllegalArgumentException("Can't set a Thumbnail of type " + 
+                               newType + " when existing one is of a different type " +
+                               tPart.getContentType());
+            }
+            StreamHelper.copyStream(imageData, tPart.getOutputStream());
+        }
 	}
 
 	/**

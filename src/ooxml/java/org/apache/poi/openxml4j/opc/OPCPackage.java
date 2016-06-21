@@ -474,18 +474,31 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 	 * the addition of a thumbnail in a package. You can do the same work by
 	 * using the traditionnal relationship and part mechanism.
 	 *
-	 * @param path
-	 *            The full path to the image file.
+	 * @param path The full path to the image file.
 	 */
 	public void addThumbnail(String path) throws IOException {
+        // Check parameter
+        if (path == null || path.isEmpty()) {
+            throw new IllegalArgumentException("path");
+        }
+        String name = path.substring(path.lastIndexOf(File.separatorChar) + 1);
+        
+        FileInputStream is = new FileInputStream(path);
+        addThumbnail(name, is);
+        is.close();
+	}
+    /**
+     * Add a thumbnail to the package. This method is provided to make easier
+     * the addition of a thumbnail in a package. You can do the same work by
+     * using the traditionnal relationship and part mechanism.
+     *
+     * @param path The full path to the image file.
+     */
+    public void addThumbnail(String filename, InputStream data) throws IOException {
 		// Check parameter
-		if ("".equals(path)) {
-			throw new IllegalArgumentException("path");
+        if (filename == null || filename.isEmpty()) {
+			throw new IllegalArgumentException("filename");
 		}
-
-		// Get the filename from the path
-		String filename = path
-				.substring(path.lastIndexOf(File.separatorChar) + 1);
 
 		// Create the thumbnail part name
 		String contentType = ContentTypes
@@ -495,10 +508,10 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 			thumbnailPartName = PackagingURIHelper.createPartName("/docProps/"
 					+ filename);
 		} catch (InvalidFormatException e) {
+		    String partName = "/docProps/thumbnail" +
+                         filename.substring(filename.lastIndexOf(".") + 1);
 			try {
-				thumbnailPartName = PackagingURIHelper
-						.createPartName("/docProps/thumbnail"
-								+ path.substring(path.lastIndexOf(".") + 1));
+				thumbnailPartName = PackagingURIHelper.createPartName(partName);
 			} catch (InvalidFormatException e2) {
 				throw new InvalidOperationException(
 						"Can't add a thumbnail file named '" + filename + "'", e2);
@@ -519,10 +532,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 				PackageRelationshipTypes.THUMBNAIL);
 
 		// Copy file data to the newly created part
-		FileInputStream is = new FileInputStream(path);
-		StreamHelper.copyStream(is, thumbnailPart
-				.getOutputStream());
-		is.close();
+		StreamHelper.copyStream(data, thumbnailPart.getOutputStream());
 	}
 
 	/**

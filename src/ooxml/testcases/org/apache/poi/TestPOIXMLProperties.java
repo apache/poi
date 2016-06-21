@@ -19,9 +19,11 @@ package org.apache.poi;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
@@ -42,12 +44,16 @@ import org.junit.Test;
  */
 public final class TestPOIXMLProperties {
     private XWPFDocument sampleDoc;
+    private XWPFDocument sampleNoThumb;
 	private POIXMLProperties _props;
 	private CoreProperties _coreProperties;
 
 	@Before
 	public void setUp() throws IOException {
 		sampleDoc = XWPFTestDataSamples.openSampleDocument("documentProperties.docx");
+		sampleNoThumb = XWPFTestDataSamples.openSampleDocument("SampleDoc.docx");
+        assertNotNull(sampleDoc);
+        assertNotNull(sampleNoThumb);
 		_props = sampleDoc.getProperties();
 		_coreProperties = _props.getCoreProperties();
 		assertNotNull(_props);
@@ -56,6 +62,7 @@ public final class TestPOIXMLProperties {
 	@After
 	public void closeResources() throws Exception {
 	    sampleDoc.close();
+	    sampleNoThumb.close();
 	}
 
 	@Test
@@ -214,6 +221,35 @@ public final class TestPOIXMLProperties {
 		
         return utcString.equals(dateTimeUtcString);
     }
+	
+	public void testThumbnails() throws Exception {
+	    POIXMLProperties noThumbProps = sampleNoThumb.getProperties();
+	    
+	    assertNotNull(_props.getThumbnailPart());
+	    assertNull(noThumbProps.getThumbnailPart());
+        
+        assertNotNull(_props.getThumbnailFilename());
+        assertNull(noThumbProps.getThumbnailFilename());
+        
+        assertNotNull(_props.getThumbnailImage());
+        assertNull(noThumbProps.getThumbnailImage());
+        
+        assertEquals("thumbnail.jpeg", _props.getThumbnailFilename());
+        
+        
+        // Adding / changing
+        noThumbProps.setThumbnail("Testing.png", new ByteArrayInputStream(new byte[1]));
+        assertNotNull(noThumbProps.getThumbnailPart());
+        assertEquals("Testing.png", noThumbProps.getThumbnailFilename());
+        assertNotNull(noThumbProps.getThumbnailImage());
+        assertEquals(1, noThumbProps.getThumbnailImage().available());
+        
+        noThumbProps.setThumbnail("Testing2.png", new ByteArrayInputStream(new byte[2]));
+        assertNotNull(noThumbProps.getThumbnailPart());
+        assertEquals("Testing.png", noThumbProps.getThumbnailFilename());
+        assertNotNull(noThumbProps.getThumbnailImage());
+        assertEquals(2, noThumbProps.getThumbnailImage().available());
+	}
 
 	private static String zeroPad(long i) {
         if (i >= 0 && i <=9) {
