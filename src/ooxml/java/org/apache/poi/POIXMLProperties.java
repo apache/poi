@@ -45,114 +45,114 @@ import org.openxmlformats.schemas.officeDocument.x2006.customProperties.CTProper
  *  as well Thumbnails.
  */
 public class POIXMLProperties {
-	private OPCPackage pkg;
-	private CoreProperties core;
-	private ExtendedProperties ext;
-	private CustomProperties cust;
+    private OPCPackage pkg;
+    private CoreProperties core;
+    private ExtendedProperties ext;
+    private CustomProperties cust;
 
-	private PackagePart extPart;
-	private PackagePart custPart;
+    private PackagePart extPart;
+    private PackagePart custPart;
 
 
-	private static final org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.PropertiesDocument NEW_EXT_INSTANCE;
-	private static final org.openxmlformats.schemas.officeDocument.x2006.customProperties.PropertiesDocument NEW_CUST_INSTANCE;
-	static {
-		NEW_EXT_INSTANCE = org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.PropertiesDocument.Factory.newInstance();
-		NEW_EXT_INSTANCE.addNewProperties();
+    private static final org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.PropertiesDocument NEW_EXT_INSTANCE;
+    private static final org.openxmlformats.schemas.officeDocument.x2006.customProperties.PropertiesDocument NEW_CUST_INSTANCE;
+    static {
+        NEW_EXT_INSTANCE = org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.PropertiesDocument.Factory.newInstance();
+        NEW_EXT_INSTANCE.addNewProperties();
 
-		NEW_CUST_INSTANCE = org.openxmlformats.schemas.officeDocument.x2006.customProperties.PropertiesDocument.Factory.newInstance();
-		NEW_CUST_INSTANCE.addNewProperties();
-	}
+        NEW_CUST_INSTANCE = org.openxmlformats.schemas.officeDocument.x2006.customProperties.PropertiesDocument.Factory.newInstance();
+        NEW_CUST_INSTANCE.addNewProperties();
+    }
 
-	public POIXMLProperties(OPCPackage docPackage) throws IOException, OpenXML4JException, XmlException {
-		this.pkg = docPackage;
+    public POIXMLProperties(OPCPackage docPackage) throws IOException, OpenXML4JException, XmlException {
+        this.pkg = docPackage;
 
-		// Core properties
-		core = new CoreProperties((PackagePropertiesPart)pkg.getPackageProperties() );
+        // Core properties
+        core = new CoreProperties((PackagePropertiesPart)pkg.getPackageProperties() );
 
-		// Extended properties
-		PackageRelationshipCollection extRel =
-			pkg.getRelationshipsByType(PackageRelationshipTypes.EXTENDED_PROPERTIES);
-		if(extRel.size() == 1) {
-			extPart = pkg.getPart( extRel.getRelationship(0));
-			org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.PropertiesDocument props = org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.PropertiesDocument.Factory.parse(
-				 extPart.getInputStream(), DEFAULT_XML_OPTIONS
-			);
-			ext = new ExtendedProperties(props);
-		} else {
-			extPart = null;
-			ext = new ExtendedProperties((org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.PropertiesDocument)NEW_EXT_INSTANCE.copy());
-		}
+        // Extended properties
+        PackageRelationshipCollection extRel =
+                pkg.getRelationshipsByType(PackageRelationshipTypes.EXTENDED_PROPERTIES);
+        if(extRel.size() == 1) {
+            extPart = pkg.getPart( extRel.getRelationship(0));
+            org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.PropertiesDocument props = org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.PropertiesDocument.Factory.parse(
+                    extPart.getInputStream(), DEFAULT_XML_OPTIONS
+            );
+            ext = new ExtendedProperties(props);
+        } else {
+            extPart = null;
+            ext = new ExtendedProperties((org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.PropertiesDocument)NEW_EXT_INSTANCE.copy());
+        }
 
-		// Custom properties
-		PackageRelationshipCollection custRel =
-			pkg.getRelationshipsByType(PackageRelationshipTypes.CUSTOM_PROPERTIES);
-		if(custRel.size() == 1) {
-			custPart = pkg.getPart( custRel.getRelationship(0));
-			org.openxmlformats.schemas.officeDocument.x2006.customProperties.PropertiesDocument props = org.openxmlformats.schemas.officeDocument.x2006.customProperties.PropertiesDocument.Factory.parse(
-					custPart.getInputStream(), DEFAULT_XML_OPTIONS
-			);
-			cust = new CustomProperties(props);
-		} else {
-			custPart = null;
-			cust = new CustomProperties((org.openxmlformats.schemas.officeDocument.x2006.customProperties.PropertiesDocument)NEW_CUST_INSTANCE.copy());
-		}
-	}
+        // Custom properties
+        PackageRelationshipCollection custRel =
+                pkg.getRelationshipsByType(PackageRelationshipTypes.CUSTOM_PROPERTIES);
+        if(custRel.size() == 1) {
+            custPart = pkg.getPart( custRel.getRelationship(0));
+            org.openxmlformats.schemas.officeDocument.x2006.customProperties.PropertiesDocument props = org.openxmlformats.schemas.officeDocument.x2006.customProperties.PropertiesDocument.Factory.parse(
+                    custPart.getInputStream(), DEFAULT_XML_OPTIONS
+            );
+            cust = new CustomProperties(props);
+        } else {
+            custPart = null;
+            cust = new CustomProperties((org.openxmlformats.schemas.officeDocument.x2006.customProperties.PropertiesDocument)NEW_CUST_INSTANCE.copy());
+        }
+    }
 
-	/**
-	 * Returns the core document properties
-	 * 
-	 * @return the core document properties
-	 */
-	public CoreProperties getCoreProperties() {
-		return core;
-	}
+    /**
+     * Returns the core document properties
+     * 
+     * @return the core document properties
+     */
+    public CoreProperties getCoreProperties() {
+        return core;
+    }
 
-	/**
-	 * Returns the extended document properties
-	 * 
-	 * @return the extended document properties
-	 */
-	public ExtendedProperties getExtendedProperties() {
-		return ext;
-	}
+    /**
+     * Returns the extended document properties
+     * 
+     * @return the extended document properties
+     */
+    public ExtendedProperties getExtendedProperties() {
+        return ext;
+    }
 
-	/**
-	 * Returns the custom document properties
-	 * 
-	 * @return the custom document properties
-	 */
-	public CustomProperties getCustomProperties() {
-		return cust;
-	}
-	
-	/**
-	 * Returns the {@link PackagePart} for the Document
-	 *  Thumbnail, or <code>null</code> if there isn't one
-	 *
-	 * @return The Document Thumbnail part or null
-	 */
-	protected PackagePart getThumbnailPart() {
+    /**
+     * Returns the custom document properties
+     * 
+     * @return the custom document properties
+     */
+    public CustomProperties getCustomProperties() {
+        return cust;
+    }
+
+    /**
+     * Returns the {@link PackagePart} for the Document
+     *  Thumbnail, or <code>null</code> if there isn't one
+     *
+     * @return The Document Thumbnail part or null
+     */
+    protected PackagePart getThumbnailPart() {
         PackageRelationshipCollection rels =
                 pkg.getRelationshipsByType(PackageRelationshipTypes.THUMBNAIL);
         if(rels.size() == 1) {
             return pkg.getPart(rels.getRelationship(0));
         }
         return null;
-	}
-	/**
-	 * Returns the name of the Document thumbnail, eg 
-	 *  <code>thumbnail.jpeg</code>, or <code>null</code> if there
-	 *  isn't one.
-	 *
-	 * @return The thumbnail filename, or null
-	 */
-	public String getThumbnailFilename() {
-	    PackagePart tPart = getThumbnailPart();
-	    if (tPart == null) return null;
-	    String name = tPart.getPartName().getName();
-	    return name.substring(name.lastIndexOf('/'));
-	}
+    }
+    /**
+     * Returns the name of the Document thumbnail, eg 
+     *  <code>thumbnail.jpeg</code>, or <code>null</code> if there
+     *  isn't one.
+     *
+     * @return The thumbnail filename, or null
+     */
+    public String getThumbnailFilename() {
+        PackagePart tPart = getThumbnailPart();
+        if (tPart == null) return null;
+        String name = tPart.getPartName().getName();
+        return name.substring(name.lastIndexOf('/'));
+    }
     /**
      * Returns the Document thumbnail image data, or
      *  <code>null</code> if there isn't one.
@@ -164,15 +164,15 @@ public class POIXMLProperties {
         if (tPart == null) return null;
         return tPart.getInputStream();
     }
-	
-	/**
-	 * Sets the Thumbnail for the document, replacing any existing
-	 *  one.
-	 *
-	 * @param name The filename for the thumbnail image, eg <code>thumbnail.jpg</code>
-	 * @param imageData The inputstream to read the thumbnail image from
-	 */
-	public void setThumbnail(String filename, InputStream imageData) throws IOException {
+
+    /**
+     * Sets the Thumbnail for the document, replacing any existing
+     *  one.
+     *
+     * @param name The filename for the thumbnail image, eg <code>thumbnail.jpg</code>
+     * @param imageData The inputstream to read the thumbnail image from
+     */
+    public void setThumbnail(String filename, InputStream imageData) throws IOException {
         PackagePart tPart = getThumbnailPart();
         if (tPart == null) {
             // New thumbnail
@@ -182,173 +182,173 @@ public class POIXMLProperties {
             String newType = ContentTypes.getContentTypeFromFileExtension(filename); 
             if (! newType.equals(tPart.getContentType())) {
                 throw new IllegalArgumentException("Can't set a Thumbnail of type " + 
-                               newType + " when existing one is of a different type " +
-                               tPart.getContentType());
+                        newType + " when existing one is of a different type " +
+                        tPart.getContentType());
             }
             StreamHelper.copyStream(imageData, tPart.getOutputStream());
         }
-	}
+    }
 
-	/**
-	 * Commit changes to the underlying OPC package
-	 * 
-	 * @throws IOException if the properties can't be saved
-	 * @throws POIXMLException if the properties are erroneous
-	 */
-	public void commit() throws IOException{
+    /**
+     * Commit changes to the underlying OPC package
+     * 
+     * @throws IOException if the properties can't be saved
+     * @throws POIXMLException if the properties are erroneous
+     */
+    public void commit() throws IOException{
 
-		if(extPart == null && !NEW_EXT_INSTANCE.toString().equals(ext.props.toString())){
-			try {
-				PackagePartName prtname = PackagingURIHelper.createPartName("/docProps/app.xml");
-				pkg.addRelationship(prtname, TargetMode.INTERNAL, "http://schemas.openxmlformats.org/officeDocument/2006/relationships/extended-properties");
-				extPart = pkg.createPart(prtname, "application/vnd.openxmlformats-officedocument.extended-properties+xml");
-			} catch (InvalidFormatException e){
-				throw new POIXMLException(e);
-			}
-		}
-		if(custPart == null && !NEW_CUST_INSTANCE.toString().equals(cust.props.toString())){
-			try {
-				PackagePartName prtname = PackagingURIHelper.createPartName("/docProps/custom.xml");
-				pkg.addRelationship(prtname, TargetMode.INTERNAL, "http://schemas.openxmlformats.org/officeDocument/2006/relationships/custom-properties");
-				custPart = pkg.createPart(prtname, "application/vnd.openxmlformats-officedocument.custom-properties+xml");
-			} catch (InvalidFormatException e){
-				throw new POIXMLException(e);
-			}
-		}
-		if(extPart != null){
-			OutputStream out = extPart.getOutputStream();
-			if (extPart.getSize() > 0) {
-			    extPart.clear();
-			}
-			ext.props.save(out, DEFAULT_XML_OPTIONS);
-			out.close();
-		}
-		if(custPart != null){
-			OutputStream out = custPart.getOutputStream();
-			cust.props.save(out, DEFAULT_XML_OPTIONS);
-			out.close();
-		}
-	}
+        if(extPart == null && !NEW_EXT_INSTANCE.toString().equals(ext.props.toString())){
+            try {
+                PackagePartName prtname = PackagingURIHelper.createPartName("/docProps/app.xml");
+                pkg.addRelationship(prtname, TargetMode.INTERNAL, "http://schemas.openxmlformats.org/officeDocument/2006/relationships/extended-properties");
+                extPart = pkg.createPart(prtname, "application/vnd.openxmlformats-officedocument.extended-properties+xml");
+            } catch (InvalidFormatException e){
+                throw new POIXMLException(e);
+            }
+        }
+        if(custPart == null && !NEW_CUST_INSTANCE.toString().equals(cust.props.toString())){
+            try {
+                PackagePartName prtname = PackagingURIHelper.createPartName("/docProps/custom.xml");
+                pkg.addRelationship(prtname, TargetMode.INTERNAL, "http://schemas.openxmlformats.org/officeDocument/2006/relationships/custom-properties");
+                custPart = pkg.createPart(prtname, "application/vnd.openxmlformats-officedocument.custom-properties+xml");
+            } catch (InvalidFormatException e){
+                throw new POIXMLException(e);
+            }
+        }
+        if(extPart != null){
+            OutputStream out = extPart.getOutputStream();
+            if (extPart.getSize() > 0) {
+                extPart.clear();
+            }
+            ext.props.save(out, DEFAULT_XML_OPTIONS);
+            out.close();
+        }
+        if(custPart != null){
+            OutputStream out = custPart.getOutputStream();
+            cust.props.save(out, DEFAULT_XML_OPTIONS);
+            out.close();
+        }
+    }
 
-	/**
-	 * The core document properties
-	 */
-	public static class CoreProperties {
-		private PackagePropertiesPart part;
-		private CoreProperties(PackagePropertiesPart part) {
-			this.part = part;
-		}
+    /**
+     * The core document properties
+     */
+    public static class CoreProperties {
+        private PackagePropertiesPart part;
+        private CoreProperties(PackagePropertiesPart part) {
+            this.part = part;
+        }
 
-		public String getCategory() {
-			return part.getCategoryProperty().getValue();
-		}
-		public void setCategory(String category) {
-			part.setCategoryProperty(category);
-		}
-		public String getContentStatus() {
-			return part.getContentStatusProperty().getValue();
-		}
-		public void setContentStatus(String contentStatus) {
-			part.setContentStatusProperty(contentStatus);
-		}
-		public String getContentType() {
-			return part.getContentTypeProperty().getValue();
-		}
-		public void setContentType(String contentType) {
-			part.setContentTypeProperty(contentType);
-		}
-		public Date getCreated() {
-			return part.getCreatedProperty().getValue();
-		}
-		public void setCreated(Nullable<Date> date) {
-			part.setCreatedProperty(date);
-		}
-		public void setCreated(String date) {
-			part.setCreatedProperty(date);
-		}
-		public String getCreator() {
-			return part.getCreatorProperty().getValue();
-		}
-		public void setCreator(String creator) {
-			part.setCreatorProperty(creator);
-		}
-		public String getDescription() {
-			return part.getDescriptionProperty().getValue();
-		}
-		public void setDescription(String description) {
-			part.setDescriptionProperty(description);
-		}
-		public String getIdentifier() {
-			return part.getIdentifierProperty().getValue();
-		}
-		public void setIdentifier(String identifier) {
-			part.setIdentifierProperty(identifier);
-		}
-		public String getKeywords() {
-			return part.getKeywordsProperty().getValue();
-		}
-		public void setKeywords(String keywords) {
-			part.setKeywordsProperty(keywords);
-		}
-		public Date getLastPrinted() {
-			return part.getLastPrintedProperty().getValue();
-		}
-		public void setLastPrinted(Nullable<Date> date) {
-			part.setLastPrintedProperty(date);
-		}
-		public void setLastPrinted(String date) {
-			part.setLastPrintedProperty(date);
-		}
-		public Date getModified() {
-			return part.getModifiedProperty().getValue();
-		}
-		public void setModified(Nullable<Date> date) {
-			part.setModifiedProperty(date);
-		}
-		public void setModified(String date) {
-			part.setModifiedProperty(date);
-		}
-		public String getSubject() {
-			return part.getSubjectProperty().getValue();
-		}
-		public void setSubjectProperty(String subject) {
-			part.setSubjectProperty(subject);
-		}
-		public void setTitle(String title) {
-			part.setTitleProperty(title);
-		}
-		public String getTitle() {
-			return part.getTitleProperty().getValue();
-		}
-		public String getRevision() {
-			return part.getRevisionProperty().getValue();
-		}
-		public void setRevision(String revision) {
-			try {
-				Long.valueOf(revision);
-				part.setRevisionProperty(revision);
-			}
-			catch (NumberFormatException e) {}
-		}
+        public String getCategory() {
+            return part.getCategoryProperty().getValue();
+        }
+        public void setCategory(String category) {
+            part.setCategoryProperty(category);
+        }
+        public String getContentStatus() {
+            return part.getContentStatusProperty().getValue();
+        }
+        public void setContentStatus(String contentStatus) {
+            part.setContentStatusProperty(contentStatus);
+        }
+        public String getContentType() {
+            return part.getContentTypeProperty().getValue();
+        }
+        public void setContentType(String contentType) {
+            part.setContentTypeProperty(contentType);
+        }
+        public Date getCreated() {
+            return part.getCreatedProperty().getValue();
+        }
+        public void setCreated(Nullable<Date> date) {
+            part.setCreatedProperty(date);
+        }
+        public void setCreated(String date) {
+            part.setCreatedProperty(date);
+        }
+        public String getCreator() {
+            return part.getCreatorProperty().getValue();
+        }
+        public void setCreator(String creator) {
+            part.setCreatorProperty(creator);
+        }
+        public String getDescription() {
+            return part.getDescriptionProperty().getValue();
+        }
+        public void setDescription(String description) {
+            part.setDescriptionProperty(description);
+        }
+        public String getIdentifier() {
+            return part.getIdentifierProperty().getValue();
+        }
+        public void setIdentifier(String identifier) {
+            part.setIdentifierProperty(identifier);
+        }
+        public String getKeywords() {
+            return part.getKeywordsProperty().getValue();
+        }
+        public void setKeywords(String keywords) {
+            part.setKeywordsProperty(keywords);
+        }
+        public Date getLastPrinted() {
+            return part.getLastPrintedProperty().getValue();
+        }
+        public void setLastPrinted(Nullable<Date> date) {
+            part.setLastPrintedProperty(date);
+        }
+        public void setLastPrinted(String date) {
+            part.setLastPrintedProperty(date);
+        }
+        public Date getModified() {
+            return part.getModifiedProperty().getValue();
+        }
+        public void setModified(Nullable<Date> date) {
+            part.setModifiedProperty(date);
+        }
+        public void setModified(String date) {
+            part.setModifiedProperty(date);
+        }
+        public String getSubject() {
+            return part.getSubjectProperty().getValue();
+        }
+        public void setSubjectProperty(String subject) {
+            part.setSubjectProperty(subject);
+        }
+        public void setTitle(String title) {
+            part.setTitleProperty(title);
+        }
+        public String getTitle() {
+            return part.getTitleProperty().getValue();
+        }
+        public String getRevision() {
+            return part.getRevisionProperty().getValue();
+        }
+        public void setRevision(String revision) {
+            try {
+                Long.valueOf(revision);
+                part.setRevisionProperty(revision);
+            }
+            catch (NumberFormatException e) {}
+        }
 
-		public PackagePropertiesPart getUnderlyingProperties() {
-			return part;
-		}
-	}
+        public PackagePropertiesPart getUnderlyingProperties() {
+            return part;
+        }
+    }
 
-	/**
-	 * Extended document properties
-	 */
-	public static class ExtendedProperties {
-		private org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.PropertiesDocument props;
-		private ExtendedProperties(org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.PropertiesDocument props) {
-			this.props = props;
-		}
+    /**
+     * Extended document properties
+     */
+    public static class ExtendedProperties {
+        private org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.PropertiesDocument props;
+        private ExtendedProperties(org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.PropertiesDocument props) {
+            this.props = props;
+        }
 
-		public org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.CTProperties getUnderlyingProperties() {
-			return props.getProperties();
-		}
-		
+        public org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.CTProperties getUnderlyingProperties() {
+            return props.getProperties();
+        }
+
         public String getTemplate() {
             if (props.getProperties().isSetTemplate()) {
                 return props.getProperties().getTemplate();
@@ -459,113 +459,113 @@ public class POIXMLProperties {
             }
             return null;
         }
-	}
+    }
 
-	/**
-	 *  Custom document properties
-	 */
-	public static class CustomProperties {
-		/**
-		 *  Each custom property element contains an fmtid attribute
-		 *  with the same GUID value ({D5CDD505-2E9C-101B-9397-08002B2CF9AE}).
-		 */
-		public static final String FORMAT_ID = "{D5CDD505-2E9C-101B-9397-08002B2CF9AE}";
+    /**
+     *  Custom document properties
+     */
+    public static class CustomProperties {
+        /**
+         *  Each custom property element contains an fmtid attribute
+         *  with the same GUID value ({D5CDD505-2E9C-101B-9397-08002B2CF9AE}).
+         */
+        public static final String FORMAT_ID = "{D5CDD505-2E9C-101B-9397-08002B2CF9AE}";
 
-		private org.openxmlformats.schemas.officeDocument.x2006.customProperties.PropertiesDocument props;
-		private CustomProperties(org.openxmlformats.schemas.officeDocument.x2006.customProperties.PropertiesDocument props) {
-			this.props = props;
-		}
+        private org.openxmlformats.schemas.officeDocument.x2006.customProperties.PropertiesDocument props;
+        private CustomProperties(org.openxmlformats.schemas.officeDocument.x2006.customProperties.PropertiesDocument props) {
+            this.props = props;
+        }
 
-		public org.openxmlformats.schemas.officeDocument.x2006.customProperties.CTProperties getUnderlyingProperties() {
-			return props.getProperties();
-		}
+        public org.openxmlformats.schemas.officeDocument.x2006.customProperties.CTProperties getUnderlyingProperties() {
+            return props.getProperties();
+        }
 
-		/**
-		 * Add a new property
-		 *
-		 * @param name the property name
-		 * @throws IllegalArgumentException if a property with this name already exists
-		 */
-		private CTProperty add(String name) {
-			if(contains(name)) {
-				throw new IllegalArgumentException("A property with this name " +
-						"already exists in the custom properties");
-			}
+        /**
+         * Add a new property
+         *
+         * @param name the property name
+         * @throws IllegalArgumentException if a property with this name already exists
+         */
+        private CTProperty add(String name) {
+            if(contains(name)) {
+                throw new IllegalArgumentException("A property with this name " +
+                        "already exists in the custom properties");
+            }
 
-			CTProperty p = props.getProperties().addNewProperty();
-			int pid = nextPid();
-			p.setPid(pid);
-			p.setFmtid(FORMAT_ID);
-			p.setName(name);
-			return p;
-		}
+            CTProperty p = props.getProperties().addNewProperty();
+            int pid = nextPid();
+            p.setPid(pid);
+            p.setFmtid(FORMAT_ID);
+            p.setName(name);
+            return p;
+        }
 
-		/**
-		 * Add a new string property
-		 * 
-		 * @param name the property name
-		 * @param value the property value
-		 *
-		 * @throws IllegalArgumentException if a property with this name already exists
-		 */
-		 public void addProperty(String name, String value){
-			CTProperty p = add(name);
-			p.setLpwstr(value);
-		}
-
-		/**
-		 * Add a new double property
-		 *
+        /**
+         * Add a new string property
+         * 
          * @param name the property name
          * @param value the property value
          *
-		 * @throws IllegalArgumentException if a property with this name already exists
-		 */
-		public void addProperty(String name, double value){
-			CTProperty p = add(name);
-			p.setR8(value);
-		}
+         * @throws IllegalArgumentException if a property with this name already exists
+         */
+        public void addProperty(String name, String value){
+            CTProperty p = add(name);
+            p.setLpwstr(value);
+        }
 
-		/**
-		 * Add a new integer property
-		 *
+        /**
+         * Add a new double property
+         *
          * @param name the property name
          * @param value the property value
          *
-		 * @throws IllegalArgumentException if a property with this name already exists
-		 */
-		public void addProperty(String name, int value){
-			CTProperty p = add(name);
-			p.setI4(value);
-		}
+         * @throws IllegalArgumentException if a property with this name already exists
+         */
+        public void addProperty(String name, double value){
+            CTProperty p = add(name);
+            p.setR8(value);
+        }
 
-		/**
-		 * Add a new boolean property
-		 *
+        /**
+         * Add a new integer property
+         *
          * @param name the property name
          * @param value the property value
          *
-		 * @throws IllegalArgumentException if a property with this name already exists
-		 */
-		public void addProperty(String name, boolean value){
-			CTProperty p = add(name);
-			p.setBool(value);
-		}
+         * @throws IllegalArgumentException if a property with this name already exists
+         */
+        public void addProperty(String name, int value){
+            CTProperty p = add(name);
+            p.setI4(value);
+        }
 
-		/**
-		 * Generate next id that uniquely relates a custom property
-		 *
-		 * @return next property id starting with 2
-		 */
+        /**
+         * Add a new boolean property
+         *
+         * @param name the property name
+         * @param value the property value
+         *
+         * @throws IllegalArgumentException if a property with this name already exists
+         */
+        public void addProperty(String name, boolean value){
+            CTProperty p = add(name);
+            p.setBool(value);
+        }
+
+        /**
+         * Generate next id that uniquely relates a custom property
+         *
+         * @return next property id starting with 2
+         */
         protected int nextPid() {
-			int propid = 1;
-			for(CTProperty p : props.getProperties().getPropertyArray()){
-				if(p.getPid() > propid) propid = p.getPid();
-			}
-			return propid + 1;
-		}
+            int propid = 1;
+            for(CTProperty p : props.getProperties().getPropertyArray()){
+                if(p.getPid() > propid) propid = p.getPid();
+            }
+            return propid + 1;
+        }
 
-       /**
+        /**
          * Check if a property with this name already exists in the collection of custom properties
          *
          * @param name the name to check
@@ -577,7 +577,7 @@ public class POIXMLProperties {
             }
             return false;
         }
-        
+
         /**
          * Retrieve the custom property with this name, or null if none exists.
          *

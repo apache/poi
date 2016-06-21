@@ -461,32 +461,32 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 		this.contentTypeManager.clearAll();
 	}
 
-	/**
-	 * Close the package WITHOUT saving its content. Reinitialize this package
-	 * and cancel all changes done to it.
-	 */
-	public void revert() {
-		revertImpl();
-	}
+    /**
+     * Close the package WITHOUT saving its content. Reinitialize this package
+     * and cancel all changes done to it.
+     */
+    public void revert() {
+        revertImpl();
+    }
 
-	/**
-	 * Add a thumbnail to the package. This method is provided to make easier
-	 * the addition of a thumbnail in a package. You can do the same work by
-	 * using the traditionnal relationship and part mechanism.
-	 *
-	 * @param path The full path to the image file.
-	 */
-	public void addThumbnail(String path) throws IOException {
+    /**
+     * Add a thumbnail to the package. This method is provided to make easier
+     * the addition of a thumbnail in a package. You can do the same work by
+     * using the traditionnal relationship and part mechanism.
+     *
+     * @param path The full path to the image file.
+     */
+    public void addThumbnail(String path) throws IOException {
         // Check parameter
         if (path == null || path.isEmpty()) {
             throw new IllegalArgumentException("path");
         }
         String name = path.substring(path.lastIndexOf(File.separatorChar) + 1);
-        
+
         FileInputStream is = new FileInputStream(path);
         addThumbnail(name, is);
         is.close();
-	}
+    }
     /**
      * Add a thumbnail to the package. This method is provided to make easier
      * the addition of a thumbnail in a package. You can do the same work by
@@ -495,60 +495,60 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
      * @param path The full path to the image file.
      */
     public void addThumbnail(String filename, InputStream data) throws IOException {
-		// Check parameter
+        // Check parameter
         if (filename == null || filename.isEmpty()) {
-			throw new IllegalArgumentException("filename");
-		}
+            throw new IllegalArgumentException("filename");
+        }
 
-		// Create the thumbnail part name
-		String contentType = ContentTypes
-				.getContentTypeFromFileExtension(filename);
-		PackagePartName thumbnailPartName = null;
-		try {
-			thumbnailPartName = PackagingURIHelper.createPartName("/docProps/"
-					+ filename);
-		} catch (InvalidFormatException e) {
-		    String partName = "/docProps/thumbnail" +
-                         filename.substring(filename.lastIndexOf(".") + 1);
-			try {
-				thumbnailPartName = PackagingURIHelper.createPartName(partName);
-			} catch (InvalidFormatException e2) {
-				throw new InvalidOperationException(
-						"Can't add a thumbnail file named '" + filename + "'", e2);
-			}
-		}
+        // Create the thumbnail part name
+        String contentType = ContentTypes
+                .getContentTypeFromFileExtension(filename);
+        PackagePartName thumbnailPartName = null;
+        try {
+            thumbnailPartName = PackagingURIHelper.createPartName("/docProps/"
+                    + filename);
+        } catch (InvalidFormatException e) {
+            String partName = "/docProps/thumbnail" +
+                    filename.substring(filename.lastIndexOf(".") + 1);
+            try {
+                thumbnailPartName = PackagingURIHelper.createPartName(partName);
+            } catch (InvalidFormatException e2) {
+                throw new InvalidOperationException(
+                        "Can't add a thumbnail file named '" + filename + "'", e2);
+            }
+        }
 
-		// Check if part already exist
-		if (this.getPart(thumbnailPartName) != null)
-			throw new InvalidOperationException(
-					"You already add a thumbnail named '" + filename + "'");
+        // Check if part already exist
+        if (this.getPart(thumbnailPartName) != null)
+            throw new InvalidOperationException(
+                    "You already add a thumbnail named '" + filename + "'");
 
-		// Add the thumbnail part to this package.
-		PackagePart thumbnailPart = this.createPart(thumbnailPartName,
-				contentType, false);
+        // Add the thumbnail part to this package.
+        PackagePart thumbnailPart = this.createPart(thumbnailPartName,
+                contentType, false);
 
-		// Add the relationship between the package and the thumbnail part
-		this.addRelationship(thumbnailPartName, TargetMode.INTERNAL,
-				PackageRelationshipTypes.THUMBNAIL);
+        // Add the relationship between the package and the thumbnail part
+        this.addRelationship(thumbnailPartName, TargetMode.INTERNAL,
+                PackageRelationshipTypes.THUMBNAIL);
 
-		// Copy file data to the newly created part
-		StreamHelper.copyStream(data, thumbnailPart.getOutputStream());
-	}
+        // Copy file data to the newly created part
+        StreamHelper.copyStream(data, thumbnailPart.getOutputStream());
+    }
 
-	/**
-	 * Throws an exception if the package access mode is in read only mode
-	 * (PackageAccess.Read).
-	 *
-	 * @throws InvalidOperationException
-	 *             Throws if a writing operation is done on a read only package.
-	 * @see org.apache.poi.openxml4j.opc.PackageAccess
-	 */
-	void throwExceptionIfReadOnly() throws InvalidOperationException {
-		if (packageAccess == PackageAccess.READ) {
-			throw new InvalidOperationException(
-					"Operation not allowed, document open in read only mode!");
-		}
-	}
+    /**
+     * Throws an exception if the package access mode is in read only mode
+     * (PackageAccess.Read).
+     *
+     * @throws InvalidOperationException
+     *             Throws if a writing operation is done on a read only package.
+     * @see org.apache.poi.openxml4j.opc.PackageAccess
+     */
+    void throwExceptionIfReadOnly() throws InvalidOperationException {
+        if (packageAccess == PackageAccess.READ) {
+            throw new InvalidOperationException(
+                    "Operation not allowed, document open in read only mode!");
+        }
+    }
 
 	/**
 	 * Throws an exception if the package access mode is in write only mode
