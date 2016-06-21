@@ -620,16 +620,29 @@ public final class SummaryInformation extends SpecialPropertySet {
      * method is implemented. Please note that the return type is likely to
      * change!</strong></p>
      *
-     * <p><strong>Hint to developers:</strong> Drew Varner &lt;Drew.Varner
-     * -at- sc.edu&gt; said that this is an image in WMF or Clipboard (BMP?)
-     * format. However, we won't do any conversion into any image type but
-     * instead just return a byte array.</p>
+     * <p>To process this data, you may wish to make use of the
+     *  {@link Thumbnail} class. The raw data is generally 
+     *  an image in WMF or Clipboard (BMP?) format</p>
      *
      * @return The thumbnail or <code>null</code>
      */
     public byte[] getThumbnail()
     {
         return (byte[]) getProperty(PropertyIDMap.PID_THUMBNAIL);
+    }
+
+    /**
+     * <p>Returns the thumbnail (or <code>null</code>), processed
+     *  as an object which is (largely) able to unpack the thumbnail
+     *  image data.</p>
+     *
+     * @return The thumbnail or <code>null</code>
+     */
+    public Thumbnail getThumbnailThumbnail()
+    {
+        byte[] data = getThumbnail();
+        if (data == null) return null;
+        return new Thumbnail(data);
     }
 
 
