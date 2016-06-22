@@ -23,9 +23,7 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * DATALABEXT - Chart Data Label Extension (0x086A) <br/>
- * 
- * @author Patrick Cheng
+ * DATALABEXT - Chart Data Label Extension (0x086A)
  */
 public final class DataLabelExtensionRecord extends StandardRecord {
 	public static final short sid = 0x086A;

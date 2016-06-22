@@ -25,9 +25,7 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * The text record is used to define text stored on a chart.<p/>
- * 
- * @author Glen Stampoultzis (glens at apache.org)
+ * The text record is used to define text stored on a chart.
  */
 public final class TextRecord extends StandardRecord {
     public final static short      sid                             = 0x1025;

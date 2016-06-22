@@ -38,18 +38,24 @@ public abstract class POIXMLTextExtractor extends POITextExtractor {
 
 	/**
 	 * Returns the core document properties
+	 * 
+	 * @return the core document properties
 	 */
 	public CoreProperties getCoreProperties() {
 		 return _document.getProperties().getCoreProperties();
 	}
 	/**
 	 * Returns the extended document properties
+	 * 
+	 * @return the extended document properties
 	 */
 	public ExtendedProperties getExtendedProperties() {
 		return _document.getProperties().getExtendedProperties();
 	}
 	/**
 	 * Returns the custom document properties
+	 * 
+	 * @return the custom document properties
 	 */
 	public CustomProperties getCustomProperties() {
 		return _document.getProperties().getCustomProperties();
@@ -57,6 +63,8 @@ public abstract class POIXMLTextExtractor extends POITextExtractor {
 
 	/**
 	 * Returns opened document
+	 * 
+	 * @return the opened document
 	 */
 	public final POIXMLDocument getDocument() {
 		return _document;
@@ -64,6 +72,8 @@ public abstract class POIXMLTextExtractor extends POITextExtractor {
 
 	/**
 	 * Returns the opened OPCPackage that contains the document
+	 * 
+	 * @return the opened OPCPackage
 	 */
 	public OPCPackage getPackage() {
 	   return _document.getPackage();

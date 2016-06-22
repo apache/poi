@@ -23,9 +23,7 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * The units record describes units.<p/>
- * 
- * @author Glen Stampoultzis (glens at apache.org)
+ * The units record describes units.
  */
 public final class UnitsRecord extends StandardRecord {
     public final static short      sid                             = 0x1001;

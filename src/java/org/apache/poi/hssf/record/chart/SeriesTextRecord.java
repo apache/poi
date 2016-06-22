@@ -24,10 +24,8 @@ import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.StringUtil;
 
 /**
- * SERIESTEXT (0x100D)</p> 
- * Defines a series name</p>
- * 
- * @author Andrew C. Oliver (acoliver at apache.org)
+ * SERIESTEXT (0x100D)<p> 
+ * Defines a series name
  */
 public final class SeriesTextRecord extends StandardRecord {
 	public final static short sid = 0x100D;

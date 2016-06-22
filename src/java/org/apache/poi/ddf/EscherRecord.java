@@ -31,12 +31,10 @@ import org.apache.poi.util.LittleEndian;
 /**
  * The base abstract record from which all escher records are defined.  Subclasses will need
  * to define methods for serialization/deserialization and for determining the record size.
- *
- * @author Glen Stampoultzis
  */
-public abstract class EscherRecord {
-    private static BitField fInstance = BitFieldFactory.getInstance(0xfff0);
-    private static BitField fVersion = BitFieldFactory.getInstance(0x000f);
+public abstract class EscherRecord implements Cloneable {
+    private static final BitField fInstance = BitFieldFactory.getInstance(0xfff0);
+    private static final BitField fVersion = BitFieldFactory.getInstance(0x000f);
 
     private short _options;
     private short _recordId;
@@ -50,7 +48,11 @@ public abstract class EscherRecord {
 
     /**
      * Delegates to fillFields(byte[], int, EscherRecordFactory)
-     *
+     * 
+     * @param data they bytes to serialize from
+     * @param f the escher record factory
+     * @return The number of bytes written.
+     * 
      * @see #fillFields(byte[], int, org.apache.poi.ddf.EscherRecordFactory)
      */
     protected int fillFields( byte[] data, EscherRecordFactory f )
@@ -79,8 +81,7 @@ public abstract class EscherRecord {
      * @return          the number of bytes remaining in this record.  This
      *                  may include the children if this is a container.
      */
-    protected int readHeader( byte[] data, int offset )
-    {
+    protected int readHeader( byte[] data, int offset ) {
         _options = LittleEndian.getShort( data, offset );
         _recordId = LittleEndian.getShort( data, offset + 2 );
         int remainingBytes = LittleEndian.getInt( data, offset + 4 );
@@ -93,15 +94,14 @@ public abstract class EscherRecord {
      * @param offset    the offset to start reading from
      * @return          value of instance part of options field
      */
-    protected static short readInstance( byte data[], int offset )
-    {
+    protected static short readInstance( byte data[], int offset ) {
         final short options = LittleEndian.getShort( data, offset );
         return fInstance.getShortValue( options );
     }
 
     /**
-     * Determine whether this is a container record by inspecting the option
-     * field.
+     * Determine whether this is a container record by inspecting the option field.
+     * 
      * @return  true is this is a container field.
      */
     public boolean isContainerRecord() {
@@ -109,10 +109,9 @@ public abstract class EscherRecord {
     }
 
     /**
-     * <p
-     * Note that <code>options</code> is an internal field. Use {@link #setInstance(short)} ()} and
-     *             {@link #setVersion(short)} ()} to set the actual fields.
-     * </p>
+     * Note that <code>options</code> is an internal field.
+     * Use {@link #setInstance(short)} ()} and {@link #setVersion(short)} ()} to set the actual fields.
+     * 
      * @return The options field for this record. All records have one.
      */
     @Internal
@@ -122,13 +121,13 @@ public abstract class EscherRecord {
     }
 
     /**
-     * Set the options this this record.  Container records should have the
-     * last nibble set to 0xF.
-     *
-     * <p
-     * Note that <code>options</code> is an internal field. Use {@link #getInstance()} and
-     *             {@link #getVersion()} to access actual fields.
-     * </p>
+     * Set the options this this record. Container records should have the
+     * last nibble set to 0xF.<p>
+     * 
+     * Note that {@code options} is an internal field.
+     * Use {@link #getInstance()} and {@link #getVersion()} to access actual fields.
+     * 
+     * @param options the record options
      */
     @Internal
     public void setOptions( short options ) {
@@ -200,6 +199,8 @@ public abstract class EscherRecord {
 
     /**
      * Sets the record id for this record.
+     * 
+     * @param recordId the record id
      */
     public void setRecordId( short recordId ) {
         _recordId = recordId;
@@ -226,14 +227,21 @@ public abstract class EscherRecord {
 
     /**
      * Escher records may need to be clonable in the future.
+     * 
+     * @return the cloned object
+     * 
+     * @throws CloneNotSupportedException if the subclass hasn't implemented {@link Cloneable}
      */
     @Override
     public EscherRecord clone() throws CloneNotSupportedException {
-        throw new CloneNotSupportedException( "The class " + getClass().getName() + " needs to define a clone method" );
+        return (EscherRecord)super.clone();
     }
 
     /**
      * Returns the indexed child record.
+     * 
+     * @param index the index of the child within the child records
+     * @return the indexed child record
      */
     public EscherRecord getChild( int index ) {
         return getChildRecords().get(index);
@@ -254,6 +262,8 @@ public abstract class EscherRecord {
 
     /**
      * Subclasses should return the short name for this escher record.
+     * 
+     * @return the short name for this escher record
      */
     public abstract String getRecordName();
 
@@ -270,8 +280,7 @@ public abstract class EscherRecord {
     /**
      * Sets the instance part of record
      * 
-     * @param value
-     *            instance part value
+     * @param value instance part value
      */
     public void setInstance( short value )
     {
@@ -291,8 +300,7 @@ public abstract class EscherRecord {
     /**
      * Sets the version part of record
      * 
-     * @param value
-     *            version part value
+     * @param value version part value
      */
     public void setVersion( short value )
     {

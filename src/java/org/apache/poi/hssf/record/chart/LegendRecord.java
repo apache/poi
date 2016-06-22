@@ -25,9 +25,7 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Defines a legend for a chart.<p/>
- * 
- * @author Andrew C. Oliver (acoliver at apache.org)
+ * Defines a legend for a chart.
  */
 public final class LegendRecord extends StandardRecord implements Cloneable {
     public final static short sid = 0x1015;

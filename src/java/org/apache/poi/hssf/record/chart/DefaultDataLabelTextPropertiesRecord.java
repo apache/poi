@@ -23,9 +23,7 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * The default data label text properties record identifies the text characteristics of the preceding text record.<p/>
- * 
- * @author Glen Stampoultzis (glens at apache.org)
+ * The default data label text properties record identifies the text characteristics of the preceding text record.
  */
 public final class DefaultDataLabelTextPropertiesRecord extends StandardRecord implements Cloneable {
     public final static short      sid                             = 0x1024;

@@ -154,10 +154,11 @@ public class POIXMLProperties {
         return name.substring(name.lastIndexOf('/'));
     }
     /**
-     * Returns the Document thumbnail image data, or
-     *  <code>null</code> if there isn't one.
+     * Returns the Document thumbnail image data, or {@code null} if there isn't one.
      *
      * @return The thumbnail data, or null
+     * 
+     * @throws IOException if the thumbnail can't be read
      */
     public InputStream getThumbnailImage() throws IOException {
         PackagePart tPart = getThumbnailPart();
@@ -166,11 +167,12 @@ public class POIXMLProperties {
     }
 
     /**
-     * Sets the Thumbnail for the document, replacing any existing
-     *  one.
+     * Sets the Thumbnail for the document, replacing any existing one.
      *
-     * @param name The filename for the thumbnail image, eg <code>thumbnail.jpg</code>
+     * @param filename The filename for the thumbnail image, eg {@code thumbnail.jpg}
      * @param imageData The inputstream to read the thumbnail image from
+     * 
+     * @throws IOException if the thumbnail can't be written
      */
     public void setThumbnail(String filename, InputStream imageData) throws IOException {
         PackagePart tPart = getThumbnailPart();

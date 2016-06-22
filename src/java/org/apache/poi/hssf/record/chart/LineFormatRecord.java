@@ -25,9 +25,7 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Describes a line format record.  The line format record controls how a line on a chart appears.<p/>
- * 
- * @author Glen Stampoultzis (glens at apache.org)
+ * Describes a line format record.  The line format record controls how a line on a chart appears.
  */
 public final class LineFormatRecord extends StandardRecord implements Cloneable {
     public final static short sid = 0x1007;

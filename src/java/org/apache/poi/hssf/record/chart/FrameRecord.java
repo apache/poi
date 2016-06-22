@@ -25,9 +25,7 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * The frame record indicates whether there is a border around the displayed text of a chart.<p/>
- * 
- * @author Glen Stampoultzis (glens at apache.org)
+ * The frame record indicates whether there is a border around the displayed text of a chart.
  */
 public final class FrameRecord extends StandardRecord implements Cloneable {
     public final static short sid  = 0x1032;

@@ -25,9 +25,7 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * The dat record is used to store options for the chart.<p/>
- * 
- * @author Glen Stampoultzis (glens at apache.org)
+ * The dat record is used to store options for the chart.
  */
 public final class DatRecord extends StandardRecord implements Cloneable {
     public final static short sid = 0x1063;

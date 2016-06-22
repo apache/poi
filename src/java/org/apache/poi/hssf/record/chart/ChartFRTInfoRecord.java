@@ -24,9 +24,7 @@ import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * CHARTFRTINFO - Chart Future Record Type Info (0x0850)<br/>
- * 
- * @author Patrick Cheng
+ * CHARTFRTINFO - Chart Future Record Type Info (0x0850)
  */
 public final class ChartFRTInfoRecord extends StandardRecord {
 	public static final short sid = 0x850;
