@@ -249,6 +249,8 @@ public final class XSLFPictureData extends POIXMLDocumentPart implements Picture
             return PictureType.WPG;
         } else if (XSLFRelation.IMAGE_WDP.getContentType().equals(ct)) {
             return PictureType.WDP;
+        } else if (XSLFRelation.IMAGE_TIFF.getContentType().equals(ct)) {
+            return PictureType.TIFF;
         } else {
             return null;
         }
@@ -267,6 +269,7 @@ public final class XSLFPictureData extends POIXMLDocumentPart implements Picture
             case BMP: return XSLFRelation.IMAGE_BMP;
             case WPG: return XSLFRelation.IMAGE_WPG;
             case WDP: return XSLFRelation.IMAGE_WDP;
+            case TIFF: return XSLFRelation.IMAGE_TIFF;
             default: return null;
         }
     }

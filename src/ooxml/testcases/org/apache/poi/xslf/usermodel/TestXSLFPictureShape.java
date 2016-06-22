@@ -32,6 +32,7 @@ import java.util.Map;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.xslf.XSLFTestDataSamples;
 import org.junit.Test;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPicture;
@@ -192,5 +193,19 @@ public class TestXSLFPictureShape {
         XMLSlideShow ppt2 = new XMLSlideShow(new ByteArrayInputStream(bos.toByteArray()));
         assertTrue(ppt2.getPictureData().isEmpty());
         ppt2.close();
+    }
+    
+    @Test
+    public void testTiffImageBug59742() throws Exception {
+        XMLSlideShow slideShow = new XMLSlideShow();
+        final InputStream tiffStream = _slTests.openResourceAsStream("testtiff.tif");
+        final byte[] pictureData = IOUtils.toByteArray(tiffStream);
+        IOUtils.closeQuietly(tiffStream);
+        
+        XSLFPictureData pic = slideShow.addPicture(pictureData, PictureType.TIFF);
+        assertEquals("image/tiff", pic.getContentType());
+        assertEquals("image1.tiff", pic.getFileName());
+        
+        slideShow.close();
     }
 }
