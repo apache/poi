@@ -23,9 +23,7 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * The series record describes the overall data for a series.<p/>
- * 
- * @author Glen Stampoultzis (glens at apache.org)
+ * The series record describes the overall data for a series.
  */
 public final class SeriesRecord extends StandardRecord {
     public final static short      sid                             = 0x1003;

@@ -23,9 +23,7 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * links a series to its position in the series list.<p/>
- * 
- * @author Andrew C. Oliver (acoliver at apache.org)
+ * links a series to its position in the series list.
  */
 public final class SeriesIndexRecord extends StandardRecord {
     public final static short      sid                             = 0x1065;

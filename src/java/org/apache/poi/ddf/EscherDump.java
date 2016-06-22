@@ -65,8 +65,8 @@ public final class EscherDump {
      * @param in        An input stream to read from.
      * @param out       An output stream to write to.
      * 
-     * @throws IOException
-     * @throws LittleEndian.BufferUnderrunException
+     * @throws IOException if the data can't be read or written 
+     * @throws LittleEndian.BufferUnderrunException if an buffer underrun occurs  
      */
     public void dumpOld(long maxLength, InputStream in, PrintStream out)
             throws IOException, LittleEndian.BufferUnderrunException {

@@ -18,8 +18,6 @@ package org.apache.poi;
 
 /**
  * Represents a descriptor of a OOXML relation.
- *
- * @author Yegor Kozlov
  */
 public abstract class POIXMLRelation {
 
@@ -100,8 +98,10 @@ public abstract class POIXMLRelation {
     }
 
     /**
-     * Returns the filename for the nth one of these,
-     *  e.g. /xl/comments4.xml
+     * Returns the filename for the nth one of these, e.g. /xl/comments4.xml
+     * 
+     * @param index the suffix for the document type
+     * @return the filename including the suffix
      */
     public String getFileName(int index) {
         if(_defaultName.indexOf("#") == -1) {
@@ -114,6 +114,9 @@ public abstract class POIXMLRelation {
     /**
      * Returns the index of the filename within the package for the given part.
      *  e.g. 4 for /xl/comments4.xml
+     *  
+     * @param part the part to read the suffix from
+     * @return the suffix
      */
     public Integer getFileNameIndex(POIXMLDocumentPart part) {
         String regex = _defaultName.replace("#", "(\\d+)");

@@ -23,9 +23,7 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * STARTBLOCK - Chart Future Record Type Start Block (0x0852)<br/>
- * 
- * @author Patrick Cheng
+ * STARTBLOCK - Chart Future Record Type Start Block (0x0852)
  */
 public final class ChartStartBlockRecord extends StandardRecord implements Cloneable {
 	public static final short sid = 0x0852;

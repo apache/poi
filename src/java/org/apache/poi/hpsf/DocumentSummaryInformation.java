@@ -39,6 +39,7 @@ public class DocumentSummaryInformation extends SpecialPropertySet
     public static final String DEFAULT_STREAM_NAME =
         "\005DocumentSummaryInformation";
 
+    @Override
     public PropertyIDMap getPropertySetIDMap() {
     	return PropertyIDMap.getDocumentSummaryInformationProperties();
     }
@@ -64,7 +65,7 @@ public class DocumentSummaryInformation extends SpecialPropertySet
 
     
     /**
-     * <p>Returns the category (or <code>null</code>).</p>
+     * <p>Returns the category (or {@code null}).</p>
      *
      * @return The category value
      */
@@ -97,7 +98,7 @@ public class DocumentSummaryInformation extends SpecialPropertySet
 
     /**
      * <p>Returns the presentation format (or
-     * <code>null</code>).</p>
+     * {@code null}).</p>
      *
      * @return The presentation format value
      */
@@ -395,7 +396,7 @@ public class DocumentSummaryInformation extends SpecialPropertySet
 
 
     /**
-     * <p>Returns the heading pair (or <code>null</code>)
+     * <p>Returns the heading pair (or {@code null})
      * <strong>when this method is implemented. Please note that the
      * return type is likely to change!</strong>
      *
@@ -429,7 +430,7 @@ public class DocumentSummaryInformation extends SpecialPropertySet
 
 
     /**
-     * <p>Returns the doc parts (or <code>null</code>)
+     * <p>Returns the doc parts (or {@code null})
      * <strong>when this method is implemented. Please note that the
      * return type is likely to change!</strong>
      *
@@ -465,7 +466,7 @@ public class DocumentSummaryInformation extends SpecialPropertySet
 
 
     /**
-     * <p>Returns the manager (or <code>null</code>).</p>
+     * <p>Returns the manager (or {@code null}).</p>
      *
      * @return The manager value
      */
@@ -497,7 +498,7 @@ public class DocumentSummaryInformation extends SpecialPropertySet
 
 
     /**
-     * <p>Returns the company (or <code>null</code>).</p>
+     * <p>Returns the company (or {@code null}).</p>
      *
      * @return The company value
      */
@@ -563,7 +564,7 @@ public class DocumentSummaryInformation extends SpecialPropertySet
      *  {@link DocumentSummaryInformation} does not contain this char count.</p>
      * <p>This is the whitespace-including version of {@link SummaryInformation#getCharCount()}
      *
-     * @return The character count or <code>null</code>
+     * @return The character count or {@code null}
      */
     public int getCharCountWithSpaces()
     {
@@ -592,9 +593,11 @@ public class DocumentSummaryInformation extends SpecialPropertySet
     
     
     /**
-     * <p>Get if the User Defined Property Set has been updated outside of the 
-     * Application.</p>
-     * <p>If it has (true), the hyperlinks should be updated on document load.</p>
+     * Get if the User Defined Property Set has been updated outside of the 
+     * Application.<p>
+     * If it has (true), the hyperlinks should be updated on document load.
+     * 
+     * @return true, if the hyperlinks should be updated on document load
      */
     public boolean getHyperlinksChanged()
     {
@@ -604,6 +607,8 @@ public class DocumentSummaryInformation extends SpecialPropertySet
     /**
      * Set the flag for if the User Defined Property Set has been updated outside 
      *  of the Application.
+     *  
+     * @param changed true, if the User Defined Property Set has been updated
      */
     public void setHyperlinksChanged(boolean changed)
     {
@@ -623,10 +628,12 @@ public class DocumentSummaryInformation extends SpecialPropertySet
 
     
     /**
-     * <p>Gets the version of the Application which wrote the
+     * Gets the version of the Application which wrote the
      *  Property set, stored with the two high order bytes having the major
-     *  version number, and the two low order bytes the minor version number.</p>
-     * <p>This will be 0 if no version is set.</p>
+     *  version number, and the two low order bytes the minor version number.<p>
+     * This will be 0 if no version is set.
+     * 
+     * @return the Application version
      */
     public int getApplicationVersion()
     {
@@ -637,6 +644,8 @@ public class DocumentSummaryInformation extends SpecialPropertySet
      * Sets the Application version, which must be a 4 byte int with
      *  the  two high order bytes having the major version number, and the 
      *  two low order bytes the minor version number.
+     *  
+     * @param version the Application version
      */
     public void setApplicationVersion(int version)
     {
@@ -655,8 +664,10 @@ public class DocumentSummaryInformation extends SpecialPropertySet
 
     
     /**
-     * <p>Returns the VBA digital signature for the VBA project 
-     *  embedded in the document (or <code>null</code>).</p>
+     * Returns the VBA digital signature for the VBA project 
+     * embedded in the document (or {@code null}).
+     * 
+     * @return the VBA digital signature
      */
     public byte[] getVBADigitalSignature()
     {
@@ -690,7 +701,9 @@ public class DocumentSummaryInformation extends SpecialPropertySet
 
     
     /**
-     * <p>Gets the content type of the file (or <code>null</code>).</p>
+     * Gets the content type of the file (or {@code null}).
+     * 
+     * @return the content type of the file
      */
     public String getContentType()
     {
@@ -699,6 +712,8 @@ public class DocumentSummaryInformation extends SpecialPropertySet
     
     /**
      * Sets the content type of the file
+     * 
+     * @param type the content type of the file
      */
     public void setContentType(String type)
     {
@@ -717,7 +732,9 @@ public class DocumentSummaryInformation extends SpecialPropertySet
 
     
     /**
-     * <p>Gets the content status of the file (or <code>null</code>).</p>
+     * Gets the content status of the file (or {@code null}).
+     * 
+     * @return the content status of the file
      */
     public String getContentStatus()
     {
@@ -725,7 +742,9 @@ public class DocumentSummaryInformation extends SpecialPropertySet
     }
     
     /**
-     * Sets the content type of the file
+     * Sets the content status of the file
+     * 
+     * @param status the content status of the file
      */
     public void setContentStatus(String status)
     {
@@ -744,8 +763,9 @@ public class DocumentSummaryInformation extends SpecialPropertySet
 
     
     /**
-     * <p>Gets the document language, which is normally unset and empty
-     *  (or <code>null</code>).</p>
+     * Gets the document language, which is normally unset and empty (or {@code null}).
+     * 
+     * @return the document language
      */
     public String getLanguage()
     {
@@ -754,6 +774,8 @@ public class DocumentSummaryInformation extends SpecialPropertySet
     
     /**
      * Set the document language
+     * 
+     * @param language the document language
      */
     public void setLanguage(String language)
     {
@@ -773,7 +795,9 @@ public class DocumentSummaryInformation extends SpecialPropertySet
     
     /**
      * <p>Gets the document version as a string, which is normally unset and empty
-     *  (or <code>null</code>).</p>
+     *  (or {@code null}).</p>
+     *  
+     *  @return the document verion
      */
     public String getDocumentVersion()
     {
@@ -782,6 +806,8 @@ public class DocumentSummaryInformation extends SpecialPropertySet
     
     /**
      * Sets the document version string
+     * 
+     * @param version the document version string
      */
     public void setDocumentVersion(String version)
     {

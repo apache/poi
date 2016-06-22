@@ -25,12 +25,10 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Describes a chart sheet properties record. SHTPROPS (0x1044) <p/>
+ * Describes a chart sheet properties record. SHTPROPS (0x1044)<p>
  * 
  * (As with all chart related records, documentation is lacking.
  * See {@link ChartRecord} for more details)
- *
- * @author Glen Stampoultzis (glens at apache.org)
  */
 public final class SheetPropertiesRecord extends StandardRecord {
     public final static short sid = 0x1044;

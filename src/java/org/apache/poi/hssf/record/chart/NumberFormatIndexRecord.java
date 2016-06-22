@@ -23,9 +23,7 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * The number format index record indexes format table.  This applies to an axis.<p/>
- * 
- * @author Glen Stampoultzis (glens at apache.org)
+ * The number format index record indexes format table. This applies to an axis.
  */
 public final class NumberFormatIndexRecord extends StandardRecord implements Cloneable {
     public final static short      sid                             = 0x104E;

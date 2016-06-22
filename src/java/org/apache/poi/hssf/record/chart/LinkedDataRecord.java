@@ -27,9 +27,7 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Describes a linked data record.  This record refers to the series data or text.<p/>
- *
- * @author Glen Stampoultzis (glens at apache.org)
+ * Describes a linked data record.  This record refers to the series data or text.
  */
 public final class LinkedDataRecord extends StandardRecord implements Cloneable {
     public final static short sid  = 0x1051;

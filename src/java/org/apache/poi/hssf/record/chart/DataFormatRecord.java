@@ -25,9 +25,7 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * The data format record is used to index into a series.<p/>
- * 
- * @author Glen Stampoultzis (glens at apache.org)
+ * The data format record is used to index into a series.
  */
 public final class DataFormatRecord extends StandardRecord implements Cloneable {
     public final static short sid = 0x1006;

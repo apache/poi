@@ -23,9 +23,7 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * ENDOBJECT - Chart Future Record Type End Object (0x0855)<br/>
- * 
- * @author Patrick Cheng
+ * ENDOBJECT - Chart Future Record Type End Object (0x0855)
  */
 public final class ChartEndObjectRecord extends StandardRecord {
 	public static final short sid = 0x0855;

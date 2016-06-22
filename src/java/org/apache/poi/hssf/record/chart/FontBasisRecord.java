@@ -23,9 +23,7 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * The font basis record stores various font metrics.<p/>
- * 
- * @author Glen Stampoultzis (glens at apache.org)
+ * The font basis record stores various font metrics.
  */
 public final class FontBasisRecord extends StandardRecord implements Cloneable {
     public final static short sid = 0x1060;

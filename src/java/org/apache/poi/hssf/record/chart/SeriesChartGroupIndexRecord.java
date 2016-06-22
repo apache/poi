@@ -23,9 +23,7 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * The series chart group index record stores the index to the CHARTFORMAT record (0 based).<p/>
- * 
- * @author Glen Stampoultzis (glens at apache.org)
+ * The series chart group index record stores the index to the CHARTFORMAT record (0 based).
  */
 public final class SeriesChartGroupIndexRecord extends StandardRecord {
     public final static short      sid                             = 0x1045;

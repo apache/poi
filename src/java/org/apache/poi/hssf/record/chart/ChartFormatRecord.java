@@ -25,12 +25,10 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Class ChartFormatRecord (0x1014)<p/>
+ * Class ChartFormatRecord (0x1014)<p>
  *
  * (As with all chart related records, documentation is lacking.
  * See {@link ChartRecord} for more details)
- *
- * @author Glen Stampoultzis (glens at apache.org)
  */
 public final class ChartFormatRecord extends StandardRecord {
     public static final short sid = 0x1014;

@@ -20,13 +20,15 @@ package org.apache.poi.ddf;
 /**
  * The escher record factory interface allows for the creation of escher
  * records from a pointer into a data array.
- *
- * @author Glen Stampoultzis (glens at apache.org)
  */
 public interface EscherRecordFactory {
     /**
-     * Create a new escher record from the data provided.  Does not attempt
-     * to fill the contents of the record however.
+     * Generates an escher record including any children contained under that record.
+     * An exception is thrown if the record could not be generated.
+     * 
+     * @param data   The byte array containing the records
+     * @param offset The starting offset into the byte array
+     * @return The generated escher record
      */
     EscherRecord createRecord( byte[] data, int offset );
 }

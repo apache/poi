@@ -23,9 +23,7 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Links text to an object on the chart or identifies it as the title.<p/>
- * 
- * @author Andrew C. Oliver (acoliver at apache.org)
+ * Links text to an object on the chart or identifies it as the title.
  */
 public final class ObjectLinkRecord extends StandardRecord implements Cloneable {
     public final static short      sid                             = 0x1027;

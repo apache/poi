@@ -25,7 +25,7 @@ import org.apache.poi.hssf.record.StandardRecord;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * CHARTTITLEFORMAT (0x1050)<p/>
+ * CHARTTITLEFORMAT (0x1050)<p>
  * Describes the formatting runs associated with a chart title.
  */
 public class ChartTitleFormatRecord extends StandardRecord {

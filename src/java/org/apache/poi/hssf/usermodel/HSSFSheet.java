@@ -490,32 +490,26 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
     }
 
     /**
-     * Set the width (in units of 1/256th of a character width)
-     * <p/>
-     * <p>
+     * Set the width (in units of 1/256th of a character width)<p>
+     * 
      * The maximum column width for an individual cell is 255 characters.
      * This value represents the number of characters that can be displayed
-     * in a cell that is formatted with the standard font (first font in the workbook).
-     * </p>
-     * <p/>
-     * <p>
+     * in a cell that is formatted with the standard font (first font in the workbook).<p>
+     * 
      * Character width is defined as the maximum digit width
      * of the numbers <code>0, 1, 2, ... 9</code> as rendered
-     * using the default font (first font in the workbook).
-     * <br/>
+     * using the default font (first font in the workbook).<p>
+     * 
      * Unless you are using a very special font, the default character is '0' (zero),
-     * this is true for Arial (default font font in HSSF) and Calibri (default font in XSSF)
-     * </p>
-     * <p/>
-     * <p>
+     * this is true for Arial (default font font in HSSF) and Calibri (default font in XSSF)<p>
+     * 
      * Please note, that the width set by this method includes 4 pixels of margin padding (two on each side),
      * plus 1 pixel padding for the gridlines (Section 3.3.1.12 of the OOXML spec).
-     * This results is a slightly less value of visible characters than passed to this method (approx. 1/2 of a character).
-     * </p>
-     * <p>
+     * This results is a slightly less value of visible characters than passed to this method (approx. 1/2 of a character).<p>
+     * 
      * To compute the actual number of visible characters,
-     * Excel uses the following formula (Section 3.3.1.12 of the OOXML spec):
-     * </p>
+     * Excel uses the following formula (Section 3.3.1.12 of the OOXML spec):<p>
+     * 
      * <code>
      * width = Truncate([{Number of Visible Characters} *
      * {Maximum Digit Width} + {5 pixel padding}]/{Maximum Digit Width}*256)/256
@@ -531,7 +525,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      *
      * @param columnIndex - the column to set (0-based)
      * @param width       - the width in units of 1/256th of a character width
-     * @throws IllegalArgumentException if width > 255*256 (the maximum column width in Excel is 255 characters)
+     * @throws IllegalArgumentException if width &gt; 255*256 (the maximum column width in Excel is 255 characters)
      */
     @Override
     public void setColumnWidth(int columnIndex, int width) {
@@ -809,19 +803,15 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
 
     /**
      * Control if Excel should be asked to recalculate all formulas on this sheet
-     * when the workbook is opened.
-     * <p/>
-     * <p>
+     * when the workbook is opened.<p>
+     * 
      * Calculating the formula values with {@link org.apache.poi.ss.usermodel.FormulaEvaluator} is the
      * recommended solution, but this may be used for certain cases where
-     * evaluation in POI is not possible.
-     * </p>
-     * <p/>
-     * <p>
+     * evaluation in POI is not possible.<p>
+     * 
      * It is recommended to force recalcuation of formulas on workbook level using
      * {@link org.apache.poi.ss.usermodel.Workbook#setForceFormulaRecalculation(boolean)}
      * to ensure that all cross-worksheet formuals and external dependencies are updated.
-     * </p>
      *
      * @param value true if the application will perform a full recalculation of
      *              this worksheet values when the workbook is opened
@@ -1345,7 +1335,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
     /**
      * Answer whether protection is enabled or disabled
      *
-     * @return true => protection enabled; false => protection disabled
+     * @return true =&gt; protection enabled; false =&gt; protection disabled
      */
     @Override
     public boolean getProtect() {
@@ -1362,7 +1352,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
     /**
      * Answer whether object protection is enabled or disabled
      *
-     * @return true => protection enabled; false => protection disabled
+     * @return true =&gt; protection enabled; false =&gt; protection disabled
      */
     public boolean getObjectProtect() {
         return getProtectionBlock().isObjectProtected();
@@ -1371,7 +1361,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
     /**
      * Answer whether scenario protection is enabled or disabled
      *
-     * @return true => protection enabled; false => protection disabled
+     * @return true =&gt; protection enabled; false =&gt; protection disabled
      */
     @Override
     public boolean getScenarioProtect() {
@@ -1412,7 +1402,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
     
     /**
      * Window zoom magnification for current view representing percent values.
-     * Valid values range from 10 to 400. Horizontal & Vertical scale together.
+     * Valid values range from 10 to 400. Horizontal &amp; Vertical scale together.
      *
      * For example:
      * <pre>
@@ -1497,11 +1487,10 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
     /**
      * Shifts rows between startRow and endRow n number of rows.
      * If you use a negative number, it will shift rows up.
-     * Code ensures that rows don't wrap around.
-     * <p/>
-     * Calls shiftRows(startRow, endRow, n, false, false);
-     * <p/>
-     * <p/>
+     * Code ensures that rows don't wrap around.<p>
+     * 
+     * Calls {@code shiftRows(startRow, endRow, n, false, false);}<p>
+     * 
      * Additionally shifts merged regions that are completely defined in these
      * rows (ie. merged 2 cells on a row to be shifted).
      *
@@ -1517,12 +1506,11 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
     /**
      * Shifts rows between startRow and endRow n number of rows.
      * If you use a negative number, it will shift rows up.
-     * Code ensures that rows don't wrap around
-     * <p/>
-     * <p/>
+     * Code ensures that rows don't wrap around<p>
+     * 
      * Additionally shifts merged regions that are completely defined in these
-     * rows (ie. merged 2 cells on a row to be shifted).
-     * <p/>
+     * rows (ie. merged 2 cells on a row to be shifted).<p>
+     * 
      * TODO Might want to add bounds checking here
      *
      * @param startRow               the row to start shifting
@@ -1539,12 +1527,11 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
     /**
      * Shifts rows between startRow and endRow n number of rows.
      * If you use a negative number, it will shift rows up.
-     * Code ensures that rows don't wrap around
-     * <p/>
-     * <p/>
+     * Code ensures that rows don't wrap around<p>
+     * 
      * Additionally shifts merged regions that are completely defined in these
-     * rows (ie. merged 2 cells on a row to be shifted).
-     * <p/>
+     * rows (ie. merged 2 cells on a row to be shifted).<p>
+     * 
      * TODO Might want to add bounds checking here
      *
      * @param startRow               the row to start shifting
@@ -1738,11 +1725,9 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
     }
 
     /**
-     * Creates a split (freezepane). Any existing freezepane or split pane is overwritten.
-     * <p/>
-     * <p>
+     * Creates a split (freezepane). Any existing freezepane or split pane is overwritten.<p>
+     * 
      * If both colSplit and rowSplit are zero then the existing freeze pane is removed
-     * </p>
      *
      * @param colSplit       Horizonatal position of split.
      * @param rowSplit       Vertical position of split.
@@ -1761,11 +1746,9 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
     }
 
     /**
-     * Creates a split (freezepane). Any existing freezepane or split pane is overwritten.
-     * <p/>
-     * <p>
+     * Creates a split (freezepane). Any existing freezepane or split pane is overwritten.<p>
+     * 
      * If both colSplit and rowSplit are zero then the existing freeze pane is removed
-     * </p>
      *
      * @param colSplit Horizonatal position of split.
      * @param rowSplit Vertical position of split.
@@ -1866,8 +1849,8 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
 
     /**
      * Sets a page break at the indicated row
-     * Breaks occur above the specified row and left of the specified column inclusive.
-     * <p/>
+     * Breaks occur above the specified row and left of the specified column inclusive.<p>
+     * 
      * For example, <code>sheet.setColumnBreak(2);</code> breaks the sheet into two parts
      * with columns A,B,C in the first and D,E,... in the second. Simuilar, <code>sheet.setRowBreak(2);</code>
      * breaks the sheet into two parts with first three rows (rownum=1...3) in the first part
@@ -1918,10 +1901,10 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
 
     /**
      * Sets a page break at the indicated column.
-     * Breaks occur above the specified row and left of the specified column inclusive.
-     * <p/>
+     * Breaks occur above the specified row and left of the specified column inclusive.<p>
+     * 
      * For example, <code>sheet.setColumnBreak(2);</code> breaks the sheet into two parts
-     * with columns A,B,C in the first and D,E,... in the second. Simuilar, <code>sheet.setRowBreak(2);</code>
+     * with columns A,B,C in the first and D,E,... in the second. Simuilar, {@code sheet.setRowBreak(2);}
      * breaks the sheet into two parts with first three rows (rownum=1...3) in the first part
      * and rows starting with rownum=4 in the second.
      *
@@ -2141,8 +2124,8 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
     }
 
     /**
-     * Adjusts the column width to fit the contents.
-     * <p/>
+     * Adjusts the column width to fit the contents.<p>
+     * 
      * This process can be relatively slow on large sheets, so this should
      * normally only be called once per column, at the end of your
      * processing.
@@ -2155,12 +2138,12 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
     }
 
     /**
-     * Adjusts the column width to fit the contents.
-     * <p/>
+     * Adjusts the column width to fit the contents.<p>
+     * 
      * This process can be relatively slow on large sheets, so this should
      * normally only be called once per column, at the end of your
-     * processing.
-     * <p/>
+     * processing.<p>
+     * 
      * You can specify whether the content of merged cells should be considered or ignored.
      * Default is to ignore merged cells.
      *

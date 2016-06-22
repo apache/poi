@@ -23,9 +23,7 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * The plot growth record specifies the scaling factors used when a font is scaled.<p/>
- * 
- * @author Glen Stampoultzis (glens at apache.org)
+ * The plot growth record specifies the scaling factors used when a font is scaled.
  */
 public final class PlotGrowthRecord extends StandardRecord {
     public final static short      sid                             = 0x1064;

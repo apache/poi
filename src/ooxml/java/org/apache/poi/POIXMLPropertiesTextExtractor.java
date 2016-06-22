@@ -38,8 +38,9 @@ public class POIXMLPropertiesTextExtractor extends POIXMLTextExtractor {
     private final DateFormat dateFormat;
     
 	/**
-	 * Creates a new POIXMLPropertiesTextExtractor for the
-	 *  given open document.
+	 * Creates a new POIXMLPropertiesTextExtractor for the given open document.
+	 * 
+	 * @param doc the given open document
 	 */
 	public POIXMLPropertiesTextExtractor(POIXMLDocument doc) {
 		super(doc);
@@ -52,6 +53,8 @@ public class POIXMLPropertiesTextExtractor extends POIXMLTextExtractor {
 	 * Creates a new POIXMLPropertiesTextExtractor, for the
 	 *  same file that another TextExtractor is already
 	 *  working on.
+	 * 
+	 * @param otherExtractor the extractor referencing the given file
 	 */
 	public POIXMLPropertiesTextExtractor(POIXMLTextExtractor otherExtractor) {
 		this(otherExtractor.getDocument());
@@ -77,6 +80,8 @@ public class POIXMLPropertiesTextExtractor extends POIXMLTextExtractor {
 
 	/**
 	 * Returns the core document properties, eg author
+	 * 
+	 * @return the core document properties
 	 */
 	@SuppressWarnings("resource")
     public String getCorePropertiesText() {
@@ -113,8 +118,9 @@ public class POIXMLPropertiesTextExtractor extends POIXMLTextExtractor {
 		return text.toString();
 	}
 	/**
-	 * Returns the extended document properties, eg
-	 *  application
+	 * Returns the extended document properties, eg application
+	 * 
+	 * @return the extended document properties
 	 */
 	@SuppressWarnings("resource")
     public String getExtendedPropertiesText() {
@@ -146,8 +152,9 @@ public class POIXMLPropertiesTextExtractor extends POIXMLTextExtractor {
 		return text.toString();
 	}
    /**
-    * Returns the custom document properties, if
-    *  there are any
+    * Returns the custom document properties, if there are any
+    * 
+    * @return the custom document properties
     */
    @SuppressWarnings({ "resource" })
    public String getCustomPropertiesText() {

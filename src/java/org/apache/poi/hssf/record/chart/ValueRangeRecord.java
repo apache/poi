@@ -25,9 +25,7 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * The value range record defines the range of the value axis.<p/>
- * 
- * @author Glen Stampoultzis (glens at apache.org)
+ * The value range record defines the range of the value axis.
  */
 public final class ValueRangeRecord extends StandardRecord {
     public final static short sid = 0x101f;

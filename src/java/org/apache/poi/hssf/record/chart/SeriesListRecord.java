@@ -24,14 +24,12 @@ import org.apache.poi.hssf.record.StandardRecord;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * SERIESLIST (0x1016)<p/>
+ * SERIESLIST (0x1016)<p>
  * 
- * The series list record defines the series displayed as an overlay to the main chart record.<br/>
+ * The series list record defines the series displayed as an overlay to the main chart record.<p>
  * 
  * (As with all chart related records, documentation is lacking.
  * See {@link ChartRecord} for more details)
- * 
- * @author Glen Stampoultzis (glens at apache.org)
  */
 public final class SeriesListRecord extends StandardRecord {
     public final static short sid = 0x1016;

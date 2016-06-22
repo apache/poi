@@ -32,6 +32,9 @@ public class EscherSimpleProperty extends EscherProperty
     /**
      * The id is distinct from the actual property number.  The id includes the property number the blip id
      * flag and an indicator whether the property is complex or not.
+     * 
+     * @param id the property id
+     * @param propertyValue the property value
      */
     public EscherSimpleProperty( short id, int propertyValue )
     {
@@ -40,8 +43,12 @@ public class EscherSimpleProperty extends EscherProperty
     }
 
     /**
-     * Constructs a new escher property.  The three parameters are combined to form a property
-     * id.
+     * Constructs a new escher property.  The three parameters are combined to form a property id.
+     * 
+     * @param propertyNumber the property number
+     * @param isComplex true, if its a complex property
+     * @param isBlipId true, if its a blip
+     * @param propertyValue the property value
      */
     public EscherSimpleProperty( short propertyNumber, boolean isComplex, boolean isBlipId, int propertyValue )
     {

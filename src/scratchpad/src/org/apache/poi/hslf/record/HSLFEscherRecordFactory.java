@@ -40,14 +40,7 @@ public class HSLFEscherRecordFactory extends DefaultEscherRecordFactory {
         // no instance initialisation
     }
     
-    /**
-     * Generates an escher record including the any children contained under that record.
-     * An exception is thrown if the record could not be generated.
-     *
-     * @param data   The byte array containing the records
-     * @param offset The starting offset into the byte array
-     * @return The generated escher record
-     */
+    @Override
     public EscherRecord createRecord(byte[] data, int offset) {
         short options = LittleEndian.getShort( data, offset );
         short recordId = LittleEndian.getShort( data, offset + 2 );

@@ -492,7 +492,8 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
      * the addition of a thumbnail in a package. You can do the same work by
      * using the traditionnal relationship and part mechanism.
      *
-     * @param path The full path to the image file.
+     * @param filename The full path to the image file.
+     * @param data the image data
      */
     public void addThumbnail(String filename, InputStream data) throws IOException {
         // Check parameter
