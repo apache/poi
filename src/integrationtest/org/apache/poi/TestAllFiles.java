@@ -148,6 +148,9 @@ public class TestAllFiles {
         HANDLERS.put(".svg", new NullFileHandler());
         HANDLERS.put(".pict", new NullFileHandler());
         HANDLERS.put(".jpg", new NullFileHandler());
+        HANDLERS.put(".jpeg", new NullFileHandler());
+        HANDLERS.put(".tif", new NullFileHandler());
+        HANDLERS.put(".tiff", new NullFileHandler());
         HANDLERS.put(".wav", new NullFileHandler());
         HANDLERS.put(".pfx", new NullFileHandler());
         HANDLERS.put(".xml", new NullFileHandler());
