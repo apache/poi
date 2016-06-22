@@ -59,9 +59,6 @@ import org.apache.poi.util.POILogger;
 
 /**
  * Represents a container that can store multiple data objects.
- *
- * @author Julien Chable, CDubet
- * @version 0.1
  */
 public abstract class OPCPackage implements RelationshipSource, Closeable {
 
@@ -420,7 +417,8 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 	 * @throws IOException
 	 *             If an IO exception occur during the saving process.
 	 */
-	public void close() throws IOException {
+	@Override
+    public void close() throws IOException {
 		if (this.packageAccess == PackageAccess.READ) {
 			logger.log(POILogger.WARN, 
 			        "The close() method is intended to SAVE a package. This package is open in READ ONLY mode, use the revert() method instead !");
@@ -484,8 +482,11 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
         String name = path.substring(path.lastIndexOf(File.separatorChar) + 1);
 
         FileInputStream is = new FileInputStream(path);
-        addThumbnail(name, is);
-        is.close();
+        try {
+            addThumbnail(name, is);
+        } finally {
+            is.close();
+        }
     }
     /**
      * Add a thumbnail to the package. This method is provided to make easier
@@ -1150,7 +1151,8 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 	 *            ID of the relationship.
 	 * @see PackageRelationshipTypes
 	 */
-	public PackageRelationship addRelationship(PackagePartName targetPartName,
+	@Override
+    public PackageRelationship addRelationship(PackagePartName targetPartName,
 			TargetMode targetMode, String relationshipType, String relID) {
 		/* Check OPC compliance */
 
@@ -1197,7 +1199,8 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 	 *            Relationship type.
 	 * @see PackageRelationshipTypes
 	 */
-	public PackageRelationship addRelationship(PackagePartName targetPartName,
+	@Override
+    public PackageRelationship addRelationship(PackagePartName targetPartName,
 			TargetMode targetMode, String relationshipType) {
 		return this.addRelationship(targetPartName, targetMode,
 				relationshipType, null);
@@ -1218,7 +1221,8 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 	 * @see org.apache.poi.openxml4j.opc.RelationshipSource#addExternalRelationship(java.lang.String,
 	 *      java.lang.String)
 	 */
-	public PackageRelationship addExternalRelationship(String target,
+	@Override
+    public PackageRelationship addExternalRelationship(String target,
 			String relationshipType) {
 		return addExternalRelationship(target, relationshipType, null);
 	}
@@ -1240,7 +1244,8 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 	 * @see org.apache.poi.openxml4j.opc.RelationshipSource#addExternalRelationship(java.lang.String,
 	 *      java.lang.String)
 	 */
-	public PackageRelationship addExternalRelationship(String target,
+	@Override
+    public PackageRelationship addExternalRelationship(String target,
 			String relationshipType, String id) {
 		if (target == null) {
 			throw new IllegalArgumentException("target");
@@ -1269,7 +1274,8 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 	 * @param id
 	 *            Id of the relationship to delete.
 	 */
-	public void removeRelationship(String id) {
+	@Override
+    public void removeRelationship(String id) {
 		if (relationships != null) {
 			relationships.removeRelationship(id);
 			this.isDirty = true;
@@ -1283,7 +1289,8 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 	 * @throws OpenXML4JException
 	 * @see #getRelationshipsHelper(String)
 	 */
-	public PackageRelationshipCollection getRelationships() {
+	@Override
+    public PackageRelationshipCollection getRelationships() {
 		return getRelationshipsHelper(null);
 	}
 
@@ -1294,7 +1301,8 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 	 *            The filter specifying the relationship type.
 	 * @return All relationships with the specified relationship type.
 	 */
-	public PackageRelationshipCollection getRelationshipsByType(
+	@Override
+    public PackageRelationshipCollection getRelationshipsByType(
 			String relationshipType) {
 		throwExceptionIfWriteOnly();
 		if (relationshipType == null) {
@@ -1319,7 +1327,8 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 	/**
 	 * Clear package relationships.
 	 */
-	public void clearRelationships() {
+	@Override
+    public void clearRelationships() {
 		if (relationships != null) {
 			relationships.clear();
 			this.isDirty = true;
@@ -1342,21 +1351,24 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 	/**
 	 * @see org.apache.poi.openxml4j.opc.RelationshipSource#getRelationship(java.lang.String)
 	 */
-	public PackageRelationship getRelationship(String id) {
+	@Override
+    public PackageRelationship getRelationship(String id) {
 		return this.relationships.getRelationshipByID(id);
 	}
 
 	/**
 	 * @see org.apache.poi.openxml4j.opc.RelationshipSource#hasRelationships()
 	 */
-	public boolean hasRelationships() {
+	@Override
+    public boolean hasRelationships() {
 		return (relationships.size() > 0);
 	}
 
 	/**
 	 * @see org.apache.poi.openxml4j.opc.RelationshipSource#isRelationshipExists(org.apache.poi.openxml4j.opc.PackageRelationship)
 	 */
-	public boolean isRelationshipExists(PackageRelationship rel) {
+	@Override
+    public boolean isRelationshipExists(PackageRelationship rel) {
         for (PackageRelationship r : this.getRelationships()) {
             if (r == rel) {
                 return true;
