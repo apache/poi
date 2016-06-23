@@ -49,10 +49,8 @@ public class FromHowTo {
 
 			XMLReader parser = fetchSheetParser(sst);
 
-			// To look up the Sheet Name / Sheet Order / rID,
-			//  you need to process the core Workbook stream.
-			// Normally it's of the form rId# or rSheet#
-			InputStream sheet2 = r.getSheet("rId2");
+			// process the first sheet
+			InputStream sheet2 = r.getSheetsData().next();
 			InputSource sheetSource = new InputSource(sheet2);
 			parser.parse(sheetSource);
 			sheet2.close();
