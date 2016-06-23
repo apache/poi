@@ -3082,4 +3082,19 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         Cell P16 = row.getCell(P);
         assertEquals(10.0, P16.getNumericCellValue(), 0.00001);
     }
+    
+    /**
+     * Files produced by some scientific equipment neglect
+     *  to include the row number on the row tags
+     */
+    @Test
+    @Ignore("Not yet supported")
+    public void noRowNumbers59746() {
+        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("59746_NoRowNums.xlsx");
+        Sheet sheet = wb.getSheetAt(0);
+        assertTrue("Last row num: "+sheet.getLastRowNum(), sheet.getLastRowNum()>20);
+        assertEquals("Checked", sheet.getRow(0).getCell(0).getStringCellValue());
+        assertEquals("Checked", sheet.getRow(9).getCell(2).getStringCellValue());
+        assertEquals(false, sheet.getRow(70).getCell(8).getBooleanCellValue());
+    }
 }
