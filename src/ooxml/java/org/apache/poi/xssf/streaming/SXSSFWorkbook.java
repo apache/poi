@@ -35,7 +35,6 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.poi.openxml4j.opc.OPCPackage;
-import org.apache.poi.openxml4j.opc.internal.ZipHelper;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.udf.UDFFinder;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -355,7 +354,8 @@ public class SXSSFWorkbook implements Workbook {
 
     private void injectData(File zipfile, OutputStream out) throws IOException 
     {
-        ZipFile zip = ZipHelper.openZipFile(zipfile);
+    	// don't use ZipHelper.openZipFile here - see #59743
+        ZipFile zip = new ZipFile(zipfile);
         try
         {
             ZipOutputStream zos = new ZipOutputStream(out);
