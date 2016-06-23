@@ -77,6 +77,16 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
             _cells.put(colI, cell);
             sheet.onReadCell(cell);
         }
+        
+        if (! row.isSetR()) {
+            // Certain file format writers skip the row number
+            // Assume no gaps, and give this the next row number
+            int nextRowNum = sheet.getLastRowNum()+2;
+            if (nextRowNum == 2 && sheet.getPhysicalNumberOfRows() == 0) {
+                nextRowNum = 1;
+            }
+            row.setR(nextRowNum);
+        }
     }
 
     /**
