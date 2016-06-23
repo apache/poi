@@ -25,10 +25,12 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.POITestCase;
@@ -116,6 +118,7 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
 	    xssfWb1.close();
 	    
 	    wb2.close();
+	    wb1.close();
     }
 
     @Test
@@ -153,6 +156,7 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
         assertEquals("A", cell.getStringCellValue());
 
         xssfWorkbook.close();
+        wb.close();
     }
 
     @Test
@@ -226,6 +230,7 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
     	
         xssfWb2.close();
     	xssfWb3.close();
+    	wb1.close();
     }
 
     @Test
@@ -304,6 +309,7 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
 
         assertTrue(wb.dispose());
         xwb.close();
+        wb.close();
     }
 
     protected static void assertWorkbookDispose(SXSSFWorkbook wb)
@@ -339,17 +345,17 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
     }
 
     @Test
-    public void workbookDispose()
-    {
+    public void workbookDispose() throws IOException {
         SXSSFWorkbook wb1 = new SXSSFWorkbook();
         // the underlying writer is SheetDataWriter
         assertWorkbookDispose(wb1);
+        wb1.close();
 
         SXSSFWorkbook wb2 = new SXSSFWorkbook();
         wb2.setCompressTempFiles(true);
         // the underlying writer is GZIPSheetDataWriter
         assertWorkbookDispose(wb2);
-
+        wb2.close();
     }
 
     @Ignore("currently writing the same sheet multiple times is not supported...")
@@ -397,6 +403,7 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
             } finally {
                 assertTrue(wb.dispose());
             }
+            wb.close();
         }
         out.delete();
     }
@@ -448,7 +455,9 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
             }
         }
 
-        streamingWorkBook.write(new FileOutputStream("C:\\temp\\streaming.xlsx"));
+        FileOutputStream fos = new FileOutputStream("C:\\temp\\streaming.xlsx");
+        streamingWorkBook.write(fos);
+        fos.close();
         
         streamingWorkBook.close();
         workBook.close();
@@ -459,7 +468,8 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
     public void closeDoesNotModifyWorkbook() throws IOException, InvalidFormatException {
         final String filename = "SampleSS.xlsx";
         final File file = POIDataSamples.getSpreadSheetInstance().getFile(filename);
-        SXSSFWorkbook wb;
+        SXSSFWorkbook wb = null;
+        XSSFWorkbook xwb = null;
         
         // Some tests commented out because close() modifies the file
         // See bug 58779
@@ -473,11 +483,55 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
         //assertCloseDoesNotModifyFile(filename, wb);
         
         // InputStream
-        wb = new SXSSFWorkbook(new XSSFWorkbook(new FileInputStream(file)));
-        assertCloseDoesNotModifyFile(filename, wb);
+        FileInputStream fis = new FileInputStream(file);
+        try {
+            xwb = new XSSFWorkbook(fis);
+            wb = new SXSSFWorkbook(xwb);
+            assertCloseDoesNotModifyFile(filename, wb);
+        } finally {
+            if (xwb != null) {
+                xwb.close();
+            }
+            if (wb != null) {
+                wb.close();
+            }
+            fis.close();
+        }
         
         // OPCPackage
         //wb = new SXSSFWorkbook(new XSSFWorkbook(OPCPackage.open(file)));
         //assertCloseDoesNotModifyFile(filename, wb);
+    }
+    
+    /**
+     * Bug #59743
+     * 
+     * this is only triggered on other files apart of sheet[1,2,...].xml
+     * as those are either copied uncompressed or with the use of GZIPInputStream
+     * so we use shared strings
+     */
+    @Test
+    public void testZipBombNotTriggeredOnUselessContent() throws IOException {
+        SXSSFWorkbook swb = new SXSSFWorkbook(null, 1, true, true);
+        SXSSFSheet s = swb.createSheet();
+        char useless[] = new char[32767];
+        Arrays.fill(useless, ' ');
+        
+        for (int row=0; row<1; row++) {
+            Row r = s.createRow(row);
+            for (int col=0; col<10; col++) {
+                char prefix[] = Integer.toHexString(row*1000+col).toCharArray();
+                Arrays.fill(useless, 0, 10, ' ');
+                System.arraycopy(prefix, 0, useless, 0, prefix.length);
+                String ul = new String(useless);
+                r.createCell(col, Cell.CELL_TYPE_STRING).setCellValue(ul);
+                ul = null;
+            }
+        }
+        
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        swb.write(bos);
+        swb.dispose();
+        swb.close();
     }
 }
