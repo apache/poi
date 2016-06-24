@@ -17,7 +17,7 @@
 
 package org.apache.poi.hssf.util;
 
-import java.util.Hashtable;
+import java.util.Map;
 
 import junit.framework.TestCase;
 /**
@@ -40,7 +40,7 @@ public final class TestHSSFColor extends TestCase {
 	}
 	
 	public void testTrippletHash() {
-		Hashtable tripplets = HSSFColor.getTripletHash();
+		Map<String, HSSFColor> tripplets = HSSFColor.getTripletHash();
 		
 		assertEquals(
 				HSSFColor.MAROON.class,

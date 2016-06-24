@@ -181,53 +181,65 @@ public final class TestContentType extends TestCase {
         
         // Check the types on everything
         for (PackagePart part : p.getParts()) {
+            final String contentType = part.getContentType();
+            final ContentType details = part.getContentTypeDetails();
+            final int length = details.getParameterKeys().length;
+            final boolean hasParameters = details.hasParameters();
+
             // _rels type doesn't have any params
             if (part.isRelationshipPart()) {
-                assertEquals(ContentTypes.RELATIONSHIPS_PART, part.getContentType());
-                assertEquals(ContentTypes.RELATIONSHIPS_PART, part.getContentTypeDetails().toString());
-                assertEquals(false, part.getContentTypeDetails().hasParameters());
-                assertEquals(0, part.getContentTypeDetails().getParameterKeys().length);
+                assertEquals(ContentTypes.RELATIONSHIPS_PART, contentType);
+                assertEquals(ContentTypes.RELATIONSHIPS_PART, details.toString());
+                assertEquals(false, hasParameters);
+                assertEquals(0, length);
             }
             // Core type doesn't have any params
             else if (part.getPartName().toString().equals("/docProps/core.xml")) {
-                assertEquals(ContentTypes.CORE_PROPERTIES_PART, part.getContentType());
-                assertEquals(ContentTypes.CORE_PROPERTIES_PART, part.getContentTypeDetails().toString());
-                assertEquals(false, part.getContentTypeDetails().hasParameters());
-                assertEquals(0, part.getContentTypeDetails().getParameterKeys().length);
+                assertEquals(ContentTypes.CORE_PROPERTIES_PART, contentType);
+                assertEquals(ContentTypes.CORE_PROPERTIES_PART, details.toString());
+                assertEquals(false, hasParameters);
+                assertEquals(0, length);
             }
             // Global Crs types do have params
             else if (part.getPartName().toString().equals("/global1dCrs.xml")) {
-                assertEquals(typeResqml, part.getContentType().substring(0, typeResqml.length()));
-                assertEquals(typeResqml, part.getContentTypeDetails().toString(false));
-                assertEquals(true, part.getContentTypeDetails().hasParameters());
-                assertEquals(typeResqml+";version=2.0;type=obj_global1dCrs", part.getContentTypeDetails().toString());
-                assertEquals(2, part.getContentTypeDetails().getParameterKeys().length);
-                assertEquals("2.0", part.getContentTypeDetails().getParameter("version"));
-                assertEquals("obj_global1dCrs", part.getContentTypeDetails().getParameter("type"));
+                assertTrue(part.getContentType().startsWith(typeResqml));
+                assertEquals(typeResqml, details.toString(false));
+                assertEquals(true, hasParameters);
+                assertContains("version=2.0", details.toString());
+                assertContains("type=obj_global1dCrs", details.toString());
+                assertEquals(2, length);
+                assertEquals("2.0", details.getParameter("version"));
+                assertEquals("obj_global1dCrs", details.getParameter("type"));
             }
             else if (part.getPartName().toString().equals("/global2dCrs.xml")) {
-                assertEquals(typeResqml, part.getContentType().substring(0, typeResqml.length()));
-                assertEquals(typeResqml, part.getContentTypeDetails().toString(false));
-                assertEquals(true, part.getContentTypeDetails().hasParameters());
-                assertEquals(typeResqml+";version=2.0;type=obj_global2dCrs", part.getContentTypeDetails().toString());
-                assertEquals(2, part.getContentTypeDetails().getParameterKeys().length);
-                assertEquals("2.0", part.getContentTypeDetails().getParameter("version"));
-                assertEquals("obj_global2dCrs", part.getContentTypeDetails().getParameter("type"));
+                assertTrue(part.getContentType().startsWith(typeResqml));
+                assertEquals(typeResqml, details.toString(false));
+                assertEquals(true, hasParameters);
+                assertContains("version=2.0", details.toString());
+                assertContains("type=obj_global2dCrs", details.toString());
+                assertEquals(2, length);
+                assertEquals("2.0", details.getParameter("version"));
+                assertEquals("obj_global2dCrs", details.getParameter("type"));
             }
             // Other thingy
             else if (part.getPartName().toString().equals("/myTestingGuid.xml")) {
-                assertEquals(typeResqml, part.getContentType().substring(0, typeResqml.length()));
-                assertEquals(typeResqml, part.getContentTypeDetails().toString(false));
-                assertEquals(true, part.getContentTypeDetails().hasParameters());
-                assertEquals(typeResqml+";version=2.0;type=obj_tectonicBoundaryFeature", part.getContentTypeDetails().toString());
-                assertEquals(2, part.getContentTypeDetails().getParameterKeys().length);
-                assertEquals("2.0", part.getContentTypeDetails().getParameter("version"));
-                assertEquals("obj_tectonicBoundaryFeature", part.getContentTypeDetails().getParameter("type"));
+                assertTrue(part.getContentType().startsWith(typeResqml));
+                assertEquals(typeResqml, details.toString(false));
+                assertEquals(true, hasParameters);
+                assertContains("version=2.0", details.toString());
+                assertContains("type=obj_tectonicBoundaryFeature", details.toString());
+                assertEquals(2, length);
+                assertEquals("2.0", details.getParameter("version"));
+                assertEquals("obj_tectonicBoundaryFeature", details.getParameter("type"));
             }
             // That should be it!
             else {
                 fail("Unexpected part " + part);
             }
         }
-	}
+    }
+
+    private static void assertContains(String needle, String haystack) {
+        assertTrue(haystack.contains(needle));
+    }
 }

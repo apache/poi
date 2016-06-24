@@ -60,8 +60,8 @@ public final class TestReWriteSanity extends TestCase {
 		// Find the location of the PersistPtrIncrementalBlocks and
 		// UserEditAtoms
 		Record[] r = wss.getRecords();
-		Map<Integer,Record> pp = new Hashtable<Integer,Record>();
-		Map<Integer,Object> ue = new Hashtable<Integer,Object>();
+		Map<Integer,Record> pp = new HashMap<Integer,Record>();
+		Map<Integer,Object> ue = new HashMap<Integer,Object>();
 		ue.put(Integer.valueOf(0),Integer.valueOf(0)); // Will show 0 if first
 		int pos = 0;
 		int lastUEPos = -1;

@@ -28,7 +28,7 @@ import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Hashtable;
+import java.util.Map;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
@@ -464,7 +464,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
         // For position dependent records, hold where they were and now are
         // As we go along, update, and hand over, to any Position Dependent
         //  records we happen across
-        Hashtable<Integer,Integer> oldToNewPositions = new Hashtable<Integer,Integer>();
+        Map<Integer,Integer> oldToNewPositions = new HashMap<Integer,Integer>();
 
         // First pass - figure out where all the position dependent
         //   records are going to end up, in the new scheme

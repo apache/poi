@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
 
@@ -44,7 +44,7 @@ public final class ChunkFactory {
 	 * Key is a Chunk's type, value is an array of its CommandDefinitions
 	 */
 	private final Map<Integer, CommandDefinition[]> chunkCommandDefinitions = 
-	      new Hashtable<Integer, CommandDefinition[]>();
+	      new HashMap<Integer, CommandDefinition[]>();
 	/**
 	 * What the name is of the chunk table definitions file?
 	 * This file comes from the scratchpad resources directory.
@@ -105,7 +105,7 @@ public final class ChunkFactory {
     
     			CommandDefinition[] defs = defsL.toArray(new CommandDefinition[defsL.size()]);
     
-    			// Add to the hashtable
+    			// Add to the map
     			chunkCommandDefinitions.put(Integer.valueOf(chunkType), defs);
     		}
 		} finally {
