@@ -30,6 +30,7 @@ import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.util.CellRangeAddress;
 
 /**
@@ -69,13 +70,13 @@ public final class HSSFReadWrite {
 
 		f.setFontHeightInPoints((short) 12);
 		f.setColor((short) 0xA);
-		f.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+		f.setBold(true);
 		f2.setFontHeightInPoints((short) 10);
 		f2.setColor((short) 0xf);
-		f2.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+		f2.setBold(true);
 		cs.setFont(f);
 		cs.setDataFormat(HSSFDataFormat.getBuiltinFormat("($#,##0_);[Red]($#,##0)"));
-		cs2.setBorderBottom(HSSFCellStyle.BORDER_THIN);
+		cs2.setBorderBottom(BorderStyle.THIN);
 		cs2.setFillPattern((short) 1); // fill w fg
 		cs2.setFillForegroundColor((short) 0xA);
 		cs2.setFont(f2);
@@ -107,7 +108,7 @@ public final class HSSFReadWrite {
 		rownum++;
 		rownum++;
 		HSSFRow r = s.createRow(rownum);
-		cs3.setBorderBottom(HSSFCellStyle.BORDER_THICK);
+		cs3.setBorderBottom(BorderStyle.THICK);
 		for (int cellnum = 0; cellnum < 50; cellnum++) {
 			HSSFCell c = r.createCell(cellnum);
 			c.setCellStyle(cs3);
@@ -123,8 +124,11 @@ public final class HSSFReadWrite {
 
 		// end deleted sheet
 		FileOutputStream out = new FileOutputStream(outputFilename);
-		wb.write(out);
-		out.close();
+		try {
+		    wb.write(out);
+		} finally {
+		    out.close();
+		}
 		
 		wb.close();
 	}

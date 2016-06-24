@@ -71,8 +71,6 @@ public class InCellLists {
         HSSFSheet sheet = null;
         HSSFRow row = null;
         HSSFCell cell = null;
-        File outputFile = null;
-        FileOutputStream fos = null;
         ArrayList<MultiLevelListItem> multiLevelListItems = null;
         ArrayList<String> listItems = null;
         try {
@@ -170,9 +168,12 @@ public class InCellLists {
             row.setHeight((short)2800);
 
             // Save the completed workbook
-            outputFile = new File(outputFilename);
-            fos = new FileOutputStream(outputFile);
-            workbook.write(fos);
+            FileOutputStream fos = new FileOutputStream(new File(outputFilename));
+            try {
+                workbook.write(fos);
+            } finally {
+                fos.close();
+            }
         }
         catch(FileNotFoundException fnfEx) {
             System.out.println("Caught a: " + fnfEx.getClass().getName());
@@ -189,9 +190,6 @@ public class InCellLists {
         finally {
             if (workbook != null) {
                 workbook.close();
-            }
-            if (fos != null) {
-                fos.close();
             }
         }
     }

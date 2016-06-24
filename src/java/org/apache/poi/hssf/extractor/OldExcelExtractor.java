@@ -89,7 +89,7 @@ public class OldExcelExtractor implements Closeable {
         }
         
         @SuppressWarnings("resource")
-        FileInputStream biffStream = new FileInputStream(f);
+        FileInputStream biffStream = new FileInputStream(f); // NOSONAR
         try {
             open(biffStream);
         } catch (IOException e)  {

@@ -89,7 +89,7 @@ public class FFData
         fillFields( std, offset );
     }
 
-    public void fillFields( final byte[] std, final int startOffset )
+    public void fillFields( final byte[] std, final int startOffset ) // NOSONAR
     {
         int offset = startOffset;
 
