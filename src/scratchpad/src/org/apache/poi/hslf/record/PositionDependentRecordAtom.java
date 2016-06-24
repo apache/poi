@@ -16,7 +16,7 @@
 ==================================================================== */
 
 package org.apache.poi.hslf.record;
-import java.util.Hashtable;
+import java.util.Map;
 
 /**
  * A special (and dangerous) kind of Record Atom that cares about where
@@ -48,5 +48,5 @@ public abstract class PositionDependentRecordAtom extends RecordAtom implements 
 	 * Allows records to update their internal pointers to other records
 	 *  locations
 	 */
-	public abstract void updateOtherRecordReferences(Hashtable<Integer,Integer> oldToNewReferencesLookup);
+	public abstract void updateOtherRecordReferences(Map<Integer,Integer> oldToNewReferencesLookup);
 }

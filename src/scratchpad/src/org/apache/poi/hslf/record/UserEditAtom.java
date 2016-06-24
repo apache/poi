@@ -22,7 +22,7 @@ import org.apache.poi.util.LittleEndianConsts;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Hashtable;
+import java.util.Map;
 
 /**
  * A UserEdit Atom (type 4085). Holds information which bits of the file
@@ -146,7 +146,7 @@ public final class UserEditAtom extends PositionDependentRecordAtom
 	 * At write-out time, update the references to PersistPtrs and
 	 *  other UserEditAtoms to point to their new positions
 	 */
-	public void updateOtherRecordReferences(Hashtable<Integer,Integer> oldToNewReferencesLookup) {
+	public void updateOtherRecordReferences(Map<Integer,Integer> oldToNewReferencesLookup) {
 		// Look up the new positions of our preceding UserEditAtomOffset
 		if(lastUserEditAtomOffset != 0) {
 			Integer newLocation = oldToNewReferencesLookup.get(Integer.valueOf(lastUserEditAtomOffset));

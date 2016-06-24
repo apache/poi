@@ -16,7 +16,7 @@
 ==================================================================== */
 
 package org.apache.poi.hslf.record;
-import java.util.Hashtable;
+import java.util.Map;
 
 /**
  * Records which either care about where they are on disk, or have other
@@ -47,5 +47,5 @@ public interface PositionDependentRecord
 	 * Offer the record the list of records that have changed their
 	 *  location as part of the writeout.
 	 */
-	public void updateOtherRecordReferences(Hashtable<Integer,Integer> oldToNewReferencesLookup);
+	public void updateOtherRecordReferences(Map<Integer,Integer> oldToNewReferencesLookup);
 }

@@ -33,9 +33,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -155,7 +154,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      * this holds the HSSFFont objects attached to this workbook.
      * We only create these from the low level records as required.
      */
-    private Hashtable<Short,HSSFFont> fonts;
+    private Map<Short,HSSFFont> fonts;
 
     /**
      * holds whether or not to preserve other nodes in the POIFS.  Used
@@ -1204,7 +1203,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      */
     @Override
     public HSSFFont getFontAt(short idx) {
-        if(fonts == null) fonts = new Hashtable<Short, HSSFFont>();
+        if(fonts == null) fonts = new HashMap<Short, HSSFFont>();
 
         // So we don't confuse users, give them back
         //  the same object every time, but create
@@ -1228,7 +1227,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      *  and that's not something you should normally do
      */
     protected void resetFontCache() {
-        fonts = new Hashtable<Short, HSSFFont>();
+        fonts = new HashMap<Short, HSSFFont>();
     }
 
     /**

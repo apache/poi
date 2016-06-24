@@ -19,7 +19,7 @@ package org.apache.poi.hssf.util;
 
 import java.lang.reflect.Field;
 import java.util.Collections;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.poi.ss.usermodel.Color;
@@ -57,18 +57,18 @@ public class HSSFColor implements Color {
         return indexHash;
     }
     /**
-     * This function returns all the Colours, stored in a Hashtable that
+     * This function returns all the Colours, stored in a Map that
      *  can be edited. No caching is performed. If you don't need to edit
      *  the table, then call {@link #getIndexHash()} which returns a
      *  statically cached imuatable map of colours.
      */
-    public final static Hashtable<Integer,HSSFColor> getMutableIndexHash() {
+    public final static Map<Integer,HSSFColor> getMutableIndexHash() {
        return createColorsByIndexMap();
     }
 
-    private static Hashtable<Integer,HSSFColor> createColorsByIndexMap() {
+    private static Map<Integer,HSSFColor> createColorsByIndexMap() {
         HSSFColor[] colors = getAllColors();
-        Hashtable<Integer,HSSFColor> result = new Hashtable<Integer,HSSFColor>(colors.length * 3 / 2);
+        Map<Integer,HSSFColor> result = new HashMap<Integer,HSSFColor>(colors.length * 3 / 2);
 
         for (int i = 0; i < colors.length; i++) {
             HSSFColor color = colors[i];
@@ -148,16 +148,16 @@ public class HSSFColor implements Color {
      * it takes to create it once per request but you will not hold onto it
      * if you have none of those requests.
      *
-     * @return a hashtable containing all colors keyed by String gnumeric-like triplets
+     * @return a Map containing all colors keyed by String gnumeric-like triplets
      */
-    public final static Hashtable<String,HSSFColor> getTripletHash()
+    public final static Map<String,HSSFColor> getTripletHash()
     {
         return createColorsByHexStringMap();
     }
 
-    private static Hashtable<String,HSSFColor> createColorsByHexStringMap() {
+    private static Map<String,HSSFColor> createColorsByHexStringMap() {
         HSSFColor[] colors = getAllColors();
-        Hashtable<String,HSSFColor> result = new Hashtable<String,HSSFColor>(colors.length * 3 / 2);
+        Map<String,HSSFColor> result = new HashMap<String,HSSFColor>(colors.length * 3 / 2);
 
         for (int i = 0; i < colors.length; i++) {
             HSSFColor color = colors[i];
@@ -1683,7 +1683,7 @@ public class HSSFColor implements Color {
 
     /**
      * Special Default/Normal/Automatic color.
-     * <p><i>Note:</i> This class is NOT in the default HashTables returned by HSSFColor.
+     * <p><i>Note:</i> This class is NOT in the default Map returned by HSSFColor.
      * The index is a special case which is interpreted in the various setXXXColor calls.
      *
      * @author Jason

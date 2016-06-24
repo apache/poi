@@ -20,7 +20,7 @@ package org.apache.poi.hslf.record;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Hashtable;
+import java.util.Map;
 
 import org.apache.poi.poifs.crypt.CipherAlgorithm;
 import org.apache.poi.poifs.crypt.EncryptionInfo;
@@ -123,7 +123,7 @@ public final class DocumentEncryptionAtom extends PositionDependentRecordAtom {
 		out.write(data, 0, bos.getWriteIndex());
 	}
 
-    public void updateOtherRecordReferences(Hashtable<Integer,Integer> oldToNewReferencesLookup) {
+    public void updateOtherRecordReferences(Map<Integer,Integer> oldToNewReferencesLookup) {
         
     }
 }

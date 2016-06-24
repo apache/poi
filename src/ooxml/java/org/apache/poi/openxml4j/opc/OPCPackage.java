@@ -30,7 +30,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -145,8 +145,8 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 	 * Initialize the package instance.
 	 */
 	private void init() {
-		this.partMarshallers = new Hashtable<ContentType, PartMarshaller>(5);
-		this.partUnmarshallers = new Hashtable<ContentType, PartUnmarshaller>(2);
+		this.partMarshallers = new HashMap<ContentType, PartMarshaller>(5);
+		this.partUnmarshallers = new HashMap<ContentType, PartUnmarshaller>(2);
 
 		try {
 			// Add 'default' unmarshaller

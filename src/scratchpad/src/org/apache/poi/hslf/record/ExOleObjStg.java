@@ -22,7 +22,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Hashtable;
+import java.util.Map;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterInputStream;
 
@@ -184,7 +184,7 @@ public class ExOleObjStg extends RecordAtom implements PositionDependentRecord, 
         myLastOnDiskOffset = offset;
     }
 
-    public void updateOtherRecordReferences(Hashtable<Integer,Integer> oldToNewReferencesLookup) {
+    public void updateOtherRecordReferences(Map<Integer,Integer> oldToNewReferencesLookup) {
         return;
     }
 
