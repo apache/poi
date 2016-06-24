@@ -784,37 +784,19 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
                 cur.push();
                 if ((cur.toChild(nsPML, "txStyles") && cur.toChild(nsPML, defaultStyleSelector)) ||
             		(cur.pop() && cur.toChild(nsPML, "notesStyle"))) {
-                	if (cur.toChild(nsDML, "lvl" +(level+1)+ "pPr")) {
-                		return (CTTextParagraphProperties)cur.getObject();
-                	}
+                    while (level >= 0) {
+                        cur.push();
+                    	if (cur.toChild(nsDML, "lvl" +(level+1)+ "pPr")) {
+                    		return (CTTextParagraphProperties)cur.getObject();
+                    	}
+                    	cur.pop();
+                    	level--;
+                    }
                 }
             } finally {
             	cur.dispose();
             }
         }
-
-        
-//        for (CTTextBody txBody : (CTTextBody[])xo.selectPath(nsDecl+".//p:txBody")) {
-//            CTTextParagraphProperties defaultPr = null, lastPr = null;
-//            boolean hasLvl = false;
-//            for (CTTextParagraph p : txBody.getPArray()) {
-//                CTTextParagraphProperties pr = p.getPPr();
-//                if (pr.isSetLvl()) {
-//                    hasLvl |= true;
-//                    lastPr = pr;
-//                    if (pr.getLvl() == level) return pr;
-//                } else {
-//                    defaultPr = pr;
-//                }
-//            }
-//            if (!hasLvl) continue;
-//            if (level == 0 && defaultPr != null) return defaultPr;
-//            if (lastPr != null) return lastPr;
-//            break;
-//        }
-//           
-//        String err = "Failed to fetch default style for " + defaultStyleSelector + " and level=" + level;
-//        throw new IllegalArgumentException(err);
         
         return null;
     }
