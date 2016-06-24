@@ -190,7 +190,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
      *  blank cells when fetching from a row.
      * See {@link org.apache.poi.ss.usermodel.Row.MissingCellPolicy}
      */
-    private MissingCellPolicy _missingCellPolicy = Row.RETURN_NULL_AND_BLANK;
+    private MissingCellPolicy _missingCellPolicy = MissingCellPolicy.RETURN_NULL_AND_BLANK;
 
     /**
      * array of pictures for this workbook
@@ -872,6 +872,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
      * Finds a font that matches the one with the supplied attributes
      * @deprecated POI 3.15. Use {@link #findFont(boolean, short, short, String, boolean, boolean, short, byte)} instead.
      */
+    @Deprecated
     @Override
     public XSSFFont findFont(short boldWeight, short color, short fontHeight, String name, boolean italic, boolean strikeout, short typeOffset, byte underline) {
         return stylesSource.findFont(boldWeight, color, fontHeight, name, italic, strikeout, typeOffset, underline);
@@ -921,6 +922,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
      * @param idx  index within the set of styles
      * @return XSSFCellStyle object at the index
      */
+    @Override
     public XSSFCellStyle getCellStyleAt(int idx) {
         return stylesSource.getStyleAt(idx);
     }
@@ -995,6 +997,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
      *
      * @return count of cell styles
      */
+    @Override
     public int getNumCellStyles() {
         return stylesSource.getNumCellStyles();
     }
@@ -1127,6 +1130,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
      *
      * @return an iterator of the sheets.
      */
+    @Override
     public Iterator<Sheet> sheetIterator() {
         return new SheetIterator<Sheet>();
     }
@@ -1950,6 +1954,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
      * @param name The name the workbook will be referenced as in formulas
      * @param workbook The open workbook to fetch the link required information from
      */
+    @Override
     @NotImplemented
     public int linkExternalWorkbook(String name, Workbook workbook) {
         throw new RuntimeException("Not Implemented - see bug #57184");

@@ -135,48 +135,43 @@ public interface Sheet extends Iterable<Row> {
     public boolean isRightToLeft();
 
     /**
-     * Set the width (in units of 1/256th of a character width)
+     * Set the width (in units of 1/256th of a character width)<p>
      *
-     * <p>
      * The maximum column width for an individual cell is 255 characters.
      * This value represents the number of characters that can be displayed
-     * in a cell that is formatted with the standard font (first font in the workbook).
-     * </p>
+     * in a cell that is formatted with the standard font (first font in the workbook).<p>
      *
-     * <p>
      * Character width is defined as the maximum digit width
      * of the numbers <code>0, 1, 2, ... 9</code> as rendered
-     * using the default font (first font in the workbook).
-     * <br/>
+     * using the default font (first font in the workbook).<p>
+     * 
      * Unless you are using a very special font, the default character is '0' (zero),
-     * this is true for Arial (default font font in HSSF) and Calibri (default font in XSSF)
-     * </p>
+     * this is true for Arial (default font font in HSSF) and Calibri (default font in XSSF)<p>
      *
-     * <p>
      * Please note, that the width set by this method includes 4 pixels of margin padding (two on each side),
      * plus 1 pixel padding for the gridlines (Section 3.3.1.12 of the OOXML spec).
-     * This results is a slightly less value of visible characters than passed to this method (approx. 1/2 of a character).
-     * </p>
-     * <p>
+     * This results is a slightly less value of visible characters than passed to this method (approx. 1/2 of a character).<p>
+     * 
      * To compute the actual number of visible characters,
-     *  Excel uses the following formula (Section 3.3.1.12 of the OOXML spec):
-     * </p>
+     * Excel uses the following formula (Section 3.3.1.12 of the OOXML spec):<p>
+     * 
      * <code>
      *     width = Truncate([{Number of Visible Characters} *
      *      {Maximum Digit Width} + {5 pixel padding}]/{Maximum Digit Width}*256)/256
      * </code>
-     * <p>Using the Calibri font as an example, the maximum digit width of 11 point font size is 7 pixels (at 96 dpi).
-     *  If you set a column width to be eight characters wide, e.g. <code>setColumnWidth(columnIndex, 8*256)</code>,
-     *  then the actual value of visible characters (the value shown in Excel) is derived from the following equation:
+     * 
+     * Using the Calibri font as an example, the maximum digit width of 11 point font size is 7 pixels (at 96 dpi).
+     * If you set a column width to be eight characters wide, e.g. <code>setColumnWidth(columnIndex, 8*256)</code>,
+     * then the actual value of visible characters (the value shown in Excel) is derived from the following equation:
      *  <code>
-            Truncate([numChars*7+5]/7*256)/256 = 8;
+     *      Truncate([numChars*7+5]/7*256)/256 = 8;
      *  </code>
      *
-     *  which gives <code>7.29</code>.
+     * which gives <code>7.29</code>.
      *
      * @param columnIndex - the column to set (0-based)
      * @param width - the width in units of 1/256th of a character width
-     * @throws IllegalArgumentException if width > 255*256 (the maximum column width in Excel is 255 characters)
+     * @throws IllegalArgumentException if width &gt; 255*256 (the maximum column width in Excel is 255 characters)
      */
     void setColumnWidth(int columnIndex, int width);
 
@@ -557,17 +552,17 @@ public interface Sheet extends Iterable<Row> {
     PrintSetup getPrintSetup();
 
     /**
-     * Gets the user model for the default document header.
-     * <p/>
+     * Gets the user model for the default document header.<p>
+     * 
      * Note that XSSF offers more kinds of document headers than HSSF does
-     * </p>
+     * 
      * @return the document header. Never <code>null</code>
      */
     Header getHeader();
 
     /**
-     * Gets the user model for the default document footer.
-     * <p/>
+     * Gets the user model for the default document footer.<p>
+     * 
      * Note that XSSF offers more kinds of document footers than HSSF does.
      *
      * @return the document footer. Never <code>null</code>
@@ -575,10 +570,10 @@ public interface Sheet extends Iterable<Row> {
     Footer getFooter();
 
     /**
-     * Sets a flag indicating whether this sheet is selected.
-     *<p>
+     * Sets a flag indicating whether this sheet is selected.<p>
+     * 
      * Note: multiple sheets can be selected, but only one sheet can be active at one time.
-     *</p>
+     *
      * @param value <code>true</code> if this sheet is selected
      * @see Workbook#setActiveSheet(int)
      */
@@ -603,7 +598,7 @@ public interface Sheet extends Iterable<Row> {
     /**
      * Answer whether protection is enabled or disabled
      *
-     * @return true => protection enabled; false => protection disabled
+     * @return true =&gt; protection enabled; false =&gt; protection disabled
      */
     boolean getProtect();
     
@@ -616,7 +611,7 @@ public interface Sheet extends Iterable<Row> {
     /**
      * Answer whether scenario protection is enabled or disabled
      *
-     * @return true => protection enabled; false => protection disabled
+     * @return true =&gt; protection enabled; false =&gt; protection disabled
      */
     boolean getScenarioProtect();
 
@@ -629,11 +624,12 @@ public interface Sheet extends Iterable<Row> {
      * @param denominator   The denominator for the zoom magnification.
      * @deprecated 2015-11-23 (circa POI 3.14beta1). Use {@link #setZoom(int)} instead.
      */
+    @Deprecated
     void setZoom(int numerator, int denominator);
     
     /**
      * Window zoom magnification for current view representing percent values.
-     * Valid values range from 10 to 400. Horizontal & Vertical scale together.
+     * Valid values range from 10 to 400. Horizontal &amp; Vertical scale together.
      *
      * For example:
      * <pre>
@@ -949,6 +945,7 @@ public interface Sheet extends Iterable<Row> {
      * @return cell comment or <code>null</code> if not found
      * @deprecated as of 2015-11-23 (circa POI 3.14beta1). Use {@link #getCellComment(CellAddress)} instead.
      */
+    @Deprecated
     Comment getCellComment(int row, int column);
     
     /**
@@ -1054,8 +1051,8 @@ public interface Sheet extends Iterable<Row> {
 
     /**
      * Gets the repeating rows used when printing the sheet, as found in 
-     * File->PageSetup->Sheet.
-     * <p/>
+     * File-&gt;PageSetup-&gt;Sheet.<p>
+     * 
      * Repeating rows cover a range of contiguous rows, e.g.:
      * <pre>
      * Sheet1!$1:$1
@@ -1063,8 +1060,8 @@ public interface Sheet extends Iterable<Row> {
      * </pre>
      * The {@link CellRangeAddress} returned contains a column part which spans 
      * all columns, and a row part which specifies the contiguous range of 
-     * repeating rows.
-     * <p/>
+     * repeating rows.<p>
+     * 
      * If the Sheet does not have any repeating rows defined, null is returned.
      * 
      * @return an {@link CellRangeAddress} containing the repeating rows for the 
@@ -1075,8 +1072,8 @@ public interface Sheet extends Iterable<Row> {
 
     /**
      * Gets the repeating columns used when printing the sheet, as found in 
-     * File->PageSetup->Sheet.
-     * <p/>
+     * File-&gt;PageSetup-&gt;Sheet.<p>
+     * 
      * Repeating columns cover a range of contiguous columns, e.g.:
      * <pre>
      * Sheet1!$A:$A
@@ -1084,8 +1081,8 @@ public interface Sheet extends Iterable<Row> {
      * </pre>
      * The {@link CellRangeAddress} returned contains a row part which spans all 
      * rows, and a column part which specifies the contiguous range of 
-     * repeating columns.
-     * <p/>
+     * repeating columns.<p>
+     * 
      * If the Sheet does not have any repeating columns defined, null is 
      * returned.
      * 
@@ -1097,8 +1094,8 @@ public interface Sheet extends Iterable<Row> {
 
     /**
      * Sets the repeating rows used when printing the sheet, as found in 
-     * File->PageSetup->Sheet.
-     * <p/>
+     * File-&gt;PageSetup-&gt;Sheet.<p>
+     * 
      * Repeating rows cover a range of contiguous rows, e.g.:
      * <pre>
      * Sheet1!$1:$1
@@ -1121,8 +1118,8 @@ public interface Sheet extends Iterable<Row> {
 
     /**
      * Sets the repeating columns used when printing the sheet, as found in 
-     * File->PageSetup->Sheet.
-     * <p/>
+     * File-&gt;PageSetup-&gt;Sheet.<p>
+     * 
      * Repeating columns cover a range of contiguous columns, e.g.:
      * <pre>
      * Sheet1!$A:$A

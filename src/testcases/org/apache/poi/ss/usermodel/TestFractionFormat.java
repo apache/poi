@@ -25,6 +25,7 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.util.LocaleUtil;
 import org.junit.Test;
 
@@ -60,7 +61,7 @@ public final class TestFractionFormat {
             String[] truths = truthLine.split("\t");
             // Intentionally ignore the last column (tika-1132), for now
             for (short j = 3; j < 12; j++){
-                Cell cell = r.getCell(j, Row.CREATE_NULL_AS_BLANK);
+                Cell cell = r.getCell(j, MissingCellPolicy.CREATE_NULL_AS_BLANK);
                 String formatted = clean(formatter.formatCellValue(cell, evaluator));
                 if (truths.length <= j){
                     continue;

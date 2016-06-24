@@ -59,6 +59,7 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
@@ -1036,26 +1037,26 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
 
             // read-only mode works!
             Workbook workbook = WorkbookFactory.create(OPCPackage.open(file, PackageAccess.READ));
-            Date dateAct = workbook.getSheetAt(0).getRow(0).getCell(0, Row.CREATE_NULL_AS_BLANK).getDateCellValue();
+            Date dateAct = workbook.getSheetAt(0).getRow(0).getCell(0, MissingCellPolicy.CREATE_NULL_AS_BLANK).getDateCellValue();
             assertEquals(dateExp, dateAct);
             workbook.close();
             workbook = null;
 
             workbook = WorkbookFactory.create(OPCPackage.open(file, PackageAccess.READ));
-            dateAct = workbook.getSheetAt(0).getRow(0).getCell(0, Row.CREATE_NULL_AS_BLANK).getDateCellValue();
+            dateAct = workbook.getSheetAt(0).getRow(0).getCell(0, MissingCellPolicy.CREATE_NULL_AS_BLANK).getDateCellValue();
             assertEquals(dateExp, dateAct);
             workbook.close();
             workbook = null;
 
             // now check read/write mode
             workbook = WorkbookFactory.create(OPCPackage.open(file, PackageAccess.READ_WRITE));
-            dateAct = workbook.getSheetAt(0).getRow(0).getCell(0, Row.CREATE_NULL_AS_BLANK).getDateCellValue();
+            dateAct = workbook.getSheetAt(0).getRow(0).getCell(0, MissingCellPolicy.CREATE_NULL_AS_BLANK).getDateCellValue();
             assertEquals(dateExp, dateAct);
             workbook.close();
             workbook = null;
 
             workbook = WorkbookFactory.create(OPCPackage.open(file, PackageAccess.READ_WRITE));
-            dateAct = workbook.getSheetAt(0).getRow(0).getCell(0, Row.CREATE_NULL_AS_BLANK).getDateCellValue();
+            dateAct = workbook.getSheetAt(0).getRow(0).getCell(0, MissingCellPolicy.CREATE_NULL_AS_BLANK).getDateCellValue();
             assertEquals(dateExp, dateAct);
             workbook.close();
             workbook = null;
