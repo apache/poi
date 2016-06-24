@@ -175,7 +175,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      *  blank cells when fetching from a row.
      * See {@link MissingCellPolicy}
      */
-    private MissingCellPolicy missingCellPolicy = HSSFRow.RETURN_NULL_AND_BLANK;
+    private MissingCellPolicy missingCellPolicy = MissingCellPolicy.RETURN_NULL_AND_BLANK;
 
     private static POILogger log = POILogFactory.getLogger(HSSFWorkbook.class);
 
@@ -888,6 +888,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      *
      * @return an iterator of the sheets.
      */
+    @Override
     public Iterator<Sheet> sheetIterator() {
         Iterator<Sheet> result = new SheetIterator<Sheet>();
         return result;
@@ -897,6 +898,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      * Alias for {@link #sheetIterator()} to allow
      * foreach loops
      */
+    @Override
     public Iterator<Sheet> iterator() {
         return sheetIterator();
     }
@@ -1130,6 +1132,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      * Finds a font that matches the one with the supplied attributes
      * @deprecated 3.15 beta 2. Use {@link #findFont(boolean, short, short, String, boolean, boolean, short, byte)} instead.
      */
+    @Deprecated
     @Override
     public HSSFFont findFont(short boldWeight, short color, short fontHeight,
                              String name, boolean italic, boolean strikeout,
@@ -1159,6 +1162,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     /**
      * Finds a font that matches the one with the supplied attributes
      */
+    @Override
     public HSSFFont findFont(boolean bold, short color, short fontHeight,
                              String name, boolean italic, boolean strikeout,
                              short typeOffset, byte underline)
@@ -1756,7 +1760,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     	        break;
         }
 
-        blipRecord.setRecordId((short) (EscherBitmapBlip.RECORD_ID_START + format));
+        blipRecord.setRecordId((short) (EscherBlipRecord.RECORD_ID_START + format));
         switch (format)
         {
             case PICTURE_TYPE_EMF:

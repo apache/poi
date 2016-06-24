@@ -37,6 +37,7 @@ import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.usermodel.HeaderFooter;
+import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 
 /**
  * A text extractor for Excel files.
@@ -236,6 +237,7 @@ public class ExcelExtractor extends POIOLE2TextExtractor implements org.apache.p
 		extractor.setIncludeHeadersFooters(cmdArgs.shouldIncludeHeadersFooters());
 		System.out.println(extractor.getText());
 		extractor.close();
+		wb.close();
 	}
 	/**
 	 * Should sheet names be included? Default is true
@@ -280,7 +282,7 @@ public class ExcelExtractor extends POIOLE2TextExtractor implements org.apache.p
 
 		// We don't care about the difference between
 		//  null (missing) and blank cells
-		_wb.setMissingCellPolicy(HSSFRow.RETURN_BLANK_AS_NULL);
+		_wb.setMissingCellPolicy(MissingCellPolicy.RETURN_BLANK_AS_NULL);
 
 		// Process each sheet in turn
 		for(int i=0;i<_wb.getNumberOfSheets();i++) {

@@ -41,6 +41,7 @@ import javax.swing.JLabel;
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.util.LocaleUtil;
@@ -141,7 +142,7 @@ public class CellFormatTestBase {
     protected void openWorkbook(String workbookName)
             throws IOException {
         workbook = _testDataProvider.openSampleWorkbook(workbookName);
-        workbook.setMissingCellPolicy(Row.CREATE_NULL_AS_BLANK);
+        workbook.setMissingCellPolicy(MissingCellPolicy.CREATE_NULL_AS_BLANK);
         testFile = workbookName;
     }
 

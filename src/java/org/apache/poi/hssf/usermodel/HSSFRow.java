@@ -107,9 +107,10 @@ public final class HSSFRow implements Row, Comparable<HSSFRow> {
      * @throws IllegalArgumentException if columnIndex < 0 or greater than 255,
      *   the maximum number of columns supported by the Excel binary format (.xls)
      */
+    @Override
     public HSSFCell createCell(int column)
     {
-        return this.createCell(column,HSSFCell.CELL_TYPE_BLANK);
+        return this.createCell(column,Cell.CELL_TYPE_BLANK);
     }
 
     /**
@@ -126,6 +127,7 @@ public final class HSSFRow implements Row, Comparable<HSSFRow> {
      * @throws IllegalArgumentException if columnIndex < 0 or greater than 255,
      *   the maximum number of columns supported by the Excel binary format (.xls)
      */
+    @Override
     public HSSFCell createCell(int columnIndex, int type)
     {
         short shortCellNum = (short)columnIndex;
@@ -143,6 +145,7 @@ public final class HSSFRow implements Row, Comparable<HSSFRow> {
      * remove the HSSFCell from this row.
      * @param cell to remove
      */
+    @Override
     public void removeCell(Cell cell) {
         if(cell == null) {
             throw new IllegalArgumentException("cell must not be null");
@@ -221,6 +224,7 @@ public final class HSSFRow implements Row, Comparable<HSSFRow> {
      * @param rowIndex  the row number (0-based)
      * @throws IndexOutOfBoundsException if the row number is not within the range 0-65535.
      */
+    @Override
     public void setRowNum(int rowIndex) {
         int maxrow = SpreadsheetVersion.EXCEL97.getLastRowIndex();
         if ((rowIndex < 0) || (rowIndex > maxrow)) {
@@ -237,6 +241,7 @@ public final class HSSFRow implements Row, Comparable<HSSFRow> {
      * get row number this row represents
      * @return the row number (0 based)
      */
+    @Override
     public int getRowNum()
     {
         return rowNum;
@@ -247,6 +252,7 @@ public final class HSSFRow implements Row, Comparable<HSSFRow> {
      *
      * @return the HSSFSheet that owns this row
      */
+    @Override
     public HSSFSheet getSheet()
     {
         return sheet;
@@ -257,6 +263,7 @@ public final class HSSFRow implements Row, Comparable<HSSFRow> {
      *  put it into more groups (outlines), reduced as
      *  you take it out of them.
      */
+    @Override
     public int getOutlineLevel() {
         return row.getOutlineLevel();
     }
@@ -339,6 +346,7 @@ public final class HSSFRow implements Row, Comparable<HSSFRow> {
      * @param cellnum  0 based column number
      * @return HSSFCell representing that column or null if undefined.
      */
+    @Override
     public HSSFCell getCell(int cellnum) {
         return getCell(cellnum, book.getMissingCellPolicy());
     }
@@ -352,31 +360,27 @@ public final class HSSFRow implements Row, Comparable<HSSFRow> {
      * @param policy Policy on blank / missing cells
      * @return representing that column or null if undefined + policy allows.
      */
+    @Override
     public HSSFCell getCell(int cellnum, MissingCellPolicy policy) {
         HSSFCell cell = retrieveCell(cellnum);
-        if(policy == RETURN_NULL_AND_BLANK) {
-            return cell;
+        switch (policy) {
+            case RETURN_NULL_AND_BLANK:
+                return cell;
+            case RETURN_BLANK_AS_NULL:
+                boolean isBlank = (cell != null && cell.getCellType() == Cell.CELL_TYPE_BLANK);
+                return (isBlank) ? null : cell;
+            case CREATE_NULL_AS_BLANK:
+                return (cell == null) ? createCell(cellnum, Cell.CELL_TYPE_BLANK) : cell;
+            default:
+                throw new IllegalArgumentException("Illegal policy " + policy + " (" + policy.id + ")");
         }
-        if(policy == RETURN_BLANK_AS_NULL) {
-            if(cell == null) return cell;
-            if(cell.getCellType() == HSSFCell.CELL_TYPE_BLANK) {
-                return null;
-            }
-            return cell;
-        }
-        if(policy == CREATE_NULL_AS_BLANK) {
-            if(cell == null) {
-                return createCell(cellnum, HSSFCell.CELL_TYPE_BLANK);
-            }
-            return cell;
-        }
-        throw new IllegalArgumentException("Illegal policy " + policy + " (" + policy.id + ")");
     }
 
     /**
      * get the number of the first cell contained in this row.
      * @return short representing the first logical cell in the row, or -1 if the row does not contain any cells.
      */
+    @Override
     public short getFirstCellNum() {
         if (row.isEmpty()) {
             return -1;
@@ -403,6 +407,7 @@ public final class HSSFRow implements Row, Comparable<HSSFRow> {
      * @return short representing the last logical cell in the row <b>PLUS ONE</b>, or -1 if the
      *  row does not contain any cells.
      */
+    @Override
     public short getLastCellNum() {
         if (row.isEmpty()) {
             return -1;
@@ -417,6 +422,7 @@ public final class HSSFRow implements Row, Comparable<HSSFRow> {
      * @return int representing the number of defined cells in the row.
      */
 
+    @Override
     public int getPhysicalNumberOfCells()
     {
       int count=0;
@@ -433,6 +439,7 @@ public final class HSSFRow implements Row, Comparable<HSSFRow> {
      * @param height  rowheight or -1 for undefined (use sheet default)
      */
 
+    @Override
     public void setHeight(short height)
     {
         if(height == -1){
@@ -448,6 +455,7 @@ public final class HSSFRow implements Row, Comparable<HSSFRow> {
      * set whether or not to display this row with 0 height
      * @param zHeight  height is zero or not.
      */
+    @Override
     public void setZeroHeight(boolean zHeight) {
         row.setZeroHeight(zHeight);
     }
@@ -456,6 +464,7 @@ public final class HSSFRow implements Row, Comparable<HSSFRow> {
      * get whether or not to display this row with 0 height
      * @return - zHeight height is zero or not.
      */
+    @Override
     public boolean getZeroHeight() {
         return row.getZeroHeight();
     }
@@ -465,6 +474,7 @@ public final class HSSFRow implements Row, Comparable<HSSFRow> {
      * @param height  row height in points, <code>-1</code> means to use the default height
      */
 
+    @Override
     public void setHeightInPoints(float height)
     {
         if(height == -1){
@@ -480,6 +490,7 @@ public final class HSSFRow implements Row, Comparable<HSSFRow> {
      * @return rowheight or 0xff for undefined (use sheet default)
      */
 
+    @Override
     public short getHeight()
     {
         short height = row.getHeight();
@@ -497,6 +508,7 @@ public final class HSSFRow implements Row, Comparable<HSSFRow> {
      * @return rowheight or 0xff for undefined (use sheet default)
      */
 
+    @Override
     public float getHeightInPoints()
     {
         return ((float)getHeight() / 20);
@@ -553,6 +565,7 @@ public final class HSSFRow implements Row, Comparable<HSSFRow> {
      *  do have whole-row styles. For those that do, you
      *  can get the formatting from {@link #getRowStyle()}
      */
+    @Override
     public boolean isFormatted() {
         return row.getFormatted();
     }
@@ -561,6 +574,7 @@ public final class HSSFRow implements Row, Comparable<HSSFRow> {
      *  have one of these, so will return null. Call
      *  {@link #isFormatted()} to check first.
      */
+    @Override
     public HSSFCellStyle getRowStyle() {
         if(!isFormatted()) { return null; }
         short styleIndex = row.getXFIndex();
@@ -577,6 +591,7 @@ public final class HSSFRow implements Row, Comparable<HSSFRow> {
     /**
      * Applies a whole-row cell styling to the row.
      */
+    @Override
     public void setRowStyle(CellStyle style) {
         setRowStyle((HSSFCellStyle)style);
     }
@@ -589,6 +604,7 @@ public final class HSSFRow implements Row, Comparable<HSSFRow> {
      * As this only ever works on physically defined cells,
      *  the {@link org.apache.poi.ss.usermodel.Row.MissingCellPolicy} has no effect.
      */
+    @Override
     public Iterator<Cell> cellIterator()
     {
       return new CellIterator();
@@ -597,6 +613,7 @@ public final class HSSFRow implements Row, Comparable<HSSFRow> {
      * Alias for {@link #cellIterator} to allow
      *  foreach loops
      */
+    @Override
     public Iterator<Cell> iterator() {
        return cellIterator();
     }
@@ -613,11 +630,13 @@ public final class HSSFRow implements Row, Comparable<HSSFRow> {
         findNext();
       }
 
-      public boolean hasNext() {
+      @Override
+    public boolean hasNext() {
         return nextId<cells.length;
       }
 
-      public Cell next() {
+      @Override
+    public Cell next() {
           if (!hasNext())
               throw new NoSuchElementException("At last element");
         HSSFCell cell=cells[nextId];
@@ -626,7 +645,8 @@ public final class HSSFRow implements Row, Comparable<HSSFRow> {
         return cell;
       }
 
-      public void remove() {
+      @Override
+    public void remove() {
           if (thisId == -1)
               throw new IllegalStateException("remove() called before next()");
         cells[thisId]=null;

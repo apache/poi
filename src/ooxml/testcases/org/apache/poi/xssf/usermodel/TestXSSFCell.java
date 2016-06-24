@@ -30,6 +30,7 @@ import java.util.List;
 import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.BaseTestXCell;
+import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellCopyPolicy;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -40,6 +41,7 @@ import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -52,9 +54,6 @@ import org.junit.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellType;
 
-/**
- * @author Yegor Kozlov
- */
 public final class TestXSSFCell extends BaseTestXCell {
 
     public TestXSSFCell() {
@@ -152,7 +151,7 @@ public final class TestXSSFCell extends BaseTestXCell {
             CTCell ctCell = cell.getCTCell(); //low-level bean holding cell's xml
     
             cell.setCellFormula("A2");
-            assertEquals(XSSFCell.CELL_TYPE_FORMULA, cell.getCellType());
+            assertEquals(Cell.CELL_TYPE_FORMULA, cell.getCellType());
             assertEquals("A2", cell.getCellFormula());
             //the value is not set and cell's type='N' which means blank
             assertEquals(STCellType.N, ctCell.getT());
@@ -160,7 +159,7 @@ public final class TestXSSFCell extends BaseTestXCell {
             //set cached formula value
             cell.setCellValue("t='str'");
             //we are still of 'formula' type
-            assertEquals(XSSFCell.CELL_TYPE_FORMULA, cell.getCellType());
+            assertEquals(Cell.CELL_TYPE_FORMULA, cell.getCellType());
             assertEquals("A2", cell.getCellFormula());
             //cached formula value is set and cell's type='STR'
             assertEquals(STCellType.STR, ctCell.getT());
@@ -168,14 +167,14 @@ public final class TestXSSFCell extends BaseTestXCell {
     
             //now remove the formula, the cached formula result remains
             cell.setCellFormula(null);
-            assertEquals(XSSFCell.CELL_TYPE_STRING, cell.getCellType());
+            assertEquals(Cell.CELL_TYPE_STRING, cell.getCellType());
             assertEquals(STCellType.STR, ctCell.getT());
             //the line below failed prior to fix of Bug #47889
             assertEquals("t='str'", cell.getStringCellValue());
     
             //revert to a blank cell
             cell.setCellValue((String)null);
-            assertEquals(XSSFCell.CELL_TYPE_BLANK, cell.getCellType());
+            assertEquals(Cell.CELL_TYPE_BLANK, cell.getCellType());
             assertEquals(STCellType.N, ctCell.getT());
             assertEquals("", cell.getStringCellValue());
         } finally {
@@ -195,7 +194,7 @@ public final class TestXSSFCell extends BaseTestXCell {
 
         //try a string cell
         cell = sh.getRow(0).getCell(0);
-        assertEquals(XSSFCell.CELL_TYPE_STRING, cell.getCellType());
+        assertEquals(Cell.CELL_TYPE_STRING, cell.getCellType());
         assertEquals("a", cell.getStringCellValue());
         assertEquals("a", cell.toString());
         //Gnumeric produces spreadsheets without styles
@@ -204,7 +203,7 @@ public final class TestXSSFCell extends BaseTestXCell {
 
         //try a numeric cell
         cell = sh.getRow(1).getCell(0);
-        assertEquals(XSSFCell.CELL_TYPE_NUMERIC, cell.getCellType());
+        assertEquals(Cell.CELL_TYPE_NUMERIC, cell.getCellType());
         assertEquals(1.0, cell.getNumericCellValue(), 0);
         assertEquals("1.0", cell.toString());
         //Gnumeric produces spreadsheets without styles
@@ -417,7 +416,7 @@ public final class TestXSSFCell extends BaseTestXCell {
     public void testBug56644ReturnNull() throws IOException {
         Workbook wb = XSSFTestDataSamples.openSampleWorkbook("56644.xlsx");
         try {
-            wb.setMissingCellPolicy(Row.RETURN_BLANK_AS_NULL);
+            wb.setMissingCellPolicy(MissingCellPolicy.RETURN_BLANK_AS_NULL);
             Sheet sheet = wb.getSheet("samplelist");
             Row row = sheet.getRow(20);
             row.createCell(2);
@@ -430,7 +429,7 @@ public final class TestXSSFCell extends BaseTestXCell {
     public void testBug56644ReturnBlank() throws IOException {
         Workbook wb = XSSFTestDataSamples.openSampleWorkbook("56644.xlsx");
         try {
-            wb.setMissingCellPolicy(Row.RETURN_NULL_AND_BLANK);
+            wb.setMissingCellPolicy(MissingCellPolicy.RETURN_NULL_AND_BLANK);
             Sheet sheet = wb.getSheet("samplelist");
             Row row = sheet.getRow(20);
             row.createCell(2);
@@ -443,7 +442,7 @@ public final class TestXSSFCell extends BaseTestXCell {
     public void testBug56644CreateBlank() throws IOException {
         Workbook wb = XSSFTestDataSamples.openSampleWorkbook("56644.xlsx");
         try {
-            wb.setMissingCellPolicy(Row.CREATE_NULL_AS_BLANK);
+            wb.setMissingCellPolicy(MissingCellPolicy.CREATE_NULL_AS_BLANK);
             Sheet sheet = wb.getSheet("samplelist");
             Row row = sheet.getRow(20);
             row.createCell(2);
@@ -565,7 +564,7 @@ public final class TestXSSFCell extends BaseTestXCell {
         final CreationHelper createHelper = wb.getCreationHelper();
 
         srcCell.setCellValue("URL LINK");
-        Hyperlink link = createHelper.createHyperlink(Hyperlink.LINK_URL);
+        Hyperlink link = createHelper.createHyperlink(org.apache.poi.common.usermodel.Hyperlink.LINK_URL);
         link.setAddress("http://poi.apache.org/");
         srcCell.setHyperlink(link);
 
@@ -602,7 +601,7 @@ public final class TestXSSFCell extends BaseTestXCell {
         final CreationHelper createHelper = wb.getCreationHelper();
 
         srcCell.setCellValue("URL LINK");
-        Hyperlink link = createHelper.createHyperlink(Hyperlink.LINK_URL);
+        Hyperlink link = createHelper.createHyperlink(org.apache.poi.common.usermodel.Hyperlink.LINK_URL);
         link.setAddress("http://poi.apache.org/");
         destCell.setHyperlink(link);
 
@@ -657,7 +656,7 @@ public final class TestXSSFCell extends BaseTestXCell {
         srcCell.setCellFormula("2+3");
         
         final CellStyle style = wb.createCellStyle();
-        style.setBorderTop(CellStyle.BORDER_THICK);
+        style.setBorderTop(BorderStyle.THICK);
         style.setFillBackgroundColor((short) 5);
         srcCell.setCellStyle(style);
         

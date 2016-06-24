@@ -94,6 +94,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      *
      * @return the XSSFSheet that owns this row
      */
+    @Override
     public XSSFSheet getSheet() {
         return this._sheet;
     }
@@ -109,6 +110,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      *
      * @return an iterator over cells in this row.
      */
+    @Override
     @SuppressWarnings("unchecked")
 	public Iterator<Cell> cellIterator() {
         return (Iterator<Cell>)(Iterator<? extends Cell>)_cells.values().iterator();
@@ -124,6 +126,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      *
      * @return an iterator over cells in this row.
      */
+    @Override
     public Iterator<Cell> iterator() {
     	return cellIterator();
     }
@@ -189,6 +192,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      * @throws IllegalArgumentException if columnIndex < 0 or greater than 16384,
      *   the maximum number of columns supported by the SpreadsheetML format (.xlsx)
      */
+    @Override
     public XSSFCell createCell(int columnIndex) {
     	return createCell(columnIndex, Cell.CELL_TYPE_BLANK);
     }
@@ -208,6 +212,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      * @see Cell#CELL_TYPE_NUMERIC
      * @see Cell#CELL_TYPE_STRING
      */
+    @Override
     public XSSFCell createCell(int columnIndex, int type) {
         // Performance optimization for bug 57840: explicit boxing is slightly faster than auto-unboxing, though may use more memory
         final Integer colI = new Integer(columnIndex); // NOSONAR
@@ -234,6 +239,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      *
      * @return the cell at the given (0 based) index
      */
+    @Override
     public XSSFCell getCell(int cellnum) {
     	return getCell(cellnum, _sheet.getWorkbook().getMissingCellPolicy());
     }
@@ -242,34 +248,26 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      * Returns the cell at the given (0 based) index, with the specified {@link org.apache.poi.ss.usermodel.Row.MissingCellPolicy}
      *
      * @return the cell at the given (0 based) index
-     * @throws IllegalArgumentException if cellnum < 0 or the specified MissingCellPolicy is invalid
-     * @see Row#RETURN_NULL_AND_BLANK
-     * @see Row#RETURN_BLANK_AS_NULL
-     * @see Row#CREATE_NULL_AS_BLANK
+     * @throws IllegalArgumentException if cellnum &lt; 0 or the specified MissingCellPolicy is invalid
      */
+    @Override
     public XSSFCell getCell(int cellnum, MissingCellPolicy policy) {
     	if(cellnum < 0) throw new IllegalArgumentException("Cell index must be >= 0");
 
         // Performance optimization for bug 57840: explicit boxing is slightly faster than auto-unboxing, though may use more memory
     	final Integer colI = new Integer(cellnum); // NOSONAR
         XSSFCell cell = _cells.get(colI);
-    	if(policy == RETURN_NULL_AND_BLANK) {
-    		return cell;
-    	}
-    	if(policy == RETURN_BLANK_AS_NULL) {
-    		if(cell == null) return cell;
-    		if(cell.getCellType() == Cell.CELL_TYPE_BLANK) {
-    			return null;
-    		}
-    		return cell;
-    	}
-    	if(policy == CREATE_NULL_AS_BLANK) {
-    		if(cell == null) {
-    			return createCell((short)cellnum, Cell.CELL_TYPE_BLANK);
-    		}
-    		return cell;
-    	}
-    	throw new IllegalArgumentException("Illegal policy " + policy + " (" + policy.id + ")");
+        switch (policy) {
+            case RETURN_NULL_AND_BLANK:
+                return cell;
+            case RETURN_BLANK_AS_NULL:
+                boolean isBlank = (cell != null && cell.getCellType() == Cell.CELL_TYPE_BLANK);
+                return (isBlank) ? null : cell;
+            case CREATE_NULL_AS_BLANK:
+                return (cell == null) ? createCell(cellnum, Cell.CELL_TYPE_BLANK) : cell;
+            default:
+                throw new IllegalArgumentException("Illegal policy " + policy + " (" + policy.id + ")");
+        }
     }
 
     /**
@@ -278,6 +276,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      * @return short representing the first logical cell in the row,
      *  or -1 if the row does not contain any cells.
      */
+    @Override
     public short getFirstCellNum() {
     	return (short)(_cells.size() == 0 ? -1 : _cells.firstKey());
     }
@@ -301,6 +300,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      * @return short representing the last logical cell in the row <b>PLUS ONE</b>,
      *   or -1 if the row does not contain any cells.
      */
+    @Override
     public short getLastCellNum() {
     	return (short)(_cells.size() == 0 ? -1 : (_cells.lastKey() + 1));
     }
@@ -311,6 +311,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      *
      * @return row height measured in twips (1/20th of a point)
      */
+    @Override
     public short getHeight() {
         return (short)(getHeightInPoints()*20);
     }
@@ -322,6 +323,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      * @return row height measured in point size
      * @see org.apache.poi.xssf.usermodel.XSSFSheet#getDefaultRowHeightInPoints()
      */
+    @Override
     public float getHeightInPoints() {
         if (this._row.isSetHt()) {
             return (float) this._row.getHt();
@@ -334,6 +336,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      *
      * @param height the height in "twips" or  1/20th of a point. <code>-1</code>  resets to the default height
      */
+    @Override
     public void setHeight(short height) {
         if (height == -1) {
             if (_row.isSetHt()) _row.unsetHt();
@@ -350,6 +353,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      *
      * @param height the height in points. <code>-1</code>  resets to the default height
      */
+    @Override
     public void setHeightInPoints(float height) {
 	    setHeight((short)(height == -1 ? -1 : (height*20)));
     }
@@ -360,6 +364,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      *
      * @return int representing the number of defined cells in the row.
      */
+    @Override
     public int getPhysicalNumberOfCells() {
     	return _cells.size();
     }
@@ -369,6 +374,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      *
      * @return the row number (0 based)
      */
+    @Override
     public int getRowNum() {
         return (int) (_row.getR() - 1);
     }
@@ -379,6 +385,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      * @param rowIndex  the row number (0-based)
      * @throws IllegalArgumentException if rowNum < 0 or greater than 1048575
      */
+    @Override
     public void setRowNum(int rowIndex) {
         int maxrow = SpreadsheetVersion.EXCEL2007.getLastRowIndex();
         if (rowIndex < 0 || rowIndex > maxrow) {
@@ -393,6 +400,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      *
      * @return - height is zero or not.
      */
+    @Override
     public boolean getZeroHeight() {
     	return this._row.getHidden();
     }
@@ -402,6 +410,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      *
      * @param height  height is zero or not.
      */
+    @Override
     public void setZeroHeight(boolean height) {
     	this._row.setHidden(height);
 
@@ -412,6 +421,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      *  do have whole-row styles. For those that do, you
      *  can get the formatting from {@link #getRowStyle()}
      */
+    @Override
     public boolean isFormatted() {
         return _row.isSetS();
     }
@@ -420,6 +430,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      *  have one of these, so will return null. Call
      *  {@link #isFormatted()} to check first.
      */
+    @Override
     public XSSFCellStyle getRowStyle() {
        if(!isFormatted()) return null;
        
@@ -436,6 +447,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      * If the value is null then the style information is removed,
      *  causing the cell to used the default workbook style.
      */
+    @Override
     public void setRowStyle(CellStyle style) {
         if(style == null) {
            if(_row.isSetS()) {
@@ -459,6 +471,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      *
      * @param cell the cell to remove
      */
+    @Override
     public void removeCell(Cell cell) {
         if (cell.getRow() != this) {
             throw new IllegalArgumentException("Specified cell does not belong to this row");
@@ -640,6 +653,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
         }
     }
 
+    @Override
     public int getOutlineLevel() {
         return _row.getOutlineLevel();
     }

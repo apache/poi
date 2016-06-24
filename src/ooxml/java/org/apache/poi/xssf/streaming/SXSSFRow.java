@@ -32,9 +32,7 @@ import org.apache.poi.util.Internal;
 
 /**
  * Streaming version of XSSFRow implementing the "BigGridDemo" strategy.
- *
- * @author Alex Geller, Four J's Development Tools
-*/
+ */
 public class SXSSFRow implements Row, Comparable<SXSSFRow>
 {
     private static final Boolean UNDEFINED = null;
@@ -55,6 +53,7 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
      * @param initialSize - no longer needed
      * @deprecated 2015-11-30 (circa POI 3.14beta1). Use {@link #SXSSFRow(SXSSFSheet)} instead.
      */
+    @Deprecated
     public SXSSFRow(SXSSFSheet sheet, @SuppressWarnings("UnusedParameters") int initialSize)
     {
         this(sheet);
@@ -74,6 +73,7 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
         return _height!=-1;
     }
 
+    @Override
     public int getOutlineLevel(){
         return _outlineLevel;
     }
@@ -239,38 +239,24 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
      *
      * @return the cell at the given (0 based) index
      * @throws IllegalArgumentException if cellnum < 0 or the specified MissingCellPolicy is invalid
-     * @see Row#RETURN_NULL_AND_BLANK
-     * @see Row#RETURN_BLANK_AS_NULL
-     * @see Row#CREATE_NULL_AS_BLANK
      */
     @Override
     public SXSSFCell getCell(int cellnum, MissingCellPolicy policy)
     {
         checkBounds(cellnum);
         
-        // FIXME: replace with switch(enum)
         final SXSSFCell cell = _cells.get(cellnum);
-        if (policy == RETURN_NULL_AND_BLANK)
-        {
-            return cell;
+        switch (policy) {
+            case RETURN_NULL_AND_BLANK:
+                return cell;
+            case RETURN_BLANK_AS_NULL:
+                boolean isBlank = (cell != null && cell.getCellType() == Cell.CELL_TYPE_BLANK);
+                return (isBlank) ? null : cell;
+            case CREATE_NULL_AS_BLANK:
+                return (cell == null) ? createCell(cellnum, Cell.CELL_TYPE_BLANK) : cell;
+            default:
+                throw new IllegalArgumentException("Illegal policy " + policy + " (" + policy.id + ")");
         }
-        else if (policy == RETURN_BLANK_AS_NULL)
-        {
-            if (cell == null || cell.getCellType() == Cell.CELL_TYPE_BLANK)
-            {
-                return null;
-            }
-            return cell;
-        }
-        else if (policy == CREATE_NULL_AS_BLANK)
-        {
-            if (cell == null)
-            {
-                return createCell(cellnum, Cell.CELL_TYPE_BLANK);
-            }
-            return cell;
-        }
-        throw new IllegalArgumentException("Illegal policy " + policy + " (" + policy.id + ")");
     }
 
     /**
