@@ -36,7 +36,7 @@ public final class SeriesListRecord extends StandardRecord {
     private  short[]    field_1_seriesNumbers;
 
     public SeriesListRecord(short[] seriesNumbers) {
-    	field_1_seriesNumbers = seriesNumbers;
+    	field_1_seriesNumbers = (seriesNumbers == null) ? null : seriesNumbers.clone();
     }
 
     public SeriesListRecord(RecordInputStream in) {
@@ -78,7 +78,7 @@ public final class SeriesListRecord extends StandardRecord {
     }
 
     public Object clone() {
-        return new SeriesListRecord(field_1_seriesNumbers.clone());
+        return new SeriesListRecord(field_1_seriesNumbers);
     }
 
     /**

@@ -107,7 +107,7 @@ public final class ExtendedColor implements Cloneable {
         return rgba;
     }
     public void setRGBA(byte[] rgba) {
-        this.rgba = rgba;
+        this.rgba = (rgba == null) ? null : rgba.clone();
     }
     
     /**

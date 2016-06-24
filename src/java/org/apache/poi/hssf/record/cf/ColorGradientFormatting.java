@@ -89,7 +89,7 @@ public final class ColorGradientFormatting implements Cloneable {
         return thresholds;
     }
     public void setThresholds(ColorGradientThreshold[] thresholds) {
-        this.thresholds = thresholds;
+        this.thresholds = (thresholds == null) ? null : thresholds.clone();
         updateThresholdPositions();
     }
 
@@ -97,7 +97,7 @@ public final class ColorGradientFormatting implements Cloneable {
         return colors;
     }
     public void setColors(ExtendedColor[] colors) {
-        this.colors = colors;
+        this.colors = (colors == null) ? null : colors.clone();
     }
     
     public boolean isClampToCurve() {

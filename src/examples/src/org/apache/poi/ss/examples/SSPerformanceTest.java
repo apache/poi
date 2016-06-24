@@ -18,21 +18,27 @@
  */
 package org.apache.poi.ss.examples;
 
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.ss.util.CellReference;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.apache.poi.xssf.streaming.SXSSFWorkbook;
-
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
 public class SSPerformanceTest {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         if (args.length != 4) usage("need four command arguments");
 
         String type = args[0];
@@ -52,6 +58,8 @@ public class SSPerformanceTest {
         }
         long timeFinished = System.currentTimeMillis();
         System.out.println("Elapsed " + (timeFinished-timeStarted)/1000 + " seconds");
+        
+        workBook.close();
     }
 
     private static void addContent(Workbook workBook, boolean isHType, int rows, int cols) {
@@ -147,7 +155,7 @@ public class SSPerformanceTest {
 
         Font headerFont = wb.createFont();
         headerFont.setFontHeightInPoints((short) 14);
-        headerFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
+        headerFont.setBold(true);
         style = wb.createCellStyle();
         style.setAlignment(CellStyle.ALIGN_CENTER);
         style.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
@@ -159,7 +167,7 @@ public class SSPerformanceTest {
         Font monthFont = wb.createFont();
         monthFont.setFontHeightInPoints((short)12);
         monthFont.setColor(IndexedColors.RED.getIndex());
-        monthFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
+        monthFont.setBold(true);
         style = wb.createCellStyle();
         style.setAlignment(CellStyle.ALIGN_CENTER);
         style.setVerticalAlignment(CellStyle.VERTICAL_CENTER);

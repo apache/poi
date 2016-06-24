@@ -29,7 +29,7 @@ import org.apache.poi.util.LittleEndian;
  * Font Formatting Block of the Conditional Formatting Rule Record.
  */
 public final class FontFormatting implements Cloneable {
-    private byte[] _rawData;
+    private final byte[] _rawData = new byte[RAW_DATA_SIZE];
 
     private static final int OFFSET_FONT_NAME = 0;
     private static final int OFFSET_FONT_HEIGHT = 64;
@@ -88,14 +88,7 @@ public final class FontFormatting implements Cloneable {
      */
     private static final short FONT_WEIGHT_BOLD	 = 0x2bc;
 
-    private FontFormatting(byte[] rawData) {
-        _rawData = rawData;
-    }
-
-    public FontFormatting()
-    {
-        this(new byte[RAW_DATA_SIZE]);
-
+    public FontFormatting() {
         setFontHeight(-1);
         setItalic(false);
         setFontWieghtModified(false);
@@ -122,11 +115,8 @@ public final class FontFormatting implements Cloneable {
     }
 
     /** Creates new FontFormatting */
-    public FontFormatting(RecordInputStream in)
-    {
-        this(new byte[RAW_DATA_SIZE]);
-        for (int i = 0; i < _rawData.length; i++)
-        {
+    public FontFormatting(RecordInputStream in) {
+        for (int i = 0; i < _rawData.length; i++) {
             _rawData[i] = in.readByte();
         }
     }
@@ -542,9 +532,9 @@ public final class FontFormatting implements Cloneable {
     }
 
     @Override
-    public FontFormatting clone()
-    {
-        byte[] rawData = _rawData.clone();
-        return new FontFormatting(rawData);
+    public FontFormatting clone() {
+        FontFormatting other = new FontFormatting();
+        System.arraycopy(_rawData, 0, other._rawData, 0, _rawData.length);
+        return other;
     }
 }

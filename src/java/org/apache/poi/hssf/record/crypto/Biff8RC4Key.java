@@ -48,7 +48,7 @@ public class Biff8RC4Key extends Biff8EncryptionKey {
         }
 
         CipherAlgorithm ca = CipherAlgorithm.rc4;
-        _secretKey = new SecretKeySpec(keyDigest, ca.jceId);
+        _secretKey = new SecretKeySpec(keyDigest.clone(), ca.jceId);
     }
 
     /**

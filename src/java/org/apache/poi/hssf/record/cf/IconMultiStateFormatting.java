@@ -71,7 +71,7 @@ public final class IconMultiStateFormatting implements Cloneable {
         return thresholds;
     }
     public void setThresholds(Threshold[] thresholds) {
-        this.thresholds = thresholds;
+        this.thresholds = (thresholds == null) ? null : thresholds.clone();
     }
     
     public boolean isIconOnly() {

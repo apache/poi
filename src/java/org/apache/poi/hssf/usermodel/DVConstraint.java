@@ -37,14 +37,14 @@ import org.apache.poi.util.LocaleUtil;
  * Data Validation Constraint
  */
 public class DVConstraint implements DataValidationConstraint {
-	/* package */ public static final class FormulaPair {
+	/* package */ static final class FormulaPair {
 
 		private final Ptg[] _formula1;
 		private final Ptg[] _formula2;
 
-		public FormulaPair(Ptg[] formula1, Ptg[] formula2) {
-			_formula1 = formula1;
-			_formula2 = formula2;
+		FormulaPair(Ptg[] formula1, Ptg[] formula2) {
+			_formula1 = (formula1 == null) ? null : formula1.clone();
+			_formula2 = (formula2 == null) ? null : formula2.clone();
 		}
 		public Ptg[] getFormula1() {
 			return _formula1;
@@ -73,7 +73,7 @@ public class DVConstraint implements DataValidationConstraint {
 		_formula2 = formulaB;
 		_value1 = value1;
 		_value2 = value2;
-		_explicitListValues = excplicitListValues;
+		_explicitListValues = (excplicitListValues == null) ? null : excplicitListValues.clone();
 	}
 	
 	
