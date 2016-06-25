@@ -39,8 +39,8 @@ import org.apache.poi.util.LittleEndianInputStream;
  * @author Nick Burch
  */
 public final class DocumentEncryptionAtom extends PositionDependentRecordAtom {
-    private static long _type = 12052l;
-	private byte[] _header;
+    private static final long _type = 12052l;
+	private final byte[] _header;
 	private EncryptionInfo ei;
 
 	/**
@@ -123,7 +123,8 @@ public final class DocumentEncryptionAtom extends PositionDependentRecordAtom {
 		out.write(data, 0, bos.getWriteIndex());
 	}
 
+    @Override
     public void updateOtherRecordReferences(Map<Integer,Integer> oldToNewReferencesLookup) {
-        
+        // nothing to update
     }
 }

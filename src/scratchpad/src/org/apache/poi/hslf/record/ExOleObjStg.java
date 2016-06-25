@@ -41,7 +41,7 @@ public class ExOleObjStg extends RecordAtom implements PositionDependentRecord, 
     /**
      * Record header.
      */
-    private byte[] _header;
+    private final byte[] _header;
 
     /**
      * Record data.
@@ -184,8 +184,8 @@ public class ExOleObjStg extends RecordAtom implements PositionDependentRecord, 
         myLastOnDiskOffset = offset;
     }
 
+    @Override
     public void updateOtherRecordReferences(Map<Integer,Integer> oldToNewReferencesLookup) {
-        return;
+        // nothing to update
     }
-
 }
