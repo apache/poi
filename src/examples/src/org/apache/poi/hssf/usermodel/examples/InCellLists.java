@@ -127,7 +127,8 @@ public class InCellLists {
             // a Hashtable or HashMap as the ArrayList will preserve the
             // ordering of the items added to it; the first item added will
             // be the first item recovered and the last item added, the last
-            // item recovered.
+            // item recovered. Alternatively, a LinkedHashMap could be used
+            // to preserve order.
             row = sheet.createRow(4);
             cell = row.createCell(0);
             multiLevelListItems = new ArrayList<MultiLevelListItem>();
