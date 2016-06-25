@@ -34,7 +34,7 @@
 #include <java/lang/Double.h>
 #include <java/io/StringWriter.h>
 #include <java/io/PrintWriter.h>
-#include <java/util/Hashtable.h>
+#include <java/util/HashMap.h>
 #include <java/util/Date.h>
 #include <java/util/Calendar.h>
 #include <java/lang/System.h>
@@ -74,7 +74,7 @@ typedef JArray<jstring> *jstringArray;
 
 
 static java::lang::Thread *nextThread;
-static java::util::Hashtable *objects;
+static java::util::HashMap *objects;
 
 
 static void store_reference(jobject object) {
@@ -599,9 +599,9 @@ static const jshort 	U_SINGLE_ACCOUNTING;
     JvAttachCurrentThread(NULL, NULL);
 
     nextThread = new java::lang::Thread();
-    objects = new java::util::Hashtable();
+    objects = new java::util::HashMap();
 
-    java::util::Hashtable *props = (java::util::Hashtable *)
+    java::util::HashMap *props = (java::util::HashMap *)
         java::lang::System::getProperties();
     props->put(JvNewStringUTF("inRuby"), objects);
 
