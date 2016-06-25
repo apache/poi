@@ -45,7 +45,7 @@ import org.apache.poi.util.POILogger;
 
 public final class PersistPtrHolder extends PositionDependentRecordAtom
 {
-	private byte[] _header;
+	private final byte[] _header;
 	private byte[] _ptrData; // Will need to update this once we allow updates to _slideLocations
 	private long _type;
 
@@ -159,6 +159,7 @@ public final class PersistPtrHolder extends PositionDependentRecordAtom
 	 * At write-out time, update the references to the sheets to their
 	 *  new positions
 	 */
+	@Override
 	public void updateOtherRecordReferences(Map<Integer,Integer> oldToNewReferencesLookup) {
 		// Loop over all the slides we know about
 		// Find where they used to live, and where they now live
