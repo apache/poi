@@ -90,6 +90,8 @@ public final class SAXHelper {
                 return;
             } catch (Exception e) {
                 logger.log(POILogger.WARN, "SAX Security Manager could not be setup", e);
+            } catch (Error err) {
+                logger.log(POILogger.WARN, "SAX Security Manager could not be setup", err);
             }
         }
     }
