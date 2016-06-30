@@ -894,4 +894,9 @@ public class TestBugs extends TestCase
             }
         }
     }
+
+    public void testRegressionIn315beta2() {
+        HWPFDocument hwpfDocument = HWPFTestDataSamples.openSampleFile("cap.stanford.edu_profiles_viewbiosketch_facultyid=4009&name=m_maciver.doc");
+        assertNotNull(hwpfDocument);
+    }
 }
