@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.HashSet;
+import java.util.Locale;
 
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.hwpf.model.io.HWPFOutputStream;
@@ -144,7 +145,7 @@ public final class FileInformationBlock implements Cloneable
     private void assertCbRgFcLcb()
     {
         int nfib = getNFib();
-        String nfibHex = String.format("%04X", nfib);
+        String nfibHex = String.format(Locale.ROOT, "%04X", nfib);
         
         // Note - CommonCrawl shows there's more variation in these than
         //        the documentation suggests, so accept common clusters around
