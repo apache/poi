@@ -24,14 +24,17 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.junit.Assume;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
@@ -47,7 +50,11 @@ import org.junit.runners.Parameterized.Parameters;
 public abstract class BaseXLSIteratingTest {
     protected static final OutputStream NULL_OUTPUT_STREAM = new NullOutputStream();
 
-	protected static final List<String> EXCLUDED = new ArrayList<String>();
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+    
+	protected static final Map<String,Class<? extends Throwable>> EXCLUDED =
+        new HashMap<String,Class<? extends Throwable>>();
 
     @Parameters(name="{index}: {0}")
     public static Iterable<Object[]> files() {
@@ -85,16 +92,15 @@ public abstract class BaseXLSIteratingTest {
 	public void testMain() throws Exception {
 	    // we had intermittent problems when this was set differently somehow, let's try to set it here so it always is set correctly for these tests
 	    Biff8EncryptionKey.setCurrentUserPassword(null);
+
+	    String fileName = file.getName();
+	    if (EXCLUDED.containsKey(fileName)) {
+	        thrown.expect(EXCLUDED.get(fileName));
+	    }
 	    
 		try {
 			runOneFile(file);
 		} catch (Exception e) {
-		    Assume.assumeFalse("File " + file + " is excluded currently",
-		            EXCLUDED.contains(file.getName()));
-
-			System.out.println("Failed: " + file);
-			e.printStackTrace();
-			
 			// try to read it in HSSFWorkbook to quickly fail if we cannot read the file there at all and thus probably should use EXCLUDED instead
 			FileInputStream stream = new FileInputStream(file);
 			HSSFWorkbook wb = null;
@@ -107,6 +113,8 @@ public abstract class BaseXLSIteratingTest {
 			    }
 				stream.close();
 			}
+			
+			throw e;
 		}
 	}
 

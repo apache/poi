@@ -22,28 +22,32 @@ import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 
+import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.hssf.OldExcelFormatException;
+import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.util.LocaleUtil;
+import org.junit.BeforeClass;
 
 public class TestBiffViewer extends BaseXLSIteratingTest {
-    static {
-        // these are likely ok to fail
-        EXCLUDED.add("XRefCalc.xls"); 	// "Buffer overrun"
-        EXCLUDED.add("50833.xls"); 		// "Name is too long" when setting username
-        EXCLUDED.add("OddStyleRecord.xls");		
-        EXCLUDED.add("NoGutsRecords.xls"); 
-        EXCLUDED.add("51832.xls");	// password 
-        EXCLUDED.add("43493.xls");	// HSSFWorkbook cannot open it as well
-        EXCLUDED.add("password.xls"); 
-        EXCLUDED.add("46904.xls");
-        EXCLUDED.add("59074.xls"); // Biff 5 / Excel 95
-        EXCLUDED.add("35897-type4.xls"); // unsupported crypto api header 
-        EXCLUDED.add("xor-encryption-abc.xls"); // unsupported XOR-encryption
-        EXCLUDED.add("testEXCEL_2.xls");  // Biff 2 / Excel 2, pre-OLE2
-        EXCLUDED.add("testEXCEL_3.xls");  // Biff 3 / Excel 3, pre-OLE2
-        EXCLUDED.add("testEXCEL_4.xls");  // Biff 4 / Excel 4, pre-OLE2
-        EXCLUDED.add("testEXCEL_5.xls");  // Biff 5 / Excel 5
-        EXCLUDED.add("testEXCEL_95.xls"); // Biff 5 / Excel 95
+    @BeforeClass
+    public static void setup() {
+        EXCLUDED.clear();
+        EXCLUDED.put("35897-type4.xls", EncryptedDocumentException.class); // unsupported crypto api header 
+        EXCLUDED.put("51832.xls", EncryptedDocumentException.class);
+        EXCLUDED.put("xor-encryption-abc.xls", EncryptedDocumentException.class); 
+        EXCLUDED.put("password.xls", EncryptedDocumentException.class); 
+        EXCLUDED.put("46904.xls", OldExcelFormatException.class);
+        EXCLUDED.put("59074.xls", OldExcelFormatException.class);
+        EXCLUDED.put("testEXCEL_2.xls", OldExcelFormatException.class);  // Biff 2 / Excel 2, pre-OLE2
+        EXCLUDED.put("testEXCEL_3.xls", OldExcelFormatException.class);  // Biff 3 / Excel 3, pre-OLE2
+        EXCLUDED.put("testEXCEL_4.xls", OldExcelFormatException.class);  // Biff 4 / Excel 4, pre-OLE2
+        EXCLUDED.put("testEXCEL_5.xls", OldExcelFormatException.class);  // Biff 5 / Excel 5
+        EXCLUDED.put("testEXCEL_95.xls", OldExcelFormatException.class); // Biff 5 / Excel 95
+        EXCLUDED.put("43493.xls", RecordInputStream.LeftoverDataException.class);  // HSSFWorkbook cannot open it as well
+        // EXCLUDED.put("44958_1.xls", RecordInputStream.LeftoverDataException.class);
+        EXCLUDED.put("50833.xls", IllegalArgumentException.class);       // "Name is too long" when setting username
+        EXCLUDED.put("XRefCalc.xls", RuntimeException.class);            // "Buffer overrun"
     }
 
     @Override

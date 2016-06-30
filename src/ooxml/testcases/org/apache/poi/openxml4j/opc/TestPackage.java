@@ -786,7 +786,7 @@ public final class TestPackage {
         ZipFile zipFile = ZipHelper.openZipFile(OpenXML4JTestDataSamples.getSampleFile("sample.xlsx"));
 		assertNotNull(zipFile);
 
-		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		ByteArrayOutputStream bos = new ByteArrayOutputStream(2500000);
 		ZipOutputStream append = new ZipOutputStream(bos);
 		// first, copy contents from existing war
         Enumeration<? extends ZipEntry> entries = zipFile.entries();
@@ -807,7 +807,8 @@ public final class TestPackage {
                     append.write(bos2.toByteArray(), 0, (int)size);
                     byte spam[] = new byte[0x7FFF];
                     for (int i=0; i<spam.length; i++) spam[i] = ' ';
-                    while (size < 0x7FFF0000) {
+                    // 0x7FFF0000 is the maximum for 32-bit zips, but less still works
+                    while (size < 0x7FFF00) {
                         append.write(spam);
                         size += spam.length;
                     }

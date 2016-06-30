@@ -20,18 +20,22 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 
+import org.apache.poi.hssf.OldExcelFormatException;
 import org.apache.poi.util.LocaleUtil;
+import org.junit.BeforeClass;
 
 public class TestRecordLister extends BaseXLSIteratingTest {
-	static {
-		// these are likely ok to fail
-		EXCLUDED.add("46904.xls"); 
-        EXCLUDED.add("testEXCEL_3.xls");  // Biff 3 / Excel 3, pre-OLE2
-        EXCLUDED.add("testEXCEL_4.xls");   // old unsupported format
-        EXCLUDED.add("testEXCEL_5.xls");  // Biff 5 / Excel 5
-        EXCLUDED.add("testEXCEL_95.xls"); // Biff 5 / Excel 95
-		EXCLUDED.add("59074.xls");	// Biff 5 / Excel 95
-	}
+    @BeforeClass
+    public static void setup() {
+        EXCLUDED.clear();
+        EXCLUDED.put("46904.xls", OldExcelFormatException.class);
+        EXCLUDED.put("59074.xls", OldExcelFormatException.class);
+        EXCLUDED.put("testEXCEL_2.xls", OldExcelFormatException.class);  // Biff 2 / Excel 2, pre-OLE2
+        EXCLUDED.put("testEXCEL_3.xls", OldExcelFormatException.class);  // Biff 3 / Excel 3, pre-OLE2
+        EXCLUDED.put("testEXCEL_4.xls", OldExcelFormatException.class);  // Biff 4 / Excel 4, pre-OLE2
+        EXCLUDED.put("testEXCEL_5.xls", OldExcelFormatException.class);  // Biff 5 / Excel 5
+        EXCLUDED.put("testEXCEL_95.xls", OldExcelFormatException.class); // Biff 5 / Excel 95
+    }
 	
 	@Override
 	void runOneFile(File fileIn) throws IOException {

@@ -21,22 +21,29 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.PrintStream;
 
+import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.hssf.OldExcelFormatException;
+import org.apache.poi.hssf.record.RecordInputStream;
+import org.junit.BeforeClass;
+
 public class TestBiffDrawingToXml extends BaseXLSIteratingTest {
-	static {
-        EXCLUDED.add("35897-type4.xls"); // unsupported crypto api header 
-        EXCLUDED.add("43493.xls");  // HSSFWorkbook cannot open it as well
-        EXCLUDED.add("46904.xls");
-        EXCLUDED.add("44958_1.xls");
-        EXCLUDED.add("51832.xls");
-        EXCLUDED.add("59074.xls");
-		EXCLUDED.add("password.xls"); 
-        EXCLUDED.add("testEXCEL_2.xls");  // Biff 2 / Excel 2, pre-OLE2
-        EXCLUDED.add("testEXCEL_3.xls");  // Biff 3 / Excel 3, pre-OLE2
-        EXCLUDED.add("testEXCEL_4.xls");  // Biff 4 / Excel 4, pre-OLE2
-        EXCLUDED.add("testEXCEL_5.xls");  // Biff 5 / Excel 5
-        EXCLUDED.add("testEXCEL_95.xls"); // Biff 5 / Excel 95
-		EXCLUDED.add("xor-encryption-abc.xls"); 
-	}
+    @BeforeClass
+    public static void setup() {
+        EXCLUDED.clear();
+        EXCLUDED.put("35897-type4.xls", EncryptedDocumentException.class); // unsupported crypto api header 
+        EXCLUDED.put("51832.xls", EncryptedDocumentException.class);
+        EXCLUDED.put("xor-encryption-abc.xls", EncryptedDocumentException.class); 
+        EXCLUDED.put("password.xls", EncryptedDocumentException.class); 
+        EXCLUDED.put("46904.xls", OldExcelFormatException.class);
+        EXCLUDED.put("59074.xls", OldExcelFormatException.class);
+        EXCLUDED.put("testEXCEL_2.xls", OldExcelFormatException.class);  // Biff 2 / Excel 2, pre-OLE2
+        EXCLUDED.put("testEXCEL_3.xls", OldExcelFormatException.class);  // Biff 3 / Excel 3, pre-OLE2
+        EXCLUDED.put("testEXCEL_4.xls", OldExcelFormatException.class);  // Biff 4 / Excel 4, pre-OLE2
+        EXCLUDED.put("testEXCEL_5.xls", OldExcelFormatException.class);  // Biff 5 / Excel 5
+        EXCLUDED.put("testEXCEL_95.xls", OldExcelFormatException.class); // Biff 5 / Excel 95
+        EXCLUDED.put("43493.xls", RecordInputStream.LeftoverDataException.class);  // HSSFWorkbook cannot open it as well
+        EXCLUDED.put("44958_1.xls", RecordInputStream.LeftoverDataException.class);
+    }
 	
 	@Override
 	void runOneFile(File pFile) throws Exception {
