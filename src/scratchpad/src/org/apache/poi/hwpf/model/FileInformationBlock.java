@@ -161,7 +161,18 @@ public final class FileInformationBlock implements Cloneable
             assertCbRgFcLcb( "0x0112", 0x00B7, "0x00B7", _cbRgFcLcb );
             break;
         default:
-            throw new IllegalStateException("Invalid file format version number: " + getNFib());
+            /*
+When running with the large CommonCrawl corpus we found the following ids in documents that are processed fine:
+java.lang.IllegalStateException: Invalid file format version number: 113
+java.lang.IllegalStateException: Invalid file format version number: 191
+java.lang.IllegalStateException: Invalid file format version number: 192
+java.lang.IllegalStateException: Invalid file format version number: 194
+java.lang.IllegalStateException: Invalid file format version number: 195
+java.lang.IllegalStateException: Invalid file format version number: 216
+java.lang.IllegalStateException: Invalid file format version number: 265
+java.lang.IllegalStateException: Invalid file format version number: 267
+             */
+            logger.log(POILogger.WARN, "Invalid file format version number: " + getNFib());
         }
     }
 
@@ -197,7 +208,7 @@ public final class FileInformationBlock implements Cloneable
             assertCswNew( "0x0112", 0x0005, "0x0005", _cswNew );
             break;
         default:
-            throw new IllegalStateException("Invalid file format version number: " + getNFib());
+            logger.log(POILogger.WARN, "Invalid file format version number: " + getNFib());
         }
     }
 
@@ -321,7 +332,7 @@ public final class FileInformationBlock implements Cloneable
         }
         catch ( Exception exc )
         {
-            stringBuilder.append( "(exc: " + exc.getMessage() + ")" );
+            stringBuilder.append("(exc: ").append(exc.getMessage()).append(")");
         }
         stringBuilder.append( "[/FIB2]\n" );
         return stringBuilder.toString();
