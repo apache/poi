@@ -98,7 +98,7 @@ public class FormulaViewer
             StringBuffer buf = new StringBuffer();
             
             if (token instanceof ExpPtg) return;
-            buf.append(((OperationPtg) token).toFormulaString());
+            buf.append(token.toFormulaString());
             buf.append(sep);
             switch (token.getPtgClass()) {
                 case Ptg.CLASS_REF :

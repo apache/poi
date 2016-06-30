@@ -204,8 +204,8 @@ import org.apache.poi.util.StringUtil;
  * @see        #main
  */
 public final class BiffViewer {
-    static final String NEW_LINE_CHARS = System.getProperty("line.separator");
-    private static POILogger logger = POILogFactory.getLogger(BiffViewer.class);
+    private static final char[] NEW_LINE_CHARS = System.getProperty("line.separator").toCharArray();
+    private static final POILogger logger = POILogFactory.getLogger(BiffViewer.class);
 
     private BiffViewer() {
         // no instances of this class
@@ -804,39 +804,55 @@ public final class BiffViewer {
 	}
 
 	private static void hexDumpLine(Writer w, byte[] data, int lineStartAddress, int lineDataOffset, int startDelta, int endDelta) {
-		if (startDelta >= endDelta) {
+	    final char[] buf = new char[8+2*COLUMN_SEPARATOR.length+DUMP_LINE_LEN*3-1+DUMP_LINE_LEN+NEW_LINE_CHARS.length];
+
+	    if (startDelta >= endDelta) {
 			throw new IllegalArgumentException("Bad start/end delta");
 		}
+	    int idx=0;
 		try {
-			writeHex(w, lineStartAddress, 8);
-			w.write(COLUMN_SEPARATOR);
+			writeHex(buf, idx, lineStartAddress, 8);
+			idx = arraycopy(COLUMN_SEPARATOR, buf, idx+8);
 			// raw hex data
 			for (int i=0; i< DUMP_LINE_LEN; i++) {
 				if (i>0) {
-					w.write(" ");
+				    buf[idx++] = ' ';
 				}
 				if (i >= startDelta && i < endDelta) {
-					writeHex(w, data[lineDataOffset+i], 2);
+					writeHex(buf, idx, data[lineDataOffset+i], 2);
 				} else {
-					w.write("  ");
+				    buf[idx] = ' ';
+				    buf[idx+1] = ' ';
 				}
+				idx += 2;
 			}
-			w.write(COLUMN_SEPARATOR);
+			idx = arraycopy(COLUMN_SEPARATOR, buf, idx);
 
 			// interpreted ascii
 			for (int i=0; i< DUMP_LINE_LEN; i++) {
+			    char ch = ' ';
 				if (i >= startDelta && i < endDelta) {
-					w.write(getPrintableChar(data[lineDataOffset+i]));
-				} else {
-					w.write(" ");
+				    ch = getPrintableChar(data[lineDataOffset+i]);
 				}
+				buf[idx++] = ch;
 			}
-			w.write(NEW_LINE_CHARS);
+
+			idx = arraycopy(NEW_LINE_CHARS, buf, idx);
+			
+			w.write(buf, 0, idx);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
+	private static int arraycopy(char[] in, char[] out, int pos) {
+	    int idx = pos;
+	    for (char c : in) {
+	        out[idx++] = c;
+	    }
+	    return idx;
+	}
+	
 	private static char getPrintableChar(byte b) {
 		char ib = (char) (b & 0x00FF);
 		if (ib < 32 || ib > 126) {
@@ -845,14 +861,12 @@ public final class BiffViewer {
 		return ib;
 	}
 
-	private static void writeHex(Writer w, int value, int nDigits) throws IOException {
-		char[] buf = new char[nDigits];
+	private static void writeHex(char buf[], int startInBuf, int value, int nDigits) throws IOException {
 		int acc = value;
 		for(int i=nDigits-1; i>=0; i--) {
 			int digit = acc & 0x0F;
-			buf[i] = (char) (digit < 10 ? ('0' + digit) : ('A' + digit - 10));
-			acc >>= 4;
+			buf[startInBuf+i] = (char) (digit < 10 ? ('0' + digit) : ('A' + digit - 10));
+			acc >>>= 4;
 		}
-		w.write(buf);
 	}
 }
