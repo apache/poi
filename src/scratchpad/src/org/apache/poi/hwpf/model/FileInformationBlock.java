@@ -143,36 +143,45 @@ public final class FileInformationBlock implements Cloneable
 
     private void assertCbRgFcLcb()
     {
-        switch ( getNFib() )
+        int nfib = getNFib();
+        String nfibHex = String.format("%04X", nfib);
+        
+        // Note - CommonCrawl shows there's more variation in these than
+        //        the documentation suggests, so accept common clusters around
+        //        the "correct" value as well
+        switch ( nfib )
         {
-        case 0x00C1:
-            assertCbRgFcLcb( "0x00C1", 0x005D, "0x005D", _cbRgFcLcb );
+        case 0x0071:
+            // Found in CommonCrawl corpus but not in the docs...
             break;
-        case 0x00D9:
-            assertCbRgFcLcb( "0x00D9", 0x006C, "0x006C", _cbRgFcLcb );
+        case 0x00BE:
+        case 0x00BF:
+        case 0x00C0:
+        case 0x00C1: // Docs "official"
+        case 0x00C2:
+        case 0x00C3:
+            assertCbRgFcLcb(nfibHex, 0x005D, "0x005D", _cbRgFcLcb );
+            break;
+        case 0x00D8:
+        case 0x00D9: //  Docs "official"
+            assertCbRgFcLcb(nfibHex, 0x006C, "0x006C", _cbRgFcLcb );
             break;
         case 0x0101:
             assertCbRgFcLcb( "0x0101", 0x0088, "0x0088", _cbRgFcLcb );
             break;
-        case 0x010C:
-            assertCbRgFcLcb( "0x010C", 0x00A4, "0x00A4", _cbRgFcLcb );
+        // TODO Is CommonCrawl 265 = 0x109 the one above or below?
+        case 0x010B:
+        case 0x010C: //  Docs "official"
+            assertCbRgFcLcb(nfibHex, 0x00A4, "0x00A4", _cbRgFcLcb );
             break;
         case 0x0112:
             assertCbRgFcLcb( "0x0112", 0x00B7, "0x00B7", _cbRgFcLcb );
             break;
         default:
-            /*
-When running with the large CommonCrawl corpus we found the following ids in documents that are processed fine:
-java.lang.IllegalStateException: Invalid file format version number: 113
-java.lang.IllegalStateException: Invalid file format version number: 191
-java.lang.IllegalStateException: Invalid file format version number: 192
-java.lang.IllegalStateException: Invalid file format version number: 194
-java.lang.IllegalStateException: Invalid file format version number: 195
-java.lang.IllegalStateException: Invalid file format version number: 216
-java.lang.IllegalStateException: Invalid file format version number: 265
-java.lang.IllegalStateException: Invalid file format version number: 267
+            /* The Word spec has a much smaller list of "valid" values
+             * to what the large CommonCrawl corpus contains!
              */
-            logger.log(POILogger.WARN, "Invalid file format version number: " + getNFib());
+            logger.log(POILogger.WARN, "Invalid file format version number: " + nfib + "("+nfibHex+")");
         }
     }
 
