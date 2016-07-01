@@ -56,7 +56,7 @@ public final class ZipPackagePropertiesMarshaller extends PackagePropertiesMarsh
 			}
 			zos.closeEntry();
 		} catch (IOException e) {
-			throw new OpenXML4JException(e.getLocalizedMessage());
+			throw new OpenXML4JException(e.getLocalizedMessage(), e);
 		}
 		return true;
 	}
