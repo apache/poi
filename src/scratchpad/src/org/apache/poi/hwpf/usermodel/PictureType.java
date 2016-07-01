@@ -78,7 +78,7 @@ public enum PictureType
     {
         this._mime = mime;
         this._extension = extension;
-        this._signatures = signatures;
+        this._signatures = signatures.clone();
     }
 
     public String getExtension()

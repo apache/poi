@@ -40,7 +40,7 @@ public class SheetBuilder {
 
     public SheetBuilder(Workbook workbook, Object[][] cells) {
         this.workbook = workbook;
-        this.cells = cells;
+        this.cells = cells.clone();
     }
 
     /**

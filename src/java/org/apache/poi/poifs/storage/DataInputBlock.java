@@ -47,7 +47,7 @@ public final class DataInputBlock {
 	private int _readIndex;
 	private int _maxIndex;
 
-	DataInputBlock(byte[] data, int startOffset) {
+	DataInputBlock(byte[] data, int startOffset) { // NOSONAR
 		_buf = data;
 		_readIndex = startOffset;
 		_maxIndex = _buf.length;

@@ -36,7 +36,7 @@ final class SheetRangeEvaluator implements SheetRange {
         }
         _firstSheetIndex = firstSheetIndex;
         _lastSheetIndex = lastSheetIndex;
-        _sheetEvaluators = sheetEvaluators;
+        _sheetEvaluators = sheetEvaluators.clone();
 	}
     public SheetRangeEvaluator(int onlySheetIndex, SheetRefEvaluator sheetEvaluator) {
         this(onlySheetIndex, onlySheetIndex, new SheetRefEvaluator[] {sheetEvaluator});

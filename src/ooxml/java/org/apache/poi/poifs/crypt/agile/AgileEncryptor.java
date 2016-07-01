@@ -90,18 +90,18 @@ public class AgileEncryptor extends Encryptor {
         int keySize = builder.getHeader().getKeySize()/8;
         int hashSize = builder.getHeader().getHashAlgorithmEx().hashSize;
         
-        byte[] verifierSalt = new byte[blockSize]
-             , verifier = new byte[blockSize]
-             , keySalt = new byte[blockSize]
-             , keySpec = new byte[keySize]
-             , integritySalt = new byte[hashSize];
-        r.nextBytes(verifierSalt); // blocksize
-        r.nextBytes(verifier); // blocksize
-        r.nextBytes(keySalt); // blocksize
-        r.nextBytes(keySpec); // keysize
-        r.nextBytes(integritySalt); // hashsize
+        byte[] newVerifierSalt = new byte[blockSize]
+             , newVerifier = new byte[blockSize]
+             , newKeySalt = new byte[blockSize]
+             , newKeySpec = new byte[keySize]
+             , newIntegritySalt = new byte[hashSize];
+        r.nextBytes(newVerifierSalt); // blocksize
+        r.nextBytes(newVerifier); // blocksize
+        r.nextBytes(newKeySalt); // blocksize
+        r.nextBytes(newKeySpec); // keysize
+        r.nextBytes(newIntegritySalt); // hashsize
         
-        confirmPassword(password, keySpec, keySalt, verifierSalt, verifier, integritySalt);
+        confirmPassword(password, newKeySpec, newKeySalt, newVerifierSalt, newVerifier, newIntegritySalt);
     }
 	
 	public void confirmPassword(String password, byte keySpec[], byte keySalt[], byte verifier[], byte verifierSalt[], byte integritySalt[]) {
@@ -192,12 +192,12 @@ public class AgileEncryptor extends Encryptor {
          *    0xa0, 0x67, 0x7f, 0x02, 0xb2, 0x2c, 0x84, and 0x33.
          * 7.  Assign the encryptedHmacValue attribute to the base64-encoded form of the result of step 6. 
          */
-        this.integritySalt = integritySalt;
+        this.integritySalt = integritySalt.clone();
 
         try {
             byte vec[] = CryptoFunctions.generateIv(hashAlgo, header.getKeySalt(), kIntegrityKeyBlock, header.getBlockSize());
             Cipher cipher = getCipher(secretKey, ver.getCipherAlgorithm(), ver.getChainingMode(), vec, Cipher.ENCRYPT_MODE);
-            byte filledSalt[] = getBlock0(integritySalt, getNextBlockSize(integritySalt.length, blockSize));
+            byte filledSalt[] = getBlock0(this.integritySalt, getNextBlockSize(this.integritySalt.length, blockSize));
             byte encryptedHmacKey[] = cipher.doFinal(filledSalt);
             header.setEncryptedHmacKey(encryptedHmacKey);
 

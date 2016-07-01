@@ -107,9 +107,7 @@ public final class Picture
      * Builds a Picture object for a Picture stored in the
      *  DataStream
      */
-    public Picture( int dataBlockStartOfsset, byte[] _dataStream,
-            boolean fillBytes )
-    {
+    public Picture( int dataBlockStartOfsset, byte[] _dataStream, boolean fillBytes ) { // NOSONAR
         _picfAndOfficeArtData = new PICFAndOfficeArtData( _dataStream,
                 dataBlockStartOfsset );
         _picf = _picfAndOfficeArtData.getPicf();
@@ -584,10 +582,10 @@ public final class Picture
      */
     public void writeImageContent( OutputStream out ) throws IOException
     {
-        byte[] content = getContent();
-        if ( content != null && content.length > 0 )
+        byte[] c = getContent();
+        if ( c != null && c.length > 0 )
         {
-            out.write( content, 0, content.length );
+            out.write( c, 0, c.length );
         }
     }
 
