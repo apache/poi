@@ -393,6 +393,6 @@ public class Ole10Native {
     }
 
     public void setDataBuffer(byte dataBuffer[]) {
-        this.dataBuffer = dataBuffer;
+        this.dataBuffer = dataBuffer.clone();
     }
 }

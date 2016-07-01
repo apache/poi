@@ -29,7 +29,7 @@ public final class LittleEndianByteArrayOutputStream implements LittleEndianOutp
 	private final int _endIndex;
 	private int _writeIndex;
 
-	public LittleEndianByteArrayOutputStream(byte[] buf, int startOffset, int maxWriteLen) {
+	public LittleEndianByteArrayOutputStream(byte[] buf, int startOffset, int maxWriteLen) { // NOSONAR
 		if (startOffset < 0 || startOffset > buf.length) {
 			throw new IllegalArgumentException("Specified startOffset (" + startOffset 
 					+ ") is out of allowable range (0.." + buf.length + ")");

@@ -77,7 +77,7 @@ public class DataSources {
         private final T[] elements;
 
         public ArrayDataSource(T[] elements) {
-            this.elements = elements;
+            this.elements = elements.clone();
         }
 
         public int getPointCount() {

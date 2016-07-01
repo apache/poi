@@ -45,7 +45,7 @@ public final class SSCellRange<K extends Cell> implements CellRange<K> {
 		_firstColumn = firstColumn;
 		_height = height;
 		_width = width;
-		_flattenedArray = flattenedArray;
+		_flattenedArray = flattenedArray.clone();
 	}
 
 	public static <B extends Cell> SSCellRange<B> create(int firstRow, int firstColumn, int height, int width, List<B> flattenedList, Class<B> cellClass) {

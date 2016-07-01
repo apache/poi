@@ -196,7 +196,7 @@ public final class SlideListWithText extends RecordContainer {
 		/** Create one to hold the Records for one Slide's text */
 		public SlideAtomsSet(SlidePersistAtom s, Record[] r) {
 			slidePersistAtom = s;
-			slideRecords = r;
+			slideRecords = r.clone();
 		}
 	}
 }

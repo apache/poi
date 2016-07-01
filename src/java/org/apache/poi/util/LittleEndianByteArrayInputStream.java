@@ -27,7 +27,7 @@ public final class LittleEndianByteArrayInputStream implements LittleEndianInput
 	private final int _endIndex;
 	private int _readIndex;
 
-	public LittleEndianByteArrayInputStream(byte[] buf, int startOffset, int maxReadLen) {
+	public LittleEndianByteArrayInputStream(byte[] buf, int startOffset, int maxReadLen) { // NOSONAR
 		_buf = buf;
 		_readIndex = startOffset;
 		_endIndex = startOffset + maxReadLen;
