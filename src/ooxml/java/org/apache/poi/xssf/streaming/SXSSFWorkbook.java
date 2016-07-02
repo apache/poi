@@ -239,7 +239,8 @@ public class SXSSFWorkbook implements Workbook {
         {
             _wb=workbook;
             _sharedStringSource = useSharedStringsTable ? _wb.getSharedStringSource() : null;
-            for ( int i = 0; i < _wb.getNumberOfSheets(); i++ )
+            final int numberOfSheets = _wb.getNumberOfSheets();
+            for ( int i = 0; i < numberOfSheets; i++ )
             {
                 XSSFSheet sheet = _wb.getSheetAt( i );
                 createAndRegisterSXSSFSheet( sheet );

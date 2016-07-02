@@ -379,18 +379,17 @@ public class XSSFRichTextString implements RichTextString {
      *                      index is out of range.
      */
     public XSSFFont getFontAtIndex( int index ) {
-        if(st.sizeOfRArray() == 0) return null;
-
+        final ThemesTable themes = getThemesTable();
         int pos = 0;
-        for(int i = 0; i < st.sizeOfRArray(); i++){
-            CTRElt r = st.getRArray(i);
-            if(index >= pos && index < pos + r.getT().length()) {
+        for(CTRElt r : st.getRArray()){
+            final int length = r.getT().length();
+            if(index >= pos && index < pos + length) {
                XSSFFont fnt = new XSSFFont(toCTFont(r.getRPr()));
-               fnt.setThemesTable(getThemesTable());
+               fnt.setThemesTable(themes);
                return fnt;
             }
 
-            pos += r.getT().length();
+            pos += length;
         }
         return null;
 

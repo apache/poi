@@ -1640,7 +1640,8 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
             if (moveComments) {
                 // This code would get simpler if NoteRecords could be organised by HSSFRow.
                 HSSFPatriarch patriarch = createDrawingPatriarch();
-                for (int i = patriarch.getChildren().size() - 1; i >= 0; i--) {
+                final int lastChildIndex = patriarch.getChildren().size() - 1;
+                for (int i = lastChildIndex; i >= 0; i--) {
                     HSSFShape shape = patriarch.getChildren().get(i);
                     if (!(shape instanceof HSSFComment)) {
                         continue;
@@ -2372,7 +2373,9 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
 
         //create a combobox control for each column
         HSSFPatriarch p = createDrawingPatriarch();
-        for (int col = range.getFirstColumn(); col <= range.getLastColumn(); col++) {
+        final int firstColumn = range.getFirstColumn();
+        final int lastColumn = range.getLastColumn();
+        for (int col = firstColumn; col <= lastColumn; col++) {
             p.createComboBox(new HSSFClientAnchor(0, 0, 0, 0,
                     (short) col, firstRow, (short) (col + 1), firstRow + 1));
         }

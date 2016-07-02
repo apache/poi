@@ -2674,7 +2674,8 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     public int findEndOfRowOutlineGroup(int row) {
         short level = getRow(row).getCTRow().getOutlineLevel();
         int currentRow;
-        for (currentRow = row; currentRow < getLastRowNum(); currentRow++) {
+        final int lastRowNum = getLastRowNum();
+        for (currentRow = row; currentRow < lastRowNum; currentRow++) {
             if (getRow(currentRow) == null
                     || getRow(currentRow).getCTRow().getOutlineLevel() < level) {
                 break;

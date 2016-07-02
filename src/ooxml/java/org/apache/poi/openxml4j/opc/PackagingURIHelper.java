@@ -606,12 +606,13 @@ public final class PackagingURIHelper {
 		StringBuffer retVal = new StringBuffer();
 		String uriStr = uri.toASCIIString();
 		char c;
-		for (int i = 0; i < uriStr.length(); ++i) {
+		final int length = uriStr.length();
+		for (int i = 0; i < length; ++i) {
 			c = uriStr.charAt(i);
 			if (c == '%') {
 				// We certainly found an encoded character, check for length
 				// now ( '%' HEXDIGIT HEXDIGIT)
-				if (((uriStr.length() - i) < 2)) {
+				if (((length - i) < 2)) {
 					throw new IllegalArgumentException("The uri " + uriStr
 							+ " contain invalid encoded character !");
 				}

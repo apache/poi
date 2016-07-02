@@ -50,11 +50,12 @@ public final class XSSFEvaluationWorkbook extends BaseXSSFEvaluationWorkbook {
     public EvaluationSheet getSheet(int sheetIndex) {
         // Performance optimization: build sheet cache the first time this is called
         // to avoid re-creating the XSSFEvaluationSheet each time a new cell is evaluated
-        // EvaluationWorkbooks make not guarentee to syncronize changes made to
+        // EvaluationWorkbooks make not guarantee to synchronize changes made to
         // the underlying workbook after the EvaluationWorkbook is created.
         if (_sheetCache == null) {
-            _sheetCache = new XSSFEvaluationSheet[_uBook.getNumberOfSheets()];
-            for (int i=0; i < _uBook.getNumberOfSheets(); i++) {
+            final int numberOfSheets = _uBook.getNumberOfSheets();
+            _sheetCache = new XSSFEvaluationSheet[numberOfSheets];
+            for (int i=0; i < numberOfSheets; i++) {
                 _sheetCache[i] = new XSSFEvaluationSheet(_uBook.getSheetAt(i));
             }
         }
