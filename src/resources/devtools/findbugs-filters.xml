@@ -28,6 +28,7 @@
 	</Match>
 
 	<!-- things that were moved or are named equally on purpose -->
+        <!-- Classes that shadow an identically named class in Common SS should be deprecated and deleted -->
 	<Match>
 		<Or>
 			<Class name="org.apache.poi.hssf.extractor.ExcelExtractor"/>
@@ -39,6 +40,7 @@
 			<Class name="org.apache.poi.hssf.util.CellRangeAddressList"/>
 			<Class name="org.apache.poi.hssf.util.CellReference"/>
 			<Class name="org.apache.poi.hssf.util.Region"/>
+			<Class name="org.apache.poi.hssf.util.PaneInformation"/>
 			<Class name="org.apache.poi.hwpf.usermodel.CharacterRun"/>
 			<Class name="org.apache.poi.sl.usermodel.Hyperlink"/>
 			<Class name="org.apache.poi.ss.usermodel.Hyperlink"/>
