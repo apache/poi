@@ -42,7 +42,7 @@ import org.apache.poi.util.POILogger;
  * </ul>
  */
 @Internal
-public final class FileInformationBlock implements Cloneable
+public final class FileInformationBlock
 {
     public static final POILogger logger = POILogFactory
             .getLogger( FileInformationBlock.class );

@@ -58,7 +58,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
 /**
  * Streaming version of XSSFSheet implementing the "BigGridDemo" strategy.
 */
-public class SXSSFSheet implements Sheet, Cloneable
+public class SXSSFSheet implements Sheet
 {
     /*package*/ final XSSFSheet _sh;
     private final SXSSFWorkbook _workbook;
