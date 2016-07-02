@@ -17,7 +17,10 @@
 
 package org.apache.poi.hssf.util;
 
-
+/**
+ * @deprecated POI 3.15 beta 3. Use {@link org.apache.poi.ss.util.AreaReference} instead.
+ */
+@Deprecated
 public final class AreaReference extends org.apache.poi.ss.util.AreaReference {
     /**
      * Create an area ref from a string representation.  Sheet names containing special characters should be
