@@ -47,6 +47,7 @@ import javax.xml.crypto.dsig.dom.DOMValidateContext;
 import javax.xml.crypto.dsig.spec.C14NMethodParameterSpec;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -97,6 +98,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.events.EventListener;
 import org.w3c.dom.events.EventTarget;
+import org.xml.sax.SAXException;
 
 
 /**
@@ -261,8 +263,24 @@ public class SignatureInfo implements SignatureConfigurable {
                 }
                 
                 return valid;
-            } catch (Exception e) {
-                String s = "error in marshalling and validating the signature";
+            } catch (IOException e) {
+                String s = "error in reading document";
+                LOG.log(POILogger.ERROR, s, e);
+                throw new EncryptedDocumentException(s, e);
+            } catch (SAXException e) {
+                String s = "error in parsing document";
+                LOG.log(POILogger.ERROR, s, e);
+                throw new EncryptedDocumentException(s, e);
+            } catch (XPathExpressionException e) {
+                String s = "error in searching document with xpath expression";
+                LOG.log(POILogger.ERROR, s, e);
+                throw new EncryptedDocumentException(s, e);
+            } catch (MarshalException e) {
+                String s = "error in unmarshalling the signature";
+                LOG.log(POILogger.ERROR, s, e);
+                throw new EncryptedDocumentException(s, e);
+            } catch (XMLSignatureException e) {
+                String s = "error in validating the signature";
                 LOG.log(POILogger.ERROR, s, e);
                 throw new EncryptedDocumentException(s, e);
             }
