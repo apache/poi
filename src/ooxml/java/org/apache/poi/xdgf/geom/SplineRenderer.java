@@ -30,15 +30,17 @@ public class SplineRenderer {
             ValueVector knots, ValueVector weights, int degree) {
 
         double firstKnot = knots.get(0);
-        double lastKnot = knots.get(knots.size() - 1);
+        final int count = knots.size();
+        double lastKnot = knots.get(count - 1);
 
         // scale knots to [0, 1] based on first/last knots
-        for (int i = 0; i < knots.size(); i++) {
+        for (int i = 0; i < count; i++) {
             knots.set((knots.get(i) - firstKnot) / lastKnot, i);
         }
 
         // if we don't have enough knots, duplicate the last knot until we do
-        for (int i = knots.size(); i < controlPoints.numPoints() + degree + 1; i++) {
+        final int  knotsToAdd = controlPoints.numPoints() + degree + 1;
+        for (int i = count; i < knotsToAdd; i++) {
             knots.add(1);
         }
 

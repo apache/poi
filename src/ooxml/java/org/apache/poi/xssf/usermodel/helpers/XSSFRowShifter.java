@@ -85,7 +85,8 @@ public final class XSSFRowShifter extends RowShifter {
     public void updateNamedRanges(FormulaShifter shifter) {
         Workbook wb = sheet.getWorkbook();
         XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create((XSSFWorkbook) wb);
-        for (int i = 0; i < wb.getNumberOfNames(); i++) {
+        final int numberOfNames = wb.getNumberOfNames();
+        for (int i = 0; i < numberOfNames; i++) {
             Name name = wb.getNameAt(i);
             String formula = name.getRefersToFormula();
             int sheetIndex = name.getSheetIndex();

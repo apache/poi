@@ -1084,11 +1084,12 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
      */
     @Override
     public int getSheetIndex(String name) {
-        for (int i = 0 ; i < sheets.size() ; ++i) {
-            XSSFSheet sheet = sheets.get(i);
-            if (name.equalsIgnoreCase(sheet.getSheetName())) {
-                return i;
+        int idx = 0;
+        for (XSSFSheet sh : sheets) {
+            if (name.equalsIgnoreCase(sh.getSheetName())) {
+                return idx;
             }
+            idx++;
         }
         return -1;
     }
@@ -1264,12 +1265,13 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
 
     @Override
     public void removeName(String name) {
-        for (int i = 0; i < namedRanges.size(); i++) {
-            XSSFName nm = namedRanges.get(i);
+        int idx = 0;
+        for (XSSFName nm : namedRanges) {
             if(nm.getNameName().equalsIgnoreCase(name)) {
-                removeName(i);
+                removeName(idx);
                 return;
             }
+            idx++;
         }
         throw new IllegalArgumentException("Named range was not found: " + name);
     }
@@ -1551,9 +1553,10 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
      */
     @Override
     public void setSelectedTab(int index) {
-        for (int i = 0 ; i < sheets.size() ; ++i) {
-            XSSFSheet sheet = sheets.get(i);
-            sheet.setSelected(i == index);
+        int idx = 0;
+        for (XSSFSheet sh : sheets) {
+            sh.setSelected(idx == index);
+            idx++;
         }
     }
 

@@ -289,7 +289,8 @@ public final class PackagePartName implements Comparable<PackagePartName> {
 	private static void checkPCharCompliance(String segment)
 			throws InvalidFormatException {
 		boolean errorFlag;
-		for (int i = 0; i < segment.length(); ++i) {
+		final int length = segment.length();
+		for (int i = 0; i < length; ++i) {
 			char c = segment.charAt(i);
 			errorFlag = true;
 
@@ -328,7 +329,7 @@ public final class PackagePartName implements Comparable<PackagePartName> {
 			if (errorFlag && c == '%') {
 				// We certainly found an encoded character, check for length
 				// now ( '%' HEXDIGIT HEXDIGIT)
-				if (((segment.length() - i) < 2)) {
+				if (((length - i) < 2)) {
 					throw new InvalidFormatException("The segment " + segment
 							+ " contain invalid encoded character !");
 				}

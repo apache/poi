@@ -135,7 +135,8 @@ public final class HSSFName implements Name {
         int sheetNumber = _definedNameRec.getSheetNumber();
 
         //Check to ensure no other names have the same case-insensitive name
-        for ( int i = wb.getNumNames()-1; i >=0; i-- )
+        final int lastNameIndex = wb.getNumNames()-1;
+        for ( int i = lastNameIndex; i >=0; i-- )
         {
             NameRecord rec = wb.getNameRecord(i);
             if (rec != _definedNameRec) {

@@ -30,6 +30,7 @@ import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.HeaderFooter;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFDrawing;
 import org.apache.poi.xssf.usermodel.XSSFRelation;
@@ -134,10 +135,10 @@ public class XSSFExcelExtractor extends POIXMLTextExtractor
         }
 
         StringBuffer text = new StringBuffer();
-        for(int i=0; i<workbook.getNumberOfSheets(); i++) {
-            XSSFSheet sheet = workbook.getSheetAt(i);
+        for(Sheet sh : workbook) {
+            XSSFSheet sheet = (XSSFSheet) sh;
             if(includeSheetNames) {
-                text.append(workbook.getSheetName(i)).append("\n");
+                text.append(sheet.getSheetName()).append("\n");
             }
 
             // Header(s), if present
