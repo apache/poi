@@ -31,6 +31,8 @@ public abstract class POIXMLTextExtractor extends POITextExtractor {
 
 	/**
 	 * Creates a new text extractor for the given document
+	 * 
+	 * @param document the document to extract from
 	 */
 	public POIXMLTextExtractor(POIXMLDocument document) {
 		_document = document;

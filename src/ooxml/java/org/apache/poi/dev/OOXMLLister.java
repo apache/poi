@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.openxml4j.opc.PackagePart;
@@ -47,28 +48,37 @@ public class OOXMLLister {
 	
 	/**
 	 * Figures out how big a given PackagePart is.
+	 * 
+	 * @param part the PackagePart
+	 * @return the size of the PackagePart
 	 */
 	public static long getSize(PackagePart part) throws IOException {
 		InputStream in = part.getInputStream();
-		byte[] b = new byte[8192];
-		long size = 0;
-		int read = 0;
-		
-		while(read > -1) {
-			read = in.read(b);
-			if(read > 0) {
-				size += read;
-			}
+		try {
+    		byte[] b = new byte[8192];
+    		long size = 0;
+    		int read = 0;
+    		
+    		while(read > -1) {
+    			read = in.read(b);
+    			if(read > 0) {
+    				size += read;
+    			}
+    		}
+    		
+    		return size;
+		} finally {
+		    in.close();
 		}
-		
-		return size;
 	}
 	
 	/**
 	 * Displays information on all the different
 	 *  parts of the OOXML file container.
+	 * @throws InvalidFormatException if the package relations are invalid
+	 * @throws IOException if the package can't be read 
 	 */
-	public void displayParts() throws Exception {
+	public void displayParts() throws InvalidFormatException, IOException {
 		ArrayList<PackagePart> parts = container.getParts();
 		for (PackagePart part : parts) {
 			disp.println(part.getPartName());
@@ -91,7 +101,7 @@ public class OOXMLLister {
 	 *  relationships between different parts
 	 *  of the OOXML file container.
 	 */
-	public void displayRelations() throws Exception {
+	public void displayRelations() {
 		PackageRelationshipCollection rels = 
 			container.getRelationships();
 		for (PackageRelationship rel : rels) {
