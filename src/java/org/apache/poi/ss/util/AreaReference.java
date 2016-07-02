@@ -356,11 +356,11 @@ public class AreaReference {
                         }
                         delimiterPos = i;
                     }
-                    // fall through
-                default:
                     continue; //continue the for-loop
                 case SPECIAL_NAME_DELIMITER:
                     break;
+                default:
+                    continue; //continue the for-loop
             }
             if(!insideDelimitedName) {
                 insideDelimitedName = true;
