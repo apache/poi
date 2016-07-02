@@ -43,8 +43,6 @@ public final class XSSFGraphicFrame extends XSSFShape {
 	private static CTGraphicalObjectFrame prototype = null;
 
 	private CTGraphicalObjectFrame graphicFrame;
-	// FIXME: shadows protected XSSFShape.drawing
-	private XSSFDrawing drawing;
 	private XSSFClientAnchor anchor;
 
 	/**
@@ -54,7 +52,7 @@ public final class XSSFGraphicFrame extends XSSFShape {
 	 * @param ctGraphicFrame the XML bean that stores this frame content
 	 */
 	protected XSSFGraphicFrame(XSSFDrawing drawing, CTGraphicalObjectFrame ctGraphicFrame) {
-		this.drawing = drawing;
+		this.drawing = drawing; // protected field on XSSFShape
 		this.graphicFrame = ctGraphicFrame;
 	}
 
