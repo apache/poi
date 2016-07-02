@@ -82,7 +82,6 @@ import org.etsi.uri.x01903.v13.DigestAlgAndValueType;
 import org.etsi.uri.x01903.v13.QualifyingPropertiesType;
 import org.junit.Assume;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.w3.x2000.x09.xmldsig.ReferenceType;
 import org.w3.x2000.x09.xmldsig.SignatureDocument;
@@ -587,7 +586,6 @@ public class TestSignatureInfo {
     }
     
     @Test
-    @Ignore
     public void testMultiSign() throws Exception {
         initKeyPair("KeyA", "CN=KeyA");
         //KeyPair keyPairA = keyPair;
