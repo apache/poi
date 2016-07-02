@@ -198,71 +198,79 @@ public class VBAMacroReader implements Closeable {
             String name = entry.getName();
             DocumentNode document = (DocumentNode)entry;
             DocumentInputStream dis = new DocumentInputStream(document);
-            if ("dir".equalsIgnoreCase(name)) {
-                // process DIR
-                RLEDecompressingInputStream in = new RLEDecompressingInputStream(dis);
-                String streamName = null;
-                while (true) {
-                    int id = in.readShort();
-                    if (id == -1 || id == 0x0010) {
-                        break; // EOF or TERMINATOR
-                    }
-                    int len = in.readInt();
-                    switch (id) {
-                    case 0x0009: // PROJECTVERSION
-                        trySkip(in, 6);
-                        break;
-                    case 0x0003: // PROJECTCODEPAGE
-                        int codepage = in.readShort();
-                        modules.charset = Charset.forName("Cp" + codepage);
-                        break;
-                    case 0x001A: // STREAMNAME
-                        streamName = readString(in, len, modules.charset);
-                        break;
-                    case 0x0031: // MODULEOFFSET
-                        int moduleOffset = in.readInt();
-                        Module module = modules.get(streamName);
-                        if (module != null) {
-                            ByteArrayOutputStream out = new ByteArrayOutputStream();
-                            RLEDecompressingInputStream stream = new RLEDecompressingInputStream(new ByteArrayInputStream(
-                                    module.buf, moduleOffset, module.buf.length - moduleOffset));
-                            IOUtils.copy(stream, out);
-                            stream.close();
-                            out.close();
-                            module.buf = out.toByteArray();
-                        } else {
-                            module = new Module();
-                            module.offset = moduleOffset;
-                            modules.put(streamName, module);
+            try {
+                if ("dir".equalsIgnoreCase(name)) {
+                    // process DIR
+                    RLEDecompressingInputStream in = new RLEDecompressingInputStream(dis);
+                    String streamName = null;
+                    while (true) {
+                        int id = in.readShort();
+                        if (id == -1 || id == 0x0010) {
+                            break; // EOF or TERMINATOR
                         }
-                        break;
-                    default:
-                        trySkip(in, len);
-                        break;
+                        int len = in.readInt();
+                        switch (id) {
+                        case 0x0009: // PROJECTVERSION
+                            trySkip(in, 6);
+                            break;
+                        case 0x0003: // PROJECTCODEPAGE
+                            int codepage = in.readShort();
+                            modules.charset = Charset.forName("Cp" + codepage);
+                            break;
+                        case 0x001A: // STREAMNAME
+                            streamName = readString(in, len, modules.charset);
+                            break;
+                        case 0x0031: // MODULEOFFSET
+                            int moduleOffset = in.readInt();
+                            Module module = modules.get(streamName);
+                            if (module != null) {
+                                ByteArrayOutputStream out = new ByteArrayOutputStream();
+                                RLEDecompressingInputStream stream = new RLEDecompressingInputStream(new ByteArrayInputStream(
+                                        module.buf, moduleOffset, module.buf.length - moduleOffset));
+                                IOUtils.copy(stream, out);
+                                stream.close();
+                                out.close();
+                                module.buf = out.toByteArray();
+                            } else {
+                                module = new Module();
+                                module.offset = moduleOffset;
+                                modules.put(streamName, module);
+                            }
+                            break;
+                        default:
+                            trySkip(in, len);
+                            break;
+                        }
                     }
+                    in.close();
+                } else if (!startsWithIgnoreCase(name, "__SRP")
+                        && !startsWithIgnoreCase(name, "_VBA_PROJECT")) {
+                    // process module, skip __SRP and _VBA_PROJECT since these do not contain macros
+                    Module module = modules.get(name);
+                    final InputStream in;
+                    // TODO Refactor this to fetch dir then do the rest
+                    if (module == null) {
+                        // no DIR stream with offsets yet, so store the compressed bytes for later
+                        module = new Module();
+                        modules.put(name, module);
+                        in = dis;
+                    } else {
+                        // we know the offset already, so decompress immediately on-the-fly
+                        long skippedBytes = dis.skip(module.offset);
+                        if (skippedBytes != module.offset) {
+                            throw new IOException("tried to skip " + module.offset + " bytes, but actually skipped " + skippedBytes + " bytes");
+                        }
+                        in = new RLEDecompressingInputStream(dis);
+                    }
+                    final ByteArrayOutputStream out = new ByteArrayOutputStream();
+                    IOUtils.copy(in, out);
+                    in.close();
+                    out.close();
+                    module.buf = out.toByteArray();
                 }
-                in.close();
-            } else if (!startsWithIgnoreCase(name, "__SRP")
-                    && !startsWithIgnoreCase(name, "_VBA_PROJECT")) {
-                // process module, skip __SRP and _VBA_PROJECT since these do not contain macros
-                Module module = modules.get(name);
-                final InputStream in;
-                // TODO Refactor this to fetch dir then do the rest
-                if (module == null) {
-                    // no DIR stream with offsets yet, so store the compressed bytes for later
-                    module = new Module();
-                    modules.put(name, module);
-                    in = dis;
-                } else {
-                    // we know the offset already, so decompress immediately on-the-fly
-                    dis.skip(module.offset);
-                    in = new RLEDecompressingInputStream(dis);
-                }
-                final ByteArrayOutputStream out = new ByteArrayOutputStream();
-                IOUtils.copy(in, out);
-                in.close();
-                out.close();
-                module.buf = out.toByteArray();
+            }
+            finally {
+                dis.close();
             }
         }
     }
