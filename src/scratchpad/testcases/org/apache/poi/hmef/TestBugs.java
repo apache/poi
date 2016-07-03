@@ -16,7 +16,8 @@
 ==================================================================== */
 package org.apache.poi.hmef;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hmef.attribute.MAPIAttribute;
@@ -25,7 +26,10 @@ import org.apache.poi.hmef.attribute.TNEFProperty;
 import org.apache.poi.hsmf.datatypes.MAPIProperty;
 import org.apache.poi.util.LittleEndian;
 
-public class TestBugs extends TestCase {
+import org.junit.Test;
+
+public class TestBugs {
+    @Test
     public void test52400ReadSimpleTNEF() throws Exception {
         POIDataSamples samples = POIDataSamples.getHMEFInstance();
         String testFile = "bug52400-winmail-simple.dat";
@@ -35,6 +39,7 @@ public class TestBugs extends TestCase {
         assertTrue(bodyStr.contains("This is the message body."));
     }
     
+    @Test
     public void test52400ReadAttachedTNEF() throws Exception {
         POIDataSamples samples = POIDataSamples.getHMEFInstance();
         String testFile = "bug52400-winmail-with-attachments.dat";
