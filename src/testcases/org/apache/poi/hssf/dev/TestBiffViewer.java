@@ -23,11 +23,14 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 
 import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.POIDataSamples;
 import org.apache.poi.hssf.OldExcelFormatException;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.util.LocaleUtil;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
+import org.junit.Test;
 
 public class TestBiffViewer extends BaseXLSIteratingTest {
     @BeforeClass
@@ -66,11 +69,11 @@ public class TestBiffViewer extends BaseXLSIteratingTest {
             fs.close();
         }
     }
-	
-//  @Test
-//  @Ignore("only used for manual tests")
-//  public void testOneFile() throws Exception {
-//      POIDataSamples samples = POIDataSamples.getSpreadSheetInstance();
-//      runOneFile(samples.getFile("43493.xls"));
-//  }
+
+    @Test
+    @Ignore("only used for manual tests")
+    public void testOneFile() throws Exception {
+        POIDataSamples samples = POIDataSamples.getSpreadSheetInstance();
+        runOneFile(samples.getFile("43493.xls"));
+    }
 }

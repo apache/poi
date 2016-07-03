@@ -29,6 +29,8 @@ import org.apache.poi.hssf.OldExcelFormatException;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.util.LocaleUtil;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
+import org.junit.Test;
 
 public class TestReSave extends BaseXLSIteratingTest {
     @BeforeClass
@@ -81,18 +83,18 @@ public class TestReSave extends BaseXLSIteratingTest {
 		}
 	}
 
-	//Only used for local testing
-	//@Test
-	public void testOneFile() throws Exception {
+    @Ignore("Only used for local testing")
+    @Test
+    public void testOneFile() throws Exception {
         String dataDirName = System.getProperty(POIDataSamples.TEST_PROPERTY);
         if(dataDirName == null) {
             dataDirName = "test-data";
         }
 
-		List<String> failed = new ArrayList<String>();
-		runOneFile(new File(dataDirName + "/spreadsheet", "49931.xls"));
+        List<String> failed = new ArrayList<String>();
+        runOneFile(new File(dataDirName + "/spreadsheet", "49931.xls"));
 
-		assertTrue("Expected to have no failed except the ones excluded, but had: " + failed, 
-				failed.isEmpty());
-	}
+        assertTrue("Expected to have no failed except the ones excluded, but had: " + failed, 
+                failed.isEmpty());
+    }
 }
