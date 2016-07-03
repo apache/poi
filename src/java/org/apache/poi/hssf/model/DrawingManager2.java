@@ -45,6 +45,11 @@ public class DrawingManager2
     	drawingGroups.clear(); 
     }
 
+    /**
+     * Creates a new drawing group 
+     *
+     * @return a new drawing group
+     */
     public EscherDgRecord createDgRecord()
     {
         EscherDgRecord dg = new EscherDgRecord();
@@ -60,9 +65,11 @@ public class DrawingManager2
     }
 
     /**
-     * Allocates new shape id for the new drawing group id.
-     *
-     * @return a new shape id.
+     * Allocates new shape id for the drawing group id.
+     * 
+     * @param drawingGroupId the drawing group id
+     * 
+     * @return a new shape id
      */
     public int allocateShapeId(short drawingGroupId)
     {
@@ -71,7 +78,10 @@ public class DrawingManager2
     }
 
     /**
-     * Allocates new shape id for the new drawing group id.
+     * Allocates new shape id for the drawing group
+     *
+     * @param drawingGroupId the drawing group id
+     * @param dg the EscherDgRecord which receives the new shape
      *
      * @return a new shape id.
      */
@@ -109,6 +119,8 @@ public class DrawingManager2
     
     /**
      * Finds the next available (1 based) drawing group id
+     * 
+     * @return the next available drawing group id
      */
     public short findNewDrawingGroupId()
     {
@@ -140,11 +152,19 @@ public class DrawingManager2
         return next;
     }
 
+    /**
+     * Returns the drawing group container record
+     *
+     * @return the drawing group container record
+     */
     public EscherDggRecord getDgg()
     {
         return dgg;
     }
 
+    /**
+     * Increment the drawing counter
+     */
     public void incrementDrawingsSaved(){
         dgg.setDrawingsSaved(dgg.getDrawingsSaved()+1);
     }

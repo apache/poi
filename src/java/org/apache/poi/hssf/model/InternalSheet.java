@@ -87,7 +87,6 @@ import org.apache.poi.util.POILogger;
  * really know what you're doing.  I recommend you read the Microsoft Excel 97 Developer's
  * Kit (Microsoft Press) and the documentation at http://sc.openoffice.org/excelfileformat.pdf
  * before even attempting to use this.
- * <P>
  *
  * @see org.apache.poi.hssf.model.InternalWorkbook
  * @see org.apache.poi.hssf.usermodel.HSSFSheet
@@ -410,6 +409,8 @@ public final class InternalSheet {
      * can be added to a sheet. The <b>Record</b> object does not implement cloneable.
      * When adding a new record, implement a public clone method if and only if the record
      * belongs to a sheet.
+     * 
+     * @return the cloned sheet
      */
     public InternalSheet cloneSheet() {
         List<Record> clonedRecords = new ArrayList<Record>(_records.size());
@@ -512,6 +513,8 @@ public final class InternalSheet {
 
     /**
      * Updates formulas in cells and conditional formats due to moving of cells
+     * 
+     * @param shifter the formular shifter
      * @param externSheetIndex the externSheet index of this sheet
      */
     public void updateFormulasAfterCellShift(FormulaShifter shifter, int externSheetIndex) {
@@ -572,10 +575,14 @@ public final class InternalSheet {
      * sets the values in the sheet's DimensionsRecord object to be correct.  Excel doesn't
      * really care, but we want to play nice with other libraries.
      *
+     * @param firstrow the first row index
+     * @param firstcol the first column index
+     * @param lastrow the last row index
+     * @param lastcol the last column index
+     *
      * @see org.apache.poi.hssf.record.DimensionsRecord
      */
-    public void setDimensions(int firstrow, short firstcol, int lastrow,
-                              short lastcol)
+    public void setDimensions(int firstrow, short firstcol, int lastrow, short lastcol)
     {
         if (log.check( POILogger.DEBUG ))
         {
@@ -1023,6 +1030,8 @@ public final class InternalSheet {
 
     /**
      * set the default row height for the sheet (if the rows do not define their own height)
+     * 
+     * @param dch the default row height
      */
     public void setDefaultRowHeight(short dch) {
         defaultrowheight.setRowHeight(dch);
@@ -1066,7 +1075,7 @@ public final class InternalSheet {
      * Returns the index to the default ExtendedFormatRecord (0xF)
      * if no ColumnInfoRecord exists that includes the column
      * index specified.
-     * @param columnIndex
+     * @param columnIndex the column index
      * @return index of ExtendedFormatRecord associated with
      * ColumnInfoRecord that includes the column index or the
      * index of the default ExtendedFormatRecord (0xF)
@@ -1273,6 +1282,8 @@ public final class InternalSheet {
 
     /**
      * Gets the gridset record for this sheet.
+     * 
+     * @return the gridset record for this sheet
      */
     public GridsetRecord getGridsetRecord()
     {
@@ -1281,6 +1292,10 @@ public final class InternalSheet {
 
     /**
      * Returns the first occurrence of a record matching a particular sid.
+     * 
+     * @param sid the sid to search for
+     * 
+     * @return the matching record or {@code null} if it wasn't found
      */
     public Record findFirstRecordBySid(short sid) {
         int ix = findFirstRecordLocBySid(sid);
