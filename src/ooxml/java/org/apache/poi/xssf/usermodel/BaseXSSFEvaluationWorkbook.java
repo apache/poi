@@ -118,11 +118,14 @@ public abstract class BaseXSSFEvaluationWorkbook implements FormulaRenderingWork
         // Not properly referenced
         throw new RuntimeException("Book not linked for filename " + bookName);
     }
+    /* case-sensitive */
     private int findExternalLinkIndex(String bookName, List<ExternalLinksTable> tables) {
-        for (int i=0; i<tables.size(); i++) {
-            if (tables.get(i).getLinkedFileName().equals(bookName)) {
+        int i = 0;
+        for (ExternalLinksTable table : tables) {
+            if (table.getLinkedFileName().equals(bookName)) {
                 return i+1; // 1 based results, 0 = current workbook
             }
+            i++;
         }
         return -1;
     }
@@ -131,6 +134,7 @@ public abstract class BaseXSSFEvaluationWorkbook implements FormulaRenderingWork
         private FakeExternalLinksTable(String fileName) {
             this.fileName = fileName;
         }
+        @Override
         public String getLinkedFileName() {
             return fileName;
         }

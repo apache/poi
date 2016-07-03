@@ -27,6 +27,7 @@ import java.nio.charset.Charset;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.ss.usermodel.Sheet;
 
 /**
  * Dump out the aggregated escher records
@@ -42,11 +43,11 @@ public class DrawingDump
             pw.println( "Drawing group:" );
             wb.dumpDrawingGroupRecords(true);
     
-            for (int sheetNum = 1; sheetNum <= wb.getNumberOfSheets(); sheetNum++)
+            int i = 1;
+            for (Sheet sheet : wb)
             {
-                pw.println( "Sheet " + sheetNum + ":" );
-                HSSFSheet sheet = wb.getSheetAt(sheetNum - 1);
-                sheet.dumpDrawingRecords(true, pw);
+                pw.println( "Sheet " + i + "(" + sheet.getSheetName() + "):" );
+                ((HSSFSheet) sheet).dumpDrawingRecords(true, pw);
             }
         } finally {
             wb.close();

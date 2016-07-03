@@ -169,18 +169,18 @@ public final class ArrayPtg extends Ptg {
 	public String toFormulaString() {
 		StringBuffer b = new StringBuffer();
 		b.append("{");
-	  	for (int y=0;y<getRowCount();y++) {
+		for (int y = 0; y < _nRows; y++) {
 			if (y > 0) {
 				b.append(";");
 			}
-			for (int x=0;x<getColumnCount();x++) {
-			  	if (x > 0) {
+			for (int x = 0; x < _nColumns; x++) {
+				if (x > 0) {
 					b.append(",");
 				}
-		  		Object o = _arrayValues[getValueIndex(x, y)];
-		  		b.append(getConstantText(o));
-		  	}
-		  }
+				Object o = _arrayValues[getValueIndex(x, y)];
+				b.append(getConstantText(o));
+			}
+		}
 		b.append("}");
 		return b.toString();
 	}

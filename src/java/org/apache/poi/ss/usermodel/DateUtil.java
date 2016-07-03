@@ -395,10 +395,11 @@ public class DateUtil {
              // The code above was reworked as suggested in bug 48425:
              // simple loop is more efficient than consecutive regexp replacements.
         }*/
-        StringBuilder sb = new StringBuilder(fs.length());
-        for (int i = 0; i < fs.length(); i++) {
+        final int length = fs.length();
+        StringBuilder sb = new StringBuilder(length);
+        for (int i = 0; i < length; i++) {
             char c = fs.charAt(i);
-            if (i < fs.length() - 1) {
+            if (i < length - 1) {
                 char nc = fs.charAt(i + 1);
                 if (c == '\\') {
                     switch (nc) {
@@ -435,8 +436,9 @@ public class DateUtil {
         // You're allowed something like dd/mm/yy;[red]dd/mm/yy
         //  which would place dates before 1900/1904 in red
         // For now, only consider the first one
-        if(fs.indexOf(';') > 0 && fs.indexOf(';') < fs.length()-1) {
-           fs = fs.substring(0, fs.indexOf(';'));
+        final int separatorIndex = fs.indexOf(';');
+        if(0 < separatorIndex && separatorIndex < fs.length()-1) {
+           fs = fs.substring(0, separatorIndex);
         }
 
         // Ensure it has some date letters in it
