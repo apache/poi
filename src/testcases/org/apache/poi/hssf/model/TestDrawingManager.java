@@ -21,6 +21,10 @@ import junit.framework.TestCase;
 import org.apache.poi.ddf.EscherDggRecord;
 import org.apache.poi.ddf.EscherDgRecord;
 
+/**
+ * @deprecated in POI 3.15-beta2, scheduled for removal in 3.17, use DrawingManager2 instead
+ */
+@Deprecated
 public final class TestDrawingManager extends TestCase {
     public void testFindFreeSPIDBlock() {
         EscherDggRecord dgg = new EscherDggRecord();
