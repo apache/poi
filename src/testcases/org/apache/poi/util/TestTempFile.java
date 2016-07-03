@@ -20,6 +20,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -29,12 +30,16 @@ import java.util.Arrays;
 import org.apache.poi.poifs.dev.TestPOIFSDump;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 public class TestTempFile {
     private String previousTempDir;
-
     private File tempDir;
+    
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
     @Before
     public void setUp() throws IOException {
@@ -78,29 +83,54 @@ public class TestTempFile {
     }
 
     @Test
-    public void testCreateTempFile() throws Exception
+    public void testCreateTempFile() throws IOException
     {
         File tempFile = TempFile.createTempFile("test", ".txt");
         FileOutputStream fos = new FileOutputStream(tempFile);
-        fos.write(1);
+        fos.write(1); //file can be written to
         fos.close();
-        assertTrue(tempFile.exists());
-        assertEquals("poifiles", tempFile.getParentFile().getName());
+        assertTrue("temp file exists", tempFile.exists());
+        assertTrue("temp file is a file", tempFile.isFile());
+        assertTrue("temp file's name should start with test",
+                tempFile.getName().startsWith("test"));
+        assertTrue("temp file's name should end with .txt",
+                tempFile.getName().endsWith(".txt"));
+        assertEquals("temp file is saved in poifiles directory",
+                "poifiles", tempFile.getParentFile().getName());
 
         // Can't think of a good way to check whether a file is actually deleted since it would require the VM to stop.
-        assertTrue(tempFile.delete());
+        // Solution: set TempFileCreationStrategy to something that the unit test can trigger a deletion"
+        assertTrue("Unable to delete temp file", tempFile.delete());
     }
     
     @Test
-    public void testConstructor() {
-        // can currently be constructed...
-        new TempFile();
+    public void createTempFileWithDefaultSuffix() throws IOException {
+        File tempFile = TempFile.createTempFile("test", null);
+        assertTrue("temp file's name should end with .tmp",
+                tempFile.getName().endsWith(".tmp"));
     }
     
-    @Test(expected=IllegalArgumentException.class)
+    @Test
+    public void testCreateTempDirectory() throws IOException
+    {
+        File tempDir = TempFile.createTempDirectory("testDir");
+        assertTrue("testDir exists", tempDir.exists());
+        assertTrue("testDir is a directory", tempDir.isDirectory());
+        assertTrue("testDir's name starts with testDir",
+                tempDir.getName().startsWith("testDir"));
+        assertEquals("tempDir is saved in poifiles directory",
+                "poifiles", tempDir.getParentFile().getName());
+
+        // Can't think of a good way to check whether a directory is actually deleted since it would require the VM to stop.
+        // Solution: set TempFileCreationStrategy to something that the unit test can trigger a deletion"
+        assertTrue("Unable to delete tempDir", tempDir.delete());
+    }
+    
+    @Test
     public void testSetTempFileCreationStrategy() throws IOException {
         TempFile.setTempFileCreationStrategy(new TempFile.DefaultTempFileCreationStrategy());
         
+        // Should be able to create two tempfiles with same prefix and suffix
         File file1 = TempFile.createTempFile("TestTempFile", ".tst");
         File file2 = TempFile.createTempFile("TestTempFile", ".tst");
         assertFalse(file1.equals(file2));
@@ -109,6 +139,7 @@ public class TestTempFile {
         assertNotNull(file1);
         assertTrue(file1.delete());
         
+        thrown.expect(IllegalArgumentException.class);
         TempFile.setTempFileCreationStrategy(null);
     }
 }

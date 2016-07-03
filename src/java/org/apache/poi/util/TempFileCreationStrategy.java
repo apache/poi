@@ -35,4 +35,15 @@ public interface TempFileCreationStrategy {
      * @throws IOException If no temporary file could be created.
      */
     File createTempFile(String prefix, String suffix) throws IOException;
+    
+    /**
+     * Creates a new and empty temporary directory.
+     *
+     * @param prefix The directory name to be used to generate the name of the temporary directory.
+     * 
+     * @return The path to the newly created and empty temporary directory.
+     * 
+     * @throws IOException If no temporary directory could be created.
+     */
+    File createTempDirectory(String prefix) throws IOException;
 }
