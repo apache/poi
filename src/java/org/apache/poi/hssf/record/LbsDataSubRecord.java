@@ -160,7 +160,7 @@ public class LbsDataSubRecord extends SubRecord {
     /**
      *
      * @return a new instance of LbsDataSubRecord to construct auto-filters
-     * @see org.apache.poi.hssf.model.ComboboxShape#createObjRecord(org.apache.poi.hssf.usermodel.HSSFSimpleShape, int)
+     * @see org.apache.poi.hssf.usermodel.HSSFCombobox
      */
     public static LbsDataSubRecord newAutoFilterInstance(){
         LbsDataSubRecord lbs = new LbsDataSubRecord();
@@ -330,7 +330,7 @@ public class LbsDataSubRecord extends SubRecord {
         /**
          * a string that specifies the current string value in the dropdown
          */
-        private String _str;
+        private final String _str;
 
         /**
          * Optional, undefined and MUST be ignored.

@@ -16,6 +16,7 @@
 ==================================================================== */
 package org.apache.poi.hssf.usermodel;
 
+import static org.apache.poi.hssf.model.TestDrawingAggregate.decompress;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -26,8 +27,6 @@ import java.io.IOException;
 import org.apache.poi.ddf.EscherSpRecord;
 import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.hssf.model.CommentShape;
-import org.apache.poi.hssf.model.HSSFTestModelHelper;
 import org.apache.poi.hssf.record.CommonObjectDataSubRecord;
 import org.apache.poi.hssf.record.EscherAggregate;
 import org.apache.poi.hssf.record.NoteRecord;
@@ -66,7 +65,7 @@ public final class TestHSSFComment extends BaseTestCellComment {
      * when matching cells and their cell comments. The correct algorithm is to map
      */
     @Test
-    public void bug47924() {
+    public void bug47924() throws IOException {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("47924.xls");
         HSSFSheet sheet = wb.getSheetAt(0);
         HSSFCell cell;
@@ -95,6 +94,8 @@ public final class TestHSSFComment extends BaseTestCellComment {
         cell = sheet.getRow(5).getCell(2);
         comment = cell.getCellComment();
         assertEquals("c6", comment.getString().getString());
+        
+        wb.close();
     }
     
     @Test
@@ -202,7 +203,7 @@ public final class TestHSSFComment extends BaseTestCellComment {
     }
     
     @Test
-    public void resultEqualsToAbstractShape() throws IOException {
+    public void resultEqualsToNonExistingAbstractShape() throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sh = wb.createSheet();
         HSSFPatriarch patriarch = sh.createDrawingPatriarch();
@@ -212,59 +213,53 @@ public final class TestHSSFComment extends BaseTestCellComment {
         HSSFCell cell = row.createCell(0);
         cell.setCellComment(comment);
 
-        CommentShape commentShape = HSSFTestModelHelper.createCommentShape(1025, comment);
-
         assertEquals(comment.getEscherContainer().getChildRecords().size(), 5);
-        assertEquals(commentShape.getSpContainer().getChildRecords().size(), 5);
 
         //sp record
-        byte[] expected = commentShape.getSpContainer().getChild(0).serialize();
+        byte[] expected = decompress("H4sIAAAAAAAAAFvEw/WBg4GBgZEFSHAxMAAA9gX7nhAAAAA=");
         byte[] actual = comment.getEscherContainer().getChild(0).serialize();
 
         assertEquals(expected.length, actual.length);
         assertArrayEquals(expected, actual);
 
-        expected = commentShape.getSpContainer().getChild(2).serialize();
+        expected = decompress("H4sIAAAAAAAAAGNgEPggxIANAABK4+laGgAAAA==");
         actual = comment.getEscherContainer().getChild(2).serialize();
 
         assertEquals(expected.length, actual.length);
         assertArrayEquals(expected, actual);
 
-        expected = commentShape.getSpContainer().getChild(3).serialize();
+        expected = decompress("H4sIAAAAAAAAAGNgEPzAAAQACl6c5QgAAAA=");
         actual = comment.getEscherContainer().getChild(3).serialize();
 
         assertEquals(expected.length, actual.length);
         assertArrayEquals(expected, actual);
 
-        expected = commentShape.getSpContainer().getChild(4).serialize();
+        expected = decompress("H4sIAAAAAAAAAGNg4P3AAAQA6pyIkQgAAAA=");
         actual = comment.getEscherContainer().getChild(4).serialize();
 
         assertEquals(expected.length, actual.length);
         assertArrayEquals(expected, actual);
 
         ObjRecord obj = comment.getObjRecord();
-        ObjRecord objShape = commentShape.getObjRecord();
 
-        expected = obj.serialize();
-        actual = objShape.serialize();
+        expected = decompress("H4sIAAAAAAAAAItlMGEQZRBikGRgZBF0YEACvAxiDLgBAJZsuoU4AAAA");
+        actual = obj.serialize();
 
         assertEquals(expected.length, actual.length);
         //assertArrayEquals(expected, actual);
 
         TextObjectRecord tor = comment.getTextObjectRecord();
-        TextObjectRecord torShape = commentShape.getTextObjectRecord();
 
-        expected = tor.serialize();
-        actual = torShape.serialize();
+        expected = decompress("H4sIAAAAAAAAANvGKMQgxMSABgBGi8T+FgAAAA==");
+        actual = tor.serialize();
 
         assertEquals(expected.length, actual.length);
         assertArrayEquals(expected, actual);
 
         NoteRecord note = comment.getNoteRecord();
-        NoteRecord noteShape = commentShape.getNoteRecord();
 
-        expected = note.serialize();
-        actual = noteShape.serialize();
+        expected = decompress("H4sIAAAAAAAAAJNh4GGAAEYWEAkAS0KXuRAAAAA=");
+        actual = note.serialize();
 
         assertEquals(expected.length, actual.length);
         assertArrayEquals(expected, actual);
@@ -376,7 +371,7 @@ public final class TestHSSFComment extends BaseTestCellComment {
     }
 
     @Test
-    public void existingFileWithComment(){
+    public void existingFileWithComment() throws IOException {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("drawings.xls");
         HSSFSheet sheet = wb.getSheet("comments");
         HSSFPatriarch drawing = sheet.getDrawingPatriarch();
@@ -386,6 +381,7 @@ public final class TestHSSFComment extends BaseTestCellComment {
         assertEquals(comment.getString().getString(), "evgeniy:\npoi test");
         assertEquals(comment.getColumn(), 1);
         assertEquals(comment.getRow(), 2);
+        wb.close();
     }
 
     @Test
@@ -398,8 +394,6 @@ public final class TestHSSFComment extends BaseTestCellComment {
         HSSFRow row = sh.createRow(5);
         HSSFCell cell = row.createCell(4);
         cell.setCellComment(comment);
-
-        HSSFTestModelHelper.createCommentShape(0, comment);
 
         assertNotNull(sh.findCellComment(5, 4));
         assertNull(sh.findCellComment(5, 5));
