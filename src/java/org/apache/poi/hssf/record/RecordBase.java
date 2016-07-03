@@ -19,8 +19,6 @@ package org.apache.poi.hssf.record;
 
 /**
  * Common base class of {@link Record} and {@link org.apache.poi.hssf.record.aggregates.RecordAggregate}
- * 
- * @author Josh Micich
  */
 public abstract class RecordBase {
 	/**
@@ -37,6 +35,8 @@ public abstract class RecordBase {
 	/**
 	 * gives the current serialized size of the record. Should include the sid
 	 * and reclength (4 bytes).
+	 * 
+	 * @return the record size
 	 */
 	public abstract int getRecordSize();
 }

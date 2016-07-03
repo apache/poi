@@ -30,7 +30,6 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.ss.formula.ptg.ExpPtg;
 import org.apache.poi.ss.formula.ptg.FuncPtg;
-import org.apache.poi.ss.formula.ptg.OperationPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
 
 /**
@@ -53,13 +52,9 @@ public class FormulaViewer
 
     /**
      * Method run
-     * @throws IOException 
-     *
-     *
-     * @exception Exception
-     *
+     * 
+     * @throws IOException if the file contained errors 
      */
-
     public void run() throws IOException {
         NPOIFSFileSystem fs  = new NPOIFSFileSystem(new File(file), true);
         InputStream is = BiffViewer.getPOIFSInputStream(fs);
@@ -141,11 +136,8 @@ public class FormulaViewer
     /**
      * Method parseFormulaRecord
      *
-     *
-     * @param record
-     *
+     * @param record the record to be parsed
      */
-
     public void parseFormulaRecord(FormulaRecord record)
     {
         System.out.println("==============================");
@@ -164,9 +156,8 @@ public class FormulaViewer
 
         StringBuffer buf = new StringBuffer();
 		Ptg[] tokens = record.getParsedExpression();
-		for (int i = 0; i < tokens.length; i++) {
-			Ptg token = tokens[i];
-            buf.append( token.toFormulaString());
+		for (Ptg token : tokens) {
+			buf.append( token.toFormulaString());
             switch (token.getPtgClass()) {
                 case Ptg.CLASS_REF :
                     buf.append("(R)");
@@ -198,9 +189,7 @@ public class FormulaViewer
     /**
      * Method setFile
      *
-     *
-     * @param file
-     *
+     * @param file the file to process
      */
 
     public void setFile(String file)
@@ -218,11 +207,8 @@ public class FormulaViewer
      * pass me a filename and I'll try and parse the formulas from it
      *
      * @param args pass one argument with the filename or --help
-     * @throws IOException 
-     * @throws Exception 
-     *
+     * @throws IOException if the file can't be read or contained errors
      */
-
     public static void main(String args[]) throws IOException
     {
         if ((args == null) || (args.length >2 )

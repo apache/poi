@@ -161,6 +161,11 @@ public class SectionIDMap extends HashMap {
     /**
      * Associates the string representation of a section
      *  format ID with a {@link PropertyIDMap}
+     * 
+     * @param key the key of the PropertyIDMap
+     * @param value the PropertyIDMap itself
+     * 
+     * @return the previous PropertyIDMap stored under this key, or {@code null} if there wasn't one
      */
     protected PropertyIDMap put(String key, PropertyIDMap value) {
         return (PropertyIDMap)super.put(key, value);

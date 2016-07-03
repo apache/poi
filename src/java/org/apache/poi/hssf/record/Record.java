@@ -20,11 +20,7 @@ package org.apache.poi.hssf.record;
 import java.io.ByteArrayInputStream;
 
 /**
- * Title: Record
- * Description: All HSSF Records inherit from this class.
- * @author Andrew C. Oliver
- * @author Marc Johnson (mjohnson at apache dot org)
- * @author Jason Height (jheight at chariot dot net dot au)
+ * All HSSF Records inherit from this class.
  */
 public abstract class Record extends RecordBase {
 
@@ -56,8 +52,9 @@ public abstract class Record extends RecordBase {
 
     /**
      * return the non static version of the id for this record.
+     * 
+     * @return he id for this record
      */
-
     public abstract short getSid();
 
     @Override
@@ -73,6 +70,8 @@ public abstract class Record extends RecordBase {
      *  internal counts / ids in them. For those which
      *  do, a full model-aware cloning is needed, which
      *  allocates new ids / counts as needed.
+     * 
+     * @return the cloned current record
      */
     public Record cloneViaReserialise() {
         // Do it via a re-serialization

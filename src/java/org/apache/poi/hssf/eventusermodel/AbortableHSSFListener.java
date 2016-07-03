@@ -42,7 +42,8 @@ public abstract class AbortableHSSFListener implements HSSFListener
      * It is never called by HSSFEventFactory or HSSFRequest.
      * You should implement #abortableProcessRecord instead
      */
-	public void processRecord(Record record)
+	@Override
+    public void processRecord(Record record)
 	{
 	}
 
@@ -59,6 +60,8 @@ public abstract class AbortableHSSFListener implements HSSFListener
 	 * Error termination can be done by throwing the HSSFUserException.
 	 *
 	 * Note that HSSFEventFactory will not call the inherited process 
+	 *
+	 * @param record the record to be processed
 	 *
      * @return result code of zero for continued processing.
      *

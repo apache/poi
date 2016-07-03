@@ -23,8 +23,8 @@ package org.apache.poi.hssf.eventusermodel.dummyrecord;
  *  cell record for this row.
  */
 public final class LastCellOfRowDummyRecord extends DummyRecordBase {
-	private int row;
-	private int lastColumnNumber;
+	private final int row;
+	private final int lastColumnNumber;
 	
 	public LastCellOfRowDummyRecord(int row, int lastColumnNumber) {
 		this.row = row;
@@ -34,17 +34,27 @@ public final class LastCellOfRowDummyRecord extends DummyRecordBase {
 	/**
 	 * Returns the (0 based) number of the row we are
 	 *  currently working on.
+	 *  
+	 * @return the (0 based) number of the row
 	 */
-	public int getRow() { return row; }
+	public int getRow() {
+	    return row;
+    }
+	
 	/**
 	 * Returns the (0 based) number of the last column
 	 *  seen for this row. You should have already been
 	 *  called with that record.
 	 * This is -1 in the case of there being no columns
 	 *  for the row.
+	 *  
+	 * @return the (0 based) number of the last column
 	 */
-	public int getLastColumnNumber() { return lastColumnNumber; }
+	public int getLastColumnNumber() {
+	    return lastColumnNumber;
+    }
 	
+	@Override
 	public String toString() {
 	    return "End-of-Row for Row=" + row + " at Column=" + lastColumnNumber;
 	}

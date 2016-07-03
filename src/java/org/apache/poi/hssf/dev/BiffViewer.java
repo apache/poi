@@ -214,9 +214,13 @@ public final class BiffViewer {
     /**
      *  Create an array of records from an input stream
      *
-     *@param  is the InputStream from which the records will be obtained
-     *@return an array of Records created from the InputStream
-     *@exception  org.apache.poi.util.RecordFormatException  on error processing the InputStream
+     * @param is the InputStream from which the records will be obtained
+     * @param ps the PrintWriter to output the record data
+     * @param recListener the record listener to notify about read records
+     * @param dumpInterpretedRecords if {@code true}, the read records will be written to the PrintWriter
+     *
+     * @return an array of Records created from the InputStream
+     * @exception  org.apache.poi.util.RecordFormatException  on error processing the InputStream
      */
     public static Record[] createRecords(InputStream is, PrintWriter ps, BiffRecordListener recListener, boolean dumpInterpretedRecords)
             throws org.apache.poi.util.RecordFormatException {
@@ -527,8 +531,7 @@ public final class BiffViewer {
 	 * <b>Usage</b>:<p>
 	 *
 	 * BiffViewer [--biffhex] [--noint] [--noescher] [--out] &lt;fileName&gt;<p>
-	 * BiffViewer --rawhex  [--out] &lt;fileName&gt;<p>
-	 * <p>
+	 * BiffViewer --rawhex  [--out] &lt;fileName&gt;
 	 *
 	 * <table summary="BiffViewer options">
 	 * <tr><td>--biffhex</td><td>show hex dump of each BIFF record</td></tr>
@@ -538,7 +541,11 @@ public final class BiffViewer {
 	 * <tr><td>--escher</td><td>turn on deserialization of escher records (default is off)</td></tr>
 	 * <tr><td>--noheader</td><td>do not print record header (default is on)</td></tr>
 	 * </table>
+	 * 
+	 * @param args the command line arguments 
 	 *
+	 * @throws IOException if the file doesn't exist or contained errors
+	 * @throws CommandParseException if the command line contained errors
 	 */
 	public static void main(String[] args) throws IOException, CommandParseException {
 		// args = new String[] { "--out", "", };
@@ -609,7 +616,8 @@ public final class BiffViewer {
 			_headers = new ArrayList<String>();
 		}
 
-		public void processRecord(int globalOffset, int recordCounter, int sid, int dataSize,
+		@Override
+        public void processRecord(int globalOffset, int recordCounter, int sid, int dataSize,
 				byte[] data) {
 			String header = formatRecordDetails(globalOffset, sid, dataSize, recordCounter);
 			if(!_noHeader) _headers.add(header);

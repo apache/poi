@@ -36,6 +36,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.formula.eval.ErrorEval;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.HeaderFooter;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 
@@ -54,8 +55,8 @@ import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
  * @see <a href="http://svn.apache.org/repos/asf/poi/trunk/src/examples/src/org/apache/poi/hssf/eventusermodel/examples/XLS2CSVmra.java">XLS2CSVmra</a>
  */
 public class ExcelExtractor extends POIOLE2TextExtractor implements org.apache.poi.ss.extractor.ExcelExtractor {
-	private HSSFWorkbook _wb;
-	private HSSFDataFormatter _formatter;
+	private final HSSFWorkbook _wb;
+	private final HSSFDataFormatter _formatter;
 	private boolean _includeSheetNames = true;
 	private boolean _shouldEvaluateFormulas = true;
 	private boolean _includeCellComments = false;
@@ -201,7 +202,10 @@ public class ExcelExtractor extends POIOLE2TextExtractor implements org.apache.p
 
 	/**
 	 * Command line extractor.
-	 * @throws IOException 
+	 * 
+	 * @param args the command line parameters
+	 * 
+	 * @throws IOException if the file can't be read or contains errors
 	 */
 	public static void main(String[] args) throws IOException {
 
@@ -239,45 +243,40 @@ public class ExcelExtractor extends POIOLE2TextExtractor implements org.apache.p
 		extractor.close();
 		wb.close();
 	}
-	/**
-	 * Should sheet names be included? Default is true
-	 */
-	public void setIncludeSheetNames(boolean includeSheetNames) {
+
+	@Override
+    public void setIncludeSheetNames(boolean includeSheetNames) {
 		_includeSheetNames = includeSheetNames;
 	}
-	/**
-	 * Should we return the formula itself, and not
-	 *  the result it produces? Default is false
-	 */
-	public void setFormulasNotResults(boolean formulasNotResults) {
+
+	@Override
+    public void setFormulasNotResults(boolean formulasNotResults) {
 		_shouldEvaluateFormulas = !formulasNotResults;
 	}
-	/**
-	 * Should cell comments be included? Default is false
-	 */
-	public void setIncludeCellComments(boolean includeCellComments) {
+
+	@Override
+    public void setIncludeCellComments(boolean includeCellComments) {
 		_includeCellComments = includeCellComments;
 	}
+
 	/**
 	 * Should blank cells be output? Default is to only
 	 *  output cells that are present in the file and are
 	 *  non-blank.
+	 * 
+	 * @param includeBlankCells {@code true} if blank cells should be included
 	 */
 	public void setIncludeBlankCells(boolean includeBlankCells) {
 		_includeBlankCells = includeBlankCells;
 	}
-	/**
-	 * Should headers and footers be included in the output?
-	 * Default is to include them.
-	 */
-	public void setIncludeHeadersFooters(boolean includeHeadersFooters) {
+
+	@Override
+    public void setIncludeHeadersFooters(boolean includeHeadersFooters) {
 		_includeHeadersFooters = includeHeadersFooters;
 	}
 
-	/**
-	 * Retrieves the text contents of the file
-	 */
-	public String getText() {
+	@Override
+    public String getText() {
 		StringBuffer text = new StringBuffer();
 
 		// We don't care about the difference between
@@ -324,42 +323,42 @@ public class ExcelExtractor extends POIOLE2TextExtractor implements org.apache.p
 						outputContents = _includeBlankCells;
 					} else {
 						switch(cell.getCellType()) {
-							case HSSFCell.CELL_TYPE_STRING:
+							case Cell.CELL_TYPE_STRING:
 								text.append(cell.getRichStringCellValue().getString());
 								break;
-							case HSSFCell.CELL_TYPE_NUMERIC:
+							case Cell.CELL_TYPE_NUMERIC:
 								text.append(
 								      _formatter.formatCellValue(cell)
 								);
 								break;
-							case HSSFCell.CELL_TYPE_BOOLEAN:
+							case Cell.CELL_TYPE_BOOLEAN:
 								text.append(cell.getBooleanCellValue());
 								break;
-							case HSSFCell.CELL_TYPE_ERROR:
+							case Cell.CELL_TYPE_ERROR:
 								text.append(ErrorEval.getText(cell.getErrorCellValue()));
 								break;
-							case HSSFCell.CELL_TYPE_FORMULA:
+							case Cell.CELL_TYPE_FORMULA:
 								if(!_shouldEvaluateFormulas) {
 									text.append(cell.getCellFormula());
 								} else {
 									switch(cell.getCachedFormulaResultType()) {
-										case HSSFCell.CELL_TYPE_STRING:
+										case Cell.CELL_TYPE_STRING:
 											HSSFRichTextString str = cell.getRichStringCellValue();
 											if(str != null && str.length() > 0) {
 												text.append(str.toString());
 											}
 											break;
-										case HSSFCell.CELL_TYPE_NUMERIC:
+										case Cell.CELL_TYPE_NUMERIC:
 											HSSFCellStyle style = cell.getCellStyle();
 											double nVal = cell.getNumericCellValue();
 											short df = style.getDataFormat();
 											String dfs = style.getDataFormatString();
 											text.append(_formatter.formatRawCellContents(nVal, df, dfs));
 											break;
-										case HSSFCell.CELL_TYPE_BOOLEAN:
+										case Cell.CELL_TYPE_BOOLEAN:
 											text.append(cell.getBooleanCellValue());
 											break;
-										case HSSFCell.CELL_TYPE_ERROR:
+										case Cell.CELL_TYPE_ERROR:
 											text.append(ErrorEval.getText(cell.getErrorCellValue()));
 											break;
 										default:

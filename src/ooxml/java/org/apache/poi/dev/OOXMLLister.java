@@ -35,8 +35,8 @@ import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
  *  they're all related to each other.
  */
 public class OOXMLLister {
-	private OPCPackage container;
-	private PrintStream disp;
+	private final OPCPackage container;
+	private final PrintStream disp;
 	
 	public OOXMLLister(OPCPackage container) {
 		this(container, System.out);
@@ -51,6 +51,8 @@ public class OOXMLLister {
 	 * 
 	 * @param part the PackagePart
 	 * @return the size of the PackagePart
+	 * 
+	 * @throws IOException if the part can't be read
 	 */
 	public static long getSize(PackagePart part) throws IOException {
 		InputStream in = part.getInputStream();

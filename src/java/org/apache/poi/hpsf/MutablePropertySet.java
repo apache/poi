@@ -210,7 +210,7 @@ public class MutablePropertySet extends PropertySet
         /* Write the section list, i.e. the references to the sections. Each
          * entry in the section list consist of the section's class ID and the
          * section's offset relative to the beginning of the stream. */
-        offset += nrSections * (ClassID.LENGTH + LittleEndian.INT_SIZE);
+        offset += nrSections * (ClassID.LENGTH + LittleEndianConsts.INT_SIZE);
         final int sectionsBegin = offset;
         for (final Section section : sections)
         {
@@ -282,8 +282,8 @@ public class MutablePropertySet extends PropertySet
      * @param name The document's name. If there is already a document with the
      * same name in the directory the latter will be overwritten.
      *
-     * @throws WritingNotSupportedException
-     * @throws IOException
+     * @throws WritingNotSupportedException if the filesystem doesn't support writing
+     * @throws IOException if the old entry can't be deleted or the new entry be written
      */
     public void write(final DirectoryEntry dir, final String name)
     throws WritingNotSupportedException, IOException

@@ -54,6 +54,8 @@ public class HSSFUserException extends Exception
     /**
      * <p>Creates a new {@link HSSFUserException} with a message
      * string.</p>
+     * 
+     * @param msg the error message
      */
     public HSSFUserException(final String msg)
     {
@@ -64,6 +66,8 @@ public class HSSFUserException extends Exception
 
     /**
      * <p>Creates a new {@link HSSFUserException} with a reason.</p>
+     * 
+     * @param reason the causing exception
      */
     public HSSFUserException(final Throwable reason)
     {
@@ -76,6 +80,9 @@ public class HSSFUserException extends Exception
     /**
      * <p>Creates a new {@link HSSFUserException} with a message string
      * and a reason.</p>
+     * 
+     * @param msg the error message
+     * @param reason the causing exception
      */
     public HSSFUserException(final String msg, final Throwable reason)
     {
@@ -89,6 +96,8 @@ public class HSSFUserException extends Exception
      * <p>Returns the {@link Throwable} that caused this exception to
      * be thrown or <code>null</code> if there was no such {@link
      * Throwable}.</p>
+     * 
+     * @return the reason
      */
     public Throwable getReason()
     {

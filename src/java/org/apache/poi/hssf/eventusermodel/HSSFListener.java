@@ -34,7 +34,8 @@ public interface HSSFListener
 
     /**
      * process an HSSF Record. Called when a record occurs in an HSSF file.
+     * 
+     * @param record the record to be processed
      */
-
     public void processRecord(Record record);
 }

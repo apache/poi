@@ -47,6 +47,8 @@ public class HSSFEventFactory {
 	 *
 	 * @param req an Instance of HSSFRequest which has your registered listeners
 	 * @param fs  a POIFS filesystem containing your workbook
+     * 
+     * @throws IOException if the workbook contained errors 
 	 */
 	public void processWorkbookEvents(HSSFRequest req, POIFSFileSystem fs) throws IOException {
 	   processWorkbookEvents(req, fs.getRoot());
@@ -57,6 +59,8 @@ public class HSSFEventFactory {
     *
     * @param req an Instance of HSSFRequest which has your registered listeners
     * @param dir  a DirectoryNode containing your workbook
+    * 
+    * @throws IOException if the workbook contained errors 
     */
     public void processWorkbookEvents(HSSFRequest req, DirectoryNode dir) throws IOException {
         // some old documents have "WORKBOOK" or "BOOK"
@@ -74,7 +78,11 @@ public class HSSFEventFactory {
         }
 
         InputStream in = dir.createDocumentInputStream(name);
-        processEvents(req, in);
+        try {
+            processEvents(req, in);
+        } finally {
+            in.close();
+        }
     }
 
    /**
@@ -83,6 +91,9 @@ public class HSSFEventFactory {
     * @param req an Instance of HSSFRequest which has your registered listeners
     * @param fs  a POIFS filesystem containing your workbook
     * @return    numeric user-specified result code.
+    * 
+    * @throws HSSFUserException if the processing should be aborted
+    * @throws IOException if the workbook contained errors 
     */
    public short abortableProcessWorkbookEvents(HSSFRequest req, POIFSFileSystem fs)
       throws IOException, HSSFUserException {
@@ -95,11 +106,18 @@ public class HSSFEventFactory {
 	 * @param req an Instance of HSSFRequest which has your registered listeners
 	 * @param dir  a DirectoryNode containing your workbook
 	 * @return    numeric user-specified result code.
+	 * 
+	 * @throws HSSFUserException if the processing should be aborted
+	 * @throws IOException if the workbook contained errors 
 	 */
 	public short abortableProcessWorkbookEvents(HSSFRequest req, DirectoryNode dir)
 		throws IOException, HSSFUserException {
 		InputStream in = dir.createDocumentInputStream("Workbook");
-		return abortableProcessEvents(req, in);
+		try {
+		    return abortableProcessEvents(req, in);
+		} finally {
+		    in.close();
+		}
 	}
 
 	/**
@@ -129,6 +147,8 @@ public class HSSFEventFactory {
 	 * @param req an Instance of HSSFRequest which has your registered listeners
 	 * @param in  a DocumentInputStream obtained from POIFS's POIFSFileSystem object
 	 * @return    numeric user-specified result code.
+	 * 
+	 * @throws HSSFUserException if the processing should be aborted 
 	 */
 	public short abortableProcessEvents(HSSFRequest req, InputStream in)
 		throws HSSFUserException {

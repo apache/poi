@@ -51,6 +51,8 @@ public class FormatTrackingHSSFListener implements HSSFListener {
 	/**
 	 * Creates a format tracking wrapper around the given listener, using
 	 * the {@link Locale#getDefault() default locale} for the formats.
+	 * 
+	 * @param childListener the listener to be wrapped
 	 */
 	public FormatTrackingHSSFListener(HSSFListener childListener) {
 		this(childListener, LocaleUtil.getUserLocale());
@@ -59,6 +61,9 @@ public class FormatTrackingHSSFListener implements HSSFListener {
 	/**
 	 * Creates a format tracking wrapper around the given listener, using
 	 * the given locale for the formats.
+     * 
+     * @param childListener the listener to be wrapped
+     * @param locale the locale for the formats
 	 */
 	public FormatTrackingHSSFListener(
 			HSSFListener childListener, Locale locale) {
@@ -78,7 +83,8 @@ public class FormatTrackingHSSFListener implements HSSFListener {
 	/**
 	 * Process this record ourselves, and then pass it on to our child listener
 	 */
-	public void processRecord(Record record) {
+	@Override
+    public void processRecord(Record record) {
 		// Handle it ourselves
 		processRecordInternally(record);
 
@@ -90,7 +96,7 @@ public class FormatTrackingHSSFListener implements HSSFListener {
 	 * Process the record ourselves, but do not pass it on to the child
 	 * Listener.
 	 *
-	 * @param record
+	 * @param record the record to be processed
 	 */
 	public void processRecordInternally(Record record) {
 		if (record instanceof FormatRecord) {
@@ -104,12 +110,16 @@ public class FormatTrackingHSSFListener implements HSSFListener {
 	}
 
 	/**
-	 * Formats the given numeric of date Cell's contents as a String, in as
+	 * Formats the given numeric of date cells contents as a String, in as
 	 * close as we can to the way that Excel would do so. Uses the various
 	 * format records to manage this.
 	 *
 	 * TODO - move this to a central class in such a way that hssf.usermodel can
 	 * make use of it too
+	 * 
+	 * @param cell the cell
+	 * 
+	 * @return the given numeric of date cells contents as a String
 	 */
 	public String formatNumberDateCell(CellValueRecordInterface cell) {
 		double value;
@@ -135,6 +145,10 @@ public class FormatTrackingHSSFListener implements HSSFListener {
 
 	/**
 	 * Returns the format string, eg $##.##, for the given number format index.
+	 * 
+	 * @param formatIndex the format index
+	 * 
+	 * @return the format string
 	 */
 	public String getFormatString(int formatIndex) {
 		String format = null;
@@ -154,6 +168,10 @@ public class FormatTrackingHSSFListener implements HSSFListener {
 
 	/**
 	 * Returns the format string, eg $##.##, used by your cell
+	 * 
+	 * @param cell the cell
+	 * 
+	 * @return the format string
 	 */
 	public String getFormatString(CellValueRecordInterface cell) {
 		int formatIndex = getFormatIndex(cell);
@@ -165,8 +183,11 @@ public class FormatTrackingHSSFListener implements HSSFListener {
 	}
 
 	/**
-	 * Returns the index of the format string, used by your cell, or -1 if none
-	 * found
+	 * Returns the index of the format string, used by your cell, or -1 if none found
+	 * 
+	 * @param cell the cell
+	 * 
+	 * @return the index of the format string
 	 */
 	public int getFormatIndex(CellValueRecordInterface cell) {
 		ExtendedFormatRecord xfr = _xfRecords.get(cell.getXFIndex());

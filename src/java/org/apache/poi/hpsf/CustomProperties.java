@@ -49,9 +49,9 @@ import org.apache.poi.hpsf.wellknown.PropertyIDMap;
  * <p>This class is not thread-safe; concurrent access to instances of this
  * class must be synchronized.</p>
  *
- * <p>While this class is roughly HashMap<Long,CustomProperty>, that's the
+ * <p>While this class is roughly HashMap&lt;Long,CustomProperty&gt;, that's the
  *  internal representation. To external calls, it should appear as
- *  HashMap<String,Object> mapping between Names and Custom Property Values.</p>
+ *  HashMap&lt;String,Object&gt; mapping between Names and Custom Property Values.</p>
  */
 @SuppressWarnings("serial")
 public class CustomProperties extends HashMap<Object,CustomProperty>
@@ -60,12 +60,12 @@ public class CustomProperties extends HashMap<Object,CustomProperty>
     /**
      * <p>Maps property IDs to property names.</p>
      */
-    private Map<Long,String> dictionaryIDToName = new HashMap<Long,String>();
+    private final Map<Long,String> dictionaryIDToName = new HashMap<Long,String>();
 
     /**
      * <p>Maps property names to property IDs.</p>
      */
-    private Map<String,Long> dictionaryNameToID = new HashMap<String,Long>();
+    private final Map<String,Long> dictionaryNameToID = new HashMap<String,Long>();
 
     /**
      * <p>Tells whether this object is pure or not.</p>
@@ -77,6 +77,11 @@ public class CustomProperties extends HashMap<Object,CustomProperty>
      * <p>Puts a {@link CustomProperty} into this map. It is assumed that the
      * {@link CustomProperty} already has a valid ID. Otherwise use
      * {@link #put(CustomProperty)}.</p>
+     * 
+     * @param name the property name
+     * @param cp the property
+     * 
+     * @return the previous property stored under this name
      */
     public CustomProperty put(final String name, final CustomProperty cp)
     {
@@ -134,9 +139,8 @@ public class CustomProperties extends HashMap<Object,CustomProperty>
         else
         {
             long max = 1;
-            for (final Iterator<Long> i = dictionaryIDToName.keySet().iterator(); i.hasNext();)
-            {
-                final long id = i.next().longValue();
+            for (Long long1 : dictionaryIDToName.keySet()) {
+                final long id = long1.longValue();
                 if (id > max)
                     max = id;
             }
@@ -290,25 +294,30 @@ public class CustomProperties extends HashMap<Object,CustomProperty>
     }
 
     /**
-     * Returns a set of all the names of our
-     *  custom properties. Equivalent to 
-     *  {@link #nameSet()}
+     * Returns a set of all the names of our custom properties.
+     * Equivalent to {@link #nameSet()}
+     * 
+     * @return a set of all the names of our custom properties
      */
+    @Override
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public Set keySet() {
         return dictionaryNameToID.keySet();
     }
 
     /**
-     * Returns a set of all the names of our
-     *  custom properties
+     * Returns a set of all the names of our custom properties
+     * 
+     * @return a set of all the names of our custom properties
      */
     public Set<String> nameSet() {
         return dictionaryNameToID.keySet();
     }
 
     /**
-     * Returns a set of all the IDs of our
-     *  custom properties
+     * Returns a set of all the IDs of our custom properties
+     * 
+     * @return a set of all the IDs of our custom properties
      */
     public Set<String> idSet() {
         return dictionaryNameToID.keySet();
@@ -346,6 +355,7 @@ public class CustomProperties extends HashMap<Object,CustomProperty>
     /**
      * Checks against both String Name and Long ID
      */
+   @Override
    public boolean containsKey(Object key) {
       if(key instanceof Long) {
          return super.containsKey(key);
@@ -359,6 +369,7 @@ public class CustomProperties extends HashMap<Object,CustomProperty>
    /**
     * Checks against both the property, and its values. 
     */
+   @Override
    public boolean containsValue(Object value) {
       if(value instanceof CustomProperty) {
          return super.containsValue(value);
