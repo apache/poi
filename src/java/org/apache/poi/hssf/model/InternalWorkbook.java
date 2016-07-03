@@ -372,6 +372,8 @@ public final class InternalWorkbook {
     /**
      * Creates an empty workbook object with three blank sheets and all the empty
      * fields.  Use this to create a workbook from scratch.
+     * 
+     * @return an empty workbook object
      */
     public static InternalWorkbook createWorkbook()
     {
@@ -508,6 +510,12 @@ public final class InternalWorkbook {
 
     /**
      * Retrieves the index of the given font
+     * 
+     * @param font the font
+     * 
+     * @return the font index
+     * 
+     * @throws IllegalArgumentException if the font index can't be determined 
      */
     public int getFontIndex(FontRecord font) {
         for(int i=0; i<=numfonts; i++) {
@@ -546,6 +554,8 @@ public final class InternalWorkbook {
      *  file's list. This will make all
      *  subsequent font indicies drop by one,
      *  so you'll need to update those yourself!
+     * 
+     * @param rec the font record
      */
     public void removeFontRecord(FontRecord rec) {
         records.remove(rec); // this updates FontPos for us
@@ -584,8 +594,9 @@ public final class InternalWorkbook {
 
     /**
      * Returns the position of the backup record.
+     * 
+     * @return the position of the backup record
      */
-
     public BackupRecord getBackupRecord() {
         return ( BackupRecord ) records.get(records.getBackuppos());
     }
@@ -873,6 +884,8 @@ public final class InternalWorkbook {
      *  file's list. This will make all
      *  subsequent font indicies drop by one,
      *  so you'll need to update those yourself!
+     * 
+     * @param rec the ExtendedFormatRecord
      */
     public void removeExFormatRecord(ExtendedFormatRecord rec) {
         records.remove(rec); // this updates XfPos for us
@@ -913,6 +926,10 @@ public final class InternalWorkbook {
      * Returns the StyleRecord for the given
      *  xfIndex, or null if that ExtendedFormat doesn't
      *  have a Style set.
+     *  
+     * @param xfIndex the extended format index
+     * 
+     * @return the StyleRecord, {@code null} if it that ExtendedFormat doesn't have a Style set.
      */
     public StyleRecord getStyleRecord(int xfIndex) {
         // Style records always follow after
@@ -932,10 +949,15 @@ public final class InternalWorkbook {
         }
         return null;
     }
+    
     /**
      * Creates a new StyleRecord, for the given Extended
      *  Format index, and adds it onto the end of the
      *  records collection
+     * 
+     * @param xfIndex the extended format index
+     * 
+     * @return a new StyleRecord
      */
     public StyleRecord createStyleRecord(int xfIndex) {
         // Style records always follow after
@@ -984,9 +1006,9 @@ public final class InternalWorkbook {
 
     /**
      * given an index into the SST table, this function returns the corresponding String value
+     * @param str the index into the SST table
      * @return String containing the SST String
      */
-
     public UnicodeString getSSTString(int str) {
         if (sst == null) {
             insertSST();
@@ -1047,8 +1069,8 @@ public final class InternalWorkbook {
      * this to write the Workbook out.
      * @param offset of the data to be written
      * @param data array of bytes to write this to
+     * @return the length of serialized bytes
      */
-
     public int serialize( int offset, byte[] data )
     {
         if (log.check( POILogger.DEBUG ))
@@ -1947,7 +1969,8 @@ public final class InternalWorkbook {
         return linkTable.getNumNames();
     }
 
-    /** gets the name record
+    /**
+     * gets the name record
      * @param index name index
      * @return name record
      */
@@ -1955,7 +1978,8 @@ public final class InternalWorkbook {
         return linkTable.getNameRecord(index);
     }
 
-    /** gets the name comment record
+    /**
+     * gets the name comment record
      * @param nameRecord name record who's comment is required.
      * @return name comment record or <code>null</code> if there isn't one for the given name.
      */
@@ -1963,7 +1987,8 @@ public final class InternalWorkbook {
         return commentRecords.get(nameRecord.getNameText());
     }
 
-    /** creates new name
+    /**
+     * creates new name
      * @return new name record
      */
     public NameRecord createName(){
@@ -1971,8 +1996,11 @@ public final class InternalWorkbook {
     }
 
 
-    /** creates new name
-     * @return new name record
+    /**
+     * adds a name record
+     * 
+     * @param name the name record to be added
+     * @return the given name record 
      */
     public NameRecord addName(NameRecord name)
     {
@@ -1985,6 +2013,10 @@ public final class InternalWorkbook {
 
     /**
      * Generates a NameRecord to represent a built-in region
+     * 
+     * @param builtInName the built-in name
+     * @param sheetNumber the sheet number
+     * 
      * @return a new NameRecord
      */
     public NameRecord createBuiltInName(byte builtInName, int sheetNumber) {
@@ -2018,6 +2050,8 @@ public final class InternalWorkbook {
     /**
      * If a {@link NameCommentRecord} is added or the name it references
      *  is renamed, then this will update the lookup cache for it.
+     * 
+     * @param commentRecord the comment record
      */
     public void updateNameCommentRecordCache(final NameCommentRecord commentRecord) {
        if(commentRecords.containsValue(commentRecord)) {
@@ -2084,6 +2118,10 @@ public final class InternalWorkbook {
 
     /**
      * Returns the first occurance of a record matching a particular sid.
+     * 
+     * @param sid the sid
+     * 
+     * @return the matching record or {@code null} if it wasn't found
      */
     public Record findFirstRecordBySid(short sid) {
         for (Record record : records) {
@@ -2112,6 +2150,11 @@ public final class InternalWorkbook {
 
     /**
      * Returns the next occurance of a record matching a particular sid.
+     * 
+     * @param sid the sid
+     * @param pos specifies the n-th matching sid
+     * 
+     * @return the matching record or {@code null} if it wasn't found
      */
     public Record findNextRecordBySid(short sid, int pos) {
         int matches = 0;
@@ -2146,6 +2189,8 @@ public final class InternalWorkbook {
     /**
      * Returns the custom palette in use for this workbook; if a custom palette record
      * does not exist, then it is created.
+     * 
+     * @return the custom palette
      */
     public PaletteRecord getCustomPalette()
     {
@@ -2169,6 +2214,8 @@ public final class InternalWorkbook {
 
     /**
      * Finds the primary drawing group, if one already exists
+     * 
+     * @return the primary drawing group
      */
     public DrawingManager2 findDrawingGroup() {
         if(drawingManager != null) {
@@ -2388,6 +2435,8 @@ public final class InternalWorkbook {
 
     /**
      * is the workbook protected with a password (not encrypted)?
+     * 
+     * @return {@code true} if the workbook is write protected
      */
     public boolean isWriteProtected() {
         if (fileShare == null) {
@@ -2400,7 +2449,9 @@ public final class InternalWorkbook {
     /**
      * protect a workbook with a password (not encypted, just sets writeprotect
      * flags and the password.
-     * @param password to set
+     * 
+     * @param password the password
+     * @param username the username
      */
     public void writeProtectWorkbook( String password, String username ) {
         FileSharingRecord frec = getFileSharing();
@@ -2549,6 +2600,8 @@ public final class InternalWorkbook {
     }
     /**
      * Updates named ranges due to moving of cells
+     * 
+     * @param shifter the formula shifter
      */
     public void updateNamesAfterCellShift(FormulaShifter shifter) {
         for (int i = 0 ; i < getNumNames() ; ++i){
@@ -2562,6 +2615,8 @@ public final class InternalWorkbook {
 
     /**
      * Get or create RecalcIdRecord
+     *
+     * @return a new RecalcIdRecord
      *
      * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#setForceFormulaRecalculation(boolean)
      */
