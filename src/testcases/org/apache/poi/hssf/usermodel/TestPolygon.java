@@ -17,27 +17,22 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import static org.apache.poi.hssf.model.TestDrawingAggregate.decompress;
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 
-import junit.framework.TestCase;
-
 import org.apache.poi.ddf.EscherArrayProperty;
-import org.apache.poi.ddf.EscherOptRecord;
 import org.apache.poi.ddf.EscherProperties;
 import org.apache.poi.ddf.EscherSpRecord;
 import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.hssf.model.HSSFTestModelHelper;
-import org.apache.poi.hssf.model.PolygonShape;
 import org.apache.poi.hssf.record.ObjRecord;
+import org.junit.Test;
 
-/**
- * @author Evgeniy Berlog
- * @date 28.06.12
- */
-public class TestPolygon extends TestCase{
-
+public class TestPolygon {
+    @Test
     public void testResultEqualsToAbstractShape() throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sh = wb.createSheet();
@@ -46,42 +41,42 @@ public class TestPolygon extends TestCase{
         HSSFPolygon polygon = patriarch.createPolygon(new HSSFClientAnchor());
         polygon.setPolygonDrawArea( 100, 100 );
         polygon.setPoints( new int[]{0, 90, 50}, new int[]{5, 5, 44} );
-        PolygonShape polygonShape = HSSFTestModelHelper.createPolygonShape(1024, polygon);
         polygon.setShapeId(1024);
 
         assertEquals(polygon.getEscherContainer().getChildRecords().size(), 4);
-        assertEquals(polygonShape.getSpContainer().getChildRecords().size(), 4);
 
         //sp record
-        byte[] expected = polygonShape.getSpContainer().getChild(0).serialize();
+        byte[] expected = decompress("H4sIAAAAAAAAAGNi4PrAwQAELEDMxcAAAAU6ZlwQAAAA");
         byte[] actual = polygon.getEscherContainer().getChild(0).serialize();
 
         assertEquals(expected.length, actual.length);
         assertArrayEquals(expected, actual);
 
-        expected = polygonShape.getSpContainer().getChild(2).serialize();
+        expected = decompress("H4sIAAAAAAAAAGNgEPggxIANAABK4+laGgAAAA==");
         actual = polygon.getEscherContainer().getChild(2).serialize();
 
         assertEquals(expected.length, actual.length);
         assertArrayEquals(expected, actual);
 
-        expected = polygonShape.getSpContainer().getChild(3).serialize();
+        expected = decompress("H4sIAAAAAAAAAGNgEPzAAAQACl6c5QgAAAA=");
         actual = polygon.getEscherContainer().getChild(3).serialize();
 
         assertEquals(expected.length, actual.length);
         assertArrayEquals(expected, actual);
 
         ObjRecord obj = polygon.getObjRecord();
-        ObjRecord objShape = polygonShape.getObjRecord();
 
-        expected = obj.serialize();
-        actual = objShape.serialize();
+        expected = decompress("H4sIAAAAAAAAAItlkGIQZRBikGNgYBBMYEADAOAV/ZkeAAAA");
+        actual = obj.serialize();
 
         assertEquals(expected.length, actual.length);
         assertArrayEquals(expected, actual);
+        
+        wb.close();
     }
 
-    public void testPolygonPoints(){
+    @Test
+    public void testPolygonPoints() throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sh = wb.createSheet();
         HSSFPatriarch patriarch = sh.createDrawingPatriarch();
@@ -90,31 +85,46 @@ public class TestPolygon extends TestCase{
         polygon.setPolygonDrawArea( 100, 100 );
         polygon.setPoints( new int[]{0, 90, 50, 90}, new int[]{5, 5, 44, 88} );
 
-        PolygonShape polygonShape = HSSFTestModelHelper.createPolygonShape(0, polygon);
-
         EscherArrayProperty verticesProp1 = polygon.getOptRecord().lookup(EscherProperties.GEOMETRY__VERTICES);
-        EscherArrayProperty verticesProp2 = ((EscherOptRecord)polygonShape.getSpContainer().getChildById(EscherOptRecord.RECORD_ID))
-                .lookup(EscherProperties.GEOMETRY__VERTICES);
 
-        assertEquals(verticesProp1.getNumberOfElementsInArray(), verticesProp2.getNumberOfElementsInArray());
-        assertEquals(verticesProp1.toXml(""), verticesProp2.toXml(""));
+        String expected =
+            "<EscherArrayProperty id=\"0x8145\" name=\"geometry.vertices\" blipId=\"false\">"+
+            "<Element>[00, 00, 05, 00]</Element>"+
+            "<Element>[5A, 00, 05, 00]</Element>"+
+            "<Element>[32, 00, 2C, 00]</Element>"+
+            "<Element>[5A, 00, 58, 00]</Element>"+
+            "<Element>[00, 00, 05, 00]</Element>"+
+            "</EscherArrayProperty>";
+        String actual = verticesProp1.toXml("").replaceAll("[\r\n\t]","");
+        
+        assertEquals(verticesProp1.getNumberOfElementsInArray(), 5);
+        assertEquals(expected, actual);
         
         polygon.setPoints(new int[]{1,2,3}, new int[] {4,5,6});
         assertArrayEquals(polygon.getXPoints(), new int[]{1, 2, 3});
         assertArrayEquals(polygon.getYPoints(), new int[]{4, 5, 6});
 
-        polygonShape = HSSFTestModelHelper.createPolygonShape(0, polygon);
         verticesProp1 = polygon.getOptRecord().lookup(EscherProperties.GEOMETRY__VERTICES);
-        verticesProp2 = ((EscherOptRecord)polygonShape.getSpContainer().getChildById(EscherOptRecord.RECORD_ID))
-                .lookup(EscherProperties.GEOMETRY__VERTICES);
 
-        assertEquals(verticesProp1.getNumberOfElementsInArray(), verticesProp2.getNumberOfElementsInArray());
-        assertEquals(verticesProp1.toXml(""), verticesProp2.toXml(""));
+        expected =
+            "<EscherArrayProperty id=\"0x8145\" name=\"geometry.vertices\" blipId=\"false\">" +
+            "<Element>[01, 00, 04, 00]</Element>" +
+            "<Element>[02, 00, 05, 00]</Element>" +
+            "<Element>[03, 00, 06, 00]</Element>" +
+            "<Element>[01, 00, 04, 00]</Element>" +
+            "</EscherArrayProperty>";
+        actual = verticesProp1.toXml("").replaceAll("[\r\n\t]","");
+        
+        assertEquals(verticesProp1.getNumberOfElementsInArray(), 4);
+        assertEquals(expected, actual);
+        
+        wb.close();
     }
 
-    public void testSetGetProperties(){
-        HSSFWorkbook wb = new HSSFWorkbook();
-        HSSFSheet sh = wb.createSheet();
+    @Test
+    public void testSetGetProperties() throws IOException {
+        HSSFWorkbook wb1 = new HSSFWorkbook();
+        HSSFSheet sh = wb1.createSheet();
         HSSFPatriarch patriarch = sh.createDrawingPatriarch();
 
         HSSFPolygon polygon = patriarch.createPolygon(new HSSFClientAnchor());
@@ -126,8 +136,9 @@ public class TestPolygon extends TestCase{
         assertEquals(polygon.getDrawAreaHeight(), 101);
         assertEquals(polygon.getDrawAreaWidth(), 102);
 
-        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
-        sh = wb.getSheetAt(0);
+        HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1);
+        wb1.close();
+        sh = wb2.getSheetAt(0);
         patriarch = sh.getDrawingPatriarch();
 
         polygon = (HSSFPolygon) patriarch.getChildren().get(0);
@@ -144,8 +155,9 @@ public class TestPolygon extends TestCase{
         assertEquals(polygon.getDrawAreaHeight(), 1011);
         assertEquals(polygon.getDrawAreaWidth(), 1021);
 
-        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
-        sh = wb.getSheetAt(0);
+        HSSFWorkbook wb3 = HSSFTestDataSamples.writeOutAndReadBack(wb2);
+        wb2.close();
+        sh = wb3.getSheetAt(0);
         patriarch = sh.getDrawingPatriarch();
 
         polygon = (HSSFPolygon) patriarch.getChildren().get(0);
@@ -154,11 +166,14 @@ public class TestPolygon extends TestCase{
         assertArrayEquals(polygon.getYPoints(), new int[]{41, 51, 61});
         assertEquals(polygon.getDrawAreaHeight(), 1011);
         assertEquals(polygon.getDrawAreaWidth(), 1021);
+        
+        wb3.close();
     }
 
-    public void testAddToExistingFile(){
-        HSSFWorkbook wb = new HSSFWorkbook();
-        HSSFSheet sh = wb.createSheet();
+    @Test
+    public void testAddToExistingFile() throws IOException {
+        HSSFWorkbook wb1 = new HSSFWorkbook();
+        HSSFSheet sh = wb1.createSheet();
         HSSFPatriarch patriarch = sh.createDrawingPatriarch();
 
         HSSFPolygon polygon = patriarch.createPolygon(new HSSFClientAnchor());
@@ -169,8 +184,9 @@ public class TestPolygon extends TestCase{
         polygon1.setPolygonDrawArea( 103, 104 );
         polygon1.setPoints( new int[]{11,12,13}, new int[]{14,15,16} );
 
-        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
-        sh = wb.getSheetAt(0);
+        HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1);
+        wb1.close();
+        sh = wb2.getSheetAt(0);
         patriarch = sh.getDrawingPatriarch();
 
         assertEquals(patriarch.getChildren().size(), 2);
@@ -179,8 +195,9 @@ public class TestPolygon extends TestCase{
         polygon2.setPolygonDrawArea( 203, 204 );
         polygon2.setPoints( new int[]{21,22,23}, new int[]{24,25,26} );
 
-        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
-        sh = wb.getSheetAt(0);
+        HSSFWorkbook wb3 = HSSFTestDataSamples.writeOutAndReadBack(wb2);
+        wb2.close();
+        sh = wb3.getSheetAt(0);
         patriarch = sh.getDrawingPatriarch();
 
         assertEquals(patriarch.getChildren().size(), 3);
@@ -203,8 +220,11 @@ public class TestPolygon extends TestCase{
         assertArrayEquals(polygon2.getYPoints(), new int[]{24,25,26});
         assertEquals(polygon2.getDrawAreaHeight(), 204);
         assertEquals(polygon2.getDrawAreaWidth(), 203);
+        
+        wb3.close();
     }
 
+    @Test
     public void testExistingFile() throws IOException {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("drawings.xls");
         HSSFSheet sheet = wb.getSheet("polygon");
@@ -216,19 +236,23 @@ public class TestPolygon extends TestCase{
         assertEquals(polygon.getDrawAreaWidth(), 3686175);
         assertArrayEquals(polygon.getXPoints(), new int[]{0, 0, 31479, 16159, 19676, 20502});
         assertArrayEquals(polygon.getYPoints(), new int[]{0, 0, 36, 56, 34, 18});
+        
+        wb.close();
     }
 
-    public void testPolygonType(){
-        HSSFWorkbook wb = new HSSFWorkbook();
-        HSSFSheet sh = wb.createSheet();
+    @Test
+    public void testPolygonType() throws IOException {
+        HSSFWorkbook wb1 = new HSSFWorkbook();
+        HSSFSheet sh = wb1.createSheet();
         HSSFPatriarch patriarch = sh.createDrawingPatriarch();
 
         HSSFPolygon polygon = patriarch.createPolygon(new HSSFClientAnchor());
         polygon.setPolygonDrawArea( 102, 101 );
         polygon.setPoints( new int[]{1,2,3}, new int[]{4,5,6} );
 
-        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
-        sh = wb.getSheetAt(0);
+        HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1);
+        wb1.close();
+        sh = wb2.getSheetAt(0);
         patriarch = sh.getDrawingPatriarch();
 
         HSSFPolygon polygon1 = patriarch.createPolygon(new HSSFClientAnchor());
@@ -239,12 +263,14 @@ public class TestPolygon extends TestCase{
 
         spRecord.setShapeType((short)77/**RANDOM**/);
 
-        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
-        sh = wb.getSheetAt(0);
+        HSSFWorkbook wb3 = HSSFTestDataSamples.writeOutAndReadBack(wb2);
+        wb2.close();
+        sh = wb3.getSheetAt(0);
         patriarch = sh.getDrawingPatriarch();
 
         assertEquals(patriarch.getChildren().size(), 2);
         assertTrue(patriarch.getChildren().get(0) instanceof HSSFPolygon);
         assertTrue(patriarch.getChildren().get(1) instanceof HSSFPolygon);
+        wb3.close();
     }
 }

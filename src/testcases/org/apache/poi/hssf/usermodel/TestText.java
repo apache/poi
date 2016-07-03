@@ -17,12 +17,13 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import static org.apache.poi.hssf.model.TestDrawingAggregate.decompress;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
+import java.io.IOException;
+
 import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.hssf.model.HSSFTestModelHelper;
-import org.apache.poi.hssf.model.TextboxShape;
 import org.apache.poi.hssf.record.ObjRecord;
 import org.apache.poi.hssf.record.TextObjectRecord;
 import org.junit.Test;
@@ -31,56 +32,54 @@ import org.junit.Test;
  * @author Evgeniy Berlog
  * @date 25.06.12
  */
-@SuppressWarnings("deprecation")
 public class TestText {
 
     @Test
-    public void testResultEqualsToAbstractShape() throws Exception {
+    public void testResultEqualsToNonExistingAbstractShape() throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sh = wb.createSheet();
         HSSFPatriarch patriarch = sh.createDrawingPatriarch();
         HSSFTextbox textbox = patriarch.createTextbox(new HSSFClientAnchor());
-        TextboxShape textboxShape = HSSFTestModelHelper.createTextboxShape(1025, textbox);
 
         assertEquals(textbox.getEscherContainer().getChildRecords().size(), 5);
-        assertEquals(textboxShape.getSpContainer().getChildRecords().size(), 5);
 
         //sp record
-        byte[] expected = textboxShape.getSpContainer().getChild(0).serialize();
+        byte[] expected = decompress("H4sIAAAAAAAAAFvEw/WBg4GBgZEFSHAxMAAA9gX7nhAAAAA=");
         byte[] actual = textbox.getEscherContainer().getChild(0).serialize();
 
         assertEquals(expected.length, actual.length);
         assertArrayEquals(expected, actual);
 
-        expected = textboxShape.getSpContainer().getChild(2).serialize();
+        expected = decompress("H4sIAAAAAAAAAGNgEPggxIANAABK4+laGgAAAA==");
         actual = textbox.getEscherContainer().getChild(2).serialize();
 
         assertEquals(expected.length, actual.length);
         assertArrayEquals(expected, actual);
 
-        expected = textboxShape.getSpContainer().getChild(3).serialize();
+        expected = decompress("H4sIAAAAAAAAAGNgEPzAAAQACl6c5QgAAAA=");
         actual = textbox.getEscherContainer().getChild(3).serialize();
 
         assertEquals(expected.length, actual.length);
         assertArrayEquals(expected, actual);
 
-        expected = textboxShape.getSpContainer().getChild(4).serialize();
+        expected = decompress("H4sIAAAAAAAAAGNg4P3AAAQA6pyIkQgAAAA=");
         actual = textbox.getEscherContainer().getChild(4).serialize();
 
         assertEquals(expected.length, actual.length);
         assertArrayEquals(expected, actual);
 
         ObjRecord obj = textbox.getObjRecord();
-        ObjRecord objShape = textboxShape.getObjRecord();
 
-        expected = obj.serialize();
-        actual = objShape.serialize();
+        expected = decompress("H4sIAAAAAAAAAItlkGIQZRBiYGNgZBBMYEADAOdCLuweAAAA");
+        actual = obj.serialize();
 
+        assertEquals(expected.length, actual.length);
+        assertArrayEquals(expected, actual);
+        
         TextObjectRecord tor = textbox.getTextObjectRecord();
-        TextObjectRecord torShape = textboxShape.getTextObjectRecord();
 
-        expected = tor.serialize();
-        actual = torShape.serialize();
+        expected = decompress("H4sIAAAAAAAAANvGKMQgxMSABgBGi8T+FgAAAA==");
+        actual = tor.serialize();
 
         assertEquals(expected.length, actual.length);
         assertArrayEquals(expected, actual);

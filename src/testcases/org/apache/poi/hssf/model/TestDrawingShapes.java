@@ -20,6 +20,7 @@ package org.apache.poi.hssf.model;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
@@ -103,23 +104,14 @@ public class TestDrawingShapes {
         assertEquals(HSSFShape.LINEWIDTH_DEFAULT, shape.getLineWidth());
         assertEquals(HSSFShape.LINESTYLE_SOLID, shape.getLineStyle());
         assertFalse(shape.isNoFill());
-
-        AbstractShape sp = AbstractShape.createShape(shape, 1);
-        EscherContainerRecord spContainer = sp.getSpContainer();
-        EscherOptRecord opt =
-                spContainer.getChildById(EscherOptRecord.RECORD_ID);
+        
+        EscherOptRecord opt = shape.getOptRecord();
 
         assertEquals(7, opt.getEscherProperties().size());
-        assertTrue(((EscherBoolProperty) opt.lookup(EscherProperties.TEXT__SIZE_TEXT_TO_FIT_SHAPE)).isTrue());
-        assertEquals(0x00000004,
-                ((EscherSimpleProperty) opt.lookup(EscherProperties.GEOMETRY__SHAPEPATH)).getPropertyValue());
-        assertEquals(0x08000009,
-                ((EscherSimpleProperty) opt.lookup(EscherProperties.FILL__FILLCOLOR)).getPropertyValue());
-        assertTrue(((EscherBoolProperty) opt.lookup(EscherProperties.FILL__NOFILLHITTEST)).isTrue());
-        assertEquals(0x08000040,
-                ((EscherSimpleProperty) opt.lookup(EscherProperties.LINESTYLE__COLOR)).getPropertyValue());
-        assertTrue(((EscherBoolProperty) opt.lookup(EscherProperties.LINESTYLE__NOLINEDRAWDASH)).isTrue());
         assertTrue(((EscherBoolProperty) opt.lookup(EscherProperties.GROUPSHAPE__PRINT)).isTrue());
+        assertTrue(((EscherBoolProperty) opt.lookup(EscherProperties.LINESTYLE__NOLINEDRAWDASH)).isTrue());
+        assertEquals(0x00000004, ((EscherSimpleProperty) opt.lookup(EscherProperties.GEOMETRY__SHAPEPATH)).getPropertyValue());
+        assertNull(opt.lookup(EscherProperties.TEXT__SIZE_TEXT_TO_FIT_SHAPE));
     }
 
     @Test

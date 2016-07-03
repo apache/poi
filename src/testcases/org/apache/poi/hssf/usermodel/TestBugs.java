@@ -51,6 +51,7 @@ import org.apache.poi.hssf.extractor.ExcelExtractor;
 import org.apache.poi.hssf.model.InternalSheet;
 import org.apache.poi.hssf.model.InternalWorkbook;
 import org.apache.poi.hssf.record.CellValueRecordInterface;
+import org.apache.poi.hssf.record.CommonObjectDataSubRecord;
 import org.apache.poi.hssf.record.EmbeddedObjectRefSubRecord;
 import org.apache.poi.hssf.record.NameRecord;
 import org.apache.poi.hssf.record.Record;
@@ -3008,5 +3009,30 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         Sheet newSheet = wb.cloneSheet(1);
         assertNotNull(newSheet);
         wb.close();
+    }
+
+    /**
+     * Test generator of ids for the CommonObjectDataSubRecord record.
+     */
+    @Test
+    public void test51332() {
+        HSSFClientAnchor anchor = new HSSFClientAnchor();
+        HSSFSimpleShape shape;
+        CommonObjectDataSubRecord cmo;
+        
+        shape = new HSSFTextbox(null, anchor);
+        shape.setShapeId(1025);
+        cmo = (CommonObjectDataSubRecord)shape.getObjRecord().getSubRecords().get(0);
+        assertEquals(1, cmo.getObjectId());
+
+        shape = new HSSFPicture(null, anchor);
+        shape.setShapeId(1026);
+        cmo = (CommonObjectDataSubRecord)shape.getObjRecord().getSubRecords().get(0);
+        assertEquals(2, cmo.getObjectId());
+
+        shape = new HSSFComment(null, anchor);
+        shape.setShapeId(1027);
+        cmo = (CommonObjectDataSubRecord)shape.getObjRecord().getSubRecords().get(0);
+        assertEquals(1027, cmo.getObjectId());
     }
 }

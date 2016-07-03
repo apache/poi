@@ -143,7 +143,12 @@ public abstract class HSSFShape {
         return _objRecord;
     }
 
-    protected EscherOptRecord getOptRecord() {
+    /**
+     * Return the low-level EscherOptRecord to read/modify not yet wrapped escher properties  
+     *
+     * @return the low-level EscherOptRecord
+     */
+    public EscherOptRecord getOptRecord() {
         return _optRecord;
     }
 
