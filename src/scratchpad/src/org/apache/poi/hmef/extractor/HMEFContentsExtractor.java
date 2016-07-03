@@ -34,81 +34,81 @@ import org.apache.poi.hsmf.datatypes.MAPIProperty;
  *  from a HMEF/TNEF/winmail.dat file
  */
 public final class HMEFContentsExtractor {
-   public static void main(String[] args) throws Exception {
-      if(args.length < 2) {
-         System.err.println("Use:");
-         System.err.println("  HMEFContentsExtractor <filename> <output dir>");
-         System.err.println("");
-         System.err.println("");
-         System.err.println("Where <filename> is the winmail.dat file to extract,");
-         System.err.println(" and <output dir> is where to place the extracted files");
-         System.exit(2);
-      }
-      
-      HMEFContentsExtractor ext = new HMEFContentsExtractor(new File(args[0]));
-      
-      File dir = new File(args[1]);
-      File rtf = new File(dir, "message.rtf");
-      if(! dir.exists()) {
-         throw new FileNotFoundException("Output directory " + dir.getName() + " not found");
-      }
-      
-      System.out.println("Extracting...");
-      ext.extractMessageBody(rtf);
-      ext.extractAttachments(dir);
-      System.out.println("Extraction completed");
-   }
-   
-   private HMEFMessage message;
-   public HMEFContentsExtractor(File filename) throws IOException {
-      this(new HMEFMessage(new FileInputStream(filename)));
-   }
-   public HMEFContentsExtractor(HMEFMessage message) {
-      this.message = message;
-   }
-   
-   /**
-    * Extracts the RTF message body to the supplied file
-    */
-   public void extractMessageBody(File dest) throws IOException {
-      OutputStream fout = new FileOutputStream(dest);
-      try {
-          MAPIRtfAttribute body = (MAPIRtfAttribute)
-             message.getMessageMAPIAttribute(MAPIProperty.RTF_COMPRESSED);
-          fout.write(body.getData());
-      } finally {
-    	  fout.close();
-      }
-   }
-   
-   /**
-    * Extracts all the message attachments to the supplied directory
-    */
-   public void extractAttachments(File dir) throws IOException {
-      int count = 0;
-      for(Attachment att : message.getAttachments()) {
-         count++;
-         
-         // Decide what to call it
-         String filename = att.getLongFilename();
-         if(filename == null || filename.length() == 0) {
-            filename = att.getFilename();
-         }
-         if(filename == null || filename.length() == 0) {
-            filename = "attachment" + count;
-            if(att.getExtension() != null) {
-               filename += att.getExtension();
+    public static void main(String[] args) throws Exception {
+        if (args.length < 2) {
+            System.err.println("Use:");
+            System.err.println("  HMEFContentsExtractor <filename> <output dir>");
+            System.err.println("");
+            System.err.println("");
+            System.err.println("Where <filename> is the winmail.dat file to extract,");
+            System.err.println(" and <output dir> is where to place the extracted files");
+            System.exit(2);
+        }
+        
+        HMEFContentsExtractor ext = new HMEFContentsExtractor(new File(args[0]));
+        
+        File dir = new File(args[1]);
+        File rtf = new File(dir, "message.rtf");
+        if (! dir.exists()) {
+            throw new FileNotFoundException("Output directory " + dir.getName() + " not found");
+        }
+        
+        System.out.println("Extracting...");
+        ext.extractMessageBody(rtf);
+        ext.extractAttachments(dir);
+        System.out.println("Extraction completed");
+    }
+    
+    private HMEFMessage message;
+    public HMEFContentsExtractor(File filename) throws IOException {
+        this(new HMEFMessage(new FileInputStream(filename)));
+    }
+    public HMEFContentsExtractor(HMEFMessage message) {
+        this.message = message;
+    }
+    
+    /**
+     * Extracts the RTF message body to the supplied file
+     */
+    public void extractMessageBody(File dest) throws IOException {
+        OutputStream fout = new FileOutputStream(dest);
+        try {
+            MAPIRtfAttribute body = (MAPIRtfAttribute)
+                    message.getMessageMAPIAttribute(MAPIProperty.RTF_COMPRESSED);
+            fout.write(body.getData());
+        } finally {
+            fout.close();
+        }
+    }
+    
+    /**
+     * Extracts all the message attachments to the supplied directory
+     */
+    public void extractAttachments(File dir) throws IOException {
+        int count = 0;
+        for(Attachment att : message.getAttachments()) {
+            count++;
+            
+            // Decide what to call it
+            String filename = att.getLongFilename();
+            if(filename == null || filename.length() == 0) {
+                filename = att.getFilename();
             }
-         }
-         
-         // Save it
-         File file = new File(dir, filename);
-         OutputStream fout = new FileOutputStream(file);
-         try {
-        	 fout.write( att.getContents() );
-         } finally {
-        	 fout.close();
-         }
-      }
-   }
+            if(filename == null || filename.length() == 0) {
+                filename = "attachment" + count;
+                if(att.getExtension() != null) {
+                    filename += att.getExtension();
+                }
+            }
+            
+            // Save it
+            File file = new File(dir, filename);
+            OutputStream fout = new FileOutputStream(file);
+            try {
+                fout.write( att.getContents() );
+            } finally {
+                fout.close();
+            }
+        }
+    }
 }
