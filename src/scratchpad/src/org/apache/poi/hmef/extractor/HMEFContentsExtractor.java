@@ -1,18 +1,18 @@
 /* ====================================================================
-   Licensed to the Apache Software Foundation (ASF) under one or more
-   contributor license agreements.  See the NOTICE file distributed with
-   this work for additional information regarding copyright ownership.
-   The ASF licenses this file to You under the Apache License, Version 2.0
-   (the "License"); you may not use this file except in compliance with
-   the License.  You may obtain a copy of the License at
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
 
-       http://www.apache.org/licenses/LICENSE-2.0
+         http://www.apache.org/licenses/LICENSE-2.0
 
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
 ==================================================================== */
 
 package org.apache.poi.hmef.extractor;
@@ -34,8 +34,11 @@ import org.apache.poi.hsmf.datatypes.MAPIProperty;
  *  from a HMEF/TNEF/winmail.dat file
  */
 public final class HMEFContentsExtractor {
-    public static void main(String[] args) throws Exception {
-        if (args.length < 2) {
+    /**
+     * Usage: HMEFContentsExtractor &lt;filename&gt; &lt;output dir&gt;
+     */
+    public static void main(String[] args) throws IOException {
+        if(args.length < 2) {
             System.err.println("Use:");
             System.err.println("  HMEFContentsExtractor <filename> <output dir>");
             System.err.println("");
@@ -45,11 +48,14 @@ public final class HMEFContentsExtractor {
             System.exit(2);
         }
         
-        HMEFContentsExtractor ext = new HMEFContentsExtractor(new File(args[0]));
+        final String filename = args[0];
+        final String outputDir = args[1];
         
-        File dir = new File(args[1]);
+        HMEFContentsExtractor ext = new HMEFContentsExtractor(new File(filename));
+        
+        File dir = new File(outputDir);
         File rtf = new File(dir, "message.rtf");
-        if (! dir.exists()) {
+        if(! dir.exists()) {
             throw new FileNotFoundException("Output directory " + dir.getName() + " not found");
         }
         
@@ -59,7 +65,7 @@ public final class HMEFContentsExtractor {
         System.out.println("Extraction completed");
     }
     
-    private HMEFMessage message;
+    private final HMEFMessage message;
     public HMEFContentsExtractor(File filename) throws IOException {
         this(new HMEFMessage(new FileInputStream(filename)));
     }
@@ -73,11 +79,20 @@ public final class HMEFContentsExtractor {
     public void extractMessageBody(File dest) throws IOException {
         OutputStream fout = new FileOutputStream(dest);
         try {
-            MAPIRtfAttribute body = (MAPIRtfAttribute)
-                    message.getMessageMAPIAttribute(MAPIProperty.RTF_COMPRESSED);
-            fout.write(body.getData());
+            extractMessageBody(fout);
         } finally {
             fout.close();
+        }
+    }
+    
+    /**
+     * Extracts the RTF message body to the supplied stream
+     */
+    public void extractMessageBody(OutputStream out) throws IOException {
+        MAPIRtfAttribute body = (MAPIRtfAttribute)
+                message.getMessageMAPIAttribute(MAPIProperty.RTF_COMPRESSED);
+        if (body != null) {
+            out.write(body.getData());
         }
     }
     
