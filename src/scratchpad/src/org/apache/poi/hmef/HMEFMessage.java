@@ -20,6 +20,7 @@ package org.apache.poi.hmef;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.poi.hmef.attribute.MAPIAttribute;
@@ -41,10 +42,11 @@ import org.apache.poi.util.LittleEndian;
 public final class HMEFMessage {
    public static final int HEADER_SIGNATURE = 0x223e9f78;
    
+   @SuppressWarnings("unused")
    private int fileId;
-   private List<TNEFAttribute> messageAttributes = new ArrayList<TNEFAttribute>();
-   private List<MAPIAttribute> mapiAttributes = new ArrayList<MAPIAttribute>();
-   private List<Attachment> attachments = new ArrayList<Attachment>();
+   private final List<TNEFAttribute> messageAttributes = new ArrayList<TNEFAttribute>();
+   private final List<MAPIAttribute> mapiAttributes = new ArrayList<MAPIAttribute>();
+   private final List<Attachment> attachments = new ArrayList<Attachment>();
    
    public HMEFMessage(InputStream inp) throws IOException {
        try {
@@ -125,7 +127,7 @@ public final class HMEFMessage {
     *  are stored as {@link MAPIAttribute}s - see {@link #getMessageMAPIAttributes()} 
     */
    public List<TNEFAttribute> getMessageAttributes() {
-      return messageAttributes;
+      return Collections.unmodifiableList(messageAttributes);
    }
    
    /**
@@ -134,14 +136,14 @@ public final class HMEFMessage {
     *  apply to most messages, see {@link #getMessageAttributes()}
     */
    public List<MAPIAttribute> getMessageMAPIAttributes() {
-      return mapiAttributes;
+      return Collections.unmodifiableList(mapiAttributes);
    }
    
    /**
     * Returns all the Attachments of the message.
     */
    public List<Attachment> getAttachments() {
-      return attachments;
+      return Collections.unmodifiableList(attachments);
    }
    
    /**
