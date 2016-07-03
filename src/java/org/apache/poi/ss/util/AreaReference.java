@@ -101,7 +101,7 @@ public class AreaReference {
        }
      }
     
-    private boolean isPlainColumn(String refPart) {
+    private static boolean isPlainColumn(String refPart) {
         for(int i=refPart.length()-1; i>=0; i--) {
             int ch = refPart.charAt(i);
             if (ch == '$' && i==0) {

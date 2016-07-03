@@ -563,8 +563,7 @@ public class DataFormatter implements Observer {
             else if (c == 's' || c == 'S') {
                 sb.append('s');
                 // if 'M' precedes 's' it should be minutes ('m')
-                for (int i = 0; i < ms.size(); i++) {
-                    int index = ms.get(i).intValue();
+                for (int index : ms) {
                     if (sb.charAt(index) == 'M') {
                         sb.replace(index, index+1, "m");
                     }

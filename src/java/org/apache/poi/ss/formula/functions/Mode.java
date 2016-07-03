@@ -106,7 +106,9 @@ public final class Mode implements Function {
 		}
 		if (arg instanceof RefEval) {
 			RefEval re = (RefEval) arg;
-			for (int sIx = re.getFirstSheetIndex(); sIx <= re.getLastSheetIndex(); sIx++) {
+			final int firstSheetIndex = re.getFirstSheetIndex();
+			final int lastSheetIndex = re.getLastSheetIndex();
+			for (int sIx = firstSheetIndex; sIx <= lastSheetIndex; sIx++) {
 			    collectValue(re.getInnerValueEval(sIx), temp, true);
 			}
 			return;

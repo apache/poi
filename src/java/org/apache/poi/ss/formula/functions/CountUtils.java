@@ -49,7 +49,9 @@ final class CountUtils {
     public static int countMatchingCellsInArea(ThreeDEval areaEval, I_MatchPredicate criteriaPredicate) {
         int result = 0;
 
-        for (int sIx=areaEval.getFirstSheetIndex(); sIx <= areaEval.getLastSheetIndex(); sIx++) {
+        final int firstSheetIndex = areaEval.getFirstSheetIndex();
+        final int lastSheetIndex = areaEval.getLastSheetIndex();
+        for (int sIx = firstSheetIndex; sIx <= lastSheetIndex; sIx++) {
             int height = areaEval.getHeight();
             int width = areaEval.getWidth();
             for (int rrIx=0; rrIx<height; rrIx++) {
@@ -75,7 +77,9 @@ final class CountUtils {
 	public static int countMatchingCellsInRef(RefEval refEval, I_MatchPredicate criteriaPredicate) {
 	    int result = 0;
 	    
-	    for (int sIx = refEval.getFirstSheetIndex(); sIx <= refEval.getLastSheetIndex(); sIx++) {
+        final int firstSheetIndex = refEval.getFirstSheetIndex();
+        final int lastSheetIndex = refEval.getLastSheetIndex();
+        for (int sIx = firstSheetIndex; sIx <= lastSheetIndex; sIx++) {
 	        ValueEval ve = refEval.getInnerValueEval(sIx);
             if(criteriaPredicate.matches(ve)) {
                 result++;

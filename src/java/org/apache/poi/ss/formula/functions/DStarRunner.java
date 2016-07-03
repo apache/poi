@@ -89,7 +89,8 @@ public final class DStarRunner implements Function3Arg {
         }
 
         // Iterate over all DB entries.
-        for(int row = 1; row < db.getHeight(); ++row) {
+        final int height = db.getHeight();
+        for(int row = 1; row < height; ++row) {
             boolean matches = true;
             try {
                 matches = fullfillsConditions(db, row, cdb);
@@ -189,7 +190,8 @@ public final class DStarRunner implements Function3Arg {
     private static int getColumnForString(TwoDEval db,String name)
             throws EvaluationException {
         int resultColumn = -1;
-        for(int column = 0; column < db.getWidth(); ++column) {
+        final int width = db.getWidth();
+        for(int column = 0; column < width; ++column) {
             ValueEval columnNameValueEval = db.getValue(0, column);
             String columnName = getStringFromValueEval(columnNameValueEval);
             if(name.equals(columnName)) {
@@ -215,9 +217,11 @@ public final class DStarRunner implements Function3Arg {
         // Only one row must match to accept the input, so rows are ORed.
         // Each row is made up of cells where each cell is a condition,
         // all have to match, so they are ANDed.
-        for(int conditionRow = 1; conditionRow < cdb.getHeight(); ++conditionRow) {
+        final int height = cdb.getHeight();
+        for(int conditionRow = 1; conditionRow < height; ++conditionRow) {
             boolean matches = true;
-            for(int column = 0; column < cdb.getWidth(); ++column) { // columns are ANDed
+            final int width = cdb.getWidth();
+            for(int column = 0; column < width; ++column) { // columns are ANDed
                 // Whether the condition column matches a database column, if not it's a
                 // special column that accepts formulas.
                 boolean columnCondition = true;

@@ -229,7 +229,8 @@ public class SignatureInfo implements SignatureConfigurable {
                 Document doc = DocumentHelper.readDocument(signaturePart.getInputStream());
                 XPath xpath = XPathFactory.newInstance().newXPath();
                 NodeList nl = (NodeList)xpath.compile("//*[@Id]").evaluate(doc, XPathConstants.NODESET);
-                for (int i=0; i<nl.getLength(); i++) {
+                final int length = nl.getLength();
+                for (int i=0; i<length; i++) {
                     ((Element)nl.item(i)).setIdAttribute("Id", true);
                 }
                 
@@ -242,6 +243,7 @@ public class SignatureInfo implements SignatureConfigurable {
                 XMLSignature xmlSignature = xmlSignatureFactory.unmarshalXMLSignature(domValidateContext);
                 
                 // TODO: replace with property when xml-sec patch is applied
+                // workaround added in r1637283 2014-11-07
                 for (Reference ref : (List<Reference>)xmlSignature.getSignedInfo().getReferences()) {
                     SignatureFacet.brokenJvmWorkaround(ref);
                 }

@@ -60,9 +60,8 @@ public abstract class BooleanFunction implements Function {
 		/*
 		 * Note: no short-circuit boolean loop exit because any ErrorEvals will override the result
 		 */
-		for (int i=0, iSize=args.length; i<iSize; i++) {
+		for (final ValueEval arg : args) {
             Boolean tempVe;
-			ValueEval arg = args[i];
 			if (arg instanceof TwoDEval) {
 				TwoDEval ae = (TwoDEval) arg;
 				int height = ae.getHeight();
@@ -81,7 +80,9 @@ public abstract class BooleanFunction implements Function {
 			}
             if (arg instanceof RefEval) {
                 RefEval re = (RefEval) arg;
-                for (int sIx = re.getFirstSheetIndex(); sIx <= re.getLastSheetIndex(); sIx++) {
+                final int firstSheetIndex = re.getFirstSheetIndex();
+                final int lastSheetIndex = re.getLastSheetIndex();
+                for (int sIx = firstSheetIndex; sIx <= lastSheetIndex; sIx++) {
                     ValueEval ve = re.getInnerValueEval(sIx);
                     tempVe = OperandResolver.coerceValueToBoolean(ve, true);
                     if (tempVe != null) {

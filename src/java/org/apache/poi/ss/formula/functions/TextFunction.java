@@ -126,9 +126,10 @@ public abstract class TextFunction implements Function {
 		protected ValueEval evaluate(String text) {
 			StringBuilder sb = new StringBuilder();
 			boolean shouldMakeUppercase = true;
-			String lowercaseText = text.toLowerCase(Locale.ROOT);
-			String uppercaseText = text.toUpperCase(Locale.ROOT);
-			for(int i = 0; i < text.length(); ++i) {
+			final String lowercaseText = text.toLowerCase(Locale.ROOT);
+			final String uppercaseText = text.toUpperCase(Locale.ROOT);
+			final int length = text.length();
+			for(int i = 0; i < length; ++i) {
 				if (shouldMakeUppercase) {
 					sb.append(uppercaseText.charAt(i));
 				}

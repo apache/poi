@@ -58,6 +58,7 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTRegularTextRun;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBody;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextField;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraph;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 
@@ -274,9 +275,11 @@ public final class XSSFChart extends POIXMLDocumentPart implements Chart, ChartA
 			.selectPath("declare namespace a='"+XSSFDrawing.NAMESPACE_A+"' .//a:t");
 		for (int m = 0; m < t.length; m++) {
 			NodeList kids = t[m].getDomNode().getChildNodes();
-			for (int n = 0; n < kids.getLength(); n++) {
-				if (kids.item(n) instanceof Text) {
-					text.append(kids.item(n).getNodeValue());
+			final int count = kids.getLength();
+			for (int n = 0; n < count; n++) {
+				Node kid = kids.item(n);
+				if (kid instanceof Text) {
+					text.append(kid.getNodeValue());
 				}
 			}
 		}

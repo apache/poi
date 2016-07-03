@@ -2804,7 +2804,8 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         
         // check row numbers to make sure they are continuous and increasing (monotonic)
         // and srcRows does not contain null rows
-        for (int index=1; index < srcRows.size(); index++) {
+        final int size = srcRows.size();
+        for (int index=1; index < size; index++) {
             final Row curRow = srcRows.get(index);
             if (curRow == null) {
                 throw new IllegalArgumentException("srcRows may not contain null rows. Found null row at index " + index + ".");

@@ -23,6 +23,7 @@ import org.apache.poi.ss.formula.WorkbookEvaluator;
 import org.apache.poi.ss.formula.udf.UDFFinder;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.xssf.usermodel.BaseXSSFFormulaEvaluator;
@@ -100,26 +101,24 @@ public final class SXSSFFormulaEvaluator extends BaseXSSFFormulaEvaluator {
         SXSSFFormulaEvaluator eval = new SXSSFFormulaEvaluator(wb);
         
         // Check they're all available
-        for (int i=0; i<wb.getNumberOfSheets(); i++) {
-            SXSSFSheet s = wb.getSheetAt(i);
-            if (s.areAllRowsFlushed()) {
+        for (Sheet sheet : wb) {
+            if (((SXSSFSheet)sheet).areAllRowsFlushed()) {
                 throw new SheetsFlushedException();
             }
         }
         
         // Process the sheets as best we can
-        for (int i=0; i<wb.getNumberOfSheets(); i++) {
-            SXSSFSheet s = wb.getSheetAt(i);
+        for (Sheet sheet : wb) {
             
             // Check if any rows have already been flushed out
-            int lastFlushedRowNum = s.getLastFlushedRowNum();
+            int lastFlushedRowNum = ((SXSSFSheet) sheet).getLastFlushedRowNum();
             if (lastFlushedRowNum > -1) {
                 if (! skipOutOfWindow) throw new RowFlushedException(0);
                 logger.log(POILogger.INFO, "Rows up to " + lastFlushedRowNum + " have already been flushed, skipping");
             }
             
             // Evaluate what we have
-            for (Row r : s) {
+            for (Row r : sheet) {
                 for (Cell c : r) {
                     if (c.getCellType() == Cell.CELL_TYPE_FORMULA) {
                         eval.evaluateFormulaCell(c);

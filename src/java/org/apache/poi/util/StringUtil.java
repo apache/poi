@@ -271,8 +271,7 @@ public class StringUtil {
 	public static boolean hasMultibyte(String value) {
 		if (value == null)
 			return false;
-		for (int i = 0; i < value.length(); i++) {
-			char c = value.charAt(i);
+		for (char c : value.toCharArray()) {
 			if (c > 0xFF) {
 				return true;
 			}
