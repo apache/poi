@@ -25,7 +25,10 @@ import java.util.HashMap;
 
 /**
  * Provides utilities to manage drawing groups.
+ * 
+ * @deprecated in POI 3.15-beta2, scheduled for removal in 3.17, use DrawingManager2 instead
  */
+@Deprecated
 public class DrawingManager
 {
     EscherDggRecord dgg;
