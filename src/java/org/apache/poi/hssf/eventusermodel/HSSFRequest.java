@@ -77,16 +77,16 @@ public class HSSFRequest {
 	public void addListenerForAllRecords(HSSFListener lsnr) {
 		short[] rectypes = RecordFactory.getAllKnownRecordSIDs();
 
-		for (int k = 0; k < rectypes.length; k++) {
-			addListener(lsnr, rectypes[k]);
+		for (short rectype : rectypes) {
+			addListener(lsnr, rectype);
 		}
 	}
 
 	/**
 	 * Called by HSSFEventFactory, passes the Record to each listener associated with
 	 * a record.sid.
-	 *
-	 * Exception and return value added 2002-04-19 by Carey Sublette
+	 * 
+	 * @param rec the record to be processed
 	 *
 	 * @return numeric user-specified result code. If zero continue processing.
 	 * @throws HSSFUserException User exception condition

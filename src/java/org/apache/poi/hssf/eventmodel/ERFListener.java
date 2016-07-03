@@ -31,6 +31,9 @@ public interface ERFListener
     /**
      * Process a Record.  This method is called by the 
      * EventRecordFactory when a record is returned.
+     * 
+     * @param rec the record to be processed
+     * 
      * @return boolean specifying whether the effort was a success.
      */
     public boolean processRecord(Record rec);

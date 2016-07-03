@@ -195,14 +195,19 @@ public class OldExcelExtractor implements Closeable {
 
     /**
      * The Biff version, largely corresponding to the Excel version
+     * 
+     * @return the Biff version
      */
     public int getBiffVersion() {
         return biffVersion;
     }
+    
     /**
      * The kind of the file, one of {@link BOFRecord#TYPE_WORKSHEET},
      *  {@link BOFRecord#TYPE_CHART}, {@link BOFRecord#TYPE_EXCEL_4_MACRO}
      *  or {@link BOFRecord#TYPE_WORKSPACE_FILE}
+     * 
+     * @return the file type
      */
     public int getFileType() {
         return fileType;
@@ -211,6 +216,8 @@ public class OldExcelExtractor implements Closeable {
     /**
      * Retrieves the text contents of the file, as best we can
      *  for these old file formats
+     * 
+     * @return the text contents of the file
      */
     public String getText() {
         StringBuffer text = new StringBuffer();

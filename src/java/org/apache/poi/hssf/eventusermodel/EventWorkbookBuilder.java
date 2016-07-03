@@ -69,8 +69,8 @@ public class EventWorkbookBuilder {
 
 		// Core Workbook records go first
 		if(bounds != null) {
-			for(int i=0; i<bounds.length; i++) {
-				wbRecords.add(bounds[i]);
+			for (BoundSheetRecord bound : bounds) {
+				wbRecords.add(bound);
 			}
 		}
 		if(sst != null) {
@@ -82,8 +82,8 @@ public class EventWorkbookBuilder {
 		if(externs != null) {
 			wbRecords.add(SupBookRecord.createInternalReferences(
 					(short)externs.length));
-			for(int i=0; i<externs.length; i++) {
-				wbRecords.add(externs[i]);
+			for (ExternSheetRecord extern : externs) {
+				wbRecords.add(extern);
 			}
 		}
 
@@ -113,9 +113,9 @@ public class EventWorkbookBuilder {
 	 *  them once required.
 	 */
 	public static class SheetRecordCollectingListener implements HSSFListener {
-		private HSSFListener childListener;
-		private List<BoundSheetRecord> boundSheetRecords = new ArrayList<BoundSheetRecord>();
-		private List<ExternSheetRecord> externSheetRecords = new ArrayList<ExternSheetRecord>();
+		private final HSSFListener childListener;
+		private final List<BoundSheetRecord> boundSheetRecords = new ArrayList<BoundSheetRecord>();
+		private final List<ExternSheetRecord> externSheetRecords = new ArrayList<ExternSheetRecord>();
 		private SSTRecord sstRecord = null;
 
 		public SheetRecordCollectingListener(HSSFListener childListener) {
@@ -159,7 +159,8 @@ public class EventWorkbookBuilder {
 		 * Process this record ourselves, and then
 		 *  pass it on to our child listener
 		 */
-		public void processRecord(Record record) {
+		@Override
+        public void processRecord(Record record) {
 			// Handle it ourselves
 			processRecordInternally(record);
 
@@ -170,6 +171,8 @@ public class EventWorkbookBuilder {
 		/**
 		 * Process the record ourselves, but do not
 		 *  pass it on to the child Listener.
+		 *  
+		 * @param record the record to be processed
 		 */
 		public void processRecordInternally(Record record) {
 			if(record instanceof BoundSheetRecord) {
