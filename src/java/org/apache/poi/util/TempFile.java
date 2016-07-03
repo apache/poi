@@ -19,6 +19,7 @@ package org.apache.poi.util;
 
 import java.io.File;
 import java.io.IOException;
+import java.security.SecureRandom;
 
 /**
  * Interface for creating temporary files. Collects them all into one directory by default.
@@ -29,6 +30,10 @@ public final class TempFile {
 
     /** Define a constant for this property as it is sometimes mistypes as "tempdir" otherwise */
     public static final String JAVA_IO_TMPDIR = "java.io.tmpdir";
+    
+    private TempFile() {
+        // no instances of this class
+    }
 
     /**
      * Configures the strategy used by {@link #createTempFile(String, String)} to create the temporary files.
@@ -62,6 +67,10 @@ public final class TempFile {
         return strategy.createTempFile(prefix, suffix);
     }
     
+    public static File createTempDirectory(String name) throws IOException {
+        return strategy.createTempDirectory(name);
+    }
+    
     /**
      * Default implementation of the {@link TempFileCreationStrategy} used by {@link TempFile}:
      * Files are collected into one directory and by default are deleted on exit from the VM. 
@@ -92,9 +101,9 @@ public final class TempFile {
             this.dir = dir;
         }
         
-        @Override
-        public File createTempFile(String prefix, String suffix) throws IOException {
+        private void createPOIFilesDirectory() throws IOException {
             // Identify and create our temp dir, if needed
+            // The directory is not deleted, even if it was created by this TempFleCreationStrategy
             if (dir == null) {
                 String tmpDir = System.getProperty(JAVA_IO_TMPDIR);
                 if (tmpDir == null) {
@@ -102,10 +111,20 @@ public final class TempFile {
                 }
                 dir = new File(tmpDir, "poifiles");
             }
-
-             if (!(dir.exists() || dir.mkdirs()) || !dir.isDirectory()) {
-                throw new IOException("Could not create temporary directory '" + dir + "'");
+            
+            createTempDirectory(dir);
+        }
+        
+        private void createTempDirectory(File directory) throws IOException {
+            if (!(directory.exists() || directory.mkdirs()) || !directory.isDirectory()) {
+                throw new IOException("Could not create temporary directory '" + directory + "'");
             }
+        }
+        
+        @Override
+        public File createTempFile(String prefix, String suffix) throws IOException {
+            // Identify and create our temp dir, if needed
+            createPOIFilesDirectory();
             
             // Generate a unique new filename 
             File newFile = File.createTempFile(prefix, suffix, dir);
@@ -117,6 +136,27 @@ public final class TempFile {
 
             // All done
             return newFile;
+        }
+        
+        private static final SecureRandom random = new SecureRandom();
+        @Override
+        public File createTempDirectory(String prefix) throws IOException {
+            // Identify and create our temp dir, if needed
+            createPOIFilesDirectory();
+            
+            // Generate a unique new filename
+            // FIXME: Java 7+: use java.nio.Files#createTempDirectory
+            final long n = random.nextLong();
+            File newDirectory = new File(dir, prefix + Long.toString(n));
+            createTempDirectory(newDirectory);
+
+            // Set the delete on exit flag, unless explicitly disabled
+            if (System.getProperty("poi.keep.tmp.files") == null) {
+                newDirectory.deleteOnExit();
+            }
+
+            // All done
+            return newDirectory;
         }
     }
 }
