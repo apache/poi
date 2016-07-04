@@ -195,7 +195,9 @@ public final class ColumnInfoRecord extends StandardRecord implements Cloneable 
     }
 
     /**
-     * @return <code>true</code> if the format, options and column width match
+     * @param other the format to match with
+     * 
+     * @return {@code true} if the format, options and column width match
      */
     public boolean formatMatches(ColumnInfoRecord other) {
         if (_xfIndex != other._xfIndex) {

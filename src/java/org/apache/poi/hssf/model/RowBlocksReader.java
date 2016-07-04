@@ -43,6 +43,8 @@ public final class RowBlocksReader {
 	/**
 	 * Also collects any loose MergeCellRecords and puts them in the supplied
 	 * mergedCellsTable
+	 * 
+	 * @param  rs the record stream
 	 */
 	public RowBlocksReader(RecordStream rs) {
 		List<Record> plainRecords = new ArrayList<Record>();

@@ -24,8 +24,6 @@ import org.apache.poi.util.LittleEndianOutput;
 /**
  * Common base class for {@link SharedFormulaRecord}, {@link ArrayRecord} and
  * {@link TableRecord} which are have similarities.
- *
- * @author Josh Micich
  */
 public abstract class SharedValueRecordBase extends StandardRecord {
 
@@ -86,8 +84,12 @@ public abstract class SharedValueRecordBase extends StandardRecord {
 	}
 
 	/**
-	 * @return <code>true</code> if (rowIx, colIx) is within the range ({@link #getRange()})
-	 * of this shared value object.
+     * @param rowIx the row index
+     * @param colIx the column index
+     * 
+	 * @return {@code true} if (rowIx, colIx) is within the range of this shared value object.
+     * 
+     * @see #getRange()
 	 */
 	public final boolean isInRange(int rowIx, int colIx) {
 		CellRangeAddress8Bit r = _range;
@@ -97,8 +99,15 @@ public abstract class SharedValueRecordBase extends StandardRecord {
 			&& r.getLastColumn() >= colIx;
 	}
 	/**
-	 * @return <code>true</code> if (rowIx, colIx) describes the first cell in this shared value
-	 * object's range ({@link #getRange()})
+	 * @return {@code true} if (rowIx, colIx) describes the first cell in this shared value
+	 * object's range
+	 * 
+	 * @param rowIx the row index
+	 * @param colIx the column index
+	 * 
+	 * @return {@code true} if its the first cell in this shared value object range
+	 * 
+	 * @see #getRange()
 	 */
 	public final boolean isFirstCell(int rowIx, int colIx) {
 		CellRangeAddress8Bit r = getRange();

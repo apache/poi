@@ -33,9 +33,7 @@ import org.apache.poi.ss.util.WorkbookUtil;
  * Description:  Defines a sheet within a workbook.  Basically stores the sheet name
  *               and tells where the Beginning of file record is within the HSSF
  *               file. <P>
- * REFERENCE:  PG 291 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
- * @author Andrew C. Oliver (acoliver at apache dot org)
- * @author Sergei Kozello (sergeikozello at mail.ru)
+ * REFERENCE:  PG 291 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)
  */
 public final class BoundSheetRecord extends StandardRecord {
 	public final static short sid = 0x0085;
@@ -58,6 +56,8 @@ public final class BoundSheetRecord extends StandardRecord {
 	 *
 	 * UNICODE: sid + len + bof + flags + len(str) + unicode + str 2 + 2 + 4 + 2 +
 	 * 1 + 1 + 2 * len(str)
+	 * 
+	 * @param in the record stream to read from
 	 */
 	public BoundSheetRecord(RecordInputStream in) {
 		field_1_position_of_BOF = in.readInt();
@@ -154,6 +154,8 @@ public final class BoundSheetRecord extends StandardRecord {
 
 	/**
 	 * Is the sheet hidden? Different from very hidden
+	 * 
+	 * @return {@code true} if hidden
 	 */
 	public boolean isHidden() {
 		return hiddenFlag.isSet(field_2_option_flags);
@@ -161,6 +163,8 @@ public final class BoundSheetRecord extends StandardRecord {
 
 	/**
 	 * Is the sheet hidden? Different from very hidden
+	 * 
+	 * @param hidden {@code true} if hidden
 	 */
 	public void setHidden(boolean hidden) {
 		field_2_option_flags = hiddenFlag.setBoolean(field_2_option_flags, hidden);
@@ -168,6 +172,8 @@ public final class BoundSheetRecord extends StandardRecord {
 
 	/**
 	 * Is the sheet very hidden? Different from (normal) hidden
+	 * 
+	 * @return {@code true} if very hidden
 	 */
 	public boolean isVeryHidden() {
 		return veryHiddenFlag.isSet(field_2_option_flags);
@@ -175,6 +181,8 @@ public final class BoundSheetRecord extends StandardRecord {
 
 	/**
 	 * Is the sheet very hidden? Different from (normal) hidden
+	 * 
+	 * @param veryHidden {@code true} if very hidden
 	 */
 	public void setVeryHidden(boolean veryHidden) {
 		field_2_option_flags = veryHiddenFlag.setBoolean(field_2_option_flags, veryHidden);
@@ -183,6 +191,10 @@ public final class BoundSheetRecord extends StandardRecord {
 	/**
 	 * Converts a List of {@link BoundSheetRecord}s to an array and sorts by the position of their
 	 * BOFs.
+	 * 
+	 * @param boundSheetRecords the boundSheetRecord list to arrayify
+	 * 
+	 * @return the sorted boundSheetRecords
 	 */
 	public static BoundSheetRecord[] orderByBofPosition(List<BoundSheetRecord> boundSheetRecords) {
 		BoundSheetRecord[] bsrs = new BoundSheetRecord[boundSheetRecords.size()];
@@ -190,6 +202,7 @@ public final class BoundSheetRecord extends StandardRecord {
 		Arrays.sort(bsrs, BOFComparator);
 	 	return bsrs;
 	}
+	
 	private static final Comparator<BoundSheetRecord> BOFComparator = new Comparator<BoundSheetRecord>() {
 
 		public int compare(BoundSheetRecord bsr1, BoundSheetRecord bsr2) {

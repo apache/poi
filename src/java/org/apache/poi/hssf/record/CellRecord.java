@@ -23,8 +23,6 @@ import org.apache.poi.util.LittleEndianOutput;
 /**
  * Base class for all cell value records (implementors of {@link CellValueRecordInterface}).
  * Subclasses are expected to manage the cell data values (of various types).
- *
- * @author Josh Micich
  */
 public abstract class CellRecord extends StandardRecord implements CellValueRecordInterface {
     private int _rowIndex;
@@ -41,10 +39,12 @@ public abstract class CellRecord extends StandardRecord implements CellValueReco
         _formatIndex = in.readUShort();
     }
 
+    @Override
     public final void setRow(int row) {
         _rowIndex = row;
     }
 
+    @Override
     public final void setColumn(short col) {
         _columnIndex = col;
     }
@@ -55,14 +55,17 @@ public abstract class CellRecord extends StandardRecord implements CellValueReco
      * @see org.apache.poi.hssf.record.ExtendedFormatRecord
      * @param xf index to the XF record
      */
+    @Override
     public final void setXFIndex(short xf) {
         _formatIndex = xf;
     }
 
+    @Override
     public final int getRow() {
         return _rowIndex;
     }
 
+    @Override
     public final short getColumn() {
         return (short) _columnIndex;
     }
@@ -73,6 +76,7 @@ public abstract class CellRecord extends StandardRecord implements CellValueReco
      * @see org.apache.poi.hssf.record.ExtendedFormatRecord
      * @return index to the XF record
      */
+    @Override
     public final short getXFIndex() {
         return (short) _formatIndex;
     }
@@ -96,16 +100,22 @@ public abstract class CellRecord extends StandardRecord implements CellValueReco
      * Append specific debug info (used by {@link #toString()} for the value
      * contained in this record. Trailing new-line should not be appended
      * (superclass does that).
+     * 
+     * @param sb the StringBuilder to write to
      */
     protected abstract void appendValueText(StringBuilder sb);
 
     /**
      * Gets the debug info BIFF record type name (used by {@link #toString()}.
+     * 
+     * @return the record type name
      */
     protected abstract String getRecordName();
 
     /**
      * writes out the value data for this cell record
+     * 
+     * @param out the output
      */
     protected abstract void serializeValue(LittleEndianOutput out);
 
