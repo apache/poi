@@ -45,14 +45,14 @@ import org.apache.poi.ss.usermodel.Workbook;
  */
 public class HSSFFormulaEvaluator implements FormulaEvaluator, WorkbookEvaluatorProvider {
 
-	private WorkbookEvaluator _bookEvaluator;
-	private HSSFWorkbook _book;
+	private final WorkbookEvaluator _bookEvaluator;
+	private final HSSFWorkbook _book;
 
 	public HSSFFormulaEvaluator(HSSFWorkbook workbook) {
 		this(workbook, null);
-      this._book = workbook;
 	}
 	/**
+	 * @param workbook  The workbook to perform the formula evaluations in
 	 * @param stabilityClassifier used to optimise caching performance. Pass <code>null</code>
 	 * for the (conservative) assumption that any cell may have its definition changed after
 	 * evaluation begins.
@@ -62,13 +62,19 @@ public class HSSFFormulaEvaluator implements FormulaEvaluator, WorkbookEvaluator
 	}
 
 	/**
+	 * @param workbook  The workbook to perform the formula evaluations in
+     * @param stabilityClassifier used to optimise caching performance. Pass <code>null</code>
+     * for the (conservative) assumption that any cell may have its definition changed after
+     * evaluation begins.
 	 * @param udfFinder pass <code>null</code> for default (AnalysisToolPak only)
 	 */
 	private HSSFFormulaEvaluator(HSSFWorkbook workbook, IStabilityClassifier stabilityClassifier, UDFFinder udfFinder) {
+		_book = workbook;
 		_bookEvaluator = new WorkbookEvaluator(HSSFEvaluationWorkbook.create(workbook), stabilityClassifier, udfFinder);
 	}
 
 	/**
+	 * @param workbook  The workbook to perform the formula evaluations in
 	 * @param stabilityClassifier used to optimise caching performance. Pass <code>null</code>
 	 * for the (conservative) assumption that any cell may have its definition changed after
 	 * evaluation begins.

@@ -74,6 +74,7 @@ import org.apache.poi.ss.usermodel.Table;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.CellReference.NameType;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
@@ -90,6 +91,7 @@ import org.apache.poi.util.POILogger;
  * For POI internal use only
  * <p/>
  */
+@Internal
 public final class FormulaParser {
     private final static POILogger log = POILogFactory.getLogger(FormulaParser.class);
     private final String _formulaString;
@@ -110,7 +112,7 @@ public final class FormulaParser {
     private char look;
 
     /**
-     * Tracks whether the run of whitespace preceeding "look" could be an
+     * Tracks whether the run of whitespace preceding "look" could be an
      * intersection operator.  See GetChar.
      */
     private boolean _inIntersection = false;
@@ -130,11 +132,11 @@ public final class FormulaParser {
      *  parse results.
      * This class is recommended only for single threaded use.
      *
-     * If you only have a usermodel.HSSFWorkbook, and not a
-     *  model.Workbook, then use the convenience method on
-     *  usermodel.HSSFFormulaEvaluator
+     * If you have a {@link org.apache.poi.hssf.usermodel.HSSFWorkbook}, and not a
+     *  {@link org.apache.poi.hssf.model.Workbook}, then use the convenience method on
+     *  {@link org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator}
      */
-    private FormulaParser(String formula, FormulaParsingWorkbook book, int sheetIndex, int rowIndex){
+    private FormulaParser(String formula, FormulaParsingWorkbook book, int sheetIndex, int rowIndex) {
         _formulaString = formula;
         _pointer=0;
         _book = book;
@@ -151,7 +153,7 @@ public final class FormulaParser {
      *
      * @param formula     the formula to parse
      * @param workbook    the parent workbook
-     * @param formulaType the type of the formula, see {@link FormulaType}
+     * @param formulaType the type of the formula
      * @param sheetIndex  the 0-based index of the sheet this formula belongs to.
      *     The sheet index is required to resolve sheet-level names. <code>-1</code> means that
      *     the scope of the name will be ignored and  the parser will match names only by name
@@ -163,7 +165,7 @@ public final class FormulaParser {
      * @return array of parsed tokens
      * @throws FormulaParseException if the formula has incorrect syntax or is otherwise invalid
      */
-    public static Ptg[] parse(String formula, FormulaParsingWorkbook workbook, int formulaType, int sheetIndex, int rowIndex) {
+    public static Ptg[] parse(String formula, FormulaParsingWorkbook workbook, FormulaType formulaType, int sheetIndex, int rowIndex) {
         FormulaParser fp = new FormulaParser(formula, workbook, sheetIndex, rowIndex);
         fp.parse();
         return fp.getRPNPtg(formulaType);
@@ -176,7 +178,7 @@ public final class FormulaParser {
      *
      * @param formula     the formula to parse
      * @param workbook    the parent workbook
-     * @param formulaType the type of the formula, see {@link FormulaType}
+     * @param formulaType the type of the formula
      * @param sheetIndex  the 0-based index of the sheet this formula belongs to.
      *     The sheet index is required to resolve sheet-level names. <code>-1</code> means that
      *     the scope of the name will be ignored and  the parser will match names only by name
@@ -184,7 +186,7 @@ public final class FormulaParser {
      * @return array of parsed tokens
      * @throws FormulaParseException if the formula has incorrect syntax or is otherwise invalid
      */
-    public static Ptg[] parse(String formula, FormulaParsingWorkbook workbook, int formulaType, int sheetIndex) {
+    public static Ptg[] parse(String formula, FormulaParsingWorkbook workbook, FormulaType formulaType, int sheetIndex) {
         return parse(formula, workbook, formulaType, sheetIndex, -1);
     }
 
@@ -1022,7 +1024,7 @@ public final class FormulaParser {
                 return null;
             }
         } else if (hasLetters) {
-            if (!CellReference.isColumnWithnRange(rep.replace("$", ""), _ssVersion)) {
+            if (!CellReference.isColumnWithinRange(rep.replace("$", ""), _ssVersion)) {
                 return null;
             }
         } else if (hasDigits) {
@@ -2001,7 +2003,7 @@ end;
         }
     }
 
-    private Ptg[] getRPNPtg(int formulaType) {
+    private Ptg[] getRPNPtg(FormulaType formulaType) {
         OperandClassTransformer oct = new OperandClassTransformer(formulaType);
         // RVA is for 'operand class': 'reference', 'value', 'array'
         oct.transformFormula(_rootNode);
