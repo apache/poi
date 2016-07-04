@@ -19,7 +19,7 @@ package org.apache.poi.hssf.usermodel;
 import java.io.IOException;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 
 import junit.framework.TestCase;
 
@@ -51,7 +51,7 @@ public class TestExternalReferenceChange extends TestCase {
 		HSSFSheet lSheet = mainWorkbook.getSheetAt(0);
 		HSSFCell lA1Cell = lSheet.getRow(0).getCell(0);
 		
-		assertEquals(Cell.CELL_TYPE_FORMULA, lA1Cell.getCellType());
+		assertEquals(CellType.FORMULA, lA1Cell.getCellType());
 		
 		HSSFFormulaEvaluator lMainWorkbookEvaluator = new HSSFFormulaEvaluator(mainWorkbook);
 		HSSFFormulaEvaluator lSourceEvaluator = new HSSFFormulaEvaluator(sourceWorkbook);
@@ -59,7 +59,7 @@ public class TestExternalReferenceChange extends TestCase {
 				new String[]{MAIN_WORKBOOK_FILENAME, SOURCE_WORKBOOK_FILENAME}, 
 				new HSSFFormulaEvaluator[] {lMainWorkbookEvaluator, lSourceEvaluator});
 		
-		assertEquals(Cell.CELL_TYPE_NUMERIC, lMainWorkbookEvaluator.evaluateFormulaCell(lA1Cell));
+		assertEquals(CellType.NUMERIC, lMainWorkbookEvaluator.evaluateFormulaCell(lA1Cell));
 
 		assertEquals(20.0d, lA1Cell.getNumericCellValue(), 0.00001d);
 

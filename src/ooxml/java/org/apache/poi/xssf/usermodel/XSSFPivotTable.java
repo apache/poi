@@ -31,6 +31,7 @@ import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DataConsolidateFunction;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.AreaReference;
@@ -39,26 +40,7 @@ import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCacheSource;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColFields;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDataField;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDataFields;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTField;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTItems;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTLocation;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageField;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageFields;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotCacheDefinition;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotField;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotFields;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotTableDefinition;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotTableStyle;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRowFields;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheetSource;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STAxis;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STDataConsolidateFunction;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STItemType;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STSourceType;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
 
 public class XSSFPivotTable extends POIXMLDocumentPart {
 
@@ -357,7 +339,7 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         dataField.setSubtotal(STDataConsolidateFunction.Enum.forInt(function.getValue()));
         Cell cell = getDataSheet().getRow(pivotArea.getFirstCell().getRow())
                 .getCell(pivotArea.getFirstCell().getCol() + columnIndex);
-        cell.setCellType(Cell.CELL_TYPE_STRING);
+        cell.setCellType(CellType.STRING);
         dataField.setName(valueFieldName);
         dataField.setFld(columnIndex);
         dataFields.setCount(dataFields.sizeOfDataFieldArray());

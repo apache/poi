@@ -19,6 +19,7 @@ package org.apache.poi.ss.formula.functions;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
 
 import junit.framework.TestCase;
@@ -59,7 +60,7 @@ public final class TestClean extends TestCase {
         cell.setCellFormula(formulaText);
         fe.notifyUpdateCell(cell);
         CellValue result = fe.evaluate(cell);
-        assertEquals(result.getCellType(), HSSFCell.CELL_TYPE_STRING);
+        assertEquals(result.getCellType(), CellType.STRING);
         assertEquals(expectedResult, result.getStringValue());
     }
 }

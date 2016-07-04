@@ -127,12 +127,12 @@ public interface Cell {
      *
      * @throws IllegalArgumentException if the specified cell type is invalid
      * @throws IllegalStateException if the current value cannot be converted to the new type
-     * @see #CELL_TYPE_NUMERIC
-     * @see #CELL_TYPE_STRING
-     * @see #CELL_TYPE_FORMULA
-     * @see #CELL_TYPE_BLANK
-     * @see #CELL_TYPE_BOOLEAN
-     * @see #CELL_TYPE_ERROR
+     * @see CellType#NUMERIC
+     * @see CellType#STRING
+     * @see CellType#FORMULA
+     * @see CellType#BLANK
+     * @see CellType#BOOLEAN
+     * @see CellType#ERROR
      * @deprecated POI 3.15 beta 3. Use {@link #setCellType(CellType)} instead.
      */
     void setCellType(int cellType);

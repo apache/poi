@@ -42,7 +42,7 @@ public class DataSources {
         return new AbstractCellRangeDataSource<Number>(sheet, cellRangeAddress) {
             public Number getPointAt(int index) {
                 CellValue cellValue = getCellValueAt(index);
-                if (cellValue != null && cellValue.getCellType() == Cell.CELL_TYPE_NUMERIC) {
+                if (cellValue != null && cellValue.getCellType() == CellType.NUMERIC) {
                     return Double.valueOf(cellValue.getNumberValue());
                 } else {
                     return null;
@@ -59,7 +59,7 @@ public class DataSources {
         return new AbstractCellRangeDataSource<String>(sheet, cellRangeAddress) {
             public String getPointAt(int index) {
                 CellValue cellValue = getCellValueAt(index);
-                if (cellValue != null && cellValue.getCellType() == Cell.CELL_TYPE_STRING) {
+                if (cellValue != null && cellValue.getCellType() == CellType.STRING) {
                     return cellValue.getStringValue();
                 } else {
                     return null;

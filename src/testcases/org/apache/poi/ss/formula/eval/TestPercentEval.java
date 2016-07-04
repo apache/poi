@@ -27,6 +27,7 @@ import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
 
 /**
@@ -77,7 +78,7 @@ public final class TestPercentEval extends TestCase {
 			// else some other unexpected error
 			throw e;
 		}
-		assertEquals(HSSFCell.CELL_TYPE_NUMERIC, cv.getCellType());
+		assertEquals(CellType.NUMERIC, cv.getCellType());
 		assertEquals(0.5, cv.getNumberValue(), 0.0);
 	}
 }

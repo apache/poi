@@ -583,7 +583,7 @@ public class TestDataFormatter {
         try {
             Sheet s = wb.createSheet();
             Row r = s.createRow(0);
-            Cell c = r.createCell(0, Cell.CELL_TYPE_ERROR);
+            Cell c = r.createCell(0, CellType.ERROR);
 
             c.setCellErrorValue(FormulaError.DIV0.getCode());
             assertEquals(FormulaError.DIV0.getString(), dfUS.formatCellValue(c));

@@ -19,6 +19,8 @@ package org.apache.poi.hssf.usermodel;
 
 import java.util.Iterator;
 
+import org.apache.poi.ss.usermodel.CellType;
+
 import junit.framework.TestCase;
 
 /**
@@ -75,11 +77,11 @@ public final class TestFormulaEvaluatorDocs extends TestCase {
 
 				for(Iterator cit = r.cellIterator(); cit.hasNext();) {
 					HSSFCell c = (HSSFCell)cit.next();
-					if(c.getCellType() == HSSFCell.CELL_TYPE_FORMULA) {
+					if(c.getCellType() == CellType.FORMULA) {
 						evaluator.evaluateFormulaCell(c);
 						
 						// For testing - all should be numeric
-						assertEquals(HSSFCell.CELL_TYPE_NUMERIC, evaluator.evaluateFormulaCell(c));
+						assertEquals(CellType.NUMERIC, evaluator.evaluateFormulaCell(c));
 					}
 				}
 			}
@@ -88,15 +90,15 @@ public final class TestFormulaEvaluatorDocs extends TestCase {
 		// Check now as expected
 		assertEquals(55.7, wb.getSheetAt(0).getRow(0).getCell(2).getNumericCellValue(), 0);
 		assertEquals("SUM(A1:B1)", wb.getSheetAt(0).getRow(0).getCell(2).getCellFormula());
-		assertEquals(HSSFCell.CELL_TYPE_FORMULA, wb.getSheetAt(0).getRow(0).getCell(2).getCellType());
+		assertEquals(CellType.FORMULA, wb.getSheetAt(0).getRow(0).getCell(2).getCellType());
 		
 		assertEquals(-4.6, wb.getSheetAt(0).getRow(1).getCell(2).getNumericCellValue(), 0);
 		assertEquals("SUM(A2:B2)", wb.getSheetAt(0).getRow(1).getCell(2).getCellFormula());
-		assertEquals(HSSFCell.CELL_TYPE_FORMULA, wb.getSheetAt(0).getRow(1).getCell(2).getCellType());
+		assertEquals(CellType.FORMULA, wb.getSheetAt(0).getRow(1).getCell(2).getCellType());
 		
 		assertEquals(22.3, wb.getSheetAt(1).getRow(0).getCell(0).getNumericCellValue(), 0);
 		assertEquals("'S1'!A1", wb.getSheetAt(1).getRow(0).getCell(0).getCellFormula());
-		assertEquals(HSSFCell.CELL_TYPE_FORMULA, wb.getSheetAt(1).getRow(0).getCell(0).getCellType());
+		assertEquals(CellType.FORMULA, wb.getSheetAt(1).getRow(0).getCell(0).getCellType());
 		
 		
 		// Now do the alternate call, which zaps the formulas
@@ -110,7 +112,7 @@ public final class TestFormulaEvaluatorDocs extends TestCase {
 
 				for(Iterator cit = r.cellIterator(); cit.hasNext();) {
 					HSSFCell c = (HSSFCell)cit.next();
-					if(c.getCellType() == HSSFCell.CELL_TYPE_FORMULA) {
+					if(c.getCellType() == CellType.FORMULA) {
 						evaluator.evaluateInCell(c);
 					}
 				}
@@ -118,12 +120,12 @@ public final class TestFormulaEvaluatorDocs extends TestCase {
 		}
 		
 		assertEquals(55.7, wb.getSheetAt(0).getRow(0).getCell(2).getNumericCellValue(), 0);
-		assertEquals(HSSFCell.CELL_TYPE_NUMERIC, wb.getSheetAt(0).getRow(0).getCell(2).getCellType());
+		assertEquals(CellType.NUMERIC, wb.getSheetAt(0).getRow(0).getCell(2).getCellType());
 		
 		assertEquals(-4.6, wb.getSheetAt(0).getRow(1).getCell(2).getNumericCellValue(), 0);
-		assertEquals(HSSFCell.CELL_TYPE_NUMERIC, wb.getSheetAt(0).getRow(1).getCell(2).getCellType());
+		assertEquals(CellType.NUMERIC, wb.getSheetAt(0).getRow(1).getCell(2).getCellType());
 		
 		assertEquals(22.3, wb.getSheetAt(1).getRow(0).getCell(0).getNumericCellValue(), 0);
-		assertEquals(HSSFCell.CELL_TYPE_NUMERIC, wb.getSheetAt(1).getRow(0).getCell(0).getCellType());
+		assertEquals(CellType.NUMERIC, wb.getSheetAt(1).getRow(0).getCell(0).getCellType());
 	}
 }

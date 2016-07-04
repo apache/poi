@@ -26,6 +26,7 @@ import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.ptg.Pxg;
 import org.apache.poi.ss.formula.ptg.Pxg3D;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFCell;
@@ -76,7 +77,7 @@ public final class XSSFFormulaUtils {
         for (Sheet sh : _wb) {
             for (Row row : sh) {
                 for (Cell cell : row) {
-                    if (cell.getCellType() == Cell.CELL_TYPE_FORMULA) {
+                    if (cell.getCellType() == CellType.FORMULA) {
                         updateFormula((XSSFCell) cell, oldName, newName);
                     }
                 }

@@ -29,6 +29,7 @@ import java.util.ArrayList;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
@@ -541,7 +542,7 @@ public class ToCSV {
                     csvLine.add("");
                 }
                 else {
-                    if(cell.getCellType() != Cell.CELL_TYPE_FORMULA) {
+                    if(cell.getCellType() != CellType.FORMULA) {
                         csvLine.add(this.formatter.formatCellValue(cell));
                     }
                     else {

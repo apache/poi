@@ -16,10 +16,7 @@
 ==================================================================== */
 package org.apache.poi.ss.formula.udf;
 
-import static org.junit.Assert.assertNotNull;
-
 import org.apache.poi.ss.formula.functions.FreeRefFunction;
-
 import org.junit.Test;
 
 public class TestDefaultUDFFinder extends BaseTestUDFFinder {

@@ -26,6 +26,7 @@ import java.util.Map;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ss.usermodel.BaseTestFormulaEvaluator;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
@@ -369,32 +370,32 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
             
             // sheet1 A1
             XSSFCell cell = sheet1.createRow(0).createCell(0);
-            cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+            cell.setCellType(CellType.NUMERIC);
             cell.setCellValue(1.0);
             
             // sheet2 A1
             cell = sheet2.createRow(0).createCell(0);
-            cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+            cell.setCellType(CellType.NUMERIC);
             cell.setCellValue(1.0);
             
             // sheet2 B1
             cell = sheet2.getRow(0).createCell(1);
-            cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+            cell.setCellType(CellType.NUMERIC);
             cell.setCellValue(1.0);
             
             // sheet3 A1
             cell = sheet3.createRow(0).createCell(0);
-            cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+            cell.setCellType(CellType.NUMERIC);
             cell.setCellValue(1.0);
             
             // sheet1 A2 formulae
             cell = sheet1.createRow(1).createCell(0);
-            cell.setCellType(Cell.CELL_TYPE_FORMULA);
+            cell.setCellType(CellType.FORMULA);
             cell.setCellFormula("SUM(Sheet1:Sheet3!A1)");
             
             // sheet1 A3 formulae
             cell = sheet1.createRow(2).createCell(0);
-            cell.setCellType(Cell.CELL_TYPE_FORMULA);
+            cell.setCellType(CellType.FORMULA);
             cell.setCellFormula("SUM(Sheet1:Sheet3!A1:B1)");
             
             wb.getCreationHelper().createFormulaEvaluator().evaluateAll();
@@ -416,8 +417,8 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
             XSSFSheet sheet = wb.createSheet("test");
             XSSFRow row = sheet.createRow(0);
             XSSFRow row2 = sheet.createRow(1);
-            XSSFCell cellA2 = row2.createCell(0, Cell.CELL_TYPE_FORMULA);
-            XSSFCell cellB1 = row.createCell(1, Cell.CELL_TYPE_NUMERIC);
+            XSSFCell cellA2 = row2.createCell(0, CellType.FORMULA);
+            XSSFCell cellB1 = row.createCell(1, CellType.NUMERIC);
             cellB1.setCellValue(10);
             XSSFFormulaEvaluator formulaEvaluator = wb.getCreationHelper().createFormulaEvaluator();
             cellA2.setCellFormula("IF(B1=0,\"\",((ROW()-ROW(A$1))*12))");
@@ -441,8 +442,8 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
             XSSFSheet sheet = wb.createSheet("test");
             XSSFRow row = sheet.createRow(0);
             XSSFRow row2 = sheet.createRow(1);
-            XSSFCell cellA2 = row2.createCell(0, Cell.CELL_TYPE_FORMULA);
-            XSSFCell cellB1 = row.createCell(1, Cell.CELL_TYPE_NUMERIC);
+            XSSFCell cellA2 = row2.createCell(0, CellType.FORMULA);
+            XSSFCell cellB1 = row.createCell(1, CellType.NUMERIC);
             cellB1.setCellValue(10);
             XSSFFormulaEvaluator formulaEvaluator = wb.getCreationHelper().createFormulaEvaluator();
             cellA2.setCellFormula("IF(B1=0,\"\",((ROW(A$1))))");
@@ -466,8 +467,8 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
             XSSFSheet sheet = wb.createSheet("test");
             XSSFRow row = sheet.createRow(0);
             XSSFRow row2 = sheet.createRow(1);
-            XSSFCell cellA2 = row2.createCell(0, Cell.CELL_TYPE_FORMULA);
-            XSSFCell cellB1 = row.createCell(1, Cell.CELL_TYPE_NUMERIC);
+            XSSFCell cellA2 = row2.createCell(0, CellType.FORMULA);
+            XSSFCell cellB1 = row.createCell(1, CellType.NUMERIC);
             cellB1.setCellValue(10);
             XSSFFormulaEvaluator formulaEvaluator = wb.getCreationHelper().createFormulaEvaluator();
 
@@ -492,8 +493,8 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
             XSSFSheet sheet = wb.createSheet("test");
             XSSFRow row = sheet.createRow(0);
             XSSFRow row2 = sheet.createRow(1);
-            XSSFCell cellA2 = row2.createCell(0, Cell.CELL_TYPE_FORMULA);
-            XSSFCell cellB1 = row.createCell(1, Cell.CELL_TYPE_NUMERIC);
+            XSSFCell cellA2 = row2.createCell(0, CellType.FORMULA);
+            XSSFCell cellB1 = row.createCell(1, CellType.NUMERIC);
             cellB1.setCellValue(10);
             XSSFFormulaEvaluator formulaEvaluator = wb.getCreationHelper().createFormulaEvaluator();
             
@@ -512,8 +513,8 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
             XSSFSheet sheet = wb.createSheet("test");
             XSSFRow row = sheet.createRow(0);
             XSSFRow row2 = sheet.createRow(1);
-            XSSFCell cellA2 = row2.createCell(0, Cell.CELL_TYPE_FORMULA);
-            XSSFCell cellB1 = row.createCell(1, Cell.CELL_TYPE_NUMERIC);
+            XSSFCell cellA2 = row2.createCell(0, CellType.FORMULA);
+            XSSFCell cellB1 = row.createCell(1, CellType.NUMERIC);
             cellB1.setCellValue(10);
             XSSFFormulaEvaluator formulaEvaluator = wb.getCreationHelper().createFormulaEvaluator();
             
@@ -532,8 +533,8 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
             XSSFSheet sheet = wb.createSheet("test");
             XSSFRow row = sheet.createRow(0);
             XSSFRow row2 = sheet.createRow(1);
-            XSSFCell cellA2 = row2.createCell(0, Cell.CELL_TYPE_FORMULA);
-            XSSFCell cellB1 = row.createCell(1, Cell.CELL_TYPE_NUMERIC);
+            XSSFCell cellA2 = row2.createCell(0, CellType.FORMULA);
+            XSSFCell cellB1 = row.createCell(1, CellType.NUMERIC);
             cellB1.setCellValue(10);
             XSSFFormulaEvaluator formulaEvaluator = wb.getCreationHelper().createFormulaEvaluator();
 
@@ -552,8 +553,8 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
             XSSFSheet sheet = wb.createSheet("test");
             XSSFRow row = sheet.createRow(0);
             XSSFRow row2 = sheet.createRow(1);
-            XSSFCell cellA2 = row2.createCell(0, Cell.CELL_TYPE_FORMULA);
-            XSSFCell cellB1 = row.createCell(1, Cell.CELL_TYPE_NUMERIC);
+            XSSFCell cellA2 = row2.createCell(0, CellType.FORMULA);
+            XSSFCell cellB1 = row.createCell(1, CellType.NUMERIC);
             cellB1.setCellValue(10);
             XSSFFormulaEvaluator formulaEvaluator = wb.getCreationHelper().createFormulaEvaluator();
 
@@ -575,9 +576,9 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
 
         wb.getCreationHelper().createFormulaEvaluator().evaluateAll();
 
-        assertEquals(XSSFCell.CELL_TYPE_ERROR, getCell(sheet, 0,0).getCachedFormulaResultType());
+        assertEquals(CellType.ERROR, getCell(sheet, 0,0).getCachedFormulaResultType());
         assertEquals(FormulaError.VALUE.getCode(), getCell(sheet, 0,0).getErrorCellValue());
-        assertEquals(XSSFCell.CELL_TYPE_ERROR, getCell(sheet, 0,1).getCachedFormulaResultType());
+        assertEquals(CellType.ERROR, getCell(sheet, 0,1).getCachedFormulaResultType());
         assertEquals(FormulaError.VALUE.getCode(), getCell(sheet, 0,1).getErrorCellValue());
         
         wb.close();
@@ -596,11 +597,11 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
 
         wb.getCreationHelper().createFormulaEvaluator().evaluateAll();
 
-        assertEquals(XSSFCell.CELL_TYPE_ERROR, getCell(sheet, 0, 0).getCachedFormulaResultType());
+        assertEquals(CellType.ERROR, getCell(sheet, 0, 0).getCachedFormulaResultType());
         assertEquals(FormulaError.VALUE.getCode(), getCell(sheet, 0, 0).getErrorCellValue());
-        assertEquals(XSSFCell.CELL_TYPE_ERROR, getCell(sheet, 1, 0).getCachedFormulaResultType());
+        assertEquals(CellType.ERROR, getCell(sheet, 1, 0).getCachedFormulaResultType());
         assertEquals(FormulaError.VALUE.getCode(), getCell(sheet, 1, 0).getErrorCellValue());
-        assertEquals(XSSFCell.CELL_TYPE_ERROR, getCell(sheet, 0, 3).getCachedFormulaResultType());
+        assertEquals(CellType.ERROR, getCell(sheet, 0, 3).getCachedFormulaResultType());
         assertEquals(FormulaError.VALUE.getCode(), getCell(sheet, 0, 3).getErrorCellValue());
         
         wb.close();
@@ -639,7 +640,7 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
         if (cell == null) {
             cell = r.createCell(column);
         }
-        cell.setCellType(XSSFCell.CELL_TYPE_FORMULA);
+        cell.setCellType(CellType.FORMULA);
         cell.setCellFormula(formula);
     }
 

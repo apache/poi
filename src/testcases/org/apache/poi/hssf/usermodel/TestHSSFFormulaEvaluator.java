@@ -33,6 +33,7 @@ import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.usermodel.BaseTestFormulaEvaluator;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.FormulaError;
 import org.junit.Test;
@@ -54,7 +55,7 @@ public final class TestHSSFFormulaEvaluator extends BaseTestFormulaEvaluator {
 		HSSFCell cell = sheet.getRow(8).getCell(0);
 		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
 		CellValue cv = fe.evaluate(cell);
-		assertEquals(HSSFCell.CELL_TYPE_NUMERIC, cv.getCellType());
+		assertEquals(CellType.NUMERIC, cv.getCellType());
 		assertEquals(3.72, cv.getNumberValue(), 0.0);
 		wb.close();
 	}
@@ -126,7 +127,7 @@ public final class TestHSSFFormulaEvaluator extends BaseTestFormulaEvaluator {
 		try {
 			value = hsf.evaluate(cellA1);
 
-	        assertEquals(Cell.CELL_TYPE_NUMERIC, value.getCellType());
+	        assertEquals(CellType.NUMERIC, value.getCellType());
 	        assertEquals(5.33, value.getNumberValue(), 0.0);
 	        
 		} catch (RuntimeException e) {
@@ -198,8 +199,8 @@ public final class TestHSSFFormulaEvaluator extends BaseTestFormulaEvaluator {
       
       // VLookup on a name in another file
       cell = wb1.getSheetAt(0).getRow(1).getCell(2);
-      assertEquals(Cell.CELL_TYPE_FORMULA, cell.getCellType());
-      assertEquals(Cell.CELL_TYPE_NUMERIC, cell.getCachedFormulaResultType());
+      assertEquals(CellType.FORMULA, cell.getCellType());
+      assertEquals(CellType.NUMERIC, cell.getCachedFormulaResultType());
       assertEquals(12.30, cell.getNumericCellValue(), 0.0001);
       // WARNING - this is wrong!
       // The file name should be showing, but bug #45970 is fixed
@@ -209,8 +210,8 @@ public final class TestHSSFFormulaEvaluator extends BaseTestFormulaEvaluator {
       
       // Simple reference to a name in another file
       cell = wb1.getSheetAt(0).getRow(1).getCell(4);
-      assertEquals(Cell.CELL_TYPE_FORMULA, cell.getCellType());
-      assertEquals(Cell.CELL_TYPE_NUMERIC, cell.getCachedFormulaResultType());
+      assertEquals(CellType.FORMULA, cell.getCellType());
+      assertEquals(CellType.NUMERIC, cell.getCachedFormulaResultType());
       assertEquals(36.90, cell.getNumericCellValue(), 0.0001);
       // TODO Correct this!
       // The file name should be shown too, see bug #56742
@@ -236,14 +237,14 @@ public final class TestHSSFFormulaEvaluator extends BaseTestFormulaEvaluator {
 
       // Re-check VLOOKUP one
       cell = wb1.getSheetAt(0).getRow(1).getCell(2);
-      assertEquals(Cell.CELL_TYPE_FORMULA, cell.getCellType());
-      assertEquals(Cell.CELL_TYPE_NUMERIC, cell.getCachedFormulaResultType());
+      assertEquals(CellType.FORMULA, cell.getCellType());
+      assertEquals(CellType.NUMERIC, cell.getCachedFormulaResultType());
       assertEquals(12.30, cell.getNumericCellValue(), 0.0001);
       
       // Re-check ref one
       cell = wb1.getSheetAt(0).getRow(1).getCell(4);
-      assertEquals(Cell.CELL_TYPE_FORMULA, cell.getCellType());
-      assertEquals(Cell.CELL_TYPE_NUMERIC, cell.getCachedFormulaResultType());
+      assertEquals(CellType.FORMULA, cell.getCellType());
+      assertEquals(CellType.NUMERIC, cell.getCachedFormulaResultType());
       assertEquals(36.90, cell.getNumericCellValue(), 0.0001);
       
       

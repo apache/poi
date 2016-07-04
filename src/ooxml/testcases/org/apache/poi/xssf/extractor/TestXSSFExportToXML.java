@@ -32,6 +32,7 @@ import junit.framework.TestCase;
 
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.util.XMLHelper;
@@ -513,30 +514,30 @@ public final class TestXSSFExportToXML extends TestCase {
        
        Cell cString = row.createCell(0);
        cString.setCellValue("somestring");
-       cString.setCellType(XSSFCell.CELL_TYPE_STRING);
+       cString.setCellType(CellType.STRING);
        
        Cell cBoolean = row.createCell(1);
        cBoolean.setCellValue(true);
-       cBoolean.setCellType(XSSFCell.CELL_TYPE_BOOLEAN);
+       cBoolean.setCellType(CellType.BOOLEAN);
        
        Cell cError = row.createCell(2);
-       cError.setCellType(XSSFCell.CELL_TYPE_ERROR);
+       cError.setCellType(CellType.ERROR);
        
        Cell cFormulaString = row.createCell(3);
        cFormulaString.setCellFormula("A1");
-       cFormulaString.setCellType(XSSFCell.CELL_TYPE_FORMULA);
+       cFormulaString.setCellType(CellType.FORMULA);
        
        Cell cFormulaNumeric = row.createCell(4);
        cFormulaNumeric.setCellFormula("F1");
-       cFormulaNumeric.setCellType(XSSFCell.CELL_TYPE_FORMULA);
+       cFormulaNumeric.setCellType(CellType.FORMULA);
        
        Cell cNumeric = row.createCell(5);
        cNumeric.setCellValue(1.2);
-       cNumeric.setCellType(XSSFCell.CELL_TYPE_NUMERIC);
+       cNumeric.setCellType(CellType.NUMERIC);
        
        Cell cDate = row.createCell(6);
        cDate.setCellValue(new Date());
-       cDate.setCellType(XSSFCell.CELL_TYPE_NUMERIC);
+       cDate.setCellType(CellType.NUMERIC);
        
        boolean found = false;
        for (POIXMLDocumentPart p : wb.getRelations()) {

@@ -27,6 +27,7 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.FormulaError;
 import org.junit.Test;
 
@@ -57,12 +58,12 @@ public final class TestNper {
 		cell.setCellFormula("NPER(12,4500,100000,100000)");
 		cell.setCellValue(15.0);
 		assertEquals("NPER(12,4500,100000,100000)", cell.getCellFormula());
-		assertEquals(HSSFCell.CELL_TYPE_NUMERIC, cell.getCachedFormulaResultType());
+		assertEquals(CellType.NUMERIC, cell.getCachedFormulaResultType());
 		assertEquals(15.0, cell.getNumericCellValue(), 0.0);
 
 		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
 		fe.evaluateFormulaCell(cell);
-		assertEquals(HSSFCell.CELL_TYPE_ERROR, cell.getCachedFormulaResultType());
+		assertEquals(CellType.ERROR, cell.getCachedFormulaResultType());
 		assertEquals(FormulaError.NUM.getCode(), cell.getErrorCellValue());
 		wb.close();
 	}

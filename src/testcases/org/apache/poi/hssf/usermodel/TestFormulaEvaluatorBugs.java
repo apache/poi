@@ -40,6 +40,7 @@ import org.apache.poi.ss.formula.ptg.FuncVarPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.ptg.RefPtg;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.LocaleUtil;
@@ -565,7 +566,7 @@ public final class TestFormulaEvaluatorBugs {
         }
     }
     private Ptg[] getPtgs(HSSFCell cell) {
-        assertEquals(HSSFCell.CELL_TYPE_FORMULA, cell.getCellType());
+        assertEquals(CellType.FORMULA, cell.getCellType());
         assertEquals(FormulaRecordAggregate.class, cell.getCellValueRecord().getClass());
         FormulaRecordAggregate agg = (FormulaRecordAggregate)cell.getCellValueRecord();
         FormulaRecord rec = agg.getFormulaRecord();

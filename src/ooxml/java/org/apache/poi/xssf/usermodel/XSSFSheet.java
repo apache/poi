@@ -43,7 +43,6 @@ import javax.xml.namespace.QName;
 
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.POIXMLException;
-
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.PartAlreadyExistsException;
 import org.apache.poi.openxml4j.opc.PackagePart;
@@ -58,6 +57,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellCopyPolicy;
 import org.apache.poi.ss.usermodel.CellRange;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DataValidation;
 import org.apache.poi.ss.usermodel.DataValidationHelper;
 import org.apache.poi.ss.usermodel.Footer;
@@ -3782,7 +3782,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
                 arrayFormulas.remove(range);
                 CellRange<XSSFCell> cr = getCellRange(range);
                 for (XSSFCell c : cr) {
-                    c.setCellType(Cell.CELL_TYPE_BLANK);
+                    c.setCellType(CellType.BLANK);
                 }
                 return cr;
             }

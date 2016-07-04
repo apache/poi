@@ -17,16 +17,16 @@
 
 package org.apache.poi.ss.formula;
 
+import org.apache.poi.ss.formula.FormulaCellCache.IEntryOperation;
+import org.apache.poi.ss.formula.FormulaUsedBlankCellSet.BookSheetKey;
+import org.apache.poi.ss.formula.PlainCellCache.Loc;
 import org.apache.poi.ss.formula.eval.BlankEval;
 import org.apache.poi.ss.formula.eval.BoolEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
-import org.apache.poi.ss.formula.FormulaCellCache.IEntryOperation;
-import org.apache.poi.ss.formula.FormulaUsedBlankCellSet.BookSheetKey;
-import org.apache.poi.ss.formula.PlainCellCache.Loc;
-import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 
 /**
  * Performance optimisation for {@link org.apache.poi.ss.usermodel.FormulaEvaluator}.
@@ -56,7 +56,7 @@ final class EvaluationCache {
 		Loc loc = new Loc(bookIndex, sheetIndex, rowIndex, columnIndex);
 		PlainValueCellCacheEntry pcce = _plainCellCache.get(loc);
 
-		if (cell.getCellType() == Cell.CELL_TYPE_FORMULA) {
+		if (cell.getCellType() == CellType.FORMULA) {
 			if (fcce == null) {
 				fcce = new FormulaCellCacheEntry();
 				if (pcce == null) {
@@ -197,7 +197,7 @@ final class EvaluationCache {
 	}
 	public void notifyDeleteCell(int bookIndex, int sheetIndex, EvaluationCell cell) {
 
-		if (cell.getCellType() == Cell.CELL_TYPE_FORMULA) {
+		if (cell.getCellType() == CellType.FORMULA) {
 			FormulaCellCacheEntry fcce = _formulaCellCache.remove(cell);
 			if (fcce == null) {
 				// formula cell has not been evaluated yet

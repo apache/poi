@@ -29,11 +29,11 @@ public class CountifsTests extends TestCase {
         HSSFWorkbook workbook = new HSSFWorkbook();
         Sheet sheet = workbook.createSheet("test");
         Row row1 = sheet.createRow(0);
-        Cell cellA1 = row1.createCell(0, Cell.CELL_TYPE_FORMULA);
-        Cell cellB1 = row1.createCell(1, Cell.CELL_TYPE_NUMERIC);
-        Cell cellC1 = row1.createCell(2, Cell.CELL_TYPE_NUMERIC);
-        Cell cellD1 = row1.createCell(3, Cell.CELL_TYPE_NUMERIC);
-        Cell cellE1 = row1.createCell(4, Cell.CELL_TYPE_NUMERIC);
+        Cell cellA1 = row1.createCell(0, CellType.FORMULA);
+        Cell cellB1 = row1.createCell(1, CellType.NUMERIC);
+        Cell cellC1 = row1.createCell(2, CellType.NUMERIC);
+        Cell cellD1 = row1.createCell(3, CellType.NUMERIC);
+        Cell cellE1 = row1.createCell(4, CellType.NUMERIC);
         cellB1.setCellValue(1);
         cellC1.setCellValue(1);
         cellD1.setCellValue(2);
@@ -49,7 +49,7 @@ public class CountifsTests extends TestCase {
         HSSFWorkbook workbook = new HSSFWorkbook();
         Sheet sheet = workbook.createSheet("test");
         Row row1 = sheet.createRow(0);
-        Cell cellA1 = row1.createCell(0, Cell.CELL_TYPE_FORMULA);
+        Cell cellA1 = row1.createCell(0, CellType.FORMULA);
         cellA1.setCellFormula("COUNTIFS()");
         FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
         CellValue evaluate = evaluator.evaluate(cellA1);

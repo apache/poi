@@ -25,6 +25,7 @@ import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
 
 /**
@@ -39,7 +40,7 @@ public final class TestDate extends TestCase {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet("new sheet");
         cell11 = sheet.createRow(0).createCell(0);
-        cell11.setCellType(HSSFCell.CELL_TYPE_FORMULA);
+        cell11.setCellType(CellType.FORMULA);
         evaluator = new HSSFFormulaEvaluator(wb);
     }
 
@@ -81,7 +82,7 @@ public final class TestDate extends TestCase {
         cell11.setCellFormula(formulaText);
         evaluator.clearAllCachedResultValues();
         CellValue cv = evaluator.evaluate(cell11);
-        if (cv.getCellType() != Cell.CELL_TYPE_NUMERIC) {
+        if (cv.getCellType() != CellType.NUMERIC) {
             throw new AssertionFailedError("Wrong result type: " + cv.formatAsString());
         }
         double actualValue = cv.getNumberValue();

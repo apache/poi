@@ -31,7 +31,7 @@ import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
-import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.FormulaError;
 import org.junit.Before;
@@ -48,7 +48,7 @@ public final class TestFixed {
         try {
             HSSFSheet sheet = wb.createSheet("new sheet");
             cell11 = sheet.createRow(0).createCell(0);
-            cell11.setCellType(HSSFCell.CELL_TYPE_FORMULA);
+            cell11.setCellType(CellType.FORMULA);
             evaluator = new HSSFFormulaEvaluator(wb);
         } finally {
             wb.close();
@@ -117,7 +117,7 @@ public final class TestFixed {
         cell11.setCellFormula(formulaText);
         evaluator.clearAllCachedResultValues();
         CellValue cv = evaluator.evaluate(cell11);
-        assertEquals("Wrong result type: " + cv.formatAsString(), Cell.CELL_TYPE_STRING, cv.getCellType());
+        assertEquals("Wrong result type: " + cv.formatAsString(), CellType.STRING, cv.getCellType());
         String actualValue = cv.getStringValue();
         assertEquals(expectedResult, actualValue);
     }
@@ -127,7 +127,7 @@ public final class TestFixed {
         evaluator.clearAllCachedResultValues();
         CellValue cv = evaluator.evaluate(cell11);
         assertTrue("Wrong result type: " + cv.formatAsString(), 
-                cv.getCellType() == Cell.CELL_TYPE_ERROR
+                cv.getCellType() == CellType.ERROR
                 && cv.getErrorValue() == FormulaError.VALUE.getCode());
     }
 }

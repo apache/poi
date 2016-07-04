@@ -370,12 +370,12 @@ public final class TestXSSFFormulaParser {
             assertEquals("MIN",            toFormulaString(ptgs[1], fpb));
 
             // Check we can round-trip - try to set a new one to a new single cell
-            Cell newF = s1.getRow(0).createCell(10, Cell.CELL_TYPE_FORMULA);
+            Cell newF = s1.getRow(0).createCell(10, CellType.FORMULA);
             newF.setCellFormula("SUM(Sheet2:Sheet3!A1)");
             assertEquals("SUM(Sheet2:Sheet3!A1)", newF.getCellFormula());
             
             // Check we can round-trip - try to set a new one to a cell range
-            newF = s1.getRow(0).createCell(11, Cell.CELL_TYPE_FORMULA);
+            newF = s1.getRow(0).createCell(11, CellType.FORMULA);
             newF.setCellFormula("MIN(Sheet1:Sheet2!A1:B2)");
             assertEquals("MIN(Sheet1:Sheet2!A1:B2)", newF.getCellFormula());
 
@@ -465,7 +465,7 @@ public final class TestXSSFFormulaParser {
 
             for (Row row : xsheet) {
                 for (Cell cell : row) {
-                    if (cell.getCellType() == HSSFCell.CELL_TYPE_FORMULA) {
+                    if (cell.getCellType() == CellType.FORMULA) {
                         try {
                             evaluator.evaluateFormulaCell(cell);
                         } catch (Exception e) {

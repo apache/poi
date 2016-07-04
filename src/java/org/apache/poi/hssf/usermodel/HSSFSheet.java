@@ -40,7 +40,6 @@ import org.apache.poi.hssf.record.EscherAggregate;
 import org.apache.poi.hssf.record.ExtendedFormatRecord;
 import org.apache.poi.hssf.record.HyperlinkRecord;
 import org.apache.poi.hssf.record.NameRecord;
-import org.apache.poi.hssf.record.NoteRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RecordBase;
 import org.apache.poi.hssf.record.RowRecord;
@@ -62,6 +61,7 @@ import org.apache.poi.ss.formula.ptg.UnionPtg;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellRange;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DataValidation;
 import org.apache.poi.ss.usermodel.DataValidationHelper;
 import org.apache.poi.ss.usermodel.Row;
@@ -2338,7 +2338,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
         CellRange<HSSFCell> result = getCellRange(range);
         // clear all cells in the range
         for (Cell c : result) {
-            c.setCellType(Cell.CELL_TYPE_BLANK);
+            c.setCellType(CellType.BLANK);
         }
         return result;
     }

@@ -16,7 +16,9 @@
 ==================================================================== */
 package org.apache.poi.ss.formula;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
 
@@ -30,6 +32,7 @@ import org.apache.poi.ss.formula.functions.FreeRefFunction;
 import org.apache.poi.ss.formula.udf.DefaultUDFFinder;
 import org.apache.poi.ss.formula.udf.UDFFinder;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -146,12 +149,12 @@ public abstract class BaseTestExternalFunctions {
         Cell cell2 = sh.getRow(2).getCell(1);
         assertEquals("ISODD(2)", cell2.getCellFormula());
         assertEquals(false, evaluator.evaluate(cell2).getBooleanValue());
-        assertEquals(Cell.CELL_TYPE_BOOLEAN, evaluator.evaluateFormulaCell(cell2));
+        assertEquals(CellType.BOOLEAN, evaluator.evaluateFormulaCell(cell2));
 
         Cell cell3 = sh.getRow(3).getCell(1);
         assertEquals("ISEVEN(2)", cell3.getCellFormula());
         assertEquals(true, evaluator.evaluate(cell3).getBooleanValue());
-        assertEquals(Cell.CELL_TYPE_BOOLEAN, evaluator.evaluateFormulaCell(cell3));
+        assertEquals(CellType.BOOLEAN, evaluator.evaluateFormulaCell(cell3));
 
         wb.close();
     }

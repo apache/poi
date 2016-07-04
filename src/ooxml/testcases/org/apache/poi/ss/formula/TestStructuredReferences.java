@@ -23,6 +23,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Table;
@@ -72,7 +73,7 @@ public class TestStructuredReferences {
     private static void confirm(FormulaEvaluator fe, Cell cell, double expectedResult) {
         fe.clearAllCachedResultValues();
         CellValue cv = fe.evaluate(cell);
-        if (cv.getCellType() != Cell.CELL_TYPE_NUMERIC) {
+        if (cv.getCellType() != CellType.NUMERIC) {
             fail("expected numeric cell type but got " + cv.formatAsString());
         }
         assertEquals(expectedResult, cv.getNumberValue(), 0.0);

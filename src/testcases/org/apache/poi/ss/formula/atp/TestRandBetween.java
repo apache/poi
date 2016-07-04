@@ -21,6 +21,7 @@ import junit.framework.TestCase;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -49,7 +50,7 @@ public class TestRandBetween extends TestCase {
 		Row row = sheet.createRow(0);
 		bottomValueCell = row.createCell(0);
 		topValueCell = row.createCell(1);
-		formulaCell = row.createCell(2, Cell.CELL_TYPE_FORMULA);
+		formulaCell = row.createCell(2, CellType.FORMULA);
 	}
 	
 	@Override
@@ -113,7 +114,7 @@ public class TestRandBetween extends TestCase {
 	public void testRandBetweenTopBlank() {
 
 		bottomValueCell.setCellValue(-1);		
-		topValueCell.setCellType(Cell.CELL_TYPE_BLANK);
+		topValueCell.setCellType(CellType.BLANK);
 		formulaCell.setCellFormula("RANDBETWEEN($A$1,$B$1)");
 		evaluator.clearAllCachedResultValues();
 		evaluator.evaluateFormulaCell(formulaCell);
@@ -130,7 +131,7 @@ public class TestRandBetween extends TestCase {
 		formulaCell.setCellFormula("RANDBETWEEN($A$1,$B$1)");
 		evaluator.clearAllCachedResultValues();
 		evaluator.evaluateFormulaCell(formulaCell);
-		assertEquals(Cell.CELL_TYPE_ERROR, formulaCell.getCachedFormulaResultType());
+		assertEquals(CellType.ERROR, formulaCell.getCachedFormulaResultType());
 		assertEquals(ErrorEval.VALUE_INVALID.getErrorCode(), formulaCell.getErrorCellValue());
 		
 		
@@ -140,7 +141,7 @@ public class TestRandBetween extends TestCase {
 		formulaCell.setCellFormula("RANDBETWEEN($A$1,$B$1)");
 		evaluator.clearAllCachedResultValues();
 		evaluator.evaluateFormulaCell(formulaCell);
-		assertEquals(Cell.CELL_TYPE_ERROR, formulaCell.getCachedFormulaResultType());
+		assertEquals(CellType.ERROR, formulaCell.getCachedFormulaResultType());
 		assertEquals(ErrorEval.VALUE_INVALID.getErrorCode(), formulaCell.getErrorCellValue());
 
 		// Check case where both inputs are of wrong type
@@ -149,7 +150,7 @@ public class TestRandBetween extends TestCase {
 		formulaCell.setCellFormula("RANDBETWEEN($A$1,$B$1)");
 		evaluator.clearAllCachedResultValues();
 		evaluator.evaluateFormulaCell(formulaCell);
-		assertEquals(Cell.CELL_TYPE_ERROR, formulaCell.getCachedFormulaResultType());
+		assertEquals(CellType.ERROR, formulaCell.getCachedFormulaResultType());
 		assertEquals(ErrorEval.VALUE_INVALID.getErrorCode(), formulaCell.getErrorCellValue());
 	
 	}
@@ -165,14 +166,14 @@ public class TestRandBetween extends TestCase {
 		formulaCell.setCellFormula("RANDBETWEEN($A$1,$B$1)");
 		evaluator.clearAllCachedResultValues();
 		evaluator.evaluateFormulaCell(formulaCell);
-		assertEquals(Cell.CELL_TYPE_ERROR, formulaCell.getCachedFormulaResultType());
+		assertEquals(CellType.ERROR, formulaCell.getCachedFormulaResultType());
 		assertEquals(ErrorEval.NUM_ERROR.getErrorCode(), formulaCell.getErrorCellValue());		
 		bottomValueCell.setCellValue(1);		
-		topValueCell.setCellType(Cell.CELL_TYPE_BLANK);
+		topValueCell.setCellType(CellType.BLANK);
 		formulaCell.setCellFormula("RANDBETWEEN($A$1,$B$1)");
 		evaluator.clearAllCachedResultValues();
 		evaluator.evaluateFormulaCell(formulaCell);
-		assertEquals(Cell.CELL_TYPE_ERROR, formulaCell.getCachedFormulaResultType());
+		assertEquals(CellType.ERROR, formulaCell.getCachedFormulaResultType());
 		assertEquals(ErrorEval.NUM_ERROR.getErrorCode(), formulaCell.getErrorCellValue());
 	}
 	

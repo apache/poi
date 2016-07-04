@@ -18,6 +18,7 @@
 package org.apache.poi.ss.util.cellwalk;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -100,7 +101,7 @@ public class CellWalk {
     }
 
     private boolean isEmpty(Cell cell) {
-        return (cell.getCellType() == Cell.CELL_TYPE_BLANK);
+        return (cell.getCellType() == CellType.BLANK);
     }
 
     /**

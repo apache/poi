@@ -157,16 +157,16 @@ public class TestCellFormat {
         
         CellFormat cf = CellFormat.getInstance("General");
         
-        // case Cell.CELL_TYPE_BLANK
+        // case CellType.BLANK
         CellFormatResult result0 = cf.apply(cell0);
         assertEquals("", result0.text);
         
-        // case Cell.CELL_TYPE_BOOLEAN
+        // case CellType.BOOLEAN
         cell1.setCellValue(true);
         CellFormatResult result1 = cf.apply(cell1);
         assertEquals("TRUE", result1.text);
         
-        // case Cell.CELL_TYPE_NUMERIC
+        // case CellType.NUMERIC
         cell2.setCellValue(1.23);
         CellFormatResult result2 = cf.apply(cell2);
         assertEquals("1.23", result2.text);
@@ -175,7 +175,7 @@ public class TestCellFormat {
         CellFormatResult result3 = cf.apply(cell3);
         assertEquals("123", result3.text);
         
-        // case Cell.CELL_TYPE_STRING
+        // case CellType.STRING
         cell4.setCellValue("abc");
         CellFormatResult result4 = cf.apply(cell4);
         assertEquals("abc", result4.text);
@@ -198,16 +198,16 @@ public class TestCellFormat {
         
         CellFormat cf = CellFormat.getInstance("@");
         
-        // case Cell.CELL_TYPE_BLANK
+        // case CellType.BLANK
         CellFormatResult result0 = cf.apply(cell0);
         assertEquals("", result0.text);
         
-        // case Cell.CELL_TYPE_BOOLEAN
+        // case CellType.BOOLEAN
         cell1.setCellValue(true);
         CellFormatResult result1 = cf.apply(cell1);
         assertEquals("TRUE", result1.text);
         
-        // case Cell.CELL_TYPE_NUMERIC
+        // case CellType.NUMERIC
         cell2.setCellValue(1.23);
         CellFormatResult result2 = cf.apply(cell2);
         assertEquals("1.23", result2.text);
@@ -216,7 +216,7 @@ public class TestCellFormat {
         CellFormatResult result3 = cf.apply(cell3);
         assertEquals("123", result3.text);
         
-        // case Cell.CELL_TYPE_STRING
+        // case CellType.STRING
         cell4.setCellValue("abc");
         CellFormatResult result4 = cf.apply(cell4);
         assertEquals("abc", result4.text);
@@ -309,18 +309,18 @@ public class TestCellFormat {
         JLabel label3 = new JLabel();
         JLabel label4 = new JLabel();
         
-        // case Cell.CELL_TYPE_BLANK
+        // case CellType.BLANK
         CellFormatResult result0 = cf.apply(label0, cell0);
         assertEquals("", result0.text);
         assertEquals("", label0.getText());
         
-        // case Cell.CELL_TYPE_BOOLEAN
+        // case CellType.BOOLEAN
         cell1.setCellValue(true);
         CellFormatResult result1 = cf.apply(label1, cell1);
         assertEquals("TRUE", result1.text);
         assertEquals("TRUE", label1.getText());
         
-        // case Cell.CELL_TYPE_NUMERIC
+        // case CellType.NUMERIC
         cell2.setCellValue(1.23);
         CellFormatResult result2 = cf.apply(label2, cell2);
         assertEquals("1.23", result2.text);
@@ -331,7 +331,7 @@ public class TestCellFormat {
         assertEquals("123", result3.text);
         assertEquals("123", label3.getText());
         
-        // case Cell.CELL_TYPE_STRING
+        // case CellType.STRING
         cell4.setCellValue("abc");
         CellFormatResult result4 = cf.apply(label4, cell4);
         assertEquals("abc", result4.text);
@@ -361,18 +361,18 @@ public class TestCellFormat {
         JLabel label3 = new JLabel();
         JLabel label4 = new JLabel();
         
-        // case Cell.CELL_TYPE_BLANK
+        // case CellType.BLANK
         CellFormatResult result0 = cf.apply(label0, cell0);
         assertEquals("", result0.text);
         assertEquals("", label0.getText());
         
-        // case Cell.CELL_TYPE_BOOLEAN
+        // case CellType.BOOLEAN
         cell1.setCellValue(true);
         CellFormatResult result1 = cf.apply(label1, cell1);
         assertEquals("TRUE", result1.text);
         assertEquals("TRUE", label1.getText());
         
-        // case Cell.CELL_TYPE_NUMERIC
+        // case CellType.NUMERIC
         cell2.setCellValue(1.23);
         CellFormatResult result2 = cf.apply(label2, cell2);
         assertEquals("1.23", result2.text);
@@ -383,7 +383,7 @@ public class TestCellFormat {
         assertEquals("123", result3.text);
         assertEquals("123", label3.getText());
         
-        // case Cell.CELL_TYPE_STRING
+        // case CellType.STRING
         cell4.setCellValue("abc");
         CellFormatResult result4 = cf.apply(label4, cell4);
         assertEquals("abc", result4.text);

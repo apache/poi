@@ -19,13 +19,14 @@ package org.apache.poi.ss.util;
 
 import java.util.Date;
 
-import junit.framework.TestCase;
-
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+
+import junit.framework.TestCase;
 
 /**
  * Tests SheetBuilder.
@@ -49,7 +50,7 @@ public final class TestSheetBuilder extends TestCase {
         Row firstRow = sheet.getRow(0);
         Cell firstCell = firstRow.getCell(0);
 
-        assertEquals(firstCell.getCellType(), Cell.CELL_TYPE_NUMERIC);
+        assertEquals(firstCell.getCellType(), CellType.NUMERIC);
         assertEquals(1.0, firstCell.getNumericCellValue(), 0.00001);
 
 
@@ -58,11 +59,11 @@ public final class TestSheetBuilder extends TestCase {
         assertNull(secondRow.getCell(2));
 
         Row thirdRow = sheet.getRow(2);
-        assertEquals(Cell.CELL_TYPE_STRING, thirdRow.getCell(0).getCellType());
+        assertEquals(CellType.STRING, thirdRow.getCell(0).getCellType());
         String cellValue = thirdRow.getCell(0).getStringCellValue();
         assertEquals(testData[2][0].toString(), cellValue);
 
-        assertEquals(Cell.CELL_TYPE_FORMULA, thirdRow.getCell(2).getCellType());
+        assertEquals(CellType.FORMULA, thirdRow.getCell(2).getCellType());
         assertEquals("A1+B2", thirdRow.getCell(2).getCellFormula());
     }
 
@@ -72,7 +73,7 @@ public final class TestSheetBuilder extends TestCase {
 
         Cell emptyCell = sheet.getRow(1).getCell(1);
         assertNotNull(emptyCell);
-        assertEquals(Cell.CELL_TYPE_BLANK, emptyCell.getCellType());
+        assertEquals(CellType.BLANK, emptyCell.getCellType());
     }
 
     public void testSheetName() {

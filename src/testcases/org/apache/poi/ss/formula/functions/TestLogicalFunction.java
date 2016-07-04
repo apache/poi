@@ -19,15 +19,17 @@ package org.apache.poi.ss.formula.functions;
 
 import java.io.IOException;
 
-import junit.framework.TestCase;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellReference;
+
+import junit.framework.TestCase;
 
 /**
  * LogicalFunction unit tests.
@@ -55,11 +57,11 @@ public class TestLogicalFunction extends TestCase {
         Row row2 = sh.createRow(1);
         row3 = sh.createRow(2);
 
-        row1.createCell(0, Cell.CELL_TYPE_NUMERIC);
-        row1.createCell(1, Cell.CELL_TYPE_NUMERIC);
+        row1.createCell(0, CellType.NUMERIC);
+        row1.createCell(1, CellType.NUMERIC);
 
-        row2.createCell(0, Cell.CELL_TYPE_NUMERIC);
-        row2.createCell(1, Cell.CELL_TYPE_NUMERIC);
+        row2.createCell(0, CellType.NUMERIC);
+        row2.createCell(1, CellType.NUMERIC);
 
         row3.createCell(0);
         row3.createCell(1);
