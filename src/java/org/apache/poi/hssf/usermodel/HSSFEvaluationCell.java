@@ -60,7 +60,11 @@ final class HSSFEvaluationCell implements EvaluationCell {
 	public int getCellType() {
 		return _cell.getCellType();
 	}
-	/** @deprecated POI 3.15 beta 3 */
+	/**
+	 * @since POI 3.15 beta 3
+	 * @deprecated POI 3.15 beta 3.
+	 * Will be deleted when we make the CellType enum transition. See bug 59791.
+	 */
 	@Internal
 	@Override
 	public CellType getCellTypeEnum() {
@@ -100,7 +104,11 @@ final class HSSFEvaluationCell implements EvaluationCell {
 	public int getCachedFormulaResultType() {
 		return _cell.getCachedFormulaResultType();
 	}
-	/** @deprecated POI 3.15 beta 3 */
+	/**
+	 * @since POI 3.15 beta 3
+	 * @deprecated POI 3.15 beta 3.
+	 * Will be deleted when we make the CellType enum transition. See bug 59791.
+	 */
 	@Internal
 	@Override
 	public CellType getCachedFormulaResultTypeEnum() {

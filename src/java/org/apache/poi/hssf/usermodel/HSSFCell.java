@@ -455,7 +455,9 @@ public class HSSFCell implements Cell {
     
     /**
      * get the cells type (numeric, formula or string)
+     * @since POI 3.15 beta 3
      * @deprecated POI 3.15 beta 3
+     * Will be deleted when we make the CellType enum transition. See bug 59791.
      */
     @Internal
     @Override
@@ -1163,7 +1165,9 @@ public class HSSFCell implements Cell {
      * @return one of ({@link CellType#NUMERIC}, {@link CellType#STRING},
      *     {@link CellType#BOOLEAN}, {@link CellType#ERROR}) depending
      * on the cached value of the formula
+     * @since POI 3.15 beta 3
      * @deprecated POI 3.15 beta 3
+     * Will be deleted when we make the CellType enum transition. See bug 59791.
      */
     @Internal
     @Override
