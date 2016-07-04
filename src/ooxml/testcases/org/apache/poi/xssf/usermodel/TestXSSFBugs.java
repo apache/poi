@@ -300,7 +300,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
                 Sheet s = wb.getSheetAt(i);
                 for(Row r : s) {
                     for(Cell c : r) {
-                        if(c.getCellType() == CellType.FORMULA) {
+                        if(c.getCellTypeEnum() == CellType.FORMULA) {
                             CellValue cv = eval.evaluate(c);
 
                             if(cv.getCellType() == CellType.NUMERIC) {
@@ -424,7 +424,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
         cell = sheet.getRow(0).getCell(0);
         assertEquals("#REF!*#REF!", cell.getCellFormula());
-        assertEquals(CellType.ERROR, evaluator.evaluateInCell(cell).getCellType());
+        assertEquals(CellType.ERROR, evaluator.evaluateInCell(cell).getCellTypeEnum());
         assertEquals("#REF!", FormulaError.forInt(cell.getErrorCellValue()).getString());
 
         Name nm1 = wb.getName("sale_1");
@@ -436,7 +436,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
         cell = sheet.getRow(1).getCell(0);
         assertEquals("sale_1*sale_2", cell.getCellFormula());
-        assertEquals(CellType.ERROR, evaluator.evaluateInCell(cell).getCellType());
+        assertEquals(CellType.ERROR, evaluator.evaluateInCell(cell).getCellTypeEnum());
         assertEquals("#REF!", FormulaError.forInt(cell.getErrorCellValue()).getString());
         
         wb.close();
@@ -642,7 +642,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         Sheet sheet = wb.getSheetAt(0);
         for(Row row : sheet){
             for(Cell cell : row){
-                if(cell.getCellType() == CellType.FORMULA){
+                if(cell.getCellTypeEnum() == CellType.FORMULA){
                     formulaEvaluator.evaluateInCell(cell); // caused NPE on some cells
                 }
             }
@@ -1696,7 +1696,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
         // Get wrong cell by row 8 & column 7
         Cell cell = sheet.getRow(8).getCell(7);
-        assertEquals(CellType.NUMERIC, cell.getCellType());
+        assertEquals(CellType.NUMERIC, cell.getCellTypeEnum());
 
         // Check the value - will be zero as it is <c><v/></c>
         assertEquals(0.0, cell.getNumericCellValue(), 0.001);
@@ -2182,7 +2182,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
         Sheet sheet = wb.getSheet("Sheet1");
         Cell cell = sheet.getRow(5).getCell(4);
-        assertEquals(CellType.FORMULA, cell.getCellType());
+        assertEquals(CellType.FORMULA, cell.getCellTypeEnum());
         assertEquals("E4+E5", cell.getCellFormula());
 
         CellValue value = evaluator.evaluate(cell);
@@ -2541,7 +2541,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
                 if(cell == null){
                     cell = row.createCell(cellnum);
                 } else {
-                    if(cell.getCellType() == CellType.FORMULA) {
+                    if(cell.getCellTypeEnum() == CellType.FORMULA) {
                         cell.setCellFormula(null);
                         cell.getCellStyle().setDataFormat((short) 0);
                     }
@@ -2607,13 +2607,13 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     }
 
     private void assertFormula(Workbook wb, Cell intF, String expectedFormula, String expectedResultOrNull) {
-        assertEquals(CellType.FORMULA, intF.getCellType());
+        assertEquals(CellType.FORMULA, intF.getCellTypeEnum());
         if (null == expectedResultOrNull) {
-            assertEquals(CellType.ERROR, intF.getCachedFormulaResultType());
+            assertEquals(CellType.ERROR, intF.getCachedFormulaResultTypeEnum());
             expectedResultOrNull = "#VALUE!";
         }
         else {
-            assertEquals(CellType.NUMERIC, intF.getCachedFormulaResultType());
+            assertEquals(CellType.NUMERIC, intF.getCachedFormulaResultTypeEnum());
         }
 
         assertEquals(expectedFormula, intF.getCellFormula());
@@ -2654,7 +2654,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         Sheet sheet = wb.getSheet("Sheet1");
         for(Row aRow : sheet) {
             Cell cell = aRow.getCell(1);
-            if(cell.getCellType() == CellType.FORMULA) {
+            if(cell.getCellTypeEnum() == CellType.FORMULA) {
                 String formula = cell.getCellFormula();
                 //System.out.println("formula: " + formula);
                 assertNotNull(formula);
@@ -2958,14 +2958,14 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         row = worksheet.getRow(2);
         cell = row.getCell(1);
 
-        assertEquals(CellType.BLANK, cell.getCellType());
+        assertEquals(CellType.BLANK, cell.getCellTypeEnum());
         assertEquals(CellType._UNINITIALIZED, evaluator.evaluateFormulaCell(cell));
 
         // A3
         row = worksheet.getRow(2);
         cell = row.getCell(0);
 
-        assertEquals(CellType.FORMULA, cell.getCellType());
+        assertEquals(CellType.FORMULA, cell.getCellTypeEnum());
         assertEquals("IF(ISBLANK(B3),\"\",B3)", cell.getCellFormula());
         assertEquals(CellType.STRING, evaluator.evaluateFormulaCell(cell));
         CellValue value = evaluator.evaluate(cell);
@@ -2975,7 +2975,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         row = worksheet.getRow(4);
         cell = row.getCell(0);
 
-        assertEquals(CellType.FORMULA, cell.getCellType());
+        assertEquals(CellType.FORMULA, cell.getCellTypeEnum());
         assertEquals("COUNTBLANK(A1:A4)", cell.getCellFormula());
         assertEquals(CellType.NUMERIC, evaluator.evaluateFormulaCell(cell));
         value = evaluator.evaluate(cell);

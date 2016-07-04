@@ -121,14 +121,14 @@ public abstract class AbstractExcelConverter
     protected boolean isTextEmpty( HSSFCell cell )
     {
         final String value;
-        switch ( cell.getCellType() )
+        switch ( cell.getCellTypeEnum() )
         {
         case STRING:
             // XXX: enrich
             value = cell.getRichStringCellValue().getString();
             break;
         case FORMULA:
-            switch ( cell.getCachedFormulaResultType() )
+            switch ( cell.getCachedFormulaResultTypeEnum() )
             {
             case STRING:
                 HSSFRichTextString str = cell.getRichStringCellValue();

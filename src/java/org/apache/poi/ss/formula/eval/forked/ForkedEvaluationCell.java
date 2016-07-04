@@ -17,16 +17,17 @@
 
 package org.apache.poi.ss.formula.eval.forked;
 
+import org.apache.poi.ss.formula.EvaluationCell;
+import org.apache.poi.ss.formula.EvaluationSheet;
 import org.apache.poi.ss.formula.eval.BlankEval;
 import org.apache.poi.ss.formula.eval.BoolEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
-import org.apache.poi.ss.formula.EvaluationCell;
-import org.apache.poi.ss.formula.EvaluationSheet;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.util.Internal;
 
 /**
  * Represents a cell being used for forked evaluation that has had a value set different from the
@@ -52,6 +53,7 @@ final class ForkedEvaluationCell implements EvaluationCell {
 		setValue(BlankEval.instance); // followed by a proper call to setValue()
 	}
 
+	@Override
 	public Object getIdentityKey() {
 		return _masterCell.getIdentityKey();
 	}
@@ -101,36 +103,69 @@ final class ForkedEvaluationCell implements EvaluationCell {
 			throw new RuntimeException("Wrong data type (" + _cellType + ")");
 		}
 	}
-	public CellType getCellType() {
+	/**
+	 * Will return {@link CellType} in a future version of POI.
+	 * For forwards compatibility, do not hard-code cell type literals in your code.
+	 *
+	 * @return cell type
+	 */
+	@Override
+	public int getCellType() {
+		return _cellType.getCode();
+	}
+	/** @deprecated POI 3.15 beta 3 */
+	@Internal
+	@Override
+	public CellType getCellTypeEnum() {
 		return _cellType;
 	}
+	@Override
 	public boolean getBooleanCellValue() {
 		checkCellType(CellType.BOOLEAN);
 		return _booleanValue;
 	}
+	@Override
 	public int getErrorCellValue() {
 		checkCellType(CellType.ERROR);
 		return _errorValue;
 	}
+	@Override
 	public double getNumericCellValue() {
 		checkCellType(CellType.NUMERIC);
 		return _numberValue;
 	}
+	@Override
 	public String getStringCellValue() {
 		checkCellType(CellType.STRING);
 		return _stringValue;
 	}
+	@Override
 	public EvaluationSheet getSheet() {
 		return _sheet;
 	}
+	@Override
 	public int getRowIndex() {
 		return _masterCell.getRowIndex();
 	}
+	@Override
 	public int getColumnIndex() {
 		return _masterCell.getColumnIndex();
 	}
-    public CellType getCachedFormulaResultType() {
-        return _masterCell.getCachedFormulaResultType();
-    }
+	/**
+	 * Will return {@link CellType} in a future version of POI.
+	 * For forwards compatibility, do not hard-code cell type literals in your code.
+	 *
+	 * @return cell type of cached formula result
+	 */
+	@Override
+	public int getCachedFormulaResultType() {
+		return _masterCell.getCachedFormulaResultType();
+	}
+	/** @deprecated POI 3.15 beta 3. */
+	@Internal
+	@Override
+	public CellType getCachedFormulaResultTypeEnum() {
+		return _masterCell.getCachedFormulaResultTypeEnum();
+	}
 
 }

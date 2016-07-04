@@ -162,19 +162,19 @@ public class XSSFExcelExtractor extends POIXMLTextExtractor
                     Cell cell = ri.next();
 
                     // Is it a formula one?
-                    if(cell.getCellType() == CellType.FORMULA) {
+                    if(cell.getCellTypeEnum() == CellType.FORMULA) {
                         if (formulasNotResults) {
                             String contents = cell.getCellFormula();
                             checkMaxTextSize(text, contents);
                             text.append(contents);
                         } else {
-                            if (cell.getCachedFormulaResultType() == CellType.STRING) {
+                            if (cell.getCachedFormulaResultTypeEnum() == CellType.STRING) {
                                 handleStringCell(text, cell);
                             } else {
                                 handleNonStringCell(text, cell, formatter);
                             }
                         }
-                    } else if(cell.getCellType() == CellType.STRING) {
+                    } else if(cell.getCellTypeEnum() == CellType.STRING) {
                         handleStringCell(text, cell);
                     } else {
                         handleNonStringCell(text, cell, formatter);
@@ -236,9 +236,9 @@ public class XSSFExcelExtractor extends POIXMLTextExtractor
     }
 
     private void handleNonStringCell(StringBuffer text, Cell cell, DataFormatter formatter) {
-        CellType type = cell.getCellType();
+        CellType type = cell.getCellTypeEnum();
         if (type == CellType.FORMULA) {
-            type = cell.getCachedFormulaResultType();
+            type = cell.getCachedFormulaResultTypeEnum();
         }
 
         if (type == CellType.NUMERIC) {

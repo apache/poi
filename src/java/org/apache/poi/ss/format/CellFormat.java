@@ -411,17 +411,17 @@ public class CellFormat {
     /**
      * Returns the ultimate cell type, following the results of formulas.  If
      * the cell is a {@link CellType#FORMULA}, this returns the result of
-     * {@link Cell#getCachedFormulaResultType()}.  Otherwise this returns the
-     * result of {@link Cell#getCellType()}.
+     * {@link Cell#getCachedFormulaResultTypeEnum()}.  Otherwise this returns the
+     * result of {@link Cell#getCellTypeEnum()}.
      *
      * @param cell The cell.
      *
      * @return The ultimate type of this cell.
      */
     public static CellType ultimateType(Cell cell) {
-        CellType type = cell.getCellType();
+        CellType type = cell.getCellTypeEnum();
         if (type == CellType.FORMULA)
-            return cell.getCachedFormulaResultType();
+            return cell.getCachedFormulaResultTypeEnum();
         else
             return type;
     }

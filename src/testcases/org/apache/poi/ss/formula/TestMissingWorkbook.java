@@ -67,7 +67,7 @@ public class TestMissingWorkbook extends TestCase {
 		Row lARow = lSheet.getRow(0);
 		Cell lA1Cell = lARow.getCell(0);
 		
-		assertEquals(CellType.FORMULA, lA1Cell.getCellType());
+		assertEquals(CellType.FORMULA, lA1Cell.getCellTypeEnum());
 		try {
 			evaluator.evaluateFormulaCell(lA1Cell);
 			fail("Missing external workbook reference exception expected!");
@@ -82,9 +82,9 @@ public class TestMissingWorkbook extends TestCase {
 		Cell lB1Cell = lSheet.getRow(1).getCell(0);
 		Cell lC1Cell = lSheet.getRow(2).getCell(0);
 		
-		assertEquals(CellType.FORMULA, lA1Cell.getCellType());
-		assertEquals(CellType.FORMULA, lB1Cell.getCellType());
-		assertEquals(CellType.FORMULA, lC1Cell.getCellType());
+		assertEquals(CellType.FORMULA, lA1Cell.getCellTypeEnum());
+		assertEquals(CellType.FORMULA, lB1Cell.getCellTypeEnum());
+		assertEquals(CellType.FORMULA, lC1Cell.getCellTypeEnum());
 
 		// Check cached values
         assertEquals(10.0d, lA1Cell.getNumericCellValue(), 0.00001d);
@@ -111,9 +111,9 @@ public class TestMissingWorkbook extends TestCase {
 		Cell lB1Cell = lSheet.getRow(1).getCell(0);
 		Cell lC1Cell = lSheet.getRow(2).getCell(0);
 		
-		assertEquals(CellType.FORMULA, lA1Cell.getCellType());
-		assertEquals(CellType.FORMULA, lB1Cell.getCellType());
-		assertEquals(CellType.FORMULA, lC1Cell.getCellType());
+		assertEquals(CellType.FORMULA, lA1Cell.getCellTypeEnum());
+		assertEquals(CellType.FORMULA, lB1Cell.getCellTypeEnum());
+		assertEquals(CellType.FORMULA, lC1Cell.getCellTypeEnum());
 
 		FormulaEvaluator lMainWorkbookEvaluator = mainWorkbook.getCreationHelper().createFormulaEvaluator();
 		FormulaEvaluator lSourceEvaluator = sourceWorkbook.getCreationHelper().createFormulaEvaluator();

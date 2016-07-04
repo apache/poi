@@ -177,7 +177,7 @@ public class HSSFFormulaEvaluator implements FormulaEvaluator, WorkbookEvaluator
 			return null;
 		}
 
-		switch (cell.getCellType()) {
+		switch (cell.getCellTypeEnum()) {
 			case BOOLEAN:
 				return CellValue.valueOf(cell.getBooleanCellValue());
 			case ERROR:
@@ -191,7 +191,7 @@ public class HSSFFormulaEvaluator implements FormulaEvaluator, WorkbookEvaluator
 			case BLANK:
 				return null;
 			default:
-				throw new IllegalStateException("Bad cell type (" + cell.getCellType() + ")");
+				throw new IllegalStateException("Bad cell type (" + cell.getCellTypeEnum() + ")");
 		}
 		
 	}
@@ -214,7 +214,7 @@ public class HSSFFormulaEvaluator implements FormulaEvaluator, WorkbookEvaluator
 	 */
 	@Override
 	public CellType evaluateFormulaCell(Cell cell) {
-		if (cell == null || cell.getCellType() != CellType.FORMULA) {
+		if (cell == null || cell.getCellTypeEnum() != CellType.FORMULA) {
 			return CellType._UNINITIALIZED;
 		}
 		CellValue cv = evaluateFormulaCellValue(cell);
@@ -244,7 +244,7 @@ public class HSSFFormulaEvaluator implements FormulaEvaluator, WorkbookEvaluator
 			return null;
 		}
 		HSSFCell result = (HSSFCell) cell;
-		if (cell.getCellType() == CellType.FORMULA) {
+		if (cell.getCellTypeEnum() == CellType.FORMULA) {
 			CellValue cv = evaluateFormulaCellValue(cell);
 			setCellValue(cell, cv);
 			setCellType(cell, cv); // cell will no longer be a formula cell
@@ -330,7 +330,7 @@ public class HSSFFormulaEvaluator implements FormulaEvaluator, WorkbookEvaluator
 
          for(Row r : sheet) {
             for (Cell c : r) {
-               if (c.getCellType() == CellType.FORMULA) {
+               if (c.getCellTypeEnum() == CellType.FORMULA) {
                   evaluator.evaluateFormulaCell(c);
                }
             }

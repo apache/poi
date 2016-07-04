@@ -112,7 +112,7 @@ public final class ForkedEvaluator {
 	public ValueEval evaluate(String sheetName, int rowIndex, int columnIndex) {
 		EvaluationCell cell = _sewb.getEvaluationCell(sheetName, rowIndex, columnIndex);
 
-		switch (cell.getCellType()) {
+		switch (cell.getCellTypeEnum()) {
 			case BOOLEAN:
 				return BoolEval.valueOf(cell.getBooleanCellValue());
 			case ERROR:
@@ -126,7 +126,7 @@ public final class ForkedEvaluator {
 			case BLANK:
 				return null;
 			default:
-				throw new IllegalStateException("Bad cell type (" + cell.getCellType() + ")");
+				throw new IllegalStateException("Bad cell type (" + cell.getCellTypeEnum() + ")");
 		}
 	}
 	/**

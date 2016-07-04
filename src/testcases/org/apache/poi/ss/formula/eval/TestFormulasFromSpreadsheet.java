@@ -174,7 +174,7 @@ public final class TestFormulasFromSpreadsheet {
        // iterate across the row for all the evaluation cases
        for (int colnum=SS.COLUMN_INDEX_FIRST_TEST_VALUE; colnum < endcolnum; colnum++) {
            Cell c = formulasRow.getCell(colnum);
-           if (c == null || c.getCellType() != CellType.FORMULA) {
+           if (c == null || c.getCellTypeEnum() != CellType.FORMULA) {
                continue;
            }
 
@@ -187,7 +187,7 @@ public final class TestFormulasFromSpreadsheet {
            assertNotNull(msg + " - Bad setup data expected value is null", expValue);
            assertNotNull(msg + " - actual value was null", actValue);
 
-           final CellType cellType = expValue.getCellType();
+           final CellType cellType = expValue.getCellTypeEnum();
            switch (cellType) {
                case BLANK:
                    assertEquals(msg, CellType.BLANK, actValue.getCellType());
@@ -228,14 +228,14 @@ public final class TestFormulasFromSpreadsheet {
 			System.err.println("Warning - Row " + r.getRowNum() + " has no cell " + SS.COLUMN_INDEX_FUNCTION_NAME + ", can't figure out function name");
 			return null;
 		}
-		if(cell.getCellType() == CellType.BLANK) {
+		if(cell.getCellTypeEnum() == CellType.BLANK) {
 			return null;
 		}
-		if(cell.getCellType() == CellType.STRING) {
+		if(cell.getCellTypeEnum() == CellType.STRING) {
 			return cell.getRichStringCellValue().getString();
 		}
 
 		throw new AssertionFailedError("Bad cell type for 'function name' column: ("
-				+ cell.getCellType() + ") row (" + (r.getRowNum() +1) + ")");
+				+ cell.getCellTypeEnum() + ") row (" + (r.getRowNum() +1) + ")");
 	}
 }

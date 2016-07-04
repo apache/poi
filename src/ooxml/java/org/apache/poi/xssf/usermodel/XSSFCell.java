@@ -138,11 +138,11 @@ public final class XSSFCell implements Cell {
         // Copy cell value (cell type is updated implicitly)
         if (policy.isCopyCellValue()) {
             if (srcCell != null) {
-                CellType copyCellType = srcCell.getCellType();
+                CellType copyCellType = srcCell.getCellTypeEnum();
                 if (copyCellType == CellType.FORMULA && !policy.isCopyCellFormula()) {
                     // Copy formula result as value
                     // FIXME: Cached value may be stale
-                    copyCellType = srcCell.getCachedFormulaResultType();
+                    copyCellType = srcCell.getCachedFormulaResultTypeEnum();
                 }
                 switch (copyCellType) {
                     case NUMERIC:
@@ -171,7 +171,7 @@ public final class XSSFCell implements Cell {
                         break;
 
                     default:
-                        throw new IllegalArgumentException("Invalid cell type " + srcCell.getCellType());
+                        throw new IllegalArgumentException("Invalid cell type " + srcCell.getCellTypeEnum());
                 }
             } else { //srcCell is null
                 setBlank();
@@ -249,12 +249,12 @@ public final class XSSFCell implements Cell {
      * For strings, numbers, and errors, we throw an exception. For blank cells we return a false.
      * </p>
      * @return the value of the cell as a boolean
-     * @throws IllegalStateException if the cell type returned by {@link #getCellType()}
+     * @throws IllegalStateException if the cell type returned by {@link #getCellTypeEnum()}
      *   is not {@link CellType#BOOLEAN}, {@link CellType#BLANK} or {@link CellType#FORMULA}
      */
     @Override
     public boolean getBooleanCellValue() {
-        CellType cellType = getCellType();
+        CellType cellType = getCellTypeEnum();
         switch(cellType) {
             case BLANK:
                 return false;
@@ -288,13 +288,13 @@ public final class XSSFCell implements Cell {
      * For formulas or error cells we return the precalculated value;
      * </p>
      * @return the value of the cell as a number
-     * @throws IllegalStateException if the cell type returned by {@link #getCellType()} is {@link CellType#STRING}
+     * @throws IllegalStateException if the cell type returned by {@link #getCellTypeEnum()} is {@link CellType#STRING}
      * @exception NumberFormatException if the cell value isn't a parsable <code>double</code>.
      * @see DataFormatter for turning this number into a string similar to that which Excel would render this number as.
      */
     @Override
     public double getNumericCellValue() {
-        CellType cellType = getCellType();
+        CellType cellType = getCellTypeEnum();
         switch(cellType) {
             case BLANK:
                 return 0.0;
@@ -366,7 +366,7 @@ public final class XSSFCell implements Cell {
      */
     @Override
     public XSSFRichTextString getRichStringCellValue() {
-        CellType cellType = getCellType();
+        CellType cellType = getCellTypeEnum();
         XSSFRichTextString rt;
         switch (cellType) {
             case BLANK:
@@ -445,7 +445,7 @@ public final class XSSFCell implements Cell {
             throw new IllegalArgumentException("The maximum length of cell contents (text) is 32,767 characters");
         }
 
-        CellType cellType = getCellType();
+        CellType cellType = getCellTypeEnum();
         switch (cellType){
             case FORMULA:
                 _cell.setV(str.getString());
@@ -470,7 +470,7 @@ public final class XSSFCell implements Cell {
      * Return a formula for the cell, for example, <code>SUM(C4:E4)</code>
      *
      * @return a formula for the cell
-     * @throws IllegalStateException if the cell type returned by {@link #getCellType()} is not {@link CellType#FORMULA}
+     * @throws IllegalStateException if the cell type returned by {@link #getCellTypeEnum()} is not {@link CellType#FORMULA}
      */
     @Override
     public String getCellFormula() {
@@ -483,10 +483,10 @@ public final class XSSFCell implements Cell {
      *
      * @param fpb evaluation workbook for reuse, if available, or null to create a new one as needed
      * @return a formula for the cell
-     * @throws IllegalStateException if the cell type returned by {@link #getCellType()} is not {@link CellType#FORMULA}
+     * @throws IllegalStateException if the cell type returned by {@link #getCellTypeEnum()} is not {@link CellType#FORMULA}
      */
     protected String getCellFormula(XSSFEvaluationWorkbook fpb) {
-        CellType cellType = getCellType();
+        CellType cellType = getCellTypeEnum();
         if(cellType != CellType.FORMULA) throw typeMismatch(CellType.FORMULA, cellType, false);
 
         CTCellFormula f = _cell.getF();
@@ -660,14 +660,29 @@ public final class XSSFCell implements Cell {
         }
         return false;
     }
+    
+    /**
+     * Return the cell type.
+     * 
+     * Will return {@link CellType} in a future version of POI.
+     * For forwards compatibility, do not hard-code cell type literals in your code.
+     *
+     * @return the cell type
+     */
+    @Override
+    public int getCellType() {
+        return getCellTypeEnum().getCode();
+    }
 
     /**
      * Return the cell type.
      *
      * @return the cell type
+     * @deprecated POI 3.15 beta 3
      */
+    @Internal
     @Override
-    public CellType getCellType() {
+    public CellType getCellTypeEnum() {
         if (isFormulaCell()) return CellType.FORMULA;
 
         return getBaseCellType(true);
@@ -675,12 +690,29 @@ public final class XSSFCell implements Cell {
 
     /**
      * Only valid for formula cells
+     * 
+     * Will return {@link CellType} in a future version of POI.
+     * For forwards compatibility, do not hard-code cell type literals in your code.
+     * 
      * @return one of ({@link CellType#NUMERIC}, {@link CellType#STRING},
      *     {@link CellType#BOOLEAN}, {@link CellType#ERROR}) depending
      * on the cached value of the formula
      */
     @Override
-    public CellType getCachedFormulaResultType() {
+    public int getCachedFormulaResultType() {
+        return getCachedFormulaResultTypeEnum().getCode();
+    }
+    
+    /**
+     * Only valid for formula cells
+     * @return one of ({@link CellType#NUMERIC}, {@link CellType#STRING},
+     *     {@link CellType#BOOLEAN}, {@link CellType#ERROR}) depending
+     * on the cached value of the formula
+     * @deprecated POI 3.15 beta 3
+     */
+    @Internal
+    @Override
+    public CellType getCachedFormulaResultTypeEnum() {
         if (! isFormulaCell()) {
             throw new IllegalStateException("Only formula cells have cached results");
         }
@@ -722,13 +754,13 @@ public final class XSSFCell implements Cell {
      * For strings we throw an exception. For blank cells we return a null.
      * </p>
      * @return the value of the cell as a date
-     * @throws IllegalStateException if the cell type returned by {@link #getCellType()} is {@link CellType#STRING}
+     * @throws IllegalStateException if the cell type returned by {@link #getCellTypeEnum()} is {@link CellType#STRING}
      * @exception NumberFormatException if the cell value isn't a parsable <code>double</code>.
      * @see DataFormatter for formatting  this date into a string similar to how excel does.
      */
     @Override
     public Date getDateCellValue() {
-        if (getCellType() == CellType.BLANK) {
+        if (getCellTypeEnum() == CellType.BLANK) {
             return null;
         }
 
@@ -787,7 +819,7 @@ public final class XSSFCell implements Cell {
      * Returns the error message, such as #VALUE!
      *
      * @return the error message such as #VALUE!
-     * @throws IllegalStateException if the cell type returned by {@link #getCellType()} isn't {@link CellType#ERROR}
+     * @throws IllegalStateException if the cell type returned by {@link #getCellTypeEnum()} isn't {@link CellType#ERROR}
      * @see FormulaError
      */
     public String getErrorCellString() {
@@ -804,7 +836,7 @@ public final class XSSFCell implements Cell {
      * </p>
      *
      * @return the value of the cell as an error code
-     * @throws IllegalStateException if the cell type returned by {@link #getCellType()} isn't {@link CellType #ERROR}
+     * @throws IllegalStateException if the cell type returned by {@link #getCellTypeEnum()} isn't {@link CellType #ERROR}
      * @see FormulaError
      */
     @Override
@@ -899,7 +931,7 @@ public final class XSSFCell implements Cell {
      */
     @Override
     public void setCellType(CellType cellType) {
-        CellType prevType = getCellType();
+        CellType prevType = getCellTypeEnum();
 
         if(isPartOfArrayFormulaGroup()){
             notifyArrayFormulaChanging();
@@ -962,7 +994,7 @@ public final class XSSFCell implements Cell {
      */
     @Override
     public String toString() {
-        switch (getCellType()) {
+        switch (getCellTypeEnum()) {
             case NUMERIC:
                 if (DateUtil.isCellDateFormatted(this)) {
                     DateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy", LocaleUtil.getUserLocale());
@@ -981,7 +1013,7 @@ public final class XSSFCell implements Cell {
             case ERROR:
                 return ErrorEval.getText(getErrorCellValue());
             default:
-                return "Unknown Cell Type: " + getCellType();
+                return "Unknown Cell Type: " + getCellTypeEnum();
         }
     }
 
@@ -1133,7 +1165,7 @@ public final class XSSFCell implements Cell {
      * TODO - perhaps a method like setCellTypeAndValue(int, Object) should be introduced to avoid this
      */
     private boolean convertCellValueToBoolean() {
-        CellType cellType = getCellType();
+        CellType cellType = getCellTypeEnum();
 
         if (cellType == CellType.FORMULA) {
             cellType = getBaseCellType(false);
@@ -1161,7 +1193,7 @@ public final class XSSFCell implements Cell {
     }
 
     private String convertCellValueToString() {
-        CellType cellType = getCellType();
+        CellType cellType = getCellTypeEnum();
 
         switch (cellType) {
             case BLANK:

@@ -190,7 +190,7 @@ public final class TestFormulaEvaluatorOnXSSF {
 		for (short colnum=SS.COLUMN_INDEX_FIRST_TEST_VALUE; colnum < endcolnum; colnum++) {
 			Cell c = formulasRow.getCell(colnum);
 			assumeNotNull(c);
-			assumeTrue(c.getCellType() == CellType.FORMULA);
+			assumeTrue(c.getCellTypeEnum() == CellType.FORMULA);
 			ignoredFormulaTestCase(c.getCellFormula());
 
 			CellValue actValue = evaluator.evaluate(c);
@@ -202,7 +202,7 @@ public final class TestFormulaEvaluatorOnXSSF {
 			assertNotNull(msg + " - Bad setup data expected value is null", expValue);
 			assertNotNull(msg + " - actual value was null", actValue);
 	        
-	        final CellType expectedCellType = expValue.getCellType();
+	        final CellType expectedCellType = expValue.getCellTypeEnum();
 	        switch (expectedCellType) {
 	            case BLANK:
 	                assertEquals(msg, CellType.BLANK, actValue.getCellType());
@@ -264,10 +264,10 @@ public final class TestFormulaEvaluatorOnXSSF {
             logger.log(POILogger.WARN, "Warning - Row " + r.getRowNum() + " has no cell " + SS.COLUMN_INDEX_FUNCTION_NAME + ", can't figure out function name");
 			return null;
 		}
-		if(cell.getCellType() == CellType.BLANK) {
+		if(cell.getCellTypeEnum() == CellType.BLANK) {
 			return null;
 		}
-		if(cell.getCellType() == CellType.STRING) {
+		if(cell.getCellTypeEnum() == CellType.STRING) {
 			return cell.getRichStringCellValue().getString();
 		}
 		

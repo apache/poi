@@ -268,7 +268,7 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
             case RETURN_NULL_AND_BLANK:
                 return cell;
             case RETURN_BLANK_AS_NULL:
-                boolean isBlank = (cell != null && cell.getCellType() == CellType.BLANK);
+                boolean isBlank = (cell != null && cell.getCellTypeEnum() == CellType.BLANK);
                 return (isBlank) ? null : cell;
             case CREATE_NULL_AS_BLANK:
                 return (cell == null) ? createCell(cellnum, CellType.BLANK) : cell;

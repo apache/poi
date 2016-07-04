@@ -542,7 +542,7 @@ public class ToCSV {
                     csvLine.add("");
                 }
                 else {
-                    if(cell.getCellType() != CellType.FORMULA) {
+                    if(cell.getCellTypeEnum() != CellType.FORMULA) {
                         csvLine.add(this.formatter.formatCellValue(cell));
                     }
                     else {

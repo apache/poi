@@ -53,6 +53,7 @@ import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.NumberToTextConverter;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.LocaleUtil;
 
 /**
@@ -442,9 +443,23 @@ public class HSSFCell implements Cell {
 
     /**
      * get the cells type (numeric, formula or string)
+     * 
+     * Will return {@link CellType} in a future version of POI.
+     * For forwards compatibility, do not hard-code cell type literals in your code.
      */
     @Override
-    public CellType getCellType()
+    public int getCellType()
+    {
+        return getCellTypeEnum().getCode();
+    }
+    
+    /**
+     * get the cells type (numeric, formula or string)
+     * @deprecated POI 3.15 beta 3
+     */
+    @Internal
+    @Override
+    public CellType getCellTypeEnum()
     {
         return _cellType;
     }
@@ -995,7 +1010,7 @@ public class HSSFCell implements Cell {
      * Errors are displayed as #ERR&lt;errIdx&gt;
      */
     public String toString() {
-        switch (getCellType()) {
+        switch (getCellTypeEnum()) {
             case BLANK:
                 return "";
             case BOOLEAN:
@@ -1015,7 +1030,7 @@ public class HSSFCell implements Cell {
             case STRING:
                 return getStringCellValue();
             default:
-                return "Unknown Cell Type: " + getCellType();
+                return "Unknown Cell Type: " + getCellTypeEnum();
         }
     }
 
@@ -1130,11 +1145,29 @@ public class HSSFCell implements Cell {
 
     /**
      * Only valid for formula cells
+     * 
+     * Will return {@link CellType} in a future version of POI.
+     * For forwards compatibility, do not hard-code cell type literals in your code.
+     * 
      * @return one of ({@link CellType#NUMERIC}, {@link CellType#STRING},
      *     {@link CellType#BOOLEAN}, {@link CellType#ERROR}) depending
      * on the cached value of the formula
      */
-    public CellType getCachedFormulaResultType() {
+    @Override
+    public int getCachedFormulaResultType() {
+        return getCachedFormulaResultTypeEnum().getCode();
+    }
+
+    /**
+     * Only valid for formula cells
+     * @return one of ({@link CellType#NUMERIC}, {@link CellType#STRING},
+     *     {@link CellType#BOOLEAN}, {@link CellType#ERROR}) depending
+     * on the cached value of the formula
+     * @deprecated POI 3.15 beta 3
+     */
+    @Internal
+    @Override
+    public CellType getCachedFormulaResultTypeEnum() {
         if (_cellType != CellType.FORMULA) {
             throw new IllegalStateException("Only formula cells have cached results");
         }

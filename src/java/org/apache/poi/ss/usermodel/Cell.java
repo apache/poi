@@ -23,6 +23,7 @@ import java.util.Date;
 import org.apache.poi.ss.formula.FormulaParseException;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.util.Internal;
 
 /**
  * High level representation of a cell in a row of a spreadsheet.
@@ -153,18 +154,44 @@ public interface Cell {
 
     /**
      * Return the cell type.
+     * 
+     * Will return {@link CellType} in a future version of POI.
+     * For forwards compatibility, do not hard-code cell type literals in your code.
      *
      * @return the cell type
      */
-    CellType getCellType();
+    int getCellType();
+    
+    /**
+     * Return the cell type.
+     *
+     * @return the cell type
+     * @deprecated POI 3.15 beta 3
+     */
+    @Internal
+    CellType getCellTypeEnum();
+    
+    /**
+     * Only valid for formula cells
+     * 
+     * Will return {@link CellType} in a future version of POI.
+     * For forwards compatibility, do not hard-code cell type literals in your code.
+     * 
+     * @return one of ({@link CellType#NUMERIC}, {@link CellType#STRING},
+     *     {@link CellType#BOOLEAN}, {@link CellType#ERROR}) depending
+     * on the cached value of the formula
+     */
+    int getCachedFormulaResultType();
 
     /**
      * Only valid for formula cells
      * @return one of ({@link CellType#NUMERIC}, {@link CellType#STRING},
      *     {@link CellType#BOOLEAN}, {@link CellType#ERROR}) depending
      * on the cached value of the formula
+     * @deprecated POI 3.15 beta 3
      */
-    CellType getCachedFormulaResultType();
+    @Internal
+    CellType getCachedFormulaResultTypeEnum();
 
     /**
      * Set a numeric value for the cell
@@ -248,7 +275,7 @@ public interface Cell {
      * Return a formula for the cell, for example, <code>SUM(C4:E4)</code>
      *
      * @return a formula for the cell
-     * @throws IllegalStateException if the cell type returned by {@link #getCellType()} is not {@link CellType#FORMULA}
+     * @throws IllegalStateException if the cell type returned by {@link #getCellTypeEnum()} is not {@link CellType#FORMULA}
      */
     String getCellFormula();
 
@@ -259,7 +286,7 @@ public interface Cell {
      * For formulas or error cells we return the precalculated value;
      * </p>
      * @return the value of the cell as a number
-     * @throws IllegalStateException if the cell type returned by {@link #getCellType()} is {@link CellType#STRING}
+     * @throws IllegalStateException if the cell type returned by {@link #getCellTypeEnum()} is {@link CellType#STRING}
      * @exception NumberFormatException if the cell value isn't a parsable <code>double</code>.
      * @see DataFormatter for turning this number into a string similar to that which Excel would render this number as.
      */
@@ -271,7 +298,7 @@ public interface Cell {
      * For strings we throw an exception. For blank cells we return a null.
      * </p>
      * @return the value of the cell as a date
-     * @throws IllegalStateException if the cell type returned by {@link #getCellType()} is {@link CellType#STRING}
+     * @throws IllegalStateException if the cell type returned by {@link #getCellTypeEnum()} is {@link CellType#STRING}
      * @exception NumberFormatException if the cell value isn't a parsable <code>double</code>.
      * @see DataFormatter for formatting  this date into a string similar to how excel does.
      */
@@ -323,7 +350,7 @@ public interface Cell {
      * For strings, numbers, and errors, we throw an exception. For blank cells we return a false.
      * </p>
      * @return the value of the cell as a boolean
-     * @throws IllegalStateException if the cell type returned by {@link #getCellType()}
+     * @throws IllegalStateException if the cell type returned by {@link #getCellTypeEnum()}
      *   is not {@link CellType#BOOLEAN}, {@link CellType#BLANK} or {@link CellType#FORMULA}
      */
     boolean getBooleanCellValue();
@@ -336,7 +363,7 @@ public interface Cell {
      * </p>
      *
      * @return the value of the cell as an error code
-     * @throws IllegalStateException if the cell type returned by {@link #getCellType()} isn't {@link CellType#ERROR}
+     * @throws IllegalStateException if the cell type returned by {@link #getCellTypeEnum()} isn't {@link CellType#ERROR}
      * @see FormulaError for error codes
      */
     byte getErrorCellValue();

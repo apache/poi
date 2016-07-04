@@ -276,7 +276,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
             case RETURN_NULL_AND_BLANK:
                 return cell;
             case RETURN_BLANK_AS_NULL:
-                boolean isBlank = (cell != null && cell.getCellType() == CellType.BLANK);
+                boolean isBlank = (cell != null && cell.getCellTypeEnum() == CellType.BLANK);
                 return (isBlank) ? null : cell;
             case CREATE_NULL_AS_BLANK:
                 return (cell == null) ? createCell(cellnum, CellType.BLANK) : cell;
@@ -496,7 +496,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
         if(xcell.isPartOfArrayFormulaGroup()) {
             xcell.notifyArrayFormulaChanging();
         }
-        if(cell.getCellType() == CellType.FORMULA) {
+        if(cell.getCellTypeEnum() == CellType.FORMULA) {
            _sheet.getWorkbook().onDeleteFormula(xcell);
         }
         // Performance optimization for bug 57840: explicit boxing is slightly faster than auto-unboxing, though may use more memory
@@ -636,7 +636,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
         else {
             for (final Cell c : srcRow){
                 final XSSFCell srcCell = (XSSFCell)c;
-                final XSSFCell destCell = createCell(srcCell.getColumnIndex(), srcCell.getCellType());
+                final XSSFCell destCell = createCell(srcCell.getColumnIndex(), srcCell.getCellTypeEnum());
                 destCell.copyCellFrom(srcCell, policy);
             }
 

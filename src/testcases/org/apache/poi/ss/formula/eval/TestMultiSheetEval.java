@@ -106,7 +106,7 @@ public final class TestMultiSheetEval extends TestCase {
 			throw new AssertionFailedError(msg + " - actual value was null");
 		}
 		
-		final CellType cellType = expected.getCellType();
+		final CellType cellType = expected.getCellTypeEnum();
 
 		switch (cellType) {
 			case BLANK:
@@ -231,7 +231,7 @@ public final class TestMultiSheetEval extends TestCase {
 		int result = Result.NO_EVALUATIONS_FOUND; // so far
 
 		Cell c = formulasRow.getCell(SS.COLUMN_INDEX_ACTUAL_VALUE);
-		if (c == null || c.getCellType() != CellType.FORMULA) {
+		if (c == null || c.getCellTypeEnum() != CellType.FORMULA) {
 			return result;
 		}
 
@@ -300,15 +300,15 @@ public final class TestMultiSheetEval extends TestCase {
 			System.err.println("Warning - Row " + r.getRowNum() + " has no cell " + SS.COLUMN_INDEX_FUNCTION_NAME + ", can't figure out function name");
 			return null;
 		}
-		if(cell.getCellType() == CellType.BLANK) {
+		if(cell.getCellTypeEnum() == CellType.BLANK) {
 			return null;
 		}
-		if(cell.getCellType() == CellType.STRING) {
+		if(cell.getCellTypeEnum() == CellType.STRING) {
 			return cell.getRichStringCellValue().getString();
 		}
 
 		throw new AssertionFailedError("Bad cell type for 'function name' column: ("
-				+ cell.getCellType() + ") row (" + (r.getRowNum() +1) + ")");
+				+ cell.getCellTypeEnum() + ") row (" + (r.getRowNum() +1) + ")");
 	}
 	/**
 	 * @return <code>null</code> if cell is missing, empty or blank
@@ -323,15 +323,15 @@ public final class TestMultiSheetEval extends TestCase {
 			System.err.println("Warning - Row " + r.getRowNum() + " has no cell " + SS.COLUMN_INDEX_TEST_NAME + ", can't figure out test name");
 			return null;
 		}
-		if(cell.getCellType() == CellType.BLANK) {
+		if(cell.getCellTypeEnum() == CellType.BLANK) {
 			return null;
 		}
-		if(cell.getCellType() == CellType.STRING) {
+		if(cell.getCellTypeEnum() == CellType.STRING) {
 			return cell.getRichStringCellValue().getString();
 		}
 
 		throw new AssertionFailedError("Bad cell type for 'test name' column: ("
-				+ cell.getCellType() + ") row (" + (r.getRowNum() +1) + ")");
+				+ cell.getCellTypeEnum() + ") row (" + (r.getRowNum() +1) + ")");
 	}
 	
 }

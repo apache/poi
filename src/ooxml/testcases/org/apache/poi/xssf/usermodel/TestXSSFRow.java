@@ -183,7 +183,7 @@ public final class TestXSSFRow extends BaseTestXRow {
         assertSame("existing references to externObserverRow are still valid", externObserverRow, sheet2.getRow(0));
         
         // Make sure copyRowFrom actually copied row (this is tested elsewhere)
-        assertEquals(CellType.STRING, destRow.getCell(0).getCellType());
+        assertEquals(CellType.STRING, destRow.getCell(0).getCellTypeEnum());
         assertEquals("hello", destRow.getCell(0).getStringCellValue());
         
         // We don't want #REF! errors if we copy a row that contains cells that are referred to by other cells outside of copied region

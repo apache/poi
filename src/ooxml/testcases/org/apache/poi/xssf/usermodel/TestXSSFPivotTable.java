@@ -317,7 +317,7 @@ public class TestXSSFPivotTable extends TestCase {
      */
     public void testAddDataColumnWithOffsetData() {
         offsetPivotTable.addColumnLabel(DataConsolidateFunction.SUM, 1);
-        assertEquals(CellType.NUMERIC, offsetOuterCell.getCellType());
+        assertEquals(CellType.NUMERIC, offsetOuterCell.getCellTypeEnum());
         
         offsetPivotTable.addColumnLabel(DataConsolidateFunction.SUM, 0);
     }

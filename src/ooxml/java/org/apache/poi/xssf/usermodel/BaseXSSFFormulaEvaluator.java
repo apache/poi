@@ -75,7 +75,7 @@ public abstract class BaseXSSFFormulaEvaluator implements FormulaEvaluator, Work
             return null;
         }
 
-        switch (cell.getCellType()) {
+        switch (cell.getCellTypeEnum()) {
             case BOOLEAN:
                 return CellValue.valueOf(cell.getBooleanCellValue());
             case ERROR:
@@ -89,7 +89,7 @@ public abstract class BaseXSSFFormulaEvaluator implements FormulaEvaluator, Work
             case BLANK:
                 return null;
             default:
-                throw new IllegalStateException("Bad cell type (" + cell.getCellType() + ")");
+                throw new IllegalStateException("Bad cell type (" + cell.getCellTypeEnum() + ")");
         }
     }
 
@@ -113,7 +113,7 @@ public abstract class BaseXSSFFormulaEvaluator implements FormulaEvaluator, Work
      * @return The type of the formula result (the cell's type remains as CellType.FORMULA however)
      */
     public CellType evaluateFormulaCell(Cell cell) {
-        if (cell == null || cell.getCellType() != CellType.FORMULA) {
+        if (cell == null || cell.getCellTypeEnum() != CellType.FORMULA) {
             return CellType._UNINITIALIZED;
         }
         CellValue cv = evaluateFormulaCellValue(cell);
@@ -131,7 +131,7 @@ public abstract class BaseXSSFFormulaEvaluator implements FormulaEvaluator, Work
      */
     protected void doEvaluateInCell(Cell cell) {
         if (cell == null) return;
-        if (cell.getCellType() == CellType.FORMULA) {
+        if (cell.getCellTypeEnum() == CellType.FORMULA) {
             CellValue cv = evaluateFormulaCellValue(cell);
             setCellType(cell, cv); // cell will no longer be a formula cell
             setCellValue(cell, cv);

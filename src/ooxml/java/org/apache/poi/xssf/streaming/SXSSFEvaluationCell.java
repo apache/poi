@@ -20,6 +20,7 @@ package org.apache.poi.xssf.streaming;
 import org.apache.poi.ss.formula.EvaluationCell;
 import org.apache.poi.ss.formula.EvaluationSheet;
 import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.util.Internal;
 
 /**
  * SXSSF wrapper for a cell under evaluation
@@ -51,9 +52,21 @@ final class SXSSFEvaluationCell implements EvaluationCell {
     public boolean getBooleanCellValue() {
         return _cell.getBooleanCellValue();
     }
+    /**
+     * Will return {@link CellType} in a future version of POI.
+     * For forwards compatibility, do not hard-code cell type literals in your code.
+     *
+     * @return cell type
+     */
     @Override
-    public CellType getCellType() {
+    public int getCellType() {
         return _cell.getCellType();
+    }
+    /** @deprecated POI 3.15 beta 3 */
+    @Internal
+    @Override
+    public CellType getCellTypeEnum() {
+        return _cell.getCellTypeEnum();
     }
     @Override
     public int getColumnIndex() {
@@ -79,8 +92,20 @@ final class SXSSFEvaluationCell implements EvaluationCell {
     public String getStringCellValue() {
         return _cell.getRichStringCellValue().getString();
     }
+    /**
+     * Will return {@link CellType} in a future version of POI.
+     * For forwards compatibility, do not hard-code cell type literals in your code.
+     *
+     * @return cell type of cached formula result
+     */
     @Override
-    public CellType getCachedFormulaResultType() {
+    public int getCachedFormulaResultType() {
         return _cell.getCachedFormulaResultType();
+    }
+    /** @deprecated POI 3.15 beta 3 */
+    @Internal
+    @Override
+    public CellType getCachedFormulaResultTypeEnum() {
+        return _cell.getCachedFormulaResultTypeEnum();
     }
 }

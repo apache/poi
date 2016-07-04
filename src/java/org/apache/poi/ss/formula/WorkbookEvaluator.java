@@ -276,7 +276,7 @@ public final class WorkbookEvaluator {
         // avoid tracking dependencies to cells that have constant definition
         boolean shouldCellDependencyBeRecorded = _stabilityClassifier == null ? true
                     : !_stabilityClassifier.isCellFinal(sheetIndex, rowIndex, columnIndex);
-        if (srcCell == null || srcCell.getCellType() != CellType.FORMULA) {
+        if (srcCell == null || srcCell.getCellTypeEnum() != CellType.FORMULA) {
             ValueEval result = getValueFromNonFormulaCell(srcCell);
             if (shouldCellDependencyBeRecorded) {
                 tracker.acceptPlainValueDependency(_workbookIx, sheetIndex, rowIndex, columnIndex, result);
@@ -314,7 +314,7 @@ public final class WorkbookEvaluator {
              } catch (RuntimeException re) {
                  if (re.getCause() instanceof WorkbookNotFoundException && _ignoreMissingWorkbooks) {
                      logInfo(re.getCause().getMessage() + " - Continuing with cached value!");
-                     switch(srcCell.getCachedFormulaResultType()) {
+                     switch(srcCell.getCachedFormulaResultTypeEnum()) {
                          case NUMERIC:
                              result = new NumberEval(srcCell.getNumericCellValue());
                              break;
@@ -332,7 +332,7 @@ public final class WorkbookEvaluator {
                             break;
                          case FORMULA:
                         default:
-                            throw new RuntimeException("Unexpected cell type '" + srcCell.getCellType()+"' found!");
+                            throw new RuntimeException("Unexpected cell type '" + srcCell.getCellTypeEnum()+"' found!");
                      }
                  } else {
                      throw re;
@@ -385,7 +385,7 @@ public final class WorkbookEvaluator {
         if (cell == null) {
             return BlankEval.instance;
         }
-        CellType cellType = cell.getCellType();
+        CellType cellType = cell.getCellTypeEnum();
         switch (cellType) {
             case NUMERIC:
                 return new NumberEval(cell.getNumericCellValue());
