@@ -293,8 +293,8 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
     }
 
     /**
-      * @since POI 3.15 beta 3
-      */
+     * @since POI 3.15 beta 3
+     */
     private void setCellReferences() {
         String ref = ctTable.getRef();
         if (ref != null) {
@@ -399,9 +399,11 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
             final int count = getTableColumns().length;
             columnMap = new HashMap<String, Integer>(count * 3 / 2);
             
-            for (int i=0; i < count; i++) {
-                String columnName = getTableColumns()[i].getName();
+            int i = 0;
+            for (CTTableColumn column : getTableColumns()) {
+                String columnName = column.getName();
                 columnMap.put(caseInsensitive(columnName), i);
+                i++;
             }
         }
         // Table column names with special characters need a single quote escape
