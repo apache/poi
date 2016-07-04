@@ -29,6 +29,7 @@ import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.AreaReference;
@@ -143,7 +144,7 @@ public class XSSFPivotCacheDefinition extends POIXMLDocumentPart{
             //General number format
             cf.setNumFmtId(0);
             Cell cell = row.getCell(i);
-            cell.setCellType(Cell.CELL_TYPE_STRING);
+            cell.setCellType(CellType.STRING);
             cf.setName(row.getCell(i).getStringCellValue());
             cf.addNewSharedItems();
         }

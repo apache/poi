@@ -252,40 +252,40 @@ public abstract class BaseTestRow {
         // 5 -> num
         row.createCell(0).setCellValue("test");
         row.createCell(1).setCellValue(3.2);
-        row.createCell(4, Cell.CELL_TYPE_BLANK);
+        row.createCell(4, CellType.BLANK);
         row.createCell(5).setCellValue(4);
 
         // First up, no policy given, uses default
-        assertEquals(Cell.CELL_TYPE_STRING,  row.getCell(0).getCellType());
-        assertEquals(Cell.CELL_TYPE_NUMERIC, row.getCell(1).getCellType());
+        assertEquals(CellType.STRING,  row.getCell(0).getCellType());
+        assertEquals(CellType.NUMERIC, row.getCell(1).getCellType());
         assertEquals(null, row.getCell(2));
         assertEquals(null, row.getCell(3));
-        assertEquals(Cell.CELL_TYPE_BLANK,   row.getCell(4).getCellType());
-        assertEquals(Cell.CELL_TYPE_NUMERIC, row.getCell(5).getCellType());
+        assertEquals(CellType.BLANK,   row.getCell(4).getCellType());
+        assertEquals(CellType.NUMERIC, row.getCell(5).getCellType());
 
         // RETURN_NULL_AND_BLANK - same as default
-        assertEquals(Cell.CELL_TYPE_STRING,  row.getCell(0, MissingCellPolicy.RETURN_NULL_AND_BLANK).getCellType());
-        assertEquals(Cell.CELL_TYPE_NUMERIC, row.getCell(1, MissingCellPolicy.RETURN_NULL_AND_BLANK).getCellType());
+        assertEquals(CellType.STRING,  row.getCell(0, MissingCellPolicy.RETURN_NULL_AND_BLANK).getCellType());
+        assertEquals(CellType.NUMERIC, row.getCell(1, MissingCellPolicy.RETURN_NULL_AND_BLANK).getCellType());
         assertEquals(null, row.getCell(2, MissingCellPolicy.RETURN_NULL_AND_BLANK));
         assertEquals(null, row.getCell(3, MissingCellPolicy.RETURN_NULL_AND_BLANK));
-        assertEquals(Cell.CELL_TYPE_BLANK,   row.getCell(4, MissingCellPolicy.RETURN_NULL_AND_BLANK).getCellType());
-        assertEquals(Cell.CELL_TYPE_NUMERIC, row.getCell(5, MissingCellPolicy.RETURN_NULL_AND_BLANK).getCellType());
+        assertEquals(CellType.BLANK,   row.getCell(4, MissingCellPolicy.RETURN_NULL_AND_BLANK).getCellType());
+        assertEquals(CellType.NUMERIC, row.getCell(5, MissingCellPolicy.RETURN_NULL_AND_BLANK).getCellType());
 
         // RETURN_BLANK_AS_NULL - nearly the same
-        assertEquals(Cell.CELL_TYPE_STRING,  row.getCell(0, MissingCellPolicy.RETURN_BLANK_AS_NULL).getCellType());
-        assertEquals(Cell.CELL_TYPE_NUMERIC, row.getCell(1, MissingCellPolicy.RETURN_BLANK_AS_NULL).getCellType());
+        assertEquals(CellType.STRING,  row.getCell(0, MissingCellPolicy.RETURN_BLANK_AS_NULL).getCellType());
+        assertEquals(CellType.NUMERIC, row.getCell(1, MissingCellPolicy.RETURN_BLANK_AS_NULL).getCellType());
         assertEquals(null, row.getCell(2, MissingCellPolicy.RETURN_BLANK_AS_NULL));
         assertEquals(null, row.getCell(3, MissingCellPolicy.RETURN_BLANK_AS_NULL));
         assertEquals(null, row.getCell(4, MissingCellPolicy.RETURN_BLANK_AS_NULL));
-        assertEquals(Cell.CELL_TYPE_NUMERIC, row.getCell(5, MissingCellPolicy.RETURN_BLANK_AS_NULL).getCellType());
+        assertEquals(CellType.NUMERIC, row.getCell(5, MissingCellPolicy.RETURN_BLANK_AS_NULL).getCellType());
 
         // CREATE_NULL_AS_BLANK - creates as needed
-        assertEquals(Cell.CELL_TYPE_STRING,  row.getCell(0, MissingCellPolicy.CREATE_NULL_AS_BLANK).getCellType());
-        assertEquals(Cell.CELL_TYPE_NUMERIC, row.getCell(1, MissingCellPolicy.CREATE_NULL_AS_BLANK).getCellType());
-        assertEquals(Cell.CELL_TYPE_BLANK,   row.getCell(2, MissingCellPolicy.CREATE_NULL_AS_BLANK).getCellType());
-        assertEquals(Cell.CELL_TYPE_BLANK,   row.getCell(3, MissingCellPolicy.CREATE_NULL_AS_BLANK).getCellType());
-        assertEquals(Cell.CELL_TYPE_BLANK,   row.getCell(4, MissingCellPolicy.CREATE_NULL_AS_BLANK).getCellType());
-        assertEquals(Cell.CELL_TYPE_NUMERIC, row.getCell(5, MissingCellPolicy.CREATE_NULL_AS_BLANK).getCellType());
+        assertEquals(CellType.STRING,  row.getCell(0, MissingCellPolicy.CREATE_NULL_AS_BLANK).getCellType());
+        assertEquals(CellType.NUMERIC, row.getCell(1, MissingCellPolicy.CREATE_NULL_AS_BLANK).getCellType());
+        assertEquals(CellType.BLANK,   row.getCell(2, MissingCellPolicy.CREATE_NULL_AS_BLANK).getCellType());
+        assertEquals(CellType.BLANK,   row.getCell(3, MissingCellPolicy.CREATE_NULL_AS_BLANK).getCellType());
+        assertEquals(CellType.BLANK,   row.getCell(4, MissingCellPolicy.CREATE_NULL_AS_BLANK).getCellType());
+        assertEquals(CellType.NUMERIC, row.getCell(5, MissingCellPolicy.CREATE_NULL_AS_BLANK).getCellType());
 
         // Check created ones get the right column
         assertEquals(0, row.getCell(0, MissingCellPolicy.CREATE_NULL_AS_BLANK).getColumnIndex());
@@ -300,12 +300,12 @@ public abstract class BaseTestRow {
         //  that that is now used if no policy given
         workbook.setMissingCellPolicy(MissingCellPolicy.RETURN_BLANK_AS_NULL);
 
-        assertEquals(Cell.CELL_TYPE_STRING,  row.getCell(0).getCellType());
-        assertEquals(Cell.CELL_TYPE_NUMERIC, row.getCell(1).getCellType());
+        assertEquals(CellType.STRING,  row.getCell(0).getCellType());
+        assertEquals(CellType.NUMERIC, row.getCell(1).getCellType());
         assertEquals(null, row.getCell(2));
         assertEquals(null, row.getCell(3));
         assertEquals(null, row.getCell(4));
-        assertEquals(Cell.CELL_TYPE_NUMERIC, row.getCell(5).getCellType());
+        assertEquals(CellType.NUMERIC, row.getCell(5).getCellType());
         
         workbook.close();
     }
@@ -409,7 +409,7 @@ public abstract class BaseTestRow {
         assertFalse(it.hasNext());
 
         // Add another cell, specifying the cellType
-        Cell cell5 = row.createCell(2, Cell.CELL_TYPE_STRING);
+        Cell cell5 = row.createCell(2, CellType.STRING);
         it = row.cellIterator();
         assertNotNull(cell5);
         assertTrue(it.hasNext());
@@ -420,7 +420,7 @@ public abstract class BaseTestRow {
         assertTrue(cell5 == it.next());
         assertTrue(it.hasNext());
         assertTrue(cell2 == it.next());
-        assertEquals(Cell.CELL_TYPE_STRING, cell5.getCellType());
+        assertEquals(CellType.STRING, cell5.getCellType());
         wb.close();
     }
 

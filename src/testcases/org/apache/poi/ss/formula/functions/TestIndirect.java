@@ -28,6 +28,7 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.junit.Test;
@@ -182,7 +183,7 @@ public final class TestIndirect {
         fe.clearAllCachedResultValues();
         cell.setCellFormula(formula);
         CellValue cv = fe.evaluate(cell);
-        if (cv.getCellType() != Cell.CELL_TYPE_NUMERIC) {
+        if (cv.getCellType() != CellType.NUMERIC) {
             fail("expected numeric cell type but got " + cv.formatAsString());
         }
         assertEquals(expectedResult, cv.getNumberValue(), 0.0);
@@ -193,7 +194,7 @@ public final class TestIndirect {
         fe.clearAllCachedResultValues();
         cell.setCellFormula(formula);
         CellValue cv = fe.evaluate(cell);
-        if (cv.getCellType() != Cell.CELL_TYPE_ERROR) {
+        if (cv.getCellType() != CellType.ERROR) {
             fail("expected error cell type but got " + cv.formatAsString());
         }
         int expCode = expectedResult.getErrorCode();

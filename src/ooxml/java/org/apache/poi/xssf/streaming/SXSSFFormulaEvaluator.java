@@ -22,6 +22,7 @@ import org.apache.poi.ss.formula.IStabilityClassifier;
 import org.apache.poi.ss.formula.WorkbookEvaluator;
 import org.apache.poi.ss.formula.udf.UDFFinder;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.util.POILogFactory;
@@ -120,7 +121,7 @@ public final class SXSSFFormulaEvaluator extends BaseXSSFFormulaEvaluator {
             // Evaluate what we have
             for (Row r : sheet) {
                 for (Cell c : r) {
-                    if (c.getCellType() == Cell.CELL_TYPE_FORMULA) {
+                    if (c.getCellType() == CellType.FORMULA) {
                         eval.evaluateFormulaCell(c);
                     }
                 }

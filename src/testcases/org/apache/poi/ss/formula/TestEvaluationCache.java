@@ -224,14 +224,14 @@ public class TestEvaluationCache extends TestCase {
 		public void setCellValue(String cellRefText, double value) {
 			HSSFCell cell = getOrCreateCell(cellRefText);
 			// be sure to blank cell, in case it is currently a formula
-			cell.setCellType(HSSFCell.CELL_TYPE_BLANK);
+			cell.setCellType(CellType.BLANK);
 			// otherwise this line will only set the formula cached result;
 			cell.setCellValue(value);
 			_evaluator.notifyUpdateCell(wrapCell(cell));
 		}
 		public void clearCell(String cellRefText) {
 			HSSFCell cell = getOrCreateCell(cellRefText);
-			cell.setCellType(HSSFCell.CELL_TYPE_BLANK);
+			cell.setCellType(CellType.BLANK);
 			_evaluator.notifyUpdateCell(wrapCell(cell));
 		}
 
@@ -598,7 +598,7 @@ public class TestEvaluationCache extends TestCase {
 		cv = fe.evaluate(cellA1);
 		assertEquals(3.7, cv.getNumberValue(), 0.0);
 
-		cellB1.setCellType(HSSFCell.CELL_TYPE_BLANK);
+		cellB1.setCellType(CellType.BLANK);
 		fe.notifyUpdateCell(cellB1);
 		cv = fe.evaluate(cellA1); // B1 was used to evaluate A1
 		assertEquals(2.2, cv.getNumberValue(), 0.0);

@@ -30,6 +30,7 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.formula.FormulaParseException;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
 
 /**
@@ -98,7 +99,7 @@ public final class TestFormulaParserEval extends TestCase {
 			}
 			throw e;
 		}
-		assertEquals(HSSFCell.CELL_TYPE_NUMERIC, result.getCellType());
+		assertEquals(CellType.NUMERIC, result.getCellType());
 		assertEquals(42.0, result.getNumberValue(), 0.0);
 	}
 }

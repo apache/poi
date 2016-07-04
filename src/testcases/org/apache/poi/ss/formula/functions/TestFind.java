@@ -24,6 +24,7 @@ import java.io.IOException;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.FormulaError;
 import org.junit.Test;
@@ -65,7 +66,7 @@ public final class TestFind {
 		cell.setCellFormula(formulaText);
 		fe.notifyUpdateCell(cell);
 		CellValue result = fe.evaluate(cell);
-		assertEquals(result.getCellType(), HSSFCell.CELL_TYPE_NUMERIC);
+		assertEquals(result.getCellType(), CellType.NUMERIC);
 		assertEquals(expectedResult, result.getNumberValue(), 0.0);
 	}
 
@@ -74,7 +75,7 @@ public final class TestFind {
 		cell.setCellFormula(formulaText);
 		fe.notifyUpdateCell(cell);
 		CellValue result = fe.evaluate(cell);
-		assertEquals(result.getCellType(), HSSFCell.CELL_TYPE_ERROR);
+		assertEquals(result.getCellType(), CellType.ERROR);
 		assertEquals(expectedErrorCode.getCode(), result.getErrorValue());
 	}
 }

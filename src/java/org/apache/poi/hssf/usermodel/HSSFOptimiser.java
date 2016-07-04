@@ -22,6 +22,7 @@ import org.apache.poi.hssf.record.ExtendedFormatRecord;
 import org.apache.poi.hssf.record.FontRecord;
 import org.apache.poi.hssf.record.common.UnicodeString;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 
 /**
@@ -141,7 +142,7 @@ public class HSSFOptimiser {
 			HSSFSheet s = workbook.getSheetAt(sheetNum);
 			for (Row row : s) {
 			   for (Cell cell : row) {
-					if(cell.getCellType() == Cell.CELL_TYPE_STRING) {
+					if(cell.getCellType() == CellType.STRING) {
 						HSSFRichTextString rtr = (HSSFRichTextString)cell.getRichStringCellValue();
 						UnicodeString u = rtr.getRawUnicodeString();
 						

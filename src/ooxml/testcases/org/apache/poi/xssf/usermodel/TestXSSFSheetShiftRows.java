@@ -26,6 +26,7 @@ import java.io.IOException;
 
 import org.apache.poi.ss.usermodel.BaseTestSheetShiftRows;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -116,7 +117,7 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
             return;
         }
         Cell readCell = readRow.getCell(0);
-        if(readCell.getCellType() == Cell.CELL_TYPE_NUMERIC) {
+        if(readCell.getCellType() == CellType.NUMERIC) {
             assertEquals(expect, Double.toString(readCell.getNumericCellValue()));
         } else {
             assertEquals(expect, readCell.getStringCellValue());

@@ -318,7 +318,7 @@ public abstract class BaseTestSheetShiftRows {
             Row row = sheet.createRow(i);
             
             for (int j = 0; j < 10; j++) {
-                Cell cell = row.createCell(j, Cell.CELL_TYPE_STRING);
+                Cell cell = row.createCell(j, CellType.STRING);
                 cell.setCellValue(i + "x" + j);
             }
         }

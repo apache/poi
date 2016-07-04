@@ -27,6 +27,7 @@ import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -435,7 +436,7 @@ public final class TestCellStyle extends TestCase {
         
                             Cell cell = row.getCell(idxCell);
                             cell.getCellStyle().getDataFormatString();
-                            if (cell.getCellType() == HSSFCell.CELL_TYPE_NUMERIC) {
+                            if (cell.getCellType() == CellType.NUMERIC) {
                                 boolean isDate = HSSFDateUtil.isCellDateFormatted(cell);
                                 if (idxCell > 0 && isDate) {
                                     fail("cell " + idxCell + " is not a date: " + idxCell.toString());

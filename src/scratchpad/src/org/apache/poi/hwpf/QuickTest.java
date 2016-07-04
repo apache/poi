@@ -18,7 +18,6 @@
 package org.apache.poi.hwpf;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.apache.poi.hwpf.usermodel.CharacterRun;

@@ -23,6 +23,7 @@ import junit.framework.TestCase;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -52,7 +53,7 @@ public final class TestProper extends TestCase {
     private void confirm(Workbook wb) {
         Sheet sheet = wb.createSheet("new sheet");
         cell11 = sheet.createRow(0).createCell(0);
-        cell11.setCellType(XSSFCell.CELL_TYPE_FORMULA);
+        cell11.setCellType(CellType.FORMULA);
 
         confirm("PROPER(\"hi there\")", "Hi There");
         confirm("PROPER(\"what's up\")", "What'S Up");
@@ -77,7 +78,7 @@ public final class TestProper extends TestCase {
         cell11.setCellFormula(formulaText);
         evaluator.clearAllCachedResultValues();
         CellValue cv = evaluator.evaluate(cell11);
-        if (cv.getCellType() != Cell.CELL_TYPE_STRING) {
+        if (cv.getCellType() != CellType.STRING) {
             throw new AssertionFailedError("Wrong result type: " + cv.formatAsString());
         }
         String actualValue = cv.getStringValue();

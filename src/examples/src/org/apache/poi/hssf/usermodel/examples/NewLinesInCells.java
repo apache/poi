@@ -18,6 +18,7 @@
 package org.apache.poi.hssf.usermodel.examples;
 
 import org.apache.poi.hssf.usermodel.*;
+import org.apache.poi.ss.usermodel.CellType;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -47,7 +48,7 @@ public class NewLinesInCells {
 		r = s.createRow(2);
 		r.setHeight((short) 0x349);
 		c = r.createCell(2);
-		c.setCellType(HSSFCell.CELL_TYPE_STRING);
+		c.setCellType(CellType.STRING);
 		c.setCellValue("Use \n with word wrap on to create a new line");
 		c.setCellStyle(cs);
 		s.setColumnWidth(2, (int) ((50 * 8) / ((double) 1 / 20)));

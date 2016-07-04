@@ -16,9 +16,8 @@
 ==================================================================== */
 package org.apache.poi.xssf.usermodel;
 
-import junit.framework.TestCase;
-
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DataConsolidateFunction;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -29,6 +28,8 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageFields;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotFields;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotTableDefinition;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STDataConsolidateFunction;
+
+import junit.framework.TestCase;
 
 public class TestXSSFPivotTable extends TestCase {
     private XSSFPivotTable pivotTable;
@@ -316,7 +317,7 @@ public class TestXSSFPivotTable extends TestCase {
      */
     public void testAddDataColumnWithOffsetData() {
         offsetPivotTable.addColumnLabel(DataConsolidateFunction.SUM, 1);
-        assertEquals(Cell.CELL_TYPE_NUMERIC, offsetOuterCell.getCellType());
+        assertEquals(CellType.NUMERIC, offsetOuterCell.getCellType());
         
         offsetPivotTable.addColumnLabel(DataConsolidateFunction.SUM, 0);
     }

@@ -27,6 +27,7 @@ import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
 import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.Row;
 import org.junit.Test;
@@ -67,7 +68,7 @@ public final class TestBug42464 {
 		Iterator<Cell> it = row.cellIterator();
 		while(it.hasNext()) {
 			HSSFCell cell = (HSSFCell)it.next();
-			if(cell.getCellType() != HSSFCell.CELL_TYPE_FORMULA) {
+			if(cell.getCellType() != CellType.FORMULA) {
 			    continue;
 			}
 			FormulaRecordAggregate record = (FormulaRecordAggregate) cell.getCellValueRecord();

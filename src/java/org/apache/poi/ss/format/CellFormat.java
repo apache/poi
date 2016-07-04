@@ -410,7 +410,7 @@ public class CellFormat {
 
     /**
      * Returns the ultimate cell type, following the results of formulas.  If
-     * the cell is a {@link Cell#CELL_TYPE_FORMULA}, this returns the result of
+     * the cell is a {@link CellType#FORMULA}, this returns the result of
      * {@link Cell#getCachedFormulaResultType()}.  Otherwise this returns the
      * result of {@link Cell#getCellType()}.
      *

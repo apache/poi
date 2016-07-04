@@ -672,17 +672,17 @@ public abstract class BaseTestCell {
 
         Cell cell0 = row.createCell(0);
         cell0.setCellValue(Double.NaN);
-        assertEquals("Double.NaN should change cell type to CELL_TYPE_ERROR", CellType.ERROR, cell0.getCellType());
+        assertEquals("Double.NaN should change cell type to CellType#ERROR", CellType.ERROR, cell0.getCellType());
         assertEquals("Double.NaN should change cell value to #NUM!", FormulaError.NUM, forInt(cell0.getErrorCellValue()));
 
         Cell cell1 = row.createCell(1);
         cell1.setCellValue(Double.POSITIVE_INFINITY);
-        assertEquals("Double.POSITIVE_INFINITY should change cell type to CELL_TYPE_ERROR", CellType.ERROR, cell1.getCellType());
+        assertEquals("Double.POSITIVE_INFINITY should change cell type to CellType#ERROR", CellType.ERROR, cell1.getCellType());
         assertEquals("Double.POSITIVE_INFINITY should change cell value to #DIV/0!", FormulaError.DIV0, forInt(cell1.getErrorCellValue()));
 
         Cell cell2 = row.createCell(2);
         cell2.setCellValue(Double.NEGATIVE_INFINITY);
-        assertEquals("Double.NEGATIVE_INFINITY should change cell type to CELL_TYPE_ERROR", CellType.ERROR, cell2.getCellType());
+        assertEquals("Double.NEGATIVE_INFINITY should change cell type to CellType#ERROR", CellType.ERROR, cell2.getCellType());
         assertEquals("Double.NEGATIVE_INFINITY should change cell value to #DIV/0!", FormulaError.DIV0, forInt(cell2.getErrorCellValue()));
 
         Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1);

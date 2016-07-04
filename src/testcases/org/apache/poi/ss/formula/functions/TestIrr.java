@@ -17,11 +17,17 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import junit.framework.TestCase;
-import junit.framework.AssertionFailedError;
-import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
+
+import junit.framework.AssertionFailedError;
+import junit.framework.TestCase;
 
 /**
  * Tests for {@link Irr}
@@ -122,7 +128,7 @@ public final class TestIrr extends TestCase {
     private static void assertFormulaResult(CellValue cv, HSSFCell cell){
         double actualValue = cv.getNumberValue();
         double expectedValue = cell.getNumericCellValue(); // cached formula result calculated by Excel
-        assertEquals("Invalid formula result: " + cv.toString(), HSSFCell.CELL_TYPE_NUMERIC, cv.getCellType());
+        assertEquals("Invalid formula result: " + cv.toString(), CellType.NUMERIC, cv.getCellType());
         assertEquals(expectedValue, actualValue, 1E-4); // should agree within 0.01%
     }
 }

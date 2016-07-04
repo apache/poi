@@ -26,6 +26,7 @@ import java.io.IOException;
 import org.apache.poi.ss.usermodel.BaseTestXRow;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellCopyPolicy;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.XSSFITestDataProvider;
@@ -182,7 +183,7 @@ public final class TestXSSFRow extends BaseTestXRow {
         assertSame("existing references to externObserverRow are still valid", externObserverRow, sheet2.getRow(0));
         
         // Make sure copyRowFrom actually copied row (this is tested elsewhere)
-        assertEquals(Cell.CELL_TYPE_STRING, destRow.getCell(0).getCellType());
+        assertEquals(CellType.STRING, destRow.getCell(0).getCellType());
         assertEquals("hello", destRow.getCell(0).getStringCellValue());
         
         // We don't want #REF! errors if we copy a row that contains cells that are referred to by other cells outside of copied region

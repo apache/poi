@@ -16,20 +16,37 @@
 ==================================================================== */
 package org.apache.poi.hssf.view;
 
-import org.apache.poi.hssf.view.brush.PendingPaintings;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-
-import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.table.*;
-import javax.swing.text.JTextComponent;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.Toolkit;
 import java.awt.event.HierarchyEvent;
 import java.awt.event.HierarchyListener;
+
+import javax.swing.BorderFactory;
+import javax.swing.JLabel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JViewport;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
+import javax.swing.table.TableModel;
+import javax.swing.text.JTextComponent;
+
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.view.brush.PendingPaintings;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.Row;
 
 /**
  * This class is a table that represents the values in a single worksheet.
@@ -125,7 +142,7 @@ public class SVSheetTable extends JTable {
       HSSFCell cell = (HSSFCell) getValueAt(row, col);
       String formula = "";
       if (cell != null) {
-        if (cell.getCellType() == Cell.CELL_TYPE_FORMULA) {
+        if (cell.getCellType() == CellType.FORMULA) {
           formula = cell.getCellFormula();
         } else {
           formula = cell.toString();

@@ -37,6 +37,7 @@ import org.apache.poi.POITestCase;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.BaseTestXWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -524,7 +525,7 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
                 Arrays.fill(useless, 0, 10, ' ');
                 System.arraycopy(prefix, 0, useless, 0, prefix.length);
                 String ul = new String(useless);
-                r.createCell(col, Cell.CELL_TYPE_STRING).setCellValue(ul);
+                r.createCell(col, CellType.STRING).setCellValue(ul);
                 ul = null;
             }
         }

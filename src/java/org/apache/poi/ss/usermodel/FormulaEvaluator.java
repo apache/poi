@@ -96,8 +96,8 @@ public interface FormulaEvaluator {
      *  the result of the formula, use {@link #evaluateInCell(Cell)}
      * @param cell The cell to evaluate
      * @return The type of the formula result, i.e. -1 if the cell is not a formula, 
-     *      or one of Cell.CELL_TYPE_NUMERIC, Cell.CELL_TYPE_STRING, Cell.CELL_TYPE_BOOLEAN, Cell.CELL_TYPE_ERROR
-     *      Note: the cell's type remains as Cell.CELL_TYPE_FORMULA however.
+     *      or one of CellType.NUMERIC, CellType.STRING, CellType.BOOLEAN, CellType.ERROR
+     *      Note: the cell's type remains as CellType.FORMULA however.
      */
     CellType evaluateFormulaCell(Cell cell);
 

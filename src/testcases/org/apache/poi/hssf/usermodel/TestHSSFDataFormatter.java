@@ -31,6 +31,7 @@ import java.util.TimeZone;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.util.LocaleUtil;
 import org.junit.AfterClass;
@@ -216,7 +217,7 @@ public final class TestHSSFDataFormatter {
         { // formula cell
             row = sheet.createRow(7);
             HSSFCell cell = row.createCell(0);
-            cell.setCellType(HSSFCell.CELL_TYPE_FORMULA);
+            cell.setCellType(CellType.FORMULA);
             cell.setCellFormula("SUM(12.25,12.25)/100");
             HSSFCellStyle cellStyle = wb.createCellStyle();
             cellStyle.setDataFormat(format.getFormat("##.00%;"));
@@ -383,7 +384,7 @@ public final class TestHSSFDataFormatter {
         HSSFRow row = sheet.getRow(0);
         HSSFCell cellA1 = row.getCell(0);
 
-        assertEquals(HSSFCell.CELL_TYPE_NUMERIC, cellA1.getCellType());
+        assertEquals(CellType.NUMERIC, cellA1.getCellType());
         assertEquals(2345.0, cellA1.getNumericCellValue(), 0.0001);
         assertEquals("@", cellA1.getCellStyle().getDataFormatString());
 

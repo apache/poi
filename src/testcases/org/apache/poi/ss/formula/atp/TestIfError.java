@@ -16,15 +16,16 @@
 ==================================================================== */
 package org.apache.poi.ss.formula.atp;
 
-import junit.framework.TestCase;
-
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellReference;
+
+import junit.framework.TestCase;
 
 /**
  * Testcase for 'Analysis Toolpak' function IFERROR()
@@ -45,11 +46,11 @@ public class TestIfError extends TestCase {
         Row row2 = sh.createRow(1);
 
         // Create cells
-        row1.createCell(0, Cell.CELL_TYPE_NUMERIC);
-        row1.createCell(1, Cell.CELL_TYPE_NUMERIC);
-        row1.createCell(2, Cell.CELL_TYPE_NUMERIC);
-        row2.createCell(0, Cell.CELL_TYPE_NUMERIC);
-        row2.createCell(1, Cell.CELL_TYPE_NUMERIC);
+        row1.createCell(0, CellType.NUMERIC);
+        row1.createCell(1, CellType.NUMERIC);
+        row1.createCell(2, CellType.NUMERIC);
+        row2.createCell(0, CellType.NUMERIC);
+        row2.createCell(1, CellType.NUMERIC);
 
         // Create references
         CellReference a1 = new CellReference("A1");
@@ -77,18 +78,18 @@ public class TestIfError extends TestCase {
         FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
 
         assertEquals("Checks that the cell is numeric",
-        		Cell.CELL_TYPE_NUMERIC, evaluator.evaluate(cell1).getCellType());
+        		CellType.NUMERIC, evaluator.evaluate(cell1).getCellType());
         assertEquals("Divides 210 by 35 and returns 6.0",
                 6.0, evaluator.evaluate(cell1).getNumberValue(), accuracy);
         
         
         assertEquals("Checks that the cell is numeric",
-        		Cell.CELL_TYPE_STRING, evaluator.evaluate(cell2).getCellType());        
+        		CellType.STRING, evaluator.evaluate(cell2).getCellType());        
         assertEquals("Rounds -10 to a nearest multiple of -3 (-9)",
                 "Error in calculation", evaluator.evaluate(cell2).getStringValue());
         
         assertEquals("Check that C1 returns string", 
-        		Cell.CELL_TYPE_STRING, evaluator.evaluate(cell3).getCellType());
+        		CellType.STRING, evaluator.evaluate(cell3).getCellType());
         assertEquals("Check that C1 returns string \"error\"", 
         		"error", evaluator.evaluate(cell3).getStringValue());
     }

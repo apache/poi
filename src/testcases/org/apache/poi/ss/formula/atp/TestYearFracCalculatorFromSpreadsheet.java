@@ -32,6 +32,7 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.formula.eval.EvaluationException;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.util.LocaleUtil;
 import org.junit.Test;
@@ -62,7 +63,7 @@ public final class TestYearFracCalculatorFromSpreadsheet {
 			HSSFRow row = (HSSFRow) rowIterator.next();
 			
 			HSSFCell cell = row.getCell(SS.YEARFRAC_FORMULA_COLUMN);
-			if (cell == null || cell.getCellType() != HSSFCell.CELL_TYPE_FORMULA) {
+			if (cell == null || cell.getCellType() != CellType.FORMULA) {
 				continue;
 			}
             processRow(row, cell, formulaEvaluator);

@@ -26,6 +26,7 @@ import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.ptg.RefPtg;
 import org.apache.poi.ss.formula.SharedFormula;
 import org.apache.poi.hssf.usermodel.*;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.formula.FormulaParser;
 import org.apache.poi.ss.formula.FormulaRenderer;
@@ -203,7 +204,7 @@ public final class TestSharedFormulaRecord extends TestCase {
 
         assertEquals("A$1*2", sheet.getRow(ROW_IX).getCell(1).getCellFormula());
         cell = sheet.getRow(ROW_IX).getCell(1);
-        cell.setCellType(HSSFCell.CELL_TYPE_BLANK);
+        cell.setCellType(CellType.BLANK);
         assertEquals(3, countSharedFormulas(sheet));
 
         wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
@@ -227,7 +228,7 @@ public final class TestSharedFormulaRecord extends TestCase {
     private static void confirmCellEvaluation(HSSFWorkbook wb, HSSFCell cell, double expectedValue) {
         HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
         CellValue cv = fe.evaluate(cell);
-        assertEquals(HSSFCell.CELL_TYPE_NUMERIC, cv.getCellType());
+        assertEquals(CellType.NUMERIC, cv.getCellType());
         assertEquals(expectedValue, cv.getNumberValue(), 0.0);
     }
 

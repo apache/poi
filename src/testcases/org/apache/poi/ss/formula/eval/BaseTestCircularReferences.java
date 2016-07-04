@@ -24,6 +24,7 @@ import java.io.IOException;
 
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
@@ -65,7 +66,7 @@ public abstract class BaseTestCircularReferences {
      * Makes sure that the specified evaluated cell value represents a circular reference error.
      */
     private static void confirmCycleErrorCode(CellValue cellValue) {
-        assertTrue(cellValue.getCellType() == Cell.CELL_TYPE_ERROR);
+        assertTrue(cellValue.getCellType() == CellType.ERROR);
         assertEquals(ErrorEval.CIRCULAR_REF_ERROR.getErrorCode(), cellValue.getErrorValue());
     }
 
@@ -95,7 +96,7 @@ public abstract class BaseTestCircularReferences {
 
         CellValue cellValue = evaluateWithCycles(wb, testCell);
 
-        assertTrue(cellValue.getCellType() == Cell.CELL_TYPE_NUMERIC);
+        assertTrue(cellValue.getCellType() == CellType.NUMERIC);
         assertEquals(2, cellValue.getNumberValue(), 0);
         wb.close();
     }
@@ -165,10 +166,10 @@ public abstract class BaseTestCircularReferences {
 
         // Happy day flow - evaluate A1 first
         cv = fe.evaluate(cellA1);
-        assertEquals(Cell.CELL_TYPE_NUMERIC, cv.getCellType());
+        assertEquals(CellType.NUMERIC, cv.getCellType());
         assertEquals(42.0, cv.getNumberValue(), 0.0);
         cv = fe.evaluate(cellB1); // no circ-ref-error because A1 result is cached
-        assertEquals(Cell.CELL_TYPE_NUMERIC, cv.getCellType());
+        assertEquals(CellType.NUMERIC, cv.getCellType());
         assertEquals(46.0, cv.getNumberValue(), 0.0);
 
         // Show the bug - evaluate another cell from the loop first
@@ -176,13 +177,13 @@ public abstract class BaseTestCircularReferences {
         cv = fe.evaluate(cellB1);
         // Identified bug 46898
         assertNotEquals(cv.getCellType(), ErrorEval.CIRCULAR_REF_ERROR.getErrorCode());
-        assertEquals(Cell.CELL_TYPE_NUMERIC, cv.getCellType());
+        assertEquals(CellType.NUMERIC, cv.getCellType());
         assertEquals(46.0, cv.getNumberValue(), 0.0);
 
         // start evaluation on another cell
         fe.clearAllCachedResultValues();
         cv = fe.evaluate(cellE1);
-        assertEquals(Cell.CELL_TYPE_NUMERIC, cv.getCellType());
+        assertEquals(CellType.NUMERIC, cv.getCellType());
         assertEquals(43.0, cv.getNumberValue(), 0.0);
         
         wb.close();

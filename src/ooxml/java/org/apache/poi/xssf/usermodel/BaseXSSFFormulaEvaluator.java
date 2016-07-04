@@ -110,7 +110,7 @@ public abstract class BaseXSSFFormulaEvaluator implements FormulaEvaluator, Work
      *  and the result. If you want the cell replaced with
      *  the result of the formula, use {@link #evaluate(org.apache.poi.ss.usermodel.Cell)} }
      * @param cell The cell to evaluate
-     * @return The type of the formula result (the cell's type remains as HSSFCell.CELL_TYPE_FORMULA however)
+     * @return The type of the formula result (the cell's type remains as CellType.FORMULA however)
      */
     public CellType evaluateFormulaCell(Cell cell) {
         if (cell == null || cell.getCellType() != CellType.FORMULA) {
