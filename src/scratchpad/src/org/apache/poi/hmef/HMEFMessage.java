@@ -165,7 +165,8 @@ public final class HMEFMessage {
      */
     public MAPIAttribute getMessageMAPIAttribute(MAPIProperty id) {
         for (MAPIAttribute attr : mapiAttributes) {
-            if (attr.getProperty() == id) {
+            // Because of custom properties, match on ID not literal property object
+            if (attr.getProperty().id == id.id) {
                 return attr;
             }
         }
