@@ -31,6 +31,7 @@ import org.apache.poi.hmef.attribute.MAPIRtfAttribute;
 import org.apache.poi.hmef.attribute.MAPIStringAttribute;
 import org.apache.poi.hsmf.datatypes.MAPIProperty;
 import org.apache.poi.hsmf.datatypes.Types;
+import org.apache.poi.util.StringUtil;
 
 /**
  * A utility for extracting out the message body, and all attachments
@@ -95,7 +96,14 @@ public final class HMEFContentsExtractor {
         
         OutputStream fout = new FileOutputStream(dest);
         try {
-            fout.write(body.getData());
+            if (body instanceof MAPIStringAttribute) {
+                // Save in a predictable encoding, not raw bytes
+                String text = ((MAPIStringAttribute)body).getDataString();
+                fout.write(text.getBytes(StringUtil.UTF8));
+            } else {
+                // Save the raw bytes, should be raw RTF
+                fout.write(body.getData());
+            }
         } finally {
             fout.close();
         }
