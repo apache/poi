@@ -551,8 +551,7 @@ public final class XSSFCell implements Cell {
         cellFormula.setRef(range.formatAsString());
     }
 
-    @SuppressWarnings("resource")
-    private void setFormula(String formula, int formulaType) {
+    private void setFormula(String formula, FormulaType formulaType) {
         XSSFWorkbook wb = _row.getSheet().getWorkbook();
         if (formula == null) {
             wb.onDeleteFormula(this);

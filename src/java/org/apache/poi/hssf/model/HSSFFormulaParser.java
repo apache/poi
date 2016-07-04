@@ -18,6 +18,7 @@
 package org.apache.poi.hssf.model;
 
 import org.apache.poi.ss.formula.ptg.Ptg;
+import org.apache.poi.util.Internal;
 import org.apache.poi.hssf.usermodel.HSSFEvaluationWorkbook;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.formula.FormulaParseException;
@@ -29,6 +30,7 @@ import org.apache.poi.ss.formula.FormulaType;
 /**
  * HSSF wrapper for the {@link FormulaParser} and {@link FormulaRenderer}
  */
+@Internal
 public final class HSSFFormulaParser {
 
     private static FormulaParsingWorkbook createParsingWorkbook(HSSFWorkbook book) {
@@ -40,18 +42,36 @@ public final class HSSFFormulaParser {
     }
 
     /**
-     * Convenience method for parsing cell formulas. see {@link #parse(String, HSSFWorkbook, int, int)}
+     * Convenience method for parsing cell formulas. see {@link #parse(String, HSSFWorkbook, FormulaType, int)}
+     * @param formula   The formula to parse, excluding the leading equals sign
+     * @param workbook  The parent workbook
+     * @return the parsed formula tokens
+     * @throws FormulaParseException if the formula has incorrect syntax or is otherwise invalid
      */
     public static Ptg[] parse(String formula, HSSFWorkbook workbook) throws FormulaParseException {
         return parse(formula, workbook, FormulaType.CELL);
     }
 
     /**
+     * @param formula The formula to parse, excluding the leading equals sign
+     * @param workbook The parent workbook
      * @param formulaType a constant from {@link FormulaType}
      * @return the parsed formula tokens
      * @throws FormulaParseException if the formula has incorrect syntax or is otherwise invalid
+     * 
+     * @deprecated POI 3.15 beta 3. Use {@link #parse(String, HSSFWorkbook, FormulaType)} instead.
      */
     public static Ptg[] parse(String formula, HSSFWorkbook workbook, int formulaType) throws FormulaParseException {
+        return parse(formula, workbook, FormulaType.forInt(formulaType));
+    }
+    /**
+     * @param formula     The formula to parse, excluding the leading equals sign
+     * @param workbook    The parent workbook
+     * @param formulaType The type of formula
+     * @return The parsed formula tokens
+     * @throws FormulaParseException if the formula has incorrect syntax or is otherwise invalid
+     */
+    public static Ptg[] parse(String formula, HSSFWorkbook workbook, FormulaType formulaType) throws FormulaParseException {
         return parse(formula, workbook, formulaType, -1);
     }
 
@@ -65,8 +85,23 @@ public final class HSSFFormulaParser {
      *
      * @return the parsed formula tokens
      * @throws FormulaParseException if the formula has incorrect syntax or is otherwise invalid
+     * @deprecated POI 3.15 beta 3. Use {@link #parse(String, HSSFWorkbook, FormulaType, int)} instead.
      */
     public static Ptg[] parse(String formula, HSSFWorkbook workbook, int formulaType, int sheetIndex) throws FormulaParseException {
+        return parse(formula, workbook, FormulaType.forInt(formulaType), sheetIndex);
+    }
+    /**
+     * @param formula     The formula to parse
+     * @param workbook    The parent workbook
+     * @param formulaType The type of formula
+     * @param sheetIndex  The 0-based index of the sheet this formula belongs to.
+     * The sheet index is required to resolve sheet-level names. <code>-1</code> means that
+     * the scope of the name will be ignored and  the parser will match named ranges only by name
+     *
+     * @return the parsed formula tokens
+     * @throws FormulaParseException if the formula has incorrect syntax or is otherwise invalid
+     */
+    public static Ptg[] parse(String formula, HSSFWorkbook workbook, FormulaType formulaType, int sheetIndex) throws FormulaParseException {
         return FormulaParser.parse(formula, createParsingWorkbook(workbook), formulaType, sheetIndex);
     }
 

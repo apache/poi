@@ -57,9 +57,13 @@ import org.apache.poi.ss.formula.ptg.ValueOperatorPtg;
  */
 final class OperandClassTransformer {
 
-	private final int _formulaType;
+	private final FormulaType _formulaType;
 
+	/** @deprecated POI 3.15 beta 3. */
 	public OperandClassTransformer(int formulaType) {
+		this(FormulaType.forInt(formulaType));
+	}
+	public OperandClassTransformer(FormulaType formulaType) {
 		_formulaType = formulaType;
 	}
 
@@ -70,14 +74,14 @@ final class OperandClassTransformer {
 	public void transformFormula(ParseNode rootNode) {
 		byte rootNodeOperandClass;
 		switch (_formulaType) {
-			case FormulaType.CELL:
+			case CELL:
 				rootNodeOperandClass = Ptg.CLASS_VALUE;
 				break;
-			case FormulaType.ARRAY:
+			case ARRAY:
 				rootNodeOperandClass = Ptg.CLASS_ARRAY;
 				break;
-			case FormulaType.NAMEDRANGE:
-			case FormulaType.DATAVALIDATION_LIST:
+			case NAMEDRANGE:
+			case DATAVALIDATION_LIST:
 				rootNodeOperandClass = Ptg.CLASS_REF;
 				break;
 			default:
