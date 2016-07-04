@@ -287,7 +287,7 @@ public final class TestFormulaEvaluatorBugs {
                 HSSFRow r = (HSSFRow)rows.next();
                 for (Iterator<Cell> cells = r.cellIterator(); cells.hasNext();) {
                     HSSFCell c = (HSSFCell)cells.next();
-                    eval.evaluateFormulaCell(c);
+                    eval.evaluateFormulaCellEnum(c);
                 }
             }
         }

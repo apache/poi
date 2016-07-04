@@ -62,7 +62,7 @@ public final class TestNper {
 		assertEquals(15.0, cell.getNumericCellValue(), 0.0);
 
 		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
-		fe.evaluateFormulaCell(cell);
+		fe.evaluateFormulaCellEnum(cell);
 		assertEquals(CellType.ERROR, cell.getCachedFormulaResultTypeEnum());
 		assertEquals(FormulaError.NUM.getCode(), cell.getErrorCellValue());
 		wb.close();

@@ -663,14 +663,14 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         assertEquals(3.0, c.getNumericCellValue(), 0);
 
         FormulaEvaluator formulaEvaluator = wb.getCreationHelper().createFormulaEvaluator();
-        formulaEvaluator.evaluateFormulaCell(c);
+        formulaEvaluator.evaluateFormulaCellEnum(c);
 
         assertEquals("SUM(\n1,2\n)", c.getCellFormula());
         assertEquals(3.0, c.getNumericCellValue(), 0);
 
         // For 51875
         Cell b3 = s.getRow(2).getCell(1);
-        formulaEvaluator.evaluateFormulaCell(b3);
+        formulaEvaluator.evaluateFormulaCellEnum(b3);
         assertEquals("B1+B2", b3.getCellFormula()); // The newline is lost for shared formulas
         assertEquals(3.0, b3.getNumericCellValue(), 0);
         
@@ -1375,8 +1375,8 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
         // Try evaluating both
         XSSFFormulaEvaluator eval = new XSSFFormulaEvaluator(wb);
-        eval.evaluateFormulaCell(c1);
-        eval.evaluateFormulaCell(c2);
+        eval.evaluateFormulaCellEnum(c1);
+        eval.evaluateFormulaCellEnum(c2);
 
         assertEquals(20.0, c1.getNumericCellValue(), 0);
         assertEquals(20.0, c2.getNumericCellValue(), 0);
@@ -2959,7 +2959,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         cell = row.getCell(1);
 
         assertEquals(CellType.BLANK, cell.getCellTypeEnum());
-        assertEquals(CellType._UNINITIALIZED, evaluator.evaluateFormulaCell(cell));
+        assertEquals(CellType._UNINITIALIZED, evaluator.evaluateFormulaCellEnum(cell));
 
         // A3
         row = worksheet.getRow(2);
@@ -2967,7 +2967,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
         assertEquals(CellType.FORMULA, cell.getCellTypeEnum());
         assertEquals("IF(ISBLANK(B3),\"\",B3)", cell.getCellFormula());
-        assertEquals(CellType.STRING, evaluator.evaluateFormulaCell(cell));
+        assertEquals(CellType.STRING, evaluator.evaluateFormulaCellEnum(cell));
         CellValue value = evaluator.evaluate(cell);
         assertEquals("", value.getStringValue());
 
@@ -2977,7 +2977,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
         assertEquals(CellType.FORMULA, cell.getCellTypeEnum());
         assertEquals("COUNTBLANK(A1:A4)", cell.getCellFormula());
-        assertEquals(CellType.NUMERIC, evaluator.evaluateFormulaCell(cell));
+        assertEquals(CellType.NUMERIC, evaluator.evaluateFormulaCellEnum(cell));
         value = evaluator.evaluate(cell);
         assertEquals(1.0, value.getNumberValue(), 0.1);
 

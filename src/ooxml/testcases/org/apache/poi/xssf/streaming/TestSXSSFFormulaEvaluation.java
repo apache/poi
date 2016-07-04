@@ -106,7 +106,7 @@ public final class TestSXSSFFormulaEvaluation {
         
         FormulaEvaluator eval = wb.getCreationHelper().createFormulaEvaluator();
         try {
-            eval.evaluateFormulaCell(c);
+            eval.evaluateFormulaCellEnum(c);
             fail("Evaluate shouldn't work, as reference outside the window");
         } catch(SXSSFFormulaEvaluator.RowFlushedException e) {
             // Expected
@@ -152,7 +152,7 @@ public final class TestSXSSFFormulaEvaluation {
         c.setCellFormula("A1*2");
         
         assertEquals(0, (int)c.getNumericCellValue());
-        eval.evaluateFormulaCell(c);
+        eval.evaluateFormulaCellEnum(c);
         assertEquals(3, (int)c.getNumericCellValue());
         
         wb.close();
@@ -168,12 +168,12 @@ public final class TestSXSSFFormulaEvaluation {
         SXSSFCell c = s.createRow(0).createCell(0);
         c.setCellFormula("1+2");
         assertEquals(0, (int)c.getNumericCellValue());
-        eval.evaluateFormulaCell(c);
+        eval.evaluateFormulaCellEnum(c);
         assertEquals(3, (int)c.getNumericCellValue());
         
         c = s.createRow(1).createCell(0);
         c.setCellFormula("CONCATENATE(\"hello\",\" \",\"world\")");
-        eval.evaluateFormulaCell(c);
+        eval.evaluateFormulaCellEnum(c);
         assertEquals("hello world", c.getStringCellValue());
         
         wb.close();

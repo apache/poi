@@ -96,9 +96,9 @@ public final class TestExternalNameReference extends TestCase {
 		HSSFCell ccell = wb.getSheet(cellRef.getSheetName()).getRow(cellRef.getRow()).getCell((int)cellRef.getCol());
 		cellRef = new CellReference(wb.getName("TOTALCOST").getRefersToFormula());
 		HSSFCell tccell = wb.getSheet(cellRef.getSheetName()).getRow(cellRef.getRow()).getCell((int)cellRef.getCol());
-		evaluator.evaluateFormulaCell(uccell);
-		evaluator.evaluateFormulaCell(ccell);
-		evaluator.evaluateFormulaCell(tccell);
+		evaluator.evaluateFormulaCellEnum(uccell);
+		evaluator.evaluateFormulaCellEnum(ccell);
+		evaluator.evaluateFormulaCellEnum(tccell);
 		assertEquals(NEW_PART_COST, uccell.getNumericCellValue());
 		assertEquals(NEW_PART_COST*NEW_QUANT, ccell.getNumericCellValue());
 		assertEquals(NEW_PART_COST*NEW_QUANT*MARKUP_COST_2, tccell.getNumericCellValue());

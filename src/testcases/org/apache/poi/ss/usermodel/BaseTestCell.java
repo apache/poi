@@ -500,7 +500,7 @@ public abstract class BaseTestCell {
 
         FormulaEvaluator fe = cellA1.getSheet().getWorkbook().getCreationHelper().createFormulaEvaluator();
 
-        fe.evaluateFormulaCell(cellA1);
+        fe.evaluateFormulaCellEnum(cellA1);
         assertEquals("abc", cellA1.getStringCellValue());
 
         fe.evaluateInCell(cellA1);
@@ -523,14 +523,14 @@ public abstract class BaseTestCell {
 
         cellA1.setCellFormula("\"DEF\"");
         fe.clearAllCachedResultValues();
-        fe.evaluateFormulaCell(cellA1);
+        fe.evaluateFormulaCellEnum(cellA1);
         assertEquals("DEF", cellA1.getStringCellValue());
         cellA1.setCellType(CellType.STRING);
         assertEquals("DEF", cellA1.getStringCellValue());
 
         cellA1.setCellFormula("25.061");
         fe.clearAllCachedResultValues();
-        fe.evaluateFormulaCell(cellA1);
+        fe.evaluateFormulaCellEnum(cellA1);
         confirmCannotReadString(cellA1);
         assertEquals(25.061, cellA1.getNumericCellValue(), 0.0);
         cellA1.setCellType(CellType.STRING);
@@ -538,7 +538,7 @@ public abstract class BaseTestCell {
 
         cellA1.setCellFormula("TRUE");
         fe.clearAllCachedResultValues();
-        fe.evaluateFormulaCell(cellA1);
+        fe.evaluateFormulaCellEnum(cellA1);
         confirmCannotReadString(cellA1);
         assertEquals(true, cellA1.getBooleanCellValue());
         cellA1.setCellType(CellType.STRING);
@@ -546,7 +546,7 @@ public abstract class BaseTestCell {
 
         cellA1.setCellFormula("#NAME?");
         fe.clearAllCachedResultValues();
-        fe.evaluateFormulaCell(cellA1);
+        fe.evaluateFormulaCellEnum(cellA1);
         confirmCannotReadString(cellA1);
         assertEquals(FormulaError.NAME, forInt(cellA1.getErrorCellValue()));
         cellA1.setCellType(CellType.STRING);
@@ -816,7 +816,7 @@ public abstract class BaseTestCell {
             Row row = sheet.createRow(0);
             Cell cell = row.createCell(0);
             cell.setCellFormula("SQRT(-1)");
-            wb.getCreationHelper().createFormulaEvaluator().evaluateFormulaCell(cell);
+            wb.getCreationHelper().createFormulaEvaluator().evaluateFormulaCellEnum(cell);
             assertEquals(36, cell.getErrorCellValue());
         } finally {
             wb.close();

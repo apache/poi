@@ -1118,9 +1118,9 @@ public final class TestBugs extends BaseTestBugzillaIssues {
 
         // Now evaluate, they should all be changed
         HSSFFormulaEvaluator eval = new HSSFFormulaEvaluator(wb1);
-        eval.evaluateFormulaCell(c1);
-        eval.evaluateFormulaCell(c2);
-        eval.evaluateFormulaCell(c3);
+        eval.evaluateFormulaCellEnum(c1);
+        eval.evaluateFormulaCellEnum(c2);
+        eval.evaluateFormulaCellEnum(c3);
 
         // Check that the cells now contain
         //  the correct values
@@ -2389,7 +2389,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
 
         // Check the evaluated result
         HSSFFormulaEvaluator eval = new HSSFFormulaEvaluator(wb);
-        eval.evaluateFormulaCell(c);
+        eval.evaluateFormulaCellEnum(c);
         assertEquals(4.0, c.getNumericCellValue(), 0);
         wb.close();
     }

@@ -884,7 +884,7 @@ public class DataFormatter implements Observer {
             if (evaluator == null) {
                 return cell.getCellFormula();
             }
-            cellType = evaluator.evaluateFormulaCell(cell);
+            cellType = evaluator.evaluateFormulaCellEnum(cell);
         }
         switch (cellType) {
             case NUMERIC :

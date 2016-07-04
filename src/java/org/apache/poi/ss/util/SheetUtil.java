@@ -69,18 +69,34 @@ public class SheetUtil {
      *  See Bugzilla #50021
      */
     private static final FormulaEvaluator dummyEvaluator = new FormulaEvaluator(){
+        @Override
         public void clearAllCachedResultValues(){}
+        @Override
         public void notifySetFormula(Cell cell) {}
+        @Override
         public void notifyDeleteCell(Cell cell) {}
+        @Override
         public void notifyUpdateCell(Cell cell) {}
+        @Override
         public CellValue evaluate(Cell cell) {return null;  }
+        @Override
         public Cell evaluateInCell(Cell cell) { return null; }
+        @Override
         public void setupReferencedWorkbooks(Map<String, FormulaEvaluator> workbooks) {}
+        @Override
         public void setDebugEvaluationOutputForNextEval(boolean value) {}
+        @Override
         public void setIgnoreMissingWorkbooks(boolean ignore) {}
-        
+        @Override
         public void evaluateAll() {}
-        public CellType evaluateFormulaCell(Cell cell) {
+        @Override
+        public int evaluateFormulaCell(Cell cell) {
+            return cell.getCachedFormulaResultType();
+        }
+        /** @deprecated POI 3.15 beta 3. Will be deleted when we make the CellType enum transition. See bug 59791. */
+        @Internal
+        @Override
+        public CellType evaluateFormulaCellEnum(Cell cell) {
             return cell.getCachedFormulaResultTypeEnum();
         }
     };

@@ -78,10 +78,10 @@ public final class TestFormulaEvaluatorDocs extends TestCase {
 				for(Iterator cit = r.cellIterator(); cit.hasNext();) {
 					HSSFCell c = (HSSFCell)cit.next();
 					if(c.getCellTypeEnum() == CellType.FORMULA) {
-						evaluator.evaluateFormulaCell(c);
+						evaluator.evaluateFormulaCellEnum(c);
 						
 						// For testing - all should be numeric
-						assertEquals(CellType.NUMERIC, evaluator.evaluateFormulaCell(c));
+						assertEquals(CellType.NUMERIC, evaluator.evaluateFormulaCellEnum(c));
 					}
 				}
 			}

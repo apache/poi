@@ -32,6 +32,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
+import org.apache.poi.util.Internal;
 
 /**
  * Internal POI use only - parent of XSSF and SXSSF formula evaluators
@@ -112,7 +113,31 @@ public abstract class BaseXSSFFormulaEvaluator implements FormulaEvaluator, Work
      * @param cell The cell to evaluate
      * @return The type of the formula result (the cell's type remains as CellType.FORMULA however)
      */
-    public CellType evaluateFormulaCell(Cell cell) {
+    public int evaluateFormulaCell(Cell cell) {
+        return evaluateFormulaCellEnum(cell).getCode();
+    }
+    
+    /**
+     * If cell contains formula, it evaluates the formula,
+     *  and saves the result of the formula. The cell
+     *  remains as a formula cell.
+     * Else if cell does not contain formula, this method leaves
+     *  the cell unchanged.
+     * Note that the type of the formula result is returned,
+     *  so you know what kind of value is also stored with
+     *  the formula.
+     * <pre>
+     * int evaluatedCellType = evaluator.evaluateFormulaCell(cell);
+     * </pre>
+     * Be aware that your cell will hold both the formula,
+     *  and the result. If you want the cell replaced with
+     *  the result of the formula, use {@link #evaluate(org.apache.poi.ss.usermodel.Cell)} }
+     * @param cell The cell to evaluate
+     * @return The type of the formula result (the cell's type remains as CellType.FORMULA however)
+     * @deprecated POI 3.15 beta 3. Will be deleted when we make the CellType enum transition. See bug 59791.
+     */
+    @Internal
+    public CellType evaluateFormulaCellEnum(Cell cell) {
         if (cell == null || cell.getCellTypeEnum() != CellType.FORMULA) {
             return CellType._UNINITIALIZED;
         }

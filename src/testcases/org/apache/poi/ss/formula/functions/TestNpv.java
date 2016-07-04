@@ -50,7 +50,7 @@ public final class TestNpv extends TestCase {
         // Enumeration
         cell.setCellFormula("NPV(A2, A4,A5,A6,A7,A8)+A3");
         fe.clearAllCachedResultValues();
-        fe.evaluateFormulaCell(cell);
+        fe.evaluateFormulaCellEnum(cell);
         double res = cell.getNumericCellValue();
         assertEquals(1922.06d, Math.round(res * 100d) / 100d);
 
@@ -58,7 +58,7 @@ public final class TestNpv extends TestCase {
         cell.setCellFormula("NPV(A2, A4:A8)+A3");
 
         fe.clearAllCachedResultValues();
-        fe.evaluateFormulaCell(cell);
+        fe.evaluateFormulaCellEnum(cell);
         res = cell.getNumericCellValue();
         assertEquals(1922.06d, Math.round(res * 100d) / 100d);
     }

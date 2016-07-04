@@ -56,8 +56,8 @@ public abstract class BaseTestFormulaEvaluator {
 
         FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();
 
-        fe.evaluateFormulaCell(c1);
-        fe.evaluateFormulaCell(c2);
+        fe.evaluateFormulaCellEnum(c1);
+        fe.evaluateFormulaCellEnum(c2);
 
         assertEquals(6.0, c1.getNumericCellValue(), 0.0001);
         assertEquals(5.0, c2.getNumericCellValue(), 0.0001);
@@ -97,10 +97,10 @@ public abstract class BaseTestFormulaEvaluator {
         // Evaluate and test
         FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();
 
-        fe.evaluateFormulaCell(c1);
-        fe.evaluateFormulaCell(c2);
-        fe.evaluateFormulaCell(c3);
-        fe.evaluateFormulaCell(c4);
+        fe.evaluateFormulaCellEnum(c1);
+        fe.evaluateFormulaCellEnum(c2);
+        fe.evaluateFormulaCellEnum(c3);
+        fe.evaluateFormulaCellEnum(c4);
 
         assertEquals(3.6, c1.getNumericCellValue(), 0.0001);
         assertEquals(17.5, c2.getNumericCellValue(), 0.0001);
@@ -289,7 +289,7 @@ public abstract class BaseTestFormulaEvaluator {
         FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();
 
         cellA1.setCellErrorValue(FormulaError.NAME.getCode());
-        fe.evaluateFormulaCell(cellB1);
+        fe.evaluateFormulaCellEnum(cellB1);
 
         cellA1.setCellValue(2.5);
         fe.notifyUpdateCell(cellA1);

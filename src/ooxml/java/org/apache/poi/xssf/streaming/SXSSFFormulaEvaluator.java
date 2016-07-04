@@ -85,7 +85,7 @@ public final class SXSSFFormulaEvaluator extends BaseXSSFFormulaEvaluator {
      * </pre>
      * Be aware that your cell value will be changed to hold the
      *  result of the formula. If you simply want the formula
-     *  value computed for you, use {@link #evaluateFormulaCell(org.apache.poi.ss.usermodel.Cell)} }
+     *  value computed for you, use {@link #evaluateFormulaCellEnum(org.apache.poi.ss.usermodel.Cell)} }
      */
     public SXSSFCell evaluateInCell(Cell cell) {
         doEvaluateInCell(cell);
@@ -122,7 +122,7 @@ public final class SXSSFFormulaEvaluator extends BaseXSSFFormulaEvaluator {
             for (Row r : sheet) {
                 for (Cell c : r) {
                     if (c.getCellTypeEnum() == CellType.FORMULA) {
-                        eval.evaluateFormulaCell(c);
+                        eval.evaluateFormulaCellEnum(c);
                     }
                 }
             }

@@ -511,7 +511,7 @@ public class TestWorkbookEvaluator {
         Cell D1 = wb.getSheet("IFEquals").getRow(0).getCell(3);
         
         FormulaEvaluator eval = wb.getCreationHelper().createFormulaEvaluator();
-        CellType resultCellType = eval.evaluateFormulaCell(D1);
+        CellType resultCellType = eval.evaluateFormulaCellEnum(D1);
         
         // Call should modify the contents, but leave the formula intact
         assertEquals(CellType.FORMULA, D1.getCellTypeEnum());
