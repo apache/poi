@@ -21,9 +21,12 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 
+import org.apache.poi.hmef.attribute.MAPIAttribute;
 import org.apache.poi.hmef.attribute.MAPIRtfAttribute;
+import org.apache.poi.hmef.attribute.MAPIStringAttribute;
 import org.apache.poi.hmef.attribute.TNEFProperty;
 import org.apache.poi.hsmf.datatypes.MAPIProperty;
+import org.apache.poi.hsmf.datatypes.Types;
 import org.apache.poi.util.LittleEndian;
 
 public final class TestHMEFMessage extends HMEFTest {
@@ -197,6 +200,34 @@ public final class TestHMEFMessage extends HMEFTest {
 	   } catch (IllegalStateException e) {
 		   assertTrue(e.getMessage().contains("Unhandled level 90"));
 	   }
+   }
+   
+   public void testCustomProperty() throws Exception {
+       HMEFMessage msg = new HMEFMessage(
+               _samples.openResourceAsStream("quick-winmail.dat")
+       );
+       
+       // Should have non-standard properties with IDs 0xE28 and 0xE29
+       boolean hasE28 = false;
+       boolean hasE29 = false;
+       for (MAPIAttribute attr : msg.getMessageMAPIAttributes()) {
+           if (attr.getProperty().id == 0xe28) hasE28 = true;
+           if (attr.getProperty().id == 0xe29) hasE29 = true;
+       }
+       assertEquals(true, hasE28);
+       assertEquals(true, hasE29);
+       
+       // Ensure we can fetch those as custom ones
+       MAPIProperty propE28 = MAPIProperty.createCustom(0xe28, Types.ASCII_STRING, "Custom E28");
+       MAPIProperty propE29 = MAPIProperty.createCustom(0xe29, Types.ASCII_STRING, "Custom E29");
+       assertNotNull(msg.getMessageMAPIAttribute(propE28));
+       assertNotNull(msg.getMessageMAPIAttribute(propE29));
+       
+       assertEquals(MAPIStringAttribute.class, msg.getMessageMAPIAttribute(propE28).getClass());
+       assertEquals(
+            "Zimbra - Mark Rogers", 
+            ((MAPIStringAttribute)msg.getMessageMAPIAttribute(propE28)).getDataString().substring(10)
+       );
    }
 }
 
