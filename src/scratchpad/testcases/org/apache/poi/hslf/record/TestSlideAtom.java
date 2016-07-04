@@ -19,12 +19,11 @@ package org.apache.poi.hslf.record;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
-
-import junit.framework.TestCase;
 
 import org.apache.poi.hslf.record.SlideAtom.SSlideLayoutAtom;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
+
+import junit.framework.TestCase;
 
 /**
  * Tests that SlideAtom works properly

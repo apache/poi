@@ -17,7 +17,6 @@
 
 package org.apache.poi.hwmf.record;
 
-import java.awt.Color;
 import java.awt.Shape;
 import java.awt.geom.Arc2D;
 import java.awt.geom.Area;

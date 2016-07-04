@@ -18,11 +18,10 @@
 package org.apache.poi.hslf.usermodel;
 
 
-import junit.framework.TestCase;
-
-import org.apache.poi.hslf.*;
-import org.apache.poi.hslf.record.*;
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.hslf.record.Record;
+
+import junit.framework.TestCase;
 
 /**
  * Tests that SlideShow finds the right records as its most recent ones

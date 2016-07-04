@@ -20,7 +20,6 @@ package org.apache.poi.ss.util;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.SelectionRecord;
 import org.apache.poi.ss.formula.SheetNameFormatter;
-import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**

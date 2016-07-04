@@ -17,8 +17,11 @@
 
 package org.apache.poi.hslf.dev;
 
-import org.apache.poi.hslf.*;
-import org.apache.poi.hslf.record.*;
+import org.apache.poi.hslf.record.Notes;
+import org.apache.poi.hslf.record.NotesAtom;
+import org.apache.poi.hslf.record.Record;
+import org.apache.poi.hslf.record.Slide;
+import org.apache.poi.hslf.record.SlideAtom;
 import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
 
 

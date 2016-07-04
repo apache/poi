@@ -17,17 +17,17 @@
 
 package org.apache.poi.hwpf;
 
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.util.List;
 
-import junit.framework.TestCase;
+import javax.imageio.ImageIO;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hwpf.model.PicturesTable;
 import org.apache.poi.hwpf.usermodel.Picture;
-import org.apache.poi.POIDataSamples;
+
+import junit.framework.TestCase;
 
 /**
  * Test picture support in HWPF

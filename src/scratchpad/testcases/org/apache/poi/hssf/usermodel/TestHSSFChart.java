@@ -17,13 +17,11 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import java.io.IOException;
-
-import org.junit.Test;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
+
+import java.io.IOException;
 
 import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.hssf.HSSFTestDataSamples;
@@ -31,6 +29,7 @@ import org.apache.poi.hssf.record.chart.SeriesRecord;
 import org.apache.poi.hssf.usermodel.HSSFChart.HSSFSeries;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellRangeAddressBase;
+import org.junit.Test;
 
 /**
  * Tests for {@link HSSFChart}

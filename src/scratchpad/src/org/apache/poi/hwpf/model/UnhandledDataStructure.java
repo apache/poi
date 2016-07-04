@@ -17,8 +17,6 @@
 
 package org.apache.poi.hwpf.model;
 
-import java.util.Arrays;
-
 import org.apache.poi.util.Internal;
 
 /**

@@ -21,11 +21,10 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import junit.framework.TestCase;
-
 import org.apache.poi.poifs.property.DocumentProperty;
 import org.apache.poi.poifs.storage.RawDataBlock;
-import org.apache.poi.poifs.storage.SmallDocumentBlock;
+
+import junit.framework.TestCase;
 
 /**
  * Class to test OPOIFSDocument functionality
