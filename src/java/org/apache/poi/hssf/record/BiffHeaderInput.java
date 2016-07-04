@@ -20,13 +20,21 @@ public interface BiffHeaderInput {
 
 	/**
 	 * Read an unsigned short from the stream without decrypting
+	 * 
+	 * @return the record sid
 	 */
 	int readRecordSID();
+	
 	/**
 	 * Read an unsigned short from the stream without decrypting
+	 * 
+	 * @return the data size
 	 */
 	int readDataSize();
 
+	/**
+	 * @return the available bytes
+	 */
 	int available();
 
 }

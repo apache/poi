@@ -60,6 +60,8 @@ public abstract class StandardRecord extends Record {
      *  {@link org.apache.poi.hssf.record.Record#getRecordSize()}} minus four
      *  ( record header consisting of a 'ushort sid' and 'ushort reclength' has already been written
      *  by their superclass).
+     * 
+     * @param out the output object
      */
 	protected abstract void serialize(LittleEndianOutput out);
 }

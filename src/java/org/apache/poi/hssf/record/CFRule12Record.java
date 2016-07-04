@@ -97,14 +97,27 @@ public final class CFRule12Record extends CFRuleBase implements FutureRecord, Cl
 
     /**
      * Creates a new comparison operation rule
+     * 
+     * @param sheet the sheet
+     * @param formulaText the first formula text
+     * 
+     * @return a new comparison operation rule
      */
     public static CFRule12Record create(HSSFSheet sheet, String formulaText) {
         Ptg[] formula1 = parseFormula(formulaText, sheet);
         return new CFRule12Record(CONDITION_TYPE_FORMULA, ComparisonOperator.NO_COMPARISON,
                 formula1, null, null);
     }
+    
     /**
      * Creates a new comparison operation rule
+     * 
+     * @param sheet the sheet
+     * @param comparisonOperation the comparison operation
+     * @param formulaText1 the first formula text
+     * @param formulaText2 the second formula text
+     * 
+     * @return a new comparison operation rule
      */
     public static CFRule12Record create(HSSFSheet sheet, byte comparisonOperation,
             String formulaText1, String formulaText2) {
@@ -113,8 +126,17 @@ public final class CFRule12Record extends CFRuleBase implements FutureRecord, Cl
         return new CFRule12Record(CONDITION_TYPE_CELL_VALUE_IS, comparisonOperation, 
                 formula1, formula2, null);
     }
+    
     /**
      * Creates a new comparison operation rule
+     * 
+     * @param sheet the sheet
+     * @param comparisonOperation the comparison operation
+     * @param formulaText1 the first formula text
+     * @param formulaText2 the second formula text
+     * @param formulaTextScale the scale to apply for the comparison
+     * 
+     * @return a new comparison operation rule
      */
     public static CFRule12Record create(HSSFSheet sheet, byte comparisonOperation,
             String formulaText1, String formulaText2, String formulaTextScale) {
@@ -124,8 +146,14 @@ public final class CFRule12Record extends CFRuleBase implements FutureRecord, Cl
         return new CFRule12Record(CONDITION_TYPE_CELL_VALUE_IS, comparisonOperation, 
                 formula1, formula2, formula3);
     }
+    
     /**
      * Creates a new Data Bar formatting
+     * 
+     * @param sheet the sheet
+     * @param color the data bar color
+     * 
+     * @return a new Data Bar formatting
      */
     public static CFRule12Record create(HSSFSheet sheet, ExtendedColor color) {
         CFRule12Record r = new CFRule12Record(CONDITION_TYPE_DATA_BAR, 
@@ -145,8 +173,14 @@ public final class CFRule12Record extends CFRuleBase implements FutureRecord, Cl
         
         return r;
     }
+    
     /**
      * Creates a new Icon Set / Multi-State formatting
+     * 
+     * @param sheet the sheet
+     * @param iconSet the icon set
+     * 
+     * @return a new Icon Set / Multi-State formatting
      */
     public static CFRule12Record create(HSSFSheet sheet, IconSet iconSet) {
         Threshold[] ts = new Threshold[iconSet.num];
@@ -161,8 +195,13 @@ public final class CFRule12Record extends CFRuleBase implements FutureRecord, Cl
         imf.setThresholds(ts);
         return r;
     }
+    
     /**
      * Creates a new Color Scale / Color Gradient formatting
+     * 
+     * @param sheet the sheet
+     * 
+     * @return a new Color Scale / Color Gradient formatting
      */
     public static CFRule12Record createColorScale(HSSFSheet sheet) {
         int numPoints = 3;

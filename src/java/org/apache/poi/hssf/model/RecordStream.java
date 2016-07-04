@@ -32,6 +32,10 @@ public final class RecordStream {
 
 	/**
 	 * Creates a RecordStream bounded by startIndex and endIndex
+	 * 
+	 * @param inputList the list to iterate over
+	 * @param startIndex the start index within the list
+	 * @param endIx the end index within the list, which is the index of the end element + 1
 	 */
 	public RecordStream(List<Record> inputList, int startIndex, int endIx) {
 		_list = inputList;

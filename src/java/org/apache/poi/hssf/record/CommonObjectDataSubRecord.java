@@ -91,6 +91,7 @@ public final class CommonObjectDataSubRecord extends SubRecord implements Clonea
         field_6_reserved3              = in.readInt();
     }
 
+    @Override
     public String toString()
     {
         StringBuffer buffer = new StringBuffer();
@@ -129,6 +130,7 @@ public final class CommonObjectDataSubRecord extends SubRecord implements Clonea
         return buffer.toString();
     }
 
+    @Override
     public void serialize(LittleEndianOutput out) {
 
         out.writeShort(sid);
@@ -142,10 +144,14 @@ public final class CommonObjectDataSubRecord extends SubRecord implements Clonea
         out.writeInt(field_6_reserved3);
     }
 
-	protected int getDataSize() {
+	@Override
+    protected int getDataSize() {
         return 2 + 2 + 2 + 4 + 4 + 4;
     }
 
+	/**
+	 * @return the record sid
+	 */
     public short getSid()
     {
         return sid;
@@ -250,6 +256,8 @@ public final class CommonObjectDataSubRecord extends SubRecord implements Clonea
 
     /**
      * Get the object id field for the CommonObjectData record.
+     * 
+     * @return the object id field
      */
     public int getObjectId()
     {
@@ -258,6 +266,8 @@ public final class CommonObjectDataSubRecord extends SubRecord implements Clonea
 
     /**
      * Set the object id field for the CommonObjectData record.
+     * 
+     * @param field_2_objectId the object id field
      */
     public void setObjectId(int field_2_objectId)
     {
@@ -266,6 +276,8 @@ public final class CommonObjectDataSubRecord extends SubRecord implements Clonea
 
     /**
      * Get the option field for the CommonObjectData record.
+     * 
+     * @return the option field
      */
     public short getOption()
     {
@@ -274,6 +286,8 @@ public final class CommonObjectDataSubRecord extends SubRecord implements Clonea
 
     /**
      * Set the option field for the CommonObjectData record.
+     * 
+     * @param field_3_option the option field
      */
     public void setOption(short field_3_option)
     {
@@ -282,6 +296,8 @@ public final class CommonObjectDataSubRecord extends SubRecord implements Clonea
 
     /**
      * Get the reserved1 field for the CommonObjectData record.
+     * 
+     * @return the reserved1 field
      */
     public int getReserved1()
     {
@@ -290,6 +306,8 @@ public final class CommonObjectDataSubRecord extends SubRecord implements Clonea
 
     /**
      * Set the reserved1 field for the CommonObjectData record.
+     * 
+     * @param field_4_reserved1 the reserved1 field
      */
     public void setReserved1(int field_4_reserved1)
     {
@@ -298,6 +316,8 @@ public final class CommonObjectDataSubRecord extends SubRecord implements Clonea
 
     /**
      * Get the reserved2 field for the CommonObjectData record.
+     * 
+     * @return the reserved2 field
      */
     public int getReserved2()
     {
@@ -306,6 +326,8 @@ public final class CommonObjectDataSubRecord extends SubRecord implements Clonea
 
     /**
      * Set the reserved2 field for the CommonObjectData record.
+     * 
+     * @param field_5_reserved2 the reserved2 field
      */
     public void setReserved2(int field_5_reserved2)
     {
@@ -314,6 +336,8 @@ public final class CommonObjectDataSubRecord extends SubRecord implements Clonea
 
     /**
      * Get the reserved3 field for the CommonObjectData record.
+     * 
+     * @return the reserved3 field
      */
     public int getReserved3()
     {
@@ -322,6 +346,8 @@ public final class CommonObjectDataSubRecord extends SubRecord implements Clonea
 
     /**
      * Set the reserved3 field for the CommonObjectData record.
+     * 
+     * @param field_6_reserved3 the reserved3 field
      */
     public void setReserved3(int field_6_reserved3)
     {
@@ -331,6 +357,8 @@ public final class CommonObjectDataSubRecord extends SubRecord implements Clonea
     /**
      * Sets the locked field value.
      * true if object is locked when sheet has been protected
+     * 
+     * @param value {@code true} if object is locked when sheet has been protected
      */
     public void setLocked(boolean value)
     {
@@ -349,6 +377,8 @@ public final class CommonObjectDataSubRecord extends SubRecord implements Clonea
     /**
      * Sets the printable field value.
      * object appears when printed
+     * 
+     * @param value {@code true} if object appears when printed
      */
     public void setPrintable(boolean value)
     {
@@ -367,6 +397,8 @@ public final class CommonObjectDataSubRecord extends SubRecord implements Clonea
     /**
      * Sets the autofill field value.
      * whether object uses an automatic fill style
+     * 
+     * @param value {@code true} if object uses an automatic fill style
      */
     public void setAutofill(boolean value)
     {
@@ -385,6 +417,8 @@ public final class CommonObjectDataSubRecord extends SubRecord implements Clonea
     /**
      * Sets the autoline field value.
      * whether object uses an automatic line style
+     * 
+     * @param value {@code true} if object uses an automatic line style
      */
     public void setAutoline(boolean value)
     {

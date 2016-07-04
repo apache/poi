@@ -139,7 +139,12 @@ public abstract class CFRuleBase extends StandardRecord implements Cloneable {
     private Formula formula1;
     private Formula formula2;
 
-    /** Creates new CFRuleRecord */
+    /**
+     * Creates new CFRuleRecord
+     * 
+     * @param conditionType the condition type
+     * @param comparisonOperation the comparison operation
+     */
     protected CFRuleBase(byte conditionType, byte comparisonOperation) {
         setConditionType(conditionType);
         setComparisonOperation(comparisonOperation);
