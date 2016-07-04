@@ -50,7 +50,7 @@ public final class PackagePropertiesPart extends PackagePart implements
 
 	public final static String NAMESPACE_DCTERMS_URI = "http://purl.org/dc/terms/";
 
-	private final static String DEFAULT_DATEFORMAT =     "yyyy-MM-dd'T'HH:mm:ss'Z'";
+	private final static String DEFAULT_DATEFORMAT =   "yyyy-MM-dd'T'HH:mm:ss'Z'";
 
 	private final static String[] DATE_FORMATS = new String[]{
 			DEFAULT_DATEFORMAT,
@@ -61,9 +61,12 @@ public final class PackagePropertiesPart extends PackagePart implements
 	//When we move to Java 7, we should be able to add another
 	//date format to DATE_FORMATS that uses XXX and get rid of this
 	//and TIME_ZONE_PAT
+	// TODO Fix this after the Java 7 upgrade
 	private final String[] TZ_DATE_FORMATS = new String[]{
 			"yyyy-MM-dd'T'HH:mm:ssz",
-			"yyyy-MM-dd'T'HH:mm:ss.SSSz"
+            "yyyy-MM-dd'T'HH:mm:ss.Sz",
+            "yyyy-MM-dd'T'HH:mm:ss.SSz",
+			"yyyy-MM-dd'T'HH:mm:ss.SSSz",
 	};
 
 	private final Pattern TIME_ZONE_PAT = Pattern.compile("([-+]\\d\\d):?(\\d\\d)");

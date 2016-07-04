@@ -273,21 +273,52 @@ public final class TestPackageCoreProperties {
     }
 	
 	@Test
-	@Ignore
 	public void testAlternateCorePropertyTimezones() throws Exception {
         InputStream is = OpenXML4JTestDataSamples.openSampleStream("OPCCompliance_CoreProperties_AlternateTimezones.docx");
         OPCPackage pkg = OPCPackage.open(is);
         PackagePropertiesPart props = (PackagePropertiesPart)pkg.getPackageProperties();
         is.close();
+        
+        // We need predictable dates for testing!
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.ROOT);
+        df.setTimeZone(LocaleUtil.TIMEZONE_UTC);
 
         // Check text properties first
-        assertEquals("Lorem Ipsu", props.getTitleProperty().getValue());
+        assertEquals("Lorem Ipsum", props.getTitleProperty().getValue());
         assertEquals("Apache POI", props.getCreatorProperty().getValue());
         
         // Created at has a +3 timezone and milliseconds
-        //   2006-10-13T18:06:00.1234+03:00
+        //   2006-10-13T18:06:00.123+03:00
+        // = 2006-10-13T15:06:00.123+00:00
+        assertEquals("2006-10-13T15:06:00Z", props.getCreatedPropertyString());
+        assertEquals("2006-10-13T15:06:00.123Z", df.format(props.getCreatedProperty().getValue()));
         
         // Modified at has a -13 timezone but no milliseconds
         //   2007-06-20T07:59:00-13:00
+        // = 2007-06-20T20:59:00-13:00
+        assertEquals("2007-06-20T20:59:00Z", props.getModifiedPropertyString());
+        assertEquals("2007-06-20T20:59:00.000Z", df.format(props.getModifiedProperty().getValue()));
+        
+        
+        // Ensure we can change them with other timezones and still read back OK
+        props.setCreatedProperty("2007-06-20T20:57:00+13:00");
+        props.setModifiedProperty("2007-06-20T20:59:00.123-13:00");
+        
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        pkg.save(baos);
+        pkg = OPCPackage.open(new ByteArrayInputStream(baos.toByteArray()));
+        
+        // Check text properties first - should be unchanged
+        assertEquals("Lorem Ipsum", props.getTitleProperty().getValue());
+        assertEquals("Apache POI", props.getCreatorProperty().getValue());
+        
+        // Check the updated times
+        //   2007-06-20T20:57:00+13:00
+        // = 2007-06-20T07:57:00Z
+        assertEquals("2007-06-20T07:57:00.000Z", df.format(props.getCreatedProperty().getValue()));
+        
+        //   2007-06-20T20:59:00.123-13:00
+        // = 2007-06-21T09:59:00.123Z
+        assertEquals("2007-06-21T09:59:00.123Z", df.format(props.getModifiedProperty().getValue()));
 	}
 }
