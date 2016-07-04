@@ -31,6 +31,7 @@ import java.util.Iterator;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.POILogFactory;
@@ -201,19 +202,19 @@ public class SheetDataWriter {
             // APIs
             _out.write(" s=\"" + (cellStyle.getIndex() & 0xffff) + "\"");
         }
-        int cellType = cell.getCellType();
+        CellType cellType = cell.getCellType();
         switch (cellType) {
-            case Cell.CELL_TYPE_BLANK: {
+            case BLANK: {
                 _out.write(">");
                 break;
             }
-            case Cell.CELL_TYPE_FORMULA: {
+            case FORMULA: {
                 _out.write(">");
                 _out.write("<f>");
                 outputQuotedString(cell.getCellFormula());
                 _out.write("</f>");
                 switch (cell.getCachedFormulaResultType()) {
-                    case Cell.CELL_TYPE_NUMERIC:
+                    case NUMERIC:
                         double nval = cell.getNumericCellValue();
                         if (!Double.isNaN(nval)) {
                             _out.write("<v>" + nval + "</v>");
@@ -224,7 +225,7 @@ public class SheetDataWriter {
                 }
                 break;
             }
-            case Cell.CELL_TYPE_STRING: {
+            case STRING: {
                 if (_sharedStringSource != null) {
                     XSSFRichTextString rt = new XSSFRichTextString(cell.getStringCellValue());
                     int sRef = _sharedStringSource.addEntry(rt.getCTRst());
@@ -245,17 +246,17 @@ public class SheetDataWriter {
                 }
                 break;
             }
-            case Cell.CELL_TYPE_NUMERIC: {
+            case NUMERIC: {
                 _out.write(" t=\"n\">");
                 _out.write("<v>" + cell.getNumericCellValue() + "</v>");
                 break;
             }
-            case Cell.CELL_TYPE_BOOLEAN: {
+            case BOOLEAN: {
                 _out.write(" t=\"b\">");
                 _out.write("<v>" + (cell.getBooleanCellValue() ? "1" : "0") + "</v>");
                 break;
             }
-            case Cell.CELL_TYPE_ERROR: {
+            case ERROR: {
                 FormulaError error = FormulaError.forInt(cell.getErrorCellValue());
 
                 _out.write(" t=\"e\">");

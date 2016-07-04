@@ -123,31 +123,31 @@ public abstract class AbstractExcelConverter
         final String value;
         switch ( cell.getCellType() )
         {
-        case HSSFCell.CELL_TYPE_STRING:
+        case STRING:
             // XXX: enrich
             value = cell.getRichStringCellValue().getString();
             break;
-        case HSSFCell.CELL_TYPE_FORMULA:
+        case FORMULA:
             switch ( cell.getCachedFormulaResultType() )
             {
-            case HSSFCell.CELL_TYPE_STRING:
+            case STRING:
                 HSSFRichTextString str = cell.getRichStringCellValue();
                 if ( str == null || str.length() <= 0 )
                     return false;
 
                 value = str.toString();
                 break;
-            case HSSFCell.CELL_TYPE_NUMERIC:
+            case NUMERIC:
                 HSSFCellStyle style = cell.getCellStyle();
                 double nval = cell.getNumericCellValue();
                 short df = style.getDataFormat();
                 String dfs = style.getDataFormatString();
                 value = _formatter.formatRawCellContents(nval, df, dfs);
                 break;
-            case HSSFCell.CELL_TYPE_BOOLEAN:
+            case BOOLEAN:
                 value = String.valueOf( cell.getBooleanCellValue() );
                 break;
-            case HSSFCell.CELL_TYPE_ERROR:
+            case ERROR:
                 value = ErrorEval.getText( cell.getErrorCellValue() );
                 break;
             default:
@@ -155,16 +155,16 @@ public abstract class AbstractExcelConverter
                 break;
             }
             break;
-        case HSSFCell.CELL_TYPE_BLANK:
+        case BLANK:
             value = ExcelToHtmlUtils.EMPTY;
             break;
-        case HSSFCell.CELL_TYPE_NUMERIC:
+        case NUMERIC:
             value = _formatter.formatCellValue( cell );
             break;
-        case HSSFCell.CELL_TYPE_BOOLEAN:
+        case BOOLEAN:
             value = String.valueOf( cell.getBooleanCellValue() );
             break;
-        case HSSFCell.CELL_TYPE_ERROR:
+        case ERROR:
             value = ErrorEval.getText( cell.getErrorCellValue() );
             break;
         default:

@@ -27,7 +27,7 @@ public interface Row extends Iterable<Cell> {
     /**
      * Use this to create new cells within the row and return it.
      * <p>
-     * The cell that is returned is a {@link Cell#CELL_TYPE_BLANK}. The type can be changed
+     * The cell that is returned is a {@link CellType#BLANK}. The type can be changed
      * either through calling <code>setCellValue</code> or <code>setCellType</code>.
      *
      * @param column - the column number this cell represents
@@ -50,14 +50,30 @@ public interface Row extends Iterable<Cell> {
      * @return Cell a high level representation of the created cell.
      * @throws IllegalArgumentException if columnIndex &lt; 0 or greater than a maximum number of supported columns
      * (255 for *.xls, 1048576 for *.xlsx)
-     * @see Cell#CELL_TYPE_BLANK
-     * @see Cell#CELL_TYPE_BOOLEAN
-     * @see Cell#CELL_TYPE_ERROR
-     * @see Cell#CELL_TYPE_FORMULA
-     * @see Cell#CELL_TYPE_NUMERIC
-     * @see Cell#CELL_TYPE_STRING
+     * @see CellType#BLANK
+     * @see CellType#BOOLEAN
+     * @see CellType#ERROR
+     * @see CellType#FORMULA
+     * @see CellType#NUMERIC
+     * @see CellType#STRING
+     * @deprecated POI 3.15 beta 3. Use {@link #createCell(int, CellType)} instead.
      */
     Cell createCell(int column, int type);
+    /**
+     * Use this to create new cells within the row and return it.
+     * <p>
+     * The cell that is returned will be of the requested type.
+     * The type can be changed either through calling setCellValue 
+     *  or setCellType, but there is a small overhead to doing this,
+     *  so it is best to create of the required type up front.
+     *
+     * @param column - the column number this cell represents
+     * @param type - the cell's data type
+     * @return Cell a high level representation of the created cell.
+     * @throws IllegalArgumentException if columnIndex &lt; 0 or greater than a maximum number of supported columns
+     * (255 for *.xls, 1048576 for *.xlsx)
+     */
+    Cell createCell(int column, CellType type);
 
     /**
      * Remove the Cell from this row.

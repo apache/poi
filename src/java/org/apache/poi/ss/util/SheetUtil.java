@@ -28,6 +28,7 @@ import java.util.Map;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Font;
@@ -79,7 +80,7 @@ public class SheetUtil {
         public void setIgnoreMissingWorkbooks(boolean ignore) {}
         
         public void evaluateAll() {}
-        public int evaluateFormulaCell(Cell cell) {
+        public CellType evaluateFormulaCell(Cell cell) {
             return cell.getCachedFormulaResultType();
         }
     };
@@ -119,15 +120,16 @@ public class SheetUtil {
         }
 
         CellStyle style = cell.getCellStyle();
-        int cellType = cell.getCellType();
+        CellType cellType = cell.getCellType();
 
         // for formula cells we compute the cell width for the cached formula result
-        if(cellType == Cell.CELL_TYPE_FORMULA) cellType = cell.getCachedFormulaResultType();
+        if (cellType == CellType.FORMULA)
+            cellType = cell.getCachedFormulaResultType();
 
         Font font = wb.getFontAt(style.getFontIndex());
 
         double width = -1;
-        if (cellType == Cell.CELL_TYPE_STRING) {
+        if (cellType == CellType.STRING) {
             RichTextString rt = cell.getRichStringCellValue();
             String[] lines = rt.getString().split("\\n");
             for (int i = 0; i < lines.length; i++) {
@@ -144,14 +146,14 @@ public class SheetUtil {
             }
         } else {
             String sval = null;
-            if (cellType == Cell.CELL_TYPE_NUMERIC) {
+            if (cellType == CellType.NUMERIC) {
                 // Try to get it formatted to look the same as excel
                 try {
                     sval = formatter.formatCellValue(cell, dummyEvaluator);
                 } catch (Exception e) {
                     sval = String.valueOf(cell.getNumericCellValue());
                 }
-            } else if (cellType == Cell.CELL_TYPE_BOOLEAN) {
+            } else if (cellType == CellType.BOOLEAN) {
                 sval = String.valueOf(cell.getBooleanCellValue()).toUpperCase(Locale.ROOT);
             }
             if(sval != null) {

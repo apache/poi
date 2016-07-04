@@ -25,6 +25,7 @@ import java.util.Locale;
 
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Color;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
@@ -178,25 +179,28 @@ public class ExcelComparator {
 
     private void compareDataInCell(Locator loc1, Locator loc2) {
         if (isCellTypeMatches(loc1, loc2)) {
-            switch(loc1.cell.getCellType()) {
-            case Cell.CELL_TYPE_BLANK:
-            case Cell.CELL_TYPE_STRING:
-            case Cell.CELL_TYPE_ERROR:
-                isCellContentMatches(loc1,loc2);
-                break;
-            case Cell.CELL_TYPE_BOOLEAN:
-                isCellContentMatchesForBoolean(loc1,loc2);
-                break;
-            case Cell.CELL_TYPE_FORMULA:
-                isCellContentMatchesForFormula(loc1,loc2);
-                break;
-            case Cell.CELL_TYPE_NUMERIC:
-                if (DateUtil.isCellDateFormatted(loc1.cell)) {
-                    isCellContentMatchesForDate(loc1,loc2);
-                } else {
-                    isCellContentMatchesForNumeric(loc1,loc2);
-                }
-                break;
+            final CellType loc1cellType = loc1.cell.getCellType();
+            switch(loc1cellType) {
+                case BLANK:
+                case STRING:
+                case ERROR:
+                    isCellContentMatches(loc1,loc2);
+                    break;
+                case BOOLEAN:
+                    isCellContentMatchesForBoolean(loc1,loc2);
+                    break;
+                case FORMULA:
+                    isCellContentMatchesForFormula(loc1,loc2);
+                    break;
+                case NUMERIC:
+                    if (DateUtil.isCellDateFormatted(loc1.cell)) {
+                        isCellContentMatchesForDate(loc1,loc2);
+                    } else {
+                        isCellContentMatchesForNumeric(loc1,loc2);
+                    }
+                    break;
+                default:
+                    throw new IllegalStateException("Unexpected cell type: " + loc1cellType);
             }
         }
 
@@ -577,13 +581,12 @@ public class ExcelComparator {
      * Checks if cell type matches.
      */
     private boolean isCellTypeMatches(Locator loc1, Locator loc2) {
-        int type1 = loc1.cell.getCellType();
-        int type2 = loc2.cell.getCellType();
+        CellType type1 = loc1.cell.getCellType();
+        CellType type2 = loc2.cell.getCellType();
         if (type1 == type2) return true;
         addMessage(loc1, loc2,
             "Cell Data-Type does not Match in :: ",
-            Integer.toString(type1),
-            Integer.toString(type2)
+            type1.name(), type2.name()
         );
         return false;
     }

@@ -67,29 +67,7 @@ import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.functions.Function;
-import org.apache.poi.ss.usermodel.BaseTestBugzillaIssues;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CellValue;
-import org.apache.poi.ss.usermodel.ClientAnchor;
-import org.apache.poi.ss.usermodel.Comment;
-import org.apache.poi.ss.usermodel.CreationHelper;
-import org.apache.poi.ss.usermodel.DataFormat;
-import org.apache.poi.ss.usermodel.DataFormatter;
-import org.apache.poi.ss.usermodel.DateUtil;
-import org.apache.poi.ss.usermodel.Drawing;
-import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.FormulaError;
-import org.apache.poi.ss.usermodel.FormulaEvaluator;
-import org.apache.poi.ss.usermodel.Hyperlink;
-import org.apache.poi.ss.usermodel.IndexedColors;
-import org.apache.poi.ss.usermodel.Name;
-import org.apache.poi.ss.usermodel.PrintSetup;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.SheetConditionalFormatting;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
@@ -322,10 +300,10 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
                 Sheet s = wb.getSheetAt(i);
                 for(Row r : s) {
                     for(Cell c : r) {
-                        if(c.getCellType() == Cell.CELL_TYPE_FORMULA) {
+                        if(c.getCellType() == CellType.FORMULA) {
                             CellValue cv = eval.evaluate(c);
 
-                            if(cv.getCellType() == Cell.CELL_TYPE_NUMERIC) {
+                            if(cv.getCellType() == CellType.NUMERIC) {
                                 // assert that the calculated value agrees with
                                 // the cached formula result calculated by Excel
                                 String formula = c.getCellFormula();
@@ -446,7 +424,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
         cell = sheet.getRow(0).getCell(0);
         assertEquals("#REF!*#REF!", cell.getCellFormula());
-        assertEquals(Cell.CELL_TYPE_ERROR, evaluator.evaluateInCell(cell).getCellType());
+        assertEquals(CellType.ERROR, evaluator.evaluateInCell(cell).getCellType());
         assertEquals("#REF!", FormulaError.forInt(cell.getErrorCellValue()).getString());
 
         Name nm1 = wb.getName("sale_1");
@@ -458,7 +436,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
         cell = sheet.getRow(1).getCell(0);
         assertEquals("sale_1*sale_2", cell.getCellFormula());
-        assertEquals(Cell.CELL_TYPE_ERROR, evaluator.evaluateInCell(cell).getCellType());
+        assertEquals(CellType.ERROR, evaluator.evaluateInCell(cell).getCellType());
         assertEquals("#REF!", FormulaError.forInt(cell.getErrorCellValue()).getString());
         
         wb.close();
@@ -606,10 +584,10 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         // Otherwise should go
         sheet.getRow(1).getCell(0).setCellFormula("A1"); // stay
         sheet.getRow(2).getCell(0).setCellFormula(null); // go
-        sheet.getRow(3).getCell(0).setCellType(Cell.CELL_TYPE_FORMULA); // stay
+        sheet.getRow(3).getCell(0).setCellType(CellType.FORMULA); // stay
         XSSFTestDataSamples.writeOutAndReadBack(wb1).close();
 
-        sheet.getRow(4).getCell(0).setCellType(Cell.CELL_TYPE_STRING); // go
+        sheet.getRow(4).getCell(0).setCellType(CellType.STRING); // go
         XSSFTestDataSamples.writeOutAndReadBack(wb1).close();
 
         validateCells(sheet);
@@ -617,7 +595,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         validateCells(sheet);
         XSSFTestDataSamples.writeOutAndReadBack(wb1).close();
 
-        sheet.getRow(6).getCell(0).setCellType(Cell.CELL_TYPE_BLANK); // go
+        sheet.getRow(6).getCell(0).setCellType(CellType.BLANK); // go
         XSSFTestDataSamples.writeOutAndReadBack(wb1).close();
 
         sheet.getRow(7).getCell(0).setCellValue((String) null); // go
@@ -664,7 +642,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         Sheet sheet = wb.getSheetAt(0);
         for(Row row : sheet){
             for(Cell cell : row){
-                if(cell.getCellType() == Cell.CELL_TYPE_FORMULA){
+                if(cell.getCellType() == CellType.FORMULA){
                     formulaEvaluator.evaluateInCell(cell); // caused NPE on some cells
                 }
             }
@@ -1718,7 +1696,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
         // Get wrong cell by row 8 & column 7
         Cell cell = sheet.getRow(8).getCell(7);
-        assertEquals(Cell.CELL_TYPE_NUMERIC, cell.getCellType());
+        assertEquals(CellType.NUMERIC, cell.getCellType());
 
         // Check the value - will be zero as it is <c><v/></c>
         assertEquals(0.0, cell.getNumericCellValue(), 0.001);
@@ -2204,11 +2182,11 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
         Sheet sheet = wb.getSheet("Sheet1");
         Cell cell = sheet.getRow(5).getCell(4);
-        assertEquals(Cell.CELL_TYPE_FORMULA, cell.getCellType());
+        assertEquals(CellType.FORMULA, cell.getCellType());
         assertEquals("E4+E5", cell.getCellFormula());
 
         CellValue value = evaluator.evaluate(cell);
-        assertEquals(Cell.CELL_TYPE_ERROR, value.getCellType());
+        assertEquals(CellType.ERROR, value.getCellType());
         assertEquals(-60, value.getErrorValue());
         assertEquals("~CIRCULAR~REF~", FormulaError.forInt(value.getErrorValue()).getString());
         assertEquals("CIRCULAR_REF", FormulaError.forInt(value.getErrorValue()).toString());
@@ -2563,7 +2541,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
                 if(cell == null){
                     cell = row.createCell(cellnum);
                 } else {
-                    if(cell.getCellType() == Cell.CELL_TYPE_FORMULA) {
+                    if(cell.getCellType() == CellType.FORMULA) {
                         cell.setCellFormula(null);
                         cell.getCellStyle().setDataFormat((short) 0);
                     }
@@ -2629,13 +2607,13 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     }
 
     private void assertFormula(Workbook wb, Cell intF, String expectedFormula, String expectedResultOrNull) {
-        assertEquals(Cell.CELL_TYPE_FORMULA, intF.getCellType());
+        assertEquals(CellType.FORMULA, intF.getCellType());
         if (null == expectedResultOrNull) {
-            assertEquals(Cell.CELL_TYPE_ERROR, intF.getCachedFormulaResultType());
+            assertEquals(CellType.ERROR, intF.getCachedFormulaResultType());
             expectedResultOrNull = "#VALUE!";
         }
         else {
-            assertEquals(Cell.CELL_TYPE_NUMERIC, intF.getCachedFormulaResultType());
+            assertEquals(CellType.NUMERIC, intF.getCachedFormulaResultType());
         }
 
         assertEquals(expectedFormula, intF.getCellFormula());
@@ -2676,7 +2654,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         Sheet sheet = wb.getSheet("Sheet1");
         for(Row aRow : sheet) {
             Cell cell = aRow.getCell(1);
-            if(cell.getCellType() == Cell.CELL_TYPE_FORMULA) {
+            if(cell.getCellType() == CellType.FORMULA) {
                 String formula = cell.getCellFormula();
                 //System.out.println("formula: " + formula);
                 assertNotNull(formula);
@@ -2980,16 +2958,16 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         row = worksheet.getRow(2);
         cell = row.getCell(1);
 
-        assertEquals(Cell.CELL_TYPE_BLANK, cell.getCellType());
-        assertEquals(-1, evaluator.evaluateFormulaCell(cell));
+        assertEquals(CellType.BLANK, cell.getCellType());
+        assertEquals(CellType._UNINITIALIZED, evaluator.evaluateFormulaCell(cell));
 
         // A3
         row = worksheet.getRow(2);
         cell = row.getCell(0);
 
-        assertEquals(Cell.CELL_TYPE_FORMULA, cell.getCellType());
+        assertEquals(CellType.FORMULA, cell.getCellType());
         assertEquals("IF(ISBLANK(B3),\"\",B3)", cell.getCellFormula());
-        assertEquals(Cell.CELL_TYPE_STRING, evaluator.evaluateFormulaCell(cell));
+        assertEquals(CellType.STRING, evaluator.evaluateFormulaCell(cell));
         CellValue value = evaluator.evaluate(cell);
         assertEquals("", value.getStringValue());
 
@@ -2997,9 +2975,9 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         row = worksheet.getRow(4);
         cell = row.getCell(0);
 
-        assertEquals(Cell.CELL_TYPE_FORMULA, cell.getCellType());
+        assertEquals(CellType.FORMULA, cell.getCellType());
         assertEquals("COUNTBLANK(A1:A4)", cell.getCellFormula());
-        assertEquals(Cell.CELL_TYPE_NUMERIC, evaluator.evaluateFormulaCell(cell));
+        assertEquals(CellType.NUMERIC, evaluator.evaluateFormulaCell(cell));
         value = evaluator.evaluate(cell);
         assertEquals(1.0, value.getNumberValue(), 0.1);
 

@@ -43,7 +43,7 @@ import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentNode;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.NotOLE2FileException;
-import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.util.IOUtils;
 
 /**
@@ -266,12 +266,12 @@ public class OldExcelExtractor implements Closeable {
                     // Biff 2 and 5+ share the same SID, due to a bug...
                     if (biffVersion == 5) {
                         FormulaRecord fr = new FormulaRecord(ris);
-                        if (fr.getCachedResultType() == Cell.CELL_TYPE_NUMERIC) {
+                        if (fr.getCachedResultType() == CellType.NUMERIC.getCode()) {
                             handleNumericCell(text, fr.getValue());
                         }
                     } else {
                         OldFormulaRecord fr = new OldFormulaRecord(ris);
-                        if (fr.getCachedResultType() == Cell.CELL_TYPE_NUMERIC) {
+                        if (fr.getCachedResultType() == CellType.NUMERIC.getCode()) {
                             handleNumericCell(text, fr.getValue());
                         }
                     }

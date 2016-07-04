@@ -58,13 +58,14 @@ public class TestCellFormatPart extends CellFormatTestBase {
     public void testGeneralFormat() throws Exception {
         runFormatTests("GeneralFormatTests.xlsx", new CellValue() {
             public Object getValue(Cell cell) {
-                int type = CellFormat.ultimateType(cell);
-                if (type == Cell.CELL_TYPE_BOOLEAN)
-                    return cell.getBooleanCellValue();
-                else if (type == Cell.CELL_TYPE_NUMERIC)
-                    return cell.getNumericCellValue();
-                else
-                    return cell.getStringCellValue();
+                switch (CellFormat.ultimateType(cell)) {
+                    case BOOLEAN:
+                        return cell.getBooleanCellValue();
+                    case NUMERIC:
+                        return cell.getNumericCellValue();
+                    default:
+                        return cell.getStringCellValue();
+                }
             }
         });
     }
@@ -125,10 +126,12 @@ public class TestCellFormatPart extends CellFormatTestBase {
     public void testTextFormat() throws Exception {
         runFormatTests("TextFormatTests.xlsx", new CellValue() {
             public Object getValue(Cell cell) {
-                if (CellFormat.ultimateType(cell) == Cell.CELL_TYPE_BOOLEAN)
-                    return cell.getBooleanCellValue();
-                else
-                    return cell.getStringCellValue();
+                switch(CellFormat.ultimateType(cell)) {
+                    case BOOLEAN:
+                        return cell.getBooleanCellValue();
+                    default:
+                        return cell.getStringCellValue();
+                }
             }
         });
     }

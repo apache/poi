@@ -166,17 +166,17 @@ public class SVTableCellRenderer extends JLabel
 
             //Set the value that is rendered for the cell
             switch (c.getCellType()) {
-              case HSSFCell.CELL_TYPE_BLANK:
+              case BLANK:
                 setValue("");
               break;
-              case HSSFCell.CELL_TYPE_BOOLEAN:
+              case BOOLEAN:
                 if (c.getBooleanCellValue()) {
                   setValue("true");
                 } else {
                   setValue("false");
                 }
               break;
-              case HSSFCell.CELL_TYPE_NUMERIC:
+              case NUMERIC:
                 short format = s.getDataFormat();
                 double numericValue = c.getNumericCellValue();
                 if (cellFormatter.useRedColor(format, numericValue))
@@ -184,10 +184,10 @@ public class SVTableCellRenderer extends JLabel
                 else setForeground(null);
                 setValue(cellFormatter.format(format, c.getNumericCellValue()));
               break;
-              case HSSFCell.CELL_TYPE_STRING:
+              case STRING:
                 setValue(c.getRichStringCellValue().getString());
               break;
-              case HSSFCell.CELL_TYPE_FORMULA:
+              case FORMULA:
               default:
                 setValue("?");
             }

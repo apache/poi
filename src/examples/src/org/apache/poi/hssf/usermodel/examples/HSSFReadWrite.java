@@ -187,15 +187,15 @@ public final class HSSFReadWrite {
 
 							switch (cell.getCellType()) {
 
-								case HSSFCell.CELL_TYPE_FORMULA:
+								case FORMULA:
 									value = "FORMULA value=" + cell.getCellFormula();
 									break;
 
-								case HSSFCell.CELL_TYPE_NUMERIC:
+								case NUMERIC:
 									value = "NUMERIC value=" + cell.getNumericCellValue();
 									break;
 
-								case HSSFCell.CELL_TYPE_STRING:
+								case STRING:
 									value = "STRING value=" + cell.getStringCellValue();
 									break;
 

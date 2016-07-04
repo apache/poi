@@ -21,6 +21,7 @@ import org.apache.poi.hssf.record.FormulaRecord.SpecialCachedValue;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.ss.formula.Formula;
 import org.apache.poi.ss.formula.ptg.Ptg;
+import org.apache.poi.ss.usermodel.CellType;
 
 /**
  * Formula Record (0x0006 / 0x0206 / 0x0406) - holds a formula in
@@ -63,7 +64,7 @@ public final class OldFormulaRecord extends OldCellRecord {
 
     public int getCachedResultType() {
         if (specialCachedValue == null) {
-            return HSSFCell.CELL_TYPE_NUMERIC;
+            return CellType.NUMERIC.getCode();
         }
         return specialCachedValue.getValueType();
     }

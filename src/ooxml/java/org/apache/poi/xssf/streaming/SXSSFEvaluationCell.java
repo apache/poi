@@ -19,6 +19,7 @@ package org.apache.poi.xssf.streaming;
 
 import org.apache.poi.ss.formula.EvaluationCell;
 import org.apache.poi.ss.formula.EvaluationSheet;
+import org.apache.poi.ss.usermodel.CellType;
 
 /**
  * SXSSF wrapper for a cell under evaluation
@@ -36,6 +37,7 @@ final class SXSSFEvaluationCell implements EvaluationCell {
         this(cell, new SXSSFEvaluationSheet(cell.getSheet()));
     }
 
+    @Override
     public Object getIdentityKey() {
         // save memory by just using the cell itself as the identity key
         // Note - this assumes SXSSFCell has not overridden hashCode and equals
@@ -45,31 +47,40 @@ final class SXSSFEvaluationCell implements EvaluationCell {
     public SXSSFCell getSXSSFCell() {
         return _cell;
     }
+    @Override
     public boolean getBooleanCellValue() {
         return _cell.getBooleanCellValue();
     }
-    public int getCellType() {
+    @Override
+    public CellType getCellType() {
         return _cell.getCellType();
     }
+    @Override
     public int getColumnIndex() {
         return _cell.getColumnIndex();
     }
+    @Override
     public int getErrorCellValue() {
         return _cell.getErrorCellValue();
     }
+    @Override
     public double getNumericCellValue() {
         return _cell.getNumericCellValue();
     }
+    @Override
     public int getRowIndex() {
         return _cell.getRowIndex();
     }
+    @Override
     public EvaluationSheet getSheet() {
         return _evalSheet;
     }
+    @Override
     public String getStringCellValue() {
         return _cell.getRichStringCellValue().getString();
     }
-    public int getCachedFormulaResultType() {
+    @Override
+    public CellType getCachedFormulaResultType() {
         return _cell.getCachedFormulaResultType();
     }
 }

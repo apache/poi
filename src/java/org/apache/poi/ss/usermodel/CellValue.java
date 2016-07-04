@@ -23,19 +23,18 @@ import org.apache.poi.ss.formula.eval.ErrorEval;
  * Mimics the 'data view' of a cell. This allows formula evaluator
  * to return a CellValue instead of precasting the value to String
  * or Number or boolean type.
- * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
  */
 public final class CellValue {
-	public static final CellValue TRUE = new CellValue(Cell.CELL_TYPE_BOOLEAN, 0.0, true,  null, 0);
-	public static final CellValue FALSE= new CellValue(Cell.CELL_TYPE_BOOLEAN, 0.0, false, null, 0);
+	public static final CellValue TRUE = new CellValue(CellType.BOOLEAN, 0.0, true,  null, 0);
+	public static final CellValue FALSE= new CellValue(CellType.BOOLEAN, 0.0, false, null, 0);
 
-	private final int _cellType;
+	private final CellType _cellType;
 	private final double _numberValue;
 	private final boolean _booleanValue;
 	private final String _textValue;
 	private final int _errorCode;
 
-	private CellValue(int cellType, double numberValue, boolean booleanValue,
+	private CellValue(CellType cellType, double numberValue, boolean booleanValue,
 			String textValue, int errorCode) {
 		_cellType = cellType;
 		_numberValue = numberValue;
@@ -46,16 +45,16 @@ public final class CellValue {
 
 
 	public CellValue(double numberValue) {
-		this(Cell.CELL_TYPE_NUMERIC, numberValue, false, null, 0);
+		this(CellType.NUMERIC, numberValue, false, null, 0);
 	}
 	public static CellValue valueOf(boolean booleanValue) {
 		return booleanValue ? TRUE : FALSE;
 	}
 	public CellValue(String stringValue) {
-		this(Cell.CELL_TYPE_STRING, 0.0, false, stringValue, 0);
+		this(CellType.STRING, 0.0, false, stringValue, 0);
 	}
 	public static CellValue getError(int errorCode) {
-		return new CellValue(Cell.CELL_TYPE_ERROR, 0.0, false, null, errorCode);
+		return new CellValue(CellType.ERROR, 0.0, false, null, errorCode);
 	}
 
 
@@ -80,7 +79,7 @@ public final class CellValue {
 	/**
 	 * @return Returns the cellType.
 	 */
-	public int getCellType() {
+	public CellType getCellType() {
 		return _cellType;
 	}
 	/**
@@ -99,15 +98,17 @@ public final class CellValue {
 
 	public String formatAsString() {
 		switch (_cellType) {
-			case Cell.CELL_TYPE_NUMERIC:
+			case NUMERIC:
 				return String.valueOf(_numberValue);
-			case Cell.CELL_TYPE_STRING:
+			case STRING:
 				return '"' + _textValue + '"';
-			case Cell.CELL_TYPE_BOOLEAN:
+			case BOOLEAN:
 				return _booleanValue ? "TRUE" : "FALSE";
-			case Cell.CELL_TYPE_ERROR:
+			case ERROR:
 				return ErrorEval.getText(_errorCode);
+			default:
+			return "<error unexpected cell type " + _cellType + ">";
 		}
-		return "<error unexpected cell type " + _cellType + ">";
+		
 	}
 }

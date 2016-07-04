@@ -527,7 +527,7 @@ public abstract class BaseTestBugzillaIssues {
         for(int rn=0; rn<= topRow; rn++) {
            Row r = s.createRow(rn);
            for(int cn=0; cn<leftmostColumn; cn++) {
-              Cell c = r.createCell(cn, Cell.CELL_TYPE_NUMERIC);
+              Cell c = r.createCell(cn, CellType.NUMERIC);
               c.setCellValue(100*rn + cn);
            }
         }
@@ -654,16 +654,16 @@ public abstract class BaseTestBugzillaIssues {
         Row r1 = s.createRow(0);
 
         for (int i=0; i<3; i++) {
-            r1.createCell(i, Cell.CELL_TYPE_NUMERIC).setCellValue(0);
+            r1.createCell(i, CellType.NUMERIC).setCellValue(0);
         }
         for (int i=3; i<6; i++) {
-            r1.createCell(i, Cell.CELL_TYPE_NUMERIC).setCellValue(1);
+            r1.createCell(i, CellType.NUMERIC).setCellValue(1);
         }
         for (int i=6; i<9; i++) {
-            r1.createCell(i, Cell.CELL_TYPE_NUMERIC).setCellValue(0.12345);
+            r1.createCell(i, CellType.NUMERIC).setCellValue(0.12345);
         }
         for (int i=9; i<12; i++) {
-            r1.createCell(i, Cell.CELL_TYPE_NUMERIC).setCellValue(1.2345);
+            r1.createCell(i, CellType.NUMERIC).setCellValue(1.2345);
         }
         for (int i=0; i<12; i+=3) {
             r1.getCell(i).setCellStyle(iPercent);
@@ -714,11 +714,11 @@ public abstract class BaseTestBugzillaIssues {
         // C1 is a string, with different text
         r1.createCell(2).setCellValue("This some other text");
         // D1 is a blank cell
-        r1.createCell(3, Cell.CELL_TYPE_BLANK);
+        r1.createCell(3, CellType.BLANK);
         // E1 is null
 
         // A2 will hold our test formulas
-        Cell cf = r2.createCell(0, Cell.CELL_TYPE_FORMULA);
+        Cell cf = r2.createCell(0, CellType.FORMULA);
 
 
         // First up, check that TRUE and ISLOGICAL both behave
@@ -872,10 +872,10 @@ public abstract class BaseTestBugzillaIssues {
 
 
         // Create the references
-        Cell c1 = r1.createCell(0, Cell.CELL_TYPE_FORMULA);
+        Cell c1 = r1.createCell(0, CellType.FORMULA);
         c1.setCellFormula(refLocal);
 
-        Cell c2 = r1.createCell(1, Cell.CELL_TYPE_FORMULA);
+        Cell c2 = r1.createCell(1, CellType.FORMULA);
         c2.setCellFormula(refHttp);
 
 
@@ -952,7 +952,7 @@ public abstract class BaseTestBugzillaIssues {
             assertEquals(1, cArray.length);*/
 
             Cell cell = row.getCell(0);
-            assertEquals(Cell.CELL_TYPE_FORMULA, cell.getCellType());
+            assertEquals(CellType.FORMULA, cell.getCellType());
         }
 
         { // overwrite the row
@@ -1119,29 +1119,29 @@ public abstract class BaseTestBugzillaIssues {
         Row r = s.createRow(0);
 
         // Setup
-        Cell cn = r.createCell(0, Cell.CELL_TYPE_NUMERIC);
+        Cell cn = r.createCell(0, CellType.NUMERIC);
         cn.setCellValue(1.2);
-        Cell cs = r.createCell(1, Cell.CELL_TYPE_STRING);
+        Cell cs = r.createCell(1, CellType.STRING);
         cs.setCellValue("Testing");
 
-        Cell cfn = r.createCell(2, Cell.CELL_TYPE_FORMULA);
+        Cell cfn = r.createCell(2, CellType.FORMULA);
         cfn.setCellFormula("A1");
-        Cell cfs = r.createCell(3, Cell.CELL_TYPE_FORMULA);
+        Cell cfs = r.createCell(3, CellType.FORMULA);
         cfs.setCellFormula("B1");
 
         FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();
-        assertEquals(Cell.CELL_TYPE_NUMERIC, fe.evaluate(cfn).getCellType());
-        assertEquals(Cell.CELL_TYPE_STRING, fe.evaluate(cfs).getCellType());
+        assertEquals(CellType.NUMERIC, fe.evaluate(cfn).getCellType());
+        assertEquals(CellType.STRING, fe.evaluate(cfs).getCellType());
         fe.evaluateFormulaCell(cfn);
         fe.evaluateFormulaCell(cfs);
 
         // Now test
-        assertEquals(Cell.CELL_TYPE_NUMERIC, cn.getCellType());
-        assertEquals(Cell.CELL_TYPE_STRING, cs.getCellType());
-        assertEquals(Cell.CELL_TYPE_FORMULA, cfn.getCellType());
-        assertEquals(Cell.CELL_TYPE_NUMERIC, cfn.getCachedFormulaResultType());
-        assertEquals(Cell.CELL_TYPE_FORMULA, cfs.getCellType());
-        assertEquals(Cell.CELL_TYPE_STRING, cfs.getCachedFormulaResultType());
+        assertEquals(CellType.NUMERIC, cn.getCellType());
+        assertEquals(CellType.STRING, cs.getCellType());
+        assertEquals(CellType.FORMULA, cfn.getCellType());
+        assertEquals(CellType.NUMERIC, cfn.getCachedFormulaResultType());
+        assertEquals(CellType.FORMULA, cfs.getCellType());
+        assertEquals(CellType.STRING, cfs.getCachedFormulaResultType());
 
         // Different ways of retrieving
         assertEquals(1.2, cn.getNumericCellValue(), 0);
@@ -1195,7 +1195,7 @@ public abstract class BaseTestBugzillaIssues {
 
         cell = row.createCell(1);
         // also verify that setting formulas to null works
-        cell.setCellType(Cell.CELL_TYPE_FORMULA);
+        cell.setCellType(CellType.FORMULA);
         cell.setCellValue((String)null);
 
         wb.getCreationHelper().createFormulaEvaluator().evaluateAll();
@@ -1205,7 +1205,7 @@ public abstract class BaseTestBugzillaIssues {
                 value == null || value.length() == 0);
 
         // set some value
-        cell.setCellType(Cell.CELL_TYPE_STRING);
+        cell.setCellType(CellType.STRING);
         cell.setCellValue("somevalue");
 
         value = cell.getStringCellValue();
@@ -1383,7 +1383,7 @@ public abstract class BaseTestBugzillaIssues {
         Sheet s = wb.createSheet();
         Cell cell = s.createRow(0).createCell(0);
         cell.setCellValue((String)null);
-        assertEquals(Cell.CELL_TYPE_BLANK, cell.getCellType());
+        assertEquals(CellType.BLANK, cell.getCellType());
         
         _testDataProvider.trackAllColumnsForAutosizing(s);
         
@@ -1554,8 +1554,8 @@ public abstract class BaseTestBugzillaIssues {
         Cell cell = row.getCell(cellId);
 
         System.out.println("Formula:" + cell.getCellFormula());
-        if (Cell.CELL_TYPE_FORMULA == cell.getCellType()) {
-            int formulaResultType = cell.getCachedFormulaResultType();
+        if (CellType.FORMULA == cell.getCellType()) {
+            CellType formulaResultType = cell.getCachedFormulaResultType();
             System.out.println("Formula Result Type:" + formulaResultType);
         }
 
@@ -1569,8 +1569,8 @@ public abstract class BaseTestBugzillaIssues {
         cell = row.getCell(cellId);
         System.out.println("Formula:" + cell.getCellFormula());
 
-        if (Cell.CELL_TYPE_FORMULA == cell.getCellType()) {
-            int formulaResultType = cell.getCachedFormulaResultType();
+        if (CellType.FORMULA == cell.getCellType()) {
+            CellType formulaResultType = cell.getCachedFormulaResultType();
             System.out.println("Formula Result Type:" + formulaResultType);
         }
 

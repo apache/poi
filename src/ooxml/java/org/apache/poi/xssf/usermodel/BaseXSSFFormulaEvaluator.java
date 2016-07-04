@@ -29,6 +29,7 @@ import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 
@@ -75,20 +76,21 @@ public abstract class BaseXSSFFormulaEvaluator implements FormulaEvaluator, Work
         }
 
         switch (cell.getCellType()) {
-            case XSSFCell.CELL_TYPE_BOOLEAN:
+            case BOOLEAN:
                 return CellValue.valueOf(cell.getBooleanCellValue());
-            case XSSFCell.CELL_TYPE_ERROR:
+            case ERROR:
                 return CellValue.getError(cell.getErrorCellValue());
-            case XSSFCell.CELL_TYPE_FORMULA:
+            case FORMULA:
                 return evaluateFormulaCellValue(cell);
-            case XSSFCell.CELL_TYPE_NUMERIC:
+            case NUMERIC:
                 return new CellValue(cell.getNumericCellValue());
-            case XSSFCell.CELL_TYPE_STRING:
+            case STRING:
                 return new CellValue(cell.getRichStringCellValue().getString());
-            case XSSFCell.CELL_TYPE_BLANK:
+            case BLANK:
                 return null;
+            default:
+                throw new IllegalStateException("Bad cell type (" + cell.getCellType() + ")");
         }
-        throw new IllegalStateException("Bad cell type (" + cell.getCellType() + ")");
     }
 
 
@@ -110,9 +112,9 @@ public abstract class BaseXSSFFormulaEvaluator implements FormulaEvaluator, Work
      * @param cell The cell to evaluate
      * @return The type of the formula result (the cell's type remains as HSSFCell.CELL_TYPE_FORMULA however)
      */
-    public int evaluateFormulaCell(Cell cell) {
-        if (cell == null || cell.getCellType() != XSSFCell.CELL_TYPE_FORMULA) {
-            return -1;
+    public CellType evaluateFormulaCell(Cell cell) {
+        if (cell == null || cell.getCellType() != CellType.FORMULA) {
+            return CellType._UNINITIALIZED;
         }
         CellValue cv = evaluateFormulaCellValue(cell);
         // cell remains a formula cell, but the cached value is changed
@@ -129,47 +131,52 @@ public abstract class BaseXSSFFormulaEvaluator implements FormulaEvaluator, Work
      */
     protected void doEvaluateInCell(Cell cell) {
         if (cell == null) return;
-        if (cell.getCellType() == XSSFCell.CELL_TYPE_FORMULA) {
+        if (cell.getCellType() == CellType.FORMULA) {
             CellValue cv = evaluateFormulaCellValue(cell);
             setCellType(cell, cv); // cell will no longer be a formula cell
             setCellValue(cell, cv);
         }
     }
     private static void setCellType(Cell cell, CellValue cv) {
-        int cellType = cv.getCellType();
+        CellType cellType = cv.getCellType();
         switch (cellType) {
-            case XSSFCell.CELL_TYPE_BOOLEAN:
-            case XSSFCell.CELL_TYPE_ERROR:
-            case XSSFCell.CELL_TYPE_NUMERIC:
-            case XSSFCell.CELL_TYPE_STRING:
+            case BOOLEAN:
+            case ERROR:
+            case NUMERIC:
+            case STRING:
                 cell.setCellType(cellType);
                 return;
-            case XSSFCell.CELL_TYPE_BLANK:
+            case BLANK:
                 // never happens - blanks eventually get translated to zero
-            case XSSFCell.CELL_TYPE_FORMULA:
+                throw new IllegalArgumentException("This should never happen. Blanks eventually get translated to zero.");
+            case FORMULA:
                 // this will never happen, we have already evaluated the formula
+                throw new IllegalArgumentException("This should never happen. Formulas should have already been evaluated.");
+            default:
+                throw new IllegalStateException("Unexpected cell value type (" + cellType + ")");
+            
         }
-        throw new IllegalStateException("Unexpected cell value type (" + cellType + ")");
+        
     }
 
     private static void setCellValue(Cell cell, CellValue cv) {
-        int cellType = cv.getCellType();
+        CellType cellType = cv.getCellType();
         switch (cellType) {
-            case XSSFCell.CELL_TYPE_BOOLEAN:
+            case BOOLEAN:
                 cell.setCellValue(cv.getBooleanValue());
                 break;
-            case XSSFCell.CELL_TYPE_ERROR:
+            case ERROR:
                 cell.setCellErrorValue(cv.getErrorValue());
                 break;
-            case XSSFCell.CELL_TYPE_NUMERIC:
+            case NUMERIC:
                 cell.setCellValue(cv.getNumberValue());
                 break;
-            case XSSFCell.CELL_TYPE_STRING:
+            case STRING:
                 cell.setCellValue(new XSSFRichTextString(cv.getStringValue()));
                 break;
-            case XSSFCell.CELL_TYPE_BLANK:
+            case BLANK:
                 // never happens - blanks eventually get translated to zero
-            case XSSFCell.CELL_TYPE_FORMULA:
+            case FORMULA:
                 // this will never happen, we have already evaluated the formula
             default:
                 throw new IllegalStateException("Unexpected cell value type (" + cellType + ")");

@@ -43,43 +43,49 @@ public interface Cell {
      * Numeric Cell type (0)
      * @see #setCellType(int)
      * @see #getCellType()
+     * @deprecated POI 3.15 beta 3. Use {@link CellType#NUMERIC} instead.
      */
-    int CELL_TYPE_NUMERIC = 0;
+    CellType CELL_TYPE_NUMERIC = CellType.NUMERIC;
 
     /**
      * String Cell type (1)
      * @see #setCellType(int)
      * @see #getCellType()
+     * @deprecated POI 3.15 beta 3. Use {@link CellType#STRING} instead.
      */
-    int CELL_TYPE_STRING = 1;
+    CellType CELL_TYPE_STRING = CellType.STRING;
 
     /**
      * Formula Cell type (2)
      * @see #setCellType(int)
      * @see #getCellType()
+     * @deprecated POI 3.15 beta 3. Use {@link CellType#FORMULA} instead.
      */
-    int CELL_TYPE_FORMULA = 2;
+    CellType CELL_TYPE_FORMULA = CellType.FORMULA;
 
     /**
      * Blank Cell type (3)
      * @see #setCellType(int)
      * @see #getCellType()
+     * @deprecated POI 3.15 beta 3. Use {@link CellType#BLANK} instead.
      */
-    int CELL_TYPE_BLANK = 3;
+    CellType CELL_TYPE_BLANK = CellType.BLANK;
 
     /**
      * Boolean Cell type (4)
      * @see #setCellType(int)
      * @see #getCellType()
+     * @deprecated POI 3.15 beta 3. Use {@link CellType#BOOLEAN} instead.
      */
-    int CELL_TYPE_BOOLEAN = 4;
+    CellType CELL_TYPE_BOOLEAN = CellType.BOOLEAN;
 
     /**
      * Error Cell type (5)
      * @see #setCellType(int)
      * @see #getCellType()
+     * @deprecated POI 3.15 beta 3. Use {@link CellType#ERROR} instead.
      */
-    int CELL_TYPE_ERROR = 5;
+    CellType CELL_TYPE_ERROR = CellType.ERROR;
 
     /**
      * Returns column index of this cell
@@ -127,29 +133,38 @@ public interface Cell {
      * @see #CELL_TYPE_BLANK
      * @see #CELL_TYPE_BOOLEAN
      * @see #CELL_TYPE_ERROR
+     * @deprecated POI 3.15 beta 3. Use {@link #setCellType(CellType)} instead.
      */
     void setCellType(int cellType);
+    /**
+     * Set the cells type (numeric, formula or string).
+     * <p>If the cell currently contains a value, the value will
+     *  be converted to match the new type, if possible. Formatting
+     *  is generally lost in the process however.</p>
+     * <p>If what you want to do is get a String value for your
+     *  numeric cell, <i>stop!</i>. This is not the way to do it.
+     *  Instead, for fetching the string value of a numeric or boolean
+     *  or date cell, use {@link DataFormatter} instead.</p> 
+     *
+     * @throws IllegalArgumentException if the specified cell type is invalid
+     * @throws IllegalStateException if the current value cannot be converted to the new type
+     */
+    void setCellType(CellType cellType);
 
     /**
      * Return the cell type.
      *
      * @return the cell type
-     * @see Cell#CELL_TYPE_BLANK
-     * @see Cell#CELL_TYPE_NUMERIC
-     * @see Cell#CELL_TYPE_STRING
-     * @see Cell#CELL_TYPE_FORMULA
-     * @see Cell#CELL_TYPE_BOOLEAN
-     * @see Cell#CELL_TYPE_ERROR
      */
-    int getCellType();
+    CellType getCellType();
 
     /**
      * Only valid for formula cells
-     * @return one of ({@link #CELL_TYPE_NUMERIC}, {@link #CELL_TYPE_STRING},
-     *     {@link #CELL_TYPE_BOOLEAN}, {@link #CELL_TYPE_ERROR}) depending
+     * @return one of ({@link CellType#NUMERIC}, {@link CellType#STRING},
+     *     {@link CellType#BOOLEAN}, {@link CellType#ERROR}) depending
      * on the cached value of the formula
      */
-    int getCachedFormulaResultType();
+    CellType getCachedFormulaResultType();
 
     /**
      * Set a numeric value for the cell
@@ -167,7 +182,7 @@ public interface Cell {
      * <p><b>Note</b> - There is actually no 'DATE' cell type in Excel. In many
      * cases (when entering date values), Excel automatically adjusts the
      * <i>cell style</i> to some date format, creating the illusion that the cell
-     * data type is now something besides {@link Cell#CELL_TYPE_NUMERIC}.  POI
+     * data type is now something besides {@link CellType#NUMERIC}.  POI
      * does not attempt to replicate this behaviour.  To make a numeric cell
      * display as a date, use {@link #setCellStyle(CellStyle)} etc.</p>
      *
@@ -233,7 +248,7 @@ public interface Cell {
      * Return a formula for the cell, for example, <code>SUM(C4:E4)</code>
      *
      * @return a formula for the cell
-     * @throws IllegalStateException if the cell type returned by {@link #getCellType()} is not CELL_TYPE_FORMULA
+     * @throws IllegalStateException if the cell type returned by {@link #getCellType()} is not {@link CellType#FORMULA}
      */
     String getCellFormula();
 
@@ -244,7 +259,7 @@ public interface Cell {
      * For formulas or error cells we return the precalculated value;
      * </p>
      * @return the value of the cell as a number
-     * @throws IllegalStateException if the cell type returned by {@link #getCellType()} is CELL_TYPE_STRING
+     * @throws IllegalStateException if the cell type returned by {@link #getCellType()} is {@link CellType#STRING}
      * @exception NumberFormatException if the cell value isn't a parsable <code>double</code>.
      * @see DataFormatter for turning this number into a string similar to that which Excel would render this number as.
      */
@@ -256,7 +271,7 @@ public interface Cell {
      * For strings we throw an exception. For blank cells we return a null.
      * </p>
      * @return the value of the cell as a date
-     * @throws IllegalStateException if the cell type returned by {@link #getCellType()} is CELL_TYPE_STRING
+     * @throws IllegalStateException if the cell type returned by {@link #getCellType()} is {@link CellType#STRING}
      * @exception NumberFormatException if the cell value isn't a parsable <code>double</code>.
      * @see DataFormatter for formatting  this date into a string similar to how excel does.
      */
@@ -309,7 +324,7 @@ public interface Cell {
      * </p>
      * @return the value of the cell as a boolean
      * @throws IllegalStateException if the cell type returned by {@link #getCellType()}
-     *   is not CELL_TYPE_BOOLEAN, CELL_TYPE_BLANK or CELL_TYPE_FORMULA
+     *   is not {@link CellType#BOOLEAN}, {@link CellType#BLANK} or {@link CellType#FORMULA}
      */
     boolean getBooleanCellValue();
 
@@ -321,13 +336,13 @@ public interface Cell {
      * </p>
      *
      * @return the value of the cell as an error code
-     * @throws IllegalStateException if the cell type returned by {@link #getCellType()} isn't CELL_TYPE_ERROR
+     * @throws IllegalStateException if the cell type returned by {@link #getCellType()} isn't {@link CellType#ERROR}
      * @see FormulaError for error codes
      */
     byte getErrorCellValue();
 
     /**
-     * <p>Set the style for the cell.  The style should be an CellStyle created/retreived from
+     * <p>Set the style for the cell.  The style should be an CellStyle created/retrieved from
      * the Workbook.</p>
      * 
      * <p>To change the style of a cell without affecting other cells that use the same style,
