@@ -28,8 +28,8 @@ public enum SpreadsheetVersion {
     /**
      * Excel97 format aka BIFF8
      * <ul>
-     * <li>The total number of available columns is 256 (2^8)</li>
      * <li>The total number of available rows is 64k (2^16)</li>
+     * <li>The total number of available columns is 256 (2^8)</li>
      * <li>The maximum number of arguments to a function is 30</li>
      * <li>Number of conditional format conditions on a cell is 3</li>
      * <li>Number of cell styles is 4000</li>
@@ -42,8 +42,8 @@ public enum SpreadsheetVersion {
      * Excel2007
      *
      * <ul>
-     * <li>The total number of available columns is 16K (2^14)</li>
      * <li>The total number of available rows is 1M (2^20)</li>
+     * <li>The total number of available columns is 16K (2^14)</li>
      * <li>The maximum number of arguments to a function is 255</li>
      * <li>Number of conditional format conditions on a cell is unlimited
      * (actually limited by available memory in Excel)</li>
