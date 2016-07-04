@@ -57,14 +57,19 @@ public enum FormulaType {
     
     /** @deprecated POI 3.15 beta 3. */
     private final int code;
-    /** @deprecated POI 3.15 beta 3.
+    /**
+     * @since POI 3.15 beta 3.
+     * @deprecated POI 3.15 beta 3.
      * Formula type code doesn't mean anything. Only in this class for transitioning from a class with int constants to a true enum.
      * Remove hard-coded numbers from the enums above. */
     private FormulaType(int code) {
         this.code = code;
     }
     
-    /** @deprecated POI 3.15 beta 3. Used to transition code from <code>int</code>s to <code>FormulaType</code>s. */
+    /**
+     * @since POI 3.15 beta 3.
+     * @deprecated POI 3.15 beta 3. Used to transition code from <code>int</code>s to <code>FormulaType</code>s.
+     */
     public static FormulaType forInt(int code) {
         for (FormulaType type : values()) {
             if (type.code == code) {
