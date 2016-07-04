@@ -35,6 +35,7 @@ import org.apache.poi.ss.usermodel.ConditionalFormattingRule;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.util.DateFormatConverter;
+import org.apache.poi.util.Internal;
 
 /**
  * Format a value according to the standard Excel behavior.  This "standard" is
@@ -265,7 +266,7 @@ public class CellFormat {
      * @return The result, in a {@link CellFormatResult}.
      */
     public CellFormatResult apply(Cell c) {
-        switch (ultimateType(c)) {
+        switch (ultimateTypeEnum(c)) {
         case BLANK:
             return apply("");
         case BOOLEAN:
@@ -335,7 +336,7 @@ public class CellFormat {
      * @return The result, in a {@link CellFormatResult}.
      */
     public CellFormatResult apply(JLabel label, Cell c) {
-        switch (ultimateType(c)) {
+        switch (ultimateTypeEnum(c)) {
             case BLANK:
                 return apply(label, "");
             case BOOLEAN:
@@ -407,6 +408,23 @@ public class CellFormat {
         }
         
     }
+    
+    /**
+     * Returns the ultimate cell type, following the results of formulas.  If
+     * the cell is a {@link CellType#FORMULA}, this returns the result of
+     * {@link Cell#getCachedFormulaResultTypeEnum()}.  Otherwise this returns the
+     * result of {@link Cell#getCellTypeEnum()}.
+     * 
+     * Will return {@link CellType} in a future version of POI.
+     * For forwards compatibility, do not hard-code cell type literals in your code.
+     *
+     * @param cell The cell.
+     *
+     * @return The ultimate type of this cell.
+     */
+    public static int ultimateType(Cell cell) {
+        return ultimateTypeEnum(cell).getCode();
+    }
 
     /**
      * Returns the ultimate cell type, following the results of formulas.  If
@@ -417,8 +435,12 @@ public class CellFormat {
      * @param cell The cell.
      *
      * @return The ultimate type of this cell.
+     * @since POI 3.15 beta 3
+     * @deprecated POI 3.15 beta 3
+     * Will be deleted when we make the CellType enum transition. See bug 59791.
      */
-    public static CellType ultimateType(Cell cell) {
+    @Internal
+    public static CellType ultimateTypeEnum(Cell cell) {
         CellType type = cell.getCellTypeEnum();
         if (type == CellType.FORMULA)
             return cell.getCachedFormulaResultTypeEnum();

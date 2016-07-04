@@ -56,6 +56,15 @@ public class SXSSFCell implements Cell {
     private Value _value;
     private CellStyle _style;
     private Property _firstProperty;
+    
+    /**
+     * @deprecated POI 3.15 beta 3.
+     * Will be deleted when we make the CellType enum transition. See bug 59791.
+     */
+    public SXSSFCell(SXSSFRow row, int cellType)
+    {
+        this(row, CellType.forInt((cellType)));
+    }
 
     public SXSSFCell(SXSSFRow row,CellType cellType)
     {
