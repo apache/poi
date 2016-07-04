@@ -44,7 +44,11 @@ public interface EvaluationCell {
 	 * @return cell type
 	 */
 	int getCellType();
-	/** @deprecated POI 3.15 beta 3 */
+	/**
+	 * @since POI 3.15 beta 3
+	 * @deprecated POI 3.15 beta 3.
+	 * Will be deleted when we make the CellType enum transition. See bug 59791.
+	 */
 	CellType getCellTypeEnum();
 
 	double getNumericCellValue();
@@ -59,6 +63,10 @@ public interface EvaluationCell {
 	 * @return cell type of cached formula result
 	 */
 	int getCachedFormulaResultType();
-	/** @deprecated POI 3.15 beta 3 */
+	/**
+	 * @since POI 3.15 beta 3
+	 * @deprecated POI 3.15 beta 3.
+	 * Will be deleted when we make the CellType enum transition. See bug 59791.
+	 */
 	CellType getCachedFormulaResultTypeEnum();
 }

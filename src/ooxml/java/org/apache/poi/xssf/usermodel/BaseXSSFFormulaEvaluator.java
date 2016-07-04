@@ -127,7 +127,7 @@ public abstract class BaseXSSFFormulaEvaluator implements FormulaEvaluator, Work
      *  so you know what kind of value is also stored with
      *  the formula.
      * <pre>
-     * int evaluatedCellType = evaluator.evaluateFormulaCell(cell);
+     * CellType evaluatedCellType = evaluator.evaluateFormulaCellEnum(cell);
      * </pre>
      * Be aware that your cell will hold both the formula,
      *  and the result. If you want the cell replaced with

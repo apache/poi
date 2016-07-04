@@ -219,32 +219,32 @@ public class HSSFFormulaEvaluator implements FormulaEvaluator, WorkbookEvaluator
 	}
 	
 	/**
-     * If cell contains formula, it evaluates the formula, and saves the result of the formula. The
-     * cell remains as a formula cell. If the cell does not contain formula, this method returns -1
-     * and leaves the cell unchanged.
-     *
-     * Note that the type of the <em>formula result</em> is returned, so you know what kind of
-     * cached formula result is also stored with  the formula.
-     * <pre>
-     * int evaluatedCellType = evaluator.evaluateFormulaCell(cell);
-     * </pre>
-     * Be aware that your cell will hold both the formula, and the result. If you want the cell
-     * replaced with the result of the formula, use {@link #evaluateInCell(org.apache.poi.ss.usermodel.Cell)}
-     * @param cell The cell to evaluate
-     * @return -1 for non-formula cells, or the type of the <em>formula result</em>
-     * @deprecated POI 3.15 beta 3
-     */
-    @Internal
-    @Override
-    public CellType evaluateFormulaCellEnum(Cell cell) {
-        if (cell == null || cell.getCellTypeEnum() != CellType.FORMULA) {
-            return CellType._UNINITIALIZED;
-        }
-        CellValue cv = evaluateFormulaCellValue(cell);
-        // cell remains a formula cell, but the cached value is changed
-        setCellValue(cell, cv);
-        return cv.getCellType();
-    }
+	 * If cell contains formula, it evaluates the formula, and saves the result of the formula. The
+	 * cell remains as a formula cell. If the cell does not contain formula, this method returns -1
+	 * and leaves the cell unchanged.
+	 *
+	 * Note that the type of the <em>formula result</em> is returned, so you know what kind of
+	 * cached formula result is also stored with  the formula.
+	 * <pre>
+	 * int evaluatedCellType = evaluator.evaluateFormulaCell(cell);
+	 * </pre>
+	 * Be aware that your cell will hold both the formula, and the result. If you want the cell
+	 * replaced with the result of the formula, use {@link #evaluateInCell(org.apache.poi.ss.usermodel.Cell)}
+	 * @param cell The cell to evaluate
+	 * @return -1 for non-formula cells, or the type of the <em>formula result</em>
+	 * @deprecated POI 3.15 beta 3. Will be deleted when we make the CellType enum transition. See bug 59791.
+	 */
+	@Internal
+	@Override
+	public CellType evaluateFormulaCellEnum(Cell cell) {
+		if (cell == null || cell.getCellTypeEnum() != CellType.FORMULA) {
+			return CellType._UNINITIALIZED;
+		}
+		CellValue cv = evaluateFormulaCellValue(cell);
+		// cell remains a formula cell, but the cached value is changed
+		setCellValue(cell, cv);
+		return cv.getCellType();
+	}
 
 	/**
 	 * If cell contains formula, it evaluates the formula, and
@@ -262,7 +262,7 @@ public class HSSFFormulaEvaluator implements FormulaEvaluator, WorkbookEvaluator
 	 *  value computed for you, use {@link #evaluateFormulaCellEnum(Cell)}}
 	 */
 	@Override
-    public HSSFCell evaluateInCell(Cell cell) {
+	public HSSFCell evaluateInCell(Cell cell) {
 		if (cell == null) {
 			return null;
 		}

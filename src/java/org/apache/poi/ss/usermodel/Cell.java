@@ -166,7 +166,9 @@ public interface Cell {
      * Return the cell type.
      *
      * @return the cell type
+     * @since POI 3.15 beta 3
      * @deprecated POI 3.15 beta 3
+     * Will be deleted when we make the CellType enum transition. See bug 59791.
      */
     @Internal
     CellType getCellTypeEnum();
@@ -188,7 +190,9 @@ public interface Cell {
      * @return one of ({@link CellType#NUMERIC}, {@link CellType#STRING},
      *     {@link CellType#BOOLEAN}, {@link CellType#ERROR}) depending
      * on the cached value of the formula
+     * @since POI 3.15 beta 3
      * @deprecated POI 3.15 beta 3
+     * Will be deleted when we make the CellType enum transition. See bug 59791.
      */
     @Internal
     CellType getCachedFormulaResultTypeEnum();
