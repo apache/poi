@@ -95,73 +95,80 @@ public final class BorderCode implements Cloneable {
     return _dptLineWidth.getShortValue(_info);
   }
   
+  /**
+   * @param lineWidth the width of the line to set
+   */
   public void setLineWidth(int lineWidth) {
-    _dptLineWidth.setValue(_info, lineWidth);
+    _info = _dptLineWidth.setShortValue(_info, (short)lineWidth);
   }
 
   /**
    * Border type code:
-   * <li>0  none
-   * <li>1  single
-   * <li>2  thick
-   * <li>3  double
-   * <li>5  hairline
-   * <li>6  dot
-   * <li>7  dash large gap
-   * <li>8  dot dash
-   * <li>9  dot dot dash
-   * <li>10  triple
-   * <li>11  thin-thick small gap
-   * <li>12  thick-thin small gap
-   * <li>13  thin-thick-thin small gap
-   * <li>14  thin-thick medium gap
-   * <li>15  thick-thin medium gap
-   * <li>16  thin-thick-thin medium gap
-   * <li>17  thin-thick large gap
-   * <li>18  thick-thin large gap
-   * <li>19  thin-thick-thin large gap
-   * <li>20  wave
-   * <li>21  double wave
-   * <li>22  dash small gap
-   * <li>23  dash dot stroked
-   * <li>24  emboss 3D
-   * <li>25  engrave 3D
-   * <li>codes 64 - 230 represent border art types and are used only for page borders
+   * <ul>
+   * <li>0  none</li>
+   * <li>1  single</li>
+   * <li>2  thick</li>
+   * <li>3  double</li>
+   * <li>5  hairline</li>
+   * <li>6  dot</li>
+   * <li>7  dash large gap</li>
+   * <li>8  dot dash</li>
+   * <li>9  dot dot dash</li>
+   * <li>10  triple</li>
+   * <li>11  thin-thick small gap</li>
+   * <li>12  thick-thin small gap</li>
+   * <li>13  thin-thick-thin small gap</li>
+   * <li>14  thin-thick medium gap</li>
+   * <li>15  thick-thin medium gap</li>
+   * <li>16  thin-thick-thin medium gap</li>
+   * <li>17  thin-thick large gap</li>
+   * <li>18  thick-thin large gap</li>
+   * <li>19  thin-thick-thin large gap</li>
+   * <li>20  wave</li>
+   * <li>21  double wave</li>
+   * <li>22  dash small gap</li>
+   * <li>23  dash dot stroked</li>
+   * <li>24  emboss 3D</li>
+   * <li>25  engrave 3D</li>
+   * <li>codes 64 - 230 represent border art types and are used only for page borders</li>
+   * </ul>
    */
   public int getBorderType() {
     return _brcType.getShortValue(_info);
   }
   
   public void setBorderType(int borderType) {
-      _info = (short)_brcType.setValue(_info, borderType);
+      _info = _brcType.setShortValue(_info, (short)borderType);
   }
   
   /**
    * Color:
-   * <li>0  Auto
-   * <li>1  Black
-   * <li>2  Blue
-   * <li>3  Cyan
-   * <li>4  Green
-   * <li>5  Magenta
-   * <li>6  Red
-   * <li>7  Yellow
-   * <li>8  White
-   * <li>9  DkBlue
-   * <li>10  DkCyan
-   * <li>11  DkGreen
-   * <li>12  DkMagenta
-   * <li>13  DkRed
-   * <li>14  DkYellow
-   * <li>15  DkGray
-   * <li>16  LtGray
+   * <ul>
+   * <li>0  Auto</li>
+   * <li>1  Black</li>
+   * <li>2  Blue</li>
+   * <li>3  Cyan</li>
+   * <li>4  Green</li>
+   * <li>5  Magenta</li>
+   * <li>6  Red</li>
+   * <li>7  Yellow</li>
+   * <li>8  White</li>
+   * <li>9  DkBlue</li>
+   * <li>10  DkCyan</li>
+   * <li>11  DkGreen</li>
+   * <li>12  DkMagenta</li>
+   * <li>13  DkRed</li>
+   * <li>14  DkYellow</li>
+   * <li>15  DkGray</li>
+   * <li>16  LtGray</li>
+   * </ul>
    */
   public short getColor() {
     return _ico.getShortValue(_info2);
   }
   
   public void setColor(short color) {
-      _info2 = (short)_ico.setValue(_info2, color);
+      _info2 = _ico.setShortValue(_info2, color);
   }
   
   /**
