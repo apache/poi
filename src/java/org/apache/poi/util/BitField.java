@@ -126,8 +126,7 @@ public class BitField
      * value; the results of using it for a multi-bit field is to
      * determine whether *any* of its bits are set
      *
-     * @param holder the int data containing the bits we're interested
-     *               in
+     * @param holder the int data containing the bits we're interested in
      *
      * @return true if any of the bits are set, else false
      */
@@ -142,8 +141,7 @@ public class BitField
      * isSet, in that all of the bits in a multi-bit set must be set
      * for this method to return true
      *
-     * @param holder the int data containing the bits we're interested
-     *               in
+     * @param holder the int data containing the bits we're interested in
      *
      * @return true if all of the bits are set, else false
      */
@@ -156,8 +154,7 @@ public class BitField
     /**
      * Replace the bits with new values.
      *
-     * @param holder the int data containint the bits we're interested
-     *               in
+     * @param holder the int data containing the bits we're interested in
      * @param value the new value for the specified bits
      *
      * @return the value of holder with the bits from the value
@@ -172,8 +169,7 @@ public class BitField
     /**
      * Replace the bits with new values.
      *
-     * @param holder the short data containing the bits we're
-     *               interested in
+     * @param holder the short data containing the bits we're interested in
      * @param value the new value for the specified bits
      *
      * @return the value of holder with the bits from the value
@@ -188,8 +184,7 @@ public class BitField
     /**
      * Clear the bits.
      *
-     * @param holder the int data containing the bits we're interested
-     *               in
+     * @param holder the int data containing the bits we're interested in
      *
      * @return the value of holder with the specified bits cleared
      *         (set to 0)
