@@ -56,6 +56,7 @@ public class DrawingManager
     /**
      * Allocates new shape id for the new drawing group id.
      *
+     * @param drawingGroupId The drawing group id
      * @return a new shape id.
      */
     public int allocateShapeId(short drawingGroupId)
