@@ -76,7 +76,7 @@ public final class TestHSSFFormulaEvaluator extends BaseTestFormulaEvaluator {
 		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
 
 		cellA1.setCellErrorValue(FormulaError.NAME.getCode());
-		fe.evaluateFormulaCell(cellB1);
+		fe.evaluateFormulaCellEnum(cellB1);
 
 		cellA1.setCellValue(2.5);
 		fe.notifyUpdateCell(cellA1);
@@ -227,10 +227,10 @@ public final class TestHSSFFormulaEvaluator extends BaseTestFormulaEvaluator {
                   new HSSFFormulaEvaluator(wb2)
             }
       );
-      eval.evaluateFormulaCell(
+      eval.evaluateFormulaCellEnum(
             wb1.getSheetAt(0).getRow(1).getCell(2)
       );      
-      eval.evaluateFormulaCell(
+      eval.evaluateFormulaCellEnum(
             wb1.getSheetAt(0).getRow(1).getCell(4)
       );      
       
@@ -256,7 +256,7 @@ public final class TestHSSFFormulaEvaluator extends BaseTestFormulaEvaluator {
       assertEquals("Cost*[XRefCalcData.xls]MarkupSheet!$B$1", cell.getCellFormula());
       
       // Check it evaluates correctly
-      eval.evaluateFormulaCell(cell);
+      eval.evaluateFormulaCellEnum(cell);
       assertEquals(24.60*1.8, cell.getNumericCellValue(), 0);
       
       
@@ -291,7 +291,7 @@ public final class TestHSSFFormulaEvaluator extends BaseTestFormulaEvaluator {
                     new HSSFFormulaEvaluator(wb3)
               }
       );
-      eval.evaluateFormulaCell(cell);
+      eval.evaluateFormulaCellEnum(cell);
       assertEquals("In another workbook", cell.getStringCellValue());
       
       
@@ -310,13 +310,13 @@ public final class TestHSSFFormulaEvaluator extends BaseTestFormulaEvaluator {
       // Check the one referring to the previously existing workbook behaves
       cell = wb4.getSheetAt(0).getRow(1).getCell(40);
       assertEquals("Cost*[XRefCalcData.xls]MarkupSheet!$B$1", cell.getCellFormula());
-      eval.evaluateFormulaCell(cell);
+      eval.evaluateFormulaCellEnum(cell);
       assertEquals(24.60*1.8, cell.getNumericCellValue(), 0);
       
       // Now check the newly added reference
       cell = wb4.getSheetAt(0).getRow(1).getCell(42);
       assertEquals("[alt.xls]Sheet0!$A$1", cell.getCellFormula());
-      eval.evaluateFormulaCell(cell);
+      eval.evaluateFormulaCellEnum(cell);
       assertEquals("In another workbook", cell.getStringCellValue());
       
       wb4.close();

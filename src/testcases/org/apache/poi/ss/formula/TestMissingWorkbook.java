@@ -69,7 +69,7 @@ public class TestMissingWorkbook extends TestCase {
 		
 		assertEquals(CellType.FORMULA, lA1Cell.getCellTypeEnum());
 		try {
-			evaluator.evaluateFormulaCell(lA1Cell);
+			evaluator.evaluateFormulaCellEnum(lA1Cell);
 			fail("Missing external workbook reference exception expected!");
 		}catch(RuntimeException re) {
 			assertTrue("Unexpected exception: " + re, re.getMessage().indexOf(SOURCE_DUMMY_WORKBOOK_FILENAME) != -1);
@@ -95,9 +95,9 @@ public class TestMissingWorkbook extends TestCase {
 		FormulaEvaluator evaluator = mainWorkbook.getCreationHelper().createFormulaEvaluator();
         evaluator.setIgnoreMissingWorkbooks(true);
 
-		assertEquals(CellType.NUMERIC, evaluator.evaluateFormulaCell(lA1Cell));
-		assertEquals(CellType.STRING,  evaluator.evaluateFormulaCell(lB1Cell));
-		assertEquals(CellType.BOOLEAN, evaluator.evaluateFormulaCell(lC1Cell));
+		assertEquals(CellType.NUMERIC, evaluator.evaluateFormulaCellEnum(lA1Cell));
+		assertEquals(CellType.STRING,  evaluator.evaluateFormulaCellEnum(lB1Cell));
+		assertEquals(CellType.BOOLEAN, evaluator.evaluateFormulaCellEnum(lC1Cell));
 
 		assertEquals(10.0d, lA1Cell.getNumericCellValue(), 0.00001d);
 		assertEquals("POI rocks!", lB1Cell.getStringCellValue());
@@ -122,9 +122,9 @@ public class TestMissingWorkbook extends TestCase {
 		workbooks.put(SOURCE_DUMMY_WORKBOOK_FILENAME, lSourceEvaluator);
 		lMainWorkbookEvaluator.setupReferencedWorkbooks(workbooks);
 		
-		assertEquals(CellType.NUMERIC, lMainWorkbookEvaluator.evaluateFormulaCell(lA1Cell));
-		assertEquals(CellType.STRING, lMainWorkbookEvaluator.evaluateFormulaCell(lB1Cell));
-		assertEquals(CellType.BOOLEAN, lMainWorkbookEvaluator.evaluateFormulaCell(lC1Cell));
+		assertEquals(CellType.NUMERIC, lMainWorkbookEvaluator.evaluateFormulaCellEnum(lA1Cell));
+		assertEquals(CellType.STRING, lMainWorkbookEvaluator.evaluateFormulaCellEnum(lB1Cell));
+		assertEquals(CellType.BOOLEAN, lMainWorkbookEvaluator.evaluateFormulaCellEnum(lC1Cell));
 
 		assertEquals(20.0d, lA1Cell.getNumericCellValue(), 0.00001d);
 		assertEquals("Apache rocks!", lB1Cell.getStringCellValue());

@@ -121,7 +121,7 @@ public final class TestMirr extends TestCase {
 
         HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
         fe.clearAllCachedResultValues();
-        fe.evaluateFormulaCell(cell);
+        fe.evaluateFormulaCellEnum(cell);
         double res = cell.getNumericCellValue();
         assertEquals(0.18736225093, res, 0.00000001);
     }
