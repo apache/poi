@@ -58,7 +58,7 @@ public class TestCellFormatPart extends CellFormatTestBase {
     public void testGeneralFormat() throws Exception {
         runFormatTests("GeneralFormatTests.xlsx", new CellValue() {
             public Object getValue(Cell cell) {
-                switch (CellFormat.ultimateType(cell)) {
+                switch (CellFormat.ultimateTypeEnum(cell)) {
                     case BOOLEAN:
                         return cell.getBooleanCellValue();
                     case NUMERIC:
@@ -126,7 +126,7 @@ public class TestCellFormatPart extends CellFormatTestBase {
     public void testTextFormat() throws Exception {
         runFormatTests("TextFormatTests.xlsx", new CellValue() {
             public Object getValue(Cell cell) {
-                switch(CellFormat.ultimateType(cell)) {
+                switch(CellFormat.ultimateTypeEnum(cell)) {
                     case BOOLEAN:
                         return cell.getBooleanCellValue();
                     default:
