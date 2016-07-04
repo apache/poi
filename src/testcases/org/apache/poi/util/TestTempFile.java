@@ -74,7 +74,7 @@ public class TestTempFile {
         }
 
         // reset strategy to re-create the directory
-        TempFile.setTempFileCreationStrategy(new TempFile.DefaultTempFileCreationStrategy());
+        TempFile.setTempFileCreationStrategy(new DefaultTempFileCreationStrategy());
 
         // check that we can still create a tempfile
         File testFile = TempFile.createTempFile("test", ".tst");
@@ -128,7 +128,7 @@ public class TestTempFile {
     
     @Test
     public void testSetTempFileCreationStrategy() throws IOException {
-        TempFile.setTempFileCreationStrategy(new TempFile.DefaultTempFileCreationStrategy());
+        TempFile.setTempFileCreationStrategy(new DefaultTempFileCreationStrategy());
         
         // Should be able to create two tempfiles with same prefix and suffix
         File file1 = TempFile.createTempFile("TestTempFile", ".tst");
