@@ -271,4 +271,23 @@ public final class TestPackageCoreProperties {
         wb.close();
         pkg.close();
     }
+	
+	@Test
+	@Ignore
+	public void testAlternateCorePropertyTimezones() throws Exception {
+        InputStream is = OpenXML4JTestDataSamples.openSampleStream("OPCCompliance_CoreProperties_AlternateTimezones.docx");
+        OPCPackage pkg = OPCPackage.open(is);
+        PackagePropertiesPart props = (PackagePropertiesPart)pkg.getPackageProperties();
+        is.close();
+
+        // Check text properties first
+        assertEquals("Lorem Ipsu", props.getTitleProperty().getValue());
+        assertEquals("Apache POI", props.getCreatorProperty().getValue());
+        
+        // Created at has a +3 timezone and milliseconds
+        //   2006-10-13T18:06:00.1234+03:00
+        
+        // Modified at has a -13 timezone but no milliseconds
+        //   2007-06-20T07:59:00-13:00
+	}
 }
