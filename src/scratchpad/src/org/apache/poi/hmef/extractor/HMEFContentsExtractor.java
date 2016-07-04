@@ -26,8 +26,11 @@ import java.io.OutputStream;
 
 import org.apache.poi.hmef.Attachment;
 import org.apache.poi.hmef.HMEFMessage;
+import org.apache.poi.hmef.attribute.MAPIAttribute;
 import org.apache.poi.hmef.attribute.MAPIRtfAttribute;
+import org.apache.poi.hmef.attribute.MAPIStringAttribute;
 import org.apache.poi.hsmf.datatypes.MAPIProperty;
+import org.apache.poi.hsmf.datatypes.Types;
 
 /**
  * A utility for extracting out the message body, and all attachments
@@ -77,16 +80,43 @@ public final class HMEFContentsExtractor {
      * Extracts the RTF message body to the supplied file
      */
     public void extractMessageBody(File dest) throws IOException {
+        MAPIAttribute body = getBodyAttribute();
+        if (body == null) {
+            System.err.println("No message body found, " + dest + " not created");
+            return;
+        }
+        if (body instanceof MAPIStringAttribute) {
+            String name = dest.toString();
+            if (name.endsWith(".rtf")) { 
+                name = name.substring(0, name.length()-4);
+            }
+            dest = new File(name + ".txt");
+        }
+        
         OutputStream fout = new FileOutputStream(dest);
         try {
-            extractMessageBody(fout);
+            fout.write(body.getData());
         } finally {
             fout.close();
         }
     }
     
+    protected MAPIAttribute getBodyAttribute() {
+        MAPIAttribute body = message.getMessageMAPIAttribute(MAPIProperty.RTF_COMPRESSED);
+        if (body != null) return body;
+        
+        // See bug #59786 - we'd really like a test file to confirm if this
+        //  is the right properties + if this is truely general or not!
+        MAPIProperty uncompressedBody = 
+                MAPIProperty.createCustom(0x3fd9, Types.ASCII_STRING, "Uncompressed Body");
+        // Return this uncompressed one, or null if that isn't their either
+        return message.getMessageMAPIAttribute(uncompressedBody);
+    }
+    
     /**
-     * Extracts the RTF message body to the supplied stream
+     * Extracts the RTF message body to the supplied stream. If there is no
+     *  RTF message body, nothing will be written to the stream, but no
+     *  errors or exceptions will be raised.
      */
     public void extractMessageBody(OutputStream out) throws IOException {
         MAPIRtfAttribute body = (MAPIRtfAttribute)
