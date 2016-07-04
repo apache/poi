@@ -238,4 +238,33 @@ public final class TestXSSFTable {
 
         wb.close();
     }
+
+    @Test
+    public void getCellReferences() {
+        // make sure that cached start and end cell references
+        // can be synchronized with the underlying CTTable
+        XSSFWorkbook wb = new XSSFWorkbook();
+        XSSFSheet sh = wb.createSheet();
+        XSSFTable table = sh.createTable();
+        CTTable ctTable = table.getCTTable();
+        ctTable.setRef("B2:E8");
+
+        assertEquals(new CellReference("B2"), table.getStartCellReference());
+        assertEquals(new CellReference("E8"), table.getEndCellReference());
+
+        // At this point start and end cell reference are cached
+        // and may not follow changes to the underlying CTTable
+        ctTable.setRef("C1:M3");
+
+        assertEquals(new CellReference("B2"), table.getStartCellReference());
+        assertEquals(new CellReference("E8"), table.getEndCellReference());
+
+        // Force a synchronization between CTTable and XSSFTable
+        // start and end cell references
+        table.updateReferences();
+
+        assertEquals(new CellReference("C1"), table.getStartCellReference());
+        assertEquals(new CellReference("M3"), table.getEndCellReference());
+
+    }
 }

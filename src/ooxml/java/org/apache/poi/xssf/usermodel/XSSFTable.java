@@ -34,6 +34,7 @@ import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.ss.usermodel.Table;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.helpers.XSSFXmlColumnPr;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.StringUtil;
 import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTable;
@@ -113,6 +114,10 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
         out.close();
     }
     
+    /**
+      * get the underlying CTTable XML bean
+      */
+    @Internal
     public CTTable getCTTable() {
         return ctTable;
     }
@@ -262,15 +267,12 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
      * (see Open Office XML Part 4: chapter 3.5.1.2, attribute ref) 
      *
      * Does not track updates to underlying changes to CTTable
+     * To synchronize with changes to the underlying CTTable,
+     * call {@link #updateReferences()}.
      */
     public CellReference getStartCellReference() {
         if (startCellReference==null) {
-            String ref = ctTable.getRef();
-            if (ref != null) {
-                String[] boundaries = ref.split(":");
-                String from = boundaries[0];
-                startCellReference = new CellReference(from);
-            }
+             setCellReferences();
         }
         return startCellReference;
     }
@@ -280,22 +282,53 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
      * (see Open Office XML Part 4: chapter 3.5.1.2, attribute ref)
      *
      * Does not track updates to underlying changes to CTTable
+     * To synchronize with changes to the underlying CTTable,
+     * call {@link #updateReferences()}.
      */
     public CellReference getEndCellReference() {
         if (endCellReference==null) {
-            String ref = ctTable.getRef();
-            String[] boundaries = ref.split(":");
-            String from = boundaries[1];
-            endCellReference = new CellReference(from);
+             setCellReferences();
         }
         return endCellReference;
     }
+
+    /**
+      * @since POI 3.15 beta 3
+      */
+    private void setCellReferences() {
+        String ref = ctTable.getRef();
+        if (ref != null) {
+            String[] boundaries = ref.split(":", 2);
+            String from = boundaries[0];
+            String to = boundaries[1];
+            startCellReference = new CellReference(from);
+            endCellReference = new CellReference(to);
+        }
+    }
+
     
+    /**
+     * Clears the cached values set by {@link #getStartCellReference()}
+     * and {@link #getEndCellReference()}.
+     * The next call to {@link #getStartCellReference()} and
+     * {@link #getEndCellReference()} will synchronize the
+     * cell references with the underlying <code>CTTable</code>.
+     * Thus, {@link #updateReferences()} is inexpensive.
+     *
+     * @since POI 3.15 beta 3
+     */
+    public void updateReferences() {
+        startCellReference = null;
+        endCellReference = null;
+    }
+
     
     /**
      *  @return the total number of rows in the selection. (Note: in this version autofiltering is ignored)
      *
      * Does not track updates to underlying changes to CTTable
+     * To synchronize with changes to the underlying CTTable,
+     * call {@link #updateReferences()}.
      */
     public int getRowCount() {
         CellReference from = getStartCellReference();
@@ -303,6 +336,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
         
         int rowCount = -1;
         if (from!=null && to!=null) {
+            // FIXME: shouldn't this be to-from+1?
             rowCount = to.getRow()-from.getRow();
         }
         return rowCount;
@@ -312,6 +346,10 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
      * Synchronize table headers with cell values in the parent sheet.
      * Headers <em>must</em> be in sync, otherwise Excel will display a
      * "Found unreadable content" message on startup.
+     * 
+     * If calling both {@link #updateReferences()} and
+     * {@link #updateHeaders()}, {@link #updateReferences()}
+     * should be called first.
      */
     public void updateHeaders() {
         XSSFSheet sheet = (XSSFSheet)getParent();
