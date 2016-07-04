@@ -323,42 +323,40 @@ public class ExcelExtractor extends POIOLE2TextExtractor implements org.apache.p
 						outputContents = _includeBlankCells;
 					} else {
 						switch(cell.getCellType()) {
-							case Cell.CELL_TYPE_STRING:
+							case STRING:
 								text.append(cell.getRichStringCellValue().getString());
 								break;
-							case Cell.CELL_TYPE_NUMERIC:
-								text.append(
-								      _formatter.formatCellValue(cell)
-								);
+							case NUMERIC:
+								text.append(_formatter.formatCellValue(cell));
 								break;
-							case Cell.CELL_TYPE_BOOLEAN:
+							case BOOLEAN:
 								text.append(cell.getBooleanCellValue());
 								break;
-							case Cell.CELL_TYPE_ERROR:
+							case ERROR:
 								text.append(ErrorEval.getText(cell.getErrorCellValue()));
 								break;
-							case Cell.CELL_TYPE_FORMULA:
+							case FORMULA:
 								if(!_shouldEvaluateFormulas) {
 									text.append(cell.getCellFormula());
 								} else {
 									switch(cell.getCachedFormulaResultType()) {
-										case Cell.CELL_TYPE_STRING:
+										case STRING:
 											HSSFRichTextString str = cell.getRichStringCellValue();
 											if(str != null && str.length() > 0) {
 												text.append(str.toString());
 											}
 											break;
-										case Cell.CELL_TYPE_NUMERIC:
+										case NUMERIC:
 											HSSFCellStyle style = cell.getCellStyle();
 											double nVal = cell.getNumericCellValue();
 											short df = style.getDataFormat();
 											String dfs = style.getDataFormatString();
 											text.append(_formatter.formatRawCellContents(nVal, df, dfs));
 											break;
-										case Cell.CELL_TYPE_BOOLEAN:
+										case BOOLEAN:
 											text.append(cell.getBooleanCellValue());
 											break;
-										case Cell.CELL_TYPE_ERROR:
+										case ERROR:
 											text.append(ErrorEval.getText(cell.getErrorCellValue()));
 											break;
 										default:

@@ -76,7 +76,7 @@ import org.apache.poi.ss.formula.ptg.UnionPtg;
 import org.apache.poi.ss.formula.ptg.UnknownPtg;
 import org.apache.poi.ss.formula.udf.AggregatingUDFFinder;
 import org.apache.poi.ss.formula.udf.UDFFinder;
-import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -276,7 +276,7 @@ public final class WorkbookEvaluator {
         // avoid tracking dependencies to cells that have constant definition
         boolean shouldCellDependencyBeRecorded = _stabilityClassifier == null ? true
                     : !_stabilityClassifier.isCellFinal(sheetIndex, rowIndex, columnIndex);
-        if (srcCell == null || srcCell.getCellType() != Cell.CELL_TYPE_FORMULA) {
+        if (srcCell == null || srcCell.getCellType() != CellType.FORMULA) {
             ValueEval result = getValueFromNonFormulaCell(srcCell);
             if (shouldCellDependencyBeRecorded) {
                 tracker.acceptPlainValueDependency(_workbookIx, sheetIndex, rowIndex, columnIndex, result);
@@ -315,22 +315,22 @@ public final class WorkbookEvaluator {
                  if (re.getCause() instanceof WorkbookNotFoundException && _ignoreMissingWorkbooks) {
                      logInfo(re.getCause().getMessage() + " - Continuing with cached value!");
                      switch(srcCell.getCachedFormulaResultType()) {
-                         case Cell.CELL_TYPE_NUMERIC:
+                         case NUMERIC:
                              result = new NumberEval(srcCell.getNumericCellValue());
                              break;
-                         case Cell.CELL_TYPE_STRING:
+                         case STRING:
                              result =  new StringEval(srcCell.getStringCellValue());
                              break;
-                         case Cell.CELL_TYPE_BLANK:
+                         case BLANK:
                              result = BlankEval.instance;
                              break;
-                         case Cell.CELL_TYPE_BOOLEAN:
+                         case BOOLEAN:
                              result =  BoolEval.valueOf(srcCell.getBooleanCellValue());
                              break;
-                         case Cell.CELL_TYPE_ERROR:
+                         case ERROR:
                             result =  ErrorEval.valueOf(srcCell.getErrorCellValue());
                             break;
-                         case Cell.CELL_TYPE_FORMULA:
+                         case FORMULA:
                         default:
                             throw new RuntimeException("Unexpected cell type '" + srcCell.getCellType()+"' found!");
                      }
@@ -385,20 +385,22 @@ public final class WorkbookEvaluator {
         if (cell == null) {
             return BlankEval.instance;
         }
-        int cellType = cell.getCellType();
+        CellType cellType = cell.getCellType();
         switch (cellType) {
-            case Cell.CELL_TYPE_NUMERIC:
+            case NUMERIC:
                 return new NumberEval(cell.getNumericCellValue());
-            case Cell.CELL_TYPE_STRING:
+            case STRING:
                 return new StringEval(cell.getStringCellValue());
-            case Cell.CELL_TYPE_BOOLEAN:
+            case BOOLEAN:
                 return BoolEval.valueOf(cell.getBooleanCellValue());
-            case Cell.CELL_TYPE_BLANK:
+            case BLANK:
                 return BlankEval.instance;
-            case Cell.CELL_TYPE_ERROR:
+            case ERROR:
                 return ErrorEval.valueOf(cell.getErrorCellValue());
+            default:
+                throw new RuntimeException("Unexpected cell type (" + cellType + ")");
         }
-        throw new RuntimeException("Unexpected cell type (" + cellType + ")");
+        
     }
 
 

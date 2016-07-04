@@ -99,7 +99,7 @@ public interface FormulaEvaluator {
      *      or one of Cell.CELL_TYPE_NUMERIC, Cell.CELL_TYPE_STRING, Cell.CELL_TYPE_BOOLEAN, Cell.CELL_TYPE_ERROR
      *      Note: the cell's type remains as Cell.CELL_TYPE_FORMULA however.
      */
-    int evaluateFormulaCell(Cell cell);
+    CellType evaluateFormulaCell(Cell cell);
 
     /**
      * If cell contains formula, it evaluates the formula, and

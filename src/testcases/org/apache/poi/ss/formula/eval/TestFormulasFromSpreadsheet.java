@@ -31,6 +31,7 @@ import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.formula.functions.TestMathX;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -173,7 +174,7 @@ public final class TestFormulasFromSpreadsheet {
        // iterate across the row for all the evaluation cases
        for (int colnum=SS.COLUMN_INDEX_FIRST_TEST_VALUE; colnum < endcolnum; colnum++) {
            Cell c = formulasRow.getCell(colnum);
-           if (c == null || c.getCellType() != Cell.CELL_TYPE_FORMULA) {
+           if (c == null || c.getCellType() != CellType.FORMULA) {
                continue;
            }
 
@@ -186,28 +187,31 @@ public final class TestFormulasFromSpreadsheet {
            assertNotNull(msg + " - Bad setup data expected value is null", expValue);
            assertNotNull(msg + " - actual value was null", actValue);
 
-           switch (expValue.getCellType()) {
-               case Cell.CELL_TYPE_BLANK:
-                   assertEquals(msg, Cell.CELL_TYPE_BLANK, actValue.getCellType());
+           final CellType cellType = expValue.getCellType();
+           switch (cellType) {
+               case BLANK:
+                   assertEquals(msg, CellType.BLANK, actValue.getCellType());
                    break;
-               case Cell.CELL_TYPE_BOOLEAN:
-                   assertEquals(msg, Cell.CELL_TYPE_BOOLEAN, actValue.getCellType());
+               case BOOLEAN:
+                   assertEquals(msg, CellType.BOOLEAN, actValue.getCellType());
                    assertEquals(msg, expValue.getBooleanCellValue(), actValue.getBooleanValue());
                    break;
-               case Cell.CELL_TYPE_ERROR:
-                   assertEquals(msg, Cell.CELL_TYPE_ERROR, actValue.getCellType());
+               case ERROR:
+                   assertEquals(msg, CellType.ERROR, actValue.getCellType());
                    assertEquals(msg, ErrorEval.getText(expValue.getErrorCellValue()), ErrorEval.getText(actValue.getErrorValue()));
                    break;
-               case Cell.CELL_TYPE_FORMULA: // will never be used, since we will call method after formula evaluation
+               case FORMULA: // will never be used, since we will call method after formula evaluation
                    fail("Cannot expect formula as result of formula evaluation: " + msg);
-               case Cell.CELL_TYPE_NUMERIC:
-                   assertEquals(msg, Cell.CELL_TYPE_NUMERIC, actValue.getCellType());
+               case NUMERIC:
+                   assertEquals(msg, CellType.NUMERIC, actValue.getCellType());
                    TestMathX.assertEquals(msg, expValue.getNumericCellValue(), actValue.getNumberValue(), TestMathX.POS_ZERO, TestMathX.DIFF_TOLERANCE_FACTOR);
                    break;
-               case Cell.CELL_TYPE_STRING:
-                   assertEquals(msg, Cell.CELL_TYPE_STRING, actValue.getCellType());
+               case STRING:
+                   assertEquals(msg, CellType.STRING, actValue.getCellType());
                    assertEquals(msg, expValue.getRichStringCellValue().getString(), actValue.getStringValue());
                    break;
+               default:
+                   fail("Unexpected cell type: " + cellType);
            }
        }
    }
@@ -224,10 +228,10 @@ public final class TestFormulasFromSpreadsheet {
 			System.err.println("Warning - Row " + r.getRowNum() + " has no cell " + SS.COLUMN_INDEX_FUNCTION_NAME + ", can't figure out function name");
 			return null;
 		}
-		if(cell.getCellType() == Cell.CELL_TYPE_BLANK) {
+		if(cell.getCellType() == CellType.BLANK) {
 			return null;
 		}
-		if(cell.getCellType() == Cell.CELL_TYPE_STRING) {
+		if(cell.getCellType() == CellType.STRING) {
 			return cell.getRichStringCellValue().getString();
 		}
 

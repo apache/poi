@@ -16,7 +16,6 @@
 ==================================================================== */
 package org.apache.poi.ss.examples.html;
 
-import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.format.CellFormat;
@@ -336,9 +335,9 @@ public class ToHtml {
         }
     }
 
-    private static int ultimateCellType(Cell c) {
-        int type = c.getCellType();
-        if (type == Cell.CELL_TYPE_FORMULA)
+    private static CellType ultimateCellType(Cell c) {
+        CellType type = c.getCellType();
+        if (type == CellType.FORMULA)
             type = c.getCachedFormulaResultType();
         return type;
     }
@@ -443,12 +442,12 @@ public class ToHtml {
     private String tagStyle(Cell cell, CellStyle style) {
         if (style.getAlignment() == ALIGN_GENERAL) {
             switch (ultimateCellType(cell)) {
-            case HSSFCell.CELL_TYPE_STRING:
+            case STRING:
                 return "style=\"text-align: left;\"";
-            case HSSFCell.CELL_TYPE_BOOLEAN:
-            case HSSFCell.CELL_TYPE_ERROR:
+            case BOOLEAN:
+            case ERROR:
                 return "style=\"text-align: center;\"";
-            case HSSFCell.CELL_TYPE_NUMERIC:
+            case NUMERIC:
             default:
                 // "right" is the default
                 break;

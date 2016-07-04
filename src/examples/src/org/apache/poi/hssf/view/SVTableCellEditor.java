@@ -152,23 +152,23 @@ public class SVTableCellEditor extends AbstractCellEditor implements TableCellEd
 
       //Set the value that is rendered for the cell
       switch (cell.getCellType()) {
-        case HSSFCell.CELL_TYPE_BLANK:
+        case BLANK:
           editor.setText("");
           break;
-        case HSSFCell.CELL_TYPE_BOOLEAN:
+        case BOOLEAN:
           if (cell.getBooleanCellValue()) {
             editor.setText("true");
           } else {
             editor.setText("false");
           }
           break;
-        case HSSFCell.CELL_TYPE_NUMERIC:
+        case NUMERIC:
           editor.setText(Double.toString(cell.getNumericCellValue()));
           break;
-        case HSSFCell.CELL_TYPE_STRING:
+        case STRING:
           editor.setText(cell.getRichStringCellValue().getString());
           break;
-        case HSSFCell.CELL_TYPE_FORMULA:
+        case FORMULA:
         default:
           editor.setText("?");
       }

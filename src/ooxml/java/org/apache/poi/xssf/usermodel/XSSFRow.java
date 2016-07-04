@@ -27,6 +27,7 @@ import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellCopyPolicy;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
@@ -184,7 +185,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
     /**
      * Use this to create new cells within the row and return it.
      * <p>
-     * The cell that is returned is a {@link Cell#CELL_TYPE_BLANK}. The type can be changed
+     * The cell that is returned is a {@link CellType#BLANK}. The type can be changed
      * either through calling <code>setCellValue</code> or <code>setCellType</code>.
      * </p>
      * @param columnIndex - the column number this cell represents
@@ -194,7 +195,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      */
     @Override
     public XSSFCell createCell(int columnIndex) {
-    	return createCell(columnIndex, Cell.CELL_TYPE_BLANK);
+        return createCell(columnIndex, CellType.BLANK);
     }
 
     /**
@@ -205,15 +206,29 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      * @return XSSFCell a high level representation of the created cell.
      * @throws IllegalArgumentException if the specified cell type is invalid, columnIndex < 0
      *   or greater than 16384, the maximum number of columns supported by the SpreadsheetML format (.xlsx)
-     * @see Cell#CELL_TYPE_BLANK
-     * @see Cell#CELL_TYPE_BOOLEAN
-     * @see Cell#CELL_TYPE_ERROR
-     * @see Cell#CELL_TYPE_FORMULA
-     * @see Cell#CELL_TYPE_NUMERIC
-     * @see Cell#CELL_TYPE_STRING
+     * @see CellType#BLANK
+     * @see CellType#BOOLEAN
+     * @see CellType#ERROR
+     * @see CellType#FORMULA
+     * @see CellType#NUMERIC
+     * @see CellType#STRING
+     * @deprecated POI 3.15 beta 3. Use {@link #createCell(int, CellType)} instead.
      */
     @Override
     public XSSFCell createCell(int columnIndex, int type) {
+        return createCell(columnIndex, CellType.forInt(type));
+    }
+    /**
+     * Use this to create new cells within the row and return it.
+     *
+     * @param columnIndex - the column number this cell represents
+     * @param type - the cell's data type
+     * @return XSSFCell a high level representation of the created cell.
+     * @throws IllegalArgumentException if the specified cell type is invalid, columnIndex < 0
+     *   or greater than 16384, the maximum number of columns supported by the SpreadsheetML format (.xlsx)
+     */
+    @Override
+    public XSSFCell createCell(int columnIndex, CellType type) {
         // Performance optimization for bug 57840: explicit boxing is slightly faster than auto-unboxing, though may use more memory
         final Integer colI = new Integer(columnIndex); // NOSONAR
         CTCell ctCell;
@@ -226,8 +241,8 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
         }
         XSSFCell xcell = new XSSFCell(this, ctCell);
         xcell.setCellNum(columnIndex);
-        if (type != Cell.CELL_TYPE_BLANK) {
-        	xcell.setCellType(type);
+        if (type != CellType.BLANK) {
+            xcell.setCellType(type);
         }
         _cells.put(colI, xcell);
         return xcell;
@@ -261,10 +276,10 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
             case RETURN_NULL_AND_BLANK:
                 return cell;
             case RETURN_BLANK_AS_NULL:
-                boolean isBlank = (cell != null && cell.getCellType() == Cell.CELL_TYPE_BLANK);
+                boolean isBlank = (cell != null && cell.getCellType() == CellType.BLANK);
                 return (isBlank) ? null : cell;
             case CREATE_NULL_AS_BLANK:
-                return (cell == null) ? createCell(cellnum, Cell.CELL_TYPE_BLANK) : cell;
+                return (cell == null) ? createCell(cellnum, CellType.BLANK) : cell;
             default:
                 throw new IllegalArgumentException("Illegal policy " + policy + " (" + policy.id + ")");
         }
@@ -481,7 +496,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
         if(xcell.isPartOfArrayFormulaGroup()) {
             xcell.notifyArrayFormulaChanging();
         }
-        if(cell.getCellType() == Cell.CELL_TYPE_FORMULA) {
+        if(cell.getCellType() == CellType.FORMULA) {
            _sheet.getWorkbook().onDeleteFormula(xcell);
         }
         // Performance optimization for bug 57840: explicit boxing is slightly faster than auto-unboxing, though may use more memory

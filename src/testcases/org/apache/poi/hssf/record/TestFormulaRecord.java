@@ -17,12 +17,12 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.ss.formula.ptg.AttrPtg;
 import org.apache.poi.ss.formula.ptg.FuncVarPtg;
 import org.apache.poi.ss.formula.ptg.IntPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.ptg.RefPtg;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.FormulaError;
 
 import junit.framework.AssertionFailedError;
@@ -83,7 +83,7 @@ public final class TestFormulaRecord extends TestCase {
 		FormulaRecord record = new FormulaRecord(TestcaseRecordInputStream.create(FormulaRecord.sid, formulaByte));
 		assertEquals("Row", 0, record.getRow());
 		assertEquals("Column", 0, record.getColumn());
-		assertEquals(HSSFCell.CELL_TYPE_ERROR, record.getCachedResultType());
+		assertEquals(CellType.ERROR.getCode(), record.getCachedResultType());
 
 		byte[] output = record.serialize();
 		assertEquals("Output size", 33, output.length); //includes sid+recordlength

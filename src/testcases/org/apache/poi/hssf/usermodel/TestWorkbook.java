@@ -30,7 +30,7 @@ import org.apache.poi.hssf.record.BackupRecord;
 import org.apache.poi.hssf.record.LabelSSTRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor;
-import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -384,16 +384,15 @@ public final class TestWorkbook {
      * OBJECTIVE:  Test that HSSF can read a simple spreadsheet with and RKRecord and correctly
      *             identify the cell as numeric and convert it to a NumberRecord.  <P>
      * SUCCESS:    HSSF reads a sheet.  HSSF returns that the cell is a numeric type cell.    <P>
-     * FAILURE:    HSSF does not read a sheet or excepts.  HSSF incorrectly indentifies the cell<P>
+     * FAILURE:    HSSF does not read a sheet or excepts.  HSSF incorrectly identifies the cell<P>
      */
     @Test
     public void testReadSheetWithRK() throws IOException {
         HSSFWorkbook wb = openSample("rk.xls");
         HSSFSheet    s  = wb.getSheetAt(0);
         HSSFCell     c  = s.getRow(0).getCell(0);
-        int          a  = c.getCellType();
 
-        assertEquals(a, Cell.CELL_TYPE_NUMERIC);
+        assertEquals(CellType.NUMERIC, c.getCellType());
         
         wb.close();
     }

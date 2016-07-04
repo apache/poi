@@ -216,7 +216,7 @@ public abstract class BaseTestFormulaEvaluator {
        FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();
        Sheet sheet = wb.createSheet("Sheet1");
        Row r = sheet.createRow(0);
-       Cell c = r.createCell(0, Cell.CELL_TYPE_FORMULA);
+       Cell c = r.createCell(0, CellType.FORMULA);
        
        // Create a value and check it
        c.setCellFormula("Date(2011,10,6)");

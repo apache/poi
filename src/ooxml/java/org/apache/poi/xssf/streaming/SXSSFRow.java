@@ -26,6 +26,7 @@ import java.util.TreeMap;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.util.Internal;
@@ -119,7 +120,7 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
     /**
      * Use this to create new cells within the row and return it.
      * <p>
-     * The cell that is returned is a {@link Cell#CELL_TYPE_BLANK}. The type can be changed
+     * The cell that is returned is a {@link CellType#BLANK}. The type can be changed
      * either through calling <code>setCellValue</code> or <code>setCellType</code>.
      *
      * @param column - the column number this cell represents
@@ -130,13 +131,30 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
     @Override
     public SXSSFCell createCell(int column)
     {
-        return createCell(column, Cell.CELL_TYPE_BLANK);
+        return createCell(column, CellType.BLANK);
     }
 
     /**
      * Use this to create new cells within the row and return it.
      * <p>
-     * The cell that is returned is a {@link Cell#CELL_TYPE_BLANK}. The type can be changed
+     * The cell that is returned is a {@link CellType#BLANK}. The type can be changed
+     * either through calling setCellValue or setCellType.
+     *
+     * @param column - the column number this cell represents
+     * @return Cell a high level representation of the created cell.
+     * @throws IllegalArgumentException if columnIndex < 0 or greate than a maximum number of supported columns
+     * (255 for *.xls, 1048576 for *.xlsx)
+     * @deprecated POI 3.15 beta 3. Use {@link #createCell(int, CellType)} instead.
+     */
+    @Override
+    public SXSSFCell createCell(int column, int type)
+    {
+        return createCell(column, CellType.forInt(type));
+    }
+    /**
+     * Use this to create new cells within the row and return it.
+     * <p>
+     * The cell that is returned is a {@link CellType#BLANK}. The type can be changed
      * either through calling setCellValue or setCellType.
      *
      * @param column - the column number this cell represents
@@ -145,7 +163,7 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
      * (255 for *.xls, 1048576 for *.xlsx)
      */
     @Override
-    public SXSSFCell createCell(int column, int type)
+    public SXSSFCell createCell(int column, CellType type)
     {
         checkBounds(column);
         SXSSFCell cell = new SXSSFCell(this, type);
@@ -250,10 +268,10 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
             case RETURN_NULL_AND_BLANK:
                 return cell;
             case RETURN_BLANK_AS_NULL:
-                boolean isBlank = (cell != null && cell.getCellType() == Cell.CELL_TYPE_BLANK);
+                boolean isBlank = (cell != null && cell.getCellType() == CellType.BLANK);
                 return (isBlank) ? null : cell;
             case CREATE_NULL_AS_BLANK:
-                return (cell == null) ? createCell(cellnum, Cell.CELL_TYPE_BLANK) : cell;
+                return (cell == null) ? createCell(cellnum, CellType.BLANK) : cell;
             default:
                 throw new IllegalArgumentException("Illegal policy " + policy + " (" + policy.id + ")");
         }

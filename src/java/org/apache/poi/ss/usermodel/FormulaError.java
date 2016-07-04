@@ -17,6 +17,9 @@
 package org.apache.poi.ss.usermodel;
 
 import java.util.Map;
+
+import org.apache.poi.util.Internal;
+
 import java.util.HashMap;
 
 /**
@@ -25,6 +28,9 @@ import java.util.HashMap;
  * See also OOO's excelfileformat.pdf (2.5.6)
  */
 public enum FormulaError {
+    @Internal
+    _NO_ERROR(-1, "(no error)"),
+    
     /**
      * Intended to indicate when two areas are required to intersect, but do not.
      * <p>Example:

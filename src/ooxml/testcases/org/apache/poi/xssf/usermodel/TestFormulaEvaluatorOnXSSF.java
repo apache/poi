@@ -35,6 +35,7 @@ import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.ss.formula.eval.TestFormulasFromSpreadsheet;
 import org.apache.poi.ss.formula.functions.TestMathX;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
@@ -189,7 +190,7 @@ public final class TestFormulaEvaluatorOnXSSF {
 		for (short colnum=SS.COLUMN_INDEX_FIRST_TEST_VALUE; colnum < endcolnum; colnum++) {
 			Cell c = formulasRow.getCell(colnum);
 			assumeNotNull(c);
-			assumeTrue(c.getCellType() == Cell.CELL_TYPE_FORMULA);
+			assumeTrue(c.getCellType() == CellType.FORMULA);
 			ignoredFormulaTestCase(c.getCellFormula());
 
 			CellValue actValue = evaluator.evaluate(c);
@@ -201,33 +202,36 @@ public final class TestFormulaEvaluatorOnXSSF {
 			assertNotNull(msg + " - Bad setup data expected value is null", expValue);
 			assertNotNull(msg + " - actual value was null", actValue);
 	        
-	        switch (expValue.getCellType()) {
-	            case Cell.CELL_TYPE_BLANK:
-	                assertEquals(msg, Cell.CELL_TYPE_BLANK, actValue.getCellType());
+	        final CellType expectedCellType = expValue.getCellType();
+	        switch (expectedCellType) {
+	            case BLANK:
+	                assertEquals(msg, CellType.BLANK, actValue.getCellType());
 	                break;
-	            case Cell.CELL_TYPE_BOOLEAN:
-	                assertEquals(msg, Cell.CELL_TYPE_BOOLEAN, actValue.getCellType());
+	            case BOOLEAN:
+	                assertEquals(msg, CellType.BOOLEAN, actValue.getCellType());
 	                assertEquals(msg, expValue.getBooleanCellValue(), actValue.getBooleanValue());
 	                break;
-	            case Cell.CELL_TYPE_ERROR:
-	                assertEquals(msg, Cell.CELL_TYPE_ERROR, actValue.getCellType());
+	            case ERROR:
+	                assertEquals(msg, CellType.ERROR, actValue.getCellType());
 //	              if(false) { // TODO: fix ~45 functions which are currently returning incorrect error values
 //	                  assertEquals(msg, expValue.getErrorCellValue(), actValue.getErrorValue());
 //	              }
 	                break;
-	            case Cell.CELL_TYPE_FORMULA: // will never be used, since we will call method after formula evaluation
+	            case FORMULA: // will never be used, since we will call method after formula evaluation
 	                fail("Cannot expect formula as result of formula evaluation: " + msg);
-	            case Cell.CELL_TYPE_NUMERIC:
-	                assertEquals(msg, Cell.CELL_TYPE_NUMERIC, actValue.getCellType());
+	            case NUMERIC:
+	                assertEquals(msg, CellType.NUMERIC, actValue.getCellType());
 	                TestMathX.assertEquals(msg, expValue.getNumericCellValue(), actValue.getNumberValue(), TestMathX.POS_ZERO, TestMathX.DIFF_TOLERANCE_FACTOR);
 //	              double delta = Math.abs(expValue.getNumericCellValue()-actValue.getNumberValue());
 //	              double pctExpValue = Math.abs(0.00001*expValue.getNumericCellValue());
 //	              assertTrue(msg, delta <= pctExpValue);
 	                break;
-	            case Cell.CELL_TYPE_STRING:
-	                assertEquals(msg, Cell.CELL_TYPE_STRING, actValue.getCellType());
+	            case STRING:
+	                assertEquals(msg, CellType.STRING, actValue.getCellType());
 	                assertEquals(msg, expValue.getRichStringCellValue().getString(), actValue.getStringValue());
 	                break;
+	            default:
+	                fail("Unexpected cell type: " + expectedCellType);
 	        }
 		}
 	}
@@ -260,10 +264,10 @@ public final class TestFormulaEvaluatorOnXSSF {
             logger.log(POILogger.WARN, "Warning - Row " + r.getRowNum() + " has no cell " + SS.COLUMN_INDEX_FUNCTION_NAME + ", can't figure out function name");
 			return null;
 		}
-		if(cell.getCellType() == Cell.CELL_TYPE_BLANK) {
+		if(cell.getCellType() == CellType.BLANK) {
 			return null;
 		}
-		if(cell.getCellType() == Cell.CELL_TYPE_STRING) {
+		if(cell.getCellType() == CellType.STRING) {
 			return cell.getRichStringCellValue().getString();
 		}
 		

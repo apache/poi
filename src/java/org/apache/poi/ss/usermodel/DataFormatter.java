@@ -879,32 +879,33 @@ public class DataFormatter implements Observer {
             return "";
         }
 
-        int cellType = cell.getCellType();
-        if (cellType == Cell.CELL_TYPE_FORMULA) {
+        CellType cellType = cell.getCellType();
+        if (cellType == CellType.FORMULA) {
             if (evaluator == null) {
                 return cell.getCellFormula();
             }
             cellType = evaluator.evaluateFormulaCell(cell);
         }
         switch (cellType) {
-            case Cell.CELL_TYPE_NUMERIC :
+            case NUMERIC :
 
                 if (DateUtil.isCellDateFormatted(cell)) {
                     return getFormattedDateString(cell);
                 }
                 return getFormattedNumberString(cell);
 
-            case Cell.CELL_TYPE_STRING :
+            case STRING :
                 return cell.getRichStringCellValue().getString();
 
-            case Cell.CELL_TYPE_BOOLEAN :
+            case BOOLEAN :
                 return String.valueOf(cell.getBooleanCellValue());
-            case Cell.CELL_TYPE_BLANK :
+            case BLANK :
                 return "";
-            case Cell.CELL_TYPE_ERROR:
-            	return FormulaError.forInt(cell.getErrorCellValue()).getString();
+            case ERROR:
+                return FormulaError.forInt(cell.getErrorCellValue()).getString();
+            default:
+                throw new RuntimeException("Unexpected celltype (" + cellType + ")");
         }
-        throw new RuntimeException("Unexpected celltype (" + cellType + ")");
     }
 
 

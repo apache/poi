@@ -36,6 +36,7 @@ import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.StringRecord;
 import org.apache.poi.ss.usermodel.BaseTestCell;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
@@ -417,14 +418,7 @@ public final class TestHSSFCell extends BaseTestCell {
             cell.getCachedFormulaResultType();
             fail("Should catch exception");
         } catch (IllegalStateException e) {
-			// expected here
-        }
-        
-        try {
-            assertNotNull(new HSSFCell(wb, sheet, 0, (short)0, Cell.CELL_TYPE_ERROR+1 ));
-            fail("Should catch exception");
-        } catch (RuntimeException e) {
-			// expected here
+            // expected here
         }
         
         cell.removeCellComment();
@@ -440,36 +434,36 @@ public final class TestHSSFCell extends BaseTestCell {
         Row row = sheet.createRow(0);
         Cell cell = row.createCell(0);
 
-        cell.setCellType(Cell.CELL_TYPE_BLANK);
+        cell.setCellType(CellType.BLANK);
         assertNull(null, cell.getDateCellValue());
         assertFalse(cell.getBooleanCellValue());
         assertEquals("", cell.toString());
         
-        cell.setCellType(Cell.CELL_TYPE_STRING);
+        cell.setCellType(CellType.STRING);
         assertEquals("", cell.toString());
-        cell.setCellType(Cell.CELL_TYPE_STRING);
+        cell.setCellType(CellType.STRING);
         cell.setCellValue(1.2);
-        cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+        cell.setCellType(CellType.NUMERIC);
         assertEquals("1.2", cell.toString());
-        cell.setCellType(Cell.CELL_TYPE_BOOLEAN);
+        cell.setCellType(CellType.BOOLEAN);
         assertEquals("TRUE", cell.toString());
-        cell.setCellType(Cell.CELL_TYPE_BOOLEAN);
+        cell.setCellType(CellType.BOOLEAN);
         cell.setCellValue("" + FormulaError.VALUE.name());
-        cell.setCellType(Cell.CELL_TYPE_ERROR);
+        cell.setCellType(CellType.ERROR);
         assertEquals("#VALUE!", cell.toString());
-        cell.setCellType(Cell.CELL_TYPE_ERROR);
-        cell.setCellType(Cell.CELL_TYPE_BOOLEAN);
+        cell.setCellType(CellType.ERROR);
+        cell.setCellType(CellType.BOOLEAN);
         assertEquals("FALSE", cell.toString());
         cell.setCellValue(1.2);
-        cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+        cell.setCellType(CellType.NUMERIC);
         assertEquals("1.2", cell.toString());
-        cell.setCellType(Cell.CELL_TYPE_BOOLEAN);
-        cell.setCellType(Cell.CELL_TYPE_STRING);
-        cell.setCellType(Cell.CELL_TYPE_ERROR);
-        cell.setCellType(Cell.CELL_TYPE_STRING);
+        cell.setCellType(CellType.BOOLEAN);
+        cell.setCellType(CellType.STRING);
+        cell.setCellType(CellType.ERROR);
+        cell.setCellType(CellType.STRING);
         cell.setCellValue(1.2);
-        cell.setCellType(Cell.CELL_TYPE_NUMERIC);
-        cell.setCellType(Cell.CELL_TYPE_STRING);
+        cell.setCellType(CellType.NUMERIC);
+        cell.setCellType(CellType.STRING);
         assertEquals("1.2", cell.toString());
         
         cell.setCellValue((String)null);

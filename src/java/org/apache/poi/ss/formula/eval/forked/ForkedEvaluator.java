@@ -33,7 +33,6 @@ import org.apache.poi.ss.formula.EvaluationCell;
 import org.apache.poi.ss.formula.EvaluationWorkbook;
 import org.apache.poi.ss.formula.IStabilityClassifier;
 import org.apache.poi.ss.formula.WorkbookEvaluator;
-import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Workbook;
 
 /**
@@ -114,20 +113,21 @@ public final class ForkedEvaluator {
 		EvaluationCell cell = _sewb.getEvaluationCell(sheetName, rowIndex, columnIndex);
 
 		switch (cell.getCellType()) {
-			case Cell.CELL_TYPE_BOOLEAN:
+			case BOOLEAN:
 				return BoolEval.valueOf(cell.getBooleanCellValue());
-			case Cell.CELL_TYPE_ERROR:
+			case ERROR:
 				return ErrorEval.valueOf(cell.getErrorCellValue());
-			case Cell.CELL_TYPE_FORMULA:
+			case FORMULA:
 				return _evaluator.evaluate(cell);
-			case Cell.CELL_TYPE_NUMERIC:
+			case NUMERIC:
 				return new NumberEval(cell.getNumericCellValue());
-			case Cell.CELL_TYPE_STRING:
+			case STRING:
 				return new StringEval(cell.getStringCellValue());
-			case Cell.CELL_TYPE_BLANK:
+			case BLANK:
 				return null;
+			default:
+				throw new IllegalStateException("Bad cell type (" + cell.getCellType() + ")");
 		}
-		throw new IllegalStateException("Bad cell type (" + cell.getCellType() + ")");
 	}
 	/**
 	 * Coordinates several formula evaluators together so that formulas that involve external

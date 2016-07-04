@@ -17,6 +17,8 @@
 
 package org.apache.poi.ss.formula;
 
+import org.apache.poi.ss.usermodel.CellType;
+
 /**
  * Abstracts a cell for the purpose of formula evaluation.  This interface represents both formula
  * and non-formula cells.<br/>
@@ -35,12 +37,12 @@ public interface EvaluationCell {
 	EvaluationSheet getSheet();
 	int getRowIndex();
 	int getColumnIndex();
-	int getCellType();
+	CellType getCellType();
 
 	double getNumericCellValue();
 	String getStringCellValue();
 	boolean getBooleanCellValue();
 	int getErrorCellValue();
 
-	int getCachedFormulaResultType();
+	CellType getCachedFormulaResultType();
 }

@@ -42,7 +42,7 @@ import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.util.DocumentHelper;
 import org.apache.poi.util.LocaleUtil;
@@ -280,11 +280,11 @@ public class XSSFExportToXml implements Comparator<String>{
         String value ="";
         switch (cell.getCellType()) {
 
-        case XSSFCell.CELL_TYPE_STRING: value = cell.getStringCellValue(); break;
-        case XSSFCell.CELL_TYPE_BOOLEAN: value += cell.getBooleanCellValue(); break;
-        case XSSFCell.CELL_TYPE_ERROR: value = cell.getErrorCellString();  break;
-        case XSSFCell.CELL_TYPE_FORMULA:
-           if (cell.getCachedFormulaResultType() == Cell.CELL_TYPE_STRING) {
+        case STRING: value = cell.getStringCellValue(); break;
+        case BOOLEAN: value += cell.getBooleanCellValue(); break;
+        case ERROR: value = cell.getErrorCellString();  break;
+        case FORMULA:
+           if (cell.getCachedFormulaResultType() == CellType.STRING) {
                value = cell.getStringCellValue();
            } else {
                if (DateUtil.isCellDateFormatted(cell)) {
@@ -295,7 +295,7 @@ public class XSSFExportToXml implements Comparator<String>{
            }
            break;
         
-        case XSSFCell.CELL_TYPE_NUMERIC: 
+        case NUMERIC: 
              if (DateUtil.isCellDateFormatted(cell)) {
                   value = getFormattedDate(cell);
               } else {

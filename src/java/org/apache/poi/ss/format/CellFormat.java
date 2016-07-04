@@ -29,6 +29,7 @@ import java.util.regex.Pattern;
 import javax.swing.JLabel;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.ConditionalFormatting;
 import org.apache.poi.ss.usermodel.ConditionalFormattingRule;
 import org.apache.poi.ss.usermodel.DataFormatter;
@@ -265,11 +266,11 @@ public class CellFormat {
      */
     public CellFormatResult apply(Cell c) {
         switch (ultimateType(c)) {
-        case Cell.CELL_TYPE_BLANK:
+        case BLANK:
             return apply("");
-        case Cell.CELL_TYPE_BOOLEAN:
+        case BOOLEAN:
             return apply(c.getBooleanCellValue());
-        case Cell.CELL_TYPE_NUMERIC:
+        case NUMERIC:
             Double value = c.getNumericCellValue();
             if (getApplicableFormatPart(value).getCellFormatType() == CellFormatType.DATE) {
                 if (DateUtil.isValidExcelDate(value)) {
@@ -280,7 +281,7 @@ public class CellFormat {
             } else {
                 return apply(value);
             }
-        case Cell.CELL_TYPE_STRING:
+        case STRING:
             return apply(c.getStringCellValue());
         default:
             return apply("?");
@@ -335,26 +336,26 @@ public class CellFormat {
      */
     public CellFormatResult apply(JLabel label, Cell c) {
         switch (ultimateType(c)) {
-        case Cell.CELL_TYPE_BLANK:
-            return apply(label, "");
-        case Cell.CELL_TYPE_BOOLEAN:
-            return apply(label, c.getBooleanCellValue());
-        case Cell.CELL_TYPE_NUMERIC:
-            Double value = c.getNumericCellValue();
-            if (getApplicableFormatPart(value).getCellFormatType() == CellFormatType.DATE) {
-                if (DateUtil.isValidExcelDate(value)) {
-                    return apply(label, c.getDateCellValue(), value);
+            case BLANK:
+                return apply(label, "");
+            case BOOLEAN:
+                return apply(label, c.getBooleanCellValue());
+            case NUMERIC:
+                Double value = c.getNumericCellValue();
+                if (getApplicableFormatPart(value).getCellFormatType() == CellFormatType.DATE) {
+                    if (DateUtil.isValidExcelDate(value)) {
+                        return apply(label, c.getDateCellValue(), value);
+                    } else {
+                        return apply(label, INVALID_VALUE_FOR_FORMAT);
+                    }
                 } else {
-                    return apply(label, INVALID_VALUE_FOR_FORMAT);
+                    return apply(label, value);
                 }
-            } else {
-                return apply(label, value);
+            case STRING:
+                return apply(label, c.getStringCellValue());
+            default:
+                return apply(label, "?");
             }
-        case Cell.CELL_TYPE_STRING:
-            return apply(label, c.getStringCellValue());
-        default:
-            return apply(label, "?");
-        }
     }
 
     /**
@@ -417,9 +418,9 @@ public class CellFormat {
      *
      * @return The ultimate type of this cell.
      */
-    public static int ultimateType(Cell cell) {
-        int type = cell.getCellType();
-        if (type == Cell.CELL_TYPE_FORMULA)
+    public static CellType ultimateType(Cell cell) {
+        CellType type = cell.getCellType();
+        if (type == CellType.FORMULA)
             return cell.getCachedFormulaResultType();
         else
             return type;

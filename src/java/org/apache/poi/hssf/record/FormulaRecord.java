@@ -17,10 +17,10 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.ss.formula.Formula;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.ptg.Ptg;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.HexDump;
@@ -53,6 +53,8 @@ public final class FormulaRecord extends CellRecord implements Cloneable {
 		private static final int VARIABLE_DATA_LENGTH = 6;
 		private static final int DATA_INDEX = 2;
 
+		// FIXME: can these be merged with {@link CellType}?
+		// are the numbers specific to the HSSF formula record format or just a poor-man's enum?
 		public static final int STRING = 0;
 		public static final int BOOLEAN = 1;
 		public static final int ERROR_CODE = 2;
@@ -146,10 +148,10 @@ public final class FormulaRecord extends CellRecord implements Cloneable {
 		public int getValueType() {
 			int typeCode = getTypeCode();
 			switch (typeCode) {
-				case STRING:	 return HSSFCell.CELL_TYPE_STRING;
-				case BOOLEAN:	return HSSFCell.CELL_TYPE_BOOLEAN;
-				case ERROR_CODE: return HSSFCell.CELL_TYPE_ERROR;
-				case EMPTY:	  return HSSFCell.CELL_TYPE_STRING; // is this correct?
+				case STRING:	 return CellType.STRING.getCode();
+				case BOOLEAN:	return CellType.BOOLEAN.getCode();
+				case ERROR_CODE: return CellType.ERROR.getCode();
+				case EMPTY:	  return CellType.STRING.getCode(); // is this correct?
 			}
 			throw new IllegalStateException("Unexpected type id (" + typeCode + ")");
 		}
@@ -241,7 +243,7 @@ public final class FormulaRecord extends CellRecord implements Cloneable {
 
 	public int getCachedResultType() {
 		if (specialCachedValue == null) {
-			return HSSFCell.CELL_TYPE_NUMERIC;
+			return CellType.NUMERIC.getCode();
 		}
 		return specialCachedValue.getValueType();
 	}

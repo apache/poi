@@ -26,6 +26,7 @@ import org.apache.poi.hssf.record.RowRecord;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.util.Configurator;
 
@@ -110,16 +111,36 @@ public final class HSSFRow implements Row, Comparable<HSSFRow> {
     @Override
     public HSSFCell createCell(int column)
     {
-        return this.createCell(column,Cell.CELL_TYPE_BLANK);
+        return this.createCell(column,CellType.BLANK);
     }
-
+    
     /**
      * Use this to create new cells within the row and return it.
      * <p>
      * The cell that is returned will be of the requested type.
      * The type can be changed either through calling setCellValue 
      *  or setCellType, but there is a small overhead to doing this,
-     *  so it is best to create of the required type up front.
+     *  so it is best to create the required type up front.
+     *
+     * @param columnIndex - the column number this cell represents
+     *
+     * @return HSSFCell a high level representation of the created cell.
+     * @throws IllegalArgumentException if columnIndex < 0 or greater than 255,
+     *   the maximum number of columns supported by the Excel binary format (.xls)
+     * @deprecated POI 3.15 beta 3
+     */
+    @Override
+    public HSSFCell createCell(int columnIndex, int type)
+    {
+        return createCell(columnIndex, CellType.forInt(type));
+    }
+    /**
+     * Use this to create new cells within the row and return it.
+     * <p>
+     * The cell that is returned will be of the requested type.
+     * The type can be changed either through calling setCellValue 
+     *  or setCellType, but there is a small overhead to doing this,
+     *  so it is best to create the required type up front.
      *
      * @param columnIndex - the column number this cell represents
      *
@@ -128,7 +149,7 @@ public final class HSSFRow implements Row, Comparable<HSSFRow> {
      *   the maximum number of columns supported by the Excel binary format (.xls)
      */
     @Override
-    public HSSFCell createCell(int columnIndex, int type)
+    public HSSFCell createCell(int columnIndex, CellType type)
     {
         short shortCellNum = (short)columnIndex;
         if(columnIndex > 0x7FFF) {
@@ -367,10 +388,10 @@ public final class HSSFRow implements Row, Comparable<HSSFRow> {
             case RETURN_NULL_AND_BLANK:
                 return cell;
             case RETURN_BLANK_AS_NULL:
-                boolean isBlank = (cell != null && cell.getCellType() == Cell.CELL_TYPE_BLANK);
+                boolean isBlank = (cell != null && cell.getCellType() == CellType.BLANK);
                 return (isBlank) ? null : cell;
             case CREATE_NULL_AS_BLANK:
-                return (cell == null) ? createCell(cellnum, Cell.CELL_TYPE_BLANK) : cell;
+                return (cell == null) ? createCell(cellnum, CellType.BLANK) : cell;
             default:
                 throw new IllegalArgumentException("Illegal policy " + policy + " (" + policy.id + ")");
         }

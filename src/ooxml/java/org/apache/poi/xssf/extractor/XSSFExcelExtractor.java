@@ -26,6 +26,7 @@ import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.HeaderFooter;
@@ -161,19 +162,19 @@ public class XSSFExcelExtractor extends POIXMLTextExtractor
                     Cell cell = ri.next();
 
                     // Is it a formula one?
-                    if(cell.getCellType() == Cell.CELL_TYPE_FORMULA) {
+                    if(cell.getCellType() == CellType.FORMULA) {
                         if (formulasNotResults) {
                             String contents = cell.getCellFormula();
                             checkMaxTextSize(text, contents);
                             text.append(contents);
                         } else {
-                            if (cell.getCachedFormulaResultType() == Cell.CELL_TYPE_STRING) {
+                            if (cell.getCachedFormulaResultType() == CellType.STRING) {
                                 handleStringCell(text, cell);
                             } else {
                                 handleNonStringCell(text, cell, formatter);
                             }
                         }
-                    } else if(cell.getCellType() == Cell.CELL_TYPE_STRING) {
+                    } else if(cell.getCellType() == CellType.STRING) {
                         handleStringCell(text, cell);
                     } else {
                         handleNonStringCell(text, cell, formatter);
@@ -235,12 +236,12 @@ public class XSSFExcelExtractor extends POIXMLTextExtractor
     }
 
     private void handleNonStringCell(StringBuffer text, Cell cell, DataFormatter formatter) {
-        int type = cell.getCellType();
-        if (type == Cell.CELL_TYPE_FORMULA) {
+        CellType type = cell.getCellType();
+        if (type == CellType.FORMULA) {
             type = cell.getCachedFormulaResultType();
         }
 
-        if (type == Cell.CELL_TYPE_NUMERIC) {
+        if (type == CellType.NUMERIC) {
             CellStyle cs = cell.getCellStyle();
 
             if (cs != null && cs.getDataFormatString() != null) {
