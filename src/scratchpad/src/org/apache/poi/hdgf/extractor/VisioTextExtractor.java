@@ -35,8 +35,8 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
  * Class to find all the text in a Visio file, and return it.
- * Can opperate on the command line (outputs to stdout), or
- *  can return the text for you (eg for use with Lucene).
+ * Can operate on the command line (outputs to stdout), or
+ *  can return the text for you (example: for use with Lucene).
  */
 public final class VisioTextExtractor extends POIOLE2TextExtractor {
 	private HDGFDiagram hdgf;
@@ -61,11 +61,13 @@ public final class VisioTextExtractor extends POIOLE2TextExtractor {
 	/**
 	 * Locates all the text entries in the file, and returns their
 	 *  contents.
+	 * 
+	 * @return An array of each Text item in the document
 	 */
 	public String[] getAllText() {
 		ArrayList<String> text = new ArrayList<String>();
-		for(int i=0; i<hdgf.getTopLevelStreams().length; i++) {
-			findText(hdgf.getTopLevelStreams()[i], text);
+		for(Stream stream : hdgf.getTopLevelStreams()) {
+			findText(stream, text);
 		}
 		return text.toArray( new String[text.size()] );
 	}
@@ -106,15 +108,16 @@ public final class VisioTextExtractor extends POIOLE2TextExtractor {
 	 * Returns the textual contents of the file.
 	 * Each textual object's text will be separated
 	 *  by a newline
+	 *  
+	 * @return All text contained in this document, separated by <code>\n</code>
 	 */
+	@Override
 	public String getText() {
 		StringBuffer text = new StringBuffer();
-		String[] allText = getAllText();
-		for(int i=0; i<allText.length; i++) {
-			text.append(allText[i]);
-			if(!allText[i].endsWith("\r") &&
-					!allText[i].endsWith("\n")) {
-				text.append("\n");
+		for(String t : getAllText()) {
+			text.append(t);
+			if(!t.endsWith("\r") && !t.endsWith("\n")) {
+				text.append('\n');
 			}
 		}
 		return text.toString();

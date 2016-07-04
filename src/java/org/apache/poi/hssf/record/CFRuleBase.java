@@ -424,6 +424,8 @@ public abstract class CFRuleBase extends StandardRecord implements Cloneable {
      * One approach might be to apply the inverse of SharedFormulaRecord.convertSharedFormulas(Stack, int, int)
      * Note - two extra parameters (rowIx &amp; colIx) will be required. They probably come from one of the Region objects.
      *
+     * @param formula  The formula to parse, excluding the leading equals sign.
+     * @param sheet  The sheet that the formula is on.
      * @return <code>null</code> if <tt>formula</tt> was null.
      */
     public static Ptg[] parseFormula(String formula, HSSFSheet sheet) {
