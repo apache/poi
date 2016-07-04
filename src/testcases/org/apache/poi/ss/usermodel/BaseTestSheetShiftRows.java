@@ -602,7 +602,7 @@ public abstract class BaseTestSheetShiftRows {
         read.close();
     }
     
-    // bug 56454
+    // bug 56454: Incorrectly handles merged regions that do not contain column 0
     @Ignore
     @Test
     public void shiftRowsWithMergedRegionsThatDoNotContainColumnZero() throws IOException {
