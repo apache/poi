@@ -20,6 +20,9 @@ package org.apache.poi.ss.usermodel;
 import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.util.Internal;
 
+/**
+ * @since POI 3.15 beta 3
+ */
 public enum CellType {
     @Internal
     _UNINITIALIZED(-1),
@@ -52,15 +55,24 @@ public enum CellType {
      */
     ERROR(5);
 
-    /** @deprecated POI 3.15 beta 3 */
+    /**
+     * @since POI 3.15 beta 3
+     * @deprecated POI 3.15 beta 3
+     */
     private final int code;
     
-    /** @deprecated POI 3.15 beta 3 */
+    /**
+     * @since POI 3.15 beta 3
+     * @deprecated POI 3.15 beta 3
+     */
     private CellType(int code) {
         this.code = code;
     }
     
-    /** @deprecated POI 3.15 beta 3. Used to transition code from <code>int</code>s to <code>CellType</code>s. */
+    /**
+     * @since POI 3.15 beta 3.
+     * @deprecated POI 3.15 beta 3. Used to transition code from <code>int</code>s to <code>CellType</code>s.
+     */
     public static CellType forInt(int code) {
         for (CellType type : values()) {
             if (type.code == code) {
@@ -70,7 +82,10 @@ public enum CellType {
         throw new IllegalArgumentException("Invalid CellType code: " + code);
     }
     
-    /** @deprecated POI 3.15 beta 3 */
+    /**
+     * @since POI 3.15 beta 3
+     * @deprecated POI 3.15 beta 3
+     */
     public int getCode() {
         return code;
     }
