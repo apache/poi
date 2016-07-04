@@ -40,7 +40,7 @@ import org.apache.poi.hsmf.datatypes.Types.MAPIType;
  *  by friendly name, ID and MAPI Property Name.
  * 
  * These are taken from the following MSDN resources:
- *  http://msdn.microsoft.com/en-us/library/microsoft.exchange.data.contenttypes.tnef.tnefpropertyid%28v=EXCHG.140%29.aspx
+ *  https://msdn.microsoft.com/en-us/library/microsoft.exchange.data.contenttypes.tnef.tnefpropertyid(v=exchg.150).aspx
  *  http://msdn.microsoft.com/en-us/library/ms526356%28v=exchg.10%29.aspx
  */
 public class MAPIProperty {
