@@ -20,7 +20,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -57,7 +56,7 @@ public class TestTempFile {
         String[] files = tempDir.list();
         // can have the "poifiles" subdir
         if(files.length == 1) {
-            assertEquals("Had: " + Arrays.toString(files), "poifiles", files[0]);
+            assertEquals("Had: " + Arrays.toString(files), DefaultTempFileCreationStrategy.POIFILES, files[0]);
             files = new File(tempDir, files[0]).list();
             assertEquals("Had: " + Arrays.toString(files), 0, files.length);
         } else {
@@ -96,7 +95,7 @@ public class TestTempFile {
         assertTrue("temp file's name should end with .txt",
                 tempFile.getName().endsWith(".txt"));
         assertEquals("temp file is saved in poifiles directory",
-                "poifiles", tempFile.getParentFile().getName());
+                DefaultTempFileCreationStrategy.POIFILES, tempFile.getParentFile().getName());
 
         // Can't think of a good way to check whether a file is actually deleted since it would require the VM to stop.
         // Solution: set TempFileCreationStrategy to something that the unit test can trigger a deletion"
@@ -119,7 +118,7 @@ public class TestTempFile {
         assertTrue("testDir's name starts with testDir",
                 tempDir.getName().startsWith("testDir"));
         assertEquals("tempDir is saved in poifiles directory",
-                "poifiles", tempDir.getParentFile().getName());
+                DefaultTempFileCreationStrategy.POIFILES, tempDir.getParentFile().getName());
 
         // Can't think of a good way to check whether a directory is actually deleted since it would require the VM to stop.
         // Solution: set TempFileCreationStrategy to something that the unit test can trigger a deletion"
