@@ -324,8 +324,9 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
 
     
     /**
-     *  @return the total number of rows in the selection. (Note: in this version autofiltering is ignored)
-     *
+     * @return the total number of rows in the selection. (Note: in this version autofiltering is ignored)
+     * Returns <code>0</code> if the start or end cell references are not set.
+     * 
      * Does not track updates to underlying changes to CTTable
      * To synchronize with changes to the underlying CTTable,
      * call {@link #updateReferences()}.
@@ -334,10 +335,9 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
         CellReference from = getStartCellReference();
         CellReference to = getEndCellReference();
         
-        int rowCount = -1;
+        int rowCount = 0;
         if (from!=null && to!=null) {
-            // FIXME: shouldn't this be to-from+1?
-            rowCount = to.getRow()-from.getRow();
+            rowCount = to.getRow() - from.getRow() + 1;
         }
         return rowCount;
     }

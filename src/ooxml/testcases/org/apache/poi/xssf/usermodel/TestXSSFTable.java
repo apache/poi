@@ -267,4 +267,24 @@ public final class TestXSSFTable {
         assertEquals(new CellReference("M3"), table.getEndCellReference());
 
     }
+
+    @Test
+    public void getRowCount() {
+        XSSFWorkbook wb = new XSSFWorkbook();
+        XSSFSheet sh = wb.createSheet();
+        XSSFTable table = sh.createTable();
+        CTTable ctTable = table.getCTTable();
+
+        assertEquals(0, table.getRowCount());
+
+        ctTable.setRef("B2:B2");
+        // update cell references to clear the cache
+        table.updateReferences();
+        assertEquals(1, table.getRowCount());
+
+        ctTable.setRef("B2:B12");
+        // update cell references to clear the cache
+        table.updateReferences();
+        assertEquals(11, table.getRowCount());
+    }
 }
