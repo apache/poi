@@ -40,6 +40,7 @@ import org.apache.poi.hssf.record.EscherAggregate;
 import org.apache.poi.hssf.record.ExtendedFormatRecord;
 import org.apache.poi.hssf.record.HyperlinkRecord;
 import org.apache.poi.hssf.record.NameRecord;
+import org.apache.poi.hssf.record.NoteRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RecordBase;
 import org.apache.poi.hssf.record.RowRecord;
@@ -1523,6 +1524,17 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
     public void shiftRows(int startRow, int endRow, int n, boolean copyRowHeight, boolean resetOriginalRowHeight) {
         shiftRows(startRow, endRow, n, copyRowHeight, resetOriginalRowHeight, true);
     }
+    
+    /**
+     * bound a row number between 0 and last row index (65535)
+     *
+     * @param row the row number
+     */
+    private static int clip(int row) {
+        return Math.min(
+                Math.max(0, row),
+                SpreadsheetVersion.EXCEL97.getLastRowIndex());
+    }
 
     /**
      * Shifts rows between startRow and endRow n number of rows.
@@ -1558,11 +1570,27 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
             return;
         }
         
-        RowShifter rowShifter = new HSSFRowShifter(this);
-
-        // Shift comments
+        final RowShifter rowShifter = new HSSFRowShifter(this);
+        
+        // Move comments from the source row to the
+        //  destination row. Note that comments can
+        //  exist for cells which are null
+        // If the row shift would shift the comments off the sheet
+        // (above the first row or below the last row), this code will shift the
+        // comments to the first or last row, rather than moving them out of
+        // bounds or deleting them
         if (moveComments) {
-            _sheet.getNoteRecords();
+            final HSSFPatriarch patriarch = createDrawingPatriarch();
+            for (final HSSFShape shape : patriarch.getChildren()) {
+                if (!(shape instanceof HSSFComment)) {
+                    continue;
+                }
+                final HSSFComment comment = (HSSFComment) shape;
+                final int r = comment.getRow();
+                if (startRow <= r && r <= endRow) {
+                    comment.setRow(clip(r + n));
+                }
+            }
         }
 
         // Shift Merged Regions
@@ -1576,10 +1604,10 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
         final int lastOverwrittenRow = endRow + n;
         for (HSSFHyperlink link : getHyperlinkList()) {
             // If hyperlink is fully contained in the rows that will be overwritten, delete the hyperlink
-            if (firstOverwrittenRow <= link.getFirstRow() &&
-                    link.getFirstRow() <= lastOverwrittenRow &&
-                    lastOverwrittenRow <= link.getLastRow() &&
-                    link.getLastRow() <= lastOverwrittenRow) {
+            final int firstRow = link.getFirstRow();
+            final int lastRow = link.getLastRow();
+            if (firstOverwrittenRow <= firstRow && firstRow <= lastOverwrittenRow &&
+                    lastOverwrittenRow <= lastRow && lastRow <= lastOverwrittenRow) {
                 removeHyperlink(link);
             }
         }
@@ -1633,26 +1661,6 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
             }
             // Now zap all the cells in the source row
             row.removeAllCells();
-
-            // Move comments from the source row to the
-            //  destination row. Note that comments can
-            //  exist for cells which are null
-            if (moveComments) {
-                // This code would get simpler if NoteRecords could be organised by HSSFRow.
-                HSSFPatriarch patriarch = createDrawingPatriarch();
-                final int lastChildIndex = patriarch.getChildren().size() - 1;
-                for (int i = lastChildIndex; i >= 0; i--) {
-                    HSSFShape shape = patriarch.getChildren().get(i);
-                    if (!(shape instanceof HSSFComment)) {
-                        continue;
-                    }
-                    HSSFComment comment = (HSSFComment) shape;
-                    if (comment.getRow() != rowNum) {
-                        continue;
-                    }
-                    comment.setRow(rowNum + n);
-                }
-            }
         }
 
         // Re-compute the first and last rows of the sheet as needed
