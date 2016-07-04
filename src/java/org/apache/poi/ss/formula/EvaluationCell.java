@@ -30,19 +30,35 @@ import org.apache.poi.ss.usermodel.CellType;
 public interface EvaluationCell {
 	/**
 	 * @return an Object that identifies the underlying cell,
-     * suitable for use as a key in a {@link java.util.HashMap}
+	 * suitable for use as a key in a {@link java.util.HashMap}
 	 */
 	Object getIdentityKey();
 
 	EvaluationSheet getSheet();
 	int getRowIndex();
 	int getColumnIndex();
-	CellType getCellType();
+	/**
+	 * Will return {@link CellType} in a future version of POI.
+	 * For forwards compatibility, do not hard-code cell type literals in your code.
+	 *
+	 * @return cell type
+	 */
+	int getCellType();
+	/** @deprecated POI 3.15 beta 3 */
+	CellType getCellTypeEnum();
 
 	double getNumericCellValue();
 	String getStringCellValue();
 	boolean getBooleanCellValue();
 	int getErrorCellValue();
 
-	CellType getCachedFormulaResultType();
+	/**
+	 * Will return {@link CellType} in a future version of POI.
+	 * For forwards compatibility, do not hard-code cell type literals in your code.
+	 *
+	 * @return cell type of cached formula result
+	 */
+	int getCachedFormulaResultType();
+	/** @deprecated POI 3.15 beta 3 */
+	CellType getCachedFormulaResultTypeEnum();
 }

@@ -60,13 +60,13 @@ public abstract class BaseTestCell {
 
         cell.setCellValue(1.2);
         assertEquals(1.2, cell.getNumericCellValue(), 0.0001);
-        assertEquals(CellType.NUMERIC, cell.getCellType());
+        assertEquals(CellType.NUMERIC, cell.getCellTypeEnum());
         assertProhibitedValueAccess(cell, CellType.BOOLEAN, CellType.STRING,
                 CellType.FORMULA, CellType.ERROR);
 
         cell.setCellValue(false);
         assertEquals(false, cell.getBooleanCellValue());
-        assertEquals(CellType.BOOLEAN, cell.getCellType());
+        assertEquals(CellType.BOOLEAN, cell.getCellTypeEnum());
         cell.setCellValue(true);
         assertEquals(true, cell.getBooleanCellValue());
         assertProhibitedValueAccess(cell, CellType.NUMERIC, CellType.STRING,
@@ -75,14 +75,14 @@ public abstract class BaseTestCell {
         cell.setCellValue(factory.createRichTextString("Foo"));
         assertEquals("Foo", cell.getRichStringCellValue().getString());
         assertEquals("Foo", cell.getStringCellValue());
-        assertEquals(CellType.STRING, cell.getCellType());
+        assertEquals(CellType.STRING, cell.getCellTypeEnum());
         assertProhibitedValueAccess(cell, CellType.NUMERIC, CellType.BOOLEAN,
                 CellType.FORMULA, CellType.ERROR);
 
         cell.setCellValue("345");
         assertEquals("345", cell.getRichStringCellValue().getString());
         assertEquals("345", cell.getStringCellValue());
-        assertEquals(CellType.STRING, cell.getCellType());
+        assertEquals(CellType.STRING, cell.getCellTypeEnum());
         assertProhibitedValueAccess(cell, CellType.NUMERIC, CellType.BOOLEAN,
                 CellType.FORMULA, CellType.ERROR);
 
@@ -90,19 +90,19 @@ public abstract class BaseTestCell {
         c.setTimeInMillis(123456789);
         cell.setCellValue(c.getTime());
         assertEquals(c.getTime().getTime(), cell.getDateCellValue().getTime());
-        assertEquals(CellType.NUMERIC, cell.getCellType());
+        assertEquals(CellType.NUMERIC, cell.getCellTypeEnum());
         assertProhibitedValueAccess(cell, CellType.BOOLEAN, CellType.STRING,
                 CellType.FORMULA, CellType.ERROR);
 
         cell.setCellValue(c);
         assertEquals(c.getTime().getTime(), cell.getDateCellValue().getTime());
-        assertEquals(CellType.NUMERIC, cell.getCellType());
+        assertEquals(CellType.NUMERIC, cell.getCellTypeEnum());
         assertProhibitedValueAccess(cell, CellType.BOOLEAN, CellType.STRING,
                 CellType.FORMULA, CellType.ERROR);
 
         cell.setCellErrorValue(FormulaError.NA.getCode());
         assertEquals(FormulaError.NA.getCode(), cell.getErrorCellValue());
-        assertEquals(CellType.ERROR, cell.getCellType());
+        assertEquals(CellType.ERROR, cell.getCellTypeEnum());
         assertProhibitedValueAccess(cell, CellType.NUMERIC, CellType.BOOLEAN,
                 CellType.FORMULA, CellType.STRING);
         
@@ -176,13 +176,13 @@ public abstract class BaseTestCell {
         c = r.getCell(1);
         assertEquals(0, c.getRowIndex());
         assertEquals(1, c.getColumnIndex());
-        assertEquals(CellType.BOOLEAN, c.getCellType());
+        assertEquals(CellType.BOOLEAN, c.getCellTypeEnum());
         assertEquals("B1 value", true, c.getBooleanCellValue());
         
         c = r.getCell(2);
         assertEquals(0, c.getRowIndex());
         assertEquals(2, c.getColumnIndex());
-        assertEquals(CellType.BOOLEAN, c.getCellType());
+        assertEquals(CellType.BOOLEAN, c.getCellTypeEnum());
         assertEquals("C1 value", false, c.getBooleanCellValue());
         
         wb2.close();
@@ -226,13 +226,13 @@ public abstract class BaseTestCell {
         c = r.getCell(1);
         assertEquals(0, c.getRowIndex());
         assertEquals(1, c.getColumnIndex());
-        assertEquals(CellType.ERROR, c.getCellType());
+        assertEquals(CellType.ERROR, c.getCellTypeEnum());
         assertEquals("B1 value == #NULL!", FormulaError.NULL.getCode(), c.getErrorCellValue());
 
         c = r.getCell(2);
         assertEquals(0, c.getRowIndex());
         assertEquals(2, c.getColumnIndex());
-        assertEquals(CellType.ERROR, c.getCellType());
+        assertEquals(CellType.ERROR, c.getCellTypeEnum());
         assertEquals("C1 value == #DIV/0!", FormulaError.DIV0.getCode(), c.getErrorCellValue());
 
         wb2.close();
@@ -272,7 +272,7 @@ public abstract class BaseTestCell {
         r = s.getRow(0);
         c = r.getCell(0);
 
-        assertEquals("Formula Cell at 0,0", CellType.FORMULA, c.getCellType());
+        assertEquals("Formula Cell at 0,0", CellType.FORMULA, c.getCellTypeEnum());
         cs = c.getCellStyle();
 
         assertNotNull("Formula Cell Style", cs);
@@ -347,25 +347,25 @@ public abstract class BaseTestCell {
         Cell c1 = r.createCell(0);
         c1.setCellFormula("NA()");
         assertEquals(0.0, c1.getNumericCellValue(), 0.0);
-        assertEquals(CellType.NUMERIC, c1.getCachedFormulaResultType());
+        assertEquals(CellType.NUMERIC, c1.getCachedFormulaResultTypeEnum());
         c1.setCellValue(10);
         assertEquals(10.0, c1.getNumericCellValue(), 0.0);
-        assertEquals(CellType.FORMULA, c1.getCellType());
-        assertEquals(CellType.NUMERIC, c1.getCachedFormulaResultType());
+        assertEquals(CellType.FORMULA, c1.getCellTypeEnum());
+        assertEquals(CellType.NUMERIC, c1.getCachedFormulaResultTypeEnum());
 
         Cell c2 = r.createCell(1);
         c2.setCellFormula("NA()");
         assertEquals(0.0, c2.getNumericCellValue(), 0.0);
-        assertEquals(CellType.NUMERIC, c2.getCachedFormulaResultType());
+        assertEquals(CellType.NUMERIC, c2.getCachedFormulaResultTypeEnum());
         c2.setCellValue("I changed!");
         assertEquals("I changed!", c2.getStringCellValue());
-        assertEquals(CellType.FORMULA, c2.getCellType());
-        assertEquals(CellType.STRING, c2.getCachedFormulaResultType());
+        assertEquals(CellType.FORMULA, c2.getCellTypeEnum());
+        assertEquals(CellType.STRING, c2.getCachedFormulaResultTypeEnum());
 
         //calglin Cell.setCellFormula(null) for a non-formula cell
         Cell c3 = r.createCell(2);
         c3.setCellFormula(null);
-        assertEquals(CellType.BLANK, c3.getCellType());
+        assertEquals(CellType.BLANK, c3.getCellTypeEnum());
         wb.close();
 
     }
@@ -420,11 +420,11 @@ public abstract class BaseTestCell {
         Cell cell = createACell(wb);
 
         cell.setCellValue("TRUE");
-        assertEquals(CellType.STRING, cell.getCellType());
+        assertEquals(CellType.STRING, cell.getCellTypeEnum());
         // test conversion of cell from text to boolean
         cell.setCellType(CellType.BOOLEAN);
 
-        assertEquals(CellType.BOOLEAN, cell.getCellType());
+        assertEquals(CellType.BOOLEAN, cell.getCellTypeEnum());
         assertEquals(true, cell.getBooleanCellValue());
         cell.setCellType(CellType.STRING);
         assertEquals("TRUE", cell.getRichStringCellValue().getString());
@@ -432,7 +432,7 @@ public abstract class BaseTestCell {
         // 'false' text to bool and back
         cell.setCellValue("FALSE");
         cell.setCellType(CellType.BOOLEAN);
-        assertEquals(CellType.BOOLEAN, cell.getCellType());
+        assertEquals(CellType.BOOLEAN, cell.getCellTypeEnum());
         assertEquals(false, cell.getBooleanCellValue());
         cell.setCellType(CellType.STRING);
         assertEquals("FALSE", cell.getRichStringCellValue().getString());
@@ -589,17 +589,17 @@ public abstract class BaseTestCell {
 
         cell = row.createCell(0, CellType.NUMERIC);
         cell.setCellValue(1.0);
-        assertEquals(CellType.NUMERIC, cell.getCellType());
+        assertEquals(CellType.NUMERIC, cell.getCellTypeEnum());
         assertEquals(1.0, cell.getNumericCellValue(), 0.0);
 
         cell = row.createCell(1, CellType.NUMERIC);
         cell.setCellValue(2.0);
-        assertEquals(CellType.NUMERIC, cell.getCellType());
+        assertEquals(CellType.NUMERIC, cell.getCellTypeEnum());
         assertEquals(2.0, cell.getNumericCellValue(), 0.0);
 
         cell = row.createCell(2, CellType.FORMULA);
         cell.setCellFormula("SUM(A1:B1)");
-        assertEquals(CellType.FORMULA, cell.getCellType());
+        assertEquals(CellType.FORMULA, cell.getCellTypeEnum());
         assertEquals("SUM(A1:B1)", cell.getCellFormula());
 
         //serialize and check again
@@ -607,15 +607,15 @@ public abstract class BaseTestCell {
         wb1.close();
         row = wb2.getSheetAt(0).getRow(0);
         cell = row.getCell(0);
-        assertEquals(CellType.NUMERIC, cell.getCellType());
+        assertEquals(CellType.NUMERIC, cell.getCellTypeEnum());
         assertEquals(1.0, cell.getNumericCellValue(), 0.0);
 
         cell = row.getCell(1);
-        assertEquals(CellType.NUMERIC, cell.getCellType());
+        assertEquals(CellType.NUMERIC, cell.getCellTypeEnum());
         assertEquals(2.0, cell.getNumericCellValue(), 0.0);
 
         cell = row.getCell(2);
-        assertEquals(CellType.FORMULA, cell.getCellType());
+        assertEquals(CellType.FORMULA, cell.getCellTypeEnum());
         assertEquals("SUM(A1:B1)", cell.getCellFormula());
         wb2.close();
     }
@@ -672,17 +672,17 @@ public abstract class BaseTestCell {
 
         Cell cell0 = row.createCell(0);
         cell0.setCellValue(Double.NaN);
-        assertEquals("Double.NaN should change cell type to CellType#ERROR", CellType.ERROR, cell0.getCellType());
+        assertEquals("Double.NaN should change cell type to CellType#ERROR", CellType.ERROR, cell0.getCellTypeEnum());
         assertEquals("Double.NaN should change cell value to #NUM!", FormulaError.NUM, forInt(cell0.getErrorCellValue()));
 
         Cell cell1 = row.createCell(1);
         cell1.setCellValue(Double.POSITIVE_INFINITY);
-        assertEquals("Double.POSITIVE_INFINITY should change cell type to CellType#ERROR", CellType.ERROR, cell1.getCellType());
+        assertEquals("Double.POSITIVE_INFINITY should change cell type to CellType#ERROR", CellType.ERROR, cell1.getCellTypeEnum());
         assertEquals("Double.POSITIVE_INFINITY should change cell value to #DIV/0!", FormulaError.DIV0, forInt(cell1.getErrorCellValue()));
 
         Cell cell2 = row.createCell(2);
         cell2.setCellValue(Double.NEGATIVE_INFINITY);
-        assertEquals("Double.NEGATIVE_INFINITY should change cell type to CellType#ERROR", CellType.ERROR, cell2.getCellType());
+        assertEquals("Double.NEGATIVE_INFINITY should change cell type to CellType#ERROR", CellType.ERROR, cell2.getCellTypeEnum());
         assertEquals("Double.NEGATIVE_INFINITY should change cell value to #DIV/0!", FormulaError.DIV0, forInt(cell2.getErrorCellValue()));
 
         Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1);
@@ -690,15 +690,15 @@ public abstract class BaseTestCell {
         row = wb2.getSheetAt(0).getRow(0);
 
         cell0 = row.getCell(0);
-        assertEquals(CellType.ERROR, cell0.getCellType());
+        assertEquals(CellType.ERROR, cell0.getCellTypeEnum());
         assertEquals(FormulaError.NUM, forInt(cell0.getErrorCellValue()));
 
         cell1 = row.getCell(1);
-        assertEquals(CellType.ERROR, cell1.getCellType());
+        assertEquals(CellType.ERROR, cell1.getCellTypeEnum());
         assertEquals(FormulaError.DIV0, forInt(cell1.getErrorCellValue()));
 
         cell2 = row.getCell(2);
-        assertEquals(CellType.ERROR, cell2.getCellType());
+        assertEquals(CellType.ERROR, cell2.getCellTypeEnum());
         assertEquals(FormulaError.DIV0, forInt(cell2.getErrorCellValue()));
         wb2.close();
     }
@@ -899,21 +899,21 @@ public abstract class BaseTestCell {
         RichTextString nullStr = null;
         cell.setCellValue(nullStr);
         assertEquals("", cell.getStringCellValue());
-        assertEquals(CellType.BLANK, cell.getCellType());
+        assertEquals(CellType.BLANK, cell.getCellTypeEnum());
 
         cell = sheet.createRow(0).createCell(1);
         cell.setCellValue(1.2d);
-        assertEquals(CellType.NUMERIC, cell.getCellType());
+        assertEquals(CellType.NUMERIC, cell.getCellTypeEnum());
         cell.setCellValue(nullStr);
         assertEquals("", cell.getStringCellValue());
-        assertEquals(CellType.BLANK, cell.getCellType());
+        assertEquals(CellType.BLANK, cell.getCellTypeEnum());
 
         cell = sheet.createRow(0).createCell(1);
         cell.setCellValue(wb.getCreationHelper().createRichTextString("Test"));
-        assertEquals(CellType.STRING, cell.getCellType());
+        assertEquals(CellType.STRING, cell.getCellTypeEnum());
         cell.setCellValue(nullStr);
         assertEquals("", cell.getStringCellValue());
-        assertEquals(CellType.BLANK, cell.getCellType());
+        assertEquals(CellType.BLANK, cell.getCellTypeEnum());
 
         wb.close();
     }

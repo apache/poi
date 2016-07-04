@@ -68,7 +68,7 @@ public final class TestBug42464 {
 		Iterator<Cell> it = row.cellIterator();
 		while(it.hasNext()) {
 			HSSFCell cell = (HSSFCell)it.next();
-			if(cell.getCellType() != CellType.FORMULA) {
+			if(cell.getCellTypeEnum() != CellType.FORMULA) {
 			    continue;
 			}
 			FormulaRecordAggregate record = (FormulaRecordAggregate) cell.getCellValueRecord();

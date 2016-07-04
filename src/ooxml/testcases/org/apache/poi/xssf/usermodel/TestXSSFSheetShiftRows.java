@@ -117,7 +117,7 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
             return;
         }
         Cell readCell = readRow.getCell(0);
-        if(readCell.getCellType() == CellType.NUMERIC) {
+        if(readCell.getCellTypeEnum() == CellType.NUMERIC) {
             assertEquals(expect, Double.toString(readCell.getNumericCellValue()));
         } else {
             assertEquals(expect, readCell.getStringCellValue());

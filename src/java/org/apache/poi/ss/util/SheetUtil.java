@@ -81,7 +81,7 @@ public class SheetUtil {
         
         public void evaluateAll() {}
         public CellType evaluateFormulaCell(Cell cell) {
-            return cell.getCachedFormulaResultType();
+            return cell.getCachedFormulaResultTypeEnum();
         }
     };
 
@@ -120,11 +120,11 @@ public class SheetUtil {
         }
 
         CellStyle style = cell.getCellStyle();
-        CellType cellType = cell.getCellType();
+        CellType cellType = cell.getCellTypeEnum();
 
         // for formula cells we compute the cell width for the cached formula result
         if (cellType == CellType.FORMULA)
-            cellType = cell.getCachedFormulaResultType();
+            cellType = cell.getCachedFormulaResultTypeEnum();
 
         Font font = wb.getFontAt(style.getFontIndex());
 

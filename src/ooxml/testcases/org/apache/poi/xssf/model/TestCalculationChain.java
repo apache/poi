@@ -42,7 +42,7 @@ public final class TestCalculationChain extends TestCase {
         XSSFSheet sheet = wb.getSheet("Test");
         XSSFCell cell = sheet.getRow(0).getCell(4);
 
-        assertEquals(CellType.FORMULA, cell.getCellType());
+        assertEquals(CellType.FORMULA, cell.getCellTypeEnum());
         cell.setCellFormula(null);
 
         //the count of items is less by one
@@ -53,9 +53,9 @@ public final class TestCalculationChain extends TestCase {
         assertEquals(10, c.getI());
         assertEquals("C1", c.getR());
 
-        assertEquals(CellType.STRING, cell.getCellType());
+        assertEquals(CellType.STRING, cell.getCellTypeEnum());
         cell.setCellValue("ABC");
-        assertEquals(CellType.STRING, cell.getCellType());
+        assertEquals(CellType.STRING, cell.getCellTypeEnum());
     }
 
 

@@ -505,9 +505,9 @@ public final class TestCountFuncs extends TestCase {
         for (int rowIx=7; rowIx<=12; rowIx++) {
             HSSFRow row = sheet1.getRow(rowIx-1);
             HSSFCell cellA = row.getCell(0);  // cell containing a formula with COUNTIF
-            assertEquals(CellType.FORMULA, cellA.getCellType());
+            assertEquals(CellType.FORMULA, cellA.getCellTypeEnum());
             HSSFCell cellC = row.getCell(2);  // cell with a reference value
-            assertEquals(CellType.NUMERIC, cellC.getCellType());
+            assertEquals(CellType.NUMERIC, cellC.getCellTypeEnum());
 
             CellValue cv = fe.evaluate(cellA);
             double actualValue = cv.getNumberValue();
@@ -523,9 +523,9 @@ public final class TestCountFuncs extends TestCase {
         for (int rowIx=9; rowIx<=14; rowIx++) {
             HSSFRow row = sheet2.getRow(rowIx-1);
             HSSFCell cellA = row.getCell(0);  // cell containing a formula with COUNTIF
-            assertEquals(CellType.FORMULA, cellA.getCellType());
+            assertEquals(CellType.FORMULA, cellA.getCellTypeEnum());
             HSSFCell cellC = row.getCell(2);  // cell with a reference value
-            assertEquals(CellType.NUMERIC, cellC.getCellType());
+            assertEquals(CellType.NUMERIC, cellC.getCellTypeEnum());
 
             CellValue cv = fe.evaluate(cellA);
             double actualValue = cv.getNumberValue();

@@ -151,7 +151,7 @@ public class SVTableCellEditor extends AbstractCellEditor implements TableCellEd
 
 
       //Set the value that is rendered for the cell
-      switch (cell.getCellType()) {
+      switch (cell.getCellTypeEnum()) {
         case BLANK:
           editor.setText("");
           break;

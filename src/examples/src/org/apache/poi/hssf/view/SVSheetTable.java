@@ -142,7 +142,7 @@ public class SVSheetTable extends JTable {
       HSSFCell cell = (HSSFCell) getValueAt(row, col);
       String formula = "";
       if (cell != null) {
-        if (cell.getCellType() == CellType.FORMULA) {
+        if (cell.getCellTypeEnum() == CellType.FORMULA) {
           formula = cell.getCellFormula();
         } else {
           formula = cell.toString();

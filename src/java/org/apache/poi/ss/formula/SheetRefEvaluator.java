@@ -62,7 +62,7 @@ final class SheetRefEvaluator {
     public boolean isSubTotal(int rowIndex, int columnIndex){
         boolean subtotal = false;
         EvaluationCell cell = getSheet().getCell(rowIndex, columnIndex);
-        if(cell != null && cell.getCellType() == CellType.FORMULA){
+        if(cell != null && cell.getCellTypeEnum() == CellType.FORMULA){
             EvaluationWorkbook wb = _bookEvaluator.getWorkbook();
             for(Ptg ptg : wb.getFormulaTokens(cell)){
                 if(ptg instanceof FuncVarPtg){

@@ -165,7 +165,7 @@ public class SVTableCellRenderer extends JLabel
             isBorderSet=true;
 
             //Set the value that is rendered for the cell
-            switch (c.getCellType()) {
+            switch (c.getCellTypeEnum()) {
               case BLANK:
                 setValue("");
               break;

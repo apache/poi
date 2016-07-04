@@ -202,7 +202,7 @@ public class SheetDataWriter {
             // APIs
             _out.write(" s=\"" + (cellStyle.getIndex() & 0xffff) + "\"");
         }
-        CellType cellType = cell.getCellType();
+        CellType cellType = cell.getCellTypeEnum();
         switch (cellType) {
             case BLANK: {
                 _out.write(">");
@@ -213,7 +213,7 @@ public class SheetDataWriter {
                 _out.write("<f>");
                 outputQuotedString(cell.getCellFormula());
                 _out.write("</f>");
-                switch (cell.getCachedFormulaResultType()) {
+                switch (cell.getCachedFormulaResultTypeEnum()) {
                     case NUMERIC:
                         double nval = cell.getNumericCellValue();
                         if (!Double.isNaN(nval)) {

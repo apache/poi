@@ -131,7 +131,7 @@ public class TestRandBetween extends TestCase {
 		formulaCell.setCellFormula("RANDBETWEEN($A$1,$B$1)");
 		evaluator.clearAllCachedResultValues();
 		evaluator.evaluateFormulaCell(formulaCell);
-		assertEquals(CellType.ERROR, formulaCell.getCachedFormulaResultType());
+		assertEquals(CellType.ERROR, formulaCell.getCachedFormulaResultTypeEnum());
 		assertEquals(ErrorEval.VALUE_INVALID.getErrorCode(), formulaCell.getErrorCellValue());
 		
 		
@@ -141,7 +141,7 @@ public class TestRandBetween extends TestCase {
 		formulaCell.setCellFormula("RANDBETWEEN($A$1,$B$1)");
 		evaluator.clearAllCachedResultValues();
 		evaluator.evaluateFormulaCell(formulaCell);
-		assertEquals(CellType.ERROR, formulaCell.getCachedFormulaResultType());
+		assertEquals(CellType.ERROR, formulaCell.getCachedFormulaResultTypeEnum());
 		assertEquals(ErrorEval.VALUE_INVALID.getErrorCode(), formulaCell.getErrorCellValue());
 
 		// Check case where both inputs are of wrong type
@@ -150,7 +150,7 @@ public class TestRandBetween extends TestCase {
 		formulaCell.setCellFormula("RANDBETWEEN($A$1,$B$1)");
 		evaluator.clearAllCachedResultValues();
 		evaluator.evaluateFormulaCell(formulaCell);
-		assertEquals(CellType.ERROR, formulaCell.getCachedFormulaResultType());
+		assertEquals(CellType.ERROR, formulaCell.getCachedFormulaResultTypeEnum());
 		assertEquals(ErrorEval.VALUE_INVALID.getErrorCode(), formulaCell.getErrorCellValue());
 	
 	}
@@ -166,14 +166,14 @@ public class TestRandBetween extends TestCase {
 		formulaCell.setCellFormula("RANDBETWEEN($A$1,$B$1)");
 		evaluator.clearAllCachedResultValues();
 		evaluator.evaluateFormulaCell(formulaCell);
-		assertEquals(CellType.ERROR, formulaCell.getCachedFormulaResultType());
+		assertEquals(CellType.ERROR, formulaCell.getCachedFormulaResultTypeEnum());
 		assertEquals(ErrorEval.NUM_ERROR.getErrorCode(), formulaCell.getErrorCellValue());		
 		bottomValueCell.setCellValue(1);		
 		topValueCell.setCellType(CellType.BLANK);
 		formulaCell.setCellFormula("RANDBETWEEN($A$1,$B$1)");
 		evaluator.clearAllCachedResultValues();
 		evaluator.evaluateFormulaCell(formulaCell);
-		assertEquals(CellType.ERROR, formulaCell.getCachedFormulaResultType());
+		assertEquals(CellType.ERROR, formulaCell.getCachedFormulaResultTypeEnum());
 		assertEquals(ErrorEval.NUM_ERROR.getErrorCode(), formulaCell.getErrorCellValue());
 	}
 	

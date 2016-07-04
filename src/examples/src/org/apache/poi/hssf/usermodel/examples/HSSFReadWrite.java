@@ -185,7 +185,7 @@ public final class HSSFReadWrite {
 							HSSFCell cell = row.getCell(c);
 							String value = null;
 
-							switch (cell.getCellType()) {
+							switch (cell.getCellTypeEnum()) {
 
 								case FORMULA:
 									value = "FORMULA value=" + cell.getCellFormula();

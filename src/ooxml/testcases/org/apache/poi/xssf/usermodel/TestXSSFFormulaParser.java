@@ -486,7 +486,7 @@ public final class TestXSSFFormulaParser {
 
             for (Row row : xsheet) {
                 for (Cell cell : row) {
-                    if (cell.getCellType() == CellType.FORMULA) {
+                    if (cell.getCellTypeEnum() == CellType.FORMULA) {
                         try {
                             evaluator.evaluateFormulaCell(cell);
                         } catch (Exception e) {

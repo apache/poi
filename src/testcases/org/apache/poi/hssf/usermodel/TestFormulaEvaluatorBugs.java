@@ -566,7 +566,7 @@ public final class TestFormulaEvaluatorBugs {
         }
     }
     private Ptg[] getPtgs(HSSFCell cell) {
-        assertEquals(CellType.FORMULA, cell.getCellType());
+        assertEquals(CellType.FORMULA, cell.getCellTypeEnum());
         assertEquals(FormulaRecordAggregate.class, cell.getCellValueRecord().getClass());
         FormulaRecordAggregate agg = (FormulaRecordAggregate)cell.getCellValueRecord();
         FormulaRecord rec = agg.getFormulaRecord();

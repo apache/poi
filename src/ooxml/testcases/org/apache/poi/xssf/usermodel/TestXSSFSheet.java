@@ -1484,44 +1484,44 @@ public final class TestXSSFSheet extends BaseTestXSheet {
 
         // Blank
         cell = CellUtil.getCell(destRow, col++);
-        assertEquals("[Blank] C7 cell type", CellType.BLANK, cell.getCellType());
+        assertEquals("[Blank] C7 cell type", CellType.BLANK, cell.getCellTypeEnum());
 
         // Error
         cell = CellUtil.getCell(destRow, col++);
-        assertEquals("[Error] D7 cell type", CellType.ERROR, cell.getCellType());
+        assertEquals("[Error] D7 cell type", CellType.ERROR, cell.getCellTypeEnum());
         final FormulaError error = FormulaError.forInt(cell.getErrorCellValue());
         assertEquals("[Error] D7 cell value", FormulaError.NA, error); //FIXME: XSSFCell and HSSFCell expose different interfaces. getErrorCellString would be helpful here
 
         // Date
         cell = CellUtil.getCell(destRow, col++);
-        assertEquals("[Date] E7 cell type", CellType.NUMERIC, cell.getCellType());
+        assertEquals("[Date] E7 cell type", CellType.NUMERIC, cell.getCellTypeEnum());
         final Date date = LocaleUtil.getLocaleCalendar(2000, Calendar.JANUARY, 1).getTime();
         assertEquals("[Date] E7 cell value", date, cell.getDateCellValue());
 
         // Boolean
         cell = CellUtil.getCell(destRow, col++);
-        assertEquals("[Boolean] F7 cell type", CellType.BOOLEAN, cell.getCellType());
+        assertEquals("[Boolean] F7 cell type", CellType.BOOLEAN, cell.getCellTypeEnum());
         assertEquals("[Boolean] F7 cell value", true, cell.getBooleanCellValue());
 
         // String
         cell = CellUtil.getCell(destRow, col++);
-        assertEquals("[String] G7 cell type", CellType.STRING, cell.getCellType());
+        assertEquals("[String] G7 cell type", CellType.STRING, cell.getCellTypeEnum());
         assertEquals("[String] G7 cell value", "Hello", cell.getStringCellValue());
         
         // Int
         cell = CellUtil.getCell(destRow, col++);
-        assertEquals("[Int] H7 cell type", CellType.NUMERIC, cell.getCellType());
+        assertEquals("[Int] H7 cell type", CellType.NUMERIC, cell.getCellTypeEnum());
         assertEquals("[Int] H7 cell value", 15, (int) cell.getNumericCellValue());
         
         // Float
         cell = CellUtil.getCell(destRow, col++);
-        assertEquals("[Float] I7 cell type", CellType.NUMERIC, cell.getCellType());
+        assertEquals("[Float] I7 cell type", CellType.NUMERIC, cell.getCellTypeEnum());
         assertEquals("[Float] I7 cell value", 12.5, cell.getNumericCellValue(), FLOAT_PRECISION);
         
         // Cell Formula
         cell = CellUtil.getCell(destRow, col++);
         assertEquals("J7", new CellReference(cell).formatAsString());
-        assertEquals("[Cell Formula] J7 cell type", CellType.FORMULA, cell.getCellType());
+        assertEquals("[Cell Formula] J7 cell type", CellType.FORMULA, cell.getCellTypeEnum());
         assertEquals("[Cell Formula] J7 cell formula", "5+2", cell.getCellFormula());
         System.out.println("Cell formula evaluation currently unsupported");
         
@@ -1530,21 +1530,21 @@ public final class TestXSSFSheet extends BaseTestXSheet {
         cell = CellUtil.getCell(destRow, col++);
         assertEquals("K7", new CellReference(cell).formatAsString());
         assertEquals("[Cell Formula with Reference] K7 cell type",
-                CellType.FORMULA, cell.getCellType());
+                CellType.FORMULA, cell.getCellTypeEnum());
         assertEquals("[Cell Formula with Reference] K7 cell formula",
                 "J7+H$2", cell.getCellFormula());
         
         // Cell Formula with Reference spanning multiple rows
         cell = CellUtil.getCell(destRow, col++);
         assertEquals("[Cell Formula with Reference spanning multiple rows] L7 cell type",
-                CellType.FORMULA, cell.getCellType());
+                CellType.FORMULA, cell.getCellTypeEnum());
         assertEquals("[Cell Formula with Reference spanning multiple rows] L7 cell formula",
                 "G7&\" \"&G8", cell.getCellFormula());
         
         // Cell Formula with Reference spanning multiple rows
         cell = CellUtil.getCell(destRow, col++);
         assertEquals("[Cell Formula with Area Reference] M7 cell type",
-                CellType.FORMULA, cell.getCellType());
+                CellType.FORMULA, cell.getCellTypeEnum());
         assertEquals("[Cell Formula with Area Reference] M7 cell formula",
                 "SUM(H7:I8)", cell.getCellFormula());
         
@@ -1559,7 +1559,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
         
         // Data Format
         cell = CellUtil.getCell(destRow, col++);
-        assertEquals("[Data Format] O7 cell type;", CellType.NUMERIC, cell.getCellType());
+        assertEquals("[Data Format] O7 cell type;", CellType.NUMERIC, cell.getCellTypeEnum());
         assertEquals("[Data Format] O7 cell value", 100.20, cell.getNumericCellValue(), FLOAT_PRECISION);
         //FIXME: currently fails
         final String moneyFormat = "\"$\"#,##0.00_);[Red]\\(\"$\"#,##0.00\\)";
@@ -1638,83 +1638,83 @@ public final class TestXSSFSheet extends BaseTestXSheet {
         // Blank
         col++;
         cell = CellUtil.getCell(destRow1, col);
-        assertEquals("[Blank] C10 cell type", CellType.BLANK, cell.getCellType());
+        assertEquals("[Blank] C10 cell type", CellType.BLANK, cell.getCellTypeEnum());
         
         cell = CellUtil.getCell(destRow2, col);
-        assertEquals("[Blank] C11 cell type", CellType.BLANK, cell.getCellType());
+        assertEquals("[Blank] C11 cell type", CellType.BLANK, cell.getCellTypeEnum());
         
         // Error
         col++;
         cell = CellUtil.getCell(destRow1, col);
-        assertEquals("[Error] D10 cell type", CellType.ERROR, cell.getCellType());
+        assertEquals("[Error] D10 cell type", CellType.ERROR, cell.getCellTypeEnum());
         FormulaError error = FormulaError.forInt(cell.getErrorCellValue());
         assertEquals("[Error] D10 cell value", FormulaError.NA, error); //FIXME: XSSFCell and HSSFCell expose different interfaces. getErrorCellString would be helpful here
         
         cell = CellUtil.getCell(destRow2, col);
-        assertEquals("[Error] D11 cell type", CellType.ERROR, cell.getCellType());
+        assertEquals("[Error] D11 cell type", CellType.ERROR, cell.getCellTypeEnum());
         error = FormulaError.forInt(cell.getErrorCellValue());
         assertEquals("[Error] D11 cell value", FormulaError.NAME, error); //FIXME: XSSFCell and HSSFCell expose different interfaces. getErrorCellString would be helpful here
         
         // Date
         col++;
         cell = CellUtil.getCell(destRow1, col);
-        assertEquals("[Date] E10 cell type", CellType.NUMERIC, cell.getCellType());
+        assertEquals("[Date] E10 cell type", CellType.NUMERIC, cell.getCellTypeEnum());
         Date date = LocaleUtil.getLocaleCalendar(2000, Calendar.JANUARY, 1).getTime();
         assertEquals("[Date] E10 cell value", date, cell.getDateCellValue());
         
         cell = CellUtil.getCell(destRow2, col);
-        assertEquals("[Date] E11 cell type", CellType.NUMERIC, cell.getCellType());
+        assertEquals("[Date] E11 cell type", CellType.NUMERIC, cell.getCellTypeEnum());
         date = LocaleUtil.getLocaleCalendar(2000, Calendar.JANUARY, 2).getTime();
         assertEquals("[Date] E11 cell value", date, cell.getDateCellValue());
         
         // Boolean
         col++;
         cell = CellUtil.getCell(destRow1, col);
-        assertEquals("[Boolean] F10 cell type", CellType.BOOLEAN, cell.getCellType());
+        assertEquals("[Boolean] F10 cell type", CellType.BOOLEAN, cell.getCellTypeEnum());
         assertEquals("[Boolean] F10 cell value", true, cell.getBooleanCellValue());
         
         cell = CellUtil.getCell(destRow2, col);
-        assertEquals("[Boolean] F11 cell type", CellType.BOOLEAN, cell.getCellType());
+        assertEquals("[Boolean] F11 cell type", CellType.BOOLEAN, cell.getCellTypeEnum());
         assertEquals("[Boolean] F11 cell value", false, cell.getBooleanCellValue());
         
         // String
         col++;
         cell = CellUtil.getCell(destRow1, col);
-        assertEquals("[String] G10 cell type", CellType.STRING, cell.getCellType());
+        assertEquals("[String] G10 cell type", CellType.STRING, cell.getCellTypeEnum());
         assertEquals("[String] G10 cell value", "Hello", cell.getStringCellValue());
         
         cell = CellUtil.getCell(destRow2, col);
-        assertEquals("[String] G11 cell type", CellType.STRING, cell.getCellType());
+        assertEquals("[String] G11 cell type", CellType.STRING, cell.getCellTypeEnum());
         assertEquals("[String] G11 cell value", "World", cell.getStringCellValue());
         
         // Int
         col++;
         cell = CellUtil.getCell(destRow1, col);
-        assertEquals("[Int] H10 cell type", CellType.NUMERIC, cell.getCellType());
+        assertEquals("[Int] H10 cell type", CellType.NUMERIC, cell.getCellTypeEnum());
         assertEquals("[Int] H10 cell value", 15, (int) cell.getNumericCellValue());
         
         cell = CellUtil.getCell(destRow2, col);
-        assertEquals("[Int] H11 cell type", CellType.NUMERIC, cell.getCellType());
+        assertEquals("[Int] H11 cell type", CellType.NUMERIC, cell.getCellTypeEnum());
         assertEquals("[Int] H11 cell value", 42, (int) cell.getNumericCellValue());
         
         // Float
         col++;
         cell = CellUtil.getCell(destRow1, col);
-        assertEquals("[Float] I10 cell type", CellType.NUMERIC, cell.getCellType());
+        assertEquals("[Float] I10 cell type", CellType.NUMERIC, cell.getCellTypeEnum());
         assertEquals("[Float] I10 cell value", 12.5, cell.getNumericCellValue(), FLOAT_PRECISION);
         
         cell = CellUtil.getCell(destRow2, col);
-        assertEquals("[Float] I11 cell type", CellType.NUMERIC, cell.getCellType());
+        assertEquals("[Float] I11 cell type", CellType.NUMERIC, cell.getCellTypeEnum());
         assertEquals("[Float] I11 cell value", 5.5, cell.getNumericCellValue(), FLOAT_PRECISION);
         
         // Cell Formula
         col++;
         cell = CellUtil.getCell(destRow1, col);
-        assertEquals("[Cell Formula] J10 cell type", CellType.FORMULA, cell.getCellType());
+        assertEquals("[Cell Formula] J10 cell type", CellType.FORMULA, cell.getCellTypeEnum());
         assertEquals("[Cell Formula] J10 cell formula", "5+2", cell.getCellFormula());
         
         cell = CellUtil.getCell(destRow2, col);
-        assertEquals("[Cell Formula] J11 cell type", CellType.FORMULA, cell.getCellType());
+        assertEquals("[Cell Formula] J11 cell type", CellType.FORMULA, cell.getCellTypeEnum());
         assertEquals("[Cell Formula] J11 cell formula", "6+18", cell.getCellFormula());
 
         // Cell Formula with Reference
@@ -1722,25 +1722,25 @@ public final class TestXSSFSheet extends BaseTestXSheet {
         // Formula row references should be adjusted by destRowNum-srcRowNum
         cell = CellUtil.getCell(destRow1, col);
         assertEquals("[Cell Formula with Reference] K10 cell type",
-                CellType.FORMULA, cell.getCellType());
+                CellType.FORMULA, cell.getCellTypeEnum());
         assertEquals("[Cell Formula with Reference] K10 cell formula",
                 "J10+H$2", cell.getCellFormula());
         
         cell = CellUtil.getCell(destRow2, col);
-        assertEquals("[Cell Formula with Reference] K11 cell type", CellType.FORMULA, cell.getCellType());
+        assertEquals("[Cell Formula with Reference] K11 cell type", CellType.FORMULA, cell.getCellTypeEnum());
         assertEquals("[Cell Formula with Reference] K11 cell formula", "J11+H$2", cell.getCellFormula());
         
         // Cell Formula with Reference spanning multiple rows
         col++;
         cell = CellUtil.getCell(destRow1, col);
         assertEquals("[Cell Formula with Reference spanning multiple rows] L10 cell type",
-                CellType.FORMULA, cell.getCellType());
+                CellType.FORMULA, cell.getCellTypeEnum());
         assertEquals("[Cell Formula with Reference spanning multiple rows] L10 cell formula",
                 "G10&\" \"&G11", cell.getCellFormula());
         
         cell = CellUtil.getCell(destRow2, col);
         assertEquals("[Cell Formula with Reference spanning multiple rows] L11 cell type",
-                CellType.FORMULA, cell.getCellType());
+                CellType.FORMULA, cell.getCellTypeEnum());
         assertEquals("[Cell Formula with Reference spanning multiple rows] L11 cell formula",
                 "G11&\" \"&G12", cell.getCellFormula());
         
@@ -1748,13 +1748,13 @@ public final class TestXSSFSheet extends BaseTestXSheet {
         col++;
         cell = CellUtil.getCell(destRow1, col);
         assertEquals("[Cell Formula with Area Reference] M10 cell type",
-                CellType.FORMULA, cell.getCellType());
+                CellType.FORMULA, cell.getCellTypeEnum());
         assertEquals("[Cell Formula with Area Reference] M10 cell formula",
                 "SUM(H10:I11)", cell.getCellFormula());
         
         cell = CellUtil.getCell(destRow2, col);
         assertEquals("[Cell Formula with Area Reference] M11 cell type",
-                CellType.FORMULA, cell.getCellType());
+                CellType.FORMULA, cell.getCellTypeEnum());
         assertEquals("[Cell Formula with Area Reference] M11 cell formula",
                 "SUM($H$3:I10)", cell.getCellFormula()); //Also acceptable: SUM($H10:I$3), but this AreaReference isn't in ascending order
         
@@ -1776,7 +1776,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
         // Data Format
         col++;
         cell = CellUtil.getCell(destRow2, col);
-        assertEquals("[Data Format] O10 cell type", CellType.NUMERIC, cell.getCellType());
+        assertEquals("[Data Format] O10 cell type", CellType.NUMERIC, cell.getCellTypeEnum());
         assertEquals("[Data Format] O10 cell value", 100.20, cell.getNumericCellValue(), FLOAT_PRECISION);
         final String moneyFormat = "\"$\"#,##0.00_);[Red]\\(\"$\"#,##0.00\\)";
         assertEquals("[Data Format] O10 cell data format", moneyFormat, cell.getCellStyle().getDataFormatString());
