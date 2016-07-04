@@ -27,7 +27,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.poi.POIDataSamples;
-import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.sl.usermodel.PictureData;
 import org.apache.poi.sl.usermodel.PictureShape;
 import org.apache.poi.sl.usermodel.RectAlign;
@@ -36,8 +35,6 @@ import org.apache.poi.sl.usermodel.Slide;
 import org.apache.poi.sl.usermodel.SlideShow;
 import org.apache.poi.sl.usermodel.SlideShowFactory;
 import org.apache.poi.util.Units;
-import org.apache.poi.xslf.XSLFTestDataSamples;
-import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.junit.Test;
 
 public class TestDrawPictureShape {

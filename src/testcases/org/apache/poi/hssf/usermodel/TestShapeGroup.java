@@ -17,15 +17,13 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import junit.framework.TestCase;
-
 import org.apache.poi.POITestCase;
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherSpgrRecord;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.EscherAggregate;
 
-import java.lang.reflect.Field;
+import junit.framework.TestCase;
 
 /**
  * @author Evgeniy Berlog

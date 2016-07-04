@@ -29,7 +29,6 @@ import java.util.zip.ZipFile;
 import javax.crypto.Cipher;
 
 import org.apache.poi.POIDataSamples;
-import org.apache.poi.openxml4j.OpenXML4JTestDataSamples;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.poifs.crypt.CipherAlgorithm;
 import org.apache.poi.poifs.crypt.Decryptor;

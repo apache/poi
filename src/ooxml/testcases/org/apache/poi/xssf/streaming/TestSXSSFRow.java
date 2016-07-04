@@ -22,7 +22,6 @@ package org.apache.poi.xssf.streaming;
 import org.apache.poi.ss.usermodel.BaseTestXRow;
 import org.apache.poi.xssf.SXSSFITestDataProvider;
 import org.junit.After;
-import org.junit.Test;
 
 /**
  * Tests for XSSFRow

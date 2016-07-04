@@ -18,10 +18,8 @@ package org.apache.poi.hwpf.usermodel;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -37,7 +35,6 @@ import org.apache.poi.hwpf.extractor.Word6Extractor;
 import org.apache.poi.hwpf.extractor.WordExtractor;
 import org.apache.poi.hwpf.model.FieldsDocumentPart;
 import org.apache.poi.hwpf.model.FileInformationBlock;
-import org.apache.poi.hwpf.model.PicturesTable;
 import org.apache.poi.hwpf.model.PlexOfField;
 import org.apache.poi.hwpf.model.SubdocumentType;
 import org.apache.poi.hwpf.model.io.HWPFOutputStream;

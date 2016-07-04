@@ -19,15 +19,13 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.formula.OperationEvaluationContext;
-import org.apache.poi.ss.formula.eval.*;
+
+import junit.framework.TestCase;
 
 /**
  * Test cases for IPMT()

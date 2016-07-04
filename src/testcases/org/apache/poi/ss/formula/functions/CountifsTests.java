@@ -18,10 +18,15 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import junit.framework.TestCase;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.formula.atp.AnalysisToolPak;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.CellValue;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+
+import junit.framework.TestCase;
 
 public class CountifsTests extends TestCase {
 

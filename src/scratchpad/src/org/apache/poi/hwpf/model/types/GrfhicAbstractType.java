@@ -18,8 +18,8 @@
 package org.apache.poi.hwpf.model.types;
 
 
-import org.apache.poi.hwpf.usermodel.*;
-import org.apache.poi.util.*;
+import org.apache.poi.util.BitField;
+import org.apache.poi.util.Internal;
 
 /**
  * The grfhic structure is a set of HTML incompatibility flags that specify the HTML

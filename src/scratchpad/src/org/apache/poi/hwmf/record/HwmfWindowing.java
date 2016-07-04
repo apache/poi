@@ -20,10 +20,7 @@ package org.apache.poi.hwmf.record;
 import java.awt.Shape;
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
-import java.awt.geom.Rectangle2D.Double;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.poi.hwmf.draw.HwmfGraphics;
 import org.apache.poi.util.LittleEndianConsts;

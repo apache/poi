@@ -30,7 +30,6 @@ import org.apache.poi.util.LittleEndianInputStream;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.apache.poi.util.RecordFormatException;
 
 public class HwmfText {
     private static final POILogger logger = POILogFactory.getLogger(HwmfText.class);

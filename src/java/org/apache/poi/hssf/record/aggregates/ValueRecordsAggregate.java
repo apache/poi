@@ -17,9 +17,7 @@
 
 package org.apache.poi.hssf.record.aggregates;
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 import org.apache.poi.hssf.model.RecordStream;
 import org.apache.poi.hssf.record.BlankRecord;
