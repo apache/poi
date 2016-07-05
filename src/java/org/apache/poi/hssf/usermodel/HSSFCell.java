@@ -151,7 +151,7 @@ public class HSSFCell implements Cell {
                        CellType type)
     {
         checkBounds(col);
-        _cellType     = CellType._UNINITIALIZED; // Force 'setCellType' to create a first Record
+        _cellType     = CellType._NONE; // Force 'setCellType' to create a first Record
         _stringValue  = null;
         _book    = book;
         _sheet   = sheet;
@@ -434,7 +434,7 @@ public class HSSFCell implements Cell {
                 throw new IllegalStateException("Invalid cell type: " + cellType);
         }
         if (cellType != _cellType &&
-            _cellType != CellType._UNINITIALIZED )  // Special Value to indicate an uninitialized Cell
+            _cellType != CellType._NONE )  // Special Value to indicate an uninitialized Cell
         {
             _sheet.getSheet().replaceValueRecord(_record);
         }
@@ -459,7 +459,7 @@ public class HSSFCell implements Cell {
      * @deprecated POI 3.15 beta 3
      * Will be deleted when we make the CellType enum transition. See bug 59791.
      */
-    @Internal
+    @Internal(since="POI 3.15 beta 3")
     @Override
     public CellType getCellTypeEnum()
     {
@@ -1169,7 +1169,7 @@ public class HSSFCell implements Cell {
      * @deprecated POI 3.15 beta 3
      * Will be deleted when we make the CellType enum transition. See bug 59791.
      */
-    @Internal
+    @Internal(since="POI 3.15 beta 3")
     @Override
     public CellType getCachedFormulaResultTypeEnum() {
         if (_cellType != CellType.FORMULA) {

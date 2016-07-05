@@ -25,7 +25,7 @@ package org.apache.poi.util;
  * @author Marc Johnson (mjohnson at apache dot org)
  * @author Andrew C. Oliver (acoliver at apache dot org)
  */
-@Internal
+@Internal(since="POI 3.15 beta 3")
 public class BitField
 {
     private final int _mask;

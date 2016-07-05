@@ -117,7 +117,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
     /**
       * get the underlying CTTable XML bean
       */
-    @Internal
+    @Internal(since="POI 3.15 beta 3")
     public CTTable getCTTable() {
         return ctTable;
     }

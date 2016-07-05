@@ -134,12 +134,14 @@ public abstract class BaseXSSFFormulaEvaluator implements FormulaEvaluator, Work
      *  the result of the formula, use {@link #evaluate(org.apache.poi.ss.usermodel.Cell)} }
      * @param cell The cell to evaluate
      * @return The type of the formula result (the cell's type remains as CellType.FORMULA however)
+     *         If cell is not a formula cell, returns {@link CellType#_NONE} rather than throwing an exception.
+     * @since POI 3.15 beta 3
      * @deprecated POI 3.15 beta 3. Will be deleted when we make the CellType enum transition. See bug 59791.
      */
-    @Internal
+    @Internal(since="POI 3.15 beta 3")
     public CellType evaluateFormulaCellEnum(Cell cell) {
         if (cell == null || cell.getCellTypeEnum() != CellType.FORMULA) {
-            return CellType._UNINITIALIZED;
+            return CellType._NONE;
         }
         CellValue cv = evaluateFormulaCellValue(cell);
         // cell remains a formula cell, but the cached value is changed
