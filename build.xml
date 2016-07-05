@@ -2555,7 +2555,7 @@ under the License.
       <section><title>Binary Distribution</title>
       <ul>
         <li><link href="http://www.apache.org/dyn/closer.lua/poi/${reltype}/bin/poi-bin-${version.id}-${file_date}.tar.gz">poi-bin-${version.id}-${file_date}.tar.gz</link>
-          (${bin-tar-size} MB, <link href="http://www.apache.org/dist/poi/${reltype}/bin/poi-bin-${version.id}-${file_date}.tar.gz.asc">signed</link>)
+          (${bin-tar-size} MB, <link href="http://www.apache.org/dist/poi/${reltype}/bin/poi-bin-${version.id}-${file_date}.tar.gz.asc">signature (.asc)</link>)
           <br/>
           MD5 checksum: <link href="http://www.apache.org/dist/poi/${reltype}/bin/poi-bin-${version.id}-${file_date}.tar.gz.md5">
           ${bin-tar-md5}</link>
@@ -2564,7 +2564,7 @@ under the License.
           ${bin-tar-sha1}</link>
         </li>
         <li><link href="http://www.apache.org/dyn/closer.lua/poi/${reltype}/bin/poi-bin-${version.id}-${file_date}.zip">poi-bin-${version.id}-${file_date}.zip</link>
-          (${bin-zip-size} MB, <link href="http://www.apache.org/dist/poi/${reltype}/bin/poi-bin-${version.id}-${file_date}.zip.asc">signed</link>)
+          (${bin-zip-size} MB, <link href="http://www.apache.org/dist/poi/${reltype}/bin/poi-bin-${version.id}-${file_date}.zip.asc">signature (.asc)</link>)
           <br/>
           MD5 checksum: <link href="http://www.apache.org/dist/poi/${reltype}/bin/poi-bin-${version.id}-${file_date}.zip.md5">
 	      ${bin-zip-md5}</link>
@@ -2577,7 +2577,7 @@ under the License.
       <section><title>Source Distribution</title>
       <ul>
         <li><link href="http://www.apache.org/dyn/closer.lua/poi/${reltype}/src/poi-src-${version.id}-${file_date}.tar.gz">poi-src-${version.id}-${file_date}.tar.gz</link>
-          (${src-tar-size} MB, <link href="http://www.apache.org/dist/poi/${reltype}/src/poi-src-${version.id}-${file_date}.tar.gz.asc">signed</link>)
+          (${src-tar-size} MB, <link href="http://www.apache.org/dist/poi/${reltype}/src/poi-src-${version.id}-${file_date}.tar.gz.asc">signature (.asc)</link>)
           <br/>
           MD5 checksum: <link href="http://www.apache.org/dist/poi/${reltype}/src/poi-src-${version.id}-${file_date}.tar.gz.md5">
           ${src-tar-md5}</link>
@@ -2586,7 +2586,7 @@ under the License.
 	      ${src-tar-sha1}</link>
         </li>
         <li><link href="http://www.apache.org/dyn/closer.lua/poi/${reltype}/src/poi-src-${version.id}-${file_date}.zip">poi-src-${version.id}-${file_date}.zip</link>
-          (${src-zip-size} MB, <link href="http://www.apache.org/dist/poi/${reltype}/src/poi-src-${version.id}-${file_date}.zip.asc">signed</link>)
+          (${src-zip-size} MB, <link href="http://www.apache.org/dist/poi/${reltype}/src/poi-src-${version.id}-${file_date}.zip.asc">signature (.asc)</link>)
           <br/>
           MD5 checksum: <link href="http://www.apache.org/dist/poi/${reltype}/src/poi-src-${version.id}-${file_date}.zip.md5">
 	      ${src-zip-md5}</link>
