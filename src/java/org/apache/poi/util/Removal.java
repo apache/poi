@@ -50,7 +50,10 @@ import java.lang.annotation.Documented;
 public @interface Removal {
     /**
      * The POI version when this feature may be removed.
-     *
+     * 
+     * To ensure that the version number can be compared to the current version
+     * and a unit test can generate a warning if a removal-eligible feature has
+     * not been removed yet, the version number should adhere to the following format:
      * Format: "(?<major>\d+)\.(?<minor>\d+)"
      * Example: "3.15"
      */
