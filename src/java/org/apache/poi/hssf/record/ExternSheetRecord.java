@@ -186,7 +186,9 @@ public class ExternSheetRecord extends StandardRecord {
 	}
 
     /**
-     * Returns the index of the SupBookRecord for this index
+     * @param refIndex specifies the n-th refIndex
+     * 
+     * @return the index of the SupBookRecord for this index
      */
     public int getExtbookIndexFromRefIndex(int refIndex) {
         RefSubRecord refRec = getRef(refIndex);

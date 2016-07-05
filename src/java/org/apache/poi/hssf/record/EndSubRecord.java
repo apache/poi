@@ -37,7 +37,7 @@ public final class EndSubRecord extends SubRecord implements Cloneable {
 
     /**
      * @param in unused (since this record has no data)
-     * @param size 
+     * @param size must be 0
      */
     public EndSubRecord(LittleEndianInput in, int size) {
         if ((size & 0xFF) != ENCODED_SIZE) { // mask out random crap in upper byte

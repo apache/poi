@@ -114,14 +114,14 @@ public final class DVALRecord extends StandardRecord implements Cloneable {
 	}
 
 	/**
-     * get Object ID of the drop down arrow object for list boxes
+     * @return the Object ID of the drop down arrow object for list boxes
      */
     public int getObjectID() {
         return field_cbo_id;
     }
 
     /**
-     * Get number of following DV records
+     * @return the number of following DV records
      */
     public int getDVRecNo() {
         return field_5_dv_no;
