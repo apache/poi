@@ -61,25 +61,31 @@ public final class ExternalNameRecord extends StandardRecord {
 	private int _nRows;
 
 	/**
-	 * Convenience Function to determine if the name is a built-in name
+	 * @return {@code true} if the name is a built-in name
 	 */
 	public boolean isBuiltInName() {
 		return (field_1_option_flag & OPT_BUILTIN_NAME) != 0;
 	}
 	/**
 	 * For OLE and DDE, links can be either 'automatic' or 'manual'
+	 * 
+	 * @return {@code true} if this is a automatic link
 	 */
 	public boolean isAutomaticLink() {
 		return (field_1_option_flag & OPT_AUTOMATIC_LINK) != 0;
 	}
 	/**
 	 * only for OLE and DDE
+	 * 
+	 * @return {@code true} if this is a picture link
 	 */
 	public boolean isPicureLink() {
 		return (field_1_option_flag & OPT_PICTURE_LINK) != 0;
 	}
 	/**
 	 * DDE links only. If <code>true</code>, this denotes the 'StdDocumentName'
+	 * 
+	 * @return {@code true} if this denotes the 'StdDocumentName'
 	 */
 	public boolean isStdDocumentNameIdentifier() {
 		return (field_1_option_flag & OPT_STD_DOCUMENT_NAME) != 0;
@@ -104,12 +110,15 @@ public final class ExternalNameRecord extends StandardRecord {
 	/**
 	 * If this is a local name, then this is the (1 based)
 	 *  index of the name of the Sheet this refers to, as
-	 *  defined in the preceeding {@link SupBookRecord}.
+	 *  defined in the preceding {@link SupBookRecord}.
 	 * If it isn't a local name, then it must be zero.
+	 * 
+	 * @return the index of the name of the Sheet this refers to
 	 */
 	public short getIx() {
 	   return field_2_ixals;
 	}
+	
     public void setIx(short ix) {
         field_2_ixals = ix;
     }
@@ -212,8 +221,7 @@ public final class ExternalNameRecord extends StandardRecord {
 		sb.append("    .name    = ").append(field_4_name).append("\n");
 		if(field_5_name_definition != null) {
             Ptg[] ptgs = field_5_name_definition.getTokens();
-            for (int i = 0; i < ptgs.length; i++) {
-                Ptg ptg = ptgs[i];
+            for (Ptg ptg : ptgs) {
                 sb.append(ptg.toString()).append(ptg.getRVAType()).append("\n");
             }
 		}

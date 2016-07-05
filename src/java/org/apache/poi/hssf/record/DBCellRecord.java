@@ -100,8 +100,13 @@ public final class DBCellRecord extends StandardRecord implements Cloneable {
     }
     
     /**
-     *  @return the size of the group of <tt>DBCellRecord</tt>s needed to encode
-     *  the specified number of blocks and rows
+     * @param nBlocks number of blocks
+     * @param nRows number of rows
+     * 
+     * @return the size of the group of <tt>DBCellRecord</tt>s needed to encode
+     *         the specified number of blocks and rows
+     * 
+     * @deprecated in POI 3.15-beta2, scheduled for removal in POI 3.17 - this method is not used within POI
      */
     public static int calculateSizeOfRecords(int nBlocks, int nRows) {
         // One DBCell per block.
