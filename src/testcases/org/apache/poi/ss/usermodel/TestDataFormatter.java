@@ -32,10 +32,12 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
+import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.usermodel.TestHSSFDataFormatter;
 import org.apache.poi.ss.format.CellFormat;
 import org.apache.poi.ss.format.CellFormatResult;
+import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.NumberToTextConverter;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.SuppressForbidden;
@@ -774,5 +776,23 @@ public class TestDataFormatter {
         finally {
             wb.close();
         }
+    }
+
+    @Test
+    public void testFormulaEvaluation() throws IOException {
+        Workbook wb = HSSFTestDataSamples.openSampleWorkbook("FormulaEvalTestData.xls");
+
+        CellReference ref = new CellReference("D47");
+
+        Cell cell = wb.getSheetAt(0).getRow(ref.getRow()).getCell(ref.getCol());
+        //noinspection deprecation
+        assertEquals(CellType.FORMULA, cell.getCellTypeEnum());
+        assertEquals("G9:K9 I7:I12", cell.getCellFormula());
+
+        DataFormatter formatter = new DataFormatter();
+        FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
+        assertEquals("5.6789", formatter.formatCellValue(cell, evaluator));
+
+        wb.close();
     }
 }
