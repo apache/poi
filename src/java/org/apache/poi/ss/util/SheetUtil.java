@@ -93,8 +93,11 @@ public class SheetUtil {
         public int evaluateFormulaCell(Cell cell) {
             return cell.getCachedFormulaResultType();
         }
-        /** @deprecated POI 3.15 beta 3. Will be deleted when we make the CellType enum transition. See bug 59791. */
-        @Internal
+        /** 
+         * @since POI 3.15 beta 3
+         * @deprecated POI 3.15 beta 3. Will be deleted when we make the CellType enum transition. See bug 59791.
+         */
+        @Internal(since="POI 3.15 beta 3")
         @Override
         public CellType evaluateFormulaCellEnum(Cell cell) {
             return cell.getCachedFormulaResultTypeEnum();

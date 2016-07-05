@@ -118,7 +118,7 @@ final class ForkedEvaluationCell implements EvaluationCell {
 	 * @deprecated POI 3.15 beta 3.
 	 * Will be deleted when we make the CellType enum transition. See bug 59791.
 	 */
-	@Internal
+	@Internal(since="POI 3.15 beta 3")
 	@Override
 	public CellType getCellTypeEnum() {
 		return _cellType;
@@ -170,7 +170,7 @@ final class ForkedEvaluationCell implements EvaluationCell {
 	 * @deprecated POI 3.15 beta 3.
 	 * Will be deleted when we make the CellType enum transition. See bug 59791.
 	 */
-	@Internal
+	@Internal(since="POI 3.15 beta 3")
 	@Override
 	public CellType getCachedFormulaResultTypeEnum() {
 		return _masterCell.getCachedFormulaResultTypeEnum();

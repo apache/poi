@@ -24,13 +24,20 @@ import org.apache.poi.util.Internal;
  * @since POI 3.15 beta 3
  */
 public enum CellType {
-    @Internal
-    _UNINITIALIZED(-1),
+    /**
+     * Unknown type, used to represent a state prior to initialization or the
+     * lack of a concrete type.
+     * For internal use only.
+     */
+    @Internal(since="POI 3.15 beta 3")
+    _NONE(-1),
 
-    /** Numeric cell type (whole numbers, fractional numbers, dates) */
+    /**
+     * Numeric cell type (whole numbers, fractional numbers, dates)
+     */
     NUMERIC(0),
     
-    /** String cell type */
+    /** String (text) cell type */
     STRING(1),
     
     /**

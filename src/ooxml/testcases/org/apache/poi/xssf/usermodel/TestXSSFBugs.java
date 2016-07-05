@@ -2959,7 +2959,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         cell = row.getCell(1);
 
         assertEquals(CellType.BLANK, cell.getCellTypeEnum());
-        assertEquals(CellType._UNINITIALIZED, evaluator.evaluateFormulaCellEnum(cell));
+        assertEquals(CellType._NONE, evaluator.evaluateFormulaCellEnum(cell));
 
         // A3
         row = worksheet.getRow(2);
