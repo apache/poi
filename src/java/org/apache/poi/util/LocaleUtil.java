@@ -85,6 +85,10 @@ public final class LocaleUtil {
     public static TimeZone getUserTimeZone() {
         return userTimeZone.get();
     }
+    
+    public static void resetUserTimeZone() {
+        userTimeZone.remove();
+    }
 
     /**
      * Sets default user locale.
@@ -92,6 +96,10 @@ public final class LocaleUtil {
      */
     public static void setUserLocale(Locale locale) {
         userLocale.set(locale);
+    }
+    
+    public static void resetUserLocale() {
+        userLocale.remove();
     }
 
     /**
@@ -105,7 +113,7 @@ public final class LocaleUtil {
      * @return a calendar for the user locale and time zone
      */
     public static Calendar getLocaleCalendar() {
-        return getLocaleCalendar(getUserTimeZone());        
+        return getLocaleCalendar(getUserTimeZone());
     }
 
     /**
@@ -142,7 +150,7 @@ public final class LocaleUtil {
      * @return a calendar for the user locale and time zone
      */
     public static Calendar getLocaleCalendar(TimeZone timeZone) {
-        return Calendar.getInstance(timeZone, getUserLocale());        
+        return Calendar.getInstance(timeZone, getUserLocale());
     }
 }
 
