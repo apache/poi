@@ -34,7 +34,11 @@ import java.util.TimeZone;
  * The settings are saved in a {@link java.lang.ThreadLocal},
  * so they only apply to the current thread and can't be set globally.
  */
-public class LocaleUtil {
+public final class LocaleUtil {
+    private LocaleUtil() {
+        // no instances of this class
+    }
+    
     /**
      * Excel doesn't store TimeZone information in the file, so if in doubt,
      *  use UTC to perform calculations
