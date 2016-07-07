@@ -40,16 +40,12 @@ public class TestLocaleUtil {
     /**
      * Reset the Locale to the user default before the test so that it isn't influenced
      * by the LocaleUtil's state being changed by previous tests.
-     * 
-     * Reset the Locale to the user default after the test so that it doesn't influence
-     * other tests.
      */
     @Before
-    @After
     @SuppressForbidden("implementation around default locales in POI")
-    public void reset() {
-        // clear the user locale and time zone so that tests do not interfere with each other
-        // the other way and better way would be to run each test in its own thread since
+    public void setUp() {
+        // reset the user locale and time zone so that tests do not interfere with each other
+        // the other and better way would be to run each test in its own thread since
         // LocaleUtil uses per-thread settings.
         // Helpful, but not ASL 2.0 licensed:
         // http://www.codeaffine.com/2014/07/21/a-junit-rule-to-run-a-test-in-its-own-thread/
@@ -58,6 +54,16 @@ public class TestLocaleUtil {
         
         assumeFalse(ja_JP.equals(LocaleUtil.getUserLocale()));
         assumeFalse(TOKYO.equals(LocaleUtil.getUserTimeZone()));
+    }
+
+    /**
+     * Reset the Locale to the user default after the test so that it doesn't influence
+     * other tests.
+     */
+    @After
+    public void tearDown() {
+        LocaleUtil.resetUserLocale();
+        LocaleUtil.resetUserTimeZone();
     }
     
     @Test
