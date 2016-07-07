@@ -352,6 +352,7 @@ public final class HSLFFreeformShape extends HSLFAutoShape implements FreeformSh
         return prop;
     }
     
+    // FIXME: FindBugs-JDK8 identified that this method does nothing
     private void handleEscapeInfo(Path2D path, byte segElem[], Iterator<byte[]> vertIter) {
         EscapeInfo ei = getEscapeInfo(segElem);
         switch (ei) {
