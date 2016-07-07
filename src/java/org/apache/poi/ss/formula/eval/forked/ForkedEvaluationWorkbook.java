@@ -75,17 +75,21 @@ final class ForkedEvaluationWorkbook implements EvaluationWorkbook {
 		}
 	}
 
+    @Override
 	public int convertFromExternSheetIndex(int externSheetIndex) {
 		return _masterBook.convertFromExternSheetIndex(externSheetIndex);
 	}
 
+    @Override
 	public ExternalSheet getExternalSheet(int externSheetIndex) {
 		return _masterBook.getExternalSheet(externSheetIndex);
 	}
+    @Override
 	public ExternalSheet getExternalSheet(String firstSheetName, String lastSheetName, int externalWorkbookNumber) {
         return _masterBook.getExternalSheet(firstSheetName, lastSheetName, externalWorkbookNumber);
     }
 
+    @Override
     public Ptg[] getFormulaTokens(EvaluationCell cell) {
 		if (cell instanceof ForkedEvaluationCell) {
 			// doesn't happen yet because formulas cannot be modified from the master workbook
@@ -94,25 +98,31 @@ final class ForkedEvaluationWorkbook implements EvaluationWorkbook {
 		return _masterBook.getFormulaTokens(cell);
 	}
 
+    @Override
 	public EvaluationName getName(NamePtg namePtg) {
 		return _masterBook.getName(namePtg);
 	}
 
+    @Override
     public EvaluationName getName(String name, int sheetIndex){
         return _masterBook.getName(name, sheetIndex);
     }
 
+    @Override
 	public EvaluationSheet getSheet(int sheetIndex) {
 		return getSharedSheet(getSheetName(sheetIndex));
 	}
 	
+    @Override
 	public ExternalName getExternalName(int externSheetIndex, int externNameIndex) {
 	   return _masterBook.getExternalName(externSheetIndex, externNameIndex);
 	}
+    @Override
 	public ExternalName getExternalName(String nameName, String sheetName, int externalWorkbookNumber) {
 	       return _masterBook.getExternalName(nameName, sheetName, externalWorkbookNumber);
     }
 
+    @Override
     public int getSheetIndex(EvaluationSheet sheet) {
 		if (sheet instanceof ForkedEvaluationSheet) {
 			ForkedEvaluationSheet mes = (ForkedEvaluationSheet) sheet;
@@ -121,19 +131,23 @@ final class ForkedEvaluationWorkbook implements EvaluationWorkbook {
 		return _masterBook.getSheetIndex(sheet);
 	}
 
+    @Override
 	public int getSheetIndex(String sheetName) {
 		return _masterBook.getSheetIndex(sheetName);
 	}
 
+    @Override
 	public String getSheetName(int sheetIndex) {
 		return _masterBook.getSheetName(sheetIndex);
 	}
 
+    @Override
 	public String resolveNameXText(NameXPtg ptg) {
 		return _masterBook.resolveNameXText(ptg);
 	}
 
-    public UDFFinder getUDFFinder(){
+    @Override
+    public UDFFinder getUDFFinder() {
         return _masterBook.getUDFFinder();
     }
     
@@ -141,6 +155,7 @@ final class ForkedEvaluationWorkbook implements EvaluationWorkbook {
      * leave the map alone, if it needs resetting, reusing this class is probably a bad idea.
      * @see org.apache.poi.ss.formula.EvaluationSheet#clearAllCachedResultValues()
      */
+    @Override
     public void clearAllCachedResultValues() {
         _masterBook.clearAllCachedResultValues();
     }

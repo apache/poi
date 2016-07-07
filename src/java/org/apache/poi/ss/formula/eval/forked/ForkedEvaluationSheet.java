@@ -50,6 +50,7 @@ final class ForkedEvaluationSheet implements EvaluationSheet {
 		_sharedCellsByRowCol = new HashMap<RowColKey, ForkedEvaluationCell>();
 	}
 
+	@Override
 	public EvaluationCell getCell(int rowIndex, int columnIndex) {
 		RowColKey key = new RowColKey(rowIndex, columnIndex);
 
@@ -105,10 +106,12 @@ final class ForkedEvaluationSheet implements EvaluationSheet {
 	 * leave the map alone, if it needs resetting, reusing this class is probably a bad idea.
 	 * @see org.apache.poi.ss.formula.EvaluationSheet#clearAllCachedResultValues()
 	 */
+	@Override
 	public void clearAllCachedResultValues() {
 	    _masterSheet.clearAllCachedResultValues();
 	}
 	
+    // FIXME: serves same purpose as org.apache.poi.xssf.usermodel.XSSFEvaluationSheet$CellKey
 	private static final class RowColKey implements Comparable<RowColKey>{
 		private final int _rowIndex;
 		private final int _columnIndex;

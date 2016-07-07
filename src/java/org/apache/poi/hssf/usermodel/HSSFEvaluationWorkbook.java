@@ -63,7 +63,8 @@ public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
         _uBook = book;
         _iBook = book.getWorkbook();
     }
-    
+
+    @Override
     public void clearAllCachedResultValues() {
         // nothing to do
     }
@@ -73,18 +74,22 @@ public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
         return _uBook.createName();
     }
 
+    @Override
     public int getExternalSheetIndex(String sheetName) {
         int sheetIndex = _uBook.getSheetIndex(sheetName);
         return _iBook.checkExternSheet(sheetIndex);
     }
+    @Override
     public int getExternalSheetIndex(String workbookName, String sheetName) {
         return _iBook.getExternalSheetIndex(workbookName, sheetName);
     }
     
+    @Override
     public Ptg get3DReferencePtg(CellReference cr, SheetIdentifier sheet) {
         int extIx = getSheetExtIx(sheet);
         return new Ref3DPtg(cr, extIx);
     }
+    @Override
     public Ptg get3DReferencePtg(AreaReference areaRef, SheetIdentifier sheet) {
         int extIx = getSheetExtIx(sheet);
         return new Area3DPtg(areaRef, extIx);
@@ -115,26 +120,33 @@ public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
         return sheetIndex == -1 ? null : getName(name, -1);
     }
 
+    @Override
     public int getSheetIndex(EvaluationSheet evalSheet) {
         HSSFSheet sheet = ((HSSFEvaluationSheet)evalSheet).getHSSFSheet();
         return _uBook.getSheetIndex(sheet);
     }
+    @Override
     public int getSheetIndex(String sheetName) {
         return _uBook.getSheetIndex(sheetName);
     }
 
+    @Override
     public String getSheetName(int sheetIndex) {
         return _uBook.getSheetName(sheetIndex);
     }
 
+    @Override
     public EvaluationSheet getSheet(int sheetIndex) {
+        // TODO Cache these evaluation sheets so they aren't re-generated on every getSheet call
         return new HSSFEvaluationSheet(_uBook.getSheetAt(sheetIndex));
     }
+    @Override
     public int convertFromExternSheetIndex(int externSheetIndex) {
         // TODO Update this to expose first and last sheet indexes
         return _iBook.getFirstSheetIndexFromExternSheetIndex(externSheetIndex);
     }
 
+    @Override
     public ExternalSheet getExternalSheet(int externSheetIndex) {
         ExternalSheet sheet = _iBook.getExternalSheet(externSheetIndex);
         if (sheet == null) {
@@ -163,36 +175,52 @@ public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
         }
         return sheet;
     }
+
+    /**
+     * @throws IllegalStateException: XSSF-style external references are not supported for HSSF
+     */
+    @Override
     public ExternalSheet getExternalSheet(String firstSheetName, String lastSheetName, int externalWorkbookNumber) {
         throw new IllegalStateException("XSSF-style external references are not supported for HSSF");
     }
 
+    @Override
     public ExternalName getExternalName(int externSheetIndex, int externNameIndex) {
         return _iBook.getExternalName(externSheetIndex, externNameIndex);
     }
 
+    /**
+     * @throws IllegalStateException: XSSF-style external names are not supported for HSSF
+     */
+    @Override
     public ExternalName getExternalName(String nameName, String sheetName, int externalWorkbookNumber) {
         throw new IllegalStateException("XSSF-style external names are not supported for HSSF");
     }
 
+    @Override
     public String resolveNameXText(NameXPtg n) {
         return _iBook.resolveNameXText(n.getSheetRefIndex(), n.getNameIndex());
     }
 
+    @Override
     public String getSheetFirstNameByExternSheet(int externSheetIndex) {
         return _iBook.findSheetFirstNameFromExternSheet(externSheetIndex);
     }
+    @Override
     public String getSheetLastNameByExternSheet(int externSheetIndex) {
         return _iBook.findSheetLastNameFromExternSheet(externSheetIndex);
     }
+    @Override
     public String getNameText(NamePtg namePtg) {
         return _iBook.getNameRecord(namePtg.getIndex()).getNameText();
     }
+    @Override
     public EvaluationName getName(NamePtg namePtg) {
         int ix = namePtg.getIndex();
         return new Name(_iBook.getNameRecord(ix), ix);
     }
 
+    @Override
     @SuppressWarnings("unused")
     public Ptg[] getFormulaTokens(EvaluationCell evalCell) {
         HSSFCell cell = ((HSSFEvaluationCell)evalCell).getHSSFCell();
@@ -213,6 +241,7 @@ public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
         return fra.getFormulaTokens();
     }
 
+    @Override
     public UDFFinder getUDFFinder(){
         return _uBook.getUDFFinder();
     }

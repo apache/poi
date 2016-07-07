@@ -33,6 +33,7 @@ final class SXSSFEvaluationSheet implements EvaluationSheet {
     public SXSSFSheet getSXSSFSheet() {
         return _xs;
     }
+    @Override
     public EvaluationCell getCell(int rowIndex, int columnIndex) {
         SXSSFRow row = _xs.getRow(rowIndex);
         if (row == null) {
@@ -48,6 +49,7 @@ final class SXSSFEvaluationSheet implements EvaluationSheet {
         return new SXSSFEvaluationCell(cell, this);
     }
     
+    @Override
     public void clearAllCachedResultValues() {
         // nothing to do
     }
