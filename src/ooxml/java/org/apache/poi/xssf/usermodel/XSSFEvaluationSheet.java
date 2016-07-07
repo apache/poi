@@ -41,10 +41,12 @@ final class XSSFEvaluationSheet implements EvaluationSheet {
         return _xs;
     }
 
+    @Override
     public void clearAllCachedResultValues() {
         _cellCache = null;
     }
     
+    @Override
     public EvaluationCell getCell(int rowIndex, int columnIndex) {
         // cache for performance: ~30% speedup due to caching
         if (_cellCache == null) {

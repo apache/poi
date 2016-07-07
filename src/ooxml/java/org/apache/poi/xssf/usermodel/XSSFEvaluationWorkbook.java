@@ -40,6 +40,7 @@ public final class XSSFEvaluationWorkbook extends BaseXSSFEvaluationWorkbook {
         super(book);
     }
 
+    @Override
     public void clearAllCachedResultValues() {
         super.clearAllCachedResultValues();
         _sheetCache = null;

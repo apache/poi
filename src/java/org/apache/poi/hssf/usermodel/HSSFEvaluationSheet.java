@@ -34,6 +34,7 @@ final class HSSFEvaluationSheet implements EvaluationSheet {
 	public HSSFSheet getHSSFSheet() {
 		return _hs;
 	}
+	@Override
 	public EvaluationCell getCell(int rowIndex, int columnIndex) {
 		HSSFRow row = _hs.getRow(rowIndex);
 		if (row == null) {
@@ -46,6 +47,7 @@ final class HSSFEvaluationSheet implements EvaluationSheet {
 		return new HSSFEvaluationCell(cell, this);
 	}
 	
+	@Override
 	public void clearAllCachedResultValues() {
 	    // nothing to do
 	}
