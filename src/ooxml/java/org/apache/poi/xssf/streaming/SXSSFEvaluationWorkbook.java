@@ -23,10 +23,12 @@ import org.apache.poi.ss.formula.FormulaParser;
 import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.xssf.usermodel.BaseXSSFEvaluationWorkbook;
+import org.apache.poi.util.Internal;
 
 /**
  * SXSSF wrapper around the SXSSF and XSSF workbooks
  */
+@Internal
 public final class SXSSFEvaluationWorkbook extends BaseXSSFEvaluationWorkbook {
     private final SXSSFWorkbook _uBook;
     

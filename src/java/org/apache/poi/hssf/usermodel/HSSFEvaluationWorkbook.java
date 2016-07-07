@@ -41,12 +41,14 @@ import org.apache.poi.ss.formula.udf.UDFFinder;
 import org.apache.poi.ss.usermodel.Table;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
 /**
  * Internal POI use only
  */
+@Internal
 public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, EvaluationWorkbook, FormulaParsingWorkbook {
     private static POILogger logger = POILogFactory.getLogger(HSSFEvaluationWorkbook.class);
     private final HSSFWorkbook _uBook;
@@ -64,6 +66,9 @@ public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
         _iBook = book.getWorkbook();
     }
 
+    /* (non-JavaDoc), inherit JavaDoc from EvaluationWorkbook
+     * @since POI 3.15 beta 3
+     */
     @Override
     public void clearAllCachedResultValues() {
         // nothing to do
