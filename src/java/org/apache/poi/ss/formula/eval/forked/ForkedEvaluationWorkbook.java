@@ -136,4 +136,12 @@ final class ForkedEvaluationWorkbook implements EvaluationWorkbook {
     public UDFFinder getUDFFinder(){
         return _masterBook.getUDFFinder();
     }
+    
+    /* (non-Javadoc)
+     * leave the map alone, if it needs resetting, reusing this class is probably a bad idea.
+     * @see org.apache.poi.ss.formula.EvaluationSheet#clearAllCachedResultValues()
+     */
+    public void clearAllCachedResultValues() {
+        _masterBook.clearAllCachedResultValues();
+    }
 }

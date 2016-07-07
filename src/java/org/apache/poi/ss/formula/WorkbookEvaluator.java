@@ -208,6 +208,7 @@ public final class WorkbookEvaluator {
     public void clearAllCachedResultValues() {
         _cache.clear();
         _sheetIndexesBySheet.clear();
+        _workbook.clearAllCachedResultValues();
     }
 
     /**

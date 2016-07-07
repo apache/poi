@@ -40,6 +40,11 @@ public final class XSSFEvaluationWorkbook extends BaseXSSFEvaluationWorkbook {
         super(book);
     }
 
+    public void clearAllCachedResultValues() {
+        super.clearAllCachedResultValues();
+        _sheetCache = null;
+    }
+    
     @Override
     public int getSheetIndex(EvaluationSheet evalSheet) {
         XSSFSheet sheet = ((XSSFEvaluationSheet)evalSheet).getXSSFSheet();

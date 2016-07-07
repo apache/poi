@@ -30,4 +30,12 @@ public interface EvaluationSheet {
 	 * @return <code>null</code> if there is no cell at the specified coordinates
 	 */
 	EvaluationCell getCell(int rowIndex, int columnIndex);
+	
+    /**
+     * Propagated from {@link EvaluationWorkbook#clearAllCachedResultValues()} to clear locally cached data.
+     * 
+     * @see WorkbookEvaluator#clearAllCachedResultValues()
+     * @see EvaluationWorkbook#clearAllCachedResultValues()
+     */
+    public void clearAllCachedResultValues();
 }
