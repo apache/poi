@@ -675,7 +675,7 @@ public abstract class XSLFSimpleShape extends XSLFShape
      *
      * @return definition of the shape geometry
      */
-    public CustomGeometry getGeometry(){
+    public CustomGeometry getGeometry() {
         XSLFGeometryProperties gp = XSLFPropertiesDelegate.getGeometryDelegate(getShapeProperties());
         
         if (gp == null) {
@@ -693,8 +693,13 @@ public abstract class XSLFSimpleShape extends XSLFShape
         } else if (gp.isSetCustGeom()){
             XMLStreamReader staxReader = gp.getCustGeom().newXMLStreamReader();
             geom = PresetGeometries.convertCustomGeometry(staxReader);
-            try { staxReader.close(); }
-            catch (XMLStreamException e) {}
+            try {
+                staxReader.close();
+            }
+            catch (XMLStreamException e) {
+                LOG.log(POILogger.WARN,
+                        "An error occurred while closing a Custom Geometry XML Stream Reader: " + e.getMessage());
+            }
         } else {
             geom = dict.get("rect");
         }
