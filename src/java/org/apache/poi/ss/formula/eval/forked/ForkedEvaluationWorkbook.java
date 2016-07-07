@@ -37,71 +37,71 @@ import org.apache.poi.ss.usermodel.Workbook;
  */
 final class ForkedEvaluationWorkbook implements EvaluationWorkbook {
 
-	private final EvaluationWorkbook _masterBook;
-	private final Map<String, ForkedEvaluationSheet> _sharedSheetsByName;
+    private final EvaluationWorkbook _masterBook;
+    private final Map<String, ForkedEvaluationSheet> _sharedSheetsByName;
 
-	public ForkedEvaluationWorkbook(EvaluationWorkbook master) {
-		_masterBook = master;
-		_sharedSheetsByName = new HashMap<String, ForkedEvaluationSheet>();
-	}
+    public ForkedEvaluationWorkbook(EvaluationWorkbook master) {
+        _masterBook = master;
+        _sharedSheetsByName = new HashMap<String, ForkedEvaluationSheet>();
+    }
 
-	public ForkedEvaluationCell getOrCreateUpdatableCell(String sheetName, int rowIndex,
-			int columnIndex) {
-		ForkedEvaluationSheet sheet = getSharedSheet(sheetName);
-		return sheet.getOrCreateUpdatableCell(rowIndex, columnIndex);
-	}
+    public ForkedEvaluationCell getOrCreateUpdatableCell(String sheetName, int rowIndex,
+            int columnIndex) {
+        ForkedEvaluationSheet sheet = getSharedSheet(sheetName);
+        return sheet.getOrCreateUpdatableCell(rowIndex, columnIndex);
+    }
 
-	public EvaluationCell getEvaluationCell(String sheetName, int rowIndex, int columnIndex) {
-		ForkedEvaluationSheet sheet = getSharedSheet(sheetName);
-		return sheet.getCell(rowIndex, columnIndex);
-	}
+    public EvaluationCell getEvaluationCell(String sheetName, int rowIndex, int columnIndex) {
+        ForkedEvaluationSheet sheet = getSharedSheet(sheetName);
+        return sheet.getCell(rowIndex, columnIndex);
+    }
 
-	private ForkedEvaluationSheet getSharedSheet(String sheetName) {
-		ForkedEvaluationSheet result = _sharedSheetsByName.get(sheetName);
-		if (result == null) {
-			result = new ForkedEvaluationSheet(_masterBook.getSheet(_masterBook
-					.getSheetIndex(sheetName)));
-			_sharedSheetsByName.put(sheetName, result);
-		}
-		return result;
-	}
+    private ForkedEvaluationSheet getSharedSheet(String sheetName) {
+        ForkedEvaluationSheet result = _sharedSheetsByName.get(sheetName);
+        if (result == null) {
+            result = new ForkedEvaluationSheet(_masterBook.getSheet(_masterBook
+                    .getSheetIndex(sheetName)));
+            _sharedSheetsByName.put(sheetName, result);
+        }
+        return result;
+    }
 
-	public void copyUpdatedCells(Workbook workbook) {
+    public void copyUpdatedCells(Workbook workbook) {
         String[] sheetNames = new String[_sharedSheetsByName.size()];
         _sharedSheetsByName.keySet().toArray(sheetNames);
-		for (String sheetName : sheetNames) {
-			ForkedEvaluationSheet sheet = _sharedSheetsByName.get(sheetName);
-			sheet.copyUpdatedCells(workbook.getSheet(sheetName));
-		}
-	}
+        for (String sheetName : sheetNames) {
+            ForkedEvaluationSheet sheet = _sharedSheetsByName.get(sheetName);
+            sheet.copyUpdatedCells(workbook.getSheet(sheetName));
+        }
+    }
 
     @Override
-	public int convertFromExternSheetIndex(int externSheetIndex) {
-		return _masterBook.convertFromExternSheetIndex(externSheetIndex);
-	}
+    public int convertFromExternSheetIndex(int externSheetIndex) {
+        return _masterBook.convertFromExternSheetIndex(externSheetIndex);
+    }
 
     @Override
-	public ExternalSheet getExternalSheet(int externSheetIndex) {
-		return _masterBook.getExternalSheet(externSheetIndex);
-	}
+    public ExternalSheet getExternalSheet(int externSheetIndex) {
+        return _masterBook.getExternalSheet(externSheetIndex);
+    }
     @Override
-	public ExternalSheet getExternalSheet(String firstSheetName, String lastSheetName, int externalWorkbookNumber) {
+    public ExternalSheet getExternalSheet(String firstSheetName, String lastSheetName, int externalWorkbookNumber) {
         return _masterBook.getExternalSheet(firstSheetName, lastSheetName, externalWorkbookNumber);
     }
 
     @Override
     public Ptg[] getFormulaTokens(EvaluationCell cell) {
-		if (cell instanceof ForkedEvaluationCell) {
-			// doesn't happen yet because formulas cannot be modified from the master workbook
-			throw new RuntimeException("Updated formulas not supported yet");
-		}
-		return _masterBook.getFormulaTokens(cell);
-	}
+        if (cell instanceof ForkedEvaluationCell) {
+            // doesn't happen yet because formulas cannot be modified from the master workbook
+            throw new RuntimeException("Updated formulas not supported yet");
+        }
+        return _masterBook.getFormulaTokens(cell);
+    }
 
     @Override
-	public EvaluationName getName(NamePtg namePtg) {
-		return _masterBook.getName(namePtg);
-	}
+    public EvaluationName getName(NamePtg namePtg) {
+        return _masterBook.getName(namePtg);
+    }
 
     @Override
     public EvaluationName getName(String name, int sheetIndex){
@@ -109,42 +109,42 @@ final class ForkedEvaluationWorkbook implements EvaluationWorkbook {
     }
 
     @Override
-	public EvaluationSheet getSheet(int sheetIndex) {
-		return getSharedSheet(getSheetName(sheetIndex));
-	}
-	
+    public EvaluationSheet getSheet(int sheetIndex) {
+        return getSharedSheet(getSheetName(sheetIndex));
+    }
+    
     @Override
-	public ExternalName getExternalName(int externSheetIndex, int externNameIndex) {
-	   return _masterBook.getExternalName(externSheetIndex, externNameIndex);
-	}
+    public ExternalName getExternalName(int externSheetIndex, int externNameIndex) {
+       return _masterBook.getExternalName(externSheetIndex, externNameIndex);
+    }
     @Override
-	public ExternalName getExternalName(String nameName, String sheetName, int externalWorkbookNumber) {
-	       return _masterBook.getExternalName(nameName, sheetName, externalWorkbookNumber);
+    public ExternalName getExternalName(String nameName, String sheetName, int externalWorkbookNumber) {
+           return _masterBook.getExternalName(nameName, sheetName, externalWorkbookNumber);
     }
 
     @Override
     public int getSheetIndex(EvaluationSheet sheet) {
-		if (sheet instanceof ForkedEvaluationSheet) {
-			ForkedEvaluationSheet mes = (ForkedEvaluationSheet) sheet;
-			return mes.getSheetIndex(_masterBook);
-		}
-		return _masterBook.getSheetIndex(sheet);
-	}
+        if (sheet instanceof ForkedEvaluationSheet) {
+            ForkedEvaluationSheet mes = (ForkedEvaluationSheet) sheet;
+            return mes.getSheetIndex(_masterBook);
+        }
+        return _masterBook.getSheetIndex(sheet);
+    }
 
     @Override
-	public int getSheetIndex(String sheetName) {
-		return _masterBook.getSheetIndex(sheetName);
-	}
+    public int getSheetIndex(String sheetName) {
+        return _masterBook.getSheetIndex(sheetName);
+    }
 
     @Override
-	public String getSheetName(int sheetIndex) {
-		return _masterBook.getSheetName(sheetIndex);
-	}
+    public String getSheetName(int sheetIndex) {
+        return _masterBook.getSheetName(sheetIndex);
+    }
 
     @Override
-	public String resolveNameXText(NameXPtg ptg) {
-		return _masterBook.resolveNameXText(ptg);
-	}
+    public String resolveNameXText(NameXPtg ptg) {
+        return _masterBook.resolveNameXText(ptg);
+    }
 
     @Override
     public UDFFinder getUDFFinder() {
