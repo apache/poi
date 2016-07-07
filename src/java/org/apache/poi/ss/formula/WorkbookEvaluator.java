@@ -19,6 +19,7 @@ package org.apache.poi.ss.formula;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.Stack;
@@ -78,6 +79,7 @@ import org.apache.poi.ss.formula.udf.AggregatingUDFFinder;
 import org.apache.poi.ss.formula.udf.UDFFinder;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 /**
@@ -92,6 +94,7 @@ import org.apache.poi.util.POILogger;
  * @author Josh Micich
  * @author Thies Wellpott (debug output enhancements)
  */
+@Internal
 public final class WorkbookEvaluator {
     
     private static final POILogger LOG = POILogFactory.getLogger(WorkbookEvaluator.class);
@@ -768,6 +771,9 @@ public final class WorkbookEvaluator {
     public void setIgnoreMissingWorkbooks(boolean ignore){
         _ignoreMissingWorkbooks = ignore;
     }
+    public boolean isIgnoreMissingWorkbooks(){
+        return _ignoreMissingWorkbooks;
+    }
 
     /**
      * Return a collection of functions that POI can evaluate
@@ -778,7 +784,7 @@ public final class WorkbookEvaluator {
         Collection<String> lst = new TreeSet<String>();
         lst.addAll(FunctionEval.getSupportedFunctionNames());
         lst.addAll(AnalysisToolPak.getSupportedFunctionNames());
-        return lst;
+        return Collections.unmodifiableCollection(lst);
     }
 
     /**
@@ -790,7 +796,7 @@ public final class WorkbookEvaluator {
         Collection<String> lst = new TreeSet<String>();
         lst.addAll(FunctionEval.getNotSupportedFunctionNames());
         lst.addAll(AnalysisToolPak.getNotSupportedFunctionNames());
-        return lst;
+        return Collections.unmodifiableCollection(lst);
     }
 
     /**
@@ -819,5 +825,8 @@ public final class WorkbookEvaluator {
 
     public void setDebugEvaluationOutputForNextEval(boolean value){
         dbgEvaluationOutputForNextEval = value;
+    }
+    public boolean isDebugEvaluationOutputForNextEval(){
+        return dbgEvaluationOutputForNextEval;
     }
 }
