@@ -28,15 +28,19 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.util.Internal;
 
 /**
  * Represents a sheet being used for forked evaluation.  Initially, objects of this class contain
  * only the cells from the master workbook. By calling {@link #getOrCreateUpdatableCell(int, int)},
  * the master cell object is logically replaced with a {@link ForkedEvaluationCell} instance, which
- * will be used in all subsequent evaluations.
+ * will be used in all subsequent evaluations.<br/>
+ *
+ * For POI internal use only
  *
  * @author Josh Micich
  */
+@Internal
 final class ForkedEvaluationSheet implements EvaluationSheet {
 
     private final EvaluationSheet _masterSheet;
@@ -105,6 +109,8 @@ final class ForkedEvaluationSheet implements EvaluationSheet {
     /* (non-Javadoc)
      * leave the map alone, if it needs resetting, reusing this class is probably a bad idea.
      * @see org.apache.poi.ss.formula.EvaluationSheet#clearAllCachedResultValues()
+     * 
+     * @since POI 3.15 beta 3
      */
     @Override
     public void clearAllCachedResultValues() {

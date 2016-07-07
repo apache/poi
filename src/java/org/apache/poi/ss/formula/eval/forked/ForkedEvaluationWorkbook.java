@@ -29,12 +29,16 @@ import org.apache.poi.ss.formula.ptg.NameXPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.udf.UDFFinder;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.util.Internal;
 
 /**
  * Represents a workbook being used for forked evaluation. Most operations are delegated to the
  * shared master workbook, except those that potentially involve cell values that may have been
- * updated after a call to {@link #getOrCreateUpdatableCell(String, int, int)}.
+ * updated after a call to {@link #getOrCreateUpdatableCell(String, int, int)}.<br/>
+ * 
+ * For POI internal use only
  */
+@Internal
 final class ForkedEvaluationWorkbook implements EvaluationWorkbook {
 
     private final EvaluationWorkbook _masterBook;
@@ -154,6 +158,8 @@ final class ForkedEvaluationWorkbook implements EvaluationWorkbook {
     /* (non-Javadoc)
      * leave the map alone, if it needs resetting, reusing this class is probably a bad idea.
      * @see org.apache.poi.ss.formula.EvaluationSheet#clearAllCachedResultValues()
+     * 
+     * @since POI 3.15 beta 3
      */
     @Override
     public void clearAllCachedResultValues() {

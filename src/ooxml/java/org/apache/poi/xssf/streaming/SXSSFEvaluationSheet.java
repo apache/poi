@@ -19,10 +19,12 @@ package org.apache.poi.xssf.streaming;
 
 import org.apache.poi.ss.formula.EvaluationCell;
 import org.apache.poi.ss.formula.EvaluationSheet;
+import org.apache.poi.util.Internal;
 
 /**
  * SXSSF wrapper for a sheet under evaluation
  */
+@Internal
 final class SXSSFEvaluationSheet implements EvaluationSheet {
     private final SXSSFSheet _xs;
 
@@ -49,6 +51,9 @@ final class SXSSFEvaluationSheet implements EvaluationSheet {
         return new SXSSFEvaluationCell(cell, this);
     }
     
+    /* (non-JavaDoc), inherit JavaDoc from EvaluationSheet
+     * @since POI 3.15 beta 3
+     */
     @Override
     public void clearAllCachedResultValues() {
         // nothing to do

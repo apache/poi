@@ -17,6 +17,8 @@
 
 package org.apache.poi.ss.formula;
 
+import org.apache.poi.util.Internal;
+
 /**
  * Abstracts a sheet for the purpose of formula evaluation.<br/>
  * 
@@ -24,6 +26,7 @@ package org.apache.poi.ss.formula;
  * 
  * @author Josh Micich
  */
+@Internal
 public interface EvaluationSheet {
 
     /**
@@ -36,6 +39,7 @@ public interface EvaluationSheet {
      * 
      * @see WorkbookEvaluator#clearAllCachedResultValues()
      * @see EvaluationWorkbook#clearAllCachedResultValues()
+     * @since POI 3.15 beta 3
      */
     public void clearAllCachedResultValues();
 }

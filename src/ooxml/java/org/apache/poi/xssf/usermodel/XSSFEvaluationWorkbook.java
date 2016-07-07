@@ -22,10 +22,12 @@ import org.apache.poi.ss.formula.EvaluationSheet;
 import org.apache.poi.ss.formula.FormulaParser;
 import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.formula.ptg.Ptg;
+import org.apache.poi.util.Internal;
 
 /**
  * Internal POI use only
  */
+@Internal
 public final class XSSFEvaluationWorkbook extends BaseXSSFEvaluationWorkbook {
     private XSSFEvaluationSheet[] _sheetCache;
     
@@ -40,6 +42,9 @@ public final class XSSFEvaluationWorkbook extends BaseXSSFEvaluationWorkbook {
         super(book);
     }
 
+    /* (non-JavaDoc), inherit JavaDoc from EvaluationSheet
+     * @since POI 3.15 beta 3
+     */
     @Override
     public void clearAllCachedResultValues() {
         super.clearAllCachedResultValues();

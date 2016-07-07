@@ -19,10 +19,12 @@ package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.ss.formula.EvaluationCell;
 import org.apache.poi.ss.formula.EvaluationSheet;
+import org.apache.poi.util.Internal;
 
 /**
  * HSSF wrapper for a sheet under evaluation
  */
+@Internal
 final class HSSFEvaluationSheet implements EvaluationSheet {
 
     private final HSSFSheet _hs;
@@ -46,7 +48,10 @@ final class HSSFEvaluationSheet implements EvaluationSheet {
         }
         return new HSSFEvaluationCell(cell, this);
     }
-    
+
+    /* (non-JavaDoc), inherit JavaDoc from EvaluationSheet
+     * @since POI 3.15 beta 3
+     */    
     @Override
     public void clearAllCachedResultValues() {
         // nothing to do

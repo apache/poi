@@ -43,12 +43,14 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.NotImplemented;
+import org.apache.poi.util.Internal;
 import org.apache.poi.xssf.model.ExternalLinksTable;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedName;
 
 /**
  * Internal POI use only - parent of XSSF and SXSSF evaluation workbooks
  */
+@Internal
 public abstract class BaseXSSFEvaluationWorkbook implements FormulaRenderingWorkbook, EvaluationWorkbook, FormulaParsingWorkbook {
     protected final XSSFWorkbook _uBook;
 
@@ -61,6 +63,9 @@ public abstract class BaseXSSFEvaluationWorkbook implements FormulaRenderingWork
         _uBook = book;
     }
 
+    /* (non-JavaDoc), inherit JavaDoc from EvaluationWorkbook
+     * @since POI 3.15 beta 3
+     */
     @Override
     public void clearAllCachedResultValues() {
         _tableCache = null;

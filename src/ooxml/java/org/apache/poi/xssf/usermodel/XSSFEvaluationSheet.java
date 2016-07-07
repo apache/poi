@@ -24,10 +24,12 @@ import org.apache.poi.ss.formula.EvaluationCell;
 import org.apache.poi.ss.formula.EvaluationSheet;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.util.Internal;
 
 /**
  * XSSF wrapper for a sheet under evaluation
  */
+@Internal
 final class XSSFEvaluationSheet implements EvaluationSheet {
 
     private final XSSFSheet _xs;
@@ -41,6 +43,9 @@ final class XSSFEvaluationSheet implements EvaluationSheet {
         return _xs;
     }
 
+    /* (non-JavaDoc), inherit JavaDoc from EvaluationWorkbook
+     * @since POI 3.15 beta 3
+     */
     @Override
     public void clearAllCachedResultValues() {
         _cellCache = null;
