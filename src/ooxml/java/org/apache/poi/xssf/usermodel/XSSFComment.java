@@ -60,10 +60,7 @@ public class XSSFComment implements Comment {
             clientData.setRowArray(0, new BigInteger(String.valueOf(ref.getRow())));
             clientData.setColumnArray(0, new BigInteger(String.valueOf(ref.getCol())));
             
-            // There is a very odd xmlbeans bug when changing the row
-            //  arrays which can lead to corrupt pointer
-            // This call seems to fix them again... See bug #50795
-            vmlShape.getClientDataList().toString();
+            avoidXmlbeansCorruptPointer(vmlShape);
         }
     }
 
@@ -156,10 +153,7 @@ public class XSSFComment implements Comment {
             clientData.setRowArray(0, new BigInteger(String.valueOf(address.getRow())));
             clientData.setColumnArray(0, new BigInteger(String.valueOf(address.getColumn())));
            
-           // There is a very odd xmlbeans bug when changing the column
-           //  arrays which can lead to corrupt pointer
-           // This call seems to fix them again... See bug #50795
-           _vmlShape.getClientDataList().toString();
+            avoidXmlbeansCorruptPointer(_vmlShape);
         }
     }
 
@@ -253,5 +247,12 @@ public class XSSFComment implements Comment {
     @Override
     public int hashCode() {
         return ((getRow()*17) + getColumn())*31;
+    }
+
+    private static void avoidXmlbeansCorruptPointer(CTShape vmlShape) {
+        // There is a very odd xmlbeans bug when changing the row
+        //  arrays which can lead to corrupt pointer
+        // This call seems to fix them again... See bug #50795
+        vmlShape.getClientDataList().toString();
     }
 }
