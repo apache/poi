@@ -52,21 +52,8 @@ public final class LocaleUtil {
      */
     public static final Charset CHARSET_1252 = Charset.forName("CP1252");
 
-    private static final ThreadLocal<TimeZone> userTimeZone = new ThreadLocal<TimeZone>() {
-        @Override
-        @SuppressForbidden("implementation around default locales in POI")
-        protected TimeZone initialValue() {
-            return TimeZone.getDefault();
-        }
-    };
-
-    private static final ThreadLocal<Locale> userLocale = new ThreadLocal<Locale>() {
-        @Override
-        @SuppressForbidden("implementation around default locales in POI")
-        protected Locale initialValue() {
-            return Locale.getDefault();
-        }
-    };
+    private static final ThreadLocal<TimeZone> userTimeZone = new ThreadLocal<TimeZone>();
+    private static final ThreadLocal<Locale> userLocale = new ThreadLocal<Locale>();
     
     /**
      * As time zone information is not stored in any format, it can be
@@ -80,12 +67,17 @@ public final class LocaleUtil {
     }
     
     /**
-     * @return the time zone which is used for date calculations, defaults to UTC
+     * @return the time zone which is used for date calculations. If not set, returns {@link TimeZone#getDefault()}.
      */
+    @SuppressForbidden("implementation around default locales in POI")
     public static TimeZone getUserTimeZone() {
-        return userTimeZone.get();
+        TimeZone timeZone = userTimeZone.get();
+        return (timeZone != null) ? timeZone : TimeZone.getDefault();
     }
-    
+
+    /**
+     * Clear the thread-local user time zone.
+     */    
     public static void resetUserTimeZone() {
         userTimeZone.remove();
     }
@@ -98,15 +90,17 @@ public final class LocaleUtil {
         userLocale.set(locale);
     }
     
-    public static void resetUserLocale() {
-        userLocale.remove();
+    /**
+     * @return the default user locale. If not set, returns {@link Locale#getDefault()}.
+     */
+    @SuppressForbidden("implementation around default locales in POI")
+    public static Locale getUserLocale() {
+        Locale locale = userLocale.get();
+        return (locale != null) ? locale : Locale.getDefault();
     }
 
-    /**
-     * @return the default user locale, defaults to {@link Locale#ROOT}
-     */
-    public static Locale getUserLocale() {
-        return userLocale.get();
+    public static void resetUserLocale() {
+        userLocale.remove();
     }
 
     /**
