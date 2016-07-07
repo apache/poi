@@ -18,7 +18,9 @@
 package org.apache.poi.ss.formula;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
@@ -301,6 +303,32 @@ public class TestWorkbookEvaluator {
         assertEquals(28.14, fe.evaluate(row3.getCell(2)).getNumberValue(), EPSILON);
         
         wb.close();
+    }
+
+    @Test
+    public void testIgnoreMissingWorkbooks() {
+        // TODO: update this test for meaningful functional behavior
+        WorkbookEvaluator evaluator = new WorkbookEvaluator(null, null, null);
+        assertFalse(evaluator.isIgnoreMissingWorkbooks());
+
+        evaluator.setIgnoreMissingWorkbooks(true);
+        assertTrue(evaluator.isIgnoreMissingWorkbooks());
+
+        evaluator.setIgnoreMissingWorkbooks(false);
+        assertFalse(evaluator.isIgnoreMissingWorkbooks());
+    }
+
+    @Test
+    public void testDebugEvaluationOutputForNextEval() {
+        // TODO: update this test for meaningful functional behavior
+        WorkbookEvaluator evaluator = new WorkbookEvaluator(null, null, null);
+        assertFalse(evaluator.isDebugEvaluationOutputForNextEval());
+
+        evaluator.setDebugEvaluationOutputForNextEval(true);
+        assertTrue(evaluator.isDebugEvaluationOutputForNextEval());
+
+        evaluator.setDebugEvaluationOutputForNextEval(false);
+        assertFalse(evaluator.isDebugEvaluationOutputForNextEval());
     }
     
 // Test IF-Equals Formula Evaluation (bug 58591)
