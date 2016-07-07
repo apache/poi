@@ -114,6 +114,16 @@ public final class WorkbookEvaluator {
     private boolean _ignoreMissingWorkbooks = false;
 
     /**
+     * whether print detailed messages about the next formula evaluation
+     */
+    private boolean dbgEvaluationOutputForNextEval = false;
+
+    // special logger for formula evaluation output (because of possibly very large output)
+    private final POILogger EVAL_LOG = POILogFactory.getLogger("POI.FormulaEval");
+    // current indent level for evalution; negative value for no output
+    private int dbgEvaluationOutputIndent = -1;
+
+    /**
      * @param udfFinder pass <code>null</code> for default (AnalysisToolPak only)
      */
     public WorkbookEvaluator(EvaluationWorkbook workbook, IStabilityClassifier stabilityClassifier, UDFFinder udfFinder) {
@@ -408,17 +418,8 @@ public final class WorkbookEvaluator {
     }
 
 
-    /**
-     * whether print detailed messages about the next formula evaluation
-     */
-    private boolean dbgEvaluationOutputForNextEval = false;
-
-    // special logger for formula evaluation output (because of possibly very large output)
-    private final POILogger EVAL_LOG = POILogFactory.getLogger("POI.FormulaEval");
-    // current indent level for evalution; negative value for no output
-    private int dbgEvaluationOutputIndent = -1;
-
     // visibility raised for testing
+    @Internal
     /* package */ ValueEval evaluateFormula(OperationEvaluationContext ec, Ptg[] ptgs) {
 
         String dbgIndentStr = "";        // always init. to non-null just for defensive avoiding NPE
