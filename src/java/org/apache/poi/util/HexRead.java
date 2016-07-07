@@ -108,58 +108,35 @@ public class HexRead
         int characterCount = 0;
         byte b = (byte) 0;
         List<Byte> bytes = new ArrayList<Byte>();
-        boolean done = false;
-        while ( !done )
+        final char a = 'a' - 10;
+        final char A = 'A' - 10;
+        while ( true )
         {
             int count = stream.read();
-            char baseChar = 'a';
-            if ( count == eofChar ) break;
-            switch ( count )
-            {
-                case '#':
-                    readToEOL( stream );
-                    break;
-                case '0': case '1': case '2': case '3': case '4': case '5':
-                case '6': case '7': case '8': case '9':
-                    b <<= 4;
-                    b += (byte) ( count - '0' );
-                    characterCount++;
-                    if ( characterCount == 2 )
-                    {
-                        bytes.add( Byte.valueOf( b ) );
-                        characterCount = 0;
-                        b = (byte) 0;
-                    }
-                    break;
-                case 'A':
-                case 'B':
-                case 'C':
-                case 'D':
-                case 'E':
-                case 'F':
-                    baseChar = 'A';
-                    // fall through
-                case 'a':
-                case 'b':
-                case 'c':
-                case 'd':
-                case 'e':
-                case 'f':
-                    b <<= 4;
-                    b += (byte) ( count + 10 - baseChar );
-                    characterCount++;
-                    if ( characterCount == 2 )
-                    {
-                        bytes.add( Byte.valueOf( b ) );
-                        characterCount = 0;
-                        b = (byte) 0;
-                    }
-                    break;
-                case -1:
-                    done = true;
-                    break;
-                default :
-                    break;
+            int digitValue = -1;
+            if ( '0' <= count && count <= '9' ) {
+                digitValue = count - '0';
+            } else if ( 'A' <= count && count <= 'F' ) {
+                digitValue = count - A;
+            } else if ( 'a' <= count && count <= 'f' ) {
+                digitValue = count - a;
+            } else if ( '#' == count ) {
+                readToEOL( stream );
+            } else if ( -1 == count || eofChar == count ) {
+                break;
+            }
+            // else: ignore the character
+
+            if (digitValue != -1) {
+                b <<= 4;
+                b += (byte) digitValue;
+                characterCount++;
+                if ( characterCount == 2 )
+                {
+                    bytes.add( Byte.valueOf( b ) );
+                    characterCount = 0;
+                    b = (byte) 0;
+                }
             }
         }
         Byte[] polished = bytes.toArray( new Byte[0] );
