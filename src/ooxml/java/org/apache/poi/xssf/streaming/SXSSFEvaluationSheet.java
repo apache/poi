@@ -47,4 +47,8 @@ final class SXSSFEvaluationSheet implements EvaluationSheet {
         }
         return new SXSSFEvaluationCell(cell, this);
     }
+    
+    public void clearAllCachedResultValues() {
+        // nothing to do
+    }
 }

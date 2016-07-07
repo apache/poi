@@ -45,4 +45,8 @@ final class HSSFEvaluationSheet implements EvaluationSheet {
 		}
 		return new HSSFEvaluationCell(cell, this);
 	}
+	
+	public void clearAllCachedResultValues() {
+	    // nothing to do
+	}
 }

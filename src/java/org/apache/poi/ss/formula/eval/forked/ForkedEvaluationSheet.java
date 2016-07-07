@@ -101,6 +101,14 @@ final class ForkedEvaluationSheet implements EvaluationSheet {
 		return mewb.getSheetIndex(_masterSheet);
 	}
 
+	/* (non-Javadoc)
+	 * leave the map alone, if it needs resetting, reusing this class is probably a bad idea.
+	 * @see org.apache.poi.ss.formula.EvaluationSheet#clearAllCachedResultValues()
+	 */
+	public void clearAllCachedResultValues() {
+	    _masterSheet.clearAllCachedResultValues();
+	}
+	
 	private static final class RowColKey implements Comparable<RowColKey>{
 		private final int _rowIndex;
 		private final int _columnIndex;

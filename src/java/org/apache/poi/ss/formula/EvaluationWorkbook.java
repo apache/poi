@@ -73,6 +73,13 @@ public interface EvaluationWorkbook {
     String resolveNameXText(NameXPtg ptg);
     Ptg[] getFormulaTokens(EvaluationCell cell);
     UDFFinder getUDFFinder();
+    
+    /**
+     * Propagated from {@link WorkbookEvaluator#clearAllCachedResultValues()} to clear locally cached data.
+     * Implementations must call the same method on all referenced {@link EvaluationSheet} instances, as well as clearing local caches.
+     * @see WorkbookEvaluator#clearAllCachedResultValues()
+     */
+    public void clearAllCachedResultValues();
 
     class ExternalSheet {
         private final String _workbookName;

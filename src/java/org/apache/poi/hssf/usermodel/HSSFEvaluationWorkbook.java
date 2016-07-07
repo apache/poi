@@ -64,6 +64,10 @@ public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
         _iBook = book.getWorkbook();
     }
     
+    public void clearAllCachedResultValues() {
+        // nothing to do
+    }
+    
     @Override
     public HSSFName createName() {
         return _uBook.createName();

@@ -56,6 +56,10 @@ public abstract class BaseXSSFEvaluationWorkbook implements FormulaRenderingWork
         _uBook = book;
     }
 
+    public void clearAllCachedResultValues() {
+        _tableCache = null;
+    }
+    
     private int convertFromExternalSheetIndex(int externSheetIndex) {
         return externSheetIndex;
     }

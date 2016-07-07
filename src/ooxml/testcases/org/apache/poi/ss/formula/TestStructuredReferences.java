@@ -18,17 +18,22 @@
 package org.apache.poi.ss.formula;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Table;
+import org.apache.poi.ss.util.AreaReference;
+import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.usermodel.XSSFFormulaEvaluator;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFTable;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.Test;
 
@@ -63,8 +68,40 @@ public class TestStructuredReferences {
         try {
             
             final FormulaEvaluator eval = new XSSFFormulaEvaluator(wb);
-            confirm(eval, wb.getSheet("Table").getRow(5).getCell(0), 49);
-            confirm(eval, wb.getSheet("Formulas").getRow(0).getCell(0), 209);
+            final XSSFSheet tableSheet = wb.getSheet("Table");
+            final XSSFSheet formulaSheet = wb.getSheet("Formulas");
+
+            confirm(eval, tableSheet.getRow(5).getCell(0), 49);
+            confirm(eval, formulaSheet.getRow(0).getCell(0), 209);
+            confirm(eval, formulaSheet.getRow(1).getCell(0), "one");
+            
+            // test changing a table value, to see if the caches are properly cleared
+            // Issue 59814
+            
+            // this test passes before the fix for 59814
+            tableSheet.getRow(1).getCell(1).setCellValue("ONEA");
+            confirm(eval, formulaSheet.getRow(1).getCell(0), "ONEA");
+            
+            // test adding a row to a table, issue 59814
+            Row newRow = tableSheet.getRow(7);
+            if (newRow == null) newRow = tableSheet.createRow(7);
+            newRow.createCell(0, CellType.FORMULA).setCellFormula("\\_Prime.1[[#This Row],[@Number]]*\\_Prime.1[[#This Row],[@Number]]");
+            newRow.createCell(1, CellType.STRING).setCellValue("thirteen");
+            newRow.createCell(2, CellType.NUMERIC).setCellValue(13);
+            
+            // update Table
+            final XSSFTable table = wb.getTable("\\_Prime.1");
+            final AreaReference newArea = new AreaReference(table.getStartCellReference(), new CellReference(table.getEndRowIndex() + 1, table.getEndColIndex()));
+            String newAreaStr = newArea.formatAsString();
+            table.getCTTable().setRef(newAreaStr);
+            table.getCTTable().getAutoFilter().setRef(newAreaStr);
+            table.updateHeaders();
+            table.updateReferences();
+
+            // these fail before the fix for 59814
+            confirm(eval, tableSheet.getRow(7).getCell(0), 13*13);
+            confirm(eval, formulaSheet.getRow(0).getCell(0), 209 + 13*13);
+
         } finally {
             wb.close();
         }
@@ -77,5 +114,14 @@ public class TestStructuredReferences {
             fail("expected numeric cell type but got " + cv.formatAsString());
         }
         assertEquals(expectedResult, cv.getNumberValue(), 0.0);
+    }
+
+    private static void confirm(FormulaEvaluator fe, Cell cell, String expectedResult) {
+        fe.clearAllCachedResultValues();
+        CellValue cv = fe.evaluate(cell);
+        if (cv.getCellType() != CellType.STRING) {
+            fail("expected String cell type but got " + cv.formatAsString());
+        }
+        assertEquals(expectedResult, cv.getStringValue());
     }
 }
