@@ -17,9 +17,9 @@
 
 package org.apache.poi.openxml4j.opc.compliance;
 
-import java.io.IOException;
+import static org.junit.Assert.fail;
 
-import junit.framework.TestCase;
+import java.io.IOException;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -31,6 +31,7 @@ import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.opc.TargetMode;
+import org.junit.Test;
 
 /**
  * Test Open Packaging Convention package model compliance.
@@ -40,13 +41,14 @@ import org.apache.poi.openxml4j.opc.TargetMode;
  *
  * @author Julien Chable
  */
-public class TestOPCCompliancePackageModel extends TestCase {
+public class TestOPCCompliancePackageModel {
 
     /**
      * A package implementer shall neither create nor recognize a part with a
      * part name derived from another part name by appending segments to it.
      * [M1.11]
      */
+    @Test
     public void testPartNameDerivationAdditionFailure() {
         OPCPackage pkg = OPCPackage.create("TODELETEIFEXIST.docx");
         try {
@@ -72,6 +74,7 @@ public class TestOPCCompliancePackageModel extends TestCase {
      * part name derived from another part name by appending segments to it.
      * [M1.11]
      */
+    @Test
     public void testPartNameDerivationReadingFailure() throws IOException {
         String filename = "OPCCompliance_DerivedPartNameFAIL.docx";
         try {
@@ -89,6 +92,7 @@ public class TestOPCCompliancePackageModel extends TestCase {
      * implementers shall neither create nor recognize packages with equivalent
      * part names.
      */
+    @Test
     public void testAddPackageAlreadyAddFailure() throws Exception {
         OPCPackage pkg = OPCPackage.create("DELETEIFEXISTS.docx");
         PackagePartName name1 = null;
@@ -113,6 +117,7 @@ public class TestOPCCompliancePackageModel extends TestCase {
      * implementers shall neither create nor recognize packages with equivalent
      * part names.
      */
+    @Test
     public void testAddPackageAlreadyAddFailure2() throws Exception {
         OPCPackage pkg = OPCPackage.create("DELETEIFEXISTS.docx");
         PackagePartName partName = null;
@@ -138,6 +143,7 @@ public class TestOPCCompliancePackageModel extends TestCase {
      * the attempt to create such a relationship and shall treat any such
      * relationship as invalid.
      */
+    @Test
     public void testAddRelationshipRelationshipsPartFailure() {
         OPCPackage pkg = OPCPackage.create("DELETEIFEXISTS.docx");
         PackagePartName name1 = null;

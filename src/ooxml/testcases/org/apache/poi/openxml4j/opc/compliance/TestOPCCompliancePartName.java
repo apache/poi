@@ -17,14 +17,17 @@
 
 package org.apache.poi.openxml4j.opc.compliance;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.net.URI;
 import java.net.URISyntaxException;
-
-import junit.framework.TestCase;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
+import org.junit.Test;
 
 /**
  * Test part name Open Packaging Convention compliance.
@@ -77,13 +80,14 @@ import org.apache.poi.openxml4j.opc.PackagingURIHelper;
  *
  * @author Julien Chable
  */
-public final class TestOPCCompliancePartName extends TestCase {
+public final class TestOPCCompliancePartName {
 
     /**
      * Test some common invalid names.
      *
      * A segment shall not contain percent-encoded unreserved characters. [M1.8]
      */
+    @Test
     public void testInvalidPartNames() {
         String[] invalidNames = { "/", "/xml./doc.xml", "[Content_Types].xml", "//xml/." };
         for (String s : invalidNames) {
@@ -102,6 +106,7 @@ public final class TestOPCCompliancePartName extends TestCase {
     /**
      * Test some common valid names.
      */
+    @Test
     public void testValidPartNames() throws URISyntaxException {
         String[] validNames = { "/xml/item1.xml", "/document.xml",
                 "/a/%D1%86.xml" };
@@ -113,6 +118,7 @@ public final class TestOPCCompliancePartName extends TestCase {
     /**
      * A part name shall not be empty. [M1.1]
      */
+    @Test
     public void testEmptyPartNameFailure() throws URISyntaxException {
         try {
             PackagingURIHelper.createPartName(new URI(""));
@@ -129,6 +135,7 @@ public final class TestOPCCompliancePartName extends TestCase {
      *
      * A segment shall include at least one non-dot character. [M1.10]
      */
+    @Test
     public void testPartNameWithInvalidSegmentsFailure() {
         String[] invalidNames = { "//document.xml", "//word/document.xml",
                 "/word//document.rels", "/word//rels//document.rels",
@@ -148,6 +155,7 @@ public final class TestOPCCompliancePartName extends TestCase {
      * A segment shall not hold any characters other than ipchar (RFC 3987) characters.
      * [M1.6].
      */
+    @Test
     public void testPartNameWithNonPCharCharacters() {
         String[] validNames = { "/doc&.xml" };
         try {
@@ -164,6 +172,7 @@ public final class TestOPCCompliancePartName extends TestCase {
     /**
      * A segment shall not contain percent-encoded unreserved characters [M1.8].
      */
+    @Test
     public void testPartNameWithUnreservedEncodedCharactersFailure() {
         String[] invalidNames = { "/a/docum%65nt.xml" };
         try {
@@ -180,6 +189,7 @@ public final class TestOPCCompliancePartName extends TestCase {
     /**
      * A part name shall start with a forward slash ('/') character. [M1.4]
      */
+    @Test
     public void testPartNameStartsWithAForwardSlashFailure()
             throws URISyntaxException {
         try {
@@ -193,6 +203,7 @@ public final class TestOPCCompliancePartName extends TestCase {
     /**
      * A part name shall not have a forward slash as the last character. [M1.5]
      */
+    @Test
     public void testPartNameEndsWithAForwardSlashFailure()
             throws URISyntaxException {
         try {
@@ -207,6 +218,7 @@ public final class TestOPCCompliancePartName extends TestCase {
      * Part name equivalence is determined by comparing part names as
      * case-insensitive ASCII strings. [M1.12]
      */
+    @Test
     public void testPartNameComparaison() throws Exception {
         String[] partName1 = { "/word/document.xml", "/docProps/core.xml", "/rels/.rels" };
         String[] partName2 = { "/WORD/DocUment.XML", "/docProps/core.xml", "/rels/.rels" };
@@ -225,6 +237,7 @@ public final class TestOPCCompliancePartName extends TestCase {
      *
      * All the comparisons MUST FAIL !
      */
+    @Test
     public void testPartNameComparaisonFailure() throws Exception {
         String[] partName1 = { "/word/document.xml", "/docProps/core.xml", "/rels/.rels" };
         String[] partName2 = { "/WORD/DocUment.XML2", "/docProp/core.xml", "/rels/rels" };

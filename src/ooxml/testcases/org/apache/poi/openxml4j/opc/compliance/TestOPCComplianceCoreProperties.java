@@ -17,6 +17,12 @@
 
 package org.apache.poi.openxml4j.opc.compliance;
 
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -37,9 +43,9 @@ import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.TempFile;
+import org.junit.Test;
 
 import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
 
 /**
  * Test core properties Open Packaging Convention compliance.
@@ -73,8 +79,9 @@ import junit.framework.TestCase;
  * 
  * @author Julien Chable
  */
-public final class TestOPCComplianceCoreProperties extends TestCase {
+public final class TestOPCComplianceCoreProperties {
 
+    @Test
     public void testCorePropertiesPart() {
         OPCPackage pkg;
         try {
@@ -106,6 +113,7 @@ public final class TestOPCComplianceCoreProperties extends TestCase {
     /**
      * Test M4.1 rule.
      */
+    @Test
     public void testOnlyOneCorePropertiesPart() throws Exception {
        // We have relaxed this check, so we can read the file anyway
        try {
@@ -141,6 +149,7 @@ public final class TestOPCComplianceCoreProperties extends TestCase {
     /**
      * Test M4.1 rule.
      */
+    @Test
     public void testOnlyOneCorePropertiesPart_AddRelationship() {
         InputStream is = OpenXML4JTestDataSamples.openComplianceSampleStream("OPCCompliance_CoreProperties_OnlyOneCorePropertiesPart.docx");
         OPCPackage pkg;
@@ -169,6 +178,7 @@ public final class TestOPCComplianceCoreProperties extends TestCase {
     /**
      * Test M4.1 rule.
      */
+    @Test
     public void testOnlyOneCorePropertiesPart_AddPart() throws InvalidFormatException {
         String sampleFileName = "OPCCompliance_CoreProperties_OnlyOneCorePropertiesPart.docx";
         OPCPackage pkg = OPCPackage.open(POIDataSamples.getOpenXML4JInstance().getFile(sampleFileName).getPath());
@@ -189,6 +199,7 @@ public final class TestOPCComplianceCoreProperties extends TestCase {
     /**
      * Test M4.2 rule.
      */
+    @Test
     public void testDoNotUseCompatibilityMarkup() {
         String msg = extractInvalidFormatMessage("DoNotUseCompatibilityMarkupFAIL.docx");
         assertEquals("OPC Compliance error [M4.2]: A format consumer shall consider the use of the Markup Compatibility namespace to be an error.", msg);
@@ -197,6 +208,7 @@ public final class TestOPCComplianceCoreProperties extends TestCase {
     /**
      * Test M4.3 rule.
      */
+    @Test
     public void testDCTermsNamespaceLimitedUse() {
         String msg = extractInvalidFormatMessage("DCTermsNamespaceLimitedUseFAIL.docx");
         assertEquals("OPC Compliance error [M4.3]: Producers shall not create a document element that contains refinements to the Dublin Core elements, except for the two specified in the schema: <dcterms:created> and <dcterms:modified> Consumers shall consider a document element that violates this constraint to be an error.", msg);
@@ -205,6 +217,7 @@ public final class TestOPCComplianceCoreProperties extends TestCase {
     /**
      * Test M4.4 rule.
      */
+    @Test
     public void testUnauthorizedXMLLangAttribute() {
         String msg = extractInvalidFormatMessage("UnauthorizedXMLLangAttributeFAIL.docx");
         assertEquals("OPC Compliance error [M4.4]: Producers shall not create a document element that contains the xml:lang attribute. Consumers shall consider a document element that violates this constraint to be an error.", msg);
@@ -213,6 +226,7 @@ public final class TestOPCComplianceCoreProperties extends TestCase {
     /**
      * Test M4.5 rule.
      */
+    @Test
     public void testLimitedXSITypeAttribute_NotPresent() {
         String msg = extractInvalidFormatMessage("LimitedXSITypeAttribute_NotPresentFAIL.docx");
         assertEquals("The element 'created' must have the 'xsi:type' attribute present !", msg);
@@ -221,6 +235,7 @@ public final class TestOPCComplianceCoreProperties extends TestCase {
     /**
      * Test M4.5 rule.
      */
+    @Test
     public void testLimitedXSITypeAttribute_PresentWithUnauthorizedValue() {
         String msg = extractInvalidFormatMessage("LimitedXSITypeAttribute_PresentWithUnauthorizedValueFAIL.docx");
         assertEquals("The element 'modified' must have the 'xsi:type' attribute with the value 'dcterms:W3CDTF', but had 'W3CDTF' !", msg);
@@ -230,6 +245,7 @@ public final class TestOPCComplianceCoreProperties extends TestCase {
      * Document with no core properties - testing at the OPC level,
      *  saving into a new stream
      */
+    @Test
     public void testNoCoreProperties_saveNew() throws Exception {
         String sampleFileName = "OPCCompliance_NoCoreProperties.xlsx";
         OPCPackage pkg = OPCPackage.open(POIDataSamples.getOpenXML4JInstance().getFile(sampleFileName).getPath());
@@ -277,6 +293,7 @@ public final class TestOPCComplianceCoreProperties extends TestCase {
      * Document with no core properties - testing at the OPC level,
      *  from a temp-file, saving in-place
      */
+    @Test
     public void testNoCoreProperties_saveInPlace() throws Exception {
         String sampleFileName = "OPCCompliance_NoCoreProperties.xlsx";
 
