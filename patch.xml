@@ -100,7 +100,7 @@
             
             <!--
             get a list of all new files in patch.tar.gz and store in tar.file.list filelist
-            $ tar -tf patch.tar.gz | grep -v patch.txt | xargs svn add
+            $ tar tf patch.tar.gz | grep -v patch\.txt | xargs svn add
             -->
             <echo message="Getting ${patch.file} file list"/>
             <delete dir="${patch.package}.tmp" quiet="false" failonerror="false" />
