@@ -192,7 +192,7 @@ public final class TestPOIXMLProperties {
 
         XWPFDocument doc2 = XWPFTestDataSamples.writeOutAndReadBack(doc);
         doc.close();
-        cp = doc.getProperties().getCoreProperties();
+        cp = doc2.getProperties().getCoreProperties();
         Date dt3 = cp.getCreated();
         assertEquals(dateCreated, dt3);
         doc2.close();
@@ -206,6 +206,14 @@ public final class TestPOIXMLProperties {
         assertEquals("20", _coreProperties.getRevision());
         _coreProperties.setRevision("20xx");
         assertEquals("20", _coreProperties.getRevision());
+    }
+
+    @Test
+    public void testLastModifiedByProperty() {
+        String lastModifiedBy = _coreProperties.getLastModifiedBy();
+        assertEquals("Paolo Mottadelli", lastModifiedBy);
+        _coreProperties.setLastModifiedBy("Test User");
+        assertEquals("Test User", _coreProperties.getLastModifiedBy());
     }
 
     public static boolean dateTimeEqualToUTCString(Date dateTime, String utcString) {
