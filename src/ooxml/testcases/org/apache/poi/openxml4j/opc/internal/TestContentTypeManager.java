@@ -17,7 +17,9 @@
 
 package org.apache.poi.openxml4j.opc.internal;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+import static org.junit.Assume.assumeTrue;
 
 import org.apache.poi.openxml4j.OpenXML4JTestDataSamples;
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -25,34 +27,39 @@ import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
 import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
+import org.junit.Ignore;
+import org.junit.Test;
 
-public final class TestContentTypeManager extends TestCase {
+public final class TestContentTypeManager {
 
     /**
      * Test the properties part content parsing.
      */
-    public void disabled_testContentType() throws Exception {
+    @Test
+    public void testContentType() throws Exception {
         String filepath =  OpenXML4JTestDataSamples.getSampleFileName("sample.docx");
 
-         // Retrieves core properties part
-         OPCPackage p = OPCPackage.open(filepath, PackageAccess.READ);
-         PackageRelationship corePropertiesRelationship = p
-         .getRelationshipsByType(
-         PackageRelationshipTypes.CORE_PROPERTIES)
-         .getRelationship(0);
-         PackagePart coreDocument = p.getPart(corePropertiesRelationship);
+        // Retrieves core properties part
+        OPCPackage p = OPCPackage.open(filepath, PackageAccess.READ);
+        PackageRelationshipCollection rels = p.getRelationshipsByType(PackageRelationshipTypes.CORE_PROPERTIES);
+        PackageRelationship corePropertiesRelationship = rels.getRelationship(0);
+        PackagePart coreDocument = p.getPart(corePropertiesRelationship);
+        
+        assertEquals("application/vnd.openxmlformats-package.core-properties+xml", coreDocument.getContentType());
 
-         ContentTypeManager ctm = new ZipContentTypeManager(coreDocument.getInputStream(), p);
-
-         // TODO - finish writing this test
-        fail();
+        // TODO - finish writing this test
+        assumeTrue("finish writing this test", false);
+        
+        ContentTypeManager ctm = new ZipContentTypeManager(coreDocument.getInputStream(), p);
     }
 
     /**
      * Test the addition of several default and override content types.
      */
+    @Test
     public void testContentTypeAddition() throws Exception {
         ContentTypeManager ctm = new ZipContentTypeManager(null, null);
 
@@ -76,6 +83,7 @@ public final class TestContentTypeManager extends TestCase {
     /**
      * Test the addition then removal of content types.
      */
+    @Test
     public void testContentTypeRemoval() throws Exception {
         ContentTypeManager ctm = new ZipContentTypeManager(null, null);
 
@@ -104,7 +112,10 @@ public final class TestContentTypeManager extends TestCase {
     /**
      * Test the addition then removal of content types in a package.
      */
+    @Ignore
+    @Test
     public void testContentTypeRemovalPackage() {
         // TODO
+        fail("test not written");
     }
 }
