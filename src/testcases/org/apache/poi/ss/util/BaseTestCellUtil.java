@@ -31,7 +31,9 @@ import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -259,5 +261,24 @@ public class BaseTestCellUtil {
             wb1.close();
             wb2.close();
         }
+    }
+    
+    // bug 55555
+    @Test
+    public void setFillForegroundColorBeforeFillBackgroundColor() {
+        Workbook wb1 = _testDataProvider.createWorkbook();
+        Cell A1 = wb1.createSheet().createRow(0).createCell(0);
+        Map<String, Object> properties = new HashMap<String, Object>();
+        // FIXME: Use FillPatternType.BRICKS enum
+        properties.put(CellUtil.FILL_PATTERN, CellStyle.BRICKS);
+        properties.put(CellUtil.FILL_FOREGROUND_COLOR, IndexedColors.BLUE.index);
+        properties.put(CellUtil.FILL_BACKGROUND_COLOR, IndexedColors.RED.index);
+        
+        CellUtil.setCellStyleProperties(A1, properties);
+        CellStyle style = A1.getCellStyle();
+        // FIXME: Use FillPatternType.BRICKS enum
+        assertEquals("fill pattern", CellStyle.BRICKS, style.getFillPattern());
+        assertEquals("fill foreground color", IndexedColors.BLUE, IndexedColors.fromInt(style.getFillForegroundColor()));
+        assertEquals("fill background color", IndexedColors.RED, IndexedColors.fromInt(style.getFillBackgroundColor()));
     }
 }
