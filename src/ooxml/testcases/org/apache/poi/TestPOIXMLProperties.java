@@ -209,11 +209,11 @@ public final class TestPOIXMLProperties {
     }
 
     @Test
-    public void testLastModifiedByProperty() {
-        String lastModifiedBy = _coreProperties.getLastModifiedBy();
-        assertEquals("Paolo Mottadelli", lastModifiedBy);
-        _coreProperties.setLastModifiedBy("Test User");
-        assertEquals("Test User", _coreProperties.getLastModifiedBy());
+    public void testLastModifiedByUserProperty() {
+        String lastModifiedByUser = _coreProperties.getLastModifiedByUser();
+        assertEquals("Paolo Mottadelli", lastModifiedByUser);
+        _coreProperties.setLastModifiedByUser("Test User");
+        assertEquals("Test User", _coreProperties.getLastModifiedByUser());
     }
 
     public static boolean dateTimeEqualToUTCString(Date dateTime, String utcString) {
