@@ -75,47 +75,47 @@ import junit.framework.TestCase;
  */
 public final class TestOPCComplianceCoreProperties extends TestCase {
 
-	public void testCorePropertiesPart() {
-		OPCPackage pkg;
-		try {
-			InputStream is = OpenXML4JTestDataSamples.openComplianceSampleStream("OPCCompliance_CoreProperties_OnlyOneCorePropertiesPart.docx");
-			pkg = OPCPackage.open(is);
-		} catch (InvalidFormatException e) {
-			throw new RuntimeException(e);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-		pkg.revert();
-	}
+    public void testCorePropertiesPart() {
+        OPCPackage pkg;
+        try {
+            InputStream is = OpenXML4JTestDataSamples.openComplianceSampleStream("OPCCompliance_CoreProperties_OnlyOneCorePropertiesPart.docx");
+            pkg = OPCPackage.open(is);
+        } catch (InvalidFormatException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        pkg.revert();
+    }
 
-	private static String extractInvalidFormatMessage(String sampleNameSuffix) {
-		InputStream is = OpenXML4JTestDataSamples.openComplianceSampleStream("OPCCompliance_CoreProperties_" + sampleNameSuffix);
-		OPCPackage pkg;
-		try {
-			pkg = OPCPackage.open(is);
-		} catch (InvalidFormatException e) {
-			// no longer required for successful test
-			return e.getMessage();
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-		pkg.revert();
-		throw new AssertionFailedError("expected OPC compliance exception was not thrown");
-	}
-	
-	/**
-	 * Test M4.1 rule.
-	 */
-	public void testOnlyOneCorePropertiesPart() throws Exception {
-	   // We have relaxed this check, so we can read the file anyway
-	   try {
-	      extractInvalidFormatMessage("OnlyOneCorePropertiesPartFAIL.docx");
-	      fail("M4.1 should be being relaxed");
-	   } catch (AssertionFailedError e) {
-		   // expected here
-	   }
-	   
-	   // We will use the first core properties, and ignore the others
+    private static String extractInvalidFormatMessage(String sampleNameSuffix) {
+        InputStream is = OpenXML4JTestDataSamples.openComplianceSampleStream("OPCCompliance_CoreProperties_" + sampleNameSuffix);
+        OPCPackage pkg;
+        try {
+            pkg = OPCPackage.open(is);
+        } catch (InvalidFormatException e) {
+            // no longer required for successful test
+            return e.getMessage();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        pkg.revert();
+        throw new AssertionFailedError("expected OPC compliance exception was not thrown");
+    }
+    
+    /**
+     * Test M4.1 rule.
+     */
+    public void testOnlyOneCorePropertiesPart() throws Exception {
+       // We have relaxed this check, so we can read the file anyway
+       try {
+          extractInvalidFormatMessage("OnlyOneCorePropertiesPartFAIL.docx");
+          fail("M4.1 should be being relaxed");
+       } catch (AssertionFailedError e) {
+           // expected here
+       }
+       
+       // We will use the first core properties, and ignore the others
       InputStream is = OpenXML4JTestDataSamples.openSampleStream("MultipleCoreProperties.docx");
       OPCPackage pkg = OPCPackage.open(is);
       
@@ -128,104 +128,104 @@ public final class TestOPCComplianceCoreProperties extends TestCase {
             "/docProps/core.xml",
             pkg.getPartsByRelationshipType(PackageRelationshipTypes.CORE_PROPERTIES).get(0).getPartName().toString()
       );
-	}
-	
-	private static URI createURI(String text) {
-		try {
-			return new URI(text);
-		} catch (URISyntaxException e) {
-			throw new RuntimeException(e);
-		}
-	}
+    }
+    
+    private static URI createURI(String text) {
+        try {
+            return new URI(text);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-	/**
-	 * Test M4.1 rule.
-	 */
-	public void testOnlyOneCorePropertiesPart_AddRelationship() {
-		InputStream is = OpenXML4JTestDataSamples.openComplianceSampleStream("OPCCompliance_CoreProperties_OnlyOneCorePropertiesPart.docx");
-		OPCPackage pkg;
-		try {
-			pkg = OPCPackage.open(is);
-		} catch (InvalidFormatException e) {
-			throw new RuntimeException(e);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-		URI partUri = createURI("/docProps/core2.xml");
-		try {
-			pkg.addRelationship(PackagingURIHelper.createPartName(partUri), TargetMode.INTERNAL,
-					PackageRelationshipTypes.CORE_PROPERTIES);
-			// no longer fail on compliance error
-			//fail("expected OPC compliance exception was not thrown");
-		} catch (InvalidFormatException e) {
-			throw new RuntimeException(e);
-		} catch (InvalidOperationException e) {
-			// expected during successful test
-			assertEquals("OPC Compliance error [M4.1]: can't add another core properties part ! Use the built-in package method instead.", e.getMessage());
-		}
-		pkg.revert();
-	}
+    /**
+     * Test M4.1 rule.
+     */
+    public void testOnlyOneCorePropertiesPart_AddRelationship() {
+        InputStream is = OpenXML4JTestDataSamples.openComplianceSampleStream("OPCCompliance_CoreProperties_OnlyOneCorePropertiesPart.docx");
+        OPCPackage pkg;
+        try {
+            pkg = OPCPackage.open(is);
+        } catch (InvalidFormatException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        URI partUri = createURI("/docProps/core2.xml");
+        try {
+            pkg.addRelationship(PackagingURIHelper.createPartName(partUri), TargetMode.INTERNAL,
+                    PackageRelationshipTypes.CORE_PROPERTIES);
+            // no longer fail on compliance error
+            //fail("expected OPC compliance exception was not thrown");
+        } catch (InvalidFormatException e) {
+            throw new RuntimeException(e);
+        } catch (InvalidOperationException e) {
+            // expected during successful test
+            assertEquals("OPC Compliance error [M4.1]: can't add another core properties part ! Use the built-in package method instead.", e.getMessage());
+        }
+        pkg.revert();
+    }
 
-	/**
-	 * Test M4.1 rule.
-	 */
-	public void testOnlyOneCorePropertiesPart_AddPart() throws InvalidFormatException {
-		String sampleFileName = "OPCCompliance_CoreProperties_OnlyOneCorePropertiesPart.docx";
-		OPCPackage pkg = OPCPackage.open(POIDataSamples.getOpenXML4JInstance().getFile(sampleFileName).getPath());
+    /**
+     * Test M4.1 rule.
+     */
+    public void testOnlyOneCorePropertiesPart_AddPart() throws InvalidFormatException {
+        String sampleFileName = "OPCCompliance_CoreProperties_OnlyOneCorePropertiesPart.docx";
+        OPCPackage pkg = OPCPackage.open(POIDataSamples.getOpenXML4JInstance().getFile(sampleFileName).getPath());
 
-		URI partUri = createURI("/docProps/core2.xml");
-		try {
-			pkg.createPart(PackagingURIHelper.createPartName(partUri),
-					ContentTypes.CORE_PROPERTIES_PART);
-			// no longer fail on compliance error
-			//fail("expected OPC compliance exception was not thrown");
-		} catch (InvalidOperationException e) {
-			// expected during successful test
-			assertEquals("OPC Compliance error [M4.1]: you try to add more than one core properties relationship in the package !", e.getMessage());
-		}
-		pkg.revert();
-	}
+        URI partUri = createURI("/docProps/core2.xml");
+        try {
+            pkg.createPart(PackagingURIHelper.createPartName(partUri),
+                    ContentTypes.CORE_PROPERTIES_PART);
+            // no longer fail on compliance error
+            //fail("expected OPC compliance exception was not thrown");
+        } catch (InvalidOperationException e) {
+            // expected during successful test
+            assertEquals("OPC Compliance error [M4.1]: you try to add more than one core properties relationship in the package !", e.getMessage());
+        }
+        pkg.revert();
+    }
 
-	/**
-	 * Test M4.2 rule.
-	 */
-	public void testDoNotUseCompatibilityMarkup() {
-		String msg = extractInvalidFormatMessage("DoNotUseCompatibilityMarkupFAIL.docx");
-		assertEquals("OPC Compliance error [M4.2]: A format consumer shall consider the use of the Markup Compatibility namespace to be an error.", msg);
-	}
+    /**
+     * Test M4.2 rule.
+     */
+    public void testDoNotUseCompatibilityMarkup() {
+        String msg = extractInvalidFormatMessage("DoNotUseCompatibilityMarkupFAIL.docx");
+        assertEquals("OPC Compliance error [M4.2]: A format consumer shall consider the use of the Markup Compatibility namespace to be an error.", msg);
+    }
 
-	/**
-	 * Test M4.3 rule.
-	 */
-	public void testDCTermsNamespaceLimitedUse() {
-		String msg = extractInvalidFormatMessage("DCTermsNamespaceLimitedUseFAIL.docx");
-		assertEquals("OPC Compliance error [M4.3]: Producers shall not create a document element that contains refinements to the Dublin Core elements, except for the two specified in the schema: <dcterms:created> and <dcterms:modified> Consumers shall consider a document element that violates this constraint to be an error.", msg);
-	}
+    /**
+     * Test M4.3 rule.
+     */
+    public void testDCTermsNamespaceLimitedUse() {
+        String msg = extractInvalidFormatMessage("DCTermsNamespaceLimitedUseFAIL.docx");
+        assertEquals("OPC Compliance error [M4.3]: Producers shall not create a document element that contains refinements to the Dublin Core elements, except for the two specified in the schema: <dcterms:created> and <dcterms:modified> Consumers shall consider a document element that violates this constraint to be an error.", msg);
+    }
 
-	/**
-	 * Test M4.4 rule.
-	 */
-	public void testUnauthorizedXMLLangAttribute() {
-		String msg = extractInvalidFormatMessage("UnauthorizedXMLLangAttributeFAIL.docx");
-		assertEquals("OPC Compliance error [M4.4]: Producers shall not create a document element that contains the xml:lang attribute. Consumers shall consider a document element that violates this constraint to be an error.", msg);
-	}
+    /**
+     * Test M4.4 rule.
+     */
+    public void testUnauthorizedXMLLangAttribute() {
+        String msg = extractInvalidFormatMessage("UnauthorizedXMLLangAttributeFAIL.docx");
+        assertEquals("OPC Compliance error [M4.4]: Producers shall not create a document element that contains the xml:lang attribute. Consumers shall consider a document element that violates this constraint to be an error.", msg);
+    }
 
-	/**
-	 * Test M4.5 rule.
-	 */
-	public void testLimitedXSITypeAttribute_NotPresent() {
-		String msg = extractInvalidFormatMessage("LimitedXSITypeAttribute_NotPresentFAIL.docx");
-		assertEquals("The element 'created' must have the 'xsi:type' attribute present !", msg);
-	}
+    /**
+     * Test M4.5 rule.
+     */
+    public void testLimitedXSITypeAttribute_NotPresent() {
+        String msg = extractInvalidFormatMessage("LimitedXSITypeAttribute_NotPresentFAIL.docx");
+        assertEquals("The element 'created' must have the 'xsi:type' attribute present !", msg);
+    }
 
-	/**
-	 * Test M4.5 rule.
-	 */
-	public void testLimitedXSITypeAttribute_PresentWithUnauthorizedValue() {
-		String msg = extractInvalidFormatMessage("LimitedXSITypeAttribute_PresentWithUnauthorizedValueFAIL.docx");
-		assertEquals("The element 'modified' must have the 'xsi:type' attribute with the value 'dcterms:W3CDTF', but had 'W3CDTF' !", msg);
-	}
-	
+    /**
+     * Test M4.5 rule.
+     */
+    public void testLimitedXSITypeAttribute_PresentWithUnauthorizedValue() {
+        String msg = extractInvalidFormatMessage("LimitedXSITypeAttribute_PresentWithUnauthorizedValueFAIL.docx");
+        assertEquals("The element 'modified' must have the 'xsi:type' attribute with the value 'dcterms:W3CDTF', but had 'W3CDTF' !", msg);
+    }
+    
     /**
      * Document with no core properties - testing at the OPC level,
      *  saving into a new stream
