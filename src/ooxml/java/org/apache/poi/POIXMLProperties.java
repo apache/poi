@@ -301,9 +301,11 @@ public class POIXMLProperties {
         public void setLastPrinted(String date) {
             part.setLastPrintedProperty(date);
         }
+        /** @since POI 3.15 beta 3 */
         public String getLastModifiedBy() {
             return part.getLastModifiedByProperty().getValue();
         }
+        /** @since POI 3.15 beta 3 */
         public void setLastModifiedBy(String user) {
             part.setLastModifiedByProperty(user);
         }
