@@ -363,9 +363,9 @@ public final class CellUtil {
         style.setBorderTop(getBorderStyle(properties, BORDER_TOP));
         style.setBottomBorderColor(getShort(properties, BOTTOM_BORDER_COLOR));
         style.setDataFormat(getShort(properties, DATA_FORMAT));
-        style.setFillBackgroundColor(getShort(properties, FILL_BACKGROUND_COLOR));
-        style.setFillForegroundColor(getShort(properties, FILL_FOREGROUND_COLOR));
         style.setFillPattern(getShort(properties, FILL_PATTERN));
+        style.setFillForegroundColor(getShort(properties, FILL_FOREGROUND_COLOR));
+        style.setFillBackgroundColor(getShort(properties, FILL_BACKGROUND_COLOR));
         style.setFont(workbook.getFontAt(getShort(properties, FONT)));
         style.setHidden(getBoolean(properties, HIDDEN));
         style.setIndention(getShort(properties, INDENTION));
