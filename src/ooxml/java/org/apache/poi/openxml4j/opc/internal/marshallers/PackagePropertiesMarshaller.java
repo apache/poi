@@ -86,6 +86,7 @@ public class PackagePropertiesMarshaller implements PartMarshaller {
 	 * Marshall package core properties to an XML document. Always return
 	 * <code>true</code>.
 	 */
+	@Override
 	public boolean marshall(PackagePart part, OutputStream out)
 			throws OpenXML4JException {
 		if (!(part instanceof PackagePropertiesPart))
