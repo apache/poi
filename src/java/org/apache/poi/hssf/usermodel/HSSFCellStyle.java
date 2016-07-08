@@ -28,6 +28,7 @@ import org.apache.poi.hssf.record.StyleRecord;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
 
 /**
@@ -685,21 +686,45 @@ public final class HSSFCellStyle implements CellStyle {
      * @see #DIAMONDS
      *
      * @param fp  fill pattern (set to 1 to fill w/foreground color)
+     * @deprecated POI 3.15 beta 3. Use {@link #setFillPattern(FillPatternType)} instead.
      */
     @Override
     public void setFillPattern(short fp)
     {
-        _format.setAdtlFillPattern(fp);
+        setFillPattern(FillPatternType.forInt(fp));
+    }
+    
+    /**
+     * setting to one fills the cell with the foreground color... No idea about
+     * other values
+     *
+     * @param fp  fill pattern (set to {@link FillPatternType#SOLID_FOREGROUND} to fill w/foreground color)
+     */
+    @Override
+    public void setFillPattern(FillPatternType fp)
+    {
+        _format.setAdtlFillPattern(fp.getCode());
     }
 
     /**
-     * get the fill pattern (??) - set to 1 to fill with foreground color
+     * get the fill pattern
      * @return fill pattern
+     * @deprecated POI 3.15 beta 3. This method will return {@link FillPatternType} in the future. Use {@link #setFillPattern(FillPatternType)} instead. 
      */
     @Override
     public short getFillPattern()
     {
-        return _format.getAdtlFillPattern();
+        return getFillPatternEnum().getCode();
+    }
+    
+    /**
+     * get the fill pattern
+     * @return fill pattern
+     */
+    @Override
+    public FillPatternType getFillPatternEnum()
+    {
+        return FillPatternType.forInt(_format.getAdtlFillPattern());
     }
 
     /**

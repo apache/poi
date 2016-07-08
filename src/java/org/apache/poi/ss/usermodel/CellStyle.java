@@ -169,62 +169,119 @@ public interface CellStyle {
      */
     short BORDER_SLANTED_DASH_DOT = 0xD;
 
-    /**  No background */
-    short NO_FILL = 0;
+    /** 
+     * Fill Pattern: No background
+     * @deprecated 3.15 beta 3. Use {@link FillPatternType#NO_FILL} instead.
+     */
+    short NO_FILL = FillPatternType.NO_FILL.getCode();
 
-    /**  Solidly filled */
-    short SOLID_FOREGROUND = 1;
+    /**
+     * Fill Pattern: Solidly filled
+     * @deprecated 3.15 beta 3. Use {@link FillPatternType#SOLID_FOREGROUND} instead.
+     */
+    short SOLID_FOREGROUND = FillPatternType.SOLID_FOREGROUND.getCode();
 
-    /**  Small fine dots */
-    short FINE_DOTS = 2;
+    /**
+     * Fill Pattern: Small fine dots
+     * @deprecated 3.15 beta 3. Use {@link FillPatternType#FINE_DOTS} instead.
+     */
+    short FINE_DOTS = FillPatternType.FINE_DOTS.getCode();
 
-    /**  Wide dots */
-    short ALT_BARS = 3;
+    /**
+     * Fill Pattern: Wide dots
+     * @deprecated 3.15 beta 3. Use {@link FillPatternType#ALT_BARS} instead.
+     */
+    short ALT_BARS = FillPatternType.ALT_BARS.getCode();
 
-    /**  Sparse dots */
-    short SPARSE_DOTS = 4;
+    /**
+     * Fill Pattern: Sparse dots
+     * @deprecated 3.15 beta 3. Use {@link FillPatternType#SPARSE_DOTS} instead.
+     */
+    short SPARSE_DOTS = FillPatternType.SPARSE_DOTS.getCode();
 
-    /**  Thick horizontal bands */
-    short THICK_HORZ_BANDS = 5;
+    /**
+     * Fill Pattern: Thick horizontal bands
+     * @deprecated 3.15 beta 3. Use {@link FillPatternType#THICK_HORZ_BANDS} instead.
+     */
+    short THICK_HORZ_BANDS = FillPatternType.THICK_HORZ_BANDS.getCode();
 
-    /**  Thick vertical bands */
-    short THICK_VERT_BANDS = 6;
+    /**
+     * Fill Pattern: Thick vertical bands
+     * @deprecated 3.15 beta 3. Use {@link FillPatternType#THICK_VERT_BANDS} instead.
+     */
+    short THICK_VERT_BANDS = FillPatternType.THICK_VERT_BANDS.getCode();
 
-    /**  Thick backward facing diagonals */
+    /**
+     * Fill Pattern: Thick backward facing diagonals
+     * @deprecated 3.15 beta 3. Use {@link FillPatternType#NO_FILL} instead.
+     */
     short THICK_BACKWARD_DIAG = 7;
 
-    /**  Thick forward facing diagonals */
-    short THICK_FORWARD_DIAG = 8;
+    /**
+     * Fill Pattern: Thick forward facing diagonals
+     * @deprecated 3.15 beta 3. Use {@link FillPatternType#NO_FILL} instead.
+     */
+    short THICK_FORWARD_DIAG = FillPatternType.THICK_FORWARD_DIAG.getCode();
 
-    /**  Large spots */
-    short BIG_SPOTS = 9;
+    /**
+     * Fill Pattern: Large spots
+     * @deprecated 3.15 beta 3. Use {@link FillPatternType#BIG_SPOTS} instead.
+     */
+    short BIG_SPOTS = FillPatternType.BIG_SPOTS.getCode();
 
-    /**  Brick-like layout */
-    short BRICKS = 10;
+    /**
+     * Fill Pattern: Brick-like layout
+     * @deprecated 3.15 beta 3. Use {@link FillPatternType#BRICKS} instead.
+     */
+    short BRICKS = FillPatternType.BRICKS.getCode();
 
-    /**  Thin horizontal bands */
-    short THIN_HORZ_BANDS = 11;
+    /**
+     * Fill Pattern: Thin horizontal bands
+     * @deprecated 3.15 beta 3. Use {@link FillPatternType#THIN_HORZ_BANDS} instead.
+     */
+    short THIN_HORZ_BANDS = FillPatternType.THIN_HORZ_BANDS.getCode();
 
-    /**  Thin vertical bands */
-    short THIN_VERT_BANDS = 12;
+    /**
+     * Fill Pattern: Thin vertical bands
+     * @deprecated 3.15 beta 3. Use {@link FillPatternType#THIN_VERT_BANDS} instead.
+     */
+    short THIN_VERT_BANDS = FillPatternType.THIN_VERT_BANDS.getCode();
 
-    /**  Thin backward diagonal */
-    short THIN_BACKWARD_DIAG = 13;
+    /**
+     * Fill Pattern: Thin backward diagonal
+     * @deprecated 3.15 beta 3. Use {@link FillPatternType#THIN_BACKWARD_DIAG} instead.
+     */
+    short THIN_BACKWARD_DIAG = FillPatternType.THIN_BACKWARD_DIAG.getCode();
 
-    /**  Thin forward diagonal */
-    short THIN_FORWARD_DIAG = 14;
+    /**
+     * Fill Pattern: Thin forward diagonal
+     * @deprecated 3.15 beta 3. Use {@link FillPatternType#THIN_FORWARD_DIAG} instead.
+     */
+    short THIN_FORWARD_DIAG = FillPatternType.THIN_FORWARD_DIAG.getCode();
 
-    /**  Squares */
-    short SQUARES = 15;
+    /**
+     * Fill Pattern: Squares
+     * @deprecated 3.15 beta 3. Use {@link FillPatternType#SQUARES} instead.
+     */
+    short SQUARES = FillPatternType.SQUARES.getCode();
 
-    /**  Diamonds */
-    short DIAMONDS = 16;
+    /**
+     * Fill Pattern: Diamonds
+     * @deprecated 3.15 beta 3. Use {@link FillPatternType#DIAMONDS} instead.
+     */
+    short DIAMONDS = FillPatternType.DIAMONDS.getCode();
 
-    /**  Less Dots */
-    short LESS_DOTS = 17;
+    /**
+     * Fill Pattern: Less Dots
+     * @deprecated 3.15 beta 3. Use {@link FillPatternType#LESS_DOTS} instead.
+     */
+    short LESS_DOTS = FillPatternType.LESS_DOTS.getCode();
 
-    /**  Least Dots */
-    short LEAST_DOTS = 18;
+    /**
+     * Fill Pattern: Least Dots
+     * @deprecated 3.15 beta 3. Use {@link FillPatternType#LEAST_DOTS} instead.
+     */
+    short LEAST_DOTS = FillPatternType.LEAST_DOTS.getCode();
 
     /**
      * get the index within the Workbook (sequence within the collection of ExtnededFormat objects)
@@ -601,15 +658,48 @@ public interface CellStyle {
      * @see #DIAMONDS
      *
      * @param fp  fill pattern (set to 1 to fill w/foreground color)
+     * @deprecated POI 3.15 beta 3. Use {@link #setFillPattern(FillPatternType)} instead.
      */
     void setFillPattern(short fp);
+    /**
+     * setting to one fills the cell with the foreground color... No idea about
+     * other values
+     *
+     * @see #NO_FILL
+     * @see #SOLID_FOREGROUND
+     * @see #FINE_DOTS
+     * @see #ALT_BARS
+     * @see #SPARSE_DOTS
+     * @see #THICK_HORZ_BANDS
+     * @see #THICK_VERT_BANDS
+     * @see #THICK_BACKWARD_DIAG
+     * @see #THICK_FORWARD_DIAG
+     * @see #BIG_SPOTS
+     * @see #BRICKS
+     * @see #THIN_HORZ_BANDS
+     * @see #THIN_VERT_BANDS
+     * @see #THIN_BACKWARD_DIAG
+     * @see #THIN_FORWARD_DIAG
+     * @see #SQUARES
+     * @see #DIAMONDS
+     *
+     * @param fp  fill pattern (set to {@link FillPatternType#SOLID_FOREGROUND} to fill w/foreground color)
+     * @since POI 3.15 beta 3
+     */
+    void setFillPattern(FillPatternType fp);
 
     /**
      * get the fill pattern (??) - set to 1 to fill with foreground color
      * @return fill pattern
+     * @deprecated POI 3.15 beta 3. This method will return {@link FillPatternType} in the future. Use {@link #setFillPattern(FillPatternType)} instead.
      */
-
     short getFillPattern();
+    /**
+     * get the fill pattern (??) - set to 1 to fill with foreground color
+     * @return fill pattern
+     * @since POI 3.15 beta 3
+     */
+    FillPatternType getFillPatternEnum();
 
     /**
      * set the background fill color.

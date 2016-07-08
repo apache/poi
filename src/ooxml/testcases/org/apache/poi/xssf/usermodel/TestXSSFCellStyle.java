@@ -554,6 +554,7 @@ public class TestXSSFCellStyle {
         HSSFCellStyle style2 = wb2.createCellStyle();
         assertEquals(style2.getFillBackgroundColor(), style1.getFillBackgroundColor());
         assertEquals(style2.getFillForegroundColor(), style1.getFillForegroundColor());
+        assertEquals(style2.getFillPatternEnum(), style1.getFillPatternEnum());
         assertEquals(style2.getFillPattern(), style1.getFillPattern());
 
         assertEquals(style2.getLeftBorderColor(), style1.getLeftBorderColor());
@@ -578,11 +579,13 @@ public class TestXSSFCellStyle {
         XSSFCellStyle defaultStyle = wb.getCellStyleAt((short)0);
         assertEquals(IndexedColors.AUTOMATIC.getIndex(), defaultStyle.getFillForegroundColor());
         assertEquals(null, defaultStyle.getFillForegroundXSSFColor());
+        assertEquals(FillPatternType.NO_FILL, defaultStyle.getFillPatternEnum());
         assertEquals(CellStyle.NO_FILL, defaultStyle.getFillPattern());
 
         XSSFCellStyle customStyle = wb.createCellStyle();
 
-        customStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
+        customStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        assertEquals(FillPatternType.SOLID_FOREGROUND, customStyle.getFillPatternEnum());
         assertEquals(CellStyle.SOLID_FOREGROUND, customStyle.getFillPattern());
         assertEquals(3, styles.getFills().size());
 
@@ -593,7 +596,8 @@ public class TestXSSFCellStyle {
         for (int i = 0; i < 3; i++) {
             XSSFCellStyle style = wb.createCellStyle();
 
-            style.setFillPattern(CellStyle.SOLID_FOREGROUND);
+            style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+            assertEquals(FillPatternType.SOLID_FOREGROUND, style.getFillPatternEnum());
             assertEquals(CellStyle.SOLID_FOREGROUND, style.getFillPattern());
             assertEquals(4, styles.getFills().size());
 
@@ -604,15 +608,17 @@ public class TestXSSFCellStyle {
 
         assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(wb));
         wb.close();
-	}
+    }
 
-	@Test
+    @Test
     public void testGetFillPattern() {
 
+        assertEquals(STPatternType.INT_DARK_GRAY-1, cellStyle.getFillPatternEnum().getCode());
         assertEquals(STPatternType.INT_DARK_GRAY-1, cellStyle.getFillPattern());
 
         int num = stylesTable.getFills().size();
-        cellStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
+        cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        assertEquals(FillPatternType.SOLID_FOREGROUND, cellStyle.getFillPatternEnum());
         assertEquals(CellStyle.SOLID_FOREGROUND, cellStyle.getFillPattern());
         assertEquals(num + 1, stylesTable.getFills().size());
         int fillId = (int)cellStyle.getCoreXf().getFillId();
@@ -623,11 +629,12 @@ public class TestXSSFCellStyle {
 
         //setting the same fill multiple time does not update the styles table
         for (int i = 0; i < 3; i++) {
-            cellStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
+            cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         }
         assertEquals(num + 1, stylesTable.getFills().size());
 
-        cellStyle.setFillPattern(CellStyle.NO_FILL);
+        cellStyle.setFillPattern(FillPatternType.NO_FILL);
+        assertEquals(FillPatternType.NO_FILL, cellStyle.getFillPatternEnum());
         assertEquals(CellStyle.NO_FILL, cellStyle.getFillPattern());
         fillId = (int)cellStyle.getCoreXf().getFillId();
         ctFill2 = stylesTable.getFillAt(fillId).getCTFill();
@@ -935,7 +942,7 @@ public class TestXSSFCellStyle {
 
         cellStyle2.setFillBackgroundColor(IndexedColors.DARK_BLUE.getIndex());
         cellStyle2.setFillForegroundColor(IndexedColors.DARK_BLUE.getIndex());
-        cellStyle2.setFillPattern(CellStyle.SOLID_FOREGROUND);
+        cellStyle2.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 
         cellStyle2.setAlignment(CellStyle.ALIGN_RIGHT);
         cellStyle2.setVerticalAlignment(CellStyle.VERTICAL_TOP);
@@ -950,6 +957,7 @@ public class TestXSSFCellStyle {
         assertEquals(IndexedColors.DARK_BLUE.getIndex(), styleBack.getFillForegroundColor());
         assertEquals(CellStyle.ALIGN_RIGHT, styleBack.getAlignment());
         assertEquals(CellStyle.VERTICAL_TOP, styleBack.getVerticalAlignment());
+        assertEquals(FillPatternType.SOLID_FOREGROUND, styleBack.getFillPatternEnum());
         assertEquals(CellStyle.SOLID_FOREGROUND, styleBack.getFillPattern());
         
         wbBack.close();
