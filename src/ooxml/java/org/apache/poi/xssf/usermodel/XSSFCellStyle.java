@@ -512,28 +512,29 @@ public class XSSFCellStyle implements CellStyle {
      * @see org.apache.poi.ss.usermodel.CellStyle#THIN_FORWARD_DIAG
      * @see org.apache.poi.ss.usermodel.CellStyle#SQUARES
      * @see org.apache.poi.ss.usermodel.CellStyle#DIAMONDS
+     * @deprecated POI 3.15 beta 3. This method will return {@link FillPatternType} in the future. Use {@link #setFillPattern(FillPatternType)} instead.
      */
     @Override
     public short getFillPattern() {
-        // bug 56295: handle missing applyFill attribute as "true" because Excel does as well
-        if(_cellXf.isSetApplyFill() && !_cellXf.getApplyFill()) return 0;
-
-        int fillIndex = (int)_cellXf.getFillId();
-        XSSFCellFill fill = _stylesSource.getFillAt(fillIndex);
-
-        STPatternType.Enum ptrn = fill.getPatternType();
-        if(ptrn == null) return CellStyle.NO_FILL;
-        return (short)(ptrn.intValue() - 1);
+        return getFillPatternEnum().getCode();
     }
 
     /**
      * Get the fill pattern
      *
-     * @return the fill pattern, default value is {@link org.apache.poi.ss.usermodel.FillPatternType#NO_FILL}
+     * @return the fill pattern, default value is {@link FillPatternType#NO_FILL}
      */
+    @Override
     public FillPatternType getFillPatternEnum() {
-        int style  = getFillPattern();
-        return FillPatternType.values()[style];
+     // bug 56295: handle missing applyFill attribute as "true" because Excel does as well
+        if(_cellXf.isSetApplyFill() && !_cellXf.getApplyFill()) return FillPatternType.NO_FILL;
+
+        int fillIndex = (int)_cellXf.getFillId();
+        XSSFCellFill fill = _stylesSource.getFillAt(fillIndex);
+
+        STPatternType.Enum ptrn = fill.getPatternType();
+        if(ptrn == null) return FillPatternType.NO_FILL;
+        return FillPatternType.forInt(ptrn.intValue() - 1);
     }
 
     /**
@@ -1094,7 +1095,7 @@ public class XSSFCellStyle implements CellStyle {
 
     /**
      * This element is used to specify cell fill information for pattern and solid color cell fills.
-     * For solid cell fills (no pattern),  foregorund color is used.
+     * For solid cell fills (no pattern),  foreground color is used.
      * For cell fills with patterns specified, then the cell fill color is specified by the background color.
      *
      * @see org.apache.poi.ss.usermodel.CellStyle#NO_FILL
@@ -1120,31 +1121,35 @@ public class XSSFCellStyle implements CellStyle {
      */
     @Override
     public void setFillPattern(short fp) {
-        CTFill ct = getCTFill();
-        CTPatternFill ptrn = ct.isSetPatternFill() ? ct.getPatternFill() : ct.addNewPatternFill();
-        if(fp == NO_FILL && ptrn.isSetPatternType()) ptrn.unsetPatternType();
-        else ptrn.setPatternType(STPatternType.Enum.forInt(fp + 1));
-
-        addFill(ct);
+        setFillPattern(FillPatternType.forInt(fp));
     }
 
     /**
      * This element is used to specify cell fill information for pattern and solid color cell fills. For solid cell fills (no pattern),
      * foreground color is used is used. For cell fills with patterns specified, then the cell fill color is specified by the background color element.
      *
-     * @param ptrn the fill pattern to use
-     * @see #setFillBackgroundColor(short)
-     * @see #setFillForegroundColor(short)
+     * @param pattern the fill pattern to use
+     * @see #setFillBackgroundColor(XSSFColor)
+     * @see #setFillForegroundColor(XSSFColor)
      * @see org.apache.poi.ss.usermodel.FillPatternType
      */
-    public void setFillPattern(FillPatternType ptrn) {
-        setFillPattern((short)ptrn.ordinal());
+    @Override
+    public void setFillPattern(FillPatternType pattern) {
+        CTFill ct = getCTFill();
+        CTPatternFill ctptrn = ct.isSetPatternFill() ? ct.getPatternFill() : ct.addNewPatternFill();
+        if (pattern == FillPatternType.NO_FILL && ctptrn.isSetPatternType()) {
+            ctptrn.unsetPatternType();
+        } else {
+            ctptrn.setPatternType(STPatternType.Enum.forInt(pattern.getCode() + 1));
+        }
+
+        addFill(ct);
     }
 
     /**
      * Set the font for this style
      *
-     * @param font  a font object created or retreived from the XSSFWorkbook object
+     * @param font  a font object created or retrieved from the XSSFWorkbook object
      * @see org.apache.poi.xssf.usermodel.XSSFWorkbook#createFont()
      * @see org.apache.poi.xssf.usermodel.XSSFWorkbook#getFontAt(short)
      */
