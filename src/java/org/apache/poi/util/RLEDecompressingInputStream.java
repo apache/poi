@@ -230,7 +230,7 @@ public class RLEDecompressingInputStream extends InputStream {
     /**
      * Convenience method for read a 2-bytes short in little endian encoding.
      * 
-     * @return short value from the stream
+     * @return short value from the stream, -1 if end of stream is reached
      * @throws IOException
      */
     public int readShort() throws IOException {
@@ -240,7 +240,7 @@ public class RLEDecompressingInputStream extends InputStream {
     /**
      * Convenience method for read a 4-bytes int in little endian encoding.
      * 
-     * @return integer value from the stream
+     * @return integer value from the stream, -1 if end of stream is reached
      * @throws IOException
      */
     public int readInt() throws IOException {

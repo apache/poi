@@ -238,7 +238,11 @@ public class VBAMacroReader implements Closeable {
                             }
                             break;
                         default:
-                            trySkip(in, len);
+                            try {
+                                trySkip(in, len);
+                            } catch (final IOException e) {
+                                throw new IOException("Error occurred while reading section id " + id, e);
+                            }
                             break;
                         }
                     }
