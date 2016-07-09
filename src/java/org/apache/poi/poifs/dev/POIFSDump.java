@@ -63,32 +63,37 @@ public class POIFSDump {
 
             System.out.println("Dumping " + filename);
             FileInputStream is = new FileInputStream(filename);
-            NPOIFSFileSystem fs = new NPOIFSFileSystem(is);
-            is.close();
-
-            DirectoryEntry root = fs.getRoot();
-            File file = new File(new File(filename).getName(), root.getName());
-            if (!file.exists() && !file.mkdirs()) {
-                throw new IOException("Could not create directory " + file);
+            NPOIFSFileSystem fs;
+            try {
+                fs = new NPOIFSFileSystem(is);
+            } finally {
+                is.close();
             }
-
-            dump(root, file);
-
-            if (dumpProps) {
-                HeaderBlock header = fs.getHeaderBlock();
-                dump(fs, header.getPropertyStart(), "properties", file);
-            }
-            if (dumpMini) {
-                NPropertyTable props = fs.getPropertyTable();
-                int startBlock = props.getRoot().getStartBlock();
-                if (startBlock == POIFSConstants.END_OF_CHAIN) {
-                    System.err.println("No Mini Stream in file");
-                } else {
-                    dump(fs, startBlock, "mini-stream", file);
+            try {
+                DirectoryEntry root = fs.getRoot();
+                File file = new File(new File(filename).getName(), root.getName());
+                if (!file.exists() && !file.mkdirs()) {
+                    throw new IOException("Could not create directory " + file);
                 }
+    
+                dump(root, file);
+    
+                if (dumpProps) {
+                    HeaderBlock header = fs.getHeaderBlock();
+                    dump(fs, header.getPropertyStart(), "properties", file);
+                }
+                if (dumpMini) {
+                    NPropertyTable props = fs.getPropertyTable();
+                    int startBlock = props.getRoot().getStartBlock();
+                    if (startBlock == POIFSConstants.END_OF_CHAIN) {
+                        System.err.println("No Mini Stream in file");
+                    } else {
+                        dump(fs, startBlock, "mini-stream", file);
+                    }
+                }
+            } finally {
+                fs.close();
             }
-
-            fs.close();
         }
     }
     
