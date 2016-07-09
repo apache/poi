@@ -41,6 +41,7 @@ public final class SCLRecord extends StandardRecord {
         field_2_denominator            = in.readShort();
     }
 
+    @Override
     public String toString()
     {
         StringBuffer buffer = new StringBuffer();
@@ -59,20 +60,24 @@ public final class SCLRecord extends StandardRecord {
         return buffer.toString();
     }
 
+    @Override
     public void serialize(LittleEndianOutput out) {
         out.writeShort(field_1_numerator);
         out.writeShort(field_2_denominator);
     }
 
+    @Override
     protected int getDataSize() {
         return 2 + 2;
     }
 
+    @Override
     public short getSid()
     {
         return sid;
     }
 
+    @Override
     public Object clone() {
         SCLRecord rec = new SCLRecord();
     
@@ -81,11 +86,10 @@ public final class SCLRecord extends StandardRecord {
         return rec;
     }
 
-
-
-
     /**
      * Get the numerator field for the SCL record.
+     * 
+     * @return the numerator
      */
     public short getNumerator()
     {
@@ -94,6 +98,8 @@ public final class SCLRecord extends StandardRecord {
 
     /**
      * Set the numerator field for the SCL record.
+     * 
+     * @param field_1_numerator the numerator
      */
     public void setNumerator(short field_1_numerator)
     {
@@ -102,6 +108,8 @@ public final class SCLRecord extends StandardRecord {
 
     /**
      * Get the denominator field for the SCL record.
+     * 
+     * @return the denominator
      */
     public short getDenominator()
     {
@@ -110,6 +118,8 @@ public final class SCLRecord extends StandardRecord {
 
     /**
      * Set the denominator field for the SCL record.
+     * 
+     * @param field_2_denominator the denominator
      */
     public void setDenominator(short field_2_denominator)
     {

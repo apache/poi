@@ -193,6 +193,8 @@ public final class RecordFactoryInputStream {
 
 
 	/**
+	 * @param in the InputStream to read from
+	 * 
 	 * @param shouldIncludeContinueRecords caller can pass <code>false</code> if loose
 	 * {@link ContinueRecord}s should be skipped (this is sometimes useful in event based
 	 * processing).
@@ -238,8 +240,7 @@ public final class RecordFactoryInputStream {
 	}
 
 	/**
-	 * Returns the next (complete) record from the
-	 * stream, or null if there are no more.
+	 * @return the next (complete) record from the stream, or null if there are no more.
 	 */
 	public Record nextRecord() {
 		Record r;

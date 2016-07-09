@@ -46,8 +46,12 @@ public final class ExtSSTRecord extends ContinuableRecord {
         /** unused - supposed to be zero */
         private short field_3_zero;
 
-        /** Creates new ExtSSTInfoSubRecord */
-
+        /**
+         * Creates new ExtSSTInfoSubRecord
+         * 
+         * @param streamPos stream pointer to the SST record
+         * @param bucketSstOffset ... don't really understand this yet
+         */
         public InfoSubRecord(int streamPos, int bucketSstOffset) {
             field_1_stream_pos        = streamPos;
             field_2_bucket_sst_offset = bucketSstOffset;
@@ -155,7 +159,13 @@ public final class ExtSSTRecord extends ContinuableRecord {
       return infoRecs;
     }
 
-    /** Given a number of strings (in the sst), returns the size of the extsst record*/
+    /**
+     * Given a number of strings (in the sst), returns the size of the extsst record
+     * 
+     * @param numStrings the number of strings
+     * 
+     * @return the size of the extsst record
+     */
     public static final int getRecordSizeForStrings(int numStrings) {
         return 4 + 2 + getNumberOfInfoRecsForStrings(numStrings) * 8;
     }

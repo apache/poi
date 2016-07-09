@@ -29,7 +29,7 @@ import org.apache.poi.util.LittleEndianOutput;
 public final class MergeCellsRecord extends StandardRecord implements Cloneable {
     public final static short sid = 0x00E5;
     /** sometimes the regions array is shared with other MergedCellsRecords */ 
-    private CellRangeAddress[] _regions;
+    private final CellRangeAddress[] _regions;
     private final int _startIndex;
     private final int _numberOfRegions;
 
@@ -62,20 +62,25 @@ public final class MergeCellsRecord extends StandardRecord implements Cloneable 
     }
 
     /**
+     * @param index the n-th MergedRegion
+     * 
      * @return MergedRegion at the given index representing the area that is Merged (r1,c1 - r2,c2)
      */
     public CellRangeAddress getAreaAt(int index) {
         return _regions[_startIndex + index];
     }
 
+    @Override
     protected int getDataSize() {
 		return CellRangeAddressList.getEncodedSize(_numberOfRegions);
 	}
 
+    @Override
     public short getSid() {
         return sid;
     }
 
+    @Override
     public void serialize(LittleEndianOutput out) {
         int nItems = _numberOfRegions;
         out.writeShort(nItems);
@@ -84,6 +89,7 @@ public final class MergeCellsRecord extends StandardRecord implements Cloneable 
 		}
     }
 
+    @Override
     public String toString() {
         StringBuffer retval = new StringBuffer();
 

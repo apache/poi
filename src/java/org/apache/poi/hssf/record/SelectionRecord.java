@@ -26,10 +26,7 @@ import org.apache.poi.util.LittleEndianOutput;
  * Description:  shows the user's selection on the sheet
  *               for write set num refs to 0<P>
  *
- * REFERENCE:  PG 291 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
- * @author Andrew C. Oliver (acoliver at apache dot org)
- * @author Jason Height (jheight at chariot dot net dot au)
- * @author Glen Stampoultzis (glens at apache.org)
+ * REFERENCE:  PG 291 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)
  */
 public final class SelectionRecord extends StandardRecord {
     public final static short sid = 0x001D;
@@ -41,6 +38,9 @@ public final class SelectionRecord extends StandardRecord {
 
     /**
      * Creates a default selection record (cell A1, in pane ID 3)
+     * 
+     * @param activeCellRow the active cells row index
+     * @param activeCellCol the active cells column index
      */
     public SelectionRecord(int activeCellRow, int activeCellCol) {
         field_1_pane = 3; // pane id 3 is always present.  see OOO sec 5.75 'PANE'
@@ -67,6 +67,7 @@ public final class SelectionRecord extends StandardRecord {
 
     /**
      * set which window pane this is for
+     * @param pane the window pane
      */
     public void setPane(byte pane) {
         field_1_pane = pane;
@@ -127,6 +128,7 @@ public final class SelectionRecord extends StandardRecord {
         return field_4_active_cell_ref_index;
     }
 
+    @Override
     public String toString() {
         StringBuffer sb = new StringBuffer();
 
@@ -139,10 +141,12 @@ public final class SelectionRecord extends StandardRecord {
         sb.append("[/SELECTION]\n");
         return sb.toString();
     }
+    @Override
     protected int getDataSize() {
         return 9 // 1 byte + 4 shorts
             + CellRangeAddress8Bit.getEncodedSize(field_6_refs.length);
     }
+    @Override
     public void serialize(LittleEndianOutput out) {
         out.writeByte(getPane());
         out.writeShort(getActiveCellRow());
@@ -150,15 +154,17 @@ public final class SelectionRecord extends StandardRecord {
         out.writeShort(getActiveCellRef());
         int nRefs = field_6_refs.length;
         out.writeShort(nRefs);
-        for (int i = 0; i < field_6_refs.length; i++) {
-            field_6_refs[i].serialize(out);
+        for (CellRangeAddress8Bit field_6_ref : field_6_refs) {
+            field_6_ref.serialize(out);
         }
     }
 
+    @Override
     public short getSid() {
         return sid;
     }
 
+    @Override
     public Object clone() {
         SelectionRecord rec = new SelectionRecord(field_2_row_active_cell, field_3_col_active_cell);
         rec.field_1_pane = field_1_pane;

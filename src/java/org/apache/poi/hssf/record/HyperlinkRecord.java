@@ -80,7 +80,9 @@ public final class HyperlinkRecord extends StandardRecord implements Cloneable {
 
 		@Override
 		public boolean equals(Object obj) {
-            if (!(obj instanceof GUID)) return false;
+            if (!(obj instanceof GUID)) {
+                return false;
+            }
 			GUID other = (GUID) obj;
 			return _d1 == other._d1 && _d2 == other._d2
 			    && _d3 == other._d3 && _d4 == other._d4;
@@ -265,10 +267,12 @@ public final class HyperlinkRecord extends StandardRecord implements Cloneable {
     }
 
     /**
-     * Set the first column (zero-based)of the range that contains this hyperlink
+     * Set the first column (zero-based) of the range that contains this hyperlink
+     * 
+     * @param firstCol the first column (zero-based)
      */
-    public void setFirstColumn(int col) {
-        _range.setFirstColumn(col);
+    public void setFirstColumn(int firstCol) {
+        _range.setFirstColumn(firstCol);
     }
 
     /**
@@ -279,10 +283,12 @@ public final class HyperlinkRecord extends StandardRecord implements Cloneable {
     }
 
     /**
-     * Set the last column (zero-based)of the range that contains this hyperlink
+     * Set the last column (zero-based) of the range that contains this hyperlink
+     * 
+     * @param lastCol the last column (zero-based)
      */
-    public void setLastColumn(int col) {
-        _range.setLastColumn(col);
+    public void setLastColumn(int lastCol) {
+        _range.setLastColumn(lastCol);
     }
 
     /**
@@ -293,10 +299,12 @@ public final class HyperlinkRecord extends StandardRecord implements Cloneable {
     }
 
     /**
-     * Set the first row (zero-based)of the range that contains this hyperlink
+     * Set the first row (zero-based) of the range that contains this hyperlink
+     * 
+     * @param firstRow the first row (zero-based)
      */
-    public void setFirstRow(int col) {
-        _range.setFirstRow(col);
+    public void setFirstRow(int firstRow) {
+        _range.setFirstRow(firstRow);
     }
 
     /**
@@ -307,10 +315,12 @@ public final class HyperlinkRecord extends StandardRecord implements Cloneable {
     }
 
     /**
-     * Set the last row (zero-based)of the range that contains this hyperlink
+     * Set the last row (zero-based) of the range that contains this hyperlink
+     * 
+     * @param lastRow the last row (zero-based)
      */
-    public void setLastRow(int col) {
-        _range.setLastRow(col);
+    public void setLastRow(int lastRow) {
+        _range.setLastRow(lastRow);
     }
 
     /**
@@ -372,12 +382,13 @@ public final class HyperlinkRecord extends StandardRecord implements Cloneable {
      * @return  the address of this hyperlink
      */
     public String getAddress() {
-        if ((_linkOpts & HLINK_URL) != 0 && FILE_MONIKER.equals(_moniker))
+        if ((_linkOpts & HLINK_URL) != 0 && FILE_MONIKER.equals(_moniker)) {
             return cleanString(_address != null ? _address : _shortFilename);
-        else if((_linkOpts & HLINK_PLACE) != 0)
+        } else if((_linkOpts & HLINK_PLACE) != 0) {
             return cleanString(_textMark);
-        else
+        } else {
             return cleanString(_address);
+        }
     }
 
     /**
@@ -386,12 +397,13 @@ public final class HyperlinkRecord extends StandardRecord implements Cloneable {
      * @param address  the address of this hyperlink
      */
     public void setAddress(String address) {
-        if ((_linkOpts & HLINK_URL) != 0 && FILE_MONIKER.equals(_moniker))
+        if ((_linkOpts & HLINK_URL) != 0 && FILE_MONIKER.equals(_moniker)) {
             _shortFilename = appendNullTerm(address);
-        else if((_linkOpts & HLINK_PLACE) != 0)
+        } else if((_linkOpts & HLINK_PLACE) != 0) {
             _textMark = appendNullTerm(address);
-        else
+        } else {
             _address = appendNullTerm(address);
+        }
     }
 
     public String getShortFilename() {
@@ -413,20 +425,22 @@ public final class HyperlinkRecord extends StandardRecord implements Cloneable {
     /**
      * Link options. Must be a combination of HLINK_* constants.
      * For testing only
+     * 
+     * @return Link options
      */
     int getLinkOptions(){
         return _linkOpts;
     }
 
     /**
-     * Label options
+     * @return Label options
      */
     public int getLabelOptions(){
         return 2; // always 2
     }
 
     /**
-     * Options for a file link
+     * @return Options for a file link
      */
     public int getFileOptions(){
         return _fileOpts;
@@ -536,6 +550,7 @@ public final class HyperlinkRecord extends StandardRecord implements Cloneable {
         }
     }
 
+    @Override
     public void serialize(LittleEndianOutput out) {
         _range.serialize(out);
 
@@ -590,6 +605,7 @@ public final class HyperlinkRecord extends StandardRecord implements Cloneable {
         }
     }
 
+    @Override
     protected int getDataSize() {
         int size = 0;
         size += 2 + 2 + 2 + 2;  //rwFirst, rwLast, colFirst, colLast
@@ -654,11 +670,13 @@ public final class HyperlinkRecord extends StandardRecord implements Cloneable {
         out.write(tail);
     }
 
+    @Override
     public short getSid() {
         return HyperlinkRecord.sid;
     }
 
 
+    @Override
     public String toString() {
         StringBuffer buffer = new StringBuffer();
 
@@ -683,6 +701,8 @@ public final class HyperlinkRecord extends StandardRecord implements Cloneable {
 
     /**
      * Based on the link options, is this a url?
+     * 
+     * @return true, if this is a url link
      */
     public boolean isUrlLink() {
        return (_linkOpts & HLINK_URL) > 0 
@@ -690,6 +710,8 @@ public final class HyperlinkRecord extends StandardRecord implements Cloneable {
     }
     /**
      * Based on the link options, is this a file?
+     * 
+     * @return true, if this is a file link
      */
     public boolean isFileLink() {
        return (_linkOpts & HLINK_URL) > 0 
@@ -697,6 +719,8 @@ public final class HyperlinkRecord extends StandardRecord implements Cloneable {
     }
     /**
      * Based on the link options, is this a document?
+     * 
+     * @return true, if this is a docment link
      */
     public boolean isDocumentLink() {
        return (_linkOpts & HLINK_PLACE) > 0; 

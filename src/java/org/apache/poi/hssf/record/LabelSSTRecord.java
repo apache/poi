@@ -22,9 +22,8 @@ import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * Title:        Label SST Record<P>
- * Description:  Refers to a string in the shared string table and is a column
- *               value.  <P>
- * REFERENCE:  PG 325 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
+ * Description:  Refers to a string in the shared string table and is a column value.<P>
+ * REFERENCE:  PG 325 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)
  */
 public final class LabelSSTRecord extends CellRecord implements Cloneable {
     public final static short sid = 0xfd;
@@ -80,6 +79,7 @@ public final class LabelSSTRecord extends CellRecord implements Cloneable {
         return 4;
     }
 
+    @Override
     public short getSid() {
         return sid;
     }

@@ -103,6 +103,7 @@ public final class IndexRecord extends StandardRecord implements Cloneable {
         return field_5_dbcells.get(cellnum);
     }
 
+    @Override
     public String toString()
     {
         StringBuffer buffer = new StringBuffer();
@@ -120,6 +121,7 @@ public final class IndexRecord extends StandardRecord implements Cloneable {
         return buffer.toString();
     }
 
+    @Override
     public void serialize(LittleEndianOutput out) {
 
         out.writeInt(0);
@@ -131,18 +133,21 @@ public final class IndexRecord extends StandardRecord implements Cloneable {
         }
     }
 
+    @Override
     protected int getDataSize() {
         return 16 // 4 ints
         	+ getNumDbcells() * 4;
     }
     
     /** 
-     * @return the size of an INdexRecord when it needs to index the specified number of blocks
+     * @param blockCount the number of blocks to be indexed
+     * @return the size of an IndexRecord when it needs to index the specified number of blocks
      */
     public static int getRecordSizeForBlockCount(int blockCount) {
         return 20 + 4 * blockCount;
     }  
 
+    @Override
     public short getSid() {
         return sid;
     }

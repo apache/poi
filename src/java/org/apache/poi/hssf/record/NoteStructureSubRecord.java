@@ -45,6 +45,9 @@ public final class NoteStructureSubRecord extends SubRecord implements Cloneable
 
     /**
      * Read the record data from the supplied <code>RecordInputStream</code>
+     * 
+     * @param in the input to read from
+     * @param size the provided size - must be 22
      */
     public NoteStructureSubRecord(LittleEndianInput in, int size) {
         if (size != ENCODED_SIZE) {
@@ -60,6 +63,7 @@ public final class NoteStructureSubRecord extends SubRecord implements Cloneable
      * Convert this record to string.
      * Used by BiffViewer and other utilities.
      */
+    @Override
     public String toString()
     {
         StringBuffer buffer = new StringBuffer();
@@ -76,13 +80,15 @@ public final class NoteStructureSubRecord extends SubRecord implements Cloneable
      *
      * @param out the stream to serialize into
      */
+    @Override
     public void serialize(LittleEndianOutput out) {
         out.writeShort(sid);
         out.writeShort(reserved.length);
         out.write(reserved);
     }
 
-	protected int getDataSize() {
+	@Override
+    protected int getDataSize() {
         return reserved.length;
     }
 

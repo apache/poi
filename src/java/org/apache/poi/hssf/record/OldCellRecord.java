@@ -25,10 +25,10 @@ import org.apache.poi.util.HexDump;
  * Subclasses are expected to manage the cell data values (of various types).
  */
 public abstract class OldCellRecord {
-    private short    sid;
-    private boolean  isBiff2;   
-    private int      field_1_row;
-    private short    field_2_column;
+    private final short    sid;
+    private final boolean  isBiff2;   
+    private final int      field_1_row;
+    private final short    field_2_column;
     private int      field_3_cell_attrs; // Biff 2
     private short    field_3_xf_index;   // Biff 3+
 
@@ -63,6 +63,7 @@ public abstract class OldCellRecord {
     public final short getXFIndex() {
         return field_3_xf_index;
     }
+    
     public int getCellAttrs()
     {
         return field_3_cell_attrs;
@@ -70,10 +71,13 @@ public abstract class OldCellRecord {
 
     /**
      * Is this a Biff2 record, or newer?
+     * 
+     * @return true, if this is a Biff2 record or newer
      */
     public boolean isBiff2() {
         return isBiff2;
     }
+    
     public short getSid() {
         return sid;
     }
@@ -101,11 +105,15 @@ public abstract class OldCellRecord {
      * Append specific debug info (used by {@link #toString()} for the value
      * contained in this record. Trailing new-line should not be appended
      * (superclass does that).
+     * 
+     * @param sb the StringBuilder to append to
      */
     protected abstract void appendValueText(StringBuilder sb);
 
     /**
      * Gets the debug info BIFF record type name (used by {@link #toString()}.
+     * 
+     * @return the debug info BIFF record type name
      */
     protected abstract String getRecordName();
 }

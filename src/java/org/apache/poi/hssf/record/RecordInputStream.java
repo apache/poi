@@ -25,6 +25,7 @@ import org.apache.poi.hssf.dev.BiffViewer;
 import org.apache.poi.hssf.record.crypto.Biff8DecryptingStream;
 import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianInputStream;
 
@@ -98,13 +99,16 @@ public final class RecordInputStream implements LittleEndianInput {
 		public SimpleHeaderInput(InputStream in) {
 			_lei = getLEI(in);
 		}
-		public int available() {
+		@Override
+        public int available() {
 			return _lei.available();
 		}
-		public int readDataSize() {
+		@Override
+        public int readDataSize() {
 			return _lei.readUShort();
 		}
-		public int readRecordSID() {
+		@Override
+        public int readRecordSID() {
 			return _lei.readUShort();
 		}
 	}
@@ -138,7 +142,8 @@ public final class RecordInputStream implements LittleEndianInput {
 	 * @return the number of bytes available in the current BIFF record
 	 * @see #remaining()
 	 */
-	public int available() {
+	@Override
+    public int available() {
 		return remaining();
 	}
 
@@ -158,6 +163,9 @@ public final class RecordInputStream implements LittleEndianInput {
 	/**
 	 * Note - this method is expected to be called only when completed reading the current BIFF
 	 * record.
+	 * 
+	 * @return true, if there's another record in the stream
+	 * 
 	 * @throws LeftoverDataException if this method is called before reaching the end of the
 	 * current record.
 	 */
@@ -230,56 +238,63 @@ public final class RecordInputStream implements LittleEndianInput {
 	/**
 	 * Reads an 8 bit, signed value
 	 */
-	public byte readByte() {
-		checkRecordPosition(LittleEndian.BYTE_SIZE);
-		_currentDataOffset += LittleEndian.BYTE_SIZE;
+	@Override
+    public byte readByte() {
+		checkRecordPosition(LittleEndianConsts.BYTE_SIZE);
+		_currentDataOffset += LittleEndianConsts.BYTE_SIZE;
 		return _dataInput.readByte();
 	}
 
 	/**
 	 * Reads a 16 bit, signed value
 	 */
-	public short readShort() {
-		checkRecordPosition(LittleEndian.SHORT_SIZE);
-		_currentDataOffset += LittleEndian.SHORT_SIZE;
+	@Override
+    public short readShort() {
+		checkRecordPosition(LittleEndianConsts.SHORT_SIZE);
+		_currentDataOffset += LittleEndianConsts.SHORT_SIZE;
 		return _dataInput.readShort();
 	}
 
 	/**
 	 * Reads a 32 bit, signed value 
 	 */
-	public int readInt() {
-		checkRecordPosition(LittleEndian.INT_SIZE);
-		_currentDataOffset += LittleEndian.INT_SIZE;
+	@Override
+    public int readInt() {
+		checkRecordPosition(LittleEndianConsts.INT_SIZE);
+		_currentDataOffset += LittleEndianConsts.INT_SIZE;
 		return _dataInput.readInt();
 	}
 
 	/**
 	 * Reads a 64 bit, signed value
 	 */
-	public long readLong() {
-		checkRecordPosition(LittleEndian.LONG_SIZE);
-		_currentDataOffset += LittleEndian.LONG_SIZE;
+	@Override
+    public long readLong() {
+		checkRecordPosition(LittleEndianConsts.LONG_SIZE);
+		_currentDataOffset += LittleEndianConsts.LONG_SIZE;
 		return _dataInput.readLong();
 	}
 
 	/**
 	 * Reads an 8 bit, unsigned value
 	 */
-	public int readUByte() {
+	@Override
+    public int readUByte() {
 		return readByte() & 0x00FF;
 	}
 
 	/**
 	 * Reads a 16 bit, unsigned value.
 	 */
-	public int readUShort() {
-		checkRecordPosition(LittleEndian.SHORT_SIZE);
-		_currentDataOffset += LittleEndian.SHORT_SIZE;
+	@Override
+    public int readUShort() {
+		checkRecordPosition(LittleEndianConsts.SHORT_SIZE);
+		_currentDataOffset += LittleEndianConsts.SHORT_SIZE;
 		return _dataInput.readUShort();
 	}
 
-	public double readDouble() {
+	@Override
+    public double readDouble() {
 		long valueLongBits = readLong();
 		double result = Double.longBitsToDouble(valueLongBits);
 		if (Double.isNaN(result)) {
@@ -290,11 +305,13 @@ public final class RecordInputStream implements LittleEndianInput {
 		}
 		return result;
 	}
-	public void readFully(byte[] buf) {
+	@Override
+    public void readFully(byte[] buf) {
 		readFully(buf, 0, buf.length);
 	}
 
-	public void readFully(byte[] buf, int off, int len) {
+	@Override
+    public void readFully(byte[] buf, int off, int len) {
 	    int origLen = len;
 	    if (buf == null) {
 	        throw new NullPointerException();
@@ -355,7 +372,7 @@ public final class RecordInputStream implements LittleEndianInput {
 		boolean isCompressedEncoding = pIsCompressedEncoding;
 		int curLen = 0;
 		while(true) {
-			int availableChars =isCompressedEncoding ?  remaining() : remaining() / LittleEndian.SHORT_SIZE;
+			int availableChars =isCompressedEncoding ?  remaining() : remaining() / LittleEndianConsts.SHORT_SIZE;
 			if (requestedLength - curLen <= availableChars) {
 				// enough space in current record, so just read it out
 				while(curLen < requestedLength) {
@@ -412,27 +429,30 @@ public final class RecordInputStream implements LittleEndianInput {
 		return result;
 	}
 
-  /** Reads all byte data for the current record, including any
-   *  that overlaps into any following continue records.
-   *
-   *  @deprecated POI 2.0 Best to write a input stream that wraps this one where there is
-   *  special sub record that may overlap continue records.
-   */
-  public byte[] readAllContinuedRemainder() {
-    //Using a ByteArrayOutputStream is just an easy way to get a
-    //growable array of the data.
-    ByteArrayOutputStream out = new ByteArrayOutputStream(2*MAX_RECORD_DATA_SIZE);
+    /**
+     * Reads all byte data for the current record, including any that overlaps
+     * into any following continue records.
+     *
+     * @return all byte data for the current record
+     * 
+     * @deprecated POI 2.0 Best to write a input stream that wraps this one
+     *             where there is special sub record that may overlap continue
+     *             records.
+     */
+    @Deprecated
+    public byte[] readAllContinuedRemainder() {
+        ByteArrayOutputStream out = new ByteArrayOutputStream(2 * MAX_RECORD_DATA_SIZE);
 
-    while (true) {
-      byte[] b = readRemainder();
-      out.write(b, 0, b.length);
-      if (!isContinueNext()) {
-          break;
-      }
-      nextRecord();
+        while (true) {
+            byte[] b = readRemainder();
+            out.write(b, 0, b.length);
+            if (!isContinueNext()) {
+                break;
+            }
+            nextRecord();
+        }
+        return out.toByteArray();
     }
-    return out.toByteArray();
-  }
 
 	/** The remaining number of bytes in the <i>current</i> record.
 	 *

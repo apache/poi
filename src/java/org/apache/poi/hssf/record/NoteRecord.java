@@ -73,6 +73,8 @@ public final class NoteRecord extends StandardRecord implements Cloneable {
 
 	/**
 	 * Read the record data from the supplied <code>RecordInputStream</code>
+	 * 
+	 * @param in the RecordInputStream to read from
 	 */
 	public NoteRecord(RecordInputStream in) {
 		field_1_row = in.readUShort();
@@ -195,6 +197,8 @@ public final class NoteRecord extends StandardRecord implements Cloneable {
 	
 	/**
 	 * For unit testing only!
+	 * 
+	 * @return true, if author element uses multi byte
 	 */
 	protected boolean authorIsMultibyte() {
 	   return field_5_hasMultibyte;
@@ -202,6 +206,8 @@ public final class NoteRecord extends StandardRecord implements Cloneable {
 
 	/**
 	 * Object id for OBJ record that contains the comment
+	 * 
+	 * @return the Object id for OBJ record that contains the comment
 	 */
 	public int getShapeId() {
 		return field_4_shapeid;
@@ -209,6 +215,8 @@ public final class NoteRecord extends StandardRecord implements Cloneable {
 
 	/**
 	 * Object id for OBJ record that contains the comment
+	 * 
+	 * @param id the Object id for OBJ record that contains the comment
 	 */
 	public void setShapeId(int id) {
 		field_4_shapeid = id;

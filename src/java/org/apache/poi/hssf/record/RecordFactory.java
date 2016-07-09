@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -78,6 +77,7 @@ public final class RecordFactory {
         public ReflectionConstructorRecordCreator(Constructor<? extends Record> c) {
             _c = c;
         }
+        @Override
         public Record create(RecordInputStream in) {
             Object[] args = { in, };
             try {
@@ -99,6 +99,7 @@ public final class RecordFactory {
                 }
             }
         }
+        @Override
         public Class<? extends Record> getRecordClass() {
             return _c.getDeclaringClass();
         }
@@ -112,6 +113,7 @@ public final class RecordFactory {
         public ReflectionMethodRecordCreator(Method m) {
             _m = m;
         }
+        @Override
         public Record create(RecordInputStream in) {
             Object[] args = { in, };
             try {
@@ -124,6 +126,7 @@ public final class RecordFactory {
                 throw new RecordFormatException("Unable to construct record instance" , e.getTargetException());
             }
         }
+        @Override
         @SuppressWarnings("unchecked")
         public Class<? extends Record> getRecordClass() {
             return (Class<? extends Record>) _m.getDeclaringClass();
@@ -292,9 +295,13 @@ public final class RecordFactory {
 
     /**
      * Debug / diagnosis method<p>
-     * Gets the POI implementation class for a given {@code sid}.  Only a subset of the any BIFF
+     *
+     * Gets the POI implementation class for a given {@code sid}.  Only a subset of the BIFF
      * records are actually interpreted by POI.  A few others are known but not interpreted
      * (see {@link UnknownRecord#getBiffName(int)}).
+     *
+     * @param sid the record sid
+     *
      * @return the POI implementation class for the specified record {@code sid}.
      * {@code null} if the specified record is not interpreted by POI.
      */
@@ -305,9 +312,13 @@ public final class RecordFactory {
         }
         return rc.getRecordClass();
     }
+
     /**
      * create a record, if there are MUL records than multiple records
      * are returned digested into the non-mul form.
+     *
+     * @param in the RecordInputStream to read from
+     * @return the extracted records
      */
     public static Record [] createRecord(RecordInputStream in) {
         Record record = createSingleRecord(in);
@@ -337,6 +348,9 @@ public final class RecordFactory {
     /**
      * RK record is a slightly smaller alternative to NumberRecord
      * POI likes NumberRecord better
+     *
+     * @param the RK record to convert
+     * @return the NumberRecord
      */
     public static NumberRecord convertToNumberRecord(RKRecord rk) {
         NumberRecord num = new NumberRecord();
@@ -349,7 +363,10 @@ public final class RecordFactory {
     }
 
     /**
-     * Converts a {@link MulRKRecord} into an equivalent array of {@link NumberRecord}s
+     * Converts a {@link MulRKRecord} into an equivalent array of {@link NumberRecord NumberRecords}
+     *
+     * @param mrk the MulRKRecord to convert
+     * @return the equivalent array of {@link NumberRecord NumberRecords}
      */
     public static NumberRecord[] convertRKRecords(MulRKRecord mrk) {
         NumberRecord[] mulRecs = new NumberRecord[mrk.getNumColumns()];
@@ -366,7 +383,10 @@ public final class RecordFactory {
     }
 
     /**
-     * Converts a {@link MulBlankRecord} into an equivalent array of {@link BlankRecord}s
+     * Converts a {@link MulBlankRecord} into an equivalent array of {@link BlankRecord BlankRecords}
+     *
+     * @param mbk the MulBlankRecord to convert
+     * @return the equivalent array of {@link BlankRecord BlankRecords}
      */
     public static BlankRecord[] convertBlankRecords(MulBlankRecord mbk) {
         BlankRecord[] mulRecs = new BlankRecord[mbk.getNumColumns()];
@@ -389,9 +409,7 @@ public final class RecordFactory {
             short[] results = new short[ _recordCreatorsById.size() ];
             int i = 0;
 
-            for (Iterator<Integer> iterator = _recordCreatorsById.keySet().iterator(); iterator.hasNext(); ) {
-                Integer sid = iterator.next();
-
+            for (Integer sid : _recordCreatorsById.keySet()) {
                 results[i++] = sid.shortValue();
             }
             Arrays.sort(results);
@@ -410,9 +428,7 @@ public final class RecordFactory {
         Map<Integer, I_RecordCreator> result = new HashMap<Integer, I_RecordCreator>();
         Set<Class<?>> uniqueRecClasses = new HashSet<Class<?>>(records.length * 3 / 2);
 
-        for (int i = 0; i < records.length; i++) {
-
-            Class<? extends Record> recClass = records[ i ];
+        for (Class<? extends Record> recClass : records) {
             if(!Record.class.isAssignableFrom(recClass)) {
                 throw new RuntimeException("Invalid record sub-class (" + recClass.getName() + ")");
             }
@@ -433,7 +449,7 @@ public final class RecordFactory {
             Integer key = Integer.valueOf(sid);
             if (result.containsKey(key)) {
                 Class<?> prevClass = result.get(key).getRecordClass();
-                throw new RuntimeException("duplicate record sid 0x" + 
+                throw new RuntimeException("duplicate record sid 0x" +
                         Integer.toHexString(sid).toUpperCase(Locale.ROOT)
                         + " for classes (" + recClass.getName() + ") and ("
                         + prevClass.getName() + ")");
