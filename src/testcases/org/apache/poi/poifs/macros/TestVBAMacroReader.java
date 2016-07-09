@@ -17,12 +17,9 @@
 
 package org.apache.poi.poifs.macros;
 
-import org.apache.poi.POIDataSamples;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
-import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.StringUtil;
-import org.junit.Ignore;
-import org.junit.Test;
+import static org.apache.poi.POITestCase.assertContains;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -32,9 +29,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.apache.poi.POITestCase.assertContains;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
+import org.apache.poi.POIDataSamples;
+import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.StringUtil;
+import org.junit.Ignore;
+import org.junit.Test;
 
 public class TestVBAMacroReader {
     private static final Map<POIDataSamples, String> expectedMacroContents;
@@ -178,7 +178,7 @@ public class TestVBAMacroReader {
         }
     }
 
-    protected void fromStream(POIDataSamples dataSamples, String filename) throws IOException {   
+    protected void fromStream(POIDataSamples dataSamples, String filename) throws IOException {
         InputStream fis = dataSamples.openResourceAsStream(filename);
         try {
             VBAMacroReader r = new VBAMacroReader(fis);
@@ -192,7 +192,7 @@ public class TestVBAMacroReader {
         }
     }
 
-    protected void fromNPOIFS(POIDataSamples dataSamples, String filename) throws IOException {   
+    protected void fromNPOIFS(POIDataSamples dataSamples, String filename) throws IOException {
         File f = dataSamples.getFile(filename);
         NPOIFSFileSystem fs = new NPOIFSFileSystem(f);
         try {
@@ -240,5 +240,23 @@ public class TestVBAMacroReader {
         // And the macro itself
         String testMacroNoSub = expectedMacroContents.get(samples);
         assertContains(content, testMacroNoSub);
+    }
+    
+    @Ignore
+    @Test
+    public void bug59830() throws IOException {
+        // This file is intentionally omitted from the test-data directory
+        // unless we can extract the vbaProject.bin from this Word 97-2003 file
+        // so that it's less likely to be opened and executed on a Windows computer.
+        // The file is attached to bug 59830.
+        // The Macro Virus only affects Windows computers, as it makes a
+        // subprocess call to powershell.exe with an encoded payload
+        // The document contains macros that execute on workbook open if macros
+        // are enabled
+        File doc = POIDataSamples.getDocumentInstance().getFile("macro_virus.doc.do_not_open");
+        VBAMacroReader reader = new VBAMacroReader(doc);
+        Map<String, String> macros = reader.readMacros();
+        assertNotNull(macros);
+        reader.close();
     }
 }
