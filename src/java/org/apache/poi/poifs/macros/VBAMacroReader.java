@@ -128,6 +128,12 @@ public class VBAMacroReader implements Closeable {
     protected static class Module {
         Integer offset;
         byte[] buf;
+        void read(InputStream in) throws IOException {
+            final ByteArrayOutputStream out = new ByteArrayOutputStream();
+            IOUtils.copy(in, out);
+            out.close();
+            buf = out.toByteArray();
+        }
     }
     protected static class ModuleMap extends HashMap<String, Module> {
         Charset charset = Charset.forName("Cp1252"); // default charset
@@ -173,7 +179,7 @@ public class VBAMacroReader implements Closeable {
     }
     
     /**
-     * reads module from input stream and adds it to the modules map for decompression later
+     * reads module from DIR node in input stream and adds it to the modules map for decompression later
      * on the second pass through this function, the module will be decompressed
      * 
      * Side-effects: adds a new module to the module map or sets the buf field on the module
@@ -187,22 +193,41 @@ public class VBAMacroReader implements Closeable {
     private static void readModule(RLEDecompressingInputStream in, String streamName, ModuleMap modules) throws IOException {
         int moduleOffset = in.readInt();
         Module module = modules.get(streamName);
-        // First time we've seen the module. Add it to the ModuleMap and decompress it later 
         if (module == null) {
+            // First time we've seen the module. Add it to the ModuleMap and decompress it later
             module = new Module();
             module.offset = moduleOffset;
             modules.put(streamName, module);
-        }
-        // Decompress a previously found module and store the decompressed result into module.buf
-        else {
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            RLEDecompressingInputStream stream = new RLEDecompressingInputStream(new ByteArrayInputStream(
-                    module.buf, moduleOffset, module.buf.length - moduleOffset));
-            IOUtils.copy(stream, out);
+            // Would adding module.read(in) here be correct?
+        } else {
+            // Decompress a previously found module and store the decompressed result into module.buf
+            InputStream stream = new RLEDecompressingInputStream(
+                    new ByteArrayInputStream(module.buf, moduleOffset, module.buf.length - moduleOffset)
+            );
+            module.read(stream);
             stream.close();
-            out.close();
-            module.buf = out.toByteArray();
         }
+    }
+    
+    private static void readModule(DocumentInputStream dis, String name, ModuleMap modules) throws IOException {
+        Module module = modules.get(name);
+        // TODO Refactor this to fetch dir then do the rest
+        if (module == null) {
+            // no DIR stream with offsets yet, so store the compressed bytes for later
+            module = new Module();
+            modules.put(name, module);
+            module.read(dis);
+        } else {
+            // we know the offset already, so decompress immediately on-the-fly
+            long skippedBytes = dis.skip(module.offset);
+            if (skippedBytes != module.offset) {
+                throw new IOException("tried to skip " + module.offset + " bytes, but actually skipped " + skippedBytes + " bytes");
+            }
+            InputStream stream = new RLEDecompressingInputStream(dis);
+            module.read(stream);
+            stream.close();
+        }
+        
     }
 
     /**
@@ -294,27 +319,7 @@ public class VBAMacroReader implements Closeable {
                 } else if (!startsWithIgnoreCase(name, "__SRP")
                         && !startsWithIgnoreCase(name, "_VBA_PROJECT")) {
                     // process module, skip __SRP and _VBA_PROJECT since these do not contain macros
-                    Module module = modules.get(name);
-                    final InputStream in;
-                    // TODO Refactor this to fetch dir then do the rest
-                    if (module == null) {
-                        // no DIR stream with offsets yet, so store the compressed bytes for later
-                        module = new Module();
-                        modules.put(name, module);
-                        in = dis;
-                    } else {
-                        // we know the offset already, so decompress immediately on-the-fly
-                        long skippedBytes = dis.skip(module.offset);
-                        if (skippedBytes != module.offset) {
-                            throw new IOException("tried to skip " + module.offset + " bytes, but actually skipped " + skippedBytes + " bytes");
-                        }
-                        in = new RLEDecompressingInputStream(dis);
-                    }
-                    final ByteArrayOutputStream out = new ByteArrayOutputStream();
-                    IOUtils.copy(in, out);
-                    in.close();
-                    out.close();
-                    module.buf = out.toByteArray();
+                    readModule(dis, name, modules);
                 }
             }
             finally {
