@@ -40,6 +40,7 @@ import org.apache.poi.poifs.filesystem.DocumentNode;
 import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
+import org.apache.poi.util.HexDump;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.RLEDecompressingInputStream;
 
@@ -179,13 +180,31 @@ public class VBAMacroReader implements Closeable {
     private static void trySkip(InputStream in, long n) throws IOException {
         long skippedBytes = in.skip(n);
         if (skippedBytes != n) {
-            throw new IOException(
-                "Skipped only " + skippedBytes + " while trying to skip " + n + " bytes. " +
-                    " This should never happen.");
+            if (skippedBytes < 0) {
+                throw new IOException(
+                    "Tried skipping " + n + " bytes, but no bytes were skipped. "
+                    + "The end of the stream has been reached or the stream is closed.");
+            } else {
+                throw new IOException(
+                    "Tried skipping " + n + " bytes, but only " + skippedBytes + " bytes were skipped. "
+                    + "This should never happen.");
+            }
         }
     }
+    
+    // Constants from MS-OVBA: https://msdn.microsoft.com/en-us/library/office/cc313094(v=office.12).aspx
+    private static final int EOF = -1;
+    private static final int VERSION_INDEPENDENT_TERMINATOR = 0x0010;
+    private static final int VERSION_DEPENDENT_TERMINATOR = 0x002B;
+    private static final int PROJECTVERSION = 0x0009;
+    private static final int PROJECTCODEPAGE = 0x0003;
+    private static final int STREAMNAME = 0x001A;
+    private static final int MODULEOFFSET = 0x0031;
+    private static final int MODULETYPE_PROCEDURAL = 0x0021;
+    private static final int MODULETYPE_DOCUMENT_CLASS_OR_DESIGNER = 0x0022;
+    private static final int PROJECTLCID = 0x0002;
 
-    /*
+    /**
      * Reads VBA Project modules from a VBA Project directory located at
      * <tt>macroDir</tt> into <tt>modules</tt>.
      *
@@ -203,50 +222,56 @@ public class VBAMacroReader implements Closeable {
                     // process DIR
                     RLEDecompressingInputStream in = new RLEDecompressingInputStream(dis);
                     String streamName = null;
-                    while (true) {
-                        int id = in.readShort();
-                        if (id == -1 || id == 0x0010) {
-                            break; // EOF or TERMINATOR
-                        }
-                        int len = in.readInt();
-                        switch (id) {
-                        case 0x0009: // PROJECTVERSION
-                            trySkip(in, 6);
-                            break;
-                        case 0x0003: // PROJECTCODEPAGE
-                            int codepage = in.readShort();
-                            modules.charset = Charset.forName("Cp" + codepage);
-                            break;
-                        case 0x001A: // STREAMNAME
-                            streamName = readString(in, len, modules.charset);
-                            break;
-                        case 0x0031: // MODULEOFFSET
-                            int moduleOffset = in.readInt();
-                            Module module = modules.get(streamName);
-                            if (module != null) {
-                                ByteArrayOutputStream out = new ByteArrayOutputStream();
-                                RLEDecompressingInputStream stream = new RLEDecompressingInputStream(new ByteArrayInputStream(
-                                        module.buf, moduleOffset, module.buf.length - moduleOffset));
-                                IOUtils.copy(stream, out);
-                                stream.close();
-                                out.close();
-                                module.buf = out.toByteArray();
-                            } else {
-                                module = new Module();
-                                module.offset = moduleOffset;
-                                modules.put(streamName, module);
+                    int recordId = 0;
+                    try {
+                        while (true) {
+                            recordId = in.readShort();
+                            if (EOF == recordId
+                                    || VERSION_INDEPENDENT_TERMINATOR == recordId) {
+                                break;
                             }
-                            break;
-                        default:
-                            try {
-                                trySkip(in, len);
-                            } catch (final IOException e) {
-                                throw new IOException("Error occurred while reading section id " + id, e);
+                            int recordLength = in.readInt();
+                            switch (recordId) {
+                            case PROJECTVERSION:
+                                trySkip(in, 6);
+                                break;
+                            case PROJECTCODEPAGE:
+                                int codepage = in.readShort();
+                                modules.charset = Charset.forName("Cp" + codepage);
+                                break;
+                            case STREAMNAME:
+                                streamName = readString(in, recordLength, modules.charset);
+                                break;
+                            case MODULEOFFSET:
+                                int moduleOffset = in.readInt();
+                                Module module = modules.get(streamName);
+                                if (module != null) {
+                                    ByteArrayOutputStream out = new ByteArrayOutputStream();
+                                    RLEDecompressingInputStream stream = new RLEDecompressingInputStream(new ByteArrayInputStream(
+                                            module.buf, moduleOffset, module.buf.length - moduleOffset));
+                                    IOUtils.copy(stream, out);
+                                    stream.close();
+                                    out.close();
+                                    module.buf = out.toByteArray();
+                                } else {
+                                    module = new Module();
+                                    module.offset = moduleOffset;
+                                    modules.put(streamName, module);
+                                }
+                                break;
+                            default:
+                                trySkip(in, recordLength);
+                                break;
                             }
-                            break;
                         }
+                    } catch (final IOException e) {
+                        throw new IOException(
+                                "Error occurred while reading macros at section id "
+                                + recordId + " (" + HexDump.shortToHex(recordId) + ")", e);
                     }
-                    in.close();
+                    finally {
+                        in.close();
+                    }
                 } else if (!startsWithIgnoreCase(name, "__SRP")
                         && !startsWithIgnoreCase(name, "_VBA_PROJECT")) {
                     // process module, skip __SRP and _VBA_PROJECT since these do not contain macros
