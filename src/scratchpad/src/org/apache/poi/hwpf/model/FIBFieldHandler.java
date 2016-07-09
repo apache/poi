@@ -283,24 +283,17 @@ public final class FIBFieldHandler
         {
             result.append( '\t' );
             result.append( leftPad( Integer.toString( x ), 8, ' ' ) );
-            result.append( leftPad(
-                    Integer.toString( 154 + x * LittleEndian.INT_SIZE * 2 ), 6,
-                    ' ' ) );
+            result.append( leftPad( Integer.toString( 154 + x * LittleEndian.INT_SIZE * 2 ), 6, ' ' ) );
             result.append( "   0x" );
-            result.append( leftPad(
-                    Integer.toHexString( 154 + x * LittleEndian.INT_SIZE * 2 ),
-                    4, '0' ) );
-            result.append( leftPad( Integer.toString( getFieldOffset( x ) ), 8,
-                    ' ' ) );
-            result.append( leftPad( Integer.toString( getFieldSize( x ) ), 8,
-                    ' ' ) );
+            result.append( leftPad( Integer.toHexString( 154 + x * LittleEndian.INT_SIZE * 2 ), 4, '0' ) );
+            result.append( leftPad( Integer.toString( getFieldOffset( x ) ), 8, ' ' ) );
+            result.append( leftPad( Integer.toString( getFieldSize( x ) ), 8, ' ' ) );
 
-            UnhandledDataStructure structure = _unknownMap.get( Integer
-                    .valueOf( x ) );
+            UnhandledDataStructure structure = _unknownMap.get( Integer.valueOf( x ) );
             if ( structure != null )
             {
                 result.append( " => Unknown structure of size " );
-                result.append( structure._buf.length );
+                result.append( structure.getBuf().length );
             }
             result.append( '\n' );
         }
