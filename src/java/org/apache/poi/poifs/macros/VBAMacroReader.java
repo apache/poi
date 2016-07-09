@@ -171,6 +171,39 @@ public class VBAMacroReader implements Closeable {
         int count = stream.read(buffer);
         return new String(buffer, 0, count, charset);
     }
+    
+    /**
+     * reads module from input stream and adds it to the modules map for decompression later
+     * on the second pass through this function, the module will be decompressed
+     * 
+     * Side-effects: adds a new module to the module map or sets the buf field on the module
+     * to the decompressed stream contents (the VBA code for one module)
+     *
+     * @param in the run-length encoded input stream to read from
+     * @param streamName the stream name of the module
+     * @param modules a map to store the modules
+     * @throws IOException
+     */
+    private static void readModule(RLEDecompressingInputStream in, String streamName, ModuleMap modules) throws IOException {
+        int moduleOffset = in.readInt();
+        Module module = modules.get(streamName);
+        // First time we've seen the module. Add it to the ModuleMap and decompress it later 
+        if (module == null) {
+            module = new Module();
+            module.offset = moduleOffset;
+            modules.put(streamName, module);
+        }
+        // Decompress a previously found module and store the decompressed result into module.buf
+        else {
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            RLEDecompressingInputStream stream = new RLEDecompressingInputStream(new ByteArrayInputStream(
+                    module.buf, moduleOffset, module.buf.length - moduleOffset));
+            IOUtils.copy(stream, out);
+            stream.close();
+            out.close();
+            module.buf = out.toByteArray();
+        }
+    }
 
     /**
       * Skips <tt>n</tt> bytes in an input stream, throwing IOException if the
@@ -243,21 +276,7 @@ public class VBAMacroReader implements Closeable {
                                 streamName = readString(in, recordLength, modules.charset);
                                 break;
                             case MODULEOFFSET:
-                                int moduleOffset = in.readInt();
-                                Module module = modules.get(streamName);
-                                if (module != null) {
-                                    ByteArrayOutputStream out = new ByteArrayOutputStream();
-                                    RLEDecompressingInputStream stream = new RLEDecompressingInputStream(new ByteArrayInputStream(
-                                            module.buf, moduleOffset, module.buf.length - moduleOffset));
-                                    IOUtils.copy(stream, out);
-                                    stream.close();
-                                    out.close();
-                                    module.buf = out.toByteArray();
-                                } else {
-                                    module = new Module();
-                                    module.offset = moduleOffset;
-                                    modules.put(streamName, module);
-                                }
+                                readModule(in, streamName, modules);
                                 break;
                             default:
                                 trySkip(in, recordLength);
