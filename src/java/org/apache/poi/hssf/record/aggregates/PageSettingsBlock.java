@@ -66,8 +66,8 @@ public final class PageSettingsBlock extends RecordAggregate {
         @Override
         public void visitContainedRecords(RecordVisitor rv) {
             rv.visitRecord(_pls);
-            for (int i = 0; i < _plsContinues.length; i++) {
-                rv.visitRecord(_plsContinues[i]);
+            for (ContinueRecord _plsContinue : _plsContinues) {
+                rv.visitRecord(_plsContinue);
             }
         }
     }
@@ -93,7 +93,7 @@ public final class PageSettingsBlock extends RecordAggregate {
      * The indicator of such records is a non-zero GUID,
      *  see {@link  org.apache.poi.hssf.record.HeaderFooterRecord#getGuid()}
      */
-    private List<HeaderFooterRecord> _sviewHeaderFooters = new ArrayList<HeaderFooterRecord>();
+    private final List<HeaderFooterRecord> _sviewHeaderFooters = new ArrayList<HeaderFooterRecord>();
     private Record _printSize;
 
     public PageSettingsBlock(RecordStream rs) {
@@ -120,6 +120,8 @@ public final class PageSettingsBlock extends RecordAggregate {
     }
 
     /**
+     * @param sid the record sid
+     * 
      * @return <code>true</code> if the specified Record sid is one belonging to the
      * 'Page Settings Block'.
      */
@@ -205,8 +207,9 @@ public final class PageSettingsBlock extends RecordAggregate {
             case HeaderFooterRecord.sid:
                 //there can be multiple HeaderFooterRecord records belonging to different sheet views
                 HeaderFooterRecord hf = (HeaderFooterRecord)rs.getNext();
-                if(hf.isCurrentSheet()) _headerFooter = hf;
-                else {
+                if(hf.isCurrentSheet()) {
+                    _headerFooter = hf;
+                } else {
                     _sviewHeaderFooters.add(hf);
                 }
                 break;
@@ -242,6 +245,9 @@ public final class PageSettingsBlock extends RecordAggregate {
     /**
      * Sets a page break at the indicated column
      *
+     * @param column the column to add page breaks to
+     * @param fromRow the starting row
+     * @param toRow the ending row
      */
     public void setColumnBreak(short column, short fromRow, short toRow) {
         getColumnBreaksRecord().addBreak(column, fromRow, toRow);
@@ -250,6 +256,7 @@ public final class PageSettingsBlock extends RecordAggregate {
     /**
      * Removes a page break at the indicated column
      *
+     * @param column the column to check for page breaks
      */
     public void removeColumnBreak(int column) {
         getColumnBreaksRecord().removeBreak(column);
@@ -258,6 +265,7 @@ public final class PageSettingsBlock extends RecordAggregate {
 
 
 
+    @Override
     public void visitContainedRecords(RecordVisitor rv) {
         // Replicates record order from Excel 2007, though this is not critical
 
@@ -481,8 +489,9 @@ public final class PageSettingsBlock extends RecordAggregate {
             int breakLocation = breakItem.main;
             boolean inStart = (breakLocation >= start);
             boolean inEnd = (breakLocation <= stop);
-            if(inStart && inEnd)
+            if(inStart && inEnd) {
                 shiftedBreak.add(breakItem);
+            }
         }
 
         iterator = shiftedBreak.iterator();
@@ -496,7 +505,9 @@ public final class PageSettingsBlock extends RecordAggregate {
 
     /**
      * Sets a page break at the indicated row
-     * @param row
+     * @param row the row
+     * @param fromCol the starting column
+     * @param toCol the ending column
      */
     public void setRowBreak(int row, short fromCol, short toCol) {
         getRowBreaksRecord().addBreak((short)row, fromCol, toCol);
@@ -504,17 +515,20 @@ public final class PageSettingsBlock extends RecordAggregate {
 
     /**
      * Removes a page break at the indicated row
-     * @param row
+     * @param row the row
      */
     public void removeRowBreak(int row) {
-        if (getRowBreaksRecord().getBreaks().length < 1)
+        if (getRowBreaksRecord().getBreaks().length < 1) {
             throw new IllegalArgumentException("Sheet does not define any row breaks");
+        }
         getRowBreaksRecord().removeBreak((short)row);
     }
 
     /**
      * Queries if the specified row has a page break
-     * @param row
+     * 
+     * @param row the row to check for
+     * 
      * @return true if the specified row has a page break
      */
     public boolean isRowBroken(int row) {
@@ -524,6 +538,8 @@ public final class PageSettingsBlock extends RecordAggregate {
 
     /**
      * Queries if the specified column has a page break
+     * 
+     * @param column the column to check for
      *
      * @return <code>true</code> if the specified column has a page break
      */
@@ -533,9 +549,9 @@ public final class PageSettingsBlock extends RecordAggregate {
 
     /**
      * Shifts the horizontal page breaks for the indicated count
-     * @param startingRow
-     * @param endingRow
-     * @param count
+     * @param startingRow the starting row
+     * @param endingRow the ending row
+     * @param count the number of rows to shift by
      */
     public void shiftRowBreaks(int startingRow, int endingRow, int count) {
         shiftBreaks(getRowBreaksRecord(), startingRow, endingRow, count);
@@ -543,9 +559,9 @@ public final class PageSettingsBlock extends RecordAggregate {
 
     /**
      * Shifts the vertical page breaks for the indicated count
-     * @param startingCol
-     * @param endingCol
-     * @param count
+     * @param startingCol the starting column
+     * @param endingCol the ending column
+     * @param count the number of columns to shift by
      */
     public void shiftColumnBreaks(short startingCol, short endingCol, short count) {
         shiftBreaks(getColumnBreaksRecord(), startingCol, endingCol, count);
@@ -590,6 +606,8 @@ public final class PageSettingsBlock extends RecordAggregate {
     /**
      * HEADERFOOTER is new in 2007.  Some apps seem to have scattered this record long after
      * the {@link PageSettingsBlock} where it belongs.
+     * 
+     * @param rec the HeaderFooterRecord to set
      */
     public void addLateHeaderFooter(HeaderFooterRecord rec) {
         if (_headerFooter != null) {
@@ -604,10 +622,11 @@ public final class PageSettingsBlock extends RecordAggregate {
     /**
      * This method reads PageSettingsBlock records from the supplied RecordStream until the first
      * non-PageSettingsBlock record is encountered.  As each record is read, it is incorporated
-     * into this PageSettingsBlock.
-     * <p/>
+     * into this PageSettingsBlock.<p>
+     * 
      * The latest Excel version seems to write the PageSettingsBlock uninterrupted. However there
      * are several examples (that Excel reads OK) where these records are not written together:
+     * 
      * <ul>
      * <li><b>HEADER_FOOTER(0x089C) after WINDOW2</b> - This record is new in 2007.  Some apps
      * seem to have scattered this record long after the PageSettingsBlock where it belongs
@@ -616,16 +635,18 @@ public final class PageSettingsBlock extends RecordAggregate {
      * This happens in the test sample file "NoGutsRecords.xls" and "WORKBOOK_in_capitals.xls"</li>
      * <li><b>Margins after DIMENSION</b> - All of PSB should be before DIMENSION. (Bug-47199)</li>
      * </ul>
+     * 
      * These were probably written by other applications (or earlier versions of Excel). It was
      * decided to not write specific code for detecting each of these cases.  POI now tolerates
      * PageSettingsBlock records scattered all over the sheet record stream, and in any order, but
-     * does not allow duplicates of any of those records.
+     * does not allow duplicates of any of those records.<p>
      *
-     * <p/>
      * <b>Note</b> - when POI writes out this PageSettingsBlock, the records will always be written
      * in one consolidated block (in the standard ordering) regardless of how scattered the records
      * were when they were originally read.
      *
+     * @param rs the RecordStream to read from
+     * 
      * @throws  RecordFormatException if any PSB record encountered has the same type (sid) as
      * a record that is already part of this PageSettingsBlock
      */
@@ -665,6 +686,7 @@ public final class PageSettingsBlock extends RecordAggregate {
             if (rb instanceof CustomViewSettingsRecordAggregate) {
                 final CustomViewSettingsRecordAggregate cv = (CustomViewSettingsRecordAggregate) rb;
                 cv.visitContainedRecords(new RecordVisitor() {
+                    @Override
                     public void visitRecord(Record r) {
                         if (r.getSid() == UserSViewBegin.sid) {
                             String guid = HexDump.toHex(((UserSViewBegin) r).getGuid());

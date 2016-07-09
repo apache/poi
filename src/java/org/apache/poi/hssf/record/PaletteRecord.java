@@ -40,8 +40,8 @@ public final class PaletteRecord extends StandardRecord {
     public PaletteRecord() {
       PColor[] defaultPalette = createDefaultPalette();
       _colors    = new ArrayList<PColor>(defaultPalette.length);
-      for (int i = 0; i < defaultPalette.length; i++) {
-        _colors.add(defaultPalette[i]);
+      for (PColor element : defaultPalette) {
+        _colors.add(element);
       }
     }
 
@@ -53,6 +53,7 @@ public final class PaletteRecord extends StandardRecord {
        }
     }
 
+    @Override
     public String toString() {
         StringBuffer buffer = new StringBuffer();
 
@@ -68,6 +69,7 @@ public final class PaletteRecord extends StandardRecord {
         return buffer.toString();
     }
 
+    @Override
     public void serialize(LittleEndianOutput out) {
         out.writeShort(_colors.size());
         for (int i = 0; i < _colors.size(); i++) {
@@ -75,16 +77,20 @@ public final class PaletteRecord extends StandardRecord {
         }
     }
 
+    @Override
     protected int getDataSize() {
         return 2 + _colors.size() * PColor.ENCODED_SIZE;
     }
 
+    @Override
     public short getSid() {
         return sid;
     }
 
     /**
      * Returns the color value at a given index
+     * 
+     * @param byteIndex palette index, must be &gt;= 0x8
      *
      * @return the RGB triplet for the color, or <code>null</code> if the specified index
      * does not exist
@@ -105,6 +111,9 @@ public final class PaletteRecord extends StandardRecord {
      *
      * @param byteIndex the index to set; if this index is less than 0x8 or greater than
      * 0x40, then no modification is made
+     * @param red the red color part
+     * @param green the green color part
+     * @param blue the blue color part
      */
     public void setColor(short byteIndex, byte red, byte green, byte blue)
     {
@@ -195,9 +204,9 @@ public final class PaletteRecord extends StandardRecord {
      */
     private static final class PColor {
         public static final short ENCODED_SIZE = 4;
-        private int _red;
-        private int _green;
-        private int _blue;
+        private final int _red;
+        private final int _green;
+        private final int _blue;
 
         public PColor(int red, int green, int blue) {
             _red = red;
@@ -223,6 +232,7 @@ public final class PaletteRecord extends StandardRecord {
             out.writeByte(0);
         }
 
+        @Override
         public String toString() {
             StringBuffer buffer = new StringBuffer();
             buffer.append("  red   = ").append(_red & 0xff).append('\n');

@@ -33,10 +33,10 @@ import org.apache.poi.util.LittleEndianOutput;
 public final class MulRKRecord extends StandardRecord {
 	public final static short sid = 0x00BD;
 
-	private int	 field_1_row;
-	private short   field_2_first_col;
-	private RkRec[] field_3_rks;
-	private short   field_4_last_col;
+	private final int	 field_1_row;
+	private final short   field_2_first_col;
+	private final RkRec[] field_3_rks;
+	private final short   field_4_last_col;
 
 	public int getRow() {
 		return field_1_row;
@@ -68,6 +68,9 @@ public final class MulRKRecord extends StandardRecord {
 
 	/**
 	 * returns the xf index for column (coffset = column - field_2_first_col)
+	 * 
+     * @param coffset the coffset = column - field_2_first_col
+     * 
 	 * @return the XF index for the column
 	 */
 	public short getXFAt(int coffset) {
@@ -76,6 +79,9 @@ public final class MulRKRecord extends StandardRecord {
 
 	/**
 	 * returns the rk number for column (coffset = column - field_2_first_col)
+	 * 
+	 * @param coffset the coffset = column - field_2_first_col
+	 * 
 	 * @return the value (decoded into a double)
 	 */
 	public double getRKNumberAt(int coffset) {
@@ -93,7 +99,8 @@ public final class MulRKRecord extends StandardRecord {
 	}
 
 
-	public String toString() {
+	@Override
+    public String toString() {
 		StringBuffer buffer = new StringBuffer();
 
 		buffer.append("[MULRK]\n");
@@ -109,15 +116,18 @@ public final class MulRKRecord extends StandardRecord {
 		return buffer.toString();
 	}
 
-	public short getSid()
+	@Override
+    public short getSid()
 	{
 		return sid;
 	}
 
-	public void serialize(LittleEndianOutput out) {
+	@Override
+    public void serialize(LittleEndianOutput out) {
 		throw new RecordFormatException( "Sorry, you can't serialize MulRK in this release");
 	}
-	protected int getDataSize() {
+	@Override
+    protected int getDataSize() {
 		throw new RecordFormatException( "Sorry, you can't serialize MulRK in this release");
 	}
 

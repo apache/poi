@@ -100,8 +100,8 @@ public final class FtPioGrbitSubRecord extends SubRecord implements Cloneable {
 
     /**
      * Use one of the bitmasks MANUAL_ADVANCE_BIT ... CURSOR_VISIBLE_BIT
-     * @param bitmask
-     * @param enabled
+     * @param bitmask the bitmask to apply
+     * @param enabled if true, the bitmask will be or-ed, otherwise the bits set in the mask will be removed from the flags
      */
     public void setFlagByBit(int bitmask, boolean enabled) {
         if (enabled) {

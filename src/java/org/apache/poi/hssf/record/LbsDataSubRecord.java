@@ -270,12 +270,16 @@ public class LbsDataSubRecord extends SubRecord {
         sb.append("[ftLbsData]\n");
         sb.append("    .unknownShort1 =").append(HexDump.shortToHex(_cbFContinued)).append("\n");
         sb.append("    .formula        = ").append('\n');
-        if(_linkPtg != null) sb.append(_linkPtg.toString()).append(_linkPtg.getRVAType()).append('\n');
+        if(_linkPtg != null) {
+            sb.append(_linkPtg.toString()).append(_linkPtg.getRVAType()).append('\n');
+        }
         sb.append("    .nEntryCount   =").append(HexDump.shortToHex(_cLines)).append("\n");
         sb.append("    .selEntryIx    =").append(HexDump.shortToHex(_iSel)).append("\n");
         sb.append("    .style         =").append(HexDump.shortToHex(_flags)).append("\n");
         sb.append("    .unknownShort10=").append(HexDump.shortToHex(_idEdit)).append("\n");
-        if(_dropData != null) sb.append('\n').append(_dropData.toString());
+        if(_dropData != null) {
+            sb.append('\n').append(_dropData.toString());
+        }
         sb.append("[/ftLbsData]\n");
         return sb.toString();
     }
@@ -354,14 +358,16 @@ public class LbsDataSubRecord extends SubRecord {
         }
 
         /**
-         *  Set the style of this dropdown.
+         * Set the style of this dropdown.<p>
          *
          * Possible values:
-         *  <p>
-         *  0  Combo dropdown control
-         *  1  Combo Edit dropdown control
-         *  2  Simple dropdown control (just the dropdown button)
-         *
+         * <ul>
+         * <li>0: Combo dropdown control</li>
+         * <li>1: Combo Edit dropdown control</li>
+         * <li>2: Simple dropdown control (just the dropdown button)</li>
+         * </ul>
+         * 
+         * @param style the style - see possible values
          */
         public void setStyle(int style){
             _wStyle = style;
@@ -369,6 +375,8 @@ public class LbsDataSubRecord extends SubRecord {
 
         /**
          * Set the number of lines to be displayed in the dropdown.
+         * 
+         * @param num the number of lines to be displayed in the dropdown
          */
         public void setNumLines(int num){
             _cLine = num;
@@ -379,13 +387,17 @@ public class LbsDataSubRecord extends SubRecord {
             out.writeShort(_cLine);
             out.writeShort(_dxMin);
             StringUtil.writeUnicodeString(out, _str);
-            if(_unused != null) out.writeByte(_unused);
+            if(_unused != null) {
+                out.writeByte(_unused);
+            }
         }
 
         public int getDataSize() {
             int size = 6;
             size += StringUtil.getEncodedSize(_str);
-            if(_unused != null) size++;
+            if(_unused != null) {
+                size++;
+            }
             return size;
         }
 
@@ -397,7 +409,9 @@ public class LbsDataSubRecord extends SubRecord {
             sb.append("  ._cLine:  ").append(_cLine).append('\n');
             sb.append("  ._dxMin:  ").append(_dxMin).append('\n');
             sb.append("  ._str:  ").append(_str).append('\n');
-            if(_unused != null) sb.append("  ._unused:  ").append(_unused).append('\n');
+            if(_unused != null) {
+                sb.append("  ._unused:  ").append(_unused).append('\n');
+            }
             sb.append("[/LbsDropData]\n");
 
             return sb.toString();

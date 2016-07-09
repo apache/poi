@@ -138,6 +138,8 @@ public final class NameCommentRecord extends StandardRecord {
   /**
    * Updates the name we're associated with, normally used
    *  when renaming that Name
+   * 
+   * @param newName the new name
    */
   public void setNameText(String newName) {
      field_6_name_text = newName;

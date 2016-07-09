@@ -33,7 +33,7 @@ public final class OldLabelRecord extends OldCellRecord {
     public final static short biff345_sid = 0x0204;
 
     private short          field_4_string_len;
-    private byte[]         field_5_bytes;
+    private final byte[]         field_5_bytes;
     private CodepageRecord codepage;
 
     /**
@@ -76,6 +76,8 @@ public final class OldLabelRecord extends OldCellRecord {
 
     /**
      * Get the String of the cell
+     * 
+     * @return the String of the cell
      */
     public String getValue()
     {
@@ -84,19 +86,26 @@ public final class OldLabelRecord extends OldCellRecord {
 
     /**
      * Not supported
+     * 
+     * @param offset not supported
+     * @param data not supported
+     * @return not supported
      */
     public int serialize(int offset, byte [] data) {
         throw new RecordFormatException("Old Label Records are supported READ ONLY");
     }
+    
     public int getRecordSize() {
         throw new RecordFormatException("Old Label Records are supported READ ONLY");
     }
 
+    @Override
     protected void appendValueText(StringBuilder sb) {
         sb.append("    .string_len= ").append(HexDump.shortToHex(field_4_string_len)).append("\n");
         sb.append("    .value       = ").append(getValue()).append("\n");
     }
 
+    @Override
     protected String getRecordName() {
         return "OLD LABEL";
     }

@@ -421,6 +421,8 @@ public final class FontRecord extends StandardRecord {
 	 * Clones all the font style information from another
 	 *  FontRecord, onto this one. This
 	 *  will then hold all the same font style options.
+	 * 
+	 * @param source the record to clone the properties from
 	 */
 	public void cloneStyleFrom(FontRecord source) {
 		field_1_font_height         = source.field_1_font_height;
@@ -462,6 +464,10 @@ public final class FontRecord extends StandardRecord {
 	 *  for exact contents, because normally the
 	 *  font record's position makes a big
 	 *  difference too.
+	 *  
+	 *  @param other the record to compare with
+	 *  
+	 *  @return true, if the properties match
 	 */
 	public boolean sameProperties(FontRecord other) {
 		return

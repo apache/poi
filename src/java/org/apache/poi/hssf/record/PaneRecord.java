@@ -51,6 +51,7 @@ public final class PaneRecord extends StandardRecord {
         field_5_activePane             = in.readShort();
     }
 
+    @Override
     public String toString()
     {
         StringBuffer buffer = new StringBuffer();
@@ -81,6 +82,7 @@ public final class PaneRecord extends StandardRecord {
         return buffer.toString();
     }
 
+    @Override
     public void serialize(LittleEndianOutput out) {
         out.writeShort(field_1_x);
         out.writeShort(field_2_y);
@@ -89,15 +91,18 @@ public final class PaneRecord extends StandardRecord {
         out.writeShort(field_5_activePane);
     }
 
+    @Override
     protected int getDataSize() {
         return 2 + 2 + 2 + 2 + 2;
     }
 
+    @Override
     public short getSid()
     {
         return sid;
     }
 
+    @Override
     public Object clone() {
         PaneRecord rec = new PaneRecord();
     
@@ -109,11 +114,10 @@ public final class PaneRecord extends StandardRecord {
         return rec;
     }
 
-
-
-
     /**
      * Get the x field for the Pane record.
+     * 
+     * @param the x value
      */
     public short getX()
     {
@@ -122,6 +126,8 @@ public final class PaneRecord extends StandardRecord {
 
     /**
      * Set the x field for the Pane record.
+     * 
+     * @param field_1_x the x value
      */
     public void setX(short field_1_x)
     {
@@ -130,6 +136,8 @@ public final class PaneRecord extends StandardRecord {
 
     /**
      * Get the y field for the Pane record.
+     * 
+     * @return the y value
      */
     public short getY()
     {
@@ -138,6 +146,8 @@ public final class PaneRecord extends StandardRecord {
 
     /**
      * Set the y field for the Pane record.
+     * 
+     * @param field_2_y the y value
      */
     public void setY(short field_2_y)
     {
@@ -146,6 +156,8 @@ public final class PaneRecord extends StandardRecord {
 
     /**
      * Get the top row field for the Pane record.
+     * 
+     * @return the top row
      */
     public short getTopRow()
     {
@@ -154,6 +166,8 @@ public final class PaneRecord extends StandardRecord {
 
     /**
      * Set the top row field for the Pane record.
+     * 
+     * @param field_3_topRow the top row
      */
     public void setTopRow(short field_3_topRow)
     {
@@ -162,6 +176,8 @@ public final class PaneRecord extends StandardRecord {
 
     /**
      * Get the left column field for the Pane record.
+     * 
+     * @return the left column
      */
     public short getLeftColumn()
     {
@@ -170,6 +186,8 @@ public final class PaneRecord extends StandardRecord {
 
     /**
      * Set the left column field for the Pane record.
+     * 
+     * @param field_4_leftColumn the left column
      */
     public void setLeftColumn(short field_4_leftColumn)
     {
