@@ -349,7 +349,7 @@ public final class RecordFactory {
      * RK record is a slightly smaller alternative to NumberRecord
      * POI likes NumberRecord better
      *
-     * @param the RK record to convert
+     * @param rk the RK record to convert
      * @return the NumberRecord
      */
     public static NumberRecord convertToNumberRecord(RKRecord rk) {
