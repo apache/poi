@@ -23,7 +23,9 @@ import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.util.CellUtil;
+import org.apache.poi.util.Removal;
 
 /**
  * Various utility functions that make working with a cells and rows easier.  The various
@@ -33,8 +35,10 @@ import org.apache.poi.ss.util.CellUtil;
  * creating too many styles.  there is an upper limit in Excel on the number of styles that
  * can be supported.
  * 
- * @deprecated 3.15 beta2. Removed in 3.17. Use {@link org.apache.poi.ss.util.CellUtil} instead.
+ * @deprecated 3.15 beta2. Use {@link org.apache.poi.ss.util.CellUtil} instead.
  */
+@Deprecated
+@Removal(version="3.17")
 public final class HSSFCellUtil {
 
     private HSSFCellUtil() {
@@ -104,7 +108,19 @@ public final class HSSFCellUtil {
      * @see HSSFCellStyle for alignment options
      */
     public static void setAlignment(HSSFCell cell, HSSFWorkbook workbook, short align) {
-    	CellUtil.setAlignment(cell, align);
+    	setAlignment(cell, HorizontalAlignment.forInt(align));
+    }
+    /**
+     *  Take a cell, and align it.
+     *
+     * @param  cell     the cell to set the alignment for
+     * @param  align  the column alignment to use.
+     * @deprecated 3.15 beta2. Removed in 3.17. Use {@link org.apache.poi.ss.util.CellUtil#setAlignment} instead.
+     *
+     * @see HSSFCellStyle for alignment options
+     */
+    public static void setAlignment(HSSFCell cell, HorizontalAlignment align) {
+        CellUtil.setAlignment(cell, align);
     }
 
     /**

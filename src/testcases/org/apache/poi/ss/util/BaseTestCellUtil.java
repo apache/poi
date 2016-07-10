@@ -33,9 +33,11 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.Test;
 
@@ -62,19 +64,20 @@ public class BaseTestCellUtil {
         int styCnt1 = wb.getNumCellStyles();
         CellUtil.setCellStyleProperty(c, CellUtil.BORDER_BOTTOM, BorderStyle.THIN);
         int styCnt2 = wb.getNumCellStyles();
-        assertEquals(styCnt2, styCnt1+1);
+        assertEquals(styCnt1+1, styCnt2);
 
         // Add same border to another cell, should not create another style
         c = r.createCell(1);
         CellUtil.setCellStyleProperty(c, CellUtil.BORDER_BOTTOM, BorderStyle.THIN);
         int styCnt3 = wb.getNumCellStyles();
-        assertEquals(styCnt3, styCnt2);
+        assertEquals(styCnt2, styCnt3);
 
         wb.close();
     }
 
     @Test
     public void setCellStyleProperties() throws IOException {
+        System.out.println("setCellStyleProps start");
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet s = wb.createSheet();
         Row r = s.createRow(0);
@@ -87,6 +90,8 @@ public class BaseTestCellUtil {
         props.put(CellUtil.BORDER_BOTTOM, BorderStyle.THIN);
         props.put(CellUtil.BORDER_LEFT, BorderStyle.THIN);
         props.put(CellUtil.BORDER_RIGHT, BorderStyle.THIN);
+        props.put(CellUtil.ALIGNMENT, HorizontalAlignment.CENTER.getCode()); // try it both with a Short (deprecated)
+        props.put(CellUtil.VERTICAL_ALIGNMENT, VerticalAlignment.CENTER); // and with an enum
         CellUtil.setCellStyleProperties(c, props);
         int styCnt2 = wb.getNumCellStyles();
         assertEquals("Only one additional style should have been created", styCnt1 + 1, styCnt2);
@@ -95,9 +100,11 @@ public class BaseTestCellUtil {
         c = r.createCell(1);
         CellUtil.setCellStyleProperties(c, props);
         int styCnt3 = wb.getNumCellStyles();
-        assertEquals(styCnt2, styCnt3);
+        System.out.println("setCellStyleProps nearing end");
+        assertEquals("No additional styles should have been created", styCnt2, styCnt3);
 
         wb.close();
+        
     }
 
     @Test
@@ -171,6 +178,11 @@ public class BaseTestCellUtil {
 
     }
 
+    /**
+     * @deprecated by {@link #setAlignmentEnum()}
+     *
+     * @throws IOException
+     */
     @Test
     public void setAlignment() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
@@ -188,13 +200,69 @@ public class BaseTestCellUtil {
         assertEquals(CellStyle.ALIGN_GENERAL, B1.getCellStyle().getAlignment());
 
         // get/set alignment modifies the cell's style
-        CellUtil.setAlignment(A1, CellStyle.ALIGN_RIGHT);
+        CellUtil.setAlignment(A1, null, CellStyle.ALIGN_RIGHT);
         assertEquals(CellStyle.ALIGN_RIGHT, A1.getCellStyle().getAlignment());
 
         // get/set alignment doesn't affect the style of cells with
         // the same style prior to modifying the style
         assertNotEquals(A1.getCellStyle(), B1.getCellStyle());
         assertEquals(CellStyle.ALIGN_GENERAL, B1.getCellStyle().getAlignment());
+
+        wb.close();
+    }
+    
+    @Test
+    public void setAlignmentEnum() throws IOException {
+        Workbook wb = _testDataProvider.createWorkbook();
+        Sheet sh = wb.createSheet();
+        Row row = sh.createRow(0);
+        Cell A1 = row.createCell(0);
+        Cell B1 = row.createCell(1);
+
+        // Assumptions
+        assertEquals(A1.getCellStyle(), B1.getCellStyle());
+        // should be assertSame, but a new HSSFCellStyle is returned for each getCellStyle() call. 
+        // HSSFCellStyle wraps an underlying style record, and the underlying
+        // style record is the same between multiple getCellStyle() calls.
+        assertEquals(HorizontalAlignment.GENERAL, A1.getCellStyle().getAlignmentEnum());
+        assertEquals(HorizontalAlignment.GENERAL, B1.getCellStyle().getAlignmentEnum());
+
+        // get/set alignment modifies the cell's style
+        CellUtil.setAlignment(A1, HorizontalAlignment.RIGHT);
+        assertEquals(HorizontalAlignment.RIGHT, A1.getCellStyle().getAlignmentEnum());
+
+        // get/set alignment doesn't affect the style of cells with
+        // the same style prior to modifying the style
+        assertNotEquals(A1.getCellStyle(), B1.getCellStyle());
+        assertEquals(HorizontalAlignment.GENERAL, B1.getCellStyle().getAlignmentEnum());
+
+        wb.close();
+    }
+    
+    @Test
+    public void setVerticalAlignmentEnum() throws IOException {
+        Workbook wb = _testDataProvider.createWorkbook();
+        Sheet sh = wb.createSheet();
+        Row row = sh.createRow(0);
+        Cell A1 = row.createCell(0);
+        Cell B1 = row.createCell(1);
+
+        // Assumptions
+        assertEquals(A1.getCellStyle(), B1.getCellStyle());
+        // should be assertSame, but a new HSSFCellStyle is returned for each getCellStyle() call. 
+        // HSSFCellStyle wraps an underlying style record, and the underlying
+        // style record is the same between multiple getCellStyle() calls.
+        assertEquals(VerticalAlignment.BOTTOM, A1.getCellStyle().getVerticalAlignmentEnum());
+        assertEquals(VerticalAlignment.BOTTOM, B1.getCellStyle().getVerticalAlignmentEnum());
+
+        // get/set alignment modifies the cell's style
+        CellUtil.setVerticalAlignment(A1, VerticalAlignment.TOP);
+        assertEquals(VerticalAlignment.TOP, A1.getCellStyle().getVerticalAlignmentEnum());
+
+        // get/set alignment doesn't affect the style of cells with
+        // the same style prior to modifying the style
+        assertNotEquals(A1.getCellStyle(), B1.getCellStyle());
+        assertEquals(VerticalAlignment.BOTTOM, B1.getCellStyle().getVerticalAlignmentEnum());
 
         wb.close();
     }
@@ -263,6 +331,11 @@ public class BaseTestCellUtil {
         }
     }
     
+    /**
+     * bug 55555
+     * @deprecated Replaced by {@link #setFillForegroundColorBeforeFillBackgroundColorEnum()}
+     * @since POI 3.15 beta 3
+     */
     // bug 55555
     @Test
     public void setFillForegroundColorBeforeFillBackgroundColor() {
@@ -278,6 +351,27 @@ public class BaseTestCellUtil {
         CellStyle style = A1.getCellStyle();
         // FIXME: Use FillPatternType.BRICKS enum
         assertEquals("fill pattern", CellStyle.BRICKS, style.getFillPattern());
+        assertEquals("fill foreground color", IndexedColors.BLUE, IndexedColors.fromInt(style.getFillForegroundColor()));
+        assertEquals("fill background color", IndexedColors.RED, IndexedColors.fromInt(style.getFillBackgroundColor()));
+    }
+    /**
+     * bug 55555
+     * @since POI 3.15 beta 3
+     */
+    @Test
+    public void setFillForegroundColorBeforeFillBackgroundColorEnum() {
+        Workbook wb1 = _testDataProvider.createWorkbook();
+        Cell A1 = wb1.createSheet().createRow(0).createCell(0);
+        Map<String, Object> properties = new HashMap<String, Object>();
+        // FIXME: Use FillPatternType.BRICKS enum
+        properties.put(CellUtil.FILL_PATTERN, FillPatternType.BRICKS);
+        properties.put(CellUtil.FILL_FOREGROUND_COLOR, IndexedColors.BLUE.index);
+        properties.put(CellUtil.FILL_BACKGROUND_COLOR, IndexedColors.RED.index);
+        
+        CellUtil.setCellStyleProperties(A1, properties);
+        CellStyle style = A1.getCellStyle();
+        // FIXME: Use FillPatternType.BRICKS enum
+        assertEquals("fill pattern", FillPatternType.BRICKS, style.getFillPatternEnum());
         assertEquals("fill foreground color", IndexedColors.BLUE, IndexedColors.fromInt(style.getFillForegroundColor()));
         assertEquals("fill background color", IndexedColors.RED, IndexedColors.fromInt(style.getFillBackgroundColor()));
     }
