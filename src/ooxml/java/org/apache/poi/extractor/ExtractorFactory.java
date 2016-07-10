@@ -329,13 +329,16 @@ public class ExtractorFactory {
 
         final String[] outlookEntryNames = new String[] {
                 // message bodies, saved as plain text (PtypString)
-                // https://msdn.microsoft.com/en-us/library/cc433490(v=exchg.80).aspx 
-                "__substg1.0_1000001E", //PidTagBody
-                "__substg1.0_1000001F", //PidTagBody
-                "__substg1.0_0047001E", //PidTagMessageSubmissionId
-                "__substg1.0_0047001F", //PidTagMessageSubmissionId
-                "__substg1.0_0037001E", //PidTagSubject
-                "__substg1.0_0037001F", //PidTagSubject
+                // The first short (0x1000, 0x0047, 0x0037) refer to the Property ID (see [MS-OXPROPS].pdf)
+                // the second short (0x001e, 0x001f, 0x0102) refer to the type of data stored in this entry
+                // https://msdn.microsoft.com/endatatypes.Ex-us/library/cc433490(v=exchg.80).aspx
+                // @see org.apache.poi.hsmf.Types.MAPIType
+                "__substg1.0_1000001E", //PidTagBody ASCII
+                "__substg1.0_1000001F", //PidTagBody Unicode
+                "__substg1.0_0047001E", //PidTagMessageSubmissionId ASCII
+                "__substg1.0_0047001F", //PidTagMessageSubmissionId Unicode
+                "__substg1.0_0037001E", //PidTagSubject ASCII
+                "__substg1.0_0037001F", //PidTagSubject Unicode
         };
         for (String entryName : outlookEntryNames) {
             if (poifsDir.hasEntry(entryName)) {
