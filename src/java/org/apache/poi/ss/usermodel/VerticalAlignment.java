@@ -17,11 +17,11 @@
 
 package org.apache.poi.ss.usermodel;
 
-//FIXME: Identical to {@link org.apache.poi.ss.usermodel.VerticalAlignment}. Should merge these.
 /**
  * This enumeration value indicates the type of vertical alignment for a cell, i.e.,
  * whether it is aligned top, bottom, vertically centered, justified or distributed.
- * FIXME: Identical to {@link org.apache.poi.ss.usermodel.VerticalAlignment}. Should merge these.
+ * 
+ * <!-- FIXME: Identical to {@link org.apache.poi.ss.usermodel.VerticalAlignment}. Should merge these.-->
  */
 public enum VerticalAlignment {
     /**
@@ -35,7 +35,7 @@ public enum VerticalAlignment {
     CENTER,
 
     /**
-     * The vertical alignment is aligned-to-bottom.
+     * The vertical alignment is aligned-to-bottom. (typically the default value)
      */
     BOTTOM,
 
