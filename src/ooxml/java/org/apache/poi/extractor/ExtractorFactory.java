@@ -327,19 +327,24 @@ public class ExtractorFactory {
             return new PublisherTextExtractor(poifsDir);
         }
 
-        if (poifsDir.hasEntry("__substg1.0_1000001E") || poifsDir.hasEntry("__substg1.0_1000001F")
-                || poifsDir.hasEntry("__substg1.0_0047001E")
-                || poifsDir.hasEntry("__substg1.0_0047001F")
-                || poifsDir.hasEntry("__substg1.0_0037001E")
-                || poifsDir.hasEntry("__substg1.0_0037001F"))
-        {
-            return new OutlookTextExtactor(poifsDir);
+        final String[] outlookEntryNames = new String[] {
+                // message bodies, saved as plain text (PtypString)
+                // https://msdn.microsoft.com/en-us/library/cc433490(v=exchg.80).aspx 
+                "__substg1.0_1000001E", //PidTagBody
+                "__substg1.0_1000001F", //PidTagBody
+                "__substg1.0_0047001E", //PidTagMessageSubmissionId
+                "__substg1.0_0047001F", //PidTagMessageSubmissionId
+                "__substg1.0_0037001E", //PidTagSubject
+                "__substg1.0_0037001F", //PidTagSubject
+        };
+        for (String entryName : outlookEntryNames) {
+            if (poifsDir.hasEntry(entryName)) {
+                return new OutlookTextExtactor(poifsDir);
+            }
         }
 
-        for (Iterator<Entry> entries = poifsDir.getEntries(); entries.hasNext();) {
-            Entry entry = entries.next();
-
-            if (entry.getName().equals("Package")) {
+        for (String entryName : poifsDir.getEntryNames()) {
+            if (entryName.equals("Package")) {
                 OPCPackage pkg = OPCPackage.open(poifsDir.createDocumentInputStream("Package"));
                 return createExtractor(pkg);
             }
