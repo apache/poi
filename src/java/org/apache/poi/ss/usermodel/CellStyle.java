@@ -89,85 +89,85 @@ public interface CellStyle {
      * No border
      * @deprecated 3.15 beta 2. Use {@link BorderStyle#NONE} instead.
      */
-    short BORDER_NONE = 0x0;
+    short BORDER_NONE = BorderStyle.NONE.getCode();
 
     /**
      * Thin border
      * @deprecated 3.15 beta 2. Use {@link BorderStyle#THIN} instead.
      */
-    short BORDER_THIN = 0x1;
+    short BORDER_THIN = BorderStyle.THIN.getCode();
 
     /**
      * Medium border
      * @deprecated 3.15 beta 2. Use {@link BorderStyle#MEDIUM} instead.
      */
-    short BORDER_MEDIUM = 0x2;
+    short BORDER_MEDIUM = BorderStyle.MEDIUM.getCode();
 
     /**
      * dash border
      * @deprecated 3.15 beta 2. Use {@link BorderStyle#DASHED} instead.
      */
-    short BORDER_DASHED = 0x3;
+    short BORDER_DASHED = BorderStyle.DASHED.getCode();
 
     /**
      * dot border
      * @deprecated 3.15 beta 2. Use {@link BorderStyle#DOTTED} instead.
      */
-    short BORDER_DOTTED = 0x4;
+    short BORDER_DOTTED = BorderStyle.DOTTED.getCode();
 
     /**
      * Thick border
      * @deprecated 3.15 beta 2. Use {@link BorderStyle#THICK} instead.
      */
-    short BORDER_THICK = 0x5;
+    short BORDER_THICK = BorderStyle.THICK.getCode();
 
     /**
      * double-line border
      * @deprecated 3.15 beta 2. Use {@link BorderStyle#DOUBLE} instead.
      */
-    short BORDER_DOUBLE = 0x6;
+    short BORDER_DOUBLE = BorderStyle.DOUBLE.getCode();
 
     /**
      * hair-line border
      * @deprecated 3.15 beta 2. Use {@link BorderStyle#HAIR} instead.
      */
-    short BORDER_HAIR = 0x7;
+    short BORDER_HAIR = BorderStyle.HAIR.getCode();
 
     /**
      * Medium dashed border
      * @deprecated 3.15 beta 2. Use {@link BorderStyle#MEDIUM_DASHED} instead.
      */
-    short BORDER_MEDIUM_DASHED = 0x8;
+    short BORDER_MEDIUM_DASHED = BorderStyle.MEDIUM_DASHED.getCode();
 
     /**
      * dash-dot border
      * @deprecated 3.15 beta 2. Use {@link BorderStyle#DASH_DOT} instead.
      */
-    short BORDER_DASH_DOT = 0x9;
+    short BORDER_DASH_DOT = BorderStyle.DASH_DOT.getCode();
 
     /**
      * medium dash-dot border
      * @deprecated 3.15 beta 2. Use {@link BorderStyle#MEDIUM_DASH_DOT} instead.
      */
-    short BORDER_MEDIUM_DASH_DOT = 0xA;
+    short BORDER_MEDIUM_DASH_DOT = BorderStyle.MEDIUM_DASH_DOT.getCode();
 
     /**
      * dash-dot-dot border
      * @deprecated 3.15 beta 2. Use {@link BorderStyle#DASH_DOT_DOT} instead.
      */
-    short BORDER_DASH_DOT_DOT = 0xB;
+    short BORDER_DASH_DOT_DOT = BorderStyle.DASH_DOT_DOT.getCode();
 
     /**
      * medium dash-dot-dot border
      * @deprecated 3.15 beta 2. Use {@link BorderStyle#MEDIUM_DASH_DOT_DOT} instead.
      */
-    short BORDER_MEDIUM_DASH_DOT_DOT = 0xC;
+    short BORDER_MEDIUM_DASH_DOT_DOT = BorderStyle.MEDIUM_DASH_DOT_DOT.getCode();
 
     /**
      * slanted dash-dot border
      * @deprecated 3.15 beta 2. Use {@link BorderStyle#SLANTED_DASH_DOT} instead.
      */
-    short BORDER_SLANTED_DASH_DOT = 0xD;
+    short BORDER_SLANTED_DASH_DOT = BorderStyle.SLANTED_DASH_DOT.getCode();
 
     /** 
      * Fill Pattern: No background
