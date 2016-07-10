@@ -74,6 +74,37 @@ public class BaseTestCellUtil {
 
         wb.close();
     }
+    
+    @Test(expected=RuntimeException.class)
+    public void setCellStylePropertyWithInvalidValue() throws IOException {
+        Workbook wb = _testDataProvider.createWorkbook();
+        Sheet s = wb.createSheet();
+        Row r = s.createRow(0);
+        Cell c = r.createCell(0);
+
+        // An invalid BorderStyle constant
+        CellUtil.setCellStyleProperty(c, CellUtil.BORDER_BOTTOM, 42);
+        
+        wb.close();
+    }
+    
+    @Test()
+    public void setCellStylePropertyBorderWithShortAndEnum() throws IOException {
+        Workbook wb = _testDataProvider.createWorkbook();
+        Sheet s = wb.createSheet();
+        Row r = s.createRow(0);
+        Cell c = r.createCell(0);
+
+        // A valid BorderStyle constant, as a Short
+        CellUtil.setCellStyleProperty(c, CellUtil.BORDER_BOTTOM, BorderStyle.DASH_DOT.getCode());
+        assertEquals(BorderStyle.DASH_DOT, c.getCellStyle().getBorderBottom());
+        
+        // A valid BorderStyle constant, as an Enum
+        CellUtil.setCellStyleProperty(c, CellUtil.BORDER_TOP, BorderStyle.MEDIUM_DASH_DOT);
+        assertEquals(BorderStyle.MEDIUM_DASH_DOT, c.getCellStyle().getBorderTop());
+        
+        wb.close();
+    }
 
     @Test
     public void setCellStyleProperties() throws IOException {
