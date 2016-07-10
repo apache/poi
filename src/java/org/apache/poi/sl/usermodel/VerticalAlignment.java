@@ -18,6 +18,7 @@
  */
 package org.apache.poi.sl.usermodel;
 
+// FIXME: Identical to {@link org.apache.poi.ss.usermodel.VerticalAlignment}. Should merge these.
 /**
  * Specifies a list of available anchoring types for text
  * 

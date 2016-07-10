@@ -228,22 +228,23 @@ public class XSSFCellStyle implements CellStyle {
      * @see org.apache.poi.ss.usermodel.CellStyle#ALIGN_FILL
      * @see org.apache.poi.ss.usermodel.CellStyle#ALIGN_JUSTIFY
      * @see org.apache.poi.ss.usermodel.CellStyle#ALIGN_CENTER_SELECTION
+     * @deprecated POI 3.15 beta 3. Use {@link #getAlignmentEnum()} instead.
      */
     @Override
     public short getAlignment() {
-        return (short)(getAlignmentEnum().ordinal());
+        return getAlignmentEnum().getCode();
     }
 
     /**
      * Get the type of horizontal alignment for the cell
      *
      * @return HorizontalAlignment - the type of alignment
-     * @see org.apache.poi.ss.usermodel.HorizontalAlignment
      */
+    @Override
     public HorizontalAlignment getAlignmentEnum() {
         CTCellAlignment align = _cellXf.getAlignment();
         if(align != null && align.isSetHorizontal()) {
-            return HorizontalAlignment.values()[align.getHorizontal().intValue()-1];
+            return HorizontalAlignment.forInt(align.getHorizontal().intValue()-1);
         }
         return HorizontalAlignment.GENERAL;
     }
@@ -729,22 +730,23 @@ public class XSSFCellStyle implements CellStyle {
      * @see org.apache.poi.ss.usermodel.CellStyle#VERTICAL_CENTER
      * @see org.apache.poi.ss.usermodel.CellStyle#VERTICAL_BOTTOM
      * @see org.apache.poi.ss.usermodel.CellStyle#VERTICAL_JUSTIFY
+     * @deprecated POI 3.15 beta 3. Use {@link #getVerticalAlignmentEnum()} instead.
      */
     @Override
     public short getVerticalAlignment() {
-        return (short) (getVerticalAlignmentEnum().ordinal());
+        return getVerticalAlignmentEnum().getCode();
     }
 
     /**
      * Get the type of vertical alignment for the cell
      *
-     * @return the type of alignment, default value is {@link org.apache.poi.ss.usermodel.VerticalAlignment#BOTTOM}
-     * @see org.apache.poi.ss.usermodel.VerticalAlignment
+     * @return the type of alignment, default value is {@link VerticalAlignment#BOTTOM}
      */
+    @Override
     public VerticalAlignment getVerticalAlignmentEnum() {
         CTCellAlignment align = _cellXf.getAlignment();
         if(align != null && align.isSetVertical()) {
-            return VerticalAlignment.values()[align.getVertical().intValue()-1];
+            return VerticalAlignment.forInt(align.getVertical().intValue()-1);
         }
         return VerticalAlignment.BOTTOM;
     }
@@ -771,20 +773,21 @@ public class XSSFCellStyle implements CellStyle {
      * @see org.apache.poi.ss.usermodel.CellStyle#ALIGN_FILL
      * @see org.apache.poi.ss.usermodel.CellStyle#ALIGN_JUSTIFY
      * @see org.apache.poi.ss.usermodel.CellStyle#ALIGN_CENTER_SELECTION
+     * @deprecated POI 3.15 beta 3. Use {@link #setAlignment(HorizontalAlignment)} instead.
      */
     @Override
     public void setAlignment(short align) {
-        getCellAlignment().setHorizontal(HorizontalAlignment.values()[align]);
+        setAlignment(HorizontalAlignment.forInt(align));
     }
 
     /**
      * Set the type of horizontal alignment for the cell
      *
      * @param align - the type of alignment
-     * @see org.apache.poi.ss.usermodel.HorizontalAlignment
      */
+    @Override
     public void setAlignment(HorizontalAlignment align) {
-        setAlignment((short)align.ordinal());
+        getCellAlignment().setHorizontal(align);
     }
 
     /**
@@ -1330,10 +1333,11 @@ public class XSSFCellStyle implements CellStyle {
      * @see org.apache.poi.ss.usermodel.CellStyle#VERTICAL_BOTTOM
      * @see org.apache.poi.ss.usermodel.CellStyle#VERTICAL_JUSTIFY
      * @see org.apache.poi.ss.usermodel.VerticalAlignment
+     * @deprecated POI 3.15 beta 3. Use {@link #setVerticalAlignment(VerticalAlignment)} instead.
      */
     @Override
     public void setVerticalAlignment(short align) {
-        getCellAlignment().setVertical(VerticalAlignment.values()[align]);
+        setVerticalAlignment(VerticalAlignment.forInt(align));
     }
 
     /**
