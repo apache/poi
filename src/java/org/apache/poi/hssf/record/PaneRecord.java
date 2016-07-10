@@ -117,7 +117,7 @@ public final class PaneRecord extends StandardRecord {
     /**
      * Get the x field for the Pane record.
      * 
-     * @param the x value
+     * @return the x value
      */
     public short getX()
     {
