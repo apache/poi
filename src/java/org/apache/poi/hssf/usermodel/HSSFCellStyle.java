@@ -30,6 +30,8 @@ import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
 
 /**
  * High level representation of the style of a cell in a sheet of a workbook.
@@ -250,12 +252,23 @@ public final class HSSFCellStyle implements CellStyle {
      * @see #ALIGN_FILL
      * @see #ALIGN_JUSTIFY
      * @see #ALIGN_CENTER_SELECTION
+     * @deprecated POI 3.15 beta 3. Use {@link #setAlignment(HorizontalAlignment)} instead.
      */
     @Override
     public void setAlignment(short align)
     {
         _format.setIndentNotParentAlignment(true);
         _format.setAlignment(align);
+    }
+    /**
+     * set the type of horizontal alignment for the cell
+     * @param align - the type of alignment
+     */
+    @Override
+    public void setAlignment(HorizontalAlignment align)
+    {
+        _format.setIndentNotParentAlignment(true);
+        _format.setAlignment(align.getCode());
     }
 
     /**
@@ -268,11 +281,21 @@ public final class HSSFCellStyle implements CellStyle {
      * @see #ALIGN_FILL
      * @see #ALIGN_JUSTIFY
      * @see #ALIGN_CENTER_SELECTION
+     * @deprecated POI 3.15 beta 3. Use {@link #getAlignmentEnum()} instead.
      */
     @Override
     public short getAlignment()
     {
         return _format.getAlignment();
+    }
+    /**
+     * get the type of horizontal alignment for the cell
+     * @return align - the type of alignment
+     */
+    @Override
+    public HorizontalAlignment getAlignmentEnum()
+    {
+        return HorizontalAlignment.forInt(_format.getAlignment());
     }
 
     /**
@@ -303,11 +326,22 @@ public final class HSSFCellStyle implements CellStyle {
      * @see #VERTICAL_CENTER
      * @see #VERTICAL_BOTTOM
      * @see #VERTICAL_JUSTIFY
+     * @see VerticalAlignment
+     * @deprecated POI 3.15 beta 3. Use {@link #setVerticalAlignment(VerticalAlignment)} instead.
      */
     @Override
     public void setVerticalAlignment(short align)
     {
         _format.setVerticalAlignment(align);
+    }
+    /**
+     * set the type of vertical alignment for the cell
+     * @param align the type of alignment
+     */
+    @Override
+    public void setVerticalAlignment(VerticalAlignment align)
+    {
+        _format.setVerticalAlignment(align.getCode());
     }
 
     /**
@@ -317,12 +351,23 @@ public final class HSSFCellStyle implements CellStyle {
      * @see #VERTICAL_CENTER
      * @see #VERTICAL_BOTTOM
      * @see #VERTICAL_JUSTIFY
+     * @see VerticalAlignment
+     * @deprecated POI 3.15 beta 3. Use {@link #getVerticalAlignmentEnum()} instead.
      */
     @Override
     public short getVerticalAlignment()
     {
         return _format.getVerticalAlignment();
     }
+   /**
+    * get the type of vertical alignment for the cell
+    * @return align the type of alignment
+    */
+   @Override
+   public VerticalAlignment getVerticalAlignmentEnum()
+   {
+       return VerticalAlignment.forInt(_format.getVerticalAlignment());
+   }
 
     /**
      * set the degree of rotation for the text in the cell

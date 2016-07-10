@@ -91,5 +91,15 @@ public enum HorizontalAlignment {
      * <p> A 'word' is a set of characters with no space character in them. </p>
      * <p> Two lines inside a cell are separated by a carriage return. </p>
      */
-    DISTRIBUTED
+    DISTRIBUTED;
+    
+    public short getCode() {
+        return (short) ordinal();
+    }
+    public static HorizontalAlignment forInt(int code) {
+        if (code < 0 || code >= values().length) {
+            throw new IllegalArgumentException("Invalid HorizontalAlignment code: " + code);
+        }
+        return values()[code];
+    }
 }
