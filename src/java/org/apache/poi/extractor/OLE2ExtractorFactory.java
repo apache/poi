@@ -16,6 +16,7 @@
 ==================================================================== */
 package org.apache.poi.extractor;
 
+import static org.apache.poi.hssf.model.InternalWorkbook.OLD_WORKBOOK_DIR_ENTRY_NAME;
 import static org.apache.poi.hssf.model.InternalWorkbook.WORKBOOK_DIR_ENTRY_NAMES;
 
 import java.io.IOException;
@@ -27,6 +28,7 @@ import java.util.List;
 
 import org.apache.poi.POIOLE2TextExtractor;
 import org.apache.poi.POITextExtractor;
+import org.apache.poi.hssf.OldExcelFormatException;
 import org.apache.poi.hssf.extractor.EventBasedExcelExtractor;
 import org.apache.poi.hssf.extractor.ExcelExtractor;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
@@ -171,6 +173,10 @@ public class OLE2ExtractorFactory {
                 return new ExcelExtractor(poifsDir);
             }
         }
+        if (poifsDir.hasEntry(OLD_WORKBOOK_DIR_ENTRY_NAME)) {
+            throw new OldExcelFormatException("Old Excel Spreadsheet format (1-95) "
+                    + "found. Please call OldExcelExtractor directly for basic text extraction");
+        }
         
         // Ask Scratchpad, or fail trying
         Class<?> cls = getScratchpadClass();
@@ -178,6 +184,8 @@ public class OLE2ExtractorFactory {
             Method m = cls.getDeclaredMethod("createExtractor", DirectoryNode.class);
             POITextExtractor ext = (POITextExtractor)m.invoke(null, poifsDir);
             if (ext != null) return ext;
+        } catch (IllegalArgumentException iae) {
+            throw iae;
         } catch (Exception e) {
             throw new IllegalArgumentException("Error creating Scratchpad Extractor", e);
         }
