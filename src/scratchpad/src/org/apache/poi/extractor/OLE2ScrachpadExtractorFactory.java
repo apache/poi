@@ -20,8 +20,8 @@ import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.poi.POIOLE2TextExtractor;
 import org.apache.poi.POITextExtractor;
@@ -108,7 +108,7 @@ public class OLE2ScrachpadExtractorFactory {
 	 *  empty array. Otherwise, you'll get one open
 	 *  {@link POITextExtractor} for each embedded file.
 	 */
-	public static void identifyEmbeddedResources(POIOLE2TextExtractor ext, ArrayList<Entry> dirs, ArrayList<InputStream> nonPOIFS) throws IOException {
+	public static void identifyEmbeddedResources(POIOLE2TextExtractor ext, List<Entry> dirs, List<InputStream> nonPOIFS) throws IOException {
       // Find all the embedded directories
 		DirectoryEntry root = ext.getRoot();
 		if(root == null) {

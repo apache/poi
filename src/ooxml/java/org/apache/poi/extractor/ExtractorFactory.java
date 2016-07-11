@@ -78,23 +78,13 @@ public class ExtractorFactory {
 	protected static final String VISIO_DOCUMENT_REL = PackageRelationshipTypes.VISIO_CORE_DOCUMENT;
 	protected static final String STRICT_DOCUMENT_REL = PackageRelationshipTypes.STRICT_CORE_DOCUMENT;
 
-
-	/** Should this thread prefer event based over usermodel based extractors? */
-	private static final ThreadLocal<Boolean> threadPreferEventExtractors = new ThreadLocal<Boolean>() {
-		@Override
-		protected Boolean initialValue() { return Boolean.FALSE; }
-	};
-
-	/** Should all threads prefer event based over usermodel based extractors? */
-	private static Boolean allPreferEventExtractors;
-
    /**
     * Should this thread prefer event based over usermodel based extractors?
     * (usermodel extractors tend to be more accurate, but use more memory)
     * Default is false.
     */
 	public static boolean getThreadPrefersEventExtractors() {
-	   return threadPreferEventExtractors.get();
+	   return OLE2ExtractorFactory.getThreadPrefersEventExtractors();
 	}
 
    /**
@@ -103,7 +93,7 @@ public class ExtractorFactory {
     * Default is to use the thread level setting, which defaults to false.
     */
 	public static Boolean getAllThreadsPreferEventExtractors() {
-	   return allPreferEventExtractors;
+	   return OLE2ExtractorFactory.getAllThreadsPreferEventExtractors();
 	}
 
    /**
@@ -111,7 +101,7 @@ public class ExtractorFactory {
     * Will only be used if the All Threads setting is null.
     */
    public static void setThreadPrefersEventExtractors(boolean preferEventExtractors) {
-      threadPreferEventExtractors.set(preferEventExtractors);
+       OLE2ExtractorFactory.setThreadPrefersEventExtractors(preferEventExtractors);
    }
 
    /**
@@ -119,7 +109,7 @@ public class ExtractorFactory {
     * If set, will take preference over the Thread level setting.
     */
    public static void setAllThreadsPreferEventExtractors(Boolean preferEventExtractors) {
-      allPreferEventExtractors = preferEventExtractors;
+       OLE2ExtractorFactory.setAllThreadsPreferEventExtractors(preferEventExtractors);
    }
 
    /**
@@ -127,10 +117,7 @@ public class ExtractorFactory {
     * Checks the all-threads one first, then thread specific.
     */
    protected static boolean getPreferEventExtractor() {
-      if(allPreferEventExtractors != null) {
-         return allPreferEventExtractors;
-      }
-      return threadPreferEventExtractors.get();
+       return OLE2ExtractorFactory.getPreferEventExtractor();
    }
 
 	public static POITextExtractor createExtractor(File f) throws IOException, InvalidFormatException, OpenXML4JException, XmlException {
@@ -281,83 +268,28 @@ public class ExtractorFactory {
 	}
 
 	public static POIOLE2TextExtractor createExtractor(POIFSFileSystem fs) throws IOException, OpenXML4JException, XmlException {
-	   // Only ever an OLE2 one from the root of the FS
-		return (POIOLE2TextExtractor)createExtractor(fs.getRoot());
+	    return OLE2ExtractorFactory.createExtractor(fs);
 	}
     public static POIOLE2TextExtractor createExtractor(NPOIFSFileSystem fs) throws IOException, OpenXML4JException, XmlException {
-        // Only ever an OLE2 one from the root of the FS
-         return (POIOLE2TextExtractor)createExtractor(fs.getRoot());
+        return OLE2ExtractorFactory.createExtractor(fs);
      }
     public static POIOLE2TextExtractor createExtractor(OPOIFSFileSystem fs) throws IOException, OpenXML4JException, XmlException {
-        // Only ever an OLE2 one from the root of the FS
-         return (POIOLE2TextExtractor)createExtractor(fs.getRoot());
+        return OLE2ExtractorFactory.createExtractor(fs);
      }
 
     public static POITextExtractor createExtractor(DirectoryNode poifsDir) throws IOException,
             OpenXML4JException, XmlException
     {
-        // Look for certain entries in the stream, to figure it
-        // out from
-        for (String workbookName : WORKBOOK_DIR_ENTRY_NAMES) {
-            if (poifsDir.hasEntry(workbookName)) {
-                if (getPreferEventExtractor()) {
-                    return new EventBasedExcelExtractor(poifsDir);
-                }
-                return new ExcelExtractor(poifsDir);
-            }
-        }
-        if (poifsDir.hasEntry(OLD_WORKBOOK_DIR_ENTRY_NAME)) {
-            throw new OldExcelFormatException("Old Excel Spreadsheet format (1-95) "
-                    + "found. Please call OldExcelExtractor directly for basic text extraction");
-        }
-
-        if (poifsDir.hasEntry("WordDocument")) {
-            // Old or new style word document?
-            try {
-                return new WordExtractor(poifsDir);
-            } catch (OldWordFileFormatException e) {
-                return new Word6Extractor(poifsDir);
-            }
-        }
-
-        if (poifsDir.hasEntry("PowerPoint Document")) {
-            return new PowerPointExtractor(poifsDir);
-        }
-
-        if (poifsDir.hasEntry("VisioDocument")) {
-            return new VisioTextExtractor(poifsDir);
-        }
-
-        if (poifsDir.hasEntry("Quill")) {
-            return new PublisherTextExtractor(poifsDir);
-        }
-
-        final String[] outlookEntryNames = new String[] {
-                // message bodies, saved as plain text (PtypString)
-                // The first short (0x1000, 0x0047, 0x0037) refer to the Property ID (see [MS-OXPROPS].pdf)
-                // the second short (0x001e, 0x001f, 0x0102) refer to the type of data stored in this entry
-                // https://msdn.microsoft.com/endatatypes.Ex-us/library/cc433490(v=exchg.80).aspx
-                // @see org.apache.poi.hsmf.Types.MAPIType
-                "__substg1.0_1000001E", //PidTagBody ASCII
-                "__substg1.0_1000001F", //PidTagBody Unicode
-                "__substg1.0_0047001E", //PidTagMessageSubmissionId ASCII
-                "__substg1.0_0047001F", //PidTagMessageSubmissionId Unicode
-                "__substg1.0_0037001E", //PidTagSubject ASCII
-                "__substg1.0_0037001F", //PidTagSubject Unicode
-        };
-        for (String entryName : outlookEntryNames) {
-            if (poifsDir.hasEntry(entryName)) {
-                return new OutlookTextExtactor(poifsDir);
-            }
-        }
-
+        // First, check for OOXML
         for (String entryName : poifsDir.getEntryNames()) {
             if (entryName.equals("Package")) {
                 OPCPackage pkg = OPCPackage.open(poifsDir.createDocumentInputStream("Package"));
                 return createExtractor(pkg);
             }
         }
-        throw new IllegalArgumentException("No supported documents found in the OLE2 stream");
+        
+        // If not, ask the OLE2 code to check, with Scratchpad if possible
+        return OLE2ExtractorFactory.createExtractor(poifsDir);
     }
 
 	/**

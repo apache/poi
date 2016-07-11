@@ -150,6 +150,7 @@ public class TestExtractorFactory {
 
         POITextExtractor extractor = ExtractorFactory.createExtractor(xlsx);
         assertTrue(
+                extractor.getClass().getName(),
                 extractor
                 instanceof XSSFExcelExtractor
         );
@@ -163,6 +164,7 @@ public class TestExtractorFactory {
 
         extractor = ExtractorFactory.createExtractor(xltx);
         assertTrue(
+                extractor.getClass().getName(),
                 extractor
                 instanceof XSSFExcelExtractor
         );
@@ -340,6 +342,7 @@ public class TestExtractorFactory {
 
         extractor = ExtractorFactory.createExtractor(new FileInputStream(xlsx));
         assertTrue(
+                extractor.getClass().getName(),
                 extractor
                 instanceof XSSFExcelExtractor
         );
@@ -359,6 +362,7 @@ public class TestExtractorFactory {
         // Word
         extractor = ExtractorFactory.createExtractor(new FileInputStream(doc));
         assertTrue(
+                extractor.getClass().getName(),
                 extractor
                 instanceof WordExtractor
         );
@@ -369,6 +373,7 @@ public class TestExtractorFactory {
 
         extractor = ExtractorFactory.createExtractor(new FileInputStream(doc6));
         assertTrue(
+                extractor.getClass().getName(),
                 extractor
                 instanceof Word6Extractor
         );
@@ -379,6 +384,7 @@ public class TestExtractorFactory {
 
         extractor = ExtractorFactory.createExtractor(new FileInputStream(doc95));
         assertTrue(
+                extractor.getClass().getName(),
                 extractor
                 instanceof Word6Extractor
         );

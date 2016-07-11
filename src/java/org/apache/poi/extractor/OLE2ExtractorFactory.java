@@ -20,8 +20,10 @@ import static org.apache.poi.hssf.model.InternalWorkbook.WORKBOOK_DIR_ENTRY_NAME
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.poi.POIOLE2TextExtractor;
 import org.apache.poi.POITextExtractor;
@@ -33,6 +35,8 @@ import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.OPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * Figures out the correct POIOLE2TextExtractor for your supplied
@@ -48,6 +52,8 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  */
 @SuppressWarnings("WeakerAccess")
 public class OLE2ExtractorFactory {
+    private static final POILogger LOGGER = POILogFactory.getLogger(OLE2ExtractorFactory.class); 
+    
     /** Should this thread prefer event based over usermodel based extractors? */
     private static final ThreadLocal<Boolean> threadPreferEventExtractors = new ThreadLocal<Boolean>() {
         @Override
@@ -115,11 +121,38 @@ public class OLE2ExtractorFactory {
         return (POIOLE2TextExtractor)createExtractor(fs.getRoot());
     }
 
-    public static POITextExtractor createExtractor(InputStream input) {
-        // TODO Something nasty with reflection...
-        return null;
+    public static POITextExtractor createExtractor(InputStream input) throws IOException {
+        Class<?> cls = getOOXMLClass();
+        if (cls != null) {
+            // TODO Reflection
+            throw new IllegalArgumentException("TODO Reflection");
+        } else {
+            // Best hope it's OLE2....
+            return createExtractor(new NPOIFSFileSystem(input));
+        }
     }
 
+    private static Class<?> getOOXMLClass() {
+        try {
+            return OLE2ExtractorFactory.class.getClassLoader().loadClass(
+                    "org.apache.poi.extractor.ExtractorFactory"
+            );
+        } catch (ClassNotFoundException e) {
+            LOGGER.log(POILogger.WARN, "POI OOXML jar missing");
+            return null;
+        }
+    }
+    private static Class<?> getScratchpadClass() {
+        try {
+            return OLE2ExtractorFactory.class.getClassLoader().loadClass(
+                    "org.apache.poi.extractor.OLE2ScrachpadExtractorFactory"
+            );
+        } catch (ClassNotFoundException e) {
+            LOGGER.log(POILogger.ERROR, "POI Scratchpad jar missing");
+            throw new IllegalStateException("POI Scratchpad jar missing, required for ExtractorFactory");
+        }
+    }
+    
     /**
      * Create the Extractor, if possible. Generally needs the Scratchpad jar.
      * Note that this won't check for embedded OOXML resources either, use
@@ -138,8 +171,16 @@ public class OLE2ExtractorFactory {
                 return new ExcelExtractor(poifsDir);
             }
         }
-
-        // TODO Try to ask the Scratchpad
+        
+        // Ask Scratchpad, or fail trying
+        Class<?> cls = getScratchpadClass();
+        try {
+            Method m = cls.getDeclaredMethod("createExtractor", DirectoryNode.class);
+            POITextExtractor ext = (POITextExtractor)m.invoke(null, poifsDir);
+            if (ext != null) return ext;
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Error creating Scratchpad Extractor", e);
+        }
 
         throw new IllegalArgumentException("No supported documents found in the OLE2 stream");
     }
@@ -155,9 +196,9 @@ public class OLE2ExtractorFactory {
             throws IOException
     {
         // All the embedded directories we spotted
-        ArrayList<Entry> dirs = new ArrayList<Entry>();
+        List<Entry> dirs = new ArrayList<Entry>();
         // For anything else not directly held in as a POIFS directory
-        ArrayList<InputStream> nonPOIFS = new ArrayList<InputStream>();
+        List<InputStream> nonPOIFS = new ArrayList<InputStream>();
 
         // Find all the embedded directories
         DirectoryEntry root = ext.getRoot();
@@ -175,7 +216,15 @@ public class OLE2ExtractorFactory {
                 }
             }
         } else {
-            // TODO Ask scratchpad
+            // Ask Scratchpad, or fail trying
+            Class<?> cls = getScratchpadClass();
+            try {
+                Method m = cls.getDeclaredMethod(
+                        "identifyEmbeddedResources", POIOLE2TextExtractor.class, List.class, List.class);
+                m.invoke(null, ext, dirs, nonPOIFS);
+            } catch (Exception e) {
+                throw new IllegalArgumentException("Error checking for Scratchpad embedded resources", e);
+            }
         }
 
         // Create the extractors
@@ -195,10 +244,10 @@ public class OLE2ExtractorFactory {
             } catch (IllegalArgumentException ie) {
                 // Ignore, just means it didn't contain
                 //  a format we support as yet
-                // TODO Should we log this?
+                LOGGER.log(POILogger.WARN, ie);
             } catch (Exception xe) {
                 // Ignore, invalid format
-                // TODO Should we log this?
+                LOGGER.log(POILogger.WARN, xe);
             }
         }
         return e.toArray(new POITextExtractor[e.size()]);
