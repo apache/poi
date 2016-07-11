@@ -126,8 +126,15 @@ public class OLE2ExtractorFactory {
     public static POITextExtractor createExtractor(InputStream input) throws IOException {
         Class<?> cls = getOOXMLClass();
         if (cls != null) {
-            // TODO Reflection
-            throw new IllegalArgumentException("TODO Reflection");
+            // Use Reflection to get us the full OOXML-enabled version
+            try {
+                Method m = cls.getDeclaredMethod("createExtractor", InputStream.class);
+                return (POITextExtractor)m.invoke(null, input);
+            } catch (IllegalArgumentException iae) {
+                throw iae;
+            } catch (Exception e) {
+                throw new IllegalArgumentException("Error creating Extractor for InputStream", e);
+            }
         } else {
             // Best hope it's OLE2....
             return createExtractor(new NPOIFSFileSystem(input));
