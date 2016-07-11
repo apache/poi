@@ -27,14 +27,12 @@ import org.apache.poi.POIOLE2TextExtractor;
 import org.apache.poi.POITextExtractor;
 import org.apache.poi.hssf.extractor.EventBasedExcelExtractor;
 import org.apache.poi.hssf.extractor.ExcelExtractor;
-import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.OPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.xmlbeans.XmlException;
 
 /**
  * Figures out the correct POIOLE2TextExtractor for your supplied
@@ -104,15 +102,15 @@ public class OLE2ExtractorFactory {
         return threadPreferEventExtractors.get();
     }
 
-    public static POIOLE2TextExtractor createExtractor(POIFSFileSystem fs) throws IOException, OpenXML4JException, XmlException {
+    public static POIOLE2TextExtractor createExtractor(POIFSFileSystem fs) throws IOException {
         // Only ever an OLE2 one from the root of the FS
         return (POIOLE2TextExtractor)createExtractor(fs.getRoot());
     }
-    public static POIOLE2TextExtractor createExtractor(NPOIFSFileSystem fs) throws IOException, OpenXML4JException, XmlException {
+    public static POIOLE2TextExtractor createExtractor(NPOIFSFileSystem fs) throws IOException {
         // Only ever an OLE2 one from the root of the FS
         return (POIOLE2TextExtractor)createExtractor(fs.getRoot());
     }
-    public static POIOLE2TextExtractor createExtractor(OPOIFSFileSystem fs) throws IOException, OpenXML4JException, XmlException {
+    public static POIOLE2TextExtractor createExtractor(OPOIFSFileSystem fs) throws IOException {
         // Only ever an OLE2 one from the root of the FS
         return (POIOLE2TextExtractor)createExtractor(fs.getRoot());
     }
@@ -128,7 +126,7 @@ public class OLE2ExtractorFactory {
      *  {@link org.apache.poi.extractor.ExtractorFactory} for that.
      */
     public static POITextExtractor createExtractor(DirectoryNode poifsDir)
-            throws IOException, OpenXML4JException, XmlException
+            throws IOException
     {
         // Look for certain entries in the stream, to figure it
         // out from
@@ -154,7 +152,7 @@ public class OLE2ExtractorFactory {
      *  {@link POITextExtractor} for each embedded file.
      */
     public static POITextExtractor[] getEmbededDocsTextExtractors(POIOLE2TextExtractor ext)
-            throws IOException, OpenXML4JException, XmlException
+            throws IOException
     {
         // All the embedded directories we spotted
         ArrayList<Entry> dirs = new ArrayList<Entry>();
