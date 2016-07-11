@@ -16,8 +16,6 @@
 ==================================================================== */
 package org.apache.poi.openxml4j.util;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -26,6 +24,8 @@ import java.util.Iterator;
 import java.util.zip.ZipEntry;
 
 import org.apache.poi.openxml4j.util.ZipSecureFile.ThresholdInputStream;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * Provides a way to get at all the ZipEntries
@@ -36,6 +36,7 @@ import org.apache.poi.openxml4j.util.ZipSecureFile.ThresholdInputStream;
  *  done, to free up that memory!
  */
 public class ZipInputStreamZipEntrySource implements ZipEntrySource {
+    private static POILogger logger = POILogFactory.getLogger(ZipInputStreamZipEntrySource.class);
 	private ArrayList<FakeZipEntry> zipEntries;
 	
 	/**
@@ -53,7 +54,7 @@ public class ZipInputStreamZipEntrySource implements ZipEntrySource {
 			if(zipEntry == null) {
 				going = false;
 			} else {
-				FakeZipEntry entry = new FakeZipEntry(zipEntry, inp);
+				FakeZipEntry entry = FakeZipEntry.STRATEGY.createFakeZipEntry(zipEntry, inp);
 				inp.closeEntry();
 				
 				zipEntries.add(entry);
@@ -73,8 +74,17 @@ public class ZipInputStreamZipEntrySource implements ZipEntrySource {
 	}
 	
 	public void close() {
-		// Free the memory
-		zipEntries = null;
+	    if(zipEntries != null) {
+    	    for(FakeZipEntry zipEntry : zipEntries) {
+    	        try {
+    	            zipEntry.close();
+    	        } catch(Throwable t) {
+    	            logger.log(POILogger.WARN, "Cannot close zip entry", t);
+    	        }
+    	    }
+            // Free the memory
+            zipEntries = null;
+	    }
 	}
 	
 	/**
@@ -94,47 +104,6 @@ public class ZipInputStreamZipEntrySource implements ZipEntrySource {
 
 		public ZipEntry nextElement() {
 			return iterator.next();
-		}
-	}
-
-	/**
-	 * So we can close the real zip entry and still
-	 *  effectively work with it.
-	 * Holds the (decompressed!) data in memory, so
-	 *  close this as soon as you can! 
-	 */
-	public static class FakeZipEntry extends ZipEntry {
-		private byte[] data;
-		
-		public FakeZipEntry(ZipEntry entry, InputStream inp) throws IOException {
-			super(entry.getName());
-			
-			// Grab the de-compressed contents for later
-            ByteArrayOutputStream baos;
-
-            long entrySize = entry.getSize();
-
-            if (entrySize !=-1) {
-                if (entrySize>=Integer.MAX_VALUE) {
-                    throw new IOException("ZIP entry size is too large");
-                }
-
-                baos = new ByteArrayOutputStream((int) entrySize);
-            } else {
-    			baos = new ByteArrayOutputStream();
-            }
-
-			byte[] buffer = new byte[4096];
-			int read = 0;
-			while( (read = inp.read(buffer)) != -1 ) {
-				baos.write(buffer, 0, read);
-			}
-			
-			data = baos.toByteArray();
-		}
-		
-		public InputStream getInputStream() {
-			return new ByteArrayInputStream(data);
 		}
 	}
 }
