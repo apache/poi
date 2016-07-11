@@ -24,8 +24,7 @@ import java.util.Iterator;
 import java.util.zip.ZipEntry;
 
 import org.apache.poi.openxml4j.util.ZipSecureFile.ThresholdInputStream;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+import org.apache.poi.util.IOUtils;
 
 /**
  * Provides a way to get at all the ZipEntries
@@ -36,7 +35,6 @@ import org.apache.poi.util.POILogger;
  *  done, to free up that memory!
  */
 public class ZipInputStreamZipEntrySource implements ZipEntrySource {
-    private static POILogger logger = POILogFactory.getLogger(ZipInputStreamZipEntrySource.class);
 	private ArrayList<FakeZipEntry> zipEntries;
 	
 	/**
@@ -76,11 +74,7 @@ public class ZipInputStreamZipEntrySource implements ZipEntrySource {
 	public void close() {
 	    if(zipEntries != null) {
     	    for(FakeZipEntry zipEntry : zipEntries) {
-    	        try {
-    	            zipEntry.close();
-    	        } catch(Throwable t) {
-    	            logger.log(POILogger.WARN, "Cannot close zip entry", t);
-    	        }
+    	        IOUtils.closeQuietly(zipEntry);
     	    }
             // Free the memory
             zipEntries = null;
