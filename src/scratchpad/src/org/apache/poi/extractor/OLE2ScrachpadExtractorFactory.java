@@ -34,11 +34,9 @@ import org.apache.poi.hsmf.extractor.OutlookTextExtactor;
 import org.apache.poi.hwpf.OldWordFileFormatException;
 import org.apache.poi.hwpf.extractor.Word6Extractor;
 import org.apache.poi.hwpf.extractor.WordExtractor;
-import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.Entry;
-import org.apache.xmlbeans.XmlException;
 
 /**
  * Scratchpad-specific logic for {@link OLE2ExtractorFactory} and
@@ -55,9 +53,7 @@ public class OLE2ScrachpadExtractorFactory {
      * Note - doesn't check for core-supported formats!
      * Note - doesn't check for OOXML-supported formats
      */
-    public static POITextExtractor createExtractor(DirectoryNode poifsDir) throws IOException,
-            OpenXML4JException, XmlException
-    {
+    public static POITextExtractor createExtractor(DirectoryNode poifsDir) throws IOException {
         if (poifsDir.hasEntry("WordDocument")) {
             // Old or new style word document?
             try {
