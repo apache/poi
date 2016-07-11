@@ -66,6 +66,11 @@ import org.apache.xmlbeans.XmlException;
 /**
  * Figures out the correct POITextExtractor for your supplied
  *  document, and returns it.
+ *  
+ * <p>Note 1 - will fail for many file formats if the POI Scratchpad jar is
+ *  not present on the runtime classpath</p>
+ * <p>Note 2 - rather than using this, for most cases you would be better
+ *  off switching to <a href="http://tika.apache.org">Apache Tika</a> instead!</p>
  */
 @SuppressWarnings("WeakerAccess")
 public class ExtractorFactory {
