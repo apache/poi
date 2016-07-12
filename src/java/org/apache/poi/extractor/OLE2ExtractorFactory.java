@@ -154,7 +154,7 @@ public class OLE2ExtractorFactory {
     private static Class<?> getScratchpadClass() {
         try {
             return OLE2ExtractorFactory.class.getClassLoader().loadClass(
-                    "org.apache.poi.extractor.OLE2ScrachpadExtractorFactory"
+                    "org.apache.poi.extractor.OLE2ScratchpadExtractorFactory"
             );
         } catch (ClassNotFoundException e) {
             LOGGER.log(POILogger.ERROR, "POI Scratchpad jar missing");
