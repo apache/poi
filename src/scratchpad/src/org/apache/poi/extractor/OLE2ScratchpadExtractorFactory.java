@@ -46,7 +46,7 @@ import org.apache.poi.poifs.filesystem.Entry;
  *  two classes</p>
  */
 @SuppressWarnings("WeakerAccess")
-public class OLE2ScrachpadExtractorFactory {
+public class OLE2ScratchpadExtractorFactory {
     /**
      * Look for certain entries in the stream, to figure it
      * out what format is desired
