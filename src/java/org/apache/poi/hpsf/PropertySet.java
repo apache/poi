@@ -223,7 +223,7 @@ public class PropertySet
      * stream.
      * @throws MarkUnsupportedException if the stream does not support
      * the {@link InputStream#markSupported} method.
-     * @throws IOException if the {@link InputStream} cannot not be
+     * @throws IOException if the {@link InputStream} cannot be
      * accessed as needed.
      * @exception NoPropertySetStreamException if the input stream does not
      * contain a property set.
