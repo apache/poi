@@ -18,6 +18,7 @@
 package org.apache.poi.openxml4j.util;
 
 import java.io.Closeable;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.zip.ZipEntry;
 
@@ -29,9 +30,12 @@ public abstract class FakeZipEntry extends ZipEntry implements Closeable {
         super(name);
     }
     
-    public abstract InputStream getInputStream();
+    public abstract InputStream getInputStream() throws IOException;
     
     public static void setFakeZipEntryCreationStrategy(final FakeZipEntryCreationStrategy strategy) {
+        if (strategy == null) {
+            throw new IllegalArgumentException("strategy == null");
+        }
         STRATEGY = strategy;
     }
 }
