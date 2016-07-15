@@ -1255,7 +1255,7 @@ public class SXSSFSheet implements Sheet
      *     Please note the rows being grouped <em>must</em> be in the current window,
      *     if the rows are already flushed then groupRow has no effect.
      * </p>
-     * <p>
+     * 
      *      Correct code:
      *      <pre><code>
      *       Workbook wb = new SXSSFWorkbook(100);  // keep 100 rows in memory
@@ -1268,8 +1268,8 @@ public class SXSSFSheet implements Sheet
      *       }
      *
      *      </code></pre>
-     * </p>
-     * <p>
+     * 
+     * 
      *      Incorrect code:
      *      <pre><code>
      *       Workbook wb = new SXSSFWorkbook(100);  // keep 100 rows in memory
@@ -1280,7 +1280,7 @@ public class SXSSFSheet implements Sheet
      *       sh.groupRow(100, 200); // the rows in the range [100, 200] are already flushed and groupRows has no effect
      *
      *      </code></pre>
-     * </p>
+     * 
      *
      * @param fromRow   start row (0-based)
      * @param toRow     end row (0-based)
