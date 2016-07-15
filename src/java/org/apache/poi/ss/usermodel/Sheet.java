@@ -25,6 +25,7 @@ import java.util.Map;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.PaneInformation;
+import org.apache.poi.util.Removal;
 
 /**
  * High level representation of a Excel worksheet.
@@ -624,6 +625,7 @@ public interface Sheet extends Iterable<Row> {
      * @param denominator   The denominator for the zoom magnification.
      * @deprecated 2015-11-23 (circa POI 3.14beta1). Use {@link #setZoom(int)} instead.
      */
+    @Removal(version="3.16")
     @Deprecated
     void setZoom(int numerator, int denominator);
     

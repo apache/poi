@@ -47,6 +47,7 @@ import org.apache.poi.ss.util.PaneInformation;
 import org.apache.poi.ss.util.SheetUtil;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.NotImplemented;
+import org.apache.poi.util.Removal;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFComment;
 import org.apache.poi.xssf.usermodel.XSSFDataValidation;
@@ -771,7 +772,7 @@ public class SXSSFSheet implements Sheet
 
     /**
      * Gets the user model for the default document header.
-     * <p/>
+     * <p>
      * Note that XSSF offers more kinds of document headers than HSSF does
      * </p>
      * @return the document header. Never <code>null</code>
@@ -784,9 +785,9 @@ public class SXSSFSheet implements Sheet
 
     /**
      * Gets the user model for the default document footer.
-     * <p/>
+     * <p>
      * Note that XSSF offers more kinds of document footers than HSSF does.
-     *
+     * </p>
      * @return the document footer. Never <code>null</code>
      */
     @Override
@@ -797,9 +798,9 @@ public class SXSSFSheet implements Sheet
 
     /**
      * Sets a flag indicating whether this sheet is selected.
-     *<p>
+     * <p>
      * Note: multiple sheets can be selected, but only one sheet can be active at one time.
-     *</p>
+     * </p>
      * @param value <code>true</code> if this sheet is selected
      * @see Workbook#setActiveSheet(int)
      */
@@ -836,7 +837,7 @@ public class SXSSFSheet implements Sheet
     /**
      * Answer whether protection is enabled or disabled
      *
-     * @return true => protection enabled; false => protection disabled
+     * @return true means protection enabled; false means protection disabled
      */
     @Override
     public boolean getProtect()
@@ -857,7 +858,7 @@ public class SXSSFSheet implements Sheet
     /**
      * Answer whether scenario protection is enabled or disabled
      *
-     * @return true => protection enabled; false => protection disabled
+     * @return true means protection enabled; false means protection disabled
      */
     @Override
     public boolean getScenarioProtect()
@@ -866,7 +867,7 @@ public class SXSSFSheet implements Sheet
     }
 
     /**
-     * Sets the zoom magnication for the sheet.  The zoom is expressed as a
+     * Sets the zoom magnification for the sheet.  The zoom is expressed as a
      * fraction.  For example to express a zoom of 75% use 3 for the numerator
      * and 4 for the denominator.
      *
@@ -874,6 +875,7 @@ public class SXSSFSheet implements Sheet
      * @param denominator   The denominator for the zoom magnification.
      * @deprecated 2015-11-23 (circa POI 3.14beta1). Use {@link #setZoom(int)} instead.
      */
+    @Removal(version="3.16")
     @Override
     public void setZoom(int numerator, int denominator)
     {
@@ -882,7 +884,7 @@ public class SXSSFSheet implements Sheet
     
     /**
      * Window zoom magnification for current view representing percent values.
-     * Valid values range from 10 to 400. Horizontal & Vertical scale together.
+     * Valid values range from 10 to 400. Horizontal and Vertical scale together.
      *
      * For example:
      * <pre>
@@ -1308,7 +1310,7 @@ public class SXSSFSheet implements Sheet
      * </p>
      *
      * @param rownum    index of row to update (0-based)
-     * @param level     outline level (> 0)
+     * @param level     outline level (greater than 0)
      */
     public void setRowOutlineLevel(int rownum, int level)
     {

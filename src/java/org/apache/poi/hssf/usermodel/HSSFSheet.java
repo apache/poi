@@ -1386,9 +1386,8 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      *
      * @param numerator   The numerator for the zoom magnification.
      * @param denominator The denominator for the zoom magnification.
-     * @deprecated 2015-11-23 (circa POI 3.14beta1). Use {@link #setZoom(int)} instead.
+     * @see #setZoom(int)
      */
-    @Override
     public void setZoom(int numerator, int denominator) {
         if (numerator < 1 || numerator > 65535)
             throw new IllegalArgumentException("Numerator must be greater than 0 and less than 65536");
