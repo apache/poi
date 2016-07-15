@@ -157,8 +157,7 @@ public abstract class TextFunction implements Function {
     public static final Function CLEAN = new SingleArgTextFunc() {
         protected ValueEval evaluate(String arg) {
             StringBuilder result = new StringBuilder();
-            for (int i = 0; i < arg.length(); i++) {
-                char c = arg.charAt(i);
+            for (final char c : arg.toCharArray()) {
                 if (isPrintable(c)) {
                     result.append(c);
                 }
@@ -178,7 +177,7 @@ public abstract class TextFunction implements Function {
          * @return  whether the character is printable
          */
         private boolean isPrintable(char c){
-			return (int) c >= 32;
+			return c >= 32;
         }
     };
 
