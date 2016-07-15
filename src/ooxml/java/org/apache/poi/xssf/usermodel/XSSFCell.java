@@ -618,7 +618,7 @@ public final class XSSFCell implements Cell {
     /**
      * Return the cell's style.
      *
-     * @return the cell's style.</code>
+     * @return the cell's style.
      */
     @Override
     public XSSFCellStyle getCellStyle() {

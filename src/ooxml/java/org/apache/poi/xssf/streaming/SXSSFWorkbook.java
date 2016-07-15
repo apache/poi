@@ -82,11 +82,11 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  */
 public class SXSSFWorkbook implements Workbook {
     /**
-     * Specifies how many rows can be accessed at most via getRow().
-     * When a new node is created via createRow() and the total number
+     * Specifies how many rows can be accessed at most via {@link SXSSFSheet#getRow}.
+     * When a new node is created via {@link SXSSFSheet#createRow} and the total number
      * of unflushed records would exceed the specified value, then the
      * row with the lowest index value is flushed and cannot be accessed
-     * via getRow() anymore.
+     * via {@link SXSSFSheet#getRow} anymore.
      */
     public static final int DEFAULT_WINDOW_SIZE = 100;
     private static final POILogger logger = POILogFactory.getLogger(SXSSFWorkbook.class);
@@ -116,8 +116,8 @@ public class SXSSFWorkbook implements Workbook {
     }
 
     /**
-     * Construct a workbook from a template.
-     * <p>
+     * <p>Construct a workbook from a template.</p>
+     * 
      * There are three use-cases to use SXSSFWorkbook(XSSFWorkbook) :
      * <ol>
      *   <li>
@@ -126,7 +126,7 @@ public class SXSSFWorkbook implements Workbook {
      *   </li>
      *   <li>
      *       Append rows to existing sheets. The row number MUST be greater
-     *       than max(rownum) in the template sheet.
+     *       than {@code max(rownum)} in the template sheet.
      *   </li>
      *   <li>
      *       Use existing workbook as a template and re-use global objects such
@@ -134,13 +134,13 @@ public class SXSSFWorkbook implements Workbook {
      *   </li>
      * </ol>
      * All three use cases can work in a combination.
-     * </p>
+     * 
      * What is not supported:
      * <ul>
      *   <li>
      *   Access initial cells and rows in the template. After constructing
-     *   SXSSFWorkbook(XSSFWorkbook) all internal windows are empty and
-     *   SXSSFSheet@getRow and SXSSFRow#getCell return null.
+     *   {@link #SXSSFWorkbook(XSSFWorkbook)} all internal windows are empty and
+     *   {@link SXSSFSheet#getRow} and {@link SXSSFRow#getCell} return <code>null</code>.
      *   </li>
      *   <li>
      *    Override existing cells and rows. The API silently allows that but
@@ -158,18 +158,18 @@ public class SXSSFWorkbook implements Workbook {
     /**
      * Constructs an workbook from an existing workbook.
      * <p>
-     * When a new node is created via createRow() and the total number
+     * When a new node is created via {@link SXSSFSheet#createRow} and the total number
      * of unflushed records would exceed the specified value, then the
      * row with the lowest index value is flushed and cannot be accessed
-     * via getRow() anymore.
+     * via {@link SXSSFSheet#getRow} anymore.
      * </p>
      * <p>
-     * A value of -1 indicates unlimited access. In this case all
-     * records that have not been flushed by a call to flush() are available
+     * A value of <code>-1</code> indicates unlimited access. In this case all
+     * records that have not been flushed by a call to <code>flush()</code> are available
      * for random access.
+     * </p>
      * <p>
-     * <p></p>
-     * A value of 0 is not allowed because it would flush any newly created row
+     * A value of <code>0</code> is not allowed because it would flush any newly created row
      * without having a chance to specify any cells.
      * </p>
      *
@@ -182,18 +182,18 @@ public class SXSSFWorkbook implements Workbook {
     /**
      * Constructs an workbook from an existing workbook.
      * <p>
-     * When a new node is created via createRow() and the total number
+     * When a new node is created via {@link SXSSFSheet#createRow} and the total number
      * of unflushed records would exceed the specified value, then the
      * row with the lowest index value is flushed and cannot be accessed
-     * via getRow() anymore.
+     * via {@link SXSSFSheet#getRow} anymore.
      * </p>
      * <p>
-     * A value of -1 indicates unlimited access. In this case all
-     * records that have not been flushed by a call to flush() are available
+     * A value of <code>-1</code> indicates unlimited access. In this case all
+     * records that have not been flushed by a call to <code>flush()</code> are available
      * for random access.
+     * </p>
      * <p>
-     * <p></p>
-     * A value of 0 is not allowed because it would flush any newly created row
+     * A value of <code>0</code> is not allowed because it would flush any newly created row
      * without having a chance to specify any cells.
      * </p>
      *
@@ -207,18 +207,18 @@ public class SXSSFWorkbook implements Workbook {
     /**
      * Constructs an workbook from an existing workbook.
      * <p>
-     * When a new node is created via createRow() and the total number
+     * When a new node is created via {@link SXSSFSheet#createRow} and the total number
      * of unflushed records would exceed the specified value, then the
      * row with the lowest index value is flushed and cannot be accessed
-     * via getRow() anymore.
+     * via {@link SXSSFSheet#getRow} anymore.
      * </p>
      * <p>
-     * A value of -1 indicates unlimited access. In this case all
-     * records that have not been flushed by a call to flush() are available
+     * A value of <code>-1</code> indicates unlimited access. In this case all
+     * records that have not been flushed by a call to <code>flush()</code> are available
      * for random access.
+     * </p>
      * <p>
-     * <p></p>
-     * A value of 0 is not allowed because it would flush any newly created row
+     * A value of <code>0</code> is not allowed because it would flush any newly created row
      * without having a chance to specify any cells.
      * </p>
      *
@@ -250,18 +250,18 @@ public class SXSSFWorkbook implements Workbook {
     /**
      * Construct an empty workbook and specify the window for row access.
      * <p>
-     * When a new node is created via createRow() and the total number
+     * When a new node is created via {@link SXSSFSheet#createRow} and the total number
      * of unflushed records would exceed the specified value, then the
      * row with the lowest index value is flushed and cannot be accessed
-     * via getRow() anymore.
+     * via {@link SXSSFSheet#getRow} anymore.
      * </p>
      * <p>
-     * A value of -1 indicates unlimited access. In this case all
-     * records that have not been flushed by a call to flush() are available
+     * A value of <code>-1</code> indicates unlimited access. In this case all
+     * records that have not been flushed by a call to <code>flush()</code> are available
      * for random access.
+     * </p>
      * <p>
-     * <p></p>
-     * A value of 0 is not allowed because it would flush any newly created row
+     * A value of <code>0</code> is not allowed because it would flush any newly created row
      * without having a chance to specify any cells.
      * </p>
      *
@@ -754,7 +754,7 @@ public class SXSSFWorkbook implements Workbook {
     /**
      * Get the Sheet object at the given index.
      *
-     * @param index of the sheet number (0-based physical & logical)
+     * @param index of the sheet number (0-based physical and logical)
      * @return Sheet at the provided index
      */
     @Override
@@ -1026,12 +1026,13 @@ public class SXSSFWorkbook implements Workbook {
     }
 
     /**
-     * Gets the defined name index by name<br/>
+     * Gets the defined name index by name
+     * 
      * <i>Note:</i> Excel defined names are case-insensitive and
      * this method performs a case-insensitive search.
      *
      * @param name the name of the defined name
-     * @return zero based index of the defined name. <tt>-1</tt> if not found.
+     * @return zero based index of the defined name. <code>-1</code> if not found.
      */
     @Override
     public int getNameIndex(String name)

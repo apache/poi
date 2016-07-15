@@ -78,6 +78,7 @@ import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.util.Removal;
 import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.xssf.usermodel.helpers.ColumnHelper;
 import org.apache.poi.xssf.usermodel.helpers.XSSFIgnoredErrorHelper;
@@ -2740,6 +2741,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * @param denominator   The denominator for the zoom magnification.
      * @deprecated 2015-11-23 (circa POI 3.14beta1). Use {@link #setZoom(int)} instead.
      */
+    @Removal(version="3.16")
     @Override
     public void setZoom(int numerator, int denominator) {
         int zoom = 100*numerator/denominator;
