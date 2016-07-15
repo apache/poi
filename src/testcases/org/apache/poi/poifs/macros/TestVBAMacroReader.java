@@ -20,6 +20,8 @@ package org.apache.poi.poifs.macros;
 import static org.apache.poi.POITestCase.assertContains;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+import static org.junit.Assume.assumeTrue;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -258,5 +260,19 @@ public class TestVBAMacroReader {
         Map<String, String> macros = reader.readMacros();
         assertNotNull(macros);
         reader.close();
+    }
+    
+    // This test is written as expected-to-fail and should be rewritten
+    // as expected-to-pass when the bug is fixed.
+    @Test
+    public void bug59858() throws IOException {
+        try {
+            fromFile(POIDataSamples.getSpreadSheetInstance(), "59858.xls");
+            fail("This test passes now. Please update the unit test and bug 59858.");
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            // NPE when reading module.offset in VBAMacroReader.readMacros (approx line 258)
+            assumeTrue("This test currently fails with an NPE. See stdout.", false);
+        }
     }
 }
