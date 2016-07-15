@@ -24,10 +24,16 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.List;
 
+import org.apache.poi.sl.draw.DrawFactory;
+import org.apache.poi.sl.usermodel.Slide;
 import org.apache.poi.sl.usermodel.TableCell.BorderEdge;
 import org.apache.poi.sl.usermodel.VerticalAlignment;
 import org.apache.poi.xslf.XSLFTestDataSamples;
@@ -192,5 +198,21 @@ public class TestXSLFTable {
         assertEquals(0, tc0.getLineWidth(), 0);
         
         ppt.close();
+    }
+
+    @Test
+    public void checkNullPointerException() {
+        XMLSlideShow ss = XSLFTestDataSamples.openSampleDocument("au.asn.aes.www_conferences_2011_presentations_Fri_20Room4Level4_20930_20Maloney.pptx");
+        Dimension pgsize = ss.getPageSize();
+        for (Slide<?, ?> s : ss.getSlides()) {
+            BufferedImage img = new BufferedImage(pgsize.width, pgsize.height, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D graphics = img.createGraphics();
+
+            // draw stuff
+            s.draw(graphics);
+
+            graphics.dispose();
+            img.flush();
+        }
     }
 }
