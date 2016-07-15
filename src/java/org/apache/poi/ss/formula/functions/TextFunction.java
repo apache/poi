@@ -112,18 +112,18 @@ public abstract class TextFunction implements Function {
 	 * Implementation of the PROPER function:
      * Normalizes all words (separated by non-word characters) by
      * making the first letter upper and the rest lower case.
+     * 
+     * This is nearly equivalent to toTitleCase if the Java language had it
 	 */
 	public static final Function PROPER = new SingleArgTextFunc() {
 		protected ValueEval evaluate(String text) {
 			StringBuilder sb = new StringBuilder();
 			boolean shouldMakeUppercase = true;
-			final int length = text.length();
-			for(int i = 0; i < length; ++i) {
-				final char ch = text.charAt(i);
+			for(final char ch : text.toCharArray()) {
 
 				// Note: we are using String.toUpperCase() here on purpose as it handles certain things
 				// better than Character.toUpperCase(), e.g. German "scharfes s" is translated
-				// to "SS" (i.e. two characters), if upercased properly!
+				// to "SS" (i.e. two characters), if uppercased properly!
 				if (shouldMakeUppercase) {
 					sb.append(String.valueOf(ch).toUpperCase(Locale.ROOT));
 				}

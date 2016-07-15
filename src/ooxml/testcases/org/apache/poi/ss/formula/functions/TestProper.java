@@ -54,14 +54,25 @@ public final class TestProper extends TestCase {
         cell11 = sheet.createRow(0).createCell(0);
         cell11.setCellType(CellType.FORMULA);
 
-        confirm("PROPER(\"hi there\")", "Hi There");
-        confirm("PROPER(\"what's up\")", "What'S Up");
-        confirm("PROPER(\"I DON'T TH!NK SO!\")", "I Don'T Th!Nk So!");
+        confirm("PROPER(\"hi there\")", "Hi There"); //simple case
+        confirm("PROPER(\"what's up\")", "What'S Up"); //apostrophes are treated as word breaks
+        confirm("PROPER(\"I DON'T TH!NK SO!\")", "I Don'T Th!Nk So!"); //capitalization is ignored, special punctuation is treated as a word break
         confirm("PROPER(\"dr\u00dcb\u00f6'\u00e4 \u00e9lo\u015f|\u00eb\u00e8 \")", "Dr\u00fcb\u00f6'\u00c4 \u00c9lo\u015f|\u00cb\u00e8 ");
-        confirm("PROPER(\"hi123 the123re\")", "Hi123 The123Re");
-        confirm("PROPER(\"-\")", "-");
-        confirm("PROPER(\"!\u00a7$\")", "!\u00a7$");
-        confirm("PROPER(\"/&%\")", "/&%");
+        confirm("PROPER(\"hi123 the123re\")", "Hi123 The123Re"); //numbers are treated as word breaks
+        confirm("PROPER(\"-\")", "-"); //nothing happens with ascii punctuation that is not upper or lower case
+        confirm("PROPER(\"!\u00a7$\")", "!\u00a7$"); //nothing happens with unicode punctuation (section sign) that is not upper or lower case
+        confirm("PROPER(\"/&%\")", "/&%"); //nothing happens with ascii punctuation that is not upper or lower case
+        confirm("PROPER(\"Apache POI\")", "Apache Poi"); //acronyms are not special
+        confirm("PROPER(\"  hello world\")", "  Hello World"); //leading whitespace is ignored
+        
+        final String scharfes = "\u00df$"; //German lowercase eszett, scharfes s, sharp s
+        // CURRENTLY FAILS: result: "Stra"+scharfes+"E"
+        // confirm("PROPER(\"stra"+scharfes+"e\")", "Stra"+scharfes+"e");
+        
+        // CURRENTLY FAILS: result: "SSUnd"+scharfes
+        // LibreOffice 5.0.3.2 behavior: "Sund"+scharfes
+        // Excel 2013 behavior: ???
+        //confirm("PROPER(\""+scharfes+"und"+scharfes+"\")", "SSund"+scharfes);
         
         // also test longer string
         StringBuilder builder = new StringBuilder("A");
