@@ -269,10 +269,15 @@ public class TestVBAMacroReader {
         try {
             fromFile(POIDataSamples.getSpreadSheetInstance(), "59858.xls");
             fail("This test passes now. Please update the unit test and bug 59858.");
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-            // NPE when reading module.offset in VBAMacroReader.readMacros (approx line 258)
-            assumeTrue("This test currently fails with an NPE. See stdout.", false);
+        } catch (IOException e) {
+            if (e.getMessage().matches("Module offset for '.+' was never read.")) {
+                //e.printStackTrace();
+                // NPE when reading module.offset in VBAMacroReader.readMacros (approx line 258)
+                assumeTrue("This test currently fails. See stdout.", false);
+            } else {
+                // something unexpected failed
+                throw e;
+            }
         }
     }
 }

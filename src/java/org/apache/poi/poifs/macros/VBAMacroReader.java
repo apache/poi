@@ -218,6 +218,10 @@ public class VBAMacroReader implements Closeable {
             modules.put(name, module);
             module.read(dis);
         } else {
+            if (module.offset == null) {
+                //This should not happen. bug 59858
+                throw new IOException("Module offset for '" + name + "' was never read.");
+            }
             // we know the offset already, so decompress immediately on-the-fly
             long skippedBytes = dis.skip(module.offset);
             if (skippedBytes != module.offset) {
