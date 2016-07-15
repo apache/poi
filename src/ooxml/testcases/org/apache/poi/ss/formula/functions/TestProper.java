@@ -19,6 +19,8 @@ package org.apache.poi.ss.formula.functions;
 
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.formula.eval.StringEval;
+import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
@@ -30,11 +32,15 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
+import org.junit.Test;
 
-public final class TestProper extends TestCase {
+import static org.junit.Assert.assertEquals;
+
+public final class TestProper {
     private Cell cell11;
     private FormulaEvaluator evaluator;
 
+    @Test
     public void testValidHSSF() {
         HSSFWorkbook wb = new HSSFWorkbook();
         evaluator = new HSSFFormulaEvaluator(wb);
@@ -42,6 +48,7 @@ public final class TestProper extends TestCase {
         confirm(wb);
     }
 
+    @Test
     public void testValidXSSF() {
         XSSFWorkbook wb = new XSSFWorkbook();
         evaluator = new XSSFFormulaEvaluator(wb);
@@ -65,14 +72,13 @@ public final class TestProper extends TestCase {
         confirm("PROPER(\"Apache POI\")", "Apache Poi"); //acronyms are not special
         confirm("PROPER(\"  hello world\")", "  Hello World"); //leading whitespace is ignored
         
-        final String scharfes = "\u00df$"; //German lowercase eszett, scharfes s, sharp s
-        // CURRENTLY FAILS: result: "Stra"+scharfes+"E"
-        // confirm("PROPER(\"stra"+scharfes+"e\")", "Stra"+scharfes+"e");
+        final String scharfes = "\u00df"; //German lowercase eszett, scharfes s, sharp s
+        confirm("PROPER(\"stra"+scharfes+"e\")", "Stra"+scharfes+"e");
         
         // CURRENTLY FAILS: result: "SSUnd"+scharfes
         // LibreOffice 5.0.3.2 behavior: "Sund"+scharfes
         // Excel 2013 behavior: ???
-        //confirm("PROPER(\""+scharfes+"und"+scharfes+"\")", "SSund"+scharfes);
+        confirm("PROPER(\""+scharfes+"und"+scharfes+"\")", "SSund"+scharfes);
         
         // also test longer string
         StringBuilder builder = new StringBuilder("A");
@@ -93,5 +99,42 @@ public final class TestProper extends TestCase {
         }
         String actualValue = cv.getStringValue();
         assertEquals(expectedResult, actualValue);
+    }
+
+    @Test
+    public void test() {
+        checkProper("", "");
+        checkProper("a", "A");
+        checkProper("abc", "Abc");
+        checkProper("abc abc", "Abc Abc");
+        checkProper("abc/abc", "Abc/Abc");
+        checkProper("ABC/ABC", "Abc/Abc");
+        checkProper("aBc/ABC", "Abc/Abc");
+        checkProper("aBc@#$%^&*()_+=-ABC", "Abc@#$%^&*()_+=-Abc");
+        checkProper("aBc25aerg/ABC", "Abc25Aerg/Abc");
+        checkProper("aBc/\u00C4\u00F6\u00DF\u00FC/ABC", "Abc/\u00C4\u00F6\u00DF\u00FC/Abc");  // Some German umlauts with uppercase first letter is not changed
+        checkProper("\u00FC", "\u00DC");
+        checkProper("\u00DC", "\u00DC");
+        checkProper("\u00DF", "SS");    // German "scharfes s" is uppercased to "SS"
+        checkProper("\u00DFomesing", "SSomesing");    // German "scharfes s" is uppercased to "SS"
+        checkProper("aBc/\u00FC\u00C4\u00F6\u00DF\u00FC/ABC", "Abc/\u00DC\u00E4\u00F6\u00DF\u00FC/Abc");  // Some German umlauts with lowercase first letter is changed to uppercase
+    }
+
+    @Test
+    public void testMicroBenchmark() {
+        ValueEval strArg = new StringEval("some longer text that needs a number of replacements to check for runtime of different implementations");
+        long start = System.currentTimeMillis();
+        for(int i = 0;i < 300000;i++) {
+            final ValueEval ret = TextFunction.PROPER.evaluate(new ValueEval[]{strArg}, 0, 0);
+            assertEquals("Some Longer Text That Needs A Number Of Replacements To Check For Runtime Of Different Implementations", ((StringEval)ret).getStringValue());
+        }
+        // Took aprox. 600ms on a decent Laptop in July 2016
+        System.out.println("Took: " + (System.currentTimeMillis() - start) + "ms");
+    }
+
+    private void checkProper(String input, String expected) {
+        ValueEval strArg = new StringEval(input);
+        final ValueEval ret = TextFunction.PROPER.evaluate(new ValueEval[]{strArg}, 0, 0);
+        assertEquals(expected, ((StringEval)ret).getStringValue());
     }
 }
