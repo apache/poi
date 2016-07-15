@@ -17,17 +17,10 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import java.util.Locale;
-import java.util.regex.Pattern;
-
-import org.apache.poi.ss.formula.eval.BoolEval;
-import org.apache.poi.ss.formula.eval.ErrorEval;
-import org.apache.poi.ss.formula.eval.EvaluationException;
-import org.apache.poi.ss.formula.eval.NumberEval;
-import org.apache.poi.ss.formula.eval.OperandResolver;
-import org.apache.poi.ss.formula.eval.StringEval;
-import org.apache.poi.ss.formula.eval.ValueEval;
+import org.apache.poi.ss.formula.eval.*;
 import org.apache.poi.ss.usermodel.DataFormatter;
+
+import java.util.Locale;
 
 /**
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
@@ -36,18 +29,17 @@ import org.apache.poi.ss.usermodel.DataFormatter;
  */
 public abstract class TextFunction implements Function {
 	protected static final DataFormatter formatter = new DataFormatter();
-    protected static final String EMPTY_STRING = "";
 
-	protected static final String evaluateStringArg(ValueEval eval, int srcRow, int srcCol) throws EvaluationException {
+	protected static String evaluateStringArg(ValueEval eval, int srcRow, int srcCol) throws EvaluationException {
 		ValueEval ve = OperandResolver.getSingleValue(eval, srcRow, srcCol);
 		return OperandResolver.coerceValueToString(ve);
 	}
-	protected static final int evaluateIntArg(ValueEval arg, int srcCellRow, int srcCellCol) throws EvaluationException {
+	protected static int evaluateIntArg(ValueEval arg, int srcCellRow, int srcCellCol) throws EvaluationException {
 		ValueEval ve = OperandResolver.getSingleValue(arg, srcCellRow, srcCellCol);
 		return OperandResolver.coerceValueToInt(ve);
 	}
 	
-	protected static final double evaluateDoubleArg(ValueEval arg, int srcCellRow, int srcCellCol) throws EvaluationException {
+	protected static double evaluateDoubleArg(ValueEval arg, int srcCellRow, int srcCellCol) throws EvaluationException {
 		ValueEval ve = OperandResolver.getSingleValue(arg, srcCellRow, srcCellCol);
 		return OperandResolver.coerceValueToDouble(ve);
 	}
@@ -122,21 +114,23 @@ public abstract class TextFunction implements Function {
      * making the first letter upper and the rest lower case.
 	 */
 	public static final Function PROPER = new SingleArgTextFunc() {
-	    final Pattern nonAlphabeticPattern = Pattern.compile("\\P{IsL}");
 		protected ValueEval evaluate(String text) {
 			StringBuilder sb = new StringBuilder();
 			boolean shouldMakeUppercase = true;
-			final String lowercaseText = text.toLowerCase(Locale.ROOT);
-			final String uppercaseText = text.toUpperCase(Locale.ROOT);
 			final int length = text.length();
 			for(int i = 0; i < length; ++i) {
+				final char ch = text.charAt(i);
+
+				// Note: we are using String.toUpperCase() here on purpose as it handles certain things
+				// better than Character.toUpperCase(), e.g. German "scharfes s" is translated
+				// to "SS" (i.e. two characters), if upercased properly!
 				if (shouldMakeUppercase) {
-					sb.append(uppercaseText.charAt(i));
+					sb.append(String.valueOf(ch).toUpperCase(Locale.ROOT));
 				}
 				else {
-					sb.append(lowercaseText.charAt(i));
+					sb.append(String.valueOf(ch).toLowerCase(Locale.ROOT));
 				}
-				shouldMakeUppercase = nonAlphabeticPattern.matcher(text.subSequence(i, i + 1)).matches();
+				shouldMakeUppercase = !Character.isLetter(ch);
 			}
 			return new StringEval(sb.toString());
 		}
@@ -184,8 +178,7 @@ public abstract class TextFunction implements Function {
          * @return  whether the character is printable
          */
         private boolean isPrintable(char c){
-            int charCode = c;
-            return charCode >= 32;
+			return (int) c >= 32;
         }
     };
 
@@ -274,9 +267,9 @@ public abstract class TextFunction implements Function {
 
 		public ValueEval evaluate(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
 			StringBuilder sb = new StringBuilder();
-			for (int i=0, iSize=args.length; i<iSize; i++) {
+			for (ValueEval arg : args) {
 				try {
-					sb.append(evaluateStringArg(args[i], srcRowIndex, srcColumnIndex));
+					sb.append(evaluateStringArg(arg, srcRowIndex, srcColumnIndex));
 				} catch (EvaluationException e) {
 					return e.getErrorEval();
 				}
