@@ -36,7 +36,6 @@ import org.apache.poi.util.POILogger;
  * This abstract class exists to consolidate duplicated code between XSSFRowShifter and HSSFRowShifter (currently methods sprinkled throughout HSSFSheet)
  */
 public abstract class RowShifter {
-    private static final POILogger logger = POILogFactory.getLogger(RowShifter.class);
     protected final Sheet sheet;
 
     public RowShifter(Sheet sh) {
@@ -44,12 +43,13 @@ public abstract class RowShifter {
     }
 
     /**
-     * Shifts, grows, or shrinks the merged regions due to a row shift
+     * Shifts, grows, or shrinks the merged regions due to a row shift.
+     * Merged regions that are completely overlaid by shifting will be deleted.
      *
      * @param startRow the row to start shifting
      * @param endRow   the row to end shifting
      * @param n        the number of rows to shift
-     * @return an array of affected merged regions
+     * @return an array of affected merged regions, doesn't contain deleted ones
      */
     public List<CellRangeAddress> shiftMergedRegions(int startRow, int endRow, int n) {
         List<CellRangeAddress> shiftedRegions = new ArrayList<CellRangeAddress>();
@@ -58,6 +58,12 @@ public abstract class RowShifter {
         int size = sheet.getNumMergedRegions();
         for (int i = 0; i < size; i++) {
             CellRangeAddress merged = sheet.getMergedRegion(i);
+
+            // remove merged region that overlaps shifting
+            if (startRow + n <= merged.getFirstRow() && endRow + n >= merged.getLastRow()) {
+                removedIndices.add(i);
+                continue;
+            }
 
             boolean inStart = (merged.getFirstRow() >= startRow || merged.getLastRow() >= startRow);
             boolean inEnd = (merged.getFirstRow() <= endRow || merged.getLastRow() <= endRow);
@@ -114,7 +120,7 @@ public abstract class RowShifter {
      * is of type LINK_DOCUMENT and refers to a cell that was shifted). Hyperlinks
      * do not track the content they point to.
      *
-     * @param shifter
+     * @param shifter the formula shifting policy
      */
     public abstract void updateHyperlinks(FormulaShifter shifter);
 

@@ -2913,7 +2913,8 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      *
      * <p>
      * Additionally shifts merged regions that are completely defined in these
-     * rows (ie. merged 2 cells on a row to be shifted).
+     * rows (ie. merged 2 cells on a row to be shifted). All merged regions that are
+     * completely overlaid by shifting will be deleted.
      * <p>
      * @param startRow the row to start shifting
      * @param endRow the row to end shifting

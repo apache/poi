@@ -131,20 +131,6 @@ public abstract class BaseTestSheetShiftRows {
     }
 
     /**
-     * Tests when shifting the first row.
-     */
-    @Test
-    public final void testActiveCell() throws IOException {
-        Workbook wb = _testDataProvider.createWorkbook();
-        Sheet s = wb.createSheet();
-
-        s.createRow(0).createCell(0).setCellValue("TEST1");
-        s.createRow(3).createCell(0).setCellValue("TEST2");
-        s.shiftRows(0,4,1);
-        wb.close();
-    }
-
-    /**
      * When shifting rows, the page breaks should go with it
      */
     @Test
@@ -307,8 +293,8 @@ public abstract class BaseTestSheetShiftRows {
         assertEquals("A3:C3", region.formatAsString());
         wb.close();
     }
-    
-    @Ignore
+
+    @Ignore("bug 56454: Incorrectly handles merged regions that do not contain column 0")
     @Test
     public final void shiftWithMergedRegions_bug56454() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
@@ -602,8 +588,7 @@ public abstract class BaseTestSheetShiftRows {
         read.close();
     }
     
-    // bug 56454: Incorrectly handles merged regions that do not contain column 0
-    @Ignore
+    @Ignore("bug 56454: Incorrectly handles merged regions that do not contain column 0")
     @Test
     public void shiftRowsWithMergedRegionsThatDoNotContainColumnZero() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
@@ -634,7 +619,65 @@ public abstract class BaseTestSheetShiftRows {
         
         wb.close();
     }
-    
+
+    @Test
+    public void shiftMergedRowsToMergedRowsUp() throws IOException {
+        Workbook wb = _testDataProvider.createWorkbook();
+        Sheet sheet = wb.createSheet("test");
+        populateSheetCells(sheet);
+
+
+        CellRangeAddress A1_E1 = new CellRangeAddress(0, 0, 0, 4);
+        CellRangeAddress A2_C2 = new CellRangeAddress(1, 1, 0, 2);
+
+        sheet.addMergedRegion(A1_E1);
+        sheet.addMergedRegion(A2_C2);
+
+        // A1:E1 should be removed
+        // A2:C2 will be A1:C1
+        sheet.shiftRows(1, sheet.getLastRowNum(), -1);
+
+        assertEquals(1, sheet.getNumMergedRegions());
+        assertEquals(CellRangeAddress.valueOf("A1:C1"), sheet.getMergedRegion(0));
+
+        wb.close();
+    }
+
+    private void populateSheetCells(Sheet sheet) {
+        // populate sheet cells
+        for (int i = 0; i < 2; i++) {
+            Row row = sheet.createRow(i);
+            for (int j = 0; j < 5; j++) {
+                Cell cell = row.createCell(j);
+                cell.setCellValue(i + "x" + j);
+            }
+        }
+    }
+
+    @Test
+    public void shiftMergedRowsToMergedRowsDown() throws IOException {
+        Workbook wb = _testDataProvider.createWorkbook();
+        Sheet sheet = wb.createSheet("test");
+
+        // populate sheet cells
+        populateSheetCells(sheet);
+
+        CellRangeAddress A1_E1 = new CellRangeAddress(0, 0, 0, 4);
+        CellRangeAddress A2_C2 = new CellRangeAddress(1, 1, 0, 2);
+
+        sheet.addMergedRegion(A1_E1);
+        sheet.addMergedRegion(A2_C2);
+
+        // A1:E1 should be moved to A2:E2
+        // A2:C2 will be removed
+        sheet.shiftRows(0, 0, 1);
+
+        assertEquals(1, sheet.getNumMergedRegions());
+        assertEquals(CellRangeAddress.valueOf("A2:E2"), sheet.getMergedRegion(0));
+
+        wb.close();
+    }
+
     private void createHyperlink(CreationHelper helper, Cell cell, int linkType, String ref) {
         cell.setCellValue(ref);
         Hyperlink link = helper.createHyperlink(linkType);
