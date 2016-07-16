@@ -76,12 +76,11 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
         // when shifted by less than -1 negative amount (try -2)
         testSheet.shiftRows(3, 3, -2);
         
-        Row newRow = null; Cell newCell = null;
-        // 2) attempt to create a new row IN PLACE of a removed row by a negative shift causes corrupted 
+        // 2) attempt to create a new row IN PLACE of a removed row by a negative shift causes corrupted
         // xlsx file with  unreadable data in the negative shifted row. 
         // NOTE it's ok to create any other row.
-        newRow = testSheet.createRow(3);
-        newCell = newRow.createCell(0);
+        Row newRow = testSheet.createRow(3);
+        Cell newCell = newRow.createCell(0);
         newCell.setCellValue("new Cell in row "+newRow.getRowNum());
         
         // 3) once a negative shift has been made any attempt to shift another group of rows 
@@ -117,6 +116,7 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
             return;
         }
         Cell readCell = readRow.getCell(0);
+        //noinspection deprecation
         if(readCell.getCellTypeEnum() == CellType.NUMERIC) {
             assertEquals(expect, Double.toString(readCell.getNumericCellValue()));
         } else {
@@ -369,12 +369,12 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
         wb.close();
     }
     
-    @Ignore
+    @Ignore("Bug 59733 - shiftRows() causes org.apache.xmlbeans.impl.values.XmlValueDisconnectedException")
     @Test
     public void bug59733() throws IOException {
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet();
-        for (int r=0; r<=3; r++) {
+        for (int r=0; r<4; r++) {
             sheet.createRow(r);
         }
 
@@ -389,12 +389,11 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
             at org.apache.xmlbeans.impl.values.XmlObjectBase.check_orphaned(XmlObjectBase.java:1258)
             at org.openxmlformats.schemas.spreadsheetml.x2006.main.impl.CTRowImpl.getR(Unknown Source)
             at org.apache.poi.xssf.usermodel.XSSFRow.getRowNum(XSSFRow.java:363)
-            at org.apache.poi.xssf.usermodel.XSSFSheet.shiftRows(XSSFSheet.java:2926)
-            at org.apache.poi.xssf.usermodel.XSSFSheet.shiftRows(XSSFSheet.java:2901)
             at org.apache.poi.xssf.usermodel.TestXSSFSheetShiftRows.bug59733(TestXSSFSheetShiftRows.java:393)
          */
-        sheet.shiftRows(3, 3, -3);
-        
+        sheet.removeRow(sheet.getRow(0));
+        assertEquals(1, sheet.getRow(1).getRowNum());
+
         workbook.close();
     }
 }
