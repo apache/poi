@@ -48,6 +48,7 @@ import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.POIXMLDocumentPart.RelationPart;
 import org.apache.poi.POIXMLException;
 import org.apache.poi.POIXMLProperties;
+import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -1841,7 +1842,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         XSSFHyperlink hyperlink;
 
         // Try with a cell reference
-        hyperlink = creationHelper.createHyperlink(Hyperlink.LINK_URL);
+        hyperlink = creationHelper.createHyperlink(HyperlinkType.URL);
         sheet.addHyperlink(hyperlink);
         hyperlink.setAddress("http://myurl");
         hyperlink.setCellReference("B4");
@@ -1851,7 +1852,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         assertEquals(1, hyperlink.getLastColumn());
 
         // Try with explicit rows / columns
-        hyperlink = creationHelper.createHyperlink(Hyperlink.LINK_URL);
+        hyperlink = creationHelper.createHyperlink(HyperlinkType.URL);
         sheet.addHyperlink(hyperlink);
         hyperlink.setAddress("http://myurl");
         hyperlink.setFirstRow(5);

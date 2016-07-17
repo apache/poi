@@ -28,6 +28,7 @@ import static org.junit.Assert.fail;
 import java.io.IOException;
 import java.util.Calendar;
 
+import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.SpreadsheetVersion;
@@ -771,21 +772,21 @@ public abstract class BaseTestCell {
         CreationHelper helper = wb1.getCreationHelper();
 
         Cell cell1 = row.createCell(1);
-        Hyperlink link1 = helper.createHyperlink(Hyperlink.LINK_URL);
+        Hyperlink link1 = helper.createHyperlink(HyperlinkType.URL);
         cell1.setHyperlink(link1);
         assertNotNull(cell1.getHyperlink());
         cell1.removeHyperlink();
         assertNull(cell1.getHyperlink());
 
         Cell cell2 = row.createCell(0);
-        Hyperlink link2 = helper.createHyperlink(Hyperlink.LINK_URL);
+        Hyperlink link2 = helper.createHyperlink(HyperlinkType.URL);
         cell2.setHyperlink(link2);
         assertNotNull(cell2.getHyperlink());
         cell2.setHyperlink(null);
         assertNull(cell2.getHyperlink());
 
         Cell cell3 = row.createCell(2);
-        Hyperlink link3 = helper.createHyperlink(Hyperlink.LINK_URL);
+        Hyperlink link3 = helper.createHyperlink(HyperlinkType.URL);
         link3.setAddress("http://poi.apache.org/");
         cell3.setHyperlink(link3);
         assertNotNull(cell3.getHyperlink());

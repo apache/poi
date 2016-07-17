@@ -37,6 +37,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.util.CellAddress;
@@ -1212,7 +1213,7 @@ public abstract class BaseTestSheet {
     @Test
     public void getHyperlink() throws IOException {
         Workbook workbook = _testDataProvider.createWorkbook();
-        Hyperlink hyperlink = workbook.getCreationHelper().createHyperlink(Hyperlink.LINK_URL);
+        Hyperlink hyperlink = workbook.getCreationHelper().createHyperlink(HyperlinkType.URL);
         hyperlink.setAddress("https://poi.apache.org/");
         
         Sheet sheet = workbook.createSheet();

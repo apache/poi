@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.hslf.HSLFTestDataSamples;
 import org.apache.poi.hslf.record.InteractiveInfoAtom;
 import org.apache.poi.hslf.usermodel.HSLFHyperlink;
@@ -128,31 +129,31 @@ public final class TestHyperlink {
         hl1 = tb1.getTextParagraphs().get(0).getTextRuns().get(0).getHyperlink();
         assertNotNull(hl1);
         assertEquals("dev@poi.apache.org", hl1.getLabel());
-        assertEquals(Hyperlink.LINK_EMAIL, hl1.getType());
+        assertEquals(HyperlinkType.EMAIL, hl1.getTypeEnum());
 
         HSLFTextBox tb2 = (HSLFTextBox)slides.get(1).getShapes().get(0);
         hl2 = tb2.getTextParagraphs().get(0).getTextRuns().get(0).getHyperlink();
         assertNotNull(hl2);
         assertEquals(InteractiveInfoAtom.LINK_LastSlide, hl2.getInfo().getInteractiveInfoAtom().getHyperlinkType());
-        assertEquals(Hyperlink.LINK_DOCUMENT, hl2.getType());
+        assertEquals(HyperlinkType.DOCUMENT, hl2.getTypeEnum());
 
         HSLFTextBox tb3 = (HSLFTextBox)slides.get(2).getShapes().get(0);
         hl3 = tb3.getTextParagraphs().get(0).getTextRuns().get(1).getHyperlink();
         assertNotNull(hl3);
         assertEquals(ppt2.getSlides().get(0)._getSheetNumber(), Integer.parseInt(hl3.getAddress().split(",")[0]));
-        assertEquals(Hyperlink.LINK_DOCUMENT, hl3.getType());
+        assertEquals(HyperlinkType.DOCUMENT, hl3.getTypeEnum());
 
         HSLFTextBox tb4 = (HSLFTextBox)slides.get(3).getShapes().get(0);
         hl4 = tb4.getTextParagraphs().get(0).getTextRuns().get(0).getHyperlink();
         assertNotNull(hl4);
         assertEquals("http://poi.apache.org", hl4.getLabel());
-        assertEquals(Hyperlink.LINK_URL, hl4.getType());
+        assertEquals(HyperlinkType.URL, hl4.getTypeEnum());
 
         tb5 = (HSLFTextBox)slides.get(4).getShapes().get(0);
         hl5 = tb5.getHyperlink();
         assertNotNull(hl5);
         assertEquals(InteractiveInfoAtom.LINK_FirstSlide, hl5.getInfo().getInteractiveInfoAtom().getHyperlinkType());
-        assertEquals(Hyperlink.LINK_DOCUMENT, hl5.getType());
+        assertEquals(HyperlinkType.DOCUMENT, hl5.getTypeEnum());
         
         ppt2.close();
     }
