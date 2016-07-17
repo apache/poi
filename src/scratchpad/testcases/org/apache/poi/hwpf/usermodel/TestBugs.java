@@ -16,11 +16,7 @@
 ==================================================================== */
 package org.apache.poi.hwpf.usermodel;
 
-import java.io.*;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-
+import junit.framework.TestCase;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hwpf.HWPFDocument;
@@ -40,8 +36,13 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
-import junit.framework.TestCase;
-import org.junit.Ignore;
+import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * Test different problems reported in the Apache Bugzilla
@@ -799,14 +800,14 @@ public class TestBugs extends TestCase
      * 
      * Disabled pending a fix for the bug
      */
-    public void DISABLEDtest56880() throws Exception {
+    public void test56880() throws Exception {
         HWPFDocument doc =
                 HWPFTestDataSamples.openSampleFile("56880.doc");
         assertEqualsIgnoreNewline("Check Request", doc.getRange().text());
     }
 
     
-    // These are the values the are explected to be read when the file
+    // These are the values the are expected to be read when the file
     // is checked.
     private int section1LeftMargin = 1440;
     private int section1RightMargin = 1440;
