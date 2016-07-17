@@ -38,6 +38,7 @@ import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.usermodel.FillPatternType;
 
 /**
  * Sheet Viewer Table Cell Editor -- not commented via javadoc as it
@@ -143,7 +144,7 @@ public class SVTableCellEditor extends AbstractCellEditor implements TableCellEd
           Font font = new Font(f.getFontName(),fontstyle,fontheight);
           editor.setFont(font);
 
-          if (style.getFillPattern() == HSSFCellStyle.SOLID_FOREGROUND) {
+          if (style.getFillPatternEnum() == FillPatternType.SOLID_FOREGROUND) {
             editor.setBackground(getAWTColor(style.getFillForegroundColor(), white));
           } else editor.setBackground(white);
 
