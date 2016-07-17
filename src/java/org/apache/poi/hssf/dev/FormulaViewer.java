@@ -57,24 +57,26 @@ public class FormulaViewer
      */
     public void run() throws IOException {
         NPOIFSFileSystem fs  = new NPOIFSFileSystem(new File(file), true);
-        InputStream is = BiffViewer.getPOIFSInputStream(fs);
-        List<Record> records = RecordFactory.createRecords(is);
+        try {
+            InputStream is = BiffViewer.getPOIFSInputStream(fs);
+            try {
+                List<Record> records = RecordFactory.createRecords(is);
 
-        for (int k = 0; k < records.size(); k++)
-        {
-            Record record = records.get(k);
-
-            if (record.getSid() == FormulaRecord.sid)
-            {
-               if (list) {
-                    listFormula((FormulaRecord) record);
-               }else {
-                    parseFormulaRecord(( FormulaRecord ) record);
-               }
+                for (Record record : records) {
+                    if (record.getSid() == FormulaRecord.sid) {
+                        if (list) {
+                            listFormula((FormulaRecord) record);
+                        } else {
+                            parseFormulaRecord((FormulaRecord) record);
+                        }
+                    }
+                }
+            } finally {
+                is.close();
             }
+        } finally {
+            fs.close();
         }
-        is.close();
-        fs.close();
     }
     
     private void listFormula(FormulaRecord record) {
@@ -90,7 +92,7 @@ public class FormulaViewer
             	numArg = String.valueOf(-1);
             }
             
-            StringBuffer buf = new StringBuffer();
+            StringBuilder buf = new StringBuilder();
             
             if (token instanceof ExpPtg) return;
             buf.append(token.toFormulaString());
@@ -154,7 +156,7 @@ public class FormulaViewer
 
     private String formulaString(FormulaRecord record) {
 
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
 		Ptg[] tokens = record.getParsedExpression();
 		for (Ptg token : tokens) {
 			buf.append( token.toFormulaString());
