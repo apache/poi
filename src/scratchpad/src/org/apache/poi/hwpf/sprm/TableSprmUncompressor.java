@@ -35,9 +35,9 @@ public final class TableSprmUncompressor
   {
   }
 
+  /** @deprecated POI 3.8 beta 4 */
   @Deprecated
-  public static TableProperties uncompressTAP(byte[] grpprl,
-                                                  int offset)
+  public static TableProperties uncompressTAP(byte[] grpprl, int offset)
   {
     TableProperties newProperties = new TableProperties();
 
@@ -49,7 +49,7 @@ public final class TableSprmUncompressor
 
       //TAPXs are actually PAPXs so we have to make sure we are only trying to
       //uncompress the right type of sprm.
-      if (sprm.getType() == SprmOperation.TAP_TYPE)
+      if (sprm.getType() == SprmOperation.TYPE_TAP)
       {
         try {
             unCompressTAPOperation(newProperties, sprm);
