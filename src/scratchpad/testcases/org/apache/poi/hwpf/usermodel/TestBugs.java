@@ -16,10 +16,7 @@
 ==================================================================== */
 package org.apache.poi.hwpf.usermodel;
 
-import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -44,6 +41,7 @@ import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
 import junit.framework.TestCase;
+import org.junit.Ignore;
 
 /**
  * Test different problems reported in the Apache Bugzilla
@@ -895,5 +893,11 @@ public class TestBugs extends TestCase
     public void testRegressionIn315beta2() {
         HWPFDocument hwpfDocument = HWPFTestDataSamples.openSampleFile("cap.stanford.edu_profiles_viewbiosketch_facultyid=4009&name=m_maciver.doc");
         assertNotNull(hwpfDocument);
+    }
+
+    public void DISABLEDtest57603SevenRowTable() throws Exception {
+        HWPFDocument hwpfDocument = HWPFTestDataSamples.openSampleFile("57603-seven_columns.doc");
+        HWPFDocument hwpfDocument2 = HWPFTestDataSamples.writeOutAndReadBack(hwpfDocument);
+        assertNotNull(hwpfDocument2);
     }
 }
