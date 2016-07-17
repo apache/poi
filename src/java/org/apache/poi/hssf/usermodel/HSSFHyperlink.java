@@ -16,37 +16,15 @@
 ==================================================================== */
 package org.apache.poi.hssf.usermodel;
 
+import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.hssf.record.HyperlinkRecord;
 import org.apache.poi.ss.usermodel.Hyperlink;
+import org.apache.poi.util.Internal;
 
 /**
  * Represents an Excel hyperlink.
  */
 public class HSSFHyperlink implements Hyperlink {
-
-    /**
-     * Link to an existing file or web page
-     * May be deprecated in the future. Consider using {@link Hyperlink#LINK_URL} instead.
-     */
-    public static final int LINK_URL = Hyperlink.LINK_URL;
-
-    /**
-     * Link to a place in this document
-     * May be deprecated in the future. Consider using {@link Hyperlink#LINK_DOCUMENT} instead.
-     */
-    public static final int LINK_DOCUMENT = Hyperlink.LINK_DOCUMENT;
-
-    /**
-     * Link to an E-mail address
-     * May be deprecated in the future. Consider using {@link Hyperlink#LINK_EMAIL} instead.
-     */
-    public static final int LINK_EMAIL = Hyperlink.LINK_EMAIL;
-
-    /**
-     * Link to a file
-     * May be deprecated in the future. Consider using {@link Hyperlink#LINK_FILE} instead.
-     */
-    public static final int LINK_FILE = Hyperlink.LINK_FILE;
 
     /**
      * Low-level record object that stores the actual hyperlink data
@@ -56,26 +34,43 @@ public class HSSFHyperlink implements Hyperlink {
     /**
      * If we create a new hyperlink remember its type
      */
-    final protected int link_type;
+    final protected HyperlinkType link_type;
 
     /**
      * Construct a new hyperlink
+     * 
+     * This method is internal to be used only by {@link HSSFCreationHelper#createHyperlink(int)}
+     *
+     * @param type the type of hyperlink to create
+     * @deprecated POI 3.15 beta 3
+     */
+    @Internal(since="3.15 beta 3")
+    protected HSSFHyperlink( int type )
+    {
+        this(HyperlinkType.forInt(type));
+    }
+    
+    /**
+     * Construct a new hyperlink
+     * 
+     * This method is internal to be used only by {@link HSSFCreationHelper#createHyperlink(int)}
      *
      * @param type the type of hyperlink to create
      */
-    public HSSFHyperlink( int type )
+    @Internal(since="3.15 beta 3")
+    protected HSSFHyperlink( HyperlinkType type )
     {
         this.link_type = type;
         record = new HyperlinkRecord();
         switch(type){
-            case LINK_URL:
-            case LINK_EMAIL:
+            case URL:
+            case EMAIL:
                 record.newUrlLink();
                 break;
-            case LINK_FILE:
+            case FILE:
                 record.newFileLink();
                 break;
-            case LINK_DOCUMENT:
+            case DOCUMENT:
                 record.newDocumentLink();
                 break;
             default:
@@ -94,19 +89,19 @@ public class HSSFHyperlink implements Hyperlink {
         link_type = getType(record);
     }
     
-    private int getType(HyperlinkRecord record) {
-        int link_type;
+    private static HyperlinkType getType(HyperlinkRecord record) {
+        HyperlinkType link_type;
         // Figure out the type
         if (record.isFileLink()) {
-            link_type = LINK_FILE;
+            link_type = HyperlinkType.FILE;
         } else if(record.isDocumentLink()) {
-            link_type = LINK_DOCUMENT;
+            link_type = HyperlinkType.DOCUMENT;
         } else {
             if(record.getAddress() != null &&
                     record.getAddress().startsWith("mailto:")) {
-                link_type = LINK_EMAIL;
+                link_type = HyperlinkType.EMAIL;
             } else {
-                link_type = LINK_URL;
+                link_type = HyperlinkType.URL;
             }
         }
         return link_type;
@@ -119,7 +114,7 @@ public class HSSFHyperlink implements Hyperlink {
             link_type = getType(record);
         }
         else {
-            link_type = other.getType();
+            link_type = other.getTypeEnum();
             record = new HyperlinkRecord();
             setFirstRow(other.getFirstRow());
             setFirstColumn(other.getFirstColumn());
@@ -275,9 +270,20 @@ public class HSSFHyperlink implements Hyperlink {
      * Return the type of this hyperlink
      *
      * @return the type of this hyperlink
+     * @see HyperlinkType#forInt
      */
     @Override
-    public int getType(){
+    public int getType() {
+        return link_type.getCode();
+    }
+    
+    /**
+     * Return the type of this hyperlink
+     *
+     * @return the type of this hyperlink
+     */
+    @Override
+    public HyperlinkType getTypeEnum() {
         return link_type;
     }
     

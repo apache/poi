@@ -17,6 +17,7 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.hssf.record.common.ExtendedColor;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.util.Internal;
@@ -44,8 +45,17 @@ public class HSSFCreationHelper implements CreationHelper {
         return workbook.createDataFormat();
     }
 
+    /**
+     * {@inheritDoc}
+     * @deprecated POI 3.15 beta 3. Use {@link #createHyperlink(HyperlinkType)} instead.
+     */
+    @Deprecated
     @Override
     public HSSFHyperlink createHyperlink(int type) {
+        return new HSSFHyperlink(type);
+    }
+    @Override
+    public HSSFHyperlink createHyperlink(HyperlinkType type) {
         return new HSSFHyperlink(type);
     }
 

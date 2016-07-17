@@ -23,7 +23,9 @@ import static org.junit.Assert.fail;
 
 import java.io.IOException;
 
+import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.hssf.usermodel.HSSFHyperlink;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
 import org.apache.poi.ss.usermodel.BaseTestHyperlink;
@@ -278,8 +280,9 @@ public final class TestXSSFHyperlink extends BaseTestHyperlink {
     }
     
     @Test
-    public void testCopyHSSFHyperlink() {
-        HSSFHyperlink hlink = new HSSFHyperlink(Hyperlink.LINK_URL);
+    public void testCopyHSSFHyperlink() throws IOException {
+        HSSFWorkbook hssfworkbook = new HSSFWorkbook();
+        HSSFHyperlink hlink = hssfworkbook.getCreationHelper().createHyperlink(HyperlinkType.URL);
         hlink.setAddress("http://poi.apache.org/");
         hlink.setFirstColumn(3);
         hlink.setFirstRow(2);
@@ -292,6 +295,8 @@ public final class TestXSSFHyperlink extends BaseTestHyperlink {
         assertEquals(new CellReference(2, 3), new CellReference(xlink.getCellRef()));
         // Are HSSFHyperlink.label and XSSFHyperlink.tooltip the same? If so, perhaps one of these needs renamed for a consistent Hyperlink interface
         // assertEquals("label", xlink.getTooltip());
+        
+        hssfworkbook.close();
     }
     
     /* bug 59775: XSSFHyperlink has wrong type if it contains a location (CTHyperlink#getLocation)

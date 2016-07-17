@@ -16,6 +16,8 @@
 ==================================================================== */
 package org.apache.poi.ss.usermodel;
 
+import org.apache.poi.common.usermodel.HyperlinkType;
+
 /**
  * An object that handles instantiating concrete
  *  classes of the various instances one needs for
@@ -42,8 +44,15 @@ public interface CreationHelper {
 
     /**
      * Creates a new Hyperlink, of the given type
+     * @deprecated POI 3.15 beta 3. Use {@link #createHyperlink(HyperlinkType)} instead.
      */
+    @Deprecated
     Hyperlink createHyperlink(int type);
+    
+    /**
+     * Creates a new Hyperlink, of the given type
+     */
+    Hyperlink createHyperlink(HyperlinkType type);
 
     /**
      * Creates FormulaEvaluator - an object that evaluates formula cells.

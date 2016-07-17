@@ -17,6 +17,7 @@
 
 package org.apache.poi.xssf.streaming;
 
+import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.DataFormat;
@@ -66,8 +67,17 @@ public class SXSSFCreationHelper implements CreationHelper {
     public DataFormat createDataFormat() {
         return helper.createDataFormat();
     }
+    /**
+     * {@inheritDoc}
+     * @deprecated POI 3.15 beta 3. Use {@link #createHyperlink(HyperlinkType)} instead.
+     */
+    @Deprecated
     @Override
     public Hyperlink createHyperlink(int type) {
+        return helper.createHyperlink(type);
+    }
+    @Override
+    public Hyperlink createHyperlink(HyperlinkType type) {
         return helper.createHyperlink(type);
     }
     @Override

@@ -22,23 +22,31 @@ package org.apache.poi.common.usermodel;
 public interface Hyperlink {
     /**
      * Link to an existing file or web page
+     * 
+     * @deprecated POI 3.15 beta 3. Use {@link HyperlinkType#URL} instead.
      */
-    public static final int LINK_URL = 1;
+    public static final int LINK_URL = 1; // HyperlinkType.URL.getCode()
 
     /**
      * Link to a place in this document
+     * 
+     * @deprecated POI 3.15 beta 3. Use {@link HyperlinkType#DOCUMENT} instead.
      */
-    public static final int LINK_DOCUMENT = 2;
+    public static final int LINK_DOCUMENT = 2; // HyperlinkType.DOCUMENT.getCode()
 
     /**
      * Link to an E-mail address
+     * 
+     * @deprecated POI 3.15 beta 3. Use {@link HyperlinkType#EMAIL} instead.
      */
-    public static final int LINK_EMAIL = 3;
+    public static final int LINK_EMAIL = 3; // HyperlinkType.EMAIL.getCode()
 
     /**
-     * Link to a file
+     * Link to an file
+     * 
+     * @deprecated POI 3.15 beta 3. Use {@link HyperlinkType#FILE} instead.
      */
-    public static final int LINK_FILE = 4;
+    public static final int LINK_FILE = 4; // HyperlinkType.FILE.getCode()
 
     
     /**
@@ -73,6 +81,16 @@ public interface Hyperlink {
      * Return the type of this hyperlink
      *
      * @return the type of this hyperlink
+     * @see HyperlinkType#forInt(int)
+     * @deprecated POI 3.15 beta 3. Use {@link #getTypeEnum()}
      */
     public int getType();
+    
+    /**
+     * Return the type of this hyperlink
+     *
+     * @return the type of this hyperlink
+     * @since POI 3.15 beta 3
+     */
+    public HyperlinkType getTypeEnum();
 }
