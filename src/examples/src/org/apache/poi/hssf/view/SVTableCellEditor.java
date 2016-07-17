@@ -129,7 +129,7 @@ public class SVTableCellEditor extends AbstractCellEditor implements TableCellEd
     if (cell != null) {
           HSSFCellStyle style = cell.getCellStyle();
           HSSFFont f = wb.getFontAt(style.getFontIndex());
-          boolean isbold = f.getBoldweight() > HSSFFont.BOLDWEIGHT_NORMAL;
+          boolean isbold = f.getBold();
           boolean isitalics = f.getItalic();
 
           int fontstyle = Font.PLAIN;
@@ -172,18 +172,18 @@ public class SVTableCellEditor extends AbstractCellEditor implements TableCellEd
         default:
           editor.setText("?");
       }
-      switch (style.getAlignment()) {
-        case HSSFCellStyle.ALIGN_LEFT:
-        case HSSFCellStyle.ALIGN_JUSTIFY:
-        case HSSFCellStyle.ALIGN_FILL:
+      switch (style.getAlignmentEnum()) {
+        case LEFT:
+        case JUSTIFY:
+        case FILL:
           editor.setHorizontalAlignment(SwingConstants.LEFT);
           break;
-        case HSSFCellStyle.ALIGN_CENTER:
-        case HSSFCellStyle.ALIGN_CENTER_SELECTION:
+        case CENTER:
+        case CENTER_SELECTION:
           editor.setHorizontalAlignment(SwingConstants.CENTER);
           break;
-        case HSSFCellStyle.ALIGN_GENERAL:
-        case HSSFCellStyle.ALIGN_RIGHT:
+        case GENERAL:
+        case RIGHT:
           editor.setHorizontalAlignment(SwingConstants.RIGHT);
           break;
         default:

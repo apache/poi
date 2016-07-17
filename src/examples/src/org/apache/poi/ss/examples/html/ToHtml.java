@@ -16,13 +16,6 @@
 ==================================================================== */
 package org.apache.poi.ss.examples.html;
 
-import org.apache.poi.hssf.usermodel.HSSFFont;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.format.CellFormat;
-import org.apache.poi.ss.format.CellFormatResult;
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
 import java.io.BufferedReader;
 import java.io.Closeable;
 import java.io.FileInputStream;
@@ -38,8 +31,22 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import static org.apache.poi.ss.usermodel.CellStyle.*;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.format.CellFormat;
+import org.apache.poi.ss.format.CellFormatResult;
+import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
  * This example shows how to display a spreadsheet in HTML using the classes for
@@ -61,18 +68,18 @@ public class ToHtml {
     private static final String COL_HEAD_CLASS = "colHeader";
     private static final String ROW_HEAD_CLASS = "rowHeader";
 
-    private static final Map<Short, String> ALIGN = mapFor(
-            ALIGN_LEFT, "left",
-            ALIGN_CENTER, "center",
-            ALIGN_RIGHT, "right",
-            ALIGN_FILL, "left",
-            ALIGN_JUSTIFY, "left",
-            ALIGN_CENTER_SELECTION, "center");
+    private static final Map<HorizontalAlignment, String> HALIGN = mapFor(
+            HorizontalAlignment.LEFT, "left",
+            HorizontalAlignment.CENTER, "center",
+            HorizontalAlignment.RIGHT, "right",
+            HorizontalAlignment.FILL, "left",
+            HorizontalAlignment.JUSTIFY, "left",
+            HorizontalAlignment.CENTER_SELECTION, "center");
 
-    private static final Map<Short, String> VERTICAL_ALIGN = mapFor(
-            VERTICAL_BOTTOM, "bottom",
-            VERTICAL_CENTER, "middle",
-            VERTICAL_TOP, "top");
+    private static final Map<VerticalAlignment, String> VALIGN = mapFor(
+            VerticalAlignment.BOTTOM, "bottom",
+            VerticalAlignment.CENTER, "middle",
+            VerticalAlignment.TOP, "top");
 
     private static final Map<BorderStyle, String> BORDER = mapFor(
             BorderStyle.DASH_DOT, "dashed 1pt",
@@ -283,8 +290,8 @@ public class ToHtml {
     }
 
     private void styleContents(CellStyle style) {
-        styleOut("text-align", style.getAlignment(), ALIGN);
-        styleOut("vertical-align", style.getAlignment(), VERTICAL_ALIGN);
+        styleOut("text-align", style.getAlignmentEnum(), HALIGN);
+        styleOut("vertical-align", style.getVerticalAlignmentEnum(), VALIGN);
         fontStyle(style);
         borderStyles(style);
         helper.colorStyles(style, out);
@@ -300,7 +307,7 @@ public class ToHtml {
     private void fontStyle(CellStyle style) {
         Font font = wb.getFontAt(style.getFontIndex());
 
-        if (font.getBoldweight() >= HSSFFont.BOLDWEIGHT_BOLD)
+        if (font.getBold())
             out.format("  font-weight: bold;%n");
         if (font.getItalic())
             out.format("  font-style: italic;%n");
@@ -440,7 +447,7 @@ public class ToHtml {
     }
 
     private String tagStyle(Cell cell, CellStyle style) {
-        if (style.getAlignment() == ALIGN_GENERAL) {
+        if (style.getAlignmentEnum() == HorizontalAlignment.GENERAL) {
             switch (ultimateCellType(cell)) {
             case STRING:
                 return "style=\"text-align: left;\"";
