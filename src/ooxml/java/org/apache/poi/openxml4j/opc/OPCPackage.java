@@ -53,6 +53,7 @@ import org.apache.poi.openxml4j.opc.internal.marshallers.ZipPackagePropertiesMar
 import org.apache.poi.openxml4j.opc.internal.unmarshallers.PackagePropertiesUnmarshaller;
 import org.apache.poi.openxml4j.opc.internal.unmarshallers.UnmarshallContext;
 import org.apache.poi.openxml4j.util.Nullable;
+import org.apache.poi.openxml4j.util.ZipEntrySource;
 import org.apache.poi.util.NotImplemented;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -200,6 +201,42 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
       return open(file, defaultPackageAccess);
    }
 
+   /**
+    * Open an user provided {@link ZipEntrySource} with read-only permission.
+    * This method can be used to stream data into POI.
+    * Opposed to other open variants, the data is read as-is, e.g. there aren't
+    * any zip-bomb protection put in place.
+    *
+    * @param zipEntry the custom source
+    * @return A Package object
+    * @throws InvalidFormatException if a parsing error occur.
+    */
+   public static OPCPackage open(ZipEntrySource zipEntry)
+   throws InvalidFormatException {
+       OPCPackage pack = new ZipPackage(zipEntry, PackageAccess.READ);
+       try {
+           if (pack.partList == null) {
+               pack.getParts();
+           }
+           // pack.originalPackagePath = file.getAbsolutePath();
+           return pack;
+       } catch (InvalidFormatException e) {
+           try {
+               pack.close();
+           } catch (IOException e1) {
+               throw new IllegalStateException(e);
+           }
+           throw e;
+       } catch (RuntimeException e) {
+           try {
+               pack.close();
+           } catch (IOException e1) {
+               throw new IllegalStateException(e);
+           }
+           throw e;
+       }
+   }
+   
 	/**
 	 * Open a package.
 	 *
