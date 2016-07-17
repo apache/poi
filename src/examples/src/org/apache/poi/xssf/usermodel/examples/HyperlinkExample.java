@@ -17,6 +17,7 @@
 package org.apache.poi.xssf.usermodel.examples;
 
 import java.io.FileOutputStream;
+import java.io.IOException;
 
 import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.ss.usermodel.Cell;
@@ -35,7 +36,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 public class HyperlinkExample {
 
 
-    public static void main(String[]args) throws Exception{
+    public static void main(String[]args) throws IOException {
         Workbook wb = new XSSFWorkbook(); //or new HSSFWorkbook();
         CreationHelper createHelper = wb.getCreationHelper();
 
@@ -91,6 +92,7 @@ public class HyperlinkExample {
         FileOutputStream out = new FileOutputStream("hyperinks.xlsx");
         wb.write(out);
         out.close();
-
+        
+        wb.close();
     }
 }
