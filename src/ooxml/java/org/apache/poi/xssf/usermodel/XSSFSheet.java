@@ -814,6 +814,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      *
      * @param addr The address of the cell containing the hyperlink
      * @return hyperlink if there is a hyperlink anchored at {@code addr}; otherwise returns {@code null}
+     * @since POI 3.15 beta 3
      */
     @Override
     public XSSFHyperlink getHyperlink(CellAddress addr) {
