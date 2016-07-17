@@ -655,17 +655,18 @@ public final class InternalWorkbook {
      * @param sheetname the name of the sheet to reorder
      * @param pos the position that we want to insert the sheet into (0 based)
      */
-
     public void setSheetOrder(String sheetname, int pos ) {
         int sheetNumber = getSheetIndex(sheetname);
         //remove the sheet that needs to be reordered and place it in the spot we want
         boundsheets.add(pos, boundsheets.remove(sheetNumber));
         
         // also adjust order of Records, calculate the position of the Boundsheets via getBspos()...
-        int pos0 = records.getBspos() - (boundsheets.size() - 1);
+        int initialBspos = records.getBspos();
+        int pos0 = initialBspos - (boundsheets.size() - 1);
         Record removed = records.get(pos0 + sheetNumber);
         records.remove(pos0 + sheetNumber);
 		records.add(pos0 + pos, removed);
+        records.setBspos(initialBspos);
     }
 
     /**

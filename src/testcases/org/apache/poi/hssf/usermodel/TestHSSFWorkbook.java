@@ -1197,4 +1197,17 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         wb = new HSSFWorkbook(new FileInputStream(file));
         assertCloseDoesNotModifyFile(filename, wb);
     }
+
+    @Test
+    public void setSheetOrderToEnd() throws Exception {
+        final HSSFWorkbook workbook = new HSSFWorkbook();
+        workbook.createSheet("A");
+        try {
+            for (int i = 0; i < 2 * workbook.getInternalWorkbook().getRecords().size(); i++) {
+                workbook.setSheetOrder("A", 0);
+            }
+        } catch (Exception e) {
+            throw new Exception("Moving a sheet to the end should not throw an exception, but threw ", e);
+        }
+    }
 }
