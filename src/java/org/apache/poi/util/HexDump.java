@@ -391,6 +391,10 @@ public class HexDump {
         return sb.toString();
     }
     
+    /**
+     * @see Integer#toHexString(int)
+     * @see Long#toHexString(long)
+     */
     private static void writeHex(StringBuilder sb, long value, int nDigits, String prefix) {
         sb.append(prefix);
         char[] buf = new char[nDigits];
