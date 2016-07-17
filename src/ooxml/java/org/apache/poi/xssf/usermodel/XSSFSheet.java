@@ -806,7 +806,18 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      */
     @Override
     public XSSFHyperlink getHyperlink(int row, int column) {
-        String ref = new CellReference(row, column).formatAsString();
+        return getHyperlink(new CellAddress(row, column));
+    }
+    
+    /**
+     * Get a Hyperlink in this sheet located in a cell specified by {code addr}
+     *
+     * @param addr The address of the cell containing the hyperlink
+     * @return hyperlink if there is a hyperlink anchored at {@code addr}; otherwise returns {@code null}
+     */
+    @Override
+    public XSSFHyperlink getHyperlink(CellAddress addr) {
+        String ref = addr.formatAsString();
         for(XSSFHyperlink hyperlink : hyperlinks) {
             if(hyperlink.getCellRef().equals(ref)) {
                 return hyperlink;

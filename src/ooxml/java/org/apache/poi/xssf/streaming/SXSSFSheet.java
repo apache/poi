@@ -1666,6 +1666,17 @@ public class SXSSFSheet implements Sheet
     }
     
     /**
+     * Get a Hyperlink in this sheet located in a cell specified by {code addr}
+     *
+     * @param addr The address of the cell containing the hyperlink
+     * @return hyperlink if there is a hyperlink anchored at {@code addr}; otherwise returns {@code null}
+     */
+    @Override
+    public XSSFHyperlink getHyperlink(CellAddress addr) {
+        return _sh.getHyperlink(addr);
+    }
+    
+    /**
      * Get a list of Hyperlinks in this sheet
      *
      * @return Hyperlinks for the sheet
