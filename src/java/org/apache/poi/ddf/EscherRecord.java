@@ -84,8 +84,7 @@ public abstract class EscherRecord implements Cloneable {
     protected int readHeader( byte[] data, int offset ) {
         _options = LittleEndian.getShort( data, offset );
         _recordId = LittleEndian.getShort( data, offset + 2 );
-        int remainingBytes = LittleEndian.getInt( data, offset + 4 );
-        return remainingBytes;
+        return LittleEndian.getInt( data, offset + 4 );
     }
 
     /**
@@ -312,19 +311,15 @@ public abstract class EscherRecord implements Cloneable {
      * @return xml representation of this record
      */
     public String toXml(String tab){
-        StringBuilder builder = new StringBuilder();
-        builder.append(tab).append("<").append(getClass().getSimpleName()).append(">\n")
-                .append(tab).append("\t").append("<RecordId>0x").append(HexDump.toHex(_recordId)).append("</RecordId>\n")
-                .append(tab).append("\t").append("<Options>").append(_options).append("</Options>\n")
-                .append(tab).append("</").append(getClass().getSimpleName()).append(">\n");
-        return builder.toString();
+        return tab + "<" + getClass().getSimpleName() + ">\n" +
+                tab + "\t" + "<RecordId>0x" + HexDump.toHex(_recordId) + "</RecordId>\n" +
+                tab + "\t" + "<Options>" + _options + "</Options>\n" +
+                tab + "</" + getClass().getSimpleName() + ">\n";
     }
     
     protected String formatXmlRecordHeader(String className, String recordId, String version, String instance){
-        StringBuilder builder = new StringBuilder();
-        builder.append("<").append(className).append(" recordId=\"0x").append(recordId).append("\" version=\"0x")
-                .append(version).append("\" instance=\"0x").append(instance).append("\" size=\"").append(getRecordSize()).append("\">\n");
-        return builder.toString();
+        return "<" + className + " recordId=\"0x" + recordId + "\" version=\"0x" +
+                version + "\" instance=\"0x" + instance + "\" size=\"" + getRecordSize() + "\">\n";
     }
     
     public String toXml(){

@@ -265,37 +265,14 @@ public final class TestExcelExtractor {
             assertTrue(text.startsWith(
                   "Dates, all 24th November 2006\n"
             ));
-            assertTrue(
-                  text.indexOf(
-                     "yyyy/mm/dd\t2006/11/24\n"
-                  ) > -1
-            );
-            assertTrue(
-                  text.indexOf(
-                     "yyyy-mm-dd\t2006-11-24\n"
-                  ) > -1
-            );
-            assertTrue(
-                  text.indexOf(
-                     "dd-mm-yy\t24-11-06\n"
-                  ) > -1
-            );
+            assertTrue(text.contains("yyyy/mm/dd\t2006/11/24\n"));
+            assertTrue(text.contains("yyyy-mm-dd\t2006-11-24\n"));
+            assertTrue(text.contains("dd-mm-yy\t24-11-06\n"));
             
             assertTrue("Had: " + text + ", but should contain 'nn.nn\\t10.52\\n'",
-                  text.indexOf(
-                     "nn.nn\t10.52\n"
-                  ) > -1
-            );
-            assertTrue(
-                  text.indexOf(
-                     "nn.nnn\t10.520\n"
-                  ) > -1
-            );
-            assertTrue(
-                  text.indexOf(
-                     "\u00a3nn.nn\t\u00a310.52\n"
-                  ) > -1
-            );
+					text.contains("nn.nn\t10.52\n"));
+            assertTrue(text.contains("nn.nnn\t10.520\n"));
+            assertTrue(text.contains("\u00a3nn.nn\t\u00a310.52\n"));
             extractor.close();
 	    } finally {
 	        LocaleUtil.setUserLocale(userLocale);
@@ -387,11 +364,11 @@ public final class TestExcelExtractor {
 			"45538_classic_Footer.xls", "45538_form_Footer.xls",
 			"45538_classic_Header.xls", "45538_form_Header.xls"
 		};
-		for(int i=0; i<files.length; i++) {
-			ExcelExtractor extractor = createExtractor(files[i]);
+		for (String file : files) {
+			ExcelExtractor extractor = createExtractor(file);
 			String text = extractor.getText();
-			assertTrue("Unable to find expected word in text\n" + text, text.indexOf("testdoc") >=0);
-			assertTrue("Unable to find expected word in text\n" + text, text.indexOf("test phrase") >= 0);
+			assertTrue("Unable to find expected word in text\n" + text, text.contains("testdoc"));
+			assertTrue("Unable to find expected word in text\n" + text, text.contains("test phrase"));
 			extractor.close();
 		}
 	}

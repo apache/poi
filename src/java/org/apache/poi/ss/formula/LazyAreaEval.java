@@ -77,15 +77,13 @@ final class LazyAreaEval extends AreaEvalBase {
 	public String toString() {
 		CellReference crA = new CellReference(getFirstRow(), getFirstColumn());
 		CellReference crB = new CellReference(getLastRow(), getLastColumn());
-		StringBuffer sb = new StringBuffer();
-		sb.append(getClass().getName()).append("[");
-		sb.append(_evaluator.getSheetNameRange());
-		sb.append('!');
-		sb.append(crA.formatAsString());
-		sb.append(':');
-		sb.append(crB.formatAsString());
-		sb.append("]");
-		return sb.toString();
+		return getClass().getName() + "[" +
+				_evaluator.getSheetNameRange() +
+				'!' +
+				crA.formatAsString() +
+				':' +
+				crB.formatAsString() +
+				"]";
 	}
 
     /**

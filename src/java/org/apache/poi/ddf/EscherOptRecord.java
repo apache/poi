@@ -16,7 +16,6 @@
 ==================================================================== */
 package org.apache.poi.ddf;
 
-import org.apache.poi.util.HexDump;
 import org.apache.poi.util.Internal;
 
 /**
@@ -71,16 +70,5 @@ public class EscherOptRecord extends AbstractEscherOptRecord
                     + " can have only '0x3' version" );
 
         super.setVersion( value );
-    }
-
-    @Override
-    public String toXml(String tab) {
-        StringBuilder builder = new StringBuilder();
-        builder.append(tab).append(formatXmlRecordHeader(getClass().getSimpleName(), HexDump.toHex(getRecordId()), HexDump.toHex(getVersion()), HexDump.toHex(getInstance())));
-        for (EscherProperty property: getEscherProperties()){
-            builder.append(property.toXml(tab+"\t"));
-        }
-        builder.append(tab).append("</").append(getClass().getSimpleName()).append(">\n");
-        return builder.toString();
     }
 }

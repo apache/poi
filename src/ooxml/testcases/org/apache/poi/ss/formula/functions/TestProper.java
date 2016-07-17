@@ -35,6 +35,7 @@ import junit.framework.TestCase;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public final class TestProper {
     private Cell cell11;
@@ -74,6 +75,7 @@ public final class TestProper {
         
         final String scharfes = "\u00df"; //German lowercase eszett, scharfes s, sharp s
         confirm("PROPER(\"stra"+scharfes+"e\")", "Stra"+scharfes+"e");
+        assertTrue(Character.isLetter(scharfes.charAt(0)));
         
         // CURRENTLY FAILS: result: "SSUnd"+scharfes
         // LibreOffice 5.0.3.2 behavior: "Sund"+scharfes

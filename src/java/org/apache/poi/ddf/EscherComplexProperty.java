@@ -112,9 +112,8 @@ public class EscherComplexProperty extends EscherProperty {
 
         EscherComplexProperty escherComplexProperty = (EscherComplexProperty) o;
 
-        if ( !Arrays.equals( _complexData, escherComplexProperty._complexData ) ) return false;
+        return Arrays.equals(_complexData, escherComplexProperty._complexData);
 
-        return true;
     }
 
     /**
@@ -148,12 +147,10 @@ public class EscherComplexProperty extends EscherProperty {
 
     @Override
     public String toXml(String tab){
-        StringBuilder builder = new StringBuilder();
-        builder.append(tab).append("<").append(getClass().getSimpleName()).append(" id=\"0x").append(HexDump.toHex(getId()))
-                .append("\" name=\"").append(getName()).append("\" blipId=\"")
-                .append(isBlipId()).append("\">\n");
+        return tab + "<" + getClass().getSimpleName() + " id=\"0x" + HexDump.toHex(getId()) +
+                "\" name=\"" + getName() + "\" blipId=\"" +
+                isBlipId() + "\">\n" +
+                tab + "</" + getClass().getSimpleName() + ">\n";
         //builder.append("\t").append(tab).append(dataStr);
-        builder.append(tab).append("</").append(getClass().getSimpleName()).append(">\n");
-        return builder.toString();
     }
 }

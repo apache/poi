@@ -207,7 +207,7 @@ public abstract class AbstractEscherOptRecord extends EscherRecord
 
         for ( EscherProperty property : properties )
         {
-            stringBuilder.append( "    " + property.toString() + nl );
+            stringBuilder.append("    ").append(property.toString()).append(nl);
         }
 
         return stringBuilder.toString();

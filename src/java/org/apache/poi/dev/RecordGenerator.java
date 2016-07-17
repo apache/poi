@@ -20,6 +20,7 @@ package org.apache.poi.dev;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Locale;
 import java.util.Properties;
 
@@ -92,8 +93,10 @@ public class RecordGenerator {
                 // Generate record
                 String destinationPath = destSrcPathDir + "/" + packageName;
                 File destinationPathFile = new File(destinationPath);
-                if (destinationPathFile.mkdirs()) {
-                    System.out.println("Created destination directory: " + destinationPath);
+                if(!destinationPathFile.mkdirs()) {
+                    throw new IOException("Could not create directory " + destinationPathFile);
+                } else {
+					System.out.println("Created destination directory: " + destinationPath);
                 }
                 String destinationFilepath = destinationPath + "/" + recordName + suffix + ".java";
                 transform(file, new File(destinationFilepath), 
@@ -103,11 +106,13 @@ public class RecordGenerator {
                 // Generate test (if not already generated)
                 destinationPath = testSrcPathDir + "/" + packageName;
                 destinationPathFile = new File(destinationPath);
-                if (destinationPathFile.mkdirs()) {
+                if(!destinationPathFile.mkdirs()) {
+                    throw new IOException("Could not create directory " + destinationPathFile);
+                } else {
                     System.out.println("Created destination directory: " + destinationPath);
                 }
                 destinationFilepath = destinationPath + "/Test" + recordName + suffix + ".java";
-                if (new File(destinationFilepath).exists() == false) {
+                if (!new File(destinationFilepath).exists()) {
                     String temp = (recordStyleDir + "/" + extendstg.toLowerCase(Locale.ROOT) + "_test.xsl");
                     transform(file, new File(destinationFilepath), new File(temp));
                     System.out.println("Generated test: " + destinationFilepath);

@@ -45,7 +45,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSectPr;
  * Helper class to extract text from an OOXML Word file
  */
 public class XWPFWordExtractor extends POIXMLTextExtractor {
-    public static final XWPFRelation[] SUPPORTED_TYPES = new XWPFRelation[]{
+    public static final XWPFRelation[] SUPPORTED_TYPES = {
             XWPFRelation.DOCUMENT, XWPFRelation.TEMPLATE,
             XWPFRelation.MACRO_DOCUMENT,
             XWPFRelation.MACRO_TEMPLATE_DOCUMENT
@@ -134,7 +134,7 @@ public class XWPFWordExtractor extends POIXMLTextExtractor {
             if (run instanceof XWPFHyperlinkRun && fetchHyperlinks) {
                 XWPFHyperlink link = ((XWPFHyperlinkRun) run).getHyperlink(document);
                 if (link != null)
-                    text.append(" <" + link.getURL() + ">");
+                    text.append(" <").append(link.getURL()).append(">");
             }
         }
 
@@ -148,7 +148,7 @@ public class XWPFWordExtractor extends POIXMLTextExtractor {
         // Do endnotes and footnotes
         String footnameText = paragraph.getFootnoteText();
         if (footnameText != null && footnameText.length() > 0) {
-            text.append(footnameText + '\n');
+            text.append(footnameText).append('\n');
         }
 
         if (ctSectPr != null) {

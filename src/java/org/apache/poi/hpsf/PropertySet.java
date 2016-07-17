@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.hpsf.wellknown.SectionIDMap;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -61,7 +62,7 @@ public class PropertySet
      * <p>The "byteOrder" field must equal this value.</p>
      */
     static final byte[] BYTE_ORDER_ASSERTION =
-        new byte[] {(byte) 0xFE, (byte) 0xFF};
+            {(byte) 0xFE, (byte) 0xFF};
 
     /**
      * <p>Specifies this {@link PropertySet}'s byte order. See the
@@ -86,7 +87,7 @@ public class PropertySet
      * <p>The "format" field must equal this value.</p>
      */
     static final byte[] FORMAT_ASSERTION =
-        new byte[]{(byte) 0x00, (byte) 0x00};
+            {(byte) 0x00, (byte) 0x00};
 
     /**
      * <p>Specifies this {@link PropertySet}'s format. See the HPFS
@@ -238,7 +239,7 @@ public class PropertySet
         {
             final int avail = stream.available();
             final byte[] buffer = new byte[avail];
-            stream.read(buffer, 0, buffer.length);
+            IOUtils.readFully(stream, buffer);
             init(buffer, 0, buffer.length);
         }
         else
@@ -627,6 +628,7 @@ public class PropertySet
      * @return <code>true</code> if the objects are equal, <code>false</code>
      * if not
      */
+    @Override
     public boolean equals(final Object o)
     {
         if (o == null || !(o instanceof PropertySet))
@@ -670,7 +672,7 @@ public class PropertySet
      */
     public String toString()
     {
-        final StringBuffer b = new StringBuffer();
+        final StringBuilder b = new StringBuilder();
         final int sectionCount = getSectionCount();
         b.append(getClass().getName());
         b.append('[');

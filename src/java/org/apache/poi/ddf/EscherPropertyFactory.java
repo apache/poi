@@ -18,7 +18,6 @@
 package org.apache.poi.ddf;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.poi.util.LittleEndian;
@@ -72,16 +71,15 @@ public final class EscherPropertyFactory {
         }
 
         // Get complex data
-        for (Iterator<EscherProperty> iterator = results.iterator(); iterator.hasNext();) {
-            EscherProperty p = iterator.next();
+        for (EscherProperty p : results) {
             if (p instanceof EscherComplexProperty) {
                 if (p instanceof EscherArrayProperty) {
                     pos += ((EscherArrayProperty)p).setArrayData(data, pos);
                 } else {
                     byte[] complexData = ((EscherComplexProperty)p).getComplexData();
 
-                    int leftover = data.length-pos;
-                    if(leftover < complexData.length){
+                    int leftover = data.length - pos;
+                    if (leftover < complexData.length) {
                         throw new IllegalStateException("Could not read complex escher property, lenght was " + complexData.length + ", but had only " +
                                 leftover + " bytes left");
                     }
