@@ -17,17 +17,34 @@
 
 package org.apache.poi.xssf.usermodel.examples;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.util.Calendar;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.poi.openxml4j.opc.internal.ZipHelper;
 import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.util.CellReference;
-import org.apache.poi.xssf.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFDataFormat;
+import org.apache.poi.xssf.usermodel.XSSFFont;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
  * Demonstrates a workaround you can use to generate large workbooks and avoid OutOfMemory exception.
@@ -103,22 +120,22 @@ public class BigGridDemo {
         XSSFDataFormat fmt = wb.createDataFormat();
 
         XSSFCellStyle style1 = wb.createCellStyle();
-        style1.setAlignment(XSSFCellStyle.ALIGN_RIGHT);
+        style1.setAlignment(HorizontalAlignment.RIGHT);
         style1.setDataFormat(fmt.getFormat("0.0%"));
         styles.put("percent", style1);
 
         XSSFCellStyle style2 = wb.createCellStyle();
-        style2.setAlignment(XSSFCellStyle.ALIGN_CENTER);
+        style2.setAlignment(HorizontalAlignment.CENTER);
         style2.setDataFormat(fmt.getFormat("0.0X"));
         styles.put("coeff", style2);
 
         XSSFCellStyle style3 = wb.createCellStyle();
-        style3.setAlignment(XSSFCellStyle.ALIGN_RIGHT);
+        style3.setAlignment(HorizontalAlignment.RIGHT);
         style3.setDataFormat(fmt.getFormat("$#,##0.00"));
         styles.put("currency", style3);
 
         XSSFCellStyle style4 = wb.createCellStyle();
-        style4.setAlignment(XSSFCellStyle.ALIGN_RIGHT);
+        style4.setAlignment(HorizontalAlignment.RIGHT);
         style4.setDataFormat(fmt.getFormat("mmm dd"));
         styles.put("date", style4);
 
@@ -126,7 +143,7 @@ public class BigGridDemo {
         XSSFFont headerFont = wb.createFont();
         headerFont.setBold(true);
         style5.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
-        style5.setFillPattern(XSSFCellStyle.SOLID_FOREGROUND);
+        style5.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         style5.setFont(headerFont);
         styles.put("header", style5);
 

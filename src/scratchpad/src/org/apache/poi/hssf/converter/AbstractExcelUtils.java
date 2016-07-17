@@ -26,6 +26,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.hwpf.converter.AbstractWordUtils;
 import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.IOUtils;
@@ -35,32 +36,42 @@ import org.apache.poi.util.IOUtils;
  * 
  * @author Sergey Vladimirov (vlsergey {at} gmail {dot} com)
  * @see AbstractWordUtils
+ * @since POI 3.8 beta 5
  */
 @Beta
 public class AbstractExcelUtils
 {
-    static final String EMPTY = "";
+    /*package*/ static final String EMPTY = "";
     private static final short EXCEL_COLUMN_WIDTH_FACTOR = 256;
     private static final int UNIT_OFFSET_LENGTH = 7;
-
+    
+    /**
+     * @param alignment The horizontal alignment. See {@link HorizontalAlignment}.
+     * @return a friendly string representation of the alignment code
+     * @deprecated POI 3.15 beta 3. Use {@link #getAlign(HorizontalAlignment)} instead.
+     */
     public static String getAlign( short alignment )
+    {
+        return getAlign(HorizontalAlignment.forInt(alignment));
+    }
+    public static String getAlign( HorizontalAlignment alignment )
     {
         switch ( alignment )
         {
-        case HSSFCellStyle.ALIGN_CENTER:
+        case CENTER:
             return "center";
-        case HSSFCellStyle.ALIGN_CENTER_SELECTION:
+        case CENTER_SELECTION:
             return "center";
-        case HSSFCellStyle.ALIGN_FILL:
+        case FILL:
             // XXX: shall we support fill?
             return "";
-        case HSSFCellStyle.ALIGN_GENERAL:
+        case GENERAL:
             return "";
-        case HSSFCellStyle.ALIGN_JUSTIFY:
+        case JUSTIFY:
             return "justify";
-        case HSSFCellStyle.ALIGN_LEFT:
+        case LEFT:
             return "left";
-        case HSSFCellStyle.ALIGN_RIGHT:
+        case RIGHT:
             return "right";
         default:
             return "";

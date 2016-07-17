@@ -195,57 +195,57 @@ public abstract class BaseTestDataValidation {
 
 		public WorkbookFormatter(Workbook wb) {
 			_wb = wb;
-			_style_1 = createStyle( wb, CellStyle.ALIGN_LEFT );
-			_style_2 = createStyle( wb, CellStyle.ALIGN_CENTER );
-			_style_3 = createStyle( wb, CellStyle.ALIGN_CENTER, IndexedColors.GREY_25_PERCENT.getIndex(), true );
+			_style_1 = createStyle( wb, HorizontalAlignment.LEFT );
+			_style_2 = createStyle( wb, HorizontalAlignment.CENTER );
+			_style_3 = createStyle( wb, HorizontalAlignment.CENTER, IndexedColors.GREY_25_PERCENT.getIndex(), true );
 			_style_4 = createHeaderStyle(wb);
 		}
 
-		private static CellStyle createStyle(Workbook wb, short h_align, short color,
+		private static CellStyle createStyle(Workbook wb, HorizontalAlignment h_align, short color,
 				boolean bold) {
 			Font font = wb.createFont();
 			if (bold) {
-				font.setBoldweight(Font.BOLDWEIGHT_BOLD);
+				font.setBold(true);
 			}
 
 			CellStyle cellStyle = wb.createCellStyle();
 			cellStyle.setFont(font);
 			cellStyle.setFillForegroundColor(color);
-			cellStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
-			cellStyle.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
+			cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+			cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
 			cellStyle.setAlignment(h_align);
-			cellStyle.setBorderLeft(CellStyle.BORDER_THIN);
+			cellStyle.setBorderLeft(BorderStyle.THIN);
 			cellStyle.setLeftBorderColor(IndexedColors.BLACK.getIndex());
-			cellStyle.setBorderTop(CellStyle.BORDER_THIN);
+			cellStyle.setBorderTop(BorderStyle.THIN);
 			cellStyle.setTopBorderColor(IndexedColors.BLACK.getIndex());
-			cellStyle.setBorderRight(CellStyle.BORDER_THIN);
+			cellStyle.setBorderRight(BorderStyle.THIN);
 			cellStyle.setRightBorderColor(IndexedColors.BLACK.getIndex());
-			cellStyle.setBorderBottom(CellStyle.BORDER_THIN);
+			cellStyle.setBorderBottom(BorderStyle.THIN);
 			cellStyle.setBottomBorderColor(IndexedColors.BLACK.getIndex());
 
 			return cellStyle;
 		}
 
-		private static CellStyle createStyle(Workbook wb, short h_align) {
+		private static CellStyle createStyle(Workbook wb, HorizontalAlignment h_align) {
 			return createStyle(wb, h_align, IndexedColors.WHITE.getIndex(), false);
 		}
 		private static CellStyle createHeaderStyle(Workbook wb) {
 			Font font = wb.createFont();
 			font.setColor( IndexedColors.WHITE.getIndex() );
-			font.setBoldweight(Font.BOLDWEIGHT_BOLD);
+			font.setBold(true);
 
 			CellStyle cellStyle = wb.createCellStyle();
 			cellStyle.setFillForegroundColor(IndexedColors.BLUE_GREY.getIndex());
-			cellStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
-			cellStyle.setAlignment(CellStyle.ALIGN_CENTER);
-			cellStyle.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
-			cellStyle.setBorderLeft(CellStyle.BORDER_THIN);
+			cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+			cellStyle.setAlignment(HorizontalAlignment.CENTER);
+			cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+			cellStyle.setBorderLeft(BorderStyle.THIN);
 			cellStyle.setLeftBorderColor(IndexedColors.WHITE.getIndex());
-			cellStyle.setBorderTop(CellStyle.BORDER_THIN);
+			cellStyle.setBorderTop(BorderStyle.THIN);
 			cellStyle.setTopBorderColor(IndexedColors.WHITE.getIndex());
-			cellStyle.setBorderRight(CellStyle.BORDER_THIN);
+			cellStyle.setBorderRight(BorderStyle.THIN);
 			cellStyle.setRightBorderColor(IndexedColors.WHITE.getIndex());
-			cellStyle.setBorderBottom(CellStyle.BORDER_THIN);
+			cellStyle.setBorderBottom(BorderStyle.THIN);
 			cellStyle.setBottomBorderColor(IndexedColors.WHITE.getIndex());
 			cellStyle.setFont(font);
 			return cellStyle;

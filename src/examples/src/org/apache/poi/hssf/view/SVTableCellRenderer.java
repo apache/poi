@@ -19,18 +19,28 @@
 
 package org.apache.poi.hssf.view;
 
-import javax.swing.*;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.border.*;
-
-import java.awt.Component;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Rectangle;
 import java.io.Serializable;
-import java.text.*;
+import java.text.DecimalFormat;
+import java.text.Format;
+import java.text.SimpleDateFormat;
 
-import org.apache.poi.hssf.usermodel.*;
+import javax.swing.JLabel;
+import javax.swing.JTable;
+import javax.swing.SwingConstants;
+import javax.swing.UIManager;
+import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.TableCellRenderer;
+
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFFont;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.FillPatternType;
 
 
 /**
@@ -99,14 +109,6 @@ public class SVTableCellRenderer extends JLabel
         textFormatter[0x30] = new DecimalFormat("##0.0E0");
       }
 
-      public String format(short index, Object value) {
-        if (index == 0)
-          return value.toString();
-        if (textFormatter[index] == null)
-          throw new RuntimeException("Sorry. I cant handle the format code :"+Integer.toHexString(index));
-        return textFormatter[index].format(value);
-      }
-
       public String format(short index, double value) {
         if ( index <= 0 )
           return generalNumberFormat.format(value);
@@ -148,7 +150,7 @@ public class SVTableCellRenderer extends JLabel
           HSSFFont f = wb.getFontAt(s.getFontIndex());
           setFont(SVTableUtils.makeFont(f));
 
-          if (s.getFillPattern() == HSSFCellStyle.SOLID_FOREGROUND) {
+          if (s.getFillPatternEnum() == FillPatternType.SOLID_FOREGROUND) {
             setBackground(SVTableUtils.getAWTColor(s.getFillForegroundColor(), SVTableUtils.white));
           } else setBackground(SVTableUtils.white);
 
@@ -192,18 +194,18 @@ public class SVTableCellRenderer extends JLabel
                 setValue("?");
             }
             //Set the text alignment of the cell
-            switch (s.getAlignment()) {
-              case HSSFCellStyle.ALIGN_LEFT:
-              case HSSFCellStyle.ALIGN_JUSTIFY:
-              case HSSFCellStyle.ALIGN_FILL:
+            switch (s.getAlignmentEnum()) {
+              case LEFT:
+              case JUSTIFY:
+              case FILL:
                 setHorizontalAlignment(SwingConstants.LEFT);
                 break;
-              case HSSFCellStyle.ALIGN_CENTER:
-              case HSSFCellStyle.ALIGN_CENTER_SELECTION:
+              case CENTER:
+              case CENTER_SELECTION:
                 setHorizontalAlignment(SwingConstants.CENTER);
                 break;
-              case HSSFCellStyle.ALIGN_GENERAL:
-              case HSSFCellStyle.ALIGN_RIGHT:
+              case GENERAL:
+              case RIGHT:
                 setHorizontalAlignment(SwingConstants.RIGHT);
                 break;
               default:
