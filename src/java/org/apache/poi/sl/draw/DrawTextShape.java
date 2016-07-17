@@ -85,9 +85,9 @@ public class DrawTextShape extends DrawSimpleShape {
             graphics.rotate(Math.toRadians(textRot));
             graphics.translate(-cx, -cy);
         }
-
+        
         // first dry-run to calculate the total height of the text
-        double textHeight = getTextHeight(graphics);
+        double textHeight;
 
         switch (s.getVerticalAlignment()){
             default:
@@ -95,9 +95,11 @@ public class DrawTextShape extends DrawSimpleShape {
                 y += insets.top;
                 break;
             case BOTTOM:
+                textHeight = getTextHeight(graphics);
                 y += anchor.getHeight() - textHeight - insets.bottom;
                 break;
             case MIDDLE:
+                textHeight = getTextHeight(graphics);
                 double delta = anchor.getHeight() - textHeight - insets.top - insets.bottom;
                 y += insets.top + delta/2;
                 break;
