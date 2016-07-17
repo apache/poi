@@ -39,7 +39,8 @@ public class XSSFHyperlink implements Hyperlink {
     private String _location; //what the hyperlink refers to
 
     /**
-     * Create a new XSSFHyperlink. This method is protected to be used only by {@link XSSFCreationHelper#createHyperlink(int)}
+     * Create a new XSSFHyperlink. This method is protected to be used only by
+     * {@link XSSFCreationHelper#createHyperlink(int)}.
      *
      * @param type - the type of hyperlink to create, see {@link Hyperlink}
      * @deprecated POI 3.15 beta 3. Use {@link #XSSFHyperlink(HyperlinkType)} instead.
@@ -49,9 +50,10 @@ public class XSSFHyperlink implements Hyperlink {
     }
     
     /**
-     * Create a new XSSFHyperlink. This method is protected to be used only by {@link XSSFCreationHelper#createHyperlink(int)}
+     * Create a new XSSFHyperlink. This method is protected to be used only by
+     * {@link XSSFCreationHelper#createHyperlink(HyperlinkType)}.
      *
-     * @param type - the type of hyperlink to create, see {@link Hyperlink}
+     * @param type - the type of hyperlink to create
      */
     protected XSSFHyperlink(HyperlinkType type) {
         _type = type;
