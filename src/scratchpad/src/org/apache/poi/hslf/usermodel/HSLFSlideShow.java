@@ -69,10 +69,10 @@ public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagrap
     enum LoadSavePhase {
         INIT, LOADED
 	}
-    private static ThreadLocal<LoadSavePhase> loadSavePhase = new ThreadLocal<LoadSavePhase>();
+    private static final ThreadLocal<LoadSavePhase> loadSavePhase = new ThreadLocal<LoadSavePhase>();
     
     // What we're based on
-	private HSLFSlideShowImpl _hslfSlideShow;
+	private final HSLFSlideShowImpl _hslfSlideShow;
 
 	// Pointers to the most recent versions of the core records
 	// (Document, Notes, Slide etc)
@@ -92,7 +92,7 @@ public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagrap
 	private FontCollection _fonts;
 
 	// For logging
-	private POILogger logger = POILogFactory.getLogger(this.getClass());
+	private static final POILogger logger = POILogFactory.getLogger(HSLFSlideShow.class);
 
 
 	/**
