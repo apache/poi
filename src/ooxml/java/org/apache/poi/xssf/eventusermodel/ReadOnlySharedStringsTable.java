@@ -20,6 +20,7 @@ import static org.apache.poi.xssf.usermodel.XSSFRelation.NS_SPREADSHEETML;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PushbackInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -140,8 +141,12 @@ public class ReadOnlySharedStringsTable extends DefaultHandler {
      * @throws ParserConfigurationException
      */
     public void readFrom(InputStream is) throws IOException, SAXException {
-        if (is.available() > 0) {
-            InputSource sheetSource = new InputSource(is);
+        // test if the file is empty, otherwise parse it
+        PushbackInputStream pis = new PushbackInputStream(is, 1);
+        int emptyTest = pis.read();
+        if (emptyTest > -1) {
+            pis.unread(emptyTest);
+            InputSource sheetSource = new InputSource(pis);
             try {
                 XMLReader sheetParser = SAXHelper.newXMLReader();
                 sheetParser.setContentHandler(this);
