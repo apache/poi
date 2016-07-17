@@ -18,7 +18,11 @@
 package org.apache.poi.sl.usermodel;
 
 import java.awt.Dimension;
-import java.io.*;
+import java.io.Closeable;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.List;
 
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
@@ -91,6 +95,14 @@ public interface SlideShow<
      * @return the picture data reference
      */
     PictureData addPicture(File pict, PictureType format) throws IOException;
+    
+    /**
+     * check if a picture with this picture data already exists in this presentation
+     * 
+     * @param pictureData The picture data to find in the SlideShow
+     * @return {@code null} if picture data is not found in this slideshow
+     */
+    PictureData findPictureData(byte[] pictureData);
 
     /**
      * Writes out the slideshow file the is represented by an instance of this

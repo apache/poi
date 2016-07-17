@@ -19,31 +19,36 @@ package org.apache.poi.xslf.usermodel;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 
-import org.apache.poi.POIDataSamples;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.sl.usermodel.PictureData.PictureType;
+import org.apache.poi.sl.usermodel.BaseTestSlideShow;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTNotesMasterIdListEntry;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideIdListEntry;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideMasterIdListEntry;
 
-public class TestXMLSlideShow {
-   private static final POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
+public class TestXMLSlideShow extends BaseTestSlideShow {
    private OPCPackage pack;
+   
+   @Override
+   public XMLSlideShow createSlideShow() {
+       return new XMLSlideShow();
+   }
 
    @Before
    public void setUp() throws Exception {
       pack = OPCPackage.open(slTests.openResourceAsStream("sample.pptx"));
+   }
+   
+   @After
+   public void tearDown() throws IOException {
+       pack.revert();
    }
 
    @Test
@@ -172,46 +177,5 @@ public class TestXMLSlideShow {
       
       xmlComments.close();
       xml.close();
-   }
-   
-   @Test
-   public void addPicture_File() throws IOException {
-       XMLSlideShow xml = new XMLSlideShow();
-       File f = slTests.getFile("clock.jpg");
-       
-       assertEquals(0, xml.getPictureData().size());
-       XSLFPictureData picture = xml.addPicture(f, PictureType.JPEG);
-       assertEquals(1, xml.getPictureData().size());
-       assertSame(picture, xml.getPictureData().get(0));
-       
-       xml.close();
-   }
-   
-   @Test
-   public void addPicture_Stream() throws IOException {
-       XMLSlideShow xml = new XMLSlideShow();
-       InputStream stream = slTests.openResourceAsStream("clock.jpg");
-       
-       assertEquals(0, xml.getPictureData().size());
-       XSLFPictureData picture = xml.addPicture(stream, PictureType.JPEG);
-       assertEquals(1, xml.getPictureData().size());
-       assertSame(picture, xml.getPictureData().get(0));
-       
-       xml.close();
-   }
-   
-   /** also tests {@link XMLSlideShow#addPicture(byte[], PictureType)} */
-   @Test
-   public void findPicture() throws IOException {
-       XMLSlideShow xml = new XMLSlideShow();
-       byte[] data = slTests.readFile("clock.jpg");
-       
-       assertNull(xml.findPictureData(data));
-       XSLFPictureData picture = xml.addPicture(data, PictureType.JPEG);
-       XSLFPictureData found = xml.findPictureData(data);
-       assertNotNull(found);
-       assertEquals(picture, found);
-       
-       xml.close();
    }
 }

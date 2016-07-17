@@ -504,8 +504,12 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
 
     /**
      * check if a picture with this picture data already exists in this presentation
+     * 
+     * @param pictureData The picture data to find in the SlideShow
+     * @return {@code null} if picture data is not found in this slideshow
      */
-    XSLFPictureData findPictureData(byte[] pictureData){
+    @Override
+    public XSLFPictureData findPictureData(byte[] pictureData) {
         long checksum = IOUtils.calculateChecksum(pictureData);
         byte cs[] = new byte[LittleEndianConsts.LONG_SIZE];
         LittleEndian.putLong(cs,0,checksum);
