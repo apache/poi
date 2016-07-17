@@ -27,6 +27,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.util.List;
 
+import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.BaseTestXCell;
@@ -565,7 +566,7 @@ public final class TestXSSFCell extends BaseTestXCell {
         final CreationHelper createHelper = wb.getCreationHelper();
 
         srcCell.setCellValue("URL LINK");
-        Hyperlink link = createHelper.createHyperlink(org.apache.poi.common.usermodel.Hyperlink.LINK_URL);
+        Hyperlink link = createHelper.createHyperlink(HyperlinkType.URL);
         link.setAddress("http://poi.apache.org/");
         srcCell.setHyperlink(link);
 
@@ -602,7 +603,7 @@ public final class TestXSSFCell extends BaseTestXCell {
         final CreationHelper createHelper = wb.getCreationHelper();
 
         srcCell.setCellValue("URL LINK");
-        Hyperlink link = createHelper.createHyperlink(org.apache.poi.common.usermodel.Hyperlink.LINK_URL);
+        Hyperlink link = createHelper.createHyperlink(HyperlinkType.URL);
         link.setAddress("http://poi.apache.org/");
         destCell.setHyperlink(link);
 

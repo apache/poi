@@ -25,7 +25,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.junit.Test;
-
+import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.ss.ITestDataProvider;
 
 /**
@@ -53,21 +53,21 @@ public abstract class BaseTestHyperlink {
         //URL
         cell = sheet.createRow(0).createCell((short) 0);
         cell.setCellValue("URL Link");
-        link = createHelper.createHyperlink(Hyperlink.LINK_URL);
+        link = createHelper.createHyperlink(HyperlinkType.URL);
         link.setAddress("http://poi.apache.org/");
         cell.setHyperlink(link);
 
         //link to a file in the current directory
         cell = sheet.createRow(1).createCell((short) 0);
         cell.setCellValue("File Link");
-        link = createHelper.createHyperlink(Hyperlink.LINK_FILE);
+        link = createHelper.createHyperlink(HyperlinkType.FILE);
         link.setAddress("hyperinks-beta4-dump.txt");
         cell.setHyperlink(link);
 
         //e-mail link
         cell = sheet.createRow(2).createCell((short) 0);
         cell.setCellValue("Email Link");
-        link = createHelper.createHyperlink(Hyperlink.LINK_EMAIL);
+        link = createHelper.createHyperlink(HyperlinkType.EMAIL);
         //note, if subject contains white spaces, make sure they are url-encoded
         link.setAddress("mailto:poi@apache.org?subject=Hyperlinks");
         cell.setHyperlink(link);
@@ -80,7 +80,7 @@ public abstract class BaseTestHyperlink {
 
         cell = sheet.createRow(3).createCell((short) 0);
         cell.setCellValue("Worksheet Link");
-        link = createHelper.createHyperlink(Hyperlink.LINK_DOCUMENT);
+        link = createHelper.createHyperlink(HyperlinkType.DOCUMENT);
         link.setAddress("'Target Sheet'!A1");
         cell.setHyperlink(link);
 
@@ -116,7 +116,7 @@ public abstract class BaseTestHyperlink {
         cell1 = row.createCell(0);
         cell2 = row.createCell(1);
         cell1.setCellValue("URL Link");
-        link1 = createHelper.createHyperlink(Hyperlink.LINK_URL);
+        link1 = createHelper.createHyperlink(HyperlinkType.URL);
         link1.setAddress("http://poi.apache.org/");
         cell1.setHyperlink(link1);
         
