@@ -50,6 +50,9 @@ import org.apache.poi.poifs.filesystem.OPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.NotImplemented;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 import org.apache.poi.xdgf.extractor.XDGFVisioExtractor;
 import org.apache.poi.xslf.extractor.XSLFPowerPointExtractor;
 import org.apache.poi.xslf.usermodel.XSLFRelation;
@@ -72,6 +75,8 @@ import org.apache.xmlbeans.XmlException;
  */
 @SuppressWarnings("WeakerAccess")
 public class ExtractorFactory {
+    private static final POILogger logger = POILogFactory.getLogger(ExtractorFactory.class);
+    
     public static final String CORE_DOCUMENT_REL = PackageRelationshipTypes.CORE_DOCUMENT;
     protected static final String VISIO_DOCUMENT_REL = PackageRelationshipTypes.VISIO_CORE_DOCUMENT;
     protected static final String STRICT_DOCUMENT_REL = PackageRelationshipTypes.STRICT_CORE_DOCUMENT;
@@ -208,11 +213,12 @@ public class ExtractorFactory {
             }
      
             // Grab the core document part, and try to identify from that
-            PackagePart corePart = pkg.getPart(core.getRelationship(0));
-
+            final PackagePart corePart = pkg.getPart(core.getRelationship(0));
+            final String contentType = corePart.getContentType();
+     
             // Is it XSSF?
             for (XSSFRelation rel : XSSFExcelExtractor.SUPPORTED_TYPES) {
-                if (corePart.getContentType().equals(rel.getContentType())) {
+                if ( rel.getContentType().equals( contentType ) ) {
                     if (getPreferEventExtractor()) {
                         return new XSSFEventBasedExcelExtractor(pkg);
                     }
@@ -222,24 +228,24 @@ public class ExtractorFactory {
      
             // Is it XWPF?
             for (XWPFRelation rel : XWPFWordExtractor.SUPPORTED_TYPES) {
-                if (corePart.getContentType().equals(rel.getContentType())) {
+                if ( rel.getContentType().equals( contentType ) ) {
                     return new XWPFWordExtractor(pkg);
                 }
             }
      
             // Is it XSLF?
             for (XSLFRelation rel : XSLFPowerPointExtractor.SUPPORTED_TYPES) {
-                if (corePart.getContentType().equals(rel.getContentType())) {
+                if ( rel.getContentType().equals( contentType ) ) {
                     return new XSLFPowerPointExtractor(pkg);
                 }
             }
      
             // special handling for SlideShow-Theme-files, 
-            if (XSLFRelation.THEME_MANAGER.getContentType().equals(corePart.getContentType())) {
+            if (XSLFRelation.THEME_MANAGER.getContentType().equals(contentType)) {
                 return new XSLFPowerPointExtractor(new XSLFSlideShow(pkg));
             }
 
-            throw new IllegalArgumentException("No supported documents found in the OOXML package (found "+corePart.getContentType()+")");
+            throw new IllegalArgumentException("No supported documents found in the OOXML package (found "+contentType+")");
 
         } catch (IOException e) {
             // ensure that we close the package again if there is an error opening it, however
@@ -328,6 +334,7 @@ public class ExtractorFactory {
                     }
                 }
             } catch (FileNotFoundException e) {
+                logger.log(POILogger.INFO, "Ignoring FileNotFoundException while extracting Word document", e.getLocalizedMessage());
                 // ignored here
             }
         //} else if(ext instanceof PowerPointExtractor) {
@@ -351,23 +358,24 @@ public class ExtractorFactory {
             return new POITextExtractor[0];
         }
 
-        ArrayList<POITextExtractor> e = new ArrayList<POITextExtractor>();
+        ArrayList<POITextExtractor> textExtractors = new ArrayList<POITextExtractor>();
         for (Entry dir : dirs) {
-            e.add(createExtractor((DirectoryNode) dir));
+            textExtractors.add(createExtractor((DirectoryNode) dir));
         }
         for (InputStream nonPOIF : nonPOIFS) {
             try {
-                 e.add(createExtractor(nonPOIF));
-            } catch (IllegalArgumentException ie) {
+                 textExtractors.add(createExtractor(nonPOIF));
+            } catch (IllegalArgumentException e) {
                 // Ignore, just means it didn't contain
                 //  a format we support as yet
-            } catch (XmlException xe) {
-                 throw new IOException(xe.getMessage());
-            } catch (OpenXML4JException oe) {
-                 throw new IOException(oe.getMessage());
+                logger.log(POILogger.INFO, "Format not supported yet", e.getLocalizedMessage());
+            } catch (XmlException e) {
+                throw new IOException(e.getMessage(), e);
+            } catch (OpenXML4JException e) {
+                throw new IOException(e.getMessage(), e);
             }
         }
-        return e.toArray(new POITextExtractor[e.size()]);
+        return textExtractors.toArray(new POITextExtractor[textExtractors.size()]);
     }
 
     /**
@@ -377,6 +385,7 @@ public class ExtractorFactory {
      *  empty array. Otherwise, you'll get one open
      *  {@link POITextExtractor} for each embedded file.
      */
+    @NotImplemented
     @SuppressWarnings("UnusedParameters")
     public static POITextExtractor[] getEmbededDocsTextExtractors(POIXMLTextExtractor ext) {
         throw new IllegalStateException("Not yet supported");
