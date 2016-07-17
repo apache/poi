@@ -40,7 +40,7 @@ import org.apache.poi.poifs.filesystem.Entry;
 
 /**
  * Scratchpad-specific logic for {@link OLE2ExtractorFactory} and
- *  {@link ExtractorFactory}, which permit the other two to run with
+ *  {@link org.apache.poi.extractor.ExtractorFactory}, which permit the other two to run with
  *  no Scratchpad jar (though without functionality!)
  * <p>Note - should not be used standalone, always use via the other
  *  two classes</p>
