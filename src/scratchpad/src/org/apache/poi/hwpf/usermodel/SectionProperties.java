@@ -19,7 +19,7 @@ package org.apache.poi.hwpf.usermodel;
 
 import org.apache.poi.hwpf.model.types.SEPAbstractType;
 
-public final class SectionProperties extends SEPAbstractType
+public final class SectionProperties extends SEPAbstractType implements Cloneable
 {
     private short field_60_rncftn;
     private short field_61_rncedn;
@@ -37,6 +37,7 @@ public final class SectionProperties extends SEPAbstractType
         field_26_dttmPropRMark = new DateAndTime();
     }
 
+    @Override
     public Object clone() throws CloneNotSupportedException
     {
         SectionProperties copy = (SectionProperties) super.clone();
