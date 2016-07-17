@@ -235,20 +235,26 @@ public class XSSFHyperlink implements Hyperlink {
         }
     }
 
+    @SuppressWarnings("fall-through")
     private void validate(String address) {
-        switch (_type){
+        switch (_type) {
             // email, path to file and url must be valid URIs
             case Hyperlink.LINK_EMAIL:
             case Hyperlink.LINK_FILE:
             case Hyperlink.LINK_URL:
                 try {
                     new URI(address);
-                } catch (URISyntaxException x) {
-                    IllegalArgumentException y = new IllegalArgumentException("Address of hyperlink must be a valid URI");
-                    y.initCause(x);
-                    throw y;
+                } catch (URISyntaxException e) {
+                    throw new IllegalArgumentException("Address of hyperlink must be a valid URI", e);
                 }
                 break;
+            case Hyperlink.LINK_DOCUMENT:
+                // currently not evaluating anything.
+                break;
+            default:
+                // this check wouldn't need to be done if _type was checked when object was set
+                // since _type is final, this check would only need to be done once
+                throw new IllegalStateException("Invalid Hyperlink type: " + _type);
         }
     }
 
