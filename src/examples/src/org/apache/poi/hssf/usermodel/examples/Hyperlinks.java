@@ -17,11 +17,18 @@
 
 package org.apache.poi.hssf.usermodel.examples;
 
-import org.apache.poi.hssf.usermodel.*;
-import org.apache.poi.hssf.util.HSSFColor;
-
-import java.io.IOException;
 import java.io.FileOutputStream;
+import java.io.IOException;
+
+import org.apache.poi.common.usermodel.HyperlinkType;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFCreationHelper;
+import org.apache.poi.hssf.usermodel.HSSFFont;
+import org.apache.poi.hssf.usermodel.HSSFHyperlink;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.util.HSSFColor;
 
 /**
  * Demonstrates how to create hyperlinks.
@@ -32,6 +39,7 @@ public class Hyperlinks {
 
     public static void main(String[] args) throws IOException  {
         HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFCreationHelper helper = wb.getCreationHelper();
 
         //cell style for hyperlinks
         //by default hyperlinks are blue and underlined
@@ -47,7 +55,7 @@ public class Hyperlinks {
         //URL
         cell = sheet.createRow(0).createCell(0);
         cell.setCellValue("URL Link");
-        HSSFHyperlink link = new HSSFHyperlink(HSSFHyperlink.LINK_URL);
+        HSSFHyperlink link = helper.createHyperlink(HyperlinkType.URL);
         link.setAddress("http://poi.apache.org/");
         cell.setHyperlink(link);
         cell.setCellStyle(hlink_style);
@@ -55,7 +63,7 @@ public class Hyperlinks {
         //link to a file in the current directory
         cell = sheet.createRow(1).createCell(0);
         cell.setCellValue("File Link");
-        link = new HSSFHyperlink(HSSFHyperlink.LINK_FILE);
+        link = helper.createHyperlink(HyperlinkType.FILE);
         link.setAddress("link1.xls");
         cell.setHyperlink(link);
         cell.setCellStyle(hlink_style);
@@ -63,7 +71,7 @@ public class Hyperlinks {
         //e-mail link
         cell = sheet.createRow(2).createCell(0);
         cell.setCellValue("Email Link");
-        link = new HSSFHyperlink(HSSFHyperlink.LINK_EMAIL);
+        link = helper.createHyperlink(HyperlinkType.EMAIL);
         //note, if subject contains white spaces, make sure they are url-encoded
         link.setAddress("mailto:poi@apache.org?subject=Hyperlinks");
         cell.setHyperlink(link);
@@ -77,7 +85,7 @@ public class Hyperlinks {
 
         cell = sheet.createRow(3).createCell(0);
         cell.setCellValue("Worksheet Link");
-        link = new HSSFHyperlink(HSSFHyperlink.LINK_DOCUMENT);
+        link = helper.createHyperlink(HyperlinkType.DOCUMENT);
         link.setAddress("'Target Sheet'!A1");
         cell.setHyperlink(link);
         cell.setCellStyle(hlink_style);

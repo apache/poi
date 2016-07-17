@@ -16,6 +16,7 @@
 ==================================================================== */
 package org.apache.poi.xssf.usermodel;
 
+import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.util.Internal;
@@ -56,10 +57,22 @@ public class XSSFCreationHelper implements CreationHelper {
     /**
      * Create a new XSSFHyperlink.
      *
+     * @param type - the type of hyperlink to create, see {@link HyperlinkType}
+     * @deprecated POI 3.15 beta 3. Use {@link #createHyperlink(HyperlinkType)} instead.
+     */
+    @Deprecated
+    @Override
+    public XSSFHyperlink createHyperlink(int type) {
+        return new XSSFHyperlink(type);
+    }
+    
+    /**
+     * Create a new XSSFHyperlink.
+     *
      * @param type - the type of hyperlink to create, see {@link Hyperlink}
      */
     @Override
-    public XSSFHyperlink createHyperlink(int type) {
+    public XSSFHyperlink createHyperlink(HyperlinkType type) {
         return new XSSFHyperlink(type);
     }
 

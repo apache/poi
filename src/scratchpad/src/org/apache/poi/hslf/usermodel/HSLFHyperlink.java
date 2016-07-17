@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.ListIterator;
 
+import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.hslf.record.ExHyperlink;
 import org.apache.poi.hslf.record.ExHyperlinkAtom;
 import org.apache.poi.hslf.record.ExObjList;
@@ -127,25 +128,38 @@ public final class HSLFHyperlink implements Hyperlink<HSLFShape,HSLFTextParagrap
      *
      * @return the hyperlink URL
      * @see InteractiveInfoAtom
+     * @deprecated POI 3.15 beta 3. Use {@link #getTypeEnum()}
      */
     @Override
     public int getType() {
+        return getTypeEnum().getCode();
+    }
+    
+    /**
+     * Gets the type of the hyperlink action.
+     * Must be a <code>LINK_*</code>  constant</code>
+     *
+     * @return the hyperlink URL
+     * @see InteractiveInfoAtom
+     */
+    @Override
+    public HyperlinkType getTypeEnum() {
         switch (info.getInteractiveInfoAtom().getHyperlinkType()) {
         case InteractiveInfoAtom.LINK_Url:
-            return (exHyper.getLinkURL().startsWith("mailto:")) ? LINK_EMAIL : LINK_URL;
+            return (exHyper.getLinkURL().startsWith("mailto:")) ? HyperlinkType.EMAIL : HyperlinkType.URL;
         case InteractiveInfoAtom.LINK_NextSlide:
         case InteractiveInfoAtom.LINK_PreviousSlide:
         case InteractiveInfoAtom.LINK_FirstSlide:
         case InteractiveInfoAtom.LINK_LastSlide:
         case InteractiveInfoAtom.LINK_SlideNumber:
-            return LINK_DOCUMENT;
+            return HyperlinkType.DOCUMENT;
         case InteractiveInfoAtom.LINK_CustomShow:
         case InteractiveInfoAtom.LINK_OtherPresentation:
         case InteractiveInfoAtom.LINK_OtherFile:
-            return LINK_FILE;
+            return HyperlinkType.FILE;
         default:
         case InteractiveInfoAtom.LINK_NULL:
-            return -1;
+            return HyperlinkType.NONE;
         }
     }
 

@@ -18,6 +18,7 @@ package org.apache.poi.xslf.usermodel;
 
 import java.net.URI;
 
+import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
@@ -70,12 +71,17 @@ public class XSLFHyperlink implements Hyperlink<XSLFShape,XSLFTextParagraph> {
 
     @Override
     public int getType() {
+        return getTypeEnum().getCode();
+    }
+    
+    @Override
+    public HyperlinkType getTypeEnum() {
         String action = _link.getAction();
         if (action == null) {
             action = "";
         }
         if (action.equals("ppaction://hlinksldjump") || action.startsWith("ppaction://hlinkshowjump")) {
-            return LINK_DOCUMENT;
+            return HyperlinkType.DOCUMENT;
         }
         
         String address = getAddress();
@@ -83,9 +89,9 @@ public class XSLFHyperlink implements Hyperlink<XSLFShape,XSLFTextParagraph> {
             address = "";
         }
         if (address.startsWith("mailto:")) {
-            return LINK_EMAIL;
+            return HyperlinkType.EMAIL;
         } else {
-            return LINK_URL;
+            return HyperlinkType.URL;
         }
     }
 
