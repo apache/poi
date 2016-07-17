@@ -726,6 +726,21 @@ public class NPOIFSFileSystem extends BlockStore
     }
     
     /**
+     * Does the filesystem support an in-place write via
+     *  {@link #writeFilesystem()} ? If false, only writing out to
+     *  a brand new file via {@link #writeFilesystem(OutputStream)}
+     *  is supported.
+     */
+    public boolean isInPlaceWriteable() {
+        if(_data instanceof FileBackedDataSource) {
+            if ( ((FileBackedDataSource)_data).isWriteable() ) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    /**
      * Write the filesystem out to the open file. Will thrown an
      *  {@link IllegalArgumentException} if opened from an 
      *  {@link InputStream}.
