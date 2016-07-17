@@ -1163,6 +1163,7 @@ public interface Sheet extends Iterable<Row> {
      *
      * @param addr The address of the cell containing the hyperlink
      * @return hyperlink if there is a hyperlink anchored at {@code addr}; otherwise returns {@code null}
+     * @since POI 3.15 beta 3
      */
     public Hyperlink getHyperlink(CellAddress addr);
     
