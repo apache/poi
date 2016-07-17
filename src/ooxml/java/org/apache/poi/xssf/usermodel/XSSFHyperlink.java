@@ -58,44 +58,47 @@ public class XSSFHyperlink implements Hyperlink {
         _ctHyperlink = ctHyperlink;
         _externalRel = hyperlinkRel;
 
-        // Figure out the Hyperlink type and distination
+        // Figure out the Hyperlink type and destination
 
-        // If it has a location, it's internal
-        if (ctHyperlink.getLocation() != null) {
-            _type = Hyperlink.LINK_DOCUMENT;
-            _location = ctHyperlink.getLocation();
-        } else {
-            // Otherwise it's somehow external, check
-            //  the relation to see how
-            if (_externalRel == null) {
-                if (ctHyperlink.getId() != null) {
-                    throw new IllegalStateException("The hyperlink for cell " + ctHyperlink.getRef() +
-                            " references relation " + ctHyperlink.getId() + ", but that didn't exist!");
-                }
+        if (_externalRel == null) {
+            // If it has a location, it's internal
+            if (ctHyperlink.getLocation() != null) {
+                _type = Hyperlink.LINK_DOCUMENT;
+                _location = ctHyperlink.getLocation();
+            } else if (ctHyperlink.getId() != null) {
+                throw new IllegalStateException("The hyperlink for cell "
+                        + ctHyperlink.getRef() + " references relation "
+                        + ctHyperlink.getId() + ", but that didn't exist!");
+            } else {
                 // hyperlink is internal and is not related to other parts
                 _type = Hyperlink.LINK_DOCUMENT;
-            } else {
-                URI target = _externalRel.getTargetURI();
-                _location = target.toString();
-
-                // Try to figure out the type
-                if (_location.startsWith("http://") || _location.startsWith("https://")
-                        || _location.startsWith("ftp://")) {
-                    _type = Hyperlink.LINK_URL;
-                } else if (_location.startsWith("mailto:")) {
-                    _type = Hyperlink.LINK_EMAIL;
-                } else {
-                    _type = Hyperlink.LINK_FILE;
-                }
+            }
+        } else {
+            URI target = _externalRel.getTargetURI();
+            _location = target.toString();
+            if (ctHyperlink.getLocation() != null) {
+                // URI fragment
+                _location += "#" + ctHyperlink.getLocation();
             }
 
-
+            // Try to figure out the type
+               if (_location.startsWith("http://") || _location.startsWith("https://")
+                    || _location.startsWith("ftp://")) {
+                _type = Hyperlink.LINK_URL;
+            } else if (_location.startsWith("mailto:")) {
+                _type = Hyperlink.LINK_EMAIL;
+            } else {
+                _type = Hyperlink.LINK_FILE;
+            }
         }
-    }
-    
+
+     }
+
     /**
      * Create a new XSSFHyperlink. This method is for Internal use only.
-     * XSSFHyperlinks can be created by XSSFCreationHelper.
+     * XSSFHyperlinks can be created by {@link XSSFCreationHelper}.
+     * See the <a href="https://poi.apache.org/spreadsheet/quick-guide.html#Hyperlinks">spreadsheet quick-guide</a>
+     * for an example.
      *
      * @param other the hyperlink to copy
      */
@@ -165,7 +168,8 @@ public class XSSFHyperlink implements Hyperlink {
     }
 
     /**
-     * Hyperlink address. Depending on the hyperlink type it can be URL, e-mail, path to a file
+     * Hyperlink address. Depending on the hyperlink type it can be URL, e-mail, path to a file.
+     * The is the hyperlink target.
      *
      * @return the address of this hyperlink
      */
@@ -216,6 +220,7 @@ public class XSSFHyperlink implements Hyperlink {
 
     /**
      * Hyperlink address. Depending on the hyperlink type it can be URL, e-mail, path to a file
+     * This is the hyperlink target.
      *
      * @param address - the address of this hyperlink
      */

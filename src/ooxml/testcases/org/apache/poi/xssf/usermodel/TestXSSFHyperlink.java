@@ -17,11 +17,11 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import java.io.IOException;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
+
+import java.io.IOException;
 
 import org.apache.poi.hssf.usermodel.HSSFHyperlink;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
@@ -31,6 +31,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
@@ -291,5 +292,40 @@ public final class TestXSSFHyperlink extends BaseTestHyperlink {
         assertEquals(new CellReference(2, 3), new CellReference(xlink.getCellRef()));
         // Are HSSFHyperlink.label and XSSFHyperlink.tooltip the same? If so, perhaps one of these needs renamed for a consistent Hyperlink interface
         // assertEquals("label", xlink.getTooltip());
+    }
+    
+    /* bug 59775: XSSFHyperlink has wrong type if it contains a location (CTHyperlink#getLocation)
+     * URLs with a hash mark (#) are still URL hyperlinks, not document links
+     */
+    @Test
+    public void testURLsWithHashMark() throws IOException {
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("59775.xlsx");
+        XSSFSheet sh = wb.getSheetAt(0);
+        CellAddress A2 = new CellAddress("A2");
+        CellAddress A3 = new CellAddress("A3");
+        CellAddress A4 = new CellAddress("A4");
+        CellAddress A7 = new CellAddress("A7");
+        
+        XSSFHyperlink link = sh.getHyperlink(A2);
+        assertEquals("address", "A2", link.getCellRef());
+        assertEquals("link type", Hyperlink.LINK_URL, link.getType());
+        assertEquals("link target", "http://twitter.com/#!/apacheorg", link.getAddress());
+        
+        link = sh.getHyperlink(A3);
+        assertEquals("address", "A3", link.getCellRef());
+        assertEquals("link type", Hyperlink.LINK_URL, link.getType());
+        assertEquals("link target", "http://www.bailii.org/databases.html#ie", link.getAddress());
+        
+        link = sh.getHyperlink(A4);
+        assertEquals("address", "A4", link.getCellRef());
+        assertEquals("link type", Hyperlink.LINK_URL, link.getType());
+        assertEquals("link target", "https://en.wikipedia.org/wiki/Apache_POI#See_also", link.getAddress());
+        
+        link = sh.getHyperlink(A7);
+        assertEquals("address", "A7", link.getCellRef());
+        assertEquals("link type", Hyperlink.LINK_DOCUMENT, link.getType());
+        assertEquals("link target", "Sheet1", link.getAddress());
+        
+        wb.close();
     }
 }
