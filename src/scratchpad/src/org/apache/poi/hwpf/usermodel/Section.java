@@ -160,6 +160,72 @@ public final class Section extends Range
         return _props.getFEvenlySpaced();
     }
 
+    /**
+     * Get the footnote restart qualifier
+     *
+     * <dl>
+     * <dt>{@code 0x00}</dt><dd>If the numbering is continuous throughout the entire document</dd>
+     * <dt>{@code 0x01}</dt><dd>If the numbering restarts at the beginning of this section</dd>
+     * <dt>{@code 0x02}</dt><dd>If the numbering restarts on every page</dd>
+     * </dl>
+     *
+     * @return an Rnc, as decribed above, specifying when and where footnote numbering restarts
+     */
+    public short getFootnoteRestartQualifier() {
+        return _props.getRncFtn();
+    }
+
+    /**
+     * @return an offset to be added to footnote numbers
+     */
+    public int getFootnoteNumberingOffset() {
+        return _props.getNFtn();
+    }
+    
+    /**
+     * Get the numbering format of embedded footnotes
+     *
+     * <p>The full list of possible return values is given in [MS-OSHARED], v20140428, 2.2.1.3</p>
+     *
+     * @return an Nfc specifying the numbering format for footnotes
+     */
+    public int getFootnoteNumberingFormat() {
+        return _props.getNfcFtnRef();
+    }
+    
+    /**
+     * Get the endnote restart qualifier
+     *
+     * <dl>
+     * <dt>{@code 0x00}</dt><dd>If the numbering is continuous throughout the entire document</dd>
+     * <dt>{@code 0x01}</dt><dd>If the numbering restarts at the beginning of this section</dd>
+     * <dt>{@code 0x02}</dt><dd>If the numbering restarts on every page</dd>
+     * </dl>
+     *
+     * @return an Rnc, as decribed above, specifying when and where endnote numbering restarts
+     */   
+    public short getEndnoteRestartQualifier() {
+        return _props.getRncEdn();
+    }
+    
+    /**
+     * @return an offset to be added to endnote numbers
+     */
+    public int getEndnoteNumberingOffset() {
+        return _props.getNEdn();
+    }
+    
+    /**
+     * Get the numbering format of embedded endnotes
+     *
+     * <p>The full list of possible return values is given in [MS-OSHARED], v20140428, 2.2.1.3</p>
+     *
+     * @return an Nfc specifying the numbering format for endnotes
+     */
+    public int getEndnoteNumberingFormat() {
+        return _props.getNfcEdnRef();
+    }
+
     @Override
     public String toString()
     {
