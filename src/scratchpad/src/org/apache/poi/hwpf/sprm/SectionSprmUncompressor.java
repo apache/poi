@@ -208,6 +208,30 @@ public final class SectionSprmUncompressor extends SprmUncompressor
       case 0x33:
         newSEP.setWTextFlow ((short) sprm.getOperand());
         break;
+      case 0x3C:
+	// [MS-DOC], v20140721, 2.6.4, sprmSRncFtn	
+	newSEP.setRncFtn((short) sprm.getOperand());
+	break;
+      case 0x3E:
+	// [MS-DOC], v20140721, 2.6.4, sprmSRncEdn	
+	newSEP.setRncEdn((short) sprm.getOperand());
+	break;
+      case 0x3F:
+	// [MS-DOC], v20140721, 2.6.4, sprmSNFtn
+	newSEP.setNFtn((int) sprm.getOperand());
+	break;
+      case 0x40:
+	// [MS-DOC], v20140721, 2.6.4, sprmSNFtnRef
+	newSEP.setNfcFtnRef((int) sprm.getOperand());
+	break;
+      case 0x41:
+	// [MS-DOC], v20140721, 2.6.4, sprmSNEdn
+	newSEP.setNEdn((int) sprm.getOperand());
+	break;
+      case 0x42:
+	// [MS-DOC], v20140721, 2.6.4, sprmSNEdnRef
+	newSEP.setNfcEdnRef((int) sprm.getOperand());
+	break;
       default:
         break;
     }

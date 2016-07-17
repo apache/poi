@@ -233,6 +233,10 @@ public final class TestWordExtractor extends TestCase {
 		}
 
 		assertTrue(b.toString().contains("TestFootnote"));
+		assertEquals(0x00, doc.getRange().getSection(0).getFootnoteNumberingFormat()); // msonfcArabic
+		assertEquals(0x00, doc.getRange().getSection(0).getFootnoteRestartQualifier()); // rncCont
+		assertEquals(0, doc.getRange().getSection(0).getFootnoteNumberingOffset());	    
+		assertEquals(1, doc.getFootnotes().getNotesCount());
 	}
 
 	public void testEndnote() {
@@ -246,6 +250,10 @@ public final class TestWordExtractor extends TestCase {
 		}
 
 		assertTrue(b.toString().contains("TestEndnote"));
+		assertEquals(0x02, doc.getRange().getSection(0).getEndnoteNumberingFormat()); // msonfcLCRoman
+		assertEquals(0x00, doc.getRange().getSection(0).getEndnoteRestartQualifier()); // rncCont
+		assertEquals(0, doc.getRange().getSection(0).getEndnoteNumberingOffset()); 	   
+		assertEquals(1, doc.getEndnotes().getNotesCount());
 	}
 
 	public void testComments() {
