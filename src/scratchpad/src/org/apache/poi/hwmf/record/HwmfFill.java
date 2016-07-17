@@ -482,8 +482,7 @@ public class HwmfFill {
             xSrc = leis.readShort();
             size = 6*LittleEndianConsts.SHORT_SIZE;
             if (!hasBitmap) {
-                @SuppressWarnings("unused")
-                int reserved = leis.readShort();
+                /*int reserved =*/ leis.readShort();
                 size += LittleEndianConsts.SHORT_SIZE;
             }
             destHeight = leis.readShort();
@@ -685,8 +684,7 @@ public class HwmfFill {
             size = 4*LittleEndianConsts.SHORT_SIZE;
             
             if (!hasBitmap) {
-                @SuppressWarnings("unused")
-                int reserved = leis.readShort();
+                /*int reserved =*/ leis.readShort();
                 size += LittleEndianConsts.SHORT_SIZE;
             }
             
@@ -872,8 +870,7 @@ public class HwmfFill {
             xSrc = leis.readShort();
             size = 4*LittleEndianConsts.SHORT_SIZE;
             if (!hasBitmap) {
-                @SuppressWarnings("unused")
-                int reserved = leis.readShort();
+                /*int reserved =*/ leis.readShort();
                 size += LittleEndianConsts.SHORT_SIZE;
             }
             height = leis.readShort();
@@ -979,8 +976,7 @@ public class HwmfFill {
             xSrc = leis.readShort();
             size = 6*LittleEndianConsts.SHORT_SIZE;
             if (!hasBitmap) {
-                @SuppressWarnings("unused")
-                int reserved = leis.readShort();
+                /*int reserved =*/ leis.readShort();
                 size += LittleEndianConsts.SHORT_SIZE;
             }
             destHeight = leis.readShort();

@@ -84,8 +84,6 @@ public class HwmfBitmap16 {
     }
 
     public BufferedImage getImage() {
-        BufferedImage bi = new BufferedImage(width, height, BufferedImage.TYPE_4BYTE_ABGR);
-        return bi;
+        return new BufferedImage(width, height, BufferedImage.TYPE_4BYTE_ABGR);
     }
-
 }

@@ -184,12 +184,11 @@ public class HwmfMisc {
             return HwmfRecordType.setLayout;
         }
 
-        @SuppressWarnings("unused")
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
             layout = leis.readUShort();
             // A 16-bit field that MUST be ignored.
-            int reserved = leis.readShort();
+            /*int reserved =*/ leis.readShort();
             return 2*LittleEndianConsts.SHORT_SIZE;
         }
 
