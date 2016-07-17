@@ -60,7 +60,7 @@ public final class SectionProperties extends SEPAbstractType
     }
     
     /**
-     * @see #setRncFtn(int)
+     * @see #setRncFtn(short)
      * @return an Rnc value specifying when and where footnote numbering restarts
      */
     public short getRncFtn() {
@@ -77,7 +77,7 @@ public final class SectionProperties extends SEPAbstractType
     }
     
     /**
-     * @see #setRncEdn(int)
+     * @see #setRncEdn(short)
      * @return an Rnc value specifying when and where endnote numbering restarts
      */
     public short getRncEdn() {
