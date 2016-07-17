@@ -54,6 +54,7 @@ import org.apache.poi.hssf.record.WindowOneRecord;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.poifs.filesystem.OPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.formula.ptg.Area3DPtg;
 import org.apache.poi.ss.usermodel.BaseTestWorkbook;
@@ -66,6 +67,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.SheetConditionalFormatting;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.RecordFormatException;
 import org.apache.poi.util.TempFile;
@@ -1209,5 +1211,70 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         } catch (Exception e) {
             throw new Exception("Moving a sheet to the end should not throw an exception, but threw ", e);
         }
+    }
+    
+    @Test
+    public void invalidInPlaceWrite() throws Exception {
+        HSSFWorkbook wb;
+        
+        // Can't work for new files
+        wb = new HSSFWorkbook();
+        try {
+            wb.write();
+            fail("Shouldn't work for new files");
+        } catch (IllegalStateException e) {}
+        
+        // Can't work for InputStream opened files
+        wb = new HSSFWorkbook(
+            POIDataSamples.getSpreadSheetInstance().openResourceAsStream("SampleSS.xls"));
+        try {
+            wb.write();
+            fail("Shouldn't work for InputStream");
+        } catch (IllegalStateException e) {}
+        
+        // Can't work for OPOIFS
+        OPOIFSFileSystem ofs = new OPOIFSFileSystem(
+                POIDataSamples.getSpreadSheetInstance().openResourceAsStream("SampleSS.xls"));
+        wb = new HSSFWorkbook(ofs.getRoot(), true);
+        try {
+            wb.write();
+            fail("Shouldn't work for OPOIFSFileSystem");
+        } catch (IllegalStateException e) {}
+        
+        // Can't work for Read-Only files
+        NPOIFSFileSystem fs = new NPOIFSFileSystem(
+                POIDataSamples.getSpreadSheetInstance().getFile("SampleSS.xls"), true);
+        wb = new HSSFWorkbook(fs);
+        try {
+            wb.write();
+            fail("Shouldn't work for Read Only");
+        } catch (IllegalStateException e) {}
+    }
+    
+    @Test
+    public void inPlaceWrite() throws Exception {
+        // Setup as a copy of a known-good file
+        final File file = TempFile.createTempFile("TestHSSFWorkbook", ".xls");
+        IOUtils.copy(
+                POIDataSamples.getSpreadSheetInstance().openResourceAsStream("SampleSS.xls"),
+                new FileOutputStream(file)
+        );
+        
+        // Open from the temp file in read-write mode
+        HSSFWorkbook wb = new HSSFWorkbook(new NPOIFSFileSystem(file, false));
+        assertEquals(3, wb.getNumberOfSheets());
+        
+        // Change
+        wb.removeSheetAt(2);
+        wb.removeSheetAt(1);
+        wb.getSheetAt(0).getRow(0).getCell(0).setCellValue("Changed!");
+        
+        // Save in-place, close, re-open and check
+        wb.write();
+        wb.close();
+        
+        wb = new HSSFWorkbook(new NPOIFSFileSystem(file));
+        assertEquals(1, wb.getNumberOfSheets());
+        assertEquals("Changed!", wb.getSheetAt(0).getRow(0).getCell(0).toString());
     }
 }

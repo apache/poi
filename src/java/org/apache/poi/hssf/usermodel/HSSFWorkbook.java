@@ -22,6 +22,7 @@ import static org.apache.poi.hssf.model.InternalWorkbook.WORKBOOK_DIR_ENTRY_NAME
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,8 +34,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -77,8 +78,10 @@ import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.poifs.crypt.Decryptor;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
+import org.apache.poi.poifs.filesystem.DocumentNode;
 import org.apache.poi.poifs.filesystem.EntryUtils;
 import org.apache.poi.poifs.filesystem.FilteringDirectoryNode;
+import org.apache.poi.poifs.filesystem.NPOIFSDocument;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.Ole10Native;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
@@ -1288,6 +1291,38 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
         super.close();
     }
 
+    //@Override // TODO Not yet on POIDocument
+    /**
+     * Write out this workbook to the currently open {@link File} via the
+     *  writeable {@link POIFSFileSystem} it was opened as. 
+     * <p>This will fail (with an {@link IllegalStateException} if the
+     *  Workbook was opened read-only, opened from an {@link InputStream}
+     *   instead of a File, or if this is not the root document. For those cases, 
+     *   you must use {@link #write(OutputStream)} to write to a brand new stream.
+     */
+    public void write() throws IOException {
+        // TODO Push much of this logic down to POIDocument, as will be common for most formats
+        if (directory == null) {
+            throw new IllegalStateException("Newly created Workbook, cannot save in-place");
+        }
+        if (directory.getParent() != null) {
+            throw new IllegalStateException("This is not the root document, cannot save in-place");
+        }
+        if (directory.getFileSystem() == null ||
+            !directory.getFileSystem().isInPlaceWriteable()) {
+            throw new IllegalStateException("Opened read-only or via an InputStream, a Writeable File");
+        }
+        
+        // Update the Workbook stream in the file
+        DocumentNode workbookNode = (DocumentNode)directory.getEntry(
+                getWorkbookDirEntryName(directory));
+        NPOIFSDocument workbookDoc = new NPOIFSDocument(workbookNode);
+        workbookDoc.replaceContents(new ByteArrayInputStream(getBytes()));
+        
+        // Sync with the File on disk
+        directory.getFileSystem().writeFilesystem();
+    }
+    
     /**
      * Method write - write out this workbook to an {@link OutputStream}.  Constructs
      * a new POI POIFSFileSystem, passes in the workbook binary representation  and
