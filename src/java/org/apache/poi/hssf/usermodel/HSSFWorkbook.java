@@ -1327,6 +1327,11 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      * Method write - write out this workbook to an {@link OutputStream}.  Constructs
      * a new POI POIFSFileSystem, passes in the workbook binary representation  and
      * writes it out.
+     * 
+     * If {@code stream} is a {@link java.io.FileOutputStream} on a networked drive
+     * or has a high cost/latency associated with each written byte,
+     * consider wrapping the OutputStream in a {@link java.io.BufferedOutputStream}
+     * to improve write performance.
      *
      * @param stream - the java OutputStream you wish to write the XLS to
      *
