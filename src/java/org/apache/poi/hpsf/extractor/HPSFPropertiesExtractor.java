@@ -19,7 +19,6 @@ package org.apache.poi.hpsf.extractor;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Iterator;
 
 import org.apache.poi.POIDocument;
 import org.apache.poi.POIOLE2TextExtractor;
@@ -59,7 +58,7 @@ public class HPSFPropertiesExtractor extends POIOLE2TextExtractor {
         }
 
         DocumentSummaryInformation dsi = document.getDocumentSummaryInformation();
-        StringBuffer text = new StringBuffer();
+        StringBuilder text = new StringBuilder();
 
         // Normal properties
         text.append( getPropertiesText(dsi) );
@@ -67,11 +66,9 @@ public class HPSFPropertiesExtractor extends POIOLE2TextExtractor {
         // Now custom ones
         CustomProperties cps = dsi == null ? null : dsi.getCustomProperties();
         if (cps != null) {
-            Iterator<String> keys = cps.nameSet().iterator();
-            while (keys.hasNext()) {
-                String key = keys.next();
-                String val = HelperPropertySet.getPropertyValueText( cps.get(key) );
-                text.append(key + " = " + val + "\n");
+            for (String key : cps.nameSet()) {
+                String val = HelperPropertySet.getPropertyValueText(cps.get(key));
+                text.append(key).append(" = ").append(val).append("\n");
             }
         }
 
@@ -95,19 +92,19 @@ public class HPSFPropertiesExtractor extends POIOLE2TextExtractor {
             return "";
         }
 
-        StringBuffer text = new StringBuffer();
+        StringBuilder text = new StringBuilder();
 
         PropertyIDMap idMap = ps.getPropertySetIDMap();
         Property[] props = ps.getProperties();
-        for (int i=0; i<props.length; i++) {
-            String type = Long.toString( props[i].getID() );
-            Object typeObj = idMap.get(props[i].getID());
-            if(typeObj != null) {
+        for (Property prop : props) {
+            String type = Long.toString(prop.getID());
+            Object typeObj = idMap.get(prop.getID());
+            if (typeObj != null) {
                 type = typeObj.toString();
             }
 
-            String val = HelperPropertySet.getPropertyValueText( props[i].getValue() );
-            text.append(type + " = " + val + "\n");
+            String val = HelperPropertySet.getPropertyValueText(prop.getValue());
+            text.append(type).append(" = ").append(val).append("\n");
         }
 
         return text.toString();
@@ -127,7 +124,7 @@ public class HPSFPropertiesExtractor extends POIOLE2TextExtractor {
     public POITextExtractor getMetadataTextExtractor() {
         throw new IllegalStateException("You already have the Metadata Text Extractor, not recursing!");
     }
-    
+
     private static abstract class HelperPropertySet extends SpecialPropertySet {
         public HelperPropertySet() {
             super(null);
@@ -138,6 +135,16 @@ public class HPSFPropertiesExtractor extends POIOLE2TextExtractor {
             }
             return SpecialPropertySet.getPropertyStringValue(val);
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return super.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 
     public static void main(String[] args) throws IOException {

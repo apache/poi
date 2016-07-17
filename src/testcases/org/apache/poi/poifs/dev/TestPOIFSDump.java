@@ -39,7 +39,7 @@ public class TestPOIFSDump {
     private static final String INVALID_FILE = HSSFTestDataSamples.getSampleFile("48936-strings.txt").getAbsolutePath();
     private static final String INVALID_XLSX_FILE = HSSFTestDataSamples.getSampleFile("47668.xlsx").getAbsolutePath();
 
-    private static final String[] DUMP_OPTIONS = new String[] {
+    private static final String[] DUMP_OPTIONS = {
         "-dumprops",
         "-dump-props",
         "-dump-properties",

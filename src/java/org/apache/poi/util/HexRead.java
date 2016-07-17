@@ -139,7 +139,7 @@ public class HexRead
                 }
             }
         }
-        Byte[] polished = bytes.toArray( new Byte[0] );
+        Byte[] polished = bytes.toArray(new Byte[bytes.size()]);
         byte[] rval = new byte[polished.length];
         for ( int j = 0; j < polished.length; j++ )
         {

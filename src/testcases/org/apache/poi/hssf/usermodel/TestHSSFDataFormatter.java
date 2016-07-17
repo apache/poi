@@ -246,18 +246,18 @@ public final class TestHSSFDataFormatter {
             String fmt = cell.getCellStyle().getDataFormatString();
 
             //assert the correct month form, as in the original Excel format
-            String monthPtrn = fmt.indexOf("mmmm") != -1 ? "MMMM" : "MMM";
+            String monthPtrn = fmt.contains("mmmm") ? "MMMM" : "MMM";
             // this line is intended to compute how "July" would look like in the current locale
             SimpleDateFormat sdf = new SimpleDateFormat(monthPtrn, LocaleUtil.getUserLocale());
             sdf.setTimeZone(LocaleUtil.getUserTimeZone());
             Calendar calDef = LocaleUtil.getLocaleCalendar(2010, 6, 15, 0, 0, 0);
             String jul = sdf.format(calDef.getTime());
             // special case for MMMMM = 1st letter of month name
-            if(fmt.indexOf("mmmmm") > -1) {
+            if(fmt.contains("mmmmm")) {
                 jul = jul.substring(0,1);
             }
             // check we found july properly
-            assertTrue("Format came out incorrect - " + fmt, fmtval.indexOf(jul) > -1);
+            assertTrue("Format came out incorrect - " + fmt, fmtval.contains(jul));
         }
 
         row = wb.getSheetAt(0).getRow(1);
@@ -275,7 +275,7 @@ public final class TestHSSFDataFormatter {
 
             // check we found the time properly
             assertTrue("Format came out incorrect - " + fmt + " - found " + fmtval + 
-                       ", but expected to find '11:23'", fmtval.indexOf("11:23") > -1);
+                       ", but expected to find '11:23'", fmtval.contains("11:23"));
         }
 
         // test number formats
@@ -451,7 +451,7 @@ public final class TestHSSFDataFormatter {
         assertEquals("\u00a310.52", f.formatCellValue(sheet.getRow(12).getCell(1)));
     }
 
-    private static void log(String msg) {
+    private static void log(@SuppressWarnings("UnusedParameters") String msg) {
 //      if (false) { // successful tests should be silent
 //         System.out.println(msg);
 //      }

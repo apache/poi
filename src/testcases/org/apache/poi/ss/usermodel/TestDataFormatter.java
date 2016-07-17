@@ -140,7 +140,7 @@ public class TestDataFormatter {
     public void testColours() {
         DataFormatter dfUS = new DataFormatter(Locale.US);
 
-        String[] formats = new String[] {
+        String[] formats = {
                 "##.##",
                 "[WHITE]##.##",
                 "[BLACK]##.##;[RED]-##.##",
@@ -169,7 +169,7 @@ public class TestDataFormatter {
         DataFormatter dfUS = new DataFormatter(Locale.US);
 
         // Without currency symbols
-        String[] formats = new String[] { "#,##0.00;[Blue](#,##0.00)" };
+        String[] formats = { "#,##0.00;[Blue](#,##0.00)" };
         for (String format : formats) {
             assertEquals(
                 "Wrong format for: " + format,
@@ -304,7 +304,7 @@ public class TestDataFormatter {
         assertEquals("321 1/3",   dfUS.formatRawCellContents(321.321, -1, "# ?/? ?/?"));
         assertEquals("321 1/3",   dfUS.formatRawCellContents(321.321, -1, "# ?/? #/# #/#"));
 
-        // Where +ve has a fraction, but -ve doesnt, we currently show both
+        // Where +ve has a fraction, but -ve doesn't, we currently show both
         assertEquals("123 1/3", dfUS.formatRawCellContents( 123.321, -1, "0 ?/?;0"));
         //assertEquals("123",     dfUS.formatRawCellContents(-123.321, -1, "0 ?/?;0"));
 
@@ -567,12 +567,12 @@ public class TestDataFormatter {
 
         assertEquals("    0.10 ", dfUS.formatRawCellContents( 0.1, -1, "_-* #,##0.00_-;-* #,##0.00_-;_-* \"-\"??_-;_-@_-"));
         assertEquals("-   0.10 ", dfUS.formatRawCellContents(-0.1, -1, "_-* #,##0.00_-;-* #,##0.00_-;_-* \"-\"??_-;_-@_-"));
-        // TODO Fix this, we are randomly adding a 0 at the end that souldn't be there
+        // TODO Fix this, we are randomly adding a 0 at the end that shouldn't be there
         //assertEquals("     -   ", dfUS.formatRawCellContents(0.0, -1, "_-* #,##0.00_-;-* #,##0.00_-;_-* \"-\"??_-;_-@_-"));
 
         assertEquals(" $   1.10 ", dfUS.formatRawCellContents( 1.1, -1, "_-$* #,##0.00_-;-$* #,##0.00_-;_-$* \"-\"??_-;_-@_-"));
         assertEquals("-$   1.10 ", dfUS.formatRawCellContents(-1.1, -1, "_-$* #,##0.00_-;-$* #,##0.00_-;_-$* \"-\"??_-;_-@_-"));
-        // TODO Fix this, we are randomly adding a 0 at the end that souldn't be there
+        // TODO Fix this, we are randomly adding a 0 at the end that shouldn't be there
         //assertEquals(" $    -   ", dfUS.formatRawCellContents( 0.0, -1, "_-$* #,##0.00_-;-$* #,##0.00_-;_-$* \"-\"??_-;_-@_-"));
     }
 

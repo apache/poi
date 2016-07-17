@@ -33,7 +33,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -319,7 +318,7 @@ public class DataFormatter implements Observer {
         //  handle these ourselves in a special way.
         // For now, if we detect 3+ parts, we call out to CellFormat to handle it
         // TODO Going forward, we should really merge the logic between the two classes
-        if (formatStr.indexOf(";") != -1 && 
+        if (formatStr.contains(";") &&
                 formatStr.indexOf(';') != formatStr.lastIndexOf(';')) {
             try {
                 // Ask CellFormat to get a formatter for it
@@ -402,11 +401,9 @@ public class DataFormatter implements Observer {
             String match = m.group();
             String symbol = match.substring(match.indexOf('$') + 1, match.indexOf('-'));
             if (symbol.indexOf('$') > -1) {
-                StringBuffer sb = new StringBuffer();
-                sb.append(symbol.substring(0, symbol.indexOf('$')));
-                sb.append('\\');
-                sb.append(symbol.substring(symbol.indexOf('$'), symbol.length()));
-                symbol = sb.toString();
+                symbol = symbol.substring(0, symbol.indexOf('$')) +
+                        '\\' +
+                        symbol.substring(symbol.indexOf('$'), symbol.length());
             }
             formatStr = m.replaceAll(symbol);
             m = localePatternGroup.matcher(formatStr);
@@ -426,16 +423,16 @@ public class DataFormatter implements Observer {
             return createDateFormat(formatStr, cellValue);
         }
         // Excel supports fractions in format strings, which Java doesn't
-        if (formatStr.indexOf("#/") >= 0 || formatStr.indexOf("?/") >= 0) {
+        if (formatStr.contains("#/") || formatStr.contains("?/")) {
             String[] chunks = formatStr.split(";");
-            for (int i = 0; i < chunks.length; i++){
-                String chunk = chunks[i].replaceAll("\\?", "#");
+            for (String chunk1 : chunks) {
+                String chunk = chunk1.replaceAll("\\?", "#");
                 Matcher matcher = fractionStripper.matcher(chunk);
                 chunk = matcher.replaceAll(" ");
                 chunk = chunk.replaceAll(" +", " ");
                 Matcher fractionMatcher = fractionPattern.matcher(chunk);
                 //take the first match
-                if (fractionMatcher.find()){
+                if (fractionMatcher.find()) {
                     String wholePart = (fractionMatcher.group(1) == null) ? "" : defaultFractionWholePartFormat;
                     return new FractionFormat(wholePart, fractionMatcher.group(3));
                 }
@@ -498,7 +495,7 @@ public class DataFormatter implements Observer {
             Excel displays the month instead of minutes."
           */
 
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         char[] chars = formatStr.toCharArray();
         boolean mIsMonth = true;
         List<Integer> ms = new ArrayList<Integer>();
@@ -565,7 +562,7 @@ public class DataFormatter implements Observer {
                 // if 'M' precedes 's' it should be minutes ('m')
                 for (int index : ms) {
                     if (sb.charAt(index) == 'M') {
-                        sb.replace(index, index+1, "m");
+                        sb.replace(index, index + 1, "m");
                     }
                 }
                 mIsMonth = true;
@@ -602,7 +599,7 @@ public class DataFormatter implements Observer {
     }
 
     private String cleanFormatForNumber(String formatStr) {
-        StringBuffer sb = new StringBuffer(formatStr);
+        StringBuilder sb = new StringBuilder(formatStr);
 
         if (emulateCSV) {
             // Requested spacers with "_" are replaced by a single space.
@@ -927,9 +924,7 @@ public class DataFormatter implements Observer {
      * @see java.text.Format#format
      */
     public void setDefaultNumberFormat(Format format) {
-        Iterator<Map.Entry<String,Format>> itr = formats.entrySet().iterator();
-        while(itr.hasNext()) {
-            Map.Entry<String,Format> entry = itr.next();
+        for (Map.Entry<String, Format> entry : formats.entrySet()) {
             if (entry.getValue() == generalNumberFormat) {
                 entry.setValue(format);
             }
@@ -1054,11 +1049,9 @@ public class DataFormatter implements Observer {
         /** Format a number as an SSN */
         public static String format(Number num) {
             String result = df.format(num);
-            StringBuffer sb = new StringBuffer();
-            sb.append(result.substring(0, 3)).append('-');
-            sb.append(result.substring(3, 5)).append('-');
-            sb.append(result.substring(5, 9));
-            return sb.toString();
+            return result.substring(0, 3) + '-' +
+                    result.substring(3, 5) + '-' +
+                    result.substring(5, 9);
         }
 
         @Override
@@ -1088,10 +1081,8 @@ public class DataFormatter implements Observer {
         /** Format a number as Zip + 4 */
         public static String format(Number num) {
             String result = df.format(num);
-            StringBuffer sb = new StringBuffer();
-            sb.append(result.substring(0, 5)).append('-');
-            sb.append(result.substring(5, 9));
-            return sb.toString();
+            return result.substring(0, 5) + '-' +
+                    result.substring(5, 9);
         }
 
         @Override
@@ -1121,7 +1112,7 @@ public class DataFormatter implements Observer {
         /** Format a number as a phone number */
         public static String format(Number num) {
             String result = df.format(num);
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             String seg1, seg2, seg3;
             int len = result.length();
             if (len <= 4) {
@@ -1132,10 +1123,10 @@ public class DataFormatter implements Observer {
             seg2 = result.substring(Math.max(0, len - 7), len - 4);
             seg1 = result.substring(Math.max(0, len - 10), Math.max(0, len - 7));
 
-            if(seg1 != null && seg1.trim().length() > 0) {
+            if(seg1.trim().length() > 0) {
                 sb.append('(').append(seg1).append(") ");
             }
-            if(seg2 != null && seg2.trim().length() > 0) {
+            if(seg2.trim().length() > 0) {
                 sb.append(seg2).append('-');
             }
             sb.append(seg3);

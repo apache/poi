@@ -97,7 +97,7 @@ public class MutablePropertySet extends PropertySet
     /**
      * <p>The length of the property set stream header.</p>
      */
-    private final int OFFSET_HEADER =
+    private final static int OFFSET_HEADER =
         BYTE_ORDER_ASSERTION.length + /* Byte order    */
         FORMAT_ASSERTION.length +     /* Format        */
         LittleEndianConsts.INT_SIZE + /* OS version    */
@@ -197,14 +197,13 @@ public class MutablePropertySet extends PropertySet
     {
         /* Write the number of sections in this property set stream. */
         final int nrSections = sections.size();
-        int length = 0;
 
         /* Write the property set's header. */
-        length += TypeWriter.writeToStream(out, (short) getByteOrder());
-        length += TypeWriter.writeToStream(out, (short) getFormat());
-        length += TypeWriter.writeToStream(out, getOSVersion());
-        length += TypeWriter.writeToStream(out, getClassID());
-        length += TypeWriter.writeToStream(out, nrSections);
+        TypeWriter.writeToStream(out, (short) getByteOrder());
+        TypeWriter.writeToStream(out, (short) getFormat());
+        TypeWriter.writeToStream(out, getOSVersion());
+        TypeWriter.writeToStream(out, getClassID());
+        TypeWriter.writeToStream(out, nrSections);
         int offset = OFFSET_HEADER;
 
         /* Write the section list, i.e. the references to the sections. Each
@@ -218,8 +217,8 @@ public class MutablePropertySet extends PropertySet
             final ClassID formatID = s.getFormatID();
             if (formatID == null)
                 throw new NoFormatIDException();
-            length += TypeWriter.writeToStream(out, s.getFormatID());
-            length += TypeWriter.writeUIntToStream(out, offset);
+            TypeWriter.writeToStream(out, s.getFormatID());
+            TypeWriter.writeUIntToStream(out, offset);
             try
             {
                 offset += s.getSize();
