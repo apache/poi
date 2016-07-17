@@ -97,49 +97,49 @@ public class OLE2ScratchpadExtractorFactory {
         throw new IllegalArgumentException("No supported documents found in the OLE2 stream");
     }
 
-	/**
-	 * Returns an array of text extractors, one for each of
-	 *  the embedded documents in the file (if there are any).
-	 * If there are no embedded documents, you'll get back an
-	 *  empty array. Otherwise, you'll get one open
-	 *  {@link POITextExtractor} for each embedded file.
-	 */
-	public static void identifyEmbeddedResources(POIOLE2TextExtractor ext, List<Entry> dirs, List<InputStream> nonPOIFS) throws IOException {
+    /**
+     * Returns an array of text extractors, one for each of
+     *  the embedded documents in the file (if there are any).
+     * If there are no embedded documents, you'll get back an
+     *  empty array. Otherwise, you'll get one open
+     *  {@link POITextExtractor} for each embedded file.
+     */
+    public static void identifyEmbeddedResources(POIOLE2TextExtractor ext, List<Entry> dirs, List<InputStream> nonPOIFS) throws IOException {
       // Find all the embedded directories
-		DirectoryEntry root = ext.getRoot();
-		if(root == null) {
-			throw new IllegalStateException("The extractor didn't know which POIFS it came from!");
-		}
+        DirectoryEntry root = ext.getRoot();
+        if(root == null) {
+            throw new IllegalStateException("The extractor didn't know which POIFS it came from!");
+        }
 
-		if(ext instanceof WordExtractor) {
-		    // These are in ObjectPool -> _... under the root
-		    try {
-		        DirectoryEntry op = (DirectoryEntry)
-		                root.getEntry("ObjectPool");
-		        Iterator<Entry> it = op.getEntries();
-		        while(it.hasNext()) {
-		            Entry entry = it.next();
-		            if(entry.getName().startsWith("_")) {
-		                dirs.add(entry);
-		            }
-		        }
-		    } catch(FileNotFoundException e) {
-		        // ignored here
-		    }
-		    //} else if(ext instanceof PowerPointExtractor) {
-		    // Tricky, not stored directly in poifs
-		    // TODO
-		} else if(ext instanceof OutlookTextExtactor) {
-		    // Stored in the Attachment blocks
-		    MAPIMessage msg = ((OutlookTextExtactor)ext).getMAPIMessage();
-		    for(AttachmentChunks attachment : msg.getAttachmentFiles()) {
-		        if(attachment.attachData != null) {
-		            byte[] data = attachment.attachData.getValue();
-		            nonPOIFS.add( new ByteArrayInputStream(data) );
-		        } else if(attachment.attachmentDirectory != null) {
-		            dirs.add(attachment.attachmentDirectory.getDirectory());
-		        }
-		    }
-		}
-	}
+        if(ext instanceof WordExtractor) {
+            // These are in ObjectPool -> _... under the root
+            try {
+                DirectoryEntry op = (DirectoryEntry)
+                        root.getEntry("ObjectPool");
+                Iterator<Entry> it = op.getEntries();
+                while(it.hasNext()) {
+                    Entry entry = it.next();
+                    if(entry.getName().startsWith("_")) {
+                        dirs.add(entry);
+                    }
+                }
+            } catch(FileNotFoundException e) {
+                // ignored here
+            }
+            //} else if(ext instanceof PowerPointExtractor) {
+            // Tricky, not stored directly in poifs
+            // TODO
+        } else if(ext instanceof OutlookTextExtactor) {
+            // Stored in the Attachment blocks
+            MAPIMessage msg = ((OutlookTextExtactor)ext).getMAPIMessage();
+            for(AttachmentChunks attachment : msg.getAttachmentFiles()) {
+                if(attachment.attachData != null) {
+                    byte[] data = attachment.attachData.getValue();
+                    nonPOIFS.add( new ByteArrayInputStream(data) );
+                } else if(attachment.attachmentDirectory != null) {
+                    dirs.add(attachment.attachmentDirectory.getDirectory());
+                }
+            }
+        }
+    }
 }
