@@ -43,8 +43,7 @@ public class HwmfColorRef implements Cloneable {
         int red = leis.readUByte();
         int green = leis.readUByte();
         int blue = leis.readUByte();
-        @SuppressWarnings("unused")
-        int reserved = leis.readUByte();
+        /*int reserved =*/ leis.readUByte();
 
         colorRef = new Color(red, green, blue);
         return 4*LittleEndianConsts.BYTE_SIZE;
