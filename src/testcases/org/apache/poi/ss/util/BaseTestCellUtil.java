@@ -213,7 +213,9 @@ public class BaseTestCellUtil {
      * @deprecated by {@link #setAlignmentEnum()}
      *
      * @throws IOException
+     * 
      */
+    @SuppressWarnings("deprecated")
     @Test
     public void setAlignment() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();

@@ -49,7 +49,23 @@ public enum HyperlinkType {
      */
     FILE(4);
     
+    
+    /** @deprecated POI 3.15 beta 3 */
+    @Internal(since="3.15 beta 3")
+    @Deprecated
     private final int code;
+    
+    /**
+     * The codes don't have any real meaning.
+     * There bytes that are read in and written out from HSSF, HSLF, XSSF, and XSLF are different
+     * that the codes here.
+     * These codes only exist to assist in transitioning from using ints to enums.
+     *
+     * @param code
+     * @deprecated POI 3.15 beta 3
+     */
+    @Internal(since="3.15 beta 3")
+    @Deprecated
     private HyperlinkType(int code) {
         this.code = code;
     }
@@ -61,10 +77,26 @@ public enum HyperlinkType {
         }
     }
     
+    /**
+     * @deprecated POI 3.15 beta 3
+     *
+     * @return the old integer code for a HyperlinkType enum
+     */
+    @Internal(since="3.15 beta 3")
+    @Deprecated
     public int getCode() {
         return code;
     }
     
+    /**
+     * @deprecated POI 3.15 beta 3
+     *
+     * @param code the old integer code
+     * @return the corresponding HyperlinkEnum, if it exists
+     * @throws IllegalArgumentException if {@code code} is not a valid HyperlinkType.
+     */
+    @Internal(since="3.15 beta 3")
+    @Deprecated
     public static HyperlinkType forInt(int code) {
         HyperlinkType type = map.get(code);
         if (type == null) {
