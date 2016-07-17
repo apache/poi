@@ -19,11 +19,16 @@ package org.apache.poi.hwpf.sprm;
 
 import org.apache.poi.hwpf.usermodel.BorderCode;
 import org.apache.poi.hwpf.usermodel.SectionProperties;
+import org.apache.poi.util.HexDump;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 @Internal
 public final class SectionSprmUncompressor extends SprmUncompressor
 {
+  private static final POILogger logger = POILogFactory.getLogger(SectionSprmUncompressor.class);
+  
   public SectionSprmUncompressor()
   {
   }
@@ -46,20 +51,22 @@ public final class SectionSprmUncompressor extends SprmUncompressor
    * Used in decompression of a sepx. This performs an operation defined by
    * a single sprm.
    *
-   * @param newSEP The SectionProperty to perfrom the operation on.
+   * @param newSEP The SectionProperty to perform the operation on.
    * @param operand The operation to perform.
    * @param param The operation's parameter.
    * @param varParam The operation variable length parameter.
    */
   static void unCompressSEPOperation (SectionProperties newSEP, SprmOperation sprm)
   {
-    switch (sprm.getOperation())
+    final int operation = sprm.getOperation();
+    final int operand = sprm.getOperand();
+    switch (operation)
     {
       case 0:
-        newSEP.setCnsPgn ((byte) sprm.getOperand());
+        newSEP.setCnsPgn ((byte) operand);
         break;
       case 0x1:
-        newSEP.setIHeadingPgn ((byte) sprm.getOperand());
+        newSEP.setIHeadingPgn ((byte) operand);
         break;
       case 0x2:
         byte[] buf = new byte[sprm.size() - 3];
@@ -73,110 +80,110 @@ public final class SectionSprmUncompressor extends SprmUncompressor
         //not quite sure
         break;
       case 0x5:
-        newSEP.setFEvenlySpaced (getFlag (sprm.getOperand()));
+        newSEP.setFEvenlySpaced (getFlag (operand));
         break;
       case 0x6:
-        newSEP.setFUnlocked (getFlag (sprm.getOperand()));
+        newSEP.setFUnlocked (getFlag (operand));
         break;
       case 0x7:
-        newSEP.setDmBinFirst ((short) sprm.getOperand());
+        newSEP.setDmBinFirst ((short) operand);
         break;
       case 0x8:
-        newSEP.setDmBinOther ((short) sprm.getOperand());
+        newSEP.setDmBinOther ((short) operand);
         break;
       case 0x9:
-        newSEP.setBkc ((byte) sprm.getOperand());
+        newSEP.setBkc ((byte) operand);
         break;
       case 0xa:
-        newSEP.setFTitlePage (getFlag (sprm.getOperand()));
+        newSEP.setFTitlePage (getFlag (operand));
         break;
       case 0xb:
-        newSEP.setCcolM1 ((short) sprm.getOperand());
+        newSEP.setCcolM1 ((short) operand);
         break;
       case 0xc:
-        newSEP.setDxaColumns (sprm.getOperand());
+        newSEP.setDxaColumns (operand);
         break;
       case 0xd:
-        newSEP.setFAutoPgn (getFlag (sprm.getOperand()));
+        newSEP.setFAutoPgn (getFlag (operand));
         break;
       case 0xe:
-        newSEP.setNfcPgn ((byte) sprm.getOperand());
+        newSEP.setNfcPgn ((byte) operand);
         break;
       case 0xf:
-        newSEP.setDyaPgn ((short) sprm.getOperand());
+        newSEP.setDyaPgn ((short) operand);
         break;
       case 0x10:
-        newSEP.setDxaPgn ((short) sprm.getOperand());
+        newSEP.setDxaPgn ((short) operand);
         break;
       case 0x11:
-        newSEP.setFPgnRestart (getFlag (sprm.getOperand()));
+        newSEP.setFPgnRestart (getFlag (operand));
         break;
       case 0x12:
-        newSEP.setFEndNote (getFlag (sprm.getOperand()));
+        newSEP.setFEndNote (getFlag (operand));
         break;
       case 0x13:
-        newSEP.setLnc ((byte) sprm.getOperand());
+        newSEP.setLnc ((byte) operand);
         break;
       case 0x14:
-        newSEP.setGrpfIhdt ((byte) sprm.getOperand());
+        newSEP.setGrpfIhdt ((byte) operand);
         break;
       case 0x15:
-        newSEP.setNLnnMod ((short) sprm.getOperand());
+        newSEP.setNLnnMod ((short) operand);
         break;
       case 0x16:
-        newSEP.setDxaLnn (sprm.getOperand());
+        newSEP.setDxaLnn (operand);
         break;
       case 0x17:
-        newSEP.setDyaHdrTop (sprm.getOperand());
+        newSEP.setDyaHdrTop (operand);
         break;
       case 0x18:
-        newSEP.setDyaHdrBottom (sprm.getOperand());
+        newSEP.setDyaHdrBottom (operand);
         break;
       case 0x19:
-        newSEP.setFLBetween (getFlag (sprm.getOperand()));
+        newSEP.setFLBetween (getFlag (operand));
         break;
       case 0x1a:
-        newSEP.setVjc ((byte) sprm.getOperand());
+        newSEP.setVjc ((byte) operand);
         break;
       case 0x1b:
-        newSEP.setLnnMin ((short) sprm.getOperand());
+        newSEP.setLnnMin ((short) operand);
         break;
       case 0x1c:
-        newSEP.setPgnStart ((short) sprm.getOperand());
+        newSEP.setPgnStart ((short) operand);
         break;
       case 0x1d:
-        newSEP.setDmOrientPage( sprm.getOperand() != 0 );
+        newSEP.setDmOrientPage( operand != 0 );
         break;
       case 0x1e:
 
         //nothing
         break;
       case 0x1f:
-        newSEP.setXaPage (sprm.getOperand());
+        newSEP.setXaPage (operand);
         break;
       case 0x20:
-        newSEP.setYaPage (sprm.getOperand());
+        newSEP.setYaPage (operand);
         break;
       case 0x21:
-        newSEP.setDxaLeft (sprm.getOperand());
+        newSEP.setDxaLeft (operand);
         break;
       case 0x22:
-        newSEP.setDxaRight (sprm.getOperand());
+        newSEP.setDxaRight (operand);
         break;
       case 0x23:
-        newSEP.setDyaTop (sprm.getOperand());
+        newSEP.setDyaTop (operand);
         break;
       case 0x24:
-        newSEP.setDyaBottom (sprm.getOperand());
+        newSEP.setDyaBottom (operand);
         break;
       case 0x25:
-        newSEP.setDzaGutter (sprm.getOperand());
+        newSEP.setDzaGutter (operand);
         break;
       case 0x26:
-        newSEP.setDmPaperReq ((short) sprm.getOperand());
+        newSEP.setDmPaperReq ((short) operand);
         break;
       case 0x27:
-        newSEP.setFPropMark (getFlag (sprm.getOperand()));
+        newSEP.setFPropMark (getFlag (operand));
         break;
       case 0x28:
         break;
@@ -197,42 +204,43 @@ public final class SectionSprmUncompressor extends SprmUncompressor
         newSEP.setBrcRight(new BorderCode(sprm.getGrpprl(), sprm.getGrpprlOffset()));
         break;
       case 0x2f:
-        newSEP.setPgbProp (sprm.getOperand());
+        newSEP.setPgbProp (operand);
         break;
       case 0x30:
-        newSEP.setDxtCharSpace (sprm.getOperand());
+        newSEP.setDxtCharSpace (operand);
         break;
       case 0x31:
-        newSEP.setDyaLinePitch (sprm.getOperand());
+        newSEP.setDyaLinePitch (operand);
         break;
       case 0x33:
-        newSEP.setWTextFlow ((short) sprm.getOperand());
+        newSEP.setWTextFlow ((short) operand);
         break;
       case 0x3C:
         // [MS-DOC], v20140721, 2.6.4, sprmSRncFtn        
-        newSEP.setRncFtn((short) sprm.getOperand());
+        newSEP.setRncFtn((short) operand);
         break;
       case 0x3E:
         // [MS-DOC], v20140721, 2.6.4, sprmSRncEdn        
-        newSEP.setRncEdn((short) sprm.getOperand());
+        newSEP.setRncEdn((short) operand);
         break;
       case 0x3F:
         // [MS-DOC], v20140721, 2.6.4, sprmSNFtn
-        newSEP.setNFtn((int) sprm.getOperand());
+        newSEP.setNFtn(operand);
         break;
       case 0x40:
         // [MS-DOC], v20140721, 2.6.4, sprmSNFtnRef
-        newSEP.setNfcFtnRef((int) sprm.getOperand());
+        newSEP.setNfcFtnRef(operand);
         break;
       case 0x41:
         // [MS-DOC], v20140721, 2.6.4, sprmSNEdn
-        newSEP.setNEdn((int) sprm.getOperand());
+        newSEP.setNEdn(operand);
         break;
       case 0x42:
         // [MS-DOC], v20140721, 2.6.4, sprmSNEdnRef
-        newSEP.setNfcEdnRef((int) sprm.getOperand());
+        newSEP.setNfcEdnRef(operand);
         break;
       default:
+        logger.log(POILogger.INFO, "Unsupported Sprm operation: " + operation + " (" + HexDump.byteToHex(operation) + ")");
         break;
     }
 
