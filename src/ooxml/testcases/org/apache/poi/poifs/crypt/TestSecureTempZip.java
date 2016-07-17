@@ -45,6 +45,7 @@ import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.util.ZipEntrySource;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.TempFile;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.extractor.XSSFEventBasedExcelExtractor;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -58,7 +59,7 @@ public class TestSecureTempZip {
      */
     @Test
     public void protectedTempZip() throws IOException, GeneralSecurityException, XmlException, OpenXML4JException {
-        final File tmpFile = new File("build/tmp", "protectedXlsx.zip");
+        final File tmpFile = TempFile.createTempFile("protectedXlsx", ".zip");
         File tikaProt = XSSFTestDataSamples.getSampleFile("protected_passtika.xlsx");
         FileInputStream fis = new FileInputStream(tikaProt);
         POIFSFileSystem poifs = new POIFSFileSystem(fis);
@@ -101,6 +102,7 @@ public class TestSecureTempZip {
         source.close();
         poifs.close();
         fis.close();
+        tmpFile.delete();
     }
     
     private void copyToFile(InputStream is, File tmpFile, CipherAlgorithm cipherAlgorithm, byte keyBytes[], byte ivBytes[]) throws IOException, GeneralSecurityException {
