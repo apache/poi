@@ -105,13 +105,13 @@ public class OLE2ScratchpadExtractorFactory {
      *  {@link POITextExtractor} for each embedded file.
      */
     public static void identifyEmbeddedResources(POIOLE2TextExtractor ext, List<Entry> dirs, List<InputStream> nonPOIFS) throws IOException {
-      // Find all the embedded directories
+        // Find all the embedded directories
         DirectoryEntry root = ext.getRoot();
-        if(root == null) {
+        if (root == null) {
             throw new IllegalStateException("The extractor didn't know which POIFS it came from!");
         }
 
-        if(ext instanceof WordExtractor) {
+        if (ext instanceof WordExtractor) {
             // These are in ObjectPool -> _... under the root
             try {
                 DirectoryEntry op = (DirectoryEntry)
@@ -129,14 +129,14 @@ public class OLE2ScratchpadExtractorFactory {
             //} else if(ext instanceof PowerPointExtractor) {
             // Tricky, not stored directly in poifs
             // TODO
-        } else if(ext instanceof OutlookTextExtactor) {
+        } else if (ext instanceof OutlookTextExtactor) {
             // Stored in the Attachment blocks
             MAPIMessage msg = ((OutlookTextExtactor)ext).getMAPIMessage();
-            for(AttachmentChunks attachment : msg.getAttachmentFiles()) {
-                if(attachment.attachData != null) {
+            for (AttachmentChunks attachment : msg.getAttachmentFiles()) {
+                if (attachment.attachData != null) {
                     byte[] data = attachment.attachData.getValue();
                     nonPOIFS.add( new ByteArrayInputStream(data) );
-                } else if(attachment.attachmentDirectory != null) {
+                } else if (attachment.attachmentDirectory != null) {
                     dirs.add(attachment.attachmentDirectory.getDirectory());
                 }
             }
