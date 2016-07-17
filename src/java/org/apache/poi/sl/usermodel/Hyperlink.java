@@ -19,6 +19,7 @@ package org.apache.poi.sl.usermodel;
 
 /**
  * A PowerPoint hyperlink
+ * @since POI 3.14 beta 2
  */
 public interface Hyperlink<
     S extends Shape<S,P>,
