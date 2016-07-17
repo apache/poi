@@ -42,35 +42,8 @@ import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.hslf.model.HeadersFooters;
 import org.apache.poi.hslf.model.MovieShape;
 import org.apache.poi.hslf.model.PPFont;
-import org.apache.poi.hslf.record.Document;
-import org.apache.poi.hslf.record.DocumentAtom;
-import org.apache.poi.hslf.record.ExAviMovie;
-import org.apache.poi.hslf.record.ExControl;
-import org.apache.poi.hslf.record.ExEmbed;
-import org.apache.poi.hslf.record.ExEmbedAtom;
-import org.apache.poi.hslf.record.ExMCIMovie;
-import org.apache.poi.hslf.record.ExObjList;
-import org.apache.poi.hslf.record.ExObjListAtom;
-import org.apache.poi.hslf.record.ExOleObjAtom;
-import org.apache.poi.hslf.record.ExOleObjStg;
-import org.apache.poi.hslf.record.ExVideoContainer;
-import org.apache.poi.hslf.record.FontCollection;
-import org.apache.poi.hslf.record.FontEntityAtom;
-import org.apache.poi.hslf.record.HeadersFootersContainer;
-import org.apache.poi.hslf.record.MainMaster;
-import org.apache.poi.hslf.record.Notes;
-import org.apache.poi.hslf.record.PersistPtrHolder;
-import org.apache.poi.hslf.record.PositionDependentRecord;
-import org.apache.poi.hslf.record.PositionDependentRecordContainer;
-import org.apache.poi.hslf.record.Record;
-import org.apache.poi.hslf.record.RecordContainer;
-import org.apache.poi.hslf.record.RecordTypes;
-import org.apache.poi.hslf.record.Slide;
-import org.apache.poi.hslf.record.SlideListWithText;
+import org.apache.poi.hslf.record.*;
 import org.apache.poi.hslf.record.SlideListWithText.SlideAtomsSet;
-import org.apache.poi.hslf.record.SlidePersistAtom;
-import org.apache.poi.hslf.record.TxMasterStyleAtom;
-import org.apache.poi.hslf.record.UserEditAtom;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
@@ -768,16 +741,14 @@ public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagrap
 
 	@Override
 	public HSLFPictureData addPicture(byte[] data, PictureType format) throws IOException {
-	    if (format == null || format.nativeId == -1) {
-	        throw new IllegalArgumentException("Unsupported picture format: " + format); 
-	    }
-	    
-	    byte[] uid = HSLFPictureData.getChecksum(data);
-
-		for (HSLFPictureData pd : getPictureData()) {
-		    if (Arrays.equals(pd.getUID(), uid)) {
-		        return pd;
-		    }
+		if (format == null || format.nativeId == -1) {
+			throw new IllegalArgumentException("Unsupported picture format: " + format); 
+		}
+		
+		HSLFPictureData pd = findPictureData(data);
+		if (pd != null) {
+			// identical picture was already added to the SlideShow
+			return pd;
 		}
 		
 		EscherContainerRecord bstore;
@@ -801,6 +772,7 @@ public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagrap
 		bse.setRecordId(EscherBSERecord.RECORD_ID);
 		bse.setOptions((short) (0x0002 | (format.nativeId << 4)));
 		bse.setSize(pict.getRawData().length + 8);
+		byte[] uid = HSLFPictureData.getChecksum(data);
 		bse.setUid(uid);
 
 		bse.setBlipTypeMacOS((byte) format.nativeId);
@@ -866,6 +838,24 @@ public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagrap
         }
 		return addPicture(data, format);
 	}
+	
+    /**
+     * check if a picture with this picture data already exists in this presentation
+     * 
+     * @param pictureData The picture data to find in the SlideShow
+     * @return {@code null} if picture data is not found in this slideshow
+     */
+    @Override
+    public HSLFPictureData findPictureData(byte[] pictureData) {
+        byte[] uid = HSLFPictureData.getChecksum(pictureData);
+
+        for (HSLFPictureData pic : getPictureData()) {
+            if (Arrays.equals(pic.getUID(), uid)) {
+                return pic;
+            }
+        }
+        return null;
+    }
 
 	/**
 	 * Add a font in this presentation
