@@ -70,16 +70,20 @@ public class DrawTextShape extends DrawSimpleShape {
         // Horizontal flipping applies only to shape outline and not to the text in the shape.
         // Applying flip second time restores the original not-flipped transform
         if (horzFlip ^ vertFlip) {
-            graphics.translate(anchor.getX() + anchor.getWidth(), anchor.getY());
+            final double ax = anchor.getX();
+            final double ay = anchor.getY();
+            graphics.translate(ax + anchor.getWidth(), ay);
             graphics.scale(-1, 1);
-            graphics.translate(-anchor.getX(), -anchor.getY());
+            graphics.translate(-ax, -ay);
         }
 
         Double textRot = s.getTextRotation();
         if (textRot != null && textRot != 0) {
-            graphics.translate(anchor.getCenterX(), anchor.getCenterY());
+            final double cx = anchor.getCenterX();
+            final double cy = anchor.getCenterY();
+            graphics.translate(cx, cy);
             graphics.rotate(Math.toRadians(textRot));
-            graphics.translate(-anchor.getCenterX(), -anchor.getCenterY());
+            graphics.translate(-cx, -cy);
         }
 
         // first dry-run to calculate the total height of the text
@@ -101,16 +105,19 @@ public class DrawTextShape extends DrawSimpleShape {
 
         TextDirection textDir = s.getTextDirection();
         if (textDir == TextDirection.VERTICAL || textDir == TextDirection.VERTICAL_270) {
-            double deg = (textDir == TextDirection.VERTICAL) ? 90 : 270;
-            graphics.translate(anchor.getCenterX(), anchor.getCenterY());
+            final double deg = (textDir == TextDirection.VERTICAL) ? 90 : 270;
+            final double cx = anchor.getCenterX();
+            final double cy = anchor.getCenterY();
+            graphics.translate(cx, cy);
             graphics.rotate(Math.toRadians(deg));
-            graphics.translate(-anchor.getCenterX(), -anchor.getCenterY());
+            graphics.translate(-cx, -cy);
             
             // old top/left edge is now bottom/left or top/right - as we operate on the already
             // rotated drawing context, both verticals can be moved in the same direction
-            double w = anchor.getWidth();
-            double h = anchor.getHeight();
-            graphics.translate((w-h)/2d,(h-w)/2d);
+            final double w = anchor.getWidth();
+            final double h = anchor.getHeight();
+            final double dx = (w-h)/2d;
+            graphics.translate(dx,-dx);
         }
 
         drawParagraphs(graphics, x, y);
