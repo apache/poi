@@ -1208,6 +1208,27 @@ public abstract class BaseTestSheet {
         workbook.close();
         wb.close();
     }
+    
+    @Test
+    public void getHyperlink() throws IOException {
+        Workbook workbook = _testDataProvider.createWorkbook();
+        Hyperlink hyperlink = workbook.getCreationHelper().createHyperlink(Hyperlink.LINK_URL);
+        hyperlink.setAddress("https://poi.apache.org/");
+        
+        Sheet sheet = workbook.createSheet();
+        Cell cell = sheet.createRow(5).createCell(1);
+        
+        assertEquals("list size before add", 0, sheet.getHyperlinkList().size());
+        cell.setHyperlink(hyperlink);
+        assertEquals("list size after add", 1, sheet.getHyperlinkList().size());
+        
+        assertEquals("list", hyperlink, sheet.getHyperlinkList().get(0));
+        assertEquals("row, col", hyperlink, sheet.getHyperlink(5, 1));
+        assertEquals("addr", hyperlink, sheet.getHyperlink(new CellAddress("B4")));
+        assertEquals("no hyperlink at A1", null, sheet.getHyperlink(CellAddress.A1));
+        
+        workbook.close();
+    }
 
 
     @Test

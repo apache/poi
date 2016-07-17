@@ -1159,6 +1159,14 @@ public interface Sheet extends Iterable<Row> {
     public Hyperlink getHyperlink(int row, int column);
     
     /**
+     * Get a Hyperlink in this sheet located in a cell specified by {code addr}
+     *
+     * @param addr The address of the cell containing the hyperlink
+     * @return hyperlink if there is a hyperlink anchored at {@code addr}; otherwise returns {@code null}
+     */
+    public Hyperlink getHyperlink(CellAddress addr);
+    
+    /**
      * Get a list of Hyperlinks in this sheet
      *
      * @return Hyperlinks for the sheet
