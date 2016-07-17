@@ -3078,4 +3078,17 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         assertEquals(70, sheet.getLastRowNum());
         assertEquals(70, sheet.getRow(sheet.getLastRowNum()).getRowNum());
     }
+
+    @Test
+    public void testWorkdayFunction() throws IOException {
+        XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("59106.xlsx");
+        XSSFSheet sheet = workbook.getSheet("Test");
+        Row row = sheet.getRow(1);
+        Cell cell = row.getCell(0);
+        DataFormatter form = new DataFormatter();
+        FormulaEvaluator evaluator = cell.getSheet().getWorkbook().getCreationHelper().createFormulaEvaluator();
+        String result = form.formatCellValue(cell, evaluator);
+
+        assertEquals("09 Mar 2016", result);
+    }
 }

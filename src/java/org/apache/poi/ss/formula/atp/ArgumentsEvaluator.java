@@ -86,7 +86,9 @@ final class ArgumentsEvaluator {
             AreaEvalBase area = (AreaEvalBase) arg;
             for (int i = area.getFirstRow(); i <= area.getLastRow(); i++) {
                 for (int j = area.getFirstColumn(); j <= area.getLastColumn(); j++) {
-                    valuesList.add(evaluateDateArg(area.getValue(i, j), i, j));
+                    // getValue() is replaced with getAbsoluteValue() because loop variables i, j are
+                    // absolute indexes values, but getValue() works with relative indexes values
+                    valuesList.add(evaluateDateArg(area.getAbsoluteValue(i, j), i, j));
                 }
             }
             double[] values = new double[valuesList.size()];
