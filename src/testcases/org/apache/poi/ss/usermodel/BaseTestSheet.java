@@ -1223,8 +1223,9 @@ public abstract class BaseTestSheet {
         assertEquals("list size after add", 1, sheet.getHyperlinkList().size());
         
         assertEquals("list", hyperlink, sheet.getHyperlinkList().get(0));
+        CellAddress B6 = new CellAddress(5, 1);
         assertEquals("row, col", hyperlink, sheet.getHyperlink(5, 1));
-        assertEquals("addr", hyperlink, sheet.getHyperlink(new CellAddress("B4")));
+        assertEquals("addr", hyperlink, sheet.getHyperlink(B6));
         assertEquals("no hyperlink at A1", null, sheet.getHyperlink(CellAddress.A1));
         
         workbook.close();
