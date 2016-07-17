@@ -79,7 +79,7 @@ import org.apache.poi.util.Internal;
  */
 public final class HWPFDocument extends HWPFDocumentCore
 {
-    static final String PROPERTY_PRESERVE_BIN_TABLES = "org.apache.poi.hwpf.preserveBinTables";
+    /*package*/ static final String PROPERTY_PRESERVE_BIN_TABLES = "org.apache.poi.hwpf.preserveBinTables";
     private static final String PROPERTY_PRESERVE_TEXT_TABLE = "org.apache.poi.hwpf.preserveTextTable";
 
     private static final String STREAM_DATA = "Data";
@@ -583,6 +583,11 @@ public final class HWPFDocument extends HWPFDocumentCore
 
   /**
    * Writes out the word file that is represented by an instance of this class.
+   * 
+   * If {@code stream} is a {@link java.io.FileOutputStream} on a networked drive
+   * or has a high cost/latency associated with each written byte,
+   * consider wrapping the OutputStream in a {@link java.io.BufferedOutputStream}
+   * to improve write performance.
    *
    * @param out The OutputStream to write to.
    * @throws IOException If there is an unexpected IOException from the passed
