@@ -25,11 +25,8 @@ import org.apache.poi.util.LittleEndian;
 /**
  * This class is used to represent a sprm operation from a Word 97/2000/XP
  * document.
- * 
- * @author Ryan Ackley
- * @version 1.0
  */
-@Internal
+@Internal(since="3.8 beta 4")
 public final class SprmOperation
 {
     private static final BitField BITFIELD_OP = BitFieldFactory
@@ -50,11 +47,6 @@ public final class SprmOperation
     public static final int TYPE_SEP = 4;
     public static final int TYPE_TAP = 5;
 
-    @Deprecated
-    final static public int PAP_TYPE = TYPE_PAP;
-    @Deprecated
-    final static public int TAP_TYPE = TYPE_TAP;
-
     public static int getOperationFromOpcode( short opcode )
     {
         return BITFIELD_OP.getValue( opcode );
@@ -65,11 +57,11 @@ public final class SprmOperation
         return BITFIELD_TYPE.getValue( opcode );
     }
 
-    private int _offset;
+    private final int _offset;
     private int _gOffset;
-    private byte[] _grpprl;
-    private int _size;
-    private short _value;
+    private final byte[] _grpprl;
+    private final int _size;
+    private final short _value;
 
     public SprmOperation( byte[] grpprl, int offset )
     {
@@ -136,7 +128,8 @@ public final class SprmOperation
 
     public short getOperandShortSigned()
     {
-        if ( getSizeCode() != 2 && getSizeCode() != 4 && getSizeCode() != 5 )
+        int sizeCode = getSizeCode();
+        if ( sizeCode != 2 && sizeCode != 4 && sizeCode != 5 )
             throw new UnsupportedOperationException(
                     "Current SPRM doesn't have signed short operand: " + this );
 
@@ -175,8 +168,8 @@ public final class SprmOperation
             int offset = _gOffset;
             if ( sprm == SPRM_LONG_TABLE || sprm == SPRM_LONG_PARAGRAPH )
             {
-                int retVal = ( 0x0000ffff & LittleEndian.getShort( _grpprl,
-                        offset ) ) + 3;
+                int retVal = ( 0x0000ffff &
+                        LittleEndian.getShort( _grpprl, offset ) ) + 3;
                 _gOffset += 2;
                 return retVal;
             }
