@@ -20,10 +20,10 @@ package org.apache.poi.hssf.usermodel;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import org.junit.Test;
 
 import java.io.IOException;
 
+import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ss.usermodel.BaseTestHyperlink;
@@ -34,6 +34,7 @@ import org.apache.poi.xssf.usermodel.XSSFCreationHelper;
 import org.apache.poi.xssf.usermodel.XSSFHyperlink;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 */
+import org.junit.Test;
 
 /**
  * Tests HSSFHyperlink.
@@ -64,7 +65,7 @@ public final class TestHSSFHyperlink extends BaseTestHyperlink {
         assertEquals("POI", link.getLabel());
         assertEquals("POI", cell.getRichStringCellValue().getString());
         assertEquals("http://poi.apache.org/", link.getAddress());
-        assertEquals(HSSFHyperlink.LINK_URL, link.getType());
+        assertEquals(HyperlinkType.URL, link.getTypeEnum());
 
         cell = sheet.getRow(8).getCell(0);
         link = cell.getHyperlink();
@@ -72,7 +73,7 @@ public final class TestHSSFHyperlink extends BaseTestHyperlink {
         assertEquals("HSSF", link.getLabel());
         assertEquals("HSSF", cell.getRichStringCellValue().getString());
         assertEquals("http://poi.apache.org/hssf/", link.getAddress());
-        assertEquals(HSSFHyperlink.LINK_URL, link.getType());
+        assertEquals(HyperlinkType.URL, link.getTypeEnum());
 
         sheet = wb.getSheet("Emails");
         cell = sheet.getRow(4).getCell(0);
@@ -81,7 +82,7 @@ public final class TestHSSFHyperlink extends BaseTestHyperlink {
         assertEquals("dev", link.getLabel());
         assertEquals("dev", cell.getRichStringCellValue().getString());
         assertEquals("mailto:dev@poi.apache.org", link.getAddress());
-        assertEquals(HSSFHyperlink.LINK_EMAIL, link.getType());
+        assertEquals(HyperlinkType.EMAIL, link.getTypeEnum());
 
         sheet = wb.getSheet("Internal");
         cell = sheet.getRow(4).getCell(0);
@@ -91,7 +92,7 @@ public final class TestHSSFHyperlink extends BaseTestHyperlink {
         assertEquals("Link To First Sheet", cell.getRichStringCellValue().getString());
         assertEquals("WebLinks!A1", link.getTextMark());
         assertEquals("WebLinks!A1", link.getAddress());
-        assertEquals(HSSFHyperlink.LINK_DOCUMENT, link.getType());
+        assertEquals(HyperlinkType.DOCUMENT, link.getTypeEnum());
     }
 
     @Test
@@ -141,14 +142,14 @@ public final class TestHSSFHyperlink extends BaseTestHyperlink {
         //cell A1 has a link to 'Target Sheet-1'!A1
         cell = sheet.createRow(0).createCell(0);
         cell.setCellValue("Worksheet Link");
-        link = new HSSFHyperlink(HSSFHyperlink.LINK_DOCUMENT);
+        link = new HSSFHyperlink(HyperlinkType.DOCUMENT);
         link.setTextMark("'Target Sheet'!A1");
         cell.setHyperlink(link);
 
         //cell B1 has a link to cell A1 on the same sheet
         cell = sheet.createRow(1).createCell(0);
         cell.setCellValue("Worksheet Link");
-        link = new HSSFHyperlink(HSSFHyperlink.LINK_DOCUMENT);
+        link = new HSSFHyperlink(HyperlinkType.DOCUMENT);
         link.setAddress("'Hyperlinks'!A1");
         cell.setHyperlink(link);
 
@@ -202,7 +203,7 @@ public final class TestHSSFHyperlink extends BaseTestHyperlink {
 
         cell = sheet.createRow(1).createCell(0);
         cell.setCellValue("File Link");
-        link = new HSSFHyperlink(HSSFHyperlink.LINK_FILE);
+        link = new HSSFHyperlink(HyperlinkType.FILE);
         link.setAddress("testfolder\\test.PDF");
         cell.setHyperlink(link);
 
@@ -239,7 +240,7 @@ public final class TestHSSFHyperlink extends BaseTestHyperlink {
         assertEquals(2, link1.getLastRow());
 
         //assign a hyperlink to A4
-        HSSFHyperlink link2 = new HSSFHyperlink(HSSFHyperlink.LINK_DOCUMENT);
+        HSSFHyperlink link2 = new HSSFHyperlink(HyperlinkType.DOCUMENT);
         link2.setAddress("Sheet2!A2");
         HSSFCell cell2 = sheet.getRow(3).getCell(0);
         cell2.setHyperlink(link2);

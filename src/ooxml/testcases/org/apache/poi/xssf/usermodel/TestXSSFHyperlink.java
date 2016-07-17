@@ -71,7 +71,7 @@ public final class TestXSSFHyperlink extends BaseTestHyperlink {
                 "http://apache.org/default.php?s=isTramsformed&submit=Search&la=*&li=*"};
         for(int i = 0; i < urls.length; i++){
             String s = urls[i];
-            XSSFHyperlink link = createHelper.createHyperlink(Hyperlink.LINK_URL);
+            XSSFHyperlink link = createHelper.createHyperlink(HyperlinkType.URL);
             link.setAddress(s);
 
             XSSFCell cell = row.createCell(i);
@@ -111,7 +111,7 @@ public final class TestXSSFHyperlink extends BaseTestHyperlink {
                 "\\poi"};
         for(String s : invalidURLs){
             try {
-                createHelper.createHyperlink(Hyperlink.LINK_URL).setAddress(s);
+                createHelper.createHyperlink(HyperlinkType.URL).setAddress(s);
                 fail("expected IllegalArgumentException: " + s);
             } catch (IllegalArgumentException e){
 
@@ -153,7 +153,7 @@ public final class TestXSSFHyperlink extends BaseTestHyperlink {
         Row r17 = sheet.createRow(17);
         Cell r17c = r17.createCell(2);
 
-        Hyperlink hyperlink = createHelper.createHyperlink(Hyperlink.LINK_URL);
+        Hyperlink hyperlink = createHelper.createHyperlink(HyperlinkType.URL);
         hyperlink.setAddress("http://poi.apache.org/spreadsheet/");
         hyperlink.setLabel("POI SS Link");
         r17c.setHyperlink(hyperlink);
@@ -161,8 +161,8 @@ public final class TestXSSFHyperlink extends BaseTestHyperlink {
         assertEquals(5, sheet.getNumHyperlinks());
         doTestHyperlinkContents(sheet);
 
-        assertEquals(Hyperlink.LINK_URL,
-                sheet.getRow(17).getCell(2).getHyperlink().getType());
+        assertEquals(HyperlinkType.URL,
+                sheet.getRow(17).getCell(2).getHyperlink().getTypeEnum());
         assertEquals("POI SS Link",
                 sheet.getRow(17).getCell(2).getHyperlink().getLabel());
         assertEquals("http://poi.apache.org/spreadsheet/",
@@ -182,8 +182,8 @@ public final class TestXSSFHyperlink extends BaseTestHyperlink {
         assertEquals(5, sheet.getNumHyperlinks());
         doTestHyperlinkContents(sheet);
 
-        assertEquals(Hyperlink.LINK_URL,
-                sheet.getRow(17).getCell(2).getHyperlink().getType());
+        assertEquals(HyperlinkType.URL,
+                sheet.getRow(17).getCell(2).getHyperlink().getTypeEnum());
         assertEquals("POI SS Link",
                 sheet.getRow(17).getCell(2).getHyperlink().getLabel());
         assertEquals("http://poi.apache.org/spreadsheet/",
@@ -200,32 +200,32 @@ public final class TestXSSFHyperlink extends BaseTestHyperlink {
         assertNotNull(sheet.getRow(16).getCell(2).getHyperlink());
 
         // First is a link to poi
-        assertEquals(Hyperlink.LINK_URL,
-                sheet.getRow(3).getCell(2).getHyperlink().getType());
+        assertEquals(HyperlinkType.URL,
+                sheet.getRow(3).getCell(2).getHyperlink().getTypeEnum());
         assertEquals(null,
                 sheet.getRow(3).getCell(2).getHyperlink().getLabel());
         assertEquals("http://poi.apache.org/",
                 sheet.getRow(3).getCell(2).getHyperlink().getAddress());
 
         // Next is an internal doc link
-        assertEquals(Hyperlink.LINK_DOCUMENT,
-                sheet.getRow(14).getCell(2).getHyperlink().getType());
+        assertEquals(HyperlinkType.DOCUMENT,
+                sheet.getRow(14).getCell(2).getHyperlink().getTypeEnum());
         assertEquals("Internal hyperlink to A2",
                 sheet.getRow(14).getCell(2).getHyperlink().getLabel());
         assertEquals("Sheet1!A2",
                 sheet.getRow(14).getCell(2).getHyperlink().getAddress());
 
         // Next is a file
-        assertEquals(Hyperlink.LINK_FILE,
-                sheet.getRow(15).getCell(2).getHyperlink().getType());
+        assertEquals(HyperlinkType.FILE,
+                sheet.getRow(15).getCell(2).getHyperlink().getTypeEnum());
         assertEquals(null,
                 sheet.getRow(15).getCell(2).getHyperlink().getLabel());
         assertEquals("WithVariousData.xlsx",
                 sheet.getRow(15).getCell(2).getHyperlink().getAddress());
 
         // Last is a mailto
-        assertEquals(Hyperlink.LINK_EMAIL,
-                sheet.getRow(16).getCell(2).getHyperlink().getType());
+        assertEquals(HyperlinkType.EMAIL,
+                sheet.getRow(16).getCell(2).getHyperlink().getTypeEnum());
         assertEquals(null,
                 sheet.getRow(16).getCell(2).getHyperlink().getLabel());
         assertEquals("mailto:dev@poi.apache.org?subject=XSSF%20Hyperlinks",
@@ -242,13 +242,13 @@ public final class TestXSSFHyperlink extends BaseTestHyperlink {
 
         assertEquals(sh1.getNumberOfComments(), sh2.getNumberOfComments());
         XSSFHyperlink l1 = sh1.getHyperlink(0, 1);
-        assertEquals(XSSFHyperlink.LINK_DOCUMENT, l1.getType());
+        assertEquals(HyperlinkType.DOCUMENT, l1.getTypeEnum());
         assertEquals("B1", l1.getCellRef());
         assertEquals("Sort on Titel", l1.getTooltip());
 
         XSSFHyperlink l2 = sh2.getHyperlink(0, 1);
         assertEquals(l1.getTooltip(), l2.getTooltip());
-        assertEquals(XSSFHyperlink.LINK_DOCUMENT, l2.getType());
+        assertEquals(HyperlinkType.DOCUMENT, l2.getTypeEnum());
         assertEquals("B1", l2.getCellRef());
     }
 
@@ -313,22 +313,22 @@ public final class TestXSSFHyperlink extends BaseTestHyperlink {
         
         XSSFHyperlink link = sh.getHyperlink(A2);
         assertEquals("address", "A2", link.getCellRef());
-        assertEquals("link type", Hyperlink.LINK_URL, link.getType());
+        assertEquals("link type", HyperlinkType.URL, link.getTypeEnum());
         assertEquals("link target", "http://twitter.com/#!/apacheorg", link.getAddress());
         
         link = sh.getHyperlink(A3);
         assertEquals("address", "A3", link.getCellRef());
-        assertEquals("link type", Hyperlink.LINK_URL, link.getType());
+        assertEquals("link type", HyperlinkType.URL, link.getTypeEnum());
         assertEquals("link target", "http://www.bailii.org/databases.html#ie", link.getAddress());
         
         link = sh.getHyperlink(A4);
         assertEquals("address", "A4", link.getCellRef());
-        assertEquals("link type", Hyperlink.LINK_URL, link.getType());
+        assertEquals("link type", HyperlinkType.URL, link.getTypeEnum());
         assertEquals("link target", "https://en.wikipedia.org/wiki/Apache_POI#See_also", link.getAddress());
         
         link = sh.getHyperlink(A7);
         assertEquals("address", "A7", link.getCellRef());
-        assertEquals("link type", Hyperlink.LINK_DOCUMENT, link.getType());
+        assertEquals("link type", HyperlinkType.DOCUMENT, link.getTypeEnum());
         assertEquals("link target", "Sheet1", link.getAddress());
         
         wb.close();

@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.util.CellAddress;
@@ -514,32 +515,32 @@ public abstract class BaseTestSheetShiftRows {
         // CellAddress=A1, shifted to A4
         Cell cell = row.createCell(0);
         cell.setCellStyle(hlinkStyle);
-        createHyperlink(helper, cell, Hyperlink.LINK_DOCUMENT, "test!E1");
+        createHyperlink(helper, cell, HyperlinkType.DOCUMENT, "test!E1");
         
         // URL
         cell = row.createCell(1);
         // CellAddress=B1, shifted to B4
         cell.setCellStyle(hlinkStyle);
-        createHyperlink(helper, cell, Hyperlink.LINK_URL, "http://poi.apache.org/");
+        createHyperlink(helper, cell, HyperlinkType.URL, "http://poi.apache.org/");
         
         // row0 will be shifted on top of row1, so this URL should be removed from the workbook
         Row overwrittenRow = sheet.createRow(3);
         cell = overwrittenRow.createCell(2);
         // CellAddress=C4, will be overwritten (deleted)
         cell.setCellStyle(hlinkStyle);
-        createHyperlink(helper, cell, Hyperlink.LINK_EMAIL, "mailto:poi@apache.org");
+        createHyperlink(helper, cell, HyperlinkType.EMAIL, "mailto:poi@apache.org");
         
         // hyperlinks on this row are unaffected by the row shifting, so the hyperlinks should not move
         Row unaffectedRow = sheet.createRow(20);
         cell = unaffectedRow.createCell(3);
         // CellAddress=D21, will be unaffected
         cell.setCellStyle(hlinkStyle);
-        createHyperlink(helper, cell, Hyperlink.LINK_FILE, "54524.xlsx");
+        createHyperlink(helper, cell, HyperlinkType.FILE, "54524.xlsx");
         
         cell = wb.createSheet("other").createRow(0).createCell(0);
         // CellAddress=Other!A1, will be unaffected
         cell.setCellStyle(hlinkStyle);
-        createHyperlink(helper, cell, Hyperlink.LINK_URL, "http://apache.org/");
+        createHyperlink(helper, cell, HyperlinkType.URL, "http://apache.org/");
         
         int startRow = 0;
         int endRow = 0;
@@ -555,10 +556,10 @@ public abstract class BaseTestSheetShiftRows {
         
         // document link anchored on a shifted cell should be moved
         // Note that hyperlinks do not track what they point to, so this hyperlink should still refer to test!E1
-        verifyHyperlink(shiftedRow.getCell(0), Hyperlink.LINK_DOCUMENT, "test!E1");
+        verifyHyperlink(shiftedRow.getCell(0), HyperlinkType.DOCUMENT, "test!E1");
         
         // URL, EMAIL, and FILE links anchored on a shifted cell should be moved
-        verifyHyperlink(shiftedRow.getCell(1), Hyperlink.LINK_URL, "http://poi.apache.org/");
+        verifyHyperlink(shiftedRow.getCell(1), HyperlinkType.URL, "http://poi.apache.org/");
         
         // Make sure hyperlinks were moved and not copied
         assertNull("Document hyperlink should be moved, not copied", sh.getHyperlink(0, 0));
@@ -578,12 +579,12 @@ public abstract class BaseTestSheetShiftRows {
         // Make sure unaffected rows are not shifted
         Cell unaffectedCell = sh.getRow(20).getCell(3);
         assertTrue(cellHasHyperlink(unaffectedCell));
-        verifyHyperlink(unaffectedCell, Hyperlink.LINK_FILE, "54524.xlsx");
+        verifyHyperlink(unaffectedCell, HyperlinkType.FILE, "54524.xlsx");
         
         // Make sure cells on other sheets are not affected
         unaffectedCell = read.getSheet("other").getRow(0).getCell(0);
         assertTrue(cellHasHyperlink(unaffectedCell));
-        verifyHyperlink(unaffectedCell, Hyperlink.LINK_URL, "http://apache.org/");
+        verifyHyperlink(unaffectedCell, HyperlinkType.URL, "http://apache.org/");
         
         read.close();
     }
@@ -678,17 +679,17 @@ public abstract class BaseTestSheetShiftRows {
         wb.close();
     }
 
-    private void createHyperlink(CreationHelper helper, Cell cell, int linkType, String ref) {
+    private void createHyperlink(CreationHelper helper, Cell cell, HyperlinkType linkType, String ref) {
         cell.setCellValue(ref);
         Hyperlink link = helper.createHyperlink(linkType);
         link.setAddress(ref);
         cell.setHyperlink(link);
     }
     
-    private void verifyHyperlink(Cell cell, int linkType, String ref) {
+    private void verifyHyperlink(Cell cell, HyperlinkType linkType, String ref) {
         assertTrue(cellHasHyperlink(cell));
         Hyperlink link = cell.getHyperlink();
-        assertEquals(linkType, link.getType());
+        assertEquals(linkType, link.getTypeEnum());
         assertEquals(ref, link.getAddress());
     }
     

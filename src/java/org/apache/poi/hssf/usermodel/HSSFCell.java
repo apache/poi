@@ -1109,15 +1109,15 @@ public class HSSFCell implements Cell {
         link.setFirstColumn(_record.getColumn());
         link.setLastColumn(_record.getColumn());
 
-        switch(link.getType()){
-            case HSSFHyperlink.LINK_EMAIL:
-            case HSSFHyperlink.LINK_URL:
+        switch(link.getTypeEnum()){
+            case EMAIL:
+            case URL:
                 link.setLabel("url");
                 break;
-            case HSSFHyperlink.LINK_FILE:
+            case FILE:
                 link.setLabel("file");
                 break;
-            case HSSFHyperlink.LINK_DOCUMENT:
+            case DOCUMENT:
                 link.setLabel("place");
                 break;
             default:
