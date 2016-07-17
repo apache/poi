@@ -58,5 +58,11 @@ public interface CreationHelper {
      */
     ExtendedColor createExtendedColor();
 
+    /**
+     * Creates a ClientAnchor. Use this object to position drawing object in a sheet
+     *
+     * @return a ClientAnchor instance
+     * @see org.apache.poi.ss.usermodel.Drawing
+     */
     ClientAnchor createClientAnchor();
 }

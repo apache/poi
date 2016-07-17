@@ -22,6 +22,7 @@ import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.ExtendedColor;
 import org.apache.poi.ss.usermodel.Hyperlink;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.xssf.usermodel.XSSFCreationHelper;
@@ -33,35 +34,47 @@ import org.apache.poi.xssf.usermodel.XSSFRichTextString;
  *  regular XSSF Workbook
  */
 public class SXSSFCreationHelper implements CreationHelper {
-    private static POILogger logger = POILogFactory.getLogger(SXSSFCreationHelper.class);
+    private static final POILogger logger = POILogFactory.getLogger(SXSSFCreationHelper.class);
     
-    private SXSSFWorkbook wb;
-    private XSSFCreationHelper helper;
+    private final SXSSFWorkbook wb;
+    private final XSSFCreationHelper helper;
     
+    /**
+     * Should only be called by {@link SXSSFWorkbook#getCreationHelper()}
+     *
+     * @param workbook the workbook to create objects for
+     */
+    @Internal
     public SXSSFCreationHelper(SXSSFWorkbook workbook) {
         this.helper = new XSSFCreationHelper(workbook.getXSSFWorkbook());
         this.wb = workbook;
     }
 
+    @Override
     public XSSFRichTextString createRichTextString(String text) {
         logger.log(POILogger.INFO, "SXSSF doesn't support Rich Text Strings, any formatting information will be lost");
         return new XSSFRichTextString(text);
     }
 
+    @Override
     public SXSSFFormulaEvaluator createFormulaEvaluator() {
         return new SXSSFFormulaEvaluator(wb);
     }
 
     // Pass-through methods
+    @Override
     public DataFormat createDataFormat() {
         return helper.createDataFormat();
     }
+    @Override
     public Hyperlink createHyperlink(int type) {
         return helper.createHyperlink(type);
     }
+    @Override
     public ExtendedColor createExtendedColor() {
         return helper.createExtendedColor();
     }
+    @Override
     public ClientAnchor createClientAnchor() {
         return helper.createClientAnchor();
     }
