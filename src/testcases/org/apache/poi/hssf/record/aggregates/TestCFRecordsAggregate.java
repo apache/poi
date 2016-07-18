@@ -64,8 +64,7 @@ public final class TestCFRecordsAggregate extends TestCase {
         recs.add(rule1);
         recs.add(rule2);
         recs.add(rule3);
-        CFRecordsAggregate record;
-        record = CFRecordsAggregate.createCFAggregate(new RecordStream(recs, 0));
+        CFRecordsAggregate record = CFRecordsAggregate.createCFAggregate(new RecordStream(recs, 0));
 
         // Serialize
         byte [] serializedRecord = new byte[record.getRecordSize()];
@@ -81,12 +80,16 @@ public final class TestCFRecordsAggregate extends TestCase {
 
         header = (CFHeaderRecord)recs.get(0);
         rule1 = (CFRuleRecord)recs.get(1);
+        assertNotNull(rule1);
         rule2 = (CFRuleRecord)recs.get(2);
+        assertNotNull(rule2);
         rule3 = (CFRuleRecord)recs.get(3);
+        assertNotNull(rule3);
         cellRanges = header.getCellRanges();
 
         assertEquals(2, cellRanges.length);
         assertEquals(3, header.getNumberOfConditionalFormats());
+        assertFalse(header.getNeedRecalculation());
 
         record = CFRecordsAggregate.createCFAggregate(new RecordStream(recs, 0));
 
@@ -97,12 +100,16 @@ public final class TestCFRecordsAggregate extends TestCase {
 
         header = record.getHeader();
         rule1 = record.getRule(0);
+        assertNotNull(rule1);
         rule2 = record.getRule(1);
+        assertNotNull(rule2);
         rule3 = record.getRule(2);
+        assertNotNull(rule3);
         cellRanges = header.getCellRanges();
 
         assertEquals(2, cellRanges.length);
         assertEquals(3, header.getNumberOfConditionalFormats());
+        assertFalse(header.getNeedRecalculation());
     }
 
     /**
@@ -144,15 +151,20 @@ public final class TestCFRecordsAggregate extends TestCase {
         try {
             new CFRecordsAggregate(cellRanges, rules);
             fail("Shouldn't be able to mix between types");
-        } catch (IllegalArgumentException e) {}
+        } catch (IllegalArgumentException e) {
+            // expected here
+        }
         
         
         rules = new CFRuleBase[] { CFRuleRecord.create(sheet, "7") };
         CFRecordsAggregate agg = new CFRecordsAggregate(cellRanges, rules);
+        assertTrue(agg.getHeader().getNeedRecalculation());
         
         try {
             agg.addRule(CFRule12Record.create(sheet, "7"));
             fail("Shouldn't be able to mix between types");
-        } catch (IllegalArgumentException e) {}
+        } catch (IllegalArgumentException e) {
+            // expected here
+        }
     }
 }

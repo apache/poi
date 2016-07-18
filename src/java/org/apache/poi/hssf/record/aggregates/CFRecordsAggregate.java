@@ -83,10 +83,18 @@ public final class CFRecordsAggregate extends RecordAggregate {
         this(createHeader(regions, rules), rules);
     }
     private static CFHeaderBase createHeader(CellRangeAddress[] regions, CFRuleBase[] rules) {
+        final CFHeaderBase header;
         if (rules.length == 0 || rules[0] instanceof CFRuleRecord) {
-            return new CFHeaderRecord(regions, rules.length);
+            header = new CFHeaderRecord(regions, rules.length);
+        } else {
+            header = new CFHeader12Record(regions, rules.length);
         }
-        return new CFHeader12Record(regions, rules.length);
+
+        // set the "needs recalculate" by default to avoid Excel handling conditional formatting incorrectly
+        // see bug 52122 for details
+        header.setNeedRecalculation(true);
+
+        return header;
     }
 
     /**
