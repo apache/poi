@@ -17,7 +17,6 @@
 package org.apache.poi.ss.format;
 
 import junit.framework.TestCase;
-import org.apache.poi.ss.format.CellFormatCondition;
 
 public class TestCellFormatCondition extends TestCase {
     public void testSVConditions() {

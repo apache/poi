@@ -90,12 +90,12 @@ public final class RecordFactory {
                 throw new RuntimeException(e);
             } catch (InvocationTargetException e) {
                 Throwable t = e.getTargetException();
-                if (t instanceof RecordFormatException) {
-                    throw (RecordFormatException)t;
+                if (t instanceof org.apache.poi.util.RecordFormatException) {
+                    throw (org.apache.poi.util.RecordFormatException)t;
                 } else if (t instanceof EncryptedDocumentException) {
                     throw (EncryptedDocumentException)t;
                 } else {
-                    throw new RecordFormatException("Unable to construct record instance" , t);
+                    throw new org.apache.poi.util.RecordFormatException("Unable to construct record instance" , t);
                 }
             }
         }
@@ -123,7 +123,7 @@ public final class RecordFactory {
             } catch (IllegalAccessException e) {
                 throw new RuntimeException(e);
             } catch (InvocationTargetException e) {
-                throw new RecordFormatException("Unable to construct record instance" , e.getTargetException());
+                throw new org.apache.poi.util.RecordFormatException("Unable to construct record instance" , e.getTargetException());
             }
         }
         @Override
@@ -443,7 +443,7 @@ public final class RecordFactory {
             try {
                 sid = recClass.getField("sid").getShort(null);
             } catch (Exception illegalArgumentException) {
-                throw new RecordFormatException(
+                throw new org.apache.poi.util.RecordFormatException(
                         "Unable to determine record types");
             }
             Integer key = Integer.valueOf(sid);
@@ -482,9 +482,9 @@ public final class RecordFactory {
      *
      * @return an array of Records created from the InputStream
      *
-     * @exception RecordFormatException on error processing the InputStream
+     * @exception org.apache.poi.util.RecordFormatException on error processing the InputStream
      */
-    public static List<Record> createRecords(InputStream in) throws RecordFormatException {
+    public static List<Record> createRecords(InputStream in) throws org.apache.poi.util.RecordFormatException {
 
         List<Record> records = new ArrayList<Record>(NUM_RECORDS);
 

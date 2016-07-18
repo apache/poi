@@ -51,8 +51,7 @@ public final class ConditionalFormattingTable extends RecordAggregate {
 	}
 
 	public void visitContainedRecords(RecordVisitor rv) {
-		for (int i = 0; i < _cfHeaders.size(); i++) {
-			CFRecordsAggregate subAgg = _cfHeaders.get(i);
+		for (CFRecordsAggregate subAgg : _cfHeaders) {
 			subAgg.visitContainedRecords(rv);
 		}
 	}
