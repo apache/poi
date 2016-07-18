@@ -340,7 +340,7 @@ public final class DStarRunner implements Function3Arg {
         }
         else if(condition instanceof NumericValueEval) {
             double conditionNumber = ((NumericValueEval)condition).getNumberValue();
-            Double valueNumber = getNumerFromValueEval(value);
+            Double valueNumber = getNumberFromValueEval(value);
             if(valueNumber == null) {
                 return false;
             }
@@ -405,7 +405,7 @@ public final class DStarRunner implements Function3Arg {
         return false; // Can not be reached.
     }
     
-    private static Double getNumerFromValueEval(ValueEval value) {
+    private static Double getNumberFromValueEval(ValueEval value) {
         if(value instanceof NumericValueEval) {
             return ((NumericValueEval)value).getNumberValue();
         }
