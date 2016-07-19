@@ -193,6 +193,9 @@ public final class DStarRunner implements Function3Arg {
         final int width = db.getWidth();
         for(int column = 0; column < width; ++column) {
             ValueEval columnNameValueEval = db.getValue(0, column);
+            if(solveReference(columnNameValueEval) instanceof BlankEval) {
+                continue;
+            }
             String columnName = getStringFromValueEval(columnNameValueEval);
             if(name.equals(columnName)) {
                 resultColumn = column;
