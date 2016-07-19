@@ -74,6 +74,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
+import org.apache.poi.ss.usermodel.ComparisonOperator;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Name;
@@ -3035,5 +3036,49 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         shape.setShapeId(1027);
         cmo = (CommonObjectDataSubRecord)shape.getObjRecord().getSubRecords().get(0);
         assertEquals(1027, cmo.getObjectId());
+    }
+    
+    // As of POI 3.15 beta 2, LibreOffice does not display the diagonal border while it does display the bottom border
+    // I have not checked Excel to know if this is a LibreOffice or a POI problem.
+    @Test
+    public void test53564() throws IOException {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet = wb.createSheet("Page 1");
+        final short BLUE = 30;
+        
+        HSSFSheetConditionalFormatting scf = sheet.getSheetConditionalFormatting();
+        HSSFConditionalFormattingRule rule = scf.createConditionalFormattingRule(ComparisonOperator.GT, "10");
+        
+        HSSFBorderFormatting bord = rule.createBorderFormatting();
+        bord.setBorderDiagonal(BorderStyle.THICK);
+        assertEquals(BorderStyle.THICK, bord.getBorderDiagonal());
+
+        bord.setBackwardDiagonalOn(true);
+        assertTrue(bord.isBackwardDiagonalOn());
+
+        bord.setForwardDiagonalOn(true);
+        assertTrue(bord.isForwardDiagonalOn());
+        
+        bord.setDiagonalBorderColor(BLUE);
+        assertEquals(BLUE, bord.getDiagonalBorderColor());
+
+        // Create the bottom border style so we know what a border is supposed to look like
+        bord.setBorderBottom(BorderStyle.THICK);
+        assertEquals(BorderStyle.THICK, bord.getBorderBottom());
+        bord.setBottomBorderColor(BLUE);
+        assertEquals(BLUE, bord.getBottomBorderColor());
+        
+        CellRangeAddress[] A2_D4 = {new CellRangeAddress(1, 3, 0, 3)};
+        scf.addConditionalFormatting(A2_D4, rule);
+        
+        // Set a cell value within the conditional formatting range whose rule would resolve to True.
+        Cell C3 = sheet.createRow(2).createCell(2);
+        C3.setCellValue(30.0);
+        
+        // Manually check the output file with Excel to see if the diagonal border is present
+        //OutputStream fos = new FileOutputStream("/tmp/53564.xls");
+        //wb.write(fos);
+        //fos.close();
+        wb.close();
     }
 }
