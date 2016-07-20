@@ -20,7 +20,6 @@ package org.apache.poi.hsmf;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,7 +28,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.poi.POIDocument;
+import org.apache.poi.POIReadOnlyDocument;
 import org.apache.poi.hmef.attribute.MAPIRtfAttribute;
 import org.apache.poi.hsmf.datatypes.AttachmentChunks;
 import org.apache.poi.hsmf.datatypes.AttachmentChunks.AttachmentChunksSorter;
@@ -63,7 +62,7 @@ import org.apache.poi.util.POILogger;
  *  
  * [MS-OXCMSG]: Message and Attachment Object Protocol Specification
  */
-public class MAPIMessage extends POIDocument {
+public class MAPIMessage extends POIReadOnlyDocument {
    /** For logging problems we spot with the file */
    private POILogger logger = POILogFactory.getLogger(MAPIMessage.class);
    
@@ -600,14 +599,6 @@ public class MAPIMessage extends POIDocument {
     */
    public AttachmentChunks[] getAttachmentFiles() {
       return attachmentChunks;
-   }
-
-
-   /**
-    * Note - not yet supported, sorry.
-    */
-   public void write(OutputStream out) throws IOException {
-      throw new UnsupportedOperationException("Writing isn't yet supported for HSMF, sorry");
    }
 
 
