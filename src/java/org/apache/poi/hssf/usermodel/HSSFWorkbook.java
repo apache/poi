@@ -1294,24 +1294,16 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     /**
      * Write out this workbook to the currently open {@link File} via the
      *  writeable {@link POIFSFileSystem} it was opened as. 
+     *  
      * <p>This will fail (with an {@link IllegalStateException} if the
      *  Workbook was opened read-only, opened from an {@link InputStream}
      *   instead of a File, or if this is not the root document. For those cases, 
-     *   you must use {@link #write(OutputStream)} to write to a brand new stream.
+     *   you must use {@link #write(OutputStream)} or {@link #write(File)} to 
+     *   write to a brand new document.
      */
     //@Override // TODO Not yet on POIDocument
     public void write() throws IOException {
-        // TODO Push much of this logic down to POIDocument, as will be common for most formats
-        if (directory == null) {
-            throw new IllegalStateException("Newly created Workbook, cannot save in-place");
-        }
-        if (directory.getParent() != null) {
-            throw new IllegalStateException("This is not the root document, cannot save in-place");
-        }
-        if (directory.getFileSystem() == null ||
-            !directory.getFileSystem().isInPlaceWriteable()) {
-            throw new IllegalStateException("Opened read-only or via an InputStream, a Writeable File");
-        }
+        validateInPlaceWritePossible();
         
         // Update the Workbook stream in the file
         DocumentNode workbookNode = (DocumentNode)directory.getEntry(
@@ -1324,8 +1316,8 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     }
     
     /**
-     * Method write - write out this workbook to a new {@link File}.  Constructs
-     * a new POI POIFSFileSystem, passes in the workbook binary representation  and
+     * Method write - write out this workbook to a new {@link File}. Constructs
+     * a new POI POIFSFileSystem, passes in the workbook binary representation and
      * writes it out. If the file exists, it will be replaced, otherwise a new one
      * will be created.
      * 
@@ -1333,9 +1325,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      * If you opened your Workbook from a File, you <i>must</i> use the {@link #write()}
      * method instead!
      * 
-     * TODO Finish Implementing
-     * 
-     * @param newFile - the new File you wish to write the XLS to
+     * @param newFile The new File you wish to write the XLS to
      *
      * @exception IOException if anything can't be written.
      * @see org.apache.poi.poifs.filesystem.POIFSFileSystem
@@ -1352,8 +1342,8 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     }
     
     /**
-     * Method write - write out this workbook to an {@link OutputStream}.  Constructs
-     * a new POI POIFSFileSystem, passes in the workbook binary representation  and
+     * Method write - write out this workbook to an {@link OutputStream}. Constructs
+     * a new POI POIFSFileSystem, passes in the workbook binary representation and
      * writes it out.
      * 
      * If {@code stream} is a {@link java.io.FileOutputStream} on a networked drive
