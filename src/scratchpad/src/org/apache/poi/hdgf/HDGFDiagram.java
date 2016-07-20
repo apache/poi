@@ -20,9 +20,8 @@ package org.apache.poi.hdgf;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 
-import org.apache.poi.POIDocument;
+import org.apache.poi.POIReadOnlyDocument;
 import org.apache.poi.hdgf.chunks.ChunkFactory;
 import org.apache.poi.hdgf.pointers.Pointer;
 import org.apache.poi.hdgf.pointers.PointerFactory;
@@ -44,7 +43,7 @@ import org.apache.poi.util.LocaleUtil;
  *  http://www.gnome.ru/projects/docs/slide1.png
  *  http://www.gnome.ru/projects/docs/slide2.png
  */
-public final class HDGFDiagram extends POIDocument {
+public final class HDGFDiagram extends POIReadOnlyDocument {
 	private static final String VISIO_HEADER = "Visio (TM) Drawing\r\n";
 
 	private byte[] _docstream;
@@ -156,10 +155,6 @@ public final class HDGFDiagram extends POIDocument {
 		}
 	}
 
-	public void write(OutputStream out) {
-		throw new IllegalStateException("Writing is not yet implemented, see http://poi.apache.org/hdgf/");
-	}
-
 	/**
 	 * For testing only
 	 */
@@ -167,6 +162,7 @@ public final class HDGFDiagram extends POIDocument {
 		NPOIFSFileSystem pfs = new NPOIFSFileSystem(new File(args[0]));
 		HDGFDiagram hdgf = new HDGFDiagram(pfs);
 		hdgf.debug();
+		hdgf.close();
 		pfs.close();
 	}
 }
