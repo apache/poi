@@ -545,18 +545,53 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
 	
 	@Override
 	public void write() throws IOException {
-	    throw new IllegalStateException("Coming soon!");
+	    throw new IllegalStateException("In-Place write coming soon! See Bug #57919");
 	}
+	
+    /**
+     * Writes out the slideshow file the is represented by an instance
+     *  of this class.
+     * <p>This will write out only the common OLE2 streams. If you require all
+     *  streams to be written out, use {@link #write(File, boolean)}
+     *  with <code>preserveNodes</code> set to <code>true</code>.
+     * @param newFile The File to write to.
+     * @throws IOException If there is an unexpected IOException from writing to the File
+     */
     @Override
     public void write(File newFile) throws IOException {
-        throw new IllegalStateException("Coming soon!");
+        // Write out, but only the common streams
+        write(newFile, false);
+    }
+    /**
+     * Writes out the slideshow file the is represented by an instance
+     *  of this class.
+     * If you require all streams to be written out (eg Marcos, embeded
+     *  documents), then set <code>preserveNodes</code> set to <code>true</code>
+     * @param newFile The File to write to.
+     * @param preserveNodes Should all OLE2 streams be written back out, or only the common ones?
+     * @throws IOException If there is an unexpected IOException from writing to the File
+     */
+    public void write(File newFile, boolean preserveNodes) throws IOException {
+        // Get a new FileSystem to write into
+        POIFSFileSystem outFS = POIFSFileSystem.create(newFile);
+        
+        try {
+            // Write into the new FileSystem
+            write(outFS, preserveNodes);
+
+            // Send the POIFSFileSystem object out to the underlying stream
+            outFS.writeFilesystem();
+        } finally {
+            outFS.close();
+        }
     }
 
     /**
      * Writes out the slideshow file the is represented by an instance
      *  of this class.
-     * It will write out the common OLE2 streams. If you require all
-     *  streams to be written out, pass in preserveNodes
+     * <p>This will write out only the common OLE2 streams. If you require all
+     *  streams to be written out, use {@link #write(OutputStream, boolean)}
+     *  with <code>preserveNodes</code> set to <code>true</code>.
      * @param out The OutputStream to write to.
      * @throws IOException If there is an unexpected IOException from
      *           the passed in OutputStream
@@ -570,7 +605,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
      * Writes out the slideshow file the is represented by an instance
      *  of this class.
      * If you require all streams to be written out (eg Marcos, embeded
-     *  documents), then set preserveNodes to true
+     *  documents), then set <code>preserveNodes</code> set to <code>true</code>
      * @param out The OutputStream to write to.
      * @param preserveNodes Should all OLE2 streams be written back out, or only the common ones?
      * @throws IOException If there is an unexpected IOException from

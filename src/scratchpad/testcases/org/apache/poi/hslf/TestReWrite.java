@@ -24,6 +24,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 
 import org.apache.poi.POIDataSamples;
@@ -31,6 +32,7 @@ import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.util.TempFile;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -72,31 +74,38 @@ public final class TestReWrite {
     }
     
     public void assertWritesOutTheSame(HSLFSlideShowImpl hss, POIFSFileSystem pfs) throws Exception {
-        // Write out to a byte array
+        // Write out to a byte array, and to a temp file
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         hss.write(baos);
+        
+        final File file = TempFile.createTempFile("TestHSLF", ".ppt");
+        hss.write(file);
+        
 
-        // Build an input stream of it
+        // Build an input stream of it, and read back as a POIFS from the stream
         ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-
-        // Use POIFS to query that lot
-        POIFSFileSystem npfs = new POIFSFileSystem(bais);
-
-        // Check that the "PowerPoint Document" sections have the same size
-        DocumentEntry oProps = (DocumentEntry)pfs.getRoot().getEntry("PowerPoint Document");
-        DocumentEntry nProps = (DocumentEntry)npfs.getRoot().getEntry("PowerPoint Document");
-        assertEquals(oProps.getSize(),nProps.getSize());
-
-        // Check that they contain the same data
-        byte[] _oData = new byte[oProps.getSize()];
-        byte[] _nData = new byte[nProps.getSize()];
-        pfs.createDocumentInputStream("PowerPoint Document").read(_oData);
-        npfs.createDocumentInputStream("PowerPoint Document").read(_nData);
-        for(int i=0; i<_oData.length; i++) {
-            //System.out.println(i + "\t" + Integer.toHexString(i));
-            assertEquals(_oData[i], _nData[i]);
+        POIFSFileSystem npfS = new POIFSFileSystem(bais);
+        
+        // And the same on the temp file
+        POIFSFileSystem npfF = new POIFSFileSystem(file);
+        
+        for (POIFSFileSystem npf : new POIFSFileSystem[] { npfS, npfF }) {
+            // Check that the "PowerPoint Document" sections have the same size
+            DocumentEntry oProps = (DocumentEntry)pfs.getRoot().getEntry("PowerPoint Document");
+            DocumentEntry nProps = (DocumentEntry)npf.getRoot().getEntry("PowerPoint Document");
+            assertEquals(oProps.getSize(),nProps.getSize());
+    
+            // Check that they contain the same data
+            byte[] _oData = new byte[oProps.getSize()];
+            byte[] _nData = new byte[nProps.getSize()];
+            pfs.createDocumentInputStream("PowerPoint Document").read(_oData);
+            npf.createDocumentInputStream("PowerPoint Document").read(_nData);
+            for(int i=0; i<_oData.length; i++) {
+                //System.out.println(i + "\t" + Integer.toHexString(i));
+                assertEquals(_oData[i], _nData[i]);
+            }
+            npf.close();
         }
-        npfs.close();
     }
 
     @Test
