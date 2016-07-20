@@ -1291,7 +1291,6 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
         super.close();
     }
 
-    //@Override // TODO Not yet on POIDocument
     /**
      * Write out this workbook to the currently open {@link File} via the
      *  writeable {@link POIFSFileSystem} it was opened as. 
@@ -1300,6 +1299,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      *   instead of a File, or if this is not the root document. For those cases, 
      *   you must use {@link #write(OutputStream)} to write to a brand new stream.
      */
+    //@Override // TODO Not yet on POIDocument
     public void write() throws IOException {
         // TODO Push much of this logic down to POIDocument, as will be common for most formats
         if (directory == null) {
@@ -1324,6 +1324,34 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     }
     
     /**
+     * Method write - write out this workbook to a new {@link File}.  Constructs
+     * a new POI POIFSFileSystem, passes in the workbook binary representation  and
+     * writes it out. If the file exists, it will be replaced, otherwise a new one
+     * will be created.
+     * 
+     * Note that you cannot write to the currently open File using this method.
+     * If you opened your Workbook from a File, you <i>must</i> use the {@link #write()}
+     * method instead!
+     * 
+     * TODO Finish Implementing
+     * 
+     * @param newFile - the new File you wish to write the XLS to
+     *
+     * @exception IOException if anything can't be written.
+     * @see org.apache.poi.poifs.filesystem.POIFSFileSystem
+     */
+    //@Override // TODO Not yet on POIDocument
+    public void write(File newFile) throws IOException {
+        POIFSFileSystem fs = POIFSFileSystem.create(newFile);
+        try {
+            write(fs);
+            fs.writeFilesystem();
+        } finally {
+            fs.close();
+        }
+    }
+    
+    /**
      * Method write - write out this workbook to an {@link OutputStream}.  Constructs
      * a new POI POIFSFileSystem, passes in the workbook binary representation  and
      * writes it out.
@@ -1339,40 +1367,43 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      * @see org.apache.poi.poifs.filesystem.POIFSFileSystem
      */
     @Override
-	public void write(OutputStream stream)
-            throws IOException
-    {
+	public void write(OutputStream stream) throws IOException {
         NPOIFSFileSystem fs = new NPOIFSFileSystem();
         try {
-            // For tracking what we've written out, used if we're
-            //  going to be preserving nodes
-            List<String> excepts = new ArrayList<String>(1);
-    
-            // Write out the Workbook stream
-            fs.createDocument(new ByteArrayInputStream(getBytes()), "Workbook");
-    
-            // Write out our HPFS properties, if we have them
-            writeProperties(fs, excepts);
-    
-            if (preserveNodes) {
-                // Don't write out the old Workbook, we'll be doing our new one
-                // If the file had an "incorrect" name for the workbook stream,
-                // don't write the old one as we'll use the correct name shortly
-            	excepts.addAll(Arrays.asList(WORKBOOK_DIR_ENTRY_NAMES));
-    
-                // Copy over all the other nodes to our new poifs
-                EntryUtils.copyNodes(
-                        new FilteringDirectoryNode(this.directory, excepts)
-                        , new FilteringDirectoryNode(fs.getRoot(), excepts)
-                );
-    
-                // YK: preserve StorageClsid, it is important for embedded workbooks,
-                // see Bugzilla 47920
-                fs.getRoot().setStorageClsid(this.directory.getStorageClsid());
-            }
+            write(fs);
             fs.writeFilesystem(stream);
         } finally {
             fs.close();
+        }
+    }
+    
+    /** Writes the workbook out to a brand new, empty POIFS */
+    private void write(NPOIFSFileSystem fs) throws IOException {
+        // For tracking what we've written out, used if we're
+        //  going to be preserving nodes
+        List<String> excepts = new ArrayList<String>(1);
+
+        // Write out the Workbook stream
+        fs.createDocument(new ByteArrayInputStream(getBytes()), "Workbook");
+
+        // Write out our HPFS properties, if we have them
+        writeProperties(fs, excepts);
+
+        if (preserveNodes) {
+            // Don't write out the old Workbook, we'll be doing our new one
+            // If the file had an "incorrect" name for the workbook stream,
+            // don't write the old one as we'll use the correct name shortly
+            excepts.addAll(Arrays.asList(WORKBOOK_DIR_ENTRY_NAMES));
+
+            // Copy over all the other nodes to our new poifs
+            EntryUtils.copyNodes(
+                    new FilteringDirectoryNode(this.directory, excepts)
+                    , new FilteringDirectoryNode(fs.getRoot(), excepts)
+                    );
+
+            // YK: preserve StorageClsid, it is important for embedded workbooks,
+            // see Bugzilla 47920
+            fs.getRoot().setStorageClsid(this.directory.getStorageClsid());
         }
     }
 
