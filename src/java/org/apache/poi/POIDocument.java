@@ -21,6 +21,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -34,6 +35,8 @@ import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.poifs.crypt.EncryptionInfo;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
+import org.apache.poi.poifs.filesystem.DocumentNode;
+import org.apache.poi.poifs.filesystem.NPOIFSDocument;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.OPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
@@ -298,7 +301,16 @@ public abstract class POIDocument implements Closeable {
             mSet.write(bOut);
             byte[] data = bOut.toByteArray();
             ByteArrayInputStream bIn = new ByteArrayInputStream(data);
-            outFS.createDocument(bIn,name);
+            
+            // New or Existing?
+            // TODO Use a createOrUpdate method for this to be cleaner!
+            try {
+                DocumentNode propSetNode = (DocumentNode)outFS.getRoot().getEntry(name);
+                NPOIFSDocument propSetDoc = new NPOIFSDocument(propSetNode);
+                propSetDoc.replaceContents(bIn);
+            } catch (FileNotFoundException e) {
+                outFS.createDocument(bIn,name);
+            }
 
             logger.log(POILogger.INFO, "Wrote property set " + name + " of size " + data.length);
         } catch(org.apache.poi.hpsf.WritingNotSupportedException wnse) {
