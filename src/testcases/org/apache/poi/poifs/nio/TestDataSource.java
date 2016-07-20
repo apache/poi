@@ -177,7 +177,7 @@ public class TestDataSource extends TestCase
             if(!writeable) {
                 fail("Shouldn't be able to read off the end of the file");
             }
-        } catch (IllegalArgumentException e) {
+        } catch (IndexOutOfBoundsException e) {
             // expected here
         }
     }
