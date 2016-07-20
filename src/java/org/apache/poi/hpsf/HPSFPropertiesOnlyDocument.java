@@ -16,6 +16,7 @@
 ==================================================================== */
 package org.apache.poi.hpsf;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -45,13 +46,35 @@ public class HPSFPropertiesOnlyDocument extends POIDocument {
     }
 
     /**
+     * Write out to the currently open file the properties changes, but nothing else
+     */
+    public void write() throws IOException {
+        NPOIFSFileSystem fs = directory.getFileSystem();
+        
+        validateInPlaceWritePossible();        
+        writeProperties(fs, null);
+        fs.writeFilesystem();
+    }
+    /**
+     * Write out, with any properties changes, but nothing else
+     */
+    public void write(File newFile) throws IOException {
+        POIFSFileSystem fs = POIFSFileSystem.create(newFile);
+        write(fs);
+        fs.writeFilesystem();
+    }
+    /**
      * Write out, with any properties changes, but nothing else
      */
     public void write(OutputStream out) throws IOException {
         NPOIFSFileSystem fs = new NPOIFSFileSystem();
-
+        write(fs);
+        fs.writeFilesystem(out);
+    }
+    
+    private void write(NPOIFSFileSystem fs) throws IOException {
         // For tracking what we've written out, so far
-        List<String> excepts = new ArrayList<String>(1);
+        List<String> excepts = new ArrayList<String>(2);
 
         // Write out our HPFS properties, with any changes
         writeProperties(fs, excepts);
@@ -59,7 +82,6 @@ public class HPSFPropertiesOnlyDocument extends POIDocument {
         // Copy over everything else unchanged
         EntryUtils.copyNodes(directory, fs.getRoot(), excepts);
         
-        // Save the resultant POIFSFileSystem to the output stream
-        fs.writeFilesystem(out);
+        // Caller will save the resultant POIFSFileSystem to the stream/file
     }
 }

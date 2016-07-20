@@ -1301,7 +1301,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      *   you must use {@link #write(OutputStream)} or {@link #write(File)} to 
      *   write to a brand new document.
      */
-    //@Override // TODO Not yet on POIDocument
+    @Override
     public void write() throws IOException {
         validateInPlaceWritePossible();
         
@@ -1330,7 +1330,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      * @exception IOException if anything can't be written.
      * @see org.apache.poi.poifs.filesystem.POIFSFileSystem
      */
-    //@Override // TODO Not yet on POIDocument
+    @Override
     public void write(File newFile) throws IOException {
         POIFSFileSystem fs = POIFSFileSystem.create(newFile);
         try {
