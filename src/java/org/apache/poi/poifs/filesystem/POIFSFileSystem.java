@@ -20,6 +20,7 @@
 package org.apache.poi.poifs.filesystem;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -120,6 +121,27 @@ public class POIFSFileSystem
      */
     public static boolean hasPOIFSHeader(byte[] header8Bytes) {
         return NPOIFSFileSystem.hasPOIFSHeader(header8Bytes);
+    }
+    
+    /**
+     * Creates a new {@link POIFSFileSystem} in a new {@link File}.
+     * Use {@link #POIFSFileSystem(File)} to open an existing File,
+     *  this should only be used to create a new empty filesystem.
+     *
+     * @param file The file to create and open
+     * @return The created and opened {@link POIFSFileSystem}
+     */
+    public static POIFSFileSystem create(File file) throws IOException {
+        // TODO Make this nicer!
+        // Create a new empty POIFS in the file
+        POIFSFileSystem tmp = new POIFSFileSystem();
+        FileOutputStream fout = new FileOutputStream(file);
+        tmp.writeFilesystem(fout);
+        fout.close();
+        tmp.close();
+        
+        // Open it up again backed by the file
+        return new POIFSFileSystem(file);
     }
 
     /**
