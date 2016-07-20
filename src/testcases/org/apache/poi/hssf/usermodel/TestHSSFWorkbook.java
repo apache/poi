@@ -71,6 +71,7 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.RecordFormatException;
 import org.apache.poi.util.TempFile;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import junit.framework.AssertionFailedError;
@@ -1276,5 +1277,23 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         wb = new HSSFWorkbook(new NPOIFSFileSystem(file));
         assertEquals(1, wb.getNumberOfSheets());
         assertEquals("Changed!", wb.getSheetAt(0).getRow(0).getCell(0).toString());
+    }
+    
+    @Test
+    @Ignore("Not currently working, bug in POIFS creating empty FS")
+    public void testWriteToNewFile() throws Exception {
+        // Open from a Stream
+        HSSFWorkbook wb = new HSSFWorkbook(
+                POIDataSamples.getSpreadSheetInstance().openResourceAsStream("SampleSS.xls"));
+
+        // Save to a new temp file
+        final File file = TempFile.createTempFile("TestHSSFWorkbook", ".xls");
+        wb.write(file);
+        wb.close();
+        
+        // Read and check
+        wb = new HSSFWorkbook(new NPOIFSFileSystem(file));
+        assertEquals(3, wb.getNumberOfSheets());
+        wb.close();
     }
 }
