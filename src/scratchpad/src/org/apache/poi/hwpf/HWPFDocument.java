@@ -18,6 +18,7 @@
 package org.apache.poi.hwpf;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -581,6 +582,15 @@ public final class HWPFDocument extends HWPFDocumentCore
         return _fields;
     }
 
+    @Override
+    public void write() throws IOException {
+        throw new IllegalStateException("Coming soon!");
+    }
+    @Override
+    public void write(File newFile) throws IOException {
+        throw new IllegalStateException("Coming soon!");
+    }
+    
   /**
    * Writes out the word file that is represented by an instance of this class.
    * 

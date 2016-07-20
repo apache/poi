@@ -544,6 +544,15 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
         }
         currentUser.setCurrentEditOffset(usr.getLastOnDiskOffset());
 	}
+	
+	@Override
+	public void write() throws IOException {
+	    throw new IllegalStateException("Coming soon!");
+	}
+    @Override
+    public void write(File newFile) throws IOException {
+        throw new IllegalStateException("Coming soon!");
+    }
 
     /**
      * Writes out the slideshow file the is represented by an instance
@@ -554,6 +563,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
      * @throws IOException If there is an unexpected IOException from
      *           the passed in OutputStream
      */
+	@Override
     public void write(OutputStream out) throws IOException {
         // Write out, but only the common streams
         write(out,false);

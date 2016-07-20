@@ -16,6 +16,7 @@
 ==================================================================== */
 package org.apache.poi.hwpf;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -154,6 +155,14 @@ public class HWPFOldDocument extends HWPFDocumentCore {
         return _text;
     }
 
+    @Override
+    public void write() throws IOException {
+        throw new IllegalStateException("Writing is not available for the older file formats");
+    }
+    @Override
+    public void write(File out) throws IOException {
+        throw new IllegalStateException("Writing is not available for the older file formats");
+    }
     @Override
     public void write(OutputStream out) throws IOException {
         throw new IllegalStateException("Writing is not available for the older file formats");

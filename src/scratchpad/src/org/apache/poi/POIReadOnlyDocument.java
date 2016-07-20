@@ -47,17 +47,17 @@ public abstract class POIReadOnlyDocument extends POIDocument {
     /**
      * Note - writing is not yet supported for this file format, sorry.
      */
-//    @Override
-//    public void write() throws IOException {
-//        throw new IllegalStateException("Writing is not yet implemented for this Document Format");
-//    }
+    @Override
+    public void write() throws IOException {
+        throw new IllegalStateException("Writing is not yet implemented for this Document Format");
+    }
     /**
      * Note - writing is not yet supported for this file format, sorry.
      */
-//    @Override
-//    public void write(File file) throws IOException {
-//        throw new IllegalStateException("Writing is not yet implemented for this Document Format");
-//    }
+    @Override
+    public void write(File file) throws IOException {
+        throw new IllegalStateException("Writing is not yet implemented for this Document Format");
+    }
     /**
      * Note - writing is not yet supported for this file format, sorry.
      */

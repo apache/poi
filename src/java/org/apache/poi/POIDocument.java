@@ -338,7 +338,7 @@ public abstract class POIDocument implements Closeable {
      * 
      * @throws IOException thrown on errors writing to the file
      */
-    //public abstract void write() throws IOException; // TODO Implement elsewhere
+    public abstract void write() throws IOException;
 
     /**
      * Writes the document out to the specified new {@link File}. If the file 
@@ -348,7 +348,7 @@ public abstract class POIDocument implements Closeable {
      * 
      * @throws IOException thrown on errors writing to the file
      */
-    //public abstract void write(File newFile) throws IOException; // TODO Implement elsewhere
+    public abstract void write(File newFile) throws IOException;
 
     /**
      * Writes the document out to the specified output stream. The
