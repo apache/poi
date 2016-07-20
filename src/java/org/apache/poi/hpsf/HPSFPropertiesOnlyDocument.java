@@ -60,16 +60,24 @@ public class HPSFPropertiesOnlyDocument extends POIDocument {
      */
     public void write(File newFile) throws IOException {
         POIFSFileSystem fs = POIFSFileSystem.create(newFile);
-        write(fs);
-        fs.writeFilesystem();
+        try {
+            write(fs);
+            fs.writeFilesystem();
+        } finally {
+            fs.close();
+        }
     }
     /**
      * Write out, with any properties changes, but nothing else
      */
     public void write(OutputStream out) throws IOException {
         NPOIFSFileSystem fs = new NPOIFSFileSystem();
-        write(fs);
-        fs.writeFilesystem(out);
+        try {
+            write(fs);
+            fs.writeFilesystem(out);
+        } finally {
+            fs.close();
+        }
     }
     
     private void write(NPOIFSFileSystem fs) throws IOException {

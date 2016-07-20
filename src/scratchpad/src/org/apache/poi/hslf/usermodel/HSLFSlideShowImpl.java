@@ -564,7 +564,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
 	@Override
     public void write(OutputStream out) throws IOException {
         // Write out, but only the common streams
-        write(out,false);
+        write(out, false);
     }
     /**
      * Writes out the slideshow file the is represented by an instance
@@ -577,8 +577,22 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
      *           the passed in OutputStream
      */
     public void write(OutputStream out, boolean preserveNodes) throws IOException {
+        // Get a new FileSystem to write into
+        POIFSFileSystem outFS = new POIFSFileSystem();
+        
+        try {
+            // Write into the new FileSystem
+            write(outFS, preserveNodes);
+
+            // Send the POIFSFileSystem object out to the underlying stream
+            outFS.writeFilesystem(out);
+        } finally {
+            outFS.close();
+        }
+    }
+    private void write(POIFSFileSystem outFS, boolean preserveNodes) throws IOException {
         // read properties and pictures, with old encryption settings where appropriate 
-        if(_pictures == null) {
+        if (_pictures == null) {
            readPictures();
         }
         getDocumentSummaryInformation();
@@ -586,9 +600,6 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
         // set new encryption settings
         HSLFSlideShowEncrypted encryptedSS = new HSLFSlideShowEncrypted(getDocumentEncryptionAtom());
         _records = encryptedSS.updateEncryptionRecord(_records);
-
-        // Get a new Filesystem to write into
-        POIFSFileSystem outFS = new POIFSFileSystem();
 
         // The list of entries we've written out
         List<String> writtenEntries = new ArrayList<String>(1);
@@ -633,13 +644,9 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
         }
 
         // If requested, write out any other streams we spot
-        if(preserveNodes) {
+        if (preserveNodes) {
             EntryUtils.copyNodes(directory.getFileSystem(), outFS, writtenEntries);
         }
-
-        // Send the POIFSFileSystem object out to the underlying stream
-        outFS.writeFilesystem(out);
-        outFS.close();
     }
 
     /** 
