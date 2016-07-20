@@ -1311,6 +1311,9 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
         NPOIFSDocument workbookDoc = new NPOIFSDocument(workbookNode);
         workbookDoc.replaceContents(new ByteArrayInputStream(getBytes()));
         
+        // Update the properties streams in the file
+        writeProperties(directory.getFileSystem(), null);
+        
         // Sync with the File on disk
         directory.getFileSystem().writeFilesystem();
     }

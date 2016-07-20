@@ -689,6 +689,8 @@ public class NPOIFSFileSystem extends BlockStore
         return getRoot().createDocument(name, stream);
     }
 
+    // TODO Add a createOrUpdateDocument method to simplify code
+    
     /**
      * create a new DocumentEntry in the root entry; the data will be
      * provided later
