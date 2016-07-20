@@ -61,8 +61,6 @@ import org.apache.poi.util.POILogger;
 /**
  * This class contains the main functionality for the Powerpoint file
  * "reader". It is only a very basic class for now
- *
- * @author Nick Burch
  */
 public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
     public static final int UNSET_OFFSET = -1;
