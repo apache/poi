@@ -19,9 +19,8 @@ package org.apache.poi.hpbf;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 
-import org.apache.poi.POIDocument;
+import org.apache.poi.POIReadOnlyDocument;
 import org.apache.poi.hpbf.model.EscherDelayStm;
 import org.apache.poi.hpbf.model.EscherStm;
 import org.apache.poi.hpbf.model.MainContents;
@@ -35,7 +34,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  *  for HPBF, our implementation of the publisher
  *  file format.
  */
-public final class HPBFDocument extends POIDocument {
+public final class HPBFDocument extends POIReadOnlyDocument {
 	private MainContents mainContents;
 	private QuillContents quillContents;
 	private EscherStm escherStm;
@@ -82,9 +81,5 @@ public final class HPBFDocument extends POIDocument {
 	}
 	public EscherDelayStm getEscherDelayStm() {
 		return escherDelayStm;
-	}
-
-	public void write(OutputStream out) throws IOException {
-		throw new IllegalStateException("Writing is not yet implemented, see http://poi.apache.org/hpbf/");
 	}
 }
