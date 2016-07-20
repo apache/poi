@@ -27,6 +27,7 @@ import static org.junit.Assert.fail;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Iterator;
@@ -42,6 +43,7 @@ import org.apache.poi.poifs.property.Property;
 import org.apache.poi.poifs.property.RootProperty;
 import org.apache.poi.poifs.storage.HeaderBlock;
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.TempFile;
 import org.junit.Test;
 
 /**
@@ -100,6 +102,13 @@ public final class TestNPOIFSFileSystem {
        original.writeFilesystem(baos);
        original.close();
        return new NPOIFSFileSystem(new ByteArrayInputStream(baos.toByteArray()));
+   }
+   protected static NPOIFSFileSystem writeOutFileAndReadBack(NPOIFSFileSystem original) throws IOException {
+       final File file = TempFile.createTempFile("TestPOIFS", ".ole2");
+       final FileOutputStream fout = new FileOutputStream(file);
+       original.writeFilesystem(fout);
+       original.close();
+       return new NPOIFSFileSystem(file, false);
    }
    
    @Test
@@ -958,6 +967,20 @@ public final class TestNPOIFSFileSystem {
       assertEquals(POIFSConstants.END_OF_CHAIN,     fs.getRoot().getProperty().getStartBlock());
       assertEquals(0, fs._get_property_table().getStartBlock());
 
+      
+      // Check the same but with saving to a file
+      fs = new NPOIFSFileSystem();
+      fs = writeOutFileAndReadBack(fs);
+      
+      // Same, no change, SBAT remains empty 
+      assertEquals(POIFSConstants.END_OF_CHAIN,     fs.getNextBlock(0));
+      assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, fs.getNextBlock(1));
+      assertEquals(POIFSConstants.UNUSED_BLOCK,     fs.getNextBlock(2));
+      assertEquals(POIFSConstants.UNUSED_BLOCK,     fs.getNextBlock(3));
+      assertEquals(POIFSConstants.END_OF_CHAIN,     fs.getRoot().getProperty().getStartBlock());
+      assertEquals(0, fs._get_property_table().getStartBlock());
+
+      
       
       // Put everything within a new directory
       DirectoryEntry testDir = fs.createDirectory("Test Directory");

@@ -37,6 +37,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import junit.framework.AssertionFailedError;
+
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.hpsf.ClassID;
@@ -71,10 +73,7 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.RecordFormatException;
 import org.apache.poi.util.TempFile;
-import org.junit.Ignore;
 import org.junit.Test;
-
-import junit.framework.AssertionFailedError;
 
 /**
  * Tests for {@link HSSFWorkbook}
@@ -1280,7 +1279,6 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
     }
     
     @Test
-    @Ignore("Not currently working, bug in POIFS creating empty FS")
     public void testWriteToNewFile() throws Exception {
         // Open from a Stream
         HSSFWorkbook wb = new HSSFWorkbook(

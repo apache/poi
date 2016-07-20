@@ -85,7 +85,7 @@ public class FileBackedDataSource extends DataSource {
    @Override
    public ByteBuffer read(int length, long position) throws IOException {
       if(position >= size()) {
-         throw new IllegalArgumentException("Position " + position + " past the end of the file");
+         throw new IndexOutOfBoundsException("Position " + position + " past the end of the file");
       }
       
       // Do we read or map (for read/write?
@@ -103,7 +103,7 @@ public class FileBackedDataSource extends DataSource {
 
       // Check
       if(worked == -1) {
-         throw new IllegalArgumentException("Position " + position + " past the end of the file");
+         throw new IndexOutOfBoundsException("Position " + position + " past the end of the file");
       }
 
       // Ready it for reading
