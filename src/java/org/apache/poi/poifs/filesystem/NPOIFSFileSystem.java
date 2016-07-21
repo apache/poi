@@ -689,8 +689,6 @@ public class NPOIFSFileSystem extends BlockStore
         return getRoot().createDocument(name, stream);
     }
 
-    // TODO Add a createOrUpdateDocument method to simplify code
-    
     /**
      * create a new DocumentEntry in the root entry; the data will be
      * provided later
@@ -725,6 +723,26 @@ public class NPOIFSFileSystem extends BlockStore
         throws IOException
     {
         return getRoot().createDirectory(name);
+    }
+    
+    /**
+     * Set the contents of a document in the root directory,
+     *  creating if needed, otherwise updating
+     *
+     * @param stream the InputStream from which the document's data
+     *               will be obtained
+     * @param name the name of the new or existing POIFSDocument
+     *
+     * @return the new or updated DocumentEntry
+     *
+     * @exception IOException on error populating the POIFSDocument
+     */
+
+    public DocumentEntry createOrUpdateDocument(final InputStream stream,
+                                                final String name)
+        throws IOException
+    {
+        return getRoot().createOrUpdateDocument(name, stream);
     }
     
     /**

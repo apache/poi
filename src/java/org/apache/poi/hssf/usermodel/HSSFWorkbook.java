@@ -1312,7 +1312,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
         workbookDoc.replaceContents(new ByteArrayInputStream(getBytes()));
         
         // Update the properties streams in the file
-        writeProperties(directory.getFileSystem(), null);
+        writeProperties();
         
         // Sync with the File on disk
         directory.getFileSystem().writeFilesystem();

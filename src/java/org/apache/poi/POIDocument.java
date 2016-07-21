@@ -21,7 +21,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -35,8 +34,6 @@ import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.poifs.crypt.EncryptionInfo;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
-import org.apache.poi.poifs.filesystem.DocumentNode;
-import org.apache.poi.poifs.filesystem.NPOIFSDocument;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.OPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
@@ -239,14 +236,13 @@ public abstract class POIDocument implements Closeable {
     /**
      * Writes out the updated standard Document Information Properties (HPSF)
      *  into the currently open NPOIFSFileSystem
-     * TODO Implement in-place update
      * 
      * @throws IOException if an error when writing to the open
      *      {@link NPOIFSFileSystem} occurs
-     * TODO throws exception if open from stream not file
      */
     protected void writeProperties() throws IOException {
-        throw new IllegalStateException("In-place write is not yet supported");
+        validateInPlaceWritePossible();
+        writeProperties(directory.getFileSystem(), null);
     }
 
     /**
@@ -301,16 +297,9 @@ public abstract class POIDocument implements Closeable {
             mSet.write(bOut);
             byte[] data = bOut.toByteArray();
             ByteArrayInputStream bIn = new ByteArrayInputStream(data);
-            
-            // New or Existing?
-            // TODO Use a createOrUpdate method for this to be cleaner!
-            try {
-                DocumentNode propSetNode = (DocumentNode)outFS.getRoot().getEntry(name);
-                NPOIFSDocument propSetDoc = new NPOIFSDocument(propSetNode);
-                propSetDoc.replaceContents(bIn);
-            } catch (FileNotFoundException e) {
-                outFS.createDocument(bIn,name);
-            }
+
+            // Create or Update the Property Set stream in the POIFS
+            outFS.createOrUpdateDocument(bIn, name);
 
             logger.log(POILogger.INFO, "Wrote property set " + name + " of size " + data.length);
         } catch(org.apache.poi.hpsf.WritingNotSupportedException wnse) {
@@ -351,6 +340,7 @@ public abstract class POIDocument implements Closeable {
      * @since POI 3.15 beta 3
      * 
      * @throws IOException thrown on errors writing to the file
+     * @throws IllegalStateException if this isn't from a writable File
      */
     public abstract void write() throws IOException;
 
