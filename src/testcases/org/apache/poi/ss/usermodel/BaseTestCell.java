@@ -292,30 +292,32 @@ public abstract class BaseTestCell {
         Row r = wb1.createSheet("Sheet1").createRow(0);
         CreationHelper factory = wb1.getCreationHelper();
 
-        r.createCell(0).setCellValue(true);
-        r.createCell(1).setCellValue(1.5);
-        r.createCell(2).setCellValue(factory.createRichTextString("Astring"));
-        r.createCell(3).setCellErrorValue(FormulaError.DIV0.getCode());
-        r.createCell(4).setCellFormula("A1+B1");
-        r.createCell(5); // blank
+        r.createCell(0).setCellValue(false);
+        r.createCell(1).setCellValue(true);
+        r.createCell(2).setCellValue(1.5);
+        r.createCell(3).setCellValue(factory.createRichTextString("Astring"));
+        r.createCell(4).setCellErrorValue(FormulaError.DIV0.getCode());
+        r.createCell(5).setCellFormula("A1+B1");
+        r.createCell(6); // blank
 
         // create date-formatted cell
         Calendar c = LocaleUtil.getLocaleCalendar();
         c.set(2010, 01, 02, 00, 00, 00);
-        r.createCell(6).setCellValue(c);
+        r.createCell(7).setCellValue(c);
         CellStyle dateStyle = wb1.createCellStyle();
         short formatId = wb1.getCreationHelper().createDataFormat().getFormat("m/d/yy h:mm"); // any date format will do
         dateStyle.setDataFormat(formatId);
-        r.getCell(6).setCellStyle(dateStyle);
+        r.getCell(7).setCellStyle(dateStyle);
 
-        assertEquals("Boolean", "TRUE", r.getCell(0).toString());
-        assertEquals("Numeric", "1.5", r.getCell(1).toString());
-        assertEquals("String", "Astring", r.getCell(2).toString());
-        assertEquals("Error", "#DIV/0!", r.getCell(3).toString());
-        assertEquals("Formula", "A1+B1", r.getCell(4).toString());
-        assertEquals("Blank", "", r.getCell(5).toString());
+        assertEquals("Boolean", "FALSE", r.getCell(0).toString());
+        assertEquals("Boolean", "TRUE", r.getCell(1).toString());
+        assertEquals("Numeric", "1.5", r.getCell(2).toString());
+        assertEquals("String", "Astring", r.getCell(3).toString());
+        assertEquals("Error", "#DIV/0!", r.getCell(4).toString());
+        assertEquals("Formula", "A1+B1", r.getCell(5).toString());
+        assertEquals("Blank", "", r.getCell(6).toString());
         // toString on a date-formatted cell displays dates as dd-MMM-yyyy, which has locale problems with the month
-        String dateCell1 = r.getCell(6).toString();
+        String dateCell1 = r.getCell(7).toString();
         assertTrue("Date (Day)", dateCell1.startsWith("02-"));
         assertTrue("Date (Year)", dateCell1.endsWith("-2010"));
 
@@ -325,13 +327,14 @@ public abstract class BaseTestCell {
         wb1.close();
 
         r = wb2.getSheetAt(0).getRow(0);
-        assertEquals("Boolean", "TRUE", r.getCell(0).toString());
-        assertEquals("Numeric", "1.5", r.getCell(1).toString());
-        assertEquals("String", "Astring", r.getCell(2).toString());
-        assertEquals("Error", "#DIV/0!", r.getCell(3).toString());
-        assertEquals("Formula", "A1+B1", r.getCell(4).toString());
-        assertEquals("Blank", "", r.getCell(5).toString());
-        String dateCell2 = r.getCell(6).toString();
+        assertEquals("Boolean", "FALSE", r.getCell(0).toString());
+        assertEquals("Boolean", "TRUE", r.getCell(1).toString());
+        assertEquals("Numeric", "1.5", r.getCell(2).toString());
+        assertEquals("String", "Astring", r.getCell(3).toString());
+        assertEquals("Error", "#DIV/0!", r.getCell(4).toString());
+        assertEquals("Formula", "A1+B1", r.getCell(5).toString());
+        assertEquals("Blank", "", r.getCell(6).toString());
+        String dateCell2 = r.getCell(7).toString();
         assertEquals("Date", dateCell1, dateCell2);
         wb2.close();
     }
@@ -1005,7 +1008,6 @@ public abstract class BaseTestCell {
         Comment comment = drawing.createCellComment(anchor);
         RichTextString str = factory.createRichTextString("Hello, World!");
         comment.setString(str);
-
         comment.setAuthor("Apache POI");
         cell.setCellComment(comment);
         // ideally assertSame, but XSSFCell creates a new XSSFCellComment wrapping the same bean for every call to getCellComment.
