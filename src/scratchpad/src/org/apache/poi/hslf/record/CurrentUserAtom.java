@@ -279,6 +279,6 @@ public class CurrentUserAtom
 			new ByteArrayInputStream(baos.toByteArray());
 
 		// Write out
-		fs.createDocument(bais,"Current User");
+		fs.createOrUpdateDocument(bais,"Current User");
 	}
 }
