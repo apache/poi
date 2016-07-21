@@ -479,6 +479,38 @@ public class DirectoryNode
     }
 
     /**
+     * Set the contents of a document, creating if needed, 
+     *  otherwise updating. Returns the created / updated DocumentEntry
+     *
+     * @param name the name of the new or existing DocumentEntry
+     * @param stream the InputStream from which to populate the DocumentEntry
+     *
+     * @return the new or updated DocumentEntry
+     *
+     * @exception IOException
+     */
+
+    public DocumentEntry createOrUpdateDocument(final String name,
+                                                final InputStream stream)
+        throws IOException
+    {
+        if (! hasEntry(name)) {
+            return createDocument(name, stream);
+        } else {
+            DocumentNode existing = (DocumentNode)getEntry(name);
+            if (_nfilesystem != null) {
+                NPOIFSDocument nDoc = new NPOIFSDocument(existing);
+                nDoc.replaceContents(stream);
+                return existing;
+            } else {
+                // Do it the hard way for Old POIFS...
+                deleteEntry(existing);
+                return createDocument(name, stream);
+            }
+        }
+    }
+    
+    /**
      * Gets the storage clsid of the directory entry
      *
      * @return storage Class ID
