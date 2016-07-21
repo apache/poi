@@ -17,7 +17,6 @@
 package org.apache.poi;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.OutputStream;
 
 import org.apache.poi.poifs.filesystem.DirectoryNode;
@@ -29,6 +28,8 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 /**
  * This holds the common functionality for all read-only
  *  POI Document classes, i.e. ones which don't support writing.
+ *  
+ *  @since POI 3.15 beta 3
  */
 public abstract class POIReadOnlyDocument extends POIDocument {
     public POIReadOnlyDocument(DirectoryNode dir) {
@@ -46,23 +47,29 @@ public abstract class POIReadOnlyDocument extends POIDocument {
 
     /**
      * Note - writing is not yet supported for this file format, sorry.
+     * 
+     * @throws IllegalStateException If you call the method, as writing is not supported
      */
     @Override
-    public void write() throws IOException {
+    public void write() {
         throw new IllegalStateException("Writing is not yet implemented for this Document Format");
     }
     /**
      * Note - writing is not yet supported for this file format, sorry.
+     * 
+     * @throws IllegalStateException If you call the method, as writing is not supported
      */
     @Override
-    public void write(File file) throws IOException {
+    public void write(File file) {
         throw new IllegalStateException("Writing is not yet implemented for this Document Format");
     }
     /**
      * Note - writing is not yet supported for this file format, sorry.
+     * 
+     * @throws IllegalStateException If you call the method, as writing is not supported
      */
     @Override
-    public void write(OutputStream out) throws IOException {
+    public void write(OutputStream out) {
         throw new IllegalStateException("Writing is not yet implemented for this Document Format");
     }
 }

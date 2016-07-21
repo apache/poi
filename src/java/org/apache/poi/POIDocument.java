@@ -347,6 +347,8 @@ public abstract class POIDocument implements Closeable {
      *   instead of a File, or if this is not the root document. For those cases, 
      *   you must use {@link #write(OutputStream)} or {@link #write(File)} to 
      *   write to a brand new document.
+     *   
+     * @since POI 3.15 beta 3
      * 
      * @throws IOException thrown on errors writing to the file
      */
@@ -356,6 +358,8 @@ public abstract class POIDocument implements Closeable {
      * Writes the document out to the specified new {@link File}. If the file 
      * exists, it will be replaced, otherwise a new one will be created
      *
+     * @since POI 3.15 beta 3
+     * 
      * @param newFile The new File to write to.
      * 
      * @throws IOException thrown on errors writing to the file
