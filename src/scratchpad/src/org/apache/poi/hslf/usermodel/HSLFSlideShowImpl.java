@@ -537,16 +537,37 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
         // Update and write out the Current User atom
         int oldLastUserEditAtomPos = (int)currentUser.getCurrentEditOffset();
         Integer newLastUserEditAtomPos = oldToNewPositions.get(oldLastUserEditAtomPos);
-        if(newLastUserEditAtomPos == null || usr.getLastOnDiskOffset() != newLastUserEditAtomPos) {
+        if (newLastUserEditAtomPos == null || usr.getLastOnDiskOffset() != newLastUserEditAtomPos) {
             throw new HSLFException("Couldn't find the new location of the last UserEditAtom that used to be at " + oldLastUserEditAtomPos);
         }
         currentUser.setCurrentEditOffset(usr.getLastOnDiskOffset());
-	}
-	
-	@Override
-	public void write() throws IOException {
-	    throw new IllegalStateException("In-Place write coming soon! See Bug #57919");
-	}
+    }
+
+    /**
+     * Writes out the slideshow to the currently open file.
+     * 
+     * <p>This will fail (with an {@link IllegalStateException} if the
+     *  slideshow was opened read-only, opened from an {@link InputStream}
+     *   instead of a File, or if this is not the root document. For those cases, 
+     *   you must use {@link #write(OutputStream)} or {@link #write(File)} to 
+     *   write to a brand new document.
+     *   
+     * @since POI 3.15 beta 3
+     * 
+     * @throws IOException thrown on errors writing to the file
+     * @throws IllegalStateException if this isn't from a writable File
+     */
+    @Override
+    public void write() throws IOException {
+        validateInPlaceWritePossible();
+	    
+        // Write the PowerPoint streams to the current FileSystem
+        // No need to do anything to other streams, already there! 
+        write(directory.getFileSystem(), false);
+        
+        // Sync with the File on disk
+        directory.getFileSystem().writeFilesystem();
+    }
 	
     /**
      * Writes out the slideshow file the is represented by an instance
@@ -625,7 +646,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
             outFS.close();
         }
     }
-    private void write(POIFSFileSystem outFS, boolean preserveNodes) throws IOException {
+    private void write(NPOIFSFileSystem outFS, boolean copyAllOtherNodes) throws IOException {
         // read properties and pictures, with old encryption settings where appropriate 
         if (_pictures == null) {
            readPictures();
@@ -656,7 +677,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
 
         // Write the PPT stream into the POIFS layer
         ByteArrayInputStream bais = new ByteArrayInputStream(_docstream);
-        outFS.createDocument(bais,"PowerPoint Document");
+        outFS.createOrUpdateDocument(bais,"PowerPoint Document");
         writtenEntries.add("PowerPoint Document");
         
         currentUser.setEncrypted(encryptedSS.getDocumentEncryptionAtom() != null);
@@ -671,15 +692,15 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
                 p.write(pict);
                 encryptedSS.encryptPicture(pict.getBuf(), offset);
             }
-            outFS.createDocument(
+            outFS.createOrUpdateDocument(
                 new ByteArrayInputStream(pict.getBuf(), 0, pict.size()), "Pictures"
             );
             writtenEntries.add("Pictures");
             pict.close();
         }
 
-        // If requested, write out any other streams we spot
-        if (preserveNodes) {
+        // If requested, copy over any other streams we spot, eg Macros
+        if (copyAllOtherNodes) {
             EntryUtils.copyNodes(directory.getFileSystem(), outFS, writtenEntries);
         }
     }
@@ -706,7 +727,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
      * @throws IOException if an error when writing to the 
      *      {@link POIFSFileSystem} occurs
      */
-    protected void writeProperties(POIFSFileSystem outFS, List<String> writtenEntries) throws IOException {
+    protected void writeProperties(NPOIFSFileSystem outFS, List<String> writtenEntries) throws IOException {
         super.writeProperties(outFS, writtenEntries);
         DocumentEncryptionAtom dea = getDocumentEncryptionAtom();
         if (dea != null) {

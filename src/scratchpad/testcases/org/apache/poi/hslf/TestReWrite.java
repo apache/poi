@@ -79,7 +79,9 @@ public final class TestReWrite {
         hss.write(baos);
         
         final File file = TempFile.createTempFile("TestHSLF", ".ppt");
+        final File file2 = TempFile.createTempFile("TestHSLF", ".ppt");
         hss.write(file);
+        hss.write(file2);
         
 
         // Build an input stream of it, and read back as a POIFS from the stream
@@ -89,7 +91,15 @@ public final class TestReWrite {
         // And the same on the temp file
         POIFSFileSystem npfF = new POIFSFileSystem(file);
         
-        for (POIFSFileSystem npf : new POIFSFileSystem[] { npfS, npfF }) {
+        // And another where we do an in-place write
+        POIFSFileSystem npfRF = new POIFSFileSystem(file2, false);
+        HSLFSlideShowImpl hssRF = new HSLFSlideShowImpl(npfRF);
+        hssRF.write();
+        hssRF.close();
+        npfRF = new POIFSFileSystem(file2);
+        
+        // Check all of them in turn
+        for (POIFSFileSystem npf : new POIFSFileSystem[] { npfS, npfF, npfRF }) {
             // Check that the "PowerPoint Document" sections have the same size
             DocumentEntry oProps = (DocumentEntry)pfs.getRoot().getEntry("PowerPoint Document");
             DocumentEntry nProps = (DocumentEntry)npf.getRoot().getEntry("PowerPoint Document");
