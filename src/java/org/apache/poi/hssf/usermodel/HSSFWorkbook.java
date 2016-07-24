@@ -548,7 +548,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      * the 'active' sheet (which is the sheet with focus).
      * Unselects sheets that are not in <code>indexes</code>.
      *
-     * @param indexes
+     * @param indexes Array of sheets to select, the index is 0-based.
      */
     public void setSelectedTabs(int[] indexes) {
         Collection<Integer> list = new ArrayList<Integer>(indexes.length);
@@ -563,7 +563,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      * the 'active' sheet (which is the sheet with focus).
      * Unselects sheets that are not in <code>indexes</code>.
      *
-     * @param indexes
+     * @param indexes Collection of sheets to select, the index is 0-based.
      */
     public void setSelectedTabs(Collection<Integer> indexes) {
 
@@ -893,8 +893,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      */
     @Override
     public Iterator<Sheet> sheetIterator() {
-        Iterator<Sheet> result = new SheetIterator<Sheet>();
-        return result;
+        return new SheetIterator<Sheet>();
     }
 
     /**
@@ -1280,9 +1279,9 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
 
     /**
      * Closes the underlying {@link NPOIFSFileSystem} from which
-     *  the Workbook was read, if any. Has no effect on Workbooks
-     *  opened from an InputStream, or newly created ones.
-     * <p>Once {@link #close()} has been called, no further 
+     *  the Workbook was read, if any.
+     *
+     * <p>Once this has been called, no further
      *  operations, updates or reads should be performed on the 
      *  Workbook.
      */

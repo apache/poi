@@ -341,9 +341,11 @@ public interface Workbook extends Closeable, Iterable<Sheet> {
 
     /**
      * Close the underlying input resource (File or Stream),
-     *  from which the Workbook was read. After closing, the
-     *  Workbook should no longer be used.
-     * <p>This will have no effect newly created Workbooks.
+     *  from which the Workbook was read.
+     *
+     * <p>Once this has been called, no further
+     *  operations, updates or reads should be performed on the
+     *  Workbook.
      */
     @Override
     void close() throws IOException;

@@ -893,8 +893,11 @@ public class SXSSFWorkbook implements Workbook {
 
     /**
      * Closes the underlying {@link XSSFWorkbook} and {@link OPCPackage} 
-     *  on which this Workbook is based, if any. Has no effect on Workbooks
-     *  created from scratch.
+     *  on which this Workbook is based, if any.
+     *
+     * <p>Once this has been called, no further
+     *  operations, updates or reads should be performed on the
+     *  Workbook.
      */
     @Override
     public void close() throws IOException {
