@@ -571,20 +571,39 @@ public final class HWPFDocument extends HWPFDocumentCore {
         return _fields;
     }
 
+    /**
+     * Warning - not currently implemented for HWPF!
+     */
     @Override
     public void write() throws IOException {
+        // TODO Implement
         throw new IllegalStateException("Coming soon!");
     }
+    
+    /**
+     * Writes out the word file that is represented by an instance of this class.
+     * 
+     * If the {@link File} exists, it will be replaced, otherwise a new one 
+     * will be created
+     *
+     * @param newFile The File to write to.
+     * @throws IOException If there is an unexpected IOException from writing
+     *         to the File.
+     *         
+     * @since 3.15 beta 3
+     */
     @Override
     public void write(File newFile) throws IOException {
-        throw new IllegalStateException("Coming soon!");
+        NPOIFSFileSystem pfs = POIFSFileSystem.create(newFile);
+        write(pfs, true);
+        pfs.writeFilesystem();
     }
 
     /**
      * Writes out the word file that is represented by an instance of this class.
      * 
-     * If {@code stream} is a {@link java.io.FileOutputStream} on a networked drive
-     * or has a high cost/latency associated with each written byte,
+     * For better performance when writing to files, use {@link #write(File)}.
+     * If {@code stream} has a high cost/latency associated with each written byte,
      * consider wrapping the OutputStream in a {@link java.io.BufferedOutputStream}
      * to improve write performance.
      *
@@ -592,9 +611,12 @@ public final class HWPFDocument extends HWPFDocumentCore {
      * @throws IOException If there is an unexpected IOException from the passed
      *         in OutputStream.
      */
-    public void write(OutputStream out)
-            throws IOException
-            {
+    public void write(OutputStream out) throws IOException {
+        NPOIFSFileSystem pfs = new NPOIFSFileSystem();
+        write(pfs, true);
+        pfs.writeFilesystem( out );
+    }
+    private void write(NPOIFSFileSystem pfs, boolean copyOtherEntries) throws IOException {
         // initialize our streams for writing.
         HWPFFileSystem docSys = new HWPFFileSystem();
         HWPFOutputStream wordDocumentStream = docSys.getStream(STREAM_WORD_DOCUMENT);
@@ -891,7 +913,8 @@ public final class HWPFDocument extends HWPFDocumentCore {
         }
 
         // create new document preserving order of entries
-        NPOIFSFileSystem pfs = new NPOIFSFileSystem();
+        // TODO Check "copyOtherEntries" and tweak behaviour based on that
+        // TODO That's needed for in-place write
         boolean docWritten = false;
         boolean dataWritten = false;
         boolean objectPoolWritten = false;
@@ -967,7 +990,6 @@ public final class HWPFDocument extends HWPFDocumentCore {
         if ( !objectPoolWritten )
             _objectPool.writeTo( pfs.getRoot() );
 
-        pfs.writeFilesystem( out );
         this.directory = pfs.getRoot();
 
         /*
