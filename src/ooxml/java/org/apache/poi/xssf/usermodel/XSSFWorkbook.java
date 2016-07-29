@@ -1305,7 +1305,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     /**
      * Remove the named range at the given index.
      *
-     * @param index the index of the named range name to remove
+     * @param nameIndex the index of the named range name to remove
      *
      * @deprecated 3.16. New projects should use {@link #removeName(Name)}.
      */
