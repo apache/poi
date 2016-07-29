@@ -167,19 +167,18 @@ public final class XSSFName implements Name {
     public void setNameName(String name) {
         validateName(name);
 
+        String oldName = getNameName();
         int sheetIndex = getSheetIndex();
-        int numberOfNames = _workbook.getNumberOfNames();
         //Check to ensure no other names have the same case-insensitive name at the same scope
-        for (int i = 0; i < numberOfNames; i++) {
-            XSSFName nm = _workbook.getNameAt(i);
-            if ((nm != this)
-                    && name.equalsIgnoreCase(nm.getNameName())
-                    && (sheetIndex == nm.getSheetIndex())) {
+        for (XSSFName foundName : _workbook.getNames(name)) {
+            if (foundName.getSheetIndex() == sheetIndex && foundName != this) {
                 String msg = "The "+(sheetIndex == -1 ? "workbook" : "sheet")+" already contains this name: " + name;
                 throw new IllegalArgumentException(msg);
             }
         }
         _ctName.setName(name);
+        //Need to update the name -> named ranges map
+        _workbook.updateName(this, oldName);
     }
 
     public String getRefersToFormula() {

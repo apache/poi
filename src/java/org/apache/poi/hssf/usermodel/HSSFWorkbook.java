@@ -92,6 +92,7 @@ import org.apache.poi.ss.formula.SheetNameFormatter;
 import org.apache.poi.ss.formula.udf.AggregatingUDFFinder;
 import org.apache.poi.ss.formula.udf.IndexedUDFFinder;
 import org.apache.poi.ss.formula.udf.UDFFinder;
+import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -1530,6 +1531,11 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
         return names.get(nameIndex);
     }
 
+    @Override
+    public List<HSSFName> getAllNames() {
+        return Collections.unmodifiableList(names);
+    }
+
     public NameRecord getNameRecord(int nameIndex) {
         return getWorkbook().getNameRecord(nameIndex);
     }
@@ -1701,8 +1707,9 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      *
      * @param name the name to remove.
      */
-    void removeName(HSSFName name) {
-      int index = getNameIndex(name);
+    @Override
+    public void removeName(Name name) {
+      int index = getNameIndex((HSSFName) name);
       removeName(index);
     }
 

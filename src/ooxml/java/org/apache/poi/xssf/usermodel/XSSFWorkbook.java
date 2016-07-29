@@ -29,16 +29,20 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.regex.Pattern;
 
 import javax.xml.namespace.QName;
 
+import org.apache.commons.collections4.ListValuedMap;
+import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
 import org.apache.poi.POIXMLDocument;
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.POIXMLException;
@@ -59,6 +63,7 @@ import org.apache.poi.ss.formula.SheetNameFormatter;
 import org.apache.poi.ss.formula.udf.AggregatingUDFFinder;
 import org.apache.poi.ss.formula.udf.IndexedUDFFinder;
 import org.apache.poi.ss.formula.udf.UDFFinder;
+import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -139,6 +144,11 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
      * this holds the XSSFSheet objects attached to this workbook
      */
     private List<XSSFSheet> sheets;
+
+    /**
+     * this holds the XSSFName objects attached to this workbook, keyed by lower-case name
+     */
+    private ListValuedMap<String, XSSFName> namedRangesByName;
 
     /**
      * this holds the XSSFName objects attached to this workbook
@@ -442,6 +452,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         stylesSource.setWorkbook(this);
 
         namedRanges = new ArrayList<XSSFName>();
+        namedRangesByName = new ArrayListValuedHashMap<String, XSSFName>();
         sheets = new ArrayList<XSSFSheet>();
         pivotTables = new ArrayList<XSSFPivotTable>();
     }
@@ -733,8 +744,13 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     public XSSFName createName() {
         CTDefinedName ctName = CTDefinedName.Factory.newInstance();
         ctName.setName("");
+        return createAndStoreName(ctName);
+    }
+
+    private XSSFName createAndStoreName(CTDefinedName ctName) {
         XSSFName name = new XSSFName(ctName, this);
         namedRanges.add(name);
+        namedRangesByName.put(ctName.getName().toLowerCase(Locale.ENGLISH), name);
         return name;
     }
 
@@ -938,28 +954,47 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         return stylesSource.getFontAt(idx);
     }
 
+    /**
+     * Get the first named range with the given name.
+     *
+     * Note: names of named ranges are not unique as they are scoped by sheet.
+     * {@link #getNames(String name)} returns all named ranges with the given name.
+     *
+     * @param name  named range name
+     * @return XSSFName with the given name. <code>null</code> is returned no named range could be found.
+     */
     @Override
     public XSSFName getName(String name) {
-        int nameIndex = getNameIndex(name);
-        if (nameIndex < 0) {
+        Collection<XSSFName> list = getNames(name);
+        if (list.isEmpty()) {
             return null;
         }
-        return namedRanges.get(nameIndex);
+        return list.iterator().next();
     }
 
+    /**
+     * Get the named ranges with the given name.
+     * <i>Note:</i>Excel named ranges are case-insensitive and
+     * this method performs a case-insensitive search.
+     *
+     * @param name  named range name
+     * @return list of XSSFNames with the given name. An empty list if no named ranges could be found
+     */
     @Override
     public List<XSSFName> getNames(String name) {
-        List<XSSFName> names = new ArrayList<XSSFName>();
-        for(XSSFName nr : namedRanges) {
-            if(nr.getNameName().equals(name)) {
-                names.add(nr);
-            }
-        }
-
-        return names;
+        return Collections.unmodifiableList(namedRangesByName.get(name.toLowerCase(Locale.ENGLISH)));
     }
 
+    /**
+     * Get the named range at the given index.
+     *
+     * @param nameIndex the index of the named range
+     * @return the XSSFName at the given index
+     *
+     * @deprecated 3.16. New projects should avoid accessing named ranges by index.
+     */
     @Override
+    @Deprecated
     public XSSFName getNameAt(int nameIndex) {
         int nNames = namedRanges.size();
         if (nNames < 1) {
@@ -973,21 +1008,30 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     }
 
     /**
-     * Gets the named range index by his name
-     * <i>Note:</i>Excel named ranges are case-insensitive and
-     * this method performs a case-insensitive search.
+     * Get a list of all the named ranges in the workbook.
      *
-     * @param name named range name
-     * @return named range index
+     * @return list of XSSFNames in the workbook
      */
     @Override
+    public List<XSSFName> getAllNames() {
+        return Collections.unmodifiableList(namedRanges);
+    }
+
+    /**
+     * Gets the named range index by name.
+     *
+     * @param name named range name
+     * @return named range index. <code>-1</code> is returned if no named ranges could be found.
+     *
+     * @deprecated 3.16. New projects should avoid accessing named ranges by index.
+     * Use {@link #getName(String)} instead.
+     */
+    @Override
+    @Deprecated
     public int getNameIndex(String name) {
-        int i = 0;
-        for(XSSFName nr : namedRanges) {
-            if(nr.getNameName().equals(name)) {
-                return i;
-            }
-            i++;
+        XSSFName nm = getName(name);
+        if (nm != null) {
+            return namedRanges.indexOf(nm);
         }
         return -1;
     }
@@ -1258,22 +1302,40 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         return getPackagePart().getContentType().equals(XSSFRelation.MACROS_WORKBOOK.getContentType());
     }
 
+    /**
+     * Remove the named range at the given index.
+     *
+     * @param index the index of the named range name to remove
+     *
+     * @deprecated 3.16. New projects should use {@link #removeName(Name)}.
+     */
     @Override
+    @Deprecated
     public void removeName(int nameIndex) {
-        namedRanges.remove(nameIndex);
+        removeName(getNameAt(nameIndex));
     }
 
+    /**
+     * Remove the first named range found with the given name.
+     * 
+     * Note: names of named ranges are not unique (name + sheet
+     * index is unique), so {@link #removeName(Name)} should
+     * be used if possible.
+     * 
+     * @param name the named range name to remove
+     *
+     * @throws IllegalArgumentException if no named range could be found
+     *
+     * @deprecated 3.16. New projects should use {@link #removeName(Name)}.
+     */
     @Override
+    @Deprecated
     public void removeName(String name) {
-        int idx = 0;
-        for (XSSFName nm : namedRanges) {
-            if(nm.getNameName().equalsIgnoreCase(name)) {
-                removeName(idx);
-                return;
-            }
-            idx++;
+        List<XSSFName> names = namedRangesByName.get(name.toLowerCase(Locale.ENGLISH));
+        if (names.isEmpty()) {
+            throw new IllegalArgumentException("Named range was not found: " + name);
         }
-        throw new IllegalArgumentException("Named range was not found: " + name);
+        removeName(names.get(0));
     }
 
 
@@ -1282,11 +1344,22 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
      * (name + sheet index is unique), this method is more accurate.
      *
      * @param name the name to remove.
+     *
+     * @throws IllegalArgumentException if the named range is not a part of this XSSFWorkbook
      */
-    void removeName(XSSFName name) {
-        if (!namedRanges.remove(name)) {
+    @Override
+    public void removeName(Name name) {
+        if (!namedRangesByName.removeMapping(name.getNameName().toLowerCase(Locale.ENGLISH), name)
+                || !namedRanges.remove(name)) {
             throw new IllegalArgumentException("Name was not found: " + name);
         }
+    }
+
+    void updateName(XSSFName name, String oldName) {
+        if (!namedRangesByName.removeMapping(oldName.toLowerCase(Locale.ENGLISH), name)) {
+            throw new IllegalArgumentException("Name was not found: " + name);
+        }
+        namedRangesByName.put(name.getNameName().toLowerCase(Locale.ENGLISH), name);
     }
 
 
@@ -1297,13 +1370,9 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
      */
     @Override
     public void removePrintArea(int sheetIndex) {
-        int cont = 0;
-        for (XSSFName name : namedRanges) {
-            if (name.getNameName().equals(XSSFName.BUILTIN_PRINT_AREA) && name.getSheetIndex() == sheetIndex) {
-                namedRanges.remove(cont);
-                break;
-            }
-            cont++;
+        XSSFName name = getBuiltInName(XSSFName.BUILTIN_PRINT_AREA, sheetIndex);
+        if (name != null) {
+            removeName(name);
         }
     }
 
@@ -1369,16 +1438,19 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         }
 
         //adjust indices of names ranges
-        for (Iterator<XSSFName> it = namedRanges.iterator(); it.hasNext();) {
-            XSSFName nm = it.next();
+        List<XSSFName> toRemove = new ArrayList<XSSFName>();
+        for (XSSFName nm : namedRanges) {
             CTDefinedName ct = nm.getCTName();
             if(!ct.isSetLocalSheetId()) continue;
             if (ct.getLocalSheetId() == index) {
-                it.remove();
+                toRemove.add(nm);
             } else if (ct.getLocalSheetId() > index){
                 // Bump down by one, so still points at the same sheet
                 ct.setLocalSheetId(ct.getLocalSheetId()-1);
             }
+        }
+        for (XSSFName nm : toRemove) {
+            removeName(nm);
         }
     }
 
@@ -1514,8 +1586,8 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     }
 
     XSSFName getBuiltInName(String builtInCode, int sheetNumber) {
-        for (XSSFName name : namedRanges) {
-            if (name.getNameName().equalsIgnoreCase(builtInCode) && name.getSheetIndex() == sheetNumber) {
+        for (XSSFName name : namedRangesByName.get(builtInCode.toLowerCase(Locale.ENGLISH))) {
+            if (name.getSheetIndex() == sheetNumber) {
                 return name;
             }
         }
@@ -1537,15 +1609,12 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         nameRecord.setName(builtInName);
         nameRecord.setLocalSheetId(sheetNumber);
 
-        XSSFName name = new XSSFName(nameRecord, this);
-        for (XSSFName nr : namedRanges) {
-            if (nr.equals(name))
-                throw new POIXMLException("Builtin (" + builtInName
-                        + ") already exists for sheet (" + sheetNumber + ")");
+        if (getBuiltInName(builtInName, sheetNumber) != null) {
+            throw new POIXMLException("Builtin (" + builtInName
+                    + ") already exists for sheet (" + sheetNumber + ")");
         }
 
-        namedRanges.add(name);
-        return name;
+        return createAndStoreName(nameRecord);
     }
 
     /**
@@ -1665,10 +1734,11 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     }
     
     private void reprocessNamedRanges() {
+        namedRangesByName = new ArrayListValuedHashMap<String, XSSFName>();
         namedRanges = new ArrayList<XSSFName>();
         if(workbook.isSetDefinedNames()) {
             for(CTDefinedName ctName : workbook.getDefinedNames().getDefinedNameArray()) {
-                namedRanges.add(new XSSFName(ctName, this));
+                createAndStoreName(ctName);
             }
         }
     }

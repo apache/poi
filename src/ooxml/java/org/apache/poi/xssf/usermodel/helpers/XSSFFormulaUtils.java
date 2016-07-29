@@ -65,9 +65,7 @@ public final class XSSFFormulaUtils {
      */
     public void updateSheetName(final int sheetIndex, final String oldName, final String newName) {
         // update named ranges
-        final int numberOfNames = _wb.getNumberOfNames();
-        for (int i = 0; i < numberOfNames; i++) {
-            XSSFName nm = _wb.getNameAt(i);
+        for (XSSFName nm : _wb.getAllNames()) {
             if (nm.getSheetIndex() == -1 || nm.getSheetIndex() == sheetIndex) {
                 updateName(nm, oldName, newName);
             }
