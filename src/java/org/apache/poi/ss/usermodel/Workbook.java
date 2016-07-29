@@ -370,6 +370,13 @@ public interface Workbook extends Closeable, Iterable<Sheet> {
     List<? extends Name> getNames(String name);
 
     /**
+     * Returns all defined names.
+     *
+     * @return a list of the defined names. An empty list is returned if none is found.
+     */
+    List<? extends Name> getAllNames();
+
+    /**
      * @param nameIndex position of the named range (0-based)
      * @return the defined name at the specified index
      * @throws IllegalArgumentException if the supplied index is invalid
@@ -406,6 +413,13 @@ public interface Workbook extends Closeable, Iterable<Sheet> {
       * @param name the name of the defined name
      */
     void removeName(String name);
+
+    /**
+     * Remove a defined name
+     *
+      * @param name the name of the defined name
+     */
+    void removeName(Name name);
 
     /**
      * Adds the linking required to allow formulas referencing

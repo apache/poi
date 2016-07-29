@@ -184,6 +184,9 @@ under the License.
     <property name="ooxml.curvesapi.jar" location="${ooxml.lib}/curvesapi-1.04.jar"/>
     <property name="ooxml.curvesapi.url"
               value="${repository.m2}/maven2/com/github/virtuald/curvesapi/1.04/curvesapi-1.04.jar"/>
+    <property name="ooxml.commons-collections4.jar" location="${ooxml.lib}/commons-collections4-4.1.jar"/>
+    <property name="ooxml.commons-collections4.url"
+              value="${repository.m2}/maven2/org/apache/commons/commons-collections4/4.1/commons-collections4-4.1.jar"/>
     <property name="ooxml.xmlbeans23.jar" location="${ooxml.lib}/xmlbeans-2.3.0.jar"/>
     <property name="ooxml.xmlbeans23.url"
               value="${repository.m2}/maven2/org/apache/xmlbeans/xmlbeans/2.3.0/xmlbeans-2.3.0.jar"/>
@@ -326,6 +329,7 @@ under the License.
 
     <path id="ooxml.classpath">
         <pathelement location="${ooxml.curvesapi.jar}"/>
+        <pathelement location="${ooxml.commons-collections4.jar}"/>
         <pathelement location="${ooxml.xmlbeans26.jar}"/>
         <pathelement location="${ooxml.xsds.jar}"/>
         <path refid="main.classpath"/>
@@ -623,6 +627,7 @@ under the License.
             <or>
                 <and>
                     <available file="${ooxml.curvesapi.jar}"/>
+                    <available file="${ooxml.commons-collections4.jar}"/>
                     <available file="${ooxml.xmlbeans23.jar}"/>
                     <available file="${ooxml.xmlbeans26.jar}"/>
                 </and>
@@ -633,6 +638,7 @@ under the License.
     <target name="fetch-ooxml-jars" depends="check-ooxml-jars" unless="ooxml.jars.present">
         <mkdir dir="${ooxml.lib}"/>
         <downloadfile src="${ooxml.curvesapi.url}" dest="${ooxml.curvesapi.jar}"/>
+        <downloadfile src="${ooxml.commons-collections4.url}" dest="${ooxml.commons-collections4.jar}"/>
         <downloadfile src="${ooxml.xmlbeans23.url}" dest="${ooxml.xmlbeans23.jar}.orig"/>
         <downloadfile src="${ooxml.xmlbeans26.url}" dest="${ooxml.xmlbeans26.jar}.orig"/>
         <!-- remove piccolo parser, so we don't use unsafe calls to it instead of using jaxp -->
@@ -1874,7 +1880,7 @@ under the License.
                 <globmapper from="*" to="${zipdir}/lib/*"/>
             </mappedresources>
             <mappedresources cache="true">
-                <fileset dir="${ooxml.lib}" includes="xmlbeans-2.6.0.jar.orig,curvesapi-*.jar"/>
+                <fileset dir="${ooxml.lib}" includes="xmlbeans-2.6.0.jar.orig,commons-collections4-*.jar,curvesapi-*.jar"/>
                 <regexpmapper from="^(.*\.jar)(\.orig)?$$" to="${zipdir}/ooxml-lib/\1"/>
             </mappedresources>
             <mappedresources cache="true">
@@ -2116,6 +2122,7 @@ under the License.
             <auxClasspath path="${ooxml.xsds.jar}" />
             <auxClasspath path="${ooxml.security.jar}" />
             <auxClasspath path="${ooxml.curvesapi.jar}" />
+            <auxClasspath path="${ooxml.commons-collections4.jar}" />
             <auxClasspath path="${ooxml.xmlbeans26.jar}" />
             <auxClasspath path="${main.commons-codec.jar}" />
             <auxClasspath path="${main.commons-logging.jar}" />

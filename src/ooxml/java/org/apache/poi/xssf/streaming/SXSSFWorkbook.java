@@ -1007,11 +1007,24 @@ public class SXSSFWorkbook implements Workbook {
     }
 
     /**
+     * Returns all defined names
+     *
+     * @return all defined names
+     */
+    @Override
+    public List<? extends Name> getAllNames()
+    {
+        return _wb.getAllNames();
+    }
+
+    /**
      * @param nameIndex position of the named range (0-based)
      * @return the defined name at the specified index
      * @throws IllegalArgumentException if the supplied index is invalid
+     * @deprecated 3.16. New projects should avoid accessing named ranges by index.
      */
     @Override
+    @Deprecated
     public Name getNameAt(int nameIndex)
     {
         return _wb.getNameAt(nameIndex);
@@ -1036,8 +1049,12 @@ public class SXSSFWorkbook implements Workbook {
      *
      * @param name the name of the defined name
      * @return zero based index of the defined name. <code>-1</code> if not found.
+     *
+     * @deprecated 3.16. New projects should avoid accessing named ranges by index.
+     * Use {@link #getName(String)} instead.
      */
     @Override
+    @Deprecated
     public int getNameIndex(String name)
     {
         return _wb.getNameIndex(name);
@@ -1047,8 +1064,11 @@ public class SXSSFWorkbook implements Workbook {
      * Remove the defined name at the specified index
      *
      * @param index named range index (0 based)
+     *
+     * @deprecated 3.16. New projects should use {@link #removeName(Name)}.
      */
     @Override
+    @Deprecated
     public void removeName(int index)
     {
         _wb.removeName(index);
@@ -1057,10 +1077,24 @@ public class SXSSFWorkbook implements Workbook {
     /**
      * Remove a defined name by name
      *
-      * @param name the name of the defined name
+     * @param name the name of the defined name
+     *
+     * @deprecated 3.16. New projects should use {@link #removeName(Name)}.
      */
     @Override
+    @Deprecated
     public void removeName(String name)
+    {
+        _wb.removeName(name);
+    }
+
+    /**
+     * Remove the given defined name
+     *
+     * @param name the name to remove
+     */
+    @Override
+    public void removeName(Name name)
     {
         _wb.removeName(name);
     }
