@@ -27,6 +27,7 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.formula.eval.ErrorEval;
+import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
@@ -105,6 +106,7 @@ public final class TestIndirect {
 
         // non-error cases
         confirm(feA, c, "INDIRECT(\"C2\")", 23);
+        confirm(feA, c, "INDIRECT(\"C2\", TRUE)", 23);
         confirm(feA, c, "INDIRECT(\"$C2\")", 23);
         confirm(feA, c, "INDIRECT(\"C$2\")", 23);
         confirm(feA, c, "SUM(INDIRECT(\"Sheet2!B1:C3\"))", 351); // area ref
@@ -149,7 +151,7 @@ public final class TestIndirect {
 //            confirm(feA, c, "INDIRECT(\"Sheet1!A65537\")", ErrorEval.REF_INVALID); // bad row
 //        }
         confirm(feA, c, "INDIRECT(\"Sheet1!A 1\")", ErrorEval.REF_INVALID); // space in cell ref
-        
+
         wbA.close();
     }
 
@@ -202,5 +204,10 @@ public final class TestIndirect {
             fail("Expected error '" + ErrorEval.getText(expCode)
                     + "' but got '" + cv.formatAsString() + "'.");
         }
+    }
+
+    @Test
+    public void testInvalidInput() {
+        assertEquals(ErrorEval.VALUE_INVALID, Indirect.instance.evaluate(new ValueEval[] {}, null));
     }
 }
