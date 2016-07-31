@@ -994,6 +994,7 @@ public class SXSSFCell implements Cell {
             ((FormulaValue)_value)._value = ((FormulaValue)prevValue)._value;
         }
     }
+
 //TODO: implement this correctly
     @NotImplemented
     /*package*/ CellType computeTypeFromFormula(String formula)

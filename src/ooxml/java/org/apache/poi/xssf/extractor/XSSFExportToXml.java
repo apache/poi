@@ -41,7 +41,6 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.util.DocumentHelper;
@@ -55,7 +54,6 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFTable;
 import org.apache.poi.xssf.usermodel.helpers.XSSFSingleXmlCell;
 import org.apache.poi.xssf.usermodel.helpers.XSSFXmlColumnPr;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STXmlDataType;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -117,8 +115,7 @@ public class XSSFExportToXml implements Comparator<String>{
      * @param validate if true, validates the XML againts the XML Schema
      * @throws SAXException
      * @throws ParserConfigurationException 
-     * @throws TransformerException 
-     * @throws InvalidFormatException
+     * @throws TransformerException
      */
     public void exportToXML(OutputStream os, String encoding, boolean validate) throws SAXException, ParserConfigurationException, TransformerException{
         List<XSSFSingleXmlCell> singleXMLCells = map.getRelatedSingleXMLCell();
@@ -128,10 +125,10 @@ public class XSSFExportToXml implements Comparator<String>{
 
         Document doc = DocumentHelper.createDocument();
 
-        Element root = null;
+        final Element root;
 
         if (isNamespaceDeclared()) {
-            root=doc.createElementNS(getNamespace(),rootElement);
+            root = doc.createElementNS(getNamespace(),rootElement);
         } else {
             root = doc.createElementNS("", rootElement);
         }
@@ -152,7 +149,6 @@ public class XSSFExportToXml implements Comparator<String>{
             tableMappings.put(commonXPath, table);
         }
 
-
         Collections.sort(xpaths,this);
 
         for(String xpath : xpaths) {
@@ -167,8 +163,7 @@ public class XSSFExportToXml implements Comparator<String>{
                     XSSFCell cell = simpleXmlCell.getReferencedCell();
                     if (cell!=null) {
                         Node currentNode = getNodeByXPath(xpath,doc.getFirstChild(),doc,false);
-                        STXmlDataType.Enum dataType = simpleXmlCell.getXmlDataType();
-                        mapCellOnNode(cell,currentNode,dataType);
+                        mapCellOnNode(cell,currentNode);
                         
                         //remove nodes which are empty in order to keep the output xml valid
                         if("".equals(currentNode.getTextContent()) && currentNode.getParentNode() != null) {
@@ -202,30 +197,21 @@ public class XSSFExportToXml implements Comparator<String>{
                                 XSSFXmlColumnPr pointer = tableColumns.get(j-startColumnIndex);
                                 String localXPath = pointer.getLocalXPath();
                                 Node currentNode = getNodeByXPath(localXPath,tableRootNode,doc,false);
-                                STXmlDataType.Enum dataType = pointer.getXmlDataType();
 
-
-                                mapCellOnNode(cell,currentNode,dataType);
+                                mapCellOnNode(cell,currentNode);
                             }
-
                         }
-
                     }
-
-
-
                 }
-            } else {
+            } /*else {
                 // TODO:  implement filtering management in xpath
-            }
+            }*/
         }
 
         boolean isValid = true;
         if (validate) {
             isValid =isValid(doc);
         }
-
-
 
         if (isValid) {
 
@@ -275,7 +261,7 @@ public class XSSFExportToXml implements Comparator<String>{
     }
 
 
-    private void mapCellOnNode(XSSFCell cell, Node node, STXmlDataType.Enum  outputDataType) {
+    private void mapCellOnNode(XSSFCell cell, Node node) {
 
         String value ="";
         switch (cell.getCellTypeEnum()) {
@@ -349,11 +335,7 @@ public class XSSFExportToXml implements Comparator<String>{
                 }
                 currentNode = selectedNode;
             } else {
-
-
-                Node attribute = createAttribute(doc, currentNode, axisName);
-
-                currentNode = attribute;
+                currentNode = createAttribute(doc, currentNode, axisName);
             }
         }
         return currentNode;
@@ -421,12 +403,11 @@ public class XSSFExportToXml implements Comparator<String>{
 
         for(int i =1;i <minLenght; i++) {
 
-            String leftElementName =leftTokens[i];
+            String leftElementName = leftTokens[i];
             String rightElementName = rightTokens[i];
 
             if (leftElementName.equals(rightElementName)) {
-                Node complexType = getComplexTypeForElement(leftElementName, xmlSchema,localComplexTypeRootNode);
-                localComplexTypeRootNode = complexType;
+                localComplexTypeRootNode = getComplexTypeForElement(leftElementName, xmlSchema, localComplexTypeRootNode);
             } else {
                 int leftIndex = indexOfElementInComplexType(leftElementName,localComplexTypeRootNode);
                 int rightIndex = indexOfElementInComplexType(rightElementName,localComplexTypeRootNode);
@@ -436,9 +417,9 @@ public class XSSFExportToXml implements Comparator<String>{
                     }if ( leftIndex > rightIndex) {
                         return 1;
                     }
-                } else {
+                } /*else {
                     // NOTE: the xpath doesn't match correctly in the schema
-                }
+                }*/
             }
         }
 
@@ -483,7 +464,7 @@ public class XSSFExportToXml implements Comparator<String>{
         // Note: we expect that all the complex types are defined at root level
         Node complexTypeNode = null;
         if (!"".equals(complexTypeName)) {
-            complexTypeNode = getComplexTypeNodeFromSchemaChildren(xmlSchema, complexTypeNode, complexTypeName);
+            complexTypeNode = getComplexTypeNodeFromSchemaChildren(xmlSchema, null, complexTypeName);
         }
 
         return complexTypeNode;

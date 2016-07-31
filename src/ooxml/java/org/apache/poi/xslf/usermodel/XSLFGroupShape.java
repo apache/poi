@@ -304,13 +304,13 @@ implements XSLFShapeContainer, GroupShape<XSLFShape,XSLFTextParagraph> {
     @Override
     public boolean getFlipHorizontal(){
         CTGroupTransform2D xfrm = getXfrm();
-        return (xfrm == null || !xfrm.isSetFlipH()) ? false : xfrm.getFlipH();
+        return !(xfrm == null || !xfrm.isSetFlipH()) && xfrm.getFlipH();
     }
 
     @Override
     public boolean getFlipVertical(){
         CTGroupTransform2D xfrm = getXfrm();
-        return (xfrm == null || !xfrm.isSetFlipV()) ? false : xfrm.getFlipV();
+        return !(xfrm == null || !xfrm.isSetFlipV()) && xfrm.getFlipV();
     }
 
     @Override
@@ -333,7 +333,7 @@ implements XSLFShapeContainer, GroupShape<XSLFShape,XSLFTextParagraph> {
         
         // recursively update each shape
         for(XSLFShape shape : gr.getShapes()) {
-            XSLFShape newShape = null;
+            XSLFShape newShape;
             if (shape instanceof XSLFTextBox) {
                 newShape = createTextBox();
             } else if (shape instanceof XSLFAutoShape) {

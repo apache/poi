@@ -78,14 +78,16 @@ public class BaseTestCellUtil {
     @Test(expected=RuntimeException.class)
     public void setCellStylePropertyWithInvalidValue() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
-        Sheet s = wb.createSheet();
-        Row r = s.createRow(0);
-        Cell c = r.createCell(0);
+        try {
+            Sheet s = wb.createSheet();
+            Row r = s.createRow(0);
+            Cell c = r.createCell(0);
 
-        // An invalid BorderStyle constant
-        CellUtil.setCellStyleProperty(c, CellUtil.BORDER_BOTTOM, 42);
-        
-        wb.close();
+            // An invalid BorderStyle constant
+            CellUtil.setCellStyleProperty(c, CellUtil.BORDER_BOTTOM, 42);
+        } finally {
+            wb.close();
+        }
     }
     
     @Test()
@@ -352,10 +354,8 @@ public class BaseTestCellUtil {
             CellUtil.setFont(A1, font2);
             fail("setFont not allowed if font belongs to a different workbook");
         } catch (final IllegalArgumentException e) {
-            if (e.getMessage().startsWith("Font does not belong to this workbook")) {
-                // expected
-            }
-            else {
+            // one specific message is expected
+            if (!e.getMessage().startsWith("Font does not belong to this workbook")) {
                 throw e;
             }
         } finally {
@@ -371,7 +371,7 @@ public class BaseTestCellUtil {
      */
     // bug 55555
     @Test
-    public void setFillForegroundColorBeforeFillBackgroundColor() {
+    public void setFillForegroundColorBeforeFillBackgroundColor() throws IOException {
         Workbook wb1 = _testDataProvider.createWorkbook();
         Cell A1 = wb1.createSheet().createRow(0).createCell(0);
         Map<String, Object> properties = new HashMap<String, Object>();
@@ -386,13 +386,14 @@ public class BaseTestCellUtil {
         assertEquals("fill pattern", CellStyle.BRICKS, style.getFillPattern());
         assertEquals("fill foreground color", IndexedColors.BLUE, IndexedColors.fromInt(style.getFillForegroundColor()));
         assertEquals("fill background color", IndexedColors.RED, IndexedColors.fromInt(style.getFillBackgroundColor()));
+        wb1.close();
     }
     /**
      * bug 55555
      * @since POI 3.15 beta 3
      */
     @Test
-    public void setFillForegroundColorBeforeFillBackgroundColorEnum() {
+    public void setFillForegroundColorBeforeFillBackgroundColorEnum() throws IOException {
         Workbook wb1 = _testDataProvider.createWorkbook();
         Cell A1 = wb1.createSheet().createRow(0).createCell(0);
         Map<String, Object> properties = new HashMap<String, Object>();
@@ -407,5 +408,7 @@ public class BaseTestCellUtil {
         assertEquals("fill pattern", FillPatternType.BRICKS, style.getFillPatternEnum());
         assertEquals("fill foreground color", IndexedColors.BLUE, IndexedColors.fromInt(style.getFillForegroundColor()));
         assertEquals("fill background color", IndexedColors.RED, IndexedColors.fromInt(style.getFillBackgroundColor()));
+
+        wb1.close();
     }
 }
