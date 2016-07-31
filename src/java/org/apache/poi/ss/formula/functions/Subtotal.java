@@ -19,12 +19,18 @@ package org.apache.poi.ss.formula.functions;
 
 import static org.apache.poi.ss.formula.functions.AggregateFunction.subtotalInstance;
 
+import org.apache.poi.ss.formula.LazyRefEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.EvaluationException;
 import org.apache.poi.ss.formula.eval.NotImplementedException;
 import org.apache.poi.ss.formula.eval.NotImplementedFunctionException;
 import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.formula.eval.ValueEval;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Implementation for the Excel function SUBTOTAL<p>
@@ -61,7 +67,6 @@ import org.apache.poi.ss.formula.eval.ValueEval;
 public class Subtotal implements Function {
 
 	private static Function findFunction(int functionCode) throws EvaluationException {
-		Function func;
         switch (functionCode) {
 			case 1: return subtotalInstance(AggregateFunction.AVERAGE);
 			case 2: return Count.subtotalInstance();
@@ -87,7 +92,7 @@ public class Subtotal implements Function {
 			return ErrorEval.VALUE_INVALID;
 		}
 
-		Function innerFunc;
+		final Function innerFunc;
 		try {
 			ValueEval ve = OperandResolver.getSingleValue(args[0], srcRowIndex, srcColumnIndex);
 			int functionCode = OperandResolver.coerceValueToInt(ve);
@@ -96,9 +101,24 @@ public class Subtotal implements Function {
 			return e.getErrorEval();
 		}
 
-		ValueEval[] innerArgs = new ValueEval[nInnerArgs];
-		System.arraycopy(args, 1, innerArgs, 0, nInnerArgs);
+		// ignore the first arg, this is the function-type, we check for the length above
+		final List<ValueEval> list = new ArrayList<ValueEval>(Arrays.asList(args).subList(1, args.length));
 
-		return innerFunc.evaluate(innerArgs, srcRowIndex, srcColumnIndex);
+		Iterator<ValueEval> it = list.iterator();
+
+		// See https://support.office.com/en-us/article/SUBTOTAL-function-7b027003-f060-4ade-9040-e478765b9939
+		// "If there are other subtotals within ref1, ref2,... (or nested subtotals), these nested subtotals are ignored to avoid double counting."
+		// For array references it is handled in other evaluation steps, but we need to handle this here for references to subtotal-functions
+		while(it.hasNext()) {
+			ValueEval eval = it.next();
+			if(eval instanceof LazyRefEval) {
+				LazyRefEval lazyRefEval = (LazyRefEval) eval;
+				if(lazyRefEval.isSubTotal()) {
+					it.remove();
+				}
+			}
+		}
+
+		return innerFunc.evaluate(list.toArray(new ValueEval[list.size()]), srcRowIndex, srcColumnIndex);
 	}
 }
