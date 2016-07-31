@@ -1166,6 +1166,8 @@ under the License.
                 <group name="Main">
                     <classfiles>
                         <fileset dir="${main.output.dir}">
+                            <!-- exclude some generated classes -->
+                            <exclude name="org/apache/poi/sl/draw/binding/*.class"/>
                             <!-- exclude large test-class -->
                             <exclude name="org/apache/poi/hssf/usermodel/DummyGraphics2d.class"/>
                         </fileset>
