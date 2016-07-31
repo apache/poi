@@ -20,9 +20,8 @@ package org.apache.poi.ss.formula.functions;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.formula.eval.AreaEval;
-import org.apache.poi.ss.formula.eval.NumberEval;
-import org.apache.poi.ss.formula.eval.ValueEval;
+import org.apache.poi.ss.formula.FormulaParseException;
+import org.apache.poi.ss.formula.eval.*;
 
 import junit.framework.TestCase;
 import org.apache.poi.ss.usermodel.*;
@@ -75,7 +74,6 @@ public final class TestSubtotal extends TestCase {
 	}
 
      public void testAvg(){
-
         Workbook wb = new HSSFWorkbook();
 
         FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();
@@ -95,16 +93,18 @@ public final class TestSubtotal extends TestCase {
         a6.setCellFormula("SUBTOTAL(1,B2:B6)*2 + 2");
         Cell a7 = sh.createRow(7).createCell(1);
         a7.setCellFormula("SUBTOTAL(1,B2:B7)");
+        Cell a8 = sh.createRow(8).createCell(1);
+        a8.setCellFormula("SUBTOTAL(1,B2,B3,B4,B5,B6,B7,B8)");
 
         fe.evaluateAll();
 
         assertEquals(2.0, a3.getNumericCellValue());
         assertEquals(8.0, a6.getNumericCellValue());
         assertEquals(3.0, a7.getNumericCellValue());
+        assertEquals(3.0, a8.getNumericCellValue());
     }
 
     public void testSum(){
-
         Workbook wb = new HSSFWorkbook();
 
         FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();
@@ -124,12 +124,15 @@ public final class TestSubtotal extends TestCase {
         a6.setCellFormula("SUBTOTAL(9,B2:B6)*2 + 2");
         Cell a7 = sh.createRow(7).createCell(1);
         a7.setCellFormula("SUBTOTAL(9,B2:B7)");
+        Cell a8 = sh.createRow(8).createCell(1);
+        a8.setCellFormula("SUBTOTAL(9,B2,B3,B4,B5,B6,B7,B8)");
 
         fe.evaluateAll();
 
         assertEquals(4.0, a3.getNumericCellValue());
         assertEquals(26.0, a6.getNumericCellValue());
         assertEquals(12.0, a7.getNumericCellValue());
+        assertEquals(12.0, a8.getNumericCellValue());
     }
 
     public void testCount(){
@@ -147,18 +150,21 @@ public final class TestSubtotal extends TestCase {
         a3.setCellFormula("SUBTOTAL(2,B2:B3)");
         Cell a4 = sh.createRow(4).createCell(1);
         a4.setCellValue("POI");                  // A4 is string and not counted
-        Cell a5 = sh.createRow(5).createCell(1); // A5 is blank and not counted
+        /*Cell a5 =*/ sh.createRow(5).createCell(1); // A5 is blank and not counted
 
         Cell a6 = sh.createRow(6).createCell(1);
         a6.setCellFormula("SUBTOTAL(2,B2:B6)*2 + 2");
         Cell a7 = sh.createRow(7).createCell(1);
         a7.setCellFormula("SUBTOTAL(2,B2:B7)");
+        Cell a8 = sh.createRow(8).createCell(1);
+        a8.setCellFormula("SUBTOTAL(2,B2,B3,B4,B5,B6,B7,B8)");
 
         fe.evaluateAll();
 
         assertEquals(2.0, a3.getNumericCellValue());
         assertEquals(6.0, a6.getNumericCellValue());
         assertEquals(2.0, a7.getNumericCellValue());
+        assertEquals(2.0, a8.getNumericCellValue());
     }
 
     public void testCounta(){
@@ -176,18 +182,21 @@ public final class TestSubtotal extends TestCase {
         a3.setCellFormula("SUBTOTAL(3,B2:B3)");
         Cell a4 = sh.createRow(4).createCell(1);
         a4.setCellValue("POI");                  // A4 is string and not counted
-        Cell a5 = sh.createRow(5).createCell(1); // A5 is blank and not counted
+        /*Cell a5 =*/ sh.createRow(5).createCell(1); // A5 is blank and not counted
 
         Cell a6 = sh.createRow(6).createCell(1);
         a6.setCellFormula("SUBTOTAL(3,B2:B6)*2 + 2");
         Cell a7 = sh.createRow(7).createCell(1);
         a7.setCellFormula("SUBTOTAL(3,B2:B7)");
+        Cell a8 = sh.createRow(8).createCell(1);
+        a8.setCellFormula("SUBTOTAL(3,B2,B3,B4,B5,B6,B7,B8)");
 
         fe.evaluateAll();
 
         assertEquals(2.0, a3.getNumericCellValue());
         assertEquals(8.0, a6.getNumericCellValue());
         assertEquals(3.0, a7.getNumericCellValue());
+        assertEquals(3.0, a8.getNumericCellValue());
     }
 
     public void testMax(){
@@ -211,12 +220,15 @@ public final class TestSubtotal extends TestCase {
         a6.setCellFormula("SUBTOTAL(4,B2:B6)*2 + 2");
         Cell a7 = sh.createRow(7).createCell(1);
         a7.setCellFormula("SUBTOTAL(4,B2:B7)");
+        Cell a8 = sh.createRow(8).createCell(1);
+        a8.setCellFormula("SUBTOTAL(4,B2,B3,B4,B5,B6,B7,B8)");
 
         fe.evaluateAll();
 
         assertEquals(3.0, a3.getNumericCellValue());
         assertEquals(16.0, a6.getNumericCellValue());
         assertEquals(7.0, a7.getNumericCellValue());
+        assertEquals(7.0, a8.getNumericCellValue());
     }
 
     public void testMin(){
@@ -240,12 +252,15 @@ public final class TestSubtotal extends TestCase {
         a6.setCellFormula("SUBTOTAL(5,B2:B6)*2 + 2");
         Cell a7 = sh.createRow(7).createCell(1);
         a7.setCellFormula("SUBTOTAL(5,B2:B7)");
+        Cell a8 = sh.createRow(8).createCell(1);
+        a8.setCellFormula("SUBTOTAL(5,B2,B3,B4,B5,B6,B7,B8)");
 
         fe.evaluateAll();
 
         assertEquals(1.0, a3.getNumericCellValue());
         assertEquals(4.0, a6.getNumericCellValue());
         assertEquals(1.0, a7.getNumericCellValue());
+        assertEquals(1.0, a8.getNumericCellValue());
     }
 
     public void testStdev(){
@@ -269,12 +284,15 @@ public final class TestSubtotal extends TestCase {
         a6.setCellFormula("SUBTOTAL(7,B2:B6)*2 + 2");
         Cell a7 = sh.createRow(7).createCell(1);
         a7.setCellFormula("SUBTOTAL(7,B2:B7)");
+        Cell a8 = sh.createRow(8).createCell(1);
+        a8.setCellFormula("SUBTOTAL(7,B2,B3,B4,B5,B6,B7,B8)");
 
         fe.evaluateAll();
 
         assertEquals(1.41421, a3.getNumericCellValue(), 0.0001);
         assertEquals(7.65685, a6.getNumericCellValue(), 0.0001);
         assertEquals(2.82842, a7.getNumericCellValue(), 0.0001);
+        assertEquals(2.82842, a8.getNumericCellValue(), 0.0001);
     }
 
     public void test50209(){
@@ -327,5 +345,70 @@ public final class TestSubtotal extends TestCase {
         confirmExpectedResult(evaluator, "SUBTOTAL(SUM;B2:B8;C2:C8)", cellC1, 37.0);
         confirmExpectedResult(evaluator, "SUBTOTAL(COUNT;B2:B8,C2:C8)", cellC2, 3.0);
         confirmExpectedResult(evaluator, "SUBTOTAL(COUNTA;B2:B8,C2:C8)", cellC3, 5.0);
+    }
+
+    public void testUnimplemented(){
+        Workbook wb = new HSSFWorkbook();
+
+        FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();
+
+        Sheet sh = wb.createSheet();
+        Cell a3 = sh.createRow(3).createCell(1);
+        a3.setCellFormula("SUBTOTAL(8,B2:B3)");
+
+        try {
+            fe.evaluateAll();
+            fail("Should catch an NotImplementedFunctionException here, adjust these tests if it was actually implemented");
+        } catch (NotImplementedException e) {
+            // expected here
+        }
+
+        a3.setCellFormula("SUBTOTAL(10,B2:B3)");
+
+        try {
+            fe.evaluateAll();
+            fail("Should catch an NotImplementedFunctionException here, adjust these tests if it was actually implemented");
+        } catch (NotImplementedException e) {
+            // expected here
+        }
+
+        a3.setCellFormula("SUBTOTAL(11,B2:B3)");
+
+        try {
+            fe.evaluateAll();
+            fail("Should catch an NotImplementedFunctionException here, adjust these tests if it was actually implemented");
+        } catch (NotImplementedException e) {
+            // expected here
+        }
+
+        a3.setCellFormula("SUBTOTAL(107,B2:B3)");
+
+        try {
+            fe.evaluateAll();
+            fail("Should catch an NotImplementedFunctionException here, adjust these tests if it was actually implemented");
+        } catch (NotImplementedException e) {
+            // expected here
+        }
+
+        a3.setCellFormula("SUBTOTAL(0,B2:B3)");
+        fe.evaluateAll();
+        assertEquals(FormulaError.VALUE.getCode(), a3.getErrorCellValue());
+
+        try {
+            a3.setCellFormula("SUBTOTAL(9)");
+            fail("Should catch an exception here");
+        } catch (FormulaParseException e) {
+            // expected here
+        }
+
+        try {
+            a3.setCellFormula("SUBTOTAL()");
+            fail("Should catch an exception here");
+        } catch (FormulaParseException e) {
+            // expected here
+        }
+
+        Subtotal subtotal = new Subtotal();
+        assertEquals(ErrorEval.VALUE_INVALID, subtotal.evaluate(new ValueEval[] {}, 0, 0));
     }
 }
