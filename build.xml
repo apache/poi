@@ -133,6 +133,7 @@ under the License.
     <property name="ooxml.output.test.dir" location="build/ooxml-test-classes"/>
     <property name="ooxml.testokfile" location="build/ooxml-testokfile.txt"/>
     <property name="ooxml.lite.output.dir" location="build/ooxml-lite-classes"/>
+    <property name="ooxml.lite.testokfile" location="build/ooxml-lite-testokfile.txt"/>
 
     <!-- XSSF/SXSSF subset of OOXML: -->
     <property name="ooxml.ss.testokfile" location="build/ooxml-ss-testokfile.txt"/>
@@ -502,9 +503,7 @@ under the License.
         <attribute name="src"/>
         <attribute name="dest"/>
         <sequential>
-            <local name="exists"/>
-            <available file="@{dest}" property="exists"/>
-            <!--fail unless:true="${exists}"
+            <!--fail
                 message="Java version might be uncapable to download https URLs - see https://stackoverflow.com/questions/6851461/java-why-does-ssl-handshake-give-could-not-generate-dh-keypair-exception">
                 <condition>
                     <and>
@@ -513,7 +512,7 @@ under the License.
                     </and>
                 </condition>
             </fail-->
-            <get src="@{src}" dest="@{dest}" unless:true="${exists}"/>
+            <get src="@{src}" dest="@{dest}" skipexisting="true"/>
         </sequential>
     </macrodef>
 
@@ -1509,7 +1508,20 @@ under the License.
     </target>
 
     <!-- Section: test-ooxml-lite -->
-    <target name="compile-ooxml-lite" depends="compile-ooxml">
+    <target name="-compile-ooxml-lite-check">
+        <uptodate property="ooxml.lite.test.notRequired" targetfile="${ooxml.lite.testokfile}">
+            <srcfiles dir="${ooxml.src}"/>
+            <srcfiles dir="${ooxml.src.test}"/>
+            <srcfiles file="${ooxml.xsds.jar}"/>
+            <srcfiles file="${ooxml.security.jar}"/>
+        </uptodate>
+    </target>
+
+    <target name="compile-ooxml-lite" depends="-compile-ooxml-lite-check,compile-ooxml"
+            unless="ooxml.lite.test.notRequired">
+        <delete file="${ooxml.lite.testokfile}"/>
+        <echo message="Running ooxml-lite generator"/>
+
         <property name="ooxml.lite-merged.dir" location="build/ooxml-lite-merged"/>
         <mkdir dir="${ooxml.lite-merged.dir}"/>
 
@@ -1535,6 +1547,8 @@ under the License.
             <arg value="-dest"/>
             <arg value="${ooxml.lite.output.dir}"/>
         </java>
+
+        <echo file="${ooxml.lite.testokfile}" append="false" message="testok"/>
     </target>
 
     <target name="test-ooxml-lite" depends="jacocotask,compile-ooxml-xsds,compile-ooxml-lite">
@@ -2089,7 +2103,7 @@ under the License.
         </forbiddenapis>
     </target>
 
-    <target name="findbugs" depends="assemble">
+    <target name="findbugs" depends="jar">
         <downloadfile src="${findbugs.url}" dest="${findbugs.jar}"/>
 
         <property name="findbugs.home" value="build/findbugs" />
@@ -2114,6 +2128,7 @@ under the License.
                 <include name="poi/poi-${version.id}.jar"/>
                 <include name="poi-scratchpad/poi-scratchpad-${version.id}.jar"/>
                 <include name="poi-ooxml/poi-ooxml-${version.id}.jar"/>
+                <include name="poi-excelant/poi-excelant-${version.id}.jar"/>
             </fileset>
             <auxClasspath path="${dsig.bouncycastle-pkix.jar}" />
             <auxClasspath path="${dsig.bouncycastle-prov.jar}" />
