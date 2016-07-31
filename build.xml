@@ -170,7 +170,7 @@ under the License.
     <property name="main.ant.url" value="${repository.m2}/maven2/org/apache/ant/ant/1.9.4/ant-1.9.4.jar"/>
     <property name="main.antlauncher.jar" location="${main.lib}/ant-launcher-1.9.4.jar"/>
     <property name="main.antlauncher.url" value="${repository.m2}/maven2/org/apache/ant/ant-launcher/1.9.4/ant-launcher-1.9.4.jar"/>
-    <property name="main.commons-collections4.jar" location="${ooxml.lib}/commons-collections4-4.1.jar"/>
+    <property name="main.commons-collections4.jar" location="${main.lib}/commons-collections4-4.1.jar"/>
     <property name="main.commons-collections4.url"
               value="${repository.m2}/maven2/org/apache/commons/commons-collections4/4.1/commons-collections4-4.1.jar"/>
 
@@ -1922,13 +1922,14 @@ under the License.
                 <fileset dir="${main.lib}">
                     <include name="commons-codec-*.jar"/>
                     <include name="commons-logging-*.jar"/>
+                    <include name="commons-collections4-*.jar"/>
                     <include name="junit-*.jar"/>
                     <include name="log4j-*.jar"/>
                 </fileset>
                 <globmapper from="*" to="${zipdir}/lib/*"/>
             </mappedresources>
             <mappedresources cache="true">
-                <fileset dir="${ooxml.lib}" includes="xmlbeans-2.6.0.jar.orig,commons-collections4-*.jar,curvesapi-*.jar"/>
+                <fileset dir="${ooxml.lib}" includes="xmlbeans-2.6.0.jar.orig,curvesapi-*.jar"/>
                 <regexpmapper from="^(.*\.jar)(\.orig)?$$" to="${zipdir}/ooxml-lib/\1"/>
             </mappedresources>
             <mappedresources cache="true">
@@ -2157,6 +2158,7 @@ under the License.
     	   output="xml:withMessages"
     	   outputFile="build/findbugs.xml"
     	   effort="max"
+           failOnError="true"
            excludeFilter="src/resources/devtools/findbugs-filters.xml">
             <fileset dir="${dist.dir}/maven">
                 <include name="poi/poi-${version.id}.jar"/>
@@ -2171,11 +2173,12 @@ under the License.
             <auxClasspath path="${ooxml.xsds.jar}" />
             <auxClasspath path="${ooxml.security.jar}" />
             <auxClasspath path="${ooxml.curvesapi.jar}" />
-            <auxClasspath path="${ooxml.commons-collections4.jar}" />
             <auxClasspath path="${ooxml.xmlbeans26.jar}" />
+            <auxClasspath path="${main.commons-collections4.jar}" />
             <auxClasspath path="${main.commons-codec.jar}" />
             <auxClasspath path="${main.commons-logging.jar}" />
             <auxClasspath path="${main.junit.jar}" />
+            <auxClasspath path="${main.ant.jar}" />
             <sourcePath path="src/java" />
             <sourcePath path="src/ooxml/java" />
             <sourcePath path="src/scratchpad/src" />
