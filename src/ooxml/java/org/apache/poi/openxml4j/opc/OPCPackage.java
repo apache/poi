@@ -382,8 +382,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 		}
 
 		// Creates a new package
-		OPCPackage pkg = null;
-		pkg = new ZipPackage();
+		OPCPackage pkg = new ZipPackage();
 		pkg.originalPackagePath = file.getAbsolutePath();
 
 		configurePackage(pkg);
@@ -391,8 +390,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 	}
 
 	public static OPCPackage create(OutputStream output) {
-		OPCPackage pkg = null;
-		pkg = new ZipPackage();
+		OPCPackage pkg = new ZipPackage();
 		pkg.originalPackagePath = null;
 		pkg.output = output;
 
@@ -542,7 +540,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
         // Create the thumbnail part name
         String contentType = ContentTypes
                 .getContentTypeFromFileExtension(filename);
-        PackagePartName thumbnailPartName = null;
+        PackagePartName thumbnailPartName;
         try {
             thumbnailPartName = PackagingURIHelper.createPartName("/docProps/"
                     + filename);
