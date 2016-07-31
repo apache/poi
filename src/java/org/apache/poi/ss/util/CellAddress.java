@@ -97,6 +97,15 @@ public class CellAddress implements Comparable<CellAddress> {
     }
     
     /**
+     * Create a new CellAddress object.
+     *
+     * @param address a cell address
+     */
+    public CellAddress(CellAddress address) {
+        this(address._row, address._col);
+    }    
+    
+    /**
      * Get the cell address row
      *
      * @return row
