@@ -196,8 +196,8 @@ under the License.
               value="${repository.m2}/maven2/org/apache/xmlbeans/xmlbeans/2.6.0/xmlbeans-2.6.0.jar"/>
 
     <!-- coverage libs -->
-    <property name="jacoco.zip" location="${main.lib}/jacoco-0.7.6.201602180812.zip"/>
-    <property name="jacoco.url" value="${repository.m2}/maven2/org/jacoco/jacoco/0.7.6.201602180812/jacoco-0.7.6.201602180812.zip"/>
+    <property name="jacoco.zip" location="${main.lib}/jacoco-0.7.7.201606060606.zip"/>
+    <property name="jacoco.url" value="${repository.m2}/maven2/org/jacoco/jacoco/0.7.7.201606060606/jacoco-0.7.7.201606060606.zip"/>
     <property name="asm.jar" location="${main.lib}/asm-all-5.0.3.jar"/>
     <property name="asm.url" value="${repository.m2}/maven2/org/ow2/asm/asm-all/5.0.3/asm-all-5.0.3.jar"/>
 
@@ -307,6 +307,8 @@ under the License.
 
     <!-- this can be overwriten to empty when running with Java 9 -->
     <property name="maxpermsize" value="-XX:MaxPermSize=256m"/>
+    <property name="java9addmods" value="-Dthis.is.a.dummy=true"/>
+    <property name="java9addmodsvalue" value="-Dthis.is.a.dummy=true"/>
 
     <path id="main.classpath">
         <pathelement location="${main.commons-logging.jar}"/>
@@ -534,12 +536,14 @@ under the License.
                 <include name="jacoco-0.7.2*"/>
                 <include name="jacoco-0.7.3*"/>
                 <include name="jacoco-0.7.4*"/>
+                <include name="jacoco-0.7.6*"/>
                 <include name="log4j-1.2.13*"/>
                 <include name="org.jacoco.*-0.6.*"/>
                 <include name="org.jacoco.*-0.7.1*"/>
                 <include name="org.jacoco.*-0.7.2*"/>
                 <include name="org.jacoco.*-0.7.3*"/>
                 <include name="org.jacoco.*-0.7.4*"/>
+                <include name="org.jacoco.*-0.7.6*"/>
                 <include name="dom4j*"/>
                 <include name="apache-rat-0.10*"/>
                 <include name="xercesImpl-*.jar"/>
@@ -1249,6 +1253,8 @@ under the License.
                 <jvmarg value="-ea"/>
                 <jvmarg value="-Xmx256m"/>
                 <!-- jvmarg value="-Duser.timezone=UTC"/ -->
+                <jvmarg value="${java9addmods}" />
+                <jvmarg value="${java9addmodsvalue}" />
                 <formatter type="plain"/>
                 <formatter type="xml"/>
                 <batchtest todir="${main.reports.test}">
@@ -1264,6 +1270,16 @@ under the License.
         <delete file="${main.testokfile}"/>
         <antcall target="-test-main-write-testfile"/>
     </target>
+
+	<target name="test-report" depends="init">
+		<mkdir dir="build/report"/>
+		<junitreport todir="build/report">
+		  <fileset dir="build">
+			<include name="*results/**/TEST-*.xml"/>
+		  </fileset>
+		  <report format="frames" todir="build/report"/>
+		</junitreport>
+	</target>
 
     <target name="-test-property-check" unless="testcase">
         <echo message="Please use -Dtestcase=org.your.testcase to run a single test"/>
@@ -1295,6 +1311,8 @@ under the License.
                 <jvmarg value="-ea"/>
                 <jvmarg value="-Xmx256m"/>
                 <!-- jvmarg value="-Duser.timezone=UTC"/ -->
+                <jvmarg value="${java9addmods}" />
+                <jvmarg value="${java9addmodsvalue}" />
                 <formatter type="plain"/>
                 <formatter type="xml"/>
                 <batchtest todir="${main.reports.test}">
@@ -1342,6 +1360,8 @@ under the License.
                   and on Windows with jdk-1.5.22
                 -->
                 <jvmarg value="-Xmx256M"/>
+                <jvmarg value="${java9addmods}" />
+                <jvmarg value="${java9addmodsvalue}" />
                 <formatter type="plain"/>
                 <formatter type="xml"/>
                 <batchtest todir="${scratchpad.reports.test}">
@@ -1380,6 +1400,8 @@ under the License.
                     <jvmarg value="${maxpermsize}"/>
                     <jvmarg value="-Xmx768M"/>
                   <jvmarg value="-ea"/>
+                  <jvmarg value="${java9addmods}" />
+                  <jvmarg value="${java9addmodsvalue}" />
                     <!-- jvmarg value="-Duser.timezone=UTC"/ -->
                   <formatter type="plain"/>
                   <formatter type="xml"/>
@@ -1403,6 +1425,8 @@ under the License.
                   <syspropertyset refid="junit.properties"/>
                     <jvmarg value="-Xmx768M"/>
                   <jvmarg value="-ea"/>
+                  <jvmarg value="${java9addmods}" />
+                  <jvmarg value="${java9addmodsvalue}" />
                   <formatter type="plain"/>
                   <formatter type="xml"/>
                   <batchtest todir="${ooxml.reports.test}">
@@ -1446,6 +1470,8 @@ under the License.
                     <jvmarg value="${maxpermsize}"/>
                     <jvmarg value="-Xmx768M"/>
                   <jvmarg value="-ea"/>
+                  <jvmarg value="${java9addmods}" />
+                  <jvmarg value="${java9addmodsvalue}" />
                     <!-- jvmarg value="-Duser.timezone=UTC"/ -->
                   <formatter type="plain"/>
                   <formatter type="xml"/>
@@ -1492,6 +1518,8 @@ under the License.
                 <syspropertyset refid="junit.properties"/>
                 <jvmarg value="-ea"/>
                 <jvmarg value="-Xmx1512M"/>
+                <jvmarg value="${java9addmods}" />
+                <jvmarg value="${java9addmodsvalue}" />
                 <formatter type="plain"/>
                 <formatter type="xml"/>
                 <batchtest todir="${integration.reports.test}">
@@ -1542,6 +1570,8 @@ under the License.
             <syspropertyset refid="junit.properties"/>
             <jvmarg value="${maxpermsize}"/>
             <jvmarg value="-Xmx512m"/>
+			<jvmarg value="${java9addmods}" />
+			<jvmarg value="${java9addmodsvalue}" />
             <arg value="-ooxml"/>
             <arg value="${ooxml.lite-merged.dir}/ooxml-lite-merged.jar"/>
             <arg value="-test"/>
@@ -1579,6 +1609,8 @@ under the License.
                 <classpath refid="test.excelant.classpath"/>
                 <syspropertyset refid="junit.properties"/>
                 <jvmarg value="-ea"/>
+                <jvmarg value="${java9addmods}" />
+                <jvmarg value="${java9addmodsvalue}" />
                 <formatter type="plain"/>
                 <formatter type="xml"/>
                 <batchtest todir="${excelant.reports.test}">
