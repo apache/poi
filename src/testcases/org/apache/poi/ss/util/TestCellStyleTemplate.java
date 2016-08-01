@@ -50,10 +50,10 @@ public final class TestCellStyleTemplate {
         CellStyleTemplate cst = new CellStyleTemplate();
         cst.drawBorders(a1, BorderStyle.THIN, BorderExtent.TOP);
         assertEquals(BorderStyle.THIN,
-                cst.getTemplateProperty(0, 0, CellUtil.BORDER_TOP));
+                cst.getBorderStyle(0, 0, CellUtil.BORDER_TOP));
         cst.drawBorders(a1, BorderStyle.MEDIUM, BorderExtent.BOTTOM);
         assertEquals(BorderStyle.MEDIUM,
-                cst.getTemplateProperty(0, 0, CellUtil.BORDER_BOTTOM));
+                cst.getBorderStyle(0, 0, CellUtil.BORDER_BOTTOM));
         cst.drawBorderColors(a1, IndexedColors.RED.getIndex(), BorderExtent.TOP);
         assertEquals(IndexedColors.RED.getIndex(),
                 cst.getTemplateProperty(0, 0, CellUtil.TOP_BORDER_COLOR));
@@ -72,13 +72,13 @@ public final class TestCellStyleTemplate {
             for (int j = 0; j <= 2; j++) {
                 assertEquals(4, cst.getNumBorders(i, j));
                 assertEquals(BorderStyle.THIN,
-                        cst.getTemplateProperty(i, j, CellUtil.BORDER_TOP));
+                        cst.getBorderStyle(i, j, CellUtil.BORDER_TOP));
                 assertEquals(BorderStyle.THIN,
-                        cst.getTemplateProperty(i, j, CellUtil.BORDER_BOTTOM));
+                        cst.getBorderStyle(i, j, CellUtil.BORDER_BOTTOM));
                 assertEquals(BorderStyle.THIN,
-                        cst.getTemplateProperty(i, j, CellUtil.BORDER_LEFT));
+                        cst.getBorderStyle(i, j, CellUtil.BORDER_LEFT));
                 assertEquals(BorderStyle.THIN,
-                        cst.getTemplateProperty(i, j, CellUtil.BORDER_RIGHT));
+                        cst.getBorderStyle(i, j, CellUtil.BORDER_RIGHT));
             }
         }
         cst.drawBorders(a1c3, BorderStyle.MEDIUM,
@@ -89,124 +89,124 @@ public final class TestCellStyleTemplate {
                 if (i == 0) {
                     if (j == 0) {
                         assertEquals(BorderStyle.MEDIUM,
-                                cst.getTemplateProperty(i, j,
+                                cst.getBorderStyle(i, j,
                                         CellUtil.BORDER_TOP));
                         assertEquals(BorderStyle.THIN,
-                                cst.getTemplateProperty(i, j,
+                                cst.getBorderStyle(i, j,
                                         CellUtil.BORDER_BOTTOM));
                         assertEquals(BorderStyle.MEDIUM,
-                                cst.getTemplateProperty(i, j,
+                                cst.getBorderStyle(i, j,
                                         CellUtil.BORDER_LEFT));
                         assertEquals(BorderStyle.THIN,
-                                cst.getTemplateProperty(i, j,
+                                cst.getBorderStyle(i, j,
                                         CellUtil.BORDER_RIGHT));
                     } else if (j == 2) {
                         assertEquals(BorderStyle.MEDIUM,
-                                cst.getTemplateProperty(i, j,
+                                cst.getBorderStyle(i, j,
                                         CellUtil.BORDER_TOP));
                         assertEquals(BorderStyle.THIN,
-                                cst.getTemplateProperty(i, j,
+                                cst.getBorderStyle(i, j,
                                         CellUtil.BORDER_BOTTOM));
                         assertEquals(BorderStyle.THIN,
-                                cst.getTemplateProperty(i, j,
+                                cst.getBorderStyle(i, j,
                                         CellUtil.BORDER_LEFT));
                         assertEquals(BorderStyle.MEDIUM,
-                                cst.getTemplateProperty(i, j,
+                                cst.getBorderStyle(i, j,
                                         CellUtil.BORDER_RIGHT));
                     } else {
                         assertEquals(BorderStyle.MEDIUM,
-                                cst.getTemplateProperty(i, j,
+                                cst.getBorderStyle(i, j,
                                         CellUtil.BORDER_TOP));
                         assertEquals(BorderStyle.THIN,
-                                cst.getTemplateProperty(i, j,
+                                cst.getBorderStyle(i, j,
                                         CellUtil.BORDER_BOTTOM));
                         assertEquals(BorderStyle.THIN,
-                                cst.getTemplateProperty(i, j,
+                                cst.getBorderStyle(i, j,
                                         CellUtil.BORDER_LEFT));
                         assertEquals(BorderStyle.THIN,
-                                cst.getTemplateProperty(i, j,
+                                cst.getBorderStyle(i, j,
                                         CellUtil.BORDER_RIGHT));
                     }
                 } else if (i == 2) {
                     if (j == 0) {
                         assertEquals(BorderStyle.THIN,
-                                cst.getTemplateProperty(i, j,
+                                cst.getBorderStyle(i, j,
                                         CellUtil.BORDER_TOP));
                         assertEquals(BorderStyle.MEDIUM,
-                                cst.getTemplateProperty(i, j,
+                                cst.getBorderStyle(i, j,
                                         CellUtil.BORDER_BOTTOM));
                         assertEquals(BorderStyle.MEDIUM,
-                                cst.getTemplateProperty(i, j,
+                                cst.getBorderStyle(i, j,
                                         CellUtil.BORDER_LEFT));
                         assertEquals(BorderStyle.THIN,
-                                cst.getTemplateProperty(i, j,
+                                cst.getBorderStyle(i, j,
                                         CellUtil.BORDER_RIGHT));
                     } else if (j == 2) {
                         assertEquals(BorderStyle.THIN,
-                                cst.getTemplateProperty(i, j,
+                                cst.getBorderStyle(i, j,
                                         CellUtil.BORDER_TOP));
                         assertEquals(BorderStyle.MEDIUM,
-                                cst.getTemplateProperty(i, j,
+                                cst.getBorderStyle(i, j,
                                         CellUtil.BORDER_BOTTOM));
                         assertEquals(BorderStyle.THIN,
-                                cst.getTemplateProperty(i, j,
+                                cst.getBorderStyle(i, j,
                                         CellUtil.BORDER_LEFT));
                         assertEquals(BorderStyle.MEDIUM,
-                                cst.getTemplateProperty(i, j,
+                                cst.getBorderStyle(i, j,
                                         CellUtil.BORDER_RIGHT));
                     } else {
                         assertEquals(BorderStyle.THIN,
-                                cst.getTemplateProperty(i, j,
+                                cst.getBorderStyle(i, j,
                                         CellUtil.BORDER_TOP));
                         assertEquals(BorderStyle.MEDIUM,
-                                cst.getTemplateProperty(i, j,
+                                cst.getBorderStyle(i, j,
                                         CellUtil.BORDER_BOTTOM));
                         assertEquals(BorderStyle.THIN,
-                                cst.getTemplateProperty(i, j,
+                                cst.getBorderStyle(i, j,
                                         CellUtil.BORDER_LEFT));
                         assertEquals(BorderStyle.THIN,
-                                cst.getTemplateProperty(i, j,
+                                cst.getBorderStyle(i, j,
                                         CellUtil.BORDER_RIGHT));
                     }
                 } else {
                     if (j == 0) {
                         assertEquals(BorderStyle.THIN,
-                                cst.getTemplateProperty(i, j,
+                                cst.getBorderStyle(i, j,
                                         CellUtil.BORDER_TOP));
                         assertEquals(BorderStyle.THIN,
-                                cst.getTemplateProperty(i, j,
+                                cst.getBorderStyle(i, j,
                                         CellUtil.BORDER_BOTTOM));
                         assertEquals(BorderStyle.MEDIUM,
-                                cst.getTemplateProperty(i, j,
+                                cst.getBorderStyle(i, j,
                                         CellUtil.BORDER_LEFT));
                         assertEquals(BorderStyle.THIN,
-                                cst.getTemplateProperty(i, j,
+                                cst.getBorderStyle(i, j,
                                         CellUtil.BORDER_RIGHT));
                     } else if (j == 2) {
                         assertEquals(BorderStyle.THIN,
-                                cst.getTemplateProperty(i, j,
+                                cst.getBorderStyle(i, j,
                                         CellUtil.BORDER_TOP));
                         assertEquals(BorderStyle.THIN,
-                                cst.getTemplateProperty(i, j,
+                                cst.getBorderStyle(i, j,
                                         CellUtil.BORDER_BOTTOM));
                         assertEquals(BorderStyle.THIN,
-                                cst.getTemplateProperty(i, j,
+                                cst.getBorderStyle(i, j,
                                         CellUtil.BORDER_LEFT));
                         assertEquals(BorderStyle.MEDIUM,
-                                cst.getTemplateProperty(i, j,
+                                cst.getBorderStyle(i, j,
                                         CellUtil.BORDER_RIGHT));
                     } else {
                         assertEquals(BorderStyle.THIN,
-                                cst.getTemplateProperty(i, j,
+                                cst.getBorderStyle(i, j,
                                         CellUtil.BORDER_TOP));
                         assertEquals(BorderStyle.THIN,
-                                cst.getTemplateProperty(i, j,
+                                cst.getBorderStyle(i, j,
                                         CellUtil.BORDER_BOTTOM));
                         assertEquals(BorderStyle.THIN,
-                                cst.getTemplateProperty(i, j,
+                                cst.getBorderStyle(i, j,
                                         CellUtil.BORDER_LEFT));
                         assertEquals(BorderStyle.THIN,
-                                cst.getTemplateProperty(i, j,
+                                cst.getBorderStyle(i, j,
                                         CellUtil.BORDER_RIGHT));
                     }
                 }
@@ -226,7 +226,7 @@ public final class TestCellStyleTemplate {
                 if (i == 0) {
                     assertEquals(1, cst.getNumBorders(i, j));
                     assertEquals(BorderStyle.MEDIUM,
-                            cst.getTemplateProperty(i, j, CellUtil.BORDER_TOP));
+                            cst.getBorderStyle(i, j, CellUtil.BORDER_TOP));
                 } else {
                     assertEquals(0, cst.getNumBorders(i, j));
                 }
@@ -241,7 +241,7 @@ public final class TestCellStyleTemplate {
                 if (i == 2) {
                     assertEquals(1, cst.getNumBorders(i, j));
                     assertEquals(BorderStyle.MEDIUM, cst
-                            .getTemplateProperty(i, j, CellUtil.BORDER_BOTTOM));
+                            .getBorderStyle(i, j, CellUtil.BORDER_BOTTOM));
                 } else {
                     assertEquals(0, cst.getNumBorders(i, j));
                 }
@@ -256,7 +256,7 @@ public final class TestCellStyleTemplate {
                 if (j == 0) {
                     assertEquals(1, cst.getNumBorders(i, j));
                     assertEquals(BorderStyle.MEDIUM,
-                            cst.getTemplateProperty(i, j, CellUtil.BORDER_LEFT));
+                            cst.getBorderStyle(i, j, CellUtil.BORDER_LEFT));
                 } else {
                     assertEquals(0, cst.getNumBorders(i, j));
                 }
@@ -271,7 +271,7 @@ public final class TestCellStyleTemplate {
                 if (j == 2) {
                     assertEquals(1, cst.getNumBorders(i, j));
                     assertEquals(BorderStyle.MEDIUM, cst
-                            .getTemplateProperty(i, j, CellUtil.BORDER_RIGHT));
+                            .getBorderStyle(i, j, CellUtil.BORDER_RIGHT));
                 } else {
                     assertEquals(0, cst.getNumBorders(i, j));
                 }
@@ -285,9 +285,9 @@ public final class TestCellStyleTemplate {
             for (int j = 0; j <= 2; j++) {
                 assertEquals(2, cst.getNumBorders(i, j));
                 assertEquals(BorderStyle.MEDIUM,
-                        cst.getTemplateProperty(i, j, CellUtil.BORDER_TOP));
+                        cst.getBorderStyle(i, j, CellUtil.BORDER_TOP));
                 assertEquals(BorderStyle.MEDIUM,
-                        cst.getTemplateProperty(i, j, CellUtil.BORDER_BOTTOM));
+                        cst.getBorderStyle(i, j, CellUtil.BORDER_BOTTOM));
             }
         }
         cst.drawBorders(a1c3, BorderStyle.NONE,
@@ -299,17 +299,17 @@ public final class TestCellStyleTemplate {
                 if (i == 0) {
                     assertEquals(1, cst.getNumBorders(i, j));
                     assertEquals(BorderStyle.MEDIUM, cst
-                            .getTemplateProperty(i, j, CellUtil.BORDER_BOTTOM));
+                            .getBorderStyle(i, j, CellUtil.BORDER_BOTTOM));
                 } else if (i == 2) {
                     assertEquals(1, cst.getNumBorders(i, j));
                     assertEquals(BorderStyle.MEDIUM,
-                            cst.getTemplateProperty(i, j, CellUtil.BORDER_TOP));
+                            cst.getBorderStyle(i, j, CellUtil.BORDER_TOP));
                 } else {
                     assertEquals(2, cst.getNumBorders(i, j));
                     assertEquals(BorderStyle.MEDIUM,
-                            cst.getTemplateProperty(i, j, CellUtil.BORDER_TOP));
+                            cst.getBorderStyle(i, j, CellUtil.BORDER_TOP));
                     assertEquals(BorderStyle.MEDIUM, cst
-                            .getTemplateProperty(i, j, CellUtil.BORDER_BOTTOM));
+                            .getBorderStyle(i, j, CellUtil.BORDER_BOTTOM));
                 }
             }
         }
@@ -322,11 +322,11 @@ public final class TestCellStyleTemplate {
                 if (i == 0) {
                     assertEquals(1, cst.getNumBorders(i, j));
                     assertEquals(BorderStyle.MEDIUM,
-                            cst.getTemplateProperty(i, j, CellUtil.BORDER_TOP));
+                            cst.getBorderStyle(i, j, CellUtil.BORDER_TOP));
                 } else if (i == 2) {
                     assertEquals(1, cst.getNumBorders(i, j));
                     assertEquals(BorderStyle.MEDIUM, cst
-                            .getTemplateProperty(i, j, CellUtil.BORDER_BOTTOM));
+                            .getBorderStyle(i, j, CellUtil.BORDER_BOTTOM));
                 } else {
                     assertEquals(0, cst.getNumBorders(i, j));
                 }
@@ -340,9 +340,9 @@ public final class TestCellStyleTemplate {
             for (int j = 0; j <= 2; j++) {
                 assertEquals(2, cst.getNumBorders(i, j));
                 assertEquals(BorderStyle.MEDIUM,
-                        cst.getTemplateProperty(i, j, CellUtil.BORDER_LEFT));
+                        cst.getBorderStyle(i, j, CellUtil.BORDER_LEFT));
                 assertEquals(BorderStyle.MEDIUM,
-                        cst.getTemplateProperty(i, j, CellUtil.BORDER_RIGHT));
+                        cst.getBorderStyle(i, j, CellUtil.BORDER_RIGHT));
             }
         }
         cst.drawBorders(a1c3, BorderStyle.NONE,
@@ -354,17 +354,17 @@ public final class TestCellStyleTemplate {
                 if (j == 0) {
                     assertEquals(1, cst.getNumBorders(i, j));
                     assertEquals(BorderStyle.MEDIUM, cst
-                            .getTemplateProperty(i, j, CellUtil.BORDER_RIGHT));
+                            .getBorderStyle(i, j, CellUtil.BORDER_RIGHT));
                 } else if (j == 2) {
                     assertEquals(1, cst.getNumBorders(i, j));
                     assertEquals(BorderStyle.MEDIUM,
-                            cst.getTemplateProperty(i, j, CellUtil.BORDER_LEFT));
+                            cst.getBorderStyle(i, j, CellUtil.BORDER_LEFT));
                 } else {
                     assertEquals(2, cst.getNumBorders(i, j));
                     assertEquals(BorderStyle.MEDIUM,
-                            cst.getTemplateProperty(i, j, CellUtil.BORDER_LEFT));
+                            cst.getBorderStyle(i, j, CellUtil.BORDER_LEFT));
                     assertEquals(BorderStyle.MEDIUM, cst
-                            .getTemplateProperty(i, j, CellUtil.BORDER_RIGHT));
+                            .getBorderStyle(i, j, CellUtil.BORDER_RIGHT));
                 }
             }
         }
@@ -377,11 +377,11 @@ public final class TestCellStyleTemplate {
                 if (j == 0) {
                     assertEquals(1, cst.getNumBorders(i, j));
                     assertEquals(BorderStyle.MEDIUM,
-                            cst.getTemplateProperty(i, j, CellUtil.BORDER_LEFT));
+                            cst.getBorderStyle(i, j, CellUtil.BORDER_LEFT));
                 } else if (j == 2) {
                     assertEquals(1, cst.getNumBorders(i, j));
                     assertEquals(BorderStyle.MEDIUM, cst
-                            .getTemplateProperty(i, j, CellUtil.BORDER_RIGHT));
+                            .getBorderStyle(i, j, CellUtil.BORDER_RIGHT));
                 } else {
                     assertEquals(0, cst.getNumBorders(i, j));
                 }
@@ -792,13 +792,13 @@ public final class TestCellStyleTemplate {
                 assertEquals(4, cst.getNumBorders(i, j));
                 assertEquals(4, cst.getNumBorderColors(i, j));
                 assertEquals(BorderStyle.MEDIUM,
-                        cst.getTemplateProperty(i, j, CellUtil.BORDER_TOP));
+                        cst.getBorderStyle(i, j, CellUtil.BORDER_TOP));
                 assertEquals(BorderStyle.MEDIUM,
-                        cst.getTemplateProperty(i, j, CellUtil.BORDER_BOTTOM));
+                        cst.getBorderStyle(i, j, CellUtil.BORDER_BOTTOM));
                 assertEquals(BorderStyle.MEDIUM,
-                        cst.getTemplateProperty(i, j, CellUtil.BORDER_LEFT));
+                        cst.getBorderStyle(i, j, CellUtil.BORDER_LEFT));
                 assertEquals(BorderStyle.MEDIUM,
-                        cst.getTemplateProperty(i, j, CellUtil.BORDER_RIGHT));
+                        cst.getBorderStyle(i, j, CellUtil.BORDER_RIGHT));
                 assertEquals(IndexedColors.RED.getIndex(), cst
                         .getTemplateProperty(i, j, CellUtil.TOP_BORDER_COLOR));
                 assertEquals(IndexedColors.RED.getIndex(),
@@ -818,13 +818,13 @@ public final class TestCellStyleTemplate {
                 assertEquals(4, cst.getNumBorders(i, j));
                 assertEquals(0, cst.getNumBorderColors(i, j));
                 assertEquals(BorderStyle.NONE,
-                        cst.getTemplateProperty(i, j, CellUtil.BORDER_TOP));
+                        cst.getBorderStyle(i, j, CellUtil.BORDER_TOP));
                 assertEquals(BorderStyle.NONE,
-                        cst.getTemplateProperty(i, j, CellUtil.BORDER_BOTTOM));
+                        cst.getBorderStyle(i, j, CellUtil.BORDER_BOTTOM));
                 assertEquals(BorderStyle.NONE,
-                        cst.getTemplateProperty(i, j, CellUtil.BORDER_LEFT));
+                        cst.getBorderStyle(i, j, CellUtil.BORDER_LEFT));
                 assertEquals(BorderStyle.NONE,
-                        cst.getTemplateProperty(i, j, CellUtil.BORDER_RIGHT));
+                        cst.getBorderStyle(i, j, CellUtil.BORDER_RIGHT));
             }
         }
     }
