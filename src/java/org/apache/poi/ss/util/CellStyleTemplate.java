@@ -39,7 +39,7 @@ import org.apache.poi.ss.usermodel.Workbook;
  * sheet in any workbook.
  * 
  * This class requires the full spreadsheet to be in memory so
- * {@link SWorkbook} Spreadsheets are not supported. The same
+ * {@link SXSSFWorkbook} Spreadsheets are not supported. The same
  * {@link CellStyleTemplate} can, however, be applied to both
  * {@link org.apache.poi.hssf.usermodel.HSSFWorkbook}, and Workbook objects
  * if necessary. Portions of the border that fall outside the max range of the
@@ -97,8 +97,7 @@ public final class CellStyleTemplate {
      * @param borderStyle
      *            - Type of border to draw. {@link BorderStyle}.
      * @param extent
-     *            - {@link CellStyleTemplate.BorderExtent} of the borders to be
-     *            applied.
+     *            - {@link BorderExtent} of the borders to be applied.
      */
     public void drawBorders(CellRangeAddress range, BorderStyle borderStyle,
             BorderExtent extent) {
@@ -162,7 +161,7 @@ public final class CellStyleTemplate {
      *            - Type of border to draw. {@link BorderStyle}.
      * @param color
      *            - Color index from {@link IndexedColors} used to draw the
-     *            borders. Ignored if extent is {@link BorderExtent.NONE}.
+     *            borders. Ignored if extent is {@link BorderExtent#NONE}.
      * @param extent
      *            - {@link BorderExtent} of the borders to be applied.
      */
@@ -454,8 +453,7 @@ public final class CellStyleTemplate {
      *            - Color index from {@link IndexedColors} used to draw the
      *            borders.
      * @param extent
-     *            - {@link CellStyleTemplate.BorderExtent} of the borders for which
-     *            colors are set.
+     *            - {@link BorderExtent} of the borders for which colors are set.
      */
     public void drawBorderColors(CellRangeAddress range, short color,
             BorderExtent extent) {
