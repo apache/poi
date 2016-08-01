@@ -55,8 +55,8 @@ public class XSSFPaswordHelper {
         cur.toFirstContentToken();
         if (hashAlgo == null) {
             int hash = CryptoFunctions.createXorVerifier1(password);
-            cur.insertAttributeWithValue(getAttrName(prefix, "password"), 
-                                         Integer.toHexString(hash).toUpperCase(Locale.ROOT));
+            cur.insertAttributeWithValue(getAttrName(prefix, "password"),
+                                         String.format(Locale.ROOT, "%04X", hash).toUpperCase(Locale.ROOT));
         } else {
             SecureRandom random = new SecureRandom(); 
             byte salt[] = random.generateSeed(16);
