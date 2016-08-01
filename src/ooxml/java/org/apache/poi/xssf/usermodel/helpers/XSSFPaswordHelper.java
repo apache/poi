@@ -28,9 +28,11 @@ import javax.xml.namespace.QName;
 
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
+import org.apache.poi.util.Internal;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 
+@Internal(since="3.15 beta 3")
 public class XSSFPaswordHelper {
     /**
      * Sets the XORed or hashed password 
