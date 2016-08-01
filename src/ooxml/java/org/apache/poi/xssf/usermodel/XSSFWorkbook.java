@@ -18,8 +18,8 @@
 package org.apache.poi.xssf.usermodel;
 
 import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
-import static org.apache.poi.xssf.usermodel.helpers.XSSFPaswordHelper.setPassword;
-import static org.apache.poi.xssf.usermodel.helpers.XSSFPaswordHelper.validatePassword;
+import static org.apache.poi.xssf.usermodel.helpers.XSSFPasswordHelper.setPassword;
+import static org.apache.poi.xssf.usermodel.helpers.XSSFPasswordHelper.validatePassword;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
