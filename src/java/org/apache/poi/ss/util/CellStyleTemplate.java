@@ -890,8 +890,8 @@ public final class CellStyleTemplate {
         return getNumBorderColors(new CellAddress(row, col));
     }
 
-    /**
-     * Retrieves the border style for a given cell
+   /**
+     * Retrieves a template property as a short for a given cell
      * 
      * @param cell
      * @param property
@@ -909,7 +909,7 @@ public final class CellStyleTemplate {
     }
 
     /**
-     * Retrieves the border style for a given cell
+     * Retrieves a template property as a short for a given cell
      * 
      * @param row
      * @param col
@@ -917,6 +917,34 @@ public final class CellStyleTemplate {
      */
     public short getTemplateProperty(int row, int col, String property) {
         return getTemplateProperty(new CellAddress(row, col), property);
+    }
+
+    /**
+     * Retrieves the border style for a given cell
+     * 
+     * @param cell
+     * @param property
+     */
+    public BorderStyle getBorderStyle(CellAddress cell, String property) {
+        Map<String, Object> cellProperties = _cellStyleTemplate.get(cell);
+        if (cellProperties != null) {
+            Object obj = cellProperties.get(property);
+            if (obj instanceof BorderStyle) {
+                return (BorderStyle) obj;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Retrieves the border style for a given cell
+     * 
+     * @param row
+     * @param col
+     * @param property
+     */
+    public BorderStyle getBorderStyle(int row, int col, String property) {
+        return getBorderStyle(new CellAddress(row, col), property);
     }
 
     /**
