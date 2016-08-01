@@ -81,7 +81,7 @@ public interface CellStyle {
 
     /**
      * vertically justified vertical alignment
-     * @deprecated POI 3.15 beta 3. Use {@link VerticalAlignment#TOP} instead.
+     * @deprecated POI 3.15 beta 3. Use {@link VerticalAlignment#JUSTIFY} instead.
      */
     static final short VERTICAL_JUSTIFY = 0x3; //VerticalAlignment.JUSTIFY.getCode();
 
