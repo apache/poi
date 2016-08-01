@@ -80,6 +80,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTXf;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCalcMode;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPane;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STUnsignedShortHex;
 
 
 public final class TestXSSFSheet extends BaseTestXSheet {
@@ -1096,6 +1097,30 @@ public final class TestXSSFSheet extends BaseTestXSheet {
         sheet.protectSheet(null);
         assertNull("protectSheet(null) should unset CTSheetProtection", sheet.getCTWorksheet().getSheetProtection());
         
+        wb.close();
+    }
+
+    @Test
+    public void protectSheet_emptyPassword() throws IOException {
+        XSSFWorkbook wb = new XSSFWorkbook();
+        XSSFSheet sheet = wb.createSheet();
+        CTSheetProtection pr = sheet.getCTWorksheet().getSheetProtection();
+        assertNull("CTSheetProtection should be null by default", pr);
+        String password = "";
+        sheet.protectSheet(password);
+        pr = sheet.getCTWorksheet().getSheetProtection();
+        assertNotNull("CTSheetProtection should be not null", pr);
+        assertTrue("sheet protection should be on", pr.isSetSheet());
+        assertTrue("object protection should be on", pr.isSetObjects());
+        assertTrue("scenario protection should be on", pr.isSetScenarios());
+        int hashVal = CryptoFunctions.createXorVerifier1(password);
+        STUnsignedShortHex xpassword = pr.xgetPassword();
+        int actualVal = Integer.parseInt(xpassword.getStringValue(),16);
+        assertEquals("well known value for top secret hash should match", hashVal, actualVal);
+
+        sheet.protectSheet(null);
+        assertNull("protectSheet(null) should unset CTSheetProtection", sheet.getCTWorksheet().getSheetProtection());
+
         wb.close();
     }
 
