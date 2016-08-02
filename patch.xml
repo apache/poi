@@ -17,7 +17,7 @@
 -->
 <!--
   =======================================================================
-   Use Apache Ant to generate a patch file.
+  Use Apache Ant to generate a patch file.
   =======================================================================
 -->
 <project name="create-patch" default="patchpackage" basedir=".">
