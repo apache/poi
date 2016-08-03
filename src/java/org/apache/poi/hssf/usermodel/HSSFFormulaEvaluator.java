@@ -373,16 +373,16 @@ public class HSSFFormulaEvaluator implements FormulaEvaluator, WorkbookEvaluator
     * This is a helpful wrapper around looping over all
     *  cells, and calling evaluateFormulaCell on each one.
     */
-   @Override
-public void evaluateAll() {
-      evaluateAllFormulaCells(_book, this);
-   }
+    @Override
+    public void evaluateAll() {
+        evaluateAllFormulaCells(_book, this);
+    }
 
-	/**
-	 * Returns a CellValue wrapper around the supplied ValueEval instance.
-	 * @param cell
-	 */
-	private CellValue evaluateFormulaCellValue(Cell cell) {
+    /**
+     * Returns a CellValue wrapper around the supplied ValueEval instance.
+     * @param cell
+     */
+    private CellValue evaluateFormulaCellValue(Cell cell) {
 		ValueEval eval = _bookEvaluator.evaluate(new HSSFEvaluationCell((HSSFCell)cell));
 		if (eval instanceof BoolEval) {
 			BoolEval be = (BoolEval) eval;
