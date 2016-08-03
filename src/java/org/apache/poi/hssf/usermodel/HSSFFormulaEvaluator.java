@@ -19,10 +19,10 @@ package org.apache.poi.hssf.usermodel;
 
 import java.util.Map;
 
+import org.apache.poi.ss.formula.BaseFormulaEvaluator;
 import org.apache.poi.ss.formula.CollaboratingWorkbooksEnvironment;
 import org.apache.poi.ss.formula.IStabilityClassifier;
 import org.apache.poi.ss.formula.WorkbookEvaluator;
-import org.apache.poi.ss.formula.WorkbookEvaluatorProvider;
 import org.apache.poi.ss.formula.eval.BoolEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.NumericValueEval;
@@ -45,8 +45,7 @@ import org.apache.poi.util.Internal;
  * cell values.  Be sure to call {@link #clearAllCachedResultValues()} if any workbook cells are changed between
  * calls to evaluate~ methods on this class.
  */
-public class HSSFFormulaEvaluator implements FormulaEvaluator, WorkbookEvaluatorProvider {
-    private final WorkbookEvaluator _bookEvaluator;
+public class HSSFFormulaEvaluator extends BaseFormulaEvaluator {
     private final HSSFWorkbook _book;
 
     public HSSFFormulaEvaluator(HSSFWorkbook workbook) {
@@ -70,8 +69,8 @@ public class HSSFFormulaEvaluator implements FormulaEvaluator, WorkbookEvaluator
      * @param udfFinder pass <code>null</code> for default (AnalysisToolPak only)
      */
     private HSSFFormulaEvaluator(HSSFWorkbook workbook, IStabilityClassifier stabilityClassifier, UDFFinder udfFinder) {
+        super(new WorkbookEvaluator(HSSFEvaluationWorkbook.create(workbook), stabilityClassifier, udfFinder));
         _book = workbook;
-        _bookEvaluator = new WorkbookEvaluator(HSSFEvaluationWorkbook.create(workbook), stabilityClassifier, udfFinder);
     }
 
     /**
@@ -94,11 +93,7 @@ public class HSSFFormulaEvaluator implements FormulaEvaluator, WorkbookEvaluator
      * @param evaluators all evaluators for the full set of workbooks required by the formulas.
      */
     public static void setupEnvironment(String[] workbookNames, HSSFFormulaEvaluator[] evaluators) {
-        WorkbookEvaluator[] wbEvals = new WorkbookEvaluator[evaluators.length];
-        for (int i = 0; i < wbEvals.length; i++) {
-            wbEvals[i] = evaluators[i]._bookEvaluator;
-        }
-        CollaboratingWorkbooksEnvironment.setup(workbookNames, wbEvals);
+        BaseFormulaEvaluator.setupEnvironment(workbookNames, evaluators);
     }
 
     @Override
@@ -106,23 +101,6 @@ public class HSSFFormulaEvaluator implements FormulaEvaluator, WorkbookEvaluator
         CollaboratingWorkbooksEnvironment.setupFormulaEvaluator(evaluators);
     }
 
-    @Override
-    public WorkbookEvaluator _getWorkbookEvaluator() {
-        return _bookEvaluator;
-    }
-
-    /**
-     * Should be called whenever there are major changes (e.g. moving sheets) to input cells
-     * in the evaluated workbook.  If performance is not critical, a single call to this method
-     * may be used instead of many specific calls to the notify~ methods.
-     *
-     * Failure to call this method after changing cell values will cause incorrect behaviour
-     * of the evaluate~ methods of this class
-     */
-    @Override
-    public void clearAllCachedResultValues() {
-        _bookEvaluator.clearAllCachedResultValues();
-    }
     /**
      * Should be called to tell the cell value cache that the specified (value or formula) cell
      * has changed.
@@ -159,61 +137,6 @@ public class HSSFFormulaEvaluator implements FormulaEvaluator, WorkbookEvaluator
     @Override
     public void notifySetFormula(Cell cell) {
         _bookEvaluator.notifyUpdateCell(new HSSFEvaluationCell((HSSFCell)cell));
-    }
-
-    /**
-     * If cell contains a formula, the formula is evaluated and returned,
-     * else the CellValue simply copies the appropriate cell value from
-     * the cell and also its cell type. This method should be preferred over
-     * evaluateInCell() when the call should not modify the contents of the
-     * original cell.
-     *
-     * @param cell may be <code>null</code> signifying that the cell is not present (or blank)
-     * @return <code>null</code> if the supplied cell is <code>null</code> or blank
-     */
-    @Override
-    public CellValue evaluate(Cell cell) {
-        if (cell == null) {
-            return null;
-        }
-
-        switch (cell.getCellTypeEnum()) {
-            case BOOLEAN:
-                return CellValue.valueOf(cell.getBooleanCellValue());
-            case ERROR:
-                return CellValue.getError(cell.getErrorCellValue());
-            case FORMULA:
-                return evaluateFormulaCellValue(cell);
-            case NUMERIC:
-                return new CellValue(cell.getNumericCellValue());
-            case STRING:
-                return new CellValue(cell.getRichStringCellValue().getString());
-            case BLANK:
-                return null;
-            default:
-                throw new IllegalStateException("Bad cell type (" + cell.getCellTypeEnum() + ")");
-        }
-    }
-
-
-    /**
-     * If cell contains formula, it evaluates the formula, and saves the result of the formula. The
-     * cell remains as a formula cell. If the cell does not contain formula, this method returns -1
-     * and leaves the cell unchanged.
-     *
-     * Note that the type of the <em>formula result</em> is returned, so you know what kind of
-     * cached formula result is also stored with  the formula.
-     * <pre>
-     * int evaluatedCellType = evaluator.evaluateFormulaCell(cell);
-     * </pre>
-     * Be aware that your cell will hold both the formula, and the result. If you want the cell
-     * replaced with the result of the formula, use {@link #evaluateInCell(org.apache.poi.ss.usermodel.Cell)}
-     * @param cell The cell to evaluate
-     * @return -1 for non-formula cells, or the type of the <em>formula result</em>
-     */
-    @Override
-    public int evaluateFormulaCell(Cell cell) {
-        return evaluateFormulaCellEnum(cell).getCode();
     }
 
     /**
@@ -272,23 +195,6 @@ public class HSSFFormulaEvaluator implements FormulaEvaluator, WorkbookEvaluator
             setCellType(cell, cv); // cell will no longer be a formula cell
         }
         return result;
-    }
-    private static void setCellType(Cell cell, CellValue cv) {
-        CellType cellType = cv.getCellType();
-        switch (cellType) {
-            case BOOLEAN:
-            case ERROR:
-            case NUMERIC:
-            case STRING:
-                cell.setCellType(cellType);
-                return;
-            case BLANK:
-                // never happens - blanks eventually get translated to zero
-            case FORMULA:
-                // this will never happen, we have already evaluated the formula
-            default:
-                throw new IllegalStateException("Unexpected cell value type (" + cellType + ")");
-        }
     }
 
     private static void setCellValue(Cell cell, CellValue cv) {
@@ -379,7 +285,7 @@ public class HSSFFormulaEvaluator implements FormulaEvaluator, WorkbookEvaluator
      * Returns a CellValue wrapper around the supplied ValueEval instance.
      * @param cell
      */
-    private CellValue evaluateFormulaCellValue(Cell cell) {
+    protected CellValue evaluateFormulaCellValue(Cell cell) {
         ValueEval eval = _bookEvaluator.evaluate(new HSSFEvaluationCell((HSSFCell)cell));
         if (eval instanceof BoolEval) {
             BoolEval be = (BoolEval) eval;
