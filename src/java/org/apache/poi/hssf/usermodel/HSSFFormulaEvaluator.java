@@ -33,8 +33,6 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.util.Internal;
 
@@ -248,21 +246,7 @@ public class HSSFFormulaEvaluator extends BaseFormulaEvaluator {
      *  cells, and calling evaluateFormulaCell on each one.
      */
     public static void evaluateAllFormulaCells(Workbook wb) {
-        FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
-        evaluateAllFormulaCells(wb, evaluator);
-    }
-    private static void evaluateAllFormulaCells(Workbook wb, FormulaEvaluator evaluator) {
-        for(int i=0; i<wb.getNumberOfSheets(); i++) {
-            Sheet sheet = wb.getSheetAt(i);
-
-            for(Row r : sheet) {
-                for (Cell c : r) {
-                    if (c.getCellTypeEnum() == CellType.FORMULA) {
-                        evaluator.evaluateFormulaCellEnum(c);
-                    }
-                }
-            }
-        }
+        BaseFormulaEvaluator.evaluateAllFormulaCells(wb);
     }
 
     /**

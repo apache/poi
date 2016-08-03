@@ -173,8 +173,19 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
                 evaluator.evaluate(c);
             }
         }
+        // And evaluate the other way too
+        evaluator.evaluateAll();
         
-        // Evaluate and check results
+        // Static evaluator won't work, as no references passed in
+        try {
+            XSSFFormulaEvaluator.evaluateAllFormulaCells(wb);
+            fail("Static method lacks references, shouldn't work");
+        } catch(Exception e) {
+            // expected here
+        }
+        
+        
+        // Evaluate specific cells and check results
         assertEquals("\"Hello!\"",  evaluator.evaluate(cXSLX_cell).formatAsString());
         assertEquals("\"Test A1\"", evaluator.evaluate(cXSLX_sNR).formatAsString());
         assertEquals("142.0",   evaluator.evaluate(cXSLX_gNR).formatAsString());
