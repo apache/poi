@@ -39,7 +39,7 @@ import com.microsoft.schemas.office.x2006.keyEncryptor.password.CTPasswordKeyEnc
 /**
  * Used when checking if a key is valid for a document 
  */
-public class AgileEncryptionVerifier extends EncryptionVerifier {
+public class AgileEncryptionVerifier extends EncryptionVerifier implements Cloneable {
 
     public static class AgileCertificateEntry {
         X509Certificate x509;
@@ -87,8 +87,9 @@ public class AgileEncryptionVerifier extends EncryptionVerifier {
         setEncryptedVerifierHash(keyData.getEncryptedVerifierHashValue());
 
         int saltSize = keyData.getSaltSize();
-        if (saltSize != getSalt().length)
+        if (saltSize != getSalt().length) {
             throw new EncryptedDocumentException("Invalid salt size");
+        }
         
         switch (keyData.getCipherChaining().intValue()) {
             case STCipherChaining.INT_CHAINING_MODE_CBC:
@@ -101,7 +102,9 @@ public class AgileEncryptionVerifier extends EncryptionVerifier {
                 throw new EncryptedDocumentException("Unsupported chaining mode - "+keyData.getCipherChaining().toString());
         }
         
-        if (!encList.hasNext()) return;
+        if (!encList.hasNext()) {
+            return;
+        }
         
         try {
             CertificateFactory cf = CertificateFactory.getInstance("X.509");
@@ -125,6 +128,7 @@ public class AgileEncryptionVerifier extends EncryptionVerifier {
         setSpinCount(100000); // TODO: use parameter
     }
     
+    @Override
     protected void setSalt(byte salt[]) {
         if (salt == null || salt.length != getCipherAlgorithm().blockSize) {
             throw new EncryptedDocumentException("invalid verifier salt");
@@ -133,16 +137,19 @@ public class AgileEncryptionVerifier extends EncryptionVerifier {
     }
     
     // make method visible for this package
+    @Override
     protected void setEncryptedVerifier(byte encryptedVerifier[]) {
         super.setEncryptedVerifier(encryptedVerifier);
     }
 
     // make method visible for this package
+    @Override
     protected void setEncryptedVerifierHash(byte encryptedVerifierHash[]) {
         super.setEncryptedVerifierHash(encryptedVerifierHash);
     }
 
     // make method visible for this package
+    @Override
     protected void setEncryptedKey(byte[] encryptedKey) {
         super.setEncryptedKey(encryptedKey);
     }
@@ -155,5 +162,13 @@ public class AgileEncryptionVerifier extends EncryptionVerifier {
     
     public List<AgileCertificateEntry> getCertificates() {
         return certList;
+    }
+
+    @Override
+    public AgileEncryptionVerifier clone() throws CloneNotSupportedException {
+        AgileEncryptionVerifier other = (AgileEncryptionVerifier)super.clone();
+        // TODO: deep copy of certList
+        other.certList = new ArrayList<AgileCertificateEntry>(certList);
+        return other;
     }
 }

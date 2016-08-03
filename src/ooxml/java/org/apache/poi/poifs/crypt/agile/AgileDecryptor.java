@@ -45,7 +45,7 @@ import org.apache.poi.poifs.crypt.CipherAlgorithm;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.Decryptor;
 import org.apache.poi.poifs.crypt.EncryptionHeader;
-import org.apache.poi.poifs.crypt.EncryptionInfoBuilder;
+import org.apache.poi.poifs.crypt.EncryptionInfo;
 import org.apache.poi.poifs.crypt.EncryptionVerifier;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.poifs.crypt.agile.AgileEncryptionVerifier.AgileCertificateEntry;
@@ -56,14 +56,14 @@ import org.apache.poi.util.LittleEndian;
 /**
  * Decryptor implementation for Agile Encryption
  */
-public class AgileDecryptor extends Decryptor {
+public class AgileDecryptor extends Decryptor implements Cloneable {
     private long _length = -1;
 
-    protected static final byte[] kVerifierInputBlock;
-    protected static final byte[] kHashedVerifierBlock;
-    protected static final byte[] kCryptoKeyBlock;
-    protected static final byte[] kIntegrityKeyBlock;
-    protected static final byte[] kIntegrityValueBlock;
+    /* package */ static final byte[] kVerifierInputBlock;
+    /* package */ static final byte[] kHashedVerifierBlock;
+    /* package */ static final byte[] kCryptoKeyBlock;
+    /* package */ static final byte[] kIntegrityKeyBlock;
+    /* package */ static final byte[] kIntegrityValueBlock;
 
     static {
         kVerifierInputBlock =
@@ -83,16 +83,16 @@ public class AgileDecryptor extends Decryptor {
                          (byte)0xb2, (byte)0x2c, (byte)0x84, (byte)0x33 };
     }
 
-    protected AgileDecryptor(AgileEncryptionInfoBuilder builder) {
-        super(builder);
+    protected AgileDecryptor() {
     }
     
     /**
      * set decryption password
      */
+    @Override
     public boolean verifyPassword(String password) throws GeneralSecurityException {
-        AgileEncryptionVerifier ver = (AgileEncryptionVerifier)builder.getVerifier();
-        AgileEncryptionHeader header = (AgileEncryptionHeader)builder.getHeader(); 
+        AgileEncryptionVerifier ver = (AgileEncryptionVerifier)getEncryptionInfo().getVerifier();
+        AgileEncryptionHeader header = (AgileEncryptionHeader)getEncryptionInfo().getHeader(); 
         HashAlgorithm hashAlgo = header.getHashAlgorithmEx();
         CipherAlgorithm cipherAlgo = header.getCipherAlgorithm();
         int blockSize = header.getBlockSize();
@@ -113,7 +113,7 @@ public class AgileDecryptor extends Decryptor {
          *    blockSize bytes.
          * 4. Use base64 to encode the result of step 3.
          */
-        byte verfierInputEnc[] = hashInput(builder, pwHash, kVerifierInputBlock, ver.getEncryptedVerifier(), Cipher.DECRYPT_MODE);
+        byte verfierInputEnc[] = hashInput(getEncryptionInfo(), pwHash, kVerifierInputBlock, ver.getEncryptedVerifier(), Cipher.DECRYPT_MODE);
         setVerifier(verfierInputEnc);
         MessageDigest hashMD = getMessageDigest(hashAlgo);
         byte[] verifierHash = hashMD.digest(verfierInputEnc);
@@ -130,7 +130,7 @@ public class AgileDecryptor extends Decryptor {
          *    blockSize bytes, pad the hash value with 0x00 to an integral multiple of blockSize bytes.
          * 4. Use base64 to encode the result of step 3.
          */
-        byte verifierHashDec[] = hashInput(builder, pwHash, kHashedVerifierBlock, ver.getEncryptedVerifierHash(), Cipher.DECRYPT_MODE);
+        byte verifierHashDec[] = hashInput(getEncryptionInfo(), pwHash, kHashedVerifierBlock, ver.getEncryptedVerifierHash(), Cipher.DECRYPT_MODE);
         verifierHashDec = getBlock0(verifierHashDec, hashAlgo.hashSize);
         
         /**
@@ -146,7 +146,7 @@ public class AgileDecryptor extends Decryptor {
          *    blockSize bytes.
          * 4. Use base64 to encode the result of step 3.
          */
-        byte keyspec[] = hashInput(builder, pwHash, kCryptoKeyBlock, ver.getEncryptedKey(), Cipher.DECRYPT_MODE);
+        byte keyspec[] = hashInput(getEncryptionInfo(), pwHash, kCryptoKeyBlock, ver.getEncryptedKey(), Cipher.DECRYPT_MODE);
         keyspec = getBlock0(keyspec, keySize);
         SecretKeySpec secretKey = new SecretKeySpec(keyspec, ver.getCipherAlgorithm().jceId);
 
@@ -204,8 +204,8 @@ public class AgileDecryptor extends Decryptor {
      * @throws GeneralSecurityException
      */
     public boolean verifyPassword(KeyPair keyPair, X509Certificate x509) throws GeneralSecurityException {
-        AgileEncryptionVerifier ver = (AgileEncryptionVerifier)builder.getVerifier();
-        AgileEncryptionHeader header = (AgileEncryptionHeader)builder.getHeader();
+        AgileEncryptionVerifier ver = (AgileEncryptionVerifier)getEncryptionInfo().getVerifier();
+        AgileEncryptionHeader header = (AgileEncryptionHeader)getEncryptionInfo().getHeader();
         HashAlgorithm hashAlgo = header.getHashAlgorithmEx();
         CipherAlgorithm cipherAlgo = header.getCipherAlgorithm();
         int blockSize = header.getBlockSize();
@@ -217,7 +217,9 @@ public class AgileDecryptor extends Decryptor {
                 break;
             }
         }
-        if (ace == null) return false;
+        if (ace == null) {
+            return false;
+        }
         
         Cipher cipher = Cipher.getInstance("RSA");
         cipher.init(Cipher.DECRYPT_MODE, keyPair.getPrivate());
@@ -255,9 +257,9 @@ public class AgileDecryptor extends Decryptor {
         return fillSize;
     }
 
-    protected static byte[] hashInput(EncryptionInfoBuilder builder, byte pwHash[], byte blockKey[], byte inputKey[], int cipherMode) {
-        EncryptionVerifier ver = builder.getVerifier();
-        AgileDecryptor dec = (AgileDecryptor)builder.getDecryptor();
+    protected static byte[] hashInput(EncryptionInfo encryptionInfo, byte pwHash[], byte blockKey[], byte inputKey[], int cipherMode) {
+        EncryptionVerifier ver = encryptionInfo.getVerifier();
+        AgileDecryptor dec = (AgileDecryptor)encryptionInfo.getDecryptor();
         int keySize = dec.getKeySizeInBytes();
         int blockSize = dec.getBlockSizeInBytes();
         HashAlgorithm hashAlgo = ver.getHashAlgorithm();
@@ -278,6 +280,7 @@ public class AgileDecryptor extends Decryptor {
         }
     }
 
+    @Override
     @SuppressWarnings("resource")
     public InputStream getDataStream(DirectoryNode dir) throws IOException, GeneralSecurityException {
         DocumentInputStream dis = dir.createDocumentInputStream(DEFAULT_POIFS_ENTRY);
@@ -285,17 +288,20 @@ public class AgileDecryptor extends Decryptor {
         return new AgileCipherInputStream(dis, _length);
     }
 
+    @Override
     public long getLength(){
-        if(_length == -1) throw new IllegalStateException("EcmaDecryptor.getDataStream() was not called");
+        if(_length == -1) {
+            throw new IllegalStateException("EcmaDecryptor.getDataStream() was not called");
+        }
         return _length;
     }
 
 
-    protected static Cipher initCipherForBlock(Cipher existing, int block, boolean lastChunk, EncryptionInfoBuilder builder, SecretKey skey, int encryptionMode)
+    protected static Cipher initCipherForBlock(Cipher existing, int block, boolean lastChunk, EncryptionInfo encryptionInfo, SecretKey skey, int encryptionMode)
     throws GeneralSecurityException {
-        EncryptionHeader header = builder.getHeader();
-        if (existing == null || lastChunk) {
-            String padding = (lastChunk ? "PKCS5Padding" : "NoPadding");
+        EncryptionHeader header = encryptionInfo.getHeader();
+        String padding = (lastChunk ? "PKCS5Padding" : "NoPadding");
+        if (existing == null || !existing.getAlgorithm().endsWith(padding)) {
             existing = getCipher(skey, header.getCipherAlgorithm(), header.getChainingMode(), header.getKeySalt(), encryptionMode, padding);
         }
 
@@ -339,9 +345,15 @@ public class AgileDecryptor extends Decryptor {
         // TODO: calculate integrity hmac while reading the stream
         // for a post-validation of the data
         
+        @Override
         protected Cipher initCipherForBlock(Cipher cipher, int block)
         throws GeneralSecurityException {
-            return AgileDecryptor.initCipherForBlock(cipher, block, false, builder, getSecretKey(), Cipher.DECRYPT_MODE);
+            return AgileDecryptor.initCipherForBlock(cipher, block, false, getEncryptionInfo(), getSecretKey(), Cipher.DECRYPT_MODE);
         }
+    }
+    
+    @Override
+    public AgileDecryptor clone() throws CloneNotSupportedException {
+        return (AgileDecryptor)super.clone();
     }
 }

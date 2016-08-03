@@ -17,7 +17,6 @@
 
 package org.apache.poi.poifs.crypt.cryptoapi;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,79 +26,34 @@ import java.util.Arrays;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
-import javax.crypto.ShortBufferException;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.poifs.crypt.ChunkedCipherInputStream;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.Decryptor;
 import org.apache.poi.poifs.crypt.EncryptionHeader;
-import org.apache.poi.poifs.crypt.EncryptionInfoBuilder;
+import org.apache.poi.poifs.crypt.EncryptionInfo;
 import org.apache.poi.poifs.crypt.EncryptionVerifier;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.poifs.filesystem.DocumentNode;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.BoundedInputStream;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianInputStream;
 import org.apache.poi.util.StringUtil;
 
-public class CryptoAPIDecryptor extends Decryptor {
+public class CryptoAPIDecryptor extends Decryptor implements Cloneable {
 
     private long _length;
+    private int _chunkSize = -1;
     
-    private class SeekableByteArrayInputStream extends ByteArrayInputStream {
-        Cipher cipher;
-        byte oneByte[] = { 0 };
-        
-        public void seek(int newpos) {
-            if (newpos > count) {
-                throw new ArrayIndexOutOfBoundsException(newpos);
-            }
-            
-            this.pos = newpos;
-            mark = newpos;
-        }
-
-        public void setBlock(int block) throws GeneralSecurityException {
-            cipher = initCipherForBlock(cipher, block);
-        }
-
-        public synchronized int read() {
-            int ch = super.read();
-            if (ch == -1) return -1;
-            oneByte[0] = (byte) ch;
-            try {
-                cipher.update(oneByte, 0, 1, oneByte);
-            } catch (ShortBufferException e) {
-                throw new EncryptedDocumentException(e);
-            }
-            return oneByte[0];
-        }
-
-        public synchronized int read(byte b[], int off, int len) {
-            int readLen = super.read(b, off, len);
-            if (readLen ==-1) return -1;
-            try {
-                cipher.update(b, off, readLen, b, off);
-            } catch (ShortBufferException e) {
-                throw new EncryptedDocumentException(e);
-            }
-            return readLen;
-        }
-
-        public SeekableByteArrayInputStream(byte buf[])
-        throws GeneralSecurityException {
-            super(buf);
-            cipher = initCipherForBlock(null, 0);
-        }
-    }
-
     static class StreamDescriptorEntry {
         static BitField flagStream = BitFieldFactory.getInstance(1);
         
@@ -111,16 +65,16 @@ public class CryptoAPIDecryptor extends Decryptor {
         String streamName;
     }
 
-    protected CryptoAPIDecryptor(CryptoAPIEncryptionInfoBuilder builder) {
-        super(builder);
+    protected CryptoAPIDecryptor() {
         _length = -1L;
     }
 
+    @Override
     public boolean verifyPassword(String password) {
-        EncryptionVerifier ver = builder.getVerifier();
+        EncryptionVerifier ver = getEncryptionInfo().getVerifier();
         SecretKey skey = generateSecretKey(password, ver);
         try {
-            Cipher cipher = initCipherForBlock(null, 0, builder, skey, Cipher.DECRYPT_MODE);
+            Cipher cipher = initCipherForBlock(null, 0, getEncryptionInfo(), skey, Cipher.DECRYPT_MODE);
             byte encryptedVerifier[] = ver.getEncryptedVerifier();
             byte verifier[] = new byte[encryptedVerifier.length];
             cipher.update(encryptedVerifier, 0, encryptedVerifier.length, verifier);
@@ -140,30 +94,25 @@ public class CryptoAPIDecryptor extends Decryptor {
         return false;
     }
 
-    /**
-     * Initializes a cipher object for a given block index for decryption
-     *
-     * @param cipher may be null, otherwise the given instance is reset to the new block index
-     * @param block the block index, e.g. the persist/slide id (hslf)
-     * @return a new cipher object, if cipher was null, otherwise the reinitialized cipher
-     * @throws GeneralSecurityException
-     */
+    @Override
     public Cipher initCipherForBlock(Cipher cipher, int block)
     throws GeneralSecurityException {
-        return initCipherForBlock(cipher, block, builder, getSecretKey(), Cipher.DECRYPT_MODE);
+        EncryptionInfo ei = getEncryptionInfo();
+        SecretKey sk = getSecretKey();
+        return initCipherForBlock(cipher, block, ei, sk, Cipher.DECRYPT_MODE);
     }
 
     protected static Cipher initCipherForBlock(Cipher cipher, int block,
-        EncryptionInfoBuilder builder, SecretKey skey, int encryptMode)
+        EncryptionInfo encryptionInfo, SecretKey skey, int encryptMode)
     throws GeneralSecurityException {
-        EncryptionVerifier ver = builder.getVerifier();
+        EncryptionVerifier ver = encryptionInfo.getVerifier();
         HashAlgorithm hashAlgo = ver.getHashAlgorithm();
         byte blockKey[] = new byte[4];
         LittleEndian.putUInt(blockKey, 0, block);
         MessageDigest hashAlg = CryptoFunctions.getMessageDigest(hashAlgo);
         hashAlg.update(skey.getEncoded());
         byte encKey[] = hashAlg.digest(blockKey);
-        EncryptionHeader header = builder.getHeader();
+        EncryptionHeader header = encryptionInfo.getHeader();
         int keyBits = header.getKeySize();
         encKey = CryptoFunctions.getBlock0(encKey, keyBits / 8);
         if (keyBits == 40) {
@@ -190,6 +139,18 @@ public class CryptoAPIDecryptor extends Decryptor {
         return skey;
     }
 
+    @Override
+    public ChunkedCipherInputStream getDataStream(DirectoryNode dir)
+    throws IOException, GeneralSecurityException {
+        throw new IOException("not supported");
+    }
+
+    @Override
+    public ChunkedCipherInputStream getDataStream(LittleEndianInput stream, int size, int initialPos)
+            throws IOException, GeneralSecurityException {
+        return new CryptoAPICipherInputStream(stream, size, initialPos);
+    }
+    
     /**
      * Decrypt the Document-/SummaryInformation and other optionally streams.
      * Opposed to other crypto modes, cryptoapi is record based and can't be used
@@ -197,15 +158,17 @@ public class CryptoAPIDecryptor extends Decryptor {
      * 
      * @see <a href="http://msdn.microsoft.com/en-us/library/dd943321(v=office.12).aspx">2.3.5.4 RC4 CryptoAPI Encrypted Summary Stream</a>
      */
-    public InputStream getDataStream(DirectoryNode dir)
+    public POIFSFileSystem getSummaryEntries(DirectoryNode root, String encryptedStream)
     throws IOException, GeneralSecurityException {
-        NPOIFSFileSystem fsOut = new NPOIFSFileSystem();
-        DocumentNode es = (DocumentNode) dir.getEntry("EncryptedSummary");
-        DocumentInputStream dis = dir.createDocumentInputStream(es);
+        POIFSFileSystem fsOut = new POIFSFileSystem();
+        // HSLF: encryptedStream
+        // HSSF: encryption
+        DocumentNode es = (DocumentNode) root.getEntry(encryptedStream);
+        DocumentInputStream dis = root.createDocumentInputStream(es);
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         IOUtils.copy(dis, bos);
         dis.close();
-        SeekableByteArrayInputStream sbis = new SeekableByteArrayInputStream(bos.toByteArray());
+        CryptoAPIDocumentInputStream sbis = new CryptoAPIDocumentInputStream(this, bos.toByteArray());
         LittleEndianInputStream leis = new LittleEndianInputStream(sbis);
         int streamDescriptorArrayOffset = (int) leis.readUInt();
         /* int streamDescriptorArraySize = (int) */ leis.readUInt();
@@ -239,21 +202,40 @@ public class CryptoAPIDecryptor extends Decryptor {
         leis.close();
         sbis.close();
         sbis = null;
-        bos.reset();
-        fsOut.writeFilesystem(bos);
-        fsOut.close();
-        _length = bos.size();
-        ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
-        return bis;
+        return fsOut;
     }
 
     /**
      * @return the length of the stream returned by {@link #getDataStream(DirectoryNode)}
      */
+    @Override
     public long getLength() {
         if (_length == -1L) {
             throw new IllegalStateException("Decryptor.getDataStream() was not called");
         }
         return _length;
+    }
+
+    public void setChunkSize(int chunkSize) {
+        _chunkSize = chunkSize;
+    }
+    
+    @Override
+    public CryptoAPIDecryptor clone() throws CloneNotSupportedException {
+        return (CryptoAPIDecryptor)super.clone();
+    }
+
+    private class CryptoAPICipherInputStream extends ChunkedCipherInputStream {
+
+        @Override
+        protected Cipher initCipherForBlock(Cipher existing, int block)
+                throws GeneralSecurityException {
+            return CryptoAPIDecryptor.this.initCipherForBlock(existing, block);
+        }
+
+        public CryptoAPICipherInputStream(LittleEndianInput stream, long size, int initialPos)
+                throws GeneralSecurityException {
+            super(stream, size, _chunkSize, initialPos);
+        }    
     }
 }

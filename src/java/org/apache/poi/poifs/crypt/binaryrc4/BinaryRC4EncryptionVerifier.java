@@ -23,7 +23,7 @@ import org.apache.poi.poifs.crypt.standard.EncryptionRecord;
 import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 import org.apache.poi.util.LittleEndianInput;
 
-public class BinaryRC4EncryptionVerifier extends EncryptionVerifier implements EncryptionRecord {
+public class BinaryRC4EncryptionVerifier extends EncryptionVerifier implements EncryptionRecord, Cloneable {
 
     protected BinaryRC4EncryptionVerifier() {
         setSpinCount(-1);
@@ -50,6 +50,7 @@ public class BinaryRC4EncryptionVerifier extends EncryptionVerifier implements E
         setHashAlgorithm(HashAlgorithm.md5);
     }
 
+    @Override
     protected void setSalt(byte salt[]) {
         if (salt == null || salt.length != 16) {
             throw new EncryptedDocumentException("invalid verifier salt");
@@ -58,14 +59,17 @@ public class BinaryRC4EncryptionVerifier extends EncryptionVerifier implements E
         super.setSalt(salt);
     }
 
+    @Override
     protected void setEncryptedVerifier(byte encryptedVerifier[]) {
         super.setEncryptedVerifier(encryptedVerifier);
     }
 
+    @Override
     protected void setEncryptedVerifierHash(byte encryptedVerifierHash[]) {
         super.setEncryptedVerifierHash(encryptedVerifierHash);
     }
 
+    @Override
     public void write(LittleEndianByteArrayOutputStream bos) {
         byte salt[] = getSalt();
         assert (salt.length == 16);
@@ -78,4 +82,8 @@ public class BinaryRC4EncryptionVerifier extends EncryptionVerifier implements E
         bos.write(encryptedVerifierHash);
     }
 
+    @Override
+    public BinaryRC4EncryptionVerifier clone() throws CloneNotSupportedException {
+        return (BinaryRC4EncryptionVerifier)super.clone();
+    }
 }

@@ -60,6 +60,7 @@ import org.apache.poi.poifs.crypt.standard.EncryptionRecord;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianByteArrayOutputStream;
+import org.apache.poi.util.LittleEndianConsts;
 import org.apache.xmlbeans.XmlOptions;
 
 import com.microsoft.schemas.office.x2006.encryption.CTDataIntegrity;
@@ -74,21 +75,20 @@ import com.microsoft.schemas.office.x2006.encryption.STHashAlgorithm;
 import com.microsoft.schemas.office.x2006.keyEncryptor.certificate.CTCertificateKeyEncryptor;
 import com.microsoft.schemas.office.x2006.keyEncryptor.password.CTPasswordKeyEncryptor;
 
-public class AgileEncryptor extends Encryptor {
-    private final AgileEncryptionInfoBuilder builder;
+public class AgileEncryptor extends Encryptor implements Cloneable {
     private byte integritySalt[];
 	private byte pwHash[];
     
-	protected AgileEncryptor(AgileEncryptionInfoBuilder builder) {
-		this.builder = builder;
+	protected AgileEncryptor() {
 	}
 
+    @Override
     public void confirmPassword(String password) {
         // see [MS-OFFCRYPTO] - 2.3.3 EncryptionVerifier
         Random r = new SecureRandom();
-        int blockSize = builder.getHeader().getBlockSize();
-        int keySize = builder.getHeader().getKeySize()/8;
-        int hashSize = builder.getHeader().getHashAlgorithmEx().hashSize;
+        int blockSize = getEncryptionInfo().getHeader().getBlockSize();
+        int keySize = getEncryptionInfo().getHeader().getKeySize()/8;
+        int hashSize = getEncryptionInfo().getHeader().getHashAlgorithmEx().hashSize;
         
         byte[] newVerifierSalt = new byte[blockSize]
              , newVerifier = new byte[blockSize]
@@ -104,10 +104,11 @@ public class AgileEncryptor extends Encryptor {
         confirmPassword(password, newKeySpec, newKeySalt, newVerifierSalt, newVerifier, newIntegritySalt);
     }
 	
-	public void confirmPassword(String password, byte keySpec[], byte keySalt[], byte verifier[], byte verifierSalt[], byte integritySalt[]) {
-        AgileEncryptionVerifier ver = builder.getVerifier();
+	@Override
+    public void confirmPassword(String password, byte keySpec[], byte keySalt[], byte verifier[], byte verifierSalt[], byte integritySalt[]) {
+        AgileEncryptionVerifier ver = (AgileEncryptionVerifier)getEncryptionInfo().getVerifier();
         ver.setSalt(verifierSalt);
-        AgileEncryptionHeader header = builder.getHeader();
+        AgileEncryptionHeader header = (AgileEncryptionHeader)getEncryptionInfo().getHeader();
         header.setKeySalt(keySalt);
         HashAlgorithm hashAlgo = ver.getHashAlgorithm();
 
@@ -128,7 +129,7 @@ public class AgileEncryptor extends Encryptor {
          *    blockSize bytes.
          * 4. Use base64 to encode the result of step 3.
          */
-        byte encryptedVerifier[] = hashInput(builder, pwHash, kVerifierInputBlock, verifier, Cipher.ENCRYPT_MODE);
+        byte encryptedVerifier[] = hashInput(getEncryptionInfo(), pwHash, kVerifierInputBlock, verifier, Cipher.ENCRYPT_MODE);
         ver.setEncryptedVerifier(encryptedVerifier);
 	    
 
@@ -146,7 +147,7 @@ public class AgileEncryptor extends Encryptor {
          */
         MessageDigest hashMD = getMessageDigest(hashAlgo);
         byte[] hashedVerifier = hashMD.digest(verifier);
-        byte encryptedVerifierHash[] = hashInput(builder, pwHash, kHashedVerifierBlock, hashedVerifier, Cipher.ENCRYPT_MODE);
+        byte encryptedVerifierHash[] = hashInput(getEncryptionInfo(), pwHash, kHashedVerifierBlock, hashedVerifier, Cipher.ENCRYPT_MODE);
         ver.setEncryptedVerifierHash(encryptedVerifierHash);
         
         /**
@@ -162,7 +163,7 @@ public class AgileEncryptor extends Encryptor {
          *    blockSize bytes.
          * 4. Use base64 to encode the result of step 3.
          */
-        byte encryptedKey[] = hashInput(builder, pwHash, kCryptoKeyBlock, keySpec, Cipher.ENCRYPT_MODE);
+        byte encryptedKey[] = hashInput(getEncryptionInfo(), pwHash, kCryptoKeyBlock, keySpec, Cipher.ENCRYPT_MODE);
         ver.setEncryptedKey(encryptedKey);
         
         SecretKey secretKey = new SecretKeySpec(keySpec, ver.getCipherAlgorithm().jceId);
@@ -214,6 +215,7 @@ public class AgileEncryptor extends Encryptor {
         }
 	}
 	
+    @Override
     public OutputStream getDataStream(DirectoryNode dir)
             throws IOException, GeneralSecurityException {
         // TODO: initialize headers
@@ -234,14 +236,14 @@ public class AgileEncryptor extends Encryptor {
         // as the integrity hmac needs to contain the StreamSize,
         // it's not possible to calculate it on-the-fly while buffering
         // TODO: add stream size parameter to getDataStream()
-        AgileEncryptionVerifier ver = builder.getVerifier();
+        AgileEncryptionVerifier ver = (AgileEncryptionVerifier)getEncryptionInfo().getVerifier();
         HashAlgorithm hashAlgo = ver.getHashAlgorithm();
         Mac integrityMD = CryptoFunctions.getMac(hashAlgo);
         integrityMD.init(new SecretKeySpec(integritySalt, hashAlgo.jceHmacId));
 
         byte buf[] = new byte[1024];
         LittleEndian.putLong(buf, 0, oleStreamSize);
-        integrityMD.update(buf, 0, LittleEndian.LONG_SIZE);
+        integrityMD.update(buf, 0, LittleEndianConsts.LONG_SIZE);
         
         InputStream fis = new FileInputStream(tmpFile);
         try {
@@ -255,7 +257,7 @@ public class AgileEncryptor extends Encryptor {
         
         byte hmacValue[] = integrityMD.doFinal();
         
-        AgileEncryptionHeader header = builder.getHeader();
+        AgileEncryptionHeader header = (AgileEncryptionHeader)getEncryptionInfo().getHeader();
         int blockSize = header.getBlockSize();
         byte iv[] = CryptoFunctions.generateIv(header.getHashAlgorithmEx(), header.getKeySalt(), kIntegrityValueBlock, blockSize);
         Cipher cipher = CryptoFunctions.getCipher(getSecretKey(), header.getCipherAlgorithm(), header.getChainingMode(), iv, Cipher.ENCRYPT_MODE);
@@ -271,8 +273,8 @@ public class AgileEncryptor extends Encryptor {
         CTKeyEncryptor.Uri.HTTP_SCHEMAS_MICROSOFT_COM_OFFICE_2006_KEY_ENCRYPTOR_CERTIFICATE;
     
     protected EncryptionDocument createEncryptionDocument() {
-        AgileEncryptionVerifier ver = builder.getVerifier();
-        AgileEncryptionHeader header = builder.getHeader(); 
+        AgileEncryptionVerifier ver = (AgileEncryptionVerifier)getEncryptionInfo().getVerifier();
+        AgileEncryptionHeader header = (AgileEncryptionHeader)getEncryptionInfo().getHeader(); 
         
         EncryptionDocument ed = EncryptionDocument.Factory.newInstance();
         CTEncryption edRoot = ed.addNewEncryption();
@@ -379,9 +381,10 @@ public class AgileEncryptor extends Encryptor {
     throws IOException, GeneralSecurityException {
         DataSpaceMapUtils.addDefaultDataSpace(dir);
 
-        final EncryptionInfo info = builder.getInfo();
+        final EncryptionInfo info = getEncryptionInfo();
 
         EncryptionRecord er = new EncryptionRecord(){
+            @Override
             public void write(LittleEndianByteArrayOutputStream bos) {
                 // EncryptionVersionInfo (4 bytes): A Version structure (section 2.1.4), where 
                 // Version.vMajor MUST be 0x0004 and Version.vMinor MUST be 0x0004
@@ -422,7 +425,7 @@ public class AgileEncryptor extends Encryptor {
         @Override
         protected Cipher initCipherForBlock(Cipher existing, int block, boolean lastChunk)
         throws GeneralSecurityException {
-            return AgileDecryptor.initCipherForBlock(existing, block, lastChunk, builder, getSecretKey(), Cipher.ENCRYPT_MODE);
+            return AgileDecryptor.initCipherForBlock(existing, block, lastChunk, getEncryptionInfo(), getSecretKey(), Cipher.ENCRYPT_MODE);
         }
 
         @Override
@@ -439,4 +442,11 @@ public class AgileEncryptor extends Encryptor {
         }
     }
 
+    @Override
+    public AgileEncryptor clone() throws CloneNotSupportedException {
+        AgileEncryptor other = (AgileEncryptor)super.clone();
+        other.integritySalt = (integritySalt == null) ? null : integritySalt.clone();
+        other.pwHash = (pwHash == null) ? null : pwHash.clone();
+        return other;
+    }
 }
