@@ -17,7 +17,7 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
+import org.apache.poi.ss.formula.BaseFormulaEvaluator;
 import org.apache.poi.ss.formula.EvaluationCell;
 import org.apache.poi.ss.formula.IStabilityClassifier;
 import org.apache.poi.ss.formula.WorkbookEvaluator;
@@ -88,7 +88,7 @@ public final class XSSFFormulaEvaluator extends BaseXSSFFormulaEvaluator {
      *  cells, and calling evaluateFormulaCell on each one.
      */
     public static void evaluateAllFormulaCells(XSSFWorkbook wb) {
-        HSSFFormulaEvaluator.evaluateAllFormulaCells(wb);
+        BaseFormulaEvaluator.evaluateAllFormulaCells(wb);
     }
     /**
      * Loops over all cells in all sheets of the supplied
@@ -102,7 +102,7 @@ public final class XSSFFormulaEvaluator extends BaseXSSFFormulaEvaluator {
      *  cells, and calling evaluateFormulaCell on each one.
      */
     public void evaluateAll() {
-        HSSFFormulaEvaluator.evaluateAllFormulaCells(_book);
+        evaluateAllFormulaCells(_book, this);
     }
 
     /**

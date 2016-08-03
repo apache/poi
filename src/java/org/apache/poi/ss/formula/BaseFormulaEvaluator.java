@@ -142,8 +142,10 @@ public abstract class BaseFormulaEvaluator implements FormulaEvaluator, Workbook
                 return;
             case BLANK:
                 // never happens - blanks eventually get translated to zero
+                throw new IllegalArgumentException("This should never happen. Blanks eventually get translated to zero.");
             case FORMULA:
                 // this will never happen, we have already evaluated the formula
+                throw new IllegalArgumentException("This should never happen. Formulas should have already been evaluated.");
             default:
                 throw new IllegalStateException("Unexpected cell value type (" + cellType + ")");
         }
@@ -164,7 +166,7 @@ public abstract class BaseFormulaEvaluator implements FormulaEvaluator, Workbook
         FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
         evaluateAllFormulaCells(wb, evaluator);
     }
-    private static void evaluateAllFormulaCells(Workbook wb, FormulaEvaluator evaluator) {
+    protected static void evaluateAllFormulaCells(Workbook wb, FormulaEvaluator evaluator) {
         for(int i=0; i<wb.getNumberOfSheets(); i++) {
             Sheet sheet = wb.getSheetAt(i);
 
