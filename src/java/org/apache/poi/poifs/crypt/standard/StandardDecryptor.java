@@ -34,7 +34,6 @@ import org.apache.poi.poifs.crypt.ChainingMode;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.Decryptor;
 import org.apache.poi.poifs.crypt.EncryptionHeader;
-import org.apache.poi.poifs.crypt.EncryptionInfoBuilder;
 import org.apache.poi.poifs.crypt.EncryptionVerifier;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
@@ -44,15 +43,15 @@ import org.apache.poi.util.LittleEndian;
 
 /**
  */
-public class StandardDecryptor extends Decryptor {
+public class StandardDecryptor extends Decryptor implements Cloneable {
     private long _length = -1;
 
-    protected StandardDecryptor(EncryptionInfoBuilder builder) {
-        super(builder);
+    protected StandardDecryptor() {
     }
 
+    @Override
     public boolean verifyPassword(String password) {
-        EncryptionVerifier ver = builder.getVerifier();
+        EncryptionVerifier ver = getEncryptionInfo().getVerifier();
         SecretKey skey = generateSecretKey(password, ver, getKeySizeInBytes());
         Cipher cipher = getCipher(skey);
 
@@ -116,12 +115,13 @@ public class StandardDecryptor extends Decryptor {
     }
 
     private Cipher getCipher(SecretKey key) {
-        EncryptionHeader em = builder.getHeader();
+        EncryptionHeader em = getEncryptionInfo().getHeader();
         ChainingMode cm = em.getChainingMode();
         assert(cm == ChainingMode.ecb);
         return CryptoFunctions.getCipher(key, em.getCipherAlgorithm(), cm, null, Cipher.DECRYPT_MODE);
     }
 
+    @Override
     @SuppressWarnings("resource")
     public InputStream getDataStream(DirectoryNode dir) throws IOException {
         DocumentInputStream dis = dir.createDocumentInputStream(DEFAULT_POIFS_ENTRY);
@@ -134,7 +134,7 @@ public class StandardDecryptor extends Decryptor {
         // limit wrong calculated ole entries - (bug #57080)
         // standard encryption always uses aes encoding, so blockSize is always 16 
         // http://stackoverflow.com/questions/3283787/size-of-data-after-aes-encryption
-        int blockSize = builder.getHeader().getCipherAlgorithm().blockSize;
+        int blockSize = getEncryptionInfo().getHeader().getCipherAlgorithm().blockSize;
         long cipherLen = (_length/blockSize + 1) * blockSize;
         Cipher cipher = getCipher(getSecretKey());
         
@@ -145,8 +145,16 @@ public class StandardDecryptor extends Decryptor {
     /**
      * @return the length of the stream returned by {@link #getDataStream(DirectoryNode)}
      */
+    @Override
     public long getLength(){
-        if(_length == -1) throw new IllegalStateException("Decryptor.getDataStream() was not called");
+        if(_length == -1) {
+            throw new IllegalStateException("Decryptor.getDataStream() was not called");
+        }
         return _length;
+    }
+
+    @Override
+    public StandardDecryptor clone() throws CloneNotSupportedException {
+        return (StandardDecryptor)super.clone();
     }
 }

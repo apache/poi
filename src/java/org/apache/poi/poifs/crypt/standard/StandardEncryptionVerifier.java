@@ -27,7 +27,7 @@ import org.apache.poi.util.LittleEndianInput;
 /**
  * Used when checking if a key is valid for a document 
  */
-public class StandardEncryptionVerifier extends EncryptionVerifier implements EncryptionRecord {
+public class StandardEncryptionVerifier extends EncryptionVerifier implements EncryptionRecord, Cloneable {
     private static final int SPIN_COUNT = 50000;
     private final int verifierHashSize;
     
@@ -68,6 +68,7 @@ public class StandardEncryptionVerifier extends EncryptionVerifier implements En
     }
 
     // make method visible for this package
+    @Override
     protected void setSalt(byte salt[]) {
         if (salt == null || salt.length != 16) {
             throw new EncryptedDocumentException("invalid verifier salt");
@@ -76,15 +77,18 @@ public class StandardEncryptionVerifier extends EncryptionVerifier implements En
     }
     
     // make method visible for this package
+    @Override
     protected void setEncryptedVerifier(byte encryptedVerifier[]) {
         super.setEncryptedVerifier(encryptedVerifier);
     }
 
     // make method visible for this package
+    @Override
     protected void setEncryptedVerifierHash(byte encryptedVerifierHash[]) {
         super.setEncryptedVerifierHash(encryptedVerifierHash);
     }
     
+    @Override
     public void write(LittleEndianByteArrayOutputStream bos) {
         // see [MS-OFFCRYPTO] - 2.3.4.9
         byte salt[] = getSalt();
@@ -114,5 +118,10 @@ public class StandardEncryptionVerifier extends EncryptionVerifier implements En
 
     protected int getVerifierHashSize() {
         return verifierHashSize;
+    }
+
+    @Override
+    public StandardEncryptionVerifier clone() throws CloneNotSupportedException {
+        return (StandardEncryptionVerifier)super.clone();
     }
 }

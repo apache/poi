@@ -21,14 +21,16 @@ import java.io.OutputStream;
 import java.security.GeneralSecurityException;
 
 import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.OPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
-public abstract class Encryptor {
+public abstract class Encryptor implements Cloneable {
     protected static final String DEFAULT_POIFS_ENTRY = Decryptor.DEFAULT_POIFS_ENTRY;
+    private EncryptionInfo encryptionInfo;
     private SecretKey secretKey;
     
     /**
@@ -65,5 +67,21 @@ public abstract class Encryptor {
 
     protected void setSecretKey(SecretKey secretKey) {
         this.secretKey = secretKey;
+    }
+
+    public EncryptionInfo getEncryptionInfo() {
+        return encryptionInfo;
+    }
+
+    public void setEncryptionInfo(EncryptionInfo encryptionInfo) {
+        this.encryptionInfo = encryptionInfo;
+    }
+
+    @Override
+    public Encryptor clone() throws CloneNotSupportedException {
+        Encryptor other = (Encryptor)super.clone();
+        other.secretKey = new SecretKeySpec(secretKey.getEncoded(), secretKey.getAlgorithm());
+        // encryptionInfo is set from outside
+        return other;
     }
 }

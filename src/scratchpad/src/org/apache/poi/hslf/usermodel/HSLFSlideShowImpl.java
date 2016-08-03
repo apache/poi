@@ -54,6 +54,7 @@ import org.apache.poi.poifs.filesystem.EntryUtils;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -205,14 +206,12 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
 
 		// Grab the document stream
 		int len = docProps.getSize();
-		_docstream = new byte[len];
-		InputStream is = directory.createDocumentInputStream("PowerPoint Document");
-		int readLen = is.read(_docstream);
-		is.close();
-		
-		if (len != readLen) {
-		    throw new IOException("Document input stream ended prematurely - expected "+len+" bytes - received "+readLen+" bytes");
-		}
+        InputStream is = directory.createDocumentInputStream("PowerPoint Document");
+        try {
+            _docstream = IOUtils.toByteArray(is, len);
+        } finally {
+            is.close();
+        }
 	}
 
 	/**
@@ -364,17 +363,10 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
         HSLFSlideShowEncrypted decryptData = new HSLFSlideShowEncrypted(getDocumentEncryptionAtom());
         
 		DocumentEntry entry = (DocumentEntry)directory.getEntry("Pictures");
-		int len = entry.getSize();
-		byte[] pictstream = new byte[len];
-		DocumentInputStream is = directory.createDocumentInputStream(entry);
-		int readLen = is.read(pictstream);
+        DocumentInputStream is = directory.createDocumentInputStream(entry);
+		byte[] pictstream = IOUtils.toByteArray(is, entry.getSize());
 		is.close();
 
-		if (len != readLen) {
-		    throw new IOException("Picture stream ended prematurely - expected "+len+" bytes - received "+readLen+" bytes");
-		}
-
-		
         int pos = 0;
 		// An empty picture record (length 0) will take up 8 bytes
         while (pos <= (pictstream.length-8)) {
@@ -512,7 +504,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
         }
         
         HSLFSlideShowEncrypted encData = new HSLFSlideShowEncrypted(getDocumentEncryptionAtom());
-	    
+        
 	    for (Record record : _records) {
             assert(record instanceof PositionDependentRecord);
             // We've already figured out their new location, and
@@ -533,6 +525,8 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
                 record.writeOut(encData.encryptRecord(os, persistId, record));
             }
         }
+	    
+	    encData.close();
 
         // Update and write out the Current User atom
         int oldLastUserEditAtomPos = (int)currentUser.getCurrentEditOffset();
@@ -733,7 +727,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
         if (dea != null) {
             CryptoAPIEncryptor enc = (CryptoAPIEncryptor)dea.getEncryptionInfo().getEncryptor();
             try {
-                enc.getDataStream(outFS.getRoot()); // ignore OutputStream
+                enc.getSummaryEntries(outFS.getRoot()); // ignore OutputStream
             } catch (IOException e) {
                 throw e;
             } catch (GeneralSecurityException e) {

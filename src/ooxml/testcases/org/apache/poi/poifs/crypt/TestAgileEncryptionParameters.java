@@ -16,8 +16,7 @@
 ==================================================================== */
 package org.apache.poi.poifs.crypt;
 
-import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
@@ -94,6 +93,7 @@ public class TestAgileEncryptionParameters {
         os.close();
         bos.reset();
         fsEnc.writeFilesystem(bos);
+        fsEnc.close();
         
         POIFSFileSystem fsDec = new POIFSFileSystem(new ByteArrayInputStream(bos.toByteArray()));
         EncryptionInfo infoDec = new EncryptionInfo(fsDec);
@@ -103,6 +103,7 @@ public class TestAgileEncryptionParameters {
         InputStream is = dec.getDataStream(fsDec);
         byte actualData[] = IOUtils.toByteArray(is);
         is.close();
-        assertThat("Failed roundtrip - "+ca+"-"+ha+"-"+cm, testData, equalTo(actualData));
+        fsDec.close();
+        assertArrayEquals("Failed roundtrip - "+ca+"-"+ha+"-"+cm, testData, actualData);
     }
 }

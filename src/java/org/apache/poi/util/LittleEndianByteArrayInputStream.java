@@ -17,103 +17,91 @@
 
 package org.apache.poi.util;
 
+import java.io.ByteArrayInputStream;
+
 /**
  * Adapts a plain byte array to {@link LittleEndianInput}
- *
- * @author Josh Micich
  */
-public final class LittleEndianByteArrayInputStream implements LittleEndianInput {
-	private final byte[] _buf;
-	private final int _endIndex;
-	private int _readIndex;
-
+public final class LittleEndianByteArrayInputStream extends ByteArrayInputStream implements LittleEndianInput {
 	public LittleEndianByteArrayInputStream(byte[] buf, int startOffset, int maxReadLen) { // NOSONAR
-		_buf = buf;
-		_readIndex = startOffset;
-		_endIndex = startOffset + maxReadLen;
+	    super(buf, startOffset, maxReadLen);
 	}
+	
 	public LittleEndianByteArrayInputStream(byte[] buf, int startOffset) {
-		this(buf, startOffset, buf.length - startOffset);
+	    super(buf, startOffset, buf.length - startOffset);
 	}
+	
 	public LittleEndianByteArrayInputStream(byte[] buf) {
-		this(buf, 0, buf.length);
+	    super(buf);
 	}
 
-	public int available() {
-		return _endIndex - _readIndex;
-	}
 	private void checkPosition(int i) {
-		if (i > _endIndex - _readIndex) {
+		if (i > count - pos) {
 			throw new RuntimeException("Buffer overrun");
 		}
 	}
 
 	public int getReadIndex() {
-		return _readIndex;
+		return pos;
 	}
-	public byte readByte() {
+
+	@Override
+    public byte readByte() {
 		checkPosition(1);
-		return _buf[_readIndex++];
+		return (byte)read();
 	}
 
-	public int readInt() {
-		checkPosition(4);
-		int i = _readIndex;
-
-		int b0 = _buf[i++] & 0xFF;
-		int b1 = _buf[i++] & 0xFF;
-		int b2 = _buf[i++] & 0xFF;
-		int b3 = _buf[i++] & 0xFF;
-		_readIndex = i;
-		return (b3 << 24) + (b2 << 16) + (b1 << 8) + (b0 << 0);
+	@Override
+    public int readInt() {
+	    final int size = LittleEndianConsts.INT_SIZE;
+		checkPosition(size);
+		int le = LittleEndian.getInt(buf, pos);
+		super.skip(size);
+		return le;
 	}
-	public long readLong() {
-		checkPosition(8);
-		int i = _readIndex;
 
-		int b0 = _buf[i++] & 0xFF;
-		int b1 = _buf[i++] & 0xFF;
-		int b2 = _buf[i++] & 0xFF;
-		int b3 = _buf[i++] & 0xFF;
-		int b4 = _buf[i++] & 0xFF;
-		int b5 = _buf[i++] & 0xFF;
-		int b6 = _buf[i++] & 0xFF;
-		int b7 = _buf[i++] & 0xFF;
-		_readIndex = i;
-		return (((long)b7 << 56) +
-				((long)b6 << 48) +
-				((long)b5 << 40) +
-				((long)b4 << 32) +
-				((long)b3 << 24) +
-				(b2 << 16) +
-				(b1 <<  8) +
-				(b0 <<  0));
+	@Override
+    public long readLong() {
+	    final int size = LittleEndianConsts.LONG_SIZE;
+		checkPosition(size);
+		long le = LittleEndian.getLong(buf, pos);
+		super.skip(size);
+		return le;
 	}
-	public short readShort() {
+
+	@Override
+    public short readShort() {
 		return (short)readUShort();
 	}
-	public int readUByte() {
-		checkPosition(1);
-		return _buf[_readIndex++] & 0xFF;
-	}
-	public int readUShort() {
-		checkPosition(2);
-		int i = _readIndex;
 
-		int b0 = _buf[i++] & 0xFF;
-		int b1 = _buf[i++] & 0xFF;
-		_readIndex = i;
-		return (b1 << 8) + (b0 << 0);
+	@Override
+    public int readUByte() {
+	    return readByte() & 0xFF;
 	}
-	public void readFully(byte[] buf, int off, int len) {
+
+	@Override
+    public int readUShort() {
+        final int size = LittleEndianConsts.SHORT_SIZE;
+        checkPosition(size);
+        int le = LittleEndian.getUShort(buf, pos);
+        super.skip(size);
+        return le;
+	}
+
+    @Override
+    public double readDouble() {
+        return Double.longBitsToDouble(readLong());
+    }
+	
+	@Override
+    public void readFully(byte[] buffer, int off, int len) {
 		checkPosition(len);
-		System.arraycopy(_buf, _readIndex, buf, off, len);
-		_readIndex+=len;
+		read(buffer, off, len);
 	}
-	public void readFully(byte[] buf) {
-		readFully(buf, 0, buf.length);
-	}
-	public double readDouble() {
-		return Double.longBitsToDouble(readLong());
+
+	@Override
+    public void readFully(byte[] buffer) {
+        checkPosition(buffer.length);
+        read(buffer, 0, buffer.length);
 	}
 }

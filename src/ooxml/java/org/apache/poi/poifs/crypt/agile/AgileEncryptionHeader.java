@@ -27,7 +27,7 @@ import com.microsoft.schemas.office.x2006.encryption.CTKeyData;
 import com.microsoft.schemas.office.x2006.encryption.EncryptionDocument;
 import com.microsoft.schemas.office.x2006.encryption.STCipherChaining;
 
-public class AgileEncryptionHeader extends EncryptionHeader {
+public class AgileEncryptionHeader extends EncryptionHeader implements Cloneable {
     private byte encryptedHmacKey[], encryptedHmacValue[];
     
     public AgileEncryptionHeader(String descriptor) {
@@ -99,6 +99,7 @@ public class AgileEncryptionHeader extends EncryptionHeader {
     }
 
     // make method visible for this package
+    @Override
     protected void setKeySalt(byte salt[]) {
         if (salt == null || salt.length != getBlockSize()) {
             throw new EncryptedDocumentException("invalid verifier salt");
@@ -121,4 +122,13 @@ public class AgileEncryptionHeader extends EncryptionHeader {
     protected void setEncryptedHmacValue(byte[] encryptedHmacValue) {
         this.encryptedHmacValue = (encryptedHmacValue == null) ? null : encryptedHmacValue.clone();
     }
+
+    @Override
+    public AgileEncryptionHeader clone() throws CloneNotSupportedException {
+        AgileEncryptionHeader other = (AgileEncryptionHeader)super.clone();
+        other.encryptedHmacKey = (encryptedHmacKey == null) ? null : encryptedHmacKey.clone();
+        other.encryptedHmacValue = (encryptedHmacValue == null) ? null : encryptedHmacValue.clone();
+        return other;
+    }
+
 }
