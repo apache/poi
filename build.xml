@@ -288,6 +288,7 @@ under the License.
     </condition>
     <property name="findbugs.version" value="2.0.3" if:set="findbugs.jdk6"/>
     <property name="findbugs.version" value="3.0.1" unless:set="findbugs.jdk6"/>
+    <echo message="Findbugs-Version: ${findbugs.version} for Java ${ant.java.version}"/>
 	<property name="findbugs.url" value="http://prdownloads.sourceforge.net/findbugs/findbugs-noUpdateChecks-${findbugs.version}.zip?download"/>
 	<property name="findbugs.jar" location="${main.lib}/findbugs-noUpdateChecks-${findbugs.version}.zip"/>
 
