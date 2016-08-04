@@ -30,16 +30,20 @@ public class DummyPOILogger extends POILogger {
 		logged = new ArrayList<String>();
 	}
 	
+    @Override
 	public boolean check(int level) {
 		return true;
 	}
 
+    @Override
 	public void initialize(String cat) {}
 
+    @Override
 	public void log(int level, Object obj1) {
 		logged.add(level + " - " + obj1);
 	}
 
+    @Override
 	public void log(int level, Object obj1, Throwable exception) {
 		logged.add(level + " - " + obj1 + " - " + exception);
 	}
