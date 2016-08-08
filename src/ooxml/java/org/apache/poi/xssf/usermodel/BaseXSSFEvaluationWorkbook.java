@@ -232,7 +232,7 @@ public abstract class BaseXSSFEvaluationWorkbook implements FormulaRenderingWork
         
         // Otherwise, try it as a named range
         if (sheet == null) {
-            if (_uBook.getNameIndex(name) > -1) {
+            if (!_uBook.getNames(name).isEmpty()) {
                 return new NameXPxg(null, name);
             }
             return null;

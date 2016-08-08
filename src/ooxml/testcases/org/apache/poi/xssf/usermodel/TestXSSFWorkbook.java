@@ -1140,4 +1140,44 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
 
        wb.close();
     }
+
+    @Test
+    public void testRemoveSheet() throws IOException {
+        // Test removing a sheet maintains the named ranges correctly
+        XSSFWorkbook wb = new XSSFWorkbook();
+        wb.createSheet("Sheet1");
+        wb.createSheet("Sheet2");
+
+        XSSFName sheet1Name = wb.createName();
+        sheet1Name.setNameName("name1");
+        sheet1Name.setSheetIndex(0);
+        sheet1Name.setRefersToFormula("Sheet1!$A$1");
+
+        XSSFName sheet2Name = wb.createName();
+        sheet2Name.setNameName("name1");
+        sheet2Name.setSheetIndex(1);
+        sheet2Name.setRefersToFormula("Sheet2!$A$1");
+
+        assertTrue(wb.getAllNames().contains(sheet1Name));
+        assertTrue(wb.getAllNames().contains(sheet2Name));
+
+        assertEquals(2, wb.getNames("name1").size());
+        assertEquals(sheet1Name, wb.getNames("name1").get(0));
+        assertEquals(sheet2Name, wb.getNames("name1").get(1));
+
+        // Remove sheet1, we should only have sheet2Name now
+        wb.removeSheetAt(0);
+
+        assertFalse(wb.getAllNames().contains(sheet1Name));
+        assertTrue(wb.getAllNames().contains(sheet2Name));
+        assertEquals(1, wb.getNames("name1").size());
+        assertEquals(sheet2Name, wb.getNames("name1").get(0));
+
+        // Check by index as well for sanity
+        assertEquals(1, wb.getNumberOfNames());
+        assertEquals(0, wb.getNameIndex("name1"));
+        assertEquals(sheet2Name, wb.getNameAt(0));
+
+        wb.close();
+    }
 }

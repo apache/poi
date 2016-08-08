@@ -115,25 +115,25 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         assertFalse(wb.isMacroEnabled());
         assertEquals(3, wb.getNumberOfNames());
 
-        assertEquals(0, wb.getNameAt(0).getCTName().getLocalSheetId());
-        assertFalse(wb.getNameAt(0).getCTName().isSetLocalSheetId());
-        assertEquals("SheetA!$A$1", wb.getNameAt(0).getRefersToFormula());
-        assertEquals("SheetA", wb.getNameAt(0).getSheetName());
+        assertEquals(0, wb.getName("SheetAA1").getCTName().getLocalSheetId());
+        assertFalse(wb.getName("SheetAA1").getCTName().isSetLocalSheetId());
+        assertEquals("SheetA!$A$1", wb.getName("SheetAA1").getRefersToFormula());
+        assertEquals("SheetA", wb.getName("SheetAA1").getSheetName());
 
-        assertEquals(0, wb.getNameAt(1).getCTName().getLocalSheetId());
-        assertFalse(wb.getNameAt(1).getCTName().isSetLocalSheetId());
-        assertEquals("SheetB!$A$1", wb.getNameAt(1).getRefersToFormula());
-        assertEquals("SheetB", wb.getNameAt(1).getSheetName());
+        assertEquals(0, wb.getName("SheetBA1").getCTName().getLocalSheetId());
+        assertFalse(wb.getName("SheetBA1").getCTName().isSetLocalSheetId());
+        assertEquals("SheetB!$A$1", wb.getName("SheetBA1").getRefersToFormula());
+        assertEquals("SheetB", wb.getName("SheetBA1").getSheetName());
 
-        assertEquals(0, wb.getNameAt(2).getCTName().getLocalSheetId());
-        assertFalse(wb.getNameAt(2).getCTName().isSetLocalSheetId());
-        assertEquals("SheetC!$A$1", wb.getNameAt(2).getRefersToFormula());
-        assertEquals("SheetC", wb.getNameAt(2).getSheetName());
+        assertEquals(0, wb.getName("SheetCA1").getCTName().getLocalSheetId());
+        assertFalse(wb.getName("SheetCA1").getCTName().isSetLocalSheetId());
+        assertEquals("SheetC!$A$1", wb.getName("SheetCA1").getRefersToFormula());
+        assertEquals("SheetC", wb.getName("SheetCA1").getSheetName());
 
         // Save and re-load, still there
         XSSFWorkbook nwb = XSSFTestDataSamples.writeOutAndReadBack(wb);
         assertEquals(3, nwb.getNumberOfNames());
-        assertEquals("SheetA!$A$1", nwb.getNameAt(0).getRefersToFormula());
+        assertEquals("SheetA!$A$1", nwb.getName("SheetAA1").getRefersToFormula());
 
         nwb.close();
         wb.close();

@@ -341,9 +341,11 @@ public interface Workbook extends Closeable, Iterable<Sheet> {
 
     /**
      * Close the underlying input resource (File or Stream),
-     *  from which the Workbook was read. After closing, the
-     *  Workbook should no longer be used.
-     * <p>This will have no effect newly created Workbooks.
+     *  from which the Workbook was read.
+     *
+     * <p>Once this has been called, no further
+     *  operations, updates or reads should be performed on the
+     *  Workbook.
      */
     @Override
     void close() throws IOException;
@@ -366,6 +368,13 @@ public interface Workbook extends Closeable, Iterable<Sheet> {
      * @return a list of the defined names with the specified name. An empty list is returned if none is found.
      */
     List<? extends Name> getNames(String name);
+
+    /**
+     * Returns all defined names.
+     *
+     * @return a list of the defined names. An empty list is returned if none is found.
+     */
+    List<? extends Name> getAllNames();
 
     /**
      * @param nameIndex position of the named range (0-based)
@@ -404,6 +413,13 @@ public interface Workbook extends Closeable, Iterable<Sheet> {
       * @param name the name of the defined name
      */
     void removeName(String name);
+
+    /**
+     * Remove a defined name
+     *
+      * @param name the name of the defined name
+     */
+    void removeName(Name name);
 
     /**
      * Adds the linking required to allow formulas referencing

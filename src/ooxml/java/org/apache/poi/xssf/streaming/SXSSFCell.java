@@ -338,7 +338,11 @@ public class SXSSFCell implements Cell {
             }
     
             if(_value.getType()==CellType.FORMULA)
-                ((StringFormulaValue)_value).setPreEvaluatedValue(value);
+                if(_value instanceof NumericFormulaValue) {
+                    ((NumericFormulaValue) _value).setPreEvaluatedValue(Double.parseDouble(value));
+                } else {
+                    ((StringFormulaValue) _value).setPreEvaluatedValue(value);
+                }
             else
                 ((PlainStringValue)_value).setValue(value);
         } else {
@@ -956,6 +960,7 @@ public class SXSSFCell implements Cell {
     }
     /*package*/ void setFormulaType(CellType type)
     {
+        Value prevValue = _value;
         switch(type)
         {
             case NUMERIC:
@@ -983,7 +988,13 @@ public class SXSSFCell implements Cell {
                 throw new IllegalArgumentException("Illegal type " + type);
             }
         }
+
+        // if we had a Formula before, we should copy over the _value of the formula
+        if(prevValue instanceof FormulaValue) {
+            ((FormulaValue)_value)._value = ((FormulaValue)prevValue)._value;
+        }
     }
+
 //TODO: implement this correctly
     @NotImplemented
     /*package*/ CellType computeTypeFromFormula(String formula)

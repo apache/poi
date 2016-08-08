@@ -33,9 +33,12 @@ import java.awt.font.FontRenderContext;
 import java.awt.font.TextAttribute;
 import java.awt.font.TextLayout;
 import java.awt.geom.Rectangle2D;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.AttributedString;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.*;
@@ -1605,5 +1608,79 @@ public abstract class BaseTestBugzillaIssues {
         
         assertNull("Sheet0 after write", wb2.getPrintArea(0)); // CURRENTLY FAILS with "Sheet0!$A$1:$C$6"
         assertEquals("Sheet1 after write", "Sheet1!$A$1:$A$1", wb2.getPrintArea(1));
+    }
+
+
+    @Test
+    public void test55384() throws Exception {
+        Workbook wb = _testDataProvider.createWorkbook();
+        try {
+            Sheet sh = wb.createSheet();
+            for (int rownum = 0; rownum < 10; rownum++) {
+                org.apache.poi.ss.usermodel.Row row = sh.createRow(rownum);
+                for (int cellnum = 0; cellnum < 3; cellnum++) {
+                    Cell cell = row.createCell(cellnum);
+                    cell.setCellValue(rownum + cellnum);
+                }
+            }
+            Row row = sh.createRow(10);
+            // setting no precalculated value works just fine.
+            Cell cell1 = row.createCell(0);
+            cell1.setCellFormula("SUM(A1:A10)");
+
+            // but setting a precalculated STRING value fails totally in SXSSF
+            Cell cell2 = row.createCell(1);
+            cell2.setCellFormula("SUM(B1:B10)");
+            cell2.setCellValue("55");
+
+            // setting a precalculated int value works as expected
+            Cell cell3 = row.createCell(2);
+            cell3.setCellFormula("SUM(C1:C10)");
+            cell3.setCellValue(65);
+
+            assertEquals(CellType.FORMULA, cell1.getCellTypeEnum());
+            assertEquals(CellType.FORMULA, cell2.getCellTypeEnum());
+            assertEquals(CellType.FORMULA, cell3.getCellTypeEnum());
+
+            assertEquals("SUM(A1:A10)", cell1.getCellFormula());
+            assertEquals("SUM(B1:B10)", cell2.getCellFormula());
+            assertEquals("SUM(C1:C10)", cell3.getCellFormula());
+
+            /*String name = wb.getClass().getCanonicalName();
+            String ext = (wb instanceof HSSFWorkbook) ? ".xls" : ".xlsx";
+            OutputStream output = new FileOutputStream("/tmp" + name + ext);
+            try {
+                wb.write(output);
+            } finally {
+                output.close();
+            }*/
+
+            Workbook wbBack = _testDataProvider.writeOutAndReadBack(wb);
+            checkFormulaPreevaluatedString(wbBack);
+            wbBack.close();
+        } finally {
+            wb.close();
+        }
+    }
+
+    private void checkFormulaPreevaluatedString(Workbook readFile) {
+        Sheet sheet = readFile.getSheetAt(0);
+        Row row = sheet.getRow(sheet.getLastRowNum());
+        assertEquals(10, row.getRowNum());
+
+        for (Cell cell : row) {
+            String cellValue = null;
+            switch (cell.getCellTypeEnum()) {
+                case STRING:
+                    cellValue = cell.getRichStringCellValue().getString();
+                    break;
+                case FORMULA:
+                    cellValue = cell.getCellFormula();
+                    break;
+            }
+            assertNotNull(cellValue);
+            cellValue = cellValue.isEmpty() ? null : cellValue;
+            assertNotNull(cellValue);
+        }
     }
 }

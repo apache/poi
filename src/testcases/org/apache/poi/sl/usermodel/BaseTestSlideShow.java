@@ -50,14 +50,20 @@ public abstract class BaseTestSlideShow {
     @Test
     public void addPicture_Stream() throws IOException {
         SlideShow<?,?> show = createSlideShow();
-        InputStream stream = slTests.openResourceAsStream("clock.jpg");
-        
-        assertEquals(0, show.getPictureData().size());
-        PictureData picture = show.addPicture(stream, PictureType.JPEG);
-        assertEquals(1, show.getPictureData().size());
-        assertSame(picture, show.getPictureData().get(0));
-        
-        show.close();
+        try {
+            InputStream stream = slTests.openResourceAsStream("clock.jpg");
+            try {
+                assertEquals(0, show.getPictureData().size());
+                PictureData picture = show.addPicture(stream, PictureType.JPEG);
+                assertEquals(1, show.getPictureData().size());
+                assertSame(picture, show.getPictureData().get(0));
+
+            } finally {
+                stream.close();
+            }
+        } finally {
+            show.close();
+        }
     }
     
     @Test

@@ -18,6 +18,7 @@
 package org.apache.poi.openxml4j.opc.internal;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeTrue;
 
@@ -44,16 +45,21 @@ public final class TestContentTypeManager {
 
         // Retrieves core properties part
         OPCPackage p = OPCPackage.open(filepath, PackageAccess.READ);
-        PackageRelationshipCollection rels = p.getRelationshipsByType(PackageRelationshipTypes.CORE_PROPERTIES);
-        PackageRelationship corePropertiesRelationship = rels.getRelationship(0);
-        PackagePart coreDocument = p.getPart(corePropertiesRelationship);
-        
-        assertEquals("application/vnd.openxmlformats-package.core-properties+xml", coreDocument.getContentType());
+        try {
+            PackageRelationshipCollection rels = p.getRelationshipsByType(PackageRelationshipTypes.CORE_PROPERTIES);
+            PackageRelationship corePropertiesRelationship = rels.getRelationship(0);
+            PackagePart coreDocument = p.getPart(corePropertiesRelationship);
 
-        // TODO - finish writing this test
-        assumeTrue("finish writing this test", false);
-        
-        ContentTypeManager ctm = new ZipContentTypeManager(coreDocument.getInputStream(), p);
+            assertEquals("application/vnd.openxmlformats-package.core-properties+xml", coreDocument.getContentType());
+
+            // TODO - finish writing this test
+            assumeTrue("finish writing this test", false);
+
+            ContentTypeManager ctm = new ZipContentTypeManager(coreDocument.getInputStream(), p);
+            assertNotNull(ctm);
+        } finally {
+            p.close();
+        }
     }
 
     /**

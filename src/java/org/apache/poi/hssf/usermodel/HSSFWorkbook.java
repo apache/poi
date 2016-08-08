@@ -92,6 +92,7 @@ import org.apache.poi.ss.formula.SheetNameFormatter;
 import org.apache.poi.ss.formula.udf.AggregatingUDFFinder;
 import org.apache.poi.ss.formula.udf.IndexedUDFFinder;
 import org.apache.poi.ss.formula.udf.UDFFinder;
+import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -548,7 +549,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      * the 'active' sheet (which is the sheet with focus).
      * Unselects sheets that are not in <code>indexes</code>.
      *
-     * @param indexes
+     * @param indexes Array of sheets to select, the index is 0-based.
      */
     public void setSelectedTabs(int[] indexes) {
         Collection<Integer> list = new ArrayList<Integer>(indexes.length);
@@ -563,7 +564,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      * the 'active' sheet (which is the sheet with focus).
      * Unselects sheets that are not in <code>indexes</code>.
      *
-     * @param indexes
+     * @param indexes Collection of sheets to select, the index is 0-based.
      */
     public void setSelectedTabs(Collection<Integer> indexes) {
 
@@ -893,8 +894,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      */
     @Override
     public Iterator<Sheet> sheetIterator() {
-        Iterator<Sheet> result = new SheetIterator<Sheet>();
-        return result;
+        return new SheetIterator<Sheet>();
     }
 
     /**
@@ -1280,9 +1280,9 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
 
     /**
      * Closes the underlying {@link NPOIFSFileSystem} from which
-     *  the Workbook was read, if any. Has no effect on Workbooks
-     *  opened from an InputStream, or newly created ones.
-     * <p>Once {@link #close()} has been called, no further 
+     *  the Workbook was read, if any.
+     *
+     * <p>Once this has been called, no further
      *  operations, updates or reads should be performed on the 
      *  Workbook.
      */
@@ -1531,6 +1531,11 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
         return names.get(nameIndex);
     }
 
+    @Override
+    public List<HSSFName> getAllNames() {
+        return Collections.unmodifiableList(names);
+    }
+
     public NameRecord getNameRecord(int nameIndex) {
         return getWorkbook().getNameRecord(nameIndex);
     }
@@ -1702,8 +1707,9 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      *
      * @param name the name to remove.
      */
-    void removeName(HSSFName name) {
-      int index = getNameIndex(name);
+    @Override
+    public void removeName(Name name) {
+      int index = getNameIndex((HSSFName) name);
       removeName(index);
     }
 

@@ -261,17 +261,17 @@ public abstract class BaseTestSheetShiftRows {
         name4.setSheetIndex(1);
 
         sheet1.shiftRows(0, 1, 2);  //shift down the top row on Sheet1.
-        name1 = wb.getNameAt(0);
+        name1 = wb.getName("name1");
         assertEquals("Sheet1!$A$3+Sheet1!$B$3", name1.getRefersToFormula());
 
-        name2 = wb.getNameAt(1);
+        name2 = wb.getName("name2");
         assertEquals("Sheet1!$A$3", name2.getRefersToFormula());
 
         //name3 and name4 refer to Sheet2 and should not be affected
-        name3 = wb.getNameAt(2);
+        name3 = wb.getName("name3");
         assertEquals("Sheet2!$A$1", name3.getRefersToFormula());
 
-        name4 = wb.getNameAt(3);
+        name4 = wb.getName("name4");
         assertEquals("A1", name4.getRefersToFormula());
         
         wb.close();
