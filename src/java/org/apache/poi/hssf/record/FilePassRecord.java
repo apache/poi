@@ -17,6 +17,7 @@
 
 package org.apache.poi.hssf.record;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import org.apache.poi.EncryptedDocumentException;
@@ -31,6 +32,7 @@ import org.apache.poi.poifs.crypt.xor.XOREncryptionVerifier;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.LittleEndianOutputStream;
 
 /**
  * Title: File Pass Record (0x002F) <p>
@@ -42,12 +44,10 @@ public final class FilePassRecord extends StandardRecord implements Cloneable {
     private static final int ENCRYPTION_XOR = 0;
     private static final int ENCRYPTION_OTHER = 1;
 	
-	private int encryptionType;
+	private final int encryptionType;
     private EncryptionInfo encryptionInfo;
-    private int dataLength;
 	
 	private FilePassRecord(FilePassRecord other) {
-	    dataLength = other.dataLength;
 	    encryptionType = other.encryptionType;
         try {
             encryptionInfo = other.encryptionInfo.clone();
@@ -57,7 +57,6 @@ public final class FilePassRecord extends StandardRecord implements Cloneable {
 	}
 	
 	public FilePassRecord(RecordInputStream in) {
-        dataLength = in.remaining();
 		encryptionType = in.readUShort();
 		
 		EncryptionMode preferredMode;
@@ -79,7 +78,8 @@ public final class FilePassRecord extends StandardRecord implements Cloneable {
         }
 	}
 
-	public void serialize(LittleEndianOutput out) {
+	@Override
+    public void serialize(LittleEndianOutput out) {
         out.writeShort(encryptionType);
 
         byte data[] = new byte[1024];
@@ -99,6 +99,7 @@ public final class FilePassRecord extends StandardRecord implements Cloneable {
             case cryptoAPI:
                 out.writeShort(encryptionInfo.getVersionMajor());
                 out.writeShort(encryptionInfo.getVersionMinor());
+                out.writeInt(encryptionInfo.getEncryptionFlags());
                 ((CryptoAPIEncryptionHeader)encryptionInfo.getHeader()).write(bos);
                 ((CryptoAPIEncryptionVerifier)encryptionInfo.getVerifier()).write(bos);
                 break;
@@ -109,14 +110,20 @@ public final class FilePassRecord extends StandardRecord implements Cloneable {
         out.write(data, 0, bos.getWriteIndex());
 	}
 
-	protected int getDataSize() {
-	    return dataLength;
+	@Override
+    @SuppressWarnings("resource")
+    protected int getDataSize() {
+	    ByteArrayOutputStream bos = new ByteArrayOutputStream();
+	    LittleEndianOutputStream leos = new LittleEndianOutputStream(bos);
+        serialize(leos);
+        return bos.size();
 	}
 
 	public EncryptionInfo getEncryptionInfo() {
         return encryptionInfo;
     }
 
+    @Override
     public short getSid() {
 		return sid;
 	}
@@ -126,7 +133,8 @@ public final class FilePassRecord extends StandardRecord implements Cloneable {
 		return new FilePassRecord(this);
 	}
 
-	public String toString() {
+	@Override
+    public String toString() {
 		StringBuffer buffer = new StringBuffer();
 
 		buffer.append("[FILEPASS]\n");
