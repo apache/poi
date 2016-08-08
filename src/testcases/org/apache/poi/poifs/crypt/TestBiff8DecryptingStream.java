@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.record.crypto;
+package org.apache.poi.poifs.crypt;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -23,17 +23,18 @@ import static org.junit.Assert.assertFalse;
 import java.io.InputStream;
 import java.util.Arrays;
 
-import junit.framework.AssertionFailedError;
-import junit.framework.ComparisonFailure;
+import javax.crypto.spec.SecretKeySpec;
 
+import org.apache.poi.hssf.record.crypto.Biff8DecryptingStream;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.HexRead;
 import org.junit.Test;
 
+import junit.framework.AssertionFailedError;
+import junit.framework.ComparisonFailure;
+
 /**
  * Tests for {@link Biff8DecryptingStream}
- *
- * @author Josh Micich
  */
 public final class TestBiff8DecryptingStream {
 
@@ -49,11 +50,9 @@ public final class TestBiff8DecryptingStream {
 		public MockStream(int initialValue) {
 			_initialValue = initialValue;
 		}
+
 		public int read() {
 			return (_initialValue+_position++) & 0xFF;
-		}
-		public int getPosition() {
-			return _position;
 		}
 	}
 
@@ -70,7 +69,11 @@ public final class TestBiff8DecryptingStream {
 		public StreamTester(MockStream ms, String keyDigestHex, int expectedFirstInt) {
 			_ms = ms;
 			byte[] keyDigest = HexRead.readFromString(keyDigestHex);
-			_bds = new Biff8DecryptingStream(_ms, 0, new Biff8RC4Key(keyDigest));
+			EncryptionInfo ei = new EncryptionInfo(EncryptionMode.binaryRC4);
+			Decryptor dec = ei.getDecryptor();
+			dec.setSecretKey(new SecretKeySpec(keyDigest, "RC4"));
+			
+			_bds = new Biff8DecryptingStream(_ms, 0, ei);
 			assertEquals(expectedFirstInt, _bds.readInt());
 			_errorsOccurred = false;
 		}
@@ -84,11 +87,11 @@ public final class TestBiff8DecryptingStream {
 		 * Also confirms that read position of the underlying stream is aligned.
 		 */
 		public void rollForward(int fromPosition, int toPosition) {
-			assertEquals(fromPosition, _ms.getPosition());
+			assertEquals(fromPosition, _bds.getPosition());
 			for (int i = fromPosition; i < toPosition; i++) {
 				_bds.readByte();
 			}
-			assertEquals(toPosition, _ms.getPosition());
+			assertEquals(toPosition, _bds.getPosition());
 		}
 
 		public void confirmByte(int expVal) {

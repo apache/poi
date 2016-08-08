@@ -29,7 +29,6 @@ import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.OPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.util.LittleEndianInput;
 
 public abstract class Decryptor implements Cloneable {
     public static final String DEFAULT_PASSWORD="VelvetSweatshop";
@@ -66,7 +65,7 @@ public abstract class Decryptor implements Cloneable {
      * @param initialPos initial/current byte position within the stream
      * @return decrypted stream
      */
-    public InputStream getDataStream(LittleEndianInput stream, int size, int initialPos)
+    public InputStream getDataStream(InputStream stream, int size, int initialPos)
         throws IOException, GeneralSecurityException {
         throw new RuntimeException("this decryptor doesn't support reading from a stream");
     }

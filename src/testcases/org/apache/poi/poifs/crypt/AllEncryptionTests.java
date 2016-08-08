@@ -15,20 +15,19 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.record.crypto;
+package org.apache.poi.poifs.crypt;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 /**
- * Collects all tests for package <tt>org.apache.poi.hssf.record.crypto</tt>.
- *
- * @author Josh Micich
+ * Collects all tests for package <tt>org.apache.poi.poifs.crypt</tt>.
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
     TestBiff8DecryptingStream.class,
-    TestBiff8EncryptionKey.class
+    TestCipherAlgorithm.class,
+    TestXorEncryption.class
 })
-public final class AllHSSFEncryptionTests {
+public final class AllEncryptionTests {
 }

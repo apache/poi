@@ -25,6 +25,7 @@ import java.util.Locale;
 import org.apache.poi.hssf.dev.BiffViewer;
 import org.apache.poi.hssf.record.crypto.Biff8DecryptingStream;
 import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
+import org.apache.poi.poifs.crypt.EncryptionInfo;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInput;
@@ -33,8 +34,6 @@ import org.apache.poi.util.LittleEndianInputStream;
 /**
  * Title:  Record Input Stream<P>
  * Description:  Wraps a stream and provides helper methods for the construction of records.<P>
- *
- * @author Jason Height (jheight @ apache dot org)
  */
 public final class RecordInputStream implements LittleEndianInput {
 	/** Maximum size of a single record (minus the 4 byte header) without a continue*/
@@ -122,7 +121,7 @@ public final class RecordInputStream implements LittleEndianInput {
 		this (in, null, 0);
 	}
 
-	public RecordInputStream(InputStream in, Biff8EncryptionKey key, int initialOffset) throws RecordFormatException {
+	public RecordInputStream(InputStream in, EncryptionInfo key, int initialOffset) throws RecordFormatException {
 		if (key == null) {
 			_dataInput = getLEI(in);
 			_bhi = new SimpleHeaderInput(in);

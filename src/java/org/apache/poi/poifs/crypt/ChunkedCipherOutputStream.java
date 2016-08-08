@@ -26,7 +26,10 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.security.GeneralSecurityException;
 
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.ShortBufferException;
 
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
@@ -153,19 +156,17 @@ public abstract class ChunkedCipherOutputStream extends FilterOutputStream {
 
         int ciLen;
         try {
+            boolean doFinal = true;
             if (_chunkSize == STREAMING) {
                 if (continued) {
-                    ciLen = _cipher.update(_chunk, 0, posInChunk, _chunk);
-                } else {
-                    ciLen = _cipher.doFinal(_chunk, 0, posInChunk, _chunk);
+                    doFinal = false;
                 }
-
                 // reset stream (not only) in case we were interrupted by plain stream parts
                 _pos = 0;
             } else {
                 _cipher = initCipherForBlock(_cipher, index, lastChunk);
-                ciLen = _cipher.doFinal(_chunk, 0, posInChunk, _chunk);
             }
+            ciLen = invokeCipher(posInChunk, doFinal);
         } catch (GeneralSecurityException e) {
             throw new IOException("can't re-/initialize cipher", e);
         }
@@ -173,6 +174,23 @@ public abstract class ChunkedCipherOutputStream extends FilterOutputStream {
         out.write(_chunk, 0, ciLen);
     }
 
+    /**
+     * Helper function for overriding the cipher invocation, i.e. XOR doesn't use a cipher
+     * and uses it's own implementation
+     *
+     * @return
+     * @throws BadPaddingException 
+     * @throws IllegalBlockSizeException 
+     * @throws ShortBufferException 
+     */
+    protected int invokeCipher(int posInChunk, boolean doFinal) throws GeneralSecurityException {
+        if (doFinal) {
+            return _cipher.doFinal(_chunk, 0, posInChunk, _chunk);
+        } else {
+            return _cipher.update(_chunk, 0, posInChunk, _chunk);
+        }
+    }
+    
     @Override
     public void close() throws IOException {
         try {
