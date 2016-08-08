@@ -45,7 +45,6 @@ import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.BoundedInputStream;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianInputStream;
 import org.apache.poi.util.StringUtil;
 
@@ -146,7 +145,7 @@ public class CryptoAPIDecryptor extends Decryptor implements Cloneable {
     }
 
     @Override
-    public ChunkedCipherInputStream getDataStream(LittleEndianInput stream, int size, int initialPos)
+    public ChunkedCipherInputStream getDataStream(InputStream stream, int size, int initialPos)
             throws IOException, GeneralSecurityException {
         return new CryptoAPICipherInputStream(stream, size, initialPos);
     }
@@ -233,7 +232,7 @@ public class CryptoAPIDecryptor extends Decryptor implements Cloneable {
             return CryptoAPIDecryptor.this.initCipherForBlock(existing, block);
         }
 
-        public CryptoAPICipherInputStream(LittleEndianInput stream, long size, int initialPos)
+        public CryptoAPICipherInputStream(InputStream stream, long size, int initialPos)
                 throws GeneralSecurityException {
             super(stream, size, _chunkSize, initialPos);
         }    

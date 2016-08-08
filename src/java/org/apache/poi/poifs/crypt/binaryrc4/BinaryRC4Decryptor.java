@@ -29,11 +29,9 @@ import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.poifs.crypt.*;
-import org.apache.poi.poifs.crypt.cryptoapi.CryptoAPIDecryptor;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.StringUtil;
 
 public class BinaryRC4Decryptor extends Decryptor implements Cloneable {
@@ -53,7 +51,7 @@ public class BinaryRC4Decryptor extends Decryptor implements Cloneable {
             super(stream, size, _chunkSize);
         }
 
-        public BinaryRC4CipherInputStream(LittleEndianInput stream)
+        public BinaryRC4CipherInputStream(InputStream stream)
                 throws GeneralSecurityException {
             super(stream, Integer.MAX_VALUE, _chunkSize);
         }    
@@ -140,7 +138,8 @@ public class BinaryRC4Decryptor extends Decryptor implements Cloneable {
         return new BinaryRC4CipherInputStream(dis, _length);
     }
     
-    public InputStream getDataStream(LittleEndianInput stream)
+    @Override
+    public InputStream getDataStream(InputStream stream, int size, int initialPos)
             throws IOException, GeneralSecurityException {
         return new BinaryRC4CipherInputStream(stream);
     }

@@ -21,8 +21,8 @@ import org.apache.poi.hssf.record.aggregates.AllRecordAggregateTests;
 import org.apache.poi.hssf.record.cf.TestCellRange;
 import org.apache.poi.hssf.record.chart.AllChartRecordTests;
 import org.apache.poi.hssf.record.common.TestUnicodeString;
-import org.apache.poi.hssf.record.crypto.AllHSSFEncryptionTests;
 import org.apache.poi.hssf.record.pivot.AllPivotRecordTests;
+import org.apache.poi.poifs.crypt.AllEncryptionTests;
 import org.apache.poi.ss.formula.constant.TestConstantValueParser;
 import org.apache.poi.ss.formula.ptg.AllFormulaTests;
 import org.junit.runner.RunWith;
@@ -34,7 +34,7 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
     AllChartRecordTests.class,
-    AllHSSFEncryptionTests.class,
+    AllEncryptionTests.class,
     AllFormulaTests.class,
     AllPivotRecordTests.class,
     AllRecordAggregateTests.class,

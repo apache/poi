@@ -33,7 +33,9 @@ public enum EncryptionMode {
     /* @see <a href="http://msdn.microsoft.com/en-us/library/dd906097(v=office.12).aspx">2.3.4.5 \EncryptionInfo Stream (Standard Encryption)</a> */
     standard("org.apache.poi.poifs.crypt.standard.StandardEncryptionInfoBuilder", 4, 2, 0x24),
     /* @see <a href="http://msdn.microsoft.com/en-us/library/dd925810(v=office.12).aspx">2.3.4.10 \EncryptionInfo Stream (Agile Encryption)</a> */
-    agile("org.apache.poi.poifs.crypt.agile.AgileEncryptionInfoBuilder", 4, 4, 0x40)
+    agile("org.apache.poi.poifs.crypt.agile.AgileEncryptionInfoBuilder", 4, 4, 0x40),
+    /* @see <a href="https://msdn.microsoft.com/en-us/library/dd907599(v=office.12).aspx">XOR Obfuscation</a> */
+    xor("org.apache.poi.poifs.crypt.xor.XOREncryptionInfoBuilder", 0, 0, 0)
     ;
     
     public final String builder;

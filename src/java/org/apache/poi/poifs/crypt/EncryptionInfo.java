@@ -20,6 +20,7 @@ import static org.apache.poi.poifs.crypt.EncryptionMode.agile;
 import static org.apache.poi.poifs.crypt.EncryptionMode.binaryRC4;
 import static org.apache.poi.poifs.crypt.EncryptionMode.cryptoAPI;
 import static org.apache.poi.poifs.crypt.EncryptionMode.standard;
+import static org.apache.poi.poifs.crypt.EncryptionMode.xor;
 
 import java.io.IOException;
 
@@ -35,6 +36,7 @@ import org.apache.poi.util.LittleEndianInput;
 /**
  */
 public class EncryptionInfo implements Cloneable {
+    private final EncryptionMode encryptionMode;
     private final int versionMajor;
     private final int versionMinor;
     private final int encryptionFlags;
@@ -75,48 +77,54 @@ public class EncryptionInfo implements Cloneable {
     public EncryptionInfo(POIFSFileSystem fs) throws IOException {
        this(fs.getRoot());
     }
+    
     /**
      * Opens for decryption
      */
     public EncryptionInfo(OPOIFSFileSystem fs) throws IOException {
        this(fs.getRoot());
     }
+    
     /**
      * Opens for decryption
      */
     public EncryptionInfo(NPOIFSFileSystem fs) throws IOException {
        this(fs.getRoot());
     }
+    
     /**
      * Opens for decryption
      */
     public EncryptionInfo(DirectoryNode dir) throws IOException {
-        this(dir.createDocumentInputStream("EncryptionInfo"), false);
+        this(dir.createDocumentInputStream("EncryptionInfo"), null);
     }
 
-    public EncryptionInfo(LittleEndianInput dis, boolean isCryptoAPI) throws IOException {
-        final EncryptionMode encryptionMode;
-        versionMajor = dis.readUShort();
-        versionMinor = dis.readUShort();
+    public EncryptionInfo(LittleEndianInput dis, EncryptionMode preferredEncryptionMode) throws IOException {
+        if (preferredEncryptionMode == xor) {
+            versionMajor = xor.versionMajor;
+            versionMinor = xor.versionMinor;
+        } else {
+            versionMajor = dis.readUShort();
+            versionMinor = dis.readUShort();
+        }
 
-        if (   versionMajor == binaryRC4.versionMajor
+        if (   versionMajor == xor.versionMajor
+            && versionMinor == xor.versionMinor) {
+            encryptionMode = xor;
+            encryptionFlags = -1;
+        } else if (   versionMajor == binaryRC4.versionMajor
             && versionMinor == binaryRC4.versionMinor) {
             encryptionMode = binaryRC4;
             encryptionFlags = -1;
-        } else if (!isCryptoAPI
-            && versionMajor == agile.versionMajor
+        } else if (
+               2 <= versionMajor && versionMajor <= 4
+            && versionMinor == 2) {
+            encryptionMode = (preferredEncryptionMode == cryptoAPI) ? cryptoAPI : standard;
+            encryptionFlags = dis.readInt();
+        } else if (
+               versionMajor == agile.versionMajor
             && versionMinor == agile.versionMinor){
             encryptionMode = agile;
-            encryptionFlags = dis.readInt();
-        } else if (!isCryptoAPI
-            && 2 <= versionMajor && versionMajor <= 4
-            && versionMinor == standard.versionMinor) {
-            encryptionMode = standard;
-            encryptionFlags = dis.readInt();
-        } else if (isCryptoAPI
-            && 2 <= versionMajor && versionMajor <= 4
-            && versionMinor == cryptoAPI.versionMinor) {
-            encryptionMode = cryptoAPI;
             encryptionFlags = dis.readInt();
         } else {
             encryptionFlags = dis.readInt();
@@ -170,6 +178,7 @@ public class EncryptionInfo implements Cloneable {
           , int blockSize
           , ChainingMode chainingMode
       ) {
+        this.encryptionMode = encryptionMode; 
         versionMajor = encryptionMode.versionMajor;
         versionMinor = encryptionMode.versionMinor;
         encryptionFlags = encryptionMode.encryptionFlags;
@@ -236,6 +245,10 @@ public class EncryptionInfo implements Cloneable {
         this.encryptor = encryptor;
     }
 
+    public EncryptionMode getEncryptionMode() {
+        return encryptionMode;
+    }
+    
     @Override
     public EncryptionInfo clone() throws CloneNotSupportedException {
         EncryptionInfo other = (EncryptionInfo)super.clone();

@@ -17,8 +17,19 @@
 
 package org.apache.poi.hssf.record;
 
+import java.io.IOException;
+
 import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.poifs.crypt.EncryptionInfo;
+import org.apache.poi.poifs.crypt.EncryptionMode;
+import org.apache.poi.poifs.crypt.binaryrc4.BinaryRC4EncryptionHeader;
+import org.apache.poi.poifs.crypt.binaryrc4.BinaryRC4EncryptionVerifier;
+import org.apache.poi.poifs.crypt.cryptoapi.CryptoAPIEncryptionHeader;
+import org.apache.poi.poifs.crypt.cryptoapi.CryptoAPIEncryptionVerifier;
+import org.apache.poi.poifs.crypt.xor.XOREncryptionHeader;
+import org.apache.poi.poifs.crypt.xor.XOREncryptionVerifier;
 import org.apache.poi.util.HexDump;
+import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
@@ -31,228 +42,82 @@ public final class FilePassRecord extends StandardRecord implements Cloneable {
     private static final int ENCRYPTION_XOR = 0;
     private static final int ENCRYPTION_OTHER = 1;
 	
-	private int _encryptionType;
-	private KeyData _keyData;
-
-	private static interface KeyData extends Cloneable {
-	    void read(RecordInputStream in);
-	    void serialize(LittleEndianOutput out);
-	    int getDataSize();
-	    void appendToString(StringBuffer buffer);
-	    KeyData clone(); // NOSONAR
-	} 
-	
-	public static final class Rc4KeyData implements KeyData, Cloneable {
-	    private static final int ENCRYPTION_OTHER_RC4 = 1;
-	    private static final int ENCRYPTION_OTHER_CAPI_2 = 2;
-	    private static final int ENCRYPTION_OTHER_CAPI_3 = 3;
-        private static final int ENCRYPTION_OTHER_CAPI_4 = 4;
-	    
-	    private byte[] _salt;
-	    private byte[] _encryptedVerifier;
-	    private byte[] _encryptedVerifierHash;
-	    private int _encryptionInfo;
-	    private int _minorVersionNo;
-	    
-	    public void read(RecordInputStream in) {
-	        _encryptionInfo = in.readUShort();
-	        switch (_encryptionInfo) {
-	            case ENCRYPTION_OTHER_RC4:
-	                // handled below
-	                break;
-	            case ENCRYPTION_OTHER_CAPI_2:
-	            case ENCRYPTION_OTHER_CAPI_3:
-                case ENCRYPTION_OTHER_CAPI_4:
-	                throw new EncryptedDocumentException(
-	                        "HSSF does not currently support CryptoAPI encryption");
-	            default:
-	                throw new RecordFormatException("Unknown encryption info " + _encryptionInfo);
-	        }
-	        _minorVersionNo = in.readUShort();
-	        if (_minorVersionNo!=1) {
-	            throw new RecordFormatException("Unexpected VersionInfo number for RC4Header " + _minorVersionNo);
-	        }
-	        _salt = FilePassRecord.read(in, 16);
-	        _encryptedVerifier = FilePassRecord.read(in, 16);
-	        _encryptedVerifierHash = FilePassRecord.read(in, 16);
-	    }
-	    
-	    public void serialize(LittleEndianOutput out) {
-            out.writeShort(_encryptionInfo);
-            out.writeShort(_minorVersionNo);
-            out.write(_salt);
-            out.write(_encryptedVerifier);
-            out.write(_encryptedVerifierHash);
-	    }
-	    
-	    public int getDataSize() {
-	        return 54;
-	    }
-
-        public byte[] getSalt() {
-            return _salt.clone();
-        }
-
-        public void setSalt(byte[] salt) {
-            this._salt = salt.clone();
-        }
-
-        public byte[] getEncryptedVerifier() {
-            return _encryptedVerifier.clone();
-        }
-
-        public void setEncryptedVerifier(byte[] encryptedVerifier) {
-            this._encryptedVerifier = encryptedVerifier.clone();
-        }
-
-        public byte[] getEncryptedVerifierHash() {
-            return _encryptedVerifierHash.clone();
-        }
-
-        public void setEncryptedVerifierHash(byte[] encryptedVerifierHash) {
-            this._encryptedVerifierHash = encryptedVerifierHash.clone();
-        }
-        
-        public void appendToString(StringBuffer buffer) {
-            buffer.append("    .rc4.info = ").append(HexDump.shortToHex(_encryptionInfo)).append("\n");
-            buffer.append("    .rc4.ver  = ").append(HexDump.shortToHex(_minorVersionNo)).append("\n");
-            buffer.append("    .rc4.salt = ").append(HexDump.toHex(_salt)).append("\n");
-            buffer.append("    .rc4.verifier = ").append(HexDump.toHex(_encryptedVerifier)).append("\n");
-            buffer.append("    .rc4.verifierHash = ").append(HexDump.toHex(_encryptedVerifierHash)).append("\n");
-        }
-        
-        @Override
-        public Rc4KeyData clone() {
-            Rc4KeyData other = new Rc4KeyData();
-            other._salt = this._salt.clone();
-            other._encryptedVerifier = this._encryptedVerifier.clone();
-            other._encryptedVerifierHash = this._encryptedVerifierHash.clone();
-            other._encryptionInfo = this._encryptionInfo;
-            other._minorVersionNo = this._minorVersionNo;
-            return other;
-        }
-	}
-
-	public static final class XorKeyData implements KeyData, Cloneable {
-	    /**
-	     * key (2 bytes): An unsigned integer that specifies the obfuscation key. 
-	     * See [MS-OFFCRYPTO], 2.3.6.2 section, the first step of initializing XOR
-	     * array where it describes the generation of 16-bit XorKey value.
-	     */
-	    private int _key;
-
-	    /**
-	     * verificationBytes (2 bytes): An unsigned integer that specifies
-	     * the password verification identifier.
-	     */
-	    private int _verifier;
-	    
-        public void read(RecordInputStream in) {
-            _key = in.readUShort();
-            _verifier = in.readUShort();
-        }
-
-        public void serialize(LittleEndianOutput out) {
-            out.writeShort(_key);
-            out.writeShort(_verifier);
-        }
-
-        public int getDataSize() {
-            // TODO: Check!
-            return 6;
-        }
-
-        public int getKey() {
-            return _key;
-        }
-        
-        public int getVerifier() {
-            return _verifier;
-        }
-        
-        public void setKey(int key) {
-            this._key = key;
-        }
-        
-        public void setVerifier(int verifier) {
-            this._verifier = verifier;
-        }
-        
-        public void appendToString(StringBuffer buffer) {
-            buffer.append("    .xor.key = ").append(HexDump.intToHex(_key)).append("\n");
-            buffer.append("    .xor.verifier  = ").append(HexDump.intToHex(_verifier)).append("\n");
-        }
-        
-        @Override
-        public XorKeyData clone() {
-            XorKeyData other = new XorKeyData();
-            other._key = this._key;
-            other._verifier = this._verifier;
-            return other;
-        }
-	}
-	
+	private int encryptionType;
+    private EncryptionInfo encryptionInfo;
+    private int dataLength;
 	
 	private FilePassRecord(FilePassRecord other) {
-	    _encryptionType = other._encryptionType;
-	    _keyData = other._keyData.clone();
+	    dataLength = other.dataLength;
+	    encryptionType = other.encryptionType;
+        try {
+            encryptionInfo = other.encryptionInfo.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new EncryptedDocumentException(e);
+        }
 	}
 	
 	public FilePassRecord(RecordInputStream in) {
-		_encryptionType = in.readUShort();
-
-		switch (_encryptionType) {
-			case ENCRYPTION_XOR:
-			    _keyData = new XorKeyData();
-			    break;
-			case ENCRYPTION_OTHER:
-			    _keyData = new Rc4KeyData();
-				break;
-			default:
-				throw new RecordFormatException("Unknown encryption type " + _encryptionType);
-		}
-
-		_keyData.read(in);
-	}
-
-	private static byte[] read(RecordInputStream in, int size) {
-		byte[] result = new byte[size];
-		in.readFully(result);
-		return result;
+        dataLength = in.remaining();
+		encryptionType = in.readUShort();
+		
+		EncryptionMode preferredMode;
+        switch (encryptionType) {
+            case ENCRYPTION_XOR:
+                preferredMode = EncryptionMode.xor;
+                break;
+            case ENCRYPTION_OTHER:
+                preferredMode = EncryptionMode.cryptoAPI;
+                break;
+            default:
+                throw new EncryptedDocumentException("invalid encryption type");
+        }
+		
+		try {
+            encryptionInfo = new EncryptionInfo(in, preferredMode);
+        } catch (IOException e) {
+            throw new EncryptedDocumentException(e);
+        }
 	}
 
 	public void serialize(LittleEndianOutput out) {
-		out.writeShort(_encryptionType);
-		assert(_keyData != null);
-		_keyData.serialize(out);
+        out.writeShort(encryptionType);
+
+        byte data[] = new byte[1024];
+        LittleEndianByteArrayOutputStream bos = new LittleEndianByteArrayOutputStream(data, 0);
+
+        switch (encryptionInfo.getEncryptionMode()) {
+            case xor:
+                ((XOREncryptionHeader)encryptionInfo.getHeader()).write(bos);
+                ((XOREncryptionVerifier)encryptionInfo.getVerifier()).write(bos);
+                break;
+            case binaryRC4:
+                out.writeShort(encryptionInfo.getVersionMajor());
+                out.writeShort(encryptionInfo.getVersionMinor());
+                ((BinaryRC4EncryptionHeader)encryptionInfo.getHeader()).write(bos);
+                ((BinaryRC4EncryptionVerifier)encryptionInfo.getVerifier()).write(bos);
+                break;
+            case cryptoAPI:
+                out.writeShort(encryptionInfo.getVersionMajor());
+                out.writeShort(encryptionInfo.getVersionMinor());
+                ((CryptoAPIEncryptionHeader)encryptionInfo.getHeader()).write(bos);
+                ((CryptoAPIEncryptionVerifier)encryptionInfo.getVerifier()).write(bos);
+                break;
+            default:
+                throw new RuntimeException("not supported");
+        }
+
+        out.write(data, 0, bos.getWriteIndex());
 	}
 
 	protected int getDataSize() {
-	    assert(_keyData != null);
-	    return _keyData.getDataSize();
+	    return dataLength;
 	}
 
-	public Rc4KeyData getRc4KeyData() {
-	    return (_keyData instanceof Rc4KeyData)
-            ? (Rc4KeyData) _keyData
-            : null;
-	}
-	
-    public XorKeyData getXorKeyData() {
-        return (_keyData instanceof XorKeyData)
-            ? (XorKeyData) _keyData
-            : null;
-    }
-    
-    private Rc4KeyData checkRc4() {
-        Rc4KeyData rc4 = getRc4KeyData();
-        if (rc4 == null) {
-            throw new RecordFormatException("file pass record doesn't contain a rc4 key.");
-        }
-        return rc4;
+	public EncryptionInfo getEncryptionInfo() {
+        return encryptionInfo;
     }
 
-	public short getSid() {
+    public short getSid() {
 		return sid;
 	}
 	
@@ -265,8 +130,13 @@ public final class FilePassRecord extends StandardRecord implements Cloneable {
 		StringBuffer buffer = new StringBuffer();
 
 		buffer.append("[FILEPASS]\n");
-		buffer.append("    .type = ").append(HexDump.shortToHex(_encryptionType)).append("\n");
-		_keyData.appendToString(buffer);
+		buffer.append("    .type = ").append(HexDump.shortToHex(encryptionType)).append("\n");
+        String prefix = "     ."+encryptionInfo.getEncryptionMode();
+        buffer.append(prefix+".info = ").append(HexDump.shortToHex(encryptionInfo.getVersionMajor())).append("\n");
+        buffer.append(prefix+".ver  = ").append(HexDump.shortToHex(encryptionInfo.getVersionMinor())).append("\n");
+        buffer.append(prefix+".salt = ").append(HexDump.toHex(encryptionInfo.getVerifier().getSalt())).append("\n");
+        buffer.append(prefix+".verifier = ").append(HexDump.toHex(encryptionInfo.getVerifier().getEncryptedVerifier())).append("\n");
+        buffer.append(prefix+".verifierHash = ").append(HexDump.toHex(encryptionInfo.getVerifier().getEncryptedVerifierHash())).append("\n");
 		buffer.append("[/FILEPASS]\n");
 		return buffer.toString();
 	}
