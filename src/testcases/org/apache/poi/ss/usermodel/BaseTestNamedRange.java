@@ -201,11 +201,7 @@ public abstract class BaseTestNamedRange {
             assertEquals("The sheet already contains this name: aaa", e.getMessage());
         }
 
-        int cnt = 0;
-        for (int i = 0; i < wb.getNumberOfNames(); i++) {
-            if("aaa".equals(wb.getNameAt(i).getNameName())) cnt++;
-        }
-        assertEquals(3, cnt);
+        assertEquals(3, wb.getNames("aaa").size());
         
         wb.close();
     }
@@ -250,11 +246,11 @@ public abstract class BaseTestNamedRange {
          // Write the workbook to a file
          // Read the Excel file and verify its content
          Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1);
-         Name nm1 = wb2.getNameAt(wb2.getNameIndex("RangeTest1"));
+         Name nm1 = wb2.getName("RangeTest1");
          assertTrue("Name is "+nm1.getNameName(),"RangeTest1".equals(nm1.getNameName()));
          assertTrue("Reference is "+nm1.getRefersToFormula(),(wb2.getSheetName(0)+"!$A$1:$L$41").equals(nm1.getRefersToFormula()));
 
-         Name nm2 = wb2.getNameAt(wb2.getNameIndex("RangeTest2"));
+         Name nm2 = wb2.getName("RangeTest2");
          assertTrue("Name is "+nm2.getNameName(),"RangeTest2".equals(nm2.getNameName()));
          assertTrue("Reference is "+nm2.getRefersToFormula(),(wb2.getSheetName(1)+"!$A$1:$O$21").equals(nm2.getRefersToFormula()));
          
@@ -466,11 +462,11 @@ public abstract class BaseTestNamedRange {
         wb1.getNameAt(0);
 
         Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1);
-        Name nm =wb2.getNameAt(wb2.getNameIndex("RangeTest"));
+        Name nm =wb2.getName("RangeTest");
         assertTrue("Name is "+nm.getNameName(),"RangeTest".equals(nm.getNameName()));
         assertTrue("Reference is "+nm.getRefersToFormula(),(wb2.getSheetName(0)+"!$D$4:$E$8").equals(nm.getRefersToFormula()));
 
-        nm = wb2.getNameAt(wb2.getNameIndex("AnotherTest"));
+        nm = wb2.getName("AnotherTest");
         assertTrue("Name is "+nm.getNameName(),"AnotherTest".equals(nm.getNameName()));
         assertTrue("Reference is "+nm.getRefersToFormula(),newNamedRange2.getRefersToFormula().equals(nm.getRefersToFormula()));
         
@@ -499,8 +495,7 @@ public abstract class BaseTestNamedRange {
         namedCell.setRefersToFormula(reference);
 
         // retrieve the newly created named range
-        int namedCellIdx = wb.getNameIndex(cellName);
-        Name aNamedCell = wb.getNameAt(namedCellIdx);
+        Name aNamedCell = wb.getName(cellName);
         assertNotNull(aNamedCell);
 
         // retrieve the cell at the named range and test its contents
@@ -540,8 +535,7 @@ public abstract class BaseTestNamedRange {
         namedCell.setRefersToFormula(reference);
 
         // retrieve the newly created named range
-        int namedCellIdx = wb.getNameIndex(cname);
-        Name aNamedCell = wb.getNameAt(namedCellIdx);
+        Name aNamedCell = wb.getName(cname);
         assertNotNull(aNamedCell);
 
         // retrieve the cell at the named range and test its contents

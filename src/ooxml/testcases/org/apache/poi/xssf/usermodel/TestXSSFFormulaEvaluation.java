@@ -154,7 +154,9 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
             evaluator.evaluate(cXSL_cell);
             fail("Without a fix for #56752, shouldn't be able to evaluate a " +
                  "reference to a non-provided linked workbook");
-        } catch(Exception e) {}
+        } catch(Exception e) {
+            // expected here
+        }
         
         // Setup the environment
         Map<String,FormulaEvaluator> evaluators = new HashMap<String, FormulaEvaluator>();
@@ -171,8 +173,19 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
                 evaluator.evaluate(c);
             }
         }
+        // And evaluate the other way too
+        evaluator.evaluateAll();
         
-        // Evaluate and check results
+        // Static evaluator won't work, as no references passed in
+        try {
+            XSSFFormulaEvaluator.evaluateAllFormulaCells(wb);
+            fail("Static method lacks references, shouldn't work");
+        } catch(Exception e) {
+            // expected here
+        }
+        
+        
+        // Evaluate specific cells and check results
         assertEquals("\"Hello!\"",  evaluator.evaluate(cXSLX_cell).formatAsString());
         assertEquals("\"Test A1\"", evaluator.evaluate(cXSLX_sNR).formatAsString());
         assertEquals("142.0",   evaluator.evaluate(cXSLX_gNR).formatAsString());
@@ -196,7 +209,9 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
         try {
             cXSLX_nw_cell.setCellFormula("[alt.xlsx]Sheet1!$A$1");
             fail("New workbook not linked, shouldn't be able to add");
-        } catch (Exception e) {}
+        } catch (Exception e) {
+            // expected here
+        }
         
         // Link and re-try
         Workbook alt = new XSSFWorkbook();
@@ -650,5 +665,21 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
      */
     private Cell getCell(Sheet sheet, int rowNo, int column) {
         return sheet.getRow(rowNo).getCell(column);
+    }
+
+    @Test
+    public void test59736() {
+        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("59736.xlsx");
+        FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
+        Cell cell = wb.getSheetAt(0).getRow(0).getCell(0);
+        assertEquals(1, cell.getNumericCellValue(), 0.001);
+
+        cell = wb.getSheetAt(0).getRow(1).getCell(0);
+        CellValue value = evaluator.evaluate(cell);
+        assertEquals(1, value.getNumberValue(), 0.001);
+
+        cell = wb.getSheetAt(0).getRow(2).getCell(0);
+        value = evaluator.evaluate(cell);
+        assertEquals(1, value.getNumberValue(), 0.001);
     }
 }

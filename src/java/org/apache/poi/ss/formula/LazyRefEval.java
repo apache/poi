@@ -27,7 +27,7 @@ import org.apache.poi.ss.util.CellReference;
 /**
  * Provides Lazy Evaluation to a 3D Reference
  */
-final class LazyRefEval extends RefEvalBase {
+public final class LazyRefEval extends RefEvalBase {
 	private final SheetRangeEvaluator _evaluator;
 
 	public LazyRefEval(int rowIndex, int columnIndex, SheetRangeEvaluator sre) {
@@ -47,14 +47,17 @@ final class LazyRefEval extends RefEvalBase {
 		return new LazyAreaEval(area, _evaluator);
 	}
 
+	public boolean isSubTotal() {
+		SheetRefEvaluator sheetEvaluator = _evaluator.getSheetEvaluator(getFirstSheetIndex());
+		return sheetEvaluator.isSubTotal(getRow(), getColumn());
+	}
+
 	public String toString() {
 		CellReference cr = new CellReference(getRow(), getColumn());
-		StringBuffer sb = new StringBuffer();
-		sb.append(getClass().getName()).append("[");
-		sb.append(_evaluator.getSheetNameRange());
-		sb.append('!');
-		sb.append(cr.formatAsString());
-		sb.append("]");
-		return sb.toString();
+		return getClass().getName() + "[" +
+				_evaluator.getSheetNameRange() +
+				'!' +
+				cr.formatAsString() +
+				"]";
 	}
 }

@@ -27,19 +27,13 @@ import org.apache.commons.logging.LogFactory;
  * developers to write log calls, while simultaneously making those
  * calls as cheap as possible by performing lazy evaluation of the log
  * message.<p>
- *
- * @author Marc Johnson (mjohnson at apache dot org)
- * @author Glen Stampoultzis (glens at apache.org)
- * @author Nicola Ken Barozzi (nicolaken at apache.org)
  */
-
 public class CommonsLogger extends POILogger
 {
-
     private static LogFactory   _creator = LogFactory.getFactory();
     private Log             log   = null;
 
-   
+    @Override
     public void initialize(final String cat)
     {
         this.log = _creator.getInstance(cat);
@@ -51,6 +45,7 @@ public class CommonsLogger extends POILogger
      * @param level One of DEBUG, INFO, WARN, ERROR, FATAL
      * @param obj1 The object to log.
      */
+    @Override
     public void log(final int level, final Object obj1)
     {
         if(level==FATAL)
@@ -104,6 +99,7 @@ public class CommonsLogger extends POILogger
      * @param obj1 The object to log.  This is converted to a string.
      * @param exception An exception to be logged
      */
+    @Override
     public void log(final int level, final Object obj1,
                     final Throwable exception) 
     {
@@ -175,7 +171,7 @@ public class CommonsLogger extends POILogger
      *
      * @param level One of DEBUG, INFO, WARN, ERROR, FATAL
      */
-
+    @Override
     public boolean check(final int level)
     {
         if(level==FATAL)

@@ -17,7 +17,6 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 -->
-
 <!--
     This build was tested with ant 1.9.4 although it will probably work with
     other versions, however at least 1.8.0 is required.
@@ -133,6 +132,7 @@ under the License.
     <property name="ooxml.output.test.dir" location="build/ooxml-test-classes"/>
     <property name="ooxml.testokfile" location="build/ooxml-testokfile.txt"/>
     <property name="ooxml.lite.output.dir" location="build/ooxml-lite-classes"/>
+    <property name="ooxml.lite.testokfile" location="build/ooxml-lite-testokfile.txt"/>
 
     <!-- XSSF/SXSSF subset of OOXML: -->
     <property name="ooxml.ss.testokfile" location="build/ooxml-ss-testokfile.txt"/>
@@ -169,6 +169,9 @@ under the License.
     <property name="main.ant.url" value="${repository.m2}/maven2/org/apache/ant/ant/1.9.4/ant-1.9.4.jar"/>
     <property name="main.antlauncher.jar" location="${main.lib}/ant-launcher-1.9.4.jar"/>
     <property name="main.antlauncher.url" value="${repository.m2}/maven2/org/apache/ant/ant-launcher/1.9.4/ant-launcher-1.9.4.jar"/>
+    <property name="main.commons-collections4.jar" location="${main.lib}/commons-collections4-4.1.jar"/>
+    <property name="main.commons-collections4.url"
+              value="${repository.m2}/maven2/org/apache/commons/commons-collections4/4.1/commons-collections4-4.1.jar"/>
 
     <!-- xml signature libs -->
     <property name="dsig.xmlsec.jar" location="${compile.lib}/xmlsec-2.0.6.jar"/>
@@ -192,8 +195,8 @@ under the License.
               value="${repository.m2}/maven2/org/apache/xmlbeans/xmlbeans/2.6.0/xmlbeans-2.6.0.jar"/>
 
     <!-- coverage libs -->
-    <property name="jacoco.zip" location="${main.lib}/jacoco-0.7.6.201602180812.zip"/>
-    <property name="jacoco.url" value="${repository.m2}/maven2/org/jacoco/jacoco/0.7.6.201602180812/jacoco-0.7.6.201602180812.zip"/>
+    <property name="jacoco.zip" location="${main.lib}/jacoco-0.7.7.201606060606.zip"/>
+    <property name="jacoco.url" value="${repository.m2}/maven2/org/jacoco/jacoco/0.7.7.201606060606/jacoco-0.7.7.201606060606.zip"/>
     <property name="asm.jar" location="${main.lib}/asm-all-5.0.3.jar"/>
     <property name="asm.url" value="${repository.m2}/maven2/org/ow2/asm/asm-all/5.0.3/asm-all-5.0.3.jar"/>
 
@@ -285,6 +288,7 @@ under the License.
     </condition>
     <property name="findbugs.version" value="2.0.3" if:set="findbugs.jdk6"/>
     <property name="findbugs.version" value="3.0.1" unless:set="findbugs.jdk6"/>
+    <echo message="Findbugs-Version: ${findbugs.version} for Java ${ant.java.version}"/>
 	<property name="findbugs.url" value="http://prdownloads.sourceforge.net/findbugs/findbugs-noUpdateChecks-${findbugs.version}.zip?download"/>
 	<property name="findbugs.jar" location="${main.lib}/findbugs-noUpdateChecks-${findbugs.version}.zip"/>
 
@@ -303,6 +307,8 @@ under the License.
 
     <!-- this can be overwriten to empty when running with Java 9 -->
     <property name="maxpermsize" value="-XX:MaxPermSize=256m"/>
+    <property name="java9addmods" value="-Dthis.is.a.dummy=true"/>
+    <property name="java9addmodsvalue" value="-Dthis.is.a.dummy=true"/>
 
     <path id="main.classpath">
         <pathelement location="${main.commons-logging.jar}"/>
@@ -310,6 +316,7 @@ under the License.
         <pathelement location="${main.log4j.jar}"/>
         <pathelement location="${main.junit.jar}"/>
         <pathelement location="${main.hamcrest.jar}"/>
+        <pathelement location="${main.commons-collections4.jar}"/>
     </path>
 
     <path id="scratchpad.classpath">
@@ -498,9 +505,7 @@ under the License.
         <attribute name="src"/>
         <attribute name="dest"/>
         <sequential>
-            <local name="exists"/>
-            <available file="@{dest}" property="exists"/>
-            <!--fail unless:true="${exists}"
+            <!--fail
                 message="Java version might be uncapable to download https URLs - see https://stackoverflow.com/questions/6851461/java-why-does-ssl-handshake-give-could-not-generate-dh-keypair-exception">
                 <condition>
                     <and>
@@ -509,7 +514,7 @@ under the License.
                     </and>
                 </condition>
             </fail-->
-            <get src="@{src}" dest="@{dest}" unless:true="${exists}"/>
+            <get src="@{src}" dest="@{dest}" skipexisting="true"/>
         </sequential>
     </macrodef>
 
@@ -531,12 +536,14 @@ under the License.
                 <include name="jacoco-0.7.2*"/>
                 <include name="jacoco-0.7.3*"/>
                 <include name="jacoco-0.7.4*"/>
+                <include name="jacoco-0.7.6*"/>
                 <include name="log4j-1.2.13*"/>
                 <include name="org.jacoco.*-0.6.*"/>
                 <include name="org.jacoco.*-0.7.1*"/>
                 <include name="org.jacoco.*-0.7.2*"/>
                 <include name="org.jacoco.*-0.7.3*"/>
                 <include name="org.jacoco.*-0.7.4*"/>
+                <include name="org.jacoco.*-0.7.6*"/>
                 <include name="dom4j*"/>
                 <include name="apache-rat-0.10*"/>
                 <include name="xercesImpl-*.jar"/>
@@ -587,6 +594,7 @@ under the License.
                     <available file="${dsig.bouncycastle-pkix.jar}"/>
                     <available file="${dsig.xmlsec.jar}"/>
                     <available file="${dsig.sl4j-api.jar}"/>
+                    <available file="${main.commons-collections4.jar}"/>
                 </and>
                 <isset property="disconnected"/>
             </or>
@@ -605,6 +613,7 @@ under the License.
         <downloadfile src="${main.antlauncher.url}" dest="${main.antlauncher.jar}"/>
         <downloadfile src="${asm.url}" dest="${asm.jar}"/>
         <downloadfile src="${jacoco.url}" dest="${jacoco.zip}"/>
+        <downloadfile src="${main.commons-collections4.url}" dest="${main.commons-collections4.jar}"/>
         <unzip src="${jacoco.zip}" dest=".">
             <patternset>
                 <include name="lib/*.jar"/>
@@ -1161,6 +1170,8 @@ under the License.
                 <group name="Main">
                     <classfiles>
                         <fileset dir="${main.output.dir}">
+                            <!-- exclude some generated classes -->
+                            <exclude name="org/apache/poi/sl/draw/binding/*.class"/>
                             <!-- exclude large test-class -->
                             <exclude name="org/apache/poi/hssf/usermodel/DummyGraphics2d.class"/>
                         </fileset>
@@ -1242,6 +1253,8 @@ under the License.
                 <jvmarg value="-ea"/>
                 <jvmarg value="-Xmx256m"/>
                 <!-- jvmarg value="-Duser.timezone=UTC"/ -->
+                <jvmarg value="${java9addmods}" />
+                <jvmarg value="${java9addmodsvalue}" />
                 <formatter type="plain"/>
                 <formatter type="xml"/>
                 <batchtest todir="${main.reports.test}">
@@ -1257,6 +1270,16 @@ under the License.
         <delete file="${main.testokfile}"/>
         <antcall target="-test-main-write-testfile"/>
     </target>
+
+	<target name="test-report" depends="init">
+		<mkdir dir="build/report"/>
+		<junitreport todir="build/report">
+		  <fileset dir="build">
+			<include name="*results/**/TEST-*.xml"/>
+		  </fileset>
+		  <report format="frames" todir="build/report"/>
+		</junitreport>
+	</target>
 
     <target name="-test-property-check" unless="testcase">
         <echo message="Please use -Dtestcase=org.your.testcase to run a single test"/>
@@ -1288,6 +1311,8 @@ under the License.
                 <jvmarg value="-ea"/>
                 <jvmarg value="-Xmx256m"/>
                 <!-- jvmarg value="-Duser.timezone=UTC"/ -->
+                <jvmarg value="${java9addmods}" />
+                <jvmarg value="${java9addmodsvalue}" />
                 <formatter type="plain"/>
                 <formatter type="xml"/>
                 <batchtest todir="${main.reports.test}">
@@ -1335,6 +1360,8 @@ under the License.
                   and on Windows with jdk-1.5.22
                 -->
                 <jvmarg value="-Xmx256M"/>
+                <jvmarg value="${java9addmods}" />
+                <jvmarg value="${java9addmodsvalue}" />
                 <formatter type="plain"/>
                 <formatter type="xml"/>
                 <batchtest todir="${scratchpad.reports.test}">
@@ -1373,6 +1400,8 @@ under the License.
                     <jvmarg value="${maxpermsize}"/>
                     <jvmarg value="-Xmx768M"/>
                   <jvmarg value="-ea"/>
+                  <jvmarg value="${java9addmods}" />
+                  <jvmarg value="${java9addmodsvalue}" />
                     <!-- jvmarg value="-Duser.timezone=UTC"/ -->
                   <formatter type="plain"/>
                   <formatter type="xml"/>
@@ -1396,6 +1425,8 @@ under the License.
                   <syspropertyset refid="junit.properties"/>
                     <jvmarg value="-Xmx768M"/>
                   <jvmarg value="-ea"/>
+                  <jvmarg value="${java9addmods}" />
+                  <jvmarg value="${java9addmodsvalue}" />
                   <formatter type="plain"/>
                   <formatter type="xml"/>
                   <batchtest todir="${ooxml.reports.test}">
@@ -1439,6 +1470,8 @@ under the License.
                     <jvmarg value="${maxpermsize}"/>
                     <jvmarg value="-Xmx768M"/>
                   <jvmarg value="-ea"/>
+                  <jvmarg value="${java9addmods}" />
+                  <jvmarg value="${java9addmodsvalue}" />
                     <!-- jvmarg value="-Duser.timezone=UTC"/ -->
                   <formatter type="plain"/>
                   <formatter type="xml"/>
@@ -1485,6 +1518,8 @@ under the License.
                 <syspropertyset refid="junit.properties"/>
                 <jvmarg value="-ea"/>
                 <jvmarg value="-Xmx1512M"/>
+                <jvmarg value="${java9addmods}" />
+                <jvmarg value="${java9addmodsvalue}" />
                 <formatter type="plain"/>
                 <formatter type="xml"/>
                 <batchtest todir="${integration.reports.test}">
@@ -1503,7 +1538,20 @@ under the License.
     </target>
 
     <!-- Section: test-ooxml-lite -->
-    <target name="compile-ooxml-lite" depends="compile-ooxml">
+    <target name="-compile-ooxml-lite-check">
+        <uptodate property="ooxml.lite.test.notRequired" targetfile="${ooxml.lite.testokfile}">
+            <srcfiles dir="${ooxml.src}"/>
+            <srcfiles dir="${ooxml.src.test}"/>
+            <srcfiles file="${ooxml.xsds.jar}"/>
+            <srcfiles file="${ooxml.security.jar}"/>
+        </uptodate>
+    </target>
+
+    <target name="compile-ooxml-lite" depends="-compile-ooxml-lite-check,compile-ooxml"
+            unless="ooxml.lite.test.notRequired">
+        <delete file="${ooxml.lite.testokfile}"/>
+        <echo message="Running ooxml-lite generator"/>
+
         <property name="ooxml.lite-merged.dir" location="build/ooxml-lite-merged"/>
         <mkdir dir="${ooxml.lite-merged.dir}"/>
 
@@ -1522,6 +1570,8 @@ under the License.
             <syspropertyset refid="junit.properties"/>
             <jvmarg value="${maxpermsize}"/>
             <jvmarg value="-Xmx512m"/>
+			<jvmarg value="${java9addmods}" />
+			<jvmarg value="${java9addmodsvalue}" />
             <arg value="-ooxml"/>
             <arg value="${ooxml.lite-merged.dir}/ooxml-lite-merged.jar"/>
             <arg value="-test"/>
@@ -1529,6 +1579,8 @@ under the License.
             <arg value="-dest"/>
             <arg value="${ooxml.lite.output.dir}"/>
         </java>
+
+        <echo file="${ooxml.lite.testokfile}" append="false" message="testok"/>
     </target>
 
     <target name="test-ooxml-lite" depends="jacocotask,compile-ooxml-xsds,compile-ooxml-lite">
@@ -1557,6 +1609,8 @@ under the License.
                 <classpath refid="test.excelant.classpath"/>
                 <syspropertyset refid="junit.properties"/>
                 <jvmarg value="-ea"/>
+                <jvmarg value="${java9addmods}" />
+                <jvmarg value="${java9addmodsvalue}" />
                 <formatter type="plain"/>
                 <formatter type="xml"/>
                 <batchtest todir="${excelant.reports.test}">
@@ -1868,6 +1922,7 @@ under the License.
                 <fileset dir="${main.lib}">
                     <include name="commons-codec-*.jar"/>
                     <include name="commons-logging-*.jar"/>
+                    <include name="commons-collections4-*.jar"/>
                     <include name="junit-*.jar"/>
                     <include name="log4j-*.jar"/>
                 </fileset>
@@ -2083,7 +2138,7 @@ under the License.
         </forbiddenapis>
     </target>
 
-    <target name="findbugs" depends="assemble">
+    <target name="findbugs" depends="jar">
         <downloadfile src="${findbugs.url}" dest="${findbugs.jar}"/>
 
         <property name="findbugs.home" value="build/findbugs" />
@@ -2103,11 +2158,13 @@ under the License.
     	   output="xml:withMessages"
     	   outputFile="build/findbugs.xml"
     	   effort="max"
+           failOnError="true"
            excludeFilter="src/resources/devtools/findbugs-filters.xml">
             <fileset dir="${dist.dir}/maven">
                 <include name="poi/poi-${version.id}.jar"/>
                 <include name="poi-scratchpad/poi-scratchpad-${version.id}.jar"/>
                 <include name="poi-ooxml/poi-ooxml-${version.id}.jar"/>
+                <include name="poi-excelant/poi-excelant-${version.id}.jar"/>
             </fileset>
             <auxClasspath path="${dsig.bouncycastle-pkix.jar}" />
             <auxClasspath path="${dsig.bouncycastle-prov.jar}" />
@@ -2117,9 +2174,11 @@ under the License.
             <auxClasspath path="${ooxml.security.jar}" />
             <auxClasspath path="${ooxml.curvesapi.jar}" />
             <auxClasspath path="${ooxml.xmlbeans26.jar}" />
+            <auxClasspath path="${main.commons-collections4.jar}" />
             <auxClasspath path="${main.commons-codec.jar}" />
             <auxClasspath path="${main.commons-logging.jar}" />
             <auxClasspath path="${main.junit.jar}" />
+            <auxClasspath path="${main.ant.jar}" />
             <sourcePath path="src/java" />
             <sourcePath path="src/ooxml/java" />
             <sourcePath path="src/scratchpad/src" />

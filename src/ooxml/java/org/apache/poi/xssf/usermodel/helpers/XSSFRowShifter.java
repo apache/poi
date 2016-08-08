@@ -83,9 +83,7 @@ public final class XSSFRowShifter extends RowShifter {
     public void updateNamedRanges(FormulaShifter shifter) {
         Workbook wb = sheet.getWorkbook();
         XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create((XSSFWorkbook) wb);
-        final int numberOfNames = wb.getNumberOfNames();
-        for (int i = 0; i < numberOfNames; i++) {
-            Name name = wb.getNameAt(i);
+        for (Name name : wb.getAllNames()) {
             String formula = name.getRefersToFormula();
             int sheetIndex = name.getSheetIndex();
             final int rowIndex = -1; //don't care, named ranges are not allowed to include structured references

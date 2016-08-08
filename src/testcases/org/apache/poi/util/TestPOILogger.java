@@ -26,10 +26,6 @@ import org.junit.Test;
 
 /**
  * Tests the log class.
- *
- * @author Glen Stampoultzis (glens at apache.org)
- * @author Marc Johnson (mjohnson at apache dot org)
- * @author Nicola Ken Barozzi (nicolaken at apache.org)
  */
 public final class TestPOILogger extends POILogger {
     private String lastLog = "";
@@ -61,20 +57,26 @@ public final class TestPOILogger extends POILogger {
             POILogFactory._loggerClassName = oldLCN;
         }
     }
+    
+    // ---------- POI Logger methods implemented for testing ----------
 
+    @Override
     public void initialize(String cat) {
     }
 
+    @Override
     public void log(int level, Object obj1) {
         lastLog = (obj1 == null) ? "" : obj1.toString();
         lastEx = null;
     }
 
+    @Override
     public void log(int level, Object obj1, Throwable exception) {
         lastLog = (obj1 == null) ? "" : obj1.toString();
         lastEx = exception;
     }
 
+    @Override
     public boolean check(int level) {
         return true;
     }

@@ -24,15 +24,12 @@ package org.apache.poi.util;
  * developers to write log calls, while simultaneously making those
  * calls as cheap as possible by performing lazy evaluation of the log
  * message.
- *
- * @author Marc Johnson (mjohnson at apache dot org)
- * @author Glen Stampoultzis (glens at apache.org)
- * @author Nicola Ken Barozzi (nicolaken at apache.org)
  */
 public class SystemOutLogger extends POILogger
 {
     private String _cat;
 
+    @Override
     public void initialize(final String cat)
     {
        this._cat=cat;
@@ -44,7 +41,7 @@ public class SystemOutLogger extends POILogger
      * @param level One of DEBUG, INFO, WARN, ERROR, FATAL
      * @param obj1 The object to log.
      */
-
+    @Override
     public void log(final int level, final Object obj1)
     {
     	log(level, obj1, null);
@@ -57,6 +54,7 @@ public class SystemOutLogger extends POILogger
      * @param obj1 The object to log.  This is converted to a string.
      * @param exception An exception to be logged
      */
+    @Override
     @SuppressForbidden("uses printStackTrace")
     public void log(final int level, final Object obj1,
                     final Throwable exception) {
@@ -78,6 +76,7 @@ public class SystemOutLogger extends POILogger
      * @see #ERROR
      * @see #FATAL
      */
+    @Override
     public boolean check(final int level)
     {
         int currentLevel;

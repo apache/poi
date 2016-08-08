@@ -193,8 +193,12 @@ public abstract class POIXMLDocument extends POIXMLDocumentPart implements Close
     /**
      * Closes the underlying {@link OPCPackage} from which this
      *  document was read, if there is one
-     * 
-     * @throws IOException for writable packages, if an IO exception occur during the saving process. 
+     *
+     * <p>Once this has been called, no further
+     *  operations, updates or reads should be performed on the
+     *  document.
+     *
+     * @throws IOException for writable packages, if an IO exception occur during the saving process.
      */
     @Override
     public void close() throws IOException {

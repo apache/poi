@@ -29,10 +29,7 @@ import java.util.TreeMap;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JRuntimeException;
-import org.apache.poi.openxml4j.opc.OPCPackage;
-import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackagePartName;
-import org.apache.poi.openxml4j.opc.PackagingURIHelper;
+import org.apache.poi.openxml4j.opc.*;
 import org.apache.poi.util.DocumentHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -54,7 +51,7 @@ public abstract class ContentTypeManager {
 	/**
 	 * Content type namespace
 	 */
-	public static final String TYPES_NAMESPACE_URI = "http://schemas.openxmlformats.org/package/2006/content-types";
+	public static final String TYPES_NAMESPACE_URI = PackageNamespaces.CONTENT_TYPES;
 
 	/* Xml elements in content type part */
 
