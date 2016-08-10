@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+<!--
+   ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+   ====================================================================
+-->
+<record id="0x15" name="CommonObjectData" excel-record-id="ftCmo"
+    package="org.apache.poi.hssf.record">
+    <suffix>SubRecord</suffix>
+    <extends>SubRecord</extends>
+    <description>The common object data record is used to store all common preferences for an excel object.</description>
+    <author>Glen Stampoultzis (glens at apache.org)</author>
+    <fields>
+        <field type="int" size="2" name="object type">
+            <const value="0" name="group" description="group"/>
+            <const value="1" name="line" description="line"/>
+            <const value="2" name="rectangle" description="rectangle"/>
+            <const value="3" name="oval" description="oval"/>
+            <const value="4" name="arc" description="arc"/>
+            <const value="5" name="chart" description="chart"/>
+            <const value="6" name="text" description="text"/>
+            <const value="7" name="button" description="button"/>
+            <const value="8" name="picture" description="picture"/>
+            <const value="9" name="polygon" description="polygon"/>
+            <const value="10" name="reserved1" description="reserved1"/>
+            <const value="11" name="checkbox" description="checkbox"/>
+            <const value="12" name="option button" description="option button"/>
+            <const value="13" name="edit box" description="edit box"/>
+            <const value="14" name="label" description="label"/>
+            <const value="15" name="dialog box" description="dialog box"/>
+            <const value="16" name="spinner" description="spinner"/>
+            <const value="17" name="scroll bar" description="scroll bar"/>
+            <const value="18" name="list box" description="list box"/>
+            <const value="19" name="group box" description="group box"/>
+            <const value="20" name="combo box" description="combo box"/>
+            <const value="21" name="reserved2" description="reserved2"/>
+            <const value="22" name="reserved3" description="reserved3"/>
+            <const value="23" name="reserved4" description="reserved4"/>
+            <const value="24" name="reserved5" description="reserved5"/>
+            <const value="25" name="comment" description="comment"/>
+            <const value="26" name="reserved6" description="reserved6"/>
+            <const value="27" name="reserved7" description="reserved7"/>
+            <const value="28" name="reserved8" description="reserved8"/>
+            <const value="29" name="reserved9" description="reserved9"/>
+            <const value="30" name="microsoft office drawing" description="microsoft office drawing"/>
+        </field>
+        <field type="int" size="2" name="object id"/>
+        <field type="int" size="2" name="option">
+            <bit number="0" name="locked" description="true if object is locked when sheet has been protected"/>
+            <bit number="4" name="printable" description="object appears when printed"/>
+            <bit number="13" name="autofill" description="whether object uses an automatic fill style"/>
+            <bit number="14" name="autoline" description="whether object uses an automatic line style"/>
+        </field>
+        <field type="int" size="4" name="reserved1" description="Should always be 0"/>
+        <field type="int" size="4" name="reserved2" description="Should always be 0"/>
+        <field type="int" size="4" name="reserved3" description="Should always be 0"/>
+    </fields>
+</record>
