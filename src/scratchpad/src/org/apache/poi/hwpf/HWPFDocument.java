@@ -572,12 +572,27 @@ public final class HWPFDocument extends HWPFDocumentCore {
     }
 
     /**
-     * Warning - not currently implemented for HWPF!
+     * Write out the word file that is represented by this class, to the 
+     *  currently open {@link File}, via the writeable {@link POIFSFileSystem}
+     *  it was opened as. 
+     *  
+     * <p>This will fail (with an {@link IllegalStateException} if the
+     *  Document was opened read-only, opened from an {@link InputStream}
+     *   instead of a File, or if this is not the root document. For those cases, 
+     *   you must use {@link #write(OutputStream)} or {@link #write(File)} to 
+     *   write to a brand new document.
+     *         
+     * @since 3.15
      */
     @Override
     public void write() throws IOException {
-        // TODO Implement
-        throw new IllegalStateException("Coming soon!");
+        validateInPlaceWritePossible();
+        
+        // Update the Document+Properties streams in the file
+        write(directory.getFileSystem(), false);
+        
+        // Sync with the File on disk
+        directory.getFileSystem().writeFilesystem();
     }
     
     /**
@@ -912,22 +927,18 @@ public final class HWPFDocument extends HWPFDocumentCore {
             dataBuf = tempBuf;
         }
 
-        // create new document preserving order of entries
-        // TODO Check "copyOtherEntries" and tweak behaviour based on that
-        // TODO That's needed for in-place write
+        // Create a new document preserving order of entries / Update existing
         boolean docWritten = false;
         boolean dataWritten = false;
         boolean objectPoolWritten = false;
         boolean tableWritten = false;
         boolean propertiesWritten = false;
-        for ( Iterator<Entry> iter = directory.getEntries(); iter.hasNext(); )
-        {
-            Entry entry = iter.next();
+        for (Entry entry : directory) {
             if ( entry.getName().equals( STREAM_WORD_DOCUMENT ) )
             {
                 if ( !docWritten )
                 {
-                    pfs.createDocument( new ByteArrayInputStream( mainBuf ),
+                    pfs.createOrUpdateDocument( new ByteArrayInputStream( mainBuf ),
                             STREAM_WORD_DOCUMENT );
                     docWritten = true;
                 }
@@ -936,7 +947,11 @@ public final class HWPFDocument extends HWPFDocumentCore {
             {
                 if ( !objectPoolWritten )
                 {
-                    _objectPool.writeTo( pfs.getRoot() );
+                    if ( copyOtherEntries ) {
+                        _objectPool.writeTo( pfs.getRoot() );
+                    } else {
+                        // Object pool is already there, no need to change/copy
+                    }
                     objectPoolWritten = true;
                 }
             }
@@ -945,7 +960,7 @@ public final class HWPFDocument extends HWPFDocumentCore {
             {
                 if ( !tableWritten )
                 {
-                    pfs.createDocument( new ByteArrayInputStream( tableBuf ),
+                    pfs.createOrUpdateDocument( new ByteArrayInputStream( tableBuf ),
                             STREAM_TABLE_1 );
                     tableWritten = true;
                 }
@@ -965,29 +980,29 @@ public final class HWPFDocument extends HWPFDocumentCore {
             {
                 if ( !dataWritten )
                 {
-                    pfs.createDocument( new ByteArrayInputStream( dataBuf ),
+                    pfs.createOrUpdateDocument( new ByteArrayInputStream( dataBuf ),
                             STREAM_DATA );
                     dataWritten = true;
                 }
             }
-            else
+            else if ( copyOtherEntries )
             {
                 EntryUtils.copyNodeRecursively( entry, pfs.getRoot() );
             }
         }
 
         if ( !docWritten )
-            pfs.createDocument( new ByteArrayInputStream( mainBuf ),
+            pfs.createOrUpdateDocument( new ByteArrayInputStream( mainBuf ),
                     STREAM_WORD_DOCUMENT );
         if ( !tableWritten )
-            pfs.createDocument( new ByteArrayInputStream( tableBuf ),
+            pfs.createOrUpdateDocument( new ByteArrayInputStream( tableBuf ),
                     STREAM_TABLE_1 );
         if ( !propertiesWritten )
             writeProperties( pfs );
         if ( !dataWritten )
-            pfs.createDocument( new ByteArrayInputStream( dataBuf ),
+            pfs.createOrUpdateDocument( new ByteArrayInputStream( dataBuf ),
                     STREAM_DATA );
-        if ( !objectPoolWritten )
+        if ( !objectPoolWritten && copyOtherEntries )
             _objectPool.writeTo( pfs.getRoot() );
 
         this.directory = pfs.getRoot();
