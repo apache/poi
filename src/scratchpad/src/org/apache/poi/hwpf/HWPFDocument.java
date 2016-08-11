@@ -22,32 +22,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Iterator;
 
 import org.apache.poi.hpsf.DocumentSummaryInformation;
 import org.apache.poi.hpsf.SummaryInformation;
-import org.apache.poi.hwpf.model.BookmarksTables;
-import org.apache.poi.hwpf.model.CHPBinTable;
-import org.apache.poi.hwpf.model.ComplexFileTable;
-import org.apache.poi.hwpf.model.DocumentProperties;
-import org.apache.poi.hwpf.model.EscherRecordHolder;
-import org.apache.poi.hwpf.model.FSPADocumentPart;
-import org.apache.poi.hwpf.model.FSPATable;
-import org.apache.poi.hwpf.model.FieldsTables;
-import org.apache.poi.hwpf.model.FontTable;
-import org.apache.poi.hwpf.model.ListTables;
-import org.apache.poi.hwpf.model.NoteType;
-import org.apache.poi.hwpf.model.NotesTables;
-import org.apache.poi.hwpf.model.PAPBinTable;
-import org.apache.poi.hwpf.model.PicturesTable;
-import org.apache.poi.hwpf.model.RevisionMarkAuthorTable;
-import org.apache.poi.hwpf.model.SavedByTable;
-import org.apache.poi.hwpf.model.SectionTable;
-import org.apache.poi.hwpf.model.SinglentonTextPiece;
-import org.apache.poi.hwpf.model.StyleSheet;
-import org.apache.poi.hwpf.model.SubdocumentType;
-import org.apache.poi.hwpf.model.TextPiece;
-import org.apache.poi.hwpf.model.TextPieceTable;
+import org.apache.poi.hwpf.model.*;
 import org.apache.poi.hwpf.model.io.HWPFFileSystem;
 import org.apache.poi.hwpf.model.io.HWPFOutputStream;
 import org.apache.poi.hwpf.usermodel.Bookmarks;
@@ -938,8 +916,7 @@ public final class HWPFDocument extends HWPFDocumentCore {
             {
                 if ( !docWritten )
                 {
-                    pfs.createOrUpdateDocument( new ByteArrayInputStream( mainBuf ),
-                            STREAM_WORD_DOCUMENT );
+                    write(pfs, mainBuf, STREAM_WORD_DOCUMENT);
                     docWritten = true;
                 }
             }
@@ -960,8 +937,7 @@ public final class HWPFDocument extends HWPFDocumentCore {
             {
                 if ( !tableWritten )
                 {
-                    pfs.createOrUpdateDocument( new ByteArrayInputStream( tableBuf ),
-                            STREAM_TABLE_1 );
+                    write(pfs, tableBuf, STREAM_TABLE_1);
                     tableWritten = true;
                 }
             }
@@ -980,8 +956,7 @@ public final class HWPFDocument extends HWPFDocumentCore {
             {
                 if ( !dataWritten )
                 {
-                    pfs.createOrUpdateDocument( new ByteArrayInputStream( dataBuf ),
-                            STREAM_DATA );
+                    write(pfs, dataBuf, STREAM_DATA);
                     dataWritten = true;
                 }
             }
@@ -992,16 +967,13 @@ public final class HWPFDocument extends HWPFDocumentCore {
         }
 
         if ( !docWritten )
-            pfs.createOrUpdateDocument( new ByteArrayInputStream( mainBuf ),
-                    STREAM_WORD_DOCUMENT );
+            write(pfs, mainBuf, STREAM_WORD_DOCUMENT);
         if ( !tableWritten )
-            pfs.createOrUpdateDocument( new ByteArrayInputStream( tableBuf ),
-                    STREAM_TABLE_1 );
+            write(pfs, tableBuf, STREAM_TABLE_1);
         if ( !propertiesWritten )
             writeProperties( pfs );
         if ( !dataWritten )
-            pfs.createOrUpdateDocument( new ByteArrayInputStream( dataBuf ),
-                    STREAM_DATA );
+            write(pfs, dataBuf, STREAM_DATA);
         if ( !objectPoolWritten && copyOtherEntries )
             _objectPool.writeTo( pfs.getRoot() );
 
@@ -1014,6 +986,9 @@ public final class HWPFDocument extends HWPFDocumentCore {
         this.directory = pfs.getRoot();
         this._tableStream = tableStream.toByteArray();
         this._dataStream = dataBuf;
+    }
+    private static void write(NPOIFSFileSystem pfs, byte[] data, String name) throws IOException {
+        pfs.createOrUpdateDocument(new ByteArrayInputStream(data), name);
     }
 
     @Internal
