@@ -257,8 +257,8 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
 				// Comments, if requested and present
 				if (getCommentText) {
 					Comment[] comments = slide.getComments();
-					for (int j = 0; j < comments.length; j++) {
-						ret.append(comments[j].getAuthor() + " - " + comments[j].getText() + "\n");
+					for (Comment comment : slide.getComments()) {
+						ret.append(comment.getAuthor() + " - " + comment.getText() + "\n");
 					}
 				}
 			}
@@ -285,8 +285,8 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
 			}
 			
 
-			for (int i = 0; i < _slides.size(); i++) {
-				HSLFNotes notes = _slides.get(i).getNotes();
+			for (HSLFSlide slide : _slides) {
+				HSLFNotes notes = slide.getNotes();
 				if (notes == null) {
 					continue;
 				}
@@ -297,13 +297,13 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
 				seenNotes.add(id);
 
 				// Repeat the Notes header, if set
-			    ret.append(headerText);
+				ret.append(headerText);
 
 				// Notes text
-                textRunsToText(ret, notes.getTextParagraphs());
+				textRunsToText(ret, notes.getTextParagraphs());
 
 				// Repeat the notes footer, if set
-                ret.append(footerText);
+				ret.append(footerText);
 			}
 		}
 
@@ -315,16 +315,18 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
 	}
 
     private void extractTableText(StringBuffer ret, HSLFTable table) {
-        for (int row = 0; row < table.getNumberOfRows(); row++){
-            for (int col = 0; col < table.getNumberOfColumns(); col++){
+        final int nrows = table.getNumberOfRows();
+        final int ncols = table.getNumberOfColumns();
+        for (int row = 0; row < nrows; row++){
+            for (int col = 0; col < ncols; col++){
                 HSLFTableCell cell = table.getCell(row, col);
                 //defensive null checks; don't know if they're necessary
                 if (cell != null){
                     String txt = cell.getText();
                     txt = (txt == null) ? "" : txt;
                     ret.append(txt);
-                    if (col < table.getNumberOfColumns()-1){
-                        ret.append("\t");
+                    if (col < ncols-1){
+                        ret.append('\t');
                     }
                 }
             }
@@ -339,7 +341,7 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
         for (List<HSLFTextParagraph> lp : paragraphs) {
             ret.append(HSLFTextParagraph.getText(lp));
             if (ret.length() > 0 && ret.charAt(ret.length()-1) != '\n') {
-                ret.append("\n");
+                ret.append('\n');
             }
         }
     }
