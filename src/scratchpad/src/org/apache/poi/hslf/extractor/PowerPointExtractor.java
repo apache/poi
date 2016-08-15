@@ -240,9 +240,9 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
                 }
                 
                 // Slide header, if set
-				ret.append(headerText);
+                ret.append(headerText);
 
-				// Slide text
+                // Slide text
                 textRunsToText(ret, slide.getTextParagraphs());
 
                 // Table text
@@ -256,14 +256,13 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
 
 				// Comments, if requested and present
 				if (getCommentText) {
-					Comment[] comments = slide.getComments();
 					for (Comment comment : slide.getComments()) {
 						ret.append(comment.getAuthor() + " - " + comment.getText() + "\n");
 					}
 				}
 			}
 			if (getNoteText) {
-				ret.append("\n");
+				ret.append('\n');
 			}
 		}
 
@@ -271,7 +270,7 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
 			// Not currently using _notes, as that can have the notes of
 			// master sheets in. Grab Slide list, then work from there,
 			// but ensure no duplicates
-			HashSet<Integer> seenNotes = new HashSet<Integer>();
+			Set<Integer> seenNotes = new HashSet<Integer>();
             String headerText = "";
             String footerText = "";
 			HeadersFooters hf = _show.getNotesHeadersFooters();
