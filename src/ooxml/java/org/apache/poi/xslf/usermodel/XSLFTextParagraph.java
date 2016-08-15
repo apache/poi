@@ -752,6 +752,10 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
     }
 
 
+    /**
+     * @return master style text paragraph properties, or <code>null</code> if 
+     * there are no master slides or the master slides do not contain a text paragraph
+     */
     /* package */ CTTextParagraphProperties getDefaultMasterStyle(){
         CTPlaceholder ph = _shape.getCTPlaceholder();
         String defaultStyleSelector;  
@@ -932,7 +936,11 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
     public Double getDefaultFontSize() {
         CTTextCharacterProperties endPr = _p.getEndParaRPr();
         if (endPr == null || !endPr.isSetSz()) {
-            endPr = getDefaultMasterStyle().getDefRPr();
+            // inherit the font size from the master style
+            CTTextParagraphProperties masterStyle = getDefaultMasterStyle();
+            if (masterStyle != null) {
+                endPr = masterStyle.getDefRPr();
+            }
         }
         return (endPr == null || !endPr.isSetSz()) ? 12 : (endPr.getSz() / 100.);
     }
