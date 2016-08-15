@@ -32,9 +32,9 @@ import org.apache.poi.poifs.filesystem.*;
  * @author Nick Burch
  */
 public final class PowerPointExtractor extends POIOLE2TextExtractor {
-   private HSLFSlideShowImpl _hslfshow;
-   private HSLFSlideShow _show;
-   private List<HSLFSlide> _slides;
+   private final HSLFSlideShowImpl _hslfshow;
+   private final HSLFSlideShow _show;
+   private final List<HSLFSlide> _slides;
 
    private boolean _slidesByDefault = true;
    private boolean _notesByDefault = false;
