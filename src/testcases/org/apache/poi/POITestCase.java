@@ -32,13 +32,16 @@ import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.poi.util.SuppressForbidden;
+import org.apache.poi.util.Internal;
 
 /**
  * Util class for POI JUnit TestCases, which provide additional features 
  */
+@Internal
 public final class POITestCase {
     public static void assertContains(String haystack, String needle) {
         assertNotNull(haystack);
@@ -46,6 +49,19 @@ public final class POITestCase {
               "Unable to find expected text '" + needle + "' in text:\n" + haystack,
               haystack.contains(needle)
         );
+    }
+
+    public static void assertContainsIgnoreCase(String haystack, String needle, Locale locale) {
+        assertNotNull(haystack);
+        assertNotNull(needle);
+        String hay = haystack.toLowerCase(locale);
+        String n = needle.toLowerCase(locale);
+        assertTrue("Unable to find expected text '" + needle + "' in text:\n" + haystack,
+                hay.contains(n)
+        );
+    }
+    public static void assertContainsIgnoreCase(String haystack, String needle) {
+        assertContainsIgnoreCase(haystack, needle, Locale.ROOT);
     }
     
     public static void assertNotContained(String haystack, String needle) {

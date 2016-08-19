@@ -22,32 +22,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Iterator;
 
 import org.apache.poi.hpsf.DocumentSummaryInformation;
 import org.apache.poi.hpsf.SummaryInformation;
-import org.apache.poi.hwpf.model.BookmarksTables;
-import org.apache.poi.hwpf.model.CHPBinTable;
-import org.apache.poi.hwpf.model.ComplexFileTable;
-import org.apache.poi.hwpf.model.DocumentProperties;
-import org.apache.poi.hwpf.model.EscherRecordHolder;
-import org.apache.poi.hwpf.model.FSPADocumentPart;
-import org.apache.poi.hwpf.model.FSPATable;
-import org.apache.poi.hwpf.model.FieldsTables;
-import org.apache.poi.hwpf.model.FontTable;
-import org.apache.poi.hwpf.model.ListTables;
-import org.apache.poi.hwpf.model.NoteType;
-import org.apache.poi.hwpf.model.NotesTables;
-import org.apache.poi.hwpf.model.PAPBinTable;
-import org.apache.poi.hwpf.model.PicturesTable;
-import org.apache.poi.hwpf.model.RevisionMarkAuthorTable;
-import org.apache.poi.hwpf.model.SavedByTable;
-import org.apache.poi.hwpf.model.SectionTable;
-import org.apache.poi.hwpf.model.SinglentonTextPiece;
-import org.apache.poi.hwpf.model.StyleSheet;
-import org.apache.poi.hwpf.model.SubdocumentType;
-import org.apache.poi.hwpf.model.TextPiece;
-import org.apache.poi.hwpf.model.TextPieceTable;
+import org.apache.poi.hwpf.model.*;
 import org.apache.poi.hwpf.model.io.HWPFFileSystem;
 import org.apache.poi.hwpf.model.io.HWPFOutputStream;
 import org.apache.poi.hwpf.usermodel.Bookmarks;
@@ -572,12 +550,27 @@ public final class HWPFDocument extends HWPFDocumentCore {
     }
 
     /**
-     * Warning - not currently implemented for HWPF!
+     * Write out the word file that is represented by this class, to the 
+     *  currently open {@link File}, via the writeable {@link POIFSFileSystem}
+     *  it was opened as. 
+     *  
+     * <p>This will fail (with an {@link IllegalStateException} if the
+     *  Document was opened read-only, opened from an {@link InputStream}
+     *   instead of a File, or if this is not the root document. For those cases, 
+     *   you must use {@link #write(OutputStream)} or {@link #write(File)} to 
+     *   write to a brand new document.
+     *         
+     * @since 3.15
      */
     @Override
     public void write() throws IOException {
-        // TODO Implement
-        throw new IllegalStateException("Coming soon!");
+        validateInPlaceWritePossible();
+        
+        // Update the Document+Properties streams in the file
+        write(directory.getFileSystem(), false);
+        
+        // Sync with the File on disk
+        directory.getFileSystem().writeFilesystem();
     }
     
     /**
@@ -912,23 +905,18 @@ public final class HWPFDocument extends HWPFDocumentCore {
             dataBuf = tempBuf;
         }
 
-        // create new document preserving order of entries
-        // TODO Check "copyOtherEntries" and tweak behaviour based on that
-        // TODO That's needed for in-place write
+        // Create a new document preserving order of entries / Update existing
         boolean docWritten = false;
         boolean dataWritten = false;
         boolean objectPoolWritten = false;
         boolean tableWritten = false;
         boolean propertiesWritten = false;
-        for ( Iterator<Entry> iter = directory.getEntries(); iter.hasNext(); )
-        {
-            Entry entry = iter.next();
+        for (Entry entry : directory) {
             if ( entry.getName().equals( STREAM_WORD_DOCUMENT ) )
             {
                 if ( !docWritten )
                 {
-                    pfs.createDocument( new ByteArrayInputStream( mainBuf ),
-                            STREAM_WORD_DOCUMENT );
+                    write(pfs, mainBuf, STREAM_WORD_DOCUMENT);
                     docWritten = true;
                 }
             }
@@ -936,7 +924,11 @@ public final class HWPFDocument extends HWPFDocumentCore {
             {
                 if ( !objectPoolWritten )
                 {
-                    _objectPool.writeTo( pfs.getRoot() );
+                    if ( copyOtherEntries ) {
+                        _objectPool.writeTo( pfs.getRoot() );
+                    } else {
+                        // Object pool is already there, no need to change/copy
+                    }
                     objectPoolWritten = true;
                 }
             }
@@ -945,8 +937,7 @@ public final class HWPFDocument extends HWPFDocumentCore {
             {
                 if ( !tableWritten )
                 {
-                    pfs.createDocument( new ByteArrayInputStream( tableBuf ),
-                            STREAM_TABLE_1 );
+                    write(pfs, tableBuf, STREAM_TABLE_1);
                     tableWritten = true;
                 }
             }
@@ -965,29 +956,25 @@ public final class HWPFDocument extends HWPFDocumentCore {
             {
                 if ( !dataWritten )
                 {
-                    pfs.createDocument( new ByteArrayInputStream( dataBuf ),
-                            STREAM_DATA );
+                    write(pfs, dataBuf, STREAM_DATA);
                     dataWritten = true;
                 }
             }
-            else
+            else if ( copyOtherEntries )
             {
                 EntryUtils.copyNodeRecursively( entry, pfs.getRoot() );
             }
         }
 
         if ( !docWritten )
-            pfs.createDocument( new ByteArrayInputStream( mainBuf ),
-                    STREAM_WORD_DOCUMENT );
+            write(pfs, mainBuf, STREAM_WORD_DOCUMENT);
         if ( !tableWritten )
-            pfs.createDocument( new ByteArrayInputStream( tableBuf ),
-                    STREAM_TABLE_1 );
+            write(pfs, tableBuf, STREAM_TABLE_1);
         if ( !propertiesWritten )
             writeProperties( pfs );
         if ( !dataWritten )
-            pfs.createDocument( new ByteArrayInputStream( dataBuf ),
-                    STREAM_DATA );
-        if ( !objectPoolWritten )
+            write(pfs, dataBuf, STREAM_DATA);
+        if ( !objectPoolWritten && copyOtherEntries )
             _objectPool.writeTo( pfs.getRoot() );
 
         this.directory = pfs.getRoot();
@@ -999,6 +986,9 @@ public final class HWPFDocument extends HWPFDocumentCore {
         this.directory = pfs.getRoot();
         this._tableStream = tableStream.toByteArray();
         this._dataStream = dataBuf;
+    }
+    private static void write(NPOIFSFileSystem pfs, byte[] data, String name) throws IOException {
+        pfs.createOrUpdateDocument(new ByteArrayInputStream(data), name);
     }
 
     @Internal

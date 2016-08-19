@@ -21,11 +21,16 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 
+import org.apache.poi.POIDataSamples;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFTestCase;
 import org.apache.poi.hwpf.HWPFTestDataSamples;
+import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.poifs.filesystem.OPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.TempFile;
 
 /**
@@ -75,7 +80,65 @@ public final class TestHWPFWrite extends HWPFTestCase {
        r = doc.getRange();
        assertEquals("I am a test document\r", r.getParagraph(0).text());
        doc.close();
-    }
+   }
    
-   // TODO In-place write positive and negative checks
+   /**
+    * Writing to the file we opened from - note, uses a temp file to
+    *  avoid changing our test files!
+    */
+   @SuppressWarnings("resource")
+   public void testInPlaceWrite() throws Exception {
+       // Setup as a copy of a known-good file
+       final File file = TempFile.createTempFile("TestDocument", ".doc");
+       IOUtils.copy(
+               POIDataSamples.getDocumentInstance().openResourceAsStream("SampleDoc.doc"),
+               new FileOutputStream(file)
+       );
+
+       // Open from the temp file in read-write mode
+       HWPFDocument doc = new HWPFDocument(new NPOIFSFileSystem(file, false).getRoot());
+       Range r = doc.getRange();
+       assertEquals("I am a test document\r", r.getParagraph(0).text());
+
+       // Change
+       r.replaceText("X XX a test document\r", false);
+
+       // Save in-place, close, re-open and check
+       doc.write();
+       doc.close();
+
+       doc = new HWPFDocument(new NPOIFSFileSystem(file).getRoot());
+       assertEquals("X XX a test document\r", r.getParagraph(0).text());
+   }
+
+   @SuppressWarnings("resource")
+   public void testInvalidInPlaceWrite() throws Exception {
+       HWPFDocument doc;
+
+       // Can't work for InputStream opened files
+       doc = new HWPFDocument(
+               POIDataSamples.getDocumentInstance().openResourceAsStream("SampleDoc.doc"));
+       try {
+           doc.write();
+           fail("Shouldn't work for InputStream");
+       } catch (IllegalStateException e) {}
+
+       // Can't work for OPOIFS
+       OPOIFSFileSystem ofs = new OPOIFSFileSystem(
+               POIDataSamples.getDocumentInstance().openResourceAsStream("SampleDoc.doc"));
+       doc = new HWPFDocument(ofs.getRoot());
+       try {
+           doc.write();
+           fail("Shouldn't work for OPOIFSFileSystem");
+       } catch (IllegalStateException e) {}
+
+       // Can't work for Read-Only files
+       NPOIFSFileSystem fs = new NPOIFSFileSystem(
+               POIDataSamples.getDocumentInstance().getFile("SampleDoc.doc"), true);
+       doc = new HWPFDocument(fs.getRoot());
+       try {
+           doc.write();
+           fail("Shouldn't work for Read Only");
+       } catch (IllegalStateException e) {}
+   }
 }
