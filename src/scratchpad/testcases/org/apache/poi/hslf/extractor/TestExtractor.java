@@ -18,6 +18,7 @@
 package org.apache.poi.hslf.extractor;
 
 import static org.apache.poi.POITestCase.assertContains;
+import static org.apache.poi.POITestCase.assertContainsIgnoreCase;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -26,7 +27,6 @@ import static org.junit.Assert.assertTrue;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.List;
-import java.util.Locale;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hslf.model.OLEShape;
@@ -355,7 +355,7 @@ public final class TestExtractor {
        ppe = new PowerPointExtractor(hslf);
        
        text = ppe.getText();
-       assertContains(text.toLowerCase(Locale.ROOT), "master");
+       assertContainsIgnoreCase(text, "master");
        assertContains(text, masterText);
     }
 

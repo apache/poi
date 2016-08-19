@@ -40,7 +40,7 @@ under the License.
 
     <description>The Apache POI project Ant build.</description>
 
-    <property name="version.id" value="3.15-beta3"/>
+    <property name="version.id" value="3.15-beta4"/>
     <property name="release.rc" value="RC1"/>
 
     <property environment="env"/>
@@ -283,13 +283,10 @@ under the License.
          NOTE: we did not update to 3.x yet because it requires Java 7, but we are still supporting Java 6 currently
          ===========================================================================================================
     -->
-    <condition property="findbugs.jdk6">
-        <equals arg1="${ant.java.version}" arg2="1.6"/>
+    <condition property="findbugs.version" value="2.0.3" else="3.0.1">
+        <contains string="${java.version}" substring="1.6"/>
     </condition>
-    <property name="findbugs.version" value="2.0.3" if:set="findbugs.jdk6"/>
-    <property name="findbugs.version" value="3.0.1" unless:set="findbugs.jdk6"/>
-    <echo message="Findbugs-Version: ${findbugs.version} for Java ${ant.java.version}"/>
-	<property name="findbugs.url" value="http://prdownloads.sourceforge.net/findbugs/findbugs-noUpdateChecks-${findbugs.version}.zip?download"/>
+    <property name="findbugs.url" value="http://prdownloads.sourceforge.net/findbugs/findbugs-noUpdateChecks-${findbugs.version}.zip?download"/>
 	<property name="findbugs.jar" location="${main.lib}/findbugs-noUpdateChecks-${findbugs.version}.zip"/>
 
     <propertyset id="junit.properties">
@@ -441,7 +438,7 @@ under the License.
     <target name="help" description="Prints Apache POI's Ant usage help">
       <echo>
   This is POI ${version.id}
-  Java Version ${ant.java.version}
+  Java Version ${ant.java.version}/${java.version}
   Timestamp ${DSTAMP}
   The main targets of interest are:
     - clean       Erase all build work products (ie. everything in the build directory)
@@ -480,7 +477,9 @@ under the License.
         <mkdir dir="${dist.dir}"/>
         <mkdir dir="${build.site}"/>
 
+        <echo message="Using Ant: ${ant.version} from ${ant.home}, Ant detected Java ${ant.java.version} (may be different than actual Java sometimes...)" />
         <echo message="Using Java: ${java.version}/${java.runtime.version}/${java.vm.version}/${java.vm.name} from ${java.vm.vendor} on ${os.name}: ${os.version}" />
+        <echo message="Using Findbugs: ${findbugs.version} for Java ${java.version}"/>
 
         <scriptdef name="release_tag" language="javascript">
             var rel = ("REL_"+project.getProperty("version.id")).toUpperCase().replace(/\W/g,"_");

@@ -36,6 +36,8 @@ import org.apache.poi.hslf.usermodel.HSLFTextShape;
  */
 public final class HeadersFooters {
 
+    private static final String _ppt2007tag = "___PPT12";
+
     private final HeadersFootersContainer _container;
     private final HSLFSheet _sheet;
     private final boolean _ppt2007;
@@ -54,7 +56,7 @@ public final class HeadersFooters {
         
         // detect if this ppt was saved in Office2007
         String tag = ppt.getSlideMasters().get(0).getProgrammableTag();
-        _ppt2007 = "___PPT12".equals(tag);
+        _ppt2007 = _ppt2007tag.equals(tag);
 
         SheetContainer sc = _sheet.getSheetContainer();
         HeadersFootersContainer hdd = (HeadersFootersContainer)sc.findFirstOfType(RecordTypes.HeadersFooters.typeID);
